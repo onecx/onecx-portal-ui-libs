@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { DataTableComponent } from './data-table.component'
-import { PrimeNgModule } from '@onecx/portal-integration-angular'
+import { PrimeNgModule } from '../../primeng.module'
 
 describe('Data table component', () => {
   let fixture: ComponentFixture<DataTableComponent>
