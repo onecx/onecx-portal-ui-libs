@@ -46,6 +46,12 @@
           "libs/portal-integration-angular/package.json"
         ]
       }
+    },
+    "release": {
+      "executor": "nx-release:build-update-publish",
+      "options": {
+        "libName": "portal-integration-angular"
+      }
     }
   }
 }
