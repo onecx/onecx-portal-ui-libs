@@ -23,5 +23,8 @@
     ".": {
       "style": "./assets/styles.scss"
     }
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

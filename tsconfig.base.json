@@ -15,9 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@onecx/portal-integration-angular": [
-        "libs/portal-integration-angular/src/index.ts"
-      ]
+      "@onecx/portal-integration-angular": ["libs/portal-integration-angular/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
