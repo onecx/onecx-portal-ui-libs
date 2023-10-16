@@ -1,0 +1,37 @@
+$clr-neutral-100: #f7f7f7;
+$clr-neutral-500: #979797;
+$clr-neutral-700: #262626;
+
+:host ::ng-deep .p-multiselect {
+  padding: 0;
+  background: $clr-neutral-100;
+  border: none;
+
+  .p-multiselect-container {
+    height: 20px;
+    width: 20px;
+  }
+
+  .p-multiselect-trigger {
+    display: none;
+  }
+
+  .p-multiselect-label.p-placeholder {
+    color: $clr-neutral-700;
+    font-size: 0.9rem;
+    font-family: Bold, sans-serif;
+    font-weight: 700;
+    padding: 0;
+  }
+
+  &:focus-within {
+    box-shadow: none;
+    background: $clr-neutral-500;
+  }
+}
+
+.pi {
+  border: none;
+  background: none;
+  cursor: pointer;
+}

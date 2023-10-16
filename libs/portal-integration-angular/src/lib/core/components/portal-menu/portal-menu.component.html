@@ -1,0 +1,9 @@
+<ul class="layout-menu" id="nav" role="navigation">
+  <ng-container *ngIf="menuItems$ | async as items; else loading">
+    <ocx-submenu *ngFor="let item of items; let i = index;" [item]="item" [index]="i" [root]="true"></ocx-submenu>
+  </ng-container>
+  <ng-template #loading>
+    <!-- TODO implement me -->
+    loading...
+  </ng-template>
+</ul>

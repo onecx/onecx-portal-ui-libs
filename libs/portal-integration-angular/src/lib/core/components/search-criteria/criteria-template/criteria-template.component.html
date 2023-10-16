@@ -1,0 +1,16 @@
+<div>
+  <p-dropdown
+    [options]="templates"
+    [(ngModel)]="selectedTemplate"
+    ngDefaultControl
+    [editable]="false"
+    appendTo="body"
+    optionLabel="name"
+    name="searchCriteriaTemplateDropdown"
+    [filter]="true"
+    filterBy="name"
+    placeholder="Select saved filter"
+    [showClear]="true"
+  ></p-dropdown>
+  <span class="c-template-modified-indicator"></span>
+</div>

@@ -1,0 +1,22 @@
+@keyframes opacityFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.profile-content {
+  animation: 0.2s linear 0s 1 opacityFadeIn;
+}
+
+.profile-image {
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+}
+
+.active-item {
+  background-color: var(--primary-lightest-color);
+}

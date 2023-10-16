@@ -1,0 +1,63 @@
+<div class="onecx-search-criteria">
+  <ocx-page-header
+    [header]="header"
+    [actions]="actions"
+    [subheader]="subheader"
+    [manualBreadcrumbs]="manualBreadcrumbs"
+  >
+    <div toolbarItems class="toolbar-items-wrap">
+      <ocx-criteria-template class="ocx-criteria-template" *ngIf="criteriaTemplate"></ocx-criteria-template>
+      <ng-content select="[toolbarItems]"> </ng-content>
+    </div>
+
+    <div
+      class="search-criteria-container"
+      [ngClass]="(!advancedSearchActive && !disableAdvancedToggle) || disableAdvancedToggle ? 'simple-block' : 'advanced-block'"
+    >
+      <ng-container *ngIf="!advancedSearchActive || disableAdvancedToggle">
+        <div class="basic-criteria flex flex-column md:flex-row md:gap-2 md:align-items-center">
+          <ng-content select="[simpleCriteria]"> </ng-content>
+          <div>
+            <button
+              id="ocx-search-button"
+              pButton
+              icon="pi pi-search"
+              class="search-button"
+              type="button"
+              label="Search"
+              (click)="emitSearchEvent()"
+            ></button>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="advancedSearchActive && !disableAdvancedToggle">
+        <div class="advanced-criteria">
+          <ng-content select="[advancedCriteria]"> </ng-content>
+
+          <div class="search-criteria-buttons">
+            <button
+              id="ocx-search-button-advanced"
+              pButton
+              icon="pi pi-search"
+              type="submit"
+              label="Search"
+              title="Trigger"
+              (click)="emitSearchEvent()"
+            ></button>
+            <button
+              id="ocx-reset-button"
+              *ngIf="advancedSearchActive && !disableAdvancedToggle"
+              class="p-button"
+              pButton
+              icon="pi pi-eraser"
+              type="button"
+              label="Reset"
+              (click)="emitResetEvent()"
+            ></button>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </ocx-page-header>
+</div>

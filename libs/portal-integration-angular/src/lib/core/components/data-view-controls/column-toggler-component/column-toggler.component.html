@@ -1,0 +1,26 @@
+<p-pickList
+  [source]="activeColumns"
+  [target]="inactiveColumns"
+  [sourceHeader]="sourceLabel | translate"
+  [targetHeader]="targetLabel | translate"
+  [dragdrop]="true"
+  [responsive]="false"
+  [sourceStyle]="{ height: '300px' }"
+  [targetStyle]="{ height: '300px' }"
+  (onMoveToTarget)="setInactive($event.items)"
+  (onMoveToSource)="setActive($event.items)"
+  (onMoveAllToTarget)="setInactive($event.items)"
+  (onMoveAllToSource)="setActive($event.items)"
+>
+  <ng-template let-column pTemplate="item">
+    <div>{{ sanitizeToggleTranslation(column.header, column.translationPrefix) | translate}}</div>
+  </ng-template>
+</p-pickList>
+<p-footer class="p-dialog-footer p-4 flex justify-content-end">
+  <button
+    pButton
+    type="submit"
+    [label]="saveButtonLabel | translate"
+    (click)="submitResults(activeColumns, inactiveColumns)"
+  ></button>
+</p-footer>

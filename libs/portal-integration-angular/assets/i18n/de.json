@@ -1,0 +1,60 @@
+{
+  "OCX_CUSTOM_GROUP_COLUMN_SELECTOR": {
+    "OPEN_BUTTON_TITLE": "Dialog zur Auswahl einer benutzerdefinierten Gruppe öffnen",
+    "ACTIVE_COLUMNS_LABEL": "Aktive Spalten",
+    "INACTIVE_COLUMNS_LABEL": "Inaktive Spalten",
+    "SAVE_BUTTON_LABEL": "Speichern",
+    "CANCEL_BUTTON_LABEL": "Abbrechen",
+    "DIALOG_TITLE": "Spalten für benutzerdefinierte Gruppe auswählen"
+  },
+  "OCX_LIST_GRID_SORT": {
+    "DROPDOWN": {
+      "PLACEHOLDER": "Sortierung auswählen",
+      "TITLE": "Sortieren nach"
+    },
+    "TOGGLE_BUTTON": {
+      "ASCENDING_TITLE": "Auftseigend",
+      "DESCENDING_TITLE": "Absteigend"
+    }
+  },
+  "OCX_DATA_TABLE": {
+    "EMPTY_RESULT": "Keine Daten gefunden.",
+    "EMPTY_FILTER_MESSAGE": "Keine Filter gefunden.",
+    "ACTIONS_COLUMN_NAME": "Aktionen",
+    "FILTER_TITLE": "Filter",
+    "EDITED": "Bearbeitet"
+  },
+  "OCX_DATA_LIST_GRID": {
+    "EMPTY_RESULT": "Keine Daten gefunden.",
+    "MENU": {
+      "VIEW": "Anzeigen",
+      "EDIT": "Bearbeiten",
+      "DELETE": "Löschen"
+    }
+  },
+  "OCX_DATA_LAYOUT_SELECTION": {
+    "LAYOUT": {
+      "LIST": "Liste",
+      "GRID": "Raster",
+      "TABLE": "Tabelle"
+    }
+  },
+  "OCX_INTERACTIVE_DATA_VIEW": {
+    "DEFAULT_GROUP": "Standardgruppe",
+    "CUSTOM_GROUP": "Benutzerdefinierte Gruppe",
+    "NO_GROUP_SELECTED": "Keine Gruppe ausgewählt"
+  },
+  "OCX_SEARCH_HEADER": {
+    "TOGGLE_BUTTON": {
+      "BASIC": "Basis",
+      "ADVANCED": "Erweitert"
+    },
+    "HEADLINE": "Suche",
+    "RESET_BUTTON_TEXT": "Zurücksetzen",
+    "SEARCH_BUTTON_TEXT": "Suchen",
+    "EXPORT": "Alle Ereignisse exportieren"
+  },
+  "OCX_PAGE_HEADER": {
+    "MORE_ACTIONS": "Weitere Aktionen"
+  }
+}

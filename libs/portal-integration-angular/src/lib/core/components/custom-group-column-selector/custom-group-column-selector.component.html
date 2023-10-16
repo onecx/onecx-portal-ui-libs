@@ -1,0 +1,42 @@
+<p-button
+  type="button"
+  (click)="onOpenCustomGroupColumnSelectionDialogClick()"
+  [title]="openButtonTitle || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.OPEN_BUTTON_TITLE' | translate)"
+  icon="pi pi-cog"
+  styleClass="p-button"
+></p-button>
+
+<p-dialog header="Header" [(visible)]="visible" [style]="{ width: '70%' }">
+  <ng-template pTemplate="header">
+    <span class="text-xl font-bold"
+      >{{ dialogTitle || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.DIALOG_TITLE' | translate) }}</span
+    >
+  </ng-template>
+
+  <p-pickList
+    [source]="displayedColumnsModel"
+    [target]="hiddenColumnsModel"
+    [sourceHeader]="activeColumnsLabel || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ACTIVE_COLUMNS_LABEL' | translate)"
+    [targetHeader]="inactiveColumnsLabel || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.INACTIVE_COLUMNS_LABEL' | translate)"
+    [dragdrop]="true"
+    [responsive]="false"
+    [sourceStyle]="{ height: '300px' }"
+    [targetStyle]="{ height: '300px' }"
+  >
+    <ng-template let-item pTemplate="item">
+      <div>{{ item.nameKey | translate }}</div>
+    </ng-template>
+  </p-pickList>
+
+  <ng-template pTemplate="footer">
+    <p-button
+      (click)="onCancelClick()"
+      [label]="cancelButtonLabel || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CANCEL_BUTTON_LABEL' | translate)"
+      styleClass="p-button"
+    ></p-button>
+    <p-button
+      (click)="onSaveClick()"
+      [label]="saveButtonLabel || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.SAVE_BUTTON_LABEL' | translate)"
+    ></p-button>
+  </ng-template>
+</p-dialog>
