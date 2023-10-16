@@ -32,7 +32,7 @@ describe('SearchHeaderComponent', () => {
       id: 'i-am-test-portal',
       portalName: 'test',
       baseUrl: '',
-      microfrontends: [],
+      microfrontendRegistrations: [],
     })
 
     fixture = TestBed.createComponent(SearchHeaderComponent)
