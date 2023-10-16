@@ -1,0 +1,28 @@
+<ocx-page-header
+  [header]="headline || ('OCX_SEARCH_HEADER.HEADLINE' | translate)"
+  [manualBreadcrumbs]="manualBreadcrumbs"
+  [actions]="headerActions"
+>
+  <div class="search-criteria-container">
+    <div>
+      <ng-content></ng-content>
+      <div class="search-criteria-buttons">
+        <p-button
+          *ngIf="resetted.observed"
+          (click)="onResetClicked()"
+          label="{{ 'OCX_SEARCH_HEADER.RESET_BUTTON_TEXT' | translate }}"
+          icon="pi pi-eraser"
+          styleClass="p-button"
+        >
+        </p-button>
+
+        <p-button
+          (click)="onSearchClicked()"
+          label="{{ 'OCX_SEARCH_HEADER.SEARCH_BUTTON_TEXT' | translate }}"
+          icon="pi pi-search"
+        >
+        </p-button>
+      </div>
+    </div>
+  </div>
+</ocx-page-header>

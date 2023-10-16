@@ -1,0 +1,105 @@
+.pages-body {
+  height: 100vh;
+
+  .topbar {
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+    background-color: #1565c0;
+    z-index: 100;
+
+    .topbar-left {
+      img {
+        height: 2rem;
+      }
+    }
+
+    .p-button.p-button-text.p-button-plain {
+      color: #ffffff;
+    }
+  }
+
+  .pages-panel {
+    text-align: center;
+    z-index: 200;
+
+    &.card {
+      img {
+        width: 100%;
+      }
+
+      border: 1.5px solid var(--divider-color);
+      border-radius: 6px;
+
+      > .card {
+        background-color: var(--content-alt-bg-color);
+      }
+    }
+
+    .pages-header {
+      margin-top: -3rem;
+      color: var(--primary-color-text);
+      border: 1.5px solid var(--divider-color);
+      border-radius: 4px;
+      margin-left: auto;
+      margin-right: auto;
+
+      h2 {
+        margin: 0;
+      }
+    }
+
+    .pages-detail {
+      color: var(--text-secondary-color);
+    }
+  }
+
+  &.error-page {
+    background-size: cover;
+    background-color: var(--primary-color);
+
+    .pages-panel {
+      .pages-header {
+        background: #d81b60;
+      }
+    }
+  }
+
+  &.notfound-page {
+    background-size: cover;
+
+    .pages-panel {
+      .pages-header {
+        background: #455a64;
+      }
+    }
+  }
+
+  &.accessdenied-page {
+    background-size: cover;
+
+    .pages-panel {
+      .pages-header {
+        background: #fb8c00;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .pages-body {
+    &.contact-page {
+      .pages-panel {
+        padding-bottom: 10em;
+
+        .p-button {
+          width: 100%;
+        }
+
+        .card {
+          .right-panel {
+            text-align: center;
+          }
+        }
+      }
+    }
+  }
+}

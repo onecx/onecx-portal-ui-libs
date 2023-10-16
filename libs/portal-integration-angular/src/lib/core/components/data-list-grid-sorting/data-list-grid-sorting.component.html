@@ -1,0 +1,16 @@
+<div class="flex align-items-center gap-2">
+  <p-dropdown
+    [(ngModel)]="selectedSortingOption"
+    class="sort-dropdown"
+    [options]="dropdownOptions"
+    [placeholder]="('OCX_LIST_GRID_SORT.DROPDOWN.PLACEHOLDER' | translate)"
+    (onChange)="selectSorting($event)"
+    [title]="('OCX_LIST_GRID_SORT.DROPDOWN.TITLE' | translate)"
+  >
+    <ng-template let-item pTemplate="item"> {{ item?.columnName ? (item.columnName | translate) : ''}} </ng-template>
+    <ng-template let-item pTemplate="selectedItem">
+      {{ item?.columnName ? (item.columnName | translate) : ''}}
+    </ng-template></p-dropdown
+  >
+  <p-button icon="pi {{sortIcon()}}" styleClass="p-button-outlined" (click)="sortDirectionChanged()"></p-button>
+</div>

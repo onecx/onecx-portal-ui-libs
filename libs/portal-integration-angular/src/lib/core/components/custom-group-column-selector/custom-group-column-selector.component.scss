@@ -1,0 +1,18 @@
+::ng-deep {
+  .p-buttonset .p-button {
+    min-width: auto;
+  }
+
+  .p-buttonset {
+    display: flex;
+  }
+
+  // Setting the drag ghost-element index to 2000 avoids potential overlapping issues with the dialog
+  .p-picklist-item.cdk-drag-preview {
+    z-index: 2000 !important;
+  }
+}
+
+.p-button {
+  height: 100%;
+}

@@ -1,0 +1,6 @@
+export const enum ColumnType {
+  STANDARD = 'STANDARD',
+  DATE = 'DATE',
+  RELATIVE_DATE = 'RELATIVE_DATE',
+  TRANSLATION_KEY = 'TRANSLATION_KEY',
+}

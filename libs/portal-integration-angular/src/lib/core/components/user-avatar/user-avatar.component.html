@@ -1,0 +1,14 @@
+<div style="height: 32px">
+  <ng-container *ngIf="user$ | async as userInfo; else fallbackAvatar">
+    <img
+      *ngIf="userInfo.avatar && userInfo.avatar.smallImageUrl; else fallbackAvatar"
+      [src]="apiPrefix + userInfo.avatar.smallImageUrl"
+      alt="avatar"
+      class="profile-image"
+    />
+  </ng-container>
+
+  <ng-template #fallbackAvatar>
+    <img [src]="placeHolderPath" alt="avatar" class="profile-image" />
+  </ng-template>
+</div>

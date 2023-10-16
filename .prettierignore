@@ -1,0 +1,4 @@
+.prettierignore
+.docusaurus/
+**/CHANGELOG.md
+libs/portal-integration-angular/mocks/mockServiceWorker.js

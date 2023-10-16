@@ -1,0 +1,23 @@
+<p-dialog
+  header="Create Support Ticket"
+  [contentStyle]="{ overflow: 'visible' }"
+  [style]="{ width: '400px', 'max-height': '300px' }"
+  [(visible)]="displayDialog"
+  (onHide)="close()"
+>
+  <form [formGroup]="formGroup">
+    <div class="p-grid support-ticket-container">
+      <div class="p-col-12">
+        <label for="ticket-title">Title</label>
+        <input id="ticket-title" formControlName="title" pInputText />
+      </div>
+      <div class="p-col-12">
+        <label for="ticket-description">Description</label>
+        <textarea id="ticket-description" formControlName="description" pInputTextarea rows="10"> </textarea>
+      </div>
+      <div class="p-col-12" style="float: right">
+        <button pButton label="Submit" (click)="submit()" [disabled]="formGroup.invalid"></button>
+      </div>
+    </div>
+  </form>
+</p-dialog>

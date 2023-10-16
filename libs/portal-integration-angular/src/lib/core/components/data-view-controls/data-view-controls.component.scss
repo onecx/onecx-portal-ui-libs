@@ -1,0 +1,42 @@
+:host ::ng-deep {
+  .data-view-control-border {
+    border: var(--toggle-button-border);
+    &:last-of-type {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+  }
+  .p-inputtext.data-view-control-border,
+  .p-dropdown.data-view-control-border {
+    &:hover {
+      border-color: rgb(0 0 0 / 30%) !important;
+    }
+  }
+
+  .p-buttonset .p-button {
+    min-width: auto;
+  }
+
+  .p-buttonset {
+    display: flex;
+  }
+
+  .pseudo-button:hover {
+    background: var(--button-hover-bg) !important;
+    cursor: pointer;
+  }
+
+  @media only screen and (max-width: 600px) {
+    .sort-dropdown .p-dropdown {
+      max-width: 100px;
+    }
+    .search-filter-input {
+      max-width: 170px;
+    }
+  }
+
+  // Setting the drag ghost-element index to 2000 avoids potential overlapping issues with the dialog
+  .p-picklist-item.cdk-drag-preview {
+    z-index: 2000 !important;
+  }
+}

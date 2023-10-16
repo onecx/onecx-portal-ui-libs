@@ -1,0 +1,60 @@
+{
+  "OCX_CUSTOM_GROUP_COLUMN_SELECTOR": {
+    "OPEN_BUTTON_TITLE": "Open custom group selection dialog",
+    "ACTIVE_COLUMNS_LABEL": "Active columns",
+    "INACTIVE_COLUMNS_LABEL": "Inactive columns",
+    "SAVE_BUTTON_LABEL": "Save",
+    "CANCEL_BUTTON_LABEL": "Cancel",
+    "DIALOG_TITLE": "Custom group column selection"
+  },
+  "OCX_LIST_GRID_SORT": {
+    "DROPDOWN": {
+      "PLACEHOLDER": "Select sorting",
+      "TITLE": "Sort by"
+    },
+    "TOGGLE_BUTTON": {
+      "ASCENDING_TITLE": "Ascending",
+      "DESCENDING_TITLE": "Descending"
+    }
+  },
+  "OCX_DATA_TABLE": {
+    "EMPTY_RESULT": "No data found.",
+    "EMPTY_FILTER_MESSAGE": "No filters found.",
+    "ACTIONS_COLUMN_NAME": "Actions",
+    "FILTER_TITLE": "Filter",
+    "EDITED": "Edited"
+  },
+  "OCX_DATA_LIST_GRID": {
+    "EMPTY_RESULT": "No data found.",
+    "MENU": {
+      "VIEW": "View",
+      "EDIT": "Edit",
+      "DELETE": "Delete"
+    }
+  },
+  "OCX_DATA_LAYOUT_SELECTION": {
+    "LAYOUT": {
+      "LIST": "List",
+      "GRID": "Grid",
+      "TABLE": "Table"
+    }
+  },
+  "OCX_INTERACTIVE_DATA_VIEW": {
+    "DEFAULT_GROUP": "Default group",
+    "CUSTOM_GROUP": "Custom group",
+    "NO_GROUP_SELECTED": "No group selected"
+  },
+  "OCX_SEARCH_HEADER": {
+    "TOGGLE_BUTTON": {
+      "BASIC": "Basic",
+      "ADVANCED": "Advanced"
+    },
+    "HEADLINE": "Search",
+    "RESET_BUTTON_TEXT": "Reset",
+    "SEARCH_BUTTON_TEXT": "Search",
+    "EXPORT": "Export all events"
+  },
+  "OCX_PAGE_HEADER": {
+    "MORE_ACTIONS": "More actions"
+  }
+}
