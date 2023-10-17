@@ -1,0 +1,16 @@
+.p-inplace {
+  .p-inplace-display {
+    padding: var(--input-padding);
+    border-radius: var(--border-radius);
+    transition: var(--form-element-transition);
+
+    &:not(.p-disabled):hover {
+      background: var(--inplace-hover-bg);
+      color: var(--text-color);
+    }
+
+    &:focus {
+      @include focused();
+    }
+  }
+}

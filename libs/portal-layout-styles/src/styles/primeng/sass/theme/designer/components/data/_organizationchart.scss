@@ -1,0 +1,50 @@
+.p-organizationchart {
+  .p-organizationchart-node-content {
+    &.p-organizationchart-selectable-node:not(.p-highlight):hover {
+      background: var(--input-list-item-hover-bg);
+      color: var(--text-color);
+    }
+
+    &.p-highlight {
+      background: var(--highlight-bg);
+      color: var(--primary-color);
+
+      .p-node-toggler {
+        i {
+          color: darken($highlightBg, 25%);
+        }
+      }
+    }
+  }
+
+  .p-organizationchart-line-down {
+    background: var(--organization-chart-connector-color);
+  }
+
+  .p-organizationchart-line-left {
+    border-right: var(--panel-content-border);
+    border-color: var(--organization-chart-connector-color);
+  }
+
+  .p-organizationchart-line-top {
+    border-top: var(--panel-content-border);
+    border-color: var(--organization-chart-connector-color);
+  }
+
+  .p-organizationchart-node-content {
+    border: var(--panel-content-border);
+    background: var(--panel-content-bg);
+    color: var(--text-color);
+    padding: var(--panel-content-padding);
+  }
+
+  .p-organizationchart-node-content .p-node-toggler {
+    background: inherit;
+    color: inherit;
+    border-radius: 50%;
+
+    &:focus {
+      @include focused();
+    }
+  }
+}

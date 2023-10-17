@@ -8,15 +8,17 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "es2015",
+    "target": "es2022",
     "module": "esnext",
-    "lib": ["es2020", "dom"],
+    "lib": ["es2022", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@onecx/portal-integration-angular": ["libs/portal-integration-angular/src/index.ts"]
-    }
+      "@onecx/portal-integration-angular": ["libs/portal-integration-angular/src/index.ts"],
+      "@onecx/portal-layout-styles": ["libs/portal-layout-styles/src/index.ts"]
+    },
+    "allowSyntheticDefaultImports": true
   },
   "exclude": ["node_modules", "tmp"]
 }

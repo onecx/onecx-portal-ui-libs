@@ -1,0 +1,47 @@
+.p-fieldset {
+  border: var(--panel-content-border);
+  background: var(--panel-content-bg);
+  color: var(--text-color);
+  border-radius: var(--border-radius);
+
+  .p-fieldset-legend {
+    padding: var(--panel-header-padding);
+    border: var(--panel-header-border);
+    color: var(--text-color);
+    background: var(--panel-header-bg);
+    font-weight: var(--panel-header-font-weight);
+    border-radius: var(--border-radius);
+  }
+
+  &.p-fieldset-toggleable {
+    .p-fieldset-legend {
+      padding: 0;
+      transition: var(--action-icon-transition);
+
+      a {
+        padding: var(--panel-header-padding);
+        color: var(--text-color);
+        border-radius: var(--border-radius);
+        transition: var(--list-item-transition);
+
+        .p-fieldset-toggler {
+          margin-right: var(--inline-spacing);
+        }
+
+        &:focus {
+          @include focused();
+        }
+      }
+
+      &:hover {
+        background: var(--panel-header-hover-bg);
+        border-color: var(--panel-header-hover-border-color);
+        color: var(--text-color);
+      }
+    }
+  }
+
+  .p-fieldset-content {
+    padding: var(--panel-content-padding);
+  }
+}

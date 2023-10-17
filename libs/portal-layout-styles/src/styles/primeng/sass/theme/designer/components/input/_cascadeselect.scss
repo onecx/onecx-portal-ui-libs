@@ -1,0 +1,98 @@
+.p-cascadeselect {
+  background: var(--input-bg);
+  border: var(--input-border);
+  transition: var(--form-element-transition);
+  border-radius: var(--border-radius);
+
+  &:not(.p-disabled):hover {
+    border-color: var(--emphasis-high);
+  }
+
+  &:not(.p-disabled).p-focus {
+    @include focused-input();
+  }
+
+  .p-cascadeselect-label {
+    background: transparent;
+    border: 0 none;
+    padding: var(--input-padding);
+
+    &.p-placeholder {
+      color: var(--emphasis-medium);
+    }
+
+    &:enabled:focus {
+      outline: 0 none;
+      box-shadow: none;
+    }
+  }
+
+  .p-cascadeselect-trigger {
+    background: transparent;
+    color: var(--emphasis-medium);
+    width: var(--input-group-add-on-min-width);
+    border-top-right-radius: var(--border-radius);
+    border-bottom-right-radius: var(--border-radius);
+  }
+}
+
+.p-cascadeselect-panel {
+  background: var(--input-list-bg);
+  color: var(--text-color);
+  border: var(--input-overlay-border);
+  border-radius: var(--border-radius);
+  box-shadow: var(--input-overlay-shadow);
+
+  .p-cascadeselect-items {
+    padding: var(--input-list-padding);
+
+    .p-cascadeselect-item {
+      margin: var(--input-list-item-margin);
+      border: var(--input-list-item-border);
+      color: var(--text-color);
+      background: var(--input-list-item-bg);
+      transition: var(--list-item-transition);
+      border-radius: var(--input-list-item-border-radius);
+
+      .p-cascadeselect-item-content {
+        padding: var(--input-list-item-padding);
+
+        &:focus {
+          @include focused-listitem();
+        }
+      }
+
+      &.p-highlight {
+        color: var(--primary-color);
+        background: var(--highlight-bg);
+      }
+
+      &:not(.p-highlight):not(.p-disabled):hover {
+        color: var(--text-color);
+        background: var(--input-list-item-hover-bg);
+      }
+
+      .p-cascadeselect-group-icon {
+        font-size: var(--menuitem-submenu-icon-font-size);
+      }
+    }
+  }
+}
+
+p-cascadeselect.ng-dirty.ng-invalid > .p-cascadeselect {
+  @include invalid-input();
+}
+
+.p-input-filled {
+  .p-cascadeselect {
+    background: var(--input-filled-bg);
+
+    &:not(.p-disabled):hover {
+      background-color: var(--input-filled-hover-bg);
+    }
+
+    &:not(.p-disabled).p-focus {
+      background-color: var(--input-filled-focus-bg);
+    }
+  }
+}
