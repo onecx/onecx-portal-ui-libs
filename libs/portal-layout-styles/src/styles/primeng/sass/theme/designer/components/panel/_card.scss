@@ -1,0 +1,30 @@
+.p-card {
+  background: var(--panel-content-bg);
+  color: var(--text-color);
+  box-shadow: var(--card-shadow);
+  border-radius: var(--border-radius);
+
+  .p-card-body {
+    padding: var(--card-body-padding);
+  }
+
+  .p-card-title {
+    font-size: var(--card-title-font-size);
+    font-weight: var(--card-title-font-weight);
+    margin-bottom: var(--inline-spacing);
+  }
+
+  .p-card-subtitle {
+    font-weight: var(--card-sub-title-font-weight);
+    margin-bottom: var(--inline-spacing);
+    color: var(--text-secondary-color);
+  }
+
+  .p-card-content {
+    padding: var(--card-content-padding);
+  }
+
+  .p-card-footer {
+    padding: var(--card-footer-padding);
+  }
+}

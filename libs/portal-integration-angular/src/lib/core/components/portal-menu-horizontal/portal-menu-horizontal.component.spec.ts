@@ -5,6 +5,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { ConfigurationService } from '../../../services/configuration.service'
 import { MenubarModule } from 'primeng/menubar'
 
+// TODO: write test. PrimeNg bug? https://github.com/primefaces/primeng/issues/13024
 describe('PortalMenuHorizontalComponent', () => {
   // let component: PortalMenuHorizontalComponent
   // let fixture: ComponentFixture<PortalMenuHorizontalComponent>

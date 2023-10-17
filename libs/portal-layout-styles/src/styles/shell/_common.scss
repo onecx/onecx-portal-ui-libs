@@ -1,0 +1,69 @@
+* {
+  box-sizing: border-box;
+}
+
+.p-component {
+  font-family: var(--font-family);
+  font-size: var(--font-size);
+  font-weight: var(--font-weight);
+}
+
+.p-component-overlay {
+  background-color: var(--mask-bg);
+  transition-duration: var(--transition-duration);
+}
+
+.p-disabled,
+.p-component:disabled {
+  opacity: var(--disabled-opacity);
+}
+
+.p-error {
+  color: var(--error-color);
+}
+
+.p-text-secondary {
+  color: var(--emphasis-medium);
+}
+
+.pi {
+  font-size: var(--prime-icon-font-size);
+}
+
+.p-link {
+  font-size: var(--font-size);
+  font-family: var(--font-family);
+  border-radius: var(--border-radius);
+
+  &:focus {
+    @include focused();
+  }
+}
+
+.p-component-overlay-enter {
+  animation: p-component-overlay-enter-animation 150ms forwards;
+}
+
+.p-component-overlay-leave {
+  animation: p-component-overlay-leave-animation 150ms forwards;
+}
+
+.p-component-overlay {
+  @keyframes p-component-overlay-enter-animation {
+    from {
+      background-color: transparent;
+    }
+    to {
+      background-color: var(--maskbg);
+    }
+  }
+
+  @keyframes p-component-overlay-leave-animation {
+    from {
+      background-color: var(--maskbg);
+    }
+    to {
+      background-color: transparent;
+    }
+  }
+}

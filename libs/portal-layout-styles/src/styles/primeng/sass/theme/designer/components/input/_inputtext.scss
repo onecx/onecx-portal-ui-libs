@@ -1,0 +1,97 @@
+.p-inputtext {
+  font-family: var(--font-family);
+  font-size: var(--input-text-font-size);
+  color: var(--emphasis-high);
+  background: var(--input-bg);
+  padding: var(--input-padding);
+  border: var(--input-border);
+  transition: var(--form-element-transition);
+  appearance: none;
+  border-radius: var(--border-radius);
+
+  &:enabled:hover {
+    border-color: var(--emphasis-high);
+  }
+
+  &:enabled:focus {
+    @include focused-input();
+  }
+
+  &.ng-dirty.ng-invalid {
+    @include invalid-input();
+  }
+
+  &.p-inputtext-sm {
+    @include scaledFontSize($inputTextFontSize, $scaleSM);
+    @include scaledPadding($inputPadding, $scaleSM);
+  }
+
+  &.p-inputtext-lg {
+    @include scaledFontSize($inputTextFontSize, $scaleLG);
+    @include scaledPadding($inputPadding, $scaleLG);
+  }
+}
+
+.p-float-label > label {
+  left: nth($inputPadding, 2);
+  color: var(--emphasis-medium);
+  transition-duration: var(--transition-duration);
+}
+
+.p-float-label > .ng-invalid.ng-dirty + label {
+  color: var(--error-color);
+}
+
+.p-input-icon-left > i:first-of-type {
+  left: nth($inputPadding, 2);
+  color: var(--emphasis-medium);
+}
+
+.p-input-icon-left > .p-inputtext {
+  padding-left: nth($inputPadding, 2) * 2 + $primeIconFontSize;
+}
+
+.p-input-icon-left.p-float-label > label {
+  left: nth($inputPadding, 2) * 2 + $primeIconFontSize;
+}
+
+.p-input-icon-right > i:last-of-type {
+  right: nth($inputPadding, 2);
+  color: var(--emphasis-medium);
+}
+
+.p-input-icon-right > .p-inputtext {
+  padding-right: nth($inputPadding, 2) * 2 + $primeIconFontSize;
+}
+
+@include placeholder {
+  color: var(--emphasis-medium);
+}
+
+.p-input-filled {
+  .p-inputtext {
+    background-color: var(--input-filled-bg);
+
+    &:enabled:hover {
+      background-color: var(--input-filled-hover-bg);
+    }
+
+    &:enabled:focus {
+      background-color: var(--input-filled-focus-bg);
+    }
+  }
+}
+
+.p-inputtext-sm {
+  .p-inputtext {
+    @include scaledFontSize($inputTextFontSize, $scaleSM);
+    @include scaledPadding($inputPadding, $scaleSM);
+  }
+}
+
+.p-inputtext-lg {
+  .p-inputtext {
+    @include scaledFontSize($inputTextFontSize, $scaleLG);
+    @include scaledPadding($inputPadding, $scaleLG);
+  }
+}

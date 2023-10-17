@@ -1,0 +1,49 @@
+.p-tabmenu {
+  .p-tabmenu-nav {
+    background: var(--tabview-nav-bg);
+    border: var(--tabview-nav-border);
+    border-width: var(--tabview-nav-border-width);
+
+    .p-tabmenuitem {
+      margin-right: var(--tabview-header-spacing);
+
+      .p-menuitem-link {
+        border: var(--tabview-header-border);
+        border-width: var(--tabview-header-border-width);
+        border-color: var(--tabview-header-border-color);
+        background: var(--tabview-header-bg);
+        color: var(--text-secondary-color);
+        padding: var(--tabview-header-padding);
+        font-weight: var(--tabview-header-font-weight);
+        border-top-right-radius: var(--border-radius);
+        border-top-left-radius: var(--border-radius);
+        transition: var(--list-item-transition);
+        margin: var(--tabview-header-margin);
+
+        .p-menuitem-icon {
+          margin-right: var(--inline-spacing);
+        }
+
+        &:not(.p-disabled):focus {
+          @include focused-inset();
+        }
+      }
+
+      &:not(.p-highlight):not(.p-disabled):hover {
+        .p-menuitem-link {
+          background: var(--tabview-header-hover-bg);
+          border-color: var(--tabview-header-hover-border-color);
+          color: var(--text-secondary-color);
+        }
+      }
+
+      &.p-highlight {
+        .p-menuitem-link {
+          background: var(--tabview-header-active-bg);
+          border-color: var(--tabview-header-active-border-color);
+          color: var(--primary-color);
+        }
+      }
+    }
+  }
+}

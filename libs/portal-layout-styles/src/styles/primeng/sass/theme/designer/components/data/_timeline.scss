@@ -1,0 +1,35 @@
+.p-timeline {
+  .p-timeline-event-marker {
+    border: var(--timeline-event-marker-border);
+    border-radius: var(--timeline-event-marker-border-radius);
+    width: var(--timeline-event-marker-width);
+    height: var(--timeline-event-marker-height);
+    background-color: var(--timeline-event-marker-background);
+  }
+
+  .p-timeline-event-connector {
+    background-color: var(--timeline-event-color);
+  }
+
+  &.p-timeline-vertical {
+    .p-timeline-event-opposite,
+    .p-timeline-event-content {
+      padding: var(--timeline-vertical-event-content-padding);
+    }
+
+    .p-timeline-event-connector {
+      width: var(--timeline-event-connector-size);
+    }
+  }
+
+  &.p-timeline-horizontal {
+    .p-timeline-event-opposite,
+    .p-timeline-event-content {
+      padding: var(--timeline-horizontal-event-content-padding);
+    }
+
+    .p-timeline-event-connector {
+      height: var(--timeline-event-connector-size);
+    }
+  }
+}

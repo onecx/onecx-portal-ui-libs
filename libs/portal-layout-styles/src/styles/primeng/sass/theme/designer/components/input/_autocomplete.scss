@@ -1,0 +1,105 @@
+@use 'sass:math';
+
+.p-autocomplete {
+  .p-autocomplete-loader {
+    right: nth($inputPadding, 2);
+  }
+
+  &.p-autocomplete-dd {
+    .p-autocomplete-loader {
+      right: nth($inputPadding, 2) + $buttonIconOnlyWidth;
+    }
+  }
+
+  .p-autocomplete-multiple-container {
+    padding: math.div(nth($inputPadding, 1), 2) nth($inputPadding, 2);
+
+    &:not(.p-disabled):hover {
+      border-color: var(--emphasis-high);
+    }
+
+    &:not(.p-disabled).p-focus {
+      @include focused-input();
+    }
+
+    .p-autocomplete-input-token {
+      padding: math.div(nth($inputPadding, 1), 2) 0;
+
+      input {
+        font-family: var(--font-family);
+        font-size: var(--font-size);
+        color: var(--emphasis-high);
+        padding: 0;
+        margin: 0;
+      }
+    }
+
+    .p-autocomplete-token {
+      padding: math.div(nth($inputPadding, 1), 2) nth($inputPadding, 2);
+      margin-right: var(--inline-spacing);
+      background: var(--highlight-bg);
+      color: var(--primary-color);
+      border-radius: var(--border-radius);
+
+      .p-autocomplete-token-icon {
+        margin-left: var(--inline-spacing);
+      }
+    }
+  }
+}
+
+p-autocomplete.ng-dirty.ng-invalid > .p-autocomplete > .p-inputtext {
+  @include invalid-input();
+}
+
+.p-autocomplete-panel {
+  background: var(--input-list-bg);
+  color: var(--text-color);
+  border: var(--input-overlay-border);
+  border-radius: var(--border-radius);
+  box-shadow: var(--input-overlay-shadow);
+
+  .p-autocomplete-items {
+    &:not(.p-autocomplete-virtualscroll) {
+      padding: var(--input-list-padding);
+    }
+
+    &.p-autocomplete-virtualscroll .cdk-virtual-scroll-content-wrapper {
+      padding: var(--input-list-padding);
+    }
+
+    .p-autocomplete-item {
+      margin: var(--input-list-item-margin);
+      padding: var(--input-list-item-padding);
+      border: var(--input-list-item-border);
+      color: var(--text-color);
+      background: var(--input-list-item-bg);
+      transition: var(--list-item-transition);
+      border-radius: var(--input-list-item-border-radius);
+
+      &:hover {
+        color: var(--text-color);
+        background: var(--input-list-item-hover-bg);
+      }
+
+      &.p-highlight {
+        color: var(--primary-color);
+        background: var(--highlight-bg);
+      }
+    }
+
+    .p-autocomplete-empty-message {
+      padding: var(--input-list-item-padding);
+      color: var(--text-color);
+      background: var(--input-list-item-bg);
+    }
+
+    .p-autocomplete-item-group {
+      margin: var(--submenu-header-margin);
+      padding: var(--submenu-header-padding);
+      color: var(--text-secondary-color);
+      background: var(--submenu-header-bg);
+      font-weight: var(--submenu-header-font-weight);
+    }
+  }
+}

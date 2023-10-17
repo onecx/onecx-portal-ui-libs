@@ -1,0 +1,85 @@
+.p-checkbox {
+  width: var(--checkbox-width);
+  height: var(--checkbox-height);
+
+  .p-checkbox-box {
+    border: var(--checkbox-border);
+    background: var(--input-bg);
+    width: var(--checkbox-width);
+    height: var(--checkbox-height);
+    color: var(--emphasis-high);
+    border-radius: var(--border-radius);
+    transition: var(--form-element-transition);
+
+    .p-checkbox-icon {
+      transition-duration: var(--transition-duration);
+      color: var(--primary-text-color);
+      font-size: var(--checkbox-icon-font-size);
+    }
+
+    &.p-highlight {
+      border-color: var(--primary-color);
+      background: var(--primary-color);
+    }
+  }
+
+  &:not(.p-checkbox-disabled) {
+    .p-checkbox-box {
+      &:hover {
+        border-color: var(--emphasis-high);
+      }
+
+      &.p-focus {
+        @include focused-input();
+      }
+
+      &.p-highlight:hover {
+        border-color: var(--primary-color);
+        background: var(--primary-color);
+        color: var(--primary-text-color);
+      }
+    }
+  }
+}
+
+p-checkbox.ng-dirty.ng-invalid > .p-checkbox > .p-checkbox-box {
+  @include invalid-input();
+}
+
+.p-input-filled {
+  .p-checkbox {
+    .p-checkbox-box {
+      background-color: var(--input-filled-bg);
+
+      &.p-highlight {
+        background: var(--primary-color);
+      }
+    }
+
+    &:not(.p-checkbox-disabled) {
+      .p-checkbox-box {
+        &:hover {
+          background-color: var(--input-filled-hover-bg);
+        }
+
+        &.p-highlight:hover {
+          background: var(--primary-color);
+        }
+      }
+    }
+  }
+}
+
+.p-checkbox-label {
+  margin-left: var(--inline-spacing);
+}
+
+@if ($highlightBg == $checkboxActiveBg) {
+  .p-highlight {
+    .p-checkbox {
+      .p-checkbox-box {
+        border-color: var(--primary-text-color);
+      }
+    }
+  }
+}

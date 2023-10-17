@@ -1,0 +1,180 @@
+@mixin icon-override($icon) {
+  &:before {
+    content: var(--icon);
+  }
+}
+
+@mixin focused() {
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-outline-offset);
+  box-shadow: var(--focus-shadow);
+}
+
+@mixin focused-inset() {
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-outline-offset);
+  box-shadow: inset $focusShadow;
+}
+
+@mixin focused-input() {
+  @include focused();
+  border-color: var(--primary-color);
+}
+
+@mixin focused-listitem() {
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-outline-offset);
+  box-shadow: var(--input-list-item-focus-shadow);
+}
+
+@mixin invalid-input() {
+  border-color: var(--error-color);
+}
+
+@mixin menuitem-link {
+  padding: var(--menuitem-padding);
+  color: var(--text-color);
+  border-radius: var(--menuitem-border-radius);
+  transition: var(--list-item-transition);
+  user-select: none;
+
+  .p-menuitem-text {
+    color: var(--text-color);
+  }
+
+  .p-menuitem-icon {
+    color: var(--text-secondary-color);
+    margin-right: var(--inline-spacing);
+  }
+
+  .p-submenu-icon {
+    color: var(--text-secondary-color);
+  }
+
+  &:not(.p-disabled):hover {
+    background: var(--menuitem-hover-bg);
+
+    .p-menuitem-text {
+      color: var(--text-color);
+    }
+
+    .p-menuitem-icon {
+      color: var(--text-secondary-color);
+    }
+
+    .p-submenu-icon {
+      color: var(--text-secondary-color);
+    }
+  }
+
+  &:focus {
+    @include focused-listitem();
+  }
+}
+
+@mixin horizontal-rootmenuitem-link {
+  padding: var(--horizontal-menu-root-menuitem-padding);
+  color: var(--text-color);
+  border-radius: var(--border-radius);
+  transition: var(--list-item-transition);
+  user-select: none;
+
+  .p-menuitem-text {
+    color: var(--text-color);
+  }
+
+  .p-menuitem-icon {
+    color: var(--text-secondary-color);
+    margin-right: var(--inline-spacing);
+  }
+
+  .p-submenu-icon {
+    color: var(--text-secondary-color);
+    margin-left: var(--inline-spacing);
+  }
+
+  &:not(.p-disabled):hover {
+    background: var(--horizontal-menu-root-menuitem-hover-bg);
+
+    .p-menuitem-text {
+      color: var(--text-color);
+    }
+
+    .p-menuitem-icon {
+      color: var(--text-secondary-color);
+    }
+
+    .p-submenu-icon {
+      color: var(--text-secondary-color);
+    }
+  }
+
+  &:focus {
+    @include focused-listitem();
+  }
+}
+
+@mixin placeholder {
+  ::-webkit-input-placeholder {
+    @content;
+  }
+  :-moz-placeholder {
+    @content;
+  }
+  ::-moz-placeholder {
+    @content;
+  }
+  :-ms-input-placeholder {
+    @content;
+  }
+}
+
+@mixin scaledPadding($val, $scale) {
+  padding: nth($val, 1) * $scale nth($val, 2) * $scale;
+}
+
+@mixin scaledFontSize($val, $scale) {
+  font-size: $val * $scale;
+}
+
+@mixin nested-submenu-indents($val, $index, $length) {
+  ul {
+    li {
+      a {
+        padding-left: $val * ($index + 1);
+      }
+
+      @if $index < $length {
+        @include nested-submenu-indents($val, $index + 2, $length);
+      }
+    }
+  }
+}
+
+@mixin action-icon($enabled: true) {
+  width: var(--action-icon-width);
+  height: var(--action-icon-height);
+  color: var(--text-secondary-color);
+  border: var(--action-icon-border);
+  background: var(--action-icon-bg);
+  border-radius: var(--action-icon-border-radius);
+  transition: var(--action-icon-transition);
+
+  &:enabled:hover {
+    color: var(--text-secondary-color);
+    border-color: var(--action-icon-hover-border-color);
+    background: var(--action-icon-hover-bg);
+  }
+
+  &:focus {
+    @include focused();
+  }
+}
+
+@function tint($color, $percentage) {
+  @return mix(#fff, $color, $percentage);
+}
+
+@function shade($color, $percentage) {
+  @return mix(#000, $color, $percentage);
+}

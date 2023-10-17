@@ -1,0 +1,84 @@
+@import './_variables'; // The variables were checked
+
+:root {
+  // Top Bar Variables
+  --topbar-bg-color: rgb(18 171 219);
+  --topbar-text-color: #ffffff;
+  --topbar-left-bg-color: #ececec;
+  --topbar-item-text-color: #ffffff;
+  --topbar-item-text-hover-bg-color: #ffffff;
+  --topbar-menu-button-bg-color: rgb(255 0 68);
+  --menu-button-text-color: #ffffff;
+
+  // Body Variables
+  --page-padding: 1rem;
+  --page-padding-lg: calc(var(--page-padding) * 2);
+  --body-bg-color: #f7f7f7;
+  --text-color: rgb(0 0 0 / 87%);
+  --text-secondary-color: #616161;
+  --font-size: 14px;
+  --font-family: Ubuntu, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
+  // --border-width: #{$border-width};
+  --border-radius: 5px;
+  --transition-duration: 0.2s;
+  --root-font-size: 14px;
+
+  // Contents Variables
+  --content-bg-color: #ffffff;
+  --content-alt-bg-color: #eceff1;
+  --overlay-content-bg-color: #ffffff;
+  // --hover-bg-color: #{$hoverBgColor};
+  // --solid-surface-text-color: #{$solidSurfaceTextColor};
+  --divider-color: #ff00ff;
+
+  // Animation Variables
+  --animation-duration: 0.2s;
+  --animation-timing: #{$animationTimingFunction};
+
+  // Menu Style Variables
+  --menu-text-color: #00ff00;
+  --menu-bg-color: #ff00ff;
+  --menu-item-text-color: var(--text-color, #000000);
+  --menu-item-hover-bg-color: rgb(0 0 0 / 4%);
+  --menu-active-item-bg-color: var(--menu-item-hover-bg-color);
+  --menu-active-item-text-color: var(--menu-item-text-color);
+  --inline-menu-border-color: var(--divider-color);
+  --mobile-break-point: #{$mobileBreakpoint};
+  --submenu-shadow: #{$submenuShadow};
+  --menu-shadow: #{$menuShadow};
+  --menu-wrapper-width: 17rem;
+
+  // Headings Style Variables
+  --h1-font-size: #{$h1FontSize};
+  --h2-font-size: #{$h2FontSize};
+  --h3-font-size: #{$h3FontSize};
+  --h4-font-size: #{$h4FontSize};
+  --h5-font-size: #{$h5FontSize};
+  --h6-font-size: #{$h6FontSize};
+
+  // General Colors Variables
+  --primary-color: rgb(18, 171, 219);
+  --secondary-color: #ee4400;
+}
+
+@import '_mixins'; // The variables were checked
+@import '_common'; // The variables were checked
+@import '_colors'; // The variables were checked
+@import './_typography'; //The variables were checked
+@import '_fonts';
+// @import './_loader';
+@import './_animation'; // The variables were checked
+@import './_utils'; // The variables were checked
+@import './topbar/_topbar'; //The variables were checked
+// @import './_rightmenu';
+@import './menu/_menu'; // The variables were checked
+// @import './_megamenu';
+// @import './_widgets';
+@import './_main'; // The variables were checked
+@import './_footer'; // Coud not find the color for the footer Colors
+// @import './_help';
+@import './_breadcrumb'; // The variables were checked
+@import './_input_styles';
+@import './_validation'; // control validation
+
+// TODO check the included files, remove those not needed, cleanup those that are required
