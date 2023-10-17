@@ -1,0 +1,11 @@
+.p-terminal {
+  background: var(--panel-content-bg);
+  color: var(--text-color);
+  border: var(--panel-content-border);
+  padding: var(--panel-content-padding);
+
+  .p-terminal-input {
+    font-size: var(--font-size);
+    font-family: var(--font-family);
+  }
+}

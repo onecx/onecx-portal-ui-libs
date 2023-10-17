@@ -1,0 +1,27 @@
+.p-galleria {
+  .p-galleria-indicators {
+    padding: var(--galleria-indicators-padding);
+
+    .p-galleria-indicator {
+      &.p-highlight {
+        button {
+          background: var(--accent-color);
+          color: var(--accent-text-color);
+        }
+      }
+    }
+  }
+
+  &.p-galleria-indicator-onitem {
+    .p-galleria-indicators {
+      .p-galleria-indicator {
+        &.p-highlight {
+          button {
+            background: rgba(var(--accent-color-rgb), 0.68);
+            color: var(--accent-text-color);
+          }
+        }
+      }
+    }
+  }
+}

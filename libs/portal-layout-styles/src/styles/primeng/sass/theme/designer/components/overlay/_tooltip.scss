@@ -1,0 +1,33 @@
+.p-tooltip {
+  .p-tooltip-text {
+    background: var(--tooltip-bg);
+    color: var(--tooltip-text-color);
+    padding: var(--tooltip-padding);
+    box-shadow: var(--input-overlay-shadow);
+    border-radius: var(--border-radius);
+  }
+
+  &.p-tooltip-right {
+    .p-tooltip-arrow {
+      border-right-color: var(--tooltip-bg);
+    }
+  }
+
+  &.p-tooltip-left {
+    .p-tooltip-arrow {
+      border-left-color: var(--tooltip-bg);
+    }
+  }
+
+  &.p-tooltip-top {
+    .p-tooltip-arrow {
+      border-top-color: var(--tooltip-bg);
+    }
+  }
+
+  &.p-tooltip-bottom {
+    .p-tooltip-arrow {
+      border-bottom-color: var(--tooltip-bg);
+    }
+  }
+}

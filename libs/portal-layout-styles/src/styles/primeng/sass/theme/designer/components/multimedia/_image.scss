@@ -1,0 +1,44 @@
+.p-image-mask {
+  --maskbg: #{$imageMaskBg};
+}
+
+.p-image-preview-indicator {
+  background-color: transparent;
+  color: var(--image-preview-indicator-color);
+  transition: var(--action-icon-transition);
+}
+
+.p-image-preview-container {
+  &:hover {
+    > .p-image-preview-indicator {
+      background-color: var(--image-preview-indicator-bg);
+    }
+  }
+}
+
+.p-image-toolbar {
+  padding: var(--image-preview-toolbar-padding);
+}
+
+.p-image-action.p-link {
+  color: var(--image-preview-action-icon-color);
+  background-color: var(--image-preview-action-icon-bg);
+  width: var(--image-preview-action-icon-width);
+  height: var(--image-preview-action-icon-height);
+  border-radius: var(--image-preview-action-icon-border-radius);
+  transition: var(--action-icon-transition);
+  margin-right: var(--inline-spacing);
+
+  &:last-child {
+    margin-right: 0;
+  }
+
+  &:hover {
+    color: var(--image-preview-action-icon-hover-color);
+    background-color: var(--image-preview-action-icon-hover-bg);
+  }
+
+  i {
+    font-size: var(--image-preview-action-icon-font-size);
+  }
+}

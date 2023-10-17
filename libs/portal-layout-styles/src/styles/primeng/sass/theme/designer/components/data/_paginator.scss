@@ -1,0 +1,92 @@
+.p-paginator {
+  background: var(--paginator-bg);
+  color: var(--text-color);
+  border: var(--paginator-border);
+  border-width: var(--paginator-border-width);
+  padding: var(--paginator-padding);
+  border-radius: var(--border-radius);
+
+  .p-paginator-first,
+  .p-paginator-prev,
+  .p-paginator-next,
+  .p-paginator-last {
+    background-color: var(--paginator-element-bg);
+    border: var(--paginator-element-border);
+    color: var(--text-secondary-color);
+    min-width: var(--button-icon-only-width);
+    height: var(--button-icon-only-width);
+    margin: var(--paginator-element-margin);
+    transition: var(--list-item-transition);
+    border-radius: var(--paginator-element-border-radius);
+
+    &:not(.p-disabled):not(.p-highlight):hover {
+      background: var(--paginator-element-hover-bg);
+      border-color: var(--paginator-element-hover-border-color);
+      color: var(--text-secondary-color);
+    }
+  }
+
+  .p-paginator-first {
+    border-top-left-radius: var(--paginator-element-border-radius);
+    border-bottom-left-radius: var(--paginator-element-border-radius);
+  }
+
+  .p-paginator-last {
+    border-top-right-radius: var(--paginator-element-border-radius);
+    border-bottom-right-radius: var(--paginator-element-border-radius);
+  }
+
+  .p-dropdown {
+    margin-left: var(--inline-spacing);
+    margin-right: var(--inline-spacing);
+    height: var(--button-icon-only-width);
+
+    .p-dropdown-label {
+      padding-right: 0;
+    }
+  }
+
+  .p-paginator-page-input {
+    margin-left: var(--inline-spacing);
+    margin-right: var(--inline-spacing);
+
+    .p-inputtext {
+      max-width: var(--button-icon-only-width);
+    }
+  }
+
+  .p-paginator-current {
+    background-color: var(--paginator-element-bg);
+    border: var(--paginator-element-border);
+    color: var(--text-secondary-color);
+    min-width: var(--button-icon-only-width);
+    height: var(--button-icon-only-width);
+    margin: var(--paginator-element-margin);
+    padding: 0 $inlineSpacing;
+  }
+
+  .p-paginator-pages {
+    .p-paginator-page {
+      background-color: var(--paginator-element-bg);
+      border: var(--paginator-element-border);
+      color: var(--text-secondary-color);
+      min-width: var(--button-icon-only-width);
+      height: var(--button-icon-only-width);
+      margin: var(--paginator-element-margin);
+      transition: var(--list-item-transition);
+      border-radius: var(--paginator-element-border-radius);
+
+      &.p-highlight {
+        background: var(--highlight-bg);
+        border-color: var(--highlight-bg);
+        color: var(--primary-color);
+      }
+
+      &:not(.p-highlight):hover {
+        background: var(--paginator-element-hover-bg);
+        border-color: var(--paginator-element-hover-border-color);
+        color: var(--text-secondary-color);
+      }
+    }
+  }
+}

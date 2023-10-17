@@ -1,0 +1,12 @@
+.p-carousel {
+  .p-carousel-indicators {
+    .p-carousel-indicator {
+      &.p-highlight {
+        button {
+          background: var(--accent-color);
+          color: var(--accent-text-color);
+        }
+      }
+    }
+  }
+}

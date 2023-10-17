@@ -64,7 +64,7 @@ describe('PageHeaderComponent', () => {
     }).compileComponents()
 
     const configurationService = getTestBed().inject(ConfigurationService)
-    configurationService.setPortal({ id: 'i-am-test-portal', portalName: 'test', baseUrl: '', microfrontends: [] })
+    configurationService.setPortal({ id: 'i-am-test-portal', portalName: 'test', baseUrl: '', microfrontendRegistrations: [] })
   })
 
   beforeEach(() => {
