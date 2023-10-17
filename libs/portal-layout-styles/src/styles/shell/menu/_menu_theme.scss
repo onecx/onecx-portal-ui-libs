@@ -1,0 +1,83 @@
+.menu-wrapper {
+  background-color: var(--menu-bg-color);
+  box-shadow: var(--menu-shadow);
+
+  .layout-menu-container {
+    .layout-menu {
+      > li {
+        > div {
+          .layout-menuitem-text {
+            color: var(--menu-text-color);
+          }
+        }
+
+        // > ul {
+        //   background-color: var(--menu-bg-color);
+        // }
+      }
+
+      li {
+        border-left: 0px;
+        &.active-menu-parent.parent-menu {
+          // background: #ececec;
+          border-left: 4px solid var(--primary-color);
+        }
+
+        a {
+          color: var(--menu-item-text-color);
+          border-left: 4px solid transparent;
+          // i {
+          //   color: var(--menu-item-text-color);
+          // }
+
+          &:hover {
+            background-color: var(--menu-item-hover-bg-color);
+          }
+        }
+        a.active-menuitem-routerlink {
+          background-color: var(--menu-active-item-bg-color);
+          color: var(--menu-active-item-text-color);
+          font-weight: bold;
+          border-left: 4px solid var(--primary-color);
+        }
+        &.active-menuitem {
+          > a {
+            background-color: var(--menu-active-item-bg-color);
+            color: var(--menu-active-item-text-color);
+            font-weight: bold;
+            border-left: 4px solid var(--primary-color);
+
+            // > i {
+            // color: $activeMenuItemTextColor;
+            // }
+          }
+        }
+      }
+    }
+
+    .layout-inline-menu {
+      border-color: var(--inline-menu-border-color);
+
+      a {
+        color: var(--menu-item-text-color);
+      }
+
+      .layout-inline-menu-action,
+      .layout-inline-menu-action-panel .layout-inline-menu-action-item {
+        color: var(--menu-item-text-color);
+
+        // i {
+        //   color: var(--menu-item-text-color);
+        // }
+
+        &:hover {
+          background-color: var(--menu-item-hover-bg-color);
+        }
+      }
+
+      .layout-inline-menu-action-panel {
+        background-color: var(--menu-bg-color);
+      }
+    }
+  }
+}

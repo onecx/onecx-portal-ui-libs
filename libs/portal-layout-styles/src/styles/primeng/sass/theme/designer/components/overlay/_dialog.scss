@@ -1,0 +1,72 @@
+.p-dialog {
+  border-radius: var(--border-radius);
+  box-shadow: var(--overlay-container-shadow);
+  border: var(--overlay-content-border);
+
+  .p-dialog-header {
+    border-bottom: var(--dialog-header-border);
+    background: var(--dialog-header-bg);
+    color: var(--text-color);
+    padding: var(--dialog-header-padding);
+    border-top-right-radius: var(--border-radius);
+    border-top-left-radius: var(--border-radius);
+
+    .p-dialog-title {
+      font-weight: var(--dialog-header-font-weight);
+      font-size: var(--dialog-header-font-size);
+    }
+
+    .p-dialog-header-icon {
+      @include action-icon();
+      margin-right: var(--inline-spacing);
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+
+  .p-dialog-content {
+    background: var(--panel-content-bg);
+    color: var(--text-color);
+    padding: var(--dialog-content-padding);
+  }
+
+  .p-dialog-footer {
+    border-top: $dialogFooterBorder;
+    background: var(--panel-content-bg);
+    color: var(--text-color);
+    padding: var(--dialog-footer-padding);
+    text-align: right;
+    border-bottom-right-radius: var(--border-radius);
+    border-bottom-left-radius: var(--border-radius);
+
+    button {
+      margin: 0 $inlineSpacing 0 0;
+      width: auto;
+    }
+  }
+
+  &.p-confirm-dialog {
+    .p-confirm-dialog-icon {
+      font-size: $primeIconFontSize * 2;
+    }
+
+    .p-confirm-dialog-message {
+      margin-left: $inlineSpacing * 2;
+    }
+  }
+}
+
+@media (max-width: $mobileBreakpoint) {
+  .p-dialog.p-dialog {
+    transition: none;
+    transform: none;
+    width: 100vw !important;
+    height: 100vh !important;
+    top: 0px !important;
+    left: 0px !important;
+    max-height: 100%;
+    height: 100%;
+  }
+}
