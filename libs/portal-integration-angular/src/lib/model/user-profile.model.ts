@@ -50,7 +50,7 @@ export interface UserProfileAccountSettingsPrivacySettings {
   hideMyProfile?: string
 }
 export interface UserProfileAccountSettingsLayoutAndThemeSettings {
-  menuMode?: 'HORIZONTAL' | 'VERTICAL' | 'STATIC' | 'OVERLAY' | 'SLIM' | 'SLIMPLUS'
+  menuMode?: 'HORIZONTAL' | 'STATIC' | 'OVERLAY' | 'SLIM' | 'SLIMPLUS'
   colorScheme?: 'AUTO' | 'LIGHT' | 'DARK'
 }
 export interface Membership {

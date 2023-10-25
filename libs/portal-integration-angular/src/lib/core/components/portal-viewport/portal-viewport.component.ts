@@ -44,7 +44,7 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
   topbarTheme = 'var'
   colorScheme: 'auto' | 'light' | 'dark' = 'light'
   layoutMode: 'auto' | 'light' | 'dark' = 'light'
-  menuMode: 'vertical' | 'horizontal' | 'dual' = 'vertical'
+  menuMode: 'horizontal' | 'static' | 'overlay' | 'slim' | 'slimplus' = 'static'
   inputStyle = 'outline'
   ripple = true
   isMobile = false
@@ -204,16 +204,12 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
     return this.menuMode === 'horizontal' && !this.isMobile
   }
 
-  isDualMenuMode() {
-    return this.menuMode === 'dual' && !this.isMobile
-  }
-
-  isVerticalMenuVisible() {
+  isStaticalMenuVisible() {
     return this.menuActive && !this.isHorizontalMenuMode()
   }
 
   isHorizontalMenuVisible() {
-    return this.isHorizontalMenuMode() || (this.isDualMenuMode() && !this.menuActive)
+    return this.isHorizontalMenuMode()
   }
 
   public openHelpPageEditor(): void {

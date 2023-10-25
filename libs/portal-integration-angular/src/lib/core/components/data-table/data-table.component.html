@@ -1,7 +1,7 @@
 <p-table
   [value]="(displayedRows$ | async) || []"
   responsiveLayout="scroll"
-  [paginator]="true"
+  [paginator]="paginator"
   [rows]="pageSize"
   [rowsPerPageOptions]="pageSizes"
   id="dataTable_{{name}}"
@@ -14,15 +14,18 @@
             <span>{{ column.nameKey | translate }}</span>
             <span class="icon-button-header-wrapper">
               <button
+                id="sortButton"
                 *ngIf="column.sortable && sortedObserved"
                 class="pi"
                 [class.pi-sort-alt-slash]="(column?.id === sortColumn && sortDirection === 'NONE') || column?.id !== sortColumn"
                 [class.pi-sort-amount-up]="column?.id === sortColumn && sortDirection === 'ASCENDING'"
                 [class.pi-sort-amount-down]="column?.id === sortColumn && sortDirection === 'DESCENDING'"
                 (click)="onSortColumnClick(column.id)"
+                [title]="(sortIconTitle() | translate)"
               ></button>
               <p-multiSelect
-                *ngIf="filteredObserved && column.filterable"
+                id="filterMultiSelect"
+                *ngIf="column.filterable"
                 [options]="(currentFilterOptions$ | async) || []"
                 [ngModel]="(currentSelectedFilters$ | async) || []"
                 [showToggleAll]="true"
@@ -56,7 +59,7 @@
           <th scope="col">{{ column.nameKey | translate }}</th>
         </ng-template>
       </ng-container>
-      <th *ngIf="viewTableRow.observed || editTableRow.observed || deleteTableRow.observed">
+      <th *ngIf="viewTableRowObserved || editTableRowObserved || deleteTableRowObserved">
         {{ 'OCX_DATA_TABLE.ACTIONS_COLUMN_NAME' | translate }}
       </th>
     </tr>
@@ -74,10 +77,11 @@
             }"
         ></ng-container>
       </td>
-      <td *ngIf="viewTableRow.observed || editTableRow.observed || deleteTableRow.observed">
+      <td class="actions" *ngIf="viewTableRowObserved || editTableRowObserved || deleteTableRowObserved">
         <div class="icon-button-row-wrapper">
-          <ng-container *ngIf="viewTableRow.observed">
+          <ng-container *ngIf="viewTableRowObserved">
             <button
+              id="viewTableRowButton"
               *ocxIfPermission="viewPermission"
               pButton
               class="p-button-rounded p-button-text"
@@ -85,8 +89,9 @@
               (click)="onViewRow(rowObject)"
             ></button>
           </ng-container>
-          <ng-container *ngIf="editTableRow.observed">
+          <ng-container *ngIf="editTableRowObserved">
             <button
+              id="editTableRowButton"
               *ocxIfPermission="editPermission"
               pButton
               class="p-button-rounded p-button-text"
@@ -94,8 +99,9 @@
               (click)="onEditRow(rowObject)"
             ></button>
           </ng-container>
-          <ng-container *ngIf="deleteTableRow.observed">
+          <ng-container *ngIf="deleteTableRowObserved">
             <button
+              id="deleteTableRowButton"
               *ocxIfPermission="deletePermission"
               pButton
               class="p-button-rounded p-button-text p-button-danger"

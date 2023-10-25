@@ -1,11 +1,8 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { DataTableComponent } from './data-table.component'
-import { PrimeNgModule } from '../../primeng.module'
 
-// TODO: write test. PrimeNg bug? https://github.com/primefaces/primeng/issues/13024
-describe('Data table component', () => {
+describe('DataTableComponent', () => {
+
+  // FIXME: Rewrite or update the test
+
   // let fixture: ComponentFixture<DataTableComponent>
   // let component: DataTableComponent
 
@@ -21,7 +18,10 @@ describe('Data table component', () => {
   //   fixture.detectChanges()
   // })
 
-  it('should create', () => {
-    // expect(component).toBeDefined()
-  })
+  // it('should create', () => {
+  //   expect(component).toBeDefined()
+  // })
+    it ('ok', () => {
+      console.log("FIXME: write test")
+    })
 })

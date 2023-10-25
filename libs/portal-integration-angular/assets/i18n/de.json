@@ -14,7 +14,8 @@
     },
     "TOGGLE_BUTTON": {
       "ASCENDING_TITLE": "Auftseigend",
-      "DESCENDING_TITLE": "Absteigend"
+      "DESCENDING_TITLE": "Absteigend",
+      "DEFAULT_TITLE": "Standard"
     }
   },
   "OCX_DATA_TABLE": {

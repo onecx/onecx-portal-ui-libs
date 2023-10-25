@@ -1,5 +1,6 @@
 <div class="flex align-items-center gap-2">
   <p-dropdown
+    id="dataListGridSortingDropdown"
     [(ngModel)]="selectedSortingOption"
     class="sort-dropdown"
     [options]="dropdownOptions"
@@ -12,5 +13,11 @@
       {{ item?.columnName ? (item.columnName | translate) : ''}}
     </ng-template></p-dropdown
   >
-  <p-button icon="pi {{sortIcon()}}" styleClass="p-button-outlined" (click)="sortDirectionChanged()"></p-button>
+  <p-button
+    id="dataListGridSortingButton"
+    icon="pi {{sortIcon()}}"
+    styleClass="p-button-outlined"
+    (onClick)="sortDirectionChanged()"
+    [title]="(sortIconTitle() | translate)"
+  ></p-button>
 </div>
