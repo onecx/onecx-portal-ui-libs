@@ -1,8 +1,3 @@
-// import { ComponentFixture, TestBed } from '@angular/core/testing'
-// import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-// import { TranslateModule, TranslateService } from '@ngx-translate/core'
-// import { DataTableComponent } from './data-table.component'
-// import { PrimeNgModule } from './../../primeng.module'
 
 describe('DataTableComponent', () => {
 
@@ -26,5 +21,7 @@ describe('DataTableComponent', () => {
   // it('should create', () => {
   //   expect(component).toBeDefined()
   // })
-    it ('ok', () => {})
+    it ('ok', () => {
+      console.log("FIXME: write test")
+    })
 })
