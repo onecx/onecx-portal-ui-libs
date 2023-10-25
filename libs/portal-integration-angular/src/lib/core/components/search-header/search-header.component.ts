@@ -43,6 +43,7 @@ export class SearchHeaderComponent {
     const headerActions: Action[] = []
     if (this.hasAdvanced) {
       headerActions.push({
+        id: 'basicAdvancedButton',
         labelKey:
           this.viewMode === 'basic'
             ? 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.ADVANCED'

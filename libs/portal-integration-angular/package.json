@@ -5,6 +5,7 @@
     "@angular-architects/module-federation": "15.0.0",
     "@angular/common": "^15.2.7",
     "@angular/core": "^15.2.7",
+    "@angular/cdk": "^15.2.7",
     "rxjs": "~7.8.0",
     "primeng": "^15.3.0",
     "@angular/forms": "^15.2.7",

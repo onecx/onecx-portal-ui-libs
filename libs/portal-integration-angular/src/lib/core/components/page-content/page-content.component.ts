@@ -1,4 +1,4 @@
-import { Component } from '@angular/core'
+import { Component, Input } from '@angular/core'
 
 @Component({
   selector: 'ocx-page-content',
@@ -6,4 +6,6 @@ import { Component } from '@angular/core'
   styleUrls: ['./page-content.component.scss'],
   // changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PageContentComponent {}
+export class PageContentComponent {
+  @Input() public styleClass: string | undefined
+}

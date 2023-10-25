@@ -30,7 +30,7 @@ describe('SearchCriteriaComponent', () => {
     component = fixture.componentInstance
 
     const configurationService = getTestBed().inject(ConfigurationService)
-    configurationService.setPortal({ id: 'i-am-test-portal', portalName: 'test', baseUrl: '', microfrontendRegistrations: [] })
+    configurationService.setPortal({ id: 'i-am-test-portal', portalName: 'test', baseUrl: '', microfrontends: [] })
 
     fixture.detectChanges()
   })
