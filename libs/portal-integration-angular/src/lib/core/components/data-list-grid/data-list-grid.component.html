@@ -2,7 +2,7 @@
   [value]="data"
   [sortField]="clientSideSorting ? sortField : ''"
   [sortOrder]="clientSideSorting ? sortDirectionNumber : 0"
-  [paginator]="true"
+  [paginator]="paginator"
   [rows]="pageSize"
   [layout]="layout"
   [rowsPerPageOptions]="pageSizes"
@@ -27,14 +27,19 @@
 
 <ng-template #defaultGridItem let-item>
   <div class="col-12 lg:col-6 xl:col-4 flex">
-    <div class="card flex flex-column justify-content-between w-12 lg:w-11 mb-4 mt-4 align-self-stretch">
+    <div class="data-grid-item card flex flex-column justify-content-between w-12 lg:w-11 mb-4 mt-4 align-self-stretch">
       <div class="flex justify-content-center mb-3">
-        <img class="image" src="{{ item.imagePath }}" (error)="imgError($event)" alt="{{item?.[titleLineId || '']}}" />
+        <img
+          class="image"
+          src="{{ item.imagePath }}"
+          (error)="imgError($event)"
+          alt="{{resolveFieldData(item, titleLineId)|| ''}}"
+        />
       </div>
       <div class="flex flex-row justify-content-between align-items-center">
-        <div class="flex-row">
+        <div class="data-grid-items flex-row">
           <div class="item-name font-medium mr-3 text-2xl">
-            <a [routerLink]="" (click)="onViewRow">{{ item?.[titleLineId || ''] }}</a>
+            <a [routerLink]="" (click)="onViewRow">{{ resolveFieldData(item, titleLineId) || '' }}</a>
           </div>
           <ng-container
             [ngTemplateOutlet]="_gridItemSubtitleLines ? _gridItemSubtitleLines : defaultGridItemSubtitleLines"
@@ -47,7 +52,7 @@
             pButton
             (click)="setSelectedItem(item); menu.toggle($event)"
             icon="pi pi-ellipsis-v"
-            class="menu-btn"
+            class="more-actions-menu-button menu-btn"
           ></button>
         </div>
       </div>
@@ -55,19 +60,22 @@
   </div>
 </ng-template>
 <ng-template #defaultGridItemSubtitleLines let-item>
-  <div *ngFor="let subtitleLineId of subtitleLineIds" class="edit-time text-xl my-3">{{ item[subtitleLineId] }}</div>
+  <div *ngFor="let subtitleLineId of subtitleLineIds" class="subtitleLine edit-time text-xl my-3">
+    {{ resolveFieldData(item, subtitleLineId) }}
+  </div>
 </ng-template>
 <ng-template #defaultListItem let-item>
   <div class="col-12">
     <div class="flex flex-1 align-items-center p-3 w-full">
-      <div class="flex-1">
+      <div class="data-list-items flex-1">
         <div class="item-name-row flex flex-row justify-content-between">
           <div class="item-name mr-3 text-2xl font-medium">
-            <a [routerLink]="" (click)="onViewRow(item)">{{ item[titleLineId || ''] }}</a>
+            <a [routerLink]="" (click)="onViewRow(item)">{{ resolveFieldData(item, titleLineId) || '' }}</a>
           </div>
           <div class="flex flex-column md:flex-row md:justify-content-between">
-            <ng-container *ngIf="viewItem.observed">
+            <ng-container *ngIf="viewItemObserved">
               <button
+                id="viewListItemButton"
                 type="button"
                 icon="pi pi-eye"
                 pButton
@@ -77,8 +85,9 @@
                 *ocxIfPermission="viewPermission"
               ></button>
             </ng-container>
-            <ng-container *ngIf="editItem.observed">
+            <ng-container *ngIf="editItemObserved">
               <button
+                id="editListItemButton"
                 type="button"
                 class="p-button-rounded p-button-text mb-1 mr-2"
                 icon="pi pi-pencil"
@@ -88,8 +97,9 @@
                 *ocxIfPermission="editPermission"
               ></button>
             </ng-container>
-            <ng-container *ngIf="deleteItem.observed">
+            <ng-container *ngIf="deleteItemObserved">
               <button
+                id="deleteListItemButton"
                 type="button"
                 icon="pi pi-trash"
                 class="p-button-rounded p-button-text p-button-danger mb-1 mr-2"
@@ -113,7 +123,6 @@
             </ng-container>
           </div>
         </div>
-        <div class="text-xl font-light">{{ item.description }}</div>
         <div class="text-base font-light my-1">
           <ng-container
             [ngTemplateOutlet]="_listItemSubtitleLines ? _listItemSubtitleLines : defaultListItemSubtitleLines"
@@ -125,5 +134,5 @@
   </div>
 </ng-template>
 <ng-template #defaultListItemSubtitleLines let-item="$implicit">
-  <div *ngFor="let subtitleLineId of subtitleLineIds" class="edit-time text-xl my-3">{{ item[subtitleLineId] }}</div>
+  <div *ngFor="let subtitleLineId of subtitleLineIds" class="subtitleLine text-xl my-3">{{ item[subtitleLineId] }}</div>
 </ng-template>

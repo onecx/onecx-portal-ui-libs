@@ -7,12 +7,14 @@ import { DataTableColumn } from '../../../model/data-table-column.model'
 import { DataSortDirection } from '../../../model/data-sort-direction'
 import { ColumnType } from '../../../model/column-type.model'
 import { DataAction } from '../../../model/data-action'
-
+import { ObjectUtils } from '../../utils/objectutils'
+import { flattenObject } from '../../../functions/flatten-object'
 type Primitive = number | string | boolean | bigint | Date
 export type Row = {
   id: string | number
-  [columnId: string]: Primitive
+  [columnId: string]: unknown
 }
+
 export type Filter = { columnId: string; value: string }
 export type Sort = { sortColumn: string; sortDirection: DataSortDirection }
 
@@ -65,6 +67,7 @@ export class DataTableComponent implements OnInit {
   @Input() deletePermission: string | undefined
   @Input() viewPermission: string | undefined
   @Input() editPermission: string | undefined
+  @Input() paginator = true
 
   @Input() standardCellTemplate: TemplateRef<any> | undefined
   @ContentChild('standardCell') standardCellChildTemplate: TemplateRef<any> | undefined
@@ -103,7 +106,7 @@ export class DataTableComponent implements OnInit {
   @Output() editTableRow = new EventEmitter<Row>()
   @Output() deleteTableRow = new EventEmitter<Row>()
 
-  displayedRows$: Observable<Row[]> | undefined
+  displayedRows$: Observable<unknown[]> | undefined
 
   currentFilterColumn$ = new BehaviorSubject<DataTableColumn | null>(null)
   currentFilterOptions$: Observable<SelectItem[]> | undefined
@@ -115,6 +118,18 @@ export class DataTableComponent implements OnInit {
   get filteredObserved(): boolean {
     return this.injector.get('DataViewComponent')?.filtered.observed || this.filtered.observed
   }
+  get viewTableRowObserved(): boolean {
+    const dv = this.injector.get('DataViewComponent')
+    return dv?.viewItemObserved || dv?.viewItem.observed || this.viewTableRow.observed
+  }
+  get editTableRowObserved(): boolean {
+    const dv = this.injector.get('DataViewComponent')
+    return dv?.editItemObserved || dv?.editItem.observed || this.editTableRow.observed
+  }
+  get deleteTableRowObserved(): boolean {
+    const dv = this.injector.get('DataViewComponent')
+    return dv?.deleteItemObserved || dv?.deleteItem.observed || this.deleteTableRow.observed
+  }
 
   constructor(private translateService: TranslateService, private router: Router, private injector: Injector) {
     this.name = this.name || this.router.url.replace(/[^A-Za-z0-9]/, '_')
@@ -125,7 +140,7 @@ export class DataTableComponent implements OnInit {
       mergeMap((params) => this.translateColumns(params)),
       map((params) => this.filterRows(params)),
       map((params) => this.sortRows(params)),
-      map(([rows]) => rows)
+      map(([rows]) => this.flattenRows(rows))
     )
     this.currentSelectedFilters$ = combineLatest([this._filters$, this.currentFilterColumn$]).pipe(
       map(([filters, currentFilterColumn]) => {
@@ -225,7 +240,7 @@ export class DataTableComponent implements OnInit {
       let translationKeys: string[] = []
       const translatedColumns = this.columns.filter((c) => c.columnType === ColumnType.TRANSLATION_KEY)
       translatedColumns.forEach((c) => {
-        translationKeys = [...translationKeys, ...rows.map((r) => r[c.id]?.toString())]
+        translationKeys = [...translationKeys, ...rows.map((r) => ObjectUtils.resolveFieldData(r, c.id)?.toString())]
       })
       if (translationKeys.length) {
         return this.translateService.get(translationKeys).pipe(
@@ -233,7 +248,10 @@ export class DataTableComponent implements OnInit {
             const translations: Record<string, Record<string, string>> = {}
             translatedColumns.forEach((c) => {
               translations[c.id] = Object.fromEntries(
-                rows.map((r) => [r[c.id]?.toString() || '', translatedValues[r[c.id]?.toString()]])
+                rows.map((r) => [
+                  ObjectUtils.resolveFieldData(r, c.id)?.toString() || '',
+                  translatedValues[ObjectUtils.resolveFieldData(r, c.id)?.toString()],
+                ])
               )
             })
             return [rows, filters, sortColumn, sortDirection, translations]
@@ -265,7 +283,8 @@ export class DataTableComponent implements OnInit {
               .some(
                 (filter) =>
                   (
-                    translations[filter.columnId]?.[row[filter.columnId].toString()] || row[filter.columnId]
+                    translations[filter.columnId]?.[ObjectUtils.resolveFieldData(row, filter.columnId).toString()] ||
+                    ObjectUtils.resolveFieldData(row, filter.columnId)
                   ).toString() === filter.value.toString()
               )
           )
@@ -288,7 +307,10 @@ export class DataTableComponent implements OnInit {
       return [rows, filters, sortColumn, sortDirection, translations]
     }
     let translatedColValues: Record<string, string> = Object.fromEntries(
-      rows.map((r) => [r[sortColumn]?.toString(), r[sortColumn]?.toString()])
+      rows.map((r) => [
+        ObjectUtils.resolveFieldData(r, sortColumn)?.toString(),
+        ObjectUtils.resolveFieldData(r, sortColumn)?.toString(),
+      ])
     )
     if (this.columns.find((h) => h.id === sortColumn)?.columnType === ColumnType.TRANSLATION_KEY) {
       translatedColValues = translations[sortColumn]
@@ -300,6 +322,9 @@ export class DataTableComponent implements OnInit {
       sortDirection,
       translations,
     ]
+  }
+  private flattenRows(rows: Row[]) {
+    return rows.map((r) => flattenObject(r))
   }
 
   private createCompareFunction(
@@ -319,8 +344,8 @@ export class DataTableComponent implements OnInit {
         return 0
       }
       let result
-      const value1 = translatedColValues[data1[sortColumn]]
-      const value2 = translatedColValues[data2[sortColumn]]
+      const value1 = translatedColValues[ObjectUtils.resolveFieldData(data1, sortColumn)]
+      const value2 = translatedColValues[ObjectUtils.resolveFieldData(data2, sortColumn)]
 
       if (value1 == null && value2 != null) result = -1
       else if (value1 != null && value2 == null) result = 1
@@ -342,5 +367,16 @@ export class DataTableComponent implements OnInit {
 
   getSelectedFilters(columnId: string): string[] | undefined {
     return this.filters.filter((filter) => filter.columnId === columnId).map((filter) => filter.value)
+  }
+
+  sortIconTitle() {
+    switch (this.sortDirection) {
+      case DataSortDirection.ASCENDING:
+        return 'OCX_LIST_GRID_SORT.TOGGLE_BUTTON.ASCENDING_TITLE'
+      case DataSortDirection.DESCENDING:
+        return 'OCX_LIST_GRID_SORT.TOGGLE_BUTTON.DESCENDING_TITLE'
+      default:
+        return 'OCX_LIST_GRID_SORT.TOGGLE_BUTTON.DEFAULT_TITLE'
+    }
   }
 }

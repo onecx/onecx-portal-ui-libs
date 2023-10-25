@@ -132,3 +132,7 @@ dist
 .pnp.*
 
 .angular
+
+*.iml
+.idea
+

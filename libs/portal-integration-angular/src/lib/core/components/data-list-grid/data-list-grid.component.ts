@@ -4,6 +4,7 @@ import {
   DoCheck,
   EventEmitter,
   Inject,
+  Injector,
   Input,
   OnInit,
   Output,
@@ -16,12 +17,16 @@ import { AUTH_SERVICE, MFE_INFO } from '../../../api/injection-tokens'
 import { MfeInfo } from '../../../model/mfe-info.model'
 import { DataAction } from '../../../model/data-action'
 import { TranslateService } from '@ngx-translate/core'
+import { ObjectUtils } from '../../utils/objectutils'
+import { Row } from '../data-table/data-table.component'
 
 export type ListGridData = {
   id: string | number
   imagePath: string | number
   [columnId: string]: unknown
 }
+
+type RowListGridData = ListGridData & Row
 
 export interface ListGridDataMenuItem extends MenuItem {
   permission: string
@@ -33,8 +38,6 @@ export interface ListGridDataMenuItem extends MenuItem {
   styleUrls: ['./data-list-grid.component.scss'],
 })
 export class DataListGridComponent implements OnInit, DoCheck {
-  @Input() data: ListGridData[] = []
-  @Input() sortDirection: DataSortDirection = DataSortDirection.NONE
   @Input() sortField = ''
   @Input() titleLineId: string | undefined
   @Input() subtitleLineIds: string[] = []
@@ -51,6 +54,30 @@ export class DataListGridComponent implements OnInit, DoCheck {
   @Input() viewMenuItemKey: string | undefined
   @Input() editMenuItemKey: string | undefined
   @Input() deleteMenuItemKey: string | undefined
+  @Input() paginator = true
+
+  _originalData: RowListGridData[] = []
+  _sortDirection = DataSortDirection.NONE
+
+  @Input()
+  get sortDirection(): DataSortDirection {
+    return this._sortDirection
+  }
+  set sortDirection(value: DataSortDirection) {
+    if (value === DataSortDirection.NONE) {
+      this._data = [...this._originalData]
+    }
+    this._sortDirection = value
+  }
+  _data: RowListGridData[] = []
+  @Input()
+  get data(): RowListGridData[] {
+    return this._data
+  }
+  set data(value: RowListGridData[]) {
+    this._originalData = [...value]
+    this._data = [...value]
+  }
 
   @Input() gridItemSubtitleLinesTemplate: TemplateRef<any> | undefined
   @ContentChild('gridItemSubtitleLines') gridItemSubtitleLinesChildTemplate: TemplateRef<any> | undefined
@@ -86,9 +113,22 @@ export class DataListGridComponent implements OnInit, DoCheck {
     this.updateGridMenuItems()
   }
 
-  @Output() deleteItem = new EventEmitter<ListGridData>()
   @Output() viewItem = new EventEmitter<ListGridData>()
   @Output() editItem = new EventEmitter<ListGridData>()
+  @Output() deleteItem = new EventEmitter<ListGridData>()
+
+  get viewItemObserved(): boolean {
+    const dv = this.injector.get('DataViewComponent')
+    return dv?.viewItemObserved || dv?.viewItem.observed || this.viewItem.observed
+  }
+  get editItemObserved(): boolean {
+    const dv = this.injector.get('DataViewComponent')
+    return dv?.editItemObserved || dv?.editItem.observed || this.editItem.observed
+  }
+  get deleteItemObserved(): boolean {
+    const dv = this.injector.get('DataViewComponent')
+    return dv?.deleteItemObserved || dv?.deleteItem.observed || this.deleteItem.observed
+  }
 
   showMenu = false
   gridMenuItems: MenuItem[] = []
@@ -104,7 +144,8 @@ export class DataListGridComponent implements OnInit, DoCheck {
   constructor(
     @Inject(AUTH_SERVICE) private authService: IAuthService,
     @Inject(MFE_INFO) private mfeInfo: MfeInfo,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private injector: Injector
   ) {}
 
   ngDoCheck(): void {
@@ -196,5 +237,8 @@ export class DataListGridComponent implements OnInit, DoCheck {
 
   setSelectedItem(item: ListGridData) {
     this.selectedItem = item
+  }
+  resolveFieldData(object: any, key: any) {
+    return ObjectUtils.resolveFieldData(object, key)
   }
 }
