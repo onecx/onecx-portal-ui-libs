@@ -190,8 +190,8 @@ describe('InteractiveDataViewComponent', () => {
     },
   ]
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(() => {
+    TestBed.configureTestingModule({
       declarations: [
         InteractiveDataViewComponent,
         DataLayoutSelectionComponent,
