@@ -23,6 +23,7 @@ import { DataAction } from '../../../model/data-action'
   selector: 'ocx-interactive-data-view',
   templateUrl: './interactive-data-view.component.html',
   styleUrls: ['./interactive-data-view.component.css'],
+  providers: [{ provide: 'InteractiveDataViewComponent', useExisting: InteractiveDataViewComponent }],
 })
 export class InteractiveDataViewComponent implements OnInit {
   _dataViewComponent: DataViewComponent | undefined
@@ -37,7 +38,6 @@ export class InteractiveDataViewComponent implements OnInit {
   @Input() deletePermission: string | undefined
   @Input() editPermission: string | undefined
   @Input() viewPermission: string | undefined
-  @Input() data: RowListGridData[] = []
   @Input() name = 'Data'
   @Input() titleLineId: string | undefined
   @Input() subtitleLineIds: string[] = []
@@ -61,6 +61,8 @@ export class InteractiveDataViewComponent implements OnInit {
   @Input() customGroupKey = 'OCX_INTERACTIVE_DATA_VIEW.CUSTOM_GROUP'
   @Input() groupSelectionNoGroupSelectedKey = 'OCX_INTERACTIVE_DATA_VIEW.NO_GROUP_SELECTED'
   @Input() additionalActions: DataAction[] = []
+  @Input() listGridPaginator = true
+  @Input() tablePaginator = true
   @ContentChild('tableCell') tableCell: TemplateRef<any> | undefined
   @ContentChild('tableDateCell') tableDateCell: TemplateRef<any> | undefined
   @ContentChild('tableRelativeDateCell') tableRelativeDateCell: TemplateRef<any> | undefined
@@ -83,8 +85,17 @@ export class InteractiveDataViewComponent implements OnInit {
   isSortedObserved: boolean | undefined
   isDeleteItemObserved: boolean | undefined
   isViewItemObserved: boolean | undefined
-  IsEditItemObserved: boolean | undefined
+  isEditItemObserved: boolean | undefined
   firstColumnId: string | undefined
+
+  @Input()
+  get paginator(): boolean {
+    return this.listGridPaginator && this.tablePaginator
+  }
+  set paginator(value: boolean) {
+    this.listGridPaginator = value
+    this.tablePaginator = value
+  }
 
   get _gridItemSubtitleLines(): TemplateRef<any> | undefined {
     return this.gridItemSubtitleLines
@@ -114,6 +125,15 @@ export class InteractiveDataViewComponent implements OnInit {
     return this.listItem
   }
 
+  _data: RowListGridData[] = []
+  @Input()
+  get data(): RowListGridData[] {
+    return this._data
+  }
+  set data(value: RowListGridData[]) {
+    this._data = value
+  }
+
   constructor(@Inject(AUTH_SERVICE) private authService: IAuthService) {}
 
   ngOnInit(): void {
@@ -129,6 +149,7 @@ export class InteractiveDataViewComponent implements OnInit {
     }
     this.firstColumnId = this.columns[0]?.id
   }
+
   filtering(event: any) {
     if (this.isFilteredObserved) {
       this.filtered.emit(event)
@@ -140,6 +161,7 @@ export class InteractiveDataViewComponent implements OnInit {
       this.sorted.emit(event)
     }
   }
+
   onDeleteElement(element: RowListGridData) {
     if (this.isDeleteItemObserved) {
       this.deleteItem.emit(element)
@@ -151,8 +173,9 @@ export class InteractiveDataViewComponent implements OnInit {
       this.viewItem.emit(element)
     }
   }
+
   onEditElement(element: RowListGridData) {
-    if (this.IsEditItemObserved) {
+    if (this.isEditItemObserved) {
       this.editItem.emit(element)
     }
   }
@@ -161,9 +184,11 @@ export class InteractiveDataViewComponent implements OnInit {
     this.layout = layout
     this.dataViewLayoutChange.emit(layout)
   }
+
   onSortChange($event: any) {
     this.sortField = $event
   }
+
   onSortDirectionChange($event: any) {
     this.sortDirection = $event
   }
@@ -177,6 +202,7 @@ export class InteractiveDataViewComponent implements OnInit {
     this.displayedColumns = event.activeColumns
     this.selectedGroupKey = event.groupKey
   }
+
   registerEventListenerForDataView() {
     if (this.filtered.observed) {
       this.isFilteredObserved = true
@@ -211,7 +237,7 @@ export class InteractiveDataViewComponent implements OnInit {
       }
     }
     if (this.editItem.observed) {
-      this.IsEditItemObserved = true
+      this.isEditItemObserved = true
       if (!this._dataViewComponent?.editItem.observed) {
         this._dataViewComponent?.editItem.subscribe((event) => {
           this.onEditElement(event)

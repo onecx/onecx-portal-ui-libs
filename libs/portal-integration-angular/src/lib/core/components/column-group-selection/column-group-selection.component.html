@@ -1,4 +1,5 @@
 <p-dropdown
+  id="columnGroupSelectionDropdown"
   *ngIf="(allGroupKeys$ | async)?.length"
   (onClear)="clearGroupSelection()"
   (onChange)="changeGroupSelection($event)"

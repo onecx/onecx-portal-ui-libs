@@ -22,6 +22,7 @@ import { TranslateService } from '@ngx-translate/core'
  * Action definition.
  */
 export interface Action {
+  id?: string
   label?: string
   labelKey?: string
   icon?: string

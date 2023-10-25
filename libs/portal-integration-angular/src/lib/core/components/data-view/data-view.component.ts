@@ -4,6 +4,7 @@ import {
   DoCheck,
   EventEmitter,
   Inject,
+  Injector,
   Input,
   OnInit,
   Output,
@@ -58,6 +59,17 @@ export class DataViewComponent implements DoCheck, OnInit {
   @Input() filters: Filter[] = []
   @Input() sortField: any = ''
   @Input() sortDirection: DataSortDirection = DataSortDirection.NONE
+  @Input() listGridPaginator = true
+  @Input() tablePaginator = true
+
+  @Input()
+  get paginator(): boolean {
+    return this.listGridPaginator && this.tablePaginator
+  }
+  set paginator(value: boolean) {
+    this.listGridPaginator = value
+    this.tablePaginator = value
+  }
 
   @Input() sortStates: DataSortDirection[] = [DataSortDirection.ASCENDING, DataSortDirection.DESCENDING]
   @Input() pageSizes: number[] = [10, 25, 50]
@@ -130,7 +142,17 @@ export class DataViewComponent implements DoCheck, OnInit {
   IsEditItemObserved: boolean | undefined
   firstColumnId: string | undefined
 
-  constructor(@Inject(AUTH_SERVICE) private authService: IAuthService) {}
+  get viewItemObserved(): boolean {
+    return this.injector.get('InteractiveDataViewComponent')?.viewItem.observed || this.viewItem.observed
+  }
+  get editItemObserved(): boolean {
+    return this.injector.get('InteractiveDataViewComponent')?.editItem.observed || this.editItem.observed
+  }
+  get deleteItemObserved(): boolean {
+    return this.injector.get('InteractiveDataViewComponent')?.deleteItem.observed || this.deleteItem.observed
+  }
+
+  constructor(@Inject(AUTH_SERVICE) private authService: IAuthService, private injector: Injector) {}
   ngOnInit(): void {
     this.firstColumnId = this.columns[0]?.id
   }

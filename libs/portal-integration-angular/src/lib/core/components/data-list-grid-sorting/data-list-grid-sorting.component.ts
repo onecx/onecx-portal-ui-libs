@@ -28,6 +28,7 @@ export class DataListGridSortingComponent implements OnInit {
   set sortField(value: string) {
     this._sortField.next(value)
   }
+
   @Output() sortChange: EventEmitter<string> = new EventEmitter()
   @Output() sortDirectionChange: EventEmitter<DataSortDirection> = new EventEmitter()
   @Output() columnsChange: EventEmitter<string[]> = new EventEmitter()
@@ -46,8 +47,6 @@ export class DataListGridSortingComponent implements OnInit {
   sortDirectionChanged(): void {
     const newSortDirection = this.sortStates[(this.sortStates.indexOf(this.sortDirection) + 1) % this.sortStates.length]
     this._sortDirection$.next(newSortDirection)
-
-    this._sortDirection$.next(newSortDirection)
     this.sortDirectionChange.emit(newSortDirection)
   }
 
@@ -59,6 +58,17 @@ export class DataListGridSortingComponent implements OnInit {
         return 'pi-sort-amount-down'
       default:
         return 'pi-sort-alt-slash'
+    }
+  }
+
+  sortIconTitle() {
+    switch (this.sortDirection) {
+      case DataSortDirection.ASCENDING:
+        return 'OCX_LIST_GRID_SORT.TOGGLE_BUTTON.ASCENDING_TITLE'
+      case DataSortDirection.DESCENDING:
+        return 'OCX_LIST_GRID_SORT.TOGGLE_BUTTON.DESCENDING_TITLE'
+      default:
+        return 'OCX_LIST_GRID_SORT.TOGGLE_BUTTON.DEFAULT_TITLE'
     }
   }
 }

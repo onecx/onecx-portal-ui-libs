@@ -1,4 +1,5 @@
 <p-button
+  id="customGroupColumnSelectorButton"
   type="button"
   (click)="onOpenCustomGroupColumnSelectionDialogClick()"
   [title]="openButtonTitle || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.OPEN_BUTTON_TITLE' | translate)"
@@ -6,7 +7,7 @@
   styleClass="p-button"
 ></p-button>
 
-<p-dialog header="Header" [(visible)]="visible" [style]="{ width: '70%' }">
+<p-dialog header="Header" [(visible)]="visible" [style]="{ width: '70%' }" [modal]="true">
   <ng-template pTemplate="header">
     <span class="text-xl font-bold"
       >{{ dialogTitle || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.DIALOG_TITLE' | translate) }}</span
@@ -30,12 +31,14 @@
 
   <ng-template pTemplate="footer">
     <p-button
-      (click)="onCancelClick()"
+      id="cancelButton"
+      (onClick)="onCancelClick()"
       [label]="cancelButtonLabel || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CANCEL_BUTTON_LABEL' | translate)"
       styleClass="p-button"
     ></p-button>
     <p-button
-      (click)="onSaveClick()"
+      id="saveButton"
+      (onClick)="onSaveClick()"
       [label]="saveButtonLabel || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.SAVE_BUTTON_LABEL' | translate)"
     ></p-button>
   </ng-template>
