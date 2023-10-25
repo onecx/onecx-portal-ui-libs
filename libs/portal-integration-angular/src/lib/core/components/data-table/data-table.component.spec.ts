@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { DataTableComponent } from './data-table.component'
-import { PrimeNgModule } from './../../primeng.module'
+// import { ComponentFixture, TestBed } from '@angular/core/testing'
+// import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
+// import { TranslateModule, TranslateService } from '@ngx-translate/core'
+// import { DataTableComponent } from './data-table.component'
+// import { PrimeNgModule } from './../../primeng.module'
 
 describe('DataTableComponent', () => {
 
