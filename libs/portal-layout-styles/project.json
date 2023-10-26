@@ -11,7 +11,7 @@
         "outputPath": "dist/libs/portal-layout-styles",
         "main": "libs/portal-layout-styles/src/index.ts",
         "tsConfig": "libs/portal-layout-styles/tsconfig.lib.json",
-        "assets": ["libs/portal-layout-styles/*.md"]
+        "assets": ["libs/portal-layout-styles/src/styles/**/*", "libs/portal-layout-styles/*.md"]
       }
     },
     "lint": {
