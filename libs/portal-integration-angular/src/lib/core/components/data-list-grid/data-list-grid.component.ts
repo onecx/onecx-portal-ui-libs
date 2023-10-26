@@ -6,6 +6,7 @@ import {
   Inject,
   Injector,
   Input,
+  LOCALE_ID,
   OnInit,
   Output,
   TemplateRef,
@@ -18,7 +19,11 @@ import { MfeInfo } from '../../../model/mfe-info.model'
 import { DataAction } from '../../../model/data-action'
 import { TranslateService } from '@ngx-translate/core'
 import { ObjectUtils } from '../../utils/objectutils'
-import { Row } from '../data-table/data-table.component'
+import { Filter, Row } from '../data-table/data-table.component'
+import { DataTableColumn } from '../../../model/data-table-column.model'
+import { BehaviorSubject, combineLatest, map, mergeMap, Observable } from 'rxjs'
+import { DataSortBase } from '../data-sort-base/data-sort-base'
+import { Router } from '@angular/router'
 
 export type ListGridData = {
   id: string | number
@@ -37,11 +42,11 @@ export interface ListGridDataMenuItem extends MenuItem {
   templateUrl: './data-list-grid.component.html',
   styleUrls: ['./data-list-grid.component.scss'],
 })
-export class DataListGridComponent implements OnInit, DoCheck {
-  @Input() sortField = ''
+export class DataListGridComponent extends DataSortBase implements OnInit, DoCheck {
   @Input() titleLineId: string | undefined
   @Input() subtitleLineIds: string[] = []
   @Input() clientSideSorting = true
+  @Input() clientSideFiltering = true
   @Input() sortStates: DataSortDirection[] = []
   @Input() pageSizes: number[] = [10, 25, 50]
   @Input() pageSize: number = this.pageSizes[0] || 50
@@ -55,28 +60,45 @@ export class DataListGridComponent implements OnInit, DoCheck {
   @Input() editMenuItemKey: string | undefined
   @Input() deleteMenuItemKey: string | undefined
   @Input() paginator = true
+  @Input() columns: DataTableColumn[] = []
+  @Input() name = ''
 
-  _originalData: RowListGridData[] = []
-  _sortDirection = DataSortDirection.NONE
-
-  @Input()
-  get sortDirection(): DataSortDirection {
-    return this._sortDirection
-  }
-  set sortDirection(value: DataSortDirection) {
-    if (value === DataSortDirection.NONE) {
-      this._data = [...this._originalData]
-    }
-    this._sortDirection = value
-  }
-  _data: RowListGridData[] = []
+  _data$ = new BehaviorSubject<RowListGridData[]>([])
   @Input()
   get data(): RowListGridData[] {
-    return this._data
+    return this._data$.getValue()
   }
   set data(value: RowListGridData[]) {
     this._originalData = [...value]
-    this._data = [...value]
+    this._data$.next([...value])
+  }
+  _filters$ = new BehaviorSubject<Filter[]>([])
+  @Input()
+  get filters(): Filter[] {
+    return this._filters$.getValue()
+  }
+  set filters(value: Filter[]) {
+    this._filters$.next(value)
+  }
+  _originalData: RowListGridData[] = []
+  _sortDirection$ = new BehaviorSubject<DataSortDirection>(DataSortDirection.NONE)
+  @Input()
+  get sortDirection(): DataSortDirection {
+    return this._sortDirection$.getValue()
+  }
+  set sortDirection(value: DataSortDirection) {
+    if (value === DataSortDirection.NONE) {
+      this._data$.next([...this._originalData])
+    }
+    this._sortDirection$.next(value)
+  }
+  _sortField$ = new BehaviorSubject<string>('')
+  @Input()
+  get sortField(): string {
+    return this?._sortField$.getValue()
+  }
+  set sortField(value: string) {
+    this._sortField$.next(value)
   }
 
   @Input() gridItemSubtitleLinesTemplate: TemplateRef<any> | undefined
@@ -118,35 +140,43 @@ export class DataListGridComponent implements OnInit, DoCheck {
   @Output() deleteItem = new EventEmitter<ListGridData>()
 
   get viewItemObserved(): boolean {
-    const dv = this.injector.get('DataViewComponent')
+    const dv = this.injector.get('DataViewComponent', null)
     return dv?.viewItemObserved || dv?.viewItem.observed || this.viewItem.observed
   }
   get editItemObserved(): boolean {
-    const dv = this.injector.get('DataViewComponent')
+    const dv = this.injector.get('DataViewComponent', null)
     return dv?.editItemObserved || dv?.editItem.observed || this.editItem.observed
   }
   get deleteItemObserved(): boolean {
-    const dv = this.injector.get('DataViewComponent')
+    const dv = this.injector.get('DataViewComponent', null)
     return dv?.deleteItemObserved || dv?.deleteItem.observed || this.deleteItem.observed
+  }
+
+  get sortDirectionNumber(): number {
+    if (this.sortDirection === DataSortDirection.ASCENDING) return 1
+    if (this.sortDirection === DataSortDirection.DESCENDING) return -1
+    return 0
   }
 
   showMenu = false
   gridMenuItems: MenuItem[] = []
   selectedItem: ListGridData | undefined
   observedOutputs = 0
-
-  get sortDirectionNumber() {
-    if (this.sortDirection === DataSortDirection.ASCENDING) return 1
-    if (this.sortDirection === DataSortDirection.DESCENDING) return -1
-    return 0
-  }
+  
+  displayedItems$: Observable<unknown[]> | undefined
 
   constructor(
+    @Inject(LOCALE_ID) locale: string,
     @Inject(AUTH_SERVICE) private authService: IAuthService,
     @Inject(MFE_INFO) private mfeInfo: MfeInfo,
-    private translateService: TranslateService,
+    translateService: TranslateService,
+    private router: Router,
     private injector: Injector
-  ) {}
+  ) {
+    super(locale, translateService)
+    this.name = this.name || this.router.url.replace(/[^A-Za-z0-9]/, '_')
+
+  }
 
   ngDoCheck(): void {
     const observedOutputs = <any>this.viewItem.observed + <any>this.deleteItem.observed + <any>this.editItem.observed
@@ -157,6 +187,13 @@ export class DataListGridComponent implements OnInit, DoCheck {
   }
 
   ngOnInit(): void {
+    this.displayedItems$ = combineLatest([this._data$, this._filters$, this._sortField$, this._sortDirection$]).pipe(
+      mergeMap((params) => this.translateItems(params, this.columns, this.clientSideFiltering, this.clientSideSorting)),
+      map((params) => this.filterItems(params, this.clientSideFiltering)),
+      map((params) => this.sortItems(params, this.columns, this.clientSideSorting)),
+      map(([items]) => this.flattenItems(items))
+    )
+  
     this.showMenu =
       (!!this.viewPermission && this.authService.hasPermission(this.viewPermission)) ||
       (!!this.editPermission && this.authService.hasPermission(this.editPermission)) ||
