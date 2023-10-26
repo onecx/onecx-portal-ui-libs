@@ -1,11 +1,10 @@
 <p-dataView
-  [value]="data"
-  [sortField]="clientSideSorting ? sortField : ''"
-  [sortOrder]="clientSideSorting ? sortDirectionNumber : 0"
+  [value]="(displayedItems$ | async) || []"
   [paginator]="paginator"
   [rows]="pageSize"
   [layout]="layout"
   [rowsPerPageOptions]="pageSizes"
+  id="dataListGrid_{{name}}"
 >
   <ng-template #gridItem let-item pTemplate="gridItem">
     <ng-container
@@ -21,7 +20,7 @@
     ></ng-container>
   </ng-template>
   <ng-template pTemplate="empty">
-    <span>{{ emptyResultsMessage || ("DATA_LIST_GRID.EMPTY_RESULT" | translate) }}</span>
+    <span>{{ emptyResultsMessage || ("OCX_DATA_LIST_GRID.EMPTY_RESULT" | translate) }}</span>
   </ng-template>
 </p-dataView>
 
