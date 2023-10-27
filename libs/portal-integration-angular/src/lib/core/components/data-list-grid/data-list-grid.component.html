@@ -133,5 +133,5 @@
   </div>
 </ng-template>
 <ng-template #defaultListItemSubtitleLines let-item="$implicit">
-  <div *ngFor="let subtitleLineId of subtitleLineIds" class="subtitleLine text-xl my-3">{{ item[subtitleLineId] }}</div>
+  <div *ngFor="let subtitleLineId of subtitleLineIds" class="subtitleLine text-xl my-3">{{ resolveFieldData(item, subtitleLineId) }}</div>
 </ng-template>
