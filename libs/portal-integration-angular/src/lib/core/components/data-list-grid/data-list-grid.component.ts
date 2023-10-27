@@ -275,6 +275,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   setSelectedItem(item: ListGridData) {
     this.selectedItem = item
   }
+  
   resolveFieldData(object: any, key: any) {
     return ObjectUtils.resolveFieldData(object, key)
   }
