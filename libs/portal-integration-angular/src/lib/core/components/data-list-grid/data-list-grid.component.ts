@@ -191,7 +191,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
       mergeMap((params) => this.translateItems(params, this.columns, this.clientSideFiltering, this.clientSideSorting)),
       map((params) => this.filterItems(params, this.clientSideFiltering)),
       map((params) => this.sortItems(params, this.columns, this.clientSideSorting)),
-      map(([items]) => this.flattenItems(items))
+      map(([items]) => (items))
     )
   
     this.showMenu =
