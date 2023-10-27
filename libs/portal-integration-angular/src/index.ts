@@ -96,3 +96,4 @@ export * from './lib/functions/flatten-object'
 
 // utils
 export * from './lib/core/utils/objectutils'
+export * from './lib/core/utils/dateutils'
