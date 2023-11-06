@@ -20,13 +20,13 @@ export class DataListGridSortingComponent implements OnInit {
   set sortDirection(value: DataSortDirection) {
     this._sortDirection$.next(value)
   }
-  _sortField = new BehaviorSubject<string>('')
+  _sortField$ = new BehaviorSubject<string>('')
   @Input()
   get sortField(): string {
-    return this?._sortField.getValue()
+    return this?._sortField$.getValue()
   }
   set sortField(value: string) {
-    this._sortField.next(value)
+    this._sortField$.next(value)
   }
 
   @Output() sortChange: EventEmitter<string> = new EventEmitter()
@@ -41,7 +41,7 @@ export class DataListGridSortingComponent implements OnInit {
   }
 
   selectSorting(event: any): void {
-    this._sortField.next(event.value)
+    this._sortField$.next(event.value)
     this.sortChange.emit(event.value.columnId)
   }
   sortDirectionChanged(): void {

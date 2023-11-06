@@ -69,7 +69,8 @@ export class InteractiveDataViewComponent implements OnInit {
   @ContentChild('tableTranslationKeyCell') tableTranslationKeyCell: TemplateRef<any> | undefined
   @ContentChild('gridItemSubtitleLines') gridItemSubtitleLines: TemplateRef<any> | undefined
   @ContentChild('listItemSubtitleLines') listItemSubtitleLines: TemplateRef<any> | undefined
-  @ContentChild('standardTableCell') standardTableCell: TemplateRef<any> | undefined
+  @ContentChild('stringTableCell') stringTableCell: TemplateRef<any> | undefined
+  @ContentChild('numberTableCell') numberTableCell: TemplateRef<any> | undefined
   @ContentChild('gridItem') gridItem: TemplateRef<any> | undefined
   @ContentChild('listItem') listItem: TemplateRef<any> | undefined
 
@@ -81,8 +82,6 @@ export class InteractiveDataViewComponent implements OnInit {
   @Output() dataViewLayoutChange: EventEmitter<any> = new EventEmitter()
   displayedColumns: DataTableColumn[] = []
   selectedGroupKey = ''
-  isFilteredObserved: boolean | undefined
-  isSortedObserved: boolean | undefined
   isDeleteItemObserved: boolean | undefined
   isViewItemObserved: boolean | undefined
   isEditItemObserved: boolean | undefined
@@ -106,8 +105,11 @@ export class InteractiveDataViewComponent implements OnInit {
   get _tableCell(): TemplateRef<any> | undefined {
     return this.tableCell
   }
-  get _standardTableCell(): TemplateRef<any> | undefined {
-    return this.standardTableCell
+  get _stringTableCell(): TemplateRef<any> | undefined {
+    return this.stringTableCell
+  }
+  get _numberTableCell(): TemplateRef<any> | undefined {
+    return this.numberTableCell
   }
   get _tableDateCell(): TemplateRef<any> | undefined {
     return this.tableDateCell
@@ -151,15 +153,14 @@ export class InteractiveDataViewComponent implements OnInit {
   }
 
   filtering(event: any) {
-    if (this.isFilteredObserved) {
-      this.filtered.emit(event)
-    }
+    this.filters = event
+    this.filtered.emit(event)
   }
 
   sorting(event: any) {
-    if (this.isSortedObserved) {
-      this.sorted.emit(event)
-    }
+    this.sortDirection = event.sortDirection
+    this.sortField = event.sortColumn
+    this.sorted.emit(event)
   }
 
   onDeleteElement(element: RowListGridData) {
@@ -187,15 +188,12 @@ export class InteractiveDataViewComponent implements OnInit {
 
   onSortChange($event: any) {
     this.sortField = $event
+    this.sorted.emit({ sortColumn: this.sortField, sortDirection: this.sortDirection })
   }
 
   onSortDirectionChange($event: any) {
     this.sortDirection = $event
-  }
-
-  onSorted($event: Sort) {
-    this.sortDirection = $event.sortDirection
-    this.sortField = $event.sortColumn
+    this.sorted.emit({ sortColumn: this.sortField, sortDirection: this.sortDirection })
   }
 
   onColumnGroupSelectionChange(event: GroupSelectionChangedEvent) {
@@ -204,22 +202,6 @@ export class InteractiveDataViewComponent implements OnInit {
   }
 
   registerEventListenerForDataView() {
-    if (this.filtered.observed) {
-      this.isFilteredObserved = true
-      if (!this._dataViewComponent?.filtered.observed) {
-        this._dataViewComponent?.filtered.subscribe((event) => {
-          this.filtering(event)
-        })
-      }
-    }
-    if (this.sorted.observed) {
-      this.isSortedObserved = true
-      if (!this._dataViewComponent?.sorted.observed) {
-        this._dataViewComponent?.sorted.subscribe((event) => {
-          this.sorting(event)
-        })
-      }
-    }
     if (this.deleteItem.observed) {
       this.isDeleteItemObserved = true
       if (!this._dataViewComponent?.deleteItem.observed) {
