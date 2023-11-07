@@ -9,6 +9,7 @@ import { UserProfile } from '../../../model/user-profile.model'
 import { API_PREFIX, CONFIG_KEY_TKIT_SEARCH_BASE_URL } from '../../../api/constants'
 import { ConfigurationService } from '../../../services/configuration.service'
 import { MenuService } from '../../../services/app.menu.service'
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 
 type MenuItemPerm = MenuItem & { permission: string }
 @Component({
@@ -25,6 +26,7 @@ type MenuItemPerm = MenuItem & { permission: string }
     ]),
   ],
 })
+@UntilDestroy()
 export class HeaderComponent implements OnInit {
   menuExpanded = false
   searchUrl: string | undefined
@@ -86,7 +88,9 @@ export class HeaderComponent implements OnInit {
     private config: ConfigurationService,
     private menuService: MenuService
   ) {
-    this.currentUser$ = this.authService.currentUser$.pipe(filter((x) => x !== undefined)) as Observable<UserProfile>
+    this.currentUser$ = this.authService.currentUser$
+      .pipe(untilDestroyed(this))
+      .pipe(filter((x) => x !== undefined)) as Observable<UserProfile>
   }
 
   ngOnInit() {
