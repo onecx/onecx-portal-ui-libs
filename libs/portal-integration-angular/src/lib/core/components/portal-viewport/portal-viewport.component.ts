@@ -4,7 +4,7 @@ import { MenuItem, MessageService, PrimeNGConfig } from 'primeng/api'
 import { Portal } from '../../../model/portal'
 import { ConfigurationService } from '../../../services/configuration.service'
 import { PortalUIService } from '../../../services/portal-ui.service'
-import { filter } from 'rxjs'
+import { combineLatest, filter } from 'rxjs'
 import { ThemeService } from '../../../services/theme.service'
 import { AppStateService } from '../../../services/app-state.service'
 import { SupportTicket } from '../../../model/support-ticket'
@@ -15,7 +15,7 @@ import { NavigationEnd, Router } from '@angular/router'
 import { HelpPageAPIService } from '../../../services/help-api-service'
 import { AUTH_SERVICE } from '../../../api/injection-tokens'
 import { IAuthService } from '../../../api/iauth.service'
-import { PageInfo } from '../../../model/page-info.model'
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 
 @Component({
   selector: 'ocx-portal-viewport',
@@ -23,6 +23,7 @@ import { PageInfo } from '../../../model/page-info.model'
   styleUrls: ['./portal-viewport.component.scss'],
   providers: [DialogService],
 })
+@UntilDestroy()
 export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input()
   showProfileInSidebar = true
@@ -80,30 +81,28 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
     this.showMenuButtonTitle = this.portalUIConfig.getTranslation('showMenuButton')
     this.portalDefinition = this.config.getPortal()
 
-    this.themeService.currentTheme$.subscribe((theme: any) => {
+    this.themeService.currentTheme$.pipe(untilDestroyed(this)).subscribe((theme: any) => {
       this.logoUrl = theme.logoUrl || this.portalDefinition.logoUrl
       document.getElementById('favicon')?.setAttribute('href', theme.faviconUrl)
     })
 
-    this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe((event) => {
-      if (event instanceof NavigationEnd) this.currentRoute = event.url.split('#')[0]
-    })
+    this.router.events
+      .pipe(untilDestroyed(this))
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe((event) => {
+        if (event instanceof NavigationEnd) this.currentRoute = event.url.split('#')[0]
+      })
 
-    this.initState.currentPage$.subscribe({
-      next: (info: PageInfo | undefined) => {
+    combineLatest([this.initState.currentPage$, this.initState.currentMfe$])
+      .pipe(untilDestroyed(this))
+      .subscribe(([info, mfe]) => {
         this.pageName = info?.pageName
         this.helpArticleId = info?.helpArticleId || this.pageName || this.currentRoute
+        this.applicationId = info?.applicationId || mfe?.displayName
+        if (this.applicationId && this.helpArticleId) this.loadHelpArticle(this.applicationId, this.helpArticleId)
+      })
 
-        this.initState.currentMfe$.subscribe({
-          next: (mfe) => {
-            this.applicationId = info?.applicationId || mfe?.displayName
-            if (this.applicationId && this.helpArticleId) this.loadHelpArticle(this.applicationId, this.helpArticleId)
-          },
-        })
-      },
-    })
-
-    this.authService.currentUser$.subscribe((profile) => {
+    this.authService.currentUser$.pipe(untilDestroyed(this)).subscribe((profile) => {
       this.menuMode =
         (profile?.accountSettings?.layoutAndThemeSettings?.menuMode?.toLowerCase() as
           | typeof this.menuMode
@@ -123,9 +122,12 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
   ngOnInit() {
     this.primengConfig.ripple = true
 
-    this.initState.globalError$.pipe(filter((i) => i !== undefined)).subscribe((err) => {
-      this.globalErrMsg = err
-    })
+    this.initState.globalError$
+      .pipe(untilDestroyed(this))
+      .pipe(filter((i) => i !== undefined))
+      .subscribe((err) => {
+        this.globalErrMsg = err
+      })
 
     this.onResize()
   }
