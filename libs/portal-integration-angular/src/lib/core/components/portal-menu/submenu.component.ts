@@ -2,6 +2,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { Component, Input, OnInit } from '@angular/core'
 import { DomSanitizer } from '@angular/platform-browser'
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router'
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { MenuItem } from 'primeng/api'
 import { filter } from 'rxjs'
 import { PortalUIService } from '../../../services/portal-ui.service'
@@ -51,6 +52,7 @@ import { PortalUIService } from '../../../services/portal-ui.service'
     ]),
   ],
 })
+@UntilDestroy()
 export class SubMenuComponent implements OnInit {
   @Input() item!: MenuItem
 
@@ -76,17 +78,20 @@ export class SubMenuComponent implements OnInit {
     public uiConfig: PortalUIService,
     private sanitizer: DomSanitizer
   ) {
-    this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
-      if (this.uiConfig.isHorizontal || this.uiConfig.isSlim) {
-        this.active = false
-      } else {
-        if (this.type === 'routerLink' || this.type === 'parent') {
-          this.updateActiveStateFromRoute()
-        } else {
+    this.router.events
+      .pipe(untilDestroyed(this))
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => {
+        if (this.uiConfig.isHorizontal || this.uiConfig.isSlim) {
           this.active = false
+        } else {
+          if (this.type === 'routerLink' || this.type === 'parent') {
+            this.updateActiveStateFromRoute()
+          } else {
+            this.active = false
+          }
         }
-      }
-    })
+      })
   }
 
   ngOnInit() {
