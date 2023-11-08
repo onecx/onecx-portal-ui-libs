@@ -1,3 +1,12 @@
+## [3.1.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.1.0...v3.1.1) (2023-11-08)
+
+
+### Bug Fixes
+
+* add menu button tooltip ([044b7b7](https://github.com/onecx/onecx-portal-ui-libs/commit/044b7b7064d4cc7968a8ffd114b5d4bb9b1c4f36))
+* add missing imports to tests ([152eb96](https://github.com/onecx/onecx-portal-ui-libs/commit/152eb964f732c66602df957df640e13a52284a85))
+* export TranslateCombinedLoader ([5aeac59](https://github.com/onecx/onecx-portal-ui-libs/commit/5aeac59226e398af15a98e6fd3d77444b25bfaa5))
+
 ## [3.1.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.0.1...v3.1.0) (2023-11-08)
 
 
