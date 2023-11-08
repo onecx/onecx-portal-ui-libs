@@ -21,6 +21,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { IfBreakpointDirective } from '../../directives/if-breakpoint.directive'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { TooltipModule } from 'primeng/tooltip'
+import { TranslateTestingModule } from 'ngx-translate-testing'
 
 describe('PortalViewportComponent', () => {
   let component: PortalViewportComponent
@@ -49,6 +50,7 @@ describe('PortalViewportComponent', () => {
         ReactiveFormsModule,
         RouterModule,
         TooltipModule,
+        TranslateTestingModule.withTranslations({})
       ],
       providers: [
         ConfigurationService,
