@@ -77,6 +77,8 @@ import { RelativeDatePipe } from './pipes/relative-date.pipe'
 import { MessageService } from 'primeng/api'
 import { PatchFormGroupValuesDirective } from './directives/patch-form-group-values.driective'
 import { SetInputValueDirective } from './directives/set-input-value.directive'
+import { LoadingIndicatorComponent } from './components/loading-indicator/loading-indicator.component'
+import { LoadingIndicatorDirective } from './directives/loading-indicator.directive'
 
 export function createTranslateLoader(http: HttpClient, mfeInfo: MfeInfo) {
   if (mfeInfo?.remoteBaseUrl) {
@@ -152,6 +154,8 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     ColumnGroupSelectionComponent,
     CustomGroupColumnSelectorComponent,
     SearchHeaderComponent,
+    LoadingIndicatorComponent,
+    LoadingIndicatorDirective,
     AdvancedDirective,
     BasicDirective,
     DataListGridSortingComponent,
@@ -211,6 +215,8 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     ColumnGroupSelectionComponent,
     CustomGroupColumnSelectorComponent,
     SearchHeaderComponent,
+    LoadingIndicatorComponent,
+    LoadingIndicatorDirective,
     AdvancedDirective,
     BasicDirective,
     RelativeDatePipe,
