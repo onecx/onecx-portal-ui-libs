@@ -57,5 +57,8 @@
   },
   "OCX_PAGE_HEADER": {
     "MORE_ACTIONS": "More actions"
+  },
+  "OCX_HEADER": {
+    "MENU_TOGGLE": "Menu"
   }
 }

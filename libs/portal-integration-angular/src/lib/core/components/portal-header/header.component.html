@@ -34,7 +34,7 @@
       </svg>
     </a>
 
-    <a class="layout-menu-button shadow-6" (click)="onMenuButtonClick($event)" pRipple [title]="menuButtonTitle">
+    <a class="layout-menu-button shadow-6" (click)="onMenuButtonClick($event)" pRipple [title]="menuButtonTitle ?? ('OCX_HEADER.MENU_TOGGLE' | translate)">
       <i class="pi pi-chevron-right"></i>
     </a>
   </div>
