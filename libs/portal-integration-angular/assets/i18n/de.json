@@ -57,5 +57,8 @@
   },
   "OCX_PAGE_HEADER": {
     "MORE_ACTIONS": "Weitere Aktionen"
+  },
+  "OCX_HEADER_HELPITEM": {
+    "NO_HELP_ITEM_TITLE": "Hilfe nicht gefunden"
   }
 }

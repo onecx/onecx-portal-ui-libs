@@ -20,7 +20,9 @@ export class HelpItemEditorComponent implements OnChanges {
     this.formGroup = this.fb.group({
       appId: new FormControl({ value: null, disabled: true }, [Validators.required]),
       helpItemId: new FormControl({ value: null, disabled: true }, [Validators.required]),
+      baseUrl: new FormControl({ value: null, disabled: true }, [Validators.required]),
       resourceUrl: new FormControl(null, Validators.required),
+      context: new FormControl(null),
     })
   }
   public ngOnChanges(changes: SimpleChanges): void {
@@ -32,6 +34,7 @@ export class HelpItemEditorComponent implements OnChanges {
   public save() {
     if (this.formGroup.valid && this.helpItem) {
       this.helpItem.resourceUrl = this.formGroup.value['resourceUrl']
+      this.helpItem.context = this.formGroup.value['context']
       this.saveHelpItem.emit(this.helpItem)
     } else {
       this.messageService.add({
