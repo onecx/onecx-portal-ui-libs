@@ -7,12 +7,14 @@ import { AppStateService } from '../../../services/app-state.service'
 import { map, Observable } from 'rxjs'
 import { ThemeService } from '../../../services/theme.service'
 import { API_PREFIX } from '../../../api/constants'
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 @Component({
   selector: 'ocx-footer',
   templateUrl: './portal-footer.component.html',
   styleUrls: ['./portal-footer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
+@UntilDestroy()
 export class PortalFooterComponent implements OnInit {
   copyrightMsg = 'Capgemini. All rights reserved.'
   @Input() src: string | undefined
@@ -29,7 +31,7 @@ export class PortalFooterComponent implements OnInit {
     private themeService: ThemeService,
     private ref: ChangeDetectorRef
   ) {
-    this.versionInfo$ = this.appState.currentMfe$.pipe(
+    this.versionInfo$ = this.appState.currentMfe$.pipe(untilDestroyed(this)).pipe(
       map((mfe) => {
         const mfeInfoVersion = mfe?.version || ''
         const mfeName = mfe?.displayName
@@ -41,7 +43,7 @@ export class PortalFooterComponent implements OnInit {
   }
   ngOnInit(): void {
     const portalData = this.configurationService.getPortal()
-    this.themeService.currentTheme$.subscribe({
+    this.themeService.currentTheme$.pipe(untilDestroyed(this)).subscribe({
       next: (theme) => {
         this.src = this.setImageUrl(theme.logoUrl || portalData.logoUrl)
       },

@@ -7,6 +7,7 @@ import { ConfigurationService } from '../../../services/configuration.service'
 import { PortalUIService } from '../../../services/portal-ui.service'
 import { MenuService } from '../../../services/app.menu.service'
 import { MenuItem } from 'primeng/api'
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 
 @Component({
   selector: 'ocx-inline-profile',
@@ -53,6 +54,7 @@ import { MenuItem } from 'primeng/api'
     ]),
   ],
 })
+@UntilDestroy()
 export class AppInlineProfileComponent implements OnInit {
   userProfile: UserProfile | undefined
   activeInlineMenuElement: string | undefined
@@ -82,7 +84,7 @@ export class AppInlineProfileComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.authService.currentUser$.subscribe((user) => {
+    this.authService.currentUser$.pipe(untilDestroyed(this)).subscribe((user) => {
       this.userProfile = user
       this.displayName = this.determineDisplayName()
     })

@@ -1,4 +1,4 @@
-import { Component, ContentChild, EventEmitter, Injector, Input, OnInit, Output, TemplateRef } from '@angular/core'
+import { Component, ContentChild, EventEmitter, Inject, Injector, Input, LOCALE_ID, OnInit, Output, TemplateRef } from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { SelectItem } from 'primeng/api'
@@ -7,8 +7,8 @@ import { DataTableColumn } from '../../../model/data-table-column.model'
 import { DataSortDirection } from '../../../model/data-sort-direction'
 import { ColumnType } from '../../../model/column-type.model'
 import { DataAction } from '../../../model/data-action'
-import { ObjectUtils } from '../../utils/objectutils'
-import { flattenObject } from '../../../functions/flatten-object'
+import { DataSortBase } from '../data-sort-base/data-sort-base'
+
 type Primitive = number | string | boolean | bigint | Date
 export type Row = {
   id: string | number
@@ -23,7 +23,7 @@ export type Sort = { sortColumn: string; sortDirection: DataSortDirection }
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
 })
-export class DataTableComponent implements OnInit {
+export class DataTableComponent extends DataSortBase implements OnInit {
   _rows$ = new BehaviorSubject<Row[]>([])
   @Input()
   get rows(): Row[] {
@@ -63,16 +63,22 @@ export class DataTableComponent implements OnInit {
   @Input() pageSizes: number[] = [10, 25, 50]
   @Input() pageSize: number = this.pageSizes[0] || 50
   @Input() emptyResultsMessage: string | undefined
-  @Input() name = 'Data table'
+  @Input() name = ''
   @Input() deletePermission: string | undefined
   @Input() viewPermission: string | undefined
   @Input() editPermission: string | undefined
   @Input() paginator = true
 
-  @Input() standardCellTemplate: TemplateRef<any> | undefined
-  @ContentChild('standardCell') standardCellChildTemplate: TemplateRef<any> | undefined
-  get _standardCell(): TemplateRef<any> | undefined {
-    return this.standardCellTemplate || this.standardCellChildTemplate
+  @Input() stringCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('stringCell') stringCellChildTemplate: TemplateRef<any> | undefined
+  get _stringCell(): TemplateRef<any> | undefined {
+    return this.stringCellTemplate || this.stringCellChildTemplate
+  }
+
+  @Input() numberCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('numberCell') numberCellChildTemplate: TemplateRef<any> | undefined
+  get _numberCell(): TemplateRef<any> | undefined {
+    return this.numberCellTemplate || this.numberCellChildTemplate
   }
 
   @Input() dateCellTemplate: TemplateRef<any> | undefined
@@ -113,34 +119,35 @@ export class DataTableComponent implements OnInit {
   currentSelectedFilters$: Observable<string[]> | undefined
   filterAmounts$: Observable<Record<string, number>> | undefined
   get sortedObserved(): boolean {
-    return this.injector.get('DataViewComponent')?.sorted.observed || this.sorted.observed
+    return this.injector.get('DataViewComponent', null)?.sorted.observed || this.sorted.observed
   }
   get filteredObserved(): boolean {
-    return this.injector.get('DataViewComponent')?.filtered.observed || this.filtered.observed
+    return this.injector.get('DataViewComponent', null)?.filtered.observed || this.filtered.observed
   }
   get viewTableRowObserved(): boolean {
-    const dv = this.injector.get('DataViewComponent')
+    const dv = this.injector.get('DataViewComponent', null)
     return dv?.viewItemObserved || dv?.viewItem.observed || this.viewTableRow.observed
   }
   get editTableRowObserved(): boolean {
-    const dv = this.injector.get('DataViewComponent')
+    const dv = this.injector.get('DataViewComponent', null)
     return dv?.editItemObserved || dv?.editItem.observed || this.editTableRow.observed
   }
   get deleteTableRowObserved(): boolean {
-    const dv = this.injector.get('DataViewComponent')
+    const dv = this.injector.get('DataViewComponent', null)
     return dv?.deleteItemObserved || dv?.deleteItem.observed || this.deleteTableRow.observed
   }
 
-  constructor(private translateService: TranslateService, private router: Router, private injector: Injector) {
+  constructor(@Inject(LOCALE_ID) locale: string, translateService: TranslateService, private router: Router, private injector: Injector) {
+    super(locale, translateService)
     this.name = this.name || this.router.url.replace(/[^A-Za-z0-9]/, '_')
   }
 
   ngOnInit(): void {
     this.displayedRows$ = combineLatest([this._rows$, this._filters$, this._sortColumn$, this._sortDirection$]).pipe(
-      mergeMap((params) => this.translateColumns(params)),
-      map((params) => this.filterRows(params)),
-      map((params) => this.sortRows(params)),
-      map(([rows]) => this.flattenRows(rows))
+      mergeMap((params) => this.translateItems(params, this.columns, this.clientSideFiltering, this.clientSideSorting)),
+      map((params) => this.filterItems(params, this.clientSideFiltering)),
+      map((params) => this.sortItems(params, this.columns, this.clientSideSorting)),
+      map(([rows]) => this.flattenItems(rows,))
     )
     this.currentSelectedFilters$ = combineLatest([this._filters$, this.currentFilterColumn$]).pipe(
       map(([filters, currentFilterColumn]) => {
@@ -228,141 +235,6 @@ export class DataTableComponent implements OnInit {
       this.filters = filters
     }
     this.filtered.emit(filters)
-  }
-
-  private translateColumns([rows, filters, sortColumn, sortDirection]: [
-    Row[],
-    Filter[],
-    string,
-    DataSortDirection
-  ]): Observable<[Row[], Filter[], string, DataSortDirection, Record<string, Record<string, string>>]> {
-    if (this.clientSideFiltering || this.clientSideSorting) {
-      let translationKeys: string[] = []
-      const translatedColumns = this.columns.filter((c) => c.columnType === ColumnType.TRANSLATION_KEY)
-      translatedColumns.forEach((c) => {
-        translationKeys = [...translationKeys, ...rows.map((r) => ObjectUtils.resolveFieldData(r, c.id)?.toString())]
-      })
-      if (translationKeys.length) {
-        return this.translateService.get(translationKeys).pipe(
-          map((translatedValues: Record<string, string>) => {
-            const translations: Record<string, Record<string, string>> = {}
-            translatedColumns.forEach((c) => {
-              translations[c.id] = Object.fromEntries(
-                rows.map((r) => [
-                  ObjectUtils.resolveFieldData(r, c.id)?.toString() || '',
-                  translatedValues[ObjectUtils.resolveFieldData(r, c.id)?.toString()],
-                ])
-              )
-            })
-            return [rows, filters, sortColumn, sortDirection, translations]
-          })
-        )
-      }
-    }
-    return of([rows, filters, sortColumn, sortDirection, {}])
-  }
-
-  private filterRows([rows, filters, sortColumn, sortDirection, translations]: [
-    Row[],
-    Filter[],
-    string,
-    DataSortDirection,
-    Record<string, Record<string, string>>
-  ]): [Row[], Filter[], string, DataSortDirection, Record<string, Record<string, string>>] {
-    if (!this.clientSideFiltering) {
-      return [rows, filters, sortColumn, sortDirection, translations]
-    }
-    return [
-      rows.filter((row) =>
-        filters
-          .map((filter) => filter.columnId)
-          .filter((value, index, self) => self.indexOf(value) === index && value != null)
-          .every((filterColumnId) =>
-            filters
-              .filter((filter) => filter.columnId === filterColumnId)
-              .some(
-                (filter) =>
-                  (
-                    translations[filter.columnId]?.[ObjectUtils.resolveFieldData(row, filter.columnId).toString()] ||
-                    ObjectUtils.resolveFieldData(row, filter.columnId)
-                  ).toString() === filter.value.toString()
-              )
-          )
-      ),
-      filters,
-      sortColumn,
-      sortDirection,
-      translations,
-    ]
-  }
-
-  private sortRows([rows, filters, sortColumn, sortDirection, translations]: [
-    Row[],
-    Filter[],
-    string,
-    DataSortDirection,
-    Record<string, Record<string, string>>
-  ]): [Row[], Filter[], string, DataSortDirection, Record<string, Record<string, string>>] {
-    if (!this.clientSideSorting || sortColumn === '') {
-      return [rows, filters, sortColumn, sortDirection, translations]
-    }
-    let translatedColValues: Record<string, string> = Object.fromEntries(
-      rows.map((r) => [
-        ObjectUtils.resolveFieldData(r, sortColumn)?.toString(),
-        ObjectUtils.resolveFieldData(r, sortColumn)?.toString(),
-      ])
-    )
-    if (this.columns.find((h) => h.id === sortColumn)?.columnType === ColumnType.TRANSLATION_KEY) {
-      translatedColValues = translations[sortColumn]
-    }
-    return [
-      [...rows].sort(this.createCompareFunction(translatedColValues, sortColumn, sortDirection)),
-      filters,
-      sortColumn,
-      sortDirection,
-      translations,
-    ]
-  }
-  private flattenRows(rows: Row[]) {
-    return rows.map((r) => flattenObject(r))
-  }
-
-  private createCompareFunction(
-    translatedColValues: Record<string, string>,
-    sortColumn: string,
-    sortDirection: DataSortDirection
-  ): (a: Record<string, any>, b: Record<string, any>) => number {
-    let direction = 0
-    if (sortDirection === DataSortDirection.ASCENDING) {
-      direction = 1
-    } else if (sortDirection === DataSortDirection.DESCENDING) {
-      direction = -1
-    }
-
-    return (data1, data2) => {
-      if (direction === 0) {
-        return 0
-      }
-      let result
-      const value1 = translatedColValues[ObjectUtils.resolveFieldData(data1, sortColumn)]
-      const value2 = translatedColValues[ObjectUtils.resolveFieldData(data2, sortColumn)]
-
-      if (value1 == null && value2 != null) result = -1
-      else if (value1 != null && value2 == null) result = 1
-      else if (value1 == null && value2 == null) result = 0
-      else if (typeof value1 === 'string' && typeof value2 === 'string')
-        result = value1.localeCompare(value2, ['en', 'de'], { numeric: true })
-      else {
-        if (value1 < value2) {
-          result = -1
-        } else if (value1 > value2) {
-          result = 1
-        } else {
-          result = 0
-        }
-      }
-      return direction * result
-    }
   }
 
   getSelectedFilters(columnId: string): string[] | undefined {

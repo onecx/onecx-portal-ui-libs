@@ -54,12 +54,12 @@
     [name]="name"
     [deletePermission]="deletePermission"
     [editPermission]="editPermission"
-    (sorted)="onSorted($event)"
     [viewPermission]="viewPermission"
     [additionalActions]="additionalActions"
     [listGridPaginator]="listGridPaginator"
     [tablePaginator]="tablePaginator"
-    [standardTableCellTemplate]="_standardTableCell ? standardTableCell : undefined"
+    [stringTableCellTemplate]="_stringTableCell ? stringTableCell : undefined"
+    [numberTableCellTemplate]="_numberTableCell ? numberTableCell : undefined"
     [tableDateCellTemplate]="_tableDateCell ? tableDateCell : undefined"
     [tableRelativeDateTemplate]="_tableRelativeDateCell ? tableRelativeDateCell : undefined"
     [tableCellTemplate]="_tableCell ? tableCell : undefined"
@@ -68,13 +68,15 @@
     [listItemSubtitleLinesTemplate]="_listItemSubtitleLines ? listItemSubtitleLines : undefined"
     [listItemTemplate]="_listItem? listItem : undefined"
     [gridItemTemplate]="_gridItem? gridItem  : undefined"
+    (sorted)="sorting($event)"
+    (filtered)="filtering($event)"
   >
   </ocx-data-view>
 </div>
-<ng-template #standardTableCell let-rowObject="rowObject" let-column="column">
+<ng-template #stringTableCell let-rowObject="rowObject" let-column="column">
   <ng-container
-    *ngIf="_standardTableCell"
-    [ngTemplateOutlet]="_standardTableCell"
+    *ngIf="_stringTableCell"
+    [ngTemplateOutlet]="_stringTableCell"
     [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
   >
   </ng-container

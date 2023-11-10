@@ -8,6 +8,7 @@ import { UserAvatarComponent } from '../user-avatar/user-avatar.component'
 import { ActivatedRoute, RouterModule } from '@angular/router'
 import { IfBreakpointDirective } from '../../directives/if-breakpoint.directive'
 import { TooltipModule } from 'primeng/tooltip'
+import { TranslateTestingModule } from 'ngx-translate-testing'
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent
@@ -16,7 +17,7 @@ describe('HeaderComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [HeaderComponent, UserAvatarComponent, IfBreakpointDirective],
-      imports: [HttpClientTestingModule, RouterModule, TooltipModule],
+      imports: [HttpClientTestingModule, RouterModule, TooltipModule, TranslateTestingModule.withTranslations({}),],
       providers: [
         { provide: AUTH_SERVICE, useClass: MockAuthService },
         ConfigurationService,

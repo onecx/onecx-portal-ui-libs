@@ -61,4 +61,7 @@
   "OCX_HEADER_HELPITEM": {
     "NO_HELP_ITEM_TITLE": "Help not found"
   }
+  "OCX_HEADER": {
+    "MENU_TOGGLE": "Menu"
+  }
 }

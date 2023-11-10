@@ -75,10 +75,16 @@ export class DataViewComponent implements DoCheck, OnInit {
   @Input() pageSizes: number[] = [10, 25, 50]
   @Input() pageSize: number = this.pageSizes?.[0] || 50
 
-  @Input() standardTableCellTemplate: TemplateRef<any> | undefined
-  @ContentChild('standardTableCell') standardTableCellChildTemplate: TemplateRef<any> | undefined
-  get _standardTableCell(): TemplateRef<any> | undefined {
-    return this.standardTableCellTemplate || this.standardTableCellChildTemplate
+  @Input() stringTableCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('stringTableCell') stringTableCellChildTemplate: TemplateRef<any> | undefined
+  get _stringTableCell(): TemplateRef<any> | undefined {
+    return this.stringTableCellTemplate || this.stringTableCellChildTemplate
+  }
+
+  @Input() numberTableCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('numberTableCell') numberTableCellChildTemplate: TemplateRef<any> | undefined
+  get _numberTableCell(): TemplateRef<any> | undefined {
+    return this.numberTableCellTemplate || this.numberTableCellChildTemplate
   }
 
   @Input() tableDateCellTemplate: TemplateRef<any> | undefined
@@ -135,21 +141,19 @@ export class DataViewComponent implements DoCheck, OnInit {
   @Output() deleteItem = new EventEmitter<RowListGridData>()
   @Output() viewItem = new EventEmitter<RowListGridData>()
   @Output() editItem = new EventEmitter<RowListGridData>()
-  isFilteredObserved: boolean | undefined
-  isSortedObserved: boolean | undefined
   isDeleteItemObserved: boolean | undefined
   isViewItemObserved: boolean | undefined
   IsEditItemObserved: boolean | undefined
   firstColumnId: string | undefined
 
   get viewItemObserved(): boolean {
-    return this.injector.get('InteractiveDataViewComponent')?.viewItem.observed || this.viewItem.observed
+    return this.injector.get('InteractiveDataViewComponent', null)?.viewItem.observed || this.viewItem.observed
   }
   get editItemObserved(): boolean {
-    return this.injector.get('InteractiveDataViewComponent')?.editItem.observed || this.editItem.observed
+    return this.injector.get('InteractiveDataViewComponent', null)?.editItem.observed || this.editItem.observed
   }
   get deleteItemObserved(): boolean {
-    return this.injector.get('InteractiveDataViewComponent')?.deleteItem.observed || this.deleteItem.observed
+    return this.injector.get('InteractiveDataViewComponent', null)?.deleteItem.observed || this.deleteItem.observed
   }
 
   constructor(@Inject(AUTH_SERVICE) private authService: IAuthService, private injector: Injector) {}
@@ -190,22 +194,6 @@ export class DataViewComponent implements DoCheck, OnInit {
   }
   registerEventListenerForDataTable() {
     if (this.layout === 'table') {
-      if (this.filtered.observed) {
-        this.isFilteredObserved = true
-        if (!this._dataTableComponent?.filtered.observed) {
-          this._dataTableComponent?.filtered.subscribe((event) => {
-            this.filtering(event)
-          })
-        }
-      }
-      if (this.sorted.observed) {
-        this.isSortedObserved = true
-        if (!this._dataTableComponent?.sorted.observed) {
-          this._dataTableComponent?.sorted.subscribe((event) => {
-            this.sorting(event)
-          })
-        }
-      }
       if (this.deleteItem.observed) {
         this.isDeleteItemObserved = true
         if (!this._dataTableComponent?.deleteTableRow.observed) {
@@ -232,17 +220,18 @@ export class DataViewComponent implements DoCheck, OnInit {
       }
     }
   }
+  
   filtering(event: any) {
-    if (this.isFilteredObserved) {
-      this.filtered.emit(event)
-    }
+    this.filters = event
+    this.filtered.emit(event)
   }
 
   sorting(event: any) {
-    if (this.isSortedObserved) {
-      this.sorted.emit(event)
-    }
+    this.sortDirection = event.sortDirection
+    this.sortField = event.sortColumn
+    this.sorted.emit(event)
   }
+
   deletingElement(event: any) {
     if (this.isDeleteItemObserved) {
       this.deleteItem.emit(event)
