@@ -26,6 +26,8 @@ export * from './more-actions-menu-button.harness'
 export * from './search-header.harness'
 export * from './table-header-column.harness'
 export * from './table-row.harness'
+export * from './group-by-count-diagram.harness'
+export * from './diagram.harness'
 
 export * from '@angular/cdk/testing'
 export * from '@angular/cdk/testing/testbed'

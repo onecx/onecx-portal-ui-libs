@@ -1,0 +1,72 @@
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core'
+import { TranslateService } from '@ngx-translate/core'
+import { ChartData, ChartOptions } from 'chart.js'
+import { UIChart } from 'primeng/chart'
+import * as d3 from 'd3-scale-chromatic'
+import { ColorUtils } from '../../utils/colorutils'
+
+export type DiagramData = { label: string; value: number }
+@Component({
+  selector: 'ocx-diagram',
+  templateUrl: './diagram.component.html',
+  styleUrls: ['./diagram.component.scss'],
+})
+export class DiagramComponent implements OnInit, OnChanges {
+  @Input() data: DiagramData[] | undefined
+  @Input() sumKey = 'SEARCH.SUMMARY_TITLE'
+  @Output() dataSelected: EventEmitter<any> = new EventEmitter()
+  chartOptions: ChartOptions | undefined
+  chartData: ChartData | undefined
+  amountOfData: number | undefined | null
+  @ViewChild(UIChart) pDiagram: UIChart | undefined
+  // Changing the colorRangeInfo, will change the range of the color palette of the diagram.
+  colorRangeInfo = {
+    colorStart: 0,
+    colorEnd: 1,
+    useEndAsStart: false,
+  }
+  // Changing the colorScale, will change the thematic color appearance of the diagram.
+  colorScale = d3.interpolateCool
+
+  constructor(private translateService: TranslateService) {}
+  ngOnChanges(): void {
+    this.generateChart(this.colorScale, this.colorRangeInfo)
+  }
+  ngOnInit(): void {
+    this.generateChart(this.colorScale, this.colorRangeInfo)
+  }
+
+  public generateChart(colorScale: any, colorRangeInfo: any) {
+    if (this.data) {
+      const inputData = this.data.map((diagramData) => diagramData.value)
+
+      this.amountOfData = this.data.reduce((acc, current) => acc + current.value, 0)
+      const COLORS = interpolateColors(this.amountOfData, colorScale, colorRangeInfo)
+      this.chartData = {
+        labels: this.data.map((data) => data.label),
+        datasets: [
+          {
+            data: inputData,
+            backgroundColor: COLORS,
+          },
+        ],
+      }
+    }
+
+    this.chartOptions = {
+      plugins: {
+        legend: {
+          position: 'bottom',
+        },
+      },
+      maintainAspectRatio: false,
+    }
+  }
+
+  dataClicked(event: []) {
+    this.dataSelected.emit(event.length)
+  }
+}
+function interpolateColors(amountOfData: number, colorScale: any, colorRangeInfo: any) {
+  return ColorUtils.interpolateColors(amountOfData, colorScale, colorRangeInfo)
+}

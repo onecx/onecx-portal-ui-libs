@@ -1,0 +1,20 @@
+<!-- The title will be provided by the ocx-content-->
+<ng-container *ngIf="this.data">
+  <div class="w-full flex justify-content-center">
+    <p-chart
+      id="diagram"
+      type="pie"
+      [data]="chartData"
+      [responsive]="false"
+      [options]="chartOptions"
+      (onDataSelect)="dataClicked($event)"
+    ></p-chart>
+  </div>
+  <div class="w-full flex justify-content-center mt-2 sumKey">
+    <p class="text-md font-medium text-700">{{ sumKey | translate }} : {{ amountOfData}}</p>
+  </div>
+</ng-container>
+
+<div *ngIf="!this.data" class="w-full flex justify-content-center">
+  <p-message severity="info" text="{{ 'EVENT_DETAILS.STATUS_NO_DATA' | translate }}"></p-message>
+</div>
