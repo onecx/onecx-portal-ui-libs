@@ -131,13 +131,12 @@ describe('Topic', () => {
   it('should remove event listener', () => {
     testTopic1.destroy()
     testTopic2.publish('value1')
-    console.log('after destroy ', testTopic1.getValue())
     
     expect(values1).toEqual([])
     expect(values2).toEqual(['value1'])
   })
 
-  it('should pipe', () => {
+  it('should pipe to get the length of the value', () => {
     let v = 0
     testTopic1.pipe(map((v) => v.length)).subscribe((s) => v = s)
     testTopic1.publish('value1')
