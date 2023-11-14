@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@onecx/accelerator": ["libs/accelerator/src/index.ts"],
       "@onecx/keycloak-auth": ["libs/keycloak-auth/src/index.ts"],
       "@onecx/portal-integration-angular": ["libs/portal-integration-angular/src/index.ts"],
       "@onecx/portal-layout-styles": ["libs/portal-layout-styles/src/index.ts"]

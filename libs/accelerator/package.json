@@ -1,0 +1,13 @@
+{
+    "name": "@onecx/accelerator",
+    "version": "3.1.1",
+    "peerDependencies": {
+      "@angular/common": ">=15.2.7",
+      "@angular/core": ">=15.2.7",
+      "rxjs": "^7.8.0"
+    },
+    "publishConfig": {
+      "access": "public"
+    }
+  }
+  
