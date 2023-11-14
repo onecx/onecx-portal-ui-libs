@@ -1,28 +1,50 @@
-import { Directive, DoCheck, Input, Optional, TemplateRef, ViewContainerRef } from '@angular/core'
+import {
+  ComponentFactory,
+  ComponentFactoryResolver,
+  ComponentRef,
+  Directive,
+  DoCheck,
+  Input,
+  OnChanges,
+  Optional,
+  SimpleChanges,
+  TemplateRef,
+  ViewContainerRef,
+} from '@angular/core'
 import { LoadingIndicatorComponent } from '../components/loading-indicator/loading-indicator.component'
 
 @Directive({ selector: '[onecxLoadingIndicator]' })
-  export class LoadingIndicatorDirective {
-    constructor(
-        private viewContainer: ViewContainerRef,
-        @Optional() private templateRef?: TemplateRef<any>,
-        @Optional() private loadingIndicator?: LoadingIndicatorComponent
-      ) {}
-  
-    @Input() 
-    set onecxLoadingIndicator(loading: boolean) {
-      this.viewContainer.clear();
-  
-      if (loading)
-    {
-      // create and embed an instance of the loading component
-      this.loadingIndicator = this.viewContainer.createComponent(this.loadingIndicator);
+  export class LoadingIndicatorDirective implements OnChanges {
+    @Input() onecxLoadingIndicator = false;
+  @Input() overlayFullPage = true;
+
+  private componentRef: ComponentRef<LoadingIndicatorComponent>;
+
+  constructor(
+    private viewContainerRef: ViewContainerRef,
+    private componentFactoryResolver: ComponentFactoryResolver
+  ) {}
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.onecxLoadingIndicator || changes.overlayFullPage) {
+      this.toggleLoadingIndicator();
     }
-    else
-    {
-      // embed the contents of the host template
-      this.viewContainer.createEmbeddedView(this.templateRef);
-    }    
+  }
+
+  private toggleLoadingIndicator() {
+    if (this.onecxLoadingIndicator) {
+      const factory = this.componentFactoryResolver.resolveComponentFactory(
+        LoadingIndicatorComponent
+      );
+      this.componentRef = this.viewContainerRef.createComponent(factory);
+      this.componentRef.instance.showOverlay = this.overlayFullPage;
+    } else {
+      this.viewContainerRef.clear();
+      if (this.componentRef) {
+        this.componentRef.destroy();
+      }
     }
+  }
+
   }
 

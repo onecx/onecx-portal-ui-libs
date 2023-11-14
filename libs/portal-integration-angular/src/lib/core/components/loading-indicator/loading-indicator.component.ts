@@ -1,4 +1,4 @@
-import { Component } from '@angular/core'
+import { Component, Input } from '@angular/core'
 
 @Component({
   selector: 'ocx-loading-indicator',
@@ -6,4 +6,8 @@ import { Component } from '@angular/core'
   styleUrls: ['./loading-indicator.component.scss'],
 })
 
-export class LoadingIndicatorComponent {}
+export class LoadingIndicatorComponent {
+  @Input() showOverlay = true;
+  @Input() themeColor = 'blue';
+}
+}
