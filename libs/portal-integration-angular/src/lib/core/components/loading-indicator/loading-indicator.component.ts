@@ -7,7 +7,5 @@ import { Component, Input } from '@angular/core'
 })
 
 export class LoadingIndicatorComponent {
-  @Input() showOverlay = true;
-  @Input() themeColor = 'blue';
-}
+  @Input() fullPageOverlay = false;
 }

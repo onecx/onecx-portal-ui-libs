@@ -1,3 +1,5 @@
-<div *ngIf="showOverlay" class="overlay">
-    <span class="loader"></span>
-  </div>
+<div
+  [ngClass]="{ overlay: fullPageOverlay }"
+>
+  <span class="loader"></span>
+</div>
