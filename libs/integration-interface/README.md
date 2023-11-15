@@ -1,6 +1,6 @@
 # integration-interface
 
-This library was generated with [Nx](https://nx.dev).
+This library contains all the different Topic instances.
 
 ## Running unit tests
 
