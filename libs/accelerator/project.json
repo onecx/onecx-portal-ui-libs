@@ -1,7 +1,7 @@
 {
-  "name": "portal-integration-angular",
+  "name": "accelerator",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/portal-integration-angular/src",
+  "sourceRoot": "libs/accelerator/src",
   "prefix": "onecx",
   "tags": [],
   "projectType": "library",
@@ -12,14 +12,14 @@
         "{workspaceRoot}/dist/{projectRoot}"
       ],
       "options": {
-        "project": "libs/portal-integration-angular/ng-package.json"
+        "project": "libs/accelerator/ng-package.json"
       },
       "configurations": {
         "production": {
-          "tsConfig": "libs/portal-integration-angular/tsconfig.lib.prod.json"
+          "tsConfig": "libs/accelerator/tsconfig.lib.prod.json"
         },
         "development": {
-          "tsConfig": "libs/portal-integration-angular/tsconfig.lib.json"
+          "tsConfig": "libs/accelerator/tsconfig.lib.json"
         }
       },
       "defaultConfiguration": "production"
@@ -30,7 +30,7 @@
         "{workspaceRoot}/coverage/{projectRoot}"
       ],
       "options": {
-        "jestConfig": "libs/portal-integration-angular/jest.config.ts",
+        "jestConfig": "libs/accelerator/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {
@@ -47,16 +47,16 @@
       ],
       "options": {
         "lintFilePatterns": [
-          "libs/portal-integration-angular/**/*.ts",
-          "libs/portal-integration-angular/**/*.html",
-          "libs/portal-integration-angular/package.json"
+          "libs/accelerator/**/*.ts",
+          "libs/accelerator/**/*.html",
+          "libs/accelerator/package.json"
         ]
       }
     },
     "release": {
       "executor": "nx-release:build-update-publish",
       "options": {
-        "libName": "portal-integration-angular"
+        "libName": "accelerator"
       }
     }
   }

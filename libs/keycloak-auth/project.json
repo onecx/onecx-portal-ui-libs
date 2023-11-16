@@ -8,9 +8,11 @@
   "targets": {
     "build": {
       "executor": "@nx/angular:package",
-      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/dist/{projectRoot}"
+      ],
       "options": {
-        "project": "libs/keycloak-auth/ng-package.json"      
+        "project": "libs/keycloak-auth/ng-package.json"
       },
       "configurations": {
         "production": {
@@ -24,7 +26,9 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
       "options": {
         "jestConfig": "libs/keycloak-auth/jest.config.ts",
         "passWithNoTests": true
@@ -38,7 +42,9 @@
     },
     "lint": {
       "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
         "lintFilePatterns": [
           "libs/keycloak-auth/**/*.ts",
