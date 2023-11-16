@@ -60,5 +60,8 @@
   },
   "OCX_HEADER": {
     "MENU_TOGGLE": "Menu"
+  },
+  "OCX_DIAGRAM": {
+    "SUMKEY": "Gesamtanzahl"
   }
 }

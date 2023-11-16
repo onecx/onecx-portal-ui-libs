@@ -1,7 +1,6 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core'
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { ChartData, ChartOptions } from 'chart.js'
-import { UIChart } from 'primeng/chart'
 import * as d3 from 'd3-scale-chromatic'
 import { ColorUtils } from '../../utils/colorutils'
 import { DiagramData } from '../../../model/diagram-data'
@@ -17,17 +16,17 @@ export class DiagramComponent implements OnInit, OnChanges {
   chartOptions: ChartOptions | undefined
   chartData: ChartData | undefined
   amountOfData: number | undefined | null
-  @ViewChild(UIChart) pDiagram: UIChart | undefined
   // Changing the colorRangeInfo, will change the range of the color palette of the diagram.
-  colorRangeInfo = {
+  private colorRangeInfo = {
     colorStart: 0,
     colorEnd: 1,
     useEndAsStart: false,
   }
   // Changing the colorScale, will change the thematic color appearance of the diagram.
-  colorScale = d3.interpolateCool
+  private colorScale = d3.interpolateCool
 
   constructor(private translateService: TranslateService) {}
+
   ngOnChanges(): void {
     this.generateChart(this.colorScale, this.colorRangeInfo)
   }

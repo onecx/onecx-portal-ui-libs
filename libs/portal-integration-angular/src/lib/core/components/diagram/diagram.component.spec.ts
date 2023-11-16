@@ -7,12 +7,15 @@ import { ChartModule } from 'primeng/chart'
 import { MessageModule } from 'primeng/message'
 import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
 import { MFE_INFO } from '../../../api/injection-tokens'
+import { DiagramHarness, TestbedHarnessEnvironment } from '../../../../../testing'
+import { TranslateService } from '@ngx-translate/core'
 
 describe('DiagramComponent', () => {
+  let translateService: TranslateService
   let component: DiagramComponent
   let fixture: ComponentFixture<DiagramComponent>
 
-  const definedSumKey = 'Total'
+  const definedSumKey = 'OCX_DIAGRAM.SUMKEY'
 
   // Use the power of 2 (2^n) to identify the error of a possibly failed test more quickly
   const diagramData: { label: string; value: number }[] = [
@@ -34,7 +37,10 @@ describe('DiagramComponent', () => {
         ChartModule,
         MessageModule,
         MockAuthModule,
-        TranslateTestingModule.withTranslations({}),
+        TranslateTestingModule.withTranslations({
+          en: require('./../../../../../assets/i18n/en.json'),
+          de: require('./../../../../../assets/i18n/de.json'),
+        }),
         HttpClientTestingModule,
       ],
       providers: [
@@ -52,24 +58,36 @@ describe('DiagramComponent', () => {
 
     fixture = TestBed.createComponent(DiagramComponent)
     component = fixture.componentInstance
-
     component.data = diagramData
     component.sumKey = definedSumKey
+    translateService = TestBed.inject(TranslateService)
+    translateService.setDefaultLang('en')
+    translateService.use('en')
   })
 
-  it('should create the diagram component', async () => {
+  it('should create the diagram component', () => {
     expect(component).toBeTruthy()
   })
 
-  it('should display the sumkey', async () => {
-    expect(definedSumKey).toEqual(component.sumKey)
+  it('loads diagramHarness', async () => {
+    const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
+    expect(diagram).toBeTruthy()
   })
-  it('should display the diagramData', async () => {
-    expect(diagramData).toEqual(component.data)
+
+  it('should display the sumKey on the diagram component', async () => {
+    const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
+    const displayedText = await diagram.getSumLabel()
+    const definedSumKeyTranslation = translateService.instant(definedSumKey)
+    expect(displayedText).toEqual(definedSumKeyTranslation)
+  })
+
+  it('should be created', () => {
+    expect(translateService).toBeTruthy()
   })
 
   it('should display the amountOfData on the diagram component', async () => {
-    fixture.detectChanges()
-    expect(numberOfResults).toEqual(component.amountOfData)
+    const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
+    const displayedNumber = await diagram.getTotalNumberOfResults()
+    expect(displayedNumber).toEqual(numberOfResults)
   })
 })

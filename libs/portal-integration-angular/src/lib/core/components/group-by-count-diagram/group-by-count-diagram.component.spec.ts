@@ -11,10 +11,11 @@ import { DiagramComponent } from '../diagram/diagram.component'
 import { firstValueFrom, of } from 'rxjs'
 import { HarnessLoader } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { DiagramHarness } from 'libs/portal-integration-angular/testing'
+import { TranslateService } from '@ngx-translate/core'
+import { DiagramHarness } from '../../../../../testing'
 
 describe('GroupByCountDiagramComponent', () => {
+  let translateService: TranslateService
   let component: GroupByCountDiagramComponent
   let fixture: ComponentFixture<GroupByCountDiagramComponent>
   let loader: HarnessLoader
@@ -151,7 +152,10 @@ describe('GroupByCountDiagramComponent', () => {
         ChartModule,
         MessageModule,
         MockAuthModule,
-        TranslateTestingModule.withTranslations({}),
+        TranslateTestingModule.withTranslations({
+          en: require('./../../../../../assets/i18n/en.json'),
+          de: require('./../../../../../assets/i18n/de.json'),
+        }),
         HttpClientTestingModule,
       ],
       providers: [
@@ -174,12 +178,21 @@ describe('GroupByCountDiagramComponent', () => {
     component.column = inputColumn
     component.sumKey = definedSumKey
 
+    translateService = TestBed.inject(TranslateService)
+    translateService.setDefaultLang('en')
+    translateService.use('en')
+
     fixture.detectChanges()
     loader = TestbedHarnessEnvironment.loader(fixture)
   })
 
-  it('should create the group-by-count-diagram component', async () => {
+  it('should create the group-by-count-diagram component', () => {
     expect(component).toBeTruthy()
+  })
+
+  it('should convert the data properly to diagramData', async () => {
+    const result = await firstValueFrom(component.diagramData$ ?? of())
+    expect(diagramData).toEqual(result)
   })
 
   it('should load diagram harness', async () => {
@@ -187,12 +200,10 @@ describe('GroupByCountDiagramComponent', () => {
     expect(diagram).toBeTruthy()
   })
 
-  fit('should convert the data properly to diagramData', async () => {
-    const result = await firstValueFrom(component.diagramData$ ?? of())
-    expect(diagramData).toEqual(result)
-  })
-
-  it('should select the right column', async () => {
-    expect(inputColumn).toEqual(component.column)
+  it('should display the sumKey on the diagram component', async () => {
+    const diagram = await loader.getHarness(DiagramHarness)
+    const displayedText = await diagram.getSumLabel()
+    const definedSumKeyTranslation = translateService.instant(definedSumKey)
+    expect(displayedText).toEqual(definedSumKeyTranslation)
   })
 })

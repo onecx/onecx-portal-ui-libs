@@ -11,7 +11,9 @@
     ></p-chart>
   </div>
   <div class="w-full flex justify-content-center mt-2 sumKey">
-    <p class="text-md font-medium text-700">{{ sumKey | translate }} : {{ amountOfData}}</p>
+    <p class="text-md font-medium text-700">
+      <span name="sumLabel"> {{ sumKey | translate }}</span> : <span name="amountOfData">{{ amountOfData}}</span>
+    </p>
   </div>
 </ng-container>
 

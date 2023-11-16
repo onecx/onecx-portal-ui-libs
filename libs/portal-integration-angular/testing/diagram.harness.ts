@@ -1,12 +1,13 @@
 import { ComponentHarness } from '@angular/cdk/testing'
-import { DivHarness } from './div.harness'
 
 export class DiagramHarness extends ComponentHarness {
   static hostSelector = 'ocx-diagram'
 
-  getSumKey = this.locatorForOptional(DivHarness.with({ class: 'sumKey' }))
+  async getTotalNumberOfResults(): Promise<number | undefined> {
+    return (await this.locatorForOptional('.sumKey span[name="amountOfData"]')())?.text().then((s) => Number(s))
+  }
 
-  async getTotalNumber(): Promise<string | undefined> {
-    return await (await this.getSumKey())?.getText()
+  async getSumLabel(): Promise<string | undefined> {
+    return (await this.locatorForOptional('.sumKey span[name="sumLabel"]')())?.text()
   }
 }

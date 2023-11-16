@@ -12,7 +12,7 @@ import { DiagramData } from '../../../model/diagram-data'
 })
 export class GroupByCountDiagramComponent implements OnInit {
   @Input() sumKey = 'SEARCH.SUMMARY_TITLE'
-  _data$ = new BehaviorSubject<unknown[]>([])
+  private _data$ = new BehaviorSubject<unknown[]>([])
   @Input()
   get data(): unknown[] {
     return this._data$.getValue()
@@ -22,7 +22,8 @@ export class GroupByCountDiagramComponent implements OnInit {
   }
   diagramData$: Observable<DiagramData[]> | undefined
 
-  _columnType$ = new BehaviorSubject<ColumnType>(ColumnType.STRING)
+  private _columnType$ = new BehaviorSubject<ColumnType>(ColumnType.STRING)
+  @Input()
   get columnType(): ColumnType {
     return this._columnType$.getValue()
   }
@@ -30,7 +31,8 @@ export class GroupByCountDiagramComponent implements OnInit {
     this._columnType$.next(value)
   }
 
-  _columnField$ = new BehaviorSubject<string>('')
+  private _columnField$ = new BehaviorSubject<string>('')
+  @Input()
   get columnField(): string {
     return this._columnField$.getValue()
   }
@@ -50,6 +52,7 @@ export class GroupByCountDiagramComponent implements OnInit {
   @Output() dataSelected: EventEmitter<any> = new EventEmitter()
 
   constructor(private translateService: TranslateService) {}
+
   ngOnInit(): void {
     this.diagramData$ = combineLatest([this._data$, this._columnField$, this._columnType$]).pipe(
       mergeMap(([data, columnField, columnType]) => {
