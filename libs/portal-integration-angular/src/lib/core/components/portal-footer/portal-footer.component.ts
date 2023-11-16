@@ -43,10 +43,8 @@ export class PortalFooterComponent implements OnInit {
   }
   ngOnInit(): void {
     const portalData = this.configurationService.getPortal()
-    this.themeService.currentTheme$.pipe(untilDestroyed(this)).subscribe({
-      next: (theme) => {
-        this.src = this.setImageUrl(theme.logoUrl || portalData.logoUrl)
-      },
+    this.themeService.currentTheme$.pipe(untilDestroyed(this)).subscribe((theme) => {
+      this.src = this.setImageUrl(theme.logoUrl || portalData.logoUrl)
     })
 
     if (
