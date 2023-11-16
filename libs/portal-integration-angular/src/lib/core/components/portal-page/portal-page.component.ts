@@ -32,7 +32,7 @@ export class PortalPageComponent implements OnInit {
         `ocx-portal-page on url ${location.pathname} does not have 'heplArticleId' set. Set to some unique string in order to support help management feature.`
       )
     }
-    this.appState.currentPageTopic$.publish({
+    this.appState.currentPage$.publish({
       path: document.location.pathname,
       helpArticleId: this.helpArticleId,
       permission: this.permission,

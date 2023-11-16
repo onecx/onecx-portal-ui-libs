@@ -68,7 +68,7 @@ export function standaloneInitializer(
         console.log('Standalone Initializer')
         console.log(`🛑 Error during initialization: ${errCause} ${err} `)
         console.dir(err)
-        initState.globalErrorTopic$.publish(errCause || 'INITIALIZATION_ERROR')
+        initState.globalError$.publish(errCause || 'INITIALIZATION_ERROR')
         //TODO store error info somewhere, so we can show error in app component
         return of(null)
       })

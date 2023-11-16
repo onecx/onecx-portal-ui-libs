@@ -31,7 +31,7 @@ export class PortalFooterComponent implements OnInit {
     private themeService: ThemeService,
     private ref: ChangeDetectorRef
   ) {
-    this.versionInfo$ = this.appState.currentMfeTopic$.pipe(untilDestroyed(this)).pipe(
+    this.versionInfo$ = this.appState.currentMfe$.pipe(untilDestroyed(this)).pipe(
       map((mfe) => {
         const mfeInfoVersion = mfe?.version || ''
         const mfeName = mfe?.displayName

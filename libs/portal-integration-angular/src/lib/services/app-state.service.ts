@@ -3,20 +3,20 @@ import { GlobalErrorTopic, GlobalLoadingTopic, CurrentMfeTopic, CurrentPageTopic
 
 @Injectable({ providedIn: 'root' })
 export class AppStateService implements OnDestroy {
-  globalErrorTopic$ = new GlobalErrorTopic()
-  globalLoadingTopic$ = new GlobalLoadingTopic()
-  currentMfeTopic$ = new CurrentMfeTopic()
+  globalError$ = new GlobalErrorTopic()
+  globalLoading$ = new GlobalLoadingTopic()
+  currentMfe$ = new CurrentMfeTopic()
 
   /**
    *This topic will only fire when pageInfo.path matches document.location.pathname,
    * if not it will fire undefined.
    */
-  currentPageTopic$ = new CurrentPageTopic()
+  currentPage$ = new CurrentPageTopic()
 
   ngOnDestroy(): void {
-    this.globalErrorTopic$.destroy()
-    this.globalLoadingTopic$.destroy()
-    this.currentMfeTopic$.destroy()
-    this.currentPageTopic$.destroy()
+    this.globalError$.destroy()
+    this.globalLoading$.destroy()
+    this.currentMfe$.destroy()
+    this.currentPage$.destroy()
   }
 }

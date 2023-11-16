@@ -1,2 +1,2 @@
-export * from './lib/accelerator.module'
+export * from './lib/accelerator'
 export * from './lib/topic/topic'

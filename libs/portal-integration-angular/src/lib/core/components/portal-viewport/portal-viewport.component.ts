@@ -93,7 +93,7 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
         if (event instanceof NavigationEnd) this.currentRoute = event.url.split('#')[0]
       })
 
-    combineLatest([this.initState.currentPageTopic$.asObservable(), this.initState.currentMfeTopic$.asObservable()])
+    combineLatest([this.initState.currentPage$.asObservable(), this.initState.currentMfe$.asObservable()])
       .pipe(untilDestroyed(this))
       .subscribe(([info, mfe]) => {
         this.pageName = info?.pageName
@@ -122,7 +122,7 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
   ngOnInit() {
     this.primengConfig.ripple = true
 
-    this.initState.globalErrorTopic$
+    this.initState.globalError$
       .pipe(untilDestroyed(this))
       .pipe(filter((i) => i !== undefined))
       .subscribe((err) => {
