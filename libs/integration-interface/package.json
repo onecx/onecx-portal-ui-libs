@@ -1,9 +1,10 @@
 {
-  "name": "@onecx/accelerator",
+  "name": "@onecx/integration-interface",
   "version": "3.1.1",
   "peerDependencies": {
     "tslib": "^2.3.0",
-    "rxjs": "7.8.1"
+    "rxjs": "7.8.1",
+    "@onecx/accelerator": "^3"
   },
   "type": "commonjs",
   "main": "./src/index.js",
