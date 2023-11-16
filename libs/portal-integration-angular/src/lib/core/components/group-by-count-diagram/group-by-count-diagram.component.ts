@@ -1,15 +1,14 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
 import { ColumnType } from '../../../model/column-type.model'
 import { DiagramColumn } from '../../../model/diagram-column'
-import { DiagramData } from '../diagram/diagram.component'
 import { ObjectUtils } from '../../utils/objectutils'
 import { BehaviorSubject, Observable, combineLatest, map, mergeMap, of } from 'rxjs'
 import { TranslateService } from '@ngx-translate/core'
+import { DiagramData } from '../../../model/diagram-data'
 
 @Component({
   selector: 'ocx-group-by-count-diagram',
   templateUrl: './group-by-count-diagram.component.html',
-  styleUrls: ['./group-by-count-diagram.component.scss'],
 })
 export class GroupByCountDiagramComponent implements OnInit {
   @Input() sumKey = 'SEARCH.SUMMARY_TITLE'

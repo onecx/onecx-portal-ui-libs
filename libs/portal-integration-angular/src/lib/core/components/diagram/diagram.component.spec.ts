@@ -24,6 +24,8 @@ describe('DiagramComponent', () => {
     { label: 'test5', value: 32 },
     { label: 'test6', value: 64 },
   ]
+  const numberOfResults = Math.pow(2, diagramData.length) - 1
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DiagramComponent],
@@ -68,7 +70,6 @@ describe('DiagramComponent', () => {
 
   it('should display the amountOfData on the diagram component', async () => {
     fixture.detectChanges()
-    const numberOfResults = diagramData.reduce((acc: any, current: any) => acc + current.value, 0)
     expect(numberOfResults).toEqual(component.amountOfData)
   })
 })

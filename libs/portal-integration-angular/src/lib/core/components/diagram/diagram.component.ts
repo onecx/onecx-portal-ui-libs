@@ -4,12 +4,11 @@ import { ChartData, ChartOptions } from 'chart.js'
 import { UIChart } from 'primeng/chart'
 import * as d3 from 'd3-scale-chromatic'
 import { ColorUtils } from '../../utils/colorutils'
+import { DiagramData } from '../../../model/diagram-data'
 
-export type DiagramData = { label: string; value: number }
 @Component({
   selector: 'ocx-diagram',
   templateUrl: './diagram.component.html',
-  styleUrls: ['./diagram.component.scss'],
 })
 export class DiagramComponent implements OnInit, OnChanges {
   @Input() data: DiagramData[] | undefined
