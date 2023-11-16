@@ -1,3 +1,11 @@
+/**
+ * The test environment that will be used for testing.
+ * The default environment in Jest is a Node.js environment.
+ * If you are building a web app, you can use a browser-like environment through jsdom instead.
+ * 
+ * @jest-environment jsdom
+ */
+
 import { map } from 'rxjs'
 import { Topic } from './topic'
 
@@ -79,7 +87,7 @@ describe('Topic', () => {
     expect(values2).toEqual(['value1', 'value2'])
   })
 
-  it('should has no value if message name is different', () => {
+  it('should have no value if message name is different', () => {
     testTopic1.publish('value1')
 
     expect(values1).toEqual(['value1'])
@@ -92,7 +100,7 @@ describe('Topic', () => {
     expect(values3).toEqual([])
   })
 
-  it('should has no value if message version is different', () => {
+  it('should have no value if message version is different', () => {
     testTopic1.publish('value1')
 
     expect(values1).toEqual(['value1'])
@@ -105,7 +113,7 @@ describe('Topic', () => {
     expect(values3).toEqual([])
   })
 
-  it('should has no value if message is undefined', () => {
+  it('should have no value if message is undefined', () => {
     testTopic1.publish('value1')
 
     expect(values1).toEqual(['value1'])

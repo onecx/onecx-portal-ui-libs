@@ -1,31 +1,31 @@
 {
-  "name": "accelerator",
+  "name": "integration-interface",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/accelerator/src",
+  "sourceRoot": "libs/integration-interface/src",
   "projectType": "library",
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/libs/accelerator",
-        "main": "libs/accelerator/src/index.ts",
-        "tsConfig": "libs/accelerator/tsconfig.lib.json",
-        "assets": ["libs/accelerator/*.md"]
+        "outputPath": "dist/libs/integration-interface",
+        "main": "libs/integration-interface/src/index.ts",
+        "tsConfig": "libs/integration-interface/tsconfig.lib.json",
+        "assets": ["libs/integration-interface/*.md"]
       }
     },
     "lint": {
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/accelerator/**/*.ts", "libs/accelerator/package.json"]
+        "lintFilePatterns": ["libs/integration-interface/**/*.ts", "libs/integration-interface/package.json"]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/accelerator/jest.config.ts",
+        "jestConfig": "libs/integration-interface/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {

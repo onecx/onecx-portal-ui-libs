@@ -1,10 +1,10 @@
 import { filter, map } from 'rxjs/operators'
-import { BehaviorSubject, Observable, Observer, OperatorFunction, Subscription, UnaryFunction } from 'rxjs'
+import { BehaviorSubject, Observable, Observer, OperatorFunction, Subscribable, Subscription, UnaryFunction } from 'rxjs'
 import { TopicDataMessage } from './topic-data-message'
 import { TopicMessage } from './topic-message'
 import { TopicMessageType } from './topic-message-type'
 
-export class Topic<T> {
+export class Topic<T> implements Subscribable<T>{
   public isInitialized: Promise<void>
   private data = new BehaviorSubject<TopicDataMessage<T> | undefined>(undefined)
 
