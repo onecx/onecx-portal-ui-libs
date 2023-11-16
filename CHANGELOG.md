@@ -1,3 +1,14 @@
+## [3.2.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.1.1...v3.2.0) (2023-11-16)
+
+
+### Features
+
+* distributed state in AppStateService ([#12](https://github.com/onecx/onecx-portal-ui-libs/issues/12)) ([5d14a49](https://github.com/onecx/onecx-portal-ui-libs/commit/5d14a492aa7abf191d3641064e7e1ae62121645c))
+* distributed state in theme service ([#13](https://github.com/onecx/onecx-portal-ui-libs/issues/13)) ([6c75518](https://github.com/onecx/onecx-portal-ui-libs/commit/6c75518eea70f2a08b9a4e69092413954cdc62d8))
+* init accelerator lib and topic to share states ([#11](https://github.com/onecx/onecx-portal-ui-libs/issues/11)) ([b79d1a4](https://github.com/onecx/onecx-portal-ui-libs/commit/b79d1a46305ad9da87d0e0f213630ebdde295860))
+* primeng accept minor and patch releases ([7d0dca3](https://github.com/onecx/onecx-portal-ui-libs/commit/7d0dca33ada7f0fd416dee0b804e93201e7d43fc))
+* trigger search on enter ([c476f48](https://github.com/onecx/onecx-portal-ui-libs/commit/c476f48c78d4751885f231076712cb14f813bf3f))
+
 ## [3.1.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.1.0...v3.1.1) (2023-11-08)
 
 
