@@ -1,6 +1,6 @@
 # integration-interface
 
-This library was generated with [Nx](https://nx.dev).
+This library contains everything that is needed to communicate with the shell and that is framework independent
 
 ## Building
 
