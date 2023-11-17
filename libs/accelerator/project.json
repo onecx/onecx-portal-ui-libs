@@ -34,6 +34,12 @@
           "codeCoverage": true
         }
       }
+    },
+    "release": {
+      "executor": "nx-release:build-update-publish",
+      "options": {
+        "libName": "accelerator"
+      }
     }
   },
   "tags": []
