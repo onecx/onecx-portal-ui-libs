@@ -15,7 +15,7 @@ describe('DiagramComponent', () => {
   let component: DiagramComponent
   let fixture: ComponentFixture<DiagramComponent>
 
-  const definedSumKey = 'OCX_DIAGRAM.SUMKEY'
+  const definedSumKey = 'OCX_DIAGRAM.SUM'
 
   // Use the power of 2 (2^n) to identify the error of a possibly failed test more quickly
   const diagramData: { label: string; value: number }[] = [

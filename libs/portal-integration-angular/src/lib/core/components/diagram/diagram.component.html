@@ -1,4 +1,3 @@
-<!-- The title will be provided by the ocx-content-->
 <ng-container *ngIf="this.data">
   <div class="w-full flex justify-content-center">
     <p-chart
@@ -18,5 +17,5 @@
 </ng-container>
 
 <div *ngIf="!this.data" class="w-full flex justify-content-center">
-  <p-message severity="info" text="{{ 'EVENT_DETAILS.STATUS_NO_DATA' | translate }}"></p-message>
+  <p-message severity="info" text="{{ 'OCX_DIAGRAM.NO_DATA' | translate }}"></p-message>
 </div>

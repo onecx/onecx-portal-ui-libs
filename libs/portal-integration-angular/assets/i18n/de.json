@@ -62,6 +62,7 @@
     "MENU_TOGGLE": "Menü"
   },
   "OCX_DIAGRAM": {
-      "SUMKEY": "Gesamtanzahl"
+      "SUM": "Gesamtanzahl",
+      "NO_DATA": "Es sind keine Daten vorhanden"
     }
 }
