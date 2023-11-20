@@ -23,6 +23,7 @@ import { DialogModule } from 'primeng/dialog'
 import { InputSwitchModule } from 'primeng/inputswitch'
 import { DataViewModule } from 'primeng/dataview'
 import { PortalMessageService } from '../services/message.service'
+import { ChartModule } from 'primeng/chart'
 
 @NgModule({
   imports: [
@@ -48,6 +49,8 @@ import { PortalMessageService } from '../services/message.service'
     MultiSelectModule,
     TableModule,
     DataViewModule,
+    ChartModule,
+    MessageModule,
   ],
   providers: [{ provide: MessageService, useExisting: PortalMessageService }],
   exports: [
@@ -73,6 +76,8 @@ import { PortalMessageService } from '../services/message.service'
     MultiSelectModule,
     TableModule,
     DataViewModule,
+    ChartModule,
+    MessageModule,
   ],
 })
 export class PrimeNgModule {}

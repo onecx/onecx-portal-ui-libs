@@ -60,5 +60,9 @@
   },
   "OCX_HEADER": {
     "MENU_TOGGLE": "Menu"
+  },
+  "OCX_DIAGRAM": {
+    "SUM": "Total",
+    "NO_DATA": "There is no data available"
   }
 }
