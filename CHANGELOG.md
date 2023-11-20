@@ -1,3 +1,16 @@
+## [3.3.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.2.0...v3.3.0) (2023-11-20)
+
+
+### Features
+
+* basic diagram component ([#10](https://github.com/onecx/onecx-portal-ui-libs/issues/10)) ([9896d5f](https://github.com/onecx/onecx-portal-ui-libs/commit/9896d5f95ab04250f01289918e0e703746c3b0c5))
+
+
+### Bug Fixes
+
+* add publishConfig ([#15](https://github.com/onecx/onecx-portal-ui-libs/issues/15)) ([10df810](https://github.com/onecx/onecx-portal-ui-libs/commit/10df8107563d4d70fbe6f651a44e57c26922bf1c))
+* add release in targets for libs ([#14](https://github.com/onecx/onecx-portal-ui-libs/issues/14)) ([c99e568](https://github.com/onecx/onecx-portal-ui-libs/commit/c99e56899643345af039ccfb81f273d969f232c9))
+
 ## [3.2.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.1.1...v3.2.0) (2023-11-16)
 
 
