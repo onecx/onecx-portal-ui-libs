@@ -11,7 +11,7 @@ import { DiagramData } from '../../../model/diagram-data'
 })
 export class DiagramComponent implements OnInit, OnChanges {
   @Input() data: DiagramData[] | undefined
-  @Input() sumKey = 'SEARCH.SUMMARY_TITLE'
+  @Input() sumKey = 'OCX_DIAGRAM.SUM'
   @Output() dataSelected: EventEmitter<any> = new EventEmitter()
   chartOptions: ChartOptions | undefined
   chartData: ChartData | undefined
