@@ -1,3 +1,10 @@
+## [3.5.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.4.0...v3.5.0) (2023-11-21)
+
+
+### Features
+
+* set msw version to 2.0.0 ([#17](https://github.com/onecx/onecx-portal-ui-libs/issues/17)) ([cfbd0bd](https://github.com/onecx/onecx-portal-ui-libs/commit/cfbd0bdbf263410e58ed4720d3efb963ee7773d5))
+
 ## [3.4.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.3.0...v3.4.0) (2023-11-21)
 
 
