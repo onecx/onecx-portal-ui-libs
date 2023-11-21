@@ -1,3 +1,10 @@
+## [3.5.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.5.0...v3.5.1) (2023-11-21)
+
+
+### Bug Fixes
+
+* downgrade msw to version 1.3.2 ([#18](https://github.com/onecx/onecx-portal-ui-libs/issues/18)) ([15e8538](https://github.com/onecx/onecx-portal-ui-libs/commit/15e853823c37911b173c04a6c69c40213ae0a8b1))
+
 ## [3.5.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.4.0...v3.5.0) (2023-11-21)
 
 
