@@ -1,3 +1,10 @@
+## [3.4.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.3.0...v3.4.0) (2023-11-21)
+
+
+### Features
+
+* remove canvas, add msw ([#16](https://github.com/onecx/onecx-portal-ui-libs/issues/16)) ([3d1fd40](https://github.com/onecx/onecx-portal-ui-libs/commit/3d1fd40e301ca420292b7d06d3c03c1cd417daac))
+
 ## [3.3.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.2.0...v3.3.0) (2023-11-20)
 
 
