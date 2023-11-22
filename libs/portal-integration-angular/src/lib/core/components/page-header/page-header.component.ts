@@ -13,10 +13,10 @@ import {
 import { MenuItem } from 'primeng/api'
 import { Observable, of } from 'rxjs'
 import { BreadcrumbService } from '../../../services/breadcrumb.service'
-import { ConfigurationService } from '../../../services/configuration.service'
 import { IAuthService } from '../../../api/iauth.service'
 import { AUTH_SERVICE } from '../../../api/injection-tokens'
 import { TranslateService } from '@ngx-translate/core'
+import { AppStateService } from '../../../services/app-state.service';
 
 /**
  * Action definition.
@@ -114,9 +114,9 @@ export class PageHeaderComponent implements OnInit, OnChanges {
 
   constructor(
     breadcrumbs: BreadcrumbService,
-    private config: ConfigurationService,
     @Inject(AUTH_SERVICE) private authService: IAuthService,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private appStateService: AppStateService,
   ) {
     this.breadcrumbs = breadcrumbs
   }
@@ -128,7 +128,7 @@ export class PageHeaderComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.home.routerLink = this.config.getPortal().baseUrl
+    this.appStateService.currentPortal$.subscribe((portal) => this.home.routerLink = portal.baseUrl)
     if (!this.manualBreadcrumbs) {
       this.breadcrumbs$ = this.breadcrumbs.generatedItemsSource
     } else {

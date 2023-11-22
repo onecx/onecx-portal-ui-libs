@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed, getTestBed } from '@angular/core/testing'
 
 import { AnnouncementBannerComponent } from './announcement-banner.component'
 import { ConfigurationService } from '../../../services/configuration.service'
+import { AppStateService } from '../../../services/app-state.service'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { AnnouncementsApiService } from '../../../services/announcements-api.service'
 import { Subject } from 'rxjs'
@@ -19,11 +20,14 @@ describe('AnnouncementBannerComponent', () => {
     TestBed.configureTestingModule({
       declarations: [AnnouncementBannerComponent],
       imports: [HttpClientTestingModule],
-      providers: [ConfigurationService, AnnouncementsApiService],
+      providers: [ConfigurationService, AnnouncementsApiService, AppStateService],
     }).compileComponents()
 
-    const configurationService = getTestBed().inject(ConfigurationService)
-    configurationService.setPortal({ id: 'i-am-test-portal', portalName: 'test', baseUrl: '', microfrontendRegistrations: [] })
+    // const configurationService = getTestBed().inject(ConfigurationService)
+    // configurationService.setPortal({ id: 'i-am-test-portal', portalName: 'test', baseUrl: '', microfrontendRegistrations: [] })
+
+    const appStateService = getTestBed().inject(AppStateService)
+    appStateService.currentPortal$.publish({ id: 'i-am-test-portal', portalName: 'test', baseUrl: '', microfrontendRegistrations: [] })
 
     announcementsApiService = getTestBed().inject(AnnouncementsApiService)
     jest.spyOn(announcementsApiService, 'getAnnouncementById').mockReturnValue(getAnnouncementByIdMock)

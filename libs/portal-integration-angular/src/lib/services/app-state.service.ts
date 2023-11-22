@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core'
-import { GlobalErrorTopic, GlobalLoadingTopic, CurrentMfeTopic, CurrentPageTopic } from '@onecx/integration-interface'
+import { GlobalErrorTopic, GlobalLoadingTopic, CurrentMfeTopic, CurrentPageTopic, CurrentPortalTopic } from '@onecx/integration-interface'
 
 @Injectable({ providedIn: 'root' })
 export class AppStateService implements OnDestroy {
@@ -12,11 +12,13 @@ export class AppStateService implements OnDestroy {
    * if not it will fire undefined.
    */
   currentPage$ = new CurrentPageTopic()
+  currentPortal$ = new CurrentPortalTopic()
 
   ngOnDestroy(): void {
     this.globalError$.destroy()
     this.globalLoading$.destroy()
     this.currentMfe$.destroy()
     this.currentPage$.destroy()
+    this.currentPortal$.destroy()
   }
 }

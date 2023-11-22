@@ -52,10 +52,10 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
 
   currentRoute: string | undefined
   globalErrMsg: string | undefined
-  portalHomeMenuItem: MenuItem = { url: this.config?.getPortal()?.homePage, label: 'Home' }
+  portalHomeMenuItem: MenuItem = {}
   showMenuButtonTitle: string | undefined
   hideMenuButtonTitle: string | undefined
-  portalDefinition: Portal
+  portalDefinition: Portal | undefined
   logoUrl: string | undefined
   pageName: string | undefined
   helpArticleId: string | undefined
@@ -68,7 +68,7 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
     private primengConfig: PrimeNGConfig,
     private portalUIConfig: PortalUIService,
     private config: ConfigurationService,
-    private initState: AppStateService,
+    private appStateService: AppStateService,
     private themeService: ThemeService,
     private messageService: MessageService,
     private supportTicketApiService: SupportTicketApiService,
@@ -79,10 +79,13 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
     // TODO
     this.hideMenuButtonTitle = this.portalUIConfig.getTranslation('hideMenuButton')
     this.showMenuButtonTitle = this.portalUIConfig.getTranslation('showMenuButton')
-    this.portalDefinition = this.config.getPortal()
+    this.appStateService.currentPortal$.subscribe((portal) => {
+      this.portalDefinition = portal
+      this.portalHomeMenuItem = {url: portal.homePage, label: 'Home'}
+    })
 
     this.themeService.currentTheme$.pipe(untilDestroyed(this)).subscribe((theme: any) => {
-      this.logoUrl = theme.logoUrl || this.portalDefinition.logoUrl
+      this.logoUrl = theme.logoUrl || this.portalDefinition?.logoUrl
       document.getElementById('favicon')?.setAttribute('href', theme.faviconUrl)
     })
 
@@ -93,7 +96,7 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
         if (event instanceof NavigationEnd) this.currentRoute = event.url.split('#')[0]
       })
 
-    combineLatest([this.initState.currentPage$.asObservable(), this.initState.currentMfe$.asObservable()])
+    combineLatest([this.appStateService.currentPage$.asObservable(), this.appStateService.currentMfe$.asObservable()])
       .pipe(untilDestroyed(this))
       .subscribe(([info, mfe]) => {
         this.pageName = info?.pageName
@@ -122,7 +125,7 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
   ngOnInit() {
     this.primengConfig.ripple = true
 
-    this.initState.globalError$
+    this.appStateService.globalError$
       .pipe(untilDestroyed(this))
       .pipe(filter((i) => i !== undefined))
       .subscribe((err) => {

@@ -4,10 +4,11 @@ import { Router } from '@angular/router'
 import { MenuItem } from 'primeng/api'
 import { MenuService } from '../../../services/app.menu.service'
 import { AppStateService } from '../../../services/app-state.service'
-import { map, Observable } from 'rxjs'
+import { map, Observable, withLatestFrom } from 'rxjs'
 import { ThemeService } from '../../../services/theme.service'
 import { API_PREFIX } from '../../../api/constants'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
+import { CONFIG_KEY } from '../../../model/config-key.model'
 @Component({
   selector: 'ocx-footer',
   templateUrl: './portal-footer.component.html',
@@ -32,27 +33,30 @@ export class PortalFooterComponent implements OnInit {
     private ref: ChangeDetectorRef
   ) {
     this.versionInfo$ = this.appState.currentMfe$.pipe(untilDestroyed(this)).pipe(
-      map((mfe) => {
+      withLatestFrom(this.appState.currentPortal$.asObservable()),
+      map(([mfe, portal]) => {
         const mfeInfoVersion = mfe?.version || ''
         const mfeName = mfe?.displayName
-        const hostVersion = this.configurationService.getProperty('APP_VERSION') || 'DEV-LOCAL'
+        const hostVersion = this.configurationService.getProperty(CONFIG_KEY.APP_VERSION) || 'DEV-LOCAL'
         const mfInfoText = mfeName ? `MF ${mfeName} v${mfeInfoVersion}` : ''
-        return `Portal: ${this.configurationService.getPortal().portalName} v${hostVersion} ${mfInfoText}`
+        return `Portal: ${portal.portalName} v${hostVersion} ${mfInfoText}`
       })
     )
   }
   ngOnInit(): void {
-    const portalData = this.configurationService.getPortal()
-    this.themeService.currentTheme$.pipe(untilDestroyed(this)).subscribe((theme) => {
-      this.src = this.setImageUrl(theme.logoUrl || portalData.logoUrl)
+    this.themeService.currentTheme$
+      .pipe(untilDestroyed(this), withLatestFrom(this.appState.currentPortal$.asObservable()))
+      .subscribe(([theme, portalData]) => {
+        this.src = this.setImageUrl(theme.logoUrl || portalData.logoUrl)
+      })
+
+    this.appState.currentPortal$.subscribe((portalData) => {
+      if (
+        !(portalData.footerLabel === '' || portalData.footerLabel === 'string' || portalData.footerLabel === undefined)
+      ) {
+        this.copyrightMsg = portalData.companyName || portalData.footerLabel || 'All rights reserved.'
+      }
     })
-
-    if (
-      !(portalData.footerLabel === '' || portalData.footerLabel === 'string' || portalData.footerLabel === undefined)
-    ) {
-      this.copyrightMsg = portalData.companyName || portalData.footerLabel || 'All rights reserved.'
-    }
-
     this.menuService
       .getMenuItems()
       .subscribe((el) =>
