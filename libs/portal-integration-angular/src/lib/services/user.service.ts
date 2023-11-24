@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core'
+import { Injectable, OnDestroy } from '@angular/core'
 import { UserProfileTopic } from '@onecx/integration-interface'
 import { BehaviorSubject } from 'rxjs'
 import { DEFAULT_LANG } from '../api/constants'
 
-@Injectable({ providedIn: 'root' })
-export class UserService {
+@Injectable({ providedIn: 'any' })
+export class UserService implements OnDestroy {
   profile$ = new UserProfileTopic()
   lang$ = new BehaviorSubject(this.determineLanguage() ?? DEFAULT_LANG)
 
@@ -14,6 +14,10 @@ export class UserService {
         profile.accountSettings?.localeAndTimeSettings?.locale ?? this.determineLanguage() ?? DEFAULT_LANG
       )
     )
+  }
+
+  ngOnDestroy(): void {
+    this.profile$.destroy()
   }
 
   private determineLanguage(): string | undefined {

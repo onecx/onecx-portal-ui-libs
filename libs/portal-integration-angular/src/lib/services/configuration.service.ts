@@ -1,18 +1,22 @@
 import { HttpClient } from '@angular/common/http'
-import { Inject, Injectable, Optional } from '@angular/core'
+import { Inject, Injectable, OnDestroy, Optional } from '@angular/core'
 import { Config, ConfigurationTopic } from '@onecx/integration-interface'
 import { firstValueFrom } from 'rxjs'
 import { APP_CONFIG } from '../api/injection-tokens'
 import { CONFIG_KEY } from '../model/config-key.model'
 
 @Injectable()
-export class ConfigurationService {
+export class ConfigurationService implements OnDestroy {
   config$ = new ConfigurationTopic()
 
   constructor(
     private http: HttpClient,
     @Optional() @Inject(APP_CONFIG) private defaultConfig?: { [key: string]: string }
   ) {}
+
+  ngOnDestroy(): void {
+    this.config$.destroy()
+  }
 
   public init(): Promise<boolean> {
     return new Promise((resolve, reject) => {
@@ -57,15 +61,15 @@ export class ConfigurationService {
   get isInitialized(): Promise<void> {
     return this.config$.isInitialized
   }
-  
+
   public getProperty(key: CONFIG_KEY): string | undefined {
     return this.config$.getValue()?.[key]
   }
-  
+
   public setProperty(key: string, val: string) {
     this.config$.publish({ key, val })
   }
-  
+
   public getConfig(): Config | undefined {
     return this.config$.getValue()
   }

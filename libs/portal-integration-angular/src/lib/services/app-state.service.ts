@@ -1,7 +1,13 @@
 import { Injectable, OnDestroy } from '@angular/core'
-import { GlobalErrorTopic, GlobalLoadingTopic, CurrentMfeTopic, CurrentPageTopic, CurrentPortalTopic } from '@onecx/integration-interface'
+import {
+  GlobalErrorTopic,
+  GlobalLoadingTopic,
+  CurrentMfeTopic,
+  CurrentPageTopic,
+  CurrentPortalTopic,
+} from '@onecx/integration-interface'
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: 'any' })
 export class AppStateService implements OnDestroy {
   globalError$ = new GlobalErrorTopic()
   globalLoading$ = new GlobalLoadingTopic()

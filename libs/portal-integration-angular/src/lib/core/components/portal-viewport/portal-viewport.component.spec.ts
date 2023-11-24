@@ -1,5 +1,5 @@
 /* tslint:disable:no-unused-variable */
-import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { ComponentFixture, getTestBed, TestBed } from '@angular/core/testing'
 import { PortalViewportComponent } from './portal-viewport.component'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { ConfigurationService } from '../../../services/configuration.service'
@@ -22,8 +22,31 @@ import { IfBreakpointDirective } from '../../directives/if-breakpoint.directive'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { TooltipModule } from 'primeng/tooltip'
 import { TranslateTestingModule } from 'ngx-translate-testing'
+import { AppStateService } from '../../../services/app-state.service'
 
 describe('PortalViewportComponent', () => {
+  const origAddEventListener = window.addEventListener
+  const origPostMessage = window.postMessage
+
+  let listeners: any[] = []
+  window.addEventListener = (_type: any, listener: any) => {
+    listeners.push(listener)
+  }
+
+  window.removeEventListener = (_type: any, listener: any) => {
+    listeners = listeners.filter((l) => l !== listener)
+  }
+
+  window.postMessage = (m: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    listeners.forEach((l) => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }))
+  }
+
+  afterAll(() => {
+    window.addEventListener = origAddEventListener
+    window.postMessage = origPostMessage
+  })
+
   let component: PortalViewportComponent
   let fixture: ComponentFixture<PortalViewportComponent>
 
@@ -50,7 +73,7 @@ describe('PortalViewportComponent', () => {
         ReactiveFormsModule,
         RouterModule,
         TooltipModule,
-        TranslateTestingModule.withTranslations({})
+        TranslateTestingModule.withTranslations({}),
       ],
       providers: [
         ConfigurationService,
@@ -70,13 +93,15 @@ describe('PortalViewportComponent', () => {
     }).compileComponents()
   })
 
-  beforeEach(() => {
-    TestBed.inject(ConfigurationService).setPortal({
+  beforeEach(async () => {
+    const appStateService = getTestBed().inject(AppStateService)
+    appStateService.currentPortal$.publish({
       id: 'i-am-test-portal',
       portalName: 'test',
       baseUrl: '',
       microfrontendRegistrations: [],
     })
+    await appStateService.currentPortal$.isInitialized
 
     fixture = TestBed.createComponent(PortalViewportComponent)
     component = fixture.componentInstance

@@ -78,6 +78,7 @@ import { PatchFormGroupValuesDirective } from './directives/patch-form-group-val
 import { SetInputValueDirective } from './directives/set-input-value.directive'
 import { DiagramComponent } from './components/diagram/diagram.component'
 import { GroupByCountDiagramComponent } from './components/group-by-count-diagram/group-by-count-diagram.component'
+import { UserService } from '../services/user.service'
 
 export function createTranslateLoader(http: HttpClient, mfeInfo: MfeInfo) {
   if (mfeInfo?.remoteBaseUrl) {
@@ -262,7 +263,15 @@ export class PortalCoreModule {
           provide: APP_INITIALIZER,
           multi: true,
           useFactory: standaloneInitializer,
-          deps: [AUTH_SERVICE, ConfigurationService, PortalApiService, ThemeService, APPLICATION_NAME, AppStateService],
+          deps: [
+            AUTH_SERVICE,
+            ConfigurationService,
+            PortalApiService,
+            ThemeService,
+            APPLICATION_NAME,
+            AppStateService,
+            UserService,
+          ],
         })
     }
     return module

@@ -3,11 +3,10 @@ import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular
 import { IAuthService } from '../../../api/iauth.service'
 import { AUTH_SERVICE } from '../../../api/injection-tokens'
 import { UserProfile } from '../../../model/user-profile.model'
-import { ConfigurationService } from '../../../services/configuration.service'
-import { PortalUIService } from '../../../services/portal-ui.service'
 import { MenuService } from '../../../services/app.menu.service'
 import { MenuItem } from 'primeng/api'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
+import { AppStateService } from '../../../services/app-state.service'
 
 @Component({
   selector: 'ocx-inline-profile',
@@ -72,15 +71,15 @@ export class AppInlineProfileComponent implements OnInit {
 
   displayName = ''
 
-  baseUrl: string
+  baseUrl: string | undefined
 
   constructor(
     @Inject(AUTH_SERVICE) private authService: IAuthService,
-    private configService: ConfigurationService,
-    private stateService: PortalUIService,
-    private menuService: MenuService
+    private menuService: MenuService,
+    private appStateService: AppStateService
   ) {
-    this.baseUrl = this.configService.getBaseUrl()
+    // this.baseUrl = this.configService.getBaseUrl()
+    this.appStateService.currentMfe$.subscribe((mfe) => (this.baseUrl = mfe.baseHref))
   }
 
   ngOnInit() {

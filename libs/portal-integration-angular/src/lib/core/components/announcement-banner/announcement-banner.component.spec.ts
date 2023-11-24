@@ -10,24 +10,49 @@ import { Subject } from 'rxjs'
 import { AnnouncementItem, AnnouncementPriorityType } from '../../../model/announcement-item'
 
 describe('AnnouncementBannerComponent', () => {
+  const origAddEventListener = window.addEventListener
+  const origPostMessage = window.postMessage
+
+  let listeners: any[] = []
+  window.addEventListener = (_type: any, listener: any) => {
+    listeners.push(listener)
+  }
+
+  window.removeEventListener = (_type: any, listener: any) => {
+    listeners = listeners.filter((l) => l !== listener)
+  }
+
+  window.postMessage = (m: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    listeners.forEach((l) => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }))
+  }
+
+  afterAll(() => {
+    window.addEventListener = origAddEventListener
+    window.postMessage = origPostMessage
+  })
+
   let component: AnnouncementBannerComponent
   let fixture: ComponentFixture<AnnouncementBannerComponent>
   let announcementsApiService: AnnouncementsApiService
   const getAnnouncementByIdMock = new Subject<AnnouncementItem>()
   const getAnnouncementsMock = new Subject<Array<AnnouncementItem>>()
 
-  beforeEach(() => {
+  beforeEach(async () => {
     TestBed.configureTestingModule({
       declarations: [AnnouncementBannerComponent],
       imports: [HttpClientTestingModule],
       providers: [ConfigurationService, AnnouncementsApiService, AppStateService],
     }).compileComponents()
 
-    // const configurationService = getTestBed().inject(ConfigurationService)
-    // configurationService.setPortal({ id: 'i-am-test-portal', portalName: 'test', baseUrl: '', microfrontendRegistrations: [] })
-
     const appStateService = getTestBed().inject(AppStateService)
-    appStateService.currentPortal$.publish({ id: 'i-am-test-portal', portalName: 'test', baseUrl: '', microfrontendRegistrations: [] })
+    appStateService.currentPortal$.publish({
+      id: 'i-am-test-portal',
+      portalName: 'test',
+      baseUrl: '',
+      microfrontendRegistrations: [],
+    })
+    await appStateService.currentPortal$.isInitialized
 
     announcementsApiService = getTestBed().inject(AnnouncementsApiService)
     jest.spyOn(announcementsApiService, 'getAnnouncementById').mockReturnValue(getAnnouncementByIdMock)

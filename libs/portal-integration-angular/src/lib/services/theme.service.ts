@@ -2,19 +2,21 @@ import { HttpClient } from '@angular/common/http'
 import { Injectable, OnDestroy } from '@angular/core'
 import { CurrentThemeTopic } from '@onecx/integration-interface'
 import { tap } from 'rxjs'
+import { CONFIG_KEY } from '../model/config-key.model'
 import { Theme } from '../model/theme'
 import { ConfigurationService } from './configuration.service'
 
 const defaultThemeServerUrl = 'http://portal-theme-management:8080'
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: 'any' })
 export class ThemeService implements OnDestroy {
   themeServerUrl: string
   baseUrlV1 = './portal-api'
   currentTheme$ = new CurrentThemeTopic()
 
   constructor(private configservice: ConfigurationService, private http: HttpClient) {
-    this.themeServerUrl = this.configservice.getProperty('TKIT_PORTAL_THEME_SERVER_URL') || defaultThemeServerUrl
+    this.themeServerUrl =
+      this.configservice.getProperty(CONFIG_KEY.TKIT_PORTAL_THEME_SERVER_URL) || defaultThemeServerUrl
   }
 
   getThemeHref(themeId: string): string {
