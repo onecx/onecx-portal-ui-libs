@@ -72,12 +72,10 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
     private dialogService: DialogService,
     @Inject(AUTH_SERVICE) public authService: IAuthService
   ) {
-    // TODO
     this.hideMenuButtonTitle = this.portalUIConfig.getTranslation('hideMenuButton')
     this.showMenuButtonTitle = this.portalUIConfig.getTranslation('showMenuButton')
 
     this.portalHomeMenuItem$ = this.appStateService.currentPortal$.asObservable().pipe(
-      untilDestroyed(this),
       map((portal) => ({
         url: portal.homePage,
         label: 'Home',
@@ -85,8 +83,8 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
     )
 
     this.logoUrl$ = combineLatest([
-      this.themeService.currentTheme$.pipe(untilDestroyed(this)),
-      this.appStateService.currentPortal$.asObservable().pipe(untilDestroyed(this)),
+      this.themeService.currentTheme$.asObservable(),
+      this.appStateService.currentPortal$.asObservable(),
     ]).pipe(
       map(([theme, portal]) => {
         return theme.logoUrl || portal.logoUrl || ''

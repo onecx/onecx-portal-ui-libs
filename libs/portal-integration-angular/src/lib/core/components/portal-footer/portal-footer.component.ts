@@ -32,7 +32,7 @@ export class PortalFooterComponent implements OnInit {
     private themeService: ThemeService,
     private ref: ChangeDetectorRef
   ) {
-    this.versionInfo$ = this.appState.currentMfe$.pipe(untilDestroyed(this)).pipe(
+    this.versionInfo$ = this.appState.currentMfe$.pipe(
       withLatestFrom(this.appState.currentPortal$.asObservable()),
       map(([mfe, portal]) => {
         const mfeInfoVersion = mfe?.version || ''
@@ -45,8 +45,8 @@ export class PortalFooterComponent implements OnInit {
   }
   ngOnInit(): void {
     this.src$ = combineLatest([
-      this.themeService.currentTheme$.pipe(untilDestroyed(this)),
-      this.appState.currentPortal$.asObservable().pipe(untilDestroyed(this)),
+      this.themeService.currentTheme$.asObservable(),
+      this.appState.currentPortal$.asObservable(),
     ]).pipe(map(([theme, portalData]) => this.setImageUrl(theme.logoUrl || portalData.logoUrl)))
 
     this.copyrightMsg$ = concat(

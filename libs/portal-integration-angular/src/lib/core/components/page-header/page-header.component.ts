@@ -17,7 +17,6 @@ import { IAuthService } from '../../../api/iauth.service'
 import { AUTH_SERVICE } from '../../../api/injection-tokens'
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService } from '../../../services/app-state.service'
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 
 /**
  * Action definition.
@@ -58,7 +57,6 @@ export interface ObjectDetailItem {
   styleUrls: ['./page-header.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-@UntilDestroy()
 export class PageHeaderComponent implements OnInit, OnChanges {
   @Input()
   public header: string | undefined
@@ -123,10 +121,7 @@ export class PageHeaderComponent implements OnInit, OnChanges {
     this.breadcrumbs = breadcrumbs
     this.home$ = concat(
       of({ icon: 'pi pi-home', routerLink: '/' }),
-      this.appStateService.currentPortal$.pipe(
-        untilDestroyed(this),
-        map((portal) => ({ icon: 'pi pi-home', routerLink: portal.baseUrl }))
-      )
+      this.appStateService.currentPortal$.pipe(map((portal) => ({ icon: 'pi pi-home', routerLink: portal.baseUrl })))
     )
   }
   ngOnChanges(changes: SimpleChanges): void {
