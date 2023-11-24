@@ -61,6 +61,6 @@
 ></ocx-support-ticket>
 <ocx-help-item-editor
   [(displayDialog)]="helpPageEditorDisplayed"
-  [helpItem]="helpDataItem"
+  [helpItem]="(helpDataItem$ | async) ?? {}"
   (saveHelpItem)="updateHelpArticle($event)"
 ></ocx-help-item-editor>

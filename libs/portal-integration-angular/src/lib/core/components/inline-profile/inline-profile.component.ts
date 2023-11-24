@@ -4,7 +4,7 @@ import { IAuthService } from '../../../api/iauth.service'
 import { AUTH_SERVICE } from '../../../api/injection-tokens'
 import { MenuService } from '../../../services/app.menu.service'
 import { MenuItem } from 'primeng/api'
-import { UntilDestroy } from '@ngneat/until-destroy'
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { UserService } from '../../../services/user.service'
 import { map, Observable } from 'rxjs'
 import { UserProfile } from '../../../model/user-profile.model'
@@ -82,7 +82,7 @@ export class AppInlineProfileComponent implements OnInit {
     this.userProfile$ = this.userService.profile$.asObservable()
     this.displayName$ = this.userService.profile$.pipe(map((userProfile) => this.determineDisplayName(userProfile)))
 
-    this.menuService.getMenuItems().subscribe((el) => this.createMenu(el))
+    this.menuService.getMenuItems().pipe(untilDestroyed(this)).subscribe((el) => this.createMenu(el))
   }
 
   private createMenu(menuItems: MenuItem[]) {

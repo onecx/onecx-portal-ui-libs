@@ -4,7 +4,7 @@
   [class]="styleClass"
 >
   <a class="layout-inline-menu-action flex flex-row align-items-center p-3" (click)="onClick($event)">
-    <ocx-user-avatar [user890-]="userProfile$ | async"></ocx-user-avatar>
+    <ocx-user-avatar [user]="(userProfile$ | async) ?? undefined"></ocx-user-avatar>
     <span class="flex flex-column ml-2">
       <span class="font-bold">{{ displayName$ | async }}</span>
       <small>Portal User</small>
