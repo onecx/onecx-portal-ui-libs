@@ -19,7 +19,7 @@ import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.com
 import { HttpClientModule } from '@angular/common/http'
 import { AppStateService } from '../../../services/app-state.service'
 
-async function initFactory(breadcrumbService: BreadcrumbService, appStateService: AppStateService) {
+function initFactory(breadcrumbService: BreadcrumbService, appStateService: AppStateService) {
   return async () => {
     breadcrumbService.setItems([
       { label: 'Level 1', routerLink: 'something' },

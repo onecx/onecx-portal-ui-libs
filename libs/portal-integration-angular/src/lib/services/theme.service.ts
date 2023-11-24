@@ -8,7 +8,7 @@ import { ConfigurationService } from './configuration.service'
 
 const defaultThemeServerUrl = 'http://portal-theme-management:8080'
 
-@Injectable({ providedIn: 'any' })
+@Injectable({ providedIn: 'root' })
 export class ThemeService implements OnDestroy {
   themeServerUrl: string
   baseUrlV1 = './portal-api'

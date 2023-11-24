@@ -1,10 +1,8 @@
 import { SupportTicketApiService } from './../../../services/support-ticket-api.service'
 import { AfterViewInit, Component, HostListener, Inject, Input, OnDestroy, OnInit, Renderer2 } from '@angular/core'
 import { MenuItem, MessageService, PrimeNGConfig } from 'primeng/api'
-import { Portal } from '../../../model/portal'
-import { ConfigurationService } from '../../../services/configuration.service'
 import { PortalUIService } from '../../../services/portal-ui.service'
-import { combineLatest, filter } from 'rxjs'
+import { combineLatest, filter, map, Observable } from 'rxjs'
 import { ThemeService } from '../../../services/theme.service'
 import { AppStateService } from '../../../services/app-state.service'
 import { SupportTicket } from '../../../model/support-ticket'
@@ -52,11 +50,10 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
 
   currentRoute: string | undefined
   globalErrMsg: string | undefined
-  portalHomeMenuItem: MenuItem = {}
+  portalHomeMenuItem$: Observable<MenuItem> | undefined
   showMenuButtonTitle: string | undefined
   hideMenuButtonTitle: string | undefined
-  portalDefinition: Portal | undefined
-  logoUrl: string | undefined
+  logoUrl$: Observable<string> | undefined
   pageName: string | undefined
   helpArticleId: string | undefined
   applicationId: string | undefined
@@ -67,7 +64,6 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
     private router: Router,
     private primengConfig: PrimeNGConfig,
     private portalUIConfig: PortalUIService,
-    private config: ConfigurationService,
     private appStateService: AppStateService,
     private themeService: ThemeService,
     private messageService: MessageService,
@@ -79,16 +75,28 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
     // TODO
     this.hideMenuButtonTitle = this.portalUIConfig.getTranslation('hideMenuButton')
     this.showMenuButtonTitle = this.portalUIConfig.getTranslation('showMenuButton')
-    this.appStateService.currentPortal$.subscribe((portal) => {
-      this.portalDefinition = portal
-      this.portalHomeMenuItem = {url: portal.homePage, label: 'Home'}
-    })
 
-    this.themeService.currentTheme$.pipe(untilDestroyed(this)).subscribe((theme: any) => {
-      this.logoUrl = theme.logoUrl || this.portalDefinition?.logoUrl
-      document.getElementById('favicon')?.setAttribute('href', theme.faviconUrl)
-    })
+    this.portalHomeMenuItem$ = this.appStateService.currentPortal$.asObservable().pipe(
+      untilDestroyed(this),
+      map((portal) => ({
+        url: portal.homePage,
+        label: 'Home',
+      }))
+    )
 
+    this.logoUrl$ = combineLatest([
+      this.themeService.currentTheme$.pipe(untilDestroyed(this)),
+      this.appStateService.currentPortal$.asObservable().pipe(untilDestroyed(this)),
+    ]).pipe(
+      map(([theme, portal]) => {
+        return theme.logoUrl || portal.logoUrl || ''
+      })
+    )
+
+    this.themeService.currentTheme$.pipe(untilDestroyed(this)).subscribe((theme) => {
+      document.getElementById('favicon')?.setAttribute('href', theme.faviconUrl || '')
+    })
+    
     this.router.events
       .pipe(untilDestroyed(this))
       .pipe(filter((event) => event instanceof NavigationEnd))
@@ -96,14 +104,18 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
         if (event instanceof NavigationEnd) this.currentRoute = event.url.split('#')[0]
       })
 
-    combineLatest([this.appStateService.currentPage$.asObservable(), this.appStateService.currentMfe$.asObservable()])
-      .pipe(untilDestroyed(this))
-      .subscribe(([info, mfe]) => {
+    combineLatest([
+      this.appStateService.currentPage$.asObservable(),
+      this.appStateService.currentMfe$.asObservable(),
+    ]).pipe(
+      untilDestroyed(this),
+      map(([info, mfe]) => {
         this.pageName = info?.pageName
         this.helpArticleId = info?.helpArticleId || this.pageName || this.currentRoute
         this.applicationId = info?.applicationId || mfe?.displayName
         if (this.applicationId && this.helpArticleId) this.loadHelpArticle(this.applicationId, this.helpArticleId)
       })
+    )
 
     this.authService.currentUser$.pipe(untilDestroyed(this)).subscribe((profile) => {
       this.menuMode =

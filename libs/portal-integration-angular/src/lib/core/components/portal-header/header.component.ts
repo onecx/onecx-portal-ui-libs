@@ -178,13 +178,6 @@ export class HeaderComponent implements OnInit {
     this.userMenuItems = menuItems.find(({ id }) => id === 'USER_PROFILE_MENU')?.items || []
   }
 
-  navigateTo(path: string, event: Event) {
-    event.preventDefault()
-    // path = this.config.getBaseUrl() + path
-    this.appStateService.currentMfe$.subscribe((mfe) => (path = mfe.baseHref + path))
-    location.assign(path)
-  }
-
   logout(event: Event) {
     event.preventDefault()
     this.authService.logout()

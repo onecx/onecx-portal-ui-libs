@@ -11,12 +11,13 @@ import {
   ViewEncapsulation,
 } from '@angular/core'
 import { MenuItem } from 'primeng/api'
-import { Observable, of } from 'rxjs'
+import { concat, map, Observable, of } from 'rxjs'
 import { BreadcrumbService } from '../../../services/breadcrumb.service'
 import { IAuthService } from '../../../api/iauth.service'
 import { AUTH_SERVICE } from '../../../api/injection-tokens'
 import { TranslateService } from '@ngx-translate/core'
-import { AppStateService } from '../../../services/app-state.service';
+import { AppStateService } from '../../../services/app-state.service'
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 
 /**
  * Action definition.
@@ -57,6 +58,7 @@ export interface ObjectDetailItem {
   styleUrls: ['./page-header.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
+@UntilDestroy()
 export class PageHeaderComponent implements OnInit, OnChanges {
   @Input()
   public header: string | undefined
@@ -108,7 +110,7 @@ export class PageHeaderComponent implements OnInit, OnChanges {
   dd = new Date()
   breadcrumbs$!: Observable<MenuItem[]>
 
-  home = { icon: 'pi pi-home', routerLink: '/' }
+  home$!: Observable<MenuItem>
 
   protected breadcrumbs: BreadcrumbService
 
@@ -116,9 +118,16 @@ export class PageHeaderComponent implements OnInit, OnChanges {
     breadcrumbs: BreadcrumbService,
     @Inject(AUTH_SERVICE) private authService: IAuthService,
     private translateService: TranslateService,
-    private appStateService: AppStateService,
+    private appStateService: AppStateService
   ) {
     this.breadcrumbs = breadcrumbs
+    this.home$ = concat(
+      of({ icon: 'pi pi-home', routerLink: '/' }),
+      this.appStateService.currentPortal$.pipe(
+        untilDestroyed(this),
+        map((portal) => ({ icon: 'pi pi-home', routerLink: portal.baseUrl }))
+      )
+    )
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['actions']) {
@@ -128,7 +137,6 @@ export class PageHeaderComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.appStateService.currentPortal$.subscribe((portal) => this.home.routerLink = portal.baseUrl)
     if (!this.manualBreadcrumbs) {
       this.breadcrumbs$ = this.breadcrumbs.generatedItemsSource
     } else {

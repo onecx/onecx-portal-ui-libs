@@ -31,23 +31,15 @@ describe('Syncable Topic', () => {
     window.postMessage = origPostMessage
   })
 
-  let values1: any[]
-  let values2: any[]
-
   let testSyncableTopic1: SyncableTopic<string>
   let testSyncableTopic2: SyncableTopic<string>
 
   beforeEach(() => {
     listeners = []
 
-    values1 = []
-    values2 = []
-
     testSyncableTopic1 = new SyncableTopic<string>('test', 1)
     testSyncableTopic2 = new SyncableTopic<string>('test', 1)
 
-    testSyncableTopic1.subscribe((v) => values1.push(v))
-    testSyncableTopic2.subscribe((v) => values2.push(v))
   })
 
   it('should get correct value', async () => {

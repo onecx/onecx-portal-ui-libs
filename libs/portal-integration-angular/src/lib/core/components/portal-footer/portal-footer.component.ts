@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core'
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core'
 import { ConfigurationService } from '../../../services/configuration.service'
 import { Router } from '@angular/router'
 import { MenuItem } from 'primeng/api'
 import { MenuService } from '../../../services/app.menu.service'
 import { AppStateService } from '../../../services/app-state.service'
-import { map, Observable, withLatestFrom } from 'rxjs'
+import { combineLatest, concat, map, Observable, of, withLatestFrom } from 'rxjs'
 import { ThemeService } from '../../../services/theme.service'
 import { API_PREFIX } from '../../../api/constants'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
@@ -17,8 +17,8 @@ import { CONFIG_KEY } from '../../../model/config-key.model'
 })
 @UntilDestroy()
 export class PortalFooterComponent implements OnInit {
-  copyrightMsg = 'Capgemini. All rights reserved.'
-  @Input() src: string | undefined
+  copyrightMsg$: Observable<string> | undefined
+  src$: Observable<string | undefined> | undefined
   currentYear = new Date().getFullYear()
   portalMenuItems: MenuItem[] = []
   versionInfo$: Observable<string | undefined>
@@ -44,19 +44,30 @@ export class PortalFooterComponent implements OnInit {
     )
   }
   ngOnInit(): void {
-    this.themeService.currentTheme$
-      .pipe(untilDestroyed(this), withLatestFrom(this.appState.currentPortal$.asObservable()))
-      .subscribe(([theme, portalData]) => {
-        this.src = this.setImageUrl(theme.logoUrl || portalData.logoUrl)
-      })
+    this.src$ = combineLatest([
+      this.themeService.currentTheme$.pipe(untilDestroyed(this)),
+      this.appState.currentPortal$.asObservable().pipe(untilDestroyed(this)),
+    ]).pipe(map(([theme, portalData]) => this.setImageUrl(theme.logoUrl || portalData.logoUrl)))
 
-    this.appState.currentPortal$.subscribe((portalData) => {
-      if (
-        !(portalData.footerLabel === '' || portalData.footerLabel === 'string' || portalData.footerLabel === undefined)
-      ) {
-        this.copyrightMsg = portalData.companyName || portalData.footerLabel || 'All rights reserved.'
-      }
-    })
+    this.copyrightMsg$ = concat(
+      of('Capgemini. All rights reserved.'),
+      this.appState.currentPortal$.pipe(
+        untilDestroyed(this),
+        map((portalData) => {
+          if (
+            !(
+              portalData.footerLabel === '' ||
+              portalData.footerLabel === 'string' ||
+              portalData.footerLabel === undefined
+            )
+          ) {
+            return portalData.companyName || portalData.footerLabel || 'All rights reserved.'
+          }
+          return ''
+        })
+      )
+    )
+
     this.menuService
       .getMenuItems()
       .subscribe((el) =>
@@ -64,7 +75,7 @@ export class PortalFooterComponent implements OnInit {
       )
   }
   public onErrorHandleSrc(): void {
-    this.src = undefined
+    this.src$ = undefined
   }
   private createMenu(menuItem: MenuItem): void {
     if (menuItem && menuItem.items) {

@@ -43,8 +43,7 @@ export class ConfigurationService implements OnDestroy {
       loadConfigPromise
         .then((config) => {
           if (config) {
-            const sanitizedEnvValues = this.sanitizeConfig(config)
-            this.config$.publish({ ...this.defaultConfig, ...sanitizedEnvValues })
+            this.config$.publish({ ...this.defaultConfig })
             this.config$.isInitialized.then(() => {
               resolve(true)
             })
@@ -72,13 +71,5 @@ export class ConfigurationService implements OnDestroy {
 
   public getConfig(): Config | undefined {
     return this.config$.getValue()
-  }
-
-  private sanitizeConfig(config: Config) {
-    const sanitizedConfig: Config = {}
-    return Object.keys(config).reduce((obj, key) => {
-      obj[key] = config[key]
-      return obj
-    }, sanitizedConfig)
   }
 }

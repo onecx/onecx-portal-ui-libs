@@ -3,7 +3,7 @@ import { UserProfileTopic } from '@onecx/integration-interface'
 import { BehaviorSubject } from 'rxjs'
 import { DEFAULT_LANG } from '../api/constants'
 
-@Injectable({ providedIn: 'any' })
+@Injectable({ providedIn: 'root' })
 export class UserService implements OnDestroy {
   profile$ = new UserProfileTopic()
   lang$ = new BehaviorSubject(this.determineLanguage() ?? DEFAULT_LANG)

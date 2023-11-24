@@ -7,7 +7,7 @@ import {
   CurrentPortalTopic,
 } from '@onecx/integration-interface'
 
-@Injectable({ providedIn: 'any' })
+@Injectable({ providedIn: 'root' })
 export class AppStateService implements OnDestroy {
   globalError$ = new GlobalErrorTopic()
   globalLoading$ = new GlobalLoadingTopic()

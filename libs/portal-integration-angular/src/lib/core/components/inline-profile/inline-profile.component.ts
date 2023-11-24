@@ -2,11 +2,12 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core'
 import { IAuthService } from '../../../api/iauth.service'
 import { AUTH_SERVICE } from '../../../api/injection-tokens'
-import { UserProfile } from '../../../model/user-profile.model'
 import { MenuService } from '../../../services/app.menu.service'
 import { MenuItem } from 'primeng/api'
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
-import { AppStateService } from '../../../services/app-state.service'
+import { UntilDestroy } from '@ngneat/until-destroy'
+import { UserService } from '../../../services/user.service'
+import { map, Observable } from 'rxjs'
+import { UserProfile } from '../../../model/user-profile.model'
 
 @Component({
   selector: 'ocx-inline-profile',
@@ -55,7 +56,7 @@ import { AppStateService } from '../../../services/app-state.service'
 })
 @UntilDestroy()
 export class AppInlineProfileComponent implements OnInit {
-  userProfile: UserProfile | undefined
+  userProfile$: Observable<UserProfile> | undefined
   activeInlineMenuElement: string | undefined
   userMenuItems: MenuItem[] = []
 
@@ -69,24 +70,17 @@ export class AppInlineProfileComponent implements OnInit {
   @Output()
   inlineMenuClick: EventEmitter<UIEvent> = new EventEmitter()
 
-  displayName = ''
-
-  baseUrl: string | undefined
+  displayName$: Observable<string> | undefined
 
   constructor(
     @Inject(AUTH_SERVICE) private authService: IAuthService,
     private menuService: MenuService,
-    private appStateService: AppStateService
-  ) {
-    // this.baseUrl = this.configService.getBaseUrl()
-    this.appStateService.currentMfe$.subscribe((mfe) => (this.baseUrl = mfe.baseHref))
-  }
+    private userService: UserService
+  ) {}
 
   ngOnInit() {
-    this.authService.currentUser$.pipe(untilDestroyed(this)).subscribe((user) => {
-      this.userProfile = user
-      this.displayName = this.determineDisplayName()
-    })
+    this.userProfile$ = this.userService.profile$.asObservable()
+    this.displayName$ = this.userService.profile$.pipe(map((userProfile) => this.determineDisplayName(userProfile)))
 
     this.menuService.getMenuItems().subscribe((el) => this.createMenu(el))
   }
@@ -96,15 +90,15 @@ export class AppInlineProfileComponent implements OnInit {
     this.userMenuItems = menu?.items ? menu.items : []
   }
 
-  determineDisplayName() {
-    if (this.userProfile) {
-      const person = this.userProfile.person
+  determineDisplayName(userProfile: UserProfile) {
+    if (userProfile) {
+      const person = userProfile.person
       if (person.displayName) {
         return person.displayName
       } else if (person.firstName && person.lastName) {
         return person.firstName + ' ' + person.lastName
       } else {
-        return this.userProfile.userId
+        return userProfile.userId
       }
     } else {
       return 'Guest'
