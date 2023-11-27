@@ -7,7 +7,6 @@ import { AppStateService } from '../../../services/app-state.service'
 import { combineLatest, concat, map, Observable, of, withLatestFrom } from 'rxjs'
 import { ThemeService } from '../../../services/theme.service'
 import { API_PREFIX } from '../../../api/constants'
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { CONFIG_KEY } from '../../../model/config-key.model'
 @Component({
   selector: 'ocx-footer',
@@ -15,7 +14,6 @@ import { CONFIG_KEY } from '../../../model/config-key.model'
   styleUrls: ['./portal-footer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-@UntilDestroy()
 export class PortalFooterComponent implements OnInit {
   copyrightMsg$: Observable<string> | undefined
   src$: Observable<string | undefined> | undefined
@@ -52,7 +50,6 @@ export class PortalFooterComponent implements OnInit {
     this.copyrightMsg$ = concat(
       of('Capgemini. All rights reserved.'),
       this.appState.currentPortal$.pipe(
-        untilDestroyed(this),
         map((portalData) => {
           if (
             !(
