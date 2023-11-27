@@ -1,10 +1,8 @@
 import { SupportTicketApiService } from './../../../services/support-ticket-api.service'
 import { AfterViewInit, Component, HostListener, Inject, Input, OnDestroy, OnInit, Renderer2 } from '@angular/core'
 import { MenuItem, MessageService, PrimeNGConfig } from 'primeng/api'
-import { Portal } from '../../../model/portal'
-import { ConfigurationService } from '../../../services/configuration.service'
 import { PortalUIService } from '../../../services/portal-ui.service'
-import { combineLatest, filter } from 'rxjs'
+import { catchError, combineLatest, filter, first, map, mergeMap, Observable, of, withLatestFrom } from 'rxjs'
 import { ThemeService } from '../../../services/theme.service'
 import { AppStateService } from '../../../services/app-state.service'
 import { SupportTicket } from '../../../model/support-ticket'
@@ -16,6 +14,7 @@ import { HelpPageAPIService } from '../../../services/help-api-service'
 import { AUTH_SERVICE } from '../../../api/injection-tokens'
 import { IAuthService } from '../../../api/iauth.service'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
+import { HttpResponse } from '@angular/common/http'
 
 @Component({
   selector: 'ocx-portal-viewport',
@@ -50,25 +49,22 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
   ripple = true
   isMobile = false
 
-  currentRoute: string | undefined
   globalErrMsg: string | undefined
-  portalHomeMenuItem: MenuItem = { url: this.config?.getPortal()?.homePage, label: 'Home' }
+  portalHomeMenuItem$: Observable<MenuItem> | undefined
   showMenuButtonTitle: string | undefined
   hideMenuButtonTitle: string | undefined
-  portalDefinition: Portal
-  logoUrl: string | undefined
-  pageName: string | undefined
-  helpArticleId: string | undefined
-  applicationId: string | undefined
-  helpDataItem: HelpData | undefined
+  logoUrl$: Observable<string> | undefined
+  pageName$: Observable<string> | undefined
+  helpArticleId$: Observable<string> | undefined
+  applicationId$: Observable<string> | undefined
+  helpDataItem$: Observable<HelpData> | undefined
 
   constructor(
     private renderer: Renderer2,
     private router: Router,
     private primengConfig: PrimeNGConfig,
     private portalUIConfig: PortalUIService,
-    private config: ConfigurationService,
-    private initState: AppStateService,
+    private appStateService: AppStateService,
     private themeService: ThemeService,
     private messageService: MessageService,
     private supportTicketApiService: SupportTicketApiService,
@@ -76,31 +72,57 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
     private dialogService: DialogService,
     @Inject(AUTH_SERVICE) public authService: IAuthService
   ) {
-    // TODO
     this.hideMenuButtonTitle = this.portalUIConfig.getTranslation('hideMenuButton')
     this.showMenuButtonTitle = this.portalUIConfig.getTranslation('showMenuButton')
-    this.portalDefinition = this.config.getPortal()
 
-    this.themeService.currentTheme$.pipe(untilDestroyed(this)).subscribe((theme: any) => {
-      this.logoUrl = theme.logoUrl || this.portalDefinition.logoUrl
-      document.getElementById('favicon')?.setAttribute('href', theme.faviconUrl)
+    this.portalHomeMenuItem$ = this.appStateService.currentPortal$.asObservable().pipe(
+      map((portal) => ({
+        url: portal.homePage,
+        label: 'Home',
+      }))
+    )
+
+    this.logoUrl$ = combineLatest([
+      this.themeService.currentTheme$.asObservable(),
+      this.appStateService.currentPortal$.asObservable(),
+    ]).pipe(
+      map(([theme, portal]) => {
+        return theme.logoUrl || portal.logoUrl || ''
+      })
+    )
+
+    this.themeService.currentTheme$.pipe(untilDestroyed(this)).subscribe((theme) => {
+      document.getElementById('favicon')?.setAttribute('href', theme.faviconUrl || '')
     })
 
-    this.router.events
-      .pipe(untilDestroyed(this))
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe((event) => {
-        if (event instanceof NavigationEnd) this.currentRoute = event.url.split('#')[0]
-      })
+    this.pageName$ = this.appStateService.currentPage$.pipe(map((page) => page?.pageName ?? ''))
+    this.helpArticleId$ = combineLatest([
+      this.appStateService.currentPage$.asObservable(),
+      this.router.events.pipe(filter((event) => event instanceof NavigationEnd)),
+    ]).pipe(
+      map(
+        ([page, routerEvent]) =>
+          page?.helpArticleId ??
+          page?.pageName ??
+          (routerEvent instanceof NavigationEnd ? routerEvent.url.split('#')[0] : '')
+      )
+    )
 
-    combineLatest([this.initState.currentPage$.asObservable(), this.initState.currentMfe$.asObservable()])
-      .pipe(untilDestroyed(this))
-      .subscribe(([info, mfe]) => {
-        this.pageName = info?.pageName
-        this.helpArticleId = info?.helpArticleId || this.pageName || this.currentRoute
-        this.applicationId = info?.applicationId || mfe?.displayName
-        if (this.applicationId && this.helpArticleId) this.loadHelpArticle(this.applicationId, this.helpArticleId)
+    this.applicationId$ = combineLatest([
+      this.appStateService.currentPage$.asObservable(),
+      this.appStateService.currentMfe$.asObservable(),
+    ]).pipe(map(([page, mfe]) => page?.applicationId ?? mfe.displayName ?? ''))
+
+    this.helpDataItem$ = combineLatest([this.applicationId$, this.helpArticleId$]).pipe(
+      mergeMap(([applicationId, helpArticleId]) => {
+        if (applicationId && helpArticleId) return this.loadHelpArticle(applicationId, helpArticleId)
+        return of()
+      }),
+      catchError(() => {
+        console.log(`Failed to load help article`)
+        return of()
       })
+    )
 
     this.authService.currentUser$.pipe(untilDestroyed(this)).subscribe((profile) => {
       this.menuMode =
@@ -122,7 +144,7 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
   ngOnInit() {
     this.primengConfig.ripple = true
 
-    this.initState.globalError$
+    this.appStateService.globalError$
       .pipe(untilDestroyed(this))
       .pipe(filter((i) => i !== undefined))
       .subscribe((err) => {
@@ -186,21 +208,26 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
     this.supportTicketDisplayed = true
   }
   onSubmitTicket(ticket: SupportTicket) {
-    this.supportTicketApiService.createSupportTicket(ticket, this.pageName).subscribe({
-      next: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Success!',
-          detail: 'Ticket successfully submitted',
-        })
-      },
-      error: () =>
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error!',
-          detail: 'Error occured while submitting a ticket',
-        }),
-    })
+    this.pageName$
+      ?.pipe(
+        first(),
+        mergeMap((pageName) => this.supportTicketApiService.createSupportTicket(ticket, pageName))
+      )
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success!',
+            detail: 'Ticket successfully submitted',
+          })
+        },
+        error: () =>
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error!',
+            detail: 'Error occured while submitting a ticket',
+          }),
+      })
   }
   isHorizontalMenuMode() {
     return this.menuMode === 'horizontal' && !this.isMobile
@@ -215,68 +242,81 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   public openHelpPageEditor(): void {
-    if (this.helpArticleId && this.applicationId) {
-      if (!this.helpDataItem) {
-        this.helpDataItem = { appId: this.applicationId, helpItemId: this.helpArticleId }
-      }
-      this.helpPageEditorDisplayed = true
-    } else {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Cannot edit the Help Item. HelpItemId or ApplicationId are undefined or null.',
+    combineLatest([this.helpArticleId$ ?? of(), this.applicationId$ ?? of(), this.helpDataItem$ ?? of()])
+      .pipe(first())
+      .subscribe(([helpArticleId, applicationId, helpDataItem]) => {
+        if (helpArticleId && applicationId) {
+          if (!helpDataItem) {
+            helpDataItem = { appId: applicationId, helpItemId: helpArticleId }
+          }
+          this.helpPageEditorDisplayed = true
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Cannot edit the Help Item. HelpItemId or ApplicationId are undefined or null.',
+          })
+        }
       })
-    }
   }
 
   public openHelpPage(event: any) {
-    if (this.helpDataItem && this.helpDataItem.id) {
-      const url = this.helpDataItem.resourceUrl
-      if (url) {
-        console.log(`navigate to help page: ${url}`)
-        try {
-          window.open(new URL(url), '_blank')?.focus
-        } catch (e) {
-          console.log(`Error constructing help page URL`, e)
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Help Item URL not valid',
+    this.helpDataItem$
+      ?.pipe(withLatestFrom(this.helpArticleId$ ?? of()), first())
+      .subscribe(([helpDataItem, helpArticleId]) => {
+        if (helpDataItem && helpDataItem.id) {
+          const url = helpDataItem.resourceUrl
+          if (url) {
+            console.log(`navigate to help page: ${url}`)
+            try {
+              window.open(new URL(url), '_blank')?.focus
+            } catch (e) {
+              console.log(`Error constructing help page URL`, e)
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Help Item URL not valid',
+              })
+            }
+          }
+        } else {
+          this.dialogService.open(NoHelpItemComponent, {
+            header: 'No help item defined for this page',
+            width: '400px',
+            data: {
+              helpArticleId: helpArticleId,
+            },
           })
         }
-      }
-    } else {
-      this.dialogService.open(NoHelpItemComponent, {
-        header: 'No help item defined for this page',
-        width: '400px',
-        data: {
-          helpArticleId: this.helpArticleId,
-        },
       })
-    }
     event.preventDefault()
   }
   private loadHelpArticle(appId: string, helpItemId: string) {
-    this.helpDataService.getHelpDataItem(appId, helpItemId).subscribe({
-      next: (data) => {
-        this.helpDataItem = data
-      },
-      error: () => console.log(`Failed to load help article: ${helpItemId}`),
-    })
+    return this.helpDataService.getHelpDataItem(appId, helpItemId)
   }
   public updateHelpArticle(helpItem: HelpData) {
-    if (this.applicationId && helpItem) {
-      this.helpDataService.saveHelpPage(this.applicationId, helpItem).subscribe({
-        next: (res) => {
-          console.log(`Help item saved: ${res.status}`)
-          this.helpPageEditorDisplayed = false
+    this.applicationId$
+      ?.pipe(
+        first(),
+        mergeMap((applicationId) =>
+          this.helpDataService
+            .saveHelpPage(applicationId, helpItem)
+            .pipe(map((res): [string, HttpResponse<any>] => [applicationId, res]))
+        )
+      )
+      .subscribe({
+        next: ([applicationId, res]) => {
+          if (applicationId && helpItem) {
+            console.log(`Help item saved: ${res.status}`)
+            this.helpPageEditorDisplayed = false
 
-          this.messageService.add({
-            severity: 'info',
-            summary: 'Help Item definition updated',
-          })
-          if (helpItem.helpItemId && this.applicationId) {
-            this.loadHelpArticle(this.applicationId, helpItem.helpItemId)
+            this.messageService.add({
+              severity: 'info',
+              summary: 'Help Item definition updated',
+            })
+            if (helpItem.helpItemId && applicationId) {
+              this.loadHelpArticle(applicationId, helpItem.helpItemId)
+            }
+            this.helpPageEditorDisplayed = false
           }
-          this.helpPageEditorDisplayed = false
         },
         error: (error) => {
           console.log(`Could not save help item`)
@@ -288,6 +328,5 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
           this.helpPageEditorDisplayed = false
         },
       })
-    }
   }
 }

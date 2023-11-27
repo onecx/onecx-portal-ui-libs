@@ -7,12 +7,19 @@ import { CommonModule } from '@angular/common'
 import { BrowserModule } from '@angular/platform-browser'
 import { AnnouncementBannerComponent } from './announcement-banner.component'
 import { HttpClientModule } from '@angular/common/http'
-import { ConfigurationService } from '../../../services/configuration.service'
+import { AppStateService } from '../../../services/app-state.service'
 
-function initFactory(configurationService: ConfigurationService) {
-  configurationService.setPortal({ baseUrl: '/demo', portalName: 'Demo', id: 'Demo', microfrontends: [] })
+async function initFactory(appStateService: AppStateService) {
+  appStateService.currentPortal$.publish({
+    baseUrl: '/demo',
+    portalName: 'Demo',
+    id: 'Demo',
+    microfrontendRegistrations: [],
+  })
+  await appStateService.currentPortal$.isInitialized
+
   return () => {
-    configurationService
+    appStateService
   }
 }
 
@@ -26,12 +33,12 @@ export default {
         importProvidersFrom(BrowserModule),
         importProvidersFrom(BrowserAnimationsModule),
         importProvidersFrom(HttpClientModule),
-        ConfigurationService,
+        AppStateService,
         {
           provide: APP_INITIALIZER,
           useFactory: initFactory,
           multi: true,
-          deps: [ConfigurationService],
+          deps: [AppStateService],
         },
       ],
     }),

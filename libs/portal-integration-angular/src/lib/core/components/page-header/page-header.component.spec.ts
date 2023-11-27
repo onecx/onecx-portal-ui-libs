@@ -10,6 +10,7 @@ import { TranslateTestingModule } from 'ngx-translate-testing'
 import { BreadcrumbModule } from 'primeng/breadcrumb'
 import { MenuModule } from 'primeng/menu'
 import { ButtonModule } from 'primeng/button'
+import { AppStateService } from '../../../services/app-state.service'
 
 const mockActions: Action[] = [
   {
@@ -40,6 +41,28 @@ class TestHostComponent {
 }
 
 describe('PageHeaderComponent', () => {
+  const origAddEventListener = window.addEventListener
+  const origPostMessage = window.postMessage
+
+  let listeners: any[] = []
+  window.addEventListener = (_type: any, listener: any) => {
+    listeners.push(listener)
+  }
+
+  window.removeEventListener = (_type: any, listener: any) => {
+    listeners = listeners.filter((l) => l !== listener)
+  }
+
+  window.postMessage = (m: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    listeners.forEach((l) => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }))
+  }
+
+  afterAll(() => {
+    window.addEventListener = origAddEventListener
+    window.postMessage = origPostMessage
+  })
+
   let component: TestHostComponent
   let fixture: ComponentFixture<TestHostComponent>
   const mockService = new MockAuthService()
@@ -60,16 +83,17 @@ describe('PageHeaderComponent', () => {
         MenuModule,
         ButtonModule,
       ],
-      providers: [ConfigurationService, { provide: AUTH_SERVICE, useValue: mockService }],
+      providers: [ConfigurationService, AppStateService, { provide: AUTH_SERVICE, useValue: mockService }],
     }).compileComponents()
 
-    const configurationService = getTestBed().inject(ConfigurationService)
-    configurationService.setPortal({
+    const appStateService = getTestBed().inject(AppStateService)
+    appStateService.currentPortal$.publish({
       id: 'i-am-test-portal',
       portalName: 'test',
       baseUrl: '',
       microfrontendRegistrations: [],
     })
+    await appStateService.currentPortal$.isInitialized
   })
 
   beforeEach(() => {

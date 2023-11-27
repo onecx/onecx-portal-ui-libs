@@ -60,6 +60,9 @@ export * from './lib/services/theme.service'
 export * from './lib/services/initialize-module-guard.service'
 export * from './lib/services/userprofile-api.service'
 export * from './lib/services/portal-dialog.service'
+export * from './lib/services/user.service'
+
+// pipes
 export * from './lib/core/pipes/dynamic.pipe'
 export * from './lib/core/pipes/relative-date.pipe'
 
@@ -85,6 +88,7 @@ export * from './lib/model/column-type.model'
 export * from './lib/model/data-sort-direction'
 export * from './lib/model/breadcrumb-menu-item.model'
 export * from './lib/model/data-action'
+export * from './lib/model/config-key.model'
 
 // core
 export * from './lib/api/iauth.service'

@@ -1,13 +1,11 @@
 import { Inject, Injectable, Optional } from '@angular/core'
 import {
   ConfigurationService,
-  CONFIG_KEY_KEYCLOAK_CLIENT_ID,
-  CONFIG_KEY_KEYCLOAK_ENABLE_SILENT_SSO,
-  CONFIG_KEY_KEYCLOAK_REALM,
-  CONFIG_KEY_KEYCLOAK_URL,
+  CONFIG_KEY,
   IAuthService,
   UserProfile,
   UserProfileAPIService,
+  UserService,
 } from '@onecx/portal-integration-angular'
 import { KeycloakEventType, KeycloakOptions, KeycloakService } from 'keycloak-angular'
 import { KeycloakConfig } from 'keycloak-js'
@@ -29,11 +27,11 @@ export class KeycloakAuthService implements IAuthService {
     private keycloakService: KeycloakService,
     private configService: ConfigurationService,
     private userProfileAPIService: UserProfileAPIService,
+    private userService: UserService,
     @Inject(KEYCLOAK_AUTH_CONFIG) @Optional() private kcModuleConfig: KeycloakAuthModuleConfig
   ) {}
 
   public init(): Promise<boolean> {
-    // console.log('Keycloak Auth initialization')
     // load previous tokens, saved after successful login of keycloak success callback
     let token = localStorage.getItem(KC_TOKEN_LS)
     let idToken = localStorage.getItem(KC_ID_TOKEN_LS)
@@ -60,13 +58,12 @@ export class KeycloakAuthService implements IAuthService {
       kcConfig = './assets/keycloak.json'
     }
 
-    const enableSilentSSOCheck = this.configService.getProperty(CONFIG_KEY_KEYCLOAK_ENABLE_SILENT_SSO) === 'true'
+    const enableSilentSSOCheck = this.configService.getProperty(CONFIG_KEY.KEYCLOAK_ENABLE_SILENT_SSO) === 'true'
 
     const kcOptions: KeycloakOptions = {
       loadUserProfileAtStartUp: false,
       config: kcConfig,
       initOptions: {
-        // onLoad: "login-required",
         onLoad: 'check-sso',
         checkLoginIframe: false,
         silentCheckSsoRedirectUri: enableSilentSSOCheck ? this.getSilentSSOUrl() : undefined,
@@ -78,7 +75,6 @@ export class KeycloakAuthService implements IAuthService {
       bearerExcludedUrls: ['/assets'],
     }
 
-    // console.log(`INit KC with ${JSON.stringify(kcOptions, null, 2)}`)
     return (
       this.keycloakService
         .init(kcOptions)
@@ -88,26 +84,18 @@ export class KeycloakAuthService implements IAuthService {
         })
         .then((loginOk) => {
           // this will be false if our silent login did not work
-          // console.log(`Keycloak init done, loginOk?: ${loginOk}`)
           if (loginOk) {
             return this.keycloakService.getToken()
           } else {
             // we want to block bootstrap process now
             return this.keycloakService.login().then(() => 'login')
           }
-          // if (!loginOk) {
-          //     return this.keycloakService.login().then(() => 'login')
-          // } else {
-          //     return Promise.resolve('loginOk')
-          // }
         })
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         .then((res) => {
           return firstValueFrom(this.userProfileAPIService.getCurrentUser())
         })
         .then((userProfile) => {
-          // console.debug(`Got user profile, update state`)
-          // this.updateUserFromKeycloak(results[0], parsedToken);
           this.userProfile = userProfile
 
           //overwrite user-roles with the roles from keycloak-token
@@ -125,18 +113,8 @@ export class KeycloakAuthService implements IAuthService {
           this.updatePermissionsFromUserProfile(userProfile)
           localStorage.setItem(TKIT_USER_PROFILE_LS, JSON.stringify(userProfile))
           this.currentUser$.next(this.userProfile)
+          this.userService.profile$.publish(this.userProfile)
 
-          //update language if set
-          if (this.userProfile.accountSettings?.localeAndTimeSettings?.locale) {
-            console.log(
-              `ℹ Update App language from user profile : ${this.userProfile.accountSettings?.localeAndTimeSettings?.locale}`
-            )
-            this.configService.lang = this.userProfile.accountSettings?.localeAndTimeSettings?.locale
-            this.configService.lang$.next(this.userProfile.accountSettings?.localeAndTimeSettings?.locale)
-          } else {
-            console.log(`ℹ User does not have language/local set in profile`)
-          }
-          // console.log(`Keycloak auth init complete`)
           return true
         })
         .catch((err) => {
@@ -162,16 +140,16 @@ export class KeycloakAuthService implements IAuthService {
   }
 
   private getValidKCConfig(): KeycloakConfig {
-    const clientId = this.configService.getProperty(CONFIG_KEY_KEYCLOAK_CLIENT_ID)
+    const clientId = this.configService.getProperty(CONFIG_KEY.KEYCLOAK_CLIENT_ID)
     if (!clientId) {
       throw new Error('Invalid KC config, missing clientId')
     }
-    const realm = this.configService.getProperty(CONFIG_KEY_KEYCLOAK_REALM)
+    const realm = this.configService.getProperty(CONFIG_KEY.KEYCLOAK_REALM)
     if (!realm) {
       throw new Error('Invalid KC config, missing realm')
     }
     return {
-      url: this.configService.getProperty(CONFIG_KEY_KEYCLOAK_URL),
+      url: this.configService.getProperty(CONFIG_KEY.KEYCLOAK_URL),
       clientId,
       realm,
     }
@@ -179,7 +157,6 @@ export class KeycloakAuthService implements IAuthService {
 
   private setupEventListener() {
     this.keycloakService.keycloakEvents$.subscribe((ke) => {
-      // console.log(`KC Event ${KeycloakEventType[ke.type]} token: ${this.keycloakService.getKeycloakInstance().token}`)
       // we are logged in, get tokens and store them in localstorage
       if (this.keycloakService.getKeycloakInstance().token) {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -203,7 +180,6 @@ export class KeycloakAuthService implements IAuthService {
         console.log('SSO logout nav to root')
         this.clearKCStateFromLocalstorage()
         this.keycloakService.login()
-        // window.location.reload()
       }
     })
   }
@@ -234,7 +210,6 @@ export class KeycloakAuthService implements IAuthService {
       console.log(`⚠ Permission check is disabled. Allowing ${permissionKey}`)
       return true
     }
-    // return true
     const result = this.userPermissions ? this.userPermissions.includes(permissionKey) : false
     if (!result) {
       console.log(`👮‍♀️ No permission for: ${permissionKey}`)
