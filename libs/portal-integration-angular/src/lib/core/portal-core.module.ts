@@ -79,6 +79,7 @@ import { PatchFormGroupValuesDirective } from './directives/patch-form-group-val
 import { SetInputValueDirective } from './directives/set-input-value.directive'
 import { DiagramComponent } from './components/diagram/diagram.component'
 import { GroupByCountDiagramComponent } from './components/group-by-count-diagram/group-by-count-diagram.component'
+import { SearchConfigComponent } from './components/search-config/search-config.component'
 
 export function createTranslateLoader(http: HttpClient, mfeInfo: MfeInfo) {
   if (mfeInfo?.remoteBaseUrl) {
@@ -162,6 +163,7 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     SetInputValueDirective,
     DiagramComponent,
     GroupByCountDiagramComponent,
+    SearchConfigComponent,
   ],
   providers: [
     ConfigurationService,
@@ -222,6 +224,7 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     SetInputValueDirective,
     DiagramComponent,
     GroupByCountDiagramComponent,
+    SearchConfigComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   entryComponents: [ColumnTogglerComponent],

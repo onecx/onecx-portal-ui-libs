@@ -1,0 +1,14 @@
+<div *ngIf="formGroup">
+  <form [formGroup]="formGroup">
+    <div *ngIf="searchConfigs">
+      <p-dropdown
+        formControlName="searchConfigForm"
+        [options]="searchConfigs"
+        optionLabel="name"
+        placeholder="Select a SearchConfig"
+        [showClear]="true"
+        (onChange)="onChange($event)"
+      ></p-dropdown>
+    </div>
+  </form>
+</div>
