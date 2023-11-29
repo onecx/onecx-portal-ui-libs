@@ -39,7 +39,7 @@ export class DiagramComponent implements OnInit, OnChanges {
       const inputData = this.data.map((diagramData) => diagramData.value)
 
       this.amountOfData = this.data.reduce((acc, current) => acc + current.value, 0)
-      const COLORS = interpolateColors(this.amountOfData, colorScale, colorRangeInfo)
+      const COLORS = interpolateColors(this.data.length, colorScale, colorRangeInfo)
       this.chartData = {
         labels: this.data.map((data) => data.label),
         datasets: [
