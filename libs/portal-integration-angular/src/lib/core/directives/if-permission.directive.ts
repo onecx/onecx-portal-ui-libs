@@ -33,7 +33,7 @@ export class IfPermissionDirective implements OnInit {
 
   ngOnInit() {
     if (this.permission) {
-      if (!this.authService.hasPermission(this.permission)) {
+      if (this.negate === this.authService.hasPermission(this.permission)) {
         console.log(`Permission check failed: ${this.permission}`)
         if (this.onMissingPermission === 'disable') {
           this.renderer.setAttribute(this.el.nativeElement, 'disabled', 'disabled')
