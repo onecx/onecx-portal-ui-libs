@@ -1,5 +1,16 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core'
+import {
+  AfterViewInit,
+  Component,
+  ContentChild,
+  ElementRef,
+  EventEmitter,
+  Input,
+  Output,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core'
 import { Action } from '../page-header/page-header.component'
+import { SearchConfig } from '../../../model/search-config'
 
 /**
  * To trigger the search when Enter key is pressed inside a search parameter field,
@@ -13,6 +24,14 @@ import { Action } from '../page-header/page-header.component'
   styleUrls: ['./search-header.component.scss'],
 })
 export class SearchHeaderComponent implements AfterViewInit {
+  @ContentChild('additionalToolbarActions')
+  additionalToolbarActions: TemplateRef<any> | undefined
+
+  get _additionalToolbarActions(): TemplateRef<any> | undefined {
+    return this.additionalToolbarActions
+  }
+
+  @Input() searchConfigsEntries: SearchConfig[] | undefined
   @Input() headline = ''
   @Input() manualBreadcrumbs = false
   _actions: Action[] = []

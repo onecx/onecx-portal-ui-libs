@@ -1,5 +1,6 @@
 import {
   Component,
+  ContentChild,
   EventEmitter,
   Inject,
   Input,
@@ -7,6 +8,7 @@ import {
   OnInit,
   Output,
   SimpleChanges,
+  TemplateRef,
   Type,
   ViewEncapsulation,
 } from '@angular/core'
@@ -58,6 +60,9 @@ export interface ObjectDetailItem {
   encapsulation: ViewEncapsulation.None,
 })
 export class PageHeaderComponent implements OnInit, OnChanges {
+  @ContentChild('additionalToolbarActions')
+  additionalToolbarActions: TemplateRef<any> | undefined
+
   @Input()
   public header: string | undefined
 
