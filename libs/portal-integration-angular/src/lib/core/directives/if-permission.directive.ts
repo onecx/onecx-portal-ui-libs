@@ -12,10 +12,16 @@ import {
 import { IAuthService } from '../../api/iauth.service'
 import { AUTH_SERVICE } from '../../api/injection-tokens'
 
-@Directive({ selector: '[ocxIfPermission]' })
+@Directive({ selector: '[ocxIfPermission], [ocxIfNotPermission]' })
 export class IfPermissionDirective implements OnInit {
   @Input('ocxIfPermission') permission: string | undefined
+  @Input('ocxIfNotPermission') set notPermission(value: string | undefined) {
+    this.permission = value
+    this.negate = true
+  }
+
   @Input() onMissingPermission: 'hide' | 'disable' = 'hide'
+  negate = false
 
   constructor(
     private renderer: Renderer2,
