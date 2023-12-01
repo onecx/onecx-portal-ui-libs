@@ -7,5 +7,6 @@ import { Component, Input } from '@angular/core'
 })
 
 export class LoadingIndicatorComponent {
-  @Input() fullPageOverlay = false;
+  @Input() fullPageOverlay: Boolean;
+  @Input() small: Boolean;
 }
