@@ -9,10 +9,10 @@ import { FormControl, FormGroup } from '@angular/forms'
 })
 export class SearchConfigComponent implements OnInit {
   @Input()
-  searchConfigs: SearchConfig[] | undefined
+  searchConfigs: SearchConfig[] | [] | undefined
 
   @Output()
-  selectedSearchConfig: EventEmitter<SearchConfig | null> | undefined
+  selectedSearchConfig: EventEmitter<SearchConfig[]> = new EventEmitter()
 
   formGroup: FormGroup | undefined
   ngOnInit(): void {
@@ -21,7 +21,7 @@ export class SearchConfigComponent implements OnInit {
     })
   }
 
-  onChange(event: SearchConfig) {
+  onSearchConfigChange(event: SearchConfig[]) {
     this.selectedSearchConfig?.emit(event)
   }
 }

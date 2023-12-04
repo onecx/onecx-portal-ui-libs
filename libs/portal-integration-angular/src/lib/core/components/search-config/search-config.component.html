@@ -1,14 +1,16 @@
 <div *ngIf="formGroup">
   <form [formGroup]="formGroup">
-    <div *ngIf="searchConfigs">
-      <p-dropdown
-        formControlName="searchConfigForm"
-        [options]="searchConfigs"
-        optionLabel="name"
-        placeholder="Select a SearchConfig"
-        [showClear]="true"
-        (onChange)="onChange($event)"
-      ></p-dropdown>
+    <div *ngIf="searchConfigs !== undefined">
+      <div *ngIf="searchConfigs.length > 0">
+        <p-dropdown
+          formControlName="searchConfigForm"
+          [options]="searchConfigs"
+          optionLabel="name"
+          placeholder="{{ 'OCX_SEARCH_HEADER.OCX_SEARCH_CONFIG.DEFAULT' | translate }}"
+          [showClear]="true"
+          (onChange)="onSearchConfigChange($event)"
+        ></p-dropdown>
+      </div>
     </div>
   </form>
 </div>

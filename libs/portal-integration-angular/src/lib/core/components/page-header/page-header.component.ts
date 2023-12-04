@@ -60,9 +60,6 @@ export interface ObjectDetailItem {
   encapsulation: ViewEncapsulation.None,
 })
 export class PageHeaderComponent implements OnInit, OnChanges {
-  @ContentChild('additionalToolbarActions')
-  additionalToolbarActions: TemplateRef<any> | undefined
-
   @Input()
   public header: string | undefined
 
@@ -107,9 +104,12 @@ export class PageHeaderComponent implements OnInit, OnChanges {
 
   @Output()
   save = new EventEmitter()
+
+  @ContentChild('additionalToolbarActions')
+  additionalToolbarActions: TemplateRef<any> | undefined
+
   overflowActions: MenuItem[] = []
   inlineActions: Action[] | undefined
-
   dd = new Date()
   breadcrumbs$!: Observable<MenuItem[]>
 

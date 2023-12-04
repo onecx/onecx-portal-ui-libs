@@ -24,13 +24,6 @@ import { SearchConfig } from '../../../model/search-config'
   styleUrls: ['./search-header.component.scss'],
 })
 export class SearchHeaderComponent implements AfterViewInit {
-  @ContentChild('additionalToolbarActions')
-  additionalToolbarActions: TemplateRef<any> | undefined
-
-  get _additionalToolbarActions(): TemplateRef<any> | undefined {
-    return this.additionalToolbarActions
-  }
-
   @Input() searchConfigsEntries: SearchConfig[] | undefined
   @Input() headline = ''
   @Input() manualBreadcrumbs = false
@@ -46,6 +39,13 @@ export class SearchHeaderComponent implements AfterViewInit {
 
   @Output() searched: EventEmitter<any> = new EventEmitter()
   @Output() resetted: EventEmitter<any> = new EventEmitter()
+  @Output() selectedSearchConfig: EventEmitter<any> = new EventEmitter()
+  @ContentChild('additionalToolbarActions')
+  additionalToolbarActions: TemplateRef<any> | undefined
+
+  get _additionalToolbarActions(): TemplateRef<any> | undefined {
+    return this.additionalToolbarActions
+  }
 
   @ViewChild('searchParameterFields') searchParameterFields: ElementRef | undefined
 
@@ -101,5 +101,9 @@ export class SearchHeaderComponent implements AfterViewInit {
     if (event.code === 'Enter') {
       this.onSearchClicked()
     }
+  }
+
+  confirmSearchConfig(event: any) {
+    this.selectedSearchConfig?.emit(event)
   }
 }
