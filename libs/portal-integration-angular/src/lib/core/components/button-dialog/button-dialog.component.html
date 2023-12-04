@@ -1,0 +1,17 @@
+<div>
+    <ng-template buttonDialogHost></ng-template>
+    <div class="w-full flex justify-content-end mb-3">
+        <p-button id="buttonDialogSideButton" *ngIf="dialogData.sideButtonEnabled"
+            class="mx-2"
+            [icon]="dialogData.sideButtonDetails.icon"
+            (click)="sideButtonAction()"
+            [label]="dialogData.sideButtonDetails.label"
+        ></p-button>
+        <p-button id="buttonDialogMainButton"
+            class="mx-2"
+            [icon]="dialogData.mainButtonDetails.icon"
+            (click)="mainButtonAction()"
+            [label]="dialogData.mainButtonDetails.label"
+        ></p-button>
+    </div>
+</div>

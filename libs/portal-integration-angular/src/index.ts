@@ -6,6 +6,7 @@ export * from './lib/core/directives/advanced.directive'
 export * from './lib/core/directives/basic.directive'
 export * from './lib/core/directives/patch-form-group-values.driective'
 export * from './lib/core/directives/set-input-value.directive'
+export * from './lib/core/directives/button-dialog-host.directive'
 
 // components
 export * from './lib/core/components/loading/loading.component'
@@ -47,6 +48,7 @@ export * from './lib/core/components/custom-group-column-selector/custom-group-c
 export * from './lib/core/components/data-list-grid-sorting/data-list-grid-sorting.component'
 export * from './lib/core/components/group-by-count-diagram/group-by-count-diagram.component'
 export * from './lib/core/components/diagram/diagram.component'
+export * from './lib/core/components/button-dialog/button-dialog.component'
 
 // services
 export * from './lib/services/app.menu.service'
@@ -85,6 +87,7 @@ export * from './lib/model/column-type.model'
 export * from './lib/model/data-sort-direction'
 export * from './lib/model/breadcrumb-menu-item.model'
 export * from './lib/model/data-action'
+export * from './lib/model/button-dialog-content'
 
 // core
 export * from './lib/api/iauth.service'
