@@ -8,7 +8,8 @@ import { ButtonDialogHostDirective } from '../../directives/button-dialog-host.d
 import { ButtonModule } from 'primeng/button'
 import { HarnessLoader } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { PButtonHarness } from 'libs/portal-integration-angular/testing'
+import { PButtonHarness } from '../../../../../testing'
+// import { PButtonHarness } from 'libs/portal-integration-angular/testing'
 import { EventEmitter } from '@angular/core'
 import { ButtonDialogContent } from '../../../model/button-dialog-content'
 
@@ -102,7 +103,7 @@ describe('ButtonDialogComponent', () => {
     it('should create new EventEmitter by default', async () => {
       jest.spyOn(component.dialogResult, 'emit')
 
-      let button = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogMainButton' }))
+      const button = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogMainButton' }))
       await button.click()
 
       expect(component.dialogResult.emit).toHaveBeenCalledTimes(1)
@@ -331,9 +332,9 @@ describe('ButtonDialogComponent', () => {
     })
 
     it('should emit approperiate values', async () => {
-      let emitter: EventEmitter<any> = new EventEmitter()
+      const emitter: EventEmitter<any> = new EventEmitter()
       jest.spyOn(emitter, 'emit')
-      let defaultEmiter = component.dialogResult
+      const defaultEmiter = component.dialogResult
       jest.spyOn(defaultEmiter, 'emit')
 
       component.dialogContent = {
@@ -344,7 +345,7 @@ describe('ButtonDialogComponent', () => {
       component.loadComponent()
       fixture.detectChanges()
 
-      let button = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogMainButton' }))
+      const button = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogMainButton' }))
       await button.click()
 
       expect(emitter.emit).toHaveBeenCalledWith(true)
@@ -367,7 +368,7 @@ describe('ButtonDialogComponent', () => {
       component.loadComponent()
       fixture.detectChanges()
 
-      let button = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogMainButton' }))
+      const button = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogMainButton' }))
       await button.click()
 
       expect(component.dialogResult.emit).toHaveBeenCalledWith('myCustomValueWithCustomType')
@@ -396,14 +397,14 @@ describe('ButtonDialogComponent', () => {
       component.loadComponent()
       fixture.detectChanges()
 
-      let mainButton = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogMainButton' }))
+      const mainButton = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogMainButton' }))
       await mainButton.click()
 
       expect(component.ref.close).toHaveBeenCalledTimes(1)
 
       jest.resetAllMocks()
 
-      let sideButton = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogSideButton' }))
+      const sideButton = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogSideButton' }))
       await sideButton.click()
 
       expect(component.ref.close).toHaveBeenCalledTimes(0)
