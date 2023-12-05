@@ -1,3 +1,11 @@
+## [3.5.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.5.1...v3.5.2) (2023-12-05)
+
+
+### Bug Fixes
+
+* diagram color range fix ([487f671](https://github.com/onecx/onecx-portal-ui-libs/commit/487f67180cfa473b8d554cd7149d7b90967db79d))
+* theme logo ([e8ebc0e](https://github.com/onecx/onecx-portal-ui-libs/commit/e8ebc0ebcd69364a9e000929f32380573858f7b3))
+
 ## [3.5.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.5.0...v3.5.1) (2023-11-21)
 
 
