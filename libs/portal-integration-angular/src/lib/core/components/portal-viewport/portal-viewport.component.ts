@@ -83,6 +83,9 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
 
     this.themeService.currentTheme$.pipe(untilDestroyed(this)).subscribe((theme: any) => {
       this.logoUrl = theme.logoUrl || this.portalDefinition.logoUrl
+      if (this.logoUrl && !this.logoUrl.startsWith('/portal-api')) {
+        this.logoUrl = '/portal-api' + this.logoUrl
+      }
       document.getElementById('favicon')?.setAttribute('href', theme.faviconUrl)
     })
 

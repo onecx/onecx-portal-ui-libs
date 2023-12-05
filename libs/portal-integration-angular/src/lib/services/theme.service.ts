@@ -25,13 +25,13 @@ export class ThemeService implements OnDestroy {
     return this.http.get<Theme>(`${this.baseUrlV1}/internal/themes/${encodeURI(themeName)}`).pipe(
       tap((theme) => {
         this.apply(theme)
-        this.currentTheme$.publish(theme)
       })
     )
   }
 
   public apply(theme: Theme) {
     console.log(`🎨 Applying theme: ${theme.name}`)
+    this.currentTheme$.publish(theme)
     if (theme.properties) {
       Object.values(theme.properties).forEach((group) => {
         for (const [key, value] of Object.entries(group)) {
