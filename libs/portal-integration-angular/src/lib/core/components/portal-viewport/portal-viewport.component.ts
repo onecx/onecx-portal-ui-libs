@@ -87,7 +87,11 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
       this.appStateService.currentPortal$.asObservable(),
     ]).pipe(
       map(([theme, portal]) => {
-        return theme.logoUrl || portal.logoUrl || ''
+        let logoUrl = theme.logoUrl || portal.logoUrl || ''
+        if (logoUrl && !logoUrl.startsWith('/portal-api')) {
+          logoUrl = '/portal-api' + logoUrl
+        }
+        return logoUrl
       })
     )
 
