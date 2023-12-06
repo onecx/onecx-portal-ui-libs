@@ -56,7 +56,6 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
   showMenuButtonTitle: string | undefined
   hideMenuButtonTitle: string | undefined
   portalDefinition: Portal
-  logoUrl: string | undefined
   pageName: string | undefined
   helpArticleId: string | undefined
   applicationId: string | undefined
@@ -80,15 +79,6 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
     this.hideMenuButtonTitle = this.portalUIConfig.getTranslation('hideMenuButton')
     this.showMenuButtonTitle = this.portalUIConfig.getTranslation('showMenuButton')
     this.portalDefinition = this.config.getPortal()
-
-    this.themeService.currentTheme$.pipe(untilDestroyed(this)).subscribe((theme: any) => {
-      this.logoUrl = theme.logoUrl || this.portalDefinition.logoUrl
-      if (this.logoUrl && !this.logoUrl.startsWith('/portal-api')) {
-        this.logoUrl = '/portal-api' + this.logoUrl
-      }
-      document.getElementById('favicon')?.setAttribute('href', theme.faviconUrl)
-    })
-
     this.router.events
       .pipe(untilDestroyed(this))
       .pipe(filter((event) => event instanceof NavigationEnd))

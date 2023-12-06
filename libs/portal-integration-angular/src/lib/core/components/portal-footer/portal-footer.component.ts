@@ -6,8 +6,9 @@ import { MenuService } from '../../../services/app.menu.service'
 import { AppStateService } from '../../../services/app-state.service'
 import { map, Observable } from 'rxjs'
 import { ThemeService } from '../../../services/theme.service'
-import { API_PREFIX } from '../../../api/constants'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
+import { ImageLogoUrlUtils } from '../../utils/image-logo-url.utils'
+
 @Component({
   selector: 'ocx-footer',
   templateUrl: './portal-footer.component.html',
@@ -17,11 +18,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 @UntilDestroy()
 export class PortalFooterComponent implements OnInit {
   copyrightMsg = 'Capgemini. All rights reserved.'
-  @Input() src: string | undefined
+  @Input() logoUrl$: Observable<string | undefined> | undefined
   currentYear = new Date().getFullYear()
   portalMenuItems: MenuItem[] = []
   versionInfo$: Observable<string | undefined>
-  apiPrefix: string = API_PREFIX
 
   constructor(
     private configurationService: ConfigurationService,
@@ -43,9 +43,9 @@ export class PortalFooterComponent implements OnInit {
   }
   ngOnInit(): void {
     const portalData = this.configurationService.getPortal()
-    this.themeService.currentTheme$.pipe(untilDestroyed(this)).subscribe((theme) => {
-      this.src = this.setImageUrl(theme.logoUrl || portalData.logoUrl)
-    })
+    this.logoUrl$ = this.themeService.currentTheme$.pipe(untilDestroyed(this), map((theme) => {
+      return ImageLogoUrlUtils.setImageLogoUrl(theme.logoUrl || portalData.logoUrl)
+    }))
 
     if (
       !(portalData.footerLabel === '' || portalData.footerLabel === 'string' || portalData.footerLabel === undefined)
@@ -60,7 +60,7 @@ export class PortalFooterComponent implements OnInit {
       )
   }
   public onErrorHandleSrc(): void {
-    this.src = undefined
+    this.logoUrl$ = undefined
   }
   private createMenu(menuItem: MenuItem): void {
     if (menuItem && menuItem.items) {
@@ -75,15 +75,6 @@ export class PortalFooterComponent implements OnInit {
       this.ref.detectChanges()
     } else {
       this.portalMenuItems = []
-    }
-  }
-
-  private setImageUrl(url?: string): string | undefined {
-    //if the url is from the backend, then we insert the apiPrefix
-    if (url && !url.match(/^(http|https)/g)) {
-      return this.apiPrefix + url
-    } else {
-      return url
     }
   }
 }
