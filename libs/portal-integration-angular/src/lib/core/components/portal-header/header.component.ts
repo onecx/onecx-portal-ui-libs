@@ -1,17 +1,17 @@
 import { animate, style, transition, trigger } from '@angular/animations'
 import { Component, ElementRef, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core'
-import { filter, Observable } from 'rxjs'
+import { filter, map, Observable } from 'rxjs'
 import { MenuItem } from 'primeng/api/menuitem'
 
 import { IAuthService } from '../../../api/iauth.service'
 import { AUTH_SERVICE } from '../../../api/injection-tokens'
 import { UserProfile } from '../../../model/user-profile.model'
-import { API_PREFIX } from '../../../api/constants'
 import { ConfigurationService } from '../../../services/configuration.service'
 import { MenuService } from '../../../services/app.menu.service'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { CONFIG_KEY } from '../../../model/config-key.model'
-import { AppStateService } from '../../../services/app-state.service'
+import { ThemeService } from '../../../services/theme.service'
+import { ImageLogoUrlUtils } from '../../utils/image-logo-url.utils'
 
 type MenuItemPerm = MenuItem & { permission: string }
 @Component({
@@ -79,17 +79,15 @@ export class HeaderComponent implements OnInit {
   homeNavUrl = '/'
   @Input()
   homeNavTitle = 'Home'
-  @Input()
-  logoUrl?: string
 
+  logoUrl$: Observable<string | undefined> | undefined
   currentUser$: Observable<UserProfile>
-  private apiPrefix = API_PREFIX
 
   constructor(
     @Inject(AUTH_SERVICE) private authService: IAuthService,
     private config: ConfigurationService,
     private menuService: MenuService,
-    private appStateService: AppStateService
+    private themeService: ThemeService
   ) {
     this.currentUser$ = this.authService.currentUser$
       .pipe(untilDestroyed(this))
@@ -168,10 +166,12 @@ export class HeaderComponent implements OnInit {
       },
     ]
 
-    // if logo Url does not start with a http, then it stored in the backend. So we need to put prefix in front
-    if (this.logoUrl && !this.logoUrl.match(/^(http|https)/g)) {
-      this.logoUrl = this.apiPrefix + this.logoUrl
-    }
+    this.logoUrl$ = this.themeService.currentTheme$.pipe(
+      untilDestroyed(this),
+      map((theme) => {
+        return ImageLogoUrlUtils.createLogoUrl(theme.logoUrl)
+      })
+    )
   }
 
   private createMenu(menuItems: MenuItem[]) {
