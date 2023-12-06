@@ -1,6 +1,6 @@
 <div class="ml-3 py-2 lg:ml-5 flex flex-wrap align-items-center justify-content-between row-gap-1">
   <div class="flex flex-wrap align-items-center justify-content-start gap-3 row-gap-1">
-    <img *ngIf="logoUrl$" alt="logo" class="max-h-1rem" [src]="logoUrl$ | async" (error)="onErrorHandleSrc()" />
+    <img *ngIf="logoUrl$ | async" alt="logo" class="max-h-1rem" [src]="logoUrl$ | async" (error)="onErrorHandleSrc()" />
     <div class="flex-none text-sm">&copy; {{copyrightMsg$ | async}}</div>
     <ul
       class="ml-0 sm:ml-6 list-none flex flex-row gap-4 text-xs m-0 p-0"

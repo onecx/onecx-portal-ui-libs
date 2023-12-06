@@ -80,7 +80,7 @@ export class HeaderComponent implements OnInit {
   @Input()
   homeNavTitle = 'Home'
 
-  logoUrl$: Observable<string | undefined> | undefined
+  logoUrl$!: Observable<string | undefined>
   currentUser$: Observable<UserProfile>
 
   constructor(
@@ -92,6 +92,13 @@ export class HeaderComponent implements OnInit {
     this.currentUser$ = this.authService.currentUser$
       .pipe(untilDestroyed(this))
       .pipe(filter((x) => x !== undefined)) as Observable<UserProfile>
+
+    this.logoUrl$ = this.themeService.currentTheme$.pipe(
+      untilDestroyed(this),
+      map((theme) => {
+        return ImageLogoUrlUtils.createLogoUrl(theme.logoUrl)
+      })
+    )
   }
 
   ngOnInit() {
@@ -165,13 +172,6 @@ export class HeaderComponent implements OnInit {
         permission: 'PORTAL_HEADER_HELP_ITEM_EDITOR#VIEW',
       },
     ]
-
-    this.logoUrl$ = this.themeService.currentTheme$.pipe(
-      untilDestroyed(this),
-      map((theme) => {
-        return ImageLogoUrlUtils.createLogoUrl(theme.logoUrl)
-      })
-    )
   }
 
   private createMenu(menuItems: MenuItem[]) {
