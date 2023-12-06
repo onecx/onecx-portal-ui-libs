@@ -12,10 +12,7 @@ export interface UserProfile {
   person: UserPerson
   avatar?: AvatarInfo
   accountSettings?: UserProfileAccountSettings
-  roles?: Array<string>
   memberships?: Array<Membership>
-  idToken?: string
-  accessToken?: string
 }
 
 export interface UserProfileAccountSettings {

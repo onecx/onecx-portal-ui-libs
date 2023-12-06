@@ -15,6 +15,7 @@ import { AUTH_SERVICE } from '../../../api/injection-tokens'
 import { IAuthService } from '../../../api/iauth.service'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { HttpResponse } from '@angular/common/http'
+import { UserService } from '../../../services/user.service'
 
 @Component({
   selector: 'ocx-portal-viewport',
@@ -53,7 +54,6 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
   portalHomeMenuItem$: Observable<MenuItem> | undefined
   showMenuButtonTitle: string | undefined
   hideMenuButtonTitle: string | undefined
-  logoUrl$: Observable<string> | undefined
   pageName$: Observable<string> | undefined
   helpArticleId$: Observable<string> | undefined
   applicationId$: Observable<string> | undefined
@@ -70,6 +70,7 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
     private supportTicketApiService: SupportTicketApiService,
     private helpDataService: HelpPageAPIService,
     private dialogService: DialogService,
+    private userService: UserService,
     @Inject(AUTH_SERVICE) public authService: IAuthService
   ) {
     this.hideMenuButtonTitle = this.portalUIConfig.getTranslation('hideMenuButton')
@@ -80,19 +81,6 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
         url: portal.homePage,
         label: 'Home',
       }))
-    )
-
-    this.logoUrl$ = combineLatest([
-      this.themeService.currentTheme$.asObservable(),
-      this.appStateService.currentPortal$.asObservable(),
-    ]).pipe(
-      map(([theme, portal]) => {
-        let logoUrl = theme.logoUrl || portal.logoUrl || ''
-        if (logoUrl && !logoUrl.startsWith('/portal-api')) {
-          logoUrl = '/portal-api' + logoUrl
-        }
-        return logoUrl
-      })
     )
 
     this.themeService.currentTheme$.pipe(untilDestroyed(this)).subscribe((theme) => {
@@ -128,7 +116,7 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
       })
     )
 
-    this.authService.currentUser$.pipe(untilDestroyed(this)).subscribe((profile) => {
+    this.userService.profile$.pipe(untilDestroyed(this)).subscribe((profile) => {
       this.menuMode =
         (profile?.accountSettings?.layoutAndThemeSettings?.menuMode?.toLowerCase() as
           | typeof this.menuMode

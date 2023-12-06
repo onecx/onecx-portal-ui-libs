@@ -5,9 +5,11 @@ import { PortalApiService } from '../../services/portal-api.service'
 import { ThemeService } from '../../services/theme.service'
 import { AppStateService } from '../../services/app-state.service'
 import { CONFIG_KEY } from '../../model/config-key.model'
+import { UserService } from '../../services/user.service'
 
 const CONFIG_INIT_ERR = 'CONFIG_INIT_ERR'
 const AUTH_INIT_ERR = 'AUTH_INIT_ERR'
+const USER_INIT_ERR = 'USER_INIT_ERR'
 const THEME_INIT_ERR = 'THEME_INIT_ERR'
 const PORTAL_LOAD_INIT_ERR = 'PORTAL_LOAD_INIT_ERR'
 
@@ -20,7 +22,8 @@ export function standaloneInitializer(
   portalApi: PortalApiService,
   themeService: ThemeService,
   appName: string,
-  appStateService: AppStateService
+  appStateService: AppStateService,
+  userService: UserService
 ): () => Promise<any> {
   // eslint-disable-next-line no-restricted-syntax
   console.time('initializer')
@@ -46,6 +49,14 @@ export function standaloneInitializer(
         throw e
       }
       console.log(`📑 auth OK? ${authOk}`)
+      try {
+        await userService.init()
+        await userService.permissions$.isInitialized
+      } catch (e) {
+        errCause = USER_INIT_ERR
+        throw e
+      }
+      console.log('📑 user initialized')
       let portal = undefined
       try {
         portal = await firstValueFrom(portalApi.getPortalData(config.getProperty(CONFIG_KEY.TKIT_PORTAL_ID) || 'ADMIN'))
