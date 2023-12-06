@@ -3,7 +3,6 @@ import {
   APP_INITIALIZER,
   CUSTOM_ELEMENTS_SCHEMA,
   Inject,
-  InjectionToken,
   LOCALE_ID,
   ModuleWithProviders,
   NgModule,
@@ -21,7 +20,7 @@ import {
   TranslateService,
 } from '@ngx-translate/core'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
-import { AUTH_SERVICE, MFE_INFO, MFE_INFO_FN } from '../api/injection-tokens'
+import { APPLICATION_NAME, AUTH_SERVICE, MFE_INFO, MFE_INFO_FN, SANITY_CHECK } from '../api/injection-tokens'
 import { MfeInfo } from '../model/mfe-info.model'
 import { AutofocusDirective } from './directives/autofocus.directive'
 import { IfBreakpointDirective } from './directives/if-breakpoint.directive'
@@ -79,6 +78,7 @@ import { PatchFormGroupValuesDirective } from './directives/patch-form-group-val
 import { SetInputValueDirective } from './directives/set-input-value.directive'
 import { DiagramComponent } from './components/diagram/diagram.component'
 import { GroupByCountDiagramComponent } from './components/group-by-count-diagram/group-by-count-diagram.component'
+import { UserService } from '../services/user.service'
 
 export function createTranslateLoader(http: HttpClient, mfeInfo: MfeInfo) {
   if (mfeInfo?.remoteBaseUrl) {
@@ -263,14 +263,21 @@ export class PortalCoreModule {
           provide: APP_INITIALIZER,
           multi: true,
           useFactory: standaloneInitializer,
-          deps: [AUTH_SERVICE, ConfigurationService, PortalApiService, ThemeService, APPLICATION_NAME, AppStateService],
+          deps: [
+            AUTH_SERVICE,
+            ConfigurationService,
+            PortalApiService,
+            ThemeService,
+            APPLICATION_NAME,
+            AppStateService,
+            UserService,
+          ],
         })
     }
     return module
   }
 
   constructor(
-    @Optional() @SkipSelf() parent?: PortalCoreModule,
     @Optional() @Inject(SANITY_CHECK) sanityCheck?: string,
     @Optional() @SkipSelf() @Inject(SANITY_CHECK) parentSanityCheck?: string
   ) {
@@ -287,5 +294,3 @@ export class PortalCoreModule {
     registerLocaleData(de)
   }
 }
-const SANITY_CHECK = new InjectionToken<string>('OCXSANITY_CHECK')
-const APPLICATION_NAME = new InjectionToken<string>('APPLICATION_NAME')
