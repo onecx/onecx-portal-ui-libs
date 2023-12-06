@@ -12,10 +12,16 @@ import {
 import { IAuthService } from '../../api/iauth.service'
 import { AUTH_SERVICE } from '../../api/injection-tokens'
 
-@Directive({ selector: '[ocxIfPermission]' })
+@Directive({ selector: '[ocxIfPermission], [ocxIfNotPermission]' })
 export class IfPermissionDirective implements OnInit {
   @Input('ocxIfPermission') permission: string | undefined
+  @Input('ocxIfNotPermission') set notPermission(value: string | undefined) {
+    this.permission = value
+    this.negate = true
+  }
+
   @Input() onMissingPermission: 'hide' | 'disable' = 'hide'
+  negate = false
 
   constructor(
     private renderer: Renderer2,
@@ -27,8 +33,7 @@ export class IfPermissionDirective implements OnInit {
 
   ngOnInit() {
     if (this.permission) {
-      if (!this.authService.hasPermission(this.permission)) {
-        console.log(`Permission check failed: ${this.permission}`)
+      if (this.negate === this.authService.hasPermission(this.permission)) {
         if (this.onMissingPermission === 'disable') {
           this.renderer.setAttribute(this.el.nativeElement, 'disabled', 'disabled')
         } else {
