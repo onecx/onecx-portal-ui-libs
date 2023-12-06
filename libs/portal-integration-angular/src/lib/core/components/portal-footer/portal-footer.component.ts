@@ -8,6 +8,7 @@ import { combineLatest, concat, map, Observable, of, withLatestFrom } from 'rxjs
 import { ThemeService } from '../../../services/theme.service'
 import { API_PREFIX } from '../../../api/constants'
 import { CONFIG_KEY } from '../../../model/config-key.model'
+import { ImageLogoUrlUtils } from '../../utils/image-logo-url.utils'
 @Component({
   selector: 'ocx-footer',
   templateUrl: './portal-footer.component.html',
@@ -16,7 +17,7 @@ import { CONFIG_KEY } from '../../../model/config-key.model'
 })
 export class PortalFooterComponent implements OnInit {
   copyrightMsg$: Observable<string> | undefined
-  src$: Observable<string | undefined> | undefined
+  logoUrl$!: Observable<string | undefined>
   currentYear = new Date().getFullYear()
   portalMenuItems: MenuItem[] = []
   versionInfo$: Observable<string | undefined>
@@ -40,13 +41,12 @@ export class PortalFooterComponent implements OnInit {
         return `Portal: ${portal.portalName} v${hostVersion} ${mfInfoText}`
       })
     )
-  }
-  ngOnInit(): void {
-    this.src$ = combineLatest([
+    this.logoUrl$ = combineLatest([
       this.themeService.currentTheme$.asObservable(),
       this.appState.currentPortal$.asObservable(),
-    ]).pipe(map(([theme, portalData]) => this.setImageUrl(theme.logoUrl || portalData.logoUrl)))
-
+    ]).pipe(map(([theme, portalData]) => ImageLogoUrlUtils.createLogoUrl(theme.logoUrl || portalData.logoUrl)))
+  }
+  ngOnInit(): void {
     this.copyrightMsg$ = concat(
       of('Capgemini. All rights reserved.'),
       this.appState.currentPortal$.pipe(
@@ -72,7 +72,7 @@ export class PortalFooterComponent implements OnInit {
       )
   }
   public onErrorHandleSrc(): void {
-    this.src$ = undefined
+    this.logoUrl$ = of(undefined)
   }
   private createMenu(menuItem: MenuItem): void {
     if (menuItem && menuItem.items) {
