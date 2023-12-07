@@ -1,27 +1,21 @@
 import { Injectable, OnDestroy } from '@angular/core'
 import { DEFAULT_LANG } from '../api/constants'
-import { PermissionsTopic, UserProfile, UserProfileTopic } from '@onecx/integration-interface'
-import { UserProfileAPIService } from './userprofile-api.service'
-import { BehaviorSubject, firstValueFrom } from 'rxjs'
+import { UserProfile, UserProfileTopic } from '@onecx/integration-interface'
+import { BehaviorSubject } from 'rxjs'
 
 @Injectable({ providedIn: 'root' })
 export class UserService implements OnDestroy {
   profile$ = new UserProfileTopic()
-  permissions$ = new PermissionsTopic()
+  permissions$ = new BehaviorSubject<string[]>([])
   lang$ = new BehaviorSubject(this.determineLanguage() ?? DEFAULT_LANG)
 
-  constructor(private userProfileAPIService: UserProfileAPIService) {
+  constructor() {
     this.profile$.subscribe((profile) => {
       this.lang$.next(
         profile.accountSettings?.localeAndTimeSettings?.locale ?? this.determineLanguage() ?? DEFAULT_LANG
       )
       this.updatePermissionsFromUserProfile(profile)
     })
-  }
-
-  async init(): Promise<void> {
-    const profile = await firstValueFrom(this.userProfileAPIService.getCurrentUser())
-    this.profile$.publish(profile)
   }
 
   ngOnDestroy(): void {
@@ -75,7 +69,7 @@ export class UserService implements OnDestroy {
             })
           })
         })
-        this.permissions$.publish(permissions)
+        this.permissions$.next(permissions)
       }
     }
   }

@@ -6,6 +6,7 @@ import { ThemeService } from '../../services/theme.service'
 import { AppStateService } from '../../services/app-state.service'
 import { CONFIG_KEY } from '../../model/config-key.model'
 import { UserService } from '../../services/user.service'
+import { UserProfileAPIService } from '../../services/userprofile-api.service'
 
 const CONFIG_INIT_ERR = 'CONFIG_INIT_ERR'
 const AUTH_INIT_ERR = 'AUTH_INIT_ERR'
@@ -23,7 +24,8 @@ export function standaloneInitializer(
   themeService: ThemeService,
   appName: string,
   appStateService: AppStateService,
-  userService: UserService
+  userService: UserService,
+  userProfileAPIService: UserProfileAPIService
 ): () => Promise<any> {
   // eslint-disable-next-line no-restricted-syntax
   console.time('initializer')
@@ -50,8 +52,9 @@ export function standaloneInitializer(
       }
       console.log(`📑 auth OK? ${authOk}`)
       try {
-        await userService.init()
-        await userService.permissions$.isInitialized
+        const profile = await firstValueFrom(userProfileAPIService.getCurrentUser())
+        userService.profile$.publish(profile)
+        await userService.profile$.isInitialized
       } catch (e) {
         errCause = USER_INIT_ERR
         throw e

@@ -79,6 +79,7 @@ import { SetInputValueDirective } from './directives/set-input-value.directive'
 import { DiagramComponent } from './components/diagram/diagram.component'
 import { GroupByCountDiagramComponent } from './components/group-by-count-diagram/group-by-count-diagram.component'
 import { UserService } from '../services/user.service'
+import { UserProfileAPIService } from '../services/userprofile-api.service'
 
 export function createTranslateLoader(http: HttpClient, mfeInfo: MfeInfo) {
   if (mfeInfo?.remoteBaseUrl) {
@@ -271,6 +272,7 @@ export class PortalCoreModule {
             APPLICATION_NAME,
             AppStateService,
             UserService,
+            UserProfileAPIService,
           ],
         })
     }

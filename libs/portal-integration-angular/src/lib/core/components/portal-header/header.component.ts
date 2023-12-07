@@ -82,7 +82,7 @@ export class HeaderComponent implements OnInit {
   @Input()
   homeNavTitle = 'Home'
 
-  logoUrl$!: Observable<string | undefined>
+  logoUrl$!: Observable<string | null>
   currentUser$: Observable<UserProfile>
 
   constructor(
@@ -102,7 +102,7 @@ export class HeaderComponent implements OnInit {
         this.appStateService.currentPortal$.asObservable(),
       ]).pipe(
         map(([theme, portal]) => {
-          return ImageLogoUrlUtils.createLogoUrl(theme.logoUrl || portal.logoUrl || '')
+          return ImageLogoUrlUtils.createLogoUrl(theme.logoUrl || portal.logoUrl)
         })
       )
   }

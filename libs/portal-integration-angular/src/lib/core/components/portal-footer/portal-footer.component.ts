@@ -17,7 +17,7 @@ import { ImageLogoUrlUtils } from '../../utils/image-logo-url.utils'
 })
 export class PortalFooterComponent implements OnInit {
   copyrightMsg$: Observable<string> | undefined
-  logoUrl$!: Observable<string | undefined>
+  logoUrl$!: Observable<string | null>
   currentYear = new Date().getFullYear()
   portalMenuItems: MenuItem[] = []
   versionInfo$: Observable<string | undefined>
@@ -72,7 +72,7 @@ export class PortalFooterComponent implements OnInit {
       )
   }
   public onErrorHandleSrc(): void {
-    this.logoUrl$ = of(undefined)
+    this.logoUrl$ = of(null)
   }
   private createMenu(menuItem: MenuItem): void {
     if (menuItem && menuItem.items) {

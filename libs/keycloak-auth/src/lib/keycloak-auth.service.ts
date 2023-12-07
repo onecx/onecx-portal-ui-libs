@@ -1,9 +1,6 @@
 import { Injectable } from '@angular/core'
-import {
-  ConfigurationService,
-  CONFIG_KEY,
-  IAuthService,
-} from '@onecx/portal-integration-angular'
+import { IsAuthenticatedTopic } from '@onecx/integration-interface'
+import { ConfigurationService, CONFIG_KEY, IAuthService } from '@onecx/portal-integration-angular'
 import { KeycloakEventType, KeycloakOptions, KeycloakService } from 'keycloak-angular'
 import { KeycloakConfig } from 'keycloak-js'
 
@@ -16,6 +13,7 @@ export class KeycloakAuthService implements IAuthService {
   constructor(
     private keycloakService: KeycloakService,
     private configService: ConfigurationService,
+    private isAuthenticated: IsAuthenticatedTopic
   ) {}
 
   public init(): Promise<boolean> {
@@ -60,28 +58,30 @@ export class KeycloakAuthService implements IAuthService {
       bearerExcludedUrls: ['/assets'],
     }
 
-    return (
-      this.keycloakService
-        .init(kcOptions)
-        .catch((err) => {
-          console.log(`Keycloak err: ${err}, try force login`)
-          return this.keycloakService.login()
-        })
-        .then((loginOk) => {
-          // this will be false if our silent login did not work
-          if (loginOk) {
-            return this.keycloakService.getToken()
-          } else {
-            // we want to block bootstrap process now
-            return this.keycloakService.login().then(() => 'login')
-          }
-        })
-        .then(() => true)
-        .catch((err) => {
-          console.log(`KC ERROR ${err} as json ${JSON.stringify(err)}`)
-          throw err
-        })
-    )
+    return this.keycloakService
+      .init(kcOptions)
+      .catch((err) => {
+        console.log(`Keycloak err: ${err}, try force login`)
+        return this.keycloakService.login()
+      })
+      .then((loginOk) => {
+        // this will be false if our silent login did not work
+        if (loginOk) {
+          return this.keycloakService.getToken()
+        } else {
+          // we want to block bootstrap process now
+          return this.keycloakService.login().then(() => 'login')
+        }
+      })
+      .then(() => {
+        this.isAuthenticated.publish()
+        return this.isAuthenticated.isInitialized
+      })
+      .then(() => true)
+      .catch((err) => {
+        console.log(`KC ERROR ${err} as json ${JSON.stringify(err)}`)
+        throw err
+      })
   }
 
   private getValidKCConfig(): KeycloakConfig {
@@ -150,7 +150,7 @@ export class KeycloakAuthService implements IAuthService {
   logout(): void {
     this.keycloakService.logout()
   }
- 
+
   getAuthProviderName(): string {
     return 'keycloak-auth'
   }
