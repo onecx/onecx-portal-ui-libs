@@ -1,16 +1,5 @@
-import {
-  Directive,
-  ElementRef,
-  Inject,
-  Input,
-  OnInit,
-  Optional,
-  Renderer2,
-  TemplateRef,
-  ViewContainerRef,
-} from '@angular/core'
-import { IAuthService } from '../../api/iauth.service'
-import { AUTH_SERVICE } from '../../api/injection-tokens'
+import { Directive, ElementRef, Input, OnInit, Optional, Renderer2, TemplateRef, ViewContainerRef } from '@angular/core'
+import { UserService } from '../../services/user.service'
 
 @Directive({ selector: '[ocxIfPermission], [ocxIfNotPermission]' })
 export class IfPermissionDirective implements OnInit {
@@ -27,13 +16,13 @@ export class IfPermissionDirective implements OnInit {
     private renderer: Renderer2,
     private el: ElementRef,
     private viewContainer: ViewContainerRef,
-    @Inject(AUTH_SERVICE) private authService: IAuthService,
+    private userService: UserService,
     @Optional() private templateRef?: TemplateRef<any>
   ) {}
 
   ngOnInit() {
     if (this.permission) {
-      if (this.negate === this.authService.hasPermission(this.permission)) {
+      if (this.negate === this.userService.hasPermission(this.permission)) {
         if (this.onMissingPermission === 'disable') {
           this.renderer.setAttribute(this.el.nativeElement, 'disabled', 'disabled')
         } else {

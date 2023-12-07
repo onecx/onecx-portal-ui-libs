@@ -9,7 +9,7 @@
         *ngIf="(logoUrl$ | async) && !fallbackImg"
         (error)="fallbackImg=true"
       />
-      <svg *ngIf="((logoUrl$ | async) === undefined) || fallbackImg" width="160" viewBox="0 0 283 72" class="default-logo">
+      <svg *ngIf="((logoUrl$ | async) === null) || fallbackImg" width="160" viewBox="0 0 283 72" class="default-logo">
         <defs id="SvgjsDefs4962"></defs>
         <g
           id="SvgjsG4963"

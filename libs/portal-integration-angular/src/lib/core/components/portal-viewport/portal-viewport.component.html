@@ -16,7 +16,6 @@
     [homeNavTitle]="(portalHomeMenuItem$ | async)?.label!"
     [homeNavUrl]="(portalHomeMenuItem$ | async)?.url!"
     [fullPortalLayout]="fullPortalLayout"
-    [logoUrl]="(logoUrl$ | async) || ''"
     (menuButtonClick)="onMenuButtonClick($event)"
     (topbarItemClick)="onTopbarItemClick($event.event, $event.arg)"
     (openSupportTicket)="onSupportTicketClick()"

@@ -13,8 +13,7 @@ import {
 } from '@angular/core'
 import { DataSortDirection } from '../../../model/data-sort-direction'
 import { MenuItem } from 'primeng/api'
-import { IAuthService } from '../../../api/iauth.service'
-import { AUTH_SERVICE, MFE_INFO } from '../../../api/injection-tokens'
+import { MFE_INFO } from '../../../api/injection-tokens'
 import { MfeInfo } from '../../../model/mfe-info.model'
 import { DataAction } from '../../../model/data-action'
 import { TranslateService } from '@ngx-translate/core'
@@ -24,6 +23,7 @@ import { DataTableColumn } from '../../../model/data-table-column.model'
 import { BehaviorSubject, combineLatest, map, mergeMap, Observable } from 'rxjs'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { Router } from '@angular/router'
+import { UserService } from '../../../services/user.service'
 
 export type ListGridData = {
   id: string | number
@@ -162,20 +162,19 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   gridMenuItems: MenuItem[] = []
   selectedItem: ListGridData | undefined
   observedOutputs = 0
-  
+
   displayedItems$: Observable<unknown[]> | undefined
 
   constructor(
     @Inject(LOCALE_ID) locale: string,
-    @Inject(AUTH_SERVICE) private authService: IAuthService,
     @Inject(MFE_INFO) private mfeInfo: MfeInfo,
     translateService: TranslateService,
+    private userService: UserService,
     private router: Router,
     private injector: Injector
   ) {
     super(locale, translateService)
     this.name = this.name || this.router.url.replace(/[^A-Za-z0-9]/, '_')
-
   }
 
   ngDoCheck(): void {
@@ -191,13 +190,13 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
       mergeMap((params) => this.translateItems(params, this.columns, this.clientSideFiltering, this.clientSideSorting)),
       map((params) => this.filterItems(params, this.clientSideFiltering)),
       map((params) => this.sortItems(params, this.columns, this.clientSideSorting)),
-      map(([items]) => (items))
+      map(([items]) => items)
     )
-  
+
     this.showMenu =
-      (!!this.viewPermission && this.authService.hasPermission(this.viewPermission)) ||
-      (!!this.editPermission && this.authService.hasPermission(this.editPermission)) ||
-      (!!this.deletePermission && this.authService.hasPermission(this.deletePermission))
+      (!!this.viewPermission && this.userService.hasPermission(this.viewPermission)) ||
+      (!!this.editPermission && this.userService.hasPermission(this.editPermission)) ||
+      (!!this.deletePermission && this.userService.hasPermission(this.deletePermission))
   }
 
   onDeleteRow(element: ListGridData) {
@@ -205,7 +204,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   }
 
   onViewRow(element: ListGridData) {
-    if (!!this.viewPermission && this.authService.hasPermission(this.viewPermission)) {
+    if (!!this.viewPermission && this.userService.hasPermission(this.viewPermission)) {
       this.viewItem.emit(element)
     }
   }
@@ -236,21 +235,21 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
       ])
       .subscribe((translations) => {
         let menuItems: MenuItem[] = []
-        if (this.viewItem.observed && this.authService.hasPermission(this.viewPermission || '')) {
+        if (this.viewItem.observed && this.userService.hasPermission(this.viewPermission || '')) {
           menuItems.push({
             label: translations[this.viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW'],
             icon: 'pi pi-eye',
             command: () => this.viewItem.emit(this.selectedItem),
           })
         }
-        if (this.editItem.observed && this.authService.hasPermission(this.editPermission || '')) {
+        if (this.editItem.observed && this.userService.hasPermission(this.editPermission || '')) {
           menuItems.push({
             label: translations[this.editMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.EDIT'],
             icon: 'pi pi-pencil',
             command: () => this.editItem.emit(this.selectedItem),
           })
         }
-        if (this.deleteItem.observed && this.authService.hasPermission(this.deletePermission || '')) {
+        if (this.deleteItem.observed && this.userService.hasPermission(this.deletePermission || '')) {
           menuItems.push({
             label: translations[this.deleteMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.DELETE'],
             icon: 'pi pi-trash',
@@ -259,7 +258,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
         }
         menuItems = menuItems.concat(
           this.additionalActions
-            .filter((a) => this.authService.hasPermission(a.permission))
+            .filter((a) => this.userService.hasPermission(a.permission))
             .map((a) => ({
               label: translations[a.labelKey || ''],
               icon: a.icon,
@@ -275,7 +274,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   setSelectedItem(item: ListGridData) {
     this.selectedItem = item
   }
-  
+
   resolveFieldData(object: any, key: any) {
     return ObjectUtils.resolveFieldData(object, key)
   }

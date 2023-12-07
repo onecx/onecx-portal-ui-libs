@@ -1,6 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations'
 import { Component, ElementRef, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core'
-import { filter, map, Observable } from 'rxjs'
+import { combineLatest, filter, map, Observable } from 'rxjs'
 import { MenuItem } from 'primeng/api/menuitem'
 
 import { IAuthService } from '../../../api/iauth.service'
@@ -12,6 +12,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { CONFIG_KEY } from '../../../model/config-key.model'
 import { ThemeService } from '../../../services/theme.service'
 import { ImageLogoUrlUtils } from '../../utils/image-logo-url.utils'
+import { UserService } from '../../../services/user.service'
+import { AppStateService } from '../../../services/app-state.service'
 
 type MenuItemPerm = MenuItem & { permission: string }
 @Component({
@@ -80,25 +82,29 @@ export class HeaderComponent implements OnInit {
   @Input()
   homeNavTitle = 'Home'
 
-  logoUrl$!: Observable<string | undefined>
+  logoUrl$!: Observable<string | null>
   currentUser$: Observable<UserProfile>
 
   constructor(
     @Inject(AUTH_SERVICE) private authService: IAuthService,
     private config: ConfigurationService,
     private menuService: MenuService,
-    private themeService: ThemeService
+    private themeService: ThemeService,
+    private userService: UserService,
+    private appStateService: AppStateService
   ) {
-    this.currentUser$ = this.authService.currentUser$
+    this.currentUser$ = this.userService.profile$
       .pipe(untilDestroyed(this))
       .pipe(filter((x) => x !== undefined)) as Observable<UserProfile>
 
-    this.logoUrl$ = this.themeService.currentTheme$.pipe(
-      untilDestroyed(this),
-      map((theme) => {
-        return ImageLogoUrlUtils.createLogoUrl(theme.logoUrl)
-      })
-    )
+      this.logoUrl$ = combineLatest([
+        this.themeService.currentTheme$.asObservable(),
+        this.appStateService.currentPortal$.asObservable(),
+      ]).pipe(
+        map(([theme, portal]) => {
+          return ImageLogoUrlUtils.createLogoUrl(theme.logoUrl || portal.logoUrl)
+        })
+      )
   }
 
   ngOnInit() {

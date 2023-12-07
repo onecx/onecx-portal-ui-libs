@@ -28,6 +28,10 @@ export class Topic<T> implements Subscribable<T> {
     const message = new TopicMessage(TopicMessageType.TopicGet, this.name, this.version)
     window.postMessage(message, '*')
   }
+  
+  get isInitialized(): Promise<void> {
+    return this.isInitializedPromise
+  }
 
   asObservable(): Observable<T> {
     return this.data.asObservable().pipe(

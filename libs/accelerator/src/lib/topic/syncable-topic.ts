@@ -26,8 +26,4 @@ export class SyncableTopic<T> extends Topic<T> {
   getValue(): T | undefined {
     return this.isInit ? (<TopicDataMessage<T>>this.data.value).data : undefined
   }
-
-  get isInitialized(): Promise<void> {
-    return this.isInitializedPromise
-  }
 }
