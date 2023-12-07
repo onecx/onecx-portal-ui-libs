@@ -5,7 +5,6 @@ import { KeycloakAuthService } from './keycloak-auth.service'
 import { KeycloakAngularModule } from 'keycloak-angular'
 import { HTTP_INTERCEPTORS } from '@angular/common/http'
 import { TokenInterceptor } from './token.interceptor'
-import { IsAuthenticatedTopic } from '@onecx/integration-interface'
 
 export interface KeycloakAuthModuleConfig {
   tokenInterceptorWhitelist?: string[]
@@ -21,7 +20,6 @@ export interface KeycloakAuthModuleConfig {
       useClass: KeycloakAuthService,
     },
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
-    IsAuthenticatedTopic,
   ],
 })
 export class KeycloakAuthModule {

@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core'
 import { DEFAULT_LANG } from '../api/constants'
 import { UserProfile, UserProfileTopic } from '@onecx/integration-interface'
-import { BehaviorSubject } from 'rxjs'
+import { BehaviorSubject, map } from 'rxjs'
 
 @Injectable({ providedIn: 'root' })
 export class UserService implements OnDestroy {
@@ -10,12 +10,16 @@ export class UserService implements OnDestroy {
   lang$ = new BehaviorSubject(this.determineLanguage() ?? DEFAULT_LANG)
 
   constructor() {
-    this.profile$.subscribe((profile) => {
-      this.lang$.next(
-        profile.accountSettings?.localeAndTimeSettings?.locale ?? this.determineLanguage() ?? DEFAULT_LANG
+    this.profile$
+      .pipe(
+        map(
+          (profile) =>
+            profile.accountSettings?.localeAndTimeSettings?.locale ?? this.determineLanguage() ?? DEFAULT_LANG
+        )
       )
-      this.updatePermissionsFromUserProfile(profile)
-    })
+      .subscribe(this.lang$)
+
+    this.profile$.pipe(map((profile) => this.extractPermissions(profile))).subscribe(this.permissions$)
   }
 
   ngOnDestroy(): void {
@@ -29,7 +33,6 @@ export class UserService implements OnDestroy {
     }
     return !!result
   }
-
 
   private determineLanguage(): string | undefined {
     if (typeof window === 'undefined' || typeof window.navigator === 'undefined') {
@@ -54,10 +57,10 @@ export class UserService implements OnDestroy {
     return browserLang
   }
 
-  private updatePermissionsFromUserProfile(userProfile: UserProfile) {
+  private extractPermissions(userProfile: UserProfile) {
+    const permissions: string[] = []
     if (userProfile) {
       if (userProfile.memberships) {
-        const permissions: string[] = []
         userProfile.memberships.forEach((m) => {
           m.roleMemberships?.forEach((r) => {
             r.permissions?.forEach((p) => {
@@ -69,8 +72,8 @@ export class UserService implements OnDestroy {
             })
           })
         })
-        this.permissions$.next(permissions)
       }
     }
+    return permissions
   }
 }

@@ -1,5 +1,5 @@
 import { SupportTicketApiService } from './../../../services/support-ticket-api.service'
-import { AfterViewInit, Component, HostListener, Inject, Input, OnDestroy, OnInit, Renderer2 } from '@angular/core'
+import { AfterViewInit, Component, HostListener, Input, OnDestroy, OnInit, Renderer2 } from '@angular/core'
 import { MenuItem, MessageService, PrimeNGConfig } from 'primeng/api'
 import { PortalUIService } from '../../../services/portal-ui.service'
 import { catchError, combineLatest, filter, first, map, mergeMap, Observable, of, withLatestFrom } from 'rxjs'
@@ -11,8 +11,6 @@ import { DialogService } from 'primeng/dynamicdialog'
 import { NoHelpItemComponent } from '../no-help-item/no-help-item.component'
 import { NavigationEnd, Router } from '@angular/router'
 import { HelpPageAPIService } from '../../../services/help-api-service'
-import { AUTH_SERVICE } from '../../../api/injection-tokens'
-import { IAuthService } from '../../../api/iauth.service'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { HttpResponse } from '@angular/common/http'
 import { UserService } from '../../../services/user.service'
@@ -71,7 +69,6 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
     private helpDataService: HelpPageAPIService,
     private dialogService: DialogService,
     private userService: UserService,
-    @Inject(AUTH_SERVICE) public authService: IAuthService
   ) {
     this.hideMenuButtonTitle = this.portalUIConfig.getTranslation('hideMenuButton')
     this.showMenuButtonTitle = this.portalUIConfig.getTranslation('showMenuButton')

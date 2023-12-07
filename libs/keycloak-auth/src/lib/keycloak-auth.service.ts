@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core'
-import { IsAuthenticatedTopic } from '@onecx/integration-interface'
-import { ConfigurationService, CONFIG_KEY, IAuthService } from '@onecx/portal-integration-angular'
+import { AppStateService, ConfigurationService, CONFIG_KEY, IAuthService } from '@onecx/portal-integration-angular'
 import { KeycloakEventType, KeycloakOptions, KeycloakService } from 'keycloak-angular'
 import { KeycloakConfig } from 'keycloak-js'
 
@@ -13,7 +12,7 @@ export class KeycloakAuthService implements IAuthService {
   constructor(
     private keycloakService: KeycloakService,
     private configService: ConfigurationService,
-    private isAuthenticated: IsAuthenticatedTopic
+    private appStateService: AppStateService,
   ) {}
 
   public init(): Promise<boolean> {
@@ -74,8 +73,8 @@ export class KeycloakAuthService implements IAuthService {
         }
       })
       .then(() => {
-        this.isAuthenticated.publish()
-        return this.isAuthenticated.isInitialized
+        this.appStateService.isAuthenticated$.publish()
+        return this.appStateService.isAuthenticated$.isInitialized
       })
       .then(() => true)
       .catch((err) => {
