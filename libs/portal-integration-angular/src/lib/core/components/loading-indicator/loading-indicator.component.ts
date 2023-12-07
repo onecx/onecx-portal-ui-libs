@@ -6,7 +6,4 @@ import { Component, Input } from '@angular/core'
   styleUrls: ['./loading-indicator.component.scss'],
 })
 
-export class LoadingIndicatorComponent {
-  @Input() fullPageOverlay: Boolean;
-  @Input() small: Boolean;
-}
+export class LoadingIndicatorComponent {}

@@ -66,7 +66,7 @@
 @import '_colors'; // The variables were checked
 @import './_typography'; //The variables were checked
 @import '_fonts';
-// @import './_loader';
+@import './_loader'; // loading-indicator style
 @import './_animation'; // The variables were checked
 @import './_utils'; // The variables were checked
 @import './topbar/_topbar'; //The variables were checked
@@ -80,5 +80,6 @@
 @import './_breadcrumb'; // The variables were checked
 @import './_input_styles';
 @import './_validation'; // control validation
+
 
 // TODO check the included files, remove those not needed, cleanup those that are required
