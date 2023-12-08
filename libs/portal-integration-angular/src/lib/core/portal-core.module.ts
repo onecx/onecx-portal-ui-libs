@@ -80,20 +80,29 @@ import { DiagramComponent } from './components/diagram/diagram.component'
 import { GroupByCountDiagramComponent } from './components/group-by-count-diagram/group-by-count-diagram.component'
 import { UserService } from '../services/user.service'
 import { UserProfileAPIService } from '../services/userprofile-api.service'
+import { AsyncTranslateLoader } from './utils/async-translate-loader.utils'
+import { combineLatest, filter, map } from 'rxjs'
 
-export function createTranslateLoader(http: HttpClient, mfeInfo: MfeInfo) {
-  if (mfeInfo?.remoteBaseUrl) {
-    return new TranslateCombinedLoader(
-      new TranslateHttpLoader(http, `${mfeInfo.remoteBaseUrl}/assets/i18n/`, '.json'),
-      new TranslateHttpLoader(http, `./assets/i18n/`, '.json'),
-      new TranslateHttpLoader(http, `./onecx-portal-lib/assets/i18n/`, '.json')
+export function createTranslateLoader(http: HttpClient, appStateService: AppStateService): TranslateLoader {
+  return new AsyncTranslateLoader(
+    combineLatest([appStateService.currentMfe$.asObservable(), appStateService.globalLoading$.asObservable()]).pipe(
+      filter(([, isLoading]) => !isLoading),
+      map(([currentMfe]) => {
+        if (currentMfe.remoteBaseUrl) {
+          return new TranslateCombinedLoader(
+            new TranslateHttpLoader(http, `${currentMfe.remoteBaseUrl}/assets/i18n/`, '.json'),
+            new TranslateHttpLoader(http, `./assets/i18n/`, '.json'),
+            new TranslateHttpLoader(http, `./onecx-portal-lib/assets/i18n/`, '.json')
+          )
+        } else {
+          return new TranslateCombinedLoader(
+            new TranslateHttpLoader(http, `./assets/i18n/`, '.json'),
+            new TranslateHttpLoader(http, `./onecx-portal-lib/assets/i18n/`, '.json')
+          )
+        }
+      })
     )
-  } else {
-    return new TranslateCombinedLoader(
-      new TranslateHttpLoader(http, `./assets/i18n/`, '.json'),
-      new TranslateHttpLoader(http, `./onecx-portal-lib/assets/i18n/`, '.json')
-    )
-  }
+  )
 }
 
 export class MyMissingTranslationHandler implements MissingTranslationHandler {
@@ -112,7 +121,7 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     PrimeNgModule,
     TranslateModule.forRoot({
       isolate: true,
-      loader: { provide: TranslateLoader, useFactory: createTranslateLoader, deps: [HttpClient, MFE_INFO] },
+      loader: { provide: TranslateLoader, useFactory: createTranslateLoader, deps: [HttpClient, AppStateService] },
       missingTranslationHandler: { provide: MissingTranslationHandler, useClass: MyMissingTranslationHandler },
     }),
     ConfirmDialogModule,
