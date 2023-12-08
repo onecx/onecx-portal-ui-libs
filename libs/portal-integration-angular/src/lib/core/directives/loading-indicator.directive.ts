@@ -12,14 +12,14 @@ import {
 import { LoadingIndicatorComponent } from '../components/loading-indicator/loading-indicator.component';
 
 @Directive({
-  selector: '[onecxLoadingIndicator]',
+  selector: '[ocxLoadingIndicator]',
 })
 export class LoadingIndicatorDirective implements OnChanges {
-  @Input() onecxLoadingIndicator = false;
+  @Input() ocxLoadingIndicator = false;
   @Input() overlayFullPage = false;
   @Input() isLoaderSmall? = false;
 
-  private componentRef: ComponentRef<LoadingIndicatorComponent>;
+  private componentRef: ComponentRef<LoadingIndicatorComponent>| undefined;
 
   constructor(
     private viewContainerRef: ViewContainerRef,
@@ -29,7 +29,7 @@ export class LoadingIndicatorDirective implements OnChanges {
   ) {}
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.onecxLoadingIndicator || changes.overlayFullPage) {
+    if (changes['ocxLoadingIndicator'] || changes['overlayFullPage']) {
       this.toggleLoadingIndicator();
     }
   }
@@ -45,7 +45,7 @@ export class LoadingIndicatorDirective implements OnChanges {
   }
 
   private toggleLoadingIndicator() {
-    if (this.onecxLoadingIndicator) {
+    if (this.ocxLoadingIndicator) {
       if (this.overlayFullPage == false) {
         this.elementLoader();
       } else {

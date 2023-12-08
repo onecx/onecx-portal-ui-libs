@@ -77,13 +77,10 @@ import { RelativeDatePipe } from './pipes/relative-date.pipe'
 import { MessageService } from 'primeng/api'
 import { PatchFormGroupValuesDirective } from './directives/patch-form-group-values.driective'
 import { SetInputValueDirective } from './directives/set-input-value.directive'
-<<<<<<< HEAD
 import { LoadingIndicatorComponent } from './components/loading-indicator/loading-indicator.component'
 import { LoadingIndicatorDirective } from './directives/loading-indicator.directive'
-=======
 import { DiagramComponent } from './components/diagram/diagram.component'
 import { GroupByCountDiagramComponent } from './components/group-by-count-diagram/group-by-count-diagram.component'
->>>>>>> 5082bea029ea11d06451d1e612db5e46e0afe964
 
 export function createTranslateLoader(http: HttpClient, mfeInfo: MfeInfo) {
   if (mfeInfo?.remoteBaseUrl) {
