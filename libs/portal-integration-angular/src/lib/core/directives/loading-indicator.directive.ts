@@ -17,7 +17,7 @@ import { LoadingIndicatorComponent } from '../components/loading-indicator/loadi
 export class LoadingIndicatorDirective implements OnChanges {
   @Input() onecxLoadingIndicator = false;
   @Input() overlayFullPage = false;
-  @Input() loaderSize? = false;
+  @Input() isLoaderSmall? = false;
 
   private componentRef: ComponentRef<LoadingIndicatorComponent>;
 
@@ -38,7 +38,7 @@ export class LoadingIndicatorDirective implements OnChanges {
     this.renderer.addClass(this.el.nativeElement, 'element-overlay');
     const loaderElement = document.createElement('div');
     loaderElement.className = 'loader';
-    if (this.loaderSize) {
+    if (this.isLoaderSmall) {
       loaderElement.className = 'loader loader-small';
     }
     this.renderer.appendChild(this.el.nativeElement, loaderElement);
