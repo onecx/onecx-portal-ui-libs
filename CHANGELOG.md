@@ -1,3 +1,8 @@
+## [3.6.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.5.2...v3.6.0) (2023-12-07)
+
+### Bug Fixes
+
+
 ## [3.5.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.5.1...v3.5.2) (2023-12-05)
 
 
