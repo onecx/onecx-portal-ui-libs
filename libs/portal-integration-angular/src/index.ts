@@ -45,6 +45,8 @@ export * from './lib/core/components/custom-group-column-selector/custom-group-c
 export * from './lib/core/components/search-header/search-header.component'
 export * from './lib/core/components/custom-group-column-selector/custom-group-column-selector.component'
 export * from './lib/core/components/data-list-grid-sorting/data-list-grid-sorting.component'
+export * from './lib/core/components/group-by-count-diagram/group-by-count-diagram.component'
+export * from './lib/core/components/diagram/diagram.component'
 
 // services
 export * from './lib/services/app.menu.service'
@@ -68,6 +70,7 @@ export * from './lib/model/microfrontend'
 export * from './lib/model/portal-wrapper'
 export * from './lib/model/theme'
 export * from './lib/model/column'
+export * from './lib/model/diagram-column'
 export * from './lib/model/column-view-template'
 export * from './lib/model/menu-item.model'
 export * from './lib/model/mfe-info.model'
@@ -97,3 +100,5 @@ export * from './lib/functions/flatten-object'
 // utils
 export * from './lib/core/utils/objectutils'
 export * from './lib/core/utils/dateutils'
+export * from './lib/core/utils/colorutils'
+export * from './lib/core/utils/translate.combined.loader'

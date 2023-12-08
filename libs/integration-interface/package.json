@@ -1,0 +1,15 @@
+{
+  "name": "@onecx/integration-interface",
+  "version": "3.6.0",
+  "peerDependencies": {
+    "tslib": "^2.3.0",
+    "rxjs": "7.8.1",
+    "@onecx/accelerator": "^3"
+  },
+  "type": "commonjs",
+  "main": "./src/index.js",
+  "typings": "./src/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -343,7 +343,6 @@ describe('InteractiveDataViewComponent', () => {
       ['name 3', '', 'status name 3', ''],
     ]
 
-
     it('should load table', async () => {
       expect(dataTable).toBeTruthy()
       expect(await dataLayoutSelection.getCurrentLayout()).toEqual('table')
@@ -578,9 +577,33 @@ describe('InteractiveDataViewComponent', () => {
           '',
           '3.141',
         ],
-        ['name 1', '', dateUtils.localizedDate('2023-09-14T09:34:22Z'), dateUtils.localizedDate('2023-09-15T09:34:24Z'), 'status name 1', '', '123,456,789'],
-        ['name 2', '', dateUtils.localizedDate('2023-09-14T09:34:22Z'), dateUtils.localizedDate('2023-09-15T09:34:24Z'), 'status name 2', '', '12,345.679'],
-        ['name 3', '', dateUtils.localizedDate('2023-09-14T09:34:22Z'), dateUtils.localizedDate('2023-09-15T09:34:24Z'), 'status name 3', '', '7.1'],
+        [
+          'name 1',
+          '',
+          dateUtils.localizedDate('2023-09-14T09:34:22Z'),
+          dateUtils.localizedDate('2023-09-15T09:34:24Z'),
+          'status name 1',
+          '',
+          '123,456,789',
+        ],
+        [
+          'name 2',
+          '',
+          dateUtils.localizedDate('2023-09-14T09:34:22Z'),
+          dateUtils.localizedDate('2023-09-15T09:34:24Z'),
+          'status name 2',
+          '',
+          '12,345.679',
+        ],
+        [
+          'name 3',
+          '',
+          dateUtils.localizedDate('2023-09-14T09:34:22Z'),
+          dateUtils.localizedDate('2023-09-15T09:34:24Z'),
+          'status name 3',
+          '',
+          '7.1',
+        ],
       ]
 
       const columnGroupSelectionDropdown = await loader.getHarness(
@@ -600,8 +623,7 @@ describe('InteractiveDataViewComponent', () => {
 
     it('should select option in column group selection dropdown and sort ascending', async () => {
       window.HTMLElement.prototype.scrollIntoView = jest.fn()
-      const expectedRowsData = 
-      [
+      const expectedRowsData = [
         [
           'some name',
           '',
@@ -620,9 +642,33 @@ describe('InteractiveDataViewComponent', () => {
           '',
           '3.141',
         ],
-        ['name 3', '', dateUtils.localizedDate('2023-09-14T09:34:22Z'), dateUtils.localizedDate('2023-09-15T09:34:24Z'), 'status name 3', '', '7.1'],
-        ['name 2', '', dateUtils.localizedDate('2023-09-14T09:34:22Z'), dateUtils.localizedDate('2023-09-15T09:34:24Z'), 'status name 2', '', '12,345.679'],
-        ['name 1', '', dateUtils.localizedDate('2023-09-14T09:34:22Z'), dateUtils.localizedDate('2023-09-15T09:34:24Z'), 'status name 1', '', '123,456,789'],
+        [
+          'name 3',
+          '',
+          dateUtils.localizedDate('2023-09-14T09:34:22Z'),
+          dateUtils.localizedDate('2023-09-15T09:34:24Z'),
+          'status name 3',
+          '',
+          '7.1',
+        ],
+        [
+          'name 2',
+          '',
+          dateUtils.localizedDate('2023-09-14T09:34:22Z'),
+          dateUtils.localizedDate('2023-09-15T09:34:24Z'),
+          'status name 2',
+          '',
+          '12,345.679',
+        ],
+        [
+          'name 1',
+          '',
+          dateUtils.localizedDate('2023-09-14T09:34:22Z'),
+          dateUtils.localizedDate('2023-09-15T09:34:24Z'),
+          'status name 1',
+          '',
+          '123,456,789',
+        ],
       ]
 
       const columnGroupSelectionDropdown = await loader.getHarness(
@@ -643,11 +689,34 @@ describe('InteractiveDataViewComponent', () => {
 
     it('should select option in column group selection dropdown and sort descending', async () => {
       window.HTMLElement.prototype.scrollIntoView = jest.fn()
-      const expectedRowsData =
-      [
-        ['name 1', '', dateUtils.localizedDate('2023-09-14T09:34:22Z'), dateUtils.localizedDate('2023-09-15T09:34:24Z'), 'status name 1', '', '123,456,789'],
-        ['name 2', '', dateUtils.localizedDate('2023-09-14T09:34:22Z'), dateUtils.localizedDate('2023-09-15T09:34:24Z'), 'status name 2', '', '12,345.679'],
-        ['name 3', '', dateUtils.localizedDate('2023-09-14T09:34:22Z'), dateUtils.localizedDate('2023-09-15T09:34:24Z'), 'status name 3', '', '7.1'],
+      const expectedRowsData = [
+        [
+          'name 1',
+          '',
+          dateUtils.localizedDate('2023-09-14T09:34:22Z'),
+          dateUtils.localizedDate('2023-09-15T09:34:24Z'),
+          'status name 1',
+          '',
+          '123,456,789',
+        ],
+        [
+          'name 2',
+          '',
+          dateUtils.localizedDate('2023-09-14T09:34:22Z'),
+          dateUtils.localizedDate('2023-09-15T09:34:24Z'),
+          'status name 2',
+          '',
+          '12,345.679',
+        ],
+        [
+          'name 3',
+          '',
+          dateUtils.localizedDate('2023-09-14T09:34:22Z'),
+          dateUtils.localizedDate('2023-09-15T09:34:24Z'),
+          'status name 3',
+          '',
+          '7.1',
+        ],
         [
           'example',
           'example description',
@@ -706,9 +775,33 @@ describe('InteractiveDataViewComponent', () => {
           '',
           '3.141',
         ],
-        ['name 1', '', dateUtils.localizedDate('2023-09-14T09:34:22Z'), dateUtils.localizedDate('2023-09-15T09:34:24Z'), 'status name 1', '', '123,456,789'],
-        ['name 2', '', dateUtils.localizedDate('2023-09-14T09:34:22Z'), dateUtils.localizedDate('2023-09-15T09:34:24Z'), 'status name 2', '', '12,345.679'],
-        ['name 3', '', dateUtils.localizedDate('2023-09-14T09:34:22Z'), dateUtils.localizedDate('2023-09-15T09:34:24Z'), 'status name 3', '', '7.1'],
+        [
+          'name 1',
+          '',
+          dateUtils.localizedDate('2023-09-14T09:34:22Z'),
+          dateUtils.localizedDate('2023-09-15T09:34:24Z'),
+          'status name 1',
+          '',
+          '123,456,789',
+        ],
+        [
+          'name 2',
+          '',
+          dateUtils.localizedDate('2023-09-14T09:34:22Z'),
+          dateUtils.localizedDate('2023-09-15T09:34:24Z'),
+          'status name 2',
+          '',
+          '12,345.679',
+        ],
+        [
+          'name 3',
+          '',
+          dateUtils.localizedDate('2023-09-14T09:34:22Z'),
+          dateUtils.localizedDate('2023-09-15T09:34:24Z'),
+          'status name 3',
+          '',
+          '7.1',
+        ],
       ]
 
       const columnGroupSelectionDropdown = await loader.getHarness(
@@ -870,10 +963,8 @@ describe('InteractiveDataViewComponent', () => {
         'Actions',
       ]
       const expectedRowsData = [
-        ['some name', '', 'some status', 'someone responsible', dateUtils.localizedDate('2023-09-13T09:34:05Z'),
-      ],
-        ['example', 'example description', 'status example', '', dateUtils.localizedDate('2023-09-12T09:33:53Z'),
-      ],
+        ['some name', '', 'some status', 'someone responsible', dateUtils.localizedDate('2023-09-13T09:34:05Z')],
+        ['example', 'example description', 'status example', '', dateUtils.localizedDate('2023-09-12T09:33:53Z')],
         ['name 1', '', 'status name 1', '', dateUtils.localizedDate('2023-09-14T09:34:22Z')],
         ['name 2', '', 'status name 2', '', dateUtils.localizedDate('2023-09-14T09:34:22Z')],
         ['name 3', '', 'status name 3', '', dateUtils.localizedDate('2023-09-14T09:34:22Z')],
