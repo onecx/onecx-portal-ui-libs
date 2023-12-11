@@ -18,12 +18,6 @@ export const APP_CONFIG = new InjectionToken<LibConfig>('APP_CONFIG')
 
 export const AUTH_SERVICE = new InjectionToken<IAuthService>('AUTH_SERVICE')
 
-// export const MFE_NAME = new InjectionToken<string>('OCX_MFE_NAME')
-
-export const MFE_INFO_FN = new InjectionToken<mfeInfoProducer>('OCX_MFE_INFO_FN')
-
-export const MFE_INFO = new InjectionToken<MfeInfo>('OCX_MFE_INFO')
-
 export type mfeInfoProducer = () => MfeInfo
 
 export const SANITY_CHECK = new InjectionToken<string>('OCXSANITY_CHECK')

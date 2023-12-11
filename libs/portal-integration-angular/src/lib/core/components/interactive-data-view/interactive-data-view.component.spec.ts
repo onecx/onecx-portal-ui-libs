@@ -14,7 +14,6 @@ import { HarnessLoader, parallel, TestElement } from '@angular/cdk/testing'
 import { PortalCoreModule } from '../../portal-core.module'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ColumnType } from '../../../model/column-type.model'
-import { MFE_INFO } from '../../../api/injection-tokens'
 import {
   DataViewHarness,
   ColumnGroupSelectionHarness,
@@ -234,15 +233,6 @@ describe('InteractiveDataViewComponent', () => {
         HttpClientModule,
       ],
       providers: [
-        {
-          provide: MFE_INFO,
-          useValue: {
-            baseHref: '/base/path',
-            mountPath: '/base/path',
-            remoteBaseUrl: 'http://localhost:4200',
-            shellName: 'shell',
-          },
-        },
         { provide: UserService, useClass: MockUserService },
       ],
     }).compileComponents()

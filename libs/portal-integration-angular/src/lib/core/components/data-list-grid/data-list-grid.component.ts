@@ -13,7 +13,6 @@ import {
 } from '@angular/core'
 import { DataSortDirection } from '../../../model/data-sort-direction'
 import { MenuItem } from 'primeng/api'
-import { MFE_INFO } from '../../../api/injection-tokens'
 import { MfeInfo } from '../../../model/mfe-info.model'
 import { DataAction } from '../../../model/data-action'
 import { TranslateService } from '@ngx-translate/core'
@@ -24,6 +23,7 @@ import { BehaviorSubject, combineLatest, map, mergeMap, Observable } from 'rxjs'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { Router } from '@angular/router'
 import { UserService } from '../../../services/user.service'
+import { AppStateService } from '../../../services/app-state.service'
 
 export type ListGridData = {
   id: string | number
@@ -164,17 +164,21 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   observedOutputs = 0
 
   displayedItems$: Observable<unknown[]> | undefined
+  fallbackImagePath$!: Observable<string>
 
   constructor(
     @Inject(LOCALE_ID) locale: string,
-    @Inject(MFE_INFO) private mfeInfo: MfeInfo,
     translateService: TranslateService,
     private userService: UserService,
     private router: Router,
-    private injector: Injector
+    private injector: Injector,
+    private appStateService: AppStateService
   ) {
     super(locale, translateService)
     this.name = this.name || this.router.url.replace(/[^A-Za-z0-9]/, '_')
+    this.fallbackImagePath$ = this.appStateService.currentMfe$.pipe(
+      map((currentMfe) => this.getFallbackImagePath(currentMfe))
+    )
   }
 
   ngDoCheck(): void {
@@ -213,10 +217,8 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     this.editItem.emit(element)
   }
 
-  imgError(event: Event) {
-    if (!!this.fallbackImage && (<any>event?.target)?.src != this.fallbackImage) {
-      ;(<any>event.target).src = this.getFallbackImagePath(this.mfeInfo)
-    }
+  imgError(item: ListGridData) {
+    item.imagePath = ''
   }
 
   getFallbackImagePath(mfeInfo: MfeInfo) {
