@@ -9,7 +9,6 @@ import { ButtonModule } from 'primeng/button'
 import { HarnessLoader } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { PButtonHarness } from '../../../../../testing'
-// import { PButtonHarness } from 'libs/portal-integration-angular/testing'
 import { EventEmitter } from '@angular/core'
 import { ButtonDialogContent } from '../../../model/button-dialog-content'
 
@@ -45,7 +44,7 @@ describe('ButtonDialogComponent', () => {
     })
   })
 
-  describe('base usage', () => {
+  describe('basic usage', () => {
     beforeEach(async () => {
       await TestBed.compileComponents()
       fixture = TestBed.createComponent(ButtonDialogComponent)
@@ -64,6 +63,7 @@ describe('ButtonDialogComponent', () => {
       expect(component.dialogData.mainButtonDetails).toEqual(component.defaultMainButtonDetails)
       expect(component.dialogData.sideButtonEnabled).toEqual(true)
       expect(component.dialogData.sideButtonDetails).toEqual(component.defaultSideButtonDetails)
+
       const nativeElement: HTMLElement = fixture.debugElement.nativeElement
       expect(nativeElement.querySelector('h2')?.textContent).toBe('Title')
       expect(nativeElement.querySelector('#buttonDialogMainButton > button')?.textContent).toBe('Confirm')
@@ -100,7 +100,7 @@ describe('ButtonDialogComponent', () => {
       expect(nativeElement.querySelector('#buttonDialogSideButton > button')?.textContent).toBe('CustomSide')
     })
 
-    it('should create new EventEmitter by default', async () => {
+    it('should create a new EventEmitter by default', async () => {
       jest.spyOn(component.dialogResult, 'emit')
 
       const button = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogMainButton' }))
@@ -109,7 +109,7 @@ describe('ButtonDialogComponent', () => {
       expect(component.dialogResult.emit).toHaveBeenCalledTimes(1)
     })
 
-    it('should create Confirm/Cancel dialog when sideButton enabled', () => {
+    it('should create Confirm/Cancel button-dialog when sideButton is enabled', () => {
       component.dialogContent = {
         component: DefaultButtonDialogHostComponent,
         sideButtonEnabled: true,
@@ -123,7 +123,7 @@ describe('ButtonDialogComponent', () => {
       expect(nativeElement.querySelector('#buttonDialogSideButton > button')?.textContent).toBe('Cancel')
     })
 
-    it('should create Confirm only dialog when sideButton disabled', () => {
+    it('should create Confirm only button-dialog when sideButton is disabled', () => {
       component.dialogContent = {
         component: DefaultButtonDialogHostComponent,
         sideButtonEnabled: false,
@@ -137,7 +137,7 @@ describe('ButtonDialogComponent', () => {
       expect(nativeElement.querySelector('#buttonDialogSideButton > button')).not.toBeTruthy()
     })
 
-    it('should create CustmMain/Cancel dialog when mainButton defined', () => {
+    it('should create CustmMain/Cancel button-dialog when mainButton is defined', () => {
       component.dialogContent = {
         component: DefaultButtonDialogHostComponent,
         mainButtonDetails: {
@@ -156,7 +156,7 @@ describe('ButtonDialogComponent', () => {
       expect(nativeElement.querySelector('#buttonDialogSideButton > button')?.textContent).toBe('Cancel')
     })
 
-    it('should create Confirm/CustomSide dialog when sideButton defined', () => {
+    it('should create Confirm/CustomSide button-dialog when sideButton is defined', () => {
       component.dialogContent = {
         component: DefaultButtonDialogHostComponent,
         sideButtonDetails: {
@@ -175,7 +175,7 @@ describe('ButtonDialogComponent', () => {
       expect(nativeElement.querySelector('#buttonDialogSideButton > button')?.textContent).toBe('CustomSide')
     })
 
-    it('should create CustomMain/CustomSide dialog when both buttons defined', () => {
+    it('should create CustomMain/CustomSide button-dialog when both buttons are defined', () => {
       component.dialogContent = {
         component: DefaultButtonDialogHostComponent,
         mainButtonDetails: {
@@ -200,7 +200,7 @@ describe('ButtonDialogComponent', () => {
       expect(nativeElement.querySelector('#buttonDialogSideButton > button')?.textContent).toBe('CustomSide')
     })
 
-    it('should create CustomMain only dialog when sideButton disabled', () => {
+    it('should create CustomMain only button-dialog when sideButton is disabled', () => {
       component.dialogContent = {
         component: DefaultButtonDialogHostComponent,
         mainButtonDetails: {
@@ -220,7 +220,7 @@ describe('ButtonDialogComponent', () => {
       expect(nativeElement.querySelector('#buttonDialogSideButton > button')).not.toBeTruthy()
     })
 
-    it('should create CustomMain/Cancel dialog when sideButton enabled', () => {
+    it('should create CustomMain/Cancel button-dialog when sideButton is enabled', () => {
       component.dialogContent = {
         component: DefaultButtonDialogHostComponent,
         mainButtonDetails: {
@@ -240,7 +240,7 @@ describe('ButtonDialogComponent', () => {
       expect(nativeElement.querySelector('#buttonDialogSideButton > button')?.textContent).toBe('Cancel')
     })
 
-    it('should create Confirm only dialog when sideButton defined but disabled', () => {
+    it('should create Confirm only button-dialog when sideButton is defined but is disabled', () => {
       component.dialogContent = {
         component: DefaultButtonDialogHostComponent,
         sideButtonDetails: {
@@ -260,7 +260,7 @@ describe('ButtonDialogComponent', () => {
       expect(nativeElement.querySelector('#buttonDialogSideButton > button')).not.toBeTruthy()
     })
 
-    it('should create Confirm/CustomSide dialog when sideButton defined and not disabled', () => {
+    it('should create Confirm/CustomSide button-dialog when sideButton is defined and enabled', () => {
       component.dialogContent = {
         component: DefaultButtonDialogHostComponent,
         sideButtonDetails: {
@@ -280,7 +280,7 @@ describe('ButtonDialogComponent', () => {
       expect(nativeElement.querySelector('#buttonDialogSideButton > button')?.textContent).toBe('CustomSide')
     })
 
-    it('should create CustomMain only dialog when sideButton defined but disabled', () => {
+    it('should create CustomMain only button-dialog when sideButton is defined but is disabled', () => {
       component.dialogContent = {
         component: DefaultButtonDialogHostComponent,
         mainButtonDetails: {
@@ -331,7 +331,7 @@ describe('ButtonDialogComponent', () => {
       expect(component.dialogData.sideButtonDetails.icon).toBe('sideLabel')
     })
 
-    it('should emit approperiate values', async () => {
+    it('should emit appropriate values', async () => {
       const emitter: EventEmitter<any> = new EventEmitter()
       jest.spyOn(emitter, 'emit')
       const defaultEmiter = component.dialogResult
@@ -374,7 +374,7 @@ describe('ButtonDialogComponent', () => {
       expect(component.dialogResult.emit).toHaveBeenCalledWith('myCustomValueWithCustomType')
     })
 
-    it('should use closeDialog property to determine if dialog should be closed', async () => {
+    it('should use closeDialog property to determine if button-dialog should be closed', async () => {
       jest.spyOn(component.ref, 'close')
 
       component.dialogContent = {
