@@ -17,7 +17,6 @@ export class DefaultButtonDialogHostComponent {
 @Component({
   selector: 'ocx-button-dialog',
   templateUrl: './button-dialog.component.html',
-  styleUrls: ['./button-dialog.component.scss'],
 })
 export class ButtonDialogComponent implements OnInit {
   defaultMainButtonDetails: ButtonDialogDetails = {
