@@ -51,7 +51,7 @@
       "ADVANCED": "Advanced"
     },
     "OCX_SEARCH_CONFIG": {
-      "DEFAULT": "Pick predefined template"
+      "DROPDOWN_DEFAULT": "Pick predefined template"
     },
     "HEADLINE": "Search",
     "RESET_BUTTON_TEXT": "Reset",

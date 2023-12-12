@@ -51,7 +51,7 @@
       "ADVANCED": "Erweitert"
     },
     "OCX_SEARCH_CONFIG": {
-      "DEFAULT": "Wähle vordefiniertes Template"
+      "DROPDOWN_DEFAULT": "Gespeicherte Suchvorlage auswählen"
     },
     "HEADLINE": "Suche",
     "RESET_BUTTON_TEXT": "Zurücksetzen",

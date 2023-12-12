@@ -40,11 +40,11 @@ export class SearchHeaderComponent implements AfterViewInit {
   @Output() searched: EventEmitter<any> = new EventEmitter()
   @Output() resetted: EventEmitter<any> = new EventEmitter()
   @Output() selectedSearchConfig: EventEmitter<any> = new EventEmitter()
-  @ContentChild('additionalToolbarActions')
-  additionalToolbarActions: TemplateRef<any> | undefined
+  @ContentChild('additionalToolbarContent')
+  additionalToolbarContent: TemplateRef<any> | undefined
 
-  get _additionalToolbarActions(): TemplateRef<any> | undefined {
-    return this.additionalToolbarActions
+  get _additionalToolbarContent(): TemplateRef<any> | undefined {
+    return this.additionalToolbarContent
   }
 
   @ViewChild('searchParameterFields') searchParameterFields: ElementRef | undefined

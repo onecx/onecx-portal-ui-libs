@@ -1,4 +1,4 @@
-export type SearchConfigPrimitive = string | number | bigint | boolean | Date
+export type SearchConfigPrimitive = string | number | bigint | boolean | Date | undefined
 export interface SearchConfig {
   id: string
   name: string

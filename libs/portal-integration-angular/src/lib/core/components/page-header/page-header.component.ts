@@ -105,8 +105,8 @@ export class PageHeaderComponent implements OnInit, OnChanges {
   @Output()
   save = new EventEmitter()
 
-  @ContentChild('additionalToolbarActions')
-  additionalToolbarActions: TemplateRef<any> | undefined
+  @ContentChild('additionalToolbarContent')
+  additionalToolbarContent: TemplateRef<any> | undefined
 
   overflowActions: MenuItem[] = []
   inlineActions: Action[] | undefined
