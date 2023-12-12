@@ -7,7 +7,7 @@ import { AsyncTranslateLoader } from "./async-translate-loader.utils"
 import { TranslateCombinedLoader } from "./translate.combined.loader"
 
 export class CreateTranslateLoader {
-    createTranslateLoader(http: HttpClient, appStateService: AppStateService): TranslateLoader {
+    public static createTranslateLoader(http: HttpClient, appStateService: AppStateService): TranslateLoader {
         return new AsyncTranslateLoader(
           combineLatest([appStateService.currentMfe$.asObservable(), appStateService.globalLoading$.asObservable()]).pipe(
             filter(([, isLoading]) => !isLoading),
