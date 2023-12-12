@@ -87,7 +87,7 @@ export * from './lib/model/column-type.model'
 export * from './lib/model/data-sort-direction'
 export * from './lib/model/breadcrumb-menu-item.model'
 export * from './lib/model/data-action'
-export * from './lib/model/button-dialog-content'
+export * from './lib/model/button-dialog'
 
 // core
 export * from './lib/api/iauth.service'

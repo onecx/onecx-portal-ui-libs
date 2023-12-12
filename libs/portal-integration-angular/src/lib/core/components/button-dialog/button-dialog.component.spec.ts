@@ -10,7 +10,7 @@ import { HarnessLoader } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { PButtonHarness } from '../../../../../testing'
 import { EventEmitter } from '@angular/core'
-import { ButtonDialogContent } from '../../../model/button-dialog-content'
+import { ButtonDialogDynamicDialogConfig } from '../../../model/button-dialog'
 
 describe('ButtonDialogComponent', () => {
   let component: ButtonDialogComponent
@@ -57,22 +57,20 @@ describe('ButtonDialogComponent', () => {
       expect(component).toBeTruthy()
     })
 
-    it('should create default button-dialog without passing dialogContent', () => {
-      expect(component.dialogData.component).toEqual(DefaultButtonDialogHostComponent)
-      expect(component.dialogData.data).toEqual({})
-      expect(component.dialogData.mainButtonDetails).toEqual(component.defaultMainButtonDetails)
-      expect(component.dialogData.sideButtonEnabled).toEqual(true)
-      expect(component.dialogData.sideButtonDetails).toEqual(component.defaultSideButtonDetails)
+    it('should create default button-dialog without passing config', () => {
+      expect(component.dialogData.component).toEqual(undefined)
+      expect(component.dialogData.componentData).toEqual(undefined)
+      expect(component.dialogData.config.mainButtonDetails).toEqual(component.defaultMainButtonDetails)
+      expect(component.dialogData.config.sideButtonEnabled).toEqual(true)
+      expect(component.dialogData.config.sideButtonDetails).toEqual(component.defaultSideButtonDetails)
 
       const nativeElement: HTMLElement = fixture.debugElement.nativeElement
-      expect(nativeElement.querySelector('h2')?.textContent).toBe('Title')
       expect(nativeElement.querySelector('#buttonDialogMainButton > button')?.textContent).toBe('Confirm')
       expect(nativeElement.querySelector('#buttonDialogSideButton > button')?.textContent).toBe('Cancel')
     })
 
-    it('should create customized button-dialog with passing dialogContent', () => {
-      component.dialogContent = {
-        component: DefaultButtonDialogHostComponent,
+    it('should create customized button-dialog with passing config', () => {
+      component.config = {
         mainButtonDetails: {
           label: 'CustomMain',
           icon: 'pi pi-check',
@@ -86,32 +84,27 @@ describe('ButtonDialogComponent', () => {
           closeDialog: false,
           valueToEmit: true,
         },
-        data: {
-          title: 'CustomTitle',
-        },
       }
 
       component.loadComponent()
       fixture.detectChanges()
 
       const nativeElement: HTMLElement = fixture.debugElement.nativeElement
-      expect(nativeElement.querySelector('h2')?.textContent).toBe('CustomTitle')
       expect(nativeElement.querySelector('#buttonDialogMainButton > button')?.textContent).toBe('CustomMain')
       expect(nativeElement.querySelector('#buttonDialogSideButton > button')?.textContent).toBe('CustomSide')
     })
 
     it('should create a new EventEmitter by default', async () => {
-      jest.spyOn(component.dialogResult, 'emit')
+      jest.spyOn(component.resultEmitter, 'emit')
 
       const button = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogMainButton' }))
       await button.click()
 
-      expect(component.dialogResult.emit).toHaveBeenCalledTimes(1)
+      expect(component.resultEmitter.emit).toHaveBeenCalledTimes(1)
     })
 
     it('should create Confirm/Cancel button-dialog when sideButton is enabled', () => {
-      component.dialogContent = {
-        component: DefaultButtonDialogHostComponent,
+      component.config = {
         sideButtonEnabled: true,
       }
 
@@ -124,8 +117,7 @@ describe('ButtonDialogComponent', () => {
     })
 
     it('should create Confirm only button-dialog when sideButton is disabled', () => {
-      component.dialogContent = {
-        component: DefaultButtonDialogHostComponent,
+      component.config = {
         sideButtonEnabled: false,
       }
 
@@ -138,8 +130,7 @@ describe('ButtonDialogComponent', () => {
     })
 
     it('should create CustmMain/Cancel button-dialog when mainButton is defined', () => {
-      component.dialogContent = {
-        component: DefaultButtonDialogHostComponent,
+      component.config = {
         mainButtonDetails: {
           label: 'CustomMain',
           icon: 'pi pi-check',
@@ -157,8 +148,7 @@ describe('ButtonDialogComponent', () => {
     })
 
     it('should create Confirm/CustomSide button-dialog when sideButton is defined', () => {
-      component.dialogContent = {
-        component: DefaultButtonDialogHostComponent,
+      component.config = {
         sideButtonDetails: {
           label: 'CustomSide',
           icon: 'pi pi-times',
@@ -176,8 +166,7 @@ describe('ButtonDialogComponent', () => {
     })
 
     it('should create CustomMain/CustomSide button-dialog when both buttons are defined', () => {
-      component.dialogContent = {
-        component: DefaultButtonDialogHostComponent,
+      component.config = {
         mainButtonDetails: {
           label: 'CustomMain',
           icon: 'pi pi-check',
@@ -201,8 +190,7 @@ describe('ButtonDialogComponent', () => {
     })
 
     it('should create CustomMain only button-dialog when sideButton is disabled', () => {
-      component.dialogContent = {
-        component: DefaultButtonDialogHostComponent,
+      component.config = {
         mainButtonDetails: {
           label: 'CustomMain',
           icon: 'pi pi-check',
@@ -221,8 +209,7 @@ describe('ButtonDialogComponent', () => {
     })
 
     it('should create CustomMain/Cancel button-dialog when sideButton is enabled', () => {
-      component.dialogContent = {
-        component: DefaultButtonDialogHostComponent,
+      component.config = {
         mainButtonDetails: {
           label: 'CustomMain',
           icon: 'pi pi-check',
@@ -241,8 +228,7 @@ describe('ButtonDialogComponent', () => {
     })
 
     it('should create Confirm only button-dialog when sideButton is defined but is disabled', () => {
-      component.dialogContent = {
-        component: DefaultButtonDialogHostComponent,
+      component.config = {
         sideButtonDetails: {
           label: 'CustomSide',
           icon: 'pi pi-times',
@@ -261,8 +247,7 @@ describe('ButtonDialogComponent', () => {
     })
 
     it('should create Confirm/CustomSide button-dialog when sideButton is defined and enabled', () => {
-      component.dialogContent = {
-        component: DefaultButtonDialogHostComponent,
+      component.config = {
         sideButtonDetails: {
           label: 'CustomSide',
           icon: 'pi pi-times',
@@ -281,8 +266,7 @@ describe('ButtonDialogComponent', () => {
     })
 
     it('should create CustomMain only button-dialog when sideButton is defined but is disabled', () => {
-      component.dialogContent = {
-        component: DefaultButtonDialogHostComponent,
+      component.config = {
         mainButtonDetails: {
           label: 'CustomMain',
           icon: 'pi pi-check',
@@ -307,8 +291,7 @@ describe('ButtonDialogComponent', () => {
     })
 
     it('should assign icons to buttons', () => {
-      component.dialogContent = {
-        component: DefaultButtonDialogHostComponent,
+      component.config = {
         mainButtonDetails: {
           label: 'CustomMain',
           icon: 'mainLabel',
@@ -327,36 +310,14 @@ describe('ButtonDialogComponent', () => {
       component.loadComponent()
       fixture.detectChanges()
 
-      expect(component.dialogData.mainButtonDetails.icon).toBe('mainLabel')
-      expect(component.dialogData.sideButtonDetails.icon).toBe('sideLabel')
-    })
-
-    it('should emit appropriate values', async () => {
-      const emitter: EventEmitter<any> = new EventEmitter()
-      jest.spyOn(emitter, 'emit')
-      const defaultEmiter = component.dialogResult
-      jest.spyOn(defaultEmiter, 'emit')
-
-      component.dialogContent = {
-        component: DefaultButtonDialogHostComponent,
-        resultEmitter: emitter,
-      }
-
-      component.loadComponent()
-      fixture.detectChanges()
-
-      const button = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogMainButton' }))
-      await button.click()
-
-      expect(emitter.emit).toHaveBeenCalledWith(true)
-      expect(defaultEmiter.emit).toHaveBeenCalledTimes(0)
+      expect(component.dialogData.config.mainButtonDetails!.icon).toBe('mainLabel')
+      expect(component.dialogData.config.sideButtonDetails!.icon).toBe('sideLabel')
     })
 
     it('should emit approperiate values', async () => {
-      jest.spyOn(component.dialogResult, 'emit')
+      jest.spyOn(component.resultEmitter, 'emit')
 
-      component.dialogContent = {
-        component: DefaultButtonDialogHostComponent,
+      component.config = {
         mainButtonDetails: {
           label: 'CustomMain',
           icon: 'mainLabel',
@@ -371,77 +332,41 @@ describe('ButtonDialogComponent', () => {
       const button = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogMainButton' }))
       await button.click()
 
-      expect(component.dialogResult.emit).toHaveBeenCalledWith('myCustomValueWithCustomType')
-    })
-
-    it('should use closeDialog property to determine if button-dialog should be closed', async () => {
-      jest.spyOn(component.ref, 'close')
-
-      component.dialogContent = {
-        component: DefaultButtonDialogHostComponent,
-        mainButtonDetails: {
-          label: 'CustomMain',
-          icon: 'mainLabel',
-          closeDialog: true,
-          valueToEmit: 'myCustomValueWithCustomType',
-        },
-        sideButtonEnabled: true,
-        sideButtonDetails: {
-          label: 'CustomSide',
-          icon: 'sideLabel',
-          closeDialog: false,
-          valueToEmit: 1,
-        },
-      }
-
-      component.loadComponent()
-      fixture.detectChanges()
-
-      const mainButton = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogMainButton' }))
-      await mainButton.click()
-
-      expect(component.ref.close).toHaveBeenCalledTimes(1)
-
-      jest.resetAllMocks()
-
-      const sideButton = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogSideButton' }))
-      await sideButton.click()
-
-      expect(component.ref.close).toHaveBeenCalledTimes(0)
+      expect(component.resultEmitter.emit).toHaveBeenCalledWith('myCustomValueWithCustomType')
     })
   })
 
   describe('with dynamicDialog data', () => {
     it('should use DynamicDialogConfig', async () => {
-      const buttonDialogContent: ButtonDialogContent = {
+      const buttonDialogData: ButtonDialogDynamicDialogConfig = {
         component: DefaultButtonDialogHostComponent,
-        mainButtonDetails: {
-          label: 'CustomMainFromDynamicDialogConfig',
-          icon: 'pi pi-check',
-          closeDialog: false,
-          valueToEmit: false,
+        config: {
+          mainButtonDetails: {
+            label: 'CustomMainFromDynamicDialogConfig',
+            icon: 'pi pi-check',
+            closeDialog: false,
+            valueToEmit: false,
+          },
+          sideButtonEnabled: true,
+          sideButtonDetails: {
+            label: 'CustomSideFromDynamicDialogConfig',
+            icon: 'pi pi-times',
+            closeDialog: false,
+            valueToEmit: true,
+          },
         },
-        sideButtonEnabled: true,
-        sideButtonDetails: {
-          label: 'CustomSideFromDynamicDialogConfig',
-          icon: 'pi pi-times',
-          closeDialog: false,
-          valueToEmit: true,
-        },
-        data: {
+        componentData: {
           title: 'CustomTitleFromDynamicDialogConfig',
         },
       }
       const dialogConfig: DynamicDialogConfig = {
-        data: buttonDialogContent,
+        data: buttonDialogData,
       }
-
       TestBed.overrideProvider(DynamicDialogConfig, { useValue: dialogConfig })
       await TestBed.compileComponents()
       fixture = TestBed.createComponent(ButtonDialogComponent)
       component = fixture.componentInstance
       fixture.detectChanges()
-
       component.loadComponent()
       fixture.detectChanges()
 
@@ -453,6 +378,99 @@ describe('ButtonDialogComponent', () => {
       expect(nativeElement.querySelector('#buttonDialogSideButton > button')?.textContent).toBe(
         'CustomSideFromDynamicDialogConfig'
       )
+    })
+
+    it('should use use default data if dynamicDialogConfig not passed', async () => {
+      const buttonDialogData: ButtonDialogDynamicDialogConfig = {}
+      const dialogConfig: DynamicDialogConfig = {
+        data: buttonDialogData,
+      }
+      TestBed.overrideProvider(DynamicDialogConfig, { useValue: dialogConfig })
+      await TestBed.compileComponents()
+      fixture = TestBed.createComponent(ButtonDialogComponent)
+      component = fixture.componentInstance
+      fixture.detectChanges()
+      component.loadComponent()
+      fixture.detectChanges()
+
+      const nativeElement: HTMLElement = fixture.debugElement.nativeElement
+      expect(nativeElement.querySelector('h2')?.textContent).toBe('Title')
+      expect(nativeElement.querySelector('#buttonDialogMainButton > button')?.textContent).toBe('Confirm')
+      expect(nativeElement.querySelector('#buttonDialogSideButton > button')?.textContent).toBe('Cancel')
+    })
+
+    it('should emit appropriate values while passing emitter via dynamicDialogConfig', async () => {
+      const emitter: EventEmitter<any> = new EventEmitter()
+      jest.spyOn(emitter, 'emit')
+      const defaultEmiter = component.resultEmitter
+      jest.spyOn(defaultEmiter, 'emit')
+
+      const buttonDialogData: ButtonDialogDynamicDialogConfig = {
+        emitter: emitter,
+      }
+      const dialogConfig: DynamicDialogConfig = {
+        data: buttonDialogData,
+      }
+      TestBed.overrideProvider(DynamicDialogConfig, { useValue: dialogConfig })
+      await TestBed.compileComponents()
+      fixture = TestBed.createComponent(ButtonDialogComponent)
+      component = fixture.componentInstance
+      fixture.detectChanges()
+      component.loadComponent()
+      fixture.detectChanges()
+      loader = TestbedHarnessEnvironment.loader(fixture)
+
+      const button = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogMainButton' }))
+      await button.click()
+
+      expect(emitter.emit).toHaveBeenCalledWith(true)
+      expect(defaultEmiter.emit).toHaveBeenCalledTimes(0)
+    })
+
+    it('should use closeDialog property to determine if button-dialog should be closed', async () => {
+      const buttonDialogData: ButtonDialogDynamicDialogConfig = {
+        component: DefaultButtonDialogHostComponent,
+        config: {
+          mainButtonDetails: {
+            label: 'CustomMain',
+            icon: 'mainLabel',
+            closeDialog: true,
+            valueToEmit: 'myCustomValueWithCustomType',
+          },
+          sideButtonEnabled: true,
+          sideButtonDetails: {
+            label: 'CustomSide',
+            icon: 'sideLabel',
+            closeDialog: false,
+            valueToEmit: 1,
+          },
+        },
+      }
+      const dialogConfig: DynamicDialogConfig = {
+        data: buttonDialogData,
+      }
+      TestBed.overrideProvider(DynamicDialogConfig, { useValue: dialogConfig })
+      await TestBed.compileComponents()
+      fixture = TestBed.createComponent(ButtonDialogComponent)
+      component = fixture.componentInstance
+      fixture.detectChanges()
+      component.loadComponent()
+      fixture.detectChanges()
+      loader = TestbedHarnessEnvironment.loader(fixture)
+
+      jest.spyOn(component.dynamicDialogRef, 'close')
+
+      const mainButton = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogMainButton' }))
+      await mainButton.click()
+
+      expect(component.dynamicDialogRef.close).toHaveBeenCalledTimes(1)
+
+      jest.resetAllMocks()
+
+      const sideButton = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogSideButton' }))
+      await sideButton.click()
+
+      expect(component.dynamicDialogRef.close).toHaveBeenCalledTimes(0)
     })
   })
 })
