@@ -1,5 +1,6 @@
 <div>
     <ng-template ocxButtonDialogHost></ng-template>
+    <ng-content select="[ocxButtonDialogHost]"></ng-content>
     <div class="w-full flex justify-content-end mb-3">
         <p-button id="buttonDialogSideButton" *ngIf="dialogData.config.sideButtonEnabled"
             class="mx-2"

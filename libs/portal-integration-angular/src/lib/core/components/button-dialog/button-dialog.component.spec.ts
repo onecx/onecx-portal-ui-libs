@@ -9,8 +9,9 @@ import { ButtonModule } from 'primeng/button'
 import { HarnessLoader } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { PButtonHarness } from '../../../../../testing'
-import { EventEmitter } from '@angular/core'
-import { ButtonDialogDynamicDialogConfig } from '../../../model/button-dialog'
+import { Component, EventEmitter, Input, ViewChild } from '@angular/core'
+import { ButtonDialogDynamicDialogConfig, ButtonDialogConfig } from '../../../model/button-dialog'
+import { By } from '@angular/platform-browser'
 
 describe('ButtonDialogComponent', () => {
   let component: ButtonDialogComponent
@@ -294,13 +295,13 @@ describe('ButtonDialogComponent', () => {
       component.config = {
         mainButtonDetails: {
           label: 'CustomMain',
-          icon: 'mainLabel',
+          icon: 'mainIcon',
           closeDialog: false,
           valueToEmit: false,
         },
         sideButtonDetails: {
           label: 'CustomSide',
-          icon: 'sideLabel',
+          icon: 'sideIcon',
           closeDialog: false,
           valueToEmit: true,
         },
@@ -310,8 +311,8 @@ describe('ButtonDialogComponent', () => {
       component.loadComponent()
       fixture.detectChanges()
 
-      expect(component.dialogData.config.mainButtonDetails!.icon).toBe('mainLabel')
-      expect(component.dialogData.config.sideButtonDetails!.icon).toBe('sideLabel')
+      expect(component.dialogData.config.mainButtonDetails!.icon).toBe('mainIcon')
+      expect(component.dialogData.config.sideButtonDetails!.icon).toBe('sideIcon')
     })
 
     it('should emit approperiate values', async () => {
@@ -471,6 +472,85 @@ describe('ButtonDialogComponent', () => {
       await sideButton.click()
 
       expect(component.dynamicDialogRef.close).toHaveBeenCalledTimes(0)
+    })
+  })
+
+  describe('inline usage', () => {
+    @Component({
+      template: `<ocx-button-dialog>
+        <div ocxButtonDialogHost id="host">HostComponentContent</div>
+      </ocx-button-dialog>`,
+    })
+    class TestBaseHostComponent {}
+
+    let fixtureWithHost
+    let componentWithHost
+
+    it('should use ng-content', async () => {
+      await TestBed.compileComponents()
+      fixtureWithHost = TestBed.createComponent(TestBaseHostComponent)
+      fixtureWithHost.detectChanges()
+
+      const nativeElement: HTMLElement = fixtureWithHost.debugElement.nativeElement
+      expect(nativeElement.querySelector('#host')?.textContent).toBe('HostComponentContent')
+    })
+
+    let config: ButtonDialogConfig = {
+      mainButtonDetails: {
+        label: 'inlineMain',
+        icon: 'pi pi-plus',
+        valueToEmit: 'inlineMainEmit',
+      },
+      sideButtonEnabled: true,
+      sideButtonDetails: {
+        label: 'inlineSide',
+        icon: 'pi pi-times',
+        valueToEmit: 'inlineSideEmit',
+      },
+    }
+
+    @Component({
+      template: ` <ocx-button-dialog [config]="this.buttonDialogConfig">
+        <div ocxButtonDialogHost id="host">HostComponentContent</div>
+      </ocx-button-dialog>`,
+    })
+    class TestHostComponentWithConfig {
+      @Input() buttonDialogConfig: ButtonDialogConfig = config
+    }
+
+    it('should use passed config', async () => {
+      await TestBed.compileComponents()
+      fixtureWithHost = TestBed.createComponent(TestHostComponentWithConfig)
+      fixtureWithHost.detectChanges()
+
+      const buttonDialog = fixtureWithHost.debugElement.query(By.css('ocx-button-dialog'))
+      expect(buttonDialog).toBeTruthy()
+      expect(buttonDialog.properties['config']).toBe(config)
+    })
+
+    @Component({
+      template: ` <ocx-button-dialog (resultEmitter)="handleResult($event)">
+        <div ocxButtonDialogHost id="host">HostComponentContent</div>
+      </ocx-button-dialog>`,
+    })
+    class TestHostComponentWithResultSub {
+      @Input() buttonDialogConfig: ButtonDialogConfig = config
+      public handleResult(result: any): void {
+        console.log(result)
+      }
+    }
+
+    it('should use passed config', async () => {
+      await TestBed.compileComponents()
+      fixtureWithHost = TestBed.createComponent(TestHostComponentWithResultSub)
+      fixtureWithHost.detectChanges()
+
+      jest.spyOn(console, 'log')
+
+      const buttonDialog = fixtureWithHost.debugElement.query(By.css('ocx-button-dialog'))
+      expect(buttonDialog).toBeTruthy()
+      buttonDialog.triggerEventHandler('resultEmitter', true)
+      expect(console.log).toHaveBeenCalledWith(true)
     })
   })
 })
