@@ -9,13 +9,7 @@ import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
 import { MFE_INFO } from '../../../api/injection-tokens'
 import { SearchConfigPrimitive, SearchConfig } from '../../../model/search-config'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import {
-  DivHarness,
-  HarnessLoader,
-  PDropdownHarness,
-  SearchConfigHarness,
-} from 'libs/portal-integration-angular/testing'
-import { CoreModule } from 'keycloak-angular'
+import { SearchConfigHarness } from '../../../../../testing'
 import { PrimeNgModule } from '../../primeng.module'
 import { ReactiveFormsModule } from '@angular/forms'
 
@@ -23,9 +17,6 @@ describe('SearchConfigComponent', () => {
   let translateService: TranslateService
   let component: SearchConfigComponent
   let fixture: ComponentFixture<SearchConfigComponent>
-  let loader: HarnessLoader
-  let searchConfig: SearchConfigHarness
-  let dropdown: PDropdownHarness | null
 
   const searchConfigurations: Record<string, SearchConfigPrimitive>[] = [
     {
@@ -59,7 +50,7 @@ describe('SearchConfigComponent', () => {
     },
   ]
 
-  const definedSumKey = 'OCX_SEARCH_HEADER.OCX_SEARCH_CONFIG.DEFAULT'
+  const definedSumKey = 'OCX_SEARCH_HEADER.OCX_SEARCH_CONFIG.DROPDOWN_DEFAULT'
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -96,9 +87,6 @@ describe('SearchConfigComponent', () => {
     translateService.setDefaultLang('en')
     translateService.use('en')
     fixture.detectChanges()
-    loader = TestbedHarnessEnvironment.loader(fixture)
-
-    // searchConfig = await loader.getHarness(SearchConfigHarness)
   })
 
   it('should create', () => {
@@ -160,8 +148,7 @@ describe('SearchConfigComponent', () => {
   it('should display the right default message', async () => {
     const searchConfigHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, SearchConfigHarness)
     const dropdown = await searchConfigHarness.getSearchConfigDropdown()
-    const defaultDropdownKey = 'OCX_SEARCH_HEADER.OCX_SEARCH_CONFIG.DROPDOWN_DEFAULT'
-    const definedDefaultKeyTranslation = translateService.instant(defaultDropdownKey)
+    const definedDefaultKeyTranslation = translateService.instant(definedSumKey)
     expect(await dropdown?.getDefaultText()).toEqual(definedDefaultKeyTranslation)
   })
 })
