@@ -50,7 +50,7 @@ describe('SearchConfigComponent', () => {
     },
   ]
 
-  const definedSumKey = 'OCX_SEARCH_HEADER.OCX_SEARCH_CONFIG.DROPDOWN_DEFAULT'
+  const placeholderKey = 'OCX_SEARCH_HEADER.OCX_SEARCH_CONFIG.DROPDOWN_DEFAULT'
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -148,7 +148,7 @@ describe('SearchConfigComponent', () => {
   it('should display the right default message', async () => {
     const searchConfigHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, SearchConfigHarness)
     const dropdown = await searchConfigHarness.getSearchConfigDropdown()
-    const definedDefaultKeyTranslation = translateService.instant(definedSumKey)
+    const definedDefaultKeyTranslation = translateService.instant(placeholderKey)
     expect(await dropdown?.getDefaultText()).toEqual(definedDefaultKeyTranslation)
   })
 })
