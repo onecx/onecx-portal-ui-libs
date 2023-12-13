@@ -81,6 +81,10 @@ import { LoadingIndicatorComponent } from './components/loading-indicator/loadin
 import { LoadingIndicatorDirective } from './directives/loading-indicator.directive'
 import { DiagramComponent } from './components/diagram/diagram.component'
 import { GroupByCountDiagramComponent } from './components/group-by-count-diagram/group-by-count-diagram.component'
+import { OcxContentDirective } from './directives/ocx-content.directive'
+import { OcxContentComponent } from './components/ocx-content/ocx-content.component'
+import { OcxContentContainerComponent } from './components/ocx-content-container/ocx-content-container.component'
+import { OcxContentContainerDirective } from './directives/ocx-content-container.directive'
 
 export function createTranslateLoader(http: HttpClient, mfeInfo: MfeInfo) {
   if (mfeInfo?.remoteBaseUrl) {
@@ -166,6 +170,10 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     SetInputValueDirective,
     DiagramComponent,
     GroupByCountDiagramComponent,
+    OcxContentDirective,
+    OcxContentContainerDirective,
+    OcxContentComponent,
+    OcxContentContainerComponent,
   ],
   providers: [
     ConfigurationService,
@@ -228,6 +236,10 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     SetInputValueDirective,
     DiagramComponent,
     GroupByCountDiagramComponent,
+    OcxContentDirective,
+    OcxContentContainerDirective,
+    OcxContentComponent,
+    OcxContentContainerComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   entryComponents: [ColumnTogglerComponent],
