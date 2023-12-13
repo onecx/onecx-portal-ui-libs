@@ -77,6 +77,8 @@ import { RelativeDatePipe } from './pipes/relative-date.pipe'
 import { MessageService } from 'primeng/api'
 import { PatchFormGroupValuesDirective } from './directives/patch-form-group-values.driective'
 import { SetInputValueDirective } from './directives/set-input-value.directive'
+import { LoadingIndicatorComponent } from './components/loading-indicator/loading-indicator.component'
+import { LoadingIndicatorDirective } from './directives/loading-indicator.directive'
 import { DiagramComponent } from './components/diagram/diagram.component'
 import { GroupByCountDiagramComponent } from './components/group-by-count-diagram/group-by-count-diagram.component'
 import { SearchConfigComponent } from './components/search-config/search-config.component'
@@ -155,6 +157,8 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     ColumnGroupSelectionComponent,
     CustomGroupColumnSelectorComponent,
     SearchHeaderComponent,
+    LoadingIndicatorComponent,
+    LoadingIndicatorDirective,
     AdvancedDirective,
     BasicDirective,
     DataListGridSortingComponent,
@@ -217,6 +221,8 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     ColumnGroupSelectionComponent,
     CustomGroupColumnSelectorComponent,
     SearchHeaderComponent,
+    LoadingIndicatorComponent,
+    LoadingIndicatorDirective,
     AdvancedDirective,
     BasicDirective,
     RelativeDatePipe,

@@ -2,7 +2,9 @@
   "name": "@onecx/onecx-portal-ui-libs",
   "version": "3.6.0",
   "license": "Apache-2.0",
-  "scripts": {},
+  "scripts": {
+    "sass": "npx sass libs/portal-integration-angular/assets/styles.scss libs/portal-integration-angular/assets/output.css"
+  },
   "private": true,
   "dependencies": {
     "@angular-architects/module-federation": "15.0.0",

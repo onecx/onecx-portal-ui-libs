@@ -6,6 +6,7 @@ export * from './lib/core/directives/advanced.directive'
 export * from './lib/core/directives/basic.directive'
 export * from './lib/core/directives/patch-form-group-values.driective'
 export * from './lib/core/directives/set-input-value.directive'
+export * from './lib/core/directives/loading-indicator.directive'
 
 // components
 export * from './lib/core/components/loading/loading.component'
@@ -48,6 +49,7 @@ export * from './lib/core/components/data-list-grid-sorting/data-list-grid-sorti
 export * from './lib/core/components/group-by-count-diagram/group-by-count-diagram.component'
 export * from './lib/core/components/diagram/diagram.component'
 export * from './lib/core/components/search-config/search-config.component'
+export * from './lib/core/components/loading-indicator/loading-indicator.component'
 
 // services
 export * from './lib/services/app.menu.service'
