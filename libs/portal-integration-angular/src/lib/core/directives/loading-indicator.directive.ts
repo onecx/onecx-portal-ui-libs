@@ -8,18 +8,18 @@ import {
   Renderer2,
   SimpleChanges,
   ViewContainerRef,
-} from '@angular/core';
-import { LoadingIndicatorComponent } from '../components/loading-indicator/loading-indicator.component';
+} from '@angular/core'
+import { LoadingIndicatorComponent } from '../components/loading-indicator/loading-indicator.component'
 
 @Directive({
   selector: '[ocxLoadingIndicator]',
 })
 export class LoadingIndicatorDirective implements OnChanges {
-  @Input() ocxLoadingIndicator = false;
-  @Input() overlayFullPage = false;
-  @Input() isLoaderSmall? = false;
+  @Input() ocxLoadingIndicator = false
+  @Input() overlayFullPage = false
+  @Input() isLoaderSmall? = false
 
-  private componentRef: ComponentRef<LoadingIndicatorComponent>| undefined;
+  private componentRef: ComponentRef<LoadingIndicatorComponent> | undefined
 
   constructor(
     private viewContainerRef: ViewContainerRef,
@@ -30,34 +30,32 @@ export class LoadingIndicatorDirective implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['ocxLoadingIndicator'] || changes['overlayFullPage']) {
-      this.toggleLoadingIndicator();
+      this.toggleLoadingIndicator()
     }
   }
 
   private elementLoader() {
-    this.renderer.addClass(this.el.nativeElement, 'element-overlay');
-    const loaderElement = document.createElement('div');
-    loaderElement.className = 'loader';
+    this.renderer.addClass(this.el.nativeElement, 'element-overlay')
+    const loaderElement = document.createElement('div')
+    loaderElement.className = 'loader'
     if (this.isLoaderSmall) {
-      loaderElement.className = 'loader loader-small';
+      loaderElement.className = 'loader loader-small'
     }
-    this.renderer.appendChild(this.el.nativeElement, loaderElement);
+    this.renderer.appendChild(this.el.nativeElement, loaderElement)
   }
 
   private toggleLoadingIndicator() {
     if (this.ocxLoadingIndicator) {
       if (this.overlayFullPage == false) {
-        this.elementLoader();
+        this.elementLoader()
       } else {
-        const factory = this.componentFactoryResolver.resolveComponentFactory(
-          LoadingIndicatorComponent
-        );
-        this.componentRef = this.viewContainerRef.createComponent(factory);
+        const factory = this.componentFactoryResolver.resolveComponentFactory(LoadingIndicatorComponent)
+        this.componentRef = this.viewContainerRef.createComponent(factory)
       }
     } else {
-      this.viewContainerRef.clear();
+      this.viewContainerRef.clear()
       if (this.componentRef) {
-        this.componentRef.destroy();
+        this.componentRef.destroy()
       }
     }
   }
