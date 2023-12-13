@@ -11,7 +11,7 @@ export class SearchConfigComponent implements OnInit {
   @Input()
   searchConfigs: SearchConfig[] | [] | undefined
 
-  @Input() defaultTranslationKey = 'OCX_SEARCH_HEADER.OCX_SEARCH_CONFIG.DROPDOWN_DEFAULT'
+  @Input() placeholderKey = 'OCX_SEARCH_HEADER.OCX_SEARCH_CONFIG.DROPDOWN_DEFAULT'
 
   @Output()
   selectedSearchConfig: EventEmitter<SearchConfig[]> = new EventEmitter()
