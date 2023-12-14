@@ -1,5 +1,16 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core'
+import {
+  AfterViewInit,
+  Component,
+  ContentChild,
+  ElementRef,
+  EventEmitter,
+  Input,
+  Output,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core'
 import { Action } from '../page-header/page-header.component'
+import { SearchConfig } from '../../../model/search-config'
 
 /**
  * To trigger the search when Enter key is pressed inside a search parameter field,
@@ -13,6 +24,7 @@ import { Action } from '../page-header/page-header.component'
   styleUrls: ['./search-header.component.scss'],
 })
 export class SearchHeaderComponent implements AfterViewInit {
+  @Input() searchConfigsEntries: SearchConfig[] | undefined
   @Input() headline = ''
   @Input() manualBreadcrumbs = false
   _actions: Action[] = []
@@ -27,6 +39,13 @@ export class SearchHeaderComponent implements AfterViewInit {
 
   @Output() searched: EventEmitter<any> = new EventEmitter()
   @Output() resetted: EventEmitter<any> = new EventEmitter()
+  @Output() selectedSearchConfig: EventEmitter<any> = new EventEmitter()
+  @ContentChild('additionalToolbarContent')
+  additionalToolbarContent: TemplateRef<any> | undefined
+
+  get _additionalToolbarContent(): TemplateRef<any> | undefined {
+    return this.additionalToolbarContent
+  }
 
   @ViewChild('searchParameterFields') searchParameterFields: ElementRef | undefined
 
@@ -82,5 +101,9 @@ export class SearchHeaderComponent implements AfterViewInit {
     if (event.code === 'Enter') {
       this.onSearchClicked()
     }
+  }
+
+  confirmSearchConfig(event: any) {
+    this.selectedSearchConfig?.emit(event)
   }
 }
