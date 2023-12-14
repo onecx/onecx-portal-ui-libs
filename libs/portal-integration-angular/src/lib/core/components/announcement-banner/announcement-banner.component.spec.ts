@@ -46,13 +46,12 @@ describe('AnnouncementBannerComponent', () => {
     }).compileComponents()
 
     const appStateService = getTestBed().inject(AppStateService)
-    appStateService.currentPortal$.publish({
+    await appStateService.currentPortal$.publish({
       id: 'i-am-test-portal',
       portalName: 'test',
       baseUrl: '',
       microfrontendRegistrations: [],
     })
-    await appStateService.currentPortal$.isInitialized
 
     announcementsApiService = getTestBed().inject(AnnouncementsApiService)
     jest.spyOn(announcementsApiService, 'getAnnouncementById').mockReturnValue(getAnnouncementByIdMock)

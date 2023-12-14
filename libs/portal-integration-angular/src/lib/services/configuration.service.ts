@@ -41,15 +41,13 @@ export class ConfigurationService implements OnDestroy {
       }
 
       loadConfigPromise
-        .then((config) => {
+        .then(async (config) => {
           if (config) {
-            this.config$.publish({ ...this.defaultConfig })
-            this.config$.isInitialized.then(() => {
+            await this.config$.publish({ ...this.defaultConfig }).then(() => {
               resolve(true)
             })
           }
         })
-
         .catch((e) => {
           console.log(`Failed to load env configuration`)
           reject(e)
@@ -65,8 +63,8 @@ export class ConfigurationService implements OnDestroy {
     return this.config$.getValue()?.[key]
   }
 
-  public setProperty(key: string, val: string) {
-    this.config$.publish({ key, val })
+  public async setProperty(key: string, val: string) {
+    await this.config$.publish({ key, val })
   }
 
   public getConfig(): Config | undefined {

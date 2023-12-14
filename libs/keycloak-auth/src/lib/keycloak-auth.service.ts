@@ -72,9 +72,8 @@ export class KeycloakAuthService implements IAuthService {
           return this.keycloakService.login().then(() => 'login')
         }
       })
-      .then(() => {
-        this.appStateService.isAuthenticated$.publish()
-        return this.appStateService.isAuthenticated$.isInitialized
+      .then(async () => {
+        await this.appStateService.isAuthenticated$.publish()
       })
       .then(() => true)
       .catch((err) => {
