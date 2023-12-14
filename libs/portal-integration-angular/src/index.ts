@@ -48,6 +48,7 @@ export * from './lib/core/components/custom-group-column-selector/custom-group-c
 export * from './lib/core/components/data-list-grid-sorting/data-list-grid-sorting.component'
 export * from './lib/core/components/group-by-count-diagram/group-by-count-diagram.component'
 export * from './lib/core/components/diagram/diagram.component'
+export * from './lib/core/components/search-config/search-config.component'
 export * from './lib/core/components/loading-indicator/loading-indicator.component'
 
 // services
@@ -87,6 +88,7 @@ export * from './lib/model/column-type.model'
 export * from './lib/model/data-sort-direction'
 export * from './lib/model/breadcrumb-menu-item.model'
 export * from './lib/model/data-action'
+export * from './lib/model/search-config'
 
 // core
 export * from './lib/api/iauth.service'

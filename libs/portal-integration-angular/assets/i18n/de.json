@@ -50,6 +50,9 @@
       "BASIC": "Basis",
       "ADVANCED": "Erweitert"
     },
+    "OCX_SEARCH_CONFIG": {
+      "DROPDOWN_DEFAULT": "Gespeicherte Suchvorlage auswählen"
+    },
     "HEADLINE": "Suche",
     "RESET_BUTTON_TEXT": "Zurücksetzen",
     "SEARCH_BUTTON_TEXT": "Suchen",

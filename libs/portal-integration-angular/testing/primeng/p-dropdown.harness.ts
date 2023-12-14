@@ -18,6 +18,10 @@ export class PDropdownHarness extends ContentContainerComponentHarness {
     return await (await this.host()).getAttribute('id')
   }
 
+  async getDefaultText() {
+    return (await this.locatorForOptional('span.p-placeholder')())?.text()
+  }
+
   async isOpen(): Promise<boolean> {
     return (await this.locatorFor('div')()).hasClass('p-dropdown-open')
   }
@@ -44,14 +48,18 @@ export class PDropdownHarness extends ContentContainerComponentHarness {
     return await dropdownItems
   }
 
-  async selectedDropdownItem() {
+  async selectedDropdownItem(position: number) {
     const selectedColumnGroup = await Promise.all(
       (await this.getDropdownItems()).filter((listItem) => listItem.isSelected())
     )
-    return selectedColumnGroup[0]
+    return selectedColumnGroup[position]
   }
 
-  async selectedDropdownItemText() {
-    return (await this.selectedDropdownItem()).getText()
+  async selectedDropdownItemText(position: number) {
+    return (await this.selectedDropdownItem(position)).getText()
+  }
+
+  async hasClearOption() {
+    return (await this.locatorFor('div')()).hasClass('p-dropdown-clearable')
   }
 }
