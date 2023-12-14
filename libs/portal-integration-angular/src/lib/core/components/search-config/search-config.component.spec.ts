@@ -50,6 +50,8 @@ describe('SearchConfigComponent', () => {
     },
   ]
 
+  const emptySearchConfigEntry: SearchConfig[] = []
+
   const placeholderKey = 'OCX_SEARCH_HEADER.OCX_SEARCH_CONFIG.DROPDOWN_DEFAULT'
 
   beforeEach(async () => {
@@ -113,8 +115,11 @@ describe('SearchConfigComponent', () => {
     expect(items?.length).toEqual(searchConfigsEntries.length)
   })
 
-  it('should display no dropdown if the search config is empty', () => {
-    expect(component).toBeTruthy()
+  it('should display no dropdown if the search config is empty', async () => {
+    component.searchConfigs = emptySearchConfigEntry
+    const searchConfigHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, SearchConfigHarness)
+    const dropdown = await searchConfigHarness.getSearchConfigDropdown()
+    expect(dropdown).toBeFalsy()
   })
 
   it('should display the values in the fields after selecting the fist hard coded search config', async () => {
