@@ -1,5 +1,4 @@
 import { InjectionToken } from '@angular/core'
-import { MfeInfo } from '../model/mfe-info.model'
 import { IAuthService } from './iauth.service'
 
 export interface LibConfig {
@@ -17,8 +16,6 @@ export interface LibConfig {
 export const APP_CONFIG = new InjectionToken<LibConfig>('APP_CONFIG')
 
 export const AUTH_SERVICE = new InjectionToken<IAuthService>('AUTH_SERVICE')
-
-export type mfeInfoProducer = () => MfeInfo
 
 export const SANITY_CHECK = new InjectionToken<string>('OCXSANITY_CHECK')
 

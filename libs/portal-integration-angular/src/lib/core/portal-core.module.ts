@@ -77,7 +77,7 @@ import { DiagramComponent } from './components/diagram/diagram.component'
 import { GroupByCountDiagramComponent } from './components/group-by-count-diagram/group-by-count-diagram.component'
 import { UserService } from '../services/user.service'
 import { UserProfileAPIService } from '../services/userprofile-api.service'
-import { CreateTranslateLoader } from './utils/create-translate-loader.utils'
+import { createTranslateLoader } from './utils/create-translate-loader.utils'
 
 export class MyMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -95,7 +95,7 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     PrimeNgModule,
     TranslateModule.forRoot({
       isolate: true,
-      loader: { provide: TranslateLoader, useFactory: CreateTranslateLoader.createTranslateLoader, deps: [HttpClient, AppStateService] },
+      loader: { provide: TranslateLoader, useFactory: createTranslateLoader, deps: [HttpClient, AppStateService] },
       missingTranslationHandler: { provide: MissingTranslationHandler, useClass: MyMissingTranslationHandler },
     }),
     ConfirmDialogModule,
@@ -216,14 +216,6 @@ export class PortalCoreModule {
       ngModule: PortalCoreModule,
       providers: [
         { provide: SANITY_CHECK, useValue: 'mfe' },
-        // {	
-        //   provide: MFE_INFO,	
-        //   useFactory: (mfInfoFn: () => MfeInfo): MfeInfo => {	
-        //     console.log(`MFE_INFO Factory called now `)	
-        //     return mfInfoFn()	
-        //   },	
-        //   deps: [MFE_INFO_FN],	
-        // },
       ],
     }
   }
@@ -233,7 +225,6 @@ export class PortalCoreModule {
       ngModule: PortalCoreModule,
       providers: [
         { provide: SANITY_CHECK, useValue: 'root' },
-        // { provide: MFE_INFO_FN, useValue: () => undefined },
         { provide: APPLICATION_NAME, useValue: appName },
         {
           provide: MessageService,
