@@ -10,7 +10,7 @@ import { HttpClientModule } from '@angular/common/http'
 import { ConfigurationService } from '../../../services/configuration.service'
 
 function initFactory(configurationService: ConfigurationService) {
-  configurationService.setPortal({ baseUrl: '/demo', portalName: 'Demo', id: 'Demo', microfrontends: [] })
+  configurationService.setPortal({ baseUrl: '/demo', portalName: 'Demo', id: 'Demo', microfrontendRegistrations: [] })
   return () => {
     configurationService
   }
