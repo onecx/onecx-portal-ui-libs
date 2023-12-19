@@ -20,35 +20,33 @@ describe('CreateTranslateLoader', () => {
     jest.clearAllMocks()
   })
 
-  describe('', () => {
-    it('should call httpClient get 3 times if a remoteBaseUrl is set and if global loading is finished', () => {
-      currentMfe$ = of({ remoteBaseUrl: 'remoteUrl' })
-      globalLoading$ = of(false)
-      const translateLoader = createTranslateLoader(httpClientMock, <AppStateService>(<unknown>appStateServiceMock))
+  it('should call httpClient get 3 times if a remoteBaseUrl is set and if global loading is finished', () => {
+    currentMfe$ = of({ remoteBaseUrl: 'remoteUrl' })
+    globalLoading$ = of(false)
+    const translateLoader = createTranslateLoader(httpClientMock, <AppStateService>(<unknown>appStateServiceMock))
 
-      translateLoader.getTranslation('en').subscribe()
+    translateLoader.getTranslation('en').subscribe()
 
-      expect(httpClientMock.get).toHaveBeenCalledTimes(3)
-    })
+    expect(httpClientMock.get).toHaveBeenCalledTimes(3)
+  })
 
-    it('should call httpClient get 2 times if no remoteBaseUrl is set and if global loading is finished', () => {
-        currentMfe$ = of({})
-        globalLoading$ = of(false)
-        const translateLoader = createTranslateLoader(httpClientMock, <AppStateService>(<unknown>appStateServiceMock))
-  
-        translateLoader.getTranslation('en').subscribe()
-  
-        expect(httpClientMock.get).toHaveBeenCalledTimes(2)
-    })
+  it('should call httpClient get 2 times if no remoteBaseUrl is set and if global loading is finished', () => {
+    currentMfe$ = of({})
+    globalLoading$ = of(false)
+    const translateLoader = createTranslateLoader(httpClientMock, <AppStateService>(<unknown>appStateServiceMock))
 
-    it('should not call httpClient get if global loading is not finished', () => {
-        currentMfe$ = of({})
-        globalLoading$ = of(true)
-        const translateLoader = createTranslateLoader(httpClientMock, <AppStateService>(<unknown>appStateServiceMock))
-  
-        translateLoader.getTranslation('en').subscribe()
-  
-        expect(httpClientMock.get).toHaveBeenCalledTimes(0)
-    })
+    translateLoader.getTranslation('en').subscribe()
+
+    expect(httpClientMock.get).toHaveBeenCalledTimes(2)
+  })
+
+  it('should not call httpClient get if global loading is not finished', () => {
+    currentMfe$ = of({})
+    globalLoading$ = of(true)
+    const translateLoader = createTranslateLoader(httpClientMock, <AppStateService>(<unknown>appStateServiceMock))
+
+    translateLoader.getTranslation('en').subscribe()
+
+    expect(httpClientMock.get).toHaveBeenCalledTimes(0)
   })
 })
