@@ -2,12 +2,12 @@ import { EventEmitter, Type } from '@angular/core'
 
 export interface ButtonDialogDetails {
   label: string
-  icon: string
-  valueToEmit: any
+  icon?: string
+  valueToEmit?: any
 }
 
 export interface ButtonDialogDynamicDialogDetails extends ButtonDialogDetails {
-  closeDialog: boolean
+  closeDialog?: boolean
 }
 
 export interface ButtonDialogConfig {
