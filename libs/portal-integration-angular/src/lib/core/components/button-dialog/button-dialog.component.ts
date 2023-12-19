@@ -23,12 +23,12 @@ export class DefaultButtonDialogHostComponent {
   templateUrl: './button-dialog.component.html',
 })
 export class ButtonDialogComponent implements OnInit {
-  defaultMainButtonDetails: ButtonDialogDynamicDialogDetails = {
+  defaultPrimaryButtonDetails: ButtonDialogDynamicDialogDetails = {
     label: 'Confirm',
     closeDialog: true,
   }
 
-  defaultSideButtonDetails: ButtonDialogDynamicDialogDetails = {
+  defaultSecondaryButtonDetails: ButtonDialogDynamicDialogDetails = {
     label: 'Cancel',
     closeDialog: true,
   }
@@ -36,9 +36,9 @@ export class ButtonDialogComponent implements OnInit {
   defaultDialogData: ButtonDialogData = {
     component: DefaultButtonDialogHostComponent,
     config: {
-      mainButtonDetails: this.defaultMainButtonDetails,
-      sideButtonEnabled: true,
-      sideButtonDetails: this.defaultSideButtonDetails,
+      primaryButtonDetails: this.defaultPrimaryButtonDetails,
+      secondaryButtonEnabled: true,
+      secondaryButtonDetails: this.defaultSecondaryButtonDetails,
     },
     componentData: {},
   }
@@ -62,13 +62,13 @@ export class ButtonDialogComponent implements OnInit {
 
   mainButtonAction() {
     const valueToEmit =
-      this.dialogData.config.mainButtonDetails!.valueToEmit !== undefined
-        ? this.dialogData.config.mainButtonDetails!.valueToEmit
-        : this.dialogData.config.mainButtonDetails?.label
+      this.dialogData.config.primaryButtonDetails!.valueToEmit !== undefined
+        ? this.dialogData.config.primaryButtonDetails!.valueToEmit
+        : this.dialogData.config.primaryButtonDetails?.label
     this.dialogEmitter.emit(valueToEmit)
 
-    if ('closeDialog' in this.dialogData.config.mainButtonDetails!) {
-      if (this.dialogData.config.mainButtonDetails.closeDialog) {
+    if ('closeDialog' in this.dialogData.config.primaryButtonDetails!) {
+      if (this.dialogData.config.primaryButtonDetails.closeDialog) {
         this.dynamicDialogRef.close()
       }
     }
@@ -76,13 +76,13 @@ export class ButtonDialogComponent implements OnInit {
 
   sideButtonAction() {
     const valueToEmit =
-      this.dialogData.config.sideButtonDetails!.valueToEmit !== undefined
-        ? this.dialogData.config.sideButtonDetails!.valueToEmit
-        : this.dialogData.config.sideButtonDetails!.label
+      this.dialogData.config.secondaryButtonDetails!.valueToEmit !== undefined
+        ? this.dialogData.config.secondaryButtonDetails!.valueToEmit
+        : this.dialogData.config.secondaryButtonDetails!.label
     this.dialogEmitter.emit(valueToEmit)
 
-    if ('closeDialog' in this.dialogData.config.sideButtonDetails!) {
-      if (this.dialogData.config.sideButtonDetails.closeDialog) {
+    if ('closeDialog' in this.dialogData.config.secondaryButtonDetails!) {
+      if (this.dialogData.config.secondaryButtonDetails.closeDialog) {
         this.dynamicDialogRef.close()
       }
     }
@@ -100,14 +100,17 @@ export class ButtonDialogComponent implements OnInit {
     const dynamicConfigData: ButtonDialogDynamicDialogConfig = this.dynamicDialogConfig.data
     if (dynamicConfigData.config !== undefined) {
       const dialogConfig = dynamicConfigData.config
-      if (dialogConfig.mainButtonDetails !== undefined && dialogConfig.mainButtonDetails.label !== undefined) {
-        this.dialogData.config.mainButtonDetails = dialogConfig.mainButtonDetails
+      if (dialogConfig.primaryButtonDetails !== undefined && dialogConfig.primaryButtonDetails.label !== undefined) {
+        this.dialogData.config.primaryButtonDetails = dialogConfig.primaryButtonDetails
       }
-      if (dialogConfig.sideButtonEnabled !== undefined) {
-        this.dialogData.config.sideButtonEnabled = dialogConfig.sideButtonEnabled
+      if (dialogConfig.secondaryButtonEnabled !== undefined) {
+        this.dialogData.config.secondaryButtonEnabled = dialogConfig.secondaryButtonEnabled
       }
-      if (dialogConfig.sideButtonDetails !== undefined && dialogConfig.sideButtonDetails.label !== undefined) {
-        this.dialogData.config.sideButtonDetails = dialogConfig.sideButtonDetails
+      if (
+        dialogConfig.secondaryButtonDetails !== undefined &&
+        dialogConfig.secondaryButtonDetails.label !== undefined
+      ) {
+        this.dialogData.config.secondaryButtonDetails = dialogConfig.secondaryButtonDetails
       }
     }
     if (dynamicConfigData.component !== undefined) {
@@ -133,14 +136,14 @@ export class ButtonDialogComponent implements OnInit {
     this.dialogData.component = undefined
     this.dialogData.componentData = undefined
     if (this.config !== undefined) {
-      if (this.config.mainButtonDetails !== undefined && this.config.mainButtonDetails.label !== undefined) {
-        this.dialogData.config.mainButtonDetails = this.config.mainButtonDetails
+      if (this.config.primaryButtonDetails !== undefined && this.config.primaryButtonDetails.label !== undefined) {
+        this.dialogData.config.primaryButtonDetails = this.config.primaryButtonDetails
       }
-      if (this.config.sideButtonEnabled !== undefined) {
-        this.dialogData.config.sideButtonEnabled = this.config.sideButtonEnabled
+      if (this.config.secondaryButtonEnabled !== undefined) {
+        this.dialogData.config.secondaryButtonEnabled = this.config.secondaryButtonEnabled
       }
-      if (this.config.sideButtonDetails !== undefined && this.config.sideButtonDetails.label !== undefined) {
-        this.dialogData.config.sideButtonDetails = this.config.sideButtonDetails
+      if (this.config.secondaryButtonDetails !== undefined && this.config.secondaryButtonDetails.label !== undefined) {
+        this.dialogData.config.secondaryButtonDetails = this.config.secondaryButtonDetails
       }
     }
   }

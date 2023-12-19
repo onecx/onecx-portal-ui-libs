@@ -61,35 +61,36 @@ describe('ButtonDialogComponent', () => {
       // expect correct default initialization
       expect(component.dialogData.component).toEqual(undefined)
       expect(component.dialogData.componentData).toEqual(undefined)
-      expect(component.dialogData.config.mainButtonDetails).toEqual(component.defaultMainButtonDetails)
-      expect(component.dialogData.config.sideButtonEnabled).toEqual(true)
-      expect(component.dialogData.config.sideButtonDetails).toEqual(component.defaultSideButtonDetails)
+      expect(component.dialogData.config.primaryButtonDetails).toEqual(component.defaultPrimaryButtonDetails)
+      expect(component.dialogData.config.secondaryButtonEnabled).toEqual(true)
+      expect(component.dialogData.config.secondaryButtonDetails).toEqual(component.defaultSecondaryButtonDetails)
 
       // expect default emitted value to be label
       jest.spyOn(component.resultEmitter, 'emit')
-      const button = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogMainButton' }))
+      const button = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogPrimaryButton' }))
       await button.click()
 
       expect(component.resultEmitter.emit).toHaveBeenCalledWith(
-        component.defaultDialogData.config.mainButtonDetails?.label
+        component.defaultDialogData.config.primaryButtonDetails?.label
       )
 
       // expect default label
       const nativeElement: HTMLElement = fixture.debugElement.nativeElement
-      expect(nativeElement.querySelector('#buttonDialogMainButton > button')?.textContent).toBe('Confirm')
-      expect(nativeElement.querySelector('#buttonDialogSideButton > button')?.textContent).toBe('Cancel')
-      expect(nativeElement.querySelector('#buttonDialogMainButton')?.getAttribute('ng-reflect-icon')).toBe('')
-      expect(nativeElement.querySelector('#buttonDialogSideButton')?.getAttribute('ng-reflect-icon')).toBe('')
+      expect(nativeElement.querySelector('#buttonDialogPrimaryButton > button')?.textContent).toBe('Confirm')
+      expect(nativeElement.querySelector('#buttonDialogSecondaryButton > button')?.textContent).toBe('Cancel')
+      // expect no icon
+      expect(nativeElement.querySelector('#buttonDialogPrimaryButton')?.getAttribute('ng-reflect-icon')).toBe('')
+      expect(nativeElement.querySelector('#buttonDialogSecondaryButton')?.getAttribute('ng-reflect-icon')).toBe('')
     })
 
     it('should create customized button-dialog with passing config', () => {
       component.dialogData.config = {
-        mainButtonDetails: {
+        primaryButtonDetails: {
           label: 'CustomMain',
           icon: 'pi pi-check',
         },
-        sideButtonEnabled: true,
-        sideButtonDetails: {
+        secondaryButtonEnabled: true,
+        secondaryButtonDetails: {
           label: 'CustomSide',
           icon: 'pi pi-times',
         },
@@ -99,13 +100,13 @@ describe('ButtonDialogComponent', () => {
 
       const nativeElement: HTMLElement = fixture.debugElement.nativeElement
       // expect correct label
-      expect(nativeElement.querySelector('#buttonDialogMainButton > button')?.textContent).toBe('CustomMain')
-      expect(nativeElement.querySelector('#buttonDialogSideButton > button')?.textContent).toBe('CustomSide')
+      expect(nativeElement.querySelector('#buttonDialogPrimaryButton > button')?.textContent).toBe('CustomMain')
+      expect(nativeElement.querySelector('#buttonDialogSecondaryButton > button')?.textContent).toBe('CustomSide')
       // expect correct icon
-      expect(nativeElement.querySelector('#buttonDialogMainButton')?.getAttribute('ng-reflect-icon')).toBe(
+      expect(nativeElement.querySelector('#buttonDialogPrimaryButton')?.getAttribute('ng-reflect-icon')).toBe(
         'pi pi-check'
       )
-      expect(nativeElement.querySelector('#buttonDialogSideButton')?.getAttribute('ng-reflect-icon')).toBe(
+      expect(nativeElement.querySelector('#buttonDialogSecondaryButton')?.getAttribute('ng-reflect-icon')).toBe(
         'pi pi-times'
       )
     })
@@ -113,7 +114,7 @@ describe('ButtonDialogComponent', () => {
     it('should create a new EventEmitter by default', async () => {
       jest.spyOn(component.resultEmitter, 'emit')
 
-      const button = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogMainButton' }))
+      const button = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogPrimaryButton' }))
       await button.click()
 
       // expect default emitter to be called
@@ -121,139 +122,139 @@ describe('ButtonDialogComponent', () => {
     })
 
     it('should create Confirm/Cancel button-dialog when sideButton is enabled', () => {
-      component.dialogData.config.sideButtonEnabled = true
+      component.dialogData.config.secondaryButtonEnabled = true
 
       fixture.detectChanges()
 
       const nativeElement: HTMLElement = fixture.debugElement.nativeElement
-      expect(nativeElement.querySelector('#buttonDialogMainButton > button')?.textContent).toBe('Confirm')
-      expect(nativeElement.querySelector('#buttonDialogSideButton > button')?.textContent).toBe('Cancel')
+      expect(nativeElement.querySelector('#buttonDialogPrimaryButton > button')?.textContent).toBe('Confirm')
+      expect(nativeElement.querySelector('#buttonDialogSecondaryButton > button')?.textContent).toBe('Cancel')
     })
 
     it('should create Confirm only button-dialog when sideButton is disabled', () => {
-      component.dialogData.config.sideButtonEnabled = false
+      component.dialogData.config.secondaryButtonEnabled = false
 
       fixture.detectChanges()
 
       const nativeElement: HTMLElement = fixture.debugElement.nativeElement
-      expect(nativeElement.querySelector('#buttonDialogMainButton > button')?.textContent).toBe('Confirm')
-      expect(nativeElement.querySelector('#buttonDialogSideButton > button')).not.toBeTruthy()
+      expect(nativeElement.querySelector('#buttonDialogPrimaryButton > button')?.textContent).toBe('Confirm')
+      expect(nativeElement.querySelector('#buttonDialogSecondaryButton > button')).not.toBeTruthy()
     })
 
     it('should create CustmMain/Cancel button-dialog when mainButton is defined', () => {
-      component.dialogData.config.mainButtonDetails = {
+      component.dialogData.config.primaryButtonDetails = {
         label: 'CustomMain',
       }
 
       fixture.detectChanges()
 
       const nativeElement: HTMLElement = fixture.debugElement.nativeElement
-      expect(nativeElement.querySelector('#buttonDialogMainButton > button')?.textContent).toBe('CustomMain')
-      expect(nativeElement.querySelector('#buttonDialogSideButton > button')?.textContent).toBe('Cancel')
+      expect(nativeElement.querySelector('#buttonDialogPrimaryButton > button')?.textContent).toBe('CustomMain')
+      expect(nativeElement.querySelector('#buttonDialogSecondaryButton > button')?.textContent).toBe('Cancel')
     })
 
     it('should create Confirm/CustomSide button-dialog when sideButton is defined', () => {
-      component.dialogData.config.sideButtonDetails = {
+      component.dialogData.config.secondaryButtonDetails = {
         label: 'CustomSide',
       }
 
       fixture.detectChanges()
 
       const nativeElement: HTMLElement = fixture.debugElement.nativeElement
-      expect(nativeElement.querySelector('#buttonDialogMainButton > button')?.textContent).toBe('Confirm')
-      expect(nativeElement.querySelector('#buttonDialogSideButton > button')?.textContent).toBe('CustomSide')
+      expect(nativeElement.querySelector('#buttonDialogPrimaryButton > button')?.textContent).toBe('Confirm')
+      expect(nativeElement.querySelector('#buttonDialogSecondaryButton > button')?.textContent).toBe('CustomSide')
     })
 
     it('should create CustomMain/CustomSide button-dialog when both buttons are defined', () => {
-      component.dialogData.config.mainButtonDetails = {
+      component.dialogData.config.primaryButtonDetails = {
         label: 'CustomMain',
       }
-      component.dialogData.config.sideButtonDetails = {
+      component.dialogData.config.secondaryButtonDetails = {
         label: 'CustomSide',
       }
 
       fixture.detectChanges()
 
       const nativeElement: HTMLElement = fixture.debugElement.nativeElement
-      expect(nativeElement.querySelector('#buttonDialogMainButton > button')?.textContent).toBe('CustomMain')
-      expect(nativeElement.querySelector('#buttonDialogSideButton > button')?.textContent).toBe('CustomSide')
+      expect(nativeElement.querySelector('#buttonDialogPrimaryButton > button')?.textContent).toBe('CustomMain')
+      expect(nativeElement.querySelector('#buttonDialogSecondaryButton > button')?.textContent).toBe('CustomSide')
     })
 
     it('should create CustomMain only button-dialog when sideButton is disabled', () => {
-      component.dialogData.config.mainButtonDetails = {
+      component.dialogData.config.primaryButtonDetails = {
         label: 'CustomMain',
       }
-      component.dialogData.config.sideButtonEnabled = false
+      component.dialogData.config.secondaryButtonEnabled = false
 
       fixture.detectChanges()
 
       const nativeElement: HTMLElement = fixture.debugElement.nativeElement
-      expect(nativeElement.querySelector('#buttonDialogMainButton > button')?.textContent).toBe('CustomMain')
-      expect(nativeElement.querySelector('#buttonDialogSideButton > button')).not.toBeTruthy()
+      expect(nativeElement.querySelector('#buttonDialogPrimaryButton > button')?.textContent).toBe('CustomMain')
+      expect(nativeElement.querySelector('#buttonDialogSecondaryButton > button')).not.toBeTruthy()
     })
 
     it('should create CustomMain/Cancel button-dialog when sideButton is enabled', () => {
-      component.dialogData.config.mainButtonDetails = {
+      component.dialogData.config.primaryButtonDetails = {
         label: 'CustomMain',
       }
-      component.dialogData.config.sideButtonEnabled = true
+      component.dialogData.config.secondaryButtonEnabled = true
 
       fixture.detectChanges()
 
       const nativeElement: HTMLElement = fixture.debugElement.nativeElement
-      expect(nativeElement.querySelector('#buttonDialogMainButton > button')?.textContent).toBe('CustomMain')
-      expect(nativeElement.querySelector('#buttonDialogSideButton > button')?.textContent).toBe('Cancel')
+      expect(nativeElement.querySelector('#buttonDialogPrimaryButton > button')?.textContent).toBe('CustomMain')
+      expect(nativeElement.querySelector('#buttonDialogSecondaryButton > button')?.textContent).toBe('Cancel')
     })
 
     it('should create Confirm only button-dialog when sideButton is defined but is disabled', () => {
-      component.dialogData.config.sideButtonDetails = {
+      component.dialogData.config.secondaryButtonDetails = {
         label: 'CustomSide',
       }
-      component.dialogData.config.sideButtonEnabled = false
+      component.dialogData.config.secondaryButtonEnabled = false
 
       fixture.detectChanges()
 
       const nativeElement: HTMLElement = fixture.debugElement.nativeElement
-      expect(nativeElement.querySelector('#buttonDialogMainButton > button')?.textContent).toBe('Confirm')
-      expect(nativeElement.querySelector('#buttonDialogSideButton > button')).not.toBeTruthy()
+      expect(nativeElement.querySelector('#buttonDialogPrimaryButton > button')?.textContent).toBe('Confirm')
+      expect(nativeElement.querySelector('#buttonDialogSecondaryButton > button')).not.toBeTruthy()
     })
 
     it('should create Confirm/CustomSide button-dialog when sideButton is defined and enabled', () => {
-      component.dialogData.config.sideButtonDetails = {
+      component.dialogData.config.secondaryButtonDetails = {
         label: 'CustomSide',
       }
-      component.dialogData.config.sideButtonEnabled = true
+      component.dialogData.config.secondaryButtonEnabled = true
 
       fixture.detectChanges()
 
       const nativeElement: HTMLElement = fixture.debugElement.nativeElement
-      expect(nativeElement.querySelector('#buttonDialogMainButton > button')?.textContent).toBe('Confirm')
-      expect(nativeElement.querySelector('#buttonDialogSideButton > button')?.textContent).toBe('CustomSide')
+      expect(nativeElement.querySelector('#buttonDialogPrimaryButton > button')?.textContent).toBe('Confirm')
+      expect(nativeElement.querySelector('#buttonDialogSecondaryButton > button')?.textContent).toBe('CustomSide')
     })
 
     it('should create CustomMain only button-dialog when sideButton is defined but is disabled', () => {
       component.dialogData.config = {
-        mainButtonDetails: {
+        primaryButtonDetails: {
           label: 'CustomMain',
         },
-        sideButtonDetails: {
+        secondaryButtonDetails: {
           label: 'CustomSide',
         },
-        sideButtonEnabled: false,
+        secondaryButtonEnabled: false,
       }
 
       fixture.detectChanges()
 
       const nativeElement: HTMLElement = fixture.debugElement.nativeElement
-      expect(nativeElement.querySelector('#buttonDialogMainButton > button')?.textContent).toBe('CustomMain')
-      expect(nativeElement.querySelector('#buttonDialogSideButton > button')?.textContent).not.toBeTruthy()
+      expect(nativeElement.querySelector('#buttonDialogPrimaryButton > button')?.textContent).toBe('CustomMain')
+      expect(nativeElement.querySelector('#buttonDialogSecondaryButton > button')?.textContent).not.toBeTruthy()
     })
 
     it('should emit approperiate values', async () => {
       jest.spyOn(component.resultEmitter, 'emit')
 
       component.dialogData.config = {
-        mainButtonDetails: {
+        primaryButtonDetails: {
           label: 'CustomMain',
           valueToEmit: 'myCustomValueWithCustomType',
         },
@@ -261,7 +262,7 @@ describe('ButtonDialogComponent', () => {
 
       fixture.detectChanges()
 
-      const button = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogMainButton' }))
+      const button = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogPrimaryButton' }))
       await button.click()
 
       expect(component.resultEmitter.emit).toHaveBeenCalledWith('myCustomValueWithCustomType')
@@ -273,14 +274,14 @@ describe('ButtonDialogComponent', () => {
       const buttonDialogData: ButtonDialogDynamicDialogConfig = {
         component: DefaultButtonDialogHostComponent,
         config: {
-          mainButtonDetails: {
+          primaryButtonDetails: {
             label: 'CustomMainFromDynamicDialogConfig',
             icon: 'pi pi-check',
             closeDialog: false,
             valueToEmit: false,
           },
-          sideButtonEnabled: true,
-          sideButtonDetails: {
+          secondaryButtonEnabled: true,
+          secondaryButtonDetails: {
             label: 'CustomSideFromDynamicDialogConfig',
             icon: 'pi pi-times',
             closeDialog: false,
@@ -305,18 +306,18 @@ describe('ButtonDialogComponent', () => {
 
       // expect correct data from dynamic dialog config
       expect(component.dialogData.component).toBe(DefaultButtonDialogHostComponent)
-      expect(component.dialogData.config.mainButtonDetails).toBe(buttonDialogData.config?.mainButtonDetails)
-      expect(component.dialogData.config.sideButtonEnabled).toBe(buttonDialogData.config?.sideButtonEnabled)
-      expect(component.dialogData.config.sideButtonDetails).toBe(buttonDialogData.config?.sideButtonDetails)
+      expect(component.dialogData.config.primaryButtonDetails).toBe(buttonDialogData.config?.primaryButtonDetails)
+      expect(component.dialogData.config.secondaryButtonEnabled).toBe(buttonDialogData.config?.secondaryButtonEnabled)
+      expect(component.dialogData.config.secondaryButtonDetails).toBe(buttonDialogData.config?.secondaryButtonDetails)
       expect(component.dialogData.componentData).toBe(buttonDialogData.componentData)
 
       // expect changes in ui with config
       const nativeElement: HTMLElement = fixture.debugElement.nativeElement
       expect(nativeElement.querySelector('h2')?.textContent).toBe('CustomTitleFromDynamicDialogConfig')
-      expect(nativeElement.querySelector('#buttonDialogMainButton > button')?.textContent).toBe(
+      expect(nativeElement.querySelector('#buttonDialogPrimaryButton > button')?.textContent).toBe(
         'CustomMainFromDynamicDialogConfig'
       )
-      expect(nativeElement.querySelector('#buttonDialogSideButton > button')?.textContent).toBe(
+      expect(nativeElement.querySelector('#buttonDialogSecondaryButton > button')?.textContent).toBe(
         'CustomSideFromDynamicDialogConfig'
       )
     })
@@ -342,14 +343,14 @@ describe('ButtonDialogComponent', () => {
       expect(component.dialogData).toBe(component.defaultDialogData)
 
       // expect to close dialog by default
-      const mainButton = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogMainButton' }))
+      const mainButton = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogPrimaryButton' }))
       await mainButton.click()
 
       expect(component.dynamicDialogRef.close).toHaveBeenCalledTimes(1)
 
       jest.resetAllMocks()
 
-      const sideButton = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogSideButton' }))
+      const sideButton = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogSecondaryButton' }))
       await sideButton.click()
 
       expect(component.dynamicDialogRef.close).toHaveBeenCalledTimes(1)
@@ -357,11 +358,11 @@ describe('ButtonDialogComponent', () => {
       // expect default label
       const nativeElement: HTMLElement = fixture.debugElement.nativeElement
       expect(nativeElement.querySelector('h2')?.textContent).toBe('Title')
-      expect(nativeElement.querySelector('#buttonDialogMainButton > button')?.textContent).toBe('Confirm')
-      expect(nativeElement.querySelector('#buttonDialogSideButton > button')?.textContent).toBe('Cancel')
+      expect(nativeElement.querySelector('#buttonDialogPrimaryButton > button')?.textContent).toBe('Confirm')
+      expect(nativeElement.querySelector('#buttonDialogSecondaryButton > button')?.textContent).toBe('Cancel')
       // expect no icon
-      expect(nativeElement.querySelector('#buttonDialogMainButton')?.getAttribute('ng-reflect-icon')).toBe('')
-      expect(nativeElement.querySelector('#buttonDialogSideButton')?.getAttribute('ng-reflect-icon')).toBe('')
+      expect(nativeElement.querySelector('#buttonDialogPrimaryButton')?.getAttribute('ng-reflect-icon')).toBe('')
+      expect(nativeElement.querySelector('#buttonDialogSecondaryButton')?.getAttribute('ng-reflect-icon')).toBe('')
     })
 
     it('should use correct emitter while passing emitter via dynamicDialogConfig', async () => {
@@ -388,10 +389,10 @@ describe('ButtonDialogComponent', () => {
       loader = TestbedHarnessEnvironment.loader(fixture)
 
       //expect default emitted value to be label
-      const button = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogMainButton' }))
+      const button = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogPrimaryButton' }))
       await button.click()
 
-      expect(emitter.emit).toHaveBeenCalledWith(component.defaultDialogData.config.mainButtonDetails?.label)
+      expect(emitter.emit).toHaveBeenCalledWith(component.defaultDialogData.config.primaryButtonDetails?.label)
       expect(defaultEmiter.emit).toHaveBeenCalledTimes(0)
     })
 
@@ -399,14 +400,14 @@ describe('ButtonDialogComponent', () => {
       const buttonDialogData: ButtonDialogDynamicDialogConfig = {
         component: DefaultButtonDialogHostComponent,
         config: {
-          mainButtonDetails: {
+          primaryButtonDetails: {
             label: 'CustomMain',
             icon: 'mainLabel',
             closeDialog: true,
             valueToEmit: 'myCustomValueWithCustomType',
           },
-          sideButtonEnabled: true,
-          sideButtonDetails: {
+          secondaryButtonEnabled: true,
+          secondaryButtonDetails: {
             label: 'CustomSide',
             icon: 'sideLabel',
             closeDialog: false,
@@ -428,14 +429,14 @@ describe('ButtonDialogComponent', () => {
 
       jest.spyOn(component.dynamicDialogRef, 'close')
 
-      const mainButton = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogMainButton' }))
+      const mainButton = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogPrimaryButton' }))
       await mainButton.click()
 
       expect(component.dynamicDialogRef.close).toHaveBeenCalledTimes(1)
 
       jest.resetAllMocks()
 
-      const sideButton = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogSideButton' }))
+      const sideButton = await loader.getHarness(PButtonHarness.with({ id: 'buttonDialogSecondaryButton' }))
       await sideButton.click()
 
       expect(component.dynamicDialogRef.close).toHaveBeenCalledTimes(0)
@@ -462,13 +463,13 @@ describe('ButtonDialogComponent', () => {
     })
 
     let config: ButtonDialogConfig = {
-      mainButtonDetails: {
+      primaryButtonDetails: {
         label: 'inlineMain',
         icon: 'pi pi-plus',
         valueToEmit: 'inlineMainEmit',
       },
-      sideButtonEnabled: true,
-      sideButtonDetails: {
+      secondaryButtonEnabled: true,
+      secondaryButtonDetails: {
         label: 'inlineSide',
         icon: 'pi pi-times',
         valueToEmit: 'inlineSideEmit',
@@ -506,7 +507,7 @@ describe('ButtonDialogComponent', () => {
       }
     }
 
-    it('should use passed config', async () => {
+    it('should use default emitter inline', async () => {
       await TestBed.compileComponents()
       fixtureWithHost = TestBed.createComponent(TestHostComponentWithResultSub)
       fixtureWithHost.detectChanges()

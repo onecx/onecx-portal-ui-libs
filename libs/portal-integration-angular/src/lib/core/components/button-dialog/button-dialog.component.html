@@ -3,19 +3,19 @@
     <ng-content></ng-content>
     <div class="w-full flex justify-content-end mb-3">
         <p-button 
-            id="buttonDialogSideButton" 
-            *ngIf="dialogData.config.sideButtonEnabled"
+            id="buttonDialogSecondaryButton" 
+            *ngIf="dialogData.config.secondaryButtonEnabled"
             class="mx-2"
-            [icon]="dialogData.config.sideButtonDetails!.icon !== undefined ? dialogData.config.sideButtonDetails!.icon : ''"
+            [icon]="dialogData.config.secondaryButtonDetails!.icon !== undefined ? dialogData.config.secondaryButtonDetails!.icon : ''"
             (click)="sideButtonAction()"
-            [label]="dialogData.config.sideButtonDetails!.label"
+            [label]="dialogData.config.secondaryButtonDetails!.label"
         ></p-button>
         <p-button 
-            id="buttonDialogMainButton"
+            id="buttonDialogPrimaryButton"
             class="mx-2"
-            [icon]="dialogData.config.mainButtonDetails!.icon !== undefined ? dialogData.config.mainButtonDetails!.icon : ''"
+            [icon]="dialogData.config.primaryButtonDetails!.icon !== undefined ? dialogData.config.primaryButtonDetails!.icon : ''"
             (click)="mainButtonAction()"
-            [label]="dialogData.config.mainButtonDetails!.label"
+            [label]="dialogData.config.primaryButtonDetails!.label"
         ></p-button>
     </div>
 </div>

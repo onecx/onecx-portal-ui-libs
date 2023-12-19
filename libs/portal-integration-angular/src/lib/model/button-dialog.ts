@@ -11,9 +11,9 @@ export interface ButtonDialogDynamicDialogDetails extends ButtonDialogDetails {
 }
 
 export interface ButtonDialogConfig {
-  mainButtonDetails?: ButtonDialogDetails | ButtonDialogDynamicDialogDetails
-  sideButtonEnabled?: boolean
-  sideButtonDetails?: ButtonDialogDetails | ButtonDialogDynamicDialogDetails
+  primaryButtonDetails?: ButtonDialogDetails | ButtonDialogDynamicDialogDetails
+  secondaryButtonEnabled?: boolean
+  secondaryButtonDetails?: ButtonDialogDetails | ButtonDialogDynamicDialogDetails
 }
 
 export interface ButtonDialogData {

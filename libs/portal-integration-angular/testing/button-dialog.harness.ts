@@ -4,8 +4,8 @@ import { PButtonHarness } from './primeng/p-button.harness'
 export class ButtonDialogHarness extends ContentContainerComponentHarness {
   static hostSelector = 'ocx-button-dialog'
 
-  getMainButton = this.locatorFor(PButtonHarness.with({ id: 'buttonDialogMainButton' }))
-  getSideButton = this.locatorFor(PButtonHarness.with({ id: 'buttonDialogSideButton' }))
+  getMainButton = this.locatorFor(PButtonHarness.with({ id: 'buttonDialogPrimaryButton' }))
+  getSideButton = this.locatorFor(PButtonHarness.with({ id: 'buttonDialogSecondaryButton' }))
 
   async clickMainButton() {
     await (await this.getMainButton()).click()
