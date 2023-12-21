@@ -85,6 +85,7 @@ import { OcxContentDirective } from './directives/ocx-content.directive'
 import { OcxContentComponent } from './components/ocx-content/ocx-content.component'
 import { OcxContentContainerComponent } from './components/ocx-content-container/ocx-content-container.component'
 import { OcxContentContainerDirective } from './directives/ocx-content-container.directive'
+import { SearchConfigComponent } from './components/search-config/search-config.component'
 
 export function createTranslateLoader(http: HttpClient, mfeInfo: MfeInfo) {
   if (mfeInfo?.remoteBaseUrl) {
@@ -174,6 +175,7 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     OcxContentContainerDirective,
     OcxContentComponent,
     OcxContentContainerComponent,
+    SearchConfigComponent,
   ],
   providers: [
     ConfigurationService,
@@ -240,6 +242,7 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     OcxContentContainerDirective,
     OcxContentComponent,
     OcxContentContainerComponent,
+    SearchConfigComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   entryComponents: [ColumnTogglerComponent],
