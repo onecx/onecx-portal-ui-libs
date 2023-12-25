@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core'
 import { map, Observable } from 'rxjs'
 import { HelpData } from '../model/help-data'
 
-const baseUrl = './ahm-api/announcement-help-management-rs/internal/applications'
+const baseUrl = './ahm-api/internal/applications'
 
 @Injectable({ providedIn: 'root' })
 export class HelpPageAPIService {
