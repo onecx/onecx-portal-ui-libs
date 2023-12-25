@@ -18,13 +18,13 @@ export class AnnouncementsApiService {
     startDateTo: string,
     endDateFrom: string
   ): Observable<Array<AnnouncementItem>> {
-    return this.http.get<Array<AnnouncementItem>>(`./ahm-api/announcement-help-management-rs/internal/announcements`, {
+    return this.http.get<Array<AnnouncementItem>>(`./ahm-api/internal/announcements`, {
       params: { appId: appId, status: 'ACTIVE', startDateTo: startDateTo, endDateFrom: endDateFrom },
       headers: { Accept: 'application/json' },
     })
   }
 
   public getAnnouncementById(id: string): Observable<AnnouncementItem> {
-    return this.http.get<AnnouncementItem>(`./ahm-api/announcement-help-management-rs/internal/announcements/${id}`)
+    return this.http.get<AnnouncementItem>(`./ahm-api/internal/announcements/${id}`)
   }
 }
