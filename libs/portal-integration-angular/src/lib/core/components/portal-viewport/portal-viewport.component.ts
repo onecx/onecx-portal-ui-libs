@@ -15,6 +15,8 @@ import { NavigationEnd, Router } from '@angular/router'
 import { HelpPageAPIService } from '../../../services/help-api-service'
 import { AUTH_SERVICE } from '../../../api/injection-tokens'
 import { IAuthService } from '../../../api/iauth.service'
+import { PageInfo } from '../../../model/page-info.model'
+import { TranslateService } from '@ngx-translate/core'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 
 @Component({
@@ -74,6 +76,7 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
     private supportTicketApiService: SupportTicketApiService,
     private helpDataService: HelpPageAPIService,
     private dialogService: DialogService,
+    private translateService: TranslateService,
     @Inject(AUTH_SERVICE) public authService: IAuthService
   ) {
     // TODO
@@ -231,28 +234,39 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
     }
   }
 
+  public isUrlValid(url: string): boolean {
+    const validURLPattern = new RegExp(
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
+        '((\\d{1,3}\\.){3}\\d{1,3}))' +
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' +
+        '(\\?[;&a-z\\d%_.~+=-]*)?' +
+        '(\\#[-a-z\\d_]*)?$',
+      'i'
+    )
+    return validURLPattern.test(url)
+  }
+
   public openHelpPage(event: any) {
     if (this.helpDataItem && this.helpDataItem.id) {
-      const url = this.helpDataItem.resourceUrl
-      if (url) {
-        console.log(`navigate to help page: ${url}`)
-        try {
-          window.open(new URL(url), '_blank')?.focus
-        } catch (e) {
-          console.log(`Error constructing help page URL`, e)
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Help Item URL not valid',
-          })
-        }
+      const url = `${this.helpDataItem?.baseUrl}${this.helpDataItem?.resourceUrl}`
+      if (url && this.isUrlValid(url)) {
+        window.open(url, '_blank')?.focus()
+      } else {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Help Item URL not valid',
+        })
       }
     } else {
-      this.dialogService.open(NoHelpItemComponent, {
-        header: 'No help item defined for this page',
-        width: '400px',
-        data: {
-          helpArticleId: this.helpArticleId,
-        },
+      this.translateService.get('OCX_HEADER_HELPITEM.NO_HELP_ITEM_TITLE').subscribe((translation) => {
+        this.dialogService.open(NoHelpItemComponent, {
+          header: translation,
+          width: '400px',
+          draggable: true,
+          data: {
+            helpArticleId: this.helpArticleId,
+          },
+        })
       })
     }
     event.preventDefault()

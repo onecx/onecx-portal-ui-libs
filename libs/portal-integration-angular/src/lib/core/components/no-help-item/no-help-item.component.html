@@ -1,9 +1,19 @@
 <div>
-  <div class="dialog-content">
+  <div class="dialog-content pt-1">
     <span>No help items were found for this page. Please ask your system administrator to add it.</span>
-    <div *ngIf="helpArticleId">
+    <div *ngIf="helpArticleId" class="pt-4">
       <span> The help Item ID for this page is:</span>
-      <span class="code p-my-2">{{ helpArticleId }}</span>
+      <span class="code my-2">{{ helpArticleId }}</span>
+    </div>
+    <div class="grid pt-4 pr-2">
+        <p-button
+        icon="pi pi-times"
+        class="flat ml-auto"
+        value="Cancel"
+        label="Cancel"
+        (click)="this.close()"
+        >
+        </p-button>
     </div>
   </div>
 </div>
