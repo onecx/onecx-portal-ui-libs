@@ -21,33 +21,24 @@ export class OcxContentDirective implements OnInit, OnChanges {
   }
 
   private init() {
-    // Apply style classes to element that directive is added to
     this.addContentStyles()
     if (this.ocxContent) {
-      // Prepend title as first child of element that directive is added to
       this.prependTitle()
     } else {
-      // Ensure that title element doesn't remain in DOM when ocxContent is set to '' | null | undefined
       this.removeTitle()
     }
   }
 
   private addContentStyles() {
-    // Helper methods
     const addClasses = (classes: string[]) => this.el.nativeElement.classList.add(...classes)
-
-    // Apply needed css classes
     addClasses(['card'])
   }
 
   private prependTitle() {
-    // Query for ocxContentTitleElement to check if it exists
     const titleElement = this.el.nativeElement.querySelector(`#${this.titleElemID}`)
     if (titleElement) {
-      // If element already exists don't re-render everything and only change the text content of the element
       titleElement.textContent = this.ocxContent
     } else {
-      // If element doesn't exist create it and add the text to it
       const title = document.createElement('p')
       title.classList.add('font-medium')
       title.classList.add('text-lg')
@@ -58,10 +49,8 @@ export class OcxContentDirective implements OnInit, OnChanges {
   }
 
   private removeTitle() {
-    // Query for ocxContentTitleElement to check if it exists
     const titleElement = this.el.nativeElement.querySelector(`#${this.titleElemID}`)
     if (titleElement) {
-      // If element exists remove it, if not do nothing
       titleElement.remove()
     }
   }
