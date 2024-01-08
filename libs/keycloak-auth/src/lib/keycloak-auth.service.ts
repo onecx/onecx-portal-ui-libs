@@ -12,7 +12,8 @@ import {
 import { KeycloakEventType, KeycloakOptions, KeycloakService } from 'keycloak-angular'
 import { KeycloakConfig } from 'keycloak-js'
 import { BehaviorSubject, firstValueFrom } from 'rxjs'
-import { KEYCLOAK_AUTH_CONFIG, KeycloakAuthModuleConfig } from './keycloak-auth.module'
+import { KeycloakAuthModuleConfig } from './keycloak-auth.module'
+import { KEYCLOAK_AUTH_CONFIG } from './keycloak-injection-token'
 
 const KC_REFRESH_TOKEN_LS = 'onecx_kc_refreshToken'
 const KC_ID_TOKEN_LS = 'onecx_kc_idToken'

@@ -1,3 +1,10 @@
+## [3.7.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.7.0...v3.7.1) (2023-12-25)
+
+
+### Bug Fixes
+
+* remove ahm..rs api prefix ([f168ec5](https://github.com/onecx/onecx-portal-ui-libs/commit/f168ec59389482f99ef541c5f38889613819808e))
+
 ## [3.6.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.5.2...v3.6.0) (2023-12-07)
 
 ### Bug Fixes
