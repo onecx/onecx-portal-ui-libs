@@ -19,6 +19,7 @@ export class Topic<T> implements Subscribable<T> {
   protected isInit = false
   private resolveInitPromise!: (value: void | PromiseLike<void>) => void
   private eventListener = (m: MessageEvent<TopicMessage>) => this.onMessage(m)
+  private publishPromiseResolver: Record<number, () => void> = {}
 
   constructor(private name: string, private version: number) {
     this.isInitializedPromise = new Promise<void>((resolve) => {
@@ -132,9 +133,13 @@ export class Topic<T> implements Subscribable<T> {
     return (<any>this.asObservable()).pipe(...operations)
   }
 
-  publish(value: T) {
+  publish(value: T): Promise<void> {
     const message = new TopicDataMessage<T>(TopicMessageType.TopicNext, this.name, this.version, value)
+    const promise = new Promise<void>((resolve) => {
+      this.publishPromiseResolver[message.timestamp] = resolve
+    })
     window.postMessage(message, '*')
+    return promise
   }
 
   destroy() {
@@ -152,6 +157,11 @@ export class Topic<T> implements Subscribable<T> {
           this.isInit = true
           this.data.next(<TopicDataMessage<T>>m.data)
           this.resolveInitPromise()
+          const publishPromiseResolver = this.publishPromiseResolver[m.data.timestamp]
+          if (publishPromiseResolver) {
+            publishPromiseResolver()
+            delete this.publishPromiseResolver[m.data.timestamp]
+          }
         }
         break
       case TopicMessageType.TopicGet:

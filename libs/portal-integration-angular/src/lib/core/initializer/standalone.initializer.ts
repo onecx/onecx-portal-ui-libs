@@ -53,8 +53,7 @@ export function standaloneInitializer(
       console.log(`📑 auth OK? ${authOk}`)
       try {
         const profile = await firstValueFrom(userProfileAPIService.getCurrentUser())
-        userService.profile$.publish(profile)
-        await userService.profile$.isInitialized
+        await userService.profile$.publish(profile)
       } catch (e) {
         errCause = USER_INIT_ERR
         throw e
@@ -68,8 +67,7 @@ export function standaloneInitializer(
         throw e
       }
       console.log(`📃 portal OK? ${portal}`)
-      appStateService.currentPortal$.publish(portal)
-      await appStateService.currentPortal$.isInitialized
+      await appStateService.currentPortal$.publish(portal)
       let theme = undefined
 
       if (!portal) {
@@ -89,7 +87,7 @@ export function standaloneInitializer(
       console.log('Standalone Initializer')
       console.log(`🛑 Error during initialization: ${errCause} ${e} `)
       console.dir(e)
-      appStateService.globalError$.publish(errCause || 'INITIALIZATION_ERROR')
+      await appStateService.globalError$.publish(errCause || 'INITIALIZATION_ERROR')
       return undefined
     } finally {
       // eslint-disable-next-line no-restricted-syntax

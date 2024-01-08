@@ -45,8 +45,7 @@ describe('Syncable Topic', () => {
   it('should get correct value', async () => {
     expect(testSyncableTopic1.getValue()).toEqual(undefined)
 
-    testSyncableTopic1.publish('value1')
-    await testSyncableTopic1.isInitialized
+    await testSyncableTopic1.publish('value1')
 
     expect(testSyncableTopic1.getValue()).toEqual('value1')
     expect(testSyncableTopic2.getValue()).toEqual('value1')
