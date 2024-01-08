@@ -25,3 +25,7 @@ export const MFE_INFO_FN = new InjectionToken<mfeInfoProducer>('OCX_MFE_INFO_FN'
 export const MFE_INFO = new InjectionToken<MfeInfo>('OCX_MFE_INFO')
 
 export type mfeInfoProducer = () => MfeInfo
+
+export const SANITY_CHECK = new InjectionToken<string>('OCXSANITY_CHECK')
+
+export const APPLICATION_NAME = new InjectionToken<string>('APPLICATION_NAME')
