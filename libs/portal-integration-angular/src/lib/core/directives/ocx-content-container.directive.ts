@@ -31,7 +31,7 @@ export class OcxContentContainerDirective implements OnInit, OnChanges {
     const sharedClasses = ['flex', 'p-3', 'gap-3', 'flex-column']
     
     // Remove all potentially applied classes to avoid duplicates
-    removeClasses([...sharedClasses, 'sm:flex-row'])
+    removeClasses(['sm:flex-row'])
 
     // Apply shared classes
     addClasses(sharedClasses)

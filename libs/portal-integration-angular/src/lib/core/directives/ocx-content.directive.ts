@@ -35,16 +35,9 @@ export class OcxContentDirective implements OnInit, OnChanges {
   private addContentStyles() {
     // Helper methods
     const addClasses = (classes: string[]) => this.el.nativeElement.classList.add(...classes)
-    const removeClasses = (classes: string[]) => this.el.nativeElement.classList.remove(...classes)
 
-    // Classes that should be applied to the content element
-    const sharedClasses = ['card']
-    
-    // Remove all potentially applied classes to avoid duplicates
-    removeClasses(sharedClasses)
-
-    // Apply shared classes
-    addClasses(sharedClasses)
+    // Apply needed css classes
+    addClasses(['card'])
   }
 
   private prependTitle() {
