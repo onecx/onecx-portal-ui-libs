@@ -29,7 +29,7 @@ function initFactory(breadcrumbService: BreadcrumbService, configService: Config
   }
 }
 
-const dummyPortal: Portal = { baseUrl: '/demo', portalName: 'Demo', id: 'Demo', microfrontends: [] }
+const dummyPortal: Portal = { baseUrl: '/demo', portalName: 'Demo', id: 'Demo', microfrontendRegistrations: [] }
 export default {
   title: 'Page Header Component',
   component: PageHeaderComponent,

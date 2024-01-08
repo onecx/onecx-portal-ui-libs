@@ -21,7 +21,7 @@ import { APP_INITIALIZER, importProvidersFrom } from '@angular/core'
 import { InputTextModule } from 'primeng/inputtext'
 
 function initFactory(configurationService: ConfigurationService) {
-  configurationService.setPortal({ baseUrl: '/demo', portalName: 'Demo', id: 'Demo', microfrontends: [] })
+  configurationService.setPortal({ baseUrl: '/demo', portalName: 'Demo', id: 'Demo', microfrontendRegistrations: [] })
   return () => {
     configurationService
   }
