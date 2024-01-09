@@ -57,7 +57,7 @@
     "@nx/esbuild": "16.10.0",
     "@nx/eslint-plugin": "16.10.0",
     "@nx/jest": "16.10.0",
-    "@nx/js": "v17.2.5",
+    "@nx/js": "v17.2.8",
     "@nx/linter": "16.10.0",
     "@nx/node": "16.10.0",
     "@nx/storybook": "^17.2.5",
