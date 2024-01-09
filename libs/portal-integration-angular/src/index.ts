@@ -7,6 +7,8 @@ export * from './lib/core/directives/basic.directive'
 export * from './lib/core/directives/patch-form-group-values.driective'
 export * from './lib/core/directives/set-input-value.directive'
 export * from './lib/core/directives/loading-indicator.directive'
+export * from './lib/core/directives/ocx-content.directive'
+export * from './lib/core/directives/ocx-content-container.directive'
 
 // components
 export * from './lib/core/components/loading/loading.component'
@@ -50,6 +52,8 @@ export * from './lib/core/components/group-by-count-diagram/group-by-count-diagr
 export * from './lib/core/components/diagram/diagram.component'
 export * from './lib/core/components/search-config/search-config.component'
 export * from './lib/core/components/loading-indicator/loading-indicator.component'
+export * from './lib/core/components/ocx-content-container/ocx-content-container.component'
+export * from './lib/core/components/ocx-content/ocx-content.component'
 
 // services
 export * from './lib/services/app.menu.service'

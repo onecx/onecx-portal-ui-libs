@@ -17,9 +17,12 @@
     },
     {
       "path": "./tsconfig.lib.prod.json"
-    },    
+    },
     {
       "path": "./tsconfig.spec.json"
+    },
+    {
+      "path": "./.storybook/tsconfig.json"
     }
   ],
   "extends": "../../tsconfig.base.json",
