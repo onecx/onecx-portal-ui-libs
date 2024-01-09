@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http'
 import { Injectable, OnDestroy } from '@angular/core'
 import { CurrentThemeTopic } from '@onecx/integration-interface'
-import { tap } from 'rxjs'
+import { from, map, mergeMap } from 'rxjs'
 import { CONFIG_KEY } from '../model/config-key.model'
 import { Theme } from '../model/theme'
 import { ConfigurationService } from './configuration.service'
@@ -25,8 +25,8 @@ export class ThemeService implements OnDestroy {
 
   public loadAndApplyTheme(themeName: string) {
     return this.http.get<Theme>(`${this.baseUrlV1}/internal/themes/${encodeURI(themeName)}`).pipe(
-      tap(async (theme) => {
-        await this.apply(theme)
+      mergeMap((theme) => {
+        return from(this.apply(theme)).pipe(map(() => theme))
       })
     )
   }
