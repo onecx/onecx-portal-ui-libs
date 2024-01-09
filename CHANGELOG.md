@@ -1,3 +1,11 @@
+## [3.8.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.7.1...v3.8.0) (2024-01-09)
+
+
+### Features
+
+* implement ocx-content + ocx-content-container and re-enable Storybook ([#52](https://github.com/onecx/onecx-portal-ui-libs/issues/52)) ([5c7a934](https://github.com/onecx/onecx-portal-ui-libs/commit/5c7a93409e68ea4a3faa2b7e0245e3bad93e10de))
+* move injection tokens to separate file ([#60](https://github.com/onecx/onecx-portal-ui-libs/issues/60)) ([7b0ac81](https://github.com/onecx/onecx-portal-ui-libs/commit/7b0ac81402b37024adef0b54b9aa29cdf1810abf))
+
 ## [3.7.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.7.0...v3.7.1) (2023-12-25)
 
 
