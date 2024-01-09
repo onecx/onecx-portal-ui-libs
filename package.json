@@ -3,7 +3,8 @@
   "version": "3.7.1",
   "license": "Apache-2.0",
   "scripts": {
-    "sass": "npx sass libs/portal-integration-angular/assets/styles.scss libs/portal-integration-angular/assets/output.css"
+    "sass": "npx sass libs/portal-integration-angular/assets/styles.scss libs/portal-integration-angular/assets/output.css",
+    "postinstall": "mkdir -p .nx"
   },
   "private": true,
   "dependencies": {
