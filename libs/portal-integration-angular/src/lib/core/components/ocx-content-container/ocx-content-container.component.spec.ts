@@ -7,11 +7,12 @@ import { Component } from '@angular/core'
 // Using this mock host allows us to simulate Angular @Input mechanisms
 @Component({
   template: `
-    <ocx-content-container [layout]="layout"></ocx-content-container>
+    <ocx-content-container [layout]="layout" [breakpoint]="breakpoint"></ocx-content-container>
     `,
 })
 class TestHostComponent {
   layout: 'horizontal' | 'vertical' = 'horizontal';
+  breakpoint: 'sm' | 'md' | 'lg' | 'xl' = 'md'
 }
 
 describe('OcxContentContainerComponent', () => {
@@ -35,11 +36,33 @@ describe('OcxContentContainerComponent', () => {
   it('should render a horizontal layout container with all expected css classes', () => {
     // Check that layout is horizontal by default
     expect(component.layout).toEqual('horizontal')
+    // Check that breakpoint is md by default
+    expect(component.breakpoint).toEqual('md')
     fixture.detectChanges()
     
     // Check that the classList of the rendered element contains all expected classes
-    const expectedClasses = ['flex', 'p-3', 'gap-3', 'flex-column', 'sm:flex-row']
+    const expectedClasses = ['flex', 'py-3', 'gap-3', 'flex-column', 'md:flex-row']
     expect(Object.keys(fixture.debugElement.children[0].classes)).toEqual(expectedClasses)
+  })
+
+  it('should render a horizontal layout container with all expected css classes and a specified breakpoint', () => {
+        // Check that layout is horizontal by default
+        expect(component.layout).toEqual('horizontal')
+        // Check that breakpoint is md by default
+        expect(component.breakpoint).toEqual('md')
+        fixture.detectChanges()
+        
+        // Check that the classList of the rendered element contains all expected classes
+        const expectedClassesMD = ['flex', 'py-3', 'gap-3', 'flex-column', 'md:flex-row']
+        expect(Object.keys(fixture.debugElement.children[0].classes)).toEqual(expectedClassesMD)
+
+        component.breakpoint = "lg"
+        fixture.detectChanges()
+
+        // Check that breakpoint is now lg and that classes have been updated accordingly
+        expect(component.breakpoint).toEqual('lg')
+        const expectedClassesLG = ['flex', 'py-3', 'gap-3', 'flex-column', 'lg:flex-row']
+        expect(Object.keys(fixture.debugElement.children[0].classes)).toEqual(expectedClassesLG)
   })
 
   it('should render a vertical layout container with all expected css classes', () => {
@@ -59,7 +82,7 @@ describe('OcxContentContainerComponent', () => {
     expect(component.layout).toEqual('vertical')
 
     // Check that the classList of the rendered element contains all expected classes
-    const expectedClasses = ["flex", "p-3", "gap-3", "flex-column"]
+    const expectedClasses = ["flex", "py-3", "gap-3", "flex-column"]
     expect(Object.keys(fixture.debugElement.children[0].children[0].classes)).toEqual(expectedClasses)
   })
 })
