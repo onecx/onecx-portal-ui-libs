@@ -1,3 +1,10 @@
+## [3.8.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.8.0...v3.8.1) (2024-01-10)
+
+
+### Bug Fixes
+
+* ocx-content-container - improve padding + allow specifying breakpoint ([#63](https://github.com/onecx/onecx-portal-ui-libs/issues/63)) ([ddef75b](https://github.com/onecx/onecx-portal-ui-libs/commit/ddef75b0734b5dcadfffe1c7157ad0c960e3f2c8))
+
 ## [3.8.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.7.1...v3.8.0) (2024-01-09)
 
 
