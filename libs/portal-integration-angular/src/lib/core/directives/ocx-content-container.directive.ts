@@ -46,7 +46,7 @@ export class OcxContentContainerDirective implements OnInit, OnChanges {
     removeResponsiveLayoutClasses()
     addClasses(sharedClasses)
     if (this.layout != 'vertical') {
-      const responsiveLayoutClass = `${this.breakpoint}:flex-row`
+      const responsiveLayoutClass = `${this.breakpoint || 'md'}:flex-row`
       addClasses([responsiveLayoutClass])
     }
   }
