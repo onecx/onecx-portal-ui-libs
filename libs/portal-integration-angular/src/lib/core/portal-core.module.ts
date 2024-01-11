@@ -3,7 +3,6 @@ import {
   APP_INITIALIZER,
   CUSTOM_ELEMENTS_SCHEMA,
   Inject,
-  InjectionToken,
   LOCALE_ID,
   ModuleWithProviders,
   NgModule,
@@ -21,7 +20,7 @@ import {
   TranslateService,
 } from '@ngx-translate/core'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
-import { AUTH_SERVICE, MFE_INFO, MFE_INFO_FN } from '../api/injection-tokens'
+import { APPLICATION_NAME, AUTH_SERVICE, MFE_INFO, MFE_INFO_FN, SANITY_CHECK } from '../api/injection-tokens'
 import { MfeInfo } from '../model/mfe-info.model'
 import { AutofocusDirective } from './directives/autofocus.directive'
 import { IfBreakpointDirective } from './directives/if-breakpoint.directive'
@@ -81,6 +80,11 @@ import { LoadingIndicatorComponent } from './components/loading-indicator/loadin
 import { LoadingIndicatorDirective } from './directives/loading-indicator.directive'
 import { DiagramComponent } from './components/diagram/diagram.component'
 import { GroupByCountDiagramComponent } from './components/group-by-count-diagram/group-by-count-diagram.component'
+import { OcxContentDirective } from './directives/ocx-content.directive'
+import { OcxContentComponent } from './components/ocx-content/ocx-content.component'
+import { OcxContentContainerComponent } from './components/ocx-content-container/ocx-content-container.component'
+import { OcxContentContainerDirective } from './directives/ocx-content-container.directive'
+import { SearchConfigComponent } from './components/search-config/search-config.component'
 
 export function createTranslateLoader(http: HttpClient, mfeInfo: MfeInfo) {
   if (mfeInfo?.remoteBaseUrl) {
@@ -166,6 +170,11 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     SetInputValueDirective,
     DiagramComponent,
     GroupByCountDiagramComponent,
+    OcxContentDirective,
+    OcxContentContainerDirective,
+    OcxContentComponent,
+    OcxContentContainerComponent,
+    SearchConfigComponent,
   ],
   providers: [
     ConfigurationService,
@@ -228,6 +237,11 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     SetInputValueDirective,
     DiagramComponent,
     GroupByCountDiagramComponent,
+    OcxContentDirective,
+    OcxContentContainerDirective,
+    OcxContentComponent,
+    OcxContentContainerComponent,
+    SearchConfigComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   entryComponents: [ColumnTogglerComponent],
@@ -296,5 +310,3 @@ export class PortalCoreModule {
     //  The ts-jest bug causes that the locale is not imported correctly.
   }
 }
-const SANITY_CHECK = new InjectionToken<string>('OCXSANITY_CHECK')
-const APPLICATION_NAME = new InjectionToken<string>('APPLICATION_NAME')

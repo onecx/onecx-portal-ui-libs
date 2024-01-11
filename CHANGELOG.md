@@ -1,3 +1,25 @@
+## [3.8.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.8.0...v3.8.1) (2024-01-10)
+
+
+### Bug Fixes
+
+* ocx-content-container - improve padding + allow specifying breakpoint ([#63](https://github.com/onecx/onecx-portal-ui-libs/issues/63)) ([ddef75b](https://github.com/onecx/onecx-portal-ui-libs/commit/ddef75b0734b5dcadfffe1c7157ad0c960e3f2c8))
+
+## [3.8.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.7.1...v3.8.0) (2024-01-09)
+
+
+### Features
+
+* implement ocx-content + ocx-content-container and re-enable Storybook ([#52](https://github.com/onecx/onecx-portal-ui-libs/issues/52)) ([5c7a934](https://github.com/onecx/onecx-portal-ui-libs/commit/5c7a93409e68ea4a3faa2b7e0245e3bad93e10de))
+* move injection tokens to separate file ([#60](https://github.com/onecx/onecx-portal-ui-libs/issues/60)) ([7b0ac81](https://github.com/onecx/onecx-portal-ui-libs/commit/7b0ac81402b37024adef0b54b9aa29cdf1810abf))
+
+## [3.7.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.7.0...v3.7.1) (2023-12-25)
+
+
+### Bug Fixes
+
+* remove ahm..rs api prefix ([f168ec5](https://github.com/onecx/onecx-portal-ui-libs/commit/f168ec59389482f99ef541c5f38889613819808e))
+
 ## [3.6.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.5.2...v3.6.0) (2023-12-07)
 
 ### Bug Fixes

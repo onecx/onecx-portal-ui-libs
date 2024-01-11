@@ -16,7 +16,7 @@ import { APP_INITIALIZER, importProvidersFrom } from '@angular/core'
 import { mockedGetMenu } from '../../../../../mocks/menuMapper'
 
 function initFactory(configurationService: ConfigurationService) {
-  configurationService.setPortal({ baseUrl: '/demo', portalName: 'Demo', id: 'Demo', microfrontends: [] })
+  configurationService.setPortal({ baseUrl: '/demo', portalName: 'Demo', id: 'Demo', microfrontendRegistrations: [] })
   return () => {
     configurationService
   }
