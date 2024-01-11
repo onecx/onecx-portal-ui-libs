@@ -290,7 +290,10 @@ export class PortalCoreModule {
          Make sure you only use 'PortalCoreModule.forRoot()' in you root AppModule and that you use 'PortalCoreModule.forMicrofrontend()' in your feature modules`
       )
     }
-    registerLocaleData(de)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    registerLocaleData((de as any).default ?? de)
+    //  Do not change the line above until the following ts-jest bug is fixed: https://github.com/kulshekhar/ts-jest/issues/3925
+    //  The ts-jest bug causes that the locale is not imported correctly.
   }
 }
 const SANITY_CHECK = new InjectionToken<string>('OCXSANITY_CHECK')
