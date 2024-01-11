@@ -1,7 +1,7 @@
 import { CanActivateFn, Route } from '@angular/router'
 import { InitializeModuleGuard } from '../../services/initialize-module-guard.service'
 
-export function addGuard(
+export function addInitializeModuleGuard(
   routes: Route[],
   initializeModuleGuard?: typeof InitializeModuleGuard | CanActivateFn
 ): Route[] {
