@@ -18,5 +18,4 @@ export function addInitializeModuleGuard(
     }
     return route
   })
-
 }

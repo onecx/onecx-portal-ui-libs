@@ -117,7 +117,7 @@ describe('AddInitializeGuard', () => {
       },
     ]
     const modifiedRoutes = addInitializeModuleGuard(testRoutesWithInitializeModuleGuard)
-    
+
     expect(modifiedRoutes).toEqual(expectedRoutes)
   })
 
