@@ -3,12 +3,20 @@ import { InitializeModuleGuard } from '../../services/initialize-module-guard.se
 
 export function addInitializeModuleGuard(
   routes: Route[],
-  initializeModuleGuard?: typeof InitializeModuleGuard | CanActivateFn
+  initializeModuleGuard: typeof InitializeModuleGuard | CanActivateFn = InitializeModuleGuard
 ): Route[] {
-  routes
-    .filter((r) => !r.redirectTo)
-    .map((r) =>
-      initializeModuleGuard ? (r.canActivate = [initializeModuleGuard]) : (r.canActivate = [InitializeModuleGuard])
-    )
-  return routes
+  return routes.map((r) => {
+    if (r.redirectTo) {
+      return r
+    }
+    const route = {
+      canActivate: [],
+      ...r,
+    }
+    if (!route.canActivate.includes(initializeModuleGuard)) {
+      route.canActivate.push(initializeModuleGuard)
+    }
+    return route
+  })
+
 }
