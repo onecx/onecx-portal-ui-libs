@@ -6,9 +6,9 @@ import { ConfigurationService } from './configuration.service'
 
 @Injectable()
 export class InitializeModuleGuard implements CanActivate {
-  private SUPPORTED_LANGS = ['en', 'de']
-  private DEFAULT_LANG = 'en'
-  constructor(private txService: TranslateService, private config: ConfigurationService) {}
+  protected SUPPORTED_LANGS = ['en', 'de']
+  protected DEFAULT_LANG = 'en'
+  constructor(protected translateService: TranslateService, protected configService: ConfigurationService) {}
 
   canActivate(
     _route: ActivatedRouteSnapshot,
@@ -27,9 +27,9 @@ export class InitializeModuleGuard implements CanActivate {
   }
 
   loadTranslations(): Observable<boolean> {
-    return this.config.lang$.pipe(
+    return this.configService.lang$.pipe(
       filter((v) => v !== undefined),
-      switchMap((lang) => this.txService.use(this.getBestMatchLanguage(lang as string))),
+      switchMap((lang) => this.translateService.use(this.getBestMatchLanguage(lang as string))),
       switchMap(() => of(true))
     )
   }
