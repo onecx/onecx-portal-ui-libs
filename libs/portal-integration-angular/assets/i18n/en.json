@@ -75,5 +75,8 @@
     "OPEN_HELP_PAGE_DIALOG_HEADER": "No help item defined for this page",
     "UPDATE_HELP_ARTICLE_INFO": "Help Item definition updated",
     "UPDATE_HELP_ARTICLE_ERROR": "Help Item definition update failed"
+  },
+  "OCX_HELP_ITEM_EDITOR": {
+    "SAVE_ERROR": "Form is not valid. Cannot update the Help Item."
   }
 }

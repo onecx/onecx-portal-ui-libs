@@ -75,5 +75,8 @@
     "OPEN_HELP_PAGE_DIALOG_HEADER": "Kein Hilfeartikel ist für diese Seite definiert",
     "UPDATE_HELP_ARTICLE_INFO": "Definition des Hilfeartikels aktualisiert",
     "UPDATE_HELP_ARTICLE_ERROR": "Aktualisierung des Hilfeartikels fehlgeschlagen"
+  },
+  "OCX_HELP_ITEM_EDITOR": {
+    "SAVE_ERROR": "Das Formular ist nicht gültig. Der Hilfeartikel kann nicht aktualisiert werden."
   }
 }

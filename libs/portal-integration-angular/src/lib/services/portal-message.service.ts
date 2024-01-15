@@ -46,9 +46,20 @@ export class PortalMessageService {
       msg.summaryKey ? this.translateService.get(msg.summaryKey || '', msg.summaryParameters) : of(undefined),
       msg.detailKey ? this.translateService.get(msg.detailKey, msg.detailParameters) : of(undefined),
     ]).subscribe(([summaryTranslation, detailTranslation]: string[]) => {
-      if (this.message$) {
-        this.message$.publish({ severity: severity, summary: summaryTranslation, detail: detailTranslation })
-      }
+      this.message$.publish({
+        severity: severity,
+        summary: summaryTranslation,
+        detail: detailTranslation,
+        id: msg.id,
+        key: msg.key,
+        life: msg.life,
+        sticky: msg.sticky,
+        closable: msg.closable,
+        data: msg.data,
+        icon: msg.icon,
+        contentStyleClass: msg.contentStyleClass,
+        styleClass: msg.styleClass,
+      })
     })
   }
 }
