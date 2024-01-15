@@ -47,18 +47,10 @@ export class PortalMessageService {
       msg.detailKey ? this.translateService.get(msg.detailKey, msg.detailParameters) : of(undefined),
     ]).subscribe(([summaryTranslation, detailTranslation]: string[]) => {
       this.message$.publish({
+        ...msg,
         severity: severity,
         summary: summaryTranslation,
         detail: detailTranslation,
-        id: msg.id,
-        key: msg.key,
-        life: msg.life,
-        sticky: msg.sticky,
-        closable: msg.closable,
-        data: msg.data,
-        icon: msg.icon,
-        contentStyleClass: msg.contentStyleClass,
-        styleClass: msg.styleClass,
       })
     })
   }
