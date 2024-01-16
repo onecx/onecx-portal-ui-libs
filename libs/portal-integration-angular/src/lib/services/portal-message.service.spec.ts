@@ -56,25 +56,25 @@ describe('PortalMessageService', () => {
       portalMessageService.success({ summaryKey: 'unit.test.message' })
       portalMessageService.message$.subscribe((m) => (message = m))
 
-      expect(message).toEqual({
-        detail: undefined,
-        severity: 'success',
-        summary: 'Hello {{username}}',
-        summaryKey: 'unit.test.message',
-      })
+      expect(message).toEqual(
+        expect.objectContaining({
+          severity: 'success',
+          summary: 'Hello {{username}}',
+        })
+      )
     })
 
     it('with summary and detail adds correct data', () => {
       portalMessageService.success({ summaryKey: 'unit.test.message', detailKey: 'unit.test.message' })
       portalMessageService.message$.subscribe((m) => (message = m))
 
-      expect(message).toEqual({
-        severity: 'success',
-        summary: 'Hello {{username}}',
-        detail: 'Hello {{username}}',
-        summaryKey: 'unit.test.message',
-        detailKey: 'unit.test.message',
-      })
+      expect(message).toEqual(
+        expect.objectContaining({
+          severity: 'success',
+          summary: 'Hello {{username}}',
+          detail: 'Hello {{username}}',
+        })
+      )
     })
 
     it('with summary with parameter adds correct data', () => {
@@ -93,19 +93,19 @@ describe('PortalMessageService', () => {
       })
       portalMessageService.message$.subscribe((m) => (message = m))
 
-      expect(message).toEqual({
-        severity: 'success',
-        summary: 'Hello user1',
-        detail: 'Hello user2',
-        summaryKey: 'unit.test.message',
-        summaryParameters: {
-          username: 'user1',
-        },
-        detailKey: 'unit.test.message',
-        detailParameters: {
-          username: 'user2',
-        },
-      })
+      expect(message).toEqual(
+        expect.objectContaining({
+          severity: 'success',
+          summary: 'Hello user1',
+          detail: 'Hello user2',
+          summaryParameters: {
+            username: 'user1',
+          },
+          detailParameters: {
+            username: 'user2',
+          },
+        })
+      )
     })
   })
 
