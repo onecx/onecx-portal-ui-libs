@@ -98,12 +98,6 @@ describe('PortalMessageService', () => {
           severity: 'success',
           summary: 'Hello user1',
           detail: 'Hello user2',
-          summaryParameters: {
-            username: 'user1',
-          },
-          detailParameters: {
-            username: 'user2',
-          },
         })
       )
     })
