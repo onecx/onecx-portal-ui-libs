@@ -2,7 +2,8 @@ import { Inject, Injectable, Optional } from '@angular/core'
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http'
 import { Observable } from 'rxjs'
 import { AUTH_SERVICE, IAuthService } from '@onecx/portal-integration-angular'
-import { KEYCLOAK_AUTH_CONFIG, KeycloakAuthModuleConfig } from './keycloak-auth.module'
+import { KeycloakAuthModuleConfig } from './keycloak-auth.module'
+import { KEYCLOAK_AUTH_CONFIG } from './keycloak-injection-token'
 
 const WHITELIST = ['assets']
 

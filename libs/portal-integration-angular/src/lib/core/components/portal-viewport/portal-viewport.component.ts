@@ -14,6 +14,7 @@ import { HelpPageAPIService } from '../../../services/help-api-service'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { HttpResponse } from '@angular/common/http'
 import { UserService } from '../../../services/user.service'
+import { PortalMessageService } from '../../../services/portal-message.service'
 
 @Component({
   selector: 'ocx-portal-viewport',
@@ -69,7 +70,9 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
     private helpDataService: HelpPageAPIService,
     private dialogService: DialogService,
     private userService: UserService,
+    private portalMessageService: PortalMessageService,
   ) {
+    this.portalMessageService.message$.subscribe((message) => this.messageService.add(message))
     this.hideMenuButtonTitle = this.portalUIConfig.getTranslation('hideMenuButton')
     this.showMenuButtonTitle = this.portalUIConfig.getTranslation('showMenuButton')
 
@@ -204,17 +207,15 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
       )
       .subscribe({
         next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Success!',
-            detail: 'Ticket successfully submitted',
+          this.portalMessageService.success({
+            summaryKey: 'OCX_PORTAL_VIEWPORT.SUCCESS',
+            detailKey: 'OCX_PORTAL_VIEWPORT.TICKET_SUCCESS',
           })
         },
         error: () =>
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error!',
-            detail: 'Error occured while submitting a ticket',
+          this.portalMessageService.error({
+            summaryKey: 'OCX_PORTAL_VIEWPORT.ERROR',
+            detailKey: 'OCX_PORTAL_VIEWPORT.TICKET_ERROR',
           }),
       })
   }
@@ -240,9 +241,8 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
           }
           this.helpPageEditorDisplayed = true
         } else {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Cannot edit the Help Item. HelpItemId or ApplicationId are undefined or null.',
+          this.portalMessageService.error({
+            summaryKey: 'OCX_PORTAL_VIEWPORT.OPEN_HELP_PAGE_EDITOR_ERROR',
           })
         }
       })
@@ -260,15 +260,14 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
               window.open(new URL(url), '_blank')?.focus
             } catch (e) {
               console.log(`Error constructing help page URL`, e)
-              this.messageService.add({
-                severity: 'error',
-                summary: 'Help Item URL not valid',
+              this.portalMessageService.error({
+                summaryKey: 'OCX_PORTAL_VIEWPORT.OPEN_HELP_PAGE_ERROR',
               })
             }
           }
         } else {
           this.dialogService.open(NoHelpItemComponent, {
-            header: 'No help item defined for this page',
+            header: 'OCX_PORTAL_VIEWPORT.OPEN_HELP_PAGE_DIALOG_HEADER',
             width: '400px',
             data: {
               helpArticleId: helpArticleId,
@@ -297,9 +296,8 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
             console.log(`Help item saved: ${res.status}`)
             this.helpPageEditorDisplayed = false
 
-            this.messageService.add({
-              severity: 'info',
-              summary: 'Help Item definition updated',
+            this.portalMessageService.info({
+              summaryKey: 'OCX_PORTAL_VIEWPORT.UPDATE_HELP_ARTICLE_INFO',
             })
             if (helpItem.helpItemId && applicationId) {
               this.loadHelpArticle(applicationId, helpItem.helpItemId)
@@ -309,10 +307,9 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
         },
         error: (error) => {
           console.log(`Could not save help item`)
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Help Item definition update failed',
-            detail: `Server error: ${error.status}`,
+          this.portalMessageService.error({
+            summaryKey: 'OCX_PORTAL_VIEWPORT.UPDATE_HELP_ARTICLE_ERROR',
+            detailKey: `Server error: ${error.status}`,
           })
           this.helpPageEditorDisplayed = false
         },

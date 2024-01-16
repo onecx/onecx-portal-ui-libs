@@ -1,10 +1,11 @@
-import { InjectionToken, NgModule, ModuleWithProviders } from '@angular/core'
+import { NgModule, ModuleWithProviders } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { AUTH_SERVICE } from '@onecx/portal-integration-angular'
 import { KeycloakAuthService } from './keycloak-auth.service'
 import { KeycloakAngularModule } from 'keycloak-angular'
 import { HTTP_INTERCEPTORS } from '@angular/common/http'
 import { TokenInterceptor } from './token.interceptor'
+import { KEYCLOAK_AUTH_CONFIG } from './keycloak-injection-token'
 
 export interface KeycloakAuthModuleConfig {
   tokenInterceptorWhitelist?: string[]
@@ -37,5 +38,3 @@ export class KeycloakAuthModule {
     }
   }
 }
-
-export const KEYCLOAK_AUTH_CONFIG: InjectionToken<KeycloakAuthModuleConfig> = new InjectionToken('KEYCLOAK_AUTH_CONFIG')

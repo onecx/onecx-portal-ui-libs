@@ -70,7 +70,6 @@ import { AdvancedDirective } from './directives/advanced.directive'
 import { BasicDirective } from './directives/basic.directive'
 import { DataListGridSortingComponent } from './components/data-list-grid-sorting/data-list-grid-sorting.component'
 import { RelativeDatePipe } from './pipes/relative-date.pipe'
-import { MessageService } from 'primeng/api'
 import { PatchFormGroupValuesDirective } from './directives/patch-form-group-values.driective'
 import { SetInputValueDirective } from './directives/set-input-value.directive'
 import { DiagramComponent } from './components/diagram/diagram.component'
@@ -226,10 +225,6 @@ export class PortalCoreModule {
       providers: [
         { provide: SANITY_CHECK, useValue: 'root' },
         { provide: APPLICATION_NAME, useValue: appName },
-        {
-          provide: MessageService,
-          useClass: MessageService,
-        },
       ],
     }
     if (!disableInitializer) {
