@@ -77,6 +77,7 @@ import { GroupByCountDiagramComponent } from './components/group-by-count-diagra
 import { UserService } from '../services/user.service'
 import { UserProfileAPIService } from '../services/userprofile-api.service'
 import { createTranslateLoader } from './utils/create-translate-loader.utils'
+import { MessageService } from 'primeng/api'
 
 export class MyMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -94,7 +95,11 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     PrimeNgModule,
     TranslateModule.forRoot({
       isolate: true,
-      loader: { provide: TranslateLoader, useFactory: createTranslateLoader, deps: [HttpClient, AppStateService] },
+      loader: {
+        provide: TranslateLoader,
+        useFactory: createTranslateLoader,
+        deps: [HttpClient, AppStateService, ConfigurationService],
+      },
       missingTranslationHandler: { provide: MissingTranslationHandler, useClass: MyMissingTranslationHandler },
     }),
     ConfirmDialogModule,
@@ -213,9 +218,7 @@ export class PortalCoreModule {
   public static forMicroFrontend(): ModuleWithProviders<PortalCoreModule> {
     return {
       ngModule: PortalCoreModule,
-      providers: [
-        { provide: SANITY_CHECK, useValue: 'mfe' },
-      ],
+      providers: [{ provide: SANITY_CHECK, useValue: 'mfe' }],
     }
   }
 
@@ -225,6 +228,10 @@ export class PortalCoreModule {
       providers: [
         { provide: SANITY_CHECK, useValue: 'root' },
         { provide: APPLICATION_NAME, useValue: appName },
+        {
+          provide: MessageService,
+          useClass: MessageService,
+        },
       ],
     }
     if (!disableInitializer) {

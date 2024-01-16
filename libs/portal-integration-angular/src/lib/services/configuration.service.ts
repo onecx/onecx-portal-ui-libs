@@ -43,7 +43,7 @@ export class ConfigurationService implements OnDestroy {
       loadConfigPromise
         .then(async (config) => {
           if (config) {
-            await this.config$.publish({ ...this.defaultConfig }).then(() => {
+            await this.config$.publish({ ...this.defaultConfig, ...config }).then(() => {
               resolve(true)
             })
           }
@@ -60,6 +60,9 @@ export class ConfigurationService implements OnDestroy {
   }
 
   public getProperty(key: CONFIG_KEY): string | undefined {
+    if (!Object.values(CONFIG_KEY).includes(key)) {
+      console.error('Invalid config key ', key)
+    }
     return this.config$.getValue()?.[key]
   }
 

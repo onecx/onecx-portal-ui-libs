@@ -10,17 +10,16 @@ const defaultThemeServerUrl = 'http://portal-theme-management:8080'
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService implements OnDestroy {
-  themeServerUrl: string
   baseUrlV1 = './portal-api'
   currentTheme$ = new CurrentThemeTopic()
 
-  constructor(private configservice: ConfigurationService, private http: HttpClient) {
-    this.themeServerUrl =
-      this.configservice.getProperty(CONFIG_KEY.TKIT_PORTAL_THEME_SERVER_URL) || defaultThemeServerUrl
+  constructor(private configService: ConfigurationService, private http: HttpClient) {
   }
 
   getThemeHref(themeId: string): string {
-    return `${this.themeServerUrl}/themes/${themeId}/${themeId}.min.css`
+    const themeServerUrl =
+    this.configService.getProperty(CONFIG_KEY.TKIT_PORTAL_THEME_SERVER_URL) || defaultThemeServerUrl
+    return `${themeServerUrl}/themes/${themeId}/${themeId}.min.css`
   }
 
   public loadAndApplyTheme(themeName: string) {

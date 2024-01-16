@@ -66,7 +66,7 @@ export function standaloneInitializer(
         errCause = PORTAL_LOAD_INIT_ERR
         throw e
       }
-      console.log(`📃 portal OK? ${portal}`)
+      console.log(`📃 portal OK? `, portal)
       await appStateService.currentPortal$.publish(portal)
       let theme = undefined
 
