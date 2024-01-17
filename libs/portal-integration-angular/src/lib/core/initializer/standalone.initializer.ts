@@ -7,6 +7,7 @@ import { AppStateService } from '../../services/app-state.service'
 import { CONFIG_KEY } from '../../model/config-key.model'
 import { UserService } from '../../services/user.service'
 import { UserProfileAPIService } from '../../services/userprofile-api.service'
+import { MfeInfo } from '@onecx/integration-interface'
 
 const CONFIG_INIT_ERR = 'CONFIG_INIT_ERR'
 const AUTH_INIT_ERR = 'AUTH_INIT_ERR'
@@ -68,8 +69,13 @@ export function standaloneInitializer(
       }
       console.log(`📃 portal OK? `, portal)
       await appStateService.currentPortal$.publish(portal)
-      let theme = undefined
 
+      const standaloneMfeInfo: MfeInfo = { mountPath: '/', remoteBaseUrl:'.', baseHref: '/', shellName: 'standalone' }
+      await appStateService.globalLoading$.publish(true)
+      await appStateService.currentMfe$.publish(standaloneMfeInfo)
+      await appStateService.globalLoading$.publish(false)
+
+      let theme = undefined
       if (!portal) {
         throw new Error('No portal data found')
       } else {

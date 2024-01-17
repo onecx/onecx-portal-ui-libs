@@ -1,8 +1,7 @@
+import { Location } from '@angular/common'
 import { BehaviorSubject, first, map } from 'rxjs'
-import { API_PREFIX } from '../api/constants'
-import { CONFIG_KEY } from '../model/config-key.model'
-import { AppStateService } from './app-state.service'
-import { ConfigurationService } from './configuration.service'
+import { AppStateService } from '../../services/app-state.service'
+import { ConfigurationService } from '../../services/configuration.service'
 
 type Config = {
   credentials: { [key: string]: string | (() => string | undefined) }
@@ -15,7 +14,7 @@ type Config = {
 export class PortalApiConfiguration {
   private configuration = this.activator(this.configurationClassOfGenerator)
 
-  protected basePath$ = new BehaviorSubject<string>('./' + API_PREFIX)
+  protected basePath$ = new BehaviorSubject<string>(Location.joinWithSlash('.', this.apiPrefix))
   get basePath() {
     return this.basePath$.value
   }
@@ -32,19 +31,18 @@ export class PortalApiConfiguration {
 
   constructor(
     private configurationClassOfGenerator: unknown,
+    private apiPrefix: string,
     configService: ConfigurationService,
     appStateService: AppStateService
   ) {
-    if (configService.getProperty(CONFIG_KEY.IS_SHELL)) {
-      appStateService.currentMfe$
-        .pipe(
-          first(),
-          map((currentMfe) => {
-            return currentMfe.remoteBaseUrl + API_PREFIX
-          })
-        )
-        .subscribe(this.basePath$)
-    }
+    appStateService.currentMfe$
+      .pipe(
+        first(),
+        map((currentMfe) => {
+          return Location.joinWithSlash(currentMfe.remoteBaseUrl, apiPrefix)
+        })
+      )
+      .subscribe(this.basePath$)
   }
 
   public selectHeaderContentType(contentTypes: string[]): string | undefined {

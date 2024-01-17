@@ -2,7 +2,7 @@ import { TranslateService } from '@ngx-translate/core'
 import { firstValueFrom, mergeMap, tap } from 'rxjs'
 import { UserService } from '../../services/user.service'
 
-export function appInitializer(userService: UserService, translateService: TranslateService): () => Promise<unknown> {
+export function translateServiceInitializer(userService: UserService, translateService: TranslateService): () => Promise<unknown> {
   return () => {
     translateService.setDefaultLang('en')
     return firstValueFrom(

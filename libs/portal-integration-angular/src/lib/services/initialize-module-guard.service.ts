@@ -26,12 +26,10 @@ export class InitializeModuleGuard implements CanActivate {
       mergeMap(() => from(this.configService.isInitialized)),
       mergeMap(() => from(this.appStateService.currentPortal$.isInitialized)),
       mergeMap(() => {
-        return this.configService.getProperty(CONFIG_KEY.IS_SHELL)
-          ? this.appStateService.globalLoading$.pipe(
-              filter((g) => !g),
-              map(() => true)
-            )
-          : of(true)
+        return this.appStateService.globalLoading$.pipe(
+          filter((g) => !g),
+          map(() => true)
+        )
       }),
       map(() => true)
     )
