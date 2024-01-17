@@ -4,8 +4,6 @@ import { PortalViewportComponent } from './portal-viewport.component'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { ConfigurationService } from '../../../services/configuration.service'
 import { MessageService } from 'primeng/api'
-import { AUTH_SERVICE } from '../../../api/injection-tokens'
-import { MockAuthService } from '../../../mock-auth/mock-auth.service'
 import { SupportTicketComponent } from '../support-ticket/support-ticket.component'
 import { HelpItemEditorComponent } from '../help-item-editor/help-item-editor.component'
 import { HeaderComponent } from '../portal-header/header.component'
@@ -78,7 +76,6 @@ describe('PortalViewportComponent', () => {
       providers: [
         ConfigurationService,
         MessageService,
-        { provide: AUTH_SERVICE, useClass: MockAuthService },
         {
           provide: ActivatedRoute,
           useValue: {

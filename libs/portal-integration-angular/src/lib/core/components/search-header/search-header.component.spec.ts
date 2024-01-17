@@ -4,8 +4,6 @@ import { TranslateTestingModule } from 'ngx-translate-testing'
 import { PageHeaderComponent } from '../page-header/page-header.component'
 import { RouterTestingModule } from '@angular/router/testing'
 import { ConfigurationService } from '../../../services/configuration.service'
-import { AUTH_SERVICE } from '../../../api/injection-tokens'
-import { MockAuthService } from '../../../mock-auth/mock-auth.service'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { ButtonModule } from 'primeng/button'
 import { BreadcrumbModule } from 'primeng/breadcrumb'
@@ -36,7 +34,6 @@ describe('SearchHeaderComponent', () => {
 
   let component: SearchHeaderComponent
   let fixture: ComponentFixture<SearchHeaderComponent>
-  const mockService = new MockAuthService()
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -48,7 +45,7 @@ describe('SearchHeaderComponent', () => {
         ButtonModule,
         BreadcrumbModule,
       ],
-      providers: [ConfigurationService, AppStateService, { provide: AUTH_SERVICE, useValue: mockService }],
+      providers: [ConfigurationService, AppStateService],
     }).compileComponents()
 
     const appStateService = getTestBed().inject(AppStateService)

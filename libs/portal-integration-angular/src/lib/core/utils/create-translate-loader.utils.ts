@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http'
 import { TranslateLoader } from '@ngx-translate/core'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
-import { combineLatest, filter, first, map, mergeMap, of } from 'rxjs'
+import { combineLatest, filter, first, map, mergeMap } from 'rxjs'
 import { AppStateService } from '../../services/app-state.service'
 import { ConfigurationService } from '../../services/configuration.service'
 import { AsyncTranslateLoader } from './async-translate-loader.utils'
