@@ -5,6 +5,7 @@ import { ObjectUtils } from '../../utils/objectutils'
 import { BehaviorSubject, Observable, combineLatest, map, mergeMap, of } from 'rxjs'
 import { TranslateService } from '@ngx-translate/core'
 import { DiagramData } from '../../../model/diagram-data'
+import { DiagramType } from '../../../model/diagram-type'
 
 @Component({
   selector: 'ocx-group-by-count-diagram',
@@ -12,6 +13,7 @@ import { DiagramData } from '../../../model/diagram-data'
 })
 export class GroupByCountDiagramComponent implements OnInit {
   @Input() sumKey = 'SEARCH.SUMMARY_TITLE'
+  @Input() type = DiagramType.PIE
   private _data$ = new BehaviorSubject<unknown[]>([])
   @Input()
   get data(): unknown[] {

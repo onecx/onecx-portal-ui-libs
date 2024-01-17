@@ -7,13 +7,16 @@ import { ChartModule } from 'primeng/chart'
 import { MessageModule } from 'primeng/message'
 import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
 import { MFE_INFO } from '../../../api/injection-tokens'
-import { DiagramHarness, TestbedHarnessEnvironment } from '../../../../../testing'
+import { DiagramHarness, HarnessLoader, TestbedHarnessEnvironment } from '../../../../../testing'
 import { TranslateService } from '@ngx-translate/core'
+import { PChartHarness } from 'libs/portal-integration-angular/testing/primeng/p-chart.harness'
+import 'jest-canvas-mock'
 
 describe('DiagramComponent', () => {
   let translateService: TranslateService
   let component: DiagramComponent
   let fixture: ComponentFixture<DiagramComponent>
+  let loader: HarnessLoader
 
   const definedSumKey = 'OCX_DIAGRAM.SUM'
 
@@ -63,6 +66,7 @@ describe('DiagramComponent', () => {
     translateService = TestBed.inject(TranslateService)
     translateService.setDefaultLang('en')
     translateService.use('en')
+    loader = TestbedHarnessEnvironment.loader(fixture)
   })
 
   it('should create the diagram component', () => {
@@ -89,5 +93,11 @@ describe('DiagramComponent', () => {
     const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
     const displayedNumber = await diagram.getTotalNumberOfResults()
     expect(displayedNumber).toEqual(numberOfResults)
+  })
+
+  it('should display pie chart by default', async () => {
+    const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
+    const chartHarness = await loader.getHarness(PChartHarness)
+    expect(chartHarness.getId()).toEqual('pie')
   })
 })

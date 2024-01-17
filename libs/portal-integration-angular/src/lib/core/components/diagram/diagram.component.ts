@@ -4,6 +4,7 @@ import { ChartData, ChartOptions } from 'chart.js'
 import * as d3 from 'd3-scale-chromatic'
 import { ColorUtils } from '../../utils/colorutils'
 import { DiagramData } from '../../../model/diagram-data'
+import { DiagramType } from '../../../model/diagram-type'
 
 @Component({
   selector: 'ocx-diagram',
@@ -12,6 +13,16 @@ import { DiagramData } from '../../../model/diagram-data'
 export class DiagramComponent implements OnInit, OnChanges {
   @Input() data: DiagramData[] | undefined
   @Input() sumKey = 'OCX_DIAGRAM.SUM'
+  private _diagramType: DiagramType = DiagramType.PIE
+  public chartType: string = 'pie'
+  @Input()
+  get diagramType(): DiagramType {
+    return this._diagramType
+  }
+  set diagramType(value: DiagramType) {
+    this._diagramType = value
+    this.chartType = this.diagramTypeToChartType(value)
+  }
   @Output() dataSelected: EventEmitter<any> = new EventEmitter()
   chartOptions: ChartOptions | undefined
   chartData: ChartData | undefined
@@ -58,7 +69,22 @@ export class DiagramComponent implements OnInit, OnChanges {
         },
       },
       maintainAspectRatio: false,
+      ...(this._diagramType === DiagramType.VERTICAL_BAR && {
+        plugins: { legend: { display: false } },
+        scales: { y: { ticks: { precision: 0 } } },
+      }),
+      ...(this._diagramType === DiagramType.HORIZONTAL_BAR && {
+        indexAxis: 'y',
+        plugins: { legend: { display: false } },
+        scales: { x: { ticks: { precision: 0 } } },
+      }),
     }
+  }
+
+  private diagramTypeToChartType(value: DiagramType): string {
+    if (value === DiagramType.PIE) return 'pie'
+    else if (value === DiagramType.HORIZONTAL_BAR || value === DiagramType.VERTICAL_BAR) return 'bar'
+    return 'pie'
   }
 
   dataClicked(event: []) {
