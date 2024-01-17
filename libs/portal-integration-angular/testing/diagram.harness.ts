@@ -1,4 +1,5 @@
 import { ComponentHarness } from '@angular/cdk/testing'
+import { PChartHarness } from './primeng/p-chart.harness'
 
 export class DiagramHarness extends ComponentHarness {
   static hostSelector = 'ocx-diagram'

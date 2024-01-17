@@ -11,6 +11,7 @@ import { DiagramHarness, HarnessLoader, TestbedHarnessEnvironment } from '../../
 import { TranslateService } from '@ngx-translate/core'
 import { PChartHarness } from 'libs/portal-integration-angular/testing/primeng/p-chart.harness'
 import 'jest-canvas-mock'
+import { DiagramType } from '../../../model/diagram-type'
 
 describe('DiagramComponent', () => {
   let translateService: TranslateService
@@ -98,6 +99,23 @@ describe('DiagramComponent', () => {
   it('should display pie chart by default', async () => {
     const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
     const chartHarness = await loader.getHarness(PChartHarness)
-    expect(chartHarness.getId()).toEqual('pie')
+    const chartType = await chartHarness.getType()
+    expect(chartType).toEqual('pie')
+  })
+
+  it('should display horizontal bar chart', async () => {
+    component.diagramType = DiagramType.HORIZONTAL_BAR
+    const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
+    const chartHarness = await loader.getHarness(PChartHarness)
+    const chartType = await chartHarness.getType()
+    expect(chartType).toEqual('bar')
+  })
+
+  it('should display vertical bar chart', async () => {
+    component.diagramType = DiagramType.VERTICAL_BAR
+    const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
+    const chartHarness = await loader.getHarness(PChartHarness)
+    const chartType = await chartHarness.getType()
+    expect(chartType).toEqual('bar')
   })
 })
