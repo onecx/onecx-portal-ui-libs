@@ -21,6 +21,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { TooltipModule } from 'primeng/tooltip'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { AppStateService } from '../../../services/app-state.service'
+import { AUTH_SERVICE } from '../../../api/injection-tokens'
+import { MockAuthService } from '../../../mock-auth/mock-auth.service'
 
 describe('PortalViewportComponent', () => {
   const origAddEventListener = window.addEventListener
@@ -76,6 +78,7 @@ describe('PortalViewportComponent', () => {
       providers: [
         ConfigurationService,
         MessageService,
+        { provide: AUTH_SERVICE, useClass: MockAuthService },
         {
           provide: ActivatedRoute,
           useValue: {
