@@ -6,6 +6,9 @@ export * from './lib/core/directives/advanced.directive'
 export * from './lib/core/directives/basic.directive'
 export * from './lib/core/directives/patch-form-group-values.driective'
 export * from './lib/core/directives/set-input-value.directive'
+export * from './lib/core/directives/loading-indicator.directive'
+export * from './lib/core/directives/ocx-content.directive'
+export * from './lib/core/directives/ocx-content-container.directive'
 
 // components
 export * from './lib/core/components/loading/loading.component'
@@ -47,6 +50,10 @@ export * from './lib/core/components/custom-group-column-selector/custom-group-c
 export * from './lib/core/components/data-list-grid-sorting/data-list-grid-sorting.component'
 export * from './lib/core/components/group-by-count-diagram/group-by-count-diagram.component'
 export * from './lib/core/components/diagram/diagram.component'
+export * from './lib/core/components/search-config/search-config.component'
+export * from './lib/core/components/loading-indicator/loading-indicator.component'
+export * from './lib/core/components/ocx-content-container/ocx-content-container.component'
+export * from './lib/core/components/ocx-content/ocx-content.component'
 
 // services
 export * from './lib/services/app.menu.service'
@@ -86,6 +93,7 @@ export * from './lib/model/data-sort-direction'
 export * from './lib/model/breadcrumb-menu-item.model'
 export * from './lib/model/data-action'
 export * from './lib/model/diagram-type'
+export * from './lib/model/search-config'
 
 // core
 export * from './lib/api/iauth.service'
@@ -103,3 +111,4 @@ export * from './lib/core/utils/objectutils'
 export * from './lib/core/utils/dateutils'
 export * from './lib/core/utils/colorutils'
 export * from './lib/core/utils/translate.combined.loader'
+export * from './lib/core/utils/addInitializeModuleGuard'

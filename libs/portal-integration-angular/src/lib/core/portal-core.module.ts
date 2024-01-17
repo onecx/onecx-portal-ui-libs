@@ -3,7 +3,6 @@ import {
   APP_INITIALIZER,
   CUSTOM_ELEMENTS_SCHEMA,
   Inject,
-  InjectionToken,
   LOCALE_ID,
   ModuleWithProviders,
   NgModule,
@@ -21,7 +20,7 @@ import {
   TranslateService,
 } from '@ngx-translate/core'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
-import { AUTH_SERVICE, MFE_INFO, MFE_INFO_FN } from '../api/injection-tokens'
+import { APPLICATION_NAME, AUTH_SERVICE, MFE_INFO, MFE_INFO_FN, SANITY_CHECK } from '../api/injection-tokens'
 import { MfeInfo } from '../model/mfe-info.model'
 import { AutofocusDirective } from './directives/autofocus.directive'
 import { IfBreakpointDirective } from './directives/if-breakpoint.directive'
@@ -77,8 +76,15 @@ import { RelativeDatePipe } from './pipes/relative-date.pipe'
 import { MessageService } from 'primeng/api'
 import { PatchFormGroupValuesDirective } from './directives/patch-form-group-values.driective'
 import { SetInputValueDirective } from './directives/set-input-value.directive'
+import { LoadingIndicatorComponent } from './components/loading-indicator/loading-indicator.component'
+import { LoadingIndicatorDirective } from './directives/loading-indicator.directive'
 import { DiagramComponent } from './components/diagram/diagram.component'
 import { GroupByCountDiagramComponent } from './components/group-by-count-diagram/group-by-count-diagram.component'
+import { OcxContentDirective } from './directives/ocx-content.directive'
+import { OcxContentComponent } from './components/ocx-content/ocx-content.component'
+import { OcxContentContainerComponent } from './components/ocx-content-container/ocx-content-container.component'
+import { OcxContentContainerDirective } from './directives/ocx-content-container.directive'
+import { SearchConfigComponent } from './components/search-config/search-config.component'
 
 export function createTranslateLoader(http: HttpClient, mfeInfo: MfeInfo) {
   if (mfeInfo?.remoteBaseUrl) {
@@ -154,6 +160,8 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     ColumnGroupSelectionComponent,
     CustomGroupColumnSelectorComponent,
     SearchHeaderComponent,
+    LoadingIndicatorComponent,
+    LoadingIndicatorDirective,
     AdvancedDirective,
     BasicDirective,
     DataListGridSortingComponent,
@@ -162,6 +170,11 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     SetInputValueDirective,
     DiagramComponent,
     GroupByCountDiagramComponent,
+    OcxContentDirective,
+    OcxContentContainerDirective,
+    OcxContentComponent,
+    OcxContentContainerComponent,
+    SearchConfigComponent,
   ],
   providers: [
     ConfigurationService,
@@ -215,6 +228,8 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     ColumnGroupSelectionComponent,
     CustomGroupColumnSelectorComponent,
     SearchHeaderComponent,
+    LoadingIndicatorComponent,
+    LoadingIndicatorDirective,
     AdvancedDirective,
     BasicDirective,
     RelativeDatePipe,
@@ -222,6 +237,11 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     SetInputValueDirective,
     DiagramComponent,
     GroupByCountDiagramComponent,
+    OcxContentDirective,
+    OcxContentContainerDirective,
+    OcxContentComponent,
+    OcxContentContainerComponent,
+    SearchConfigComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   entryComponents: [ColumnTogglerComponent],
@@ -284,8 +304,9 @@ export class PortalCoreModule {
          Make sure you only use 'PortalCoreModule.forRoot()' in you root AppModule and that you use 'PortalCoreModule.forMicrofrontend()' in your feature modules`
       )
     }
-    registerLocaleData(de)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    registerLocaleData((de as any).default ?? de)
+    //  Do not change the line above until the following ts-jest bug is fixed: https://github.com/kulshekhar/ts-jest/issues/3925
+    //  The ts-jest bug causes that the locale is not imported correctly.
   }
 }
-const SANITY_CHECK = new InjectionToken<string>('OCXSANITY_CHECK')
-const APPLICATION_NAME = new InjectionToken<string>('APPLICATION_NAME')
