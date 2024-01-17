@@ -1,3 +1,15 @@
+## [3.9.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.8.1...v3.9.0) (2024-01-17)
+
+
+### Features
+
+* P002271-6511 add guard ([#64](https://github.com/onecx/onecx-portal-ui-libs/issues/64)) ([249024b](https://github.com/onecx/onecx-portal-ui-libs/commit/249024b4092f9988fda2e4cbb875c58c13b8d349))
+
+
+### Bug Fixes
+
+* adaption of registerLocaleData due to ts-jest bug and removal of uncorrect include in tsconfig.spec.json ([#65](https://github.com/onecx/onecx-portal-ui-libs/issues/65)) ([f633f45](https://github.com/onecx/onecx-portal-ui-libs/commit/f633f456f4bfbfa61939c9e6821d1012f55cd20f))
+
 ## [3.8.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.8.0...v3.8.1) (2024-01-10)
 
 
