@@ -57,21 +57,24 @@ export class GroupByCountDiagramComponent implements OnInit {
     this.diagramData$ = combineLatest([this._data$, this._columnField$, this._columnType$]).pipe(
       mergeMap(([data, columnField, columnType]) => {
         const columnData = data.map((d) => ObjectUtils.resolveFieldData(d, columnField))
-        const occurences = columnData.reduce((acc, current) => {
+        const occurrences = columnData.reduce((acc, current) => {
           return acc.some((e: { label: any }) => e.label === current)
             ? (acc.find((e: { label: any }) => e.label === current).value++, acc)
             : [...acc, { label: current, value: 1 }]
         }, [])
         if (columnType === ColumnType.TRANSLATION_KEY) {
           return this.translateService
-            .get(occurences.map((o: { label: any }) => o.label))
+            .get(occurrences.map((o: { label: any }) => o.label))
             .pipe(
               map((translations: { [x: string]: any }) =>
-                occurences.map((o: { label: string; value: any }) => ({ label: translations[o.label], value: o.value }))
+                occurrences.map((o: { label: string; value: any }) => ({
+                  label: translations[o.label],
+                  value: o.value,
+                }))
               )
             )
         } else {
-          return of(occurences)
+          return of(occurrences)
         }
       })
     )
