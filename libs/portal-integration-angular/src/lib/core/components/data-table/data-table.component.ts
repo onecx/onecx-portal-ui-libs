@@ -68,6 +68,9 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   @Input() viewPermission: string | undefined
   @Input() editPermission: string | undefined
   @Input() paginator = true
+  @Input() totalRecordsOnServer: number | undefined 
+  currentPageReportTemplateShowing: string = "OCX_DATA_TABLE.SHOWING"
+  paramTotalRecordsOnServer: { [key: string]: number } = {}
 
   @Input() stringCellTemplate: TemplateRef<any> | undefined
   @ContentChild('stringCell') stringCellChildTemplate: TemplateRef<any> | undefined
@@ -192,6 +195,10 @@ export class DataTableComponent extends DataSortBase implements OnInit {
       ),
       map((amounts) => Object.fromEntries(amounts))
     )
+    if(this.totalRecordsOnServer){
+      this.paramTotalRecordsOnServer = {totalRecordsOnServer : this.totalRecordsOnServer}
+      this.currentPageReportTemplateShowing = "OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER"
+    }
   }
 
   onSortColumnClick(sortColumn: string) {

@@ -61,6 +61,7 @@ export class DataViewComponent implements DoCheck, OnInit {
   @Input() sortDirection: DataSortDirection = DataSortDirection.NONE
   @Input() listGridPaginator = true
   @Input() tablePaginator = true
+  @Input() totalRecordsOnServer: number | undefined 
 
   @Input()
   get paginator(): boolean {

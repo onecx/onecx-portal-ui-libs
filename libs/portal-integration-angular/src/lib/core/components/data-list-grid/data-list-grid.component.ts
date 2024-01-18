@@ -62,6 +62,9 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   @Input() paginator = true
   @Input() columns: DataTableColumn[] = []
   @Input() name = ''
+  @Input() totalRecordsOnServer: number | undefined 
+  currentPageReportTemplateShowing: string = "OCX_DATA_TABLE.SHOWING"
+  paramTotalRecordsOnServer: { [key: string]: number } = {}
 
   _data$ = new BehaviorSubject<RowListGridData[]>([])
   @Input()
@@ -175,7 +178,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   ) {
     super(locale, translateService)
     this.name = this.name || this.router.url.replace(/[^A-Za-z0-9]/, '_')
-
+    
   }
 
   ngDoCheck(): void {
@@ -198,6 +201,10 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
       (!!this.viewPermission && this.authService.hasPermission(this.viewPermission)) ||
       (!!this.editPermission && this.authService.hasPermission(this.editPermission)) ||
       (!!this.deletePermission && this.authService.hasPermission(this.deletePermission))
+      if(this.totalRecordsOnServer){
+        this.paramTotalRecordsOnServer = {totalRecordsOnServer : this.totalRecordsOnServer}
+        this.currentPageReportTemplateShowing = "OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER"
+      }
   }
 
   onDeleteRow(element: ListGridData) {
