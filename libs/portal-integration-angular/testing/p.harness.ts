@@ -32,10 +32,7 @@ export class PHarness extends ComponentHarness {
 
   async getClassList() {
     const host = await this.host()
-    console.log((host as any).element.innerHTML)
-
     const attributeString = await host.getAttribute('class')
-    console.log(attributeString)
     if (attributeString) {
       return attributeString.trim().split(' ')
     }
