@@ -12,12 +12,6 @@ import {
 export class AppStateService implements OnDestroy {
   globalError$ = new GlobalErrorTopic()
   globalLoading$ = new GlobalLoadingTopic()
-  
-  /**
-   * Values will only be set in shell mode, but you should not rely on this behavior,
-   * because it could change in the future.
-   * To check if you are in shell mode, please use the ConfigurationService
-   */
   currentMfe$ = new CurrentMfeTopic()
 
   /**

@@ -1,33 +1,20 @@
 import { HttpClient } from '@angular/common/http'
 import { TranslateLoader } from '@ngx-translate/core'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
-import { combineLatest, filter, first, map, mergeMap } from 'rxjs'
+import { combineLatest, filter, map } from 'rxjs'
 import { AppStateService } from '../../services/app-state.service'
-import { ConfigurationService } from '../../services/configuration.service'
 import { AsyncTranslateLoader } from './async-translate-loader.utils'
 import { TranslateCombinedLoader } from './translate.combined.loader'
 
-export function createTranslateLoader(
-  http: HttpClient,
-  appStateService: AppStateService,
-  configService: ConfigurationService
-): TranslateLoader {
+export function createTranslateLoader(http: HttpClient, appStateService: AppStateService): TranslateLoader {
   return new AsyncTranslateLoader(
-    configService.config$.pipe(
-      first(),
-      mergeMap(() => {
-        return combineLatest([
-          appStateService.currentMfe$.asObservable(),
-          appStateService.globalLoading$.asObservable(),
-        ]).pipe(
-          filter(([, isLoading]) => !isLoading),
-          map(([currentMfe]) => {
-            return new TranslateCombinedLoader(
-              new TranslateHttpLoader(http, `${currentMfe.remoteBaseUrl}/assets/i18n/`, '.json'),
-              new TranslateHttpLoader(http, `./assets/i18n/`, '.json'),
-              new TranslateHttpLoader(http, `./onecx-portal-lib/assets/i18n/`, '.json')
-            )
-          })
+    combineLatest([appStateService.currentMfe$.asObservable(), appStateService.globalLoading$.asObservable()]).pipe(
+      filter(([, isLoading]) => !isLoading),
+      map(([currentMfe]) => {
+        return new TranslateCombinedLoader(
+          new TranslateHttpLoader(http, `${currentMfe.remoteBaseUrl}/assets/i18n/`, '.json'),
+          new TranslateHttpLoader(http, `./assets/i18n/`, '.json'),
+          new TranslateHttpLoader(http, `./onecx-portal-lib/assets/i18n/`, '.json')
         )
       })
     )

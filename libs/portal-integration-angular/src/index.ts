@@ -61,7 +61,6 @@ export * from './lib/services/initialize-module-guard.service'
 export * from './lib/services/userprofile-api.service'
 export * from './lib/services/portal-dialog.service'
 export * from './lib/services/user.service'
-export * from './lib/core/utils/portal-api-configuration.utils'
 
 // pipes
 export * from './lib/core/pipes/dynamic.pipe'
@@ -112,3 +111,4 @@ export * from './lib/core/utils/async-translate-loader.utils'
 export * from './lib/core/utils/create-translate-loader.utils'
 export * from './lib/core/utils/add-initialize-module-guard.utils'
 export * from './lib/core/utils/translate-service-initializer.utils'
+export * from './lib/core/utils/portal-api-configuration.utils'
