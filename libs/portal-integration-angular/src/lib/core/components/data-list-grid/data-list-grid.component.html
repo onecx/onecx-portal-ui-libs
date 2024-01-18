@@ -4,7 +4,7 @@
   [rows]="pageSize"
   [layout]="layout"
   [showCurrentPageReport]="true"
-  currentPageReportTemplate="{{ currentPageReportTemplateShowing | translate:paramTotalRecordsOnServer }}"
+  currentPageReportTemplate="{{ currentPageReportTemplateShowing | translate:params }}"
   [rowsPerPageOptions]="[10, 25, 50, data?.length]"
   id="dataListGrid_{{name}}"
 >

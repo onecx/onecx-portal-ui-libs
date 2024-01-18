@@ -8,6 +8,7 @@ import { DataSortDirection } from '../../../model/data-sort-direction'
 import { ColumnType } from '../../../model/column-type.model'
 import { DataAction } from '../../../model/data-action'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
+import { string } from 'zod'
 
 type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -69,8 +70,10 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   @Input() editPermission: string | undefined
   @Input() paginator = true
   @Input() totalRecordsOnServer: number | undefined 
+  totalRecordsOnServerStr:string = ''
   currentPageReportTemplateShowing: string = "OCX_DATA_TABLE.SHOWING"
-  paramTotalRecordsOnServer: { [key: string]: number } = {}
+  params: { [key: string]: string } = {}
+
 
   @Input() stringCellTemplate: TemplateRef<any> | undefined
   @ContentChild('stringCell') stringCellChildTemplate: TemplateRef<any> | undefined
@@ -196,7 +199,17 @@ export class DataTableComponent extends DataSortBase implements OnInit {
       map((amounts) => Object.fromEntries(amounts))
     )
     if(this.totalRecordsOnServer){
-      this.paramTotalRecordsOnServer = {totalRecordsOnServer : this.totalRecordsOnServer}
+      this.totalRecordsOnServerStr = '' + this.totalRecordsOnServer
+      this.params = 
+      {
+        totalRecordsOnServer : this.totalRecordsOnServerStr,
+        currentPage : '{currentPage}',
+        totalPages : '{totalPages}',
+        rows: '{rows}',
+        first: '{first}',
+        last : '{last}',
+        totalRecords : '{totalRecords}'
+      }
       this.currentPageReportTemplateShowing = "OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER"
     }
   }

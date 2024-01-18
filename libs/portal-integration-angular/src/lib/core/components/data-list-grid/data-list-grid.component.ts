@@ -63,8 +63,9 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   @Input() columns: DataTableColumn[] = []
   @Input() name = ''
   @Input() totalRecordsOnServer: number | undefined 
+  totalRecordsOnServerStr:string = ''
   currentPageReportTemplateShowing: string = "OCX_DATA_TABLE.SHOWING"
-  paramTotalRecordsOnServer: { [key: string]: number } = {}
+  params: { [key: string]: string } = {}
 
   _data$ = new BehaviorSubject<RowListGridData[]>([])
   @Input()
@@ -202,7 +203,17 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
       (!!this.editPermission && this.authService.hasPermission(this.editPermission)) ||
       (!!this.deletePermission && this.authService.hasPermission(this.deletePermission))
       if(this.totalRecordsOnServer){
-        this.paramTotalRecordsOnServer = {totalRecordsOnServer : this.totalRecordsOnServer}
+        this.totalRecordsOnServerStr = '' + this.totalRecordsOnServer
+        this.params = 
+        {
+          totalRecordsOnServer : this.totalRecordsOnServerStr,
+          currentPage : '{currentPage}',
+          totalPages : '{totalPages}',
+          rows: '{rows}',
+          first: '{first}',
+          last : '{last}',
+          totalRecords : '{totalRecords}'
+        }
         this.currentPageReportTemplateShowing = "OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER"
       }
   }

@@ -25,7 +25,7 @@
     "FILTER_TITLE": "Filter",
     "EDITED": "Bearbeitet",
     "SHOWING": "{first} - {last} von {totalRecords}",
-    "SHOWING_WITH_TOTAL_ON_SERVER": "{first} - {last} von {totalRecords} ({{totalRecordsOnServer}})",
+    "SHOWING_WITH_TOTAL_ON_SERVER": "{{first}} - {{last}} von {{totalRecords}} ({{totalRecordsOnServer}})",
     "ALL": "Alle"
   },
   "OCX_DATA_LIST_GRID": {

@@ -4,7 +4,7 @@
   [paginator]="paginator"
   [rows]="pageSize"
   [showCurrentPageReport]="true"
-  currentPageReportTemplate="{{ currentPageReportTemplateShowing | translate:paramTotalRecordsOnServer }}"
+  currentPageReportTemplate="{{ currentPageReportTemplateShowing | translate:params }}"
   [rowsPerPageOptions]="[10, 25, 50, rows?.length]"
   id="dataTable_{{name}}"
 >
