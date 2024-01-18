@@ -1,88 +1,50 @@
+import { OcxContentContainerHarness } from './../../../../../testing/ocx-content-container.harness'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { OcxContentContainerComponent } from './ocx-content-container.component'
 import { OcxContentContainerDirective } from '../../directives/ocx-content-container.directive'
-import { Component } from '@angular/core'
-
-// Mock host component that's used in all tests that require a dynamic layout change
-// Using this mock host allows us to simulate Angular @Input mechanisms
-@Component({
-  template: `
-    <ocx-content-container [layout]="layout" [breakpoint]="breakpoint"></ocx-content-container>
-    `,
-})
-class TestHostComponent {
-  layout: 'horizontal' | 'vertical' = 'horizontal';
-  breakpoint: 'sm' | 'md' | 'lg' | 'xl' = 'md'
-}
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 
 describe('OcxContentContainerComponent', () => {
-  let component: TestHostComponent | OcxContentContainerComponent
-  let fixture: ComponentFixture<TestHostComponent | OcxContentContainerComponent>
+  let component: OcxContentContainerComponent
+  let fixture: ComponentFixture<OcxContentContainerComponent>
+  let ocxContentContainerHarness: OcxContentContainerHarness
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [OcxContentContainerComponent, OcxContentContainerDirective, TestHostComponent],
+      declarations: [OcxContentContainerComponent, OcxContentContainerDirective],
     }).compileComponents()
 
     fixture = TestBed.createComponent(OcxContentContainerComponent)
     component = fixture.componentInstance
-    fixture.detectChanges()
+    ocxContentContainerHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, OcxContentContainerHarness)
   })
 
   it('should create', () => {
     expect(component).toBeTruthy()
   })
 
-  it('should render a horizontal layout container with all expected css classes', () => {
-    // Check that layout is horizontal by default
-    expect(component.layout).toEqual('horizontal')
-    // Check that breakpoint is md by default
-    expect(component.breakpoint).toEqual('md')
-    fixture.detectChanges()
-    
-    // Check that the classList of the rendered element contains all expected classes
+  it('should render a horizontal layout container with md breakpoint by default', async () => {
     const expectedClasses = ['flex', 'py-3', 'gap-3', 'flex-column', 'md:flex-row']
-    expect(Object.keys(fixture.debugElement.children[0].classes)).toEqual(expectedClasses)
+    expect(await ocxContentContainerHarness.getLayoutClasses()).toEqual(expectedClasses)
+    expect(await ocxContentContainerHarness.getLayout()).toEqual('horizontal')
+    expect(await ocxContentContainerHarness.getBreakpoint()).toEqual('md')
   })
 
-  it('should render a horizontal layout container with all expected css classes and a specified breakpoint', () => {
-        // Check that layout is horizontal by default
-        expect(component.layout).toEqual('horizontal')
-        // Check that breakpoint is md by default
-        expect(component.breakpoint).toEqual('md')
-        fixture.detectChanges()
-        
-        // Check that the classList of the rendered element contains all expected classes
-        const expectedClassesMD = ['flex', 'py-3', 'gap-3', 'flex-column', 'md:flex-row']
-        expect(Object.keys(fixture.debugElement.children[0].classes)).toEqual(expectedClassesMD)
+  it('should render a horizontal layout container while respecting a specified breakpoint', async () => {
+    component.breakpoint = 'lg'
 
-        component.breakpoint = "lg"
-        fixture.detectChanges()
-
-        // Check that breakpoint is now lg and that classes have been updated accordingly
-        expect(component.breakpoint).toEqual('lg')
-        const expectedClassesLG = ['flex', 'py-3', 'gap-3', 'flex-column', 'lg:flex-row']
-        expect(Object.keys(fixture.debugElement.children[0].classes)).toEqual(expectedClassesLG)
+    const expectedClassesLG = ['flex', 'py-3', 'gap-3', 'flex-column', 'lg:flex-row']
+    expect(await ocxContentContainerHarness.getLayoutClasses()).toEqual(expectedClassesLG)
+    expect(await ocxContentContainerHarness.getLayout()).toEqual('horizontal')
+    expect(await ocxContentContainerHarness.getBreakpoint()).toEqual('lg')
   })
 
-  it('should render a vertical layout container with all expected css classes', () => {
-    // Replace default component with custom host component to simulate input behavior
-    fixture = TestBed.createComponent(TestHostComponent)
-    component = fixture.componentInstance
-    fixture.detectChanges()
-
-    // Check that layout is horizontal by default
-    expect(component.layout).toEqual('horizontal')
-    
-    // Set layout to 'vertical'
+  it('should render a vertical layout container if specified', async () => {
     component.layout = 'vertical'
-    fixture.detectChanges()
-    
-    // Check that layout is now vertical
-    expect(component.layout).toEqual('vertical')
 
-    // Check that the classList of the rendered element contains all expected classes
-    const expectedClasses = ["flex", "py-3", "gap-3", "flex-column"]
-    expect(Object.keys(fixture.debugElement.children[0].children[0].classes)).toEqual(expectedClasses)
+    const expectedClasses = ['flex', 'py-3', 'gap-3', 'flex-column']
+    expect(await ocxContentContainerHarness.getLayoutClasses()).toEqual(expectedClasses)
+    expect(await ocxContentContainerHarness.getLayout()).toEqual('vertical')
+    expect(await ocxContentContainerHarness.getBreakpoint()).toBeUndefined()
   })
 })
