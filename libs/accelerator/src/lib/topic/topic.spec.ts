@@ -142,4 +142,17 @@ describe('Topic', () => {
     expect(v).toEqual(6)
     expect(values1).toEqual(['value1'])
   })
+
+  it('should check isInitialized', (done) => {
+    let initialized = false
+    testTopic1.isInitialized.then(() => (initialized = true))
+
+    expect(initialized).toBe(false)
+
+    testTopic1.publish('test')
+    setTimeout(() => {
+      expect(initialized).toBe(true)
+      done()
+    })
+  })
 })

@@ -19,9 +19,7 @@ import {
   TranslateModule,
   TranslateService,
 } from '@ngx-translate/core'
-import { TranslateHttpLoader } from '@ngx-translate/http-loader'
-import { APPLICATION_NAME, AUTH_SERVICE, MFE_INFO, MFE_INFO_FN, SANITY_CHECK } from '../api/injection-tokens'
-import { MfeInfo } from '../model/mfe-info.model'
+import { APPLICATION_NAME, AUTH_SERVICE, SANITY_CHECK } from '../api/injection-tokens'
 import { AutofocusDirective } from './directives/autofocus.directive'
 import { IfBreakpointDirective } from './directives/if-breakpoint.directive'
 import { IfPermissionDirective } from './directives/if-permission.directive'
@@ -60,7 +58,6 @@ import { DataListGridComponent } from './components/data-list-grid/data-list-gri
 import { PrimeNgModule } from './primeng.module'
 import { MockAuthService } from '../mock-auth/mock-auth.service'
 import { ConfirmDialogModule } from 'primeng/confirmdialog'
-import { TranslateCombinedLoader } from './utils/translate.combined.loader'
 import { DataTableComponent } from './components/data-table/data-table.component'
 import de from '@angular/common/locales/de'
 import { DataViewComponent } from './components/data-view/data-view.component'
@@ -79,30 +76,8 @@ import { DiagramComponent } from './components/diagram/diagram.component'
 import { GroupByCountDiagramComponent } from './components/group-by-count-diagram/group-by-count-diagram.component'
 import { UserService } from '../services/user.service'
 import { UserProfileAPIService } from '../services/userprofile-api.service'
-import { AsyncTranslateLoader } from './utils/async-translate-loader.utils'
-import { combineLatest, filter, map } from 'rxjs'
-
-export function createTranslateLoader(http: HttpClient, appStateService: AppStateService): TranslateLoader {
-  return new AsyncTranslateLoader(
-    combineLatest([appStateService.currentMfe$.asObservable(), appStateService.globalLoading$.asObservable()]).pipe(
-      filter(([, isLoading]) => !isLoading),
-      map(([currentMfe]) => {
-        if (currentMfe.remoteBaseUrl) {
-          return new TranslateCombinedLoader(
-            new TranslateHttpLoader(http, `${currentMfe.remoteBaseUrl}/assets/i18n/`, '.json'),
-            new TranslateHttpLoader(http, `./assets/i18n/`, '.json'),
-            new TranslateHttpLoader(http, `./onecx-portal-lib/assets/i18n/`, '.json')
-          )
-        } else {
-          return new TranslateCombinedLoader(
-            new TranslateHttpLoader(http, `./assets/i18n/`, '.json'),
-            new TranslateHttpLoader(http, `./onecx-portal-lib/assets/i18n/`, '.json')
-          )
-        }
-      })
-    )
-  )
-}
+import { createTranslateLoader } from './utils/create-translate-loader.utils'
+import { MessageService } from 'primeng/api'
 
 export class MyMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -120,7 +95,11 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     PrimeNgModule,
     TranslateModule.forRoot({
       isolate: true,
-      loader: { provide: TranslateLoader, useFactory: createTranslateLoader, deps: [HttpClient, AppStateService] },
+      loader: {
+        provide: TranslateLoader,
+        useFactory: createTranslateLoader,
+        deps: [HttpClient, AppStateService, ConfigurationService],
+      },
       missingTranslationHandler: { provide: MissingTranslationHandler, useClass: MyMissingTranslationHandler },
     }),
     ConfirmDialogModule,
@@ -239,17 +218,7 @@ export class PortalCoreModule {
   public static forMicroFrontend(): ModuleWithProviders<PortalCoreModule> {
     return {
       ngModule: PortalCoreModule,
-      providers: [
-        { provide: SANITY_CHECK, useValue: 'mfe' },
-        {
-          provide: MFE_INFO,
-          useFactory: (mfInfoFn: () => MfeInfo): MfeInfo => {
-            console.log(`MFE_INFO Factory called now `)
-            return mfInfoFn()
-          },
-          deps: [MFE_INFO_FN],
-        },
-      ],
+      providers: [{ provide: SANITY_CHECK, useValue: 'mfe' }],
     }
   }
 
@@ -258,8 +227,11 @@ export class PortalCoreModule {
       ngModule: PortalCoreModule,
       providers: [
         { provide: SANITY_CHECK, useValue: 'root' },
-        { provide: MFE_INFO_FN, useValue: () => undefined },
         { provide: APPLICATION_NAME, useValue: appName },
+        {
+          provide: MessageService,
+          useClass: MessageService,
+        },
       ],
     }
     if (!disableInitializer) {

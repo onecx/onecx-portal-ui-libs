@@ -25,13 +25,12 @@ function initFactory(breadcrumbService: BreadcrumbService, appStateService: AppS
       { label: 'Level 1', routerLink: 'something' },
       { label: 'Level 2', url: '/' },
     ])
-    appStateService.currentPortal$.publish({
+    await appStateService.currentPortal$.publish({
       baseUrl: '/demo',
       portalName: 'Demo',
       id: 'Demo',
       microfrontendRegistrations: [],
     })
-    await appStateService.currentPortal$.isInitialized
   }
 }
 

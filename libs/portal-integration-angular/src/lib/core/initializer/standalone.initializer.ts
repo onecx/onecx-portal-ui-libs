@@ -7,6 +7,7 @@ import { AppStateService } from '../../services/app-state.service'
 import { CONFIG_KEY } from '../../model/config-key.model'
 import { UserService } from '../../services/user.service'
 import { UserProfileAPIService } from '../../services/userprofile-api.service'
+import { MfeInfo } from '@onecx/integration-interface'
 
 const CONFIG_INIT_ERR = 'CONFIG_INIT_ERR'
 const AUTH_INIT_ERR = 'AUTH_INIT_ERR'
@@ -53,8 +54,7 @@ export function standaloneInitializer(
       console.log(`📑 auth OK? ${authOk}`)
       try {
         const profile = await firstValueFrom(userProfileAPIService.getCurrentUser())
-        userService.profile$.publish(profile)
-        await userService.profile$.isInitialized
+        await userService.profile$.publish(profile)
       } catch (e) {
         errCause = USER_INIT_ERR
         throw e
@@ -67,11 +67,15 @@ export function standaloneInitializer(
         errCause = PORTAL_LOAD_INIT_ERR
         throw e
       }
-      console.log(`📃 portal OK? ${portal}`)
-      appStateService.currentPortal$.publish(portal)
-      await appStateService.currentPortal$.isInitialized
-      let theme = undefined
+      console.log(`📃 portal OK? `, portal)
+      await appStateService.currentPortal$.publish(portal)
 
+      const standaloneMfeInfo: MfeInfo = { mountPath: '/', remoteBaseUrl:'.', baseHref: '/', shellName: 'standalone' }
+      await appStateService.globalLoading$.publish(true)
+      await appStateService.currentMfe$.publish(standaloneMfeInfo)
+      await appStateService.globalLoading$.publish(false)
+
+      let theme = undefined
       if (!portal) {
         throw new Error('No portal data found')
       } else {
@@ -89,7 +93,7 @@ export function standaloneInitializer(
       console.log('Standalone Initializer')
       console.log(`🛑 Error during initialization: ${errCause} ${e} `)
       console.dir(e)
-      appStateService.globalError$.publish(errCause || 'INITIALIZATION_ERROR')
+      await appStateService.globalError$.publish(errCause || 'INITIALIZATION_ERROR')
       return undefined
     } finally {
       // eslint-disable-next-line no-restricted-syntax

@@ -4,8 +4,6 @@ import { PortalViewportComponent } from './portal-viewport.component'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { ConfigurationService } from '../../../services/configuration.service'
 import { MessageService } from 'primeng/api'
-import { AUTH_SERVICE } from '../../../api/injection-tokens'
-import { MockAuthService } from '../../../mock-auth/mock-auth.service'
 import { SupportTicketComponent } from '../support-ticket/support-ticket.component'
 import { HelpItemEditorComponent } from '../help-item-editor/help-item-editor.component'
 import { HeaderComponent } from '../portal-header/header.component'
@@ -23,6 +21,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { TooltipModule } from 'primeng/tooltip'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { AppStateService } from '../../../services/app-state.service'
+import { AUTH_SERVICE } from '../../../api/injection-tokens'
+import { MockAuthService } from '../../../mock-auth/mock-auth.service'
 
 describe('PortalViewportComponent', () => {
   const origAddEventListener = window.addEventListener
@@ -95,13 +95,12 @@ describe('PortalViewportComponent', () => {
 
   beforeEach(async () => {
     const appStateService = getTestBed().inject(AppStateService)
-    appStateService.currentPortal$.publish({
+    await appStateService.currentPortal$.publish({
       id: 'i-am-test-portal',
       portalName: 'test',
       baseUrl: '',
       microfrontendRegistrations: [],
     })
-    await appStateService.currentPortal$.isInitialized
 
     fixture = TestBed.createComponent(PortalViewportComponent)
     component = fixture.componentInstance

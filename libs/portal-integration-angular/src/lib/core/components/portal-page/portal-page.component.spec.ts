@@ -1,7 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { PortalPageComponent } from './portal-page.component'
-import { AUTH_SERVICE } from '../../../api/injection-tokens'
-import { MockAuthService } from '../../../mock-auth/mock-auth.service'
 import { HttpClientModule } from '@angular/common/http'
 
 describe('PortalPageComponent', () => {
@@ -12,7 +10,6 @@ describe('PortalPageComponent', () => {
     TestBed.configureTestingModule({
       declarations: [PortalPageComponent],
       imports: [HttpClientModule],
-      providers: [{ provide: AUTH_SERVICE, useClass: MockAuthService }],
     }).compileComponents()
   }))
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core'
 import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, UrlTree } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
-import { filter, from, map, mergeMap, Observable, of } from 'rxjs'
+import { filter, from, isObservable, map, mergeMap, Observable, of } from 'rxjs'
 import { AppStateService } from './app-state.service'
 import { ConfigurationService } from './configuration.service'
 import { UserService } from './user.service'
@@ -11,10 +11,10 @@ export class InitializeModuleGuard implements CanActivate {
   private SUPPORTED_LANGS = ['en', 'de']
   private DEFAULT_LANG = 'en'
   constructor(
-    private txService: TranslateService,
-    private config: ConfigurationService,
-    private appStateService: AppStateService,
-    private userService: UserService
+    protected translateService: TranslateService,
+    protected configService: ConfigurationService,
+    protected appStateService: AppStateService,
+    protected userService: UserService
   ) {}
 
   canActivate(
@@ -22,8 +22,14 @@ export class InitializeModuleGuard implements CanActivate {
     _state: RouterStateSnapshot
   ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     return this.loadTranslations().pipe(
-      mergeMap(() => from(this.config.isInitialized)),
+      mergeMap(() => from(this.configService.isInitialized)),
       mergeMap(() => from(this.appStateService.currentPortal$.isInitialized)),
+      mergeMap(() => {
+        return this.appStateService.globalLoading$.pipe(
+          filter((g) => !g),
+          map(() => true)
+        )
+      }),
       map(() => true)
     )
   }
@@ -40,8 +46,17 @@ export class InitializeModuleGuard implements CanActivate {
   loadTranslations(): Observable<boolean> {
     return this.userService.lang$.pipe(
       filter((v) => v !== undefined),
-      mergeMap((lang) => this.txService.use(this.getBestMatchLanguage(lang as string))),
+      mergeMap((lang) => this.translateService.use(this.getBestMatchLanguage(lang as string))),
       mergeMap(() => of(true))
     )
+  }
+
+  protected toObservable(
+    canActivateResult: Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree
+  ): Observable<boolean | UrlTree> {
+    if (isObservable(canActivateResult)) {
+      return canActivateResult
+    }
+    return from(Promise.resolve(canActivateResult))
   }
 }

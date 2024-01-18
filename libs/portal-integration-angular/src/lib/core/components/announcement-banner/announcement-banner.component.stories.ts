@@ -10,13 +10,12 @@ import { HttpClientModule } from '@angular/common/http'
 import { AppStateService } from '../../../services/app-state.service'
 
 async function initFactory(appStateService: AppStateService) {
-  appStateService.currentPortal$.publish({
+  await appStateService.currentPortal$.publish({
     baseUrl: '/demo',
     portalName: 'Demo',
     id: 'Demo',
     microfrontendRegistrations: [],
   })
-  await appStateService.currentPortal$.isInitialized
 
   return () => {
     appStateService
