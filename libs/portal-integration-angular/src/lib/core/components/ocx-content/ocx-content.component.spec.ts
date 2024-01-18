@@ -39,7 +39,7 @@ describe('OcxContentComponent', () => {
 
     const expectedTitleClasses = ['font-medium', 'text-lg']
     expect(await ocxContentHarness.hasTitle()).toEqual(true)
-    expect(await ocxContentHarness.getTitleContent()).toEqual(testComponentTitle)
+    expect(await ocxContentHarness.getTitle()).toEqual(testComponentTitle)
     expect(await ocxContentHarness.getTitleClasses()).toEqual(expectedTitleClasses)
   })
 })

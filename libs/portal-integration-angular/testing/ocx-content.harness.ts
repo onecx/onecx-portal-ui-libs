@@ -21,7 +21,7 @@ export class OcxContentHarness extends ComponentHarness {
     return null
   }
 
-  async getTitleContent() {
+  async getTitle() {
     const p = await this.getTitleHarness()
     if (p) {
       const titleContent = await p.getText()
