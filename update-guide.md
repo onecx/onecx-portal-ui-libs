@@ -61,7 +61,7 @@ combineLatest([appStateService.currentMfe$.asObservable(), appStateService.globa
 ```
 
 - use apiPortalConfigProvider instead of basepathProvider
-- apps have to use initializeModuleGuard or your custom one which needs to extends InitialModuleGuard  see [here](#routing,-canActivate)
+- apps have to use initializeModuleGuard or your custom one which needs to extends InitialModuleGuard  see [here](#routing-and-canActivate)
 ```
 export function apiConfigProvider(configService: ConfigurationService, appStateService: AppStateService) {
   return new PortalApiConfiguration(Configuration, environment.apiPrefix, configService, appStateService)
@@ -75,7 +75,7 @@ export function apiConfigProvider(configService: ConfigurationService, appStateS
 },
 ```
 
-## routing, canActivate
+## routing and canActivate
 - use addInitialModuleGuard() in RouterModule to add InitialModuleGuard to your routes to properly set the translations for the apps in shell mode
 - add your custom InitialModuleGuard as second parameter to add it instead of the imported InitialModuleGuard
 ```
