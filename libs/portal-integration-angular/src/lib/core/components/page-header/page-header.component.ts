@@ -1,11 +1,13 @@
 import {
   Component,
+  ContentChild,
   EventEmitter,
   Input,
   OnChanges,
   OnInit,
   Output,
   SimpleChanges,
+  TemplateRef,
   Type,
   ViewEncapsulation,
 } from '@angular/core'
@@ -100,9 +102,12 @@ export class PageHeaderComponent implements OnInit, OnChanges {
 
   @Output()
   save = new EventEmitter()
+
+  @ContentChild('additionalToolbarContent')
+  additionalToolbarContent: TemplateRef<any> | undefined
+
   overflowActions: MenuItem[] = []
   inlineActions: Action[] | undefined
-
   dd = new Date()
   breadcrumbs$!: Observable<MenuItem[]>
 

@@ -1,0 +1,17 @@
+<div *ngIf="formGroup">
+  <form [formGroup]="formGroup">
+    <div *ngIf="searchConfigs !== undefined">
+      <div *ngIf="searchConfigs.length > 0">
+        <p-dropdown
+          id="searchConfig"
+          formControlName="searchConfigForm"
+          [options]="searchConfigs"
+          optionLabel="name"
+          [placeholder]="placeholderKey | translate"
+          [showClear]="true"
+          (onChange)="onSearchConfigChange($event)"
+        ></p-dropdown>
+      </div>
+    </div>
+  </form>
+</div>

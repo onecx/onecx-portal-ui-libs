@@ -72,8 +72,15 @@ import { DataListGridSortingComponent } from './components/data-list-grid-sortin
 import { RelativeDatePipe } from './pipes/relative-date.pipe'
 import { PatchFormGroupValuesDirective } from './directives/patch-form-group-values.driective'
 import { SetInputValueDirective } from './directives/set-input-value.directive'
+import { LoadingIndicatorComponent } from './components/loading-indicator/loading-indicator.component'
+import { LoadingIndicatorDirective } from './directives/loading-indicator.directive'
 import { DiagramComponent } from './components/diagram/diagram.component'
 import { GroupByCountDiagramComponent } from './components/group-by-count-diagram/group-by-count-diagram.component'
+import { OcxContentDirective } from './directives/ocx-content.directive'
+import { OcxContentComponent } from './components/ocx-content/ocx-content.component'
+import { OcxContentContainerComponent } from './components/ocx-content-container/ocx-content-container.component'
+import { OcxContentContainerDirective } from './directives/ocx-content-container.directive'
+import { SearchConfigComponent } from './components/search-config/search-config.component'
 import { UserService } from '../services/user.service'
 import { UserProfileAPIService } from '../services/userprofile-api.service'
 import { createTranslateLoader } from './utils/create-translate-loader.utils'
@@ -142,6 +149,8 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     ColumnGroupSelectionComponent,
     CustomGroupColumnSelectorComponent,
     SearchHeaderComponent,
+    LoadingIndicatorComponent,
+    LoadingIndicatorDirective,
     AdvancedDirective,
     BasicDirective,
     DataListGridSortingComponent,
@@ -150,6 +159,11 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     SetInputValueDirective,
     DiagramComponent,
     GroupByCountDiagramComponent,
+    OcxContentDirective,
+    OcxContentContainerDirective,
+    OcxContentComponent,
+    OcxContentContainerComponent,
+    SearchConfigComponent,
   ],
   providers: [
     ConfigurationService,
@@ -203,6 +217,8 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     ColumnGroupSelectionComponent,
     CustomGroupColumnSelectorComponent,
     SearchHeaderComponent,
+    LoadingIndicatorComponent,
+    LoadingIndicatorDirective,
     AdvancedDirective,
     BasicDirective,
     RelativeDatePipe,
@@ -210,6 +226,11 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     SetInputValueDirective,
     DiagramComponent,
     GroupByCountDiagramComponent,
+    OcxContentDirective,
+    OcxContentContainerDirective,
+    OcxContentComponent,
+    OcxContentContainerComponent,
+    SearchConfigComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   entryComponents: [ColumnTogglerComponent],
@@ -269,6 +290,9 @@ export class PortalCoreModule {
          Make sure you only use 'PortalCoreModule.forRoot()' in you root AppModule and that you use 'PortalCoreModule.forMicrofrontend()' in your feature modules`
       )
     }
-    registerLocaleData(de)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    registerLocaleData((de as any).default ?? de)
+    //  Do not change the line above until the following ts-jest bug is fixed: https://github.com/kulshekhar/ts-jest/issues/3925
+    //  The ts-jest bug causes that the locale is not imported correctly.
   }
 }
