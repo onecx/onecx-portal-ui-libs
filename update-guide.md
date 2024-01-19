@@ -110,8 +110,7 @@ export class CustomInitializeModuleGuard extends InitializeModuleGuard {
 
 - add your custom InitializeModuleGuard as the second parameter to add it to the routes instead of the InitializeModuleGuard from portal-integration-angular
 ```
-RouterModule.forChild(addInitializeModuleGuard(routes, //replace InitializeModuleGuard with your custom InitializeModuleGuard
-))
+RouterModule.forChild(addInitializeModuleGuard(routes,CustomInitializeModuleGuard))
 ```
 
 ## translateServiceInitializer
