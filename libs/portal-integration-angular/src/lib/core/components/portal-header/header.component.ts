@@ -1,15 +1,19 @@
 import { animate, style, transition, trigger } from '@angular/animations'
 import { Component, ElementRef, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core'
-import { filter, Observable } from 'rxjs'
+import { combineLatest, filter, map, Observable } from 'rxjs'
 import { MenuItem } from 'primeng/api/menuitem'
 
 import { IAuthService } from '../../../api/iauth.service'
 import { AUTH_SERVICE } from '../../../api/injection-tokens'
 import { UserProfile } from '../../../model/user-profile.model'
-import { API_PREFIX, CONFIG_KEY_TKIT_SEARCH_BASE_URL } from '../../../api/constants'
 import { ConfigurationService } from '../../../services/configuration.service'
 import { MenuService } from '../../../services/app.menu.service'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
+import { CONFIG_KEY } from '../../../model/config-key.model'
+import { ThemeService } from '../../../services/theme.service'
+import { ImageLogoUrlUtils } from '../../utils/image-logo-url.utils'
+import { UserService } from '../../../services/user.service'
+import { AppStateService } from '../../../services/app-state.service'
 
 type MenuItemPerm = MenuItem & { permission: string }
 @Component({
@@ -77,24 +81,34 @@ export class HeaderComponent implements OnInit {
   homeNavUrl = '/'
   @Input()
   homeNavTitle = 'Home'
-  @Input()
-  logoUrl?: string
 
+  logoUrl$!: Observable<string | null>
   currentUser$: Observable<UserProfile>
-  private apiPrefix = API_PREFIX
 
   constructor(
     @Inject(AUTH_SERVICE) private authService: IAuthService,
     private config: ConfigurationService,
-    private menuService: MenuService
+    private menuService: MenuService,
+    private themeService: ThemeService,
+    private userService: UserService,
+    private appStateService: AppStateService
   ) {
-    this.currentUser$ = this.authService.currentUser$
+    this.currentUser$ = this.userService.profile$
       .pipe(untilDestroyed(this))
       .pipe(filter((x) => x !== undefined)) as Observable<UserProfile>
+
+      this.logoUrl$ = combineLatest([
+        this.themeService.currentTheme$.asObservable(),
+        this.appStateService.currentPortal$.asObservable(),
+      ]).pipe(
+        map(([theme, portal]) => {
+          return ImageLogoUrlUtils.createLogoUrl(theme.logoUrl || portal.logoUrl)
+        })
+      )
   }
 
   ngOnInit() {
-    this.searchUrl = this.config.getProperty(CONFIG_KEY_TKIT_SEARCH_BASE_URL) || '/ops/enterprise-search'
+    this.searchUrl = this.config.getProperty(CONFIG_KEY.TKIT_SEARCH_BASE_URL) || '/ops/enterprise-search'
 
     /* previous idea made by Matusz & Co => to be rethink later
         Use parameter management (MFE) to manipulate these config values
@@ -164,21 +178,10 @@ export class HeaderComponent implements OnInit {
         permission: 'PORTAL_HEADER_HELP_ITEM_EDITOR#VIEW',
       },
     ]
-
-    // if logo Url does not start with a http, then it stored in the backend. So we need to put prefix in front
-    if (this.logoUrl && !this.logoUrl.match(/^(http|https)/g)) {
-      this.logoUrl = this.apiPrefix + this.logoUrl
-    }
   }
 
   private createMenu(menuItems: MenuItem[]) {
     this.userMenuItems = menuItems.find(({ id }) => id === 'USER_PROFILE_MENU')?.items || []
-  }
-
-  navigateTo(path: string | undefined, event: Event) {
-    event.preventDefault()
-    path = this.config.getBaseUrl() + path
-    location.assign(path)
   }
 
   logout(event: Event) {

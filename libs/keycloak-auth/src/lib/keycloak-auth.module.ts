@@ -8,7 +8,6 @@ import { TokenInterceptor } from './token.interceptor'
 import { KEYCLOAK_AUTH_CONFIG } from './keycloak-injection-token'
 
 export interface KeycloakAuthModuleConfig {
-  disablePermissionCheck: boolean
   tokenInterceptorWhitelist?: string[]
 }
 /**

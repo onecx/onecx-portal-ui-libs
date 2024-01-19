@@ -2,5 +2,10 @@
 
 OneCx portal UI libraries
 
-# release
+# Changelog
 
+[Changelog](CHANGELOG.md)
+
+# Update from v3 to v4 guide
+
+[Update guide](update-guide.md)

@@ -2,7 +2,7 @@
  * The test environment that will be used for testing.
  * The default environment in Jest is a Node.js environment.
  * If you are building a web app, you can use a browser-like environment through jsdom instead.
- * 
+ *
  * @jest-environment jsdom
  */
 
@@ -18,7 +18,7 @@ describe('Topic', () => {
     listeners.push(listener)
   }
 
-  window.removeEventListener = (_type: any, listener: any, ) => {
+  window.removeEventListener = (_type: any, listener: any) => {
     listeners = listeners.filter((l) => l !== listener)
   }
 
@@ -49,7 +49,6 @@ describe('Topic', () => {
 
     testTopic1.subscribe((v) => values1.push(v))
     testTopic2.subscribe((v) => values2.push(v))
-
   })
 
   it('should have correct value for 2 topics after first topic publishes', () => {
@@ -118,7 +117,7 @@ describe('Topic', () => {
 
     expect(values1).toEqual(['value1'])
     expect(values2).toEqual(['value1'])
-    
+
     const values3: any[] = []
     const testTopic3 = new Topic<undefined>('', 0)
     testTopic3.subscribe((v) => values3.push(v))
@@ -127,29 +126,33 @@ describe('Topic', () => {
     expect(values3).toEqual([])
   })
 
-  it('should get correct value', () => {
-    expect(testTopic1.getValue()).toEqual(undefined)
-    
-    testTopic1.publish('value1')
-
-    expect(testTopic1.getValue()).toEqual('value1')
-    expect(testTopic2.getValue()).toEqual('value1')
-  })
-
   it('should remove event listener', () => {
     testTopic1.destroy()
     testTopic2.publish('value1')
-    
+
     expect(values1).toEqual([])
     expect(values2).toEqual(['value1'])
   })
 
   it('should pipe to get the length of the value', () => {
     let v = 0
-    testTopic1.pipe(map((v) => v.length)).subscribe((s) => v = s)
+    testTopic1.pipe(map((v) => v.length)).subscribe((s) => (v = s))
     testTopic1.publish('value1')
-    
+
     expect(v).toEqual(6)
     expect(values1).toEqual(['value1'])
+  })
+
+  it('should check isInitialized', (done) => {
+    let initialized = false
+    testTopic1.isInitialized.then(() => (initialized = true))
+
+    expect(initialized).toBe(false)
+
+    testTopic1.publish('test')
+    setTimeout(() => {
+      expect(initialized).toBe(true)
+      done()
+    })
   })
 })

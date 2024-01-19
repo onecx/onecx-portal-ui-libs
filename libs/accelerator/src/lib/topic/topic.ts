@@ -1,24 +1,37 @@
 import { filter, map } from 'rxjs/operators'
-import { BehaviorSubject, Observable, Observer, OperatorFunction, Subscribable, Subscription, UnaryFunction } from 'rxjs'
+import {
+  BehaviorSubject,
+  Observable,
+  Observer,
+  OperatorFunction,
+  Subscribable,
+  Subscription,
+  UnaryFunction,
+} from 'rxjs'
 import { TopicDataMessage } from './topic-data-message'
 import { TopicMessage } from './topic-message'
 import { TopicMessageType } from './topic-message-type'
 
-export class Topic<T> implements Subscribable<T>{
-  public isInitialized: Promise<void>
-  private data = new BehaviorSubject<TopicDataMessage<T> | undefined>(undefined)
+export class Topic<T> implements Subscribable<T> {
+  protected isInitializedPromise: Promise<void>
+  protected data = new BehaviorSubject<TopicDataMessage<T> | undefined>(undefined)
 
-  private isInit = false
+  protected isInit = false
   private resolveInitPromise!: (value: void | PromiseLike<void>) => void
   private eventListener = (m: MessageEvent<TopicMessage>) => this.onMessage(m)
+  private publishPromiseResolver: Record<number, () => void> = {}
 
   constructor(private name: string, private version: number) {
-    this.isInitialized = new Promise<void>((resolve) => {
+    this.isInitializedPromise = new Promise<void>((resolve) => {
       this.resolveInitPromise = resolve
-    });
+    })
     window.addEventListener('message', this.eventListener)
-    const message = new TopicMessage(TopicMessageType.TopicGet, this.name, this.version);
+    const message = new TopicMessage(TopicMessageType.TopicGet, this.name, this.version)
     window.postMessage(message, '*')
+  }
+  
+  get isInitialized(): Promise<void> {
+    return this.isInitializedPromise
   }
 
   asObservable(): Observable<T> {
@@ -34,16 +47,6 @@ export class Topic<T> implements Subscribable<T>{
     complete?: () => void
   ): Subscription {
     return (<any>this.asObservable()).subscribe(observerOrNext, error, complete)
-  }
-
-  /**
-   * This function does not offer read after write consistency!
-   * This means you cannot call it directly after publish, because the new value will not be there yet!
-   * This function will return undefined unti the isInitialized promise is resolved.
-   * @returns the current value of the topic in a synchronous way
-   */
-  getValue(): T | undefined {
-    return this.isInit ? (<TopicDataMessage<T>>this.data.value).data : undefined
   }
 
   pipe(): Observable<T>
@@ -130,9 +133,13 @@ export class Topic<T> implements Subscribable<T>{
     return (<any>this.asObservable()).pipe(...operations)
   }
 
-  publish(value: T) {
-    const message = new TopicDataMessage<T>(TopicMessageType.TopicNext, this.name, this.version, value);
+  publish(value: T): Promise<void> {
+    const message = new TopicDataMessage<T>(TopicMessageType.TopicNext, this.name, this.version, value)
+    const promise = new Promise<void>((resolve) => {
+      this.publishPromiseResolver[message.timestamp] = resolve
+    })
     window.postMessage(message, '*')
+    return promise
   }
 
   destroy() {
@@ -150,6 +157,11 @@ export class Topic<T> implements Subscribable<T>{
           this.isInit = true
           this.data.next(<TopicDataMessage<T>>m.data)
           this.resolveInitPromise()
+          const publishPromiseResolver = this.publishPromiseResolver[m.data.timestamp]
+          if (publishPromiseResolver) {
+            publishPromiseResolver()
+            delete this.publishPromiseResolver[m.data.timestamp]
+          }
         }
         break
       case TopicMessageType.TopicGet:

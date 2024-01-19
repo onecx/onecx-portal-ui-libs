@@ -3,13 +3,14 @@ import { Action, PageHeaderComponent } from './page-header.component'
 import { RouterTestingModule } from '@angular/router/testing'
 import { ConfigurationService } from '../../../services/configuration.service'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
-import { AUTH_SERVICE } from '../../../api/injection-tokens'
-import { MockAuthService } from '../../../mock-auth/mock-auth.service'
 import { Component } from '@angular/core'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { BreadcrumbModule } from 'primeng/breadcrumb'
 import { MenuModule } from 'primeng/menu'
 import { ButtonModule } from 'primeng/button'
+import { AppStateService } from '../../../services/app-state.service'
+import { UserService } from '../../../services/user.service'
+import { MockUserService } from '../../../../../mocks/mock-user-service'
 
 const mockActions: Action[] = [
   {
@@ -40,11 +41,31 @@ class TestHostComponent {
 }
 
 describe('PageHeaderComponent', () => {
+  const origAddEventListener = window.addEventListener
+  const origPostMessage = window.postMessage
+
+  let listeners: any[] = []
+  window.addEventListener = (_type: any, listener: any) => {
+    listeners.push(listener)
+  }
+
+  window.removeEventListener = (_type: any, listener: any) => {
+    listeners = listeners.filter((l) => l !== listener)
+  }
+
+  window.postMessage = (m: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    listeners.forEach((l) => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }))
+  }
+
+  afterAll(() => {
+    window.addEventListener = origAddEventListener
+    window.postMessage = origPostMessage
+  })
+
   let component: TestHostComponent
   let fixture: ComponentFixture<TestHostComponent>
-  const mockService = new MockAuthService()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let authServiceSpy: jest.SpyInstance<boolean, [permissionKey: string], any>
+  let userServiceSpy: jest.SpyInstance<boolean, [permissionKey: string], any>
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -60,11 +81,11 @@ describe('PageHeaderComponent', () => {
         MenuModule,
         ButtonModule,
       ],
-      providers: [ConfigurationService, { provide: AUTH_SERVICE, useValue: mockService }],
+      providers: [ConfigurationService, AppStateService, { provide: UserService, useClass: MockUserService }],
     }).compileComponents()
 
-    const configurationService = getTestBed().inject(ConfigurationService)
-    configurationService.setPortal({
+    const appStateService = getTestBed().inject(AppStateService)
+    await appStateService.currentPortal$.publish({
       id: 'i-am-test-portal',
       portalName: 'test',
       baseUrl: '',
@@ -76,8 +97,8 @@ describe('PageHeaderComponent', () => {
     fixture = TestBed.createComponent(TestHostComponent)
     component = fixture.componentInstance
     fixture.detectChanges()
-    const authService = fixture.debugElement.injector.get(AUTH_SERVICE)
-    authServiceSpy = jest.spyOn(authService, 'hasPermission')
+    const userService = fixture.debugElement.injector.get(UserService)
+    userServiceSpy = jest.spyOn(userService, 'hasPermission')
   })
 
   it('should create', () => {
@@ -106,13 +127,13 @@ describe('PageHeaderComponent', () => {
       fixture.debugElement.nativeElement.querySelectorAll('[data-testid="ocx-page-header-overflow-action-button"]')
     ).toHaveLength(1)
     expect(fixture.debugElement.nativeElement.querySelector('[title="More actions"]')).toBeTruthy()
-    expect(authServiceSpy).toHaveBeenCalledTimes(4)
+    expect(userServiceSpy).toHaveBeenCalledTimes(4)
   })
 
   it("should check permissions and not render button that user isn't allowed to see", () => {
-    authServiceSpy.mockClear()
+    userServiceSpy.mockClear()
 
-    authServiceSpy.mockReturnValue(false)
+    userServiceSpy.mockReturnValue(false)
 
     expect(
       fixture.debugElement.nativeElement.querySelectorAll('[data-testid="ocx-page-header-inline-action-button"]')
@@ -132,6 +153,6 @@ describe('PageHeaderComponent', () => {
       fixture.debugElement.nativeElement.querySelectorAll('[data-testid="ocx-page-header-overflow-action-button"]')
     ).toHaveLength(0)
     expect(fixture.debugElement.nativeElement.querySelector('[title="More actions"]')).toBeFalsy()
-    expect(authServiceSpy).toHaveBeenCalledTimes(4)
+    expect(userServiceSpy).toHaveBeenCalledTimes(4)
   })
 })

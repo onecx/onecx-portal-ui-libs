@@ -3,13 +3,13 @@
     <a class="layout-topbar-logo" [routerLink]="homeNavUrl" [title]="homeNavTitle">
       <img
         id="app-logo"
-        src="{{logoUrl || 'assets/images/logo.png'}}"
+        src="{{(logoUrl$ | async) || 'assets/images/logo.png'}}"
         alt="Logo"
         style="max-height: 100%; max-width: 100%"
-        *ngIf="logoUrl && !fallbackImg"
+        *ngIf="(logoUrl$ | async) && !fallbackImg"
         (error)="fallbackImg=true"
       />
-      <svg *ngIf="!logoUrl || fallbackImg" width="160" viewBox="0 0 283 72" class="default-logo">
+      <svg *ngIf="((logoUrl$ | async) === null) || fallbackImg" width="160" viewBox="0 0 283 72" class="default-logo">
         <defs id="SvgjsDefs4962"></defs>
         <g
           id="SvgjsG4963"

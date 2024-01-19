@@ -1,11 +1,10 @@
-import { Component, ComponentRef, EventEmitter, Host, Inject, Input, OnInit, Optional, Output } from '@angular/core'
+import { Component, EventEmitter, Inject, Input, OnInit, Optional, Output } from '@angular/core'
 import { BreadcrumbService } from '../../../services/breadcrumb.service'
-import { ConfigurationService } from '../../../services/configuration.service'
 import { Action, PageHeaderComponent } from '../page-header/page-header.component'
 import { PortalSearchPage } from './search-page'
-import { IAuthService } from '../../../api/iauth.service'
-import { AUTH_SERVICE } from '../../../api/injection-tokens'
 import { TranslateService } from '@ngx-translate/core'
+import { AppStateService } from '../../../services/app-state.service'
+import { UserService } from '../../../services/user.service'
 
 /**
  * @deprecated Will be replaced by ocx-search-header
@@ -73,15 +72,12 @@ export class SearchCriteriaComponent extends PageHeaderComponent implements OnIn
 
   constructor(
     breadcrumbs: BreadcrumbService,
-    config: ConfigurationService,
-    @Inject(AUTH_SERVICE) authService: IAuthService,
     translateService: TranslateService,
+    appStateService: AppStateService,
+    userService: UserService,
     @Inject(PortalSearchPage) @Optional() private searchPage?: PortalSearchPage<unknown>,
-    @Host() @Optional() private searchPage2?: PortalSearchPage<unknown>,
-    @Host() @Optional() private ref?: ComponentRef<unknown>
   ) {
-    super(breadcrumbs, config, authService, translateService)
-    // console.log(`Do I have a search page? ${this.searchPage} 2 : ${this.searchPage2} hsot: ${this.ref}`)
+    super(breadcrumbs, translateService, appStateService, userService)
   }
 
   override ngOnInit(): void {

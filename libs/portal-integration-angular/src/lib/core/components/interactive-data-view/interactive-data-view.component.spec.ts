@@ -14,7 +14,6 @@ import { HarnessLoader, parallel, TestElement } from '@angular/cdk/testing'
 import { PortalCoreModule } from '../../portal-core.module'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ColumnType } from '../../../model/column-type.model'
-import { MFE_INFO } from '../../../api/injection-tokens'
 import {
   DataViewHarness,
   ColumnGroupSelectionHarness,
@@ -37,6 +36,9 @@ import { RouterTestingModule } from '@angular/router/testing'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { DateUtils } from '../../utils/dateutils'
+import { HttpClientModule } from '@angular/common/http'
+import { UserService } from '../../../services/user.service'
+import { MockUserService } from '../../../../../mocks/mock-user-service'
 
 describe('InteractiveDataViewComponent', () => {
   let component: InteractiveDataViewComponent
@@ -228,17 +230,10 @@ describe('InteractiveDataViewComponent', () => {
           en: require('./../../../../../assets/i18n/en.json'),
           de: require('./../../../../../assets/i18n/de.json'),
         }),
+        HttpClientModule,
       ],
       providers: [
-        {
-          provide: MFE_INFO,
-          useValue: {
-            baseHref: '/base/path',
-            mountPath: '/base/path',
-            remoteBaseUrl: 'http://localhost:4200',
-            shellName: 'shell',
-          },
-        },
+        { provide: UserService, useClass: MockUserService },
       ],
     }).compileComponents()
 

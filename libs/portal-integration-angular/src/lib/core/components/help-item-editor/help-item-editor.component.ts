@@ -1,7 +1,7 @@
-import { MessageService } from 'primeng/api'
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core'
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { HelpData } from '../../../model/help-data'
+import { PortalMessageService } from '../../../services/portal-message.service'
 
 @Component({
   selector: 'ocx-help-item-editor',
@@ -16,7 +16,7 @@ export class HelpItemEditorComponent implements OnChanges {
   @Output() saveHelpItem = new EventEmitter<HelpData>()
 
   public formGroup!: FormGroup
-  constructor(private fb: FormBuilder, private messageService: MessageService) {
+  constructor(private fb: FormBuilder, private portalMessageService: PortalMessageService) {
     this.formGroup = this.fb.group({
       appId: new FormControl({ value: null, disabled: true }, [Validators.required]),
       helpItemId: new FormControl({ value: null, disabled: true }, [Validators.required]),
@@ -34,9 +34,8 @@ export class HelpItemEditorComponent implements OnChanges {
       this.helpItem.resourceUrl = this.formGroup.value['resourceUrl']
       this.saveHelpItem.emit(this.helpItem)
     } else {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Form is not valid. Cannot update the Help Item.',
+      this.portalMessageService.error({
+        summaryKey: 'OCX_HELP_ITEM_EDITOR.SAVE_ERROR',
       })
     }
   }
