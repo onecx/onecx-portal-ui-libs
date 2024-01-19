@@ -67,5 +67,19 @@
   "OCX_DIAGRAM": {
     "SUM": "Total",
     "NO_DATA": "There is no data available"
+  },
+  "OCX_PORTAL_VIEWPORT": {
+    "SUCCESS": "Success!",
+    "ERROR": "Error!",
+    "TICKET_SUCCESS": "Ticket successfully submitted",
+    "TICKET_ERROR": "Error occured while submitting a ticket",
+    "OPEN_HELP_PAGE_EDITOR_ERROR": "Cannot edit the Help Item. HelpItemId or ApplicationId are undefined or null.",
+    "OPEN_HELP_PAGE_ERROR": "Help Item URL not valid",
+    "OPEN_HELP_PAGE_DIALOG_HEADER": "No help item defined for this page",
+    "UPDATE_HELP_ARTICLE_INFO": "Help Item definition updated",
+    "UPDATE_HELP_ARTICLE_ERROR": "Help Item definition update failed"
+  },
+  "OCX_HELP_ITEM_EDITOR": {
+    "SAVE_ERROR": "Form is not valid. Cannot update the Help Item."
   }
 }

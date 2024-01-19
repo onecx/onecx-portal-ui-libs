@@ -1,11 +1,18 @@
 import { TranslateService } from '@ngx-translate/core'
+import { AppStateService } from '../../services/app-state.service'
 import { ConfigurationService } from '../../services/configuration.service'
 import { InitializeModuleGuard } from '../../services/initialize-module-guard.service'
-import { addInitializeModuleGuard } from './addInitializeModuleGuard'
+import { UserService } from '../../services/user.service'
+import { addInitializeModuleGuard } from './add-initialize-module-guard.utils'
 
 class MockInitializeModuleGuard extends InitializeModuleGuard {
-  constructor(translateService: TranslateService, configService: ConfigurationService) {
-    super(translateService, configService)
+  constructor(
+    translateService: TranslateService,
+    configService: ConfigurationService,
+    appStateService: AppStateService,
+    userService: UserService
+  ) {
+    super(translateService, configService, appStateService, userService)
   }
 }
 

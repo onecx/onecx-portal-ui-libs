@@ -13,10 +13,9 @@
     [menuButtonTitle]="menuButtonTitle"
     [activeTopbarItem]="activeTopbarItem"
     [disableBreadcrumbs]="!enableBreadcrumbs"
-    [homeNavTitle]="portalHomeMenuItem.label!"
-    [homeNavUrl]="portalHomeMenuItem.url!"
+    [homeNavTitle]="(portalHomeMenuItem$ | async)?.label!"
+    [homeNavUrl]="(portalHomeMenuItem$ | async)?.url!"
     [fullPortalLayout]="fullPortalLayout"
-    [logoUrl]="logoUrl"
     (menuButtonClick)="onMenuButtonClick($event)"
     (topbarItemClick)="onTopbarItemClick($event.event, $event.arg)"
     (openSupportTicket)="onSupportTicketClick()"
@@ -61,6 +60,6 @@
 ></ocx-support-ticket>
 <ocx-help-item-editor
   [(displayDialog)]="helpPageEditorDisplayed"
-  [helpItem]="helpDataItem"
+  [helpItem]="(helpDataItem$ | async) ?? {}"
   (saveHelpItem)="updateHelpArticle($event)"
 ></ocx-help-item-editor>

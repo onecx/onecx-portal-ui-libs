@@ -6,7 +6,6 @@ import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { ChartModule } from 'primeng/chart'
 import { MessageModule } from 'primeng/message'
 import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
-import { MFE_INFO } from '../../../api/injection-tokens'
 import { DiagramHarness, TestbedHarnessEnvironment } from '../../../../../testing'
 import { TranslateService } from '@ngx-translate/core'
 
@@ -42,17 +41,6 @@ describe('DiagramComponent', () => {
           de: require('./../../../../../assets/i18n/de.json'),
         }),
         HttpClientTestingModule,
-      ],
-      providers: [
-        {
-          provide: MFE_INFO,
-          useValue: {
-            baseHref: '/base/path',
-            mountPath: '/base/path',
-            remoteBaseUrl: 'http://localhost:4200',
-            shellName: 'shell',
-          },
-        },
       ],
     }).compileComponents()
 

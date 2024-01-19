@@ -1,17 +1,18 @@
 import { Component } from '@angular/core'
+import { map, Observable } from 'rxjs'
 import { MfeInfo } from '../../../model/mfe-info.model'
-import { ConfigurationService } from '../../../services/configuration.service'
+import { AppStateService } from '../../../services/app-state.service'
 
 @Component({
   selector: 'ocx-mfe-debug',
   templateUrl: './mfe-debug.component.html',
 })
 export class MfeDebugComponent {
-  isMFE: boolean
-  mfeInfo: MfeInfo | undefined
+  isMFE$: Observable<boolean>
+  mfeInfo$: Observable<MfeInfo>
 
-  constructor(private config: ConfigurationService) {
-    this.isMFE = this.config.areWeRunningAsMFE()
-    this.mfeInfo = this.config.getMFEInfo()
+  constructor(private appStateService: AppStateService) {
+    this.isMFE$ = this.appStateService.currentMfe$.pipe(map((mfe) => !!mfe))
+    this.mfeInfo$ = this.appStateService.currentMfe$.asObservable()
   }
 }

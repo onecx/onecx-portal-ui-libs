@@ -1,4 +1,3 @@
-import { MessageService } from 'primeng/api'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { moduleMetadata, StoryFn, Meta, applicationConfig } from '@storybook/angular'
 import { HelpItemEditorComponent } from './help-item-editor.component'
@@ -7,6 +6,7 @@ import { importProvidersFrom } from '@angular/core'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { ButtonModule } from 'primeng/button'
 import { InputTextModule } from 'primeng/inputtext'
+import { PortalMessageService } from '../../../services/portal-message.service'
 
 export default {
   title: 'HelpItemEditorComponent',
@@ -17,7 +17,7 @@ export default {
     }),
     moduleMetadata({
       imports: [FormsModule, ReactiveFormsModule, DialogModule, ButtonModule, InputTextModule],
-      providers: [MessageService],
+      providers: [PortalMessageService],
     }),
   ],
 } as Meta<HelpItemEditorComponent>

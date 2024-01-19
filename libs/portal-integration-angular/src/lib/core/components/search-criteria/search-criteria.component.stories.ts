@@ -19,11 +19,18 @@ import { ConfigurationService } from '../../../services/configuration.service'
 import { HttpClientModule } from '@angular/common/http'
 import { APP_INITIALIZER, importProvidersFrom } from '@angular/core'
 import { InputTextModule } from 'primeng/inputtext'
+import { AppStateService } from '../../../services/app-state.service'
 
-function initFactory(configurationService: ConfigurationService) {
-  configurationService.setPortal({ baseUrl: '/demo', portalName: 'Demo', id: 'Demo', microfrontendRegistrations: [] })
+async function initFactory(appStateService: AppStateService) {
+  await appStateService.currentPortal$.publish({
+    baseUrl: '/demo',
+    portalName: 'Demo',
+    id: 'Demo',
+    microfrontendRegistrations: [],
+  })
+
   return () => {
-    configurationService
+    appStateService
   }
 }
 
