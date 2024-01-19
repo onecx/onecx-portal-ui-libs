@@ -1,4 +1,4 @@
-# Release notes
+# Update from v3 to v4 guide
 
 ## allow multiple instances of portal-integration-angular
 - **in webpackconfig.js remove the "singleton" and "strictVersion" property from: '@onecx/portal-integration-angular' and '@onecx/keycloak-auth'**
