@@ -1,3 +1,19 @@
+## [4.0.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.9.0...v4.0.0) (2024-01-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* allow multiple instances of portal-integration-angular (#75)
+
+### Features
+
+* allow multiple instances of portal-integration-angular ([#75](https://github.com/onecx/onecx-portal-ui-libs/issues/75)) ([41c46ee](https://github.com/onecx/onecx-portal-ui-libs/commit/41c46ee389b455869ceb85df112852ed9cb33f50)), closes [#24](https://github.com/onecx/onecx-portal-ui-libs/issues/24)
+
+
+### Refactoring
+
+* **test:** ocx-content & ocx-content-container test harnesses ([#71](https://github.com/onecx/onecx-portal-ui-libs/issues/71)) ([4ab7931](https://github.com/onecx/onecx-portal-ui-libs/commit/4ab79311a2a42713db605de1dac2e471a87a1358))
+
 ## [3.9.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.8.1...v3.9.0) (2024-01-17)
 
 
