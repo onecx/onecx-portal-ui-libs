@@ -63,6 +63,7 @@ combineLatest([appStateService.currentMfe$.asObservable(), appStateService.globa
 - use apiPortalConfigProvider instead of basepathProvider
 - apps have to use initializeModuleGuard or your custom one which needs to extends InitialModuleGuard  see [here](#routing-and-canActivate)
 ```
+// you have to look from where the api prefix comes from, because it does not have to be defined in the environment file
 export function apiConfigProvider(configService: ConfigurationService, appStateService: AppStateService) {
   return new PortalApiConfiguration(Configuration, environment.apiPrefix, configService, appStateService)
 }
@@ -76,19 +77,24 @@ export function apiConfigProvider(configService: ConfigurationService, appStateS
 ```
 
 ## routing and canActivate
-- use addInitialModuleGuard() in RouterModule to add InitialModuleGuard to your routes to properly set the translations for the apps in shell mode
-- add your custom InitialModuleGuard as second parameter to add it instead of the imported InitialModuleGuard
+- always use the InitialModuleGuard from portal-integration-angular
+- to add the InitialModuleGuard to your routes to properly set the translations for the apps in shell mode, use addInitializeModuleGuard() in RouterModule.forRoot() or .forChild() 
 ```
-RouterModule.forChild(addInitialModuleGuard(routes))
+RouterModule.forChild(addInitializeModuleGuard(routes))
 ```
 
-- if you want to extend the InitialModuleGuard with your own guard, do the following
+- if you need to add something additionally to the InitialModuleGuard, then you have to create your own guard by extending the InitialModuleGuard and use toObservable() like below
 ```
 return this.toObservable(super.canActivate(...)).pipe(...)
 ```
 
+- add your CustomInitialModuleGuard as the second parameter to add it to the routes instead of the InitialModuleGuard from portal-integration-angular
+```
+RouterModule.forChild(addInitializeModuleGuard(routes, CustomInitialModuleGuard))
+```
+
 ## translateServiceInitializer
-- to properly set the translateService for standalone mode
+- to properly setup the translateService in all cases for standalone mode, add the following to your standalone module
 ```
 {
     provide: APP_INITIALIZER,
