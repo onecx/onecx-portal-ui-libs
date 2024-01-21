@@ -1,4 +1,4 @@
-import { Component, ContentChild, EventEmitter, Inject, Injector, Input, LOCALE_ID, OnInit, Output, TemplateRef } from '@angular/core'
+import { Component, ContentChild, EventEmitter, Inject, Injector, Input, LOCALE_ID, OnChanges, OnInit, Output, SimpleChanges, TemplateRef } from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { SelectItem } from 'primeng/api'
@@ -8,7 +8,6 @@ import { DataSortDirection } from '../../../model/data-sort-direction'
 import { ColumnType } from '../../../model/column-type.model'
 import { DataAction } from '../../../model/data-action'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
-import { string } from 'zod'
 
 type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -24,7 +23,7 @@ export type Sort = { sortColumn: string; sortDirection: DataSortDirection }
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
 })
-export class DataTableComponent extends DataSortBase implements OnInit {
+export class DataTableComponent extends DataSortBase implements OnInit, OnChanges {
   _rows$ = new BehaviorSubject<Row[]>([])
   @Input()
   get rows(): Row[] {
@@ -69,11 +68,9 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   @Input() viewPermission: string | undefined
   @Input() editPermission: string | undefined
   @Input() paginator = true
-  @Input() totalRecordsOnServer: number | undefined 
-  totalRecordsOnServerStr:string = ''
+  @Input() totalRecordsOnServer: number | undefined
   currentPageReportTemplateShowing: string = "OCX_DATA_TABLE.SHOWING"
   params: { [key: string]: string } = {}
-
 
   @Input() stringCellTemplate: TemplateRef<any> | undefined
   @ContentChild('stringCell') stringCellChildTemplate: TemplateRef<any> | undefined
@@ -147,6 +144,22 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     super(locale, translateService)
     this.name = this.name || this.router.url.replace(/[^A-Za-z0-9]/, '_')
   }
+  ngOnChanges(): void {
+    this.currentPageReportTemplateShowing = (this.totalRecordsOnServer ? "OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER" : "OCX_DATA_TABLE.SHOWING")
+    this.updateParams(this.totalRecordsOnServer ? this.totalRecordsOnServer : 0)
+  }
+
+  public updateParams(totalrecordsOnServer : number){
+    this.params = {
+      totalRecordsOnServer : <string><unknown>totalrecordsOnServer,
+      currentPage : '{currentPage}',
+      totalPages : '{totalPages}',
+      rows: '{rows}',
+      first: '{first}',
+      last : '{last}',
+      totalRecords : '{totalRecords}'
+    }
+  }
 
   ngOnInit(): void {
     this.displayedRows$ = combineLatest([this._rows$, this._filters$, this._sortColumn$, this._sortDirection$]).pipe(
@@ -198,20 +211,6 @@ export class DataTableComponent extends DataSortBase implements OnInit {
       ),
       map((amounts) => Object.fromEntries(amounts))
     )
-    if(this.totalRecordsOnServer){
-      this.totalRecordsOnServerStr = '' + this.totalRecordsOnServer
-      this.params = 
-      {
-        totalRecordsOnServer : this.totalRecordsOnServerStr,
-        currentPage : '{currentPage}',
-        totalPages : '{totalPages}',
-        rows: '{rows}',
-        first: '{first}',
-        last : '{last}',
-        totalRecords : '{totalRecords}'
-      }
-      this.currentPageReportTemplateShowing = "OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER"
-    }
   }
 
   onSortColumnClick(sortColumn: string) {

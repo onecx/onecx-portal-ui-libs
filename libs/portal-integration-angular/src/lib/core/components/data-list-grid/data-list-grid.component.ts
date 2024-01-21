@@ -7,6 +7,7 @@ import {
   Injector,
   Input,
   LOCALE_ID,
+  OnChanges,
   OnInit,
   Output,
   TemplateRef,
@@ -42,7 +43,7 @@ export interface ListGridDataMenuItem extends MenuItem {
   templateUrl: './data-list-grid.component.html',
   styleUrls: ['./data-list-grid.component.scss'],
 })
-export class DataListGridComponent extends DataSortBase implements OnInit, DoCheck {
+export class DataListGridComponent extends DataSortBase implements OnInit, DoCheck, OnChanges {
   @Input() titleLineId: string | undefined
   @Input() subtitleLineIds: string[] = []
   @Input() clientSideSorting = true
@@ -62,11 +63,10 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   @Input() paginator = true
   @Input() columns: DataTableColumn[] = []
   @Input() name = ''
-  @Input() totalRecordsOnServer: number | undefined 
-  totalRecordsOnServerStr:string = ''
+  @Input() totalRecordsOnServer: number | undefined
   currentPageReportTemplateShowing: string = "OCX_DATA_TABLE.SHOWING"
   params: { [key: string]: string } = {}
-
+  
   _data$ = new BehaviorSubject<RowListGridData[]>([])
   @Input()
   get data(): RowListGridData[] {
@@ -182,6 +182,23 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     
   }
 
+  ngOnChanges(): void {
+    this.currentPageReportTemplateShowing = (this.totalRecordsOnServer ? "OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER" : "OCX_DATA_TABLE.SHOWING")
+    this.updateParams(this.totalRecordsOnServer ? this.totalRecordsOnServer : 0)
+  }
+
+  public updateParams(totalrecordsOnServer : number){
+    this.params = {
+      totalRecordsOnServer : <string><unknown>totalrecordsOnServer,
+      currentPage : '{currentPage}',
+      totalPages : '{totalPages}',
+      rows: '{rows}',
+      first: '{first}',
+      last : '{last}',
+      totalRecords : '{totalRecords}'
+    }
+  }
+
   ngDoCheck(): void {
     const observedOutputs = <any>this.viewItem.observed + <any>this.deleteItem.observed + <any>this.editItem.observed
     if (this.observedOutputs !== observedOutputs) {
@@ -202,20 +219,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
       (!!this.viewPermission && this.authService.hasPermission(this.viewPermission)) ||
       (!!this.editPermission && this.authService.hasPermission(this.editPermission)) ||
       (!!this.deletePermission && this.authService.hasPermission(this.deletePermission))
-      if(this.totalRecordsOnServer){
-        this.totalRecordsOnServerStr = '' + this.totalRecordsOnServer
-        this.params = 
-        {
-          totalRecordsOnServer : this.totalRecordsOnServerStr,
-          currentPage : '{currentPage}',
-          totalPages : '{totalPages}',
-          rows: '{rows}',
-          first: '{first}',
-          last : '{last}',
-          totalRecords : '{totalRecords}'
-        }
-        this.currentPageReportTemplateShowing = "OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER"
-      }
   }
 
   onDeleteRow(element: ListGridData) {
