@@ -1,3 +1,10 @@
+## [4.0.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.0.0...v4.0.1) (2024-01-22)
+
+
+### Bug Fixes
+
+* update portal-integration-angular version in peer dependencies of keycloak-auth  ([#76](https://github.com/onecx/onecx-portal-ui-libs/issues/76)) ([9ca372a](https://github.com/onecx/onecx-portal-ui-libs/commit/9ca372a50ac5b992d4cc0e1349e4ba9c9480cff4))
+
 ## [4.0.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.9.0...v4.0.0) (2024-01-19)
 
 
