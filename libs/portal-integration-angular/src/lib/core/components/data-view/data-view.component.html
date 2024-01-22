@@ -82,6 +82,8 @@
     (sorted)="sorting($event)"
     (filtered)="filtering($event)"
     [totalRecordsOnServer]="totalRecordsOnServer"
+    [currentPageShowingKey]="currentPageShowingKey"
+    [currentPageShowingWithTotalOnServerKey]="currentPageShowingWithTotalOnServerKey"
   >
   </ocx-data-table>
   <ng-template #stringCell let-rowObject="rowObject" let-column="column">
