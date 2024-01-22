@@ -1,3 +1,10 @@
+## [4.0.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.0.1...v4.0.2) (2024-01-22)
+
+
+### Bug Fixes
+
+* update version of accelerator and integration-interface ([#77](https://github.com/onecx/onecx-portal-ui-libs/issues/77)) ([55ba465](https://github.com/onecx/onecx-portal-ui-libs/commit/55ba465f6af492ba51a4eed2f029c0ed719121cf))
+
 ## [4.0.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.0.0...v4.0.1) (2024-01-22)
 
 
