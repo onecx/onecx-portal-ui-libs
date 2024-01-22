@@ -10,6 +10,7 @@ import {
   OnChanges,
   OnInit,
   Output,
+  SimpleChanges,
   TemplateRef,
 } from '@angular/core'
 import { DataSortDirection } from '../../../model/data-sort-direction'
@@ -64,7 +65,8 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   @Input() columns: DataTableColumn[] = []
   @Input() name = ''
   @Input() totalRecordsOnServer: number | undefined
-  currentPageReportTemplateShowing: string = "OCX_DATA_TABLE.SHOWING"
+  @Input() currentPageShowingKey: string = 'OCX_DATA_TABLE.SHOWING'
+  @Input() currentPageShowingWithTotalOnServerKey: string = 'OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER'
   params: { [key: string]: string } = {}
   
   _data$ = new BehaviorSubject<RowListGridData[]>([])
@@ -182,14 +184,15 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     
   }
 
-  ngOnChanges(): void {
-    this.currentPageReportTemplateShowing = (this.totalRecordsOnServer ? "OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER" : "OCX_DATA_TABLE.SHOWING")
-    this.updateParams(this.totalRecordsOnServer ? this.totalRecordsOnServer : 0)
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['totalRecordsOnServer']) {
+      this.updateParams()
+    }
   }
 
-  public updateParams(totalrecordsOnServer : number){
+  public updateParams(){
     this.params = {
-      totalRecordsOnServer : <string><unknown>totalrecordsOnServer,
+      totalRecordsOnServer : this.totalRecordsOnServer?.toString() ?? '0',
       currentPage : '{currentPage}',
       totalPages : '{totalPages}',
       rows: '{rows}',

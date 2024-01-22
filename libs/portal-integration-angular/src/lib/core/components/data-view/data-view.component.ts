@@ -62,6 +62,8 @@ export class DataViewComponent implements DoCheck, OnInit {
   @Input() listGridPaginator = true
   @Input() tablePaginator = true
   @Input() totalRecordsOnServer: number | undefined 
+  @Input() currentPageShowingKey: string = 'OCX_DATA_TABLE.SHOWING'
+  @Input() currentPageShowingWithTotalOnServerKey: string = 'OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER'
 
   @Input()
   get paginator(): boolean {
