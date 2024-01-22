@@ -7,17 +7,14 @@ import { ChartModule } from 'primeng/chart'
 import { MessageModule } from 'primeng/message'
 import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
 import { MFE_INFO } from '../../../api/injection-tokens'
-import { DiagramHarness, HarnessLoader, TestbedHarnessEnvironment } from '../../../../../testing'
+import { DiagramHarness, TestbedHarnessEnvironment } from '../../../../../testing'
 import { TranslateService } from '@ngx-translate/core'
-import { PChartHarness } from 'libs/portal-integration-angular/testing/primeng/p-chart.harness'
-import 'jest-canvas-mock'
 import { DiagramType } from '../../../model/diagram-type'
 
 describe('DiagramComponent', () => {
   let translateService: TranslateService
   let component: DiagramComponent
   let fixture: ComponentFixture<DiagramComponent>
-  let loader: HarnessLoader
 
   const definedSumKey = 'OCX_DIAGRAM.SUM'
 
@@ -67,7 +64,6 @@ describe('DiagramComponent', () => {
     translateService = TestBed.inject(TranslateService)
     translateService.setDefaultLang('en')
     translateService.use('en')
-    loader = TestbedHarnessEnvironment.loader(fixture)
   })
 
   it('should create the diagram component', () => {
@@ -98,7 +94,7 @@ describe('DiagramComponent', () => {
 
   it('should display pie chart by default', async () => {
     const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
-    const chartHarness = await loader.getHarness(PChartHarness)
+    const chartHarness = await diagram.getChart()
     const chartType = await chartHarness.getType()
     expect(chartType).toEqual('pie')
   })
@@ -106,7 +102,7 @@ describe('DiagramComponent', () => {
   it('should display horizontal bar chart', async () => {
     component.diagramType = DiagramType.HORIZONTAL_BAR
     const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
-    const chartHarness = await loader.getHarness(PChartHarness)
+    const chartHarness = await diagram.getChart()
     const chartType = await chartHarness.getType()
     expect(chartType).toEqual('bar')
   })
@@ -114,7 +110,7 @@ describe('DiagramComponent', () => {
   it('should display vertical bar chart', async () => {
     component.diagramType = DiagramType.VERTICAL_BAR
     const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
-    const chartHarness = await loader.getHarness(PChartHarness)
+    const chartHarness = await diagram.getChart()
     const chartType = await chartHarness.getType()
     expect(chartType).toEqual('bar')
   })
