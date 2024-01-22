@@ -1,79 +1,103 @@
-import { firstValueFrom, of } from 'rxjs'
+import { firstValueFrom } from 'rxjs'
 import { IAuthService } from '../../api/iauth.service'
 import { ConfigurationService } from '../../services/configuration.service'
 import { PortalApiService } from '../../services/portal-api.service'
 import { ThemeService } from '../../services/theme.service'
 import { AppStateService } from '../../services/app-state.service'
+import { CONFIG_KEY } from '../../model/config-key.model'
+import { UserService } from '../../services/user.service'
+import { UserProfileAPIService } from '../../services/userprofile-api.service'
+import { MfeInfo } from '@onecx/integration-interface'
 
 const CONFIG_INIT_ERR = 'CONFIG_INIT_ERR'
 const AUTH_INIT_ERR = 'AUTH_INIT_ERR'
+const USER_INIT_ERR = 'USER_INIT_ERR'
 const THEME_INIT_ERR = 'THEME_INIT_ERR'
 const PORTAL_LOAD_INIT_ERR = 'PORTAL_LOAD_INIT_ERR'
 
+/**
+ * This initializer only runs in standalone mode of the apps and not in portal-mf-shell
+ */
 export function standaloneInitializer(
   auth: IAuthService,
   config: ConfigurationService,
   portalApi: PortalApiService,
   themeService: ThemeService,
   appName: string,
-  initState: AppStateService
+  appStateService: AppStateService,
+  userService: UserService,
+  userProfileAPIService: UserProfileAPIService
 ): () => Promise<any> {
   // eslint-disable-next-line no-restricted-syntax
   console.time('initializer')
   console.log(`⭐ Standalone initializer for:  ${appName}`)
   let errCause: string
-  return () =>
-    config
-      .init()
-      .catch((e) => {
+
+  return async () => {
+    try {
+      let configOk = false
+      try {
+        configOk = await config.init()
+        await config.isInitialized
+      } catch (e) {
         errCause = CONFIG_INIT_ERR
         throw e
-      })
-      .then((configOk) => {
-        console.log(`📑 config OK? ${configOk}`)
-        return auth.init().catch((e) => {
-          errCause = AUTH_INIT_ERR
-          throw e
-        })
-      })
-      .then((authOk) => {
-        console.log(`👮‍♀️ auth OK? ${authOk}`)
+      }
+      console.log(`📑 config OK? ${configOk}`)
+      let authOk = false
+      try {
+        authOk = await auth.init()
+      } catch (e) {
+        errCause = AUTH_INIT_ERR
+        throw e
+      }
+      console.log(`📑 auth OK? ${authOk}`)
+      try {
+        const profile = await firstValueFrom(userProfileAPIService.getCurrentUser())
+        await userService.profile$.publish(profile)
+      } catch (e) {
+        errCause = USER_INIT_ERR
+        throw e
+      }
+      console.log('📑 user initialized')
+      let portal = undefined
+      try {
+        portal = await firstValueFrom(portalApi.getPortalData(config.getProperty(CONFIG_KEY.TKIT_PORTAL_ID) || 'ADMIN'))
+      } catch (e) {
+        errCause = PORTAL_LOAD_INIT_ERR
+        throw e
+      }
+      console.log(`📃 portal OK? `, portal)
+      await appStateService.currentPortal$.publish(portal)
 
-        return firstValueFrom(portalApi.getPortalData(config.getPortalId() || 'ADMIN'))
-          .then((portal) => {
-            config.setPortal(portal)
-            return portal
-          })
-          .catch((e) => {
-            errCause = PORTAL_LOAD_INIT_ERR
-            throw e
-          })
-      })
-      .then((portal) => {
-        console.log(`📃 portal OK? ${portal}`)
-        if (!portal) {
-          throw new Error('No portal data found')
-        } else {
+      const standaloneMfeInfo: MfeInfo = { mountPath: '/', remoteBaseUrl:'.', baseHref: '/', shellName: 'standalone' }
+      await appStateService.globalLoading$.publish(true)
+      await appStateService.currentMfe$.publish(standaloneMfeInfo)
+      await appStateService.globalLoading$.publish(false)
+
+      let theme = undefined
+      if (!portal) {
+        throw new Error('No portal data found')
+      } else {
+        try {
           if (portal.themeName) {
-            return firstValueFrom(themeService.loadAndApplyTheme(portal.themeName)).catch((e) => {
-              errCause = THEME_INIT_ERR
-              throw e
-            })
+            theme = await firstValueFrom(themeService.loadAndApplyTheme(portal.themeName))
           }
+        } catch (e) {
+          errCause = THEME_INIT_ERR
+          throw e
         }
-        return null
-      })
-
-      .catch((err) => {
-        console.log('Standalone Initializer')
-        console.log(`🛑 Error during initialization: ${errCause} ${err} `)
-        console.dir(err)
-        initState.globalError$.publish(errCause || 'INITIALIZATION_ERROR')
-        //TODO store error info somewhere, so we can show error in app component
-        return of(null)
-      })
-      .finally(() => {
-        // eslint-disable-next-line no-restricted-syntax
-        console.timeEnd('initializer')
-      })
+      }
+      return theme
+    } catch (e) {
+      console.log('Standalone Initializer')
+      console.log(`🛑 Error during initialization: ${errCause} ${e} `)
+      console.dir(e)
+      await appStateService.globalError$.publish(errCause || 'INITIALIZATION_ERROR')
+      return undefined
+    } finally {
+      // eslint-disable-next-line no-restricted-syntax
+      console.timeEnd('initializer')
+    }
+  }
 }

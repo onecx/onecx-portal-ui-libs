@@ -19,9 +19,7 @@ import {
   TranslateModule,
   TranslateService,
 } from '@ngx-translate/core'
-import { TranslateHttpLoader } from '@ngx-translate/http-loader'
-import { APPLICATION_NAME, AUTH_SERVICE, MFE_INFO, MFE_INFO_FN, SANITY_CHECK } from '../api/injection-tokens'
-import { MfeInfo } from '../model/mfe-info.model'
+import { APPLICATION_NAME, AUTH_SERVICE, SANITY_CHECK } from '../api/injection-tokens'
 import { AutofocusDirective } from './directives/autofocus.directive'
 import { IfBreakpointDirective } from './directives/if-breakpoint.directive'
 import { IfPermissionDirective } from './directives/if-permission.directive'
@@ -60,7 +58,6 @@ import { DataListGridComponent } from './components/data-list-grid/data-list-gri
 import { PrimeNgModule } from './primeng.module'
 import { MockAuthService } from '../mock-auth/mock-auth.service'
 import { ConfirmDialogModule } from 'primeng/confirmdialog'
-import { TranslateCombinedLoader } from './utils/translate.combined.loader'
 import { DataTableComponent } from './components/data-table/data-table.component'
 import de from '@angular/common/locales/de'
 import { DataViewComponent } from './components/data-view/data-view.component'
@@ -73,7 +70,6 @@ import { AdvancedDirective } from './directives/advanced.directive'
 import { BasicDirective } from './directives/basic.directive'
 import { DataListGridSortingComponent } from './components/data-list-grid-sorting/data-list-grid-sorting.component'
 import { RelativeDatePipe } from './pipes/relative-date.pipe'
-import { MessageService } from 'primeng/api'
 import { PatchFormGroupValuesDirective } from './directives/patch-form-group-values.driective'
 import { SetInputValueDirective } from './directives/set-input-value.directive'
 import { LoadingIndicatorComponent } from './components/loading-indicator/loading-indicator.component'
@@ -85,21 +81,10 @@ import { OcxContentComponent } from './components/ocx-content/ocx-content.compon
 import { OcxContentContainerComponent } from './components/ocx-content-container/ocx-content-container.component'
 import { OcxContentContainerDirective } from './directives/ocx-content-container.directive'
 import { SearchConfigComponent } from './components/search-config/search-config.component'
-
-export function createTranslateLoader(http: HttpClient, mfeInfo: MfeInfo) {
-  if (mfeInfo?.remoteBaseUrl) {
-    return new TranslateCombinedLoader(
-      new TranslateHttpLoader(http, `${mfeInfo.remoteBaseUrl}/assets/i18n/`, '.json'),
-      new TranslateHttpLoader(http, `./assets/i18n/`, '.json'),
-      new TranslateHttpLoader(http, `./onecx-portal-lib/assets/i18n/`, '.json')
-    )
-  } else {
-    return new TranslateCombinedLoader(
-      new TranslateHttpLoader(http, `./assets/i18n/`, '.json'),
-      new TranslateHttpLoader(http, `./onecx-portal-lib/assets/i18n/`, '.json')
-    )
-  }
-}
+import { UserService } from '../services/user.service'
+import { UserProfileAPIService } from '../services/userprofile-api.service'
+import { createTranslateLoader } from './utils/create-translate-loader.utils'
+import { MessageService } from 'primeng/api'
 
 export class MyMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -117,7 +102,11 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     PrimeNgModule,
     TranslateModule.forRoot({
       isolate: true,
-      loader: { provide: TranslateLoader, useFactory: createTranslateLoader, deps: [HttpClient, MFE_INFO] },
+      loader: {
+        provide: TranslateLoader,
+        useFactory: createTranslateLoader,
+        deps: [HttpClient, AppStateService, ConfigurationService],
+      },
       missingTranslationHandler: { provide: MissingTranslationHandler, useClass: MyMissingTranslationHandler },
     }),
     ConfirmDialogModule,
@@ -250,17 +239,7 @@ export class PortalCoreModule {
   public static forMicroFrontend(): ModuleWithProviders<PortalCoreModule> {
     return {
       ngModule: PortalCoreModule,
-      providers: [
-        { provide: SANITY_CHECK, useValue: 'mfe' },
-        {
-          provide: MFE_INFO,
-          useFactory: (mfInfoFn: () => MfeInfo): MfeInfo => {
-            console.log(`MFE_INFO Factory called now `)
-            return mfInfoFn()
-          },
-          deps: [MFE_INFO_FN],
-        },
-      ],
+      providers: [{ provide: SANITY_CHECK, useValue: 'mfe' }],
     }
   }
 
@@ -269,7 +248,6 @@ export class PortalCoreModule {
       ngModule: PortalCoreModule,
       providers: [
         { provide: SANITY_CHECK, useValue: 'root' },
-        { provide: MFE_INFO_FN, useValue: () => undefined },
         { provide: APPLICATION_NAME, useValue: appName },
         {
           provide: MessageService,
@@ -283,14 +261,22 @@ export class PortalCoreModule {
           provide: APP_INITIALIZER,
           multi: true,
           useFactory: standaloneInitializer,
-          deps: [AUTH_SERVICE, ConfigurationService, PortalApiService, ThemeService, APPLICATION_NAME, AppStateService],
+          deps: [
+            AUTH_SERVICE,
+            ConfigurationService,
+            PortalApiService,
+            ThemeService,
+            APPLICATION_NAME,
+            AppStateService,
+            UserService,
+            UserProfileAPIService,
+          ],
         })
     }
     return module
   }
 
   constructor(
-    @Optional() @SkipSelf() parent?: PortalCoreModule,
     @Optional() @Inject(SANITY_CHECK) sanityCheck?: string,
     @Optional() @SkipSelf() @Inject(SANITY_CHECK) parentSanityCheck?: string
   ) {

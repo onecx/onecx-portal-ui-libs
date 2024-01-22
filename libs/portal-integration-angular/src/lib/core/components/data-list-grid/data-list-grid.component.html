@@ -30,8 +30,8 @@
       <div class="flex justify-content-center mb-3">
         <img
           class="image"
-          src="{{ item.imagePath }}"
-          (error)="imgError($event)"
+          src="{{ item.imagePath || (fallbackImagePath$ | async) }}"
+          (error)="imgError(item)"
           alt="{{resolveFieldData(item, titleLineId)|| ''}}"
         />
       </div>
