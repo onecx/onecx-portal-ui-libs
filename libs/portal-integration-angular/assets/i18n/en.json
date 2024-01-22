@@ -23,7 +23,12 @@
     "EMPTY_FILTER_MESSAGE": "No filters found.",
     "ACTIONS_COLUMN_NAME": "Actions",
     "FILTER_TITLE": "Filter",
-    "EDITED": "Edited"
+    "EDITED": "Edited",
+    "MENU": {
+      "VIEW": "View",
+      "EDIT": "Edit",
+      "DELETE": "Delete"
+    } 
   },
   "OCX_DATA_LIST_GRID": {
     "EMPTY_RESULT": "No data found.",
