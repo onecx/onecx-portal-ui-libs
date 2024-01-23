@@ -44,7 +44,7 @@ export interface ListGridDataMenuItem extends MenuItem {
   templateUrl: './data-list-grid.component.html',
   styleUrls: ['./data-list-grid.component.scss'],
 })
-export class DataListGridComponent extends DataSortBase implements OnInit, DoCheck, OnChanges {
+export class DataListGridComponent extends DataSortBase implements OnInit, DoCheck {
   @Input() titleLineId: string | undefined
   @Input() subtitleLineIds: string[] = []
   @Input() clientSideSorting = true
@@ -64,10 +64,23 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   @Input() paginator = true
   @Input() columns: DataTableColumn[] = []
   @Input() name = ''
-  @Input() totalRecordsOnServer: number | undefined
+  @Input()
+  get totalRecordsOnServer(): number | undefined {
+    return this.params['totalRecordsOnServer'] ? Number(this.params['totalRecordsOnServer']) : undefined
+  }
+  set totalRecordsOnServer(value: number | undefined) {
+    this.params['totalRecordsOnServer'] = value?.toString() ?? '0'
+  }
   @Input() currentPageShowingKey: string = 'OCX_DATA_TABLE.SHOWING'
   @Input() currentPageShowingWithTotalOnServerKey: string = 'OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER'
-  params: { [key: string]: string } = {}
+  params: { [key: string]: string } = {
+    currentPage: '{currentPage}',
+    totalPages: '{totalPages}',
+    rows: '{rows}',
+    first: '{first}',
+    last: '{last}',
+    totalRecords: '{totalRecords}'
+  }
   
   _data$ = new BehaviorSubject<RowListGridData[]>([])
   @Input()
@@ -182,24 +195,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     super(locale, translateService)
     this.name = this.name || this.router.url.replace(/[^A-Za-z0-9]/, '_')
     
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['totalRecordsOnServer']) {
-      this.updateParams()
-    }
-  }
-
-  public updateParams(){
-    this.params = {
-      totalRecordsOnServer : this.totalRecordsOnServer?.toString() ?? '0',
-      currentPage : '{currentPage}',
-      totalPages : '{totalPages}',
-      rows: '{rows}',
-      first: '{first}',
-      last : '{last}',
-      totalRecords : '{totalRecords}'
-    }
   }
 
   ngDoCheck(): void {

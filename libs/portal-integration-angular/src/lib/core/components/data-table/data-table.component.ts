@@ -23,7 +23,7 @@ export type Sort = { sortColumn: string; sortDirection: DataSortDirection }
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
 })
-export class DataTableComponent extends DataSortBase implements OnInit, OnChanges {
+export class DataTableComponent extends DataSortBase implements OnInit {
   _rows$ = new BehaviorSubject<Row[]>([])
   @Input()
   get rows(): Row[] {
@@ -68,10 +68,23 @@ export class DataTableComponent extends DataSortBase implements OnInit, OnChange
   @Input() viewPermission: string | undefined
   @Input() editPermission: string | undefined
   @Input() paginator = true
-  @Input() totalRecordsOnServer: number | undefined
+  @Input()
+  get totalRecordsOnServer(): number | undefined {
+    return this.params['totalRecordsOnServer'] ? Number(this.params['totalRecordsOnServer']) : undefined
+  }
+  set totalRecordsOnServer(value: number | undefined) {
+    this.params['totalRecordsOnServer'] = value?.toString() ?? '0'
+  }
   @Input() currentPageShowingKey: string = 'OCX_DATA_TABLE.SHOWING'
   @Input() currentPageShowingWithTotalOnServerKey: string = 'OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER'
-  params: { [key: string]: string } = {}
+  params: { [key: string]: string } = {
+    currentPage: '{currentPage}',
+    totalPages: '{totalPages}',
+    rows: '{rows}',
+    first: '{first}',
+    last: '{last}',
+    totalRecords: '{totalRecords}'
+  }
 
   @Input() stringCellTemplate: TemplateRef<any> | undefined
   @ContentChild('stringCell') stringCellChildTemplate: TemplateRef<any> | undefined
@@ -145,24 +158,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, OnChange
     super(locale, translateService)
     this.name = this.name || this.router.url.replace(/[^A-Za-z0-9]/, '_')
   }
-  
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['totalRecordsOnServer']) {
-      this.updateParams()
-    }
-  }
-
-  public updateParams(){
-    this.params = {
-      totalRecordsOnServer : this.totalRecordsOnServer?.toString() ?? '0',
-      currentPage : '{currentPage}',
-      totalPages : '{totalPages}',
-      rows: '{rows}',
-      first: '{first}',
-      last : '{last}',
-      totalRecords : '{totalRecords}'
-    }
-  }
 
   ngOnInit(): void {
     this.displayedRows$ = combineLatest([this._rows$, this._filters$, this._sortColumn$, this._sortDirection$]).pipe(
@@ -197,10 +192,10 @@ export class DataTableComponent extends DataSortBase implements OnInit, OnChange
               .filter((value, index, self) => self.indexOf(value) === index && value != null)
               .map(
                 (filterOption) =>
-                  ({
-                    label: filterOption,
-                    value: filterOption,
-                  } as SelectItem)
+                ({
+                  label: filterOption,
+                  value: filterOption,
+                } as SelectItem)
               )
           })
         )
