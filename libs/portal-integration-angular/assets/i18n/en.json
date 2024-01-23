@@ -24,7 +24,7 @@
     "ACTIONS_COLUMN_NAME": "Actions",
     "FILTER_TITLE": "Filter",
     "EDITED": "Edited",
-    "MENU": {
+    "ACTIONS": {
       "VIEW": "View",
       "EDIT": "Edit",
       "DELETE": "Delete"
