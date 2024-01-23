@@ -7,7 +7,7 @@ import { TranslateTestingModule } from 'ngx-translate-testing';
 import { ColumnType } from '../../../model/column-type.model';
 import { PortalCoreModule } from '../../portal-core.module';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { DataTableHarness } from 'libs/portal-integration-angular/testing';
+import { DataListGridHarness, DataTableHarness } from 'libs/portal-integration-angular/testing';
 import { MockAuthModule } from '../../../mock-auth/mock-auth.module';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 
@@ -226,24 +226,24 @@ describe('DataListGridComponent', () => {
         expect(component).toBeTruthy()
     })
 
-    it('loads dataTableHarness', async () => {
-        const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
-        expect(dataTable).toBeTruthy()
+    it('loads dataListGrid', async () => {
+        const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataListGridHarness)
+        expect(dataListGrid).toBeTruthy()
     })
 
     it('should display the paginator currentPageReport - de', async () => {
         console.log("params: ", component.params)
         translateService.use('de')
-        const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
-        const paginator = await dataTable.getPaginator()
+        const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataListGridHarness)
+        const paginator = await dataListGrid.getPaginator()
         const currentPageReport = await paginator.getCurrentPageReportText()
         expect(currentPageReport).toEqual('1 - 5 von 5')
     })
 
     it('should display the paginator currentPageReport - en', async () => {
         translateService.use('en')
-        const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
-        const paginator = await dataTable.getPaginator()
+        const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataListGridHarness)
+        const paginator = await dataListGrid.getPaginator()
         const currentPageReport = await paginator.getCurrentPageReportText()
         expect(currentPageReport).toEqual('1 - 5 of 5')
     })
@@ -251,8 +251,8 @@ describe('DataListGridComponent', () => {
     it('should display the paginator currentPageReport  with totalRecordsOnServer - de', async () => {
         component.totalRecordsOnServer = 10
         translateService.use('de')
-        const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
-        const paginator = await dataTable.getPaginator()
+        const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataListGridHarness)
+        const paginator = await dataListGrid.getPaginator()
         const currentPageReport = await paginator.getCurrentPageReportText()
         expect(currentPageReport).toEqual('1 - 5 von 5 (10)')
     })
@@ -260,8 +260,8 @@ describe('DataListGridComponent', () => {
     it('should display the paginator currentPageReport  with totalRecordsOnServer - en', async () => {
         component.totalRecordsOnServer = 10
         translateService.use('en')
-        const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
-        const paginator = await dataTable.getPaginator()
+        const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataListGridHarness)
+        const paginator = await dataListGrid.getPaginator()
         const currentPageReport = await paginator.getCurrentPageReportText()
         console.log("currentPageReport value: ", currentPageReport)
         expect(currentPageReport).toEqual('1 - 5 of 5 (10)')
