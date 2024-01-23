@@ -11,9 +11,4 @@ export class PPaginatorHarness extends ContentContainerComponentHarness {
         return await (await this.getCurrentPageReport()).getText()
     }
 
-    async getRowsPerPageOptionsText(position: number): Promise<string | undefined> {
-        let selectText = (await this.getRowsPerPageOptions()).selectedDropdownItemText(position)
-        
-        return selectText
-    }
 }

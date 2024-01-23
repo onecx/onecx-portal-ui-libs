@@ -20,7 +20,8 @@ describe('DataListGridComponent', () => {
     const ENGLISH_TRANSLATIONS = {
         OCX_DATA_TABLE: {
             SHOWING: "{{first}} - {{last}} of {{totalRecords}}",
-            SHOWING_WITH_TOTAL_ON_SERVER: "{{first}} - {{last}} of {{totalRecords}} ({{totalRecordsOnServer}})"
+            SHOWING_WITH_TOTAL_ON_SERVER: "{{first}} - {{last}} of {{totalRecords}} ({{totalRecordsOnServer}})",
+            ALL: "All"
         }
     };
 
@@ -28,7 +29,8 @@ describe('DataListGridComponent', () => {
     const GERMAN_TRANSLATIONS = {
         OCX_DATA_TABLE: {
             SHOWING: "{{first}} - {{last}} von {{totalRecords}}",
-            SHOWING_WITH_TOTAL_ON_SERVER: "{{first}} - {{last}} von {{totalRecords}} ({{totalRecordsOnServer}})"
+            SHOWING_WITH_TOTAL_ON_SERVER: "{{first}} - {{last}} von {{totalRecords}} ({{totalRecordsOnServer}})",
+            ALL: "Alle"
         }
     };
 
@@ -232,7 +234,6 @@ describe('DataListGridComponent', () => {
     })
 
     it('should display the paginator currentPageReport - de', async () => {
-        console.log("params: ", component.params)
         translateService.use('de')
         const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataListGridHarness)
         const paginator = await dataListGrid.getPaginator()
@@ -263,7 +264,26 @@ describe('DataListGridComponent', () => {
         const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataListGridHarness)
         const paginator = await dataListGrid.getPaginator()
         const currentPageReport = await paginator.getCurrentPageReportText()
-        console.log("currentPageReport value: ", currentPageReport)
         expect(currentPageReport).toEqual('1 - 5 of 5 (10)')
     })
+
+    it('should display the paginator rowsPerPageOptions  - en', async () => {
+        window.HTMLElement.prototype.scrollIntoView = jest.fn()
+        translateService.use('en')
+        const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
+        const paginator = await dataListGrid.getPaginator()
+        const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
+        const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(3)
+        expect(rowsPerPageOptionsText).toEqual('All')
+      })
+    
+      it('should display the paginator rowsPerPageOptions  - de', async () => {
+        window.HTMLElement.prototype.scrollIntoView = jest.fn()
+        translateService.use('de')
+        const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
+        const paginator = await dataListGrid.getPaginator()
+        const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
+        const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(3)
+        expect(rowsPerPageOptionsText).toEqual('Alle')
+      })
 })

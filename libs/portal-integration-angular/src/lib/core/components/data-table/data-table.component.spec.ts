@@ -18,7 +18,8 @@ describe('DataTableComponent', () => {
   const ENGLISH_TRANSLATIONS = {
     OCX_DATA_TABLE: {
       SHOWING: "{{first}} - {{last}} of {{totalRecords}}",
-      SHOWING_WITH_TOTAL_ON_SERVER: "{{first}} - {{last}} of {{totalRecords}} ({{totalRecordsOnServer}})"
+      SHOWING_WITH_TOTAL_ON_SERVER: "{{first}} - {{last}} of {{totalRecords}} ({{totalRecordsOnServer}})",
+      ALL: "All"
     }
   };
   
@@ -26,7 +27,8 @@ describe('DataTableComponent', () => {
   const GERMAN_TRANSLATIONS = {
     OCX_DATA_TABLE: {
       SHOWING: "{{first}} - {{last}} von {{totalRecords}}",
-      SHOWING_WITH_TOTAL_ON_SERVER: "{{first}} - {{last}} von {{totalRecords}} ({{totalRecordsOnServer}})"
+      SHOWING_WITH_TOTAL_ON_SERVER: "{{first}} - {{last}} von {{totalRecords}} ({{totalRecordsOnServer}})",
+      ALL: "Alle"
     }
   };
   
@@ -217,7 +219,6 @@ describe('DataTableComponent', () => {
   })
 
   it('should display the paginator currentPageReport - de', async () => {
-    console.log("params: ", component.params)
     translateService.use('de')
     const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
     const paginator = await dataTable.getPaginator()
@@ -248,20 +249,29 @@ describe('DataTableComponent', () => {
     const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
     const paginator = await dataTable.getPaginator()
     const currentPageReport = await paginator.getCurrentPageReportText()
-    console.log("currentPageReport value: ", currentPageReport)
     expect(currentPageReport).toEqual('1 - 5 of 5 (10)')
   })
 
-  fit('should display the paginator rowsPerPageOptions  - en', async () => {
+  it('should display the paginator rowsPerPageOptions  - en', async () => {
+    window.HTMLElement.prototype.scrollIntoView = jest.fn()
     translateService.use('en')
     const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
     const paginator = await dataTable.getPaginator()
-    const rowsPerPageOptions = await paginator.getRowsPerPageOptionsText(3)
-    //await rowsPerPageOptions.open()
- //   const dropdownItems = await rowsPerPageOptions.getDropdownItems()
- //   const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(3)
-    console.log("rowsPerPageOptionsText value: ", rowsPerPageOptions)
-    //expect(currentPageReport).toEqual('1 - 5 of 5 (10)')
+    const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
+    const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(3)
+    console.log("rowsPerPageOptionsText value: ", rowsPerPageOptionsText)
+    expect(rowsPerPageOptionsText).toEqual('All')
+  })
+
+  it('should display the paginator rowsPerPageOptions  - de', async () => {
+    window.HTMLElement.prototype.scrollIntoView = jest.fn()
+    translateService.use('de')
+    const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
+    const paginator = await dataTable.getPaginator()
+    const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
+    const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(3)
+    console.log("rowsPerPageOptionsText value: ", rowsPerPageOptionsText)
+    expect(rowsPerPageOptionsText).toEqual('Alle')
   })
   
 })
