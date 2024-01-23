@@ -3,7 +3,6 @@ import {
   ContentChild,
   DoCheck,
   EventEmitter,
-  Inject,
   Injector,
   Input,
   OnInit,
@@ -15,8 +14,6 @@ import { DataListGridComponent, ListGridData } from '../data-list-grid/data-list
 import { Row, Filter, Sort, DataTableComponent } from '../data-table/data-table.component'
 import { DataTableColumn } from '../../../model/data-table-column.model'
 import { DataSortDirection } from '../../../model/data-sort-direction'
-import { IAuthService } from '../../../api/iauth.service'
-import { AUTH_SERVICE } from '../../../api/injection-tokens'
 import { DataAction } from '../../../model/data-action'
 
 export type RowListGridData = ListGridData & Row
@@ -159,7 +156,7 @@ export class DataViewComponent implements DoCheck, OnInit {
     return this.injector.get('InteractiveDataViewComponent', null)?.deleteItem.observed || this.deleteItem.observed
   }
 
-  constructor(@Inject(AUTH_SERVICE) private authService: IAuthService, private injector: Injector) {}
+  constructor(private injector: Injector) {}
   ngOnInit(): void {
     this.firstColumnId = this.columns[0]?.id
   }

@@ -17,19 +17,23 @@ import { BreadcrumbService } from '../../../services/breadcrumb.service'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
 import { HttpClientModule } from '@angular/common/http'
-import { Portal } from '../../../model/portal'
+import { AppStateService } from '../../../services/app-state.service'
 
-function initFactory(breadcrumbService: BreadcrumbService, configService: ConfigurationService) {
-  return () => {
+function initFactory(breadcrumbService: BreadcrumbService, appStateService: AppStateService) {
+  return async () => {
     breadcrumbService.setItems([
       { label: 'Level 1', routerLink: 'something' },
       { label: 'Level 2', url: '/' },
     ])
-    configService.setPortal(dummyPortal)
+    await appStateService.currentPortal$.publish({
+      baseUrl: '/demo',
+      portalName: 'Demo',
+      id: 'Demo',
+      microfrontendRegistrations: [],
+    })
   }
 }
 
-const dummyPortal: Portal = { baseUrl: '/demo', portalName: 'Demo', id: 'Demo', microfrontends: [] }
 export default {
   title: 'Page Header Component',
   component: PageHeaderComponent,

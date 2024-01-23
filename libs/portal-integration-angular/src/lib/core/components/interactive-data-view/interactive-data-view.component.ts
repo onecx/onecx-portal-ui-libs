@@ -1,20 +1,8 @@
-import {
-  Component,
-  ContentChild,
-  EventEmitter,
-  Inject,
-  Input,
-  OnInit,
-  Output,
-  TemplateRef,
-  ViewChild,
-} from '@angular/core'
+import { Component, ContentChild, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core'
 import { DataTableColumn } from '../../../model/data-table-column.model'
 import { DataSortDirection } from '../../../model/data-sort-direction'
 import { Filter, Sort } from '../data-table/data-table.component'
 import { DataViewComponent, RowListGridData } from '../data-view/data-view.component'
-import { AUTH_SERVICE } from '../../../api/injection-tokens'
-import { IAuthService } from '../../../api/iauth.service'
 import { GroupSelectionChangedEvent } from '../column-group-selection/column-group-selection.component'
 import { ColumnSelectionChangedEvent } from '../custom-group-column-selector/custom-group-column-selector.component'
 import { DataAction } from '../../../model/data-action'
@@ -138,8 +126,6 @@ export class InteractiveDataViewComponent implements OnInit {
   set data(value: RowListGridData[]) {
     this._data = value
   }
-
-  constructor(@Inject(AUTH_SERVICE) private authService: IAuthService) {}
 
   ngOnInit(): void {
     this.selectedGroupKey = this.defaultGroupKey

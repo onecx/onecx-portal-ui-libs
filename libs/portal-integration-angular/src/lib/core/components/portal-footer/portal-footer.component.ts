@@ -1,23 +1,23 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core'
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core'
 import { ConfigurationService } from '../../../services/configuration.service'
 import { Router } from '@angular/router'
 import { MenuItem } from 'primeng/api'
 import { MenuService } from '../../../services/app.menu.service'
 import { AppStateService } from '../../../services/app-state.service'
-import { map, Observable } from 'rxjs'
+import { combineLatest, concat, map, Observable, of, withLatestFrom } from 'rxjs'
 import { ThemeService } from '../../../services/theme.service'
 import { API_PREFIX } from '../../../api/constants'
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
+import { CONFIG_KEY } from '../../../model/config-key.model'
+import { ImageLogoUrlUtils } from '../../utils/image-logo-url.utils'
 @Component({
   selector: 'ocx-footer',
   templateUrl: './portal-footer.component.html',
   styleUrls: ['./portal-footer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-@UntilDestroy()
 export class PortalFooterComponent implements OnInit {
-  copyrightMsg = 'Capgemini. All rights reserved.'
-  @Input() src: string | undefined
+  copyrightMsg$: Observable<string> | undefined
+  logoUrl$!: Observable<string | null>
   currentYear = new Date().getFullYear()
   portalMenuItems: MenuItem[] = []
   versionInfo$: Observable<string | undefined>
@@ -31,27 +31,39 @@ export class PortalFooterComponent implements OnInit {
     private themeService: ThemeService,
     private ref: ChangeDetectorRef
   ) {
-    this.versionInfo$ = this.appState.currentMfe$.pipe(untilDestroyed(this)).pipe(
-      map((mfe) => {
+    this.versionInfo$ = this.appState.currentMfe$.pipe(
+      withLatestFrom(this.appState.currentPortal$.asObservable()),
+      map(([mfe, portal]) => {
         const mfeInfoVersion = mfe?.version || ''
         const mfeName = mfe?.displayName
-        const hostVersion = this.configurationService.getProperty('APP_VERSION') || 'DEV-LOCAL'
+        const hostVersion = this.configurationService.getProperty(CONFIG_KEY.APP_VERSION) || 'DEV-LOCAL'
         const mfInfoText = mfeName ? `MF ${mfeName} v${mfeInfoVersion}` : ''
-        return `Portal: ${this.configurationService.getPortal().portalName} v${hostVersion} ${mfInfoText}`
+        return `Portal: ${portal.portalName} v${hostVersion} ${mfInfoText}`
       })
     )
+    this.logoUrl$ = combineLatest([
+      this.themeService.currentTheme$.asObservable(),
+      this.appState.currentPortal$.asObservable(),
+    ]).pipe(map(([theme, portalData]) => ImageLogoUrlUtils.createLogoUrl(theme.logoUrl || portalData.logoUrl)))
   }
   ngOnInit(): void {
-    const portalData = this.configurationService.getPortal()
-    this.themeService.currentTheme$.pipe(untilDestroyed(this)).subscribe((theme) => {
-      this.src = this.setImageUrl(theme.logoUrl || portalData.logoUrl)
-    })
-
-    if (
-      !(portalData.footerLabel === '' || portalData.footerLabel === 'string' || portalData.footerLabel === undefined)
-    ) {
-      this.copyrightMsg = portalData.companyName || portalData.footerLabel || 'All rights reserved.'
-    }
+    this.copyrightMsg$ = concat(
+      of('Capgemini. All rights reserved.'),
+      this.appState.currentPortal$.pipe(
+        map((portalData) => {
+          if (
+            !(
+              portalData.footerLabel === '' ||
+              portalData.footerLabel === 'string' ||
+              portalData.footerLabel === undefined
+            )
+          ) {
+            return portalData.companyName || portalData.footerLabel || 'All rights reserved.'
+          }
+          return ''
+        })
+      )
+    )
 
     this.menuService
       .getMenuItems()
@@ -60,7 +72,7 @@ export class PortalFooterComponent implements OnInit {
       )
   }
   public onErrorHandleSrc(): void {
-    this.src = undefined
+    this.logoUrl$ = of(null)
   }
   private createMenu(menuItem: MenuItem): void {
     if (menuItem && menuItem.items) {

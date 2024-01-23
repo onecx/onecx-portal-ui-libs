@@ -1,3 +1,60 @@
+## [4.0.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.0.1...v4.0.2) (2024-01-22)
+
+
+### Bug Fixes
+
+* update version of accelerator and integration-interface ([#77](https://github.com/onecx/onecx-portal-ui-libs/issues/77)) ([55ba465](https://github.com/onecx/onecx-portal-ui-libs/commit/55ba465f6af492ba51a4eed2f029c0ed719121cf))
+
+## [4.0.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.0.0...v4.0.1) (2024-01-22)
+
+
+### Bug Fixes
+
+* update portal-integration-angular version in peer dependencies of keycloak-auth  ([#76](https://github.com/onecx/onecx-portal-ui-libs/issues/76)) ([9ca372a](https://github.com/onecx/onecx-portal-ui-libs/commit/9ca372a50ac5b992d4cc0e1349e4ba9c9480cff4))
+
+## [4.0.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.9.0...v4.0.0) (2024-01-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* allow multiple instances of portal-integration-angular (#75)
+
+### Features
+
+* allow multiple instances of portal-integration-angular ([#75](https://github.com/onecx/onecx-portal-ui-libs/issues/75)) ([41c46ee](https://github.com/onecx/onecx-portal-ui-libs/commit/41c46ee389b455869ceb85df112852ed9cb33f50)), closes [#24](https://github.com/onecx/onecx-portal-ui-libs/issues/24)
+
+
+### Refactoring
+
+* **test:** ocx-content & ocx-content-container test harnesses ([#71](https://github.com/onecx/onecx-portal-ui-libs/issues/71)) ([4ab7931](https://github.com/onecx/onecx-portal-ui-libs/commit/4ab79311a2a42713db605de1dac2e471a87a1358))
+
+## [3.9.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.8.1...v3.9.0) (2024-01-17)
+
+
+### Features
+
+* P002271-6511 add guard ([#64](https://github.com/onecx/onecx-portal-ui-libs/issues/64)) ([249024b](https://github.com/onecx/onecx-portal-ui-libs/commit/249024b4092f9988fda2e4cbb875c58c13b8d349))
+
+
+### Bug Fixes
+
+* adaption of registerLocaleData due to ts-jest bug and removal of uncorrect include in tsconfig.spec.json ([#65](https://github.com/onecx/onecx-portal-ui-libs/issues/65)) ([f633f45](https://github.com/onecx/onecx-portal-ui-libs/commit/f633f456f4bfbfa61939c9e6821d1012f55cd20f))
+
+## [3.8.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.8.0...v3.8.1) (2024-01-10)
+
+
+### Bug Fixes
+
+* ocx-content-container - improve padding + allow specifying breakpoint ([#63](https://github.com/onecx/onecx-portal-ui-libs/issues/63)) ([ddef75b](https://github.com/onecx/onecx-portal-ui-libs/commit/ddef75b0734b5dcadfffe1c7157ad0c960e3f2c8))
+
+## [3.8.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.7.1...v3.8.0) (2024-01-09)
+
+
+### Features
+
+* implement ocx-content + ocx-content-container and re-enable Storybook ([#52](https://github.com/onecx/onecx-portal-ui-libs/issues/52)) ([5c7a934](https://github.com/onecx/onecx-portal-ui-libs/commit/5c7a93409e68ea4a3faa2b7e0245e3bad93e10de))
+* move injection tokens to separate file ([#60](https://github.com/onecx/onecx-portal-ui-libs/issues/60)) ([7b0ac81](https://github.com/onecx/onecx-portal-ui-libs/commit/7b0ac81402b37024adef0b54b9aa29cdf1810abf))
+
 ## [3.7.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.7.0...v3.7.1) (2023-12-25)
 
 

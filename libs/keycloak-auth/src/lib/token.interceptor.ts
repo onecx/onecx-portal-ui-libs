@@ -2,7 +2,8 @@ import { Inject, Injectable, Optional } from '@angular/core'
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http'
 import { Observable } from 'rxjs'
 import { AUTH_SERVICE, IAuthService } from '@onecx/portal-integration-angular'
-import { KEYCLOAK_AUTH_CONFIG, KeycloakAuthModuleConfig } from './keycloak-auth.module'
+import { KeycloakAuthModuleConfig } from './keycloak-auth.module'
+import { KEYCLOAK_AUTH_CONFIG } from './keycloak-injection-token'
 
 const WHITELIST = ['assets']
 
@@ -19,7 +20,7 @@ export class TokenInterceptor implements HttpInterceptor {
       return next.handle(request)
     }
 
-    const idToken = this.authService.getCurrentUser()?.idToken
+    const idToken = this.authService.getIdToken()
     if (idToken) {
       const authenticatedReq: HttpRequest<unknown> = request.clone({
         headers: request.headers.set('apm-principal-token', idToken),

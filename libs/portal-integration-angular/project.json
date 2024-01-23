@@ -58,6 +58,49 @@
       "options": {
         "libName": "portal-integration-angular"
       }
+    },
+    "storybook": {
+      "executor": "@storybook/angular:start-storybook",
+      "options": {
+        "port": 4400,
+        "configDir": "libs/portal-integration-angular/.storybook",
+        "browserTarget": "portal-integration-angular:build-storybook",
+        "compodoc": false,
+        "styles": [
+          "node_modules/primeng/resources/primeng.min.css",
+          "node_modules/primeicons/primeicons.css",
+          "libs/portal-integration-angular/assets/styles.scss",
+          "libs/portal-integration-angular/.storybook/storybook.css"
+        ]
+
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "build-storybook": {
+      "executor": "@storybook/angular:build-storybook",
+      "outputs": ["{options.outputDir}"],
+      "options": {
+        "outputDir": "dist/storybook/portal-integration-angular",
+        "configDir": "libs/portal-integration-angular/.storybook",
+        "browserTarget": "portal-integration-angular:build-storybook",
+        "compodoc": false,
+        "styles": [
+          "node_modules/primeng/resources/primeng.min.css",
+          "node_modules/primeicons/primeicons.css",
+          "libs/portal-integration-angular/assets/styles.scss",
+          "libs/portal-integration-angular/.storybook/storybook.css"
+        ]
+
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
     }
   }
 }
