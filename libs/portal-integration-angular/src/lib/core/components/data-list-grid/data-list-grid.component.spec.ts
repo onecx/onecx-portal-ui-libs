@@ -9,7 +9,6 @@ import { PortalCoreModule } from '../../portal-core.module';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { DataTableHarness } from 'libs/portal-integration-angular/testing';
 import { MockAuthModule } from '../../../mock-auth/mock-auth.module';
-import { MFE_INFO } from '../../../api/injection-tokens';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 
 describe('DataListGridComponent', () => {
@@ -200,15 +199,6 @@ describe('DataListGridComponent', () => {
             imports: [PrimeNgModule, BrowserAnimationsModule, TranslateModule.forRoot(), TranslateTestingModule.withTranslations(TRANSLATIONS),
                 PortalCoreModule, MockAuthModule, RouterModule],
             providers: [
-                {
-                    provide: MFE_INFO,
-                    useValue: {
-                        baseHref: '/base/path',
-                        mountPath: '/base/path',
-                        remoteBaseUrl: 'http://localhost:4200',
-                        shellName: 'shell',
-                    },
-                },
                 {
                     provide: ActivatedRoute,
                     useValue: {
