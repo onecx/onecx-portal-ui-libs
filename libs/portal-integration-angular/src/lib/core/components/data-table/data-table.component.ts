@@ -118,12 +118,6 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   currentFilterOptions$: Observable<SelectItem[]> | undefined
   currentSelectedFilters$: Observable<string[]> | undefined
   filterAmounts$: Observable<Record<string, number>> | undefined
-  get sortedObserved(): boolean {
-    return this.injector.get('DataViewComponent', null)?.sorted.observed || this.sorted.observed
-  }
-  get filteredObserved(): boolean {
-    return this.injector.get('DataViewComponent', null)?.filtered.observed || this.filtered.observed
-  }
   get viewTableRowObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
     return dv?.viewItemObserved || dv?.viewItem.observed || this.viewTableRow.observed
