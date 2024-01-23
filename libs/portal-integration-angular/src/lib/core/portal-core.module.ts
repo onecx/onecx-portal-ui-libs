@@ -80,6 +80,7 @@ import { SetInputValueDirective } from './directives/set-input-value.directive'
 import { DiagramComponent } from './components/diagram/diagram.component'
 import { GroupByCountDiagramComponent } from './components/group-by-count-diagram/group-by-count-diagram.component'
 import { ButtonDialogComponent } from './components/button-dialog/button-dialog.component'
+import { DialogHostComponent } from './components/button-dialog/dialog-host/dialog-host.component'
 
 export function createTranslateLoader(http: HttpClient, mfeInfo: MfeInfo) {
   if (mfeInfo?.remoteBaseUrl) {
@@ -164,6 +165,7 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     DiagramComponent,
     GroupByCountDiagramComponent,
     ButtonDialogComponent,
+    DialogHostComponent,
   ],
   providers: [
     ConfigurationService,
@@ -225,6 +227,7 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     DiagramComponent,
     GroupByCountDiagramComponent,
     ButtonDialogComponent,
+    DialogHostComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   entryComponents: [ColumnTogglerComponent],

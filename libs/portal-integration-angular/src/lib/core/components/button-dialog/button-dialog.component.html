@@ -7,15 +7,15 @@
             *ngIf="dialogData.config.secondaryButtonEnabled"
             class="mx-2"
             [icon]="dialogData.config.secondaryButtonDetails!.icon !== undefined ? dialogData.config.secondaryButtonDetails!.icon : ''"
-            (click)="sideButtonAction()"
-            [label]="dialogData.config.secondaryButtonDetails!.label"
+            (click)="secondaryButtonAction()"
+            [label]="dialogData.config.secondaryButtonDetails!.key | translate"
         ></p-button>
         <p-button 
             id="buttonDialogPrimaryButton"
             class="mx-2"
             [icon]="dialogData.config.primaryButtonDetails!.icon !== undefined ? dialogData.config.primaryButtonDetails!.icon : ''"
-            (click)="mainButtonAction()"
-            [label]="dialogData.config.primaryButtonDetails!.label"
+            (click)="primaryButtonAction()"
+            [label]="dialogData.config.primaryButtonDetails!.key | translate"
         ></p-button>
     </div>
 </div>

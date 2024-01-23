@@ -48,6 +48,7 @@ export * from './lib/core/components/data-list-grid-sorting/data-list-grid-sorti
 export * from './lib/core/components/group-by-count-diagram/group-by-count-diagram.component'
 export * from './lib/core/components/diagram/diagram.component'
 export * from './lib/core/components/button-dialog/button-dialog.component'
+export * from './lib/core/components/button-dialog/dialog-host/dialog-host.component'
 
 // services
 export * from './lib/services/app.menu.service'

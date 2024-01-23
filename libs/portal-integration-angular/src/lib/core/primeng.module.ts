@@ -24,6 +24,7 @@ import { InputSwitchModule } from 'primeng/inputswitch'
 import { DataViewModule } from 'primeng/dataview'
 import { PortalMessageService } from '../services/message.service'
 import { ChartModule } from 'primeng/chart'
+import { DialogService } from 'primeng/dynamicdialog'
 
 @NgModule({
   imports: [
@@ -52,7 +53,7 @@ import { ChartModule } from 'primeng/chart'
     ChartModule,
     MessageModule,
   ],
-  providers: [{ provide: MessageService, useExisting: PortalMessageService }],
+  providers: [{ provide: MessageService, useExisting: PortalMessageService }, DialogService],
   exports: [
     BadgeModule,
     BreadcrumbModule,

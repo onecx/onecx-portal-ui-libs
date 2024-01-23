@@ -1,30 +1,19 @@
-import { EventEmitter, Type } from '@angular/core'
+import { Type } from '@angular/core'
 
-export interface ButtonDialogDetails {
-  label: string
+export interface ButtonDialogButtonDetails {
+  key: string
   icon?: string
-  valueToEmit?: any
-}
-
-export interface ButtonDialogDynamicDialogDetails extends ButtonDialogDetails {
-  closeDialog?: boolean
+  parameters?: Record<string, unknown>
 }
 
 export interface ButtonDialogConfig {
-  primaryButtonDetails?: ButtonDialogDetails | ButtonDialogDynamicDialogDetails
+  primaryButtonDetails?: ButtonDialogButtonDetails
   secondaryButtonEnabled?: boolean
-  secondaryButtonDetails?: ButtonDialogDetails | ButtonDialogDynamicDialogDetails
+  secondaryButtonDetails?: ButtonDialogButtonDetails
 }
 
 export interface ButtonDialogData {
   config: ButtonDialogConfig
   component?: Type<any>
   componentData: any
-}
-
-export interface ButtonDialogDynamicDialogConfig {
-  config?: ButtonDialogConfig
-  component?: Type<any>
-  componentData?: any
-  emitter?: EventEmitter<any>
 }
