@@ -6,7 +6,6 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateService } from '@ngx-translate/core'
 import { MessageModule } from 'primeng/message'
 import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
-import { MFE_INFO } from '../../../api/injection-tokens'
 import { SearchConfigPrimitive, SearchConfig } from '../../../model/search-config'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { SearchConfigHarness } from '../../../../../testing'
@@ -71,7 +70,6 @@ describe('SearchConfigComponent', () => {
       ],
       providers: [
         {
-          provide: MFE_INFO,
           useValue: {
             baseHref: '/base/path',
             mountPath: '/base/path',

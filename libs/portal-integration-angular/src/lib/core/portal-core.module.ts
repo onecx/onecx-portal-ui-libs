@@ -3,7 +3,6 @@ import {
   APP_INITIALIZER,
   CUSTOM_ELEMENTS_SCHEMA,
   Inject,
-  InjectionToken,
   LOCALE_ID,
   ModuleWithProviders,
   NgModule,
@@ -20,9 +19,7 @@ import {
   TranslateModule,
   TranslateService,
 } from '@ngx-translate/core'
-import { TranslateHttpLoader } from '@ngx-translate/http-loader'
-import { AUTH_SERVICE, MFE_INFO, MFE_INFO_FN } from '../api/injection-tokens'
-import { MfeInfo } from '../model/mfe-info.model'
+import { APPLICATION_NAME, AUTH_SERVICE, SANITY_CHECK } from '../api/injection-tokens'
 import { AutofocusDirective } from './directives/autofocus.directive'
 import { IfBreakpointDirective } from './directives/if-breakpoint.directive'
 import { IfPermissionDirective } from './directives/if-permission.directive'
@@ -61,7 +58,6 @@ import { DataListGridComponent } from './components/data-list-grid/data-list-gri
 import { PrimeNgModule } from './primeng.module'
 import { MockAuthService } from '../mock-auth/mock-auth.service'
 import { ConfirmDialogModule } from 'primeng/confirmdialog'
-import { TranslateCombinedLoader } from './utils/translate.combined.loader'
 import { DataTableComponent } from './components/data-table/data-table.component'
 import de from '@angular/common/locales/de'
 import { DataViewComponent } from './components/data-view/data-view.component'
@@ -74,29 +70,21 @@ import { AdvancedDirective } from './directives/advanced.directive'
 import { BasicDirective } from './directives/basic.directive'
 import { DataListGridSortingComponent } from './components/data-list-grid-sorting/data-list-grid-sorting.component'
 import { RelativeDatePipe } from './pipes/relative-date.pipe'
-import { MessageService } from 'primeng/api'
 import { PatchFormGroupValuesDirective } from './directives/patch-form-group-values.driective'
 import { SetInputValueDirective } from './directives/set-input-value.directive'
 import { LoadingIndicatorComponent } from './components/loading-indicator/loading-indicator.component'
 import { LoadingIndicatorDirective } from './directives/loading-indicator.directive'
 import { DiagramComponent } from './components/diagram/diagram.component'
 import { GroupByCountDiagramComponent } from './components/group-by-count-diagram/group-by-count-diagram.component'
+import { OcxContentDirective } from './directives/ocx-content.directive'
+import { OcxContentComponent } from './components/ocx-content/ocx-content.component'
+import { OcxContentContainerComponent } from './components/ocx-content-container/ocx-content-container.component'
+import { OcxContentContainerDirective } from './directives/ocx-content-container.directive'
 import { SearchConfigComponent } from './components/search-config/search-config.component'
-
-export function createTranslateLoader(http: HttpClient, mfeInfo: MfeInfo) {
-  if (mfeInfo?.remoteBaseUrl) {
-    return new TranslateCombinedLoader(
-      new TranslateHttpLoader(http, `${mfeInfo.remoteBaseUrl}/assets/i18n/`, '.json'),
-      new TranslateHttpLoader(http, `./assets/i18n/`, '.json'),
-      new TranslateHttpLoader(http, `./onecx-portal-lib/assets/i18n/`, '.json')
-    )
-  } else {
-    return new TranslateCombinedLoader(
-      new TranslateHttpLoader(http, `./assets/i18n/`, '.json'),
-      new TranslateHttpLoader(http, `./onecx-portal-lib/assets/i18n/`, '.json')
-    )
-  }
-}
+import { UserService } from '../services/user.service'
+import { UserProfileAPIService } from '../services/userprofile-api.service'
+import { createTranslateLoader } from './utils/create-translate-loader.utils'
+import { MessageService } from 'primeng/api'
 
 export class MyMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -114,7 +102,11 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     PrimeNgModule,
     TranslateModule.forRoot({
       isolate: true,
-      loader: { provide: TranslateLoader, useFactory: createTranslateLoader, deps: [HttpClient, MFE_INFO] },
+      loader: {
+        provide: TranslateLoader,
+        useFactory: createTranslateLoader,
+        deps: [HttpClient, AppStateService, ConfigurationService],
+      },
       missingTranslationHandler: { provide: MissingTranslationHandler, useClass: MyMissingTranslationHandler },
     }),
     ConfirmDialogModule,
@@ -167,6 +159,10 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     SetInputValueDirective,
     DiagramComponent,
     GroupByCountDiagramComponent,
+    OcxContentDirective,
+    OcxContentContainerDirective,
+    OcxContentComponent,
+    OcxContentContainerComponent,
     SearchConfigComponent,
   ],
   providers: [
@@ -230,6 +226,10 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     SetInputValueDirective,
     DiagramComponent,
     GroupByCountDiagramComponent,
+    OcxContentDirective,
+    OcxContentContainerDirective,
+    OcxContentComponent,
+    OcxContentContainerComponent,
     SearchConfigComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -239,17 +239,7 @@ export class PortalCoreModule {
   public static forMicroFrontend(): ModuleWithProviders<PortalCoreModule> {
     return {
       ngModule: PortalCoreModule,
-      providers: [
-        { provide: SANITY_CHECK, useValue: 'mfe' },
-        {
-          provide: MFE_INFO,
-          useFactory: (mfInfoFn: () => MfeInfo): MfeInfo => {
-            console.log(`MFE_INFO Factory called now `)
-            return mfInfoFn()
-          },
-          deps: [MFE_INFO_FN],
-        },
-      ],
+      providers: [{ provide: SANITY_CHECK, useValue: 'mfe' }],
     }
   }
 
@@ -258,7 +248,6 @@ export class PortalCoreModule {
       ngModule: PortalCoreModule,
       providers: [
         { provide: SANITY_CHECK, useValue: 'root' },
-        { provide: MFE_INFO_FN, useValue: () => undefined },
         { provide: APPLICATION_NAME, useValue: appName },
         {
           provide: MessageService,
@@ -272,14 +261,22 @@ export class PortalCoreModule {
           provide: APP_INITIALIZER,
           multi: true,
           useFactory: standaloneInitializer,
-          deps: [AUTH_SERVICE, ConfigurationService, PortalApiService, ThemeService, APPLICATION_NAME, AppStateService],
+          deps: [
+            AUTH_SERVICE,
+            ConfigurationService,
+            PortalApiService,
+            ThemeService,
+            APPLICATION_NAME,
+            AppStateService,
+            UserService,
+            UserProfileAPIService,
+          ],
         })
     }
     return module
   }
 
   constructor(
-    @Optional() @SkipSelf() parent?: PortalCoreModule,
     @Optional() @Inject(SANITY_CHECK) sanityCheck?: string,
     @Optional() @SkipSelf() @Inject(SANITY_CHECK) parentSanityCheck?: string
   ) {
@@ -293,8 +290,9 @@ export class PortalCoreModule {
          Make sure you only use 'PortalCoreModule.forRoot()' in you root AppModule and that you use 'PortalCoreModule.forMicrofrontend()' in your feature modules`
       )
     }
-    registerLocaleData(de)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    registerLocaleData((de as any).default ?? de)
+    //  Do not change the line above until the following ts-jest bug is fixed: https://github.com/kulshekhar/ts-jest/issues/3925
+    //  The ts-jest bug causes that the locale is not imported correctly.
   }
 }
-const SANITY_CHECK = new InjectionToken<string>('OCXSANITY_CHECK')
-const APPLICATION_NAME = new InjectionToken<string>('APPLICATION_NAME')

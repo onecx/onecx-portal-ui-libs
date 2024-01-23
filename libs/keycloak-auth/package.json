@@ -1,10 +1,10 @@
 {
   "name": "@onecx/keycloak-auth",
-  "version": "3.7.1",
+  "version": "4.0.2",
   "peerDependencies": {
     "@angular/common": ">=15.2.7",
     "@angular/core": ">=15.2.7",
-    "@onecx/portal-integration-angular": "~3",
+    "@onecx/portal-integration-angular": "~4",
     "keycloak-angular": "^13.0.0",
     "keycloak-js": "^18.0.0",
     "rxjs": "~7.8.0"
