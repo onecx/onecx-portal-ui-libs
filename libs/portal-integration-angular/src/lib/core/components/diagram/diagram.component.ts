@@ -14,7 +14,7 @@ export class DiagramComponent implements OnInit, OnChanges {
   @Input() data: DiagramData[] | undefined
   @Input() sumKey = 'OCX_DIAGRAM.SUM'
   private _diagramType: DiagramType = DiagramType.PIE
-  public chartType: string = 'pie'
+  public chartType = 'pie'
   @Input()
   get diagramType(): DiagramType {
     return this._diagramType
