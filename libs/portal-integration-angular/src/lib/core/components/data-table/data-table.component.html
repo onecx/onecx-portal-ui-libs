@@ -15,7 +15,7 @@
             <span class="icon-button-header-wrapper">
               <button
                 id="sortButton"
-                *ngIf="column.sortable && sortedObserved"
+                *ngIf="column.sortable"
                 class="pi"
                 [class.pi-sort-alt-slash]="(column?.id === sortColumn && sortDirection === 'NONE') || column?.id !== sortColumn"
                 [class.pi-sort-amount-up]="column?.id === sortColumn && sortDirection === 'ASCENDING'"
