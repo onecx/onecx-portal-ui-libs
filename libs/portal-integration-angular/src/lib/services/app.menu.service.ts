@@ -1,11 +1,13 @@
 import { Inject, Injectable, Optional } from '@angular/core'
 import { Router } from '@angular/router'
 import { MenuItem } from 'primeng/api'
-import { map, Observable, of, shareReplay, Subject } from 'rxjs'
+import { map, Observable, of, shareReplay, Subject, withLatestFrom } from 'rxjs'
 import { PortalMenuItem } from '../model/menu-item.model'
 import { ConfigurationService } from './configuration.service'
 import { MenuApiService } from './menu-api.service'
 import { APP_BASE_HREF, PlatformLocation } from '@angular/common'
+import { CONFIG_KEY } from '../model/config-key.model'
+import { UserService } from './user.service'
 
 @Injectable({ providedIn: 'root' })
 export class MenuService {
@@ -21,7 +23,8 @@ export class MenuService {
     private config: ConfigurationService,
     private router: Router,
     private platformLoc: PlatformLocation,
-    @Inject(APP_BASE_HREF) @Optional() private baseURL: string
+    @Inject(APP_BASE_HREF) @Optional() private baseURL: string,
+    private userService: UserService
   ) {
     if (!this.baseURL) {
       this.baseURL = this.platformLoc.getBaseHrefFromDOM()
@@ -42,24 +45,22 @@ export class MenuService {
 
   getMenuItems(forceReload = false): Observable<MenuItem[]> {
     if (!this.menuItems$ || forceReload) {
-      const portalId = this.config.getPortalId()
+      const portalId = this.config.getProperty(CONFIG_KEY.TKIT_PORTAL_ID)
       if (portalId) {
         this.menuItems$ = this.api.getMenuItems(portalId).pipe(
-          map((data) => this.constructMenuItems(data)),
-          // tap((data) => console.log(`menu tap 1`)),
+          withLatestFrom(this.userService.lang$),
+          map(([data, userLang]) => this.constructMenuItems(data, userLang)),
           shareReplay()
-          // tap((data) => console.log(`menu tap 2 ${JSON.stringify(data, null, 2)}`))
         )
       } else {
         console.error('No portal defined - set one in your app configuration')
         return of([])
       }
     }
-
     return this.menuItems$
   }
 
-  private constructMenuItems(portalMenuItems: PortalMenuItem[]): MenuItem[] {
+  private constructMenuItems(portalMenuItems: PortalMenuItem[], userLang: string): MenuItem[] {
     const menuItems = portalMenuItems.filter((item) => {
       return item
     })
@@ -67,7 +68,7 @@ export class MenuService {
       return menuItems
         .sort((a, b) => a.position - b.position)
         .filter((i) => i)
-        .map((item) => this.mapMenuItem(item))
+        .map((item) => this.mapMenuItem(item, userLang))
     } else {
       return []
     }
@@ -91,10 +92,8 @@ export class MenuService {
       return false
     }
     const path = url?.trim().split('?')[0]
-    //route is local if it matches built in routes in our shell
     if (
       this.router.config.some((r) => {
-        // console.log(`comparing ${this.toRouteUrl(path)} to ${this.toRouteUrl(this.baseURL + r.path)}`)
         return this.toRouteUrl(path) === this.toRouteUrl(this.baseURL + r.path)
       })
     ) {
@@ -104,30 +103,6 @@ export class MenuService {
     return false
   }
 
-  // private isLocal(url: string) {
-  //   if (url && url.startsWith('http')) {
-  //     return false
-  //   }
-  //   let menuUrl = url?.trim().split('?')[0]
-  //   menuUrl = menuUrl?.endsWith('/') ? menuUrl.slice(0, -1) : menuUrl
-  //   //route is local if it matches built in routes in our shell
-
-  //   const basePathPrefix = this.baseURL?.endsWith('/') ? this.baseURL.slice(0, -1) : this.baseURL
-  //   if (
-  //     this.router.config.some((r) => {
-  //       // console.log(
-  //       //   `Compare ${basePathPrefix}/${r.path} to ${menuUrl} : result : ` +
-  //       //     `${basePathPrefix}/${r.path}`.startsWith(menuUrl)
-  //       // )
-  //       return `${basePathPrefix}/${r.path}`.startsWith(menuUrl)
-  //     })
-  //   ) {
-  //     return true
-  //   }
-
-  //   return false
-  // }
-
   private stripBaseHref(url: string): string {
     if (this.baseURL && url) {
       return url.replace(this.baseURL, '')
@@ -136,9 +111,9 @@ export class MenuService {
     }
   }
 
-  private mapMenuItem(item: PortalMenuItem): MenuItem {
+  private mapMenuItem(item: PortalMenuItem, userLang: string): MenuItem {
     const isLocal = this.isLocal(item.url)
-    const label = item.i18n[this.config.lang] || item.name
+    const label = item.i18n[userLang] || item.name
     return {
       id: item.key,
       items:
@@ -146,7 +121,7 @@ export class MenuService {
           ? item.children
               .sort((a, b) => a.position - b.position)
               .filter((i) => i)
-              .map((i) => this.mapMenuItem(i))
+              .map((i) => this.mapMenuItem(i, userLang))
           : undefined,
       label,
       icon: item.badge || undefined,

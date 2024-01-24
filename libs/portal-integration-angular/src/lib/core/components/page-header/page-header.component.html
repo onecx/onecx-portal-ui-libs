@@ -3,7 +3,7 @@
     <p-breadcrumb
       [model]="items"
       *ngIf="breadcrumbs$ | async  as items"
-      [home]="home"
+      [home]="(home$ | async) ?? {}"
       [attr.manual]="manualBreadcrumbs"
     ></p-breadcrumb>
   </ng-container>
@@ -68,6 +68,7 @@
           </div>
         </ng-container>
       </ng-container>
+      <ng-container *ngIf="additionalToolbarContent" [ngTemplateOutlet]="additionalToolbarContent"> </ng-container>
     </div>
   </div>
 

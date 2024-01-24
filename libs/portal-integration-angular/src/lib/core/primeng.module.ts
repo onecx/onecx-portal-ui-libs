@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core'
-import { MessageService } from 'primeng/api'
 import { BadgeModule } from 'primeng/badge'
 import { BreadcrumbModule } from 'primeng/breadcrumb'
 import { ButtonModule } from 'primeng/button'
@@ -22,9 +21,7 @@ import { InputNumberModule } from 'primeng/inputnumber'
 import { DialogModule } from 'primeng/dialog'
 import { InputSwitchModule } from 'primeng/inputswitch'
 import { DataViewModule } from 'primeng/dataview'
-import { PortalMessageService } from '../services/message.service'
 import { ChartModule } from 'primeng/chart'
-import { DialogService } from 'primeng/dynamicdialog'
 
 @NgModule({
   imports: [
@@ -53,7 +50,6 @@ import { DialogService } from 'primeng/dynamicdialog'
     ChartModule,
     MessageModule,
   ],
-  providers: [{ provide: MessageService, useExisting: PortalMessageService }, DialogService],
   exports: [
     BadgeModule,
     BreadcrumbModule,

@@ -1,34 +1,28 @@
-import {
-  Directive,
-  ElementRef,
-  Inject,
-  Input,
-  OnInit,
-  Optional,
-  Renderer2,
-  TemplateRef,
-  ViewContainerRef,
-} from '@angular/core'
-import { IAuthService } from '../../api/iauth.service'
-import { AUTH_SERVICE } from '../../api/injection-tokens'
+import { Directive, ElementRef, Input, OnInit, Optional, Renderer2, TemplateRef, ViewContainerRef } from '@angular/core'
+import { UserService } from '../../services/user.service'
 
-@Directive({ selector: '[ocxIfPermission]' })
+@Directive({ selector: '[ocxIfPermission], [ocxIfNotPermission]' })
 export class IfPermissionDirective implements OnInit {
   @Input('ocxIfPermission') permission: string | undefined
+  @Input('ocxIfNotPermission') set notPermission(value: string | undefined) {
+    this.permission = value
+    this.negate = true
+  }
+
   @Input() onMissingPermission: 'hide' | 'disable' = 'hide'
+  negate = false
 
   constructor(
     private renderer: Renderer2,
     private el: ElementRef,
     private viewContainer: ViewContainerRef,
-    @Inject(AUTH_SERVICE) private authService: IAuthService,
+    private userService: UserService,
     @Optional() private templateRef?: TemplateRef<any>
   ) {}
 
   ngOnInit() {
     if (this.permission) {
-      if (!this.authService.hasPermission(this.permission)) {
-        console.log(`Permission check failed: ${this.permission}`)
+      if (this.negate === this.userService.hasPermission(this.permission)) {
         if (this.onMissingPermission === 'disable') {
           this.renderer.setAttribute(this.el.nativeElement, 'disabled', 'disabled')
         } else {

@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { GroupByCountDiagramComponent } from './group-by-count-diagram.component'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { MFE_INFO } from '../../../api/injection-tokens'
 import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
 import { ColumnType } from '../../../model/column-type.model'
 import { MessageModule } from 'primeng/message'
@@ -157,17 +156,6 @@ describe('GroupByCountDiagramComponent', () => {
           de: require('./../../../../../assets/i18n/de.json'),
         }),
         HttpClientTestingModule,
-      ],
-      providers: [
-        {
-          provide: MFE_INFO,
-          useValue: {
-            baseHref: '/base/path',
-            mountPath: '/base/path',
-            remoteBaseUrl: 'http://localhost:4200',
-            shellName: 'shell',
-          },
-        },
       ],
     }).compileComponents()
 
