@@ -43,7 +43,7 @@ export class PortalDialogService {
     return this.dialogService.open(componentType, config)
   }
 
-  openNew<T = unknown>(
+  openDialog<T = unknown>(
     title: TranslationKey | null,
     componentOrMessage: Component<T> | TranslationKey | DialogMessage,
     primaryButtonTranslationKeyOrDetails: TranslationKey | ButtonDialogButtonDetails,

@@ -29,7 +29,7 @@ class BaseTestComponent {
   constructor(public portalDialogService: PortalDialogService) {}
 
   show(title: any, message: any, button1: any, button2?: any, showCloseButton: any = true) {
-    this.portalDialogService.openNew(title, message, button1, button2, showCloseButton).subscribe({
+    this.portalDialogService.openDialog(title, message, button1, button2, showCloseButton).subscribe({
       next: (result) => {
         this.resultFromShow = result
       },
@@ -713,7 +713,7 @@ describe('PortalDialogService', () => {
     expect(isSecondaryButtonDisabled).toBeTruthy()
   })
 
-  fit('should ??', async () => {
+  it('should react to complex component behavior and return when it decides', async () => {
     jest.spyOn(pDialogService, 'open')
 
     fixture.componentInstance.show(
