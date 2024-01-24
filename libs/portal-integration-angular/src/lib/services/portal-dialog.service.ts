@@ -50,13 +50,6 @@ export class PortalDialogService {
     secondaryButtonTranslationKeyOrDetails?: TranslationKey | ButtonDialogButtonDetails,
     showCloseButton: boolean = true
   ): Observable<DialogState<T>> {
-    console.log(
-      title,
-      componentOrMessage,
-      primaryButtonTranslationKeyOrDetails,
-      secondaryButtonTranslationKeyOrDetails,
-      showCloseButton
-    )
     let dialogTitle = ''
     const translateParams = this.prepareTitleForTranslation(title)
     this.translateService.get(translateParams.key, translateParams.parameters).subscribe((translation: string) => {

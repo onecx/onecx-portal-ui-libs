@@ -1,4 +1,16 @@
+import { CommonModule } from '@angular/common'
+import { NoopAnimationsModule } from '@angular/platform-browser/animations'
+import { Component, EventEmitter, Input, Output } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { HarnessLoader } from '@angular/cdk/testing'
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
+import { TranslateTestingModule } from 'ngx-translate-testing'
+import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog'
+import { ButtonModule } from 'primeng/button'
+import { Observable, of } from 'rxjs'
+
+import { ButtonDialogComponent } from '../core/components/button-dialog/button-dialog.component'
+import { DialogHostComponent } from '../core/components/button-dialog/dialog-host/dialog-host.component'
 import {
   DialogButtonClicked,
   DialogPrimaryButtonDisabled,
@@ -7,18 +19,7 @@ import {
   DialogState,
   PortalDialogService,
 } from './portal-dialog.service'
-import { TranslateTestingModule } from 'ngx-translate-testing'
-import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog'
-import { HarnessLoader } from '@angular/cdk/testing'
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { Component, EventEmitter, Input, Output } from '@angular/core'
-import { ButtonDialogHarness } from '../../../testing/button-dialog.harness'
-import { ButtonDialogComponent } from '../core/components/button-dialog/button-dialog.component'
-import { CommonModule } from '@angular/common'
-import { NoopAnimationsModule } from '@angular/platform-browser/animations'
-import { DialogHostComponent } from '../core/components/button-dialog/dialog-host/dialog-host.component'
-import { ButtonModule } from 'primeng/button'
-import { Observable, of } from 'rxjs'
+import { DivHarness, InputHarness, ButtonDialogHarness } from '../../../testing/index'
 
 @Component({
   template: `<h1>BaseTestComponent</h1>`,
@@ -103,29 +104,82 @@ class DialogSecondaryButtonDisabledComponent implements DialogSecondaryButtonDis
   secondaryButtonEnabled: EventEmitter<boolean> = new EventEmitter()
 }
 
-// @Component({
-//   template: `<div>
-//     <h1>CompleteDialogComponent</h1>
-//     <input type="text" pInputText [formControl]/>
-//   </div>`,
-// })
-// class CompleteDialogComponent
-//   implements DialogSecondaryButtonDisabled, DialogPrimaryButtonDisabled, DialogButtonClicked, DialogResult<string>
-// {
-//   @Output()
-//   primaryButtonEnabled: EventEmitter<boolean> = new EventEmitter()
-//   @Output()
-//   secondaryButtonEnabled: EventEmitter<boolean> = new EventEmitter()
-//   dialogResult: string = ''
-//   error?: string
-//   ocxDialogButtonClicked(state: DialogState<string>): boolean | Observable<boolean> | Promise<boolean> | undefined {
-//     if (this.dialogResult === 'John') {
-//       return true
-//     } else {
-//       return false
-//     }
-//   }
-// }
+interface NameAndSurnameObject {
+  name: string
+  surname: string
+}
+
+@Component({
+  template: `<div>
+    <h1>CompleteDialogComponent</h1>
+    <div class="nameError" *ngIf="!isNameValid">Name is not correct</div>
+    <label for="name">Name:</label>
+    <input id="name" type="text" (change)="onNameChange($event)" />
+    <label for="surname">Surname:</label>
+    <input id="surname" type="text" (change)="onSurnameChange($event)" />
+    <div class="message" *ngIf="message !== undefined">{{ message }}</div>
+  </div>`,
+})
+export class CompleteDialogComponent
+  implements
+    DialogSecondaryButtonDisabled,
+    DialogPrimaryButtonDisabled,
+    DialogButtonClicked,
+    DialogResult<NameAndSurnameObject>
+{
+  @Output()
+  primaryButtonEnabled: EventEmitter<boolean> = new EventEmitter()
+  @Output()
+  secondaryButtonEnabled: EventEmitter<boolean> = new EventEmitter()
+
+  dialogResult: NameAndSurnameObject = {
+    name: '',
+    surname: '',
+  }
+
+  isNameValid = false
+
+  message: string | undefined = undefined
+
+  onNameChange(event: any) {
+    const newNameValue: string = event.target.value
+    this.dialogResult.name = newNameValue
+    if (newNameValue.length < 4 || newNameValue.length == 0) {
+      this.isNameValid = false
+      this.primaryButtonEnabled.emit(false)
+    } else {
+      this.isNameValid = true
+      this.primaryButtonEnabled.emit(true)
+    }
+  }
+
+  onSurnameChange(event: any) {
+    const newSurnameValue: string = event.target.value
+    this.dialogResult.surname = newSurnameValue
+    if (newSurnameValue === 'Doe') {
+      this.secondaryButtonEnabled.emit(true)
+    } else {
+      this.secondaryButtonEnabled.emit(false)
+    }
+  }
+
+  ocxDialogButtonClicked(
+    state: DialogState<NameAndSurnameObject>
+  ): boolean | Observable<boolean> | Promise<boolean> | undefined {
+    if (state.button === 'primary') {
+      if (state.result?.name == 'John' && state.result.surname === 'Doe') {
+        // use message service
+        this.message = 'Welcome John'
+        return true
+      }
+      this.message = 'Wrong credentials'
+      return false
+    } else {
+      this.message = 'Smart but name should be correct too'
+      return false
+    }
+  }
+}
 
 describe('PortalDialogService', () => {
   let pDialogService: DialogService
@@ -143,7 +197,17 @@ describe('PortalDialogService', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [BaseTestComponent, ButtonDialogComponent, DialogHostComponent],
+      declarations: [
+        BaseTestComponent,
+        ButtonDialogComponent,
+        DialogHostComponent,
+        CompleteDialogComponent,
+        DialogButtonClickedWithResultComponent,
+        DialogPrimaryButtonDisabledComponent,
+        DialogSecondaryButtonDisabledComponent,
+        TestWithInputsComponent,
+        DialogResultTestComponent,
+      ],
       imports: [
         TranslateTestingModule.withTranslations('en', translations),
         DynamicDialogModule,
@@ -226,9 +290,9 @@ describe('PortalDialogService', () => {
     fixture.detectChanges()
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    const primaryButtonLabel = await dialogHarness.getPrimaryButtonlabel()
+    const primaryButtonLabel = await dialogHarness.getPrimaryButtonLabel()
     expect(primaryButtonLabel).toBe(translations['BUTTON'])
-    const secondaryButtonLabel = await dialogHarness.getSecondaryButtonlabel()
+    const secondaryButtonLabel = await dialogHarness.getSecondaryButtonLabel()
     expect(secondaryButtonLabel).toBe(translations['BUTTON'])
   })
 
@@ -244,9 +308,9 @@ describe('PortalDialogService', () => {
     fixture.detectChanges()
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    const primaryButtonLabel = await dialogHarness.getPrimaryButtonlabel()
+    const primaryButtonLabel = await dialogHarness.getPrimaryButtonLabel()
     expect(primaryButtonLabel).toBe('myButton myButtonParam1')
-    const secondaryButtonLabel = await dialogHarness.getSecondaryButtonlabel()
+    const secondaryButtonLabel = await dialogHarness.getSecondaryButtonLabel()
     expect(secondaryButtonLabel).toBe('myButton myButtonParam2')
   })
 
@@ -262,12 +326,12 @@ describe('PortalDialogService', () => {
     fixture.detectChanges()
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    const primaryButtonLabel = await dialogHarness.getPrimaryButtonlabel()
+    const primaryButtonLabel = await dialogHarness.getPrimaryButtonLabel()
     const primaryButtonIcon = await dialogHarness.getPrimaryButtonIcon()
     expect(primaryButtonLabel).toBe(translations['BUTTON'])
     expect(primaryButtonIcon).toBe('pi pi-times')
 
-    const secondaryButtonLabel = await dialogHarness.getSecondaryButtonlabel()
+    const secondaryButtonLabel = await dialogHarness.getSecondaryButtonLabel()
     const secondaryButtonIcon = await dialogHarness.getSecondaryButtonIcon()
     expect(secondaryButtonLabel).toBe(translations['BUTTON'])
     expect(secondaryButtonIcon).toBe('pi pi-trash')
@@ -343,9 +407,9 @@ describe('PortalDialogService', () => {
     fixture.detectChanges()
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    const primaryButtonLabel = await dialogHarness.getPrimaryButtonlabel()
+    const primaryButtonLabel = await dialogHarness.getPrimaryButtonLabel()
     expect(primaryButtonLabel).toBe('button1')
-    const secondaryButtonLabel = await dialogHarness.getSecondaryButtonlabel()
+    const secondaryButtonLabel = await dialogHarness.getSecondaryButtonLabel()
     expect(secondaryButtonLabel).toBeUndefined()
   })
 
@@ -649,41 +713,94 @@ describe('PortalDialogService', () => {
     expect(isSecondaryButtonDisabled).toBeTruthy()
   })
 
-  //   it('should enable primary button when component implementing DialogPrimaryButtonDisabled interface emits true', async () => {
-  //     // jest.spyOn(pDialogService, 'open')
-  //     // fixture.componentInstance.show(
-  //     //   'title',
-  //     //   {
-  //     //     type: DialogPrimaryButtonDisabledComponent,
-  //     //     inputs: {
-  //     //       shouldEmitOnInit: false,
-  //     //     },
-  //     //   },
-  //     //   'button1',
-  //     //   'button2'
-  //     // )
-  //     // fixture.detectChanges()
-  //     // const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-  //     // const isPrimaryButtonDisabled = await dialogHarness.getPrimaryButtonDisabled()
-  //     // expect(isPrimaryButtonDisabled).toBeTruthy()
-  //   })
+  fit('should ??', async () => {
+    jest.spyOn(pDialogService, 'open')
 
-  //   it('should enable secondary button when component implementing DialogSecondaryButtonDisabled interface emits true', async () => {
-  //     // jest.spyOn(pDialogService, 'open')
-  //     // fixture.componentInstance.show(
-  //     //   'title',
-  //     //   {
-  //     //     type: DialogPrimaryButtonDisabledComponent,
-  //     //     inputs: {
-  //     //       shouldEmitOnInit: false,
-  //     //     },
-  //     //   },
-  //     //   'button1',
-  //     //   'button2'
-  //     // )
-  //     // fixture.detectChanges()
-  //     // const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-  //     // const isPrimaryButtonDisabled = await dialogHarness.getPrimaryButtonDisabled()
-  //     // expect(isPrimaryButtonDisabled).toBeTruthy()
-  //   })
+    fixture.componentInstance.show(
+      'Enter credentials',
+      {
+        type: CompleteDialogComponent,
+      },
+      'Validate',
+      'Hint: Doe'
+    )
+    fixture.detectChanges()
+
+    // init state
+    const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
+    let isPrimaryButtonDisabled = await dialogHarness.getPrimaryButtonDisabled()
+    expect(isPrimaryButtonDisabled).toBeTruthy()
+    let isSecondaryButtonDisabled = await dialogHarness.getSecondaryButtonDisabled()
+    expect(isSecondaryButtonDisabled).toBeTruthy()
+    let nameErrorDiv = await dialogHarness.getHarnessOrNull(DivHarness.with({ class: 'nameError' }))
+    const nameErrorDivText = await nameErrorDiv?.getText()
+    expect(nameErrorDivText).toBe('Name is not correct')
+
+    // change surname input to Doe
+    const surnameInput = await dialogHarness.getHarness(InputHarness.with({ id: 'surname' }))
+    await surnameInput.setValue('Doe')
+    await (await surnameInput.getTestElement()).dispatchEvent('change')
+    fixture.detectChanges()
+
+    const surnameValue = await surnameInput.getValue()
+    expect(surnameValue).toBe('Doe')
+
+    isPrimaryButtonDisabled = await dialogHarness.getPrimaryButtonDisabled()
+    expect(isPrimaryButtonDisabled).toBeTruthy()
+    isSecondaryButtonDisabled = await dialogHarness.getSecondaryButtonDisabled()
+    expect(isSecondaryButtonDisabled).toBeFalsy()
+
+    // click secondary button
+    await dialogHarness.clickSecondaryButton()
+
+    const messageDiv = await dialogHarness.getHarness(DivHarness.with({ class: 'message' }))
+    let messageText = await messageDiv.getText()
+    expect(messageText).toBe('Smart but name should be correct too')
+
+    // change name input to Albert
+    const nameInput = await dialogHarness.getHarness(InputHarness.with({ id: 'name' }))
+    await nameInput.setValue('Albert')
+    await (await nameInput.getTestElement()).dispatchEvent('change')
+    fixture.detectChanges()
+
+    let nameValue = await nameInput.getValue()
+    expect(nameValue).toBe('Albert')
+    nameErrorDiv = await dialogHarness.getHarnessOrNull(DivHarness.with({ class: 'nameError' }))
+    expect(nameErrorDiv).toBeNull()
+
+    isPrimaryButtonDisabled = await dialogHarness.getPrimaryButtonDisabled()
+    expect(isPrimaryButtonDisabled).toBeFalsy()
+    isSecondaryButtonDisabled = await dialogHarness.getSecondaryButtonDisabled()
+    expect(isSecondaryButtonDisabled).toBeFalsy()
+
+    // click primary button
+    await dialogHarness.clickPrimaryButton()
+
+    messageText = await messageDiv.getText()
+    expect(messageText).toBe('Wrong credentials')
+
+    //change name input to John
+    await nameInput.setValue('John')
+    await (await nameInput.getTestElement()).dispatchEvent('change')
+    fixture.detectChanges()
+
+    nameValue = await nameInput.getValue()
+    expect(nameValue).toBe('John')
+
+    isPrimaryButtonDisabled = await dialogHarness.getPrimaryButtonDisabled()
+    expect(isPrimaryButtonDisabled).toBeFalsy()
+    isSecondaryButtonDisabled = await dialogHarness.getSecondaryButtonDisabled()
+    expect(isSecondaryButtonDisabled).toBeFalsy()
+
+    // click primary button
+    await dialogHarness.clickPrimaryButton()
+
+    // expect dialog to close with observable containing last state
+    const result = fixture.componentInstance.resultFromShow
+    expect(result?.button).toBe('primary')
+    expect(result?.result).toEqual({
+      name: 'John',
+      surname: 'Doe',
+    })
+  })
 })

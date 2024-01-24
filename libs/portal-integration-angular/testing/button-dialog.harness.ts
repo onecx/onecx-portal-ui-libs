@@ -1,11 +1,11 @@
 import { ContentContainerComponentHarness } from '@angular/cdk/testing'
-import { PButtonHarness } from './primeng/p-button.harness'
+import { PButtonDirectiveHarness } from './primeng/p-button-directive.harness'
 
 export class ButtonDialogHarness extends ContentContainerComponentHarness {
   static hostSelector = 'ocx-button-dialog'
 
-  getPrimaryButton = this.locatorFor(PButtonHarness.with({ id: 'buttonDialogPrimaryButton' }))
-  getSecondaryButton = this.locatorForOptional(PButtonHarness.with({ id: 'buttonDialogSecondaryButton' }))
+  getPrimaryButton = this.locatorFor(PButtonDirectiveHarness.with({ id: 'buttonDialogPrimaryButton' }))
+  getSecondaryButton = this.locatorForOptional(PButtonDirectiveHarness.with({ id: 'buttonDialogSecondaryButton' }))
 
   async clickPrimaryButton() {
     await (await this.getPrimaryButton()).click()
@@ -15,7 +15,7 @@ export class ButtonDialogHarness extends ContentContainerComponentHarness {
     await (await this.getSecondaryButton())?.click()
   }
 
-  async getPrimaryButtonlabel(): Promise<string | null> {
+  async getPrimaryButtonLabel(): Promise<string | null> {
     return await (await this.getPrimaryButton()).getLabel()
   }
 
@@ -23,7 +23,7 @@ export class ButtonDialogHarness extends ContentContainerComponentHarness {
     return await (await this.getPrimaryButton()).getIcon()
   }
 
-  async getSecondaryButtonlabel(): Promise<string | null | undefined> {
+  async getSecondaryButtonLabel(): Promise<string | null | undefined> {
     return await (await this.getSecondaryButton())?.getLabel()
   }
 
