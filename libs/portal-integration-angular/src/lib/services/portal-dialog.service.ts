@@ -1,4 +1,4 @@
-import { EventEmitter, Injectable, Type } from '@angular/core'
+import { Injectable, Type } from '@angular/core'
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { Observable, map } from 'rxjs'
 import { ButtonDialogComponent } from '../core/components/button-dialog/button-dialog.component'
@@ -9,14 +9,9 @@ import { TranslateService } from '@ngx-translate/core'
 type TranslationKeyWithParameters = { key: string; parameters: Record<string, unknown> }
 type TranslationKey = string | TranslationKeyWithParameters
 type DialogMessage = { message: TranslationKey; icon: string }
-interface DialogResult<T> {
+export interface DialogResult<T> {
   dialogResult: T
 }
-// result in DialogState:
-// if component passed to open function has member dialogResult (implementes DialogResult)
-//  -> use this value
-// else
-//  -> use undefined
 
 type Component<T> = {
   type: Type<any> | DialogResult<T>
@@ -28,24 +23,24 @@ export type DialogState<T> = {
   result: T | undefined
 }
 
-// interface DialogMainButtonDisabled {
-//     @Output() mainButtonEnabled: EventEmitter<boolean> = new EventEmitter<boolean>()
-// } // If component implements interface the button is disabled till true is emited, if interface is not implemented the button is enabled
-interface DialogPrimaryButtonDisabled {
-  mainButtonEnabled: EventEmitter<boolean>
-}
-// interface DialogSecondaryButtonDisabled { // If component implements interface the button is disabled till true is emited, if interface is not implemented the button is enabled
-//     @Output()
-//     secondaryButtonEnabled = new EventEmitter<boolean>()
+// // interface DialogMainButtonDisabled {
+// //     @Output() mainButtonEnabled: EventEmitter<boolean> = new EventEmitter<boolean>()
+// // } // If component implements interface the button is disabled till true is emited, if interface is not implemented the button is enabled
+// interface DialogPrimaryButtonDisabled {
+//   mainButtonEnabled: EventEmitter<boolean>
 // }
-interface DialogSecondaryButtonDisabled {
-  secondaryButtonEnabled: EventEmitter<boolean>
-}
-interface DialogButtonClicked {
-  //if component implements this interface it gets informed when a button was clicked
-  // TODO:
-  // ocxDialogButtonClicked(state: DialogState): Observable<boolean> | Promise<boolean> | boolean | undefined; // if false leave dialog open
-}
+// // interface DialogSecondaryButtonDisabled { // If component implements interface the button is disabled till true is emited, if interface is not implemented the button is enabled
+// //     @Output()
+// //     secondaryButtonEnabled = new EventEmitter<boolean>()
+// // }
+// interface DialogSecondaryButtonDisabled {
+//   secondaryButtonEnabled: EventEmitter<boolean>
+// }
+// interface DialogButtonClicked {
+//   //if component implements this interface it gets informed when a button was clicked
+//   // TODO:
+//   // ocxDialogButtonClicked(state: DialogState): Observable<boolean> | Promise<boolean> | boolean | undefined; // if false leave dialog open
+// }
 
 @Injectable({ providedIn: 'any' })
 export class PortalDialogService {
@@ -62,7 +57,7 @@ export class PortalDialogService {
     title: TranslationKey | null,
     componentOrMessage: Component<T> | TranslationKey | DialogMessage,
     primaryButtonTranslationKeyOrDetails: TranslationKey | ButtonDialogButtonDetails,
-    secondaryButtonTranslationKeyOrDetails?: TranslationKey | ButtonDialogButtonDetails, //when there is a secondaryButton a closeButton X is shown in the top of the dialog if showCloseButton is true
+    secondaryButtonTranslationKeyOrDetails?: TranslationKey | ButtonDialogButtonDetails,
     showCloseButton: boolean = true
   ): Observable<DialogState<T>> {
     console.log(
@@ -72,7 +67,7 @@ export class PortalDialogService {
       secondaryButtonTranslationKeyOrDetails,
       showCloseButton
     )
-    let dialogTitle: string = ''
+    let dialogTitle = ''
     const translateParams = this.prepareTitleForTranslation(title)
     this.translateService.get(translateParams.key, translateParams.parameters).subscribe((translation: string) => {
       dialogTitle = translation
@@ -96,6 +91,7 @@ export class PortalDialogService {
         //   borderRadius: '0px 0px var(--border-radius) var(--border-radius)',
         // },
         data: dynamicDialogDataConfig,
+        closable: showCloseButton && secondaryButtonTranslationKeyOrDetails !== undefined,
       })
       .onClose.pipe(
         map((result) => {

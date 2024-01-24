@@ -7,11 +7,11 @@ export class ButtonDialogHarness extends ContentContainerComponentHarness {
   getPrimaryButton = this.locatorFor(PButtonHarness.with({ id: 'buttonDialogPrimaryButton' }))
   getSecondaryButton = this.locatorForOptional(PButtonHarness.with({ id: 'buttonDialogSecondaryButton' }))
 
-  async clickMainButton() {
+  async clickPrimaryButton() {
     await (await this.getPrimaryButton()).click()
   }
 
-  async clickSideButton() {
+  async clickSecondaryButton() {
     await (await this.getSecondaryButton())?.click()
   }
 

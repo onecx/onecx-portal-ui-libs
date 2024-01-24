@@ -1,4 +1,13 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ViewContainerRef } from '@angular/core'
+import {
+  Component,
+  ComponentRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+  ViewContainerRef,
+} from '@angular/core'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { ButtonDialogButtonDetails, ButtonDialogConfig, ButtonDialogData } from '../../../model/button-dialog'
 import { DialogHostComponent } from './dialog-host/dialog-host.component'
@@ -35,6 +44,8 @@ export class ButtonDialogComponent implements OnInit {
 
   dialogData: ButtonDialogData = this.defaultDialogData
 
+  componentRef!: ComponentRef<any>
+
   constructor(public dynamicDialogConfig: DynamicDialogConfig, public dynamicDialogRef: DynamicDialogRef) {}
 
   ngOnInit(): void {
@@ -42,18 +53,35 @@ export class ButtonDialogComponent implements OnInit {
   }
 
   primaryButtonAction() {
-    this.resultEmitter.emit('primary')
+    if (this.componentRef === undefined) {
+      this.resultEmitter.emit('primary')
+      return
+    }
+
+    const component = this.componentRef.instance
+    let result = undefined
+    if ('dialogResult' in component) {
+      result = component.dialogResult
+    }
     this.dynamicDialogRef.close({
       button: 'primary',
-      result: undefined,
+      result: result,
     })
   }
 
   secondaryButtonAction() {
-    this.resultEmitter.emit('secondary')
+    if (this.componentRef === undefined) {
+      this.resultEmitter.emit('secondary')
+    }
+
+    const component = this.componentRef.instance
+    let result = undefined
+    if ('dialogResult' in component) {
+      result = component.dialogResult
+    }
     this.dynamicDialogRef.close({
       button: 'secondary',
-      result: undefined,
+      result: result,
     })
   }
 
@@ -89,10 +117,13 @@ export class ButtonDialogComponent implements OnInit {
     const viewContainerRef = this.dialogHost
     viewContainerRef.clear()
 
-    const componentRef = viewContainerRef.createComponent<any>(this.dialogData.component!)
-    Object.keys(this.dialogData.componentData).forEach((k) => {
-      componentRef.instance[k] = this.dialogData.componentData[k]
-    })
+    if (this.dialogData.component) {
+      const componentRef = viewContainerRef.createComponent<any>(this.dialogData.component)
+      Object.keys(this.dialogData.componentData).forEach((k) => {
+        componentRef.instance[k] = this.dialogData.componentData[k]
+      })
+      this.componentRef = componentRef
+    }
   }
 
   setUpDialogDataForInput() {

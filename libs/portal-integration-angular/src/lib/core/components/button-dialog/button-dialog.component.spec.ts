@@ -17,7 +17,7 @@ describe('ButtonDialogComponent', () => {
   let fixture: ComponentFixture<ButtonDialogComponent>
   let loader: HarnessLoader
 
-  let translations: any = { CUSTOM_PRI: 'primaryTranslation', CUSTOM_SEC: 'secondaryTranslation' }
+  const translations: any = { CUSTOM_PRI: 'primaryTranslation', CUSTOM_SEC: 'secondaryTranslation' }
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -381,7 +381,7 @@ describe('ButtonDialogComponent', () => {
       expect(nativeElement.querySelector('#host')?.textContent).toBe('HostComponentContent')
     })
 
-    let config: ButtonDialogConfig = {
+    const config: ButtonDialogConfig = {
       primaryButtonDetails: {
         key: 'inlineMain',
         icon: 'pi pi-plus',
@@ -398,13 +398,13 @@ describe('ButtonDialogComponent', () => {
         <div id="host">HostComponentContent</div>
       </ocx-button-dialog>`,
     })
-    class TestHostComponentWithConfig {
+    class TestHostWithConfigComponent {
       @Input() buttonDialogConfig: ButtonDialogConfig = config
     }
 
     it('should use passed config', async () => {
       await TestBed.compileComponents()
-      fixtureWithHost = TestBed.createComponent(TestHostComponentWithConfig)
+      fixtureWithHost = TestBed.createComponent(TestHostWithConfigComponent)
       fixtureWithHost.detectChanges()
 
       const buttonDialog = fixtureWithHost.debugElement.query(By.css('ocx-button-dialog'))
@@ -418,7 +418,7 @@ describe('ButtonDialogComponent', () => {
         <div id="host">HostComponentContent</div>
       </ocx-button-dialog>`,
     })
-    class TestHostComponentWithResultSub {
+    class TestHostWithResultSubComponent {
       @Input() buttonDialogConfig: ButtonDialogConfig = config
       public handleResult(result: any): void {
         console.log(result)
@@ -427,7 +427,7 @@ describe('ButtonDialogComponent', () => {
 
     it('should use default emitter inline', async () => {
       await TestBed.compileComponents()
-      fixtureWithHost = TestBed.createComponent(TestHostComponentWithResultSub)
+      fixtureWithHost = TestBed.createComponent(TestHostWithResultSubComponent)
       fixtureWithHost.detectChanges()
 
       jest.spyOn(console, 'log')
