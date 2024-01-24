@@ -5,7 +5,7 @@ export interface PButtonDirectiveHarnessFilters extends BaseHarnessFilters {
 }
 
 export class PButtonDirectiveHarness extends ComponentHarness {
-  static hostSelector = 'button'
+  static hostSelector = 'button[pButton]'
 
   static with(options: PButtonDirectiveHarnessFilters): HarnessPredicate<PButtonDirectiveHarness> {
     return new HarnessPredicate(PButtonDirectiveHarness, options).addOption('id', options.id, (harness, id) =>

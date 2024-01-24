@@ -1,10 +1,11 @@
 import { EventEmitter, Injectable, Type } from '@angular/core'
-import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { TranslateService } from '@ngx-translate/core'
 import { Observable } from 'rxjs'
+import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+
 import { ButtonDialogComponent } from '../core/components/button-dialog/button-dialog.component'
 import { ButtonDialogButtonDetails, ButtonDialogData } from '../model/button-dialog'
 import { DialogHostComponent } from '../core/components/button-dialog/dialog-host/dialog-host.component'
-import { TranslateService } from '@ngx-translate/core'
 
 type TranslationKeyWithParameters = { key: string; parameters: Record<string, unknown> }
 type TranslationKey = string | TranslationKeyWithParameters

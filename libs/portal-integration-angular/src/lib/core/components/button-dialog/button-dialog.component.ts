@@ -8,10 +8,11 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core'
+import { Observable, from, isObservable, of } from 'rxjs'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+
 import { ButtonDialogButtonDetails, ButtonDialogConfig, ButtonDialogData } from '../../../model/button-dialog'
 import { DialogHostComponent } from './dialog-host/dialog-host.component'
-import { Observable, from, isObservable, of } from 'rxjs'
 import { DialogState } from '../../../services/portal-dialog.service'
 
 @Component({
