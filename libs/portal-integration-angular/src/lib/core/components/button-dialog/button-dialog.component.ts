@@ -11,6 +11,8 @@ import {
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { ButtonDialogButtonDetails, ButtonDialogConfig, ButtonDialogData } from '../../../model/button-dialog'
 import { DialogHostComponent } from './dialog-host/dialog-host.component'
+import { Observable, from, isObservable, of } from 'rxjs'
+import { DialogState } from '../../../services/portal-dialog.service'
 
 @Component({
   selector: 'ocx-button-dialog',
@@ -58,31 +60,59 @@ export class ButtonDialogComponent implements OnInit {
       return
     }
 
-    const component = this.componentRef.instance
-    let result = undefined
-    if ('dialogResult' in component) {
-      result = component.dialogResult
-    }
-    this.dynamicDialogRef.close({
+    const state: DialogState<any> = {
       button: 'primary',
-      result: result,
-    })
+      result: undefined,
+    }
+
+    this.resolveButtonClick(state)
   }
 
   secondaryButtonAction() {
     if (this.componentRef === undefined) {
       this.resultEmitter.emit('secondary')
+      return
     }
 
-    const component = this.componentRef.instance
-    let result = undefined
-    if ('dialogResult' in component) {
-      result = component.dialogResult
-    }
-    this.dynamicDialogRef.close({
+    const state: DialogState<any> = {
       button: 'secondary',
-      result: result,
-    })
+      result: undefined,
+    }
+
+    this.resolveButtonClick(state)
+  }
+
+  private resolveButtonClick(state: DialogState<any>) {
+    const component = this.componentRef.instance
+
+    // check if component implements DialogResult<T>
+    if ('dialogResult' in component) {
+      state.result = component.dialogResult
+    }
+    // check if component implements DialogButtonClicked
+    if (typeof component.ocxDialogButtonClicked === 'function') {
+      this.toObservable(component.ocxDialogButtonClicked(state)).subscribe({
+        next: (result: boolean) => {
+          if (result === true) {
+            this.dynamicDialogRef.close(state)
+          }
+        },
+      })
+    } else {
+      return this.dynamicDialogRef.close(state)
+    }
+  }
+
+  private toObservable(
+    ocxDialogButtonClickedResult: boolean | Observable<boolean> | Promise<boolean> | undefined
+  ): Observable<boolean> {
+    if (ocxDialogButtonClickedResult === undefined) {
+      return of(true)
+    }
+    if (isObservable(ocxDialogButtonClickedResult)) {
+      return ocxDialogButtonClickedResult
+    }
+    return from(Promise.resolve(ocxDialogButtonClickedResult))
   }
 
   loadComponent() {

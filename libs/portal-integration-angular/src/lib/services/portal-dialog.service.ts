@@ -1,6 +1,6 @@
 import { Injectable, Type } from '@angular/core'
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
-import { Observable, map } from 'rxjs'
+import { Observable } from 'rxjs'
 import { ButtonDialogComponent } from '../core/components/button-dialog/button-dialog.component'
 import { ButtonDialogButtonDetails, ButtonDialogData } from '../model/button-dialog'
 import { DialogHostComponent } from '../core/components/button-dialog/dialog-host/dialog-host.component'
@@ -36,11 +36,9 @@ export type DialogState<T> = {
 // interface DialogSecondaryButtonDisabled {
 //   secondaryButtonEnabled: EventEmitter<boolean>
 // }
-// interface DialogButtonClicked {
-//   //if component implements this interface it gets informed when a button was clicked
-//   // TODO:
-//   // ocxDialogButtonClicked(state: DialogState): Observable<boolean> | Promise<boolean> | boolean | undefined; // if false leave dialog open
-// }
+export interface DialogButtonClicked {
+  ocxDialogButtonClicked(state: DialogState<any>): Observable<boolean> | Promise<boolean> | boolean | undefined
+}
 
 @Injectable({ providedIn: 'any' })
 export class PortalDialogService {
@@ -83,21 +81,15 @@ export class PortalDialogService {
       },
       componentData: componentToRender.inputs,
     }
-    return this.dialogService
-      .open(ButtonDialogComponent, {
-        header: dialogTitle,
-        // width: '50vw',
-        // contentStyle: {
-        //   borderRadius: '0px 0px var(--border-radius) var(--border-radius)',
-        // },
-        data: dynamicDialogDataConfig,
-        closable: showCloseButton && secondaryButtonTranslationKeyOrDetails !== undefined,
-      })
-      .onClose.pipe(
-        map((result) => {
-          return result
-        })
-      )
+    return this.dialogService.open(ButtonDialogComponent, {
+      header: dialogTitle,
+      // width: '50vw',
+      // contentStyle: {
+      //   borderRadius: '0px 0px var(--border-radius) var(--border-radius)',
+      // },
+      data: dynamicDialogDataConfig,
+      closable: showCloseButton && secondaryButtonTranslationKeyOrDetails !== undefined,
+    }).onClose
   }
 
   private prepareTitleForTranslation(title: TranslationKey | null) {
