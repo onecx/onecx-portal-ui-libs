@@ -1,12 +1,12 @@
-import { Component, ContentChild, EventEmitter, Inject, Injector, Input, LOCALE_ID, OnChanges, OnInit, Output, SimpleChanges, TemplateRef } from '@angular/core'
+import { Component, ContentChild, EventEmitter, Inject, Injector, Input, LOCALE_ID, OnInit, Output, TemplateRef } from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { SelectItem } from 'primeng/api'
-import { BehaviorSubject, combineLatest, map, mergeMap, Observable, of } from 'rxjs'
-import { DataTableColumn } from '../../../model/data-table-column.model'
-import { DataSortDirection } from '../../../model/data-sort-direction'
+import { BehaviorSubject, Observable, combineLatest, map, mergeMap, of } from 'rxjs'
 import { ColumnType } from '../../../model/column-type.model'
 import { DataAction } from '../../../model/data-action'
+import { DataSortDirection } from '../../../model/data-sort-direction'
+import { DataTableColumn } from '../../../model/data-table-column.model'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 
 type Primitive = number | string | boolean | bigint | Date

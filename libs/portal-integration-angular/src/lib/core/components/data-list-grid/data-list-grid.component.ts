@@ -7,25 +7,23 @@ import {
   Injector,
   Input,
   LOCALE_ID,
-  OnChanges,
   OnInit,
   Output,
-  SimpleChanges,
-  TemplateRef,
+  TemplateRef
 } from '@angular/core'
-import { DataSortDirection } from '../../../model/data-sort-direction'
-import { MenuItem } from 'primeng/api'
-import { MfeInfo } from '../../../model/mfe-info.model'
-import { DataAction } from '../../../model/data-action'
-import { TranslateService } from '@ngx-translate/core'
-import { ObjectUtils } from '../../utils/objectutils'
-import { Filter, Row } from '../data-table/data-table.component'
-import { DataTableColumn } from '../../../model/data-table-column.model'
-import { BehaviorSubject, combineLatest, map, mergeMap, Observable } from 'rxjs'
-import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { Router } from '@angular/router'
-import { UserService } from '../../../services/user.service'
+import { TranslateService } from '@ngx-translate/core'
+import { MenuItem } from 'primeng/api'
+import { BehaviorSubject, Observable, combineLatest, map, mergeMap } from 'rxjs'
+import { DataAction } from '../../../model/data-action'
+import { DataSortDirection } from '../../../model/data-sort-direction'
+import { DataTableColumn } from '../../../model/data-table-column.model'
+import { MfeInfo } from '../../../model/mfe-info.model'
 import { AppStateService } from '../../../services/app-state.service'
+import { UserService } from '../../../services/user.service'
+import { ObjectUtils } from '../../utils/objectutils'
+import { DataSortBase } from '../data-sort-base/data-sort-base'
+import { Filter, Row } from '../data-table/data-table.component'
 
 export type ListGridData = {
   id: string | number

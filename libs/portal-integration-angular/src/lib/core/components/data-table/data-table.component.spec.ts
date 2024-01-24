@@ -22,7 +22,7 @@ describe('DataTableComponent', () => {
       ALL: "All"
     }
   };
-  
+
   const GERMAN_LANGUAGE = 'de';
   const GERMAN_TRANSLATIONS = {
     OCX_DATA_TABLE: {
@@ -31,7 +31,7 @@ describe('DataTableComponent', () => {
       ALL: "Alle"
     }
   };
-  
+
   const TRANSLATIONS = {
     [ENGLISH_LANGUAGE]: ENGLISH_TRANSLATIONS,
     [GERMAN_LANGUAGE]: GERMAN_TRANSLATIONS
@@ -218,60 +218,64 @@ describe('DataTableComponent', () => {
     expect(dataTable).toBeTruthy()
   })
 
-  it('should display the paginator currentPageReport - de', async () => {
-    translateService.use('de')
-    const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
-    const paginator = await dataTable.getPaginator()
-    const currentPageReport = await paginator.getCurrentPageReportText()
-    expect(currentPageReport).toEqual('1 - 5 von 5')
+  describe('should display the paginator currentPageReport -', () => {
+    it('de', async () => {
+      translateService.use('de')
+      const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
+      const paginator = await dataTable.getPaginator()
+      const currentPageReport = await paginator.getCurrentPageReportText()
+      expect(currentPageReport).toEqual('1 - 5 von 5')
+    })
+
+    it('en', async () => {
+      translateService.use('en')
+      const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
+      const paginator = await dataTable.getPaginator()
+      const currentPageReport = await paginator.getCurrentPageReportText()
+      expect(currentPageReport).toEqual('1 - 5 of 5')
+    })
   })
 
-  it('should display the paginator currentPageReport - en', async () => {
-    translateService.use('en')
-    const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
-    const paginator = await dataTable.getPaginator()
-    const currentPageReport = await paginator.getCurrentPageReportText()
-    expect(currentPageReport).toEqual('1 - 5 of 5')
+  describe('should display the paginator currentPageReport  with totalRecordsOnServer -', () => {
+    it('de', async () => {
+      component.totalRecordsOnServer = 10
+      translateService.use('de')
+      const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
+      const paginator = await dataTable.getPaginator()
+      const currentPageReport = await paginator.getCurrentPageReportText()
+      expect(currentPageReport).toEqual('1 - 5 von 5 (10)')
+    })
+
+    it('en', async () => {
+      component.totalRecordsOnServer = 10
+      translateService.use('en')
+      const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
+      const paginator = await dataTable.getPaginator()
+      const currentPageReport = await paginator.getCurrentPageReportText()
+      expect(currentPageReport).toEqual('1 - 5 of 5 (10)')
+    })
   })
 
-  it('should display the paginator currentPageReport  with totalRecordsOnServer - de', async () => {
-    component.totalRecordsOnServer = 10
-    translateService.use('de')
-    const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
-    const paginator = await dataTable.getPaginator()
-    const currentPageReport = await paginator.getCurrentPageReportText()
-    expect(currentPageReport).toEqual('1 - 5 von 5 (10)')
+  describe('should display the paginator rowsPerPageOptions -', () => {
+    it('de', async () => {
+      window.HTMLElement.prototype.scrollIntoView = jest.fn()
+      translateService.use('de')
+      const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
+      const paginator = await dataTable.getPaginator()
+      const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
+      const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(3)
+      expect(rowsPerPageOptionsText).toEqual('Alle')
+    })
+
+    it('en', async () => {
+      window.HTMLElement.prototype.scrollIntoView = jest.fn()
+      translateService.use('en')
+      const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
+      const paginator = await dataTable.getPaginator()
+      const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
+      const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(3)
+      expect(rowsPerPageOptionsText).toEqual('All')
+    })
   })
 
-  it('should display the paginator currentPageReport  with totalRecordsOnServer - en', async () => {
-    component.totalRecordsOnServer = 10
-    translateService.use('en')
-    const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
-    const paginator = await dataTable.getPaginator()
-    const currentPageReport = await paginator.getCurrentPageReportText()
-    expect(currentPageReport).toEqual('1 - 5 of 5 (10)')
-  })
-
-  it('should display the paginator rowsPerPageOptions  - en', async () => {
-    window.HTMLElement.prototype.scrollIntoView = jest.fn()
-    translateService.use('en')
-    const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
-    const paginator = await dataTable.getPaginator()
-    const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
-    const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(3)
-    console.log("rowsPerPageOptionsText value: ", rowsPerPageOptionsText)
-    expect(rowsPerPageOptionsText).toEqual('All')
-  })
-
-  it('should display the paginator rowsPerPageOptions  - de', async () => {
-    window.HTMLElement.prototype.scrollIntoView = jest.fn()
-    translateService.use('de')
-    const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
-    const paginator = await dataTable.getPaginator()
-    const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
-    const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(3)
-    console.log("rowsPerPageOptionsText value: ", rowsPerPageOptionsText)
-    expect(rowsPerPageOptionsText).toEqual('Alle')
-  })
-  
 })
