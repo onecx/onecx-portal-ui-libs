@@ -1,4 +1,4 @@
-import { Injectable, Type } from '@angular/core'
+import { EventEmitter, Injectable, Type } from '@angular/core'
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { Observable } from 'rxjs'
 import { ButtonDialogComponent } from '../core/components/button-dialog/button-dialog.component'
@@ -12,6 +12,15 @@ type DialogMessage = { message: TranslationKey; icon: string }
 export interface DialogResult<T> {
   dialogResult: T
 }
+export interface DialogPrimaryButtonDisabled {
+  primaryButtonEnabled: EventEmitter<boolean>
+}
+export interface DialogSecondaryButtonDisabled {
+  secondaryButtonEnabled: EventEmitter<boolean>
+}
+export interface DialogButtonClicked {
+  ocxDialogButtonClicked(state: DialogState<any>): Observable<boolean> | Promise<boolean> | boolean | undefined
+}
 
 type Component<T> = {
   type: Type<any> | DialogResult<T>
@@ -21,23 +30,6 @@ type Component<T> = {
 export type DialogState<T> = {
   button: 'primary' | 'secondary'
   result: T | undefined
-}
-
-// // interface DialogMainButtonDisabled {
-// //     @Output() mainButtonEnabled: EventEmitter<boolean> = new EventEmitter<boolean>()
-// // } // If component implements interface the button is disabled till true is emited, if interface is not implemented the button is enabled
-// interface DialogPrimaryButtonDisabled {
-//   mainButtonEnabled: EventEmitter<boolean>
-// }
-// // interface DialogSecondaryButtonDisabled { // If component implements interface the button is disabled till true is emited, if interface is not implemented the button is enabled
-// //     @Output()
-// //     secondaryButtonEnabled = new EventEmitter<boolean>()
-// // }
-// interface DialogSecondaryButtonDisabled {
-//   secondaryButtonEnabled: EventEmitter<boolean>
-// }
-export interface DialogButtonClicked {
-  ocxDialogButtonClicked(state: DialogState<any>): Observable<boolean> | Promise<boolean> | boolean | undefined
 }
 
 @Injectable({ providedIn: 'any' })
@@ -76,17 +68,13 @@ export class PortalDialogService {
       component: componentToRender.type as Type<any>,
       config: {
         primaryButtonDetails: this.getButtonDetails(primaryButtonTranslationKeyOrDetails),
-        secondaryButtonEnabled: secondaryButtonTranslationKeyOrDetails !== undefined,
+        secondaryButtonIncluded: secondaryButtonTranslationKeyOrDetails !== undefined,
         secondaryButtonDetails: this.getButtonDetails(secondaryButtonTranslationKeyOrDetails),
       },
       componentData: componentToRender.inputs,
     }
     return this.dialogService.open(ButtonDialogComponent, {
       header: dialogTitle,
-      // width: '50vw',
-      // contentStyle: {
-      //   borderRadius: '0px 0px var(--border-radius) var(--border-radius)',
-      // },
       data: dynamicDialogDataConfig,
       closable: showCloseButton && secondaryButtonTranslationKeyOrDetails !== undefined,
     }).onClose

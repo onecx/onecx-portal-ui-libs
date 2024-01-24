@@ -1,10 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { DialogButtonClicked, DialogResult, DialogState, PortalDialogService } from './portal-dialog.service'
+import {
+  DialogButtonClicked,
+  DialogPrimaryButtonDisabled,
+  DialogResult,
+  DialogSecondaryButtonDisabled,
+  DialogState,
+  PortalDialogService,
+} from './portal-dialog.service'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog'
 import { HarnessLoader } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { Component, Input } from '@angular/core'
+import { Component, EventEmitter, Input, Output } from '@angular/core'
 import { ButtonDialogHarness } from '../../../testing/button-dialog.harness'
 import { ButtonDialogComponent } from '../core/components/button-dialog/button-dialog.component'
 import { CommonModule } from '@angular/common'
@@ -46,7 +53,7 @@ class DialogResultTestComponent implements DialogResult<string> {
 }
 
 @Component({
-  template: `<h1></h1>`,
+  template: `<h1>DialogButtonClickedWithResultComponent</h1>`,
 })
 class DialogButtonClickedWithResultComponent implements DialogResult<number>, DialogButtonClicked {
   @Input() dialogResult = 13
@@ -79,6 +86,46 @@ class DialogButtonClickedWithResultComponent implements DialogResult<number>, Di
     return undefined
   }
 }
+
+@Component({
+  template: `<h1>DialogPrimaryButtonDisabledComponent</h1>`,
+})
+class DialogPrimaryButtonDisabledComponent implements DialogPrimaryButtonDisabled {
+  @Output()
+  primaryButtonEnabled: EventEmitter<boolean> = new EventEmitter()
+}
+
+@Component({
+  template: `<h1>DialogSecondaryButtonDisabledComponent</h1>`,
+})
+class DialogSecondaryButtonDisabledComponent implements DialogSecondaryButtonDisabled {
+  @Output()
+  secondaryButtonEnabled: EventEmitter<boolean> = new EventEmitter()
+}
+
+// @Component({
+//   template: `<div>
+//     <h1>CompleteDialogComponent</h1>
+//     <input type="text" pInputText [formControl]/>
+//   </div>`,
+// })
+// class CompleteDialogComponent
+//   implements DialogSecondaryButtonDisabled, DialogPrimaryButtonDisabled, DialogButtonClicked, DialogResult<string>
+// {
+//   @Output()
+//   primaryButtonEnabled: EventEmitter<boolean> = new EventEmitter()
+//   @Output()
+//   secondaryButtonEnabled: EventEmitter<boolean> = new EventEmitter()
+//   dialogResult: string = ''
+//   error?: string
+//   ocxDialogButtonClicked(state: DialogState<string>): boolean | Observable<boolean> | Promise<boolean> | undefined {
+//     if (this.dialogResult === 'John') {
+//       return true
+//     } else {
+//       return false
+//     }
+//   }
+// }
 
 describe('PortalDialogService', () => {
   let pDialogService: DialogService
@@ -565,4 +612,78 @@ describe('PortalDialogService', () => {
     expect(result?.button).toBe('primary')
     expect(result?.result).toBe(13)
   })
+
+  it('should disable primary button when component implements DialogPrimaryButtonDisabled interface', async () => {
+    jest.spyOn(pDialogService, 'open')
+
+    fixture.componentInstance.show(
+      'title',
+      {
+        type: DialogPrimaryButtonDisabledComponent,
+      },
+      'button1',
+      'button2'
+    )
+    fixture.detectChanges()
+
+    const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
+    const isPrimaryButtonDisabled = await dialogHarness.getPrimaryButtonDisabled()
+    expect(isPrimaryButtonDisabled).toBeTruthy()
+  })
+
+  it('should disable secondary button when component implements DialogSecondaryButtonDisabled interface', async () => {
+    jest.spyOn(pDialogService, 'open')
+
+    fixture.componentInstance.show(
+      'title',
+      {
+        type: DialogSecondaryButtonDisabledComponent,
+      },
+      'button1',
+      'button2'
+    )
+    fixture.detectChanges()
+
+    const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
+    const isSecondaryButtonDisabled = await dialogHarness.getSecondaryButtonDisabled()
+    expect(isSecondaryButtonDisabled).toBeTruthy()
+  })
+
+  //   it('should enable primary button when component implementing DialogPrimaryButtonDisabled interface emits true', async () => {
+  //     // jest.spyOn(pDialogService, 'open')
+  //     // fixture.componentInstance.show(
+  //     //   'title',
+  //     //   {
+  //     //     type: DialogPrimaryButtonDisabledComponent,
+  //     //     inputs: {
+  //     //       shouldEmitOnInit: false,
+  //     //     },
+  //     //   },
+  //     //   'button1',
+  //     //   'button2'
+  //     // )
+  //     // fixture.detectChanges()
+  //     // const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
+  //     // const isPrimaryButtonDisabled = await dialogHarness.getPrimaryButtonDisabled()
+  //     // expect(isPrimaryButtonDisabled).toBeTruthy()
+  //   })
+
+  //   it('should enable secondary button when component implementing DialogSecondaryButtonDisabled interface emits true', async () => {
+  //     // jest.spyOn(pDialogService, 'open')
+  //     // fixture.componentInstance.show(
+  //     //   'title',
+  //     //   {
+  //     //     type: DialogPrimaryButtonDisabledComponent,
+  //     //     inputs: {
+  //     //       shouldEmitOnInit: false,
+  //     //     },
+  //     //   },
+  //     //   'button1',
+  //     //   'button2'
+  //     // )
+  //     // fixture.detectChanges()
+  //     // const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
+  //     // const isPrimaryButtonDisabled = await dialogHarness.getPrimaryButtonDisabled()
+  //     // expect(isPrimaryButtonDisabled).toBeTruthy()
+  //   })
 })

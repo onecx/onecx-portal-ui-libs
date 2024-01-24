@@ -8,7 +8,7 @@ export interface ButtonDialogButtonDetails {
 
 export interface ButtonDialogConfig {
   primaryButtonDetails?: ButtonDialogButtonDetails
-  secondaryButtonEnabled?: boolean
+  secondaryButtonIncluded?: boolean
   secondaryButtonDetails?: ButtonDialogButtonDetails
 }
 

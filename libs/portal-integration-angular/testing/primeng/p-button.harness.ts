@@ -1,4 +1,5 @@
 import { BaseHarnessFilters, ComponentHarness, HarnessPredicate } from '@angular/cdk/testing'
+import { ButtonHarness } from '../button.harness'
 
 export interface PButtonHarnessFilters extends BaseHarnessFilters {
   id?: string
@@ -8,6 +9,7 @@ export class PButtonHarness extends ComponentHarness {
   static hostSelector = 'p-button'
 
   getButton = this.locatorFor('button')
+  getButtonHarness = this.locatorFor(ButtonHarness)
 
   static with(options: PButtonHarnessFilters): HarnessPredicate<PButtonHarness> {
     return new HarnessPredicate(PButtonHarness, options).addOption('id', options.id, (harness, id) =>
@@ -29,5 +31,9 @@ export class PButtonHarness extends ComponentHarness {
 
   async getIcon(): Promise<string | null> {
     return await (await this.host()).getAttribute('ng-reflect-icon')
+  }
+
+  async getDisabled(): Promise<boolean> {
+    return await (await this.getButtonHarness()).isDisabled()
   }
 }

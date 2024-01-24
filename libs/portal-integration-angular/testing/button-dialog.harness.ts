@@ -40,4 +40,12 @@ export class ButtonDialogHarness extends ContentContainerComponentHarness {
     const element = await this.locatorForOptional(selector)
     return await (await element())?.getAttribute(attribute)
   }
+
+  async getPrimaryButtonDisabled(): Promise<boolean> {
+    return await (await this.getPrimaryButton()).getDisabled()
+  }
+
+  async getSecondaryButtonDisabled(): Promise<boolean | undefined> {
+    return await (await this.getSecondaryButton())?.getDisabled()
+  }
 }

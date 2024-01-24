@@ -63,7 +63,7 @@ describe('ButtonDialogComponent', () => {
       expect(component.dialogData.component).toEqual(undefined)
       expect(component.dialogData.componentData).toEqual(undefined)
       expect(component.dialogData.config.primaryButtonDetails).toEqual(component.defaultPrimaryButtonDetails)
-      expect(component.dialogData.config.secondaryButtonEnabled).toEqual(true)
+      expect(component.dialogData.config.secondaryButtonIncluded).toEqual(true)
       expect(component.dialogData.config.secondaryButtonDetails).toEqual(component.defaultSecondaryButtonDetails)
 
       // expect default emitted value to be label
@@ -104,7 +104,7 @@ describe('ButtonDialogComponent', () => {
           key: 'CustomMain',
           icon: 'pi pi-check',
         },
-        secondaryButtonEnabled: true,
+        secondaryButtonIncluded: true,
         secondaryButtonDetails: {
           key: 'CustomSide',
           icon: 'pi pi-times',
@@ -132,7 +132,7 @@ describe('ButtonDialogComponent', () => {
         primaryButtonDetails: {
           key: 'CUSTOM_PRI',
         },
-        secondaryButtonEnabled: true,
+        secondaryButtonIncluded: true,
         secondaryButtonDetails: {
           key: 'CUSTOM_SEC',
         },
@@ -151,7 +151,7 @@ describe('ButtonDialogComponent', () => {
     })
 
     it('should create Confirm/Cancel button-dialog when sideButton is enabled', () => {
-      component.dialogData.config.secondaryButtonEnabled = true
+      component.dialogData.config.secondaryButtonIncluded = true
 
       fixture.detectChanges()
 
@@ -161,7 +161,7 @@ describe('ButtonDialogComponent', () => {
     })
 
     it('should create Confirm only button-dialog when sideButton is disabled', () => {
-      component.dialogData.config.secondaryButtonEnabled = false
+      component.dialogData.config.secondaryButtonIncluded = false
 
       fixture.detectChanges()
 
@@ -213,7 +213,7 @@ describe('ButtonDialogComponent', () => {
       component.dialogData.config.primaryButtonDetails = {
         key: 'CustomMain',
       }
-      component.dialogData.config.secondaryButtonEnabled = false
+      component.dialogData.config.secondaryButtonIncluded = false
 
       fixture.detectChanges()
 
@@ -226,7 +226,7 @@ describe('ButtonDialogComponent', () => {
       component.dialogData.config.primaryButtonDetails = {
         key: 'CustomMain',
       }
-      component.dialogData.config.secondaryButtonEnabled = true
+      component.dialogData.config.secondaryButtonIncluded = true
 
       fixture.detectChanges()
 
@@ -239,7 +239,7 @@ describe('ButtonDialogComponent', () => {
       component.dialogData.config.secondaryButtonDetails = {
         key: 'CustomSide',
       }
-      component.dialogData.config.secondaryButtonEnabled = false
+      component.dialogData.config.secondaryButtonIncluded = false
 
       fixture.detectChanges()
 
@@ -252,7 +252,7 @@ describe('ButtonDialogComponent', () => {
       component.dialogData.config.secondaryButtonDetails = {
         key: 'CustomSide',
       }
-      component.dialogData.config.secondaryButtonEnabled = true
+      component.dialogData.config.secondaryButtonIncluded = true
 
       fixture.detectChanges()
 
@@ -269,7 +269,7 @@ describe('ButtonDialogComponent', () => {
         secondaryButtonDetails: {
           key: 'CustomSide',
         },
-        secondaryButtonEnabled: false,
+        secondaryButtonIncluded: false,
       }
 
       fixture.detectChanges()
@@ -290,7 +290,7 @@ describe('ButtonDialogComponent', () => {
     //         key: 'CustomMainFromDynamicDialogConfig',
     //         icon: 'pi pi-check',
     //       },
-    //       secondaryButtonEnabled: true,
+    //       secondaryButtonIncluded: true,
     //       secondaryButtonDetails: {
     //         key: 'CustomSideFromDynamicDialogConfig',
     //         icon: 'pi pi-times',
@@ -313,7 +313,7 @@ describe('ButtonDialogComponent', () => {
     //   // expect correct data from dynamic dialog config
     //   expect(component.dialogData.component).toBe(DialogHostComponent)
     //   expect(component.dialogData.config.primaryButtonDetails).toBe(buttonDialogData.config?.primaryButtonDetails)
-    //   expect(component.dialogData.config.secondaryButtonEnabled).toBe(buttonDialogData.config?.secondaryButtonEnabled)
+    //   expect(component.dialogData.config.secondaryButtonIncluded).toBe(buttonDialogData.config?.secondaryButtonIncluded)
     //   expect(component.dialogData.config.secondaryButtonDetails).toBe(buttonDialogData.config?.secondaryButtonDetails)
     //   expect(component.dialogData.componentData).toBe(buttonDialogData.componentData)
     //   // expect changes in ui with config
@@ -386,7 +386,7 @@ describe('ButtonDialogComponent', () => {
         key: 'inlineMain',
         icon: 'pi pi-plus',
       },
-      secondaryButtonEnabled: true,
+      secondaryButtonIncluded: true,
       secondaryButtonDetails: {
         key: 'inlineSide',
         icon: 'pi pi-times',

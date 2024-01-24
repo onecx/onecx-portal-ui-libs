@@ -31,7 +31,7 @@ export class ButtonDialogComponent implements OnInit {
     component: DialogHostComponent,
     config: {
       primaryButtonDetails: this.defaultPrimaryButtonDetails,
-      secondaryButtonEnabled: true,
+      secondaryButtonIncluded: true,
       secondaryButtonDetails: this.defaultSecondaryButtonDetails,
     },
     componentData: {},
@@ -45,8 +45,9 @@ export class ButtonDialogComponent implements OnInit {
   dialogHost!: ViewContainerRef
 
   dialogData: ButtonDialogData = this.defaultDialogData
-
   componentRef!: ComponentRef<any>
+  primaryButtonEnabled = true
+  secondaryButtonEnabled = true
 
   constructor(public dynamicDialogConfig: DynamicDialogConfig, public dynamicDialogRef: DynamicDialogRef) {}
 
@@ -130,8 +131,8 @@ export class ButtonDialogComponent implements OnInit {
       if (dialogConfig.primaryButtonDetails !== undefined && dialogConfig.primaryButtonDetails.key !== undefined) {
         this.dialogData.config.primaryButtonDetails = dialogConfig.primaryButtonDetails
       }
-      if (dialogConfig.secondaryButtonEnabled !== undefined) {
-        this.dialogData.config.secondaryButtonEnabled = dialogConfig.secondaryButtonEnabled
+      if (dialogConfig.secondaryButtonIncluded !== undefined) {
+        this.dialogData.config.secondaryButtonIncluded = dialogConfig.secondaryButtonIncluded
       }
       if (dialogConfig.secondaryButtonDetails !== undefined && dialogConfig.secondaryButtonDetails.key !== undefined) {
         this.dialogData.config.secondaryButtonDetails = dialogConfig.secondaryButtonDetails
@@ -149,6 +150,24 @@ export class ButtonDialogComponent implements OnInit {
 
     if (this.dialogData.component) {
       const componentRef = viewContainerRef.createComponent<any>(this.dialogData.component)
+      //check for DialogPrimaryButtonDisabled and DialogSecondaryButtonDisabled interfaces
+      if ('primaryButtonEnabled' in componentRef.instance) {
+        this.primaryButtonEnabled = false
+        componentRef.instance.primaryButtonEnabled.subscribe({
+          next: (enabled: boolean) => {
+            this.primaryButtonEnabled = enabled
+          },
+        })
+      }
+      if ('secondaryButtonEnabled' in componentRef.instance) {
+        this.secondaryButtonEnabled = false
+        componentRef.instance.secondaryButtonEnabled.subscribe({
+          next: (enabled: boolean) => {
+            this.secondaryButtonEnabled = enabled
+          },
+        })
+      }
+      //populate container
       Object.keys(this.dialogData.componentData).forEach((k) => {
         componentRef.instance[k] = this.dialogData.componentData[k]
       })
@@ -163,8 +182,8 @@ export class ButtonDialogComponent implements OnInit {
       if (this.config.primaryButtonDetails !== undefined && this.config.primaryButtonDetails.key !== undefined) {
         this.dialogData.config.primaryButtonDetails = this.config.primaryButtonDetails
       }
-      if (this.config.secondaryButtonEnabled !== undefined) {
-        this.dialogData.config.secondaryButtonEnabled = this.config.secondaryButtonEnabled
+      if (this.config.secondaryButtonIncluded !== undefined) {
+        this.dialogData.config.secondaryButtonIncluded = this.config.secondaryButtonIncluded
       }
       if (this.config.secondaryButtonDetails !== undefined && this.config.secondaryButtonDetails.key !== undefined) {
         this.dialogData.config.secondaryButtonDetails = this.config.secondaryButtonDetails
