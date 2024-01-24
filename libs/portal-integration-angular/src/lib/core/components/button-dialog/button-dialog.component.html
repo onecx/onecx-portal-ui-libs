@@ -8,14 +8,14 @@
             class="mx-2"
             [icon]="dialogData.config.secondaryButtonDetails!.icon !== undefined ? dialogData.config.secondaryButtonDetails!.icon : ''"
             (click)="secondaryButtonAction()"
-            [label]="dialogData.config.secondaryButtonDetails!.key | translate"
+            [label]="dialogData.config.secondaryButtonDetails!.key | translate:dialogData.config.secondaryButtonDetails?.parameters"
         ></p-button>
         <p-button 
             id="buttonDialogPrimaryButton"
             class="mx-2"
             [icon]="dialogData.config.primaryButtonDetails!.icon !== undefined ? dialogData.config.primaryButtonDetails!.icon : ''"
             (click)="primaryButtonAction()"
-            [label]="dialogData.config.primaryButtonDetails!.key | translate"
+            [label]="dialogData.config.primaryButtonDetails!.key | translate:dialogData.config.primaryButtonDetails?.parameters"
         ></p-button>
     </div>
 </div>

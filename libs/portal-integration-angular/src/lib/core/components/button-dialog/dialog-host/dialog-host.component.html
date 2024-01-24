@@ -1,6 +1,6 @@
 <div>
-    <h2>
-      <i *ngIf="icon !== ''" [class]="icon"></i>
-      <span>{{ message | translate }}</span>
-    </h2>
-  </div>
+  <h2>
+    <i *ngIf="icon !== ''" [class]="icon"></i>
+    <span id="dialogMessage">{{message | translate:messageParameters}}</span>
+  </h2>
+</div>

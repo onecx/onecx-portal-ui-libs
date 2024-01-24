@@ -4,6 +4,7 @@ import { Component, Input } from '@angular/core'
   templateUrl: `./dialog-host.component.html`,
 })
 export class DialogHostComponent {
-  @Input() message = 'message'
-  @Input() icon = ''
+  @Input() message: string = 'message'
+  @Input() messageParameters: object = {}
+  @Input() icon: string = ''
 }

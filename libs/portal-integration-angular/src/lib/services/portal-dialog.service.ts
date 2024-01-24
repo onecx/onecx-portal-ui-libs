@@ -6,10 +6,8 @@ import { ButtonDialogButtonDetails, ButtonDialogData } from '../model/button-dia
 import { DialogHostComponent } from '../core/components/button-dialog/dialog-host/dialog-host.component'
 import { TranslateService } from '@ngx-translate/core'
 
-// TODO:
-// type TranslationKeyWithParameters = { key: string; Record<string, unknown> }
-// type TranslationKey = string | TranslationKeyWithParameters
-type TranslationKey = string
+type TranslationKeyWithParameters = { key: string; parameters: Record<string, unknown> }
+type TranslationKey = string | TranslationKeyWithParameters
 type DialogMessage = { message: TranslationKey; icon: string }
 interface DialogResult<T> {
   dialogResult: T
@@ -74,8 +72,9 @@ export class PortalDialogService {
       secondaryButtonTranslationKeyOrDetails,
       showCloseButton
     )
-    let dialogTitle: string = title ? title : ''
-    this.translateService.get(dialogTitle).subscribe((translation: string) => {
+    let dialogTitle: string = ''
+    const translateParams = this.prepareTitleForTranslation(title)
+    this.translateService.get(translateParams.key, translateParams.parameters).subscribe((translation: string) => {
       dialogTitle = translation
     })
 
@@ -100,10 +99,15 @@ export class PortalDialogService {
       })
       .onClose.pipe(
         map((result) => {
-          console.log('From pipe' + result)
           return result
         })
       )
+  }
+
+  private prepareTitleForTranslation(title: TranslationKey | null) {
+    if (!title) return { key: '' }
+    if (this.isString(title)) return { key: title }
+    return { key: title.key, parameters: title.parameters }
   }
 
   private getButtonDetails(
@@ -115,7 +119,7 @@ export class PortalDialogService {
 
     let buttonDetails
 
-    if (this.isTranslationKey(buttonTranslationKeyOrDetails)) {
+    if (this.isString(buttonTranslationKeyOrDetails)) {
       buttonDetails = {
         key: buttonTranslationKeyOrDetails,
       }
@@ -131,15 +135,19 @@ export class PortalDialogService {
       return {
         type: DialogHostComponent,
         inputs: {
-          message: componentOrMessage,
+          message: this.isString(componentOrMessage) ? componentOrMessage : componentOrMessage.key,
+          messageParameters: this.isString(componentOrMessage) ? {} : componentOrMessage.parameters,
         },
       }
     } else if (this.isDialogMessage(componentOrMessage)) {
       return {
         type: DialogHostComponent,
         inputs: {
-          message: componentOrMessage.message,
+          message: this.isString(componentOrMessage.message)
+            ? componentOrMessage.message
+            : componentOrMessage.message.key,
           icon: componentOrMessage.icon,
+          messageParameters: this.isString(componentOrMessage.message) ? {} : componentOrMessage.message.parameters,
         },
       }
     }
@@ -147,6 +155,10 @@ export class PortalDialogService {
   }
 
   private isTranslationKey(obj: any): obj is TranslationKey {
+    return this.isString(obj) || ('key' in obj && 'parameters' in obj)
+  }
+
+  private isString(obj: any): obj is string {
     return typeof obj === 'string' || obj instanceof String
   }
 
@@ -154,15 +166,3 @@ export class PortalDialogService {
     return 'message' in obj && 'icon' in obj
   }
 }
-
-// dialogService.open('MY_COOL_INFO_KEY', 'MY_DIALOG_TITLE', 'GENERAL.OK','GENERAL.CANCEL')
-// // -> shows dialog with translated message and the two buttons
-
-// dialogService.open({message: 'MY_COOL_WARNING_KEY', icon: 'warning icon'}, 'MY_DIALOG_TITLE','GENERAL.OK')
-// // -> shows dialog with the icon shown next to the translated message and the one button
-
-// dialogService.open({ type: MyDialogContentComponent }, 'MY_DIALOG_TITLE','GENERAL.OK')
-// // -> shows dialog with MyDialogContentComponent as content with the one button
-
-// dialogService.open({ type: MyDialogContentComponent: inputs: { myCoolInputForComponent: 12345 } }, 'MY_DIALOG_TITLE', { key: 'GENERAL.OK', icon: 'icon class?'}, { key: 'GENERAL.CANCEL', parameters: {parameterForTranslation: 'asdf'} )
-// // -> shows dialog with MyDialogContentComponent as content and sets the values specified in inputs as inputs of the component with the two buttons. One with an icon and a transated message. The other with a translated message where the parameters are used for the translation.
