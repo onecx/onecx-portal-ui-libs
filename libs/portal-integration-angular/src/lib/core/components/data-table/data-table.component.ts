@@ -75,8 +75,8 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   set totalRecordsOnServer(value: number | undefined) {
     this.params['totalRecordsOnServer'] = value?.toString() ?? '0'
   }
-  @Input() currentPageShowingKey: string = 'OCX_DATA_TABLE.SHOWING'
-  @Input() currentPageShowingWithTotalOnServerKey: string = 'OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER'
+  @Input() currentPageShowingKey = 'OCX_DATA_TABLE.SHOWING'
+  @Input() currentPageShowingWithTotalOnServerKey = 'OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER'
   params: { [key: string]: string } = {
     currentPage: '{currentPage}',
     totalPages: '{totalPages}',

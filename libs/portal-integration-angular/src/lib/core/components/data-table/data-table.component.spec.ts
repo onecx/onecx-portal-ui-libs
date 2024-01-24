@@ -7,7 +7,7 @@ import { TranslateTestingModule } from 'ngx-translate-testing';
 import { ColumnType } from '../../../model/column-type.model';
 import { PortalCoreModule } from '../../portal-core.module';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { DataTableHarness } from 'libs/portal-integration-angular/testing';
+import { DataTableHarness } from '../../../../../../../libs/portal-integration-angular/testing';
 
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>

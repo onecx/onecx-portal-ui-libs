@@ -49,8 +49,8 @@ export class InteractiveDataViewComponent implements OnInit {
   @Input() defaultGroupKey = ''
   @Input() customGroupKey = 'OCX_INTERACTIVE_DATA_VIEW.CUSTOM_GROUP'
   @Input() groupSelectionNoGroupSelectedKey = 'OCX_INTERACTIVE_DATA_VIEW.NO_GROUP_SELECTED'
-  @Input() currentPageShowingKey: string = 'OCX_DATA_TABLE.SHOWING'
-  @Input() currentPageShowingWithTotalOnServerKey: string = 'OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER'
+  @Input() currentPageShowingKey = 'OCX_DATA_TABLE.SHOWING'
+  @Input() currentPageShowingWithTotalOnServerKey = 'OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER'
   @Input() additionalActions: DataAction[] = []
   @Input() listGridPaginator = true
   @Input() tablePaginator = true
