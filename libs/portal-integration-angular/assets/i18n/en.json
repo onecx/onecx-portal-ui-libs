@@ -27,6 +27,11 @@
     "SHOWING": "{{first}} - {{last}} of {{totalRecords}}",
     "SHOWING_WITH_TOTAL_ON_SERVER": "{{first}} - {{last}} of {{totalRecords}} ({{totalRecordsOnServer}})",
     "ALL": "All"
+    "ACTIONS": {
+      "VIEW": "View",
+      "EDIT": "Edit",
+      "DELETE": "Delete"
+    } 
   },
   "OCX_DATA_LIST_GRID": {
     "EMPTY_RESULT": "No data found.",
