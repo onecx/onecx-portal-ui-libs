@@ -85,6 +85,7 @@
                 pButton
                 class="p-button-rounded p-button-text mb-1 mr-2"
                 title="{{ (viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW') | translate }}"
+                ariaLabel="{{ (viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW') | translate }}"
                 (click)="onViewRow(item)"
                 *ocxIfPermission="viewPermission"
               ></button>
@@ -97,6 +98,7 @@
                 icon="pi pi-pencil"
                 pButton
                 title="{{ (editMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.EDIT') | translate }}"
+                ariaLabel="{{ (editMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.EDIT') | translate }}"
                 (click)="onEditRow(item)"
                 *ocxIfPermission="editPermission"
               ></button>
@@ -109,6 +111,7 @@
                 class="p-button-rounded p-button-text p-button-danger mb-1 mr-2"
                 pButton
                 title="{{ (deleteMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.DELETE') | translate }}"
+                ariaLabel="{{ (deleteMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.DELETE') | translate }}"
                 (click)="onDeleteRow(item)"
                 *ocxIfPermission="deletePermission"
               ></button>
@@ -122,6 +125,7 @@
                 [icon]="action.icon || ''"
                 (click)="action.callback(item)"
                 [title]="action.labelKey ? (action.labelKey | translate) : ''"
+                [ariaLabel]="action.labelKey ? (action.labelKey | translate) : ''"
                 [disabled]="action.disabled"
               ></button>
             </ng-container>
