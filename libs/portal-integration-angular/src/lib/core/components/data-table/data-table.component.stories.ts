@@ -8,7 +8,7 @@ import { importProvidersFrom } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ColumnType } from '../../../model/column-type.model';
-type DataTableInputTypes = Pick<DataTableComponent, 'rows' | 'columns' | 'emptyResultsMessage'>
+type DataTableInputTypes = Pick<DataTableComponent, 'rows' | 'columns' | 'emptyResultsMessage' | 'selectedRows'>
 const DataTableComponentSBConfig: Meta<DataTableComponent>  = {
     title: 'DataTableComponent',
     component: DataTableComponent,
@@ -67,7 +67,8 @@ const defaultComponentArgs: DataTableInputTypes = {
             amount: 5
          } 
     ],
-    emptyResultsMessage: "No results"
+    emptyResultsMessage: "No results",
+    selectedRows: []
 }
 
 export const WithMockData = {
@@ -80,6 +81,33 @@ export const NoData = {
     args: {
         ...defaultComponentArgs,
         rows: [],
+    }
+}
+
+export const WithRowSelection = {
+    argTypes: {
+        selectionChanged: {action: 'selectionChanged'}
+    },
+    render: Template,
+    args: {
+        ...defaultComponentArgs,
+        selectionChanged: ($event: any) => console.log("Selection changed ", $event)
+    }
+}
+
+export const WithRowSelectionAndDefaultSelection = {
+    argTypes: {
+        selectionChanged: {action: 'selectionChanged'}
+    },
+    render: Template,
+    args: {
+        ...defaultComponentArgs,
+        selectionChanged: ($event: any) => console.log("Selection changed ", $event),
+        selectedRows: [
+            {
+                id: 1
+            }
+        ]
     }
 }
 

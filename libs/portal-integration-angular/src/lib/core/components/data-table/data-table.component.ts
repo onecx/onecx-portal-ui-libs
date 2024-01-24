@@ -2,7 +2,7 @@ import { Component, ContentChild, EventEmitter, Inject, Injector, Input, LOCALE_
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { SelectItem } from 'primeng/api'
-import { BehaviorSubject, combineLatest, map, mergeMap, Observable, of } from 'rxjs'
+import { BehaviorSubject, combineLatest, map, mergeMap, Observable, of, withLatestFrom } from 'rxjs'
 import { DataTableColumn } from '../../../model/data-table-column.model'
 import { DataSortDirection } from '../../../model/data-sort-direction'
 import { ColumnType } from '../../../model/column-type.model'
@@ -31,6 +31,14 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   }
   set rows(value: Row[]) {
     this._rows$.next(value)
+  }
+  _selection$ = new BehaviorSubject<Row[]>([])
+  @Input()
+  get selectedRows(): Row[] {
+    return this._selection$.getValue()
+  }
+  set selectedRows(value: Row[]) {
+    this._selection$.next(value)
   }
   _filters$ = new BehaviorSubject<Filter[]>([])
   @Input()
@@ -111,8 +119,10 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   @Output() viewTableRow = new EventEmitter<Row>()
   @Output() editTableRow = new EventEmitter<Row>()
   @Output() deleteTableRow = new EventEmitter<Row>()
+  @Output() selectionChanged = new EventEmitter<Row[]>()
 
   displayedRows$: Observable<unknown[]> | undefined
+  selectedRows$: Observable<unknown[]> | undefined
 
   currentFilterColumn$ = new BehaviorSubject<DataTableColumn | null>(null)
   currentFilterOptions$: Observable<SelectItem[]> | undefined
@@ -131,7 +141,11 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     return dv?.deleteItemObserved || dv?.deleteItem.observed || this.deleteTableRow.observed
   }
 
-  constructor(@Inject(LOCALE_ID) locale: string, translateService: TranslateService, private router: Router, private injector: Injector) {
+  get selectionChangedObserved(): boolean {
+    return this.selectionChanged.observed
+  }
+
+constructor(@Inject(LOCALE_ID) locale: string, translateService: TranslateService, private router: Router, private injector: Injector) {
     super(locale, translateService)
     this.name = this.name || this.router.url.replace(/[^A-Za-z0-9]/, '_')
   }
@@ -186,6 +200,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
       ),
       map((amounts) => Object.fromEntries(amounts))
     )
+    this.mapSelectionToRows()
   }
 
   onSortColumnClick(sortColumn: string) {
@@ -244,5 +259,16 @@ export class DataTableComponent extends DataSortBase implements OnInit {
       default:
         return 'OCX_LIST_GRID_SORT.TOGGLE_BUTTON.DEFAULT_TITLE'
     }
+  }
+
+  mapSelectionToRows() {
+    this.selectedRows$ = this._selection$.pipe(
+      withLatestFrom(this._rows$),
+      map(([selectedRows, rows]) => {
+        return selectedRows.map((row) => {
+          return rows.find((r) => r.id === row.id)
+        })
+      })
+    )
   }
 }
