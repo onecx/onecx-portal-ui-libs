@@ -26,7 +26,7 @@
     "EDITED": "Bearbeitet",
     "SHOWING": "{{first}} - {{last}} von {{totalRecords}}",
     "SHOWING_WITH_TOTAL_ON_SERVER": "{{first}} - {{last}} von {{totalRecords}} ({{totalRecordsOnServer}})",
-    "ALL": "Alle"
+    "ALL": "Alle",
     "ACTIONS": {
       "VIEW": "Anzeigen",
       "EDIT": "Bearbeiten",
