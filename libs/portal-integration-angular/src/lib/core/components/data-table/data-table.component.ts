@@ -2,11 +2,11 @@ import { Component, ContentChild, EventEmitter, Inject, Injector, Input, LOCALE_
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { SelectItem } from 'primeng/api'
-import { BehaviorSubject, combineLatest, map, mergeMap, Observable, of } from 'rxjs'
-import { DataTableColumn } from '../../../model/data-table-column.model'
-import { DataSortDirection } from '../../../model/data-sort-direction'
+import { BehaviorSubject, Observable, combineLatest, map, mergeMap, of } from 'rxjs'
 import { ColumnType } from '../../../model/column-type.model'
 import { DataAction } from '../../../model/data-action'
+import { DataSortDirection } from '../../../model/data-sort-direction'
+import { DataTableColumn } from '../../../model/data-table-column.model'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 
 type Primitive = number | string | boolean | bigint | Date
@@ -68,6 +68,23 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   @Input() viewPermission: string | undefined
   @Input() editPermission: string | undefined
   @Input() paginator = true
+  @Input()
+  get totalRecordsOnServer(): number | undefined {
+    return this.params['totalRecordsOnServer'] ? Number(this.params['totalRecordsOnServer']) : undefined
+  }
+  set totalRecordsOnServer(value: number | undefined) {
+    this.params['totalRecordsOnServer'] = value?.toString() ?? '0'
+  }
+  @Input() currentPageShowingKey = 'OCX_DATA_TABLE.SHOWING'
+  @Input() currentPageShowingWithTotalOnServerKey = 'OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER'
+  params: { [key: string]: string } = {
+    currentPage: '{currentPage}',
+    totalPages: '{totalPages}',
+    rows: '{rows}',
+    first: '{first}',
+    last: '{last}',
+    totalRecords: '{totalRecords}'
+  }
 
   @Input() stringCellTemplate: TemplateRef<any> | undefined
   @ContentChild('stringCell') stringCellChildTemplate: TemplateRef<any> | undefined
@@ -175,10 +192,10 @@ export class DataTableComponent extends DataSortBase implements OnInit {
               .filter((value, index, self) => self.indexOf(value) === index && value != null)
               .map(
                 (filterOption) =>
-                  ({
-                    label: filterOption,
-                    value: filterOption,
-                  } as SelectItem)
+                ({
+                  label: filterOption,
+                  value: filterOption,
+                } as SelectItem)
               )
           })
         )

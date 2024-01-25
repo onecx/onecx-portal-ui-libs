@@ -9,21 +9,21 @@ import {
   LOCALE_ID,
   OnInit,
   Output,
-  TemplateRef,
+  TemplateRef
 } from '@angular/core'
-import { DataSortDirection } from '../../../model/data-sort-direction'
-import { MenuItem } from 'primeng/api'
-import { MfeInfo } from '../../../model/mfe-info.model'
-import { DataAction } from '../../../model/data-action'
-import { TranslateService } from '@ngx-translate/core'
-import { ObjectUtils } from '../../utils/objectutils'
-import { Filter, Row } from '../data-table/data-table.component'
-import { DataTableColumn } from '../../../model/data-table-column.model'
-import { BehaviorSubject, combineLatest, map, mergeMap, Observable } from 'rxjs'
-import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { Router } from '@angular/router'
-import { UserService } from '../../../services/user.service'
+import { TranslateService } from '@ngx-translate/core'
+import { MenuItem } from 'primeng/api'
+import { BehaviorSubject, Observable, combineLatest, map, mergeMap } from 'rxjs'
+import { DataAction } from '../../../model/data-action'
+import { DataSortDirection } from '../../../model/data-sort-direction'
+import { DataTableColumn } from '../../../model/data-table-column.model'
+import { MfeInfo } from '../../../model/mfe-info.model'
 import { AppStateService } from '../../../services/app-state.service'
+import { UserService } from '../../../services/user.service'
+import { ObjectUtils } from '../../utils/objectutils'
+import { DataSortBase } from '../data-sort-base/data-sort-base'
+import { Filter, Row } from '../data-table/data-table.component'
 
 export type ListGridData = {
   id: string | number
@@ -62,7 +62,24 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   @Input() paginator = true
   @Input() columns: DataTableColumn[] = []
   @Input() name = ''
-
+  @Input()
+  get totalRecordsOnServer(): number | undefined {
+    return this.params['totalRecordsOnServer'] ? Number(this.params['totalRecordsOnServer']) : undefined
+  }
+  set totalRecordsOnServer(value: number | undefined) {
+    this.params['totalRecordsOnServer'] = value?.toString() ?? '0'
+  }
+  @Input() currentPageShowingKey = 'OCX_DATA_TABLE.SHOWING'
+  @Input() currentPageShowingWithTotalOnServerKey = 'OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER'
+  params: { [key: string]: string } = {
+    currentPage: '{currentPage}',
+    totalPages: '{totalPages}',
+    rows: '{rows}',
+    first: '{first}',
+    last: '{last}',
+    totalRecords: '{totalRecords}'
+  }
+  
   _data$ = new BehaviorSubject<RowListGridData[]>([])
   @Input()
   get data(): RowListGridData[] {
