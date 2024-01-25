@@ -1,7 +1,7 @@
-import { OcxContentHarness } from './../../../../../testing/ocx-content.harness';
+import { OcxContentHarness } from '../../../../../testing/content.harness';
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { OcxContentComponent } from './ocx-content.component'
-import { OcxContentDirective } from '../../directives/ocx-content.directive'
+import { OcxContentComponent } from './content.component'
+import { OcxContentDirective } from '../../directives/content.directive'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 
 describe('OcxContentComponent', () => {
