@@ -8,6 +8,7 @@ import { MessageModule } from 'primeng/message'
 import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
 import { DiagramHarness, TestbedHarnessEnvironment } from '../../../../../testing'
 import { TranslateService } from '@ngx-translate/core'
+import { DiagramType } from '../../../model/diagram-type'
 
 describe('DiagramComponent', () => {
   let translateService: TranslateService
@@ -77,5 +78,28 @@ describe('DiagramComponent', () => {
     const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
     const displayedNumber = await diagram.getTotalNumberOfResults()
     expect(displayedNumber).toEqual(numberOfResults)
+  })
+
+  it('should display pie chart by default', async () => {
+    const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
+    const chartHarness = await diagram.getChart()
+    const chartType = await chartHarness.getType()
+    expect(chartType).toEqual('pie')
+  })
+
+  it('should display horizontal bar chart', async () => {
+    component.diagramType = DiagramType.HORIZONTAL_BAR
+    const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
+    const chartHarness = await diagram.getChart()
+    const chartType = await chartHarness.getType()
+    expect(chartType).toEqual('bar')
+  })
+
+  it('should display vertical bar chart', async () => {
+    component.diagramType = DiagramType.VERTICAL_BAR
+    const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
+    const chartHarness = await diagram.getChart()
+    const chartType = await chartHarness.getType()
+    expect(chartType).toEqual('bar')
   })
 })

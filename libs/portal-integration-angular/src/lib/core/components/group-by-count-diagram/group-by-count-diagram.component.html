@@ -1,1 +1,1 @@
-<ocx-diagram [data]="(diagramData$ | async) || []" [sumKey]="sumKey" (onDataSelect)="dataClicked($event)"></ocx-diagram>
+<ocx-diagram [data]="(diagramData$ | async) || []" [sumKey]="sumKey" [diagramType]="type" (onDataSelect)="dataClicked($event)"></ocx-diagram>
