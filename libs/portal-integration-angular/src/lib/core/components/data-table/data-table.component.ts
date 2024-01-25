@@ -142,7 +142,8 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   }
 
   get selectionChangedObserved(): boolean {
-    return this.selectionChanged.observed
+    const dv = this.injector.get('DataViewComponent', null)
+    return dv?.selectionChangedObserved || dv?.selectionChanged.observed || this.selectionChanged.observed
   }
 
 constructor(@Inject(LOCALE_ID) locale: string, translateService: TranslateService, private router: Router, private injector: Injector) {
@@ -270,5 +271,9 @@ constructor(@Inject(LOCALE_ID) locale: string, translateService: TranslateServic
         })
       })
     )
+  }
+
+  onSelectionChange(event: Row[]) {
+    this.selectionChanged.emit(event)
   }
 }

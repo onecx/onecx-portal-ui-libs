@@ -5,7 +5,7 @@
   [rows]="pageSize"
   [rowsPerPageOptions]="pageSizes"
   id="dataTable_{{name}}"
-  (selectionChange)="selectionChanged.emit($event)"
+  (selectionChange)="onSelectionChange($event)"
   [selection]="(selectedRows$ | async) || []"
 >
   <ng-template pTemplate="header">
