@@ -2,7 +2,7 @@
   <div class="w-full flex justify-content-center">
     <p-chart
       id="diagram"
-      type="pie"
+      [type]="chartType"
       [data]="chartData"
       [responsive]="false"
       [options]="chartOptions"

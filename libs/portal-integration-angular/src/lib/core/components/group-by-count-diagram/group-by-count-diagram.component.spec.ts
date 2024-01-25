@@ -180,7 +180,7 @@ describe('GroupByCountDiagramComponent', () => {
 
   it('should convert the data properly to diagramData', async () => {
     const result = await firstValueFrom(component.diagramData$ ?? of())
-    expect(diagramData).toEqual(result)
+    expect(result).toEqual(diagramData)
   })
 
   it('should load diagram harness', async () => {
