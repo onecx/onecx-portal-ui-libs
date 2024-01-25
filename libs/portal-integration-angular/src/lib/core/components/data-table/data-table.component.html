@@ -3,9 +3,14 @@
   responsiveLayout="scroll"
   [paginator]="paginator"
   [rows]="pageSize"
-  [rowsPerPageOptions]="pageSizes"
+  [showCurrentPageReport]="true"
+  currentPageReportTemplate="{{ (totalRecordsOnServer ? currentPageShowingWithTotalOnServerKey : currentPageShowingKey) | translate:params }}"
+  [rowsPerPageOptions]="[10, 25, 50, rows?.length]"
   id="dataTable_{{name}}"
 >
+  <ng-template let-item pTemplate="paginatordropdownitem">
+    {{ item.value === rows?.length ? ("OCX_DATA_TABLE.ALL" | translate) : item.value }}
+  </ng-template>
   <ng-template pTemplate="header">
     <tr>
       <ng-container *ngFor="let column of columns">

@@ -24,6 +24,9 @@
     "ACTIONS_COLUMN_NAME": "Actions",
     "FILTER_TITLE": "Filter",
     "EDITED": "Edited",
+    "SHOWING": "{{first}} - {{last}} of {{totalRecords}}",
+    "SHOWING_WITH_TOTAL_ON_SERVER": "{{first}} - {{last}} of {{totalRecords}} ({{totalRecordsOnServer}})",
+    "ALL": "All",
     "ACTIONS": {
       "VIEW": "View",
       "EDIT": "Edit",

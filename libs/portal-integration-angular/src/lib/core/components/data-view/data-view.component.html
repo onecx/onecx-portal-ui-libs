@@ -24,6 +24,7 @@
     [listItemSubtitleLinesTemplate]="_listItemSubtitleLines ? listItemSubtitleLines : undefined"
     [listItemTemplate]="_listItem ? listItem : undefined"
     [gridItemTemplate]="_gridItem ? gridItem  : undefined"
+    [totalRecordsOnServer]="totalRecordsOnServer"
   >
   </ocx-data-list-grid>
   <ng-template #listItemSubtitleLines let-item>
@@ -80,6 +81,9 @@
     [translationKeyCellTemplate]="_tableTranslationKeyCell ? translationKeyCell : undefined"
     (sorted)="sorting($event)"
     (filtered)="filtering($event)"
+    [totalRecordsOnServer]="totalRecordsOnServer"
+    [currentPageShowingKey]="currentPageShowingKey"
+    [currentPageShowingWithTotalOnServerKey]="currentPageShowingWithTotalOnServerKey"
   >
   </ocx-data-table>
   <ng-template #stringCell let-rowObject="rowObject" let-column="column">
