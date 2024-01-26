@@ -6,8 +6,8 @@ import { AppStateService } from './app-state.service'
 import { ConfigurationService } from './configuration.service'
 import { UserService } from './user.service'
 
-@Injectable()
-export class InitializeModuleGuard implements CanActivate {
+@Injectable({ providedIn: 'any' })
+export class InitializeModuleGuardService implements CanActivate {
   private SUPPORTED_LANGS = ['en', 'de']
   private DEFAULT_LANG = 'en'
   constructor(

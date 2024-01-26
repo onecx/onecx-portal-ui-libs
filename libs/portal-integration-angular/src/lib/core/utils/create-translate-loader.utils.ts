@@ -1,3 +1,4 @@
+import { Location } from '@angular/common'
 import { HttpClient } from '@angular/common/http'
 import { TranslateLoader } from '@ngx-translate/core'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
@@ -12,9 +13,16 @@ export function createTranslateLoader(http: HttpClient, appStateService: AppStat
       filter(([, isLoading]) => !isLoading),
       map(([currentMfe]) => {
         return new TranslateCombinedLoader(
-          new TranslateHttpLoader(http, `${currentMfe.remoteBaseUrl}/assets/i18n/`, '.json'),
+          // translations of shell or of app in standalone mode
           new TranslateHttpLoader(http, `./assets/i18n/`, '.json'),
-          new TranslateHttpLoader(http, `./onecx-portal-lib/assets/i18n/`, '.json')
+          // translations of portal-integration-angular of app
+          new TranslateHttpLoader(
+            http,
+            Location.joinWithSlash(currentMfe.remoteBaseUrl, `onecx-portal-lib/assets/i18n/`),
+            '.json'
+          ),
+          // translations of the app
+          new TranslateHttpLoader(http, Location.joinWithSlash(currentMfe.remoteBaseUrl, `assets/i18n/`), '.json')
         )
       })
     )

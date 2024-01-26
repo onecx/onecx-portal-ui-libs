@@ -5,6 +5,7 @@ import { ConfigurationService } from '../../services/configuration.service'
 
 type Config = {
   credentials: { [key: string]: string | (() => string | undefined) }
+  encodeParam: (param: unknown) => string
   selectHeaderContentType(contentTypes: string[]): string | undefined
   selectHeaderAccept(accepts: string[]): string | undefined
   isJsonMime(mime: string): boolean
@@ -27,6 +28,13 @@ export class PortalApiConfiguration {
   }
   set credentials(value: { [key: string]: string | (() => string | undefined) }) {
     this.configuration.credentials = value
+  }
+
+  get encodeParam(): (param: unknown) => string {
+    return this.configuration.encodeParam
+  }
+  set encocdeParam(value: (param: unknown) => string) {
+    this.configuration.encodeParam = value
   }
 
   constructor(
