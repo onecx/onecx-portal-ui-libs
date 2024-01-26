@@ -56,7 +56,6 @@ import { HelpItemEditorComponent } from './components/help-item-editor/help-item
 import { NoHelpItemComponent } from './components/no-help-item/no-help-item.component'
 import { DataListGridComponent } from './components/data-list-grid/data-list-grid.component'
 import { PrimeNgModule } from './primeng.module'
-import { MockAuthService } from '../mock-auth/mock-auth.service'
 import { ConfirmDialogModule } from 'primeng/confirmdialog'
 import { DataTableComponent } from './components/data-table/data-table.component'
 import de from '@angular/common/locales/de'
@@ -85,6 +84,8 @@ import { UserService } from '../services/user.service'
 import { UserProfileAPIService } from '../services/userprofile-api.service'
 import { createTranslateLoader } from './utils/create-translate-loader.utils'
 import { MessageService } from 'primeng/api'
+import { ExportDataService } from '../services/export-data.service'
+import { InitializeModuleGuard } from '../services/initialize-module-guard.service'
 
 export class MyMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -167,7 +168,6 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
   ],
   providers: [
     ConfigurationService,
-    MockAuthService,
     {
       provide: LOCALE_ID,
       useFactory: (translate: TranslateService) => {
@@ -176,6 +176,8 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
       },
       deps: [TranslateService],
     },
+    ExportDataService,
+    InitializeModuleGuard,
   ],
   exports: [
     AnnouncementBannerComponent,
