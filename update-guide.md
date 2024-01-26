@@ -22,7 +22,12 @@
 - .getCurrentUser(), .getUserRoles() and to get other user related data is now done with userService.profile$
 
 ## ConfigurationService
-- lang and lang$ are now defined in UserService as lang$
+- lang and lang$ are now defined in UserService as lang$: BehaviorSubject<string> and to get the value use:
+```
+userService.lang$.getValue()
+or
+userService.lang$.value
+```
 - to get the portal ID use:
 ```
 configService.getProperty(CONFIG_KEY.TKIT_PORTAL_ID)
@@ -52,7 +57,7 @@ await appStateService.currentPortal$.publish(Portal)
 loader: {
     provide: TranslateLoader,
     useFactory: createTranslateLoader,
-    deps: [HttpClient, AppStateService, ConfigurationService],
+    deps: [HttpClient, AppStateService],
 },
 ```
 
