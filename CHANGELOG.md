@@ -1,3 +1,27 @@
+## [4.1.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.0.2...v4.1.0) (2024-01-26)
+
+
+### Features
+
+* diagram type bar ([#69](https://github.com/onecx/onecx-portal-ui-libs/issues/69)) ([bb9c6fd](https://github.com/onecx/onecx-portal-ui-libs/commit/bb9c6fd969c5c870a9f38b91b2856c8cbad455c3))
+* Widgets: Show total number of results and select ALL ([#72](https://github.com/onecx/onecx-portal-ui-libs/issues/72)) ([0bec6a9](https://github.com/onecx/onecx-portal-ui-libs/commit/0bec6a96e73dc52dea2e460ebe80909cfad4c063))
+
+
+### Bug Fixes
+
+* createTranslateLoader, encodeParam, update-guide ([#89](https://github.com/onecx/onecx-portal-ui-libs/issues/89)) ([2662e77](https://github.com/onecx/onecx-portal-ui-libs/commit/2662e773b83e9474cc6d9c86da4d9d6c0d31089e))
+
+
+### Chores
+
+* **deps-dev:** bump @storybook/addon-essentials from 7.6.5 to 7.6.10 ([#73](https://github.com/onecx/onecx-portal-ui-libs/issues/73)) ([d3f4b02](https://github.com/onecx/onecx-portal-ui-libs/commit/d3f4b027847622cf2a4875c6581f56fb3d747eba))
+
+
+### Refactoring
+
+* **a11y:** add title & ariaLabel attributes to buttons in search… ([#78](https://github.com/onecx/onecx-portal-ui-libs/issues/78)) ([d511c4f](https://github.com/onecx/onecx-portal-ui-libs/commit/d511c4f39cb121706199c465bc719186b040afc5))
+* rename incorrectly named files ([#83](https://github.com/onecx/onecx-portal-ui-libs/issues/83)) ([62d521e](https://github.com/onecx/onecx-portal-ui-libs/commit/62d521ea66cde53c361863485935c0da7fa74101))
+
 ## [4.0.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.0.1...v4.0.2) (2024-01-22)
 
 
