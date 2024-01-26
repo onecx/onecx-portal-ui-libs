@@ -30,11 +30,11 @@ export class ExportDataService {
     const headerString = (await firstValueFrom(this.translateColumnNames(columns))).map((c) => c.name).join(delimiter)
     const csvString = headerString + '\r\n' + dataString
 
-    let blob = new Blob(['\ufeff' + csvString], {
+    const blob = new Blob(['\ufeff' + csvString], {
       type: 'text/csv;charset=utf-8;',
     })
-    let dwldLink = document.createElement('a')
-    let url = URL.createObjectURL(blob)
+    const dwldLink = document.createElement('a')
+    const url = URL.createObjectURL(blob)
     dwldLink.setAttribute('href', url)
 
     dwldLink.setAttribute('download', fileName)
