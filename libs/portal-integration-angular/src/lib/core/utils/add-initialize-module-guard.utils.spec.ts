@@ -1,11 +1,11 @@
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService } from '../../services/app-state.service'
 import { ConfigurationService } from '../../services/configuration.service'
-import { InitializeModuleGuardService } from '../../services/initialize-module-guard.service'
+import { InitializeModuleGuard } from '../../services/initialize-module-guard.service'
 import { UserService } from '../../services/user.service'
 import { addInitializeModuleGuard } from './add-initialize-module-guard.utils'
 
-class MockInitializeModuleGuard extends InitializeModuleGuardService {
+class MockInitializeModuleGuard extends InitializeModuleGuard {
   constructor(
     translateService: TranslateService,
     configService: ConfigurationService,
@@ -30,11 +30,11 @@ describe('AddInitializeGuard', () => {
     const expectedRoutes = [
       {
         path: 'testPathAddInitializerModuleGuard1',
-        canActivate: [InitializeModuleGuardService],
+        canActivate: [InitializeModuleGuard],
       },
       {
         path: 'testPathAddInitializerModuleGuard2',
-        canActivate: [InitializeModuleGuardService],
+        canActivate: [InitializeModuleGuard],
       },
     ]
     const modifiedRoutes = addInitializeModuleGuard(testRoutesNoCanActivate)
@@ -61,15 +61,15 @@ describe('AddInitializeGuard', () => {
     const expectedRoutes = [
       {
         path: 'testPathHasMockInitializeModueGuard1',
-        canActivate: [MockInitializeModuleGuard, InitializeModuleGuardService],
+        canActivate: [MockInitializeModuleGuard, InitializeModuleGuard],
       },
       {
         path: 'testPath',
-        canActivate: [InitializeModuleGuardService],
+        canActivate: [InitializeModuleGuard],
       },
       {
         path: 'testPathHasMockInitializeModueGuard2',
-        canActivate: [MockInitializeModuleGuard, InitializeModuleGuardService],
+        canActivate: [MockInitializeModuleGuard, InitializeModuleGuard],
       },
     ]
     const modifiedRoutes = addInitializeModuleGuard(testRoutesWithMockInitializeModuleGuard)
@@ -85,41 +85,41 @@ describe('AddInitializeGuard', () => {
       },
       {
         path: 'testPathHasInitializeModueGuard1',
-        canActivate: [InitializeModuleGuardService],
+        canActivate: [InitializeModuleGuard],
       },
       {
         path: 'testPathHasInitializeModueGuard2',
-        canActivate: [InitializeModuleGuardService],
+        canActivate: [InitializeModuleGuard],
       },
       {
         path: 'testPath2',
       },
       {
         path: 'testPathHasInitializeModueGuard3',
-        canActivate: [InitializeModuleGuardService],
+        canActivate: [InitializeModuleGuard],
       },
     ]
 
     const expectedRoutes = [
       {
         path: 'testPath1',
-        canActivate: [InitializeModuleGuardService],
+        canActivate: [InitializeModuleGuard],
       },
       {
         path: 'testPathHasInitializeModueGuard1',
-        canActivate: [InitializeModuleGuardService],
+        canActivate: [InitializeModuleGuard],
       },
       {
         path: 'testPathHasInitializeModueGuard2',
-        canActivate: [InitializeModuleGuardService],
+        canActivate: [InitializeModuleGuard],
       },
       {
         path: 'testPath2',
-        canActivate: [InitializeModuleGuardService],
+        canActivate: [InitializeModuleGuard],
       },
       {
         path: 'testPathHasInitializeModueGuard3',
-        canActivate: [InitializeModuleGuardService],
+        canActivate: [InitializeModuleGuard],
       },
     ]
     const modifiedRoutes = addInitializeModuleGuard(testRoutesWithInitializeModuleGuard)
@@ -153,7 +153,7 @@ describe('AddInitializeGuard', () => {
       },
       {
         path: 'someTestPath1',
-        canActivate: [InitializeModuleGuardService],
+        canActivate: [InitializeModuleGuard],
       },
       {
         path: 'testPathHasRedirectTo2',
@@ -161,7 +161,7 @@ describe('AddInitializeGuard', () => {
       },
       {
         path: 'someTestPath2',
-        canActivate: [InitializeModuleGuardService],
+        canActivate: [InitializeModuleGuard],
       },
     ]
     const modifiedRoutes = addInitializeModuleGuard(testRoutesWithRedirectTo)
@@ -214,7 +214,7 @@ describe('AddInitializeGuard', () => {
       },
       {
         path: 'testPathHasMockInitializeModueGuard2',
-        canActivate: [InitializeModuleGuardService],
+        canActivate: [InitializeModuleGuard],
       },
     ]
 
@@ -229,7 +229,7 @@ describe('AddInitializeGuard', () => {
       },
       {
         path: 'testPathHasMockInitializeModueGuard2',
-        canActivate: [InitializeModuleGuardService, MockInitializeModuleGuard],
+        canActivate: [InitializeModuleGuard, MockInitializeModuleGuard],
       },
     ]
     const modifiedRoutes = addInitializeModuleGuard(testRoutesWithMockInitializeModuleGuard, MockInitializeModuleGuard)

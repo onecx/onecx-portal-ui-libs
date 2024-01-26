@@ -1,9 +1,9 @@
 import { CanActivateFn, Route } from '@angular/router'
-import { InitializeModuleGuardService } from '../../services/initialize-module-guard.service'
+import { InitializeModuleGuard } from '../../services/initialize-module-guard.service'
 
 export function addInitializeModuleGuard(
   routes: Route[],
-  initializeModuleGuard: typeof InitializeModuleGuardService | CanActivateFn = InitializeModuleGuardService
+  initializeModuleGuard: typeof InitializeModuleGuard | CanActivateFn = InitializeModuleGuard
 ): Route[] {
   return routes.map((r) => {
     if (r.redirectTo) {
