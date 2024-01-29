@@ -8,7 +8,7 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core'
-import { Observable, from, isObservable, of } from 'rxjs'
+import { Observable, from, isObservable, map, of, startWith } from 'rxjs'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 
 import { ButtonDialogButtonDetails, ButtonDialogConfig, ButtonDialogData } from '../../../model/button-dialog'
@@ -47,8 +47,8 @@ export class ButtonDialogComponent implements OnInit {
 
   dialogData: ButtonDialogData = this.defaultDialogData
   componentRef!: ComponentRef<any>
-  primaryButtonEnabled = true
-  secondaryButtonEnabled = true
+  primaryButtonDisabled$: Observable<boolean | undefined> | undefined
+  secondaryButtonDisabled$: Observable<boolean | undefined> | undefined
 
   constructor(public dynamicDialogConfig: DynamicDialogConfig, public dynamicDialogRef: DynamicDialogRef) {}
 
@@ -153,20 +153,16 @@ export class ButtonDialogComponent implements OnInit {
       const componentRef = viewContainerRef.createComponent<any>(this.dialogData.component)
       //check for DialogPrimaryButtonDisabled and DialogSecondaryButtonDisabled interfaces
       if ('primaryButtonEnabled' in componentRef.instance) {
-        this.primaryButtonEnabled = false
-        componentRef.instance.primaryButtonEnabled.subscribe({
-          next: (enabled: boolean) => {
-            this.primaryButtonEnabled = enabled
-          },
-        })
+        this.primaryButtonDisabled$ = componentRef.instance.primaryButtonEnabled.pipe(
+          startWith(false),
+          map((isEnabled: boolean) => !isEnabled)
+        )
       }
       if ('secondaryButtonEnabled' in componentRef.instance) {
-        this.secondaryButtonEnabled = false
-        componentRef.instance.secondaryButtonEnabled.subscribe({
-          next: (enabled: boolean) => {
-            this.secondaryButtonEnabled = enabled
-          },
-        })
+        this.secondaryButtonDisabled$ = componentRef.instance.secondaryButtonEnabled.pipe(
+          startWith(false),
+          map((isEnabled: boolean) => !isEnabled)
+        )
       }
       //populate container
       Object.keys(this.dialogData.componentData).forEach((k) => {

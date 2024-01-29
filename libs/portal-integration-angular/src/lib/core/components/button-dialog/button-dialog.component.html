@@ -10,7 +10,7 @@
             [icon]="dialogData.config.secondaryButtonDetails!.icon !== undefined ? dialogData.config.secondaryButtonDetails!.icon : ''"
             (click)="secondaryButtonAction()"
             [label]="dialogData.config.secondaryButtonDetails!.key | translate:dialogData.config.secondaryButtonDetails?.parameters"
-            [disabled]="!secondaryButtonEnabled"
+            [disabled]="secondaryButtonDisabled$ | async"
         ></button>
         <button 
             id="buttonDialogPrimaryButton"
@@ -19,7 +19,7 @@
             [icon]="dialogData.config.primaryButtonDetails!.icon !== undefined ? dialogData.config.primaryButtonDetails!.icon : ''"
             (click)="primaryButtonAction()"
             [label]="dialogData.config.primaryButtonDetails!.key | translate:dialogData.config.primaryButtonDetails?.parameters"
-            [disabled]="!primaryButtonEnabled"
+            [disabled]="primaryButtonDisabled$ | async"
         ></button>
     </div>
 </div>
