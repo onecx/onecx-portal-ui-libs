@@ -7,8 +7,11 @@ import { AppStateService } from '../../services/app-state.service'
 import { AsyncTranslateLoader } from './async-translate-loader.utils'
 import { TranslateCombinedLoader } from './translate.combined.loader'
 
+let lastTranslateLoaderTimerId = 0
+
 export function createTranslateLoader(http: HttpClient, appStateService: AppStateService): TranslateLoader {
-  console.time('createTranslateLoader')
+  const timerId = lastTranslateLoaderTimerId++
+  console.time('createTranslateLoader_' + timerId)
   return new AsyncTranslateLoader(
     combineLatest([appStateService.currentMfe$.asObservable(), appStateService.globalLoading$.asObservable()]).pipe(
       filter(([, isLoading]) => !isLoading),
@@ -26,7 +29,7 @@ export function createTranslateLoader(http: HttpClient, appStateService: AppStat
           new TranslateHttpLoader(http, Location.joinWithSlash(currentMfe.remoteBaseUrl, `assets/i18n/`), '.json')
         )
       }),
-      tap(() => console.timeEnd('createTranslateLoader'))
+      tap(() => console.timeEnd('createTranslateLoader_' + timerId))
     )
   )
 }
