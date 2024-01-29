@@ -77,7 +77,7 @@ import { LoadingIndicatorDirective } from './directives/loading-indicator.direct
 import { DiagramComponent } from './components/diagram/diagram.component'
 import { GroupByCountDiagramComponent } from './components/group-by-count-diagram/group-by-count-diagram.component'
 import { ButtonDialogComponent } from './components/button-dialog/button-dialog.component'
-import { DialogMessageContentComponent } from './components/button-dialog/dialog-host/dialog-host.component'
+import { DialogMessageContentComponent } from './components/button-dialog/dialog-message-content/dialog-message-content.component'
 import { OcxContentDirective } from './directives/ocx-content.directive'
 import { OcxContentComponent } from './components/ocx-content/ocx-content.component'
 import { OcxContentContainerComponent } from './components/ocx-content-container/ocx-content-container.component'

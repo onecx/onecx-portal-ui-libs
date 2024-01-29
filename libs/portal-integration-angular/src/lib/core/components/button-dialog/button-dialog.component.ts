@@ -12,7 +12,7 @@ import { Observable, from, isObservable, map, of, startWith } from 'rxjs'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 
 import { ButtonDialogButtonDetails, ButtonDialogConfig, ButtonDialogData } from '../../../model/button-dialog'
-import { DialogMessageContentComponent } from './dialog-host/dialog-host.component'
+import { DialogMessageContentComponent } from './dialog-message-content/dialog-message-content.component'
 import {
   DialogButtonClicked,
   DialogPrimaryButtonDisabled,

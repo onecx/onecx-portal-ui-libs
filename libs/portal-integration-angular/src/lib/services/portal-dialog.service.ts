@@ -5,7 +5,7 @@ import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dy
 
 import { ButtonDialogComponent } from '../core/components/button-dialog/button-dialog.component'
 import { ButtonDialogButtonDetails, ButtonDialogData } from '../model/button-dialog'
-import { DialogMessageContentComponent } from '../core/components/button-dialog/dialog-host/dialog-host.component'
+import { DialogMessageContentComponent } from '../core/components/button-dialog/dialog-message-content/dialog-message-content.component'
 
 type TranslationKeyWithParameters = { key: string; parameters: Record<string, unknown> }
 type TranslationKey = string | TranslationKeyWithParameters

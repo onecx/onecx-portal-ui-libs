@@ -10,7 +10,7 @@ import { ButtonModule } from 'primeng/button'
 import { Observable, of } from 'rxjs'
 
 import { ButtonDialogComponent } from '../core/components/button-dialog/button-dialog.component'
-import { DialogMessageContentComponent } from '../core/components/button-dialog/dialog-host/dialog-host.component'
+import { DialogMessageContentComponent } from '../core/components/button-dialog/dialog-message-content/dialog-message-content.component'
 import {
   DialogButtonClicked,
   DialogPrimaryButtonDisabled,

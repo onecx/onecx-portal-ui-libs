@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core'
 
 @Component({
-  templateUrl: `./dialog-host.component.html`,
+  templateUrl: `./dialog-message-content.component.html`,
 })
 export class DialogMessageContentComponent {
   @Input() message = 'message'
