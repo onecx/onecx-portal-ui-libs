@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core'
 import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, UrlTree } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
-import { filter, from, isObservable, map, mergeMap, Observable, of } from 'rxjs'
+import { filter, from, isObservable, map, mergeMap, Observable, of, tap, zip } from 'rxjs'
 import { AppStateService } from './app-state.service'
 import { ConfigurationService } from './configuration.service'
 import { UserService } from './user.service'
 
-@Injectable()
+@Injectable({ providedIn: 'any' })
 export class InitializeModuleGuard implements CanActivate {
   private SUPPORTED_LANGS = ['en', 'de']
   private DEFAULT_LANG = 'en'
@@ -21,14 +21,15 @@ export class InitializeModuleGuard implements CanActivate {
     _route: ActivatedRouteSnapshot,
     _state: RouterStateSnapshot
   ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    return this.loadTranslations().pipe(
-      mergeMap(() => from(this.configService.isInitialized)),
-      mergeMap(() => from(this.appStateService.currentPortal$.isInitialized)),
-      mergeMap(() => {
-        return this.appStateService.globalLoading$.pipe(
-          filter((g) => !g),
-          map(() => true)
-        )
+    console.time('InitializeModuleGuard')
+    return zip([
+      this.loadTranslations(),
+      from(this.configService.isInitialized),
+      from(this.appStateService.currentPortal$.isInitialized),
+      this.appStateService.globalLoading$.pipe(filter((g) => !g)),
+    ]).pipe(
+      tap(() => {
+        console.timeEnd('InitializeModuleGuard')
       }),
       map(() => true)
     )
