@@ -1,3 +1,10 @@
+## [4.1.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.1.0...v4.1.1) (2024-01-29)
+
+
+### Bug Fixes
+
+* performance, add timers, minor fixes ([#90](https://github.com/onecx/onecx-portal-ui-libs/issues/90)) ([b4e05cf](https://github.com/onecx/onecx-portal-ui-libs/commit/b4e05cf1432c4675a31348e9c1dff6e0c7a9d7e3))
+
 ## [4.1.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.0.2...v4.1.0) (2024-01-26)
 
 
