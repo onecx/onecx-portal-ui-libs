@@ -1,11 +1,11 @@
-import { EventEmitter, Injectable, Type } from '@angular/core'
+import { EventEmitter, Injectable, Type, isDevMode } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { Observable } from 'rxjs'
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 
 import { ButtonDialogComponent } from '../core/components/button-dialog/button-dialog.component'
 import { ButtonDialogButtonDetails, ButtonDialogData } from '../model/button-dialog'
-import { DialogHostComponent } from '../core/components/button-dialog/dialog-host/dialog-host.component'
+import { DialogMessageContentComponent } from '../core/components/button-dialog/dialog-host/dialog-host.component'
 
 type TranslationKeyWithParameters = { key: string; parameters: Record<string, unknown> }
 type TranslationKey = string | TranslationKeyWithParameters
@@ -19,8 +19,8 @@ export interface DialogPrimaryButtonDisabled {
 export interface DialogSecondaryButtonDisabled {
   secondaryButtonEnabled: EventEmitter<boolean>
 }
-export interface DialogButtonClicked {
-  ocxDialogButtonClicked(state: DialogState<any>): Observable<boolean> | Promise<boolean> | boolean | undefined
+export interface DialogButtonClicked<T = unknown> {
+  ocxDialogButtonClicked(state: DialogState<T>): Observable<boolean> | Promise<boolean> | boolean | undefined
 }
 
 type Component<T> = {
@@ -41,6 +41,9 @@ export class PortalDialogService {
    * @deprecated
    */
   open(componentType: Type<any>, config: DynamicDialogConfig): DynamicDialogRef {
+    if (isDevMode()) {
+      console.warn('You are using a deprecated method to display a dialog. Please move to the new one')
+    }
     return this.dialogService.open(componentType, config)
   }
 
@@ -74,10 +77,10 @@ export class PortalDialogService {
     }).onClose
   }
 
-  private prepareTitleForTranslation(title: TranslationKey | null) {
-    if (!title) return { key: '' }
-    if (this.isString(title)) return { key: title }
-    return { key: title.key, parameters: title.parameters }
+  private prepareTitleForTranslation(title: TranslationKey | null): TranslationKeyWithParameters {
+    if (!title) return { key: '', parameters: {} }
+    if (this.isString(title)) return { key: title, parameters: {} }
+    return title
   }
 
   private getButtonDetails(
@@ -103,7 +106,7 @@ export class PortalDialogService {
   private getComponentToRender(componentOrMessage: Component<any> | TranslationKey | DialogMessage): Component<any> {
     if (this.isTranslationKey(componentOrMessage)) {
       return {
-        type: DialogHostComponent,
+        type: DialogMessageContentComponent,
         inputs: {
           message: this.isString(componentOrMessage) ? componentOrMessage : componentOrMessage.key,
           messageParameters: this.isString(componentOrMessage) ? {} : componentOrMessage.parameters,
@@ -111,7 +114,7 @@ export class PortalDialogService {
       }
     } else if (this.isDialogMessage(componentOrMessage)) {
       return {
-        type: DialogHostComponent,
+        type: DialogMessageContentComponent,
         inputs: {
           message: this.isString(componentOrMessage.message)
             ? componentOrMessage.message

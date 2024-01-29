@@ -12,8 +12,14 @@ import { Observable, from, isObservable, map, of, startWith } from 'rxjs'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 
 import { ButtonDialogButtonDetails, ButtonDialogConfig, ButtonDialogData } from '../../../model/button-dialog'
-import { DialogHostComponent } from './dialog-host/dialog-host.component'
-import { DialogState } from '../../../services/portal-dialog.service'
+import { DialogMessageContentComponent } from './dialog-host/dialog-host.component'
+import {
+  DialogButtonClicked,
+  DialogPrimaryButtonDisabled,
+  DialogResult,
+  DialogSecondaryButtonDisabled,
+  DialogState,
+} from '../../../services/portal-dialog.service'
 
 @Component({
   selector: 'ocx-button-dialog',
@@ -29,7 +35,7 @@ export class ButtonDialogComponent implements OnInit {
   }
 
   defaultDialogData: ButtonDialogData = {
-    component: DialogHostComponent,
+    component: DialogMessageContentComponent,
     config: {
       primaryButtonDetails: this.defaultPrimaryButtonDetails,
       secondaryButtonIncluded: true,
@@ -57,12 +63,12 @@ export class ButtonDialogComponent implements OnInit {
   }
 
   primaryButtonAction() {
-    if (this.componentRef === undefined) {
+    if (!this.componentRef) {
       this.resultEmitter.emit('primary')
       return
     }
 
-    const state: DialogState<any> = {
+    const state: DialogState<unknown> = {
       button: 'primary',
       result: undefined,
     }
@@ -71,12 +77,12 @@ export class ButtonDialogComponent implements OnInit {
   }
 
   secondaryButtonAction() {
-    if (this.componentRef === undefined) {
+    if (!this.componentRef) {
       this.resultEmitter.emit('secondary')
       return
     }
 
-    const state: DialogState<any> = {
+    const state: DialogState<unknown> = {
       button: 'secondary',
       result: undefined,
     }
@@ -84,21 +90,90 @@ export class ButtonDialogComponent implements OnInit {
     this.resolveButtonClick(state)
   }
 
-  private resolveButtonClick(state: DialogState<any>) {
+  loadComponent() {
+    if (this.dynamicDialogConfig.data) {
+      this.setUpDialogDataForDynamicConfig()
+    } else {
+      this.setUpDialogDataForInput()
+    }
+  }
+
+  setUpDialogDataForDynamicConfig() {
+    const dynamicConfigData: ButtonDialogData = this.dynamicDialogConfig.data
+    if (dynamicConfigData.config) {
+      const dialogConfig = dynamicConfigData.config
+      if (!!dialogConfig.primaryButtonDetails && !!dialogConfig.primaryButtonDetails.key) {
+        this.dialogData.config.primaryButtonDetails = dialogConfig.primaryButtonDetails
+      }
+      if (dialogConfig.secondaryButtonIncluded !== undefined) {
+        this.dialogData.config.secondaryButtonIncluded = dialogConfig.secondaryButtonIncluded
+      }
+      if (!!dialogConfig.secondaryButtonDetails && !!dialogConfig.secondaryButtonDetails.key) {
+        this.dialogData.config.secondaryButtonDetails = dialogConfig.secondaryButtonDetails
+      }
+    }
+    if (dynamicConfigData.component) {
+      this.dialogData.component = dynamicConfigData.component
+    }
+    if (dynamicConfigData.componentData) {
+      this.dialogData.componentData = dynamicConfigData.componentData
+    }
+
+    const viewContainerRef = this.dialogHost
+    viewContainerRef.clear()
+
+    if (this.dialogData.component) {
+      const componentRef = viewContainerRef.createComponent<any>(this.dialogData.component)
+
+      if (this.isDialogPrimaryButtonDisabledImplemented(componentRef.instance)) {
+        this.primaryButtonDisabled$ = componentRef.instance.primaryButtonEnabled.pipe(
+          startWith(false),
+          map((isEnabled: boolean) => !isEnabled)
+        )
+      }
+      if (this.isDialogSecondaryButtonDisabledImplemented(componentRef.instance)) {
+        this.secondaryButtonDisabled$ = componentRef.instance.secondaryButtonEnabled.pipe(
+          startWith(false),
+          map((isEnabled: boolean) => !isEnabled)
+        )
+      }
+
+      //populate container
+      Object.keys(this.dialogData.componentData).forEach((k) => {
+        componentRef.instance[k] = this.dialogData.componentData[k]
+      })
+      this.componentRef = componentRef
+    }
+  }
+
+  setUpDialogDataForInput() {
+    this.dialogData.component = undefined
+    this.dialogData.componentData = undefined
+    if (this.config) {
+      if (!!this.config.primaryButtonDetails && !!this.config.primaryButtonDetails.key) {
+        this.dialogData.config.primaryButtonDetails = this.config.primaryButtonDetails
+      }
+      if (this.config.secondaryButtonIncluded) {
+        this.dialogData.config.secondaryButtonIncluded = this.config.secondaryButtonIncluded
+      }
+      if (!!this.config.secondaryButtonDetails && !!this.config.secondaryButtonDetails.key) {
+        this.dialogData.config.secondaryButtonDetails = this.config.secondaryButtonDetails
+      }
+    }
+  }
+
+  private resolveButtonClick(state: DialogState<unknown>) {
     const component = this.componentRef.instance
 
-    // check if component implements DialogResult<T>
-    if ('dialogResult' in component) {
+    if (this.isDialogResultImplemented(component)) {
       state.result = component.dialogResult
     }
     // check if component implements DialogButtonClicked
-    if (typeof component.ocxDialogButtonClicked === 'function') {
-      this.toObservable(component.ocxDialogButtonClicked(state)).subscribe({
-        next: (result: boolean) => {
-          if (result === true) {
-            this.dynamicDialogRef.close(state)
-          }
-        },
+    if (this.isDialogButtonClickedImplemented(component)) {
+      this.toObservable(component.ocxDialogButtonClicked(state)).subscribe((result: boolean) => {
+        if (result === true) {
+          this.dynamicDialogRef.close(state)
+        }
       })
     } else {
       return this.dynamicDialogRef.close(state)
@@ -117,74 +192,19 @@ export class ButtonDialogComponent implements OnInit {
     return from(Promise.resolve(ocxDialogButtonClickedResult))
   }
 
-  loadComponent() {
-    if (this.dynamicDialogConfig.data !== undefined) {
-      this.setUpDialogDataForDynamicConfig()
-    } else {
-      this.setUpDialogDataForInput()
-    }
+  private isDialogResultImplemented(component: any): component is DialogResult<unknown> {
+    return 'dialogResult' in component
   }
 
-  setUpDialogDataForDynamicConfig() {
-    const dynamicConfigData: ButtonDialogData = this.dynamicDialogConfig.data
-    if (dynamicConfigData.config !== undefined) {
-      const dialogConfig = dynamicConfigData.config
-      if (dialogConfig.primaryButtonDetails !== undefined && dialogConfig.primaryButtonDetails.key !== undefined) {
-        this.dialogData.config.primaryButtonDetails = dialogConfig.primaryButtonDetails
-      }
-      if (dialogConfig.secondaryButtonIncluded !== undefined) {
-        this.dialogData.config.secondaryButtonIncluded = dialogConfig.secondaryButtonIncluded
-      }
-      if (dialogConfig.secondaryButtonDetails !== undefined && dialogConfig.secondaryButtonDetails.key !== undefined) {
-        this.dialogData.config.secondaryButtonDetails = dialogConfig.secondaryButtonDetails
-      }
-    }
-    if (dynamicConfigData.component !== undefined) {
-      this.dialogData.component = dynamicConfigData.component
-    }
-    if (dynamicConfigData.componentData !== undefined) {
-      this.dialogData.componentData = dynamicConfigData.componentData
-    }
-
-    const viewContainerRef = this.dialogHost
-    viewContainerRef.clear()
-
-    if (this.dialogData.component) {
-      const componentRef = viewContainerRef.createComponent<any>(this.dialogData.component)
-      //check for DialogPrimaryButtonDisabled and DialogSecondaryButtonDisabled interfaces
-      if ('primaryButtonEnabled' in componentRef.instance) {
-        this.primaryButtonDisabled$ = componentRef.instance.primaryButtonEnabled.pipe(
-          startWith(false),
-          map((isEnabled: boolean) => !isEnabled)
-        )
-      }
-      if ('secondaryButtonEnabled' in componentRef.instance) {
-        this.secondaryButtonDisabled$ = componentRef.instance.secondaryButtonEnabled.pipe(
-          startWith(false),
-          map((isEnabled: boolean) => !isEnabled)
-        )
-      }
-      //populate container
-      Object.keys(this.dialogData.componentData).forEach((k) => {
-        componentRef.instance[k] = this.dialogData.componentData[k]
-      })
-      this.componentRef = componentRef
-    }
+  private isDialogButtonClickedImplemented(component: any): component is DialogButtonClicked {
+    return typeof component.ocxDialogButtonClicked === 'function'
   }
 
-  setUpDialogDataForInput() {
-    this.dialogData.component = undefined
-    this.dialogData.componentData = undefined
-    if (this.config !== undefined) {
-      if (this.config.primaryButtonDetails !== undefined && this.config.primaryButtonDetails.key !== undefined) {
-        this.dialogData.config.primaryButtonDetails = this.config.primaryButtonDetails
-      }
-      if (this.config.secondaryButtonIncluded !== undefined) {
-        this.dialogData.config.secondaryButtonIncluded = this.config.secondaryButtonIncluded
-      }
-      if (this.config.secondaryButtonDetails !== undefined && this.config.secondaryButtonDetails.key !== undefined) {
-        this.dialogData.config.secondaryButtonDetails = this.config.secondaryButtonDetails
-      }
-    }
+  private isDialogPrimaryButtonDisabledImplemented(component: any): component is DialogPrimaryButtonDisabled {
+    return 'primaryButtonEnabled' in component
+  }
+
+  private isDialogSecondaryButtonDisabledImplemented(component: any): component is DialogSecondaryButtonDisabled {
+    return 'secondaryButtonEnabled' in component
   }
 }

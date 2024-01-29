@@ -10,7 +10,7 @@ import { ButtonModule } from 'primeng/button'
 import { Observable, of } from 'rxjs'
 
 import { ButtonDialogComponent } from '../core/components/button-dialog/button-dialog.component'
-import { DialogHostComponent } from '../core/components/button-dialog/dialog-host/dialog-host.component'
+import { DialogMessageContentComponent } from '../core/components/button-dialog/dialog-host/dialog-host.component'
 import {
   DialogButtonClicked,
   DialogPrimaryButtonDisabled,
@@ -26,6 +26,8 @@ import { DivHarness, InputHarness, ButtonDialogHarness } from '../../../testing/
 })
 class BaseTestComponent {
   resultFromShow: DialogState<any> | undefined = undefined
+  nameResult: string | undefined
+  surnameResult: string | undefined
   constructor(public portalDialogService: PortalDialogService) {}
 
   show(title: any, message: any, button1: any, button2?: any, showCloseButton: any = true) {
@@ -34,6 +36,23 @@ class BaseTestComponent {
         this.resultFromShow = result
       },
     })
+  }
+
+  showWithType() {
+    this.portalDialogService
+      .openDialog<NameAndSurnameObject>(
+        'Enter credentials',
+        {
+          type: CompleteDialogComponent,
+        },
+        'Validate',
+        'Hint: Doe'
+      )
+      .subscribe((result) => {
+        this.nameResult = result.result?.name
+        this.surnameResult = result.result?.surname
+        this.resultFromShow = result
+      })
   }
 }
 
@@ -200,7 +219,7 @@ describe('PortalDialogService', () => {
       declarations: [
         BaseTestComponent,
         ButtonDialogComponent,
-        DialogHostComponent,
+        DialogMessageContentComponent,
         CompleteDialogComponent,
         DialogButtonClickedWithResultComponent,
         DialogPrimaryButtonDisabledComponent,
@@ -689,14 +708,7 @@ describe('PortalDialogService', () => {
   it('should react to complex component behavior and return when it decides', async () => {
     jest.spyOn(pDialogService, 'open')
 
-    fixture.componentInstance.show(
-      'Enter credentials',
-      {
-        type: CompleteDialogComponent,
-      },
-      'Validate',
-      'Hint: Doe'
-    )
+    fixture.componentInstance.showWithType()
 
     // init state
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
@@ -771,5 +783,7 @@ describe('PortalDialogService', () => {
       name: 'John',
       surname: 'Doe',
     })
+    expect(fixture.componentInstance.nameResult).toBe('John')
+    expect(fixture.componentInstance.surnameResult).toBe('Doe')
   })
 })
