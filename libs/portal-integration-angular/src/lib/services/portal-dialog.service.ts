@@ -1,6 +1,6 @@
 import { EventEmitter, Injectable, Type, isDevMode } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
-import { Observable } from 'rxjs'
+import { Observable, mergeMap } from 'rxjs'
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 
 import { ButtonDialogComponent } from '../core/components/button-dialog/button-dialog.component'
@@ -23,10 +23,16 @@ export interface DialogButtonClicked<T = unknown> {
   ocxDialogButtonClicked(state: DialogState<T>): Observable<boolean> | Promise<boolean> | boolean | undefined
 }
 
-type Component<T> = {
-  type: Type<any> | DialogResult<T>
-  inputs?: Record<string, unknown>
-}
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
+type Component<T extends unknown> = unknown extends T
+  ? {
+      type: Type<any>
+      inputs?: Record<string, unknown>
+    }
+  : {
+      type: Type<DialogResult<T>>
+      inputs?: Record<string, unknown>
+    }
 
 export type DialogState<T> = {
   button: 'primary' | 'secondary'
@@ -47,18 +53,14 @@ export class PortalDialogService {
     return this.dialogService.open(componentType, config)
   }
 
-  openDialog<T = unknown>(
+  openDialog<T>(
     title: TranslationKey | null,
     componentOrMessage: Component<T> | TranslationKey | DialogMessage,
     primaryButtonTranslationKeyOrDetails: TranslationKey | ButtonDialogButtonDetails,
     secondaryButtonTranslationKeyOrDetails?: TranslationKey | ButtonDialogButtonDetails,
     showCloseButton: boolean = true
   ): Observable<DialogState<T>> {
-    let dialogTitle = ''
     const translateParams = this.prepareTitleForTranslation(title)
-    this.translateService.get(translateParams.key, translateParams.parameters).subscribe((translation: string) => {
-      dialogTitle = translation
-    })
 
     const componentToRender: Component<any> = this.getComponentToRender(componentOrMessage)
     const dynamicDialogDataConfig: ButtonDialogData = {
@@ -70,11 +72,16 @@ export class PortalDialogService {
       },
       componentData: componentToRender.inputs,
     }
-    return this.dialogService.open(ButtonDialogComponent, {
-      header: dialogTitle,
-      data: dynamicDialogDataConfig,
-      closable: showCloseButton && secondaryButtonTranslationKeyOrDetails !== undefined,
-    }).onClose
+
+    return this.translateService.get(translateParams.key, translateParams.parameters).pipe(
+      mergeMap((dialogTitle) => {
+        return this.dialogService.open(ButtonDialogComponent, {
+          header: dialogTitle,
+          data: dynamicDialogDataConfig,
+          closable: showCloseButton && secondaryButtonTranslationKeyOrDetails !== undefined,
+        }).onClose
+      })
+    )
   }
 
   private prepareTitleForTranslation(title: TranslationKey | null): TranslationKeyWithParameters {

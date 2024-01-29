@@ -40,7 +40,7 @@ class BaseTestComponent {
 
   showWithType() {
     this.portalDialogService
-      .openDialog<NameAndSurnameObject>(
+      .openDialog(
         'Enter credentials',
         {
           type: CompleteDialogComponent,
