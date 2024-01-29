@@ -823,6 +823,34 @@ describe('InteractiveDataViewComponent', () => {
     })
   })
 
+  describe('Table row selection ', () => {
+    let dataLayoutSelection: DataLayoutSelectionHarness
+    let dataView: DataViewHarness
+    let dataTable: DataTableHarness
+
+    beforeEach(async () => {
+      dataLayoutSelection = await loader.getHarness(DataLayoutSelectionHarness)
+      dataView = await loader.getHarness(DataViewHarness)
+      dataTable = await dataView.getDataTable()
+    })
+    it('should initially show a table without selection checkboxes', async () => {
+      expect(dataTable).toBeTruthy()
+      expect(await dataLayoutSelection.getCurrentLayout()).toEqual('table')
+      expect(await dataTable.rowSelectionIsEnabled()).toEqual(false)
+    })
+    it('should show a table with selection checkboxes if the parent binds to the event emitter',async () => {      
+      expect(dataTable).toBeTruthy()
+      expect(await dataLayoutSelection.getCurrentLayout()).toEqual('table')
+      expect(await dataTable.rowSelectionIsEnabled()).toEqual(false)
+
+      component.selectionChanged.subscribe()
+
+      expect(await dataTable.rowSelectionIsEnabled()).toEqual(true);
+
+      component.selectionChanged.unsubscribe()
+    })
+  })
+
   describe('Table view custom group column selector ', () => {
     let dataView: DataViewHarness
     let dataTable: DataTableHarness
