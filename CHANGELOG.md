@@ -1,3 +1,10 @@
+## [4.1.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.1.1...v4.1.2) (2024-01-29)
+
+
+### Bug Fixes
+
+* initializeModuleGuard fix and delete timer warnings ([#91](https://github.com/onecx/onecx-portal-ui-libs/issues/91)) ([a1dfa9f](https://github.com/onecx/onecx-portal-ui-libs/commit/a1dfa9fbf15048b7b735aeb41cf5962287c9ba14))
+
 ## [4.1.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.1.0...v4.1.1) (2024-01-29)
 
 
