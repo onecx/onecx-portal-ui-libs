@@ -12,10 +12,11 @@ export class KeycloakAuthService implements IAuthService {
   constructor(
     private keycloakService: KeycloakService,
     private configService: ConfigurationService,
-    private appStateService: AppStateService,
+    private appStateService: AppStateService
   ) {}
 
   public init(): Promise<boolean> {
+    console.time('KeycloakAuthService')
     // load previous tokens, saved after successful login of keycloak success callback
     let token = localStorage.getItem(KC_TOKEN_LS)
     let idToken = localStorage.getItem(KC_ID_TOKEN_LS)
@@ -75,7 +76,10 @@ export class KeycloakAuthService implements IAuthService {
       .then(async () => {
         await this.appStateService.isAuthenticated$.publish()
       })
-      .then(() => true)
+      .then(() => {
+        console.timeEnd('KeycloakAuthService')
+        return true
+      })
       .catch((err) => {
         console.log(`KC ERROR ${err} as json ${JSON.stringify(err)}`)
         throw err
