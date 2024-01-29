@@ -5,7 +5,7 @@ import { firstValueFrom } from 'rxjs'
 import { APP_CONFIG } from '../api/injection-tokens'
 import { CONFIG_KEY } from '../model/config-key.model'
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ConfigurationService implements OnDestroy {
   config$ = new ConfigurationTopic()
 

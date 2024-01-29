@@ -17,7 +17,6 @@ import {
   MissingTranslationHandlerParams,
   TranslateLoader,
   TranslateModule,
-  TranslateService,
 } from '@ngx-translate/core'
 import { APPLICATION_NAME, AUTH_SERVICE, SANITY_CHECK } from '../api/injection-tokens'
 import { AutofocusDirective } from './directives/autofocus.directive'
@@ -85,9 +84,9 @@ import { UserProfileAPIService } from '../services/userprofile-api.service'
 import { createTranslateLoader } from './utils/create-translate-loader.utils'
 import { MessageService } from 'primeng/api'
 
-export class MyMissingTranslationHandler implements MissingTranslationHandler {
+export class PortalMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
-    console.log(`Missing translation for ${params.key}`)
+    console.log(`Missing translation for ${params.key}`, params)
     return params.key
   }
 }
@@ -106,7 +105,7 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
         useFactory: createTranslateLoader,
         deps: [HttpClient, AppStateService, ConfigurationService],
       },
-      missingTranslationHandler: { provide: MissingTranslationHandler, useClass: MyMissingTranslationHandler },
+      missingTranslationHandler: { provide: MissingTranslationHandler, useClass: PortalMissingTranslationHandler },
     }),
     ConfirmDialogModule,
   ],
@@ -165,14 +164,13 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     SearchConfigComponent,
   ],
   providers: [
-    ConfigurationService,
     {
       provide: LOCALE_ID,
-      useFactory: (translate: TranslateService) => {
-        const browserLang = translate.getBrowserLang() || ''
-        return browserLang.match(/en|de/) ? browserLang : 'en'
+      useFactory: (userService: UserService) => {
+        console.log('Using locale: ' + userService.lang$.getValue())
+        return userService.lang$.getValue()
       },
-      deps: [TranslateService],
+      deps: [UserService],
     },
   ],
   exports: [
