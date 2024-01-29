@@ -57,7 +57,7 @@ class BaseTestComponent {
 }
 
 @Component({
-  template: `<h1 id="testHeader">{{ header }}</h1>`,
+  template: `<div class="testHeader">{{ header }}</div>`,
 })
 class TestWithInputsComponent {
   @Input() header = 'header'
@@ -279,8 +279,8 @@ describe('PortalDialogService', () => {
     fixture.componentInstance.show('title', 'MESSAGE', 'button1', 'button2')
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    const message = await dialogHarness.getTextFor('#dialogMessage')
-    expect(message).toEqual(translations['MESSAGE'])
+    const dialogMessageContentHarness = await dialogHarness.getDialogMessageContent()
+    expect(await dialogMessageContentHarness?.getMessageContent()).toEqual(translations['MESSAGE'])
   })
 
   it('should display dialog with translated message with parameters', async () => {
@@ -294,7 +294,8 @@ describe('PortalDialogService', () => {
     )
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    const message = await dialogHarness.getTextFor('#dialogMessage')
+    const dialogMessageContentHarness = await dialogHarness.getDialogMessageContent()
+    const message = await dialogMessageContentHarness?.getMessageContent()
     expect(message).toEqual('myMessage myMsgParam')
   })
 
@@ -355,9 +356,10 @@ describe('PortalDialogService', () => {
     fixture.componentInstance.show('title', { message: 'MESSAGE', icon: 'pi pi-times' }, 'button1', 'button2')
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    const message = await dialogHarness.getTextFor('#dialogMessage')
+    const dialogMessageContentHarness = await dialogHarness.getDialogMessageContent()
+    const message = await dialogMessageContentHarness?.getMessageContent()
     expect(message).toEqual(translations['MESSAGE'])
-    const icon = await dialogHarness.getAttributeFor('i', 'class')
+    const icon = await dialogMessageContentHarness?.getIconValue()
     expect(icon).toContain('pi pi-times')
   })
 
@@ -372,9 +374,10 @@ describe('PortalDialogService', () => {
     )
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    const message = await dialogHarness.getTextFor('#dialogMessage')
+    const dialogMessageContentHarness = await dialogHarness.getDialogMessageContent()
+    const message = await dialogMessageContentHarness?.getMessageContent()
     expect(message).toEqual('myMessage dialogMessageParam')
-    const icon = await dialogHarness.getAttributeFor('i', 'class')
+    const icon = await dialogMessageContentHarness?.getIconValue()
     expect(icon).toContain('pi pi-times')
   })
 
@@ -384,7 +387,8 @@ describe('PortalDialogService', () => {
     fixture.componentInstance.show('title', { type: TestWithInputsComponent }, 'button1', 'button2')
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    const headerValue = await dialogHarness.getTextFor('#testHeader')
+    const headerDiv = await dialogHarness.getHarness(DivHarness.with({ class: 'testHeader' }))
+    const headerValue = await headerDiv.getText()
     expect(headerValue).toEqual('header')
   })
 
@@ -404,7 +408,8 @@ describe('PortalDialogService', () => {
     )
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    const headerValue = await dialogHarness.getTextFor('#testHeader')
+    const headerDiv = await dialogHarness.getHarness(DivHarness.with({ class: 'testHeader' }))
+    const headerValue = await headerDiv.getText()
     expect(headerValue).toEqual('myCustomHeader')
   })
 

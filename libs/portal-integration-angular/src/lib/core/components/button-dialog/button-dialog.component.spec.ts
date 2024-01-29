@@ -7,12 +7,12 @@ import { ButtonModule } from 'primeng/button'
 
 import { ButtonDialogComponent } from './button-dialog.component'
 import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
-import { ButtonDialogHarness } from '../../../../../testing'
+import { ButtonDialogHarness, DivHarness } from '../../../../../testing'
 import { ButtonDialogConfig } from '../../../model/button-dialog'
 
 @Component({
   template: `<ocx-button-dialog>
-    <div id="host">HostComponentContent</div>
+    <div class="host">HostComponentContent</div>
   </ocx-button-dialog>`,
 })
 class TestBaseHostComponent {}
@@ -31,7 +31,7 @@ const config: ButtonDialogConfig = {
 
 @Component({
   template: ` <ocx-button-dialog [config]="this.buttonDialogConfig">
-    <div id="host">HostComponentContent</div>
+    <div class="host">HostComponentContent</div>
   </ocx-button-dialog>`,
 })
 class TestHostWithConfigComponent {
@@ -40,7 +40,7 @@ class TestHostWithConfigComponent {
 
 @Component({
   template: ` <ocx-button-dialog (resultEmitter)="handleResult($event)">
-    <div id="host">HostComponentContent</div>
+    <div class="host">HostComponentContent</div>
   </ocx-button-dialog>`,
 })
 class TestHostWithResultSubComponent {
@@ -301,7 +301,9 @@ describe('ButtonDialogComponent', () => {
       harnessLoader = await TestbedHarnessEnvironment.loader(fixtureWithHost)
       buttonDialogHarness = await harnessLoader.getHarness(ButtonDialogHarness)
 
-      expect(await buttonDialogHarness.getTextFor('#host')).toBe('HostComponentContent')
+      const contentDiv = await buttonDialogHarness.getHarness(DivHarness.with({ class: 'host' }))
+      expect(contentDiv).toBeDefined()
+      expect(await contentDiv.getText()).toBe('HostComponentContent')
     })
 
     it('should use passed config', async () => {
