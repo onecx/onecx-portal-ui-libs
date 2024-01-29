@@ -1,6 +1,6 @@
 {
   "name": "@onecx/portal-integration-angular",
-  "version": "4.1.1",
+  "version": "4.1.2",
   "peerDependencies": {
     "@angular-architects/module-federation": "15.0.0",
     "@angular/common": "^15.2.7",
