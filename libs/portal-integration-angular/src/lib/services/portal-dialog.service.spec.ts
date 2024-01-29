@@ -227,7 +227,6 @@ describe('PortalDialogService', () => {
     jest.spyOn(pDialogService, 'open')
 
     fixture.componentInstance.show('TITLE_TRANSLATE', 'message', 'button1', 'button2')
-    fixture.detectChanges()
 
     expect(pDialogService.open).toHaveBeenCalledWith(
       ButtonDialogComponent,
@@ -246,7 +245,6 @@ describe('PortalDialogService', () => {
       'button1',
       'button2'
     )
-    fixture.detectChanges()
 
     expect(pDialogService.open).lastCalledWith(
       ButtonDialogComponent,
@@ -260,7 +258,6 @@ describe('PortalDialogService', () => {
     jest.spyOn(pDialogService, 'open')
 
     fixture.componentInstance.show('title', 'MESSAGE', 'button1', 'button2')
-    fixture.detectChanges()
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
     const message = await dialogHarness.getTextFor('#dialogMessage')
@@ -276,7 +273,6 @@ describe('PortalDialogService', () => {
       'button1',
       'button2'
     )
-    fixture.detectChanges()
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
     const message = await dialogHarness.getTextFor('#dialogMessage')
@@ -287,7 +283,6 @@ describe('PortalDialogService', () => {
     jest.spyOn(pDialogService, 'open')
 
     fixture.componentInstance.show('title', 'message', 'BUTTON', 'BUTTON')
-    fixture.detectChanges()
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
     const primaryButtonLabel = await dialogHarness.getPrimaryButtonLabel()
@@ -305,7 +300,6 @@ describe('PortalDialogService', () => {
       { key: 'BUTTON_PARAM', parameters: { val: 'myButtonParam1' } },
       { key: 'BUTTON_PARAM', parameters: { val: 'myButtonParam2' } }
     )
-    fixture.detectChanges()
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
     const primaryButtonLabel = await dialogHarness.getPrimaryButtonLabel()
@@ -323,7 +317,6 @@ describe('PortalDialogService', () => {
       { key: 'BUTTON', icon: 'pi pi-times' },
       { key: 'BUTTON', icon: 'pi pi-trash' }
     )
-    fixture.detectChanges()
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
     const primaryButtonLabel = await dialogHarness.getPrimaryButtonLabel()
@@ -341,7 +334,6 @@ describe('PortalDialogService', () => {
     jest.spyOn(pDialogService, 'open')
 
     fixture.componentInstance.show('title', { message: 'MESSAGE', icon: 'pi pi-times' }, 'button1', 'button2')
-    fixture.detectChanges()
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
     const message = await dialogHarness.getTextFor('#dialogMessage')
@@ -359,7 +351,6 @@ describe('PortalDialogService', () => {
       'button1',
       'button2'
     )
-    fixture.detectChanges()
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
     const message = await dialogHarness.getTextFor('#dialogMessage')
@@ -372,7 +363,6 @@ describe('PortalDialogService', () => {
     jest.spyOn(pDialogService, 'open')
 
     fixture.componentInstance.show('title', { type: TestWithInputsComponent }, 'button1', 'button2')
-    fixture.detectChanges()
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
     const headerValue = await dialogHarness.getTextFor('#testHeader')
@@ -393,7 +383,6 @@ describe('PortalDialogService', () => {
       'button1',
       'button2'
     )
-    fixture.detectChanges()
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
     const headerValue = await dialogHarness.getTextFor('#testHeader')
@@ -404,7 +393,6 @@ describe('PortalDialogService', () => {
     jest.spyOn(pDialogService, 'open')
 
     fixture.componentInstance.show('title', 'message', 'button1')
-    fixture.detectChanges()
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
     const primaryButtonLabel = await dialogHarness.getPrimaryButtonLabel()
@@ -417,7 +405,6 @@ describe('PortalDialogService', () => {
     jest.spyOn(pDialogService, 'open')
 
     fixture.componentInstance.show('title', 'message', 'button1', undefined, true)
-    fixture.detectChanges()
 
     expect(pDialogService.open).toHaveBeenCalledWith(
       ButtonDialogComponent,
@@ -431,7 +418,6 @@ describe('PortalDialogService', () => {
     jest.spyOn(pDialogService, 'open')
 
     fixture.componentInstance.show('title', 'message', 'button1', 'button2', false)
-    fixture.detectChanges()
 
     expect(pDialogService.open).toHaveBeenCalledWith(
       ButtonDialogComponent,
@@ -445,7 +431,6 @@ describe('PortalDialogService', () => {
     jest.spyOn(pDialogService, 'open')
 
     fixture.componentInstance.show('title', 'message', 'button1', 'button2', true)
-    fixture.detectChanges()
 
     expect(pDialogService.open).toHaveBeenCalledWith(
       ButtonDialogComponent,
@@ -459,7 +444,6 @@ describe('PortalDialogService', () => {
     jest.spyOn(pDialogService, 'open')
 
     fixture.componentInstance.show('title', 'message', 'button1', 'button2')
-    fixture.detectChanges()
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
     await dialogHarness.clickPrimaryButton()
@@ -473,7 +457,6 @@ describe('PortalDialogService', () => {
     jest.spyOn(pDialogService, 'open')
 
     fixture.componentInstance.show('title', 'message', 'button1', 'button2')
-    fixture.detectChanges()
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
     await dialogHarness.clickSecondaryButton()
@@ -492,7 +475,6 @@ describe('PortalDialogService', () => {
       'button1',
       'button2'
     )
-    fixture.detectChanges()
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
     await dialogHarness.clickPrimaryButton()
@@ -518,7 +500,6 @@ describe('PortalDialogService', () => {
       'button1',
       'button2'
     )
-    fixture.detectChanges()
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
     await dialogHarness.clickPrimaryButton()
@@ -542,7 +523,6 @@ describe('PortalDialogService', () => {
       'button1',
       'button2'
     )
-    fixture.detectChanges()
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
     await dialogHarness.clickPrimaryButton()
@@ -568,7 +548,6 @@ describe('PortalDialogService', () => {
       'button1',
       'button2'
     )
-    fixture.detectChanges()
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
     await dialogHarness.clickPrimaryButton()
@@ -592,7 +571,6 @@ describe('PortalDialogService', () => {
       'button1',
       'button2'
     )
-    fixture.detectChanges()
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
     await dialogHarness.clickPrimaryButton()
@@ -618,7 +596,6 @@ describe('PortalDialogService', () => {
       'button1',
       'button2'
     )
-    fixture.detectChanges()
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
     await dialogHarness.clickPrimaryButton()
@@ -642,7 +619,6 @@ describe('PortalDialogService', () => {
       'button1',
       'button2'
     )
-    fixture.detectChanges()
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
     await dialogHarness.clickPrimaryButton()
@@ -668,7 +644,6 @@ describe('PortalDialogService', () => {
       'button1',
       'button2'
     )
-    fixture.detectChanges()
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
     await dialogHarness.clickPrimaryButton()
@@ -688,7 +663,6 @@ describe('PortalDialogService', () => {
       'button1',
       'button2'
     )
-    fixture.detectChanges()
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
     const isPrimaryButtonDisabled = await dialogHarness.getPrimaryButtonDisabled()
@@ -706,7 +680,6 @@ describe('PortalDialogService', () => {
       'button1',
       'button2'
     )
-    fixture.detectChanges()
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
     const isSecondaryButtonDisabled = await dialogHarness.getSecondaryButtonDisabled()
@@ -724,7 +697,6 @@ describe('PortalDialogService', () => {
       'Validate',
       'Hint: Doe'
     )
-    fixture.detectChanges()
 
     // init state
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
@@ -740,7 +712,6 @@ describe('PortalDialogService', () => {
     const surnameInput = await dialogHarness.getHarness(InputHarness.with({ id: 'surname' }))
     await surnameInput.setValue('Doe')
     await (await surnameInput.getTestElement()).dispatchEvent('change')
-    fixture.detectChanges()
 
     const surnameValue = await surnameInput.getValue()
     expect(surnameValue).toBe('Doe')
@@ -761,7 +732,6 @@ describe('PortalDialogService', () => {
     const nameInput = await dialogHarness.getHarness(InputHarness.with({ id: 'name' }))
     await nameInput.setValue('Albert')
     await (await nameInput.getTestElement()).dispatchEvent('change')
-    fixture.detectChanges()
 
     let nameValue = await nameInput.getValue()
     expect(nameValue).toBe('Albert')
@@ -782,7 +752,6 @@ describe('PortalDialogService', () => {
     //change name input to John
     await nameInput.setValue('John')
     await (await nameInput.getTestElement()).dispatchEvent('change')
-    fixture.detectChanges()
 
     nameValue = await nameInput.getValue()
     expect(nameValue).toBe('John')
