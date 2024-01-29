@@ -833,11 +833,13 @@ describe('InteractiveDataViewComponent', () => {
       dataView = await loader.getHarness(DataViewHarness)
       dataTable = await dataView.getDataTable()
     })
+    
     it('should initially show a table without selection checkboxes', async () => {
       expect(dataTable).toBeTruthy()
       expect(await dataLayoutSelection.getCurrentLayout()).toEqual('table')
       expect(await dataTable.rowSelectionIsEnabled()).toEqual(false)
     })
+
     it('should show a table with selection checkboxes if the parent binds to the event emitter',async () => {      
       expect(dataTable).toBeTruthy()
       expect(await dataLayoutSelection.getCurrentLayout()).toEqual('table')
@@ -846,8 +848,6 @@ describe('InteractiveDataViewComponent', () => {
       component.selectionChanged.subscribe()
 
       expect(await dataTable.rowSelectionIsEnabled()).toEqual(true);
-
-      component.selectionChanged.unsubscribe()
     })
   })
 
