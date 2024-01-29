@@ -19,7 +19,6 @@ describe('DataViewComponent', () => {
   let fixture: ComponentFixture<DataViewComponent>
   let loader: HarnessLoader
 
-  
   const mockData = [
     {
       version: 0,
