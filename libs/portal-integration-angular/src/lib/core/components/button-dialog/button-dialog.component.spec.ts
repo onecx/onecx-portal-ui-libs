@@ -60,6 +60,10 @@ describe('ButtonDialogComponent', () => {
     CUSTOM_SEC: 'secondaryTranslation',
     CUSTOM_PRI_PARAM: 'primary-{{val}}',
     CUSTOM_SEC_PARAM: 'secondary-{{val}}',
+    OCX_BUTTON_DIALOG: {
+      CONFIRM: 'Confirm',
+      CANCEL: 'Cancel',
+    },
   }
 
   describe('basic usage', () => {

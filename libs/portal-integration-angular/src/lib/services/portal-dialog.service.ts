@@ -11,7 +11,7 @@ import { DialogMessageContentComponent } from '../core/components/button-dialog/
  * Object containing key for translation with parameters object for translation
  *
  * @example
- * ## TranslationModule content
+ * ## Assume such translation is in the translation file
  * ```typescript
  * const translations = {
  *   MY_KEY = 'text with parameter value = {{value}}',
@@ -41,7 +41,7 @@ type TranslationKey = string | TranslationKeyWithParameters
  * @example
  * DialogMessage with TranslationKey will display 'text with parameter value = hello' and question mark icon
  *
- * ## TranslationModule content
+ * ## Assume such translation is in the translation file
  * ```
  * const translations = {
  *   MY_KEY = 'text with parameter value = {{value}}',
@@ -80,7 +80,7 @@ type DialogMessage = { message: TranslationKey; icon: string }
  *   dialogResult: string = ''
  *
  *   onInputChange(event: any) {
- *     dialogResult = event.target.value
+ *     this.dialogResult = event.target.value
  *   }
  * }
  * ```
@@ -101,6 +101,8 @@ export interface DialogResult<T> {
  * Implement via component class to be displayed by {@link PortalDialogService.openDialog}
  *
  * Use to control the state of the primary button (disabled or enabled). Whenever your component wants to disable/enable primary button it should emit boolean equal to whether primary button should be enabled.
+ *
+ * If you implement this interface then primary button will be disabled until the emitter emits true
  */
 export interface DialogPrimaryButtonDisabled {
   primaryButtonEnabled: EventEmitter<boolean>
@@ -109,6 +111,8 @@ export interface DialogPrimaryButtonDisabled {
  * Implement via component class to be displayed by {@link PortalDialogService.openDialog}
  *
  * Use to control the state of the secondary button (disabled or enabled). Whenever your component wants to disable/enable secondary button it should emit boolean equal to whether secondary button should be enabled.
+ *
+ * If you implement this interface then secondary button will be disabled until the emitter emits true
  */
 export interface DialogSecondaryButtonDisabled {
   secondaryButtonEnabled: EventEmitter<boolean>
@@ -134,7 +138,7 @@ export interface DialogSecondaryButtonDisabled {
  *   dialogResult: string = ''
  *
  *   onInputChange(event: any) {
- *     dialogResult = event.target.value
+ *     this.dialogResult = event.target.value
  *   }
  *
  *   ocxDialogButtonClicked(state: DialogState<string>) {
@@ -146,6 +150,7 @@ export interface DialogSecondaryButtonDisabled {
  *       this.apiService.postInput(state.result, ...).pipe(
  *         // map response to boolean meaning if call was successfull
  *       )
+ *       return true // if dialog should be closed return true
  *     } else {
  *       // clear input
  *       return false // don't want to close the dialog, only to clear it
@@ -217,14 +222,7 @@ export class PortalDialogService {
   }
 
   /**
-   * Opens dialog with a component or message to display and one or two buttons. This method allows you to customize the dialog using parameters and by implementic specific interfaces via component to be displayed.
-   *
-   * @param title Dialog title
-   * @param componentOrMessage Dialog content to display
-   * @param primaryButtonTranslationKeyOrDetails Primary button to display in the bottom of the dialog
-   * @param secondaryButtonTranslationKeyOrDetails Secondary button to display in the bottom of the dialog
-   * @param showXButton Determines if X (close) button should be visible in the top right corner of the dialog (not displayed if set to false and displayed if set to true). NOTE: If only one button is being used then close button will not be visible on the dialog
-   * @returns Observable containing dialog state on close
+   * Opens dialog with a component or message to display and one or two buttons. This method allows you to customize the dialog using parameters and by implementic specific interfaces via component to be displayed. The dialog is only shown if if you subscribe to this function.
    *
    * Displaying component inisde the dialog can be achieved by providing the component class with optional inputs. By default the component will be shown without any interaction with the dialog, however you can implement the following interfaces by your component class to allow for some interactions:
    * - {@link DialogResult} - dialog state will contain dialogResult property
@@ -235,10 +233,19 @@ export class PortalDialogService {
    *
    * - {@link DialogSecondaryButtonDisabled} - dialog will use the EventEmitter to determine if the secondary button should be disabled
    *
+   * @param title Translation key for dialog title
+   * @param componentOrMessage Either a component or a translation key of a message with optional parameters and icon to be displayed next to the message
+   * @param primaryButtonTranslationKeyOrDetails Translation key with optional parameters and icon to be displayed next to the text of the button
+   * @param secondaryButtonTranslationKeyOrDetails Translation key with optional parameters and icon to be displayed next to the text of the button
+   * @param showXButton Determines if X (close) button should be visible in the top right corner of the dialog (not displayed if set to false and displayed if set to true). NOTE: If only one button is being used then close button will not be visible on the dialog
+   * @returns Observable containing dialog state on close
+   *
+   *
    * @example
    * Display dialog with message and two buttons using translation keys
    *
    * ```
+   * // assume 'TITLE_KEY', 'WELCOME_MESSAGE', 'OK_BUTTON' and 'REFRESH_BUTTON' are translation keys
    * this.portalDialogService.openDialog('TITLE_KEY', 'WELCOME_MESSAGE', 'OK_BUTTON', 'REFRESH_BUTTON')
    * ```
    *
@@ -251,7 +258,7 @@ export class PortalDialogService {
    *   key: 'WELCOME_MESSAGE',
    *   icon: 'pi pi-question'
    * }
-   * this.portalDialogService.openDialog('TITLE_KEY', dialogMessage, 'OK_BUTTON', 'REFRESH_BUTTON')
+   * this.portalDialogService.openDialog('TITLE_KEY', dialogMessage, 'OK_BUTTON')
    * ```
    *
    * @example

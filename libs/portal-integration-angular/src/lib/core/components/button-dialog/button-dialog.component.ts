@@ -27,11 +27,11 @@ import {
 })
 export class ButtonDialogComponent implements OnInit {
   defaultPrimaryButtonDetails: ButtonDialogButtonDetails = {
-    key: 'Confirm',
+    key: 'OCX_BUTTON_DIALOG.CONFIRM',
   }
 
   defaultSecondaryButtonDetails: ButtonDialogButtonDetails = {
-    key: 'Cancel',
+    key: 'OCX_BUTTON_DIALOG.CANCEL',
   }
 
   defaultDialogData: ButtonDialogData = {

@@ -6,7 +6,7 @@ import { Type } from '@angular/core'
  * @example
  * "Cancel meeting" button with X icon
  * ```
- * // assume such translation is registered in TranslationModule
+ * // assume such translation is in the translation file
  * const translations = {
  *   MY_KEY = 'Cancel {{value}}'
  * }
