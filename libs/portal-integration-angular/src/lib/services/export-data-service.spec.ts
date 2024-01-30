@@ -246,11 +246,11 @@ describe('ExportDataService', () => {
 
     const expectedHref =
       'Name,Description,Start date,End date,Status,Responsible,Modification date,Creation user,Test number' +
-      '\r\nsome name,,Sep 13, 2023, 11:34:05 AM,Sep 14, 2023, 11:34:09 AM,some status,someone responsible,Sep 12, 2023, 11:34:11 AM,creation user,1' +
-      '\r\nexample,example description,Sep 12, 2023, 11:33:53 AM,Sep 13, 2023, 11:33:55 AM,some status example,,Sep 12, 2023, 11:33:58 AM,,3.141' +
-      '\r\nname 1,,Sep 14, 2023, 11:34:22 AM,Sep 15, 2023, 11:34:24 AM,status name 1,,Sep 12, 2023, 11:34:27 AM,,123456789' +
-      '\r\nname 2,,Sep 14, 2023, 11:34:22 AM,Sep 15, 2023, 11:34:24 AM,status name 2,,Sep 12, 2023, 11:34:27 AM,,12345.6789' +
-      '\r\nname 3,,Sep 14, 2023, 11:34:22 AM,Sep 15, 2023, 11:34:24 AM,status name 3,,Sep 12, 2023, 11:34:27 AM,,7.1'
+      '\r\nsome name,,' + dateUtils.localizedDate('2023-09-13T09:34:05Z') + ',' + dateUtils.localizedDate('2023-09-14T09:34:09Z') + ',some status,someone responsible,' + dateUtils.localizedDate('2023-09-12T09:34:11.997048Z') + ',creation user,1' +
+      '\r\nexample,example description,'+ dateUtils.localizedDate('2023-09-12T09:33:53Z') + ',' + dateUtils.localizedDate('2023-09-13T09:33:55Z') + ',some status example,,' + dateUtils.localizedDate('2023-09-12T09:33:58.544494Z') + ',,3.141' +
+      '\r\nname 1,,' + dateUtils.localizedDate('2023-09-14T09:34:22Z')+ ',' + dateUtils.localizedDate('2023-09-15T09:34:24Z') + ',status name 1,,' + dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') + ',,123456789' +
+      '\r\nname 2,,' + dateUtils.localizedDate('2023-09-14T09:34:22Z')+ ',' + dateUtils.localizedDate('2023-09-15T09:34:24Z') + ',status name 2,,' + dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') + ',,12345.6789' +
+      '\r\nname 3,,' + dateUtils.localizedDate('2023-09-14T09:34:22Z')+ ',' + dateUtils.localizedDate('2023-09-15T09:34:24Z') + ',status name 3,,' + dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') + ',,7.1'
     const expectedFilename = 'some-test.csv'
     const mock = new ElementMock()
 
@@ -273,11 +273,11 @@ describe('ExportDataService', () => {
     const expectedFilename = 'some-test.csv'
     const expectedHref =
       'Name;Beschreibung;Startdatum;Enddatum;Status;Verantwortlich;Änderungsdatum;Erstellungsbenutzer;Testnummer' +
-      '\r\nsome name;;13. Sept. 2023, 11:34:05;14. Sept. 2023, 11:34:09;irgendein Status;someone responsible;12. Sept. 2023, 11:34:11;creation user;1' +
-      '\r\nexample;example description;12. Sept. 2023, 11:33:53;13. Sept. 2023, 11:33:55;irgendein Beispielstatus;;12. Sept. 2023, 11:33:58;;3.141' +
-      '\r\nname 1;;14. Sept. 2023, 11:34:22;15. Sept. 2023, 11:34:24;Status Name 1;;12. Sept. 2023, 11:34:27;;123456789' +
-      '\r\nname 2;;14. Sept. 2023, 11:34:22;15. Sept. 2023, 11:34:24;Status Name 2;;12. Sept. 2023, 11:34:27;;12345.6789' +
-      '\r\nname 3;;14. Sept. 2023, 11:34:22;15. Sept. 2023, 11:34:24;Status Name 3;;12. Sept. 2023, 11:34:27;;7.1'
+      '\r\nsome name;;' + dateUtils.localizedDate('2023-09-13T09:34:05Z') + ';' + dateUtils.localizedDate('2023-09-14T09:34:09Z') + ';irgendein Status;someone responsible;' + dateUtils.localizedDate('2023-09-12T09:34:11.997048Z') + ';creation user;1' +
+      '\r\nexample;example description;'+ dateUtils.localizedDate('2023-09-12T09:33:53Z') + ';' + dateUtils.localizedDate('2023-09-13T09:33:55Z') + ';irgendein Beispielstatus;;' + dateUtils.localizedDate('2023-09-12T09:33:58.544494Z') + ';;3.141' +
+      '\r\nname 1;;' + dateUtils.localizedDate('2023-09-14T09:34:22Z')+ ';' + dateUtils.localizedDate('2023-09-15T09:34:24Z') + ';Status Name 1;;' + dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') + ';;123456789' +
+      '\r\nname 2;;' + dateUtils.localizedDate('2023-09-14T09:34:22Z')+ ';' + dateUtils.localizedDate('2023-09-15T09:34:24Z') + ';Status Name 2;;' + dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') + ';;12345.6789' +
+      '\r\nname 3;;' + dateUtils.localizedDate('2023-09-14T09:34:22Z')+ ';' + dateUtils.localizedDate('2023-09-15T09:34:24Z') + ';Status Name 3;;' + dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') + ';;7.1'
     const mock = new ElementMock()
 
     jest.spyOn(document, 'createElement').mockReturnValue(<any>mock)
