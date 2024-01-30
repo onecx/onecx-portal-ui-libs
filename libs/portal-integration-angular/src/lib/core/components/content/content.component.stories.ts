@@ -1,5 +1,5 @@
-import { OcxContentDirective } from '../../directives/ocx-content.directive';
-import { OcxContentComponent } from './ocx-content.component';
+import { OcxContentDirective } from '../../directives/content.directive';
+import { OcxContentComponent } from './content.component';
 import { moduleMetadata, Meta } from '@storybook/angular'
 
 export default {

@@ -17,7 +17,6 @@ import {
   MissingTranslationHandlerParams,
   TranslateLoader,
   TranslateModule,
-  TranslateService,
 } from '@ngx-translate/core'
 import { APPLICATION_NAME, AUTH_SERVICE, SANITY_CHECK } from '../api/injection-tokens'
 import { AutofocusDirective } from './directives/autofocus.directive'
@@ -56,7 +55,6 @@ import { HelpItemEditorComponent } from './components/help-item-editor/help-item
 import { NoHelpItemComponent } from './components/no-help-item/no-help-item.component'
 import { DataListGridComponent } from './components/data-list-grid/data-list-grid.component'
 import { PrimeNgModule } from './primeng.module'
-import { MockAuthService } from '../mock-auth/mock-auth.service'
 import { ConfirmDialogModule } from 'primeng/confirmdialog'
 import { DataTableComponent } from './components/data-table/data-table.component'
 import de from '@angular/common/locales/de'
@@ -78,19 +76,19 @@ import { DiagramComponent } from './components/diagram/diagram.component'
 import { GroupByCountDiagramComponent } from './components/group-by-count-diagram/group-by-count-diagram.component'
 import { ButtonDialogComponent } from './components/button-dialog/button-dialog.component'
 import { DialogMessageContentComponent } from './components/button-dialog/dialog-message-content/dialog-message-content.component'
-import { OcxContentDirective } from './directives/ocx-content.directive'
-import { OcxContentComponent } from './components/ocx-content/ocx-content.component'
-import { OcxContentContainerComponent } from './components/ocx-content-container/ocx-content-container.component'
-import { OcxContentContainerDirective } from './directives/ocx-content-container.directive'
+import { OcxContentDirective } from './directives/content.directive'
+import { OcxContentComponent } from './components/content/content.component'
+import { OcxContentContainerComponent } from './components/content-container/content-container.component'
+import { OcxContentContainerDirective } from './directives/content-container.directive'
 import { SearchConfigComponent } from './components/search-config/search-config.component'
 import { UserService } from '../services/user.service'
 import { UserProfileAPIService } from '../services/userprofile-api.service'
 import { createTranslateLoader } from './utils/create-translate-loader.utils'
 import { MessageService } from 'primeng/api'
 
-export class MyMissingTranslationHandler implements MissingTranslationHandler {
+export class PortalMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
-    console.log(`Missing translation for ${params.key}`)
+    console.log(`Missing translation for ${params.key}`, params)
     return params.key
   }
 }
@@ -109,7 +107,7 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
         useFactory: createTranslateLoader,
         deps: [HttpClient, AppStateService, ConfigurationService],
       },
-      missingTranslationHandler: { provide: MissingTranslationHandler, useClass: MyMissingTranslationHandler },
+      missingTranslationHandler: { provide: MissingTranslationHandler, useClass: PortalMissingTranslationHandler },
     }),
     ConfirmDialogModule,
   ],
@@ -170,15 +168,13 @@ export class MyMissingTranslationHandler implements MissingTranslationHandler {
     SearchConfigComponent,
   ],
   providers: [
-    ConfigurationService,
-    MockAuthService,
     {
       provide: LOCALE_ID,
-      useFactory: (translate: TranslateService) => {
-        const browserLang = translate.getBrowserLang() || ''
-        return browserLang.match(/en|de/) ? browserLang : 'en'
+      useFactory: (userService: UserService) => {
+        console.log('Using locale: ' + userService.lang$.getValue())
+        return userService.lang$.getValue()
       },
-      deps: [TranslateService],
+      deps: [UserService],
     },
   ],
   exports: [

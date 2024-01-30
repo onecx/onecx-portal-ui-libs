@@ -58,6 +58,9 @@ export class DataViewComponent implements DoCheck, OnInit {
   @Input() sortDirection: DataSortDirection = DataSortDirection.NONE
   @Input() listGridPaginator = true
   @Input() tablePaginator = true
+  @Input() totalRecordsOnServer: number | undefined 
+  @Input() currentPageShowingKey = 'OCX_DATA_TABLE.SHOWING'
+  @Input() currentPageShowingWithTotalOnServerKey = 'OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER'
 
   @Input()
   get paginator(): boolean {

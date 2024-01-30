@@ -1,7 +1,7 @@
-import { OcxContentContainerDirective } from '../../directives/ocx-content-container.directive'
-import { OcxContentDirective } from '../../directives/ocx-content.directive'
-import { OcxContentComponent } from '../ocx-content/ocx-content.component'
-import { OcxContentContainerComponent } from './ocx-content-container.component'
+import { OcxContentContainerDirective } from '../../directives/content-container.directive'
+import { OcxContentDirective } from '../../directives/content.directive'
+import { OcxContentComponent } from '../content/content.component'
+import { OcxContentContainerComponent } from './content-container.component'
 import { moduleMetadata, Meta } from '@storybook/angular'
 
 export default {
