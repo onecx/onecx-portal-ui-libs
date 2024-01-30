@@ -4,9 +4,8 @@ import { firstValueFrom, map, Observable, of } from 'rxjs'
 import { DateUtils } from '../core/utils/dateutils'
 import { ObjectUtils } from '../core/utils/objectutils'
 import { ColumnType } from '../model/column-type.model'
-const Blob = require('blob-polyfill').Blob;
 
-@Injectable()
+@Injectable({ providedIn: 'any' })
 export class ExportDataService {
   constructor(
     private dateUtils: DateUtils,

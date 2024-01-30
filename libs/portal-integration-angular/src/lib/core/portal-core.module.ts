@@ -83,8 +83,6 @@ import { UserService } from '../services/user.service'
 import { UserProfileAPIService } from '../services/userprofile-api.service'
 import { createTranslateLoader } from './utils/create-translate-loader.utils'
 import { MessageService } from 'primeng/api'
-import { ExportDataService } from '../services/export-data.service'
-import { InitializeModuleGuard } from '../services/initialize-module-guard.service'
 
 export class PortalMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -174,8 +172,6 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
       },
       deps: [UserService],
     },
-    ExportDataService,
-    InitializeModuleGuard,
   ],
   exports: [
     AnnouncementBannerComponent,

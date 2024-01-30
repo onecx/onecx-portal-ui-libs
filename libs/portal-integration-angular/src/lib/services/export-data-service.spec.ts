@@ -1,6 +1,8 @@
 import { TestBed } from '@angular/core/testing'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
+import 'blob-polyfill'
 import { TranslateTestingModule } from 'ngx-translate-testing'
+import { DateUtils } from '../core/utils/dateutils'
 import { ColumnType } from '../model/column-type.model'
 import { ExportDataService } from './export-data.service'
 
@@ -10,13 +12,16 @@ describe('ExportDataService', () => {
     setAttribute(name: string, value: unknown) {
       this.attributes[name] = value
     }
-    click() {}
+    click() {
+      // do click
+    }
   }
 
   let blobs: Blob[] = []
 
   let translateService: TranslateService
   let exportDataService: ExportDataService
+  let dateUtils: DateUtils
 
   const ENGLISH_LANGUAGE = 'en'
   const ENGLISH_TRANSLATIONS = {
@@ -224,18 +229,21 @@ describe('ExportDataService', () => {
     await TestBed.configureTestingModule({
       declarations: [],
       imports: [TranslateModule.forRoot(), TranslateTestingModule.withTranslations(TRANSLATIONS)],
-      providers: [ExportDataService],
+      providers: [ExportDataService, DateUtils],
     }).compileComponents()
 
     translateService = TestBed.inject(TranslateService)
-    translateService.use('en')
-
     exportDataService = TestBed.inject(ExportDataService)
+    dateUtils = TestBed.inject(DateUtils)
 
     blobs = []
   })
 
   it('should export data as csv in en', async () => {
+    translateService.use('en')
+    ;(<any>exportDataService).locale = 'en'
+    ;(<any>dateUtils).locale = 'en'
+
     const expectedHref =
       'Name,Description,Start date,End date,Status,Responsible,Modification date,Creation user,Test number' +
       '\r\nsome name,,Sep 13, 2023, 11:34:05 AM,Sep 14, 2023, 11:34:09 AM,some status,someone responsible,Sep 12, 2023, 11:34:11 AM,creation user,1' +
@@ -259,14 +267,17 @@ describe('ExportDataService', () => {
 
   it('should export data as csv in de', async () => {
     translateService.use('de')
+    ;(<any>exportDataService).locale = 'de'
+    ;(<any>dateUtils).locale = 'de'
+
     const expectedFilename = 'some-test.csv'
     const expectedHref =
-      'Name,Beschreibung,Startdatum,Enddatum,Status,Verantwortlich,Änderungsdatum,Erstellungsbenutzer,Testnummer' +
-      '\r\nsome name,,Sep 13, 2023, 11:34:05 AM,Sep 14, 2023, 11:34:09 AM,irgendein Status,someone responsible,Sep 12, 2023, 11:34:11 AM,creation user,1' +
-      '\r\nexample,example description,Sep 12, 2023, 11:33:53 AM,Sep 13, 2023, 11:33:55 AM,irgendein Beispielstatus,,Sep 12, 2023, 11:33:58 AM,,3.141' +
-      '\r\nname 1,,Sep 14, 2023, 11:34:22 AM,Sep 15, 2023, 11:34:24 AM,Status Name 1,,Sep 12, 2023, 11:34:27 AM,,123456789' +
-      '\r\nname 2,,Sep 14, 2023, 11:34:22 AM,Sep 15, 2023, 11:34:24 AM,Status Name 2,,Sep 12, 2023, 11:34:27 AM,,12345.6789' +
-      '\r\nname 3,,Sep 14, 2023, 11:34:22 AM,Sep 15, 2023, 11:34:24 AM,Status Name 3,,Sep 12, 2023, 11:34:27 AM,,7.1'
+      'Name;Beschreibung;Startdatum;Enddatum;Status;Verantwortlich;Änderungsdatum;Erstellungsbenutzer;Testnummer' +
+      '\r\nsome name;;13. Sept. 2023, 11:34:05;14. Sept. 2023, 11:34:09;irgendein Status;someone responsible;12. Sept. 2023, 11:34:11;creation user;1' +
+      '\r\nexample;example description;12. Sept. 2023, 11:33:53;13. Sept. 2023, 11:33:55;irgendein Beispielstatus;;12. Sept. 2023, 11:33:58;;3.141' +
+      '\r\nname 1;;14. Sept. 2023, 11:34:22;15. Sept. 2023, 11:34:24;Status Name 1;;12. Sept. 2023, 11:34:27;;123456789' +
+      '\r\nname 2;;14. Sept. 2023, 11:34:22;15. Sept. 2023, 11:34:24;Status Name 2;;12. Sept. 2023, 11:34:27;;12345.6789' +
+      '\r\nname 3;;14. Sept. 2023, 11:34:22;15. Sept. 2023, 11:34:24;Status Name 3;;12. Sept. 2023, 11:34:27;;7.1'
     const mock = new ElementMock()
 
     jest.spyOn(document, 'createElement').mockReturnValue(<any>mock)
