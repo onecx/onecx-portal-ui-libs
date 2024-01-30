@@ -3,7 +3,6 @@ import { BaseHarnessFilters, ComponentHarness, HarnessPredicate } from '@angular
 export interface PButtonHarnessFilters extends BaseHarnessFilters {
   id?: string
 }
-
 export class PButtonHarness extends ComponentHarness {
   static hostSelector = 'p-button'
 
@@ -12,7 +11,6 @@ export class PButtonHarness extends ComponentHarness {
       HarnessPredicate.stringMatches(harness.getId(), id)
     )
   }
-
   async getId(): Promise<string | null> {
     return await (await this.host()).getAttribute('id')
   }

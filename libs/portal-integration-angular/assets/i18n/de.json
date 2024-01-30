@@ -89,5 +89,9 @@
   },
   "OCX_HELP_ITEM_EDITOR": {
     "SAVE_ERROR": "Das Formular ist nicht gültig. Der Hilfeartikel kann nicht aktualisiert werden."
+  },
+  "OCX_BUTTON_DIALOG": {
+    "CONFIRM": "Bestätigen",
+    "CANCEL": "Absagen"
   }
 }
