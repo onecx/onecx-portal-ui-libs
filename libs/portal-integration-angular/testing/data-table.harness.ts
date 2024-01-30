@@ -9,13 +9,23 @@ export class DataTableHarness extends ContentContainerComponentHarness {
   getHeaderColumns = this.locatorForAll(TableHeaderColumnHarness)
   getRows = this.locatorForAll(TableRowHarness)
 
-  async getSelectionCheckboxHarness() {
-    const pTableCheckboxHarness = await this.locatorForOptional(PTableCheckboxHarness)()
-    return pTableCheckboxHarness
+  async rowSelectionIsEnabled(): Promise<boolean> {
+    const pTableCheckbox = await this.getHarnessesForCheckboxes('all')
+    return pTableCheckbox.length > 0
   }
 
-  async rowSelectionIsEnabled(): Promise<boolean> {
-    const pTableCheckbox = await this.getSelectionCheckboxHarness()
-    return !!pTableCheckbox
+  async getHarnessesForCheckboxes(type: 'all' | 'checked' | 'unchecked'): Promise<PTableCheckboxHarness[]> {
+    let checkBoxHarnesses: PTableCheckboxHarness[]
+    if (type === 'checked') {
+      checkBoxHarnesses = await this.getAllHarnesses(PTableCheckboxHarness.with({isSelected: true}))
+      return checkBoxHarnesses
+    }
+    if (type === 'unchecked') {
+      checkBoxHarnesses = await this.getAllHarnesses(PTableCheckboxHarness.with({isSelected: false}))
+      return checkBoxHarnesses
+    } else {
+      checkBoxHarnesses = await this.getAllHarnesses(PTableCheckboxHarness)
+      return checkBoxHarnesses
+    }
   }
 }
