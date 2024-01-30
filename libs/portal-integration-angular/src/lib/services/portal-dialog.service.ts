@@ -219,11 +219,11 @@ export class PortalDialogService {
   /**
    * Opens dialog with a component or message to display and one or two buttons. This method allows you to customize the dialog using parameters and by implementic specific interfaces via component to be displayed.
    *
-   * @param title - Dialog title
-   * @param componentOrMessage - Dialog content to display
-   * @param primaryButtonTranslationKeyOrDetails - Primary button to display in the bottom of the dialog
-   * @param secondaryButtonTranslationKeyOrDetails - Secondary button to display in the bottom of the dialog
-   * @param showXButton - Determines if X (close) button should be visible in the top right corner of the dialog (not displayed if set to false and displayed if set to true). NOTE: If only one button is being used then close button will not be visible on the dialog
+   * @param title Dialog title
+   * @param componentOrMessage Dialog content to display
+   * @param primaryButtonTranslationKeyOrDetails Primary button to display in the bottom of the dialog
+   * @param secondaryButtonTranslationKeyOrDetails Secondary button to display in the bottom of the dialog
+   * @param showXButton Determines if X (close) button should be visible in the top right corner of the dialog (not displayed if set to false and displayed if set to true). NOTE: If only one button is being used then close button will not be visible on the dialog
    * @returns Observable containing dialog state on close
    *
    * Displaying component inisde the dialog can be achieved by providing the component class with optional inputs. By default the component will be shown without any interaction with the dialog, however you can implement the following interfaces by your component class to allow for some interactions:
