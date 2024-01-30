@@ -89,5 +89,9 @@
   },
   "OCX_HELP_ITEM_EDITOR": {
     "SAVE_ERROR": "Form is not valid. Cannot update the Help Item."
+  },
+  "OCX_BUTTON_DIALOG": {
+    "CONFIRM": "Confirm",
+    "CANCEL": "Cancel"
   }
 }

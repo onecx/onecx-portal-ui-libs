@@ -9,6 +9,7 @@ export * from './primeng/p-picklist.harness'
 export * from './primeng/p-selectButton.harness'
 export * from './primeng/p-paginator.harness'
 
+export * from './button-dialog.harness'
 export * from './button.harness'
 export * from './column-group-selection.harness'
 export * from './custom-group-column-selector.harness'
