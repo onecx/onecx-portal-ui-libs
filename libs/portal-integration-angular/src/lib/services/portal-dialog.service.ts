@@ -58,7 +58,7 @@ export class PortalDialogService {
     componentOrMessage: Component<T> | TranslationKey | DialogMessage,
     primaryButtonTranslationKeyOrDetails: TranslationKey | ButtonDialogButtonDetails,
     secondaryButtonTranslationKeyOrDetails?: TranslationKey | ButtonDialogButtonDetails,
-    showCloseButton: boolean = true
+    showXButton: boolean = true
   ): Observable<DialogState<T>> {
     const translateParams = this.prepareTitleForTranslation(title)
 
@@ -78,7 +78,7 @@ export class PortalDialogService {
         return this.dialogService.open(ButtonDialogComponent, {
           header: dialogTitle,
           data: dynamicDialogDataConfig,
-          closable: showCloseButton && secondaryButtonTranslationKeyOrDetails !== undefined,
+          closable: showXButton && secondaryButtonTranslationKeyOrDetails !== undefined,
         }).onClose
       })
     )

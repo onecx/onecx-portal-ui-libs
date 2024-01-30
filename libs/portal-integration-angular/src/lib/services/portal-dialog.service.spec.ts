@@ -30,8 +30,8 @@ class BaseTestComponent {
   surnameResult: string | undefined
   constructor(public portalDialogService: PortalDialogService) {}
 
-  show(title: any, message: any, button1: any, button2?: any, showCloseButton: any = true) {
-    this.portalDialogService.openDialog(title, message, button1, button2, showCloseButton).subscribe({
+  show(title: any, message: any, button1: any, button2?: any, showXButton: any = true) {
+    this.portalDialogService.openDialog(title, message, button1, button2, showXButton).subscribe({
       next: (result) => {
         this.resultFromShow = result
       },
