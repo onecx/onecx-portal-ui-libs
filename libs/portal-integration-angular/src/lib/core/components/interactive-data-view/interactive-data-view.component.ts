@@ -70,7 +70,8 @@ export class InteractiveDataViewComponent implements OnInit {
   @Output() deleteItem = new EventEmitter<RowListGridData>()
   @Output() viewItem = new EventEmitter<RowListGridData>()
   @Output() editItem = new EventEmitter<RowListGridData>()
-  @Output() dataViewLayoutChange: EventEmitter<any> = new EventEmitter()
+  @Output() dataViewLayoutChange = new EventEmitter<'grid' | 'list' | 'table'>()
+  @Output() displayedColumnsChange = new EventEmitter<DataTableColumn[]>()
   displayedColumns: DataTableColumn[] = []
   selectedGroupKey = ''
   isDeleteItemObserved: boolean | undefined
@@ -135,6 +136,7 @@ export class InteractiveDataViewComponent implements OnInit {
         column.predefinedGroupKeys?.includes(this.defaultGroupKey)
       )
     }
+    this.displayedColumnsChange.emit(this.displayedColumns)
     if (!this.groupSelectionNoGroupSelectedKey) {
       this.groupSelectionNoGroupSelectedKey = 'OCX_INTERACTIVE_DATA_VIEW.NO_GROUP_SELECTED'
     }
@@ -188,6 +190,7 @@ export class InteractiveDataViewComponent implements OnInit {
   onColumnGroupSelectionChange(event: GroupSelectionChangedEvent) {
     this.displayedColumns = event.activeColumns
     this.selectedGroupKey = event.groupKey
+    this.displayedColumnsChange.emit(this.displayedColumns)
   }
 
   registerEventListenerForDataView() {
@@ -220,5 +223,6 @@ export class InteractiveDataViewComponent implements OnInit {
   onColumnSelectionChange(event: ColumnSelectionChangedEvent) {
     this.displayedColumns = event.activeColumns
     this.selectedGroupKey = this.customGroupKey
+    this.displayedColumnsChange.emit(this.displayedColumns)
   }
 }

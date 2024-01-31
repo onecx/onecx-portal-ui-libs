@@ -1,11 +1,10 @@
-import { TranslateService } from '@ngx-translate/core'
-import { Injectable } from '@angular/core'
+import { Inject, Injectable, LOCALE_ID } from '@angular/core'
 
 @Injectable({
   providedIn: 'root',
 })
 export class DateUtils {
-  constructor(private translateService: TranslateService) {}
+  constructor(@Inject(LOCALE_ID) protected locale: string) {}
 
   options: Intl.DateTimeFormatOptions = {
     month: 'short',
@@ -18,9 +17,7 @@ export class DateUtils {
 
   localizedDate(date: string | number | Date | undefined): string {
     return date
-      ? new Intl.DateTimeFormat(this.translateService.getBrowserLang(), this.options).format(
-          date instanceof Date ? date : new Date(date)
-        )
+      ? new Intl.DateTimeFormat(this.locale, this.options).format(date instanceof Date ? date : new Date(date))
       : ''
   }
 }

@@ -70,6 +70,7 @@ export * from './lib/services/initialize-module-guard.service'
 export * from './lib/services/userprofile-api.service'
 export * from './lib/services/portal-dialog.service'
 export * from './lib/services/user.service'
+export * from './lib/services/export-data.service'
 
 // pipes
 export * from './lib/core/pipes/dynamic.pipe'

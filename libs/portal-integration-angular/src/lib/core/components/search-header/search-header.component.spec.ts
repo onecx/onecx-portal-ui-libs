@@ -8,6 +8,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { ButtonModule } from 'primeng/button'
 import { BreadcrumbModule } from 'primeng/breadcrumb'
 import { AppStateService } from '../../../services/app-state.service'
+import { PortalCoreModule } from '../../portal-core.module'
 
 describe('SearchHeaderComponent', () => {
   const origAddEventListener = window.addEventListener
@@ -44,6 +45,7 @@ describe('SearchHeaderComponent', () => {
         HttpClientTestingModule,
         ButtonModule,
         BreadcrumbModule,
+        PortalCoreModule
       ],
       providers: [ConfigurationService, AppStateService],
     }).compileComponents()
