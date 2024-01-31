@@ -12,6 +12,7 @@ import { HarnessLoader } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { TranslateService } from '@ngx-translate/core'
 import { DiagramHarness } from '../../../../../testing'
+import 'jest-canvas-mock';
 
 describe('GroupByCountDiagramComponent', () => {
   let translateService: TranslateService

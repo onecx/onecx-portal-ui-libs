@@ -9,6 +9,7 @@ import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
 import { DiagramHarness, TestbedHarnessEnvironment } from '../../../../../testing'
 import { TranslateService } from '@ngx-translate/core'
 import { DiagramType } from '../../../model/diagram-type'
+import 'jest-canvas-mock';
 
 describe('DiagramComponent', () => {
   let translateService: TranslateService

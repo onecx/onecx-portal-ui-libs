@@ -13,7 +13,7 @@ export class ExportDataService {
     @Inject(LOCALE_ID) private locale: string
   ) {}
 
-  async export<T extends string | number | symbol>(
+  async exportCsv<T extends string | number | symbol>(
     columns: { id: string; nameKey: string; columnType: ColumnType }[],
     data: Partial<Record<T, unknown | undefined>>[],
     fileName: string

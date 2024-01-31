@@ -244,7 +244,7 @@ describe('ExportDataService', () => {
     ;(<any>exportDataService).locale = 'en'
     ;(<any>dateUtils).locale = 'en'
 
-    const expectedHref =
+    const expectedCsv =
       'Name,Description,Start date,End date,Status,Responsible,Modification date,Creation user,Test number' +
       '\r\nsome name,,' + dateUtils.localizedDate('2023-09-13T09:34:05Z') + ',' + dateUtils.localizedDate('2023-09-14T09:34:09Z') + ',some status,someone responsible,' + dateUtils.localizedDate('2023-09-12T09:34:11.997048Z') + ',creation user,1' +
       '\r\nexample,example description,'+ dateUtils.localizedDate('2023-09-12T09:33:53Z') + ',' + dateUtils.localizedDate('2023-09-13T09:33:55Z') + ',some status example,,' + dateUtils.localizedDate('2023-09-12T09:33:58.544494Z') + ',,3.141' +
@@ -259,9 +259,9 @@ describe('ExportDataService', () => {
       blobs.push(b)
       return (blobs.length - 1).toString()
     })
-    await exportDataService.export(mockColumns, mockData, 'some-test.csv')
+    await exportDataService.exportCsv(mockColumns, mockData, 'some-test.csv')
 
-    expect(expectedHref).toEqual(await blobs[Number(mock.attributes['href'])].text())
+    expect(expectedCsv).toEqual(await blobs[Number(mock.attributes['href'])].text())
     expect(expectedFilename).toEqual(mock.attributes['download'])
   })
 
@@ -271,7 +271,7 @@ describe('ExportDataService', () => {
     ;(<any>dateUtils).locale = 'de'
 
     const expectedFilename = 'some-test.csv'
-    const expectedHref =
+    const expectedCsv =
       'Name;Beschreibung;Startdatum;Enddatum;Status;Verantwortlich;Änderungsdatum;Erstellungsbenutzer;Testnummer' +
       '\r\nsome name;;' + dateUtils.localizedDate('2023-09-13T09:34:05Z') + ';' + dateUtils.localizedDate('2023-09-14T09:34:09Z') + ';irgendein Status;someone responsible;' + dateUtils.localizedDate('2023-09-12T09:34:11.997048Z') + ';creation user;1' +
       '\r\nexample;example description;'+ dateUtils.localizedDate('2023-09-12T09:33:53Z') + ';' + dateUtils.localizedDate('2023-09-13T09:33:55Z') + ';irgendein Beispielstatus;;' + dateUtils.localizedDate('2023-09-12T09:33:58.544494Z') + ';;3.141' +
@@ -285,9 +285,9 @@ describe('ExportDataService', () => {
       blobs.push(b)
       return (blobs.length - 1).toString()
     })
-    await exportDataService.export(mockColumns, mockData, 'some-test.csv')
+    await exportDataService.exportCsv(mockColumns, mockData, 'some-test.csv')
 
-    expect(expectedHref).toEqual(await blobs[Number(mock.attributes['href'])].text())
+    expect(expectedCsv).toEqual(await blobs[Number(mock.attributes['href'])].text())
     expect(expectedFilename).toEqual(mock.attributes['download'])
   })
 })
