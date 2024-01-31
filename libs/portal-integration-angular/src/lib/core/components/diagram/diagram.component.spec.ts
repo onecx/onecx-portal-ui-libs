@@ -1,15 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { DiagramComponent } from './diagram.component'
-import { NoopAnimationsModule } from '@angular/platform-browser/animations'
-import { TranslateTestingModule } from 'ngx-translate-testing'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { NoopAnimationsModule } from '@angular/platform-browser/animations'
+import { TranslateService } from '@ngx-translate/core'
+import 'jest-canvas-mock'
+import { TranslateTestingModule } from 'ngx-translate-testing'
 import { ChartModule } from 'primeng/chart'
 import { MessageModule } from 'primeng/message'
-import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
 import { DiagramHarness, TestbedHarnessEnvironment } from '../../../../../testing'
-import { TranslateService } from '@ngx-translate/core'
+import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
 import { DiagramType } from '../../../model/diagram-type'
-import 'jest-canvas-mock';
+import { DiagramComponent } from './diagram.component'
 
 describe('DiagramComponent', () => {
   let translateService: TranslateService
