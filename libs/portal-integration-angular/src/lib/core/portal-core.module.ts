@@ -171,7 +171,6 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     {
       provide: LOCALE_ID,
       useFactory: (userService: UserService) => {
-        console.log('Using locale: ' + userService.lang$.getValue())
         return userService.lang$.getValue()
       },
       deps: [UserService],

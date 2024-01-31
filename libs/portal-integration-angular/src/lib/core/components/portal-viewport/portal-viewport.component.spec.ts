@@ -23,6 +23,7 @@ import { TranslateTestingModule } from 'ngx-translate-testing'
 import { AppStateService } from '../../../services/app-state.service'
 import { AUTH_SERVICE } from '../../../api/injection-tokens'
 import { MockAuthService } from '../../../mock-auth/mock-auth.service'
+import { PortalCoreModule } from '../../portal-core.module'
 
 describe('PortalViewportComponent', () => {
   const origAddEventListener = window.addEventListener
@@ -74,6 +75,7 @@ describe('PortalViewportComponent', () => {
         RouterModule,
         TooltipModule,
         TranslateTestingModule.withTranslations({}),
+        PortalCoreModule,
       ],
       providers: [
         ConfigurationService,
