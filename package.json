@@ -76,7 +76,7 @@
     "@types/d3": "^7.4.3",
     "@types/jest": "^29.4.0",
     "@types/node": "~18.7.1",
-    "@typescript-eslint/eslint-plugin": "^5.60.1",
+    "@typescript-eslint/eslint-plugin": "^6.20.0",
     "@typescript-eslint/parser": "^5.60.1",
     "blob-polyfill": "^7.0.20220408",
     "conventional-changelog-conventionalcommits": "^7.0.2",
