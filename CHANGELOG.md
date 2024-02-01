@@ -1,3 +1,11 @@
+## [4.2.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.1.2...v4.2.0) (2024-02-01)
+
+
+### Features
+
+* one two button dialog ([#81](https://github.com/onecx/onecx-portal-ui-libs/issues/81)) ([aeef8b0](https://github.com/onecx/onecx-portal-ui-libs/commit/aeef8b0a2430f5922dc34d53e58fe5062131f529))
+* P002271-6620-export-function ([#92](https://github.com/onecx/onecx-portal-ui-libs/issues/92)) ([3c2c766](https://github.com/onecx/onecx-portal-ui-libs/commit/3c2c76696f4356de087915539330e4e0c06a6435))
+
 ## [4.1.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.1.1...v4.1.2) (2024-01-29)
 
 
