@@ -32,6 +32,7 @@ import {
   PPicklistHarness,
   ButtonHarness,
   PMultiSelectListItemHarness,
+  InteractiveDataViewHarness,
 } from '../../../../../testing'
 import { RouterTestingModule } from '@angular/router/testing'
 import { TranslateTestingModule } from 'ngx-translate-testing'
@@ -42,6 +43,7 @@ describe('InteractiveDataViewComponent', () => {
   let component: InteractiveDataViewComponent
   let fixture: ComponentFixture<InteractiveDataViewComponent>
   let loader: HarnessLoader
+  let interactiveDataViewHarness: InteractiveDataViewHarness
 
   let viewItemEvent: RowListGridData | undefined
   let editItemEvent: RowListGridData | undefined
@@ -258,6 +260,7 @@ describe('InteractiveDataViewComponent', () => {
     fixture.detectChanges()
 
     loader = TestbedHarnessEnvironment.loader(fixture)
+    interactiveDataViewHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, InteractiveDataViewHarness)
 
     dateUtils = TestBed.inject(DateUtils)
 
@@ -830,7 +833,7 @@ describe('InteractiveDataViewComponent', () => {
 
     beforeEach(async () => {
       dataLayoutSelection = await loader.getHarness(DataLayoutSelectionHarness)
-      dataView = await loader.getHarness(DataViewHarness)
+      dataView = await interactiveDataViewHarness.getDataView()
       dataTable = await dataView.getDataTable()
     })
     

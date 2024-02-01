@@ -9,15 +9,14 @@ import { TranslateTestingModule } from 'ngx-translate-testing'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { DataTableComponent } from '../data-table/data-table.component'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { HarnessLoader } from '@angular/cdk/testing'
-import { DataTableHarness } from '../../../../../testing'
+import { DataTableHarness, DataViewHarness } from '../../../../../testing'
 import { ColumnType } from '../../../model/column-type.model'
 import { PortalCoreModule } from '../../portal-core.module'
 
 describe('DataViewComponent', () => {
   let component: DataViewComponent
   let fixture: ComponentFixture<DataViewComponent>
-  let loader: HarnessLoader
+  let dataViewHarness: DataViewHarness
 
   const mockData = [
     {
@@ -198,7 +197,7 @@ describe('DataViewComponent', () => {
     component.data = mockData
     component.columns = mockColumns
     fixture.detectChanges()
-    loader = TestbedHarnessEnvironment.loader(fixture)
+    dataViewHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataViewHarness)
   })
 
   it('should create', () => {
@@ -210,7 +209,7 @@ describe('DataViewComponent', () => {
 
     beforeEach(async () => {
       component.layout = 'table'
-      dataTable = await loader.getHarness(DataTableHarness)
+      dataTable = await dataViewHarness.getDataTable()
     })
 
     it('should initially show a table without selection checkboxes', async () => {
