@@ -74,6 +74,8 @@ import { LoadingIndicatorComponent } from './components/loading-indicator/loadin
 import { LoadingIndicatorDirective } from './directives/loading-indicator.directive'
 import { DiagramComponent } from './components/diagram/diagram.component'
 import { GroupByCountDiagramComponent } from './components/group-by-count-diagram/group-by-count-diagram.component'
+import { ButtonDialogComponent } from './components/button-dialog/button-dialog.component'
+import { DialogMessageContentComponent } from './components/button-dialog/dialog-message-content/dialog-message-content.component'
 import { OcxContentDirective } from './directives/content.directive'
 import { OcxContentComponent } from './components/content/content.component'
 import { OcxContentContainerComponent } from './components/content-container/content-container.component'
@@ -157,6 +159,8 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     SetInputValueDirective,
     DiagramComponent,
     GroupByCountDiagramComponent,
+    ButtonDialogComponent,
+    DialogMessageContentComponent,
     OcxContentDirective,
     OcxContentContainerDirective,
     OcxContentComponent,
@@ -221,6 +225,8 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     SetInputValueDirective,
     DiagramComponent,
     GroupByCountDiagramComponent,
+    ButtonDialogComponent,
+    DialogMessageContentComponent,
     OcxContentDirective,
     OcxContentContainerDirective,
     OcxContentComponent,

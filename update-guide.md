@@ -1,5 +1,17 @@
 # Update from v3 to v4 guide
 
+## install necessary libraries
+- can be found here: https://www.npmjs.com/search?q=onecx
+- (NOTE: if you still have something like "@onecx:registry=https://gitlab.com..." in your .npmrc file then please remove it)
+- install latest version:
+```
+npm i @onecx/portal-layout-styles
+npm i @onecx/integration-interface
+npm i @onecx/accelerator
+npm i @onecx/portal-integration-angular
+npm i @onecx/keycloak-auth
+```
+
 ## allow multiple instances of portal-integration-angular
 - **in webpackconfig.js remove the "singleton" and "strictVersion" property from: '@onecx/portal-integration-angular' and '@onecx/keycloak-auth'**
 - **add the following to webpackconfig.js inside the share: shared({}) property**
@@ -128,3 +140,6 @@ RouterModule.forChild(addInitializeModuleGuard(routes,CustomInitializeModuleGuar
     deps: [UserService, TranslateService],
 },
 ```
+
+## Renaming
+- MyMissingTranslationHandler --> PortalMissingTranslationHandler
