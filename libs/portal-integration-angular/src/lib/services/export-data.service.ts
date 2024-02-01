@@ -18,6 +18,9 @@ export class ExportDataService {
     data: Partial<Record<T, unknown | undefined>>[],
     fileName: string
   ): Promise<void> {
+    if (!columns.length ) {
+      return
+    }
     const flattenedData = data.map((d) =>
       columns.reduce((obj, c) => ({ ...obj, [c.id]: ObjectUtils.resolveFieldData(d, c.id) }), {})
     )
