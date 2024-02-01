@@ -29,7 +29,6 @@ describe('CachingTranslateLoader', () => {
   })
 
   let http: HttpClient
-  let httpTestingController: HttpTestingController
   let translationCache: TranslationCacheService
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -37,7 +36,6 @@ describe('CachingTranslateLoader', () => {
       imports: [HttpClientTestingModule],
     }).compileComponents()
     http = TestBed.inject(HttpClient)
-    httpTestingController = TestBed.inject(HttpTestingController)
     translationCache = TestBed.inject(TranslationCacheService)
   })
 
@@ -53,7 +51,7 @@ describe('CachingTranslateLoader', () => {
 
   it('should load translations only once', (done) => {
     let httpCalls = 0
-    let responses = []
+    const responses = []
     const translation = { testKey: 'my translation' }
     http.get = jest.fn().mockImplementation(() => {
       httpCalls++

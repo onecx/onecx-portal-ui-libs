@@ -15,8 +15,6 @@ class TranslationCacheTopic extends SyncableTopic<Record<string, any>> {
 export class TranslationCacheService implements OnDestroy {
   translationCache$ = new TranslationCacheTopic()
 
-  constructor() {}
-
   ngOnDestroy(): void {
     this.translationCache$.destroy()
   }
