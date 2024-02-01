@@ -2,7 +2,7 @@ import { Component, ContentChild, EventEmitter, Inject, Injector, Input, LOCALE_
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { SelectItem } from 'primeng/api'
-import { BehaviorSubject, combineLatest, map, mergeMap, Observable, of, withLatestFrom } from 'rxjs'
+import { BehaviorSubject, combineLatest, map, mergeMap, Observable, of } from 'rxjs'
 import { DataTableColumn } from '../../../model/data-table-column.model'
 import { DataSortDirection } from '../../../model/data-sort-direction'
 import { ColumnType } from '../../../model/column-type.model'
@@ -146,7 +146,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     return dv?.selectionChangedObserved || dv?.selectionChanged.observed || this.selectionChanged.observed
   }
 
-constructor(@Inject(LOCALE_ID) locale: string, translateService: TranslateService, private router: Router, private injector: Injector) {
+  constructor(@Inject(LOCALE_ID) locale: string, translateService: TranslateService, private router: Router, private injector: Injector) {
     super(locale, translateService)
     this.name = this.name || this.router.url.replace(/[^A-Za-z0-9]/, '_')
   }
@@ -263,8 +263,7 @@ constructor(@Inject(LOCALE_ID) locale: string, translateService: TranslateServic
   }
 
   mapSelectionToRows() {
-    this.selectedRows$ = this._selection$.pipe(
-      withLatestFrom(this._rows$),
+    this.selectedRows$ = combineLatest([this._selection$, this._rows$]).pipe(
       map(([selectedRows, rows]) => {
         return selectedRows.map((row) => {
           return rows.find((r) => r.id === row.id)
