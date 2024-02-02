@@ -83,8 +83,14 @@
         *ngFor="let item of objectDetails"
       >
         <label class="flex font-medium text-600">{{ item.label | dynamicPipe:item.labelPipe }}</label>
-        <span class="flex text-900 mt-2" [title]="item.tooltip || ''"
-          >{{ item.value | dynamicPipe:item.valuePipe:item.valuePipeArgs}}</span
+        <span
+          *ngIf="item.icon || item.value"
+          class="flex text-900 mt-2"
+          [ngClass]="item.icon ? 'gap-1 align-items-center' : null"
+          [title]="item.tooltip || ''"
+        >
+          <i *ngIf="item.icon" class="{{item.icon}}"></i>
+          {{ item.value | dynamicPipe:item.valuePipe:item.valuePipeArgs}}</span
         >
       </div>
     </ng-container>
