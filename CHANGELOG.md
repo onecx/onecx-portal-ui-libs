@@ -1,3 +1,16 @@
+## [4.3.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.2.0...v4.3.0) (2024-02-02)
+
+
+### Features
+
+* add emitEvents Input ([#98](https://github.com/onecx/onecx-portal-ui-libs/issues/98)) ([d73806c](https://github.com/onecx/onecx-portal-ui-libs/commit/d73806c6636286c96eb3edcea359e7b28ae91a9c))
+* adding CachingTranslateLoader ([#96](https://github.com/onecx/onecx-portal-ui-libs/issues/96)) ([52fc2c6](https://github.com/onecx/onecx-portal-ui-libs/commit/52fc2c6278f07a3cd760952e0eee247434b76106))
+
+
+### Bug Fixes
+
+* P002271-6620 export function if columns empty then just return ([#100](https://github.com/onecx/onecx-portal-ui-libs/issues/100)) ([14e7abe](https://github.com/onecx/onecx-portal-ui-libs/commit/14e7abeeb22b466650efe2f89c3f09d353691d27))
+
 ## [4.2.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.1.2...v4.2.0) (2024-02-01)
 
 
