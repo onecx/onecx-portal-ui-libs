@@ -1,3 +1,18 @@
+## [3.10.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.9.0...v3.10.0) (2024-02-02)
+
+
+### Features
+
+* add emitEvents Input  ([#99](https://github.com/onecx/onecx-portal-ui-libs/issues/99)) ([f63aada](https://github.com/onecx/onecx-portal-ui-libs/commit/f63aadab536c3fa421a07daf768b0c4aa4d2da5b)), closes [#98](https://github.com/onecx/onecx-portal-ui-libs/issues/98)
+* init v3 branch and add to workflow ([3e24075](https://github.com/onecx/onecx-portal-ui-libs/commit/3e24075dedb525339e9dcc1f2d22b243e9f1f1cd))
+* table row selection ([#82](https://github.com/onecx/onecx-portal-ui-libs/issues/82)) ([f420cdd](https://github.com/onecx/onecx-portal-ui-libs/commit/f420cddbae13ea6da5b286360b96c4c559f91600))
+
+
+### Refactoring
+
+* remove unused getters and broken conditional ([#79](https://github.com/onecx/onecx-portal-ui-libs/issues/79)) ([8994807](https://github.com/onecx/onecx-portal-ui-libs/commit/8994807080aeeba6eaf8ceb9d17993e2f5ad15af))
+* **test:** ocx-content & ocx-content-container test harnesses ([#71](https://github.com/onecx/onecx-portal-ui-libs/issues/71)) ([4ab7931](https://github.com/onecx/onecx-portal-ui-libs/commit/4ab79311a2a42713db605de1dac2e471a87a1358))
+
 ## [3.9.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v3.8.1...v3.9.0) (2024-01-17)
 
 
