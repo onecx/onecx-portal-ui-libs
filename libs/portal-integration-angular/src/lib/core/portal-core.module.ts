@@ -85,6 +85,7 @@ import { UserService } from '../services/user.service'
 import { UserProfileAPIService } from '../services/userprofile-api.service'
 import { createTranslateLoader } from './utils/create-translate-loader.utils'
 import { MessageService } from 'primeng/api'
+import { TranslationCacheService } from '../services/translation-cache.service'
 
 export class PortalMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -105,7 +106,7 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
       loader: {
         provide: TranslateLoader,
         useFactory: createTranslateLoader,
-        deps: [HttpClient, AppStateService, ConfigurationService],
+        deps: [HttpClient, AppStateService, TranslationCacheService],
       },
       missingTranslationHandler: { provide: MissingTranslationHandler, useClass: PortalMissingTranslationHandler },
     }),
