@@ -32,6 +32,7 @@ import {
   PPicklistHarness,
   ButtonHarness,
   PMultiSelectListItemHarness,
+  InteractiveDataViewHarness,
 } from '../../../../../testing'
 import { RouterTestingModule } from '@angular/router/testing'
 import { TranslateTestingModule } from 'ngx-translate-testing'
@@ -42,6 +43,7 @@ describe('InteractiveDataViewComponent', () => {
   let component: InteractiveDataViewComponent
   let fixture: ComponentFixture<InteractiveDataViewComponent>
   let loader: HarnessLoader
+  let interactiveDataViewHarness: InteractiveDataViewHarness
 
   let viewItemEvent: RowListGridData | undefined
   let editItemEvent: RowListGridData | undefined
@@ -258,6 +260,7 @@ describe('InteractiveDataViewComponent', () => {
     fixture.detectChanges()
 
     loader = TestbedHarnessEnvironment.loader(fixture)
+    interactiveDataViewHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, InteractiveDataViewHarness)
 
     dateUtils = TestBed.inject(DateUtils)
 
@@ -820,6 +823,34 @@ describe('InteractiveDataViewComponent', () => {
       const rows = await parallel(() => tableRows.map((row) => row.getData()))
 
       expect(rows).toEqual(expectedRowsData)
+    })
+  })
+
+  describe('Table row selection ', () => {
+    let dataLayoutSelection: DataLayoutSelectionHarness
+    let dataView: DataViewHarness
+    let dataTable: DataTableHarness
+
+    beforeEach(async () => {
+      dataLayoutSelection = await loader.getHarness(DataLayoutSelectionHarness)
+      dataView = await interactiveDataViewHarness.getDataView()
+      dataTable = await dataView.getDataTable()
+    })
+    
+    it('should initially show a table without selection checkboxes', async () => {
+      expect(dataTable).toBeTruthy()
+      expect(await dataLayoutSelection.getCurrentLayout()).toEqual('table')
+      expect(await dataTable.rowSelectionIsEnabled()).toEqual(false)
+    })
+
+    it('should show a table with selection checkboxes if the parent binds to the event emitter',async () => {      
+      expect(dataTable).toBeTruthy()
+      expect(await dataLayoutSelection.getCurrentLayout()).toEqual('table')
+      expect(await dataTable.rowSelectionIsEnabled()).toEqual(false)
+
+      component.selectionChanged.subscribe()
+
+      expect(await dataTable.rowSelectionIsEnabled()).toEqual(true);
     })
   })
 

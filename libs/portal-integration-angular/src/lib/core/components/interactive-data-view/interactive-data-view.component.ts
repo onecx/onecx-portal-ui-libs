@@ -11,7 +11,7 @@ import {
 } from '@angular/core'
 import { DataTableColumn } from '../../../model/data-table-column.model'
 import { DataSortDirection } from '../../../model/data-sort-direction'
-import { Filter, Sort } from '../data-table/data-table.component'
+import { Filter, Row, Sort } from '../data-table/data-table.component'
 import { DataViewComponent, RowListGridData } from '../data-view/data-view.component'
 import { AUTH_SERVICE } from '../../../api/injection-tokens'
 import { IAuthService } from '../../../api/iauth.service'
@@ -63,6 +63,7 @@ export class InteractiveDataViewComponent implements OnInit {
   @Input() additionalActions: DataAction[] = []
   @Input() listGridPaginator = true
   @Input() tablePaginator = true
+  @Input() selectedRows: Row[] = []
   @ContentChild('tableCell') tableCell: TemplateRef<any> | undefined
   @ContentChild('tableDateCell') tableDateCell: TemplateRef<any> | undefined
   @ContentChild('tableRelativeDateCell') tableRelativeDateCell: TemplateRef<any> | undefined
@@ -80,6 +81,7 @@ export class InteractiveDataViewComponent implements OnInit {
   @Output() viewItem = new EventEmitter<RowListGridData>()
   @Output() editItem = new EventEmitter<RowListGridData>()
   @Output() dataViewLayoutChange: EventEmitter<any> = new EventEmitter()
+  @Output() selectionChanged: EventEmitter<Row[]> = new EventEmitter()
   displayedColumns: DataTableColumn[] = []
   selectedGroupKey = ''
   isDeleteItemObserved: boolean | undefined
@@ -226,10 +228,23 @@ export class InteractiveDataViewComponent implements OnInit {
         })
       }
     }
+    if(this.selectionChanged.observed) {
+      if(!this._dataViewComponent?.selectionChanged.observed) {
+        this._dataViewComponent?.selectionChanged.subscribe((event) => {
+          this.onRowSelectionChange(event)
+        })
+      }
+    }
   }
 
   onColumnSelectionChange(event: ColumnSelectionChangedEvent) {
     this.displayedColumns = event.activeColumns
     this.selectedGroupKey = this.customGroupKey
+  }
+
+  onRowSelectionChange(event: Row[]) {
+    if(this.selectionChanged.observed){
+      this.selectionChanged.emit(event)
+    }
   }
 }

@@ -28,6 +28,7 @@ export * from './table-header-column.harness'
 export * from './table-row.harness'
 export * from './diagram.harness'
 export * from './search-config.harness'
+export * from './p-tableCheckbox.harness'
 
 export * from '@angular/cdk/testing'
 export * from '@angular/cdk/testing/testbed'

@@ -32,6 +32,14 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   set rows(value: Row[]) {
     this._rows$.next(value)
   }
+  _selection$ = new BehaviorSubject<Row[]>([])
+  @Input()
+  get selectedRows(): Row[] {
+    return this._selection$.getValue()
+  }
+  set selectedRows(value: Row[]) {
+    this._selection$.next(value)
+  }
   _filters$ = new BehaviorSubject<Filter[]>([])
   @Input()
   get filters(): Filter[] {
@@ -111,8 +119,10 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   @Output() viewTableRow = new EventEmitter<Row>()
   @Output() editTableRow = new EventEmitter<Row>()
   @Output() deleteTableRow = new EventEmitter<Row>()
+  @Output() selectionChanged = new EventEmitter<Row[]>()
 
   displayedRows$: Observable<unknown[]> | undefined
+  selectedRows$: Observable<unknown[]> | undefined
 
   currentFilterColumn$ = new BehaviorSubject<DataTableColumn | null>(null)
   currentFilterOptions$: Observable<SelectItem[]> | undefined
@@ -129,6 +139,11 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   get deleteTableRowObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
     return dv?.deleteItemObserved || dv?.deleteItem.observed || this.deleteTableRow.observed
+  }
+
+  get selectionChangedObserved(): boolean {
+    const dv = this.injector.get('DataViewComponent', null)
+    return dv?.selectionChangedObserved || dv?.selectionChanged.observed || this.selectionChanged.observed
   }
 
   constructor(@Inject(LOCALE_ID) locale: string, translateService: TranslateService, private router: Router, private injector: Injector) {
@@ -186,6 +201,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
       ),
       map((amounts) => Object.fromEntries(amounts))
     )
+    this.mapSelectionToRows()
   }
 
   onSortColumnClick(sortColumn: string) {
@@ -244,5 +260,19 @@ export class DataTableComponent extends DataSortBase implements OnInit {
       default:
         return 'OCX_LIST_GRID_SORT.TOGGLE_BUTTON.DEFAULT_TITLE'
     }
+  }
+
+  mapSelectionToRows() {
+    this.selectedRows$ = combineLatest([this._selection$, this._rows$]).pipe(
+      map(([selectedRows, rows]) => {
+        return selectedRows.map((row) => {
+          return rows.find((r) => r.id === row.id)
+        })
+      })
+    )
+  }
+
+  onSelectionChange(event: Row[]) {
+    this.selectionChanged.emit(event)
   }
 }
