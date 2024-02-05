@@ -189,6 +189,8 @@ export class CompleteDialogComponent
       if (state.result?.name == 'John' && state.result.surname === 'Doe') {
         // use message service
         this.message = 'Welcome John'
+        this.dialogResult.name = 'Submitted John'
+        this.dialogResult.surname = 'Submitted Doe'
         return true
       }
       this.message = 'Wrong credentials'
@@ -785,10 +787,10 @@ describe('PortalDialogService', () => {
     const result = fixture.componentInstance.resultFromShow
     expect(result?.button).toBe('primary')
     expect(result?.result).toEqual({
-      name: 'John',
-      surname: 'Doe',
+      name: 'Submitted John',
+      surname: 'Submitted Doe',
     })
-    expect(fixture.componentInstance.nameResult).toBe('John')
-    expect(fixture.componentInstance.surnameResult).toBe('Doe')
+    expect(fixture.componentInstance.nameResult).toBe('Submitted John')
+    expect(fixture.componentInstance.surnameResult).toBe('Submitted Doe')
   })
 })
