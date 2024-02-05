@@ -246,7 +246,9 @@ export class PortalDialogService {
    *
    * ```
    * // assume 'TITLE_KEY', 'WELCOME_MESSAGE', 'OK_BUTTON' and 'REFRESH_BUTTON' are translation keys
-   * this.portalDialogService.openDialog('TITLE_KEY', 'WELCOME_MESSAGE', 'OK_BUTTON', 'REFRESH_BUTTON')
+   * this.portalDialogService.openDialog('TITLE_KEY', 'WELCOME_MESSAGE', 'OK_BUTTON', 'REFRESH_BUTTON').subscribe((stateOnClose) => {
+   *   // operations when dialog has been closed
+   * })
    * ```
    *
    * @example
@@ -258,7 +260,9 @@ export class PortalDialogService {
    *   key: 'WELCOME_MESSAGE',
    *   icon: 'pi pi-question'
    * }
-   * this.portalDialogService.openDialog('TITLE_KEY', dialogMessage, 'OK_BUTTON')
+   * this.portalDialogService.openDialog('TITLE_KEY', dialogMessage, 'OK_BUTTON').subscribe((stateOnClose) => {
+   *   // operations when dialog has been closed
+   * })
    * ```
    *
    * @example
@@ -277,21 +281,25 @@ export class PortalDialogService {
    *   icon: 'pi pi-refresh'
    * }
    *
-   * this.portalDialogService.openDialog('TITLE_KEY', 'WELCOME_MESSAGE', primaryButton, secondaryButton)
+   * this.portalDialogService.openDialog('TITLE_KEY', 'WELCOME_MESSAGE', primaryButton, secondaryButton).subscribe((stateOnClose) => {
+   *   // operations when dialog has been closed
+   * })
    * ```
    *
    * @example
    * Display dialog message without X button in top right corner
    *
    * ```
-   * this.portalDialogService.openDialog('TITLE_KEY', 'WELCOME_MESSAGE', 'OK_BUTTON', 'REFRESH_BUTTON', false)
+   * this.portalDialogService.openDialog('TITLE_KEY', 'WELCOME_MESSAGE', 'OK_BUTTON', 'REFRESH_BUTTON', false).subscribe((stateOnClose) => {
+   *   // operations when dialog has been closed
+   * })
    * ```
    *
    * @example
    * React on dialog closing
    *
    * ```
-   * this.portalDialogService.openDialog('TITLE_KEY', 'WELCOME_MESSAGE', 'OK_BUTTON', 'REFRESH_BUTTON').subscribe((state) => {
+   * this.portalDialogService.openDialog('TITLE_KEY', 'WELCOME_MESSAGE', 'OK_BUTTON', 'REFRESH_BUTTON').subscribe((stateOnClose) => {
    *   // operations when dialog has been closed
    * })
    * ```
@@ -333,7 +341,19 @@ export class PortalDialogService {
    *     header: 'DIALOG_HEADER'
    *   }
    * }
-   * this.portalDialogService.openDialog('TITLE_KEY', myComponent, 'OK_BUTTON', 'REFRESH_BUTTON')
+   * this.portalDialogService.openDialog('TITLE_KEY', myComponent, 'OK_BUTTON', 'REFRESH_BUTTON').subscribe((stateOnClose) => {
+   *   // operations when dialog has been closed
+   * })
+   * ```
+   *
+   * @example
+   * Display dialog with component without passing inputs
+   *
+   * ## PortalDialogService call
+   * ```
+   * this.portalDialogService.openDialog('TITLE_KEY', MyInputComponent, 'OK_BUTTON', 'REFRESH_BUTTON').subscribe((stateOnClose) => {
+   *   // operations when dialog has been closed
+   * })
    * ```
    */
   openDialog<T>(
