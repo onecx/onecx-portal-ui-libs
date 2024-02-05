@@ -386,7 +386,7 @@ describe('PortalDialogService', () => {
   it('should display dialog with custom component if provided', async () => {
     jest.spyOn(pDialogService, 'open')
 
-    fixture.componentInstance.show('title', { type: TestWithInputsComponent }, 'button1', 'button2')
+    fixture.componentInstance.show('title', TestWithInputsComponent, 'button1', 'button2')
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
     const headerDiv = await dialogHarness.getHarness(DivHarness.with({ class: 'testHeader' }))

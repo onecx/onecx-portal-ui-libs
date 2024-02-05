@@ -338,7 +338,7 @@ export class PortalDialogService {
    */
   openDialog<T>(
     title: TranslationKey | null,
-    componentOrMessage: Component<T> | TranslationKey | DialogMessage,
+    componentOrMessage: Type<any> | Type<DialogResult<T>> | Component<T> | TranslationKey | DialogMessage,
     primaryButtonTranslationKeyOrDetails: TranslationKey | ButtonDialogButtonDetails,
     secondaryButtonTranslationKeyOrDetails?: TranslationKey | ButtonDialogButtonDetails,
     showXButton: boolean = true
@@ -393,7 +393,9 @@ export class PortalDialogService {
     return buttonDetails
   }
 
-  private getComponentToRender(componentOrMessage: Component<any> | TranslationKey | DialogMessage): Component<any> {
+  private getComponentToRender(
+    componentOrMessage: Type<any> | Type<DialogResult<any>> | Component<any> | TranslationKey | DialogMessage
+  ): Component<any> {
     if (this.isTranslationKey(componentOrMessage)) {
       return {
         type: DialogMessageContentComponent,
@@ -413,6 +415,10 @@ export class PortalDialogService {
           messageParameters: this.isString(componentOrMessage.message) ? {} : componentOrMessage.message.parameters,
         },
       }
+    } else if (this.isType(componentOrMessage)) {
+      return {
+        type: componentOrMessage,
+      }
     }
     return componentOrMessage
   }
@@ -427,5 +433,9 @@ export class PortalDialogService {
 
   private isDialogMessage(obj: any): obj is DialogMessage {
     return 'message' in obj && 'icon' in obj
+  }
+
+  private isType(obj: any): obj is Type<any> {
+    return obj instanceof Type
   }
 }
