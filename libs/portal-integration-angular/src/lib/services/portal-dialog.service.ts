@@ -305,7 +305,7 @@ export class PortalDialogService {
    * <h1>{{header | translate}}</h1>
    * <input (change)="onInputChange($event)">
    * </div>`})
-   * export class MyInputComponent implements DialogResult<string>,  DialogButtonClicked, DialogPrimaryButtonDisabled, DialogPrimaryButtonDisabled {
+   * export class MyInputComponent implements DialogResult<string>,  DialogButtonClicked, DialogPrimaryButtonDisabled, DialogSecondaryButtonDisabled {
    *   ⁣@Input() header: string = ''
    *   // change value to manipulate component state visible by dialog
    *   dialogResult: string = ''
