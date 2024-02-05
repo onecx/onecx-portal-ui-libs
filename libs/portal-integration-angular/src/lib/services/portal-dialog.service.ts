@@ -246,7 +246,9 @@ export class PortalDialogService {
    *
    * ```
    * // assume 'TITLE_KEY', 'WELCOME_MESSAGE', 'OK_BUTTON' and 'REFRESH_BUTTON' are translation keys
-   * this.portalDialogService.openDialog('TITLE_KEY', 'WELCOME_MESSAGE', 'OK_BUTTON', 'REFRESH_BUTTON')
+   * this.portalDialogService.openDialog('TITLE_KEY', 'WELCOME_MESSAGE', 'OK_BUTTON', 'REFRESH_BUTTON').subscribe((stateOnClose) => {
+   *   // operations when dialog has been closed
+   * })
    * ```
    *
    * @example
@@ -258,7 +260,9 @@ export class PortalDialogService {
    *   key: 'WELCOME_MESSAGE',
    *   icon: 'pi pi-question'
    * }
-   * this.portalDialogService.openDialog('TITLE_KEY', dialogMessage, 'OK_BUTTON')
+   * this.portalDialogService.openDialog('TITLE_KEY', dialogMessage, 'OK_BUTTON').subscribe((stateOnClose) => {
+   *   // operations when dialog has been closed
+   * })
    * ```
    *
    * @example
@@ -277,21 +281,25 @@ export class PortalDialogService {
    *   icon: 'pi pi-refresh'
    * }
    *
-   * this.portalDialogService.openDialog('TITLE_KEY', 'WELCOME_MESSAGE', primaryButton, secondaryButton)
+   * this.portalDialogService.openDialog('TITLE_KEY', 'WELCOME_MESSAGE', primaryButton, secondaryButton).subscribe((stateOnClose) => {
+   *   // operations when dialog has been closed
+   * })
    * ```
    *
    * @example
    * Display dialog message without X button in top right corner
    *
    * ```
-   * this.portalDialogService.openDialog('TITLE_KEY', 'WELCOME_MESSAGE', 'OK_BUTTON', 'REFRESH_BUTTON', false)
+   * this.portalDialogService.openDialog('TITLE_KEY', 'WELCOME_MESSAGE', 'OK_BUTTON', 'REFRESH_BUTTON', false).subscribe((stateOnClose) => {
+   *   // operations when dialog has been closed
+   * })
    * ```
    *
    * @example
    * React on dialog closing
    *
    * ```
-   * this.portalDialogService.openDialog('TITLE_KEY', 'WELCOME_MESSAGE', 'OK_BUTTON', 'REFRESH_BUTTON').subscribe((state) => {
+   * this.portalDialogService.openDialog('TITLE_KEY', 'WELCOME_MESSAGE', 'OK_BUTTON', 'REFRESH_BUTTON').subscribe((stateOnClose) => {
    *   // operations when dialog has been closed
    * })
    * ```
@@ -305,7 +313,7 @@ export class PortalDialogService {
    * <h1>{{header | translate}}</h1>
    * <input (change)="onInputChange($event)">
    * </div>`})
-   * export class MyInputComponent implements DialogResult<string>,  DialogButtonClicked, DialogPrimaryButtonDisabled, DialogPrimaryButtonDisabled {
+   * export class MyInputComponent implements DialogResult<string>,  DialogButtonClicked, DialogPrimaryButtonDisabled, DialogSecondaryButtonDisabled {
    *   ⁣@Input() header: string = ''
    *   // change value to manipulate component state visible by dialog
    *   dialogResult: string = ''
@@ -333,12 +341,24 @@ export class PortalDialogService {
    *     header: 'DIALOG_HEADER'
    *   }
    * }
-   * this.portalDialogService.openDialog('TITLE_KEY', myComponent, 'OK_BUTTON', 'REFRESH_BUTTON')
+   * this.portalDialogService.openDialog('TITLE_KEY', myComponent, 'OK_BUTTON', 'REFRESH_BUTTON').subscribe((stateOnClose) => {
+   *   // operations when dialog has been closed
+   * })
+   * ```
+   *
+   * @example
+   * Display dialog with component without passing inputs
+   *
+   * ## PortalDialogService call
+   * ```
+   * this.portalDialogService.openDialog('TITLE_KEY', MyInputComponent, 'OK_BUTTON', 'REFRESH_BUTTON').subscribe((stateOnClose) => {
+   *   // operations when dialog has been closed
+   * })
    * ```
    */
   openDialog<T>(
     title: TranslationKey | null,
-    componentOrMessage: Component<T> | TranslationKey | DialogMessage,
+    componentOrMessage: Type<any> | Type<DialogResult<T>> | Component<T> | TranslationKey | DialogMessage,
     primaryButtonTranslationKeyOrDetails: TranslationKey | ButtonDialogButtonDetails,
     secondaryButtonTranslationKeyOrDetails?: TranslationKey | ButtonDialogButtonDetails,
     showXButton: boolean = true
@@ -393,7 +413,9 @@ export class PortalDialogService {
     return buttonDetails
   }
 
-  private getComponentToRender(componentOrMessage: Component<any> | TranslationKey | DialogMessage): Component<any> {
+  private getComponentToRender(
+    componentOrMessage: Type<any> | Type<DialogResult<any>> | Component<any> | TranslationKey | DialogMessage
+  ): Component<any> {
     if (this.isTranslationKey(componentOrMessage)) {
       return {
         type: DialogMessageContentComponent,
@@ -413,6 +435,10 @@ export class PortalDialogService {
           messageParameters: this.isString(componentOrMessage.message) ? {} : componentOrMessage.message.parameters,
         },
       }
+    } else if (this.isType(componentOrMessage)) {
+      return {
+        type: componentOrMessage,
+      }
     }
     return componentOrMessage
   }
@@ -427,5 +453,9 @@ export class PortalDialogService {
 
   private isDialogMessage(obj: any): obj is DialogMessage {
     return 'message' in obj && 'icon' in obj
+  }
+
+  private isType(obj: any): obj is Type<any> {
+    return obj instanceof Type
   }
 }
