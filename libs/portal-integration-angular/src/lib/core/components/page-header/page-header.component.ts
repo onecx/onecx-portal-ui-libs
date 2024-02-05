@@ -186,6 +186,7 @@ export class PageHeaderComponent implements OnInit, OnChanges {
               title:
                 (a.titleKey ? translations[a.titleKey] : a.title) || (a.labelKey ? translations[a.labelKey] : a.label),
               command: a.actionCallback,
+              disabled: a.disabled,
             })),
           ]
         }

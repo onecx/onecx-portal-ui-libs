@@ -165,18 +165,23 @@ export class ButtonDialogComponent implements OnInit {
   private resolveButtonClick(state: DialogState<unknown>) {
     const component = this.componentRef.instance
 
-    if (this.isDialogResultImplemented(component)) {
+    const hasDialogResult = this.isDialogResultImplemented(component)
+    if (hasDialogResult) {
       state.result = component.dialogResult
     }
+    const closeResult = state
     // check if component implements DialogButtonClicked
     if (this.isDialogButtonClickedImplemented(component)) {
       this.toObservable(component.ocxDialogButtonClicked(state)).subscribe((result: boolean) => {
         if (result === true) {
-          this.dynamicDialogRef.close(state)
+          if (hasDialogResult) {
+            closeResult.result = component.dialogResult
+          }
+          this.dynamicDialogRef.close(closeResult)
         }
       })
     } else {
-      return this.dynamicDialogRef.close(state)
+      return this.dynamicDialogRef.close(closeResult)
     }
   }
 

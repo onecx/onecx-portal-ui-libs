@@ -13,13 +13,14 @@ import { MockUserService } from '../../../../../mocks/mock-user-service'
 import { PageHeaderHarness, TestbedHarnessEnvironment } from '../../../../../testing'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
 import { PrimeIcons } from 'primeng/api'
+import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 
 const mockActions: Action[] = [
   {
     label: 'My Test Action',
     show: 'always',
     actionCallback: () => {
-      console.log('Test')
+      console.log('My Test Action')
     },
     permission: 'TEST#TEST_PERMISSION',
   },
@@ -27,9 +28,18 @@ const mockActions: Action[] = [
     label: 'My Test Overflow Action',
     show: 'asOverflow',
     actionCallback: () => {
-      console.log('Test')
+      console.log('My Test Overflow Action')
     },
     permission: 'TEST#TEST_PERMISSION',
+  },
+  {
+    label: 'My Test Overflow Disabled Action',
+    show: 'asOverflow',
+    actionCallback: () => {
+      console.log('My Test Overflow Disabled Action')
+    },
+    permission: 'TEST#TEST_PERMISSION',
+    disabled: true,
   },
 ]
 
@@ -73,7 +83,8 @@ describe('PageHeaderComponent', () => {
         }),
         BreadcrumbModule,
         MenuModule,
-        ButtonModule
+        ButtonModule,
+        NoopAnimationsModule,
       ],
       providers: [ConfigurationService, AppStateService, { provide: UserService, useClass: MockUserService }],
     }).compileComponents()
@@ -93,6 +104,7 @@ describe('PageHeaderComponent', () => {
     fixture.detectChanges()
     pageHeaderHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, PageHeaderHarness)
     const userService = fixture.debugElement.injector.get(UserService)
+    jest.restoreAllMocks()
     userServiceSpy = jest.spyOn(userService, 'hasPermission')
   })
 
@@ -121,7 +133,7 @@ describe('PageHeaderComponent', () => {
       await pageHeaderHarness.getOverflowActionButtons()
     ).toHaveLength(1)
     expect(await pageHeaderHarness.getElementByTitle('More actions')).toBeTruthy()
-    expect(userServiceSpy).toHaveBeenCalledTimes(2)
+    expect(userServiceSpy).toHaveBeenCalledTimes(3)
   })
 
   it("should check permissions and not render button that user isn't allowed to see", async () => {
@@ -147,7 +159,7 @@ describe('PageHeaderComponent', () => {
       await pageHeaderHarness.getOverflowActionButtons()
     ).toHaveLength(0)
     expect(await pageHeaderHarness.getElementByTitle('More actions')).toBeFalsy()
-    expect(userServiceSpy).toHaveBeenCalledTimes(2)
+    expect(userServiceSpy).toHaveBeenCalledTimes(3)
   })
 
   it("should render objectDetails as object info in the page header", async () => {
@@ -225,5 +237,62 @@ describe('PageHeaderComponent', () => {
 
     expect(await objectDetailIcons[0].getAttribute('class')).toEqual(objectDetailsWithIcons[1].icon)
     expect(await objectDetailIcons[1].getAttribute('class')).toEqual(objectDetailsWithIcons[2].icon)
+  })
+
+  it('should show overflow actions when menu overflow button clicked', () => {
+    component.actions = mockActions
+    fixture.detectChanges()
+
+    const menuOverflowButton = fixture.debugElement.nativeElement.querySelector(
+      '[name="ocx-page-header-overflow-action-button"]'
+    )
+    expect(menuOverflowButton).toBeTruthy()
+    menuOverflowButton.click()
+    fixture.detectChanges()
+
+    expect(fixture.debugElement.nativeElement.querySelector('[title="My Test Overflow Action"]')).toBeTruthy()
+    expect(fixture.debugElement.nativeElement.querySelector('[title="My Test Overflow Disabled Action"]')).toBeTruthy()
+  })
+
+  it('should use provided action callback on overflow button click', () => {
+    jest.spyOn(console, 'log')
+
+    component.actions = mockActions
+    fixture.detectChanges()
+
+    const menuOverflowButton = fixture.debugElement.nativeElement.querySelector(
+      '[name="ocx-page-header-overflow-action-button"]'
+    )
+    expect(menuOverflowButton).toBeTruthy()
+    menuOverflowButton.click()
+    fixture.detectChanges()
+
+    const enabledActionElement = fixture.debugElement.nativeElement.querySelector('[title="My Test Overflow Action"]')
+    expect(enabledActionElement).toBeTruthy()
+    expect(enabledActionElement.classList).not.toContain('p-disabled')
+    enabledActionElement.click()
+    expect(console.log).toHaveBeenCalledTimes(1)
+  })
+
+  it('should disable overflow button when action is disabled', () => {
+    jest.spyOn(console, 'log')
+
+    component.actions = mockActions
+    fixture.detectChanges()
+
+    const menuOverflowButton = fixture.debugElement.nativeElement.querySelector(
+      '[name="ocx-page-header-overflow-action-button"]'
+    )
+    expect(menuOverflowButton).toBeTruthy()
+    menuOverflowButton.click()
+    fixture.detectChanges()
+
+    const disabledActionElement = fixture.debugElement.nativeElement.querySelector(
+      '[title="My Test Overflow Disabled Action"]'
+    )
+    expect(disabledActionElement).toBeTruthy()
+    expect(disabledActionElement.classList).toContain('p-disabled')
+    disabledActionElement.click()
+    expect(console.log).toHaveBeenCalledTimes(0)
   })
 })
