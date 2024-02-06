@@ -11,7 +11,7 @@ import {
   Type,
   ViewEncapsulation,
 } from '@angular/core'
-import { MenuItem } from 'primeng/api'
+import { MenuItem, PrimeIcons } from 'primeng/api'
 import { concat, map, Observable, of } from 'rxjs'
 import { BreadcrumbService } from '../../../services/breadcrumb.service'
 import { TranslateService } from '@ngx-translate/core'
@@ -46,6 +46,7 @@ export interface ObjectDetailItem {
   label: string
   value?: string
   tooltip?: string
+  icon?: PrimeIcons
   labelPipe?: Type<any>
   valuePipe?: Type<any>
   valuePipeArgs?: string
