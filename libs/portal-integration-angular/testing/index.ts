@@ -32,6 +32,7 @@ export * from './diagram.harness'
 export * from './search-config.harness'
 export * from './span.harness'
 export * from './page-header.harness'
+export * from './p-tableCheckbox.harness'
 
 export * from '@angular/cdk/testing'
 export * from '@angular/cdk/testing/testbed'
