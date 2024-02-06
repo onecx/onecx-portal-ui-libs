@@ -176,6 +176,10 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
       },
       deps: [UserService],
     },
+    {
+      provide: MessageService,
+      useClass: MessageService,
+    },
   ],
   exports: [
     AnnouncementBannerComponent,
@@ -251,10 +255,6 @@ export class PortalCoreModule {
       providers: [
         { provide: SANITY_CHECK, useValue: 'root' },
         { provide: APPLICATION_NAME, useValue: appName },
-        {
-          provide: MessageService,
-          useClass: MessageService,
-        },
       ],
     }
     if (!disableInitializer) {
