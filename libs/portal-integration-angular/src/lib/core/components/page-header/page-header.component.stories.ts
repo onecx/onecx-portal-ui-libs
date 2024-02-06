@@ -17,20 +17,14 @@ import { BreadcrumbService } from '../../../services/breadcrumb.service'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
 import { HttpClientModule } from '@angular/common/http'
-import { AppStateService } from '../../../services/app-state.service'
+import { PrimeIcons } from 'primeng/api'
 
-function initFactory(breadcrumbService: BreadcrumbService, appStateService: AppStateService) {
+function initFactory(breadcrumbService: BreadcrumbService) {
   return async () => {
     breadcrumbService.setItems([
       { label: 'Level 1', routerLink: 'something' },
       { label: 'Level 2', url: '/' },
     ])
-    await appStateService.currentPortal$.publish({
-      baseUrl: '/demo',
-      portalName: 'Demo',
-      id: 'Demo',
-      microfrontendRegistrations: [],
-    })
   }
 }
 
@@ -298,5 +292,63 @@ export const WithCustomContent = {
     subheader: 'My subtitle',
     actions: demoActions,
     objectDetails: demoFields,
+  },
+}
+
+const objectDetailsWithoutIcons: ObjectDetailItem[] = [
+  {
+    label: 'Venue',
+    value: 'AIE Munich ',
+  },
+  {
+    label: 'Status',
+    value: 'Confirmed',
+  },
+  {
+    label: 'Start Date',
+    value: '14.3.2022',
+  },
+]
+
+export const WithObjectDetails = {
+  render: Template,
+
+  args: {
+    header: 'Test Page',
+    subheader: 'Page header with text based objectDetails and no icons',
+    loading: false,
+    objectDetails: objectDetailsWithoutIcons,
+    showBreadcrumbs: false,
+  },
+}
+
+const objectDetailsWithIcons: ObjectDetailItem[] = [
+  {
+    label: 'Venue',
+    value: 'AIE Munich ',
+  },
+  {
+    label: 'Event Completed',
+    icon: PrimeIcons.CHECK_CIRCLE
+  },
+  {
+    label: 'Start Date',
+    value: '14.3.2022',
+    icon: PrimeIcons.CLOCK
+  },
+  {
+    label: 'I have no value'
+  },
+]
+
+export const WithObjectDetailsAndIcons = {
+  render: Template,
+
+  args: {
+    header: 'Test Page',
+    subheader: 'Page header with text and icon based objectDetails',
+    loading: false,
+    objectDetails: objectDetailsWithIcons,
+    showBreadcrumbs: false,
   },
 }
