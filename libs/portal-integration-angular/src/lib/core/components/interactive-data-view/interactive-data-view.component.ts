@@ -1,7 +1,7 @@
 import { Component, ContentChild, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core'
 import { DataTableColumn } from '../../../model/data-table-column.model'
 import { DataSortDirection } from '../../../model/data-sort-direction'
-import { Filter, Sort } from '../data-table/data-table.component'
+import { Filter, Row, Sort } from '../data-table/data-table.component'
 import { DataViewComponent, RowListGridData } from '../data-view/data-view.component'
 import { GroupSelectionChangedEvent } from '../column-group-selection/column-group-selection.component'
 import { ColumnSelectionChangedEvent } from '../custom-group-column-selector/custom-group-column-selector.component'
@@ -54,6 +54,7 @@ export class InteractiveDataViewComponent implements OnInit {
   @Input() additionalActions: DataAction[] = []
   @Input() listGridPaginator = true
   @Input() tablePaginator = true
+  @Input() selectedRows: Row[] = []
   @ContentChild('tableCell') tableCell: TemplateRef<any> | undefined
   @ContentChild('tableDateCell') tableDateCell: TemplateRef<any> | undefined
   @ContentChild('tableRelativeDateCell') tableRelativeDateCell: TemplateRef<any> | undefined
@@ -72,6 +73,7 @@ export class InteractiveDataViewComponent implements OnInit {
   @Output() editItem = new EventEmitter<RowListGridData>()
   @Output() dataViewLayoutChange = new EventEmitter<'grid' | 'list' | 'table'>()
   @Output() displayedColumnsChange = new EventEmitter<DataTableColumn[]>()
+  @Output() selectionChanged: EventEmitter<Row[]> = new EventEmitter()
   displayedColumns: DataTableColumn[] = []
   selectedGroupKey = ''
   isDeleteItemObserved: boolean | undefined
@@ -218,11 +220,24 @@ export class InteractiveDataViewComponent implements OnInit {
         })
       }
     }
+    if(this.selectionChanged.observed) {
+      if(!this._dataViewComponent?.selectionChanged.observed) {
+        this._dataViewComponent?.selectionChanged.subscribe((event) => {
+          this.onRowSelectionChange(event)
+        })
+      }
+    }
   }
 
   onColumnSelectionChange(event: ColumnSelectionChangedEvent) {
     this.displayedColumns = event.activeColumns
     this.selectedGroupKey = this.customGroupKey
     this.displayedColumnsChange.emit(this.displayedColumns)
+  }
+
+  onRowSelectionChange(event: Row[]) {
+    if(this.selectionChanged.observed){
+      this.selectionChanged.emit(event)
+    }
   }
 }

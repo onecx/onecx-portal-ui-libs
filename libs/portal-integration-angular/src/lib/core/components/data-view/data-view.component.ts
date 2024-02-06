@@ -61,6 +61,7 @@ export class DataViewComponent implements DoCheck, OnInit {
   @Input() totalRecordsOnServer: number | undefined 
   @Input() currentPageShowingKey = 'OCX_DATA_TABLE.SHOWING'
   @Input() currentPageShowingWithTotalOnServerKey = 'OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER'
+  @Input() selectedRows: Row[] = []
 
   @Input()
   get paginator(): boolean {
@@ -141,6 +142,7 @@ export class DataViewComponent implements DoCheck, OnInit {
   @Output() deleteItem = new EventEmitter<RowListGridData>()
   @Output() viewItem = new EventEmitter<RowListGridData>()
   @Output() editItem = new EventEmitter<RowListGridData>()
+  @Output() selectionChanged = new EventEmitter<Row[]>()
   isDeleteItemObserved: boolean | undefined
   isViewItemObserved: boolean | undefined
   IsEditItemObserved: boolean | undefined
@@ -155,8 +157,12 @@ export class DataViewComponent implements DoCheck, OnInit {
   get deleteItemObserved(): boolean {
     return this.injector.get('InteractiveDataViewComponent', null)?.deleteItem.observed || this.deleteItem.observed
   }
+  get selectionChangedObserved(): boolean {
+    return this.injector.get('InteractiveDataViewComponent', null)?.selectionChanged.observed || this.selectionChanged.observed
+  }
 
   constructor(private injector: Injector) {}
+  
   ngOnInit(): void {
     this.firstColumnId = this.columns[0]?.id
   }
@@ -218,6 +224,13 @@ export class DataViewComponent implements DoCheck, OnInit {
           })
         }
       }
+      if(this.selectionChangedObserved) {
+        if(!this._dataTableComponent?.selectionChanged.observed) {
+          this._dataTableComponent?.selectionChanged.subscribe((event) => {
+            this.onRowSelectionChange(event)
+          })
+        }
+      }
     }
   }
   
@@ -246,6 +259,12 @@ export class DataViewComponent implements DoCheck, OnInit {
   editingElement(event: any) {
     if (this.IsEditItemObserved) {
       this.editItem.emit(event)
+    }
+  }
+
+  onRowSelectionChange(event: Row[]) {
+    if(this.selectionChangedObserved){
+      this.selectionChanged.emit(event)
     }
   }
 }

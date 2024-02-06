@@ -1,18 +1,21 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { DataTableComponent } from './data-table.component'
+import { DataTableComponent, Row } from './data-table.component'
 import { PrimeNgModule } from '../../primeng.module';
 import { TranslateTestingModule } from 'ngx-translate-testing';
 import { ColumnType } from '../../../model/column-type.model';
 import { PortalCoreModule } from '../../portal-core.module';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { DataTableHarness } from '../../../../../../../libs/portal-integration-angular/testing';
+import { DataTableHarness, PTableCheckboxHarness } from '../../../../../testing';
 
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>
   let component: DataTableComponent
   let translateService: TranslateService
+  let dataTable: DataTableHarness
+  let unselectedCheckBoxes: PTableCheckboxHarness[];
+  let selectedCheckBoxes: PTableCheckboxHarness[];
 
   const ENGLISH_LANGUAGE = 'en';
   const ENGLISH_TRANSLATIONS = {
@@ -207,6 +210,7 @@ describe('DataTableComponent', () => {
     translateService = TestBed.inject(TranslateService)
     translateService.use('en')
     fixture.detectChanges()
+    dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
   })
 
   it('should create the data table component', () => {
@@ -278,4 +282,50 @@ describe('DataTableComponent', () => {
     })
   })
 
+  describe('Table row selection', () => {
+    it('should initially show a table without selection checkboxes', async () => {
+      expect(dataTable).toBeTruthy()
+      expect(await dataTable.rowSelectionIsEnabled()).toEqual(false)
+    })
+
+    it('should show a table with selection checkboxes if the parent binds to the event emitter',async () => {      
+      expect(await dataTable.rowSelectionIsEnabled()).toEqual(false)
+      component.selectionChanged.subscribe()
+      expect(await dataTable.rowSelectionIsEnabled()).toEqual(true)
+    })
+
+    it('should pre-select rows given through selectedRows input', async () => {
+      component.selectionChanged.subscribe()
+
+      unselectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('unchecked')
+      selectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('checked')
+      expect(unselectedCheckBoxes.length).toBe(5)
+      expect(selectedCheckBoxes.length).toBe(0)
+      component.selectedRows = mockData.slice(0,2)
+
+      unselectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('unchecked')
+      selectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('checked')
+      expect(selectedCheckBoxes.length).toBe(2)
+      expect(unselectedCheckBoxes.length).toBe(3)
+    })
+  })
+
+  it('should emit all selected elements when checkbox is clicked', async () => {
+    let selectionChangedEvent: Row[] | undefined;
+
+    component.selectionChanged.subscribe((event) => (selectionChangedEvent = event))
+    unselectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('unchecked')
+    selectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('checked')
+    expect(unselectedCheckBoxes.length).toBe(5)
+    expect(selectedCheckBoxes.length).toBe(0)
+    expect(selectionChangedEvent).toBeUndefined()
+
+    const firstRowCheckBox = unselectedCheckBoxes[0]
+    await firstRowCheckBox.checkBox()
+    unselectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('unchecked')
+    selectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('checked')
+    expect(unselectedCheckBoxes.length).toBe(4)
+    expect(selectedCheckBoxes.length).toBe(1)
+    expect(selectionChangedEvent).toEqual([mockData[0]])
+  })
 })
