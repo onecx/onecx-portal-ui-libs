@@ -123,7 +123,6 @@ describe('PageHeaderComponent', () => {
     ).toHaveLength(0)
 
     component.actions = mockActions
-    fixture.detectChanges()
 
     expect(
       await pageHeaderHarness.getInlineActionButtons()
@@ -149,7 +148,6 @@ describe('PageHeaderComponent', () => {
     ).toHaveLength(0)
 
     component.actions = mockActions
-    fixture.detectChanges()
 
     expect(
       await pageHeaderHarness.getInlineActionButtons()
@@ -239,60 +237,58 @@ describe('PageHeaderComponent', () => {
     expect(await objectDetailIcons[1].getAttribute('class')).toEqual(objectDetailsWithIcons[2].icon)
   })
 
-  it('should show overflow actions when menu overflow button clicked', () => {
+  it('should show overflow actions when menu overflow button clicked', async () => {
     component.actions = mockActions
-    fixture.detectChanges()
 
-    const menuOverflowButton = fixture.debugElement.nativeElement.querySelector(
-      '[name="ocx-page-header-overflow-action-button"]'
-    )
-    expect(menuOverflowButton).toBeTruthy()
-    menuOverflowButton.click()
-    fixture.detectChanges()
+    const menuOverflowButtons = await pageHeaderHarness.getOverflowActionButtons()
 
-    expect(fixture.debugElement.nativeElement.querySelector('[title="My Test Overflow Action"]')).toBeTruthy()
-    expect(fixture.debugElement.nativeElement.querySelector('[title="My Test Overflow Disabled Action"]')).toBeTruthy()
+    expect(menuOverflowButtons).toBeTruthy()
+    expect(menuOverflowButtons.length).toBe(1)
+    await menuOverflowButtons[0].click()
+
+    const menuItems = await pageHeaderHarness.getOverFlowMenuItems()
+    expect(menuItems.length).toBe(2)
+    expect(await menuItems[0].getText()).toBe("My Test Overflow Action")
+    expect(await menuItems[1].getText()).toBe("My Test Overflow Disabled Action")
   })
 
-  it('should use provided action callback on overflow button click', () => {
+  it('should use provided action callback on overflow button click', async () => {
     jest.spyOn(console, 'log')
 
     component.actions = mockActions
-    fixture.detectChanges()
 
-    const menuOverflowButton = fixture.debugElement.nativeElement.querySelector(
-      '[name="ocx-page-header-overflow-action-button"]'
-    )
-    expect(menuOverflowButton).toBeTruthy()
-    menuOverflowButton.click()
-    fixture.detectChanges()
+    const menuOverflowButtons = await pageHeaderHarness.getOverflowActionButtons()
+    
+    expect(menuOverflowButtons).toBeTruthy()
+    expect(menuOverflowButtons.length).toBe(1)
+    await menuOverflowButtons[0].click()
 
-    const enabledActionElement = fixture.debugElement.nativeElement.querySelector('[title="My Test Overflow Action"]')
-    expect(enabledActionElement).toBeTruthy()
-    expect(enabledActionElement.classList).not.toContain('p-disabled')
-    enabledActionElement.click()
+    const menuItems = await pageHeaderHarness.getOverFlowMenuItems()
+    expect(menuItems.length).toBe(2)
+    const enabledActionElement = await menuItems[0].host()
+    expect(await(enabledActionElement.hasClass('p-disabled'))).toBe(false)
+    await enabledActionElement.click()
     expect(console.log).toHaveBeenCalledTimes(1)
   })
 
-  it('should disable overflow button when action is disabled', () => {
+  it('should disable overflow button when action is disabled', async () => {
     jest.spyOn(console, 'log')
 
     component.actions = mockActions
-    fixture.detectChanges()
 
-    const menuOverflowButton = fixture.debugElement.nativeElement.querySelector(
-      '[name="ocx-page-header-overflow-action-button"]'
-    )
+    const menuOverflowButton = await pageHeaderHarness.getOverflowActionButtons()
     expect(menuOverflowButton).toBeTruthy()
-    menuOverflowButton.click()
-    fixture.detectChanges()
+    expect(menuOverflowButton.length).toBe(1)
+    menuOverflowButton[0].click()
 
-    const disabledActionElement = fixture.debugElement.nativeElement.querySelector(
-      '[title="My Test Overflow Disabled Action"]'
-    )
+    const overFlowMenuItems = await pageHeaderHarness.getOverFlowMenuItems()
+    const disabledActionElement = overFlowMenuItems[1]
+    
+    expect(overFlowMenuItems).toBeTruthy()
+    expect(overFlowMenuItems?.length).toBe(2)
     expect(disabledActionElement).toBeTruthy()
-    expect(disabledActionElement.classList).toContain('p-disabled')
-    disabledActionElement.click()
+    expect(await (await disabledActionElement.host()).hasClass('p-disabled')).toBe(true)
+    await (await disabledActionElement.host()).click()
     expect(console.log).toHaveBeenCalledTimes(0)
   })
 })

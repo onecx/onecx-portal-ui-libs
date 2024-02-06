@@ -1,4 +1,5 @@
 import { ComponentHarness } from "@angular/cdk/testing";
+import { PMenuHarness } from "./primeng/p-menu.harness";
 
 export class PageHeaderHarness extends ComponentHarness {
     static hostSelector = 'ocx-page-header'
@@ -31,5 +32,11 @@ export class PageHeaderHarness extends ComponentHarness {
 
     async getObjectDetailIcons() {
         return await this.locatorForAll('[name="object-detail-icon"]')()
+    }
+
+    async getOverFlowMenuItems() {
+        const menu = await this.locatorFor(PMenuHarness)()
+        const menuItems = await menu.getAllMenuItems()
+        return menuItems ?? []
     }
 }
