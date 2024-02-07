@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { combineLatest, of } from 'rxjs'
+// eslint-disable-next-line
 import { Message, PortalMessageService } from '@onecx/portal-integration-angular'
 import { FakeTopic } from './fake-topic'
 import { Message as TopicMessage } from '@onecx/integration-interface'
