@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
 import { PageInfo, Portal } from '@onecx/integration-interface'
-import { AppStateService } from '../src/lib/services/app-state.service'
+import { AppStateService } from '@onecx/portal-integration-angular'
 import { FakeTopic } from './fake-topic'
 
 export function provideAppServiceMock() {

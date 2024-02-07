@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { combineLatest, of } from 'rxjs'
-import { Message, PortalMessageService } from '../src/lib/services/portal-message.service'
+import { Message, PortalMessageService } from '@onecx/portal-integration-angular'
 import { FakeTopic } from './fake-topic'
 import { Message as TopicMessage } from '@onecx/integration-interface'
 
