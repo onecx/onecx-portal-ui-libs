@@ -1,43 +1,40 @@
 import { Injectable } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
-import { MessageTopic } from '@onecx/integration-interface'
 import { combineLatest, of } from 'rxjs'
+import { Message, PortalMessageService } from '../src/lib/services/portal-message.service'
+import { FakeTopic } from './fake-topic'
+import { Message as TopicMessage } from '@onecx/integration-interface'
 
-export type Message = {
-  summaryKey?: string
-  summaryParameters?: object
-  detailKey?: string
-  detailParameters?: object
-  id?: any
-  key?: string
-  life?: number
-  sticky?: boolean
-  closable?: boolean
-  data?: any
-  icon?: string
-  contentStyleClass?: string
-  styleClass?: string
+export function providePortalMessageServiceMock() {
+  return [
+    { provide: PortalMessageServiceMock, useClass: PortalMessageServiceMock },
+    { provide: PortalMessageService, useExisting: PortalMessageServiceMock },
+  ]
 }
 
-@Injectable({ providedIn: 'any' })
-export class PortalMessageService {
+@Injectable()
+export class PortalMessageServiceMock {
   constructor(private translateService: TranslateService) {}
-
-  message$ = new MessageTopic()
+  lastMessages: { type: 'success' | 'info' | 'error' | 'warning'; value: Message }[] = []
+  message$ = new FakeTopic<TopicMessage>()
 
   success(msg: Message) {
+    this.lastMessages.push({ type: 'success', value: msg })
     this.addTranslated('success', msg)
   }
 
   info(msg: Message) {
+    this.lastMessages.push({ type: 'info', value: msg })
     this.addTranslated('info', msg)
   }
 
   error(msg: Message) {
+    this.lastMessages.push({ type: 'error', value: msg })
     this.addTranslated('error', msg)
   }
 
   warning(msg: Message) {
+    this.lastMessages.push({ type: 'warning', value: msg })
     this.addTranslated('warning', msg)
   }
 
