@@ -1,3 +1,39 @@
+## [4.5.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.4.0...v4.5.0) (2024-02-07)
+
+
+### Features
+
+* mock for message service ([#118](https://github.com/onecx/onecx-portal-ui-libs/issues/118)) ([c426ee2](https://github.com/onecx/onecx-portal-ui-libs/commit/c426ee223fb3869721c6637fa7a67e2cac4709f6))
+
+## [4.4.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.3.0...v4.4.0) (2024-02-06)
+
+
+### Features
+
+* add app-state-service mock ([#114](https://github.com/onecx/onecx-portal-ui-libs/issues/114)) ([b314e81](https://github.com/onecx/onecx-portal-ui-libs/commit/b314e81ac521dd19e2e9c2f0543d90d62eacc892))
+* allow specifying icons for header objectDetails ([#101](https://github.com/onecx/onecx-portal-ui-libs/issues/101)) ([287d873](https://github.com/onecx/onecx-portal-ui-libs/commit/287d8730dc10017e272f1aa133da84846b613d32))
+* dialog service improvements ([#106](https://github.com/onecx/onecx-portal-ui-libs/issues/106)) ([301273a](https://github.com/onecx/onecx-portal-ui-libs/commit/301273a4fe2934b6ca076e296a47a24ce9c082c1))
+* overflow action buttons can be disabled ([#95](https://github.com/onecx/onecx-portal-ui-libs/issues/95)) ([6194335](https://github.com/onecx/onecx-portal-ui-libs/commit/61943353b85d8a7fd8b2df85209bc77c3c339313))
+* table row selection ([#82](https://github.com/onecx/onecx-portal-ui-libs/issues/82)) ([#107](https://github.com/onecx/onecx-portal-ui-libs/issues/107)) ([8b14bf7](https://github.com/onecx/onecx-portal-ui-libs/commit/8b14bf79f18860e84d9ad100635715bfbcba715b))
+
+
+### Bug Fixes
+
+* export app-state-service mock ([#115](https://github.com/onecx/onecx-portal-ui-libs/issues/115)) ([60778c0](https://github.com/onecx/onecx-portal-ui-libs/commit/60778c0bd57b744e806a7e845fc2862c7512a3cd))
+
+
+### Chores
+
+* **deps-dev:** bump jest-environment-jsdom from 29.5.0 to 29.7.0 ([#102](https://github.com/onecx/onecx-portal-ui-libs/issues/102)) ([ee60735](https://github.com/onecx/onecx-portal-ui-libs/commit/ee60735875c5748cd85c11fc866e8588c47577df))
+* **deps-dev:** bump nx-release from 3.1.6 to 3.3.0 ([#105](https://github.com/onecx/onecx-portal-ui-libs/issues/105)) ([6089325](https://github.com/onecx/onecx-portal-ui-libs/commit/608932539771f3346919d09a0fdb0d4e07c37faa))
+* **deps-dev:** bump ts-jest from 29.1.1 to 29.1.2 ([#88](https://github.com/onecx/onecx-portal-ui-libs/issues/88)) ([8f4ad86](https://github.com/onecx/onecx-portal-ui-libs/commit/8f4ad868d3c180d0e0dc40362f6d29a6f24e92f8))
+* **deps-dev:** bump ts-node from 10.9.1 to 10.9.2 ([#103](https://github.com/onecx/onecx-portal-ui-libs/issues/103)) ([9e43120](https://github.com/onecx/onecx-portal-ui-libs/commit/9e43120d9e93423e5af7c06ceccb28b8512ab142))
+
+
+### Refactoring
+
+* remove unused getters and broken conditional ([#79](https://github.com/onecx/onecx-portal-ui-libs/issues/79)) ([#113](https://github.com/onecx/onecx-portal-ui-libs/issues/113)) ([ee32517](https://github.com/onecx/onecx-portal-ui-libs/commit/ee325174ee60a6f853ddb90dfce5db1b55152d53))
+
 ## [4.3.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.2.0...v4.3.0) (2024-02-02)
 
 

@@ -3,7 +3,7 @@ import { TranslateService } from '@ngx-translate/core'
 import { MessageTopic } from '@onecx/integration-interface'
 import { combineLatest, of } from 'rxjs'
 
-type Message = {
+export type Message = {
   summaryKey?: string
   summaryParameters?: object
   detailKey?: string
