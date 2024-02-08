@@ -29,6 +29,28 @@
     </ng-template>
   </p-pickList>
 
+  <div class="pt-4">
+    <p class="text-xl font-bold">{{'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CONFIGURE_ACTION_COLUMN.TITLE' | translate}}</p>
+    <div class="flex gap-6 px-3">
+      <div> 
+        <p class="mb-1">{{'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CONFIGURE_ACTION_COLUMN.FREEZE' | translate}}</p>
+        <p-selectButton [options]="stickyOptions" [(ngModel)]="stickyActionColumnModel" optionLabel="label" optionValue="value" id="stickyActionColumn">
+          <ng-template let-option pTemplate>
+            {{option.label | translate}}
+          </ng-template>
+        </p-selectButton>
+      </div>
+      <div>
+        <p class="mb-1">{{'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CONFIGURE_ACTION_COLUMN.POSITION' | translate}}</p>
+        <p-selectButton [options]="alignmentOptions" [(ngModel)]="actionColumnPositionModel" optionLabel="label" optionValue="value" id="actionColumnPosition" class="mt-2">
+          <ng-template let-option pTemplate>
+            {{option.label | translate}}
+          </ng-template>
+        </p-selectButton>
+      </div>
+    </div>
+  </div>
+
   <ng-template pTemplate="footer">
     <p-button
       id="cancelButton"
