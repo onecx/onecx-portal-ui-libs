@@ -328,4 +328,37 @@ describe('DataTableComponent', () => {
     expect(selectedCheckBoxes.length).toBe(1)
     expect(selectionChangedEvent).toEqual([mockData[0]])
   })
+
+  it('should render an unpinnend action column on the right side of the table by default', async () => {
+    component.viewTableRow.subscribe((event) => console.log(event))
+
+    expect(component.stickyActionColumn).toBe(false)
+    expect(component.actionColumnPosition).toBe('right')
+    expect(await dataTable.getActionColumnHeader('left')).toBe(null)
+    expect(await dataTable.getActionColumn('left')).toBe(null)
+
+    const rightActionColumnHeader = await dataTable.getActionColumnHeader('right')
+    const rightActionColumn = await dataTable.getActionColumn('right')
+    expect(rightActionColumnHeader).toBeTruthy()
+    expect(rightActionColumn).toBeTruthy()
+    expect(await dataTable.columnIsFrozen(rightActionColumnHeader)).toBe(false)
+    expect(await dataTable.columnIsFrozen(rightActionColumn)).toBe(false)
+  })
+
+  it('should render an pinned action column on the specified side of the table', async () => {
+    component.viewTableRow.subscribe((event) => console.log(event))
+
+    component.stickyActionColumn = true
+    component.actionColumnPosition = 'left'
+
+    expect(await dataTable.getActionColumnHeader('right')).toBe(null)
+    expect(await dataTable.getActionColumn('right')).toBe(null)
+
+    const leftActionColumnHeader = await dataTable.getActionColumnHeader('left')
+    const leftActionColumn = await dataTable.getActionColumn('left')
+    expect(leftActionColumnHeader).toBeTruthy()
+    expect(leftActionColumn).toBeTruthy()
+    expect(await dataTable.columnIsFrozen(leftActionColumnHeader)).toBe(true)
+    expect(await dataTable.columnIsFrozen(leftActionColumn)).toBe(true)
+  })
 })
