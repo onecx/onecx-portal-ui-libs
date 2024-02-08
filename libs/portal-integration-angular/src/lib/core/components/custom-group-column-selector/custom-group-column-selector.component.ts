@@ -69,11 +69,13 @@ export class CustomGroupColumnSelectorComponent {
 
   onSaveClick() {
     this.visible = false
-    const colIdsBefore = this.displayedColumns.map(column => column.id).sort()
-    const colIdsAfter = this.displayedColumnsModel.map(column => column.id).sort()
-    if(!colIdsBefore.every((colId, i) => colId === colIdsAfter[i])) {
+    const colIdsBefore = this.displayedColumns.map(column => column.id)
+    const colIdsAfter = this.displayedColumnsModel.map(column => column.id)
+    
+    if(!colIdsAfter.every((colId, i) => colId === colIdsBefore[i])) {
       this.columnSelectionChanged.emit({ activeColumns: [...this.displayedColumnsModel] })
     }
+    
     if(this.stickyActionColumn != this.stickyActionColumnModel || this.actionColumnPosition != this.actionColumnPositionModel) {
       this.actionColumnConfigChanged.emit({
         stickyActionColumn: this.stickyActionColumnModel,
