@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core'
+import { Injectable, Optional } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { combineLatest, of } from 'rxjs'
 // eslint-disable-next-line
@@ -15,7 +15,7 @@ export function providePortalMessageServiceMock() {
 
 @Injectable()
 export class PortalMessageServiceMock {
-  constructor(private translateService: TranslateService) {}
+  constructor(@Optional() private translateService?: TranslateService) {}
   lastMessages: { type: 'success' | 'info' | 'error' | 'warning'; value: Message }[] = []
   message$ = new FakeTopic<TopicMessage>()
 
@@ -40,16 +40,20 @@ export class PortalMessageServiceMock {
   }
 
   private addTranslated(severity: string, msg: Message) {
-    combineLatest([
-      msg.summaryKey ? this.translateService.get(msg.summaryKey || '', msg.summaryParameters) : of(undefined),
-      msg.detailKey ? this.translateService.get(msg.detailKey, msg.detailParameters) : of(undefined),
-    ]).subscribe(([summaryTranslation, detailTranslation]: string[]) => {
-      this.message$.publish({
-        ...msg,
-        severity: severity,
-        summary: summaryTranslation,
-        detail: detailTranslation,
+    if (this.translateService) {
+      combineLatest([
+        msg.summaryKey ? this.translateService.get(msg.summaryKey || '', msg.summaryParameters) : of(undefined),
+        msg.detailKey ? this.translateService.get(msg.detailKey, msg.detailParameters) : of(undefined),
+      ]).subscribe(([summaryTranslation, detailTranslation]: string[]) => {
+        this.message$.publish({
+          ...msg,
+          severity: severity,
+          summary: summaryTranslation,
+          detail: detailTranslation,
+        })
       })
-    })
+    } else {
+      console.log('TranslationModule not imported in TestBed. Therefore message$ is not updated.')
+    }
   }
 }
