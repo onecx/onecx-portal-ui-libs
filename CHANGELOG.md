@@ -1,3 +1,10 @@
+## [4.5.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.4.0...v4.5.0) (2024-02-07)
+
+
+### Features
+
+* mock for message service ([#118](https://github.com/onecx/onecx-portal-ui-libs/issues/118)) ([c426ee2](https://github.com/onecx/onecx-portal-ui-libs/commit/c426ee223fb3869721c6637fa7a67e2cac4709f6))
+
 ## [4.4.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.3.0...v4.4.0) (2024-02-06)
 
 
