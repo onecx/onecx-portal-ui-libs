@@ -16,6 +16,5 @@ jobs:
         uses: chromaui/action@latest
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-          dryRun: true
           storybookBuildDir: dist/storybook/portal-integration-angular
           skip: "dependabot/**"
