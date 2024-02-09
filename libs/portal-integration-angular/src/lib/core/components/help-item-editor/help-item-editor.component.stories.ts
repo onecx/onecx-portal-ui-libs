@@ -6,18 +6,29 @@ import { importProvidersFrom } from '@angular/core'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { ButtonModule } from 'primeng/button'
 import { InputTextModule } from 'primeng/inputtext'
-import { PortalMessageService } from '../../../services/portal-message.service'
+import { TranslateModule } from '@ngx-translate/core'
+import { CommonModule } from '@angular/common'
+import { BrowserModule } from '@angular/platform-browser'
+import { HttpClientModule } from '@angular/common/http'
+import { AppStateService } from '../../../services/app-state.service'
 
 export default {
   title: 'HelpItemEditorComponent',
   component: HelpItemEditorComponent,
   decorators: [
     applicationConfig({
-      providers: [importProvidersFrom(BrowserAnimationsModule)],
+      providers: [
+        importProvidersFrom(CommonModule),
+        importProvidersFrom(BrowserModule),
+        importProvidersFrom(BrowserAnimationsModule),
+        importProvidersFrom(HttpClientModule),
+        importProvidersFrom(TranslateModule.forRoot({})),
+        AppStateService,
+      ],
     }),
     moduleMetadata({
       imports: [FormsModule, ReactiveFormsModule, DialogModule, ButtonModule, InputTextModule],
-      providers: [PortalMessageService],
+      providers: [],
     }),
   ],
 } as Meta<HelpItemEditorComponent>
