@@ -15,6 +15,15 @@ export class CustomGroupColumnSelectorHarness extends ContentContainerComponentH
   getCancelButton = this.locatorFor(PButtonHarness)
   getSaveButton = this.locatorFor(PButtonHarness.with({ id: 'saveButton' }))
   getPicklist = this.locatorFor(PPicklistHarness)
+  getSelectButtons = this.locatorForOptional('[name]')
+
+  async getStickyActionColumnSelectButton() {
+    return await this.locatorForAll(`[name="sticky-action-column-select-button"] .p-button`)()
+  }
+
+  async getActionColumnPositionSelectButtons() {
+    return await this.locatorForAll(`[name="action-column-position-select-button"] .p-button`)()
+  }
 
   async openCustomGroupColumnSelectorDialog() {
     if (!(await (await this.getDialog()).isVisible())) {
