@@ -1,6 +1,6 @@
 import { mockGetAnnouncement, mockedGetAnnouncements } from '../../../../../mocks/announcementMapper'
 import { moduleMetadata, StoryFn, Meta, applicationConfig } from '@storybook/angular'
-import { APP_INITIALIZER, importProvidersFrom } from '@angular/core'
+import { importProvidersFrom } from '@angular/core'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { ButtonModule } from 'primeng/button'
 import { CommonModule } from '@angular/common'
@@ -8,19 +8,6 @@ import { BrowserModule } from '@angular/platform-browser'
 import { AnnouncementBannerComponent } from './announcement-banner.component'
 import { HttpClientModule } from '@angular/common/http'
 import { AppStateService } from '../../../services/app-state.service'
-
-async function initFactory(appStateService: AppStateService) {
-  await appStateService.currentPortal$.publish({
-    baseUrl: '/demo',
-    portalName: 'Demo',
-    id: 'Demo',
-    microfrontendRegistrations: [],
-  })
-
-  return () => {
-    appStateService
-  }
-}
 
 export default {
   title: 'AnnouncementBannerComponent',
@@ -33,12 +20,6 @@ export default {
         importProvidersFrom(BrowserAnimationsModule),
         importProvidersFrom(HttpClientModule),
         AppStateService,
-        {
-          provide: APP_INITIALIZER,
-          useFactory: initFactory,
-          multi: true,
-          deps: [AppStateService],
-        },
       ],
     }),
     moduleMetadata({

@@ -12,22 +12,8 @@ import { APP_CONFIG } from '../../../api/injection-tokens'
 import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
 import { ConfigurationService } from '../../../services/configuration.service'
 import { PortalFooterComponent } from './portal-footer.component'
-import { APP_INITIALIZER, importProvidersFrom } from '@angular/core'
+import { importProvidersFrom } from '@angular/core'
 import { mockedGetMenu } from '../../../../../mocks/menuMapper'
-import { AppStateService } from '../../../services/app-state.service'
-
-async function initFactory(appStateService: AppStateService) {
-  await appStateService.currentPortal$.publish({
-    baseUrl: '/demo',
-    portalName: 'Demo',
-    id: 'Demo',
-    microfrontendRegistrations: [],
-  })
-
-  return () => {
-    appStateService
-  }
-}
 
 export default {
   title: 'PortalFooterComponent',
@@ -44,12 +30,6 @@ export default {
         importProvidersFrom(HttpClientModule),
         importProvidersFrom(HttpClientJsonpModule),
         ConfigurationService,
-        {
-          provide: APP_INITIALIZER,
-          useFactory: initFactory,
-          multi: true,
-          deps: [ConfigurationService],
-        },
       ],
     }),
     moduleMetadata({

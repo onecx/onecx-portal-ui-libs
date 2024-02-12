@@ -17,22 +17,8 @@ import { BreadcrumbModule } from 'primeng/breadcrumb'
 import { DropdownModule } from 'primeng/dropdown'
 import { ConfigurationService } from '../../../services/configuration.service'
 import { HttpClientModule } from '@angular/common/http'
-import { APP_INITIALIZER, importProvidersFrom } from '@angular/core'
+import { importProvidersFrom } from '@angular/core'
 import { InputTextModule } from 'primeng/inputtext'
-import { AppStateService } from '../../../services/app-state.service'
-
-async function initFactory(appStateService: AppStateService) {
-  await appStateService.currentPortal$.publish({
-    baseUrl: '/demo',
-    portalName: 'Demo',
-    id: 'Demo',
-    microfrontendRegistrations: [],
-  })
-
-  return () => {
-    appStateService
-  }
-}
 
 export default {
   title: 'SearchCriteriaComponent',
@@ -48,12 +34,6 @@ export default {
         ConfigurationService,
         { provide: APP_CONFIG, useValue: {} },
         { provide: APP_BASE_HREF, useValue: '/' },
-        {
-          provide: APP_INITIALIZER,
-          useFactory: initFactory,
-          multi: true,
-          deps: [ConfigurationService],
-        },
       ],
     }),
     moduleMetadata({
