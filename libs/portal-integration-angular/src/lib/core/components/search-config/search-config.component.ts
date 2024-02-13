@@ -14,7 +14,7 @@ export class SearchConfigComponent implements OnInit {
   @Input() placeholderKey = 'OCX_SEARCH_HEADER.OCX_SEARCH_CONFIG.DROPDOWN_DEFAULT'
 
   @Output()
-  selectedSearchConfig: EventEmitter<SearchConfig[]> = new EventEmitter()
+  selectedSearchConfig: EventEmitter<SearchConfig> = new EventEmitter()
 
   formGroup: FormGroup | undefined
   ngOnInit(): void {
@@ -23,7 +23,7 @@ export class SearchConfigComponent implements OnInit {
     })
   }
 
-  onSearchConfigChange(event: SearchConfig[]) {
+  onSearchConfigChange(event: SearchConfig) {
     this.selectedSearchConfig?.emit(event)
   }
 }

@@ -55,6 +55,7 @@ export class InteractiveDataViewComponent implements OnInit {
   @Input() listGridPaginator = true
   @Input() tablePaginator = true
   @Input() selectedRows: Row[] = []
+  @Input() displayedColumns: DataTableColumn[] = []
   @ContentChild('tableCell') tableCell: TemplateRef<any> | undefined
   @ContentChild('tableDateCell') tableDateCell: TemplateRef<any> | undefined
   @ContentChild('tableRelativeDateCell') tableRelativeDateCell: TemplateRef<any> | undefined
@@ -74,7 +75,7 @@ export class InteractiveDataViewComponent implements OnInit {
   @Output() dataViewLayoutChange = new EventEmitter<'grid' | 'list' | 'table'>()
   @Output() displayedColumnsChange = new EventEmitter<DataTableColumn[]>()
   @Output() selectionChanged: EventEmitter<Row[]> = new EventEmitter()
-  displayedColumns: DataTableColumn[] = []
+
   selectedGroupKey = ''
   isDeleteItemObserved: boolean | undefined
   isViewItemObserved: boolean | undefined
@@ -220,8 +221,8 @@ export class InteractiveDataViewComponent implements OnInit {
         })
       }
     }
-    if(this.selectionChanged.observed) {
-      if(!this._dataViewComponent?.selectionChanged.observed) {
+    if (this.selectionChanged.observed) {
+      if (!this._dataViewComponent?.selectionChanged.observed) {
         this._dataViewComponent?.selectionChanged.subscribe((event) => {
           this.onRowSelectionChange(event)
         })
@@ -236,7 +237,7 @@ export class InteractiveDataViewComponent implements OnInit {
   }
 
   onRowSelectionChange(event: Row[]) {
-    if(this.selectionChanged.observed){
+    if (this.selectionChanged.observed) {
       this.selectionChanged.emit(event)
     }
   }
