@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core'
 import { SyncableTopic } from '@onecx/accelerator'
-import { Observable, concat, first, from, map, mergeMap, of } from 'rxjs'
+import { BehaviorSubject, Observable, filter, first, map, of, race, tap, withLatestFrom } from 'rxjs'
 
 // This topic is defined here and not in integration-interface, because
 // it is not used as framework independent integration but for improving
@@ -13,29 +13,51 @@ class TranslationCacheTopic extends SyncableTopic<Record<string, any>> {
 
 @Injectable({ providedIn: 'root' })
 export class TranslationCacheService implements OnDestroy {
-  translationCache$ = new TranslationCacheTopic()
-
+  private translationCache$ = new TranslationCacheTopic()
+  private translations$ = new BehaviorSubject<any>({})
+  constructor() {
+    this.translationCache$
+      .pipe(
+        withLatestFrom(this.translations$),
+        map(([topicTranslations, translations]) => {
+          let foundValueOthersDoNotKnow = false
+          let newTranslations = { ...translations }
+          Object.keys(topicTranslations).forEach((k) => {
+            if (!topicTranslations[k] && translations[k]) {
+              foundValueOthersDoNotKnow = true
+            }
+            newTranslations[k] ??= topicTranslations[k]
+          })
+          return [newTranslations, foundValueOthersDoNotKnow]
+        }),
+        tap(([newTranslations, foundValueOthersDoNotKnow]) => {
+          if (foundValueOthersDoNotKnow) {
+            this.translationCache$.publish(newTranslations)
+          }
+        }),
+        map(([newTranslations]) => newTranslations)
+      )
+      .subscribe(this.translations$)
+  }
   ngOnDestroy(): void {
     this.translationCache$.destroy()
   }
 
-  getTranslationFile(url: string): Observable<any> {
-    return this.getCache().pipe(map((t) => t[url]))
-  }
-
-  updateTranslationFile(url: string, translations: any): Observable<any> {
-    return this.getCache().pipe(
-      first(),
-      mergeMap((t) => {
-        return from(this.translationCache$.publish({ ...t, [url]: translations })).pipe(map(() => translations))
-      })
-    )
-  }
-
-  private getCache(): Observable<Record<string, any>> {
-    if (this.translationCache$.getValue()) {
-      return this.translationCache$.asObservable()
+  getTranslationFile(url: string, cacheMissFunction: () => Observable<any>): Observable<any> {
+    if (this.translations$.value[url]) {
+      return of(this.translations$.value[url])
     }
-    return concat(of({}), this.translationCache$.asObservable())
+    this.translationCache$.publish({ ...this.translations$.value, [url]: null })
+    return race(
+      this.translations$.pipe(
+        filter((t) => t[url]),
+        map((t) => t[url])
+      ),
+      cacheMissFunction().pipe(
+        tap((t) => {
+          this.translationCache$.publish({ ...this.translations$.value, [url]: t })
+        })
+      )
+    ).pipe(first())
   }
 }

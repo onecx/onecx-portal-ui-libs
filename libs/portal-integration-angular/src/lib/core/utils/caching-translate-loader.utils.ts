@@ -17,18 +17,6 @@ export class CachingTranslateLoader implements TranslateLoader {
   getTranslation(lang: string): Observable<any> {
     const url = `${this.prefix}${lang}${this.suffix}`
 
-    return this.translationCache.getTranslationFile(url).pipe(
-      filter((tf) => tf !== null),
-      first(),
-      mergeMap((tf) => {
-        if (tf) {
-          return of(tf)
-        }
-        return this.translationCache.updateTranslationFile(url, null).pipe(
-          mergeMap(() => this.translateLoader.getTranslation(lang)),
-          mergeMap((t) => this.translationCache.updateTranslationFile(url, t))
-        )
-      })
-    )
+    return this.translationCache.getTranslationFile(url, () => this.translateLoader.getTranslation(lang))
   }
 }
