@@ -13,15 +13,15 @@ class TranslationCacheTopic extends SyncableTopic<Record<string, any>> {
 
 @Injectable({ providedIn: 'root' })
 export class TranslationCacheService implements OnDestroy {
-  private translationCache$ = new TranslationCacheTopic()
+  private translationTopic$ = new TranslationCacheTopic()
   private translations$ = new BehaviorSubject<any>({})
   constructor() {
-    this.translationCache$
+    this.translationTopic$
       .pipe(
         withLatestFrom(this.translations$),
         map(([topicTranslations, translations]) => {
           let foundValueOthersDoNotKnow = false
-          let newTranslations = { ...translations }
+          const newTranslations = { ...translations }
           Object.keys(topicTranslations).forEach((k) => {
             if (!topicTranslations[k] && translations[k]) {
               foundValueOthersDoNotKnow = true
@@ -32,7 +32,7 @@ export class TranslationCacheService implements OnDestroy {
         }),
         tap(([newTranslations, foundValueOthersDoNotKnow]) => {
           if (foundValueOthersDoNotKnow) {
-            this.translationCache$.publish(newTranslations)
+            this.translationTopic$.publish(newTranslations)
           }
         }),
         map(([newTranslations]) => newTranslations)
@@ -40,14 +40,14 @@ export class TranslationCacheService implements OnDestroy {
       .subscribe(this.translations$)
   }
   ngOnDestroy(): void {
-    this.translationCache$.destroy()
+    this.translationTopic$.destroy()
   }
 
   getTranslationFile(url: string, cacheMissFunction: () => Observable<any>): Observable<any> {
     if (this.translations$.value[url]) {
       return of(this.translations$.value[url])
     }
-    this.translationCache$.publish({ ...this.translations$.value, [url]: null })
+    this.translationTopic$.publish({ ...this.translations$.value, [url]: null })
     return race(
       this.translations$.pipe(
         filter((t) => t[url]),
@@ -55,7 +55,7 @@ export class TranslationCacheService implements OnDestroy {
       ),
       cacheMissFunction().pipe(
         tap((t) => {
-          this.translationCache$.publish({ ...this.translations$.value, [url]: t })
+          this.translationTopic$.publish({ ...this.translations$.value, [url]: t })
         })
       )
     ).pipe(first())
