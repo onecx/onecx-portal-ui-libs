@@ -26,19 +26,78 @@ npm i @onecx/keycloak-auth
 },
 ```
 
-## Workaround for correctly providing ngrx
-- add this to your ...-remote.module.ts
+## Workaround for correctly providing NgRx
+- because of an issue in NgRx, we need to use a workaround to correctly provide it in the app
+- your ...remote.module.ts should look like this for example:
 ```
+import { HttpClient } from '@angular/common/http';
+import { isDevMode, NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreRouterConnectingModule } from '@ngrx/router-store';
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import {
+  MissingTranslationHandler,
+  TranslateLoader,
+  TranslateModule,
+} from '@ngx-translate/core';
+import {
+  addInitializeModuleGuard,
+  AppStateService,
+  ConfigurationService,
+  createTranslateLoader,
+  PortalApiConfiguration,
+  PortalCoreModule,
+  PortalMissingTranslationHandler,
+} from '@onecx/portal-integration-angular';
+import { environment } from 'src/environments/environment';
+import { routes } from './app-routing.module';
+import { commonImports } from './app.module';
+import { metaReducers, reducers } from './app.reducers';
+import { Configuration } from './shared/generated';
+import { SharedModule } from './shared/shared.module';
+
+export function apiConfigProvider(
+  configService: ConfigurationService,
+  appStateService: AppStateService
+) {
+  return new PortalApiConfiguration(
+    Configuration,
+    environment.API_BASE_PATH,
+    configService,
+    appStateService
+  );
+}
+
 // Workaround for the following issue:
 // https://github.com/ngrx/platform/issues/3700
 import { Actions, EffectSources, EffectsRunner } from '@ngrx/effects';
 
 const effectProvidersForWorkaround = [EffectsRunner, EffectSources, Actions];
 effectProvidersForWorkaround.forEach((p) => (p.ɵprov.providedIn = null));
-```
-- and the following to your imports:[], also in your ...-remote.module.ts
-```
-StoreModule.forRoot(reducers, { metaReducers }),
+
+@NgModule({
+  imports: [
+    ...commonImports,
+    PortalCoreModule.forMicroFrontend(),
+    RouterModule.forChild(addInitializeModuleGuard(routes)),
+    TranslateModule.forRoot({
+      extend: true,
+      isolate: false,
+      loader: {
+        provide: TranslateLoader,
+        useFactory: createTranslateLoader,
+        deps: [HttpClient, AppStateService],
+      },
+      missingTranslationHandler: {
+        provide: MissingTranslationHandler,
+        useClass: PortalMissingTranslationHandler,
+      },
+    }),
+    SharedModule,
+    // import necessary ngrx modules
+    StoreModule.forRoot(reducers, { metaReducers }),
     EffectsModule.forRoot(effectProvidersForWorkaround),
     StoreRouterConnectingModule.forRoot(),
     StoreDevtoolsModule.instrument({
@@ -48,7 +107,19 @@ StoreModule.forRoot(reducers, { metaReducers }),
       trace: false, //  If set to true, will include stack trace for every dispatched action, so you can see it in trace tab jumping directly to that part of code
       traceLimit: 75, // maximum stack trace frames to be stored (in case trace option was provided as true)
     }),
+  ],
+  exports: [],
+  providers: [
+    {
+      provide: Configuration,
+      useFactory: apiConfigProvider,
+      deps: [ConfigurationService, AppStateService],
+    },
+  ],
+})
+export class ConstrTaskMgmtModule {}
 ```
+
 ## config key constants
 - have been moved as an enum list with the name CONFIG_KEY
 
