@@ -1,3 +1,11 @@
+## [4.5.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.5.0...v4.5.1) (2024-02-16)
+
+
+### Bug Fixes
+
+* loading issue where apps are hanging sometimes ([#131](https://github.com/onecx/onecx-portal-ui-libs/issues/131)) ([b2dee83](https://github.com/onecx/onecx-portal-ui-libs/commit/b2dee83cb566c6747a6efcb6cfaad41a21ba9ff6))
+* mock does not necessarily need TranslationModule to be provided ([#119](https://github.com/onecx/onecx-portal-ui-libs/issues/119)) ([a152ece](https://github.com/onecx/onecx-portal-ui-libs/commit/a152ecef209b9d7f073491581d1ee6a225618bf3))
+
 ## [4.5.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.4.0...v4.5.0) (2024-02-07)
 
 
