@@ -35,12 +35,12 @@
       <div>
         <p class="mb-1">{{'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CONFIGURE_ACTION_COLUMN.FREEZE' | translate}}</p>
         <p-selectButton
-          [options]="stickyOptions"
-          [(ngModel)]="stickyActionColumnModel"
+          [options]="frozenOptions"
+          [(ngModel)]="frozenActionColumnModel"
           optionLabel="label"
           optionValue="value"
-          id="stickyActionColumn"
-          name="sticky-action-column-select-button"
+          id="frozenActionColumn"
+          name="frozen-action-column-select-button"
         >
           <ng-template let-option pTemplate> {{option.label | translate}} </ng-template>
         </p-selectButton>

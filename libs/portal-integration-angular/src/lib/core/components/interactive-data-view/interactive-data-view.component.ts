@@ -80,7 +80,7 @@ export class InteractiveDataViewComponent implements OnInit {
   isViewItemObserved: boolean | undefined
   isEditItemObserved: boolean | undefined
   firstColumnId: string | undefined
-  stickyActionColumn = false
+  frozenActionColumn = false
   actionColumnPosition: 'left' | 'right' = 'right'
 
   @Input()
@@ -238,7 +238,7 @@ export class InteractiveDataViewComponent implements OnInit {
   }
 
   onActionColumnConfigChange(event: ActionColumnChangedEvent) {
-    this.stickyActionColumn = event.stickyActionColumn
+    this.frozenActionColumn = event.frozenActionColumn
     this.actionColumnPosition = event.actionColumnPosition
   }
 

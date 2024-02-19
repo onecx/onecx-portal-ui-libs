@@ -3,10 +3,10 @@
     <td
       class="actions"
       pFrozenColumn
-      [frozen]="stickyActionColumn"
+      [frozen]="frozenActionColumn"
       [alignFrozen]="actionColumnPosition"
       [attr.name]="actionColumnPosition === 'left' ? 'action-column-left' : 'action-column-right'"
-      [ngClass]="(stickyActionColumn && actionColumnPosition === 'left') ? 'border-right-1' : (stickyActionColumn && actionColumnPosition === 'right') ? 'border-left-1' : ''"
+      [ngClass]="(frozenActionColumn && actionColumnPosition === 'left') ? 'border-right-1' : (frozenActionColumn && actionColumnPosition === 'right') ? 'border-left-1' : ''"
     >
       <div class="icon-button-row-wrapper">
         <ng-container *ngIf="viewTableRowObserved">
@@ -67,9 +67,9 @@
   <ng-container *ngIf="viewTableRowObserved || editTableRowObserved || deleteTableRowObserved">
     <th
       pFrozenColumn
-      [frozen]="stickyActionColumn"
+      [frozen]="frozenActionColumn"
       [alignFrozen]="actionColumnPosition"
-      [ngClass]="(stickyActionColumn && actionColumnPosition === 'left') ? 'border-right-1' : (stickyActionColumn && actionColumnPosition === 'right') ? 'border-left-1' : ''"
+      [ngClass]="(frozenActionColumn && actionColumnPosition === 'left') ? 'border-right-1' : (frozenActionColumn && actionColumnPosition === 'right') ? 'border-left-1' : ''"
       [attr.name]="actionColumnPosition === 'left' ? 'action-column-header-left' : 'action-column-header-right'"
     >
       {{ 'OCX_DATA_TABLE.ACTIONS_COLUMN_NAME' | translate }}

@@ -215,7 +215,7 @@ describe('DataViewComponent', () => {
     it('should render an unpinnend action column on the right side of the table by default', async () => {
       component.viewItem.subscribe((event) => console.log(event))
   
-      expect(component.stickyActionColumn).toBe(false)
+      expect(component.frozenActionColumn).toBe(false)
       expect(component.actionColumnPosition).toBe('right')
       expect(await dataTable.getActionColumnHeader('left')).toBe(null)
       expect(await dataTable.getActionColumn('left')).toBe(null)
@@ -231,7 +231,7 @@ describe('DataViewComponent', () => {
     it('should render an pinned action column on the specified side of the table', async () => {
       component.viewItem.subscribe((event) => console.log(event))
   
-      component.stickyActionColumn = true
+      component.frozenActionColumn = true
       component.actionColumnPosition = 'left'
   
       expect(await dataTable.getActionColumnHeader('right')).toBe(null)

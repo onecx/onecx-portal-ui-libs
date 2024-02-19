@@ -31,7 +31,7 @@
         [columns]="columns"
         [displayedColumns]="displayedColumns"
         (columnSelectionChanged)="onColumnSelectionChange($event)"
-        [stickyActionColumn]="stickyActionColumn"
+        [frozenActionColumn]="frozenActionColumn"
         [actionColumnPosition]="actionColumnPosition"
         (actionColumnConfigChanged)="onActionColumnConfigChange($event)"
       ></ocx-custom-group-column-selector>
@@ -62,7 +62,7 @@
     [listGridPaginator]="listGridPaginator"
     [tablePaginator]="tablePaginator"
     [selectedRows]="selectedRows"
-    [stickyActionColumn]="stickyActionColumn"
+    [frozenActionColumn]="frozenActionColumn"
     [actionColumnPosition]="actionColumnPosition"
     [stringTableCellTemplate]="_stringTableCell ? stringTableCell : undefined"
     [numberTableCellTemplate]="_numberTableCell ? numberTableCell : undefined"

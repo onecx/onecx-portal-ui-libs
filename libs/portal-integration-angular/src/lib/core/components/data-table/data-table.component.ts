@@ -130,7 +130,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   }
 
   @Input() additionalActions: DataAction[] = []
-  @Input() stickyActionColumn = false
+  @Input() frozenActionColumn = false
   @Input() actionColumnPosition: 'left' | 'right' = 'right'
 
 

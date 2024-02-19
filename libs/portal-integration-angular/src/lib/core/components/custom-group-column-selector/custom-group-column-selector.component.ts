@@ -4,7 +4,7 @@ import { DataTableColumn } from '../../../model/data-table-column.model'
 
 export type ColumnSelectionChangedEvent = { activeColumns: DataTableColumn[] }
 export type ActionColumnChangedEvent = {
-  stickyActionColumn: boolean
+  frozenActionColumn: boolean
   actionColumnPosition: 'left' | 'right'
 }
 
@@ -22,7 +22,7 @@ export class CustomGroupColumnSelectorComponent {
   @Input() cancelButtonLabel = ''
   @Input() activeColumnsLabel = ''
   @Input() inactiveColumnsLabel = ''
-  @Input() stickyActionColumn = false
+  @Input() frozenActionColumn = false
   @Input() actionColumnPosition: 'left' | 'right' = 'right'
 
   @Output() columnSelectionChanged: EventEmitter<ColumnSelectionChangedEvent> = new EventEmitter()
@@ -30,7 +30,7 @@ export class CustomGroupColumnSelectorComponent {
 
   hiddenColumnsModel: DataTableColumn[] = []
   displayedColumnsModel: DataTableColumn[] = []
-  stickyActionColumnModel = false
+  frozenActionColumnModel = false
   actionColumnPositionModel: 'left' | 'right' = 'right'
   visible = false
   alignmentOptions = [
@@ -44,7 +44,7 @@ export class CustomGroupColumnSelectorComponent {
     },
   ]
 
-  stickyOptions = [
+  frozenOptions = [
     {
       label: 'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CONFIGURE_ACTION_COLUMN.YES',
       value: true,
@@ -62,7 +62,7 @@ export class CustomGroupColumnSelectorComponent {
     this.hiddenColumnsModel = this.columns.filter(
       (column) => !this.displayedColumnsModel.map((c) => c.id).includes(column.id)
     )
-    this.stickyActionColumnModel = this.stickyActionColumn
+    this.frozenActionColumnModel = this.frozenActionColumn
     this.actionColumnPositionModel = this.actionColumnPosition
     this.visible = true
   }
@@ -76,9 +76,9 @@ export class CustomGroupColumnSelectorComponent {
       this.columnSelectionChanged.emit({ activeColumns: [...this.displayedColumnsModel] })
     }
     
-    if(this.stickyActionColumn != this.stickyActionColumnModel || this.actionColumnPosition != this.actionColumnPositionModel) {
+    if(this.frozenActionColumn != this.frozenActionColumnModel || this.actionColumnPosition != this.actionColumnPositionModel) {
       this.actionColumnConfigChanged.emit({
-        stickyActionColumn: this.stickyActionColumnModel,
+        frozenActionColumn: this.frozenActionColumnModel,
         actionColumnPosition: this.actionColumnPositionModel,
       })
     }

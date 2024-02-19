@@ -208,7 +208,7 @@ export const ResponsiveWithScrollAndActions = {
     args: {
         ...extendedComponentArgs,
         deleteTableRow: ($event: any) => console.log("Delete table row ", $event),
-        stickyActionColumn: true,
+        frozenActionColumn: true,
         actionColumnPosition: 'left'
     },
 }

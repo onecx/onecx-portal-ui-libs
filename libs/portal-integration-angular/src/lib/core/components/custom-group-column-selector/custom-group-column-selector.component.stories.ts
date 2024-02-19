@@ -14,7 +14,7 @@ import { FormsModule } from '@angular/forms';
 import { SelectButtonModule } from 'primeng/selectbutton';
 
 
-type CustomGroupColumnSelectorInputs = Pick<CustomGroupColumnSelectorComponent, 'columns' | 'displayedColumns' |'actionColumnPosition' | 'stickyActionColumn' | 'dialogTitle' | 'saveButtonLabel' | 'cancelButtonLabel' | 'activeColumnsLabel' | 'inactiveColumnsLabel'>
+type CustomGroupColumnSelectorInputs = Pick<CustomGroupColumnSelectorComponent, 'columns' | 'displayedColumns' |'actionColumnPosition' | 'frozenActionColumn' | 'dialogTitle' | 'saveButtonLabel' | 'cancelButtonLabel' | 'activeColumnsLabel' | 'inactiveColumnsLabel'>
 const CustomGroupColumnSelectorComponentSBConfig: Meta<CustomGroupColumnSelectorComponent>  = {
     title: 'CustomGroupColumnSelectorComponent',
     component: CustomGroupColumnSelectorComponent,
@@ -68,7 +68,7 @@ const defaultComponentArgs: CustomGroupColumnSelectorInputs = {
             sortable: false,
         },
     ],
-    stickyActionColumn: true,
+    frozenActionColumn: true,
     actionColumnPosition: 'right',
     dialogTitle: 'Column configurator',
     saveButtonLabel: 'Save',

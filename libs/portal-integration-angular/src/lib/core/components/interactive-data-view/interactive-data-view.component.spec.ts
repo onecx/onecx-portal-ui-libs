@@ -823,7 +823,7 @@ describe('InteractiveDataViewComponent', () => {
     it('should render an unpinnend action column on the right side of the table by default', async () => {
       component.viewItem.subscribe((event) => console.log(event))
   
-      expect(component.stickyActionColumn).toBe(false)
+      expect(component.frozenActionColumn).toBe(false)
       expect(component.actionColumnPosition).toBe('right')
       expect(await dataTable.getActionColumnHeader('left')).toBe(null)
       expect(await dataTable.getActionColumn('left')).toBe(null)
@@ -839,7 +839,7 @@ describe('InteractiveDataViewComponent', () => {
     it('should render an pinned action column on the specified side of the table', async () => {
       component.viewItem.subscribe((event) => console.log(event))
   
-      component.stickyActionColumn = true
+      component.frozenActionColumn = true
       component.actionColumnPosition = 'left'
   
       expect(await dataTable.getActionColumnHeader('right')).toBe(null)
@@ -895,7 +895,7 @@ describe('InteractiveDataViewComponent', () => {
     let sourceControlsButtons: ButtonHarness[]
     let transferControlsButtons: ButtonHarness[]
     let dialogSaveButton: PButtonHarness
-    let stickyActionColumnSelectButtons: TestElement[]
+    let frozenActionColumnSelectButtons: TestElement[]
     let actionColumnPositionSelectButtons: TestElement[]
 
     beforeEach(async () => {
@@ -913,7 +913,7 @@ describe('InteractiveDataViewComponent', () => {
       sourceControlsButtons = await picklist.getSourceControlsButtons()
       transferControlsButtons = await picklist.getTransferControlsButtons()
       dialogSaveButton = await customGroupColumnSelector.getSaveButton()
-      stickyActionColumnSelectButtons = await customGroupColumnSelector.getStickyActionColumnSelectButton()
+      frozenActionColumnSelectButtons = await customGroupColumnSelector.getFrozenActionColumnSelectButton()
       actionColumnPositionSelectButtons = await customGroupColumnSelector.getActionColumnPositionSelectButtons()
     })
 
@@ -1051,7 +1051,7 @@ describe('InteractiveDataViewComponent', () => {
     it('should allow users to configure the action column position', async () => {
       const spy = jest.spyOn(CustomGroupColumnSelectorComponent.prototype, 'onSaveClick')
       expect(component.actionColumnPosition).toBe('right')
-      expect(component.stickyActionColumn).toBe(false)
+      expect(component.frozenActionColumn).toBe(false)
       await actionColumnPositionSelectButtons[0].click()
       await dialogSaveButton.click()
 
@@ -1073,13 +1073,13 @@ describe('InteractiveDataViewComponent', () => {
     it('should allow users to freeze action column', async () => {
       const spy = jest.spyOn(CustomGroupColumnSelectorComponent.prototype, 'onSaveClick')
       expect(component.actionColumnPosition).toBe('right')
-      expect(component.stickyActionColumn).toBe(false)
-      await stickyActionColumnSelectButtons[0].click()
+      expect(component.frozenActionColumn).toBe(false)
+      await frozenActionColumnSelectButtons[0].click()
       await dialogSaveButton.click()
 
       expect(spy).toHaveBeenCalled()
 
-      expect(component.stickyActionColumn).toBe(true)
+      expect(component.frozenActionColumn).toBe(true)
 
       expect(await dataTable.getActionColumnHeader('left')).toBe(null)
       expect(await dataTable.getActionColumn('left')).toBe(null)

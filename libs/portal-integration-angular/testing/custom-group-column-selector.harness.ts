@@ -17,8 +17,8 @@ export class CustomGroupColumnSelectorHarness extends ContentContainerComponentH
   getPicklist = this.locatorFor(PPicklistHarness)
   getSelectButtons = this.locatorForOptional('[name]')
 
-  async getStickyActionColumnSelectButton() {
-    return await this.locatorForAll(`[name="sticky-action-column-select-button"] .p-button`)()
+  async getFrozenActionColumnSelectButton() {
+    return await this.locatorForAll(`[name="frozen-action-column-select-button"] .p-button`)()
   }
 
   async getActionColumnPositionSelectButtons() {
