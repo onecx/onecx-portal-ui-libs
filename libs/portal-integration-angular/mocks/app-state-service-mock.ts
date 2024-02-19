@@ -4,7 +4,14 @@ import { PageInfo, Portal } from '@onecx/integration-interface'
 import { AppStateService } from '@onecx/portal-integration-angular'
 import { FakeTopic } from './fake-topic'
 
+/**
+ * @deprecated use provideAppStateServiceMock()
+ */
 export function provideAppServiceMock() {
+  return provideAppStateServiceMock()
+}
+
+export function provideAppStateServiceMock() {
   return [{ provide: AppStateService, useClass: AppStateServiceMock }]
 }
 
