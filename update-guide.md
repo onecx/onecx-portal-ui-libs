@@ -58,6 +58,22 @@ effectProvidersForWorkaround.forEach((p) => (p.ɵprov.providedIn = null));
 })
 export class YourModule {}
 ```
+- in your webpack.conifg.js remove any ngrx things that are defined in the ```shared: share ({...})``` property
+- for example if you have following values in it, delete them
+```
+    '@ngrx/store': {
+        ...
+    },
+    '@ngrx/effects': {
+        ...
+    },
+    '@ngrx/router-store': {
+        ...
+    },
+    '@ngrx/store-devtools': {
+        ...
+    },
+```
 
 ## config key constants
 - have been moved as an enum list with the name CONFIG_KEY
