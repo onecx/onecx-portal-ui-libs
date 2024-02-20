@@ -25,7 +25,6 @@ export default {
         importProvidersFrom(BrowserModule),
         importProvidersFrom(BrowserAnimationsModule),
         importProvidersFrom(RouterModule.forRoot([], { useHash: true })),
-        importProvidersFrom(StorybookTranslateModule),
       ],
     }),
     moduleMetadata({
