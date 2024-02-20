@@ -1,61 +1,45 @@
-import { APP_BASE_HREF, CommonModule, DatePipe } from '@angular/common'
-import { APP_INITIALIZER, importProvidersFrom } from '@angular/core'
+import { DatePipe } from '@angular/common'
+import { importProvidersFrom } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterModule } from '@angular/router'
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core'
+import { TranslatePipe } from '@ngx-translate/core'
 import { action } from '@storybook/addon-actions'
-import { applicationConfig, Meta, moduleMetadata, StoryFn } from '@storybook/angular'
-import { ConfigurationService } from '../../../services/configuration.service'
+import { Meta, StoryFn, applicationConfig, moduleMetadata } from '@storybook/angular'
+import { PrimeIcons } from 'primeng/api'
 import { BreadcrumbModule } from 'primeng/breadcrumb'
 import { ButtonModule } from 'primeng/button'
 import { MenuModule } from 'primeng/menu'
 import { SkeletonModule } from 'primeng/skeleton'
-import { APP_CONFIG } from '../../../api/injection-tokens'
-import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
-import { BreadcrumbService } from '../../../services/breadcrumb.service'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
+import { StorybookTranslateModule } from '../../storybook-translate.module'
+import { StorybookBreadcrumbModule } from './../../storybook-breadcrumb.module'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
-import { HttpClientModule } from '@angular/common/http'
-import { PrimeIcons } from 'primeng/api'
-
-function initFactory(breadcrumbService: BreadcrumbService) {
-  return async () => {
-    breadcrumbService.setItems([
-      { label: 'Level 1', routerLink: 'something' },
-      { label: 'Level 2', url: '/' },
-    ])
-  }
-}
 
 export default {
-  title: 'Page Header Component',
+  title: 'PageHeaderComponent',
   component: PageHeaderComponent,
   decorators: [
     applicationConfig({
       providers: [
-        importProvidersFrom(CommonModule),
         importProvidersFrom(BrowserModule),
         importProvidersFrom(BrowserAnimationsModule),
-        importProvidersFrom(TranslateModule.forRoot({})),
         importProvidersFrom(RouterModule.forRoot([], { useHash: true })),
-        importProvidersFrom(MockAuthModule),
-        importProvidersFrom(HttpClientModule),
-        ConfigurationService,
-        { provide: APP_CONFIG, useValue: {} },
-        { provide: APP_BASE_HREF, useValue: '/' },
-        {
-          provide: APP_INITIALIZER,
-          useFactory: initFactory,
-          multi: true,
-          deps: [BreadcrumbService, ConfigurationService],
-        },
       ],
     }),
     moduleMetadata({
       declarations: [PageHeaderComponent, DynamicPipe],
-      imports: [MenuModule, BreadcrumbModule, ButtonModule, SkeletonModule],
-      providers: [],
+      imports: [
+        MenuModule,
+        BreadcrumbModule,
+        ButtonModule,
+        SkeletonModule,
+        StorybookTranslateModule,
+        StorybookBreadcrumbModule.init([
+          { label: 'Level 1', routerLink: ['/something'] },
+          { label: 'Level 2', url: '/' },
+        ]),
+      ],
     }),
   ],
 } as Meta<PageHeaderComponent>
@@ -329,15 +313,15 @@ const objectDetailsWithIcons: ObjectDetailItem[] = [
   },
   {
     label: 'Event Completed',
-    icon: PrimeIcons.CHECK_CIRCLE
+    icon: PrimeIcons.CHECK_CIRCLE,
   },
   {
     label: 'Start Date',
     value: '14.3.2022',
-    icon: PrimeIcons.CLOCK
+    icon: PrimeIcons.CLOCK,
   },
   {
-    label: 'I have no value'
+    label: 'I have no value',
   },
 ]
 
