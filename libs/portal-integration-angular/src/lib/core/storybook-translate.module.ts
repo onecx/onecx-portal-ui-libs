@@ -9,7 +9,7 @@ export function translateLoader(http: HttpClient) {
   return new TranslateCombinedLoader(new TranslateHttpLoader(http, `./assets/i18n/`, '.json'))
 }
 /**
-  A utility module adding I18N support for Storybook stories
+  A utility module adding i18N support for Storybook stories
  **/
 @NgModule({
   imports: [
@@ -28,6 +28,12 @@ export function translateLoader(http: HttpClient) {
 })
 export class StorybookTranslateModule {
   constructor(translateService: TranslateService) {
-    translateService.use('en')
+    const lang = translateService.getBrowserLang()
+    const supportedLanguages = ['de', 'en']
+    if(lang && supportedLanguages.includes(lang)) {
+      translateService.use(lang)
+    } else {
+      translateService.use('en')
+    }
   }
 }
