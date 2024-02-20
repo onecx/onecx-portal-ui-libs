@@ -1,7 +1,7 @@
+import { StorybookTranslateModule } from './../../storybook-translate.module';
 import { Meta, moduleMetadata, applicationConfig, StoryFn } from '@storybook/angular';
 import { DataTableComponent } from "./data-table.component";
 import { TableModule } from 'primeng/table';
-import { TranslateModule } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { importProvidersFrom } from '@angular/core';
@@ -16,18 +16,17 @@ const DataTableComponentSBConfig: Meta<DataTableComponent>  = {
         applicationConfig({
             providers: [
                 importProvidersFrom(BrowserModule),
-                importProvidersFrom(BrowserAnimationsModule),
-                importProvidersFrom(TranslateModule.forRoot({})),         
-            ]
+                importProvidersFrom(BrowserAnimationsModule)
+            ],
         }),
         moduleMetadata({
             declarations: [DataTableComponent],
             imports: [
                 TableModule,
-                TranslateModule,
                 ButtonModule,
-                MultiSelectModule
-            ]
+                MultiSelectModule,
+                StorybookTranslateModule,
+            ],
         })
     ]
 }

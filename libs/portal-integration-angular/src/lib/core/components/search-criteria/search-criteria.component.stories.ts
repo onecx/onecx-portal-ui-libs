@@ -5,7 +5,6 @@ import { SearchCriteriaComponent } from './search-criteria.component'
 import { CriteriaTemplateComponent } from './criteria-template/criteria-template.component'
 import { FormsModule } from '@angular/forms'
 import { PageHeaderComponent } from '../page-header/page-header.component'
-import { TranslateModule } from '@ngx-translate/core'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterModule } from '@angular/router'
 import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
@@ -19,6 +18,8 @@ import { ConfigurationService } from '../../../services/configuration.service'
 import { HttpClientModule } from '@angular/common/http'
 import { importProvidersFrom } from '@angular/core'
 import { InputTextModule } from 'primeng/inputtext'
+import { StorybookTranslateModule } from '../../storybook-translate.module'
+import { TranslateModule } from '@ngx-translate/core'
 
 export default {
   title: 'SearchCriteriaComponent',
@@ -27,10 +28,10 @@ export default {
     applicationConfig({
       providers: [
         importProvidersFrom(BrowserAnimationsModule),
-        importProvidersFrom(TranslateModule.forRoot({})),
         importProvidersFrom(RouterModule.forRoot([], { useHash: true })),
         importProvidersFrom(MockAuthModule),
         importProvidersFrom(HttpClientModule),
+        importProvidersFrom(TranslateModule),
         ConfigurationService,
         { provide: APP_CONFIG, useValue: {} },
         { provide: APP_BASE_HREF, useValue: '/' },
@@ -48,6 +49,7 @@ export default {
         MenuModule,
         BreadcrumbModule,
         SkeletonModule,
+        StorybookTranslateModule
       ],
       providers: [],
     }),
