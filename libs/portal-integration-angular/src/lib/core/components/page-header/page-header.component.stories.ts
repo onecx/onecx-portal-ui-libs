@@ -17,7 +17,7 @@ import { StorybookBreadcrumbModule } from './../../storybook-breadcrumb.module'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
 
 export default {
-  title: 'Page Header Component',
+  title: 'PageHeaderComponent',
   component: PageHeaderComponent,
   decorators: [
     applicationConfig({
