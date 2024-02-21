@@ -2,7 +2,16 @@ import { Router, RoutesRecognized } from '@angular/router'
 import { RouterNavigatedAction } from '@ngrx/router-store'
 import { filter, map, MonoTypeOperatorFunction, withLatestFrom } from 'rxjs'
 
+/**
+ * @deprecated use filterOutOnlyQueryParamsChanged
+ */
 export function filterForOnlyQueryParamsChanged<A extends RouterNavigatedAction>(
+  router: Router
+): MonoTypeOperatorFunction<A> {
+  return filterOutOnlyQueryParamsChanged(router)
+}
+
+export function filterOutOnlyQueryParamsChanged<A extends RouterNavigatedAction>(
   router: Router
 ): MonoTypeOperatorFunction<A> {
   return (source) => {
