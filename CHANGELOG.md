@@ -1,3 +1,15 @@
+## [4.7.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.6.0...v4.7.0) (2024-02-21)
+
+
+### Features
+
+* add freeze action column functionality to table view ([#120](https://github.com/onecx/onecx-portal-ui-libs/issues/120)) ([6cecae9](https://github.com/onecx/onecx-portal-ui-libs/commit/6cecae961deb8ab2400cd45dda4fb3d6a3132bf1))
+
+
+### Bug Fixes
+
+* renaming filter quarams functions ([#136](https://github.com/onecx/onecx-portal-ui-libs/issues/136)) ([ac46f53](https://github.com/onecx/onecx-portal-ui-libs/commit/ac46f53133129ad09f4324fc104fa9351bc8a859))
+
 ## [4.6.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.5.1...v4.6.0) (2024-02-19)
 
 
