@@ -1,38 +1,24 @@
-import { InputSwitchModule } from 'primeng/inputswitch'
-import { ButtonModule } from 'primeng/button'
-import { moduleMetadata, StoryFn, Meta, applicationConfig } from '@storybook/angular'
-import { SearchCriteriaComponent } from './search-criteria.component'
-import { CriteriaTemplateComponent } from './criteria-template/criteria-template.component'
+import { APP_BASE_HREF } from '@angular/common'
+import { HttpClientModule } from '@angular/common/http'
+import { importProvidersFrom } from '@angular/core'
 import { FormsModule } from '@angular/forms'
-import { PageHeaderComponent } from '../page-header/page-header.component'
-import { TranslateModule } from '@ngx-translate/core'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterModule } from '@angular/router'
-import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
+import { Meta, StoryFn, applicationConfig, moduleMetadata } from '@storybook/angular'
+import { BreadcrumbModule } from 'primeng/breadcrumb'
+import { ButtonModule } from 'primeng/button'
+import { DropdownModule } from 'primeng/dropdown'
+import { InputSwitchModule } from 'primeng/inputswitch'
+import { InputTextModule } from 'primeng/inputtext'
 import { MenuModule } from 'primeng/menu'
 import { SkeletonModule } from 'primeng/skeleton'
 import { APP_CONFIG } from '../../../api/injection-tokens'
-import { APP_BASE_HREF } from '@angular/common'
-import { BreadcrumbModule } from 'primeng/breadcrumb'
-import { DropdownModule } from 'primeng/dropdown'
+import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
 import { ConfigurationService } from '../../../services/configuration.service'
-import { HttpClientModule } from '@angular/common/http'
-import { APP_INITIALIZER, importProvidersFrom } from '@angular/core'
-import { InputTextModule } from 'primeng/inputtext'
-import { AppStateService } from '../../../services/app-state.service'
-
-async function initFactory(appStateService: AppStateService) {
-  await appStateService.currentPortal$.publish({
-    baseUrl: '/demo',
-    portalName: 'Demo',
-    id: 'Demo',
-    microfrontendRegistrations: [],
-  })
-
-  return () => {
-    appStateService
-  }
-}
+import { StorybookTranslateModule } from '../../storybook-translate.module'
+import { PageHeaderComponent } from '../page-header/page-header.component'
+import { CriteriaTemplateComponent } from './criteria-template/criteria-template.component'
+import { SearchCriteriaComponent } from './search-criteria.component'
 
 export default {
   title: 'SearchCriteriaComponent',
@@ -41,19 +27,12 @@ export default {
     applicationConfig({
       providers: [
         importProvidersFrom(BrowserAnimationsModule),
-        importProvidersFrom(TranslateModule.forRoot({})),
         importProvidersFrom(RouterModule.forRoot([], { useHash: true })),
         importProvidersFrom(MockAuthModule),
         importProvidersFrom(HttpClientModule),
         ConfigurationService,
         { provide: APP_CONFIG, useValue: {} },
         { provide: APP_BASE_HREF, useValue: '/' },
-        {
-          provide: APP_INITIALIZER,
-          useFactory: initFactory,
-          multi: true,
-          deps: [ConfigurationService],
-        },
       ],
     }),
     moduleMetadata({
@@ -68,6 +47,7 @@ export default {
         MenuModule,
         BreadcrumbModule,
         SkeletonModule,
+        StorybookTranslateModule
       ],
       providers: [],
     }),
