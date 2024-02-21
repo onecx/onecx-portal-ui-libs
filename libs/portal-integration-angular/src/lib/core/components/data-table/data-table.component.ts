@@ -130,6 +130,9 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   }
 
   @Input() additionalActions: DataAction[] = []
+  @Input() frozenActionColumn = false
+  @Input() actionColumnPosition: 'left' | 'right' = 'right'
+
 
   @Output() filtered = new EventEmitter<Filter[]>()
   @Output() sorted = new EventEmitter<Sort>()

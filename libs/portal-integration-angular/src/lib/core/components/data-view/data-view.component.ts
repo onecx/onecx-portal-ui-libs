@@ -62,6 +62,8 @@ export class DataViewComponent implements DoCheck, OnInit {
   @Input() currentPageShowingKey = 'OCX_DATA_TABLE.SHOWING'
   @Input() currentPageShowingWithTotalOnServerKey = 'OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER'
   @Input() selectedRows: Row[] = []
+  @Input() frozenActionColumn = false;
+  @Input() actionColumnPosition: 'left' | 'right' = 'right'
 
   @Input()
   get paginator(): boolean {

@@ -5,7 +5,16 @@
     "INACTIVE_COLUMNS_LABEL": "Inaktive Spalten",
     "SAVE_BUTTON_LABEL": "Speichern",
     "CANCEL_BUTTON_LABEL": "Abbrechen",
-    "DIALOG_TITLE": "Spalten für benutzerdefinierte Gruppe auswählen"
+    "DIALOG_TITLE": "Spalten für benutzerdefinierte Gruppe auswählen",
+    "CONFIGURE_ACTION_COLUMN": {
+      "TITLE": "Aktionsspalte konfigurieren",
+      "FREEZE": "Aktionsspalte immer anzeigen",
+      "POSITION": "Position der Aktionsspalte",
+      "YES": "Ja",
+      "NO": "Nein",
+      "LEFT": "Links",
+      "RIGHT": "Rechts"
+    }
   },
   "OCX_LIST_GRID_SORT": {
     "DROPDOWN": {
