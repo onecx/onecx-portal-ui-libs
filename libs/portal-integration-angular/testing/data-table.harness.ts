@@ -1,4 +1,4 @@
-import { ContentContainerComponentHarness } from '@angular/cdk/testing'
+import { ContentContainerComponentHarness, TestElement } from '@angular/cdk/testing'
 import { TableHeaderColumnHarness } from './table-header-column.harness'
 import { TableRowHarness } from './table-row.harness'
 import { PPaginatorHarness } from './primeng/p-paginator.harness'
@@ -29,5 +29,20 @@ export class DataTableHarness extends ContentContainerComponentHarness {
       checkBoxHarnesses = await this.getAllHarnesses(PTableCheckboxHarness)
       return checkBoxHarnesses
     }
+  }
+
+  async getActionColumnHeader(position: 'left' | 'right') {
+      return await this.locatorForOptional(`[name="action-column-header-${position}"]`)()
+  }
+
+  async getActionColumn(position: 'left' | 'right') {
+    return await this.locatorForOptional(`[name="action-column-${position}"]`)()
+  }
+
+  async columnIsFrozen(column: TestElement | null) {
+    if(column == null) {
+      throw new Error('Given column is null')
+    }
+    return await column.hasClass('p-frozen-column')
   }
 }

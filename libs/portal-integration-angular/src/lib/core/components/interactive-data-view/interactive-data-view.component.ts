@@ -4,7 +4,7 @@ import { DataSortDirection } from '../../../model/data-sort-direction'
 import { Filter, Row, Sort } from '../data-table/data-table.component'
 import { DataViewComponent, RowListGridData } from '../data-view/data-view.component'
 import { GroupSelectionChangedEvent } from '../column-group-selection/column-group-selection.component'
-import { ColumnSelectionChangedEvent } from '../custom-group-column-selector/custom-group-column-selector.component'
+import { ActionColumnChangedEvent, ColumnSelectionChangedEvent } from '../custom-group-column-selector/custom-group-column-selector.component'
 import { DataAction } from '../../../model/data-action'
 
 @Component({
@@ -80,6 +80,8 @@ export class InteractiveDataViewComponent implements OnInit {
   isViewItemObserved: boolean | undefined
   isEditItemObserved: boolean | undefined
   firstColumnId: string | undefined
+  frozenActionColumn = false
+  actionColumnPosition: 'left' | 'right' = 'right'
 
   @Input()
   get paginator(): boolean {
@@ -233,6 +235,11 @@ export class InteractiveDataViewComponent implements OnInit {
     this.displayedColumns = event.activeColumns
     this.selectedGroupKey = this.customGroupKey
     this.displayedColumnsChange.emit(this.displayedColumns)
+  }
+
+  onActionColumnConfigChange(event: ActionColumnChangedEvent) {
+    this.frozenActionColumn = event.frozenActionColumn
+    this.actionColumnPosition = event.actionColumnPosition
   }
 
   onRowSelectionChange(event: Row[]) {

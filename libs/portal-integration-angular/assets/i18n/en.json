@@ -5,7 +5,16 @@
     "INACTIVE_COLUMNS_LABEL": "Inactive columns",
     "SAVE_BUTTON_LABEL": "Save",
     "CANCEL_BUTTON_LABEL": "Cancel",
-    "DIALOG_TITLE": "Custom group column selection"
+    "DIALOG_TITLE": "Custom group column selection",
+    "CONFIGURE_ACTION_COLUMN": {
+      "TITLE": "Configure action column",
+      "FREEZE": "Always show action column",
+      "POSITION": "Position of action column",
+      "YES": "Yes",
+      "NO": "No",
+      "LEFT": "Left",
+      "RIGHT": "Right"
+    }
   },
   "OCX_LIST_GRID_SORT": {
     "DROPDOWN": {
