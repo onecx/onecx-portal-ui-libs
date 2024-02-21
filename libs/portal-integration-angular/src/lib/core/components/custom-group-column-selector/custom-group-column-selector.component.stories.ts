@@ -12,6 +12,7 @@ import { PickListModule } from 'primeng/picklist';
 import { CheckboxModule } from 'primeng/checkbox';
 import { FormsModule } from '@angular/forms';
 import { SelectButtonModule } from 'primeng/selectbutton';
+import { StorybookTranslateModule } from '../../storybook-translate.module';
 
 
 type CustomGroupColumnSelectorInputs = Pick<CustomGroupColumnSelectorComponent, 'columns' | 'displayedColumns' |'actionColumnPosition' | 'frozenActionColumn' | 'dialogTitle' | 'saveButtonLabel' | 'cancelButtonLabel' | 'activeColumnsLabel' | 'inactiveColumnsLabel'>
@@ -31,12 +32,12 @@ const CustomGroupColumnSelectorComponentSBConfig: Meta<CustomGroupColumnSelector
             imports: [
                 DropdownModule,
                 DialogModule,
-                TranslateModule,
                 PickListModule,
                 ButtonModule,
                 CheckboxModule,
                 FormsModule,
-                SelectButtonModule
+                SelectButtonModule,
+                StorybookTranslateModule
             ]
         })
     ]

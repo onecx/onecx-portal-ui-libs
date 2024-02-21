@@ -199,7 +199,7 @@ export const ResponsiveWithScroll = {
     args: extendedComponentArgs,
 }
 
-export const ResponsiveWithScrollAndActions = {
+export const ResponsiveWithScrollAndFrozenActionsColumn = {
     argTypes: {
         deleteTableRow: {action: 'deleteTableRow'}
     },
