@@ -9,6 +9,7 @@ import { ButtonDialogComponent } from './button-dialog.component'
 import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
 import { ButtonDialogHarness, DivHarness } from '../../../../../testing'
 import { ButtonDialogConfig } from '../../../model/button-dialog'
+import { PrimeIcons } from 'primeng/api'
 
 @Component({
   template: `<ocx-button-dialog>
@@ -20,12 +21,12 @@ class TestBaseHostComponent {}
 const config: ButtonDialogConfig = {
   primaryButtonDetails: {
     key: 'inlineMain',
-    icon: 'pi pi-plus',
+    icon: PrimeIcons.PLUS,
   },
   secondaryButtonIncluded: true,
   secondaryButtonDetails: {
     key: 'inlineSide',
-    icon: 'pi pi-times',
+    icon: PrimeIcons.TIMES,
   },
 }
 
