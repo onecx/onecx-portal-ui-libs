@@ -1,3 +1,35 @@
+## [4.7.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.6.0...v4.7.0) (2024-02-21)
+
+
+### Features
+
+* add freeze action column functionality to table view ([#120](https://github.com/onecx/onecx-portal-ui-libs/issues/120)) ([6cecae9](https://github.com/onecx/onecx-portal-ui-libs/commit/6cecae961deb8ab2400cd45dda4fb3d6a3132bf1))
+
+
+### Bug Fixes
+
+* renaming filter quarams functions ([#136](https://github.com/onecx/onecx-portal-ui-libs/issues/136)) ([ac46f53](https://github.com/onecx/onecx-portal-ui-libs/commit/ac46f53133129ad09f4324fc104fa9351bc8a859))
+
+## [4.6.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.5.1...v4.6.0) (2024-02-19)
+
+
+### Features
+
+* new function filterForOnlyQueryParamsChanged ([#133](https://github.com/onecx/onecx-portal-ui-libs/issues/133)) ([caa2993](https://github.com/onecx/onecx-portal-ui-libs/commit/caa299366e0fd3ddd4c9f25f7b502fb730f769a1))
+
+
+### Bug Fixes
+
+* correct functionname to provideAppStateServiceMock ([#132](https://github.com/onecx/onecx-portal-ui-libs/issues/132)) ([0c0b191](https://github.com/onecx/onecx-portal-ui-libs/commit/0c0b19112b4279332b6fc85ce552ea6c7a8def5d))
+
+## [4.5.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.5.0...v4.5.1) (2024-02-16)
+
+
+### Bug Fixes
+
+* loading issue where apps are hanging sometimes ([#131](https://github.com/onecx/onecx-portal-ui-libs/issues/131)) ([b2dee83](https://github.com/onecx/onecx-portal-ui-libs/commit/b2dee83cb566c6747a6efcb6cfaad41a21ba9ff6))
+* mock does not necessarily need TranslationModule to be provided ([#119](https://github.com/onecx/onecx-portal-ui-libs/issues/119)) ([a152ece](https://github.com/onecx/onecx-portal-ui-libs/commit/a152ecef209b9d7f073491581d1ee6a225618bf3))
+
 ## [4.5.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.4.0...v4.5.0) (2024-02-07)
 
 
