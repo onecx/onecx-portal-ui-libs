@@ -58,11 +58,12 @@ export class DataViewComponent implements DoCheck, OnInit {
   @Input() sortDirection: DataSortDirection = DataSortDirection.NONE
   @Input() listGridPaginator = true
   @Input() tablePaginator = true
-  @Input() totalRecordsOnServer: number | undefined 
+  @Input() page = 0
+  @Input() totalRecordsOnServer: number | undefined
   @Input() currentPageShowingKey = 'OCX_DATA_TABLE.SHOWING'
   @Input() currentPageShowingWithTotalOnServerKey = 'OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER'
   @Input() selectedRows: Row[] = []
-  @Input() frozenActionColumn = false;
+  @Input() frozenActionColumn = false
   @Input() actionColumnPosition: 'left' | 'right' = 'right'
 
   @Input()
@@ -145,6 +146,7 @@ export class DataViewComponent implements DoCheck, OnInit {
   @Output() viewItem = new EventEmitter<RowListGridData>()
   @Output() editItem = new EventEmitter<RowListGridData>()
   @Output() selectionChanged = new EventEmitter<Row[]>()
+  @Output() pageChanged = new EventEmitter<number>()
   isDeleteItemObserved: boolean | undefined
   isViewItemObserved: boolean | undefined
   IsEditItemObserved: boolean | undefined
@@ -160,11 +162,14 @@ export class DataViewComponent implements DoCheck, OnInit {
     return this.injector.get('InteractiveDataViewComponent', null)?.deleteItem.observed || this.deleteItem.observed
   }
   get selectionChangedObserved(): boolean {
-    return this.injector.get('InteractiveDataViewComponent', null)?.selectionChanged.observed || this.selectionChanged.observed
+    return (
+      this.injector.get('InteractiveDataViewComponent', null)?.selectionChanged.observed ||
+      this.selectionChanged.observed
+    )
   }
 
   constructor(private injector: Injector) {}
-  
+
   ngOnInit(): void {
     this.firstColumnId = this.columns[0]?.id
   }
@@ -226,8 +231,8 @@ export class DataViewComponent implements DoCheck, OnInit {
           })
         }
       }
-      if(this.selectionChangedObserved) {
-        if(!this._dataTableComponent?.selectionChanged.observed) {
+      if (this.selectionChangedObserved) {
+        if (!this._dataTableComponent?.selectionChanged.observed) {
           this._dataTableComponent?.selectionChanged.subscribe((event) => {
             this.onRowSelectionChange(event)
           })
@@ -235,7 +240,7 @@ export class DataViewComponent implements DoCheck, OnInit {
       }
     }
   }
-  
+
   filtering(event: any) {
     this.filters = event
     this.filtered.emit(event)
@@ -265,8 +270,15 @@ export class DataViewComponent implements DoCheck, OnInit {
   }
 
   onRowSelectionChange(event: Row[]) {
-    if(this.selectionChangedObserved){
+    if (this.selectionChangedObserved) {
       this.selectionChanged.emit(event)
     }
+  }
+
+  onPageChange(event: number) {
+    console.log('DataView')
+    console.log(event)
+    this.page = event
+    this.pageChanged.emit(event)
   }
 }

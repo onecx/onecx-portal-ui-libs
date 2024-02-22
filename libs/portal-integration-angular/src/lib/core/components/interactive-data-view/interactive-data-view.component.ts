@@ -4,7 +4,10 @@ import { DataSortDirection } from '../../../model/data-sort-direction'
 import { Filter, Row, Sort } from '../data-table/data-table.component'
 import { DataViewComponent, RowListGridData } from '../data-view/data-view.component'
 import { GroupSelectionChangedEvent } from '../column-group-selection/column-group-selection.component'
-import { ActionColumnChangedEvent, ColumnSelectionChangedEvent } from '../custom-group-column-selector/custom-group-column-selector.component'
+import {
+  ActionColumnChangedEvent,
+  ColumnSelectionChangedEvent,
+} from '../custom-group-column-selector/custom-group-column-selector.component'
 import { DataAction } from '../../../model/data-action'
 
 @Component({
@@ -54,6 +57,7 @@ export class InteractiveDataViewComponent implements OnInit {
   @Input() additionalActions: DataAction[] = []
   @Input() listGridPaginator = true
   @Input() tablePaginator = true
+  @Input() page = 0
   @Input() selectedRows: Row[] = []
   @ContentChild('tableCell') tableCell: TemplateRef<any> | undefined
   @ContentChild('tableDateCell') tableDateCell: TemplateRef<any> | undefined
@@ -74,6 +78,7 @@ export class InteractiveDataViewComponent implements OnInit {
   @Output() dataViewLayoutChange = new EventEmitter<'grid' | 'list' | 'table'>()
   @Output() displayedColumnsChange = new EventEmitter<DataTableColumn[]>()
   @Output() selectionChanged: EventEmitter<Row[]> = new EventEmitter()
+  @Output() pageChanged: EventEmitter<number> = new EventEmitter()
   displayedColumns: DataTableColumn[] = []
   selectedGroupKey = ''
   isDeleteItemObserved: boolean | undefined
@@ -222,8 +227,8 @@ export class InteractiveDataViewComponent implements OnInit {
         })
       }
     }
-    if(this.selectionChanged.observed) {
-      if(!this._dataViewComponent?.selectionChanged.observed) {
+    if (this.selectionChanged.observed) {
+      if (!this._dataViewComponent?.selectionChanged.observed) {
         this._dataViewComponent?.selectionChanged.subscribe((event) => {
           this.onRowSelectionChange(event)
         })
@@ -243,8 +248,15 @@ export class InteractiveDataViewComponent implements OnInit {
   }
 
   onRowSelectionChange(event: Row[]) {
-    if(this.selectionChanged.observed){
+    if (this.selectionChanged.observed) {
       this.selectionChanged.emit(event)
     }
+  }
+
+  onPageChange(event: number) {
+    console.log('Interactive')
+    console.log(event)
+    this.page = event
+    this.pageChanged.emit(event)
   }
 }
