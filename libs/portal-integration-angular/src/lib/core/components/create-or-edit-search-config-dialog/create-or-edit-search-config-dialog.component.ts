@@ -24,15 +24,15 @@ export class CreateOrEditSearchConfigDialogComponent
     DialogResult<CreateOrEditSearchDialogContent>,
     DialogButtonClicked<CreateOrEditSearchConfigDialogComponent>
 {
-  @Input() searchConfigName: string = ''
-  @Input() saveInputValues: boolean = false
-  @Input() saveColumns: boolean = false
-  @Input() placeHolderKey: string = 'OCX_SEARCH_CONFIG.PLACEHOLDER'
+  @Input() searchConfigName: string | undefined
+  @Input() saveInputValues: boolean | undefined
+  @Input() saveColumns: boolean | undefined
+  @Input() placeHolderKey = 'OCX_SEARCH_CONFIG.PLACEHOLDER'
   @Output() primaryButtonEnabled: EventEmitter<boolean> = new EventEmitter()
   searchConfigFormGroup: FormGroup = new FormGroup({
-    searchConfigName: new FormControl<string>(this.searchConfigName),
-    saveInputValues: new FormControl<boolean>(this.saveInputValues),
-    saveColumns: new FormControl<boolean>(this.saveColumns),
+    searchConfigName: new FormControl<string>(''),
+    saveInputValues: new FormControl<boolean>(false),
+    saveColumns: new FormControl<boolean>(false),
   })
   dialogResult: CreateOrEditSearchDialogContent = { searchConfigName: '', saveInputValues: false, saveColumns: false }
   constructor() {

@@ -13,7 +13,7 @@ export class CreateOrEditSearchConfigDialogHarness extends ContentContainerCompo
     return this.getHarness(PCheckboxHarness.with({ inputid: 'saveColumnsId' }))
   }
 
-  getSearchConfigInputHarness(inputId: string) {
+  getSearchConfigInputHarness() {
     return this.getHarness(InputHarness.with({ id: 'searchConfigName' }))
   }
 }

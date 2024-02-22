@@ -6,7 +6,7 @@ import { TranslateTestingModule } from 'ngx-translate-testing'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { TranslateService } from '@ngx-translate/core'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { PCheckboxHarness, CreateOrEditSearchConfigDialogHarness } from 'libs/portal-integration-angular/testing'
+import { PCheckboxHarness, CreateOrEditSearchConfigDialogHarness } from '../../../../../testing'
 import { DialogState } from '../../../services/portal-dialog.service'
 import { ReactiveFormsModule } from '@angular/forms'
 import { InputTextModule } from 'primeng/inputtext'
@@ -59,7 +59,7 @@ describe('CreateOrEditSearchConfigDialogComponent', () => {
     await saveInputValuesCheckbox.click()
     const _state: DialogState<CreateOrEditSearchConfigDialogComponent> = { button: 'primary', result: undefined }
     component.ocxDialogButtonClicked(_state)
-    let dialogResult = {
+    const dialogResult = {
       searchConfigName: '',
       saveInputValues: true,
       saveColumns: false,
@@ -70,7 +70,7 @@ describe('CreateOrEditSearchConfigDialogComponent', () => {
   it('should set the DialogResult of the saveColumnsId checkbox initially false', async () => {
     const _state: DialogState<CreateOrEditSearchConfigDialogComponent> = { button: 'primary', result: undefined }
     await component.ocxDialogButtonClicked(_state)
-    let dialogResult = {
+    const dialogResult = {
       searchConfigName: '',
       saveInputValues: false,
       saveColumns: false,
@@ -79,10 +79,10 @@ describe('CreateOrEditSearchConfigDialogComponent', () => {
   })
 
   it('should set the DialogResult of the searchConfig input Field to the entered value', async () => {
-    await (await dialogHarness.getSearchConfigInputHarness('searchConfigName')).setValue('search Config')
+    await (await dialogHarness.getSearchConfigInputHarness()).setValue('search Config')
     const _state: DialogState<CreateOrEditSearchConfigDialogComponent> = { button: 'primary', result: undefined }
     await component.ocxDialogButtonClicked(_state)
-    let dialogResult = {
+    const dialogResult = {
       searchConfigName: 'search Config',
       saveInputValues: false,
       saveColumns: false,
@@ -111,14 +111,14 @@ describe('CreateOrEditSearchConfigDialogComponent', () => {
 
   it('should emit true when the searchConfig name is not an empty string and the saveColumnsCheckBox is clicked', async () => {
     let done: () => void
-    let finished = new Promise<void>((resolve) => (done = resolve))
+    const finished = new Promise<void>((resolve) => (done = resolve))
     let enabled = false
     component.primaryButtonEnabled.subscribe((v) => {
       enabled = v
       done()
     })
 
-    const searchConfigInputHarness = await dialogHarness.getSearchConfigInputHarness('searchConfigName')
+    const searchConfigInputHarness = await dialogHarness.getSearchConfigInputHarness()
     searchConfigInputHarness.setValue('test')
     const saveInputValuesCheckbox = await dialogHarness.getSaveColumnsCheckboxHarness()
     await saveInputValuesCheckbox.click()
@@ -129,14 +129,14 @@ describe('CreateOrEditSearchConfigDialogComponent', () => {
 
   it('emit true when the searchConfig Name is not an empty string and the saveInputValuesCheckbox is clicked', async () => {
     let done: () => void
-    let finished = new Promise<void>((resolve) => (done = resolve))
+    const finished = new Promise<void>((resolve) => (done = resolve))
     let enabled = false
     component.primaryButtonEnabled.subscribe((v) => {
       enabled = v
       done()
     })
 
-    const searchConfigInputHarness = await dialogHarness.getSearchConfigInputHarness('searchConfigName')
+    const searchConfigInputHarness = await dialogHarness.getSearchConfigInputHarness()
     searchConfigInputHarness.setValue('test')
     const saveInputValuesCheckbox = await dialogHarness.getSaveInputValuesCheckboxHarness()
     await saveInputValuesCheckbox.click()
