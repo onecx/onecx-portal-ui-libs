@@ -276,8 +276,6 @@ export class DataViewComponent implements DoCheck, OnInit {
   }
 
   onPageChange(event: number) {
-    console.log('DataView')
-    console.log(event)
     this.page = event
     this.pageChanged.emit(event)
   }

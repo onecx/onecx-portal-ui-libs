@@ -314,8 +314,6 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   }
 
   onPageChange(event: any) {
-    console.log('DataTable')
-    console.log(event)
     const page = event.first / event.rows
     this.page = page
     this.pageChanged.emit(page)

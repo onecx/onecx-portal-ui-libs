@@ -254,8 +254,6 @@ export class InteractiveDataViewComponent implements OnInit {
   }
 
   onPageChange(event: number) {
-    console.log('Interactive')
-    console.log(event)
     this.page = event
     this.pageChanged.emit(event)
   }
