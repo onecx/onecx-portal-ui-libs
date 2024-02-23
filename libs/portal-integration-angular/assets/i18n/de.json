@@ -76,7 +76,8 @@
     "EXPORT": "Alle Ereignisse exportieren"
   },
   "OCX_PAGE_HEADER": {
-    "MORE_ACTIONS": "Weitere Aktionen"
+    "MORE_ACTIONS": "Weitere Aktionen",
+    "HOME": "Home"
   },
   "OCX_HEADER": {
     "MENU_TOGGLE": "Menü"

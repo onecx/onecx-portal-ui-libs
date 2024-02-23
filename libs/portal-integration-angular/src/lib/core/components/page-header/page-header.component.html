@@ -3,7 +3,8 @@
     <p-breadcrumb
       [model]="items"
       *ngIf="breadcrumbs$ | async  as items"
-      [home]="(home$ | async) ?? {}"
+      [home]="(home$ | async)?.menuItem ?? {}"
+      [homeAriaLabel]="(home$ | async)?.ariaLabel ?? 'OCX_PAGE_HEADER.HOME' | translate"
       [attr.manual]="manualBreadcrumbs"
     ></p-breadcrumb>
   </ng-container>
