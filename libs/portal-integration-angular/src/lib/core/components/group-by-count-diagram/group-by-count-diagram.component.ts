@@ -13,7 +13,18 @@ import { DiagramType } from '../../../model/diagram-type'
 })
 export class GroupByCountDiagramComponent implements OnInit {
   @Input() sumKey = 'SEARCH.SUMMARY_TITLE'
-  @Input() type = DiagramType.PIE
+  @Input() diagramType = DiagramType.PIE
+  /**
+   * @deprecated Will be replaced by diagramType
+   */
+  @Input()
+  get type(): DiagramType {
+    return this.diagramType
+  }
+  set type(value: DiagramType) {
+    this.diagramType = value
+  }
+  @Input() supportedDiagramTypes: DiagramType[] = []
   private _data$ = new BehaviorSubject<unknown[]>([])
   @Input()
   get data(): unknown[] {
@@ -52,6 +63,7 @@ export class GroupByCountDiagramComponent implements OnInit {
   }
 
   @Output() dataSelected: EventEmitter<any> = new EventEmitter()
+  @Output() diagramTypeChanged: EventEmitter<DiagramType> = new EventEmitter()
 
   constructor(private translateService: TranslateService) {}
 
@@ -84,5 +96,10 @@ export class GroupByCountDiagramComponent implements OnInit {
 
   dataClicked(event: any) {
     this.dataSelected.emit(event)
+  }
+
+  onDiagramTypeChanged(newDiagramType: DiagramType) {
+    this.diagramType = newDiagramType
+    this.diagramTypeChanged.emit(newDiagramType)
   }
 }
