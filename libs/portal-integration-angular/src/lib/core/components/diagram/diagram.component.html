@@ -5,6 +5,7 @@
         [(ngModel)]="selectedDiagramType"
         optionLabel="icon"
         (onChange)="onDiagramTypeChanged($event)"
+        name="diagram-type-select-button"
       >
         <ng-template let-item pTemplate>
           <i [class]="item.icon" [title]="item.title || (item.titleKey | translate)"></i>

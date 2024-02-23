@@ -1,13 +1,13 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core'
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { ChartData, ChartOptions } from 'chart.js'
 import * as d3 from 'd3-scale-chromatic'
-import { ColorUtils } from '../../utils/colorutils'
+import { PrimeIcons } from 'primeng/api'
 import { DiagramData } from '../../../model/diagram-data'
 import { DiagramType } from '../../../model/diagram-type'
-import { PrimeIcons } from 'primeng/api'
+import { ColorUtils } from '../../utils/colorutils'
 
-interface DiagramLayouts {
+export interface DiagramLayouts {
   icon: string
   layout: DiagramType
   title?: string
@@ -28,7 +28,6 @@ const allDiagramTypes: DiagramLayouts[] = [
 export class DiagramComponent implements OnInit, OnChanges {
   @Input() data: DiagramData[] | undefined
   @Input() sumKey = 'OCX_DIAGRAM.SUM'
-  @Input() supportedDiagramTypes: DiagramType[] = []
   private _diagramType: DiagramType = DiagramType.PIE
   selectedDiagramType: DiagramLayouts | undefined
   public chartType = 'pie'
@@ -40,6 +39,15 @@ export class DiagramComponent implements OnInit, OnChanges {
     this._diagramType = value
     this.selectedDiagramType = allDiagramTypes.find((v) => v.layout === value)
     this.chartType = this.diagramTypeToChartType(value)
+  }
+  private _supportedDiagramTypes: DiagramType[] = []
+  @Input() 
+  get supportedDiagramTypes(): DiagramType[] {
+    return this._supportedDiagramTypes
+  }
+  set supportedDiagramTypes(value: DiagramType[]) {
+    this._supportedDiagramTypes = value
+    this.shownDiagramTypes = allDiagramTypes.filter((vl) => this.supportedDiagramTypes.includes(vl.layout))
   }
   @Output() dataSelected: EventEmitter<any> = new EventEmitter()
   @Output() diagramTypeChanged: EventEmitter<DiagramType> = new EventEmitter()
@@ -58,15 +66,11 @@ export class DiagramComponent implements OnInit, OnChanges {
 
   constructor(private translateService: TranslateService) {}
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     this.generateChart(this.colorScale, this.colorRangeInfo)
-    if(changes['supportedDiagramTypes']) {
-      this.shownDiagramTypes = allDiagramTypes.filter((vl) => this.supportedDiagramTypes.includes(vl.layout))
-    }
   }
   ngOnInit(): void {
     this.generateChart(this.colorScale, this.colorRangeInfo)
-    this.shownDiagramTypes = allDiagramTypes.filter((vl) => this.supportedDiagramTypes.includes(vl.layout))
   }
 
   public generateChart(colorScale: any, colorRangeInfo: any) {

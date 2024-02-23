@@ -13,6 +13,7 @@ import { DiagramType } from '../../../model/diagram-type'
 import { DiagramData } from '../../../model/diagram-data'
 import { ChartModule } from 'primeng/chart'
 import { SelectButtonModule } from 'primeng/selectbutton'
+import { FormsModule } from '@angular/forms'
 
 export default {
   title: 'DiagramComponent',
@@ -29,7 +30,7 @@ export default {
     }),
     moduleMetadata({
       declarations: [DiagramComponent, DynamicPipe],
-      imports: [MenuModule, BreadcrumbModule, ButtonModule, SkeletonModule, StorybookTranslateModule, ChartModule, SelectButtonModule],
+      imports: [MenuModule, BreadcrumbModule, ButtonModule, SkeletonModule, StorybookTranslateModule, ChartModule, SelectButtonModule, FormsModule],
     }),
   ],
 } as Meta<DiagramComponent>
