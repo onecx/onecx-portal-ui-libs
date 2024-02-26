@@ -49,7 +49,7 @@ export class SearchHeaderComponent implements AfterViewInit {
 
   @ViewChild('searchParameterFields') searchParameterFields: ElementRef | undefined
 
-  viewMode: 'basic' | 'advanced' = 'basic'
+  viewMode: 'simple' | 'advanced' = 'simple'
   hasAdvanced = false
   headerActions: Action[] = []
 
@@ -58,7 +58,7 @@ export class SearchHeaderComponent implements AfterViewInit {
   }
 
   toggleViewMode() {
-    this.viewMode = this.viewMode === 'basic' ? 'advanced' : 'basic'
+    this.viewMode = this.viewMode === 'simple' ? 'advanced' : 'simple'
     this.updateHeaderActions()
     setTimeout(() => this.addKeyUpEventListener())
   }
@@ -75,11 +75,11 @@ export class SearchHeaderComponent implements AfterViewInit {
     const headerActions: Action[] = []
     if (this.hasAdvanced) {
       headerActions.push({
-        id: 'basicAdvancedButton',
+        id: 'simpleAdvancedButton',
         labelKey:
-          this.viewMode === 'basic'
+          this.viewMode === 'simple'
             ? 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.ADVANCED'
-            : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.BASIC',
+            : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.SIMPLE',
         actionCallback: () => this.toggleViewMode(),
         show: 'always',
       })

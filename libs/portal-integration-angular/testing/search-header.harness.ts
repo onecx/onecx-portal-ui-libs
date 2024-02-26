@@ -18,9 +18,9 @@ export class SearchHeaderHarness extends ContentContainerComponentHarness {
     })
   )
 
-  getBasicAdvancedButton = this.locatorForOptional(
+  getSimpleAdvancedButton = this.locatorForOptional(
     ButtonHarness.with({
-      id: 'basicAdvancedButton',
+      id: 'simpleAdvancedButton',
     })
   )
 
@@ -34,11 +34,11 @@ export class SearchHeaderHarness extends ContentContainerComponentHarness {
     await (await this.getResetButton()).click()
   }
 
-  async toggleBasicAdvanced() {
-    if (await this.getBasicAdvancedButton()) {
-      await (await this.getBasicAdvancedButton())?.click()
+  async toggleSimpleAdvanced() {
+    if (await this.getSimpleAdvancedButton()) {
+      await (await this.getSimpleAdvancedButton())?.click()
     } else {
-      console.warn('No BasicAdvancedButton is being displayed to toggle, because no advanced form field is defined.')
+      console.warn('No SimpleAdvancedButton is being displayed to toggle, because no advanced form field is defined.')
     }
   }
 }

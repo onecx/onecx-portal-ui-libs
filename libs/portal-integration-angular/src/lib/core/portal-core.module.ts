@@ -65,7 +65,7 @@ import { ColumnGroupSelectionComponent } from './components/column-group-selecti
 import { CustomGroupColumnSelectorComponent } from './components/custom-group-column-selector/custom-group-column-selector.component'
 import { SearchHeaderComponent } from './components/search-header/search-header.component'
 import { AdvancedDirective } from './directives/advanced.directive'
-import { BasicDirective } from './directives/basic.directive'
+import { SimpleDirective } from './directives/simple.directive'
 import { DataListGridSortingComponent } from './components/data-list-grid-sorting/data-list-grid-sorting.component'
 import { RelativeDatePipe } from './pipes/relative-date.pipe'
 import { PatchFormGroupValuesDirective } from './directives/patch-form-group-values.driective'
@@ -153,7 +153,7 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     LoadingIndicatorComponent,
     LoadingIndicatorDirective,
     AdvancedDirective,
-    BasicDirective,
+    SimpleDirective,
     DataListGridSortingComponent,
     RelativeDatePipe,
     PatchFormGroupValuesDirective,
@@ -224,7 +224,7 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     LoadingIndicatorComponent,
     LoadingIndicatorDirective,
     AdvancedDirective,
-    BasicDirective,
+    SimpleDirective,
     RelativeDatePipe,
     PatchFormGroupValuesDirective,
     SetInputValueDirective,

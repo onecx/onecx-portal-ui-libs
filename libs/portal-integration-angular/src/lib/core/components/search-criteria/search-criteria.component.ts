@@ -40,18 +40,18 @@ export class SearchCriteriaComponent extends PageHeaderComponent implements OnIn
   }
 
   /** Event emitted when the search button has been pressed. */
-  @Output() readonly search: EventEmitter<'basic' | 'advanced'> = new EventEmitter<'basic' | 'advanced'>()
+  @Output() readonly search: EventEmitter<'simple' | 'advanced'> = new EventEmitter<'simple' | 'advanced'>()
 
   /** Event emitted when the reset button has been pressed. */
   // eslint-disable-next-line @angular-eslint/no-output-native
-  @Output() readonly reset: EventEmitter<'basic' | 'advanced'> = new EventEmitter<'basic' | 'advanced'>()
+  @Output() readonly reset: EventEmitter<'simple' | 'advanced'> = new EventEmitter<'simple' | 'advanced'>()
 
   /** Event emitted when the adnvanced view has been toggled. */
   @Output() readonly advancedViewToggle = new EventEmitter()
 
   protected advancedSearchActive = false
 
-  // in BASIC mode ... enable switching to ADVANCED
+  // in SIMPLE mode ... enable switching to ADVANCED
   private enableAdvancedSearch: Action = {
     label: 'Advanced',
     title: 'Switch to Advanced Search',
@@ -60,10 +60,10 @@ export class SearchCriteriaComponent extends PageHeaderComponent implements OnIn
       this.activateAdvancedSearch(true)
     },
   }
-  // in ADVANCED mode ... enable switching to BASIC
-  private enableBasicSearch: Action = {
-    label: 'Basic',
-    title: 'Switch to Basic Search',
+  // in ADVANCED mode ... enable switching to SIMPLE
+  private enableSimpleSearch: Action = {
+    label: 'Simple',
+    title: 'Switch to Simple Search',
     show: 'always',
     actionCallback: () => {
       this.activateAdvancedSearch(false)
@@ -75,7 +75,7 @@ export class SearchCriteriaComponent extends PageHeaderComponent implements OnIn
     translateService: TranslateService,
     appStateService: AppStateService,
     userService: UserService,
-    @Inject(PortalSearchPage) @Optional() private searchPage?: PortalSearchPage<unknown>,
+    @Inject(PortalSearchPage) @Optional() private searchPage?: PortalSearchPage<unknown>
   ) {
     super(breadcrumbs, translateService, appStateService, userService)
   }
@@ -95,15 +95,15 @@ export class SearchCriteriaComponent extends PageHeaderComponent implements OnIn
     this.advancedViewToggle.emit()
   }
   protected emitSearchEvent() {
-    this.search.emit(this.advancedSearchActive ? 'advanced' : 'basic')
+    this.search.emit(this.advancedSearchActive ? 'advanced' : 'simple')
     if (this.searchPage) {
-      this.searchPage.onSearch(this.advancedSearchActive ? 'advanced' : 'basic')
+      this.searchPage.onSearch(this.advancedSearchActive ? 'advanced' : 'simple')
     }
   }
   protected emitResetEvent() {
-    this.reset.emit(this.advancedSearchActive ? 'advanced' : 'basic')
+    this.reset.emit(this.advancedSearchActive ? 'advanced' : 'simple')
     if (this.searchPage) {
-      this.searchPage.onReset(this.advancedSearchActive ? 'advanced' : 'basic')
+      this.searchPage.onReset(this.advancedSearchActive ? 'advanced' : 'simple')
     }
   }
 
@@ -111,12 +111,12 @@ export class SearchCriteriaComponent extends PageHeaderComponent implements OnIn
     this.advancedSearchActive = advanced
     const actions = [...(this.actions || [])]
     const index = actions.findIndex(
-      (a) => (advanced && a === this.enableAdvancedSearch) || (!advanced && a === this.enableBasicSearch)
+      (a) => (advanced && a === this.enableAdvancedSearch) || (!advanced && a === this.enableSimpleSearch)
     )
     if (index >= 0) {
-      actions[index] = advanced ? this.enableBasicSearch : this.enableAdvancedSearch
+      actions[index] = advanced ? this.enableSimpleSearch : this.enableAdvancedSearch
     } else {
-      actions.push(advanced ? this.enableBasicSearch : this.enableAdvancedSearch)
+      actions.push(advanced ? this.enableSimpleSearch : this.enableAdvancedSearch)
     }
     this.actions = actions
   }

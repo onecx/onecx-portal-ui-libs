@@ -64,7 +64,7 @@
   },
   "OCX_SEARCH_HEADER": {
     "TOGGLE_BUTTON": {
-      "BASIC": "Basic",
+      "SIMPLE": "Simple",
       "ADVANCED": "Advanced"
     },
     "OCX_SEARCH_CONFIG": {

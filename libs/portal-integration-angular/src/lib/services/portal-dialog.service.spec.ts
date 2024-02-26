@@ -208,7 +208,7 @@ describe('PortalDialogService', () => {
   let fixture: ComponentFixture<BaseTestComponent>
 
   const translations = {
-    TITLE_TRANSLATE: 'basicTitle',
+    TITLE_TRANSLATE: 'simpleTitle',
     TITLE_TRANSLATE_PARAM: 'translatedTitle {{val}}',
     MESSAGE: 'myMessage',
     MESSAGE_PARAM: 'myMessage {{val}}',
