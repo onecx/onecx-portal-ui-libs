@@ -3,6 +3,7 @@ import { BaseHarnessFilters, ComponentHarness, HarnessPredicate } from '@angular
 export interface ButtonHarnessFilters extends BaseHarnessFilters {
   id?: string
   icon?: string
+  class?: string
 }
 
 export class ButtonHarness extends ComponentHarness {
@@ -12,6 +13,7 @@ export class ButtonHarness extends ComponentHarness {
     return new HarnessPredicate(ButtonHarness, options)
       .addOption('id', options.id, (harness, id) => HarnessPredicate.stringMatches(harness.getId(), id))
       .addOption('icon', options.icon, (harness, icon) => HarnessPredicate.stringMatches(harness.getIcon(), icon))
+      .addOption('class', options.class, (harness, c) => HarnessPredicate.stringMatches(harness.getByClass(c), c))
   }
 
   async getId(): Promise<string | null> {
@@ -19,6 +21,9 @@ export class ButtonHarness extends ComponentHarness {
   }
   async getIcon(): Promise<string | null> {
     return await (await this.host()).getAttribute('icon')
+  }
+  async getByClass(c: string): Promise<string | null> {
+    return (await (await this.host()).hasClass(c)) ? c : ''
   }
 
   async click() {

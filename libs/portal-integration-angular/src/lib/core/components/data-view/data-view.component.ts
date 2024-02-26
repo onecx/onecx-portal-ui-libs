@@ -58,11 +58,12 @@ export class DataViewComponent implements DoCheck, OnInit {
   @Input() sortDirection: DataSortDirection = DataSortDirection.NONE
   @Input() listGridPaginator = true
   @Input() tablePaginator = true
+  @Input() page = 0
   @Input() totalRecordsOnServer: number | undefined
   @Input() currentPageShowingKey = 'OCX_DATA_TABLE.SHOWING'
   @Input() currentPageShowingWithTotalOnServerKey = 'OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER'
   @Input() selectedRows: Row[] = []
-  @Input() frozenActionColumn = false;
+  @Input() frozenActionColumn = false
   @Input() actionColumnPosition: 'left' | 'right' = 'right'
 
   @Input()
@@ -145,6 +146,7 @@ export class DataViewComponent implements DoCheck, OnInit {
   @Output() viewItem = new EventEmitter<RowListGridData>()
   @Output() editItem = new EventEmitter<RowListGridData>()
   @Output() selectionChanged = new EventEmitter<Row[]>()
+  @Output() pageChanged = new EventEmitter<number>()
   isDeleteItemObserved: boolean | undefined
   isViewItemObserved: boolean | undefined
   IsEditItemObserved: boolean | undefined
@@ -271,5 +273,10 @@ export class DataViewComponent implements DoCheck, OnInit {
     if (this.selectionChangedObserved) {
       this.selectionChanged.emit(event)
     }
+  }
+
+  onPageChange(event: number) {
+    this.page = event
+    this.pageChanged.emit(event)
   }
 }
