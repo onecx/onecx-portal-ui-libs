@@ -27325,12 +27325,6 @@ p-autocomplete.ng-dirty.ng-invalid .p-autocomplete .p-autocomplete-multiple-cont
 .p-button.p-button-icon-only {
   min-width: auto;
 }
-.p-button:enabled:focus {
-  background: rgba(var(--primary-color-rgb), 0.76);
-}
-.p-button:enabled:active {
-  background: rgba(var(--primary-color-rgb), 0.68);
-}
 .p-button .p-ink {
   background-color: rgba(255, 255, 255, 0.32);
 }
