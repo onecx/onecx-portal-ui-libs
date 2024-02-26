@@ -121,8 +121,12 @@ describe('DiagramComponent', () => {
 
   it('should render a diagramType select button if supportedDiagramTypes is specified', async () => {
     const expectedDiagramLayouts: DiagramLayouts[] = [
-      { icon: PrimeIcons.CHART_PIE, layout: DiagramType.PIE, titleKey: '' },
-      { icon: PrimeIcons.BARS, layout: DiagramType.HORIZONTAL_BAR, titleKey: '' },
+      { icon: PrimeIcons.CHART_PIE, layout: DiagramType.PIE, titleKey: 'OCX_DIAGRAM.DIAGRAM_TYPE.PIE' },
+      {
+        icon: PrimeIcons.BARS,
+        layout: DiagramType.HORIZONTAL_BAR,
+        titleKey: 'OCX_DIAGRAM.DIAGRAM_TYPE.HORIZONTAL_BAR',
+      },
     ]
 
     component.supportedDiagramTypes = [DiagramType.PIE, DiagramType.HORIZONTAL_BAR]
@@ -142,7 +146,7 @@ describe('DiagramComponent', () => {
     const diagramTypeSelectButton = await diagram.getDiagramTypeSelectButton()
     const diagramTypeSelectButtonOptions = await diagram.getAllSelectionButtons()
 
-    let diagramTypeChangedEvent: DiagramType | undefined;
+    let diagramTypeChangedEvent: DiagramType | undefined
     component.diagramTypeChanged.subscribe((event) => (diagramTypeChangedEvent = event))
 
     expect(diagramTypeSelectButton).toBeTruthy()
@@ -168,9 +172,17 @@ describe('DiagramComponent', () => {
 
   it('should dynamically add/remove options to/from the diagramType select button', async () => {
     const allDiagramLayouts: DiagramLayouts[] = [
-      { icon: PrimeIcons.CHART_PIE, layout: DiagramType.PIE, titleKey: '' },
-      { icon: PrimeIcons.BARS, layout: DiagramType.HORIZONTAL_BAR, titleKey: '' },
-      { icon: PrimeIcons.CHART_BAR, layout: DiagramType.VERTICAL_BAR, titleKey: '' },
+      { icon: PrimeIcons.CHART_PIE, layout: DiagramType.PIE, titleKey: 'OCX_DIAGRAM.DIAGRAM_TYPE.PIE' },
+      {
+        icon: PrimeIcons.BARS,
+        layout: DiagramType.HORIZONTAL_BAR,
+        titleKey: 'OCX_DIAGRAM.DIAGRAM_TYPE.HORIZONTAL_BAR',
+      },
+      {
+        icon: PrimeIcons.CHART_BAR,
+        layout: DiagramType.VERTICAL_BAR,
+        titleKey: 'OCX_DIAGRAM.DIAGRAM_TYPE.VERTICAL_BAR',
+      },
     ]
 
     expect(component.shownDiagramTypes).toEqual([])
@@ -198,7 +210,7 @@ describe('DiagramComponent', () => {
 
     const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
     const diagramTypeSelectButtonOptions = await diagram.getAllSelectionButtons()
-    
+
     expect(await diagramTypeSelectButtonOptions[0].hasClass('p-highlight')).toBe(false)
     expect(await diagramTypeSelectButtonOptions[1].hasClass('p-highlight')).toBe(true)
   })
