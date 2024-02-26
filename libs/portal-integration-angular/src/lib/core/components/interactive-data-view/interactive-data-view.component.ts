@@ -81,7 +81,6 @@ export class InteractiveDataViewComponent implements OnInit {
   @Output() selectionChanged: EventEmitter<Row[]> = new EventEmitter()
 
   @Output() pageChanged: EventEmitter<number> = new EventEmitter()
-  displayedColumns: DataTableColumn[] = []
   selectedGroupKey = ''
   isDeleteItemObserved: boolean | undefined
   isViewItemObserved: boolean | undefined
