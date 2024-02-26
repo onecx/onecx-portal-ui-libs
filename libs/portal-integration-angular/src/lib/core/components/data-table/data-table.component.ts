@@ -1,4 +1,15 @@
-import { Component, ContentChild, EventEmitter, Inject, Injector, Input, LOCALE_ID, OnInit, Output, TemplateRef } from '@angular/core'
+import {
+  Component,
+  ContentChild,
+  EventEmitter,
+  Inject,
+  Injector,
+  Input,
+  LOCALE_ID,
+  OnInit,
+  Output,
+  TemplateRef,
+} from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { SelectItem } from 'primeng/api'
@@ -91,7 +102,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     rows: '{rows}',
     first: '{first}',
     last: '{last}',
-    totalRecords: '{totalRecords}'
+    totalRecords: '{totalRecords}',
   }
 
   @Input() stringCellTemplate: TemplateRef<any> | undefined
@@ -133,7 +144,6 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   @Input() frozenActionColumn = false
   @Input() actionColumnPosition: 'left' | 'right' = 'right'
 
-
   @Output() filtered = new EventEmitter<Filter[]>()
   @Output() sorted = new EventEmitter<Sort>()
   @Output() viewTableRow = new EventEmitter<Row>()
@@ -160,13 +170,21 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     const dv = this.injector.get('DataViewComponent', null)
     return dv?.deleteItemObserved || dv?.deleteItem.observed || this.deleteTableRow.observed
   }
+  get anyRowActionObserved(): boolean {
+    return this.viewTableRowObserved || this.editTableRowObserved || this.deleteTableRowObserved
+  }
 
   get selectionChangedObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
     return dv?.selectionChangedObserved || dv?.selectionChanged.observed || this.selectionChanged.observed
   }
 
-  constructor(@Inject(LOCALE_ID) locale: string, translateService: TranslateService, private router: Router, private injector: Injector) {
+  constructor(
+    @Inject(LOCALE_ID) locale: string,
+    translateService: TranslateService,
+    private router: Router,
+    private injector: Injector
+  ) {
     super(locale, translateService)
     this.name = this.name || this.router.url.replace(/[^A-Za-z0-9]/, '_')
   }
@@ -176,7 +194,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
       mergeMap((params) => this.translateItems(params, this.columns, this.clientSideFiltering, this.clientSideSorting)),
       map((params) => this.filterItems(params, this.clientSideFiltering)),
       map((params) => this.sortItems(params, this.columns, this.clientSideSorting)),
-      map(([rows]) => this.flattenItems(rows,))
+      map(([rows]) => this.flattenItems(rows))
     )
     this.currentSelectedFilters$ = combineLatest([this._filters$, this.currentFilterColumn$]).pipe(
       map(([filters, currentFilterColumn]) => {
@@ -204,10 +222,10 @@ export class DataTableComponent extends DataSortBase implements OnInit {
               .filter((value, index, self) => self.indexOf(value) === index && value != null)
               .map(
                 (filterOption) =>
-                ({
-                  label: filterOption,
-                  value: filterOption,
-                } as SelectItem)
+                  ({
+                    label: filterOption,
+                    value: filterOption,
+                  } as SelectItem)
               )
           })
         )
