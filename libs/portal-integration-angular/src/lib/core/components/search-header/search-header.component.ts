@@ -26,6 +26,7 @@ import { SearchConfig } from '../../../model/search-config'
 export class SearchHeaderComponent implements AfterViewInit {
   @Input() searchConfigsEntries: SearchConfig[] | undefined
   @Input() headline = ''
+  @Input() subheader: string | undefined
   @Input() manualBreadcrumbs = false
   _actions: Action[] = []
   @Input()
