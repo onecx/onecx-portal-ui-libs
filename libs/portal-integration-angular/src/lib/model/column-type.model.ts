@@ -1,4 +1,4 @@
-export const enum ColumnType {
+export enum ColumnType {
   STRING = 'STRING',
   NUMBER = 'NUMBER',
   DATE = 'DATE',

@@ -4,7 +4,18 @@ import { MonoTypeOperatorFunction, filter, withLatestFrom, map } from 'rxjs'
 import equal from 'fast-deep-equal'
 import { Router, RoutesRecognized } from '@angular/router'
 
+/**
+ * @deprecated use filterOutQueryParamsHaveNotChanged
+ */
 export function filterForQueryParamsChanged<A extends RouterNavigatedAction>(
+  router: Router,
+  queryParamsTypeDef: ZodType,
+  allowEmptyQueryParamsList = false
+): MonoTypeOperatorFunction<A> {
+  return filterOutQueryParamsHaveNotChanged(router, queryParamsTypeDef, allowEmptyQueryParamsList)
+}
+
+export function filterOutQueryParamsHaveNotChanged<A extends RouterNavigatedAction>(
   router: Router,
   queryParamsTypeDef: ZodType,
   allowEmptyQueryParamsList = false
