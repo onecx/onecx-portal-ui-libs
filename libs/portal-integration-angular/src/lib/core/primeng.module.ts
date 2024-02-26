@@ -22,6 +22,7 @@ import { DialogModule } from 'primeng/dialog'
 import { InputSwitchModule } from 'primeng/inputswitch'
 import { DataViewModule } from 'primeng/dataview'
 import { ChartModule } from 'primeng/chart'
+import { CheckboxModule } from 'primeng/checkbox'
 
 @NgModule({
   imports: [
@@ -49,6 +50,7 @@ import { ChartModule } from 'primeng/chart'
     DataViewModule,
     ChartModule,
     MessageModule,
+    CheckboxModule,
   ],
   exports: [
     BadgeModule,
@@ -75,6 +77,7 @@ import { ChartModule } from 'primeng/chart'
     DataViewModule,
     ChartModule,
     MessageModule,
+    CheckboxModule,
   ],
 })
 export class PrimeNgModule {}

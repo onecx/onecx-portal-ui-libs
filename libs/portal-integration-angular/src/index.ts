@@ -56,6 +56,7 @@ export * from './lib/core/components/search-config/search-config.component'
 export * from './lib/core/components/loading-indicator/loading-indicator.component'
 export * from './lib/core/components/content-container/content-container.component'
 export * from './lib/core/components/content/content.component'
+export * from './lib/core/components/create-or-edit-search-config-dialog/create-or-edit-search-config-dialog.component'
 
 // services
 export * from './lib/services/app.menu.service'

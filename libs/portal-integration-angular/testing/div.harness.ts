@@ -27,10 +27,14 @@ export class DivHarness extends ComponentHarness {
 
   async getClassList() {
     const host = await this.host()
-    const attributeString = await host.getAttribute("class");
-    if(attributeString) {
-        return attributeString.trim().split(" ")
+    const attributeString = await host.getAttribute('class')
+    if (attributeString) {
+      return attributeString.trim().split(' ')
     }
     return []
+  }
+
+  async click(): Promise<void> {
+    await (await this.host()).click()
   }
 }

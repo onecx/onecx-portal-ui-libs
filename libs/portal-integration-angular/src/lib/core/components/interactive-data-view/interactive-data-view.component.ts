@@ -59,6 +59,7 @@ export class InteractiveDataViewComponent implements OnInit {
   @Input() tablePaginator = true
   @Input() page = 0
   @Input() selectedRows: Row[] = []
+  @Input() displayedColumns: DataTableColumn[] = []
   @ContentChild('tableCell') tableCell: TemplateRef<any> | undefined
   @ContentChild('tableDateCell') tableDateCell: TemplateRef<any> | undefined
   @ContentChild('tableRelativeDateCell') tableRelativeDateCell: TemplateRef<any> | undefined
@@ -78,8 +79,8 @@ export class InteractiveDataViewComponent implements OnInit {
   @Output() dataViewLayoutChange = new EventEmitter<'grid' | 'list' | 'table'>()
   @Output() displayedColumnsChange = new EventEmitter<DataTableColumn[]>()
   @Output() selectionChanged: EventEmitter<Row[]> = new EventEmitter()
+
   @Output() pageChanged: EventEmitter<number> = new EventEmitter()
-  displayedColumns: DataTableColumn[] = []
   selectedGroupKey = ''
   isDeleteItemObserved: boolean | undefined
   isViewItemObserved: boolean | undefined

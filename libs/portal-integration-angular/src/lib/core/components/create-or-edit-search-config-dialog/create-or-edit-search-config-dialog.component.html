@@ -1,0 +1,27 @@
+<form [formGroup]="searchConfigFormGroup" [class]="'searchConfigDialog'">
+  <div>
+    <input
+      type="text"
+      pInputText
+      formControlName="searchConfigName"
+      id="searchConfigName"
+      [placeholder]="placeHolderKey | translate"
+    />
+  </div>
+
+  <div>
+    <p-checkbox formControlName="saveInputValues" [value]="saveInputValues" [binary]="true" inputId="saveInputValuesId">
+    </p-checkbox>
+    <label for="saveInputValuesId">{{ ("OCX_SEARCH_CONFIG.SAVE_INPUT_FIELDS_OPTION" | translate) }}</label>
+  </div>
+
+  <div>
+    <p-checkbox
+      formControlName="saveColumns"
+      [value]="saveColumns"
+      [binary]="true"
+      inputId="saveColumnsId"
+    ></p-checkbox>
+    <label for="saveColumnsId">{{ ("OCX_SEARCH_CONFIG.SAVE_COLUMNS_OPTION" | translate) }}</label>
+  </div>
+</form>
