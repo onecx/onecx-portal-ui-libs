@@ -64,17 +64,15 @@ export class GroupByCountDiagramComponent implements OnInit {
             ? (acc.find((e: { label: any }) => e.label === current).value++, acc)
             : [...acc, { label: current, value: 1 }]
         }, [])
-        if (columnType === ColumnType.TRANSLATION_KEY) {
-          return this.translateService
-            .get(occurrences.map((o: { label: any }) => o.label))
-            .pipe(
-              map((translations: { [x: string]: any }) =>
-                occurrences.map((o: { label: string; value: any }) => ({
-                  label: translations[o.label],
-                  value: o.value,
-                }))
-              )
+        if (columnType === ColumnType.TRANSLATION_KEY && occurrences.length > 0) {
+          return this.translateService.get(occurrences.map((o: { label: any }) => o.label)).pipe(
+            map((translations: { [x: string]: any }) =>
+              occurrences.map((o: { label: string; value: any }) => ({
+                label: translations[o.label],
+                value: o.value,
+              }))
             )
+          )
         } else {
           return of(occurrences)
         }
