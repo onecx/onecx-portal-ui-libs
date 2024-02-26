@@ -15,9 +15,9 @@ export interface DiagramLayouts {
 }
 
 const allDiagramTypes: DiagramLayouts[] = [
-  { icon: PrimeIcons.CHART_PIE, layout: DiagramType.PIE, titleKey: 'OCX_DIAGRAM.DIAGRAM_TYPE.PIE' },
-  { icon: PrimeIcons.BARS, layout: DiagramType.HORIZONTAL_BAR, titleKey: 'OCX_DIAGRAM.DIAGRAM_TYPE.HORIZONTAL_BAR' },
-  { icon: PrimeIcons.CHART_BAR, layout: DiagramType.VERTICAL_BAR, titleKey: 'OCX_DIAGRAM.DIAGRAM_TYPE.VERTICAL_BAR' },
+  { icon: PrimeIcons.CHART_PIE, layout: DiagramType.PIE, titleKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.PIE' },
+  { icon: PrimeIcons.BARS, layout: DiagramType.HORIZONTAL_BAR, titleKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.HORIZONTAL_BAR' },
+  { icon: PrimeIcons.CHART_BAR, layout: DiagramType.VERTICAL_BAR, titleKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.VERTICAL_BAR' },
 ]
 
 @Component({

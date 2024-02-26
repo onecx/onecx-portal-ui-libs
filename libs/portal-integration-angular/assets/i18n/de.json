@@ -84,10 +84,10 @@
   "OCX_DIAGRAM": {
     "SUM": "Gesamtanzahl",
     "NO_DATA": "Es sind keine Daten vorhanden",
-    "DIAGRAM_TYPE": {
-      "PIE": "Kuchendiagramm",
-      "HORIZONTAL_BAR": "Horizontales Balkendiagramm",
-      "VERTICAL_BAR": "Vertikales Balkendiagramm"
+    "SWITCH_DIAGRAM_TYPE": {
+      "PIE": "Zu Kuchendiagramm wechseln",
+      "HORIZONTAL_BAR": "Zu horizontalem Balkendiagramm wechseln",
+      "VERTICAL_BAR": "Zu vertikalem Balkendiagramm wechseln"
     }
   },
   "OCX_PORTAL_VIEWPORT": {
