@@ -13,6 +13,7 @@ import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
 import { ColumnType } from '../../../model/column-type.model'
 import { DiagramComponent } from '../diagram/diagram.component'
 import { GroupByCountDiagramComponent } from './group-by-count-diagram.component'
+import { DiagramType } from '../../../model/diagram-type'
 
 describe('GroupByCountDiagramComponent', () => {
   let translateService: TranslateService
@@ -194,5 +195,23 @@ describe('GroupByCountDiagramComponent', () => {
     const displayedText = await diagram.getSumLabel()
     const definedSumKeyTranslation = translateService.instant(definedSumKey)
     expect(displayedText).toEqual(definedSumKeyTranslation)
+  })
+
+  it('should not display a selectButton on the diagram by default', async () => {
+    expect(component.supportedDiagramTypes).toEqual([])
+
+    const diagram = await loader.getHarness(DiagramHarness)
+    const diagramTypeSelectButton = await diagram.getDiagramTypeSelectButton()
+
+    expect(diagramTypeSelectButton).toBe(null)
+  })
+
+  it('should display a selectButton on the diagram if supportedDiagramTypes is specified', async () => {
+    component.supportedDiagramTypes = [DiagramType.PIE, DiagramType.HORIZONTAL_BAR]
+    
+    const diagram = await loader.getHarness(DiagramHarness)
+    const diagramTypeSelectButton = await diagram.getDiagramTypeSelectButton()
+
+    expect(diagramTypeSelectButton).toBeTruthy()
   })
 })

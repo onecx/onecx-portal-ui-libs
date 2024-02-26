@@ -88,7 +88,12 @@
   },
   "OCX_DIAGRAM": {
     "SUM": "Total",
-    "NO_DATA": "There is no data available"
+    "NO_DATA": "There is no data available",
+    "SWITCH_DIAGRAM_TYPE": {
+      "PIE": "Switch to pie chart",
+      "HORIZONTAL_BAR": "Switch to horizontal bar chart",
+      "VERTICAL_BAR": "Switch to vertical bar chart"
+    }
   },
   "OCX_PORTAL_VIEWPORT": {
     "SUCCESS": "Success!",
