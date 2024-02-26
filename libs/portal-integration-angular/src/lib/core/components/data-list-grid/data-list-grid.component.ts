@@ -9,7 +9,7 @@ import {
   LOCALE_ID,
   OnInit,
   Output,
-  TemplateRef
+  TemplateRef,
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
@@ -60,6 +60,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   @Input() editMenuItemKey: string | undefined
   @Input() deleteMenuItemKey: string | undefined
   @Input() paginator = true
+  @Input() page = 0
   @Input() columns: DataTableColumn[] = []
   @Input() name = ''
   @Input()
@@ -77,9 +78,9 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     rows: '{rows}',
     first: '{first}',
     last: '{last}',
-    totalRecords: '{totalRecords}'
+    totalRecords: '{totalRecords}',
   }
-  
+
   _data$ = new BehaviorSubject<RowListGridData[]>([])
   @Input()
   get data(): RowListGridData[] {
@@ -155,6 +156,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   @Output() viewItem = new EventEmitter<ListGridData>()
   @Output() editItem = new EventEmitter<ListGridData>()
   @Output() deleteItem = new EventEmitter<ListGridData>()
+  @Output() pageChanged = new EventEmitter<number>()
 
   get viewItemObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
@@ -296,5 +298,11 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
 
   resolveFieldData(object: any, key: any) {
     return ObjectUtils.resolveFieldData(object, key)
+  }
+
+  onPageChange(event: any) {
+    const page = event.first / event.rows
+    this.page = page
+    this.pageChanged.emit(page)
   }
 }

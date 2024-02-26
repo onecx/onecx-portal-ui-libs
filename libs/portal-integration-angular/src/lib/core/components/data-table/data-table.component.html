@@ -81,6 +81,8 @@
   [value]="(displayedRows$ | async) || []"
   responsiveLayout="scroll"
   [paginator]="paginator"
+  [first]="page * pageSize"
+  (onPage)="onPageChange($event)"
   [rows]="pageSize"
   [showCurrentPageReport]="true"
   currentPageReportTemplate="{{ (totalRecordsOnServer ? currentPageShowingWithTotalOnServerKey : currentPageShowingKey) | translate:params }}"

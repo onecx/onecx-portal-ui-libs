@@ -8,7 +8,7 @@ import { TranslateTestingModule } from 'ngx-translate-testing'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { DataTableComponent } from '../data-table/data-table.component'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { DataTableHarness, DataViewHarness } from '../../../../../testing'
+import { DataListGridHarness, DataTableHarness, DataViewHarness } from '../../../../../testing'
 import { ColumnType } from '../../../model/column-type.model'
 import { PortalCoreModule } from '../../portal-core.module'
 
@@ -16,6 +16,19 @@ describe('DataViewComponent', () => {
   let component: DataViewComponent
   let fixture: ComponentFixture<DataViewComponent>
   let dataViewHarness: DataViewHarness
+
+  const ENGLISH_LANGUAGE = 'en'
+  const ENGLISH_TRANSLATIONS = {
+    OCX_DATA_TABLE: {
+      SHOWING: '{{first}} - {{last}} of {{totalRecords}}',
+      SHOWING_WITH_TOTAL_ON_SERVER: '{{first}} - {{last}} of {{totalRecords}} ({{totalRecordsOnServer}})',
+      ALL: 'All',
+    },
+  }
+
+  const TRANSLATIONS = {
+    [ENGLISH_LANGUAGE]: ENGLISH_TRANSLATIONS,
+  }
 
   const mockData = [
     {
@@ -177,7 +190,13 @@ describe('DataViewComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DataViewComponent, DataListGridComponent, DataTableComponent],
-      imports: [DataViewModule, MockAuthModule, TranslateTestingModule.withTranslations({}), HttpClientTestingModule, PortalCoreModule],
+      imports: [
+        DataViewModule,
+        MockAuthModule,
+        TranslateTestingModule.withTranslations(TRANSLATIONS),
+        HttpClientTestingModule,
+        PortalCoreModule,
+      ],
     }).compileComponents()
 
     fixture = TestBed.createComponent(DataViewComponent)
@@ -205,21 +224,21 @@ describe('DataViewComponent', () => {
       expect(await dataTable.rowSelectionIsEnabled()).toEqual(false)
     })
 
-    it('should show a table with selection checkboxes if the parent binds to the event emitter',async () => {      
+    it('should show a table with selection checkboxes if the parent binds to the event emitter', async () => {
       expect(dataTable).toBeTruthy()
       expect(await dataTable.rowSelectionIsEnabled()).toEqual(false)
       component.selectionChanged.subscribe()
-      expect(await dataTable.rowSelectionIsEnabled()).toEqual(true);
+      expect(await dataTable.rowSelectionIsEnabled()).toEqual(true)
     })
 
     it('should render an unpinnend action column on the right side of the table by default', async () => {
       component.viewItem.subscribe((event) => console.log(event))
-  
+
       expect(component.frozenActionColumn).toBe(false)
       expect(component.actionColumnPosition).toBe('right')
       expect(await dataTable.getActionColumnHeader('left')).toBe(null)
       expect(await dataTable.getActionColumn('left')).toBe(null)
-  
+
       const rightActionColumnHeader = await dataTable.getActionColumnHeader('right')
       const rightActionColumn = await dataTable.getActionColumn('right')
       expect(rightActionColumnHeader).toBeTruthy()
@@ -227,16 +246,16 @@ describe('DataViewComponent', () => {
       expect(await dataTable.columnIsFrozen(rightActionColumnHeader)).toBe(false)
       expect(await dataTable.columnIsFrozen(rightActionColumn)).toBe(false)
     })
-  
+
     it('should render an pinned action column on the specified side of the table', async () => {
       component.viewItem.subscribe((event) => console.log(event))
-  
+
       component.frozenActionColumn = true
       component.actionColumnPosition = 'left'
-  
+
       expect(await dataTable.getActionColumnHeader('right')).toBe(null)
       expect(await dataTable.getActionColumn('right')).toBe(null)
-  
+
       const leftActionColumnHeader = await dataTable.getActionColumnHeader('left')
       const leftActionColumn = await dataTable.getActionColumn('left')
       expect(leftActionColumnHeader).toBeTruthy()
@@ -244,5 +263,50 @@ describe('DataViewComponent', () => {
       expect(await dataTable.columnIsFrozen(leftActionColumnHeader)).toBe(true)
       expect(await dataTable.columnIsFrozen(leftActionColumn)).toBe(true)
     })
+  })
+
+  it('should stay on the same page after layout change', async () => {
+    component.data = [
+      ...component.data,
+      {
+        id: 'mock1',
+        imagePath: '/path/to/image',
+      },
+      {
+        id: 'mock2',
+        imagePath: '/path/to/image',
+      },
+      {
+        id: 'mock3',
+        imagePath: '/path/to/image',
+      },
+      {
+        id: 'mock4',
+        imagePath: '/path/to/image',
+      },
+      {
+        id: 'mock5',
+        imagePath: '/path/to/image',
+      },
+      {
+        id: 'mock6',
+        imagePath: '/path/to/image',
+      },
+    ]
+
+    dataViewHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataViewHarness)
+    const dataList = await dataViewHarness.getHarness(DataListGridHarness)
+    const dataListPaginator = await dataList.getPaginator()
+    let dataListRaport = await dataListPaginator.getCurrentPageReportText()
+    expect(dataListRaport).toEqual('1 - 10 of 11')
+    await dataListPaginator.clickNextPage()
+    dataListRaport = await dataListPaginator.getCurrentPageReportText()
+    expect(dataListRaport).toEqual('11 - 11 of 11')
+
+    component.layout = 'table'
+    const dataTable = await dataViewHarness.getHarness(DataTableHarness)
+    const dataTablePaginator = await dataTable.getPaginator()
+    const dataTableRaport = await dataTablePaginator.getCurrentPageReportText()
+    expect(dataTableRaport).toEqual('11 - 11 of 11')
   })
 })

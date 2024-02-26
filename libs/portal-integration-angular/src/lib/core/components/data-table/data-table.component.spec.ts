@@ -2,43 +2,43 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { DataTableComponent, Row } from './data-table.component'
-import { PrimeNgModule } from '../../primeng.module';
-import { TranslateTestingModule } from 'ngx-translate-testing';
-import { ColumnType } from '../../../model/column-type.model';
-import { PortalCoreModule } from '../../portal-core.module';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { DataTableHarness, PTableCheckboxHarness } from '../../../../../testing';
+import { PrimeNgModule } from '../../primeng.module'
+import { TranslateTestingModule } from 'ngx-translate-testing'
+import { ColumnType } from '../../../model/column-type.model'
+import { PortalCoreModule } from '../../portal-core.module'
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
+import { DataTableHarness, PTableCheckboxHarness } from '../../../../../testing'
 
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>
   let component: DataTableComponent
   let translateService: TranslateService
   let dataTable: DataTableHarness
-  let unselectedCheckBoxes: PTableCheckboxHarness[];
-  let selectedCheckBoxes: PTableCheckboxHarness[];
+  let unselectedCheckBoxes: PTableCheckboxHarness[]
+  let selectedCheckBoxes: PTableCheckboxHarness[]
 
-  const ENGLISH_LANGUAGE = 'en';
+  const ENGLISH_LANGUAGE = 'en'
   const ENGLISH_TRANSLATIONS = {
     OCX_DATA_TABLE: {
-      SHOWING: "{{first}} - {{last}} of {{totalRecords}}",
-      SHOWING_WITH_TOTAL_ON_SERVER: "{{first}} - {{last}} of {{totalRecords}} ({{totalRecordsOnServer}})",
-      ALL: "All"
-    }
-  };
+      SHOWING: '{{first}} - {{last}} of {{totalRecords}}',
+      SHOWING_WITH_TOTAL_ON_SERVER: '{{first}} - {{last}} of {{totalRecords}} ({{totalRecordsOnServer}})',
+      ALL: 'All',
+    },
+  }
 
-  const GERMAN_LANGUAGE = 'de';
+  const GERMAN_LANGUAGE = 'de'
   const GERMAN_TRANSLATIONS = {
     OCX_DATA_TABLE: {
-      SHOWING: "{{first}} - {{last}} von {{totalRecords}}",
-      SHOWING_WITH_TOTAL_ON_SERVER: "{{first}} - {{last}} von {{totalRecords}} ({{totalRecordsOnServer}})",
-      ALL: "Alle"
-    }
-  };
+      SHOWING: '{{first}} - {{last}} von {{totalRecords}}',
+      SHOWING_WITH_TOTAL_ON_SERVER: '{{first}} - {{last}} von {{totalRecords}} ({{totalRecordsOnServer}})',
+      ALL: 'Alle',
+    },
+  }
 
   const TRANSLATIONS = {
     [ENGLISH_LANGUAGE]: ENGLISH_TRANSLATIONS,
-    [GERMAN_LANGUAGE]: GERMAN_TRANSLATIONS
-  };
+    [GERMAN_LANGUAGE]: GERMAN_TRANSLATIONS,
+  }
 
   const mockData = [
     {
@@ -199,7 +199,13 @@ describe('DataTableComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DataTableComponent],
-      imports: [PrimeNgModule, BrowserAnimationsModule, TranslateModule.forRoot(), TranslateTestingModule.withTranslations(TRANSLATIONS), PortalCoreModule],
+      imports: [
+        PrimeNgModule,
+        BrowserAnimationsModule,
+        TranslateModule.forRoot(),
+        TranslateTestingModule.withTranslations(TRANSLATIONS),
+        PortalCoreModule,
+      ],
     }).compileComponents()
 
     fixture = TestBed.createComponent(DataTableComponent)
@@ -288,7 +294,7 @@ describe('DataTableComponent', () => {
       expect(await dataTable.rowSelectionIsEnabled()).toEqual(false)
     })
 
-    it('should show a table with selection checkboxes if the parent binds to the event emitter',async () => {      
+    it('should show a table with selection checkboxes if the parent binds to the event emitter', async () => {
       expect(await dataTable.rowSelectionIsEnabled()).toEqual(false)
       component.selectionChanged.subscribe()
       expect(await dataTable.rowSelectionIsEnabled()).toEqual(true)
@@ -301,7 +307,7 @@ describe('DataTableComponent', () => {
       selectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('checked')
       expect(unselectedCheckBoxes.length).toBe(5)
       expect(selectedCheckBoxes.length).toBe(0)
-      component.selectedRows = mockData.slice(0,2)
+      component.selectedRows = mockData.slice(0, 2)
 
       unselectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('unchecked')
       selectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('checked')
@@ -311,7 +317,7 @@ describe('DataTableComponent', () => {
   })
 
   it('should emit all selected elements when checkbox is clicked', async () => {
-    let selectionChangedEvent: Row[] | undefined;
+    let selectionChangedEvent: Row[] | undefined
 
     component.selectionChanged.subscribe((event) => (selectionChangedEvent = event))
     unselectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('unchecked')

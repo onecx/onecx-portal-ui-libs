@@ -61,6 +61,8 @@
     [additionalActions]="additionalActions"
     [listGridPaginator]="listGridPaginator"
     [tablePaginator]="tablePaginator"
+    [page]="page"
+    (pageChanged)="onPageChange($event)"
     [selectedRows]="selectedRows"
     [frozenActionColumn]="frozenActionColumn"
     [actionColumnPosition]="actionColumnPosition"
