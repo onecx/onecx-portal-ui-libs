@@ -124,8 +124,8 @@ export class PageHeaderComponent implements OnInit, OnChanges {
   ) {
     this.breadcrumbs = breadcrumbs
     this.home$ = concat(
-      of({ icon: 'pi pi-home', routerLink: '/' }),
-      this.appStateService.currentPortal$.pipe(map((portal) => ({ icon: 'pi pi-home', routerLink: portal.baseUrl })))
+      of({ icon: PrimeIcons.HOME, routerLink: '/' }),
+      this.appStateService.currentPortal$.pipe(map((portal) => ({ icon: PrimeIcons.HOME, routerLink: portal.baseUrl })))
     )
   }
   ngOnChanges(changes: SimpleChanges): void {
