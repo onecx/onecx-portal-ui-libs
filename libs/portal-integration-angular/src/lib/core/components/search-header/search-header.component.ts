@@ -40,7 +40,7 @@ export class SearchHeaderComponent implements AfterViewInit {
 
   @Output() searched: EventEmitter<any> = new EventEmitter()
   @Output() resetted: EventEmitter<any> = new EventEmitter()
-  @Output() selectedSearchConfig: EventEmitter<SearchConfig> = new EventEmitter()
+  @Output() selectedSearchConfigChanged: EventEmitter<SearchConfig> = new EventEmitter()
   @Output() viewModeChanged: EventEmitter<string> = new EventEmitter()
   @ContentChild('additionalToolbarContent')
   additionalToolbarContent: TemplateRef<any> | undefined
@@ -105,7 +105,7 @@ export class SearchHeaderComponent implements AfterViewInit {
     }
   }
 
-  confirmSearchConfig(event: SearchConfig) {
-    this.selectedSearchConfig?.emit(event)
+  confirmSearchConfig(searchConfig: SearchConfig) {
+    this.selectedSearchConfigChanged?.emit(searchConfig)
   }
 }

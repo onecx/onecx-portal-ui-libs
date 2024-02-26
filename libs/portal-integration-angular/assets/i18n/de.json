@@ -17,7 +17,7 @@
     }
   },
   "OCX_SEARCH_CONFIG": {
-    "PLACEHOLDER": "Bitte geben Sie den Namen der Search Config ein.",
+    "PLACEHOLDER": "Bitte geben Sie den Namen der Suchkonfiguration an.",
     "SAVE_COLUMNS_OPTION": "Möchten Sie die angezeigten Spalten speichern?",
     "SAVE_INPUT_FIELDS_OPTION": "Möchten Sie die Werte aus den Suchfeldern speichern?"
   },

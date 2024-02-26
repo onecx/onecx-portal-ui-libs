@@ -4,7 +4,7 @@
   [actions]="headerActions"
 >
   <ng-template #additionalToolbarContent>
-    <ocx-search-config [searchConfigs]="searchConfigs" (selectedSearchConfig)="confirmSearchConfig($event)">
+    <ocx-search-config [searchConfigs]="searchConfigs" (selectedSearchConfigChanged)="confirmSearchConfig($event)">
     </ocx-search-config>
     <ng-container *ngIf="_additionalToolbarContent" [ngTemplateOutlet]="_additionalToolbarContent"></ng-container>
   </ng-template>

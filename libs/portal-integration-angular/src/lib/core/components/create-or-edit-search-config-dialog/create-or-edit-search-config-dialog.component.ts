@@ -27,7 +27,7 @@ export class CreateOrEditSearchConfigDialogComponent
   @Input() searchConfigName: string | undefined
   @Input() saveInputValues: boolean | undefined
   @Input() saveColumns: boolean | undefined
-  @Input() placeHolderKey = 'OCX_SEARCH_CONFIG.PLACEHOLDER'
+  placeHolderKey = 'OCX_SEARCH_CONFIG.PLACEHOLDER'
   @Output() primaryButtonEnabled: EventEmitter<boolean> = new EventEmitter()
   searchConfigFormGroup: FormGroup = new FormGroup({
     searchConfigName: new FormControl<string>(''),
