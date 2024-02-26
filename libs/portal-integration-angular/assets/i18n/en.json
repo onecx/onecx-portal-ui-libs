@@ -64,15 +64,27 @@
   },
   "OCX_SEARCH_HEADER": {
     "TOGGLE_BUTTON": {
-      "SIMPLE": "Simple",
-      "ADVANCED": "Advanced"
+      "SIMPLE": {
+        "TEXT": "Simple",
+        "ARIA_LABEL": "Switch to simple search criteria"
+      },
+      "ADVANCED": {
+        "TEXT": "Advanced",
+        "ARIA_LABEL": "Switch to advanced search criteria"
+      }
     },
     "OCX_SEARCH_CONFIG": {
       "DROPDOWN_DEFAULT": "Pick predefined template"
     },
     "HEADLINE": "Search",
-    "RESET_BUTTON_TEXT": "Reset",
-    "SEARCH_BUTTON_TEXT": "Search",
+    "RESET_BUTTON": {
+      "TEXT": "Reset",
+      "ARIA_LABEL": "Reset search criteria"
+    },
+    "SEARCH_BUTTON": {
+      "TEXT": "Search",
+      "ARIA_LABEL": "Search"
+    },
     "EXPORT": "Export all events"
   },
   "OCX_PAGE_HEADER": {

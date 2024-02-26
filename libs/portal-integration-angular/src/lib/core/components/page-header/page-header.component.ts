@@ -40,6 +40,7 @@ export interface Action {
   // Note: This currently doesn't work with dynamic values, since a passed in Action is just a copy of the original object.
   // As a workaround, you can manually update/replace the passed in Action if you wish to update a showCondition
   showCondition?: boolean
+  ariaLabel?: string
 }
 
 export interface ObjectDetailItem {
