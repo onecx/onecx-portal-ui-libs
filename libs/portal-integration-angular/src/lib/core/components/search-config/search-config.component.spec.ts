@@ -30,7 +30,7 @@ describe('SearchConfigComponent', () => {
     },
   ]
 
-  const searchConfigsEntries: SearchConfig[] = [
+  const searchConfigs: SearchConfig[] = [
     {
       id: '01',
       name: 'Basic search config',
@@ -82,7 +82,7 @@ describe('SearchConfigComponent', () => {
 
     fixture = TestBed.createComponent(SearchConfigComponent)
     component = fixture.componentInstance
-    component.searchConfigs = searchConfigsEntries
+    component.searchConfigs = searchConfigs
     translateService = TestBed.inject(TranslateService)
     translateService.setDefaultLang('en')
     translateService.use('en')
@@ -110,7 +110,7 @@ describe('SearchConfigComponent', () => {
     const searchConfigHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, SearchConfigHarness)
     const dropdown = await searchConfigHarness.getSearchConfigDropdown()
     const items = await dropdown?.getDropdownItems()
-    expect(items?.length).toEqual(searchConfigsEntries.length)
+    expect(items?.length).toEqual(searchConfigs.length)
   })
 
   it('should display no dropdown if the search config is empty', async () => {
@@ -124,14 +124,14 @@ describe('SearchConfigComponent', () => {
     const searchConfigHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, SearchConfigHarness)
     const dropdown = await searchConfigHarness.getSearchConfigDropdown()
     const selectedDropdownItem = await dropdown?.selectedDropdownItemText(0)
-    expect(selectedDropdownItem).toEqual(searchConfigsEntries[0].name)
+    expect(selectedDropdownItem).toEqual(searchConfigs[0].name)
   })
 
   it('should display the values in the fields after selecting the fist hard coded search config', async () => {
     const searchConfigHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, SearchConfigHarness)
     const dropdown = await searchConfigHarness.getSearchConfigDropdown()
     const selectedDropdownItem = await dropdown?.selectedDropdownItemText(1)
-    expect(selectedDropdownItem).toEqual(searchConfigsEntries[1].name)
+    expect(selectedDropdownItem).toEqual(searchConfigs[1].name)
   })
 
   it('should display the values in the fields correctly after selecting the fist search config and then selecting the second search config', async () => {
@@ -139,7 +139,7 @@ describe('SearchConfigComponent', () => {
     const dropdown = await searchConfigHarness.getSearchConfigDropdown()
     let selectedDropdownItem = await dropdown?.selectedDropdownItemText(0)
     selectedDropdownItem = await dropdown?.selectedDropdownItemText(1)
-    expect(selectedDropdownItem).toEqual(searchConfigsEntries[1].name)
+    expect(selectedDropdownItem).toEqual(searchConfigs[1].name)
   })
 
   it('should have the option to remove the selection', async () => {

@@ -1,3 +1,19 @@
+## [4.8.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.7.0...v4.8.0) (2024-02-26)
+
+
+### Features
+
+* allow dynamically switching diagram type ([#144](https://github.com/onecx/onecx-portal-ui-libs/issues/144)) ([ac0e2e0](https://github.com/onecx/onecx-portal-ui-libs/commit/ac0e2e051f7dee12e45561bfda1cebf642d0504c))
+* save and edit search config component ([#139](https://github.com/onecx/onecx-portal-ui-libs/issues/139)) ([635339a](https://github.com/onecx/onecx-portal-ui-libs/commit/635339aae8dedfa96d6a77798de591ef4ae49829))
+
+
+### Bug Fixes
+
+* check length of occurences and ([#141](https://github.com/onecx/onecx-portal-ui-libs/issues/141)) ([782cb27](https://github.com/onecx/onecx-portal-ui-libs/commit/782cb27643a32c7fcf5f9e14a3a4876cae4972e5))
+* current page should persist between layout changes ([#142](https://github.com/onecx/onecx-portal-ui-libs/issues/142)) ([e023add](https://github.com/onecx/onecx-portal-ui-libs/commit/e023adda69ae2a90cb4a5b82ba87fdb60eba0670))
+* empty message allignment to amount of columns ([#140](https://github.com/onecx/onecx-portal-ui-libs/issues/140)) ([3459c67](https://github.com/onecx/onecx-portal-ui-libs/commit/3459c676903225d1356ee7116951f3e25c60feb1))
+* removed conflicting style ([#137](https://github.com/onecx/onecx-portal-ui-libs/issues/137)) ([7ddcd17](https://github.com/onecx/onecx-portal-ui-libs/commit/7ddcd17c0e025708353d8a525bb07ac13500cb6d))
+
 ## [4.7.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.6.0...v4.7.0) (2024-02-21)
 
 
