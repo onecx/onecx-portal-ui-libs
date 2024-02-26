@@ -71,11 +71,11 @@
     "TOGGLE_BUTTON": {
       "SIMPLE": {
         "TEXT": "Einfach",
-        "ARIA_LABEL": "Switch to simple search criteria"
+        "ARIA_LABEL": "Zu einfachen Suchkriterien wechseln"
       },
       "ADVANCED": {
         "TEXT": "Erweitert",
-        "ARIA_LABEL": "Switch to advanced search criteria"
+        "ARIA_LABEL": "Zu erweiterten Suchkriterien wechseln"
       }
     },
     "OCX_SEARCH_CONFIG": {
@@ -84,11 +84,11 @@
     "HEADLINE": "Suche",
     "RESET_BUTTON": {
       "TEXT": "Zurücksetzen",
-      "ARIA_LABEL": "Reset search criteria"
+      "ARIA_LABEL": "Suchkriterien zurücksetzen"
     },
     "SEARCH_BUTTON": {
       "TEXT": "Suchen",
-      "ARIA_LABEL": "Search"
+      "ARIA_LABEL": "Suchen"
     },
     "RESET_BUTTON_TEXT": "Zurücksetzen",
     "SEARCH_BUTTON_TEXT": "Suchen",
