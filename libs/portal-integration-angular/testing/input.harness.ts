@@ -20,6 +20,9 @@ export class InputHarness extends ComponentHarness {
   async getValue(): Promise<string | null> {
     return await (await this.host()).getProperty<string>('value')
   }
+  async getChecked(): Promise<boolean> {
+    return await (await this.host()).getProperty<boolean>('checked')
+  }
 
   async setValue(value: string | Date): Promise<void> {
     if (value instanceof Date) {
@@ -33,6 +36,10 @@ export class InputHarness extends ComponentHarness {
         })} ${value.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
       )
     } else {
+      await (await this.host()).clear()
+      if (value) {
+        await (await this.host()).sendKeys(value)
+      }
       await (await this.host()).setInputValue(value)
     }
   }
