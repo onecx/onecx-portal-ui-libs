@@ -85,7 +85,7 @@
     "SUM": "Gesamtanzahl",
     "NO_DATA": "Es sind keine Daten vorhanden",
     "SWITCH_DIAGRAM_TYPE": {
-      "PIE": "Zu Kuchendiagramm wechseln",
+      "PIE": "Zu Tortendiagramm wechseln",
       "HORIZONTAL_BAR": "Zu horizontalem Balkendiagramm wechseln",
       "VERTICAL_BAR": "Zu vertikalem Balkendiagramm wechseln"
     }
