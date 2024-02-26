@@ -87,6 +87,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   @Input() viewPermission: string | undefined
   @Input() editPermission: string | undefined
   @Input() paginator = true
+  @Input() page = 0
   @Input()
   get totalRecordsOnServer(): number | undefined {
     return this.params['totalRecordsOnServer'] ? Number(this.params['totalRecordsOnServer']) : undefined
@@ -150,6 +151,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   @Output() editTableRow = new EventEmitter<Row>()
   @Output() deleteTableRow = new EventEmitter<Row>()
   @Output() selectionChanged = new EventEmitter<Row[]>()
+  @Output() pageChanged = new EventEmitter<number>()
 
   displayedRows$: Observable<unknown[]> | undefined
   selectedRows$: Observable<unknown[]> | undefined
@@ -312,5 +314,11 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
   onSelectionChange(event: Row[]) {
     this.selectionChanged.emit(event)
+  }
+
+  onPageChange(event: any) {
+    const page = event.first / event.rows
+    this.page = page
+    this.pageChanged.emit(page)
   }
 }
