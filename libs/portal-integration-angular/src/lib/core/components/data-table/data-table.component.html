@@ -11,10 +11,9 @@
       <div class="icon-button-row-wrapper">
         <ng-container *ngIf="viewTableRowObserved">
           <button
-            id="viewTableRowButton"
             *ocxIfPermission="viewPermission"
             pButton
-            class="p-button-rounded p-button-text"
+            class="p-button-rounded p-button-text viewTableRowButton"
             title="{{ 'OCX_DATA_TABLE.ACTIONS.VIEW' | translate }}"
             [attr.aria-label]="'OCX_DATA_TABLE.ACTIONS.VIEW' | translate"
             icon="pi pi-eye"
@@ -23,10 +22,9 @@
         </ng-container>
         <ng-container *ngIf="editTableRowObserved">
           <button
-            id="editTableRowButton"
             *ocxIfPermission="editPermission"
             pButton
-            class="p-button-rounded p-button-text"
+            class="p-button-rounded p-button-text editTableRowButton"
             title="{{ 'OCX_DATA_TABLE.ACTIONS.EDIT' | translate }}"
             [attr.aria-label]="'OCX_DATA_TABLE.ACTIONS.EDIT' | translate"
             icon="pi pi-pencil"
@@ -35,10 +33,9 @@
         </ng-container>
         <ng-container *ngIf="deleteTableRowObserved">
           <button
-            id="deleteTableRowButton"
             *ocxIfPermission="deletePermission"
             pButton
-            class="p-button-rounded p-button-text p-button-danger"
+            class="p-button-rounded p-button-text p-button-danger deleteTableRowButton"
             title="{{ 'OCX_DATA_TABLE.ACTIONS.DELETE' | translate }}"
             [attr.aria-label]="'OCX_DATA_TABLE.ACTIONS.DELETE' | translate"
             icon="pi pi-trash"
@@ -109,9 +106,8 @@
             <span>{{ column.nameKey | translate }}</span>
             <span class="icon-button-header-wrapper">
               <button
-                id="sortButton"
                 *ngIf="column.sortable"
-                class="pi"
+                class="pi sortButton"
                 [class.pi-sort-alt-slash]="(column?.id === sortColumn && sortDirection === 'NONE') || column?.id !== sortColumn"
                 [class.pi-sort-amount-up]="column?.id === sortColumn && sortDirection === 'ASCENDING'"
                 [class.pi-sort-amount-down]="column?.id === sortColumn && sortDirection === 'DESCENDING'"
@@ -119,7 +115,7 @@
                 [title]="(sortIconTitle() | translate)"
               ></button>
               <p-multiSelect
-                id="filterMultiSelect"
+                class="filterMultiSelect"
                 *ngIf="column.filterable"
                 [options]="(currentFilterOptions$ | async) || []"
                 [ngModel]="(currentSelectedFilters$ | async) || []"
