@@ -7,7 +7,7 @@
             pButton 
             *ngIf="dialogData.config.secondaryButtonIncluded"
             class="mx-2"
-            [icon]="dialogData.config.secondaryButtonDetails!.icon !== undefined ? dialogData.config.secondaryButtonDetails!.icon : ''"
+            [icon]="dialogData.config.secondaryButtonDetails!.icon !== undefined ? dialogData.config.secondaryButtonDetails!.icon.toString() : ''"
             (click)="secondaryButtonAction()"
             [label]="dialogData.config.secondaryButtonDetails!.key | translate:dialogData.config.secondaryButtonDetails?.parameters"
             [disabled]="secondaryButtonDisabled$ | async"
@@ -16,7 +16,7 @@
             id="buttonDialogPrimaryButton"
             pButton
             class="mx-2"
-            [icon]="dialogData.config.primaryButtonDetails!.icon !== undefined ? dialogData.config.primaryButtonDetails!.icon : ''"
+            [icon]="dialogData.config.primaryButtonDetails!.icon !== undefined ? dialogData.config.primaryButtonDetails!.icon.toString() : ''"
             (click)="primaryButtonAction()"
             [label]="dialogData.config.primaryButtonDetails!.key | translate:dialogData.config.primaryButtonDetails?.parameters"
             [disabled]="primaryButtonDisabled$ | async"
