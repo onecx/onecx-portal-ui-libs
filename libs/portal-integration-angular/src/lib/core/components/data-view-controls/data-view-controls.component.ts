@@ -5,18 +5,19 @@ import { Column } from '../../../model/column'
 import { ColumnViewTemplate } from '../../../model/column-view-template'
 import { ColumnTogglerComponent } from './column-toggler-component/column-toggler.component'
 import { ViewTemplatePickerComponent } from './view-template-picker/view-template-picker.component'
+import { PrimeIcons } from 'primeng/api'
 
 interface ViewingModes {
-  icon: string
+  icon: PrimeIcons
   mode: string
   title?: string
   titleKey?: string
 }
 
 const ALL_VIEW_MODES = [
-  { icon: 'pi pi-list', mode: 'list', titleKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.LIST' },
-  { icon: 'pi pi-th-large', mode: 'grid', titleKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.GRID' },
-  { icon: 'pi pi-table', mode: 'table', titleKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.TABLE' },
+  { icon: PrimeIcons.LIST, mode: 'list', titleKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.LIST' },
+  { icon: PrimeIcons.TH_LARGE, mode: 'grid', titleKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.GRID' },
+  { icon: PrimeIcons.TABLE, mode: 'table', titleKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.TABLE' },
 ]
 
 interface DefaultColumnDefinition {
@@ -248,7 +249,7 @@ export class DataViewControlsComponent implements OnInit, OnChanges {
       })
   }
 
-  viewModeChange(event: { icon: string; mode: string }): void {
+  viewModeChange(event: { icon: PrimeIcons; mode: string }): void {
     this.dataViewChange.emit(event.mode)
     this.enableToggleColumnButton(event.mode)
   }

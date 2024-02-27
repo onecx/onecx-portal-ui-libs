@@ -8,7 +8,7 @@ import { DiagramType } from '../../../model/diagram-type'
 import { ColorUtils } from '../../utils/colorutils'
 
 export interface DiagramLayouts {
-  icon: string
+  icon: PrimeIcons
   layout: DiagramType
   title?: string
   titleKey: string
