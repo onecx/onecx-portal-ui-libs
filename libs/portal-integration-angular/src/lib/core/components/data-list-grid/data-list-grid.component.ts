@@ -9,11 +9,11 @@ import {
   LOCALE_ID,
   OnInit,
   Output,
-  TemplateRef
+  TemplateRef,
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
-import { MenuItem } from 'primeng/api'
+import { MenuItem, PrimeIcons } from 'primeng/api'
 import { BehaviorSubject, Observable, combineLatest, map, mergeMap } from 'rxjs'
 import { DataAction } from '../../../model/data-action'
 import { DataSortDirection } from '../../../model/data-sort-direction'
@@ -60,6 +60,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   @Input() editMenuItemKey: string | undefined
   @Input() deleteMenuItemKey: string | undefined
   @Input() paginator = true
+  @Input() page = 0
   @Input() columns: DataTableColumn[] = []
   @Input() name = ''
   @Input()
@@ -77,9 +78,9 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     rows: '{rows}',
     first: '{first}',
     last: '{last}',
-    totalRecords: '{totalRecords}'
+    totalRecords: '{totalRecords}',
   }
-  
+
   _data$ = new BehaviorSubject<RowListGridData[]>([])
   @Input()
   get data(): RowListGridData[] {
@@ -155,6 +156,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   @Output() viewItem = new EventEmitter<ListGridData>()
   @Output() editItem = new EventEmitter<ListGridData>()
   @Output() deleteItem = new EventEmitter<ListGridData>()
+  @Output() pageChanged = new EventEmitter<number>()
 
   get viewItemObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
@@ -257,21 +259,21 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
         if (this.viewItem.observed && this.userService.hasPermission(this.viewPermission || '')) {
           menuItems.push({
             label: translations[this.viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW'],
-            icon: 'pi pi-eye',
+            icon: PrimeIcons.EYE,
             command: () => this.viewItem.emit(this.selectedItem),
           })
         }
         if (this.editItem.observed && this.userService.hasPermission(this.editPermission || '')) {
           menuItems.push({
             label: translations[this.editMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.EDIT'],
-            icon: 'pi pi-pencil',
+            icon: PrimeIcons.PENCIL,
             command: () => this.editItem.emit(this.selectedItem),
           })
         }
         if (this.deleteItem.observed && this.userService.hasPermission(this.deletePermission || '')) {
           menuItems.push({
             label: translations[this.deleteMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.DELETE'],
-            icon: 'pi pi-trash',
+            icon: PrimeIcons.TRASH,
             command: () => this.deleteItem.emit(this.selectedItem),
           })
         }
@@ -296,5 +298,11 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
 
   resolveFieldData(object: any, key: any) {
     return ObjectUtils.resolveFieldData(object, key)
+  }
+
+  onPageChange(event: any) {
+    const page = event.first / event.rows
+    this.page = page
+    this.pageChanged.emit(page)
   }
 }

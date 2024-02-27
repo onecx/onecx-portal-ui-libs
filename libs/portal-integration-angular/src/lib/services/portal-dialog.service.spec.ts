@@ -20,6 +20,7 @@ import {
   PortalDialogService,
 } from './portal-dialog.service'
 import { DivHarness, InputHarness, ButtonDialogHarness } from '../../../testing/index'
+import { PrimeIcons } from 'primeng/api'
 
 @Component({
   template: `<h1>BaseTestComponent</h1>`,
@@ -336,33 +337,33 @@ describe('PortalDialogService', () => {
     fixture.componentInstance.show(
       'title',
       'message',
-      { key: 'BUTTON', icon: 'pi pi-times' },
-      { key: 'BUTTON', icon: 'pi pi-trash' }
+      { key: 'BUTTON', icon: PrimeIcons.TIMES },
+      { key: 'BUTTON', icon: PrimeIcons.TRASH }
     )
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
     const primaryButtonLabel = await dialogHarness.getPrimaryButtonLabel()
     const primaryButtonIcon = await dialogHarness.getPrimaryButtonIcon()
     expect(primaryButtonLabel).toBe(translations['BUTTON'])
-    expect(primaryButtonIcon).toBe('pi pi-times')
+    expect(primaryButtonIcon).toBe(PrimeIcons.TIMES)
 
     const secondaryButtonLabel = await dialogHarness.getSecondaryButtonLabel()
     const secondaryButtonIcon = await dialogHarness.getSecondaryButtonIcon()
     expect(secondaryButtonLabel).toBe(translations['BUTTON'])
-    expect(secondaryButtonIcon).toBe('pi pi-trash')
+    expect(secondaryButtonIcon).toBe(PrimeIcons.TRASH)
   })
 
   it('should display dialog with message and icon if DialogMessage provided as string and icon', async () => {
     jest.spyOn(pDialogService, 'open')
 
-    fixture.componentInstance.show('title', { message: 'MESSAGE', icon: 'pi pi-times' }, 'button1', 'button2')
+    fixture.componentInstance.show('title', { message: 'MESSAGE', icon: PrimeIcons.TIMES }, 'button1', 'button2')
 
     const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
     const dialogMessageContentHarness = await dialogHarness.getDialogMessageContent()
     const message = await dialogMessageContentHarness?.getMessageContent()
     expect(message).toEqual(translations['MESSAGE'])
     const icon = await dialogMessageContentHarness?.getIconValue()
-    expect(icon).toContain('pi pi-times')
+    expect(icon).toContain(PrimeIcons.TIMES)
   })
 
   it('should display dialog with message and icon if DialogMessage provided as TranslationKey and icon', async () => {
@@ -370,7 +371,7 @@ describe('PortalDialogService', () => {
 
     fixture.componentInstance.show(
       'title',
-      { message: { key: 'MESSAGE_PARAM', parameters: { val: 'dialogMessageParam' } }, icon: 'pi pi-times' },
+      { message: { key: 'MESSAGE_PARAM', parameters: { val: 'dialogMessageParam' } }, icon: PrimeIcons.TIMES },
       'button1',
       'button2'
     )
@@ -380,7 +381,7 @@ describe('PortalDialogService', () => {
     const message = await dialogMessageContentHarness?.getMessageContent()
     expect(message).toEqual('myMessage dialogMessageParam')
     const icon = await dialogMessageContentHarness?.getIconValue()
-    expect(icon).toContain('pi pi-times')
+    expect(icon).toContain(PrimeIcons.TIMES)
   })
 
   it('should display dialog with custom component if provided', async () => {

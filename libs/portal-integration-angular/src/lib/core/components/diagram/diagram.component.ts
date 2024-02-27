@@ -2,18 +2,34 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angu
 import { TranslateService } from '@ngx-translate/core'
 import { ChartData, ChartOptions } from 'chart.js'
 import * as d3 from 'd3-scale-chromatic'
-import { ColorUtils } from '../../utils/colorutils'
+import { PrimeIcons } from 'primeng/api'
 import { DiagramData } from '../../../model/diagram-data'
 import { DiagramType } from '../../../model/diagram-type'
+import { ColorUtils } from '../../utils/colorutils'
+
+export interface DiagramLayouts {
+  icon: PrimeIcons
+  layout: DiagramType
+  title?: string
+  titleKey: string
+}
+
+const allDiagramTypes: DiagramLayouts[] = [
+  { icon: PrimeIcons.CHART_PIE, layout: DiagramType.PIE, titleKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.PIE' },
+  { icon: PrimeIcons.BARS, layout: DiagramType.HORIZONTAL_BAR, titleKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.HORIZONTAL_BAR' },
+  { icon: PrimeIcons.CHART_BAR, layout: DiagramType.VERTICAL_BAR, titleKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.VERTICAL_BAR' },
+]
 
 @Component({
   selector: 'ocx-diagram',
   templateUrl: './diagram.component.html',
+  styleUrls: ['./diagram.component.scss']
 })
 export class DiagramComponent implements OnInit, OnChanges {
   @Input() data: DiagramData[] | undefined
   @Input() sumKey = 'OCX_DIAGRAM.SUM'
   private _diagramType: DiagramType = DiagramType.PIE
+  selectedDiagramType: DiagramLayouts | undefined
   public chartType = 'pie'
   @Input()
   get diagramType(): DiagramType {
@@ -21,12 +37,24 @@ export class DiagramComponent implements OnInit, OnChanges {
   }
   set diagramType(value: DiagramType) {
     this._diagramType = value
+    this.selectedDiagramType = allDiagramTypes.find((v) => v.layout === value)
     this.chartType = this.diagramTypeToChartType(value)
   }
+  private _supportedDiagramTypes: DiagramType[] = []
+  @Input() 
+  get supportedDiagramTypes(): DiagramType[] {
+    return this._supportedDiagramTypes
+  }
+  set supportedDiagramTypes(value: DiagramType[]) {
+    this._supportedDiagramTypes = value
+    this.shownDiagramTypes = allDiagramTypes.filter((vl) => this.supportedDiagramTypes.includes(vl.layout))
+  }
   @Output() dataSelected: EventEmitter<any> = new EventEmitter()
+  @Output() diagramTypeChanged: EventEmitter<DiagramType> = new EventEmitter()
   chartOptions: ChartOptions | undefined
   chartData: ChartData | undefined
   amountOfData: number | undefined | null
+  shownDiagramTypes: DiagramLayouts[] = []
   // Changing the colorRangeInfo, will change the range of the color palette of the diagram.
   private colorRangeInfo = {
     colorStart: 0,
@@ -89,6 +117,12 @@ export class DiagramComponent implements OnInit, OnChanges {
 
   dataClicked(event: []) {
     this.dataSelected.emit(event.length)
+  }
+
+  onDiagramTypeChanged(event: any) {
+    this.diagramType = event.value.layout
+    this.generateChart(this.colorScale, this.colorRangeInfo)
+    this.diagramTypeChanged.emit(event.value.layout)
   }
 }
 function interpolateColors(amountOfData: number, colorScale: any, colorRangeInfo: any) {
