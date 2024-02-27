@@ -13,7 +13,7 @@ import { BehaviorSubject, Subscription, Observable, combineLatest } from 'rxjs';
 import { SLOT_SERVICE, SlotService } from '../../services/slot.service'
 
 @Component({
-  selector: 'onecx-slot[name]',
+  selector: 'ocx-slot[name]',
   templateUrl: './slot.component.html',
 })
 export class SlotComponent implements OnInit, OnDestroy {
