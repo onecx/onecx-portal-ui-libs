@@ -129,11 +129,11 @@ export class PageHeaderComponent implements OnInit, OnChanges {
   ) {
     this.breadcrumbs = breadcrumbs
     this.home$ = concat(
-      of({ menuItem: { icon: 'pi pi-home', routerLink: '/' } }),
+      of({ menuItem: { icon: PrimeIcons.HOME, routerLink: '/' } }),
       this.appStateService.currentPortal$.pipe(
         map((portal) => ({
           menuItem: {
-            icon: 'pi pi-home',
+            icon: PrimeIcons.HOME,
             routerLink: portal.baseUrl,
           },
           ariaLabel: portal.portalName,
