@@ -1,8 +1,8 @@
 import { Directive, DoCheck, Optional, TemplateRef, ViewContainerRef } from '@angular/core'
 import { SearchHeaderComponent } from '../components/search-header/search-header.component'
 
-@Directive({ selector: '[ocxSimple]' })
-export class SimpleDirective implements DoCheck {
+@Directive({ selector: '[ocxBasic]' })
+export class BasicDirective implements DoCheck {
   constructor(
     private viewContainer: ViewContainerRef,
     @Optional() private templateRef?: TemplateRef<any>,
@@ -13,7 +13,7 @@ export class SimpleDirective implements DoCheck {
     }
   }
   ngDoCheck(): void {
-    if (this.searchHeader?.viewMode === 'simple') {
+    if (this.searchHeader?.viewMode === 'basic') {
       if (this.templateRef && !this.viewContainer.length) {
         this.viewContainer.createEmbeddedView(this.templateRef)
       }

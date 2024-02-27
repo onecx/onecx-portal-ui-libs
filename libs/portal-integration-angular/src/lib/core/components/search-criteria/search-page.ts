@@ -13,10 +13,10 @@ export abstract class PortalSearchPage<T> {
   searchInProgress = false
   public results: T[] = []
 
-  abstract search(mode: 'simple' | 'advanced'): T[] | Observable<T[]>
-  abstract reset(mode: 'simple' | 'advanced'): void
+  abstract search(mode: 'basic' | 'advanced'): T[] | Observable<T[]>
+  abstract reset(mode: 'basic' | 'advanced'): void
 
-  onSearch(mode: 'simple' | 'advanced') {
+  onSearch(mode: 'basic' | 'advanced') {
     this.searchInProgress = true
     const resultIntermediate = this.search(mode)
     if (isObservable(resultIntermediate)) {
@@ -31,7 +31,7 @@ export abstract class PortalSearchPage<T> {
     }
   }
 
-  onReset(mode: 'simple' | 'advanced') {
+  onReset(mode: 'basic' | 'advanced') {
     this.results = []
     this.reset(mode)
   }

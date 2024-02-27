@@ -40,11 +40,11 @@ export class SearchCriteriaComponent extends PageHeaderComponent implements OnIn
   }
 
   /** Event emitted when the search button has been pressed. */
-  @Output() readonly search: EventEmitter<'simple' | 'advanced'> = new EventEmitter<'simple' | 'advanced'>()
+  @Output() readonly search: EventEmitter<'basic' | 'advanced'> = new EventEmitter<'basic' | 'advanced'>()
 
   /** Event emitted when the reset button has been pressed. */
   // eslint-disable-next-line @angular-eslint/no-output-native
-  @Output() readonly reset: EventEmitter<'simple' | 'advanced'> = new EventEmitter<'simple' | 'advanced'>()
+  @Output() readonly reset: EventEmitter<'basic' | 'advanced'> = new EventEmitter<'basic' | 'advanced'>()
 
   /** Event emitted when the adnvanced view has been toggled. */
   @Output() readonly advancedViewToggle = new EventEmitter()
@@ -95,15 +95,15 @@ export class SearchCriteriaComponent extends PageHeaderComponent implements OnIn
     this.advancedViewToggle.emit()
   }
   protected emitSearchEvent() {
-    this.search.emit(this.advancedSearchActive ? 'advanced' : 'simple')
+    this.search.emit(this.advancedSearchActive ? 'advanced' : 'basic')
     if (this.searchPage) {
-      this.searchPage.onSearch(this.advancedSearchActive ? 'advanced' : 'simple')
+      this.searchPage.onSearch(this.advancedSearchActive ? 'advanced' : 'basic')
     }
   }
   protected emitResetEvent() {
-    this.reset.emit(this.advancedSearchActive ? 'advanced' : 'simple')
+    this.reset.emit(this.advancedSearchActive ? 'advanced' : 'basic')
     if (this.searchPage) {
-      this.searchPage.onReset(this.advancedSearchActive ? 'advanced' : 'simple')
+      this.searchPage.onReset(this.advancedSearchActive ? 'advanced' : 'basic')
     }
   }
 

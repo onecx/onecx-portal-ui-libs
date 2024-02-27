@@ -26,7 +26,7 @@ import { SearchConfig } from '../../../model/search-config'
 export class SearchHeaderComponent implements AfterViewInit {
   @Input() searchConfigs: SearchConfig[] | undefined
   @Input() headline = ''
-  @Input() viewMode: 'simple' | 'advanced' = 'simple'
+  @Input() viewMode: 'basic' | 'advanced' = 'basic'
   @Input() manualBreadcrumbs = false
   _actions: Action[] = []
   @Input()
@@ -59,7 +59,7 @@ export class SearchHeaderComponent implements AfterViewInit {
   }
 
   toggleViewMode() {
-    this.viewMode = this.viewMode === 'simple' ? 'advanced' : 'simple'
+    this.viewMode = this.viewMode === 'basic' ? 'advanced' : 'basic'
     this.viewModeChanged?.emit(this.viewMode)
     this.updateHeaderActions()
     setTimeout(() => this.addKeyUpEventListener())
@@ -79,13 +79,13 @@ export class SearchHeaderComponent implements AfterViewInit {
       headerActions.push({
         id: 'simpleAdvancedButton',
         labelKey:
-          this.viewMode === 'simple'
+          this.viewMode === 'basic'
             ? 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.ADVANCED.TEXT'
             : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.SIMPLE.TEXT',
         actionCallback: () => this.toggleViewMode(),
         show: 'always',
         ariaLabel:
-          this.viewMode === 'simple'
+          this.viewMode === 'basic'
             ? 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.ADVANCED.ARIA_LABEL'
             : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.SIMPLE.ARIA_LABEL',
       })
