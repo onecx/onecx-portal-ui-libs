@@ -6,6 +6,7 @@ import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dy
 import { ButtonDialogComponent } from '../core/components/button-dialog/button-dialog.component'
 import { ButtonDialogButtonDetails, ButtonDialogData } from '../model/button-dialog'
 import { DialogMessageContentComponent } from '../core/components/button-dialog/dialog-message-content/dialog-message-content.component'
+import { PrimeIcons } from 'primeng/api'
 
 /**
  * Object containing key for translation with parameters object for translation
@@ -61,7 +62,7 @@ type TranslationKey = string | TranslationKeyWithParameters
  * }
  * ```
  */
-type DialogMessage = { message: TranslationKey; icon: string }
+type DialogMessage = { message: TranslationKey; icon: PrimeIcons }
 
 /**
  * Implement via component class to be displayed by {@link PortalDialogService.openDialog}

@@ -65,7 +65,7 @@ const demoActions: Action[] = [
     },
     title: 'Tooltip for Reload',
     show: 'always',
-    icon: 'pi pi-refresh',
+    icon: PrimeIcons.REFRESH,
   },
   {
     label: 'Delete',
@@ -75,7 +75,7 @@ const demoActions: Action[] = [
     },
     title: 'Tooltip for Delete',
     show: 'always',
-    icon: 'pi pi-trash',
+    icon: PrimeIcons.TRASH,
   },
   {
     label: 'Some action',

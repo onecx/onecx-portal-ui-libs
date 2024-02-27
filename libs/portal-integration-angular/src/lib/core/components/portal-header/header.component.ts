@@ -14,6 +14,7 @@ import { ThemeService } from '../../../services/theme.service'
 import { ImageLogoUrlUtils } from '../../utils/image-logo-url.utils'
 import { UserService } from '../../../services/user.service'
 import { AppStateService } from '../../../services/app-state.service'
+import { PrimeIcons } from 'primeng/api'
 
 type MenuItemPerm = MenuItem & { permission: string }
 @Component({
@@ -137,42 +138,42 @@ export class HeaderComponent implements OnInit {
     this.moreMenuItems = [
       {
         command: (e) => this.onOpenFeedback(e),
-        icon: 'comment',
+        icon: PrimeIcons.COMMENT,
         label: 'Feedback',
         disabled: this.feedbackDisabled,
         permission: 'PORTAL_HEADER_GIVE_FEEDBACK#VIEW',
       },
       {
         command: (e) => this.onAddToFavourites(e),
-        icon: 'star',
+        icon: PrimeIcons.STAR,
         label: 'Add to Favorites',
         disabled: this.favoritesDisabled,
         permission: 'PORTAL_HEADER_ADD_TO_MY_FAVORITES#VIEW',
       },
       {
         command: (e) => this.onOpenSupportTicket(e),
-        icon: 'ticket',
+        icon: PrimeIcons.TICKET,
         label: 'Create Support Ticket',
         disabled: this.supportTicketDisabled,
         permission: 'PORTAL_HEADER_CREATE_SUPPORT_TICKET#VIEW',
       },
       {
         command: (e) => this.onTopbarItemClick(e, 'search'),
-        icon: 'search',
+        icon: PrimeIcons.SEARCH,
         label: 'Search',
         disabled: this.searchDisabled,
         permission: 'PORTAL_HEADER_ENTERPRISE_SEARCH#VIEW',
       },
       {
         command: (e) => this.onOpenHelpPage(e),
-        icon: 'question-circle',
+        icon: PrimeIcons.QUESTION_CIRCLE,
         label: 'Show Help for this article',
         disabled: this.helpDisabled,
         permission: 'PORTAL_HEADER_HELP#VIEW',
       },
       {
         command: (e) => this.onOpenHelpPageEditor(e),
-        icon: 'pencil',
+        icon: PrimeIcons.PENCIL,
         label: 'Edit Help for this article',
         disabled: this.helpEditorDisabled,
         permission: 'PORTAL_HEADER_HELP_ITEM_EDITOR#VIEW',
