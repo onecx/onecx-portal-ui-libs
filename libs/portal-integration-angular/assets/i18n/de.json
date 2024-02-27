@@ -30,7 +30,8 @@
       "ASCENDING_TITLE": "Auftseigend",
       "DESCENDING_TITLE": "Absteigend",
       "DEFAULT_TITLE": "Standard"
-    }
+    },
+    "SORTING_BUTTON_ARIA_LABEL": "Change sorting direction. Now is {direction}"
   },
   "OCX_DATA_TABLE": {
     "EMPTY_RESULT": "Keine Daten gefunden.",
@@ -53,7 +54,8 @@
       "VIEW": "Anzeigen",
       "EDIT": "Bearbeiten",
       "DELETE": "Löschen"
-    }
+    },
+    "MORE_ACTIONS": "Weitere Aktionen"
   },
   "OCX_DATA_LAYOUT_SELECTION": {
     "LAYOUT": {
