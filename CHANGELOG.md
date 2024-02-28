@@ -1,3 +1,22 @@
+## [4.9.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.8.0...v4.9.0) (2024-02-28)
+
+
+### Features
+
+* column group floating label displayed ([#148](https://github.com/onecx/onecx-portal-ui-libs/issues/148)) ([70cf90e](https://github.com/onecx/onecx-portal-ui-libs/commit/70cf90ed8f906d640ea7280ec850a377b6b7f785))
+* lifecycle component ([#153](https://github.com/onecx/onecx-portal-ui-libs/issues/153)) ([c9c8cdf](https://github.com/onecx/onecx-portal-ui-libs/commit/c9c8cdfbc2071d65e21d3f809d97355e1201e079))
+* search header allows to provide subheader now ([#147](https://github.com/onecx/onecx-portal-ui-libs/issues/147)) ([d4bf6c5](https://github.com/onecx/onecx-portal-ui-libs/commit/d4bf6c5edb15f49f293290ddd2fdd4639e44fcd8))
+
+
+### Bug Fixes
+
+* adapt SearchConfig interface and use the type PrimeIcon for icons ([#152](https://github.com/onecx/onecx-portal-ui-libs/issues/152)) ([56e09ac](https://github.com/onecx/onecx-portal-ui-libs/commit/56e09acc4d312b9006da378817fa944f3f1eec59))
+
+
+### Refactoring
+
+* migrate icons in TS to PrimeIcons ([#151](https://github.com/onecx/onecx-portal-ui-libs/issues/151)) ([186fae8](https://github.com/onecx/onecx-portal-ui-libs/commit/186fae874a752f734b87c45d35a9c4c5c0e79bc2))
+
 ## [4.8.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.7.0...v4.8.0) (2024-02-26)
 
 
