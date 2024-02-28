@@ -17,6 +17,7 @@ import { BreadcrumbService } from '../../../services/breadcrumb.service'
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService } from '../../../services/app-state.service'
 import { UserService } from '../../../services/user.service'
+import { PrimeIcon } from '../../utils/primeicon.utils'
 
 /**
  * Action definition.
@@ -47,7 +48,7 @@ export interface ObjectDetailItem {
   label: string
   value?: string
   tooltip?: string
-  icon?: PrimeIcons
+  icon?: PrimeIcon
   labelPipe?: Type<any>
   valuePipe?: Type<any>
   valuePipeArgs?: string
@@ -125,8 +126,8 @@ export class PageHeaderComponent implements OnInit, OnChanges {
   ) {
     this.breadcrumbs = breadcrumbs
     this.home$ = concat(
-      of({ icon: 'pi pi-home', routerLink: '/' }),
-      this.appStateService.currentPortal$.pipe(map((portal) => ({ icon: 'pi pi-home', routerLink: portal.baseUrl })))
+      of({ icon: PrimeIcons.HOME, routerLink: '/' }),
+      this.appStateService.currentPortal$.pipe(map((portal) => ({ icon: PrimeIcons.HOME, routerLink: portal.baseUrl })))
     )
   }
   ngOnChanges(changes: SimpleChanges): void {

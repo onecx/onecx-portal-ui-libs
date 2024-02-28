@@ -6,9 +6,10 @@ import { PrimeIcons } from 'primeng/api'
 import { DiagramData } from '../../../model/diagram-data'
 import { DiagramType } from '../../../model/diagram-type'
 import { ColorUtils } from '../../utils/colorutils'
+import { PrimeIcon } from '../../utils/primeicon.utils'
 
 export interface DiagramLayouts {
-  icon: string
+  icon: PrimeIcon
   layout: DiagramType
   title?: string
   titleKey: string
@@ -16,14 +17,22 @@ export interface DiagramLayouts {
 
 const allDiagramTypes: DiagramLayouts[] = [
   { icon: PrimeIcons.CHART_PIE, layout: DiagramType.PIE, titleKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.PIE' },
-  { icon: PrimeIcons.BARS, layout: DiagramType.HORIZONTAL_BAR, titleKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.HORIZONTAL_BAR' },
-  { icon: PrimeIcons.CHART_BAR, layout: DiagramType.VERTICAL_BAR, titleKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.VERTICAL_BAR' },
+  {
+    icon: PrimeIcons.BARS,
+    layout: DiagramType.HORIZONTAL_BAR,
+    titleKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.HORIZONTAL_BAR',
+  },
+  {
+    icon: PrimeIcons.CHART_BAR,
+    layout: DiagramType.VERTICAL_BAR,
+    titleKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.VERTICAL_BAR',
+  },
 ]
 
 @Component({
   selector: 'ocx-diagram',
   templateUrl: './diagram.component.html',
-  styleUrls: ['./diagram.component.scss']
+  styleUrls: ['./diagram.component.scss'],
 })
 export class DiagramComponent implements OnInit, OnChanges {
   @Input() data: DiagramData[] | undefined
@@ -41,7 +50,7 @@ export class DiagramComponent implements OnInit, OnChanges {
     this.chartType = this.diagramTypeToChartType(value)
   }
   private _supportedDiagramTypes: DiagramType[] = []
-  @Input() 
+  @Input()
   get supportedDiagramTypes(): DiagramType[] {
     return this._supportedDiagramTypes
   }

@@ -1,4 +1,5 @@
 import { Type } from '@angular/core'
+import { PrimeIcon } from '../core/utils/primeicon.utils'
 
 /**
  * Object describing details for button rendering containing key for translation, optional icon and optional parameters for translation
@@ -21,7 +22,7 @@ import { Type } from '@angular/core'
  */
 export interface ButtonDialogButtonDetails {
   key: string
-  icon?: string
+  icon?: PrimeIcon
   parameters?: Record<string, unknown>
 }
 

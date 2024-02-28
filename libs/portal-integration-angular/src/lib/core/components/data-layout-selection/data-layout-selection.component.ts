@@ -1,16 +1,18 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
+import { PrimeIcons } from 'primeng/api'
+import { PrimeIcon } from '../../utils/primeicon.utils'
 
 interface ViewingLayouts {
-  icon: string
+  icon: PrimeIcon
   layout: 'grid' | 'list' | 'table'
   title?: string
   titleKey: string
 }
 
 const ALL_VIEW_LAYOUTS: ViewingLayouts[] = [
-  { icon: 'pi pi-list', layout: 'list', titleKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.LIST' },
-  { icon: 'pi pi-th-large', layout: 'grid', titleKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.GRID' },
-  { icon: 'pi pi-table', layout: 'table', titleKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.TABLE' },
+  { icon: PrimeIcons.LIST, layout: 'list', titleKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.LIST' },
+  { icon: PrimeIcons.TH_LARGE, layout: 'grid', titleKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.GRID' },
+  { icon: PrimeIcons.TABLE, layout: 'table', titleKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.TABLE' },
 ]
 
 @Component({
@@ -38,7 +40,7 @@ export class DataLayoutSelectionComponent implements OnInit {
     this.layout = 'table'
   }
 
-  onDataViewLayoutChange(event: { icon: string; layout: 'grid' | 'list' | 'table' }): void {
+  onDataViewLayoutChange(event: { icon: PrimeIcon; layout: 'grid' | 'list' | 'table' }): void {
     this.dataViewLayoutChange.emit(event.layout)
   }
 }

@@ -35,6 +35,9 @@ export * from './span.harness'
 export * from './page-header.harness'
 export * from './p-tableCheckbox.harness'
 export * from './create-or-edit-search-config-dialog.harness'
+export * from './lifecycle.harness'
+
+export * from './utils/primeicon.utils'
 
 export * from '@angular/cdk/testing'
 export * from '@angular/cdk/testing/testbed'
