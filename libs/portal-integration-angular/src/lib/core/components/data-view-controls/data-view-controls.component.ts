@@ -15,13 +15,13 @@ interface ViewingModes {
   titleKey?: string
 }
 
-type viewMode = {
+type ViewMode = {
   icon: PrimeIcon
   mode: string
   titleKey: string
 }
 
-const ALL_VIEW_MODES: viewMode[] = [
+const ALL_VIEW_MODES: ViewMode[] = [
   { icon: PrimeIcons.LIST, mode: 'list', titleKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.LIST' },
   { icon: PrimeIcons.TH_LARGE, mode: 'grid', titleKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.GRID' },
   { icon: PrimeIcons.TABLE, mode: 'table', titleKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.TABLE' },
