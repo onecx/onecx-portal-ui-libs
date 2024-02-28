@@ -1,13 +1,16 @@
-<p-dropdown
-  id="columnGroupSelectionDropdown"
-  *ngIf="(allGroupKeys$ | async)?.length"
-  (onClear)="clearGroupSelection()"
-  (onChange)="changeGroupSelection($event)"
-  [options]="(allGroupKeys$ | async) || []"
-  [placeholder]="placeholderKey | translate"
-  [showClear]="selectedGroupKey !== defaultGroupKey"
-  [(ngModel)]="selectedGroupKey"
->
-  <ng-template let-item pTemplate="item"> {{ item ? (item | translate) : ''}} </ng-template>
-  <ng-template let-item pTemplate="selectedItem"> {{ item ? (item | translate) : ''}} </ng-template>
-</p-dropdown>
+<span class="p-float-label">
+  <p-dropdown
+    id="columnGroupSelectionDropdown"
+    *ngIf="(allGroupKeys$ | async)?.length"
+    (onClear)="clearGroupSelection()"
+    (onChange)="changeGroupSelection($event)"
+    [options]="(allGroupKeys$ | async) || []"
+    [placeholder]="placeholderKey | translate"
+    [showClear]="selectedGroupKey !== defaultGroupKey"
+    [(ngModel)]="selectedGroupKey"
+  >
+    <ng-template let-item pTemplate="item"> {{ item ? (item | translate) : ''}} </ng-template>
+    <ng-template let-item pTemplate="selectedItem"> {{ item ? (item | translate) : ''}} </ng-template>
+  </p-dropdown>
+  <label for="columnGroupSelectionDropdown">{{ ("OCX_CUSTOM_GROUP_COLUMN_SELECTOR.DROPDOWN_LABEL" | translate) }}</label>
+</span>

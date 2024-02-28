@@ -1,5 +1,6 @@
 {
   "OCX_CUSTOM_GROUP_COLUMN_SELECTOR": {
+    "DROPDOWN_LABEL": "Columns",
     "OPEN_BUTTON_TITLE": "Open custom group selection dialog",
     "ACTIVE_COLUMNS_LABEL": "Active columns",
     "INACTIVE_COLUMNS_LABEL": "Inactive columns",
