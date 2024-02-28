@@ -1,25 +1,25 @@
 <div>
-    <ng-container #container></ng-container>
-    <ng-content></ng-content>
-    <div class="w-full flex justify-content-end mb-3">
-        <button
-            id="buttonDialogSecondaryButton"
-            pButton 
-            *ngIf="dialogData.config.secondaryButtonIncluded"
-            class="mx-2"
-            [icon]="dialogData.config.secondaryButtonDetails!.icon !== undefined ? dialogData.config.secondaryButtonDetails!.icon : ''"
-            (click)="secondaryButtonAction()"
-            [label]="dialogData.config.secondaryButtonDetails!.key | translate:dialogData.config.secondaryButtonDetails?.parameters"
-            [disabled]="secondaryButtonDisabled$ | async"
-        ></button>
-        <button 
-            id="buttonDialogPrimaryButton"
-            pButton
-            class="mx-2"
-            [icon]="dialogData.config.primaryButtonDetails!.icon !== undefined ? dialogData.config.primaryButtonDetails!.icon : ''"
-            (click)="primaryButtonAction()"
-            [label]="dialogData.config.primaryButtonDetails!.key | translate:dialogData.config.primaryButtonDetails?.parameters"
-            [disabled]="primaryButtonDisabled$ | async"
-        ></button>
-    </div>
+  <ng-container #container></ng-container>
+  <ng-content></ng-content>
+  <div class="w-full flex justify-content-end mb-3">
+    <button
+      id="buttonDialogSecondaryButton"
+      pButton
+      *ngIf="dialogData.config.secondaryButtonIncluded"
+      class="mx-2"
+      [icon]="dialogData.config.secondaryButtonDetails!.icon !== undefined ? dialogData.config.secondaryButtonDetails!.icon : ''"
+      (click)="secondaryButtonAction()"
+      [label]="dialogData.config.secondaryButtonDetails!.key | translate:dialogData.config.secondaryButtonDetails?.parameters"
+      [disabled]="secondaryButtonDisabled$ | async"
+    ></button>
+    <button
+      id="buttonDialogPrimaryButton"
+      pButton
+      class="mx-2"
+      [icon]="dialogData.config.primaryButtonDetails!.icon !== undefined ? dialogData.config.primaryButtonDetails!.icon : ''"
+      (click)="primaryButtonAction()"
+      [label]="dialogData.config.primaryButtonDetails!.key | translate:dialogData.config.primaryButtonDetails?.parameters"
+      [disabled]="primaryButtonDisabled$ | async"
+    ></button>
+  </div>
 </div>

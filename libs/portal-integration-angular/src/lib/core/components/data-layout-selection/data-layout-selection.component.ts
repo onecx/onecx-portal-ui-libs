@@ -1,8 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
 import { PrimeIcons } from 'primeng/api'
+import { PrimeIcon } from '../../utils/primeicon.utils'
 
 interface ViewingLayouts {
-  icon: PrimeIcons
+  icon: PrimeIcon
   layout: 'grid' | 'list' | 'table'
   title?: string
   titleKey: string
@@ -39,7 +40,7 @@ export class DataLayoutSelectionComponent implements OnInit {
     this.layout = 'table'
   }
 
-  onDataViewLayoutChange(event: { icon: PrimeIcons; layout: 'grid' | 'list' | 'table' }): void {
+  onDataViewLayoutChange(event: { icon: PrimeIcon; layout: 'grid' | 'list' | 'table' }): void {
     this.dataViewLayoutChange.emit(event.layout)
   }
 }
