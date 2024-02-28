@@ -24,8 +24,8 @@
         </div>
       </ng-template>
       <div class="header" *ngIf="!loading; else skeletonBar">
-        <h3 *ngIf="!!header">{{ header }}</h3>
-        <h4 *ngIf="!!subheader">{{ subheader }}</h4>
+        <h1 *ngIf="!!header">{{ header }}</h1>
+        <h2 *ngIf="!!subheader">{{ subheader }}</h2>
       </div>
     </div>
     <div class="action-items-wrap mt-2 md:mt-0">
