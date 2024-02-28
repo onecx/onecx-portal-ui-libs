@@ -23,6 +23,7 @@ import { InputSwitchModule } from 'primeng/inputswitch'
 import { DataViewModule } from 'primeng/dataview'
 import { ChartModule } from 'primeng/chart'
 import { CheckboxModule } from 'primeng/checkbox'
+import { TimelineModule } from 'primeng/timeline'
 
 @NgModule({
   imports: [
@@ -51,6 +52,7 @@ import { CheckboxModule } from 'primeng/checkbox'
     ChartModule,
     MessageModule,
     CheckboxModule,
+    TimelineModule,
   ],
   exports: [
     BadgeModule,
@@ -78,6 +80,7 @@ import { CheckboxModule } from 'primeng/checkbox'
     ChartModule,
     MessageModule,
     CheckboxModule,
+    TimelineModule,
   ],
 })
 export class PrimeNgModule {}
