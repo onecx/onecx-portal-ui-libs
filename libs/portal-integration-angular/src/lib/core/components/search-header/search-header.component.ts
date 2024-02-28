@@ -24,8 +24,10 @@ import { SearchConfig } from '../../../model/search-config'
   styleUrls: ['./search-header.component.scss'],
 })
 export class SearchHeaderComponent implements AfterViewInit {
-  @Input() searchConfigsEntries: SearchConfig[] | undefined
+  @Input() searchConfigs: SearchConfig[] | undefined
   @Input() headline = ''
+  @Input() subheader: string | undefined
+  @Input() viewMode: 'basic' | 'advanced' = 'basic'
   @Input() manualBreadcrumbs = false
   _actions: Action[] = []
   @Input()
@@ -39,7 +41,8 @@ export class SearchHeaderComponent implements AfterViewInit {
 
   @Output() searched: EventEmitter<any> = new EventEmitter()
   @Output() resetted: EventEmitter<any> = new EventEmitter()
-  @Output() selectedSearchConfig: EventEmitter<any> = new EventEmitter()
+  @Output() selectedSearchConfigChanged: EventEmitter<SearchConfig> = new EventEmitter()
+  @Output() viewModeChanged: EventEmitter<string> = new EventEmitter()
   @ContentChild('additionalToolbarContent')
   additionalToolbarContent: TemplateRef<any> | undefined
 
@@ -49,7 +52,6 @@ export class SearchHeaderComponent implements AfterViewInit {
 
   @ViewChild('searchParameterFields') searchParameterFields: ElementRef | undefined
 
-  viewMode: 'basic' | 'advanced' = 'basic'
   hasAdvanced = false
   headerActions: Action[] = []
 
@@ -59,6 +61,7 @@ export class SearchHeaderComponent implements AfterViewInit {
 
   toggleViewMode() {
     this.viewMode = this.viewMode === 'basic' ? 'advanced' : 'basic'
+    this.viewModeChanged?.emit(this.viewMode)
     this.updateHeaderActions()
     setTimeout(() => this.addKeyUpEventListener())
   }
@@ -103,7 +106,7 @@ export class SearchHeaderComponent implements AfterViewInit {
     }
   }
 
-  confirmSearchConfig(event: any) {
-    this.selectedSearchConfig?.emit(event)
+  confirmSearchConfig(searchConfig: SearchConfig) {
+    this.selectedSearchConfigChanged?.emit(searchConfig)
   }
 }

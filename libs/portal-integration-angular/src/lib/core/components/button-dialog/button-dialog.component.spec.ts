@@ -122,12 +122,12 @@ describe('ButtonDialogComponent', () => {
       component.dialogData.config = {
         primaryButtonDetails: {
           key: 'CustomMain',
-          icon: 'pi pi-check',
+          icon: PrimeIcons.CHECK,
         },
         secondaryButtonIncluded: true,
         secondaryButtonDetails: {
           key: 'CustomSide',
-          icon: 'pi pi-times',
+          icon: PrimeIcons.TIMES,
         },
       }
 
@@ -135,8 +135,8 @@ describe('ButtonDialogComponent', () => {
       expect(await buttonDialogHarness.getPrimaryButtonLabel()).toBe('CustomMain')
       expect(await buttonDialogHarness.getSecondaryButtonLabel()).toBe('CustomSide')
       // expect correct icon
-      expect(await buttonDialogHarness.getPrimaryButtonIcon()).toBe('pi pi-check')
-      expect(await buttonDialogHarness.getSecondaryButtonIcon()).toBe('pi pi-times')
+      expect(await buttonDialogHarness.getPrimaryButtonIcon()).toBe(PrimeIcons.CHECK)
+      expect(await buttonDialogHarness.getSecondaryButtonIcon()).toBe(PrimeIcons.TIMES)
     })
 
     it('should translate button keys', async () => {
@@ -318,9 +318,9 @@ describe('ButtonDialogComponent', () => {
       buttonDialogHarness = await harnessLoader.getHarness(ButtonDialogHarness)
 
       expect(await buttonDialogHarness.getPrimaryButtonLabel()).toBe('inlineMain')
-      expect(await buttonDialogHarness.getPrimaryButtonIcon()).toBe('pi pi-plus')
+      expect(await buttonDialogHarness.getPrimaryButtonIcon()).toBe(PrimeIcons.PLUS)
       expect(await buttonDialogHarness.getSecondaryButtonLabel()).toBe('inlineSide')
-      expect(await buttonDialogHarness.getSecondaryButtonIcon()).toBe('pi pi-times')
+      expect(await buttonDialogHarness.getSecondaryButtonIcon()).toBe(PrimeIcons.TIMES)
     })
 
     it('should use default emitter inline', async () => {

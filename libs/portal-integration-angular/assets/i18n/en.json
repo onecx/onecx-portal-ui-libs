@@ -1,5 +1,6 @@
 {
   "OCX_CUSTOM_GROUP_COLUMN_SELECTOR": {
+    "DROPDOWN_LABEL": "Columns",
     "OPEN_BUTTON_TITLE": "Open custom group selection dialog",
     "ACTIVE_COLUMNS_LABEL": "Active columns",
     "INACTIVE_COLUMNS_LABEL": "Inactive columns",
@@ -15,6 +16,11 @@
       "LEFT": "Left",
       "RIGHT": "Right"
     }
+  },
+  "OCX_SEARCH_CONFIG": {
+    "PLACEHOLDER": "Please enter the name of the search configuration",
+    "SAVE_COLUMNS_OPTION": "Do you want to save the shown columns?",
+    "SAVE_INPUT_FIELDS_OPTION": "Do you want to save the input values from the input fields?"
   },
   "OCX_LIST_GRID_SORT": {
     "DROPDOWN": {
@@ -83,7 +89,12 @@
   },
   "OCX_DIAGRAM": {
     "SUM": "Total",
-    "NO_DATA": "There is no data available"
+    "NO_DATA": "There is no data available",
+    "SWITCH_DIAGRAM_TYPE": {
+      "PIE": "Switch to pie chart",
+      "HORIZONTAL_BAR": "Switch to horizontal bar chart",
+      "VERTICAL_BAR": "Switch to vertical bar chart"
+    }
   },
   "OCX_PORTAL_VIEWPORT": {
     "SUCCESS": "Success!",

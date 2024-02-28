@@ -8,6 +8,7 @@ export * from './primeng/p-multiSelectListItem.harness'
 export * from './primeng/p-picklist.harness'
 export * from './primeng/p-selectButton.harness'
 export * from './primeng/p-paginator.harness'
+export * from './primeng/p-checkbox.harness'
 
 export * from './button-dialog.harness'
 export * from './button.harness'
@@ -33,6 +34,10 @@ export * from './search-config.harness'
 export * from './span.harness'
 export * from './page-header.harness'
 export * from './p-tableCheckbox.harness'
+export * from './create-or-edit-search-config-dialog.harness'
+export * from './lifecycle.harness'
+
+export * from './utils/primeicon.utils'
 
 export * from '@angular/cdk/testing'
 export * from '@angular/cdk/testing/testbed'

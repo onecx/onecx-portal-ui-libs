@@ -1,5 +1,7 @@
 import { ContentContainerComponentHarness, TestElement } from '@angular/cdk/testing'
 import { PSelectButtonHarness } from './primeng/p-selectButton.harness'
+import { PrimeIcons } from 'primeng/api'
+import { PrimeIcon } from './utils/primeicon.utils'
 
 export class DataLayoutSelectionHarness extends ContentContainerComponentHarness {
   static hostSelector = 'ocx-data-layout-selection'
@@ -9,15 +11,15 @@ export class DataLayoutSelectionHarness extends ContentContainerComponentHarness
   }
 
   async getListLayoutSelectionButton() {
-    return await this.isDesiredButton(await this.getAllSelectionButtons(), 'pi pi-list')
+    return await this.isDesiredButton(await this.getAllSelectionButtons(), PrimeIcons.LIST)
   }
 
   async getGridLayoutSelectionButton() {
-    return await this.isDesiredButton(await this.getAllSelectionButtons(), 'pi pi-th-large')
+    return await this.isDesiredButton(await this.getAllSelectionButtons(), PrimeIcons.TH_LARGE)
   }
 
   async getTableLayoutSelectionButton() {
-    return await this.isDesiredButton(await this.getAllSelectionButtons(), 'pi pi-table')
+    return await this.isDesiredButton(await this.getAllSelectionButtons(), PrimeIcons.TABLE)
   }
 
   async getCurrentLayout() {
@@ -28,7 +30,7 @@ export class DataLayoutSelectionHarness extends ContentContainerComponentHarness
     await (await this.getListLayoutSelectionButton())?.click()
   }
 
-  private async isDesiredButton(value: TestElement[], icon: string) {
+  private async isDesiredButton(value: TestElement[], icon: PrimeIcon) {
     for (let index = 0; index < value.length; index++) {
       if ((await value[index].getAttribute('aria-labelledby')) === icon) {
         return value[index]

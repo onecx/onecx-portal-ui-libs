@@ -86,6 +86,8 @@ import { UserProfileAPIService } from '../services/userprofile-api.service'
 import { createTranslateLoader } from './utils/create-translate-loader.utils'
 import { MessageService } from 'primeng/api'
 import { TranslationCacheService } from '../services/translation-cache.service'
+import { CreateOrEditSearchConfigDialogComponent } from './components/create-or-edit-search-config-dialog/create-or-edit-search-config-dialog.component'
+import { LifecycleComponent } from './components/lifecycle/lifecycle.component'
 
 export class PortalMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -167,6 +169,8 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     OcxContentComponent,
     OcxContentContainerComponent,
     SearchConfigComponent,
+    CreateOrEditSearchConfigDialogComponent,
+    LifecycleComponent,
   ],
   providers: [
     {
@@ -237,6 +241,8 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     OcxContentComponent,
     OcxContentContainerComponent,
     SearchConfigComponent,
+    CreateOrEditSearchConfigDialogComponent,
+    LifecycleComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   entryComponents: [ColumnTogglerComponent],

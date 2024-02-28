@@ -1,3 +1,50 @@
+## [4.9.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.8.0...v4.9.0) (2024-02-28)
+
+
+### Features
+
+* column group floating label displayed ([#148](https://github.com/onecx/onecx-portal-ui-libs/issues/148)) ([70cf90e](https://github.com/onecx/onecx-portal-ui-libs/commit/70cf90ed8f906d640ea7280ec850a377b6b7f785))
+* lifecycle component ([#153](https://github.com/onecx/onecx-portal-ui-libs/issues/153)) ([c9c8cdf](https://github.com/onecx/onecx-portal-ui-libs/commit/c9c8cdfbc2071d65e21d3f809d97355e1201e079))
+* search header allows to provide subheader now ([#147](https://github.com/onecx/onecx-portal-ui-libs/issues/147)) ([d4bf6c5](https://github.com/onecx/onecx-portal-ui-libs/commit/d4bf6c5edb15f49f293290ddd2fdd4639e44fcd8))
+
+
+### Bug Fixes
+
+* adapt SearchConfig interface and use the type PrimeIcon for icons ([#152](https://github.com/onecx/onecx-portal-ui-libs/issues/152)) ([56e09ac](https://github.com/onecx/onecx-portal-ui-libs/commit/56e09acc4d312b9006da378817fa944f3f1eec59))
+
+
+### Refactoring
+
+* migrate icons in TS to PrimeIcons ([#151](https://github.com/onecx/onecx-portal-ui-libs/issues/151)) ([186fae8](https://github.com/onecx/onecx-portal-ui-libs/commit/186fae874a752f734b87c45d35a9c4c5c0e79bc2))
+
+## [4.8.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.7.0...v4.8.0) (2024-02-26)
+
+
+### Features
+
+* allow dynamically switching diagram type ([#144](https://github.com/onecx/onecx-portal-ui-libs/issues/144)) ([ac0e2e0](https://github.com/onecx/onecx-portal-ui-libs/commit/ac0e2e051f7dee12e45561bfda1cebf642d0504c))
+* save and edit search config component ([#139](https://github.com/onecx/onecx-portal-ui-libs/issues/139)) ([635339a](https://github.com/onecx/onecx-portal-ui-libs/commit/635339aae8dedfa96d6a77798de591ef4ae49829))
+
+
+### Bug Fixes
+
+* check length of occurences and ([#141](https://github.com/onecx/onecx-portal-ui-libs/issues/141)) ([782cb27](https://github.com/onecx/onecx-portal-ui-libs/commit/782cb27643a32c7fcf5f9e14a3a4876cae4972e5))
+* current page should persist between layout changes ([#142](https://github.com/onecx/onecx-portal-ui-libs/issues/142)) ([e023add](https://github.com/onecx/onecx-portal-ui-libs/commit/e023adda69ae2a90cb4a5b82ba87fdb60eba0670))
+* empty message allignment to amount of columns ([#140](https://github.com/onecx/onecx-portal-ui-libs/issues/140)) ([3459c67](https://github.com/onecx/onecx-portal-ui-libs/commit/3459c676903225d1356ee7116951f3e25c60feb1))
+* removed conflicting style ([#137](https://github.com/onecx/onecx-portal-ui-libs/issues/137)) ([7ddcd17](https://github.com/onecx/onecx-portal-ui-libs/commit/7ddcd17c0e025708353d8a525bb07ac13500cb6d))
+
+## [4.7.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.6.0...v4.7.0) (2024-02-21)
+
+
+### Features
+
+* add freeze action column functionality to table view ([#120](https://github.com/onecx/onecx-portal-ui-libs/issues/120)) ([6cecae9](https://github.com/onecx/onecx-portal-ui-libs/commit/6cecae961deb8ab2400cd45dda4fb3d6a3132bf1))
+
+
+### Bug Fixes
+
+* renaming filter quarams functions ([#136](https://github.com/onecx/onecx-portal-ui-libs/issues/136)) ([ac46f53](https://github.com/onecx/onecx-portal-ui-libs/commit/ac46f53133129ad09f4324fc104fa9351bc8a859))
+
 ## [4.6.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.5.1...v4.6.0) (2024-02-19)
 
 
