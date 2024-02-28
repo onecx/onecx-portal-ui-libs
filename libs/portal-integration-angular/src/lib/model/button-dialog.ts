@@ -1,5 +1,5 @@
 import { Type } from '@angular/core'
-import { PrimeIcon } from '../core/utils/primeicon.utils'
+import { PrimeIcon } from '../core/utils/prime-icon.utils'
 
 /**
  * Object describing details for button rendering containing key for translation, optional icon and optional parameters for translation

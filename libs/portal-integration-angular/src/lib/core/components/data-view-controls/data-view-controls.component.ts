@@ -6,7 +6,7 @@ import { ColumnViewTemplate } from '../../../model/column-view-template'
 import { ColumnTogglerComponent } from './column-toggler-component/column-toggler.component'
 import { ViewTemplatePickerComponent } from './view-template-picker/view-template-picker.component'
 import { PrimeIcons } from 'primeng/api'
-import { PrimeIcon } from '../../utils/primeicon.utils'
+import { PrimeIcon } from '../../utils/prime-icon.utils'
 
 interface ViewingModes {
   icon: PrimeIcon
