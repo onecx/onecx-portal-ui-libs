@@ -6,7 +6,7 @@ import { PrimeIcons } from 'primeng/api'
 import { DiagramData } from '../../../model/diagram-data'
 import { DiagramType } from '../../../model/diagram-type'
 import { ColorUtils } from '../../utils/colorutils'
-import { PrimeIcon } from '../../utils/prime-icon.utils'
+import { PrimeIcon } from '../../utils/primeicon.utils'
 
 export interface DiagramLayouts {
   icon: PrimeIcon

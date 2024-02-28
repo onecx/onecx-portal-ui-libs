@@ -17,7 +17,7 @@ import { BreadcrumbService } from '../../../services/breadcrumb.service'
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService } from '../../../services/app-state.service'
 import { UserService } from '../../../services/user.service'
-import { PrimeIcon } from '../../utils/prime-icon.utils'
+import { PrimeIcon } from '../../utils/primeicon.utils'
 
 /**
  * Action definition.

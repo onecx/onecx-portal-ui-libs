@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
 import { PrimeIcons } from 'primeng/api'
-import { PrimeIcon } from '../../utils/prime-icon.utils'
+import { PrimeIcon } from '../../utils/primeicon.utils'
 
 interface ViewingLayouts {
   icon: PrimeIcon
