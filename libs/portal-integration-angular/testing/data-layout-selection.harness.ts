@@ -1,8 +1,7 @@
 import { ContentContainerComponentHarness, TestElement } from '@angular/cdk/testing'
 import { PSelectButtonHarness } from './primeng/p-selectButton.harness'
 import { PrimeIcons } from 'primeng/api'
-
-type PrimeIcon = (typeof PrimeIcons)[keyof Omit<typeof PrimeIcons, 'prototype'>]
+import { PrimeIcon } from './utils/primeicon.utils'
 
 export class DataLayoutSelectionHarness extends ContentContainerComponentHarness {
   static hostSelector = 'ocx-data-layout-selection'

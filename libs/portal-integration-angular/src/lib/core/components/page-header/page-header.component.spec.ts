@@ -189,7 +189,7 @@ describe('PageHeaderComponent', () => {
       },
       {
         label: 'Done?',
-        icon: PrimeIcons.CHECK,
+        icon: PrimeIcons.EXCLAMATION_CIRCLE,
       },
       {
         label: 'Empty',
