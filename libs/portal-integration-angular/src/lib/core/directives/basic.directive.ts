@@ -9,7 +9,7 @@ export class BasicDirective implements DoCheck {
     @Optional() private searchHeader?: SearchHeaderComponent
   ) {
     if (!searchHeader) {
-      throw 'Simple directive can only be used inside search header component'
+      throw 'Basic directive can only be used inside search header component'
     }
   }
   ngDoCheck(): void {
