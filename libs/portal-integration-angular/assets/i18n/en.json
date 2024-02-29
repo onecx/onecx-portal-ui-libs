@@ -21,10 +21,10 @@
       "TOP": "Move column to the top",
       "DOWN": "Move column down",
       "BOTTOM": "Move column to the bottom",
-      "RIGHT": "Set column as active",
-      "ALL_RIGHT": "Set all columns as active",
-      "LEFT": "Set column as inactive",
-      "ALL_LEFT": "Set all columns as inactive",
+      "RIGHT": "Set column as inactive",
+      "ALL_RIGHT": "Set all columns as inactive",
+      "LEFT": "Set column as active",
+      "ALL_LEFT": "Set all columns as active",
       "CLOSE": "Close dialog"
     }
   },
