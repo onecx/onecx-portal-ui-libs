@@ -8,7 +8,7 @@
   [ariaLabel]="openButtonTitle || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.OPEN_BUTTON_TITLE' | translate)"
 ></p-button>
 
-<p-dialog header="Header" [(visible)]="visible" [style]="{ width: '70%' }" [modal]="true">
+<p-dialog header="Header" [(visible)]="visible" [style]="{ width: '70%' }" [modal]="true" [closeAriaLabel]="('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABELS.CLOSE' | translate)">
   <ng-template pTemplate="header">
     <span class="text-xl font-bold"
       >{{ dialogTitle || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.DIALOG_TITLE' | translate) }}</span

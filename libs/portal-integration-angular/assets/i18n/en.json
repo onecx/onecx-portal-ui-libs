@@ -24,7 +24,8 @@
       "RIGHT": "Set column as active",
       "ALL_RIGHT": "Set all columns as active",
       "LEFT": "Set column as inactive",
-      "ALL_LEFT": "Set all columns as inactive"
+      "ALL_LEFT": "Set all columns as inactive",
+      "CLOSE": "Close dialog"
     }
   },
   "OCX_SEARCH_CONFIG": {
