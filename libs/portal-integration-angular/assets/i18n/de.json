@@ -15,6 +15,16 @@
       "NO": "Nein",
       "LEFT": "Links",
       "RIGHT": "Rechts"
+    },
+    "ARIA_LABELS": {
+      "UP": "Move column up",
+      "TOP": "Move column to the top",
+      "DOWN": "Move column down",
+      "BOTTOM": "Move column to the bottom",
+      "RIGHT": "Set column as active",
+      "ALL_RIGHT": "Set all columns as active",
+      "LEFT": "Set column as inactive",
+      "ALL_LEFT": "Set all columns as inactive"
     }
   },
   "OCX_SEARCH_CONFIG": {
