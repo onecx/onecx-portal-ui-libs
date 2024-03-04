@@ -82,7 +82,7 @@
     "OCX_SEARCH_CONFIG": {
       "DROPDOWN_DEFAULT": "Gespeicherte Suchvorlage auswählen"
     },
-    "HEADLINE": "Suche",
+    "HEADER": "Suche",
     "RESET_BUTTON": {
       "TEXT": "Zurücksetzen",
       "DETAIL": "Suchkriterien zurücksetzen"

@@ -82,7 +82,7 @@
     "OCX_SEARCH_CONFIG": {
       "DROPDOWN_DEFAULT": "Pick predefined template"
     },
-    "HEADLINE": "Search",
+    "HEADER": "Search",
     "RESET_BUTTON": {
       "TEXT": "Reset",
       "DETAIL": "Reset search criteria"
