@@ -25,7 +25,18 @@ import { SearchConfig } from '../../../model/search-config'
 })
 export class SearchHeaderComponent implements AfterViewInit {
   @Input() searchConfigs: SearchConfig[] | undefined
-  @Input() headline = ''
+  @Input() header = ''
+
+  /**
+   * @deprecated Will be replaced by header
+   */
+  @Input()
+  get headline(): string {
+    return this.header
+  }
+  set headline(value: string) {
+    this.header = value
+  }
   @Input() subheader: string | undefined
   @Input() viewMode: 'basic' | 'advanced' = 'basic'
   @Input() manualBreadcrumbs = false
