@@ -13,7 +13,7 @@ import { PrimeIcon } from '../core/utils/primeicon.utils'
  * }
  * const buttonDetails: ButtonDialogButtonDetails = {
  *   key: 'MY_KEY',
- *   icon: 'pi pi-times',
+ *   icon: PrimeIcons.TIMES,
  *   parameters: {
  *     value: 'meeting'
  *   }
