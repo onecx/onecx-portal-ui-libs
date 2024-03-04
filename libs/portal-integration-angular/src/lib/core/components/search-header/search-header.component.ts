@@ -85,10 +85,10 @@ export class SearchHeaderComponent implements AfterViewInit {
             : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.SIMPLE.TEXT',
         actionCallback: () => this.toggleViewMode(),
         show: 'always',
-        ariaLabel:
+        titleKey:
           this.viewMode === 'basic'
-            ? 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.ADVANCED.ARIA_LABEL'
-            : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.SIMPLE.ARIA_LABEL',
+            ? 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.ADVANCED.DETAIL'
+            : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.SIMPLE.DETAIL',
       })
     }
     this.headerActions = headerActions.concat(this.actions)
