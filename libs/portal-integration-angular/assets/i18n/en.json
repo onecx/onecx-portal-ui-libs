@@ -76,7 +76,7 @@
     "OCX_SEARCH_CONFIG": {
       "DROPDOWN_DEFAULT": "Pick predefined template"
     },
-    "HEADLINE": "Search",
+    "HEADER": "Search",
     "RESET_BUTTON_TEXT": "Reset",
     "SEARCH_BUTTON_TEXT": "Search",
     "EXPORT": "Export all events"
