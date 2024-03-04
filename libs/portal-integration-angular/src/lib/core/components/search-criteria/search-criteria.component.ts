@@ -51,7 +51,7 @@ export class SearchCriteriaComponent extends PageHeaderComponent implements OnIn
 
   protected advancedSearchActive = false
 
-  // in BASIC mode ... enable switching to ADVANCED
+  // in SIMPLE mode ... enable switching to ADVANCED
   private enableAdvancedSearch: Action = {
     label: 'Advanced',
     title: 'Switch to Advanced Search',
@@ -60,10 +60,10 @@ export class SearchCriteriaComponent extends PageHeaderComponent implements OnIn
       this.activateAdvancedSearch(true)
     },
   }
-  // in ADVANCED mode ... enable switching to BASIC
-  private enableBasicSearch: Action = {
-    label: 'Basic',
-    title: 'Switch to Basic Search',
+  // in ADVANCED mode ... enable switching to SIMPLE
+  private enableSimpleSearch: Action = {
+    label: 'Simple',
+    title: 'Switch to Simple Search',
     show: 'always',
     actionCallback: () => {
       this.activateAdvancedSearch(false)
@@ -75,7 +75,7 @@ export class SearchCriteriaComponent extends PageHeaderComponent implements OnIn
     translateService: TranslateService,
     appStateService: AppStateService,
     userService: UserService,
-    @Inject(PortalSearchPage) @Optional() private searchPage?: PortalSearchPage<unknown>,
+    @Inject(PortalSearchPage) @Optional() private searchPage?: PortalSearchPage<unknown>
   ) {
     super(breadcrumbs, translateService, appStateService, userService)
   }
@@ -111,12 +111,12 @@ export class SearchCriteriaComponent extends PageHeaderComponent implements OnIn
     this.advancedSearchActive = advanced
     const actions = [...(this.actions || [])]
     const index = actions.findIndex(
-      (a) => (advanced && a === this.enableAdvancedSearch) || (!advanced && a === this.enableBasicSearch)
+      (a) => (advanced && a === this.enableAdvancedSearch) || (!advanced && a === this.enableSimpleSearch)
     )
     if (index >= 0) {
-      actions[index] = advanced ? this.enableBasicSearch : this.enableAdvancedSearch
+      actions[index] = advanced ? this.enableSimpleSearch : this.enableAdvancedSearch
     } else {
-      actions.push(advanced ? this.enableBasicSearch : this.enableAdvancedSearch)
+      actions.push(advanced ? this.enableSimpleSearch : this.enableAdvancedSearch)
     }
     this.actions = actions
   }

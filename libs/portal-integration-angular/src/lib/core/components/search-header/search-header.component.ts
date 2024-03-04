@@ -89,13 +89,17 @@ export class SearchHeaderComponent implements AfterViewInit {
     const headerActions: Action[] = []
     if (this.hasAdvanced) {
       headerActions.push({
-        id: 'basicAdvancedButton',
+        id: 'simpleAdvancedButton',
         labelKey:
           this.viewMode === 'basic'
-            ? 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.ADVANCED'
-            : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.BASIC',
+            ? 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.ADVANCED.TEXT'
+            : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.SIMPLE.TEXT',
         actionCallback: () => this.toggleViewMode(),
         show: 'always',
+        titleKey:
+          this.viewMode === 'basic'
+            ? 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.ADVANCED.DETAIL'
+            : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.SIMPLE.DETAIL',
       })
     }
     this.headerActions = headerActions.concat(this.actions)

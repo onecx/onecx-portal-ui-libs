@@ -33,7 +33,7 @@ describe('SearchConfigComponent', () => {
   const searchConfigs: SearchConfig[] = [
     {
       id: '01',
-      name: 'Basic search config',
+      name: 'Simple search config',
       fieldListVersion: 1,
       isReadonly: true,
       isAdvanced: true,

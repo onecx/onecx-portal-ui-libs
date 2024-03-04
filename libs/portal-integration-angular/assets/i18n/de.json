@@ -70,13 +70,27 @@
   },
   "OCX_SEARCH_HEADER": {
     "TOGGLE_BUTTON": {
-      "BASIC": "Basis",
-      "ADVANCED": "Erweitert"
+      "SIMPLE": {
+        "TEXT": "Einfach",
+        "DETAIL": "Zu einfachen Suchkriterien wechseln"
+      },
+      "ADVANCED": {
+        "TEXT": "Erweitert",
+        "DETAIL": "Zu erweiterten Suchkriterien wechseln"
+      }
     },
     "OCX_SEARCH_CONFIG": {
       "DROPDOWN_DEFAULT": "Gespeicherte Suchvorlage auswählen"
     },
     "HEADER": "Suche",
+    "RESET_BUTTON": {
+      "TEXT": "Zurücksetzen",
+      "DETAIL": "Suchkriterien zurücksetzen"
+    },
+    "SEARCH_BUTTON": {
+      "TEXT": "Suchen",
+      "DETAIL": "Suche starten"
+    },
     "RESET_BUTTON_TEXT": "Zurücksetzen",
     "SEARCH_BUTTON_TEXT": "Suchen",
     "EXPORT": "Alle Ereignisse exportieren"
