@@ -103,7 +103,7 @@
       <ng-container *ngFor="let column of columns">
         <th *ngIf="column.sortable || column.filterable; else simpleHeader" scope="col">
           <div class="table-header-wrapper">
-            <span>{{ column.nameKey | translate }}</span>
+            <span id="{{column.id}}-header-name">{{ column.nameKey | translate }}</span>
             <span class="icon-button-header-wrapper">
               <button
                 *ngIf="column.sortable"
@@ -128,6 +128,7 @@
                 appendTo="body"
                 (onClick)="onFilterClick(column)"
                 [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
+                ariaLabelledBy="{{column.id}}-header-name"
               >
                 <ng-template pTemplate="selectedItems" let-value>
                   <div
