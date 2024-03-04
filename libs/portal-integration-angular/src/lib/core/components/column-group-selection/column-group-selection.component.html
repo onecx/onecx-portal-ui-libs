@@ -12,5 +12,7 @@
     <ng-template let-item pTemplate="item"> {{ item ? (item | translate) : ''}} </ng-template>
     <ng-template let-item pTemplate="selectedItem"> {{ item ? (item | translate) : ''}} </ng-template>
   </p-dropdown>
-  <label for="columnGroupSelectionDropdown">{{ ("OCX_CUSTOM_GROUP_COLUMN_SELECTOR.DROPDOWN_LABEL" | translate) }}</label>
+  <label *ngIf="(allGroupKeys$ | async)?.length" for="columnGroupSelectionDropdown"
+    >{{ ("OCX_CUSTOM_GROUP_COLUMN_SELECTOR.DROPDOWN_LABEL" | translate) }}</label
+  >
 </span>
