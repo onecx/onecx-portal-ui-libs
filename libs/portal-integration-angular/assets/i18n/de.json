@@ -17,15 +17,15 @@
       "RIGHT": "Rechts"
     },
     "ARIA_LABELS": {
-      "UP": "Move column up",
-      "TOP": "Move column to the top",
-      "DOWN": "Move column down",
-      "BOTTOM": "Move column to the bottom",
-      "RIGHT": "Set column as active",
-      "ALL_RIGHT": "Set all columns as active",
-      "LEFT": "Set column as inactive",
-      "ALL_LEFT": "Set all columns as inactive",
-      "CLOSE": "Close dialog"
+      "UP": "Spalte nach oben verschieben",
+      "TOP": "Spalte an den Anfang verschieben",
+      "DOWN": "Spalte nach unten verschieben",
+      "BOTTOM": "Spalte ans Ende verschieben",
+      "RIGHT": "Spalte als aktiv setzen",
+      "ALL_RIGHT": "Alle Spalten als aktiv setzen",
+      "LEFT": "Spalte als inaktiv setzen",
+      "ALL_LEFT": "Alle Spalten als inaktiv setzen",
+      "CLOSE": "Dialog schließen"
     }
   },
   "OCX_SEARCH_CONFIG": {
@@ -43,7 +43,7 @@
       "DESCENDING_TITLE": "Absteigend",
       "DEFAULT_TITLE": "Standard"
     },
-    "SORTING_BUTTON_ARIA_LABEL": "Toggle sorting direction to {{direction}}"
+    "SORTING_BUTTON_ARIA_LABEL": "{{direction}} sortieren"
   },
   "OCX_DATA_TABLE": {
     "EMPTY_RESULT": "Keine Daten gefunden.",
@@ -61,10 +61,10 @@
       "DELETE": "Löschen"
     },
     "TOGGLE_BUTTON": {
-      "ASCENDING_TITLE": "Ascending",
-      "DESCENDING_TITLE": "Descending",
-      "DEFAULT_TITLE": "Default",
-      "ARIA_LABEL": "Toggle {{column}} sorting direction to {{direction}}"
+      "ASCENDING_TITLE": "Auftseigend",
+      "DESCENDING_TITLE": "Absteigend",
+      "DEFAULT_TITLE": "Standard",
+      "ARIA_LABEL": "{{column}} {{direction}} sortieren"
     }
   },
   "OCX_DATA_LIST_GRID": {
@@ -115,8 +115,8 @@
   },
   "OCX_PAGE_HEADER": {
     "MORE_ACTIONS": "Weitere Aktionen",
-    "HOME_DEFAULT_ARIA_LABEL": "Go to home page",
-    "HOME_ARIA_LABEL": "Go to {{page}} home page"
+    "HOME_DEFAULT_ARIA_LABEL": "Zur Startseite navigieren",
+    "HOME_ARIA_LABEL": "Zu {{page}} navigieren"
   },
   "OCX_HEADER": {
     "MENU_TOGGLE": "Menü"
