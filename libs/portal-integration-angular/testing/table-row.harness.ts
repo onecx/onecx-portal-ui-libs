@@ -5,9 +5,9 @@ export class TableRowHarness extends ContentContainerComponentHarness {
   static hostSelector = 'tbody > tr'
 
   getAllActionButtons = this.locatorForAll('button')
-  getViewButton = this.locatorForOptional(ButtonHarness.with({ id: 'viewTableRowButton' }))
-  getEditButton = this.locatorForOptional(ButtonHarness.with({ id: 'editTableRowButton' }))
-  getDeleteButton = this.locatorForOptional(ButtonHarness.with({ id: 'deleteTableRowButton' }))
+  getViewButton = this.locatorForOptional(ButtonHarness.with({ class: 'viewTableRowButton' }))
+  getEditButton = this.locatorForOptional(ButtonHarness.with({ class: 'editTableRowButton' }))
+  getDeleteButton = this.locatorForOptional(ButtonHarness.with({ class: 'deleteTableRowButton' }))
 
   async getData(): Promise<string[]> {
     const tds = await this.locatorForAll('td')()

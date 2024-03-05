@@ -53,6 +53,11 @@ export interface ObjectDetailItem {
   valuePipeArgs?: string
 }
 
+export interface HomeItem {
+  menuItem: MenuItem
+  page?: string
+}
+
 @Component({
   selector: 'ocx-page-header',
   templateUrl: './page-header.component.html',
@@ -113,7 +118,7 @@ export class PageHeaderComponent implements OnInit, OnChanges {
   dd = new Date()
   breadcrumbs$!: Observable<MenuItem[]>
 
-  home$!: Observable<MenuItem>
+  home$!: Observable<HomeItem>
 
   protected breadcrumbs: BreadcrumbService
 
@@ -125,8 +130,16 @@ export class PageHeaderComponent implements OnInit, OnChanges {
   ) {
     this.breadcrumbs = breadcrumbs
     this.home$ = concat(
-      of({ icon: PrimeIcons.HOME, routerLink: '/' }),
-      this.appStateService.currentPortal$.pipe(map((portal) => ({ icon: PrimeIcons.HOME, routerLink: portal.baseUrl })))
+      of({ menuItem: { icon: PrimeIcons.HOME, routerLink: '/' } }),
+      this.appStateService.currentPortal$.pipe(
+        map((portal) => ({
+          menuItem: {
+            icon: PrimeIcons.HOME,
+            routerLink: portal.baseUrl,
+          },
+          page: portal.portalName,
+        }))
+      )
     )
   }
   ngOnChanges(changes: SimpleChanges): void {

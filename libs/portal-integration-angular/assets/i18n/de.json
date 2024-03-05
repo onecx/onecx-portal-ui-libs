@@ -1,7 +1,7 @@
 {
   "OCX_CUSTOM_GROUP_COLUMN_SELECTOR": {
     "DROPDOWN_LABEL": "Spalten",
-    "OPEN_BUTTON_TITLE": "Dialog zur Auswahl einer benutzerdefinierten Gruppe öffnen",
+    "OPEN_BUTTON_DETAIL": "Dialog zur Auswahl einer benutzerdefinierten Gruppe öffnen",
     "ACTIVE_COLUMNS_LABEL": "Aktive Spalten",
     "INACTIVE_COLUMNS_LABEL": "Inaktive Spalten",
     "SAVE_BUTTON_LABEL": "Speichern",
@@ -15,6 +15,17 @@
       "NO": "Nein",
       "LEFT": "Links",
       "RIGHT": "Rechts"
+    },
+    "ARIA_LABELS": {
+      "UP": "Spalte nach oben verschieben",
+      "TOP": "Spalte an den Anfang verschieben",
+      "DOWN": "Spalte nach unten verschieben",
+      "BOTTOM": "Spalte ans Ende verschieben",
+      "RIGHT": "Spalte als inaktiv setzen",
+      "ALL_RIGHT": "Alle Spalten als inaktiv setzen",
+      "LEFT": "Spalte als aktiv setzen",
+      "ALL_LEFT": "Alle Spalten als aktiv setzen",
+      "CLOSE": "Dialog schließen"
     }
   },
   "OCX_SEARCH_CONFIG": {
@@ -28,16 +39,18 @@
       "TITLE": "Sortieren nach"
     },
     "TOGGLE_BUTTON": {
-      "ASCENDING_TITLE": "Auftseigend",
+      "ASCENDING_TITLE": "Aufsteigend",
       "DESCENDING_TITLE": "Absteigend",
       "DEFAULT_TITLE": "Standard"
-    }
+    },
+    "SORTING_BUTTON_ARIA_LABEL": "{{direction}} sortieren"
   },
   "OCX_DATA_TABLE": {
     "EMPTY_RESULT": "Keine Daten gefunden.",
     "EMPTY_FILTER_MESSAGE": "Keine Filter gefunden.",
     "ACTIONS_COLUMN_NAME": "Aktionen",
     "FILTER_TITLE": "Filter",
+    "FILTER_ARIA_LABEL": "Filter {{column}}",
     "EDITED": "Bearbeitet",
     "SHOWING": "{{first}} - {{last}} von {{totalRecords}}",
     "SHOWING_WITH_TOTAL_ON_SERVER": "{{first}} - {{last}} von {{totalRecords}} ({{totalRecordsOnServer}})",
@@ -46,6 +59,12 @@
       "VIEW": "Anzeigen",
       "EDIT": "Bearbeiten",
       "DELETE": "Löschen"
+    },
+    "TOGGLE_BUTTON": {
+      "ASCENDING_TITLE": "Aufsteigend",
+      "DESCENDING_TITLE": "Absteigend",
+      "DEFAULT_TITLE": "Standard",
+      "ARIA_LABEL": "{{column}} {{direction}} sortieren"
     }
   },
   "OCX_DATA_LIST_GRID": {
@@ -54,7 +73,8 @@
       "VIEW": "Anzeigen",
       "EDIT": "Bearbeiten",
       "DELETE": "Löschen"
-    }
+    },
+    "MORE_ACTIONS": "Weitere Aktionen"
   },
   "OCX_DATA_LAYOUT_SELECTION": {
     "LAYOUT": {
@@ -91,12 +111,12 @@
       "TEXT": "Suchen",
       "DETAIL": "Suche starten"
     },
-    "RESET_BUTTON_TEXT": "Zurücksetzen",
-    "SEARCH_BUTTON_TEXT": "Suchen",
     "EXPORT": "Alle Ereignisse exportieren"
   },
   "OCX_PAGE_HEADER": {
-    "MORE_ACTIONS": "Weitere Aktionen"
+    "MORE_ACTIONS": "Weitere Aktionen",
+    "HOME_DEFAULT_ARIA_LABEL": "Zur Startseite navigieren",
+    "HOME_ARIA_LABEL": "Zu {{page}} navigieren"
   },
   "OCX_HEADER": {
     "MENU_TOGGLE": "Menü"

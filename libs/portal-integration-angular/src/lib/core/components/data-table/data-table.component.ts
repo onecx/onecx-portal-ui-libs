@@ -245,15 +245,18 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   }
 
   onSortColumnClick(sortColumn: string) {
-    const newSortDirection =
-      sortColumn !== this.sortColumn
-        ? this.sortStates[0]
-        : this.sortStates[(this.sortStates.indexOf(this.sortDirection) + 1) % this.sortStates.length]
+    const newSortDirection = this.columnNextSortDirection(sortColumn)
 
     this._sortColumn$.next(sortColumn)
     this._sortDirection$.next(newSortDirection)
 
     this.sorted.emit({ sortColumn: sortColumn, sortDirection: newSortDirection })
+  }
+
+  columnNextSortDirection(sortColumn: string) {
+    return sortColumn !== this.sortColumn
+      ? this.sortStates[0]
+      : this.sortStates[(this.sortStates.indexOf(this.sortDirection) + 1) % this.sortStates.length]
   }
 
   onDeleteRow(selectedTableRow: Row) {
@@ -291,14 +294,22 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     return this.filters.filter((filter) => filter.columnId === columnId).map((filter) => filter.value)
   }
 
-  sortIconTitle() {
-    switch (this.sortDirection) {
+  sortIconTitle(sortColumn: string) {
+    return this.sortDirectionToTitle(
+      sortColumn !== this.sortDirection
+        ? DataSortDirection.NONE
+        : this.sortStates[this.sortStates.indexOf(this.sortDirection) % this.sortStates.length]
+    )
+  }
+
+  sortDirectionToTitle(sortDirection: DataSortDirection) {
+    switch (sortDirection) {
       case DataSortDirection.ASCENDING:
-        return 'OCX_LIST_GRID_SORT.TOGGLE_BUTTON.ASCENDING_TITLE'
+        return 'OCX_DATA_TABLE.TOGGLE_BUTTON.ASCENDING_TITLE'
       case DataSortDirection.DESCENDING:
-        return 'OCX_LIST_GRID_SORT.TOGGLE_BUTTON.DESCENDING_TITLE'
+        return 'OCX_DATA_TABLE.TOGGLE_BUTTON.DESCENDING_TITLE'
       default:
-        return 'OCX_LIST_GRID_SORT.TOGGLE_BUTTON.DEFAULT_TITLE'
+        return 'OCX_DATA_TABLE.TOGGLE_BUTTON.DEFAULT_TITLE'
     }
   }
 
