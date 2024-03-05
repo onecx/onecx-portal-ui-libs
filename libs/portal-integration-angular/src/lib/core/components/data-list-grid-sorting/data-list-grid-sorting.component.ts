@@ -45,9 +45,13 @@ export class DataListGridSortingComponent implements OnInit {
     this.sortChange.emit(event.value.columnId)
   }
   sortDirectionChanged(): void {
-    const newSortDirection = this.sortStates[(this.sortStates.indexOf(this.sortDirection) + 1) % this.sortStates.length]
+    const newSortDirection = this.nextSortDirection()
     this._sortDirection$.next(newSortDirection)
     this.sortDirectionChange.emit(newSortDirection)
+  }
+
+  nextSortDirection() {
+    return this.sortStates[(this.sortStates.indexOf(this.sortDirection) + 1) % this.sortStates.length]
   }
 
   sortIcon() {
@@ -62,7 +66,11 @@ export class DataListGridSortingComponent implements OnInit {
   }
 
   sortIconTitle() {
-    switch (this.sortDirection) {
+    return this.sortDirectionToTitle(this.sortDirection)
+  }
+
+  sortDirectionToTitle(sortDirection: DataSortDirection) {
+    switch (sortDirection) {
       case DataSortDirection.ASCENDING:
         return 'OCX_LIST_GRID_SORT.TOGGLE_BUTTON.ASCENDING_TITLE'
       case DataSortDirection.DESCENDING:

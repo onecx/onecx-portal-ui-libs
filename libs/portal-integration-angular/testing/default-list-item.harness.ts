@@ -6,9 +6,9 @@ export class DefaultListItemHarness extends ComponentHarness {
   static hostSelector = '.data-list-items'
 
   getAllActionButtons = this.locatorForAll('button')
-  getViewButton = this.locatorForOptional(ButtonHarness.with({ id: 'viewListItemButton' }))
-  getEditButton = this.locatorForOptional(ButtonHarness.with({ id: 'editListItemButton' }))
-  getDeleteButton = this.locatorForOptional(ButtonHarness.with({ id: 'deleteListItemButton' }))
+  getViewButton = this.locatorForOptional(ButtonHarness.with({ class: 'viewListItemButton' }))
+  getEditButton = this.locatorForOptional(ButtonHarness.with({ class: 'editListItemButton' }))
+  getDeleteButton = this.locatorForOptional(ButtonHarness.with({ class: 'deleteListItemButton' }))
 
   private getAllDivs = this.locatorForAll(DivHarness)
 

@@ -7,13 +7,13 @@ export class TableHeaderColumnHarness extends ContentContainerComponentHarness {
 
   getSortButton = this.locatorFor(
     ButtonHarness.with({
-      id: 'sortButton',
+      class: 'sortButton',
     })
   )
 
   getFilterMultiSelect = this.locatorFor(
     PMultiSelectHarness.with({
-      id: 'filterMultiSelect',
+      class: 'filterMultiSelect',
     })
   )
 
