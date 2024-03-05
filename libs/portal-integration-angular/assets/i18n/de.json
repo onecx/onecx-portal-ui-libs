@@ -1,7 +1,7 @@
 {
   "OCX_CUSTOM_GROUP_COLUMN_SELECTOR": {
     "DROPDOWN_LABEL": "Spalten",
-    "OPEN_BUTTON_TITLE": "Dialog zur Auswahl einer benutzerdefinierten Gruppe öffnen",
+    "OPEN_BUTTON_DETAIL": "Dialog zur Auswahl einer benutzerdefinierten Gruppe öffnen",
     "ACTIVE_COLUMNS_LABEL": "Aktive Spalten",
     "INACTIVE_COLUMNS_LABEL": "Inaktive Spalten",
     "SAVE_BUTTON_LABEL": "Speichern",
@@ -43,13 +43,14 @@
       "DESCENDING_TITLE": "Absteigend",
       "DEFAULT_TITLE": "Standard"
     },
-    "SORTING_BUTTON_ARIA_LABEL": "Change sorting direction. Now is {direction}"
+    "SORTING_BUTTON_ARIA_LABEL": "Toggle sorting direction to {{direction}}"
   },
   "OCX_DATA_TABLE": {
     "EMPTY_RESULT": "Keine Daten gefunden.",
     "EMPTY_FILTER_MESSAGE": "Keine Filter gefunden.",
     "ACTIONS_COLUMN_NAME": "Aktionen",
     "FILTER_TITLE": "Filter",
+    "FILTER_ARIA_LABEL": "Filter {{column}}",
     "EDITED": "Bearbeitet",
     "SHOWING": "{{first}} - {{last}} von {{totalRecords}}",
     "SHOWING_WITH_TOTAL_ON_SERVER": "{{first}} - {{last}} von {{totalRecords}} ({{totalRecordsOnServer}})",
@@ -58,6 +59,12 @@
       "VIEW": "Anzeigen",
       "EDIT": "Bearbeiten",
       "DELETE": "Löschen"
+    },
+    "TOGGLE_BUTTON": {
+      "ASCENDING_TITLE": "Ascending",
+      "DESCENDING_TITLE": "Descending",
+      "DEFAULT_TITLE": "Default",
+      "ARIA_LABEL": "Toggle {{column}} sorting direction to {{direction}}"
     }
   },
   "OCX_DATA_LIST_GRID": {
@@ -104,13 +111,12 @@
       "TEXT": "Suchen",
       "DETAIL": "Suche starten"
     },
-    "RESET_BUTTON_TEXT": "Zurücksetzen",
-    "SEARCH_BUTTON_TEXT": "Suchen",
     "EXPORT": "Alle Ereignisse exportieren"
   },
   "OCX_PAGE_HEADER": {
     "MORE_ACTIONS": "Weitere Aktionen",
-    "HOME": "Home"
+    "HOME_DEFAULT_ARIA_LABEL": "Go to home page",
+    "HOME_ARIA_LABEL": "Go to {{page}} home page"
   },
   "OCX_HEADER": {
     "MENU_TOGGLE": "Menü"

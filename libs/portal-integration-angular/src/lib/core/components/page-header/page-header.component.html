@@ -4,7 +4,7 @@
       [model]="items"
       *ngIf="breadcrumbs$ | async  as items"
       [home]="(home$ | async)?.menuItem ?? {}"
-      [homeAriaLabel]="(home$ | async)?.ariaLabel ?? 'OCX_PAGE_HEADER.HOME' | translate"
+      [homeAriaLabel]="(home$ | async)?.page ? ('OCX_PAGE_HEADER.HOME_ARIA_LABEL' | translate: { page: (home$ | async)?.page}) : ('OCX_PAGE_HEADER.HOME_DEFAULT_ARIA_LABEL' | translate)"
       [attr.manual]="manualBreadcrumbs"
     ></p-breadcrumb>
   </ng-container>
@@ -65,6 +65,7 @@
               class="more-actions-menu-button action-button ml-2"
               (click)="menu.toggle($event)"
               name="ocx-page-header-overflow-action-button"
+              [ariaLabel]="('OCX_PAGE_HEADER.MORE_ACTIONS' | translate)"
             ></button>
             <p-menu #menu [popup]="true" [model]="overflowActions" appendTo="body"></p-menu>
           </div>

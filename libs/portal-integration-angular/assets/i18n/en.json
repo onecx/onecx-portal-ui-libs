@@ -1,7 +1,7 @@
 {
   "OCX_CUSTOM_GROUP_COLUMN_SELECTOR": {
     "DROPDOWN_LABEL": "Columns",
-    "OPEN_BUTTON_TITLE": "Open custom group selection dialog",
+    "OPEN_BUTTON_DETAIL": "Open custom group selection dialog",
     "ACTIVE_COLUMNS_LABEL": "Active columns",
     "INACTIVE_COLUMNS_LABEL": "Inactive columns",
     "SAVE_BUTTON_LABEL": "Save",
@@ -43,13 +43,14 @@
       "DESCENDING_TITLE": "Descending",
       "DEFAULT_TITLE": "Default"
     },
-    "SORTING_BUTTON_ARIA_LABEL": "Change sorting direction. Now is {{direction}}"
+    "SORTING_BUTTON_ARIA_LABEL": "Toggle sorting direction to {{direction}}"
   },
   "OCX_DATA_TABLE": {
     "EMPTY_RESULT": "No data found.",
     "EMPTY_FILTER_MESSAGE": "No filters found.",
     "ACTIONS_COLUMN_NAME": "Actions",
     "FILTER_TITLE": "Filter",
+    "FILTER_ARIA_LABEL": "Filter {{column}}",
     "EDITED": "Edited",
     "SHOWING": "{{first}} - {{last}} of {{totalRecords}}",
     "SHOWING_WITH_TOTAL_ON_SERVER": "{{first}} - {{last}} of {{totalRecords}} ({{totalRecordsOnServer}})",
@@ -58,7 +59,13 @@
       "VIEW": "View",
       "EDIT": "Edit",
       "DELETE": "Delete"
-    } 
+    },
+    "TOGGLE_BUTTON": {
+      "ASCENDING_TITLE": "Ascending",
+      "DESCENDING_TITLE": "Descending",
+      "DEFAULT_TITLE": "Default",
+      "ARIA_LABEL": "Toggle {{column}} sorting direction to {{direction}}"
+    }
   },
   "OCX_DATA_LIST_GRID": {
     "EMPTY_RESULT": "No data found.",
@@ -108,7 +115,8 @@
   },
   "OCX_PAGE_HEADER": {
     "MORE_ACTIONS": "More actions",
-    "HOME": "Home"
+    "HOME_DEFAULT_ARIA_LABEL": "Go to home page",
+    "HOME_ARIA_LABEL": "Go to {{page}} home page"
   },
   "OCX_HEADER": {
     "MENU_TOGGLE": "Menu"

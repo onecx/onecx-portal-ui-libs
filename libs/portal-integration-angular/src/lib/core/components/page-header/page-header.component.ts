@@ -55,7 +55,7 @@ export interface ObjectDetailItem {
 
 export interface HomeItem {
   menuItem: MenuItem
-  ariaLabel?: string
+  page?: string
 }
 
 @Component({
@@ -137,7 +137,7 @@ export class PageHeaderComponent implements OnInit, OnChanges {
             icon: PrimeIcons.HOME,
             routerLink: portal.baseUrl,
           },
-          ariaLabel: portal.portalName,
+          page: portal.portalName,
         }))
       )
     )

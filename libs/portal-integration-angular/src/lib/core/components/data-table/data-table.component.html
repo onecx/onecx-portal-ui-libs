@@ -112,7 +112,8 @@
                 [class.pi-sort-amount-up]="column?.id === sortColumn && sortDirection === 'ASCENDING'"
                 [class.pi-sort-amount-down]="column?.id === sortColumn && sortDirection === 'DESCENDING'"
                 (click)="onSortColumnClick(column.id)"
-                [title]="(sortIconTitle() | translate)"
+                [title]="(sortIconTitle(column.id) | translate)"
+                [attr.aria-label]="('OCX_DATA_TABLE.TOGGLE_BUTTON.ARIA_LABEL' | translate: { column: (column.nameKey | translate), direction: (sortDirectionToTitle(columnNextSortDirection(column.id)) | translate)})"
               ></button>
               <p-multiSelect
                 class="filterMultiSelect"
@@ -128,7 +129,7 @@
                 appendTo="body"
                 (onClick)="onFilterClick(column)"
                 [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
-                ariaLabelledBy="{{column.id}}-header-name"
+                aria-label="{{('OCX_DATA_TABLE.FILTER_ARIA_LABEL' | translate: { column: column.nameKey | translate})}}"
               >
                 <ng-template pTemplate="selectedItems" let-value>
                   <div
