@@ -21,10 +21,10 @@
       "TOP": "Spalte an den Anfang verschieben",
       "DOWN": "Spalte nach unten verschieben",
       "BOTTOM": "Spalte ans Ende verschieben",
-      "RIGHT": "Spalte als aktiv setzen",
-      "ALL_RIGHT": "Alle Spalten als aktiv setzen",
-      "LEFT": "Spalte als inaktiv setzen",
-      "ALL_LEFT": "Alle Spalten als inaktiv setzen",
+      "RIGHT": "Spalte als inaktiv setzen",
+      "ALL_RIGHT": "Alle Spalten als inaktiv setzen",
+      "LEFT": "Spalte als aktiv setzen",
+      "ALL_LEFT": "Alle Spalten als aktiv setzen",
       "CLOSE": "Dialog schließen"
     }
   },
@@ -39,7 +39,7 @@
       "TITLE": "Sortieren nach"
     },
     "TOGGLE_BUTTON": {
-      "ASCENDING_TITLE": "Auftseigend",
+      "ASCENDING_TITLE": "Aufsteigend",
       "DESCENDING_TITLE": "Absteigend",
       "DEFAULT_TITLE": "Standard"
     },
@@ -61,7 +61,7 @@
       "DELETE": "Löschen"
     },
     "TOGGLE_BUTTON": {
-      "ASCENDING_TITLE": "Auftseigend",
+      "ASCENDING_TITLE": "Aufsteigend",
       "DESCENDING_TITLE": "Absteigend",
       "DEFAULT_TITLE": "Standard",
       "ARIA_LABEL": "{{column}} {{direction}} sortieren"
