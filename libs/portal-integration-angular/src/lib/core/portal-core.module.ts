@@ -44,7 +44,7 @@ import { PortalApiService } from '../services/portal-api.service'
 import { CriteriaTemplateComponent } from './components/search-criteria/criteria-template/criteria-template.component'
 import { ThemeService } from '../services/theme.service'
 import { GlobalErrorComponent } from './components/error-component/global-error.component'
-import { AppStateService } from '@onecx/angular-accelerator'
+import { AngularAcceleratorModule, AppStateService } from '@onecx/angular-accelerator'
 import { UserService } from '@onecx/angular-accelerator'
 import { AnnouncementBannerComponent } from './components/announcement-banner/announcement-banner.component'
 import { ViewTemplatePickerComponent } from './components/data-view-controls/view-template-picker/view-template-picker.component'
@@ -87,6 +87,7 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     FormsModule,
     ReactiveFormsModule,
     PrimeNgModule,
+    AngularAcceleratorModule,
     TranslateModule.forRoot({
       isolate: true,
       loader: {
@@ -154,6 +155,7 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     },
   ],
   exports: [
+    AngularAcceleratorModule,
     AnnouncementBannerComponent,
     AppInlineProfileComponent,
     AutofocusDirective,

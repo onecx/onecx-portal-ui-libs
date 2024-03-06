@@ -92,3 +92,15 @@ export * from './lib/core/utils/add-initialize-module-guard.utils'
 export * from './lib/core/utils/translate-service-initializer.utils'
 export * from './lib/core/utils/portal-api-configuration.utils'
 export * from './lib/core/utils/caching-translate-loader.utils'
+
+export {
+  BreadcrumbService,
+  UserService,
+  SearchConfig,
+  Action,
+  DataAction,
+  DataTableColumn,
+  ColumnType,
+  AppStateService,
+  ObjectDetailItem,
+} from '@onecx/angular-accelerator'

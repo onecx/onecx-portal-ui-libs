@@ -39,7 +39,7 @@ export * from './lib/model/search-config'
 
 // core
 export * from './lib/core/angular-accelerator.module'
-export * from './lib/core/primeng.module'
+// export * from './lib/core/primeng.module'
 
 // functions
 export * from './lib/functions/flatten-object'
