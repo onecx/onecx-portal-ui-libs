@@ -3,6 +3,7 @@
     "dest": "../../dist/libs/angular-accelerator",
     "lib": {
       "entryFile": "src/index.ts"
-    }
+    },
+    "assets": ["./assets/**"]
   }
   

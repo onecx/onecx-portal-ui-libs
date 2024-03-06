@@ -42,7 +42,55 @@
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/angular-accelerator/**/*.ts", "libs/angular-accelerator/**/*.html"]
+        "lintFilePatterns": ["libs/angular-accelerator/**/*.ts", "libs/angular-accelerator/**/*.html", "libx/angular-accelerator/package.json"]
+      }
+    },
+    "release": {
+      "executor": "nx-release:build-update-publish",
+      "options": {
+        "libName": "angular-accelerator"
+      }
+    },
+    "storybook": {
+      "executor": "@storybook/angular:start-storybook",
+      "options": {
+        "port": 4400,
+        "configDir": "libs/angular-accelerator/.storybook",
+        "browserTarget": "angular-accelerator:build-storybook",
+        "compodoc": false,
+        "styles": [
+          "node_modules/primeng/resources/primeng.min.css",
+          "node_modules/primeicons/primeicons.css",
+          "libs/angular-accelerator/assets/styles.scss",
+          "libs/angular-accelerator/.storybook/storybook.css"
+        ]
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "build-storybook": {
+      "executor": "@storybook/angular:build-storybook",
+      "outputs": ["{options.outputDir}"],
+      "options": {
+        "outputDir": "dist/storybook/angular-accelerator",
+        "configDir": "libs/angular-accelerator/.storybook",
+        "browserTarget": "angular-accelerator:build-storybook",
+        "compodoc": false,
+        "styles": [
+          "node_modules/primeng/resources/primeng.min.css",
+          "node_modules/primeicons/primeicons.css",
+          "libs/angular-accelerator/assets/styles.scss",
+          "libs/angular-accelerator/.storybook/storybook.css"
+        ]
+
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
       }
     }
   }
