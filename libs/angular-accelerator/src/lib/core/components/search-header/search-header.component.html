@@ -1,0 +1,39 @@
+<ocx-page-header
+  [header]="header || ('OCX_SEARCH_HEADER.HEADER' | translate)"
+  [subheader]="subheader"
+  [manualBreadcrumbs]="manualBreadcrumbs"
+  [actions]="headerActions"
+>
+  <ng-template #additionalToolbarContent>
+    <ocx-search-config [searchConfigs]="searchConfigs" (selectedSearchConfigChanged)="confirmSearchConfig($event)">
+    </ocx-search-config>
+    <ng-container *ngIf="_additionalToolbarContent" [ngTemplateOutlet]="_additionalToolbarContent"></ng-container>
+  </ng-template>
+  <div class="search-criteria-container">
+    <div #searchParameterFields>
+      <ng-content></ng-content>
+      <div class="search-criteria-buttons">
+        <p-button
+          id="resetButton"
+          *ngIf="resetted.observed"
+          (onClick)="onResetClicked()"
+          label="{{ 'OCX_SEARCH_HEADER.RESET_BUTTON.TEXT' | translate }}"
+          icon="pi pi-eraser"
+          [ariaLabel]="'OCX_SEARCH_HEADER.RESET_BUTTON.DETAIL' | translate"
+          title="{{ 'OCX_SEARCH_HEADER.RESET_BUTTON.DETAIL' | translate }}"
+        >
+        </p-button>
+
+        <p-button
+          id="searchButton"
+          (onClick)="onSearchClicked()"
+          label="{{ 'OCX_SEARCH_HEADER.SEARCH_BUTTON.TEXT' | translate }}"
+          icon="pi pi-search"
+          [ariaLabel]="'OCX_SEARCH_HEADER.SEARCH_BUTTON.DETAIL' | translate"
+          title="{{ 'OCX_SEARCH_HEADER.SEARCH_BUTTON.DETAIL' | translate }}"
+        >
+        </p-button>
+      </div>
+    </div>
+  </div>
+</ocx-page-header>

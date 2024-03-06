@@ -1,0 +1,87 @@
+<p-button
+  id="customGroupColumnSelectorButton"
+  type="button"
+  (click)="onOpenCustomGroupColumnSelectionDialogClick()"
+  [title]="openButtonTitle || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.OPEN_BUTTON_DETAIL' | translate)"
+  icon="pi pi-cog"
+  styleClass="p-button"
+  [ariaLabel]="openButtonTitle || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.OPEN_BUTTON_DETAIL' | translate)"
+></p-button>
+
+<p-dialog header="Header" [(visible)]="visible" [style]="{ width: '70%' }" [modal]="true" [closeAriaLabel]="('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABELS.CLOSE' | translate)">
+  <ng-template pTemplate="header">
+    <span class="text-xl font-bold"
+      >{{ dialogTitle || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.DIALOG_TITLE' | translate) }}</span
+    >
+  </ng-template>
+
+  <p-pickList
+    [source]="displayedColumnsModel"
+    [target]="hiddenColumnsModel"
+    [sourceHeader]="activeColumnsLabel || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ACTIVE_COLUMNS_LABEL' | translate)"
+    [targetHeader]="inactiveColumnsLabel || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.INACTIVE_COLUMNS_LABEL' | translate)"
+    [dragdrop]="true"
+    [responsive]="false"
+    [sourceStyle]="{ height: '300px' }"
+    [targetStyle]="{ height: '300px' }"
+    [upButtonAriaLabel]="('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABELS.UP' | translate)"
+    [topButtonAriaLabel]="('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABELS.TOP' | translate)"
+    [downButtonAriaLabel]="('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABELS.DOWN' | translate)"
+    [bottomButtonAriaLabel]="('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABELS.BOTTOM' | translate)"
+    [rightButtonAriaLabel]="('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABELS.RIGHT' | translate)"
+    [allRightButtonAriaLabel]="('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABELS.ALL_RIGHT' | translate)"
+    [leftButtonAriaLabel]="('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABELS.LEFT' | translate)"
+    [allLeftButtonAriaLabel]="('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABELS.ALL_LEFT' | translate)"
+  >
+    <ng-template let-item pTemplate="item">
+      <div>{{ item.nameKey | translate }}</div>
+    </ng-template>
+  </p-pickList>
+
+  <div class="pt-4">
+    <p class="text-xl font-bold">{{'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CONFIGURE_ACTION_COLUMN.TITLE' | translate}}</p>
+    <div class="flex gap-6 px-3">
+      <div>
+        <p class="mb-1">{{'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CONFIGURE_ACTION_COLUMN.FREEZE' | translate}}</p>
+        <p-selectButton
+          [options]="frozenOptions"
+          [(ngModel)]="frozenActionColumnModel"
+          optionLabel="label"
+          optionValue="value"
+          id="frozenActionColumn"
+          name="frozen-action-column-select-button"
+        >
+          <ng-template let-option pTemplate> {{option.label | translate}} </ng-template>
+        </p-selectButton>
+      </div>
+      <div>
+        <p class="mb-1">{{'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CONFIGURE_ACTION_COLUMN.POSITION' | translate}}</p>
+        <p-selectButton
+          [options]="alignmentOptions"
+          [(ngModel)]="actionColumnPositionModel"
+          optionLabel="label"
+          optionValue="value"
+          id="actionColumnPosition"
+          class="mt-2"
+          name="action-column-position-select-button"
+        >
+          <ng-template let-option pTemplate> {{option.label | translate}} </ng-template>
+        </p-selectButton>
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button
+      id="cancelButton"
+      (onClick)="onCancelClick()"
+      [label]="cancelButtonLabel || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CANCEL_BUTTON_LABEL' | translate)"
+      styleClass="p-button"
+    ></p-button>
+    <p-button
+      id="saveButton"
+      (onClick)="onSaveClick()"
+      [label]="saveButtonLabel || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.SAVE_BUTTON_LABEL' | translate)"
+    ></p-button>
+  </ng-template>
+</p-dialog>

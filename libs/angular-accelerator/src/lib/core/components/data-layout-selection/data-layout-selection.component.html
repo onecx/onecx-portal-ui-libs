@@ -1,0 +1,13 @@
+<div class="flex flex-wrap justify-content-between align-items-center py-1 gap-2">
+  <p-selectButton
+    *ngIf="viewingLayouts.length > 1"
+    [options]="viewingLayouts"
+    [(ngModel)]="selectedViewLayout"
+    optionLabel="icon"
+    (onChange)="onDataViewLayoutChange($event.value)"
+  >
+    <ng-template let-item>
+      <i [class]="item.icon" [title]="item.title || (item.titleKey | translate)"></i>
+    </ng-template>
+  </p-selectButton>
+</div>
