@@ -1,6 +1,6 @@
 import { Location } from '@angular/common'
 import { BehaviorSubject, first, map } from 'rxjs'
-import { AppStateService } from '../../services/app-state.service'
+import { AppStateService } from '@onecx/angular-accelerator'
 import { ConfigurationService } from '../../services/configuration.service'
 
 type Config = {

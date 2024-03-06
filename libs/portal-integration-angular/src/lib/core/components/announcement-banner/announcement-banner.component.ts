@@ -2,7 +2,7 @@ import { Component } from '@angular/core'
 import { catchError, map, Observable, of, switchMap, tap, throwError, EMPTY, mergeMap } from 'rxjs'
 import { AnnouncementItem, AnnouncementPriorityType } from '../../../model/announcement-item'
 import { AnnouncementsApiService } from '../../../services/announcements-api.service'
-import { AppStateService } from '../../../services/app-state.service'
+import { AppStateService } from '@onecx/angular-accelerator'
 import { ConfigurationService } from '../../../services/configuration.service'
 
 @Component({

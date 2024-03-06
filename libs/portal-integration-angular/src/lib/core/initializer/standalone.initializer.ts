@@ -3,9 +3,9 @@ import { IAuthService } from '../../api/iauth.service'
 import { ConfigurationService } from '../../services/configuration.service'
 import { PortalApiService } from '../../services/portal-api.service'
 import { ThemeService } from '../../services/theme.service'
-import { AppStateService } from '../../services/app-state.service'
+import { AppStateService } from '@onecx/angular-accelerator'
 import { CONFIG_KEY } from '../../model/config-key.model'
-import { UserService } from '../../services/user.service'
+import { UserService } from '@onecx/angular-accelerator'
 import { UserProfileAPIService } from '../../services/userprofile-api.service'
 import { MfeInfo } from '@onecx/integration-interface'
 
@@ -70,7 +70,7 @@ export function standaloneInitializer(
       console.log(`📃 portal OK? `, portal)
       await appStateService.currentPortal$.publish(portal)
 
-      const standaloneMfeInfo: MfeInfo = { mountPath: '/', remoteBaseUrl:'.', baseHref: '/', shellName: 'standalone' }
+      const standaloneMfeInfo: MfeInfo = { mountPath: '/', remoteBaseUrl: '.', baseHref: '/', shellName: 'standalone' }
       await appStateService.globalLoading$.publish(true)
       await appStateService.currentMfe$.publish(standaloneMfeInfo)
       await appStateService.globalLoading$.publish(false)

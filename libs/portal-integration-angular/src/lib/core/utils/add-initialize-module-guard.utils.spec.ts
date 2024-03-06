@@ -1,8 +1,8 @@
 import { TranslateService } from '@ngx-translate/core'
-import { AppStateService } from '../../services/app-state.service'
+import { AppStateService } from '@onecx/angular-accelerator'
 import { ConfigurationService } from '../../services/configuration.service'
 import { InitializeModuleGuard } from '../../services/initialize-module-guard.service'
-import { UserService } from '../../services/user.service'
+import { UserService } from '@onecx/angular-accelerator'
 import { addInitializeModuleGuard } from './add-initialize-module-guard.utils'
 
 class MockInitializeModuleGuard extends InitializeModuleGuard {

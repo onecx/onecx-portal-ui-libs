@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core'
 import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, UrlTree } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { filter, from, isObservable, map, mergeMap, Observable, of, tap, zip } from 'rxjs'
-import { AppStateService } from './app-state.service'
+import { AppStateService } from '@onecx/angular-accelerator'
 import { ConfigurationService } from './configuration.service'
-import { UserService } from './user.service'
+import { UserService } from '@onecx/angular-accelerator'
 
 @Injectable({ providedIn: 'any' })
 export class InitializeModuleGuard implements CanActivate {

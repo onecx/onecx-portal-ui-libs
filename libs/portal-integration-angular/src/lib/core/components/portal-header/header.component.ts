@@ -12,8 +12,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { CONFIG_KEY } from '../../../model/config-key.model'
 import { ThemeService } from '../../../services/theme.service'
 import { ImageLogoUrlUtils } from '../../utils/image-logo-url.utils'
-import { UserService } from '../../../services/user.service'
-import { AppStateService } from '../../../services/app-state.service'
+import { UserService } from '@onecx/angular-accelerator'
+import { AppStateService } from '@onecx/angular-accelerator'
 import { PrimeIcons } from 'primeng/api'
 
 type MenuItemPerm = MenuItem & { permission: string }
@@ -98,14 +98,14 @@ export class HeaderComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .pipe(filter((x) => x !== undefined)) as Observable<UserProfile>
 
-      this.logoUrl$ = combineLatest([
-        this.themeService.currentTheme$.asObservable(),
-        this.appStateService.currentPortal$.asObservable(),
-      ]).pipe(
-        map(([theme, portal]) => {
-          return ImageLogoUrlUtils.createLogoUrl(theme.logoUrl || portal.logoUrl)
-        })
-      )
+    this.logoUrl$ = combineLatest([
+      this.themeService.currentTheme$.asObservable(),
+      this.appStateService.currentPortal$.asObservable(),
+    ]).pipe(
+      map(([theme, portal]) => {
+        return ImageLogoUrlUtils.createLogoUrl(theme.logoUrl || portal.logoUrl)
+      })
+    )
   }
 
   ngOnInit() {

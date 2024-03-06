@@ -1,7 +1,7 @@
 import { Component } from '@angular/core'
 import { map, Observable } from 'rxjs'
 import { MfeInfo } from '../../../model/mfe-info.model'
-import { AppStateService } from '../../../services/app-state.service'
+import { AppStateService } from '@onecx/angular-accelerator'
 
 @Component({
   selector: 'ocx-mfe-debug',

@@ -17,10 +17,11 @@ import { PageHeaderComponent } from './components/page-header/page-header.compon
 import { SearchHeaderComponent } from './components/search-header/search-header.component'
 import { GroupByCountDiagramComponent } from './components/group-by-count-diagram/group-by-count-diagram.component'
 import { DiagramComponent } from './components/diagram/diagram.component'
-import { UserService } from '../services/user.service'
 import { DynamicPipe } from './pipes/dynamic.pipe'
 import { RelativeDatePipe } from './pipes/relative-date.pipe'
+
 import { IfPermissionDirective } from './directives/if-permission.directive'
+import { UserService } from '../services/user.service'
 
 export class AngularAcceleratorMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
