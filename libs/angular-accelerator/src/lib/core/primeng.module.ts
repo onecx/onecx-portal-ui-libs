@@ -8,6 +8,7 @@ import { DataViewModule } from 'primeng/dataview'
 import { TableModule } from 'primeng/table'
 import { MenuModule } from 'primeng/menu'
 import { ChartModule } from 'primeng/chart'
+import { MultiSelectModule } from 'primeng/multiselect'
 
 @NgModule({
   imports: [
@@ -20,6 +21,7 @@ import { ChartModule } from 'primeng/chart'
     TableModule,
     MenuModule,
     ChartModule,
+    MultiSelectModule,
   ],
   exports: [
     DropdownModule,
@@ -31,6 +33,7 @@ import { ChartModule } from 'primeng/chart'
     TableModule,
     MenuModule,
     ChartModule,
+    MultiSelectModule,
   ],
 })
 export class PrimeNgModule {}
