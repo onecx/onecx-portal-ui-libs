@@ -2,8 +2,11 @@ export type SearchConfigPrimitive = string | number | bigint | boolean | Date | 
 export interface SearchConfig {
   id: string
   name: string
+  page: string
+  modificationCount: number
   fieldListVersion: number
   isReadonly: boolean
   isAdvanced: boolean
-  values: Record<string, SearchConfigPrimitive>
+  columns: Array<string>
+  values: { [key: string]: string }
 }
