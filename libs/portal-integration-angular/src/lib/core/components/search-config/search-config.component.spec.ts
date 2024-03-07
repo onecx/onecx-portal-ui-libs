@@ -11,6 +11,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { SearchConfigHarness } from '../../../../../testing'
 import { PrimeNgModule } from '../../primeng.module'
 import { ReactiveFormsModule } from '@angular/forms'
+import { SearchConfigInfo } from '../../../model/search-config-info'
 
 describe('SearchConfigComponent', () => {
   let translateService: TranslateService
@@ -30,26 +31,18 @@ describe('SearchConfigComponent', () => {
     },
   ]
 
-  const searchConfigs: SearchConfig[] = [
+  const searchConfigs: SearchConfigInfo[] = [
     {
       id: '01',
       name: 'Simple search config',
-      fieldListVersion: 1,
-      isReadonly: true,
-      isAdvanced: true,
-      values: searchConfigurations[0],
     },
     {
       id: '02',
       name: 'Adapted search config',
-      fieldListVersion: 1,
-      isReadonly: true,
-      isAdvanced: true,
-      values: searchConfigurations[1],
     },
   ]
 
-  const emptySearchConfigEntry: SearchConfig[] = []
+  const emptySearchConfigEntry: SearchConfigInfo[] = []
 
   const placeholderKey = 'OCX_SEARCH_HEADER.OCX_SEARCH_CONFIG.DROPDOWN_DEFAULT'
 

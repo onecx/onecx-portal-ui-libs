@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
-import { SearchConfig } from '../../../model/search-config'
 import { FormControl, FormGroup } from '@angular/forms'
 import { SearchConfigInfo } from '../../../model/search-config-info'
 
