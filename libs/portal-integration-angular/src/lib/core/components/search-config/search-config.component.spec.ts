@@ -6,7 +6,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateService } from '@ngx-translate/core'
 import { MessageModule } from 'primeng/message'
 import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
-import { SearchConfigPrimitive, SearchConfig } from '../../../model/search-config'
+import { SearchConfigPrimitive } from '../../../model/search-config'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { SearchConfigHarness } from '../../../../../testing'
 import { PrimeNgModule } from '../../primeng.module'
@@ -17,19 +17,6 @@ describe('SearchConfigComponent', () => {
   let translateService: TranslateService
   let component: SearchConfigComponent
   let fixture: ComponentFixture<SearchConfigComponent>
-
-  const searchConfigurations: Record<string, SearchConfigPrimitive>[] = [
-    {
-      name: 'test',
-      startDate: undefined,
-      endDate: undefined,
-    },
-    {
-      name: 'example',
-      startDate: new Date(2023, 0, 15, 12, 30, 45),
-      endDate: new Date(2023, 0, 19, 12, 30, 45),
-    },
-  ]
 
   const searchConfigs: SearchConfigInfo[] = [
     {
