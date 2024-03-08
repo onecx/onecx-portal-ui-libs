@@ -1,3 +1,10 @@
+## [4.10.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.10.1...v4.10.2) (2024-03-08)
+
+
+### Bug Fixes
+
+* search config dialog ([#164](https://github.com/onecx/onecx-portal-ui-libs/issues/164)) ([395f289](https://github.com/onecx/onecx-portal-ui-libs/commit/395f289858324eb1525ba3eeb5b0ce7f085347a3))
+
 ## [4.10.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.10.0...v4.10.1) (2024-03-08)
 
 
