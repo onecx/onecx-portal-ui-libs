@@ -53,7 +53,7 @@ export class SearchHeaderComponent implements AfterViewInit {
   @Output() searched: EventEmitter<any> = new EventEmitter()
   @Output() resetted: EventEmitter<any> = new EventEmitter()
   @Output() selectedSearchConfigChanged: EventEmitter<SearchConfigInfo> = new EventEmitter()
-  @Output() viewModeChanged: EventEmitter<string> = new EventEmitter()
+  @Output() viewModeChanged: EventEmitter<'basic' | 'advanced'> = new EventEmitter()
   @ContentChild('additionalToolbarContent')
   additionalToolbarContent: TemplateRef<any> | undefined
 
