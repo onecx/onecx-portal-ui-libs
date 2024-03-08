@@ -1,3 +1,10 @@
+## [4.10.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.10.0...v4.10.1) (2024-03-08)
+
+
+### Bug Fixes
+
+* viewModeChanged type change ([#163](https://github.com/onecx/onecx-portal-ui-libs/issues/163)) ([3aacb0c](https://github.com/onecx/onecx-portal-ui-libs/commit/3aacb0c63d857dedf3a5b495c9e4bea64b683116))
+
 ## [4.10.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.9.0...v4.10.0) (2024-03-08)
 
 
