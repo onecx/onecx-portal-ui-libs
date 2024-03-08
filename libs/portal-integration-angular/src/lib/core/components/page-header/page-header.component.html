@@ -29,6 +29,8 @@
       </div>
     </div>
     <div class="action-items-wrap mt-2 md:mt-0">
+      <ng-container *ngIf="additionalToolbarContentLeft" [ngTemplateOutlet]="additionalToolbarContentLeft"> </ng-container>
+
       <ng-container *ngIf="!disableDefaultActions"> </ng-container>
       <ng-template #skeletonActions>
         <div class="flex">

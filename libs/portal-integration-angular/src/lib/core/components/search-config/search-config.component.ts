@@ -23,7 +23,7 @@ export class SearchConfigComponent implements OnInit {
     })
   }
 
-  onSearchConfigChange(searchConfig: SearchConfigInfo) {
-    this.selectedSearchConfigChanged?.emit(searchConfig)
+  onSearchConfigChange(event: { value: SearchConfigInfo }) {
+    this.selectedSearchConfigChanged?.emit(event.value)
   }
 }
