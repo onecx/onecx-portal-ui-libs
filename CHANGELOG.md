@@ -1,3 +1,18 @@
+## [4.10.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.9.0...v4.10.0) (2024-03-08)
+
+
+### Features
+
+* basic search to simple search with aria labels improvements ([#146](https://github.com/onecx/onecx-portal-ui-libs/issues/146)) ([a3a009d](https://github.com/onecx/onecx-portal-ui-libs/commit/a3a009d744cd8fbe6203fdd99c7f85d4b8b826d6))
+* search widget accessibility ([#149](https://github.com/onecx/onecx-portal-ui-libs/issues/149)) ([1ee49dd](https://github.com/onecx/onecx-portal-ui-libs/commit/1ee49ddeb0ef4c31ffd19b8d7f7074b51633a0a5))
+* search-header component uses header input ([#157](https://github.com/onecx/onecx-portal-ui-libs/issues/157)) ([558c590](https://github.com/onecx/onecx-portal-ui-libs/commit/558c59068e2c2a105edb142e91269c429d124fc7))
+
+
+### Bug Fixes
+
+* add ngIf to columnGroupSelectionDropdown to show the label only if columnGroups are defined ([#158](https://github.com/onecx/onecx-portal-ui-libs/issues/158)) ([d8fbb39](https://github.com/onecx/onecx-portal-ui-libs/commit/d8fbb392c05ee69b3c3a68437af44eb42dbeae32))
+* remove search config and add search config info ([#161](https://github.com/onecx/onecx-portal-ui-libs/issues/161)) ([d1db2ce](https://github.com/onecx/onecx-portal-ui-libs/commit/d1db2ce6845aa41ac483ce7db470f7e6fea8af04))
+
 ## [4.9.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.8.0...v4.9.0) (2024-02-28)
 
 
