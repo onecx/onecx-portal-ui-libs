@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
-import { SearchConfig } from '../../../model/search-config'
 import { FormControl, FormGroup } from '@angular/forms'
+import { SearchConfigInfo } from '../../../model/search-config-info'
 
 @Component({
   selector: 'ocx-search-config',
@@ -9,21 +9,21 @@ import { FormControl, FormGroup } from '@angular/forms'
 })
 export class SearchConfigComponent implements OnInit {
   @Input()
-  searchConfigs: SearchConfig[] | [] | undefined
+  searchConfigs: SearchConfigInfo[] | [] | undefined
 
   @Input() placeholderKey = 'OCX_SEARCH_HEADER.OCX_SEARCH_CONFIG.DROPDOWN_DEFAULT'
 
   @Output()
-  selectedSearchConfigChanged: EventEmitter<SearchConfig> = new EventEmitter()
+  selectedSearchConfigChanged: EventEmitter<SearchConfigInfo> = new EventEmitter()
 
   formGroup: FormGroup | undefined
   ngOnInit(): void {
     this.formGroup = new FormGroup({
-      searchConfigForm: new FormControl<SearchConfig | null>(null),
+      searchConfigForm: new FormControl<SearchConfigInfo | null>(null),
     })
   }
 
-  onSearchConfigChange(searchConfig: SearchConfig) {
+  onSearchConfigChange(searchConfig: SearchConfigInfo) {
     this.selectedSearchConfigChanged?.emit(searchConfig)
   }
 }
