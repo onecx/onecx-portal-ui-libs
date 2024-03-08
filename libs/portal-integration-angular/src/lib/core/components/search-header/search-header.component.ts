@@ -60,6 +60,12 @@ export class SearchHeaderComponent implements AfterViewInit {
   get _additionalToolbarContent(): TemplateRef<any> | undefined {
     return this.additionalToolbarContent
   }
+  @ContentChild('additionalToolbarContentLeft')
+  additionalToolbarContentLeft: TemplateRef<any> | undefined
+
+  get _additionalToolbarContentLeft(): TemplateRef<any> | undefined {
+    return this.additionalToolbarContentLeft
+  }
 
   @ViewChild('searchParameterFields') searchParameterFields: ElementRef | undefined
 

@@ -113,6 +113,9 @@ export class PageHeaderComponent implements OnInit, OnChanges {
   @ContentChild('additionalToolbarContent')
   additionalToolbarContent: TemplateRef<any> | undefined
 
+  @ContentChild('additionalToolbarContentLeft')
+  additionalToolbarContentLeft: TemplateRef<any> | undefined
+
   overflowActions: MenuItem[] = []
   inlineActions: Action[] | undefined
   dd = new Date()
