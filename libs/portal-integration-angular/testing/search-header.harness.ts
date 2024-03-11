@@ -1,5 +1,5 @@
 import { ContentContainerComponentHarness } from '@angular/cdk/testing'
-import { MoreActionsMenuButtonHarness } from './more-actions-menu-button.harness'
+import { MoreActionsMenuButtonHarness } from '@onecx/angular-accelerator/testing'
 import { ButtonHarness, PButtonHarness } from '@onecx/angular-testing'
 
 export class SearchHeaderHarness extends ContentContainerComponentHarness {

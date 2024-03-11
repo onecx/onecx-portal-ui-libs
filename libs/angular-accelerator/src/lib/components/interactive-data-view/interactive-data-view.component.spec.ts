@@ -40,7 +40,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { DateUtils } from '../../utils/dateutils'
 import { HttpClientModule } from '@angular/common/http'
 import { UserService } from '@onecx/angular-integration-interface'
-import { MockUserService } from '../../../../mocks/mock-user-service'
+import { MockUserService } from '@onecx/angular-integration-interface/mocks'
 
 describe('InteractiveDataViewComponent', () => {
   let component: InteractiveDataViewComponent
