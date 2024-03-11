@@ -59,8 +59,8 @@ describe('SearchConfigComponent', () => {
         NoopAnimationsModule,
         MessageModule,
         TranslateTestingModule.withTranslations({
-          en: require('./../../../../../assets/i18n/en.json'),
-          de: require('./../../../../../assets/i18n/de.json'),
+          en: require('./../../../../assets/i18n/en.json'),
+          de: require('./../../../../assets/i18n/de.json'),
         }),
         HttpClientTestingModule,
         PrimeNgModule,

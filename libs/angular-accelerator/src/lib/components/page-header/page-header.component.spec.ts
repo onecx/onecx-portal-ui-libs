@@ -6,8 +6,8 @@ import { TranslateTestingModule } from 'ngx-translate-testing'
 import { BreadcrumbModule } from 'primeng/breadcrumb'
 import { MenuModule } from 'primeng/menu'
 import { ButtonModule } from 'primeng/button'
-import { AppStateService } from '../../services/app-state.service'
-import { UserService } from '../../services/user.service'
+import { AppStateService } from '@onecx/angular-integration-interface'
+import { UserService } from '@onecx/angular-integration-interface'
 import { MockUserService } from '../../../../mocks/mock-user-service'
 import { PageHeaderHarness, TestbedHarnessEnvironment } from '../../../../testing'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
@@ -77,8 +77,8 @@ describe('PageHeaderComponent', () => {
         RouterTestingModule,
         HttpClientTestingModule,
         TranslateTestingModule.withTranslations({
-          en: require('./../../../../../assets/i18n/en.json'),
-          de: require('./../../../../../assets/i18n/de.json'),
+          en: require('./../../../../assets/i18n/en.json'),
+          de: require('./../../../../assets/i18n/de.json'),
         }),
         BreadcrumbModule,
         MenuModule,

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http'
-import { AppStateService } from '@onecx/angular-accelerator'
+import { AppStateService } from '@onecx/angular-integration-interface'
 import { createTranslateLoader } from './create-translate-loader.utils'
 import { MockService } from 'ng-mocks'
 import { Observable, of } from 'rxjs'

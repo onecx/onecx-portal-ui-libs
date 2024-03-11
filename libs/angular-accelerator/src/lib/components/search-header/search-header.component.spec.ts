@@ -6,7 +6,7 @@ import { RouterTestingModule } from '@angular/router/testing'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { ButtonModule } from 'primeng/button'
 import { BreadcrumbModule } from 'primeng/breadcrumb'
-import { AppStateService } from '../../services/app-state.service'
+import { AppStateService } from '@onecx/angular-integration-interface'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 
 describe('SearchHeaderComponent', () => {
