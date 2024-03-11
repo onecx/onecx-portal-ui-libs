@@ -15,8 +15,8 @@ import { MenuItem, PrimeIcons } from 'primeng/api'
 import { concat, map, Observable, of } from 'rxjs'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { TranslateService } from '@ngx-translate/core'
-import { AppStateService } from '../../services/app-state.service'
-import { UserService } from '../../services/user.service'
+import { AppStateService } from '@onecx/angular-integration-interface'
+import { UserService } from '@onecx/angular-integration-interface'
 import { PrimeIcon } from '../../utils/primeicon.utils'
 
 /**

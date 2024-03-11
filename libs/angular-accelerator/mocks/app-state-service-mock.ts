@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core'
 import { PageInfo, Portal } from '@onecx/integration-interface'
 // eslint-disable-next-line
-import { AppStateService } from '@onecx/angular-accelerator'
+import { AppStateService } from '@onecx/angular-integration-interface'
 import { FakeTopic } from './fake-topic'
 
 /**

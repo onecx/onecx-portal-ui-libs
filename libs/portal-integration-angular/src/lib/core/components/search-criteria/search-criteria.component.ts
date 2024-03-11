@@ -3,8 +3,8 @@ import { BreadcrumbService } from '@onecx/angular-accelerator'
 import { Action, PageHeaderComponent } from '@onecx/angular-accelerator'
 import { PortalSearchPage } from './search-page'
 import { TranslateService } from '@ngx-translate/core'
-import { AppStateService } from '@onecx/angular-accelerator'
-import { UserService } from '@onecx/angular-accelerator'
+import { AppStateService } from '@onecx/angular-integration-interface'
+import { UserService } from '@onecx/angular-integration-interface'
 
 /**
  * @deprecated Will be replaced by ocx-search-header

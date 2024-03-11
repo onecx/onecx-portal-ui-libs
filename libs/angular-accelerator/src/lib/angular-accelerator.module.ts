@@ -21,7 +21,7 @@ import { DynamicPipe } from './pipes/dynamic.pipe'
 import { RelativeDatePipe } from './pipes/relative-date.pipe'
 
 import { IfPermissionDirective } from './directives/if-permission.directive'
-import { UserService } from './services/user.service'
+import { UserService } from '@onecx/angular-integration-interface'
 
 export class AngularAcceleratorMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {

@@ -5,7 +5,7 @@ import { AUTH_SERVICE } from '../../../api/injection-tokens'
 import { MenuService } from '../../../services/app.menu.service'
 import { MenuItem } from 'primeng/api'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
-import { UserService } from '@onecx/angular-accelerator'
+import { UserService } from '@onecx/angular-integration-interface'
 import { map, Observable } from 'rxjs'
 import { UserProfile } from '../../../model/user-profile.model'
 

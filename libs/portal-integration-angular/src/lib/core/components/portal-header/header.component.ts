@@ -12,8 +12,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { CONFIG_KEY } from '../../../model/config-key.model'
 import { ThemeService } from '../../../services/theme.service'
 import { ImageLogoUrlUtils } from '../../utils/image-logo-url.utils'
-import { UserService } from '@onecx/angular-accelerator'
-import { AppStateService } from '@onecx/angular-accelerator'
+import { UserService } from '@onecx/angular-integration-interface'
+import { AppStateService } from '@onecx/angular-integration-interface'
 import { PrimeIcons } from 'primeng/api'
 
 type MenuItemPerm = MenuItem & { permission: string }

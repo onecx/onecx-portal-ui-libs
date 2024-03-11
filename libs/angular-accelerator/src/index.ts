@@ -17,9 +17,7 @@ export * from './lib/components/search-config/search-config.component'
 export * from './lib/components/search-header/search-header.component'
 
 // services
-export * from './lib/services/app-state.service'
 export * from './lib/services/breadcrumb.service'
-export * from './lib/services/user.service'
 
 // pipes
 export * from './lib/pipes/dynamic.pipe'

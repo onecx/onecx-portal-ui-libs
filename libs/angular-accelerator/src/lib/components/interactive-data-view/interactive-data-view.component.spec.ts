@@ -39,7 +39,7 @@ import { TranslateTestingModule } from 'ngx-translate-testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { DateUtils } from '../../utils/dateutils'
 import { HttpClientModule } from '@angular/common/http'
-import { UserService } from '../../services/user.service'
+import { UserService } from '@onecx/angular-integration-interface'
 import { MockUserService } from '../../../../mocks/mock-user-service'
 
 describe('InteractiveDataViewComponent', () => {

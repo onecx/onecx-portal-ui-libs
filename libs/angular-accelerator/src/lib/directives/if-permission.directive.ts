@@ -1,5 +1,5 @@
 import { Directive, ElementRef, Input, OnInit, Optional, Renderer2, TemplateRef, ViewContainerRef } from '@angular/core'
-import { UserService } from '../services/user.service'
+import { UserService } from '@onecx/angular-integration-interface'
 
 @Directive({ selector: '[ocxIfPermission], [ocxIfNotPermission]' })
 export class IfPermissionDirective implements OnInit {

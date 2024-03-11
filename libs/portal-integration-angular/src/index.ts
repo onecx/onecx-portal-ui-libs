@@ -95,12 +95,12 @@ export * from './lib/core/utils/caching-translate-loader.utils'
 
 export {
   BreadcrumbService,
-  UserService,
   SearchConfig,
   Action,
   DataAction,
   DataTableColumn,
   ColumnType,
-  AppStateService,
   ObjectDetailItem,
 } from '@onecx/angular-accelerator'
+
+export { AppStateService, UserService } from '@onecx/angular-integration-interface'
