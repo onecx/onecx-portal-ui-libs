@@ -5,16 +5,24 @@ import { filter, from, isObservable, map, mergeMap, Observable, of, tap, zip } f
 import { AppStateService } from '@onecx/angular-integration-interface'
 import { ConfigurationService } from './configuration.service'
 import { UserService } from '@onecx/angular-integration-interface'
+import { IL10nsStrings, TimeagoIntl } from 'ngx-timeago'
+import { strings as englishStrings } from 'ngx-timeago/language-strings/en'
+import { strings as germanStrings } from 'ngx-timeago/language-strings/de'
 
 @Injectable({ providedIn: 'any' })
 export class InitializeModuleGuard implements CanActivate {
   private SUPPORTED_LANGS = ['en', 'de']
+  private LANG_TO_STRINGS: { [key: string]: IL10nsStrings } = {
+    en: englishStrings,
+    de: germanStrings,
+  }
   private DEFAULT_LANG = 'en'
   constructor(
     protected translateService: TranslateService,
     protected configService: ConfigurationService,
     protected appStateService: AppStateService,
-    protected userService: UserService
+    protected userService: UserService,
+    protected intl: TimeagoIntl
   ) {}
 
   canActivate(
@@ -47,7 +55,13 @@ export class InitializeModuleGuard implements CanActivate {
   loadTranslations(): Observable<boolean> {
     return this.userService.lang$.pipe(
       filter((v) => v !== undefined),
-      mergeMap((lang) => this.translateService.use(this.getBestMatchLanguage(lang as string))),
+      mergeMap((lang) => {
+        var bestMatchLang = this.getBestMatchLanguage(lang as string)
+        this.intl.strings = this.LANG_TO_STRINGS[bestMatchLang]
+        console.log(`loading strings for ${bestMatchLang}`)
+        this.intl.changes.next()
+        return this.translateService.use(bestMatchLang)
+      }),
       mergeMap(() => of(true))
     )
   }

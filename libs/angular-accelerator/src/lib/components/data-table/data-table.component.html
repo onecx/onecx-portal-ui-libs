@@ -266,7 +266,7 @@
 </ng-template>
 
 <ng-template #defaultRelativeDateCell let-rowObject="rowObject" let-column="column">
-  <ng-container> {{ 'OCX_DATA_TABLE.EDITED' | translate }} {{ rowObject[column.id] | relativeDate }} </ng-container>
+  <ng-container> {{ 'OCX_DATA_TABLE.EDITED' | translate }} {{ rowObject[column.id] | timeago }} </ng-container>
 </ng-template>
 
 <ng-template #defaultTranslationKeyCell let-rowObject="rowObject" let-column="column">

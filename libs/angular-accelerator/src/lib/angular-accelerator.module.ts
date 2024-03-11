@@ -7,6 +7,7 @@ import {
   MissingTranslationHandlerParams,
   TranslateLoader,
   TranslateModule,
+  TranslateService,
 } from '@ngx-translate/core'
 import { PrimeNgModule } from './primeng.module'
 import { ColumnGroupSelectionComponent } from './components/column-group-selection/column-group-selection.component'
@@ -23,13 +24,13 @@ import { SearchHeaderComponent } from './components/search-header/search-header.
 import { GroupByCountDiagramComponent } from './components/group-by-count-diagram/group-by-count-diagram.component'
 import { DiagramComponent } from './components/diagram/diagram.component'
 import { DynamicPipe } from './pipes/dynamic.pipe'
-import { RelativeDatePipe } from './pipes/relative-date.pipe'
 
 import { IfPermissionDirective } from './directives/if-permission.directive'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 import { HttpClient } from '@angular/common/http'
 import { createTranslateLoader } from '@onecx/angular-integration-interface'
 import { TranslationCacheService } from '@onecx/angular-integration-interface'
+import { TimeagoCustomFormatter, TimeagoFormatter, TimeagoIntl, TimeagoModule } from 'ngx-timeago'
 
 export class AngularAcceleratorMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -57,6 +58,10 @@ export class AngularAcceleratorMissingTranslationHandler implements MissingTrans
     FormsModule,
     RouterModule,
     ReactiveFormsModule,
+    TimeagoModule.forRoot({
+      intl: { provide: TimeagoIntl, useClass: TimeagoIntl },
+      formatter: { provide: TimeagoFormatter, useClass: TimeagoCustomFormatter },
+    }),
   ],
   declarations: [
     ColumnGroupSelectionComponent,
@@ -65,7 +70,6 @@ export class AngularAcceleratorMissingTranslationHandler implements MissingTrans
     DataListGridSortingComponent,
     DataListGridComponent,
     DataTableComponent,
-    RelativeDatePipe,
     DataViewComponent,
     InteractiveDataViewComponent,
     SearchConfigComponent,
@@ -91,7 +95,6 @@ export class AngularAcceleratorMissingTranslationHandler implements MissingTrans
     DataLayoutSelectionComponent,
     DataListGridComponent,
     DataTableComponent,
-    RelativeDatePipe,
     DataViewComponent,
     InteractiveDataViewComponent,
     SearchConfigComponent,

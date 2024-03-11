@@ -56,6 +56,7 @@ export * from './lib/services/userprofile-api.service'
 export * from './lib/services/portal-dialog.service'
 export * from './lib/services/export-data.service'
 // pipes
+export * from './lib/core/pipes/relative-date.pipe'
 
 // models
 export * from './lib/mock-auth/mock-auth.module'
@@ -102,7 +103,6 @@ export {
   BreadCrumbMenuItem,
   DiagramType,
   DynamicPipe,
-  RelativeDatePipe,
   flattenObject,
   ObjectUtils,
   DateUtils,
