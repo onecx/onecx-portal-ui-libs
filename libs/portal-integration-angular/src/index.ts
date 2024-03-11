@@ -77,8 +77,10 @@ export * from './lib/model/config-key.model'
 // core
 export * from './lib/api/iauth.service'
 export * from './lib/api/injection-tokens'
+export * from './lib/api/constants'
 export * from './lib/core/debug.module'
 export * from './lib/core/portal-core.module'
+
 export * from './lib/core/primeng.module'
 
 // utils
@@ -95,6 +97,27 @@ export {
   DataTableColumn,
   ColumnType,
   ObjectDetailItem,
+  DiagramColumn,
+  DataSortDirection,
+  BreadCrumbMenuItem,
+  DiagramType,
+  DynamicPipe,
+  RelativeDatePipe,
+  flattenObject,
+  ObjectUtils,
+  DateUtils,
+  ColorUtils,
+  PrimeIcon,
 } from '@onecx/angular-accelerator'
 
-export { AppStateService, UserService } from '@onecx/angular-integration-interface'
+export { MfeInfo } from '@onecx/integration-interface'
+
+export {
+  AppStateService,
+  UserService,
+  TranslationCacheService,
+  TranslateCombinedLoader,
+  AsyncTranslateLoader,
+  createTranslateLoader,
+  CachingTranslateLoader,
+} from '@onecx/angular-integration-interface'
