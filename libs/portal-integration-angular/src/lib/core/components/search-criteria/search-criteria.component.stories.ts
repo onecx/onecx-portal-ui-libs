@@ -16,7 +16,7 @@ import { APP_CONFIG } from '../../../api/injection-tokens'
 import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
 import { ConfigurationService } from '../../../services/configuration.service'
 import { StorybookTranslateModule } from '../../storybook-translate.module'
-import { PageHeaderComponent } from '../page-header/page-header.component'
+import { PageHeaderComponent } from '@onecx/angular-accelerator'
 import { CriteriaTemplateComponent } from './criteria-template/criteria-template.component'
 import { SearchCriteriaComponent } from './search-criteria.component'
 

@@ -2,7 +2,7 @@ const rootMain = require('../../../.storybook/main')
 
 module.exports = {
   ...rootMain,
-  staticDirs: [{ from: '../assets', to: '/assets' }, '../mocks'],
+  staticDirs: [{ from: '../assets', to: '/assets' }],
   stories: ['../src/lib/**/*.stories.mdx', '../src/lib/**/*.stories.@(js|jsx|ts|tsx)'],
   addons: [...rootMain.addons, '@storybook/addon-essentials'],
   webpackFinal: async (config, { configType }) => {
