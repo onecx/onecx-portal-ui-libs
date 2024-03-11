@@ -1,6 +1,5 @@
 import { ContentContainerComponentHarness } from '@angular/cdk/testing'
-import { PDialogHarness, PPicklistHarness } from '.'
-import { PButtonHarness } from './primeng/p-button.harness'
+import { PDialogHarness, PPicklistHarness, PButtonHarness } from '@onecx/angular-testing'
 
 export class CustomGroupColumnSelectorHarness extends ContentContainerComponentHarness {
   static hostSelector = 'ocx-custom-group-column-selector'

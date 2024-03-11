@@ -1,5 +1,5 @@
 import { ComponentHarness } from '@angular/cdk/testing'
-import { PDropdownHarness } from './primeng/p-dropdown.harness'
+import { PDropdownHarness } from '@onecx/angular-testing'
 
 export class ColumnGroupSelectionHarness extends ComponentHarness {
   static hostSelector = 'ocx-column-group-selection'

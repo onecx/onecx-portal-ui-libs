@@ -7,7 +7,8 @@ import { TranslateTestingModule } from 'ngx-translate-testing'
 import { ColumnType } from '../../../model/column-type.model'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { DataTableHarness, PTableCheckboxHarness } from '../../../../../testing'
+import { DataTableHarness } from '../../../../../testing'
+import { PTableCheckboxHarness } from '@onecx/angular-testing'
 
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>

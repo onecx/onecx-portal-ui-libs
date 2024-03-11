@@ -1,7 +1,6 @@
 import { ContentContainerComponentHarness } from '@angular/cdk/testing'
-import { ButtonHarness } from './button.harness'
 import { MoreActionsMenuButtonHarness } from './more-actions-menu-button.harness'
-import { PButtonHarness } from './primeng/p-button.harness'
+import { ButtonHarness, PButtonHarness } from '@onecx/angular-testing'
 
 export class SearchHeaderHarness extends ContentContainerComponentHarness {
   static hostSelector = 'ocx-search-header'

@@ -18,20 +18,22 @@ import {
   ColumnGroupSelectionHarness,
   CustomGroupColumnSelectorHarness,
   DataLayoutSelectionHarness,
-  PDropdownHarness,
-  PButtonHarness,
   DataTableHarness,
   DataListGridHarness,
-  TableHeaderColumnHarness,
-  TableRowHarness,
-  ListItemHarness,
   DefaultGridItemHarness,
   DefaultListItemHarness,
+  InteractiveDataViewHarness,
+} from '../../../../../testing'
+import {
+  PDropdownHarness,
+  PButtonHarness,
   PPicklistHarness,
   ButtonHarness,
   PMultiSelectListItemHarness,
-  InteractiveDataViewHarness,
-} from '../../../../../testing'
+  TableHeaderColumnHarness,
+  TableRowHarness,
+  ListItemHarness,
+} from '@onecx/angular-testing'
 import { RouterTestingModule } from '@angular/router/testing'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'

@@ -1,8 +1,10 @@
 import { ContentContainerComponentHarness, TestElement } from '@angular/cdk/testing'
-import { TableHeaderColumnHarness } from './table-header-column.harness'
-import { TableRowHarness } from './table-row.harness'
-import { PPaginatorHarness } from './primeng/p-paginator.harness'
-import { PTableCheckboxHarness } from './p-tableCheckbox.harness'
+import {
+  TableHeaderColumnHarness,
+  TableRowHarness,
+  PPaginatorHarness,
+  PTableCheckboxHarness,
+} from '@onecx/angular-testing'
 
 export class DataTableHarness extends ContentContainerComponentHarness {
   static hostSelector = 'ocx-data-table'
@@ -19,11 +21,11 @@ export class DataTableHarness extends ContentContainerComponentHarness {
   async getHarnessesForCheckboxes(type: 'all' | 'checked' | 'unchecked'): Promise<PTableCheckboxHarness[]> {
     let checkBoxHarnesses: PTableCheckboxHarness[]
     if (type === 'checked') {
-      checkBoxHarnesses = await this.getAllHarnesses(PTableCheckboxHarness.with({isSelected: true}))
+      checkBoxHarnesses = await this.getAllHarnesses(PTableCheckboxHarness.with({ isSelected: true }))
       return checkBoxHarnesses
     }
     if (type === 'unchecked') {
-      checkBoxHarnesses = await this.getAllHarnesses(PTableCheckboxHarness.with({isSelected: false}))
+      checkBoxHarnesses = await this.getAllHarnesses(PTableCheckboxHarness.with({ isSelected: false }))
       return checkBoxHarnesses
     } else {
       checkBoxHarnesses = await this.getAllHarnesses(PTableCheckboxHarness)
@@ -32,7 +34,7 @@ export class DataTableHarness extends ContentContainerComponentHarness {
   }
 
   async getActionColumnHeader(position: 'left' | 'right') {
-      return await this.locatorForOptional(`[name="action-column-header-${position}"]`)()
+    return await this.locatorForOptional(`[name="action-column-header-${position}"]`)()
   }
 
   async getActionColumn(position: 'left' | 'right') {
@@ -40,7 +42,7 @@ export class DataTableHarness extends ContentContainerComponentHarness {
   }
 
   async columnIsFrozen(column: TestElement | null) {
-    if(column == null) {
+    if (column == null) {
       throw new Error('Given column is null')
     }
     return await column.hasClass('p-frozen-column')

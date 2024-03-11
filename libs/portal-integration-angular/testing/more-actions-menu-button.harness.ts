@@ -1,5 +1,5 @@
 import { ContentContainerComponentHarness, HarnessLoader } from '@angular/cdk/testing'
-import { MenuItemHarness } from './menu-item.harness'
+import { MenuItemHarness } from '@onecx/angular-testing'
 
 export class MoreActionsMenuButtonHarness extends ContentContainerComponentHarness {
   static hostSelector = '.more-actions-menu-button'

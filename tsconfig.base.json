@@ -17,6 +17,7 @@
     "paths": {
       "@onecx/accelerator": ["libs/accelerator/src/index.ts"],
       "@onecx/angular-accelerator": ["libs/angular-accelerator/src/index.ts"],
+      "@onecx/angular-testing": ["libs/angular-testing/src/index.ts"],
       "@onecx/integration-interface": ["libs/integration-interface/src/index.ts"],
       "@onecx/keycloak-auth": ["libs/keycloak-auth/src/index.ts"],
       "@onecx/portal-integration-angular": ["libs/portal-integration-angular/src/index.ts"],

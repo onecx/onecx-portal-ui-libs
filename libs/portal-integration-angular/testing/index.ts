@@ -1,13 +1,4 @@
-export * from './primeng/p-button.harness'
-export * from './primeng/p-calendar.harness'
-export * from './primeng/p-menu.harness'
-export * from './primeng/p-checkbox.harness'
-
 export * from './button-dialog.harness'
-export * from './button.harness'
-export * from './div.harness'
-export * from './input.harness'
-export * from './menu-item.harness'
 export * from './more-actions-menu-button.harness'
 export * from './search-header.harness'
 export * from './create-or-edit-search-config-dialog.harness'

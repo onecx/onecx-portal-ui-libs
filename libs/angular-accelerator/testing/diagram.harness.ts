@@ -1,6 +1,5 @@
 import { ComponentHarness } from '@angular/cdk/testing'
-import { PChartHarness } from './primeng/p-chart.harness'
-import { PSelectButtonHarness } from './primeng/p-selectButton.harness'
+import { PChartHarness, PSelectButtonHarness } from '@onecx/angular-testing'
 
 export class DiagramHarness extends ComponentHarness {
   static hostSelector = 'ocx-diagram'
@@ -16,7 +15,7 @@ export class DiagramHarness extends ComponentHarness {
   }
 
   async getDiagramTypeSelectButton() {
-    return (await this.locatorForOptional('p-selectButton[name="diagram-type-select-button"]')())
+    return await this.locatorForOptional('p-selectButton[name="diagram-type-select-button"]')()
   }
 
   async getAllSelectionButtons() {

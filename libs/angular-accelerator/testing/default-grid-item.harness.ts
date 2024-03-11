@@ -1,5 +1,5 @@
 import { ComponentHarness } from '@angular/cdk/testing'
-import { DivHarness } from './div.harness'
+import { DivHarness } from '@onecx/angular-testing'
 import { MoreActionsMenuButtonHarness } from './more-actions-menu-button.harness'
 
 export class DefaultGridItemHarness extends ComponentHarness {

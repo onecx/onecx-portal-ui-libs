@@ -1,6 +1,5 @@
 import { ComponentHarness } from '@angular/cdk/testing'
-import { ButtonHarness } from './button.harness'
-import { DivHarness } from './div.harness'
+import { ButtonHarness, DivHarness } from '@onecx/angular-testing'
 
 export class DefaultListItemHarness extends ComponentHarness {
   static hostSelector = '.data-list-items'

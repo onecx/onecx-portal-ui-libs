@@ -1,5 +1,5 @@
 import { ComponentHarness } from '@angular/cdk/testing'
-import { DivHarness } from './div.harness'
+import { DivHarness } from '@onecx/angular-testing'
 
 export class OcxContentContainerHarness extends ComponentHarness {
   static hostSelector = 'ocx-content-container'
