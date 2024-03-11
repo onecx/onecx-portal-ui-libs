@@ -6,7 +6,7 @@ import { Observable, of } from 'rxjs'
 import { MfeInfo } from '@onecx/integration-interface'
 import { TestBed } from '@angular/core/testing'
 import { EnvironmentInjector } from '@angular/core'
-import { TranslationCacheService } from '../../services/translation-cache.service'
+import { TranslationCacheService } from '../services/translation-cache.service'
 
 describe('CreateTranslateLoader', () => {
   const origAddEventListener = window.addEventListener

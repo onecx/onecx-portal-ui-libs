@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http'
 import { TranslateLoader } from '@ngx-translate/core'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
 import { Observable } from 'rxjs'
-import { TranslationCacheService } from '../../services/translation-cache.service'
+import { TranslationCacheService } from '../services/translation-cache.service'
 
 export class CachingTranslateLoader implements TranslateLoader {
   private translateLoader = new TranslateHttpLoader(this.http, this.prefix, this.suffix)

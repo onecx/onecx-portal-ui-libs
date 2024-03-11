@@ -2,7 +2,12 @@ import { CommonModule } from '@angular/common'
 import { CUSTOM_ELEMENTS_SCHEMA, LOCALE_ID, NgModule } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
-import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateModule } from '@ngx-translate/core'
+import {
+  MissingTranslationHandler,
+  MissingTranslationHandlerParams,
+  TranslateLoader,
+  TranslateModule,
+} from '@ngx-translate/core'
 import { PrimeNgModule } from './primeng.module'
 import { ColumnGroupSelectionComponent } from './components/column-group-selection/column-group-selection.component'
 import { CustomGroupColumnSelectorComponent } from './components/custom-group-column-selector/custom-group-column-selector.component'
@@ -21,7 +26,10 @@ import { DynamicPipe } from './pipes/dynamic.pipe'
 import { RelativeDatePipe } from './pipes/relative-date.pipe'
 
 import { IfPermissionDirective } from './directives/if-permission.directive'
-import { UserService } from '@onecx/angular-integration-interface'
+import { AppStateService, UserService } from '@onecx/angular-integration-interface'
+import { HttpClient } from '@angular/common/http'
+import { createTranslateLoader } from '@onecx/angular-integration-interface'
+import { TranslationCacheService } from '@onecx/angular-integration-interface'
 
 export class AngularAcceleratorMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -31,7 +39,25 @@ export class AngularAcceleratorMissingTranslationHandler implements MissingTrans
 }
 
 @NgModule({
-  imports: [CommonModule, PrimeNgModule, TranslateModule.forRoot(), FormsModule, RouterModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    PrimeNgModule,
+    TranslateModule.forRoot({
+      isolate: true,
+      loader: {
+        provide: TranslateLoader,
+        useFactory: createTranslateLoader,
+        deps: [HttpClient, AppStateService, TranslationCacheService],
+      },
+      missingTranslationHandler: {
+        provide: MissingTranslationHandler,
+        useClass: AngularAcceleratorMissingTranslationHandler,
+      },
+    }),
+    FormsModule,
+    RouterModule,
+    ReactiveFormsModule,
+  ],
   declarations: [
     ColumnGroupSelectionComponent,
     CustomGroupColumnSelectorComponent,

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { TestBed } from '@angular/core/testing'
 import { of } from 'rxjs'
-import { TranslationCacheService } from '../../services/translation-cache.service'
+import { TranslationCacheService } from '../services/translation-cache.service'
 import { CachingTranslateLoader } from './caching-translate-loader.utils'
 
 describe('CachingTranslateLoader', () => {
