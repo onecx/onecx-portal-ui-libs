@@ -4,9 +4,12 @@
   [manualBreadcrumbs]="manualBreadcrumbs"
   [actions]="headerActions"
 >
-  <ng-template #additionalToolbarContent>
+  <ng-template #additionalToolbarContentLeft>
     <ocx-search-config [searchConfigs]="searchConfigs" (selectedSearchConfigChanged)="confirmSearchConfig($event)">
     </ocx-search-config>
+    <ng-container *ngIf="_additionalToolbarContentLeft" [ngTemplateOutlet]="_additionalToolbarContentLeft"></ng-container>
+  </ng-template>
+  <ng-template #additionalToolbarContent>
     <ng-container *ngIf="_additionalToolbarContent" [ngTemplateOutlet]="_additionalToolbarContent"></ng-container>
   </ng-template>
   <div class="search-criteria-container">

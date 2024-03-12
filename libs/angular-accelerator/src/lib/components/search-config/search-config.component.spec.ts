@@ -8,47 +8,26 @@ import { TranslateTestingModule } from 'ngx-translate-testing'
 import { MessageModule } from 'primeng/message'
 import { PrimeNgModule } from '../../primeng.module'
 import { SearchConfigComponent } from './search-config.component'
-import { SearchConfigPrimitive, SearchConfig } from '../../model/search-config'
 import { SearchConfigHarness } from '../../../../testing'
+import { SearchConfigInfo } from '../../model/search-config-info'
 
 describe('SearchConfigComponent', () => {
   let translateService: TranslateService
   let component: SearchConfigComponent
   let fixture: ComponentFixture<SearchConfigComponent>
 
-  const searchConfigurations: Record<string, SearchConfigPrimitive>[] = [
-    {
-      name: 'test',
-      startDate: undefined,
-      endDate: undefined,
-    },
-    {
-      name: 'example',
-      startDate: new Date(2023, 0, 15, 12, 30, 45),
-      endDate: new Date(2023, 0, 19, 12, 30, 45),
-    },
-  ]
-
-  const searchConfigs: SearchConfig[] = [
+  const searchConfigs: SearchConfigInfo[] = [
     {
       id: '01',
       name: 'Simple search config',
-      fieldListVersion: 1,
-      isReadonly: true,
-      isAdvanced: true,
-      values: searchConfigurations[0],
     },
     {
       id: '02',
       name: 'Adapted search config',
-      fieldListVersion: 1,
-      isReadonly: true,
-      isAdvanced: true,
-      values: searchConfigurations[1],
     },
   ]
 
-  const emptySearchConfigEntry: SearchConfig[] = []
+  const emptySearchConfigEntry: SearchConfigInfo[] = []
 
   const placeholderKey = 'OCX_SEARCH_HEADER.OCX_SEARCH_CONFIG.DROPDOWN_DEFAULT'
 

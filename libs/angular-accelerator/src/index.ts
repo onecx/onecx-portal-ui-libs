@@ -33,7 +33,7 @@ export * from './lib/model/data-table-column.model'
 export * from './lib/model/diagram-column'
 // export * from './lib/model/diagram-data'
 export * from './lib/model/diagram-type'
-export * from './lib/model/search-config'
+export * from './lib/model/search-config-info'
 
 // core
 export * from './lib/angular-accelerator.module'

@@ -140,7 +140,7 @@ export class ButtonDialogComponent implements OnInit {
 
       //populate container
       Object.keys(this.dialogData.componentData).forEach((k) => {
-        componentRef.instance[k] = this.dialogData.componentData[k]
+        componentRef.setInput(k, this.dialogData.componentData[k])
       })
       this.componentRef = componentRef
     }
