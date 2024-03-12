@@ -46,7 +46,6 @@ export * from './lib/core/components/lifecycle/lifecycle.component'
 
 // services
 export * from './lib/services/app.menu.service'
-export * from './lib/services/configuration.service'
 export * from './lib/services/menu-api.service'
 export * from './lib/services/portal-api.service'
 export * from './lib/services/portal-message.service'
@@ -73,11 +72,8 @@ export * from './lib/model/page-info.model'
 export * from './lib/model/portal'
 export * from './lib/model/user-profile.model'
 export * from './lib/model/button-dialog'
-export * from './lib/model/config-key.model'
 
 // core
-export * from './lib/api/iauth.service'
-export * from './lib/api/injection-tokens'
 export * from './lib/api/constants'
 export * from './lib/core/debug.module'
 export * from './lib/core/portal-core.module'

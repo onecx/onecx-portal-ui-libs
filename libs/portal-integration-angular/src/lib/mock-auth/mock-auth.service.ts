@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
 import { BehaviorSubject } from 'rxjs'
-import { IAuthService } from '../api/iauth.service'
+import { IAuthService } from '@onecx/angular-integration-interface'
 import { UserProfile } from '../model/user-profile.model'
 
 @Injectable()

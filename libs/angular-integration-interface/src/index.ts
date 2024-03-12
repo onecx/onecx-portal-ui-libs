@@ -1,7 +1,15 @@
 // services
 export * from './lib/services/app-state.service'
+export * from './lib/services/configuration.service'
 export * from './lib/services/user.service'
 export * from './lib/services/translation-cache.service'
+
+// models
+export * from './lib/model/config-key.model'
+
+// core
+export * from './lib/api/iauth.service'
+export * from './lib/api/injection-tokens'
 
 // utils
 export * from './lib/utils/async-translate-loader.utils'

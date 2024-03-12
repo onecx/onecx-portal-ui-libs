@@ -1,20 +1,23 @@
 import { animate, style, transition, trigger } from '@angular/animations'
 import { Component, ElementRef, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core'
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { combineLatest, filter, map, Observable } from 'rxjs'
 import { MenuItem } from 'primeng/api/menuitem'
+import { PrimeIcons } from 'primeng/api'
 
-import { IAuthService } from '../../../api/iauth.service'
-import { AUTH_SERVICE } from '../../../api/injection-tokens'
+import {
+  AppStateService,
+  UserService,
+  IAuthService,
+  AUTH_SERVICE,
+  ConfigurationService,
+  CONFIG_KEY,
+} from '@onecx/angular-integration-interface'
+
 import { UserProfile } from '../../../model/user-profile.model'
-import { ConfigurationService } from '../../../services/configuration.service'
 import { MenuService } from '../../../services/app.menu.service'
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
-import { CONFIG_KEY } from '../../../model/config-key.model'
 import { ThemeService } from '../../../services/theme.service'
 import { ImageLogoUrlUtils } from '../../utils/image-logo-url.utils'
-import { UserService } from '@onecx/angular-integration-interface'
-import { AppStateService } from '@onecx/angular-integration-interface'
-import { PrimeIcons } from 'primeng/api'
 
 type MenuItemPerm = MenuItem & { permission: string }
 @Component({
