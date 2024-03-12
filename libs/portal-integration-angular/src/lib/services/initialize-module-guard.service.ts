@@ -56,7 +56,7 @@ export class InitializeModuleGuard implements CanActivate {
     return this.userService.lang$.pipe(
       filter((v) => v !== undefined),
       mergeMap((lang) => {
-        var bestMatchLang = this.getBestMatchLanguage(lang as string)
+        const bestMatchLang = this.getBestMatchLanguage(lang as string)
         this.intl.strings = this.LANG_TO_STRINGS[bestMatchLang]
         console.log(`loading strings for ${bestMatchLang}`)
         this.intl.changes.next()

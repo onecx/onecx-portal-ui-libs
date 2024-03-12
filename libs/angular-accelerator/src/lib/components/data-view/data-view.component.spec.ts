@@ -9,18 +9,6 @@ import { DataTableComponent } from '../data-table/data-table.component'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { DataListGridHarness, DataTableHarness, DataViewHarness } from '../../../../testing'
 import { ColumnType } from '../../model/column-type.model'
-import { IfPermissionDirective } from '../../directives/if-permission.directive'
-import {
-  TimeagoClock,
-  TimeagoDefaultClock,
-  TimeagoDefaultFormatter,
-  TimeagoFormatter,
-  TimeagoIntl,
-  TimeagoModule,
-  TimeagoPipe,
-} from 'ngx-timeago'
-import { importProvidersFrom } from '@angular/core'
-import { PrimeNgModule } from '../../primeng.module'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 
 describe('DataViewComponent', () => {

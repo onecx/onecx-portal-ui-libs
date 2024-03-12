@@ -9,17 +9,6 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { DataTableHarness } from '../../../../testing'
 import { PTableCheckboxHarness } from '@onecx/angular-testing'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
-import {
-  TimeagoClock,
-  TimeagoCustomFormatter,
-  TimeagoDefaultClock,
-  TimeagoDefaultFormatter,
-  TimeagoFormatter,
-  TimeagoIntl,
-  TimeagoModule,
-  TimeagoPipe,
-} from 'ngx-timeago'
-import { importProvidersFrom } from '@angular/core'
 
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>

@@ -34,7 +34,6 @@ import {
   TimeagoClock,
   TimeagoCustomFormatter,
   TimeagoDefaultClock,
-  TimeagoDefaultFormatter,
   TimeagoFormatter,
   TimeagoIntl,
   TimeagoModule,
