@@ -18,7 +18,6 @@ import {
   TranslateLoader,
   TranslateModule,
 } from '@ngx-translate/core'
-import { APPLICATION_NAME, AUTH_SERVICE, SANITY_CHECK } from '@onecx/angular-accelerator'
 import { AutofocusDirective } from './directives/autofocus.directive'
 import { IfBreakpointDirective } from './directives/if-breakpoint.directive'
 import { AppInlineProfileComponent } from './components/inline-profile/inline-profile.component'
@@ -35,7 +34,6 @@ import { PortalPageComponent } from './components/portal-page/portal-page.compon
 import { DeleteDialogComponent } from './components/delete-dialog/delete-dialog.component'
 import { PortalViewportComponent } from './components/portal-viewport/portal-viewport.component'
 import { UserAvatarComponent } from './components/user-avatar/user-avatar.component'
-import { ConfigurationService } from '../services/configuration.service'
 import { DataViewControlsComponent } from './components/data-view-controls/data-view-controls.component'
 import { SearchCriteriaComponent } from './components/search-criteria/search-criteria.component'
 import { ColumnTogglerComponent } from './components/data-view-controls/column-toggler-component/column-toggler.component'
@@ -45,7 +43,14 @@ import { CriteriaTemplateComponent } from './components/search-criteria/criteria
 import { ThemeService } from '../services/theme.service'
 import { GlobalErrorComponent } from './components/error-component/global-error.component'
 import { AngularAcceleratorModule, TranslationCacheService, createTranslateLoader } from '@onecx/angular-accelerator'
-import { UserService, AppStateService } from '@onecx/angular-integration-interface'
+import {
+  UserService,
+  AppStateService,
+  ConfigurationService,
+  APPLICATION_NAME,
+  AUTH_SERVICE,
+  SANITY_CHECK,
+} from '@onecx/angular-integration-interface'
 import { AnnouncementBannerComponent } from './components/announcement-banner/announcement-banner.component'
 import { ViewTemplatePickerComponent } from './components/data-view-controls/view-template-picker/view-template-picker.component'
 import { SupportTicketComponent } from './components/support-ticket/support-ticket.component'
