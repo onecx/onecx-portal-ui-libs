@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http'
 import { Injectable, OnDestroy } from '@angular/core'
 import { from, map, mergeMap } from 'rxjs'
-import { CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
-import { CurrentThemeTopic } from '@onecx/integration-interface'
-import { Theme } from '../model/theme'
+import { CurrentThemeTopic, Theme } from '@onecx/integration-interface'
+import { ConfigurationService } from './configuration.service'
+import { CONFIG_KEY } from '../model/config-key.model'
 
 const defaultThemeServerUrl = 'http://portal-theme-management:8080'
 

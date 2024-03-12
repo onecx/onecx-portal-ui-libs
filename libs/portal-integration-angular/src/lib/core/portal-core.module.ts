@@ -12,12 +12,15 @@ import {
 import { HttpClient } from '@angular/common/http'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
+import de from '@angular/common/locales/de'
 import {
   MissingTranslationHandler,
   MissingTranslationHandlerParams,
   TranslateLoader,
   TranslateModule,
 } from '@ngx-translate/core'
+import { MessageService } from 'primeng/api'
+import { ConfirmDialogModule } from 'primeng/confirmdialog'
 import { AutofocusDirective } from './directives/autofocus.directive'
 import { IfBreakpointDirective } from './directives/if-breakpoint.directive'
 import { AppInlineProfileComponent } from './components/inline-profile/inline-profile.component'
@@ -40,7 +43,6 @@ import { ColumnTogglerComponent } from './components/data-view-controls/column-t
 import { standaloneInitializer } from './initializer/standalone.initializer'
 import { PortalApiService } from '../services/portal-api.service'
 import { CriteriaTemplateComponent } from './components/search-criteria/criteria-template/criteria-template.component'
-import { ThemeService } from '../services/theme.service'
 import { GlobalErrorComponent } from './components/error-component/global-error.component'
 import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import {
@@ -50,6 +52,9 @@ import {
   APPLICATION_NAME,
   AUTH_SERVICE,
   SANITY_CHECK,
+  createTranslateLoader,
+  TranslationCacheService,
+  ThemeService,
 } from '@onecx/angular-integration-interface'
 import { AnnouncementBannerComponent } from './components/announcement-banner/announcement-banner.component'
 import { ViewTemplatePickerComponent } from './components/data-view-controls/view-template-picker/view-template-picker.component'
@@ -57,8 +62,6 @@ import { SupportTicketComponent } from './components/support-ticket/support-tick
 import { HelpItemEditorComponent } from './components/help-item-editor/help-item-editor.component'
 import { NoHelpItemComponent } from './components/no-help-item/no-help-item.component'
 import { PrimeNgModule } from './primeng.module'
-import { ConfirmDialogModule } from 'primeng/confirmdialog'
-import de from '@angular/common/locales/de'
 import { AdvancedDirective } from './directives/advanced.directive'
 import { BasicDirective } from './directives/basic.directive'
 import { PatchFormGroupValuesDirective } from './directives/patch-form-group-values.driective'
@@ -72,8 +75,6 @@ import { OcxContentComponent } from './components/content/content.component'
 import { OcxContentContainerComponent } from './components/content-container/content-container.component'
 import { OcxContentContainerDirective } from './directives/content-container.directive'
 import { UserProfileAPIService } from '../services/userprofile-api.service'
-import { MessageService } from 'primeng/api'
-import { createTranslateLoader, TranslationCacheService } from '@onecx/angular-integration-interface'
 import { CreateOrEditSearchConfigDialogComponent } from './components/create-or-edit-search-config-dialog/create-or-edit-search-config-dialog.component'
 import { LifecycleComponent } from './components/lifecycle/lifecycle.component'
 

@@ -8,6 +8,7 @@ import { PrimeIcons } from 'primeng/api'
 import {
   AppStateService,
   UserService,
+  ThemeService,
   IAuthService,
   AUTH_SERVICE,
   ConfigurationService,
@@ -16,7 +17,6 @@ import {
 
 import { UserProfile } from '../../../model/user-profile.model'
 import { MenuService } from '../../../services/app.menu.service'
-import { ThemeService } from '../../../services/theme.service'
 import { ImageLogoUrlUtils } from '../../utils/image-logo-url.utils'
 
 type MenuItemPerm = MenuItem & { permission: string }

@@ -2,13 +2,13 @@ import { firstValueFrom } from 'rxjs'
 import {
   AppStateService,
   UserService,
+  ThemeService,
   ConfigurationService,
   CONFIG_KEY,
   IAuthService,
 } from '@onecx/angular-integration-interface'
 import { MfeInfo } from '@onecx/integration-interface'
 import { PortalApiService } from '../../services/portal-api.service'
-import { ThemeService } from '../../services/theme.service'
 import { UserProfileAPIService } from '../../services/userprofile-api.service'
 
 const CONFIG_INIT_ERR = 'CONFIG_INIT_ERR'
