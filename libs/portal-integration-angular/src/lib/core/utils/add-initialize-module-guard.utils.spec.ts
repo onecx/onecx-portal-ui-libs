@@ -4,17 +4,15 @@ import { ConfigurationService } from '../../services/configuration.service'
 import { InitializeModuleGuard } from '../../services/initialize-module-guard.service'
 import { UserService } from '@onecx/angular-integration-interface'
 import { addInitializeModuleGuard } from './add-initialize-module-guard.utils'
-import { TimeagoIntl } from 'ngx-timeago'
 
 class MockInitializeModuleGuard extends InitializeModuleGuard {
   constructor(
     translateService: TranslateService,
     configService: ConfigurationService,
     appStateService: AppStateService,
-    userService: UserService,
-    timeagoIntl: TimeagoIntl
+    userService: UserService
   ) {
-    super(translateService, configService, appStateService, userService, timeagoIntl)
+    super(translateService, configService, appStateService, userService)
   }
 }
 

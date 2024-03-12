@@ -10,7 +10,6 @@ import {
   TranslateModule,
 } from '@ngx-translate/core'
 import {
-  IL10nsStrings,
   TimeagoClock,
   TimeagoCustomFormatter,
   TimeagoDefaultClock,
@@ -18,7 +17,6 @@ import {
   TimeagoIntl,
   TimeagoModule,
 } from 'ngx-timeago'
-import { strings as englishStrings } from 'ngx-timeago/language-strings/en'
 
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 import { createTranslateLoader } from '@onecx/angular-integration-interface'
@@ -41,16 +39,13 @@ import { DiagramComponent } from './components/diagram/diagram.component'
 import { DynamicPipe } from './pipes/dynamic.pipe'
 import { IfPermissionDirective } from './directives/if-permission.directive'
 import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
+import { OcxTimeagoIntl } from './utils/ocxtimeagointl.utils'
 
 export class AngularAcceleratorMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
     console.log(`Missing translation for ${params.key}`, params)
     return params.key
   }
-}
-
-export class OcxTimeagoIntl extends TimeagoIntl {
-  override strings: IL10nsStrings = englishStrings
 }
 
 @NgModule({
@@ -101,7 +96,10 @@ export class OcxTimeagoIntl extends TimeagoIntl {
     },
     {
       provide: TimeagoIntl,
-      useClass: OcxTimeagoIntl,
+      useFactory: (userService: UserService) => {
+        return new OcxTimeagoIntl(userService)
+      },
+      deps: [UserService],
     },
     importProvidersFrom(TimeagoModule),
     {
