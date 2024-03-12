@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
+import { TranslateService } from '@ngx-translate/core'
+import { BehaviorSubject, Observable, combineLatest, map, mergeMap, of } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DiagramColumn } from '../../model/diagram-column'
 import { ObjectUtils } from '../../utils/objectutils'
-import { BehaviorSubject, Observable, combineLatest, map, mergeMap, of } from 'rxjs'
-import { TranslateService } from '@ngx-translate/core'
 import { DiagramData } from '../../model/diagram-data'
 import { DiagramType } from '../../model/diagram-type'
 

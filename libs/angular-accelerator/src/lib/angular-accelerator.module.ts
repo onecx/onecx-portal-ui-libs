@@ -2,12 +2,28 @@ import { CommonModule } from '@angular/common'
 import { CUSTOM_ELEMENTS_SCHEMA, LOCALE_ID, NgModule, importProvidersFrom } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
+import { HttpClient } from '@angular/common/http'
 import {
   MissingTranslationHandler,
   MissingTranslationHandlerParams,
   TranslateLoader,
   TranslateModule,
 } from '@ngx-translate/core'
+import {
+  IL10nsStrings,
+  TimeagoClock,
+  TimeagoCustomFormatter,
+  TimeagoDefaultClock,
+  TimeagoFormatter,
+  TimeagoIntl,
+  TimeagoModule,
+} from 'ngx-timeago'
+import { strings as englishStrings } from 'ngx-timeago/language-strings/en'
+
+import { AppStateService, UserService } from '@onecx/angular-integration-interface'
+import { createTranslateLoader } from '@onecx/angular-integration-interface'
+import { TranslationCacheService } from '@onecx/angular-integration-interface'
+
 import { PrimeNgModule } from './primeng.module'
 import { ColumnGroupSelectionComponent } from './components/column-group-selection/column-group-selection.component'
 import { CustomGroupColumnSelectorComponent } from './components/custom-group-column-selector/custom-group-column-selector.component'
@@ -23,23 +39,8 @@ import { SearchHeaderComponent } from './components/search-header/search-header.
 import { GroupByCountDiagramComponent } from './components/group-by-count-diagram/group-by-count-diagram.component'
 import { DiagramComponent } from './components/diagram/diagram.component'
 import { DynamicPipe } from './pipes/dynamic.pipe'
-
 import { IfPermissionDirective } from './directives/if-permission.directive'
-import { AppStateService, UserService } from '@onecx/angular-integration-interface'
-import { HttpClient } from '@angular/common/http'
-import { createTranslateLoader } from '@onecx/angular-integration-interface'
-import { TranslationCacheService } from '@onecx/angular-integration-interface'
-import {
-  IL10nsStrings,
-  TimeagoClock,
-  TimeagoCustomFormatter,
-  TimeagoDefaultClock,
-  TimeagoFormatter,
-  TimeagoIntl,
-  TimeagoModule,
-} from 'ngx-timeago'
 import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
-import { strings as englishStrings } from 'ngx-timeago/language-strings/en'
 
 export class AngularAcceleratorMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {

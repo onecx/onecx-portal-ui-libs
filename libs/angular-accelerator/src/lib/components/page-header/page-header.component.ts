@@ -11,12 +11,12 @@ import {
   Type,
   ViewEncapsulation,
 } from '@angular/core'
+import { TranslateService } from '@ngx-translate/core'
 import { MenuItem, PrimeIcons } from 'primeng/api'
 import { concat, map, Observable, of } from 'rxjs'
-import { BreadcrumbService } from '../../services/breadcrumb.service'
-import { TranslateService } from '@ngx-translate/core'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import { UserService } from '@onecx/angular-integration-interface'
+import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { PrimeIcon } from '../../utils/primeicon.utils'
 
 /**

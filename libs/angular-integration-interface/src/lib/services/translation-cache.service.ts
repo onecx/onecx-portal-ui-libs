@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core'
-import { SyncableTopic } from '@onecx/accelerator'
 import { BehaviorSubject, Observable, filter, first, map, of, race, tap, withLatestFrom } from 'rxjs'
+import { SyncableTopic } from '@onecx/accelerator'
 
 // This topic is defined here and not in integration-interface, because
 // it is not used as framework independent integration but for improving

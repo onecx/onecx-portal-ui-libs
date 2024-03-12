@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
-import { SearchConfig } from '../../model/search-config'
 import { FormControl, FormGroup } from '@angular/forms'
+import { SearchConfig } from '../../model/search-config'
 
 @Component({
   selector: 'ocx-search-config',

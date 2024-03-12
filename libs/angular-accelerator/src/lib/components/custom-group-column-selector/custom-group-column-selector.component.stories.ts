@@ -1,18 +1,18 @@
-import { CustomGroupColumnSelectorComponent } from './custom-group-column-selector.component'
 import { Meta, moduleMetadata, applicationConfig, StoryFn } from '@storybook/angular'
 import { TranslateModule } from '@ngx-translate/core'
-import { ButtonModule } from 'primeng/button'
 import { importProvidersFrom } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { ColumnType } from '../../model/column-type.model'
+import { FormsModule } from '@angular/forms'
+import { ButtonModule } from 'primeng/button'
 import { DropdownModule } from 'primeng/dropdown'
 import { DialogModule } from 'primeng/dialog'
 import { PickListModule } from 'primeng/picklist'
 import { CheckboxModule } from 'primeng/checkbox'
-import { FormsModule } from '@angular/forms'
 import { SelectButtonModule } from 'primeng/selectbutton'
 import { StorybookTranslateModule } from '../../storybook-translate.module'
+import { ColumnType } from '../../model/column-type.model'
+import { CustomGroupColumnSelectorComponent } from './custom-group-column-selector.component'
 
 type CustomGroupColumnSelectorInputs = Pick<
   CustomGroupColumnSelectorComponent,

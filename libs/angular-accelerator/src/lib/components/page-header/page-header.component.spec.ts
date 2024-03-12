@@ -1,8 +1,9 @@
 import { ComponentFixture, TestBed, getTestBed } from '@angular/core/testing'
-import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
+import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterTestingModule } from '@angular/router/testing'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { TranslateTestingModule } from 'ngx-translate-testing'
+import { PrimeIcons } from 'primeng/api'
 import { BreadcrumbModule } from 'primeng/breadcrumb'
 import { MenuModule } from 'primeng/menu'
 import { ButtonModule } from 'primeng/button'
@@ -10,9 +11,8 @@ import { AppStateService } from '@onecx/angular-integration-interface'
 import { UserService } from '@onecx/angular-integration-interface'
 import { MockUserService } from '@onecx/angular-integration-interface/mocks'
 import { PageHeaderHarness, TestbedHarnessEnvironment } from '../../../../testing'
+import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
-import { PrimeIcons } from 'primeng/api'
-import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 
 const mockActions: Action[] = [
   {

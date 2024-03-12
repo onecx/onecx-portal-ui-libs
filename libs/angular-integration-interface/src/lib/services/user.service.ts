@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core'
-import { DEFAULT_LANG } from '../api/constants'
-import { UserProfile, UserProfileTopic } from '@onecx/integration-interface'
 import { BehaviorSubject, map } from 'rxjs'
+import { UserProfile, UserProfileTopic } from '@onecx/integration-interface'
+import { DEFAULT_LANG } from '../api/constants'
 
 @Injectable({ providedIn: 'root' })
 export class UserService implements OnDestroy {

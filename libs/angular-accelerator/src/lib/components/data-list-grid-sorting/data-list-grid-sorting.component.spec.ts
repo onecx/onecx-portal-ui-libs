@@ -1,10 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 
-import { DataListGridSortingComponent } from './data-list-grid-sorting.component'
+import { FormsModule } from '@angular/forms'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { DropdownModule } from 'primeng/dropdown'
 import { ButtonModule } from 'primeng/button'
-import { FormsModule } from '@angular/forms'
+import { DataListGridSortingComponent } from './data-list-grid-sorting.component'
 
 describe('DataListGridSortingComponent', () => {
   let component: DataListGridSortingComponent

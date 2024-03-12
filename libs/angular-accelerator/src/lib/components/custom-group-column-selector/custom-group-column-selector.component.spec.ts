@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { CustomGroupColumnSelectorComponent } from './custom-group-column-selector.component'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { ButtonModule } from 'primeng/button'
 import { DialogModule } from 'primeng/dialog'
 import { PickListModule } from 'primeng/picklist'
+import { CustomGroupColumnSelectorComponent } from './custom-group-column-selector.component'
 
 describe('CustomGroupColumnSelectorComponent', () => {
   let component: CustomGroupColumnSelectorComponent

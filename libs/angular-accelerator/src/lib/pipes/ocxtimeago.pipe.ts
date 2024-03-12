@@ -1,7 +1,8 @@
-import { Pipe, PipeTransform } from '@angular/core'
+import { Pipe } from '@angular/core'
 import { TimeagoPipe } from 'ngx-timeago'
 
 @Pipe({
   name: 'timeago',
 })
-export class OcxTimeAgoPipe implements PipeTransform extends TimeagoPipe {}
+// eslint-disable-next-line @angular-eslint/use-pipe-transform-interface
+export class OcxTimeAgoPipe extends TimeagoPipe {}

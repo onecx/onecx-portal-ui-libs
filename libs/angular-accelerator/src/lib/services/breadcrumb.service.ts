@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core'
 import { ActivatedRoute, ActivatedRouteSnapshot, Data, NavigationEnd, ParamMap, Router } from '@angular/router'
-import { BehaviorSubject, filter } from 'rxjs'
-import { BreadCrumbMenuItem } from '../model/breadcrumb-menu-item.model'
-import { MenuItem } from 'primeng/api'
 import { TranslateService } from '@ngx-translate/core'
+import { BehaviorSubject, filter } from 'rxjs'
+import { MenuItem } from 'primeng/api'
+import { BreadCrumbMenuItem } from '../model/breadcrumb-menu-item.model'
 
 @Injectable({ providedIn: 'any' })
 export class BreadcrumbService {

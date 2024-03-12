@@ -1,15 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
+import { ActivatedRoute, RouterModule } from '@angular/router'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
+import { TranslateTestingModule } from 'ngx-translate-testing'
 import { DataListGridComponent } from './data-list-grid.component'
 import { PrimeNgModule } from '../../primeng.module'
-import { TranslateTestingModule } from 'ngx-translate-testing'
+import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { ColumnType } from '../../model/column-type.model'
 import { DataListGridHarness } from '../../../../testing/data-list-grid.harness'
 import { DataTableHarness } from '../../../../testing/data-table.harness'
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { ActivatedRoute, RouterModule } from '@angular/router'
-import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 
 describe('DataListGridComponent', () => {
   let fixture: ComponentFixture<DataListGridComponent>

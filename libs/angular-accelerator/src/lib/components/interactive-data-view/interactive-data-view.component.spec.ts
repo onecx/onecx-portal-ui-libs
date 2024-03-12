@@ -1,13 +1,33 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 
+import { HarnessLoader, parallel, TestElement } from '@angular/cdk/testing'
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
+import { RouterTestingModule } from '@angular/router/testing'
+import { NoopAnimationsModule } from '@angular/platform-browser/animations'
+import { HttpClientModule } from '@angular/common/http'
+import { TranslateModule } from '@ngx-translate/core'
+import { TranslateTestingModule } from 'ngx-translate-testing'
+import { ButtonModule } from 'primeng/button'
+import { DialogModule } from 'primeng/dialog'
+import { PickListModule } from 'primeng/picklist'
+import {
+  PDropdownHarness,
+  PButtonHarness,
+  PPicklistHarness,
+  ButtonHarness,
+  PMultiSelectListItemHarness,
+  TableHeaderColumnHarness,
+  TableRowHarness,
+  ListItemHarness,
+} from '@onecx/angular-testing'
+import { UserService } from '@onecx/angular-integration-interface'
+import { MockUserService } from '@onecx/angular-integration-interface/mocks'
+import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { InteractiveDataViewComponent } from './interactive-data-view.component'
 import { DataLayoutSelectionComponent } from '../data-layout-selection/data-layout-selection.component'
 import { DataViewComponent, RowListGridData } from '../data-view/data-view.component'
 import { ColumnGroupSelectionComponent } from '../column-group-selection/column-group-selection.component'
 import { CustomGroupColumnSelectorComponent } from '../custom-group-column-selector/custom-group-column-selector.component'
-import { TranslateModule } from '@ngx-translate/core'
-import { HarnessLoader, parallel, TestElement } from '@angular/cdk/testing'
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ColumnType } from '../../model/column-type.model'
 import {
   DataViewHarness,
@@ -20,27 +40,7 @@ import {
   DefaultListItemHarness,
   InteractiveDataViewHarness,
 } from '../../../../testing'
-import {
-  PDropdownHarness,
-  PButtonHarness,
-  PPicklistHarness,
-  ButtonHarness,
-  PMultiSelectListItemHarness,
-  TableHeaderColumnHarness,
-  TableRowHarness,
-  ListItemHarness,
-} from '@onecx/angular-testing'
-import { RouterTestingModule } from '@angular/router/testing'
-import { TranslateTestingModule } from 'ngx-translate-testing'
-import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { DateUtils } from '../../utils/dateutils'
-import { HttpClientModule } from '@angular/common/http'
-import { UserService } from '@onecx/angular-integration-interface'
-import { MockUserService } from '@onecx/angular-integration-interface/mocks'
-import { ButtonModule } from 'primeng/button'
-import { DialogModule } from 'primeng/dialog'
-import { PickListModule } from 'primeng/picklist'
-import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 
 describe('InteractiveDataViewComponent', () => {
   let component: InteractiveDataViewComponent

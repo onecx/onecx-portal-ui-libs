@@ -1,14 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { DataTableComponent, Row } from './data-table.component'
-import { PrimeNgModule } from '../../primeng.module'
-import { TranslateTestingModule } from 'ngx-translate-testing'
-import { ColumnType } from '../../model/column-type.model'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { DataTableHarness } from '../../../../testing'
+import { TranslateModule, TranslateService } from '@ngx-translate/core'
+import { TranslateTestingModule } from 'ngx-translate-testing'
 import { PTableCheckboxHarness } from '@onecx/angular-testing'
+import { PrimeNgModule } from '../../primeng.module'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
+import { DataTableComponent, Row } from './data-table.component'
+import { ColumnType } from '../../model/column-type.model'
+import { DataTableHarness } from '../../../../testing'
 
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>

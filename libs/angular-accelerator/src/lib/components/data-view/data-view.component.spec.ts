@@ -1,15 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 
-import { DataViewComponent } from './data-view.component'
-import { DataListGridComponent } from '../data-list-grid/data-list-grid.component'
+import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { DataViewModule } from 'primeng/dataview'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { HttpClientTestingModule } from '@angular/common/http/testing'
-import { DataTableComponent } from '../data-table/data-table.component'
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { DataListGridHarness, DataTableHarness, DataViewHarness } from '../../../../testing'
-import { ColumnType } from '../../model/column-type.model'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
+import { DataListGridHarness, DataTableHarness, DataViewHarness } from '../../../../testing'
+import { DataTableComponent } from '../data-table/data-table.component'
+import { DataViewComponent } from './data-view.component'
+import { DataListGridComponent } from '../data-list-grid/data-list-grid.component'
+import { ColumnType } from '../../model/column-type.model'
 
 describe('DataViewComponent', () => {
   let component: DataViewComponent

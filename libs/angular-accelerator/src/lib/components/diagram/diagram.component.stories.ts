@@ -1,19 +1,19 @@
 import { importProvidersFrom } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
+import { FormsModule } from '@angular/forms'
 import { Meta, StoryFn, applicationConfig, moduleMetadata } from '@storybook/angular'
 import { BreadcrumbModule } from 'primeng/breadcrumb'
 import { ButtonModule } from 'primeng/button'
 import { MenuModule } from 'primeng/menu'
 import { SkeletonModule } from 'primeng/skeleton'
-import { DynamicPipe } from '../../pipes/dynamic.pipe'
+import { ChartModule } from 'primeng/chart'
+import { SelectButtonModule } from 'primeng/selectbutton'
 import { StorybookTranslateModule } from '../../storybook-translate.module'
+import { DynamicPipe } from '../../pipes/dynamic.pipe'
 import { DiagramComponent } from './diagram.component'
 import { DiagramType } from '../../model/diagram-type'
 import { DiagramData } from '../../model/diagram-data'
-import { ChartModule } from 'primeng/chart'
-import { SelectButtonModule } from 'primeng/selectbutton'
-import { FormsModule } from '@angular/forms'
 
 export default {
   title: 'DiagramComponent',

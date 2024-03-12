@@ -1,12 +1,12 @@
-import { StorybookTranslateModule } from './../../storybook-translate.module'
-import { Meta, moduleMetadata, applicationConfig, StoryFn } from '@storybook/angular'
-import { DataTableComponent } from './data-table.component'
-import { TableModule } from 'primeng/table'
-import { ButtonModule } from 'primeng/button'
-import { MultiSelectModule } from 'primeng/multiselect'
 import { importProvidersFrom } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
+import { Meta, moduleMetadata, applicationConfig, StoryFn } from '@storybook/angular'
+import { TableModule } from 'primeng/table'
+import { ButtonModule } from 'primeng/button'
+import { MultiSelectModule } from 'primeng/multiselect'
+import { StorybookTranslateModule } from './../../storybook-translate.module'
+import { DataTableComponent } from './data-table.component'
 import { ColumnType } from '../../model/column-type.model'
 type DataTableInputTypes = Pick<DataTableComponent, 'rows' | 'columns' | 'emptyResultsMessage' | 'selectedRows'>
 const DataTableComponentSBConfig: Meta<DataTableComponent> = {

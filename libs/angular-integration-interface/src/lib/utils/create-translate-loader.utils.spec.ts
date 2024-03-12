@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http'
-import { AppStateService } from '../services/app-state.service'
-import { createTranslateLoader } from './create-translate-loader.utils'
+import { TestBed } from '@angular/core/testing'
+import { EnvironmentInjector } from '@angular/core'
 import { MockService } from 'ng-mocks'
 import { Observable, of } from 'rxjs'
 import { MfeInfo } from '@onecx/integration-interface'
-import { TestBed } from '@angular/core/testing'
-import { EnvironmentInjector } from '@angular/core'
+import { AppStateService } from '../services/app-state.service'
+import { createTranslateLoader } from './create-translate-loader.utils'
 import { TranslationCacheService } from '../services/translation-cache.service'
 
 describe('CreateTranslateLoader', () => {

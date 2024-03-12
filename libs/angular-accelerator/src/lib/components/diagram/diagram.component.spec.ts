@@ -1,17 +1,17 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
+import { FormsModule } from '@angular/forms'
 import { TranslateService } from '@ngx-translate/core'
 import 'jest-canvas-mock'
+import { PrimeIcons } from 'primeng/api'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { ChartModule } from 'primeng/chart'
 import { MessageModule } from 'primeng/message'
+import { SelectButtonModule } from 'primeng/selectbutton'
 import { DiagramHarness, TestbedHarnessEnvironment } from '../../../../testing'
 import { DiagramType } from '../../model/diagram-type'
 import { DiagramComponent, DiagramLayouts } from './diagram.component'
-import { PrimeIcons } from 'primeng/api'
-import { SelectButtonModule } from 'primeng/selectbutton'
-import { FormsModule } from '@angular/forms'
 
 describe('DiagramComponent', () => {
   let translateService: TranslateService
