@@ -9,6 +9,18 @@ import { DataTableComponent } from '../data-table/data-table.component'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { DataListGridHarness, DataTableHarness, DataViewHarness } from '../../../../testing'
 import { ColumnType } from '../../model/column-type.model'
+import { IfPermissionDirective } from '../../directives/if-permission.directive'
+import {
+  TimeagoClock,
+  TimeagoDefaultClock,
+  TimeagoDefaultFormatter,
+  TimeagoFormatter,
+  TimeagoIntl,
+  TimeagoModule,
+  TimeagoPipe,
+} from 'ngx-timeago'
+import { importProvidersFrom } from '@angular/core'
+import { PrimeNgModule } from '../../primeng.module'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 
 describe('DataViewComponent', () => {
@@ -269,26 +281,32 @@ describe('DataViewComponent', () => {
       {
         id: 'mock1',
         imagePath: '/path/to/image',
+        modificationDate: '2023-09-12T09:34:27.184086Z',
       },
       {
         id: 'mock2',
         imagePath: '/path/to/image',
+        modificationDate: '2023-09-12T09:34:27.184086Z',
       },
       {
         id: 'mock3',
         imagePath: '/path/to/image',
+        modificationDate: '2023-09-12T09:34:27.184086Z',
       },
       {
         id: 'mock4',
         imagePath: '/path/to/image',
+        modificationDate: '2023-09-12T09:34:27.184086Z',
       },
       {
         id: 'mock5',
         imagePath: '/path/to/image',
+        modificationDate: '2023-09-12T09:34:27.184086Z',
       },
       {
         id: 'mock6',
         imagePath: '/path/to/image',
+        modificationDate: '2023-09-12T09:34:27.184086Z',
       },
     ]
 

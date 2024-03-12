@@ -21,6 +21,7 @@ export * from './lib/services/breadcrumb.service'
 
 // pipes
 export * from './lib/pipes/dynamic.pipe'
+export * from './lib/pipes/ocxtimeago.pipe'
 
 // models
 export * from './lib/model/breadcrumb-menu-item.model'

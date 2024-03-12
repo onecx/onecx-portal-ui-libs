@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common'
-import { CUSTOM_ELEMENTS_SCHEMA, LOCALE_ID, NgModule } from '@angular/core'
+import { CUSTOM_ELEMENTS_SCHEMA, LOCALE_ID, NgModule, importProvidersFrom } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
 import {
@@ -7,7 +7,6 @@ import {
   MissingTranslationHandlerParams,
   TranslateLoader,
   TranslateModule,
-  TranslateService,
 } from '@ngx-translate/core'
 import { PrimeNgModule } from './primeng.module'
 import { ColumnGroupSelectionComponent } from './components/column-group-selection/column-group-selection.component'
@@ -30,13 +29,28 @@ import { AppStateService, UserService } from '@onecx/angular-integration-interfa
 import { HttpClient } from '@angular/common/http'
 import { createTranslateLoader } from '@onecx/angular-integration-interface'
 import { TranslationCacheService } from '@onecx/angular-integration-interface'
-import { TimeagoCustomFormatter, TimeagoFormatter, TimeagoIntl, TimeagoModule } from 'ngx-timeago'
+import {
+  IL10nsStrings,
+  TimeagoClock,
+  TimeagoCustomFormatter,
+  TimeagoDefaultClock,
+  TimeagoDefaultFormatter,
+  TimeagoFormatter,
+  TimeagoIntl,
+  TimeagoModule,
+} from 'ngx-timeago'
+import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
+import { strings as englishStrings } from 'ngx-timeago/language-strings/en'
 
 export class AngularAcceleratorMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
     console.log(`Missing translation for ${params.key}`, params)
     return params.key
   }
+}
+
+export class OcxTimeagoIntl extends TimeagoIntl {
+  override strings: IL10nsStrings = englishStrings
 }
 
 @NgModule({
@@ -58,10 +72,6 @@ export class AngularAcceleratorMissingTranslationHandler implements MissingTrans
     FormsModule,
     RouterModule,
     ReactiveFormsModule,
-    TimeagoModule.forRoot({
-      intl: { provide: TimeagoIntl, useClass: TimeagoIntl },
-      formatter: { provide: TimeagoFormatter, useClass: TimeagoCustomFormatter },
-    }),
   ],
   declarations: [
     ColumnGroupSelectionComponent,
@@ -79,6 +89,7 @@ export class AngularAcceleratorMissingTranslationHandler implements MissingTrans
     DiagramComponent,
     GroupByCountDiagramComponent,
     IfPermissionDirective,
+    OcxTimeAgoPipe,
   ],
   providers: [
     {
@@ -87,6 +98,22 @@ export class AngularAcceleratorMissingTranslationHandler implements MissingTrans
         return UserService.lang$.getValue()
       },
       deps: [UserService],
+    },
+    {
+      provide: TimeagoIntl,
+      useClass: OcxTimeagoIntl,
+    },
+    importProvidersFrom(TimeagoModule),
+    {
+      provide: TimeagoFormatter,
+      useFactory: (TimeagoIntl: TimeagoIntl) => {
+        return new TimeagoCustomFormatter(TimeagoIntl)
+      },
+      deps: [TimeagoIntl],
+    },
+    {
+      provide: TimeagoClock,
+      useClass: TimeagoDefaultClock,
     },
   ],
   exports: [
@@ -103,6 +130,7 @@ export class AngularAcceleratorMissingTranslationHandler implements MissingTrans
     DiagramComponent,
     GroupByCountDiagramComponent,
     IfPermissionDirective,
+    OcxTimeAgoPipe,
     // DataListGridSortingComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

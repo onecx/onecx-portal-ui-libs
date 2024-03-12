@@ -5,12 +5,8 @@ import { DataLayoutSelectionComponent } from '../data-layout-selection/data-layo
 import { DataViewComponent, RowListGridData } from '../data-view/data-view.component'
 import { ColumnGroupSelectionComponent } from '../column-group-selection/column-group-selection.component'
 import { CustomGroupColumnSelectorComponent } from '../custom-group-column-selector/custom-group-column-selector.component'
-import { ButtonModule } from 'primeng/button'
-import { DialogModule } from 'primeng/dialog'
-import { PickListModule } from 'primeng/picklist'
 import { TranslateModule } from '@ngx-translate/core'
 import { HarnessLoader, parallel, TestElement } from '@angular/cdk/testing'
-import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ColumnType } from '../../model/column-type.model'
 import {
@@ -41,6 +37,27 @@ import { DateUtils } from '../../utils/dateutils'
 import { HttpClientModule } from '@angular/common/http'
 import { UserService } from '@onecx/angular-integration-interface'
 import { MockUserService } from '@onecx/angular-integration-interface/mocks'
+import {
+  TimeagoClock,
+  TimeagoDefaultClock,
+  TimeagoDefaultFormatter,
+  TimeagoFormatter,
+  TimeagoIntl,
+  TimeagoModule,
+  TimeagoPipe,
+} from 'ngx-timeago'
+import { DataTableComponent } from '../data-table/data-table.component'
+import { DataListGridComponent } from '../data-list-grid/data-list-grid.component'
+import { importProvidersFrom } from '@angular/core'
+import { DataListGridSortingComponent } from '../data-list-grid-sorting/data-list-grid-sorting.component'
+import { PrimeNgModule } from '../../primeng.module'
+import { CommonModule } from '@angular/common'
+import { FormsModule, ReactiveFormsModule } from '@angular/forms'
+import { IfPermissionDirective } from '../../directives/if-permission.directive'
+import { ButtonModule } from 'primeng/button'
+import { DialogModule } from 'primeng/dialog'
+import { PickListModule } from 'primeng/picklist'
+import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 
 describe('InteractiveDataViewComponent', () => {
   let component: InteractiveDataViewComponent

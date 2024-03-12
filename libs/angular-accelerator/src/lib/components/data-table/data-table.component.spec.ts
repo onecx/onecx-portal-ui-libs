@@ -5,10 +5,21 @@ import { DataTableComponent, Row } from './data-table.component'
 import { PrimeNgModule } from '../../primeng.module'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { ColumnType } from '../../model/column-type.model'
-import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { DataTableHarness } from '../../../../testing'
 import { PTableCheckboxHarness } from '@onecx/angular-testing'
+import { AngularAcceleratorModule } from '../../angular-accelerator.module'
+import {
+  TimeagoClock,
+  TimeagoCustomFormatter,
+  TimeagoDefaultClock,
+  TimeagoDefaultFormatter,
+  TimeagoFormatter,
+  TimeagoIntl,
+  TimeagoModule,
+  TimeagoPipe,
+} from 'ngx-timeago'
+import { importProvidersFrom } from '@angular/core'
 
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>
