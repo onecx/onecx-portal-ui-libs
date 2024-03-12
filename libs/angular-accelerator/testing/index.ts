@@ -14,3 +14,4 @@ export * from './search-config.harness'
 
 export * from '@angular/cdk/testing'
 export * from '@angular/cdk/testing/testbed'
+export * from '@onecx/angular-testing'
