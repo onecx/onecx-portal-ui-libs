@@ -12,7 +12,7 @@
         <ng-container *ngIf="viewTableRowObserved && (!viewActionVisibleField || fieldIsTruthy(rowObject, viewActionVisibleField))">
           <button
             *ocxIfPermission="viewPermission"
-            [disabled]="viewActionEnabledField && !fieldIsTruthy(rowObject, viewActionEnabledField)"
+            [disabled]="!!viewActionEnabledField && !fieldIsTruthy(rowObject, viewActionEnabledField)"
             pButton
             class="p-button-rounded p-button-text viewTableRowButton"
             title="{{ 'OCX_DATA_TABLE.ACTIONS.VIEW' | translate }}"
@@ -24,7 +24,7 @@
         <ng-container *ngIf="editTableRowObserved && (!editActionVisibleField || fieldIsTruthy(rowObject, editActionVisibleField))">
           <button
             *ocxIfPermission="editPermission"
-            [disabled]="editActionEnabledField && !fieldIsTruthy(rowObject, editActionEnabledField)"
+            [disabled]="!!editActionEnabledField && !fieldIsTruthy(rowObject, editActionEnabledField)"
             pButton
             class="p-button-rounded p-button-text editTableRowButton"
             title="{{ 'OCX_DATA_TABLE.ACTIONS.EDIT' | translate }}"
@@ -36,7 +36,7 @@
         <ng-container *ngIf="deleteTableRowObserved && (!deleteActionVisibleField || fieldIsTruthy(rowObject, deleteActionVisibleField))">
           <button
             *ocxIfPermission="deletePermission"
-            [disabled]="deleteActionEnabledField && !fieldIsTruthy(rowObject, deleteActionEnabledField)"
+            [disabled]="!!deleteActionEnabledField && !fieldIsTruthy(rowObject, deleteActionEnabledField)"
             pButton
             class="p-button-rounded p-button-text p-button-danger deleteTableRowButton"
             title="{{ 'OCX_DATA_TABLE.ACTIONS.DELETE' | translate }}"

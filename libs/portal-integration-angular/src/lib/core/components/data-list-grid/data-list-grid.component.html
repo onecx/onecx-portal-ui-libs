@@ -56,7 +56,7 @@
           <p-menu #menu [model]="gridMenuItems" [popup]="true" appendTo="body"></p-menu>
           <button
             pButton
-            (click)="setSelectedItem(item); menu.toggle($event)"
+            (click)="setSelectedItem(item); updateGridMenuItems(true); menu.toggle($event)"
             icon="pi pi-ellipsis-v"
             [ariaLabel]="'OCX_DATA_LIST_GRID.MORE_ACTIONS' | translate"
             class="more-actions-menu-button menu-btn"
@@ -90,7 +90,7 @@
                 [attr.aria-label]="(viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW') | translate"
                 (click)="onViewRow(item)"
                 *ocxIfPermission="viewPermission"
-                [disabled]="viewActionEnabledField && !fieldIsTruthy(item, viewActionEnabledField)"
+                [disabled]="!!viewActionEnabledField && !fieldIsTruthy(item, viewActionEnabledField)"
               ></button>
             </ng-container>
             <ng-container *ngIf="editItemObserved && (!editActionVisibleField || fieldIsTruthy(item, editActionVisibleField))">
@@ -103,7 +103,7 @@
                 [attr.aria-label]="(editMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.EDIT') | translate"
                 (click)="onEditRow(item)"
                 *ocxIfPermission="editPermission"
-                [disabled]="editActionEnabledField && !fieldIsTruthy(item, editActionEnabledField)"
+                [disabled]="!!editActionEnabledField && !fieldIsTruthy(item, editActionEnabledField)"
               ></button>
             </ng-container>
             <ng-container *ngIf="deleteItemObserved && (!deleteActionVisibleField || fieldIsTruthy(item, deleteActionVisibleField))">
@@ -116,7 +116,7 @@
                 [attr.aria-label]="(deleteMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.DELETE') | translate"
                 (click)="onDeleteRow(item)"
                 *ocxIfPermission="deletePermission"
-                [disabled]="deleteActionEnabledField && !fieldIsTruthy(item, deleteActionEnabledField)"
+                [disabled]="!!deleteActionEnabledField && !fieldIsTruthy(item, deleteActionEnabledField)"
               ></button>
             </ng-container>
             <ng-container *ngFor="let action of additionalActions">
