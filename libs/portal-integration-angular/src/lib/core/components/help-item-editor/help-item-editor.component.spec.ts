@@ -4,9 +4,8 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { DialogModule } from 'primeng/dialog'
 
-import { ConfigurationService } from '@onecx/angular-integration-interface'
+import { ConfigurationService, PortalMessageService } from '@onecx/angular-integration-interface'
 import { HelpItemEditorComponent } from './help-item-editor.component'
-import { PortalMessageService } from '../../../services/portal-message.service'
 
 describe('HelpItemEditorComponent', () => {
   let component: HelpItemEditorComponent

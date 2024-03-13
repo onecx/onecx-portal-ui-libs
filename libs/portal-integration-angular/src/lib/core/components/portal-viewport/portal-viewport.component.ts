@@ -5,14 +5,13 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { catchError, combineLatest, filter, first, map, mergeMap, Observable, of, withLatestFrom } from 'rxjs'
 import { MenuItem, MessageService, PrimeNGConfig } from 'primeng/api'
 import { DialogService } from 'primeng/dynamicdialog'
-import { AppStateService, UserService, ThemeService } from '@onecx/angular-integration-interface'
+import { AppStateService, UserService, ThemeService, PortalMessageService } from '@onecx/angular-integration-interface'
 import { SupportTicketApiService } from './../../../services/support-ticket-api.service'
 import { PortalUIService } from '../../../services/portal-ui.service'
 import { SupportTicket } from '../../../model/support-ticket'
 import { HelpData } from '../../../model/help-data'
 import { NoHelpItemComponent } from '../no-help-item/no-help-item.component'
 import { HelpPageAPIService } from '../../../services/help-api-service'
-import { PortalMessageService } from '../../../services/portal-message.service'
 
 @Component({
   selector: 'ocx-portal-viewport',
