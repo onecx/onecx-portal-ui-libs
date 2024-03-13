@@ -235,7 +235,7 @@ export const ResponsiveWithScrollAndFrozenActionsColumn = {
     },
 }
 
-export const WithDisabledActionButtons = {
+export const WithConditionallyDisabledActionButtons = {
     argTypes: {
         deleteTableRow: {action: 'deleteTableRow'},
         editTableRow: {action: 'deleteTableRow'},

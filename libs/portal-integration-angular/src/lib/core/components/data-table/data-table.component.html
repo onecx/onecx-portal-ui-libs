@@ -9,7 +9,7 @@
       [ngClass]="(frozenActionColumn && actionColumnPosition === 'left') ? 'border-right-1' : (frozenActionColumn && actionColumnPosition === 'right') ? 'border-left-1' : ''"
     >
       <div class="icon-button-row-wrapper">
-        <ng-container *ngIf="viewTableRowObserved&& (!viewActionVisibleField || fieldIsTruthy(rowObject, viewActionVisibleField))">
+        <ng-container *ngIf="viewTableRowObserved && (!viewActionVisibleField || fieldIsTruthy(rowObject, viewActionVisibleField))">
           <button
             *ocxIfPermission="viewPermission"
             [disabled]="viewActionEnabledField && !fieldIsTruthy(rowObject, viewActionEnabledField)"

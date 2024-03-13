@@ -56,6 +56,12 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   @Input() viewPermission: string | undefined
   @Input() editPermission: string | undefined
   @Input() deletePermission: string | undefined
+  @Input() deleteActionVisibleField: string | undefined
+  @Input() deleteActionEnabledField: string | undefined
+  @Input() viewActionVisibleField: string | undefined
+  @Input() viewActionEnabledField: string | undefined
+  @Input() editActionVisibleField: string | undefined
+  @Input() editActionEnabledField: string | undefined
   @Input() viewMenuItemKey: string | undefined
   @Input() editMenuItemKey: string | undefined
   @Input() deleteMenuItemKey: string | undefined
@@ -304,5 +310,9 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     const page = event.first / event.rows
     this.page = page
     this.pageChanged.emit(page)
+  }
+
+  fieldIsTruthy(object: any, key: any) {
+    return !!(this.resolveFieldData(object, key))
   }
 }
