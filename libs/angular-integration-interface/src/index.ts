@@ -2,6 +2,7 @@
 export * from './lib/services/app-state.service'
 export * from './lib/services/configuration.service'
 export * from './lib/services/user.service'
+export * from './lib/services/portal-message.service'
 export * from './lib/services/theme.service'
 
 // models

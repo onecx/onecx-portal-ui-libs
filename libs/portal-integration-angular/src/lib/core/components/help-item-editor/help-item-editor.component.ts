@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core'
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
+import { PortalMessageService } from '@onecx/angular-integration-interface'
 import { HelpData } from '../../../model/help-data'
-import { PortalMessageService } from '../../../services/portal-message.service'
 
 @Component({
   selector: 'ocx-help-item-editor',
