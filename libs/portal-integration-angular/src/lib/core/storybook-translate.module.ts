@@ -2,7 +2,7 @@ import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-transla
 import { NgModule, importProvidersFrom } from '@angular/core'
 import { HttpClient, HttpClientModule } from '@angular/common/http'
 import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
-import { TranslateCombinedLoader } from '@onecx/angular-integration-interface'
+import { TranslateCombinedLoader } from '@onecx/angular-accelerator'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
 
 export function translateLoader(http: HttpClient) {

@@ -3,7 +3,7 @@ import { NgModule, importProvidersFrom } from '@angular/core'
 import { HttpClient, HttpClientModule } from '@angular/common/http'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
 import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
-import { TranslateCombinedLoader } from '@onecx/angular-integration-interface'
+import { TranslateCombinedLoader } from './utils/translate.combined.loader'
 
 export function translateLoader(http: HttpClient) {
   return new TranslateCombinedLoader(new TranslateHttpLoader(http, `./assets/i18n/`, '.json'))
