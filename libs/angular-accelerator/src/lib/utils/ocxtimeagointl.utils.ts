@@ -1,4 +1,4 @@
-import { filter, map } from 'rxjs'
+import { map } from 'rxjs'
 import { IL10nsStrings, TimeagoIntl } from 'ngx-timeago'
 import { strings as englishStrings } from 'ngx-timeago/language-strings/en'
 import { strings as germanStrings } from 'ngx-timeago/language-strings/de'
@@ -16,7 +16,6 @@ export class OcxTimeagoIntl extends TimeagoIntl {
     this.strings = englishStrings
     userService.lang$
       .pipe(
-        filter((v) => v !== undefined),
         map((lang) => {
           return this.getBestMatchLanguage(lang as string)
         })
