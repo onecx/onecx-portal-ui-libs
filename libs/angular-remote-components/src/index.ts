@@ -1,2 +1,2 @@
 export * from './lib/model/remote-component'
-export * from './lib/model/remote-component-config-type'
+export * from './lib/model/remote-component-config.model'
