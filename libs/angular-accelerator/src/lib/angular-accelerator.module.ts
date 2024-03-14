@@ -19,8 +19,6 @@ import {
 } from 'ngx-timeago'
 
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
-import { createTranslateLoader } from '@onecx/angular-integration-interface'
-import { TranslationCacheService } from '@onecx/angular-integration-interface'
 
 import { PrimeNgModule } from './primeng.module'
 import { ColumnGroupSelectionComponent } from './components/column-group-selection/column-group-selection.component'
@@ -40,6 +38,8 @@ import { DynamicPipe } from './pipes/dynamic.pipe'
 import { IfPermissionDirective } from './directives/if-permission.directive'
 import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
 import { OcxTimeagoIntl } from './utils/ocxtimeagointl.utils'
+import { createTranslateLoader } from './utils/create-translate-loader.utils'
+import { TranslationCacheService } from './services/translation-cache.service'
 
 export class AngularAcceleratorMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {

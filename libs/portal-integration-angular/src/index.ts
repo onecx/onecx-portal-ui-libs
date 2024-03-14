@@ -90,37 +90,7 @@ export * from './lib/core/utils/add-initialize-module-guard.utils'
 export * from './lib/core/utils/translate-service-initializer.utils'
 export * from './lib/core/utils/portal-api-configuration.utils'
 
-// export {
-//   BreadcrumbService,
-//   SearchConfig,
-//   Action,
-//   DataAction,
-//   DataTableColumn,
-//   ColumnType,
-//   ObjectDetailItem,
-//   DiagramColumn,
-//   DataSortDirection,
-//   BreadCrumbMenuItem,
-//   DiagramType,
-//   DynamicPipe,
-//   flattenObject,
-//   ObjectUtils,
-//   DateUtils,
-//   ColorUtils,
-//   PrimeIcon,
-// } from '@onecx/angular-accelerator'
-
 export { MfeInfo } from '@onecx/integration-interface'
-
-// export {
-//   AppStateService,
-//   UserService,
-//   TranslationCacheService,
-//   TranslateCombinedLoader,
-//   AsyncTranslateLoader,
-//   createTranslateLoader,
-//   CachingTranslateLoader,
-// } from '@onecx/angular-integration-interface'
 
 export * from '@onecx/angular-accelerator'
 export * from '@onecx/angular-integration-interface'

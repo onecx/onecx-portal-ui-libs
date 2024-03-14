@@ -18,6 +18,7 @@ export * from './lib/components/search-header/search-header.component'
 
 // services
 export * from './lib/services/breadcrumb.service'
+export * from './lib/services/translation-cache.service'
 
 // pipes
 export * from './lib/pipes/dynamic.pipe'
@@ -43,7 +44,11 @@ export * from './lib/angular-accelerator.module'
 export * from './lib/functions/flatten-object'
 
 // utils
+export * from './lib/utils/async-translate-loader.utils'
+export * from './lib/utils/caching-translate-loader.utils'
 export * from './lib/utils/colorutils'
+export * from './lib/utils/create-translate-loader.utils'
 export * from './lib/utils/dateutils'
 export * from './lib/utils/objectutils'
 export * from './lib/utils/primeicon.utils'
+export * from './lib/utils/translate.combined.loader'
