@@ -21,6 +21,7 @@
       "@onecx/angular-integration-interface": ["libs/angular-integration-interface/src/index.ts"],
       "@onecx/angular-integration-interface/mocks": ["libs/angular-integration-interface/mocks/index.ts"],
       "@onecx/angular-testing": ["libs/angular-testing/src/index.ts"],
+      "@onecx/angular-remote-components": ["libs/angular-remote-components/src/index.ts"],
       "@onecx/integration-interface": ["libs/integration-interface/src/index.ts"],
       "@onecx/keycloak-auth": ["libs/keycloak-auth/src/index.ts"],
       "@onecx/portal-integration-angular": ["libs/portal-integration-angular/src/index.ts"],
