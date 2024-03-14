@@ -1,0 +1,10 @@
+{
+    "name": "@onecx/angular-remote-components",
+    "version": "4.10.2",
+    "peerDependencies": {},
+    "dependencies": {},
+    "publishConfig": {
+      "access": "public"
+    }
+  }
+  
