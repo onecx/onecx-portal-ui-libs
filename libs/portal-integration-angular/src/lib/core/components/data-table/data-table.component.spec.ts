@@ -8,6 +8,9 @@ import { ColumnType } from '../../../model/column-type.model'
 import { PortalCoreModule } from '../../portal-core.module'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { DataTableHarness, PTableCheckboxHarness } from '../../../../../testing'
+import { UserService } from '../../../services/user.service'
+import { MockUserService } from '../../../../../mocks/mock-user-service'
+import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
 
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>
@@ -205,7 +208,9 @@ describe('DataTableComponent', () => {
         TranslateModule.forRoot(),
         TranslateTestingModule.withTranslations(TRANSLATIONS),
         PortalCoreModule,
+        MockAuthModule,
       ],
+      providers: [{ provide: UserService, useClass: MockUserService }],
     }).compileComponents()
 
     fixture = TestBed.createComponent(DataTableComponent)
@@ -314,57 +319,157 @@ describe('DataTableComponent', () => {
       expect(selectedCheckBoxes.length).toBe(2)
       expect(unselectedCheckBoxes.length).toBe(3)
     })
+
+    it('should emit all selected elements when checkbox is clicked', async () => {
+      let selectionChangedEvent: Row[] | undefined
+
+      component.selectionChanged.subscribe((event) => (selectionChangedEvent = event))
+      unselectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('unchecked')
+      selectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('checked')
+      expect(unselectedCheckBoxes.length).toBe(5)
+      expect(selectedCheckBoxes.length).toBe(0)
+      expect(selectionChangedEvent).toBeUndefined()
+
+      const firstRowCheckBox = unselectedCheckBoxes[0]
+      await firstRowCheckBox.checkBox()
+      unselectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('unchecked')
+      selectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('checked')
+      expect(unselectedCheckBoxes.length).toBe(4)
+      expect(selectedCheckBoxes.length).toBe(1)
+      expect(selectionChangedEvent).toEqual([mockData[0]])
+    })
   })
 
-  it('should emit all selected elements when checkbox is clicked', async () => {
-    let selectionChangedEvent: Row[] | undefined
+  describe('Frozen action column', () => {
+    it('should render an unpinnend action column on the right side of the table by default', async () => {
+      component.viewTableRow.subscribe((event) => console.log(event))
 
-    component.selectionChanged.subscribe((event) => (selectionChangedEvent = event))
-    unselectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('unchecked')
-    selectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('checked')
-    expect(unselectedCheckBoxes.length).toBe(5)
-    expect(selectedCheckBoxes.length).toBe(0)
-    expect(selectionChangedEvent).toBeUndefined()
+      expect(component.frozenActionColumn).toBe(false)
+      expect(component.actionColumnPosition).toBe('right')
+      expect(await dataTable.getActionColumnHeader('left')).toBe(null)
+      expect(await dataTable.getActionColumn('left')).toBe(null)
 
-    const firstRowCheckBox = unselectedCheckBoxes[0]
-    await firstRowCheckBox.checkBox()
-    unselectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('unchecked')
-    selectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('checked')
-    expect(unselectedCheckBoxes.length).toBe(4)
-    expect(selectedCheckBoxes.length).toBe(1)
-    expect(selectionChangedEvent).toEqual([mockData[0]])
+      const rightActionColumnHeader = await dataTable.getActionColumnHeader('right')
+      const rightActionColumn = await dataTable.getActionColumn('right')
+      expect(rightActionColumnHeader).toBeTruthy()
+      expect(rightActionColumn).toBeTruthy()
+      expect(await dataTable.columnIsFrozen(rightActionColumnHeader)).toBe(false)
+      expect(await dataTable.columnIsFrozen(rightActionColumn)).toBe(false)
+    })
+
+    it('should render an pinned action column on the specified side of the table', async () => {
+      component.viewTableRow.subscribe((event) => console.log(event))
+
+      component.frozenActionColumn = true
+      component.actionColumnPosition = 'left'
+
+      expect(await dataTable.getActionColumnHeader('right')).toBe(null)
+      expect(await dataTable.getActionColumn('right')).toBe(null)
+
+      const leftActionColumnHeader = await dataTable.getActionColumnHeader('left')
+      const leftActionColumn = await dataTable.getActionColumn('left')
+      expect(leftActionColumnHeader).toBeTruthy()
+      expect(leftActionColumn).toBeTruthy()
+      expect(await dataTable.columnIsFrozen(leftActionColumnHeader)).toBe(true)
+      expect(await dataTable.columnIsFrozen(leftActionColumn)).toBe(true)
+    })
   })
 
-  it('should render an unpinnend action column on the right side of the table by default', async () => {
-    component.viewTableRow.subscribe((event) => console.log(event))
+  describe('Disable action buttons based on field path', () => {
+    const setUpActionButtonMockData = () => {
+      component.columns = [
+        ...mockColumns,
+        {
+          columnType: ColumnType.STRING,
+          id: 'ready',
+          nameKey: 'Ready',
+        },
+      ]
 
-    expect(component.frozenActionColumn).toBe(false)
-    expect(component.actionColumnPosition).toBe('right')
-    expect(await dataTable.getActionColumnHeader('left')).toBe(null)
-    expect(await dataTable.getActionColumn('left')).toBe(null)
+      component.rows = [
+        {
+          version: 0,
+          creationDate: '2023-09-12T09:34:27.184086Z',
+          creationUser: '',
+          modificationDate: '2023-09-12T09:34:27.184086Z',
+          modificationUser: '',
+          id: 'cf9e7d6b-5362-46af-91f8-62f7ef5c6064',
+          name: 'name 3',
+          description: '',
+          status: 'status name 3',
+          responsible: '',
+          endDate: '2023-09-15T09:34:24Z',
+          startDate: '2023-09-14T09:34:22Z',
+          imagePath: '',
+          testNumber: '7.1',
+          ready: false,
+        },
+      ]
+      component.viewTableRow.subscribe(() => console.log())
+      component.editTableRow.subscribe(() => console.log())
+      component.deleteTableRow.subscribe(() => console.log())
+      component.viewPermission = 'VIEW'
+      component.editPermission = 'EDIT'
+      component.deletePermission = 'DELETE'
+    }
+    it('should not disable any action button by default', async () => {
+      expect(component.viewTableRowObserved).toBe(false)
+      expect(component.editTableRowObserved).toBe(false)
+      expect(component.deleteTableRowObserved).toBe(false)
 
-    const rightActionColumnHeader = await dataTable.getActionColumnHeader('right')
-    const rightActionColumn = await dataTable.getActionColumn('right')
-    expect(rightActionColumnHeader).toBeTruthy()
-    expect(rightActionColumn).toBeTruthy()
-    expect(await dataTable.columnIsFrozen(rightActionColumnHeader)).toBe(false)
-    expect(await dataTable.columnIsFrozen(rightActionColumn)).toBe(false)
-  })
+      setUpActionButtonMockData()
 
-  it('should render an pinned action column on the specified side of the table', async () => {
-    component.viewTableRow.subscribe((event) => console.log(event))
+      expect(component.viewTableRowObserved).toBe(true)
+      expect(component.editTableRowObserved).toBe(true)
+      expect(component.deleteTableRowObserved).toBe(true)
 
-    component.frozenActionColumn = true
-    component.actionColumnPosition = 'left'
+      const tableActions = await dataTable.getActionButtons()
+      expect(tableActions.length).toBe(3)
+      const expectedIcons = ['pi pi-eye', 'pi pi-trash', 'pi pi-pencil']
 
-    expect(await dataTable.getActionColumnHeader('right')).toBe(null)
-    expect(await dataTable.getActionColumn('right')).toBe(null)
+      for (const action of tableActions) {
+        expect(await action.matchesSelector('.p-button:disabled')).toBe(false)
+        const icon = await action.getAttribute('icon')
+        if (icon) {
+          const index = expectedIcons.indexOf(icon)
+          expect(index).toBeGreaterThanOrEqual(0)
+          expectedIcons.splice(index, 1)
+        }
+      }
 
-    const leftActionColumnHeader = await dataTable.getActionColumnHeader('left')
-    const leftActionColumn = await dataTable.getActionColumn('left')
-    expect(leftActionColumnHeader).toBeTruthy()
-    expect(leftActionColumn).toBeTruthy()
-    expect(await dataTable.columnIsFrozen(leftActionColumnHeader)).toBe(true)
-    expect(await dataTable.columnIsFrozen(leftActionColumn)).toBe(true)
+      expect(expectedIcons.length).toBe(0)
+    })
+
+    it('should dynamically enable/disable an action button based on the contents of a specified column', async () => {
+      setUpActionButtonMockData()
+      component.viewActionEnabledField = 'ready'
+
+      let tableActions = await dataTable.getActionButtons()
+      expect(tableActions.length).toBe(3)
+
+      for (const action of tableActions) {
+        const icon = await action.getAttribute('icon')
+        const isDisabled = await dataTable.actionButtonIsDisabled(action)
+        if (icon === 'pi pi-eye') {
+          expect(isDisabled).toBe(true)
+        } else {
+          expect(isDisabled).toBe(false)
+        }
+      }
+
+      const tempRows = [...component.rows]
+
+      tempRows[0]['ready'] = true
+
+      component.rows = [
+        ...tempRows
+      ]
+
+      tableActions = await dataTable.getActionButtons()
+
+      for (const action of tableActions) {
+        expect(await dataTable.actionButtonIsDisabled(action)).toBe(false)
+      }
+    })
   })
 })

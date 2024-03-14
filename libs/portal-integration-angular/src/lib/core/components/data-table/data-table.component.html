@@ -19,6 +19,7 @@
             [attr.aria-label]="'OCX_DATA_TABLE.ACTIONS.VIEW' | translate"
             icon="pi pi-eye"
             (click)="onViewRow(rowObject)"
+            [attr.name]="'data-table-action-button'"
           ></button>
         </ng-container>
         <ng-container *ngIf="editTableRowObserved && (!editActionVisibleField || fieldIsTruthy(rowObject, editActionVisibleField))">
@@ -31,6 +32,7 @@
             [attr.aria-label]="'OCX_DATA_TABLE.ACTIONS.EDIT' | translate"
             icon="pi pi-pencil"
             (click)="onEditRow(rowObject)"
+            [attr.name]="'data-table-action-button'"
           ></button>
         </ng-container>
         <ng-container *ngIf="deleteTableRowObserved && (!deleteActionVisibleField || fieldIsTruthy(rowObject, deleteActionVisibleField))">
@@ -43,6 +45,7 @@
             [attr.aria-label]="'OCX_DATA_TABLE.ACTIONS.DELETE' | translate"
             icon="pi pi-trash"
             (click)="onDeleteRow(rowObject)"
+            [attr.name]="'data-table-action-button'"
           ></button>
         </ng-container>
         <ng-container *ngFor="let action of additionalActions">
