@@ -280,13 +280,16 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
       ])
       .subscribe((translations) => {
         let menuItems: MenuItem[] = []
+        const automationId = 'data-grid-action-button'
+        const automationIdHidden = 'data-grid-action-button-hidden'
         if (this.viewItem.observed && this.userService.hasPermission(this.viewPermission || '')) {
           menuItems.push({
             label: translations[this.viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW'],
             icon: PrimeIcons.EYE,
             command: () => this.viewItem.emit(this.selectedItem),
             disabled: viewDisabled,
-            visible: viewVisible
+            visible: viewVisible,
+            automationId: viewVisible ? automationId : automationIdHidden 
           })
         }
         if (this.editItem.observed && this.userService.hasPermission(this.editPermission || '')) {
@@ -295,7 +298,8 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
             icon: PrimeIcons.PENCIL,
             command: () => this.editItem.emit(this.selectedItem),
             disabled: editDisabled,
-            visible: editVisible
+            visible: editVisible,
+            automationId: editVisible ? automationId : automationIdHidden
           })
         }
         if (this.deleteItem.observed && this.userService.hasPermission(this.deletePermission || '')) {
@@ -304,7 +308,8 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
             icon: PrimeIcons.TRASH,
             command: () => this.deleteItem.emit(this.selectedItem),
             disabled: deleteDisabled,
-            visible: deleteVisible
+            visible: deleteVisible,
+            automationId: deleteVisible ? automationId : automationIdHidden 
           })
         }
         menuItems = menuItems.concat(

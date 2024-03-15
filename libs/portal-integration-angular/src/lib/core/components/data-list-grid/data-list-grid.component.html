@@ -60,6 +60,7 @@
             icon="pi pi-ellipsis-v"
             [ariaLabel]="'OCX_DATA_LIST_GRID.MORE_ACTIONS' | translate"
             class="more-actions-menu-button menu-btn"
+            [attr.name]="'data-grid-item-menu-button'"
           ></button>
         </div>
       </div>
@@ -91,6 +92,7 @@
                 (click)="onViewRow(item)"
                 *ocxIfPermission="viewPermission"
                 [disabled]="!!viewActionEnabledField && !fieldIsTruthy(item, viewActionEnabledField)"
+                [attr.name]="'data-list-action-button'"
               ></button>
             </ng-container>
             <ng-container *ngIf="editItemObserved && (!editActionVisibleField || fieldIsTruthy(item, editActionVisibleField))">
@@ -104,6 +106,7 @@
                 (click)="onEditRow(item)"
                 *ocxIfPermission="editPermission"
                 [disabled]="!!editActionEnabledField && !fieldIsTruthy(item, editActionEnabledField)"
+                [attr.name]="'data-list-action-button'"
               ></button>
             </ng-container>
             <ng-container *ngIf="deleteItemObserved && (!deleteActionVisibleField || fieldIsTruthy(item, deleteActionVisibleField))">
@@ -117,6 +120,7 @@
                 (click)="onDeleteRow(item)"
                 *ocxIfPermission="deletePermission"
                 [disabled]="!!deleteActionEnabledField && !fieldIsTruthy(item, deleteActionEnabledField)"
+                [attr.name]="'data-list-action-button'"
               ></button>
             </ng-container>
             <ng-container *ngFor="let action of additionalActions">
