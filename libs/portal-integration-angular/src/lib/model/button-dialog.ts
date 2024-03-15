@@ -1,5 +1,5 @@
 import { Type } from '@angular/core'
-import { PrimeIcons } from 'primeng/api'
+import { PrimeIcon } from '../core/utils/primeicon.utils'
 
 /**
  * Object describing details for button rendering containing key for translation, optional icon and optional parameters for translation
@@ -13,7 +13,7 @@ import { PrimeIcons } from 'primeng/api'
  * }
  * const buttonDetails: ButtonDialogButtonDetails = {
  *   key: 'MY_KEY',
- *   icon: 'pi pi-times',
+ *   icon: PrimeIcons.TIMES,
  *   parameters: {
  *     value: 'meeting'
  *   }
@@ -22,7 +22,7 @@ import { PrimeIcons } from 'primeng/api'
  */
 export interface ButtonDialogButtonDetails {
   key: string
-  icon?: PrimeIcons
+  icon?: PrimeIcon
   parameters?: Record<string, unknown>
 }
 

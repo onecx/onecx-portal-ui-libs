@@ -1,11 +1,15 @@
 <ocx-page-header
-  [header]="headline || ('OCX_SEARCH_HEADER.HEADLINE' | translate)"
+  [header]="header || ('OCX_SEARCH_HEADER.HEADER' | translate)"
+  [subheader]="subheader"
   [manualBreadcrumbs]="manualBreadcrumbs"
   [actions]="headerActions"
 >
-  <ng-template #additionalToolbarContent>
+  <ng-template #additionalToolbarContentLeft>
     <ocx-search-config [searchConfigs]="searchConfigs" (selectedSearchConfigChanged)="confirmSearchConfig($event)">
     </ocx-search-config>
+    <ng-container *ngIf="_additionalToolbarContentLeft" [ngTemplateOutlet]="_additionalToolbarContentLeft"></ng-container>
+  </ng-template>
+  <ng-template #additionalToolbarContent>
     <ng-container *ngIf="_additionalToolbarContent" [ngTemplateOutlet]="_additionalToolbarContent"></ng-container>
   </ng-template>
   <div class="search-criteria-container">
@@ -16,20 +20,20 @@
           id="resetButton"
           *ngIf="resetted.observed"
           (onClick)="onResetClicked()"
-          label="{{ 'OCX_SEARCH_HEADER.RESET_BUTTON_TEXT' | translate }}"
+          label="{{ 'OCX_SEARCH_HEADER.RESET_BUTTON.TEXT' | translate }}"
           icon="pi pi-eraser"
-          [attr.aria-label]="'OCX_SEARCH_HEADER.RESET_BUTTON_TEXT' | translate"
-          title="{{ 'OCX_SEARCH_HEADER.RESET_BUTTON_TEXT' | translate }}"
+          [ariaLabel]="'OCX_SEARCH_HEADER.RESET_BUTTON.DETAIL' | translate"
+          title="{{ 'OCX_SEARCH_HEADER.RESET_BUTTON.DETAIL' | translate }}"
         >
         </p-button>
 
         <p-button
           id="searchButton"
           (onClick)="onSearchClicked()"
-          label="{{ 'OCX_SEARCH_HEADER.SEARCH_BUTTON_TEXT' | translate }}"
+          label="{{ 'OCX_SEARCH_HEADER.SEARCH_BUTTON.TEXT' | translate }}"
           icon="pi pi-search"
-          [attr.aria-label]="'OCX_SEARCH_HEADER.SEARCH_BUTTON_TEXT' | translate"
-          title="{{ 'OCX_SEARCH_HEADER.SEARCH_BUTTON_TEXT' | translate }}"
+          [ariaLabel]="'OCX_SEARCH_HEADER.SEARCH_BUTTON.DETAIL' | translate"
+          title="{{ 'OCX_SEARCH_HEADER.SEARCH_BUTTON.DETAIL' | translate }}"
         >
         </p-button>
       </div>

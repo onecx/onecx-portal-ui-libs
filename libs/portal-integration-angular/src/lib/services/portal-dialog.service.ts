@@ -6,7 +6,7 @@ import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dy
 import { ButtonDialogComponent } from '../core/components/button-dialog/button-dialog.component'
 import { ButtonDialogButtonDetails, ButtonDialogData } from '../model/button-dialog'
 import { DialogMessageContentComponent } from '../core/components/button-dialog/dialog-message-content/dialog-message-content.component'
-import { PrimeIcons } from 'primeng/api'
+import { PrimeIcon } from '../core/utils/primeicon.utils'
 
 /**
  * Object containing key for translation with parameters object for translation
@@ -58,11 +58,11 @@ type TranslationKey = string | TranslationKeyWithParameters
  *       value = 'hello',
  *     },
  *   },
- *   icon: 'pi pi-question'
+ *   icon: PrimeIcons.QUESTION
  * }
  * ```
  */
-type DialogMessage = { message: TranslationKey; icon: PrimeIcons }
+type DialogMessage = { message: TranslationKey; icon: PrimeIcon }
 
 /**
  * Implement via component class to be displayed by {@link PortalDialogService.openDialog}
@@ -259,7 +259,7 @@ export class PortalDialogService {
    * // Welcome message with question mark icon
    * const dialogMessage = {
    *   key: 'WELCOME_MESSAGE',
-   *   icon: 'pi pi-question'
+   *   icon: PrimeIcons.QUESTION
    * }
    * this.portalDialogService.openDialog('TITLE_KEY', dialogMessage, 'OK_BUTTON').subscribe((stateOnClose) => {
    *   // operations when dialog has been closed
@@ -273,13 +273,13 @@ export class PortalDialogService {
    * // Ok button with check icon
    * const primaryButton = {
    *   key: 'OK_BUTTON',
-   *   icon: 'pi pi-check'
+   *   icon: PrimeIcons.CHECK
    * }
    *
    * // Refresh button with refresh icon
    * const secondaryButton = {
    *   key: 'REFRESH_BUTTON',
-   *   icon: 'pi pi-refresh'
+   *   icon: PrimeIcons.REFRESH
    * }
    *
    * this.portalDialogService.openDialog('TITLE_KEY', 'WELCOME_MESSAGE', primaryButton, secondaryButton).subscribe((stateOnClose) => {

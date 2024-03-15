@@ -57,6 +57,7 @@ export * from './lib/core/components/loading-indicator/loading-indicator.compone
 export * from './lib/core/components/content-container/content-container.component'
 export * from './lib/core/components/content/content.component'
 export * from './lib/core/components/create-or-edit-search-config-dialog/create-or-edit-search-config-dialog.component'
+export * from './lib/core/components/lifecycle/lifecycle.component'
 
 // services
 export * from './lib/services/app.menu.service'
@@ -102,7 +103,7 @@ export * from './lib/model/data-action'
 export * from './lib/model/button-dialog'
 export * from './lib/model/diagram-type'
 export * from './lib/model/config-key.model'
-export * from './lib/model/search-config'
+export * from './lib/model/search-config-info'
 
 // core
 export * from './lib/api/iauth.service'
@@ -127,3 +128,4 @@ export * from './lib/core/utils/add-initialize-module-guard.utils'
 export * from './lib/core/utils/translate-service-initializer.utils'
 export * from './lib/core/utils/portal-api-configuration.utils'
 export * from './lib/core/utils/caching-translate-loader.utils'
+export * from './lib/core/utils/primeicon.utils'

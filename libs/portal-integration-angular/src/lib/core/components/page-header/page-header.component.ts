@@ -17,6 +17,7 @@ import { BreadcrumbService } from '../../../services/breadcrumb.service'
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService } from '../../../services/app-state.service'
 import { UserService } from '../../../services/user.service'
+import { PrimeIcon } from '../../utils/primeicon.utils'
 
 /**
  * Action definition.
@@ -46,10 +47,15 @@ export interface ObjectDetailItem {
   label: string
   value?: string
   tooltip?: string
-  icon?: PrimeIcons
+  icon?: PrimeIcon
   labelPipe?: Type<any>
   valuePipe?: Type<any>
   valuePipeArgs?: string
+}
+
+export interface HomeItem {
+  menuItem: MenuItem
+  page?: string
 }
 
 @Component({
@@ -107,12 +113,15 @@ export class PageHeaderComponent implements OnInit, OnChanges {
   @ContentChild('additionalToolbarContent')
   additionalToolbarContent: TemplateRef<any> | undefined
 
+  @ContentChild('additionalToolbarContentLeft')
+  additionalToolbarContentLeft: TemplateRef<any> | undefined
+
   overflowActions: MenuItem[] = []
   inlineActions: Action[] | undefined
   dd = new Date()
   breadcrumbs$!: Observable<MenuItem[]>
 
-  home$!: Observable<MenuItem>
+  home$!: Observable<HomeItem>
 
   protected breadcrumbs: BreadcrumbService
 
@@ -124,8 +133,16 @@ export class PageHeaderComponent implements OnInit, OnChanges {
   ) {
     this.breadcrumbs = breadcrumbs
     this.home$ = concat(
-      of({ icon: PrimeIcons.HOME, routerLink: '/' }),
-      this.appStateService.currentPortal$.pipe(map((portal) => ({ icon: PrimeIcons.HOME, routerLink: portal.baseUrl })))
+      of({ menuItem: { icon: PrimeIcons.HOME, routerLink: '/' } }),
+      this.appStateService.currentPortal$.pipe(
+        map((portal) => ({
+          menuItem: {
+            icon: PrimeIcons.HOME,
+            routerLink: portal.baseUrl,
+          },
+          page: portal.portalName,
+        }))
+      )
     )
   }
   ngOnChanges(changes: SimpleChanges): void {

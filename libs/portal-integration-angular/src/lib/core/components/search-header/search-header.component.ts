@@ -10,7 +10,7 @@ import {
   ViewChild,
 } from '@angular/core'
 import { Action } from '../page-header/page-header.component'
-import { SearchConfig } from '../../../model/search-config'
+import { SearchConfigInfo } from '../../../model/search-config-info'
 
 /**
  * To trigger the search when Enter key is pressed inside a search parameter field,
@@ -24,8 +24,20 @@ import { SearchConfig } from '../../../model/search-config'
   styleUrls: ['./search-header.component.scss'],
 })
 export class SearchHeaderComponent implements AfterViewInit {
-  @Input() searchConfigs: SearchConfig[] | undefined
-  @Input() headline = ''
+  @Input() searchConfigs: SearchConfigInfo[] | undefined
+  @Input() header = ''
+
+  /**
+   * @deprecated Will be replaced by header
+   */
+  @Input()
+  get headline(): string {
+    return this.header
+  }
+  set headline(value: string) {
+    this.header = value
+  }
+  @Input() subheader: string | undefined
   @Input() viewMode: 'basic' | 'advanced' = 'basic'
   @Input() manualBreadcrumbs = false
   _actions: Action[] = []
@@ -40,13 +52,19 @@ export class SearchHeaderComponent implements AfterViewInit {
 
   @Output() searched: EventEmitter<any> = new EventEmitter()
   @Output() resetted: EventEmitter<any> = new EventEmitter()
-  @Output() selectedSearchConfigChanged: EventEmitter<SearchConfig> = new EventEmitter()
-  @Output() viewModeChanged: EventEmitter<string> = new EventEmitter()
+  @Output() selectedSearchConfigChanged: EventEmitter<SearchConfigInfo> = new EventEmitter()
+  @Output() viewModeChanged: EventEmitter<'basic' | 'advanced'> = new EventEmitter()
   @ContentChild('additionalToolbarContent')
   additionalToolbarContent: TemplateRef<any> | undefined
 
   get _additionalToolbarContent(): TemplateRef<any> | undefined {
     return this.additionalToolbarContent
+  }
+  @ContentChild('additionalToolbarContentLeft')
+  additionalToolbarContentLeft: TemplateRef<any> | undefined
+
+  get _additionalToolbarContentLeft(): TemplateRef<any> | undefined {
+    return this.additionalToolbarContentLeft
   }
 
   @ViewChild('searchParameterFields') searchParameterFields: ElementRef | undefined
@@ -77,13 +95,17 @@ export class SearchHeaderComponent implements AfterViewInit {
     const headerActions: Action[] = []
     if (this.hasAdvanced) {
       headerActions.push({
-        id: 'basicAdvancedButton',
+        id: 'simpleAdvancedButton',
         labelKey:
           this.viewMode === 'basic'
-            ? 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.ADVANCED'
-            : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.BASIC',
+            ? 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.ADVANCED.TEXT'
+            : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.SIMPLE.TEXT',
         actionCallback: () => this.toggleViewMode(),
         show: 'always',
+        titleKey:
+          this.viewMode === 'basic'
+            ? 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.ADVANCED.DETAIL'
+            : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.SIMPLE.DETAIL',
       })
     }
     this.headerActions = headerActions.concat(this.actions)
@@ -105,7 +127,7 @@ export class SearchHeaderComponent implements AfterViewInit {
     }
   }
 
-  confirmSearchConfig(searchConfig: SearchConfig) {
+  confirmSearchConfig(searchConfig: SearchConfigInfo) {
     this.selectedSearchConfigChanged?.emit(searchConfig)
   }
 }

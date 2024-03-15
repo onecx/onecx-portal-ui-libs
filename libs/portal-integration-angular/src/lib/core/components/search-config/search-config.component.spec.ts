@@ -6,50 +6,29 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateService } from '@ngx-translate/core'
 import { MessageModule } from 'primeng/message'
 import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
-import { SearchConfigPrimitive, SearchConfig } from '../../../model/search-config'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { SearchConfigHarness } from '../../../../../testing'
 import { PrimeNgModule } from '../../primeng.module'
 import { ReactiveFormsModule } from '@angular/forms'
+import { SearchConfigInfo } from '../../../model/search-config-info'
 
 describe('SearchConfigComponent', () => {
   let translateService: TranslateService
   let component: SearchConfigComponent
   let fixture: ComponentFixture<SearchConfigComponent>
 
-  const searchConfigurations: Record<string, SearchConfigPrimitive>[] = [
-    {
-      name: 'test',
-      startDate: undefined,
-      endDate: undefined,
-    },
-    {
-      name: 'example',
-      startDate: new Date(2023, 0, 15, 12, 30, 45),
-      endDate: new Date(2023, 0, 19, 12, 30, 45),
-    },
-  ]
-
-  const searchConfigs: SearchConfig[] = [
+  const searchConfigs: SearchConfigInfo[] = [
     {
       id: '01',
-      name: 'Basic search config',
-      version: 1,
-      readonly: true,
-      isAdvanced: true,
-      values: searchConfigurations[0],
+      name: 'Simple search config',
     },
     {
       id: '02',
       name: 'Adapted search config',
-      version: 1,
-      readonly: true,
-      isAdvanced: true,
-      values: searchConfigurations[1],
     },
   ]
 
-  const emptySearchConfigEntry: SearchConfig[] = []
+  const emptySearchConfigEntry: SearchConfigInfo[] = []
 
   const placeholderKey = 'OCX_SEARCH_HEADER.OCX_SEARCH_CONFIG.DROPDOWN_DEFAULT'
 

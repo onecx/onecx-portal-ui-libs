@@ -1,3 +1,51 @@
+## [4.10.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.10.1...v4.10.2) (2024-03-08)
+
+
+### Bug Fixes
+
+* search config dialog ([#164](https://github.com/onecx/onecx-portal-ui-libs/issues/164)) ([395f289](https://github.com/onecx/onecx-portal-ui-libs/commit/395f289858324eb1525ba3eeb5b0ce7f085347a3))
+
+## [4.10.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.10.0...v4.10.1) (2024-03-08)
+
+
+### Bug Fixes
+
+* viewModeChanged type change ([#163](https://github.com/onecx/onecx-portal-ui-libs/issues/163)) ([3aacb0c](https://github.com/onecx/onecx-portal-ui-libs/commit/3aacb0c63d857dedf3a5b495c9e4bea64b683116))
+
+## [4.10.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.9.0...v4.10.0) (2024-03-08)
+
+
+### Features
+
+* basic search to simple search with aria labels improvements ([#146](https://github.com/onecx/onecx-portal-ui-libs/issues/146)) ([a3a009d](https://github.com/onecx/onecx-portal-ui-libs/commit/a3a009d744cd8fbe6203fdd99c7f85d4b8b826d6))
+* search widget accessibility ([#149](https://github.com/onecx/onecx-portal-ui-libs/issues/149)) ([1ee49dd](https://github.com/onecx/onecx-portal-ui-libs/commit/1ee49ddeb0ef4c31ffd19b8d7f7074b51633a0a5))
+* search-header component uses header input ([#157](https://github.com/onecx/onecx-portal-ui-libs/issues/157)) ([558c590](https://github.com/onecx/onecx-portal-ui-libs/commit/558c59068e2c2a105edb142e91269c429d124fc7))
+
+
+### Bug Fixes
+
+* add ngIf to columnGroupSelectionDropdown to show the label only if columnGroups are defined ([#158](https://github.com/onecx/onecx-portal-ui-libs/issues/158)) ([d8fbb39](https://github.com/onecx/onecx-portal-ui-libs/commit/d8fbb392c05ee69b3c3a68437af44eb42dbeae32))
+* remove search config and add search config info ([#161](https://github.com/onecx/onecx-portal-ui-libs/issues/161)) ([d1db2ce](https://github.com/onecx/onecx-portal-ui-libs/commit/d1db2ce6845aa41ac483ce7db470f7e6fea8af04))
+
+## [4.9.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.8.0...v4.9.0) (2024-02-28)
+
+
+### Features
+
+* column group floating label displayed ([#148](https://github.com/onecx/onecx-portal-ui-libs/issues/148)) ([70cf90e](https://github.com/onecx/onecx-portal-ui-libs/commit/70cf90ed8f906d640ea7280ec850a377b6b7f785))
+* lifecycle component ([#153](https://github.com/onecx/onecx-portal-ui-libs/issues/153)) ([c9c8cdf](https://github.com/onecx/onecx-portal-ui-libs/commit/c9c8cdfbc2071d65e21d3f809d97355e1201e079))
+* search header allows to provide subheader now ([#147](https://github.com/onecx/onecx-portal-ui-libs/issues/147)) ([d4bf6c5](https://github.com/onecx/onecx-portal-ui-libs/commit/d4bf6c5edb15f49f293290ddd2fdd4639e44fcd8))
+
+
+### Bug Fixes
+
+* adapt SearchConfig interface and use the type PrimeIcon for icons ([#152](https://github.com/onecx/onecx-portal-ui-libs/issues/152)) ([56e09ac](https://github.com/onecx/onecx-portal-ui-libs/commit/56e09acc4d312b9006da378817fa944f3f1eec59))
+
+
+### Refactoring
+
+* migrate icons in TS to PrimeIcons ([#151](https://github.com/onecx/onecx-portal-ui-libs/issues/151)) ([186fae8](https://github.com/onecx/onecx-portal-ui-libs/commit/186fae874a752f734b87c45d35a9c4c5c0e79bc2))
+
 ## [4.8.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.7.0...v4.8.0) (2024-02-26)
 
 

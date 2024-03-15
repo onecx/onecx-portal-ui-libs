@@ -3,19 +3,24 @@ import { PMultiSelectListItemHarness } from './p-multiSelectListItem.harness'
 
 export interface PMultiSelectHarnessFilters extends BaseHarnessFilters {
   id?: string
+  class?: string
 }
 
 export class PMultiSelectHarness extends ComponentHarness {
   static hostSelector = 'p-multiSelect'
 
   static with(options: PMultiSelectHarnessFilters): HarnessPredicate<PMultiSelectHarness> {
-    return new HarnessPredicate(PMultiSelectHarness, options).addOption('id', options.id, (harness, id) =>
-      HarnessPredicate.stringMatches(harness.getId(), id)
-    )
+    return new HarnessPredicate(PMultiSelectHarness, options)
+      .addOption('id', options.id, (harness, id) => HarnessPredicate.stringMatches(harness.getId(), id))
+      .addOption('class', options.class, (harness, c) => HarnessPredicate.stringMatches(harness.getByClass(c), c))
   }
 
   async getId(): Promise<string | null> {
     return await (await this.host()).getAttribute('id')
+  }
+
+  async getByClass(c: string): Promise<string | null> {
+    return (await (await this.host()).hasClass(c)) ? c : ''
   }
 
   async getHarnessLoaderForPMultiSelectPanel(): Promise<HarnessLoader> {

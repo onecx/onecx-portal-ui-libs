@@ -47,7 +47,7 @@ export default {
         MenuModule,
         BreadcrumbModule,
         SkeletonModule,
-        StorybookTranslateModule
+        StorybookTranslateModule,
       ],
       providers: [],
     }),
@@ -117,7 +117,7 @@ const TemplateWithProjectionAndExtraToolbar: StoryFn<SearchCriteriaComponent> = 
   </ocx-search-criteria>`,
 })
 
-export const Basic = {
+export const Simple = {
   render: Template,
 
   args: {

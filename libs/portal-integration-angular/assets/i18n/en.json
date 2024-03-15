@@ -1,6 +1,7 @@
 {
   "OCX_CUSTOM_GROUP_COLUMN_SELECTOR": {
-    "OPEN_BUTTON_TITLE": "Open custom group selection dialog",
+    "DROPDOWN_LABEL": "Columns",
+    "OPEN_BUTTON_DETAIL": "Open custom group selection dialog",
     "ACTIVE_COLUMNS_LABEL": "Active columns",
     "INACTIVE_COLUMNS_LABEL": "Inactive columns",
     "SAVE_BUTTON_LABEL": "Save",
@@ -14,6 +15,17 @@
       "NO": "No",
       "LEFT": "Left",
       "RIGHT": "Right"
+    },
+    "ARIA_LABELS": {
+      "UP": "Move column up",
+      "TOP": "Move column to the top",
+      "DOWN": "Move column down",
+      "BOTTOM": "Move column to the bottom",
+      "RIGHT": "Set column as inactive",
+      "ALL_RIGHT": "Set all columns as inactive",
+      "LEFT": "Set column as active",
+      "ALL_LEFT": "Set all columns as active",
+      "CLOSE": "Close dialog"
     }
   },
   "OCX_SEARCH_CONFIG": {
@@ -30,13 +42,15 @@
       "ASCENDING_TITLE": "Ascending",
       "DESCENDING_TITLE": "Descending",
       "DEFAULT_TITLE": "Default"
-    }
+    },
+    "SORTING_BUTTON_ARIA_LABEL": "Toggle sorting direction to {{direction}}"
   },
   "OCX_DATA_TABLE": {
     "EMPTY_RESULT": "No data found.",
     "EMPTY_FILTER_MESSAGE": "No filters found.",
     "ACTIONS_COLUMN_NAME": "Actions",
     "FILTER_TITLE": "Filter",
+    "FILTER_ARIA_LABEL": "Filter {{column}}",
     "EDITED": "Edited",
     "SHOWING": "{{first}} - {{last}} of {{totalRecords}}",
     "SHOWING_WITH_TOTAL_ON_SERVER": "{{first}} - {{last}} of {{totalRecords}} ({{totalRecordsOnServer}})",
@@ -45,7 +59,13 @@
       "VIEW": "View",
       "EDIT": "Edit",
       "DELETE": "Delete"
-    } 
+    },
+    "TOGGLE_BUTTON": {
+      "ASCENDING_TITLE": "Ascending",
+      "DESCENDING_TITLE": "Descending",
+      "DEFAULT_TITLE": "Default",
+      "ARIA_LABEL": "Toggle {{column}} sorting direction to {{direction}}"
+    }
   },
   "OCX_DATA_LIST_GRID": {
     "EMPTY_RESULT": "No data found.",
@@ -53,7 +73,8 @@
       "VIEW": "View",
       "EDIT": "Edit",
       "DELETE": "Delete"
-    }
+    },
+    "MORE_ACTIONS": "More actions"
   },
   "OCX_DATA_LAYOUT_SELECTION": {
     "LAYOUT": {
@@ -69,19 +90,33 @@
   },
   "OCX_SEARCH_HEADER": {
     "TOGGLE_BUTTON": {
-      "BASIC": "Basic",
-      "ADVANCED": "Advanced"
+      "SIMPLE": {
+        "TEXT": "Simple",
+        "DETAIL": "Switch to simple search criteria"
+      },
+      "ADVANCED": {
+        "TEXT": "Advanced",
+        "DETAIL": "Switch to advanced search criteria"
+      }
     },
     "OCX_SEARCH_CONFIG": {
       "DROPDOWN_DEFAULT": "Pick predefined template"
     },
-    "HEADLINE": "Search",
-    "RESET_BUTTON_TEXT": "Reset",
-    "SEARCH_BUTTON_TEXT": "Search",
+    "HEADER": "Search",
+    "RESET_BUTTON": {
+      "TEXT": "Reset",
+      "DETAIL": "Reset search criteria"
+    },
+    "SEARCH_BUTTON": {
+      "TEXT": "Search",
+      "DETAIL": "Start search"
+    },
     "EXPORT": "Export all events"
   },
   "OCX_PAGE_HEADER": {
-    "MORE_ACTIONS": "More actions"
+    "MORE_ACTIONS": "More actions",
+    "HOME_DEFAULT_ARIA_LABEL": "Go to home page",
+    "HOME_ARIA_LABEL": "Go to {{page}} home page"
   },
   "OCX_HEADER": {
     "MENU_TOGGLE": "Menu"

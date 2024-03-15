@@ -3,7 +3,8 @@
     <p-breadcrumb
       [model]="items"
       *ngIf="breadcrumbs$ | async  as items"
-      [home]="(home$ | async) ?? {}"
+      [home]="(home$ | async)?.menuItem ?? {}"
+      [homeAriaLabel]="(home$ | async)?.page ? ('OCX_PAGE_HEADER.HOME_ARIA_LABEL' | translate: { page: (home$ | async)?.page}) : ('OCX_PAGE_HEADER.HOME_DEFAULT_ARIA_LABEL' | translate)"
       [attr.manual]="manualBreadcrumbs"
     ></p-breadcrumb>
   </ng-container>
@@ -23,11 +24,13 @@
         </div>
       </ng-template>
       <div class="header" *ngIf="!loading; else skeletonBar">
-        <h3>{{ header }}</h3>
-        <h4>{{ subheader }}</h4>
+        <h1 *ngIf="!!header">{{ header }}</h1>
+        <h2 *ngIf="!!subheader">{{ subheader }}</h2>
       </div>
     </div>
     <div class="action-items-wrap mt-2 md:mt-0">
+      <ng-container *ngIf="additionalToolbarContentLeft" [ngTemplateOutlet]="additionalToolbarContentLeft"> </ng-container>
+
       <ng-container *ngIf="!disableDefaultActions"> </ng-container>
       <ng-template #skeletonActions>
         <div class="flex">
@@ -48,6 +51,7 @@
               [title]="(action.titleKey ? (action.titleKey | translate) : action.title) || (action.labelKey ? (action.labelKey | translate) : action.label)"
               [disabled]="action.disabled ? action.disabled : false"
               [attr.name]="action.icon ? 'ocx-page-header-inline-action-icon-button' : 'ocx-page-header-inline-action-button'"
+              [ariaLabel]="(action.titleKey ? (action.titleKey | translate) : action.title) || (action.labelKey ? (action.labelKey | translate) : action.label)"
             ></p-button>
           </ng-container>
         </div>
@@ -63,6 +67,7 @@
               class="more-actions-menu-button action-button ml-2"
               (click)="menu.toggle($event)"
               name="ocx-page-header-overflow-action-button"
+              [ariaLabel]="('OCX_PAGE_HEADER.MORE_ACTIONS' | translate)"
             ></button>
             <p-menu #menu [popup]="true" [model]="overflowActions" appendTo="body"></p-menu>
           </div>
