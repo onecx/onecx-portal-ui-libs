@@ -375,43 +375,44 @@ describe('DataTableComponent', () => {
     })
   })
 
-  describe('Disable action buttons based on field path', () => {
-    const setUpActionButtonMockData = () => {
-      component.columns = [
-        ...mockColumns,
-        {
-          columnType: ColumnType.STRING,
-          id: 'ready',
-          nameKey: 'Ready',
-        },
-      ]
+  const setUpActionButtonMockData = () => {
+    component.columns = [
+      ...mockColumns,
+      {
+        columnType: ColumnType.STRING,
+        id: 'ready',
+        nameKey: 'Ready',
+      },
+    ]
 
-      component.rows = [
-        {
-          version: 0,
-          creationDate: '2023-09-12T09:34:27.184086Z',
-          creationUser: '',
-          modificationDate: '2023-09-12T09:34:27.184086Z',
-          modificationUser: '',
-          id: 'cf9e7d6b-5362-46af-91f8-62f7ef5c6064',
-          name: 'name 3',
-          description: '',
-          status: 'status name 3',
-          responsible: '',
-          endDate: '2023-09-15T09:34:24Z',
-          startDate: '2023-09-14T09:34:22Z',
-          imagePath: '',
-          testNumber: '7.1',
-          ready: false,
-        },
-      ]
-      component.viewTableRow.subscribe(() => console.log())
-      component.editTableRow.subscribe(() => console.log())
-      component.deleteTableRow.subscribe(() => console.log())
-      component.viewPermission = 'VIEW'
-      component.editPermission = 'EDIT'
-      component.deletePermission = 'DELETE'
-    }
+    component.rows = [
+      {
+        version: 0,
+        creationDate: '2023-09-12T09:34:27.184086Z',
+        creationUser: '',
+        modificationDate: '2023-09-12T09:34:27.184086Z',
+        modificationUser: '',
+        id: 'cf9e7d6b-5362-46af-91f8-62f7ef5c6064',
+        name: 'name 3',
+        description: '',
+        status: 'status name 3',
+        responsible: '',
+        endDate: '2023-09-15T09:34:24Z',
+        startDate: '2023-09-14T09:34:22Z',
+        imagePath: '',
+        testNumber: '7.1',
+        ready: false,
+      },
+    ]
+    component.viewTableRow.subscribe(() => console.log())
+    component.editTableRow.subscribe(() => console.log())
+    component.deleteTableRow.subscribe(() => console.log())
+    component.viewPermission = 'VIEW'
+    component.editPermission = 'EDIT'
+    component.deletePermission = 'DELETE'
+  }
+
+  describe('Disable action buttons based on field path', () => {
     it('should not disable any action button by default', async () => {
       expect(component.viewTableRowObserved).toBe(false)
       expect(component.editTableRowObserved).toBe(false)
@@ -470,6 +471,71 @@ describe('DataTableComponent', () => {
       for (const action of tableActions) {
         expect(await dataTable.actionButtonIsDisabled(action)).toBe(false)
       }
+    })
+  })
+
+  describe('Hide action buttons based on field path', () => {
+    it('should not hide any action button by default', async () => {
+      expect(component.viewTableRowObserved).toBe(false)
+      expect(component.editTableRowObserved).toBe(false)
+      expect(component.deleteTableRowObserved).toBe(false)
+
+      setUpActionButtonMockData()
+
+      expect(component.viewTableRowObserved).toBe(true)
+      expect(component.editTableRowObserved).toBe(true)
+      expect(component.deleteTableRowObserved).toBe(true)
+
+      const tableActions = await dataTable.getActionButtons()
+      expect(tableActions.length).toBe(3)
+      const expectedIcons = ['pi pi-eye', 'pi pi-trash', 'pi pi-pencil']
+
+      for (const action of tableActions) {
+        const icon = await action.getAttribute('icon')
+        if (icon) {
+          const index = expectedIcons.indexOf(icon)
+          expect(index).toBeGreaterThanOrEqual(0)
+          expectedIcons.splice(index, 1)
+        }
+      }
+
+      expect(expectedIcons.length).toBe(0)
+    })
+
+    it('should dynamically hide/show an action button based on the contents of a specified column', async () => {
+      setUpActionButtonMockData()
+      component.viewActionVisibleField = 'ready'
+
+      let tableActions = await dataTable.getActionButtons()
+      expect(tableActions.length).toBe(2)
+
+      for (const action of tableActions) {
+        const icon = await action.getAttribute('icon')
+        expect(icon === 'pi pi-eye').toBe(false)
+      }
+
+      const tempRows = [...component.rows]
+
+      tempRows[0]['ready'] = true
+
+      component.rows = [
+        ...tempRows
+      ]
+
+      tableActions = await dataTable.getActionButtons()
+      expect(tableActions.length).toBe(3)
+      const expectedIcons = ['pi pi-eye', 'pi pi-trash', 'pi pi-pencil']
+
+      for (const action of tableActions) {
+        const icon = await action.getAttribute('icon')
+        if (icon) {
+          const index = expectedIcons.indexOf(icon)
+          expect(index).toBeGreaterThanOrEqual(0)
+          expectedIcons.splice(index, 1)
+        }
+      }
+
+      expect(expectedIcons.length).toBe(0)
     })
   })
 })
