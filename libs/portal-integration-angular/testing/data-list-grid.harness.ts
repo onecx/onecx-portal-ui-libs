@@ -28,4 +28,18 @@ export class DataListGridHarness extends ContentContainerComponentHarness {
       return await actionButton.hasClass("p-disabled")
     }
   }
+
+  async hasAmountOfActionButtons(actionButtonType: 'list' | 'grid' | 'grid-hidden', amount: number) {
+      return (await this.getActionButtons(actionButtonType)).length === amount
+  }
+
+  async hasAmountOfDisabledActionButtons(viewType: 'list' | 'grid', amount: number) {
+    let disabledActionButtons = [];
+    if(viewType === 'list') {
+      disabledActionButtons = await this.documentRootLocatorFactory().locatorForAll(`[name="data-list-action-button"]:disabled`)()
+    } else {
+      disabledActionButtons = await this.documentRootLocatorFactory().locatorForAll(`li.p-menuitem>a.p-menuitem-link.p-disabled`)()
+    }
+    return disabledActionButtons.length === amount
+  }
 }
