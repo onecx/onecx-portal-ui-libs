@@ -19,6 +19,7 @@ import { DataAction } from '../../../model/data-action'
 import { DataSortDirection } from '../../../model/data-sort-direction'
 import { DataTableColumn } from '../../../model/data-table-column.model'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
+import { ObjectUtils } from '../../utils/objectutils'
 
 type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -86,6 +87,12 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   @Input() deletePermission: string | undefined
   @Input() viewPermission: string | undefined
   @Input() editPermission: string | undefined
+  @Input() deleteActionVisibleField: string | undefined
+  @Input() deleteActionEnabledField: string | undefined
+  @Input() viewActionVisibleField: string | undefined
+  @Input() viewActionEnabledField: string | undefined
+  @Input() editActionVisibleField: string | undefined
+  @Input() editActionEnabledField: string | undefined
   @Input() paginator = true
   @Input() page = 0
   @Input()
@@ -331,5 +338,9 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     const page = event.first / event.rows
     this.page = page
     this.pageChanged.emit(page)
+  }
+
+  fieldIsTruthy(object: any, key: any) {
+    return !!(ObjectUtils.resolveFieldData(object, key))
   }
 }
