@@ -56,10 +56,11 @@
           <p-menu #menu [model]="gridMenuItems" [popup]="true" appendTo="body"></p-menu>
           <button
             pButton
-            (click)="setSelectedItem(item); menu.toggle($event)"
+            (click)="setSelectedItem(item); updateGridMenuItems(true); menu.toggle($event)"
             icon="pi pi-ellipsis-v"
             [ariaLabel]="'OCX_DATA_LIST_GRID.MORE_ACTIONS' | translate"
             class="more-actions-menu-button menu-btn"
+            [attr.name]="'data-grid-item-menu-button'"
           ></button>
         </div>
       </div>
@@ -80,7 +81,7 @@
             <a [routerLink]="" (click)="onViewRow(item)">{{ resolveFieldData(item, titleLineId) || '' }}</a>
           </div>
           <div class="flex flex-column md:flex-row md:justify-content-between">
-            <ng-container *ngIf="viewItemObserved">
+            <ng-container *ngIf="viewItemObserved && (!viewActionVisibleField || fieldIsTruthy(item, viewActionVisibleField))">
               <button
                 type="button"
                 icon="pi pi-eye"
@@ -90,9 +91,11 @@
                 [attr.aria-label]="(viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW') | translate"
                 (click)="onViewRow(item)"
                 *ocxIfPermission="viewPermission"
+                [disabled]="!!viewActionEnabledField && !fieldIsTruthy(item, viewActionEnabledField)"
+                [attr.name]="'data-list-action-button'"
               ></button>
             </ng-container>
-            <ng-container *ngIf="editItemObserved">
+            <ng-container *ngIf="editItemObserved && (!editActionVisibleField || fieldIsTruthy(item, editActionVisibleField))">
               <button
                 type="button"
                 class="p-button-rounded p-button-text mb-1 mr-2 editListItemButton"
@@ -102,9 +105,11 @@
                 [attr.aria-label]="(editMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.EDIT') | translate"
                 (click)="onEditRow(item)"
                 *ocxIfPermission="editPermission"
+                [disabled]="!!editActionEnabledField && !fieldIsTruthy(item, editActionEnabledField)"
+                [attr.name]="'data-list-action-button'"
               ></button>
             </ng-container>
-            <ng-container *ngIf="deleteItemObserved">
+            <ng-container *ngIf="deleteItemObserved && (!deleteActionVisibleField || fieldIsTruthy(item, deleteActionVisibleField))">
               <button
                 type="button"
                 icon="pi pi-trash"
@@ -114,6 +119,8 @@
                 [attr.aria-label]="(deleteMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.DELETE') | translate"
                 (click)="onDeleteRow(item)"
                 *ocxIfPermission="deletePermission"
+                [disabled]="!!deleteActionEnabledField && !fieldIsTruthy(item, deleteActionEnabledField)"
+                [attr.name]="'data-list-action-button'"
               ></button>
             </ng-container>
             <ng-container *ngFor="let action of additionalActions">
