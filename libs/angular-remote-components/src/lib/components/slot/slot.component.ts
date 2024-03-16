@@ -10,9 +10,8 @@ import {
   ViewContainerRef,
 } from '@angular/core'
 import { BehaviorSubject, Subscription, Observable, combineLatest } from 'rxjs';
-import { SLOT_SERVICE, SlotService } from '../../services/slot.service'
+import { RemoteComponentInfo, SLOT_SERVICE, SlotService } from '../../services/slot.service'
 import { ocxRemoteComponent } from '../../model/remote-component';
-import { RemoteComponent } from '@onecx/integration-interface';
 
 @Component({
   selector: 'ocx-slot[name]',
@@ -31,7 +30,7 @@ export class SlotComponent implements OnInit, OnDestroy {
   }
 
   subscription: Subscription | undefined;
-  components$: Observable<{componentType:Type<unknown>, remoteComponent: RemoteComponent}[]> | undefined;
+  components$: Observable<{componentType:Type<unknown>, remoteComponent: RemoteComponentInfo}[]> | undefined;
 
   constructor(@Inject(SLOT_SERVICE) private slotService: SlotService) {}
 
