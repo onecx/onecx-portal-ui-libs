@@ -1,2 +1,5 @@
 export * from './lib/model/remote-component'
 export * from './lib/model/remote-component-config.model'
+export * from './lib/components/slot/slot.component'
+export * from './lib/angular-remote-components.module'
+export * from './lib/services/slot.service'
