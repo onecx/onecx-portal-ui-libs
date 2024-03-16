@@ -1,5 +1,5 @@
 export interface RemoteComponent { 
-    url: string;
+    name: string;
     basePath: string;
     remoteEntryUrl: string;
     appId: string;
