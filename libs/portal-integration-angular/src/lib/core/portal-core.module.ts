@@ -8,6 +8,7 @@ import {
   NgModule,
   Optional,
   SkipSelf,
+  importProvidersFrom,
 } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
@@ -88,6 +89,7 @@ import { MessageService } from 'primeng/api'
 import { TranslationCacheService } from '../services/translation-cache.service'
 import { CreateOrEditSearchConfigDialogComponent } from './components/create-or-edit-search-config-dialog/create-or-edit-search-config-dialog.component'
 import { LifecycleComponent } from './components/lifecycle/lifecycle.component'
+import { AngularStandaloneShellModule } from '@onecx/angular-standalone-shell'
 
 export class PortalMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -242,7 +244,7 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     OcxContentContainerComponent,
     SearchConfigComponent,
     CreateOrEditSearchConfigDialogComponent,
-    LifecycleComponent
+    LifecycleComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   entryComponents: [ColumnTogglerComponent],
@@ -279,7 +281,8 @@ export class PortalCoreModule {
             UserService,
             UserProfileAPIService,
           ],
-        })
+        }) &&
+        module.providers.push(importProvidersFrom(AngularStandaloneShellModule))
     }
     return module
   }
