@@ -11,6 +11,8 @@ import {
 } from '@angular/core'
 import { BehaviorSubject, Subscription, Observable, combineLatest } from 'rxjs';
 import { SLOT_SERVICE, SlotService } from '../../services/slot.service'
+import { ocxRemoteComponent } from '../../model/remote-component';
+import { RemoteComponent } from '@onecx/integration-interface';
 
 @Component({
   selector: 'ocx-slot[name]',
@@ -29,7 +31,7 @@ export class SlotComponent implements OnInit, OnDestroy {
   }
 
   subscription: Subscription | undefined;
-  components$: Observable<Type<unknown>[]> | undefined;
+  components$: Observable<{componentType:Type<unknown>, remoteComponent: RemoteComponent}[]> | undefined;
 
   constructor(@Inject(SLOT_SERVICE) private slotService: SlotService) {}
 
@@ -41,7 +43,15 @@ export class SlotComponent implements OnInit, OnDestroy {
     ]).subscribe(([viewContainers, components]) => {
       if (viewContainers && viewContainers.length === components.length) {
         components.forEach((component, i) => {
-          viewContainers.get(i)?.createComponent(component);
+          const componentRef = viewContainers.get(i)?.createComponent<any>(component.componentType);
+          if(componentRef && 'ocxInitRemoteComponent' in componentRef.instance){
+            (componentRef.instance as ocxRemoteComponent).ocxInitRemoteComponent({
+              appId: component.remoteComponent.appId,
+              productName: component.remoteComponent.productName,
+              bffUrl: component.remoteComponent.bffUrl,
+              permissions: [] //TODO
+            })
+          }
         });
       }
     });
