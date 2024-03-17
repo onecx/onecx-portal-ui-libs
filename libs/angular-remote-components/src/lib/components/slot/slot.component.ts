@@ -30,7 +30,7 @@ export class SlotComponent implements OnInit, OnDestroy {
   }
 
   subscription: Subscription | undefined;
-  components$: Observable<{componentType:Type<unknown>, remoteComponent: RemoteComponentInfo}[]> | undefined;
+  components$: Observable<{componentType:Type<unknown>, remoteComponent: RemoteComponentInfo, permissions: string[]}[]> | undefined;
 
   constructor(@Inject(SLOT_SERVICE) private slotService: SlotService) {}
 
@@ -41,14 +41,14 @@ export class SlotComponent implements OnInit, OnDestroy {
       this.components$,
     ]).subscribe(([viewContainers, components]) => {
       if (viewContainers && viewContainers.length === components.length) {
-        components.forEach((component, i) => {
-          const componentRef = viewContainers.get(i)?.createComponent<any>(component.componentType);
+        components.forEach((componentInfo, i) => {
+          const componentRef = viewContainers.get(i)?.createComponent<any>(componentInfo.componentType);
           if(componentRef && 'ocxInitRemoteComponent' in componentRef.instance){
             (componentRef.instance as ocxRemoteComponent).ocxInitRemoteComponent({
-              appId: component.remoteComponent.appId,
-              productName: component.remoteComponent.productName,
-              bffUrl: component.remoteComponent.bffUrl,
-              permissions: [] //TODO
+              appId: componentInfo.remoteComponent.appId,
+              productName: componentInfo.remoteComponent.productName,
+              bffUrl: componentInfo.remoteComponent.bffUrl,
+              permissions: componentInfo.permissions
             })
           }
         });

@@ -5,7 +5,7 @@ import { RemoteComponentInfo, SlotService } from '@onecx/angular-remote-componen
 
 @Injectable()
 export class StandaloneSlotService implements SlotService {
-  private slotConfig: Record<string, { componentType: Type<unknown>; remoteComponent: RemoteComponentInfo }[]> = {
+  private slotConfig: Record<string, { componentType: Type<unknown>; remoteComponent: RemoteComponentInfo, permissions: string[] }[]> = {
     menu: [
       {
         componentType: StandaloneMenuComponent,
@@ -14,6 +14,7 @@ export class StandaloneSlotService implements SlotService {
           bffUrl: '',
           productName: '',
         },
+        permissions: [] //TODO
       },
     ],
   }
@@ -24,7 +25,7 @@ export class StandaloneSlotService implements SlotService {
 
   getComponentsForSlot(
     slotName: string
-  ): Observable<{ componentType: Type<unknown>; remoteComponent: RemoteComponentInfo }[]> {
+  ): Observable<{ componentType: Type<unknown>; remoteComponent: RemoteComponentInfo, permissions: string[] }[]> {
     return of(this.slotConfig[slotName] ?? [])
   }
 }
