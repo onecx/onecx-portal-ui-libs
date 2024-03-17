@@ -12,6 +12,7 @@ export class StandaloneSlotService implements SlotService {
         remoteComponent: {
           appId: '',
           bffUrl: '',
+          baseUrl: '',
           productName: '',
         },
         permissions: [] //TODO

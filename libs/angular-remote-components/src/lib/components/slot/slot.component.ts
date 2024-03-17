@@ -48,6 +48,7 @@ export class SlotComponent implements OnInit, OnDestroy {
               appId: componentInfo.remoteComponent.appId,
               productName: componentInfo.remoteComponent.productName,
               bffUrl: componentInfo.remoteComponent.bffUrl,
+              baseUrl: componentInfo.remoteComponent.baseUrl,
               permissions: componentInfo.permissions
             })
           }
