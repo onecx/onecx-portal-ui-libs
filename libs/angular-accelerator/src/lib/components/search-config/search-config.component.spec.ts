@@ -6,7 +6,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { TranslateService } from '@ngx-translate/core'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { MessageModule } from 'primeng/message'
-import { PrimeNgModule } from '../../primeng.module'
+import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { SearchConfigComponent } from './search-config.component'
 import { SearchConfigHarness } from '../../../../testing'
 import { SearchConfigInfo } from '../../model/search-config-info'
@@ -42,7 +42,7 @@ describe('SearchConfigComponent', () => {
           de: require('./../../../../assets/i18n/de.json'),
         }),
         HttpClientTestingModule,
-        PrimeNgModule,
+        AngularAcceleratorPrimeNgModule,
         ReactiveFormsModule,
       ],
       providers: [

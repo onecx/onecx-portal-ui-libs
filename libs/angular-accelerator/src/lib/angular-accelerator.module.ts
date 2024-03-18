@@ -20,7 +20,7 @@ import {
 
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 
-import { PrimeNgModule } from './primeng.module'
+import { AngularAcceleratorPrimeNgModule } from './angular-accelerator-primeng.module'
 import { ColumnGroupSelectionComponent } from './components/column-group-selection/column-group-selection.component'
 import { CustomGroupColumnSelectorComponent } from './components/custom-group-column-selector/custom-group-column-selector.component'
 import { DataLayoutSelectionComponent } from './components/data-layout-selection/data-layout-selection.component'
@@ -51,7 +51,7 @@ export class AngularAcceleratorMissingTranslationHandler implements MissingTrans
 @NgModule({
   imports: [
     CommonModule,
-    PrimeNgModule,
+    AngularAcceleratorPrimeNgModule,
     TranslateModule.forRoot({
       isolate: true,
       loader: {

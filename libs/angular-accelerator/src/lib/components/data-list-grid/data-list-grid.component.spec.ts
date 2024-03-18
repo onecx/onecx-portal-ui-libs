@@ -7,7 +7,7 @@ import { TranslateTestingModule } from 'ngx-translate-testing'
 import { UserService } from '@onecx/angular-integration-interface'
 import { MockUserService } from '@onecx/angular-integration-interface/mocks'
 import { DataListGridComponent } from './data-list-grid.component'
-import { PrimeNgModule } from '../../primeng.module'
+import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { ColumnType } from '../../model/column-type.model'
 import { DataListGridHarness } from '../../../../testing/data-list-grid.harness'
 import { DataTableHarness } from '../../../../testing/data-table.harness'
@@ -202,7 +202,7 @@ describe('DataListGridComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [DataListGridComponent],
       imports: [
-        PrimeNgModule,
+        AngularAcceleratorPrimeNgModule,
         TranslateModule.forRoot(),
         TranslateTestingModule.withTranslations(TRANSLATIONS),
         AngularAcceleratorModule,

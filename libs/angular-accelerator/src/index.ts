@@ -40,7 +40,7 @@ export * from './lib/model/search-config-info'
 export * from './lib/api/iauth.service'
 export * from './lib/api/injection-tokens'
 export * from './lib/angular-accelerator.module'
-// export * from './lib/primeng.module'
+export * from './lib/angular-accelerator-primeng.module'
 
 // functions
 export * from './lib/functions/flatten-object'

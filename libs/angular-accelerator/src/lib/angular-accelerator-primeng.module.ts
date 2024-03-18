@@ -36,4 +36,4 @@ import { MultiSelectModule } from 'primeng/multiselect'
     MultiSelectModule,
   ],
 })
-export class PrimeNgModule {}
+export class AngularAcceleratorPrimeNgModule {}

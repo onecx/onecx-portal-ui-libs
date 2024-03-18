@@ -6,7 +6,7 @@ import { TranslateTestingModule } from 'ngx-translate-testing'
 import { PTableCheckboxHarness } from '@onecx/angular-testing'
 import { UserService } from '@onecx/angular-integration-interface'
 import { MockUserService } from '@onecx/angular-integration-interface/mocks'
-import { PrimeNgModule } from '../../primeng.module'
+import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { DataTableComponent, Row } from './data-table.component'
 import { ColumnType } from '../../model/column-type.model'
@@ -204,7 +204,7 @@ describe('DataTableComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [DataTableComponent],
       imports: [
-        PrimeNgModule,
+        AngularAcceleratorPrimeNgModule,
         BrowserAnimationsModule,
         TranslateModule.forRoot(),
         TranslateTestingModule.withTranslations(TRANSLATIONS),
