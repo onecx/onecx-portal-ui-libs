@@ -6,7 +6,7 @@ import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dy
 import { ButtonDialogComponent } from '../core/components/button-dialog/button-dialog.component'
 import { ButtonDialogButtonDetails, ButtonDialogData } from '../model/button-dialog'
 import { DialogMessageContentComponent } from '../core/components/button-dialog/dialog-message-content/dialog-message-content.component'
-import { PrimeIcon } from '../core/utils/primeicon.utils'
+import { PrimeIcon } from '@onecx/angular-accelerator'
 
 /**
  * Object containing key for translation with parameters object for translation

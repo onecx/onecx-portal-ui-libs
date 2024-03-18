@@ -7,7 +7,7 @@ import { ConfigurationService } from './configuration.service'
 import { MenuApiService } from './menu-api.service'
 import { APP_BASE_HREF, PlatformLocation } from '@angular/common'
 import { CONFIG_KEY } from '../model/config-key.model'
-import { UserService } from './user.service'
+import { UserService } from '@onecx/angular-integration-interface'
 
 @Injectable({ providedIn: 'root' })
 export class MenuService {

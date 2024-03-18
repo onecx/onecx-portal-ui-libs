@@ -2,8 +2,8 @@ import { TestBed } from '@angular/core/testing'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import 'blob-polyfill'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { DateUtils } from '../core/utils/dateutils'
-import { ColumnType } from '../model/column-type.model'
+import { DateUtils } from '@onecx/angular-accelerator'
+import { ColumnType } from '@onecx/angular-accelerator'
 import { ExportDataService } from './export-data.service'
 
 describe('ExportDataService', () => {
@@ -246,11 +246,41 @@ describe('ExportDataService', () => {
 
     const expectedCsv =
       'Name,Description,Start date,End date,Status,Responsible,Modification date,Creation user,Test number' +
-      '\r\nsome name,,' + dateUtils.localizedDate('2023-09-13T09:34:05Z') + ',' + dateUtils.localizedDate('2023-09-14T09:34:09Z') + ',some status,someone responsible,' + dateUtils.localizedDate('2023-09-12T09:34:11.997048Z') + ',creation user,1' +
-      '\r\nexample,example description,'+ dateUtils.localizedDate('2023-09-12T09:33:53Z') + ',' + dateUtils.localizedDate('2023-09-13T09:33:55Z') + ',some status example,,' + dateUtils.localizedDate('2023-09-12T09:33:58.544494Z') + ',,3.141' +
-      '\r\nname 1,,' + dateUtils.localizedDate('2023-09-14T09:34:22Z')+ ',' + dateUtils.localizedDate('2023-09-15T09:34:24Z') + ',status name 1,,' + dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') + ',,123456789' +
-      '\r\nname 2,,' + dateUtils.localizedDate('2023-09-14T09:34:22Z')+ ',' + dateUtils.localizedDate('2023-09-15T09:34:24Z') + ',status name 2,,' + dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') + ',,12345.6789' +
-      '\r\nname 3,,' + dateUtils.localizedDate('2023-09-14T09:34:22Z')+ ',' + dateUtils.localizedDate('2023-09-15T09:34:24Z') + ',status name 3,,' + dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') + ',,7.1'
+      '\r\nsome name,,' +
+      dateUtils.localizedDate('2023-09-13T09:34:05Z') +
+      ',' +
+      dateUtils.localizedDate('2023-09-14T09:34:09Z') +
+      ',some status,someone responsible,' +
+      dateUtils.localizedDate('2023-09-12T09:34:11.997048Z') +
+      ',creation user,1' +
+      '\r\nexample,example description,' +
+      dateUtils.localizedDate('2023-09-12T09:33:53Z') +
+      ',' +
+      dateUtils.localizedDate('2023-09-13T09:33:55Z') +
+      ',some status example,,' +
+      dateUtils.localizedDate('2023-09-12T09:33:58.544494Z') +
+      ',,3.141' +
+      '\r\nname 1,,' +
+      dateUtils.localizedDate('2023-09-14T09:34:22Z') +
+      ',' +
+      dateUtils.localizedDate('2023-09-15T09:34:24Z') +
+      ',status name 1,,' +
+      dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') +
+      ',,123456789' +
+      '\r\nname 2,,' +
+      dateUtils.localizedDate('2023-09-14T09:34:22Z') +
+      ',' +
+      dateUtils.localizedDate('2023-09-15T09:34:24Z') +
+      ',status name 2,,' +
+      dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') +
+      ',,12345.6789' +
+      '\r\nname 3,,' +
+      dateUtils.localizedDate('2023-09-14T09:34:22Z') +
+      ',' +
+      dateUtils.localizedDate('2023-09-15T09:34:24Z') +
+      ',status name 3,,' +
+      dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') +
+      ',,7.1'
     const expectedFilename = 'some-test.csv'
     const mock = new ElementMock()
 
@@ -273,11 +303,41 @@ describe('ExportDataService', () => {
     const expectedFilename = 'some-test.csv'
     const expectedCsv =
       'Name;Beschreibung;Startdatum;Enddatum;Status;Verantwortlich;Änderungsdatum;Erstellungsbenutzer;Testnummer' +
-      '\r\nsome name;;' + dateUtils.localizedDate('2023-09-13T09:34:05Z') + ';' + dateUtils.localizedDate('2023-09-14T09:34:09Z') + ';irgendein Status;someone responsible;' + dateUtils.localizedDate('2023-09-12T09:34:11.997048Z') + ';creation user;1' +
-      '\r\nexample;example description;'+ dateUtils.localizedDate('2023-09-12T09:33:53Z') + ';' + dateUtils.localizedDate('2023-09-13T09:33:55Z') + ';irgendein Beispielstatus;;' + dateUtils.localizedDate('2023-09-12T09:33:58.544494Z') + ';;3.141' +
-      '\r\nname 1;;' + dateUtils.localizedDate('2023-09-14T09:34:22Z')+ ';' + dateUtils.localizedDate('2023-09-15T09:34:24Z') + ';Status Name 1;;' + dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') + ';;123456789' +
-      '\r\nname 2;;' + dateUtils.localizedDate('2023-09-14T09:34:22Z')+ ';' + dateUtils.localizedDate('2023-09-15T09:34:24Z') + ';Status Name 2;;' + dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') + ';;12345.6789' +
-      '\r\nname 3;;' + dateUtils.localizedDate('2023-09-14T09:34:22Z')+ ';' + dateUtils.localizedDate('2023-09-15T09:34:24Z') + ';Status Name 3;;' + dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') + ';;7.1'
+      '\r\nsome name;;' +
+      dateUtils.localizedDate('2023-09-13T09:34:05Z') +
+      ';' +
+      dateUtils.localizedDate('2023-09-14T09:34:09Z') +
+      ';irgendein Status;someone responsible;' +
+      dateUtils.localizedDate('2023-09-12T09:34:11.997048Z') +
+      ';creation user;1' +
+      '\r\nexample;example description;' +
+      dateUtils.localizedDate('2023-09-12T09:33:53Z') +
+      ';' +
+      dateUtils.localizedDate('2023-09-13T09:33:55Z') +
+      ';irgendein Beispielstatus;;' +
+      dateUtils.localizedDate('2023-09-12T09:33:58.544494Z') +
+      ';;3.141' +
+      '\r\nname 1;;' +
+      dateUtils.localizedDate('2023-09-14T09:34:22Z') +
+      ';' +
+      dateUtils.localizedDate('2023-09-15T09:34:24Z') +
+      ';Status Name 1;;' +
+      dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') +
+      ';;123456789' +
+      '\r\nname 2;;' +
+      dateUtils.localizedDate('2023-09-14T09:34:22Z') +
+      ';' +
+      dateUtils.localizedDate('2023-09-15T09:34:24Z') +
+      ';Status Name 2;;' +
+      dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') +
+      ';;12345.6789' +
+      '\r\nname 3;;' +
+      dateUtils.localizedDate('2023-09-14T09:34:22Z') +
+      ';' +
+      dateUtils.localizedDate('2023-09-15T09:34:24Z') +
+      ';Status Name 3;;' +
+      dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') +
+      ';;7.1'
     const mock = new ElementMock()
 
     jest.spyOn(document, 'createElement').mockReturnValue(<any>mock)

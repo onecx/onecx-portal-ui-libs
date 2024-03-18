@@ -3,8 +3,7 @@ import { Component, ElementRef, EventEmitter, Inject, Input, OnInit, Output, Vie
 import { combineLatest, filter, map, Observable } from 'rxjs'
 import { MenuItem } from 'primeng/api/menuitem'
 
-import { IAuthService } from '../../../api/iauth.service'
-import { AUTH_SERVICE } from '../../../api/injection-tokens'
+import { AUTH_SERVICE, IAuthService } from '@onecx/angular-accelerator'
 import { UserProfile } from '../../../model/user-profile.model'
 import { ConfigurationService } from '../../../services/configuration.service'
 import { MenuService } from '../../../services/app.menu.service'
@@ -12,8 +11,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { CONFIG_KEY } from '../../../model/config-key.model'
 import { ThemeService } from '../../../services/theme.service'
 import { ImageLogoUrlUtils } from '../../utils/image-logo-url.utils'
-import { UserService } from '../../../services/user.service'
-import { AppStateService } from '../../../services/app-state.service'
+import { UserService } from '@onecx/angular-integration-interface'
+import { AppStateService } from '@onecx/angular-integration-interface'
 import { PrimeIcons } from 'primeng/api'
 
 type MenuItemPerm = MenuItem & { permission: string }
@@ -98,14 +97,14 @@ export class HeaderComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .pipe(filter((x) => x !== undefined)) as Observable<UserProfile>
 
-      this.logoUrl$ = combineLatest([
-        this.themeService.currentTheme$.asObservable(),
-        this.appStateService.currentPortal$.asObservable(),
-      ]).pipe(
-        map(([theme, portal]) => {
-          return ImageLogoUrlUtils.createLogoUrl(theme.logoUrl || portal.logoUrl)
-        })
-      )
+    this.logoUrl$ = combineLatest([
+      this.themeService.currentTheme$.asObservable(),
+      this.appStateService.currentPortal$.asObservable(),
+    ]).pipe(
+      map(([theme, portal]) => {
+        return ImageLogoUrlUtils.createLogoUrl(theme.logoUrl || portal.logoUrl)
+      })
+    )
   }
 
   ngOnInit() {

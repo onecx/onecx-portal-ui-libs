@@ -66,11 +66,11 @@ describe('LifecycleComponent', () => {
     const steps = await lifecycle.getSteps()
     const highlightedSteps = await lifecycle.getHighlightedSteps()
     mockSteps.forEach(async (step, index) => {
-      if(step.id == component.activeStepId) {
+      if (step.id == component.activeStepId) {
         expect(await steps[index].hasClass('bg-primary')).toEqual(true)
       }
     })
     expect(steps.length).toBe(3)
-    expect(highlightedSteps.length).toBe(1) 
+    expect(highlightedSteps.length).toBe(1)
   })
 })

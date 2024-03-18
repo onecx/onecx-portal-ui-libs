@@ -1,7 +1,7 @@
 name: Deploy Storybook
 on: push
 jobs:
-  deploy-storybook:
+  deploy-storybooks:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -10,11 +10,19 @@ jobs:
           fetch-depth: 0
       - name: Install dependencies
         run: npm ci
-      - name: Build Storybook
+      - name: Build PIA Storybook
         run: npx nx run portal-integration-angular:build-storybook
-      - name: Publish to Chromatic
+      - name: Publish to PIA Chromatic
         uses: chromaui/action@latest
         with:
-          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN_PIA }}
           storybookBuildDir: dist/storybook/portal-integration-angular
-          skip: "dependabot/**"
+          skip: 'dependabot/**'
+      - name: Build AA Storybook
+        run: npx nx run angular-accelerator:build-storybook
+      - name: Publish to AA Chromatic
+        uses: chromaui/action@latest
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN_AA }}
+          storybookBuildDir: dist/storybook/angular-accelerator
+          skip: 'dependabot/**'

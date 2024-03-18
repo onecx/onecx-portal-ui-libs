@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core'
-import { AppStateService, ConfigurationService, CONFIG_KEY, IAuthService } from '@onecx/portal-integration-angular'
+import { ConfigurationService, CONFIG_KEY, IAuthService } from '@onecx/portal-integration-angular'
+import { AppStateService } from '@onecx/angular-integration-interface'
 import { KeycloakEventType, KeycloakOptions, KeycloakService } from 'keycloak-angular'
 import { KeycloakConfig } from 'keycloak-js'
 

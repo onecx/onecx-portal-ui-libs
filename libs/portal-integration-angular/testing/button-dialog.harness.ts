@@ -1,5 +1,5 @@
 import { ContentContainerComponentHarness } from '@angular/cdk/testing'
-import { PButtonDirectiveHarness } from './primeng/p-button-directive.harness'
+import { PButtonDirectiveHarness } from '@onecx/angular-testing'
 import { DialogMessageContentHarness } from './dialog-message-content.harness'
 
 export class ButtonDialogHarness extends ContentContainerComponentHarness {

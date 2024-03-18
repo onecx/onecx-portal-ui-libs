@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core'
-import { AppStateService } from '../../../services/app-state.service'
-import { UserService } from '../../../services/user.service'
+import { AppStateService } from '@onecx/angular-integration-interface'
+import { UserService } from '@onecx/angular-integration-interface'
 
 @Component({
   selector: 'ocx-portal-page',

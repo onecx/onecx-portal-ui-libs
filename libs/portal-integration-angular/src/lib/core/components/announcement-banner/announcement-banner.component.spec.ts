@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed, getTestBed } from '@angular/core/testing'
 
 import { AnnouncementBannerComponent } from './announcement-banner.component'
 import { ConfigurationService } from '../../../services/configuration.service'
-import { AppStateService } from '../../../services/app-state.service'
+import { AppStateService } from '@onecx/angular-integration-interface'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { AnnouncementsApiService } from '../../../services/announcements-api.service'
 import { Subject } from 'rxjs'

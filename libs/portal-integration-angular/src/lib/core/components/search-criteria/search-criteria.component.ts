@@ -1,10 +1,10 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Optional, Output } from '@angular/core'
-import { BreadcrumbService } from '../../../services/breadcrumb.service'
-import { Action, PageHeaderComponent } from '../page-header/page-header.component'
+import { BreadcrumbService } from '@onecx/angular-accelerator'
+import { Action, PageHeaderComponent } from '@onecx/angular-accelerator'
 import { PortalSearchPage } from './search-page'
 import { TranslateService } from '@ngx-translate/core'
-import { AppStateService } from '../../../services/app-state.service'
-import { UserService } from '../../../services/user.service'
+import { AppStateService } from '@onecx/angular-integration-interface'
+import { UserService } from '@onecx/angular-integration-interface'
 
 /**
  * @deprecated Will be replaced by ocx-search-header

@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core'
 import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, UrlTree } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { filter, from, isObservable, map, mergeMap, Observable, of, tap, zip } from 'rxjs'
-import { AppStateService } from './app-state.service'
+import { AppStateService } from '@onecx/angular-integration-interface'
 import { ConfigurationService } from './configuration.service'
-import { UserService } from './user.service'
+import { UserService } from '@onecx/angular-integration-interface'
 
 @Injectable({ providedIn: 'any' })
 export class InitializeModuleGuard implements CanActivate {
@@ -47,7 +47,10 @@ export class InitializeModuleGuard implements CanActivate {
   loadTranslations(): Observable<boolean> {
     return this.userService.lang$.pipe(
       filter((v) => v !== undefined),
-      mergeMap((lang) => this.translateService.use(this.getBestMatchLanguage(lang as string))),
+      mergeMap((lang) => {
+        const bestMatchLang = this.getBestMatchLanguage(lang as string)
+        return this.translateService.use(bestMatchLang)
+      }),
       mergeMap(() => of(true))
     )
   }
