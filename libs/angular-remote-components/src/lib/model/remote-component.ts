@@ -1,5 +1,5 @@
 import { RemoteComponentConfig } from './remote-component-config.model'
 
-export interface ocxInitRemoteComponent {
-  ocxRemoteComponent(config: RemoteComponentConfig): void
+export interface ocxRemoteComponent {
+  ocxInitRemoteComponent(config: RemoteComponentConfig): void
 }
