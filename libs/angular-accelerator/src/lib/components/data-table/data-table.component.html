@@ -1,0 +1,280 @@
+<ng-template #actionColumn let-rowObject="localRowObject">
+  <ng-container *ngIf="anyRowActionObserved">
+    <td
+      class="actions"
+      pFrozenColumn
+      [frozen]="frozenActionColumn"
+      [alignFrozen]="actionColumnPosition"
+      [attr.name]="actionColumnPosition === 'left' ? 'action-column-left' : 'action-column-right'"
+      [ngClass]="(frozenActionColumn && actionColumnPosition === 'left') ? 'border-right-1' : (frozenActionColumn && actionColumnPosition === 'right') ? 'border-left-1' : ''"
+    >
+      <div class="icon-button-row-wrapper">
+        <ng-container *ngIf="viewTableRowObserved && (!viewActionVisibleField || fieldIsTruthy(rowObject, viewActionVisibleField))">
+          <button
+            *ocxIfPermission="viewPermission"
+            [disabled]="!!viewActionEnabledField && !fieldIsTruthy(rowObject, viewActionEnabledField)"
+            pButton
+            class="p-button-rounded p-button-text viewTableRowButton"
+            title="{{ 'OCX_DATA_TABLE.ACTIONS.VIEW' | translate }}"
+            [attr.aria-label]="'OCX_DATA_TABLE.ACTIONS.VIEW' | translate"
+            icon="pi pi-eye"
+            (click)="onViewRow(rowObject)"
+            [attr.name]="'data-table-action-button'"
+          ></button>
+        </ng-container>
+        <ng-container *ngIf="editTableRowObserved && (!editActionVisibleField || fieldIsTruthy(rowObject, editActionVisibleField))">
+          <button
+            *ocxIfPermission="editPermission"
+            [disabled]="!!editActionEnabledField && !fieldIsTruthy(rowObject, editActionEnabledField)"
+            pButton
+            class="p-button-rounded p-button-text editTableRowButton"
+            title="{{ 'OCX_DATA_TABLE.ACTIONS.EDIT' | translate }}"
+            [attr.aria-label]="'OCX_DATA_TABLE.ACTIONS.EDIT' | translate"
+            icon="pi pi-pencil"
+            (click)="onEditRow(rowObject)"
+            [attr.name]="'data-table-action-button'"
+          ></button>
+        </ng-container>
+        <ng-container *ngIf="deleteTableRowObserved && (!deleteActionVisibleField || fieldIsTruthy(rowObject, deleteActionVisibleField))">
+          <button
+            *ocxIfPermission="deletePermission"
+            [disabled]="!!deleteActionEnabledField && !fieldIsTruthy(rowObject, deleteActionEnabledField)"
+            pButton
+            class="p-button-rounded p-button-text p-button-danger deleteTableRowButton"
+            title="{{ 'OCX_DATA_TABLE.ACTIONS.DELETE' | translate }}"
+            [attr.aria-label]="'OCX_DATA_TABLE.ACTIONS.DELETE' | translate"
+            icon="pi pi-trash"
+            (click)="onDeleteRow(rowObject)"
+            [attr.name]="'data-table-action-button'"
+          ></button>
+        </ng-container>
+        <ng-container *ngFor="let action of additionalActions">
+          <button
+            *ocxIfPermission="action.permission"
+            pButton
+            class="p-button-rounded p-button-text"
+            [ngClass]="action.classes"
+            [icon]="action.icon || ''"
+            (click)="action.callback(rowObject)"
+            [title]="action.labelKey ? (action.labelKey | translate) : ''"
+            [attr.aria-label]="action.labelKey ? (action.labelKey | translate) : ''"
+            [disabled]="action.disabled"
+          ></button>
+        </ng-container>
+      </div>
+    </td>
+  </ng-container>
+</ng-template>
+
+<ng-template #actionColumnHeader>
+  <ng-container *ngIf="anyRowActionObserved">
+    <th
+      pFrozenColumn
+      [frozen]="frozenActionColumn"
+      [alignFrozen]="actionColumnPosition"
+      [ngClass]="(frozenActionColumn && actionColumnPosition === 'left') ? 'border-right-1' : (frozenActionColumn && actionColumnPosition === 'right') ? 'border-left-1' : ''"
+      [attr.name]="actionColumnPosition === 'left' ? 'action-column-header-left' : 'action-column-header-right'"
+    >
+      {{ 'OCX_DATA_TABLE.ACTIONS_COLUMN_NAME' | translate }}
+    </th>
+  </ng-container>
+</ng-template>
+
+<p-table
+  [value]="(displayedRows$ | async) || []"
+  responsiveLayout="scroll"
+  [paginator]="paginator"
+  [first]="page * pageSize"
+  (onPage)="onPageChange($event)"
+  [rows]="pageSize"
+  [showCurrentPageReport]="true"
+  currentPageReportTemplate="{{ (totalRecordsOnServer ? currentPageShowingWithTotalOnServerKey : currentPageShowingKey) | translate:params }}"
+  [rowsPerPageOptions]="[10, 25, 50, rows?.length]"
+  id="dataTable_{{name}}"
+  (selectionChange)="onSelectionChange($event)"
+  [selection]="(selectedRows$ | async) || []"
+  [scrollable]="true"
+>
+  <ng-template let-item pTemplate="paginatordropdownitem">
+    {{ item.value === rows?.length ? ("OCX_DATA_TABLE.ALL" | translate) : item.value }}
+  </ng-template>
+  <ng-template pTemplate="header">
+    <tr>
+      <th style="width: 4rem" scope="col" *ngIf="selectionChangedObserved">
+        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+      </th>
+      <ng-container *ngIf="actionColumnPosition === 'left';">
+        <ng-container *ngTemplateOutlet="actionColumnHeader"></ng-container>
+      </ng-container>
+      <ng-container *ngFor="let column of columns">
+        <th *ngIf="column.sortable || column.filterable; else simpleHeader" scope="col">
+          <div class="table-header-wrapper">
+            <span id="{{column.id}}-header-name">{{ column.nameKey | translate }}</span>
+            <span class="icon-button-header-wrapper">
+              <button
+                *ngIf="column.sortable"
+                class="pi sortButton"
+                [class.pi-sort-alt-slash]="(column?.id === sortColumn && sortDirection === 'NONE') || column?.id !== sortColumn"
+                [class.pi-sort-amount-up]="column?.id === sortColumn && sortDirection === 'ASCENDING'"
+                [class.pi-sort-amount-down]="column?.id === sortColumn && sortDirection === 'DESCENDING'"
+                (click)="onSortColumnClick(column.id)"
+                [title]="(sortIconTitle(column.id) | translate)"
+                [attr.aria-label]="('OCX_DATA_TABLE.TOGGLE_BUTTON.ARIA_LABEL' | translate: { column: (column.nameKey | translate), direction: (sortDirectionToTitle(columnNextSortDirection(column.id)) | translate)})"
+              ></button>
+              <p-multiSelect
+                class="filterMultiSelect"
+                *ngIf="column.filterable"
+                [options]="(currentFilterOptions$ | async) || []"
+                [ngModel]="(currentSelectedFilters$ | async) || []"
+                [showToggleAll]="true"
+                emptyFilterMessage="{{ 'OCX_DATA_TABLE.EMPTY_FILTER_MESSAGE' | translate }}"
+                [displaySelectedLabel]="false"
+                [resetFilterOnHide]="true"
+                (onChange)="onFilterChange(column, $event)"
+                placeholder="Icon"
+                appendTo="body"
+                (onClick)="onFilterClick(column)"
+                [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
+                aria-label="{{('OCX_DATA_TABLE.FILTER_ARIA_LABEL' | translate: { column: column.nameKey | translate})}}"
+              >
+                <ng-template pTemplate="selectedItems" let-value>
+                  <div
+                    class="pi"
+                    [class.pi-filter]="!((filterAmounts$ | async) || {})[column.id]"
+                    [class.pi-filter-fill]="((filterAmounts$ | async) || {})[column.id] > 0"
+                  ></div>
+                </ng-template>
+                <ng-template pTemplate="item" let-value>
+                  <ng-container [ngSwitch]="(currentFilterColumn$ | async)?.columnType">
+                    <span *ngSwitchCase="'DATE'">{{ value.label | date }}</span>
+                    <span *ngSwitchDefault> {{ value.label }} </span>
+                  </ng-container>
+                </ng-template>
+              </p-multiSelect>
+            </span>
+          </div>
+        </th>
+        <ng-template #simpleHeader>
+          <th scope="col">{{ column.nameKey | translate }}</th>
+        </ng-template>
+      </ng-container>
+      <ng-container *ngIf="actionColumnPosition === 'right';">
+        <ng-container *ngTemplateOutlet="actionColumnHeader"></ng-container>
+      </ng-container>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowObject>
+    <tr>
+      <td *ngIf="selectionChangedObserved">
+        <p-tableCheckbox [value]="rowObject"></p-tableCheckbox>
+      </td>
+      <ng-container *ngIf="actionColumnPosition === 'left';">
+        <ng-container *ngTemplateOutlet="actionColumn; context: {localRowObject: rowObject}"></ng-container>
+      </ng-container>
+      <td *ngFor="let column of columns">
+        <ng-container
+          [ngTemplateOutlet]="
+            _cell ? _cell: defaultCell
+            "
+          [ngTemplateOutletContext]="{
+                rowObject: rowObject,
+                column: column
+            }"
+        ></ng-container>
+      </td>
+      <ng-container *ngIf="actionColumnPosition === 'right';">
+        <ng-container *ngTemplateOutlet="actionColumn; context: {localRowObject: rowObject}"></ng-container>
+      </ng-container>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td [colSpan]="columns.length + ((anyRowActionObserved) ? 1 : 0)">{{ emptyResultsMessage || ("OCX_DATA_TABLE.EMPTY_RESULT" | translate) }}</td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<ng-template #defaultCell let-rowObject="rowObject" let-column="column">
+  <ng-container [ngSwitch]="column.columnType">
+    <ng-container *ngSwitchCase="'DATE'">
+      <ng-container
+        [ngTemplateOutlet]="
+            _dateCell ? _dateCell : defaultDateCell
+            "
+        [ngTemplateOutletContext]="{
+                rowObject: rowObject,
+                column: column
+            }"
+      >
+      </ng-container>
+    </ng-container>
+    <ng-container *ngSwitchCase="'RELATIVE_DATE'">
+      <ng-container
+        [ngTemplateOutlet]="
+            _relativeDateCell ? _relativeDateCell : defaultRelativeDateCell
+            "
+        [ngTemplateOutletContext]="{
+                rowObject: rowObject,
+                column: column
+            }"
+      >
+      </ng-container>
+    </ng-container>
+    <ng-container *ngSwitchCase="'TRANSLATION_KEY'">
+      <ng-container
+        [ngTemplateOutlet]="
+            _translationKeyCell ? _translationKeyCell: defaultTranslationKeyCell
+            "
+        [ngTemplateOutletContext]="{
+                rowObject: rowObject,
+                column: column
+            }"
+      >
+      </ng-container>
+    </ng-container>
+    <ng-container *ngSwitchCase="'NUMBER'">
+      <ng-container
+        [ngTemplateOutlet]="
+            _numberCell ? _numberCell: defaultNumberCell
+            "
+        [ngTemplateOutletContext]="{
+                rowObject: rowObject,
+                column: column
+            }"
+      >
+      </ng-container>
+    </ng-container>
+    <ng-container *ngSwitchDefault>
+      <ng-container
+        [ngTemplateOutlet]="
+            _stringCell ? _stringCell: defaultStringCell
+            "
+        [ngTemplateOutletContext]="{
+                rowObject: rowObject,
+                column: column
+            }"
+      >
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</ng-template>
+
+<ng-template #defaultStringCell let-rowObject="rowObject" let-column="column">
+  <ng-container> {{ rowObject[column.id] }} </ng-container>
+</ng-template>
+
+<ng-template #defaultNumberCell let-rowObject="rowObject" let-column="column">
+  <ng-container> {{ rowObject[column.id] | number }} </ng-container>
+</ng-template>
+
+<ng-template #defaultDateCell let-rowObject="rowObject" let-column="column">
+  <ng-container> {{ rowObject[column.id] | date: 'medium' }} </ng-container>
+</ng-template>
+
+<ng-template #defaultRelativeDateCell let-rowObject="rowObject" let-column="column">
+  <ng-container> {{ 'OCX_DATA_TABLE.EDITED' | translate }} {{ rowObject[column.id] | timeago }} </ng-container>
+</ng-template>
+
+<ng-template #defaultTranslationKeyCell let-rowObject="rowObject" let-column="column">
+  <ng-container> {{ rowObject[column.id] | translate }} </ng-container>
+</ng-template>

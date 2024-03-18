@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common'
 import { APP_INITIALIZER, NgModule } from '@angular/core'
-import { AUTH_SERVICE } from '../api/injection-tokens'
+import { AUTH_SERVICE } from '@onecx/angular-accelerator'
 import { MockAuthService } from './mock-auth.service'
 
 function initializer(authService: MockAuthService): () => Promise<any> {

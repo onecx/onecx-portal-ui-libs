@@ -19,7 +19,8 @@ import {
   DialogState,
   PortalDialogService,
 } from './portal-dialog.service'
-import { DivHarness, InputHarness, ButtonDialogHarness } from '../../../testing/index'
+import { DivHarness, InputHarness } from '@onecx/angular-testing'
+import { ButtonDialogHarness } from '../../../testing/index'
 import { PrimeIcons } from 'primeng/api'
 
 @Component({

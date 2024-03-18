@@ -7,7 +7,7 @@ import { ConfigurationService } from '../../../services/configuration.service'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { AppStateService } from '../../../services/app-state.service'
+import { AppStateService } from '@onecx/angular-integration-interface'
 
 describe('SearchCriteriaComponent', () => {
   const origAddEventListener = window.addEventListener

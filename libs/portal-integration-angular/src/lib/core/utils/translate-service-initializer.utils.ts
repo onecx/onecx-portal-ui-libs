@@ -1,6 +1,6 @@
 import { TranslateService } from '@ngx-translate/core'
 import { firstValueFrom, mergeMap } from 'rxjs'
-import { UserService } from '../../services/user.service'
+import { UserService } from '@onecx/angular-integration-interface'
 
 export function translateServiceInitializer(
   userService: UserService,

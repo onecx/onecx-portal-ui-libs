@@ -1,0 +1,130 @@
+{
+    "OCX_CUSTOM_GROUP_COLUMN_SELECTOR": {
+      "DROPDOWN_LABEL": "Spalten",
+      "OPEN_BUTTON_DETAIL": "Dialog zur Auswahl einer benutzerdefinierten Gruppe öffnen",
+      "ACTIVE_COLUMNS_LABEL": "Aktive Spalten",
+      "INACTIVE_COLUMNS_LABEL": "Inaktive Spalten",
+      "SAVE_BUTTON_LABEL": "Speichern",
+      "CANCEL_BUTTON_LABEL": "Abbrechen",
+      "DIALOG_TITLE": "Spalten für benutzerdefinierte Gruppe auswählen",
+      "CONFIGURE_ACTION_COLUMN": {
+        "TITLE": "Aktionsspalte konfigurieren",
+        "FREEZE": "Aktionsspalte immer anzeigen",
+        "POSITION": "Position der Aktionsspalte",
+        "YES": "Ja",
+        "NO": "Nein",
+        "LEFT": "Links",
+        "RIGHT": "Rechts"
+      },
+      "ARIA_LABELS": {
+        "UP": "Spalte nach oben verschieben",
+        "TOP": "Spalte an den Anfang verschieben",
+        "DOWN": "Spalte nach unten verschieben",
+        "BOTTOM": "Spalte ans Ende verschieben",
+        "RIGHT": "Spalte als inaktiv setzen",
+        "ALL_RIGHT": "Alle Spalten als inaktiv setzen",
+        "LEFT": "Spalte als aktiv setzen",
+        "ALL_LEFT": "Alle Spalten als aktiv setzen",
+        "CLOSE": "Dialog schließen"
+      }
+    },
+    "OCX_SEARCH_CONFIG": {
+      "PLACEHOLDER": "Bitte geben Sie den Namen der Suchkonfiguration an.",
+      "SAVE_COLUMNS_OPTION": "Möchten Sie die angezeigten Spalten speichern?",
+      "SAVE_INPUT_FIELDS_OPTION": "Möchten Sie die Werte aus den Suchfeldern speichern?"
+    },
+    "OCX_LIST_GRID_SORT": {
+      "DROPDOWN": {
+        "PLACEHOLDER": "Sortierung auswählen",
+        "TITLE": "Sortieren nach"
+      },
+      "TOGGLE_BUTTON": {
+        "ASCENDING_TITLE": "Aufsteigend",
+        "DESCENDING_TITLE": "Absteigend",
+        "DEFAULT_TITLE": "Standard"
+      },
+      "SORTING_BUTTON_ARIA_LABEL": "{{direction}} sortieren"
+    },
+    "OCX_DATA_TABLE": {
+      "EMPTY_RESULT": "Keine Daten gefunden.",
+      "EMPTY_FILTER_MESSAGE": "Keine Filter gefunden.",
+      "ACTIONS_COLUMN_NAME": "Aktionen",
+      "FILTER_TITLE": "Filter",
+      "FILTER_ARIA_LABEL": "Filter {{column}}",
+      "EDITED": "Bearbeitet",
+      "SHOWING": "{{first}} - {{last}} von {{totalRecords}}",
+      "SHOWING_WITH_TOTAL_ON_SERVER": "{{first}} - {{last}} von {{totalRecords}} ({{totalRecordsOnServer}})",
+      "ALL": "Alle",
+      "ACTIONS": {
+        "VIEW": "Anzeigen",
+        "EDIT": "Bearbeiten",
+        "DELETE": "Löschen"
+      },
+      "TOGGLE_BUTTON": {
+        "ASCENDING_TITLE": "Aufsteigend",
+        "DESCENDING_TITLE": "Absteigend",
+        "DEFAULT_TITLE": "Standard",
+        "ARIA_LABEL": "{{column}} {{direction}} sortieren"
+      }
+    },
+    "OCX_DATA_LIST_GRID": {
+      "EMPTY_RESULT": "Keine Daten gefunden.",
+      "MENU": {
+        "VIEW": "Anzeigen",
+        "EDIT": "Bearbeiten",
+        "DELETE": "Löschen"
+      },
+      "MORE_ACTIONS": "Weitere Aktionen"
+    },
+    "OCX_DATA_LAYOUT_SELECTION": {
+      "LAYOUT": {
+        "LIST": "Liste",
+        "GRID": "Raster",
+        "TABLE": "Tabelle"
+      }
+    },
+    "OCX_INTERACTIVE_DATA_VIEW": {
+      "DEFAULT_GROUP": "Standardgruppe",
+      "CUSTOM_GROUP": "Benutzerdefinierte Gruppe",
+      "NO_GROUP_SELECTED": "Keine Gruppe ausgewählt"
+    },
+    "OCX_SEARCH_HEADER": {
+      "TOGGLE_BUTTON": {
+        "SIMPLE": {
+          "TEXT": "Einfach",
+          "DETAIL": "Zu einfachen Suchkriterien wechseln"
+        },
+        "ADVANCED": {
+          "TEXT": "Erweitert",
+          "DETAIL": "Zu erweiterten Suchkriterien wechseln"
+        }
+      },
+      "OCX_SEARCH_CONFIG": {
+        "DROPDOWN_DEFAULT": "Gespeicherte Suchvorlage auswählen"
+      },
+      "HEADER": "Suche",
+      "RESET_BUTTON": {
+        "TEXT": "Zurücksetzen",
+        "DETAIL": "Suchkriterien zurücksetzen"
+      },
+      "SEARCH_BUTTON": {
+        "TEXT": "Suchen",
+        "DETAIL": "Suche starten"
+      },
+      "EXPORT": "Alle Ereignisse exportieren"
+    },
+    "OCX_PAGE_HEADER": {
+      "MORE_ACTIONS": "Weitere Aktionen",
+      "HOME_DEFAULT_ARIA_LABEL": "Zur Startseite navigieren",
+      "HOME_ARIA_LABEL": "Zu {{page}} navigieren"
+    },
+    "OCX_DIAGRAM": {
+      "SUM": "Gesamtanzahl",
+      "NO_DATA": "Es sind keine Daten vorhanden",
+      "SWITCH_DIAGRAM_TYPE": {
+        "PIE": "Zu Tortendiagramm wechseln",
+        "HORIZONTAL_BAR": "Zu horizontalem Balkendiagramm wechseln",
+        "VERTICAL_BAR": "Zu vertikalem Balkendiagramm wechseln"
+      }
+    }
+  }

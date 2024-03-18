@@ -1,6 +1,5 @@
 import { ContentContainerComponentHarness } from '@angular/cdk/testing'
-import { PCheckboxHarness } from './primeng/p-checkbox.harness'
-import { InputHarness } from './input.harness'
+import { PCheckboxHarness, InputHarness } from '@onecx/angular-testing'
 
 export class CreateOrEditSearchConfigDialogHarness extends ContentContainerComponentHarness {
   static hostSelector = 'ocx-create-or-edit-search-config-dialog'

@@ -4,7 +4,7 @@ import { MenuItem, MessageService, PrimeNGConfig } from 'primeng/api'
 import { PortalUIService } from '../../../services/portal-ui.service'
 import { catchError, combineLatest, filter, first, map, mergeMap, Observable, of, withLatestFrom } from 'rxjs'
 import { ThemeService } from '../../../services/theme.service'
-import { AppStateService } from '../../../services/app-state.service'
+import { AppStateService } from '@onecx/angular-integration-interface'
 import { SupportTicket } from '../../../model/support-ticket'
 import { HelpData } from '../../../model/help-data'
 import { DialogService } from 'primeng/dynamicdialog'
@@ -13,7 +13,7 @@ import { NavigationEnd, Router } from '@angular/router'
 import { HelpPageAPIService } from '../../../services/help-api-service'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { HttpResponse } from '@angular/common/http'
-import { UserService } from '../../../services/user.service'
+import { UserService } from '@onecx/angular-integration-interface'
 import { PortalMessageService } from '../../../services/portal-message.service'
 
 @Component({
@@ -70,7 +70,7 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
     private helpDataService: HelpPageAPIService,
     private dialogService: DialogService,
     private userService: UserService,
-    private portalMessageService: PortalMessageService,
+    private portalMessageService: PortalMessageService
   ) {
     this.portalMessageService.message$.subscribe((message) => this.messageService.add(message))
     this.hideMenuButtonTitle = this.portalUIConfig.getTranslation('hideMenuButton')
