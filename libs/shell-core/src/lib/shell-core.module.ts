@@ -4,10 +4,10 @@ import { PortalViewportComponent } from './components/portal-viewport/portal-vie
 import { HeaderComponent } from './components/portal-header/header.component'
 import { PortalFooterComponent } from './components/portal-footer/portal-footer.component'
 import { RouterModule } from '@angular/router'
-import {AngularRemoteComponentModule} from '@onecx/angular-remote-components'
+import {AngularRemoteComponentsModule} from '@onecx/angular-remote-components'
 
 @NgModule({
-  imports: [CommonModule, RouterModule, AngularRemoteComponentModule],
+  imports: [CommonModule, RouterModule, AngularRemoteComponentsModule],
   declarations: [PortalViewportComponent, HeaderComponent, PortalFooterComponent],
   exports: [PortalViewportComponent, HeaderComponent, PortalFooterComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

@@ -8,4 +8,4 @@ import { SlotComponent } from './components/slot/slot.component'
   exports: [SlotComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class AngularRemoteComponentModule {}
+export class AngularRemoteComponentsModule {}
