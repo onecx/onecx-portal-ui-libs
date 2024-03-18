@@ -3,8 +3,7 @@ import { Component, ElementRef, EventEmitter, Inject, Input, OnInit, Output, Vie
 import { combineLatest, filter, map, Observable } from 'rxjs'
 import { MenuItem } from 'primeng/api/menuitem'
 
-import { IAuthService } from '../../../api/iauth.service'
-import { AUTH_SERVICE } from '../../../api/injection-tokens'
+import { AUTH_SERVICE, IAuthService } from '@onecx/angular-accelerator'
 import { UserProfile } from '../../../model/user-profile.model'
 import { ConfigurationService } from '../../../services/configuration.service'
 import { MenuService } from '../../../services/app.menu.service'

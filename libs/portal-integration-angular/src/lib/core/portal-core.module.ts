@@ -18,7 +18,7 @@ import {
   TranslateLoader,
   TranslateModule,
 } from '@ngx-translate/core'
-import { APPLICATION_NAME, AUTH_SERVICE, SANITY_CHECK } from '../api/injection-tokens'
+import { APPLICATION_NAME, AUTH_SERVICE, SANITY_CHECK } from '@onecx/angular-accelerator'
 import { AutofocusDirective } from './directives/autofocus.directive'
 import { IfBreakpointDirective } from './directives/if-breakpoint.directive'
 import { AppInlineProfileComponent } from './components/inline-profile/inline-profile.component'

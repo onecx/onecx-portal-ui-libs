@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core'
 import { BehaviorSubject } from 'rxjs'
-import { IAuthService } from '@onecx/angular-accelerator'
-import { UserProfile } from '../model/user-profile.model'
+import { UserProfile } from '@onecx/integration-interface'
+import { IAuthService } from '../api/iauth.service'
 
 @Injectable()
 export class MockAuthService implements IAuthService {
@@ -30,7 +30,6 @@ export class MockAuthService implements IAuthService {
     id: 'ID_MOCK_USER',
     identityProvider: 'MOCK_TKIT_PORTAL_LIB',
     identityProviderId: 'MOCK_ID',
-    roles: ['user', 'admin'],
     memberships: [
       {
         application: 'APP1',
@@ -59,7 +58,7 @@ export class MockAuthService implements IAuthService {
   }
 
   getUserRoles(): string[] {
-    return this.mockUser.roles || []
+    return []
   }
 
   currentUser(): UserProfile {

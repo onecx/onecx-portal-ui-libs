@@ -56,6 +56,12 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   @Input() viewPermission: string | undefined
   @Input() editPermission: string | undefined
   @Input() deletePermission: string | undefined
+  @Input() deleteActionVisibleField: string | undefined
+  @Input() deleteActionEnabledField: string | undefined
+  @Input() viewActionVisibleField: string | undefined
+  @Input() viewActionEnabledField: string | undefined
+  @Input() editActionVisibleField: string | undefined
+  @Input() editActionEnabledField: string | undefined
   @Input() viewMenuItemKey: string | undefined
   @Input() editMenuItemKey: string | undefined
   @Input() deleteMenuItemKey: string | undefined
@@ -246,7 +252,25 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
       : `./onecx-portal-lib/assets/images/${this.fallbackImage}`
   }
 
-  updateGridMenuItems(): void {
+  updateGridMenuItems(useSelectedItem = false): void {
+    let deleteDisabled = false;
+    let editDisabled = false;
+    let viewDisabled = false;
+
+    let deleteVisible = true;
+    let editVisible = true;
+    let viewVisible = true;
+
+    if(useSelectedItem && this.selectedItem) {
+      viewDisabled = !!this.viewActionEnabledField && !this.fieldIsTruthy(this.selectedItem, this.viewActionEnabledField);
+      editDisabled = !!this.editActionEnabledField && !this.fieldIsTruthy(this.selectedItem, this.editActionEnabledField);
+      deleteDisabled = !!this.deleteActionEnabledField && !this.fieldIsTruthy(this.selectedItem, this.deleteActionEnabledField);
+
+      viewVisible = (!this.viewActionVisibleField || this.fieldIsTruthy(this.selectedItem, this.viewActionVisibleField))
+      editVisible = (!this.editActionVisibleField || this.fieldIsTruthy(this.selectedItem, this.editActionVisibleField))
+      deleteVisible = (!this.deleteActionVisibleField || this.fieldIsTruthy(this.selectedItem, this.deleteActionVisibleField))
+    }
+
     this.translateService
       .get([
         this.viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW',
@@ -256,11 +280,16 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
       ])
       .subscribe((translations) => {
         let menuItems: MenuItem[] = []
+        const automationId = 'data-grid-action-button'
+        const automationIdHidden = 'data-grid-action-button-hidden'
         if (this.viewItem.observed && this.userService.hasPermission(this.viewPermission || '')) {
           menuItems.push({
             label: translations[this.viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW'],
             icon: PrimeIcons.EYE,
             command: () => this.viewItem.emit(this.selectedItem),
+            disabled: viewDisabled,
+            visible: viewVisible,
+            automationId: viewVisible ? automationId : automationIdHidden 
           })
         }
         if (this.editItem.observed && this.userService.hasPermission(this.editPermission || '')) {
@@ -268,6 +297,9 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
             label: translations[this.editMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.EDIT'],
             icon: PrimeIcons.PENCIL,
             command: () => this.editItem.emit(this.selectedItem),
+            disabled: editDisabled,
+            visible: editVisible,
+            automationId: editVisible ? automationId : automationIdHidden
           })
         }
         if (this.deleteItem.observed && this.userService.hasPermission(this.deletePermission || '')) {
@@ -275,6 +307,9 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
             label: translations[this.deleteMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.DELETE'],
             icon: PrimeIcons.TRASH,
             command: () => this.deleteItem.emit(this.selectedItem),
+            disabled: deleteDisabled,
+            visible: deleteVisible,
+            automationId: deleteVisible ? automationId : automationIdHidden 
           })
         }
         menuItems = menuItems.concat(
@@ -304,5 +339,9 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     const page = event.first / event.rows
     this.page = page
     this.pageChanged.emit(page)
+  }
+
+  fieldIsTruthy(object: any, key: any) {
+    return !!this.resolveFieldData(object, key)
   }
 }

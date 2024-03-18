@@ -21,7 +21,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { TooltipModule } from 'primeng/tooltip'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { AppStateService } from '@onecx/angular-integration-interface'
-import { AUTH_SERVICE } from '../../../api/injection-tokens'
+import { AUTH_SERVICE } from '@onecx/angular-accelerator'
 import { MockAuthService } from '../../../mock-auth/mock-auth.service'
 import { PortalCoreModule } from '../../portal-core.module'
 

@@ -1,5 +1,5 @@
 import { firstValueFrom } from 'rxjs'
-import { IAuthService } from '../../api/iauth.service'
+import { IAuthService } from '@onecx/angular-accelerator'
 import { ConfigurationService } from '../../services/configuration.service'
 import { PortalApiService } from '../../services/portal-api.service'
 import { ThemeService } from '../../services/theme.service'

@@ -76,8 +76,6 @@ export * from './lib/model/button-dialog'
 export * from './lib/model/config-key.model'
 
 // core
-export * from './lib/api/iauth.service'
-export * from './lib/api/injection-tokens'
 export * from './lib/api/constants'
 export * from './lib/core/debug.module'
 export * from './lib/core/portal-core.module'

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { HeaderComponent } from './header.component'
-import { AUTH_SERVICE } from '../../../api/injection-tokens'
+import { AUTH_SERVICE } from '@onecx/angular-accelerator'
 import { MockAuthService } from '../../../mock-auth/mock-auth.service'
 import { ConfigurationService } from '../../../services/configuration.service'
 import { HttpClientTestingModule } from '@angular/common/http/testing'

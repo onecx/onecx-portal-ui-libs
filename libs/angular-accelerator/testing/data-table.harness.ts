@@ -41,6 +41,26 @@ export class DataTableHarness extends ContentContainerComponentHarness {
     return await this.locatorForOptional(`[name="action-column-${position}"]`)()
   }
 
+  async getActionButtons() {
+    return await this.locatorForAll(`[name="data-table-action-button"]`)()
+  }
+
+  async actionButtonIsDisabled(actionButton: TestElement) {
+    const isDisabled = await actionButton.getProperty('disabled')
+    return isDisabled
+  }
+
+  async hasAmountOfActionButtons(amount: number) {
+    return (await this.getActionButtons()).length === amount
+  }
+
+  async hasAmountOfDisabledActionButtons(amount: number) {    
+    const disabledActionButtons = await this.documentRootLocatorFactory().locatorForAll(
+      `[name="data-table-action-button"]:disabled`
+    )()
+    return disabledActionButtons.length === amount
+  }
+
   async columnIsFrozen(column: TestElement | null) {
     if (column == null) {
       throw new Error('Given column is null')

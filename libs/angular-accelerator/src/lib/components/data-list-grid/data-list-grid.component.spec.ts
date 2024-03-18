@@ -1,20 +1,23 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
+import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ActivatedRoute, RouterModule } from '@angular/router'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { TranslateTestingModule } from 'ngx-translate-testing'
+import { UserService } from '@onecx/angular-integration-interface'
+import { MockUserService } from '@onecx/angular-integration-interface/mocks'
 import { DataListGridComponent } from './data-list-grid.component'
 import { PrimeNgModule } from '../../primeng.module'
-import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { ColumnType } from '../../model/column-type.model'
 import { DataListGridHarness } from '../../../../testing/data-list-grid.harness'
 import { DataTableHarness } from '../../../../testing/data-table.harness'
+import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 
 describe('DataListGridComponent', () => {
   let fixture: ComponentFixture<DataListGridComponent>
   let component: DataListGridComponent
   let translateService: TranslateService
+  let listGrid: DataListGridHarness
 
   const ENGLISH_LANGUAGE = 'en'
   const ENGLISH_TRANSLATIONS = {
@@ -200,12 +203,11 @@ describe('DataListGridComponent', () => {
       declarations: [DataListGridComponent],
       imports: [
         PrimeNgModule,
-        BrowserAnimationsModule,
         TranslateModule.forRoot(),
         TranslateTestingModule.withTranslations(TRANSLATIONS),
         AngularAcceleratorModule,
-        // MockAuthModule,
         RouterModule,
+        NoopAnimationsModule,
       ],
       providers: [
         {
@@ -218,6 +220,7 @@ describe('DataListGridComponent', () => {
             },
           },
         },
+        { provide: UserService, useClass: MockUserService },
       ],
     }).compileComponents()
 
@@ -229,6 +232,7 @@ describe('DataListGridComponent', () => {
     translateService = TestBed.inject(TranslateService)
     translateService.use('en')
     fixture.detectChanges()
+    listGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataListGridHarness)
   })
 
   it('should create the data list grid component', () => {
@@ -297,6 +301,306 @@ describe('DataListGridComponent', () => {
       const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
       const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(3)
       expect(rowsPerPageOptionsText).toEqual('All')
+    })
+  })
+
+  const setUpListActionButtonMockData = () => {
+    component.columns = [
+      ...mockColumns,
+      {
+        columnType: ColumnType.STRING,
+        id: 'ready',
+        nameKey: 'Ready',
+      },
+    ]
+
+    component.data = [
+      {
+        version: 0,
+        creationDate: '2023-09-12T09:34:27.184086Z',
+        creationUser: '',
+        modificationDate: '2023-09-12T09:34:27.184086Z',
+        modificationUser: '',
+        id: 'cf9e7d6b-5362-46af-91f8-62f7ef5c6064',
+        name: 'name 3',
+        description: '',
+        status: 'status name 3',
+        responsible: '',
+        endDate: '2023-09-15T09:34:24Z',
+        startDate: '2023-09-14T09:34:22Z',
+        imagePath: '',
+        testNumber: '7.1',
+        ready: false,
+      },
+    ]
+    component.viewItem.subscribe(() => console.log())
+    component.editItem.subscribe(() => console.log())
+    component.deleteItem.subscribe(() => console.log())
+    component.viewPermission = 'VIEW'
+    component.editPermission = 'EDIT'
+    component.deletePermission = 'DELETE'
+  }
+  describe('Disable list action buttons based on field path', () => {
+    it('should not disable any list action button by default', async () => {
+      component.layout = 'list'
+
+      expect(component.viewItemObserved).toBe(false)
+      expect(component.editItemObserved).toBe(false)
+      expect(component.deleteItemObserved).toBe(false)
+
+      setUpListActionButtonMockData()
+
+      expect(component.viewItemObserved).toBe(true)
+      expect(component.editItemObserved).toBe(true)
+      expect(component.deleteItemObserved).toBe(true)
+
+      const listActions = await listGrid.getActionButtons('list')
+      expect(listActions.length).toBe(3)
+      const expectedIcons = ['pi pi-eye', 'pi pi-trash', 'pi pi-pencil']
+
+      for (const action of listActions) {
+        expect(await listGrid.actionButtonIsDisabled(action, 'list')).toBe(false)
+        const icon = await action.getAttribute('icon')
+        if (icon) {
+          const index = expectedIcons.indexOf(icon)
+          expect(index).toBeGreaterThanOrEqual(0)
+          expectedIcons.splice(index, 1)
+        }
+      }
+
+      expect(expectedIcons.length).toBe(0)
+    })
+
+    it('should dynamically enable/disable an action button based on the contents of a specified field', async () => {
+      component.layout = 'list'
+      setUpListActionButtonMockData()
+      component.viewActionEnabledField = 'ready'
+
+      let listActions = await listGrid.getActionButtons('list')
+      expect(listActions.length).toBe(3)
+
+      for (const action of listActions) {
+        const icon = await action.getAttribute('icon')
+        const isDisabled = await listGrid.actionButtonIsDisabled(action, 'list')
+        if (icon === 'pi pi-eye') {
+          expect(isDisabled).toBe(true)
+        } else {
+          expect(isDisabled).toBe(false)
+        }
+      }
+
+      const tempData = [...component.data]
+
+      tempData[0]['ready'] = true
+
+      component.data = [...tempData]
+
+      listActions = await listGrid.getActionButtons('list')
+
+      for (const action of listActions) {
+        expect(await listGrid.actionButtonIsDisabled(action, 'list')).toBe(false)
+      }
+    })
+  })
+
+  describe('Hide list action buttons based on field path', () => {
+    it('should not hide any list action button by default', async () => {
+      component.layout = 'list'
+
+      expect(component.viewItemObserved).toBe(false)
+      expect(component.editItemObserved).toBe(false)
+      expect(component.deleteItemObserved).toBe(false)
+
+      setUpListActionButtonMockData()
+
+      expect(component.viewItemObserved).toBe(true)
+      expect(component.editItemObserved).toBe(true)
+      expect(component.deleteItemObserved).toBe(true)
+
+      const listActions = await listGrid.getActionButtons('list')
+      expect(listActions.length).toBe(3)
+      const expectedIcons = ['pi pi-eye', 'pi pi-trash', 'pi pi-pencil']
+
+      for (const action of listActions) {
+        const icon = await action.getAttribute('icon')
+        if (icon) {
+          const index = expectedIcons.indexOf(icon)
+          expect(index).toBeGreaterThanOrEqual(0)
+          expectedIcons.splice(index, 1)
+        }
+      }
+
+      expect(expectedIcons.length).toBe(0)
+    })
+
+    it('should dynamically hide/show an action button based on the contents of a specified field', async () => {
+      component.layout = 'list'
+      setUpListActionButtonMockData()
+      component.viewActionVisibleField = 'ready'
+
+      let listActions = await listGrid.getActionButtons('list')
+      expect(listActions.length).toBe(2)
+
+      for (const action of listActions) {
+        const icon = await action.getAttribute('icon')
+        expect(icon === 'pi pi-eye').toBe(false)
+      }
+
+      const tempData = [...component.data]
+
+      tempData[0]['ready'] = true
+
+      component.data = [...tempData]
+
+      listActions = await listGrid.getActionButtons('list')
+
+      expect(listActions.length).toBe(3)
+    })
+  })
+  const setUpGridActionButtonMockData = () => {
+    component.columns = [
+      ...mockColumns,
+      {
+        columnType: ColumnType.STRING,
+        id: 'ready',
+        nameKey: 'Ready',
+      },
+    ]
+    component.data = [
+      {
+        id: 'Test',
+        imagePath:
+          'https://images.unsplash.com/photo-1682686581427-7c80ab60e3f3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        property1: 'Card 1',
+        ready: false,
+      },
+    ]
+    component.titleLineId = 'property1'
+    component.viewItem.subscribe(() => console.log())
+    component.editItem.subscribe(() => console.log())
+    component.deleteItem.subscribe(() => console.log())
+    component.viewPermission = 'VIEW'
+    component.editPermission = 'EDIT'
+    component.deletePermission = 'DELETE'
+  }
+  describe('Disable grid action buttons based on field path', () => {
+    it('should not disable any grid action button by default', async () => {
+      component.layout = 'grid'
+      expect(component.viewItemObserved).toBe(false)
+      expect(component.editItemObserved).toBe(false)
+      expect(component.deleteItemObserved).toBe(false)
+
+      setUpGridActionButtonMockData()
+
+      expect(component.viewItemObserved).toBe(true)
+      expect(component.editItemObserved).toBe(true)
+      expect(component.deleteItemObserved).toBe(true)
+
+      const gridMenuButton = await listGrid.getMenuButton()
+
+      await gridMenuButton.click()
+
+      const gridActions = await listGrid.getActionButtons('grid')
+      expect(gridActions.length).toBe(3)
+
+      for (const action of gridActions) {
+        expect(await listGrid.actionButtonIsDisabled(action, 'grid')).toBe(false)
+      }
+    })
+
+    it('should dynamically enable/disable an action button based on the contents of a specified field', async () => {
+      component.layout = 'grid'
+      setUpGridActionButtonMockData()
+      component.viewActionEnabledField = 'ready'
+      const gridMenuButton = await listGrid.getMenuButton()
+
+      await gridMenuButton.click()
+
+      let gridActions = await listGrid.getActionButtons('grid')
+      expect(gridActions.length).toBe(3)
+
+      for (const action of gridActions) {
+        const isDisabled = await listGrid.actionButtonIsDisabled(action, 'grid')
+        const text = await action.text()
+        if (gridActions.indexOf(action) === 0) {
+          expect(text).toBe('OCX_DATA_LIST_GRID.MENU.VIEW')
+          expect(isDisabled).toBe(true)
+        } else {
+          expect(text === 'OCX_DATA_LIST_GRID.MENU.VIEW').toBe(false)
+          expect(isDisabled).toBe(false)
+        }
+      }
+
+      const tempData = [...component.data]
+
+      tempData[0]['ready'] = true
+
+      component.data = [...tempData]
+
+      await gridMenuButton.click()
+      await gridMenuButton.click()
+
+      gridActions = await listGrid.getActionButtons('grid')
+
+      for (const action of gridActions) {
+        expect(await listGrid.actionButtonIsDisabled(action, 'grid')).toBe(false)
+      }
+    })
+  })
+
+  describe('Hide grid action buttons based on field path', () => {
+    it('should not hide any grid action button by default', async () => {
+      component.layout = 'grid'
+      expect(component.viewItemObserved).toBe(false)
+      expect(component.editItemObserved).toBe(false)
+      expect(component.deleteItemObserved).toBe(false)
+
+      setUpGridActionButtonMockData()
+
+      expect(component.viewItemObserved).toBe(true)
+      expect(component.editItemObserved).toBe(true)
+      expect(component.deleteItemObserved).toBe(true)
+
+      const gridMenuButton = await listGrid.getMenuButton()
+
+      await gridMenuButton.click()
+
+      const gridActions = await listGrid.getActionButtons('grid')
+      expect(gridActions.length).toBe(3)
+    })
+
+    it('should dynamically hide/show an action button based on the contents of a specified field', async () => {
+      component.layout = 'grid'
+      setUpGridActionButtonMockData()
+      component.viewActionVisibleField = 'ready'
+      const gridMenuButton = await listGrid.getMenuButton()
+
+      await gridMenuButton.click()
+
+      let gridActions = await listGrid.getActionButtons('grid')
+      expect(gridActions.length).toBe(2)
+
+      let hiddenGridActions = await listGrid.getActionButtons('grid-hidden')
+      expect(hiddenGridActions.length).toBe(1)
+      expect(await hiddenGridActions[0].text()).toBe('OCX_DATA_LIST_GRID.MENU.VIEW')
+
+      for (const action of gridActions) {
+        const text = await action.text()
+        expect(text === 'OCX_DATA_LIST_GRID.MENU.VIEW').toBe(false)
+      }
+
+      const tempData = [...component.data]
+
+      tempData[0]['ready'] = true
+
+      component.data = [...tempData]
+
+      await gridMenuButton.click()
+      await gridMenuButton.click()
+      gridActions = await listGrid.getActionButtons('grid')
+      expect(gridActions.length).toBe(3)
+      hiddenGridActions = await listGrid.getActionButtons('grid-hidden')
+      expect(hiddenGridActions.length).toBe(0)
     })
   })
 })
