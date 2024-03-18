@@ -29,6 +29,12 @@ export class InteractiveDataViewComponent implements OnInit {
   @Input() deletePermission: string | undefined
   @Input() editPermission: string | undefined
   @Input() viewPermission: string | undefined
+  @Input() deleteActionVisibleField: string | undefined
+  @Input() deleteActionEnabledField: string | undefined
+  @Input() viewActionVisibleField: string | undefined
+  @Input() viewActionEnabledField: string | undefined
+  @Input() editActionVisibleField: string | undefined
+  @Input() editActionEnabledField: string | undefined
   @Input() name = 'Data'
   @Input() titleLineId: string | undefined
   @Input() subtitleLineIds: string[] = []
