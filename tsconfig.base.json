@@ -16,8 +16,8 @@
     "baseUrl": ".",
     "paths": {
       "@onecx/accelerator": ["libs/accelerator/src/index.ts"],
-      "@onecx/angular-standalone-shell": ["libs/angular-standalone-shell/src/index.ts"],
       "@onecx/angular-remote-components": ["libs/angular-remote-components/src/index.ts"],
+      "@onecx/angular-standalone-shell": ["libs/angular-standalone-shell/src/index.ts"],
       "@onecx/integration-interface": ["libs/integration-interface/src/index.ts"],
       "@onecx/keycloak-auth": ["libs/keycloak-auth/src/index.ts"],
       "@onecx/portal-integration-angular": ["libs/portal-integration-angular/src/index.ts"],

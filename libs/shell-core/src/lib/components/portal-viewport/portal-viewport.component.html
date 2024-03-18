@@ -1,0 +1,42 @@
+<div
+  *ngIf="!globalErrMsg; else globalError"
+  class="layout-wrapper"
+  [ngClass]="{
+    'p-input-filled': inputStyle === 'filled', 
+    'p-ripple-disabled': !ripple,
+    'layout-menu-active': isStaticalMenuVisible(),
+    'layout-menu-button-hidden': isHorizontalMenuMode()
+  }"
+  [class]="'layout-menu-' + colorScheme + ' layout-topbar-' + topbarTheme"
+>
+  <ocx-shell-header
+    [fullPortalLayout]="fullPortalLayout"
+  >
+  <ocx-slot name="horizontalMenu">Horizontal Menu</ocx-slot>
+  </ocx-shell-header>
+
+  <p-toast></p-toast>
+
+  <div class="menu-wrapper">
+    <div class="layout-menu-container" *ngIf="isStaticalMenuVisible()">
+        <ocx-slot name="menu">Vertical Menu</ocx-slot>
+    </div>
+  </div>
+  
+  <div class="layout-main">
+    <div class="layout-content relative">
+      <ocx-slot name="AnnouncementBanner">Announcement Banner</ocx-slot>
+      
+      <ng-content></ng-content>
+      <router-outlet></router-outlet>
+    </div>
+    
+    <ocx-shell-footer></ocx-shell-footer>
+  </div>
+  
+  <div *ngIf="menuActive || !!activeTopbarItem" class="layout-mask modal-in"></div>
+</div>
+
+<ng-template #globalError>
+  <ocx-error [errCode]="globalErrMsg"></ocx-error>
+</ng-template>

@@ -1,0 +1,30 @@
+<div class="layout-topbar shadow-4" id="header" role="banner">
+  <div class="layout-topbar-left">
+    <a class="layout-topbar-logo">
+    </a>
+
+    <a class="layout-menu-button shadow-6" (click)="onMenuButtonClick($event)" pRipple [title]="menuButtonTitle">
+      <i class="pi pi-chevron-right"></i>
+    </a>
+  </div>
+
+  <div class="layout-topbar-right">
+    <div class="layout-topbar-actions-left">
+      <ng-content></ng-content>
+    </div>
+    <!-- TODO *ngIf="fullPortalLayout" -->
+    <div class="layout-topbar-actions-right">
+      <ul class="layout-topbar-items">
+        <!-- Only desktop: Actions (favorites, support, search, ...) as icon buttons -->
+        <ng-container *ocxIfBreakpoint="'desktop'">
+
+        </ng-container>
+
+        <!-- Only mobile: Actions (favorites, support, search, ...) as 'more' button + overlay -->
+        <li class="layout-topbar-item" *ocxIfBreakpoint="'mobile'">
+          
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
