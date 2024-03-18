@@ -1,7 +1,7 @@
 import { animate, style, transition, trigger } from '@angular/animations'
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core'
-import { combineLatest, map, Observable } from 'rxjs'
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
 import { UntilDestroy } from '@ngneat/until-destroy'
+import { Observable } from 'rxjs'
 
 @Component({
   selector: 'ocx-shell-header',
@@ -36,7 +36,17 @@ export class HeaderComponent implements OnInit {
 
   logoUrl$!: Observable<string | null>
 
-  constructor() {}
+  // constructor(   private themeService: ThemeService,
+  //   private appStateService: AppStateService) {
+  //   this.logoUrl$ = combineLatest([
+  //     this.themeService.currentTheme$.asObservable(),
+  //     this.appStateService.currentPortal$.asObservable(),
+  //   ]).pipe(
+  //     map(([theme, portal]) => {
+  //       return ImageLogoUrlUtils.createLogoUrl(theme.logoUrl || portal.logoUrl)
+  //     })
+  //   )
+  // }
 
   ngOnInit() {}
 
