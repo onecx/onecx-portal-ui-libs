@@ -19,11 +19,11 @@ export class DataTableHarness extends ContentContainerComponentHarness {
   async getHarnessesForCheckboxes(type: 'all' | 'checked' | 'unchecked'): Promise<PTableCheckboxHarness[]> {
     let checkBoxHarnesses: PTableCheckboxHarness[]
     if (type === 'checked') {
-      checkBoxHarnesses = await this.getAllHarnesses(PTableCheckboxHarness.with({isSelected: true}))
+      checkBoxHarnesses = await this.getAllHarnesses(PTableCheckboxHarness.with({ isSelected: true }))
       return checkBoxHarnesses
     }
     if (type === 'unchecked') {
-      checkBoxHarnesses = await this.getAllHarnesses(PTableCheckboxHarness.with({isSelected: false}))
+      checkBoxHarnesses = await this.getAllHarnesses(PTableCheckboxHarness.with({ isSelected: false }))
       return checkBoxHarnesses
     } else {
       checkBoxHarnesses = await this.getAllHarnesses(PTableCheckboxHarness)
@@ -32,15 +32,35 @@ export class DataTableHarness extends ContentContainerComponentHarness {
   }
 
   async getActionColumnHeader(position: 'left' | 'right') {
-      return await this.locatorForOptional(`[name="action-column-header-${position}"]`)()
+    return await this.locatorForOptional(`[name="action-column-header-${position}"]`)()
   }
 
   async getActionColumn(position: 'left' | 'right') {
     return await this.locatorForOptional(`[name="action-column-${position}"]`)()
   }
 
+  async getActionButtons() {
+    return await this.locatorForAll(`[name="data-table-action-button"]`)()
+  }
+
+  async actionButtonIsDisabled(actionButton: TestElement) {
+    const isDisabled = await actionButton.getProperty('disabled')
+    return isDisabled
+  }
+
+  async hasAmountOfActionButtons(amount: number) {
+    return (await this.getActionButtons()).length === amount
+  }
+
+  async hasAmountOfDisabledActionButtons(amount: number) {    
+    const disabledActionButtons = await this.documentRootLocatorFactory().locatorForAll(
+      `[name="data-table-action-button"]:disabled`
+    )()
+    return disabledActionButtons.length === amount
+  }
+
   async columnIsFrozen(column: TestElement | null) {
-    if(column == null) {
+    if (column == null) {
       throw new Error('Given column is null')
     }
     return await column.hasClass('p-frozen-column')

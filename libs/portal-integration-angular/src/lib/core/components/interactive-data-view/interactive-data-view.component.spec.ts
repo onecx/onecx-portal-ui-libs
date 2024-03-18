@@ -1539,4 +1539,145 @@ describe('InteractiveDataViewComponent', () => {
       expect(listItemsData).toEqual(expectedFilteredListItemsData)
     })
   })
+  describe('Dynamically disable/hide based on field path in interactive data view', () => {
+    const setUpMockData = (viewType: 'grid' | 'list' | 'table') => {
+      component.viewItem.subscribe(() => console.log())
+      component.editItem.subscribe(() => console.log())
+      component.deleteItem.subscribe(() => console.log())
+      component.viewPermission = 'VIEW'
+      component.editPermission = 'EDIT'
+      component.deletePermission = 'DELETE'
+      component.layout = viewType
+      component.columns = [
+        {
+          columnType: ColumnType.STRING,
+          id: 'name',
+          nameKey: 'COLUMN_HEADER_NAME.NAME',
+        },
+        {
+          columnType: ColumnType.STRING,
+          id: 'ready',
+          nameKey: 'Ready',
+        },
+      ]
+      component.data = [
+        {
+          id: 'Test',
+          imagePath:
+            'https://images.unsplash.com/photo-1682686581427-7c80ab60e3f3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+          name: 'Card 1',
+          ready: false,
+        },
+      ]
+      component.titleLineId = 'name'
+    }
+
+    describe('Disable list action buttons based on field path', () => {
+      it('should not disable any buttons initially', async () => {
+        setUpMockData('list')
+        const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
+        expect(await dataView.hasAmountOfActionButtons('list', 3)).toBe(true)
+        expect(await dataView.hasAmountOfDisabledActionButtons('list', 0)).toBe(true)
+      })
+  
+      it('should disable a button based on a given field path', async() => {
+        setUpMockData('list')
+        component.viewActionEnabledField = 'ready'
+        const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
+        expect(await dataView.hasAmountOfActionButtons('list', 3)).toBe(true)
+        expect(await dataView.hasAmountOfDisabledActionButtons('list', 1)).toBe(true)
+      })
+    })
+  
+    describe('Disable grid action buttons based on field path', () => {
+      it('should not disable any buttons initially', async () => {
+        setUpMockData('grid')
+        const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
+        await (await dataView.getMenuButton()).click()
+        expect(await dataView.hasAmountOfActionButtons('grid', 3)).toBe(true)
+        expect(await dataView.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
+      })
+  
+      it('should disable a button based on a given field path', async () => {
+        setUpMockData('grid')
+        component.viewActionEnabledField = 'ready'
+        const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
+        await (await dataView.getMenuButton()).click()
+        expect(await dataView.hasAmountOfActionButtons('grid', 3)).toBe(true)
+        expect(await dataView.hasAmountOfDisabledActionButtons('grid', 1)).toBe(true)
+      })
+    })
+  
+    describe('Disable table action buttons based on field path', () => {
+      it('should not disable any buttons initially', async () => {
+        setUpMockData('table')
+        const dataTable = await (await interactiveDataViewHarness.getDataView()).getDataTable()
+        expect(await dataTable.hasAmountOfActionButtons(3)).toBe(true)
+        expect(await dataTable.hasAmountOfDisabledActionButtons(0)).toBe(true)
+      })
+  
+      it('should disable a button based on a given field path', async () => {
+        setUpMockData('table')
+        component.viewActionEnabledField = 'ready'
+        const dataTable = await (await interactiveDataViewHarness.getDataView()).getDataTable()
+        expect(await dataTable.hasAmountOfActionButtons(3)).toBe(true)
+        expect(await dataTable.hasAmountOfDisabledActionButtons(1)).toBe(true)
+      })
+    })
+  
+    describe('Hide list action buttons based on field path', () => {
+      it('should not disable any buttons initially', async () => {
+        setUpMockData('list')
+        const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
+        expect(await dataView.hasAmountOfActionButtons('list', 3)).toBe(true)
+        expect(await dataView.hasAmountOfDisabledActionButtons('list', 0)).toBe(true)
+      })
+  
+      it('should disable a button based on a given field path', async () => {
+        setUpMockData('list')
+        component.viewActionVisibleField = 'ready'
+        const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
+        expect(await dataView.hasAmountOfActionButtons('list', 2)).toBe(true)
+        expect(await dataView.hasAmountOfDisabledActionButtons('list', 0)).toBe(true)
+      })
+    })
+  
+    describe('Hide grid action buttons based on field path', () => {
+      it('should not disable any buttons initially', async () => {
+        setUpMockData('grid')
+        const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
+        await (await dataView.getMenuButton()).click()
+        expect(await dataView.hasAmountOfActionButtons('grid', 3)).toBe(true)
+        expect(await dataView.hasAmountOfActionButtons('grid-hidden', 0)).toBe(true)
+        expect(await dataView.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
+      })
+  
+      it('should disable a button based on a given field path', async () => {
+        setUpMockData('grid')
+        component.viewActionVisibleField = 'ready'
+        const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
+        await (await dataView.getMenuButton()).click()
+        expect(await dataView.hasAmountOfActionButtons('grid', 2)).toBe(true)
+        expect(await dataView.hasAmountOfActionButtons('grid-hidden', 1)).toBe(true)
+        expect(await dataView.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
+      })
+    })
+  
+    describe('Hide table action buttons based on field path', () => {
+      it('should not disable any buttons initially', async () => {
+        setUpMockData('table')
+        const dataTable = await (await interactiveDataViewHarness.getDataView()).getDataTable()
+        expect(await dataTable.hasAmountOfActionButtons(3)).toBe(true)
+        expect(await dataTable.hasAmountOfDisabledActionButtons(0)).toBe(true)
+      })
+  
+      it('should disable a button based on a given field path', async () => {
+        setUpMockData('table')
+        component.viewActionVisibleField = 'ready'
+        const dataTable = await (await interactiveDataViewHarness.getDataView()).getDataTable()
+        expect(await dataTable.hasAmountOfActionButtons(2)).toBe(true)
+        expect(await dataTable.hasAmountOfDisabledActionButtons(0)).toBe(true)
+      })
+    })
+  })
 })
