@@ -1,9 +1,9 @@
 import { Inject, Injectable, LOCALE_ID } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { firstValueFrom, map, Observable, of } from 'rxjs'
-import { DateUtils } from '../core/utils/dateutils'
-import { ObjectUtils } from '../core/utils/objectutils'
-import { ColumnType } from '../model/column-type.model'
+import { DateUtils } from '@onecx/angular-accelerator'
+import { ObjectUtils } from '@onecx/angular-accelerator'
+import { ColumnType } from '@onecx/angular-accelerator'
 
 @Injectable({ providedIn: 'any' })
 export class ExportDataService {
@@ -18,7 +18,7 @@ export class ExportDataService {
     data: Partial<Record<T, unknown | undefined>>[],
     fileName: string
   ): Promise<void> {
-    if (!columns.length ) {
+    if (!columns.length) {
       return
     }
     const flattenedData = data.map((d) =>

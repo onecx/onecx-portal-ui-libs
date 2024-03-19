@@ -1,0 +1,12 @@
+{
+    "name": "@onecx/angular-testing",
+    "version": "4.9.0",
+    "peerDependencies": {
+        "@angular/cdk": "^15.2.7",
+        "primeng": "^15.2.1"
+    },
+    "dependencies": {},
+    "publishConfig": {
+        "access": "public"
+    }
+}

@@ -19,14 +19,12 @@ import {
   TranslateLoader,
   TranslateModule,
 } from '@ngx-translate/core'
-import { APPLICATION_NAME, AUTH_SERVICE, SANITY_CHECK } from '../api/injection-tokens'
+import { APPLICATION_NAME, AUTH_SERVICE, SANITY_CHECK } from '@onecx/angular-accelerator'
 import { AutofocusDirective } from './directives/autofocus.directive'
 import { IfBreakpointDirective } from './directives/if-breakpoint.directive'
-import { IfPermissionDirective } from './directives/if-permission.directive'
 import { AppInlineProfileComponent } from './components/inline-profile/inline-profile.component'
 import { LoadingComponent } from './components/loading/loading.component'
 import { MfeDebugComponent } from './components/mfe-debug/mfe-debug.component'
-import { PageHeaderComponent } from './components/page-header/page-header.component'
 import { PageContentComponent } from './components/page-content/page-content.component'
 import { PagingInfoComponent } from './components/paging-info/paging-info.component'
 import { PortalFooterComponent } from './components/portal-footer/portal-footer.component'
@@ -38,7 +36,6 @@ import { PortalPageComponent } from './components/portal-page/portal-page.compon
 import { DeleteDialogComponent } from './components/delete-dialog/delete-dialog.component'
 import { PortalViewportComponent } from './components/portal-viewport/portal-viewport.component'
 import { UserAvatarComponent } from './components/user-avatar/user-avatar.component'
-import { DynamicPipe } from './pipes/dynamic.pipe'
 import { ConfigurationService } from '../services/configuration.service'
 import { DataViewControlsComponent } from './components/data-view-controls/data-view-controls.component'
 import { SearchCriteriaComponent } from './components/search-criteria/search-criteria.component'
@@ -48,45 +45,30 @@ import { PortalApiService } from '../services/portal-api.service'
 import { CriteriaTemplateComponent } from './components/search-criteria/criteria-template/criteria-template.component'
 import { ThemeService } from '../services/theme.service'
 import { GlobalErrorComponent } from './components/error-component/global-error.component'
-import { AppStateService } from '../services/app-state.service'
+import { AngularAcceleratorModule, TranslationCacheService, createTranslateLoader } from '@onecx/angular-accelerator'
+import { UserService, AppStateService } from '@onecx/angular-integration-interface'
 import { AnnouncementBannerComponent } from './components/announcement-banner/announcement-banner.component'
 import { ViewTemplatePickerComponent } from './components/data-view-controls/view-template-picker/view-template-picker.component'
 import { SupportTicketComponent } from './components/support-ticket/support-ticket.component'
 import { HelpItemEditorComponent } from './components/help-item-editor/help-item-editor.component'
 import { NoHelpItemComponent } from './components/no-help-item/no-help-item.component'
-import { DataListGridComponent } from './components/data-list-grid/data-list-grid.component'
 import { PrimeNgModule } from './primeng.module'
 import { ConfirmDialogModule } from 'primeng/confirmdialog'
-import { DataTableComponent } from './components/data-table/data-table.component'
 import de from '@angular/common/locales/de'
-import { DataViewComponent } from './components/data-view/data-view.component'
-import { InteractiveDataViewComponent } from './components/interactive-data-view/interactive-data-view.component'
-import { DataLayoutSelectionComponent } from './components/data-layout-selection/data-layout-selection.component'
-import { ColumnGroupSelectionComponent } from './components/column-group-selection/column-group-selection.component'
-import { CustomGroupColumnSelectorComponent } from './components/custom-group-column-selector/custom-group-column-selector.component'
-import { SearchHeaderComponent } from './components/search-header/search-header.component'
 import { AdvancedDirective } from './directives/advanced.directive'
 import { BasicDirective } from './directives/basic.directive'
-import { DataListGridSortingComponent } from './components/data-list-grid-sorting/data-list-grid-sorting.component'
-import { RelativeDatePipe } from './pipes/relative-date.pipe'
 import { PatchFormGroupValuesDirective } from './directives/patch-form-group-values.driective'
 import { SetInputValueDirective } from './directives/set-input-value.directive'
 import { LoadingIndicatorComponent } from './components/loading-indicator/loading-indicator.component'
 import { LoadingIndicatorDirective } from './directives/loading-indicator.directive'
-import { DiagramComponent } from './components/diagram/diagram.component'
-import { GroupByCountDiagramComponent } from './components/group-by-count-diagram/group-by-count-diagram.component'
 import { ButtonDialogComponent } from './components/button-dialog/button-dialog.component'
 import { DialogMessageContentComponent } from './components/button-dialog/dialog-message-content/dialog-message-content.component'
 import { OcxContentDirective } from './directives/content.directive'
 import { OcxContentComponent } from './components/content/content.component'
 import { OcxContentContainerComponent } from './components/content-container/content-container.component'
 import { OcxContentContainerDirective } from './directives/content-container.directive'
-import { SearchConfigComponent } from './components/search-config/search-config.component'
-import { UserService } from '../services/user.service'
 import { UserProfileAPIService } from '../services/userprofile-api.service'
-import { createTranslateLoader } from './utils/create-translate-loader.utils'
 import { MessageService } from 'primeng/api'
-import { TranslationCacheService } from '../services/translation-cache.service'
 import { CreateOrEditSearchConfigDialogComponent } from './components/create-or-edit-search-config-dialog/create-or-edit-search-config-dialog.component'
 import { LifecycleComponent } from './components/lifecycle/lifecycle.component'
 import { AngularStandaloneShellModule } from '@onecx/angular-standalone-shell'
@@ -105,6 +87,7 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     FormsModule,
     ReactiveFormsModule,
     PrimeNgModule,
+    AngularAcceleratorModule,
     TranslateModule.forRoot({
       isolate: true,
       loader: {
@@ -124,17 +107,14 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     CriteriaTemplateComponent,
     DataViewControlsComponent,
     DeleteDialogComponent,
-    DynamicPipe,
     GlobalErrorComponent,
     HeaderComponent,
     HelpItemEditorComponent,
     IfBreakpointDirective,
-    IfPermissionDirective,
     LoadingComponent,
     MfeDebugComponent,
     NoHelpItemComponent,
     PageContentComponent,
-    PageHeaderComponent,
     PagingInfoComponent,
     PortalFooterComponent,
     PortalMenuComponent,
@@ -146,31 +126,18 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     SupportTicketComponent,
     UserAvatarComponent,
     ViewTemplatePickerComponent,
-    DataListGridComponent,
-    DataTableComponent,
-    DataViewComponent,
-    InteractiveDataViewComponent,
-    DataLayoutSelectionComponent,
-    ColumnGroupSelectionComponent,
-    CustomGroupColumnSelectorComponent,
-    SearchHeaderComponent,
     LoadingIndicatorComponent,
     LoadingIndicatorDirective,
     AdvancedDirective,
     BasicDirective,
-    DataListGridSortingComponent,
-    RelativeDatePipe,
     PatchFormGroupValuesDirective,
     SetInputValueDirective,
-    DiagramComponent,
-    GroupByCountDiagramComponent,
     ButtonDialogComponent,
     DialogMessageContentComponent,
     OcxContentDirective,
     OcxContentContainerDirective,
     OcxContentComponent,
     OcxContentContainerComponent,
-    SearchConfigComponent,
     CreateOrEditSearchConfigDialogComponent,
     LifecycleComponent,
   ],
@@ -188,6 +155,7 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     },
   ],
   exports: [
+    AngularAcceleratorModule,
     AnnouncementBannerComponent,
     AppInlineProfileComponent,
     AutofocusDirective,
@@ -195,17 +163,14 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     CriteriaTemplateComponent,
     DataViewControlsComponent,
     DeleteDialogComponent,
-    DynamicPipe,
     GlobalErrorComponent,
     HeaderComponent,
     HelpItemEditorComponent,
     IfBreakpointDirective,
-    IfPermissionDirective,
     LoadingComponent,
     MfeDebugComponent,
     NoHelpItemComponent,
     PageContentComponent,
-    PageHeaderComponent,
     PagingInfoComponent,
     PortalFooterComponent,
     PortalMenuComponent,
@@ -219,30 +184,18 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     ViewTemplatePickerComponent,
     TranslateModule,
     PrimeNgModule,
-    DataTableComponent,
-    DataListGridComponent,
-    DataViewComponent,
-    InteractiveDataViewComponent,
-    DataLayoutSelectionComponent,
-    ColumnGroupSelectionComponent,
-    CustomGroupColumnSelectorComponent,
-    SearchHeaderComponent,
     LoadingIndicatorComponent,
     LoadingIndicatorDirective,
     AdvancedDirective,
     BasicDirective,
-    RelativeDatePipe,
     PatchFormGroupValuesDirective,
     SetInputValueDirective,
-    DiagramComponent,
-    GroupByCountDiagramComponent,
     ButtonDialogComponent,
     DialogMessageContentComponent,
     OcxContentDirective,
     OcxContentContainerDirective,
     OcxContentComponent,
     OcxContentContainerComponent,
-    SearchConfigComponent,
     CreateOrEditSearchConfigDialogComponent,
     LifecycleComponent,
   ],
