@@ -1,12 +1,11 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { HeaderComponent } from './header.component'
-import { AUTH_SERVICE } from '@onecx/angular-accelerator'
+import { AUTH_SERVICE, IfBreakpointDirective } from '@onecx/angular-accelerator'
 import { MockAuthService } from '../../../mock-auth/mock-auth.service'
 import { ConfigurationService } from '../../../services/configuration.service'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { UserAvatarComponent } from '../user-avatar/user-avatar.component'
 import { ActivatedRoute, RouterModule } from '@angular/router'
-import { IfBreakpointDirective } from '../../directives/if-breakpoint.directive'
 import { TooltipModule } from 'primeng/tooltip'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 
