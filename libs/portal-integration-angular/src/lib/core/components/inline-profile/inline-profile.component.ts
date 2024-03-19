@@ -3,8 +3,7 @@ import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { map, Observable } from 'rxjs'
 import { MenuItem } from 'primeng/api'
-import { IAuthService } from '@onecx/angular-accelerator'
-import { UserService, AUTH_SERVICE } from '@onecx/angular-integration-interface'
+import { UserService, AUTH_SERVICE, IAuthService } from '@onecx/angular-integration-interface'
 import { MenuService } from '../../../services/app.menu.service'
 import { UserProfile } from '../../../model/user-profile.model'
 

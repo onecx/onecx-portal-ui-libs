@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core'
 import { BehaviorSubject } from 'rxjs'
 import { UserProfile } from '@onecx/integration-interface'
-import { IAuthService } from '../api/iauth.service'
+import { IAuthService } from '@onecx/angular-integration-interface'
 
 @Injectable()
 export class MockAuthService implements IAuthService {

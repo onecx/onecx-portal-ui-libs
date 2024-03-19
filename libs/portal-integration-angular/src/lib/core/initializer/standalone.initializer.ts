@@ -1,11 +1,11 @@
 import { firstValueFrom } from 'rxjs'
-import { IAuthService } from '@onecx/angular-accelerator'
 import {
   AppStateService,
   UserService,
   ThemeService,
   ConfigurationService,
   CONFIG_KEY,
+  IAuthService,
 } from '@onecx/angular-integration-interface'
 import { MfeInfo } from '@onecx/integration-interface'
 import { PortalApiService } from '../../services/portal-api.service'

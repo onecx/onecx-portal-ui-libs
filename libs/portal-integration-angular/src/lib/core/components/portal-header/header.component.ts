@@ -12,9 +12,9 @@ import {
   AUTH_SERVICE,
   ConfigurationService,
   CONFIG_KEY,
+  IAuthService,
 } from '@onecx/angular-integration-interface'
 
-import { IAuthService } from '@onecx/angular-accelerator'
 import { UserProfile } from '../../../model/user-profile.model'
 import { MenuService } from '../../../services/app.menu.service'
 import { ImageLogoUrlUtils } from '../../utils/image-logo-url.utils'

@@ -9,6 +9,7 @@ export * from './lib/services/theme.service'
 export * from './lib/model/config-key.model'
 
 // core
+export * from './lib/api/iauth.service'
 export * from './lib/api/injection-tokens'
 
 // utils
