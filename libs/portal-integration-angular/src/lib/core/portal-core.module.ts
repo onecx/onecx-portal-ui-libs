@@ -20,7 +20,6 @@ import {
 } from '@ngx-translate/core'
 import { APPLICATION_NAME, AUTH_SERVICE, SANITY_CHECK } from '@onecx/angular-accelerator'
 import { AutofocusDirective } from './directives/autofocus.directive'
-import { IfBreakpointDirective } from './directives/if-breakpoint.directive'
 import { AppInlineProfileComponent } from './components/inline-profile/inline-profile.component'
 import { LoadingComponent } from './components/loading/loading.component'
 import { MfeDebugComponent } from './components/mfe-debug/mfe-debug.component'
@@ -108,7 +107,6 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     GlobalErrorComponent,
     HeaderComponent,
     HelpItemEditorComponent,
-    IfBreakpointDirective,
     LoadingComponent,
     MfeDebugComponent,
     NoHelpItemComponent,
@@ -164,7 +162,6 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     GlobalErrorComponent,
     HeaderComponent,
     HelpItemEditorComponent,
-    IfBreakpointDirective,
     LoadingComponent,
     MfeDebugComponent,
     NoHelpItemComponent,
