@@ -1,6 +1,7 @@
 import { Inject, Injectable, Optional } from '@angular/core'
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http'
-import { AUTH_SERVICE, IAuthService } from '@onecx/angular-integration-interface'
+import { AUTH_SERVICE } from '@onecx/angular-integration-interface'
+import { IAuthService } from '@onecx/angular-accelerator'
 import { Observable } from 'rxjs'
 import { KeycloakAuthModuleConfig } from './keycloak-auth.module'
 import { KEYCLOAK_AUTH_CONFIG } from './keycloak-injection-token'
