@@ -28,3 +28,5 @@ export * from './lib/topics/message/v1/message.topic'
 
 export * from './lib/topics/remote-components/v1/remote-component.model'
 export * from './lib/topics/remote-components/v1/remote-components.topic'
+
+export * from './lib/topics/permissions/v1/permissions.topic'

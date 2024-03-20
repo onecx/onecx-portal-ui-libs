@@ -10,9 +10,10 @@
   [class]="'layout-menu-' + colorScheme + ' layout-topbar-' + topbarTheme"
 >
   <ocx-shell-header
-    [fullPortalLayout]="fullPortalLayout"
+    [menuButtonTitle]="menuButtonTitle"
+    (menuButtonClick)="onMenuButtonClick($event)"
   >
-  <ocx-slot name="horizontalMenu">Horizontal Menu</ocx-slot>
+  <ocx-slot name="menu" *ngIf="isHorizontalMenuVisible()">Horizontal Menu</ocx-slot>
   </ocx-shell-header>
 
   <p-toast></p-toast>

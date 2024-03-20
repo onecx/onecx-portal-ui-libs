@@ -34,7 +34,7 @@
       </svg>
     </a>
 
-    <a class="layout-menu-button shadow-6" (click)="onMenuButtonClick($event)" pRipple [title]="menuButtonTitle">
+    <a class="layout-menu-button shadow-6" (click)="onMenuButtonClick($event)" pRipple [title]="menuButtonTitle ?? ('OCX_HEADER.MENU_TOGGLE')">
       <i class="pi pi-chevron-right"></i>
     </a>
   </div>
@@ -43,7 +43,6 @@
     <div class="layout-topbar-actions-left">
       <ng-content></ng-content>
     </div>
-    <!-- TODO *ngIf="fullPortalLayout" -->
     <div class="layout-topbar-actions-right">
       <ul class="layout-topbar-items">
         <!-- Only desktop: Actions (favorites, support, search, ...) as icon buttons -->

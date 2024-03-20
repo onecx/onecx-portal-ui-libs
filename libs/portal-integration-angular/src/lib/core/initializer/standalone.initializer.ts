@@ -70,7 +70,7 @@ export function standaloneInitializer(
       console.log(`📃 portal OK? `, portal)
       await appStateService.currentPortal$.publish(portal)
 
-      const standaloneMfeInfo: MfeInfo = { mountPath: '/', remoteBaseUrl: '.', baseHref: '/', shellName: 'standalone' }
+      const standaloneMfeInfo: MfeInfo = { mountPath: '/', remoteBaseUrl: '.', baseHref: '/', shellName: 'standalone', appId: '', productName: '' }
       await appStateService.globalLoading$.publish(true)
       await appStateService.currentMfe$.publish(standaloneMfeInfo)
       await appStateService.globalLoading$.publish(false)

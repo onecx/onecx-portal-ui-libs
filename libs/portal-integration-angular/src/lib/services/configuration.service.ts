@@ -67,7 +67,9 @@ export class ConfigurationService implements OnDestroy {
   }
 
   public async setProperty(key: string, val: string) {
-    await this.config$.publish({ key, val })
+    const currentValues = await firstValueFrom(this.config$.asObservable())
+    currentValues[key] = val
+    await this.config$.publish(currentValues)
   }
 
   public getConfig(): Config | undefined {

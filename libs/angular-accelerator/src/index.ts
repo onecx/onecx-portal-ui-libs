@@ -19,6 +19,7 @@ export * from './lib/components/search-header/search-header.component'
 // services
 export * from './lib/services/breadcrumb.service'
 export * from './lib/services/translation-cache.service'
+export * from './lib/services/app-config-service'
 
 // pipes
 export * from './lib/pipes/dynamic.pipe'
