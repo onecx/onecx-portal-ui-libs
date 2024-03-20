@@ -1,13 +1,15 @@
 import { firstValueFrom } from 'rxjs'
-import { IAuthService } from '@onecx/angular-accelerator'
-import { ConfigurationService } from '../../services/configuration.service'
-import { PortalApiService } from '../../services/portal-api.service'
-import { ThemeService } from '../../services/theme.service'
-import { AppStateService } from '@onecx/angular-integration-interface'
-import { CONFIG_KEY } from '../../model/config-key.model'
-import { UserService } from '@onecx/angular-integration-interface'
-import { UserProfileAPIService } from '../../services/userprofile-api.service'
+import {
+  AppStateService,
+  UserService,
+  ThemeService,
+  ConfigurationService,
+  CONFIG_KEY,
+  IAuthService,
+} from '@onecx/angular-integration-interface'
 import { MfeInfo } from '@onecx/integration-interface'
+import { PortalApiService } from '../../services/portal-api.service'
+import { UserProfileAPIService } from '../../services/userprofile-api.service'
 
 const CONFIG_INIT_ERR = 'CONFIG_INIT_ERR'
 const AUTH_INIT_ERR = 'AUTH_INIT_ERR'

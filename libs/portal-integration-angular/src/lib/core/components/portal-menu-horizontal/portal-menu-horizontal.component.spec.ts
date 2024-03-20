@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 
-import { PortalMenuHorizontalComponent } from './portal-menu-horizontal.component'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
-import { ConfigurationService } from '../../../services/configuration.service'
 import { MenubarModule } from 'primeng/menubar'
+import { ConfigurationService } from '@onecx/angular-integration-interface'
+import { PortalMenuHorizontalComponent } from './portal-menu-horizontal.component'
 
 describe('PortalMenuHorizontalComponent', () => {
   let component: PortalMenuHorizontalComponent

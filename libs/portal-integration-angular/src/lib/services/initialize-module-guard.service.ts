@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core'
 import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, UrlTree } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { filter, from, isObservable, map, mergeMap, Observable, of, tap, zip } from 'rxjs'
-import { AppStateService } from '@onecx/angular-integration-interface'
-import { ConfigurationService } from './configuration.service'
+import { AppStateService, ConfigurationService } from '@onecx/angular-integration-interface'
 import { UserService } from '@onecx/angular-integration-interface'
 
 @Injectable({ providedIn: 'any' })

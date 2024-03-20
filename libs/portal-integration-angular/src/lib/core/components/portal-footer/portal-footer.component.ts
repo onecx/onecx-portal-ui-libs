@@ -1,13 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core'
-import { ConfigurationService } from '../../../services/configuration.service'
 import { Router } from '@angular/router'
-import { MenuItem } from 'primeng/api'
-import { MenuService } from '../../../services/app.menu.service'
-import { AppStateService } from '@onecx/angular-integration-interface'
 import { combineLatest, concat, map, Observable, of, withLatestFrom } from 'rxjs'
-import { ThemeService } from '../../../services/theme.service'
+import { MenuItem } from 'primeng/api'
+import { AppStateService, ConfigurationService, ThemeService, CONFIG_KEY } from '@onecx/angular-integration-interface'
+import { MenuService } from '../../../services/app.menu.service'
 import { API_PREFIX } from '../../../api/constants'
-import { CONFIG_KEY } from '../../../model/config-key.model'
 import { ImageLogoUrlUtils } from '../../utils/image-logo-url.utils'
 @Component({
   selector: 'ocx-footer',

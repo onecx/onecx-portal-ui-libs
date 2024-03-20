@@ -1,9 +1,8 @@
 import { Component } from '@angular/core'
 import { catchError, map, Observable, of, switchMap, tap, throwError, EMPTY, mergeMap } from 'rxjs'
+import { AppStateService, ConfigurationService } from '@onecx/angular-integration-interface'
 import { AnnouncementItem, AnnouncementPriorityType } from '../../../model/announcement-item'
 import { AnnouncementsApiService } from '../../../services/announcements-api.service'
-import { AppStateService } from '@onecx/angular-integration-interface'
-import { ConfigurationService } from '../../../services/configuration.service'
 
 @Component({
   selector: 'ocx-announcement-banner',

@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http'
 import { Inject, Injectable, OnDestroy, Optional } from '@angular/core'
-import { Config, ConfigurationTopic } from '@onecx/integration-interface'
 import { firstValueFrom } from 'rxjs'
-import { APP_CONFIG } from '@onecx/angular-accelerator'
+import { Config, ConfigurationTopic } from '@onecx/integration-interface'
+import { APP_CONFIG } from '../api/injection-tokens'
 import { CONFIG_KEY } from '../model/config-key.model'
 
 @Injectable({ providedIn: 'root' })

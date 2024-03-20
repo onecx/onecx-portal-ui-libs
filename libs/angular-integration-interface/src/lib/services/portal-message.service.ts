@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
-import { MessageTopic } from '@onecx/integration-interface'
 import { combineLatest, of } from 'rxjs'
+import { MessageTopic } from '@onecx/integration-interface'
 
 export type Message = {
   summaryKey?: string

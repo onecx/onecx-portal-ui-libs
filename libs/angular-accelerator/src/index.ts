@@ -38,8 +38,6 @@ export * from './lib/model/diagram-type'
 export * from './lib/model/search-config-info'
 
 // core
-export * from './lib/api/iauth.service'
-export * from './lib/api/injection-tokens'
 export * from './lib/angular-accelerator.module'
 export * from './lib/angular-accelerator-primeng.module'
 

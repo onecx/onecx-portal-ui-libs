@@ -1,13 +1,11 @@
 import { Inject, Injectable, Optional } from '@angular/core'
 import { Router } from '@angular/router'
+import { APP_BASE_HREF, PlatformLocation } from '@angular/common'
 import { MenuItem } from 'primeng/api'
 import { map, Observable, of, shareReplay, Subject, withLatestFrom } from 'rxjs'
+import { UserService, ConfigurationService, CONFIG_KEY } from '@onecx/angular-integration-interface'
 import { PortalMenuItem } from '../model/menu-item.model'
-import { ConfigurationService } from './configuration.service'
 import { MenuApiService } from './menu-api.service'
-import { APP_BASE_HREF, PlatformLocation } from '@angular/common'
-import { CONFIG_KEY } from '../model/config-key.model'
-import { UserService } from '@onecx/angular-integration-interface'
 
 @Injectable({ providedIn: 'root' })
 export class MenuService {
