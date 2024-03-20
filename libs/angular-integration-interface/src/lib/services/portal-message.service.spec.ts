@@ -1,7 +1,7 @@
 import { TestBed, fakeAsync } from '@angular/core/testing'
-import { PortalMessageService } from './portal-message.service'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { Message } from '@onecx/integration-interface'
+import { PortalMessageService } from './portal-message.service'
 
 describe('PortalMessageService', () => {
   const origAddEventListener = window.addEventListener
