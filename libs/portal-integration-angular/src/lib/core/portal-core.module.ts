@@ -22,7 +22,6 @@ import {
 import { MessageService } from 'primeng/api'
 import { ConfirmDialogModule } from 'primeng/confirmdialog'
 import { AutofocusDirective } from './directives/autofocus.directive'
-import { IfBreakpointDirective } from './directives/if-breakpoint.directive'
 import { AppInlineProfileComponent } from './components/inline-profile/inline-profile.component'
 import { LoadingComponent } from './components/loading/loading.component'
 import { MfeDebugComponent } from './components/mfe-debug/mfe-debug.component'
@@ -113,7 +112,6 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     GlobalErrorComponent,
     HeaderComponent,
     HelpItemEditorComponent,
-    IfBreakpointDirective,
     LoadingComponent,
     MfeDebugComponent,
     NoHelpItemComponent,
@@ -169,7 +167,6 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     GlobalErrorComponent,
     HeaderComponent,
     HelpItemEditorComponent,
-    IfBreakpointDirective,
     LoadingComponent,
     MfeDebugComponent,
     NoHelpItemComponent,
