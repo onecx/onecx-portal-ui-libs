@@ -4,6 +4,5 @@ export interface RemoteComponent {
     remoteEntryUrl: string;
     appId: string;
     productName: string;
-    bffUrl: string;
     exposedModule: string;
 }

@@ -1,5 +1,4 @@
 import { firstValueFrom } from 'rxjs'
-import { IAuthService } from '@onecx/angular-accelerator'
 import { ConfigurationService } from '../../services/configuration.service'
 import { PortalApiService } from '../../services/portal-api.service'
 import { ThemeService } from '../../services/theme.service'
@@ -19,7 +18,6 @@ const PORTAL_LOAD_INIT_ERR = 'PORTAL_LOAD_INIT_ERR'
  * This initializer only runs in standalone mode of the apps and not in portal-mf-shell
  */
 export function standaloneInitializer(
-  auth: IAuthService,
   config: ConfigurationService,
   portalApi: PortalApiService,
   themeService: ThemeService,
@@ -44,14 +42,6 @@ export function standaloneInitializer(
         throw e
       }
       console.log(`📑 config OK? ${configOk}`)
-      let authOk = false
-      try {
-        authOk = await auth.init()
-      } catch (e) {
-        errCause = AUTH_INIT_ERR
-        throw e
-      }
-      console.log(`📑 auth OK? ${authOk}`)
       try {
         const profile = await firstValueFrom(userProfileAPIService.getCurrentUser())
         await userService.profile$.publish(profile)

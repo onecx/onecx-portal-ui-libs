@@ -30,3 +30,6 @@ export * from './lib/topics/remote-components/v1/remote-component.model'
 export * from './lib/topics/remote-components/v1/remote-components.topic'
 
 export * from './lib/topics/permissions/v1/permissions.topic'
+
+export * from './lib/topics/events/v1/events-topic'
+export * from './lib/topics/events/v1/topic-event-type'

@@ -11,7 +11,6 @@ export class StandaloneSlotService implements SlotService {
         componentType: StandaloneMenuComponent,
         remoteComponent: {
           appId: '',
-          bffUrl: '',
           baseUrl: '',
           productName: '',
         },

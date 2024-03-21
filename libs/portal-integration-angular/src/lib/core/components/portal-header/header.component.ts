@@ -1,9 +1,8 @@
 import { animate, style, transition, trigger } from '@angular/animations'
-import { Component, ElementRef, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core'
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core'
 import { combineLatest, filter, map, Observable } from 'rxjs'
 import { MenuItem } from 'primeng/api/menuitem'
 
-import { AUTH_SERVICE, IAuthService } from '@onecx/angular-accelerator'
 import { UserProfile } from '../../../model/user-profile.model'
 import { ConfigurationService } from '../../../services/configuration.service'
 import { MenuService } from '../../../services/app.menu.service'
@@ -14,6 +13,7 @@ import { ImageLogoUrlUtils } from '../../utils/image-logo-url.utils'
 import { UserService } from '@onecx/angular-integration-interface'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import { PrimeIcons } from 'primeng/api'
+import { EventsPublisher } from '@onecx/integration-interface'
 
 type MenuItemPerm = MenuItem & { permission: string }
 @Component({
@@ -84,9 +84,9 @@ export class HeaderComponent implements OnInit {
 
   logoUrl$!: Observable<string | null>
   currentUser$: Observable<UserProfile>
+  eventsPublisher$: EventsPublisher = new EventsPublisher()
 
   constructor(
-    @Inject(AUTH_SERVICE) private authService: IAuthService,
     private config: ConfigurationService,
     private menuService: MenuService,
     private themeService: ThemeService,
@@ -186,7 +186,7 @@ export class HeaderComponent implements OnInit {
 
   logout(event: Event) {
     event.preventDefault()
-    this.authService.logout()
+    this.eventsPublisher$.publish({ type: 'authentication#logoutButtonClicked' })
   }
 
   onMenuButtonClick(e: Event) {

@@ -11,23 +11,28 @@ import {
 import { TopicDataMessage } from './topic-data-message'
 import { TopicMessage } from './topic-message'
 import { TopicMessageType } from './topic-message-type'
+import { TopicPublisher } from './topic-publisher'
 
-export class Topic<T> implements Subscribable<T> {
+export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
   protected isInitializedPromise: Promise<void>
   protected data = new BehaviorSubject<TopicDataMessage<T> | undefined>(undefined)
 
   protected isInit = false
   private resolveInitPromise!: (value: void | PromiseLike<void>) => void
   private eventListener = (m: MessageEvent<TopicMessage>) => this.onMessage(m)
-  private publishPromiseResolver: Record<number, () => void> = {}
 
-  constructor(private name: string, private version: number) {
+  constructor(name: string, version: number, sendGetMessage: boolean = true) {
+    super(name, version)
+    
     this.isInitializedPromise = new Promise<void>((resolve) => {
       this.resolveInitPromise = resolve
     })
     window.addEventListener('message', this.eventListener)
-    const message = new TopicMessage(TopicMessageType.TopicGet, this.name, this.version)
-    window.postMessage(message, '*')
+
+    if (sendGetMessage) {
+      const message = new TopicMessage(TopicMessageType.TopicGet, this.name, this.version)
+      window.postMessage(message, '*')
+    }
   }
   
   get isInitialized(): Promise<void> {
@@ -131,15 +136,6 @@ export class Topic<T> implements Subscribable<T> {
 
   pipe(...operations: UnaryFunction<any, any>[]): unknown {
     return (<any>this.asObservable()).pipe(...operations)
-  }
-
-  publish(value: T): Promise<void> {
-    const message = new TopicDataMessage<T>(TopicMessageType.TopicNext, this.name, this.version, value)
-    const promise = new Promise<void>((resolve) => {
-      this.publishPromiseResolver[message.timestamp] = resolve
-    })
-    window.postMessage(message, '*')
-    return promise
   }
 
   destroy() {
