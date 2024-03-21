@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { PortalMenuComponent } from './portal-menu.component'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
-import { ConfigurationService } from '../../../services/configuration.service'
+import { ConfigurationService } from '@onecx/angular-integration-interface'
+import { PortalMenuComponent } from './portal-menu.component'
 
 describe('PortalMenuComponent', () => {
   let component: PortalMenuComponent

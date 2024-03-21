@@ -1,5 +1,6 @@
 // directives
 export * from './lib/directives/if-permission.directive'
+export * from './lib/directives/if-breakpoint.directive'
 
 // components
 export * from './lib/components/column-group-selection/column-group-selection.component'
@@ -38,8 +39,6 @@ export * from './lib/model/diagram-type'
 export * from './lib/model/search-config-info'
 
 // core
-export * from './lib/api/iauth.service'
-export * from './lib/api/injection-tokens'
 export * from './lib/angular-accelerator.module'
 export * from './lib/angular-accelerator-primeng.module'
 

@@ -1,6 +1,5 @@
 // directives
 export * from './lib/core/directives/autofocus.directive'
-export * from './lib/core/directives/if-breakpoint.directive'
 export * from './lib/core/directives/advanced.directive'
 export * from './lib/core/directives/basic.directive'
 export * from './lib/core/directives/patch-form-group-values.driective'
@@ -46,11 +45,8 @@ export * from './lib/core/components/lifecycle/lifecycle.component'
 
 // services
 export * from './lib/services/app.menu.service'
-export * from './lib/services/configuration.service'
 export * from './lib/services/menu-api.service'
 export * from './lib/services/portal-api.service'
-export * from './lib/services/portal-message.service'
-export * from './lib/services/theme.service'
 export * from './lib/services/initialize-module-guard.service'
 export * from './lib/services/userprofile-api.service'
 export * from './lib/services/portal-dialog.service'
@@ -63,7 +59,6 @@ export * from './lib/mock-auth/mock-auth.module'
 export * from './lib/model/avatar-info.model'
 export * from './lib/model/microfrontend'
 export * from './lib/model/portal-wrapper'
-export * from './lib/model/theme'
 export * from './lib/model/column'
 export * from './lib/model/column-view-template'
 export * from './lib/model/menu-item.model'
@@ -73,7 +68,6 @@ export * from './lib/model/page-info.model'
 export * from './lib/model/portal'
 export * from './lib/model/user-profile.model'
 export * from './lib/model/button-dialog'
-export * from './lib/model/config-key.model'
 
 // core
 export * from './lib/api/constants'
@@ -87,8 +81,6 @@ export * from './lib/core/utils/image-logo-url.utils'
 export * from './lib/core/utils/add-initialize-module-guard.utils'
 export * from './lib/core/utils/translate-service-initializer.utils'
 export * from './lib/core/utils/portal-api-configuration.utils'
-
-export { MfeInfo } from '@onecx/integration-interface'
 
 export * from '@onecx/angular-accelerator'
 export * from '@onecx/angular-integration-interface'

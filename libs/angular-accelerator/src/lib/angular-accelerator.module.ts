@@ -36,6 +36,7 @@ import { GroupByCountDiagramComponent } from './components/group-by-count-diagra
 import { DiagramComponent } from './components/diagram/diagram.component'
 import { DynamicPipe } from './pipes/dynamic.pipe'
 import { IfPermissionDirective } from './directives/if-permission.directive'
+import { IfBreakpointDirective } from './directives/if-breakpoint.directive'
 import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
 import { OcxTimeagoIntl } from './utils/ocxtimeagointl.utils'
 import { createTranslateLoader } from './utils/create-translate-loader.utils'
@@ -84,6 +85,7 @@ export class AngularAcceleratorMissingTranslationHandler implements MissingTrans
     DiagramComponent,
     GroupByCountDiagramComponent,
     IfPermissionDirective,
+    IfBreakpointDirective,
     OcxTimeAgoPipe,
   ],
   providers: [
@@ -128,6 +130,7 @@ export class AngularAcceleratorMissingTranslationHandler implements MissingTrans
     DiagramComponent,
     GroupByCountDiagramComponent,
     IfPermissionDirective,
+    IfBreakpointDirective,
     OcxTimeAgoPipe,
     // DataListGridSortingComponent,
   ],

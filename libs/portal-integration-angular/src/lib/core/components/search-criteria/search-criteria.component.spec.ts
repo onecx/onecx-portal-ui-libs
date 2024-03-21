@@ -1,13 +1,12 @@
-import { InputSwitchModule } from 'primeng/inputswitch'
 import { ComponentFixture, TestBed, getTestBed } from '@angular/core/testing'
 import { RouterTestingModule } from '@angular/router/testing'
-import { SearchCriteriaComponent } from './search-criteria.component'
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
-import { ConfigurationService } from '../../../services/configuration.service'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { InputSwitchModule } from 'primeng/inputswitch'
+import { AppStateService, ConfigurationService } from '@onecx/angular-integration-interface'
+import { SearchCriteriaComponent } from './search-criteria.component'
 import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { AppStateService } from '@onecx/angular-integration-interface'
 
 describe('SearchCriteriaComponent', () => {
   const origAddEventListener = window.addEventListener
