@@ -1,3 +1,20 @@
+## [4.12.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.11.0...v4.12.0) (2024-03-21)
+
+
+### Features
+
+* add ability to dynamically hide/disable action buttons ([#169](https://github.com/onecx/onecx-portal-ui-libs/issues/169)) ([bc30475](https://github.com/onecx/onecx-portal-ui-libs/commit/bc30475e201416f35ad3e44481f9d7fafb3f6d26))
+* angular accelerator init ([#165](https://github.com/onecx/onecx-portal-ui-libs/issues/165)) ([3388e3f](https://github.com/onecx/onecx-portal-ui-libs/commit/3388e3fa30ac7d1b81fe5775891c32d506f58f66))
+* angular integration interface init ([#178](https://github.com/onecx/onecx-portal-ui-libs/issues/178)) ([e5aac96](https://github.com/onecx/onecx-portal-ui-libs/commit/e5aac96896233efd3e1487374caaa6cafe1e4f3a))
+* raise github actions version ([#175](https://github.com/onecx/onecx-portal-ui-libs/issues/175)) ([3f42d93](https://github.com/onecx/onecx-portal-ui-libs/commit/3f42d931badfb584a56f199843f3f39bab834eab))
+
+
+### Bug Fixes
+
+* adapt the release config to see the whole ([#180](https://github.com/onecx/onecx-portal-ui-libs/issues/180)) ([cd56c3d](https://github.com/onecx/onecx-portal-ui-libs/commit/cd56c3d0798fb8765b4c88d3217f423d560b30e3))
+* added breakpoint directive to angular-accelerator ([#177](https://github.com/onecx/onecx-portal-ui-libs/issues/177)) ([824b5e3](https://github.com/onecx/onecx-portal-ui-libs/commit/824b5e34ad06814cd330a31f7e589970f2abc16a))
+* fixed remote component interface naming ([#174](https://github.com/onecx/onecx-portal-ui-libs/issues/174)) ([8722ff0](https://github.com/onecx/onecx-portal-ui-libs/commit/8722ff0f7768127fd26f81da02d2074612b4e599))
+
 ## [4.10.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.10.1...v4.10.2) (2024-03-08)
 
 
