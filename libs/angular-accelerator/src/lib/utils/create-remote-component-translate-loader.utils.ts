@@ -12,14 +12,14 @@ let lastTranslateLoaderTimerId = 0
 
 export function createRemoteComponentTranslateLoader(
   http: HttpClient,
-  baseUrlReplaySubject: ReplaySubject<string>,
+  baseUrlReplaySubject$: ReplaySubject<string>,
   translationCacheService?: TranslationCacheService
 ): TranslateLoader {
   const ts = translationCacheService ?? inject(TranslationCacheService)
   const timerId = lastTranslateLoaderTimerId++
   console.time('createRemoteComponentTranslateLoader_' + timerId)
   return new AsyncTranslateLoader(
-    baseUrlReplaySubject.pipe(
+    baseUrlReplaySubject$.pipe(
       map((baseUrl) => {
         return new TranslateCombinedLoader(
           // translations of shell or of app in standalone mode
