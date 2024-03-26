@@ -1,3 +1,10 @@
+## [4.12.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.12.0...v4.12.1) (2024-03-26)
+
+
+### Bug Fixes
+
+* BreadcrumbModule added to AngularAccelerator primeng module ([#187](https://github.com/onecx/onecx-portal-ui-libs/issues/187)) ([c7b2cf8](https://github.com/onecx/onecx-portal-ui-libs/commit/c7b2cf806cfe8cb40827d71bb5e425c2d2c70bf4))
+
 ## [4.12.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.11.0...v4.12.0) (2024-03-21)
 
 
