@@ -17,8 +17,6 @@ jobs:
         run: npx nx run-many -t lint
       - name: Test
         run: npx nx run-many -t test --configuration=ci
-      - name: Build to see debug output (remove later)
-        run: npx nx run-many -t build --verbose
       - name: Release
         run: npx semantic-release
         env:
