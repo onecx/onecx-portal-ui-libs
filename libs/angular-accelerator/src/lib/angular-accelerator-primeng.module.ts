@@ -9,9 +9,11 @@ import { TableModule } from 'primeng/table'
 import { MenuModule } from 'primeng/menu'
 import { ChartModule } from 'primeng/chart'
 import { MultiSelectModule } from 'primeng/multiselect'
+import { BreadcrumbModule } from 'primeng/breadcrumb'
 
 @NgModule({
   imports: [
+    BreadcrumbModule,
     DropdownModule,
     ButtonModule,
     DialogModule,
@@ -24,6 +26,7 @@ import { MultiSelectModule } from 'primeng/multiselect'
     MultiSelectModule,
   ],
   exports: [
+    BreadcrumbModule,
     DropdownModule,
     ButtonModule,
     DialogModule,
