@@ -41,6 +41,7 @@ import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
 import { OcxTimeagoIntl } from './utils/ocxtimeagointl.utils'
 import { createTranslateLoader } from './utils/create-translate-loader.utils'
 import { TranslationCacheService } from './services/translation-cache.service'
+import { SrcDirective } from './directives/src.directive'
 
 export class AngularAcceleratorMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -86,6 +87,7 @@ export class AngularAcceleratorMissingTranslationHandler implements MissingTrans
     GroupByCountDiagramComponent,
     IfPermissionDirective,
     IfBreakpointDirective,
+    SrcDirective,
     OcxTimeAgoPipe,
   ],
   providers: [
@@ -131,6 +133,7 @@ export class AngularAcceleratorMissingTranslationHandler implements MissingTrans
     GroupByCountDiagramComponent,
     IfPermissionDirective,
     IfBreakpointDirective,
+    SrcDirective,
     OcxTimeAgoPipe,
     // DataListGridSortingComponent,
   ],
