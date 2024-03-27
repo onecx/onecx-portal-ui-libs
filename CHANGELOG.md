@@ -1,3 +1,17 @@
+## [4.13.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.12.1...v4.13.0) (2024-03-27)
+
+
+### Features
+
+* add src directive ocxSrc ([#189](https://github.com/onecx/onecx-portal-ui-libs/issues/189)) ([8b19070](https://github.com/onecx/onecx-portal-ui-libs/commit/8b19070dda3e8bed83bfa1e9821fdefcd2ba8c70))
+
+
+### Bug Fixes
+
+* cleanup release config ([#188](https://github.com/onecx/onecx-portal-ui-libs/issues/188)) ([56c9a86](https://github.com/onecx/onecx-portal-ui-libs/commit/56c9a866bb2e59fd03cae4a084dbe2f0150c4117))
+* update dependencies for semantic release ([#190](https://github.com/onecx/onecx-portal-ui-libs/issues/190)) ([6129eb9](https://github.com/onecx/onecx-portal-ui-libs/commit/6129eb905acf2e513747e7c5f9bf0d9a223e9df6))
+* update release.config.js ([59c1b41](https://github.com/onecx/onecx-portal-ui-libs/commit/59c1b41aaea64f3f42c6931fd083ecd38f4f6d58))
+
 ## [4.12.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.12.0...v4.12.1) (2024-03-26)
 
 
