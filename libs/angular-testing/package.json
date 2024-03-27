@@ -2,7 +2,7 @@
   "name": "@onecx/angular-testing",
   "version": "4.13.0",
   "peerDependencies": {
-    "@angular/cdk": "^15.2.7",
+    "@angular/cdk": "^15.2.7 | ^16.0.0 | ^17.0.0",
     "primeng": "^15.2.1"
   },
   "dependencies": {},
