@@ -53,7 +53,7 @@
     "@angular-eslint/template-parser": "15.0.0",
     "@angular/cli": "~15.2.0",
     "@angular/compiler-cli": "^15.2.7",
-    "@angular/language-service": "^15.2.7",
+    "@angular/language-service": "^17.3.1",
     "@nx/angular": "16.10.0",
     "@nx/esbuild": "16.10.0",
     "@nx/eslint-plugin": "16.10.0",
