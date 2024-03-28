@@ -16,7 +16,7 @@ function appInitializer(configService: ConfigurationService, authService: Keyclo
     await configService.isInitialized
     await authService.init()
   }
-} 
+}
 
 /**
  * Authentication module for keycloak. Requires @onecx/angular-integration-interfacer and keycloak-js to work.
@@ -29,6 +29,7 @@ function appInitializer(configService: ConfigurationService, authService: Keyclo
       useClass: KeycloakAuthService,
     },
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
+    { provide: APP_INITIALIZER, useFactory: appInitializer, deps: [ConfigurationService, AUTH_SERVICE], multi: true },
   ],
 })
 export class KeycloakAuthModule {
@@ -42,7 +43,12 @@ export class KeycloakAuthModule {
         },
         { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
         { provide: KEYCLOAK_AUTH_CONFIG, useValue: config },
-        { provide: APP_INITIALIZER, useFactory: appInitializer },
+        {
+          provide: APP_INITIALIZER,
+          useFactory: appInitializer,
+          deps: [ConfigurationService, AUTH_SERVICE],
+          multi: true,
+        },
       ],
     }
   }

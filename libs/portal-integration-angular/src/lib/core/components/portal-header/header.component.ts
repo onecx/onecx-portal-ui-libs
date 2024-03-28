@@ -9,10 +9,8 @@ import {
   AppStateService,
   UserService,
   ThemeService,
-  AUTH_SERVICE,
   ConfigurationService,
   CONFIG_KEY,
-  IAuthService,
 } from '@onecx/angular-integration-interface'
 
 import { UserProfile } from '../../../model/user-profile.model'

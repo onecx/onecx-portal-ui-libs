@@ -11,9 +11,7 @@ export class AppConfigService {
 
   public init(baseUrl: string): Promise<void> {
     return new Promise((resolve, reject) => {
-      let loadConfigPromise: Promise<Config>
-
-      loadConfigPromise = firstValueFrom(this.http.get<Config>(baseUrl + 'assets/env.json'))
+      const loadConfigPromise: Promise<Config> = firstValueFrom(this.http.get<Config>(baseUrl + 'assets/env.json'))
 
       loadConfigPromise
         .then(async (config) => {

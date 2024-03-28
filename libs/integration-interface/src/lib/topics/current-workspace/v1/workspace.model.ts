@@ -2,11 +2,14 @@ import { MicrofrontendRegistration } from './mfe-portal-registration.model'
 
 export interface Workspace {
   id?: string
+  /**
+   * @deprecated will be renamed to workspaceName
+   */
   portalName: string
   /**
    * @deprecated will be removed
    */
-  description?: string // deprecaten
+  description?: string
   themeId?: string
   themeName?: string
   footerLabel?: string

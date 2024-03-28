@@ -13,7 +13,8 @@
     [menuButtonTitle]="menuButtonTitle"
     (menuButtonClick)="onMenuButtonClick($event)"
   >
-  <ocx-slot name="menu" *ngIf="isHorizontalMenuVisible()">Horizontal Menu</ocx-slot>
+  <ocx-slot class="horizontal'" name="menu" *ngIf="isHorizontalMenuVisible()">Horizontal Menu</ocx-slot>
+  
   </ocx-shell-header>
 
   <p-toast></p-toast>

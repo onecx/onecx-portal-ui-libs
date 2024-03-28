@@ -89,6 +89,7 @@ export class AngularAcceleratorMissingTranslationHandler implements MissingTrans
     IfBreakpointDirective,
     SrcDirective,
     OcxTimeAgoPipe,
+    SrcDirective,
   ],
   providers: [
     {
@@ -135,6 +136,7 @@ export class AngularAcceleratorMissingTranslationHandler implements MissingTrans
     IfBreakpointDirective,
     SrcDirective,
     OcxTimeAgoPipe,
+    SrcDirective,
     // DataListGridSortingComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

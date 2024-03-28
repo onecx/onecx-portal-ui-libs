@@ -42,6 +42,7 @@ export class AppStateService implements OnDestroy {
     this.currentMfe$.destroy()
     this.currentPage$.destroy()
     this.currentPortal$.destroy()
+    this.currentWorkspace$.destroy()
     this.isAuthenticated$.destroy()
   }
 }

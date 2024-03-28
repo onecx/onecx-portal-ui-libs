@@ -1,5 +1,3 @@
-import { from } from 'rxjs'
-
 export * from './lib/topics/current-mfe/v1/current-mfe.topic'
 export * from './lib/topics/current-mfe/v1/mfe-info.model'
 export * from './lib/topics/current-page/v1/current-page.topic'

@@ -21,7 +21,7 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
   private resolveInitPromise!: (value: void | PromiseLike<void>) => void
   private eventListener = (m: MessageEvent<TopicMessage>) => this.onMessage(m)
 
-  constructor(name: string, version: number, sendGetMessage: boolean = true) {
+  constructor(name: string, version: number, sendGetMessage = true) {
     super(name, version)
     
     this.isInitializedPromise = new Promise<void>((resolve) => {
