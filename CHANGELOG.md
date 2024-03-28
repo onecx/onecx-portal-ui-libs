@@ -1,3 +1,16 @@
+## [4.13.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.13.0...v4.13.1) (2024-03-28)
+
+
+### Bug Fixes
+
+* update dependencies for semantic release ([#190](https://github.com/onecx/onecx-portal-ui-libs/issues/190)) ([6129eb9](https://github.com/onecx/onecx-portal-ui-libs/commit/6129eb905acf2e513747e7c5f9bf0d9a223e9df6))
+* update release.config.js ([59c1b41](https://github.com/onecx/onecx-portal-ui-libs/commit/59c1b41aaea64f3f42c6931fd083ecd38f4f6d58))
+
+
+### Chores
+
+* **release:** -v4.13.0 [skip ci] ([ccec05e](https://github.com/onecx/onecx-portal-ui-libs/commit/ccec05e1386c58d8d23414573fd951e83213f1d6)), closes [#189](https://github.com/onecx/onecx-portal-ui-libs/issues/189) [#188](https://github.com/onecx/onecx-portal-ui-libs/issues/188) [#190](https://github.com/onecx/onecx-portal-ui-libs/issues/190)
+
 ## [4.13.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.12.1...v4.13.0) (2024-03-27)
 
 
