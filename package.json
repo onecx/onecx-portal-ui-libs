@@ -33,7 +33,6 @@
     "keycloak-angular": "^13.0.0",
     "keycloak-js": "^18.0.0",
     "ngx-color": "^8.0.3",
-    "ngx-timeago": "^3.0.0",
     "primeflex": "^3.3.0",
     "primeicons": "^6.0.1",
     "primeng": "15.2.1",

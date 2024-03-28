@@ -9,14 +9,7 @@ import {
   TranslateLoader,
   TranslateModule,
 } from '@ngx-translate/core'
-import {
-  TimeagoClock,
-  TimeagoCustomFormatter,
-  TimeagoDefaultClock,
-  TimeagoFormatter,
-  TimeagoIntl,
-  TimeagoModule,
-} from 'ngx-timeago'
+
 
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 
@@ -38,7 +31,6 @@ import { DynamicPipe } from './pipes/dynamic.pipe'
 import { IfPermissionDirective } from './directives/if-permission.directive'
 import { IfBreakpointDirective } from './directives/if-breakpoint.directive'
 import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
-import { OcxTimeagoIntl } from './utils/ocxtimeagointl.utils'
 import { createTranslateLoader } from './utils/create-translate-loader.utils'
 import { TranslationCacheService } from './services/translation-cache.service'
 import { SrcDirective } from './directives/src.directive'
@@ -97,25 +89,6 @@ export class AngularAcceleratorMissingTranslationHandler implements MissingTrans
         return UserService.lang$.getValue()
       },
       deps: [UserService],
-    },
-    {
-      provide: TimeagoIntl,
-      useFactory: (userService: UserService) => {
-        return new OcxTimeagoIntl(userService)
-      },
-      deps: [UserService],
-    },
-    importProvidersFrom(TimeagoModule),
-    {
-      provide: TimeagoFormatter,
-      useFactory: (TimeagoIntl: TimeagoIntl) => {
-        return new TimeagoCustomFormatter(TimeagoIntl)
-      },
-      deps: [TimeagoIntl],
-    },
-    {
-      provide: TimeagoClock,
-      useClass: TimeagoDefaultClock,
     },
   ],
   exports: [
