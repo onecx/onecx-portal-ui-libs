@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common'
-import { CUSTOM_ELEMENTS_SCHEMA, LOCALE_ID, NgModule, importProvidersFrom } from '@angular/core'
+import { CUSTOM_ELEMENTS_SCHEMA, LOCALE_ID, NgModule } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
 import { HttpClient } from '@angular/common/http'
@@ -9,7 +9,6 @@ import {
   TranslateLoader,
   TranslateModule,
 } from '@ngx-translate/core'
-
 
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 

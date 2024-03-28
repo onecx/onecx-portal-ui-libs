@@ -1,10 +1,11 @@
-import { ChangeDetectorRef, NgZone, OnDestroy, Pipe } from '@angular/core'
+import { ChangeDetectorRef, NgZone, OnDestroy, Pipe, PipeTransform } from '@angular/core'
 import { TranslatePipe, TranslateService } from '@ngx-translate/core'
 
 @Pipe({
   name: 'timeago',
 })
-export class OcxTimeAgoPipe extends TranslatePipe implements OnDestroy {
+// eslint-disable-next-line @angular-eslint/use-pipe-transform-interface
+export class OcxTimeAgoPipe extends TranslatePipe implements OnDestroy, PipeTransform {
   private timer: number | undefined | null
   constructor(
     private changeDetectorRef: ChangeDetectorRef,
@@ -58,7 +59,7 @@ export class OcxTimeAgoPipe extends TranslatePipe implements OnDestroy {
     } else {
       translationKey = 'YEARS_AGO'
     }
-    return super.transform('TRANSLATEPIPE.' + translationKey, { minutes, hours, days, months, years })
+    return super.transform('OCX_TIMEAGO.' + translationKey, { minutes, hours, days, months, years })
   }
   override ngOnDestroy(): void {
     this.removeTimer()

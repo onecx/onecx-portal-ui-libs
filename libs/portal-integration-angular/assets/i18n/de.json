@@ -148,17 +148,17 @@
       "VERTICAL_BAR": "Zu vertikalem Balkendiagramm wechseln"
     }
   },
-  "TRANSLATEPIPE": {
-    "A_DAY_AGO": "a day ago",
-    "A_FEW_SECONDS_AGO": "a few seconds ago",
-    "AN_HOUR_AGO": "an hour ago",
-    "A_MINUTE_AGO": "a minute ago",
-    "A_MONTH_AGO": "a month ago",
-    "A_YEAR_AGO": "a year ago",
-    "DAYS_AGO": "{{days}} days ago",
-    "HOURS_AGO": "{{hours}} hours ago",
-    "MINUTES_AGO": "{{minutes}} minutes ago",
-    "MONTHS_AGO": "{{months}} months ago",
-    "YEARS_AGO": "{{years}} years ago"
+  "OCX_TIMEAGO": {
+    "A_DAY_AGO": "vor einem Tag",
+    "A_FEW_SECONDS_AGO": "vor ein paar Sekunden",
+    "AN_HOUR_AGO": "vor einer Stunde",
+    "A_MINUTE_AGO": "vor einer Minute",
+    "A_MONAT_AGO": "vor einem Monat",
+    "A_YEAR_AGO": "vor einem Jahr",
+    "DAYS_AGO": "vor {{days}} Tagen",
+    "HOURS_AGO": "vor {{hours}} Stunden",
+    "MINUTES_AGO": "vor {{minutes}} Minuten",
+    "MONTHS_AGO": "vor {{months}} Monaten",
+    "YEARS_AGO": "vor {{years}} Jahren"
   }
 }

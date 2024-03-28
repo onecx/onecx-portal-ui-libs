@@ -127,7 +127,7 @@
         "VERTICAL_BAR": "Switch to vertical bar chart"
       }
     },
-    "TRANSLATEPIPE": {
+    "OCX_TIMEAGO": {
       "A_DAY_AGO": "a day ago",
       "A_FEW_SECONDS_AGO": "a few seconds ago",
       "AN_HOUR_AGO": "an hour ago",
