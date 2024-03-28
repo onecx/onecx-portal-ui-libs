@@ -15,7 +15,7 @@
     "d3-scale-chromatic": "^3.0.0",
     "rxjs": "~7.8.0",
     "primeng": "^15.2.1",
-    "ngx-timeago": "^2.0.0"
+    "ngx-timeago": "^2.0.0 | ^3.0.0"
   },
   "dependencies": {},
   "exports": {

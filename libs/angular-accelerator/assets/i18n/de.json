@@ -126,5 +126,18 @@
         "HORIZONTAL_BAR": "Zu horizontalem Balkendiagramm wechseln",
         "VERTICAL_BAR": "Zu vertikalem Balkendiagramm wechseln"
       }
+    },
+    "TRANSLATEPIPE": {
+      "A_DAY_AGO": "vor einem Tag",
+      "A_FEW_SECONDS_AGO": "vor ein paar Sekunden",
+      "AN_HOUR_AGO": "vor einer Stunde",
+      "A_MINUTE_AGO": "vor einer Minute",
+      "A_MONAT_AGO": "vor einem Monat",
+      "A_YEAR_AGO": "vor einem Jahr",
+      "DAYS_AGO": "vor {{Tage}} Tagen",
+      "HOURS_AGO": "vor {{Stunden}} Stunden",
+      "MINUTES_AGO": "vor {{minutes}} Minuten",
+      "MONTHS_AGO": "vor {{months}} Monaten",
+      "YEARS_AGO": "vor {{years}} Jahren"
     }
   }
