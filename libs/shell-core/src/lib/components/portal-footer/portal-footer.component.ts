@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core'
 import { Router } from '@angular/router'
 import { AppStateService, ConfigurationService, CONFIG_KEY, ThemeService } from '@onecx/angular-integration-interface'
+import { ImageLogoUrlUtils } from '@onecx/portal-integration-angular'
 import { combineLatest, concat, map, Observable, of, withLatestFrom } from 'rxjs'
 
 @Component({
@@ -10,7 +11,7 @@ import { combineLatest, concat, map, Observable, of, withLatestFrom } from 'rxjs
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PortalFooterComponent implements OnInit {
-  logoUrl$!: Observable<string | null>
+  logoUrl$: Observable<string | null>
   copyrightMsg$: Observable<string> | undefined
   versionInfo$: Observable<string | undefined>
 
@@ -30,10 +31,10 @@ export class PortalFooterComponent implements OnInit {
         return `Portal: ${portal.portalName} v${hostVersion} ${mfInfoText}`
       })
     )
-    // this.logoUrl$ = combineLatest([
-    //   this.themeService.currentTheme$.asObservable(),
-    //   this.appState.currentWorkspace$.asObservable(),
-    // ]).pipe(map(([theme, portalData]) => ImageLogoUrlUtils.createLogoUrl(theme.logoUrl || portalData.logoUrl)))
+    this.logoUrl$ = combineLatest([
+      this.themeService.currentTheme$.asObservable(),
+      this.appState.currentWorkspace$.asObservable(),
+    ]).pipe(map(([theme, portalData]) => ImageLogoUrlUtils.createLogoUrl(theme.logoUrl || portalData.logoUrl)))
   }
 
   ngOnInit(): void {

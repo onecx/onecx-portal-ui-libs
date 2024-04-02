@@ -33,6 +33,7 @@ import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
 import { createTranslateLoader } from './utils/create-translate-loader.utils'
 import { TranslationCacheService } from './services/translation-cache.service'
 import { SrcDirective } from './directives/src.directive'
+import { AdvancedDirective } from './directives/advanced.directive'
 
 export class AngularAcceleratorMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -81,6 +82,7 @@ export class AngularAcceleratorMissingTranslationHandler implements MissingTrans
     SrcDirective,
     OcxTimeAgoPipe,
     SrcDirective,
+    AdvancedDirective
   ],
   providers: [
     {
@@ -109,6 +111,7 @@ export class AngularAcceleratorMissingTranslationHandler implements MissingTrans
     SrcDirective,
     OcxTimeAgoPipe,
     SrcDirective,
+    AdvancedDirective,
     // DataListGridSortingComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

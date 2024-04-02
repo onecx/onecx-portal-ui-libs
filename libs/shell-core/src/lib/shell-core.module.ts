@@ -6,11 +6,12 @@ import { PortalFooterComponent } from './components/portal-footer/portal-footer.
 import { RouterModule } from '@angular/router'
 import { AngularRemoteComponentsModule } from '@onecx/angular-remote-components'
 import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
+import { ToastModule } from 'primeng/toast'
 
 @NgModule({
-  imports: [CommonModule, RouterModule, AngularRemoteComponentsModule, AngularAcceleratorModule],
+  imports: [CommonModule, RouterModule, AngularRemoteComponentsModule, AngularAcceleratorModule, ToastModule],
   declarations: [PortalViewportComponent, HeaderComponent, PortalFooterComponent],
-  exports: [PortalViewportComponent, HeaderComponent, PortalFooterComponent],
+  exports: [PortalViewportComponent, HeaderComponent, PortalFooterComponent, ToastModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ShellCoreModule {}

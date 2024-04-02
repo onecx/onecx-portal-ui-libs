@@ -1,15 +1,12 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { HeaderComponent } from './header.component'
-import { AUTH_SERVICE } from '../../../api/injection-tokens'
-import { MockAuthService } from '../../../mock-auth/mock-auth.service'
-import { ConfigurationService } from '../../../services/configuration.service'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
-import { UserAvatarComponent } from '../user-avatar/user-avatar.component'
 import { ActivatedRoute, RouterModule } from '@angular/router'
-import { IfBreakpointDirective } from '../../directives/if-breakpoint.directive'
 import { TooltipModule } from 'primeng/tooltip'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { PortalCoreModule } from '../../portal-core.module'
+import { IfBreakpointDirective } from '@onecx/angular-accelerator'
+import { ConfigurationService } from '@onecx/angular-integration-interface'
+import { UserAvatarComponent, PortalCoreModule } from '@onecx/portal-integration-angular'
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent
@@ -26,7 +23,6 @@ describe('HeaderComponent', () => {
         PortalCoreModule,
       ],
       providers: [
-        { provide: AUTH_SERVICE, useClass: MockAuthService },
         ConfigurationService,
         {
           provide: ActivatedRoute,

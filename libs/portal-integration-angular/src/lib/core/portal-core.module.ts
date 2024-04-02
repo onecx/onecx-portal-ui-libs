@@ -60,7 +60,6 @@ import { SupportTicketComponent } from './components/support-ticket/support-tick
 import { HelpItemEditorComponent } from './components/help-item-editor/help-item-editor.component'
 import { NoHelpItemComponent } from './components/no-help-item/no-help-item.component'
 import { PrimeNgModule } from './primeng.module'
-import { AdvancedDirective } from './directives/advanced.directive'
 import { BasicDirective } from './directives/basic.directive'
 import { PatchFormGroupValuesDirective } from './directives/patch-form-group-values.driective'
 import { SetInputValueDirective } from './directives/set-input-value.directive'
@@ -131,7 +130,6 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     ViewTemplatePickerComponent,
     LoadingIndicatorComponent,
     LoadingIndicatorDirective,
-    AdvancedDirective,
     BasicDirective,
     PatchFormGroupValuesDirective,
     SetInputValueDirective,
@@ -188,7 +186,6 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     PrimeNgModule,
     LoadingIndicatorComponent,
     LoadingIndicatorDirective,
-    AdvancedDirective,
     BasicDirective,
     PatchFormGroupValuesDirective,
     SetInputValueDirective,

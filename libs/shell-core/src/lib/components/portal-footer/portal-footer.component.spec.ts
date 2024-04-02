@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed, getTestBed, waitForAsync } from '@angular/core/testing'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { PortalFooterComponent } from './portal-footer.component'
-import { ConfigurationService } from '../../../services/configuration.service'
-import { AppStateService } from '../../../services/app-state.service'
+import { AppStateService, ConfigurationService } from '@onecx/angular-integration-interface'
+
 
 describe('PortalFooterComponent', () => {
   const origAddEventListener = window.addEventListener

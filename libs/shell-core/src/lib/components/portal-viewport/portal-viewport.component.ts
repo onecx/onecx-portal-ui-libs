@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http'
-import { Component, HostListener, Input, Renderer2 } from '@angular/core'
+import { Component, HostListener, Renderer2 } from '@angular/core'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
-import { ThemeService, UserService } from '@onecx/angular-integration-interface'
+import { AppStateService, Message, PortalMessageService, ThemeService, UserService } from '@onecx/angular-integration-interface'
 import { MessageService, PrimeNGConfig } from 'primeng/api'
 import { filter, first, map, mergeMap, of } from 'rxjs'
 
@@ -32,13 +32,13 @@ export class PortalViewportComponent {
     private renderer: Renderer2,
     private primengConfig: PrimeNGConfig,
     private messageService: MessageService,
-    // private appStateService: AppStateService,
-    // private portalMessageService: PortalMessageService,
+    private appStateService: AppStateService,
+    private portalMessageService: PortalMessageService,
     private userService: UserService,
     private themeService: ThemeService,
     private httpClient: HttpClient
   ) {
-    // this.portalMessageService.message$.subscribe((message: Message) => this.messageService.add(message))
+    this.portalMessageService.message$.subscribe((message: Message) => this.messageService.add(message))
     this.userService.profile$.pipe(untilDestroyed(this)).subscribe((profile) => {
       this.menuMode =
         (profile?.accountSettings?.layoutAndThemeSettings?.menuMode?.toLowerCase() as
@@ -79,12 +79,12 @@ export class PortalViewportComponent {
   ngOnInit() {
     this.primengConfig.ripple = true
 
-    // this.appStateService.globalError$
-    //   .pipe(untilDestroyed(this))
-    //   .pipe(filter((i) => i !== undefined))
-    //   .subscribe((err) => {
-    //     this.globalErrMsg = err
-    //   })
+    this.appStateService.globalError$
+      .pipe(untilDestroyed(this))
+      .pipe(filter((i) => i !== undefined))
+      .subscribe((err: string | undefined) => {
+        this.globalErrMsg = err
+      })
 
     this.onResize()
   }

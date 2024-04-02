@@ -1,7 +1,9 @@
 import { animate, style, transition, trigger } from '@angular/animations'
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
+import { Component, EventEmitter, Input, Output } from '@angular/core'
 import { UntilDestroy } from '@ngneat/until-destroy'
-import { Observable } from 'rxjs'
+import { AppStateService, ThemeService } from '@onecx/angular-integration-interface'
+import { ImageLogoUrlUtils } from '@onecx/portal-integration-angular'
+import { combineLatest, map, Observable } from 'rxjs'
 
 @Component({
   selector: 'ocx-shell-header',
@@ -18,7 +20,7 @@ import { Observable } from 'rxjs'
   ],
 })
 @UntilDestroy()
-export class HeaderComponent implements OnInit {
+export class HeaderComponent {
   menuExpanded = false
   fallbackImg = false
 
@@ -34,21 +36,19 @@ export class HeaderComponent implements OnInit {
   @Output()
   menuButtonClick: EventEmitter<any> = new EventEmitter()
 
-  logoUrl$!: Observable<string | null>
+  logoUrl$: Observable<string | null>
 
-  // constructor(   private themeService: ThemeService,
-  //   private appStateService: AppStateService) {
-  //   this.logoUrl$ = combineLatest([
-  //     this.themeService.currentTheme$.asObservable(),
-  //     this.appStateService.currentPortal$.asObservable(),
-  //   ]).pipe(
-  //     map(([theme, portal]) => {
-  //       return ImageLogoUrlUtils.createLogoUrl(theme.logoUrl || portal.logoUrl)
-  //     })
-  //   )
-  // }
-
-  ngOnInit() {}
+  constructor(   private themeService: ThemeService,
+    private appStateService: AppStateService) {
+    this.logoUrl$ = combineLatest([
+      this.themeService.currentTheme$.asObservable(),
+      this.appStateService.currentPortal$.asObservable(),
+    ]).pipe(
+      map(([theme, portal]) => {
+        return ImageLogoUrlUtils.createLogoUrl(theme.logoUrl || portal.logoUrl)
+      })
+    )
+  }
 
   onMenuButtonClick(e: Event) {
     this.menuButtonClick.emit(e)

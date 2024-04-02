@@ -10,6 +10,7 @@
     "@onecx/angular-accelerator": "~4",
     "@onecx/angular-integration-interface": "~4",
     "@onecx/angular-remote-components": "~4",
+    "@onecx/portal-integration-angular": "~4",
     "@ngneat/until-destroy": "^9.2.2",
     "primeng": "^15.2.1"
   },
