@@ -1,3 +1,10 @@
+## [4.13.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.13.1...v4.13.2) (2024-04-02)
+
+
+### Bug Fixes
+
+* ocx-time-ago-pipe ([#191](https://github.com/onecx/onecx-portal-ui-libs/issues/191)) ([27efc2f](https://github.com/onecx/onecx-portal-ui-libs/commit/27efc2fdb3cfeec079e73c32521ae12b5f9c0b7b))
+
 ## [4.13.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.13.0...v4.13.1) (2024-03-28)
 
 
