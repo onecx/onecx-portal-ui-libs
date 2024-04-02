@@ -1,6 +1,6 @@
 {
   "name": "@onecx/onecx-portal-ui-libs",
-  "version": "4.12.1",
+  "version": "4.13.2",
   "license": "Apache-2.0",
   "scripts": {
     "sass": "npx sass libs/portal-integration-angular/assets/styles.scss libs/portal-integration-angular/assets/output.css",
@@ -33,7 +33,6 @@
     "keycloak-angular": "^13.0.0",
     "keycloak-js": "^18.0.0",
     "ngx-color": "^8.0.3",
-    "ngx-timeago": "^2.0.0",
     "primeflex": "^3.3.0",
     "primeicons": "^6.0.1",
     "primeng": "15.2.1",
