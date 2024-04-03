@@ -74,7 +74,6 @@ import { OcxContentContainerDirective } from './directives/content-container.dir
 import { UserProfileAPIService } from '../services/userprofile-api.service'
 import { CreateOrEditSearchConfigDialogComponent } from './components/create-or-edit-search-config-dialog/create-or-edit-search-config-dialog.component'
 import { LifecycleComponent } from './components/lifecycle/lifecycle.component'
-import { AngularStandaloneShellModule } from '@onecx/angular-standalone-shell'
 
 export class PortalMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -233,8 +232,7 @@ export class PortalCoreModule {
             UserService,
             UserProfileAPIService,
           ],
-        }) &&
-        module.providers.push(importProvidersFrom(AngularStandaloneShellModule))
+        })
     }
     return module
   }

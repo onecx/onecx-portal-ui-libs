@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common'
-import { CUSTOM_ELEMENTS_SCHEMA, LOCALE_ID, NgModule } from '@angular/core'
+import { LOCALE_ID, NgModule } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
 import { HttpClient } from '@angular/common/http'
@@ -114,6 +114,5 @@ export class AngularAcceleratorMissingTranslationHandler implements MissingTrans
     AdvancedDirective,
     // DataListGridSortingComponent,
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AngularAcceleratorModule {}

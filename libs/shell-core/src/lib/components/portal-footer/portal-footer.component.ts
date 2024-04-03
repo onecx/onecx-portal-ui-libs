@@ -3,6 +3,7 @@ import { Router } from '@angular/router'
 import { AppStateService, ConfigurationService, CONFIG_KEY, ThemeService } from '@onecx/angular-integration-interface'
 import { ImageLogoUrlUtils } from '@onecx/portal-integration-angular'
 import { combineLatest, concat, map, Observable, of, withLatestFrom } from 'rxjs'
+import { shellBffPrefix } from '../../model/constants'
 
 @Component({
   selector: 'ocx-shell-footer',
@@ -11,7 +12,7 @@ import { combineLatest, concat, map, Observable, of, withLatestFrom } from 'rxjs
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PortalFooterComponent implements OnInit {
-  logoUrl$: Observable<string | null>
+  logoUrl$: Observable<string | undefined>
   copyrightMsg$: Observable<string> | undefined
   versionInfo$: Observable<string | undefined>
 
@@ -34,7 +35,9 @@ export class PortalFooterComponent implements OnInit {
     this.logoUrl$ = combineLatest([
       this.themeService.currentTheme$.asObservable(),
       this.appState.currentWorkspace$.asObservable(),
-    ]).pipe(map(([theme, portalData]) => ImageLogoUrlUtils.createLogoUrl(theme.logoUrl || portalData.logoUrl)))
+    ]).pipe(
+      map(([theme, portalData]) => ImageLogoUrlUtils.createLogoUrl(shellBffPrefix, theme.logoUrl || portalData.logoUrl))
+    )
   }
 
   ngOnInit(): void {
@@ -58,6 +61,6 @@ export class PortalFooterComponent implements OnInit {
   }
 
   public onErrorHandleSrc(): void {
-    this.logoUrl$ = of(null)
+    this.logoUrl$ = of(undefined)
   }
 }

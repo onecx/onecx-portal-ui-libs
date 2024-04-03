@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http'
-import { Component, HostListener, Renderer2 } from '@angular/core'
+import { AfterViewInit, Component, HostListener, OnDestroy, OnInit, Renderer2 } from '@angular/core'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { AppStateService, Message, PortalMessageService, ThemeService, UserService } from '@onecx/angular-integration-interface'
 import { MessageService, PrimeNGConfig } from 'primeng/api'
@@ -11,7 +11,7 @@ import { filter, first, map, mergeMap, of } from 'rxjs'
   styleUrls: ['./portal-viewport.component.scss'],
 })
 @UntilDestroy()
-export class PortalViewportComponent {
+export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy {
   menuButtonTitle = ''
   menuActive = true
   activeTopbarItem: string | undefined

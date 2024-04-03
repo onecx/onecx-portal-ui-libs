@@ -13,7 +13,9 @@
     [menuButtonTitle]="menuButtonTitle"
     (menuButtonClick)="onMenuButtonClick($event)"
   >
-  <ocx-slot class="horizontal'" name="menu" *ngIf="isHorizontalMenuVisible()">Horizontal Menu</ocx-slot>
+  <div class="horizontal">
+    <ocx-slot name="menu" *ngIf="isHorizontalMenuVisible()">Horizontal Menu</ocx-slot>
+  </div>
   
   </ocx-shell-header>
 
@@ -40,5 +42,5 @@
 </div>
 
 <ng-template #globalError>
-  <ocx-error [errCode]="globalErrMsg"></ocx-error>
+  <ocx-shell-error [errCode]="globalErrMsg"></ocx-shell-error>
 </ng-template>

@@ -4,6 +4,7 @@ import { UntilDestroy } from '@ngneat/until-destroy'
 import { AppStateService, ThemeService } from '@onecx/angular-integration-interface'
 import { ImageLogoUrlUtils } from '@onecx/portal-integration-angular'
 import { combineLatest, map, Observable } from 'rxjs'
+import { shellBffPrefix } from '../../model/constants'
 
 @Component({
   selector: 'ocx-shell-header',
@@ -36,16 +37,15 @@ export class HeaderComponent {
   @Output()
   menuButtonClick: EventEmitter<any> = new EventEmitter()
 
-  logoUrl$: Observable<string | null>
+  logoUrl$: Observable<string | undefined>
 
-  constructor(   private themeService: ThemeService,
-    private appStateService: AppStateService) {
+  constructor(private themeService: ThemeService, private appStateService: AppStateService) {
     this.logoUrl$ = combineLatest([
       this.themeService.currentTheme$.asObservable(),
-      this.appStateService.currentPortal$.asObservable(),
+      this.appStateService.currentWorkspace$.asObservable(),
     ]).pipe(
       map(([theme, portal]) => {
-        return ImageLogoUrlUtils.createLogoUrl(theme.logoUrl || portal.logoUrl)
+        return ImageLogoUrlUtils.createLogoUrl(shellBffPrefix, theme.logoUrl || portal.logoUrl)
       })
     )
   }

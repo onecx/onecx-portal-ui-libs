@@ -3,7 +3,7 @@
     <a class="layout-topbar-logo">
       <img
         id="app-logo"
-        src="{{(logoUrl$ | async) || 'assets/images/logo.png'}}"
+        [ocxSrc]="(logoUrl$ | async) ?? ''"
         alt="Logo"
         style="max-height: 100%; max-width: 100%"
         *ngIf="(logoUrl$ | async) && !fallbackImg"

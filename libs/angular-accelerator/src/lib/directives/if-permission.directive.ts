@@ -8,10 +8,15 @@ export class IfPermissionDirective implements OnInit {
     this.permission = value
     this.negate = true
   }
-
+  
   @Input() onMissingPermission: 'hide' | 'disable' = 'hide'
-
-  @Input() permissions: string[] | undefined
+  
+  @Input() ocxIfPermissionPermissions: string[] | undefined
+  @Input() ocxIfNotPermissionPermissions: string[] | undefined
+  set ifNotPermissionPermissions(value: string[]) {
+    this.ocxIfPermissionPermissions = value
+  }
+  
   negate = false
 
   constructor(
@@ -39,8 +44,8 @@ export class IfPermissionDirective implements OnInit {
   }
 
   hasPermission(permission: string) {
-    if (this.permissions) {
-      return this.permissions.includes(permission)
+    if (this.ocxIfPermissionPermissions) {
+      return this.ocxIfPermissionPermissions.includes(permission)
     }
     return this.userService.hasPermission(permission)
   }

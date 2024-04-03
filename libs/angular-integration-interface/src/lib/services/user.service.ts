@@ -21,7 +21,6 @@ export class UserService implements OnDestroy {
       )
       .subscribe(this.lang$)
 
-      // TODO remove
     this.profile$.pipe(map((profile) => this.extractPermissions(profile))).subscribe(this.permissions$)
     this.permissionsTopic$.subscribe(this.permissions$)
   }
