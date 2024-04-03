@@ -4,7 +4,7 @@ import { UntilDestroy } from '@ngneat/until-destroy'
 import { AppStateService, ThemeService } from '@onecx/angular-integration-interface'
 import { ImageLogoUrlUtils } from '@onecx/portal-integration-angular'
 import { combineLatest, map, Observable } from 'rxjs'
-import { shellBffPrefix } from '../../model/constants'
+import { SHELL_BFF_PREFIX } from '../../model/constants'
 
 @Component({
   selector: 'ocx-shell-header',
@@ -45,7 +45,7 @@ export class HeaderComponent {
       this.appStateService.currentWorkspace$.asObservable(),
     ]).pipe(
       map(([theme, portal]) => {
-        return ImageLogoUrlUtils.createLogoUrl(shellBffPrefix, theme.logoUrl || portal.logoUrl)
+        return ImageLogoUrlUtils.createLogoUrl(SHELL_BFF_PREFIX, theme.logoUrl || portal.logoUrl)
       })
     )
   }

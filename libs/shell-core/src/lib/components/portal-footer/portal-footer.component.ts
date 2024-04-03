@@ -3,7 +3,7 @@ import { Router } from '@angular/router'
 import { AppStateService, ConfigurationService, CONFIG_KEY, ThemeService } from '@onecx/angular-integration-interface'
 import { ImageLogoUrlUtils } from '@onecx/portal-integration-angular'
 import { combineLatest, concat, map, Observable, of, withLatestFrom } from 'rxjs'
-import { shellBffPrefix } from '../../model/constants'
+import { SHELL_BFF_PREFIX } from '../../model/constants'
 
 @Component({
   selector: 'ocx-shell-footer',
@@ -36,7 +36,7 @@ export class PortalFooterComponent implements OnInit {
       this.themeService.currentTheme$.asObservable(),
       this.appState.currentWorkspace$.asObservable(),
     ]).pipe(
-      map(([theme, portalData]) => ImageLogoUrlUtils.createLogoUrl(shellBffPrefix, theme.logoUrl || portalData.logoUrl))
+      map(([theme, portalData]) => ImageLogoUrlUtils.createLogoUrl(SHELL_BFF_PREFIX, theme.logoUrl || portalData.logoUrl))
     )
   }
 

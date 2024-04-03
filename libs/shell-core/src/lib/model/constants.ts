@@ -1,1 +1,1 @@
-export const shellBffPrefix = 'shell-bff'
+export const SHELL_BFF_PREFIX = 'shell-bff'
