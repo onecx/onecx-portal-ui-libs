@@ -12,7 +12,6 @@ import { PortalApiService } from '../../services/portal-api.service'
 import { UserProfileAPIService } from '../../services/userprofile-api.service'
 
 const CONFIG_INIT_ERR = 'CONFIG_INIT_ERR'
-const AUTH_INIT_ERR = 'AUTH_INIT_ERR'
 const USER_INIT_ERR = 'USER_INIT_ERR'
 const THEME_INIT_ERR = 'THEME_INIT_ERR'
 const PORTAL_LOAD_INIT_ERR = 'PORTAL_LOAD_INIT_ERR'
