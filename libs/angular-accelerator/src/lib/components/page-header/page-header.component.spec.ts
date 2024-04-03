@@ -42,7 +42,7 @@ const mockActions: Action[] = [
   },
 ]
 
-fdescribe('PageHeaderComponent', () => {
+describe('PageHeaderComponent', () => {
   const origAddEventListener = window.addEventListener
   const origPostMessage = window.postMessage
 
@@ -115,13 +115,13 @@ fdescribe('PageHeaderComponent', () => {
 
   it('should check permissions and render buttons accordingly', async () => {
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(0)
-    expect(await pageHeaderHarness.getOverflowActionButton()).toBeNull()
+    expect(await pageHeaderHarness.getOverflowActionMenuButton()).toBeNull()
 
     component.actions = mockActions
 
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(1)
     expect(await pageHeaderHarness.getElementByTitle('My Test Action')).toBeTruthy()
-    await (await pageHeaderHarness.getOverflowActionButton())?.click()
+    await (await pageHeaderHarness.getOverflowActionMenuButton())?.click()
     expect(await pageHeaderHarness.getOverFlowMenuItems()).toHaveLength(2)
     expect(await pageHeaderHarness.getElementByTitle('More actions')).toBeTruthy()
     expect(userServiceSpy).toHaveBeenCalledTimes(3)
@@ -133,7 +133,7 @@ fdescribe('PageHeaderComponent', () => {
     userServiceSpy.mockReturnValue(false)
 
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(0)
-    expect(await pageHeaderHarness.getOverflowActionButton()).toBeNull()
+    expect(await pageHeaderHarness.getOverflowActionMenuButton()).toBeNull()
 
     component.actions = mockActions
 
@@ -216,7 +216,7 @@ fdescribe('PageHeaderComponent', () => {
   it('should show overflow actions when menu overflow button clicked', async () => {
     component.actions = mockActions
 
-    const menuOverflowButton = await pageHeaderHarness.getOverflowActionButton()
+    const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
 
     expect(menuOverflowButton).toBeTruthy()
     await menuOverflowButton?.click()
@@ -232,7 +232,7 @@ fdescribe('PageHeaderComponent', () => {
 
     component.actions = mockActions
 
-    const menuOverflowButton = await pageHeaderHarness.getOverflowActionButton()
+    const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
 
     expect(menuOverflowButton).toBeTruthy()
     await menuOverflowButton?.click()
@@ -250,7 +250,7 @@ fdescribe('PageHeaderComponent', () => {
 
     component.actions = mockActions
 
-    const menuOverflowButton = await pageHeaderHarness.getOverflowActionButton()
+    const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
     expect(menuOverflowButton).toBeTruthy()
     await menuOverflowButton?.click()
 

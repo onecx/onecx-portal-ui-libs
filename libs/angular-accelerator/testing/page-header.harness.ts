@@ -44,7 +44,7 @@ export class PageHeaderHarness extends ComponentHarness {
     return await this.locatorForOptional(PButtonHarness.with({ icon: buttonIcon }))()
   }
 
-  async getOverflowActionButton() {
+  async getOverflowActionMenuButton() {
     return await this.locatorForOptional('[name="ocx-page-header-overflow-action-button"]')()
   }
 
