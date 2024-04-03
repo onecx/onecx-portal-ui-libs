@@ -46,14 +46,9 @@ export function standaloneInitializer(
         throw e
       }
       console.log(`📑 config OK? ${configOk}`)
-      let authOk = false
-      try {
-        await appStateService.isAuthenticated$.isInitialized.then(() => (authOk = true))
-      } catch (e) {
-        errCause = AUTH_INIT_ERR
-        throw e
-      }
-      console.log(`📑 auth OK? ${authOk}`)
+
+      await appStateService.isAuthenticated$.isInitialized
+
       try {
         const profile = await firstValueFrom(userProfileAPIService.getCurrentUser())
         await userService.profile$.publish(profile)
