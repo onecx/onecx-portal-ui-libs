@@ -1,5 +1,11 @@
-import { ComponentHarness } from '@angular/cdk/testing'
-import { ListItemHarness, MenuItemHarness, PBreadcrumbHarness, PMenuHarness } from '@onecx/angular-testing'
+import { BaseHarnessFilters, ComponentHarness, HarnessPredicate } from '@angular/cdk/testing'
+import {
+  ListItemHarness,
+  MenuItemHarness,
+  PBreadcrumbHarness,
+  PButtonHarness,
+  PMenuHarness,
+} from '@onecx/angular-testing'
 
 export class PageHeaderHarness extends ComponentHarness {
   static hostSelector = 'ocx-page-header'
@@ -7,10 +13,6 @@ export class PageHeaderHarness extends ComponentHarness {
   getPageHeaderWrapperHarness = this.locatorForAll('[name="ocx-page-header-wrapper"]')
   getBreadcrumb = this.locatorFor(PBreadcrumbHarness)
   getMenu = this.locatorFor(PMenuHarness)
-
-  async getInlineActionButtons() {
-    return await this.locatorForAll('[name="ocx-page-header-inline-action-button"]')()
-  }
 
   async getOverflowActionButton() {
     return await this.locatorFor('[name="ocx-page-header-overflow-action-button"]')()
@@ -21,19 +23,29 @@ export class PageHeaderHarness extends ComponentHarness {
   }
 
   async getObjectInfos() {
-    return await this.locatorForAll('.object-info')()
+    return await this.locatorForAll(ObjectDetailItemHarness)()
   }
 
-  async getObjectDetailLabels() {
-    return await this.locatorForAll('[name="object-detail-label"]')()
+  async getObjectInfoByLabel(objectInfolabel: string) {
+    return await this.locatorForOptional(ObjectDetailItemHarness.with({ label: objectInfolabel }))()
   }
 
-  async getObjectDetailValues() {
-    return await this.locatorForAll('[name="object-detail-value"]')()
+  async getInlineActionButtons() {
+    const inlineActionButtons = await this.locatorForAll(
+      PButtonHarness.with({ name: 'ocx-page-header-inline-action-button' })
+    )()
+    const inlineActionIconButtons = await this.locatorForAll(
+      PButtonHarness.with({ name: 'ocx-page-header-inline-action-icon-button' })
+    )()
+    return inlineActionButtons.concat(inlineActionIconButtons)
   }
 
-  async getObjectDetailIcons() {
-    return await this.locatorForAll('[name="object-detail-icon"]')()
+  async getInlineActionButtonByLabel(buttonLabel: string) {
+    return await this.locatorForOptional(PButtonHarness.with({ label: buttonLabel }))()
+  }
+
+  async getInlineActionButtonByIcon(buttonIcon: string) {
+    return await this.locatorForOptional(PButtonHarness.with({ icon: buttonIcon }))()
   }
 
   async getOverFlowMenuItems() {
@@ -58,5 +70,35 @@ export class PageHeaderHarness extends ComponentHarness {
 
   async getSubheaderText(): Promise<string | undefined> {
     return await (await this.locatorForOptional('#page-subheader')())?.text()
+  }
+}
+
+interface ObjectDetailItemHarnessFilters extends BaseHarnessFilters {
+  label?: string
+}
+
+class ObjectDetailItemHarness extends ComponentHarness {
+  static hostSelector = '.object-info'
+
+  static with(options: ObjectDetailItemHarnessFilters): HarnessPredicate<ObjectDetailItemHarness> {
+    return new HarnessPredicate(ObjectDetailItemHarness, options).addOption('label', options.label, (harness, label) =>
+      HarnessPredicate.stringMatches(harness.getLabel(), label)
+    )
+  }
+
+  getLabelElement = this.locatorFor('[name="object-detail-label"]')
+  getValueElement = this.locatorForOptional('[name="object-detail-value"]')
+  getIconElement = this.locatorForOptional('[name="object-detail-icon"]')
+
+  async getLabel() {
+    return (await this.getLabelElement()).text()
+  }
+
+  async getValue() {
+    return (await this.getValueElement())?.text()
+  }
+
+  async getIcon() {
+    return (await this.getIconElement())?.getAttribute('class')
   }
 }
