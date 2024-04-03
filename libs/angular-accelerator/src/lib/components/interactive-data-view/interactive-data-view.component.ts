@@ -41,6 +41,7 @@ export class InteractiveDataViewComponent implements OnInit {
   @Input() supportedViewLayouts: ('grid' | 'list' | 'table')[] = ['grid', 'list', 'table']
   @Input() columns: DataTableColumn[] = []
   @Input() emptyResultsMessage: string | undefined
+  @Input() clientSideSorting = true
   @Input() clientSideFiltering = true
   @Input() fallbackImage = 'placeholder.png'
   @Input() filters: Filter[] = []
