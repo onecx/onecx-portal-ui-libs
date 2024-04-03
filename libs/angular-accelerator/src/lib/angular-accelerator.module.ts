@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common'
-import { CUSTOM_ELEMENTS_SCHEMA, LOCALE_ID, NgModule } from '@angular/core'
+import { LOCALE_ID, NgModule } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
 import { HttpClient } from '@angular/common/http'
@@ -33,6 +33,7 @@ import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
 import { createTranslateLoader } from './utils/create-translate-loader.utils'
 import { TranslationCacheService } from './services/translation-cache.service'
 import { SrcDirective } from './directives/src.directive'
+import { AdvancedDirective } from './directives/advanced.directive'
 
 export class AngularAcceleratorMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -80,6 +81,8 @@ export class AngularAcceleratorMissingTranslationHandler implements MissingTrans
     IfBreakpointDirective,
     SrcDirective,
     OcxTimeAgoPipe,
+    SrcDirective,
+    AdvancedDirective
   ],
   providers: [
     {
@@ -107,8 +110,9 @@ export class AngularAcceleratorMissingTranslationHandler implements MissingTrans
     IfBreakpointDirective,
     SrcDirective,
     OcxTimeAgoPipe,
+    SrcDirective,
+    AdvancedDirective,
     // DataListGridSortingComponent,
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AngularAcceleratorModule {}

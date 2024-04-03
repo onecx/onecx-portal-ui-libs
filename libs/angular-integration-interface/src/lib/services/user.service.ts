@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core'
 import { BehaviorSubject, map } from 'rxjs'
-import { UserProfile, UserProfileTopic } from '@onecx/integration-interface'
+import { PermissionsTopic, UserProfile, UserProfileTopic } from '@onecx/integration-interface'
 import { DEFAULT_LANG } from '../api/constants'
 
 @Injectable({ providedIn: 'root' })
@@ -8,6 +8,8 @@ export class UserService implements OnDestroy {
   profile$ = new UserProfileTopic()
   permissions$ = new BehaviorSubject<string[]>([])
   lang$ = new BehaviorSubject(this.determineLanguage() ?? DEFAULT_LANG)
+
+  private permissionsTopic$ = new PermissionsTopic()
 
   constructor() {
     this.profile$
@@ -20,6 +22,7 @@ export class UserService implements OnDestroy {
       .subscribe(this.lang$)
 
     this.profile$.pipe(map((profile) => this.extractPermissions(profile))).subscribe(this.permissions$)
+    this.permissionsTopic$.subscribe(this.permissions$)
   }
 
   ngOnDestroy(): void {

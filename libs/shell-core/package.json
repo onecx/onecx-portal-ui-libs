@@ -1,0 +1,21 @@
+{
+  "name": "@onecx/shell-core",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "rxjs": "7.8.1",
+    "@angular/animations": "^15.2.7",
+    "@angular/common": "^15.2.7",
+    "@angular/core": "^15.2.7",
+    "@angular/router": "^15.2.7",
+    "@onecx/angular-accelerator": "~4",
+    "@onecx/angular-integration-interface": "~4",
+    "@onecx/angular-remote-components": "~4",
+    "@onecx/portal-integration-angular": "~4",
+    "@ngneat/until-destroy": "^9.2.2",
+    "primeng": "^15.2.1"
+  },
+  "dependencies": {},
+  "type": "commonjs",
+  "main": "./src/index.js",
+  "typings": "./src/index.d.ts"
+}

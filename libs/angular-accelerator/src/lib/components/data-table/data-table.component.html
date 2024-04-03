@@ -135,7 +135,7 @@
                 appendTo="body"
                 (onClick)="onFilterClick(column)"
                 [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
-                aria-label="{{('OCX_DATA_TABLE.FILTER_ARIA_LABEL' | translate: { column: column.nameKey | translate})}}"
+                [attr.aria-label]="('OCX_DATA_TABLE.FILTER_ARIA_LABEL' | translate: { column: column.nameKey | translate})"
               >
                 <ng-template pTemplate="selectedItems" let-value>
                   <div
