@@ -2,6 +2,7 @@
 export * from './lib/directives/if-permission.directive'
 export * from './lib/directives/if-breakpoint.directive'
 export * from './lib/directives/src.directive'
+export * from './lib/directives/advanced.directive'
 
 // components
 export * from './lib/components/column-group-selection/column-group-selection.component'
@@ -21,6 +22,7 @@ export * from './lib/components/search-header/search-header.component'
 // services
 export * from './lib/services/breadcrumb.service'
 export * from './lib/services/translation-cache.service'
+export * from './lib/services/app-config-service'
 
 // pipes
 export * from './lib/pipes/dynamic.pipe'
@@ -54,3 +56,4 @@ export * from './lib/utils/dateutils'
 export * from './lib/utils/objectutils'
 export * from './lib/utils/primeicon.utils'
 export * from './lib/utils/translate.combined.loader'
+export * from './lib/utils/create-remote-component-translate-loader.utils'

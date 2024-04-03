@@ -14,7 +14,7 @@ import { ImageLogoUrlUtils } from '../../utils/image-logo-url.utils'
 })
 export class PortalFooterComponent implements OnInit {
   copyrightMsg$: Observable<string> | undefined
-  logoUrl$!: Observable<string | null>
+  logoUrl$: Observable<string | undefined>
   currentYear = new Date().getFullYear()
   portalMenuItems: MenuItem[] = []
   versionInfo$: Observable<string | undefined>
@@ -41,7 +41,7 @@ export class PortalFooterComponent implements OnInit {
     this.logoUrl$ = combineLatest([
       this.themeService.currentTheme$.asObservable(),
       this.appState.currentPortal$.asObservable(),
-    ]).pipe(map(([theme, portalData]) => ImageLogoUrlUtils.createLogoUrl(theme.logoUrl || portalData.logoUrl)))
+    ]).pipe(map(([theme, portalData]) => ImageLogoUrlUtils.createLogoUrl(API_PREFIX, theme.logoUrl || portalData.logoUrl)))
   }
   ngOnInit(): void {
     this.copyrightMsg$ = concat(
@@ -69,7 +69,7 @@ export class PortalFooterComponent implements OnInit {
       )
   }
   public onErrorHandleSrc(): void {
-    this.logoUrl$ = of(null)
+    this.logoUrl$ = of(undefined)
   }
   private createMenu(menuItem: MenuItem): void {
     if (menuItem && menuItem.items) {

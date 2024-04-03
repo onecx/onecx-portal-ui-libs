@@ -6,5 +6,7 @@ export interface MfeInfo {
     baseHref: string
     shellName: string
     displayName?: string
+    appId: string
+    productName: string
   }
   

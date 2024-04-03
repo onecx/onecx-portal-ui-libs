@@ -1,11 +1,12 @@
 import { animate, state, style, transition, trigger } from '@angular/animations'
-import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core'
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { map, Observable } from 'rxjs'
 import { MenuItem } from 'primeng/api'
-import { UserService, AUTH_SERVICE, IAuthService } from '@onecx/angular-integration-interface'
+import { UserService } from '@onecx/angular-integration-interface'
 import { MenuService } from '../../../services/app.menu.service'
 import { UserProfile } from '../../../model/user-profile.model'
+import { EventsPublisher } from '@onecx/integration-interface'
 
 @Component({
   selector: 'ocx-inline-profile',
@@ -69,9 +70,9 @@ export class AppInlineProfileComponent implements OnInit {
   inlineMenuClick: EventEmitter<UIEvent> = new EventEmitter()
 
   displayName$: Observable<string> | undefined
+  eventsPublisher$: EventsPublisher = new EventsPublisher()
 
   constructor(
-    @Inject(AUTH_SERVICE) private authService: IAuthService,
     private menuService: MenuService,
     private userService: UserService
   ) {}
@@ -118,6 +119,6 @@ export class AppInlineProfileComponent implements OnInit {
 
   logout(event: Event) {
     event.preventDefault()
-    this.authService.logout()
+    this.eventsPublisher$.publish({ type: 'authentication#logoutButtonClicked' })
   }
 }

@@ -1,3 +1,6 @@
+/**
+ * @deprecated
+ */
 export interface IAuthService {
   logout(): void
 

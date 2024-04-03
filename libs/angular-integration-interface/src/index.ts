@@ -4,6 +4,7 @@ export * from './lib/services/configuration.service'
 export * from './lib/services/user.service'
 export * from './lib/services/portal-message.service'
 export * from './lib/services/theme.service'
+export * from './lib/services/remote-components.service'
 
 // models
 export * from './lib/model/config-key.model'

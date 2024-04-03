@@ -57,6 +57,7 @@ export class DataViewComponent implements DoCheck, OnInit {
   @Input() layout: any = ['grid', 'list', 'table']
   @Input() columns: DataTableColumn[] = []
   @Input() emptyResultsMessage: string | undefined
+  @Input() clientSideSorting = true
   @Input() clientSideFiltering = true
   @Input() fallbackImage = 'placeholder.png'
   @Input() filters: Filter[] = []

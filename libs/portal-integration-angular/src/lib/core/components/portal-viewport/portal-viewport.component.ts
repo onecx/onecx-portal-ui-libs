@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, HostListener, Input, OnDestroy, OnInit, Renderer2 } from '@angular/core'
-import { HttpResponse } from '@angular/common/http'
+import { HttpClient, HttpResponse } from '@angular/common/http'
 import { NavigationEnd, Router } from '@angular/router'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { catchError, combineLatest, filter, first, map, mergeMap, Observable, of, withLatestFrom } from 'rxjs'
@@ -67,7 +67,8 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
     private helpDataService: HelpPageAPIService,
     private dialogService: DialogService,
     private userService: UserService,
-    private portalMessageService: PortalMessageService
+    private portalMessageService: PortalMessageService,
+    private httpClient: HttpClient
   ) {
     this.portalMessageService.message$.subscribe((message) => this.messageService.add(message))
     this.hideMenuButtonTitle = this.portalUIConfig.getTranslation('hideMenuButton')
@@ -80,9 +81,29 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
       }))
     )
 
-    this.themeService.currentTheme$.pipe(untilDestroyed(this)).subscribe((theme) => {
-      document.getElementById('favicon')?.setAttribute('href', theme.faviconUrl || '')
-    })
+    this.themeService.currentTheme$
+      .pipe(
+        first(),
+        mergeMap((theme) => {
+          return theme.faviconUrl
+            ? this.httpClient
+                .get(theme.faviconUrl, { responseType: 'blob' })
+                .pipe(map((blob) => URL.createObjectURL(blob)))
+            : of('')
+        })
+      )
+      .subscribe((url) => {
+        let link = document.querySelector("link[rel~='icon']") as any
+        if (!link) {
+          link = document.createElement('link')
+          link.rel = 'icon'
+          document.head.appendChild(link)
+        }
+        link.onload = () => {
+          URL.revokeObjectURL(url)
+        }
+        link.href = url
+      })
 
     this.pageName$ = this.appStateService.currentPage$.pipe(map((page) => page?.pageName ?? ''))
     this.helpArticleId$ = combineLatest([

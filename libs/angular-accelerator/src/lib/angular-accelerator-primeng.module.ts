@@ -10,6 +10,8 @@ import { MenuModule } from 'primeng/menu'
 import { ChartModule } from 'primeng/chart'
 import { MultiSelectModule } from 'primeng/multiselect'
 import { BreadcrumbModule } from 'primeng/breadcrumb'
+import { SkeletonModule } from 'primeng/skeleton';
+import { MessageModule } from 'primeng/message';
 
 @NgModule({
   imports: [
@@ -24,6 +26,8 @@ import { BreadcrumbModule } from 'primeng/breadcrumb'
     MenuModule,
     ChartModule,
     MultiSelectModule,
+    SkeletonModule,
+    MessageModule
   ],
   exports: [
     BreadcrumbModule,
@@ -37,6 +41,8 @@ import { BreadcrumbModule } from 'primeng/breadcrumb'
     MenuModule,
     ChartModule,
     MultiSelectModule,
+    SkeletonModule,
+    MessageModule
   ],
 })
 export class AngularAcceleratorPrimeNgModule {}

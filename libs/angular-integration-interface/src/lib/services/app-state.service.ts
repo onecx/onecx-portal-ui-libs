@@ -4,7 +4,7 @@ import {
   GlobalLoadingTopic,
   CurrentMfeTopic,
   CurrentPageTopic,
-  CurrentPortalTopic,
+  CurrentWorkspaceTopic,
   IsAuthenticatedTopic,
 } from '@onecx/integration-interface'
 
@@ -19,7 +19,17 @@ export class AppStateService implements OnDestroy {
    * if not it will fire undefined.
    */
   currentPage$ = new CurrentPageTopic()
-  currentPortal$ = new CurrentPortalTopic()
+  currentWorkspace$ = new CurrentWorkspaceTopic()
+  
+  /**
+   * @deprecated Will be replaced by currentWorkspace$
+   */
+  get currentPortal$() {
+    return this.currentWorkspace$
+  }
+  set currentPortal$(value: CurrentWorkspaceTopic) {
+    this.currentWorkspace$ = value
+  }
 
   /**
    * This Topic is initialized as soon as the authentication is done
@@ -32,6 +42,7 @@ export class AppStateService implements OnDestroy {
     this.currentMfe$.destroy()
     this.currentPage$.destroy()
     this.currentPortal$.destroy()
+    this.currentWorkspace$.destroy()
     this.isAuthenticated$.destroy()
   }
 }

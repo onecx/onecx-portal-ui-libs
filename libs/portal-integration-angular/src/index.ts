@@ -1,6 +1,5 @@
 // directives
 export * from './lib/core/directives/autofocus.directive'
-export * from './lib/core/directives/advanced.directive'
 export * from './lib/core/directives/basic.directive'
 export * from './lib/core/directives/patch-form-group-values.driective'
 export * from './lib/core/directives/set-input-value.directive'
