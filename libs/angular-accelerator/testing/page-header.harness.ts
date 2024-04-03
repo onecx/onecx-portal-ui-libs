@@ -11,12 +11,8 @@ export class PageHeaderHarness extends ComponentHarness {
   static hostSelector = 'ocx-page-header'
 
   getPageHeaderWrapperHarness = this.locatorForAll('[name="ocx-page-header-wrapper"]')
-  getBreadcrumb = this.locatorFor(PBreadcrumbHarness)
-  getMenu = this.locatorFor(PMenuHarness)
-
-  async getOverflowActionButton() {
-    return await this.locatorFor('[name="ocx-page-header-overflow-action-button"]')()
-  }
+  getBreadcrumb = this.locatorForOptional(PBreadcrumbHarness)
+  getMenu = this.locatorForOptional(PMenuHarness)
 
   async getElementByTitle(title: string) {
     return await this.locatorForOptional(`[title="${title}"]`)()
@@ -48,20 +44,24 @@ export class PageHeaderHarness extends ComponentHarness {
     return await this.locatorForOptional(PButtonHarness.with({ icon: buttonIcon }))()
   }
 
+  async getOverflowActionButton() {
+    return await this.locatorForOptional('[name="ocx-page-header-overflow-action-button"]')()
+  }
+
   async getOverFlowMenuItems() {
     const menu = await this.getMenu()
-    const menuItems = await menu.getAllMenuItems()
+    const menuItems = await menu?.getAllMenuItems()
     return menuItems ?? []
   }
 
   async getOverFlowMenuItem(itemText: string): Promise<MenuItemHarness | undefined | null> {
     const menu = await this.getMenu()
-    return await menu.getMenuItem(itemText)
+    return await menu?.getMenuItem(itemText)
   }
 
   async getBreadcrumbItem(itemText: string): Promise<ListItemHarness | undefined | null> {
     const breadcrumb = await this.getBreadcrumb()
-    return await breadcrumb.getBreadcrumbItem(itemText)
+    return await breadcrumb?.getBreadcrumbItem(itemText)
   }
 
   async getHeaderText(): Promise<string | undefined> {
