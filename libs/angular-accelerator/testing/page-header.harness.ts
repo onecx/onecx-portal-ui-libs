@@ -80,15 +80,15 @@ interface ObjectDetailItemHarnessFilters extends BaseHarnessFilters {
 class ObjectDetailItemHarness extends ComponentHarness {
   static hostSelector = '.object-info'
 
+  getLabelElement = this.locatorFor('[name="object-detail-label"]')
+  getValueElement = this.locatorForOptional('[name="object-detail-value"]')
+  getIconElement = this.locatorForOptional('[name="object-detail-icon"]')
+
   static with(options: ObjectDetailItemHarnessFilters): HarnessPredicate<ObjectDetailItemHarness> {
     return new HarnessPredicate(ObjectDetailItemHarness, options).addOption('label', options.label, (harness, label) =>
       HarnessPredicate.stringMatches(harness.getLabel(), label)
     )
   }
-
-  getLabelElement = this.locatorFor('[name="object-detail-label"]')
-  getValueElement = this.locatorForOptional('[name="object-detail-value"]')
-  getIconElement = this.locatorForOptional('[name="object-detail-icon"]')
 
   async getLabel() {
     return (await this.getLabelElement()).text()
