@@ -12,8 +12,8 @@ export class IfPermissionDirective implements OnInit {
   @Input() onMissingPermission: 'hide' | 'disable' = 'hide'
   
   @Input() ocxIfPermissionPermissions: string[] | undefined
-  @Input() ocxIfNotPermissionPermissions: string[] | undefined
-  set ifNotPermissionPermissions(value: string[]) {
+  @Input() 
+  set ocxIfNotPermissionPermissions(value: string[] | undefined) {
     this.ocxIfPermissionPermissions = value
   }
   
