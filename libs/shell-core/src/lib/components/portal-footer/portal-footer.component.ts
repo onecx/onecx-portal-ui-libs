@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core'
+import { Component, OnInit } from '@angular/core'
 import { Router } from '@angular/router'
 import { AppStateService, ConfigurationService, CONFIG_KEY, ThemeService } from '@onecx/angular-integration-interface'
 import { ImageLogoUrlUtils } from '@onecx/portal-integration-angular'
@@ -9,7 +9,6 @@ import { SHELL_BFF_PREFIX } from '../../model/constants'
   selector: 'ocx-shell-footer',
   templateUrl: './portal-footer.component.html',
   styleUrls: ['./portal-footer.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PortalFooterComponent implements OnInit {
   logoUrl$: Observable<string | undefined>
