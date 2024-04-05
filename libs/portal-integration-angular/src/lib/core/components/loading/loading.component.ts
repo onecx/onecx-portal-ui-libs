@@ -1,7 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core'
+import { Component } from '@angular/core'
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'ocx-loading',
   template: `
     <div class="loading-panel p-2">

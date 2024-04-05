@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core'
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core'
 import { Router } from '@angular/router'
 import { combineLatest, concat, map, Observable, of, withLatestFrom } from 'rxjs'
 import { MenuItem } from 'primeng/api'
@@ -10,7 +10,6 @@ import { ImageLogoUrlUtils } from '../../utils/image-logo-url.utils'
   selector: 'ocx-footer',
   templateUrl: './portal-footer.component.html',
   styleUrls: ['./portal-footer.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PortalFooterComponent implements OnInit {
   copyrightMsg$: Observable<string> | undefined
