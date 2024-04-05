@@ -10,7 +10,6 @@ import { ImageLogoUrlUtils } from '../../utils/image-logo-url.utils'
   selector: 'ocx-footer',
   templateUrl: './portal-footer.component.html',
   styleUrls: ['./portal-footer.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PortalFooterComponent implements OnInit {
   copyrightMsg$: Observable<string> | undefined

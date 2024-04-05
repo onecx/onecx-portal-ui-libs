@@ -9,7 +9,6 @@ import { SHELL_BFF_PREFIX } from '../../model/constants'
   selector: 'ocx-shell-footer',
   templateUrl: './portal-footer.component.html',
   styleUrls: ['./portal-footer.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PortalFooterComponent implements OnInit {
   logoUrl$: Observable<string | undefined>
