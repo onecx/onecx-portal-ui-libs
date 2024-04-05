@@ -13,9 +13,7 @@
     [menuButtonTitle]="menuButtonTitle"
     (menuButtonClick)="onMenuButtonClick($event)"
   >
-  <div class="horizontal">
-    <ocx-slot name="menu" *ngIf="isHorizontalMenuVisible()">Horizontal Menu</ocx-slot>
-  </div>
+  <ocx-slot name="horizontalMenu" *ngIf="isHorizontalMenuVisible()"></ocx-slot>
   
   </ocx-shell-header>
 
@@ -23,13 +21,13 @@
 
   <div class="menu-wrapper">
     <div class="layout-menu-container" *ngIf="isStaticalMenuVisible()">
-        <ocx-slot name="menu">Vertical Menu</ocx-slot>
+        <ocx-slot name="menu"></ocx-slot>
     </div>
   </div>
   
   <div class="layout-main">
     <div class="layout-content relative">
-      <ocx-slot name="AnnouncementBanner">Announcement Banner</ocx-slot>
+      <ocx-slot name="subHeader"></ocx-slot>
       
       <ng-content></ng-content>
       <router-outlet></router-outlet>

@@ -11,18 +11,27 @@ export class SrcDirective {
   }
   set ocxSrc(value: string | undefined) {
     if (value && this._src !== value) {
-      this.httpClient.get(value, { responseType: 'blob' }).subscribe({
-        next: (blob) => {
-          const url = URL.createObjectURL(blob)
-          this.el.nativeElement.onload = () => {
-            URL.revokeObjectURL(url)
-          }
-          this.el.nativeElement.src = url
-        },
-        error: () => {
-          this.el.nativeElement.src = 'error'
-        },
-      })
+      try {
+        if (new URL(value, window.location.origin).origin === window.location.origin) {
+          this.httpClient.get(value, { responseType: 'blob' }).subscribe({
+            next: (blob) => {
+              const url = URL.createObjectURL(blob)
+              this.el.nativeElement.onload = () => {
+                URL.revokeObjectURL(url)
+              }
+              this.el.nativeElement.src = url
+            },
+            error: () => {
+              this.el.nativeElement.src = 'error'
+            },
+          })
+        } else {
+          this.el.nativeElement.src = value
+        }
+      } catch (error) {
+        console.log('Cannot parse URL ', value, error)
+        this.el.nativeElement.src = value
+      }
       this._src = value
     }
   }

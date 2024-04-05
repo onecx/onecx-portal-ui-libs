@@ -1,3 +1,4 @@
+import { Location } from '@angular/common'
 import { HttpClient } from '@angular/common/http'
 import { Injectable } from '@angular/core'
 import { Config } from '@onecx/integration-interface'
@@ -11,7 +12,9 @@ export class AppConfigService {
 
   public init(baseUrl: string): Promise<void> {
     return new Promise((resolve, reject) => {
-      const loadConfigPromise: Promise<Config> = firstValueFrom(this.http.get<Config>(baseUrl + 'assets/env.json'))
+      const loadConfigPromise: Promise<Config> = firstValueFrom(
+        this.http.get<Config>(Location.joinWithSlash(baseUrl, 'assets/env.json'))
+      )
 
       loadConfigPromise
         .then(async (config) => {
