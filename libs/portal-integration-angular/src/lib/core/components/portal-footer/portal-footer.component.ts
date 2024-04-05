@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core'
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core'
 import { Router } from '@angular/router'
 import { combineLatest, concat, map, Observable, of, withLatestFrom } from 'rxjs'
 import { MenuItem } from 'primeng/api'

@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core'
-import { BehaviorSubject, first, map, Observable, of } from 'rxjs'
+import { BehaviorSubject, first, map, Observable } from 'rxjs'
 
 import { API_PREFIX } from '../../../api/constants'
 import { UserProfile } from '../../../model/user-profile.model'
@@ -14,9 +14,7 @@ export class UserAvatarComponent {
     value?.pipe(first()).subscribe((user) => (this.user = user))
   }
   @Input() set user(value: UserProfile | undefined) {
-    let newPath = value?.avatar?.smallImageUrl ?? this.placeHolderPath
-
-    this.imagePath$.next(newPath)
+    this.imagePath$.next(value?.avatar?.smallImageUrl ?? this.placeHolderPath)
   }
 
   public placeHolderPath = 'onecx-portal-lib/assets/images/default_avatar.png'
