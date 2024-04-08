@@ -29,7 +29,9 @@ export class SlotComponent implements OnInit, OnDestroy {
 
   subscription: Subscription | undefined
   components$:
-    | Observable<{ componentType: Type<unknown>; remoteComponent: RemoteComponentInfo; permissions: string[] }[]>
+    | Observable<
+        { componentType: Type<unknown> | undefined; remoteComponent: RemoteComponentInfo; permissions: string[] }[]
+      >
     | undefined
 
   constructor(@Inject(SLOT_SERVICE) private slotService: SlotService) {}
@@ -40,16 +42,18 @@ export class SlotComponent implements OnInit, OnDestroy {
       ([viewContainers, components]) => {
         if (viewContainers && viewContainers.length === components.length) {
           components.forEach((componentInfo, i) => {
-            const componentRef = viewContainers.get(i)?.createComponent<any>(componentInfo.componentType)
-            if (componentRef && 'ocxInitRemoteComponent' in componentRef.instance) {
-              ;(componentRef.instance as ocxRemoteComponent).ocxInitRemoteComponent({
-                appId: componentInfo.remoteComponent.appId,
-                productName: componentInfo.remoteComponent.productName,
-                baseUrl: componentInfo.remoteComponent.baseUrl,
-                permissions: componentInfo.permissions,
-              })
+            if (componentInfo.componentType) {
+              const componentRef = viewContainers.get(i)?.createComponent<any>(componentInfo.componentType)
+              if (componentRef && 'ocxInitRemoteComponent' in componentRef.instance) {
+                ;(componentRef.instance as ocxRemoteComponent).ocxInitRemoteComponent({
+                  appId: componentInfo.remoteComponent.appId,
+                  productName: componentInfo.remoteComponent.productName,
+                  baseUrl: componentInfo.remoteComponent.baseUrl,
+                  permissions: componentInfo.permissions,
+                })
+              }
+              componentRef?.changeDetectorRef.detectChanges()
             }
-            componentRef?.changeDetectorRef.detectChanges()
           })
         }
       }

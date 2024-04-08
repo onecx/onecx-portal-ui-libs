@@ -9,5 +9,7 @@ export interface SlotService {
   init(): Promise<void>
   getComponentsForSlot(
     slotName: string
-  ): Observable<{ componentType: Type<unknown>; remoteComponent: RemoteComponentInfo; permissions: string[] }[]>
+  ): Observable<
+    { componentType: Type<unknown> | undefined; remoteComponent: RemoteComponentInfo; permissions: string[] }[]
+  >
 }
