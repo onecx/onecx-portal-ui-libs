@@ -16,12 +16,13 @@ while IFS= read -r folder; do
 done < <(find "$directory" -mindepth 1 -maxdepth 1 -type d | awk -F "/" '{print $NF}' | sort | uniq)
 
 for folder in "${folder_names[@]}"; do
-    packageJsonDataLib=$(cat libs/integration-interface/package.json)
+    packageJsonDataLib=$(cat libs/angular-accelerator/package.json)
     libPackageVersion=$(echo "$packageJsonDataLib" | jq -r '.version')
     peerDependencies=$(echo "$packageJsonDataLib" | jq -r '.peerDependencies')
     ocx_properties=$(echo "$packageJsonDataLib" | jq -r '."@onecx/accelerator"')
-    packageJsonDataLib= $(echo $packageJsonDataLib | sed -E 's/(@onecx.?+:.?*")([^"]+)"/\1^'{$libPackageVersion}'"/')
-    
+    packageJsonDataLib=$(echo "$packageJsonDataLib" | sed -E 's/(@onecx[^"]+?": *?")([^"]+)"/\1^'$libPackageVersion'"/')
+    echo "$packageJsonDataLib" > libs/angular-accelerator/package.json
+    # 
     if [ $libPackageVersion != $VERSION ]
 then
     echo Version is not up to date
