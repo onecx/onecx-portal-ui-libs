@@ -1,3 +1,15 @@
+## [4.15.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.14.3...v4.15.0) (2024-04-10)
+
+
+### Features
+
+* harnesses enchancements for testability ([#200](https://github.com/onecx/onecx-portal-ui-libs/issues/200)) ([bd51266](https://github.com/onecx/onecx-portal-ui-libs/commit/bd5126606753f8250786de6cc9ac2d5a1dbf474e))
+
+
+### Bug Fixes
+
+* fix for the pipeline release ([#210](https://github.com/onecx/onecx-portal-ui-libs/issues/210)) ([e982f61](https://github.com/onecx/onecx-portal-ui-libs/commit/e982f6188f51f353c964ff817395ddff4a2b2b94))
+
 ## [4.13.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.13.1...v4.13.2) (2024-04-02)
 
 
