@@ -20,7 +20,7 @@ for folder in "${folder_names[@]}"; do
 if [[ $libPackageVersion != $1 ]]
 then
     npx -p replace-json-property rjp libs/$folder/package.json version $1
-    npx nx run $folder:release
+    npx nx run $folder:release $1
 fi  
 done
 
