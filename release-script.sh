@@ -1,7 +1,7 @@
 #!/bin/bash
 packageJsonData=$(cat package.json)
 topLevelPackageVersion=$(echo "$packageJsonData" | jq -r '.version')
-if [ $topLevelPackageVersion != $VERSION ]
+if [[ $topLevelPackageVersion != $VERSION ]]
 then
     npx -p replace-json-property rjp ./package.json version $VERSION
 fi
@@ -16,7 +16,7 @@ for folder in "${folder_names[@]}"; do
     packageJsonDataLib=$(cat libs/$folder/package.json)
     libPackageVersion=$(echo "$packageJsonDataLib" | jq -r '.version')
     packageJsonDataLib=$(echo "$packageJsonDataLib" | sed -E 's/(@onecx[^"]+?": *?")([^"]+)"/\1^'$VERSION'"/')
-if [ $libPackageVersion != $VERSION ]
+if [[ $libPackageVersion != $VERSION ]]
 then
     npx -p replace-json-property rjp libs/$folder/package.json version $VERSION
     npx nx run $folder:release
