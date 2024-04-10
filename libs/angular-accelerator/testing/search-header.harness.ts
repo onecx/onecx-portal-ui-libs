@@ -1,10 +1,14 @@
-import { ContentContainerComponentHarness } from '@angular/cdk/testing'
-import { MoreActionsMenuButtonHarness } from '@onecx/angular-accelerator/testing'
-import { ButtonHarness, PButtonHarness } from '@onecx/angular-testing'
+import { ComponentHarness } from '@angular/cdk/testing'
+import { PButtonHarness } from '@onecx/angular-testing'
+import { PageHeaderHarness } from './page-header.harness'
+import { SearchConfigHarness } from './search-config.harness'
+import { MoreActionsMenuButtonHarness } from './more-actions-menu-button.harness'
 
-export class SearchHeaderHarness extends ContentContainerComponentHarness {
+export class SearchHeaderHarness extends ComponentHarness {
   static hostSelector = 'ocx-search-header'
 
+  getPageHeader = this.locatorFor(PageHeaderHarness)
+  getSearchConfig = this.locatorFor(SearchConfigHarness)
   getSearchButton = this.locatorFor(
     PButtonHarness.with({
       id: 'searchButton',
@@ -18,19 +22,19 @@ export class SearchHeaderHarness extends ContentContainerComponentHarness {
   )
 
   getSimpleAdvancedButton = this.locatorForOptional(
-    ButtonHarness.with({
+    PButtonHarness.with({
       id: 'simpleAdvancedButton',
     })
   )
 
   getMoreActionsMenuButton = this.locatorForOptional(MoreActionsMenuButtonHarness)
 
-  async search() {
-    await (await this.getSearchButton()).click()
+  async clickResetButton() {
+    await (await this.getResetButton()).click()
   }
 
-  async reset() {
-    await (await this.getResetButton()).click()
+  async clickSearchButton() {
+    await (await this.getSearchButton()).click()
   }
 
   async toggleSimpleAdvanced() {

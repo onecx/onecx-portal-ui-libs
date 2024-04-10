@@ -48,6 +48,10 @@ export class PDropdownHarness extends ContentContainerComponentHarness {
     return await dropdownItems
   }
 
+  async getDropdownItem(itemText: string): Promise<ListItemHarness | null> {
+    return await this.locatorForOptional(ListItemHarness.with({ text: itemText }))()
+  }
+
   async selectedDropdownItem(position: number) {
     const selectedColumnGroup = await Promise.all(
       (await this.getDropdownItems()).filter((listItem) => listItem.isSelected())
@@ -61,5 +65,13 @@ export class PDropdownHarness extends ContentContainerComponentHarness {
 
   async hasClearOption() {
     return (await this.locatorFor('div')()).hasClass('p-dropdown-clearable')
+  }
+
+  async clear() {
+    if (await this.hasClearOption()) {
+      return await (await this.locatorFor('.p-dropdown-clear-icon')()).click()
+    } else {
+      console.warn('Unable to clear dropdown, because it has no clear option')
+    }
   }
 }

@@ -4,7 +4,6 @@ export * from './content.harness'
 export * from './create-or-edit-search-config-dialog.harness'
 export * from './dialog-message-content.harness'
 export * from './lifecycle.harness'
-export * from './search-header.harness'
 
 export * from '@angular/cdk/testing'
 export * from '@angular/cdk/testing/testbed'

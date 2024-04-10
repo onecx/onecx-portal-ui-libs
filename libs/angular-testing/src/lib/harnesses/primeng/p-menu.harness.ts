@@ -20,4 +20,15 @@ export class PMenuHarness extends ContentContainerComponentHarness {
     }
     return []
   }
+
+  async getMenuItem(itemText: string): Promise<MenuItemHarness | undefined | null> {
+    if (await this.isOpen()) {
+      return await (
+        await this.getHarnessLoaderForPMenuOverlay()
+      )?.getHarnessOrNull(MenuItemHarness.with({ text: itemText }))
+    } else {
+      console.warn('Cannot get menu items because menu is closed.')
+    }
+    return undefined
+  }
 }

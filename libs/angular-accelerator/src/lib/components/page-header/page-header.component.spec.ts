@@ -115,13 +115,14 @@ describe('PageHeaderComponent', () => {
 
   it('should check permissions and render buttons accordingly', async () => {
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(0)
-    expect(await pageHeaderHarness.getOverflowActionButtons()).toHaveLength(0)
+    expect(await pageHeaderHarness.getOverflowActionMenuButton()).toBeNull()
 
     component.actions = mockActions
 
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(1)
     expect(await pageHeaderHarness.getElementByTitle('My Test Action')).toBeTruthy()
-    expect(await pageHeaderHarness.getOverflowActionButtons()).toHaveLength(1)
+    await (await pageHeaderHarness.getOverflowActionMenuButton())?.click()
+    expect(await pageHeaderHarness.getOverFlowMenuItems()).toHaveLength(2)
     expect(await pageHeaderHarness.getElementByTitle('More actions')).toBeTruthy()
     expect(userServiceSpy).toHaveBeenCalledTimes(3)
   })
@@ -132,13 +133,13 @@ describe('PageHeaderComponent', () => {
     userServiceSpy.mockReturnValue(false)
 
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(0)
-    expect(await pageHeaderHarness.getOverflowActionButtons()).toHaveLength(0)
+    expect(await pageHeaderHarness.getOverflowActionMenuButton()).toBeNull()
 
     component.actions = mockActions
 
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(0)
     expect(await pageHeaderHarness.getElementByTitle('My Test Action')).toBeFalsy()
-    expect(await pageHeaderHarness.getOverflowActionButtons()).toHaveLength(0)
+    expect(await pageHeaderHarness.getOverFlowMenuItems()).toHaveLength(0)
     expect(await pageHeaderHarness.getElementByTitle('More actions')).toBeFalsy()
     expect(userServiceSpy).toHaveBeenCalledTimes(3)
   })
@@ -159,20 +160,15 @@ describe('PageHeaderComponent', () => {
     component.objectDetails = objectDetailsWithoutIcons
 
     expect((await pageHeaderHarness.getObjectInfos()).length).toEqual(2)
-    const objectDetailLabels = await pageHeaderHarness.getObjectDetailLabels()
-    const objectDetailValues = await pageHeaderHarness.getObjectDetailValues()
-    const objectDetailIcons = await pageHeaderHarness.getObjectDetailIcons()
-    expect(objectDetailLabels.length).toEqual(2)
-    expect(objectDetailValues.length).toEqual(2)
-    expect(objectDetailIcons.length).toEqual(0)
 
-    objectDetailLabels.forEach(async (label, i) => {
-      expect(await label.text()).toEqual(objectDetailsWithoutIcons[i].label)
-    })
-
-    objectDetailValues.forEach(async (value, i) => {
-      expect(await value.text()).toEqual(objectDetailsWithoutIcons[i].value)
-    })
+    const firstDetail = await pageHeaderHarness.getObjectInfoByLabel('Venue')
+    expect(await firstDetail?.getLabel()).toEqual('Venue')
+    expect(await firstDetail?.getValue()).toEqual('AIE Munich')
+    expect(await firstDetail?.getIcon()).toBeUndefined()
+    const secondDetail = await pageHeaderHarness.getObjectInfoByLabel('Status')
+    expect(await secondDetail?.getLabel()).toEqual('Status')
+    expect(await secondDetail?.getValue()).toEqual('Confirmed')
+    expect(await secondDetail?.getIcon()).toBeUndefined()
   })
 
   it('should render objectDetails with icons as object info in the page header', async () => {
@@ -199,35 +195,31 @@ describe('PageHeaderComponent', () => {
     component.objectDetails = objectDetailsWithIcons
 
     expect((await pageHeaderHarness.getObjectInfos()).length).toEqual(4)
-    const objectDetailLabels = await pageHeaderHarness.getObjectDetailLabels()
-    const objectDetailValues = await pageHeaderHarness.getObjectDetailValues()
-    const objectDetailIcons = await pageHeaderHarness.getObjectDetailIcons()
-    expect(objectDetailLabels.length).toEqual(4)
-    expect(objectDetailValues.length).toEqual(3)
-    expect(objectDetailIcons.length).toEqual(2)
-
-    objectDetailLabels.forEach(async (label, i) => {
-      expect(await label.text()).toEqual(objectDetailsWithIcons[i].label)
-    })
-
-    objectDetailValues.forEach(async (value, i) => {
-      if (objectDetailsWithIcons[i].value) {
-        expect(await value.text()).toEqual(objectDetailsWithIcons[i].value)
-      }
-    })
-
-    expect(await objectDetailIcons[0].getAttribute('class')).toEqual(objectDetailsWithIcons[1].icon)
-    expect(await objectDetailIcons[1].getAttribute('class')).toEqual(objectDetailsWithIcons[2].icon)
+    const firstDetail = await pageHeaderHarness.getObjectInfoByLabel('Venue')
+    expect(await firstDetail?.getLabel()).toEqual('Venue')
+    expect(await firstDetail?.getValue()).toEqual('AIE Munich')
+    expect(await firstDetail?.getIcon()).toBeUndefined()
+    const secondDetail = await pageHeaderHarness.getObjectInfoByLabel('Status')
+    expect(await secondDetail?.getLabel()).toEqual('Status')
+    expect(await secondDetail?.getValue()).toEqual('Confirmed')
+    expect(await secondDetail?.getIcon()).toEqual(PrimeIcons.CHECK)
+    const thirdDetail = await pageHeaderHarness.getObjectInfoByLabel('Done?')
+    expect(await thirdDetail?.getLabel()).toEqual('Done?')
+    expect(await thirdDetail?.getValue()).toEqual('')
+    expect(await thirdDetail?.getIcon()).toEqual(PrimeIcons.EXCLAMATION_CIRCLE)
+    const fourthDetail = await pageHeaderHarness.getObjectInfoByLabel('Empty')
+    expect(await fourthDetail?.getLabel()).toEqual('Empty')
+    expect(await fourthDetail?.getValue()).toBeUndefined()
+    expect(await fourthDetail?.getIcon()).toBeUndefined()
   })
 
   it('should show overflow actions when menu overflow button clicked', async () => {
     component.actions = mockActions
 
-    const menuOverflowButtons = await pageHeaderHarness.getOverflowActionButtons()
+    const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
 
-    expect(menuOverflowButtons).toBeTruthy()
-    expect(menuOverflowButtons.length).toBe(1)
-    await menuOverflowButtons[0].click()
+    expect(menuOverflowButton).toBeTruthy()
+    await menuOverflowButton?.click()
 
     const menuItems = await pageHeaderHarness.getOverFlowMenuItems()
     expect(menuItems.length).toBe(2)
@@ -240,11 +232,10 @@ describe('PageHeaderComponent', () => {
 
     component.actions = mockActions
 
-    const menuOverflowButtons = await pageHeaderHarness.getOverflowActionButtons()
+    const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
 
-    expect(menuOverflowButtons).toBeTruthy()
-    expect(menuOverflowButtons.length).toBe(1)
-    await menuOverflowButtons[0].click()
+    expect(menuOverflowButton).toBeTruthy()
+    await menuOverflowButton?.click()
 
     const menuItems = await pageHeaderHarness.getOverFlowMenuItems()
     expect(menuItems.length).toBe(2)
@@ -259,10 +250,9 @@ describe('PageHeaderComponent', () => {
 
     component.actions = mockActions
 
-    const menuOverflowButton = await pageHeaderHarness.getOverflowActionButtons()
+    const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
     expect(menuOverflowButton).toBeTruthy()
-    expect(menuOverflowButton.length).toBe(1)
-    menuOverflowButton[0].click()
+    await menuOverflowButton?.click()
 
     const overFlowMenuItems = await pageHeaderHarness.getOverFlowMenuItems()
     const disabledActionElement = overFlowMenuItems[1]
