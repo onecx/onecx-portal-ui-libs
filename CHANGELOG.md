@@ -1,3 +1,29 @@
+## [4.15.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.15.0...v4.15.1) (2024-04-11)
+
+
+### Bug Fixes
+
+* add double brackets to avoid word-splitting ([#211](https://github.com/onecx/onecx-portal-ui-libs/issues/211)) ([8d86e0c](https://github.com/onecx/onecx-portal-ui-libs/commit/8d86e0c1034f6fa227d110b3c4feddc27927a7a2))
+* pass the correct argument to the release shell script ([#212](https://github.com/onecx/onecx-portal-ui-libs/issues/212)) ([071a778](https://github.com/onecx/onecx-portal-ui-libs/commit/071a778919702c81a453abc3b025454d135abc39))
+
+
+### Chores
+
+* export the VERSION that it gets recognized ([#214](https://github.com/onecx/onecx-portal-ui-libs/issues/214)) ([462544c](https://github.com/onecx/onecx-portal-ui-libs/commit/462544c3982be985a6afb1c10290e879b798f4fe))
+* update release-script.sh ([d0b63e0](https://github.com/onecx/onecx-portal-ui-libs/commit/d0b63e014304b4815bf15a1344da0cb7d6fb720d))
+
+## [4.15.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.14.3...v4.15.0) (2024-04-10)
+
+
+### Features
+
+* harnesses enchancements for testability ([#200](https://github.com/onecx/onecx-portal-ui-libs/issues/200)) ([bd51266](https://github.com/onecx/onecx-portal-ui-libs/commit/bd5126606753f8250786de6cc9ac2d5a1dbf474e))
+
+
+### Bug Fixes
+
+* fix for the pipeline release ([#210](https://github.com/onecx/onecx-portal-ui-libs/issues/210)) ([e982f61](https://github.com/onecx/onecx-portal-ui-libs/commit/e982f6188f51f353c964ff817395ddff4a2b2b94))
+
 ## [4.13.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.13.1...v4.13.2) (2024-04-02)
 
 

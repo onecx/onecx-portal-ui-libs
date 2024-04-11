@@ -1,11 +1,11 @@
 {
   "name": "@onecx/keycloak-auth",
-  "version": "4.13.2",
+  "version": "4.15.1",
   "peerDependencies": {
     "@angular/common": ">=15.2.7",
     "@angular/core": ">=15.2.7",
-    "@onecx/angular-integration-interface": "~4",
-    "@onecx/integration-interface": "~4",
+    "@onecx/angular-integration-interface": "^4",
+    "@onecx/integration-interface": "^4",
     "keycloak-angular": "^13.0.0",
     "keycloak-js": "^18.0.0",
     "rxjs": "~7.8.0"
