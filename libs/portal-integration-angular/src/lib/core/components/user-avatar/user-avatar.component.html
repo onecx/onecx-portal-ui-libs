@@ -1,3 +1,3 @@
 <div style="height: 32px">
-  <img [src]="imagePath$ | async" alt="avatar" class="profile-image" />
+  <img [ocxSrc]="(imagePath$ | async ) ?? ''" alt="avatar" class="profile-image" />
 </div>

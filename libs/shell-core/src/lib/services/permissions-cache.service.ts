@@ -1,19 +1,19 @@
 import { Injectable } from '@angular/core'
-import { Observable, of, tap } from 'rxjs'
+import { Observable, shareReplay } from 'rxjs'
 
 @Injectable({ providedIn: 'root' })
 export class PermissionsCacheService {
-  permissions: Record<string, string[]> = {}
+  permissions: Record<string, Observable<string[]>> = {}
 
   getPermissions(
     appId: string,
     productName: string,
-    cachemissFkt: (appId: string, productName: string) => Observable<string[]>
+    cacheMissFkt: (appId: string, productName: string) => Observable<string[]>
   ): Observable<string[]> {
     const key = appId + '|' + productName
-    if (this.permissions[key]) {
-      return of(this.permissions[key])
+    if (!this.permissions[key]) {
+      this.permissions[key] = cacheMissFkt(appId, productName).pipe(shareReplay())
     }
-    return cachemissFkt(appId, productName).pipe(tap((permissions) => (this.permissions[key] = permissions)))
+    return this.permissions[key]
   }
 }
