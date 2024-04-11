@@ -1,6 +1,6 @@
 {
   "name": "@onecx/angular-integration-interface",
-  "version": "4.15.1",
+  "version": "4.15.2",
   "peerDependencies": {
     "@angular/core": "^15.2.7",
     "@onecx/integration-interface": "^4",

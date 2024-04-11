@@ -1,3 +1,10 @@
+## [4.15.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.15.1...v4.15.2) (2024-04-11)
+
+
+### Bug Fixes
+
+* improve permission cache, use of ocxSrc, fix overflow of user avatar menu ([#215](https://github.com/onecx/onecx-portal-ui-libs/issues/215)) ([689838b](https://github.com/onecx/onecx-portal-ui-libs/commit/689838bfc45a81c224ac240e347f6aef0d27f815))
+
 ## [4.15.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.15.0...v4.15.1) (2024-04-11)
 
 
