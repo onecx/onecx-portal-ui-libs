@@ -1,4 +1,4 @@
-export interface AngularAuthService {
+export interface AuthService {
   init(): Promise<boolean>
 
   getHeaderValues(): Record<string, string>

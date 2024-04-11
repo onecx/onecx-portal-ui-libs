@@ -24,9 +24,6 @@ export class TokenInterceptor implements HttpInterceptor {
     if (idToken) {
       const authenticatedReq: HttpRequest<unknown> = request.clone({
         headers: request.headers.set('apm-principal-token', idToken),
-        // let headers = request.headers
-        // for loop
-        // headers = headers.set
       })
       return next.handle(authenticatedReq)
     } else {
