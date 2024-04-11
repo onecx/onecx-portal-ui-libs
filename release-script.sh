@@ -1,5 +1,6 @@
 #!/bin/bash
 echo "$1"
+export $VERSION = $1
 packageJsonData=$(cat package.json)
 topLevelPackageVersion=$(echo "$packageJsonData" | jq -r '.version')
 if [[ $topLevelPackageVersion != $1 ]]
@@ -20,7 +21,7 @@ for folder in "${folder_names[@]}"; do
 if [[ $libPackageVersion != $1 ]]
 then
     npx -p replace-json-property rjp libs/$folder/package.json version $1
-    npx nx run $folder:release $1
+    npx nx run $folder:release
 fi  
 done
 
