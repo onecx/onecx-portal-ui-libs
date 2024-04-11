@@ -3,9 +3,7 @@ export interface AngularAuthService {
 
   init(): Promise<boolean>
 
-  auth_header_values(): string[]
-
-  additional_header_values(): string[]
+  getHeaderValues(): Record<string, string>
 
   hasRole(_role: string): boolean
 

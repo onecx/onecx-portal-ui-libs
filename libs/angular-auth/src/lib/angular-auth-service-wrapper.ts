@@ -7,10 +7,7 @@ export class AngularAuthServiceWrapper implements AngularAuthService {
   init(): Promise<boolean> {
     throw new Error('Method not implemented.')
   }
-  auth_header_values(): string[] {
-    throw new Error('Method not implemented.')
-  }
-  additional_header_values(): string[] {
+  getHeaderValues(): Record<string, string> {
     throw new Error('Method not implemented.')
   }
   hasRole(_role: string): boolean {
