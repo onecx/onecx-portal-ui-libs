@@ -5,6 +5,7 @@ export class AngularAuthServiceWrapper implements AngularAuthService {
     throw new Error('Method not implemented.')
   }
   init(): Promise<boolean> {
+    // checks which service should be used
     throw new Error('Method not implemented.')
   }
   getHeaderValues(): Record<string, string> {
