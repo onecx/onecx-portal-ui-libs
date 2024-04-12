@@ -1,3 +1,10 @@
+## [4.15.6](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.15.5...v4.15.6) (2024-04-12)
+
+
+### Bug Fixes
+
+* define other variable for appState.globalLoading ([#220](https://github.com/onecx/onecx-portal-ui-libs/issues/220)) ([4ade83b](https://github.com/onecx/onecx-portal-ui-libs/commit/4ade83bd889e18440a84b89fe68fab8e8a2a6515))
+
 ## [4.15.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.15.4...v4.15.5) (2024-04-12)
 
 
