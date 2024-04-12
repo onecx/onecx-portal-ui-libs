@@ -32,7 +32,7 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
     private renderer: Renderer2,
     private primengConfig: PrimeNGConfig,
     private messageService: MessageService,
-    private appStateService: AppStateService,
+    public appStateService: AppStateService,
     private portalMessageService: PortalMessageService,
     private userService: UserService,
     private themeService: ThemeService,
