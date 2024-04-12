@@ -1,9 +1,15 @@
 import { HttpClient } from '@angular/common/http'
 import { AfterViewInit, Component, HostListener, OnDestroy, OnInit, Renderer2 } from '@angular/core'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
-import { AppStateService, Message, PortalMessageService, ThemeService, UserService } from '@onecx/angular-integration-interface'
+import {
+  AppStateService,
+  Message,
+  PortalMessageService,
+  ThemeService,
+  UserService,
+} from '@onecx/angular-integration-interface'
 import { MessageService, PrimeNGConfig } from 'primeng/api'
-import { filter, first, map, mergeMap, of } from 'rxjs'
+import { filter, first, map, mergeMap, of, tap } from 'rxjs'
 
 @Component({
   selector: 'ocx-shell-portal-viewport',
@@ -27,6 +33,11 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
   isMobile = false
 
   globalErrMsg: string | undefined
+  showContent$ = this.appStateService.globalLoading$.pipe(
+    tap((v) => console.log('GLOBAL LOADING ', v)),
+    map((gl) => !gl),
+    tap((v) => console.log('SHOW CONTENT', v))
+  )
 
   constructor(
     private renderer: Renderer2,
