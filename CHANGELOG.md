@@ -1,3 +1,17 @@
+## [4.15.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.15.3...v4.15.4) (2024-04-12)
+
+
+### Bug Fixes
+
+* hide app when globalLoading is true to avoid unwanted behavior when switching apps ([#218](https://github.com/onecx/onecx-portal-ui-libs/issues/218)) ([14d6e01](https://github.com/onecx/onecx-portal-ui-libs/commit/14d6e0101f0f12ce2d5f3f743f67fca89dfa93fd))
+
+## [4.15.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.15.2...v4.15.3) (2024-04-12)
+
+
+### Bug Fixes
+
+* no permission flickering ([#217](https://github.com/onecx/onecx-portal-ui-libs/issues/217)) ([972cc68](https://github.com/onecx/onecx-portal-ui-libs/commit/972cc6834ce1e5962c76db9fc1d047e4a19310f6))
+
 ## [4.15.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.15.1...v4.15.2) (2024-04-11)
 
 
