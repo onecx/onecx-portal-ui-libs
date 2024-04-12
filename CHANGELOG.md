@@ -1,3 +1,10 @@
+## [4.15.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.15.4...v4.15.5) (2024-04-12)
+
+
+### Bug Fixes
+
+* globalLoading as observable ([#219](https://github.com/onecx/onecx-portal-ui-libs/issues/219)) ([02aa501](https://github.com/onecx/onecx-portal-ui-libs/commit/02aa501c1975996330352a65e13f5f808844d8a5))
+
 ## [4.15.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.15.3...v4.15.4) (2024-04-12)
 
 
