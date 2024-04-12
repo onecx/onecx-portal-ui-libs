@@ -22,7 +22,6 @@ export class UserService implements OnDestroy {
       .subscribe(this.lang$)
 
     this.profile$.pipe(map((profile) => this.extractPermissions(profile))).subscribe(this.permissions$)
-    this.permissionsTopic$.subscribe(this.permissions$)
   }
 
   ngOnDestroy(): void {
@@ -30,7 +29,13 @@ export class UserService implements OnDestroy {
   }
 
   hasPermission(permissionKey: string): boolean {
-    const result = this.permissions$.getValue() ? this.permissions$.getValue()?.includes(permissionKey) : false
+    const oldConceptResult = this.permissions$.getValue()
+      ? this.permissions$.getValue()?.includes(permissionKey)
+      : false
+    const result = this.permissionsTopic$.getValue()
+      ? this.permissionsTopic$.getValue()?.includes(permissionKey)
+      : oldConceptResult
+
     if (!result) {
       console.log(`👮‍♀️ No permission for: ${permissionKey}`)
     }
@@ -78,5 +83,10 @@ export class UserService implements OnDestroy {
       }
     }
     return permissions
+  }
+
+  get isInitialized(): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    return Promise.all([this.permissionsTopic$.isInitialized, this.profile$.isInitialized]).then(() => {})
   }
 }
