@@ -28,7 +28,7 @@
   <div class="layout-main">
     <div class="layout-content relative">
       <ocx-slot name="subHeader"></ocx-slot>
-      <ng-container *ngIf="(appStateService.globalLoading$.asObservable() | async) === false">
+      <ng-container *ngIf="showContent$ | async">
         <ng-content></ng-content>
         <router-outlet></router-outlet>
       </ng-container>
