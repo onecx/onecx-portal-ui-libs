@@ -1,3 +1,10 @@
+## [4.15.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.15.3...v4.15.4) (2024-04-12)
+
+
+### Bug Fixes
+
+* hide app when globalLoading is true to avoid unwanted behavior when switching apps ([#218](https://github.com/onecx/onecx-portal-ui-libs/issues/218)) ([14d6e01](https://github.com/onecx/onecx-portal-ui-libs/commit/14d6e0101f0f12ce2d5f3f743f67fca89dfa93fd))
+
 ## [4.15.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.15.2...v4.15.3) (2024-04-12)
 
 
