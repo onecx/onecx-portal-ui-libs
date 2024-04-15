@@ -1,5 +1,5 @@
 import { filter } from 'rxjs/internal/operators/filter'
-import { AuthService } from './angular-auth.service'
+import { AuthService } from './auth.service'
 import { EventsTopic } from '@onecx/integration-interface'
 import { AppStateService, CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
 import { Injectable, Injector } from '@angular/core'

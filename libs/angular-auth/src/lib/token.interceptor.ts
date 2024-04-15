@@ -2,7 +2,7 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/c
 import { Injectable, Inject, Optional } from '@angular/core'
 import { AUTH_SERVICE } from '@onecx/angular-integration-interface'
 import { Observable, of } from 'rxjs'
-import { AuthServiceWrapper } from './angular-auth-service-wrapper'
+import { AuthServiceWrapper } from './auth-service-wrapper'
 
 const WHITELIST = ['assets']
 
