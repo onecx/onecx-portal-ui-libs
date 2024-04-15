@@ -14,7 +14,7 @@ export class TokenInterceptor implements HttpInterceptor {
     if (skip) {
       return next.handle(request)
     }
-    let headerValues = this.authService.getHeaderValues()
+    const headerValues = this.authService.getHeaderValues()
     let headers = request.headers
     for (const header in headerValues) {
       headers = headers.set(header, headerValues[header])

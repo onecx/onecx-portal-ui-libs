@@ -22,11 +22,11 @@ export class AuthServiceWrapper {
     await this.configService.isInitialized
 
     this.initializeAuthService()
-    let initResult = this.getInitResult()
+    const initResult = this.getInitResult()
     return initResult
   }
   async getInitResult(): Promise<boolean | undefined> {
-    let initResult = await this.authService?.init()
+    const initResult = await this.authService?.init()
 
     if (initResult) {
       await this.appStateService.isAuthenticated$.publish()
