@@ -8,20 +8,21 @@ const WHITELIST = ['assets']
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
-  constructor(@Inject(AUTH_SERVICE) private authService: AuthServiceWrapper) {}
+  constructor(private authService: AuthServiceWrapper) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const skip = WHITELIST.some((str) => request.url.includes(str))
     if (skip) {
       return next.handle(request)
     }
-    let headers = this.authService.getHeaderValues()
-    for (const header in headers) {
-      const authenticatedReq: HttpRequest<unknown> = request.clone({
-        headers: request.headers.set('apm-principal-token', header),
-      })
-      next.handle(authenticatedReq)
+    let headerValues = this.authService.getHeaderValues()
+    let headers = request.headers
+    for (const header in headerValues) {
+      headers = headers.set(header, headerValues[header])
     }
-    return next.handle(request)
+    const authenticatedReq: HttpRequest<unknown> = request.clone({
+      headers: headers,
+    })
+    return next.handle(authenticatedReq)
   }
 }

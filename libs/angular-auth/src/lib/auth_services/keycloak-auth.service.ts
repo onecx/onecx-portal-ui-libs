@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { AppStateService, ConfigurationService, CONFIG_KEY } from '@onecx/angular-integration-interface'
+import { ConfigurationService, CONFIG_KEY } from '@onecx/angular-integration-interface'
 import { KeycloakEventType, KeycloakOptions, KeycloakService } from 'keycloak-angular'
 import { KeycloakConfig } from 'keycloak-js'
 import { AuthService } from '../angular-auth.service'
@@ -10,22 +10,16 @@ const KC_TOKEN_LS = 'onecx_kc_token'
 
 @Injectable()
 export class KeycloakAuthService implements AuthService {
-  constructor(
-    private keycloakService: KeycloakService,
-    private configService: ConfigurationService,
-    private appStateService: AppStateService
-  ) {}
+  constructor(private keycloakService: KeycloakService, private configService: ConfigurationService) {}
 
   public async init(): Promise<boolean> {
     console.time('KeycloakAuthService')
-    // load previous tokens, saved after successful login of keycloak success callback
     let token = localStorage.getItem(KC_TOKEN_LS)
     let idToken = localStorage.getItem(KC_ID_TOKEN_LS)
     let refreshToken = localStorage.getItem(KC_REFRESH_TOKEN_LS)
     if (token && refreshToken) {
       const parsedToken = JSON.parse(atob(refreshToken.split('.')[1]))
       if (parsedToken.exp * 1000 < new Date().getTime()) {
-        //refresh expired, drop everything
         token = null
         refreshToken = null
         idToken = null
@@ -35,9 +29,7 @@ export class KeycloakAuthService implements AuthService {
 
     this.setupEventListener()
 
-    // try constructing the KC config from values in env
     let kcConfig: KeycloakConfig | string = this.getValidKCConfig()
-    // If any of the required props is missing, fallback to loading KC conf from file
     if (!kcConfig.clientId || !kcConfig.realm || !kcConfig.url) {
       kcConfig = './assets/keycloak.json'
     }
@@ -66,16 +58,11 @@ export class KeycloakAuthService implements AuthService {
         return this.keycloakService.login()
       })
       .then((loginOk) => {
-        // this will be false if our silent login did not work
         if (loginOk) {
           return this.keycloakService.getToken()
         } else {
-          // we want to block bootstrap process now
           return this.keycloakService.login().then(() => 'login')
         }
-      })
-      .then(async () => {
-        await this.appStateService.isAuthenticated$.publish()
       })
       .then(() => {
         console.timeEnd('KeycloakAuthService')
@@ -105,7 +92,6 @@ export class KeycloakAuthService implements AuthService {
 
   private setupEventListener() {
     this.keycloakService.keycloakEvents$.subscribe((ke) => {
-      // we are logged in, get tokens and store them in localstorage
       if (this.keycloakService.getKeycloakInstance().token) {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         localStorage.setItem(KC_TOKEN_LS, this.keycloakService.getKeycloakInstance().token!)
@@ -147,7 +133,10 @@ export class KeycloakAuthService implements AuthService {
   }
 
   getIdToken(): string | null {
-    return localStorage.getItem(KC_ID_TOKEN_LS)
+    return this.keycloakService.getKeycloakInstance().idToken ?? null
+  }
+  getAccessToken(): string | null {
+    return this.keycloakService.getKeycloakInstance().token ?? null
   }
 
   logout(): void {
@@ -167,6 +156,6 @@ export class KeycloakAuthService implements AuthService {
   }
 
   getHeaderValues(): Record<string, string> {
-    return {}
+    return { 'apm-principal-token': this.getIdToken() ?? '', Authorization: `Bearer${this.getAccessToken()}` }
   }
 }

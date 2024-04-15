@@ -5,6 +5,8 @@ import { AUTH_SERVICE, ConfigurationService } from '@onecx/angular-integration-i
 import { TokenInterceptor } from './token.interceptor'
 import { AuthService } from './angular-auth.service'
 import { AuthServiceWrapper } from './angular-auth-service-wrapper'
+import { KeycloakAuthService } from './auth_services/keycloak-auth.service'
+import { KeycloakService } from 'keycloak-angular'
 
 function appInitializer(configService: ConfigurationService, authService: AuthService) {
   return async () => {
@@ -16,12 +18,16 @@ function appInitializer(configService: ConfigurationService, authService: AuthSe
 @NgModule({
   imports: [CommonModule],
   providers: [
-    {
-      provide: AUTH_SERVICE,
-      useClass: AuthServiceWrapper,
-    },
+    AuthServiceWrapper,
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
-    { provide: APP_INITIALIZER, useFactory: appInitializer, deps: [ConfigurationService, AUTH_SERVICE], multi: true },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: appInitializer,
+      deps: [ConfigurationService, AuthServiceWrapper],
+      multi: true,
+    },
+    KeycloakAuthService,
+    KeycloakService,
   ],
 })
 export class AngularAuthModule {}
