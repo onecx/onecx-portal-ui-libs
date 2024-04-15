@@ -1,3 +1,59 @@
+## [4.15.7](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.15.6...v4.15.7) (2024-04-15)
+
+
+### Bug Fixes
+
+* loading permissions correctly when navigating to another app ([#221](https://github.com/onecx/onecx-portal-ui-libs/issues/221)) ([48c2748](https://github.com/onecx/onecx-portal-ui-libs/commit/48c27480cb77c1e1b0fb9d0959eb135cf9ef2703))
+
+## [4.15.6](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.15.5...v4.15.6) (2024-04-12)
+
+
+### Bug Fixes
+
+* define other variable for appState.globalLoading ([#220](https://github.com/onecx/onecx-portal-ui-libs/issues/220)) ([4ade83b](https://github.com/onecx/onecx-portal-ui-libs/commit/4ade83bd889e18440a84b89fe68fab8e8a2a6515))
+
+## [4.15.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.15.4...v4.15.5) (2024-04-12)
+
+
+### Bug Fixes
+
+* globalLoading as observable ([#219](https://github.com/onecx/onecx-portal-ui-libs/issues/219)) ([02aa501](https://github.com/onecx/onecx-portal-ui-libs/commit/02aa501c1975996330352a65e13f5f808844d8a5))
+
+## [4.15.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.15.3...v4.15.4) (2024-04-12)
+
+
+### Bug Fixes
+
+* hide app when globalLoading is true to avoid unwanted behavior when switching apps ([#218](https://github.com/onecx/onecx-portal-ui-libs/issues/218)) ([14d6e01](https://github.com/onecx/onecx-portal-ui-libs/commit/14d6e0101f0f12ce2d5f3f743f67fca89dfa93fd))
+
+## [4.15.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.15.2...v4.15.3) (2024-04-12)
+
+
+### Bug Fixes
+
+* no permission flickering ([#217](https://github.com/onecx/onecx-portal-ui-libs/issues/217)) ([972cc68](https://github.com/onecx/onecx-portal-ui-libs/commit/972cc6834ce1e5962c76db9fc1d047e4a19310f6))
+
+## [4.15.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.15.1...v4.15.2) (2024-04-11)
+
+
+### Bug Fixes
+
+* improve permission cache, use of ocxSrc, fix overflow of user avatar menu ([#215](https://github.com/onecx/onecx-portal-ui-libs/issues/215)) ([689838b](https://github.com/onecx/onecx-portal-ui-libs/commit/689838bfc45a81c224ac240e347f6aef0d27f815))
+
+## [4.15.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.15.0...v4.15.1) (2024-04-11)
+
+
+### Bug Fixes
+
+* add double brackets to avoid word-splitting ([#211](https://github.com/onecx/onecx-portal-ui-libs/issues/211)) ([8d86e0c](https://github.com/onecx/onecx-portal-ui-libs/commit/8d86e0c1034f6fa227d110b3c4feddc27927a7a2))
+* pass the correct argument to the release shell script ([#212](https://github.com/onecx/onecx-portal-ui-libs/issues/212)) ([071a778](https://github.com/onecx/onecx-portal-ui-libs/commit/071a778919702c81a453abc3b025454d135abc39))
+
+
+### Chores
+
+* export the VERSION that it gets recognized ([#214](https://github.com/onecx/onecx-portal-ui-libs/issues/214)) ([462544c](https://github.com/onecx/onecx-portal-ui-libs/commit/462544c3982be985a6afb1c10290e879b798f4fe))
+* update release-script.sh ([d0b63e0](https://github.com/onecx/onecx-portal-ui-libs/commit/d0b63e014304b4815bf15a1344da0cb7d6fb720d))
+
 ## [4.15.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.14.3...v4.15.0) (2024-04-10)
 
 

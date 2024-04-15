@@ -13,7 +13,7 @@
       <div class="figure flex h-2rem w-2rem md:h-3rem md:w-3rem" *ngIf="showFigure">
         <div #previewImage class="figure-image absolute top-0 left-0 right-0 bottom-0">
           <ng-content select="[figureImage]"></ng-content>
-          <img *ngIf="figureImage" [src]="figureImage" alt="Figure image" class="w-full" />
+          <img *ngIf="figureImage" [ocxSrc]="figureImage" alt="Figure image" class="w-full" />
         </div>
         <div class="colorblob flex-1 border-round" *ngIf="previewImage.children.length === 0"></div>
       </div>
