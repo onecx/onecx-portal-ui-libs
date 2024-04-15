@@ -1,7 +1,7 @@
 import { APP_INITIALIZER, NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { HTTP_INTERCEPTORS } from '@angular/common/http'
-import { AUTH_SERVICE, ConfigurationService } from '@onecx/angular-integration-interface'
+import { ConfigurationService } from '@onecx/angular-integration-interface'
 import { TokenInterceptor } from './token.interceptor'
 import { AuthService } from './auth.service'
 import { AuthServiceWrapper } from './auth-service-wrapper'
