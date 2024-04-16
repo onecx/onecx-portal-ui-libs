@@ -1,3 +1,10 @@
+## [4.16.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.15.7...v4.16.0) (2024-04-16)
+
+
+### Features
+
+* add angular auth lib and add config key to angular-integration-interface ([#222](https://github.com/onecx/onecx-portal-ui-libs/issues/222)) ([d2fbb13](https://github.com/onecx/onecx-portal-ui-libs/commit/d2fbb13a0a3ea8977ca520e9aacd120799f74c51))
+
 ## [4.15.7](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.15.6...v4.15.7) (2024-04-15)
 
 
