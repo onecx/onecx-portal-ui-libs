@@ -1,3 +1,10 @@
+## [4.17.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.16.0...v4.17.0) (2024-04-17)
+
+
+### Features
+
+* path utils to return location with deploymentPath and applicationPath ([#223](https://github.com/onecx/onecx-portal-ui-libs/issues/223)) ([0e1a052](https://github.com/onecx/onecx-portal-ui-libs/commit/0e1a0523645cc87029602c394b6425a970ab48ac))
+
 ## [4.16.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.15.7...v4.16.0) (2024-04-16)
 
 
