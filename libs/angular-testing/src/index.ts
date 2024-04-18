@@ -1,3 +1,4 @@
+export * from './lib/harnesses/primeng/p-breadcrumb.harness'
 export * from './lib/harnesses/primeng/p-button-directive.harness'
 export * from './lib/harnesses/primeng/p-button.harness'
 export * from './lib/harnesses/primeng/p-chart.harness'

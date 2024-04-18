@@ -1,5 +1,5 @@
 import { animate, style, transition, trigger } from '@angular/animations'
-import { Component, ElementRef, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core'
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { combineLatest, filter, map, Observable } from 'rxjs'
 import { MenuItem } from 'primeng/api/menuitem'
@@ -9,15 +9,15 @@ import {
   AppStateService,
   UserService,
   ThemeService,
-  AUTH_SERVICE,
   ConfigurationService,
   CONFIG_KEY,
-  IAuthService,
 } from '@onecx/angular-integration-interface'
 
 import { UserProfile } from '../../../model/user-profile.model'
 import { MenuService } from '../../../services/app.menu.service'
 import { ImageLogoUrlUtils } from '../../utils/image-logo-url.utils'
+import { EventsPublisher } from '@onecx/integration-interface'
+import { API_PREFIX } from '../../../api/constants'
 
 type MenuItemPerm = MenuItem & { permission: string }
 @Component({
@@ -86,11 +86,11 @@ export class HeaderComponent implements OnInit {
   @Input()
   homeNavTitle = 'Home'
 
-  logoUrl$!: Observable<string | null>
+  logoUrl$: Observable<string | undefined>
   currentUser$: Observable<UserProfile>
+  eventsPublisher$: EventsPublisher = new EventsPublisher()
 
   constructor(
-    @Inject(AUTH_SERVICE) private authService: IAuthService,
     private config: ConfigurationService,
     private menuService: MenuService,
     private themeService: ThemeService,
@@ -106,7 +106,7 @@ export class HeaderComponent implements OnInit {
       this.appStateService.currentPortal$.asObservable(),
     ]).pipe(
       map(([theme, portal]) => {
-        return ImageLogoUrlUtils.createLogoUrl(theme.logoUrl || portal.logoUrl)
+        return ImageLogoUrlUtils.createLogoUrl(API_PREFIX, theme.logoUrl || portal.logoUrl)
       })
     )
   }
@@ -190,7 +190,7 @@ export class HeaderComponent implements OnInit {
 
   logout(event: Event) {
     event.preventDefault()
-    this.authService.logout()
+    this.eventsPublisher$.publish({ type: 'authentication#logoutButtonClicked' })
   }
 
   onMenuButtonClick(e: Event) {

@@ -1,21 +1,27 @@
 import { Injectable } from '@angular/core'
-import { AppStateService, ConfigurationService, CONFIG_KEY, IAuthService } from '@onecx/angular-integration-interface'
+import { AppStateService, ConfigurationService, CONFIG_KEY } from '@onecx/angular-integration-interface'
 import { KeycloakEventType, KeycloakOptions, KeycloakService } from 'keycloak-angular'
 import { KeycloakConfig } from 'keycloak-js'
+import { filter } from 'rxjs'
+import { EventsTopic } from '@onecx/integration-interface'
 
 const KC_REFRESH_TOKEN_LS = 'onecx_kc_refreshToken'
 const KC_ID_TOKEN_LS = 'onecx_kc_idToken'
 const KC_TOKEN_LS = 'onecx_kc_token'
 
 @Injectable()
-export class KeycloakAuthService implements IAuthService {
+export class KeycloakAuthService {
+  private eventsTopic$ = new EventsTopic()
+
   constructor(
     private keycloakService: KeycloakService,
     private configService: ConfigurationService,
     private appStateService: AppStateService
-  ) {}
+  ) {
+    this.eventsTopic$.pipe(filter((e) => e.type === 'authentication#logoutButtonClicked')).subscribe(() => this.logout())
+  }
 
-  public init(): Promise<boolean> {
+  public async init(): Promise<boolean> {
     console.time('KeycloakAuthService')
     // load previous tokens, saved after successful login of keycloak success callback
     let token = localStorage.getItem(KC_TOKEN_LS)

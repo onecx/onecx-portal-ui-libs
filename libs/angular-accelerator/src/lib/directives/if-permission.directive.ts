@@ -8,8 +8,15 @@ export class IfPermissionDirective implements OnInit {
     this.permission = value
     this.negate = true
   }
-
+  
   @Input() onMissingPermission: 'hide' | 'disable' = 'hide'
+  
+  @Input() ocxIfPermissionPermissions: string[] | undefined
+  @Input() 
+  set ocxIfNotPermissionPermissions(value: string[] | undefined) {
+    this.ocxIfPermissionPermissions = value
+  }
+  
   negate = false
 
   constructor(
@@ -22,7 +29,7 @@ export class IfPermissionDirective implements OnInit {
 
   ngOnInit() {
     if (this.permission) {
-      if (this.negate === this.userService.hasPermission(this.permission)) {
+      if (this.negate === this.hasPermission(this.permission)) {
         if (this.onMissingPermission === 'disable') {
           this.renderer.setAttribute(this.el.nativeElement, 'disabled', 'disabled')
         } else {
@@ -34,5 +41,12 @@ export class IfPermissionDirective implements OnInit {
         }
       }
     }
+  }
+
+  hasPermission(permission: string) {
+    if (this.ocxIfPermissionPermissions) {
+      return this.ocxIfPermissionPermissions.includes(permission)
+    }
+    return this.userService.hasPermission(permission)
   }
 }

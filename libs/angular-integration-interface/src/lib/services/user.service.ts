@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core'
 import { BehaviorSubject, map } from 'rxjs'
-import { UserProfile, UserProfileTopic } from '@onecx/integration-interface'
+import { PermissionsTopic, UserProfile, UserProfileTopic } from '@onecx/integration-interface'
 import { DEFAULT_LANG } from '../api/constants'
 
 @Injectable({ providedIn: 'root' })
@@ -8,6 +8,8 @@ export class UserService implements OnDestroy {
   profile$ = new UserProfileTopic()
   permissions$ = new BehaviorSubject<string[]>([])
   lang$ = new BehaviorSubject(this.determineLanguage() ?? DEFAULT_LANG)
+
+  private permissionsTopic$ = new PermissionsTopic()
 
   constructor() {
     this.profile$
@@ -27,7 +29,13 @@ export class UserService implements OnDestroy {
   }
 
   hasPermission(permissionKey: string): boolean {
-    const result = this.permissions$.getValue() ? this.permissions$.getValue()?.includes(permissionKey) : false
+    const oldConceptResult = this.permissions$.getValue()
+      ? this.permissions$.getValue()?.includes(permissionKey)
+      : false
+    const result = this.permissionsTopic$.getValue()
+      ? this.permissionsTopic$.getValue()?.includes(permissionKey)
+      : oldConceptResult
+
     if (!result) {
       console.log(`👮‍♀️ No permission for: ${permissionKey}`)
     }
@@ -75,5 +83,10 @@ export class UserService implements OnDestroy {
       }
     }
     return permissions
+  }
+
+  get isInitialized(): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    return Promise.all([this.permissionsTopic$.isInitialized, this.profile$.isInitialized]).then(() => {})
   }
 }

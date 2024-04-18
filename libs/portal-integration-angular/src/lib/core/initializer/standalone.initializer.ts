@@ -12,7 +12,6 @@ import { PortalApiService } from '../../services/portal-api.service'
 import { UserProfileAPIService } from '../../services/userprofile-api.service'
 
 const CONFIG_INIT_ERR = 'CONFIG_INIT_ERR'
-const AUTH_INIT_ERR = 'AUTH_INIT_ERR'
 const USER_INIT_ERR = 'USER_INIT_ERR'
 const THEME_INIT_ERR = 'THEME_INIT_ERR'
 const PORTAL_LOAD_INIT_ERR = 'PORTAL_LOAD_INIT_ERR'
@@ -32,7 +31,7 @@ export function standaloneInitializer(
 ): () => Promise<any> {
   // eslint-disable-next-line no-restricted-syntax
   console.time('initializer')
-  console.log(`⭐ Standalone initializer for:  ${appName}`)
+  console.log(`⭐ Standalone initializer for: `, +appName)
   let errCause: string
 
   return async () => {
@@ -46,14 +45,9 @@ export function standaloneInitializer(
         throw e
       }
       console.log(`📑 config OK? ${configOk}`)
-      let authOk = false
-      try {
-        authOk = await auth.init()
-      } catch (e) {
-        errCause = AUTH_INIT_ERR
-        throw e
-      }
-      console.log(`📑 auth OK? ${authOk}`)
+
+      await appStateService.isAuthenticated$.isInitialized
+
       try {
         const profile = await firstValueFrom(userProfileAPIService.getCurrentUser())
         await userService.profile$.publish(profile)
@@ -72,7 +66,14 @@ export function standaloneInitializer(
       console.log(`📃 portal OK? `, portal)
       await appStateService.currentPortal$.publish(portal)
 
-      const standaloneMfeInfo: MfeInfo = { mountPath: '/', remoteBaseUrl: '.', baseHref: '/', shellName: 'standalone' }
+      const standaloneMfeInfo: MfeInfo = {
+        mountPath: '/',
+        remoteBaseUrl: '.',
+        baseHref: '/',
+        shellName: 'standalone',
+        appId: '',
+        productName: '',
+      }
       await appStateService.globalLoading$.publish(true)
       await appStateService.currentMfe$.publish(standaloneMfeInfo)
       await appStateService.globalLoading$.publish(false)

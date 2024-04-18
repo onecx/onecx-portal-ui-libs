@@ -24,8 +24,8 @@ export class InitializeModuleGuard implements CanActivate {
     return zip([
       this.loadTranslations(),
       from(this.configService.isInitialized),
-      from(this.appStateService.currentPortal$.isInitialized),
-      this.appStateService.globalLoading$.pipe(filter((g) => !g)),
+      from(this.userService.isInitialized),
+      from(this.appStateService.currentWorkspace$.isInitialized),
     ]).pipe(
       tap(() => {
         console.timeEnd('InitializeModuleGuard')
