@@ -1,9 +1,8 @@
 import { filter } from 'rxjs/internal/operators/filter'
-import { AuthService } from './auth.service'
+import { AuthService, AuthServiceFactory } from './auth.service'
 import { EventsTopic } from '@onecx/integration-interface'
 import { AppStateService, CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
 import { Injectable, Injector } from '@angular/core'
-import { KeycloakAuthService } from './auth_services/keycloak-auth.service'
 @Injectable()
 export class AuthServiceWrapper {
   private eventsTopic$ = new EventsTopic()
@@ -37,11 +36,16 @@ export class AuthServiceWrapper {
     return this.authService?.getHeaderValues() ?? {}
   }
 
-  initializeAuthService(): void {
+  async initializeAuthService(): Promise<void> {
     const serviceTypeConfig = this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE) ?? 'keycloak'
+    let customUrl
+
     switch (serviceTypeConfig) {
       case 'keycloak':
-        this.authService = this.injector.get(KeycloakAuthService)
+        customUrl = 'http://keycloak-app/'
+        const factory = (await import(customUrl)).default as AuthServiceFactory
+        this.authService = factory({ configService: this.configService })
+        //this.authService = this.injector.get(KeycloakAuthService)
         break
       // TODO: Extend the other cases in the future
       default:
