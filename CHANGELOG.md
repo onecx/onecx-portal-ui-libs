@@ -1,3 +1,10 @@
+## [4.17.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.17.0...v4.17.1) (2024-04-19)
+
+
+### Bug Fixes
+
+* add new interface to help loading permissions correctly when navigating to another app ([#225](https://github.com/onecx/onecx-portal-ui-libs/issues/225)) ([92ec90d](https://github.com/onecx/onecx-portal-ui-libs/commit/92ec90d7df12c2b4caf6b3ed904e1420b391d2c8))
+
 ## [4.17.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.16.0...v4.17.0) (2024-04-17)
 
 
