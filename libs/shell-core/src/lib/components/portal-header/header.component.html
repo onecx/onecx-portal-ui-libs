@@ -34,7 +34,12 @@
       </svg>
     </a>
 
-    <a class="layout-menu-button shadow-6" (click)="onMenuButtonClick($event)" pRipple [title]="menuButtonTitle ?? ('OCX_HEADER.MENU_TOGGLE')">
+    <a
+      class="layout-menu-button shadow-6"
+      (click)="onMenuButtonClick($event)"
+      pRipple
+      [title]="menuButtonTitle ?? ('OCX_HEADER.MENU_TOGGLE')"
+    >
       <i class="pi pi-chevron-right"></i>
     </a>
   </div>
@@ -44,17 +49,19 @@
       <ng-content></ng-content>
     </div>
     <div class="layout-topbar-actions-right">
-      <ocx-slot name="headerRight" class="layout-topbar-items"></ocx-slot>
+      <ocx-slot name="headerRight" class="layout-topbar-items">
+        <div class="flex flex-row justify-content-between w-full gap-3 h-full">
+          <p-skeleton shape="circle" size="2.5rem" class="h-full flex align-items-center"></p-skeleton>
+          <p-skeleton shape="circle" size="2.5rem" class="h-full flex align-items-center"></p-skeleton>
+          <p-skeleton shape="circle" size="2.5rem" class="h-full flex align-items-center"></p-skeleton>
+        </div>
+      </ocx-slot>
       <ul class="layout-topbar-items">
         <!-- Only desktop: Actions (favorites, support, search, ...) as icon buttons -->
-        <ng-container *ocxIfBreakpoint="'desktop'">
-
-        </ng-container>
+        <ng-container *ocxIfBreakpoint="'desktop'"> </ng-container>
 
         <!-- Only mobile: Actions (favorites, support, search, ...) as 'more' button + overlay -->
-        <li class="layout-topbar-item" *ocxIfBreakpoint="'mobile'">
-          
-        </li>
+        <li class="layout-topbar-item" *ocxIfBreakpoint="'mobile'"></li>
       </ul>
     </div>
   </div>

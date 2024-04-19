@@ -8,10 +8,11 @@ import { GlobalErrorComponent } from './components/error-component/global-error.
 import { PortalFooterComponent } from './components/portal-footer/portal-footer.component'
 import { HeaderComponent } from './components/portal-header/header.component'
 import { PortalViewportComponent } from './components/portal-viewport/portal-viewport.component'
+import { SkeletonModule } from 'primeng/skeleton'
 
 @NgModule({
-  imports: [CommonModule, RouterModule, AngularRemoteComponentsModule, AngularAcceleratorModule, ToastModule],
+  imports: [CommonModule, RouterModule, AngularRemoteComponentsModule, AngularAcceleratorModule, ToastModule, SkeletonModule],
   declarations: [PortalViewportComponent, HeaderComponent, PortalFooterComponent, GlobalErrorComponent],
-  exports: [PortalViewportComponent, HeaderComponent, PortalFooterComponent, ToastModule, GlobalErrorComponent],
+  exports: [PortalViewportComponent, HeaderComponent, PortalFooterComponent, ToastModule, GlobalErrorComponent, SkeletonModule],
 })
 export class ShellCoreModule {}
