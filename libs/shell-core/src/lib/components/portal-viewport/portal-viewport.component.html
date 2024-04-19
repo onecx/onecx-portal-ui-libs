@@ -9,34 +9,30 @@
   }"
   [class]="'layout-menu-' + colorScheme + ' layout-topbar-' + topbarTheme"
 >
-  <ocx-shell-header
-    [menuButtonTitle]="menuButtonTitle"
-    (menuButtonClick)="onMenuButtonClick($event)"
-  >
-  <ocx-slot name="horizontalMenu" *ngIf="isHorizontalMenuVisible()"></ocx-slot>
-  
+  <ocx-shell-header [menuButtonTitle]="menuButtonTitle" (menuButtonClick)="onMenuButtonClick($event)">
+    <ocx-slot name="horizontalMenu" *ngIf="isHorizontalMenuVisible()"></ocx-slot>
   </ocx-shell-header>
 
   <p-toast></p-toast>
 
   <div class="menu-wrapper">
     <div class="layout-menu-container" *ngIf="isStaticalMenuVisible()">
-        <ocx-slot name="menu"></ocx-slot>
+      <ocx-slot name="menu"></ocx-slot>
     </div>
   </div>
-  
+
   <div class="layout-main">
     <div class="layout-content relative">
       <ocx-slot name="subHeader"></ocx-slot>
-      <ng-container *ngIf="showContent$ | async">
+      <ng-container *ngIf="!showContentProvider || (showContentProvider.showContent$ | async)">
         <ng-content></ng-content>
         <router-outlet></router-outlet>
       </ng-container>
     </div>
-    
+
     <ocx-shell-footer></ocx-shell-footer>
   </div>
-  
+
   <div *ngIf="menuActive || !!activeTopbarItem" class="layout-mask modal-in"></div>
 </div>
 
