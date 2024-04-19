@@ -13,6 +13,6 @@ import { SkeletonModule } from 'primeng/skeleton'
 @NgModule({
   imports: [CommonModule, RouterModule, AngularRemoteComponentsModule, AngularAcceleratorModule, ToastModule, SkeletonModule],
   declarations: [PortalViewportComponent, HeaderComponent, PortalFooterComponent, GlobalErrorComponent],
-  exports: [PortalViewportComponent, HeaderComponent, PortalFooterComponent, ToastModule, GlobalErrorComponent, SkeletonModule],
+  exports: [PortalViewportComponent, HeaderComponent, PortalFooterComponent, ToastModule, GlobalErrorComponent],
 })
 export class ShellCoreModule {}
