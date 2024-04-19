@@ -1,6 +1,16 @@
 import { HttpClient } from '@angular/common/http'
-import { AfterViewInit, Component, HostListener, OnDestroy, OnInit, Renderer2 } from '@angular/core'
-import { NavigationEnd, Router, RoutesRecognized } from '@angular/router'
+import {
+  AfterViewInit,
+  Component,
+  HostListener,
+  Inject,
+  InjectionToken,
+  OnDestroy,
+  OnInit,
+  Optional,
+  Renderer2,
+} from '@angular/core'
+import { Router } from '@angular/router'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import {
   AppStateService,
@@ -10,16 +20,13 @@ import {
   UserService,
 } from '@onecx/angular-integration-interface'
 import { MessageService, PrimeNGConfig } from 'primeng/api'
-import {
-  bufferCount,
-  combineLatest,
-  filter,
-  first,
-  map,
-  mergeMap,
-  of,
-  startWith
-} from 'rxjs'
+import { BehaviorSubject, filter, first, map, mergeMap, of } from 'rxjs'
+
+export const SHOW_CONTENT_PROVIDER = new InjectionToken<ShowContentProvider>('SHOW_CONTENT_PROVIDER')
+
+export interface ShowContentProvider {
+  showContent$: BehaviorSubject<boolean>
+}
 
 @Component({
   selector: 'ocx-shell-portal-viewport',
@@ -44,33 +51,6 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
 
   globalErrMsg: string | undefined
 
-  showContent$ = combineLatest([
-    this.appStateService.globalLoading$.asObservable().pipe(startWith(true, true), bufferCount(3, 1)),
-    this.router.events
-      .pipe(
-        filter(
-          (e): e is NavigationEnd | RoutesRecognized => e instanceof NavigationEnd || e instanceof RoutesRecognized
-        )
-      )
-      .pipe(startWith({ url: undefined }), bufferCount(3, 1)),
-  ]).pipe(
-    map(([[beforeLastGlobalLoading, lastGlobalLoading, globalLoading], [beforeLastEvent, lastEvent, event]]) => {
-      if (!lastGlobalLoading && globalLoading) {
-        return false
-      }
-      if (beforeLastGlobalLoading) {
-        return true
-      }
-      if (!beforeLastEvent.url) {
-        return false
-      }
-      if (lastEvent.url !== event.url) {
-        return false
-      }
-      return true
-    })
-  )
-
   constructor(
     private renderer: Renderer2,
     private primengConfig: PrimeNGConfig,
@@ -80,7 +60,8 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
     private userService: UserService,
     private themeService: ThemeService,
     private httpClient: HttpClient,
-    private router: Router
+    private router: Router,
+    @Optional() @Inject(SHOW_CONTENT_PROVIDER) public showContentProvider: ShowContentProvider | undefined
   ) {
     this.portalMessageService.message$.subscribe((message: Message) => this.messageService.add(message))
     this.userService.profile$.pipe(untilDestroyed(this)).subscribe((profile) => {
