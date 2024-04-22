@@ -3,6 +3,7 @@ import { AuthService, AuthServiceFactory } from './auth.service'
 import { EventsTopic } from '@onecx/integration-interface'
 import { AppStateService, CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
 import { Injectable, Injector } from '@angular/core'
+import { KeycloakAuthService } from './auth_services/keycloak-auth.service'
 @Injectable()
 export class AuthServiceWrapper {
   private eventsTopic$ = new EventsTopic()
@@ -42,12 +43,17 @@ export class AuthServiceWrapper {
 
     switch (serviceTypeConfig) {
       case 'keycloak':
-        customUrl = 'http://keycloak-app/'
+        this.authService = this.injector.get(KeycloakAuthService)
+        break
+
+      case 'custom':
+        //customUrl = 'http://my-auth-provider-app/xyz.mjs'
+        // wenn customUrl leer ist, dann exception schmeißen
+        customUrl = 'localhost:9000/onecx-custom-auth/xyz.mjs'
         const factory = (await import(customUrl)).default as AuthServiceFactory
         this.authService = factory({ configService: this.configService })
-        //this.authService = this.injector.get(KeycloakAuthService)
         break
-      // TODO: Extend the other cases in the future
+      // TODO: Extend the other cases in the future (e.g. identity server)
       default:
         throw new Error('Configured AuthService not found')
     }
