@@ -40,7 +40,7 @@ export class AuthServiceWrapper {
   async initializeAuthService(): Promise<void> {
     const serviceTypeConfig = this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE) ?? 'keycloak'
     let customUrl
-
+    let factory
     switch (serviceTypeConfig) {
       case 'keycloak':
         this.authService = this.injector.get(KeycloakAuthService)
@@ -49,8 +49,8 @@ export class AuthServiceWrapper {
       case 'custom':
         //customUrl = 'http://my-auth-provider-app/xyz.mjs'
         // wenn customUrl leer ist, dann exception schmeißen
-        customUrl = 'localhost:9000/onecx-custom-auth/xyz.mjs'
-        const factory = (await import(customUrl)).default as AuthServiceFactory
+        customUrl = 'http://172.24.65.220:9000/libs/my-custom-auth/src/index.js'
+        factory = (await import(customUrl)).default as AuthServiceFactory
         this.authService = factory({ configService: this.configService })
         break
       // TODO: Extend the other cases in the future (e.g. identity server)
