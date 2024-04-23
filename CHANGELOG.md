@@ -1,3 +1,15 @@
+## [4.18.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.17.1...v4.18.0) (2024-04-23)
+
+
+### Features
+
+* improve remote component loading + add first skeleton loaders ([#226](https://github.com/onecx/onecx-portal-ui-libs/issues/226)) ([a8fb5c2](https://github.com/onecx/onecx-portal-ui-libs/commit/a8fb5c24dfe710058d763e87b1f12cd6478aecaa))
+
+
+### Bug Fixes
+
+* export angular auth service ([#227](https://github.com/onecx/onecx-portal-ui-libs/issues/227)) ([9c1c97b](https://github.com/onecx/onecx-portal-ui-libs/commit/9c1c97b32f93258be7889388484f734d7bc8b2b2))
+
 ## [4.17.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.17.0...v4.17.1) (2024-04-19)
 
 

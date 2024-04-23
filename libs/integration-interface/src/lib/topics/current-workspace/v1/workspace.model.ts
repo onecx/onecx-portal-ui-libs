@@ -6,6 +6,7 @@ export interface Workspace {
    * @deprecated will be renamed to workspaceName
    */
   portalName: string
+  workspaceName: string
   /**
    * @deprecated will be removed
    */
