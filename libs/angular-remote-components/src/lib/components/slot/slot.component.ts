@@ -1,10 +1,12 @@
 import {
   Component,
+  ContentChild,
   Inject,
   Input,
   OnDestroy,
   OnInit,
   QueryList,
+  TemplateRef,
   Type,
   ViewChildren,
   ViewContainerRef,
@@ -27,9 +29,10 @@ export class SlotComponent implements OnInit, OnDestroy {
     this._viewContainers$.next(value)
   }
 
+  @ContentChild('skeleton') skeleton: TemplateRef<any> | undefined
+
   subscription: Subscription | undefined
   components$: Observable<SlotComponentConfiguration[]> | undefined
-  loading = true
 
   constructor(@Inject(SLOT_SERVICE) private slotService: SlotService) {}
 
@@ -57,9 +60,11 @@ export class SlotComponent implements OnInit, OnDestroy {
     viewContainers: QueryList<ViewContainerRef>,
     i: number
   ) {
-    this.loading = false
+    const viewContainer = viewContainers.get(i);
+    viewContainer?.clear()
+    viewContainer?.element.nativeElement.replaceChildren()
     if (componentType) {
-      const componentRef = viewContainers.get(i)?.createComponent<any>(componentType)
+      const componentRef = viewContainer?.createComponent<any>(componentType)
       if (componentRef && 'ocxInitRemoteComponent' in componentRef.instance) {
         ;(componentRef.instance as ocxRemoteComponent).ocxInitRemoteComponent({
           appId: componentInfo.remoteComponent.appId,

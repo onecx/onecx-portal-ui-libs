@@ -51,9 +51,11 @@
     <div class="layout-topbar-actions-right">
       <ocx-slot name="headerRight" class="layout-topbar-items">
         <div class="flex flex-row justify-content-between w-full gap-3 h-full">
-          <p-skeleton shape="circle" size="2.5rem" class="h-full flex align-items-center"></p-skeleton>
-          <p-skeleton shape="circle" size="2.5rem" class="h-full flex align-items-center"></p-skeleton>
-          <p-skeleton shape="circle" size="2.5rem" class="h-full flex align-items-center"></p-skeleton>
+          <ng-template #skeleton>
+            <div class="flex align-items-center h-full justify-content-center" style="width: 56px;">
+              <p-skeleton shape="circle" size="2.5rem" class="h-full flex align-items-center"></p-skeleton>
+            </div>
+          </ng-template>
         </div>
       </ocx-slot>
       <ul class="layout-topbar-items">

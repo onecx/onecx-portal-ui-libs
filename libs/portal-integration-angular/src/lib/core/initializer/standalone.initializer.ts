@@ -64,7 +64,10 @@ export function standaloneInitializer(
         throw e
       }
       console.log(`📃 portal OK? `, portal)
-      await appStateService.currentPortal$.publish(portal)
+      await appStateService.currentPortal$.publish({
+        ...portal,
+        workspaceName: portal.portalName
+      })
 
       const standaloneMfeInfo: MfeInfo = {
         mountPath: '/',
