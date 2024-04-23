@@ -1,16 +1,18 @@
 import {
   Component,
+  ContentChild,
   Inject,
   Input,
   OnDestroy,
   OnInit,
   QueryList,
+  TemplateRef,
   Type,
   ViewChildren,
   ViewContainerRef,
 } from '@angular/core'
 import { BehaviorSubject, Subscription, Observable, combineLatest } from 'rxjs'
-import { RemoteComponentInfo, SLOT_SERVICE, SlotService } from '../../services/slot.service'
+import { RemoteComponentInfo, SLOT_SERVICE, SlotComponentConfiguration, SlotService } from '../../services/slot.service'
 import { ocxRemoteComponent } from '../../model/remote-component'
 
 @Component({
@@ -27,12 +29,10 @@ export class SlotComponent implements OnInit, OnDestroy {
     this._viewContainers$.next(value)
   }
 
+  @ContentChild('skeleton') skeleton: TemplateRef<any> | undefined
+
   subscription: Subscription | undefined
-  components$:
-    | Observable<
-        { componentType: Type<unknown> | undefined; remoteComponent: RemoteComponentInfo; permissions: string[] }[]
-      >
-    | undefined
+  components$: Observable<SlotComponentConfiguration[]> | undefined
 
   constructor(@Inject(SLOT_SERVICE) private slotService: SlotService) {}
 
@@ -43,21 +43,38 @@ export class SlotComponent implements OnInit, OnDestroy {
         if (viewContainers && viewContainers.length === components.length) {
           components.forEach((componentInfo, i) => {
             if (componentInfo.componentType) {
-              const componentRef = viewContainers.get(i)?.createComponent<any>(componentInfo.componentType)
-              if (componentRef && 'ocxInitRemoteComponent' in componentRef.instance) {
-                ;(componentRef.instance as ocxRemoteComponent).ocxInitRemoteComponent({
-                  appId: componentInfo.remoteComponent.appId,
-                  productName: componentInfo.remoteComponent.productName,
-                  baseUrl: componentInfo.remoteComponent.baseUrl,
-                  permissions: componentInfo.permissions,
-                })
-              }
-              componentRef?.changeDetectorRef.detectChanges()
+              Promise.all([Promise.resolve(componentInfo.componentType), Promise.resolve(componentInfo.permissions)]).then(([componentType, permissions]) => {
+                this.createComponent(componentType, componentInfo, permissions, viewContainers, i)
+              })
             }
           })
         }
       }
     )
+  }
+
+  private createComponent(
+    componentType: Type<unknown> | undefined,
+    componentInfo: { remoteComponent: RemoteComponentInfo; },
+    permissions: string[],
+    viewContainers: QueryList<ViewContainerRef>,
+    i: number
+  ) {
+    const viewContainer = viewContainers.get(i);
+    viewContainer?.clear()
+    viewContainer?.element.nativeElement.replaceChildren()
+    if (componentType) {
+      const componentRef = viewContainer?.createComponent<any>(componentType)
+      if (componentRef && 'ocxInitRemoteComponent' in componentRef.instance) {
+        ;(componentRef.instance as ocxRemoteComponent).ocxInitRemoteComponent({
+          appId: componentInfo.remoteComponent.appId,
+          productName: componentInfo.remoteComponent.productName,
+          baseUrl: componentInfo.remoteComponent.baseUrl,
+          permissions: permissions,
+        })
+      }
+      componentRef?.changeDetectorRef.detectChanges()
+    }
   }
 
   ngOnDestroy(): void {

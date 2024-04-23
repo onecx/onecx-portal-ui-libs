@@ -48,6 +48,7 @@ describe('AnnouncementBannerComponent', () => {
     await appStateService.currentPortal$.publish({
       id: 'i-am-test-portal',
       portalName: 'test',
+      workspaceName: 'test',
       baseUrl: '',
       microfrontendRegistrations: [],
     })
