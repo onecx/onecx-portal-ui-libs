@@ -1,3 +1,10 @@
+## [4.18.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.18.0...v4.18.1) (2024-04-23)
+
+
+### Bug Fixes
+
+* if only additionalActions are set, then show them in actions column too ([#229](https://github.com/onecx/onecx-portal-ui-libs/issues/229)) ([67140eb](https://github.com/onecx/onecx-portal-ui-libs/commit/67140ebeac8fa1b99779043ae8c2cb007e63a317))
+
 ## [4.18.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.17.1...v4.18.0) (2024-04-23)
 
 
