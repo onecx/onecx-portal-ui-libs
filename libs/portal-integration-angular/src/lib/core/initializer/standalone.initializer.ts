@@ -7,7 +7,7 @@ import {
   CONFIG_KEY,
   IAuthService,
 } from '@onecx/angular-integration-interface'
-import { MfeInfo } from '@onecx/integration-interface'
+import { MfeInfo, PermissionsTopic } from '@onecx/integration-interface'
 import { PortalApiService } from '../../services/portal-api.service'
 import { UserProfileAPIService } from '../../services/userprofile-api.service'
 
@@ -31,7 +31,7 @@ export function standaloneInitializer(
 ): () => Promise<any> {
   // eslint-disable-next-line no-restricted-syntax
   console.time('initializer')
-  console.log(`⭐ Standalone initializer for: `, +appName)
+  console.log(`⭐ Standalone initializer for: `, appName)
   let errCause: string
 
   return async () => {
@@ -66,8 +66,13 @@ export function standaloneInitializer(
       console.log(`📃 portal OK? `, portal)
       await appStateService.currentPortal$.publish({
         ...portal,
-        workspaceName: portal.portalName
+        workspaceName: portal.portalName,
       })
+
+      // TODO remove when permissions concept for standalone is there
+      const permissionsTopic$ = new PermissionsTopic()
+      await permissionsTopic$.publish((config.getProperty(CONFIG_KEY.STANDALONE_PERMISSIONS) ?? '').split(';'))
+      permissionsTopic$.destroy()
 
       const standaloneMfeInfo: MfeInfo = {
         mountPath: '/',
