@@ -2,8 +2,10 @@ import { filter } from 'rxjs/internal/operators/filter'
 import { AuthService, AuthServiceFactory } from './auth.service'
 import { EventsTopic } from '@onecx/integration-interface'
 import { AppStateService, CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
-import { Injectable, Injector } from '@angular/core'
+import { Injectable, Injector, inject } from '@angular/core'
 import { KeycloakAuthService } from './auth_services/keycloak-auth.service'
+import { loadRemoteModule } from '@angular-architects/module-federation'
+
 @Injectable()
 export class AuthServiceWrapper {
   private eventsTopic$ = new EventsTopic()
@@ -21,7 +23,7 @@ export class AuthServiceWrapper {
   async init(): Promise<boolean | undefined> {
     await this.configService.isInitialized
 
-    this.initializeAuthService()
+    await this.initializeAuthService()
     const initResult = this.getInitResult()
     return initResult
   }
@@ -39,19 +41,38 @@ export class AuthServiceWrapper {
 
   async initializeAuthService(): Promise<void> {
     const serviceTypeConfig = this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE) ?? 'keycloak'
-    let customUrl
+    let customUrlTemporaryTesting
     let factory
+    let module
+    let customUrl = this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL)
+    console.log('customURL', customUrl)
     switch (serviceTypeConfig) {
       case 'keycloak':
         this.authService = this.injector.get(KeycloakAuthService)
         break
-
       case 'custom':
-        //customUrl = 'http://my-auth-provider-app/xyz.mjs'
-        // wenn customUrl leer ist, dann exception schmeißen
-        customUrl = 'http://172.24.65.220:9000/libs/my-custom-auth/src/index.js'
-        factory = (await import(customUrl)).default as AuthServiceFactory
-        this.authService = factory({ configService: this.configService })
+        customUrlTemporaryTesting = customUrl
+        //customUrlTemporaryTesting = 'http://172.24.72.56:9000/libs/my-custom-auth/src/lib/my-custom-auth-service.js'
+        //customUrlTemporaryTesting = 'http://172.24.72.132:9000/libs/my-custom-auth/main.8c8fb9bf2b7a48dc.js'
+        if (!customUrlTemporaryTesting) {
+          throw new Error('URL of the custom auth service is not defined')
+        }
+        //   module = System.import(customUrlTemporaryTesting)
+        // module = await import(/*webpackIgnore: true*/ customUrlTemporaryTesting)
+        module = await loadRemoteModule({
+          type: 'module',
+          remoteEntry: customUrlTemporaryTesting,
+          exposedModule: './MyCustomAuth',
+        })
+        console.log('###Module', module)
+        factory = module.default as AuthServiceFactory
+        // this.authService = factory({ configService: this.configService })
+        this.authService = factory((injectable: string) => {
+          if (injectable === 'keycloakAuthService') {
+            return this.injector.get(KeycloakAuthService)
+          }
+          throw new Error('unknown injectable type')
+        })
         break
       // TODO: Extend the other cases in the future (e.g. identity server)
       default:

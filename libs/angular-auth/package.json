@@ -2,6 +2,7 @@
   "name": "@onecx/angular-auth",
   "version": "4.17.1",
   "peerDependencies": {
+    "@angular-architects/module-federation": "15.0.0",
     "@angular/common": ">=15.2.7",
     "@angular/core": ">=15.2.7",
     "@onecx/angular-integration-interface": "^4",
@@ -12,5 +13,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "@types/systemjs": "^6.13.5"
   }
 }

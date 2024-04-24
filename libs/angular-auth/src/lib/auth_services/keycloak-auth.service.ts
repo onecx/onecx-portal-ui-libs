@@ -12,7 +12,7 @@ const KC_TOKEN_LS = 'onecx_kc_token'
 export class KeycloakAuthService implements AuthService {
   constructor(private keycloakService: KeycloakService, private configService: ConfigurationService) {}
 
-  public async init(): Promise<boolean> {
+  public async init(config?: Record<string, unknown>): Promise<boolean> {
     console.time('KeycloakAuthService')
     let token = localStorage.getItem(KC_TOKEN_LS)
     let idToken = localStorage.getItem(KC_ID_TOKEN_LS)
@@ -29,7 +29,7 @@ export class KeycloakAuthService implements AuthService {
 
     this.setupEventListener()
 
-    let kcConfig: KeycloakConfig | string = this.getValidKCConfig()
+    let kcConfig: KeycloakConfig | string = { ...this.getValidKCConfig(), ...(config ?? {}) }
     if (!kcConfig.clientId || !kcConfig.realm || !kcConfig.url) {
       kcConfig = './assets/keycloak.json'
     }
@@ -74,7 +74,7 @@ export class KeycloakAuthService implements AuthService {
       })
   }
 
-  private getValidKCConfig(): KeycloakConfig {
+  protected getValidKCConfig(): KeycloakConfig {
     const clientId = this.configService.getProperty(CONFIG_KEY.KEYCLOAK_CLIENT_ID)
     if (!clientId) {
       throw new Error('Invalid KC config, missing clientId')

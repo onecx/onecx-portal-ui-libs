@@ -1,11 +1,11 @@
 import { ConfigurationService } from '@onecx/angular-integration-interface'
 
 export interface AuthService {
-  init(): Promise<boolean>
+  init(config?: Record<string, unknown>): Promise<boolean>
 
   getHeaderValues(): Record<string, string>
 
   logout(): void
 }
 
-export type AuthServiceFactory = (params: { configService: ConfigurationService }) => AuthService
+export type AuthServiceFactory = (injectorFunction: (injectable: string) => unknown) => AuthService
