@@ -1,3 +1,15 @@
+## [4.19.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.18.1...v4.19.0) (2024-04-24)
+
+
+### Features
+
+* add enum to dropdown utils ([#230](https://github.com/onecx/onecx-portal-ui-libs/issues/230)) ([447b1be](https://github.com/onecx/onecx-portal-ui-libs/commit/447b1be9cc8290e0746e439e4c2c7e9b3fec65e9))
+
+
+### Bug Fixes
+
+* temporary permission fix for standalone mode ([#231](https://github.com/onecx/onecx-portal-ui-libs/issues/231)) ([f84b823](https://github.com/onecx/onecx-portal-ui-libs/commit/f84b823c91129b911624568be0941aac1d6da042))
+
 ## [4.18.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.18.0...v4.18.1) (2024-04-23)
 
 
