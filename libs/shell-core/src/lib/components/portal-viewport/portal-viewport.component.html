@@ -10,14 +10,27 @@
   [class]="'layout-menu-' + colorScheme + ' layout-topbar-' + topbarTheme"
 >
   <ocx-shell-header [menuButtonTitle]="menuButtonTitle" (menuButtonClick)="onMenuButtonClick($event)">
-    <ocx-slot name="horizontalMenu" *ngIf="isHorizontalMenuVisible()"></ocx-slot>
+    <div *ngIf="isHorizontalMenuVisible()">
+      <ocx-slot name="horizontalMenu">
+        <ng-template #skeleton>
+          <div class="ml-4 flex flex-row gap-4">
+            <p-skeleton class="w-full h-full inline-block" height="35px" width="120px"></p-skeleton>
+            <p-skeleton class="w-full h-full inline-block" height="35px" width="120px"></p-skeleton>
+          </div>
+      </ng-template>
+      </ocx-slot>
+    </div>
   </ocx-shell-header>
 
   <p-toast></p-toast>
 
   <div class="menu-wrapper">
     <div class="layout-menu-container" *ngIf="isStaticalMenuVisible()">
-      <ocx-slot name="menu"></ocx-slot>
+      <ocx-slot name="menu">
+        <ng-template #skeleton>
+            <p-skeleton class="w-full h-full mb-4 inline-block" height="35px" width="120px"></p-skeleton>
+        </ng-template>
+      </ocx-slot>
     </div>
   </div>
 
