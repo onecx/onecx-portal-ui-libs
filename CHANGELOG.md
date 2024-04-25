@@ -1,3 +1,15 @@
+## [4.20.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.19.0...v4.20.0) (2024-04-25)
+
+
+### Features
+
+* add skeleton loaders for slot components ([#232](https://github.com/onecx/onecx-portal-ui-libs/issues/232)) ([132d441](https://github.com/onecx/onecx-portal-ui-libs/commit/132d44186dbdaeff56080c06885c7aae3a3a1145))
+
+
+### Bug Fixes
+
+* permissions loading in standalone and old shell ([#233](https://github.com/onecx/onecx-portal-ui-libs/issues/233)) ([8b3b21a](https://github.com/onecx/onecx-portal-ui-libs/commit/8b3b21a1d9fb4e6dd8c389a5a46b97ab506bf69a))
+
 ## [4.19.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.18.1...v4.19.0) (2024-04-24)
 
 
