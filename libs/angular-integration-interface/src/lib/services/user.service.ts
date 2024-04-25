@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core'
-import { BehaviorSubject, map } from 'rxjs'
+import { BehaviorSubject, map, filter, firstValueFrom, skip } from 'rxjs'
 import { PermissionsTopic, UserProfile, UserProfileTopic } from '@onecx/integration-interface'
 import { DEFAULT_LANG } from '../api/constants'
 
@@ -10,6 +10,7 @@ export class UserService implements OnDestroy {
   lang$ = new BehaviorSubject(this.determineLanguage() ?? DEFAULT_LANG)
 
   private permissionsTopic$ = new PermissionsTopic()
+  private oldStylePermissionsInitialized: Promise<string[]>
 
   constructor() {
     this.profile$
@@ -21,7 +22,13 @@ export class UserService implements OnDestroy {
       )
       .subscribe(this.lang$)
 
-    this.profile$.pipe(map((profile) => this.extractPermissions(profile))).subscribe(this.permissions$)
+    this.oldStylePermissionsInitialized = firstValueFrom(this.permissions$.pipe(skip(1)))
+    this.profile$
+      .pipe(
+        map((profile) => this.extractPermissions(profile)),
+        filter((permissions): permissions is string[] => !!permissions)
+      )
+      .subscribe(this.permissions$)
   }
 
   ngOnDestroy(): void {
@@ -66,9 +73,9 @@ export class UserService implements OnDestroy {
   }
 
   private extractPermissions(userProfile: UserProfile) {
-    const permissions: string[] = []
     if (userProfile) {
       if (userProfile.memberships) {
+        const permissions: string[] = []
         userProfile.memberships.forEach((m) => {
           m.roleMemberships?.forEach((r) => {
             r.permissions?.forEach((p) => {
@@ -80,13 +87,17 @@ export class UserService implements OnDestroy {
             })
           })
         })
+        return permissions
       }
     }
-    return permissions
+    return null
   }
 
   get isInitialized(): Promise<void> {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    return Promise.all([this.permissionsTopic$.isInitialized, this.profile$.isInitialized]).then(() => {})
+    return Promise.all([
+      Promise.race([this.permissionsTopic$.isInitialized, this.oldStylePermissionsInitialized]),
+      this.profile$.isInitialized,
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+    ]).then(() => {})
   }
 }
