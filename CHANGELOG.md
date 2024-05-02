@@ -1,3 +1,11 @@
+## [4.20.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.20.0...v4.20.1) (2024-05-02)
+
+
+### Bug Fixes
+
+* add missing inputs to interactive-data-view ([#236](https://github.com/onecx/onecx-portal-ui-libs/issues/236)) ([2935b98](https://github.com/onecx/onecx-portal-ui-libs/commit/2935b988c1cf6ccd684ef89cf9b950e84b2ec022))
+* vertical menu indent fix ([40ef4c4](https://github.com/onecx/onecx-portal-ui-libs/commit/40ef4c49ff5a807d37127696a2487c08cb746588))
+
 ## [4.20.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.19.0...v4.20.0) (2024-04-25)
 
 
