@@ -67,6 +67,8 @@ export class InteractiveDataViewComponent implements OnInit {
   @Input() page = 0
   @Input() selectedRows: Row[] = []
   @Input() displayedColumns: DataTableColumn[] = []
+  @Input() frozenActionColumn = false
+  @Input() actionColumnPosition: 'left' | 'right' = 'right'
   @ContentChild('tableCell') tableCell: TemplateRef<any> | undefined
   @ContentChild('tableDateCell') tableDateCell: TemplateRef<any> | undefined
   @ContentChild('tableRelativeDateCell') tableRelativeDateCell: TemplateRef<any> | undefined
@@ -93,8 +95,6 @@ export class InteractiveDataViewComponent implements OnInit {
   isViewItemObserved: boolean | undefined
   isEditItemObserved: boolean | undefined
   firstColumnId: string | undefined
-  frozenActionColumn = false
-  actionColumnPosition: 'left' | 'right' = 'right'
 
   @Input()
   get paginator(): boolean {
