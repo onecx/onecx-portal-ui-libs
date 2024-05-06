@@ -12,7 +12,7 @@ export class SrcDirective {
   set ocxSrc(value: string | undefined) {
     if (value && this._src !== value) {
       try {
-        if (new URL(value, window.location.origin).origin === window.location.origin) {
+        if (new URL(value, window.location.origin).hostname === window.location.hostname) {
           this.httpClient.get(value, { responseType: 'blob' }).subscribe({
             next: (blob) => {
               const url = URL.createObjectURL(blob)

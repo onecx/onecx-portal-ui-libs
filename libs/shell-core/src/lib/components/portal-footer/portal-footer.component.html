@@ -2,7 +2,7 @@
   <div class="flex flex-wrap align-items-center justify-content-start gap-3 row-gap-1">
     <img *ngIf="logoUrl$ | async" alt="logo" class="max-h-1rem" [ocxSrc]="(logoUrl$ | async) ?? ''" (error)="onErrorHandleSrc()" />
     <div class="flex-none text-sm">&copy; {{copyrightMsg$ | async}}</div>
-    <ocx-slot name="footer-menu-items">Footer Menu Items</ocx-slot>
+    <ocx-slot name="footer"></ocx-slot>
   </div>
   <div class="mr-5 text-sm">{{versionInfo$ | async}}</div>
 </div>
