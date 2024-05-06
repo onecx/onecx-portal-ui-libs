@@ -1,3 +1,11 @@
+## [4.20.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.20.1...v4.20.2) (2024-05-06)
+
+
+### Bug Fixes
+
+* switch to fixed @angular-devkit/architect version to fix sb build ([#237](https://github.com/onecx/onecx-portal-ui-libs/issues/237)) ([7ee894b](https://github.com/onecx/onecx-portal-ui-libs/commit/7ee894b4100c9059ce9c1e518b6ed94a60c7c850))
+* token is also sent in local env, rename slot name ([#238](https://github.com/onecx/onecx-portal-ui-libs/issues/238)) ([a1664f8](https://github.com/onecx/onecx-portal-ui-libs/commit/a1664f81640a7f9c327fc9503fe37447368f94b0))
+
 ## [4.20.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.20.0...v4.20.1) (2024-05-02)
 
 
