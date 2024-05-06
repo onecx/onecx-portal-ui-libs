@@ -4,5 +4,13 @@
   "lib": {
     "entryFile": "src/index.ts"
   },
-  "assets": ["CHANGELOG.md", "./assets/**"]
+  "assets": [
+    "CHANGELOG.md",
+    "./assets/**",
+    {
+      "input": "src/lib/core/directives",
+      "glob": "**/*.scss",
+      "output": "assets"
+    }
+  ]
 }

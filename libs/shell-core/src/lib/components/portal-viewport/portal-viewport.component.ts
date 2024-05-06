@@ -1,15 +1,5 @@
 import { HttpClient } from '@angular/common/http'
-import {
-  AfterViewInit,
-  Component,
-  HostListener,
-  Inject,
-  InjectionToken,
-  OnDestroy,
-  OnInit,
-  Optional,
-  Renderer2,
-} from '@angular/core'
+import { Component, HostListener, Inject, InjectionToken, OnDestroy, OnInit, Optional, Renderer2 } from '@angular/core'
 import { Router } from '@angular/router'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import {
@@ -34,7 +24,7 @@ export interface ShowContentProvider {
   styleUrls: ['./portal-viewport.component.scss'],
 })
 @UntilDestroy()
-export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy {
+export class PortalViewportComponent implements OnInit, OnDestroy {
   menuButtonTitle = ''
   menuActive = true
   activeTopbarItem: string | undefined
@@ -76,6 +66,18 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
           | undefined) || this.colorScheme
     })
 
+    this.themeService.currentTheme$.pipe(
+      first(),
+      mergeMap((theme) => {
+        const prefix = theme.faviconUrl && theme.faviconUrl.startsWith('/') ? '/shell-bff' : ''
+        return theme.faviconUrl
+          ? this.httpClient
+              .get(prefix + theme.faviconUrl, { responseType: 'blob' })
+              .pipe(map((blob) => URL.createObjectURL(blob)))
+          : of('')
+      })
+    )
+
     this.themeService.currentTheme$
       .pipe(
         first(),
@@ -112,14 +114,6 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
       })
 
     this.onResize()
-  }
-
-  ngAfterViewInit() {
-    // hides the horizontal submenus or top menu if outside is clicked
-    this.removeDocumentClickListener = this.renderer.listen('body', 'click', () => {
-      this.activeTopbarItem = undefined
-      if (this.isMobile) this.menuActive = false
-    })
   }
 
   ngOnDestroy() {
