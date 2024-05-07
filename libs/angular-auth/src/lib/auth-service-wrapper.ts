@@ -1,9 +1,11 @@
 import { filter } from 'rxjs/internal/operators/filter'
-import { AuthService } from './auth.service'
+import { AuthService, AuthServiceFactory, Injectables } from './auth.service'
 import { EventsTopic } from '@onecx/integration-interface'
 import { AppStateService, CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
 import { Injectable, Injector } from '@angular/core'
 import { KeycloakAuthService } from './auth_services/keycloak-auth.service'
+import { loadRemoteModule } from '@angular-architects/module-federation'
+
 @Injectable()
 export class AuthServiceWrapper {
   private eventsTopic$ = new EventsTopic()
@@ -21,7 +23,7 @@ export class AuthServiceWrapper {
   async init(): Promise<boolean | undefined> {
     await this.configService.isInitialized
 
-    this.initializeAuthService()
+    await this.initializeAuthService()
     const initResult = this.getInitResult()
     return initResult
   }
@@ -37,13 +39,32 @@ export class AuthServiceWrapper {
     return this.authService?.getHeaderValues() ?? {}
   }
 
-  initializeAuthService(): void {
+  async initializeAuthService(): Promise<void> {
     const serviceTypeConfig = this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE) ?? 'keycloak'
+    let factory
+    let module
+    const customUrl = this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL)
     switch (serviceTypeConfig) {
       case 'keycloak':
         this.authService = this.injector.get(KeycloakAuthService)
         break
-      // TODO: Extend the other cases in the future
+      case 'custom':
+        if (!customUrl) {
+          throw new Error('URL of the custom auth service is not defined')
+        }
+        module = await loadRemoteModule({
+          type: 'module',
+          remoteEntry: customUrl,
+          exposedModule: './CustomAuth',
+        })
+        factory = module.default as AuthServiceFactory
+        this.authService = factory((injectable: Injectables) => {
+          if (injectable === Injectables.KEYCLOAK_AUTH_SERVICE) {
+            return this.injector.get(KeycloakAuthService)
+          }
+          throw new Error('unknown injectable type')
+        })
+        break
       default:
         throw new Error('Configured AuthService not found')
     }
