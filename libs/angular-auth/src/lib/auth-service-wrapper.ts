@@ -43,7 +43,7 @@ export class AuthServiceWrapper {
     const serviceTypeConfig = this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE) ?? 'keycloak'
     let factory
     let module
-    let customUrl = this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL)
+    const customUrl = this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL)
     switch (serviceTypeConfig) {
       case 'keycloak':
         this.authService = this.injector.get(KeycloakAuthService)
@@ -59,7 +59,6 @@ export class AuthServiceWrapper {
         })
         factory = module.default as AuthServiceFactory
         this.authService = factory((injectable: Injectables) => {
-          console.log('injectable', injectable)
           if (injectable === Injectables.KEYCLOAK_AUTH_SERVICE) {
             return this.injector.get(KeycloakAuthService)
           }
