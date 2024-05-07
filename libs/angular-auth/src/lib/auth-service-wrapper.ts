@@ -62,7 +62,8 @@ export class AuthServiceWrapper {
         })
         factory = module.default as AuthServiceFactory
         this.authService = factory((injectable: string) => {
-          if (injectable === 'keycloakAuthService') {
+          console.log('injectable', injectable)
+          if (injectable === 'keycloakAuthService' || 'KEYCLOAK_AUTH_SERVICE') {
             return this.injector.get(KeycloakAuthService)
           }
           throw new Error('unknown injectable type')
