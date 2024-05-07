@@ -6,6 +6,12 @@
       (dataViewLayoutChange)="onDataViewLayoutChange($event)"
     ></ocx-data-layout-selection>
 
+    <div>
+      <ng-template #topCenter>
+        <ng-container *ngIf="_topCenter" [ngTemplateOutlet]="_topCenter"> </ng-container
+      ></ng-template>
+    </div>
+
     <div *ngIf="layout !== 'table'" class="flex align-items-center gap-2">
       <ocx-data-list-grid-sorting
         [sortDirection]="sortDirection"
