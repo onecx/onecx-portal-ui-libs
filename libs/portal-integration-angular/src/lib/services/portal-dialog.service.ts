@@ -460,3 +460,7 @@ export class PortalDialogService {
     return obj instanceof Type
   }
 }
+
+export function providePortalDialogService() {
+  return [DialogService, PortalDialogService]
+}
