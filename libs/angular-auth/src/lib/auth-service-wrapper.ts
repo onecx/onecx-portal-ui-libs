@@ -1,5 +1,5 @@
 import { filter } from 'rxjs/internal/operators/filter'
-import { AuthService, AuthServiceFactory } from './auth.service'
+import { AuthService, AuthServiceFactory, Injectables } from './auth.service'
 import { EventsTopic } from '@onecx/integration-interface'
 import { AppStateService, CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
 import { Injectable, Injector } from '@angular/core'
@@ -41,7 +41,6 @@ export class AuthServiceWrapper {
 
   async initializeAuthService(): Promise<void> {
     const serviceTypeConfig = this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE) ?? 'keycloak'
-    let customUrlTemporaryTesting
     let factory
     let module
     let customUrl = this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL)
@@ -50,19 +49,18 @@ export class AuthServiceWrapper {
         this.authService = this.injector.get(KeycloakAuthService)
         break
       case 'custom':
-        customUrlTemporaryTesting = customUrl
-        if (!customUrlTemporaryTesting) {
+        if (!customUrl) {
           throw new Error('URL of the custom auth service is not defined')
         }
         module = await loadRemoteModule({
           type: 'module',
-          remoteEntry: customUrlTemporaryTesting,
+          remoteEntry: customUrl,
           exposedModule: './CustomAuth',
         })
         factory = module.default as AuthServiceFactory
-        this.authService = factory((injectable: string) => {
+        this.authService = factory((injectable: Injectables) => {
           console.log('injectable', injectable)
-          if (injectable === 'keycloakAuthService' || 'KEYCLOAK_AUTH_SERVICE') {
+          if (injectable === Injectables.KEYCLOAK_AUTH_SERVICE) {
             return this.injector.get(KeycloakAuthService)
           }
           throw new Error('unknown injectable type')

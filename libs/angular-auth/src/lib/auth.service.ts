@@ -6,4 +6,8 @@ export interface AuthService {
   logout(): void
 }
 
-export type AuthServiceFactory = (injectorFunction: (injectable: string) => unknown) => AuthService
+export enum Injectables {
+  KEYCLOAK_AUTH_SERVICE = 'KEYCLOAK_AUTH_SERVICE',
+}
+
+export type AuthServiceFactory = (injectorFunction: (injectable: Injectables) => unknown) => AuthService
