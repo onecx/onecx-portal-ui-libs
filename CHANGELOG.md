@@ -1,3 +1,10 @@
+## [4.21.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.21.0...v4.21.1) (2024-05-07)
+
+
+### Bug Fixes
+
+* add template for displaying things in the top center of interactive data view ([#246](https://github.com/onecx/onecx-portal-ui-libs/issues/246)) ([d1098be](https://github.com/onecx/onecx-portal-ui-libs/commit/d1098be266c6aada6b7da8a176509e5ef3f04e51))
+
 ## [4.21.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.20.2...v4.21.0) (2024-05-07)
 
 
