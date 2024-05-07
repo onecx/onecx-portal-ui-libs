@@ -80,6 +80,7 @@ export * from './lib/core/utils/image-logo-url.utils'
 export * from './lib/core/utils/add-initialize-module-guard.utils'
 export * from './lib/core/utils/translate-service-initializer.utils'
 export * from './lib/core/utils/portal-api-configuration.utils'
+export * from './lib/core/utils/provide-portal-dialog-service.utils'
 
 export * from '@onecx/angular-accelerator'
 export * from '@onecx/angular-integration-interface'
