@@ -1,6 +1,6 @@
 {
   "name": "@onecx/angular-remote-components",
-  "version": "4.17.1",
+  "version": "4.20.2",
   "peerDependencies": {
     "@angular/common": "^15.2.7",
     "@angular/core": "^15.2.7",

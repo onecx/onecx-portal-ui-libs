@@ -31,7 +31,7 @@ export function standaloneInitializer(
 ): () => Promise<any> {
   // eslint-disable-next-line no-restricted-syntax
   console.time('initializer')
-  console.log(`⭐ Standalone initializer for: `, +appName)
+  console.log(`⭐ Standalone initializer for: `, appName)
   let errCause: string
 
   return async () => {
@@ -64,7 +64,10 @@ export function standaloneInitializer(
         throw e
       }
       console.log(`📃 portal OK? `, portal)
-      await appStateService.currentPortal$.publish(portal)
+      await appStateService.currentPortal$.publish({
+        ...portal,
+        workspaceName: portal.portalName,
+      })
 
       const standaloneMfeInfo: MfeInfo = {
         mountPath: '/',

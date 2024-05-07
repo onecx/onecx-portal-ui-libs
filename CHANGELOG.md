@@ -1,3 +1,62 @@
+## [4.20.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.20.1...v4.20.2) (2024-05-06)
+
+
+### Bug Fixes
+
+* switch to fixed @angular-devkit/architect version to fix sb build ([#237](https://github.com/onecx/onecx-portal-ui-libs/issues/237)) ([7ee894b](https://github.com/onecx/onecx-portal-ui-libs/commit/7ee894b4100c9059ce9c1e518b6ed94a60c7c850))
+* token is also sent in local env, rename slot name ([#238](https://github.com/onecx/onecx-portal-ui-libs/issues/238)) ([a1664f8](https://github.com/onecx/onecx-portal-ui-libs/commit/a1664f81640a7f9c327fc9503fe37447368f94b0))
+
+## [4.20.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.20.0...v4.20.1) (2024-05-02)
+
+
+### Bug Fixes
+
+* add missing inputs to interactive-data-view ([#236](https://github.com/onecx/onecx-portal-ui-libs/issues/236)) ([2935b98](https://github.com/onecx/onecx-portal-ui-libs/commit/2935b988c1cf6ccd684ef89cf9b950e84b2ec022))
+* vertical menu indent fix ([40ef4c4](https://github.com/onecx/onecx-portal-ui-libs/commit/40ef4c49ff5a807d37127696a2487c08cb746588))
+
+## [4.20.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.19.0...v4.20.0) (2024-04-25)
+
+
+### Features
+
+* add skeleton loaders for slot components ([#232](https://github.com/onecx/onecx-portal-ui-libs/issues/232)) ([132d441](https://github.com/onecx/onecx-portal-ui-libs/commit/132d44186dbdaeff56080c06885c7aae3a3a1145))
+
+
+### Bug Fixes
+
+* permissions loading in standalone and old shell ([#233](https://github.com/onecx/onecx-portal-ui-libs/issues/233)) ([8b3b21a](https://github.com/onecx/onecx-portal-ui-libs/commit/8b3b21a1d9fb4e6dd8c389a5a46b97ab506bf69a))
+
+## [4.19.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.18.1...v4.19.0) (2024-04-24)
+
+
+### Features
+
+* add enum to dropdown utils ([#230](https://github.com/onecx/onecx-portal-ui-libs/issues/230)) ([447b1be](https://github.com/onecx/onecx-portal-ui-libs/commit/447b1be9cc8290e0746e439e4c2c7e9b3fec65e9))
+
+
+### Bug Fixes
+
+* temporary permission fix for standalone mode ([#231](https://github.com/onecx/onecx-portal-ui-libs/issues/231)) ([f84b823](https://github.com/onecx/onecx-portal-ui-libs/commit/f84b823c91129b911624568be0941aac1d6da042))
+
+## [4.18.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.18.0...v4.18.1) (2024-04-23)
+
+
+### Bug Fixes
+
+* if only additionalActions are set, then show them in actions column too ([#229](https://github.com/onecx/onecx-portal-ui-libs/issues/229)) ([67140eb](https://github.com/onecx/onecx-portal-ui-libs/commit/67140ebeac8fa1b99779043ae8c2cb007e63a317))
+
+## [4.18.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.17.1...v4.18.0) (2024-04-23)
+
+
+### Features
+
+* improve remote component loading + add first skeleton loaders ([#226](https://github.com/onecx/onecx-portal-ui-libs/issues/226)) ([a8fb5c2](https://github.com/onecx/onecx-portal-ui-libs/commit/a8fb5c24dfe710058d763e87b1f12cd6478aecaa))
+
+
+### Bug Fixes
+
+* export angular auth service ([#227](https://github.com/onecx/onecx-portal-ui-libs/issues/227)) ([9c1c97b](https://github.com/onecx/onecx-portal-ui-libs/commit/9c1c97b32f93258be7889388484f734d7bc8b2b2))
+
 ## [4.17.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.17.0...v4.17.1) (2024-04-19)
 
 
