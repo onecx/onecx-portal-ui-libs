@@ -1,3 +1,10 @@
+## [4.23.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.22.0...v4.23.0) (2024-05-07)
+
+
+### Features
+
+* providePortalDialogService utility function ([#245](https://github.com/onecx/onecx-portal-ui-libs/issues/245)) ([a872a97](https://github.com/onecx/onecx-portal-ui-libs/commit/a872a97b8771aec1e4ceb4a588f5ac0d6e1ad860))
+
 ## [4.22.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.21.1...v4.22.0) (2024-05-07)
 
 
