@@ -1,3 +1,10 @@
+## [4.22.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.21.1...v4.22.0) (2024-05-07)
+
+
+### Features
+
+* revert lib changes ([#247](https://github.com/onecx/onecx-portal-ui-libs/issues/247)) ([2348603](https://github.com/onecx/onecx-portal-ui-libs/commit/23486035e7dd517fb45fb42777ce50ab86a454c2))
+
 ## [4.21.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.21.0...v4.21.1) (2024-05-07)
 
 
