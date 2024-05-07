@@ -45,7 +45,6 @@ export class AuthServiceWrapper {
     let factory
     let module
     let customUrl = this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL)
-    console.log('customURL', customUrl)
     switch (serviceTypeConfig) {
       case 'keycloak':
         this.authService = this.injector.get(KeycloakAuthService)
