@@ -65,7 +65,6 @@ export class AuthServiceWrapper {
           throw new Error('unknown injectable type')
         })
         break
-      // TODO: Extend the other cases in the future (e.g. identity server)
       default:
         throw new Error('Configured AuthService not found')
     }
