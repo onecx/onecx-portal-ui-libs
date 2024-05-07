@@ -79,7 +79,8 @@ export class InteractiveDataViewComponent implements OnInit {
   @ContentChild('numberTableCell') numberTableCell: TemplateRef<any> | undefined
   @ContentChild('gridItem') gridItem: TemplateRef<any> | undefined
   @ContentChild('listItem') listItem: TemplateRef<any> | undefined
-
+  @ContentChild('topCenter') topCenter: TemplateRef<any> | undefined
+  
   @Output() filtered = new EventEmitter<Filter[]>()
   @Output() sorted = new EventEmitter<Sort>()
   @Output() deleteItem = new EventEmitter<RowListGridData>()
