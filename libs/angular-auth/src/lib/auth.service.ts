@@ -1,7 +1,13 @@
 export interface AuthService {
-  init(): Promise<boolean>
+  init(config?: Record<string, unknown>): Promise<boolean>
 
   getHeaderValues(): Record<string, string>
 
   logout(): void
 }
+
+export enum Injectables {
+  KEYCLOAK_AUTH_SERVICE = 'KEYCLOAK_AUTH_SERVICE',
+}
+
+export type AuthServiceFactory = (injectorFunction: (injectable: Injectables) => unknown) => AuthService
