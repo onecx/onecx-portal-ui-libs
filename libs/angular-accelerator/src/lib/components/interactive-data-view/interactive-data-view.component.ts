@@ -69,7 +69,6 @@ export class InteractiveDataViewComponent implements OnInit {
   @Input() displayedColumns: DataTableColumn[] = []
   @Input() frozenActionColumn = false
   @Input() actionColumnPosition: 'left' | 'right' = 'right'
-  @ContentChild('topCenter') topCenter: TemplateRef<any> | undefined
   @ContentChild('tableCell') tableCell: TemplateRef<any> | undefined
   @ContentChild('tableDateCell') tableDateCell: TemplateRef<any> | undefined
   @ContentChild('tableRelativeDateCell') tableRelativeDateCell: TemplateRef<any> | undefined
@@ -80,7 +79,8 @@ export class InteractiveDataViewComponent implements OnInit {
   @ContentChild('numberTableCell') numberTableCell: TemplateRef<any> | undefined
   @ContentChild('gridItem') gridItem: TemplateRef<any> | undefined
   @ContentChild('listItem') listItem: TemplateRef<any> | undefined
-
+  @ContentChild('topCenter') topCenter: TemplateRef<any> | undefined
+  
   @Output() filtered = new EventEmitter<Filter[]>()
   @Output() sorted = new EventEmitter<Sort>()
   @Output() deleteItem = new EventEmitter<RowListGridData>()
@@ -135,9 +135,6 @@ export class InteractiveDataViewComponent implements OnInit {
   }
   get _listItem(): TemplateRef<any> | undefined {
     return this.listItem
-  }
-  get _topCenter(): TemplateRef<any> | undefined {
-    return this.topCenter
   }
 
   _data: RowListGridData[] = []
