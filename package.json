@@ -1,6 +1,6 @@
 {
   "name": "@onecx/onecx-portal-ui-libs",
-  "version": "4.17.0",
+  "version": "4.20.2",
   "license": "Apache-2.0",
   "scripts": {
     "sass": "npx sass libs/portal-integration-angular/assets/styles.scss libs/portal-integration-angular/assets/output.css",
@@ -45,6 +45,7 @@
     "zone.js": "~0.12.0"
   },
   "devDependencies": {
+    "@angular-devkit/architect": "0.1502.10",
     "@angular-devkit/build-angular": "^15.2.7",
     "@angular-devkit/core": "^15.2.7",
     "@angular-devkit/schematics": "^15.2.7",
