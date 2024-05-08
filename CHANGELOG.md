@@ -1,3 +1,37 @@
+## [4.23.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.22.0...v4.23.0) (2024-05-07)
+
+
+### Features
+
+* providePortalDialogService utility function ([#245](https://github.com/onecx/onecx-portal-ui-libs/issues/245)) ([a872a97](https://github.com/onecx/onecx-portal-ui-libs/commit/a872a97b8771aec1e4ceb4a588f5ac0d6e1ad860))
+
+## [4.22.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.21.1...v4.22.0) (2024-05-07)
+
+
+### Features
+
+* revert lib changes ([#247](https://github.com/onecx/onecx-portal-ui-libs/issues/247)) ([2348603](https://github.com/onecx/onecx-portal-ui-libs/commit/23486035e7dd517fb45fb42777ce50ab86a454c2))
+
+## [4.21.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.21.0...v4.21.1) (2024-05-07)
+
+
+### Bug Fixes
+
+* add template for displaying things in the top center of interactive data view ([#246](https://github.com/onecx/onecx-portal-ui-libs/issues/246)) ([d1098be](https://github.com/onecx/onecx-portal-ui-libs/commit/d1098be266c6aada6b7da8a176509e5ef3f04e51))
+
+## [4.21.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.20.2...v4.21.0) (2024-05-07)
+
+
+### Features
+
+* enable custom auth service ([#244](https://github.com/onecx/onecx-portal-ui-libs/issues/244)) ([71a9a33](https://github.com/onecx/onecx-portal-ui-libs/commit/71a9a33ccaffc279d623561db14abbf35e324f5a))
+* verify that the libs are installable with angular 15 to 17 in shell ([#224](https://github.com/onecx/onecx-portal-ui-libs/issues/224)) ([c8fba75](https://github.com/onecx/onecx-portal-ui-libs/commit/c8fba754df57e6d3fa44cc5d885296f032542c1e))
+
+
+### Bug Fixes
+
+* styles imports, log permission directive, set favicon, menu stays open ([#235](https://github.com/onecx/onecx-portal-ui-libs/issues/235)) ([e02b9ec](https://github.com/onecx/onecx-portal-ui-libs/commit/e02b9ecf9b5e514ee058823ec1ab9073a5e5abe4))
+
 ## [4.20.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.20.1...v4.20.2) (2024-05-06)
 
 

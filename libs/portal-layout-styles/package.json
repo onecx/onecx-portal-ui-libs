@@ -1,6 +1,6 @@
 {
   "name": "@onecx/portal-layout-styles",
-  "version": "4.20.2",
+  "version": "4.23.0",
   "peerDependencies": {
     "tslib": "^2.5.0"
   },
