@@ -1,3 +1,10 @@
+## [4.23.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.23.0...v4.23.1) (2024-05-08)
+
+
+### Bug Fixes
+
+* display favicon, add shell core styles scss to fix styling of remote component headerRight ([#248](https://github.com/onecx/onecx-portal-ui-libs/issues/248)) ([5b0f784](https://github.com/onecx/onecx-portal-ui-libs/commit/5b0f78498d454479ffd178a81cc2b93699468235))
+
 ## [4.23.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.22.0...v4.23.0) (2024-05-07)
 
 
