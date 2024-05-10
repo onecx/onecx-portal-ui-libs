@@ -13,9 +13,18 @@
       <div class="figure flex h-2rem w-2rem md:h-3rem md:w-3rem" *ngIf="showFigure">
         <div #previewImage class="figure-image absolute top-0 left-0 right-0 bottom-0">
           <ng-content select="[figureImage]"></ng-content>
-          <img *ngIf="figureImage" [ocxSrc]="figureImage" alt="Figure image" class="w-full" />
+          <img
+            *ngIf="figureImage && !figureImageLoadError"
+            [ocxSrc]="figureImage"
+            alt="Figure image"
+            class="w-full"
+            (error)="figureImageLoadError = true"
+          />
         </div>
-        <div class="colorblob flex-1 border-round" *ngIf="previewImage.children.length === 0"></div>
+        <div
+          class="colorblob flex-1 border-round"
+          *ngIf="previewImage.children.length === 0 || figureImageLoadError"
+        ></div>
       </div>
       <ng-template #skeletonBar>
         <div class="header justify-content-evenly">
@@ -25,11 +34,12 @@
       </ng-template>
       <div class="header" *ngIf="!loading; else skeletonBar">
         <h1 id="page-header" *ngIf="!!header">{{ header }}</h1>
-        <h2 id='page-subheader' *ngIf="!!subheader">{{ subheader }}</h2>
+        <h2 id="page-subheader" *ngIf="!!subheader">{{ subheader }}</h2>
       </div>
     </div>
     <div class="action-items-wrap mt-2 md:mt-0">
-      <ng-container *ngIf="additionalToolbarContentLeft" [ngTemplateOutlet]="additionalToolbarContentLeft"> </ng-container>
+      <ng-container *ngIf="additionalToolbarContentLeft" [ngTemplateOutlet]="additionalToolbarContentLeft">
+      </ng-container>
 
       <ng-container *ngIf="!disableDefaultActions"> </ng-container>
       <ng-template #skeletonActions>
@@ -87,7 +97,9 @@
         class="object-info flex flex-row md:flex-column align-items-baseline md:align-items-center justify-content-between"
         *ngFor="let item of objectDetails"
       >
-        <label class="flex font-medium text-600" name="object-detail-label">{{ item.label | dynamicPipe:item.labelPipe }}</label>
+        <label class="flex font-medium text-600" name="object-detail-label"
+          >{{ item.label | dynamicPipe:item.labelPipe }}</label
+        >
         <span
           *ngIf="item.icon || item.value"
           class="flex text-900 mt-2"
