@@ -40,7 +40,7 @@ export class UserService implements OnDestroy {
       ? this.permissions$.getValue()?.includes(permissionKey)
       : false
     const result = this.permissionsTopic$.getValue()
-      ? this.permissionsTopic$.getValue()?.includes(permissionKey)
+      ? this.permissionsTopic$.getValue()?.permissions?.includes(permissionKey)
       : oldConceptResult
 
     if (!result) {
