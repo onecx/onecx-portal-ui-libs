@@ -1,3 +1,10 @@
+## [4.23.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.23.1...v4.23.2) (2024-05-14)
+
+
+### Bug Fixes
+
+* fix permission issues in edge cases by... ([#252](https://github.com/onecx/onecx-portal-ui-libs/issues/252)) ([d0005dd](https://github.com/onecx/onecx-portal-ui-libs/commit/d0005ddc6e72412cce998a627ae070aed9e3837f))
+
 ## [4.23.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.23.0...v4.23.1) (2024-05-08)
 
 
