@@ -17,6 +17,7 @@ export type SlotComponentConfiguration = {
 export interface SlotService {
   init(): Promise<void>
   getComponentsForSlot(slotName: string): Observable<SlotComponentConfiguration[]>
+  isComponentDefinedForSlot(slotName: string): Observable<boolean>
 }
 
 @Injectable({ providedIn: 'root' })
@@ -45,6 +46,16 @@ export class SlotService implements SlotService {
         }))
       ),
       shareReplay()
+    )
+  }
+
+  isComponentDefinedForSlot(slotName: string): Observable<boolean> {
+    return this.remoteComponents$.pipe(
+      map((remoteComponentsInfo) => {
+        const components =
+          remoteComponentsInfo.slots?.find((slotMapping) => slotMapping.name === slotName)?.components ?? []
+        return components.length > 0
+      })
     )
   }
 
