@@ -25,10 +25,14 @@ export * from './lib/topics/message/v1/message.model'
 export * from './lib/topics/message/v1/message.topic'
 
 export * from './lib/topics/remote-components/v1/remote-component.model'
+export * from './lib/topics/remote-components/v1/remote-components-info.model'
+export * from './lib/topics/remote-components/v1/slot.model'
 export * from './lib/topics/remote-components/v1/remote-components.topic'
 
 export * from './lib/topics/permissions/v1/permissions.topic'
-export * from './lib/topics/permissions/v1/permissions.model'
+
+export * from './lib/topics/permissions-rpc/v1/permissions-rpc.topic'
+export * from './lib/topics/permissions-rpc/v1/permissions-rpc.model'
 
 export * from './lib/topics/events/v1/events-topic'
 export * from './lib/topics/events/v1/topic-event-type'
