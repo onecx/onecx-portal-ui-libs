@@ -82,4 +82,20 @@ export * from './lib/core/utils/translate-service-initializer.utils'
 export * from './lib/core/utils/portal-api-configuration.utils'
 
 export * from '@onecx/angular-accelerator'
-export * from '@onecx/angular-integration-interface'
+export {
+  AppStateService,
+  ConfigurationService,
+  UserService,
+  PortalMessageService,
+  ThemeService,
+  RemoteComponentsService,
+  CONFIG_KEY,
+  IAuthService,
+  LibConfig,
+  MfeInfo,
+  Theme,
+  APP_CONFIG,
+  AUTH_SERVICE,
+  SANITY_CHECK,
+  APPLICATION_NAME
+} from '@onecx/angular-integration-interface'
