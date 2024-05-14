@@ -93,5 +93,9 @@ export {
   IAuthService,
   LibConfig,
   MfeInfo,
-  APP_CONFIG
+  Theme,
+  APP_CONFIG,
+  AUTH_SERVICE,
+  SANITY_CHECK,
+  APPLICATION_NAME
 } from '@onecx/angular-integration-interface'
