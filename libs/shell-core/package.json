@@ -1,12 +1,12 @@
 {
   "name": "@onecx/shell-core",
-  "version": "4.22.0",
+  "version": "4.23.11",
   "peerDependencies": {
     "rxjs": "7.8.1",
-    "@angular/animations": "^15.2.7",
-    "@angular/common": "^15.2.7",
-    "@angular/core": "^15.2.7",
-    "@angular/router": "^15.2.7",
+    "@angular/animations": "^15.2.7 || ^16.0.0 || ^17.0.0",
+    "@angular/common": "^15.2.7 || ^16.0.0 || ^17.0.0",
+    "@angular/core": "^15.2.7 || ^16.0.0 || ^17.0.0",
+    "@angular/router": "^15.2.7 || ^16.0.0 || ^17.0.0",
     "@onecx/angular-accelerator": "^4",
     "@onecx/angular-integration-interface": "^4",
     "@onecx/angular-remote-components": "^4",
