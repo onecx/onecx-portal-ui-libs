@@ -7,6 +7,6 @@ import { AppConfigService } from '@onecx/angular-accelerator'
   imports: [CommonModule],
   declarations: [SlotComponent],
   exports: [SlotComponent],
-  providers: [AppConfigService]
+  providers: [AppConfigService],
 })
 export class AngularRemoteComponentsModule {}
