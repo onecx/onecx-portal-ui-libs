@@ -1,3 +1,24 @@
+## [4.23.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.23.1...v4.23.2) (2024-05-14)
+
+
+### Bug Fixes
+
+* fix permission issues in edge cases by... ([#252](https://github.com/onecx/onecx-portal-ui-libs/issues/252)) ([d0005dd](https://github.com/onecx/onecx-portal-ui-libs/commit/d0005ddc6e72412cce998a627ae070aed9e3837f))
+
+## [4.23.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.23.0...v4.23.1) (2024-05-08)
+
+
+### Bug Fixes
+
+* display favicon, add shell core styles scss to fix styling of remote component headerRight ([#248](https://github.com/onecx/onecx-portal-ui-libs/issues/248)) ([5b0f784](https://github.com/onecx/onecx-portal-ui-libs/commit/5b0f78498d454479ffd178a81cc2b93699468235))
+
+## [4.23.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.22.0...v4.23.0) (2024-05-07)
+
+
+### Features
+
+* providePortalDialogService utility function ([#245](https://github.com/onecx/onecx-portal-ui-libs/issues/245)) ([a872a97](https://github.com/onecx/onecx-portal-ui-libs/commit/a872a97b8771aec1e4ceb4a588f5ac0d6e1ad860))
+
 ## [4.22.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.21.1...v4.22.0) (2024-05-07)
 
 

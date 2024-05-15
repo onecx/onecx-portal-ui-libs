@@ -10,7 +10,7 @@ import {
   UserService,
 } from '@onecx/angular-integration-interface'
 import { MessageService, PrimeNGConfig } from 'primeng/api'
-import { BehaviorSubject, filter, first, map, mergeMap, of } from 'rxjs'
+import { BehaviorSubject, filter, first, from, mergeMap, of } from 'rxjs'
 
 export const SHOW_CONTENT_PROVIDER = new InjectionToken<ShowContentProvider>('SHOW_CONTENT_PROVIDER')
 
@@ -66,26 +66,22 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
           | undefined) || this.colorScheme
     })
 
-    this.themeService.currentTheme$.pipe(
-      first(),
-      mergeMap((theme) => {
-        const prefix = theme.faviconUrl && theme.faviconUrl.startsWith('/') ? '/shell-bff' : ''
-        return theme.faviconUrl
-          ? this.httpClient
-              .get(prefix + theme.faviconUrl, { responseType: 'blob' })
-              .pipe(map((blob) => URL.createObjectURL(blob)))
-          : of('')
-      })
-    )
-
     this.themeService.currentTheme$
       .pipe(
         first(),
         mergeMap((theme) => {
           return theme.faviconUrl
-            ? this.httpClient
-                .get(theme.faviconUrl, { responseType: 'blob' })
-                .pipe(map((blob) => URL.createObjectURL(blob)))
+            ? this.httpClient.get(theme.faviconUrl, { responseType: 'blob' }).pipe(
+                mergeMap((blob) => {
+                  return from(
+                    new Promise((resolve) => {
+                      const reader = new FileReader()
+                      reader.onload = (e) => resolve(e.target?.result)
+                      reader.readAsDataURL(blob)
+                    })
+                  )
+                })
+              )
             : of('')
         })
       )
@@ -95,9 +91,6 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
           link = document.createElement('link')
           link.rel = 'icon'
           document.head.appendChild(link)
-        }
-        link.onload = () => {
-          URL.revokeObjectURL(url)
         }
         link.href = url
       })
