@@ -1,5 +1,5 @@
 import { BaseHarnessFilters, ComponentHarness, HarnessPredicate } from '@angular/cdk/testing'
-import { InputHarness } from '@onecx/angular-testing'
+import { InputHarness } from '../input.harness'
 
 export interface PPasswordHarnessFilters extends BaseHarnessFilters {
   id?: string
