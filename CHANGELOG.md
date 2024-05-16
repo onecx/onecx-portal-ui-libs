@@ -1,3 +1,11 @@
+## [4.24.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.23.2...v4.24.0) (2024-05-15)
+
+
+### Features
+
+* p-password harness ([#254](https://github.com/onecx/onecx-portal-ui-libs/issues/254)) ([32ac035](https://github.com/onecx/onecx-portal-ui-libs/commit/32ac035ab16f58c7aca9089325c00c13501a63b9))
+* slot service implementation in angular-remote-components ([#251](https://github.com/onecx/onecx-portal-ui-libs/issues/251)) ([a86e682](https://github.com/onecx/onecx-portal-ui-libs/commit/a86e682dc05f12b8a84b246ee7ae0e5655a329a7))
+
 ## [4.23.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.23.1...v4.23.2) (2024-05-14)
 
 

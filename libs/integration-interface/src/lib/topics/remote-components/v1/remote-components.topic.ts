@@ -1,8 +1,8 @@
 import { Topic } from '@onecx/accelerator'
-import { RemoteComponent } from './remote-component.model'
+import { RemoteComponentsInfo } from './remote-components-info.model'
 
-export class RemoteComponentsTopic extends Topic<RemoteComponent[]> {
+export class RemoteComponentsTopic extends Topic<RemoteComponentsInfo> {
   constructor() {
-    super('remoteComponents', 1)
+    super('remoteComponentsInfo', 1)
   }
 }
