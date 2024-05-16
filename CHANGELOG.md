@@ -1,3 +1,15 @@
+## [4.25.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.24.0...v4.25.0) (2024-05-16)
+
+
+### Features
+
+* make libs installable with angular 15 and 17 ([#253](https://github.com/onecx/onecx-portal-ui-libs/issues/253)) ([5f08145](https://github.com/onecx/onecx-portal-ui-libs/commit/5f081453aec1b2f94d340005b7e060018ad53c35))
+
+
+### Bug Fixes
+
+* version correction ([#257](https://github.com/onecx/onecx-portal-ui-libs/issues/257)) ([abd1348](https://github.com/onecx/onecx-portal-ui-libs/commit/abd13481f2906ae2a142b439e531f00ae012c31d))
+
 ## [4.24.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.23.2...v4.24.0) (2024-05-15)
 
 
