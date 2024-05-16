@@ -24,7 +24,7 @@
     "primeng": "^15.0.0 || ^16.0.0 || ^17.0.0",
     "zod": "^3.22.1",
     "@ngx-translate/http-loader": "^7.0.0",
-    "@angular-architects/module-federation": "15.0.0"
+    "@angular-architects/module-federation": "^15.0.0 || ^16.0.0 || ^17.0.0"
   },
   "dependencies": {},
   "exports": {
