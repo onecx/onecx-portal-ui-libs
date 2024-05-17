@@ -8,7 +8,7 @@
     "@onecx/integration-interface": "^4",
     "@ngx-translate/core": "^14.0.0",
     "rxjs": "~7.8.0",
-    "@angular-architects/module-federation": "15.0.0"
+    "@angular-architects/module-federation": "^15.0.0 || ^16.0.0 || ^17.0.0"
   },
   "dependencies": {},
   "publishConfig": {
