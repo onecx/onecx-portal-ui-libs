@@ -1,3 +1,10 @@
+## [4.25.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.25.0...v4.25.1) (2024-05-17)
+
+
+### Bug Fixes
+
+* fix for angular 17 ([#258](https://github.com/onecx/onecx-portal-ui-libs/issues/258)) ([c5ecc21](https://github.com/onecx/onecx-portal-ui-libs/commit/c5ecc2147a483735ad8f4e9af5601bb78377381d))
+
 ## [4.25.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.24.0...v4.25.0) (2024-05-16)
 
 
