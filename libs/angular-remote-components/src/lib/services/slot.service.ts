@@ -58,17 +58,27 @@ export class SlotService implements SlotService {
   private async loadComponent(component: {
     remoteEntryUrl: string
     exposedModule: string
+    productName: string
   }): Promise<Type<unknown> | undefined> {
     try {
       const exposedModule = component.exposedModule.startsWith('./')
         ? component.exposedModule.slice(2)
         : component.exposedModule
-      const m = await loadRemoteModule({
-        type: 'module',
+      if (!(component as any).technology || (component as any).technology === 'Angular') {
+        const m = await loadRemoteModule({
+          type: 'module',
+          remoteEntry: component.remoteEntryUrl,
+          exposedModule: './' + exposedModule,
+        })
+        return m[exposedModule]
+      }
+      await loadRemoteModule({
+        type: 'script',
+        remoteName: component.productName,
         remoteEntry: component.remoteEntryUrl,
         exposedModule: './' + exposedModule,
-      })
-      return m[exposedModule]
+      });
+      return undefined
     } catch (e) {
       console.log('Failed to load remote module ', component.exposedModule, component.remoteEntryUrl, e)
       return undefined
