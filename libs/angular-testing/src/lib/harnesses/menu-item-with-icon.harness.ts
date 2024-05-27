@@ -5,8 +5,4 @@ export class MenuItemWithIconHarness extends MenuItemHarness {
     const classList = await (await this.locatorForOptional('i')())?.getAttribute('class')
     return classList?.includes(icon)
   }
-
-  async isExternal(): Promise<boolean | undefined> {
-    return (await (await this.host()).getAttribute('ng-reflect-router-link')) === null
-  }
 }

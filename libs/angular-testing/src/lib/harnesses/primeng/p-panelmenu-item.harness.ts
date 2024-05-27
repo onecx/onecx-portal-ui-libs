@@ -18,10 +18,6 @@ export class PanelMenuItemHarness extends ComponentHarness {
     return classList?.includes(icon)
   }
 
-  async isExternal(): Promise<boolean | undefined> {
-    return (await (await this.getAnchor()).getAttribute('ng-reflect-router-link')) === null
-  }
-
   async click() {
     await (await this.getAnchor()).click()
   }
