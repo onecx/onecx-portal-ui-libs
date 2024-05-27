@@ -1,3 +1,10 @@
+## [4.26.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.25.1...v4.26.0) (2024-05-27)
+
+
+### Features
+
+* menu harnesses enhancements ([#260](https://github.com/onecx/onecx-portal-ui-libs/issues/260)) ([0733f33](https://github.com/onecx/onecx-portal-ui-libs/commit/0733f33d5a9c8181bc861930477ece6a495ca6eb))
+
 ## [4.25.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.25.0...v4.25.1) (2024-05-17)
 
 
