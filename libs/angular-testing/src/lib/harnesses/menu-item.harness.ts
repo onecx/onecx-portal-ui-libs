@@ -13,11 +13,15 @@ export class MenuItemHarness extends ComponentHarness {
     )
   }
 
-  async getText() {
+  async getText(): Promise<string> {
     return await (await this.host()).text()
   }
 
   async selectItem() {
     await (await this.host()).click()
+  }
+
+  async getLink(): Promise<string | null> {
+    return await (await this.host()).getAttribute('href')
   }
 }

@@ -12,7 +12,7 @@ export class PMenuHarness extends ContentContainerComponentHarness {
     return !!(await this.getHarnessLoaderForPMenuOverlay())
   }
 
-  async getAllMenuItems() {
+  async getAllMenuItems(): Promise<MenuItemHarness[] | undefined> {
     if (await this.isOpen()) {
       return await (await this.getHarnessLoaderForPMenuOverlay())?.getAllHarnesses(MenuItemHarness)
     } else {
