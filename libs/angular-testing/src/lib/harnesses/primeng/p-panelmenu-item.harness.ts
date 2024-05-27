@@ -9,7 +9,7 @@ export class PanelMenuItemHarness extends ComponentHarness {
   getChildren = this.locatorForAll(PMenuItemHarness)
   getIconSpan = this.locatorForOptional(SpanHarness.with({ class: 'p-menuitem-icon' }))
 
-  async getText() {
+  async getText(): Promise<string> {
     return await (await this.getAnchor()).text()
   }
 
@@ -20,5 +20,9 @@ export class PanelMenuItemHarness extends ComponentHarness {
 
   async click() {
     await (await this.getAnchor()).click()
+  }
+
+  async getLink(): Promise<string | null> {
+    return await (await this.getAnchor()).getAttribute('href')
   }
 }
