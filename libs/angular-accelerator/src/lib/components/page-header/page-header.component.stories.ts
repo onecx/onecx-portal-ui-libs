@@ -323,6 +323,12 @@ const objectDetailsWithIcons: ObjectDetailItem[] = [
   {
     label: 'I have no value',
   },
+  {
+    label: 'Status with style',
+    value: 'Completed',
+    icon: PrimeIcons.CHECK_SQUARE,
+    valueCssClass: 'bg-green-400 text-white border-round-sm p-1',
+  },
 ]
 
 export const WithObjectDetailsAndIcons = {
