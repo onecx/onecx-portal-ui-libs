@@ -1,3 +1,11 @@
+## [4.27.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.26.0...v4.27.0) (2024-05-28)
+
+
+### Features
+
+* CUSTOM column type for data table ([#262](https://github.com/onecx/onecx-portal-ui-libs/issues/262)) ([c15aad3](https://github.com/onecx/onecx-portal-ui-libs/commit/c15aad3394ccbd698cb33016b2d48152dec3a707))
+* object details in page header can be styled ([#261](https://github.com/onecx/onecx-portal-ui-libs/issues/261)) ([ae72fc7](https://github.com/onecx/onecx-portal-ui-libs/commit/ae72fc7920c9890b9cfd1abee35588a76fac21e1))
+
 ## [4.26.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.25.1...v4.26.0) (2024-05-27)
 
 
