@@ -214,6 +214,25 @@ describe('PageHeaderComponent', () => {
     expect(await fourthDetail?.getIcon()).toBeUndefined()
   })
 
+  it('should use styles to render objectDetails in the page header', async () => {
+    const objectDetailsWithIcons: ObjectDetailItem[] = [
+      {
+        label: 'Venue',
+        value: 'AIE Munich',
+        valueCssClass: 'bg-green-400 text-white',
+      },
+    ]
+    expect((await pageHeaderHarness.getObjectInfos()).length).toEqual(0)
+
+    component.objectDetails = objectDetailsWithIcons
+
+    expect((await pageHeaderHarness.getObjectInfos()).length).toEqual(1)
+    const firstDetail = await pageHeaderHarness.getObjectInfoByLabel('Venue')
+    const firstDetailStyles = await firstDetail?.getValueStyles()
+    expect(firstDetailStyles?.includes('bg-green-400')).toBeTruthy()
+    expect(firstDetailStyles?.includes('text-white')).toBeTruthy()
+  })
+
   it('should show overflow actions when menu overflow button clicked', async () => {
     component.actions = mockActions
 
