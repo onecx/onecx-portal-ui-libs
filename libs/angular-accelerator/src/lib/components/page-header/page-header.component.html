@@ -91,7 +91,7 @@
         <span
           *ngIf="item.icon || item.value"
           class="flex text-900 mt-2"
-          [ngClass]="item.icon ? 'gap-1 align-items-center' : null"
+          [ngClass]="generateItemStyle(item)"
           [title]="item.tooltip || ''"
           name="object-detail-value"
         >

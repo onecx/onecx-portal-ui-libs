@@ -98,6 +98,10 @@ class ObjectDetailItemHarness extends ComponentHarness {
     return (await this.getValueElement())?.text()
   }
 
+  async getValueStyles() {
+    return (await this.getValueElement())?.getAttribute('class')
+  }
+
   async getIcon() {
     return (await this.getIconElement())?.getAttribute('class')
   }
