@@ -77,10 +77,11 @@ export class InteractiveDataViewComponent implements OnInit {
   @ContentChild('listItemSubtitleLines') listItemSubtitleLines: TemplateRef<any> | undefined
   @ContentChild('stringTableCell') stringTableCell: TemplateRef<any> | undefined
   @ContentChild('numberTableCell') numberTableCell: TemplateRef<any> | undefined
+  @ContentChild('customTableCell') customTableCell: TemplateRef<any> | undefined
   @ContentChild('gridItem') gridItem: TemplateRef<any> | undefined
   @ContentChild('listItem') listItem: TemplateRef<any> | undefined
   @ContentChild('topCenter') topCenter: TemplateRef<any> | undefined
-  
+
   @Output() filtered = new EventEmitter<Filter[]>()
   @Output() sorted = new EventEmitter<Sort>()
   @Output() deleteItem = new EventEmitter<RowListGridData>()
@@ -120,6 +121,9 @@ export class InteractiveDataViewComponent implements OnInit {
   }
   get _numberTableCell(): TemplateRef<any> | undefined {
     return this.numberTableCell
+  }
+  get _customTableCell(): TemplateRef<any> | undefined {
+    return this.customTableCell
   }
   get _tableDateCell(): TemplateRef<any> | undefined {
     return this.tableDateCell
