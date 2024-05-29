@@ -279,7 +279,7 @@ describe('DataTableComponent', () => {
       const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
       const paginator = await dataTable.getPaginator()
       const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
-      const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(3)
+      const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
       expect(rowsPerPageOptionsText).toEqual('Alle')
     })
 
@@ -289,9 +289,31 @@ describe('DataTableComponent', () => {
       const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
       const paginator = await dataTable.getPaginator()
       const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
-      const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(3)
+      const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
       expect(rowsPerPageOptionsText).toEqual('All')
     })
+  })
+
+  it('should display 10 rows by default for 1000 rows', async () => {
+    component.rows = Array.from(Array(1000).keys()).map((number) => {
+      return {
+        id: number,
+        name: number,
+      }
+    })
+    component.columns = [
+      {
+        columnType: ColumnType.NUMBER,
+        id: 'name',
+        nameKey: 'COLUMN_HEADER_NAME.NAME',
+      },
+    ]
+    component.paginator = true
+    fixture.detectChanges()
+
+    const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
+    const rows = await dataTable.getRows()
+    expect(rows.length).toBe(10)
   })
 
   describe('Table row selection', () => {
