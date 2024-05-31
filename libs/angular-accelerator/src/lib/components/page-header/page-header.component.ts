@@ -174,6 +174,10 @@ export class PageHeaderComponent implements OnInit, OnChanges {
     }
   }
 
+  handleImageError() {
+    this.figureImageLoadError = true
+  }
+
   /**
    * Generates a list of actions that should be rendered in an overflow menu
    */
