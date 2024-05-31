@@ -96,6 +96,7 @@
     [additionalActions]="additionalActions"
     [stringCellTemplate]="_stringTableCell ? stringCell : undefined"
     [numberCellTemplate]="_numberTableCell ? numberCell : undefined"
+    [customCellTemplate]="_customTableCell ? customCell : undefined"
     [dateCellTemplate]="_tableDateCell ? dateCell : undefined"
     [relativeDateCellTemplate]="_tableRelativeDateCell ? relativeDateCell : undefined"
     [cellTemplate]="_tableCell ? cell : undefined"
@@ -119,6 +120,14 @@
     <ng-container
       *ngIf="_numberTableCell"
       [ngTemplateOutlet]="_numberTableCell"
+      [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
+    >
+    </ng-container
+  ></ng-template>
+  <ng-template #customCell let-rowObject="rowObject" let-column="column">
+    <ng-container
+      *ngIf="_customTableCell"
+      [ngTemplateOutlet]="_customTableCell"
       [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
     >
     </ng-container

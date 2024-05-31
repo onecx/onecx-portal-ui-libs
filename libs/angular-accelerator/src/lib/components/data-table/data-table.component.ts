@@ -125,6 +125,12 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     return this.numberCellTemplate || this.numberCellChildTemplate
   }
 
+  @Input() customCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('customCell') customCellChildTemplate: TemplateRef<any> | undefined
+  get _customCell(): TemplateRef<any> | undefined {
+    return this.customCellTemplate || this.customCellChildTemplate
+  }
+
   @Input() dateCellTemplate: TemplateRef<any> | undefined
   @ContentChild('dateCell') dateCellChildTemplate: TemplateRef<any> | undefined
   get _dateCell(): TemplateRef<any> | undefined {
@@ -341,6 +347,6 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   }
 
   fieldIsTruthy(object: any, key: any) {
-    return !!(ObjectUtils.resolveFieldData(object, key))
+    return !!ObjectUtils.resolveFieldData(object, key)
   }
 }

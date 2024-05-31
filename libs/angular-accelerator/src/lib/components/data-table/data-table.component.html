@@ -89,15 +89,12 @@
   [rows]="pageSize"
   [showCurrentPageReport]="true"
   currentPageReportTemplate="{{ (totalRecordsOnServer ? currentPageShowingWithTotalOnServerKey : currentPageShowingKey) | translate:params }}"
-  [rowsPerPageOptions]="[10, 25, 50, rows?.length]"
+  [rowsPerPageOptions]="[10, 25, 50, { showAll: ('OCX_DATA_TABLE.ALL' | translate)}]"
   id="dataTable_{{name}}"
   (selectionChange)="onSelectionChange($event)"
   [selection]="(selectedRows$ | async) || []"
   [scrollable]="true"
 >
-  <ng-template let-item pTemplate="paginatordropdownitem">
-    {{ item.value === rows?.length ? ("OCX_DATA_TABLE.ALL" | translate) : item.value }}
-  </ng-template>
   <ng-template pTemplate="header">
     <tr>
       <th style="width: 4rem" scope="col" *ngIf="selectionChangedObserved">
@@ -196,6 +193,18 @@
 
 <ng-template #defaultCell let-rowObject="rowObject" let-column="column">
   <ng-container [ngSwitch]="column.columnType">
+    <ng-container *ngSwitchCase="'CUSTOM'">
+      <ng-container
+        [ngTemplateOutlet]="
+            _customCell ? _customCell: defaultCustomCell
+            "
+        [ngTemplateOutletContext]="{
+                rowObject: rowObject,
+                column: column
+            }"
+      >
+      </ng-container>
+    </ng-container>
     <ng-container *ngSwitchCase="'DATE'">
       <ng-container
         [ngTemplateOutlet]="
@@ -265,6 +274,9 @@
 
 <ng-template #defaultNumberCell let-rowObject="rowObject" let-column="column">
   <ng-container> {{ rowObject[column.id] | number }} </ng-container>
+</ng-template>
+
+<ng-template #defaultCustomCell let-rowObject="rowObject" let-column="column">
 </ng-template>
 
 <ng-template #defaultDateCell let-rowObject="rowObject" let-column="column">

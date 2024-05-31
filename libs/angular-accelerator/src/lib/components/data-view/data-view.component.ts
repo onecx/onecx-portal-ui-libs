@@ -98,6 +98,12 @@ export class DataViewComponent implements DoCheck, OnInit {
     return this.numberTableCellTemplate || this.numberTableCellChildTemplate
   }
 
+  @Input() customTableCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('customTableCell') customTableCellChildTemplate: TemplateRef<any> | undefined
+  get _customTableCell(): TemplateRef<any> | undefined {
+    return this.customTableCellTemplate || this.customTableCellChildTemplate
+  }
+
   @Input() tableDateCellTemplate: TemplateRef<any> | undefined
   @ContentChild('tableDateCell') tableDateCellChildTemplate: TemplateRef<any> | undefined
   get _tableDateCell(): TemplateRef<any> | undefined {

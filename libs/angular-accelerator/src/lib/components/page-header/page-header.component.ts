@@ -51,6 +51,7 @@ export interface ObjectDetailItem {
   labelPipe?: Type<any>
   valuePipe?: Type<any>
   valuePipeArgs?: string
+  valueCssClass?: string
 }
 
 export interface HomeItem {
@@ -176,6 +177,13 @@ export class PageHeaderComponent implements OnInit, OnChanges {
 
   handleImageError() {
     this.figureImageLoadError = true
+  }
+
+  public generateItemStyle(item: ObjectDetailItem): string {
+    let style = ''
+    if (item.icon) style = style.concat(style, ' ', 'gap-1 align-items-center')
+    if (item.valueCssClass) style = style.concat(style, ' ', item.valueCssClass)
+    return style
   }
 
   /**

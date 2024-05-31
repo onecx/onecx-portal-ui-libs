@@ -1,3 +1,37 @@
+## [4.27.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.26.0...v4.27.0) (2024-05-28)
+
+
+### Features
+
+* CUSTOM column type for data table ([#262](https://github.com/onecx/onecx-portal-ui-libs/issues/262)) ([c15aad3](https://github.com/onecx/onecx-portal-ui-libs/commit/c15aad3394ccbd698cb33016b2d48152dec3a707))
+* object details in page header can be styled ([#261](https://github.com/onecx/onecx-portal-ui-libs/issues/261)) ([ae72fc7](https://github.com/onecx/onecx-portal-ui-libs/commit/ae72fc7920c9890b9cfd1abee35588a76fac21e1))
+
+## [4.26.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.25.1...v4.26.0) (2024-05-27)
+
+
+### Features
+
+* menu harnesses enhancements ([#260](https://github.com/onecx/onecx-portal-ui-libs/issues/260)) ([0733f33](https://github.com/onecx/onecx-portal-ui-libs/commit/0733f33d5a9c8181bc861930477ece6a495ca6eb))
+
+## [4.25.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.25.0...v4.25.1) (2024-05-17)
+
+
+### Bug Fixes
+
+* fix for angular 17 ([#258](https://github.com/onecx/onecx-portal-ui-libs/issues/258)) ([c5ecc21](https://github.com/onecx/onecx-portal-ui-libs/commit/c5ecc2147a483735ad8f4e9af5601bb78377381d))
+
+## [4.25.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.24.0...v4.25.0) (2024-05-16)
+
+
+### Features
+
+* make libs installable with angular 15 and 17 ([#253](https://github.com/onecx/onecx-portal-ui-libs/issues/253)) ([5f08145](https://github.com/onecx/onecx-portal-ui-libs/commit/5f081453aec1b2f94d340005b7e060018ad53c35))
+
+
+### Bug Fixes
+
+* version correction ([#257](https://github.com/onecx/onecx-portal-ui-libs/issues/257)) ([abd1348](https://github.com/onecx/onecx-portal-ui-libs/commit/abd13481f2906ae2a142b439e531f00ae012c31d))
+
 ## [4.24.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.23.2...v4.24.0) (2024-05-15)
 
 
