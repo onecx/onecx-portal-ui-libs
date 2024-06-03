@@ -23,7 +23,7 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
 
   constructor(name: string, version: number, sendGetMessage = true) {
     super(name, version)
-    
+
     this.isInitializedPromise = new Promise<void>((resolve) => {
       this.resolveInitPromise = resolve
     })
@@ -34,7 +34,7 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
       window.postMessage(message, '*')
     }
   }
-  
+
   get isInitialized(): Promise<void> {
     return this.isInitializedPromise
   }
@@ -145,10 +145,17 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
   private onMessage(m: MessageEvent<TopicMessage>): any {
     switch (m.data.type) {
       case TopicMessageType.TopicNext:
+        if (m.data.name !== this.name || m.data.version !== this.version) {
+          break
+        }
+
         if (
-          m.data.name === this.name &&
-          m.data.version === this.version &&
-          (!this.data.value || (this.isInit && (<TopicMessage>m.data).timestamp > this.data.value.timestamp))
+          !this.data.value ||
+          (this.isInit &&
+            (<TopicMessage>m.data).id !== undefined &&
+            this.data.value.id !== undefined &&
+            (<TopicMessage>m.data).id > this.data.value.id) ||
+          (this.isInit && (<TopicMessage>m.data).timestamp > this.data.value.timestamp)
         ) {
           this.isInit = true
           this.data.next(<TopicDataMessage<T>>m.data)
@@ -158,6 +165,15 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
             publishPromiseResolver()
             delete this.publishPromiseResolver[m.data.timestamp]
           }
+        } else if (
+          this.data.value &&
+          this.isInit &&
+          (<TopicMessage>m.data).timestamp === this.data.value.timestamp &&
+          ((<TopicMessage>m.data).id || this.data.value.id)
+        ) {
+          console.warn(
+            'Message was dropped because of equal timestamps, because there was an old style message in the system. Please upgrade all libraries to the latest version.'
+          )
         }
         break
       case TopicMessageType.TopicGet:
