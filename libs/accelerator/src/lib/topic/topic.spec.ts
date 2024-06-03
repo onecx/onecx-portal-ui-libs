@@ -10,7 +10,6 @@ import { map } from 'rxjs'
 import { Topic } from './topic'
 import { TopicMessageType } from './topic-message-type'
 import { TopicDataMessage } from './topic-data-message'
-import { TopicMessage } from './topic-message'
 
 describe('Topic', () => {
   const origAddEventListener = window.addEventListener
