@@ -158,12 +158,12 @@ describe('Topic', () => {
     })
   })
 
-  describe('on message', () => {
-    let currentMessage: TopicDataMessage<string>
+  describe('integration with older versions of library', () => {
+    let previousMessage: TopicDataMessage<string>
     let incomingMessage: MessageEvent<TopicDataMessage<string>>
 
     beforeEach(() => {
-      currentMessage = {
+      previousMessage = {
         type: TopicMessageType.TopicNext,
         name: testTopic1.name,
         version: testTopic1.version,
@@ -187,99 +187,99 @@ describe('Topic', () => {
     })
 
     it('should have value if incoming id is greater than previous id', () => {
-      currentMessage.data = 'msg1'
-      currentMessage.id = 0
+      previousMessage.data = 'msg1'
+      previousMessage.id = 0
       incomingMessage.data.data = 'msg2'
       incomingMessage.data.id = 1
+      ;(<any>testTopic1).data.next(previousMessage)
+      ;(<any>testTopic1).onMessage(incomingMessage)
 
-      testTopic1.onMessage(currentMessage, incomingMessage)
-
-      expect(values1).toEqual(['initMsg', 'msg2'])
+      expect(values1).toEqual(['initMsg', 'msg1', 'msg2'])
     })
 
     it('should have value if incoming timestamp is greater than previous timestamp with no ids provided', () => {
-      currentMessage.data = 'msg1'
-      currentMessage.id = undefined!
-      currentMessage.timestamp = 1
+      previousMessage.data = 'msg1'
+      ;(<any>previousMessage).id = undefined
+      previousMessage.timestamp = 1
       incomingMessage.data.data = 'msg2'
-      incomingMessage.data.id = undefined!
+      ;(<any>incomingMessage.data).id = undefined
       incomingMessage.data.timestamp = 3
+      ;(<any>testTopic1).data.next(previousMessage)
+      ;(<any>testTopic1).onMessage(incomingMessage)
 
-      testTopic1.onMessage(currentMessage, incomingMessage)
-
-      expect(values1).toEqual(['initMsg', 'msg2'])
+      expect(values1).toEqual(['initMsg', 'msg1', 'msg2'])
     })
 
     it('should have value if incoming timestamp is greater than previous timestamp when current message has id', () => {
-      currentMessage.data = 'msg1'
-      currentMessage.id = 1
-      currentMessage.timestamp = 1
+      previousMessage.data = 'msg1'
+      previousMessage.id = 1
+      previousMessage.timestamp = 1
       incomingMessage.data.data = 'msg2'
-      incomingMessage.data.id = undefined!
+      ;(<any>incomingMessage.data).id = undefined
       incomingMessage.data.timestamp = 3
+      ;(<any>testTopic1).data.next(previousMessage)
+      ;(<any>testTopic1).onMessage(incomingMessage)
 
-      testTopic1.onMessage(currentMessage, incomingMessage)
-
-      expect(values1).toEqual(['initMsg', 'msg2'])
+      expect(values1).toEqual(['initMsg', 'msg1', 'msg2'])
     })
 
     it('should have value if incoming timestamp is greater than previous timestamp when incoming message has id', () => {
-      currentMessage.data = 'msg1'
-      currentMessage.id = undefined!
-      currentMessage.timestamp = 1
+      previousMessage.data = 'msg1'
+      ;(<any>previousMessage).id = undefined
+      previousMessage.timestamp = 1
       incomingMessage.data.data = 'msg2'
       incomingMessage.data.id = 1
       incomingMessage.data.timestamp = 3
+      ;(<any>testTopic1).data.next(previousMessage)
+      ;(<any>testTopic1).onMessage(incomingMessage)
 
-      testTopic1.onMessage(currentMessage, incomingMessage)
-
-      expect(values1).toEqual(['initMsg', 'msg2'])
+      expect(values1).toEqual(['initMsg', 'msg1', 'msg2'])
     })
 
     it('should have no value if incoming timestamp is equal to the previous timestamp with no ids provided', () => {
-      currentMessage.data = 'msg1'
-      currentMessage.id = undefined!
-      currentMessage.timestamp = 3
+      previousMessage.data = 'msg1'
+      ;(<any>previousMessage).id = undefined
+      previousMessage.timestamp = 3
       incomingMessage.data.data = 'msg2'
-      incomingMessage.data.id = undefined!
+      ;(<any>incomingMessage.data).id = undefined
       incomingMessage.data.timestamp = 3
+      ;(<any>testTopic1).data.next(previousMessage)
+      ;(<any>testTopic1).onMessage(incomingMessage)
 
-      testTopic1.onMessage(currentMessage, incomingMessage)
-
-      expect(values1).toEqual(['initMsg'])
+      expect(values1).toEqual(['initMsg', 'msg1'])
     })
 
     it('should have no value if incoming timestamp is equal to the previous timestamp when current message has id', () => {
       jest.spyOn(console, 'warn')
-      currentMessage.data = 'msg1'
-      currentMessage.id = 1
-      currentMessage.timestamp = 3
+      previousMessage.data = 'msg1'
+      previousMessage.id = 1
+      previousMessage.timestamp = 3
       incomingMessage.data.data = 'msg2'
-      incomingMessage.data.id = undefined!
+      ;(<any>incomingMessage.data).id = undefined
       incomingMessage.data.timestamp = 3
+      ;(<any>testTopic1).data.next(previousMessage)
+      ;(<any>testTopic1).onMessage(incomingMessage)
 
-      testTopic1.onMessage(currentMessage, incomingMessage)
-
-      expect(values1).toEqual(['initMsg'])
+      expect(values1).toEqual(['initMsg', 'msg1'])
       expect(console.warn).toHaveBeenLastCalledWith(
-        'Message was swallowed because of equal timestamps. Please upgrate to the latest version to ensure messages are correctly timed'
+        'Message was dropped because of equal timestamps, because there was an old style message in the system. Please upgrade all libraries to the latest version.'
       )
     })
 
     it('should have no value if incoming timestamp is equal to previous timestamp when incoming message has id', () => {
       jest.spyOn(console, 'warn')
-      currentMessage.data = 'msg1'
-      currentMessage.id = undefined!
-      currentMessage.timestamp = 3
+      previousMessage.data = 'msg1'
+      ;(<any>previousMessage).id = undefined
+      previousMessage.timestamp = 3
       incomingMessage.data.data = 'msg2'
       incomingMessage.data.id = 1
       incomingMessage.data.timestamp = 3
+      ;(<any>testTopic1).data.next(previousMessage)
+      ;(<any>testTopic1).onMessage(incomingMessage)
 
-      testTopic1.onMessage(currentMessage, incomingMessage)
-
-      expect(values1).toEqual(['initMsg'])
+      expect(values1).toEqual(['initMsg', 'msg1'])
       expect(console.warn).toHaveBeenLastCalledWith(
-        'Message was swallowed because of equal timestamps. Please upgrate to the latest version to ensure messages are correctly timed'
+        'Message was dropped because of equal timestamps, because there was an old style message in the system. Please upgrade all libraries to the latest version.'
       )
     })
   })
