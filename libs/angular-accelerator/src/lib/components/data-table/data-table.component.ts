@@ -20,6 +20,7 @@ import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { ObjectUtils } from '../../utils/objectutils'
+import { PaginationEvent } from '../../model/pagination.model'
 
 type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -165,6 +166,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   @Output() deleteTableRow = new EventEmitter<Row>()
   @Output() selectionChanged = new EventEmitter<Row[]>()
   @Output() pageChanged = new EventEmitter<number>()
+  @Output() paginationChanged = new EventEmitter<PaginationEvent>()
 
   displayedRows$: Observable<unknown[]> | undefined
   selectedRows$: Observable<unknown[]> | undefined
@@ -344,6 +346,10 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     const page = event.first / event.rows
     this.page = page
     this.pageChanged.emit(page)
+    this.paginationChanged.emit({
+      page: page,
+      pageSize: event.rows,
+    })
   }
 
   fieldIsTruthy(object: any, key: any) {

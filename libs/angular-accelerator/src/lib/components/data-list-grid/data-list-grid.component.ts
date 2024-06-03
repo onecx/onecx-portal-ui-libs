@@ -24,6 +24,7 @@ import { DataTableColumn } from '../../model/data-table-column.model'
 import { ObjectUtils } from '../../utils/objectutils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { Filter, Row } from '../data-table/data-table.component'
+import { PaginationEvent } from '../../model/pagination.model'
 
 export type ListGridData = {
   id: string | number
@@ -163,6 +164,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   @Output() editItem = new EventEmitter<ListGridData>()
   @Output() deleteItem = new EventEmitter<ListGridData>()
   @Output() pageChanged = new EventEmitter<number>()
+  @Output() paginationChanged = new EventEmitter<PaginationEvent>()
 
   get viewItemObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
@@ -339,6 +341,10 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     const page = event.first / event.rows
     this.page = page
     this.pageChanged.emit(page)
+    this.paginationChanged.emit({
+      page: page,
+      pageSize: event.rows,
+    })
   }
 
   fieldIsTruthy(object: any, key: any) {

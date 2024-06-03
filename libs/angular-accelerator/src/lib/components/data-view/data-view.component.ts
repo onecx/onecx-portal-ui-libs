@@ -15,6 +15,7 @@ import { Row, Filter, Sort, DataTableComponent } from '../data-table/data-table.
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataAction } from '../../model/data-action'
+import { PaginationEvent } from '../../model/pagination.model'
 
 export type RowListGridData = ListGridData & Row
 @Component({
@@ -160,6 +161,8 @@ export class DataViewComponent implements DoCheck, OnInit {
   @Output() editItem = new EventEmitter<RowListGridData>()
   @Output() selectionChanged = new EventEmitter<Row[]>()
   @Output() pageChanged = new EventEmitter<number>()
+  @Output() paginationChanged = new EventEmitter<PaginationEvent>()
+  
   isDeleteItemObserved: boolean | undefined
   isViewItemObserved: boolean | undefined
   IsEditItemObserved: boolean | undefined
@@ -291,5 +294,9 @@ export class DataViewComponent implements DoCheck, OnInit {
   onPageChange(event: number) {
     this.page = event
     this.pageChanged.emit(event)
+  }
+
+  onPaginationChange(paginationEvent: PaginationEvent) {
+    this.paginationChanged.emit(paginationEvent)
   }
 }

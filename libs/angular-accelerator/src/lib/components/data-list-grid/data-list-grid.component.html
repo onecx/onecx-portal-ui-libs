@@ -7,7 +7,7 @@
   [layout]="layout"
   [showCurrentPageReport]="true"
   currentPageReportTemplate="{{ (totalRecordsOnServer ? currentPageShowingWithTotalOnServerKey : currentPageShowingKey) | translate:params }}"
-  [rowsPerPageOptions]="[10, 25, 50, data?.length]"
+  [rowsPerPageOptions]="[10, 25, 50, totalRecordsOnServer ?? data?.length]"
   id="dataListGrid_{{name}}"
 >
   <ng-template let-item pTemplate="paginatordropdownitem">
@@ -30,6 +30,10 @@
     <span>{{ emptyResultsMessage || ("OCX_DATA_LIST_GRID.EMPTY_RESULT" | translate) }}</span>
   </ng-template>
 </p-dataView>
+
+<p>
+  {{ totalRecordsOnServer }}
+</p>
 
 <ng-template #defaultGridItem let-item>
   <div class="col-12 lg:col-6 xl:col-4 flex">
