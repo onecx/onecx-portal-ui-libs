@@ -9,6 +9,7 @@ import {
   ColumnSelectionChangedEvent,
 } from '../custom-group-column-selector/custom-group-column-selector.component'
 import { DataAction } from '../../model/data-action'
+import { PaginationEvent } from '../../model/pagination.model'
 
 @Component({
   selector: 'ocx-interactive-data-view',
@@ -90,8 +91,9 @@ export class InteractiveDataViewComponent implements OnInit {
   @Output() dataViewLayoutChange = new EventEmitter<'grid' | 'list' | 'table'>()
   @Output() displayedColumnsChange = new EventEmitter<DataTableColumn[]>()
   @Output() selectionChanged: EventEmitter<Row[]> = new EventEmitter()
-
   @Output() pageChanged: EventEmitter<number> = new EventEmitter()
+  @Output() paginationChanged = new EventEmitter<PaginationEvent>()
+
   selectedGroupKey = ''
   isDeleteItemObserved: boolean | undefined
   isViewItemObserved: boolean | undefined
@@ -269,5 +271,9 @@ export class InteractiveDataViewComponent implements OnInit {
   onPageChange(event: number) {
     this.page = event
     this.pageChanged.emit(event)
+  }
+
+  onPaginationChange(paginationEvent: PaginationEvent) {
+    this.paginationChanged.emit(paginationEvent)
   }
 }

@@ -32,6 +32,8 @@ export * from './lib/pipes/ocxtimeago.pipe'
 export * from './lib/model/breadcrumb-menu-item.model'
 export * from './lib/model/column-type.model'
 export * from './lib/model/data-action'
+export * from './lib/model/pagination.model'
+
 // export * from './lib/model/data-column-name-id.model'
 export * from './lib/model/data-sort-direction'
 export * from './lib/model/data-table-column.model'
