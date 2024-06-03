@@ -8,6 +8,9 @@
 
 import { map } from 'rxjs'
 import { Topic } from './topic'
+import { TopicMessageType } from './topic-message-type'
+import { TopicDataMessage } from './topic-data-message'
+import { TopicMessage } from './topic-message'
 
 describe('Topic', () => {
   const origAddEventListener = window.addEventListener
@@ -153,6 +156,132 @@ describe('Topic', () => {
     setTimeout(() => {
       expect(initialized).toBe(true)
       done()
+    })
+  })
+
+  describe('on message', () => {
+    let currentMessage: TopicDataMessage<string>
+    let incomingMessage: MessageEvent<TopicDataMessage<string>>
+
+    beforeEach(() => {
+      currentMessage = {
+        type: TopicMessageType.TopicNext,
+        name: testTopic1.name,
+        version: testTopic1.version,
+        data: '',
+        timestamp: 0,
+        id: 0,
+      }
+      incomingMessage = {
+        data: {
+          type: TopicMessageType.TopicNext,
+          name: testTopic1.name,
+          version: testTopic1.version,
+          data: '',
+          timestamp: 0,
+          id: 0,
+        },
+      } as any
+
+      // initialize topic
+      testTopic1.publish('initMsg')
+    })
+
+    it('should have value if incoming id is greater than previous id', () => {
+      currentMessage.data = 'msg1'
+      currentMessage.id = 0
+      incomingMessage.data.data = 'msg2'
+      incomingMessage.data.id = 1
+
+      testTopic1.onMessage(currentMessage, incomingMessage)
+
+      expect(values1).toEqual(['initMsg', 'msg2'])
+    })
+
+    it('should have value if incoming timestamp is greater than previous timestamp with no ids provided', () => {
+      currentMessage.data = 'msg1'
+      currentMessage.id = undefined!
+      currentMessage.timestamp = 1
+      incomingMessage.data.data = 'msg2'
+      incomingMessage.data.id = undefined!
+      incomingMessage.data.timestamp = 3
+
+      testTopic1.onMessage(currentMessage, incomingMessage)
+
+      expect(values1).toEqual(['initMsg', 'msg2'])
+    })
+
+    it('should have value if incoming timestamp is greater than previous timestamp when current message has id', () => {
+      currentMessage.data = 'msg1'
+      currentMessage.id = 1
+      currentMessage.timestamp = 1
+      incomingMessage.data.data = 'msg2'
+      incomingMessage.data.id = undefined!
+      incomingMessage.data.timestamp = 3
+
+      testTopic1.onMessage(currentMessage, incomingMessage)
+
+      expect(values1).toEqual(['initMsg', 'msg2'])
+    })
+
+    it('should have value if incoming timestamp is greater than previous timestamp when incoming message has id', () => {
+      currentMessage.data = 'msg1'
+      currentMessage.id = undefined!
+      currentMessage.timestamp = 1
+      incomingMessage.data.data = 'msg2'
+      incomingMessage.data.id = 1
+      incomingMessage.data.timestamp = 3
+
+      testTopic1.onMessage(currentMessage, incomingMessage)
+
+      expect(values1).toEqual(['initMsg', 'msg2'])
+    })
+
+    it('should have no value if incoming timestamp is equal to the previous timestamp with no ids provided', () => {
+      currentMessage.data = 'msg1'
+      currentMessage.id = undefined!
+      currentMessage.timestamp = 3
+      incomingMessage.data.data = 'msg2'
+      incomingMessage.data.id = undefined!
+      incomingMessage.data.timestamp = 3
+
+      testTopic1.onMessage(currentMessage, incomingMessage)
+
+      expect(values1).toEqual(['initMsg'])
+    })
+
+    it('should have no value if incoming timestamp is equal to the previous timestamp when current message has id', () => {
+      jest.spyOn(console, 'warn')
+      currentMessage.data = 'msg1'
+      currentMessage.id = 1
+      currentMessage.timestamp = 3
+      incomingMessage.data.data = 'msg2'
+      incomingMessage.data.id = undefined!
+      incomingMessage.data.timestamp = 3
+
+      testTopic1.onMessage(currentMessage, incomingMessage)
+
+      expect(values1).toEqual(['initMsg'])
+      expect(console.warn).toHaveBeenLastCalledWith(
+        'Message was swallowed because of equal timestamps. Please upgrate to the latest version to ensure messages are correctly timed'
+      )
+    })
+
+    it('should have no value if incoming timestamp is equal to previous timestamp when incoming message has id', () => {
+      jest.spyOn(console, 'warn')
+      currentMessage.data = 'msg1'
+      currentMessage.id = undefined!
+      currentMessage.timestamp = 3
+      incomingMessage.data.data = 'msg2'
+      incomingMessage.data.id = 1
+      incomingMessage.data.timestamp = 3
+
+      testTopic1.onMessage(currentMessage, incomingMessage)
+
+      expect(values1).toEqual(['initMsg'])
+      expect(console.warn).toHaveBeenLastCalledWith(
+        'Message was swallowed because of equal timestamps. Please upgrate to the latest version to ensure messages are correctly timed'
+      )
     })
   })
 })

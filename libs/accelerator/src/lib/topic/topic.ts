@@ -19,7 +19,7 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
 
   protected isInit = false
   private resolveInitPromise!: (value: void | PromiseLike<void>) => void
-  private eventListener = (m: MessageEvent<TopicMessage>) => this.onMessage(m)
+  private eventListener = (m: MessageEvent<TopicMessage>) => this.onMessage(this.data.value, m)
 
   constructor(name: string, version: number, sendGetMessage = true) {
     super(name, version)
@@ -142,34 +142,34 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
     window.removeEventListener('message', this.eventListener, true)
   }
 
-  private onMessage(m: MessageEvent<TopicMessage>): any {
-    switch (m.data.type) {
+  public onMessage(currentMessage: TopicDataMessage<T> | undefined, incomingMessage: MessageEvent<TopicMessage>): any {
+    switch (incomingMessage.data.type) {
       case TopicMessageType.TopicNext:
-        if (m.data.name !== this.name || m.data.version !== this.version) {
+        if (incomingMessage.data.name !== this.name || incomingMessage.data.version !== this.version) {
           break
         }
 
         if (
-          !this.data.value ||
+          !currentMessage ||
           (this.isInit &&
-            (<TopicMessage>m.data).id &&
-            this.data.value.id &&
-            (<TopicMessage>m.data).id > this.data.value.id) ||
-          (this.isInit && (<TopicMessage>m.data).timestamp > this.data.value.timestamp)
+            (<TopicMessage>incomingMessage.data).id !== undefined &&
+            currentMessage.id !== undefined &&
+            (<TopicMessage>incomingMessage.data).id > currentMessage.id) ||
+          (this.isInit && (<TopicMessage>incomingMessage.data).timestamp > currentMessage.timestamp)
         ) {
           this.isInit = true
-          this.data.next(<TopicDataMessage<T>>m.data)
+          this.data.next(<TopicDataMessage<T>>incomingMessage.data)
           this.resolveInitPromise()
-          const publishPromiseResolver = this.publishPromiseResolver[m.data.timestamp]
+          const publishPromiseResolver = this.publishPromiseResolver[incomingMessage.data.timestamp]
           if (publishPromiseResolver) {
             publishPromiseResolver()
-            delete this.publishPromiseResolver[m.data.timestamp]
+            delete this.publishPromiseResolver[incomingMessage.data.timestamp]
           }
         } else if (
-          this.data.value &&
+          currentMessage &&
           this.isInit &&
-          (<TopicMessage>m.data).timestamp === this.data.value.timestamp &&
-          ((<TopicMessage>m.data).id || this.data.value.id)
+          (<TopicMessage>incomingMessage.data).timestamp === currentMessage.timestamp &&
+          ((<TopicMessage>incomingMessage.data).id || currentMessage.id)
         ) {
           console.warn(
             'Message was swallowed because of equal timestamps. Please upgrate to the latest version to ensure messages are correctly timed'
@@ -177,10 +177,15 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
         }
         break
       case TopicMessageType.TopicGet:
-        if (m.data.name === this.name && m.data.version === this.version && this.isInit && this.data.value) {
-          window.postMessage(this.data.value, '*')
-          m.stopImmediatePropagation()
-          m.stopPropagation()
+        if (
+          incomingMessage.data.name === this.name &&
+          incomingMessage.data.version === this.version &&
+          this.isInit &&
+          currentMessage
+        ) {
+          window.postMessage(currentMessage, '*')
+          incomingMessage.stopImmediatePropagation()
+          incomingMessage.stopPropagation()
         }
         break
     }
