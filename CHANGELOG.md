@@ -1,3 +1,15 @@
+## [4.28.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.27.0...v4.28.0) (2024-06-03)
+
+
+### Features
+
+* topic message id for message ordering ([#265](https://github.com/onecx/onecx-portal-ui-libs/issues/265)) ([22b8bcf](https://github.com/onecx/onecx-portal-ui-libs/commit/22b8bcf89f07e6940d15110214efa39f16ed0c3b))
+
+
+### Bug Fixes
+
+* paginator All option displayed only for one element ([#263](https://github.com/onecx/onecx-portal-ui-libs/issues/263)) ([4e71709](https://github.com/onecx/onecx-portal-ui-libs/commit/4e717090a122cac12c3b1b33ad9dd56eee52b4cf))
+
 ## [4.27.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.26.0...v4.27.0) (2024-05-28)
 
 
