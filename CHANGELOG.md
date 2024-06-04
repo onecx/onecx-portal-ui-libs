@@ -1,3 +1,10 @@
+## [4.29.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.28.0...v4.29.0) (2024-06-04)
+
+
+### Features
+
+* renaming of the slots ([#266](https://github.com/onecx/onecx-portal-ui-libs/issues/266)) ([13635a1](https://github.com/onecx/onecx-portal-ui-libs/commit/13635a18e545136b475a550c2a88baa2b29492ed))
+
 ## [4.28.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.27.0...v4.28.0) (2024-06-03)
 
 
