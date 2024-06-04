@@ -11,7 +11,7 @@
 >
   <ocx-shell-header [menuButtonTitle]="menuButtonTitle" (menuButtonClick)="onMenuButtonClick($event)">
     <div *ngIf="isHorizontalMenuVisible()">
-      <ocx-slot name="ocxShellHorizontalMenu">
+      <ocx-slot name="onecx-shell-horizontalMenu">
         <ng-template #skeleton>
           <div class="ml-4 flex flex-row gap-4">
             <p-skeleton class="w-full h-full inline-block" height="35px" width="120px"></p-skeleton>
@@ -26,7 +26,7 @@
 
   <div class="menu-wrapper">
     <div class="layout-menu-container" *ngIf="isStaticalMenuVisible()">
-      <ocx-slot name="ocxShellVerticalMenu">
+      <ocx-slot name="onecx-shell-verticalMenu">
         <ng-template #skeleton>
           <p-skeleton class="w-full h-full mb-4 inline-block" height="35px" width="120px"></p-skeleton>
         </ng-template>
@@ -36,7 +36,7 @@
 
   <div class="layout-main">
     <div class="layout-content relative">
-      <ocx-slot name="ocxShellSubHeader"></ocx-slot>
+      <ocx-slot name="onecx-shell-subHeader"></ocx-slot>
       <ng-container *ngIf="!showContentProvider || (showContentProvider.showContent$ | async)">
         <ng-content></ng-content>
         <router-outlet></router-outlet>
