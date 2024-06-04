@@ -9,5 +9,6 @@ export interface MfeInfo {
     appId: string
     productName: string
     remoteName?: string
+    elementName?: string
   }
   

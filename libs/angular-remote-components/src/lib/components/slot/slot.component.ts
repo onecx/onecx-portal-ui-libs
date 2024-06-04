@@ -14,6 +14,7 @@ import {
 import { BehaviorSubject, Subscription, Observable, combineLatest } from 'rxjs'
 import { RemoteComponentInfo, SLOT_SERVICE, SlotComponentConfiguration, SlotService } from '../../services/slot.service'
 import { ocxRemoteComponent } from '../../model/remote-component'
+import { Technologies } from '@onecx/integration-interface'
 
 @Component({
   selector: 'ocx-slot[name]',
@@ -77,9 +78,14 @@ export class SlotComponent implements OnInit, OnDestroy {
         })
       }
       componentRef?.changeDetectorRef.detectChanges()
-    } else if ((componentInfo.remoteComponent as any).technology === 'WebComponent') {
-      const element = document.createElement((componentInfo.remoteComponent as any).remoteName)
-      viewContainer?.element.nativeElement.appendChild(element)
+    } else if (
+      componentInfo.remoteComponent.technology === Technologies.WebComponentModule ||
+      componentInfo.remoteComponent.technology === Technologies.WebComponentScript
+    ) {
+      if (componentInfo.remoteComponent.elementName) {
+        const element = document.createElement(componentInfo.remoteComponent.elementName)
+        viewContainer?.element.nativeElement.appendChild(element)
+      }
     }
   }
 
