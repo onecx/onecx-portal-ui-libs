@@ -4,4 +4,5 @@ export enum ColumnType {
   DATE = 'DATE',
   RELATIVE_DATE = 'RELATIVE_DATE',
   TRANSLATION_KEY = 'TRANSLATION_KEY',
+  CUSTOM = 'CUSTOM',
 }

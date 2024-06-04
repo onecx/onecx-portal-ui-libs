@@ -1,6 +1,6 @@
 {
   "name": "@onecx/integration-interface",
-  "version": "4.25.1",
+  "version": "4.29.0",
   "peerDependencies": {
     "tslib": "^2.3.0",
     "rxjs": "7.8.1",
