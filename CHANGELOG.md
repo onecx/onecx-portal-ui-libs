@@ -1,3 +1,10 @@
+## [4.30.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.30.0...v4.30.1) (2024-06-05)
+
+
+### Bug Fixes
+
+* add space after bearer token ([#270](https://github.com/onecx/onecx-portal-ui-libs/issues/270)) ([93f1c09](https://github.com/onecx/onecx-portal-ui-libs/commit/93f1c097b0aaea336024deb0d56b60470d5c5a09))
+
 ## [4.30.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.29.0...v4.30.0) (2024-06-05)
 
 
