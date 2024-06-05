@@ -37,7 +37,7 @@
   <div class="layout-main">
     <div class="layout-content relative">
       <ocx-slot name="onecx-shell-subHeader"></ocx-slot>
-      <ng-container *ngIf="!showContentProvider || (showContentProvider.showContent$ | async)">
+      <ng-container *ngIf="!showContentProvider || (showContentProvider.showContent$ | async); else appLoading">
         <ng-content></ng-content>
         <router-outlet></router-outlet>
       </ng-container>
@@ -51,4 +51,8 @@
 
 <ng-template #globalError>
   <ocx-shell-error [errCode]="globalErrMsg"></ocx-shell-error>
+</ng-template>
+
+<ng-template #appLoading>
+  <div [ocxLoadingIndicator]="true" class="w-full h-full absolute top-0 left-0"></div>
 </ng-template>
