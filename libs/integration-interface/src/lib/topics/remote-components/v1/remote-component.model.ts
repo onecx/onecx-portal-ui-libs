@@ -1,6 +1,5 @@
 export enum Technologies {
   Angular = 'Angular',
-  WebComponent = 'WebComponent',
   WebComponentScript = 'WebComponentScript',
   WebComponentModule = 'WebComponentModule',
 }

@@ -46,7 +46,6 @@ export class SlotService implements SlotService {
       ),
       map((infos) =>
         infos.map((remoteComponent) => {
-          console.log('getComponentsForSlot infos', remoteComponent)
           return {
             componentType: this.loadComponent(remoteComponent),
             remoteComponent,
