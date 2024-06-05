@@ -156,6 +156,6 @@ export class KeycloakAuthService implements AuthService {
   }
 
   getHeaderValues(): Record<string, string> {
-    return { 'apm-principal-token': this.getIdToken() ?? '', Authorization: `Bearer${this.getAccessToken()}` }
+    return { 'apm-principal-token': this.getIdToken() ?? '', Authorization: `Bearer ${this.getAccessToken()}` }
   }
 }
