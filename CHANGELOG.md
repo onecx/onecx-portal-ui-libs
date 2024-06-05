@@ -1,3 +1,10 @@
+## [4.30.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.29.0...v4.30.0) (2024-06-05)
+
+
+### Features
+
+* angular custom auth ([#269](https://github.com/onecx/onecx-portal-ui-libs/issues/269)) ([e270909](https://github.com/onecx/onecx-portal-ui-libs/commit/e270909988ba1e85c5d91c4f5ce56a908ab562e0))
+
 ## [4.29.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.28.0...v4.29.0) (2024-06-04)
 
 
