@@ -48,7 +48,7 @@ export class AuthServiceWrapper {
         this.authService = this.injector.get(KeycloakAuthService)
         break
       case 'custom': {
-        let factory = await this.getAuthServiceFactory(this.configService)
+        const factory = await this.getAuthServiceFactory(this.configService)
         this.authService = factory((injectable: Injectables) => {
           return this.retrieveInjectables(injectable)
         })
@@ -72,12 +72,11 @@ export class AuthServiceWrapper {
     if (!configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL)) {
       throw new Error('URL of the custom auth service is not defined')
     }
-    let module = await loadRemoteModule({
+    const module = await loadRemoteModule({
       type: 'module',
       remoteEntry: this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL) ?? '',
       exposedModule: this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_MODULE_NAME) ?? './CustomAuth',
     })
-    let factory = module.default as AuthServiceFactory
-    return factory
+    return module.default as AuthServiceFactory
   }
 }
