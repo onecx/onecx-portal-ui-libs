@@ -5,6 +5,7 @@ import { AppStateService, CONFIG_KEY, ConfigurationService } from '@onecx/angula
 import { Injectable, Injector } from '@angular/core'
 import { KeycloakAuthService } from './auth_services/keycloak-auth.service'
 import { loadRemoteModule } from '@angular-architects/module-federation'
+import { Config } from '@onecx/integration-interface'
 
 @Injectable()
 export class AuthServiceWrapper {
@@ -41,32 +42,42 @@ export class AuthServiceWrapper {
 
   async initializeAuthService(): Promise<void> {
     const serviceTypeConfig = this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE) ?? 'keycloak'
-    let factory
-    let module
-    const customUrl = this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL)
+
     switch (serviceTypeConfig) {
       case 'keycloak':
         this.authService = this.injector.get(KeycloakAuthService)
         break
-      case 'custom':
-        if (!customUrl) {
-          throw new Error('URL of the custom auth service is not defined')
-        }
-        module = await loadRemoteModule({
-          type: 'module',
-          remoteEntry: customUrl,
-          exposedModule: './CustomAuth',
-        })
-        factory = module.default as AuthServiceFactory
+      case 'custom': {
+        let factory = await this.getAuthServiceFactory(this.configService)
         this.authService = factory((injectable: Injectables) => {
-          if (injectable === Injectables.KEYCLOAK_AUTH_SERVICE) {
-            return this.injector.get(KeycloakAuthService)
-          }
-          throw new Error('unknown injectable type')
+          return this.retrieveInjectables(injectable)
         })
         break
+      }
       default:
         throw new Error('Configured AuthService not found')
     }
+  }
+
+  retrieveInjectables(injectable: Injectables): KeycloakAuthService | Config | undefined {
+    if (injectable === Injectables.KEYCLOAK_AUTH_SERVICE) {
+      return this.injector.get(KeycloakAuthService)
+    } else if (injectable === Injectables.CONFIG) {
+      return this.configService.getConfig()
+    }
+    throw new Error('unknown injectable type')
+  }
+
+  async getAuthServiceFactory(configService: ConfigurationService): Promise<AuthServiceFactory> {
+    if (!configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL)) {
+      throw new Error('URL of the custom auth service is not defined')
+    }
+    let module = await loadRemoteModule({
+      type: 'module',
+      remoteEntry: this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL) ?? '',
+      exposedModule: this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_MODULE_NAME) ?? './CustomAuth',
+    })
+    let factory = module.default as AuthServiceFactory
+    return factory
   }
 }
