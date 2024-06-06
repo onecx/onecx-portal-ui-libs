@@ -171,8 +171,6 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
           (<TopicMessage>m.data).timestamp === this.data.value.timestamp &&
           (((<TopicMessage>m.data).id && !this.data.value.id) || (!(<TopicMessage>m.data).id && this.data.value.id))
         ) {
-          console.log(<TopicMessage>m.data)
-          console.log(this.data.value)
           console.warn(
             'Message was dropped because of equal timestamps, because there was an old style message in the system. Please upgrade all libraries to the latest version.'
           )
