@@ -124,6 +124,8 @@ export class PageHeaderComponent implements OnInit, OnChanges {
 
   home$!: Observable<HomeItem>
 
+  figureImageLoadError = false;
+
   protected breadcrumbs: BreadcrumbService
 
   constructor(
@@ -171,6 +173,10 @@ export class PageHeaderComponent implements OnInit, OnChanges {
       default:
         break
     }
+  }
+
+  handleImageError() {
+    this.figureImageLoadError = true
   }
 
   public generateItemStyle(item: ObjectDetailItem): string {
