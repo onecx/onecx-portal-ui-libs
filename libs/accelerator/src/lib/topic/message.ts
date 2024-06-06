@@ -4,7 +4,7 @@ declare global {
   }
 }
 
-window['onecxMessageId'] = 0
+window['onecxMessageId'] = 1
 
 export class Message {
   timestamp: number

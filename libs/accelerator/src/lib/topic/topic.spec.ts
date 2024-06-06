@@ -184,6 +184,8 @@ describe('Topic', () => {
 
       // initialize topic
       testTopic1.publish('initMsg')
+
+      jest.resetAllMocks()
     })
 
     it('should have value if incoming id is greater than previous id', () => {
@@ -281,6 +283,21 @@ describe('Topic', () => {
       expect(console.warn).toHaveBeenLastCalledWith(
         'Message was dropped because of equal timestamps, because there was an old style message in the system. Please upgrade all libraries to the latest version.'
       )
+    })
+
+    it('should have no value and no warning if incoming timestamp is equal to previous timestamp when incoming message has smaller id then current', () => {
+      jest.spyOn(console, 'warn')
+      previousMessage.data = 'msg1'
+      ;(<any>previousMessage).id = 2
+      previousMessage.timestamp = 3
+      incomingMessage.data.data = 'msg2'
+      incomingMessage.data.id = 1
+      incomingMessage.data.timestamp = 3
+      ;(<any>testTopic1).data.next(previousMessage)
+      ;(<any>testTopic1).onMessage(incomingMessage)
+
+      expect(values1).toEqual(['initMsg', 'msg1'])
+      expect(console.warn).toHaveBeenCalledTimes(0)
     })
   })
 })
