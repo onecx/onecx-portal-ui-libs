@@ -1,12 +1,18 @@
 import { loadRemoteModule } from '@angular-architects/module-federation'
 import { Injectable, InjectionToken, Type } from '@angular/core'
-import { RemoteComponent, RemoteComponentsTopic } from '@onecx/integration-interface'
+import { RemoteComponent, RemoteComponentsTopic, Technologies } from '@onecx/integration-interface'
 import { Observable, map, shareReplay } from 'rxjs'
 import { PermissionService } from './permission.service'
 
 export const SLOT_SERVICE: InjectionToken<SlotService> = new InjectionToken('SLOT_SERVICE')
 
-export type RemoteComponentInfo = { appId: string; productName: string; baseUrl: string }
+export type RemoteComponentInfo = {
+  appId: string
+  productName: string
+  baseUrl: string
+  technology: Technologies
+  elementName?: string
+}
 
 export type SlotComponentConfiguration = {
   componentType: Promise<Type<unknown> | undefined> | Type<unknown> | undefined
@@ -39,11 +45,13 @@ export class SlotService implements SlotService {
           .map((remoteComponent) => remoteComponent)
       ),
       map((infos) =>
-        infos.map((remoteComponent) => ({
-          componentType: this.loadComponent(remoteComponent),
-          remoteComponent,
-          permissions: this.permissionsService.getPermissions(remoteComponent.appId, remoteComponent.productName),
-        }))
+        infos.map((remoteComponent) => {
+          return {
+            componentType: this.loadComponent(remoteComponent),
+            remoteComponent,
+            permissions: this.permissionsService.getPermissions(remoteComponent.appId, remoteComponent.productName),
+          }
+        })
       ),
       shareReplay()
     )
@@ -58,17 +66,32 @@ export class SlotService implements SlotService {
   private async loadComponent(component: {
     remoteEntryUrl: string
     exposedModule: string
+    productName: string
+    remoteName: string
+    technology: string
   }): Promise<Type<unknown> | undefined> {
     try {
       const exposedModule = component.exposedModule.startsWith('./')
         ? component.exposedModule.slice(2)
         : component.exposedModule
-      const m = await loadRemoteModule({
-        type: 'module',
+      if (component.technology === Technologies.Angular || component.technology === Technologies.WebComponentModule) {
+        const m = await loadRemoteModule({
+          type: 'module',
+          remoteEntry: component.remoteEntryUrl,
+          exposedModule: './' + exposedModule,
+        })
+        if (component.technology === Technologies.Angular) {
+          return m[exposedModule]
+        }
+        return undefined
+      }
+      await loadRemoteModule({
+        type: 'script',
+        remoteName: component.remoteName,
         remoteEntry: component.remoteEntryUrl,
         exposedModule: './' + exposedModule,
       })
-      return m[exposedModule]
+      return undefined
     } catch (e) {
       console.log('Failed to load remote module ', component.exposedModule, component.remoteEntryUrl, e)
       return undefined
