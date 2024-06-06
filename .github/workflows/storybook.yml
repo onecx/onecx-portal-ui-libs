@@ -2,6 +2,7 @@ name: Deploy Storybook
 on: push
 jobs:
   deploy-storybooks:
+    if: github.repository_owner == 'onecx'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
