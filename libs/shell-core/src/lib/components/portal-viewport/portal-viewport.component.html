@@ -25,10 +25,10 @@
   <p-toast></p-toast>
 
   <div class="menu-wrapper">
-    <div class="layout-menu-container" *ngIf="isStaticalMenuVisible()">
+    <div class="layout-menu-container overflow-auto" *ngIf="isStaticalMenuVisible()">
       <ocx-slot name="onecx-shell-verticalMenu">
         <ng-template #skeleton>
-          <p-skeleton class="w-full h-full mb-4 inline-block" height="35px" width="120px"></p-skeleton>
+          <p-skeleton class="w-full h-full inline-block p-2" height="35px"></p-skeleton>
         </ng-template>
       </ocx-slot>
     </div>
@@ -37,7 +37,7 @@
   <div class="layout-main">
     <div class="layout-content relative">
       <ocx-slot name="onecx-shell-subHeader"></ocx-slot>
-      <ng-container *ngIf="!showContentProvider || (showContentProvider.showContent$ | async)">
+      <ng-container *ngIf="!showContentProvider || (showContentProvider.showContent$ | async); else appLoading">
         <ng-content></ng-content>
         <router-outlet></router-outlet>
       </ng-container>
@@ -51,4 +51,8 @@
 
 <ng-template #globalError>
   <ocx-shell-error [errCode]="globalErrMsg"></ocx-shell-error>
+</ng-template>
+
+<ng-template #appLoading>
+  <div [ocxLoadingIndicator]="true" class="w-full h-full absolute top-0 left-0"></div>
 </ng-template>
