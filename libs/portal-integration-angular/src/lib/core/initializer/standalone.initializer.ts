@@ -76,6 +76,8 @@ export function standaloneInitializer(
         shellName: 'standalone',
         appId: '',
         productName: '',
+        remoteName: '',
+        elementName: '',
       }
       await appStateService.globalLoading$.publish(true)
       await appStateService.currentMfe$.publish(standaloneMfeInfo)

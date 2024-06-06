@@ -14,6 +14,7 @@ import {
 import { BehaviorSubject, Subscription, Observable, combineLatest } from 'rxjs'
 import { RemoteComponentInfo, SLOT_SERVICE, SlotComponentConfiguration, SlotService } from '../../services/slot.service'
 import { ocxRemoteComponent } from '../../model/remote-component'
+import { Technologies } from '@onecx/integration-interface'
 
 @Component({
   selector: 'ocx-slot[name]',
@@ -43,7 +44,10 @@ export class SlotComponent implements OnInit, OnDestroy {
         if (viewContainers && viewContainers.length === components.length) {
           components.forEach((componentInfo, i) => {
             if (componentInfo.componentType) {
-              Promise.all([Promise.resolve(componentInfo.componentType), Promise.resolve(componentInfo.permissions)]).then(([componentType, permissions]) => {
+              Promise.all([
+                Promise.resolve(componentInfo.componentType),
+                Promise.resolve(componentInfo.permissions),
+              ]).then(([componentType, permissions]) => {
                 this.createComponent(componentType, componentInfo, permissions, viewContainers, i)
               })
             }
@@ -55,12 +59,12 @@ export class SlotComponent implements OnInit, OnDestroy {
 
   private createComponent(
     componentType: Type<unknown> | undefined,
-    componentInfo: { remoteComponent: RemoteComponentInfo; },
+    componentInfo: { remoteComponent: RemoteComponentInfo },
     permissions: string[],
     viewContainers: QueryList<ViewContainerRef>,
     i: number
   ) {
-    const viewContainer = viewContainers.get(i);
+    const viewContainer = viewContainers.get(i)
     viewContainer?.clear()
     viewContainer?.element.nativeElement.replaceChildren()
     if (componentType) {
@@ -74,6 +78,14 @@ export class SlotComponent implements OnInit, OnDestroy {
         })
       }
       componentRef?.changeDetectorRef.detectChanges()
+    } else if (
+      componentInfo.remoteComponent.technology === Technologies.WebComponentModule ||
+      componentInfo.remoteComponent.technology === Technologies.WebComponentScript
+    ) {
+      if (componentInfo.remoteComponent.elementName) {
+        const element = document.createElement(componentInfo.remoteComponent.elementName)
+        viewContainer?.element.nativeElement.appendChild(element)
+      }
     }
   }
 
