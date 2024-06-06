@@ -1,8 +1,11 @@
 name: Deploy Storybook
-on: push
+on: 
+  push:
+  pull_request_target:
+      branches:
+        - main
 jobs:
   deploy-storybooks:
-    if: github.repository_owner == 'onecx'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
