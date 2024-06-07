@@ -57,6 +57,9 @@ export interface ObjectDetailItem {
   valuePipe?: Type<any>
   valuePipeArgs?: string
   valueCssClass?: string
+  actionItemIcon?: PrimeIcon
+  actionItemCallback?: () => void
+  actionItemTooltip?: string
 }
 
 export interface HomeItem {

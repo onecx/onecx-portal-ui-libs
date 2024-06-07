@@ -102,14 +102,21 @@
         >
         <span
           *ngIf="item.icon || item.value"
-          class="flex text-900 mt-2"
+          class="flex text-900 mt-2 align-items-center gap-1"
           [ngClass]="generateItemStyle(item)"
           [title]="item.valueTooltip || item.tooltip || ''"
           name="object-detail-value"
         >
           <i *ngIf="item.icon" class="{{item.icon}}" name="object-detail-icon"></i>
-          {{ item.value | dynamicPipe:item.valuePipe:item.valuePipeArgs}}</span
-        >
+          {{ item.value | dynamicPipe:item.valuePipe:item.valuePipeArgs}}
+          <p-button
+            *ngIf="item.actionItemIcon && item.actionItemCallback"
+            [icon]="item.actionItemIcon"
+            styleClass="p-button-text p-2 w-full"
+            [title]="item.actionItemTooltip || ''"
+            (onClick)="item.actionItemCallback()"
+          ></p-button>
+        </span>
       </div>
     </ng-container>
     <ng-content></ng-content>

@@ -105,6 +105,11 @@ const demoFields: ObjectDetailItem[] = [
   {
     label: 'Venue',
     value: 'AIE Munich ',
+    tooltip: 'AIE Munich',
+    labelTooltip: 'Label Tooltip',
+    actionItemIcon: PrimeIcons.COPY,
+    actionItemTooltip: 'Copy to clipboard',
+    actionItemCallback: () => {console.log('Copy to clipboard')}
   },
   {
     label: 'Status',
