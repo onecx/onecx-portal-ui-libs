@@ -27,6 +27,7 @@
     "@ngx-translate/core": "^14.0.0",
     "@ngx-translate/http-loader": "^7.0.0",
     "@onecx/styles": "file:libs/portal-layout-styles/src/styles",
+    "@onecx/styles-loading-indicator": "file:libs/portal-integration-angular/src/lib/core/directives/loading-indicator.directive.scss",
     "axios": "^1.0.0",
     "chart.js": "^4.4.0",
     "d3-scale-chromatic": "^3.0.0",
