@@ -46,7 +46,12 @@ export interface Action {
 export interface ObjectDetailItem {
   label: string
   value?: string
+  /**
+   * @deprecated Use `valueTooltip` instead
+   */
   tooltip?: string
+  labelTooltip?: string
+  valueTooltip?: string
   icon?: PrimeIcon
   labelPipe?: Type<any>
   valuePipe?: Type<any>

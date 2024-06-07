@@ -97,14 +97,14 @@
         class="object-info flex flex-row md:flex-column align-items-baseline md:align-items-center justify-content-between"
         *ngFor="let item of objectDetails"
       >
-        <label class="flex font-medium text-600" name="object-detail-label"
+        <label class="flex font-medium text-600" name="object-detail-label" [title]="item.labelTooltip || ''"
           >{{ item.label | dynamicPipe:item.labelPipe }}</label
         >
         <span
           *ngIf="item.icon || item.value"
           class="flex text-900 mt-2"
           [ngClass]="generateItemStyle(item)"
-          [title]="item.tooltip || ''"
+          [title]="item.valueTooltip || item.tooltip || ''"
           name="object-detail-value"
         >
           <i *ngIf="item.icon" class="{{item.icon}}" name="object-detail-icon"></i>
