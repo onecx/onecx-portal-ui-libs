@@ -1,3 +1,28 @@
+## [4.31.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.31.0...v4.31.1) (2024-06-12)
+
+
+### Bug Fixes
+
+* add updateTokenIfNeeded ([#275](https://github.com/onecx/onecx-portal-ui-libs/issues/275)) ([03e8d1b](https://github.com/onecx/onecx-portal-ui-libs/commit/03e8d1b65170be16e0e27167e199b305aff4fec5))
+
+## [4.31.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.30.1...v4.31.0) (2024-06-07)
+
+
+### Features
+
+* renaming of slot names ([#273](https://github.com/onecx/onecx-portal-ui-libs/issues/273)) ([5dfba46](https://github.com/onecx/onecx-portal-ui-libs/commit/5dfba469c6de8c5f0d6cd5adeea5a72540aa2bba))
+* webcomponent loading for shell and slot ([#267](https://github.com/onecx/onecx-portal-ui-libs/issues/267)) ([44ab35e](https://github.com/onecx/onecx-portal-ui-libs/commit/44ab35ebdf51744b904a6bbd869a4d6bf56db8fb))
+
+
+### Bug Fixes
+
+* topic message warning branch uses xor ([#271](https://github.com/onecx/onecx-portal-ui-libs/issues/271)) ([cff0c03](https://github.com/onecx/onecx-portal-ui-libs/commit/cff0c03b59a142c102d292dcaa9ef89d91bc7f95))
+
+
+### Refactoring
+
+* shell app loading spinner + minor improvements in libs ([#259](https://github.com/onecx/onecx-portal-ui-libs/issues/259)) ([e723981](https://github.com/onecx/onecx-portal-ui-libs/commit/e723981e7bea409a230856a50adfcf7b6a61e7ea))
+
 ## [4.30.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.30.0...v4.30.1) (2024-06-05)
 
 

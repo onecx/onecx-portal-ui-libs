@@ -8,5 +8,7 @@ export interface MfeInfo {
     displayName?: string
     appId: string
     productName: string
+    remoteName?: string
+    elementName?: string
   }
   

@@ -39,6 +39,9 @@ export class AuthServiceWrapper {
   getHeaderValues(): Record<string, string> {
     return this.authService?.getHeaderValues() ?? {}
   }
+  updateTokenIfNeeded(): Promise<boolean> {
+    return this.authService?.updateTokenIfNeeded() ?? Promise.reject()
+  }
 
   async initializeAuthService(): Promise<void> {
     const serviceTypeConfig = this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE) ?? 'keycloak'
