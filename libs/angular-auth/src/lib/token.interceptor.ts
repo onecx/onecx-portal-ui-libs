@@ -1,6 +1,6 @@
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http'
 import { Injectable } from '@angular/core'
-import { Observable, combineLatest, from, mergeMap } from 'rxjs'
+import { Observable, from, mergeMap } from 'rxjs'
 import { AuthServiceWrapper } from './auth-service-wrapper'
 
 const WHITELIST = ['assets']
