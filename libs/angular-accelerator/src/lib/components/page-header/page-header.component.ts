@@ -67,6 +67,8 @@ export interface HomeItem {
   page?: string
 }
 
+export type GridColumnOptions = 1 | 2 | 3 | 4 | 6 | 12
+
 @Component({
   selector: 'ocx-page-header',
   templateUrl: './page-header.component.html',
@@ -116,6 +118,12 @@ export class PageHeaderComponent implements OnInit, OnChanges {
   @Input()
   manualBreadcrumbs = false
 
+  @Input()
+  enableGridView: undefined | boolean
+
+  @Input()
+  gridLayoutDesktopColumns: undefined | GridColumnOptions
+
   @Output()
   save = new EventEmitter()
 
@@ -132,7 +140,17 @@ export class PageHeaderComponent implements OnInit, OnChanges {
 
   home$!: Observable<HomeItem>
 
-  figureImageLoadError = false;
+  figureImageLoadError = false
+
+  objectPanelGridLayoutClasses = 'grid row-gap-2 m-0'
+  objectPanelColumnLayoutClasses = 'flex flex-row justify-content-between overflow-x-auto'
+
+  objectPanelDefaultLayoutClasses = 'flex flex-column row-gap-2 md:flex-row md:justify-content-between'
+
+  objectInfoGridLayoutClasses = 'col-12 flex gap-4 md:col-6 align-items-center p-0'
+  objectInfoColumnLayoutClasses = 'flex flex-column align-items-center gap-2 min-w-120'
+  
+  objectInfoDefaultLayoutClasses = 'flex flex-row md:flex-column md:align-items-center md:gap-2'
 
   protected breadcrumbs: BreadcrumbService
 
@@ -192,6 +210,28 @@ export class PageHeaderComponent implements OnInit, OnChanges {
     if (item.icon) style = style.concat(style, ' ', 'gap-1 align-items-center')
     if (item.valueCssClass) style = style.concat(style, ' ', item.valueCssClass)
     return style
+  }
+
+  public getObjectPanelLayoutClasses() {
+    if (this.enableGridView) {
+      return this.objectPanelGridLayoutClasses
+    }
+    if (this.enableGridView === false) {
+      return this.objectPanelColumnLayoutClasses
+    }
+    return this.objectPanelDefaultLayoutClasses
+  }
+
+  public getObjectInfoLayoutClasses() {
+    if (this.enableGridView) {
+      return `${this.objectInfoGridLayoutClasses} lg:col-${
+        this.gridLayoutDesktopColumns ? 12 / this.gridLayoutDesktopColumns : 4
+      }`
+    }
+    if (this.enableGridView === false) {
+      return this.objectInfoColumnLayoutClasses
+    }
+    return this.objectInfoDefaultLayoutClasses
   }
 
   /**

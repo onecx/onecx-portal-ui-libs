@@ -3,7 +3,6 @@ import { importProvidersFrom } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterModule } from '@angular/router'
-import { TranslatePipe } from '@ngx-translate/core'
 import { action } from '@storybook/addon-actions'
 import { Meta, StoryFn, applicationConfig, moduleMetadata } from '@storybook/angular'
 import { PrimeIcons } from 'primeng/api'
@@ -109,21 +108,23 @@ const demoFields: ObjectDetailItem[] = [
     labelTooltip: 'Label Tooltip',
     actionItemIcon: PrimeIcons.COPY,
     actionItemTooltip: 'Copy to clipboard',
-    actionItemCallback: () => {console.log('Copy to clipboard')}
+    actionItemCallback: () => {console.log('Copy to clipboard')},
   },
   {
     label: 'Status',
-    labelPipe: TranslatePipe,
     value: 'Confirmed',
+    icon: PrimeIcons.CHECK_CIRCLE
   },
   {
     label: 'Start Date',
     value: '14.3.2022',
+    icon: PrimeIcons.CALENDAR
   },
   {
     label: 'End Date',
     value: new Date().toISOString(),
     valuePipe: DatePipe,
+    icon: PrimeIcons.CALENDAR
   },
 ]
 
@@ -345,5 +346,57 @@ export const WithObjectDetailsAndIcons = {
     loading: false,
     objectDetails: objectDetailsWithIcons,
     showBreadcrumbs: false,
+  },
+}
+
+export const DefaultLayout = {
+  render: Template,
+
+  args: {
+    header: 'My title',
+    subheader: 'My subtitle',
+    loading: false,
+    objectDetails: demoFields,
+    showBreadcrumbs: false,
+  },
+}
+
+export const ForcedColumnLayout = {
+  render: Template,
+
+  args: {
+    header: 'My title',
+    subheader: 'My subtitle',
+    loading: false,
+    objectDetails: demoFields,
+    showBreadcrumbs: false,
+    enableGridView: false
+  },
+}
+
+export const ForcedGridLayout = {
+  render: Template,
+
+  args: {
+    header: 'My title',
+    subheader: 'My subtitle',
+    loading: false,
+    objectDetails: demoFields,
+    showBreadcrumbs: false,
+    enableGridView: true
+  },
+}
+
+export const ForcedGridLayoutWithColumnAmount = {
+  render: Template,
+
+  args: {
+    header: 'My title',
+    subheader: 'My subtitle',
+    loading: false,
+    objectDetails: demoFields,
+    showBreadcrumbs: false,
+    enableGridView: true,
+    gridLayoutDesktopColumns: 4,
   },
 }
