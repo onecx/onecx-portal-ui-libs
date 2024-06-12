@@ -1,9 +1,13 @@
+import { Observable } from 'rxjs/internal/Observable'
+
 export interface AuthService {
   init(config?: Record<string, unknown>): Promise<boolean>
 
   getHeaderValues(): Record<string, string>
 
   logout(): void
+
+  updateTokenIfNeeded(): Promise<boolean>
 }
 
 export enum Injectables {
