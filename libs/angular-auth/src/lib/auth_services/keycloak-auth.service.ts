@@ -143,6 +143,14 @@ export class KeycloakAuthService implements AuthService {
     this.keycloakService.logout()
   }
 
+  async updateTokenIfNeeded(): Promise<boolean> {
+    if (!(await this.keycloakService.isLoggedIn())) {
+      return this.keycloakService.login().then(() => false)
+    } else {
+      return this.keycloakService.updateToken()
+    }
+  }
+
   getAuthProviderName(): string {
     return 'keycloak-auth'
   }
