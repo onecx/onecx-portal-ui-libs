@@ -1,6 +1,6 @@
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http'
 import { Injectable } from '@angular/core'
-import { Observable } from 'rxjs'
+import { Observable, from, mergeMap } from 'rxjs'
 import { AuthServiceWrapper } from './auth-service-wrapper'
 
 const WHITELIST = ['assets']
@@ -14,14 +14,19 @@ export class TokenInterceptor implements HttpInterceptor {
     if (skip) {
       return next.handle(request)
     }
-    const headerValues = this.authService.getHeaderValues()
-    let headers = request.headers
-    for (const header in headerValues) {
-      headers = headers.set(header, headerValues[header])
-    }
-    const authenticatedReq: HttpRequest<unknown> = request.clone({
-      headers: headers,
-    })
-    return next.handle(authenticatedReq)
+
+    return from(this.authService.updateTokenIfNeeded()).pipe(
+      mergeMap(() => {
+        const headerValues = this.authService.getHeaderValues()
+        let headers = request.headers
+        for (const header in headerValues) {
+          headers = headers.set(header, headerValues[header])
+        }
+        const authenticatedReq: HttpRequest<unknown> = request.clone({
+          headers: headers,
+        })
+        return next.handle(authenticatedReq)
+      })
+    )
   }
 }

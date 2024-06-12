@@ -4,6 +4,8 @@ export interface AuthService {
   getHeaderValues(): Record<string, string>
 
   logout(): void
+
+  updateTokenIfNeeded(): Promise<boolean>
 }
 
 export enum Injectables {
