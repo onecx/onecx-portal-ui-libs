@@ -1,3 +1,10 @@
+## [4.31.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.31.0...v4.31.1) (2024-06-12)
+
+
+### Bug Fixes
+
+* add updateTokenIfNeeded ([#275](https://github.com/onecx/onecx-portal-ui-libs/issues/275)) ([03e8d1b](https://github.com/onecx/onecx-portal-ui-libs/commit/03e8d1b65170be16e0e27167e199b305aff4fec5))
+
 ## [4.31.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.30.1...v4.31.0) (2024-06-07)
 
 
