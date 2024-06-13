@@ -3,11 +3,13 @@ on:
   pull_request:
       branches:
         - 'main'
-env:
-  PIA_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN_PIA }}
-  AA_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN_AA }}
 jobs:
   deploy-storybooks:
+    # TODO: Move this to deployment only
+    environment: Storybook
+    env:
+      PIA_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN_PIA }}
+      AA_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN_AA }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -18,12 +20,6 @@ jobs:
         run: npm ci
       - name: Build PIA Storybook
         run: npx nx run portal-integration-angular:build-storybook
-      - name: Check Portal Integration Angular Chromatic token
-        if: env.PIA_TOKEN == null
-        run: echo "PIA_TOKEN missing. Skipping Chromatic deployment for Portal Integration Angular."
-      - name: Check Angular Accelerator Chromatic token
-        if: env.AA_TOKEN == null
-        run: echo "AA_TOKEN missing. Skipping Chromatic deployment for Angular Accelerator."
       - name: Publish to PIA Chromatic
         uses: chromaui/action@latest
         if: env.PIA_TOKEN != null
