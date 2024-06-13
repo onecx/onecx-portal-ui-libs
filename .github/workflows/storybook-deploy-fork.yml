@@ -1,0 +1,21 @@
+name: Deploy Storybook (Fork)
+on:
+    workflow_run:
+      workflows: ["Build Storybook (Fork)"]
+      types:
+        - completed
+jobs:
+    deploy-storybook-fork:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout code
+            uses: actions/checkout@v4
+            with:
+              fetch-depth: 0
+          - name: Download build artifacts
+            uses: dawidd6/action-download-artifact@v3
+            with:
+              run_id: ${{ github.event.workflow_run.id }}
+              name: storybook-dist
+          - name: List Storybook files
+            run: echo "PIA_TOKEN missing. Skipping Chromatic deployment for Portal Integration Angular."
