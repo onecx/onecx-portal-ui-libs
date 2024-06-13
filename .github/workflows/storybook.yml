@@ -21,7 +21,7 @@ jobs:
         run: npm ci
       - name: Build PIA Storybook
         run: npx nx run portal-integration-angular:build-storybook
-      - name: Check PIA Chromatic token
+      - name: Check Portal Integration Angular Chromatic token
         if: env.PIA_TOKEN == null
         run: echo "PIA_TOKEN missing. Skipping Chromatic deployment for Portal Integration Angular."
       - name: Check Angular Accelerator Chromatic token
