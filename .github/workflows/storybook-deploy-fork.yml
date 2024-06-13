@@ -5,7 +5,12 @@ on:
       types:
         - completed
 jobs:
-    deploy-storybook-fork:
+    deploy-storybook:
+        if: ${{ github.event.workflow_run.conclusion == 'success' }}
+        environment: Storybook
+        env:
+          PIA_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN_PIA }}
+          AA_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN_AA }}
         runs-on: ubuntu-latest
         steps:
           - name: Checkout code
@@ -17,5 +22,18 @@ jobs:
             with:
               run_id: ${{ github.event.workflow_run.id }}
               name: storybook-dist
-          - name: List Storybook files
-            run: echo "PIA_TOKEN missing. Skipping Chromatic deployment for Portal Integration Angular."
+          - name: Publish to PIA Chromatic
+            uses: chromaui/action@latest
+            if: env.PIA_TOKEN != null
+            with:
+              projectToken: ${{ env.PIA_TOKEN }}
+              storybookBuildDir: storybook-dist/portal-integration-angular
+              skip: 'dependabot/**'
+          - name: Publish to AA Chromatic
+            uses: chromaui/action@latest
+            if: env.AA_TOKEN != null
+            with:
+              projectToken: ${{ env.AA_TOKEN }}
+              storybookBuildDir: storybook-dist/angular-accelerator
+              skip: 'dependabot/**'
+            

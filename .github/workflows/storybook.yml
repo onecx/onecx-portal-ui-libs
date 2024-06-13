@@ -3,12 +3,13 @@ on:
   push:
     branches:
       - '**'
-  pull_request_target:
-      branches:
-        - 'main'
 jobs:
   deploy-storybooks:
     runs-on: ubuntu-latest
+    environment: Storybook
+    env:
+      PIA_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN_PIA }}
+      AA_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN_AA }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -21,7 +22,7 @@ jobs:
       - name: Publish to PIA Chromatic
         uses: chromaui/action@latest
         with:
-          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN_PIA }}
+          projectToken: ${{ env.PIA_TOKEN }}
           storybookBuildDir: dist/storybook/portal-integration-angular
           skip: 'dependabot/**'
       - name: Build AA Storybook
@@ -29,6 +30,6 @@ jobs:
       - name: Publish to AA Chromatic
         uses: chromaui/action@latest
         with:
-          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN_AA }}
+          projectToken: ${{ env.AA_TOKEN }}
           storybookBuildDir: dist/storybook/angular-accelerator
           skip: 'dependabot/**'
