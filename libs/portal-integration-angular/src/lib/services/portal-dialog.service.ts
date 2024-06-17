@@ -274,12 +274,16 @@ export class PortalDialogService {
    * const primaryButton = {
    *   key: 'OK_BUTTON',
    *   icon: PrimeIcons.CHECK
+   *   tooltipKey: 'OK_TOOLTIP',
+   *   tooltipPosition: 'bottom'
    * }
    *
    * // Refresh button with refresh icon
    * const secondaryButton = {
    *   key: 'REFRESH_BUTTON',
    *   icon: PrimeIcons.REFRESH
+   *   tooltipKey: 'REFRESH_TOOLTIP',
+   *   tooltipPosition: 'right'
    * }
    *
    * this.portalDialogService.openDialog('TITLE_KEY', 'WELCOME_MESSAGE', primaryButton, secondaryButton).subscribe((stateOnClose) => {

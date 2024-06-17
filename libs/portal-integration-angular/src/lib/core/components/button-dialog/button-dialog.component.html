@@ -1,6 +1,8 @@
 <div>
-  <ng-container #container></ng-container>
-  <ng-content></ng-content>
+  <div class="buttonDialogScrollableContent">
+    <ng-container #container></ng-container>
+    <ng-content></ng-content>
+  </div>
   <div class="w-full flex justify-content-end mb-3">
     <button
       id="buttonDialogSecondaryButton"
@@ -11,6 +13,8 @@
       (click)="secondaryButtonAction()"
       [label]="dialogData.config.secondaryButtonDetails!.key | translate:dialogData.config.secondaryButtonDetails?.parameters"
       [disabled]="secondaryButtonDisabled$ | async"
+      [pTooltip]="dialogData.config.primaryButtonDetails!.tooltipKey ? (dialogData.config.primaryButtonDetails!.tooltipKey | translate) : null"
+      [tooltipPosition]="dialogData.config.primaryButtonDetails?.tooltipPosition ?? ''"
     ></button>
     <button
       id="buttonDialogPrimaryButton"
@@ -20,6 +24,8 @@
       (click)="primaryButtonAction()"
       [label]="dialogData.config.primaryButtonDetails!.key | translate:dialogData.config.primaryButtonDetails?.parameters"
       [disabled]="primaryButtonDisabled$ | async"
+      [pTooltip]="dialogData.config.secondaryButtonDetails!.tooltipKey ? (dialogData.config.secondaryButtonDetails!.tooltipKey | translate) : null"
+      [tooltipPosition]="dialogData.config.secondaryButtonDetails?.tooltipPosition ?? ''"
     ></button>
   </div>
 </div>
