@@ -1,3 +1,27 @@
+## [4.32.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.31.1...v4.32.0) (2024-06-18)
+
+
+### Features
+
+* add first version of new deploy-storybook ci ([a57c6b7](https://github.com/onecx/onecx-portal-ui-libs/commit/a57c6b79b8d3af0e57c4599f405504c4b51aa244))
+* add sb deployment action ([a2d75d5](https://github.com/onecx/onecx-portal-ui-libs/commit/a2d75d5551aa9422590375ea95c8128eae7b670d))
+* add storybook build workflow ([e2b0919](https://github.com/onecx/onecx-portal-ui-libs/commit/e2b0919feddea9a28b2cadff419e59d67a846275))
+* dialog service enchancements ([7a5cf7c](https://github.com/onecx/onecx-portal-ui-libs/commit/7a5cf7c813e4b935256b9b3b12c38c8a0b448b6a))
+
+
+### Bug Fixes
+
+* add unzip path ([#278](https://github.com/onecx/onecx-portal-ui-libs/issues/278)) ([0fc6806](https://github.com/onecx/onecx-portal-ui-libs/commit/0fc68062c888d95154309855a039f43c94494855))
+* fix broken image in ocx src + fix storybook builds ([#272](https://github.com/onecx/onecx-portal-ui-libs/issues/272)) ([70009bb](https://github.com/onecx/onecx-portal-ui-libs/commit/70009bbe96dac863ffa988f8e88ba842b058bd8f))
+* package fix ([581c9d0](https://github.com/onecx/onecx-portal-ui-libs/commit/581c9d0eb495c4217fc4c6b89e1c70f1b1db976b))
+* setting login config in keycloak-auth service ([d8554d4](https://github.com/onecx/onecx-portal-ui-libs/commit/d8554d41e4ab2b1d009c9ab149d61bf6b5bc43a7))
+* topic message increment correctly ([849547f](https://github.com/onecx/onecx-portal-ui-libs/commit/849547ffd5486d69068f7907f19541ee83c8f19e))
+
+
+### Refactoring
+
+* switch to more neutral sort column icon ([c9b9e8c](https://github.com/onecx/onecx-portal-ui-libs/commit/c9b9e8c98c66b17a95a4d34e1905c084d1194c3c))
+
 ## [4.31.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.31.0...v4.31.1) (2024-06-12)
 
 
