@@ -1,3 +1,10 @@
+## [4.32.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.32.0...v4.32.1) (2024-06-19)
+
+
+### Bug Fixes
+
+* added new line ([1dadded](https://github.com/onecx/onecx-portal-ui-libs/commit/1dadded8aff9f7896e44abcf74740f41bfcb3994))
+
 ## [4.32.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.31.1...v4.32.0) (2024-06-18)
 
 
