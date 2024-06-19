@@ -1,3 +1,10 @@
+## [4.33.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.32.1...v4.33.0) (2024-06-19)
+
+
+### Features
+
+* make page header more customizable + add grid layout capabilities ([#274](https://github.com/onecx/onecx-portal-ui-libs/issues/274)) ([fa80fe9](https://github.com/onecx/onecx-portal-ui-libs/commit/fa80fe92e2347b93ae903facae3aed1267e1247a))
+
 ## [4.32.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.32.0...v4.32.1) (2024-06-19)
 
 
