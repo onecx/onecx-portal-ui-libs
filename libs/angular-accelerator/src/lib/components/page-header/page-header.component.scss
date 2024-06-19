@@ -84,7 +84,6 @@
   .object-panel {
     border-top: 1px solid #cdd0d3;
     padding: 1rem;
-    display: flex;
 
     &:empty {
       display: none;
@@ -102,4 +101,16 @@
 
 .scale {
   transform: scale(2);
+}
+
+.object-info-grid-label {
+  flex: 1
+}
+
+.object-info-grid-value {
+  flex: 3;
+}
+
+.min-w-120 {
+  min-width: 120px !important;
 }
