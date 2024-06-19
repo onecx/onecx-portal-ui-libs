@@ -1,5 +1,4 @@
 export const enum TopicMessageType {
-    TopicNext = 'TopicNext',
-    TopicGet = 'TopicGet',
-  }
-  
+  TopicNext = 'TopicNext',
+  TopicGet = 'TopicGet',
+}
