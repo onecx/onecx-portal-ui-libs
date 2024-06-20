@@ -10,10 +10,14 @@ const KC_TOKEN_LS = 'onecx_kc_token'
 
 @Injectable()
 export class KeycloakAuthService implements AuthService {
+
+  kcConfig?: Record<string, unknown>
+
   constructor(private keycloakService: KeycloakService, private configService: ConfigurationService) {}
 
   public async init(config?: Record<string, unknown>): Promise<boolean> {
     console.time('KeycloakAuthService')
+    this.kcConfig = config
     let token = localStorage.getItem(KC_TOKEN_LS)
     let idToken = localStorage.getItem(KC_ID_TOKEN_LS)
     let refreshToken = localStorage.getItem(KC_REFRESH_TOKEN_LS)
@@ -55,13 +59,13 @@ export class KeycloakAuthService implements AuthService {
       .init(kcOptions)
       .catch((err) => {
         console.log(`Keycloak err: ${err}, try force login`)
-        return this.keycloakService.login()
+        return this.keycloakService.login(config)
       })
       .then((loginOk) => {
         if (loginOk) {
           return this.keycloakService.getToken()
         } else {
-          return this.keycloakService.login().then(() => 'login')
+          return this.keycloakService.login(config).then(() => 'login')
         }
       })
       .then(() => {
@@ -113,7 +117,7 @@ export class KeycloakAuthService implements AuthService {
       if (ke.type === KeycloakEventType.OnAuthLogout) {
         console.log('SSO logout nav to root')
         this.clearKCStateFromLocalstorage()
-        this.keycloakService.login()
+        this.keycloakService.login(this.kcConfig)
       }
     })
   }
@@ -145,7 +149,7 @@ export class KeycloakAuthService implements AuthService {
 
   async updateTokenIfNeeded(): Promise<boolean> {
     if (!(await this.keycloakService.isLoggedIn())) {
-      return this.keycloakService.login().then(() => false)
+      return this.keycloakService.login(this.kcConfig).then(() => false)
     } else {
       return this.keycloakService.updateToken()
     }

@@ -61,7 +61,7 @@ export class DataListGridSortingComponent implements OnInit {
       case DataSortDirection.DESCENDING:
         return 'pi-sort-amount-down'
       default:
-        return 'pi-sort-alt-slash'
+        return 'pi-sort-alt'
     }
   }
 

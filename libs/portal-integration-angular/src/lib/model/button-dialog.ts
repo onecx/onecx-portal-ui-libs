@@ -24,6 +24,8 @@ export interface ButtonDialogButtonDetails {
   key: string
   icon?: PrimeIcon
   parameters?: Record<string, unknown>
+  tooltipKey?: string
+  tooltipPosition?: 'right' | 'left' | 'top' | 'bottom' | string | undefined
 }
 
 export interface ButtonDialogConfig {
