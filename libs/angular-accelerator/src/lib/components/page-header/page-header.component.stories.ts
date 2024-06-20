@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common'
 import { importProvidersFrom } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
@@ -117,8 +116,7 @@ const demoFields: ObjectDetailItem[] = [
   },
   {
     label: 'End Date',
-    value: new Date().toISOString(),
-    valuePipe: DatePipe,
+    value: '19.06.2024',
   },
 ]
 
