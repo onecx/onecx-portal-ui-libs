@@ -1,3 +1,10 @@
+## [4.33.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.33.1...v4.33.2) (2024-06-24)
+
+
+### Bug Fixes
+
+* tooltips set for correct buttons ([57899e5](https://github.com/onecx/onecx-portal-ui-libs/commit/57899e573199aa7c6a09c66eca45e89d818286ce))
+
 ## [4.33.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.33.0...v4.33.1) (2024-06-24)
 
 
