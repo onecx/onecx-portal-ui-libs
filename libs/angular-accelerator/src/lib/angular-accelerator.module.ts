@@ -1,16 +1,10 @@
 import { CommonModule } from '@angular/common'
-import { HttpClient } from '@angular/common/http'
 import { LOCALE_ID, NgModule } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
-import {
-  MissingTranslationHandler,
-  MissingTranslationHandlerParams,
-  TranslateLoader,
-  TranslateModule,
-} from '@ngx-translate/core'
+import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateModule } from '@ngx-translate/core'
 
-import { AppStateService, UserService } from '@onecx/angular-integration-interface'
+import { UserService } from '@onecx/angular-integration-interface'
 
 import { AngularAcceleratorPrimeNgModule } from './angular-accelerator-primeng.module'
 import { ColumnGroupSelectionComponent } from './components/column-group-selection/column-group-selection.component'
@@ -33,8 +27,6 @@ import { SrcDirective } from './directives/src.directive'
 import { DynamicPipe } from './pipes/dynamic.pipe'
 import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
 import { AppConfigService } from './services/app-config-service'
-import { TranslationCacheService } from './services/translation-cache.service'
-import { createTranslateLoader } from './utils/create-translate-loader.utils'
 
 export class AngularAcceleratorMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -47,18 +39,7 @@ export class AngularAcceleratorMissingTranslationHandler implements MissingTrans
   imports: [
     CommonModule,
     AngularAcceleratorPrimeNgModule,
-    TranslateModule.forRoot({
-      isolate: true,
-      loader: {
-        provide: TranslateLoader,
-        useFactory: createTranslateLoader,
-        deps: [HttpClient, AppStateService, TranslationCacheService],
-      },
-      missingTranslationHandler: {
-        provide: MissingTranslationHandler,
-        useClass: AngularAcceleratorMissingTranslationHandler,
-      },
-    }),
+    TranslateModule,
     FormsModule,
     RouterModule,
     ReactiveFormsModule,
