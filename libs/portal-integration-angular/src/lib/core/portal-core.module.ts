@@ -1,4 +1,5 @@
 import { CommonModule, registerLocaleData } from '@angular/common'
+import de from '@angular/common/locales/de'
 import {
   APP_INITIALIZER,
   CUSTOM_ELEMENTS_SCHEMA,
@@ -9,77 +10,62 @@ import {
   Optional,
   SkipSelf,
 } from '@angular/core'
-import { HttpClient } from '@angular/common/http'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
-import de from '@angular/common/locales/de'
+import { TranslateModule } from '@ngx-translate/core'
+import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import {
-  MissingTranslationHandler,
-  MissingTranslationHandlerParams,
-  TranslateLoader,
-  TranslateModule,
-} from '@ngx-translate/core'
+  APPLICATION_NAME,
+  AppStateService,
+  ConfigurationService,
+  SANITY_CHECK,
+  ThemeService,
+  UserService,
+} from '@onecx/angular-integration-interface'
 import { MessageService } from 'primeng/api'
 import { ConfirmDialogModule } from 'primeng/confirmdialog'
-import { AutofocusDirective } from './directives/autofocus.directive'
+import { PortalApiService } from '../services/portal-api.service'
+import { UserProfileAPIService } from '../services/userprofile-api.service'
+import { AnnouncementBannerComponent } from './components/announcement-banner/announcement-banner.component'
+import { ButtonDialogComponent } from './components/button-dialog/button-dialog.component'
+import { DialogMessageContentComponent } from './components/button-dialog/dialog-message-content/dialog-message-content.component'
+import { OcxContentContainerComponent } from './components/content-container/content-container.component'
+import { OcxContentComponent } from './components/content/content.component'
+import { CreateOrEditSearchConfigDialogComponent } from './components/create-or-edit-search-config-dialog/create-or-edit-search-config-dialog.component'
+import { ColumnTogglerComponent } from './components/data-view-controls/column-toggler-component/column-toggler.component'
+import { DataViewControlsComponent } from './components/data-view-controls/data-view-controls.component'
+import { ViewTemplatePickerComponent } from './components/data-view-controls/view-template-picker/view-template-picker.component'
+import { DeleteDialogComponent } from './components/delete-dialog/delete-dialog.component'
+import { GlobalErrorComponent } from './components/error-component/global-error.component'
+import { HelpItemEditorComponent } from './components/help-item-editor/help-item-editor.component'
 import { AppInlineProfileComponent } from './components/inline-profile/inline-profile.component'
+import { LifecycleComponent } from './components/lifecycle/lifecycle.component'
+import { LoadingIndicatorComponent } from './components/loading-indicator/loading-indicator.component'
 import { LoadingComponent } from './components/loading/loading.component'
 import { MfeDebugComponent } from './components/mfe-debug/mfe-debug.component'
+import { NoHelpItemComponent } from './components/no-help-item/no-help-item.component'
 import { PageContentComponent } from './components/page-content/page-content.component'
 import { PagingInfoComponent } from './components/paging-info/paging-info.component'
 import { PortalFooterComponent } from './components/portal-footer/portal-footer.component'
 import { HeaderComponent } from './components/portal-header/header.component'
-import { PortalMenuComponent } from './components/portal-menu/portal-menu.component'
 import { PortalMenuHorizontalComponent } from './components/portal-menu-horizontal/portal-menu-horizontal.component'
+import { PortalMenuComponent } from './components/portal-menu/portal-menu.component'
 import { SubMenuComponent } from './components/portal-menu/submenu.component'
 import { PortalPageComponent } from './components/portal-page/portal-page.component'
-import { DeleteDialogComponent } from './components/delete-dialog/delete-dialog.component'
 import { PortalViewportComponent } from './components/portal-viewport/portal-viewport.component'
-import { UserAvatarComponent } from './components/user-avatar/user-avatar.component'
-import { DataViewControlsComponent } from './components/data-view-controls/data-view-controls.component'
-import { SearchCriteriaComponent } from './components/search-criteria/search-criteria.component'
-import { ColumnTogglerComponent } from './components/data-view-controls/column-toggler-component/column-toggler.component'
-import { standaloneInitializer } from './initializer/standalone.initializer'
-import { PortalApiService } from '../services/portal-api.service'
 import { CriteriaTemplateComponent } from './components/search-criteria/criteria-template/criteria-template.component'
-import { GlobalErrorComponent } from './components/error-component/global-error.component'
-import { AngularAcceleratorModule, TranslationCacheService, createTranslateLoader } from '@onecx/angular-accelerator'
-import {
-  UserService,
-  AppStateService,
-  ConfigurationService,
-  APPLICATION_NAME,
-  AUTH_SERVICE,
-  SANITY_CHECK,
-  ThemeService,
-} from '@onecx/angular-integration-interface'
-import { AnnouncementBannerComponent } from './components/announcement-banner/announcement-banner.component'
-import { ViewTemplatePickerComponent } from './components/data-view-controls/view-template-picker/view-template-picker.component'
+import { SearchCriteriaComponent } from './components/search-criteria/search-criteria.component'
 import { SupportTicketComponent } from './components/support-ticket/support-ticket.component'
-import { HelpItemEditorComponent } from './components/help-item-editor/help-item-editor.component'
-import { NoHelpItemComponent } from './components/no-help-item/no-help-item.component'
-import { PrimeNgModule } from './primeng.module'
+import { UserAvatarComponent } from './components/user-avatar/user-avatar.component'
+import { AutofocusDirective } from './directives/autofocus.directive'
 import { BasicDirective } from './directives/basic.directive'
+import { OcxContentContainerDirective } from './directives/content-container.directive'
+import { OcxContentDirective } from './directives/content.directive'
+import { LoadingIndicatorDirective } from './directives/loading-indicator.directive'
 import { PatchFormGroupValuesDirective } from './directives/patch-form-group-values.driective'
 import { SetInputValueDirective } from './directives/set-input-value.directive'
-import { LoadingIndicatorComponent } from './components/loading-indicator/loading-indicator.component'
-import { LoadingIndicatorDirective } from './directives/loading-indicator.directive'
-import { ButtonDialogComponent } from './components/button-dialog/button-dialog.component'
-import { DialogMessageContentComponent } from './components/button-dialog/dialog-message-content/dialog-message-content.component'
-import { OcxContentDirective } from './directives/content.directive'
-import { OcxContentComponent } from './components/content/content.component'
-import { OcxContentContainerComponent } from './components/content-container/content-container.component'
-import { OcxContentContainerDirective } from './directives/content-container.directive'
-import { UserProfileAPIService } from '../services/userprofile-api.service'
-import { CreateOrEditSearchConfigDialogComponent } from './components/create-or-edit-search-config-dialog/create-or-edit-search-config-dialog.component'
-import { LifecycleComponent } from './components/lifecycle/lifecycle.component'
-
-export class PortalMissingTranslationHandler implements MissingTranslationHandler {
-  handle(params: MissingTranslationHandlerParams) {
-    console.log(`Missing translation for ${params.key}`, params)
-    return params.key
-  }
-}
+import { standaloneInitializer } from './initializer/standalone.initializer'
+import { PrimeNgModule } from './primeng.module'
 
 @NgModule({
   imports: [
@@ -89,15 +75,7 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     ReactiveFormsModule,
     PrimeNgModule,
     AngularAcceleratorModule,
-    TranslateModule.forRoot({
-      isolate: true,
-      loader: {
-        provide: TranslateLoader,
-        useFactory: createTranslateLoader,
-        deps: [HttpClient, AppStateService, TranslationCacheService],
-      },
-      missingTranslationHandler: { provide: MissingTranslationHandler, useClass: PortalMissingTranslationHandler },
-    }),
+    TranslateModule,
     ConfirmDialogModule,
   ],
   declarations: [
@@ -222,7 +200,6 @@ export class PortalCoreModule {
           multi: true,
           useFactory: standaloneInitializer,
           deps: [
-            AUTH_SERVICE,
             ConfigurationService,
             PortalApiService,
             ThemeService,
