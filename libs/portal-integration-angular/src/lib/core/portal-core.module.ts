@@ -16,7 +16,6 @@ import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateMo
 import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import {
   APPLICATION_NAME,
-  AUTH_SERVICE,
   AppStateService,
   ConfigurationService,
   SANITY_CHECK,
@@ -208,7 +207,6 @@ export class PortalCoreModule {
           multi: true,
           useFactory: standaloneInitializer,
           deps: [
-            AUTH_SERVICE,
             ConfigurationService,
             PortalApiService,
             ThemeService,
