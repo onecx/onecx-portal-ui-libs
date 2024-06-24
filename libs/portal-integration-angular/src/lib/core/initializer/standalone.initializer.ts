@@ -1,13 +1,12 @@
-import { firstValueFrom } from 'rxjs'
 import {
   AppStateService,
-  UserService,
-  ThemeService,
-  ConfigurationService,
   CONFIG_KEY,
-  IAuthService,
+  ConfigurationService,
+  ThemeService,
+  UserService,
 } from '@onecx/angular-integration-interface'
 import { MfeInfo } from '@onecx/integration-interface'
+import { firstValueFrom } from 'rxjs'
 import { PortalApiService } from '../../services/portal-api.service'
 import { UserProfileAPIService } from '../../services/userprofile-api.service'
 
@@ -20,7 +19,6 @@ const PORTAL_LOAD_INIT_ERR = 'PORTAL_LOAD_INIT_ERR'
  * This initializer only runs in standalone mode of the apps and not in portal-mf-shell
  */
 export function standaloneInitializer(
-  auth: IAuthService,
   config: ConfigurationService,
   portalApi: PortalApiService,
   themeService: ThemeService,
