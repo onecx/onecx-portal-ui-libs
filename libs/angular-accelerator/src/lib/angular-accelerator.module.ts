@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common'
 import { LOCALE_ID, NgModule } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
-import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateModule } from '@ngx-translate/core'
+import { TranslateModule } from '@ngx-translate/core'
 
 import { UserService } from '@onecx/angular-integration-interface'
 
@@ -27,13 +27,6 @@ import { SrcDirective } from './directives/src.directive'
 import { DynamicPipe } from './pipes/dynamic.pipe'
 import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
 import { AppConfigService } from './services/app-config-service'
-
-export class AngularAcceleratorMissingTranslationHandler implements MissingTranslationHandler {
-  handle(params: MissingTranslationHandlerParams) {
-    console.log(`Missing translation for ${params.key}`, params)
-    return params.key
-  }
-}
 
 @NgModule({
   imports: [
@@ -95,7 +88,6 @@ export class AngularAcceleratorMissingTranslationHandler implements MissingTrans
     OcxTimeAgoPipe,
     SrcDirective,
     AdvancedDirective,
-    // DataListGridSortingComponent,
   ],
 })
 export class AngularAcceleratorModule {}
