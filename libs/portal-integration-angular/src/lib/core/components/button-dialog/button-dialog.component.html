@@ -13,8 +13,8 @@
       (click)="secondaryButtonAction()"
       [label]="dialogData.config.secondaryButtonDetails!.key | translate:dialogData.config.secondaryButtonDetails?.parameters"
       [disabled]="secondaryButtonDisabled$ | async"
-      [pTooltip]="dialogData.config.primaryButtonDetails!.tooltipKey ? (dialogData.config.primaryButtonDetails!.tooltipKey | translate) : null"
-      [tooltipPosition]="dialogData.config.primaryButtonDetails?.tooltipPosition ?? ''"
+      [pTooltip]="dialogData.config.secondaryButtonDetails!.tooltipKey ? (dialogData.config.secondaryButtonDetails!.tooltipKey | translate) : null"
+      [tooltipPosition]="dialogData.config.secondaryButtonDetails?.tooltipPosition ?? ''"
     ></button>
     <button
       id="buttonDialogPrimaryButton"
@@ -24,8 +24,8 @@
       (click)="primaryButtonAction()"
       [label]="dialogData.config.primaryButtonDetails!.key | translate:dialogData.config.primaryButtonDetails?.parameters"
       [disabled]="primaryButtonDisabled$ | async"
-      [pTooltip]="dialogData.config.secondaryButtonDetails!.tooltipKey ? (dialogData.config.secondaryButtonDetails!.tooltipKey | translate) : null"
-      [tooltipPosition]="dialogData.config.secondaryButtonDetails?.tooltipPosition ?? ''"
+      [pTooltip]="dialogData.config.primaryButtonDetails!.tooltipKey ? (dialogData.config.primaryButtonDetails!.tooltipKey | translate) : null"
+      [tooltipPosition]="dialogData.config.primaryButtonDetails?.tooltipPosition ?? ''"
     ></button>
   </div>
 </div>
