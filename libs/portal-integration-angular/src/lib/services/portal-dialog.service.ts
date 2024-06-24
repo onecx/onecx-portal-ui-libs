@@ -333,7 +333,7 @@ export class PortalDialogService {
    *   }
    *
    *   onInputChange(event: any) {
-   *     dialogResult = event.target.value
+   *     this.dialogResult = event.target.value
    *   }
    * }
    * ```
