@@ -1,3 +1,10 @@
+## [4.33.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.33.2...v4.33.3) (2024-06-25)
+
+
+### Bug Fixes
+
+* re-add missing translation handler ([71fb671](https://github.com/onecx/onecx-portal-ui-libs/commit/71fb67103aef02ad463480a3c13f8c1bb2c03340))
+
 ## [4.33.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.33.1...v4.33.2) (2024-06-24)
 
 
