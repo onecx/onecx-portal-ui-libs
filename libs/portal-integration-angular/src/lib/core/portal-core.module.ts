@@ -12,7 +12,7 @@ import {
 } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
-import { TranslateModule } from '@ngx-translate/core'
+import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateModule } from '@ngx-translate/core'
 import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import {
   APPLICATION_NAME,
@@ -66,6 +66,13 @@ import { PatchFormGroupValuesDirective } from './directives/patch-form-group-val
 import { SetInputValueDirective } from './directives/set-input-value.directive'
 import { standaloneInitializer } from './initializer/standalone.initializer'
 import { PrimeNgModule } from './primeng.module'
+
+export class PortalMissingTranslationHandler implements MissingTranslationHandler {
+  handle(params: MissingTranslationHandlerParams) {
+    console.log(`Missing translation for ${params.key}`, params)
+    return params.key
+  }
+}
 
 @NgModule({
   imports: [
