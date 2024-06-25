@@ -44,8 +44,9 @@ export class PDropdownHarness extends ContentContainerComponentHarness {
 
   async getDropdownItems() {
     await this.open()
-    const dropdownItems = this.locatorForAll(ListItemHarness)()
-    return await dropdownItems
+    const rootLocator = this.documentRootLocatorFactory()
+    const items = await rootLocator.harnessLoaderFor('.p-dropdown-items')
+    return await items.getAllHarnesses(ListItemHarness)
   }
 
   async getDropdownItem(itemText: string): Promise<ListItemHarness | null> {
