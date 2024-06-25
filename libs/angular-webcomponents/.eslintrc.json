@@ -10,7 +10,7 @@
           "error",
           {
             "type": "attribute",
-            "prefix": "onecx",
+            "prefix": "ocx",
             "style": "camelCase"
           }
         ],
@@ -18,8 +18,14 @@
           "error",
           {
             "type": "element",
-            "prefix": "onecx",
+            "prefix": "ocx",
             "style": "kebab-case"
+          }
+        ],
+        "no-restricted-syntax": [
+          "off",
+          {
+            "selector": "CallExpression[callee.object.name=\"console\"][callee.property.name=/^(debug|info|time|timeEnd|trace)$/]"
           }
         ]
       }
@@ -28,6 +34,13 @@
       "files": ["*.html"],
       "extends": ["plugin:@nx/angular-template"],
       "rules": {}
+    },
+    {
+      "files": ["*.json"],
+      "parser": "jsonc-eslint-parser",
+      "rules": {
+        "@nx/dependency-checks": "error"
+      }
     }
   ]
 }
