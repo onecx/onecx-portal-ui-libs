@@ -1,1 +1,1 @@
-export * from './lib/angular-webcomponents.module'
+export * from './lib/model/remote-webcomponent'

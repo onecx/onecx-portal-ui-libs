@@ -1,5 +1,4 @@
 export * from './lib/model/remote-component'
-export * from './lib/model/remote-webcomponent'
 export * from './lib/model/remote-component-config.model'
 export * from './lib/model/injection-tokens'
 export * from './lib/components/slot/slot.component'
