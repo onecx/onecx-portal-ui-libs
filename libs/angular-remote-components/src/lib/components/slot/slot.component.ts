@@ -84,6 +84,12 @@ export class SlotComponent implements OnInit, OnDestroy {
     ) {
       if (componentInfo.remoteComponent.elementName) {
         const element = document.createElement(componentInfo.remoteComponent.elementName)
+        ;(element as any)['ocxRemoteComponentConfig'] = {
+          appId: componentInfo.remoteComponent.appId,
+          productName: componentInfo.remoteComponent.productName,
+          baseUrl: componentInfo.remoteComponent.baseUrl,
+          permissions: permissions,
+        }
         viewContainer?.element.nativeElement.appendChild(element)
       }
     }
