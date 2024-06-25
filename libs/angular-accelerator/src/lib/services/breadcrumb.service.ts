@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core'
+import { Injectable, OnDestroy } from '@angular/core'
 import { ActivatedRoute, ActivatedRouteSnapshot, Data, NavigationEnd, ParamMap, Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { BehaviorSubject, filter } from 'rxjs'
@@ -6,7 +6,7 @@ import { MenuItem } from 'primeng/api'
 import { BreadCrumbMenuItem } from '../model/breadcrumb-menu-item.model'
 
 @Injectable({ providedIn: 'any' })
-export class BreadcrumbService {
+export class BreadcrumbService implements OnDestroy {
   private itemsSource = new BehaviorSubject<MenuItem[]>([])
   generatedItemsSource = new BehaviorSubject<MenuItem[]>([])
 
@@ -18,6 +18,10 @@ export class BreadcrumbService {
       const root = this.router.routerState.snapshot.root
       this.generateBreadcrumbs(root)
     })
+  }
+  ngOnDestroy(): void {
+    this.itemsSource.unsubscribe()
+    this.generatedItemsSource.unsubscribe()
   }
 
   private generateBreadcrumbs(route: ActivatedRouteSnapshot | null) {
@@ -31,7 +35,8 @@ export class BreadcrumbService {
         ]
         const baseUrl: string[] = (route.data['mfeInfo'].baseHref as string).split('/').filter((value) => value)
         const parentUrl: string[] = route.url.map((url) => url.path)
-        if (!parentUrl.every((item) => baseUrl.includes(item))) {
+        const isUsingMatcher = !parentUrl.every((item) => baseUrl.includes(item))
+        if (isUsingMatcher) {
           this.createBreadcrumb(route, parentUrl, breadcrumbs)
         }
         this.addBreadcrumb(route.firstChild, parentUrl, breadcrumbs)
