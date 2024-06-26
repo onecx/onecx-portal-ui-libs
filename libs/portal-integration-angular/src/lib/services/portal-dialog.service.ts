@@ -208,6 +208,31 @@ export type DialogState<T> = {
   result: T | undefined
 }
 
+export type PortalDialogConfig = {
+  showXButton?: boolean
+  ariaLabelledBy?: string
+  width?: string
+  height?: string
+  closeOnEscape?: boolean
+  focusOnShow?: boolean
+  focusTrap?: boolean
+  baseZIndex?: number
+  autoZIndex?: boolean
+  dismissableMask?: boolean
+  showHeader?: boolean
+  modal?: boolean
+  resizable?: boolean
+  draggable?: boolean
+  keepInViewport?: boolean
+  minX?: number
+  minY?: number
+  maximizable?: boolean
+  maximizeIcon?: string
+  minimizeIcon?: string
+  position?: string
+  closeAriaLabel?: string
+}
+
 @Injectable({ providedIn: 'any' })
 export class PortalDialogService {
   constructor(private dialogService: DialogService, private translateService: TranslateService) {}
@@ -366,8 +391,31 @@ export class PortalDialogService {
     componentOrMessage: Type<any> | Type<DialogResult<T>> | Component<T> | TranslationKey | DialogMessage,
     primaryButtonTranslationKeyOrDetails: TranslationKey | ButtonDialogButtonDetails,
     secondaryButtonTranslationKeyOrDetails?: TranslationKey | ButtonDialogButtonDetails,
-    showXButton: boolean = true
+    extras?: PortalDialogConfig
+  ): Observable<DialogState<T>>
+  /**
+   * @deprecated Use `extras` instead of `showXButton`
+   */
+  openDialog<T>(
+    title: TranslationKey | null,
+    componentOrMessage: Type<any> | Type<DialogResult<T>> | Component<T> | TranslationKey | DialogMessage,
+    primaryButtonTranslationKeyOrDetails: TranslationKey | ButtonDialogButtonDetails,
+    secondaryButtonTranslationKeyOrDetails?: TranslationKey | ButtonDialogButtonDetails,
+    showXButton?: boolean
+  ): Observable<DialogState<T>>
+  openDialog<T>(
+    title: TranslationKey | null,
+    componentOrMessage: Type<any> | Type<DialogResult<T>> | Component<T> | TranslationKey | DialogMessage,
+    primaryButtonTranslationKeyOrDetails: TranslationKey | ButtonDialogButtonDetails,
+    secondaryButtonTranslationKeyOrDetails?: TranslationKey | ButtonDialogButtonDetails,
+    extrasOrShowXButton: PortalDialogConfig | boolean = {}
   ): Observable<DialogState<T>> {
+    const dialogOptions: PortalDialogConfig =
+      typeof extrasOrShowXButton === 'object'
+        ? extrasOrShowXButton
+        : {
+            showXButton: extrasOrShowXButton,
+          }
     const translateParams = this.prepareTitleForTranslation(title)
 
     const componentToRender: Component<any> = this.getComponentToRender(componentOrMessage)
@@ -386,7 +434,8 @@ export class PortalDialogService {
         return this.dialogService.open(ButtonDialogComponent, {
           header: dialogTitle,
           data: dynamicDialogDataConfig,
-          closable: showXButton && secondaryButtonTranslationKeyOrDetails !== undefined,
+          closable: dialogOptions.showXButton && secondaryButtonTranslationKeyOrDetails !== undefined,
+          ...dialogOptions,
         }).onClose
       })
     )
