@@ -94,6 +94,7 @@
   (selectionChange)="onSelectionChange($event)"
   [selection]="(selectedRows$ | async) || []"
   [scrollable]="true"
+  paginatorDropdownAppendTo="body"
 >
   <ng-template pTemplate="header">
     <tr>
