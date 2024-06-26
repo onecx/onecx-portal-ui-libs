@@ -1,3 +1,28 @@
+## [4.34.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.33.3...v4.34.0) (2024-06-26)
+
+
+### Features
+
+* angular-webcomponents init ([4bab9ce](https://github.com/onecx/onecx-portal-ui-libs/commit/4bab9ce120d69ae2bc61154971c99a12b15a0126))
+* angular-webcomponents prepared ([1e9c237](https://github.com/onecx/onecx-portal-ui-libs/commit/1e9c237ff58e72e6fc6d3092eba1f46fa71c9984))
+* dialog-service configuration ([9775472](https://github.com/onecx/onecx-portal-ui-libs/commit/9775472a65b69ad3ee7f0566bf11311041b30f01))
+* props passing to webcomponents ([b6da099](https://github.com/onecx/onecx-portal-ui-libs/commit/b6da099bb0f683b57ca049b8b65cf667f90e06f5))
+* type check in remote config passing ([a36f141](https://github.com/onecx/onecx-portal-ui-libs/commit/a36f1410e88e9d7033055a4a2f0f78a6b12ecf65))
+
+
+### Bug Fixes
+
+* harness fix ([36f3ea2](https://github.com/onecx/onecx-portal-ui-libs/commit/36f3ea2ebd2516a67df5d7532d4de8be7c3e484b))
+* lint ([7f83d14](https://github.com/onecx/onecx-portal-ui-libs/commit/7f83d14242facd8eb4004077d4cdfd475cfe09e3))
+* lint fix ([488a65c](https://github.com/onecx/onecx-portal-ui-libs/commit/488a65cc3a26bc99cbd02ecc6c42b2478c48de54))
+* paginator appended to body ([3877f8f](https://github.com/onecx/onecx-portal-ui-libs/commit/3877f8f16ae59979962a0f501bd2d251523f1acf))
+
+
+### Refactoring
+
+* change deprecated message ([3c896d0](https://github.com/onecx/onecx-portal-ui-libs/commit/3c896d05fdf2a38439a00deeaca32f2f2c9cebd4))
+* moved remote-webcomponent interface to angular-remote-components ([547fd12](https://github.com/onecx/onecx-portal-ui-libs/commit/547fd127a1cdbdc73579ad4e7f7e4daccf6a4a95))
+
 ## [4.33.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.33.2...v4.33.3) (2024-06-25)
 
 
