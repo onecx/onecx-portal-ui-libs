@@ -349,6 +349,26 @@ export const WithObjectDetailsAndIcons = {
   },
 }
 
+export const WithObjectDetailsAndStyledIcons = {
+  render: Template,
+
+  args: {
+    header: 'My title',
+    subheader: 'My subtitle',
+    loading: false,
+    objectDetails: [
+      ...demoFields,
+      {
+        label: 'Styled Icon',
+        value: 'Confirmed',
+        icon: PrimeIcons.CHECK_CIRCLE,
+        iconStyleClass: 'text-red-400 fadein animation-duration-1000 animation-iteration-infinite'
+      }
+    ],
+    showBreadcrumbs: false,
+  },
+}
+
 export const DefaultLayout = {
   render: Template,
 

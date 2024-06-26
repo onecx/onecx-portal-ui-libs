@@ -113,7 +113,7 @@
             [ngClass]="generateItemStyle(item)"
             name="object-detail-value"
           >
-            <i *ngIf="item.icon" class="{{item.icon}}" name="object-detail-icon"></i>
+            <i *ngIf="item.icon" class='{{item.icon + " " + (item.iconStyleClass || "")}}' name="object-detail-icon"></i>
             {{ item.value | dynamicPipe:item.valuePipe:item.valuePipeArgs}}
             <p-button
               *ngIf="item.actionItemIcon && item.actionItemCallback"
