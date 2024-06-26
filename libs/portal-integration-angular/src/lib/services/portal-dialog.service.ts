@@ -7,7 +7,6 @@ import { ButtonDialogComponent } from '../core/components/button-dialog/button-d
 import { ButtonDialogButtonDetails, ButtonDialogData } from '../model/button-dialog'
 import { DialogMessageContentComponent } from '../core/components/button-dialog/dialog-message-content/dialog-message-content.component'
 import { PrimeIcon } from '@onecx/angular-accelerator'
-import { string } from 'zod'
 
 /**
  * Object containing key for translation with parameters object for translation
