@@ -1,1 +1,3 @@
-export function initializeRouter() {}
+export function initializeRouter() {
+  console.log('tmp')
+}
