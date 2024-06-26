@@ -395,7 +395,7 @@ export class PortalDialogService {
     extras?: PortalDialogConfig
   ): Observable<DialogState<T>>
   /**
-   * @deprecated Use `extras` instead
+   * @deprecated Use `extras` instead of `showXButton`
    */
   openDialog<T>(
     title: TranslationKey | null,
