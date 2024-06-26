@@ -107,9 +107,12 @@
           *ngIf="item.icon || item.value"
           class="object-info-grid-value"
           [title]="item.valueTooltip || item.tooltip || ''"
-          name="object-detail-value"
         >
-          <span class="flex text-900 align-items-center gap-2 w-max" [ngClass]="generateItemStyle(item)">
+          <span
+            class="flex text-900 align-items-center gap-2 w-max"
+            [ngClass]="generateItemStyle(item)"
+            name="object-detail-value"
+          >
             <i *ngIf="item.icon" class="{{item.icon}}" name="object-detail-icon"></i>
             {{ item.value | dynamicPipe:item.valuePipe:item.valuePipeArgs}}
             <p-button
