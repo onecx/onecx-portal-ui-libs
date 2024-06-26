@@ -9,6 +9,7 @@
   currentPageReportTemplate="{{ (totalRecordsOnServer ? currentPageShowingWithTotalOnServerKey : currentPageShowingKey) | translate:params }}"
   [rowsPerPageOptions]="[10, 25, 50, data?.length]"
   id="dataListGrid_{{name}}"
+  paginatorDropdownAppendTo="body"
 >
   <ng-template let-item pTemplate="paginatordropdownitem">
     {{ item.value === data?.length ? ("OCX_DATA_TABLE.ALL" | translate) : item.value }}
