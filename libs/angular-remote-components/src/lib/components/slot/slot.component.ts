@@ -15,6 +15,7 @@ import { BehaviorSubject, Subscription, Observable, combineLatest } from 'rxjs'
 import { RemoteComponentInfo, SLOT_SERVICE, SlotComponentConfiguration, SlotService } from '../../services/slot.service'
 import { ocxRemoteComponent } from '../../model/remote-component'
 import { Technologies } from '@onecx/integration-interface'
+import { RemoteComponentConfig } from '../../model/remote-component-config.model'
 
 @Component({
   selector: 'ocx-slot[name]',
@@ -84,6 +85,12 @@ export class SlotComponent implements OnInit, OnDestroy {
     ) {
       if (componentInfo.remoteComponent.elementName) {
         const element = document.createElement(componentInfo.remoteComponent.elementName)
+        ;(element as any)['ocxRemoteComponentConfig'] = {
+          appId: componentInfo.remoteComponent.appId,
+          productName: componentInfo.remoteComponent.productName,
+          baseUrl: componentInfo.remoteComponent.baseUrl,
+          permissions: permissions,
+        } satisfies RemoteComponentConfig
         viewContainer?.element.nativeElement.appendChild(element)
       }
     }
