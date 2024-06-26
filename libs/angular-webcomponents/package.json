@@ -1,0 +1,10 @@
+{
+  "name": "@onecx/angular-webcomponents",
+  "version": "4.33.0",
+  "peerDependencies": {
+  },
+  "dependencies": {},
+  "publishConfig": {
+    "access": "public"
+  }
+}
