@@ -1,3 +1,26 @@
+## [4.33.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.33.2...v4.33.3) (2024-06-25)
+
+
+### Bug Fixes
+
+* re-add missing translation handler ([71fb671](https://github.com/onecx/onecx-portal-ui-libs/commit/71fb67103aef02ad463480a3c13f8c1bb2c03340))
+
+## [4.33.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.33.1...v4.33.2) (2024-06-24)
+
+
+### Bug Fixes
+
+* tooltips set for correct buttons ([57899e5](https://github.com/onecx/onecx-portal-ui-libs/commit/57899e573199aa7c6a09c66eca45e89d818286ce))
+
+## [4.33.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.33.0...v4.33.1) (2024-06-24)
+
+
+### Bug Fixes
+
+* more cleanup ([86fbdef](https://github.com/onecx/onecx-portal-ui-libs/commit/86fbdef091dd9db83e93fbdef2ae574a3ca18b9b))
+* removed forRoot for TranslateModule import ([8a3c418](https://github.com/onecx/onecx-portal-ui-libs/commit/8a3c4184397482b771be9e1acef3f45d48144be6))
+* removed unused authService from standalone initializer ([db91449](https://github.com/onecx/onecx-portal-ui-libs/commit/db9144992b99f42380f888644fea1f82dc469ee3))
+
 ## [4.33.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.32.1...v4.33.0) (2024-06-19)
 
 
