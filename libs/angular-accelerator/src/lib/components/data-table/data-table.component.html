@@ -49,6 +49,7 @@
           ></button>
         </ng-container>
         <ng-container *ngFor="let action of additionalActions">
+        <ng-container *ngIf="(!action.actionVisibleField || fieldIsTruthy(rowObject, action.actionVisibleField))">
           <button
             *ocxIfPermission="action.permission"
             pButton
@@ -58,8 +59,9 @@
             (click)="action.callback(rowObject)"
             [title]="action.labelKey ? (action.labelKey | translate) : ''"
             [attr.aria-label]="action.labelKey ? (action.labelKey | translate) : ''"
-            [disabled]="action.disabled"
+            [disabled]="action.disabled || (!!action.actionEnabledField && !fieldIsTruthy(rowObject, action.actionEnabledField))"
           ></button>
+        </ng-container>
         </ng-container>
       </div>
     </td>
