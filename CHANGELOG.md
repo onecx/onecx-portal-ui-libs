@@ -1,3 +1,16 @@
+## [4.35.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.34.0...v4.35.0) (2024-06-27)
+
+
+### Features
+
+* fix styling issues for page header detail values + add ability to specify icon styles ([#294](https://github.com/onecx/onecx-portal-ui-libs/issues/294)) ([08d79c3](https://github.com/onecx/onecx-portal-ui-libs/commit/08d79c3a33336e0a0bfcdeafc3393e89362ca169))
+
+
+### Bug Fixes
+
+* fix csv exports by escaping delimiters ([#287](https://github.com/onecx/onecx-portal-ui-libs/issues/287)) ([76eb1dc](https://github.com/onecx/onecx-portal-ui-libs/commit/76eb1dc0417962f7d6fd41e33895ec863ac66aae))
+* fix ocx-content-container spacing ([#279](https://github.com/onecx/onecx-portal-ui-libs/issues/279)) ([409bc5d](https://github.com/onecx/onecx-portal-ui-libs/commit/409bc5dfafcee2adeac4666dcc107a4faff53973))
+
 ## [4.34.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.33.3...v4.34.0) (2024-06-26)
 
 
