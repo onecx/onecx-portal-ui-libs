@@ -53,6 +53,7 @@ export interface ObjectDetailItem {
   labelTooltip?: string
   valueTooltip?: string
   icon?: PrimeIcon
+  iconStyleClass?: string
   labelPipe?: Type<any>
   valuePipe?: Type<any>
   valuePipeArgs?: string
