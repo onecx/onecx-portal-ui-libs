@@ -42,7 +42,7 @@ export class OcxContentContainerDirective implements OnInit, OnChanges {
       })
       removeClasses(classesToRemove)
     }
-    const sharedClasses = ['flex', 'py-3', 'gap-3', 'flex-column']
+    const sharedClasses = ['flex', 'gap-3', 'flex-column']
     removeResponsiveLayoutClasses()
     addClasses(sharedClasses)
     if (this.layout != 'vertical') {
