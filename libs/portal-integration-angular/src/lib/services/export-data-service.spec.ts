@@ -247,39 +247,39 @@ describe('ExportDataService', () => {
     const expectedCsv =
       'Name,Description,Start date,End date,Status,Responsible,Modification date,Creation user,Test number' +
       '\r\nsome name,,' +
-      dateUtils.localizedDate('2023-09-13T09:34:05Z') +
+      '"' + dateUtils.localizedDate('2023-09-13T09:34:05Z') + '"' +
       ',' +
-      dateUtils.localizedDate('2023-09-14T09:34:09Z') +
+      '"' + dateUtils.localizedDate('2023-09-14T09:34:09Z') + '"' +
       ',some status,someone responsible,' +
-      dateUtils.localizedDate('2023-09-12T09:34:11.997048Z') +
+      '"' + dateUtils.localizedDate('2023-09-12T09:34:11.997048Z') + '"' +
       ',creation user,1' +
       '\r\nexample,example description,' +
-      dateUtils.localizedDate('2023-09-12T09:33:53Z') +
+      '"' + dateUtils.localizedDate('2023-09-12T09:33:53Z') + '"' +
       ',' +
-      dateUtils.localizedDate('2023-09-13T09:33:55Z') +
+      '"' + dateUtils.localizedDate('2023-09-13T09:33:55Z') + '"' +
       ',some status example,,' +
-      dateUtils.localizedDate('2023-09-12T09:33:58.544494Z') +
+      '"' + dateUtils.localizedDate('2023-09-12T09:33:58.544494Z') + '"' +
       ',,3.141' +
       '\r\nname 1,,' +
-      dateUtils.localizedDate('2023-09-14T09:34:22Z') +
+      '"' + dateUtils.localizedDate('2023-09-14T09:34:22Z') + '"' +
       ',' +
-      dateUtils.localizedDate('2023-09-15T09:34:24Z') +
+      '"' + dateUtils.localizedDate('2023-09-15T09:34:24Z') + '"' +
       ',status name 1,,' +
-      dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') +
+      '"' + dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') + '"' +
       ',,123456789' +
       '\r\nname 2,,' +
-      dateUtils.localizedDate('2023-09-14T09:34:22Z') +
+      '"' + dateUtils.localizedDate('2023-09-14T09:34:22Z') + '"' +
       ',' +
-      dateUtils.localizedDate('2023-09-15T09:34:24Z') +
+      '"' + dateUtils.localizedDate('2023-09-15T09:34:24Z') + '"' +
       ',status name 2,,' +
-      dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') +
+      '"' + dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') + '"' +
       ',,12345.6789' +
       '\r\nname 3,,' +
-      dateUtils.localizedDate('2023-09-14T09:34:22Z') +
+      '"' + dateUtils.localizedDate('2023-09-14T09:34:22Z') + '"' +
       ',' +
-      dateUtils.localizedDate('2023-09-15T09:34:24Z') +
+      '"' + dateUtils.localizedDate('2023-09-15T09:34:24Z') + '"' +
       ',status name 3,,' +
-      dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') +
+      '"' + dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') + '"' +
       ',,7.1'
     const expectedFilename = 'some-test.csv'
     const mock = new ElementMock()
