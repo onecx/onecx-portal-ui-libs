@@ -149,6 +149,8 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return this.gridItemTemplate || this.gridItemChildTemplate
   }
 
+  additionalListActions: DataAction[] = []
+  additionalListOverflowActions: DataAction[] = []
   _additionalActions: DataAction[] = []
   @Input()
   get additionalActions(): DataAction[] {
@@ -157,6 +159,8 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   set additionalActions(value: DataAction[]) {
     this._additionalActions = value
     this.updateGridMenuItems()
+    this.additionalListActions = value.filter((action) => !action.showAsOverflow)
+    this.additionalListOverflowActions = value.filter((action) => action.showAsOverflow)
   }
 
   @Output() viewItem = new EventEmitter<ListGridData>()
@@ -344,5 +348,30 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
 
   fieldIsTruthy(object: any, key: any) {
     return !!this.resolveFieldData(object, key)
+  }
+
+  hasVisibleOverflowMenuItems(item: any) {
+    return this.additionalListOverflowActions.some((a) => !a.actionVisibleField || this.fieldIsTruthy(item, a.actionVisibleField))
+  }
+
+  getOverflowMenuItems(item: any) {
+    return this.translateService
+      .get([...this.additionalListOverflowActions.map((a) => a.labelKey || '')])
+      .pipe(
+        map((translations) => {
+          return this.additionalListOverflowActions
+            .filter((a) => this.userService.hasPermission(a.permission))
+            .map((a) => ({
+              label: translations[a.labelKey || ''],
+              icon: a.icon,
+              styleClass: (a.classes || []).join(' '),
+              disabled:
+                a.disabled ||
+                (!!a.actionEnabledField && !this.fieldIsTruthy(item, a.actionEnabledField)),
+              visible: !a.actionVisibleField || this.fieldIsTruthy(item, a.actionVisibleField),
+              command: () => a.callback(item),
+            }))
+        })
+      )
   }
 }
