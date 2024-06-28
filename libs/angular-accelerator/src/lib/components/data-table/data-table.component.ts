@@ -12,7 +12,7 @@ import {
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
-import { MenuItem, SelectItem } from 'primeng/api'
+import { SelectItem } from 'primeng/api'
 import { BehaviorSubject, Observable, combineLatest, map, mergeMap, of } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
