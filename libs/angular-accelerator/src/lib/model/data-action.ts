@@ -5,5 +5,7 @@ export interface DataAction {
   permission: string
   classes?: string[]
   disabled?: boolean
+  actionVisibleField?: string
+  actionEnabledField?: string
   callback: (data: any) => void
 }
