@@ -12,6 +12,7 @@ import { StorybookTranslateModule } from './../../storybook-translate.module'
 import { MockAuthModule } from '../../mock-auth/mock-auth.module'
 import { IfPermissionDirective } from '../../directives/if-permission.directive'
 import { ColumnType } from '../../model/column-type.model'
+import { MenuModule } from 'primeng/menu'
 
 type DataTableInputTypes = Pick<DataTableComponent, 'rows' | 'columns' | 'emptyResultsMessage' | 'selectedRows'>
 const DataTableComponentSBConfig: Meta<DataTableComponent> = {
@@ -27,7 +28,7 @@ const DataTableComponentSBConfig: Meta<DataTableComponent> = {
     }),
     moduleMetadata({
       declarations: [DataTableComponent, IfPermissionDirective],
-      imports: [TableModule, ButtonModule, MultiSelectModule, StorybookTranslateModule, MockAuthModule],
+      imports: [TableModule, ButtonModule, MultiSelectModule, StorybookTranslateModule, MockAuthModule, MenuModule],
     }),
   ],
 }
@@ -351,6 +352,49 @@ export const WithConditionallyVisibleAdditionalActions = {
         permission: 'TEST_MGMT#TEST_VIEW',
         actionVisibleField: 'available',
       }
+    ]
+  },
+}
+
+export const WithAdditionalOverflowActions = {
+  argTypes: {
+    deleteTableRow: { action: 'deleteTableRow' },
+    editTableRow: { action: 'deleteTableRow' },
+    viewTableRow: { action: 'deleteTableRow' },
+  },
+  render: Template,
+  args: {
+    ...defaultComponentArgs,
+    deleteTableRow: ($event: any) => console.log('Delete table row ', $event),
+    editTableRow: ($event: any) => console.log('Edit table row ', $event),
+    viewTableRow: ($event: any) => console.log('View table row ', $event),
+    deletePermission: 'TEST_MGMT#TEST_DELETE',
+    editPermission: 'TEST_MGMT#TEST_EDIT',
+    viewPermission: 'TEST_MGMT#TEST_VIEW',
+    additionalActions: [
+      {
+        id: '1',
+        labelKey: 'Additional Action',
+        icon: 'pi pi-plus',
+        permission: 'TEST_MGMT#TEST_VIEW',
+        showAsOverflow: true,
+      },
+      {
+        id: '2',
+        labelKey: 'Conditionally Hidden',
+        icon: 'pi pi-plus',
+        permission: 'TEST_MGMT#TEST_VIEW',
+        showAsOverflow: true,
+        actionVisibleField: 'available',
+      },
+      {
+        id: '3',
+        labelKey: 'Conditionally Enabled',
+        icon: 'pi pi-plus',
+        permission: 'TEST_MGMT#TEST_VIEW',
+        showAsOverflow: true,
+        actionEnabledField: 'available',
+      },
     ]
   },
 }

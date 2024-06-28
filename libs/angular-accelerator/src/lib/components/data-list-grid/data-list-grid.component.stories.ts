@@ -154,6 +154,39 @@ export const ListWithConditionallyVisibleAdditionalActions = {
   },
 }
 
+export const ListWithAdditionalOverflowActions = {
+  argTypes: defaultArgTypes,
+  render: Template,
+  args: {
+    ...defaultComponentArgs,
+    additionalActions: [
+      {
+        id: '1',
+        labelKey: 'Additional Action',
+        icon: 'pi pi-plus',
+        permission: 'TEST_MGMT#TEST_VIEW',
+        showAsOverflow: true,
+      },
+      {
+        id: '2',
+        labelKey: 'Conditionally Hidden',
+        icon: 'pi pi-plus',
+        permission: 'TEST_MGMT#TEST_VIEW',
+        showAsOverflow: true,
+        actionVisibleField: 'available',
+      },
+      {
+        id: '3',
+        labelKey: 'Conditionally Enabled',
+        icon: 'pi pi-plus',
+        permission: 'TEST_MGMT#TEST_VIEW',
+        showAsOverflow: true,
+        actionEnabledField: 'available',
+      },
+    ]
+  },
+}
+
 export const GridWithMockData = {
   render: Template,
   argTypes: defaultArgTypes,

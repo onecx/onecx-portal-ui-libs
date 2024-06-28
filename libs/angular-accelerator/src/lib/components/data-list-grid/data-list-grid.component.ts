@@ -149,6 +149,8 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return this.gridItemTemplate || this.gridItemChildTemplate
   }
 
+  additionalListActions: DataAction[] = []
+  additionalListOverflowActions: DataAction[] = []
   _additionalActions: DataAction[] = []
   @Input()
   get additionalActions(): DataAction[] {
@@ -157,6 +159,8 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   set additionalActions(value: DataAction[]) {
     this._additionalActions = value
     this.updateGridMenuItems()
+    this.additionalListActions = value.filter((action) => !action.showAsOverflow)
+    this.additionalListOverflowActions = value.filter((action) => action.showAsOverflow)
   }
 
   @Output() viewItem = new EventEmitter<ListGridData>()
@@ -253,22 +257,26 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   }
 
   updateGridMenuItems(useSelectedItem = false): void {
-    let deleteDisabled = false;
-    let editDisabled = false;
-    let viewDisabled = false;
+    let deleteDisabled = false
+    let editDisabled = false
+    let viewDisabled = false
 
-    let deleteVisible = true;
-    let editVisible = true;
-    let viewVisible = true;
+    let deleteVisible = true
+    let editVisible = true
+    let viewVisible = true
 
-    if(useSelectedItem && this.selectedItem) {
-      viewDisabled = !!this.viewActionEnabledField && !this.fieldIsTruthy(this.selectedItem, this.viewActionEnabledField);
-      editDisabled = !!this.editActionEnabledField && !this.fieldIsTruthy(this.selectedItem, this.editActionEnabledField);
-      deleteDisabled = !!this.deleteActionEnabledField && !this.fieldIsTruthy(this.selectedItem, this.deleteActionEnabledField);
+    if (useSelectedItem && this.selectedItem) {
+      viewDisabled =
+        !!this.viewActionEnabledField && !this.fieldIsTruthy(this.selectedItem, this.viewActionEnabledField)
+      editDisabled =
+        !!this.editActionEnabledField && !this.fieldIsTruthy(this.selectedItem, this.editActionEnabledField)
+      deleteDisabled =
+        !!this.deleteActionEnabledField && !this.fieldIsTruthy(this.selectedItem, this.deleteActionEnabledField)
 
-      viewVisible = (!this.viewActionVisibleField || this.fieldIsTruthy(this.selectedItem, this.viewActionVisibleField))
-      editVisible = (!this.editActionVisibleField || this.fieldIsTruthy(this.selectedItem, this.editActionVisibleField))
-      deleteVisible = (!this.deleteActionVisibleField || this.fieldIsTruthy(this.selectedItem, this.deleteActionVisibleField))
+      viewVisible = !this.viewActionVisibleField || this.fieldIsTruthy(this.selectedItem, this.viewActionVisibleField)
+      editVisible = !this.editActionVisibleField || this.fieldIsTruthy(this.selectedItem, this.editActionVisibleField)
+      deleteVisible =
+        !this.deleteActionVisibleField || this.fieldIsTruthy(this.selectedItem, this.deleteActionVisibleField)
     }
 
     this.translateService
@@ -289,7 +297,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
             command: () => this.viewItem.emit(this.selectedItem),
             disabled: viewDisabled,
             visible: viewVisible,
-            automationId: viewVisible ? automationId : automationIdHidden 
+            automationId: viewVisible ? automationId : automationIdHidden,
           })
         }
         if (this.editItem.observed && this.userService.hasPermission(this.editPermission || '')) {
@@ -299,7 +307,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
             command: () => this.editItem.emit(this.selectedItem),
             disabled: editDisabled,
             visible: editVisible,
-            automationId: editVisible ? automationId : automationIdHidden
+            automationId: editVisible ? automationId : automationIdHidden,
           })
         }
         if (this.deleteItem.observed && this.userService.hasPermission(this.deletePermission || '')) {
@@ -309,7 +317,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
             command: () => this.deleteItem.emit(this.selectedItem),
             disabled: deleteDisabled,
             visible: deleteVisible,
-            automationId: deleteVisible ? automationId : automationIdHidden 
+            automationId: deleteVisible ? automationId : automationIdHidden,
           })
         }
         menuItems = menuItems.concat(
@@ -319,7 +327,8 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
               label: translations[a.labelKey || ''],
               icon: a.icon,
               styleClass: (a.classes || []).join(' '),
-              disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(this.selectedItem, a.actionEnabledField)),
+              disabled:
+                a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(this.selectedItem, a.actionEnabledField)),
               visible: !a.actionVisibleField || this.fieldIsTruthy(this.selectedItem, a.actionVisibleField),
               command: () => a.callback(this.selectedItem),
             }))
@@ -344,5 +353,30 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
 
   fieldIsTruthy(object: any, key: any) {
     return !!this.resolveFieldData(object, key)
+  }
+
+  hasVisibleOverflowMenuItems(item: any) {
+    return this.additionalListOverflowActions.some(
+      (a) =>
+        (!a.actionVisibleField || this.fieldIsTruthy(item, a.actionVisibleField)) &&
+        this.userService.hasPermission(a.permission)
+    )
+  }
+
+  getOverflowMenuItems(item: any) {
+    return this.translateService.get([...this.additionalListOverflowActions.map((a) => a.labelKey || '')]).pipe(
+      map((translations) => {
+        return this.additionalListOverflowActions
+          .filter((a) => this.userService.hasPermission(a.permission))
+          .map((a) => ({
+            label: translations[a.labelKey || ''],
+            icon: a.icon,
+            styleClass: (a.classes || []).join(' '),
+            disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(item, a.actionEnabledField)),
+            visible: !a.actionVisibleField || this.fieldIsTruthy(item, a.actionVisibleField),
+            command: () => a.callback(item),
+          }))
+      })
+    )
   }
 }

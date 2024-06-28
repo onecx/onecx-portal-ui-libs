@@ -7,5 +7,6 @@ export interface DataAction {
   disabled?: boolean
   actionVisibleField?: string
   actionEnabledField?: string
+  showAsOverflow?: boolean
   callback: (data: any) => void
 }

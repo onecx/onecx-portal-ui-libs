@@ -124,7 +124,7 @@
                 [attr.name]="'data-list-action-button'"
               ></button>
             </ng-container>
-            <ng-container *ngFor="let action of additionalActions">
+            <ng-container *ngFor="let action of additionalListActions">
               <ng-container *ngIf="(!action.actionVisibleField || fieldIsTruthy(item, action.actionVisibleField))">
                 <button
                   *ocxIfPermission="action.permission"
@@ -138,6 +138,17 @@
                   [disabled]="action.disabled || (!!action.actionEnabledField && !fieldIsTruthy(item, action.actionEnabledField))"
                 ></button>
               </ng-container>
+            </ng-container>
+            <ng-container *ngIf="hasVisibleOverflowMenuItems(item)">
+              <p-menu #menu [model]="(getOverflowMenuItems(item) | async) || []" [popup]="true" appendTo="body"></p-menu>
+              <button
+                pButton
+                class="p-button-rounded p-button-text"
+                [icon]="'pi pi-ellipsis-v'"
+                (click)="menu.toggle($event)"
+                [ariaLabel]="'OCX_DATA_TABLE.MORE_ACTIONS' | translate"
+                [title]="'OCX_DATA_TABLE.MORE_ACTIONS' | translate"
+              ></button>
             </ng-container>
           </div>
         </div>
