@@ -104,6 +104,56 @@ export const ListWithConditionallyHiddenActionButtons = {
   },
 }
 
+export const ListWithAdditionalActions = {
+  argTypes: defaultArgTypes,
+  render: Template,
+  args: {
+    ...defaultComponentArgs,
+    additionalActions: [
+      {
+        id: '1',
+        labelKey: 'Additional 1',
+        icon: 'pi pi-plus',
+        permission: 'TEST_MGMT#TEST_VIEW'
+      }
+    ]
+  },
+}
+
+export const ListWithConditionallyEnabledAdditionalActions = {
+  argTypes: defaultArgTypes,
+  render: Template,
+  args: {
+    ...defaultComponentArgs,
+    additionalActions: [
+      {
+        id: '1',
+        labelKey: 'Additional 1',
+        icon: 'pi pi-plus',
+        permission: 'TEST_MGMT#TEST_VIEW',
+        actionEnabledField: 'available'
+      }
+    ]
+  },
+}
+
+export const ListWithConditionallyVisibleAdditionalActions = {
+  argTypes: defaultArgTypes,
+  render: Template,
+  args: {
+    ...defaultComponentArgs,
+    additionalActions: [
+      {
+        id: '1',
+        labelKey: 'Additional 1',
+        icon: 'pi pi-plus',
+        permission: 'TEST_MGMT#TEST_VIEW',
+        actionVisibleField: 'available'
+      }
+    ]
+  },
+}
+
 export const GridWithMockData = {
   render: Template,
   argTypes: defaultArgTypes,
@@ -145,4 +195,56 @@ export const GridWithConditionallyHiddenActionButtons = {
   },
 }
 
+export const GridWithAdditionalActions = {
+  argTypes: defaultArgTypes,
+  render: Template,
+  args: {
+    ...defaultComponentArgs,
+    layout: 'grid',
+    additionalActions: [
+      {
+        id: '1',
+        labelKey: 'Additional 1',
+        icon: 'pi pi-plus',
+        permission: 'TEST_MGMT#TEST_VIEW'
+      }
+    ]
+  },
+}
+
+export const GridWithConditionallyEnabledAdditionalActions = {
+  argTypes: defaultArgTypes,
+  render: Template,
+  args: {
+    ...defaultComponentArgs,
+    layout: 'grid',
+    additionalActions: [
+      {
+        id: '1',
+        labelKey: 'Additional 1',
+        icon: 'pi pi-plus',
+        permission: 'TEST_MGMT#TEST_VIEW',
+        actionEnabledField: 'available'
+      }
+    ]
+  },
+}
+
+export const GridWithConditionallyVisibleAdditionalActions = {
+  argTypes: defaultArgTypes,
+  render: Template,
+  args: {
+    ...defaultComponentArgs,
+    layout: 'grid',
+    additionalActions: [
+      {
+        id: '1',
+        labelKey: 'Additional 1',
+        icon: 'pi pi-plus',
+        permission: 'TEST_MGMT#TEST_VIEW',
+        actionVisibleField: 'available'
+      }
+    ]
+  },
+}
 export default DataListGridComponentSBConfig

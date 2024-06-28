@@ -319,7 +319,8 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
               label: translations[a.labelKey || ''],
               icon: a.icon,
               styleClass: (a.classes || []).join(' '),
-              disabled: a.disabled,
+              disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(this.selectedItem, a.actionEnabledField)),
+              visible: !a.actionVisibleField || this.fieldIsTruthy(this.selectedItem, a.actionVisibleField),
               command: () => a.callback(this.selectedItem),
             }))
         )
