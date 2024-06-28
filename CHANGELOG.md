@@ -1,3 +1,11 @@
+## [4.36.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.35.0...v4.36.0) (2024-06-28)
+
+
+### Features
+
+* conditionally hide/disable additional actions ([#297](https://github.com/onecx/onecx-portal-ui-libs/issues/297)) ([fb5ddc9](https://github.com/onecx/onecx-portal-ui-libs/commit/fb5ddc9262c502699a022883215ac0d399a48945))
+* optionally place additional actions in overflow menu ([#298](https://github.com/onecx/onecx-portal-ui-libs/issues/298)) ([27f0f2d](https://github.com/onecx/onecx-portal-ui-libs/commit/27f0f2da460820f7addc88f79084f721728b76e0))
+
 ## [4.35.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.34.0...v4.35.0) (2024-06-27)
 
 
