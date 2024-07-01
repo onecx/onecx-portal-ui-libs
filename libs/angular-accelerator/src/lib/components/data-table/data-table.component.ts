@@ -20,6 +20,7 @@ import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { ObjectUtils } from '../../utils/objectutils'
+import { UserService } from '@onecx/angular-integration-interface'
 
 type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -154,7 +155,15 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     return this.translationKeyCellTemplate || this.translationKeyCellChildTemplate
   }
 
-  @Input() additionalActions: DataAction[] = []
+  _additionalActions: DataAction[] = []
+  @Input()
+  get additionalActions(): DataAction[] {
+    return this._additionalActions
+  }
+  set additionalActions(value: DataAction[]) {
+    this._additionalActions = value.filter((action) => !action.showAsOverflow)
+    this.overflowActions = value.filter((action) => action.showAsOverflow)
+  }
   @Input() frozenActionColumn = false
   @Input() actionColumnPosition: 'left' | 'right' = 'right'
 
@@ -173,6 +182,9 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   currentFilterOptions$: Observable<SelectItem[]> | undefined
   currentSelectedFilters$: Observable<string[]> | undefined
   filterAmounts$: Observable<Record<string, number>> | undefined
+
+  overflowActions: DataAction[] = []
+
   get viewTableRowObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
     return dv?.viewItemObserved || dv?.viewItem.observed || this.viewTableRow.observed
@@ -198,7 +210,8 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     @Inject(LOCALE_ID) locale: string,
     translateService: TranslateService,
     private router: Router,
-    private injector: Injector
+    private injector: Injector,
+    private userService: UserService
   ) {
     super(locale, translateService)
     this.name = this.name || this.router.url.replace(/[^A-Za-z0-9]/, '_')
@@ -348,5 +361,26 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
   fieldIsTruthy(object: any, key: any) {
     return !!ObjectUtils.resolveFieldData(object, key)
+  }
+
+  hasVisibleOverflowMenuItems(row: any) {
+    return this.overflowActions.some((a) => !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField))
+  }
+
+  getOverflowMenuItems(row: any) {
+    return this.translateService.get([...this.overflowActions.map((a) => a.labelKey || '')]).pipe(
+      map((translations) => {
+        return this.overflowActions
+          .filter((a) => this.userService.hasPermission(a.permission))
+          .map((a) => ({
+            label: translations[a.labelKey || ''],
+            icon: a.icon,
+            styleClass: (a.classes || []).join(' '),
+            disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
+            visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
+            command: () => a.callback(row),
+          }))
+      })
+    )
   }
 }

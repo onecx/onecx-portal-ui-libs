@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common'
 import { importProvidersFrom } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
@@ -122,8 +121,7 @@ const demoFields: ObjectDetailItem[] = [
   },
   {
     label: 'End Date',
-    value: new Date().toISOString(),
-    valuePipe: DatePipe,
+    value: '19.06.2024',
     icon: PrimeIcons.CALENDAR
   },
 ]
@@ -345,6 +343,26 @@ export const WithObjectDetailsAndIcons = {
     subheader: 'Page header with text and icon based objectDetails',
     loading: false,
     objectDetails: objectDetailsWithIcons,
+    showBreadcrumbs: false,
+  },
+}
+
+export const WithObjectDetailsAndStyledIcons = {
+  render: Template,
+
+  args: {
+    header: 'My title',
+    subheader: 'My subtitle',
+    loading: false,
+    objectDetails: [
+      ...demoFields,
+      {
+        label: 'Styled Icon',
+        value: 'Confirmed',
+        icon: PrimeIcons.CHECK_CIRCLE,
+        iconStyleClass: 'text-red-400 fadein animation-duration-1000 animation-iteration-infinite'
+      }
+    ],
     showBreadcrumbs: false,
   },
 }

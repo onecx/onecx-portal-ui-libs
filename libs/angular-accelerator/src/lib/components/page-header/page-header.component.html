@@ -1,4 +1,4 @@
-<div class="onecx-page-header" name="ocx-page-header-wrapper">
+<div class="onecx-page-header mb-4" name="ocx-page-header-wrapper">
   <ng-container *ngIf="showBreadcrumbs">
     <p-breadcrumb
       [model]="items"
@@ -105,20 +105,24 @@
         >
         <span
           *ngIf="item.icon || item.value"
-          class="flex text-900 align-items-center gap-2 object-info-grid-value"
-          [ngClass]="generateItemStyle(item)"
+          class="object-info-grid-value"
           [title]="item.valueTooltip || item.tooltip || ''"
-          name="object-detail-value"
         >
-          <i *ngIf="item.icon" class="{{item.icon}}" name="object-detail-icon"></i>
-          {{ item.value | dynamicPipe:item.valuePipe:item.valuePipeArgs}}
-          <p-button
-            *ngIf="item.actionItemIcon && item.actionItemCallback"
-            [icon]="item.actionItemIcon"
-            styleClass="p-button-text p-0 w-full"
-            [title]="item.actionItemTooltip || ''"
-            (onClick)="item.actionItemCallback()"
-          ></p-button>
+          <span
+            class="flex text-900 align-items-center gap-2 w-max"
+            [ngClass]="generateItemStyle(item)"
+            name="object-detail-value"
+          >
+            <i *ngIf="item.icon" class='{{item.icon + " " + (item.iconStyleClass || "")}}' name="object-detail-icon"></i>
+            {{ item.value | dynamicPipe:item.valuePipe:item.valuePipeArgs}}
+            <p-button
+              *ngIf="item.actionItemIcon && item.actionItemCallback"
+              [icon]="item.actionItemIcon"
+              styleClass="p-button-text p-0 w-full"
+              [title]="item.actionItemTooltip || ''"
+              (onClick)="item.actionItemCallback()"
+            ></p-button>
+          </span>
         </span>
       </div>
     </ng-container>

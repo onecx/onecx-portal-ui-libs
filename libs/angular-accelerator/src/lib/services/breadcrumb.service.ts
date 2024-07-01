@@ -1,12 +1,14 @@
 import { Injectable, OnDestroy } from '@angular/core'
 import { ActivatedRoute, ActivatedRouteSnapshot, Data, NavigationEnd, ParamMap, Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { BehaviorSubject, filter } from 'rxjs'
 import { MenuItem } from 'primeng/api'
 import { BreadCrumbMenuItem } from '../model/breadcrumb-menu-item.model'
 
 @Injectable({ providedIn: 'any' })
-export class BreadcrumbService implements OnDestroy {
+@UntilDestroy()
+export class BreadcrumbService {
   private itemsSource = new BehaviorSubject<MenuItem[]>([])
   generatedItemsSource = new BehaviorSubject<MenuItem[]>([])
 
@@ -14,10 +16,40 @@ export class BreadcrumbService implements OnDestroy {
 
   constructor(private router: Router, private activeRoute: ActivatedRoute, private translateService: TranslateService) {
     this.generateBreadcrumbs(this.activeRoute.snapshot)
-    this.router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe(() => {
-      const root = this.router.routerState.snapshot.root
-      this.generateBreadcrumbs(root)
-    })
+    this.router.events
+      .pipe(
+        untilDestroyed(this),
+        filter((e) => e instanceof NavigationEnd)
+      )
+      .subscribe(() => {
+        const root = this.router.routerState.snapshot.root
+        this.generateBreadcrumbs(root)
+      })
+  }
+
+  private generateBreadcrumbs(route: ActivatedRouteSnapshot | null) {
+    if (route?.data['mfeInfo']) {
+      const breadcrumbs: MenuItem[] = [
+        {
+          label: route.data['mfeInfo'].productName,
+          routerLink: route.data['mfeInfo'].baseHref,
+        },
+      ]
+      const baseUrl: string[] = (route.data['mfeInfo'].baseHref as string).split('/').filter((value) => value)
+      const parentUrl: string[] = route.url.map((url) => url.path)
+      const isUsingMatcher = !parentUrl.every((item) => baseUrl.includes(item))
+      if (isUsingMatcher) {
+        this.createBreadcrumb(route, parentUrl, breadcrumbs)
+      }
+      this.addBreadcrumb(route.firstChild, parentUrl, breadcrumbs)
+      this.generatedItemsSource.next(breadcrumbs)
+    } else if (route?.data['breadcrumb']) {
+      const breadcrumbs: MenuItem[] = []
+      this.addBreadcrumb(route, [], breadcrumbs)
+      this.generatedItemsSource.next(breadcrumbs)
+    } else if (route) {
+      this.generateBreadcrumbs(route.firstChild)
+    }
   }
   ngOnDestroy(): void {
     this.itemsSource.unsubscribe()
