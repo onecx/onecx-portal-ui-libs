@@ -5,7 +5,7 @@ import { API_PREFIX } from '../../../api/constants'
 import { UserProfile } from '../../../model/user-profile.model'
 
 /**
- * @deprecated Will be replaced by avatar image remote component in user-profile
+ * @deprecated Replace with onecx-avatar-image slot
  */
 @Component({
   selector: 'ocx-user-avatar',
