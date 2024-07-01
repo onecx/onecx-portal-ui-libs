@@ -1,3 +1,11 @@
+## [4.37.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.36.0...v4.37.0) (2024-07-01)
+
+
+### Features
+
+* breadcrumbs for webcomponents ([#290](https://github.com/onecx/onecx-portal-ui-libs/issues/290)) ([eece99e](https://github.com/onecx/onecx-portal-ui-libs/commit/eece99eec6a36524360fb663a592ed48291abed6))
+* webcomponents utils ([#295](https://github.com/onecx/onecx-portal-ui-libs/issues/295)) ([eedd081](https://github.com/onecx/onecx-portal-ui-libs/commit/eedd081c9b4b20301c9c103dc47f8fd1d805748d))
+
 ## [4.36.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.35.0...v4.36.0) (2024-06-28)
 
 
