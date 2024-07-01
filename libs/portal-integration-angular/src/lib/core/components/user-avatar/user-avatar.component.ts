@@ -4,6 +4,9 @@ import { BehaviorSubject, first, map, Observable } from 'rxjs'
 import { API_PREFIX } from '../../../api/constants'
 import { UserProfile } from '../../../model/user-profile.model'
 
+/**
+ * @deprecated Will be replaced by avatar image remote component in user-profile
+ */
 @Component({
   selector: 'ocx-user-avatar',
   templateUrl: './user-avatar.component.html',
