@@ -51,33 +51,6 @@ export class BreadcrumbService {
       this.generateBreadcrumbs(route.firstChild)
     }
   }
-  ngOnDestroy(): void {
-    this.itemsSource.unsubscribe()
-    this.generatedItemsSource.unsubscribe()
-  }
-
-  private generateBreadcrumbs(route: ActivatedRouteSnapshot | null) {
-    if (route && route.url) {
-      if (route.data['mfeInfo']) {
-        const breadcrumbs: MenuItem[] = [
-          {
-            label: route.data['mfeInfo'].productName,
-            routerLink: route.data['mfeInfo'].baseHref,
-          },
-        ]
-        const baseUrl: string[] = (route.data['mfeInfo'].baseHref as string).split('/').filter((value) => value)
-        const parentUrl: string[] = route.url.map((url) => url.path)
-        const isUsingMatcher = !parentUrl.every((item) => baseUrl.includes(item))
-        if (isUsingMatcher) {
-          this.createBreadcrumb(route, parentUrl, breadcrumbs)
-        }
-        this.addBreadcrumb(route.firstChild, parentUrl, breadcrumbs)
-        this.generatedItemsSource.next(breadcrumbs)
-      } else {
-        this.generateBreadcrumbs(route.firstChild)
-      }
-    }
-  }
 
   private addBreadcrumb(route: ActivatedRouteSnapshot | null, parentUrl: string[], breadcrumbs: MenuItem[]) {
     if (route && route.url) {
