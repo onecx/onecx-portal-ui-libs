@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core'
+import { Injectable } from '@angular/core'
 import { ActivatedRoute, ActivatedRouteSnapshot, Data, NavigationEnd, ParamMap, Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
