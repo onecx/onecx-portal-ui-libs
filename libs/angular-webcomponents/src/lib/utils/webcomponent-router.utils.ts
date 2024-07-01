@@ -1,4 +1,5 @@
 import { Route, UrlMatcher, UrlSegment, UrlSegmentGroup } from '@angular/router'
+import { getLocation } from '@onecx/accelerator'
 
 export function startsWith(prefix: string): UrlMatcher {
   return (url: UrlSegment[], UrlSegmentGroup: UrlSegmentGroup, route: Route) => {
@@ -20,7 +21,11 @@ export function sliceBaseHref(route: Route, url: UrlSegment[]): UrlSegment[] {
       'mfeInfo was not provided for route. initializeRouter function is required to be registered as app initializer.'
     )
   }
-  const baseHrefSegmentAmount = mfeBaseHref.split('/').filter((value) => value).length
+
+  const baseHrefSegmentAmount = getLocation()
+    .deploymentPath.concat(mfeBaseHref)
+    .split('/')
+    .filter((value) => value).length
   return url.slice(baseHrefSegmentAmount)
 }
 
