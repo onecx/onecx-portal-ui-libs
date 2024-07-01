@@ -20,7 +20,13 @@ export function sliceBaseHref(route: Route, url: UrlSegment[]): UrlSegment[] {
       'mfeInfo was not provided for route. initializeRouter function is required to be registered as app initializer.'
     )
   }
-  const baseHrefSegmentAmount = mfeBaseHref.split('/').filter((value) => value).length
+
+  const fullUrl = '/' + url.map((u) => u).join('/') + '/'
+  const mfeBaseHrefStartindex = fullUrl.indexOf(mfeBaseHref)
+  const baseHrefSegmentAmount = fullUrl
+    .slice(0, mfeBaseHrefStartindex + mfeBaseHref.length)
+    .split('/')
+    .filter((value) => value).length
   return url.slice(baseHrefSegmentAmount)
 }
 
