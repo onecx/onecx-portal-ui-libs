@@ -1,7 +1,14 @@
 {
   "name": "@onecx/angular-webcomponents",
   "version": "4.36.0",
-  "peerDependencies": {},
+  "peerDependencies": {
+    "@angular/core": "^15.2.7 || ^16.0.0 || ^17.0.0",
+    "@angular/platform-browser": "^15.2.7 || ^16.0.0 || ^17.0.0",
+    "@angular/elements": "^15.2.7 || ^16.0.0 || ^17.0.0",
+    "@angular/router": "^15.2.7 || ^16.0.0 || ^17.0.0",
+    "@onecx/portal-integration-angular": "^4",
+    "rxjs": "~7.8.0"
+  },
   "dependencies": {},
   "publishConfig": {
     "access": "public"
