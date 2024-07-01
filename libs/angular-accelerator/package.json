@@ -9,6 +9,7 @@
     "@angular/platform-browser": "^15.2.7 || ^16.0.0 || ^17.0.0",
     "@angular/router": "^15.2.7 || ^16.0.0 || ^17.0.0",
     "@ngx-translate/core": "^14.0.0",
+    "@ngneat/until-destroy": "^9.2.2",
     "@onecx/integration-interface": "^4",
     "@onecx/angular-integration-interface": "^4",
     "chart.js": "^4.4.0",
