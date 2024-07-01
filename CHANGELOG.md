@@ -1,3 +1,10 @@
+## [4.37.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.37.0...v4.37.1) (2024-07-01)
+
+
+### Bug Fixes
+
+* **startsWith matcher:** slice all url segments including items before mfe baseHref  ([#301](https://github.com/onecx/onecx-portal-ui-libs/issues/301)) ([ebf4413](https://github.com/onecx/onecx-portal-ui-libs/commit/ebf441331699c069f370be9691dbe8cda624ab7b))
+
 ## [4.37.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.36.0...v4.37.0) (2024-07-01)
 
 
