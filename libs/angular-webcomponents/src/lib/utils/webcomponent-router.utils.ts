@@ -1,5 +1,4 @@
 import { Route, UrlMatcher, UrlSegment, UrlSegmentGroup } from '@angular/router'
-import { getLocation } from '@onecx/accelerator'
 
 export function startsWith(prefix: string): UrlMatcher {
   return (url: UrlSegment[], UrlSegmentGroup: UrlSegmentGroup, route: Route) => {
@@ -22,10 +21,7 @@ export function sliceBaseHref(route: Route, url: UrlSegment[]): UrlSegment[] {
     )
   }
 
-  const baseHrefSegmentAmount = getLocation()
-    .deploymentPath.concat(mfeBaseHref)
-    .split('/')
-    .filter((value) => value).length
+  const baseHrefSegmentAmount = mfeBaseHref.split('/').filter((value) => value).length
   return url.slice(baseHrefSegmentAmount)
 }
 
