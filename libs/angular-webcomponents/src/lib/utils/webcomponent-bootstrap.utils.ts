@@ -115,7 +115,7 @@ function connectMicroFrontendRouter(injector: Injector) {
 }
 
 function connectRouter(router: Router): void {
-  let url = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}`
+  const url = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}`
   router.navigateByUrl(url)
   window.addEventListener('popstate', () => {
     router.navigateByUrl(url)
