@@ -168,7 +168,7 @@ export interface DialogSecondaryButtonDisabled {
  * ```
  */
 export interface DialogButtonClicked<T = unknown> {
-  ocxDialogButtonClicked(state: DialogState<T>): Observable<boolean> | Promise<boolean> | boolean | undefined
+  ocxDialogButtonClicked(state: DialogState<T>): Observable<boolean> | Promise<boolean> | boolean | undefined | void
 }
 
 /**
