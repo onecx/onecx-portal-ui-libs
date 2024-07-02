@@ -1,3 +1,15 @@
+## [4.39.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.38.0...v4.39.0) (2024-07-02)
+
+
+### Features
+
+* date and dialog tweaks ([#302](https://github.com/onecx/onecx-portal-ui-libs/issues/302)) ([501a054](https://github.com/onecx/onecx-portal-ui-libs/commit/501a0541826e7044084e58e082476d1a4ce1ab85))
+
+
+### Bug Fixes
+
+* custom module bootstrap with router ([#304](https://github.com/onecx/onecx-portal-ui-libs/issues/304)) ([985a53e](https://github.com/onecx/onecx-portal-ui-libs/commit/985a53ef0e36a4ed332f642dfd8d9ba8a6804119))
+
 ## [4.38.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.37.1...v4.38.0) (2024-07-02)
 
 
