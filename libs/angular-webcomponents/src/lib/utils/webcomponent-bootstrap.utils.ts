@@ -17,7 +17,7 @@ import { Router } from '@angular/router'
 import { getLocation } from '@onecx/accelerator'
 
 /**
- * Implementation inspired by @angular-architects/module-federation-plugin https://github.com/angular-architects/module-federation-plugin/blob/main/libs/mf-tools/src/lib/web-components/bootstrap-utils.ts#L191
+ * Implementation inspired by @angular-architects/module-federation-plugin https://github.com/angular-architects/module-federation-plugin/blob/main/libs/mf-tools/src/lib/web-components/bootstrap-utils.ts
  */
 
 export type AppType = 'shell' | 'microfrontend'
