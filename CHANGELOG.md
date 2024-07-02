@@ -1,3 +1,15 @@
+## [4.38.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.37.1...v4.38.0) (2024-07-02)
+
+
+### Features
+
+* revert multi version functionality ([#303](https://github.com/onecx/onecx-portal-ui-libs/issues/303)) ([6f677bd](https://github.com/onecx/onecx-portal-ui-libs/commit/6f677bde047e6ee107de90a10d9454df777df85b))
+
+
+### Bug Fixes
+
+* fixed removal of column leading to no refresh ([#300](https://github.com/onecx/onecx-portal-ui-libs/issues/300)) ([47ee1c9](https://github.com/onecx/onecx-portal-ui-libs/commit/47ee1c96de07a20deffa956f4fc682e96b4dfeeb))
+
 ## [4.37.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.37.0...v4.37.1) (2024-07-01)
 
 
