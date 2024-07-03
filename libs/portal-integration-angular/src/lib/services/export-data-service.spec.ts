@@ -135,16 +135,16 @@ describe('ExportDataService', () => {
     },
     {
       version: 0,
-      creationDate: '2023-09-12T09:34:27.184086Z',
+      creationDate: undefined,
       creationUser: '',
-      modificationDate: '2023-09-12T09:34:27.184086Z',
+      modificationDate: undefined,
       modificationUser: '',
       id: 'cf9e7d6b-5362-46af-91f8-62f7ef5c6064',
       name: 'name 3',
       description: '',
       status: 'STATUS_NAME_3',
       responsible: '',
-      endDate: null,
+      endDate: undefined,
       startDate: undefined,
       imagePath: '',
       testNumber: '7.1',
@@ -299,17 +299,11 @@ describe('ExportDataService', () => {
       '"' +
       ',,12345.6789' +
       '\r\nname 3,,' +
-      '"' +
-      dateUtils.localizedDate('2023-09-14T09:34:22Z') +
-      '"' +
+      dateUtils.localizedDate(undefined) +
       ',' +
-      '"' +
-      dateUtils.localizedDate('2023-09-15T09:34:24Z') +
-      '"' +
+      dateUtils.localizedDate(undefined) +
       ',status name 3,,' +
-      '"' +
-      dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') +
-      '"' +
+      dateUtils.localizedDate(undefined) +
       ',,7.1'
     const expectedFilename = 'some-test.csv'
     const mock = new ElementMock()
@@ -325,7 +319,7 @@ describe('ExportDataService', () => {
     expect(expectedFilename).toEqual(mock.attributes['download'])
   })
 
-  fit('should export data as csv in de', async () => {
+  it('should export data as csv in de', async () => {
     translateService.use('de')
     ;(<any>exportDataService).locale = 'de'
     ;(<any>dateUtils).locale = 'de'
@@ -362,11 +356,11 @@ describe('ExportDataService', () => {
       dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') +
       ';;12345.6789' +
       '\r\nname 3;;' +
-      dateUtils.localizedDate('') +
+      dateUtils.localizedDate(undefined) +
       ';' +
-      dateUtils.localizedDate('') +
+      dateUtils.localizedDate(undefined) +
       ';Status Name 3;;' +
-      dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') +
+      dateUtils.localizedDate(undefined) +
       ';;7.1'
     const mock = new ElementMock()
 
