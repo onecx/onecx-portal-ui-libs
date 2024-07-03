@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, getTestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterTestingModule } from '@angular/router/testing'
-import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { PrimeIcons } from 'primeng/api'
 import { BreadcrumbModule } from 'primeng/breadcrumb'
@@ -13,6 +13,7 @@ import { MockUserService } from '@onecx/angular-integration-interface/mocks'
 import { PageHeaderHarness, TestbedHarnessEnvironment } from '../../../../testing'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 const mockActions: Action[] = [
   {
@@ -72,21 +73,18 @@ describe('PageHeaderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [PageHeaderComponent, PageHeaderComponent, DynamicPipe],
-      imports: [
-        RouterTestingModule,
-        HttpClientTestingModule,
+    declarations: [PageHeaderComponent, PageHeaderComponent, DynamicPipe],
+    imports: [RouterTestingModule,
         TranslateTestingModule.withTranslations({
-          en: require('./../../../../assets/i18n/en.json'),
-          de: require('./../../../../assets/i18n/de.json'),
+            en: require('./../../../../assets/i18n/en.json'),
+            de: require('./../../../../assets/i18n/de.json'),
         }),
         BreadcrumbModule,
         MenuModule,
         ButtonModule,
-        NoopAnimationsModule,
-      ],
-      providers: [AppStateService, { provide: UserService, useClass: MockUserService }],
-    }).compileComponents()
+        NoopAnimationsModule],
+    providers: [AppStateService, { provide: UserService, useClass: MockUserService }, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+}).compileComponents()
 
     const appStateService = getTestBed().inject(AppStateService)
     await appStateService.currentPortal$.publish({

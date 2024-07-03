@@ -4,7 +4,7 @@ import { HarnessLoader, parallel, TestElement } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { RouterTestingModule } from '@angular/router/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
-import { HttpClientModule } from '@angular/common/http'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { TranslateModule } from '@ngx-translate/core'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { ButtonModule } from 'primeng/button'
@@ -213,15 +213,14 @@ describe('InteractiveDataViewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
+    declarations: [
         InteractiveDataViewComponent,
         DataLayoutSelectionComponent,
         DataViewComponent,
         ColumnGroupSelectionComponent,
         CustomGroupColumnSelectorComponent,
-      ],
-      imports: [
-        TranslateModule.forRoot(),
+    ],
+    imports: [TranslateModule.forRoot(),
         ButtonModule,
         DialogModule,
         PickListModule,
@@ -229,13 +228,11 @@ describe('InteractiveDataViewComponent', () => {
         RouterTestingModule,
         NoopAnimationsModule,
         TranslateTestingModule.withTranslations({
-          en: require('./../../../../assets/i18n/en.json'),
-          de: require('./../../../../assets/i18n/de.json'),
-        }),
-        HttpClientModule,
-      ],
-      providers: [{ provide: UserService, useClass: MockUserService }],
-    }).compileComponents()
+            en: require('./../../../../assets/i18n/en.json'),
+            de: require('./../../../../assets/i18n/de.json'),
+        })],
+    providers: [{ provide: UserService, useClass: MockUserService }, provideHttpClient(withInterceptorsFromDi())]
+}).compileComponents()
 
     fixture = TestBed.createComponent(InteractiveDataViewComponent)
     component = fixture.componentInstance

@@ -1,6 +1,6 @@
 import { ComponentFixture, getTestBed, TestBed } from '@angular/core/testing'
 import { RouterTestingModule } from '@angular/router/testing'
-import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { ButtonModule } from 'primeng/button'
 import { BreadcrumbModule } from 'primeng/breadcrumb'
@@ -8,6 +8,7 @@ import { AppStateService } from '@onecx/angular-integration-interface'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { SearchHeaderComponent } from './search-header.component'
 import { PageHeaderComponent } from '../page-header/page-header.component'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('SearchHeaderComponent', () => {
   const origAddEventListener = window.addEventListener
@@ -37,17 +38,14 @@ describe('SearchHeaderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [SearchHeaderComponent, PageHeaderComponent],
-      imports: [
-        TranslateTestingModule.withTranslations({}),
+    declarations: [SearchHeaderComponent, PageHeaderComponent],
+    imports: [TranslateTestingModule.withTranslations({}),
         RouterTestingModule,
-        HttpClientTestingModule,
         ButtonModule,
         BreadcrumbModule,
-        AngularAcceleratorModule,
-      ],
-      providers: [AppStateService],
-    }).compileComponents()
+        AngularAcceleratorModule],
+    providers: [AppStateService, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+}).compileComponents()
 
     const appStateService = getTestBed().inject(AppStateService)
     await appStateService.currentPortal$.publish({

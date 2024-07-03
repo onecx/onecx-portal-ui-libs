@@ -1,6 +1,6 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ActivatedRoute, RouterModule } from '@angular/router'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateTestingModule } from 'ngx-translate-testing'
@@ -15,6 +15,7 @@ import { DataListGridComponent } from '../data-list-grid/data-list-grid.componen
 import { DataTableComponent } from '../data-table/data-table.component'
 import { ColumnType } from '../../model/column-type.model'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('DataViewComponent', () => {
   let component: DataViewComponent
@@ -193,30 +194,29 @@ describe('DataViewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DataViewComponent, DataListGridComponent, DataTableComponent],
-      imports: [
-        DataViewModule,
+    declarations: [DataViewComponent, DataListGridComponent, DataTableComponent],
+    imports: [DataViewModule,
         MockAuthModule,
         TranslateTestingModule.withTranslations(TRANSLATIONS),
-        HttpClientTestingModule,
         AngularAcceleratorModule,
         RouterModule,
-        NoopAnimationsModule,
-      ],
-      providers: [
+        NoopAnimationsModule],
+    providers: [
         { provide: UserService, useClass: MockUserService },
         {
-          provide: ActivatedRoute,
-          useValue: {
-            snapshot: {
-              paramMap: {
-                get: () => '1',
-              },
+            provide: ActivatedRoute,
+            useValue: {
+                snapshot: {
+                    paramMap: {
+                        get: () => '1',
+                    },
+                },
             },
-          },
         },
-      ],
-    }).compileComponents()
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+    ]
+}).compileComponents()
 
     fixture = TestBed.createComponent(DataViewComponent)
     component = fixture.componentInstance
