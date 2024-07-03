@@ -66,8 +66,8 @@ export async function bootstrapRemoteComponent(
 
 function getWindowState(): any {
   const state = window as any
-  state['@onecx/angular-webcomponents'] = state['@onecx/angular-webcomponents'] || ({} as unknown)
-  return state
+  state['@onecx/angular-webcomponents'] ??= {} as unknown
+  return state['@onecx/angular-webcomponents']
 }
 
 function setShellZone(injector: Injector) {
