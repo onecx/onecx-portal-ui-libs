@@ -90,42 +90,41 @@
   <div
     class="object-panel"
     [ngClass]="getObjectPanelLayoutClasses()"
+    *ngIf="objectDetails"
   >
-    <ng-container *ngIf="objectDetails">
-      <div
-        class="object-info"
-        [ngClass]="getObjectInfoLayoutClasses()"
-        *ngFor="let item of objectDetails"
+    <div
+      class="object-info"
+      [ngClass]="getObjectInfoLayoutClasses()"
+      *ngFor="let item of objectDetails"
+    >
+      <span
+        class="flex font-medium text-600 object-info-grid-label"
+        name="object-detail-label"
+        [title]="item.labelTooltip || ''"
+        >{{ item.label | dynamicPipe:item.labelPipe }}</span
+      >
+      <span
+        *ngIf="item.icon || item.value"
+        class="object-info-grid-value"
+        [title]="item.valueTooltip || item.tooltip || ''"
       >
         <span
-          class="flex font-medium text-600 object-info-grid-label"
-          name="object-detail-label"
-          [title]="item.labelTooltip || ''"
-          >{{ item.label | dynamicPipe:item.labelPipe }}</span
+          class="flex text-900 align-items-center gap-2 w-max"
+          [ngClass]="generateItemStyle(item)"
+          name="object-detail-value"
         >
-        <span
-          *ngIf="item.icon || item.value"
-          class="object-info-grid-value"
-          [title]="item.valueTooltip || item.tooltip || ''"
-        >
-          <span
-            class="flex text-900 align-items-center gap-2 w-max"
-            [ngClass]="generateItemStyle(item)"
-            name="object-detail-value"
-          >
-            <i *ngIf="item.icon" class='{{item.icon + " " + (item.iconStyleClass || "")}}' name="object-detail-icon"></i>
-            {{ item.value | dynamicPipe:item.valuePipe:item.valuePipeArgs}}
-            <p-button
-              *ngIf="item.actionItemIcon && item.actionItemCallback"
-              [icon]="item.actionItemIcon"
-              styleClass="p-button-text p-0 w-full"
-              [title]="item.actionItemTooltip || ''"
-              (onClick)="item.actionItemCallback()"
-            ></p-button>
-          </span>
+          <i *ngIf="item.icon" class='{{item.icon + " " + (item.iconStyleClass || "")}}' name="object-detail-icon"></i>
+          {{ item.value | dynamicPipe:item.valuePipe:item.valuePipeArgs}}
+          <p-button
+            *ngIf="item.actionItemIcon && item.actionItemCallback"
+            [icon]="item.actionItemIcon"
+            styleClass="p-button-text p-0 w-full"
+            [title]="item.actionItemTooltip || ''"
+            (onClick)="item.actionItemCallback()"
+          ></p-button>
         </span>
-      </div>
-    </ng-container>
+      </span>
+    </div>
     <ng-content></ng-content>
   </div>
 </div>
