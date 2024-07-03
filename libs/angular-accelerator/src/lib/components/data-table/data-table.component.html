@@ -1,5 +1,5 @@
 <ng-template #actionColumn let-rowObject="localRowObject">
-  <ng-container *ngIf="anyRowActionObserved || this.additionalActions.length > 0">
+  <ng-container *ngIf="anyRowActionObserved || this.additionalActions.length > 0 || this.overflowActions.length > 0">
     <td
       class="actions"
       pFrozenColumn
@@ -88,7 +88,7 @@
 </ng-template>
 
 <ng-template #actionColumnHeader>
-  <ng-container *ngIf="anyRowActionObserved || this.additionalActions.length > 0">
+  <ng-container *ngIf="anyRowActionObserved || this.additionalActions.length > 0  || this.overflowActions.length > 0">
     <th
       pFrozenColumn
       [frozen]="frozenActionColumn"
