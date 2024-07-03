@@ -101,6 +101,7 @@
   </ng-container>
 </ng-template>
 
+<!-- TODO: Ensure that showAll option is always displayed in pageSizes -->
 <p-table
   [value]="(displayedRows$ | async) || []"
   responsiveLayout="scroll"
@@ -110,7 +111,7 @@
   [rows]="pageSize"
   [showCurrentPageReport]="true"
   currentPageReportTemplate="{{ (totalRecordsOnServer ? currentPageShowingWithTotalOnServerKey : currentPageShowingKey) | translate:params }}"
-  [rowsPerPageOptions]="[10, 25, 50, { showAll: ('OCX_DATA_TABLE.ALL' | translate)}]"
+  [rowsPerPageOptions]="pageSizes || [10, 25, 50, { showAll: ('OCX_DATA_TABLE.ALL' | translate)}]"
   id="dataTable_{{name}}"
   (selectionChange)="onSelectionChange($event)"
   [selection]="(selectedRows$ | async) || []"

@@ -81,8 +81,22 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   @Input() clientSideFiltering = true
   @Input() clientSideSorting = true
   @Input() sortStates: DataSortDirection[] = [DataSortDirection.ASCENDING, DataSortDirection.DESCENDING]
-  @Input() pageSizes: number[] = [10, 25, 50]
+  
+  _pageSizes: number[] = [10, 25, 50]
+  @Input()
+  get pageSizes(): number[] {
+    return this._pageSizes
+  }
+  set pageSizes(value: number[]) {
+    if(value.length > 0) {
+      this._pageSizes = value
+    } else {
+      this._pageSizes = [10, 25, 50]
+    }
+    this.pageSize = this.pageSizes[0] || 50;
+  }
   @Input() pageSize: number = this.pageSizes[0] || 50
+  
   @Input() emptyResultsMessage: string | undefined
   @Input() name = ''
   @Input() deletePermission: string | undefined

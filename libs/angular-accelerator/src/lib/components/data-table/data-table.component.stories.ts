@@ -431,4 +431,12 @@ export const WithOnlyOverflowActions = {
   },
 }
 
+export const WithPageSizes = {
+  render: Template,
+  args: {
+    ...defaultComponentArgs,
+    pageSizes: [2, 15, 25]
+  },
+}
+
 export default DataTableComponentSBConfig
