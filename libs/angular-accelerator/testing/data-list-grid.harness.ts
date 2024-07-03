@@ -43,7 +43,7 @@ export class DataListGridHarness extends ContentContainerComponentHarness {
       )()
     } else {
       disabledActionButtons = await this.documentRootLocatorFactory().locatorForAll(
-        `li.p-menuitem>a.p-menuitem-link.p-disabled`
+        `p-menuitem-link p-disabled`
       )()
     }
     return disabledActionButtons.length === amount

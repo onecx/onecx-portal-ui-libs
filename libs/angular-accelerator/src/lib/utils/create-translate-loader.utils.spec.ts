@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http'
 import { TestBed } from '@angular/core/testing'
-import { EnvironmentInjector } from '@angular/core'
+import { EnvironmentInjector, runInInjectionContext } from '@angular/core'
 import { MockService } from 'ng-mocks'
 import { Observable, of } from 'rxjs'
 import { MfeInfo } from '@onecx/integration-interface'
@@ -56,7 +56,7 @@ describe('CreateTranslateLoader', () => {
     it('should call httpClient get 3 times if a remoteBaseUrl is set and if global loading is finished', (done) => {
       currentMfe$ = of({ remoteBaseUrl: 'remoteUrl' })
       globalLoading$ = of(false)
-      const translateLoader = environmentInjector.runInContext(() =>
+      const translateLoader = runInInjectionContext(environmentInjector, () =>
         createTranslateLoader(httpClientMock, <AppStateService>(<unknown>appStateServiceMock))
       )
 
@@ -69,7 +69,7 @@ describe('CreateTranslateLoader', () => {
     it('should not call httpClient get if global loading is not finished', (done) => {
       currentMfe$ = of({})
       globalLoading$ = of(true)
-      const translateLoader = environmentInjector.runInContext(() =>
+      const translateLoader = runInInjectionContext(environmentInjector, () =>
         createTranslateLoader(httpClientMock, <AppStateService>(<unknown>appStateServiceMock))
       )
 

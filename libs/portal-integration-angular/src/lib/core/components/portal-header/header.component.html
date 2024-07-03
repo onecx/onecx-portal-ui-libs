@@ -54,7 +54,7 @@
           <ng-container *ngFor="let item of moreMenuItems">
             <li class="layout-topbar-item" *ocxIfPermission="item.permission">
               <!-- *ngIf="!item?.disabled" -->
-              <a
+              <!-- <a
                 class="layout-topbar-action rounded-circle"
                 pRipple
                 (click)="item?.command($event)"
@@ -63,7 +63,7 @@
                 tooltipPosition="bottom"
               >
                 <i [ngClass]="item.icon || ''" class="fs-large"></i>
-              </a>
+              </a> -->
             </li>
           </ng-container>
         </ng-container>
@@ -197,7 +197,7 @@
             <ng-container *ngFor="let item of moreMenuItems">
               <li class="layout-topbar-action-item" *ocxIfPermission="item.permission">
                 <!-- *ngIf="!item?.disabled" -->
-                <a
+                <!-- <a
                   class="flex flex-row align-items-center"
                   pRipple
                   href="#"
@@ -206,7 +206,7 @@
                 >
                   <i [ngClass]="'pi-' + item.icon || ''" class="layout-menuitem-icon pi"></i>
                   <span class="layout-menuitem-text ml-2">{{ item.label }}</span>
-                </a>
+                </a> -->
               </li>
             </ng-container>
           </ul>

@@ -43,8 +43,8 @@ export interface BreadCrumbMenuItem {
   }
   tooltipOptions?: {
     tooltipLabel?: string
-    tooltipPosition?: string
-    tooltipEvent?: string
+    tooltipPosition?: 'right' | 'left' | 'top' | 'bottom'
+    tooltipEvent?: 'hover' | 'focus'
     appendTo?: any
     positionStyle?: string
     tooltipStyleClass?: string

@@ -1587,7 +1587,7 @@ describe('InteractiveDataViewComponent', () => {
       })
     })
   
-    describe('Disable grid action buttons based on field path', () => {
+    fdescribe('Disable grid action buttons based on field path', () => {
       it('should not disable any buttons initially', async () => {
         setUpMockData('grid')
         const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()

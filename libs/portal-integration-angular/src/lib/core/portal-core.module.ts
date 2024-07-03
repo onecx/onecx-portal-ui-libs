@@ -181,8 +181,6 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     CreateOrEditSearchConfigDialogComponent,
     LifecycleComponent,
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  entryComponents: [ColumnTogglerComponent],
 })
 export class PortalCoreModule {
   public static forMicroFrontend(): ModuleWithProviders<PortalCoreModule> {

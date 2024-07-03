@@ -15,7 +15,7 @@ export class DiagramHarness extends ComponentHarness {
   }
 
   async getDiagramTypeSelectButton() {
-    return await this.locatorForOptional('p-selectButton[name="diagram-type-select-button"]')()
+    return await this.locatorForOptional('p-selectbutton[name="diagram-type-select-button"]')()
   }
 
   async getAllSelectionButtons() {
