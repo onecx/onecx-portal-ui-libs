@@ -115,9 +115,15 @@ function connectMicroFrontendRouter(injector: Injector) {
 }
 
 function connectRouter(router: Router): void {
-  const url = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}`
-  router.navigateByUrl(url)
-  window.addEventListener('popstate', () => {
-    router.navigateByUrl(url)
-  })
+  const initialUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}`
+  router.navigateByUrl(initialUrl)
+  let lastUrl = location.href
+  new MutationObserver(() => {
+    const url = location.href
+    if (url !== lastUrl) {
+      lastUrl = url
+      const routerUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}`
+      router.navigateByUrl(routerUrl)
+    }
+  }).observe(document, { subtree: true, childList: true })
 }
