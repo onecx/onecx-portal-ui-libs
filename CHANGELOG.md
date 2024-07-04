@@ -1,3 +1,17 @@
+## [4.40.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.39.0...v4.40.0) (2024-07-04)
+
+
+### Features
+
+* change styling of dialog buttons ([#307](https://github.com/onecx/onecx-portal-ui-libs/issues/307)) ([9b9d594](https://github.com/onecx/onecx-portal-ui-libs/commit/9b9d5940d49f25c1d8c8ec6c652a74a44a4e83d2))
+
+
+### Bug Fixes
+
+* add location observer to fix webcomponent routing ([#310](https://github.com/onecx/onecx-portal-ui-libs/issues/310)) ([9ab9389](https://github.com/onecx/onecx-portal-ui-libs/commit/9ab9389f0cf46fe5582d1eb3f6869b5c42708b8b))
+* fix for export data service ([#308](https://github.com/onecx/onecx-portal-ui-libs/issues/308)) ([756ec90](https://github.com/onecx/onecx-portal-ui-libs/commit/756ec9043a5ef90b3d1301fa32e4c9e0b659e000))
+* using angular-webcomponents space instead of plain window ([#305](https://github.com/onecx/onecx-portal-ui-libs/issues/305)) ([d338d83](https://github.com/onecx/onecx-portal-ui-libs/commit/d338d83aafee21c5f958c289c354941579da2fd3))
+
 ## [4.39.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.38.0...v4.39.0) (2024-07-02)
 
 
