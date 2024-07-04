@@ -193,10 +193,10 @@ export class HeaderComponent implements OnInit {
     this.eventsPublisher$.publish({ type: 'authentication#logoutButtonClicked' })
   }
 
-  onMenuButtonClick(e: Event) {
+  onMenuButtonClick(e: MouseEvent) {
     this.menuButtonClick.emit(e)
   }
-  onTopbarItemClick(e: Event | MenuItemCommandEvent, arg: any) {
+  onTopbarItemClick(e: MouseEvent | MenuItemCommandEvent, arg: any) {
     this.topbarItemClick.emit({ event: e, arg })
   }
   onOpenHelpPageEditor(e: MenuItemCommandEvent) {
@@ -215,7 +215,7 @@ export class HeaderComponent implements OnInit {
     this.openSupportTicket.emit(e)
   }
 
-  onSearchClick(e: Event | MenuItemCommandEvent, val: boolean) {
+  onSearchClick(e: MouseEvent | MenuItemCommandEvent, val: boolean) {
     this.searchClick.emit({ event: e, val })
   }
 }
