@@ -68,6 +68,78 @@ const defaultArgTypes = {
   editItem: { action: 'deleteItem' },
   viewItem: { action: 'deleteItem' },
 }
+const extendedMockData = [
+  {
+    id: 'Test',
+    imagePath:
+      'https://images.unsplash.com/photo-1682686581427-7c80ab60e3f3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    property1: 'Card 1',
+    available: true,
+  },
+  {
+    id: 'Test2',
+    imagePath:
+      'https://images.unsplash.com/photo-1710092662335-065cdbfb9781?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    property1: 'Card 2',
+    available: false,
+  },
+  {
+    id: 'Test',
+    imagePath:
+      'https://images.unsplash.com/photo-1682686581427-7c80ab60e3f3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    property1: 'Card 1',
+    available: true,
+  },
+  {
+    id: 'Test2',
+    imagePath:
+      'https://images.unsplash.com/photo-1710092662335-065cdbfb9781?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    property1: 'Card 2',
+    available: false,
+  },
+  {
+    id: 'Test',
+    imagePath:
+      'https://images.unsplash.com/photo-1682686581427-7c80ab60e3f3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    property1: 'Card 1',
+    available: true,
+  },
+  {
+    id: 'Test2',
+    imagePath:
+      'https://images.unsplash.com/photo-1710092662335-065cdbfb9781?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    property1: 'Card 2',
+    available: false,
+  },
+  {
+    id: 'Test',
+    imagePath:
+      'https://images.unsplash.com/photo-1682686581427-7c80ab60e3f3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    property1: 'Card 1',
+    available: true,
+  },
+  {
+    id: 'Test2',
+    imagePath:
+      'https://images.unsplash.com/photo-1710092662335-065cdbfb9781?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    property1: 'Card 2',
+    available: false,
+  },
+  {
+    id: 'Test',
+    imagePath:
+      'https://images.unsplash.com/photo-1682686581427-7c80ab60e3f3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    property1: 'Card 1',
+    available: true,
+  },
+  {
+    id: 'Test2',
+    imagePath:
+      'https://images.unsplash.com/photo-1710092662335-065cdbfb9781?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    property1: 'Card 2',
+    available: false,
+  },
+]
 
 export const ListWithMockData = {
   render: Template,
@@ -226,6 +298,16 @@ export const ListWithOnlyAdditionalOverflowActions = {
   },
 }
 
+export const ListWithPageSizes = {
+  argTypes: defaultArgTypes,
+  render: Template,
+  args: {
+    ...defaultComponentArgs,
+    pageSizes: [2, 15, 25],
+    data: extendedMockData
+  },
+}
+
 export const GridWithMockData = {
   render: Template,
   argTypes: defaultArgTypes,
@@ -319,4 +401,16 @@ export const GridWithConditionallyVisibleAdditionalActions = {
     ]
   },
 }
+
+export const GridWithPageSizes = {
+  argTypes: defaultArgTypes,
+  render: Template,
+  args: {
+    ...defaultComponentArgs,
+    layout: 'grid',
+    pageSizes: [2, 15, 25],
+    data: extendedMockData,
+  },
+}
+
 export default DataListGridComponentSBConfig

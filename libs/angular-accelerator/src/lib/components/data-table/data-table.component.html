@@ -101,20 +101,20 @@
   </ng-container>
 </ng-template>
 
-<!-- TODO: Ensure that showAll option is always displayed in pageSizes -->
 <p-table
-  [value]="(displayedRows$ | async) || []"
+  *ngIf="displayedPageSize$ | async as displayedPageSize"
+  [value]="(displayedRows$ | async) ?? []"
   responsiveLayout="scroll"
   [paginator]="paginator"
-  [first]="page * pageSize"
+  [first]="page * displayedPageSize"
   (onPage)="onPageChange($event)"
-  [rows]="pageSize"
+  [rows]="displayedPageSize"
   [showCurrentPageReport]="true"
   currentPageReportTemplate="{{ (totalRecordsOnServer ? currentPageShowingWithTotalOnServerKey : currentPageShowingKey) | translate:params }}"
-  [rowsPerPageOptions]="pageSizes || [10, 25, 50, { showAll: ('OCX_DATA_TABLE.ALL' | translate)}]"
+  [rowsPerPageOptions]="(displayedPageSizes$ | async) ?? []"
   id="dataTable_{{name}}"
   (selectionChange)="onSelectionChange($event)"
-  [selection]="(selectedRows$ | async) || []"
+  [selection]="(selectedRows$ | async) ?? []"
   [scrollable]="true"
   paginatorDropdownAppendTo="body"
 >
