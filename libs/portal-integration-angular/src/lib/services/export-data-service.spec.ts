@@ -135,6 +135,88 @@ describe('ExportDataService', () => {
     },
     {
       version: 0,
+      creationDate: '2023-09-12T09:34:27.184086Z',
+      creationUser: '',
+      modificationDate: '2023-09-12T09:34:27.184086Z',
+      modificationUser: '',
+      id: 'cf9e7d6b-5362-46af-91f8-62f7ef5c6064',
+      name: 'name 3',
+      description: '',
+      status: 'STATUS_NAME_3',
+      responsible: '',
+      endDate: '2023-09-15T09:34:24Z',
+      startDate: '2023-09-14T09:34:22Z',
+      imagePath: '',
+      testNumber: '7.1',
+    },
+  ]
+  const mockDataWithUndefinedDateValues = [
+    {
+      version: 0,
+      creationDate: '2023-09-12T09:34:11.997048Z',
+      creationUser: 'creation user',
+      modificationDate: '2023-09-12T09:34:11.997048Z',
+      modificationUser: '',
+      id: '195ee34e-41c6-47b7-8fc4-3f245dee7651',
+      name: 'some name',
+      description: '',
+      status: 'SOME_STATUS',
+      responsible: 'someone responsible',
+      endDate: '2023-09-14T09:34:09Z',
+      startDate: '2023-09-13T09:34:05Z',
+      imagePath: '/path/to/image',
+      testNumber: '1',
+    },
+    {
+      version: 0,
+      creationDate: '2023-09-12T09:33:58.544494Z',
+      creationUser: '',
+      modificationDate: '2023-09-12T09:33:58.544494Z',
+      modificationUser: '',
+      id: '5f8bb05b-d089-485e-a234-0bb6ff25234e',
+      name: 'example',
+      description: 'example description',
+      status: 'STATUS_EXAMPLE',
+      responsible: '',
+      endDate: '2023-09-13T09:33:55Z',
+      startDate: '2023-09-12T09:33:53Z',
+      imagePath: '',
+      testNumber: '3.141',
+    },
+    {
+      version: 0,
+      creationDate: '2023-09-12T09:34:27.184086Z',
+      creationUser: '',
+      modificationDate: '2023-09-12T09:34:27.184086Z',
+      modificationUser: '',
+      id: 'cf9e7d6b-5362-46af-91f8-62f7ef5c6064',
+      name: 'name 1',
+      description: '',
+      status: 'STATUS_NAME_1',
+      responsible: '',
+      endDate: '2023-09-15T09:34:24Z',
+      startDate: '2023-09-14T09:34:22Z',
+      imagePath: '',
+      testNumber: '123456789',
+    },
+    {
+      version: 0,
+      creationDate: '2023-09-12T09:34:27.184086Z',
+      creationUser: '',
+      modificationDate: '2023-09-12T09:34:27.184086Z',
+      modificationUser: '',
+      id: 'cf9e7d6b-5362-46af-91f8-62f7ef5c6064',
+      name: 'name 2',
+      description: '',
+      status: 'STATUS_NAME_2',
+      responsible: '',
+      endDate: '2023-09-15T09:34:24Z',
+      startDate: undefined,
+      imagePath: '',
+      testNumber: '12345.6789',
+    },
+    {
+      version: 0,
       creationDate: undefined,
       creationUser: '',
       modificationDate: undefined,
@@ -299,11 +381,17 @@ describe('ExportDataService', () => {
       '"' +
       ',,12345.6789' +
       '\r\nname 3,,' +
-      dateUtils.localizedDate(undefined) +
+      '"' +
+      dateUtils.localizedDate('2023-09-14T09:34:22Z') +
+      '"' +
       ',' +
-      dateUtils.localizedDate(undefined) +
+      '"' +
+      dateUtils.localizedDate('2023-09-15T09:34:24Z') +
+      '"' +
       ',status name 3,,' +
-      dateUtils.localizedDate(undefined) +
+      '"' +
+      dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') +
+      '"' +
       ',,7.1'
     const expectedFilename = 'some-test.csv'
     const mock = new ElementMock()
@@ -314,6 +402,62 @@ describe('ExportDataService', () => {
       return (blobs.length - 1).toString()
     })
     await exportDataService.exportCsv(mockColumns, mockData, 'some-test.csv')
+
+    expect(expectedCsv).toEqual(await blobs[Number(mock.attributes['href'])].text())
+    expect(expectedFilename).toEqual(mock.attributes['download'])
+  })
+
+  it('should export data as csv in en which contains data of date fields that are undefined', async () => {
+    translateService.use('en')
+    ;(<any>exportDataService).locale = 'en'
+    ;(<any>dateUtils).locale = 'en'
+
+    const expectedCsv =
+      'Name,Description,Start date,End date,Status,Responsible,Modification date,Creation user,Test number' +
+      '\r\nsome name,,' +
+      generateCsvContentForDate('2023-09-13T09:34:05Z', dateUtils) +
+      ',' +
+      generateCsvContentForDate('2023-09-14T09:34:09Z', dateUtils) +
+      ',some status,someone responsible,' +
+      generateCsvContentForDate('2023-09-12T09:34:11.997048Z', dateUtils) +
+      ',creation user,1' +
+      '\r\nexample,example description,' +
+      generateCsvContentForDate('2023-09-12T09:33:53Z', dateUtils) +
+      ',' +
+      generateCsvContentForDate('2023-09-13T09:33:55Z', dateUtils) +
+      ',some status example,,' +
+      generateCsvContentForDate('2023-09-12T09:33:58.544494Z', dateUtils) +
+      ',,3.141' +
+      '\r\nname 1,,' +
+      generateCsvContentForDate('2023-09-14T09:34:22Z', dateUtils) +
+      ',' +
+      generateCsvContentForDate('2023-09-15T09:34:24Z', dateUtils) +
+      ',status name 1,,' +
+      generateCsvContentForDate('2023-09-12T09:34:27.184086Z', dateUtils) +
+      ',,123456789' +
+      '\r\nname 2,,' +
+      generateCsvContentForDate(undefined, dateUtils) +
+      ',' +
+      generateCsvContentForDate('2023-09-15T09:34:24Z', dateUtils) +
+      ',status name 2,,' +
+      generateCsvContentForDate('2023-09-12T09:34:27.184086Z', dateUtils) +
+      ',,12345.6789' +
+      '\r\nname 3,,' +
+      generateCsvContentForDate(undefined, dateUtils) +
+      ',' +
+      generateCsvContentForDate(undefined, dateUtils) +
+      ',status name 3,,' +
+      generateCsvContentForDate(undefined, dateUtils) +
+      ',,7.1'
+    const expectedFilename = 'some-test.csv'
+    const mock = new ElementMock()
+
+    jest.spyOn(document, 'createElement').mockReturnValue(<any>mock)
+    URL.createObjectURL = jest.fn().mockImplementation((b: Blob) => {
+      blobs.push(b)
+      return (blobs.length - 1).toString()
+    })
+    await exportDataService.exportCsv(mockColumns, mockDataWithUndefinedDateValues, 'some-test.csv')
 
     expect(expectedCsv).toEqual(await blobs[Number(mock.attributes['href'])].text())
     expect(expectedFilename).toEqual(mock.attributes['download'])
@@ -356,11 +500,11 @@ describe('ExportDataService', () => {
       dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') +
       ';;12345.6789' +
       '\r\nname 3;;' +
-      dateUtils.localizedDate(undefined) +
+      dateUtils.localizedDate('2023-09-14T09:34:22Z') +
       ';' +
-      dateUtils.localizedDate(undefined) +
+      dateUtils.localizedDate('2023-09-15T09:34:24Z') +
       ';Status Name 3;;' +
-      dateUtils.localizedDate(undefined) +
+      dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') +
       ';;7.1'
     const mock = new ElementMock()
 
@@ -374,4 +518,66 @@ describe('ExportDataService', () => {
     expect(expectedCsv).toEqual(await blobs[Number(mock.attributes['href'])].text())
     expect(expectedFilename).toEqual(mock.attributes['download'])
   })
+  it('should export data as csv in de which contains data of date fields that are undefined', async () => {
+    translateService.use('de')
+    ;(<any>exportDataService).locale = 'de'
+    ;(<any>dateUtils).locale = 'de'
+
+    const expectedFilename = 'some-test.csv'
+    const expectedCsv =
+      'Name;Beschreibung;Startdatum;Enddatum;Status;Verantwortlich;Änderungsdatum;Erstellungsbenutzer;Testnummer' +
+      '\r\nsome name;;' +
+      dateUtils.localizedDate('2023-09-13T09:34:05Z') +
+      ';' +
+      dateUtils.localizedDate('2023-09-14T09:34:09Z') +
+      ';irgendein Status;someone responsible;' +
+      dateUtils.localizedDate('2023-09-12T09:34:11.997048Z') +
+      ';creation user;1' +
+      '\r\nexample;example description;' +
+      dateUtils.localizedDate('2023-09-12T09:33:53Z') +
+      ';' +
+      dateUtils.localizedDate('2023-09-13T09:33:55Z') +
+      ';irgendein Beispielstatus;;' +
+      dateUtils.localizedDate('2023-09-12T09:33:58.544494Z') +
+      ';;3.141' +
+      '\r\nname 1;;' +
+      dateUtils.localizedDate('2023-09-14T09:34:22Z') +
+      ';' +
+      dateUtils.localizedDate('2023-09-15T09:34:24Z') +
+      ';Status Name 1;;' +
+      dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') +
+      ';;123456789' +
+      '\r\nname 2;;' +
+      dateUtils.localizedDate(undefined) +
+      ';' +
+      dateUtils.localizedDate('2023-09-15T09:34:24Z') +
+      ';Status Name 2;;' +
+      dateUtils.localizedDate('2023-09-12T09:34:27.184086Z') +
+      ';;12345.6789' +
+      '\r\nname 3;;' +
+      dateUtils.localizedDate(undefined) +
+      ';' +
+      dateUtils.localizedDate(undefined) +
+      ';Status Name 3;;' +
+      dateUtils.localizedDate(undefined) +
+      ';;7.1'
+
+    const mock = new ElementMock()
+
+    jest.spyOn(document, 'createElement').mockReturnValue(<any>mock)
+    URL.createObjectURL = jest.fn().mockImplementation((b: Blob) => {
+      blobs.push(b)
+      return (blobs.length - 1).toString()
+    })
+    await exportDataService.exportCsv(mockColumns, mockDataWithUndefinedDateValues, 'some-test.csv')
+
+    expect(expectedCsv).toEqual(await blobs[Number(mock.attributes['href'])].text())
+    expect(expectedFilename).toEqual(mock.attributes['download'])
+  })
 })
+function generateCsvContentForDate(value: string | undefined, dateUtils: DateUtils): string {
+  if (value) {
+    return '"' + dateUtils.localizedDate(value) + '"'
+  }
+  return dateUtils.localizedDate(value)
+}
