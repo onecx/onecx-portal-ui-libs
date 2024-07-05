@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 
 import { HarnessLoader, parallel, TestElement } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { RouterTestingModule } from '@angular/router/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { TranslateModule } from '@ngx-translate/core'
@@ -41,6 +40,7 @@ import {
   InteractiveDataViewHarness,
 } from '../../../../testing'
 import { DateUtils } from '../../utils/dateutils'
+import { provideRouter } from '@angular/router'
 
 describe('InteractiveDataViewComponent', () => {
   let component: InteractiveDataViewComponent
@@ -213,26 +213,31 @@ describe('InteractiveDataViewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [
+      declarations: [
         InteractiveDataViewComponent,
         DataLayoutSelectionComponent,
         DataViewComponent,
         ColumnGroupSelectionComponent,
         CustomGroupColumnSelectorComponent,
-    ],
-    imports: [TranslateModule.forRoot(),
+      ],
+      imports: [
+        TranslateModule.forRoot(),
         ButtonModule,
         DialogModule,
         PickListModule,
         AngularAcceleratorModule,
-        RouterTestingModule,
         NoopAnimationsModule,
         TranslateTestingModule.withTranslations({
-            en: require('./../../../../assets/i18n/en.json'),
-            de: require('./../../../../assets/i18n/de.json'),
-        })],
-    providers: [{ provide: UserService, useClass: MockUserService }, provideHttpClient(withInterceptorsFromDi())]
-}).compileComponents()
+          en: require('./../../../../assets/i18n/en.json'),
+          de: require('./../../../../assets/i18n/de.json'),
+        }),
+      ],
+      providers: [
+        { provide: UserService, useClass: MockUserService },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideRouter([]),
+      ],
+    }).compileComponents()
 
     fixture = TestBed.createComponent(InteractiveDataViewComponent)
     component = fixture.componentInstance
@@ -1574,8 +1579,8 @@ describe('InteractiveDataViewComponent', () => {
         expect(await dataView.hasAmountOfActionButtons('list', 3)).toBe(true)
         expect(await dataView.hasAmountOfDisabledActionButtons('list', 0)).toBe(true)
       })
-  
-      it('should disable a button based on a given field path', async() => {
+
+      it('should disable a button based on a given field path', async () => {
         setUpMockData('list')
         component.viewActionEnabledField = 'ready'
         const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
@@ -1583,7 +1588,7 @@ describe('InteractiveDataViewComponent', () => {
         expect(await dataView.hasAmountOfDisabledActionButtons('list', 1)).toBe(true)
       })
     })
-  
+
     describe('Disable grid action buttons based on field path', () => {
       it('should not disable any buttons initially', async () => {
         setUpMockData('grid')
@@ -1592,7 +1597,7 @@ describe('InteractiveDataViewComponent', () => {
         expect(await dataView.hasAmountOfActionButtons('grid', 3)).toBe(true)
         expect(await dataView.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
       })
-  
+
       it('should disable a button based on a given field path', async () => {
         setUpMockData('grid')
         component.viewActionEnabledField = 'ready'
@@ -1602,7 +1607,7 @@ describe('InteractiveDataViewComponent', () => {
         expect(await dataView.hasAmountOfDisabledActionButtons('grid', 1)).toBe(true)
       })
     })
-  
+
     describe('Disable table action buttons based on field path', () => {
       it('should not disable any buttons initially', async () => {
         setUpMockData('table')
@@ -1610,7 +1615,7 @@ describe('InteractiveDataViewComponent', () => {
         expect(await dataTable.hasAmountOfActionButtons(3)).toBe(true)
         expect(await dataTable.hasAmountOfDisabledActionButtons(0)).toBe(true)
       })
-  
+
       it('should disable a button based on a given field path', async () => {
         setUpMockData('table')
         component.viewActionEnabledField = 'ready'
@@ -1619,7 +1624,7 @@ describe('InteractiveDataViewComponent', () => {
         expect(await dataTable.hasAmountOfDisabledActionButtons(1)).toBe(true)
       })
     })
-  
+
     describe('Hide list action buttons based on field path', () => {
       it('should not disable any buttons initially', async () => {
         setUpMockData('list')
@@ -1627,7 +1632,7 @@ describe('InteractiveDataViewComponent', () => {
         expect(await dataView.hasAmountOfActionButtons('list', 3)).toBe(true)
         expect(await dataView.hasAmountOfDisabledActionButtons('list', 0)).toBe(true)
       })
-  
+
       it('should disable a button based on a given field path', async () => {
         setUpMockData('list')
         component.viewActionVisibleField = 'ready'
@@ -1636,7 +1641,7 @@ describe('InteractiveDataViewComponent', () => {
         expect(await dataView.hasAmountOfDisabledActionButtons('list', 0)).toBe(true)
       })
     })
-  
+
     describe('Hide grid action buttons based on field path', () => {
       it('should not disable any buttons initially', async () => {
         setUpMockData('grid')
@@ -1646,7 +1651,7 @@ describe('InteractiveDataViewComponent', () => {
         expect(await dataView.hasAmountOfActionButtons('grid-hidden', 0)).toBe(true)
         expect(await dataView.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
       })
-  
+
       it('should disable a button based on a given field path', async () => {
         setUpMockData('grid')
         component.viewActionVisibleField = 'ready'
@@ -1657,7 +1662,7 @@ describe('InteractiveDataViewComponent', () => {
         expect(await dataView.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
       })
     })
-  
+
     describe('Hide table action buttons based on field path', () => {
       it('should not disable any buttons initially', async () => {
         setUpMockData('table')
@@ -1665,7 +1670,7 @@ describe('InteractiveDataViewComponent', () => {
         expect(await dataTable.hasAmountOfActionButtons(3)).toBe(true)
         expect(await dataTable.hasAmountOfDisabledActionButtons(0)).toBe(true)
       })
-  
+
       it('should disable a button based on a given field path', async () => {
         setUpMockData('table')
         component.viewActionVisibleField = 'ready'

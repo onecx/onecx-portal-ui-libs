@@ -38,15 +38,11 @@ export class PMultiSelectHarness extends ComponentHarness {
   async isOpen(): Promise<boolean> {
     try {
       await this.getHarnessLoaderForPMultiSelectPanel()
-      console.log('true --------------------------')
-
       return true
     } catch (error) {
-      console.log('false --------------------------')
+      console.error(error)
       return false
     }
-    
-    // return await (await this.locatorFor('div')()).hasClass('p-multiselect-open')
   }
 
   async open() {
@@ -66,8 +62,9 @@ export class PMultiSelectHarness extends ComponentHarness {
   }
 
   async isHighlighted(PMultiSelectListItem: PMultiSelectListItemHarness): Promise<boolean> {
-    console.log('isHighlighted =-=-=-=-=-=-=-=-=', await (await PMultiSelectListItem.getTestElement()).hasClass('data-p-highlight'))
-    return await (await PMultiSelectListItem.getTestElement()).hasClass('data-p-highlight')
+    return (await (await PMultiSelectListItem.getTestElement()).getAttribute('data-p-highlight')) === 'true'
+      ? true
+      : false
   }
 
   async getSelectedOptions(): Promise<string[] | null> {
@@ -75,7 +72,6 @@ export class PMultiSelectHarness extends ComponentHarness {
     const selectedOptions: string[] = []
     for (let index = 0; index < allOptions.length; index++) {
       const option = allOptions[index]
-      console.log('option -------------------------------', await (await option.getTestElement()).getProperty('children'))
       if (await this.isHighlighted(option)) {
         selectedOptions.push(await option.getText())
       }

@@ -2,8 +2,8 @@
   "name": "@onecx/angular-testing",
   "version": "4.38.0",
   "peerDependencies": {
-    "@angular/cdk": "^15.2.7",
-    "primeng": "^15.0.0"
+    "@angular/cdk": "^18.0.5",
+    "primeng": "^17.18.2"
   },
   "dependencies": {},
   "publishConfig": {
