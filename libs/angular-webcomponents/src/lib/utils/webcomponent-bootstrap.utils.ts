@@ -58,6 +58,7 @@ export async function bootstrapRemoteComponent(
   })
 
   cachePlatform(production)
+  adaptRemoteComponentRoutes(app.injector)
   connectMicroFrontendRouter(app.injector, false)
 
   const myRemoteComponentAsWebComponent = createCustomElement(component, {
@@ -65,6 +66,23 @@ export async function bootstrapRemoteComponent(
   })
 
   customElements.define(elementName, myRemoteComponentAsWebComponent)
+}
+
+function adaptRemoteComponentRoutes(injector: Injector) {
+  const router = injector.get(Router)
+
+  if (!router) {
+    return
+  }
+
+  if(!router.config.find((val) => val.path === '**')) {
+    router.resetConfig(
+      router.config.concat({
+        path: '**',
+        children: []
+      })
+    )
+  }
 }
 
 function getWindowState(): any {
