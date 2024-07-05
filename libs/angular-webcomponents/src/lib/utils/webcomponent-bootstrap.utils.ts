@@ -15,6 +15,8 @@ import {
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { getLocation } from '@onecx/accelerator'
+import { EventsTopic } from '@onecx/integration-interface'
+import { filter } from 'rxjs'
 
 /**
  * Implementation inspired by @angular-architects/module-federation-plugin https://github.com/angular-architects/module-federation-plugin/blob/main/libs/mf-tools/src/lib/web-components/bootstrap-utils.ts
@@ -108,7 +110,7 @@ function connectMicroFrontendRouter(injector: Injector, warn: boolean = true) {
   const router = injector.get(Router)
 
   if (!router) {
-    if(warn) {
+    if (warn) {
       console.warn('No router to connect found')
     }
     return
@@ -120,13 +122,11 @@ function connectMicroFrontendRouter(injector: Injector, warn: boolean = true) {
 function connectRouter(router: Router): void {
   const initialUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}`
   router.navigateByUrl(initialUrl)
-  let lastUrl = location.href
-  new MutationObserver(() => {
-    const url = location.href
-    if (url !== lastUrl) {
-      lastUrl = url
-      const routerUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}`
-      router.navigateByUrl(routerUrl)
-    }
-  }).observe(document, { subtree: true, childList: true })
+  const observer = new EventsTopic();
+  observer.pipe(filter((e) => e.type === 'navigated')).subscribe(() => {
+    const routerUrl = `${location.pathname.substring(
+      getLocation().deploymentPath.length
+    )}${location.search}`;
+    router.navigateByUrl(routerUrl);
+  });
 }
