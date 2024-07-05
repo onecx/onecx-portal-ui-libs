@@ -1,3 +1,10 @@
+## [4.40.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.40.1...v4.40.2) (2024-07-05)
+
+
+### Bug Fixes
+
+* fix broken webcomponent routing ([#312](https://github.com/onecx/onecx-portal-ui-libs/issues/312)) ([fcfaece](https://github.com/onecx/onecx-portal-ui-libs/commit/fcfaece543ebe1775dd83c37ed8f677139999913))
+
 ## [4.40.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.40.0...v4.40.1) (2024-07-05)
 
 
