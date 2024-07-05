@@ -56,6 +56,7 @@ export async function bootstrapRemoteComponent(
   })
 
   cachePlatform(production)
+  connectMicroFrontendRouter(app.injector, false)
 
   const myRemoteComponentAsWebComponent = createCustomElement(component, {
     injector: app.injector,
@@ -103,11 +104,13 @@ function cachePlatform(production: boolean): PlatformRef {
   return platform
 }
 
-function connectMicroFrontendRouter(injector: Injector) {
+function connectMicroFrontendRouter(injector: Injector, warn: boolean = true) {
   const router = injector.get(Router)
 
   if (!router) {
-    console.warn('No router to connect found')
+    if(warn) {
+      console.warn('No router to connect found')
+    }
     return
   }
 
