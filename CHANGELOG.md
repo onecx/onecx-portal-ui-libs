@@ -1,3 +1,10 @@
+## [4.40.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.40.0...v4.40.1) (2024-07-05)
+
+
+### Bug Fixes
+
+* connect remote component router to angular router ([#311](https://github.com/onecx/onecx-portal-ui-libs/issues/311)) ([71dcc86](https://github.com/onecx/onecx-portal-ui-libs/commit/71dcc8641985b01a7327517c2337a391669ac67c))
+
 ## [4.40.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.39.0...v4.40.0) (2024-07-04)
 
 
