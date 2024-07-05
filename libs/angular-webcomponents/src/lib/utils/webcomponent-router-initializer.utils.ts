@@ -14,6 +14,10 @@ export function initializeRouter(router: Router, appStateService: AppStateServic
               mfeInfo: mfeInfo,
             }
           })
+          routes.push({
+            path: '**',
+            children: [],
+          })
           router.resetConfig(routes)
         })
       )
