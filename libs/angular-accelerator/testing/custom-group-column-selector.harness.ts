@@ -21,7 +21,9 @@ export class CustomGroupColumnSelectorHarness extends ContentContainerComponentH
   }
 
   async getActionColumnPositionSelectButtons() {
-    return await this.locatorForAll(`[name="action-column-position-select-button"] .p-button`)()
+    const buttons = await this.locatorForAll(`[name="action-column-position-select-button"] .p-button`)()
+    // console.log('------------------------------------------------------------', (buttons[0] as any).element.outerHTML)
+    return buttons
   }
 
   async openCustomGroupColumnSelectorDialog() {

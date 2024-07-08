@@ -29,9 +29,10 @@ export class PMultiSelectHarness extends ComponentHarness {
   }
 
   async getAllOptions(): Promise<PMultiSelectListItemHarness[]> {
-    if (!(await this.isOpen())) {
+    // if (!(await this.isOpen())) {
       await this.open()
-    }
+    // }
+    console.log('++++++++++++++++++++++++ ', await (await this.getHarnessLoaderForPMultiSelectPanel()).getAllHarnesses(PMultiSelectListItemHarness))
     return await (await this.getHarnessLoaderForPMultiSelectPanel()).getAllHarnesses(PMultiSelectListItemHarness)
   }
 
@@ -46,19 +47,19 @@ export class PMultiSelectHarness extends ComponentHarness {
   }
 
   async open() {
-    if (!(await this.isOpen())) {
+    // if (!(await this.isOpen())) {
       await (await this.locatorFor('div')()).click()
-    } else {
-      console.warn('Unable to open multiSelect, because it is already open.')
-    }
+    // } else {
+    //   console.warn('Unable to open multiSelect, because it is already open.')
+    // }
   }
 
   async close() {
-    if (await this.isOpen()) {
+    // if (await this.isOpen()) {
       await (await this.locatorFor('div')()).click()
-    } else {
-      console.warn('Unable to close multiSelect, because it is not open.')
-    }
+    // } else {
+    //   console.warn('Unable to close multiSelect, because it is not open.')
+    // }
   }
 
   async isHighlighted(PMultiSelectListItem: PMultiSelectListItemHarness): Promise<boolean> {
