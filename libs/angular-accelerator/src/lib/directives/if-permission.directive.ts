@@ -40,6 +40,10 @@ export class IfPermissionDirective implements OnInit {
           this.viewContainer.createEmbeddedView(this.templateRef)
         }
       }
+    } else {
+      if (this.templateRef) {
+        this.viewContainer.createEmbeddedView(this.templateRef)
+      }
     }
   }
 
