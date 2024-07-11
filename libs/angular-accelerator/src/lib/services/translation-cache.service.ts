@@ -13,7 +13,7 @@ class TranslationCacheTopic extends SyncableTopic<Record<string, any>> {
 
 @Injectable({ providedIn: 'root' })
 export class TranslationCacheService implements OnDestroy {
-  private id: string = ''
+  private id = ''
   private translationTopic$ = new TranslationCacheTopic()
   private translations$ = new BehaviorSubject<any>({})
   constructor() {

@@ -1,7 +1,6 @@
 import { createCustomElement } from '@angular/elements'
 import { createApplication, platformBrowser } from '@angular/platform-browser'
 import {
-  ApplicationRef,
   EnvironmentProviders,
   Injector,
   NgModuleRef,
