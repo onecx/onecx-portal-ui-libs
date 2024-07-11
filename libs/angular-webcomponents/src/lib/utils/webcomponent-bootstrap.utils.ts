@@ -142,14 +142,12 @@ function connectRouter(router: Router): void {
   const initialUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}`
   router.navigateByUrl(initialUrl)
   let lastUrl = initialUrl
-  // const observer = new EventsTopic()
-  // observer.pipe(filter((e) => e.type === 'navigated')).subscribe(() => {
-  //   const routerUrl = `${location.pathname.substring(
-  //     getLocation().deploymentPath.length
-  //   )}${location.search}`;
-  //   if (routerUrl !== lastUrl) {
-  //     lastUrl = routerUrl;
-  //     router.navigateByUrl(routerUrl);
-  //   }
-  // });
+  const observer = new EventsTopic()
+  observer.pipe(filter((e) => e.type === 'navigated')).subscribe(() => {
+    const routerUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}`
+    if (routerUrl !== lastUrl) {
+      lastUrl = routerUrl
+      router.navigateByUrl(routerUrl)
+    }
+  })
 }
