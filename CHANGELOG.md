@@ -1,3 +1,23 @@
+## [4.41.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.40.2...v4.41.0) (2024-07-11)
+
+
+### Features
+
+* add a11y plugin to storybook ([#314](https://github.com/onecx/onecx-portal-ui-libs/issues/314)) ([14281b6](https://github.com/onecx/onecx-portal-ui-libs/commit/14281b62fbc3bb3c4ee8212d372e06ddbe07c9c4))
+
+
+### Bug Fixes
+
+* fix test ([43d9ac6](https://github.com/onecx/onecx-portal-ui-libs/commit/43d9ac6eaaaacd714421152594365043400ce391))
+* fixed translation cache loading ([28ba600](https://github.com/onecx/onecx-portal-ui-libs/commit/28ba6001ddfb47a4b44635977893528ad9193786))
+* id for mfe ([2eb208f](https://github.com/onecx/onecx-portal-ui-libs/commit/2eb208f6ed11852337fd61a657798affe9ec3a3d))
+* restore connectRouter function ([404b861](https://github.com/onecx/onecx-portal-ui-libs/commit/404b861de6b377a0d494a9f6a0a5124b2de45dd9))
+
+
+### Refactoring
+
+* lint ([bf7dcf5](https://github.com/onecx/onecx-portal-ui-libs/commit/bf7dcf535d9fff38b71ace28caeb7411e0fe9cd4))
+
 ## [4.40.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.40.1...v4.40.2) (2024-07-05)
 
 
