@@ -13,17 +13,19 @@ class TranslationCacheTopic extends SyncableTopic<Record<string, any>> {
 
 @Injectable({ providedIn: 'root' })
 export class TranslationCacheService implements OnDestroy {
+  private id: string = ''
   private translationTopic$ = new TranslationCacheTopic()
   private translations$ = new BehaviorSubject<any>({})
   constructor() {
     this.translationTopic$
       .pipe(
+        filter((message) => message['id'] === this.id),
         withLatestFrom(this.translations$),
         map(([topicTranslations, translations]) => {
           let foundValueOthersDoNotKnow = false
           const newTranslations = { ...translations }
           Object.keys(topicTranslations).forEach((k) => {
-            if (!topicTranslations[k] && translations[k]) {
+            if (!topicTranslations[k] && translations[k] && k !== this.id) {
               foundValueOthersDoNotKnow = true
             }
             newTranslations[k] ??= topicTranslations[k]
@@ -43,11 +45,15 @@ export class TranslationCacheService implements OnDestroy {
     this.translationTopic$.destroy()
   }
 
+  setId(id: string) {
+    this.id = 'translation-'.concat(id)
+  }
+
   getTranslationFile(url: string, cacheMissFunction: () => Observable<any>): Observable<any> {
     if (this.translations$.value[url]) {
       return of(this.translations$.value[url])
     }
-    this.translationTopic$.publish({ ...this.translations$.value, [url]: null })
+    this.translationTopic$.publish({ ...this.translations$.value, [url]: null, id: this.id })
     return race(
       this.translations$.pipe(
         filter((t) => t[url]),
@@ -55,7 +61,7 @@ export class TranslationCacheService implements OnDestroy {
       ),
       cacheMissFunction().pipe(
         tap((t) => {
-          this.translationTopic$.publish({ ...this.translations$.value, [url]: t })
+          this.translationTopic$.publish({ ...this.translations$.value, [url]: t, id: this.id })
         })
       )
     ).pipe(first())
