@@ -55,7 +55,7 @@ export class WorkspaceService {
       }
       const finalEndpoint = this.dissolveEndpoint(endpointName, route.endpoints);
       if (!finalEndpoint || finalEndpoint.path === undefined) {
-        console.log("WARNING: No endpoint.path could be found");
+        console.log("WARNING: No endpoint or endpoint.path could be found");
         return "";
       }
     
