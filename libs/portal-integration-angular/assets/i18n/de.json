@@ -76,6 +76,7 @@
     "SHOWING": "{{first}} - {{last}} von {{totalRecords}}",
     "SHOWING_WITH_TOTAL_ON_SERVER": "{{first}} - {{last}} von {{totalRecords}} ({{totalRecordsOnServer}})",
     "ALL": "Alle",
+    "MORE_ACTIONS": "Weitere Aktionen",
     "ACTIONS": {
       "VIEW": "Anzeigen",
       "EDIT": "Bearbeiten",

@@ -1,6 +1,6 @@
 {
   "name": "@onecx/accelerator",
-  "version": "4.33.3",
+  "version": "4.40.2",
   "peerDependencies": {
     "tslib": "^2.3.0",
     "rxjs": "7.8.1"

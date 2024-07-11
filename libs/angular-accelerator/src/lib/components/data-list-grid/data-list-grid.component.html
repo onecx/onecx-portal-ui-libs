@@ -9,6 +9,7 @@
   currentPageReportTemplate="{{ (totalRecordsOnServer ? currentPageShowingWithTotalOnServerKey : currentPageShowingKey) | translate:params }}"
   [rowsPerPageOptions]="[10, 25, 50, data?.length]"
   id="dataListGrid_{{name}}"
+  paginatorDropdownAppendTo="body"
 >
   <ng-template let-item pTemplate="paginatordropdownitem">
     {{ item.value === data?.length ? ("OCX_DATA_TABLE.ALL" | translate) : item.value }}
@@ -123,17 +124,30 @@
                 [attr.name]="'data-list-action-button'"
               ></button>
             </ng-container>
-            <ng-container *ngFor="let action of additionalActions">
+            <ng-container *ngFor="let action of additionalListActions">
+              <ng-container *ngIf="(!action.actionVisibleField || fieldIsTruthy(item, action.actionVisibleField))">
+                <button
+                  *ocxIfPermission="action.permission"
+                  pButton
+                  class="p-button-rounded p-button-text"
+                  [ngClass]="action.classes"
+                  [icon]="action.icon || ''"
+                  (click)="action.callback(item)"
+                  [title]="action.labelKey ? (action.labelKey | translate) : ''"
+                  [attr.aria-label]="action.labelKey ? (action.labelKey | translate) : ''"
+                  [disabled]="action.disabled || (!!action.actionEnabledField && !fieldIsTruthy(item, action.actionEnabledField))"
+                ></button>
+              </ng-container>
+            </ng-container>
+            <ng-container *ngIf="hasVisibleOverflowMenuItems(item)">
+              <p-menu #menu [model]="(getOverflowMenuItems(item) | async) || []" [popup]="true" appendTo="body"></p-menu>
               <button
-                *ocxIfPermission="action.permission"
                 pButton
                 class="p-button-rounded p-button-text"
-                [ngClass]="action.classes"
-                [icon]="action.icon || ''"
-                (click)="action.callback(item)"
-                [title]="action.labelKey ? (action.labelKey | translate) : ''"
-                [attr.aria-label]="action.labelKey ? (action.labelKey | translate) : ''"
-                [disabled]="action.disabled"
+                [icon]="'pi pi-ellipsis-v'"
+                (click)="menu.toggle($event)"
+                [ariaLabel]="'OCX_DATA_TABLE.MORE_ACTIONS' | translate"
+                [title]="'OCX_DATA_TABLE.MORE_ACTIONS' | translate"
               ></button>
             </ng-container>
           </div>

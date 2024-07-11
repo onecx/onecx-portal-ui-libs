@@ -28,9 +28,18 @@ export class ExportDataService {
     const dataToExport = this.formatData(columns, translatedData)
     const delimiter = this.locale.startsWith('de') ? ';' : ','
     const dataString = dataToExport
-      .map((d) => columns.reduce((arr: unknown[], c) => [...arr, d[c.id]], []).join(delimiter))
+      .map((d) =>
+        columns
+          .reduce((arr: unknown[], c) => [...arr, d[c.id]], [])
+          .map((d) => this.escapeDelimiter(delimiter, d))
+          .join(delimiter)
+      )
       .join('\r\n')
-    const headerString = (await firstValueFrom(this.translateColumnNames(columns))).map((c) => c.name).join(delimiter)
+    const headerString = (await firstValueFrom(this.translateColumnNames(columns)))
+      .map((c) => c.name)
+      .map((c) => this.escapeDelimiter(delimiter, c))
+      .join(delimiter)
+
     const csvString = headerString + '\r\n' + dataString
 
     const blob = new Blob(['\ufeff' + csvString], {
@@ -61,7 +70,7 @@ export class ExportDataService {
         if (c.columnType === ColumnType.DATE || c.columnType === ColumnType.RELATIVE_DATE) {
           return {
             ...obj,
-            [c.id]: this.dateUtils.localizedDate(String(d[c.id])),
+            [c.id]: this.dateUtils.localizedDate(d[c.id] ? String(d[c.id]) : undefined),
           }
         }
         return { ...obj, [c.id]: d[c.id] }
@@ -94,5 +103,22 @@ export class ExportDataService {
       )
     }
     return of(data)
+  }
+
+  private escapeDelimiter(delimiter: ';' | ',', data: unknown) {
+    if (data === null || data === undefined) {
+      return data
+    }
+
+    let str = String(data)
+
+    if (str.includes('"')) {
+      str = str.replaceAll('"', '""')
+    }
+
+    if (str.includes(delimiter)) {
+      str = `"${str}"`
+    }
+    return str
   }
 }

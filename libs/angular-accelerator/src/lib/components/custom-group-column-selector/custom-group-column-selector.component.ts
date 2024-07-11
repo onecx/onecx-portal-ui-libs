@@ -72,7 +72,8 @@ export class CustomGroupColumnSelectorComponent {
     const colIdsBefore = this.displayedColumns.map((column) => column.id)
     const colIdsAfter = this.displayedColumnsModel.map((column) => column.id)
 
-    if (!colIdsAfter.every((colId, i) => colId === colIdsBefore[i])) {
+    if ((!colIdsAfter.every((colId, i) => colId === colIdsBefore[i])) ||
+            colIdsAfter.length != colIdsBefore.length) {
       this.columnSelectionChanged.emit({ activeColumns: [...this.displayedColumnsModel] })
     }
 

@@ -1,3 +1,116 @@
+## [4.40.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.40.1...v4.40.2) (2024-07-05)
+
+
+### Bug Fixes
+
+* fix broken webcomponent routing ([#312](https://github.com/onecx/onecx-portal-ui-libs/issues/312)) ([fcfaece](https://github.com/onecx/onecx-portal-ui-libs/commit/fcfaece543ebe1775dd83c37ed8f677139999913))
+
+## [4.40.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.40.0...v4.40.1) (2024-07-05)
+
+
+### Bug Fixes
+
+* connect remote component router to angular router ([#311](https://github.com/onecx/onecx-portal-ui-libs/issues/311)) ([71dcc86](https://github.com/onecx/onecx-portal-ui-libs/commit/71dcc8641985b01a7327517c2337a391669ac67c))
+
+## [4.40.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.39.0...v4.40.0) (2024-07-04)
+
+
+### Features
+
+* change styling of dialog buttons ([#307](https://github.com/onecx/onecx-portal-ui-libs/issues/307)) ([9b9d594](https://github.com/onecx/onecx-portal-ui-libs/commit/9b9d5940d49f25c1d8c8ec6c652a74a44a4e83d2))
+
+
+### Bug Fixes
+
+* add location observer to fix webcomponent routing ([#310](https://github.com/onecx/onecx-portal-ui-libs/issues/310)) ([9ab9389](https://github.com/onecx/onecx-portal-ui-libs/commit/9ab9389f0cf46fe5582d1eb3f6869b5c42708b8b))
+* fix for export data service ([#308](https://github.com/onecx/onecx-portal-ui-libs/issues/308)) ([756ec90](https://github.com/onecx/onecx-portal-ui-libs/commit/756ec9043a5ef90b3d1301fa32e4c9e0b659e000))
+* using angular-webcomponents space instead of plain window ([#305](https://github.com/onecx/onecx-portal-ui-libs/issues/305)) ([d338d83](https://github.com/onecx/onecx-portal-ui-libs/commit/d338d83aafee21c5f958c289c354941579da2fd3))
+
+## [4.39.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.38.0...v4.39.0) (2024-07-02)
+
+
+### Features
+
+* date and dialog tweaks ([#302](https://github.com/onecx/onecx-portal-ui-libs/issues/302)) ([501a054](https://github.com/onecx/onecx-portal-ui-libs/commit/501a0541826e7044084e58e082476d1a4ce1ab85))
+
+
+### Bug Fixes
+
+* custom module bootstrap with router ([#304](https://github.com/onecx/onecx-portal-ui-libs/issues/304)) ([985a53e](https://github.com/onecx/onecx-portal-ui-libs/commit/985a53ef0e36a4ed332f642dfd8d9ba8a6804119))
+
+## [4.38.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.37.1...v4.38.0) (2024-07-02)
+
+
+### Features
+
+* revert multi version functionality ([#303](https://github.com/onecx/onecx-portal-ui-libs/issues/303)) ([6f677bd](https://github.com/onecx/onecx-portal-ui-libs/commit/6f677bde047e6ee107de90a10d9454df777df85b))
+
+
+### Bug Fixes
+
+* fixed removal of column leading to no refresh ([#300](https://github.com/onecx/onecx-portal-ui-libs/issues/300)) ([47ee1c9](https://github.com/onecx/onecx-portal-ui-libs/commit/47ee1c96de07a20deffa956f4fc682e96b4dfeeb))
+
+## [4.37.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.37.0...v4.37.1) (2024-07-01)
+
+
+### Bug Fixes
+
+* **startsWith matcher:** slice all url segments including items before mfe baseHref  ([#301](https://github.com/onecx/onecx-portal-ui-libs/issues/301)) ([ebf4413](https://github.com/onecx/onecx-portal-ui-libs/commit/ebf441331699c069f370be9691dbe8cda624ab7b))
+
+## [4.37.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.36.0...v4.37.0) (2024-07-01)
+
+
+### Features
+
+* breadcrumbs for webcomponents ([#290](https://github.com/onecx/onecx-portal-ui-libs/issues/290)) ([eece99e](https://github.com/onecx/onecx-portal-ui-libs/commit/eece99eec6a36524360fb663a592ed48291abed6))
+* webcomponents utils ([#295](https://github.com/onecx/onecx-portal-ui-libs/issues/295)) ([eedd081](https://github.com/onecx/onecx-portal-ui-libs/commit/eedd081c9b4b20301c9c103dc47f8fd1d805748d))
+
+## [4.36.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.35.0...v4.36.0) (2024-06-28)
+
+
+### Features
+
+* conditionally hide/disable additional actions ([#297](https://github.com/onecx/onecx-portal-ui-libs/issues/297)) ([fb5ddc9](https://github.com/onecx/onecx-portal-ui-libs/commit/fb5ddc9262c502699a022883215ac0d399a48945))
+* optionally place additional actions in overflow menu ([#298](https://github.com/onecx/onecx-portal-ui-libs/issues/298)) ([27f0f2d](https://github.com/onecx/onecx-portal-ui-libs/commit/27f0f2da460820f7addc88f79084f721728b76e0))
+
+## [4.35.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.34.0...v4.35.0) (2024-06-27)
+
+
+### Features
+
+* fix styling issues for page header detail values + add ability to specify icon styles ([#294](https://github.com/onecx/onecx-portal-ui-libs/issues/294)) ([08d79c3](https://github.com/onecx/onecx-portal-ui-libs/commit/08d79c3a33336e0a0bfcdeafc3393e89362ca169))
+
+
+### Bug Fixes
+
+* fix csv exports by escaping delimiters ([#287](https://github.com/onecx/onecx-portal-ui-libs/issues/287)) ([76eb1dc](https://github.com/onecx/onecx-portal-ui-libs/commit/76eb1dc0417962f7d6fd41e33895ec863ac66aae))
+* fix ocx-content-container spacing ([#279](https://github.com/onecx/onecx-portal-ui-libs/issues/279)) ([409bc5d](https://github.com/onecx/onecx-portal-ui-libs/commit/409bc5dfafcee2adeac4666dcc107a4faff53973))
+
+## [4.34.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.33.3...v4.34.0) (2024-06-26)
+
+
+### Features
+
+* angular-webcomponents init ([4bab9ce](https://github.com/onecx/onecx-portal-ui-libs/commit/4bab9ce120d69ae2bc61154971c99a12b15a0126))
+* angular-webcomponents prepared ([1e9c237](https://github.com/onecx/onecx-portal-ui-libs/commit/1e9c237ff58e72e6fc6d3092eba1f46fa71c9984))
+* dialog-service configuration ([9775472](https://github.com/onecx/onecx-portal-ui-libs/commit/9775472a65b69ad3ee7f0566bf11311041b30f01))
+* props passing to webcomponents ([b6da099](https://github.com/onecx/onecx-portal-ui-libs/commit/b6da099bb0f683b57ca049b8b65cf667f90e06f5))
+* type check in remote config passing ([a36f141](https://github.com/onecx/onecx-portal-ui-libs/commit/a36f1410e88e9d7033055a4a2f0f78a6b12ecf65))
+
+
+### Bug Fixes
+
+* harness fix ([36f3ea2](https://github.com/onecx/onecx-portal-ui-libs/commit/36f3ea2ebd2516a67df5d7532d4de8be7c3e484b))
+* lint ([7f83d14](https://github.com/onecx/onecx-portal-ui-libs/commit/7f83d14242facd8eb4004077d4cdfd475cfe09e3))
+* lint fix ([488a65c](https://github.com/onecx/onecx-portal-ui-libs/commit/488a65cc3a26bc99cbd02ecc6c42b2478c48de54))
+* paginator appended to body ([3877f8f](https://github.com/onecx/onecx-portal-ui-libs/commit/3877f8f16ae59979962a0f501bd2d251523f1acf))
+
+
+### Refactoring
+
+* change deprecated message ([3c896d0](https://github.com/onecx/onecx-portal-ui-libs/commit/3c896d05fdf2a38439a00deeaca32f2f2c9cebd4))
+* moved remote-webcomponent interface to angular-remote-components ([547fd12](https://github.com/onecx/onecx-portal-ui-libs/commit/547fd127a1cdbdc73579ad4e7f7e4daccf6a4a95))
+
 ## [4.33.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.33.2...v4.33.3) (2024-06-25)
 
 
