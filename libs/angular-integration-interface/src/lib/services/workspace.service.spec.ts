@@ -147,14 +147,18 @@ describe('WorkspaceService', () => {
         {
           appId: 'onecx-workspace-ui',
           productName: 'onecx-workspace',
-          endpoints: [],
+          endpoints: [
+            { name: 'details', path: '/details/{id}' },
+            { name: 'edit', path: '[[details]]' },
+            { name: 'change', path: '[[edit]]' },
+          ],
         },
       ],
     });
     
     service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'details', params)
       .subscribe((url) => {
-        expect(url).toBe('http://example.com');
+        expect(url).toBe('http://example.com/details/5');
         done();
       })
   })
@@ -178,7 +182,7 @@ describe('WorkspaceService', () => {
     
     service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'details', params)
       .subscribe((url) => {
-        expect(url).toBe('http://example.com');
+        expect(url).toBe('http://example.com/details/5');
         done();
       })
   })

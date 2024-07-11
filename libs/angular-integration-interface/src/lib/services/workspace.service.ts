@@ -38,13 +38,17 @@ export class WorkspaceService {
 
     private constructRouteUrl(workspace: any, appId: string, productName: string, endpointName: string, params: Record<string, unknown>): string {
       const route = this.filterRouteFromList(workspace.routes, appId, productName);
-      if (!route || route.baseUrl === undefined) {
+      let routeUrl = this.constructBaseUrlFromWorkspace(workspace);
+      if (!route) {
         console.log(`WARNING: No route.baseUrl could be found for given appId "${appId}" and productName "${productName}"`);
 
-        return this.constructBaseUrlFromWorkspace(workspace);
+        return routeUrl;
       }
-    
-      let routeUrl = route.baseUrl;
+      
+      if(route.baseUrl !== undefined && route.baseUrl.length > 0){
+        routeUrl = route.baseUrl;
+      }
+
       routeUrl = this.joinWithSlashAndDoubleCheck(routeUrl,this.constructEndpointUrl(route, endpointName, params));
       return routeUrl;
     }
