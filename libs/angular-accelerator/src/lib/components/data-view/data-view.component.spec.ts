@@ -18,6 +18,38 @@ import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('DataViewComponent', () => {
+  const origAddEventListener = window.addEventListener
+  const origPostMessage = window.postMessage
+
+  let listeners: any[] = []
+  window.addEventListener = (_type: any, listener: any) => {
+    listeners.push(listener)
+  }
+
+  window.removeEventListener = (_type: any, listener: any) => {
+    listeners = listeners.filter((l) => l !== listener)
+  }
+
+  window.postMessage = (m: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    listeners.forEach((l) => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }))
+  }
+
+  const mutationObserverMock = jest.fn(function MutationObserver(callback) {
+    this.observe = jest.fn()
+    this.disconnect = jest.fn()
+    this.trigger = (mockedMutationsList: any) => {
+      callback(mockedMutationsList, this)
+    }
+    return this
+  })
+  global.MutationObserver = mutationObserverMock
+
+  afterAll(() => {
+    window.addEventListener = origAddEventListener
+    window.postMessage = origPostMessage
+  })
+
   let component: DataViewComponent
   let fixture: ComponentFixture<DataViewComponent>
   let dataViewHarness: DataViewHarness
@@ -422,14 +454,14 @@ describe('DataViewComponent', () => {
     })
 
     describe('Hide list action buttons based on field path', () => {
-      it('should not disable any buttons initially', async () => {
+      it('should not hide any buttons initially', async () => {
         setUpMockData('list')
         const dataView = await dataViewHarness.getDataListGrid()
         expect(await dataView.hasAmountOfActionButtons('list', 3)).toBe(true)
         expect(await dataView.hasAmountOfDisabledActionButtons('list', 0)).toBe(true)
       })
 
-      it('should disable a button based on a given field path', async () => {
+      it('should hide a button based on a given field path', async () => {
         setUpMockData('list')
         component.viewActionVisibleField = 'ready'
         const dataView = await dataViewHarness.getDataListGrid()
@@ -439,7 +471,7 @@ describe('DataViewComponent', () => {
     })
 
     describe('Hide grid action buttons based on field path', () => {
-      it('should not disable any buttons initially', async () => {
+      it('should not hide any buttons initially', async () => {
         setUpMockData('grid')
         const dataView = await dataViewHarness.getDataListGrid()
         await (await dataView.getMenuButton()).click()
@@ -448,7 +480,7 @@ describe('DataViewComponent', () => {
         expect(await dataView.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
       })
 
-      it('should disable a button based on a given field path', async () => {
+      it('should hide a button based on a given field path', async () => {
         setUpMockData('grid')
         component.viewActionVisibleField = 'ready'
         const dataView = await dataViewHarness.getDataListGrid()
@@ -460,14 +492,14 @@ describe('DataViewComponent', () => {
     })
 
     describe('Hide table action buttons based on field path', () => {
-      it('should not disable any buttons initially', async () => {
+      it('should not hide any buttons initially', async () => {
         setUpMockData('table')
         const dataTable = await dataViewHarness.getDataTable()
         expect(await dataTable.hasAmountOfActionButtons(3)).toBe(true)
         expect(await dataTable.hasAmountOfDisabledActionButtons(0)).toBe(true)
       })
 
-      it('should disable a button based on a given field path', async () => {
+      it('should hide a button based on a given field path', async () => {
         setUpMockData('table')
         component.viewActionVisibleField = 'ready'
         const dataTable = await dataViewHarness.getDataTable()

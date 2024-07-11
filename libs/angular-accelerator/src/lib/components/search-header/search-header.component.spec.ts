@@ -28,6 +28,16 @@ describe('SearchHeaderComponent', () => {
     listeners.forEach((l) => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }))
   }
 
+  const mutationObserverMock = jest.fn(function MutationObserver(callback) {
+    this.observe = jest.fn()
+    this.disconnect = jest.fn()
+    this.trigger = (mockedMutationsList: any) => {
+      callback(mockedMutationsList, this)
+    }
+    return this
+  })
+  global.MutationObserver = mutationObserverMock
+
   afterAll(() => {
     window.addEventListener = origAddEventListener
     window.postMessage = origPostMessage

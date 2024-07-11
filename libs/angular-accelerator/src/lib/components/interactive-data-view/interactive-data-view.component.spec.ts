@@ -41,7 +41,6 @@ import {
 } from '../../../../testing'
 import { DateUtils } from '../../utils/dateutils'
 import { provideRouter } from '@angular/router'
-import { NgZone } from '@angular/core'
 
 describe('InteractiveDataViewComponent', () => {
   const origAddEventListener = window.addEventListener
@@ -1658,14 +1657,14 @@ describe('InteractiveDataViewComponent', () => {
     })
 
     describe('Hide list action buttons based on field path', () => {
-      it('should not disable any buttons initially', async () => {
+      it('should not hide any buttons initially', async () => {
         setUpMockData('list')
         const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
         expect(await dataView.hasAmountOfActionButtons('list', 3)).toBe(true)
         expect(await dataView.hasAmountOfDisabledActionButtons('list', 0)).toBe(true)
       })
 
-      it('should disable a button based on a given field path', async () => {
+      it('should hide a button based on a given field path', async () => {
         setUpMockData('list')
         component.viewActionVisibleField = 'ready'
         const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
@@ -1675,7 +1674,7 @@ describe('InteractiveDataViewComponent', () => {
     })
 
     describe('Hide grid action buttons based on field path', () => {
-      it('should not disable any buttons initially', async () => {
+      it('should not hide any buttons initially', async () => {
         setUpMockData('grid')
         const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
         await (await dataView.getMenuButton()).click()
@@ -1684,7 +1683,7 @@ describe('InteractiveDataViewComponent', () => {
         expect(await dataView.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
       })
 
-      it('should disable a button based on a given field path', async () => {
+      it('should hide a button based on a given field path', async () => {
         setUpMockData('grid')
         component.viewActionVisibleField = 'ready'
         const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
@@ -1696,14 +1695,14 @@ describe('InteractiveDataViewComponent', () => {
     })
 
     describe('Hide table action buttons based on field path', () => {
-      it('should not disable any buttons initially', async () => {
+      it('should not hide any buttons initially', async () => {
         setUpMockData('table')
         const dataTable = await (await interactiveDataViewHarness.getDataView()).getDataTable()
         expect(await dataTable.hasAmountOfActionButtons(3)).toBe(true)
         expect(await dataTable.hasAmountOfDisabledActionButtons(0)).toBe(true)
       })
 
-      it('should disable a button based on a given field path', async () => {
+      it('should hide a button based on a given field path', async () => {
         setUpMockData('table')
         component.viewActionVisibleField = 'ready'
         const dataTable = await (await interactiveDataViewHarness.getDataView()).getDataTable()
