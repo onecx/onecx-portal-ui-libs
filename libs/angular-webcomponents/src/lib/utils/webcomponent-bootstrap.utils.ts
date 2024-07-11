@@ -75,11 +75,11 @@ function adaptRemoteComponentRoutes(injector: Injector) {
     return
   }
 
-  if(!router.config.find((val) => val.path === '**')) {
+  if (!router.config.find((val) => val.path === '**')) {
     router.resetConfig(
       router.config.concat({
         path: '**',
-        children: []
+        children: [],
       })
     )
   }
@@ -140,11 +140,13 @@ function connectMicroFrontendRouter(injector: Injector, warn: boolean = true) {
 function connectRouter(router: Router): void {
   const initialUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}`
   router.navigateByUrl(initialUrl)
-  const observer = new EventsTopic();
+  let lastUrl = initialUrl
+  const observer = new EventsTopic()
   observer.pipe(filter((e) => e.type === 'navigated')).subscribe(() => {
-    const routerUrl = `${location.pathname.substring(
-      getLocation().deploymentPath.length
-    )}${location.search}`;
-    router.navigateByUrl(routerUrl);
-  });
+    const routerUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}`
+    if (routerUrl !== lastUrl) {
+      lastUrl = routerUrl
+      router.navigateByUrl(routerUrl)
+    }
+  })
 }
