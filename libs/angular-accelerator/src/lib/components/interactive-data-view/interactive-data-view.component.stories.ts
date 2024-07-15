@@ -116,8 +116,7 @@ const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewComponent> =
     render: Template,
     args: {
       ...defaultComponentArgs,
-      pageSizes: [2, 15, 25],
-      pageSize: 2
+      pageSizes: [2, 15, 25]
     },
   }
 
