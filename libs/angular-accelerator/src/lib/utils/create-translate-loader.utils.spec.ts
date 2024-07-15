@@ -49,6 +49,7 @@ describe('CreateTranslateLoader', () => {
     }).compileComponents()
     environmentInjector = TestBed.inject(EnvironmentInjector)
     translationCacheService = TestBed.inject(TranslationCacheService)
+    window['onecxTranslations'] = {}
     jest.clearAllMocks()
   })
 
