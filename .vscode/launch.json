@@ -1,0 +1,22 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Jest: current file",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "/home/kim/github/forks/onecx/onecx-portal-ui-libs/node_modules/.bin/jest",
+      "outFiles": ["/home/kim/github/forks/onecx/onecx-portal-ui-libs/**/*.js"],
+      "args": ["${fileBasenameNoExtension}"],
+      "console": "integratedTerminal",
+      "disableOptimisticBPs": true,
+      "windows": {
+        "program": "/home/kim/github/forks/onecx/onecx-portal-ui-libs/node_modules/jest/bin/jest"
+      }
+    }
+  ]
+}

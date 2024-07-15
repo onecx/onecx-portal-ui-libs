@@ -3,7 +3,7 @@ module.exports = {
       name: '@storybook/angular',
       options: {},
     },
-    addons: [],
+    addons: ['@storybook/addon-a11y'],
     docs: {
       autodocs: true,
     },

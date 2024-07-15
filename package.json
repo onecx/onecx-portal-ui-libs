@@ -1,6 +1,6 @@
 {
   "name": "@onecx/onecx-portal-ui-libs",
-  "version": "4.38.0",
+  "version": "4.40.2",
   "license": "Apache-2.0",
   "scripts": {
     "sass": "npx sass libs/portal-integration-angular/assets/styles.scss libs/portal-integration-angular/assets/output.css",
@@ -74,6 +74,7 @@
     "@semantic-release/exec": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/release-notes-generator": "^14.0.1",
+    "@storybook/addon-a11y": "^7.6.20",
     "@storybook/addon-essentials": "^8.1.11",
     "@storybook/angular": "^8.1.11",
     "@storybook/core-server": "^8.1.11",
@@ -84,7 +85,7 @@
     "@types/node": "~20.14.9",
     "@typescript-eslint/eslint-plugin": "^7.15.0",
     "@typescript-eslint/parser": "^7.15.0",
-    "blob-polyfill": "^8.0.20240630",
+    "blob-polyfill": "^9.0.20240710",
     "conventional-changelog-conventionalcommits": "^8.0.0",
     "esbuild": "^0.19.2",
     "eslint": "~8.57.0",

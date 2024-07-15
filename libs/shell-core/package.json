@@ -1,6 +1,6 @@
 {
   "name": "@onecx/shell-core",
-  "version": "4.38.0",
+  "version": "4.40.2",
   "peerDependencies": {
     "rxjs": "7.8.1",
     "@angular/animations": "^18.0.5",
