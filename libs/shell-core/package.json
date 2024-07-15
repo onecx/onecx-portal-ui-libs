@@ -11,7 +11,8 @@
     "@onecx/angular-accelerator": "^4",
     "@onecx/angular-integration-interface": "^4",
     "@onecx/angular-remote-components": "^4",
-    "@onecx/portal-integration-angular": "^4"
+    "@onecx/portal-integration-angular": "^4",
+    "primeng": "17.18.2"
   },
   "dependencies": {},
   "type": "commonjs",
