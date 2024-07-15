@@ -491,6 +491,62 @@ describe('ExportDataService', () => {
     expect(expectedFilename).toEqual(mock.attributes['download'])
   })
 
+  it('should export data as csv in en which contains data of date fields that are undefined', async () => {
+    translateService.use('en')
+    ;(<any>exportDataService).locale = 'en'
+    ;(<any>dateUtils).locale = 'en'
+
+    const expectedCsv =
+      'Name,Description,Start date,End date,Status,Responsible,Modification date,Creation user,Test number' +
+      '\r\nsome name,,' +
+      generateCsvContentForDate('2023-09-13T09:34:05Z', dateUtils) +
+      ',' +
+      generateCsvContentForDate('2023-09-14T09:34:09Z', dateUtils) +
+      ',some status,someone responsible,' +
+      generateCsvContentForDate('2023-09-12T09:34:11.997048Z', dateUtils) +
+      ',creation user,1' +
+      '\r\nexample,example description,' +
+      generateCsvContentForDate('2023-09-12T09:33:53Z', dateUtils) +
+      ',' +
+      generateCsvContentForDate('2023-09-13T09:33:55Z', dateUtils) +
+      ',some status example,,' +
+      generateCsvContentForDate('2023-09-12T09:33:58.544494Z', dateUtils) +
+      ',,3.141' +
+      '\r\nname 1,,' +
+      generateCsvContentForDate('2023-09-14T09:34:22Z', dateUtils) +
+      ',' +
+      generateCsvContentForDate('2023-09-15T09:34:24Z', dateUtils) +
+      ',status name 1,,' +
+      generateCsvContentForDate('2023-09-12T09:34:27.184086Z', dateUtils) +
+      ',,123456789' +
+      '\r\nname 2,,' +
+      generateCsvContentForDate(undefined, dateUtils) +
+      ',' +
+      generateCsvContentForDate('2023-09-15T09:34:24Z', dateUtils) +
+      ',status name 2,,' +
+      generateCsvContentForDate('2023-09-12T09:34:27.184086Z', dateUtils) +
+      ',,12345.6789' +
+      '\r\nname 3,,' +
+      generateCsvContentForDate(undefined, dateUtils) +
+      ',' +
+      generateCsvContentForDate(undefined, dateUtils) +
+      ',status name 3,,' +
+      generateCsvContentForDate(undefined, dateUtils) +
+      ',,7.1'
+    const expectedFilename = 'some-test.csv'
+    const mock = new ElementMock()
+
+    jest.spyOn(document, 'createElement').mockReturnValue(<any>mock)
+    URL.createObjectURL = jest.fn().mockImplementation((b: Blob) => {
+      blobs.push(b)
+      return (blobs.length - 1).toString()
+    })
+    await exportDataService.exportCsv(mockColumns, mockDataWithUndefinedDateValues, 'some-test.csv')
+
+    expect(expectedCsv).toEqual(await blobs[Number(mock.attributes['href'])].text())
+    expect(expectedFilename).toEqual(mock.attributes['download'])
+  })
+
   it('should export data as csv in de', async () => {
     translateService.use('de')
     ;(<any>exportDataService).locale = 'de'
