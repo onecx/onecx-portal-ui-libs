@@ -1,69 +1,51 @@
 import { Injectable, OnDestroy } from '@angular/core'
-import { BehaviorSubject, Observable, filter, first, map, of, race, tap, withLatestFrom } from 'rxjs'
+import { Observable, filter, map, of, tap } from 'rxjs'
 import { SyncableTopic } from '@onecx/accelerator'
 
 // This topic is defined here and not in integration-interface, because
 // it is not used as framework independent integration but for improving
 // angular specific things
-class TranslationCacheTopic extends SyncableTopic<Record<string, any>> {
+class TranslationCacheTopic extends SyncableTopic<string> {
   constructor() {
-    super('translationCache', 1)
+    super('translationCache', 2)
+  }
+}
+
+declare global {
+  interface Window {
+    onecxTranslations: Record<string, any>
   }
 }
 
 @Injectable({ providedIn: 'root' })
 export class TranslationCacheService implements OnDestroy {
-  private id = ''
   private translationTopic$ = new TranslationCacheTopic()
-  private translations$ = new BehaviorSubject<any>({})
   constructor() {
-    this.translationTopic$
-      .pipe(
-        filter((message) => message['id'] === this.id),
-        withLatestFrom(this.translations$),
-        map(([topicTranslations, translations]) => {
-          let foundValueOthersDoNotKnow = false
-          const newTranslations = { ...translations }
-          Object.keys(topicTranslations).forEach((k) => {
-            if (!topicTranslations[k] && translations[k] && k !== this.id) {
-              foundValueOthersDoNotKnow = true
-            }
-            newTranslations[k] ??= topicTranslations[k]
-          })
-          return [newTranslations, foundValueOthersDoNotKnow]
-        }),
-        tap(([newTranslations, foundValueOthersDoNotKnow]) => {
-          if (foundValueOthersDoNotKnow) {
-            this.translationTopic$.publish(newTranslations)
-          }
-        }),
-        map(([newTranslations]) => newTranslations)
-      )
-      .subscribe(this.translations$)
+    window['onecxTranslations'] ??= {}
   }
   ngOnDestroy(): void {
     this.translationTopic$.destroy()
   }
 
-  setId(id: string) {
-    this.id = 'translation-'.concat(id)
-  }
-
   getTranslationFile(url: string, cacheMissFunction: () => Observable<any>): Observable<any> {
-    if (this.translations$.value[url]) {
-      return of(this.translations$.value[url])
+    if (window['onecxTranslations'][url]) {
+      return of(window['onecxTranslations'][url])
     }
-    this.translationTopic$.publish({ ...this.translations$.value, [url]: null, id: this.id })
-    return race(
-      this.translations$.pipe(
-        filter((t) => t[url]),
-        map((t) => t[url])
-      ),
-      cacheMissFunction().pipe(
-        tap((t) => {
-          this.translationTopic$.publish({ ...this.translations$.value, [url]: t, id: this.id })
-        })
+
+    if (window['onecxTranslations'][url] === null) {
+      return this.translationTopic$.pipe(
+        filter((messageUrl) => messageUrl === url),
+        map(() => window['onecxTranslations'][url])
       )
-    ).pipe(first())
+    }
+
+    window['onecxTranslations'][url] = null
+    return cacheMissFunction().pipe(
+      tap((t) => {
+        this.translationTopic$.publish(url)
+        window['onecxTranslations'][url] = t
+      }),
+      map(() => window['onecxTranslations'][url])
+    )
   }
 }
