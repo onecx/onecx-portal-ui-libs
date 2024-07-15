@@ -938,7 +938,6 @@ describe('InteractiveDataViewComponent', () => {
       tableRows = await dataTable.getRows()
 
       customGroupColumnSelector = await loader.getHarness(CustomGroupColumnSelectorHarness)
-      // problem
       await customGroupColumnSelector.openCustomGroupColumnSelectorDialog()
 
       picklist = await customGroupColumnSelector.getPicklist()
@@ -1544,7 +1543,7 @@ describe('InteractiveDataViewComponent', () => {
       const expectedFilteredListItemsData = [['name 1', '2023-09-14T09:34:22Z', '123456789']]
       const expectedFilteredGridItemsData = [['', 'name 1', '2023-09-14T09:34:22Z', '123456789']]
       const filterMultiSelect = await tableHeaders[0].getFilterMultiSelect()
-      // problem
+
       allFilterOptions = await filterMultiSelect.getAllOptions()
       await allFilterOptions[2].click()
 

@@ -10,7 +10,6 @@ export class PDialogHarness extends ContentContainerComponentHarness {
 
   getHeader = this.locatorForOptional(DivHarness.with({ class: 'p-dialog-header' }))
   getFooter = this.locatorForOptional(DivHarness.with({ class: 'p-dialog-footer' }))
-  getDialogMask = this.locatorForOptional(DivHarness.with({ class: 'p-dialog-mask'}))
 
   async getDialogTitle(): Promise<string | undefined> {
     return await (await this.getHeader())?.getText()

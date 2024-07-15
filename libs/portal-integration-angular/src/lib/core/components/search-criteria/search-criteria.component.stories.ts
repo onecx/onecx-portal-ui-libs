@@ -1,5 +1,6 @@
 import { APP_BASE_HREF } from '@angular/common'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { importProvidersFrom } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
@@ -29,6 +30,7 @@ export default {
         importProvidersFrom(RouterModule.forRoot([], { useHash: true })),
         importProvidersFrom(MockAuthModule),
         provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
         ConfigurationService,
         { provide: APP_CONFIG, useValue: {} },
         { provide: APP_BASE_HREF, useValue: '/' },
