@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core'
-import { Observable, filter, map, of, tap } from 'rxjs'
+import { Observable, filter, first, map, of, tap } from 'rxjs'
 import { SyncableTopic } from '@onecx/accelerator'
 
 // This topic is defined here and not in integration-interface, because
@@ -35,17 +35,19 @@ export class TranslationCacheService implements OnDestroy {
     if (window['onecxTranslations'][url] === null) {
       return this.translationTopic$.pipe(
         filter((messageUrl) => messageUrl === url),
-        map(() => window['onecxTranslations'][url])
+        map(() => window['onecxTranslations'][url]),
+        first()
       )
     }
 
     window['onecxTranslations'][url] = null
     return cacheMissFunction().pipe(
       tap((t) => {
-        this.translationTopic$.publish(url)
         window['onecxTranslations'][url] = t
+        this.translationTopic$.publish(url)
       }),
-      map(() => window['onecxTranslations'][url])
+      map(() => window['onecxTranslations'][url]),
+      first()
     )
   }
 }
