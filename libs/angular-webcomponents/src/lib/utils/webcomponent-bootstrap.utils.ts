@@ -124,7 +124,7 @@ function cachePlatform(production: boolean): PlatformRef {
   return platform
 }
 
-function connectMicroFrontendRouter(injector: Injector, warn: boolean = true) {
+function connectMicroFrontendRouter(injector: Injector, warn = true) {
   const router = injector.get(Router)
 
   if (!router) {

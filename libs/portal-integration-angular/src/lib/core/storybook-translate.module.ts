@@ -1,5 +1,5 @@
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core'
-import { NgModule, importProvidersFrom } from '@angular/core'
+import { NgModule } from '@angular/core'
 import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { TranslateCombinedLoader } from '@onecx/angular-accelerator'

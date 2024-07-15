@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http'
 import { TestBed } from '@angular/core/testing'
-import { EnvironmentInjector, runInInjectionContext } from '@angular/core'
+import { EnvironmentInjector } from '@angular/core'
 import { MockService } from 'ng-mocks'
 import { Observable, of } from 'rxjs'
 import { MfeInfo } from '@onecx/integration-interface'

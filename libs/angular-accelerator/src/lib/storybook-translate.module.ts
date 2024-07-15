@@ -23,7 +23,7 @@ export function translateLoader(http: HttpClient) {
       },
     }),
   ],
-  providers: [provideAppStateServiceMock(), provideHttpClient(), provideHttpClient(withInterceptorsFromDi())],
+  providers: [provideAppStateServiceMock(), provideHttpClient(withInterceptorsFromDi())],
 })
 export class StorybookTranslateModule {
   constructor(translateService: TranslateService) {

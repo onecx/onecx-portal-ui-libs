@@ -13,7 +13,7 @@
     "@ngrx/effects": "^18.0.1",
     "@ngrx/router-store": "^18.0.1",
     "@ngrx/store": "^18.0.1",
-    "@ngneat/until-destroy": "^9.2.2",
+    "@ngneat/until-destroy": "^10.0.0",
     "@onecx/angular-accelerator": "^4",
     "@onecx/integration-interface": "^4",
     "@onecx/angular-integration-interface": "^4",
@@ -22,7 +22,7 @@
     "msw": "^2.3.1",
     "rxjs": "~7.8.1",
     "primeng": "^17.18.2",
-    "zod": "^3.28.8",
+    "zod": "^3.23.8",
     "@ngx-translate/http-loader": "^8.0.0",
     "@angular-architects/module-federation": "^18.0.4"
   },
