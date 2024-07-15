@@ -11,6 +11,7 @@
     "@ngx-translate/core": "^15.0.0",
     "@angular/animations": "^18.0.5",
     "@ngrx/effects": "^18.0.1",
+    "@ngrx/operators": "^18.0.1",
     "@ngrx/router-store": "^18.0.1",
     "@ngrx/store": "^18.0.1",
     "@ngneat/until-destroy": "^10.0.0",
