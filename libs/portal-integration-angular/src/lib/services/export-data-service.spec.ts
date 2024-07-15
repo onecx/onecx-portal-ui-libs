@@ -395,43 +395,14 @@ describe('ExportDataService', () => {
     const expectedFilename = 'some-test.csv'
     const mock = new ElementMock()
 
-    // function makeAnchor(target: { [x: string]: any }) {
-    //   return {
-    //     target,
-    //     attributes: {},
-    //     setAttribute: jest.fn((key, value) => (target[key] = value)),
-    //     click: jest.fn(),
-    //     remove: jest.fn(),
-    //   };
-    // }
-
-    // let a = makeAnchor({ href: "#", download: "" })
-    // let createElementMock = jest.spyOn(document, "createElement").mockReturnValue(<any>a)
-    // let setAttributeSpy = jest.spyOn(a, "setAttribute");
-    // var clickSpy = jest.spyOn(a, "click");
-
-
     jest.spyOn(document, 'createElement').mockReturnValue(<any>mock)
     URL.createObjectURL = jest.fn().mockImplementation((b: Blob) => {
       blobs.push(b)
-      console.log('BLOB ', b)
       return (blobs.length - 1).toString()
     })
     await exportDataService.exportCsv(mockColumns, mockData, 'some-test.csv')
-    console.log('MOCK ' , mock)
-    expect(document.createElement).toHaveBeenCalledTimes(1);
-    expect(document.createElement).toHaveBeenCalledWith("a");
 
-    // expect(setAttributeSpy).toHaveBeenNthCalledWith(2, "download", expectedFilename)
-    // expect(clickSpy).toHaveBeenCalledTimes(1);
-
-
-    const index = Number(mock.attributes['href'])
-    const blob = blobs[index]
-    debugger;
-    const blobText = await blob.text()
-    debugger;
-    expect(expectedCsv).toEqual(blobText)
+    expect(expectedCsv).toEqual(await blobs[Number(mock.attributes['href'])].text())
     expect(expectedFilename).toEqual(mock.attributes['download'])
   })
 

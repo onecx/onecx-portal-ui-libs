@@ -65,10 +65,6 @@ export class DataTableHarness extends ContentContainerComponentHarness {
       })
     )
     return disabledActionButtonsCount === amount
-    // const disabledActionButtons = await this.documentRootLocatorFactory().locatorForAll(
-    //   `[name="data-table-action-button"]:disabled`
-    // )()
-    // return disabledActionButtons.length === amount
   }
 
   async columnIsFrozen(column: TestElement | null) {

@@ -32,7 +32,6 @@ export class PMultiSelectHarness extends ComponentHarness {
     if (!(await this.isOpen())) {
       await this.open()
     }
-    console.log('++++++++++++++++++++++++ ', await (await this.getHarnessLoaderForPMultiSelectPanel()).getAllHarnesses(PMultiSelectListItemHarness))
     return await (await this.getHarnessLoaderForPMultiSelectPanel()).getAllHarnesses(PMultiSelectListItemHarness)
   }
 

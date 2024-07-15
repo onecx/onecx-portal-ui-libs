@@ -45,11 +45,8 @@ export class ExportDataService {
     const blob = new Blob(['\ufeff' + csvString], {
       type: 'text/csv;charset=utf-8;',
     })
-    debugger;
     const dwldLink = document.createElement('a')
-    console.log('DOWNLOAD LINK', dwldLink)
     const url = URL.createObjectURL(blob)
-    console.log('URL ', url)
 
     dwldLink.setAttribute('href', url)
 

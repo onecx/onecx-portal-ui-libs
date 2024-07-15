@@ -46,23 +46,5 @@ export class DataListGridHarness extends ContentContainerComponentHarness {
       })
     )
     return disabledActionButtonsCount === amount
-    // if (viewType === 'list') {
-    //   const b = await this.getActionButtons(viewType)
-    //   await parallel(() =>
-    //     b.map(async (ab) => {
-    //       if ((await this.actionButtonIsDisabled(ab, viewType)) === true) {
-    //         temp++
-    //       }
-    //     })
-    //   )
-    //   disabledActionButtons = await this.documentRootLocatorFactory().locatorForAll(
-    //     `[name="data-list-action-button"]:disabled`
-    //   )()
-    //   return temp === amount
-    // } else {
-    //   disabledActionButtons = await this.documentRootLocatorFactory().locatorForAll(`p-menuitem-link`)()
-    //   console.log('LENGTH GRID ', disabledActionButtons)
-    //   return disabledActionButtons.length === amount
-    // }
   }
 }
