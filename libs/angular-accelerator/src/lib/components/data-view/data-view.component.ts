@@ -104,10 +104,24 @@ export class DataViewComponent implements DoCheck, OnInit {
     return this.customTableCellTemplate || this.customTableCellChildTemplate
   }
 
-  @Input() tableDateCellTemplate: TemplateRef<any> | undefined
+  @Input() dateTableCellTemplate: TemplateRef<any> | undefined
+  /**
+   * @deprecated Will be replaced by dateTableCellTemplate
+   */
+  @Input()
+  get tableDateCellTemplate(): TemplateRef<any> | undefined {
+    return this.dateTableCellTemplate
+  }
+  set tableDateCellTemplate(value: TemplateRef<any> | undefined) {
+    this.dateTableCellTemplate = value
+  }
+  /**
+   * @deprecated Will be replaced by dateTableCellChildTemplate
+   */
   @ContentChild('tableDateCell') tableDateCellChildTemplate: TemplateRef<any> | undefined
-  get _tableDateCell(): TemplateRef<any> | undefined {
-    return this.tableDateCellTemplate || this.tableDateCellChildTemplate
+  @ContentChild('dateTableCell') dateTableCellChildTemplate: TemplateRef<any> | undefined
+  get _dateTableCell(): TemplateRef<any> | undefined {
+    return this.dateTableCellTemplate || this.dateTableCellChildTemplate || this.tableDateCellChildTemplate
   }
 
   @Input() tableCellTemplate: TemplateRef<any> | undefined
@@ -116,10 +130,24 @@ export class DataViewComponent implements DoCheck, OnInit {
     return this.tableCellTemplate || this.tableCellChildTemplate
   }
 
-  @Input() tableTranslationKeyCellTemplate: TemplateRef<any> | undefined
+  @Input() translationKeyTableCellTemplate: TemplateRef<any> | undefined
+  /**
+   * @deprecated Will be replaced by translationKeyTableCellTemplate
+   */
+  @Input()
+  get tableTranslationKeyCellTemplate(): TemplateRef<any> | undefined {
+    return this.translationKeyTableCellTemplate
+  }
+  set tableTranslationKeyCellTemplate(value: TemplateRef<any> | undefined) {
+    this.translationKeyTableCellTemplate = value
+  }
+  /**
+   * @deprecated Will be replaced by translationKeyTableCellChildTemplate
+   */
   @ContentChild('tableTranslationKeyCell') tableTranslationKeyCellChildTemplate: TemplateRef<any> | undefined
-  get _tableTranslationKeyCell(): TemplateRef<any> | undefined {
-    return this.tableTranslationKeyCellTemplate || this.tableTranslationKeyCellChildTemplate
+  @ContentChild('translationKeyTableCell') translationKeyTableCellChildTemplate: TemplateRef<any> | undefined
+  get _translationKeyTableCell(): TemplateRef<any> | undefined {
+    return this.translationKeyTableCellTemplate || this.translationKeyTableCellChildTemplate || this.tableTranslationKeyCellChildTemplate
   }
 
   @Input() gridItemSubtitleLinesTemplate: TemplateRef<any> | undefined
@@ -145,10 +173,24 @@ export class DataViewComponent implements DoCheck, OnInit {
     return this.listItemTemplate || this.listItemChildTemplate
   }
 
-  @Input() tableRelativeDateCellTemplate: TemplateRef<any> | undefined
+  @Input() relativeDateTableCellTemplate: TemplateRef<any> | undefined
+  /**
+   * @deprecated Will be replaced by relativeDateTableCellTemplate
+   */
+  @Input()
+  get tableRelativeDateCellTemplate(): TemplateRef<any> | undefined {
+    return this.relativeDateTableCellTemplate
+  }
+  set tableRelativeDateCellTemplate(value: TemplateRef<any> | undefined) {
+    this.relativeDateTableCellTemplate = value
+  }
+  /**
+   * @deprecated Will be replace by relativeDateTableCellChildTemplate
+   */
   @ContentChild('tableRelativeDateCell') tableRelativeDateCellChildTemplate: TemplateRef<any> | undefined
+  @ContentChild('relativeDateTableCell') relativeDateTableCellChildTemplate: TemplateRef<any> | undefined
   get _tableRelativeDateCell(): TemplateRef<any> | undefined {
-    return this.tableRelativeDateCellTemplate || this.tableRelativeDateCellChildTemplate
+    return this.relativeDateTableCellTemplate || this.relativeDateTableCellChildTemplate || this.tableRelativeDateCellChildTemplate
   }
 
   @Input() additionalActions: DataAction[] = []
