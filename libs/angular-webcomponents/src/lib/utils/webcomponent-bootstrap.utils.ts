@@ -1,7 +1,6 @@
 import { createCustomElement } from '@angular/elements'
 import { createApplication, platformBrowser } from '@angular/platform-browser'
 import {
-  EnvironmentInjector,
   EnvironmentProviders,
   Injector,
   NgModuleRef,
@@ -33,8 +32,6 @@ export function bootstrapModule<M>(module: Type<M>, appType: AppType, production
     .then((ref) => {
       if (appType === 'shell') {
         setShellZone(ref.injector)
-      } else if (appType === 'microfrontend') {
-        connectMicroFrontendRouter(ref.injector)
       }
       return ref
     })
@@ -65,16 +62,23 @@ export async function bootstrapRemoteComponent(
   createEntrypoint(component, elementName, app.injector, sub)
 }
 
-export function createEntrypoint(
+export function createAppEntrypoint(component: Type<any>, elementName: string, injector: Injector) {
+  const sub = connectMicroFrontendRouter(injector)
+  createEntrypoint(component, elementName, injector, sub)
+}
+
+function createEntrypoint(
   component: Type<any>,
   elementName: string,
-  injector: EnvironmentInjector,
+  injector: Injector,
   routerSub?: Subscription | null
 ) {
   const originalNgDestroy = component.prototype.ngOnDestroy?.bind(component)
   component.prototype.ngOnDestroy = () => {
     routerSub?.unsubscribe()
-    originalNgDestroy()
+    if (originalNgDestroy !== undefined) {
+      originalNgDestroy()
+    }
   }
 
   const myRemoteComponentAsWebComponent = createCustomElement(component, {
