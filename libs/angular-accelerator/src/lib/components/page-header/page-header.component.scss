@@ -86,7 +86,7 @@
     padding: 1rem;
 
     &:empty {
-      display: none;
+      display: none !important;
     }
   }
 }
