@@ -87,14 +87,14 @@
     </div>
   </div>
 
-  <div 
-    class="object-panel" 
+  <div
+    class="object-panel"
     [ngClass]="getObjectPanelLayoutClasses()"
   >
     <ng-container *ngIf="objectDetails">
-      <div 
-        class="object-info" 
-        [ngClass]="getObjectInfoLayoutClasses()" 
+      <div
+        class="object-info"
+        [ngClass]="getObjectInfoLayoutClasses()"
         *ngFor="let item of objectDetails"
       >
         <span
