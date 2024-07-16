@@ -90,13 +90,9 @@
   <div
     class="object-panel"
     [ngClass]="getObjectPanelLayoutClasses()"
-    *ngIf="objectDetails"
+    *ngIf="objectDetails || customPageHeaderContent?.elementRef?.nativeElement.children.lenght > 0"
   >
-    <div
-      class="object-info"
-      [ngClass]="getObjectInfoLayoutClasses()"
-      *ngFor="let item of objectDetails"
-    >
+    <div class="object-info" [ngClass]="getObjectInfoLayoutClasses()" *ngFor="let item of objectDetails">
       <span
         class="flex font-medium text-600 object-info-grid-label"
         name="object-detail-label"
@@ -125,6 +121,8 @@
         </span>
       </span>
     </div>
-    <ng-content></ng-content>
+    <div #customPageHeaderContent>
+      <ng-content></ng-content>
+    </div>
   </div>
 </div>
