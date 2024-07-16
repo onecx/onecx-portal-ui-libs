@@ -1,6 +1,6 @@
 import { Location } from '@angular/common'
 import { HttpClient } from '@angular/common/http'
-import { InjectionToken, inject } from '@angular/core'
+import { inject } from '@angular/core'
 import { TranslateLoader } from '@ngx-translate/core'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import { combineLatest, filter, map, tap } from 'rxjs'
@@ -11,16 +11,12 @@ import { TranslateCombinedLoader } from './translate.combined.loader'
 
 let lastTranslateLoaderTimerId = 0
 
-export const MFE_ID = new InjectionToken<string>('MFE_ID')
-
 export function createTranslateLoader(
   http: HttpClient,
   appStateService: AppStateService,
-  mfeId: string,
   translationCacheService?: TranslationCacheService
 ): TranslateLoader {
   const ts = translationCacheService ?? inject(TranslationCacheService)
-  ts.setId(mfeId)
   const timerId = lastTranslateLoaderTimerId++
 
   console.time('createTranslateLoader_' + timerId)

@@ -49,6 +49,7 @@ describe('CreateTranslateLoader', () => {
     }).compileComponents()
     environmentInjector = TestBed.inject(EnvironmentInjector)
     translationCacheService = TestBed.inject(TranslationCacheService)
+    window['onecxTranslations'] = {}
     jest.clearAllMocks()
   })
 
@@ -57,7 +58,7 @@ describe('CreateTranslateLoader', () => {
       currentMfe$ = of({ remoteBaseUrl: 'remoteUrl' })
       globalLoading$ = of(false)
       const translateLoader = environmentInjector.runInContext(() =>
-        createTranslateLoader(httpClientMock, <AppStateService>(<unknown>appStateServiceMock), 'mfe_id')
+        createTranslateLoader(httpClientMock, <AppStateService>(<unknown>appStateServiceMock))
       )
 
       translateLoader.getTranslation('en').subscribe(() => {
@@ -70,7 +71,7 @@ describe('CreateTranslateLoader', () => {
       currentMfe$ = of({})
       globalLoading$ = of(true)
       const translateLoader = environmentInjector.runInContext(() =>
-        createTranslateLoader(httpClientMock, <AppStateService>(<unknown>appStateServiceMock), 'mfe_id')
+        createTranslateLoader(httpClientMock, <AppStateService>(<unknown>appStateServiceMock))
       )
 
       translateLoader.getTranslation('en').subscribe(() => {
@@ -87,7 +88,6 @@ describe('CreateTranslateLoader', () => {
       const translateLoader = createTranslateLoader(
         httpClientMock,
         <AppStateService>(<unknown>appStateServiceMock),
-        'mfe_id',
         translationCacheService
       )
 
@@ -103,7 +103,6 @@ describe('CreateTranslateLoader', () => {
       const translateLoader = createTranslateLoader(
         httpClientMock,
         <AppStateService>(<unknown>appStateServiceMock),
-        'mfe_id',
         translationCacheService
       )
 
