@@ -37,6 +37,7 @@ describe('CachingTranslateLoader', () => {
     }).compileComponents()
     http = TestBed.inject(HttpClient)
     translationCache = TestBed.inject(TranslationCacheService)
+    window['onecxTranslations'] = {}
   })
 
   it('should get translations', (done) => {
