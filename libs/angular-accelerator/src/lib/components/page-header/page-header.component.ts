@@ -134,9 +134,6 @@ export class PageHeaderComponent implements OnInit, OnChanges {
   @ContentChild('additionalToolbarContentLeft')
   additionalToolbarContentLeft: TemplateRef<any> | undefined
 
-  @ContentChild('customPageHeaderContent', { static: false })
-  customPageHeaderContent: TemplateRef<any> | undefined
-
   overflowActions: MenuItem[] = []
   inlineActions: Action[] | undefined
   dd = new Date()
@@ -153,7 +150,7 @@ export class PageHeaderComponent implements OnInit, OnChanges {
 
   objectInfoGridLayoutClasses = 'col-12 flex gap-4 md:col-6 align-items-center p-0'
   objectInfoColumnLayoutClasses = 'flex flex-column align-items-center gap-2 min-w-120'
-
+  
   objectInfoDefaultLayoutClasses = 'flex flex-row md:flex-column md:align-items-center md:gap-2'
 
   protected breadcrumbs: BreadcrumbService
