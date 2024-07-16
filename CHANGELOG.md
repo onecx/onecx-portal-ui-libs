@@ -1,3 +1,17 @@
+## [4.42.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.41.0...v4.42.0) (2024-07-16)
+
+
+### Features
+
+* fix minor bugs + implement pageSizes for data components ([#309](https://github.com/onecx/onecx-portal-ui-libs/issues/309)) ([912a0a4](https://github.com/onecx/onecx-portal-ui-libs/commit/912a0a40aabd2b2c1d1b7aaec2ed171e9f6223a6))
+* router unsubscribe for web components ([#318](https://github.com/onecx/onecx-portal-ui-libs/issues/318)) ([8cbaeb3](https://github.com/onecx/onecx-portal-ui-libs/commit/8cbaeb3d4d3464311b94cfdf994e9ff43dbcadeb))
+* translation cache mechanism enchancement ([#316](https://github.com/onecx/onecx-portal-ui-libs/issues/316)) ([91de9e1](https://github.com/onecx/onecx-portal-ui-libs/commit/91de9e15116f08b7d0976a4af61ebe93b6e28d69))
+
+
+### Bug Fixes
+
+* add missing ng package ([#320](https://github.com/onecx/onecx-portal-ui-libs/issues/320)) ([5171261](https://github.com/onecx/onecx-portal-ui-libs/commit/51712614111583f1b0bbeea7bea8d0dfba08769f))
+
 ## [4.41.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.40.2...v4.41.0) (2024-07-11)
 
 
