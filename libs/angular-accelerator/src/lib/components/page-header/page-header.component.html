@@ -87,9 +87,16 @@
     </div>
   </div>
 
-  <div class="object-panel" [ngClass]="getObjectPanelLayoutClasses()">
+  <div 
+    class="object-panel" 
+    [ngClass]="getObjectPanelLayoutClasses()"
+  >
     <ng-container *ngIf="objectDetails">
-      <div class="object-info" [ngClass]="getObjectInfoLayoutClasses()" *ngFor="let item of objectDetails">
+      <div 
+        class="object-info" 
+        [ngClass]="getObjectInfoLayoutClasses()" 
+        *ngFor="let item of objectDetails"
+      >
         <span
           class="flex font-medium text-600 object-info-grid-label"
           name="object-detail-label"
@@ -106,11 +113,7 @@
             [ngClass]="generateItemStyle(item)"
             name="object-detail-value"
           >
-            <i
-              *ngIf="item.icon"
-              class='{{item.icon + " " + (item.iconStyleClass || "")}}'
-              name="object-detail-icon"
-            ></i>
+            <i *ngIf="item.icon" class='{{item.icon + " " + (item.iconStyleClass || "")}}' name="object-detail-icon"></i>
             {{ item.value | dynamicPipe:item.valuePipe:item.valuePipeArgs}}
             <p-button
               *ngIf="item.actionItemIcon && item.actionItemCallback"
