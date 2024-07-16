@@ -84,7 +84,7 @@ export class DataViewComponent implements DoCheck, OnInit {
 
   @Input() sortStates: DataSortDirection[] = [DataSortDirection.ASCENDING, DataSortDirection.DESCENDING]
   @Input() pageSizes: number[] = [10, 25, 50]
-  @Input() pageSize: number = this.pageSizes?.[0] || 50
+  @Input() pageSize: number | undefined
 
   @Input() stringTableCellTemplate: TemplateRef<any> | undefined
   @ContentChild('stringTableCell') stringTableCellChildTemplate: TemplateRef<any> | undefined

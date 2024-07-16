@@ -81,8 +81,26 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   @Input() clientSideFiltering = true
   @Input() clientSideSorting = true
   @Input() sortStates: DataSortDirection[] = [DataSortDirection.ASCENDING, DataSortDirection.DESCENDING]
-  @Input() pageSizes: number[] = [10, 25, 50]
-  @Input() pageSize: number = this.pageSizes[0] || 50
+
+  displayedPageSizes$: Observable<(number | { showAll: string })[]>
+  _pageSizes$ = new BehaviorSubject<(number | { showAll: string })[]>([10, 25, 50])
+  @Input()
+  get pageSizes(): (number | { showAll: string })[] {
+    return this._pageSizes$.getValue()
+  }
+  set pageSizes(value: (number | { showAll: string })[]) {
+    this._pageSizes$.next(value)
+  }
+  displayedPageSize$: Observable<number>
+  _pageSize$ = new BehaviorSubject<number | undefined>(undefined)
+  @Input()
+  get pageSize(): number | undefined {
+    return this._pageSize$.getValue()
+  }
+  set pageSize(value: number | undefined) {
+    this._pageSize$.next(value)
+  }
+
   @Input() emptyResultsMessage: string | undefined
   @Input() name = ''
   @Input() deletePermission: string | undefined
@@ -215,6 +233,12 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   ) {
     super(locale, translateService)
     this.name = this.name || this.router.url.replace(/[^A-Za-z0-9]/, '_')
+    this.displayedPageSizes$ = combineLatest([this._pageSizes$, this.translateService.get('OCX_DATA_TABLE.ALL')]).pipe(
+      map(([pageSizes, translation]) => pageSizes.concat({ showAll: translation }))
+    )
+    this.displayedPageSize$ = combineLatest([this._pageSize$, this._pageSizes$]).pipe(
+      map(([pageSize, pageSizes]) => pageSize ?? pageSizes.find((val): val is number => typeof val === 'number') ?? 50)
+    )
   }
 
   ngOnInit(): void {

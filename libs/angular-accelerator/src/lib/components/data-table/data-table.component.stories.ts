@@ -399,4 +399,44 @@ export const WithAdditionalOverflowActions = {
   },
 }
 
+export const WithOnlyOverflowActions = {
+  render: Template,
+  args: {
+    ...defaultComponentArgs,
+    additionalActions: [
+      {
+        id: '1',
+        labelKey: 'Additional Action',
+        icon: 'pi pi-plus',
+        permission: 'TEST_MGMT#TEST_VIEW',
+        showAsOverflow: true,
+      },
+      {
+        id: '2',
+        labelKey: 'Conditionally Hidden',
+        icon: 'pi pi-plus',
+        permission: 'TEST_MGMT#TEST_VIEW',
+        showAsOverflow: true,
+        actionVisibleField: 'available',
+      },
+      {
+        id: '3',
+        labelKey: 'Conditionally Enabled',
+        icon: 'pi pi-plus',
+        permission: 'TEST_MGMT#TEST_VIEW',
+        showAsOverflow: true,
+        actionEnabledField: 'available',
+      },
+    ]
+  },
+}
+
+export const WithPageSizes = {
+  render: Template,
+  args: {
+    ...defaultComponentArgs,
+    pageSizes: [2, 15, 25]
+  },
+}
+
 export default DataTableComponentSBConfig

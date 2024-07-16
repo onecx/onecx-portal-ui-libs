@@ -286,10 +286,16 @@ describe('DataListGridComponent', () => {
     it('de', async () => {
       window.HTMLElement.prototype.scrollIntoView = jest.fn()
       translateService.use('de')
+      fixture = TestBed.createComponent(DataListGridComponent)
+      component = fixture.componentInstance
+      component.data = mockData
+      component.columns = mockColumns
+      component.paginator = true
+      fixture.detectChanges()
       const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
       const paginator = await dataListGrid.getPaginator()
       const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
-      const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(3)
+      const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
       expect(rowsPerPageOptionsText).toEqual('Alle')
     })
 
@@ -299,7 +305,7 @@ describe('DataListGridComponent', () => {
       const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
       const paginator = await dataListGrid.getPaginator()
       const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
-      const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(3)
+      const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
       expect(rowsPerPageOptionsText).toEqual('All')
     })
   })

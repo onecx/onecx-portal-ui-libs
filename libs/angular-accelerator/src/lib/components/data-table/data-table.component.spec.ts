@@ -276,6 +276,12 @@ describe('DataTableComponent', () => {
     it('de', async () => {
       window.HTMLElement.prototype.scrollIntoView = jest.fn()
       translateService.use('de')
+      fixture = TestBed.createComponent(DataTableComponent)
+      component = fixture.componentInstance
+      component.rows = mockData
+      component.columns = mockColumns
+      component.paginator = true
+      fixture.detectChanges()
       const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
       const paginator = await dataTable.getPaginator()
       const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
