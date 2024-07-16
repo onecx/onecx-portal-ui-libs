@@ -71,7 +71,7 @@ export function createEntrypoint(
   injector: EnvironmentInjector,
   routerSub?: Subscription | null
 ) {
-  let originalNgDestroy = component.prototype.ngOnDestroy?.bind(component)
+  const originalNgDestroy = component.prototype.ngOnDestroy?.bind(component)
   component.prototype.ngOnDestroy = () => {
     routerSub?.unsubscribe()
     originalNgDestroy()
