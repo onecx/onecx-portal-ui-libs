@@ -79,10 +79,10 @@
     [stringTableCellTemplate]="_stringTableCell ? stringTableCell : undefined"
     [numberTableCellTemplate]="_numberTableCell ? numberTableCell : undefined"
     [customTableCellTemplate]="_customTableCell ? customTableCell : undefined"
-    [tableDateCellTemplate]="_tableDateCell ? tableDateCell : undefined"
-    [tableRelativeDateCellTemplate]="_tableRelativeDateCell ? tableRelativeDateCell : undefined"
+    [dateTableCellTemplate]="_dateTableCell ? dateTableCell : _tableDateCell ? tableDateCell : undefined"
+    [relativeDateTableCellTemplate]="_relativeDateTableCell ? relativeDateTableCell : _tableRelativeDateCell ? tableRelativeDateCell : undefined"
     [tableCellTemplate]="_tableCell ? tableCell : undefined"
-    [tableTranslationKeyCellTemplate]="_tableTranslationKeyCell ? tableTranslationKeyCell : undefined"
+    [translationKeyTableCellTemplate]="_translationKeyTableCell ? translationKeyTableCell : _tableTranslationKeyCell ? tableTranslationKeyCell : undefined"
     [gridItemSubtitleLinesTemplate]="_gridItemSubtitleLines ? gridItemSubtitleLines : undefined"
     [listItemSubtitleLinesTemplate]="_listItemSubtitleLines ? listItemSubtitleLines : undefined"
     [listItemTemplate]="_listItem? listItem : undefined"
@@ -111,10 +111,26 @@
   >
   </ng-container
 ></ng-template>
+<ng-template #dateTableCell let-rowObject="rowObject" let-column="column">
+  <ng-container
+    *ngIf="_dateTableCell"
+    [ngTemplateOutlet]="_dateTableCell"
+    [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
+  >
+  </ng-container
+></ng-template>
 <ng-template #tableRelativeDateCell let-rowObject="rowObject" let-column="column">
   <ng-container
     *ngIf="_tableRelativeDateCell"
     [ngTemplateOutlet]="_tableRelativeDateCell"
+    [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
+  >
+  </ng-container
+></ng-template>
+<ng-template #relativeDateTableCell let-rowObject="rowObject" let-column="column">
+  <ng-container
+    *ngIf="_relativeDateTableCell"
+    [ngTemplateOutlet]="_relativeDateTableCell"
     [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
   >
   </ng-container
@@ -131,6 +147,14 @@
   <ng-container
     *ngIf="_tableTranslationKeyCell"
     [ngTemplateOutlet]="_tableTranslationKeyCell"
+    [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
+  >
+  </ng-container
+></ng-template>
+<ng-template #translationKeyTableCell let-rowObject="rowObject" let-column="column">
+  <ng-container
+    *ngIf="_translationKeyTableCell"
+    [ngTemplateOutlet]="_translationKeyTableCell"
     [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
   >
   </ng-container
