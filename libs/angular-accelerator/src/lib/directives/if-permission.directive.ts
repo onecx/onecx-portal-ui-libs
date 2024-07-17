@@ -1,5 +1,21 @@
-import { Directive, ElementRef, Input, OnInit, Optional, Renderer2, TemplateRef, ViewContainerRef } from '@angular/core'
-import { UserService } from '@onecx/angular-integration-interface'
+import {
+  Directive,
+  ElementRef,
+  Inject,
+  InjectionToken,
+  Input,
+  OnInit,
+  Optional,
+  Renderer2,
+  TemplateRef,
+  ViewContainerRef,
+} from '@angular/core'
+
+export interface HasPermissionChecker {
+  hasPermission(permissionKey: string): boolean
+}
+
+export const HAS_PERMISSION_CHECKER = new InjectionToken<HasPermissionChecker>('hasPermission')
 
 @Directive({ selector: '[ocxIfPermission], [ocxIfNotPermission]' })
 export class IfPermissionDirective implements OnInit {
@@ -23,7 +39,8 @@ export class IfPermissionDirective implements OnInit {
     private renderer: Renderer2,
     private el: ElementRef,
     private viewContainer: ViewContainerRef,
-    private userService: UserService,
+    @Inject(HAS_PERMISSION_CHECKER)
+    private permissionChecker: HasPermissionChecker,
     @Optional() private templateRef?: TemplateRef<any>
   ) {}
 
@@ -51,6 +68,6 @@ export class IfPermissionDirective implements OnInit {
       }
       return result
     }
-    return this.userService.hasPermission(permission)
+    return this.permissionChecker && this.permissionChecker.hasPermission(permission)
   }
 }

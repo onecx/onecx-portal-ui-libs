@@ -22,11 +22,12 @@ import { SearchConfigComponent } from './components/search-config/search-config.
 import { SearchHeaderComponent } from './components/search-header/search-header.component'
 import { AdvancedDirective } from './directives/advanced.directive'
 import { IfBreakpointDirective } from './directives/if-breakpoint.directive'
-import { IfPermissionDirective } from './directives/if-permission.directive'
+import { HAS_PERMISSION_CHECKER, IfPermissionDirective } from './directives/if-permission.directive'
 import { SrcDirective } from './directives/src.directive'
 import { DynamicPipe } from './pipes/dynamic.pipe'
 import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
 import { AppConfigService } from './services/app-config-service'
+import { HasPermissionChecker } from './directives/if-permission.directive'
 
 export class AngularAcceleratorMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -73,6 +74,10 @@ export class AngularAcceleratorMissingTranslationHandler implements MissingTrans
         return UserService.lang$.getValue()
       },
       deps: [UserService],
+    },
+    {
+      provide: HAS_PERMISSION_CHECKER,
+      useExisting: UserService,
     },
     AppConfigService,
   ],
