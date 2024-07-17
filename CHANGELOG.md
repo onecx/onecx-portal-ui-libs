@@ -1,3 +1,11 @@
+## [4.42.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.42.0...v4.42.1) (2024-07-17)
+
+
+### Bug Fixes
+
+* resubscribe on component or module init ([#323](https://github.com/onecx/onecx-portal-ui-libs/issues/323)) ([1071dfc](https://github.com/onecx/onecx-portal-ui-libs/commit/1071dfcf84c2c4affef46aa35953180a737bd7ba))
+* **test:** correctly expose AppStateServiceMock ([#322](https://github.com/onecx/onecx-portal-ui-libs/issues/322)) ([ee65d50](https://github.com/onecx/onecx-portal-ui-libs/commit/ee65d5087c725a769b012933cf4e89d5fdae6d67))
+
 ## [4.42.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.41.0...v4.42.0) (2024-07-16)
 
 
