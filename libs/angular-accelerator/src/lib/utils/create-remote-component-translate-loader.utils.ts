@@ -17,7 +17,7 @@ export function createRemoteComponentTranslateLoader(
 ): TranslateLoader {
   const ts = translationCacheService ?? inject(TranslationCacheService)
   const timerId = lastTranslateLoaderTimerId++
-  
+
   console.time('createRemoteComponentTranslateLoader_' + timerId)
   return new AsyncTranslateLoader(
     baseUrlReplaySubject$.pipe(

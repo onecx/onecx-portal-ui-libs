@@ -1,3 +1,37 @@
+## [4.42.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.41.0...v4.42.0) (2024-07-16)
+
+
+### Features
+
+* fix minor bugs + implement pageSizes for data components ([#309](https://github.com/onecx/onecx-portal-ui-libs/issues/309)) ([912a0a4](https://github.com/onecx/onecx-portal-ui-libs/commit/912a0a40aabd2b2c1d1b7aaec2ed171e9f6223a6))
+* router unsubscribe for web components ([#318](https://github.com/onecx/onecx-portal-ui-libs/issues/318)) ([8cbaeb3](https://github.com/onecx/onecx-portal-ui-libs/commit/8cbaeb3d4d3464311b94cfdf994e9ff43dbcadeb))
+* translation cache mechanism enchancement ([#316](https://github.com/onecx/onecx-portal-ui-libs/issues/316)) ([91de9e1](https://github.com/onecx/onecx-portal-ui-libs/commit/91de9e15116f08b7d0976a4af61ebe93b6e28d69))
+
+
+### Bug Fixes
+
+* add missing ng package ([#320](https://github.com/onecx/onecx-portal-ui-libs/issues/320)) ([5171261](https://github.com/onecx/onecx-portal-ui-libs/commit/51712614111583f1b0bbeea7bea8d0dfba08769f))
+
+## [4.41.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.40.2...v4.41.0) (2024-07-11)
+
+
+### Features
+
+* add a11y plugin to storybook ([#314](https://github.com/onecx/onecx-portal-ui-libs/issues/314)) ([14281b6](https://github.com/onecx/onecx-portal-ui-libs/commit/14281b62fbc3bb3c4ee8212d372e06ddbe07c9c4))
+
+
+### Bug Fixes
+
+* fix test ([43d9ac6](https://github.com/onecx/onecx-portal-ui-libs/commit/43d9ac6eaaaacd714421152594365043400ce391))
+* fixed translation cache loading ([28ba600](https://github.com/onecx/onecx-portal-ui-libs/commit/28ba6001ddfb47a4b44635977893528ad9193786))
+* id for mfe ([2eb208f](https://github.com/onecx/onecx-portal-ui-libs/commit/2eb208f6ed11852337fd61a657798affe9ec3a3d))
+* restore connectRouter function ([404b861](https://github.com/onecx/onecx-portal-ui-libs/commit/404b861de6b377a0d494a9f6a0a5124b2de45dd9))
+
+
+### Refactoring
+
+* lint ([bf7dcf5](https://github.com/onecx/onecx-portal-ui-libs/commit/bf7dcf535d9fff38b71ace28caeb7411e0fe9cd4))
+
 ## [4.40.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.40.1...v4.40.2) (2024-07-05)
 
 

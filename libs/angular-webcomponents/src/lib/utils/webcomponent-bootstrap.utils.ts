@@ -16,7 +16,7 @@ import {
 import { Router } from '@angular/router'
 import { getLocation } from '@onecx/accelerator'
 import { EventsTopic } from '@onecx/integration-interface'
-import { filter } from 'rxjs'
+import { Subscription, filter } from 'rxjs'
 
 /**
  * Implementation inspired by @angular-architects/module-federation-plugin https://github.com/angular-architects/module-federation-plugin/blob/main/libs/mf-tools/src/lib/web-components/bootstrap-utils.ts
@@ -32,8 +32,6 @@ export function bootstrapModule<M>(module: Type<M>, appType: AppType, production
     .then((ref) => {
       if (appType === 'shell') {
         setShellZone(ref.injector)
-      } else if (appType === 'microfrontend') {
-        connectMicroFrontendRouter(ref.injector)
       }
       return ref
     })
@@ -59,10 +57,32 @@ export async function bootstrapRemoteComponent(
 
   cachePlatform(production)
   adaptRemoteComponentRoutes(app.injector)
-  connectMicroFrontendRouter(app.injector, false)
+  const sub = connectMicroFrontendRouter(app.injector, false)
+
+  createEntrypoint(component, elementName, app.injector, sub)
+}
+
+export function createAppEntrypoint(component: Type<any>, elementName: string, injector: Injector) {
+  const sub = connectMicroFrontendRouter(injector)
+  createEntrypoint(component, elementName, injector, sub)
+}
+
+function createEntrypoint(
+  component: Type<any>,
+  elementName: string,
+  injector: Injector,
+  routerSub?: Subscription | null
+) {
+  const originalNgDestroy = component.prototype.ngOnDestroy?.bind(component)
+  component.prototype.ngOnDestroy = () => {
+    routerSub?.unsubscribe()
+    if (originalNgDestroy !== undefined) {
+      originalNgDestroy()
+    }
+  }
 
   const myRemoteComponentAsWebComponent = createCustomElement(component, {
-    injector: app.injector,
+    injector: injector,
   })
 
   customElements.define(elementName, myRemoteComponentAsWebComponent)
@@ -75,11 +95,11 @@ function adaptRemoteComponentRoutes(injector: Injector) {
     return
   }
 
-  if(!router.config.find((val) => val.path === '**')) {
+  if (!router.config.find((val) => val.path === '**')) {
     router.resetConfig(
       router.config.concat({
         path: '**',
-        children: []
+        children: [],
       })
     )
   }
@@ -124,27 +144,29 @@ function cachePlatform(production: boolean): PlatformRef {
   return platform
 }
 
-function connectMicroFrontendRouter(injector: Injector, warn: boolean = true) {
+function connectMicroFrontendRouter(injector: Injector, warn: boolean = true): Subscription | null {
   const router = injector.get(Router)
 
   if (!router) {
     if (warn) {
       console.warn('No router to connect found')
     }
-    return
+    return null
   }
 
-  connectRouter(router)
+  return connectRouter(router)
 }
 
-function connectRouter(router: Router): void {
+function connectRouter(router: Router): Subscription {
   const initialUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}`
   router.navigateByUrl(initialUrl)
-  const observer = new EventsTopic();
-  observer.pipe(filter((e) => e.type === 'navigated')).subscribe(() => {
-    const routerUrl = `${location.pathname.substring(
-      getLocation().deploymentPath.length
-    )}${location.search}`;
-    router.navigateByUrl(routerUrl);
-  });
+  let lastUrl = initialUrl
+  const observer = new EventsTopic()
+  return observer.pipe(filter((e) => e.type === 'navigated')).subscribe(() => {
+    const routerUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}`
+    if (routerUrl !== lastUrl) {
+      lastUrl = routerUrl
+      router.navigateByUrl(routerUrl)
+    }
+  })
 }

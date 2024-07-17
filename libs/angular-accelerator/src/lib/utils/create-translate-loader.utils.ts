@@ -18,6 +18,7 @@ export function createTranslateLoader(
 ): TranslateLoader {
   const ts = translationCacheService ?? inject(TranslationCacheService)
   const timerId = lastTranslateLoaderTimerId++
+
   console.time('createTranslateLoader_' + timerId)
   return new AsyncTranslateLoader(
     combineLatest([appStateService.currentMfe$.asObservable(), appStateService.globalLoading$.asObservable()]).pipe(
