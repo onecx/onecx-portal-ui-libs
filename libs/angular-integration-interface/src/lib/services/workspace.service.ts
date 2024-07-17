@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
 import { AppStateService } from './app-state.service'
-import { Observable, of, map } from 'rxjs'
+import { Observable, map } from 'rxjs'
 import { Route } from '@onecx/integration-interface'
 import { Endpoint } from '@onecx/integration-interface'
 import { Location } from '@angular/common'
@@ -24,7 +24,7 @@ export class WorkspaceService {
   ): Observable<string> {
     return this.appStateService.currentWorkspace$.pipe(
       map((workspace) => {
-        let finalUrl = this.constructRouteUrl(workspace, appId, productName, endpointName, params)
+        const finalUrl = this.constructRouteUrl(workspace, appId, productName, endpointName, params)
         return finalUrl
       })
     )
@@ -127,11 +127,11 @@ export class WorkspaceService {
 
   private fillParamsForPath(path: string, params: Record<string, unknown>): string {
     while (path.includes(this.paramStart)) {
-      let paramName = path.substring(
+      const paramName = path.substring(
         path.indexOf(this.paramStart) + this.paramStart.length,
         path.indexOf(this.paramEnd)
       )
-      let paramValue = this.getStringFromUnknown(params[paramName])
+      const paramValue = this.getStringFromUnknown(params[paramName])
       if (paramValue != undefined && paramValue.length > 0) {
         path = path.replace(this.paramStart.concat(paramName).concat(this.paramEnd), paramValue)
       } else {
