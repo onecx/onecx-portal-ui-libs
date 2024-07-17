@@ -1,13 +1,14 @@
 {
   "name": "@onecx/onecx-portal-ui-libs",
-  "version": "4.41.0",
+  "version": "5.0.5",
   "license": "Apache-2.0",
   "scripts": {
     "sass": "npx sass libs/portal-integration-angular/assets/styles.scss libs/portal-integration-angular/assets/output.css",
     "postinstall": "mkdir -p .nx",
-    "build": "nx run-many -t build"
+    "build": "nx run-many -t build",
+    "buildCopy": "nx run-many -t build && cp -r ./dist/libs/. ../onecx-tenant-ui/node_modules/@onecx && cp -r ./dist/libs/. ../onecx-user-profile-ui/node_modules/@onecx && cp -r ./dist/libs/. ../onecx-announcement-ui/node_modules/@onecx"
   },
-  "private": true,
+  "private": false,
   "dependencies": {
     "@angular-architects/module-federation": "18.0.4",
     "@angular/animations": "18.0.5",
