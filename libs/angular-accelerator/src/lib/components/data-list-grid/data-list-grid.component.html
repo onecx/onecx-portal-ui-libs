@@ -1,13 +1,14 @@
 <p-dataView
-  [value]="(displayedItems$ | async) || []"
+  *ngIf="displayedPageSize$ | async as displayedPageSize"
+  [value]="(displayedItems$ | async) ?? []"
   [paginator]="paginator"
-  [first]="page * pageSize"
+  [first]="page * displayedPageSize"
   (onPage)="onPageChange($event)"
-  [rows]="pageSize"
+  [rows]="displayedPageSize"
   [layout]="layout"
   [showCurrentPageReport]="true"
   currentPageReportTemplate="{{ (totalRecordsOnServer ? currentPageShowingWithTotalOnServerKey : currentPageShowingKey) | translate:params }}"
-  [rowsPerPageOptions]="[10, 25, 50, data?.length]"
+  [rowsPerPageOptions]="(displayedPageSizes$ | async) ?? []"
   id="dataListGrid_{{name}}"
   paginatorDropdownAppendTo="body"
 >
