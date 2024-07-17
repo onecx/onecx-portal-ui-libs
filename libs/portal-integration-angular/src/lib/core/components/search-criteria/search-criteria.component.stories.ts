@@ -55,14 +55,14 @@ export default {
   ],
 } as Meta<SearchCriteriaComponent>
 
-const Template: StoryFn<SearchCriteriaComponent> = (args: SearchCriteriaComponent) => ({
+const Template: StoryFn<SearchCriteriaComponent> = (args) => ({
   props: args,
   template: `
   <ocx-search-criteria [disableAdvancedToggle]="disableAdvancedToggle" [showBreadcrumbs]="showBreadcrumbs" [header]="header" [subheader]="subheader" [actions]="actions"></ocx-search-criteria>
   `,
 })
 
-const TemplateWithProjection: StoryFn<SearchCriteriaComponent> = (args: SearchCriteriaComponent) => ({
+const TemplateWithProjection: StoryFn<SearchCriteriaComponent> = (args) => ({
   props: args,
   template: `
   <ocx-search-criteria [disableAdvancedToggle]="disableAdvancedToggle" [showBreadcrumbs]="showBreadcrumbs" [header]="header" [subheader]="subheader" [actions]="actions">
@@ -85,7 +85,7 @@ const TemplateWithProjection: StoryFn<SearchCriteriaComponent> = (args: SearchCr
   </ocx-search-criteria>`,
 })
 
-const TemplateWithProjectionAndExtraToolbar: StoryFn<SearchCriteriaComponent> = (args: SearchCriteriaComponent) => ({
+const TemplateWithProjectionAndExtraToolbar: StoryFn<SearchCriteriaComponent> = (args) => ({
   props: args,
   template: `
   <ocx-search-criteria [disableAdvancedToggle]="disableAdvancedToggle" [showBreadcrumbs]="showBreadcrumbs" [header]="header" [subheader]="subheader" [actions]="actions">
