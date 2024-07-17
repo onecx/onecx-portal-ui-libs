@@ -189,7 +189,7 @@ export class DataViewComponent implements DoCheck, OnInit {
    */
   @ContentChild('tableRelativeDateCell') tableRelativeDateCellChildTemplate: TemplateRef<any> | undefined
   @ContentChild('relativeDateTableCell') relativeDateTableCellChildTemplate: TemplateRef<any> | undefined
-  get _tableRelativeDateCell(): TemplateRef<any> | undefined {
+  get _relativeDateTableCell(): TemplateRef<any> | undefined {
     return this.relativeDateTableCellTemplate || this.relativeDateTableCellChildTemplate || this.tableRelativeDateCellChildTemplate
   }
 
