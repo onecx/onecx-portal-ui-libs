@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { AppStateService } from './app-state.service';
-import { Observable, of, switchMap} from 'rxjs';
+import { Observable, of, map} from 'rxjs';
 import { Route } from '@onecx/integration-interface';
 import { Endpoint } from '@onecx/integration-interface';
+import { Location } from '@angular/common'
 
 @Injectable({
   providedIn: 'root'
@@ -21,9 +22,9 @@ export class WorkspaceService {
 
      getUrl(appId: string, productName: string, endpointName: string, params: Record<string, unknown>={}): Observable<string> {
       return this.appStateService.currentWorkspace$.pipe(
-        switchMap((workspace) => {
+        map((workspace) => {
           let finalUrl = this.constructRouteUrl(workspace, appId, productName, endpointName, params)
-          return of(finalUrl);
+          return finalUrl;
         })
       );
     }
@@ -38,19 +39,19 @@ export class WorkspaceService {
 
     private constructRouteUrl(workspace: any, appId: string, productName: string, endpointName: string, params: Record<string, unknown>): string {
       const route = this.filterRouteFromList(workspace.routes, appId, productName);
-      let routeUrl = this.constructBaseUrlFromWorkspace(workspace);
+      let url = this.constructBaseUrlFromWorkspace(workspace);
       if (!route) {
         console.log(`WARNING: No route.baseUrl could be found for given appId "${appId}" and productName "${productName}"`);
 
-        return routeUrl;
+        return url;
       }
       
       if(route.baseUrl !== undefined && route.baseUrl.length > 0){
-        routeUrl = route.baseUrl;
+        url = route.baseUrl;
       }
 
-      routeUrl = this.joinWithSlashAndDoubleCheck(routeUrl,this.constructEndpointUrl(route, endpointName, params));
-      return routeUrl;
+      url = Location.joinWithSlash(url,this.constructEndpointUrl(route, endpointName, params));
+      return url;
     }
 
     private constructEndpointUrl(route: any, endpointName: string, params: Record<string, unknown>): string {
@@ -84,7 +85,7 @@ export class WorkspaceService {
       }
     
       if (productRoutes.length > 1) {
-        console.log("WARNING: Es wurden mehr als eine route gefunden. Die erste wird verwendet.");
+        console.log("WARNING: There were more than one route. First route has been used.");
       }
     
       return productRoutes[0]; 
@@ -144,15 +145,5 @@ export class WorkspaceService {
       } else {
         return String(value);  
       }
-    }
-
-    private joinWithSlashAndDoubleCheck(string1: string, string2: string) : string{
-      if(string2.length==0){
-        return string1;
-      }
-      if(string1.length==0){
-        return string2;
-      }
-      return [string1,string2].join("/").replace(/(?<=[a-zA-Z])\/{2,}/g,'/');
     }
 }
