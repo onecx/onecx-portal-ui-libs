@@ -70,9 +70,24 @@ export class InteractiveDataViewComponent implements OnInit {
   @Input() frozenActionColumn = false
   @Input() actionColumnPosition: 'left' | 'right' = 'right'
   @ContentChild('tableCell') tableCell: TemplateRef<any> | undefined
+  /**
+   * @deprecated Will be replaced by dateTableCell
+   */
   @ContentChild('tableDateCell') tableDateCell: TemplateRef<any> | undefined
+  @ContentChild('dateTableCell') dateTableCell: TemplateRef<any> | undefined
+
+  /**
+   * @deprecated Will be replaced by relativeDateTableCell
+   */
   @ContentChild('tableRelativeDateCell') tableRelativeDateCell: TemplateRef<any> | undefined
+  @ContentChild('relativeDateTableCell') relativeDateTableCell: TemplateRef<any> | undefined
+
+  /**
+   * @deprecated Will be replaced by translationKeyTableCell
+   */
   @ContentChild('tableTranslationKeyCell') tableTranslationKeyCell: TemplateRef<any> | undefined
+  @ContentChild('translationKeyTableCell') translationKeyTableCell: TemplateRef<any> | undefined
+
   @ContentChild('gridItemSubtitleLines') gridItemSubtitleLines: TemplateRef<any> | undefined
   @ContentChild('listItemSubtitleLines') listItemSubtitleLines: TemplateRef<any> | undefined
   @ContentChild('stringTableCell') stringTableCell: TemplateRef<any> | undefined
@@ -126,13 +141,22 @@ export class InteractiveDataViewComponent implements OnInit {
     return this.customTableCell
   }
   get _tableDateCell(): TemplateRef<any> | undefined {
-    return this.tableDateCell
+    return this.dateTableCell ?? this.tableDateCell
+  }
+  get _dateTableCell(): TemplateRef<any> | undefined {
+    return this.dateTableCell
   }
   get _tableRelativeDateCell(): TemplateRef<any> | undefined {
-    return this.tableRelativeDateCell
+    return this.relativeDateTableCell ?? this.tableRelativeDateCell
+  }
+  get _relativeDateTableCell(): TemplateRef<any> | undefined {
+    return this.relativeDateTableCell
   }
   get _tableTranslationKeyCell(): TemplateRef<any> | undefined {
-    return this.tableTranslationKeyCell
+    return this.translationKeyTableCell ?? this.tableTranslationKeyCell
+  }
+  get _translationKeyTableCell(): TemplateRef<any> | undefined {
+    return this.translationKeyTableCell
   }
   get _gridItem(): TemplateRef<any> | undefined {
     return this.gridItem

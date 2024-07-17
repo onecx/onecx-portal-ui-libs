@@ -134,16 +134,16 @@
   ></ng-template>
   <ng-template #dateCell let-rowObject="rowObject" let-column="column">
     <ng-container
-      *ngIf="_tableDateCell"
-      [ngTemplateOutlet]="_tableDateCell"
+      *ngIf="_dateTableCell"
+      [ngTemplateOutlet]="_dateTableCell"
       [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
     >
     </ng-container
   ></ng-template>
   <ng-template #relativeDateCell let-rowObject="rowObject" let-column="column">
     <ng-container
-      *ngIf="_tableRelativeDateCell"
-      [ngTemplateOutlet]="_tableRelativeDateCell"
+      *ngIf="_relativeDateTableCell"
+      [ngTemplateOutlet]="_relativeDateTableCell"
       [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
     >
     </ng-container
@@ -158,8 +158,8 @@
   ></ng-template>
   <ng-template #translationKeyCell let-rowObject="rowObject" let-column="column">
     <ng-container
-      *ngIf="_tableTranslationKeyCell"
-      [ngTemplateOutlet]="_tableTranslationKeyCell"
+      *ngIf="_translationKeyTableCell"
+      [ngTemplateOutlet]="_translationKeyTableCell"
       [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
     >
     </ng-container
