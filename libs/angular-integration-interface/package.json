@@ -3,7 +3,7 @@
   "version": "5.0.0",
   "peerDependencies": {
     "@angular/core": "^18.0.5",
-    "@onecx/integration-interface": "~4",
+    "@onecx/integration-interface": "~5",
     "rxjs": "~7.8.1"
   },
   "dependencies": {},
