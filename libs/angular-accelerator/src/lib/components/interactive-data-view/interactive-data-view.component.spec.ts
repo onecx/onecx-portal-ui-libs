@@ -20,11 +20,7 @@ import {
   ListItemHarness,
 } from '@onecx/angular-testing'
 import { UserService } from '@onecx/angular-integration-interface'
-import {
-  AppStateServiceMock,
-  MockUserService,
-  provideAppStateServiceMock,
-} from '@onecx/angular-integration-interface/mocks'
+import { MockUserService, provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { InteractiveDataViewComponent } from './interactive-data-view.component'
 import { DataLayoutSelectionComponent } from '../data-layout-selection/data-layout-selection.component'
@@ -47,7 +43,6 @@ import { DateUtils } from '../../utils/dateutils'
 import { provideRouter } from '@angular/router'
 
 describe('InteractiveDataViewComponent', () => {
-  let mockAppStateService: AppStateServiceMock
   let component: InteractiveDataViewComponent
   let fixture: ComponentFixture<InteractiveDataViewComponent>
   let loader: HarnessLoader
@@ -245,7 +240,6 @@ describe('InteractiveDataViewComponent', () => {
       ],
     }).compileComponents()
 
-    mockAppStateService = TestBed.inject(AppStateServiceMock)
     fixture = TestBed.createComponent(InteractiveDataViewComponent)
     component = fixture.componentInstance
     component.viewPermission = 'TEST_MGMT#TEST_View'
@@ -1516,7 +1510,9 @@ describe('InteractiveDataViewComponent', () => {
     it('should remain filtered with third filter option after switching view data view from table view to grid view and to list view', async () => {
       const expectedFilteredRowsData = [['name 1', '', 'status name 1', '']]
       const expectedFilteredListItemsData = [['name 1', '2023-09-14T09:34:22Z', '123456789']]
-      const expectedFilteredGridItemsData = [['./onecx-portal-lib/assets/images/placeholder.png', 'name 1', '2023-09-14T09:34:22Z', '123456789']]
+      const expectedFilteredGridItemsData = [
+        ['./onecx-portal-lib/assets/images/placeholder.png', 'name 1', '2023-09-14T09:34:22Z', '123456789'],
+      ]
       const filterMultiSelect = await tableHeaders[0].getFilterMultiSelect()
 
       allFilterOptions = await filterMultiSelect.getAllOptions()

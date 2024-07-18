@@ -5,11 +5,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { UserService } from '@onecx/angular-integration-interface'
-import {
-  AppStateServiceMock,
-  MockUserService,
-  provideAppStateServiceMock,
-} from '@onecx/angular-integration-interface/mocks'
+import { MockUserService, provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { DataListGridComponent } from './data-list-grid.component'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { ColumnType } from '../../model/column-type.model'
@@ -18,7 +14,6 @@ import { DataTableHarness } from '../../../../testing/data-table.harness'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 
 describe('DataListGridComponent', () => {
-  let mockAppStateService: AppStateServiceMock
   let fixture: ComponentFixture<DataListGridComponent>
   let component: DataListGridComponent
   let translateService: TranslateService
@@ -230,7 +225,6 @@ describe('DataListGridComponent', () => {
       ],
     }).compileComponents()
 
-    mockAppStateService = TestBed.inject(AppStateServiceMock)
     fixture = TestBed.createComponent(DataListGridComponent)
     component = fixture.componentInstance
     component.data = mockData
