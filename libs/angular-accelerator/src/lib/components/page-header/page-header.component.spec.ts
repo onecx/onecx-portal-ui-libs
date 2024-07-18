@@ -7,13 +7,16 @@ import { PrimeIcons } from 'primeng/api'
 import { BreadcrumbModule } from 'primeng/breadcrumb'
 import { MenuModule } from 'primeng/menu'
 import { ButtonModule } from 'primeng/button'
-import { AppStateService } from '@onecx/angular-integration-interface'
 import { UserService } from '@onecx/angular-integration-interface'
-import { MockUserService } from '@onecx/angular-integration-interface/mocks'
+import {
+  AppStateServiceMock,
+  MockUserService,
+  provideAppStateServiceMock,
+} from '@onecx/angular-integration-interface/mocks'
 import { PageHeaderHarness, TestbedHarnessEnvironment } from '../../../../testing'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 
 const mockActions: Action[] = [
   {
@@ -44,38 +47,7 @@ const mockActions: Action[] = [
 ]
 
 describe('PageHeaderComponent', () => {
-  const origAddEventListener = window.addEventListener
-  const origPostMessage = window.postMessage
-
-  let listeners: any[] = []
-  window.addEventListener = (_type: any, listener: any) => {
-    listeners.push(listener)
-  }
-
-  window.removeEventListener = (_type: any, listener: any) => {
-    listeners = listeners.filter((l) => l !== listener)
-  }
-
-  window.postMessage = (m: any) => {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    listeners.forEach((l) => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }))
-  }
-
-  const mutationObserverMock = jest.fn(function MutationObserver(callback) {
-    this.observe = jest.fn()
-    this.disconnect = jest.fn()
-    this.trigger = (mockedMutationsList: any) => {
-      callback(mockedMutationsList, this)
-    }
-    return this
-  })
-  global.MutationObserver = mutationObserverMock
-
-  afterAll(() => {
-    window.addEventListener = origAddEventListener
-    window.postMessage = origPostMessage
-  })
-
+  let mockAppStateService: AppStateServiceMock
   let component: PageHeaderComponent
   let fixture: ComponentFixture<PageHeaderComponent>
   let pageHeaderHarness: PageHeaderHarness
@@ -83,21 +55,28 @@ describe('PageHeaderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [PageHeaderComponent, PageHeaderComponent, DynamicPipe],
-    imports: [RouterTestingModule,
+      declarations: [PageHeaderComponent, PageHeaderComponent, DynamicPipe],
+      imports: [
+        RouterTestingModule,
         TranslateTestingModule.withTranslations({
-            en: require('./../../../../assets/i18n/en.json'),
-            de: require('./../../../../assets/i18n/de.json'),
+          en: require('./../../../../assets/i18n/en.json'),
+          de: require('./../../../../assets/i18n/de.json'),
         }),
         BreadcrumbModule,
         MenuModule,
         ButtonModule,
-        NoopAnimationsModule],
-    providers: [AppStateService, { provide: UserService, useClass: MockUserService }, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
-}).compileComponents()
+        NoopAnimationsModule,
+      ],
+      providers: [
+        { provide: UserService, useClass: MockUserService },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+        provideAppStateServiceMock(),
+      ],
+    }).compileComponents()
 
-    const appStateService = getTestBed().inject(AppStateService)
-    await appStateService.currentPortal$.publish({
+    mockAppStateService = TestBed.inject(AppStateServiceMock)
+    mockAppStateService.currentPortal$.publish({
       id: 'i-am-test-portal',
       portalName: 'test',
       workspaceName: 'test',

@@ -5,7 +5,11 @@ import { ActivatedRoute, RouterModule } from '@angular/router'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { UserService } from '@onecx/angular-integration-interface'
-import { MockUserService } from '@onecx/angular-integration-interface/mocks'
+import {
+  AppStateServiceMock,
+  MockUserService,
+  provideAppStateServiceMock,
+} from '@onecx/angular-integration-interface/mocks'
 import { DataListGridComponent } from './data-list-grid.component'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { ColumnType } from '../../model/column-type.model'
@@ -14,38 +18,7 @@ import { DataTableHarness } from '../../../../testing/data-table.harness'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 
 describe('DataListGridComponent', () => {
-  const origAddEventListener = window.addEventListener
-  const origPostMessage = window.postMessage
-
-  let listeners: any[] = []
-  window.addEventListener = (_type: any, listener: any) => {
-    listeners.push(listener)
-  }
-
-  window.removeEventListener = (_type: any, listener: any) => {
-    listeners = listeners.filter((l) => l !== listener)
-  }
-
-  window.postMessage = (m: any) => {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    listeners.forEach((l) => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }))
-  }
-
-  const mutationObserverMock = jest.fn(function MutationObserver(callback) {
-    this.observe = jest.fn()
-    this.disconnect = jest.fn()
-    this.trigger = (mockedMutationsList: any) => {
-      callback(mockedMutationsList, this)
-    }
-    return this
-  })
-  global.MutationObserver = mutationObserverMock
-
-  afterAll(() => {
-    window.addEventListener = origAddEventListener
-    window.postMessage = origPostMessage
-  })
-  
+  let mockAppStateService: AppStateServiceMock
   let fixture: ComponentFixture<DataListGridComponent>
   let component: DataListGridComponent
   let translateService: TranslateService
@@ -253,9 +226,11 @@ describe('DataListGridComponent', () => {
           },
         },
         { provide: UserService, useClass: MockUserService },
+        provideAppStateServiceMock(),
       ],
     }).compileComponents()
 
+    mockAppStateService = TestBed.inject(AppStateServiceMock)
     fixture = TestBed.createComponent(DataListGridComponent)
     component = fixture.componentInstance
     component.data = mockData

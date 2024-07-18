@@ -20,7 +20,11 @@ import {
   ListItemHarness,
 } from '@onecx/angular-testing'
 import { UserService } from '@onecx/angular-integration-interface'
-import { MockUserService } from '@onecx/angular-integration-interface/mocks'
+import {
+  AppStateServiceMock,
+  MockUserService,
+  provideAppStateServiceMock,
+} from '@onecx/angular-integration-interface/mocks'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { InteractiveDataViewComponent } from './interactive-data-view.component'
 import { DataLayoutSelectionComponent } from '../data-layout-selection/data-layout-selection.component'
@@ -43,38 +47,7 @@ import { DateUtils } from '../../utils/dateutils'
 import { provideRouter } from '@angular/router'
 
 describe('InteractiveDataViewComponent', () => {
-  const origAddEventListener = window.addEventListener
-  const origPostMessage = window.postMessage
-
-  let listeners: any[] = []
-  window.addEventListener = (_type: any, listener: any) => {
-    listeners.push(listener)
-  }
-
-  window.removeEventListener = (_type: any, listener: any) => {
-    listeners = listeners.filter((l) => l !== listener)
-  }
-
-  window.postMessage = (m: any) => {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    listeners.forEach((l) => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }))
-  }
-
-  const mutationObserverMock = jest.fn(function MutationObserver(callback) {
-    this.observe = jest.fn()
-    this.disconnect = jest.fn()
-    this.trigger = (mockedMutationsList: any) => {
-      callback(mockedMutationsList, this)
-    }
-    return this
-  })
-  global.MutationObserver = mutationObserverMock
-
-  afterAll(() => {
-    window.addEventListener = origAddEventListener
-    window.postMessage = origPostMessage
-  })
-
+  let mockAppStateService: AppStateServiceMock
   let component: InteractiveDataViewComponent
   let fixture: ComponentFixture<InteractiveDataViewComponent>
   let loader: HarnessLoader
@@ -268,9 +241,11 @@ describe('InteractiveDataViewComponent', () => {
         { provide: UserService, useClass: MockUserService },
         provideHttpClient(withInterceptorsFromDi()),
         provideRouter([]),
+        provideAppStateServiceMock(),
       ],
     }).compileComponents()
 
+    mockAppStateService = TestBed.inject(AppStateServiceMock)
     fixture = TestBed.createComponent(InteractiveDataViewComponent)
     component = fixture.componentInstance
     component.viewPermission = 'TEST_MGMT#TEST_View'
@@ -1146,10 +1121,10 @@ describe('InteractiveDataViewComponent', () => {
     })
     const expectedInitialGridItemsData = [
       ['/path/to/image', 'some name', '2023-09-13T09:34:05Z'],
-      ['', 'example', '2023-09-12T09:33:53Z'],
-      ['', 'name 1', '2023-09-14T09:34:22Z'],
-      ['', 'name 2', '2023-09-14T09:34:22Z'],
-      ['', 'name 3', '2023-09-14T09:34:22Z'],
+      ['./onecx-portal-lib/assets/images/placeholder.png', 'example', '2023-09-12T09:33:53Z'],
+      ['./onecx-portal-lib/assets/images/placeholder.png', 'name 1', '2023-09-14T09:34:22Z'],
+      ['./onecx-portal-lib/assets/images/placeholder.png', 'name 2', '2023-09-14T09:34:22Z'],
+      ['./onecx-portal-lib/assets/images/placeholder.png', 'name 3', '2023-09-14T09:34:22Z'],
     ]
 
     it('should load grid', async () => {
@@ -1166,10 +1141,10 @@ describe('InteractiveDataViewComponent', () => {
 
     it('should be sorted by first sorting dropdown item in ascending order', async () => {
       const expectedGridItemsDataAfterSorting = [
-        ['', 'example', '2023-09-12T09:33:53Z'],
-        ['', 'name 1', '2023-09-14T09:34:22Z'],
-        ['', 'name 2', '2023-09-14T09:34:22Z'],
-        ['', 'name 3', '2023-09-14T09:34:22Z'],
+        ['./onecx-portal-lib/assets/images/placeholder.png', 'example', '2023-09-12T09:33:53Z'],
+        ['./onecx-portal-lib/assets/images/placeholder.png', 'name 1', '2023-09-14T09:34:22Z'],
+        ['./onecx-portal-lib/assets/images/placeholder.png', 'name 2', '2023-09-14T09:34:22Z'],
+        ['./onecx-portal-lib/assets/images/placeholder.png', 'name 3', '2023-09-14T09:34:22Z'],
         ['/path/to/image', 'some name', '2023-09-13T09:34:05Z'],
       ]
 
@@ -1185,10 +1160,10 @@ describe('InteractiveDataViewComponent', () => {
     it('should be sorted by first sorting dropdown item in descending order', async () => {
       const expectedGridItemsDataAfterSorting = [
         ['/path/to/image', 'some name', '2023-09-13T09:34:05Z'],
-        ['', 'name 3', '2023-09-14T09:34:22Z'],
-        ['', 'name 2', '2023-09-14T09:34:22Z'],
-        ['', 'name 1', '2023-09-14T09:34:22Z'],
-        ['', 'example', '2023-09-12T09:33:53Z'],
+        ['./onecx-portal-lib/assets/images/placeholder.png', 'name 3', '2023-09-14T09:34:22Z'],
+        ['./onecx-portal-lib/assets/images/placeholder.png', 'name 2', '2023-09-14T09:34:22Z'],
+        ['./onecx-portal-lib/assets/images/placeholder.png', 'name 1', '2023-09-14T09:34:22Z'],
+        ['./onecx-portal-lib/assets/images/placeholder.png', 'example', '2023-09-12T09:33:53Z'],
       ]
 
       await sortingDropdownItems[0].selectItem()
@@ -1454,16 +1429,16 @@ describe('InteractiveDataViewComponent', () => {
     ]
     const expectedSortedGridItemsDataAscending = [
       ['/path/to/image', 'some name', '2023-09-13T09:34:05Z', '1'],
-      ['', 'example', '2023-09-12T09:33:53Z', '3.141'],
-      ['', 'name 3', '2023-09-14T09:34:22Z', '7.1'],
-      ['', 'name 2', '2023-09-14T09:34:22Z', '12345.6789'],
-      ['', 'name 1', '2023-09-14T09:34:22Z', '123456789'],
+      ['./onecx-portal-lib/assets/images/placeholder.png', 'example', '2023-09-12T09:33:53Z', '3.141'],
+      ['./onecx-portal-lib/assets/images/placeholder.png', 'name 3', '2023-09-14T09:34:22Z', '7.1'],
+      ['./onecx-portal-lib/assets/images/placeholder.png', 'name 2', '2023-09-14T09:34:22Z', '12345.6789'],
+      ['./onecx-portal-lib/assets/images/placeholder.png', 'name 1', '2023-09-14T09:34:22Z', '123456789'],
     ]
     const expectedSortedGridItemsDataDescending = [
-      ['', 'name 1', '2023-09-14T09:34:22Z', '123456789'],
-      ['', 'name 2', '2023-09-14T09:34:22Z', '12345.6789'],
-      ['', 'name 3', '2023-09-14T09:34:22Z', '7.1'],
-      ['', 'example', '2023-09-12T09:33:53Z', '3.141'],
+      ['./onecx-portal-lib/assets/images/placeholder.png', 'name 1', '2023-09-14T09:34:22Z', '123456789'],
+      ['./onecx-portal-lib/assets/images/placeholder.png', 'name 2', '2023-09-14T09:34:22Z', '12345.6789'],
+      ['./onecx-portal-lib/assets/images/placeholder.png', 'name 3', '2023-09-14T09:34:22Z', '7.1'],
+      ['./onecx-portal-lib/assets/images/placeholder.png', 'example', '2023-09-12T09:33:53Z', '3.141'],
       ['/path/to/image', 'some name', '2023-09-13T09:34:05Z', '1'],
     ]
 
@@ -1541,7 +1516,7 @@ describe('InteractiveDataViewComponent', () => {
     it('should remain filtered with third filter option after switching view data view from table view to grid view and to list view', async () => {
       const expectedFilteredRowsData = [['name 1', '', 'status name 1', '']]
       const expectedFilteredListItemsData = [['name 1', '2023-09-14T09:34:22Z', '123456789']]
-      const expectedFilteredGridItemsData = [['', 'name 1', '2023-09-14T09:34:22Z', '123456789']]
+      const expectedFilteredGridItemsData = [['./onecx-portal-lib/assets/images/placeholder.png', 'name 1', '2023-09-14T09:34:22Z', '123456789']]
       const filterMultiSelect = await tableHeaders[0].getFilterMultiSelect()
 
       allFilterOptions = await filterMultiSelect.getAllOptions()

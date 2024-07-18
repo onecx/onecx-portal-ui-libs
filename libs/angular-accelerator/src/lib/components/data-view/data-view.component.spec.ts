@@ -8,48 +8,21 @@ import { DataViewModule } from 'primeng/dataview'
 
 import { DataListGridHarness, DataTableHarness, DataViewHarness } from '@onecx/angular-accelerator/testing'
 import { UserService } from '@onecx/angular-integration-interface'
-import { MockUserService } from '@onecx/angular-integration-interface/mocks'
+import {
+  AppStateServiceMock,
+  MockUserService,
+  provideAppStateServiceMock,
+} from '@onecx/angular-integration-interface/mocks'
 import { DataViewComponent } from './data-view.component'
 import { MockAuthModule } from '../../mock-auth/mock-auth.module'
 import { DataListGridComponent } from '../data-list-grid/data-list-grid.component'
 import { DataTableComponent } from '../data-table/data-table.component'
 import { ColumnType } from '../../model/column-type.model'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 
 describe('DataViewComponent', () => {
-  const origAddEventListener = window.addEventListener
-  const origPostMessage = window.postMessage
-
-  let listeners: any[] = []
-  window.addEventListener = (_type: any, listener: any) => {
-    listeners.push(listener)
-  }
-
-  window.removeEventListener = (_type: any, listener: any) => {
-    listeners = listeners.filter((l) => l !== listener)
-  }
-
-  window.postMessage = (m: any) => {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    listeners.forEach((l) => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }))
-  }
-
-  const mutationObserverMock = jest.fn(function MutationObserver(callback) {
-    this.observe = jest.fn()
-    this.disconnect = jest.fn()
-    this.trigger = (mockedMutationsList: any) => {
-      callback(mockedMutationsList, this)
-    }
-    return this
-  })
-  global.MutationObserver = mutationObserverMock
-
-  afterAll(() => {
-    window.addEventListener = origAddEventListener
-    window.postMessage = origPostMessage
-  })
-
+  let mockAppStateService: AppStateServiceMock
   let component: DataViewComponent
   let fixture: ComponentFixture<DataViewComponent>
   let dataViewHarness: DataViewHarness
@@ -226,30 +199,34 @@ describe('DataViewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [DataViewComponent, DataListGridComponent, DataTableComponent],
-    imports: [DataViewModule,
+      declarations: [DataViewComponent, DataListGridComponent, DataTableComponent],
+      imports: [
+        DataViewModule,
         MockAuthModule,
         TranslateTestingModule.withTranslations(TRANSLATIONS),
         AngularAcceleratorModule,
         RouterModule,
-        NoopAnimationsModule],
-    providers: [
+        NoopAnimationsModule,
+      ],
+      providers: [
         { provide: UserService, useClass: MockUserService },
         {
-            provide: ActivatedRoute,
-            useValue: {
-                snapshot: {
-                    paramMap: {
-                        get: () => '1',
-                    },
-                },
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              paramMap: {
+                get: () => '1',
+              },
             },
+          },
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
-    ]
-}).compileComponents()
+        provideAppStateServiceMock(),
+      ],
+    }).compileComponents()
 
+    mockAppStateService = TestBed.inject(AppStateServiceMock)
     fixture = TestBed.createComponent(DataViewComponent)
     component = fixture.componentInstance
     component.data = mockData

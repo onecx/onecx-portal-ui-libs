@@ -8,57 +8,34 @@ import { AppStateService } from '@onecx/angular-integration-interface'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { SearchHeaderComponent } from './search-header.component'
 import { PageHeaderComponent } from '../page-header/page-header.component'
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { AppStateServiceMock, provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 
 describe('SearchHeaderComponent', () => {
-  const origAddEventListener = window.addEventListener
-  const origPostMessage = window.postMessage
-
-  let listeners: any[] = []
-  window.addEventListener = (_type: any, listener: any) => {
-    listeners.push(listener)
-  }
-
-  window.removeEventListener = (_type: any, listener: any) => {
-    listeners = listeners.filter((l) => l !== listener)
-  }
-
-  window.postMessage = (m: any) => {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    listeners.forEach((l) => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }))
-  }
-
-  const mutationObserverMock = jest.fn(function MutationObserver(callback) {
-    this.observe = jest.fn()
-    this.disconnect = jest.fn()
-    this.trigger = (mockedMutationsList: any) => {
-      callback(mockedMutationsList, this)
-    }
-    return this
-  })
-  global.MutationObserver = mutationObserverMock
-
-  afterAll(() => {
-    window.addEventListener = origAddEventListener
-    window.postMessage = origPostMessage
-  })
-
+  let mockAppStateService: AppStateServiceMock
   let component: SearchHeaderComponent
   let fixture: ComponentFixture<SearchHeaderComponent>
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [SearchHeaderComponent, PageHeaderComponent],
-    imports: [TranslateTestingModule.withTranslations({}),
+      declarations: [SearchHeaderComponent, PageHeaderComponent],
+      imports: [
+        TranslateTestingModule.withTranslations({}),
         RouterTestingModule,
         ButtonModule,
         BreadcrumbModule,
-        AngularAcceleratorModule],
-    providers: [AppStateService, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
-}).compileComponents()
+        AngularAcceleratorModule,
+      ],
+      providers: [
+        AppStateService,
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+        provideAppStateServiceMock(),
+      ],
+    }).compileComponents()
 
-    const appStateService = getTestBed().inject(AppStateService)
-    await appStateService.currentPortal$.publish({
+    mockAppStateService = TestBed.inject(AppStateServiceMock)
+    mockAppStateService.currentPortal$.publish({
       id: 'i-am-test-portal',
       portalName: 'test',
       workspaceName: 'test',

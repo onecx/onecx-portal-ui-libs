@@ -12,8 +12,7 @@
   id="dataListGrid_{{name}}"
   paginatorDropdownAppendTo="body"
 >
-  <ng-template let-item pTemplate="paginatordropdownitem">
-    {{ item.value === data?.length ? ("OCX_DATA_TABLE.ALL" | translate) : item.value }}
+  <ng-template #gridItem let-item pTemplate="gridItem">
   </ng-template>
   <ng-template #gridItem let-rows pTemplate="gridItem">
     <div class="p-grid p-nogutter grid grid-nogutter">
@@ -68,7 +67,7 @@
             pButton
             (click)="setSelectedItem(item); updateGridMenuItems(true); menu.toggle($event)"
             icon="pi pi-ellipsis-v"
-            [attr.aria-label]="'OCX_DATA_LIST_GRID.MORE_ACTIONS' | translate"
+            [ariaLabel]="'OCX_DATA_LIST_GRID.MORE_ACTIONS' | translate"
             class="more-actions-menu-button menu-btn"
             [attr.name]="'data-grid-item-menu-button'"
           ></button>
@@ -166,7 +165,7 @@
                 class="p-button-rounded p-button-text"
                 [icon]="'pi pi-ellipsis-v'"
                 (click)="menu.toggle($event)"
-                [attr.aria-label]="'OCX_DATA_TABLE.MORE_ACTIONS' | translate"
+                [ariaLabel]="'OCX_DATA_TABLE.MORE_ACTIONS' | translate"
                 [title]="'OCX_DATA_TABLE.MORE_ACTIONS' | translate"
               ></button>
             </ng-container>
