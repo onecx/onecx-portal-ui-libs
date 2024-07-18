@@ -150,7 +150,7 @@ function cachePlatform(production: boolean): PlatformRef {
   return platform
 }
 
-function connectMicroFrontendRouter(injector: Injector, warn: boolean = true): Subscription | null {
+function connectMicroFrontendRouter(injector: Injector, warn = true): Subscription | null {
   const router = injector.get(Router)
 
   if (!router) {

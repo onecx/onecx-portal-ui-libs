@@ -2,7 +2,7 @@
   "name": "@onecx/accelerator",
   "version": "4.43.1",
   "peerDependencies": {
-    "tslib": "^2.3.0",
+    "tslib": "^2.6.3",
     "rxjs": "7.8.1"
   },
   "type": "commonjs",

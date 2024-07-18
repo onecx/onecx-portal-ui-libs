@@ -43,7 +43,7 @@ export default {
   ],
 } as Meta<GroupByCountDiagramComponent>
 
-const Template: StoryFn<GroupByCountDiagramComponent> = (args: GroupByCountDiagramComponent) => ({
+const Template: StoryFn<GroupByCountDiagramComponent> = (args) => ({
   props: args,
 })
 

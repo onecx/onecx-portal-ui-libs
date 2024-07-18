@@ -2,9 +2,9 @@
   "name": "@onecx/angular-integration-interface",
   "version": "4.43.1",
   "peerDependencies": {
-    "@angular/core": "^15.2.7",
+    "@angular/core": "^18.0.5",
     "@onecx/integration-interface": "~4",
-    "rxjs": "~7.8.0"
+    "rxjs": "~7.8.1"
   },
   "dependencies": {},
   "publishConfig": {

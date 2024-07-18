@@ -34,7 +34,12 @@
       </svg>
     </a>
 
-    <a class="layout-menu-button shadow-6" (click)="onMenuButtonClick($event)" pRipple [title]="menuButtonTitle ?? ('OCX_HEADER.MENU_TOGGLE' | translate)">
+    <a
+      class="layout-menu-button shadow-6"
+      (click)="onMenuButtonClick($event)"
+      pRipple
+      [title]="menuButtonTitle ?? ('OCX_HEADER.MENU_TOGGLE' | translate)"
+    >
       <i class="pi pi-chevron-right"></i>
     </a>
   </div>
@@ -57,7 +62,7 @@
               <a
                 class="layout-topbar-action rounded-circle"
                 pRipple
-                (click)="item?.command($event)"
+                (click)="item?.command({originalEvent: $event, item})"
                 [title]="item.label"
                 [pTooltip]="item.label || ''"
                 tooltipPosition="bottom"
@@ -202,7 +207,7 @@
                   pRipple
                   href="#"
                   [routerLink]="item.routerLink"
-                  (click)="item?.command($event)"
+                  (click)="item?.command({originalEvent: $event, item})"
                 >
                   <i [ngClass]="'pi-' + item.icon || ''" class="layout-menuitem-icon pi"></i>
                   <span class="layout-menuitem-text ml-2">{{ item.label }}</span>

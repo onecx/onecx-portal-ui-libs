@@ -1,4 +1,5 @@
 import 'jest-preset-angular/setup-jest'
+import 'blob-polyfill'
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,

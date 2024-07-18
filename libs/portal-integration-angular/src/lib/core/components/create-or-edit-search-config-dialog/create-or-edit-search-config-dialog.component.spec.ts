@@ -3,7 +3,7 @@ import { CreateOrEditSearchConfigDialogComponent } from './create-or-edit-search
 import { CheckboxModule } from 'primeng/checkbox'
 import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { TranslateService } from '@ngx-translate/core'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { CreateOrEditSearchConfigDialogHarness } from '../../../../../testing'
@@ -11,6 +11,7 @@ import { PCheckboxHarness } from '@onecx/angular-testing'
 import { DialogState } from '../../../services/portal-dialog.service'
 import { ReactiveFormsModule } from '@angular/forms'
 import { InputTextModule } from 'primeng/inputtext'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('CreateOrEditSearchConfigDialogComponent', () => {
   let component: CreateOrEditSearchConfigDialogComponent
@@ -20,19 +21,17 @@ describe('CreateOrEditSearchConfigDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [CreateOrEditSearchConfigDialogComponent],
-      imports: [
-        CheckboxModule,
+    declarations: [CreateOrEditSearchConfigDialogComponent],
+    imports: [CheckboxModule,
         MockAuthModule,
         TranslateTestingModule.withTranslations({
-          en: require('./../../../../../assets/i18n/en.json'),
-          de: require('./../../../../../assets/i18n/de.json'),
+            en: require('./../../../../../assets/i18n/en.json'),
+            de: require('./../../../../../assets/i18n/de.json'),
         }),
-        HttpClientTestingModule,
         ReactiveFormsModule,
-        InputTextModule,
-      ],
-    }).compileComponents()
+        InputTextModule],
+    providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+}).compileComponents()
 
     fixture = TestBed.createComponent(CreateOrEditSearchConfigDialogComponent)
     component = fixture.componentInstance

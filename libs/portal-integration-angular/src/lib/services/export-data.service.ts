@@ -47,6 +47,7 @@ export class ExportDataService {
     })
     const dwldLink = document.createElement('a')
     const url = URL.createObjectURL(blob)
+
     dwldLink.setAttribute('href', url)
 
     dwldLink.setAttribute('download', fileName)

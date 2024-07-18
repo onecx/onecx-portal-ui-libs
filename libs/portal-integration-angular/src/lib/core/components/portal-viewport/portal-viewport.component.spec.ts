@@ -1,6 +1,6 @@
 /* tslint:disable:no-unused-variable */
 import { ComponentFixture, getTestBed, TestBed } from '@angular/core/testing'
-import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ActivatedRoute, RouterModule } from '@angular/router'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
@@ -22,6 +22,7 @@ import { AppInlineProfileComponent } from '../inline-profile/inline-profile.comp
 import { IfBreakpointDirective } from '@onecx/angular-accelerator'
 import { MockAuthService } from '../../../mock-auth/mock-auth.service'
 import { PortalCoreModule } from '../../portal-core.module'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('PortalViewportComponent', () => {
   const origAddEventListener = window.addEventListener
@@ -51,7 +52,7 @@ describe('PortalViewportComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [
+    declarations: [
         PortalViewportComponent,
         SupportTicketComponent,
         HelpItemEditorComponent,
@@ -62,10 +63,8 @@ describe('PortalViewportComponent', () => {
         PortalMenuComponent,
         AppInlineProfileComponent,
         IfBreakpointDirective,
-      ],
-      imports: [
-        HttpClientTestingModule,
-        ToastModule,
+    ],
+    imports: [ToastModule,
         DialogModule,
         NoopAnimationsModule,
         FormsModule,
@@ -73,24 +72,25 @@ describe('PortalViewportComponent', () => {
         RouterModule,
         TooltipModule,
         TranslateTestingModule.withTranslations({}),
-        PortalCoreModule,
-      ],
-      providers: [
+        PortalCoreModule],
+    providers: [
         ConfigurationService,
         MessageService,
         { provide: AUTH_SERVICE, useClass: MockAuthService },
         {
-          provide: ActivatedRoute,
-          useValue: {
-            snapshot: {
-              paramMap: {
-                get: () => '1',
-              },
+            provide: ActivatedRoute,
+            useValue: {
+                snapshot: {
+                    paramMap: {
+                        get: () => '1',
+                    },
+                },
             },
-          },
         },
-      ],
-    }).compileComponents()
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+    ]
+}).compileComponents()
   })
 
   beforeEach(async () => {

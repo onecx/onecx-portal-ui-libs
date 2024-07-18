@@ -1,5 +1,6 @@
 import { ActivatedRoute, Router } from '@angular/router'
-import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects'
+import { Actions, createEffect, ofType } from '@ngrx/effects'
+import { concatLatestFrom } from '@ngrx/operators'
 import { ActionCreator, Creator } from '@ngrx/store'
 import { tap } from 'rxjs'
 

@@ -1,6 +1,6 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ActivatedRoute, RouterModule } from '@angular/router'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateTestingModule } from 'ngx-translate-testing'
@@ -8,13 +8,14 @@ import { DataViewModule } from 'primeng/dataview'
 
 import { DataListGridHarness, DataTableHarness, DataViewHarness } from '@onecx/angular-accelerator/testing'
 import { UserService } from '@onecx/angular-integration-interface'
-import { MockUserService } from '@onecx/angular-integration-interface/mocks'
+import { MockUserService, provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { DataViewComponent } from './data-view.component'
 import { MockAuthModule } from '../../mock-auth/mock-auth.module'
 import { DataListGridComponent } from '../data-list-grid/data-list-grid.component'
 import { DataTableComponent } from '../data-table/data-table.component'
 import { ColumnType } from '../../model/column-type.model'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 
 describe('DataViewComponent', () => {
   let component: DataViewComponent
@@ -198,7 +199,6 @@ describe('DataViewComponent', () => {
         DataViewModule,
         MockAuthModule,
         TranslateTestingModule.withTranslations(TRANSLATIONS),
-        HttpClientTestingModule,
         AngularAcceleratorModule,
         RouterModule,
         NoopAnimationsModule,
@@ -215,6 +215,9 @@ describe('DataViewComponent', () => {
             },
           },
         },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+        provideAppStateServiceMock(),
       ],
     }).compileComponents()
 
@@ -422,14 +425,14 @@ describe('DataViewComponent', () => {
     })
 
     describe('Hide list action buttons based on field path', () => {
-      it('should not disable any buttons initially', async () => {
+      it('should not hide any buttons initially', async () => {
         setUpMockData('list')
         const dataView = await dataViewHarness.getDataListGrid()
         expect(await dataView.hasAmountOfActionButtons('list', 3)).toBe(true)
         expect(await dataView.hasAmountOfDisabledActionButtons('list', 0)).toBe(true)
       })
 
-      it('should disable a button based on a given field path', async () => {
+      it('should hide a button based on a given field path', async () => {
         setUpMockData('list')
         component.viewActionVisibleField = 'ready'
         const dataView = await dataViewHarness.getDataListGrid()
@@ -439,7 +442,7 @@ describe('DataViewComponent', () => {
     })
 
     describe('Hide grid action buttons based on field path', () => {
-      it('should not disable any buttons initially', async () => {
+      it('should not hide any buttons initially', async () => {
         setUpMockData('grid')
         const dataView = await dataViewHarness.getDataListGrid()
         await (await dataView.getMenuButton()).click()
@@ -448,7 +451,7 @@ describe('DataViewComponent', () => {
         expect(await dataView.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
       })
 
-      it('should disable a button based on a given field path', async () => {
+      it('should hide a button based on a given field path', async () => {
         setUpMockData('grid')
         component.viewActionVisibleField = 'ready'
         const dataView = await dataViewHarness.getDataListGrid()
@@ -460,14 +463,14 @@ describe('DataViewComponent', () => {
     })
 
     describe('Hide table action buttons based on field path', () => {
-      it('should not disable any buttons initially', async () => {
+      it('should not hide any buttons initially', async () => {
         setUpMockData('table')
         const dataTable = await dataViewHarness.getDataTable()
         expect(await dataTable.hasAmountOfActionButtons(3)).toBe(true)
         expect(await dataTable.hasAmountOfDisabledActionButtons(0)).toBe(true)
       })
 
-      it('should disable a button based on a given field path', async () => {
+      it('should hide a button based on a given field path', async () => {
         setUpMockData('table')
         component.viewActionVisibleField = 'ready'
         const dataTable = await dataViewHarness.getDataTable()

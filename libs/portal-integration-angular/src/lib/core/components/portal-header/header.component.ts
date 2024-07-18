@@ -2,7 +2,7 @@ import { animate, style, transition, trigger } from '@angular/animations'
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { combineLatest, filter, map, Observable } from 'rxjs'
-import { MenuItem } from 'primeng/api/menuitem'
+import { MenuItem, MenuItemCommandEvent } from 'primeng/api/menuitem'
 import { PrimeIcons } from 'primeng/api'
 
 import {
@@ -193,29 +193,29 @@ export class HeaderComponent implements OnInit {
     this.eventsPublisher$.publish({ type: 'authentication#logoutButtonClicked' })
   }
 
-  onMenuButtonClick(e: Event) {
+  onMenuButtonClick(e: MouseEvent) {
     this.menuButtonClick.emit(e)
   }
-  onTopbarItemClick(e: Event, arg: any) {
+  onTopbarItemClick(e: MouseEvent | MenuItemCommandEvent, arg: any) {
     this.topbarItemClick.emit({ event: e, arg })
   }
-  onOpenHelpPageEditor(e: Event) {
+  onOpenHelpPageEditor(e: MenuItemCommandEvent) {
     this.openHelpPageEditor.emit(e)
   }
-  onOpenHelpPage(e: Event) {
+  onOpenHelpPage(e: MenuItemCommandEvent) {
     this.openHelpPage.emit(e)
   }
-  onOpenFeedback(e: Event) {
+  onOpenFeedback(e: MenuItemCommandEvent) {
     this.openFeedback.emit(e)
   }
-  onAddToFavourites(e: Event) {
+  onAddToFavourites(e: MenuItemCommandEvent) {
     this.openAddToLaunchpad.emit(e)
   }
-  onOpenSupportTicket(e: Event) {
+  onOpenSupportTicket(e: MenuItemCommandEvent) {
     this.openSupportTicket.emit(e)
   }
 
-  onSearchClick(e: Event, val: boolean) {
+  onSearchClick(e: MouseEvent | MenuItemCommandEvent, val: boolean) {
     this.searchClick.emit({ event: e, val })
   }
 }

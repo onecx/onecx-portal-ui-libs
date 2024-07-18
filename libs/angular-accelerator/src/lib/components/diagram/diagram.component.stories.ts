@@ -44,7 +44,7 @@ export default {
   ],
 } as Meta<DiagramComponent>
 
-const Template: StoryFn<DiagramComponent> = (args: DiagramComponent) => ({
+const Template: StoryFn<DiagramComponent> = (args) => ({
   props: args,
 })
 

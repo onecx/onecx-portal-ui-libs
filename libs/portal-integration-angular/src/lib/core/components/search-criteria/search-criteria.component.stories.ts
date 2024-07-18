@@ -1,5 +1,6 @@
 import { APP_BASE_HREF } from '@angular/common'
-import { HttpClientModule } from '@angular/common/http'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { importProvidersFrom } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
@@ -28,7 +29,8 @@ export default {
         importProvidersFrom(BrowserAnimationsModule),
         importProvidersFrom(RouterModule.forRoot([], { useHash: true })),
         importProvidersFrom(MockAuthModule),
-        importProvidersFrom(HttpClientModule),
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
         ConfigurationService,
         { provide: APP_CONFIG, useValue: {} },
         { provide: APP_BASE_HREF, useValue: '/' },
@@ -53,14 +55,14 @@ export default {
   ],
 } as Meta<SearchCriteriaComponent>
 
-const Template: StoryFn<SearchCriteriaComponent> = (args: SearchCriteriaComponent) => ({
+const Template: StoryFn<SearchCriteriaComponent> = (args) => ({
   props: args,
   template: `
   <ocx-search-criteria [disableAdvancedToggle]="disableAdvancedToggle" [showBreadcrumbs]="showBreadcrumbs" [header]="header" [subheader]="subheader" [actions]="actions"></ocx-search-criteria>
   `,
 })
 
-const TemplateWithProjection: StoryFn<SearchCriteriaComponent> = (args: SearchCriteriaComponent) => ({
+const TemplateWithProjection: StoryFn<SearchCriteriaComponent> = (args) => ({
   props: args,
   template: `
   <ocx-search-criteria [disableAdvancedToggle]="disableAdvancedToggle" [showBreadcrumbs]="showBreadcrumbs" [header]="header" [subheader]="subheader" [actions]="actions">
@@ -83,7 +85,7 @@ const TemplateWithProjection: StoryFn<SearchCriteriaComponent> = (args: SearchCr
   </ocx-search-criteria>`,
 })
 
-const TemplateWithProjectionAndExtraToolbar: StoryFn<SearchCriteriaComponent> = (args: SearchCriteriaComponent) => ({
+const TemplateWithProjectionAndExtraToolbar: StoryFn<SearchCriteriaComponent> = (args) => ({
   props: args,
   template: `
   <ocx-search-criteria [disableAdvancedToggle]="disableAdvancedToggle" [showBreadcrumbs]="showBreadcrumbs" [header]="header" [subheader]="subheader" [actions]="actions">

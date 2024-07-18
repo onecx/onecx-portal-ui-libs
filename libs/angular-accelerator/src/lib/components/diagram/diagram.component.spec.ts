@@ -1,4 +1,4 @@
-import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { FormsModule } from '@angular/forms'
@@ -12,6 +12,7 @@ import { SelectButtonModule } from 'primeng/selectbutton'
 import { DiagramHarness, TestbedHarnessEnvironment } from '../../../../testing'
 import { DiagramType } from '../../model/diagram-type'
 import { DiagramComponent, DiagramLayouts } from './diagram.component'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('DiagramComponent', () => {
   let translateService: TranslateService
@@ -34,20 +35,18 @@ describe('DiagramComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DiagramComponent],
-      imports: [
-        NoopAnimationsModule,
+    declarations: [DiagramComponent],
+    imports: [NoopAnimationsModule,
         ChartModule,
         MessageModule,
         SelectButtonModule,
         FormsModule,
         TranslateTestingModule.withTranslations({
-          en: require('./../../../../assets/i18n/en.json'),
-          de: require('./../../../../assets/i18n/de.json'),
-        }),
-        HttpClientTestingModule,
-      ],
-    }).compileComponents()
+            en: require('./../../../../assets/i18n/en.json'),
+            de: require('./../../../../assets/i18n/de.json'),
+        })],
+    providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+}).compileComponents()
 
     fixture = TestBed.createComponent(DiagramComponent)
     component = fixture.componentInstance

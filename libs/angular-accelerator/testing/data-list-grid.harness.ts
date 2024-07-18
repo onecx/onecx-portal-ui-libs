@@ -1,4 +1,4 @@
-import { ContentContainerComponentHarness, TestElement } from '@angular/cdk/testing'
+import { ContentContainerComponentHarness, TestElement, parallel } from '@angular/cdk/testing'
 import { PPaginatorHarness } from '@onecx/angular-testing'
 import { DefaultGridItemHarness } from './default-grid-item.harness'
 import { DefaultListItemHarness } from './default-list-item.harness'
@@ -23,7 +23,7 @@ export class DataListGridHarness extends ContentContainerComponentHarness {
     }
   }
 
-  async actionButtonIsDisabled(actionButton: TestElement, viewType: 'list' | 'grid') {
+  async actionButtonIsDisabled(actionButton: TestElement, viewType: 'list' | 'grid'): Promise<boolean> {
     if (viewType === 'list') {
       return await actionButton.getProperty('disabled')
     } else {
@@ -36,16 +36,15 @@ export class DataListGridHarness extends ContentContainerComponentHarness {
   }
 
   async hasAmountOfDisabledActionButtons(viewType: 'list' | 'grid', amount: number) {
-    let disabledActionButtons = []
-    if (viewType === 'list') {
-      disabledActionButtons = await this.documentRootLocatorFactory().locatorForAll(
-        `[name="data-list-action-button"]:disabled`
-      )()
-    } else {
-      disabledActionButtons = await this.documentRootLocatorFactory().locatorForAll(
-        `li.p-menuitem>a.p-menuitem-link.p-disabled`
-      )()
-    }
-    return disabledActionButtons.length === amount
+    let disabledActionButtonsCount = 0
+    const actionButtons = await this.getActionButtons(viewType)
+    await parallel(() =>
+      actionButtons.map(async (actionButton) => {
+        if ((await this.actionButtonIsDisabled(actionButton, viewType)) === true) {
+          disabledActionButtonsCount++
+        }
+      })
+    )
+    return disabledActionButtonsCount === amount
   }
 }

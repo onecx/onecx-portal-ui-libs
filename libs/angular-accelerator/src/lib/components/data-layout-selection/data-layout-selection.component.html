@@ -6,7 +6,7 @@
     optionLabel="icon"
     (onChange)="onDataViewLayoutChange($event.value)"
   >
-    <ng-template let-item>
+    <ng-template let-item pTemplate>
       <i [class]="item.icon" [title]="item.title || (item.titleKey | translate)"></i>
     </ng-template>
   </p-selectButton>

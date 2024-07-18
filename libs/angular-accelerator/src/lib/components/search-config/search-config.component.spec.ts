@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ReactiveFormsModule } from '@angular/forms'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
-import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { TranslateService } from '@ngx-translate/core'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { MessageModule } from 'primeng/message'
@@ -10,6 +10,7 @@ import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-prime
 import { SearchConfigComponent } from './search-config.component'
 import { SearchConfigHarness } from '../../../../testing'
 import { SearchConfigInfo } from '../../model/search-config-info'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('SearchConfigComponent', () => {
   let translateService: TranslateService
@@ -33,29 +34,28 @@ describe('SearchConfigComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [SearchConfigComponent],
-      imports: [
-        NoopAnimationsModule,
+    declarations: [SearchConfigComponent],
+    imports: [NoopAnimationsModule,
         MessageModule,
         TranslateTestingModule.withTranslations({
-          en: require('./../../../../assets/i18n/en.json'),
-          de: require('./../../../../assets/i18n/de.json'),
+            en: require('./../../../../assets/i18n/en.json'),
+            de: require('./../../../../assets/i18n/de.json'),
         }),
-        HttpClientTestingModule,
         AngularAcceleratorPrimeNgModule,
-        ReactiveFormsModule,
-      ],
-      providers: [
+        ReactiveFormsModule],
+    providers: [
         {
-          useValue: {
-            baseHref: '/base/path',
-            mountPath: '/base/path',
-            remoteBaseUrl: 'http://localhost:4200',
-            shellName: 'shell',
-          },
+            useValue: {
+                baseHref: '/base/path',
+                mountPath: '/base/path',
+                remoteBaseUrl: 'http://localhost:4200',
+                shellName: 'shell',
+            },
         },
-      ],
-    }).compileComponents()
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+    ]
+}).compileComponents()
 
     fixture = TestBed.createComponent(SearchConfigComponent)
     component = fixture.componentInstance

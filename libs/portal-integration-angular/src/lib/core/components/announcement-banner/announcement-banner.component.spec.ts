@@ -1,12 +1,13 @@
 /* tslint:disable:no-unused-variable */
 import { ComponentFixture, TestBed, getTestBed } from '@angular/core/testing'
-import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { Subject } from 'rxjs'
 
 import { AppStateService, ConfigurationService } from '@onecx/angular-integration-interface'
 import { AnnouncementBannerComponent } from './announcement-banner.component'
 import { AnnouncementsApiService } from '../../../services/announcements-api.service'
 import { AnnouncementItem, AnnouncementPriorityType } from '../../../model/announcement-item'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('AnnouncementBannerComponent', () => {
   const origAddEventListener = window.addEventListener
@@ -39,10 +40,10 @@ describe('AnnouncementBannerComponent', () => {
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
-      declarations: [AnnouncementBannerComponent],
-      imports: [HttpClientTestingModule],
-      providers: [ConfigurationService, AnnouncementsApiService, AppStateService],
-    }).compileComponents()
+    declarations: [AnnouncementBannerComponent],
+    imports: [],
+    providers: [ConfigurationService, AnnouncementsApiService, AppStateService, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+}).compileComponents()
 
     const appStateService = getTestBed().inject(AppStateService)
     await appStateService.currentPortal$.publish({

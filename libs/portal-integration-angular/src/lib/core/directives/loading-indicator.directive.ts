@@ -1,5 +1,4 @@
 import {
-  ComponentFactoryResolver,
   ComponentRef,
   Directive,
   ElementRef,
@@ -21,12 +20,7 @@ export class LoadingIndicatorDirective implements OnChanges {
 
   private componentRef: ComponentRef<LoadingIndicatorComponent> | undefined
 
-  constructor(
-    private viewContainerRef: ViewContainerRef,
-    private componentFactoryResolver: ComponentFactoryResolver,
-    private el: ElementRef,
-    private renderer: Renderer2
-  ) {}
+  constructor(private viewContainerRef: ViewContainerRef, private el: ElementRef, private renderer: Renderer2) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['ocxLoadingIndicator'] || changes['overlayFullPage']) {
@@ -49,8 +43,7 @@ export class LoadingIndicatorDirective implements OnChanges {
       if (this.overlayFullPage == false) {
         this.elementLoader()
       } else {
-        const factory = this.componentFactoryResolver.resolveComponentFactory(LoadingIndicatorComponent)
-        this.componentRef = this.viewContainerRef.createComponent(factory)
+        this.componentRef = this.viewContainerRef.createComponent(LoadingIndicatorComponent)
       }
     } else {
       this.viewContainerRef.clear()

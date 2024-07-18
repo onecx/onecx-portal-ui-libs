@@ -1,7 +1,8 @@
 import { ComponentFixture, TestBed, getTestBed, waitForAsync } from '@angular/core/testing'
-import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { AppStateService, ConfigurationService } from '@onecx/angular-integration-interface'
 import { PortalFooterComponent } from './portal-footer.component'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('PortalFooterComponent', () => {
   const origAddEventListener = window.addEventListener
@@ -31,10 +32,10 @@ describe('PortalFooterComponent', () => {
 
   beforeEach(waitForAsync(async () => {
     TestBed.configureTestingModule({
-      declarations: [PortalFooterComponent],
-      imports: [HttpClientTestingModule],
-      providers: [ConfigurationService, AppStateService],
-    }).compileComponents()
+    declarations: [PortalFooterComponent],
+    imports: [],
+    providers: [ConfigurationService, AppStateService, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+}).compileComponents()
 
     const appStateService = getTestBed().inject(AppStateService)
     await appStateService.currentPortal$.publish({
