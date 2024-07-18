@@ -8,19 +8,20 @@ import {
   LOCALE_ID,
   OnInit,
   Output,
-  TemplateRef,
+  TemplateRef
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
-import { SelectItem } from 'primeng/api'
+import { UserService } from '@onecx/angular-integration-interface'
+import { MenuItem, SelectItem } from 'primeng/api'
+import { Menu } from 'primeng/menu'
 import { BehaviorSubject, Observable, combineLatest, map, mergeMap, of } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
-import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { ObjectUtils } from '../../utils/objectutils'
-import { UserService } from '@onecx/angular-integration-interface'
+import { DataSortBase } from '../data-sort-base/data-sort-base'
 
 type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -173,14 +174,13 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     return this.translationKeyCellTemplate || this.translationKeyCellChildTemplate
   }
 
-  _additionalActions: DataAction[] = []
+  _additionalActions$ = new BehaviorSubject<DataAction[]>([])
   @Input()
   get additionalActions(): DataAction[] {
-    return this._additionalActions
+    return this._additionalActions$.getValue()
   }
   set additionalActions(value: DataAction[]) {
-    this._additionalActions = value.filter((action) => !action.showAsOverflow)
-    this.overflowActions = value.filter((action) => action.showAsOverflow)
+    this._additionalActions$.next(value)
   }
   @Input() frozenActionColumn = false
   @Input() actionColumnPosition: 'left' | 'right' = 'right'
@@ -201,7 +201,10 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   currentSelectedFilters$: Observable<string[]> | undefined
   filterAmounts$: Observable<Record<string, number>> | undefined
 
-  overflowActions: DataAction[] = []
+  overflowActions$: Observable<DataAction[]>
+  inlineActions$: Observable<DataAction[]>
+  overflowMenuItems$: Observable<MenuItem[]>
+  currentMenuRow$ = new BehaviorSubject<Row | null>(null)
 
   get viewTableRowObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
@@ -238,6 +241,31 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     )
     this.displayedPageSize$ = combineLatest([this._pageSize$, this._pageSizes$]).pipe(
       map(([pageSize, pageSizes]) => pageSize ?? pageSizes.find((val): val is number => typeof val === 'number') ?? 50)
+    )
+    this.overflowActions$ = this._additionalActions$.pipe(
+      map((actions) => actions.filter((action) => action.showAsOverflow))
+    )
+    this.inlineActions$ = this._additionalActions$.pipe(
+      map((actions) => actions.filter((action) => !action.showAsOverflow))
+    )
+    this.overflowMenuItems$ = combineLatest([this.overflowActions$, this.currentMenuRow$]).pipe(
+      mergeMap(([actions, row]) =>
+        this.translateService.get([...actions.map((a) => a.labelKey || '')]).pipe(
+          map((translations) => {
+            console.log(actions)
+            return actions
+              .filter((a) => this.userService.hasPermission(a.permission))
+              .map((a) => ({
+                label: translations[a.labelKey || ''],
+                icon: a.icon,
+                styleClass: (a.classes || []).join(' '),
+                disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
+                visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
+                command: () => a.callback(row),
+              }))
+          })
+        )
+      )
     )
   }
 
@@ -387,24 +415,14 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     return !!ObjectUtils.resolveFieldData(object, key)
   }
 
-  hasVisibleOverflowMenuItems(row: any) {
-    return this.overflowActions.some((a) => !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField))
+  toggleOverflowMenu(event: MouseEvent, menu: Menu, row: Row) {
+    this.currentMenuRow$.next(row)
+    menu.toggle(event)
   }
 
-  getOverflowMenuItems(row: any) {
-    return this.translateService.get([...this.overflowActions.map((a) => a.labelKey || '')]).pipe(
-      map((translations) => {
-        return this.overflowActions
-          .filter((a) => this.userService.hasPermission(a.permission))
-          .map((a) => ({
-            label: translations[a.labelKey || ''],
-            icon: a.icon,
-            styleClass: (a.classes || []).join(' '),
-            disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
-            visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
-            command: () => a.callback(row),
-          }))
-      })
+  hasVisibleOverflowMenuItems(row: any) {
+    return this.overflowActions$.pipe(
+      map((actions) => actions.some((a) => !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField)))
     )
   }
 }
