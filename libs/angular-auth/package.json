@@ -1,6 +1,6 @@
 {
   "name": "@onecx/angular-auth",
-  "version": "4.42.1",
+  "version": "4.43.0",
   "peerDependencies": {
     "@angular-architects/module-federation": "18.0.4",
     "@angular/common": "^18.0.5",
