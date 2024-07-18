@@ -68,6 +68,6 @@ export class IfPermissionDirective implements OnInit {
       }
       return result
     }
-    return this.permissionChecker && this.permissionChecker.hasPermission(permission)
+    return this.permissionChecker.hasPermission(permission)
   }
 }
