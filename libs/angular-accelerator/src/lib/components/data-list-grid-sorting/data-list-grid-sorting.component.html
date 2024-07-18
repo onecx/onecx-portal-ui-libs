@@ -19,6 +19,6 @@
     styleClass="p-button-outlined"
     (onClick)="sortDirectionChanged()"
     [title]="(sortIconTitle() | translate)"
-    [ariaLabel]="('OCX_LIST_GRID_SORT.SORTING_BUTTON_ARIA_LABEL' | translate:{direction: (sortDirectionToTitle(nextSortDirection())) | translate})"
+    [attr.aria-label]="('OCX_LIST_GRID_SORT.SORTING_BUTTON_ARIA_LABEL' | translate:{direction: (sortDirectionToTitle(nextSortDirection())) | translate})"
   ></p-button>
 </div>

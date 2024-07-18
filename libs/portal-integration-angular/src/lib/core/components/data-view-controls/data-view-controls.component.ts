@@ -7,6 +7,8 @@ import { ColumnTogglerComponent } from './column-toggler-component/column-toggle
 import { ViewTemplatePickerComponent } from './view-template-picker/view-template-picker.component'
 import { PrimeIcons } from 'primeng/api'
 import { PrimeIcon } from '@onecx/angular-accelerator'
+import { DropdownChangeEvent } from 'primeng/dropdown'
+import { ToggleButtonChangeEvent } from 'primeng/togglebutton'
 
 interface ViewingModes {
   icon: PrimeIcon
@@ -136,7 +138,7 @@ export class DataViewControlsComponent implements OnInit, OnChanges {
   activeColumnIds: string[] = []
   inactiveColumnIds: string[] = []
   selectedSortingOption = ''
-  selectedSortDirection = false
+  selectedSortDirection: boolean | undefined = false 
 
   viewingModes: ViewingModes[] = []
 
@@ -265,7 +267,7 @@ export class DataViewControlsComponent implements OnInit, OnChanges {
     this.toggleColumnActive = mode === 'table' ? true : false
   }
 
-  selectSorting(event: { label: string; value: string }): void {
+  selectSorting(event: DropdownChangeEvent): void {
     this.sortChange.emit(event.value)
   }
 
@@ -273,7 +275,7 @@ export class DataViewControlsComponent implements OnInit, OnChanges {
     this.filterChange.emit((event.target as HTMLInputElement).value)
   }
 
-  sortDirection(event: { checked: boolean }): void {
+  sortDirection(event: ToggleButtonChangeEvent): void {
     this.selectedSortDirection = event.checked
     this.sortDirectionChange.emit(event.checked)
   }

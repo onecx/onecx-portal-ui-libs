@@ -1,4 +1,4 @@
-import { ContentContainerComponentHarness, TestElement } from '@angular/cdk/testing'
+import { ContentContainerComponentHarness, TestElement, parallel } from '@angular/cdk/testing'
 import {
   TableHeaderColumnHarness,
   TableRowHarness,
@@ -54,11 +54,17 @@ export class DataTableHarness extends ContentContainerComponentHarness {
     return (await this.getActionButtons()).length === amount
   }
 
-  async hasAmountOfDisabledActionButtons(amount: number) {    
-    const disabledActionButtons = await this.documentRootLocatorFactory().locatorForAll(
-      `[name="data-table-action-button"]:disabled`
-    )()
-    return disabledActionButtons.length === amount
+  async hasAmountOfDisabledActionButtons(amount: number) {
+    let disabledActionButtonsCount = 0
+    const actionButtons = await this.getActionButtons()
+    await parallel(() =>
+      actionButtons.map(async (actionButton) => {
+        if ((await this.actionButtonIsDisabled(actionButton)) === true) {
+          disabledActionButtonsCount++
+        }
+      })
+    )
+    return disabledActionButtonsCount === amount
   }
 
   async columnIsFrozen(column: TestElement | null) {

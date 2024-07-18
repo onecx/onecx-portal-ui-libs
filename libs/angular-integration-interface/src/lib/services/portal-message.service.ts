@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core'
+import { Injectable, OnDestroy } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
-import { combineLatest, of } from 'rxjs'
+import { combineLatest, first, of } from 'rxjs'
 import { MessageTopic } from '@onecx/integration-interface'
 
 export type Message = {
@@ -20,7 +20,7 @@ export type Message = {
 }
 
 @Injectable({ providedIn: 'any' })
-export class PortalMessageService {
+export class PortalMessageService implements OnDestroy {
   constructor(private translateService: TranslateService) {}
 
   message$ = new MessageTopic()
@@ -45,13 +45,19 @@ export class PortalMessageService {
     combineLatest([
       msg.summaryKey ? this.translateService.get(msg.summaryKey || '', msg.summaryParameters) : of(undefined),
       msg.detailKey ? this.translateService.get(msg.detailKey, msg.detailParameters) : of(undefined),
-    ]).subscribe(([summaryTranslation, detailTranslation]: string[]) => {
-      this.message$.publish({
-        ...msg,
-        severity: severity,
-        summary: summaryTranslation,
-        detail: detailTranslation,
+    ])
+      .pipe(first())
+      .subscribe(([summaryTranslation, detailTranslation]: string[]) => {
+        this.message$.publish({
+          ...msg,
+          severity: severity,
+          summary: summaryTranslation,
+          detail: detailTranslation,
+        })
       })
-    })
+  }
+
+  ngOnDestroy(): void {
+    this.message$.destroy()
   }
 }

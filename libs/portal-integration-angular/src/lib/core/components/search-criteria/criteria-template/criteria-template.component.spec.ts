@@ -1,5 +1,5 @@
 /* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing'
+import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { DropdownModule } from 'primeng/dropdown'
 import { FormsModule } from '@angular/forms'
 
@@ -10,12 +10,12 @@ describe('CriteriaTemplateComponent', () => {
   let component: CriteriaTemplateComponent
   let fixture: ComponentFixture<CriteriaTemplateComponent>
 
-  beforeEach(async(() => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [CriteriaTemplateComponent],
       imports: [FormsModule, DropdownModule, MockAuthModule],
     }).compileComponents()
-  }))
+  })
 
   beforeEach(() => {
     fixture = TestBed.createComponent(CriteriaTemplateComponent)

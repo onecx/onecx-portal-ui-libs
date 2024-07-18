@@ -2,9 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 
 import { HarnessLoader, parallel, TestElement } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { RouterTestingModule } from '@angular/router/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
-import { HttpClientModule } from '@angular/common/http'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { TranslateModule } from '@ngx-translate/core'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { ButtonModule } from 'primeng/button'
@@ -21,7 +20,7 @@ import {
   ListItemHarness,
 } from '@onecx/angular-testing'
 import { UserService } from '@onecx/angular-integration-interface'
-import { MockUserService } from '@onecx/angular-integration-interface/mocks'
+import { MockUserService, provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { InteractiveDataViewComponent } from './interactive-data-view.component'
 import { DataLayoutSelectionComponent } from '../data-layout-selection/data-layout-selection.component'
@@ -41,6 +40,7 @@ import {
   InteractiveDataViewHarness,
 } from '../../../../testing'
 import { DateUtils } from '../../utils/dateutils'
+import { provideRouter } from '@angular/router'
 
 describe('InteractiveDataViewComponent', () => {
   let component: InteractiveDataViewComponent
@@ -226,15 +226,18 @@ describe('InteractiveDataViewComponent', () => {
         DialogModule,
         PickListModule,
         AngularAcceleratorModule,
-        RouterTestingModule,
         NoopAnimationsModule,
         TranslateTestingModule.withTranslations({
           en: require('./../../../../assets/i18n/en.json'),
           de: require('./../../../../assets/i18n/de.json'),
         }),
-        HttpClientModule,
       ],
-      providers: [{ provide: UserService, useClass: MockUserService }],
+      providers: [
+        { provide: UserService, useClass: MockUserService },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideRouter([]),
+        provideAppStateServiceMock(),
+      ],
     }).compileComponents()
 
     fixture = TestBed.createComponent(InteractiveDataViewComponent)
@@ -877,6 +880,7 @@ describe('InteractiveDataViewComponent', () => {
       component.selectionChanged.subscribe()
 
       expect(await dataTable.rowSelectionIsEnabled()).toEqual(true)
+      component.selectionChanged.unsubscribe()
     })
   })
 
@@ -931,19 +935,15 @@ describe('InteractiveDataViewComponent', () => {
         ['', 'name 2', 'status name 2', ''],
         ['', 'name 3', 'status name 3', ''],
       ]
-
       await activeColumnsList[1].selectItem()
       await sourceControlsButtons[0].click()
       await dialogSaveButton.click()
-
       expect(spy).toHaveBeenCalled()
-
       dataTable = await dataView.getDataTable()
       tableHeaders = await dataTable.getHeaderColumns()
       tableRows = await dataTable.getRows()
       const headers = await parallel(() => tableHeaders.map((header) => header.getText()))
       const rows = await parallel(() => tableRows.map((row) => row.getData()))
-
       expect(headers).toEqual(expectedHeaders)
       expect(rows).toEqual(expectedRowsData)
     })
@@ -1115,10 +1115,10 @@ describe('InteractiveDataViewComponent', () => {
     })
     const expectedInitialGridItemsData = [
       ['/path/to/image', 'some name', '2023-09-13T09:34:05Z'],
-      ['', 'example', '2023-09-12T09:33:53Z'],
-      ['', 'name 1', '2023-09-14T09:34:22Z'],
-      ['', 'name 2', '2023-09-14T09:34:22Z'],
-      ['', 'name 3', '2023-09-14T09:34:22Z'],
+      ['./onecx-portal-lib/assets/images/placeholder.png', 'example', '2023-09-12T09:33:53Z'],
+      ['./onecx-portal-lib/assets/images/placeholder.png', 'name 1', '2023-09-14T09:34:22Z'],
+      ['./onecx-portal-lib/assets/images/placeholder.png', 'name 2', '2023-09-14T09:34:22Z'],
+      ['./onecx-portal-lib/assets/images/placeholder.png', 'name 3', '2023-09-14T09:34:22Z'],
     ]
 
     it('should load grid', async () => {
@@ -1135,10 +1135,10 @@ describe('InteractiveDataViewComponent', () => {
 
     it('should be sorted by first sorting dropdown item in ascending order', async () => {
       const expectedGridItemsDataAfterSorting = [
-        ['', 'example', '2023-09-12T09:33:53Z'],
-        ['', 'name 1', '2023-09-14T09:34:22Z'],
-        ['', 'name 2', '2023-09-14T09:34:22Z'],
-        ['', 'name 3', '2023-09-14T09:34:22Z'],
+        ['./onecx-portal-lib/assets/images/placeholder.png', 'example', '2023-09-12T09:33:53Z'],
+        ['./onecx-portal-lib/assets/images/placeholder.png', 'name 1', '2023-09-14T09:34:22Z'],
+        ['./onecx-portal-lib/assets/images/placeholder.png', 'name 2', '2023-09-14T09:34:22Z'],
+        ['./onecx-portal-lib/assets/images/placeholder.png', 'name 3', '2023-09-14T09:34:22Z'],
         ['/path/to/image', 'some name', '2023-09-13T09:34:05Z'],
       ]
 
@@ -1154,10 +1154,10 @@ describe('InteractiveDataViewComponent', () => {
     it('should be sorted by first sorting dropdown item in descending order', async () => {
       const expectedGridItemsDataAfterSorting = [
         ['/path/to/image', 'some name', '2023-09-13T09:34:05Z'],
-        ['', 'name 3', '2023-09-14T09:34:22Z'],
-        ['', 'name 2', '2023-09-14T09:34:22Z'],
-        ['', 'name 1', '2023-09-14T09:34:22Z'],
-        ['', 'example', '2023-09-12T09:33:53Z'],
+        ['./onecx-portal-lib/assets/images/placeholder.png', 'name 3', '2023-09-14T09:34:22Z'],
+        ['./onecx-portal-lib/assets/images/placeholder.png', 'name 2', '2023-09-14T09:34:22Z'],
+        ['./onecx-portal-lib/assets/images/placeholder.png', 'name 1', '2023-09-14T09:34:22Z'],
+        ['./onecx-portal-lib/assets/images/placeholder.png', 'example', '2023-09-12T09:33:53Z'],
       ]
 
       await sortingDropdownItems[0].selectItem()
@@ -1423,16 +1423,16 @@ describe('InteractiveDataViewComponent', () => {
     ]
     const expectedSortedGridItemsDataAscending = [
       ['/path/to/image', 'some name', '2023-09-13T09:34:05Z', '1'],
-      ['', 'example', '2023-09-12T09:33:53Z', '3.141'],
-      ['', 'name 3', '2023-09-14T09:34:22Z', '7.1'],
-      ['', 'name 2', '2023-09-14T09:34:22Z', '12345.6789'],
-      ['', 'name 1', '2023-09-14T09:34:22Z', '123456789'],
+      ['./onecx-portal-lib/assets/images/placeholder.png', 'example', '2023-09-12T09:33:53Z', '3.141'],
+      ['./onecx-portal-lib/assets/images/placeholder.png', 'name 3', '2023-09-14T09:34:22Z', '7.1'],
+      ['./onecx-portal-lib/assets/images/placeholder.png', 'name 2', '2023-09-14T09:34:22Z', '12345.6789'],
+      ['./onecx-portal-lib/assets/images/placeholder.png', 'name 1', '2023-09-14T09:34:22Z', '123456789'],
     ]
     const expectedSortedGridItemsDataDescending = [
-      ['', 'name 1', '2023-09-14T09:34:22Z', '123456789'],
-      ['', 'name 2', '2023-09-14T09:34:22Z', '12345.6789'],
-      ['', 'name 3', '2023-09-14T09:34:22Z', '7.1'],
-      ['', 'example', '2023-09-12T09:33:53Z', '3.141'],
+      ['./onecx-portal-lib/assets/images/placeholder.png', 'name 1', '2023-09-14T09:34:22Z', '123456789'],
+      ['./onecx-portal-lib/assets/images/placeholder.png', 'name 2', '2023-09-14T09:34:22Z', '12345.6789'],
+      ['./onecx-portal-lib/assets/images/placeholder.png', 'name 3', '2023-09-14T09:34:22Z', '7.1'],
+      ['./onecx-portal-lib/assets/images/placeholder.png', 'example', '2023-09-12T09:33:53Z', '3.141'],
       ['/path/to/image', 'some name', '2023-09-13T09:34:05Z', '1'],
     ]
 
@@ -1510,8 +1510,11 @@ describe('InteractiveDataViewComponent', () => {
     it('should remain filtered with third filter option after switching view data view from table view to grid view and to list view', async () => {
       const expectedFilteredRowsData = [['name 1', '', 'status name 1', '']]
       const expectedFilteredListItemsData = [['name 1', '2023-09-14T09:34:22Z', '123456789']]
-      const expectedFilteredGridItemsData = [['', 'name 1', '2023-09-14T09:34:22Z', '123456789']]
+      const expectedFilteredGridItemsData = [
+        ['./onecx-portal-lib/assets/images/placeholder.png', 'name 1', '2023-09-14T09:34:22Z', '123456789'],
+      ]
       const filterMultiSelect = await tableHeaders[0].getFilterMultiSelect()
+
       allFilterOptions = await filterMultiSelect.getAllOptions()
       await allFilterOptions[2].click()
 
@@ -1577,8 +1580,8 @@ describe('InteractiveDataViewComponent', () => {
         expect(await dataView.hasAmountOfActionButtons('list', 3)).toBe(true)
         expect(await dataView.hasAmountOfDisabledActionButtons('list', 0)).toBe(true)
       })
-  
-      it('should disable a button based on a given field path', async() => {
+
+      it('should disable a button based on a given field path', async () => {
         setUpMockData('list')
         component.viewActionEnabledField = 'ready'
         const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
@@ -1586,7 +1589,7 @@ describe('InteractiveDataViewComponent', () => {
         expect(await dataView.hasAmountOfDisabledActionButtons('list', 1)).toBe(true)
       })
     })
-  
+
     describe('Disable grid action buttons based on field path', () => {
       it('should not disable any buttons initially', async () => {
         setUpMockData('grid')
@@ -1595,7 +1598,7 @@ describe('InteractiveDataViewComponent', () => {
         expect(await dataView.hasAmountOfActionButtons('grid', 3)).toBe(true)
         expect(await dataView.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
       })
-  
+
       it('should disable a button based on a given field path', async () => {
         setUpMockData('grid')
         component.viewActionEnabledField = 'ready'
@@ -1605,7 +1608,7 @@ describe('InteractiveDataViewComponent', () => {
         expect(await dataView.hasAmountOfDisabledActionButtons('grid', 1)).toBe(true)
       })
     })
-  
+
     describe('Disable table action buttons based on field path', () => {
       it('should not disable any buttons initially', async () => {
         setUpMockData('table')
@@ -1613,7 +1616,7 @@ describe('InteractiveDataViewComponent', () => {
         expect(await dataTable.hasAmountOfActionButtons(3)).toBe(true)
         expect(await dataTable.hasAmountOfDisabledActionButtons(0)).toBe(true)
       })
-  
+
       it('should disable a button based on a given field path', async () => {
         setUpMockData('table')
         component.viewActionEnabledField = 'ready'
@@ -1622,16 +1625,16 @@ describe('InteractiveDataViewComponent', () => {
         expect(await dataTable.hasAmountOfDisabledActionButtons(1)).toBe(true)
       })
     })
-  
+
     describe('Hide list action buttons based on field path', () => {
-      it('should not disable any buttons initially', async () => {
+      it('should not hide any buttons initially', async () => {
         setUpMockData('list')
         const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
         expect(await dataView.hasAmountOfActionButtons('list', 3)).toBe(true)
         expect(await dataView.hasAmountOfDisabledActionButtons('list', 0)).toBe(true)
       })
-  
-      it('should disable a button based on a given field path', async () => {
+
+      it('should hide a button based on a given field path', async () => {
         setUpMockData('list')
         component.viewActionVisibleField = 'ready'
         const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
@@ -1639,9 +1642,9 @@ describe('InteractiveDataViewComponent', () => {
         expect(await dataView.hasAmountOfDisabledActionButtons('list', 0)).toBe(true)
       })
     })
-  
+
     describe('Hide grid action buttons based on field path', () => {
-      it('should not disable any buttons initially', async () => {
+      it('should not hide any buttons initially', async () => {
         setUpMockData('grid')
         const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
         await (await dataView.getMenuButton()).click()
@@ -1649,8 +1652,8 @@ describe('InteractiveDataViewComponent', () => {
         expect(await dataView.hasAmountOfActionButtons('grid-hidden', 0)).toBe(true)
         expect(await dataView.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
       })
-  
-      it('should disable a button based on a given field path', async () => {
+
+      it('should hide a button based on a given field path', async () => {
         setUpMockData('grid')
         component.viewActionVisibleField = 'ready'
         const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
@@ -1660,16 +1663,16 @@ describe('InteractiveDataViewComponent', () => {
         expect(await dataView.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
       })
     })
-  
+
     describe('Hide table action buttons based on field path', () => {
-      it('should not disable any buttons initially', async () => {
+      it('should not hide any buttons initially', async () => {
         setUpMockData('table')
         const dataTable = await (await interactiveDataViewHarness.getDataView()).getDataTable()
         expect(await dataTable.hasAmountOfActionButtons(3)).toBe(true)
         expect(await dataTable.hasAmountOfDisabledActionButtons(0)).toBe(true)
       })
-  
-      it('should disable a button based on a given field path', async () => {
+
+      it('should hide a button based on a given field path', async () => {
         setUpMockData('table')
         component.viewActionVisibleField = 'ready'
         const dataTable = await (await interactiveDataViewHarness.getDataView()).getDataTable()

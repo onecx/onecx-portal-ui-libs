@@ -5,7 +5,7 @@ export interface PTableCheckboxHarnessFilter extends BaseHarnessFilters {
 }
 
 export class PTableCheckboxHarness extends ComponentHarness {
-  static hostSelector = 'p-tableCheckbox'
+  static hostSelector = 'p-tablecheckbox'
 
   static with<T extends PTableCheckboxHarness>(this: ComponentHarnessConstructor<T>, options: PTableCheckboxHarnessFilter = {}): HarnessPredicate<T> {
     return new HarnessPredicate(this, options).addOption('isSelected', options.isSelected, async (harness, selected) => {
@@ -14,7 +14,7 @@ export class PTableCheckboxHarness extends ComponentHarness {
   }
 
   async isChecked(): Promise<boolean> {
-    const allChecked = await this.locatorForAll('.pi-check')()
+    const allChecked = await this.locatorForAll('checkicon')()
     return allChecked.length === 1
   }
 
