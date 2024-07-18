@@ -1,0 +1,321 @@
+import { TestBed } from '@angular/core/testing'
+import { WorkspaceService } from './workspace.service'
+import { AppStateServiceMock, provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
+
+describe('WorkspaceService', () => {
+  let service: WorkspaceService
+  let mockAppStateService: AppStateServiceMock
+  const params: Record<string, unknown> = {
+    id: 5,
+    key: 'xy',
+  }
+
+  const paramsWrong: Record<string, unknown> = {
+    idx: 5,
+  }
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [provideAppStateServiceMock()],
+    })
+
+    service = TestBed.inject(WorkspaceService)
+    mockAppStateService = TestBed.inject(AppStateServiceMock)
+
+    mockAppStateService.currentWorkspace$.publish({
+      portalName: 'test-portal',
+      workspaceName: 'test-workspace',
+      microfrontendRegistrations: [],
+      baseUrl: 'http://example.com',
+      routes: [
+        {
+          appId: 'onecx-workspace-ui',
+          productName: 'onecx-workspace',
+          baseUrl: 'http://example.com/workspace/baseurl',
+          endpoints: [
+            { name: 'details', path: '/details/{id}' },
+            { name: 'edit', path: '[[details]]' },
+            { name: 'change', path: '[[edit]]' },
+          ],
+        },
+      ],
+    })
+  })
+
+  it('should be created', () => {
+    expect(service).toBeTruthy()
+  })
+
+  describe('getUrl', () => {
+    it('should find endpoint and return correct url from route and endpoint ', (done) => {
+      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'details', params).subscribe((url) => {
+        expect(url).toBe('http://example.com/workspace/baseurl/details/5')
+        done()
+      })
+    })
+
+    it('should return empty string when workspace baseUrl is empty string"', (done) => {
+      mockAppStateService.currentWorkspace$.publish({
+        portalName: 'test-portal',
+        workspaceName: 'test-workspace',
+        microfrontendRegistrations: [],
+        baseUrl: '',
+        routes: [],
+      })
+
+      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'detailswrong', params).subscribe((url) => {
+        expect(url).toBe('')
+        done()
+      })
+    })
+
+    it('should return workspace baseUrl when workspace has no routes at all"', (done) => {
+      mockAppStateService.currentWorkspace$.publish({
+        portalName: 'test-portal',
+        workspaceName: 'test-workspace',
+        microfrontendRegistrations: [],
+        baseUrl: 'http://example.com',
+      })
+
+      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'detailswrong', params).subscribe((url) => {
+        expect(url).toBe('http://example.com')
+        done()
+      })
+    })
+
+    it('should return workspace baseUrl when workspace.routes is empty"', (done) => {
+      mockAppStateService.currentWorkspace$.publish({
+        portalName: 'test-portal',
+        workspaceName: 'test-workspace',
+        microfrontendRegistrations: [],
+        baseUrl: 'http://example.com',
+        routes: [],
+      })
+
+      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'detailswrong', params).subscribe((url) => {
+        expect(url).toBe('http://example.com')
+        done()
+      })
+    })
+
+    it('should return workspace baseUrl when route for appId and productName was not found"', (done) => {
+      service.getUrl('onecx-workspace-uix', 'onecx-workspace', 'details', {}).subscribe((url) => {
+        expect(url).toBe('http://example.com')
+        done()
+      })
+    })
+
+    it('should return workspace baseUrl and endpoints when route has no baseUrl', (done) => {
+      mockAppStateService.currentWorkspace$.publish({
+        portalName: 'test-portal',
+        workspaceName: 'test-workspace',
+        microfrontendRegistrations: [],
+        baseUrl: 'http://example.com',
+        routes: [
+          {
+            appId: 'onecx-workspace-ui',
+            productName: 'onecx-workspace',
+            endpoints: [
+              { name: 'details', path: '/details/{id}' },
+              { name: 'edit', path: '[[details]]' },
+              { name: 'change', path: '[[edit]]' },
+            ],
+          },
+        ],
+      })
+
+      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'details', params).subscribe((url) => {
+        expect(url).toBe('http://example.com/details/5')
+        done()
+      })
+    })
+
+    it('should return workspace baseUrl with endpoints when route has empty baseUrl', (done) => {
+      mockAppStateService.currentWorkspace$.publish({
+        portalName: 'test-portal',
+        workspaceName: 'test-workspace',
+        microfrontendRegistrations: [],
+        baseUrl: 'http://example.com',
+        routes: [
+          {
+            appId: 'onecx-workspace-ui',
+            productName: 'onecx-workspace',
+            baseUrl: '',
+            endpoints: [
+              { name: 'details', path: '/details/{id}' },
+              { name: 'edit', path: '[[details]]' },
+              { name: 'change', path: '[[edit]]' },
+            ],
+          },
+        ],
+      })
+
+      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'details', params).subscribe((url) => {
+        expect(url).toBe('http://example.com/details/5')
+        done()
+      })
+    })
+
+    it('should return route.baseUrl when endpoints are empty"', (done) => {
+      mockAppStateService.currentWorkspace$.publish({
+        portalName: 'test-portal',
+        workspaceName: 'test-workspace',
+        microfrontendRegistrations: [],
+        baseUrl: 'http://example.com',
+        routes: [
+          {
+            appId: 'onecx-workspace-ui',
+            productName: 'onecx-workspace',
+            baseUrl: 'http://example.com/workspace/baseurl',
+            endpoints: [],
+          },
+        ],
+      })
+
+      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'detailswrong', params).subscribe((url) => {
+        expect(url).toBe('http://example.com/workspace/baseurl')
+        done()
+      })
+    })
+
+    it('should return route.baseUrl when endpoint was not found', (done) => {
+      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'detailswrong', params).subscribe((url) => {
+        expect(url).toBe('http://example.com/workspace/baseurl')
+        done()
+      })
+    })
+
+    it('should return well formed url for endpoint with 1 alias', (done) => {
+      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'edit', params).subscribe((url) => {
+        expect(url).toBe('http://example.com/workspace/baseurl/details/5')
+        done()
+      })
+    })
+
+    it('should return well formed url for endpoint with 2 alias ', (done) => {
+      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'change', params).subscribe((url) => {
+        expect(url).toBe('http://example.com/workspace/baseurl/details/5')
+        done()
+      })
+    })
+
+    it('should return baseurl when endpoint was not found', (done) => {
+      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'changexy', params).subscribe((url) => {
+        expect(url).toBe('http://example.com/workspace/baseurl')
+        done()
+      })
+    })
+
+    it('should return baseurl when endpoint has wrong alias', (done) => {
+      mockAppStateService.currentWorkspace$.publish({
+        portalName: 'test-portal',
+        workspaceName: 'test-workspace',
+        microfrontendRegistrations: [],
+        baseUrl: 'http://example.com',
+        routes: [
+          {
+            appId: 'onecx-workspace-ui',
+            productName: 'onecx-workspace',
+            baseUrl: 'http://example.com/workspace/baseurl',
+            endpoints: [
+              { name: 'details', path: '/details/{id}/{key}' },
+              { name: 'change', path: '[[edit]]' },
+            ],
+          },
+        ],
+      })
+
+      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'change', params).subscribe((url) => {
+        expect(url).toBe('http://example.com/workspace/baseurl')
+        done()
+      })
+    })
+
+    it('should return baseurl when param was not found"', (done) => {
+      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'details', paramsWrong).subscribe((url) => {
+        expect(url).toBe('http://example.com/workspace/baseurl')
+        done()
+      })
+    })
+
+    it('should baseurl without endpoint when params are empty"', (done) => {
+      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'details', {}).subscribe((url) => {
+        expect(url).toBe('http://example.com/workspace/baseurl')
+        done()
+      })
+    })
+
+    it('should return well formed url with 2 params in endpoint', (done) => {
+      mockAppStateService.currentWorkspace$.publish({
+        portalName: 'test-portal',
+        workspaceName: 'test-workspace',
+        microfrontendRegistrations: [],
+        baseUrl: 'http://example.com',
+        routes: [
+          {
+            appId: 'onecx-workspace-ui',
+            productName: 'onecx-workspace',
+            baseUrl: 'http://example.com/workspace/baseurl/',
+            endpoints: [
+              { name: 'details', path: '/details/{id}/{key}' },
+              { name: 'edit', path: '[[details]]' },
+              { name: 'change', path: '[[edit]]' },
+            ],
+          },
+        ],
+      })
+
+      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'details', params).subscribe((url) => {
+        expect(url).toBe('http://example.com/workspace/baseurl/details/5/xy')
+        done()
+      })
+    })
+
+    it('should return route.baseUrl when no endpoints are available"', (done) => {
+      mockAppStateService.currentWorkspace$.publish({
+        portalName: 'test-portal',
+        workspaceName: 'test-workspace',
+        microfrontendRegistrations: [],
+        baseUrl: 'http://example.com',
+        routes: [
+          {
+            appId: 'onecx-workspace-ui',
+            productName: 'onecx-workspace',
+            baseUrl: 'http://example.com/workspace/baseurl',
+          },
+        ],
+      })
+
+      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'detailswrong', params).subscribe((url) => {
+        expect(url).toBe('http://example.com/workspace/baseurl')
+        done()
+      })
+    })
+
+    it('should return well formed url although double / are retrieved', (done) => {
+      mockAppStateService.currentWorkspace$.publish({
+        portalName: 'test-portal',
+        workspaceName: 'test-workspace',
+        microfrontendRegistrations: [],
+        baseUrl: 'http://example.com',
+        routes: [
+          {
+            appId: 'onecx-workspace-ui',
+            productName: 'onecx-workspace',
+            baseUrl: 'http://example.com/workspace/baseurl/',
+            endpoints: [
+              { name: 'details', path: '/details/{id}' },
+              { name: 'edit', path: '[[details]]' },
+              { name: 'change', path: '[[edit]]' },
+            ],
+          },
+        ],
+      })
+
+      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'details', params).subscribe((url) => {
+        expect(url).toBe('http://example.com/workspace/baseurl/details/5')
+        done()
+      })
+    })
+  })
+})
