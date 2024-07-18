@@ -1,3 +1,16 @@
+## [4.43.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.42.1...v4.43.0) (2024-07-18)
+
+
+### Features
+
+* Added service for building url by workspaces, routes and endpoints ([#319](https://github.com/onecx/onecx-portal-ui-libs/issues/319)) ([3eece0e](https://github.com/onecx/onecx-portal-ui-libs/commit/3eece0e44da3b8eddedd8032c5b436fe9b1b43d5))
+* user avatar deprecated ([#299](https://github.com/onecx/onecx-portal-ui-libs/issues/299)) ([0ef7516](https://github.com/onecx/onecx-portal-ui-libs/commit/0ef7516d8c2d27ff478611745e87641f5921d4d0))
+
+
+### Refactoring
+
+* improve data view variable naming ([#317](https://github.com/onecx/onecx-portal-ui-libs/issues/317)) ([0e053e6](https://github.com/onecx/onecx-portal-ui-libs/commit/0e053e6fa9e82cc76a94e0d77679d7a182ae6254))
+
 ## [4.42.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.42.0...v4.42.1) (2024-07-17)
 
 
