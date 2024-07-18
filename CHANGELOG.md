@@ -1,3 +1,9 @@
+## [5.0.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.0.0...v5.0.1) (2024-07-18)
+
+### Bug Fixes
+
+* update lib versions in every peerDependencies ([#325](https://github.com/onecx/onecx-portal-ui-libs/issues/325)) ([155d869](https://github.com/onecx/onecx-portal-ui-libs/commit/155d8698b67e105f7974bbb4b33a52045e722411))
+
 ## [5.0.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.43.1...v5.0.0) (2024-07-18)
 
 ### ⚠ BREAKING CHANGES
