@@ -1,3 +1,13 @@
+## [5.0.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.43.1...v5.0.0) (2024-07-18)
+
+### ⚠ BREAKING CHANGES
+
+* update angular version (#306)
+
+### Features
+
+* update angular version ([#306](https://github.com/onecx/onecx-portal-ui-libs/issues/306)) ([01e0211](https://github.com/onecx/onecx-portal-ui-libs/commit/01e0211d02457e150b9f323216318fdaba4421f0))
+
 ## [4.43.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.43.0...v4.43.1) (2024-07-18)
 
 
