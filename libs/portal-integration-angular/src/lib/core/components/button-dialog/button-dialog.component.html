@@ -3,27 +3,54 @@
     <ng-container #container></ng-container>
     <ng-content></ng-content>
   </div>
-  <div class="w-full flex justify-content-end column-gap-2">
-    <button
-      id="buttonDialogSecondaryButton"
-      pButton
-      *ngIf="dialogData.config.secondaryButtonIncluded"
-      [icon]="dialogData.config.secondaryButtonDetails!.icon !== undefined ? dialogData.config.secondaryButtonDetails!.icon : ''"
-      (click)="secondaryButtonAction()"
-      [label]="dialogData.config.secondaryButtonDetails!.key | translate:dialogData.config.secondaryButtonDetails?.parameters"
-      [disabled]="secondaryButtonDisabled$ | async"
-      [pTooltip]="dialogData.config.secondaryButtonDetails!.tooltipKey ? (dialogData.config.secondaryButtonDetails!.tooltipKey | translate) : null"
-      [tooltipPosition]="dialogData.config.secondaryButtonDetails?.tooltipPosition ?? ''"
-    ></button>
-    <button
-      id="buttonDialogPrimaryButton"
-      pButton
-      [icon]="dialogData.config.primaryButtonDetails!.icon !== undefined ? dialogData.config.primaryButtonDetails!.icon : ''"
-      (click)="primaryButtonAction()"
-      [label]="dialogData.config.primaryButtonDetails!.key | translate:dialogData.config.primaryButtonDetails?.parameters"
-      [disabled]="primaryButtonDisabled$ | async"
-      [pTooltip]="dialogData.config.primaryButtonDetails!.tooltipKey ? (dialogData.config.primaryButtonDetails!.tooltipKey | translate) : null"
-      [tooltipPosition]="dialogData.config.primaryButtonDetails?.tooltipPosition ?? ''"
-    ></button>
+  <div class="w-full flex flex-row-reverse justify-content-between column-gap-2">
+    <div class="flex flex-row-reverse flex-wrap column-gap-2 row-gap-2">
+      <div>
+        <button
+          id="buttonDialogPrimaryButton"
+          pButton
+          [icon]="dialogData.config.primaryButtonDetails!.icon !== undefined ? dialogData.config.primaryButtonDetails!.icon : ''"
+          (click)="primaryButtonAction()"
+          [label]="dialogData.config.primaryButtonDetails!.key | translate:dialogData.config.primaryButtonDetails?.parameters"
+          [disabled]="primaryButtonDisabled$ | async"
+          [pTooltip]="dialogData.config.primaryButtonDetails!.tooltipKey ? (dialogData.config.primaryButtonDetails!.tooltipKey | translate) : null"
+          [tooltipPosition]="dialogData.config.primaryButtonDetails?.tooltipPosition ?? ''"
+        ></button>
+      </div>
+      <div>
+        <button
+          id="buttonDialogSecondaryButton"
+          pButton
+          *ngIf="dialogData.config.secondaryButtonIncluded"
+          [icon]="dialogData.config.secondaryButtonDetails!.icon !== undefined ? dialogData.config.secondaryButtonDetails!.icon : ''"
+          (click)="secondaryButtonAction()"
+          [label]="dialogData.config.secondaryButtonDetails!.key | translate:dialogData.config.secondaryButtonDetails?.parameters"
+          [disabled]="secondaryButtonDisabled$ | async"
+          [pTooltip]="dialogData.config.secondaryButtonDetails!.tooltipKey ? (dialogData.config.secondaryButtonDetails!.tooltipKey | translate) : null"
+          [tooltipPosition]="dialogData.config.secondaryButtonDetails?.tooltipPosition ?? ''"
+        ></button>
+      </div>
+      <div *ngFor="let button of rightCustomButtons">
+        <ng-container *ngTemplateOutlet="customButton; context: {button: button}"> </ng-container>
+      </div>
+    </div>
+    <div class="flex flex-wrap column-gap-2 row-gap-2">
+      <div *ngFor="let button of leftCustomButtons">
+        <ng-container *ngTemplateOutlet="customButton; context: {button: button}"> </ng-container>
+      </div>
+    </div>
   </div>
 </div>
+
+<ng-template #customButton let-button="button">
+  <button
+    id="{{button.id}}"
+    pButton
+    [icon]="button.icon !== undefined ? button.icon : ''"
+    (click)="customButtonAction(button)"
+    [label]="button.key | translate:button.parameters"
+    [disabled]="resolveCustomButtonDisabled((customButtonsDisabled$ | async) ?? {}, button.id)"
+    [pTooltip]="button.tooltipKey ? (button.tooltipKey | translate) : null"
+    [tooltipPosition]="button.tooltipPosition ?? ''"
+  ></button>
+</ng-template>
