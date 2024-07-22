@@ -63,8 +63,7 @@ export class ButtonDialogComponent implements OnInit {
   componentRef!: ComponentRef<any>
   primaryButtonDisabled$: Observable<boolean | undefined> | undefined
   secondaryButtonDisabled$: Observable<boolean | undefined> | undefined
-  customButtonsDisabled$: Observable<Record<string, boolean> | undefined> | undefined
-  private customButtonsDisabledSubject$: BehaviorSubject<Record<string, boolean>> = new BehaviorSubject({})
+  customButtonsDisabled$: BehaviorSubject<Record<string, boolean>> = new BehaviorSubject({})
   leftCustomButtons: ButtonDialogCustomButtonDetails[] = []
   rightCustomButtons: ButtonDialogCustomButtonDetails[] = []
 
@@ -144,17 +143,18 @@ export class ButtonDialogComponent implements OnInit {
         this.rightCustomButtons.concat(this.leftCustomButtons).map((button) => {
           initCustomButtons[button.id] = true
         })
-        this.customButtonsDisabledSubject$.next(initCustomButtons)
-        this.customButtonsDisabled$ = componentRef.instance.customButtonEnabled.pipe(
-          withLatestFrom(this.customButtonsDisabledSubject$.asObservable()),
-          tap(([buttonEnabled, customButtonsDisabled]) => {
-            if (customButtonsDisabled[buttonEnabled.id] !== !buttonEnabled.enabled) {
-              customButtonsDisabled[buttonEnabled.id] = !buttonEnabled.enabled
-              this.customButtonsDisabledSubject$.next(customButtonsDisabled)
-            }
-          }),
-          map(([_, customButtonsDisabled]) => customButtonsDisabled)
-        )
+        this.customButtonsDisabled$.next(initCustomButtons)
+        componentRef.instance.customButtonEnabled
+          .pipe(
+            withLatestFrom(this.customButtonsDisabled$),
+            map(([buttonEnabled, customButtonsDisabled]) => {
+              if (customButtonsDisabled[buttonEnabled.id] !== !buttonEnabled.enabled) {
+                customButtonsDisabled[buttonEnabled.id] = !buttonEnabled.enabled
+              }
+              return customButtonsDisabled
+            })
+          )
+          .subscribe(this.customButtonsDisabled$)
       }
 
       //populate container
