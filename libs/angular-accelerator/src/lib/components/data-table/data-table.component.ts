@@ -252,7 +252,6 @@ export class DataTableComponent extends DataSortBase implements OnInit {
       mergeMap(([actions, row]) =>
         this.translateService.get([...actions.map((a) => a.labelKey || '')]).pipe(
           map((translations) => {
-            console.log(actions)
             return actions
               .filter((a) => this.userService.hasPermission(a.permission))
               .map((a) => ({
@@ -422,7 +421,13 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
   hasVisibleOverflowMenuItems(row: any) {
     return this.overflowActions$.pipe(
-      map((actions) => actions.some((a) => !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField)))
+      map((actions) =>
+        actions.some(
+          (a) =>
+            (!a.actionVisibleField || (this.fieldIsTruthy(row, a.actionVisibleField)) &&
+            this.userService.hasPermission(a.permission))
+        )
+      )
     )
   }
 }
