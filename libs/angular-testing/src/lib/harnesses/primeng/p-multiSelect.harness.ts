@@ -7,7 +7,7 @@ export interface PMultiSelectHarnessFilters extends BaseHarnessFilters {
 }
 
 export class PMultiSelectHarness extends ComponentHarness {
-  static hostSelector = 'p-multiSelect'
+  static hostSelector = 'p-multiselect'
 
   static with(options: PMultiSelectHarnessFilters): HarnessPredicate<PMultiSelectHarness> {
     return new HarnessPredicate(PMultiSelectHarness, options)
@@ -36,7 +36,13 @@ export class PMultiSelectHarness extends ComponentHarness {
   }
 
   async isOpen(): Promise<boolean> {
-    return await (await this.locatorFor('div')()).hasClass('p-multiselect-open')
+    try {
+      await this.getHarnessLoaderForPMultiSelectPanel()
+      return true
+    } catch (error) {
+      console.error(error)
+      return false
+    }
   }
 
   async open() {
@@ -56,7 +62,9 @@ export class PMultiSelectHarness extends ComponentHarness {
   }
 
   async isHighlighted(PMultiSelectListItem: PMultiSelectListItemHarness): Promise<boolean> {
-    return await (await PMultiSelectListItem.getTestElement()).hasClass('p-highlight')
+    return (await (await PMultiSelectListItem.getTestElement()).getAttribute('data-p-highlight')) === 'true'
+      ? true
+      : false
   }
 
   async getSelectedOptions(): Promise<string[] | null> {

@@ -20,14 +20,14 @@ export type SlotComponentConfiguration = {
   permissions: Promise<string[]> | string[]
 }
 
-export interface SlotService {
+export interface SlotServiceInterface {
   init(): Promise<void>
   getComponentsForSlot(slotName: string): Observable<SlotComponentConfiguration[]>
   isSomeComponentDefinedForSlot(slotName: string): Observable<boolean>
 }
 
 @Injectable({ providedIn: 'root' })
-export class SlotService implements SlotService {
+export class SlotService implements SlotServiceInterface {
   remoteComponents$ = new RemoteComponentsTopic()
 
   constructor(private permissionsService: PermissionService) {}

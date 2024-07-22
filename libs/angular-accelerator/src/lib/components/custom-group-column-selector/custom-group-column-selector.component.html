@@ -1,11 +1,11 @@
 <p-button
   id="customGroupColumnSelectorButton"
   type="button"
-  (click)="onOpenCustomGroupColumnSelectionDialogClick()"
+  (onClick)="onOpenCustomGroupColumnSelectionDialogClick()"
   [title]="openButtonTitle || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.OPEN_BUTTON_DETAIL' | translate)"
   icon="pi pi-cog"
   styleClass="p-button"
-  [ariaLabel]="openButtonTitle || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.OPEN_BUTTON_DETAIL' | translate)"
+  [attr.aria-label]="openButtonTitle || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.OPEN_BUTTON_DETAIL' | translate)"
 ></p-button>
 
 <p-dialog header="Header" [(visible)]="visible" [style]="{ width: '70%' }" [modal]="true" [closeAriaLabel]="('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABELS.CLOSE' | translate)">

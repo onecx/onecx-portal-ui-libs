@@ -1,15 +1,6 @@
 import { CommonModule, registerLocaleData } from '@angular/common'
 import de from '@angular/common/locales/de'
-import {
-  APP_INITIALIZER,
-  CUSTOM_ELEMENTS_SCHEMA,
-  Inject,
-  LOCALE_ID,
-  ModuleWithProviders,
-  NgModule,
-  Optional,
-  SkipSelf,
-} from '@angular/core'
+import { APP_INITIALIZER, Inject, LOCALE_ID, ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
 import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateModule } from '@ngx-translate/core'
@@ -181,8 +172,6 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     CreateOrEditSearchConfigDialogComponent,
     LifecycleComponent,
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  entryComponents: [ColumnTogglerComponent],
 })
 export class PortalCoreModule {
   public static forMicroFrontend(): ModuleWithProviders<PortalCoreModule> {

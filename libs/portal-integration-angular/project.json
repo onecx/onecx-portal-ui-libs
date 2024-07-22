@@ -67,7 +67,9 @@
     },
     "storybook": {
       "executor": "@storybook/angular:start-storybook",
-      "dependsOn": ["copy-additional-styles"],
+      "dependsOn": [
+        "copy-additional-styles"
+      ],
       "options": {
         "port": 4400,
         "configDir": "libs/portal-integration-angular/.storybook",
@@ -79,7 +81,6 @@
           "libs/portal-integration-angular/assets/styles.scss",
           "libs/portal-integration-angular/.storybook/storybook.css"
         ]
-
       },
       "configurations": {
         "ci": {
@@ -89,8 +90,12 @@
     },
     "build-storybook": {
       "executor": "@storybook/angular:build-storybook",
-      "dependsOn": ["copy-additional-styles"],
-      "outputs": ["{options.outputDir}"],
+      "dependsOn": [
+        "copy-additional-styles"
+      ],
+      "outputs": [
+        "{options.outputDir}"
+      ],
       "options": {
         "outputDir": "dist/storybook/portal-integration-angular",
         "configDir": "libs/portal-integration-angular/.storybook",
@@ -102,7 +107,6 @@
           "libs/portal-integration-angular/assets/styles.scss",
           "libs/portal-integration-angular/.storybook/storybook.css"
         ]
-
       },
       "configurations": {
         "ci": {

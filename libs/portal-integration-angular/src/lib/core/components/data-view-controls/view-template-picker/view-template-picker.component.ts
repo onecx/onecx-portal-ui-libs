@@ -1,6 +1,7 @@
 import { ColumnViewTemplate } from '../../../../model/column-view-template'
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
+import { DropdownChangeEvent } from 'primeng/dropdown'
 @Component({
   templateUrl: './view-template-picker.component.html',
   selector: 'ocx-data-view-template-picker',
@@ -28,7 +29,7 @@ export class ViewTemplatePickerComponent implements OnInit {
     }
   }
 
-  handleTemplateChange(event: { orginalEvent: PointerEvent; value: string }) {
+  handleTemplateChange(event: DropdownChangeEvent) {
     const pickedTemplate = this.templates.filter((template) => template.label === event.value).at(0)
     if (pickedTemplate) {
       const activeColumnIds = pickedTemplate.template

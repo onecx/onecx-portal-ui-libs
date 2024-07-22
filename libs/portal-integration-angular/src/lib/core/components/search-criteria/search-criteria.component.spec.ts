@@ -1,12 +1,13 @@
 import { ComponentFixture, TestBed, getTestBed } from '@angular/core/testing'
 import { RouterTestingModule } from '@angular/router/testing'
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
-import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { InputSwitchModule } from 'primeng/inputswitch'
 import { AppStateService, ConfigurationService } from '@onecx/angular-integration-interface'
 import { SearchCriteriaComponent } from './search-criteria.component'
 import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
 import { TranslateTestingModule } from 'ngx-translate-testing'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('SearchCriteriaComponent', () => {
   const origAddEventListener = window.addEventListener
@@ -36,17 +37,14 @@ describe('SearchCriteriaComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [SearchCriteriaComponent],
-      imports: [
-        InputSwitchModule,
+    declarations: [SearchCriteriaComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    imports: [InputSwitchModule,
         RouterTestingModule,
-        HttpClientTestingModule,
         MockAuthModule,
-        TranslateTestingModule.withTranslations({}),
-      ],
-      providers: [ConfigurationService, AppStateService],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    }).compileComponents()
+        TranslateTestingModule.withTranslations({})],
+    providers: [ConfigurationService, AppStateService, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+}).compileComponents()
 
     fixture = TestBed.createComponent(SearchCriteriaComponent)
     component = fixture.componentInstance

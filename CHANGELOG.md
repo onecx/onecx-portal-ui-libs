@@ -1,3 +1,27 @@
+## [5.0.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.0.0...v5.0.1) (2024-07-18)
+
+### Bug Fixes
+
+* update lib versions in every peerDependencies ([#325](https://github.com/onecx/onecx-portal-ui-libs/issues/325)) ([155d869](https://github.com/onecx/onecx-portal-ui-libs/commit/155d8698b67e105f7974bbb4b33a52045e722411))
+
+## [5.0.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.43.1...v5.0.0) (2024-07-18)
+
+### ⚠ BREAKING CHANGES
+
+* update angular version (#306)
+
+### Features
+
+* update angular version ([#306](https://github.com/onecx/onecx-portal-ui-libs/issues/306)) ([01e0211](https://github.com/onecx/onecx-portal-ui-libs/commit/01e0211d02457e150b9f323216318fdaba4421f0))
+
+## [4.43.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.43.0...v4.43.1) (2024-07-18)
+
+
+### Bug Fixes
+
+* add missing renames in data-view component ([#324](https://github.com/onecx/onecx-portal-ui-libs/issues/324)) ([d35cf25](https://github.com/onecx/onecx-portal-ui-libs/commit/d35cf25457aa4c0a362927c1b9e53e5938ad546e))
+* render template if no permission is undefined ([#313](https://github.com/onecx/onecx-portal-ui-libs/issues/313)) ([52cfe14](https://github.com/onecx/onecx-portal-ui-libs/commit/52cfe1473a15f3af52d3028922f703dc1fb4c063))
+
 ## [4.43.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.42.1...v4.43.0) (2024-07-18)
 
 
