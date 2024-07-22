@@ -237,11 +237,9 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     this.inlineListActions$ = this._additionalActions$.pipe(
       map((actions) => actions.filter((action) => !action.showAsOverflow))
     )
-    this.inlineListActions$.subscribe((items) => console.log(items))
     this.overflowListActions$ = this._additionalActions$.pipe(
       map((actions) => actions.filter((action) => action.showAsOverflow))
     )
-    this.overflowListActions$.subscribe((items) => console.log(items))
     this.overflowMenuItems$ = combineLatest([this.overflowListActions$, this.currentMenuRow$]).pipe(
       mergeMap(([actions, row]) =>
         this.translateService.get([...actions.map((a) => a.labelKey || '')]).pipe(
@@ -385,7 +383,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
               command: () => a.callback(this.selectedItem),
             }))
         )
-        console.log(menuItems);
         this.gridMenuItems = menuItems
       })
   }
