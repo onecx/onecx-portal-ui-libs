@@ -1,3 +1,58 @@
+## [5.1.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.0.1...v5.1.0) (2024-07-23)
+
+### Features
+
+* dialog can have custom buttons ([#326](https://github.com/onecx/onecx-portal-ui-libs/issues/326)) ([c61a79d](https://github.com/onecx/onecx-portal-ui-libs/commit/c61a79d5e8bb00aa0f2edf5f4c3a1ee31bf3e78b))
+
+### Bug Fixes
+
+* fix overflow menu display bug for table + list grid ([#327](https://github.com/onecx/onecx-portal-ui-libs/issues/327)) ([20f940a](https://github.com/onecx/onecx-portal-ui-libs/commit/20f940aa60f2a18d8cad931adef3d68e493724ed))
+
+## [5.0.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.0.0...v5.0.1) (2024-07-18)
+
+### Bug Fixes
+
+* update lib versions in every peerDependencies ([#325](https://github.com/onecx/onecx-portal-ui-libs/issues/325)) ([155d869](https://github.com/onecx/onecx-portal-ui-libs/commit/155d8698b67e105f7974bbb4b33a52045e722411))
+
+## [5.0.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.43.1...v5.0.0) (2024-07-18)
+
+### ⚠ BREAKING CHANGES
+
+* update angular version (#306)
+
+### Features
+
+* update angular version ([#306](https://github.com/onecx/onecx-portal-ui-libs/issues/306)) ([01e0211](https://github.com/onecx/onecx-portal-ui-libs/commit/01e0211d02457e150b9f323216318fdaba4421f0))
+
+## [4.43.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.43.0...v4.43.1) (2024-07-18)
+
+
+### Bug Fixes
+
+* add missing renames in data-view component ([#324](https://github.com/onecx/onecx-portal-ui-libs/issues/324)) ([d35cf25](https://github.com/onecx/onecx-portal-ui-libs/commit/d35cf25457aa4c0a362927c1b9e53e5938ad546e))
+* render template if no permission is undefined ([#313](https://github.com/onecx/onecx-portal-ui-libs/issues/313)) ([52cfe14](https://github.com/onecx/onecx-portal-ui-libs/commit/52cfe1473a15f3af52d3028922f703dc1fb4c063))
+
+## [4.43.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.42.1...v4.43.0) (2024-07-18)
+
+
+### Features
+
+* Added service for building url by workspaces, routes and endpoints ([#319](https://github.com/onecx/onecx-portal-ui-libs/issues/319)) ([3eece0e](https://github.com/onecx/onecx-portal-ui-libs/commit/3eece0e44da3b8eddedd8032c5b436fe9b1b43d5))
+* user avatar deprecated ([#299](https://github.com/onecx/onecx-portal-ui-libs/issues/299)) ([0ef7516](https://github.com/onecx/onecx-portal-ui-libs/commit/0ef7516d8c2d27ff478611745e87641f5921d4d0))
+
+
+### Refactoring
+
+* improve data view variable naming ([#317](https://github.com/onecx/onecx-portal-ui-libs/issues/317)) ([0e053e6](https://github.com/onecx/onecx-portal-ui-libs/commit/0e053e6fa9e82cc76a94e0d77679d7a182ae6254))
+
+## [4.42.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.42.0...v4.42.1) (2024-07-17)
+
+
+### Bug Fixes
+
+* resubscribe on component or module init ([#323](https://github.com/onecx/onecx-portal-ui-libs/issues/323)) ([1071dfc](https://github.com/onecx/onecx-portal-ui-libs/commit/1071dfcf84c2c4affef46aa35953180a737bd7ba))
+* **test:** correctly expose AppStateServiceMock ([#322](https://github.com/onecx/onecx-portal-ui-libs/issues/322)) ([ee65d50](https://github.com/onecx/onecx-portal-ui-libs/commit/ee65d5087c725a769b012933cf4e89d5fdae6d67))
+
 ## [4.42.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.41.0...v4.42.0) (2024-07-16)
 
 

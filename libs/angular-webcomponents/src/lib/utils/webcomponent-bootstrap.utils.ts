@@ -23,6 +23,7 @@ import { Subscription, filter } from 'rxjs'
  */
 
 export type AppType = 'shell' | 'microfrontend'
+export type EntrypointType = 'microfrontend' | 'component'
 
 export function bootstrapModule<M>(module: Type<M>, appType: AppType, production: boolean): Promise<NgModuleRef<M>> {
   return cachePlatform(production)
@@ -57,27 +58,32 @@ export async function bootstrapRemoteComponent(
 
   cachePlatform(production)
   adaptRemoteComponentRoutes(app.injector)
-  const sub = connectMicroFrontendRouter(app.injector, false)
-
-  createEntrypoint(component, elementName, app.injector, sub)
+  createEntrypoint(component, elementName, app.injector, 'component')
 }
 
 export function createAppEntrypoint(component: Type<any>, elementName: string, injector: Injector) {
-  const sub = connectMicroFrontendRouter(injector)
-  createEntrypoint(component, elementName, injector, sub)
+  createEntrypoint(component, elementName, injector, 'microfrontend')
 }
 
 function createEntrypoint(
   component: Type<any>,
   elementName: string,
   injector: Injector,
-  routerSub?: Subscription | null
+  entrypointType: EntrypointType
 ) {
-  const originalNgDestroy = component.prototype.ngOnDestroy?.bind(component)
-  component.prototype.ngOnDestroy = () => {
-    routerSub?.unsubscribe()
+  let sub: Subscription | null
+  const originalNgInit = component.prototype.ngOnInit
+  component.prototype.ngOnInit = function () {
+    sub = connectMicroFrontendRouter(injector, entrypointType === 'microfrontend')
+    if (originalNgInit !== undefined) {
+      originalNgInit.call(this)
+    }
+  }
+  const originalNgDestroy = component.prototype.ngOnDestroy
+  component.prototype.ngOnDestroy = function () {
+    sub?.unsubscribe()
     if (originalNgDestroy !== undefined) {
-      originalNgDestroy()
+      originalNgDestroy.call(this)
     }
   }
 
@@ -144,7 +150,7 @@ function cachePlatform(production: boolean): PlatformRef {
   return platform
 }
 
-function connectMicroFrontendRouter(injector: Injector, warn: boolean = true): Subscription | null {
+function connectMicroFrontendRouter(injector: Injector, warn = true): Subscription | null {
   const router = injector.get(Router)
 
   if (!router) {

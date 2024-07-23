@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
-import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ActivatedRoute, RouterModule } from '@angular/router'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { TooltipModule } from 'primeng/tooltip'
@@ -8,6 +8,7 @@ import { ConfigurationService, AUTH_SERVICE } from '@onecx/angular-integration-i
 import { HeaderComponent } from './header.component'
 import { MockAuthService } from '../../../mock-auth/mock-auth.service'
 import { UserAvatarComponent } from '../user-avatar/user-avatar.component'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent
@@ -15,23 +16,25 @@ describe('HeaderComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [HeaderComponent, UserAvatarComponent, IfBreakpointDirective],
-      imports: [HttpClientTestingModule, RouterModule, TooltipModule, TranslateTestingModule.withTranslations({})],
-      providers: [
+    declarations: [HeaderComponent, UserAvatarComponent, IfBreakpointDirective],
+    imports: [RouterModule, TooltipModule, TranslateTestingModule.withTranslations({})],
+    providers: [
         { provide: AUTH_SERVICE, useClass: MockAuthService },
         ConfigurationService,
         {
-          provide: ActivatedRoute,
-          useValue: {
-            snapshot: {
-              paramMap: {
-                get: () => '1',
-              },
+            provide: ActivatedRoute,
+            useValue: {
+                snapshot: {
+                    paramMap: {
+                        get: () => '1',
+                    },
+                },
             },
-          },
         },
-      ],
-    }).compileComponents()
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+    ]
+}).compileComponents()
   }))
 
   beforeEach(() => {

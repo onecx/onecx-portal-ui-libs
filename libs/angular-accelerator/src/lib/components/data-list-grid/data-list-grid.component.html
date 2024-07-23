@@ -13,17 +13,27 @@
   paginatorDropdownAppendTo="body"
 >
   <ng-template #gridItem let-item pTemplate="gridItem">
-    <ng-container
-      [ngTemplateOutlet]="_gridItem ? _gridItem : defaultGridItem"
-      [ngTemplateOutletContext]="{$implicit:item}"
-    ></ng-container>
+  </ng-template>
+  <ng-template #gridItem let-rows pTemplate="gridItem">
+    <div class="p-grid p-nogutter grid grid-nogutter">
+      <ng-template ngFor let-item [ngForOf]="rows">
+        <ng-container
+          [ngTemplateOutlet]="_gridItem ? _gridItem : defaultGridItem"
+          [ngTemplateOutletContext]="{$implicit:item}"
+        ></ng-container>
+      </ng-template>
+    </div>
   </ng-template>
 
-  <ng-template #listItem let-item pTemplate="listItem">
-    <ng-container
-      [ngTemplateOutlet]="_listItem ? _listItem : defaultListItem"
-      [ngTemplateOutletContext]="{$implicit:item}"
-    ></ng-container>
+  <ng-template #listItem let-rows pTemplate="listItem">
+    <div class="p-grid p-nogutter grid grid-nogutter">
+      <ng-template ngFor let-item [ngForOf]="rows">
+        <ng-container
+          [ngTemplateOutlet]="_listItem ? _listItem : defaultListItem"
+          [ngTemplateOutletContext]="{$implicit:item}"
+        ></ng-container>
+      </ng-template>
+    </div>
   </ng-template>
   <ng-template pTemplate="empty">
     <span>{{ emptyResultsMessage || ("OCX_DATA_LIST_GRID.EMPTY_RESULT" | translate) }}</span>
@@ -80,7 +90,9 @@
             <a [routerLink]="" (click)="onViewRow(item)">{{ resolveFieldData(item, titleLineId) || '' }}</a>
           </div>
           <div class="flex flex-column md:flex-row md:justify-content-between">
-            <ng-container *ngIf="viewItemObserved && (!viewActionVisibleField || fieldIsTruthy(item, viewActionVisibleField))">
+            <ng-container
+              *ngIf="viewItemObserved && (!viewActionVisibleField || fieldIsTruthy(item, viewActionVisibleField))"
+            >
               <button
                 type="button"
                 icon="pi pi-eye"
@@ -94,7 +106,9 @@
                 [attr.name]="'data-list-action-button'"
               ></button>
             </ng-container>
-            <ng-container *ngIf="editItemObserved && (!editActionVisibleField || fieldIsTruthy(item, editActionVisibleField))">
+            <ng-container
+              *ngIf="editItemObserved && (!editActionVisibleField || fieldIsTruthy(item, editActionVisibleField))"
+            >
               <button
                 type="button"
                 class="p-button-rounded p-button-text mb-1 mr-2 editListItemButton"
@@ -108,7 +122,9 @@
                 [attr.name]="'data-list-action-button'"
               ></button>
             </ng-container>
-            <ng-container *ngIf="deleteItemObserved && (!deleteActionVisibleField || fieldIsTruthy(item, deleteActionVisibleField))">
+            <ng-container
+              *ngIf="deleteItemObserved && (!deleteActionVisibleField || fieldIsTruthy(item, deleteActionVisibleField))"
+            >
               <button
                 type="button"
                 icon="pi pi-trash"
@@ -122,7 +138,7 @@
                 [attr.name]="'data-list-action-button'"
               ></button>
             </ng-container>
-            <ng-container *ngFor="let action of additionalListActions">
+            <ng-container *ngFor="let action of inlineListActions$ | async">
               <ng-container *ngIf="(!action.actionVisibleField || fieldIsTruthy(item, action.actionVisibleField))">
                 <button
                   *ocxIfPermission="action.permission"
@@ -137,13 +153,18 @@
                 ></button>
               </ng-container>
             </ng-container>
-            <ng-container *ngIf="hasVisibleOverflowMenuItems(item)">
-              <p-menu #menu [model]="(getOverflowMenuItems(item) | async) || []" [popup]="true" appendTo="body"></p-menu>
+            <ng-container *ngIf="hasVisibleOverflowMenuItems(item) | async">
+              <p-menu
+                #menu
+                [model]="(overflowMenuItems$ | async) || []"
+                [popup]="true"
+                appendTo="body"
+              ></p-menu>
               <button
                 pButton
                 class="p-button-rounded p-button-text"
                 [icon]="'pi pi-ellipsis-v'"
-                (click)="menu.toggle($event)"
+                (click)="toggleOverflowMenu($event, menu, item)"
                 [ariaLabel]="'OCX_DATA_TABLE.MORE_ACTIONS' | translate"
                 [title]="'OCX_DATA_TABLE.MORE_ACTIONS' | translate"
               ></button>
@@ -161,5 +182,7 @@
   </div>
 </ng-template>
 <ng-template #defaultListItemSubtitleLines let-item="$implicit">
-  <div *ngFor="let subtitleLineId of subtitleLineIds" class="subtitleLine text-xl my-3">{{ resolveFieldData(item, subtitleLineId) }}</div>
+  <div *ngFor="let subtitleLineId of subtitleLineIds" class="subtitleLine text-xl my-3">
+    {{ resolveFieldData(item, subtitleLineId) }}
+  </div>
 </ng-template>

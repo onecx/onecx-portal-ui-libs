@@ -1,4 +1,5 @@
 import { MicrofrontendRegistration } from './mfe-portal-registration.model'
+import {Route} from './route.model'
 
 export interface Workspace {
   id?: string
@@ -58,5 +59,7 @@ export interface Workspace {
    * @deprecated will be removed
    */
   userUploaded?: boolean
-  logoSmallImageUrl?: string
+  logoSmallImageUrl?: string,
+
+  routes?: Array<Route>
 }

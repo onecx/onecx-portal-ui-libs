@@ -12,7 +12,7 @@ export function provideAppServiceMock() {
 }
 
 export function provideAppStateServiceMock() {
-  return [{ provide: AppStateService, useClass: AppStateServiceMock }]
+  return [AppStateServiceMock, { provide: AppStateService, useExisting: AppStateServiceMock }]
 }
 
 @Injectable()
