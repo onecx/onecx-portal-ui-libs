@@ -5,7 +5,7 @@ export interface MenuItemHarnessFilters extends BaseHarnessFilters {
 }
 
 export class MenuItemHarness extends ComponentHarness {
-  static hostSelector = 'li > a'
+  static hostSelector = 'li>div>a'
 
   static with(options: MenuItemHarnessFilters): HarnessPredicate<MenuItemHarness> {
     return new HarnessPredicate(MenuItemHarness, options).addOption('text', options.text, (harness, text) =>

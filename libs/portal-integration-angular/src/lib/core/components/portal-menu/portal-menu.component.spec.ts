@@ -1,7 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ConfigurationService } from '@onecx/angular-integration-interface'
 import { PortalMenuComponent } from './portal-menu.component'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('PortalMenuComponent', () => {
   let component: PortalMenuComponent
@@ -9,10 +10,10 @@ describe('PortalMenuComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [PortalMenuComponent],
-      imports: [HttpClientTestingModule],
-      providers: [ConfigurationService],
-    }).compileComponents()
+    declarations: [PortalMenuComponent],
+    imports: [],
+    providers: [ConfigurationService, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+}).compileComponents()
   })
 
   beforeEach(() => {

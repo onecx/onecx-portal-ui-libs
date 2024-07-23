@@ -1,6 +1,6 @@
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core'
-import { NgModule, importProvidersFrom } from '@angular/core'
-import { HttpClient, HttpClientModule } from '@angular/common/http'
+import { NgModule } from '@angular/core'
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
 import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { TranslateCombinedLoader } from './utils/translate.combined.loader'
@@ -12,8 +12,8 @@ export function translateLoader(http: HttpClient) {
   A utility module adding i18N support for Storybook stories
  **/
 @NgModule({
+  exports: [TranslateModule],
   imports: [
-    HttpClientModule,
     TranslateModule.forRoot({
       isolate: true,
       loader: {
@@ -23,8 +23,7 @@ export function translateLoader(http: HttpClient) {
       },
     }),
   ],
-  exports: [TranslateModule, HttpClientModule],
-  providers: [HttpClientModule, provideAppStateServiceMock(), importProvidersFrom(HttpClientModule)],
+  providers: [provideAppStateServiceMock(), provideHttpClient(withInterceptorsFromDi())],
 })
 export class StorybookTranslateModule {
   constructor(translateService: TranslateService) {

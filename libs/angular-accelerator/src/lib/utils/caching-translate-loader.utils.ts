@@ -5,14 +5,16 @@ import { Observable } from 'rxjs'
 import { TranslationCacheService } from '../services/translation-cache.service'
 
 export class CachingTranslateLoader implements TranslateLoader {
-  private translateLoader = new TranslateHttpLoader(this.http, this.prefix, this.suffix)
+  private translateLoader: TranslateHttpLoader
 
   constructor(
     private translationCache: TranslationCacheService,
     private http: HttpClient,
     private prefix?: string,
     private suffix?: string
-  ) {}
+  ) {
+    this.translateLoader = new TranslateHttpLoader(this.http, this.prefix, this.suffix)
+  }
 
   getTranslation(lang: string): Observable<any> {
     const url = `${this.prefix}${lang}${this.suffix}`

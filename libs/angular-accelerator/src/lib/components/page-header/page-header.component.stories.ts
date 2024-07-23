@@ -42,7 +42,7 @@ export default {
   ],
 } as Meta<PageHeaderComponent>
 
-const Template: StoryFn<PageHeaderComponent> = (args: PageHeaderComponent) => ({
+const Template: StoryFn<PageHeaderComponent> = (args) => ({
   props: args,
 })
 
@@ -232,7 +232,7 @@ export const WithLoadingState = {
   },
 }
 
-const TemplateWithProjection: StoryFn<PageHeaderComponent> = (args: PageHeaderComponent) => ({
+const TemplateWithProjection: StoryFn<PageHeaderComponent> = (args) => ({
   props: args,
   template: `
   <ocx-page-header [header]="title" [subheader]="subTitle" [actions]="actions">
@@ -246,7 +246,7 @@ const TemplateWithProjection: StoryFn<PageHeaderComponent> = (args: PageHeaderCo
   </ocx-page-header>`,
 })
 
-const TemplateWithFigureProjection: StoryFn<PageHeaderComponent> = (args: PageHeaderComponent) => ({
+const TemplateWithFigureProjection: StoryFn<PageHeaderComponent> = (args) => ({
   props: args,
   template: `
   <ocx-page-header [header]="header" [subheader]="subheader" [actions]="actions" [figureBackground]="false">
