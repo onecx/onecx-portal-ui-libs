@@ -8,17 +8,24 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core'
-import { Observable, from, isObservable, map, of, startWith } from 'rxjs'
+import { BehaviorSubject, Observable, from, isObservable, map, of, startWith, withLatestFrom } from 'rxjs'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 
-import { ButtonDialogButtonDetails, ButtonDialogConfig, ButtonDialogData } from '../../../model/button-dialog'
+import {
+  ButtonDialogButtonDetails,
+  ButtonDialogConfig,
+  ButtonDialogCustomButtonDetails,
+  ButtonDialogData,
+} from '../../../model/button-dialog'
 import { DialogMessageContentComponent } from './dialog-message-content/dialog-message-content.component'
 import {
   DialogButtonClicked,
+  DialogCustomButtonsDisabled,
   DialogPrimaryButtonDisabled,
   DialogResult,
   DialogSecondaryButtonDisabled,
   DialogState,
+  DialogStateButtonClicked,
 } from '../../../services/portal-dialog.service'
 
 @Component({
@@ -56,6 +63,9 @@ export class ButtonDialogComponent implements OnInit {
   componentRef!: ComponentRef<any>
   primaryButtonDisabled$: Observable<boolean | undefined> | undefined
   secondaryButtonDisabled$: Observable<boolean | undefined> | undefined
+  customButtonsDisabled$: BehaviorSubject<Record<string, boolean>> = new BehaviorSubject({})
+  leftCustomButtons: ButtonDialogCustomButtonDetails[] = []
+  rightCustomButtons: ButtonDialogCustomButtonDetails[] = []
 
   constructor(public dynamicDialogConfig: DynamicDialogConfig, public dynamicDialogRef: DynamicDialogRef) {}
 
@@ -64,31 +74,19 @@ export class ButtonDialogComponent implements OnInit {
   }
 
   primaryButtonAction() {
-    if (!this.componentRef) {
-      this.resultEmitter.emit('primary')
-      return
-    }
-
-    const state: DialogState<unknown> = {
-      button: 'primary',
-      result: undefined,
-    }
-
-    this.resolveButtonClick(state)
+    return this.buttonAction('primary')
   }
 
   secondaryButtonAction() {
-    if (!this.componentRef) {
-      this.resultEmitter.emit('secondary')
-      return
-    }
+    return this.buttonAction('secondary')
+  }
 
-    const state: DialogState<unknown> = {
-      button: 'secondary',
-      result: undefined,
-    }
+  customButtonAction(button: ButtonDialogCustomButtonDetails) {
+    return this.buttonAction(`custom`, button.id)
+  }
 
-    this.resolveButtonClick(state)
+  resolveCustomButtonDisabled(customButtonsDisabled: Record<string, boolean>, buttonId: string) {
+    return buttonId in customButtonsDisabled ? customButtonsDisabled[buttonId] : true
   }
 
   loadComponent() {
@@ -120,6 +118,8 @@ export class ButtonDialogComponent implements OnInit {
       this.dialogData.componentData = dynamicConfigData.componentData
     }
 
+    this.setupCustomButtons(dynamicConfigData)
+
     const viewContainerRef = this.dialogHost
     viewContainerRef.clear()
 
@@ -137,6 +137,24 @@ export class ButtonDialogComponent implements OnInit {
           startWith(false),
           map((isEnabled: boolean) => !isEnabled)
         )
+      }
+      if (this.isDialogCustomButtonDisabledImplemented(componentRef.instance)) {
+        const initCustomButtons: Record<string, boolean> = {}
+        this.rightCustomButtons.concat(this.leftCustomButtons).map((button) => {
+          initCustomButtons[button.id] = true
+        })
+        this.customButtonsDisabled$.next(initCustomButtons)
+        componentRef.instance.customButtonEnabled
+          .pipe(
+            withLatestFrom(this.customButtonsDisabled$),
+            map(([buttonEnabled, customButtonsDisabled]) => {
+              if (customButtonsDisabled[buttonEnabled.id] !== !buttonEnabled.enabled) {
+                customButtonsDisabled[buttonEnabled.id] = !buttonEnabled.enabled
+              }
+              return customButtonsDisabled
+            })
+          )
+          .subscribe(this.customButtonsDisabled$)
       }
 
       //populate container
@@ -161,6 +179,27 @@ export class ButtonDialogComponent implements OnInit {
         this.dialogData.config.secondaryButtonDetails = this.config.secondaryButtonDetails
       }
     }
+    this.setupCustomButtons(this.dialogData)
+  }
+
+  private buttonAction(resultButtonClickedName: DialogStateButtonClicked, buttonId?: string) {
+    if (!this.componentRef) {
+      this.resultEmitter.emit(resultButtonClickedName)
+      return
+    }
+
+    const state: DialogState<unknown> = {
+      button: resultButtonClickedName,
+      result: undefined,
+      id: buttonId,
+    }
+
+    this.resolveButtonClick(state)
+  }
+
+  private setupCustomButtons(dialogData: ButtonDialogData) {
+    this.leftCustomButtons = dialogData.config.customButtons?.filter((button) => button.alignment === 'left') ?? []
+    this.rightCustomButtons = dialogData.config.customButtons?.filter((button) => button.alignment === 'right') ?? []
   }
 
   private resolveButtonClick(state: DialogState<unknown>) {
@@ -220,5 +259,9 @@ export class ButtonDialogComponent implements OnInit {
 
   private isDialogSecondaryButtonDisabledImplemented(component: any): component is DialogSecondaryButtonDisabled {
     return 'secondaryButtonEnabled' in component
+  }
+
+  private isDialogCustomButtonDisabledImplemented(component: any): component is DialogCustomButtonsDisabled {
+    return 'customButtonEnabled' in component
   }
 }

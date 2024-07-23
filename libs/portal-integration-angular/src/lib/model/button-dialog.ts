@@ -28,10 +28,16 @@ export interface ButtonDialogButtonDetails {
   tooltipPosition?: 'right' | 'left' | 'top' | 'bottom' | string | undefined
 }
 
+export interface ButtonDialogCustomButtonDetails extends ButtonDialogButtonDetails {
+  id: string
+  alignment: 'right' | 'left'
+}
+
 export interface ButtonDialogConfig {
   primaryButtonDetails?: ButtonDialogButtonDetails
   secondaryButtonIncluded?: boolean
   secondaryButtonDetails?: ButtonDialogButtonDetails
+  customButtons?: ButtonDialogCustomButtonDetails[]
 }
 
 export interface ButtonDialogData {
