@@ -11,7 +11,7 @@ import { UserService } from '@onecx/angular-integration-interface'
 import { MockUserService } from '@onecx/angular-integration-interface/mocks'
 import { StorybookTranslateModule } from './../../storybook-translate.module'
 import { DataListGridComponent } from './data-list-grid.component'
-import { IfPermissionDirective } from '../../directives/if-permission.directive'
+import { HAS_PERMISSION_CHECKER, IfPermissionDirective } from '../../directives/if-permission.directive'
 import { MockAuthModule } from '../../mock-auth/mock-auth.module'
 
 const DataListGridComponentSBConfig: Meta<DataListGridComponent> = {
@@ -23,6 +23,7 @@ const DataListGridComponentSBConfig: Meta<DataListGridComponent> = {
         importProvidersFrom(BrowserModule),
         importProvidersFrom(BrowserAnimationsModule),
         { provide: UserService, useClass: MockUserService },
+        { provide: HAS_PERMISSION_CHECKER, useClass: MockUserService },
         importProvidersFrom(RouterModule.forRoot([], { useHash: true })),
       ],
     }),
