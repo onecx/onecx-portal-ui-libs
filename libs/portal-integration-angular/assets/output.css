@@ -1,6 +1,4 @@
 /* You can add global styles to this file, and also import other style files */
-/* You can add global styles to this file, and also import other style files */
-/* You can add global styles to this file, and also import other style files */
 @import url("https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100;8..144,400;8..144,500;8..144,700&family=Ubuntu:wght@300;400;500;700&display=swap");
 .grid {
   display: flex;
@@ -28209,10 +28207,6 @@ p-multiselect.ng-dirty.ng-invalid .p-multiselect:not(.p-disabled).p-focus {
 
 .p-overlaypanel .p-overlaypanel-content {
   padding: 1.5rem;
-}
-
-.p-paginator {
-  justify-content: flex-end;
 }
 
 .p-panel {

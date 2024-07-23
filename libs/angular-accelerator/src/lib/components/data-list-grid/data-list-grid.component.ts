@@ -24,6 +24,7 @@ import { DataTableColumn } from '../../model/data-table-column.model'
 import { ObjectUtils } from '../../utils/objectutils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { Filter, Row } from '../data-table/data-table.component'
+import { Menu } from 'primeng/menu'
 
 export type ListGridData = {
   id: string | number
@@ -168,18 +169,18 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return this.gridItemTemplate || this.gridItemChildTemplate
   }
 
-  additionalListActions: DataAction[] = []
-  additionalListOverflowActions: DataAction[] = []
-  _additionalActions: DataAction[] = []
+  inlineListActions$: Observable<DataAction[]>
+  overflowListActions$: Observable<DataAction[]>
+  overflowMenuItems$: Observable<MenuItem[]>
+  currentMenuRow$ = new BehaviorSubject<Row | null>(null)
+  _additionalActions$ = new BehaviorSubject<DataAction[]>([])
   @Input()
   get additionalActions(): DataAction[] {
-    return this._additionalActions
+    return this._additionalActions$.getValue()
   }
   set additionalActions(value: DataAction[]) {
-    this._additionalActions = value
+    this._additionalActions$.next(value)
     this.updateGridMenuItems()
-    this.additionalListActions = value.filter((action) => !action.showAsOverflow)
-    this.additionalListOverflowActions = value.filter((action) => action.showAsOverflow)
   }
 
   @Output() viewItem = new EventEmitter<ListGridData>()
@@ -232,6 +233,30 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     )
     this.displayedPageSize$ = combineLatest([this._pageSize$, this._pageSizes$]).pipe(
       map(([pageSize, pageSizes]) => pageSize ?? pageSizes.find((val): val is number => typeof val === 'number') ?? 50)
+    )
+    this.inlineListActions$ = this._additionalActions$.pipe(
+      map((actions) => actions.filter((action) => !action.showAsOverflow))
+    )
+    this.overflowListActions$ = this._additionalActions$.pipe(
+      map((actions) => actions.filter((action) => action.showAsOverflow))
+    )
+    this.overflowMenuItems$ = combineLatest([this.overflowListActions$, this.currentMenuRow$]).pipe(
+      mergeMap(([actions, row]) =>
+        this.translateService.get([...actions.map((a) => a.labelKey || '')]).pipe(
+          map((translations) => {
+            return actions
+              .filter((a) => this.userService.hasPermission(a.permission))
+              .map((a) => ({
+                label: translations[a.labelKey || ''],
+                icon: a.icon,
+                styleClass: (a.classes || []).join(' '),
+                disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
+                visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
+                command: () => a.callback(row),
+              }))
+          })
+        )
+      )
     )
   }
 
@@ -381,27 +406,19 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   }
 
   hasVisibleOverflowMenuItems(item: any) {
-    return this.additionalListOverflowActions.some(
-      (a) =>
-        (!a.actionVisibleField || this.fieldIsTruthy(item, a.actionVisibleField)) &&
-        this.userService.hasPermission(a.permission)
+    return this.overflowListActions$.pipe(
+      map((actions) =>
+        actions.some(
+          (a) =>
+            (!a.actionVisibleField || this.fieldIsTruthy(item, a.actionVisibleField)) &&
+            this.userService.hasPermission(a.permission)
+        )
+      )
     )
   }
 
-  getOverflowMenuItems(item: any) {
-    return this.translateService.get([...this.additionalListOverflowActions.map((a) => a.labelKey || '')]).pipe(
-      map((translations) => {
-        return this.additionalListOverflowActions
-          .filter((a) => this.userService.hasPermission(a.permission))
-          .map((a) => ({
-            label: translations[a.labelKey || ''],
-            icon: a.icon,
-            styleClass: (a.classes || []).join(' '),
-            disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(item, a.actionEnabledField)),
-            visible: !a.actionVisibleField || this.fieldIsTruthy(item, a.actionVisibleField),
-            command: () => a.callback(item),
-          }))
-      })
-    )
+  toggleOverflowMenu(event: MouseEvent, menu: Menu, row: Row) {
+    this.currentMenuRow$.next(row)
+    menu.toggle(event)
   }
 }

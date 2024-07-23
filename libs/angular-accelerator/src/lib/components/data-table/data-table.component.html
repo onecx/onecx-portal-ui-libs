@@ -1,5 +1,7 @@
 <ng-template #actionColumn let-rowObject="localRowObject">
-  <ng-container *ngIf="anyRowActionObserved || this.additionalActions.length > 0 || this.overflowActions.length > 0">
+  <ng-container
+    *ngIf="anyRowActionObserved || this.additionalActions.length > 0 || ((this.overflowActions$ | async) ?? []).length > 0"
+  >
     <td
       class="actions"
       pFrozenColumn
@@ -54,10 +56,8 @@
             [attr.name]="'data-table-action-button'"
           ></button>
         </ng-container>
-        <ng-container *ngFor="let action of additionalActions">
-          <ng-container
-            *ngIf="(!action.actionVisibleField || fieldIsTruthy(rowObject, action.actionVisibleField))"
-          >
+        <ng-container *ngFor="let action of inlineActions$ | async">
+          <ng-container *ngIf="(!action.actionVisibleField || fieldIsTruthy(rowObject, action.actionVisibleField))">
             <button
               *ocxIfPermission="action.permission"
               pButton
@@ -71,13 +71,13 @@
             ></button>
           </ng-container>
         </ng-container>
-        <ng-container *ngIf="hasVisibleOverflowMenuItems(rowObject)">
-          <p-menu #menu [model]="(getOverflowMenuItems(rowObject) | async) || []" [popup]="true" appendTo="body"></p-menu>
+        <ng-container *ngIf="hasVisibleOverflowMenuItems(rowObject) | async">
+          <p-menu #menu [model]="(overflowMenuItems$ | async) || []" [popup]="true" appendTo="body"></p-menu>
           <button
             pButton
             class="p-button-rounded p-button-text"
             [icon]="'pi pi-ellipsis-v'"
-            (click)="menu.toggle($event)"
+            (click)="toggleOverflowMenu($event, menu, rowObject)"
             [attr.aria-label]="'OCX_DATA_TABLE.MORE_ACTIONS' | translate"
             [title]="'OCX_DATA_TABLE.MORE_ACTIONS' | translate"
           ></button>
@@ -88,7 +88,9 @@
 </ng-template>
 
 <ng-template #actionColumnHeader>
-  <ng-container *ngIf="anyRowActionObserved || this.additionalActions.length > 0  || this.overflowActions.length > 0">
+  <ng-container
+    *ngIf="anyRowActionObserved || this.additionalActions.length > 0  || ((this.overflowActions$ | async) ?? []).length > 0"
+  >
     <th
       pFrozenColumn
       [frozen]="frozenActionColumn"
