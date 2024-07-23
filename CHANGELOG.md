@@ -1,3 +1,15 @@
+## [4.44.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.43.1...v4.44.0) (2024-07-23)
+
+
+### Features
+
+* dialog can have custom buttons ([#328](https://github.com/onecx/onecx-portal-ui-libs/issues/328)) ([698770f](https://github.com/onecx/onecx-portal-ui-libs/commit/698770f6be0851a7214787ff1a259703abe297c9))
+
+
+### Bug Fixes
+
+* fix overflow menu display bug for table + list grid ([#327](https://github.com/onecx/onecx-portal-ui-libs/issues/327)) ([#329](https://github.com/onecx/onecx-portal-ui-libs/issues/329)) ([9f6032f](https://github.com/onecx/onecx-portal-ui-libs/commit/9f6032fb92210cd431936ebcbfcd39961e7fe659))
+
 ## [4.43.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.43.0...v4.43.1) (2024-07-18)
 
 
