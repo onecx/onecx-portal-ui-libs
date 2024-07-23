@@ -4,7 +4,6 @@ import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
 import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { TranslateCombinedLoader } from './utils/translate.combined.loader'
-import { provideHttpClientTesting } from '@angular/common/http/testing'
 
 export function translateLoader(http: HttpClient) {
   return new TranslateCombinedLoader(new TranslateHttpLoader(http, `./assets/i18n/`, '.json'))
@@ -24,7 +23,7 @@ export function translateLoader(http: HttpClient) {
       },
     }),
   ],
-  providers: [provideAppStateServiceMock(), provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()],
+  providers: [provideAppStateServiceMock(), provideHttpClient(withInterceptorsFromDi())],
 })
 export class StorybookTranslateModule {
   constructor(translateService: TranslateService) {

@@ -10,7 +10,7 @@ import { MockUserService } from '@onecx/angular-integration-interface/mocks'
 import { DataTableComponent } from './data-table.component'
 import { StorybookTranslateModule } from './../../storybook-translate.module'
 import { MockAuthModule } from '../../mock-auth/mock-auth.module'
-import { IfPermissionDirective } from '../../directives/if-permission.directive'
+import { HAS_PERMISSION_CHECKER, IfPermissionDirective } from '../../directives/if-permission.directive'
 import { ColumnType } from '../../model/column-type.model'
 import { MenuModule } from 'primeng/menu'
 
@@ -24,6 +24,7 @@ const DataTableComponentSBConfig: Meta<DataTableComponent> = {
         importProvidersFrom(BrowserModule),
         importProvidersFrom(BrowserAnimationsModule),
         { provide: UserService, useClass: MockUserService },
+        { provide: HAS_PERMISSION_CHECKER, useClass: MockUserService },
       ],
     }),
     moduleMetadata({
