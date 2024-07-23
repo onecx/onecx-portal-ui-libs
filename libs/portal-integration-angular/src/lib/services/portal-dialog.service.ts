@@ -4,7 +4,7 @@ import { Observable, mergeMap } from 'rxjs'
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 
 import { ButtonDialogComponent } from '../core/components/button-dialog/button-dialog.component'
-import { ButtonDialogButtonDetails, ButtonDialogData } from '../model/button-dialog'
+import { ButtonDialogButtonDetails, ButtonDialogCustomButtonDetails, ButtonDialogData } from '../model/button-dialog'
 import { DialogMessageContentComponent } from '../core/components/button-dialog/dialog-message-content/dialog-message-content.component'
 import { PrimeIcon } from '@onecx/angular-accelerator'
 
@@ -118,6 +118,17 @@ export interface DialogPrimaryButtonDisabled {
 export interface DialogSecondaryButtonDisabled {
   secondaryButtonEnabled: EventEmitter<boolean>
 }
+
+/**
+ * Implement via component class to be displayed by {@link PortalDialogService.openDialog}
+ *
+ * Use to control the state of custom buttons (disabled or enabled). Whenever your component wants to disable/enable any custom button it should emit an object indicating which button should be disabled/enabled. This object should contain id property (string) related to previously defined button and enabled property (boolean) equal to whether custom button should be enabled.
+ *
+ * If you implement this interface then all custom buttons will be disabled until the emitter emits true
+ */
+export interface DialogCustomButtonsDisabled {
+  customButtonEnabled: EventEmitter<{ id: string; enabled: boolean }>
+}
 /**
  * Implement via component class to be displayed by {@link PortalDialogService.openDialog}
  *
@@ -200,16 +211,20 @@ type Component<T extends unknown> = unknown extends T
       inputs?: Record<string, unknown>
     }
 
+export type DialogStateButtonClicked = 'primary' | 'secondary' | 'custom'
+
 /**
  * Object containing information about clicked button ('primary' or 'secondary') and displayed component state captured on button click (only if component implements {@link DialogResult} interface)
  */
 export type DialogState<T> = {
-  button: 'primary' | 'secondary'
+  button: DialogStateButtonClicked
   result: T | undefined
+  id?: string
 }
 
 export type PortalDialogConfig = {
   showXButton?: boolean
+  customButtons?: ButtonDialogCustomButtonDetails[]
   ariaLabelledBy?: string
   width?: string
   height?: string
@@ -422,9 +437,12 @@ export class PortalDialogService {
     const dynamicDialogDataConfig: ButtonDialogData = {
       component: componentToRender.type as Type<any>,
       config: {
-        primaryButtonDetails: this.getButtonDetails(primaryButtonTranslationKeyOrDetails),
+        primaryButtonDetails: this.buttonDetailsOrTranslationKey(primaryButtonTranslationKeyOrDetails),
         secondaryButtonIncluded: secondaryButtonTranslationKeyOrDetails !== undefined,
-        secondaryButtonDetails: this.getButtonDetails(secondaryButtonTranslationKeyOrDetails),
+        secondaryButtonDetails: this.buttonDetailsOrTranslationKey(secondaryButtonTranslationKeyOrDetails),
+        customButtons: dialogOptions.customButtons?.map(
+          (button) => this.buttonDetailsOrTranslationKey(button) as ButtonDialogCustomButtonDetails
+        ),
       },
       componentData: componentToRender.inputs,
     }
@@ -447,9 +465,13 @@ export class PortalDialogService {
     return title
   }
 
-  private getButtonDetails(
-    buttonTranslationKeyOrDetails: TranslationKey | ButtonDialogButtonDetails | undefined
-  ): ButtonDialogButtonDetails | undefined {
+  private buttonDetailsOrTranslationKey(
+    buttonTranslationKeyOrDetails:
+      | TranslationKey
+      | ButtonDialogButtonDetails
+      | ButtonDialogCustomButtonDetails
+      | undefined
+  ): ButtonDialogButtonDetails | ButtonDialogCustomButtonDetails | undefined {
     if (buttonTranslationKeyOrDetails === undefined) {
       return undefined
     }
