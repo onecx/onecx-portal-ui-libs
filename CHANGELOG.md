@@ -1,3 +1,10 @@
+## [4.44.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.44.0...v4.44.1) (2024-07-24)
+
+
+### Refactoring
+
+* improve webcomponent router initializer ([#332](https://github.com/onecx/onecx-portal-ui-libs/issues/332)) ([#333](https://github.com/onecx/onecx-portal-ui-libs/issues/333)) ([69e6015](https://github.com/onecx/onecx-portal-ui-libs/commit/69e60153d7bc6799eec44119b4595147d33e8423))
+
 ## [4.44.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.43.1...v4.44.0) (2024-07-23)
 
 
