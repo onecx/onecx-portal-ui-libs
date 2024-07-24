@@ -1,3 +1,10 @@
+## [4.44.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.44.1...v4.44.2) (2024-07-24)
+
+
+### Bug Fixes
+
+* fix output.css.map ([#335](https://github.com/onecx/onecx-portal-ui-libs/issues/335)) ([ba526af](https://github.com/onecx/onecx-portal-ui-libs/commit/ba526af5101fa6dc713e822b5859c60112f2e5b7)), closes [#332](https://github.com/onecx/onecx-portal-ui-libs/issues/332)
+
 ## [4.44.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.44.0...v4.44.1) (2024-07-24)
 
 
