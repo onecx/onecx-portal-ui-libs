@@ -1,3 +1,4 @@
+import { Location } from '@angular/common'
 import { Router } from '@angular/router'
 import { AppStateService } from '@onecx/portal-integration-angular'
 import { firstValueFrom, map } from 'rxjs'
@@ -12,7 +13,10 @@ export function initializeRouter(router: Router, appStateService: AppStateServic
             route.data = {
               ...route.data,
               mfeInfo: mfeInfo,
-            }
+            },
+            route.redirectTo = route.redirectTo && typeof route.redirectTo === 'string'
+                ? Location.joinWithSlash(mfeInfo.baseHref, route.redirectTo)
+                : route.redirectTo
           })
           routes.push({
             path: '**',
