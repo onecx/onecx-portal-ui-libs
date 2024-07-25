@@ -27,7 +27,7 @@ import { SrcDirective } from './directives/src.directive'
 import { DynamicPipe } from './pipes/dynamic.pipe'
 import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
 import { AppConfigService } from './services/app-config-service'
-import { DynamicLocaleId } from './utils/dynamic-locale-id-factory'
+import { DynamicLocaleId } from './utils/dynamic-locale-id'
 
 export class AngularAcceleratorMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {

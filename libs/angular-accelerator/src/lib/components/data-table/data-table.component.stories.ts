@@ -13,7 +13,7 @@ import { MockAuthModule } from '../../mock-auth/mock-auth.module'
 import { HAS_PERMISSION_CHECKER, IfPermissionDirective } from '../../directives/if-permission.directive'
 import { ColumnType } from '../../model/column-type.model'
 import { MenuModule } from 'primeng/menu'
-import { DynamicLocaleId } from '../../utils/dynamic-locale-id-factory'
+import { DynamicLocaleId } from '../../utils/dynamic-locale-id'
 
 type DataTableInputTypes = Pick<DataTableComponent, 'rows' | 'columns' | 'emptyResultsMessage' | 'selectedRows'>
 
