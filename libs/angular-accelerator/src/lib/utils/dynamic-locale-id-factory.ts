@@ -6,7 +6,7 @@ export class DynamicLocaleIdFactory {
       if (k != 'valueOf') {
         ;(this as any)[k] = function (...args: any[]) {
           const str = this.valueOf()
-          return str[k].apply(str, args)
+          return str[k](...args)
         }
       }
     })
