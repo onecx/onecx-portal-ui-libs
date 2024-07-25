@@ -1,3 +1,15 @@
+## [5.1.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.1.1...v5.1.2) (2024-07-24)
+
+### Bug Fixes
+
+* fix output.css.map ([#336](https://github.com/onecx/onecx-portal-ui-libs/issues/336)) ([9fdd049](https://github.com/onecx/onecx-portal-ui-libs/commit/9fdd049f5045227608af038ce8606de37b6b35bc))
+
+## [5.1.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.1.0...v5.1.1) (2024-07-24)
+
+### Refactoring
+
+* improve webcomponent router initializer ([#332](https://github.com/onecx/onecx-portal-ui-libs/issues/332)) ([1e51f28](https://github.com/onecx/onecx-portal-ui-libs/commit/1e51f28e59cdee7d7147dd49af537930173b940e))
+
 ## [5.1.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.0.1...v5.1.0) (2024-07-23)
 
 ### Features
