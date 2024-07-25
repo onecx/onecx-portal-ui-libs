@@ -1,6 +1,6 @@
 import { UserService } from '@onecx/angular-integration-interface'
 
-export class DynamicLocaleIdFactory {
+export class DynamicLocaleId {
   constructor(private userService: UserService) {
     Object.getOwnPropertyNames(String.prototype).forEach((k) => {
       if (k != 'valueOf') {
