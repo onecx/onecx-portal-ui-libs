@@ -8,7 +8,7 @@ import {
   LOCALE_ID,
   OnInit,
   Output,
-  TemplateRef
+  TemplateRef,
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
@@ -22,6 +22,7 @@ import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { ObjectUtils } from '../../utils/objectutils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
+import { isValidDate } from '@onecx/accelerator'
 
 type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -304,7 +305,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
                   ({
                     label: filterOption,
                     value: filterOption,
-                  } as SelectItem)
+                  }) as SelectItem
               )
           })
         )
@@ -424,10 +425,18 @@ export class DataTableComponent extends DataSortBase implements OnInit {
       map((actions) =>
         actions.some(
           (a) =>
-            (!a.actionVisibleField || (this.fieldIsTruthy(row, a.actionVisibleField)) &&
-            this.userService.hasPermission(a.permission))
+            !a.actionVisibleField ||
+            (this.fieldIsTruthy(row, a.actionVisibleField) && this.userService.hasPermission(a.permission))
         )
       )
     )
+  }
+
+  isDate(value: Date | string | number) {
+    if (value instanceof Date) {
+      return true
+    }
+    const d = new Date(value)
+    return isValidDate(d)
   }
 }
