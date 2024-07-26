@@ -168,7 +168,7 @@
                 </ng-template>
                 <ng-template pTemplate="item" let-value>
                   <ng-container [ngSwitch]="(currentFilterColumn$ | async)?.columnType">
-                    <span *ngSwitchCase="'DATE'">{{ value.label | date }}</span>
+                    <span *ngSwitchCase="'DATE'">{{ isDate(value.label) ? (value.label | date) : '' }}</span>
                     <span *ngSwitchDefault> {{ value.label }} </span>
                   </ng-container>
                 </ng-template>
