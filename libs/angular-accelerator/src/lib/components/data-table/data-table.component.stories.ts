@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { importProvidersFrom } from '@angular/core'
+import { LOCALE_ID, importProvidersFrom } from '@angular/core'
 import { Meta, moduleMetadata, applicationConfig, StoryFn } from '@storybook/angular'
 import { TableModule } from 'primeng/table'
 import { ButtonModule } from 'primeng/button'
@@ -13,8 +13,10 @@ import { MockAuthModule } from '../../mock-auth/mock-auth.module'
 import { HAS_PERMISSION_CHECKER, IfPermissionDirective } from '../../directives/if-permission.directive'
 import { ColumnType } from '../../model/column-type.model'
 import { MenuModule } from 'primeng/menu'
+import { DynamicLocaleId } from '../../utils/dynamic-locale-id'
 
 type DataTableInputTypes = Pick<DataTableComponent, 'rows' | 'columns' | 'emptyResultsMessage' | 'selectedRows'>
+
 const DataTableComponentSBConfig: Meta<DataTableComponent> = {
   title: 'DataTableComponent',
   component: DataTableComponent,
@@ -25,6 +27,11 @@ const DataTableComponentSBConfig: Meta<DataTableComponent> = {
         importProvidersFrom(BrowserAnimationsModule),
         { provide: UserService, useClass: MockUserService },
         { provide: HAS_PERMISSION_CHECKER, useClass: MockUserService },
+        {
+          provide: LOCALE_ID,
+          useClass: DynamicLocaleId,
+          deps: [UserService],
+        },
       ],
     }),
     moduleMetadata({
@@ -57,6 +64,12 @@ const defaultComponentArgs: DataTableInputTypes = {
       nameKey: 'Available',
       sortable: false,
     },
+    {
+      id: 'expiration',
+      columnType: ColumnType.DATE,
+      nameKey: 'Expiration Date',
+      sortable: true,
+    }
   ],
   rows: [
     {
@@ -64,18 +77,21 @@ const defaultComponentArgs: DataTableInputTypes = {
       product: 'Apples',
       amount: 2,
       available: false,
+      expiration: new Date(2021, 5, 4),
     },
     {
       id: 2,
       product: 'Bananas',
       amount: 10,
       available: true,
+      expiration: new Date(2021, 6, 4),
     },
     {
       id: 3,
       product: 'Strawberries',
       amount: 5,
       available: false,
+      expiration: new Date(2021, 7, 4),
     },
   ],
   emptyResultsMessage: 'No results',
