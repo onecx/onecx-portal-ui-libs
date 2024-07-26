@@ -4,6 +4,8 @@ import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
 import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { TranslateCombinedLoader } from './utils/translate.combined.loader'
+import { registerLocaleData } from '@angular/common'
+import localeDE from '@angular/common/locales/de'
 
 export function translateLoader(http: HttpClient) {
   return new TranslateCombinedLoader(new TranslateHttpLoader(http, `./assets/i18n/`, '.json'))
@@ -27,6 +29,7 @@ export function translateLoader(http: HttpClient) {
 })
 export class StorybookTranslateModule {
   constructor(translateService: TranslateService) {
+    registerLocaleData(localeDE)
     const lang = translateService.getBrowserLang()
     const supportedLanguages = ['de', 'en']
     if (lang && supportedLanguages.includes(lang)) {
