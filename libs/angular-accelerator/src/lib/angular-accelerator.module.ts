@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common'
-import { LOCALE_ID, NgModule } from '@angular/core'
+import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
 import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateModule } from '@ngx-translate/core'
@@ -27,11 +27,19 @@ import { SrcDirective } from './directives/src.directive'
 import { DynamicPipe } from './pipes/dynamic.pipe'
 import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
 import { AppConfigService } from './services/app-config-service'
+import { DynamicLocaleId } from './utils/dynamic-locale-id'
+import { firstValueFrom, skip } from 'rxjs'
 
 export class AngularAcceleratorMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
     console.log(`Missing translation for ${params.key}`, params)
     return params.key
+  }
+}
+
+function appInitializer(userService: UserService) {
+  return async () => {
+    await firstValueFrom(userService.lang$.pipe(skip(1)))
   }
 }
 
@@ -69,14 +77,18 @@ export class AngularAcceleratorMissingTranslationHandler implements MissingTrans
   providers: [
     {
       provide: LOCALE_ID,
-      useFactory: (UserService: UserService) => {
-        return UserService.lang$.getValue()
-      },
+      useClass: DynamicLocaleId,
       deps: [UserService],
     },
     {
       provide: HAS_PERMISSION_CHECKER,
       useExisting: UserService,
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: appInitializer,
+      deps: [UserService],
+      multi: true
     },
     AppConfigService,
   ],
