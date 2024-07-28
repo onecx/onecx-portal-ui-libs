@@ -1,3 +1,9 @@
+## [5.1.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.1.2...v5.1.3) (2024-07-26)
+
+### Bug Fixes
+
+* correctly inject LOCALE_ID in angular-accelerator.module ([#337](https://github.com/onecx/onecx-portal-ui-libs/issues/337)) ([2369875](https://github.com/onecx/onecx-portal-ui-libs/commit/2369875b717ff71e034ca476040d2bbc7e8cb1fe))
+
 ## [5.1.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.1.1...v5.1.2) (2024-07-24)
 
 ### Bug Fixes
