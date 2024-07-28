@@ -13,6 +13,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
     - run: npm ci
-    - uses: timonmasberg/nx-migration-gh-action@v1.0.0
+    - uses: timonmasberg/nx-migration-gh-action@v1.1.13
       with:
         repoToken: ${{ secrets.CI_PAT }}
