@@ -1,3 +1,10 @@
+## [4.44.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.44.3...v4.44.4) (2024-07-28)
+
+
+### Bug Fixes
+
+* sorting and filtering in data table view fix ([#339](https://github.com/onecx/onecx-portal-ui-libs/issues/339)) ([6d9978a](https://github.com/onecx/onecx-portal-ui-libs/commit/6d9978abccf04382de89bead137d740c18dfa95f))
+
 ## [4.44.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.44.2...v4.44.3) (2024-07-26)
 
 
