@@ -1,6 +1,6 @@
 .p-panelmenu {
   .p-panelmenu-header {
-    > a {
+    .p-panelmenu-header-action {
       padding: var(--accordion-header-padding);
       border: var(--accordion-header-border);
       color: var(--text-color);
@@ -9,7 +9,7 @@
       border-radius: var(--border-radius);
       transition: var(--list-item-transition);
 
-      .p-panelmenu-icon {
+      chevronrighticon, chevrondownicon {
         margin-right: var(--inline-spacing);
       }
 
@@ -69,7 +69,7 @@
       .p-menuitem-link {
         @include menuitem-link();
 
-        .p-panelmenu-icon {
+        chevronrighticon, chevrondownicon {
           margin-right: var(--inline-spacing);
         }
       }
@@ -85,7 +85,7 @@
 
     @if $accordionSpacing == 0 {
       .p-panelmenu-header {
-        > a {
+        .p-panelmenu-header-action {
           border-radius: 0;
         }
       }
@@ -96,7 +96,7 @@
 
       &:not(:first-child) {
         .p-panelmenu-header {
-          > a {
+          .p-panelmenu-header-action {
             border-top: 0 none;
           }
 
@@ -111,7 +111,7 @@
 
       &:first-child {
         .p-panelmenu-header {
-          > a {
+          .p-panelmenu-header-action {
             border-top-right-radius: var(--border-radius);
             border-top-left-radius: var(--border-radius);
           }
@@ -120,7 +120,7 @@
 
       &:last-child {
         .p-panelmenu-header:not(.p-highlight) {
-          > a {
+          .p-panelmenu-header-action {
             border-bottom-right-radius: var(--border-radius);
             border-bottom-left-radius: var(--border-radius);
           }

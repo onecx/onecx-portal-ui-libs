@@ -128,7 +128,7 @@ export class DataViewControlsComponent implements OnInit, OnChanges {
 
   @Output() sortChange: EventEmitter<string> = new EventEmitter()
   @Output() filterChange: EventEmitter<string> = new EventEmitter()
-  @Output() dataViewChange: EventEmitter<string> = new EventEmitter()
+  @Output() dataViewChange: EventEmitter<'list' | 'grid'> = new EventEmitter()
   @Output() sortDirectionChange: EventEmitter<boolean> = new EventEmitter()
   @Output() columnsChange: EventEmitter<string[]> = new EventEmitter()
 
@@ -258,7 +258,7 @@ export class DataViewControlsComponent implements OnInit, OnChanges {
       })
   }
 
-  viewModeChange(event: { icon: PrimeIcon; mode: string }): void {
+  viewModeChange(event: { icon: PrimeIcon; mode: 'list' | 'grid' }): void {
     this.dataViewChange.emit(event.mode)
     this.enableToggleColumnButton(event.mode)
   }
