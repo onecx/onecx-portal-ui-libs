@@ -23,6 +23,12 @@
         margin-right: 0;
       }
 
+      .p-panelmenu-icon {
+        order: 1;
+        margin-left: auto;
+        margin-right: 0;
+      }
+
       &.p-disabled {
         opacity: 1;
 
@@ -33,6 +39,12 @@
 
       &:not(.p-highlight) {
         .p-panelmenu-header-action {
+          &:focus {
+            background: var(--accordion-header-hover-bg);
+          }
+        }
+
+        .p-panelmenu-header-link {
           &:focus {
             background: var(--accordion-header-hover-bg);
           }
