@@ -3,7 +3,7 @@
   "version": "5.1.4",
   "peerDependencies": {
     "@angular/cdk": "^18.0.5",
-    "primeng": "^17.18.2"
+    "primeng": "^17.18.6"
   },
   "dependencies": {},
   "publishConfig": {
