@@ -1,3 +1,13 @@
+## [5.2.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.1.5...v5.2.0) (2024-07-29)
+
+### Features
+
+* permission checker is optional for permission directive ([#346](https://github.com/onecx/onecx-portal-ui-libs/issues/346)) ([7de9fd8](https://github.com/onecx/onecx-portal-ui-libs/commit/7de9fd853679421cf2331c44db6807aa19efd87a))
+
+### Bug Fixes
+
+* additional fixes v5 styling ([#345](https://github.com/onecx/onecx-portal-ui-libs/issues/345)) ([58bfa99](https://github.com/onecx/onecx-portal-ui-libs/commit/58bfa99edb790d8218e76c438c42bf86941ca2cc))
+
 ## [5.1.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.1.4...v5.1.5) (2024-07-29)
 
 ### Bug Fixes
