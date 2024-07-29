@@ -1,3 +1,9 @@
+## [5.1.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.1.4...v5.1.5) (2024-07-29)
+
+### Bug Fixes
+
+* additional fixes for v5 ([#331](https://github.com/onecx/onecx-portal-ui-libs/issues/331)) ([4c2088b](https://github.com/onecx/onecx-portal-ui-libs/commit/4c2088b635b559d4f8ec0ddaf85141ef91fd0176))
+
 ## [5.1.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.1.3...v5.1.4) (2024-07-28)
 
 ### Bug Fixes
