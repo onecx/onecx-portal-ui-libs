@@ -1,6 +1,6 @@
 {
   "name": "@onecx/angular-webcomponents",
-  "version": "5.1.4",
+  "version": "5.1.5",
   "peerDependencies": {
     "@angular/core": "^18.0.5",
     "@angular/platform-browser": "^18.0.5",
