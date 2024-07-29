@@ -4,7 +4,7 @@
   border-radius: var(--border-radius);
   padding: var(--breadcrumb-padding);
 
-  ul {
+  ol {
     li {
       .p-menuitem-link {
         transition: var(--list-item-transition);
@@ -23,7 +23,7 @@
         }
       }
 
-      &.p-breadcrumb-chevron {
+      &.p-menuitem-separator {
         margin: 0 $inlineSpacing 0 $inlineSpacing;
         color: var(--text-secondary-color);
       }

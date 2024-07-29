@@ -1,3 +1,17 @@
+## [5.1.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.1.4...v5.1.5) (2024-07-29)
+
+### Bug Fixes
+
+* additional fixes for v5 ([#331](https://github.com/onecx/onecx-portal-ui-libs/issues/331)) ([4c2088b](https://github.com/onecx/onecx-portal-ui-libs/commit/4c2088b635b559d4f8ec0ddaf85141ef91fd0176))
+
+## [5.1.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.1.3...v5.1.4) (2024-07-28)
+
+### Bug Fixes
+
+* package json lib versions ([#342](https://github.com/onecx/onecx-portal-ui-libs/issues/342)) ([b9528ab](https://github.com/onecx/onecx-portal-ui-libs/commit/b9528abe060bc9f0d60e3529d0cbfe1035c84e38))
+* sorting and filtering in data table view fix ([#339](https://github.com/onecx/onecx-portal-ui-libs/issues/339)) ([89337bd](https://github.com/onecx/onecx-portal-ui-libs/commit/89337bdb7198a6c97f791cca185549eb4b0f1d51))
+* update angular versions ([#340](https://github.com/onecx/onecx-portal-ui-libs/issues/340)) ([be5ecd7](https://github.com/onecx/onecx-portal-ui-libs/commit/be5ecd781ddce8dc2b2fae43089e8e6b0ab45976))
+
 ## [5.1.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.1.2...v5.1.3) (2024-07-26)
 
 ### Bug Fixes
