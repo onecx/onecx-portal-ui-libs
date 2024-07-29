@@ -22,6 +22,27 @@
       }
     }
 
+    > a {
+      padding: var(--accordion-header-padding);
+      border: var(--accordion-header-border);
+      color: var(--text-color);
+      background: var(--accordion-header-bg);
+      font-weight: var(--accordion-header-font-weight);
+      border-radius: var(--border-radius);
+      transition: var(--list-item-transition);
+
+      .p-panelmenu-icon {
+        margin-right: var(--inline-spacing);
+      }
+
+      .p-menuitem-icon {
+        margin-right: var(--inline-spacing);
+      }
+      &:focus {
+        @include focused();
+      }
+    }
+
     &:not(.p-highlight):not(.p-disabled) {
       > a:hover {
         background: var(--accordion-header-hover-bg);
@@ -72,6 +93,10 @@
         chevronrighticon, chevrondownicon {
           margin-right: var(--inline-spacing);
         }
+
+        .p-panelmenu-icon {
+          margin-right: var(--inline-spacing);
+        }
       }
     }
 
@@ -88,6 +113,10 @@
         .p-panelmenu-header-action {
           border-radius: 0;
         }
+
+        > a {
+          border-radius: 0;
+        }
       }
 
       .p-panelmenu-content {
@@ -97,6 +126,10 @@
       &:not(:first-child) {
         .p-panelmenu-header {
           .p-panelmenu-header-action {
+            border-top: 0 none;
+          }
+
+          > a {
             border-top: 0 none;
           }
 
@@ -115,12 +148,22 @@
             border-top-right-radius: var(--border-radius);
             border-top-left-radius: var(--border-radius);
           }
+
+          > a {
+            border-top-right-radius: var(--border-radius);
+            border-top-left-radius: var(--border-radius);
+          }
         }
       }
 
       &:last-child {
         .p-panelmenu-header:not(.p-highlight) {
           .p-panelmenu-header-action {
+            border-bottom-right-radius: var(--border-radius);
+            border-bottom-left-radius: var(--border-radius);
+          }
+
+          > a {
             border-bottom-right-radius: var(--border-radius);
             border-bottom-left-radius: var(--border-radius);
           }

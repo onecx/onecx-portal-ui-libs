@@ -22,6 +22,10 @@
       color: var(--emphasis-medium);
     }
 
+    span {
+      color: var(--emphasis-medium);
+    }
+
     &:enabled:hover {
       background: rgba(var(--overlay-color-rgb), 0.04);
     }
