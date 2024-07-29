@@ -10,6 +10,7 @@ import {
   TemplateRef,
   ViewContainerRef,
 } from '@angular/core'
+import { UserService } from '@onecx/angular-integration-interface'
 
 export interface HasPermissionChecker {
   hasPermission(permissionKey: string): boolean
@@ -20,7 +21,7 @@ export interface HasPermissionChecker {
  */
 export class AlwaysGrantPermissionChecker implements HasPermissionChecker {
   hasPermission(_permissionKey: string): boolean {
-    return true;
+    return true
   }
 }
 
@@ -42,16 +43,25 @@ export class IfPermissionDirective implements OnInit {
     this.ocxIfPermissionPermissions = value
   }
 
+  private permissionChecker: HasPermissionChecker | undefined
   negate = false
 
   constructor(
     private renderer: Renderer2,
     private el: ElementRef,
     private viewContainer: ViewContainerRef,
+    @Optional()
     @Inject(HAS_PERMISSION_CHECKER)
-    private permissionChecker: HasPermissionChecker,
-    @Optional() private templateRef?: TemplateRef<any>
-  ) {}
+    private hasPermissionChecker?: HasPermissionChecker,
+    @Optional() private templateRef?: TemplateRef<any>,
+    @Optional() private userService?: UserService
+  ) {
+    if (!(hasPermissionChecker || userService)) {
+      throw 'IfPermission requires UserService or HasPermissionChecker to be provided!'
+    }
+
+    this.permissionChecker = hasPermissionChecker ?? userService
+  }
 
   ngOnInit() {
     if (this.permission) {
@@ -77,6 +87,6 @@ export class IfPermissionDirective implements OnInit {
       }
       return result
     }
-    return this.permissionChecker.hasPermission(permission)
+    return this.permissionChecker?.hasPermission(permission)
   }
 }
