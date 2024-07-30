@@ -108,10 +108,10 @@ describe('PageHeaderComponent', () => {
     component.actions = mockActions
 
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(1)
-    expect(await pageHeaderHarness.getElementByPTooltip('My Test Action')).toBeTruthy()
+    expect(await pageHeaderHarness.getElementByAriaLabel('My Test Action')).toBeTruthy()
     await (await pageHeaderHarness.getOverflowActionMenuButton())?.click()
     expect(await pageHeaderHarness.getOverFlowMenuItems()).toHaveLength(2)
-    expect(await pageHeaderHarness.getElementByPTooltip('More actions')).toBeTruthy()
+    expect(await pageHeaderHarness.getElementByAriaLabel('More actions')).toBeTruthy()
     expect(userServiceSpy).toHaveBeenCalledTimes(3)
   })
 
@@ -126,9 +126,9 @@ describe('PageHeaderComponent', () => {
     component.actions = mockActions
 
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(0)
-    expect(await pageHeaderHarness.getElementByPTooltip('My Test Action')).toBeFalsy()
+    expect(await pageHeaderHarness.getElementByAriaLabel('My Test Action')).toBeFalsy()
     expect(await pageHeaderHarness.getOverFlowMenuItems()).toHaveLength(0)
-    expect(await pageHeaderHarness.getElementByPTooltip('More actions')).toBeFalsy()
+    expect(await pageHeaderHarness.getElementByAriaLabel('More actions')).toBeFalsy()
     expect(userServiceSpy).toHaveBeenCalledTimes(3)
   })
 
