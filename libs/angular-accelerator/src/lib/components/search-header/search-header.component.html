@@ -7,7 +7,10 @@
   <ng-template #additionalToolbarContentLeft>
     <ocx-search-config [searchConfigs]="searchConfigs" (selectedSearchConfigChanged)="confirmSearchConfig($event)">
     </ocx-search-config>
-    <ng-container *ngIf="_additionalToolbarContentLeft" [ngTemplateOutlet]="_additionalToolbarContentLeft"></ng-container>
+    <ng-container
+      *ngIf="_additionalToolbarContentLeft"
+      [ngTemplateOutlet]="_additionalToolbarContentLeft"
+    ></ng-container>
   </ng-template>
   <ng-template #additionalToolbarContent>
     <ng-container *ngIf="_additionalToolbarContent" [ngTemplateOutlet]="_additionalToolbarContent"></ng-container>
@@ -24,6 +27,7 @@
           icon="pi pi-eraser"
           [ariaLabel]="'OCX_SEARCH_HEADER.RESET_BUTTON.DETAIL' | translate"
           title="{{ 'OCX_SEARCH_HEADER.RESET_BUTTON.DETAIL' | translate }}"
+          [disabled]="resetButtonDisabled"
         >
         </p-button>
 
@@ -34,6 +38,7 @@
           icon="pi pi-search"
           [ariaLabel]="'OCX_SEARCH_HEADER.SEARCH_BUTTON.DETAIL' | translate"
           title="{{ 'OCX_SEARCH_HEADER.SEARCH_BUTTON.DETAIL' | translate }}"
+          [disabled]="searchButtonDisabled"
         >
         </p-button>
       </div>
