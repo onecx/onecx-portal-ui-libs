@@ -113,6 +113,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return this._data$.getValue()
   }
   set data(value: RowListGridData[]) {
+    this.resetPage()
     this._originalData = [...value]
     this._data$.next([...value])
   }
@@ -399,6 +400,11 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     const page = event.first / event.rows
     this.page = page
     this.pageChanged.emit(page)
+  }
+
+  resetPage() {
+    this.page = 0
+    this.pageChanged.emit(this.page)
   }
 
   fieldIsTruthy(object: any, key: any) {
