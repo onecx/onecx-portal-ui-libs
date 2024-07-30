@@ -5,14 +5,17 @@ import { AppStateServiceMock, provideAppStateServiceMock } from '@onecx/angular-
 describe('WorkspaceService', () => {
   let service: WorkspaceService
   let mockAppStateService: AppStateServiceMock
-  const params: Record<string, unknown> = {
+  const endpointParameters: Record<string, unknown> = {
     id: 5,
     key: 'xy',
   }
 
-  const paramsWrong: Record<string, unknown> = {
+  const endpointParametersWrong: Record<string, unknown> = {
     idx: 5,
   }
+
+  const appId = 'onecx-workspace-ui'
+  const productName = 'onecx-workspace'
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -48,7 +51,7 @@ describe('WorkspaceService', () => {
 
   describe('getUrl', () => {
     it('should find endpoint and return correct url from route and endpoint ', (done) => {
-      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'details', params).subscribe((url) => {
+      service.getUrl(productName, appId, 'details', endpointParameters).subscribe((url) => {
         expect(url).toBe('http://example.com/workspace/baseurl/details/5')
         done()
       })
@@ -63,7 +66,7 @@ describe('WorkspaceService', () => {
         routes: [],
       })
 
-      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'detailswrong', params).subscribe((url) => {
+      service.getUrl(productName, appId, 'detailswrong', endpointParameters).subscribe((url) => {
         expect(url).toBe('')
         done()
       })
@@ -77,7 +80,7 @@ describe('WorkspaceService', () => {
         baseUrl: 'http://example.com',
       })
 
-      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'detailswrong', params).subscribe((url) => {
+      service.getUrl(productName, appId, 'detailswrong', endpointParameters).subscribe((url) => {
         expect(url).toBe('http://example.com')
         done()
       })
@@ -92,14 +95,14 @@ describe('WorkspaceService', () => {
         routes: [],
       })
 
-      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'detailswrong', params).subscribe((url) => {
+      service.getUrl(productName, appId, 'detailswrong', endpointParameters).subscribe((url) => {
         expect(url).toBe('http://example.com')
         done()
       })
     })
 
     it('should return workspace baseUrl when route for appId and productName was not found"', (done) => {
-      service.getUrl('onecx-workspace-uix', 'onecx-workspace', 'details', {}).subscribe((url) => {
+      service.getUrl(productName, appId, 'details', {}).subscribe((url) => {
         expect(url).toBe('http://example.com')
         done()
       })
@@ -124,7 +127,7 @@ describe('WorkspaceService', () => {
         ],
       })
 
-      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'details', params).subscribe((url) => {
+      service.getUrl(productName, appId, 'details', endpointParameters).subscribe((url) => {
         expect(url).toBe('http://example.com/details/5')
         done()
       })
@@ -150,7 +153,7 @@ describe('WorkspaceService', () => {
         ],
       })
 
-      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'details', params).subscribe((url) => {
+      service.getUrl(productName, appId, 'details', endpointParameters).subscribe((url) => {
         expect(url).toBe('http://example.com/details/5')
         done()
       })
@@ -172,35 +175,35 @@ describe('WorkspaceService', () => {
         ],
       })
 
-      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'detailswrong', params).subscribe((url) => {
+      service.getUrl(productName, appId, 'detailswrong', endpointParameters).subscribe((url) => {
         expect(url).toBe('http://example.com/workspace/baseurl')
         done()
       })
     })
 
     it('should return route.baseUrl when endpoint was not found', (done) => {
-      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'detailswrong', params).subscribe((url) => {
+      service.getUrl(productName, appId, 'detailswrong', endpointParameters).subscribe((url) => {
         expect(url).toBe('http://example.com/workspace/baseurl')
         done()
       })
     })
 
     it('should return well formed url for endpoint with 1 alias', (done) => {
-      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'edit', params).subscribe((url) => {
+      service.getUrl(productName, appId, 'edit', endpointParameters).subscribe((url) => {
         expect(url).toBe('http://example.com/workspace/baseurl/details/5')
         done()
       })
     })
 
     it('should return well formed url for endpoint with 2 alias ', (done) => {
-      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'change', params).subscribe((url) => {
+      service.getUrl(productName, appId, 'change', endpointParameters).subscribe((url) => {
         expect(url).toBe('http://example.com/workspace/baseurl/details/5')
         done()
       })
     })
 
     it('should return baseurl when endpoint was not found', (done) => {
-      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'changexy', params).subscribe((url) => {
+      service.getUrl(productName, appId, 'changexy', endpointParameters).subscribe((url) => {
         expect(url).toBe('http://example.com/workspace/baseurl')
         done()
       })
@@ -225,27 +228,34 @@ describe('WorkspaceService', () => {
         ],
       })
 
-      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'change', params).subscribe((url) => {
+      service.getUrl(productName, appId, 'change', endpointParameters).subscribe((url) => {
         expect(url).toBe('http://example.com/workspace/baseurl')
         done()
       })
     })
 
     it('should return baseurl when param was not found"', (done) => {
-      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'details', paramsWrong).subscribe((url) => {
+      service.getUrl(productName, appId, 'details', endpointParametersWrong).subscribe((url) => {
         expect(url).toBe('http://example.com/workspace/baseurl')
         done()
       })
     })
 
-    it('should baseurl without endpoint when params are empty"', (done) => {
-      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'details', {}).subscribe((url) => {
+    it('should return baseurl when no endpointName and endpointParameters are given"', (done) => {
+      service.getUrl(productName, appId).subscribe((url) => {
         expect(url).toBe('http://example.com/workspace/baseurl')
         done()
       })
     })
 
-    it('should return well formed url with 2 params in endpoint', (done) => {
+    it('should baseurl without endpoint when endpointParameters are empty"', (done) => {
+      service.getUrl(productName, appId, 'details', {}).subscribe((url) => {
+        expect(url).toBe('http://example.com/workspace/baseurl')
+        done()
+      })
+    })
+
+    it('should return well formed url with 2 endpointParameters in endpoint', (done) => {
       mockAppStateService.currentWorkspace$.publish({
         portalName: 'test-portal',
         workspaceName: 'test-workspace',
@@ -265,7 +275,7 @@ describe('WorkspaceService', () => {
         ],
       })
 
-      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'details', params).subscribe((url) => {
+      service.getUrl(productName, appId, 'details', endpointParameters).subscribe((url) => {
         expect(url).toBe('http://example.com/workspace/baseurl/details/5/xy')
         done()
       })
@@ -286,7 +296,7 @@ describe('WorkspaceService', () => {
         ],
       })
 
-      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'detailswrong', params).subscribe((url) => {
+      service.getUrl(productName, appId, 'detailswrong', endpointParameters).subscribe((url) => {
         expect(url).toBe('http://example.com/workspace/baseurl')
         done()
       })
@@ -312,7 +322,7 @@ describe('WorkspaceService', () => {
         ],
       })
 
-      service.getUrl('onecx-workspace-ui', 'onecx-workspace', 'details', params).subscribe((url) => {
+      service.getUrl(productName, appId, 'details', endpointParameters).subscribe((url) => {
         expect(url).toBe('http://example.com/workspace/baseurl/details/5')
         done()
       })
