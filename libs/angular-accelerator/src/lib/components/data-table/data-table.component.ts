@@ -43,6 +43,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     return this._rows$.getValue()
   }
   set rows(value: Row[]) {
+    this.resetPage()
     this._rows$.next(value)
   }
   _selection$ = new BehaviorSubject<Row[]>([])
@@ -338,6 +339,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
       this.filters = filters
     }
     this.filtered.emit(filters)
+    this.resetPage()
   }
 
   getSelectedFilters(columnId: string): string[] | undefined {
@@ -381,6 +383,11 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     const page = event.first / event.rows
     this.page = page
     this.pageChanged.emit(page)
+  }
+
+  resetPage() {
+    this.page = 0
+    this.pageChanged.emit(this.page)
   }
 
   fieldIsTruthy(object: any, key: any) {
