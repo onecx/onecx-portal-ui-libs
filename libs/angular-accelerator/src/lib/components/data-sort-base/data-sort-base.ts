@@ -11,7 +11,10 @@ import { ObjectUtils } from '../../utils/objectutils'
 type RowListGridData = ListGridData | Row
 
 export class DataSortBase {
-  constructor(protected locale: string, protected translateService: TranslateService) {}
+  constructor(
+    protected locale: string,
+    protected translateService: TranslateService
+  ) {}
 
   translateItems(
     [items, filters, sortColumn, sortDirection]: [RowListGridData[], Filter[], string, DataSortDirection],
@@ -23,7 +26,10 @@ export class DataSortBase {
       let translationKeys: string[] = []
       const translatedColumns = columns.filter((c) => c.columnType === ColumnType.TRANSLATION_KEY)
       translatedColumns.forEach((c) => {
-        translationKeys = [...translationKeys, ...items.map((i) => ObjectUtils.resolveFieldData(i, c.id)?.toString())]
+        translationKeys = [
+          ...translationKeys,
+          ...items.map((i) => ObjectUtils.resolveFieldData(i, c.id)?.toString()).filter((v) => !!v),
+        ]
       })
       if (translationKeys.length) {
         return this.translateService.get(translationKeys).pipe(
@@ -51,7 +57,7 @@ export class DataSortBase {
       Filter[],
       string,
       DataSortDirection,
-      Record<string, Record<string, string>>
+      Record<string, Record<string, string>>,
     ],
     clientSideFiltering: boolean
   ): [RowListGridData[], Filter[], string, DataSortDirection, Record<string, Record<string, string>>] {
@@ -69,9 +75,9 @@ export class DataSortBase {
               .some(
                 (filter) =>
                   (
-                    translations[filter.columnId]?.[ObjectUtils.resolveFieldData(item, filter.columnId).toString()] ||
+                    translations[filter.columnId]?.[ObjectUtils.resolveFieldData(item, filter.columnId)?.toString()] ||
                     ObjectUtils.resolveFieldData(item, filter.columnId)
-                  ).toString() === filter.value.toString()
+                  )?.toString() === filter.value.toString()
               )
           )
       ),
@@ -88,7 +94,7 @@ export class DataSortBase {
       Filter[],
       string,
       DataSortDirection,
-      Record<string, Record<string, string>>
+      Record<string, Record<string, string>>,
     ],
     columns: DataTableColumn[],
     clientSideSorting: boolean

@@ -1,3 +1,33 @@
+## [5.2.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.1.5...v5.2.0) (2024-07-29)
+
+### Features
+
+* permission checker is optional for permission directive ([#346](https://github.com/onecx/onecx-portal-ui-libs/issues/346)) ([7de9fd8](https://github.com/onecx/onecx-portal-ui-libs/commit/7de9fd853679421cf2331c44db6807aa19efd87a))
+
+### Bug Fixes
+
+* additional fixes v5 styling ([#345](https://github.com/onecx/onecx-portal-ui-libs/issues/345)) ([58bfa99](https://github.com/onecx/onecx-portal-ui-libs/commit/58bfa99edb790d8218e76c438c42bf86941ca2cc))
+
+## [5.1.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.1.4...v5.1.5) (2024-07-29)
+
+### Bug Fixes
+
+* additional fixes for v5 ([#331](https://github.com/onecx/onecx-portal-ui-libs/issues/331)) ([4c2088b](https://github.com/onecx/onecx-portal-ui-libs/commit/4c2088b635b559d4f8ec0ddaf85141ef91fd0176))
+
+## [5.1.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.1.3...v5.1.4) (2024-07-28)
+
+### Bug Fixes
+
+* package json lib versions ([#342](https://github.com/onecx/onecx-portal-ui-libs/issues/342)) ([b9528ab](https://github.com/onecx/onecx-portal-ui-libs/commit/b9528abe060bc9f0d60e3529d0cbfe1035c84e38))
+* sorting and filtering in data table view fix ([#339](https://github.com/onecx/onecx-portal-ui-libs/issues/339)) ([89337bd](https://github.com/onecx/onecx-portal-ui-libs/commit/89337bdb7198a6c97f791cca185549eb4b0f1d51))
+* update angular versions ([#340](https://github.com/onecx/onecx-portal-ui-libs/issues/340)) ([be5ecd7](https://github.com/onecx/onecx-portal-ui-libs/commit/be5ecd781ddce8dc2b2fae43089e8e6b0ab45976))
+
+## [5.1.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.1.2...v5.1.3) (2024-07-26)
+
+### Bug Fixes
+
+* correctly inject LOCALE_ID in angular-accelerator.module ([#337](https://github.com/onecx/onecx-portal-ui-libs/issues/337)) ([2369875](https://github.com/onecx/onecx-portal-ui-libs/commit/2369875b717ff71e034ca476040d2bbc7e8cb1fe))
+
 ## [5.1.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.1.1...v5.1.2) (2024-07-24)
 
 ### Bug Fixes

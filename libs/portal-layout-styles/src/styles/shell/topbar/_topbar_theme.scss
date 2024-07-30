@@ -26,6 +26,23 @@
         border: none;
 
         &.p-menubar .p-menubar-root-list > .p-menuitem {
+          > .p-menuitem-content {
+            .p-menuitem-link {
+              .p-menuitem-text,
+              .p-menuitem-icon,
+              .p-submenu-icon {
+                color: var(--topbar-item-text-color);
+              }
+  
+              &:not(.p-disabled):hover {
+                background: var(--topbar-item-text-hover-bg-color);
+                transition: background-color var(--transition-duration);
+              }
+            }
+          }
+        }
+
+        &.p-menubar .p-menubar-root-list > .p-menuitem {
           > .p-menuitem-link {
             .p-menuitem-text,
             .p-menuitem-icon,

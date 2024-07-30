@@ -39,8 +39,7 @@ export class DiagramComponent implements OnInit, OnChanges {
   @Input() sumKey = 'OCX_DIAGRAM.SUM'
   private _diagramType: DiagramType = DiagramType.PIE
   selectedDiagramType: DiagramLayouts | undefined
-  public chartType: 'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'polarArea' | 'radar' | undefined =
-    'pie'
+  public chartType: 'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'polarArea' | 'radar' = 'pie'
   @Input()
   get diagramType(): DiagramType {
     return this._diagramType
@@ -121,7 +120,7 @@ export class DiagramComponent implements OnInit, OnChanges {
 
   private diagramTypeToChartType(
     value: DiagramType
-  ): 'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'polarArea' | 'radar' | undefined {
+  ): 'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'polarArea' | 'radar' {
     if (value === DiagramType.PIE) return 'pie'
     else if (value === DiagramType.HORIZONTAL_BAR || value === DiagramType.VERTICAL_BAR) return 'bar'
     return 'pie'
