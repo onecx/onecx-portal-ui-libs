@@ -5,16 +5,30 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { BehaviorSubject, filter } from 'rxjs'
 import { MenuItem } from 'primeng/api'
 import { BreadCrumbMenuItem } from '../model/breadcrumb-menu-item.model'
+import { SyncableTopic } from '@onecx/accelerator'
+
+// This topic is defined here and not in integration-interface, because
+// it is not used as framework independent integration but for improving
+// angular specific things
+class ManualBreadcrumbsTopic extends SyncableTopic<MenuItem[]> {
+  constructor() {
+    super('manualBreadcrumbs', 1)
+  }
+}
 
 @Injectable({ providedIn: 'any' })
 @UntilDestroy()
 export class BreadcrumbService {
-  private itemsSource = new BehaviorSubject<MenuItem[]>([])
+  private itemsSource$ = new ManualBreadcrumbsTopic()
   generatedItemsSource = new BehaviorSubject<MenuItem[]>([])
 
-  itemsHandler = this.itemsSource.asObservable()
+  itemsHandler = this.itemsSource$.asObservable()
 
-  constructor(private router: Router, private activeRoute: ActivatedRoute, private translateService: TranslateService) {
+  constructor(
+    private router: Router,
+    private activeRoute: ActivatedRoute,
+    private translateService: TranslateService
+  ) {
     this.generateBreadcrumbs(this.activeRoute.snapshot)
     this.router.events
       .pipe(
@@ -93,7 +107,7 @@ export class BreadcrumbService {
     ]
     if (translationKeys.length) {
       this.translateService.get(translationKeys).subscribe((translations: any) => {
-        this.itemsSource.next(
+        this.itemsSource$.publish(
           items.map((i) => ({
             ...i,
             label: translations[i.labelKey || ''] || i.label,
@@ -102,7 +116,7 @@ export class BreadcrumbService {
         )
       })
     } else {
-      this.itemsSource.next(items)
+      this.itemsSource$.publish(items)
     }
   }
 }
