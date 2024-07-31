@@ -49,6 +49,8 @@ export class SearchHeaderComponent implements AfterViewInit {
     this._actions = value
     this.updateHeaderActions()
   }
+  @Input() searchButtonDisabled = false
+  @Input() resetButtonDisabled = false
 
   @Output() searched: EventEmitter<any> = new EventEmitter()
   @Output() resetted: EventEmitter<any> = new EventEmitter()
