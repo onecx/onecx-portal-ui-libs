@@ -43,7 +43,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     return this._rows$.getValue()
   }
   set rows(value: Row[]) {
-    this.resetPage()
+    !this._rows$.getValue().length ?? this.resetPage()
     this._rows$.next(value)
   }
   _selection$ = new BehaviorSubject<Row[]>([])
@@ -60,6 +60,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     return this._filters$.getValue()
   }
   set filters(value: Filter[]) {
+    !this._filters$.getValue().length ?? this.resetPage()
     this._filters$.next(value)
   }
   _sortDirection$ = new BehaviorSubject<DataSortDirection>(DataSortDirection.NONE)

@@ -112,7 +112,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return this._data$.getValue()
   }
   set data(value: RowListGridData[]) {
-    this.resetPage()
+    !this._data$.getValue().length ?? this.resetPage()
     this._originalData = [...value]
     this._data$.next([...value])
   }
@@ -122,6 +122,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return this._filters$.getValue()
   }
   set filters(value: Filter[]) {
+    !this._filters$.getValue().length ?? this.resetPage()
     this._filters$.next(value)
   }
   _originalData: RowListGridData[] = []
