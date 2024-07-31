@@ -1,5 +1,6 @@
 import {
   Component,
+  ComponentRef,
   ContentChild,
   Inject,
   Input,
@@ -24,6 +25,10 @@ import { RemoteComponentConfig } from '../../model/remote-component-config.model
 export class SlotComponent implements OnInit, OnDestroy {
   @Input()
   name!: string
+  @Input()
+  inputs: Record<string, unknown> = {}
+  @Input()
+  outputs: Record<string, any> = {}
 
   _viewContainers$ = new BehaviorSubject<QueryList<ViewContainerRef> | undefined>(undefined)
   @ViewChildren('slot', { read: ViewContainerRef })
@@ -70,6 +75,7 @@ export class SlotComponent implements OnInit, OnDestroy {
     viewContainer?.element.nativeElement.replaceChildren()
     if (componentType) {
       const componentRef = viewContainer?.createComponent<any>(componentType)
+      this.initComponentInteraction(componentRef)
       if (componentRef && 'ocxInitRemoteComponent' in componentRef.instance) {
         ;(componentRef.instance as ocxRemoteComponent).ocxInitRemoteComponent({
           appId: componentInfo.remoteComponent.appId,
@@ -85,6 +91,7 @@ export class SlotComponent implements OnInit, OnDestroy {
     ) {
       if (componentInfo.remoteComponent.elementName) {
         const element = document.createElement(componentInfo.remoteComponent.elementName)
+        this.initComponentInteraction(element)
         ;(element as any)['ocxRemoteComponentConfig'] = {
           appId: componentInfo.remoteComponent.appId,
           productName: componentInfo.remoteComponent.productName,
@@ -94,6 +101,23 @@ export class SlotComponent implements OnInit, OnDestroy {
         viewContainer?.element.nativeElement.appendChild(element)
       }
     }
+  }
+
+  private initComponentInteraction(component: ComponentRef<any> | HTMLElement | undefined) {
+    this.setProps(component, this.inputs)
+    this.setProps(component, this.outputs)
+  }
+
+  private setProps(component: ComponentRef<any> | HTMLElement | undefined, props: Record<string, unknown>) {
+    if (!component) return
+
+    Object.entries(props).map(([name, value]) => {
+      if (component instanceof HTMLElement) {
+        ;(component as any)[name] = value
+      } else {
+        component.instance[name] = value
+      }
+    })
   }
 
   ngOnDestroy(): void {
