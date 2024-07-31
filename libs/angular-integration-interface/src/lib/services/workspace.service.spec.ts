@@ -101,8 +101,8 @@ describe('WorkspaceService', () => {
       })
     })
 
-    it('should return workspace baseUrl when route for appId and productName was not found"', (done) => {
-      service.getUrl(productName, appId, 'details', {}).subscribe((url) => {
+    it('should return workspace baseUrl when route for productName and appId was not found"', (done) => {
+      service.getUrl('wrong-productname', appId, 'details', {}).subscribe((url) => {
         expect(url).toBe('http://example.com')
         done()
       })
