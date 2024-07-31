@@ -18,10 +18,6 @@ export class PageHeaderHarness extends ComponentHarness {
     return await this.locatorForOptional(`[title="${title}"]`)()
   }
 
-  async getElementByAriaLabel(title: string) {
-    return await this.locatorForOptional(`[aria-label="${title}"]`)()
-  }
-
   async getObjectInfos() {
     return await this.locatorForAll(ObjectDetailItemHarness)()
   }
