@@ -1,3 +1,15 @@
+## [5.3.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.2.0...v5.3.0) (2024-08-01)
+
+### Features
+
+* breadcrumb service manual breadcrumbs as topic ([#353](https://github.com/onecx/onecx-portal-ui-libs/issues/353)) ([22b4f23](https://github.com/onecx/onecx-portal-ui-libs/commit/22b4f236a5a70893e4f95612f5cd2be4b4eadd38))
+* reset selected page on data change and filter change ([#349](https://github.com/onecx/onecx-portal-ui-libs/issues/349)) ([ec7f18d](https://github.com/onecx/onecx-portal-ui-libs/commit/ec7f18d638ab9ce5d6538f50246619d3953575d0))
+* search and reset buttons can be disabled ([#347](https://github.com/onecx/onecx-portal-ui-libs/issues/347)) ([e60cb93](https://github.com/onecx/onecx-portal-ui-libs/commit/e60cb932f0e8ed467e74f04ec7789161639bd39a))
+
+### Bug Fixes
+
+* P002271 7753/refactoring get url ([#354](https://github.com/onecx/onecx-portal-ui-libs/issues/354)) ([2aa92fd](https://github.com/onecx/onecx-portal-ui-libs/commit/2aa92fd99619c327f57fae4ac13f4aeb5cc42ecb))
+
 ## [5.2.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.1.5...v5.2.0) (2024-07-29)
 
 ### Features
