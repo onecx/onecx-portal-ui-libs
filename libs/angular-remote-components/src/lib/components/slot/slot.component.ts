@@ -2,6 +2,7 @@ import {
   Component,
   ComponentRef,
   ContentChild,
+  EventEmitter,
   Inject,
   Input,
   OnDestroy,
@@ -25,10 +26,34 @@ import { RemoteComponentConfig } from '../../model/remote-component-config.model
 export class SlotComponent implements OnInit, OnDestroy {
   @Input()
   name!: string
+
+  private _assignedComponents$ = new BehaviorSubject<(ComponentRef<any> | HTMLElement)[]>([])
+
+  private _inputs$ = new BehaviorSubject<Record<string, unknown>>({})
   @Input()
-  inputs: Record<string, unknown> = {}
+  get inputs(): Record<string, unknown> {
+    return this._inputs$.getValue()
+  }
+  set inputs(value: Record<string, unknown>) {
+    this._inputs$.next({
+      ...this._inputs$.getValue(),
+      ...value,
+    })
+  }
+
+  private _outputs$ = new BehaviorSubject<Record<string, any>>({})
   @Input()
-  outputs: Record<string, any> = {}
+  get outputs(): Record<string, any> {
+    return this._outputs$.getValue()
+  }
+  set outputs(value: Record<string, any>) {
+    this._outputs$.next({
+      ...this._outputs$.getValue(),
+      ...value,
+    })
+  }
+
+  updateDataSub: Subscription | undefined
 
   _viewContainers$ = new BehaviorSubject<QueryList<ViewContainerRef> | undefined>(undefined)
   @ViewChildren('slot', { read: ViewContainerRef })
@@ -45,6 +70,13 @@ export class SlotComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.components$ = this.slotService.getComponentsForSlot(this.name)
+    this.updateDataSub = combineLatest([this._assignedComponents$, this._inputs$, this._outputs$]).subscribe(
+      ([components, inputs, outputs]) => {
+        components.map((component) => {
+          this.updateComponentData(component, inputs, outputs)
+        })
+      }
+    )
     this.subscription = combineLatest([this._viewContainers$, this.components$]).subscribe(
       ([viewContainers, components]) => {
         if (viewContainers && viewContainers.length === components.length) {
@@ -54,7 +86,8 @@ export class SlotComponent implements OnInit, OnDestroy {
                 Promise.resolve(componentInfo.componentType),
                 Promise.resolve(componentInfo.permissions),
               ]).then(([componentType, permissions]) => {
-                this.createComponent(componentType, componentInfo, permissions, viewContainers, i)
+                const component = this.createComponent(componentType, componentInfo, permissions, viewContainers, i)
+                if (component) this._assignedComponents$.next([...this._assignedComponents$.getValue(), component])
               })
             }
           })
@@ -69,13 +102,12 @@ export class SlotComponent implements OnInit, OnDestroy {
     permissions: string[],
     viewContainers: QueryList<ViewContainerRef>,
     i: number
-  ) {
+  ): ComponentRef<any> | HTMLElement | undefined {
     const viewContainer = viewContainers.get(i)
     viewContainer?.clear()
     viewContainer?.element.nativeElement.replaceChildren()
     if (componentType) {
       const componentRef = viewContainer?.createComponent<any>(componentType)
-      this.initComponentInteraction(componentRef)
       if (componentRef && 'ocxInitRemoteComponent' in componentRef.instance) {
         ;(componentRef.instance as ocxRemoteComponent).ocxInitRemoteComponent({
           appId: componentInfo.remoteComponent.appId,
@@ -85,13 +117,13 @@ export class SlotComponent implements OnInit, OnDestroy {
         })
       }
       componentRef?.changeDetectorRef.detectChanges()
+      return componentRef
     } else if (
       componentInfo.remoteComponent.technology === Technologies.WebComponentModule ||
       componentInfo.remoteComponent.technology === Technologies.WebComponentScript
     ) {
       if (componentInfo.remoteComponent.elementName) {
         const element = document.createElement(componentInfo.remoteComponent.elementName)
-        this.initComponentInteraction(element)
         ;(element as any)['ocxRemoteComponentConfig'] = {
           appId: componentInfo.remoteComponent.appId,
           productName: componentInfo.remoteComponent.productName,
@@ -99,13 +131,20 @@ export class SlotComponent implements OnInit, OnDestroy {
           permissions: permissions,
         } satisfies RemoteComponentConfig
         viewContainer?.element.nativeElement.appendChild(element)
+        return element
       }
     }
+
+    return
   }
 
-  private initComponentInteraction(component: ComponentRef<any> | HTMLElement | undefined) {
-    this.setProps(component, this.inputs)
-    this.setProps(component, this.outputs)
+  private updateComponentData(
+    component: ComponentRef<any> | HTMLElement | undefined,
+    inputs: Record<string, unknown>,
+    outputs: Record<string, EventEmitter<unknown>>
+  ) {
+    this.setProps(component, inputs)
+    this.setProps(component, outputs)
   }
 
   private setProps(component: ComponentRef<any> | HTMLElement | undefined, props: Record<string, unknown>) {
@@ -115,12 +154,13 @@ export class SlotComponent implements OnInit, OnDestroy {
       if (component instanceof HTMLElement) {
         ;(component as any)[name] = value
       } else {
-        component.instance[name] = value
+        component.setInput(name, value)
       }
     })
   }
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe()
+    this.updateDataSub?.unsubscribe()
   }
 }
