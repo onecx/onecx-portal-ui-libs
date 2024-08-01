@@ -57,7 +57,7 @@
             pButton
             (click)="setSelectedItem(item); updateGridMenuItems(true); menu.toggle($event)"
             icon="pi pi-ellipsis-v"
-            [ariaLabel]="'OCX_DATA_LIST_GRID.MORE_ACTIONS' | translate"
+            [attr.ariaLabel]="'OCX_DATA_LIST_GRID.MORE_ACTIONS' | translate"
             class="more-actions-menu-button menu-btn"
             [attr.name]="'data-grid-item-menu-button'"
           ></button>

@@ -58,7 +58,9 @@
               class="action-button"
               [label]="action.labelKey ? (action.labelKey | translate) : action.label"
               (onClick)="action.actionCallback()"
-              [title]="(action.titleKey ? (action.titleKey | translate) : action.title) || (action.labelKey ? (action.labelKey | translate) : action.label)"
+              [pTooltip]="(action.titleKey ? (action.titleKey | translate) : action.title) || (action.labelKey ? (action.labelKey | translate) : action.label)"
+              tooltipPosition="top"
+              tooltipEvent="hover"
               [disabled]="action.disabled ? action.disabled : false"
               [attr.name]="action.icon ? 'ocx-page-header-inline-action-icon-button' : 'ocx-page-header-inline-action-button'"
               [ariaLabel]="(action.titleKey ? (action.titleKey | translate) : action.title) || (action.labelKey ? (action.labelKey | translate) : action.label)"
@@ -73,7 +75,9 @@
               type="button"
               pButton
               icon="pi pi-ellipsis-v"
-              title="{{ 'OCX_PAGE_HEADER.MORE_ACTIONS' | translate }}"
+              pTooltip="{{ 'OCX_PAGE_HEADER.MORE_ACTIONS' | translate }}"
+              tooltipEvent="hover"
+              tooltipPosition="top"
               class="more-actions-menu-button action-button ml-2"
               (click)="menu.toggle($event)"
               name="ocx-page-header-overflow-action-button"
@@ -100,26 +104,37 @@
         <span
           class="flex font-medium text-600 object-info-grid-label"
           name="object-detail-label"
-          [title]="item.labelTooltip || ''"
+          [pTooltip]="item.labelTooltip || ''"
+          tooltipEvent="hover"
+          tooltipPosition="top"
           >{{ item.label | dynamicPipe:item.labelPipe }}</span
         >
         <span
           *ngIf="item.icon || item.value"
           class="object-info-grid-value"
-          [title]="item.valueTooltip || item.tooltip || ''"
         >
           <span
             class="flex text-900 align-items-center gap-2 w-max"
             [ngClass]="generateItemStyle(item)"
             name="object-detail-value"
           >
+          <span 
+            class="flex align-items-center gap-2" 
+            [pTooltip]="item.valueTooltip || item.tooltip || ''"
+            tooltipEvent="hover"
+            tooltipPosition="top"  
+          >
             <i *ngIf="item.icon" class='{{item.icon + " " + (item.iconStyleClass || "")}}' name="object-detail-icon"></i>
             {{ item.value | dynamicPipe:item.valuePipe:item.valuePipeArgs}}
+          </span>
             <p-button
               *ngIf="item.actionItemIcon && item.actionItemCallback"
               [icon]="item.actionItemIcon"
               styleClass="p-button-text p-0 w-full"
-              [title]="item.actionItemTooltip || ''"
+              [pTooltip]="item.actionItemTooltip || ''"
+              tooltipPosition="top"
+              tooltipEvent="hover"
+              [ariaLabel]="item.actionItemTooltip || ''"
               (onClick)="item.actionItemCallback()"
             ></p-button>
           </span>
