@@ -1,3 +1,17 @@
+## [4.45.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.44.4...v4.45.0) (2024-08-01)
+
+
+### Features
+
+* breadcrumb service manual breadcrumbs as topic v4 ([#355](https://github.com/onecx/onecx-portal-ui-libs/issues/355)) ([c609381](https://github.com/onecx/onecx-portal-ui-libs/commit/c609381b11904a5355019eca4b57643f04f65fb5))
+* disable search header buttons v4 ([#348](https://github.com/onecx/onecx-portal-ui-libs/issues/348)) ([e76bd5c](https://github.com/onecx/onecx-portal-ui-libs/commit/e76bd5c9265f88a91b1aa098673f1aecae9e0baa))
+* rest selected page on data change and filter change ([#350](https://github.com/onecx/onecx-portal-ui-libs/issues/350)) ([df930ba](https://github.com/onecx/onecx-portal-ui-libs/commit/df930ba025812ce88bc9572b89b69af64f834e6c))
+
+
+### Bug Fixes
+
+* P002271 7753/refactoring get url ([#354](https://github.com/onecx/onecx-portal-ui-libs/issues/354)) ([#356](https://github.com/onecx/onecx-portal-ui-libs/issues/356)) ([209841d](https://github.com/onecx/onecx-portal-ui-libs/commit/209841dbedb7934a6f49753295297e4284af6240))
+
 ## [4.44.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.44.3...v4.44.4) (2024-07-28)
 
 
