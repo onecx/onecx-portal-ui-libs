@@ -19,6 +19,7 @@ export function sliceBaseHref(route: Route, url: UrlSegment[]): UrlSegment[] {
     console.warn(
       'mfeInfo was not provided for route. initializeRouter function is required to be registered as app initializer.'
     )
+    return url
   }
 
   const baseHrefSegmentAmount = mfeBaseHref.split('/').filter((value) => value).length
