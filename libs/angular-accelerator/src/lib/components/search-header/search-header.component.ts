@@ -11,6 +11,7 @@ import {
 } from '@angular/core'
 import { Action } from '../page-header/page-header.component'
 import { SearchConfigInfo } from '../../model/search-config-info'
+import { SLOT_SERVICE, SlotService } from '@onecx/angular-remote-components'
 
 /**
  * To trigger the search when Enter key is pressed inside a search parameter field,
@@ -22,6 +23,7 @@ import { SearchConfigInfo } from '../../model/search-config-info'
   selector: 'ocx-search-header',
   templateUrl: './search-header.component.html',
   styleUrls: ['./search-header.component.scss'],
+  providers: [{ provide: SLOT_SERVICE, useExisting: SlotService }],
 })
 export class SearchHeaderComponent implements AfterViewInit {
   @Input() searchConfigs: SearchConfigInfo[] | undefined
@@ -52,7 +54,7 @@ export class SearchHeaderComponent implements AfterViewInit {
 
   @Output() searched: EventEmitter<any> = new EventEmitter()
   @Output() resetted: EventEmitter<any> = new EventEmitter()
-  @Output() selectedSearchConfigChanged: EventEmitter<SearchConfigInfo> = new EventEmitter()
+  @Output() selectedSearchConfigChanged: EventEmitter<any> = new EventEmitter()
   @Output() viewModeChanged: EventEmitter<'basic' | 'advanced'> = new EventEmitter()
   @ContentChild('additionalToolbarContent')
   additionalToolbarContent: TemplateRef<any> | undefined
@@ -125,9 +127,5 @@ export class SearchHeaderComponent implements AfterViewInit {
     if (event.code === 'Enter') {
       this.onSearchClicked()
     }
-  }
-
-  confirmSearchConfig(searchConfig: SearchConfigInfo) {
-    this.selectedSearchConfigChanged?.emit(searchConfig)
   }
 }

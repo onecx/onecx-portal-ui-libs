@@ -4,7 +4,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
 import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateModule } from '@ngx-translate/core'
 
-import { UserService } from '@onecx/angular-integration-interface'
+import { AppConfigService, UserService } from '@onecx/angular-integration-interface'
+import { AngularRemoteComponentsModule } from '@onecx/angular-remote-components'
 
 import { AngularAcceleratorPrimeNgModule } from './angular-accelerator-primeng.module'
 import { ColumnGroupSelectionComponent } from './components/column-group-selection/column-group-selection.component'
@@ -26,7 +27,6 @@ import { HAS_PERMISSION_CHECKER, IfPermissionDirective } from './directives/if-p
 import { SrcDirective } from './directives/src.directive'
 import { DynamicPipe } from './pipes/dynamic.pipe'
 import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
-import { AppConfigService } from './services/app-config-service'
 import { DynamicLocaleId } from './utils/dynamic-locale-id'
 import { firstValueFrom, skip } from 'rxjs'
 
@@ -47,6 +47,7 @@ function appInitializer(userService: UserService) {
   imports: [
     CommonModule,
     AngularAcceleratorPrimeNgModule,
+    AngularRemoteComponentsModule,
     TranslateModule,
     FormsModule,
     RouterModule,
@@ -88,7 +89,7 @@ function appInitializer(userService: UserService) {
       provide: APP_INITIALIZER,
       useFactory: appInitializer,
       deps: [UserService],
-      multi: true
+      multi: true,
     },
     AppConfigService,
   ],

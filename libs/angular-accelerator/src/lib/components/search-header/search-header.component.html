@@ -5,9 +5,15 @@
   [actions]="headerActions"
 >
   <ng-template #additionalToolbarContentLeft>
-    <ocx-search-config [searchConfigs]="searchConfigs" (selectedSearchConfigChanged)="confirmSearchConfig($event)">
-    </ocx-search-config>
-    <ng-container *ngIf="_additionalToolbarContentLeft" [ngTemplateOutlet]="_additionalToolbarContentLeft"></ng-container>
+    <ocx-slot
+      name="onecx-shell-search-config"
+      [inputs]="{ pageName: header, currentInputFieldValues: {}, displayedColumns: {}}"
+      [outputs]="{ searchConfigSelected: selectedSearchConfigChanged }"
+    ></ocx-slot>
+    <ng-container
+      *ngIf="_additionalToolbarContentLeft"
+      [ngTemplateOutlet]="_additionalToolbarContentLeft"
+    ></ng-container>
   </ng-template>
   <ng-template #additionalToolbarContent>
     <ng-container *ngIf="_additionalToolbarContent" [ngTemplateOutlet]="_additionalToolbarContent"></ng-container>
