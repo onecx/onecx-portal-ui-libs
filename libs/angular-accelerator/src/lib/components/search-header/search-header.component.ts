@@ -10,8 +10,8 @@ import {
   ViewChild,
 } from '@angular/core'
 import { Action } from '../page-header/page-header.component'
-import { SearchConfigInfo } from '../../model/search-config-info'
 import { SLOT_SERVICE, SlotService } from '@onecx/angular-remote-components'
+import { DataTableColumn } from '../../model/data-table-column.model'
 
 /**
  * To trigger the search when Enter key is pressed inside a search parameter field,
@@ -26,7 +26,6 @@ import { SLOT_SERVICE, SlotService } from '@onecx/angular-remote-components'
   providers: [{ provide: SLOT_SERVICE, useExisting: SlotService }],
 })
 export class SearchHeaderComponent implements AfterViewInit {
-  @Input() searchConfigs: SearchConfigInfo[] | undefined
   @Input() header = ''
 
   /**
@@ -51,10 +50,32 @@ export class SearchHeaderComponent implements AfterViewInit {
     this._actions = value
     this.updateHeaderActions()
   }
+  @Input() pageName: string = ''
+
+  _currentInputFieldValues: { [key: string]: unknown } = {}
+  @Input() get currentInputFieldValues(): { [key: string]: unknown } {
+    return this._currentInputFieldValues
+  }
+  set currentInputFieldValues(value: { [key: string]: unknown }) {
+    this._currentInputFieldValues = {
+      ...value,
+    }
+  }
+
+  _displayedColumns: DataTableColumn[] = []
+  @Input() get displayedColumns(): DataTableColumn[] {
+    return this._displayedColumns
+  }
+  set displayedColumns(value: DataTableColumn[]) {
+    this._displayedColumns = [...value]
+  }
 
   @Output() searched: EventEmitter<any> = new EventEmitter()
   @Output() resetted: EventEmitter<any> = new EventEmitter()
-  @Output() selectedSearchConfigChanged: EventEmitter<any> = new EventEmitter()
+  @Output() selectedSearchConfigChanged: EventEmitter<{
+    inputValues: { [key: string]: unknown }
+    displayedColumns: DataTableColumn[]
+  }> = new EventEmitter()
   @Output() viewModeChanged: EventEmitter<'basic' | 'advanced'> = new EventEmitter()
   @ContentChild('additionalToolbarContent')
   additionalToolbarContent: TemplateRef<any> | undefined
