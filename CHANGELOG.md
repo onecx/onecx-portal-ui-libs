@@ -1,3 +1,16 @@
+## [4.46.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.45.0...v4.46.0) (2024-08-06)
+
+
+### Features
+
+* permission checker optional ([#370](https://github.com/onecx/onecx-portal-ui-libs/issues/370)) ([2e2a0c2](https://github.com/onecx/onecx-portal-ui-libs/commit/2e2a0c263f32e883152b8c5cf8bcbb2f1981ad9b)), closes [#346](https://github.com/onecx/onecx-portal-ui-libs/issues/346)
+
+
+### Bug Fixes
+
+* fixed accessibilty issues for pageHeaderComponent ([#330](https://github.com/onecx/onecx-portal-ui-libs/issues/330)) ([#357](https://github.com/onecx/onecx-portal-ui-libs/issues/357)) ([63ed32e](https://github.com/onecx/onecx-portal-ui-libs/commit/63ed32ebef78d6bd8d3ef21dd1ba72ad97b8a0a4))
+* P002271 7753/refactoring get url ([#354](https://github.com/onecx/onecx-portal-ui-libs/issues/354)) ([2d54477](https://github.com/onecx/onecx-portal-ui-libs/commit/2d54477555e170333b3d3774b835cd2f64602b93))
+
 ## [4.45.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.44.4...v4.45.0) (2024-08-01)
 
 
