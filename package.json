@@ -83,7 +83,7 @@
     "@types/jest": "^29.5.12",
     "@types/node": "~20.14.9",
     "@typescript-eslint/eslint-plugin": "7.17.0",
-    "@typescript-eslint/parser": "7.17.0",
+    "@typescript-eslint/parser": "7.18.0",
     "blob-polyfill": "^9.0.20240710",
     "conventional-changelog-conventionalcommits": "^8.0.0",
     "esbuild": "^0.19.2",
