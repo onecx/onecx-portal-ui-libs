@@ -21,6 +21,7 @@ jobs:
         run: npx nx run portal-integration-angular:build-storybook
       - name: Publish to PIA Chromatic
         uses: chromaui/action@latest
+        if: ${{ (env.PIA_TOKEN != null) && (env.PIA_TOKEN != '') }}
         with:
           projectToken: ${{ env.PIA_TOKEN }}
           storybookBuildDir: dist/storybook/portal-integration-angular
@@ -29,6 +30,7 @@ jobs:
         run: npx nx run angular-accelerator:build-storybook
       - name: Publish to AA Chromatic
         uses: chromaui/action@latest
+        if: ${{ (env.AA_TOKEN != null) && (env.AA_TOKEN != '') }}
         with:
           projectToken: ${{ env.AA_TOKEN }}
           storybookBuildDir: dist/storybook/angular-accelerator
