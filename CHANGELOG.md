@@ -1,3 +1,10 @@
+## [4.46.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.46.0...v4.46.1) (2024-08-08)
+
+
+### Bug Fixes
+
+* fixed route matcher for webcomponents ([#378](https://github.com/onecx/onecx-portal-ui-libs/issues/378)) ([82aa242](https://github.com/onecx/onecx-portal-ui-libs/commit/82aa24258bf38ea45a23632ec057104cf6e79113))
+
 ## [4.46.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v4.45.0...v4.46.0) (2024-08-06)
 
 
