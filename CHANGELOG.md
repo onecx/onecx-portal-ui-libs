@@ -1,3 +1,13 @@
+## [5.3.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.3.1...v5.3.2) (2024-08-08)
+
+### Bug Fixes
+
+* fixed route matcher for webcomponents ([#376](https://github.com/onecx/onecx-portal-ui-libs/issues/376)) ([cadbc6a](https://github.com/onecx/onecx-portal-ui-libs/commit/cadbc6a321fb0cb014d3e387dee915f46cc8cc43))
+
+### Chores
+
+* **deps-dev:** bump @storybook/addon-essentials from 8.2.6 to 8.2.7 ([#364](https://github.com/onecx/onecx-portal-ui-libs/issues/364)) ([9509cfc](https://github.com/onecx/onecx-portal-ui-libs/commit/9509cfc42c444d224352d61081d55cb3b2e52f86))
+
 ## [5.3.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.3.0...v5.3.1) (2024-08-06)
 
 ### Bug Fixes
