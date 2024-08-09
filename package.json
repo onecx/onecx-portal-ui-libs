@@ -76,7 +76,7 @@
     "@storybook/addon-a11y": "^8.2.5",
     "@storybook/addon-essentials": "^8.2.8",
     "@storybook/angular": "^8.2.8",
-    "@storybook/core-server": "^8.2.7",
+    "@storybook/core-server": "^8.2.8",
     "@swc-node/register": "~1.10.0",
     "@swc/core": "~1.7.6",
     "@types/d3": "^7.4.3",
