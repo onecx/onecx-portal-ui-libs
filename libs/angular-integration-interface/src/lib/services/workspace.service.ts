@@ -30,6 +30,30 @@ export class WorkspaceService {
     )
   }
 
+  doesUrlExistFor(productName: string, appId: string, endpointName?: string): Observable<boolean> {
+    return this.appStateService.currentWorkspace$.pipe(
+      map((workspace) => {
+        const checkEndpoint = endpointName !== undefined && endpointName.length > 0
+
+        if (workspace.routes == undefined) {
+          return false
+        }
+        const route = this.filterRouteFromList(workspace.routes, appId, productName)
+
+        if (checkEndpoint) {
+          if (!route || route.endpoints === undefined || route.endpoints.length == 0) {
+            return false
+          }
+
+          const endpoint = route.endpoints.find((ep) => ep.name === endpointName)
+          return !!(endpoint && endpoint.path && endpoint.path.length > 0)
+        } else {
+          return !!(route && route.baseUrl && route.baseUrl.length > 0)
+        }
+      })
+    )
+  }
+
   private constructBaseUrlFromWorkspace(workspace: any): string {
     if (workspace.baseUrl === undefined) {
       console.log('WARNING: There was no baseUrl for received workspace.')

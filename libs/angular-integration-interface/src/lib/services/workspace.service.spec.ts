@@ -378,4 +378,110 @@ describe('WorkspaceService', () => {
       })
     })
   })
+
+  describe('doesUrlExistFor', () => {
+    it('should find endpoint by name and return true', (done) => {
+      service.doesUrlExistFor(productName, appId, 'details').subscribe((result) => {
+        expect(result).toBe(true)
+        done()
+      })
+    })
+    it('should find no endpoint by name and return false', (done) => {
+      service.doesUrlExistFor(productName, appId, 'detailsx').subscribe((result) => {
+        expect(result).toBe(false)
+        done()
+      })
+    })
+    it('should find empty endpoint list in route and return false', (done) => {
+      mockAppStateService.currentWorkspace$.publish({
+        portalName: 'test-portal',
+        workspaceName: 'test-workspace',
+        microfrontendRegistrations: [],
+        baseUrl: 'http://example.com',
+        routes: [
+          {
+            appId: 'onecx-workspace-ui',
+            productName: 'onecx-workspace',
+            baseUrl: 'http://example.com/workspace/baseurl/',
+            endpoints: [],
+          },
+        ],
+      })
+      service.doesUrlExistFor(productName, appId, 'details').subscribe((result) => {
+        expect(result).toBe(false)
+        done()
+      })
+    })
+    it('should find no endpoint in route and return false', (done) => {
+      mockAppStateService.currentWorkspace$.publish({
+        portalName: 'test-portal',
+        workspaceName: 'test-workspace',
+        microfrontendRegistrations: [],
+        baseUrl: 'http://example.com',
+        routes: [
+          {
+            appId: 'onecx-workspace-ui',
+            productName: 'onecx-workspace',
+            baseUrl: 'http://example.com/workspace/baseurl/',
+          },
+        ],
+      })
+      service.doesUrlExistFor(productName, appId, 'details').subscribe((result) => {
+        expect(result).toBe(false)
+        done()
+      })
+    })
+    it('should check existing route baseUrl and return true', (done) => {
+      service.doesUrlExistFor(productName, appId).subscribe((result) => {
+        expect(result).toBe(true)
+        done()
+      })
+    })
+    it('should check empty route baseUrl and return false', (done) => {
+      mockAppStateService.currentWorkspace$.publish({
+        portalName: 'test-portal',
+        workspaceName: 'test-workspace',
+        microfrontendRegistrations: [],
+        baseUrl: 'http://example.com',
+        routes: [
+          {
+            appId: 'onecx-workspace-ui',
+            productName: 'onecx-workspace',
+            baseUrl: '',
+          },
+        ],
+      })
+      service.doesUrlExistFor(productName, appId).subscribe((result) => {
+        expect(result).toBe(false)
+        done()
+      })
+    })
+
+    it('should check route with no baseUrl and return false', (done) => {
+      mockAppStateService.currentWorkspace$.publish({
+        portalName: 'test-portal',
+        workspaceName: 'test-workspace',
+        microfrontendRegistrations: [],
+        baseUrl: 'http://example.com',
+        routes: [
+          {
+            appId: 'onecx-workspace-ui',
+            productName: 'onecx-workspace',
+            baseUrl: '',
+          },
+        ],
+      })
+      service.doesUrlExistFor(productName, appId).subscribe((result) => {
+        expect(result).toBe(false)
+        done()
+      })
+    })
+
+    it('should check not existing route baseUrl and return false', (done) => {
+      service.doesUrlExistFor(productName, 'wrongappId').subscribe((result) => {
+        expect(result).toBe(false)
+        done()
+      })
+    })
+  })
 })
