@@ -40,21 +40,15 @@ export class WorkspaceService {
         }
         const route = this.filterRouteFromList(workspace.routes, appId, productName)
 
-        if (!checkEndpoint) {
-          if (route && route.baseUrl && route.baseUrl.length > 0) {
-            return true
-          }
-          return false
-        } else {
+        if (checkEndpoint) {
           if (!route || route.endpoints === undefined || route.endpoints.length == 0) {
             return false
           }
 
           const endpoint = route.endpoints.find((ep) => ep.name === endpointName)
-          if (endpoint && endpoint.path && endpoint.path.length > 0) {
-            return true
-          }
-          return false
+          return !!(endpoint && endpoint.path && endpoint.path.length > 0)
+        } else {
+          return !!(route && route.baseUrl && route.baseUrl.length > 0)
         }
       })
     )
