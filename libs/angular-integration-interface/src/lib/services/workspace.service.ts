@@ -50,7 +50,7 @@ export class WorkspaceService {
             return false
           }
 
-          let endpoint = route.endpoints.find((ep) => ep.name === endpointName)
+          const endpoint = route.endpoints.find((ep) => ep.name === endpointName)
           if (endpoint && endpoint.path && endpoint.path.length > 0) {
             return true
           }
