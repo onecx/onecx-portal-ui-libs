@@ -1,6 +1,6 @@
 {
   "name": "@onecx/angular-testing",
-  "version": "5.3.0",
+  "version": "5.3.2",
   "peerDependencies": {
     "@angular/cdk": "^18.0.5",
     "primeng": "^17.18.6"

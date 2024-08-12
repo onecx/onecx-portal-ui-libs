@@ -25,14 +25,14 @@ jobs:
               path: './storybook-dist'
           - name: Publish to PIA Chromatic
             uses: chromaui/action@latest
-            if: env.PIA_TOKEN != null
+            if: ${{ (env.PIA_TOKEN != null) && (env.PIA_TOKEN != '') }}
             with:
               projectToken: ${{ env.PIA_TOKEN }}
               storybookBuildDir: storybook-dist/portal-integration-angular
               skip: 'dependabot/**'
           - name: Publish to AA Chromatic
             uses: chromaui/action@latest
-            if: env.AA_TOKEN != null
+            if: ${{ (env.AA_TOKEN != null) && (env.AA_TOKEN != '') }}
             with:
               projectToken: ${{ env.AA_TOKEN }}
               storybookBuildDir: storybook-dist/angular-accelerator
