@@ -12,6 +12,11 @@ import {
 import { Action } from '../page-header/page-header.component'
 import { SearchConfigInfo } from '../../model/search-config-info'
 
+export interface SearchHeaderComponentState {
+  activeViewMode?: 'basic' | 'advanced'
+  selectedSearchConfig?: SearchConfigInfo
+}
+
 /**
  * To trigger the search when Enter key is pressed inside a search parameter field,
  * an EventListener for keyup enter event is added for HTML elements which have an input.
@@ -56,6 +61,7 @@ export class SearchHeaderComponent implements AfterViewInit {
   @Output() resetted: EventEmitter<any> = new EventEmitter()
   @Output() selectedSearchConfigChanged: EventEmitter<SearchConfigInfo> = new EventEmitter()
   @Output() viewModeChanged: EventEmitter<'basic' | 'advanced'> = new EventEmitter()
+  @Output() componentStateChanged: EventEmitter<SearchHeaderComponentState> = new EventEmitter()
   @ContentChild('additionalToolbarContent')
   additionalToolbarContent: TemplateRef<any> | undefined
 
@@ -81,6 +87,9 @@ export class SearchHeaderComponent implements AfterViewInit {
   toggleViewMode() {
     this.viewMode = this.viewMode === 'basic' ? 'advanced' : 'basic'
     this.viewModeChanged?.emit(this.viewMode)
+    this.componentStateChanged.emit({
+      activeViewMode: this.viewMode
+    })
     this.updateHeaderActions()
     setTimeout(() => this.addKeyUpEventListener())
   }
@@ -131,5 +140,8 @@ export class SearchHeaderComponent implements AfterViewInit {
 
   confirmSearchConfig(searchConfig: SearchConfigInfo) {
     this.selectedSearchConfigChanged?.emit(searchConfig)
+    this.componentStateChanged.emit({
+      selectedSearchConfig: searchConfig
+    })
   }
 }
