@@ -15,4 +15,10 @@ export class DynamicLocaleId {
   valueOf() {
     return this.userService.lang$.getValue()
   }
+
+  
+  public get length() : number {
+    return this.valueOf().length
+  }
+  
 }
