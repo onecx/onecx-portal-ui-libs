@@ -10,13 +10,16 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core'
-import { DataListGridComponent, ListGridData } from '../data-list-grid/data-list-grid.component'
-import { Row, Filter, Sort, DataTableComponent } from '../data-table/data-table.component'
+import { DataListGridComponent, DataListGridComponentState, ListGridData } from '../data-list-grid/data-list-grid.component'
+import { Row, Filter, Sort, DataTableComponent, DataTableComponentState } from '../data-table/data-table.component'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataAction } from '../../model/data-action'
 
 export type RowListGridData = ListGridData & Row
+
+export type DataViewComponentState = DataListGridComponentState & DataTableComponentState
+
 @Component({
   selector: 'ocx-data-view',
   templateUrl: './data-view.component.html',
@@ -202,6 +205,7 @@ export class DataViewComponent implements DoCheck, OnInit {
   @Output() editItem = new EventEmitter<RowListGridData>()
   @Output() selectionChanged = new EventEmitter<Row[]>()
   @Output() pageChanged = new EventEmitter<number>()
+  @Output() pageSizeChanged = new EventEmitter<number>()
   isDeleteItemObserved: boolean | undefined
   isViewItemObserved: boolean | undefined
   IsEditItemObserved: boolean | undefined
@@ -333,5 +337,9 @@ export class DataViewComponent implements DoCheck, OnInit {
   onPageChange(event: number) {
     this.page = event
     this.pageChanged.emit(event)
+  }
+
+  onPageSizeChange(event: number) {
+    this.pageSizeChanged.emit(event)
   }
 }

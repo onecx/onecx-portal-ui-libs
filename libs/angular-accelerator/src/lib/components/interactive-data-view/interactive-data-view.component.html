@@ -4,6 +4,7 @@
       [supportedViewLayouts]="supportedViewLayouts"
       [layout]="layout"
       (dataViewLayoutChange)="onDataViewLayoutChange($event)"
+      (componentStateChanged)="dataLayoutComponentState$.next($event)"
     ></ocx-data-layout-selection>
 
     <div *ngIf="topCenter">

@@ -4,6 +4,11 @@ import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataColumnNameId } from '../../model/data-column-name-id.model'
 import { DataTableColumn } from '../../model/data-table-column.model'
 
+export type Sort = { sortColumn: string; sortDirection: DataSortDirection }
+export interface DataListGridSortingComponentState {
+  sorting?: Sort
+}
+
 @Component({
   selector: 'ocx-data-list-grid-sorting',
   templateUrl: './data-list-grid-sorting.component.html',
@@ -31,6 +36,7 @@ export class DataListGridSortingComponent implements OnInit {
 
   @Output() sortChange: EventEmitter<string> = new EventEmitter()
   @Output() sortDirectionChange: EventEmitter<DataSortDirection> = new EventEmitter()
+  @Output() componentStateChanged: EventEmitter<DataListGridSortingComponentState> = new EventEmitter()
   @Output() columnsChange: EventEmitter<string[]> = new EventEmitter()
   selectedSortingOption: DataColumnNameId | undefined
   dropdownOptions: DataColumnNameId[] = []
@@ -43,15 +49,26 @@ export class DataListGridSortingComponent implements OnInit {
   selectSorting(event: any): void {
     this._sortField$.next(event.value)
     this.sortChange.emit(event.value.columnId)
+    this.emitComponentStateChange()
   }
   sortDirectionChanged(): void {
     const newSortDirection = this.nextSortDirection()
     this._sortDirection$.next(newSortDirection)
     this.sortDirectionChange.emit(newSortDirection)
+    this.emitComponentStateChange()
   }
 
   nextSortDirection() {
     return this.sortStates[(this.sortStates.indexOf(this.sortDirection) + 1) % this.sortStates.length]
+  }
+
+  emitComponentStateChange() {
+    this.componentStateChanged.emit({
+      sorting: {
+        sortColumn: this.sortField,
+        sortDirection: this.sortDirection
+      }
+    })
   }
 
   sortIcon() {

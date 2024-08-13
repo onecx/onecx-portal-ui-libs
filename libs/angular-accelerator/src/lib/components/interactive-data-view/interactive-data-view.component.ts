@@ -1,15 +1,24 @@
 import { Component, ContentChild, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core'
-import { DataTableColumn } from '../../model/data-table-column.model'
+import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
-import { Filter, Row, Sort } from '../data-table/data-table.component'
-import { DataViewComponent, RowListGridData } from '../data-view/data-view.component'
-import { GroupSelectionChangedEvent } from '../column-group-selection/column-group-selection.component'
+import { DataTableColumn } from '../../model/data-table-column.model'
+import { ColumnGroupSelectionComponentState, GroupSelectionChangedEvent } from '../column-group-selection/column-group-selection.component'
 import {
   ActionColumnChangedEvent,
   ColumnSelectionChangedEvent,
+  CustomGroupColumnSelectorComponentState,
 } from '../custom-group-column-selector/custom-group-column-selector.component'
-import { DataAction } from '../../model/data-action'
+import { DataLayoutSelectionComponentState } from '../data-layout-selection/data-layout-selection.component'
+import { Filter, Row, Sort } from '../data-table/data-table.component'
+import { DataViewComponent, DataViewComponentState, RowListGridData } from '../data-view/data-view.component'
+import { ReplaySubject, combineLatest, map, timestamp } from 'rxjs'
+import { DataListGridSortingComponentState } from '../data-list-grid-sorting/data-list-grid-sorting.component'
 
+export type InteractiveDataViewComponentState = ColumnGroupSelectionComponentState &
+  CustomGroupColumnSelectorComponentState &
+  DataLayoutSelectionComponentState &
+  DataListGridSortingComponentState &
+  DataViewComponentState
 @Component({
   selector: 'ocx-interactive-data-view',
   templateUrl: './interactive-data-view.component.html',
@@ -25,6 +34,8 @@ export class InteractiveDataViewComponent implements OnInit {
   get dataView(): DataViewComponent | undefined {
     return this._dataViewComponent
   }
+
+  public dataLayoutComponentState$ = new ReplaySubject<DataLayoutSelectionComponentState>(1)
 
   @Input() deletePermission: string | undefined
   @Input() editPermission: string | undefined
@@ -107,6 +118,10 @@ export class InteractiveDataViewComponent implements OnInit {
   @Output() selectionChanged: EventEmitter<Row[]> = new EventEmitter()
 
   @Output() pageChanged: EventEmitter<number> = new EventEmitter()
+  @Output() pageSizeChanged = new EventEmitter<number>()
+
+  @Output() componentStateChanged = new EventEmitter<InteractiveDataViewComponentState>()
+
   selectedGroupKey = ''
   isDeleteItemObserved: boolean | undefined
   isViewItemObserved: boolean | undefined
@@ -172,6 +187,14 @@ export class InteractiveDataViewComponent implements OnInit {
   }
   set data(value: RowListGridData[]) {
     this._data = value
+  }
+
+  constructor() {
+    combineLatest([this.dataLayoutComponentState$.pipe(timestamp())]).pipe(map(([dataLayoutComponentState]) => {
+      // TODO: Order replay subjects ascending by timestamp and use spread operator after
+      return {...dataLayoutComponentState.value}
+      // TODO Pass componentState emitter into subscribe
+    })).subscribe((val) => this.componentStateChanged.emit(val))
   }
 
   ngOnInit(): void {
@@ -293,5 +316,9 @@ export class InteractiveDataViewComponent implements OnInit {
   onPageChange(event: number) {
     this.page = event
     this.pageChanged.emit(event)
+  }
+
+  onPageSizeChange(event: number) {
+    this.pageSizeChanged.emit(event)
   }
 }

@@ -23,6 +23,7 @@ import { DataTableColumn } from '../../model/data-table-column.model'
 import { ObjectUtils } from '../../utils/objectutils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { isValidDate } from '@onecx/accelerator'
+import { TablePageEvent } from 'primeng/table'
 
 type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -32,6 +33,14 @@ export type Row = {
 
 export type Filter = { columnId: string; value: string }
 export type Sort = { sortColumn: string; sortDirection: DataSortDirection }
+
+export interface DataTableComponentState {
+  filters?: Filter[]
+  sorting?: Sort
+  selectedRows?: Row[]
+  activePage?: number
+  pageSize?: number
+}
 
 @Component({
   selector: 'ocx-data-table',
@@ -195,6 +204,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   @Output() deleteTableRow = new EventEmitter<Row>()
   @Output() selectionChanged = new EventEmitter<Row[]>()
   @Output() pageChanged = new EventEmitter<number>()
+  @Output() pageSizeChanged = new EventEmitter<number>()
 
   displayedRows$: Observable<unknown[]> | undefined
   selectedRows$: Observable<unknown[]> | undefined
@@ -412,6 +422,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     const page = event.first / event.rows
     this.page = page
     this.pageChanged.emit(page)
+    this.pageSizeChanged.emit(event.rows) 
   }
 
   resetPage() {

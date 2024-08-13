@@ -8,6 +8,14 @@ export type ActionColumnChangedEvent = {
   actionColumnPosition: 'left' | 'right'
 }
 
+export interface CustomGroupColumnSelectorComponentState {
+  actionColumnConfig?: {
+    frozen: boolean
+    position: 'left' | 'right'
+  }
+  displayedColumns?: DataTableColumn[]
+}
+
 @Component({
   selector: 'ocx-custom-group-column-selector',
   templateUrl: './custom-group-column-selector.component.html',

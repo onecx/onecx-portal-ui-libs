@@ -38,6 +38,11 @@ export interface ListGridDataMenuItem extends MenuItem {
   permission: string
 }
 
+export interface DataListGridComponentState {
+  activePage?: number
+  pageSize?: number
+}
+
 @Component({
   selector: 'ocx-data-list-grid',
   templateUrl: './data-list-grid.component.html',
@@ -189,6 +194,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   @Output() editItem = new EventEmitter<ListGridData>()
   @Output() deleteItem = new EventEmitter<ListGridData>()
   @Output() pageChanged = new EventEmitter<number>()
+  @Output() pageSizeChanged = new EventEmitter<number>()
 
   get viewItemObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
@@ -401,6 +407,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     const page = event.first / event.rows
     this.page = page
     this.pageChanged.emit(page)
+    this.pageSizeChanged.emit(event.rows)
   }
 
   resetPage() {

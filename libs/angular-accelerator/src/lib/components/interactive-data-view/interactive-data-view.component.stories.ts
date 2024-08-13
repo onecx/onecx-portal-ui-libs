@@ -135,8 +135,14 @@ const defaultComponentArgs: InteractiveDataViewInputTypes = {
 }
 
 export const WithMockData = {
+  argTypes: {
+    componentStateChanged: { action: 'componentStateChanged' },
+  },
   render: Template,
-  args: defaultComponentArgs,
+  args: {
+    ...defaultComponentArgs,
+    componentStateChanged: ($event: any) => console.log('Component state changed ', $event),
+  },
 }
 
 export const WithPageSizes = {
