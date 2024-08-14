@@ -40,7 +40,7 @@
     "release": {
       "executor": "nx-release:build-update-publish",
       "options": {
-        "libName": "accelerator"
+        "libName": "ngrx-accelerator"
       }
     }
   }
