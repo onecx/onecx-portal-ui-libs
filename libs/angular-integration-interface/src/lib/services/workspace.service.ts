@@ -17,15 +17,39 @@ export class WorkspaceService {
   constructor(protected appStateService: AppStateService) {}
 
   getUrl(
-    appId: string,
     productName: string,
-    endpointName: string,
-    params: Record<string, unknown> = {}
+    appId: string,
+    endpointName?: string,
+    endpointParameters?: Record<string, unknown>
   ): Observable<string> {
     return this.appStateService.currentWorkspace$.pipe(
       map((workspace) => {
-        const finalUrl = this.constructRouteUrl(workspace, appId, productName, endpointName, params)
+        const finalUrl = this.constructRouteUrl(workspace, appId, productName, endpointName, endpointParameters)
         return finalUrl
+      })
+    )
+  }
+
+  doesUrlExistFor(productName: string, appId: string, endpointName?: string): Observable<boolean> {
+    return this.appStateService.currentWorkspace$.pipe(
+      map((workspace) => {
+        const checkEndpoint = endpointName !== undefined && endpointName.length > 0
+
+        if (workspace.routes == undefined) {
+          return false
+        }
+        const route = this.filterRouteFromList(workspace.routes, appId, productName)
+
+        if (checkEndpoint) {
+          if (!route || route.endpoints === undefined || route.endpoints.length == 0) {
+            return false
+          }
+
+          const endpoint = route.endpoints.find((ep) => ep.name === endpointName)
+          return !!(endpoint && endpoint.path && endpoint.path.length > 0)
+        } else {
+          return !!(route && route.baseUrl && route.baseUrl.length > 0)
+        }
       })
     )
   }
@@ -42,8 +66,8 @@ export class WorkspaceService {
     workspace: any,
     appId: string,
     productName: string,
-    endpointName: string,
-    params: Record<string, unknown>
+    endpointName?: string,
+    endpointParameters?: Record<string, unknown>
   ): string {
     const route = this.filterRouteFromList(workspace.routes, appId, productName)
     let url = this.constructBaseUrlFromWorkspace(workspace)
@@ -58,12 +82,19 @@ export class WorkspaceService {
     if (route.baseUrl !== undefined && route.baseUrl.length > 0) {
       url = route.baseUrl
     }
+    if (endpointName == undefined) {
+      return url
+    }
 
-    url = Location.joinWithSlash(url, this.constructEndpointUrl(route, endpointName, params))
+    url = Location.joinWithSlash(url, this.constructEndpointUrl(route, endpointName, endpointParameters))
     return url
   }
 
-  private constructEndpointUrl(route: any, endpointName: string, params: Record<string, unknown>): string {
+  private constructEndpointUrl(
+    route: any,
+    endpointName: string,
+    endpointParameters: Record<string, unknown> = {}
+  ): string {
     if (!route.endpoints) {
       return ''
     }
@@ -73,7 +104,7 @@ export class WorkspaceService {
       return ''
     }
 
-    const paramsFilled = this.fillParamsForPath(finalEndpoint.path, params)
+    const paramsFilled = this.fillParamsForPath(finalEndpoint.path, endpointParameters)
     if (paramsFilled === undefined) {
       console.log('WARNING: Params could not be filled correctly')
       return ''
@@ -125,13 +156,13 @@ export class WorkspaceService {
     return endpoint
   }
 
-  private fillParamsForPath(path: string, params: Record<string, unknown>): string {
+  private fillParamsForPath(path: string, endpointParameters: Record<string, unknown>): string {
     while (path.includes(this.paramStart)) {
       const paramName = path.substring(
         path.indexOf(this.paramStart) + this.paramStart.length,
         path.indexOf(this.paramEnd)
       )
-      const paramValue = this.getStringFromUnknown(params[paramName])
+      const paramValue = this.getStringFromUnknown(endpointParameters[paramName])
       if (paramValue != undefined && paramValue.length > 0) {
         path = path.replace(this.paramStart.concat(paramName).concat(this.paramEnd), paramValue)
       } else {

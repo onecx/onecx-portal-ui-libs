@@ -1,3 +1,41 @@
+## [5.3.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.3.1...v5.3.2) (2024-08-08)
+
+### Bug Fixes
+
+* fixed route matcher for webcomponents ([#376](https://github.com/onecx/onecx-portal-ui-libs/issues/376)) ([cadbc6a](https://github.com/onecx/onecx-portal-ui-libs/commit/cadbc6a321fb0cb014d3e387dee915f46cc8cc43))
+
+### Chores
+
+* **deps-dev:** bump @storybook/addon-essentials from 8.2.6 to 8.2.7 ([#364](https://github.com/onecx/onecx-portal-ui-libs/issues/364)) ([9509cfc](https://github.com/onecx/onecx-portal-ui-libs/commit/9509cfc42c444d224352d61081d55cb3b2e52f86))
+
+## [5.3.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.3.0...v5.3.1) (2024-08-06)
+
+### Bug Fixes
+
+* fixed accessibilty issues for pageHeaderComponent ([#330](https://github.com/onecx/onecx-portal-ui-libs/issues/330)) ([f162a23](https://github.com/onecx/onecx-portal-ui-libs/commit/f162a23725f03a0265e252852c60d508892202f6))
+
+### Chores
+
+* [nx migration] changes ([#358](https://github.com/onecx/onecx-portal-ui-libs/issues/358)) ([7cd1bf5](https://github.com/onecx/onecx-portal-ui-libs/commit/7cd1bf51166170ecb210ee16e8cdec501522eb62))
+* **deps-dev:** bump @schematics/angular from 18.0.7 to 18.1.3 ([#360](https://github.com/onecx/onecx-portal-ui-libs/issues/360)) ([96efab1](https://github.com/onecx/onecx-portal-ui-libs/commit/96efab1d041c52ca09d06531e2298c3003510093))
+* **deps-dev:** bump @storybook/core-server from 8.2.6 to 8.2.7 ([#362](https://github.com/onecx/onecx-portal-ui-libs/issues/362)) ([fc5d713](https://github.com/onecx/onecx-portal-ui-libs/commit/fc5d713ba148d10efcd0d6dc081ad98facca8f09))
+* **deps-dev:** bump @types/node from 20.14.12 to 22.1.0 ([#365](https://github.com/onecx/onecx-portal-ui-libs/issues/365)) ([ab3a795](https://github.com/onecx/onecx-portal-ui-libs/commit/ab3a795f3d5be4045782e66115003ef35f23e15f))
+* **deps-dev:** bump @typescript-eslint/parser from 7.17.0 to 7.18.0 ([#368](https://github.com/onecx/onecx-portal-ui-libs/issues/368)) ([a522d28](https://github.com/onecx/onecx-portal-ui-libs/commit/a522d28c96014e6312c04c5ad4720edd12d991fa))
+* **deps-dev:** bump msw from 2.3.4 to 2.3.5 ([#367](https://github.com/onecx/onecx-portal-ui-libs/issues/367)) ([ea8d5b4](https://github.com/onecx/onecx-portal-ui-libs/commit/ea8d5b42516061328c07fcaf5d82ab3fc74480ab))
+* **deps:** bump the angular group with 20 updates ([#359](https://github.com/onecx/onecx-portal-ui-libs/issues/359)) ([78a97e5](https://github.com/onecx/onecx-portal-ui-libs/commit/78a97e503a155b5099d7922aef33bf2c7c2645c0))
+
+## [5.3.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.2.0...v5.3.0) (2024-08-01)
+
+### Features
+
+* breadcrumb service manual breadcrumbs as topic ([#353](https://github.com/onecx/onecx-portal-ui-libs/issues/353)) ([22b4f23](https://github.com/onecx/onecx-portal-ui-libs/commit/22b4f236a5a70893e4f95612f5cd2be4b4eadd38))
+* reset selected page on data change and filter change ([#349](https://github.com/onecx/onecx-portal-ui-libs/issues/349)) ([ec7f18d](https://github.com/onecx/onecx-portal-ui-libs/commit/ec7f18d638ab9ce5d6538f50246619d3953575d0))
+* search and reset buttons can be disabled ([#347](https://github.com/onecx/onecx-portal-ui-libs/issues/347)) ([e60cb93](https://github.com/onecx/onecx-portal-ui-libs/commit/e60cb932f0e8ed467e74f04ec7789161639bd39a))
+
+### Bug Fixes
+
+* P002271 7753/refactoring get url ([#354](https://github.com/onecx/onecx-portal-ui-libs/issues/354)) ([2aa92fd](https://github.com/onecx/onecx-portal-ui-libs/commit/2aa92fd99619c327f57fae4ac13f4aeb5cc42ecb))
+
 ## [5.2.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.1.5...v5.2.0) (2024-07-29)
 
 ### Features

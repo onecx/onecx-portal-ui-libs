@@ -50,6 +50,8 @@ export class SearchHeaderComponent implements AfterViewInit {
     this._actions = value
     this.updateHeaderActions()
   }
+  @Input() searchButtonDisabled = false
+  @Input() resetButtonDisabled = false
   @Input() pageName: string = ''
 
   _currentInputFieldValues: { [key: string]: unknown } = {}
