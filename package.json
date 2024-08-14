@@ -81,7 +81,7 @@
     "@swc/core": "~1.7.10",
     "@types/d3": "^7.4.3",
     "@types/jest": "^29.5.12",
-    "@types/node": "~22.1.0",
+    "@types/node": "~22.3.0",
     "@typescript-eslint/eslint-plugin": "7.17.0",
     "@typescript-eslint/parser": "7.18.0",
     "blob-polyfill": "^9.0.20240710",
