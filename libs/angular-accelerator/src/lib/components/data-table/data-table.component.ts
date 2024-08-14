@@ -15,7 +15,7 @@ import { TranslateService } from '@ngx-translate/core'
 import { UserService } from '@onecx/angular-integration-interface'
 import { MenuItem, SelectItem } from 'primeng/api'
 import { Menu } from 'primeng/menu'
-import { BehaviorSubject, Observable, combineLatest, map, mergeMap, of } from 'rxjs'
+import { BehaviorSubject, Observable, combineLatest, firstValueFrom, map, mergeMap, of } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
@@ -205,6 +205,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   @Output() selectionChanged = new EventEmitter<Row[]>()
   @Output() pageChanged = new EventEmitter<number>()
   @Output() pageSizeChanged = new EventEmitter<number>()
+  @Output() componentStateChanged = new EventEmitter<DataTableComponentState>()
 
   displayedRows$: Observable<unknown[]> | undefined
   selectedRows$: Observable<unknown[]> | undefined
@@ -332,6 +333,21 @@ export class DataTableComponent extends DataSortBase implements OnInit {
       map((amounts) => Object.fromEntries(amounts))
     )
     this.mapSelectionToRows()
+    this.emitComponentStateChanged()
+  }
+
+  emitComponentStateChanged(state: DataTableComponentState = {}) {
+    this.componentStateChanged.emit({
+      filters: this.filters,
+      sorting: {
+        sortColumn: this.sortColumn,
+        sortDirection: this.sortDirection
+      },
+      pageSize: this.pageSize ?? 50,
+      activePage: this.page,
+      selectedRows: this.selectedRows,
+      ...state
+    })
   }
 
   onSortColumnClick(sortColumn: string) {
@@ -341,6 +357,12 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     this._sortDirection$.next(newSortDirection)
 
     this.sorted.emit({ sortColumn: sortColumn, sortDirection: newSortDirection })
+    this.emitComponentStateChanged({
+      sorting: {
+        sortColumn: sortColumn,
+        sortDirection: newSortDirection
+      }
+    })
   }
 
   columnNextSortDirection(sortColumn: string) {
@@ -378,6 +400,9 @@ export class DataTableComponent extends DataSortBase implements OnInit {
       this.filters = filters
     }
     this.filtered.emit(filters)
+    this.emitComponentStateChanged({
+      filters
+    })
     this.resetPage()
   }
 
@@ -416,18 +441,26 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
   onSelectionChange(event: Row[]) {
     this.selectionChanged.emit(event)
+    this.emitComponentStateChanged({
+      selectedRows: event
+    })
   }
 
   onPageChange(event: any) {
     const page = event.first / event.rows
     this.page = page
     this.pageChanged.emit(page)
-    this.pageSizeChanged.emit(event.rows) 
+    this.pageSizeChanged.emit(event.rows)
+    this.emitComponentStateChanged({
+      activePage: page,
+      pageSize: event.rows
+    })
   }
 
   resetPage() {
     this.page = 0
     this.pageChanged.emit(this.page)
+    this.emitComponentStateChanged()
   }
 
   fieldIsTruthy(object: any, key: any) {

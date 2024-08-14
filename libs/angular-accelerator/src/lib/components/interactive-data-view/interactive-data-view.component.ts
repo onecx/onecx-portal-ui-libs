@@ -11,8 +11,9 @@ import {
 import { DataLayoutSelectionComponentState } from '../data-layout-selection/data-layout-selection.component'
 import { Filter, Row, Sort } from '../data-table/data-table.component'
 import { DataViewComponent, DataViewComponentState, RowListGridData } from '../data-view/data-view.component'
-import { ReplaySubject, combineLatest, map, timestamp } from 'rxjs'
+import { Observable, ReplaySubject, Timestamp, combineLatest, map, startWith, tap, timestamp } from 'rxjs'
 import { DataListGridSortingComponentState } from '../data-list-grid-sorting/data-list-grid-sorting.component'
+import { orderAndMergeValuesByTimestamp } from '../../utils/rxjs-utils'
 
 export type InteractiveDataViewComponentState = ColumnGroupSelectionComponentState &
   CustomGroupColumnSelectorComponentState &
@@ -35,7 +36,11 @@ export class InteractiveDataViewComponent implements OnInit {
     return this._dataViewComponent
   }
 
-  public dataLayoutComponentState$ = new ReplaySubject<DataLayoutSelectionComponentState>(1)
+  columnGroupSelectionComponentState$ = new ReplaySubject<ColumnGroupSelectionComponentState>(1)
+  customGroupColumnSelectorComponentState$ = new ReplaySubject<CustomGroupColumnSelectorComponentState>(1)
+  dataLayoutComponentState$ = new ReplaySubject<DataLayoutSelectionComponentState>(1)
+  dataListGridSortingComponentState$ = new ReplaySubject<DataListGridSortingComponentState>(1)
+  dataViewComponentState$ = new ReplaySubject<DataViewComponentState>(1)
 
   @Input() deletePermission: string | undefined
   @Input() editPermission: string | undefined
@@ -64,7 +69,7 @@ export class InteractiveDataViewComponent implements OnInit {
     DataSortDirection.NONE,
   ]
   @Input() pageSizes: number[] = [10, 25, 50]
-  @Input() pageSize: number | undefined;
+  @Input() pageSize: number | undefined
   @Input() totalRecordsOnServer: number | undefined
   @Input() layout: 'grid' | 'list' | 'table' = 'table'
   @Input() defaultGroupKey = ''
@@ -189,14 +194,6 @@ export class InteractiveDataViewComponent implements OnInit {
     this._data = value
   }
 
-  constructor() {
-    combineLatest([this.dataLayoutComponentState$.pipe(timestamp())]).pipe(map(([dataLayoutComponentState]) => {
-      // TODO: Order replay subjects ascending by timestamp and use spread operator after
-      return {...dataLayoutComponentState.value}
-      // TODO Pass componentState emitter into subscribe
-    })).subscribe((val) => this.componentStateChanged.emit(val))
-  }
-
   ngOnInit(): void {
     this.selectedGroupKey = this.defaultGroupKey
     this.displayedColumns = this.columns
@@ -210,6 +207,24 @@ export class InteractiveDataViewComponent implements OnInit {
       this.groupSelectionNoGroupSelectedKey = 'OCX_INTERACTIVE_DATA_VIEW.NO_GROUP_SELECTED'
     }
     this.firstColumnId = this.columns[0]?.id
+
+    let dataListGridSortingComponentState$: Observable<DataListGridSortingComponentState | {}> = this.dataListGridSortingComponentState$
+    if (this.layout === 'table') {
+      dataListGridSortingComponentState$ = dataListGridSortingComponentState$.pipe(startWith({}))
+    }
+    combineLatest([
+      this.columnGroupSelectionComponentState$.pipe(timestamp(), tap(val => console.log(val))),
+      this.customGroupColumnSelectorComponentState$.pipe(timestamp(), tap(val => console.log(val))),
+      this.dataLayoutComponentState$.pipe(timestamp(), tap(val => console.log(val))),
+      dataListGridSortingComponentState$.pipe(timestamp(), tap(val => console.log(val))),
+      this.dataViewComponentState$.pipe(timestamp(), tap(val => console.log(val))),
+    ])
+      .pipe(
+        map((componentStates) => {
+          return orderAndMergeValuesByTimestamp(componentStates)
+        })
+      )
+      .subscribe((val) => {console.log(val); this.componentStateChanged.emit(val)})
   }
 
   filtering(event: any) {

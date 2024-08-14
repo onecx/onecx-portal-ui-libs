@@ -51,6 +51,10 @@ export class ColumnGroupSelectionComponent implements OnInit {
           .filter((value, index, self) => self.indexOf(value) === index && value != null)
       )
     )
+    this.componentStateChanged.emit({
+      activeColumnGroupKey: this.selectedGroupKey,
+      displayedColumns: this.columns,
+    })
   }
 
   changeGroupSelection(event: { value: string }) {

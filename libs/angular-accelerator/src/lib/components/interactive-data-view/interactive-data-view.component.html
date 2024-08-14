@@ -19,6 +19,7 @@
         [sortStates]="sortStates"
         (sortChange)="onSortChange($event)"
         (sortDirectionChange)="onSortDirectionChange($event)"
+        (componentStateChanged)="dataListGridSortingComponentState$.next($event)"
       ></ocx-data-list-grid-sorting>
     </div>
 
@@ -30,6 +31,7 @@
         [customGroupKey]="customGroupKey"
         [placeholderKey]="groupSelectionNoGroupSelectedKey"
         (groupSelectionChanged)="onColumnGroupSelectionChange($event)"
+        (componentStateChanged)="columnGroupSelectionComponentState$.next($event)"
       ></ocx-column-group-selection>
 
       <ocx-custom-group-column-selector
@@ -39,6 +41,7 @@
         [frozenActionColumn]="frozenActionColumn"
         [actionColumnPosition]="actionColumnPosition"
         (actionColumnConfigChanged)="onActionColumnConfigChange($event)"
+        (componentStateChanged)="customGroupColumnSelectorComponentState$.next($event)"
       ></ocx-custom-group-column-selector>
     </div>
   </div>
@@ -93,6 +96,7 @@
     [totalRecordsOnServer]="totalRecordsOnServer"
     [currentPageShowingKey]="currentPageShowingKey"
     [currentPageShowingWithTotalOnServerKey]="currentPageShowingWithTotalOnServerKey"
+    (componentStateChanged)="dataViewComponentState$.next($event)"
   >
   </ocx-data-view>
 </div>

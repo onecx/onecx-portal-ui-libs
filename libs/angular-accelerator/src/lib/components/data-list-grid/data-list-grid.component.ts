@@ -195,6 +195,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   @Output() deleteItem = new EventEmitter<ListGridData>()
   @Output() pageChanged = new EventEmitter<number>()
   @Output() pageSizeChanged = new EventEmitter<number>()
+  @Output() componentStateChanged = new EventEmitter<DataListGridComponentState>()
 
   get viewItemObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
@@ -288,6 +289,11 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
       (!!this.viewPermission && this.userService.hasPermission(this.viewPermission)) ||
       (!!this.editPermission && this.userService.hasPermission(this.editPermission)) ||
       (!!this.deletePermission && this.userService.hasPermission(this.deletePermission))
+
+      this.componentStateChanged.emit({
+        pageSize: this.pageSize ?? 50,
+        activePage: this.page,
+      })
   }
 
   onDeleteRow(element: ListGridData) {
@@ -408,11 +414,19 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     this.page = page
     this.pageChanged.emit(page)
     this.pageSizeChanged.emit(event.rows)
+    this.componentStateChanged.emit({
+      activePage: page,
+      pageSize: event.rows
+    })
   }
 
   resetPage() {
     this.page = 0
     this.pageChanged.emit(this.page)
+    this.componentStateChanged.emit({
+      pageSize: this.pageSize ?? 50,
+      activePage: this.page,
+    })
   }
 
   fieldIsTruthy(object: any, key: any) {

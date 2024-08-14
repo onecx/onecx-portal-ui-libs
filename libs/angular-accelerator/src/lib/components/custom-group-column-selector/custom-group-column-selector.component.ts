@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core'
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { DataTableColumn } from '../../model/data-table-column.model'
 
@@ -21,7 +21,7 @@ export interface CustomGroupColumnSelectorComponentState {
   templateUrl: './custom-group-column-selector.component.html',
   styleUrls: ['./custom-group-column-selector.component.scss'],
 })
-export class CustomGroupColumnSelectorComponent {
+export class CustomGroupColumnSelectorComponent implements OnInit {
   @Input() columns: DataTableColumn[] = []
   @Input() displayedColumns: DataTableColumn[] = []
   @Input() dialogTitle = ''
@@ -35,6 +35,7 @@ export class CustomGroupColumnSelectorComponent {
 
   @Output() columnSelectionChanged: EventEmitter<ColumnSelectionChangedEvent> = new EventEmitter()
   @Output() actionColumnConfigChanged: EventEmitter<ActionColumnChangedEvent> = new EventEmitter()
+  @Output() componentStateChanged: EventEmitter<CustomGroupColumnSelectorComponentState> = new EventEmitter()
 
   hiddenColumnsModel: DataTableColumn[] = []
   displayedColumnsModel: DataTableColumn[] = []
@@ -65,6 +66,16 @@ export class CustomGroupColumnSelectorComponent {
 
   constructor(private translate: TranslateService) {}
 
+  ngOnInit(): void {
+    this.componentStateChanged.emit({
+      actionColumnConfig: {
+        frozen: this.frozenActionColumn,
+        position: this.actionColumnPosition,
+      },
+      displayedColumns: this.displayedColumns,
+    })
+  }
+
   onOpenCustomGroupColumnSelectionDialogClick() {
     this.displayedColumnsModel = [...this.displayedColumns]
     this.hiddenColumnsModel = this.columns.filter(
@@ -80,9 +91,15 @@ export class CustomGroupColumnSelectorComponent {
     const colIdsBefore = this.displayedColumns.map((column) => column.id)
     const colIdsAfter = this.displayedColumnsModel.map((column) => column.id)
 
-    if ((!colIdsAfter.every((colId, i) => colId === colIdsBefore[i])) ||
-            colIdsAfter.length != colIdsBefore.length) {
+    if (!colIdsAfter.every((colId, i) => colId === colIdsBefore[i]) || colIdsAfter.length != colIdsBefore.length) {
       this.columnSelectionChanged.emit({ activeColumns: [...this.displayedColumnsModel] })
+      this.componentStateChanged.emit({
+        displayedColumns: [...this.displayedColumnsModel],
+        actionColumnConfig: {
+          frozen: this.frozenActionColumnModel,
+          position: this.actionColumnPositionModel,
+        },
+      })
     }
 
     if (
@@ -92,6 +109,13 @@ export class CustomGroupColumnSelectorComponent {
       this.actionColumnConfigChanged.emit({
         frozenActionColumn: this.frozenActionColumnModel,
         actionColumnPosition: this.actionColumnPositionModel,
+      })
+      this.componentStateChanged.emit({
+        displayedColumns: [...this.displayedColumnsModel],
+        actionColumnConfig: {
+          frozen: this.frozenActionColumnModel,
+          position: this.actionColumnPositionModel,
+        },
       })
     }
   }

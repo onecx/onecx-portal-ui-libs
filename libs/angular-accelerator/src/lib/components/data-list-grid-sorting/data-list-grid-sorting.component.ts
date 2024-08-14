@@ -3,6 +3,7 @@ import { BehaviorSubject } from 'rxjs'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataColumnNameId } from '../../model/data-column-name-id.model'
 import { DataTableColumn } from '../../model/data-table-column.model'
+import { DropdownChangeEvent } from 'primeng/dropdown'
 
 export type Sort = { sortColumn: string; sortDirection: DataSortDirection }
 export interface DataListGridSortingComponentState {
@@ -44,10 +45,11 @@ export class DataListGridSortingComponent implements OnInit {
   ngOnInit(): void {
     this.columns.forEach((element) => this.dropdownOptions.push({ columnId: element.id, columnName: element.nameKey }))
     this.selectedSortingOption = this.dropdownOptions.find((e) => e.columnId === this?.sortField)
+    this.emitComponentStateChange()
   }
 
-  selectSorting(event: any): void {
-    this._sortField$.next(event.value)
+  selectSorting(event: DropdownChangeEvent): void {
+    this._sortField$.next(event.value.columnId)
     this.sortChange.emit(event.value.columnId)
     this.emitComponentStateChange()
   }
