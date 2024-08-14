@@ -1,14 +1,27 @@
-import { Component, ContentChild, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core'
-import { DataTableColumn } from '../../model/data-table-column.model'
+import {
+  AfterContentInit,
+  Component,
+  ContentChild,
+  ContentChildren,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  QueryList,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core'
+import { PrimeTemplate } from 'primeng/api'
+import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
-import { Filter, Row, Sort } from '../data-table/data-table.component'
-import { DataViewComponent, RowListGridData } from '../data-view/data-view.component'
+import { DataTableColumn } from '../../model/data-table-column.model'
 import { GroupSelectionChangedEvent } from '../column-group-selection/column-group-selection.component'
 import {
   ActionColumnChangedEvent,
   ColumnSelectionChangedEvent,
 } from '../custom-group-column-selector/custom-group-column-selector.component'
-import { DataAction } from '../../model/data-action'
+import { Filter, Row, Sort } from '../data-table/data-table.component'
+import { DataViewComponent, RowListGridData } from '../data-view/data-view.component'
 
 @Component({
   selector: 'ocx-interactive-data-view',
@@ -16,11 +29,14 @@ import { DataAction } from '../../model/data-action'
   styleUrls: ['./interactive-data-view.component.css'],
   providers: [{ provide: 'InteractiveDataViewComponent', useExisting: InteractiveDataViewComponent }],
 })
-export class InteractiveDataViewComponent implements OnInit {
+export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   _dataViewComponent: DataViewComponent | undefined
   @ViewChild(DataViewComponent) set dataView(ref: DataViewComponent | undefined) {
     this._dataViewComponent = ref
     this.registerEventListenerForDataView()
+    if (this._dataViewComponent) {
+      this._dataViewComponent.parentTemplates = this.templates
+    }
   }
   get dataView(): DataViewComponent | undefined {
     return this._dataViewComponent
@@ -53,7 +69,7 @@ export class InteractiveDataViewComponent implements OnInit {
     DataSortDirection.NONE,
   ]
   @Input() pageSizes: number[] = [10, 25, 50]
-  @Input() pageSize: number | undefined;
+  @Input() pageSize: number | undefined
   @Input() totalRecordsOnServer: number | undefined
   @Input() layout: 'grid' | 'list' | 'table' = 'table'
   @Input() defaultGroupKey = ''
@@ -96,6 +112,17 @@ export class InteractiveDataViewComponent implements OnInit {
   @ContentChild('gridItem') gridItem: TemplateRef<any> | undefined
   @ContentChild('listItem') listItem: TemplateRef<any> | undefined
   @ContentChild('topCenter') topCenter: TemplateRef<any> | undefined
+  _templates: QueryList<PrimeTemplate> | undefined
+  @ContentChildren(PrimeTemplate)
+  set templates(value: QueryList<PrimeTemplate> | undefined) {
+    this._templates = value
+    if (this.dataView) {
+      this.dataView.parentTemplates = value
+    }
+  }
+  get templates(): QueryList<PrimeTemplate> | undefined {
+    return this._templates
+  }
 
   @Output() filtered = new EventEmitter<Filter[]>()
   @Output() sorted = new EventEmitter<Sort>()
@@ -187,6 +214,58 @@ export class InteractiveDataViewComponent implements OnInit {
       this.groupSelectionNoGroupSelectedKey = 'OCX_INTERACTIVE_DATA_VIEW.NO_GROUP_SELECTED'
     }
     this.firstColumnId = this.columns[0]?.id
+  }
+
+  ngAfterContentInit() {
+    this.templates?.forEach((item) => {
+      switch (item.getType()) {
+        case 'tableCell':
+          this.tableCell = item.template
+          break
+        case 'tableDateCell':
+          this.tableDateCell = item.template
+          break
+        case 'dateTableCell':
+          this.dateTableCell = item.template
+          break
+        case 'tableRelativeDateCell':
+          this.tableRelativeDateCell = item.template
+          break
+        case 'relativeDateTableCell':
+          this.relativeDateTableCell = item.template
+          break
+        case 'tableTranslationKeyCell':
+          this.tableTranslationKeyCell = item.template
+          break
+        case 'translationKeyTableCell':
+          this.translationKeyTableCell = item.template
+          break
+        case 'gridItemSubtitleLines':
+          this.gridItemSubtitleLines = item.template
+          break
+        case 'listItemSubtitleLines':
+          this.listItemSubtitleLines = item.template
+          break
+        case 'stringTableCell':
+          this.stringTableCell = item.template
+          break
+        case 'numberTableCell':
+          this.numberTableCell = item.template
+          break
+        case 'customTableCell':
+          this.customTableCell = item.template
+          break
+        case 'gridItem':
+          this.gridItem = item.template
+          break
+        case 'listItem':
+          this.listItem = item.template
+          break
+        case 'topCenter':
+          this.topCenter = item.template
+          break
+      }
+    })
   }
 
   filtering(event: any) {

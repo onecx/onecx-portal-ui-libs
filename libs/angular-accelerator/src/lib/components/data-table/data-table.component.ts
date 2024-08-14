@@ -1,6 +1,8 @@
 import {
+  AfterContentInit,
   Component,
   ContentChild,
+  ContentChildren,
   EventEmitter,
   Inject,
   Injector,
@@ -8,14 +10,15 @@ import {
   LOCALE_ID,
   OnInit,
   Output,
+  QueryList,
   TemplateRef,
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { UserService } from '@onecx/angular-integration-interface'
-import { MenuItem, SelectItem } from 'primeng/api'
+import { MenuItem, PrimeTemplate, SelectItem } from 'primeng/api'
 import { Menu } from 'primeng/menu'
-import { BehaviorSubject, Observable, combineLatest, map, mergeMap, of } from 'rxjs'
+import { BehaviorSubject, Observable, combineLatest, concat, map, mergeMap, of } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
@@ -38,7 +41,7 @@ export type Sort = { sortColumn: string; sortDirection: DataSortDirection }
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
 })
-export class DataTableComponent extends DataSortBase implements OnInit {
+export class DataTableComponent extends DataSortBase implements OnInit, AfterContentInit {
   _rows$ = new BehaviorSubject<Row[]>([])
   @Input()
   get rows(): Row[] {
@@ -148,7 +151,13 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     return this.numberCellTemplate || this.numberCellChildTemplate
   }
 
+  /**
+   * @deprecated
+   */
   @Input() customCellTemplate: TemplateRef<any> | undefined
+  /**
+   * @deprecated
+   */
   @ContentChild('customCell') customCellChildTemplate: TemplateRef<any> | undefined
   get _customCell(): TemplateRef<any> | undefined {
     return this.customCellTemplate || this.customCellChildTemplate
@@ -208,6 +217,9 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   inlineActions$: Observable<DataAction[]>
   overflowMenuItems$: Observable<MenuItem[]>
   currentMenuRow$ = new BehaviorSubject<Row | null>(null)
+
+  @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined = new QueryList<PrimeTemplate>()
+  parentTemplates: QueryList<PrimeTemplate> | undefined = new QueryList<PrimeTemplate>()
 
   get viewTableRowObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
@@ -322,6 +334,34 @@ export class DataTableComponent extends DataSortBase implements OnInit {
       map((amounts) => Object.fromEntries(amounts))
     )
     this.mapSelectionToRows()
+  }
+
+  ngAfterContentInit() {
+    this.templates?.forEach((item) => {
+      switch (item.getType()) {
+        case 'stringCell':
+          this.stringCellChildTemplate = item.template
+          break
+        case 'numberCell':
+          this.numberCellChildTemplate = item.template
+          break
+        case 'customCell':
+          this.customCellChildTemplate = item.template
+          break
+        case 'dateCell':
+          this.dateCellChildTemplate = item.template
+          break
+        case 'relativeDateCell':
+          this.relativeDateCellChildTemplate = item.template
+          break
+        case 'cellTemplate':
+          this.cellChildTemplate = item.template
+          break
+        case 'translationKeyCell':
+          this.translationKeyCellChildTemplate = item.template
+          break
+      }
+    })
   }
 
   onSortColumnClick(sortColumn: string) {
@@ -446,5 +486,37 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     }
     const d = new Date(value)
     return isValidDate(d)
+  }
+
+  getTemplate(column: DataTableColumn): TemplateRef<any> | null {
+    const templates = [...(this.parentTemplates ?? []), ...(this.templates ?? [])]
+    const columnTemplate =
+      templates.find((template) => template.name === column.id + 'IdTableCell')?.template ??
+      templates.find((template) => template.name === column.id + 'IdCell')?.template
+    if (columnTemplate) {
+      return columnTemplate
+    }
+    switch (column.columnType) {
+      case ColumnType.DATE:
+        return this._dateCell ?? templates.find((template) => template.name === 'defaultDateCell')?.template ?? null
+      case ColumnType.NUMBER:
+        return this._numberCell ?? templates.find((template) => template.name === 'defaultNumberCell')?.template ?? null
+      case ColumnType.RELATIVE_DATE:
+        return (
+          this._relativeDateCell ??
+          templates.find((template) => template.name === 'defaultRelativeDateCell')?.template ??
+          null
+        )
+      case ColumnType.TRANSLATION_KEY:
+        return (
+          this._translationKeyCell ??
+          templates.find((template) => template.name === 'defaultTranslationKeyCell')?.template ??
+          null
+        )
+      case ColumnType.CUSTOM:
+        return this._customCell ?? templates.find((template) => template.name === 'defaultCustomCell')?.template ?? null
+      default:
+        return this._stringCell ?? templates.find((template) => template.name === 'defaultStringCell')?.template ?? null
+    }
   }
 }

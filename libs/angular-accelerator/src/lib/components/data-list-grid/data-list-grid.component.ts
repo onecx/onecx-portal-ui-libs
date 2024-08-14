@@ -1,6 +1,7 @@
 import {
   Component,
   ContentChild,
+  ContentChildren,
   DoCheck,
   EventEmitter,
   Inject,
@@ -9,11 +10,12 @@ import {
   LOCALE_ID,
   OnInit,
   Output,
+  QueryList,
   TemplateRef,
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
-import { MenuItem, PrimeIcons } from 'primeng/api'
+import { MenuItem, PrimeIcons, PrimeTemplate } from 'primeng/api'
 import { BehaviorSubject, Observable, combineLatest, map, mergeMap } from 'rxjs'
 import { MfeInfo } from '@onecx/integration-interface'
 import { AppStateService } from '@onecx/angular-integration-interface'
@@ -217,6 +219,11 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   displayedItems$: Observable<unknown[]> | undefined
   fallbackImagePath$!: Observable<string>
 
+  filteredCols: DataTableColumn[] = []
+  
+  @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined
+  parentTemplates: QueryList<PrimeTemplate> | undefined
+
   constructor(
     @Inject(LOCALE_ID) locale: string,
     translateService: TranslateService,
@@ -282,6 +289,8 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
       (!!this.viewPermission && this.userService.hasPermission(this.viewPermission)) ||
       (!!this.editPermission && this.userService.hasPermission(this.editPermission)) ||
       (!!this.deletePermission && this.userService.hasPermission(this.deletePermission))
+
+    this.getFilteredColumns()
   }
 
   onDeleteRow(element: ListGridData) {
@@ -427,5 +436,11 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   toggleOverflowMenu(event: MouseEvent, menu: Menu, row: Row) {
     this.currentMenuRow$.next(row)
     menu.toggle(event)
+  }
+
+  getFilteredColumns() {
+    let ids: string[] = []
+    this.titleLineId ? (ids = [this.titleLineId, ...this.subtitleLineIds]) : (ids = [...this.subtitleLineIds])
+    this.filteredCols = this.columns.filter((c) => !ids.includes(c.id))
   }
 }

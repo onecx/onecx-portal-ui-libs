@@ -12,8 +12,6 @@
   id="dataListGrid_{{name}}"
   paginatorDropdownAppendTo="body"
 >
-  <ng-template #gridItem let-item pTemplate="gridItem">
-  </ng-template>
   <ng-template #gridItem let-rows pTemplate="gridItem">
     <div class="p-grid p-nogutter grid grid-nogutter">
       <ng-template ngFor let-item [ngForOf]="rows">
@@ -83,99 +81,100 @@
 </ng-template>
 <ng-template #defaultListItem let-item>
   <div class="col-12">
-    <div class="flex flex-1 align-items-center p-3 w-full">
-      <div class="data-list-items flex-1">
-        <div class="item-name-row flex flex-row justify-content-between">
-          <div class="item-name mr-3 text-2xl font-medium">
-            <a [routerLink]="" (click)="onViewRow(item)">{{ resolveFieldData(item, titleLineId) || '' }}</a>
-          </div>
-          <div class="flex flex-column md:flex-row md:justify-content-between">
-            <ng-container
-              *ngIf="viewItemObserved && (!viewActionVisibleField || fieldIsTruthy(item, viewActionVisibleField))"
-            >
+    <div class="p-3">
+      <div class="item-name-row flex flex-row justify-content-between">
+        <div class="item-name mr-3 text-2xl font-medium align-content-center">
+          <a *ngIf="titleLineId" [routerLink]="" (click)="onViewRow(item)"
+            >{{ resolveFieldData(item, titleLineId) || '' }}</a
+          >
+        </div>
+        <div class="flex flex-row">
+          <ng-container
+            *ngIf="viewItemObserved && (!viewActionVisibleField || fieldIsTruthy(item, viewActionVisibleField))"
+          >
+            <button
+              type="button"
+              icon="pi pi-eye"
+              pButton
+              class="p-button-rounded p-button-text mb-1 mr-2 viewListItemButton"
+              title="{{ (viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW') | translate }}"
+              [attr.aria-label]="(viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW') | translate"
+              (click)="onViewRow(item)"
+              *ocxIfPermission="viewPermission"
+              [disabled]="!!viewActionEnabledField && !fieldIsTruthy(item, viewActionEnabledField)"
+              [attr.name]="'data-list-action-button'"
+            ></button>
+          </ng-container>
+          <ng-container
+            *ngIf="editItemObserved && (!editActionVisibleField || fieldIsTruthy(item, editActionVisibleField))"
+          >
+            <button
+              type="button"
+              class="p-button-rounded p-button-text mb-1 mr-2 editListItemButton"
+              icon="pi pi-pencil"
+              pButton
+              title="{{ (editMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.EDIT') | translate }}"
+              [attr.aria-label]="(editMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.EDIT') | translate"
+              (click)="onEditRow(item)"
+              *ocxIfPermission="editPermission"
+              [disabled]="!!editActionEnabledField && !fieldIsTruthy(item, editActionEnabledField)"
+              [attr.name]="'data-list-action-button'"
+            ></button>
+          </ng-container>
+          <ng-container
+            *ngIf="deleteItemObserved && (!deleteActionVisibleField || fieldIsTruthy(item, deleteActionVisibleField))"
+          >
+            <button
+              type="button"
+              icon="pi pi-trash"
+              class="p-button-rounded p-button-text p-button-danger mb-1 mr-2 deleteListItemButton"
+              pButton
+              title="{{ (deleteMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.DELETE') | translate }}"
+              [attr.aria-label]="(deleteMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.DELETE') | translate"
+              (click)="onDeleteRow(item)"
+              *ocxIfPermission="deletePermission"
+              [disabled]="!!deleteActionEnabledField && !fieldIsTruthy(item, deleteActionEnabledField)"
+              [attr.name]="'data-list-action-button'"
+            ></button>
+          </ng-container>
+          <ng-container *ngFor="let action of inlineListActions$ | async">
+            <ng-container *ngIf="(!action.actionVisibleField || fieldIsTruthy(item, action.actionVisibleField))">
               <button
-                type="button"
-                icon="pi pi-eye"
-                pButton
-                class="p-button-rounded p-button-text mb-1 mr-2 viewListItemButton"
-                title="{{ (viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW') | translate }}"
-                [attr.aria-label]="(viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW') | translate"
-                (click)="onViewRow(item)"
-                *ocxIfPermission="viewPermission"
-                [disabled]="!!viewActionEnabledField && !fieldIsTruthy(item, viewActionEnabledField)"
-                [attr.name]="'data-list-action-button'"
-              ></button>
-            </ng-container>
-            <ng-container
-              *ngIf="editItemObserved && (!editActionVisibleField || fieldIsTruthy(item, editActionVisibleField))"
-            >
-              <button
-                type="button"
-                class="p-button-rounded p-button-text mb-1 mr-2 editListItemButton"
-                icon="pi pi-pencil"
-                pButton
-                title="{{ (editMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.EDIT') | translate }}"
-                [attr.aria-label]="(editMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.EDIT') | translate"
-                (click)="onEditRow(item)"
-                *ocxIfPermission="editPermission"
-                [disabled]="!!editActionEnabledField && !fieldIsTruthy(item, editActionEnabledField)"
-                [attr.name]="'data-list-action-button'"
-              ></button>
-            </ng-container>
-            <ng-container
-              *ngIf="deleteItemObserved && (!deleteActionVisibleField || fieldIsTruthy(item, deleteActionVisibleField))"
-            >
-              <button
-                type="button"
-                icon="pi pi-trash"
-                class="p-button-rounded p-button-text p-button-danger mb-1 mr-2 deleteListItemButton"
-                pButton
-                title="{{ (deleteMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.DELETE') | translate }}"
-                [attr.aria-label]="(deleteMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.DELETE') | translate"
-                (click)="onDeleteRow(item)"
-                *ocxIfPermission="deletePermission"
-                [disabled]="!!deleteActionEnabledField && !fieldIsTruthy(item, deleteActionEnabledField)"
-                [attr.name]="'data-list-action-button'"
-              ></button>
-            </ng-container>
-            <ng-container *ngFor="let action of inlineListActions$ | async">
-              <ng-container *ngIf="(!action.actionVisibleField || fieldIsTruthy(item, action.actionVisibleField))">
-                <button
-                  *ocxIfPermission="action.permission"
-                  pButton
-                  class="p-button-rounded p-button-text"
-                  [ngClass]="action.classes"
-                  [icon]="action.icon || ''"
-                  (click)="action.callback(item)"
-                  [title]="action.labelKey ? (action.labelKey | translate) : ''"
-                  [attr.aria-label]="action.labelKey ? (action.labelKey | translate) : ''"
-                  [disabled]="action.disabled || (!!action.actionEnabledField && !fieldIsTruthy(item, action.actionEnabledField))"
-                ></button>
-              </ng-container>
-            </ng-container>
-            <ng-container *ngIf="hasVisibleOverflowMenuItems(item) | async">
-              <p-menu
-                #menu
-                [model]="(overflowMenuItems$ | async) || []"
-                [popup]="true"
-                appendTo="body"
-              ></p-menu>
-              <button
+                *ocxIfPermission="action.permission"
                 pButton
                 class="p-button-rounded p-button-text"
-                [icon]="'pi pi-ellipsis-v'"
-                (click)="toggleOverflowMenu($event, menu, item)"
-                [ariaLabel]="'OCX_DATA_TABLE.MORE_ACTIONS' | translate"
-                [title]="'OCX_DATA_TABLE.MORE_ACTIONS' | translate"
+                [ngClass]="action.classes"
+                [icon]="action.icon || ''"
+                (click)="action.callback(item)"
+                [title]="action.labelKey ? (action.labelKey | translate) : ''"
+                [attr.aria-label]="action.labelKey ? (action.labelKey | translate) : ''"
+                [disabled]="action.disabled || (!!action.actionEnabledField && !fieldIsTruthy(item, action.actionEnabledField))"
               ></button>
             </ng-container>
-          </div>
+          </ng-container>
+          <ng-container *ngIf="hasVisibleOverflowMenuItems(item) | async">
+            <p-menu #menu [model]="(overflowMenuItems$ | async) || []" [popup]="true" appendTo="body"></p-menu>
+            <button
+              pButton
+              class="p-button-rounded p-button-text"
+              [icon]="'pi pi-ellipsis-v'"
+              (click)="toggleOverflowMenu($event, menu, item)"
+              [ariaLabel]="'OCX_DATA_TABLE.MORE_ACTIONS' | translate"
+              [title]="'OCX_DATA_TABLE.MORE_ACTIONS' | translate"
+            ></button>
+          </ng-container>
         </div>
-        <div class="text-base font-light my-1">
-          <ng-container
-            [ngTemplateOutlet]="_listItemSubtitleLines ? _listItemSubtitleLines : defaultListItemSubtitleLines"
-            [ngTemplateOutletContext]="{$implicit:item}"
-          ></ng-container>
+      </div>
+      <div class="text-base font-light my-1">
+        <ng-container
+          [ngTemplateOutlet]="_listItemSubtitleLines ? _listItemSubtitleLines : defaultListItemSubtitleLines"
+          [ngTemplateOutletContext]="{$implicit:item}"
+        ></ng-container>
+      </div>
+      <div class="flex flex-wrap">
+        <div *ngFor="let col of filteredCols" class="w-12rem my-2 mr-2">
+          <div class="flex font-bold">{{ col.id }}</div>
+          <div class="list-item" [pTooltip]="resolveFieldData(item, col.id)" tooltipPosition="top">{{ resolveFieldData(item, col.id) }}</div>
         </div>
       </div>
     </div>

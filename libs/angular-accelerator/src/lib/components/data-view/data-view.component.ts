@@ -1,12 +1,15 @@
 import {
+  AfterContentInit,
   Component,
   ContentChild,
+  ContentChildren,
   DoCheck,
   EventEmitter,
   Injector,
   Input,
   OnInit,
   Output,
+  QueryList,
   TemplateRef,
   ViewChild,
 } from '@angular/core'
@@ -15,6 +18,7 @@ import { Row, Filter, Sort, DataTableComponent } from '../data-table/data-table.
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataAction } from '../../model/data-action'
+import { PrimeTemplate } from 'primeng/api'
 
 export type RowListGridData = ListGridData & Row
 @Component({
@@ -23,11 +27,16 @@ export type RowListGridData = ListGridData & Row
   styleUrls: ['./data-view.component.css'],
   providers: [{ provide: 'DataViewComponent', useExisting: DataViewComponent }],
 })
-export class DataViewComponent implements DoCheck, OnInit {
+export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   _dataListGridComponent: DataListGridComponent | undefined
   @ViewChild(DataListGridComponent) set listGrid(ref: DataListGridComponent | undefined) {
     this._dataListGridComponent = ref
     this.registerEventListenerForListGrid()
+    if (this._dataListGridComponent) {
+      const ql = new QueryList<PrimeTemplate>()
+      ql.reset([...(this._templates?.toArray() ?? []), ...(this._parentTemplates?.toArray() ?? [])])
+      this._dataListGridComponent.parentTemplates = ql
+    }
   }
   get listGrid(): DataListGridComponent | undefined {
     return this._dataListGridComponent
@@ -37,10 +46,16 @@ export class DataViewComponent implements DoCheck, OnInit {
   @ViewChild(DataTableComponent) set dataTable(ref: DataTableComponent | undefined) {
     this._dataTableComponent = ref
     this.registerEventListenerForDataTable()
+    if (this._dataTableComponent) {
+      const ql = new QueryList<PrimeTemplate>()
+      ql.reset([...(this._templates?.toArray() ?? []), ...(this._parentTemplates?.toArray() ?? [])])
+      this._dataTableComponent.parentTemplates = ql
+    }
   }
   get dataTable(): DataTableComponent | undefined {
     return this._dataTableComponent
   }
+
   @Input() deletePermission: string | undefined
   @Input() editPermission: string | undefined
   @Input() viewPermission: string | undefined
@@ -92,6 +107,7 @@ export class DataViewComponent implements DoCheck, OnInit {
     return this.stringTableCellTemplate || this.stringTableCellChildTemplate
   }
 
+  // TODO copy for listValue templates
   @Input() numberTableCellTemplate: TemplateRef<any> | undefined
   @ContentChild('numberTableCell') numberTableCellChildTemplate: TemplateRef<any> | undefined
   get _numberTableCell(): TemplateRef<any> | undefined {
@@ -147,7 +163,11 @@ export class DataViewComponent implements DoCheck, OnInit {
   @ContentChild('tableTranslationKeyCell') tableTranslationKeyCellChildTemplate: TemplateRef<any> | undefined
   @ContentChild('translationKeyTableCell') translationKeyTableCellChildTemplate: TemplateRef<any> | undefined
   get _translationKeyTableCell(): TemplateRef<any> | undefined {
-    return this.translationKeyTableCellTemplate || this.translationKeyTableCellChildTemplate || this.tableTranslationKeyCellChildTemplate
+    return (
+      this.translationKeyTableCellTemplate ||
+      this.translationKeyTableCellChildTemplate ||
+      this.tableTranslationKeyCellChildTemplate
+    )
   }
 
   @Input() gridItemSubtitleLinesTemplate: TemplateRef<any> | undefined
@@ -190,7 +210,11 @@ export class DataViewComponent implements DoCheck, OnInit {
   @ContentChild('tableRelativeDateCell') tableRelativeDateCellChildTemplate: TemplateRef<any> | undefined
   @ContentChild('relativeDateTableCell') relativeDateTableCellChildTemplate: TemplateRef<any> | undefined
   get _relativeDateTableCell(): TemplateRef<any> | undefined {
-    return this.relativeDateTableCellTemplate || this.relativeDateTableCellChildTemplate || this.tableRelativeDateCellChildTemplate
+    return (
+      this.relativeDateTableCellTemplate ||
+      this.relativeDateTableCellChildTemplate ||
+      this.tableRelativeDateCellChildTemplate
+    )
   }
 
   @Input() additionalActions: DataAction[] = []
@@ -206,6 +230,37 @@ export class DataViewComponent implements DoCheck, OnInit {
   isViewItemObserved: boolean | undefined
   IsEditItemObserved: boolean | undefined
   firstColumnId: string | undefined
+
+  _parentTemplates: QueryList<PrimeTemplate> | undefined
+  set parentTemplates(templates: QueryList<PrimeTemplate> | undefined) {
+    const ql = new QueryList<PrimeTemplate>()
+    ql.reset([...(this._templates?.toArray() ?? []), ...(templates?.toArray() ?? [])])
+
+    if (this.dataTable) {
+      this.dataTable.parentTemplates = ql
+    }
+    if (this.listGrid) {
+      this.listGrid.parentTemplates = ql
+    }
+  }
+
+  _templates: QueryList<PrimeTemplate> | undefined
+  @ContentChildren(PrimeTemplate)
+  set templates(value: QueryList<PrimeTemplate> | undefined) {
+    this._templates = value
+    const ql = new QueryList<PrimeTemplate>()
+    ql.reset([...(value?.toArray() ?? []), ...(this._parentTemplates?.toArray() ?? [])])
+
+    if (this.dataTable) {
+      this.dataTable.parentTemplates = ql
+    }
+    if (this.listGrid) {
+      this.listGrid.parentTemplates = ql
+    }
+  }
+  get templates(): QueryList<PrimeTemplate> | undefined {
+    return this._templates
+  }
 
   get viewItemObserved(): boolean {
     return this.injector.get('InteractiveDataViewComponent', null)?.viewItem.observed || this.viewItem.observed
@@ -228,10 +283,61 @@ export class DataViewComponent implements DoCheck, OnInit {
   ngOnInit(): void {
     this.firstColumnId = this.columns[0]?.id
   }
+
+  ngAfterContentInit() {
+    this.templates?.forEach((item) => {
+      switch (item.getType()) {
+        case 'stringTableCell':
+          this.stringTableCellChildTemplate = item.template
+          break
+        case 'tableDateCell':
+          this.numberTableCellChildTemplate = item.template
+          break
+        case 'customTableCell':
+          this.customTableCellChildTemplate = item.template
+          break
+        case 'tableDateCell':
+          this.tableDateCellChildTemplate = item.template
+          break
+        case 'dateTableCell':
+          this.dateTableCellChildTemplate = item.template
+          break
+        case 'tableCell':
+          this.tableCellChildTemplate = item.template
+          break
+        case 'tableTranslationKeyCell':
+          this.tableTranslationKeyCellChildTemplate = item.template
+          break
+        case 'translationKeyTableCell':
+          this.translationKeyTableCellChildTemplate = item.template
+          break
+        case 'gridItemSubtitleLines':
+          this.gridItemSubtitleLinesChildTemplate = item.template
+          break
+        case 'listItemSubtitleLines':
+          this.listItemSubtitleLinesChildTemplate = item.template
+          break
+        case 'gridItem':
+          this.gridItemChildTemplate = item.template
+          break
+        case 'listItem':
+          this.listItemChildTemplate = item.template
+          break
+        case 'tableRelativeDateCell':
+          this.tableRelativeDateCellChildTemplate = item.template
+          break
+        case 'relativeDateTableCell':
+          this.relativeDateTableCellChildTemplate = item.template
+          break
+      }
+    })
+  }
+
   ngDoCheck(): void {
     this.registerEventListenerForDataTable()
     this.registerEventListenerForListGrid()
   }
+
   registerEventListenerForListGrid() {
     if (this.layout !== 'table') {
       if (this.deleteItem.observed) {
@@ -260,6 +366,7 @@ export class DataViewComponent implements DoCheck, OnInit {
       }
     }
   }
+
   registerEventListenerForDataTable() {
     if (this.layout === 'table') {
       if (this.deleteItem.observed) {
