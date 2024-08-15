@@ -10,7 +10,7 @@
           "error",
           {
             "type": "attribute",
-            "prefix": "lib",
+            "prefix": "ocx",
             "style": "camelCase"
           }
         ],
@@ -18,7 +18,7 @@
           "error",
           {
             "type": "element",
-            "prefix": "lib",
+            "prefix": "ocx",
             "style": "kebab-case"
           }
         ]
@@ -28,6 +28,13 @@
       "files": ["*.html"],
       "extends": ["plugin:@nx/angular-template"],
       "rules": {}
+    },
+    {
+      "files": ["*.json"],
+      "parser": "jsonc-eslint-parser",
+      "rules": {
+        "@nx/dependency-checks": "error"
+      }
     }
   ]
 }
