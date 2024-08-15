@@ -172,9 +172,23 @@
         ></ng-container>
       </div>
       <div class="flex flex-wrap">
-        <div *ngFor="let col of filteredCols" class="w-12rem my-2 mr-2">
-          <div class="flex font-bold">{{ col.id }}</div>
-          <div class="list-item" [pTooltip]="resolveFieldData(item, col.id)" tooltipPosition="top">{{ resolveFieldData(item, col.id) }}</div>
+        <div *ngFor="let col of getFilteredColumns()" class="w-12rem my-2 mr-2">
+          <div class="flex font-bold">{{ col.nameKey | translate }}</div>
+          <div
+            class="list-item"
+            [pTooltip]="col.columnType==columnType.TRANSLATION_KEY ? (resolveFieldData(item,col.id) | translate) : resolveFieldData(item, col.id)"
+            tooltipPosition="top"
+          >
+            <ng-container
+              [ngTemplateOutlet]="
+            _listValue ? _listValue: defaultListValue
+            "
+              [ngTemplateOutletContext]="{
+                rowObject: item,
+                column: col
+            }"
+            ></ng-container>
+          </div>
         </div>
       </div>
     </div>
@@ -184,4 +198,39 @@
   <div *ngFor="let subtitleLineId of subtitleLineIds" class="subtitleLine text-xl my-3">
     {{ resolveFieldData(item, subtitleLineId) }}
   </div>
+</ng-template>
+
+<ng-template #defaultListValue let-rowObject="rowObject" let-column="column">
+  <ng-container
+    [ngTemplateOutlet]="getTemplate(column)"
+    [ngTemplateOutletContext]="{
+                rowObject: rowObject,
+                column: column
+            }"
+  >
+  </ng-container>
+</ng-template>
+
+<ng-template pTemplate="defaultStringListValue" let-rowObject="rowObject" let-column="column">
+  <ng-container> {{ resolveFieldData(rowObject, column.id) }} </ng-container>
+</ng-template>
+
+<ng-template pTemplate="defaultNumberListValue" let-rowObject="rowObject" let-column="column">
+  <ng-container> {{ resolveFieldData(rowObject, column.id) | number }} </ng-container>
+</ng-template>
+
+<ng-template pTemplate="defaultCustomListValue" let-rowObject="rowObject" let-column="column"> </ng-template>
+
+<ng-template pTemplate="defaultDateListValue" let-rowObject="rowObject" let-column="column">
+  <ng-container> {{ resolveFieldData(rowObject, column.id) | date: 'medium' }} </ng-container>
+</ng-template>
+
+<ng-template pTemplate="defaultRelativeDateListValue" let-rowObject="rowObject" let-column="column">
+  <ng-container>
+    {{ 'OCX_DATA_TABLE.EDITED' | translate }} {{ resolveFieldData(rowObject, column.id) | timeago }}
+  </ng-container>
+</ng-template>
+
+<ng-template pTemplate="defaultTranslationKeyListValue" let-rowObject="rowObject" let-column="column">
+  <ng-container> {{ resolveFieldData(rowObject, column.id) | translate }} </ng-container>
 </ng-template>
