@@ -1,19 +1,22 @@
 import { Component, ContentChild, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core'
+import { Observable, ReplaySubject, combineLatest, map, startWith, timestamp } from 'rxjs'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
-import { ColumnGroupSelectionComponentState, GroupSelectionChangedEvent } from '../column-group-selection/column-group-selection.component'
+import { orderAndMergeValuesByTimestamp } from '../../utils/rxjs-utils'
+import {
+  ColumnGroupSelectionComponentState,
+  GroupSelectionChangedEvent,
+} from '../column-group-selection/column-group-selection.component'
 import {
   ActionColumnChangedEvent,
   ColumnSelectionChangedEvent,
   CustomGroupColumnSelectorComponentState,
 } from '../custom-group-column-selector/custom-group-column-selector.component'
 import { DataLayoutSelectionComponentState } from '../data-layout-selection/data-layout-selection.component'
+import { DataListGridSortingComponentState } from '../data-list-grid-sorting/data-list-grid-sorting.component'
 import { Filter, Row, Sort } from '../data-table/data-table.component'
 import { DataViewComponent, DataViewComponentState, RowListGridData } from '../data-view/data-view.component'
-import { Observable, ReplaySubject, Timestamp, combineLatest, map, startWith, tap, timestamp } from 'rxjs'
-import { DataListGridSortingComponentState } from '../data-list-grid-sorting/data-list-grid-sorting.component'
-import { orderAndMergeValuesByTimestamp } from '../../utils/rxjs-utils'
 
 export type InteractiveDataViewComponentState = ColumnGroupSelectionComponentState &
   CustomGroupColumnSelectorComponentState &
@@ -208,7 +211,8 @@ export class InteractiveDataViewComponent implements OnInit {
     }
     this.firstColumnId = this.columns[0]?.id
 
-    let dataListGridSortingComponentState$: Observable<DataListGridSortingComponentState | {}> = this.dataListGridSortingComponentState$
+    let dataListGridSortingComponentState$: Observable<DataListGridSortingComponentState | Record<string, never>> =
+      this.dataListGridSortingComponentState$
     if (this.layout === 'table') {
       dataListGridSortingComponentState$ = dataListGridSortingComponentState$.pipe(startWith({}))
     }
@@ -224,7 +228,9 @@ export class InteractiveDataViewComponent implements OnInit {
           return orderAndMergeValuesByTimestamp(componentStates)
         })
       )
-      .subscribe((val) => {this.componentStateChanged.emit(val)})
+      .subscribe((val) => {
+        this.componentStateChanged.emit(val)
+      })
   }
 
   filtering(event: any) {

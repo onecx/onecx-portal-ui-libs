@@ -239,8 +239,8 @@ export class DataViewComponent implements DoCheck, OnInit {
   ngOnInit(): void {
     this.firstColumnId = this.columns[0]?.id
 
-    let dataTableComponentState$: Observable<DataTableComponentState | {}> = this.dataTableComponentState$
-    let dataListGridComponentState$: Observable<DataListGridComponentState | {}> = this.dataListGridComponentState$
+    let dataTableComponentState$: Observable<DataTableComponentState | Record<string, never>> = this.dataTableComponentState$
+    let dataListGridComponentState$: Observable<DataListGridComponentState | Record<string, never>> = this.dataListGridComponentState$
     if (this.layout === 'table') {
       dataListGridComponentState$ = dataListGridComponentState$.pipe(startWith({}))
     } else {
