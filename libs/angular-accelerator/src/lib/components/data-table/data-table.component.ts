@@ -12,18 +12,17 @@ import {
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
+import { isValidDate } from '@onecx/accelerator'
 import { UserService } from '@onecx/angular-integration-interface'
 import { MenuItem, SelectItem } from 'primeng/api'
 import { Menu } from 'primeng/menu'
-import { BehaviorSubject, Observable, combineLatest, firstValueFrom, map, mergeMap, of } from 'rxjs'
+import { BehaviorSubject, Observable, combineLatest, first, map, mergeMap, of } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { ObjectUtils } from '../../utils/objectutils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
-import { isValidDate } from '@onecx/accelerator'
-import { TablePageEvent } from 'primeng/table'
 
 type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -337,17 +336,20 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   }
 
   emitComponentStateChanged(state: DataTableComponentState = {}) {
-    this.componentStateChanged.emit({
+    combineLatest([this.displayedPageSize$, this._selection$]).pipe(first()).subscribe(([pageSize, selectedRows]) => {
+          this.componentStateChanged.emit({
       filters: this.filters,
       sorting: {
         sortColumn: this.sortColumn,
         sortDirection: this.sortDirection
       },
-      pageSize: this.pageSize ?? 50,
+      pageSize,
       activePage: this.page,
-      selectedRows: this.selectedRows,
+      selectedRows,
       ...state
     })
+    })
+
   }
 
   onSortColumnClick(sortColumn: string) {
@@ -440,6 +442,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   }
 
   onSelectionChange(event: Row[]) {
+    this.selectedRows = event;
     this.selectionChanged.emit(event)
     this.emitComponentStateChanged({
       selectedRows: event
@@ -449,6 +452,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   onPageChange(event: any) {
     const page = event.first / event.rows
     this.page = page
+    this.pageSize = event.rows
     this.pageChanged.emit(page)
     this.pageSizeChanged.emit(event.rows)
     this.emitComponentStateChanged({

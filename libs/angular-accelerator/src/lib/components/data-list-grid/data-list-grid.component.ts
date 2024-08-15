@@ -412,6 +412,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   onPageChange(event: any) {
     const page = event.first / event.rows
     this.page = page
+    this.pageSize = event.rows
     this.pageChanged.emit(page)
     this.pageSizeChanged.emit(event.rows)
     this.componentStateChanged.emit({

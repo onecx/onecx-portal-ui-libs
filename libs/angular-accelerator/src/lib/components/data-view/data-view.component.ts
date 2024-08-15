@@ -15,7 +15,7 @@ import { Row, Filter, Sort, DataTableComponent, DataTableComponentState } from '
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataAction } from '../../model/data-action'
-import { ReplaySubject, tap, timestamp, combineLatest, map, Observable, startWith } from 'rxjs'
+import { ReplaySubject, timestamp, combineLatest, map, Observable, startWith } from 'rxjs'
 import { orderAndMergeValuesByTimestamp } from '../../utils/rxjs-utils'
 
 export type RowListGridData = ListGridData & Row
@@ -247,27 +247,16 @@ export class DataViewComponent implements DoCheck, OnInit {
       dataTableComponentState$ = dataTableComponentState$.pipe(startWith({}))
     }
 
-    this.componentStateChanged.emit({
-      activePage: this.page,
-      filters: this.filters,
-      pageSize: this.pageSize ?? 50,
-      selectedRows: this.selectedRows,
-      sorting: {
-        sortDirection: this.sortDirection,
-        sortColumn: this.sortField
-      },
-    })
-
     combineLatest([
-      this.dataTableComponentState$.pipe(timestamp(), tap(val => console.log(val))),
-      this.dataListGridComponentState$.pipe(timestamp(), tap(val => console.log(val))),
+      dataTableComponentState$.pipe(timestamp()),
+      dataListGridComponentState$.pipe(timestamp()),
     ])
       .pipe(
         map((componentStates) => {
           return orderAndMergeValuesByTimestamp(componentStates)
         })
       )
-      .subscribe((val) => {console.log("Dataview ", val); this.componentStateChanged.emit(val)})
+      .subscribe((val) => {this.componentStateChanged.emit(val)})
   }
   ngDoCheck(): void {
     this.registerEventListenerForDataTable()
@@ -377,6 +366,7 @@ export class DataViewComponent implements DoCheck, OnInit {
   }
 
   onPageSizeChange(event: number) {
+    this.pageSize = event
     this.pageSizeChanged.emit(event)
   }
 }

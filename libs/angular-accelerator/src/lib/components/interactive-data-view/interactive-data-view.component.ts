@@ -213,18 +213,18 @@ export class InteractiveDataViewComponent implements OnInit {
       dataListGridSortingComponentState$ = dataListGridSortingComponentState$.pipe(startWith({}))
     }
     combineLatest([
-      this.columnGroupSelectionComponentState$.pipe(timestamp(), tap(val => console.log(val))),
-      this.customGroupColumnSelectorComponentState$.pipe(timestamp(), tap(val => console.log(val))),
-      this.dataLayoutComponentState$.pipe(timestamp(), tap(val => console.log(val))),
-      dataListGridSortingComponentState$.pipe(timestamp(), tap(val => console.log(val))),
-      this.dataViewComponentState$.pipe(timestamp(), tap(val => console.log(val))),
+      this.columnGroupSelectionComponentState$.pipe(timestamp()),
+      this.customGroupColumnSelectorComponentState$.pipe(timestamp()),
+      this.dataLayoutComponentState$.pipe(timestamp()),
+      dataListGridSortingComponentState$.pipe(timestamp()),
+      this.dataViewComponentState$.pipe(timestamp()),
     ])
       .pipe(
         map((componentStates) => {
           return orderAndMergeValuesByTimestamp(componentStates)
         })
       )
-      .subscribe((val) => {console.log(val); this.componentStateChanged.emit(val)})
+      .subscribe((val) => {this.componentStateChanged.emit(val)})
   }
 
   filtering(event: any) {
@@ -334,6 +334,7 @@ export class InteractiveDataViewComponent implements OnInit {
   }
 
   onPageSizeChange(event: number) {
+    this.pageSize = event
     this.pageSizeChanged.emit(event)
   }
 }
