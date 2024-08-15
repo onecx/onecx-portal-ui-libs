@@ -5,9 +5,9 @@ import { DataColumnNameId } from '../../model/data-column-name-id.model'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { DropdownChangeEvent } from 'primeng/dropdown'
 
-export type Sort = { sortColumn: string; sortDirection: DataSortDirection }
+export type ListGridSort = { sortColumn: string; sortDirection: DataSortDirection }
 export interface DataListGridSortingComponentState {
-  sorting?: Sort
+  sorting?: ListGridSort
 }
 
 @Component({
