@@ -367,6 +367,27 @@ describe('DataTableComponent', () => {
       expect(selectedCheckBoxes.length).toBe(1)
       expect(selectionChangedEvent).toEqual([mockData[0]])
     })
+
+    it('should not change selection if selection disabled', async () => {
+      let selectionChangedEvent: Row[] | undefined
+
+      component.isRowSelectionDisabled = () => true;
+
+      component.selectionChanged.subscribe((event) => (selectionChangedEvent = event))
+      unselectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('unchecked')
+      selectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('checked')
+      expect(unselectedCheckBoxes.length).toBe(5)
+      expect(selectedCheckBoxes.length).toBe(0)
+      expect(selectionChangedEvent).toBeUndefined()
+
+      const firstRowCheckBox = unselectedCheckBoxes[0]
+      await firstRowCheckBox.checkBox()
+      unselectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('unchecked')
+      selectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('checked')
+      expect(unselectedCheckBoxes.length).toBe(5)
+      expect(selectedCheckBoxes.length).toBe(0)
+      expect(selectionChangedEvent).toEqual([mockData[0]])
+    })
   })
 
   describe('Frozen action column', () => {
