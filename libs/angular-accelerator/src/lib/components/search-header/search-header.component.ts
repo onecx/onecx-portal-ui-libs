@@ -76,7 +76,7 @@ export class SearchHeaderComponent implements AfterViewInit {
   @Output() resetted: EventEmitter<any> = new EventEmitter()
   @Output() selectedSearchConfigChanged: EventEmitter<{
     inputValues: { [key: string]: unknown }
-    displayedColumns: DataTableColumn[]
+    displayedColumns: string[]
   }> = new EventEmitter()
   @Output() viewModeChanged: EventEmitter<'basic' | 'advanced'> = new EventEmitter()
   @ContentChild('additionalToolbarContent')
