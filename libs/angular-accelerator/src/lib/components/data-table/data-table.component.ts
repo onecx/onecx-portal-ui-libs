@@ -187,6 +187,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   }
   @Input() frozenActionColumn = false
   @Input() actionColumnPosition: 'left' | 'right' = 'right'
+  @Input() isRowSelectionDisabled: (row: Row) => boolean = () => false
 
   @Output() filtered = new EventEmitter<Filter[]>()
   @Output() sorted = new EventEmitter<Sort>()
@@ -307,7 +308,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
                   ({
                     label: filterOption,
                     value: filterOption,
-                  }) as SelectItem
+                  } as SelectItem)
               )
           })
         )
