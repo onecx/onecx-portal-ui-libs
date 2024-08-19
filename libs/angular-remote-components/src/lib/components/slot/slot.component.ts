@@ -72,7 +72,7 @@ export class SlotComponent implements OnInit, OnDestroy {
     this.components$ = this.slotService.getComponentsForSlot(this.name)
     this.updateDataSub = combineLatest([this._assignedComponents$, this._inputs$, this._outputs$]).subscribe(
       ([components, inputs, outputs]) => {
-        components.map((component) => {
+        components.forEach((component) => {
           this.updateComponentData(component, inputs, outputs)
         })
       }
