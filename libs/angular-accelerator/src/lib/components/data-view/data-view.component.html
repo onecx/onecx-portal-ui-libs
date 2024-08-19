@@ -35,6 +35,7 @@
     [listItemTemplate]="_listItem ? listItem : undefined"
     [gridItemTemplate]="_gridItem ? gridItem  : undefined"
     [totalRecordsOnServer]="totalRecordsOnServer"
+    [parentTemplates]="getTemplatesForChild()"
   >
   </ocx-data-list-grid>
   <ng-template #listItemSubtitleLines let-item>
@@ -106,6 +107,7 @@
     [totalRecordsOnServer]="totalRecordsOnServer"
     [currentPageShowingKey]="currentPageShowingKey"
     [currentPageShowingWithTotalOnServerKey]="currentPageShowingWithTotalOnServerKey"
+    [parentTemplates]="getTemplatesForChild()"
   >
   </ocx-data-table>
   <ng-template #stringCell let-rowObject="rowObject" let-column="column">

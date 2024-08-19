@@ -32,11 +32,6 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   @ViewChild(DataListGridComponent) set listGrid(ref: DataListGridComponent | undefined) {
     this._dataListGridComponent = ref
     this.registerEventListenerForListGrid()
-    if (this._dataListGridComponent) {
-      const ql = new QueryList<PrimeTemplate>()
-      ql.reset([...(this._templates?.toArray() ?? []), ...(this._parentTemplates?.toArray() ?? [])])
-      this._dataListGridComponent.parentTemplates = ql
-    }
   }
   get listGrid(): DataListGridComponent | undefined {
     return this._dataListGridComponent
@@ -46,11 +41,6 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   @ViewChild(DataTableComponent) set dataTable(ref: DataTableComponent | undefined) {
     this._dataTableComponent = ref
     this.registerEventListenerForDataTable()
-    if (this._dataTableComponent) {
-      const ql = new QueryList<PrimeTemplate>()
-      ql.reset([...(this._templates?.toArray() ?? []), ...(this._parentTemplates?.toArray() ?? [])])
-      this._dataTableComponent.parentTemplates = ql
-    }
   }
   get dataTable(): DataTableComponent | undefined {
     return this._dataTableComponent
@@ -231,32 +221,34 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   IsEditItemObserved: boolean | undefined
   firstColumnId: string | undefined
 
-  _parentTemplates: QueryList<PrimeTemplate> | undefined
-  set parentTemplates(templates: QueryList<PrimeTemplate> | undefined) {
-    const ql = new QueryList<PrimeTemplate>()
-    ql.reset([...(this._templates?.toArray() ?? []), ...(templates?.toArray() ?? [])])
+  // _parentTemplates: QueryList<PrimeTemplate> | undefined
+  // set parentTemplates(templates: QueryList<PrimeTemplate> | undefined) {
+  //   console.log('data view, parent set templates', templates, !!this.dataTable, !!this.listGrid)
+  //   const ql = new QueryList<PrimeTemplate>()
+  //   ql.reset([...(this._templates?.toArray() ?? []), ...(templates?.toArray() ?? [])])
 
-    if (this.dataTable) {
-      this.dataTable.parentTemplates = ql
-    }
-    if (this.listGrid) {
-      this.listGrid.parentTemplates = ql
-    }
+  //   if (this.dataTable) {
+  //     this.dataTable.parentTemplates = ql
+  //   }
+  //   if (this.listGrid) {
+  //     this.listGrid.parentTemplates = ql
+  //   }
+  // }
+
+  @Input() parentTemplates: QueryList<PrimeTemplate> | undefined
+  getTemplatesForChild(): QueryList<PrimeTemplate> | undefined {
+    const ql = new QueryList<PrimeTemplate>()
+    ql.reset([...(this._templates?.toArray() ?? []), ...(this.parentTemplates?.toArray() ?? [])])
+    return ql
   }
+  // get parentTemplates(): QueryList<PrimeTemplate> | undefined {
+  //   return this.injector.get('InteractiveDataViewComponent', null)?.templates
+  // }
 
   _templates: QueryList<PrimeTemplate> | undefined
   @ContentChildren(PrimeTemplate)
   set templates(value: QueryList<PrimeTemplate> | undefined) {
     this._templates = value
-    const ql = new QueryList<PrimeTemplate>()
-    ql.reset([...(value?.toArray() ?? []), ...(this._parentTemplates?.toArray() ?? [])])
-
-    if (this.dataTable) {
-      this.dataTable.parentTemplates = ql
-    }
-    if (this.listGrid) {
-      this.listGrid.parentTemplates = ql
-    }
   }
   get templates(): QueryList<PrimeTemplate> | undefined {
     return this._templates

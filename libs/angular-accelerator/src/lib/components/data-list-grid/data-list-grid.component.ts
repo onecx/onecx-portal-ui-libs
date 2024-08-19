@@ -1,4 +1,6 @@
 import {
+  AfterContentInit,
+  AfterViewInit,
   Component,
   ContentChild,
   ContentChildren,
@@ -47,7 +49,7 @@ export interface ListGridDataMenuItem extends MenuItem {
   templateUrl: './data-list-grid.component.html',
   styleUrls: ['./data-list-grid.component.scss'],
 })
-export class DataListGridComponent extends DataSortBase implements OnInit, DoCheck {
+export class DataListGridComponent extends DataSortBase implements OnInit, DoCheck, AfterContentInit {
   @Input() titleLineId: string | undefined
   @Input() subtitleLineIds: string[] = []
   @Input() clientSideSorting = true
@@ -265,7 +267,16 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
 
   @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined
   @ViewChildren(PrimeTemplate) viewTemplates: QueryList<PrimeTemplate> | undefined
-  parentTemplates: QueryList<PrimeTemplate> | undefined
+  // get parentTemplates(): QueryList<PrimeTemplate> | undefined {
+  //   const ql = new QueryList<PrimeTemplate>()
+  //   ql.reset([
+  //     ...(this.injector.get('DataViewComponent', null)?.templates?.toArray() ?? []),
+  //     ...(this.injector.get('DataViewComponent', null)?.parentTemplates?.toArray() ?? []),
+  //   ])
+  //   return ql
+  // }
+  @Input() parentTemplates: QueryList<PrimeTemplate> | undefined
+
   columnType = ColumnType
 
   constructor(
@@ -333,6 +344,10 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
       (!!this.viewPermission && this.userService.hasPermission(this.viewPermission)) ||
       (!!this.editPermission && this.userService.hasPermission(this.editPermission)) ||
       (!!this.deletePermission && this.userService.hasPermission(this.deletePermission))
+  }
+
+  ngAfterContentInit() {
+    console.log('datalistgrid, afterContentInit', this.viewTemplates, this.templates)
   }
 
   onDeleteRow(element: ListGridData) {

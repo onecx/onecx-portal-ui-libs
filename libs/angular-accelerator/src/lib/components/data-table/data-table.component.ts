@@ -221,7 +221,15 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
   @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined
   @ViewChildren(PrimeTemplate) viewTemplates: QueryList<PrimeTemplate> | undefined
-  parentTemplates: QueryList<PrimeTemplate> | undefined
+  // get parentTemplates(): QueryList<PrimeTemplate> | undefined {
+  //   const ql = new QueryList<PrimeTemplate>()
+  //   ql.reset([
+  //     ...(this.injector.get('DataViewComponent', null)?.templates?.toArray() ?? []),
+  //     ...(this.injector.get('DataViewComponent', null)?.parentTemplates?.toArray() ?? []),
+  //   ])
+  //   return ql
+  // }
+  @Input() parentTemplates: QueryList<PrimeTemplate> | undefined
 
   get viewTableRowObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
