@@ -188,7 +188,10 @@
   <ng-template pTemplate="body" let-rowObject>
     <tr>
       <td *ngIf="selectionChangedObserved">
-        <p-tableCheckbox [value]="rowObject" disabled="isRowSelectionDisabled(rowObject)"></p-tableCheckbox>
+        <p-tableCheckbox
+          [value]="rowObject"
+          [disabled]="!!selectionEnabledField && !fieldIsTruthy(rowObject, selectionEnabledField)"
+        ></p-tableCheckbox>
       </td>
       <ng-container *ngIf="actionColumnPosition === 'left';">
         <ng-container *ngTemplateOutlet="actionColumn; context: {localRowObject: rowObject}"></ng-container>

@@ -113,9 +113,10 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   @Input() deleteActionVisibleField: string | undefined
   @Input() deleteActionEnabledField: string | undefined
   @Input() viewActionVisibleField: string | undefined
-  @Input() viewActionEnabledField: string | undefined
+  @Input() viewActionEnabledField: string | undefined  
   @Input() editActionVisibleField: string | undefined
   @Input() editActionEnabledField: string | undefined
+  @Input() selectionEnabledField: string | undefined
   @Input() paginator = true
   @Input() page = 0
   @Input()
@@ -186,8 +187,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     this._additionalActions$.next(value)
   }
   @Input() frozenActionColumn = false
-  @Input() actionColumnPosition: 'left' | 'right' = 'right'
-  @Input() isRowSelectionDisabled: (row: Row) => boolean = () => false
+  @Input() actionColumnPosition: 'left' | 'right' = 'right'  
 
   @Output() filtered = new EventEmitter<Filter[]>()
   @Output() sorted = new EventEmitter<Sort>()

@@ -371,7 +371,12 @@ describe('DataTableComponent', () => {
     it('should not change selection if selection disabled', async () => {
       let selectionChangedEvent: Row[] | undefined
 
-      component.isRowSelectionDisabled = () => true;
+      component.selectionEnabledField = 'selectionEnabled'
+
+      component.rows = mockData.map((m) => ({
+        ...m,
+        selectionEnabled: false,
+      }))
 
       component.selectionChanged.subscribe((event) => (selectionChangedEvent = event))
       unselectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('unchecked')
@@ -386,7 +391,6 @@ describe('DataTableComponent', () => {
       selectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('checked')
       expect(unselectedCheckBoxes.length).toBe(5)
       expect(selectedCheckBoxes.length).toBe(0)
-      expect(selectionChangedEvent).toEqual([mockData[0]])
     })
   })
 
