@@ -21,7 +21,6 @@ import { SearchConfigInfo } from '../../model/search-config-info'
 @Component({
   selector: 'ocx-search-header',
   templateUrl: './search-header.component.html',
-  styleUrls: ['./search-header.component.scss'],
 })
 export class SearchHeaderComponent implements AfterViewInit {
   @Input() searchConfigs: SearchConfigInfo[] | undefined
