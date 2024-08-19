@@ -15,33 +15,35 @@
   <ng-template #additionalToolbarContent>
     <ng-container *ngIf="_additionalToolbarContent" [ngTemplateOutlet]="_additionalToolbarContent"></ng-container>
   </ng-template>
-  <div class="search-criteria-container">
-    <div #searchParameterFields>
-      <ng-content></ng-content>
-      <div class="search-criteria-buttons">
-        <p-button
-          id="resetButton"
-          *ngIf="resetted.observed"
-          (onClick)="onResetClicked()"
-          label="{{ 'OCX_SEARCH_HEADER.RESET_BUTTON.TEXT' | translate }}"
-          icon="pi pi-eraser"
-          [attr.aria-label]="'OCX_SEARCH_HEADER.RESET_BUTTON.DETAIL' | translate"
-          title="{{ 'OCX_SEARCH_HEADER.RESET_BUTTON.DETAIL' | translate }}"
-          [disabled]="resetButtonDisabled"
-        >
-        </p-button>
-
-        <p-button
-          id="searchButton"
-          (onClick)="onSearchClicked()"
-          label="{{ 'OCX_SEARCH_HEADER.SEARCH_BUTTON.TEXT' | translate }}"
-          icon="pi pi-search"
-          [attr.aria-label]="'OCX_SEARCH_HEADER.SEARCH_BUTTON.DETAIL' | translate"
-          title="{{ 'OCX_SEARCH_HEADER.SEARCH_BUTTON.DETAIL' | translate }}"
-          [disabled]="searchButtonDisabled"
-        >
-        </p-button>
+  <div class="flex row-gap-3 column-gap-6 flex-wrap align-items-center">
+    <div>
+      <div #searchParameterFields>
+        <ng-content></ng-content>
       </div>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <p-button
+        id="resetButton"
+        *ngIf="resetted.observed"
+        (onClick)="onResetClicked()"
+        label="{{ 'OCX_SEARCH_HEADER.RESET_BUTTON.TEXT' | translate }}"
+        icon="pi pi-eraser"
+        [attr.aria-label]="'OCX_SEARCH_HEADER.RESET_BUTTON.DETAIL' | translate"
+        title="{{ 'OCX_SEARCH_HEADER.RESET_BUTTON.DETAIL' | translate }}"
+        [disabled]="resetButtonDisabled"
+      >
+      </p-button>
+
+      <p-button
+        id="searchButton"
+        (onClick)="onSearchClicked()"
+        label="{{ 'OCX_SEARCH_HEADER.SEARCH_BUTTON.TEXT' | translate }}"
+        icon="pi pi-search"
+        [attr.aria-label]="'OCX_SEARCH_HEADER.SEARCH_BUTTON.DETAIL' | translate"
+        title="{{ 'OCX_SEARCH_HEADER.SEARCH_BUTTON.DETAIL' | translate }}"
+        [disabled]="searchButtonDisabled"
+      >
+      </p-button>
     </div>
   </div>
 </ocx-page-header>
