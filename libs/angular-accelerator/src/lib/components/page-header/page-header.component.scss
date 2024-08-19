@@ -1,10 +1,6 @@
 :host(.p-button-label) {
   font-weight: 400;
 }
-:host ::ng-deep .action-button {
-  padding: 0.5rem 0.5rem;
-  font-weight: 400;
-}
 .onecx-page-header {
   display: flex;
   flex-flow: column;
@@ -76,9 +72,6 @@
       gap: 0.5rem;
       align-items: center;
       justify-content: space-between;
-      button {
-        padding: 0.5rem;
-      }
     }
   }
   .object-panel {
