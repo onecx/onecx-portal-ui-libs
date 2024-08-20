@@ -22,7 +22,6 @@ import { DataTableColumn } from '../../model/data-table-column.model'
 @Component({
   selector: 'ocx-search-header',
   templateUrl: './search-header.component.html',
-  styleUrls: ['./search-header.component.scss'],
   providers: [{ provide: SLOT_SERVICE, useExisting: SlotService }],
 })
 export class SearchHeaderComponent implements AfterViewInit {
