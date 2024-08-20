@@ -12,6 +12,7 @@ import {
   Output,
   QueryList,
   TemplateRef,
+  ViewChildren,
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
@@ -218,8 +219,17 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   overflowMenuItems$: Observable<MenuItem[]>
   currentMenuRow$ = new BehaviorSubject<Row | null>(null)
 
-  @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined = new QueryList<PrimeTemplate>()
-  parentTemplates: QueryList<PrimeTemplate> | undefined = new QueryList<PrimeTemplate>()
+  @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined
+  @ViewChildren(PrimeTemplate) viewTemplates: QueryList<PrimeTemplate> | undefined
+  // get parentTemplates(): QueryList<PrimeTemplate> | undefined {
+  //   const ql = new QueryList<PrimeTemplate>()
+  //   ql.reset([
+  //     ...(this.injector.get('DataViewComponent', null)?.templates?.toArray() ?? []),
+  //     ...(this.injector.get('DataViewComponent', null)?.parentTemplates?.toArray() ?? []),
+  //   ])
+  //   return ql
+  // }
+  @Input() parentTemplates: QueryList<PrimeTemplate> | undefined
 
   get viewTableRowObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
@@ -489,7 +499,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
 
   getTemplate(column: DataTableColumn): TemplateRef<any> | null {
-    const templates = [...(this.parentTemplates ?? []), ...(this.templates ?? [])]
+    const templates = [...(this.parentTemplates ?? []), ...(this.viewTemplates ?? []), ...(this.templates ?? [])]
     const columnTemplate =
       templates.find((template) => template.name === column.id + 'IdTableCell')?.template ??
       templates.find((template) => template.name === column.id + 'IdCell')?.template
@@ -518,5 +528,9 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       default:
         return this._stringCell ?? templates.find((template) => template.name === 'defaultStringCell')?.template ?? null
     }
+  }
+
+  resolveFieldData(object: any, key: any) {
+    return ObjectUtils.resolveFieldData(object, key)
   }
 }

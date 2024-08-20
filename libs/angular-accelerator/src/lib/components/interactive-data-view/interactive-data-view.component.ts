@@ -34,9 +34,6 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   @ViewChild(DataViewComponent) set dataView(ref: DataViewComponent | undefined) {
     this._dataViewComponent = ref
     this.registerEventListenerForDataView()
-    if (this._dataViewComponent) {
-      this._dataViewComponent.parentTemplates = this.templates
-    }
   }
   get dataView(): DataViewComponent | undefined {
     return this._dataViewComponent
@@ -115,10 +112,8 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   _templates: QueryList<PrimeTemplate> | undefined
   @ContentChildren(PrimeTemplate)
   set templates(value: QueryList<PrimeTemplate> | undefined) {
+    console.log('Interactive, set templates', value, !!this.dataView)
     this._templates = value
-    if (this.dataView) {
-      this.dataView.parentTemplates = value
-    }
   }
   get templates(): QueryList<PrimeTemplate> | undefined {
     return this._templates
