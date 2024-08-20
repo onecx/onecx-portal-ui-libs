@@ -1,23 +1,22 @@
 import {
-  AfterViewInit,
-  Directive,
-  ElementRef,
-  HostListener,
-  Inject,
-  Input,
-  NgZone,
-  OnDestroy,
-  PLATFORM_ID,
-  Renderer2,
-  TemplateRef,
-  ViewContainerRef,
+    AfterViewInit,
+    Directive,
+    ElementRef,
+    Inject,
+    Input,
+    NgZone,
+    OnDestroy,
+    PLATFORM_ID,
+    Renderer2,
+    TemplateRef,
+    ViewContainerRef,
 } from '@angular/core'
 import { PrimeNGConfig } from 'primeng/api'
 import { Tooltip } from 'primeng/tooltip'
 
 @Directive({ selector: '[ocxTooltipOnOverflow]' })
 export class TooltipOnOverflowDirective extends Tooltip implements OnDestroy, AfterViewInit {
-  resizeObserver = new MutationObserver((entries) => {
+  resizeObserver = new MutationObserver(() => {
     this.zone.run(() => {
       this.disabled = this.el.nativeElement.scrollWidth <= this.el.nativeElement.offsetWidth
       this.setOption({ disabled: this.disabled })

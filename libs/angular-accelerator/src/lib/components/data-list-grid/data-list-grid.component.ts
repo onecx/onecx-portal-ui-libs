@@ -1,6 +1,5 @@
 import {
   AfterContentInit,
-  AfterViewInit,
   Component,
   ContentChild,
   ContentChildren,
@@ -18,19 +17,18 @@ import {
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
-import { MenuItem, PrimeIcons, PrimeTemplate } from 'primeng/api'
-import { BehaviorSubject, Observable, combineLatest, debounceTime, map, mergeMap } from 'rxjs'
+import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 import { MfeInfo } from '@onecx/integration-interface'
-import { AppStateService } from '@onecx/angular-integration-interface'
-import { UserService } from '@onecx/angular-integration-interface'
+import { MenuItem, PrimeIcons, PrimeTemplate } from 'primeng/api'
+import { Menu } from 'primeng/menu'
+import { BehaviorSubject, Observable, combineLatest, debounceTime, map, mergeMap } from 'rxjs'
+import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { ObjectUtils } from '../../utils/objectutils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { Filter, Row } from '../data-table/data-table.component'
-import { Menu } from 'primeng/menu'
-import { ColumnType } from '../../model/column-type.model'
 
 export type ListGridData = {
   id: string | number

@@ -312,7 +312,7 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
         case 'stringTableCell':
           this.stringTableCellChildTemplate = item.template
           break
-        case 'tableDateCell':
+        case 'numberTableCell':
           this.numberTableCellChildTemplate = item.template
           break
         case 'customTableCell':
