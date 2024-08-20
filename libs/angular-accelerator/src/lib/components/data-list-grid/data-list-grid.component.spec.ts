@@ -14,6 +14,16 @@ import { DataTableHarness } from '../../../../testing/data-table.harness'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 
 describe('DataListGridComponent', () => {
+  const mutationObserverMock = jest.fn(function MutationObserver(callback) {
+    this.observe = jest.fn()
+    this.disconnect = jest.fn()
+    this.trigger = (mockedMutationsList: any) => {
+      callback(mockedMutationsList, this)
+    }
+    return this
+  })
+  global.MutationObserver = mutationObserverMock
+  
   let fixture: ComponentFixture<DataListGridComponent>
   let component: DataListGridComponent
   let translateService: TranslateService
@@ -311,7 +321,7 @@ describe('DataListGridComponent', () => {
     })
   })
 
-  const setUpListActionButtonMockData = () => {
+  const setUpListActionButtonMockData = async () => {
     component.columns = [
       ...mockColumns,
       {
@@ -346,6 +356,9 @@ describe('DataListGridComponent', () => {
     component.viewPermission = 'VIEW'
     component.editPermission = 'EDIT'
     component.deletePermission = 'DELETE'
+    
+    fixture.detectChanges()
+    await fixture.whenStable()
   }
   describe('Disable list action buttons based on field path', () => {
     it('should not disable any list action button by default', async () => {
@@ -355,7 +368,7 @@ describe('DataListGridComponent', () => {
       expect(component.editItemObserved).toBe(false)
       expect(component.deleteItemObserved).toBe(false)
 
-      setUpListActionButtonMockData()
+      await setUpListActionButtonMockData()
 
       expect(component.viewItemObserved).toBe(true)
       expect(component.editItemObserved).toBe(true)
@@ -380,7 +393,7 @@ describe('DataListGridComponent', () => {
 
     it('should dynamically enable/disable an action button based on the contents of a specified field', async () => {
       component.layout = 'list'
-      setUpListActionButtonMockData()
+      await setUpListActionButtonMockData()
       component.viewActionEnabledField = 'ready'
 
       let listActions = await listGrid.getActionButtons('list')
@@ -418,7 +431,7 @@ describe('DataListGridComponent', () => {
       expect(component.editItemObserved).toBe(false)
       expect(component.deleteItemObserved).toBe(false)
 
-      setUpListActionButtonMockData()
+      await setUpListActionButtonMockData()
 
       expect(component.viewItemObserved).toBe(true)
       expect(component.editItemObserved).toBe(true)
@@ -442,7 +455,7 @@ describe('DataListGridComponent', () => {
 
     it('should dynamically hide/show an action button based on the contents of a specified field', async () => {
       component.layout = 'list'
-      setUpListActionButtonMockData()
+      await setUpListActionButtonMockData()
       component.viewActionVisibleField = 'ready'
 
       let listActions = await listGrid.getActionButtons('list')
@@ -464,7 +477,7 @@ describe('DataListGridComponent', () => {
       expect(listActions.length).toBe(3)
     })
   })
-  const setUpGridActionButtonMockData = () => {
+  const setUpGridActionButtonMockData = async () => {
     component.columns = [
       ...mockColumns,
       {
@@ -489,6 +502,9 @@ describe('DataListGridComponent', () => {
     component.viewPermission = 'VIEW'
     component.editPermission = 'EDIT'
     component.deletePermission = 'DELETE'
+          
+    fixture.detectChanges()
+    await fixture.whenStable()
   }
   describe('Disable grid action buttons based on field path', () => {
     it('should not disable any grid action button by default', async () => {
@@ -497,7 +513,7 @@ describe('DataListGridComponent', () => {
       expect(component.editItemObserved).toBe(false)
       expect(component.deleteItemObserved).toBe(false)
 
-      setUpGridActionButtonMockData()
+      await setUpGridActionButtonMockData()
 
       expect(component.viewItemObserved).toBe(true)
       expect(component.editItemObserved).toBe(true)
@@ -517,7 +533,7 @@ describe('DataListGridComponent', () => {
 
     it('should dynamically enable/disable an action button based on the contents of a specified field', async () => {
       component.layout = 'grid'
-      setUpGridActionButtonMockData()
+      await setUpGridActionButtonMockData()
       component.viewActionEnabledField = 'ready'
       const gridMenuButton = await listGrid.getMenuButton()
 
@@ -562,7 +578,7 @@ describe('DataListGridComponent', () => {
       expect(component.editItemObserved).toBe(false)
       expect(component.deleteItemObserved).toBe(false)
 
-      setUpGridActionButtonMockData()
+      await setUpGridActionButtonMockData()
 
       expect(component.viewItemObserved).toBe(true)
       expect(component.editItemObserved).toBe(true)
@@ -578,7 +594,7 @@ describe('DataListGridComponent', () => {
 
     it('should dynamically hide/show an action button based on the contents of a specified field', async () => {
       component.layout = 'grid'
-      setUpGridActionButtonMockData()
+      await setUpGridActionButtonMockData()
       component.viewActionVisibleField = 'ready'
       const gridMenuButton = await listGrid.getMenuButton()
 

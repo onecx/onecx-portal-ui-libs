@@ -16,7 +16,7 @@ import { Tooltip } from 'primeng/tooltip'
 
 @Directive({ selector: '[ocxTooltipOnOverflow]' })
 export class TooltipOnOverflowDirective extends Tooltip implements OnDestroy, AfterViewInit {
-  resizeObserver = new MutationObserver(() => {
+  mutationObserver = new MutationObserver(() => {
     this.zone.run(() => {
       this.disabled = this.el.nativeElement.scrollWidth <= this.el.nativeElement.offsetWidth
       this.setOption({ disabled: this.disabled })
@@ -34,12 +34,12 @@ export class TooltipOnOverflowDirective extends Tooltip implements OnDestroy, Af
 
   override ngOnDestroy(): void {
     super.ngOnDestroy()
-    this.resizeObserver.disconnect()
+    this.mutationObserver.disconnect()
   }
 
   override ngAfterViewInit(): void {
     super.ngAfterViewInit()
-    this.resizeObserver.observe(this.el.nativeElement, { subtree: true, characterData: true, childList: true })
+    this.mutationObserver.observe(this.el.nativeElement, { subtree: true, characterData: true, childList: true })
   }
 
   constructor(
