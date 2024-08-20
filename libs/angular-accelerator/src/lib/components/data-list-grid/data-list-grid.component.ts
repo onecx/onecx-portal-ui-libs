@@ -570,7 +570,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
             case ColumnType.RELATIVE_DATE:
               return (
                 this._relativeDateListValue ??
-                templates.find((template) => template.name === 'defaultRelativeListValue')?.template ??
+                templates.find((template) => template.name === 'defaultRelativeDateListValue')?.template ??
                 null
               )
             case ColumnType.TRANSLATION_KEY:
