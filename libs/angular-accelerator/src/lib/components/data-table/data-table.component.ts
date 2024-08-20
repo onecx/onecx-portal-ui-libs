@@ -19,7 +19,7 @@ import { TranslateService } from '@ngx-translate/core'
 import { UserService } from '@onecx/angular-integration-interface'
 import { MenuItem, PrimeTemplate, SelectItem } from 'primeng/api'
 import { Menu } from 'primeng/menu'
-import { BehaviorSubject, Observable, combineLatest, concat, map, mergeMap, of } from 'rxjs'
+import { BehaviorSubject, Observable, combineLatest, concat, debounceTime, map, mergeMap, of } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
@@ -219,17 +219,29 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   overflowMenuItems$: Observable<MenuItem[]>
   currentMenuRow$ = new BehaviorSubject<Row | null>(null)
 
-  @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined
-  @ViewChildren(PrimeTemplate) viewTemplates: QueryList<PrimeTemplate> | undefined
-  // get parentTemplates(): QueryList<PrimeTemplate> | undefined {
-  //   const ql = new QueryList<PrimeTemplate>()
-  //   ql.reset([
-  //     ...(this.injector.get('DataViewComponent', null)?.templates?.toArray() ?? []),
-  //     ...(this.injector.get('DataViewComponent', null)?.parentTemplates?.toArray() ?? []),
-  //   ])
-  //   return ql
-  // }
-  @Input() parentTemplates: QueryList<PrimeTemplate> | undefined
+  templates$: BehaviorSubject<QueryList<PrimeTemplate> | undefined> = new BehaviorSubject<
+    QueryList<PrimeTemplate> | undefined
+  >(undefined)
+  @ContentChildren(PrimeTemplate)
+  set templates(value: QueryList<PrimeTemplate> | undefined) {
+    this.templates$.next(value)
+  }
+
+  viewTemplates$: BehaviorSubject<QueryList<PrimeTemplate> | undefined> = new BehaviorSubject<
+    QueryList<PrimeTemplate> | undefined
+  >(undefined)
+  @ViewChildren(PrimeTemplate)
+  set viewTemplates(value: QueryList<PrimeTemplate> | undefined) {
+    this.viewTemplates$.next(value)
+  }
+
+  parentTemplates$: BehaviorSubject<QueryList<PrimeTemplate> | null | undefined> = new BehaviorSubject<
+    QueryList<PrimeTemplate> | null | undefined
+  >(undefined)
+  @Input()
+  set parentTemplates(value: QueryList<PrimeTemplate> | null | undefined) {
+    this.parentTemplates$.next(value)
+  }
 
   get viewTableRowObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
@@ -498,36 +510,64 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return isValidDate(d)
   }
 
-  getTemplate(column: DataTableColumn): TemplateRef<any> | null {
-    const templates = [...(this.parentTemplates ?? []), ...(this.viewTemplates ?? []), ...(this.templates ?? [])]
-    const columnTemplate =
-      templates.find((template) => template.name === column.id + 'IdTableCell')?.template ??
-      templates.find((template) => template.name === column.id + 'IdCell')?.template
-    if (columnTemplate) {
-      return columnTemplate
+  templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
+
+  getTemplate(column: DataTableColumn): Observable<TemplateRef<any> | null> {
+    if (!this.templatesObservables[column.id]) {
+      this.templatesObservables[column.id] = combineLatest([
+        this.templates$,
+        this.viewTemplates$,
+        this.parentTemplates$,
+      ]).pipe(
+        map(([t, vt, pt]) => {
+          const templates = [...(t ?? []), ...(vt ?? []), ...(pt ?? [])]
+          const columnTemplate =
+            templates.find((template) => template.name === column.id + 'IdTableCell')?.template ??
+            templates.find((template) => template.name === column.id + 'IdCell')?.template
+          if (columnTemplate) {
+            return columnTemplate
+          }
+          switch (column.columnType) {
+            case ColumnType.DATE:
+              return (
+                this._dateCell ?? templates.find((template) => template.name === 'defaultDateCell')?.template ?? null
+              )
+            case ColumnType.NUMBER:
+              return (
+                this._numberCell ??
+                templates.find((template) => template.name === 'defaultNumberCell')?.template ??
+                null
+              )
+            case ColumnType.RELATIVE_DATE:
+              return (
+                this._relativeDateCell ??
+                templates.find((template) => template.name === 'defaultRelativeDateCell')?.template ??
+                null
+              )
+            case ColumnType.TRANSLATION_KEY:
+              return (
+                this._translationKeyCell ??
+                templates.find((template) => template.name === 'defaultTranslationKeyCell')?.template ??
+                null
+              )
+            case ColumnType.CUSTOM:
+              return (
+                this._customCell ??
+                templates.find((template) => template.name === 'defaultCustomCell')?.template ??
+                null
+              )
+            default:
+              return (
+                this._stringCell ??
+                templates.find((template) => template.name === 'defaultStringCell')?.template ??
+                null
+              )
+          }
+        }),
+        debounceTime(50)
+      )
     }
-    switch (column.columnType) {
-      case ColumnType.DATE:
-        return this._dateCell ?? templates.find((template) => template.name === 'defaultDateCell')?.template ?? null
-      case ColumnType.NUMBER:
-        return this._numberCell ?? templates.find((template) => template.name === 'defaultNumberCell')?.template ?? null
-      case ColumnType.RELATIVE_DATE:
-        return (
-          this._relativeDateCell ??
-          templates.find((template) => template.name === 'defaultRelativeDateCell')?.template ??
-          null
-        )
-      case ColumnType.TRANSLATION_KEY:
-        return (
-          this._translationKeyCell ??
-          templates.find((template) => template.name === 'defaultTranslationKeyCell')?.template ??
-          null
-        )
-      case ColumnType.CUSTOM:
-        return this._customCell ?? templates.find((template) => template.name === 'defaultCustomCell')?.template ?? null
-      default:
-        return this._stringCell ?? templates.find((template) => template.name === 'defaultStringCell')?.template ?? null
-    }
+    return this.templatesObservables[column.id]
   }
 
   resolveFieldData(object: any, key: any) {

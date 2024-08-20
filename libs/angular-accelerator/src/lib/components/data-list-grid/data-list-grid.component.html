@@ -173,10 +173,11 @@
       </div>
       <div class="flex flex-wrap">
         <div *ngFor="let col of getFilteredColumns()" class="w-12rem my-2 mr-2">
-          <div class="flex font-bold">{{ col.nameKey | translate }}</div>
+          <div class="font-bold" [ocxTooltipOnOverflow]="col.nameKey | translate" tooltipPosition="top">
+            {{ col.nameKey | translate }}
+          </div>
           <div
-            class="list-item"
-            [pTooltip]="col.columnType==columnType.TRANSLATION_KEY ? (resolveFieldData(item,col.id) | translate) : resolveFieldData(item, col.id)"
+            [ocxTooltipOnOverflow]="col.columnType === columnType.TRANSLATION_KEY ? (resolveFieldData(item,col.id) | translate) : resolveFieldData(item, col.id)"
             tooltipPosition="top"
           >
             <ng-container
@@ -202,7 +203,7 @@
 
 <ng-template #defaultListValue let-rowObject="rowObject" let-column="column">
   <ng-container
-    [ngTemplateOutlet]="getTemplate(column)"
+    [ngTemplateOutlet]="getTemplate(column) | async"
     [ngTemplateOutletContext]="{
                 rowObject: rowObject,
                 column: column

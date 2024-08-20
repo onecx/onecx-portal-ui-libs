@@ -29,6 +29,7 @@ import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
 import { AppConfigService } from './services/app-config-service'
 import { DynamicLocaleId } from './utils/dynamic-locale-id'
 import { firstValueFrom, skip } from 'rxjs'
+import { TooltipOnOverflowDirective } from './directives/tooltipOnOverflow.directive'
 
 export class AngularAcceleratorMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -71,8 +72,8 @@ function appInitializer(userService: UserService) {
     IfBreakpointDirective,
     SrcDirective,
     OcxTimeAgoPipe,
-    SrcDirective,
     AdvancedDirective,
+    TooltipOnOverflowDirective,
   ],
   providers: [
     {
@@ -88,7 +89,7 @@ function appInitializer(userService: UserService) {
       provide: APP_INITIALIZER,
       useFactory: appInitializer,
       deps: [UserService],
-      multi: true
+      multi: true,
     },
     AppConfigService,
   ],
@@ -109,8 +110,8 @@ function appInitializer(userService: UserService) {
     IfBreakpointDirective,
     SrcDirective,
     OcxTimeAgoPipe,
-    SrcDirective,
     AdvancedDirective,
+    TooltipOnOverflowDirective,
   ],
 })
 export class AngularAcceleratorModule {}

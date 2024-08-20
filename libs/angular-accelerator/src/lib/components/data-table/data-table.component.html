@@ -220,7 +220,8 @@
 
 <ng-template #defaultCell let-rowObject="rowObject" let-column="column">
   <ng-container
-    [ngTemplateOutlet]="getTemplate(column)"
+  *ngIf="getTemplate(column) | async as template"
+    [ngTemplateOutlet]="template"
     [ngTemplateOutletContext]="{
                 rowObject: rowObject,
                 column: column

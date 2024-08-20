@@ -19,6 +19,7 @@ import { DataTableColumn } from '../../model/data-table-column.model'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataAction } from '../../model/data-action'
 import { PrimeTemplate } from 'primeng/api'
+import { BehaviorSubject, Observable, combineLatest, map } from 'rxjs'
 
 export type RowListGridData = ListGridData & Row
 @Component({
@@ -97,7 +98,6 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
     return this.stringTableCellTemplate || this.stringTableCellChildTemplate
   }
 
-  // TODO copy for listValue templates
   @Input() numberTableCellTemplate: TemplateRef<any> | undefined
   @ContentChild('numberTableCell') numberTableCellChildTemplate: TemplateRef<any> | undefined
   get _numberTableCell(): TemplateRef<any> | undefined {
@@ -207,6 +207,42 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
     )
   }
 
+  @Input() listValueTemplate: TemplateRef<any> | undefined
+  @ContentChild('listValue') listValueChildTemplate: TemplateRef<any> | undefined
+  get _listValue(): TemplateRef<any> | undefined {
+    return this.listValueTemplate || this.listValueChildTemplate
+  }
+  @Input() translationKeyListValueTemplate: TemplateRef<any> | undefined
+  @ContentChild('translationKeyListValue') translationKeyListValueChildTemplate: TemplateRef<any> | undefined
+  get _translationKeyListValue(): TemplateRef<any> | undefined {
+    return this.translationKeyListValueTemplate || this.translationKeyListValueChildTemplate
+  }
+  @Input() numberListValueTemplate: TemplateRef<any> | undefined
+  @ContentChild('numberListValue') numberListValueChildTemplate: TemplateRef<any> | undefined
+  get _numberListValue(): TemplateRef<any> | undefined {
+    return this.numberListValueTemplate || this.numberListValueChildTemplate
+  }
+  @Input() relativeDateListValueTemplate: TemplateRef<any> | undefined
+  @ContentChild('relativeDateListValue') relativeDateListValueChildTemplate: TemplateRef<any> | undefined
+  get _relativeDateListValue(): TemplateRef<any> | undefined {
+    return this.relativeDateListValueTemplate || this.relativeDateListValueChildTemplate
+  }
+  @Input() customListValueTemplate: TemplateRef<any> | undefined
+  @ContentChild('customListValue') customListValueChildTemplate: TemplateRef<any> | undefined
+  get _customListValue(): TemplateRef<any> | undefined {
+    return this.customListValueTemplate || this.customListValueChildTemplate
+  }
+  @Input() stringListValueTemplate: TemplateRef<any> | undefined
+  @ContentChild('stringListValue') stringListValueChildTemplate: TemplateRef<any> | undefined
+  get _stringListValue(): TemplateRef<any> | undefined {
+    return this.stringListValueTemplate || this.stringListValueChildTemplate
+  }
+  @Input() dateListValueTemplate: TemplateRef<any> | undefined
+  @ContentChild('dateListValue') dateListValueChildTemplate: TemplateRef<any> | undefined
+  get _dateListValue(): TemplateRef<any> | undefined {
+    return this.dateListValueTemplate || this.dateListValueChildTemplate
+  }
+
   @Input() additionalActions: DataAction[] = []
 
   @Output() filtered = new EventEmitter<Filter[]>()
@@ -221,38 +257,32 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   IsEditItemObserved: boolean | undefined
   firstColumnId: string | undefined
 
-  // _parentTemplates: QueryList<PrimeTemplate> | undefined
-  // set parentTemplates(templates: QueryList<PrimeTemplate> | undefined) {
-  //   console.log('data view, parent set templates', templates, !!this.dataTable, !!this.listGrid)
-  //   const ql = new QueryList<PrimeTemplate>()
-  //   ql.reset([...(this._templates?.toArray() ?? []), ...(templates?.toArray() ?? [])])
-
-  //   if (this.dataTable) {
-  //     this.dataTable.parentTemplates = ql
-  //   }
-  //   if (this.listGrid) {
-  //     this.listGrid.parentTemplates = ql
-  //   }
-  // }
-
-  @Input() parentTemplates: QueryList<PrimeTemplate> | undefined
-  getTemplatesForChild(): QueryList<PrimeTemplate> | undefined {
-    const ql = new QueryList<PrimeTemplate>()
-    ql.reset([...(this._templates?.toArray() ?? []), ...(this.parentTemplates?.toArray() ?? [])])
-    return ql
+  parentTemplates$: BehaviorSubject<QueryList<PrimeTemplate> | null | undefined> = new BehaviorSubject<
+    QueryList<PrimeTemplate> | null | undefined
+  >(undefined)
+  @Input()
+  set parentTemplates(value: QueryList<PrimeTemplate> | null | undefined) {
+    this.parentTemplates$.next(value)
   }
-  // get parentTemplates(): QueryList<PrimeTemplate> | undefined {
-  //   return this.injector.get('InteractiveDataViewComponent', null)?.templates
-  // }
 
-  _templates: QueryList<PrimeTemplate> | undefined
+  templates$: BehaviorSubject<QueryList<PrimeTemplate> | undefined> = new BehaviorSubject<
+    QueryList<PrimeTemplate> | undefined
+  >(undefined)
   @ContentChildren(PrimeTemplate)
   set templates(value: QueryList<PrimeTemplate> | undefined) {
-    this._templates = value
+    this.templates$.next(value)
   }
-  get templates(): QueryList<PrimeTemplate> | undefined {
-    return this._templates
-  }
+
+  templatesForChildren$: Observable<QueryList<PrimeTemplate> | undefined> = combineLatest([
+    this.templates$,
+    this.parentTemplates$,
+  ]).pipe(
+    map(([t, pt]) => {
+      const ql = new QueryList<PrimeTemplate>()
+      ql.reset([...(t?.toArray() ?? []), ...(pt?.toArray() ?? [])])
+      return ql
+    })
+  )
 
   get viewItemObserved(): boolean {
     return this.injector.get('InteractiveDataViewComponent', null)?.viewItem.observed || this.viewItem.observed
@@ -320,6 +350,27 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
           break
         case 'relativeDateTableCell':
           this.relativeDateTableCellChildTemplate = item.template
+          break
+        case 'listValue':
+          this.listValueChildTemplate = item.template
+          break
+        case 'translationKeyListValue':
+          this.translationKeyListValueChildTemplate = item.template
+          break
+        case 'numberListValue':
+          this.numberListValueChildTemplate = item.template
+          break
+        case 'relativeDateListValue':
+          this.relativeDateListValueChildTemplate = item.template
+          break
+        case 'customListValue':
+          this.customListValueChildTemplate = item.template
+          break
+        case 'stringListValue':
+          this.stringListValueChildTemplate = item.template
+          break
+        case 'dateListValue':
+          this.dateListValueChildTemplate = item.template
           break
       }
     })

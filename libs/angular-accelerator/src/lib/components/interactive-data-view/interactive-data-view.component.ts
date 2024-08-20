@@ -22,6 +22,7 @@ import {
 } from '../custom-group-column-selector/custom-group-column-selector.component'
 import { Filter, Row, Sort } from '../data-table/data-table.component'
 import { DataViewComponent, RowListGridData } from '../data-view/data-view.component'
+import { BehaviorSubject } from 'rxjs'
 
 @Component({
   selector: 'ocx-interactive-data-view',
@@ -109,14 +110,20 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   @ContentChild('gridItem') gridItem: TemplateRef<any> | undefined
   @ContentChild('listItem') listItem: TemplateRef<any> | undefined
   @ContentChild('topCenter') topCenter: TemplateRef<any> | undefined
-  _templates: QueryList<PrimeTemplate> | undefined
+  @ContentChild('listValue') listValue: TemplateRef<any> | undefined
+  @ContentChild('translationKeyListValue') translationKeyListValue: TemplateRef<any> | undefined
+  @ContentChild('numberListValue') numberListValue: TemplateRef<any> | undefined
+  @ContentChild('relativeDateListValue') relativeDateListValue: TemplateRef<any> | undefined
+  @ContentChild('customListValue') customListValue: TemplateRef<any> | undefined
+  @ContentChild('stringListValue') stringListValue: TemplateRef<any> | undefined
+  @ContentChild('dateListValue') dateListValue: TemplateRef<any> | undefined
+
+  templates$: BehaviorSubject<QueryList<PrimeTemplate> | undefined> = new BehaviorSubject<
+    QueryList<PrimeTemplate> | undefined
+  >(undefined)
   @ContentChildren(PrimeTemplate)
   set templates(value: QueryList<PrimeTemplate> | undefined) {
-    console.log('Interactive, set templates', value, !!this.dataView)
-    this._templates = value
-  }
-  get templates(): QueryList<PrimeTemplate> | undefined {
-    return this._templates
+    this.templates$.next(value)
   }
 
   @Output() filtered = new EventEmitter<Filter[]>()
@@ -185,6 +192,27 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   }
   get _listItem(): TemplateRef<any> | undefined {
     return this.listItem
+  }
+  get _listValue(): TemplateRef<any> | undefined {
+    return this.listValue
+  }
+  get _translationKeyListValue(): TemplateRef<any> | undefined {
+    return this.translationKeyListValue
+  }
+  get _numberListValue(): TemplateRef<any> | undefined {
+    return this.numberListValue
+  }
+  get _relativeDateListValue(): TemplateRef<any> | undefined {
+    return this.relativeDateListValue
+  }
+  get _customListValue(): TemplateRef<any> | undefined {
+    return this.customListValue
+  }
+  get _stringListValue(): TemplateRef<any> | undefined {
+    return this.stringListValue
+  }
+  get _dateListValue(): TemplateRef<any> | undefined {
+    return this.dateListValue
   }
 
   _data: RowListGridData[] = []
@@ -258,6 +286,27 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
           break
         case 'topCenter':
           this.topCenter = item.template
+          break
+        case 'listValue':
+          this.listValue = item.template
+          break
+        case 'translationKeyListValue':
+          this.translationKeyListValue = item.template
+          break
+        case 'numberListValue':
+          this.numberListValue = item.template
+          break
+        case 'relativeDateListValue':
+          this.relativeDateListValue = item.template
+          break
+        case 'customListValue':
+          this.customListValue = item.template
+          break
+        case 'stringListValue':
+          this.stringListValue = item.template
+          break
+        case 'dateListValue':
+          this.dateListValue = item.template
           break
       }
     })

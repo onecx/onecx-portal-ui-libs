@@ -19,7 +19,7 @@ import {
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { MenuItem, PrimeIcons, PrimeTemplate } from 'primeng/api'
-import { BehaviorSubject, Observable, combineLatest, map, mergeMap } from 'rxjs'
+import { BehaviorSubject, Observable, combineLatest, debounceTime, map, mergeMap } from 'rxjs'
 import { MfeInfo } from '@onecx/integration-interface'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import { UserService } from '@onecx/angular-integration-interface'
@@ -184,31 +184,31 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   }
 
   @Input() translationKeyListValueTemplate: TemplateRef<any> | undefined
-  @ContentChild('translationsKeyListValue') translationKeyListValueChildTemplate: TemplateRef<any> | undefined
+  @ContentChild('translationKeyListValue') translationKeyListValueChildTemplate: TemplateRef<any> | undefined
   get _translationKeyListValue(): TemplateRef<any> | undefined {
     return this.translationKeyListValueTemplate || this.translationKeyListValueChildTemplate
   }
 
   @Input() numberListValueTemplate: TemplateRef<any> | undefined
-  @ContentChild('translationsKeyListValue') numberListValueChildTemplate: TemplateRef<any> | undefined
+  @ContentChild('numberListValue') numberListValueChildTemplate: TemplateRef<any> | undefined
   get _numberListValue(): TemplateRef<any> | undefined {
     return this.numberListValueTemplate || this.numberListValueChildTemplate
   }
 
   @Input() relativeDateListValueTemplate: TemplateRef<any> | undefined
-  @ContentChild('translationsKeyListValue') relativeDateListValueChildTemplate: TemplateRef<any> | undefined
+  @ContentChild('relativeDateListValue') relativeDateListValueChildTemplate: TemplateRef<any> | undefined
   get _relativeDateListValue(): TemplateRef<any> | undefined {
     return this.relativeDateListValueTemplate || this.relativeDateListValueChildTemplate
   }
 
   @Input() customListValueTemplate: TemplateRef<any> | undefined
-  @ContentChild('translationsKeyListValue') customListValueChildTemplate: TemplateRef<any> | undefined
+  @ContentChild('customListValue') customListValueChildTemplate: TemplateRef<any> | undefined
   get _customListValue(): TemplateRef<any> | undefined {
     return this.customListValueTemplate || this.customListValueChildTemplate
   }
 
   @Input() stringListValueTemplate: TemplateRef<any> | undefined
-  @ContentChild('translationsKeyListValue') stringListValueChildTemplate: TemplateRef<any> | undefined
+  @ContentChild('stringListValue') stringListValueChildTemplate: TemplateRef<any> | undefined
   get _stringListValue(): TemplateRef<any> | undefined {
     return this.stringListValueTemplate || this.stringListValueChildTemplate
   }
@@ -265,17 +265,29 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   displayedItems$: Observable<unknown[]> | undefined
   fallbackImagePath$!: Observable<string>
 
-  @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | undefined
-  @ViewChildren(PrimeTemplate) viewTemplates: QueryList<PrimeTemplate> | undefined
-  // get parentTemplates(): QueryList<PrimeTemplate> | undefined {
-  //   const ql = new QueryList<PrimeTemplate>()
-  //   ql.reset([
-  //     ...(this.injector.get('DataViewComponent', null)?.templates?.toArray() ?? []),
-  //     ...(this.injector.get('DataViewComponent', null)?.parentTemplates?.toArray() ?? []),
-  //   ])
-  //   return ql
-  // }
-  @Input() parentTemplates: QueryList<PrimeTemplate> | undefined
+  templates$: BehaviorSubject<QueryList<PrimeTemplate> | undefined> = new BehaviorSubject<
+    QueryList<PrimeTemplate> | undefined
+  >(undefined)
+  @ContentChildren(PrimeTemplate)
+  set templates(value: QueryList<PrimeTemplate> | undefined) {
+    this.templates$.next(value)
+  }
+
+  viewTemplates$: BehaviorSubject<QueryList<PrimeTemplate> | undefined> = new BehaviorSubject<
+    QueryList<PrimeTemplate> | undefined
+  >(undefined)
+  @ViewChildren(PrimeTemplate)
+  set viewTemplates(value: QueryList<PrimeTemplate> | undefined) {
+    this.viewTemplates$.next(value)
+  }
+
+  parentTemplates$: BehaviorSubject<QueryList<PrimeTemplate> | null | undefined> = new BehaviorSubject<
+    QueryList<PrimeTemplate> | null | undefined
+  >(undefined)
+  @Input()
+  set parentTemplates(value: QueryList<PrimeTemplate> | null | undefined) {
+    this.parentTemplates$.next(value)
+  }
 
   columnType = ColumnType
 
@@ -347,7 +359,31 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   }
 
   ngAfterContentInit() {
-    console.log('datalistgrid, afterContentInit', this.viewTemplates, this.templates)
+    this.templates?.forEach((item) => {
+      switch (item.getType()) {
+        case 'listValue':
+          this.listValueChildTemplate = item.template
+          break
+        case 'translationKeyListValue':
+          this.translationKeyListValueChildTemplate = item.template
+          break
+        case 'numberListValue':
+          this.numberListValueChildTemplate = item.template
+          break
+        case 'relativeDateListValue':
+          this.relativeDateListValueChildTemplate = item.template
+          break
+        case 'customListValue':
+          this.customListValueChildTemplate = item.template
+          break
+        case 'stringListValue':
+          this.stringListValueChildTemplate = item.template
+          break
+        case 'dateListValue':
+          this.dateListValueChildTemplate = item.template
+          break
+      }
+    })
   }
 
   onDeleteRow(element: ListGridData) {
@@ -503,49 +539,63 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return this.columns.filter((c) => !ids.includes(c.id))
   }
 
-  getTemplate(column: DataTableColumn): TemplateRef<any> | null {
-    const templates = [...(this.parentTemplates ?? []), ...(this.viewTemplates ?? []), ...(this.templates ?? [])]
-    const columnTemplate = templates.find((template) => template.name === column.id + 'IdListValue')?.template
-    if (columnTemplate) {
-      return columnTemplate
+  templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
+
+  getTemplate(column: DataTableColumn): Observable<TemplateRef<any> | null> {
+    if (!this.templatesObservables[column.id]) {
+      this.templatesObservables[column.id] = combineLatest([
+        this.templates$,
+        this.viewTemplates$,
+        this.parentTemplates$,
+      ]).pipe(
+        map(([t, vt, pt]) => {
+          const templates = [...(t ?? []), ...(vt ?? []), ...(pt ?? [])]
+          const columnTemplate = templates.find((template) => template.name === column.id + 'IdListValue')?.template
+          if (columnTemplate) {
+            return columnTemplate
+          }
+          switch (column.columnType) {
+            case ColumnType.DATE:
+              return (
+                this._dateListValue ??
+                templates.find((template) => template.name === 'defaultDateListValue')?.template ??
+                null
+              )
+            case ColumnType.NUMBER:
+              return (
+                this._numberListValue ??
+                templates.find((template) => template.name === 'defaultNumberListValue')?.template ??
+                null
+              )
+            case ColumnType.RELATIVE_DATE:
+              return (
+                this._relativeDateListValue ??
+                templates.find((template) => template.name === 'defaultRelativeListValue')?.template ??
+                null
+              )
+            case ColumnType.TRANSLATION_KEY:
+              return (
+                this._translationKeyListValue ??
+                templates.find((template) => template.name === 'defaultTranslationListValue')?.template ??
+                null
+              )
+            case ColumnType.CUSTOM:
+              return (
+                this._customListValue ??
+                templates.find((template) => template.name === 'defaultCustomListValue')?.template ??
+                null
+              )
+            default:
+              return (
+                this._stringListValue ??
+                templates.find((template) => template.name === 'defaultStringListValue')?.template ??
+                null
+              )
+          }
+        }),
+        debounceTime(50)
+      )
     }
-    switch (column.columnType) {
-      case ColumnType.DATE:
-        return (
-          this._dateListValue ??
-          templates.find((template) => template.name === 'defaultDateListValue')?.template ??
-          null
-        )
-      case ColumnType.NUMBER:
-        return (
-          this._numberListValue ??
-          templates.find((template) => template.name === 'defaultNumberListValue')?.template ??
-          null
-        )
-      case ColumnType.RELATIVE_DATE:
-        return (
-          this._relativeDateListValue ??
-          templates.find((template) => template.name === 'defaultRelativeListValue')?.template ??
-          null
-        )
-      case ColumnType.TRANSLATION_KEY:
-        return (
-          this._translationKeyListValue ??
-          templates.find((template) => template.name === 'defaultTranslationListValue')?.template ??
-          null
-        )
-      case ColumnType.CUSTOM:
-        return (
-          this._customListValue ??
-          templates.find((template) => template.name === 'defaultCustomListValue')?.template ??
-          null
-        )
-      default:
-        return (
-          this._stringListValue ??
-          templates.find((template) => template.name === 'defaultStringListValue')?.template ??
-          null
-        )
-    }
+    return this.templatesObservables[column.id]
   }
 }
