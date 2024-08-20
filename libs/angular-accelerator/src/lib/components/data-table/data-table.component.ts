@@ -43,7 +43,6 @@ export enum TemplateType {
 interface TemplatesData {
   templatesObservables: Record<string, Observable<TemplateRef<any> | null>>
   idSuffix: Array<string>
-  columnTypeTemplates: Record<ColumnType, TemplateRef<any> | undefined>
 }
 
 export type Filter = { columnId: string; value: string }
@@ -583,27 +582,11 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   cellTemplatesData: TemplatesData = {
     templatesObservables: {},
     idSuffix: ['IdTableCell', 'IdCell'],
-    columnTypeTemplates: {
-      [ColumnType.DATE]: this._dateCell,
-      [ColumnType.NUMBER]: this._numberCell,
-      [ColumnType.RELATIVE_DATE]: this._relativeDateCell,
-      [ColumnType.STRING]: this._stringCell,
-      [ColumnType.TRANSLATION_KEY]: this._translationKeyCell,
-      [ColumnType.CUSTOM]: this._customCell,
-    },
   }
 
   filterTemplatesData: TemplatesData = {
     templatesObservables: {},
     idSuffix: ['IdTableFilterCell', 'IdFilterCell'],
-    columnTypeTemplates: {
-      [ColumnType.DATE]: this._dateFilterCell,
-      [ColumnType.NUMBER]: this._numberFilterCell,
-      [ColumnType.RELATIVE_DATE]: this._relativeDateFilterCell,
-      [ColumnType.STRING]: this._stringFilterCell,
-      [ColumnType.TRANSLATION_KEY]: this._translationKeyFilterCell,
-      [ColumnType.CUSTOM]: this._customFilterCell,
-    },
   }
 
   templatesDataMap: Record<TemplateType, TemplatesData> = {
@@ -611,8 +594,76 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     [TemplateType.FILTERCELL]: this.filterTemplatesData,
   }
 
-  getTemplate(column: DataTableColumn, type: TemplateType): Observable<TemplateRef<any> | null> {
-    const templatesData = this.templatesDataMap[type]
+  getColumnTypeTemplate(
+    templates: PrimeTemplate[],
+    columnType: ColumnType,
+    templateType: TemplateType
+  ) {
+    let template: TemplateRef<any> | undefined
+    let defaultTemplateName: string
+
+    switch (templateType) {
+      case TemplateType.CELL:
+        switch (columnType) {
+          case ColumnType.DATE:
+            template = this._dateCell
+            defaultTemplateName = 'defaultDateCell'
+            break
+          case ColumnType.NUMBER:
+            template = this._numberCell
+            defaultTemplateName = 'defaultNumberCell'
+            break
+          case ColumnType.RELATIVE_DATE:
+            template = this._relativeDateCell
+            defaultTemplateName = 'defaultRelativeDateCell'
+            break
+          case ColumnType.TRANSLATION_KEY:
+            template = this._translationKeyCell
+            defaultTemplateName = 'defaultTranslationKeyCell'
+            break
+          case ColumnType.CUSTOM:
+            template = this._customCell
+            defaultTemplateName = 'defaultCustomCell'
+            break
+          default:
+            template = this._stringCell
+            defaultTemplateName = 'defaultStringCell'
+        }
+        break
+      case TemplateType.FILTERCELL:
+        switch (columnType) {
+          case ColumnType.DATE:
+            template = this._dateFilterCell
+            defaultTemplateName = 'defaultDateCell'
+            break
+          case ColumnType.NUMBER:
+            template = this._numberFilterCell
+            defaultTemplateName = 'defaultNumberCell'
+            break
+          case ColumnType.RELATIVE_DATE:
+            template = this._relativeDateFilterCell
+            defaultTemplateName = 'defaultRelativeDateCell'
+            break
+          case ColumnType.TRANSLATION_KEY:
+            template = this._translationKeyFilterCell
+            defaultTemplateName = 'defaultTranslationKeyCell'
+            break
+          case ColumnType.CUSTOM:
+            template = this._customFilterCell
+            defaultTemplateName = 'defaultCustomCell'
+            break
+          default:
+            template = this._stringFilterCell
+            defaultTemplateName = 'defaultStringCell'
+        }
+        break
+    }
+
+    return template ?? templates.find((template) => template.name === defaultTemplateName)?.template ?? null
+  }
+
+  getTemplate(column: DataTableColumn, templateType: TemplateType): Observable<TemplateRef<any> | null> {
+    const templatesData = this.templatesDataMap[templateType]
 
     if (!templatesData.templatesObservables[column.id]) {
       templatesData.templatesObservables[column.id] = combineLatest([
@@ -628,44 +679,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
           if (columnTemplate) {
             return columnTemplate
           }
-          switch (column.columnType) {
-            case ColumnType.DATE:
-              return (
-                templatesData.columnTypeTemplates[ColumnType.DATE] ??
-                templates.find((template) => template.name === 'defaultDateCell')?.template ??
-                null
-              )
-            case ColumnType.NUMBER:
-              return (
-                templatesData.columnTypeTemplates[ColumnType.NUMBER] ??
-                templates.find((template) => template.name === 'defaultNumberCell')?.template ??
-                null
-              )
-            case ColumnType.RELATIVE_DATE:
-              return (
-                templatesData.columnTypeTemplates[ColumnType.RELATIVE_DATE] ??
-                templates.find((template) => template.name === 'defaultRelativeDateCell')?.template ??
-                null
-              )
-            case ColumnType.TRANSLATION_KEY:
-              return (
-                templatesData.columnTypeTemplates[ColumnType.TRANSLATION_KEY] ??
-                templates.find((template) => template.name === 'defaultTranslationKeyCell')?.template ??
-                null
-              )
-            case ColumnType.CUSTOM:
-              return (
-                templatesData.columnTypeTemplates[ColumnType.CUSTOM] ??
-                templates.find((template) => template.name === 'defaultCustomCell')?.template ??
-                null
-              )
-            default:
-              return (
-                templatesData.columnTypeTemplates[ColumnType.STRING] ??
-                templates.find((template) => template.name === 'defaultStringCell')?.template ??
-                null
-              )
-          }
+          return this.getColumnTypeTemplate(templates, column.columnType, templateType)
         }),
         debounceTime(50)
       )
