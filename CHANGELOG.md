@@ -1,3 +1,10 @@
+## [5.5.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.4.0...v5.5.0) (2024-08-20)
+
+### Features
+
+* allow disable of row selection ([#406](https://github.com/onecx/onecx-portal-ui-libs/issues/406)) ([7ff7b50](https://github.com/onecx/onecx-portal-ui-libs/commit/7ff7b505180bf61f48868ae3da083d0c53d945ee))
+* remote component - slot - slot owner binding ([#352](https://github.com/onecx/onecx-portal-ui-libs/issues/352)) ([3e06fc2](https://github.com/onecx/onecx-portal-ui-libs/commit/3e06fc2235f2a8d6c072e57770dcb30c4babe814))
+
 ## [5.4.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.3.2...v5.4.0) (2024-08-19)
 
 ### Features
