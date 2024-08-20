@@ -69,7 +69,23 @@ export class SlotComponent implements OnInit, OnDestroy {
    *
    * @example
    *
-   * ## Slot usage
+   * ## Component with slot in a template
+   * ```
+   * ⁣@Component({
+   *  selector: 'my-component',
+   *  templateUrl: './my-component.component.html',
+   * })
+   * export class MyComponent {
+   *  buttonClickedEmitter = new EventEmitter<string>()
+   *  constructor() {
+   *    this.buttonClickedEmitter.subscribe((msg) => {
+   *      console.log(msg)
+   *    })
+   *  }
+   * }
+   * ```
+   *
+   * ## Slot usage in my-component.component.html
    * ```
    * <ocx-slot name="my-slot-name" [outputs]="{ buttonClicked: buttonClickedEmitter }">
    * </ocx-slot>
