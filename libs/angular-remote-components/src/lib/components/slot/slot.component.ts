@@ -1,6 +1,8 @@
 import {
   Component,
+  ComponentRef,
   ContentChild,
+  EventEmitter,
   Inject,
   Input,
   OnDestroy,
@@ -25,6 +27,99 @@ export class SlotComponent implements OnInit, OnDestroy {
   @Input()
   name!: string
 
+  private _assignedComponents$ = new BehaviorSubject<(ComponentRef<any> | HTMLElement)[]>([])
+
+  /**
+   * Inputs to be passed to components inside a slot.
+   *
+   * @example
+   *
+   * ## Slot usage
+   * ```
+   * <ocx-slot name="my-slot-name" [inputs]="{ header: myHeaderValue }">
+   * </ocx-slot>
+   * ```
+   *
+   * ## Remote component definition
+   * ```
+   * export class MyRemoteComponent: {
+   * ⁣@Input() header: string = ''
+   * }
+   * ```
+   *
+   * ## Remote component template
+   * ```
+   * <p>myInput = {{header}}</p>
+   * ```
+   */
+  private _inputs$ = new BehaviorSubject<Record<string, unknown>>({})
+  @Input()
+  get inputs(): Record<string, unknown> {
+    return this._inputs$.getValue()
+  }
+  set inputs(value: Record<string, unknown>) {
+    this._inputs$.next({
+      ...this._inputs$.getValue(),
+      ...value,
+    })
+  }
+
+  /**
+   * Outputs to be passed to components inside a slot as EventEmitters. It is important that the output property is annotated with ⁣@Input().
+   *
+   * @example
+   *
+   * ## Component with slot in a template
+   * ```
+   * ⁣@Component({
+   *  selector: 'my-component',
+   *  templateUrl: './my-component.component.html',
+   * })
+   * export class MyComponent {
+   *  buttonClickedEmitter = new EventEmitter<string>()
+   *  constructor() {
+   *    this.buttonClickedEmitter.subscribe((msg) => {
+   *      console.log(msg)
+   *    })
+   *  }
+   * }
+   * ```
+   *
+   * ## Slot usage in my-component.component.html
+   * ```
+   * <ocx-slot name="my-slot-name" [outputs]="{ buttonClicked: buttonClickedEmitter }">
+   * </ocx-slot>
+   * ```
+   *
+   * ## Remote component definition
+   * ```
+   * export class MyRemoteComponent: {
+   *  ⁣@Input() buttonClicked = EventEmitter<string>()
+   *  onButtonClick() {
+   *    buttonClicked.emit('payload')
+   *  }
+   * }
+   * ```
+   *
+   * ## Remote component template
+   * ```
+   * <button (click)="onButtonClick()">Emit message</button>
+   * ```
+   */
+  private _outputs$ = new BehaviorSubject<Record<string, EventEmitter<any>>>({})
+  @Input()
+  get outputs(): Record<string, EventEmitter<any>> {
+    return this._outputs$.getValue()
+  }
+  set outputs(value: Record<string, EventEmitter<any>>) {
+    this._outputs$.next({
+      ...this._outputs$.getValue(),
+      ...value,
+    })
+  }
+
+  updateDataSub: Subscription | undefined
+
   _viewContainers$ = new BehaviorSubject<QueryList<ViewContainerRef> | undefined>(undefined)
   @ViewChildren('slot', { read: ViewContainerRef })
   set viewContainers(value: QueryList<ViewContainerRef>) {
@@ -40,6 +135,13 @@ export class SlotComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.components$ = this.slotService.getComponentsForSlot(this.name)
+    combineLatest([this._assignedComponents$, this._inputs$, this._outputs$]).subscribe(
+      ([components, inputs, outputs]) => {
+        components.forEach((component) => {
+          this.updateComponentData(component, inputs, outputs)
+        })
+      }
+    )
     this.subscription = combineLatest([this._viewContainers$, this.components$]).subscribe(
       ([viewContainers, components]) => {
         if (viewContainers && viewContainers.length === components.length) {
@@ -49,7 +151,8 @@ export class SlotComponent implements OnInit, OnDestroy {
                 Promise.resolve(componentInfo.componentType),
                 Promise.resolve(componentInfo.permissions),
               ]).then(([componentType, permissions]) => {
-                this.createComponent(componentType, componentInfo, permissions, viewContainers, i)
+                const component = this.createComponent(componentType, componentInfo, permissions, viewContainers, i)
+                if (component) this._assignedComponents$.next([...this._assignedComponents$.getValue(), component])
               })
             }
           })
@@ -64,7 +167,7 @@ export class SlotComponent implements OnInit, OnDestroy {
     permissions: string[],
     viewContainers: QueryList<ViewContainerRef>,
     i: number
-  ) {
+  ): ComponentRef<any> | HTMLElement | undefined {
     const viewContainer = viewContainers.get(i)
     viewContainer?.clear()
     viewContainer?.element.nativeElement.replaceChildren()
@@ -79,6 +182,7 @@ export class SlotComponent implements OnInit, OnDestroy {
         })
       }
       componentRef?.changeDetectorRef.detectChanges()
+      return componentRef
     } else if (
       componentInfo.remoteComponent.technology === Technologies.WebComponentModule ||
       componentInfo.remoteComponent.technology === Technologies.WebComponentScript
@@ -92,8 +196,32 @@ export class SlotComponent implements OnInit, OnDestroy {
           permissions: permissions,
         } satisfies RemoteComponentConfig
         viewContainer?.element.nativeElement.appendChild(element)
+        return element
       }
     }
+
+    return
+  }
+
+  private updateComponentData(
+    component: ComponentRef<any> | HTMLElement | undefined,
+    inputs: Record<string, unknown>,
+    outputs: Record<string, EventEmitter<unknown>>
+  ) {
+    this.setProps(component, inputs)
+    this.setProps(component, outputs)
+  }
+
+  private setProps(component: ComponentRef<any> | HTMLElement | undefined, props: Record<string, unknown>) {
+    if (!component) return
+
+    Object.entries(props).map(([name, value]) => {
+      if (component instanceof HTMLElement) {
+        ;(component as any)[name] = value
+      } else {
+        component.setInput(name, value)
+      }
+    })
   }
 
   ngOnDestroy(): void {
