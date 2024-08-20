@@ -27,11 +27,23 @@ import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { ObjectUtils } from '../../utils/objectutils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
+import { MultiSelectItem } from 'primeng/multiselect'
 
 type Primitive = number | string | boolean | bigint | Date
 export type Row = {
   id: string | number
   [columnId: string]: unknown
+}
+
+export enum TemplateType {
+  CELL = 'CELL',
+  FILTERCELL = 'FILTERCELL',
+}
+
+interface TemplatesData {
+  templatesObservables: Record<string, Observable<TemplateRef<any> | null>>
+  idSuffix: Array<string>
+  columnTypeTemplates: Record<ColumnType, TemplateRef<any> | undefined>
 }
 
 export type Filter = { columnId: string; value: string }
@@ -43,6 +55,8 @@ export type Sort = { sortColumn: string; sortDirection: DataSortDirection }
   styleUrls: ['./data-table.component.scss'],
 })
 export class DataTableComponent extends DataSortBase implements OnInit, AfterContentInit {
+  TemplateType = TemplateType
+
   _rows$ = new BehaviorSubject<Row[]>([])
   @Input()
   get rows(): Row[] {
@@ -185,6 +199,41 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   @ContentChild('translationKeyCell') translationKeyCellChildTemplate: TemplateRef<any> | undefined
   get _translationKeyCell(): TemplateRef<any> | undefined {
     return this.translationKeyCellTemplate || this.translationKeyCellChildTemplate
+  }
+  @Input() stringFilterCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('stringFilterCell') stringFilterCellChildTemplate: TemplateRef<any> | undefined
+  get _stringFilterCell(): TemplateRef<any> | undefined {
+    return this.stringFilterCellTemplate || this.stringFilterCellChildTemplate
+  }
+  @Input() numberFilterCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('numberFilterCell') numberFilterCellChildTemplate: TemplateRef<any> | undefined
+  get _numberFilterCell(): TemplateRef<any> | undefined {
+    return this.numberFilterCellTemplate || this.numberFilterCellChildTemplate
+  }
+  @Input() customFilterCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('customFilterCell') customFilterCellChildTemplate: TemplateRef<any> | undefined
+  get _customFilterCell(): TemplateRef<any> | undefined {
+    return this.customFilterCellTemplate || this.customFilterCellChildTemplate
+  }
+  @Input() dateFilterCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('dateFilterCell') dateFilterCellChildTemplate: TemplateRef<any> | undefined
+  get _dateFilterCell(): TemplateRef<any> | undefined {
+    return this.dateFilterCellTemplate || this.dateFilterCellChildTemplate
+  }
+  @Input() relativeDateFilterCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('relativeDateFilterCell') relativeDateFilterCellChildTemplate: TemplateRef<any> | undefined
+  get _relativeDateFilterCell(): TemplateRef<any> | undefined {
+    return this.relativeDateFilterCellTemplate || this.relativeDateFilterCellChildTemplate
+  }
+  @Input() filterCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('filterCell') filterCellChildTemplate: TemplateRef<any> | undefined
+  get _filterCell(): TemplateRef<any> | undefined {
+    return this.filterCellTemplate || this.filterCellChildTemplate
+  }
+  @Input() translationKeyFilterCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('translationKeyFilterCell') translationKeyFilterCellChildTemplate: TemplateRef<any> | undefined
+  get _translationKeyFilterCell(): TemplateRef<any> | undefined {
+    return this.translationKeyFilterCellTemplate || this.translationKeyFilterCellChildTemplate
   }
 
   _additionalActions$ = new BehaviorSubject<DataAction[]>([])
@@ -382,6 +431,27 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         case 'translationKeyCell':
           this.translationKeyCellChildTemplate = item.template
           break
+        case 'stringFilterCell':
+          this.stringFilterCellChildTemplate = item.template
+          break
+        case 'numberFilterCell':
+          this.numberFilterCellChildTemplate = item.template
+          break
+        case 'customFilterCell':
+          this.customFilterCellChildTemplate = item.template
+          break
+        case 'dateFilterCell':
+          this.dateFilterCellChildTemplate = item.template
+          break
+        case 'relativeDateFilterCell':
+          this.relativeDateFilterCellChildTemplate = item.template
+          break
+        case 'filterCellTemplate':
+          this.filterCellChildTemplate = item.template
+          break
+        case 'translationKeyFilterCell':
+          this.translationKeyFilterCellChildTemplate = item.template
+          break
       }
     })
   }
@@ -510,55 +580,88 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return isValidDate(d)
   }
 
-  templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
+  cellTemplatesData: TemplatesData = {
+    templatesObservables: {},
+    idSuffix: ['IdTableCell', 'IdCell'],
+    columnTypeTemplates: {
+      [ColumnType.DATE]: this._dateCell,
+      [ColumnType.NUMBER]: this._numberCell,
+      [ColumnType.RELATIVE_DATE]: this._relativeDateCell,
+      [ColumnType.STRING]: this._stringCell,
+      [ColumnType.TRANSLATION_KEY]: this._translationKeyCell,
+      [ColumnType.CUSTOM]: this._customCell,
+    },
+  }
 
-  getTemplate(column: DataTableColumn): Observable<TemplateRef<any> | null> {
-    if (!this.templatesObservables[column.id]) {
-      this.templatesObservables[column.id] = combineLatest([
+  filterTemplatesData: TemplatesData = {
+    templatesObservables: {},
+    idSuffix: ['IdTableFilterCell', 'IdFilterCell'],
+    columnTypeTemplates: {
+      [ColumnType.DATE]: this._dateFilterCell,
+      [ColumnType.NUMBER]: this._numberFilterCell,
+      [ColumnType.RELATIVE_DATE]: this._relativeDateFilterCell,
+      [ColumnType.STRING]: this._stringFilterCell,
+      [ColumnType.TRANSLATION_KEY]: this._translationKeyFilterCell,
+      [ColumnType.CUSTOM]: this._customFilterCell,
+    },
+  }
+
+  templatesDataMap: Record<TemplateType, TemplatesData> = {
+    [TemplateType.CELL]: this.cellTemplatesData,
+    [TemplateType.FILTERCELL]: this.filterTemplatesData,
+  }
+
+  getTemplate(column: DataTableColumn, type: TemplateType): Observable<TemplateRef<any> | null> {
+    const templatesData = this.templatesDataMap[type]
+
+    if (!templatesData.templatesObservables[column.id]) {
+      templatesData.templatesObservables[column.id] = combineLatest([
         this.templates$,
         this.viewTemplates$,
         this.parentTemplates$,
       ]).pipe(
         map(([t, vt, pt]) => {
           const templates = [...(t ?? []), ...(vt ?? []), ...(pt ?? [])]
-          const columnTemplate =
-            templates.find((template) => template.name === column.id + 'IdTableCell')?.template ??
-            templates.find((template) => template.name === column.id + 'IdCell')?.template
+          const columnTemplate = templates.find((template) =>
+            templatesData.idSuffix.includes(template.name?.replace(column.id, '') ?? '')
+          )?.template
           if (columnTemplate) {
             return columnTemplate
           }
           switch (column.columnType) {
             case ColumnType.DATE:
               return (
-                this._dateCell ?? templates.find((template) => template.name === 'defaultDateCell')?.template ?? null
+                templatesData.columnTypeTemplates[ColumnType.DATE] ??
+                templates.find((template) => template.name === 'defaultDateCell')?.template ??
+                null
               )
             case ColumnType.NUMBER:
               return (
-                this._numberCell ??
+                templatesData.columnTypeTemplates[ColumnType.NUMBER] ??
                 templates.find((template) => template.name === 'defaultNumberCell')?.template ??
                 null
               )
             case ColumnType.RELATIVE_DATE:
               return (
-                this._relativeDateCell ??
+                templatesData.columnTypeTemplates[ColumnType.RELATIVE_DATE] ??
                 templates.find((template) => template.name === 'defaultRelativeDateCell')?.template ??
                 null
               )
             case ColumnType.TRANSLATION_KEY:
               return (
-                this._translationKeyCell ??
+                templatesData.columnTypeTemplates[ColumnType.TRANSLATION_KEY] ??
                 templates.find((template) => template.name === 'defaultTranslationKeyCell')?.template ??
                 null
               )
             case ColumnType.CUSTOM:
               return (
-                this._customCell ??
+                templatesData.columnTypeTemplates[ColumnType.CUSTOM] ??
                 templates.find((template) => template.name === 'defaultCustomCell')?.template ??
                 null
               )
             default:
               return (
-                this._stringCell ??
+                templatesData.columnTypeTemplates[ColumnType.STRING] ??
                 templates.find((template) => template.name === 'defaultStringCell')?.template ??
                 null
               )
@@ -567,10 +670,16 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         debounceTime(50)
       )
     }
-    return this.templatesObservables[column.id]
+    return templatesData.templatesObservables[column.id]
   }
 
   resolveFieldData(object: any, key: any) {
     return ObjectUtils.resolveFieldData(object, key)
+  }
+
+  getRowObjectFromMultiselectItem(value: MultiSelectItem, column: DataTableColumn) {
+    return {
+      [column.id]: value.label,
+    }
   }
 }
