@@ -288,6 +288,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   }
 
   columnType = ColumnType
+  templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
 
   constructor(
     @Inject(LOCALE_ID) locale: string,
@@ -537,7 +538,16 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return this.columns.filter((c) => !ids.includes(c.id))
   }
 
-  templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
+  findTemplate(templates: PrimeTemplate[], names: string[]): PrimeTemplate | undefined {
+    for (let index = 0; index < names.length; index++) {
+      const name = names[index]
+      const template = templates.find((template) => template.name === name)
+      if (template) {
+        return template
+      }
+    }
+    return undefined
+  }
 
   getTemplate(column: DataTableColumn): Observable<TemplateRef<any> | null> {
     if (!this.templatesObservables[column.id]) {
@@ -556,37 +566,37 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
             case ColumnType.DATE:
               return (
                 this._dateListValue ??
-                templates.find((template) => template.name === 'defaultDateListValue')?.template ??
+                this.findTemplate(templates, ['dateListValue', 'defaultDateListValue'])?.template ??
                 null
               )
             case ColumnType.NUMBER:
               return (
                 this._numberListValue ??
-                templates.find((template) => template.name === 'defaultNumberListValue')?.template ??
+                this.findTemplate(templates, ['numberListValue', 'defaultNumberListValue'])?.template ??
                 null
               )
             case ColumnType.RELATIVE_DATE:
               return (
                 this._relativeDateListValue ??
-                templates.find((template) => template.name === 'defaultRelativeDateListValue')?.template ??
+                this.findTemplate(templates, ['relativeDateListValue', 'defaultRelativeDateListValue'])?.template ??
                 null
               )
             case ColumnType.TRANSLATION_KEY:
               return (
                 this._translationKeyListValue ??
-                templates.find((template) => template.name === 'defaultTranslationListValue')?.template ??
+                this.findTemplate(templates, ['translationListValue', 'defaultTranslationListValue'])?.template ??
                 null
               )
             case ColumnType.CUSTOM:
               return (
                 this._customListValue ??
-                templates.find((template) => template.name === 'defaultCustomListValue')?.template ??
+                this.findTemplate(templates, ['customListValue', 'defaultCustomListValue'])?.template ??
                 null
               )
             default:
               return (
                 this._stringListValue ??
-                templates.find((template) => template.name === 'defaultStringListValue')?.template ??
+                this.findTemplate(templates, ['stringListValue', 'defaultStringListValue'])?.template ??
                 null
               )
           }

@@ -264,6 +264,8 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return dv?.selectionChangedObserved || dv?.selectionChanged.observed || this.selectionChanged.observed
   }
 
+  templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
+
   constructor(
     @Inject(LOCALE_ID) locale: string,
     translateService: TranslateService,
@@ -510,7 +512,16 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return isValidDate(d)
   }
 
-  templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
+  findTemplate(templates: PrimeTemplate[], names: string[]): PrimeTemplate | undefined {
+    for (let index = 0; index < names.length; index++) {
+      const name = names[index]
+      const template = templates.find((template) => template.name === name)
+      if (template) {
+        return template
+      }
+    }
+    return undefined
+  }
 
   getTemplate(column: DataTableColumn): Observable<TemplateRef<any> | null> {
     if (!this.templatesObservables[column.id]) {
@@ -521,45 +532,50 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       ]).pipe(
         map(([t, vt, pt]) => {
           const templates = [...(t ?? []), ...(vt ?? []), ...(pt ?? [])]
-          const columnTemplate =
-            templates.find((template) => template.name === column.id + 'IdTableCell')?.template ??
-            templates.find((template) => template.name === column.id + 'IdCell')?.template
+          const columnTemplate = this.findTemplate(templates, [
+            column.id + 'IdCell',
+            column.id + 'IdTableCell',
+          ])?.template
           if (columnTemplate) {
             return columnTemplate
           }
           switch (column.columnType) {
             case ColumnType.DATE:
               return (
-                this._dateCell ?? templates.find((template) => template.name === 'defaultDateCell')?.template ?? null
+                this._dateCell ??
+                this.findTemplate(templates, ['dateCell', 'dateTableCell', 'defaultDateCell'])?.template ??
+                null
               )
             case ColumnType.NUMBER:
               return (
                 this._numberCell ??
-                templates.find((template) => template.name === 'defaultNumberCell')?.template ??
+                this.findTemplate(templates, ['numberCell', 'numberTableCell', 'defaultNumberCell'])?.template ??
                 null
               )
             case ColumnType.RELATIVE_DATE:
               return (
                 this._relativeDateCell ??
-                templates.find((template) => template.name === 'defaultRelativeDateCell')?.template ??
+                this.findTemplate(templates, ['relativeDateCell', 'relativeDateTableCell', 'defaultRelativeDateCell'])
+                  ?.template ??
                 null
               )
             case ColumnType.TRANSLATION_KEY:
               return (
                 this._translationKeyCell ??
-                templates.find((template) => template.name === 'defaultTranslationKeyCell')?.template ??
+                this.findTemplate(templates, ['translationCell', 'translationTableCell', 'defaultTranslationKeyCell'])
+                  ?.template ??
                 null
               )
             case ColumnType.CUSTOM:
               return (
                 this._customCell ??
-                templates.find((template) => template.name === 'defaultCustomCell')?.template ??
+                this.findTemplate(templates, ['customCell', 'customTableCell', 'defaultCustomCell'])?.template ??
                 null
               )
             default:
               return (
                 this._stringCell ??
-                templates.find((template) => template.name === 'defaultStringCell')?.template ??
+                this.findTemplate(templates, ['stringCell', 'stringTableCell', 'defaultStringCell'])?.template ??
                 null
               )
           }
