@@ -106,6 +106,9 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   @ContentChild('listItemSubtitleLines') listItemSubtitleLines: TemplateRef<any> | undefined
   @ContentChild('stringTableCell') stringTableCell: TemplateRef<any> | undefined
   @ContentChild('numberTableCell') numberTableCell: TemplateRef<any> | undefined
+  /**
+   * @deprecated Will be removed with the next major v6 upgrade
+   */
   @ContentChild('customTableCell') customTableCell: TemplateRef<any> | undefined
   @ContentChild('gridItem') gridItem: TemplateRef<any> | undefined
   @ContentChild('listItem') listItem: TemplateRef<any> | undefined
@@ -114,6 +117,9 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   @ContentChild('translationKeyListValue') translationKeyListValue: TemplateRef<any> | undefined
   @ContentChild('numberListValue') numberListValue: TemplateRef<any> | undefined
   @ContentChild('relativeDateListValue') relativeDateListValue: TemplateRef<any> | undefined
+  /**
+   * @deprecated Will be removed with the next major v6 upgrade
+   */
   @ContentChild('customListValue') customListValue: TemplateRef<any> | undefined
   @ContentChild('stringListValue') stringListValue: TemplateRef<any> | undefined
   @ContentChild('dateListValue') dateListValue: TemplateRef<any> | undefined
