@@ -563,7 +563,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
             case ColumnType.TRANSLATION_KEY:
               return (
                 this._translationKeyCell ??
-                this.findTemplate(templates, ['translationCell', 'translationTableCell', 'defaultTranslationKeyCell'])
+                this.findTemplate(templates, ['translationKeyCell', 'translationKeyTableCell', 'defaultTranslationKeyCell'])
                   ?.template ??
                 null
               )
