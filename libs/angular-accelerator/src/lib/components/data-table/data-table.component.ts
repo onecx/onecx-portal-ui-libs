@@ -168,11 +168,11 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
 
   /**
-   * @deprecated
+   * @deprecated Will be removed with the next major v6 upgrade
    */
   @Input() customCellTemplate: TemplateRef<any> | undefined
   /**
-   * @deprecated
+   * @deprecated Will be removed with the next major v6 upgrade
    */
   @ContentChild('customCell') customCellChildTemplate: TemplateRef<any> | undefined
   get _customCell(): TemplateRef<any> | undefined {
@@ -677,7 +677,11 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         break
     }
 
-    return template ?? this.findTemplate(templates, this.templatesDataMap[templateType].templateNames[columnType])?.template ?? null
+    return (
+      template ??
+      this.findTemplate(templates, this.templatesDataMap[templateType].templateNames[columnType])?.template ??
+      null
+    )
   }
 
   getTemplate(column: DataTableColumn, templateType: TemplateType): Observable<TemplateRef<any> | null> {

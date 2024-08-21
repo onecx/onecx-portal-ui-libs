@@ -103,8 +103,13 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   get _numberTableCell(): TemplateRef<any> | undefined {
     return this.numberTableCellTemplate || this.numberTableCellChildTemplate
   }
-
+  /**
+   * @deprecated Will be removed with the next major v6 upgrade
+   */
   @Input() customTableCellTemplate: TemplateRef<any> | undefined
+    /**
+   * @deprecated Will be removed with the next major v6 upgrade
+   */
   @ContentChild('customTableCell') customTableCellChildTemplate: TemplateRef<any> | undefined
   get _customTableCell(): TemplateRef<any> | undefined {
     return this.customTableCellTemplate || this.customTableCellChildTemplate
@@ -227,7 +232,13 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   get _relativeDateListValue(): TemplateRef<any> | undefined {
     return this.relativeDateListValueTemplate || this.relativeDateListValueChildTemplate
   }
+    /**
+   * @deprecated Will be removed with the next major v6 upgrade
+   */
   @Input() customListValueTemplate: TemplateRef<any> | undefined
+    /**
+   * @deprecated Will be removed with the next major v6 upgrade
+   */
   @ContentChild('customListValue') customListValueChildTemplate: TemplateRef<any> | undefined
   get _customListValue(): TemplateRef<any> | undefined {
     return this.customListValueTemplate || this.customListValueChildTemplate
