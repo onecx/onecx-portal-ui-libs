@@ -3,6 +3,7 @@ import {Route} from './route.model'
 
 export interface Workspace {
   id?: string
+  displayName?: string
   /**
    * @deprecated will be renamed to workspaceName
    */
