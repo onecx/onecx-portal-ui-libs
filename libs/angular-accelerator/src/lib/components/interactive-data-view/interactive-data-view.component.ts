@@ -199,7 +199,9 @@ export class InteractiveDataViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.selectedGroupKey = this.defaultGroupKey
-    this.displayedColumns = this.columns
+    if(!this.displayedColumns || this.displayedColumns.length === 0) {
+      this.displayedColumns = this.columns
+    }
     if (this.defaultGroupKey) {
       this.displayedColumns = this.columns.filter((column) =>
         column.predefinedGroupKeys?.includes(this.defaultGroupKey)
@@ -343,4 +345,5 @@ export class InteractiveDataViewComponent implements OnInit {
     this.pageSize = event
     this.pageSizeChanged.emit(event)
   }
+
 }

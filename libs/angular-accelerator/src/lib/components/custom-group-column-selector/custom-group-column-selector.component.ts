@@ -14,6 +14,7 @@ export interface CustomGroupColumnSelectorComponentState {
     position: 'left' | 'right'
   }
   displayedColumns?: DataTableColumn[]
+  activeColumnGroupKey?: string
 }
 
 @Component({
@@ -99,6 +100,7 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
           frozen: this.frozenActionColumnModel,
           position: this.actionColumnPositionModel,
         },
+        activeColumnGroupKey: undefined
       })
     }
 
