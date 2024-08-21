@@ -30,7 +30,7 @@ export function createStateRehydrationEffect<
   actions$: Actions,
   router: Router,
   navigationToComponent: Type<any>,
-  actionToDispatch: EventCreator<PropsCreator, T>,
+  actionToDispatch: any,
   localStorageItemKey: string
 ) {
   return createEffect(() => {
@@ -40,7 +40,7 @@ export function createStateRehydrationEffect<
       filterOutOnlyQueryParamsChanged(router),
       map(() => {
         const item = localStorage.getItem(localStorageItemKey)
-        return actionToDispatch(JSON.parse(item ?? 'undefined'))
+        return actionToDispatch(JSON.parse(item ?? 'null'))
       })
     )
   })
@@ -48,7 +48,7 @@ export function createStateRehydrationEffect<
 
 export function createSaveStateEffect<PropsCreator extends ActionCreatorProps<unknown> | Creator, T extends string>(
   actions$: Actions,
-  listenForAction: EventCreator<PropsCreator, T>,
+  listenForAction: any,
   localStorageItemKey: string
 ) {
   return createEffect(
@@ -56,7 +56,8 @@ export function createSaveStateEffect<PropsCreator extends ActionCreatorProps<un
       return actions$.pipe(
         ofType(listenForAction),
         tap((value) => {
-          localStorage.setItem(localStorageItemKey, JSON.stringify(value))
+          const {type, ...payload} = value
+          localStorage.setItem(localStorageItemKey, JSON.stringify(payload))
         })
       )
     },
