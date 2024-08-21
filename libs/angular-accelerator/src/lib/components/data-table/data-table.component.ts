@@ -211,7 +211,13 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   get _numberFilterCell(): TemplateRef<any> | undefined {
     return this.numberFilterCellTemplate || this.numberFilterCellChildTemplate
   }
+  /**
+   * @deprecated Will be removed with the next major v6 upgrade
+   */
   @Input() customFilterCellTemplate: TemplateRef<any> | undefined
+  /**
+   * @deprecated Will be removed with the next major v6 upgrade
+   */
   @ContentChild('customFilterCell') customFilterCellChildTemplate: TemplateRef<any> | undefined
   get _customFilterCell(): TemplateRef<any> | undefined {
     return this.customFilterCellTemplate || this.customFilterCellChildTemplate

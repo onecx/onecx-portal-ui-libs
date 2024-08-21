@@ -129,6 +129,9 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   @ContentChild('translationKeyTableFilterCell') translationKeyTableFilterCell: TemplateRef<any> | undefined
   @ContentChild('stringTableFilterCell') stringTableFilterCell: TemplateRef<any> | undefined
   @ContentChild('numberTableFilterCell') numberTableFilterCell: TemplateRef<any> | undefined
+  /**
+   * @deprecated Will be removed with the next major v6 upgrade
+   */
   @ContentChild('customTableFilterCell') customTableFilterCell: TemplateRef<any> | undefined
 
   templates$: BehaviorSubject<QueryList<PrimeTemplate> | undefined> = new BehaviorSubject<

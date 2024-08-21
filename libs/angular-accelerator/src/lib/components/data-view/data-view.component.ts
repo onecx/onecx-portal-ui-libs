@@ -107,7 +107,7 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
    * @deprecated Will be removed with the next major v6 upgrade
    */
   @Input() customTableCellTemplate: TemplateRef<any> | undefined
-    /**
+  /**
    * @deprecated Will be removed with the next major v6 upgrade
    */
   @ContentChild('customTableCell') customTableCellChildTemplate: TemplateRef<any> | undefined
@@ -232,11 +232,11 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   get _relativeDateListValue(): TemplateRef<any> | undefined {
     return this.relativeDateListValueTemplate || this.relativeDateListValueChildTemplate
   }
-    /**
+  /**
    * @deprecated Will be removed with the next major v6 upgrade
    */
   @Input() customListValueTemplate: TemplateRef<any> | undefined
-    /**
+  /**
    * @deprecated Will be removed with the next major v6 upgrade
    */
   @ContentChild('customListValue') customListValueChildTemplate: TemplateRef<any> | undefined
@@ -285,7 +285,13 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   get _numberTableFilterCell(): TemplateRef<any> | undefined {
     return this.numberTableFilterCellTemplate || this.numberTableFilterCellChildTemplate
   }
+  /**
+   * @deprecated Will be removed with the next major v6 upgrade
+   */
   @Input() customTableFilterCellTemplate: TemplateRef<any> | undefined
+  /**
+   * @deprecated Will be removed with the next major v6 upgrade
+   */
   @ContentChild('customTableFilterCell') customTableFilterCellChildTemplate: TemplateRef<any> | undefined
   get _customTableFilterCell(): TemplateRef<any> | undefined {
     return this.customTableFilterCellTemplate || this.customTableFilterCellChildTemplate
