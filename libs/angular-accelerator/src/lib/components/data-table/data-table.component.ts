@@ -43,6 +43,7 @@ export enum TemplateType {
 interface TemplatesData {
   templatesObservables: Record<string, Observable<TemplateRef<any> | null>>
   idSuffix: Array<string>
+  templateNames: Record<ColumnType, Array<string>>
 }
 
 export type Filter = { columnId: string; value: string }
@@ -133,6 +134,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   @Input() viewActionEnabledField: string | undefined
   @Input() editActionVisibleField: string | undefined
   @Input() editActionEnabledField: string | undefined
+  @Input() selectionEnabledField: string | undefined
   @Input() paginator = true
   @Input() page = 0
   @Input()
@@ -311,6 +313,8 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     const dv = this.injector.get('DataViewComponent', null)
     return dv?.selectionChangedObserved || dv?.selectionChanged.observed || this.selectionChanged.observed
   }
+
+  templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
 
   constructor(
     @Inject(LOCALE_ID) locale: string,
@@ -582,11 +586,31 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   cellTemplatesData: TemplatesData = {
     templatesObservables: {},
     idSuffix: ['IdTableCell', 'IdCell'],
+    templateNames: {
+      [ColumnType.DATE]: ['dateCell', 'dateTableCell', 'defaultDateCell'],
+      [ColumnType.NUMBER]: ['numberCell', 'numberTableCell', 'defaultNumberCell'],
+      [ColumnType.RELATIVE_DATE]: ['relativeDateCell', 'relativeDateTableCell', 'defaultRelativeDateCell'],
+      [ColumnType.TRANSLATION_KEY]: ['translationKeyCell', 'translationKeyTableCell', 'defaultTranslationKeyCell'],
+      [ColumnType.CUSTOM]: ['customCell', 'customTableCell', 'defaultCustomCell'],
+      [ColumnType.STRING]: ['stringCell', 'stringTableCell', 'defaultStringCell'],
+    },
   }
 
   filterTemplatesData: TemplatesData = {
     templatesObservables: {},
     idSuffix: ['IdTableFilterCell', 'IdFilterCell'],
+    templateNames: {
+      [ColumnType.DATE]: ['dateFilterCell', 'dateTableFilterCell', 'defaultDateCell'],
+      [ColumnType.NUMBER]: ['numberFilterCell', 'numberTableFilterCell', 'defaultNumberCell'],
+      [ColumnType.RELATIVE_DATE]: ['relativeDateFilterCell', 'relativeDateTableFilterCell', 'defaultRelativeDateCell'],
+      [ColumnType.TRANSLATION_KEY]: [
+        'translationKeyFilterCell',
+        'translationKeyTableFilterCell',
+        'defaultTranslationKeyCell',
+      ],
+      [ColumnType.CUSTOM]: ['customFilterCell', 'customTableFilterCell', 'defaultCustomCell'],
+      [ColumnType.STRING]: ['stringFilterCell', 'stringTableFilterCell', 'defaultStringCell'],
+    },
   }
 
   templatesDataMap: Record<TemplateType, TemplatesData> = {
@@ -594,72 +618,66 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     [TemplateType.FILTERCELL]: this.filterTemplatesData,
   }
 
-  getColumnTypeTemplate(
-    templates: PrimeTemplate[],
-    columnType: ColumnType,
-    templateType: TemplateType
-  ) {
+  findTemplate(templates: PrimeTemplate[], names: string[]): PrimeTemplate | undefined {
+    for (let index = 0; index < names.length; index++) {
+      const name = names[index]
+      const template = templates.find((template) => template.name === name)
+      if (template) {
+        return template
+      }
+    }
+    return undefined
+  }
+
+  getColumnTypeTemplate(templates: PrimeTemplate[], columnType: ColumnType, templateType: TemplateType) {
     let template: TemplateRef<any> | undefined
-    let defaultTemplateName: string
 
     switch (templateType) {
       case TemplateType.CELL:
         switch (columnType) {
           case ColumnType.DATE:
             template = this._dateCell
-            defaultTemplateName = 'defaultDateCell'
             break
           case ColumnType.NUMBER:
             template = this._numberCell
-            defaultTemplateName = 'defaultNumberCell'
             break
           case ColumnType.RELATIVE_DATE:
             template = this._relativeDateCell
-            defaultTemplateName = 'defaultRelativeDateCell'
             break
           case ColumnType.TRANSLATION_KEY:
             template = this._translationKeyCell
-            defaultTemplateName = 'defaultTranslationKeyCell'
             break
           case ColumnType.CUSTOM:
             template = this._customCell
-            defaultTemplateName = 'defaultCustomCell'
             break
           default:
             template = this._stringCell
-            defaultTemplateName = 'defaultStringCell'
         }
         break
       case TemplateType.FILTERCELL:
         switch (columnType) {
           case ColumnType.DATE:
             template = this._dateFilterCell
-            defaultTemplateName = 'defaultDateCell'
             break
           case ColumnType.NUMBER:
             template = this._numberFilterCell
-            defaultTemplateName = 'defaultNumberCell'
             break
           case ColumnType.RELATIVE_DATE:
             template = this._relativeDateFilterCell
-            defaultTemplateName = 'defaultRelativeDateCell'
             break
           case ColumnType.TRANSLATION_KEY:
             template = this._translationKeyFilterCell
-            defaultTemplateName = 'defaultTranslationKeyCell'
             break
           case ColumnType.CUSTOM:
             template = this._customFilterCell
-            defaultTemplateName = 'defaultCustomCell'
             break
           default:
             template = this._stringFilterCell
-            defaultTemplateName = 'defaultStringCell'
         }
         break
     }
 
-    return template ?? templates.find((template) => template.name === defaultTemplateName)?.template ?? null
+    return template ?? this.findTemplate(templates, this.templatesDataMap[templateType].templateNames[columnType])?.template ?? null
   }
 
   getTemplate(column: DataTableColumn, templateType: TemplateType): Observable<TemplateRef<any> | null> {
@@ -673,8 +691,9 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       ]).pipe(
         map(([t, vt, pt]) => {
           const templates = [...(t ?? []), ...(vt ?? []), ...(pt ?? [])]
-          const columnTemplate = templates.find((template) =>
-            templatesData.idSuffix.includes(template.name?.replace(column.id, '') ?? '')
+          const columnTemplate = this.findTemplate(
+            templates,
+            templatesData.idSuffix.map((suffix) => column.id + suffix)
           )?.template
           if (columnTemplate) {
             return columnTemplate

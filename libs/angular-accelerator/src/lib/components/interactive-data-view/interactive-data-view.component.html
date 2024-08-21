@@ -198,3 +198,108 @@
   <ng-container *ngIf="_listItem" [ngTemplateOutlet]="_listItem" [ngTemplateOutletContext]="{$implicit:item}">
   </ng-container
 ></ng-template>
+<ng-template #listValue let-rowObject="rowObject" let-column="column">
+  <ng-container
+    *ngIf="_listValue"
+    [ngTemplateOutlet]="_listValue"
+    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
+  >
+  </ng-container
+></ng-template>
+<ng-template #translationKeyListValue let-rowObject="rowObject" let-column="column">
+  <ng-container
+    *ngIf="_translationKeyListValue"
+    [ngTemplateOutlet]="_translationKeyListValue"
+    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
+  >
+  </ng-container
+></ng-template>
+<ng-template #numberListValue let-rowObject="rowObject" let-column="column">
+  <ng-container
+    *ngIf="_numberListValue"
+    [ngTemplateOutlet]="_numberListValue"
+    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
+  >
+  </ng-container
+></ng-template>
+<ng-template #relativeDateListValue let-rowObject="rowObject" let-column="column">
+  <ng-container
+    *ngIf="_relativeDateListValue"
+    [ngTemplateOutlet]="_relativeDateListValue"
+    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
+  >
+  </ng-container
+></ng-template>
+<ng-template #customListValue let-rowObject="rowObject" let-column="column">
+  <ng-container
+    *ngIf="_customListValue"
+    [ngTemplateOutlet]="_customListValue"
+    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
+  >
+  </ng-container
+></ng-template>
+<ng-template #stringListValue let-rowObject="rowObject" let-column="column">
+  <ng-container
+    *ngIf="_stringListValue"
+    [ngTemplateOutlet]="_stringListValue"
+    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
+  >
+  </ng-container
+></ng-template>
+<ng-template #dateListValue let-rowObject="rowObject" let-column="column">
+  <ng-container
+    *ngIf="_dateListValue"
+    [ngTemplateOutlet]="_dateListValue"
+    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
+  >
+  </ng-container
+></ng-template>
+
+<ng-template #stringTableFilterCell let-rowObject="rowObject" let-column="column">
+  <ng-container
+    *ngIf="_stringTableFilterCell"
+    [ngTemplateOutlet]="_stringTableFilterCell"
+    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
+  >
+  </ng-container
+></ng-template>
+<ng-template #numberTableFilterCell let-rowObject="rowObject" let-column="column">
+  <ng-container
+    *ngIf="_numberTableFilterCell"
+    [ngTemplateOutlet]="_numberTableFilterCell"
+    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
+  >
+  </ng-container
+></ng-template>
+<ng-template #customTableFilterCell let-rowObject="rowObject" let-column="column">
+  <ng-container
+    *ngIf="_customTableFilterCell"
+    [ngTemplateOutlet]="_customTableFilterCell"
+    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
+  >
+  </ng-container
+></ng-template>
+<ng-template #dateTableFilterCell let-rowObject="rowObject" let-column="column">
+  <ng-container
+    *ngIf="_dateTableFilterCell"
+    [ngTemplateOutlet]="_dateTableFilterCell"
+    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
+  >
+  </ng-container
+></ng-template>
+<ng-template #relativeDateTableFilterCell let-rowObject="rowObject" let-column="column">
+  <ng-container
+    *ngIf="_relativeDateTableFilterCell"
+    [ngTemplateOutlet]="_relativeDateTableFilterCell"
+    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
+  >
+  </ng-container
+></ng-template>
+<ng-template #translationKeyTableFilterCell let-rowObject="rowObject" let-column="column">
+  <ng-container
+    *ngIf="_translationKeyTableFilterCell"
+    [ngTemplateOutlet]="_translationKeyTableFilterCell"
+    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
+  >
+  </ng-container
+></ng-template>
