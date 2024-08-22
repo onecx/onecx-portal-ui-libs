@@ -4,8 +4,5 @@ module.exports = {
       options: {},
     },
     addons: ['@storybook/addon-a11y'],
-    docs: {
-      autodocs: true,
-    },
   }
   
