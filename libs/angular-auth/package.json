@@ -1,6 +1,7 @@
 {
   "name": "@onecx/angular-auth",
   "version": "5.7.0",
+  "license": "Apache-2.0",
   "peerDependencies": {
     "@angular-architects/module-federation": "18.0.4",
     "@angular/common": "^18.0.5",
