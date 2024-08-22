@@ -94,6 +94,13 @@
     [stringListValueTemplate]="_stringListValue ? stringListValue : undefined"
     [dateListValueTemplate]="_dateListValue ? dateListValue : undefined"
     [gridItemTemplate]="_gridItem ? gridItem  : undefined"
+    [tableFilterCellTemplate]="_tableFilterCell ? tableFilterCell : undefined"
+    [dateTableFilterCellTemplate]="_dateTableFilterCell ? dateTableFilterCell : undefined"
+    [customTableFilterCellTemplate]="_customTableFilterCell ? customTableFilterCell : undefined"
+    [numberTableFilterCellTemplate]="_numberTableFilterCell ? numberTableFilterCell : undefined"
+    [stringTableFilterCellTemplate]="_stringTableFilterCell ? stringTableFilterCell : undefined"
+    [relativeDateTableFilterCellTemplate]="_relativeDateTableFilterCell ? relativeDateTableFilterCell : undefined"
+    [translationKeyTableFilterCellTemplate]="_translationKeyTableFilterCell ? translationKeyTableFilterCell : undefined"
     (sorted)="sorting($event)"
     (filtered)="filtering($event)"
     [totalRecordsOnServer]="totalRecordsOnServer"
@@ -243,6 +250,55 @@
   <ng-container
     *ngIf="_dateListValue"
     [ngTemplateOutlet]="_dateListValue"
+    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
+  >
+  </ng-container
+></ng-template>
+
+<ng-template #stringTableFilterCell let-rowObject="rowObject" let-column="column">
+  <ng-container
+    *ngIf="_stringTableFilterCell"
+    [ngTemplateOutlet]="_stringTableFilterCell"
+    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
+  >
+  </ng-container
+></ng-template>
+<ng-template #numberTableFilterCell let-rowObject="rowObject" let-column="column">
+  <ng-container
+    *ngIf="_numberTableFilterCell"
+    [ngTemplateOutlet]="_numberTableFilterCell"
+    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
+  >
+  </ng-container
+></ng-template>
+<ng-template #customTableFilterCell let-rowObject="rowObject" let-column="column">
+  <ng-container
+    *ngIf="_customTableFilterCell"
+    [ngTemplateOutlet]="_customTableFilterCell"
+    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
+  >
+  </ng-container
+></ng-template>
+<ng-template #dateTableFilterCell let-rowObject="rowObject" let-column="column">
+  <ng-container
+    *ngIf="_dateTableFilterCell"
+    [ngTemplateOutlet]="_dateTableFilterCell"
+    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
+  >
+  </ng-container
+></ng-template>
+<ng-template #relativeDateTableFilterCell let-rowObject="rowObject" let-column="column">
+  <ng-container
+    *ngIf="_relativeDateTableFilterCell"
+    [ngTemplateOutlet]="_relativeDateTableFilterCell"
+    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
+  >
+  </ng-container
+></ng-template>
+<ng-template #translationKeyTableFilterCell let-rowObject="rowObject" let-column="column">
+  <ng-container
+    *ngIf="_translationKeyTableFilterCell"
+    [ngTemplateOutlet]="_translationKeyTableFilterCell"
     [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
   >
   </ng-container

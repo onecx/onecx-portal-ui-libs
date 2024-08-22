@@ -27,11 +27,23 @@ import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { ObjectUtils } from '../../utils/objectutils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
+import { MultiSelectItem } from 'primeng/multiselect'
 
 type Primitive = number | string | boolean | bigint | Date
 export type Row = {
   id: string | number
   [columnId: string]: unknown
+}
+
+export enum TemplateType {
+  CELL = 'CELL',
+  FILTERCELL = 'FILTERCELL',
+}
+
+interface TemplatesData {
+  templatesObservables: Record<string, Observable<TemplateRef<any> | null>>
+  idSuffix: Array<string>
+  templateNames: Record<ColumnType, Array<string>>
 }
 
 export type Filter = { columnId: string; value: string }
@@ -43,6 +55,8 @@ export type Sort = { sortColumn: string; sortDirection: DataSortDirection }
   styleUrls: ['./data-table.component.scss'],
 })
 export class DataTableComponent extends DataSortBase implements OnInit, AfterContentInit {
+  TemplateType = TemplateType
+
   _rows$ = new BehaviorSubject<Row[]>([])
   @Input()
   get rows(): Row[] {
@@ -190,6 +204,51 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   @ContentChild('translationKeyCell') translationKeyCellChildTemplate: TemplateRef<any> | undefined
   get _translationKeyCell(): TemplateRef<any> | undefined {
     return this.translationKeyCellTemplate || this.translationKeyCellChildTemplate
+  }
+  @Input() stringFilterCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('stringFilterCell') stringFilterCellChildTemplate: TemplateRef<any> | undefined
+  get _stringFilterCell(): TemplateRef<any> | undefined {
+    return this.stringFilterCellTemplate || this.stringFilterCellChildTemplate
+  }
+  @Input() numberFilterCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('numberFilterCell') numberFilterCellChildTemplate: TemplateRef<any> | undefined
+  get _numberFilterCell(): TemplateRef<any> | undefined {
+    return this.numberFilterCellTemplate || this.numberFilterCellChildTemplate
+  }
+  /**
+   * @deprecated Will be removed and instead to change the template of a specific column filter
+   * use the new approach instead by following the naming convention column id + IdFilterCell
+   * e.g. for a column with the id 'status' use pTemplate="statusIdFilterCell"
+   */
+  @Input() customFilterCellTemplate: TemplateRef<any> | undefined
+  /**
+   * @deprecated Will be removed and instead to change the template of a specific column filter
+   * use the new approach instead by following the naming convention column id + IdFilterCell
+   * e.g. for a column with the id 'status' use pTemplate="statusIdFilterCell"
+   */
+  @ContentChild('customFilterCell') customFilterCellChildTemplate: TemplateRef<any> | undefined
+  get _customFilterCell(): TemplateRef<any> | undefined {
+    return this.customFilterCellTemplate || this.customFilterCellChildTemplate
+  }
+  @Input() dateFilterCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('dateFilterCell') dateFilterCellChildTemplate: TemplateRef<any> | undefined
+  get _dateFilterCell(): TemplateRef<any> | undefined {
+    return this.dateFilterCellTemplate || this.dateFilterCellChildTemplate
+  }
+  @Input() relativeDateFilterCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('relativeDateFilterCell') relativeDateFilterCellChildTemplate: TemplateRef<any> | undefined
+  get _relativeDateFilterCell(): TemplateRef<any> | undefined {
+    return this.relativeDateFilterCellTemplate || this.relativeDateFilterCellChildTemplate
+  }
+  @Input() filterCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('filterCell') filterCellChildTemplate: TemplateRef<any> | undefined
+  get _filterCell(): TemplateRef<any> | undefined {
+    return this.filterCellTemplate || this.filterCellChildTemplate
+  }
+  @Input() translationKeyFilterCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('translationKeyFilterCell') translationKeyFilterCellChildTemplate: TemplateRef<any> | undefined
+  get _translationKeyFilterCell(): TemplateRef<any> | undefined {
+    return this.translationKeyFilterCellTemplate || this.translationKeyFilterCellChildTemplate
   }
 
   _additionalActions$ = new BehaviorSubject<DataAction[]>([])
@@ -389,6 +448,27 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         case 'translationKeyCell':
           this.translationKeyCellChildTemplate = item.template
           break
+        case 'stringFilterCell':
+          this.stringFilterCellChildTemplate = item.template
+          break
+        case 'numberFilterCell':
+          this.numberFilterCellChildTemplate = item.template
+          break
+        case 'customFilterCell':
+          this.customFilterCellChildTemplate = item.template
+          break
+        case 'dateFilterCell':
+          this.dateFilterCellChildTemplate = item.template
+          break
+        case 'relativeDateFilterCell':
+          this.relativeDateFilterCellChildTemplate = item.template
+          break
+        case 'filterCellTemplate':
+          this.filterCellChildTemplate = item.template
+          break
+        case 'translationKeyFilterCell':
+          this.translationKeyFilterCellChildTemplate = item.template
+          break
       }
     })
   }
@@ -517,6 +597,41 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return isValidDate(d)
   }
 
+  cellTemplatesData: TemplatesData = {
+    templatesObservables: {},
+    idSuffix: ['IdTableCell', 'IdCell'],
+    templateNames: {
+      [ColumnType.DATE]: ['dateCell', 'dateTableCell', 'defaultDateCell'],
+      [ColumnType.NUMBER]: ['numberCell', 'numberTableCell', 'defaultNumberCell'],
+      [ColumnType.RELATIVE_DATE]: ['relativeDateCell', 'relativeDateTableCell', 'defaultRelativeDateCell'],
+      [ColumnType.TRANSLATION_KEY]: ['translationKeyCell', 'translationKeyTableCell', 'defaultTranslationKeyCell'],
+      [ColumnType.CUSTOM]: ['customCell', 'customTableCell', 'defaultCustomCell'],
+      [ColumnType.STRING]: ['stringCell', 'stringTableCell', 'defaultStringCell'],
+    },
+  }
+
+  filterTemplatesData: TemplatesData = {
+    templatesObservables: {},
+    idSuffix: ['IdTableFilterCell', 'IdFilterCell'],
+    templateNames: {
+      [ColumnType.DATE]: ['dateFilterCell', 'dateTableFilterCell', 'defaultDateCell'],
+      [ColumnType.NUMBER]: ['numberFilterCell', 'numberTableFilterCell', 'defaultNumberCell'],
+      [ColumnType.RELATIVE_DATE]: ['relativeDateFilterCell', 'relativeDateTableFilterCell', 'defaultRelativeDateCell'],
+      [ColumnType.TRANSLATION_KEY]: [
+        'translationKeyFilterCell',
+        'translationKeyTableFilterCell',
+        'defaultTranslationKeyCell',
+      ],
+      [ColumnType.CUSTOM]: ['customFilterCell', 'customTableFilterCell', 'defaultCustomCell'],
+      [ColumnType.STRING]: ['stringFilterCell', 'stringTableFilterCell', 'defaultStringCell'],
+    },
+  }
+
+  templatesDataMap: Record<TemplateType, TemplatesData> = {
+    [TemplateType.CELL]: this.cellTemplatesData,
+    [TemplateType.FILTERCELL]: this.filterTemplatesData,
+  }
+
   findTemplate(templates: PrimeTemplate[], names: string[]): PrimeTemplate | undefined {
     for (let index = 0; index < names.length; index++) {
       const name = names[index]
@@ -528,70 +643,94 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return undefined
   }
 
-  getTemplate(column: DataTableColumn): Observable<TemplateRef<any> | null> {
-    if (!this.templatesObservables[column.id]) {
-      this.templatesObservables[column.id] = combineLatest([
+  getColumnTypeTemplate(templates: PrimeTemplate[], columnType: ColumnType, templateType: TemplateType) {
+    let template: TemplateRef<any> | undefined
+
+    switch (templateType) {
+      case TemplateType.CELL:
+        switch (columnType) {
+          case ColumnType.DATE:
+            template = this._dateCell
+            break
+          case ColumnType.NUMBER:
+            template = this._numberCell
+            break
+          case ColumnType.RELATIVE_DATE:
+            template = this._relativeDateCell
+            break
+          case ColumnType.TRANSLATION_KEY:
+            template = this._translationKeyCell
+            break
+          case ColumnType.CUSTOM:
+            template = this._customCell
+            break
+          default:
+            template = this._stringCell
+        }
+        break
+      case TemplateType.FILTERCELL:
+        switch (columnType) {
+          case ColumnType.DATE:
+            template = this._dateFilterCell
+            break
+          case ColumnType.NUMBER:
+            template = this._numberFilterCell
+            break
+          case ColumnType.RELATIVE_DATE:
+            template = this._relativeDateFilterCell
+            break
+          case ColumnType.TRANSLATION_KEY:
+            template = this._translationKeyFilterCell
+            break
+          case ColumnType.CUSTOM:
+            template = this._customFilterCell
+            break
+          default:
+            template = this._stringFilterCell
+        }
+        break
+    }
+
+    return (
+      template ??
+      this.findTemplate(templates, this.templatesDataMap[templateType].templateNames[columnType])?.template ??
+      null
+    )
+  }
+
+  getTemplate(column: DataTableColumn, templateType: TemplateType): Observable<TemplateRef<any> | null> {
+    const templatesData = this.templatesDataMap[templateType]
+
+    if (!templatesData.templatesObservables[column.id]) {
+      templatesData.templatesObservables[column.id] = combineLatest([
         this.templates$,
         this.viewTemplates$,
         this.parentTemplates$,
       ]).pipe(
         map(([t, vt, pt]) => {
           const templates = [...(t ?? []), ...(vt ?? []), ...(pt ?? [])]
-          const columnTemplate = this.findTemplate(templates, [
-            column.id + 'IdCell',
-            column.id + 'IdTableCell',
-          ])?.template
+          const columnTemplate = this.findTemplate(
+            templates,
+            templatesData.idSuffix.map((suffix) => column.id + suffix)
+          )?.template
           if (columnTemplate) {
             return columnTemplate
           }
-          switch (column.columnType) {
-            case ColumnType.DATE:
-              return (
-                this._dateCell ??
-                this.findTemplate(templates, ['dateCell', 'dateTableCell', 'defaultDateCell'])?.template ??
-                null
-              )
-            case ColumnType.NUMBER:
-              return (
-                this._numberCell ??
-                this.findTemplate(templates, ['numberCell', 'numberTableCell', 'defaultNumberCell'])?.template ??
-                null
-              )
-            case ColumnType.RELATIVE_DATE:
-              return (
-                this._relativeDateCell ??
-                this.findTemplate(templates, ['relativeDateCell', 'relativeDateTableCell', 'defaultRelativeDateCell'])
-                  ?.template ??
-                null
-              )
-            case ColumnType.TRANSLATION_KEY:
-              return (
-                this._translationKeyCell ??
-                this.findTemplate(templates, ['translationKeyCell', 'translationKeyTableCell', 'defaultTranslationKeyCell'])
-                  ?.template ??
-                null
-              )
-            case ColumnType.CUSTOM:
-              return (
-                this._customCell ??
-                this.findTemplate(templates, ['customCell', 'customTableCell', 'defaultCustomCell'])?.template ??
-                null
-              )
-            default:
-              return (
-                this._stringCell ??
-                this.findTemplate(templates, ['stringCell', 'stringTableCell', 'defaultStringCell'])?.template ??
-                null
-              )
-          }
+          return this.getColumnTypeTemplate(templates, column.columnType, templateType)
         }),
         debounceTime(50)
       )
     }
-    return this.templatesObservables[column.id]
+    return templatesData.templatesObservables[column.id]
   }
 
   resolveFieldData(object: any, key: any) {
     return ObjectUtils.resolveFieldData(object, key)
+  }
+
+  getRowObjectFromMultiselectItem(value: MultiSelectItem, column: DataTableColumn) {
+    return {
+      [column.id]: value.label,
+    }
   }
 }

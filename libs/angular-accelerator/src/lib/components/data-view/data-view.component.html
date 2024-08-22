@@ -165,6 +165,13 @@
     [relativeDateCellTemplate]="_relativeDateTableCell ? relativeDateCell : undefined"
     [cellTemplate]="_tableCell ? cell : undefined"
     [translationKeyCellTemplate]="_translationKeyTableCell ? translationKeyCell : undefined"
+    [filterCellTemplate]="_tableFilterCell ? filterCell : undefined"
+    [dateFilterCellTemplate]="_dateTableFilterCell ? dateFilterCell : undefined"
+    [customFilterCellTemplate]="_customTableFilterCell ? customFilterCell : undefined"
+    [numberFilterCellTemplate]="_numberTableFilterCell ? numberFilterCell : undefined"
+    [stringFilterCellTemplate]="_stringTableFilterCell ? stringFilterCell : undefined"
+    [relativeDateFilterCellTemplate]="_relativeDateTableFilterCell ? relativeDateFilterCell : undefined"
+    [translationKeyFilterCellTemplate]="_translationKeyTableFilterCell ? translationKeyFilterCell : undefined"
     (sorted)="sorting($event)"
     (filtered)="filtering($event)"
     [totalRecordsOnServer]="totalRecordsOnServer"
@@ -229,4 +236,60 @@
     >
     </ng-container
   ></ng-template>
+  <ng-template #stringFilterCell let-rowObject="rowObject" let-column="column">
+    <ng-container
+      *ngIf="_stringTableFilterCell"
+      [ngTemplateOutlet]="_stringTableFilterCell"
+      [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
+    >
+    </ng-container
+  ></ng-template>
+  <ng-template #filterCell let-rowObject="rowObject" let-column="column">
+    <ng-container
+      *ngIf="_tableFilterCell"
+      [ngTemplateOutlet]="_tableFilterCell"
+      [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
+    >
+    </ng-container>
+  </ng-template>
+  <ng-template #dateFilterCell let-rowObject="rowObject" let-column="column">
+    <ng-container
+      *ngIf="_dateTableFilterCell"
+      [ngTemplateOutlet]="_dateTableFilterCell"
+      [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
+    >
+    </ng-container>
+  </ng-template>
+  <ng-template #customFilterCell let-rowObject="rowObject" let-column="column">
+    <ng-container
+      *ngIf="_customTableFilterCell"
+      [ngTemplateOutlet]="_customTableFilterCell"
+      [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
+    >
+    </ng-container>
+  </ng-template>
+  <ng-template #numberFilterCell let-rowObject="rowObject" let-column="column">
+    <ng-container
+      *ngIf="_numberTableFilterCell"
+      [ngTemplateOutlet]="_numberTableFilterCell"
+      [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
+    >
+    </ng-container>
+  </ng-template>
+  <ng-template #relativeDateFilterCell let-rowObject="rowObject" let-column="column">
+    <ng-container
+      *ngIf="_relativeDateTableFilterCell"
+      [ngTemplateOutlet]="_relativeDateTableFilterCell"
+      [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
+    >
+    </ng-container>
+  </ng-template>
+  <ng-template #translationKeyFilterCell let-rowObject="rowObject" let-column="column">
+    <ng-container
+      *ngIf="_translationKeyTableFilterCell"
+      [ngTemplateOutlet]="_translationKeyTableFilterCell"
+      [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
+    >
+    </ng-container>
+  </ng-template>
 </div>

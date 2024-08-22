@@ -261,6 +261,53 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   get _dateListValue(): TemplateRef<any> | undefined {
     return this.dateListValueTemplate || this.dateListValueChildTemplate
   }
+  @Input() tableFilterCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('tableFilterCell') tableFilterCellChildTemplate: TemplateRef<any> | undefined
+  get _tableFilterCell(): TemplateRef<any> | undefined {
+    return this.tableFilterCellTemplate || this.tableFilterCellChildTemplate
+  }
+  @Input() dateTableFilterCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('dateFilterCell') dateTableFilterCellChildTemplate: TemplateRef<any> | undefined
+  get _dateTableFilterCell(): TemplateRef<any> | undefined {
+    return this.dateTableFilterCellTemplate || this.dateTableFilterCellChildTemplate
+  }
+  @Input() relativeDateTableFilterCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('relativeDateTableFilterCell') relativeDateTableFilterCellChildTemplate: TemplateRef<any> | undefined
+  get _relativeDateTableFilterCell(): TemplateRef<any> | undefined {
+    return this.relativeDateTableFilterCellTemplate || this.relativeDateTableFilterCellChildTemplate
+  }
+  @Input() translationKeyTableFilterCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('translationKeyTableFilterCell') translationKeyTableFilterCellChildTemplate:
+    | TemplateRef<any>
+    | undefined
+  get _translationKeyTableFilterCell(): TemplateRef<any> | undefined {
+    return this.translationKeyTableFilterCellTemplate || this.translationKeyTableFilterCellChildTemplate
+  }
+  @Input() stringTableFilterCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('stringTableFilterCell') stringTableFilterCellChildTemplate: TemplateRef<any> | undefined
+  get _stringTableFilterCell(): TemplateRef<any> | undefined {
+    return this.stringTableFilterCellTemplate || this.stringTableFilterCellChildTemplate
+  }
+  @Input() numberTableFilterCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('numberTableFilterCell') numberTableFilterCellChildTemplate: TemplateRef<any> | undefined
+  get _numberTableFilterCell(): TemplateRef<any> | undefined {
+    return this.numberTableFilterCellTemplate || this.numberTableFilterCellChildTemplate
+  }
+  /**
+   * @deprecated Will be removed and instead to change the template of a specific column filter
+   * use the new approach instead by following the naming convention column id + IdTableFilterCell
+   * e.g. for a column with the id 'status' in DataTable use pTemplate="statusIdTableFilterCell"
+   */
+  @Input() customTableFilterCellTemplate: TemplateRef<any> | undefined
+  /**
+   * @deprecated Will be removed and instead to change the template of a specific column filter
+   * use the new approach instead by following the naming convention column id + IdTableFilterCell
+   * e.g. for a column with the id 'status' in DataTable use pTemplate="statusIdTableFilterCell"
+   */
+  @ContentChild('customTableFilterCell') customTableFilterCellChildTemplate: TemplateRef<any> | undefined
+  get _customTableFilterCell(): TemplateRef<any> | undefined {
+    return this.customTableFilterCellTemplate || this.customTableFilterCellChildTemplate
+  }
 
   @Input() additionalActions: DataAction[] = []
 
@@ -390,6 +437,27 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
           break
         case 'dateListValue':
           this.dateListValueChildTemplate = item.template
+          break
+        case 'tableFilterCell':
+          this.tableFilterCellChildTemplate = item.template
+          break
+        case 'dateTableFilterCell':
+          this.dateTableFilterCellChildTemplate = item.template
+          break
+        case 'relativeDateTableFilterCell':
+          this.relativeDateTableFilterCellChildTemplate = item.template
+          break
+        case 'translationKeyTableFilterCell':
+          this.translationKeyTableFilterCellChildTemplate = item.template
+          break
+        case 'stringTableFilterCell':
+          this.stringTableFilterCellChildTemplate = item.template
+          break
+        case 'numberTableFilterCell':
+          this.numberTableFilterCellChildTemplate = item.template
+          break
+        case 'customTableFilterCell':
+          this.customTableFilterCellChildTemplate = item.template
           break
       }
     })
