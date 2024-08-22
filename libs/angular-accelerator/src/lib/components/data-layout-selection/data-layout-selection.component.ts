@@ -24,7 +24,7 @@ export class DataLayoutSelectionComponent implements OnInit {
   @Input() supportedViewLayouts: Array<string> = []
   @Input()
   set layout(value: 'grid' | 'list' | 'table') {
-    this.selectedViewLayout = this.viewingLayouts.find((v) => v.layout === value)
+    this.selectedViewLayout = ALL_VIEW_LAYOUTS.find((v) => v.layout === value)
   }
   get layout(): 'grid' | 'list' | 'table' {
     return this.selectedViewLayout?.layout || 'table'
@@ -37,7 +37,6 @@ export class DataLayoutSelectionComponent implements OnInit {
 
   ngOnInit(): void {
     this.viewingLayouts = ALL_VIEW_LAYOUTS.filter((vl) => this.supportedViewLayouts.includes(vl.layout))
-    this.layout = 'table'
   }
 
   onDataViewLayoutChange(event: { icon: PrimeIcon; layout: 'grid' | 'list' | 'table' }): void {

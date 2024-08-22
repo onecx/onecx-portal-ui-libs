@@ -67,8 +67,8 @@ export class DataTableHarness extends ContentContainerComponentHarness {
     return disabledActionButtonsCount === amount
   }
 
-  async columnIsFrozen(column: TestElement | null) {
-    if (column == null) {
+  async columnIsFrozen(column: TestElement | null | undefined) {
+    if (column === null || column === undefined) {
       throw new Error('Given column is null')
     }
     return await column.hasClass('p-frozen-column')
