@@ -1,5 +1,5 @@
 import { Component, ContentChild, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core'
-import { Observable, ReplaySubject, combineLatest, map, startWith, timestamp } from 'rxjs'
+import { BehaviorSubject, Observable, ReplaySubject, combineLatest, map, startWith, timestamp } from 'rxjs'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
@@ -85,7 +85,29 @@ export class InteractiveDataViewComponent implements OnInit {
   @Input() tablePaginator = true
   @Input() page = 0
   @Input() selectedRows: Row[] = []
-  @Input() displayedColumns: DataTableColumn[] = []
+  displayedColumnKeys$ = new BehaviorSubject<string[]>([])
+  displayedColumns$: Observable<DataTableColumn[]> | undefined
+  @Input() 
+  get displayedColumnKeys(): string[] {
+    return this.displayedColumnKeys$.getValue()
+  }
+  set displayedColumnKeys(value: string[]) {
+    this.displayedColumnKeys$.next(value)
+  }
+  /**
+   * @deprecated Use `displayedColumnKeys` and pass in column ids instead of `DataTableColumn` objects
+   */
+  @Input()
+  get displayedColumns(): DataTableColumn[] {
+      return (
+        (this.displayedColumnKeys
+          .map((d) => this.columns.find((c) => c.id === d))
+          .filter((d) => d) as DataTableColumn[]) ?? []
+      );
+  }
+  set displayedColumns(value: DataTableColumn[]) {
+    this.displayedColumnKeys$.next(value.map((d) => d.id))
+  }
   @Input() frozenActionColumn = false
   @Input() actionColumnPosition: 'left' | 'right' = 'right'
   @ContentChild('tableCell') tableCell: TemplateRef<any> | undefined
@@ -122,7 +144,9 @@ export class InteractiveDataViewComponent implements OnInit {
   @Output() viewItem = new EventEmitter<RowListGridData>()
   @Output() editItem = new EventEmitter<RowListGridData>()
   @Output() dataViewLayoutChange = new EventEmitter<'grid' | 'list' | 'table'>()
+  // TODO: Remove following line once displayedColumns (deprecated) has been removed
   @Output() displayedColumnsChange = new EventEmitter<DataTableColumn[]>()
+  @Output() displayedColumnKeysChange = new EventEmitter<string[]>()
   @Output() selectionChanged: EventEmitter<Row[]> = new EventEmitter()
 
   @Output() pageChanged: EventEmitter<number> = new EventEmitter()
@@ -200,14 +224,21 @@ export class InteractiveDataViewComponent implements OnInit {
   ngOnInit(): void {
     this.selectedGroupKey = this.defaultGroupKey
     if(!this.displayedColumns || this.displayedColumns.length === 0) {
-      this.displayedColumns = this.columns
+      this.displayedColumnKeys = this.columns.map((column) => column.id)
     }
     if (this.defaultGroupKey) {
-      this.displayedColumns = this.columns.filter((column) =>
+      this.displayedColumnKeys = this.columns.filter((column) =>
         column.predefinedGroupKeys?.includes(this.defaultGroupKey)
-      )
+      ).map((column) => column.id)
     }
+    // TODO: Remove following line once displayedColumns (deprecated) has been removed
     this.displayedColumnsChange.emit(this.displayedColumns)
+    this.displayedColumnKeysChange.emit(this.displayedColumnKeys)
+    this.displayedColumns$ = this.displayedColumnKeys$.pipe(map((columnKeys) => (
+      (columnKeys
+        .map((key) => this.columns.find((col) => col.id === key))
+        .filter((d) => d) as DataTableColumn[]) ?? []
+    )))
     if (!this.groupSelectionNoGroupSelectedKey) {
       this.groupSelectionNoGroupSelectedKey = 'OCX_INTERACTIVE_DATA_VIEW.NO_GROUP_SELECTED'
     }
@@ -280,9 +311,11 @@ export class InteractiveDataViewComponent implements OnInit {
   }
 
   onColumnGroupSelectionChange(event: GroupSelectionChangedEvent) {
-    this.displayedColumns = event.activeColumns
+    this.displayedColumnKeys = event.activeColumns.map((col) => col.id)
     this.selectedGroupKey = event.groupKey
+    // TODO: Remove following line once displayedColumns (deprecated) has been removed
     this.displayedColumnsChange.emit(this.displayedColumns)
+    this.displayedColumnKeysChange.emit(this.displayedColumnKeys)
   }
 
   registerEventListenerForDataView() {
@@ -320,9 +353,11 @@ export class InteractiveDataViewComponent implements OnInit {
   }
 
   onColumnSelectionChange(event: ColumnSelectionChangedEvent) {
-    this.displayedColumns = event.activeColumns
+    this.displayedColumnKeys = event.activeColumns.map((col) => col.id)
     this.selectedGroupKey = this.customGroupKey
+    // TODO: Remove following line once displayedColumns (deprecated) has been removed
     this.displayedColumnsChange.emit(this.displayedColumns)
+    this.displayedColumnKeysChange.emit(this.displayedColumnKeys)
   }
 
   onActionColumnConfigChange(event: ActionColumnChangedEvent) {
