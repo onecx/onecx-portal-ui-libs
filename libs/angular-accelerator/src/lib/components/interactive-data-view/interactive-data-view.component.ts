@@ -134,7 +134,9 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   @ContentChild('stringTableFilterCell') stringTableFilterCell: TemplateRef<any> | undefined
   @ContentChild('numberTableFilterCell') numberTableFilterCell: TemplateRef<any> | undefined
   /**
-   * @deprecated Will be removed with the next major v6 upgrade
+   * @deprecated Will be removed and instead to change the template of a specific column filter
+   * use the new approach instead by following the naming convention column id + IdTableFilterCell
+   * e.g. for a column with the id 'status' in DataTable use pTemplate="statusIdTableFilterCell"
    */
   @ContentChild('customTableFilterCell') customTableFilterCell: TemplateRef<any> | undefined
 

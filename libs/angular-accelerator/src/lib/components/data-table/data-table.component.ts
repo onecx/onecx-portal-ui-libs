@@ -216,11 +216,15 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this.numberFilterCellTemplate || this.numberFilterCellChildTemplate
   }
   /**
-   * @deprecated Will be removed with the next major v6 upgrade
+   * @deprecated Will be removed and instead to change the template of a specific column filter
+   * use the new approach instead by following the naming convention column id + IdFilterCell
+   * e.g. for a column with the id 'status' use pTemplate="statusIdFilterCell"
    */
   @Input() customFilterCellTemplate: TemplateRef<any> | undefined
   /**
-   * @deprecated Will be removed with the next major v6 upgrade
+   * @deprecated Will be removed and instead to change the template of a specific column filter
+   * use the new approach instead by following the naming convention column id + IdFilterCell
+   * e.g. for a column with the id 'status' use pTemplate="statusIdFilterCell"
    */
   @ContentChild('customFilterCell') customFilterCellChildTemplate: TemplateRef<any> | undefined
   get _customFilterCell(): TemplateRef<any> | undefined {
