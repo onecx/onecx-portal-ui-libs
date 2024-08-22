@@ -153,12 +153,16 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this.numberCellTemplate || this.numberCellChildTemplate
   }
 
-  /**
-   * @deprecated Will be removed with the next major v6 upgrade
+    /**
+   * @deprecated Will be removed and instead to change the template of a specific column
+   * use the new approach instead by following the naming convention column id + IdCell
+   * e.g. for a column with the id 'status' use pTemplate="statusIdCell"
    */
   @Input() customCellTemplate: TemplateRef<any> | undefined
-  /**
-   * @deprecated Will be removed with the next major v6 upgrade
+    /**
+   * @deprecated Will be removed and instead to change the template of a specific column
+   * use the new approach instead by following the naming convention column id + IdCell
+   * e.g. for a column with the id 'status' use pTemplate="statusIdCell"
    */
   @ContentChild('customCell') customCellChildTemplate: TemplateRef<any> | undefined
   get _customCell(): TemplateRef<any> | undefined {
