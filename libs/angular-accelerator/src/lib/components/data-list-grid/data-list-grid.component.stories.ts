@@ -57,17 +57,14 @@ const defaultComponentArgs = {
   emptyResultsMessage: 'No results',
   titleLineId: 'property1',
   layout: 'list',
-  deleteItem: ($event: any) => console.log('Delete table row ', $event),
-  editItem: ($event: any) => console.log('Edit table row ', $event),
-  viewItem: ($event: any) => console.log('View table row ', $event),
   deletePermission: 'TEST_MGMT#TEST_DELETE',
   editPermission: 'TEST_MGMT#TEST_EDIT',
   viewPermission: 'TEST_MGMT#TEST_VIEW',
 }
 const defaultArgTypes = {
   deleteItem: { action: 'deleteItem' },
-  editItem: { action: 'deleteItem' },
-  viewItem: { action: 'deleteItem' },
+  editItem: { action: 'editItem' },
+  viewItem: { action: 'viewItem' },
 }
 const extendedMockData = [
   {

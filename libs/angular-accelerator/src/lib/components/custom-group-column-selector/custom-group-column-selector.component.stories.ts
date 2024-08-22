@@ -92,7 +92,6 @@ export const Default = {
   render: Template,
   args: {
     ...defaultComponentArgs,
-    actionColumnConfigChanged: ($event: any) => console.log('Action column config changed ', $event),
   },
   argTypes: {
     actionColumnConfigChanged: { action: 'actionColumnConfigChanged' },

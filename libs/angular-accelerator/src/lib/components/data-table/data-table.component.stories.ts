@@ -44,6 +44,16 @@ const Template: StoryFn = (args) => ({
   props: args,
 })
 
+const dataTableActionsArgTypes = {
+  deleteTableRow: { action: 'deleteTableRow' },
+  editTableRow: { action: 'editTableRow' },
+  viewTableRow: { action: 'viewTableRow' },
+}
+
+const dataTableSelectionArgTypes = {
+  selectionChanged: { action: 'selectionChanged' },
+}
+
 const defaultComponentArgs: DataTableInputTypes = {
   columns: [
     {
@@ -112,24 +122,18 @@ export const NoData = {
 }
 
 export const WithRowSelection = {
-  argTypes: {
-    selectionChanged: { action: 'selectionChanged' },
-  },
+  argTypes: dataTableSelectionArgTypes,
   render: Template,
   args: {
     ...defaultComponentArgs,
-    selectionChanged: ($event: any) => console.log('Selection changed ', $event),
   },
 }
 
 export const WithRowSelectionAndDefaultSelection = {
-  argTypes: {
-    selectionChanged: { action: 'selectionChanged' },
-  },
+  argTypes: dataTableSelectionArgTypes,
   render: Template,
   args: {
     ...defaultComponentArgs,
-    selectionChanged: ($event: any) => console.log('Selection changed ', $event),
     selectedRows: [
       {
         id: 1,
@@ -228,17 +232,10 @@ export const ResponsiveWithScroll = {
 }
 
 export const ResponsiveWithScrollAndFrozenActionsColumn = {
-  argTypes: {
-    deleteTableRow: { action: 'deleteTableRow' },
-    editTableRow: { action: 'deleteTableRow' },
-    viewTableRow: { action: 'deleteTableRow' },
-  },
+  argTypes: dataTableActionsArgTypes,
   render: Template,
   args: {
     ...extendedComponentArgs,
-    deleteTableRow: ($event: any) => console.log('Delete table row ', $event),
-    editTableRow: ($event: any) => console.log('Edit table row ', $event),
-    viewTableRow: ($event: any) => console.log('View table row ', $event),
     deletePermission: 'TEST_MGMT#TEST_DELETE',
     editPermission: 'TEST_MGMT#TEST_EDIT',
     viewPermission: 'TEST_MGMT#TEST_VIEW',
@@ -248,17 +245,10 @@ export const ResponsiveWithScrollAndFrozenActionsColumn = {
 }
 
 export const WithConditionallyDisabledActionButtons = {
-  argTypes: {
-    deleteTableRow: { action: 'deleteTableRow' },
-    editTableRow: { action: 'deleteTableRow' },
-    viewTableRow: { action: 'deleteTableRow' },
-  },
+  argTypes: dataTableActionsArgTypes,
   render: Template,
   args: {
     ...defaultComponentArgs,
-    deleteTableRow: ($event: any) => console.log('Delete table row ', $event),
-    editTableRow: ($event: any) => console.log('Edit table row ', $event),
-    viewTableRow: ($event: any) => console.log('View table row ', $event),
     deleteActionEnabledField: 'available',
     editActionEnabledField: 'available',
     deletePermission: 'TEST_MGMT#TEST_DELETE',
@@ -268,17 +258,10 @@ export const WithConditionallyDisabledActionButtons = {
 }
 
 export const WithConditionallyHiddenActionButtons = {
-  argTypes: {
-    deleteTableRow: { action: 'deleteTableRow' },
-    editTableRow: { action: 'deleteTableRow' },
-    viewTableRow: { action: 'deleteTableRow' },
-  },
+  argTypes: dataTableActionsArgTypes,
   render: Template,
   args: {
     ...defaultComponentArgs,
-    deleteTableRow: ($event: any) => console.log('Delete table row ', $event),
-    editTableRow: ($event: any) => console.log('Edit table row ', $event),
-    viewTableRow: ($event: any) => console.log('View table row ', $event),
     deleteActionVisibleField: 'available',
     editActionVisibleField: 'available',
     deletePermission: 'TEST_MGMT#TEST_DELETE',
@@ -288,17 +271,10 @@ export const WithConditionallyHiddenActionButtons = {
 }
 
 export const WithAdditionalActions = {
-  argTypes: {
-    deleteTableRow: { action: 'deleteTableRow' },
-    editTableRow: { action: 'deleteTableRow' },
-    viewTableRow: { action: 'deleteTableRow' },
-  },
+  argTypes: dataTableActionsArgTypes,
   render: Template,
   args: {
     ...defaultComponentArgs,
-    deleteTableRow: ($event: any) => console.log('Delete table row ', $event),
-    editTableRow: ($event: any) => console.log('Edit table row ', $event),
-    viewTableRow: ($event: any) => console.log('View table row ', $event),
     deleteActionVisibleField: 'available',
     editActionVisibleField: 'available',
     deletePermission: 'TEST_MGMT#TEST_DELETE',
@@ -316,17 +292,10 @@ export const WithAdditionalActions = {
 }
 
 export const WithConditionallyEnabledAdditionalActions = {
-  argTypes: {
-    deleteTableRow: { action: 'deleteTableRow' },
-    editTableRow: { action: 'deleteTableRow' },
-    viewTableRow: { action: 'deleteTableRow' },
-  },
+  argTypes: dataTableActionsArgTypes,
   render: Template,
   args: {
     ...defaultComponentArgs,
-    deleteTableRow: ($event: any) => console.log('Delete table row ', $event),
-    editTableRow: ($event: any) => console.log('Edit table row ', $event),
-    viewTableRow: ($event: any) => console.log('View table row ', $event),
     deleteActionVisibleField: 'available',
     editActionVisibleField: 'available',
     deletePermission: 'TEST_MGMT#TEST_DELETE',
@@ -345,17 +314,10 @@ export const WithConditionallyEnabledAdditionalActions = {
 }
 
 export const WithConditionallyVisibleAdditionalActions = {
-  argTypes: {
-    deleteTableRow: { action: 'deleteTableRow' },
-    editTableRow: { action: 'deleteTableRow' },
-    viewTableRow: { action: 'deleteTableRow' },
-  },
+  argTypes: dataTableActionsArgTypes,
   render: Template,
   args: {
     ...defaultComponentArgs,
-    deleteTableRow: ($event: any) => console.log('Delete table row ', $event),
-    editTableRow: ($event: any) => console.log('Edit table row ', $event),
-    viewTableRow: ($event: any) => console.log('View table row ', $event),
     deleteActionVisibleField: 'available',
     editActionVisibleField: 'available',
     deletePermission: 'TEST_MGMT#TEST_DELETE',
@@ -374,17 +336,10 @@ export const WithConditionallyVisibleAdditionalActions = {
 }
 
 export const WithAdditionalOverflowActions = {
-  argTypes: {
-    deleteTableRow: { action: 'deleteTableRow' },
-    editTableRow: { action: 'deleteTableRow' },
-    viewTableRow: { action: 'deleteTableRow' },
-  },
+  argTypes: dataTableActionsArgTypes,
   render: Template,
   args: {
     ...defaultComponentArgs,
-    deleteTableRow: ($event: any) => console.log('Delete table row ', $event),
-    editTableRow: ($event: any) => console.log('Edit table row ', $event),
-    viewTableRow: ($event: any) => console.log('View table row ', $event),
     deletePermission: 'TEST_MGMT#TEST_DELETE',
     editPermission: 'TEST_MGMT#TEST_EDIT',
     viewPermission: 'TEST_MGMT#TEST_VIEW',
