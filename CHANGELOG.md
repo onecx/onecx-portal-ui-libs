@@ -1,3 +1,13 @@
+## [5.6.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.5.0...v5.6.0) (2024-08-22)
+
+### Features
+
+* add workspace displayname ([#417](https://github.com/onecx/onecx-portal-ui-libs/issues/417)) ([8aa60a0](https://github.com/onecx/onecx-portal-ui-libs/commit/8aa60a0a94791764652b7d2b1957976e45813927))
+
+### Bug Fixes
+
+* prevent p-menu item text from wrapping ([#415](https://github.com/onecx/onecx-portal-ui-libs/issues/415)) ([3a01639](https://github.com/onecx/onecx-portal-ui-libs/commit/3a016395e3335a9a850fcca8d197210014a883d1))
+
 ## [5.5.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.4.0...v5.5.0) (2024-08-20)
 
 ### Features
