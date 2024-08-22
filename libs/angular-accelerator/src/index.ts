@@ -3,6 +3,7 @@ export * from './lib/directives/if-permission.directive'
 export * from './lib/directives/if-breakpoint.directive'
 export * from './lib/directives/src.directive'
 export * from './lib/directives/advanced.directive'
+export * from './lib/directives/tooltipOnOverflow.directive'
 
 // components
 export * from './lib/components/column-group-selection/column-group-selection.component'

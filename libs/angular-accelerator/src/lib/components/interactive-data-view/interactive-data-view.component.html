@@ -50,7 +50,7 @@
     [filters]="filters"
     [data]="data"
     [sortDirection]="sortDirection"
-    [titleLineId]="titleLineId || firstColumnId"
+    [titleLineId]="titleLineId"
     [subtitleLineIds]="subtitleLineIds"
     [clientSideSorting]="clientSideSorting"
     [clientSideFiltering]="clientSideFiltering"
@@ -85,13 +85,21 @@
     [translationKeyTableCellTemplate]="_translationKeyTableCell ? translationKeyTableCell : _tableTranslationKeyCell ? tableTranslationKeyCell : undefined"
     [gridItemSubtitleLinesTemplate]="_gridItemSubtitleLines ? gridItemSubtitleLines : undefined"
     [listItemSubtitleLinesTemplate]="_listItemSubtitleLines ? listItemSubtitleLines : undefined"
-    [listItemTemplate]="_listItem? listItem : undefined"
-    [gridItemTemplate]="_gridItem? gridItem  : undefined"
+    [listItemTemplate]="_listItem ? listItem : undefined"
+    [listValueTemplate]="_listValue ? listValue : undefined"
+    [translationKeyListValueTemplate]="_translationKeyListValue ? translationKeyListValue : undefined"
+    [numberListValueTemplate]="_numberListValue ? numberListValue : undefined"
+    [relativeDateListValueTemplate]="_relativeDateListValue ? relativeDateListValue : undefined"
+    [customListValueTemplate]="_customListValue ? customListValue : undefined"
+    [stringListValueTemplate]="_stringListValue ? stringListValue : undefined"
+    [dateListValueTemplate]="_dateListValue ? dateListValue : undefined"
+    [gridItemTemplate]="_gridItem ? gridItem  : undefined"
     (sorted)="sorting($event)"
     (filtered)="filtering($event)"
     [totalRecordsOnServer]="totalRecordsOnServer"
     [currentPageShowingKey]="currentPageShowingKey"
     [currentPageShowingWithTotalOnServerKey]="currentPageShowingWithTotalOnServerKey"
+    [parentTemplates]="templates$ | async"
   >
   </ocx-data-view>
 </div>
@@ -181,5 +189,61 @@
 ></ng-template>
 <ng-template #listItem let-item>
   <ng-container *ngIf="_listItem" [ngTemplateOutlet]="_listItem" [ngTemplateOutletContext]="{$implicit:item}">
+  </ng-container
+></ng-template>
+<ng-template #listValue let-rowObject="rowObject" let-column="column">
+  <ng-container
+    *ngIf="_listValue"
+    [ngTemplateOutlet]="_listValue"
+    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
+  >
+  </ng-container
+></ng-template>
+<ng-template #translationKeyListValue let-rowObject="rowObject" let-column="column">
+  <ng-container
+    *ngIf="_translationKeyListValue"
+    [ngTemplateOutlet]="_translationKeyListValue"
+    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
+  >
+  </ng-container
+></ng-template>
+<ng-template #numberListValue let-rowObject="rowObject" let-column="column">
+  <ng-container
+    *ngIf="_numberListValue"
+    [ngTemplateOutlet]="_numberListValue"
+    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
+  >
+  </ng-container
+></ng-template>
+<ng-template #relativeDateListValue let-rowObject="rowObject" let-column="column">
+  <ng-container
+    *ngIf="_relativeDateListValue"
+    [ngTemplateOutlet]="_relativeDateListValue"
+    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
+  >
+  </ng-container
+></ng-template>
+<ng-template #customListValue let-rowObject="rowObject" let-column="column">
+  <ng-container
+    *ngIf="_customListValue"
+    [ngTemplateOutlet]="_customListValue"
+    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
+  >
+  </ng-container
+></ng-template>
+<ng-template #stringListValue let-rowObject="rowObject" let-column="column">
+  <ng-container
+    *ngIf="_stringListValue"
+    [ngTemplateOutlet]="_stringListValue"
+    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
+  >
+  </ng-container
+></ng-template>
+<ng-template #dateListValue let-rowObject="rowObject" let-column="column">
+  <ng-container
+    *ngIf="_dateListValue"
+    [ngTemplateOutlet]="_dateListValue"
+    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
+  >
   </ng-container
 ></ng-template>
