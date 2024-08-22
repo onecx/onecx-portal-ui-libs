@@ -104,11 +104,15 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
     return this.numberTableCellTemplate || this.numberTableCellChildTemplate
   }
   /**
-   * @deprecated Will be removed with the next major v6 upgrade
+   * @deprecated Will be removed and instead to change the template of a specific column
+   * use the new approach instead by following the naming convention column id + IdTableCell
+   * e.g. for a column with the id 'status' in DataTable use pTemplate="statusIdTableCell"
    */
   @Input() customTableCellTemplate: TemplateRef<any> | undefined
   /**
-   * @deprecated Will be removed with the next major v6 upgrade
+   * @deprecated Will be removed and instead to change the template of a specific column
+   * use the new approach instead by following the naming convention column id + IdTableCell
+   * e.g. for a column with the id 'status' in DataTable use pTemplate="statusIdTableCell"
    */
   @ContentChild('customTableCell') customTableCellChildTemplate: TemplateRef<any> | undefined
   get _customTableCell(): TemplateRef<any> | undefined {
@@ -233,11 +237,15 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
     return this.relativeDateListValueTemplate || this.relativeDateListValueChildTemplate
   }
   /**
-   * @deprecated Will be removed with the next major v6 upgrade
+   * @deprecated Will be removed and instead to change the template of a specific column
+   * use the new approach instead by following the naming convention column id + IdListValue
+   * e.g. for a column with the id 'status' in DataListGrid use pTemplate="statusIdListValue"
    */
   @Input() customListValueTemplate: TemplateRef<any> | undefined
   /**
-   * @deprecated Will be removed with the next major v6 upgrade
+   * @deprecated Will be removed and instead to change the template of a specific column
+   * use the new approach instead by following the naming convention column id + IdListValue
+   * e.g. for a column with the id 'status' DataListGrid use pTemplate="statusIdListValue"
    */
   @ContentChild('customListValue') customListValueChildTemplate: TemplateRef<any> | undefined
   get _customListValue(): TemplateRef<any> | undefined {

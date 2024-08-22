@@ -199,11 +199,15 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return this.relativeDateListValueTemplate || this.relativeDateListValueChildTemplate
   }
   /**
-   * @deprecated Will be removed with the next major v6 upgrade
+   * @deprecated Will be removed and instead to change the template of a specific column
+   * use the new approach instead by following the naming convention column id + IdListValue
+   * e.g. for a column with the id 'status' use pTemplate="statusIdListValue"
    */
   @Input() customListValueTemplate: TemplateRef<any> | undefined
-    /**
-   * @deprecated Will be removed with the next major v6 upgrade
+  /**
+   * @deprecated Will be removed and instead to change the template of a specific column
+   * use the new approach instead by following the naming convention column id + IdListValue
+   * e.g. for a column with the id 'status' use pTemplate="statusIdListValue"
    */
   @ContentChild('customListValue') customListValueChildTemplate: TemplateRef<any> | undefined
   get _customListValue(): TemplateRef<any> | undefined {

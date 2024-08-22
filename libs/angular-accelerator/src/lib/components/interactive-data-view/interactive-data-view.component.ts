@@ -107,7 +107,9 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   @ContentChild('stringTableCell') stringTableCell: TemplateRef<any> | undefined
   @ContentChild('numberTableCell') numberTableCell: TemplateRef<any> | undefined
   /**
-   * @deprecated Will be removed with the next major v6 upgrade
+   * @deprecated Will be removed and instead to change the template of a specific column
+   * use the new approach instead by following the naming convention column id + IdTableCell
+   * e.g. for a column with the id 'status' in DataTable use pTemplate="statusIdTableCell"
    */
   @ContentChild('customTableCell') customTableCell: TemplateRef<any> | undefined
   @ContentChild('gridItem') gridItem: TemplateRef<any> | undefined
@@ -118,7 +120,9 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   @ContentChild('numberListValue') numberListValue: TemplateRef<any> | undefined
   @ContentChild('relativeDateListValue') relativeDateListValue: TemplateRef<any> | undefined
   /**
-   * @deprecated Will be removed with the next major v6 upgrade
+   * @deprecated Will be removed and instead to change the template of a specific column
+   * use the new approach instead by following the naming convention column id + IdListValue
+   * e.g. for a column with the id 'status' DataListGrid use pTemplate="statusIdListValue"
    */
   @ContentChild('customListValue') customListValue: TemplateRef<any> | undefined
   @ContentChild('stringListValue') stringListValue: TemplateRef<any> | undefined
