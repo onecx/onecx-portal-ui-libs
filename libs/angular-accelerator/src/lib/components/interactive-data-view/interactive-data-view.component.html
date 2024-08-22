@@ -36,7 +36,7 @@
 
       <ocx-custom-group-column-selector
         [columns]="columns"
-        [displayedColumns]="displayedColumns"
+        [displayedColumns]="(displayedColumns$ | async) ?? []"
         (columnSelectionChanged)="onColumnSelectionChange($event)"
         [frozenActionColumn]="frozenActionColumn"
         [actionColumnPosition]="actionColumnPosition"
@@ -48,7 +48,7 @@
 </div>
 <div class="p-3">
   <ocx-data-view
-    [columns]="displayedColumns"
+    [columns]="(displayedColumns$ | async) ?? []"
     [sortStates]="sortStates"
     [sortField]="sortField"
     [filters]="filters"

@@ -231,14 +231,14 @@ export class InteractiveDataViewComponent implements OnInit {
         column.predefinedGroupKeys?.includes(this.defaultGroupKey)
       ).map((column) => column.id)
     }
-    // TODO: Remove following line once displayedColumns (deprecated) has been removed
-    this.displayedColumnsChange.emit(this.displayedColumns)
-    this.displayedColumnKeysChange.emit(this.displayedColumnKeys)
     this.displayedColumns$ = this.displayedColumnKeys$.pipe(map((columnKeys) => (
       (columnKeys
         .map((key) => this.columns.find((col) => col.id === key))
         .filter((d) => d) as DataTableColumn[]) ?? []
     )))
+    // TODO: Remove following line once displayedColumns (deprecated) has been removed
+    this.displayedColumnsChange.emit(this.displayedColumns)
+    this.displayedColumnKeysChange.emit(this.displayedColumnKeys)
     if (!this.groupSelectionNoGroupSelectedKey) {
       this.groupSelectionNoGroupSelectedKey = 'OCX_INTERACTIVE_DATA_VIEW.NO_GROUP_SELECTED'
     }
