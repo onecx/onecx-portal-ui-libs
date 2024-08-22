@@ -13,7 +13,6 @@ initialize({
 const preview: Preview = {
   decorators: [mswDecorator],
   parameters: {
-    actions: { argTypesRegex: '^on[A-Z].*' },
     controls: {
       matchers: {
         color: /(background|color)$/i,
@@ -21,6 +20,7 @@ const preview: Preview = {
       },
     },
   },
+  tags: ['autodocs']
 }
 
 export default preview
