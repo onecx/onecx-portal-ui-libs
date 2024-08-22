@@ -43,6 +43,16 @@ import { DateUtils } from '../../utils/dateutils'
 import { provideRouter } from '@angular/router'
 
 describe('InteractiveDataViewComponent', () => {
+  const mutationObserverMock = jest.fn(function MutationObserver(callback) {
+    this.observe = jest.fn()
+    this.disconnect = jest.fn()
+    this.trigger = (mockedMutationsList: any) => {
+      callback(mockedMutationsList, this)
+    }
+    return this
+  })
+  global.MutationObserver = mutationObserverMock
+
   let component: InteractiveDataViewComponent
   let fixture: ComponentFixture<InteractiveDataViewComponent>
   let loader: HarnessLoader
@@ -249,6 +259,7 @@ describe('InteractiveDataViewComponent', () => {
     component.viewItem.subscribe((event) => (viewItemEvent = event))
     component.editItem.subscribe((event) => (editItemEvent = event))
     component.deleteItem.subscribe((event) => (deleteItemEvent = event))
+    component.titleLineId = 'name'
     component.subtitleLineIds = ['startDate']
     component.data = mockData
     component.columns = mockColumns
@@ -312,7 +323,7 @@ describe('InteractiveDataViewComponent', () => {
   describe('Table view ', () => {
     let dataLayoutSelection: DataLayoutSelectionHarness
     let dataView: DataViewHarness
-    let dataTable: DataTableHarness
+    let dataTable: DataTableHarness | null
     let tableHeaders: TableHeaderColumnHarness[]
     let tableRows: TableRowHarness[]
     let allFilterOptions: PMultiSelectListItemHarness[] | undefined
@@ -320,9 +331,9 @@ describe('InteractiveDataViewComponent', () => {
     beforeEach(async () => {
       dataLayoutSelection = await loader.getHarness(DataLayoutSelectionHarness)
       dataView = await loader.getHarness(DataViewHarness)
-      dataTable = await dataView.getDataTable()
-      tableHeaders = await dataTable.getHeaderColumns()
-      tableRows = await dataTable.getRows()
+      dataTable = await dataView?.getDataTable()
+      tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
+      tableRows = (await dataTable?.getRows()) ?? []
 
       allFilterOptions = undefined
     })
@@ -365,7 +376,7 @@ describe('InteractiveDataViewComponent', () => {
       const sortButton = await tableHeaders[0].getSortButton()
       await sortButton.click()
 
-      tableRows = await dataTable.getRows()
+      tableRows = (await dataTable?.getRows()) ?? []
       const rows = await parallel(() => tableRows.map((row) => row.getData()))
 
       expect(rows).toEqual(expectedRowsDataAfterSorting)
@@ -382,7 +393,7 @@ describe('InteractiveDataViewComponent', () => {
       const sortButton = await tableHeaders[2].getSortButton()
       await sortButton.click()
 
-      tableRows = await dataTable.getRows()
+      tableRows = (await dataTable?.getRows()) ?? []
       const rows = await parallel(() => tableRows.map((row) => row.getData()))
 
       expect(rows).toEqual(expectedRowsDataAfterSorting)
@@ -400,7 +411,7 @@ describe('InteractiveDataViewComponent', () => {
       await sortButton.click()
       await sortButton.click()
 
-      tableRows = await dataTable.getRows()
+      tableRows = (await dataTable?.getRows()) ?? []
       const rows = await parallel(() => tableRows.map((row) => row.getData()))
 
       expect(rows).toEqual(expectedRowsDataAfterSorting)
@@ -418,7 +429,7 @@ describe('InteractiveDataViewComponent', () => {
       await sortButton.click()
       await sortButton.click()
 
-      tableRows = await dataTable.getRows()
+      tableRows = (await dataTable?.getRows()) ?? []
       const rows = await parallel(() => tableRows.map((row) => row.getData()))
 
       expect(rows).toEqual(expectedRowsDataAfterSorting)
@@ -453,7 +464,7 @@ describe('InteractiveDataViewComponent', () => {
       allFilterOptions = await filterMultiSelect.getAllOptions()
       await allFilterOptions[1].click()
 
-      tableRows = await dataTable.getRows()
+      tableRows = (await dataTable?.getRows()) ?? []
       const rows = await parallel(() => tableRows.map((row) => row.getData()))
 
       expect(rows).toEqual(expectedRowsDataAfterFilter)
@@ -475,7 +486,7 @@ describe('InteractiveDataViewComponent', () => {
 
       expect(await filterMultiSelect.getSelectedOptions()).toEqual(expectedSelectedOptions)
 
-      tableRows = await dataTable.getRows()
+      tableRows = (await dataTable?.getRows()) ?? []
       const rows = await parallel(() => tableRows.map((row) => row.getData()))
 
       expect(rows).toEqual(expectedRowsDataAfterFilter)
@@ -497,7 +508,7 @@ describe('InteractiveDataViewComponent', () => {
 
       expect(await filterMultiSelect.getSelectedOptions()).toEqual(expectedSelectedOption)
 
-      tableRows = await dataTable.getRows()
+      tableRows = (await dataTable?.getRows()) ?? []
       const rows = await parallel(() => tableRows.map((row) => row.getData()))
 
       expect(rows).toEqual(expectedRowsDataAfterFilter)
@@ -611,8 +622,8 @@ describe('InteractiveDataViewComponent', () => {
       const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
       await dropdownItems[1].selectItem()
 
-      tableHeaders = await dataTable.getHeaderColumns()
-      tableRows = await dataTable.getRows()
+      tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
+      tableRows = (await dataTable?.getRows()) ?? []
       const headers = await parallel(() => tableHeaders.map((header) => header.getText()))
       const rows = await parallel(() => tableRows.map((row) => row.getData()))
 
@@ -676,11 +687,11 @@ describe('InteractiveDataViewComponent', () => {
       const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
       await dropdownItems[1].selectItem()
 
-      tableHeaders = await dataTable.getHeaderColumns()
+      tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
       const sortButton = await tableHeaders[6].getSortButton()
       await sortButton.click()
 
-      tableRows = await dataTable.getRows()
+      tableRows = (await dataTable?.getRows()) ?? []
       const rows = await parallel(() => tableRows.map((row) => row.getData()))
 
       expect(rows).toEqual(expectedRowsData)
@@ -742,12 +753,12 @@ describe('InteractiveDataViewComponent', () => {
       const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
       await dropdownItems[1].selectItem()
 
-      tableHeaders = await dataTable.getHeaderColumns()
+      tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
       const sortButton = await tableHeaders[6].getSortButton()
       await sortButton.click()
       await sortButton.click()
 
-      tableRows = await dataTable.getRows()
+      tableRows = (await dataTable?.getRows()) ?? []
       const rows = await parallel(() => tableRows.map((row) => row.getData()))
 
       expect(rows).toEqual(expectedRowsData)
@@ -809,13 +820,13 @@ describe('InteractiveDataViewComponent', () => {
       const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
       await dropdownItems[1].selectItem()
 
-      tableHeaders = await dataTable.getHeaderColumns()
+      tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
       const sortButton = await tableHeaders[6].getSortButton()
       await sortButton.click()
       await sortButton.click()
       await sortButton.click()
 
-      tableRows = await dataTable.getRows()
+      tableRows = (await dataTable?.getRows()) ?? []
       const rows = await parallel(() => tableRows.map((row) => row.getData()))
 
       expect(rows).toEqual(expectedRowsData)
@@ -826,15 +837,15 @@ describe('InteractiveDataViewComponent', () => {
 
       expect(component.frozenActionColumn).toBe(false)
       expect(component.actionColumnPosition).toBe('right')
-      expect(await dataTable.getActionColumnHeader('left')).toBe(null)
-      expect(await dataTable.getActionColumn('left')).toBe(null)
+      expect(await dataTable?.getActionColumnHeader('left')).toBe(null)
+      expect(await dataTable?.getActionColumn('left')).toBe(null)
 
-      const rightActionColumnHeader = await dataTable.getActionColumnHeader('right')
-      const rightActionColumn = await dataTable.getActionColumn('right')
+      const rightActionColumnHeader = await dataTable?.getActionColumnHeader('right')
+      const rightActionColumn = await dataTable?.getActionColumn('right')
       expect(rightActionColumnHeader).toBeTruthy()
       expect(rightActionColumn).toBeTruthy()
-      expect(await dataTable.columnIsFrozen(rightActionColumnHeader)).toBe(false)
-      expect(await dataTable.columnIsFrozen(rightActionColumn)).toBe(false)
+      expect(await dataTable?.columnIsFrozen(rightActionColumnHeader)).toBe(false)
+      expect(await dataTable?.columnIsFrozen(rightActionColumn)).toBe(false)
     })
 
     it('should render an pinned action column on the specified side of the table', async () => {
@@ -843,50 +854,50 @@ describe('InteractiveDataViewComponent', () => {
       component.frozenActionColumn = true
       component.actionColumnPosition = 'left'
 
-      expect(await dataTable.getActionColumnHeader('right')).toBe(null)
-      expect(await dataTable.getActionColumn('right')).toBe(null)
+      expect(await dataTable?.getActionColumnHeader('right')).toBe(null)
+      expect(await dataTable?.getActionColumn('right')).toBe(null)
 
-      const leftActionColumnHeader = await dataTable.getActionColumnHeader('left')
-      const leftActionColumn = await dataTable.getActionColumn('left')
+      const leftActionColumnHeader = await dataTable?.getActionColumnHeader('left')
+      const leftActionColumn = await dataTable?.getActionColumn('left')
       expect(leftActionColumnHeader).toBeTruthy()
       expect(leftActionColumn).toBeTruthy()
-      expect(await dataTable.columnIsFrozen(leftActionColumnHeader)).toBe(true)
-      expect(await dataTable.columnIsFrozen(leftActionColumn)).toBe(true)
+      expect(await dataTable?.columnIsFrozen(leftActionColumnHeader)).toBe(true)
+      expect(await dataTable?.columnIsFrozen(leftActionColumn)).toBe(true)
     })
   })
 
   describe('Table row selection ', () => {
     let dataLayoutSelection: DataLayoutSelectionHarness
     let dataView: DataViewHarness
-    let dataTable: DataTableHarness
+    let dataTable: DataTableHarness | null
 
     beforeEach(async () => {
       dataLayoutSelection = await loader.getHarness(DataLayoutSelectionHarness)
       dataView = await interactiveDataViewHarness.getDataView()
-      dataTable = await dataView.getDataTable()
+      dataTable = await dataView?.getDataTable()
     })
 
     it('should initially show a table without selection checkboxes', async () => {
       expect(dataTable).toBeTruthy()
       expect(await dataLayoutSelection.getCurrentLayout()).toEqual('table')
-      expect(await dataTable.rowSelectionIsEnabled()).toEqual(false)
+      expect(await dataTable?.rowSelectionIsEnabled()).toEqual(false)
     })
 
     it('should show a table with selection checkboxes if the parent binds to the event emitter', async () => {
       expect(dataTable).toBeTruthy()
       expect(await dataLayoutSelection.getCurrentLayout()).toEqual('table')
-      expect(await dataTable.rowSelectionIsEnabled()).toEqual(false)
+      expect(await dataTable?.rowSelectionIsEnabled()).toEqual(false)
 
       component.selectionChanged.subscribe()
 
-      expect(await dataTable.rowSelectionIsEnabled()).toEqual(true)
+      expect(await dataTable?.rowSelectionIsEnabled()).toEqual(true)
       component.selectionChanged.unsubscribe()
     })
   })
 
   describe('Table view custom group column selector ', () => {
     let dataView: DataViewHarness
-    let dataTable: DataTableHarness
+    let dataTable: DataTableHarness | null
     let tableHeaders: TableHeaderColumnHarness[]
     let tableRows: TableRowHarness[]
 
@@ -902,9 +913,9 @@ describe('InteractiveDataViewComponent', () => {
 
     beforeEach(async () => {
       dataView = await loader.getHarness(DataViewHarness)
-      dataTable = await dataView.getDataTable()
-      tableHeaders = await dataTable.getHeaderColumns()
-      tableRows = await dataTable.getRows()
+      dataTable = await dataView?.getDataTable()
+      tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
+      tableRows = (await dataTable?.getRows()) ?? []
 
       customGroupColumnSelector = await loader.getHarness(CustomGroupColumnSelectorHarness)
       await customGroupColumnSelector.openCustomGroupColumnSelectorDialog()
@@ -940,8 +951,8 @@ describe('InteractiveDataViewComponent', () => {
       await dialogSaveButton.click()
       expect(spy).toHaveBeenCalled()
       dataTable = await dataView.getDataTable()
-      tableHeaders = await dataTable.getHeaderColumns()
-      tableRows = await dataTable.getRows()
+      tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
+      tableRows = (await dataTable?.getRows()) ?? []
       const headers = await parallel(() => tableHeaders.map((header) => header.getText()))
       const rows = await parallel(() => tableRows.map((row) => row.getData()))
       expect(headers).toEqual(expectedHeaders)
@@ -972,8 +983,8 @@ describe('InteractiveDataViewComponent', () => {
       expect(spy).toHaveBeenCalled()
 
       dataTable = await dataView.getDataTable()
-      tableHeaders = await dataTable.getHeaderColumns()
-      tableRows = await dataTable.getRows()
+      tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
+      tableRows = (await dataTable?.getRows()) ?? []
       const headers = await parallel(() => tableHeaders.map((header) => header.getText()))
       const rows = await parallel(() => tableRows.map((row) => row.getData()))
 
@@ -1004,8 +1015,8 @@ describe('InteractiveDataViewComponent', () => {
       expect(spy).toHaveBeenCalled()
 
       dataTable = await dataView.getDataTable()
-      tableHeaders = await dataTable.getHeaderColumns()
-      tableRows = await dataTable.getRows()
+      tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
+      tableRows = (await dataTable?.getRows()) ?? []
       const headers = await parallel(() => tableHeaders.map((header) => header.getText()))
       const rows = await parallel(() => tableRows.map((row) => row.getData()))
 
@@ -1037,8 +1048,8 @@ describe('InteractiveDataViewComponent', () => {
       expect(spy).toHaveBeenCalled()
 
       dataTable = await dataView.getDataTable()
-      tableHeaders = await dataTable.getHeaderColumns()
-      tableRows = await dataTable.getRows()
+      tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
+      tableRows = (await dataTable?.getRows()) ?? []
       const headers = await parallel(() => tableHeaders.map((header) => header.getText()))
       const rows = await parallel(() => tableRows.map((row) => row.getData()))
 
@@ -1057,15 +1068,15 @@ describe('InteractiveDataViewComponent', () => {
 
       expect(component.actionColumnPosition).toBe('left')
 
-      expect(await dataTable.getActionColumnHeader('right')).toBe(null)
-      expect(await dataTable.getActionColumn('right')).toBe(null)
+      expect(await dataTable?.getActionColumnHeader('right')).toBe(null)
+      expect(await dataTable?.getActionColumn('right')).toBe(null)
 
-      const leftActionColumnHeader = await dataTable.getActionColumnHeader('left')
-      const leftActionColumn = await dataTable.getActionColumn('left')
+      const leftActionColumnHeader = await dataTable?.getActionColumnHeader('left')
+      const leftActionColumn = await dataTable?.getActionColumn('left')
       expect(leftActionColumnHeader).toBeTruthy()
       expect(leftActionColumn).toBeTruthy()
-      expect(await dataTable.columnIsFrozen(leftActionColumnHeader)).toBe(false)
-      expect(await dataTable.columnIsFrozen(leftActionColumn)).toBe(false)
+      expect(await dataTable?.columnIsFrozen(leftActionColumnHeader)).toBe(false)
+      expect(await dataTable?.columnIsFrozen(leftActionColumn)).toBe(false)
     })
 
     it('should allow users to freeze action column', async () => {
@@ -1079,22 +1090,22 @@ describe('InteractiveDataViewComponent', () => {
 
       expect(component.frozenActionColumn).toBe(true)
 
-      expect(await dataTable.getActionColumnHeader('left')).toBe(null)
-      expect(await dataTable.getActionColumn('left')).toBe(null)
+      expect(await dataTable?.getActionColumnHeader('left')).toBe(null)
+      expect(await dataTable?.getActionColumn('left')).toBe(null)
 
-      const rightActionColumnHeader = await dataTable.getActionColumnHeader('right')
-      const rightActionColumn = await dataTable.getActionColumn('right')
+      const rightActionColumnHeader = await dataTable?.getActionColumnHeader('right')
+      const rightActionColumn = await dataTable?.getActionColumn('right')
       expect(rightActionColumnHeader).toBeTruthy()
       expect(rightActionColumn).toBeTruthy()
-      expect(await dataTable.columnIsFrozen(rightActionColumnHeader)).toBe(true)
-      expect(await dataTable.columnIsFrozen(rightActionColumn)).toBe(true)
+      expect(await dataTable?.columnIsFrozen(rightActionColumnHeader)).toBe(true)
+      expect(await dataTable?.columnIsFrozen(rightActionColumn)).toBe(true)
     })
   })
 
   describe('Grid view ', () => {
     let dataLayoutSelection: DataLayoutSelectionHarness
     let dataView: DataViewHarness
-    let dataGrid: DataListGridHarness
+    let dataGrid: DataListGridHarness | null
     let gridItems: DefaultGridItemHarness[]
 
     let sortingDropdown: PDropdownHarness
@@ -1103,12 +1114,12 @@ describe('InteractiveDataViewComponent', () => {
 
     beforeEach(async () => {
       dataLayoutSelection = await loader.getHarness(DataLayoutSelectionHarness)
-
+      
       const gridLayoutSelectionButton = await dataLayoutSelection.getGridLayoutSelectionButton()
       await gridLayoutSelectionButton?.click()
 
       dataView = await loader.getHarness(DataViewHarness)
-      dataGrid = await dataView.getDataListGrid()
+      dataGrid = await dataView?.getDataListGrid()
       sortingDropdown = await loader.getHarness(PDropdownHarness.with({ id: 'dataListGridSortingDropdown' }))
       sortingDropdownItems = await sortingDropdown.getDropdownItems()
       dataListGridSortingButton = await loader.getHarness(PButtonHarness.with({ id: 'dataListGridSortingButton' }))
@@ -1127,7 +1138,7 @@ describe('InteractiveDataViewComponent', () => {
     })
 
     it('should get grid data', async () => {
-      gridItems = await dataGrid.getDefaultGridItems()
+      gridItems = (await dataGrid?.getDefaultGridItems()) ?? []
       const gridItemsData = await parallel(() => gridItems.map((item) => item.getData()))
 
       expect(gridItemsData).toEqual(expectedInitialGridItemsData)
@@ -1145,7 +1156,7 @@ describe('InteractiveDataViewComponent', () => {
       await sortingDropdownItems[0].selectItem()
       await dataListGridSortingButton.click()
 
-      gridItems = await dataGrid.getDefaultGridItems()
+      gridItems = (await dataGrid?.getDefaultGridItems()) ?? []
       const gridItemsData = await parallel(() => gridItems.map((item) => item.getData()))
 
       expect(gridItemsData).toEqual(expectedGridItemsDataAfterSorting)
@@ -1164,7 +1175,7 @@ describe('InteractiveDataViewComponent', () => {
       await dataListGridSortingButton.click()
       await dataListGridSortingButton.click()
 
-      gridItems = await dataGrid.getDefaultGridItems()
+      gridItems = (await dataGrid?.getDefaultGridItems()) ?? []
       const gridItemsData = await parallel(() => gridItems.map((item) => item.getData()))
 
       expect(gridItemsData).toEqual(expectedGridItemsDataAfterSorting)
@@ -1176,14 +1187,14 @@ describe('InteractiveDataViewComponent', () => {
       await dataListGridSortingButton.click()
       await dataListGridSortingButton.click()
 
-      gridItems = await dataGrid.getDefaultGridItems()
+      gridItems = (await dataGrid?.getDefaultGridItems()) ?? []
       const gridItemsData = await parallel(() => gridItems.map((item) => item.getData()))
 
       expect(gridItemsData).toEqual(expectedInitialGridItemsData)
     })
 
     it('should get view actions menu button of first grid item and get event viewItem with first data grid item when clicked', async () => {
-      gridItems = await dataGrid.getDefaultGridItems()
+      gridItems = (await dataGrid?.getDefaultGridItems()) ?? []
       const gridItemMoreActionsMenu = await gridItems[0].getMoreActionsButton()
       const moreActionsMenuItems = await gridItemMoreActionsMenu.getAllActionsMenuItems()
       await moreActionsMenuItems[0].selectItem()
@@ -1192,7 +1203,7 @@ describe('InteractiveDataViewComponent', () => {
     })
 
     it('should get view actions menu button of third grid item and get event viewItem with third data grid item when clicked', async () => {
-      gridItems = await dataGrid.getDefaultGridItems()
+      gridItems = (await dataGrid?.getDefaultGridItems()) ?? []
       const gridItemMoreActionsMenu = await gridItems[2].getMoreActionsButton()
       const moreActionsMenuItems = await gridItemMoreActionsMenu.getAllActionsMenuItems()
       await moreActionsMenuItems[0].selectItem()
@@ -1201,7 +1212,7 @@ describe('InteractiveDataViewComponent', () => {
     })
 
     it('should get edit actions menu button first grid item and get event editItem with first data grid item when clicked', async () => {
-      gridItems = await dataGrid.getDefaultGridItems()
+      gridItems = (await dataGrid?.getDefaultGridItems()) ?? []
       const gridItemMoreActionsMenu = await gridItems[0].getMoreActionsButton()
       const moreActionsMenuItems = await gridItemMoreActionsMenu.getAllActionsMenuItems()
       await moreActionsMenuItems[1].selectItem()
@@ -1210,7 +1221,7 @@ describe('InteractiveDataViewComponent', () => {
     })
 
     it('should get edit actions menu button third grid item and get event editItem with third data grid item when clicked', async () => {
-      gridItems = await dataGrid.getDefaultGridItems()
+      gridItems = (await dataGrid?.getDefaultGridItems()) ?? []
       const gridItemMoreActionsMenu = await gridItems[2].getMoreActionsButton()
       const moreActionsMenuItems = await gridItemMoreActionsMenu.getAllActionsMenuItems()
       await moreActionsMenuItems[1].selectItem()
@@ -1219,7 +1230,7 @@ describe('InteractiveDataViewComponent', () => {
     })
 
     it('should get delete actions menu button first grid item and get event deleteItem with first data grid item when clicked', async () => {
-      gridItems = await dataGrid.getDefaultGridItems()
+      gridItems = (await dataGrid?.getDefaultGridItems()) ?? []
       const gridItemMoreActionsMenu = await gridItems[0].getMoreActionsButton()
       const moreActionsMenuItems = await gridItemMoreActionsMenu.getAllActionsMenuItems()
       await moreActionsMenuItems[2].selectItem()
@@ -1228,7 +1239,7 @@ describe('InteractiveDataViewComponent', () => {
     })
 
     it('should get delete actions menu button third grid item and get event deleteItem with third data grid item when clicked', async () => {
-      gridItems = await dataGrid.getDefaultGridItems()
+      gridItems = (await dataGrid?.getDefaultGridItems()) ?? []
       const gridItemMoreActionsMenu = await gridItems[2].getMoreActionsButton()
       const moreActionsMenuItems = await gridItemMoreActionsMenu.getAllActionsMenuItems()
       await moreActionsMenuItems[2].selectItem()
@@ -1240,7 +1251,7 @@ describe('InteractiveDataViewComponent', () => {
   describe('List view ', () => {
     let dataLayoutSelection: DataLayoutSelectionHarness
     let dataView: DataViewHarness
-    let dataList: DataListGridHarness
+    let dataList: DataListGridHarness | null
     let listItems: DefaultListItemHarness[]
 
     let sortingDropdown: PDropdownHarness
@@ -1252,8 +1263,11 @@ describe('InteractiveDataViewComponent', () => {
       const listLayoutSelectionButton = await dataLayoutSelection.getListLayoutSelectionButton()
       await listLayoutSelectionButton?.click()
 
+      fixture.detectChanges()
+      await fixture.whenStable()
+
       dataView = await loader.getHarness(DataViewHarness)
-      dataList = await dataView.getDataListGrid()
+      dataList = await dataView?.getDataListGrid()
       sortingDropdown = await loader.getHarness(PDropdownHarness.with({ id: 'dataListGridSortingDropdown' }))
       sortingDropdownItems = await sortingDropdown.getDropdownItems()
       dataListGridSortingButton = await loader.getHarness(PButtonHarness.with({ id: 'dataListGridSortingButton' }))
@@ -1272,7 +1286,7 @@ describe('InteractiveDataViewComponent', () => {
     })
 
     it('should get list data', async () => {
-      listItems = await dataList.getDefaultListItems()
+      listItems = (await dataList?.getDefaultListItems()) ?? []
       const listItemsData = await parallel(() => listItems.map((item) => item.getData()))
 
       expect(listItemsData).toEqual(expectedInitialListItemsData)
@@ -1290,7 +1304,7 @@ describe('InteractiveDataViewComponent', () => {
       await sortingDropdownItems[0].selectItem()
       await dataListGridSortingButton.click()
 
-      listItems = await dataList.getDefaultListItems()
+      listItems = (await dataList?.getDefaultListItems()) ?? []
       const listItemsData = await parallel(() => listItems.map((item) => item.getData()))
 
       expect(listItemsData).toEqual(expectedListItemsDataAfterSorting)
@@ -1309,7 +1323,7 @@ describe('InteractiveDataViewComponent', () => {
       await dataListGridSortingButton.click()
       await dataListGridSortingButton.click()
 
-      listItems = await dataList.getDefaultListItems()
+      listItems = (await dataList?.getDefaultListItems()) ?? []
       const listItemsData = await parallel(() => listItems.map((item) => item.getData()))
 
       expect(listItemsData).toEqual(expectedListItemsDataAfterSorting)
@@ -1321,14 +1335,14 @@ describe('InteractiveDataViewComponent', () => {
       await dataListGridSortingButton.click()
       await dataListGridSortingButton.click()
 
-      listItems = await dataList.getDefaultListItems()
+      listItems = (await dataList?.getDefaultListItems()) ?? []
       const listItemsData = await parallel(() => listItems.map((item) => item.getData()))
 
       expect(listItemsData).toEqual(expectedInitialListItemsData)
     })
 
     it('should get list item view button of first list item and get event viewItem with first data list item when clicked', async () => {
-      listItems = await dataList.getDefaultListItems()
+      listItems = (await dataList?.getDefaultListItems()) ?? []
       const viewButton = await listItems[0].getViewButton()
       await viewButton?.click()
 
@@ -1336,7 +1350,7 @@ describe('InteractiveDataViewComponent', () => {
     })
 
     it('should get list item view button of third list item and get event viewItem with third data list item when clicked', async () => {
-      listItems = await dataList.getDefaultListItems()
+      listItems = (await dataList?.getDefaultListItems()) ?? []
       const viewButton = await listItems[2].getViewButton()
       await viewButton?.click()
 
@@ -1344,7 +1358,7 @@ describe('InteractiveDataViewComponent', () => {
     })
 
     it('should get list item view button of first list item and get event editItem with first data list item when clicked', async () => {
-      listItems = await dataList.getDefaultListItems()
+      listItems = (await dataList?.getDefaultListItems()) ?? []
       const editButton = await listItems[0].getEditButton()
       await editButton?.click()
 
@@ -1352,7 +1366,7 @@ describe('InteractiveDataViewComponent', () => {
     })
 
     it('should get list item view button of third list item and get event editItem with third data list item when clicked', async () => {
-      listItems = await dataList.getDefaultListItems()
+      listItems = (await dataList?.getDefaultListItems()) ?? []
       const editButton = await listItems[2].getEditButton()
       await editButton?.click()
 
@@ -1360,7 +1374,7 @@ describe('InteractiveDataViewComponent', () => {
     })
 
     it('should get list item view button of first list item and get event deleteItem with first data list item when clicked', async () => {
-      listItems = await dataList.getDefaultListItems()
+      listItems = (await dataList?.getDefaultListItems()) ?? []
       const deleteButton = await listItems[0].getDeleteButton()
       await deleteButton?.click()
 
@@ -1368,7 +1382,7 @@ describe('InteractiveDataViewComponent', () => {
     })
 
     it('should get list item view button of third list item and get event deleteItem with third data list item when clicked', async () => {
-      listItems = await dataList.getDefaultListItems()
+      listItems = (await dataList?.getDefaultListItems()) ?? []
       const deleteButton = await listItems[2].getDeleteButton()
       await deleteButton?.click()
 
@@ -1380,16 +1394,16 @@ describe('InteractiveDataViewComponent', () => {
     let dataLayoutSelection: DataLayoutSelectionHarness
     let dataView: DataViewHarness
 
-    let dataTable: DataTableHarness
+    let dataTable: DataTableHarness | null
     let tableHeaders: TableHeaderColumnHarness[]
     let tableRows: TableRowHarness[]
     let allFilterOptions: PMultiSelectListItemHarness[] | undefined
 
-    let dataList: DataListGridHarness
+    let dataList: DataListGridHarness | null
     let listItems: DefaultListItemHarness[]
     let listLayoutSelectionButton: TestElement | null
 
-    let dataGrid: DataListGridHarness
+    let dataGrid: DataListGridHarness | null
     let gridItems: DefaultGridItemHarness[]
     let gridLayoutSelectionButton: TestElement | null
 
@@ -1402,8 +1416,8 @@ describe('InteractiveDataViewComponent', () => {
 
       dataView = await loader.getHarness(DataViewHarness)
       dataTable = await dataView.getDataTable()
-      tableHeaders = await dataTable.getHeaderColumns()
-      tableRows = await dataTable.getRows()
+      tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
+      tableRows = (await dataTable?.getRows()) ?? []
 
       allFilterOptions = undefined
     })
@@ -1444,14 +1458,14 @@ describe('InteractiveDataViewComponent', () => {
       const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
       await dropdownItems[1].selectItem()
 
-      tableHeaders = await dataTable.getHeaderColumns()
-      const sortButton = await tableHeaders[6].getSortButton()
-      await sortButton.click()
+      tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
+      const sortButton = await tableHeaders?.[6].getSortButton()
+      await sortButton?.click()
 
       await gridLayoutSelectionButton?.click()
 
       dataGrid = await dataView.getDataListGrid()
-      gridItems = await dataGrid.getDefaultGridItems()
+      gridItems = (await dataGrid?.getDefaultGridItems()) ?? []
       const gridItemsData = await parallel(() => gridItems.map((item) => item.getData()))
 
       expect(gridItemsData).toEqual(expectedSortedGridItemsDataAscending)
@@ -1459,7 +1473,7 @@ describe('InteractiveDataViewComponent', () => {
       await listLayoutSelectionButton?.click()
 
       dataList = await dataView.getDataListGrid()
-      listItems = await dataList.getDefaultListItems()
+      listItems = (await dataList?.getDefaultListItems()) ?? []
       const listItemsData = await parallel(() => listItems.map((item) => item.getData()))
 
       expect(listItemsData).toEqual(expectedSortedListItemsDataAscending)
@@ -1473,14 +1487,14 @@ describe('InteractiveDataViewComponent', () => {
       const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
       await dropdownItems[1].selectItem()
 
-      tableHeaders = await dataTable.getHeaderColumns()
-      const sortButton = await tableHeaders[6].getSortButton()
-      await sortButton.click()
+      tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
+      const sortButton = await tableHeaders?.[6].getSortButton()
+      await sortButton?.click()
 
       await listLayoutSelectionButton?.click()
 
       dataList = await dataView.getDataListGrid()
-      listItems = await dataList.getDefaultListItems()
+      listItems = (await dataList?.getDefaultListItems()) ?? []
       let listItemsData = await parallel(() => listItems.map((item) => item.getData()))
 
       expect(listItemsData).toEqual(expectedSortedListItemsDataAscending)
@@ -1493,7 +1507,7 @@ describe('InteractiveDataViewComponent', () => {
       expect(await (await sortingDropdown.host()).text()).toEqual('COLUMN_HEADER_NAME.TEST_NUMBER')
       await dataListGridSortingButton.click()
 
-      listItems = await dataList.getDefaultListItems()
+      listItems = (await dataList?.getDefaultListItems()) ?? []
       listItemsData = await parallel(() => listItems.map((item) => item.getData()))
 
       expect(listItemsData).toEqual(expectedSortedListItemsDataDescending)
@@ -1501,7 +1515,7 @@ describe('InteractiveDataViewComponent', () => {
       await gridLayoutSelectionButton?.click()
 
       dataGrid = await dataView.getDataListGrid()
-      gridItems = await dataGrid.getDefaultGridItems()
+      gridItems = (await dataGrid?.getDefaultGridItems()) ?? []
       const gridItemsData = await parallel(() => gridItems.map((item) => item.getData()))
 
       expect(gridItemsData).toEqual(expectedSortedGridItemsDataDescending)
@@ -1513,12 +1527,12 @@ describe('InteractiveDataViewComponent', () => {
       const expectedFilteredGridItemsData = [
         ['./onecx-portal-lib/assets/images/placeholder.png', 'name 1', '2023-09-14T09:34:22Z', '123456789'],
       ]
-      const filterMultiSelect = await tableHeaders[0].getFilterMultiSelect()
+      const filterMultiSelect = await tableHeaders?.[0].getFilterMultiSelect()
 
-      allFilterOptions = await filterMultiSelect.getAllOptions()
-      await allFilterOptions[2].click()
+      allFilterOptions = await filterMultiSelect?.getAllOptions()
+      await allFilterOptions?.[2].click()
 
-      tableRows = await dataTable.getRows()
+      tableRows = (await dataTable?.getRows()) ?? []
       const rows = await parallel(() => tableRows.map((row) => row.getData()))
 
       expect(rows).toEqual(expectedFilteredRowsData)
@@ -1526,7 +1540,7 @@ describe('InteractiveDataViewComponent', () => {
       await gridLayoutSelectionButton?.click()
 
       dataGrid = await dataView.getDataListGrid()
-      gridItems = await dataGrid.getDefaultGridItems()
+      gridItems = (await dataGrid?.getDefaultGridItems()) ?? []
       const gridItemsData = await parallel(() => gridItems.map((item) => item.getData()))
 
       expect(gridItemsData).toEqual(expectedFilteredGridItemsData)
@@ -1534,14 +1548,14 @@ describe('InteractiveDataViewComponent', () => {
       await listLayoutSelectionButton?.click()
 
       dataList = await dataView.getDataListGrid()
-      listItems = await dataList.getDefaultListItems()
+      listItems = (await dataList?.getDefaultListItems()) ?? []
       const listItemsData = await parallel(() => listItems.map((item) => item.getData()))
 
       expect(listItemsData).toEqual(expectedFilteredListItemsData)
     })
   })
   describe('Dynamically disable/hide based on field path in interactive data view', () => {
-    const setUpMockData = (viewType: 'grid' | 'list' | 'table') => {
+    const setUpMockData = async (viewType: 'grid' | 'list' | 'table') => {
       component.viewItem.subscribe(() => console.log())
       component.editItem.subscribe(() => console.log())
       component.deleteItem.subscribe(() => console.log())
@@ -1571,113 +1585,116 @@ describe('InteractiveDataViewComponent', () => {
         },
       ]
       component.titleLineId = 'name'
+      
+      fixture.detectChanges()
+      await fixture.whenStable()
     }
 
     describe('Disable list action buttons based on field path', () => {
       it('should not disable any buttons initially', async () => {
-        setUpMockData('list')
+        await setUpMockData('list')
         const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
-        expect(await dataView.hasAmountOfActionButtons('list', 3)).toBe(true)
-        expect(await dataView.hasAmountOfDisabledActionButtons('list', 0)).toBe(true)
+        expect(await dataView?.hasAmountOfActionButtons('list', 3)).toBe(true)
+        expect(await dataView?.hasAmountOfDisabledActionButtons('list', 0)).toBe(true)
       })
 
       it('should disable a button based on a given field path', async () => {
-        setUpMockData('list')
+        await setUpMockData('list')
         component.viewActionEnabledField = 'ready'
         const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
-        expect(await dataView.hasAmountOfActionButtons('list', 3)).toBe(true)
-        expect(await dataView.hasAmountOfDisabledActionButtons('list', 1)).toBe(true)
+        expect(await dataView?.hasAmountOfActionButtons('list', 3)).toBe(true)
+        expect(await dataView?.hasAmountOfDisabledActionButtons('list', 1)).toBe(true)
       })
     })
 
     describe('Disable grid action buttons based on field path', () => {
       it('should not disable any buttons initially', async () => {
-        setUpMockData('grid')
+        await setUpMockData('grid')
         const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
-        await (await dataView.getMenuButton()).click()
-        expect(await dataView.hasAmountOfActionButtons('grid', 3)).toBe(true)
-        expect(await dataView.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
+        await (await dataView?.getMenuButton())?.click()
+        expect(await dataView?.hasAmountOfActionButtons('grid', 3)).toBe(true)
+        expect(await dataView?.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
       })
 
       it('should disable a button based on a given field path', async () => {
-        setUpMockData('grid')
+        await setUpMockData('grid')
         component.viewActionEnabledField = 'ready'
         const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
-        await (await dataView.getMenuButton()).click()
-        expect(await dataView.hasAmountOfActionButtons('grid', 3)).toBe(true)
-        expect(await dataView.hasAmountOfDisabledActionButtons('grid', 1)).toBe(true)
+        await (await dataView?.getMenuButton())?.click()
+        expect(await dataView?.hasAmountOfActionButtons('grid', 3)).toBe(true)
+        expect(await dataView?.hasAmountOfDisabledActionButtons('grid', 1)).toBe(true)
       })
     })
 
     describe('Disable table action buttons based on field path', () => {
       it('should not disable any buttons initially', async () => {
-        setUpMockData('table')
+        await setUpMockData('table')
         const dataTable = await (await interactiveDataViewHarness.getDataView()).getDataTable()
-        expect(await dataTable.hasAmountOfActionButtons(3)).toBe(true)
-        expect(await dataTable.hasAmountOfDisabledActionButtons(0)).toBe(true)
+        expect(await dataTable?.hasAmountOfActionButtons(3)).toBe(true)
+        expect(await dataTable?.hasAmountOfDisabledActionButtons(0)).toBe(true)
       })
 
       it('should disable a button based on a given field path', async () => {
-        setUpMockData('table')
+        await setUpMockData('table')
         component.viewActionEnabledField = 'ready'
         const dataTable = await (await interactiveDataViewHarness.getDataView()).getDataTable()
-        expect(await dataTable.hasAmountOfActionButtons(3)).toBe(true)
-        expect(await dataTable.hasAmountOfDisabledActionButtons(1)).toBe(true)
+        expect(await dataTable?.hasAmountOfActionButtons(3)).toBe(true)
+        expect(await dataTable?.hasAmountOfDisabledActionButtons(1)).toBe(true)
       })
     })
 
     describe('Hide list action buttons based on field path', () => {
       it('should not hide any buttons initially', async () => {
-        setUpMockData('list')
+        await setUpMockData('list')
         const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
-        expect(await dataView.hasAmountOfActionButtons('list', 3)).toBe(true)
-        expect(await dataView.hasAmountOfDisabledActionButtons('list', 0)).toBe(true)
+        expect(await dataView?.hasAmountOfActionButtons('list', 3)).toBe(true)
+        expect(await dataView?.hasAmountOfDisabledActionButtons('list', 0)).toBe(true)
       })
 
       it('should hide a button based on a given field path', async () => {
-        setUpMockData('list')
+        await setUpMockData('list')
         component.viewActionVisibleField = 'ready'
         const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
-        expect(await dataView.hasAmountOfActionButtons('list', 2)).toBe(true)
-        expect(await dataView.hasAmountOfDisabledActionButtons('list', 0)).toBe(true)
+        expect(await dataView?.hasAmountOfActionButtons('list', 2)).toBe(true)
+        expect(await dataView?.hasAmountOfDisabledActionButtons('list', 0)).toBe(true)
       })
     })
 
     describe('Hide grid action buttons based on field path', () => {
       it('should not hide any buttons initially', async () => {
-        setUpMockData('grid')
+        await setUpMockData('grid')
         const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
-        await (await dataView.getMenuButton()).click()
-        expect(await dataView.hasAmountOfActionButtons('grid', 3)).toBe(true)
-        expect(await dataView.hasAmountOfActionButtons('grid-hidden', 0)).toBe(true)
-        expect(await dataView.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
+        await (await dataView?.getMenuButton())?.click()
+        expect(await dataView?.hasAmountOfActionButtons('grid', 3)).toBe(true)
+        expect(await dataView?.hasAmountOfActionButtons('grid-hidden', 0)).toBe(true)
+        expect(await dataView?.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
       })
 
       it('should hide a button based on a given field path', async () => {
-        setUpMockData('grid')
+        await setUpMockData('grid')
         component.viewActionVisibleField = 'ready'
         const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
-        await (await dataView.getMenuButton()).click()
-        expect(await dataView.hasAmountOfActionButtons('grid', 2)).toBe(true)
-        expect(await dataView.hasAmountOfActionButtons('grid-hidden', 1)).toBe(true)
-        expect(await dataView.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
+        await (await dataView?.getMenuButton())?.click()
+        expect(await dataView?.hasAmountOfActionButtons('grid', 2)).toBe(true)
+        expect(await dataView?.hasAmountOfActionButtons('grid-hidden', 1)).toBe(true)
+        expect(await dataView?.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
       })
     })
 
     describe('Hide table action buttons based on field path', () => {
       it('should not hide any buttons initially', async () => {
-        setUpMockData('table')
+        await setUpMockData('table')
         const dataTable = await (await interactiveDataViewHarness.getDataView()).getDataTable()
-        expect(await dataTable.hasAmountOfActionButtons(3)).toBe(true)
-        expect(await dataTable.hasAmountOfDisabledActionButtons(0)).toBe(true)
+        expect(await dataTable?.hasAmountOfActionButtons(3)).toBe(true)
+        expect(await dataTable?.hasAmountOfDisabledActionButtons(0)).toBe(true)
       })
 
       it('should hide a button based on a given field path', async () => {
-        setUpMockData('table')
+        await setUpMockData('table')
         component.viewActionVisibleField = 'ready'
         const dataTable = await (await interactiveDataViewHarness.getDataView()).getDataTable()
-        expect(await dataTable.hasAmountOfActionButtons(2)).toBe(true)
-        expect(await dataTable.hasAmountOfDisabledActionButtons(0)).toBe(true)
+        expect(await dataTable?.hasAmountOfActionButtons(2)).toBe(true)
+        expect(await dataTable?.hasAmountOfDisabledActionButtons(0)).toBe(true)
       })
     })
   })
