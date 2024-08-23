@@ -1,3 +1,13 @@
+## [5.8.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.7.0...v5.8.0) (2024-08-23)
+
+### Features
+
+* filter templates for data-table ([#416](https://github.com/onecx/onecx-portal-ui-libs/issues/416)) ([ff38854](https://github.com/onecx/onecx-portal-ui-libs/commit/ff3885410499476e25e6e95a286af32ed45a1769))
+
+### Bug Fixes
+
+* add Apache 2.0 open source license ([#420](https://github.com/onecx/onecx-portal-ui-libs/issues/420)) ([8126189](https://github.com/onecx/onecx-portal-ui-libs/commit/8126189dd0dccbe4fabad57582f53ae700fa259a))
+
 ## [5.7.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.6.0...v5.7.0) (2024-08-22)
 
 ### Features
