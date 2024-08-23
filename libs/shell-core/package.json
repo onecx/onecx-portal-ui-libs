@@ -1,6 +1,7 @@
 {
   "name": "@onecx/shell-core",
-  "version": "5.6.0",
+  "version": "5.8.0",
+  "license": "Apache-2.0",
   "peerDependencies": {
     "rxjs": "7.8.1",
     "@angular/animations": "^18.0.5",

@@ -1,3 +1,23 @@
+## [5.8.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.7.0...v5.8.0) (2024-08-23)
+
+### Features
+
+* filter templates for data-table ([#416](https://github.com/onecx/onecx-portal-ui-libs/issues/416)) ([ff38854](https://github.com/onecx/onecx-portal-ui-libs/commit/ff3885410499476e25e6e95a286af32ed45a1769))
+
+### Bug Fixes
+
+* add Apache 2.0 open source license ([#420](https://github.com/onecx/onecx-portal-ui-libs/issues/420)) ([8126189](https://github.com/onecx/onecx-portal-ui-libs/commit/8126189dd0dccbe4fabad57582f53ae700fa259a))
+
+## [5.7.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.6.0...v5.7.0) (2024-08-22)
+
+### Features
+
+* default list view refactor, new way of templating ([#400](https://github.com/onecx/onecx-portal-ui-libs/issues/400)) ([b61da4b](https://github.com/onecx/onecx-portal-ui-libs/commit/b61da4bf182400510200c11d22f768c8fdac5eee))
+
+### Bug Fixes
+
+* fix nx migration and improve storybook action handling ([#418](https://github.com/onecx/onecx-portal-ui-libs/issues/418)) ([e141e4f](https://github.com/onecx/onecx-portal-ui-libs/commit/e141e4f29d2d5d620a872b383123f3100a7b8a1d))
+
 ## [5.6.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.5.0...v5.6.0) (2024-08-22)
 
 ### Features

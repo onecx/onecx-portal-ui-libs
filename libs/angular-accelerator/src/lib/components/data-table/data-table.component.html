@@ -167,9 +167,14 @@
                   ></div>
                 </ng-template>
                 <ng-template pTemplate="item" let-value>
-                  <ng-container [ngSwitch]="(currentFilterColumn$ | async)?.columnType">
-                    <span *ngSwitchCase="'DATE'">{{ isDate(value.label) ? (value.label | date) : '' }}</span>
-                    <span *ngSwitchDefault> {{ value.label }} </span>
+                  <ng-container
+                    *ngIf="getTemplate(column, TemplateType.FILTERCELL) | async as template"
+                    [ngTemplateOutlet]="template"
+                    [ngTemplateOutletContext]="{
+                    rowObject: getRowObjectFromMultiselectItem(value, column),
+                    column: column
+                }"
+                  >
                   </ng-container>
                 </ng-template>
               </p-multiSelect>
@@ -223,7 +228,7 @@
 
 <ng-template #defaultCell let-rowObject="rowObject" let-column="column">
   <ng-container
-  *ngIf="getTemplate(column) | async as template"
+    *ngIf="getTemplate(column, TemplateType.CELL) | async as template"
     [ngTemplateOutlet]="template"
     [ngTemplateOutletContext]="{
                 rowObject: rowObject,
