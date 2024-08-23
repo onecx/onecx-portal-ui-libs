@@ -8,4 +8,4 @@ export * from './lib/utils/effects/filter-for-query-params-changed'
 export * from './lib/utils/selectors/create-child-selectors'
 
 // Local Storage
-export * from './lib/utils/local-storage/navigation-merge-reducer'
+export * from './lib/utils/local-storage/lazy-loading-merge-reducer'
