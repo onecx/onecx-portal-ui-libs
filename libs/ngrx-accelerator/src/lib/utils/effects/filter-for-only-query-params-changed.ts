@@ -11,9 +11,6 @@ export function filterForOnlyQueryParamsChanged<A extends RouterNavigatedAction>
   return filterOutOnlyQueryParamsChanged(router)
 }
 
-/**
- * @deprecated Please import from \@onecx/ngrx-accelerator
- */
 export function filterOutOnlyQueryParamsChanged<A extends RouterNavigatedAction>(
   router: Router
 ): MonoTypeOperatorFunction<A> {
