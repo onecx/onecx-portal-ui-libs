@@ -8,7 +8,7 @@
       [attr.manual]="manualBreadcrumbs"
     ></p-breadcrumb>
   </ng-container>
-  <div class="title-bar flex flex-row md:justify-content-between p-2 md:p-3">
+  <div class="title-bar flex flex-row md:justify-content-between p-3">
     <div class="title-wrap">
       <div class="figure flex h-2rem w-2rem md:h-3rem md:w-3rem" *ngIf="showFigure">
         <div #previewImage class="figure-image absolute top-0 left-0 right-0 bottom-0">
@@ -91,16 +91,9 @@
     </div>
   </div>
 
-  <div
-    class="object-panel"
-    [ngClass]="getObjectPanelLayoutClasses()"
-  >
+  <div class="object-panel" [ngClass]="getObjectPanelLayoutClasses()">
     <ng-container *ngIf="objectDetails">
-      <div
-        class="object-info"
-        [ngClass]="getObjectInfoLayoutClasses()"
-        *ngFor="let item of objectDetails"
-      >
+      <div class="object-info" [ngClass]="getObjectInfoLayoutClasses()" *ngFor="let item of objectDetails">
         <span
           class="flex font-medium text-600 object-info-grid-label"
           name="object-detail-label"
@@ -109,24 +102,25 @@
           tooltipPosition="top"
           >{{ item.label | dynamicPipe:item.labelPipe }}</span
         >
-        <span
-          *ngIf="item.icon || item.value"
-          class="object-info-grid-value"
-        >
+        <span *ngIf="item.icon || item.value" class="object-info-grid-value">
           <span
             class="flex text-900 align-items-center gap-2 w-max"
             [ngClass]="generateItemStyle(item)"
             name="object-detail-value"
           >
-          <span 
-            class="flex align-items-center gap-2" 
-            [pTooltip]="item.valueTooltip || item.tooltip || ''"
-            tooltipEvent="hover"
-            tooltipPosition="top"  
-          >
-            <i *ngIf="item.icon" class='{{item.icon + " " + (item.iconStyleClass || "")}}' name="object-detail-icon"></i>
-            {{ item.value | dynamicPipe:item.valuePipe:item.valuePipeArgs}}
-          </span>
+            <span
+              class="flex align-items-center gap-2"
+              [pTooltip]="item.valueTooltip || item.tooltip || ''"
+              tooltipEvent="hover"
+              tooltipPosition="top"
+            >
+              <i
+                *ngIf="item.icon"
+                class='{{item.icon + " " + (item.iconStyleClass || "")}}'
+                name="object-detail-icon"
+              ></i>
+              {{ item.value | dynamicPipe:item.valuePipe:item.valuePipeArgs}}
+            </span>
             <p-button
               *ngIf="item.actionItemIcon && item.actionItemCallback"
               [icon]="item.actionItemIcon"

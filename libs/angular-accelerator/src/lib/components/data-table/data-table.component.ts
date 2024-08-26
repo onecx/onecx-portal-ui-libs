@@ -1,6 +1,8 @@
 import {
+  AfterContentInit,
   Component,
   ContentChild,
+  ContentChildren,
   EventEmitter,
   Inject,
   Injector,
@@ -8,26 +10,40 @@ import {
   LOCALE_ID,
   OnInit,
   Output,
+  QueryList,
   TemplateRef,
+  ViewChildren,
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { isValidDate } from '@onecx/accelerator'
 import { UserService } from '@onecx/angular-integration-interface'
-import { MenuItem, SelectItem } from 'primeng/api'
+import { MenuItem, PrimeTemplate, SelectItem } from 'primeng/api'
 import { Menu } from 'primeng/menu'
-import { BehaviorSubject, Observable, combineLatest, first, map, mergeMap, of } from 'rxjs'
+import { BehaviorSubject, Observable, combineLatest, debounceTime, first, map, mergeMap, of } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { ObjectUtils } from '../../utils/objectutils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
+import { MultiSelectItem } from 'primeng/multiselect'
 
 type Primitive = number | string | boolean | bigint | Date
 export type Row = {
   id: string | number
   [columnId: string]: unknown
+}
+
+export enum TemplateType {
+  CELL = 'CELL',
+  FILTERCELL = 'FILTERCELL',
+}
+
+interface TemplatesData {
+  templatesObservables: Record<string, Observable<TemplateRef<any> | null>>
+  idSuffix: Array<string>
+  templateNames: Record<ColumnType, Array<string>>
 }
 
 export type Filter = { columnId: string; value: string }
@@ -46,7 +62,9 @@ export interface DataTableComponentState {
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
 })
-export class DataTableComponent extends DataSortBase implements OnInit {
+export class DataTableComponent extends DataSortBase implements OnInit, AfterContentInit {
+  TemplateType = TemplateType
+
   _rows$ = new BehaviorSubject<Row[]>([])
   @Input()
   get rows(): Row[] {
@@ -124,6 +142,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   @Input() viewActionEnabledField: string | undefined
   @Input() editActionVisibleField: string | undefined
   @Input() editActionEnabledField: string | undefined
+  @Input() selectionEnabledField: string | undefined
   @Input() paginator = true
   @Input() page = 0
   @Input()
@@ -156,7 +175,17 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     return this.numberCellTemplate || this.numberCellChildTemplate
   }
 
+    /**
+   * @deprecated Will be removed and instead to change the template of a specific column
+   * use the new approach instead by following the naming convention column id + IdCell
+   * e.g. for a column with the id 'status' use pTemplate="statusIdCell"
+   */
   @Input() customCellTemplate: TemplateRef<any> | undefined
+    /**
+   * @deprecated Will be removed and instead to change the template of a specific column
+   * use the new approach instead by following the naming convention column id + IdCell
+   * e.g. for a column with the id 'status' use pTemplate="statusIdCell"
+   */
   @ContentChild('customCell') customCellChildTemplate: TemplateRef<any> | undefined
   get _customCell(): TemplateRef<any> | undefined {
     return this.customCellTemplate || this.customCellChildTemplate
@@ -183,6 +212,51 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   @ContentChild('translationKeyCell') translationKeyCellChildTemplate: TemplateRef<any> | undefined
   get _translationKeyCell(): TemplateRef<any> | undefined {
     return this.translationKeyCellTemplate || this.translationKeyCellChildTemplate
+  }
+  @Input() stringFilterCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('stringFilterCell') stringFilterCellChildTemplate: TemplateRef<any> | undefined
+  get _stringFilterCell(): TemplateRef<any> | undefined {
+    return this.stringFilterCellTemplate || this.stringFilterCellChildTemplate
+  }
+  @Input() numberFilterCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('numberFilterCell') numberFilterCellChildTemplate: TemplateRef<any> | undefined
+  get _numberFilterCell(): TemplateRef<any> | undefined {
+    return this.numberFilterCellTemplate || this.numberFilterCellChildTemplate
+  }
+  /**
+   * @deprecated Will be removed and instead to change the template of a specific column filter
+   * use the new approach instead by following the naming convention column id + IdFilterCell
+   * e.g. for a column with the id 'status' use pTemplate="statusIdFilterCell"
+   */
+  @Input() customFilterCellTemplate: TemplateRef<any> | undefined
+  /**
+   * @deprecated Will be removed and instead to change the template of a specific column filter
+   * use the new approach instead by following the naming convention column id + IdFilterCell
+   * e.g. for a column with the id 'status' use pTemplate="statusIdFilterCell"
+   */
+  @ContentChild('customFilterCell') customFilterCellChildTemplate: TemplateRef<any> | undefined
+  get _customFilterCell(): TemplateRef<any> | undefined {
+    return this.customFilterCellTemplate || this.customFilterCellChildTemplate
+  }
+  @Input() dateFilterCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('dateFilterCell') dateFilterCellChildTemplate: TemplateRef<any> | undefined
+  get _dateFilterCell(): TemplateRef<any> | undefined {
+    return this.dateFilterCellTemplate || this.dateFilterCellChildTemplate
+  }
+  @Input() relativeDateFilterCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('relativeDateFilterCell') relativeDateFilterCellChildTemplate: TemplateRef<any> | undefined
+  get _relativeDateFilterCell(): TemplateRef<any> | undefined {
+    return this.relativeDateFilterCellTemplate || this.relativeDateFilterCellChildTemplate
+  }
+  @Input() filterCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('filterCell') filterCellChildTemplate: TemplateRef<any> | undefined
+  get _filterCell(): TemplateRef<any> | undefined {
+    return this.filterCellTemplate || this.filterCellChildTemplate
+  }
+  @Input() translationKeyFilterCellTemplate: TemplateRef<any> | undefined
+  @ContentChild('translationKeyFilterCell') translationKeyFilterCellChildTemplate: TemplateRef<any> | undefined
+  get _translationKeyFilterCell(): TemplateRef<any> | undefined {
+    return this.translationKeyFilterCellTemplate || this.translationKeyFilterCellChildTemplate
   }
 
   _additionalActions$ = new BehaviorSubject<DataAction[]>([])
@@ -219,6 +293,30 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   overflowMenuItems$: Observable<MenuItem[]>
   currentMenuRow$ = new BehaviorSubject<Row | null>(null)
 
+  templates$: BehaviorSubject<QueryList<PrimeTemplate> | undefined> = new BehaviorSubject<
+    QueryList<PrimeTemplate> | undefined
+  >(undefined)
+  @ContentChildren(PrimeTemplate)
+  set templates(value: QueryList<PrimeTemplate> | undefined) {
+    this.templates$.next(value)
+  }
+
+  viewTemplates$: BehaviorSubject<QueryList<PrimeTemplate> | undefined> = new BehaviorSubject<
+    QueryList<PrimeTemplate> | undefined
+  >(undefined)
+  @ViewChildren(PrimeTemplate)
+  set viewTemplates(value: QueryList<PrimeTemplate> | undefined) {
+    this.viewTemplates$.next(value)
+  }
+
+  parentTemplates$: BehaviorSubject<QueryList<PrimeTemplate> | null | undefined> = new BehaviorSubject<
+    QueryList<PrimeTemplate> | null | undefined
+  >(undefined)
+  @Input()
+  set parentTemplates(value: QueryList<PrimeTemplate> | null | undefined) {
+    this.parentTemplates$.next(value)
+  }
+
   get viewTableRowObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
     return dv?.viewItemObserved || dv?.viewItem.observed || this.viewTableRow.observed
@@ -239,6 +337,8 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     const dv = this.injector.get('DataViewComponent', null)
     return dv?.selectionChangedObserved || dv?.selectionChanged.observed || this.selectionChanged.observed
   }
+
+  templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
 
   constructor(
     @Inject(LOCALE_ID) locale: string,
@@ -350,6 +450,55 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     })
     })
 
+  }
+
+  ngAfterContentInit() {
+    this.templates?.forEach((item) => {
+      switch (item.getType()) {
+        case 'stringCell':
+          this.stringCellChildTemplate = item.template
+          break
+        case 'numberCell':
+          this.numberCellChildTemplate = item.template
+          break
+        case 'customCell':
+          this.customCellChildTemplate = item.template
+          break
+        case 'dateCell':
+          this.dateCellChildTemplate = item.template
+          break
+        case 'relativeDateCell':
+          this.relativeDateCellChildTemplate = item.template
+          break
+        case 'cellTemplate':
+          this.cellChildTemplate = item.template
+          break
+        case 'translationKeyCell':
+          this.translationKeyCellChildTemplate = item.template
+          break
+        case 'stringFilterCell':
+          this.stringFilterCellChildTemplate = item.template
+          break
+        case 'numberFilterCell':
+          this.numberFilterCellChildTemplate = item.template
+          break
+        case 'customFilterCell':
+          this.customFilterCellChildTemplate = item.template
+          break
+        case 'dateFilterCell':
+          this.dateFilterCellChildTemplate = item.template
+          break
+        case 'relativeDateFilterCell':
+          this.relativeDateFilterCellChildTemplate = item.template
+          break
+        case 'filterCellTemplate':
+          this.filterCellChildTemplate = item.template
+          break
+        case 'translationKeyFilterCell':
+          this.translationKeyFilterCellChildTemplate = item.template
+          break
+      }
+    })
   }
 
   onSortColumnClick(sortColumn: string) {
@@ -494,5 +643,142 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     }
     const d = new Date(value)
     return isValidDate(d)
+  }
+
+  cellTemplatesData: TemplatesData = {
+    templatesObservables: {},
+    idSuffix: ['IdTableCell', 'IdCell'],
+    templateNames: {
+      [ColumnType.DATE]: ['dateCell', 'dateTableCell', 'defaultDateCell'],
+      [ColumnType.NUMBER]: ['numberCell', 'numberTableCell', 'defaultNumberCell'],
+      [ColumnType.RELATIVE_DATE]: ['relativeDateCell', 'relativeDateTableCell', 'defaultRelativeDateCell'],
+      [ColumnType.TRANSLATION_KEY]: ['translationKeyCell', 'translationKeyTableCell', 'defaultTranslationKeyCell'],
+      [ColumnType.CUSTOM]: ['customCell', 'customTableCell', 'defaultCustomCell'],
+      [ColumnType.STRING]: ['stringCell', 'stringTableCell', 'defaultStringCell'],
+    },
+  }
+
+  filterTemplatesData: TemplatesData = {
+    templatesObservables: {},
+    idSuffix: ['IdTableFilterCell', 'IdFilterCell'],
+    templateNames: {
+      [ColumnType.DATE]: ['dateFilterCell', 'dateTableFilterCell', 'defaultDateCell'],
+      [ColumnType.NUMBER]: ['numberFilterCell', 'numberTableFilterCell', 'defaultNumberCell'],
+      [ColumnType.RELATIVE_DATE]: ['relativeDateFilterCell', 'relativeDateTableFilterCell', 'defaultRelativeDateCell'],
+      [ColumnType.TRANSLATION_KEY]: [
+        'translationKeyFilterCell',
+        'translationKeyTableFilterCell',
+        'defaultTranslationKeyCell',
+      ],
+      [ColumnType.CUSTOM]: ['customFilterCell', 'customTableFilterCell', 'defaultCustomCell'],
+      [ColumnType.STRING]: ['stringFilterCell', 'stringTableFilterCell', 'defaultStringCell'],
+    },
+  }
+
+  templatesDataMap: Record<TemplateType, TemplatesData> = {
+    [TemplateType.CELL]: this.cellTemplatesData,
+    [TemplateType.FILTERCELL]: this.filterTemplatesData,
+  }
+
+  findTemplate(templates: PrimeTemplate[], names: string[]): PrimeTemplate | undefined {
+    for (let index = 0; index < names.length; index++) {
+      const name = names[index]
+      const template = templates.find((template) => template.name === name)
+      if (template) {
+        return template
+      }
+    }
+    return undefined
+  }
+
+  getColumnTypeTemplate(templates: PrimeTemplate[], columnType: ColumnType, templateType: TemplateType) {
+    let template: TemplateRef<any> | undefined
+
+    switch (templateType) {
+      case TemplateType.CELL:
+        switch (columnType) {
+          case ColumnType.DATE:
+            template = this._dateCell
+            break
+          case ColumnType.NUMBER:
+            template = this._numberCell
+            break
+          case ColumnType.RELATIVE_DATE:
+            template = this._relativeDateCell
+            break
+          case ColumnType.TRANSLATION_KEY:
+            template = this._translationKeyCell
+            break
+          case ColumnType.CUSTOM:
+            template = this._customCell
+            break
+          default:
+            template = this._stringCell
+        }
+        break
+      case TemplateType.FILTERCELL:
+        switch (columnType) {
+          case ColumnType.DATE:
+            template = this._dateFilterCell
+            break
+          case ColumnType.NUMBER:
+            template = this._numberFilterCell
+            break
+          case ColumnType.RELATIVE_DATE:
+            template = this._relativeDateFilterCell
+            break
+          case ColumnType.TRANSLATION_KEY:
+            template = this._translationKeyFilterCell
+            break
+          case ColumnType.CUSTOM:
+            template = this._customFilterCell
+            break
+          default:
+            template = this._stringFilterCell
+        }
+        break
+    }
+
+    return (
+      template ??
+      this.findTemplate(templates, this.templatesDataMap[templateType].templateNames[columnType])?.template ??
+      null
+    )
+  }
+
+  getTemplate(column: DataTableColumn, templateType: TemplateType): Observable<TemplateRef<any> | null> {
+    const templatesData = this.templatesDataMap[templateType]
+
+    if (!templatesData.templatesObservables[column.id]) {
+      templatesData.templatesObservables[column.id] = combineLatest([
+        this.templates$,
+        this.viewTemplates$,
+        this.parentTemplates$,
+      ]).pipe(
+        map(([t, vt, pt]) => {
+          const templates = [...(t ?? []), ...(vt ?? []), ...(pt ?? [])]
+          const columnTemplate = this.findTemplate(
+            templates,
+            templatesData.idSuffix.map((suffix) => column.id + suffix)
+          )?.template
+          if (columnTemplate) {
+            return columnTemplate
+          }
+          return this.getColumnTypeTemplate(templates, column.columnType, templateType)
+        }),
+        debounceTime(50)
+      )
+    }
+    return templatesData.templatesObservables[column.id]
+  }
+
+  resolveFieldData(object: any, key: any) {
+    return ObjectUtils.resolveFieldData(object, key)
+  }
+
+  getRowObjectFromMultiselectItem(value: MultiSelectItem, column: DataTableColumn) {
+    return {
+      [column.id]: value.label,
+    }
   }
 }

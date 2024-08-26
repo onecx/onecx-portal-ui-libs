@@ -1,3 +1,75 @@
+## [5.8.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.7.0...v5.8.0) (2024-08-23)
+
+### Features
+
+* filter templates for data-table ([#416](https://github.com/onecx/onecx-portal-ui-libs/issues/416)) ([ff38854](https://github.com/onecx/onecx-portal-ui-libs/commit/ff3885410499476e25e6e95a286af32ed45a1769))
+
+### Bug Fixes
+
+* add Apache 2.0 open source license ([#420](https://github.com/onecx/onecx-portal-ui-libs/issues/420)) ([8126189](https://github.com/onecx/onecx-portal-ui-libs/commit/8126189dd0dccbe4fabad57582f53ae700fa259a))
+
+## [5.7.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.6.0...v5.7.0) (2024-08-22)
+
+### Features
+
+* default list view refactor, new way of templating ([#400](https://github.com/onecx/onecx-portal-ui-libs/issues/400)) ([b61da4b](https://github.com/onecx/onecx-portal-ui-libs/commit/b61da4bf182400510200c11d22f768c8fdac5eee))
+
+### Bug Fixes
+
+* fix nx migration and improve storybook action handling ([#418](https://github.com/onecx/onecx-portal-ui-libs/issues/418)) ([e141e4f](https://github.com/onecx/onecx-portal-ui-libs/commit/e141e4f29d2d5d620a872b383123f3100a7b8a1d))
+
+## [5.6.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.5.0...v5.6.0) (2024-08-22)
+
+### Features
+
+* add workspace displayname ([#417](https://github.com/onecx/onecx-portal-ui-libs/issues/417)) ([8aa60a0](https://github.com/onecx/onecx-portal-ui-libs/commit/8aa60a0a94791764652b7d2b1957976e45813927))
+
+### Bug Fixes
+
+* prevent p-menu item text from wrapping ([#415](https://github.com/onecx/onecx-portal-ui-libs/issues/415)) ([3a01639](https://github.com/onecx/onecx-portal-ui-libs/commit/3a016395e3335a9a850fcca8d197210014a883d1))
+
+## [5.5.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.4.0...v5.5.0) (2024-08-20)
+
+### Features
+
+* allow disable of row selection ([#406](https://github.com/onecx/onecx-portal-ui-libs/issues/406)) ([7ff7b50](https://github.com/onecx/onecx-portal-ui-libs/commit/7ff7b505180bf61f48868ae3da083d0c53d945ee))
+* remote component - slot - slot owner binding ([#352](https://github.com/onecx/onecx-portal-ui-libs/issues/352)) ([3e06fc2](https://github.com/onecx/onecx-portal-ui-libs/commit/3e06fc2235f2a8d6c072e57770dcb30c4babe814))
+
+## [5.4.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.3.2...v5.4.0) (2024-08-19)
+
+### Features
+
+* added function for check if url exists ([0e09d20](https://github.com/onecx/onecx-portal-ui-libs/commit/0e09d20d9326ede9f2b7330a73f439658ec302b7))
+
+### Bug Fixes
+
+* add length getter to DynamicLocaleId ([#393](https://github.com/onecx/onecx-portal-ui-libs/issues/393)) ([d4b373d](https://github.com/onecx/onecx-portal-ui-libs/commit/d4b373d5c9597bbbdd613b6608b09eae196acd70))
+* fix search header layout ([#410](https://github.com/onecx/onecx-portal-ui-libs/issues/410)) ([23f7d2b](https://github.com/onecx/onecx-portal-ui-libs/commit/23f7d2b7951add1b0dace421577412f0bcdf95d1))
+* remove unnecessary page header button padding ([#408](https://github.com/onecx/onecx-portal-ui-libs/issues/408)) ([e93dc11](https://github.com/onecx/onecx-portal-ui-libs/commit/e93dc11538e5eda78a94438ba39d1331506cf49f))
+
+### Chores
+
+* **deps-dev:** bump @storybook/addon-a11y from 8.2.6 to 8.2.8 ([#388](https://github.com/onecx/onecx-portal-ui-libs/issues/388)) ([b34bc6d](https://github.com/onecx/onecx-portal-ui-libs/commit/b34bc6d9d05214232217c28f2e0f30e9ded8a196))
+* **deps-dev:** bump @storybook/addon-essentials from 8.2.7 to 8.2.8 ([#381](https://github.com/onecx/onecx-portal-ui-libs/issues/381)) ([fea8fa4](https://github.com/onecx/onecx-portal-ui-libs/commit/fea8fa4d9c5c1e2ac5a06bafabd31507f1a9af19))
+* **deps-dev:** bump @storybook/angular from 8.2.6 to 8.2.8 ([#384](https://github.com/onecx/onecx-portal-ui-libs/issues/384)) ([8d719f2](https://github.com/onecx/onecx-portal-ui-libs/commit/8d719f2c2fff5e4da0930ba3fabac8c6dde3e7b8))
+* **deps-dev:** bump @storybook/angular from 8.2.8 to 8.2.9 ([#397](https://github.com/onecx/onecx-portal-ui-libs/issues/397)) ([49cfb8a](https://github.com/onecx/onecx-portal-ui-libs/commit/49cfb8a1e23f6e9fe0b18513b5e9ee86b3ca82ca))
+* **deps-dev:** bump @storybook/core-server from 8.2.7 to 8.2.8 ([#389](https://github.com/onecx/onecx-portal-ui-libs/issues/389)) ([8168b64](https://github.com/onecx/onecx-portal-ui-libs/commit/8168b64c5a72434126abcfb54007c746c8fcd68b))
+* **deps-dev:** bump @swc/core from 1.6.13 to 1.7.6 ([#373](https://github.com/onecx/onecx-portal-ui-libs/issues/373)) ([39abfb6](https://github.com/onecx/onecx-portal-ui-libs/commit/39abfb624a150b2f42cd0eaea268e6d9cd8d6ed7))
+* **deps-dev:** bump @swc/core from 1.7.6 to 1.7.10 ([#398](https://github.com/onecx/onecx-portal-ui-libs/issues/398)) ([c7ce3f8](https://github.com/onecx/onecx-portal-ui-libs/commit/c7ce3f8d409b44f2144f59c3b85a004c3e23fb72))
+* **deps-dev:** bump @types/node from 22.1.0 to 22.4.0 ([#407](https://github.com/onecx/onecx-portal-ui-libs/issues/407)) ([5553278](https://github.com/onecx/onecx-portal-ui-libs/commit/55532787240a686dae876dad3d16ff811738987e))
+* **deps-dev:** bump jest-preset-angular from 14.1.1 to 14.2.2 ([#387](https://github.com/onecx/onecx-portal-ui-libs/issues/387)) ([0d5705b](https://github.com/onecx/onecx-portal-ui-libs/commit/0d5705be68f4441bd7426abc49ffd71d595d4993))
+* **deps-dev:** bump ng-packagr from 18.1.0 to 18.2.0 ([#403](https://github.com/onecx/onecx-portal-ui-libs/issues/403)) ([02b6bcf](https://github.com/onecx/onecx-portal-ui-libs/commit/02b6bcf34d378ab2e774531d82c5ec9b2199bcdc))
+* **deps-dev:** bump postcss from 8.4.40 to 8.4.41 ([#372](https://github.com/onecx/onecx-portal-ui-libs/issues/372)) ([1357858](https://github.com/onecx/onecx-portal-ui-libs/commit/1357858d0e586257a892565d9396212ca1ddeb90))
+* **deps-dev:** bump postcss-preset-env from 10.0.0 to 10.0.1 ([#404](https://github.com/onecx/onecx-portal-ui-libs/issues/404)) ([2a1bd3a](https://github.com/onecx/onecx-portal-ui-libs/commit/2a1bd3a9ad60e3fc456e5428c93a8dc8e0f40f95))
+* **deps-dev:** bump postcss-preset-env from 9.5.16 to 10.0.0 ([#385](https://github.com/onecx/onecx-portal-ui-libs/issues/385)) ([79827d3](https://github.com/onecx/onecx-portal-ui-libs/commit/79827d3ffef3edab2945f88dbf5e0c900d7ad6a7))
+* **deps-dev:** bump the angular group with 3 updates ([#396](https://github.com/onecx/onecx-portal-ui-libs/issues/396)) ([dda43c1](https://github.com/onecx/onecx-portal-ui-libs/commit/dda43c12f8105e83ffad05a09e3559a613073006))
+* **deps-dev:** bump ts-jest from 29.2.3 to 29.2.4 ([#383](https://github.com/onecx/onecx-portal-ui-libs/issues/383)) ([7c44fb8](https://github.com/onecx/onecx-portal-ui-libs/commit/7c44fb869603553b77ac099e53b00ad4829b249e))
+* **deps:** bump axios from 1.7.2 to 1.7.3 ([#371](https://github.com/onecx/onecx-portal-ui-libs/issues/371)) ([ff3d015](https://github.com/onecx/onecx-portal-ui-libs/commit/ff3d0157d5f081c95ae460f560b5c8e30b008b4f))
+* **deps:** bump primeng from 17.18.6 to 17.18.8 ([#379](https://github.com/onecx/onecx-portal-ui-libs/issues/379)) ([21d4473](https://github.com/onecx/onecx-portal-ui-libs/commit/21d4473b447b2cd52c649dd884675164ca7d81b5))
+* **deps:** bump the angular group across 1 directory with 17 updates ([#405](https://github.com/onecx/onecx-portal-ui-libs/issues/405)) ([749768b](https://github.com/onecx/onecx-portal-ui-libs/commit/749768b4f2c18a72447daadf05cf219a56c5971f))
+* **deps:** bump the angular group with 17 updates ([#380](https://github.com/onecx/onecx-portal-ui-libs/issues/380)) ([0626afe](https://github.com/onecx/onecx-portal-ui-libs/commit/0626afed19557a58f10ea262e47e3ff0a2602a0b))
+* **deps:** bump zone.js from 0.14.8 to 0.14.10 ([#386](https://github.com/onecx/onecx-portal-ui-libs/issues/386)) ([3e888a4](https://github.com/onecx/onecx-portal-ui-libs/commit/3e888a4864c6de9b20182e7b51155d1cb7df8b21))
+
 ## [5.3.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.3.1...v5.3.2) (2024-08-08)
 
 ### Bug Fixes

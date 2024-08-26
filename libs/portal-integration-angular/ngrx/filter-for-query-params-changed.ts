@@ -15,6 +15,9 @@ export function filterForQueryParamsChanged<A extends RouterNavigatedAction>(
   return filterOutQueryParamsHaveNotChanged(router, queryParamsTypeDef, allowEmptyQueryParamsList)
 }
 
+/**
+ * @deprecated Please import from \@onecx/ngrx-accelerator
+ */
 export function filterOutQueryParamsHaveNotChanged<A extends RouterNavigatedAction>(
   router: Router,
   queryParamsTypeDef: ZodType,

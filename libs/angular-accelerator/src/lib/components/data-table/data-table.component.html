@@ -167,9 +167,14 @@
                   ></div>
                 </ng-template>
                 <ng-template pTemplate="item" let-value>
-                  <ng-container [ngSwitch]="(currentFilterColumn$ | async)?.columnType">
-                    <span *ngSwitchCase="'DATE'">{{ isDate(value.label) ? (value.label | date) : '' }}</span>
-                    <span *ngSwitchDefault> {{ value.label }} </span>
+                  <ng-container
+                    *ngIf="getTemplate(column, TemplateType.FILTERCELL) | async as template"
+                    [ngTemplateOutlet]="template"
+                    [ngTemplateOutletContext]="{
+                    rowObject: getRowObjectFromMultiselectItem(value, column),
+                    column: column
+                }"
+                  >
                   </ng-container>
                 </ng-template>
               </p-multiSelect>
@@ -188,7 +193,10 @@
   <ng-template pTemplate="body" let-rowObject>
     <tr>
       <td *ngIf="selectionChangedObserved">
-        <p-tableCheckbox [value]="rowObject"></p-tableCheckbox>
+        <p-tableCheckbox
+          [value]="rowObject"
+          [disabled]="!!selectionEnabledField && !fieldIsTruthy(rowObject, selectionEnabledField)"
+        ></p-tableCheckbox>
       </td>
       <ng-container *ngIf="actionColumnPosition === 'left';">
         <ng-container *ngTemplateOutlet="actionColumn; context: {localRowObject: rowObject}"></ng-container>
@@ -219,100 +227,37 @@
 </p-table>
 
 <ng-template #defaultCell let-rowObject="rowObject" let-column="column">
-  <ng-container [ngSwitch]="column.columnType">
-    <ng-container *ngSwitchCase="'CUSTOM'">
-      <ng-container
-        [ngTemplateOutlet]="
-            _customCell ? _customCell: defaultCustomCell
-            "
-        [ngTemplateOutletContext]="{
+  <ng-container
+    *ngIf="getTemplate(column, TemplateType.CELL) | async as template"
+    [ngTemplateOutlet]="template"
+    [ngTemplateOutletContext]="{
                 rowObject: rowObject,
                 column: column
             }"
-      >
-      </ng-container>
-    </ng-container>
-    <ng-container *ngSwitchCase="'DATE'">
-      <ng-container
-        [ngTemplateOutlet]="
-            _dateCell ? _dateCell : defaultDateCell
-            "
-        [ngTemplateOutletContext]="{
-                rowObject: rowObject,
-                column: column
-            }"
-      >
-      </ng-container>
-    </ng-container>
-    <ng-container *ngSwitchCase="'RELATIVE_DATE'">
-      <ng-container
-        [ngTemplateOutlet]="
-            _relativeDateCell ? _relativeDateCell : defaultRelativeDateCell
-            "
-        [ngTemplateOutletContext]="{
-                rowObject: rowObject,
-                column: column
-            }"
-      >
-      </ng-container>
-    </ng-container>
-    <ng-container *ngSwitchCase="'TRANSLATION_KEY'">
-      <ng-container
-        [ngTemplateOutlet]="
-            _translationKeyCell ? _translationKeyCell: defaultTranslationKeyCell
-            "
-        [ngTemplateOutletContext]="{
-                rowObject: rowObject,
-                column: column
-            }"
-      >
-      </ng-container>
-    </ng-container>
-    <ng-container *ngSwitchCase="'NUMBER'">
-      <ng-container
-        [ngTemplateOutlet]="
-            _numberCell ? _numberCell: defaultNumberCell
-            "
-        [ngTemplateOutletContext]="{
-                rowObject: rowObject,
-                column: column
-            }"
-      >
-      </ng-container>
-    </ng-container>
-    <ng-container *ngSwitchDefault>
-      <ng-container
-        [ngTemplateOutlet]="
-            _stringCell ? _stringCell: defaultStringCell
-            "
-        [ngTemplateOutletContext]="{
-                rowObject: rowObject,
-                column: column
-            }"
-      >
-      </ng-container>
-    </ng-container>
+  >
   </ng-container>
 </ng-template>
 
-<ng-template #defaultStringCell let-rowObject="rowObject" let-column="column">
-  <ng-container> {{ rowObject[column.id] }} </ng-container>
+<ng-template pTemplate="defaultStringCell" let-rowObject="rowObject" let-column="column">
+  <ng-container> {{ resolveFieldData(rowObject, column.id)}} </ng-container>
 </ng-template>
 
-<ng-template #defaultNumberCell let-rowObject="rowObject" let-column="column">
-  <ng-container> {{ rowObject[column.id] | number }} </ng-container>
+<ng-template pTemplate="defaultNumberCell" let-rowObject="rowObject" let-column="column">
+  <ng-container> {{ resolveFieldData(rowObject, column.id) | number }} </ng-container>
 </ng-template>
 
-<ng-template #defaultCustomCell let-rowObject="rowObject" let-column="column"> </ng-template>
+<ng-template pTemplate="defaultCustomCell" let-rowObject="rowObject" let-column="column"> </ng-template>
 
-<ng-template #defaultDateCell let-rowObject="rowObject" let-column="column">
-  <ng-container> {{ rowObject[column.id] | date: 'medium' }} </ng-container>
+<ng-template pTemplate="defaultDateCell" let-rowObject="rowObject" let-column="column">
+  <ng-container> {{ resolveFieldData(rowObject, column.id)| date: 'medium' }} </ng-container>
 </ng-template>
 
-<ng-template #defaultRelativeDateCell let-rowObject="rowObject" let-column="column">
-  <ng-container> {{ 'OCX_DATA_TABLE.EDITED' | translate }} {{ rowObject[column.id] | timeago }} </ng-container>
+<ng-template pTemplate="defaultRelativeDateCell" let-rowObject="rowObject" let-column="column">
+  <ng-container>
+    {{ 'OCX_DATA_TABLE.EDITED' | translate }} {{ resolveFieldData(rowObject, column.id) | timeago }}
+  </ng-container>
 </ng-template>
 
-<ng-template #defaultTranslationKeyCell let-rowObject="rowObject" let-column="column">
-  <ng-container> {{ rowObject[column.id] | translate }} </ng-container>
+<ng-template pTemplate="defaultTranslationKeyCell" let-rowObject="rowObject" let-column="column">
+  <ng-container> {{ resolveFieldData(rowObject, column.id) | translate }} </ng-container>
 </ng-template>
