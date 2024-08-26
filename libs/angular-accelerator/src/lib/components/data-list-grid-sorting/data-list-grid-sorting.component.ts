@@ -3,6 +3,12 @@ import { BehaviorSubject } from 'rxjs'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataColumnNameId } from '../../model/data-column-name-id.model'
 import { DataTableColumn } from '../../model/data-table-column.model'
+import { DropdownChangeEvent } from 'primeng/dropdown'
+
+export type ListGridSort = { sortColumn: string; sortDirection: DataSortDirection }
+export interface DataListGridSortingComponentState {
+  sorting?: ListGridSort
+}
 
 @Component({
   selector: 'ocx-data-list-grid-sorting',
@@ -31,6 +37,7 @@ export class DataListGridSortingComponent implements OnInit {
 
   @Output() sortChange: EventEmitter<string> = new EventEmitter()
   @Output() sortDirectionChange: EventEmitter<DataSortDirection> = new EventEmitter()
+  @Output() componentStateChanged: EventEmitter<DataListGridSortingComponentState> = new EventEmitter()
   @Output() columnsChange: EventEmitter<string[]> = new EventEmitter()
   selectedSortingOption: DataColumnNameId | undefined
   dropdownOptions: DataColumnNameId[] = []
@@ -38,20 +45,32 @@ export class DataListGridSortingComponent implements OnInit {
   ngOnInit(): void {
     this.columns.forEach((element) => this.dropdownOptions.push({ columnId: element.id, columnName: element.nameKey }))
     this.selectedSortingOption = this.dropdownOptions.find((e) => e.columnId === this?.sortField)
+    this.emitComponentStateChange()
   }
 
-  selectSorting(event: any): void {
-    this._sortField$.next(event.value)
+  selectSorting(event: DropdownChangeEvent): void {
+    this._sortField$.next(event.value.columnId)
     this.sortChange.emit(event.value.columnId)
+    this.emitComponentStateChange()
   }
   sortDirectionChanged(): void {
     const newSortDirection = this.nextSortDirection()
     this._sortDirection$.next(newSortDirection)
     this.sortDirectionChange.emit(newSortDirection)
+    this.emitComponentStateChange()
   }
 
   nextSortDirection() {
     return this.sortStates[(this.sortStates.indexOf(this.sortDirection) + 1) % this.sortStates.length]
+  }
+
+  emitComponentStateChange() {
+    this.componentStateChanged.emit({
+      sorting: {
+        sortColumn: this.sortField,
+        sortDirection: this.sortDirection
+      }
+    })
   }
 
   sortIcon() {

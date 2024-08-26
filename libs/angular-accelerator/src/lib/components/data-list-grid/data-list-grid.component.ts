@@ -21,7 +21,7 @@ import { AppStateService, UserService } from '@onecx/angular-integration-interfa
 import { MfeInfo } from '@onecx/integration-interface'
 import { MenuItem, PrimeIcons, PrimeTemplate } from 'primeng/api'
 import { Menu } from 'primeng/menu'
-import { BehaviorSubject, Observable, combineLatest, debounceTime, map, mergeMap } from 'rxjs'
+import { BehaviorSubject, Observable, combineLatest, debounceTime, first, map, mergeMap } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
@@ -40,6 +40,11 @@ type RowListGridData = ListGridData & Row
 
 export interface ListGridDataMenuItem extends MenuItem {
   permission: string
+}
+
+export interface DataListGridComponentState {
+  activePage?: number
+  pageSize?: number
 }
 
 @Component({
@@ -244,6 +249,8 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   @Output() editItem = new EventEmitter<ListGridData>()
   @Output() deleteItem = new EventEmitter<ListGridData>()
   @Output() pageChanged = new EventEmitter<number>()
+  @Output() pageSizeChanged = new EventEmitter<number>()
+  @Output() componentStateChanged = new EventEmitter<DataListGridComponentState>()
 
   get viewItemObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
@@ -364,6 +371,8 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
       (!!this.viewPermission && this.userService.hasPermission(this.viewPermission)) ||
       (!!this.editPermission && this.userService.hasPermission(this.editPermission)) ||
       (!!this.deletePermission && this.userService.hasPermission(this.deletePermission))
+
+      this.emitComponentStateChanged()
   }
 
   ngAfterContentInit() {
@@ -507,15 +516,33 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return ObjectUtils.resolveFieldData(object, key)
   }
 
+  emitComponentStateChanged(state: DataListGridComponentState = {}) {
+    this.displayedPageSize$.pipe(first()).subscribe((pageSize) => {
+          this.componentStateChanged.emit({
+      pageSize,
+      activePage: this.page,
+      ...state
+    })
+    })
+
+  }
+
   onPageChange(event: any) {
     const page = event.first / event.rows
     this.page = page
+    this.pageSize = event.rows
     this.pageChanged.emit(page)
+    this.pageSizeChanged.emit(event.rows)
+    this.emitComponentStateChanged({
+      activePage: page,
+      pageSize: event.rows
+    })
   }
 
   resetPage() {
     this.page = 0
     this.pageChanged.emit(this.page)
+    this.emitComponentStateChanged()
   }
 
   fieldIsTruthy(object: any, key: any) {

@@ -3,6 +3,10 @@ import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs'
 import { DataTableColumn } from '../../model/data-table-column.model'
 
 export type GroupSelectionChangedEvent = { activeColumns: DataTableColumn[]; groupKey: string }
+export interface ColumnGroupSelectionComponentState {
+  activeColumnGroupKey?: string
+  displayedColumns?: DataTableColumn[]
+}
 @Component({
   templateUrl: './column-group-selection.component.html',
   selector: 'ocx-column-group-selection',
@@ -31,6 +35,7 @@ export class ColumnGroupSelectionComponent implements OnInit {
   @Input() customGroupKey = ''
 
   @Output() groupSelectionChanged: EventEmitter<GroupSelectionChangedEvent> = new EventEmitter()
+  @Output() componentStateChanged: EventEmitter<ColumnGroupSelectionComponentState> = new EventEmitter()
 
   allGroupKeys$: Observable<string[]> | undefined
 
@@ -46,6 +51,10 @@ export class ColumnGroupSelectionComponent implements OnInit {
           .filter((value, index, self) => self.indexOf(value) === index && value != null)
       )
     )
+    this.componentStateChanged.emit({
+      activeColumnGroupKey: this.selectedGroupKey,
+      displayedColumns: this.columns,
+    })
   }
 
   changeGroupSelection(event: { value: string }) {
@@ -54,6 +63,10 @@ export class ColumnGroupSelectionComponent implements OnInit {
     }
     const activeColumns = this.columns.filter((c) => c.predefinedGroupKeys?.includes(event.value))
     this.groupSelectionChanged.emit({ activeColumns, groupKey: event.value })
+    this.componentStateChanged.emit({
+      activeColumnGroupKey: event.value,
+      displayedColumns: activeColumns
+    })
   }
 
   clearGroupSelection() {
@@ -62,5 +75,9 @@ export class ColumnGroupSelectionComponent implements OnInit {
       activeColumns = this.columns.filter((column) => column.predefinedGroupKeys?.includes(this.defaultGroupKey))
     }
     this.groupSelectionChanged.emit({ activeColumns, groupKey: this.defaultGroupKey })
+    this.componentStateChanged.emit({
+      activeColumnGroupKey: this.defaultGroupKey,
+      displayedColumns: activeColumns
+    })
   }
 }

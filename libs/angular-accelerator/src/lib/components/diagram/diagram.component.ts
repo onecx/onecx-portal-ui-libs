@@ -15,6 +15,10 @@ export interface DiagramLayouts {
   titleKey: string
 }
 
+export interface DiagramComponentState {
+  activeDiagramType?: DiagramType
+}
+
 const allDiagramTypes: DiagramLayouts[] = [
   { icon: PrimeIcons.CHART_PIE, layout: DiagramType.PIE, titleKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.PIE' },
   {
@@ -60,6 +64,7 @@ export class DiagramComponent implements OnInit, OnChanges {
   }
   @Output() dataSelected: EventEmitter<any> = new EventEmitter()
   @Output() diagramTypeChanged: EventEmitter<DiagramType> = new EventEmitter()
+  @Output() componentStateChanged: EventEmitter<DiagramComponentState> = new EventEmitter()
   chartOptions: ChartOptions | undefined
   chartData: ChartData | undefined
   amountOfData: number | undefined | null
@@ -128,12 +133,16 @@ export class DiagramComponent implements OnInit, OnChanges {
 
   dataClicked(event: []) {
     this.dataSelected.emit(event.length)
+    
   }
 
   onDiagramTypeChanged(event: any) {
     this.diagramType = event.value.layout
     this.generateChart(this.colorScale, this.colorRangeInfo)
     this.diagramTypeChanged.emit(event.value.layout)
+    this.componentStateChanged.emit({
+      activeDiagramType: event.value.layout
+    })
   }
 }
 function interpolateColors(amountOfData: number, colorScale: any, colorRangeInfo: any) {

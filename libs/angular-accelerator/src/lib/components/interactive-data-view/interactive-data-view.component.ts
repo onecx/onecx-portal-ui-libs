@@ -11,19 +11,31 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core'
-import { PrimeTemplate } from 'primeng/api'
+import { BehaviorSubject, Observable, ReplaySubject, combineLatest, map, startWith, timestamp } from 'rxjs'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
-import { GroupSelectionChangedEvent } from '../column-group-selection/column-group-selection.component'
+import { orderAndMergeValuesByTimestamp } from '../../utils/rxjs-utils'
+import {
+  ColumnGroupSelectionComponentState,
+  GroupSelectionChangedEvent,
+} from '../column-group-selection/column-group-selection.component'
+import { PrimeTemplate } from 'primeng/api'
 import {
   ActionColumnChangedEvent,
   ColumnSelectionChangedEvent,
+  CustomGroupColumnSelectorComponentState,
 } from '../custom-group-column-selector/custom-group-column-selector.component'
+import { DataLayoutSelectionComponentState } from '../data-layout-selection/data-layout-selection.component'
+import { DataListGridSortingComponentState } from '../data-list-grid-sorting/data-list-grid-sorting.component'
 import { Filter, Row, Sort } from '../data-table/data-table.component'
-import { DataViewComponent, RowListGridData } from '../data-view/data-view.component'
-import { BehaviorSubject } from 'rxjs'
+import { DataViewComponent, DataViewComponentState, RowListGridData } from '../data-view/data-view.component'
 
+export type InteractiveDataViewComponentState = ColumnGroupSelectionComponentState &
+  CustomGroupColumnSelectorComponentState &
+  DataLayoutSelectionComponentState &
+  DataListGridSortingComponentState &
+  DataViewComponentState
 @Component({
   selector: 'ocx-interactive-data-view',
   templateUrl: './interactive-data-view.component.html',
@@ -39,6 +51,12 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   get dataView(): DataViewComponent | undefined {
     return this._dataViewComponent
   }
+
+  columnGroupSelectionComponentState$ = new ReplaySubject<ColumnGroupSelectionComponentState>(1)
+  customGroupColumnSelectorComponentState$ = new ReplaySubject<CustomGroupColumnSelectorComponentState>(1)
+  dataLayoutComponentState$ = new ReplaySubject<DataLayoutSelectionComponentState>(1)
+  dataListGridSortingComponentState$ = new ReplaySubject<DataListGridSortingComponentState>(1)
+  dataViewComponentState$ = new ReplaySubject<DataViewComponentState>(1)
 
   @Input() deletePermission: string | undefined
   @Input() editPermission: string | undefined
@@ -80,7 +98,29 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   @Input() tablePaginator = true
   @Input() page = 0
   @Input() selectedRows: Row[] = []
-  @Input() displayedColumns: DataTableColumn[] = []
+  displayedColumnKeys$ = new BehaviorSubject<string[]>([])
+  displayedColumns$: Observable<DataTableColumn[]> | undefined
+  @Input() 
+  get displayedColumnKeys(): string[] {
+    return this.displayedColumnKeys$.getValue()
+  }
+  set displayedColumnKeys(value: string[]) {
+    this.displayedColumnKeys$.next(value)
+  }
+  /**
+   * @deprecated Use `displayedColumnKeys` and pass in column ids instead of `DataTableColumn` objects
+   */
+  @Input()
+  get displayedColumns(): DataTableColumn[] {
+      return (
+        (this.displayedColumnKeys
+          .map((d) => this.columns.find((c) => c.id === d))
+          .filter((d) => d) as DataTableColumn[]) ?? []
+      );
+  }
+  set displayedColumns(value: DataTableColumn[]) {
+    this.displayedColumnKeys$.next(value.map((d) => d.id))
+  }
   @Input() frozenActionColumn = false
   @Input() actionColumnPosition: 'left' | 'right' = 'right'
   @ContentChild('tableCell') tableCell: TemplateRef<any> | undefined
@@ -154,10 +194,16 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   @Output() viewItem = new EventEmitter<RowListGridData>()
   @Output() editItem = new EventEmitter<RowListGridData>()
   @Output() dataViewLayoutChange = new EventEmitter<'grid' | 'list' | 'table'>()
+  // TODO: Remove following line once displayedColumns (deprecated) has been removed
   @Output() displayedColumnsChange = new EventEmitter<DataTableColumn[]>()
+  @Output() displayedColumnKeysChange = new EventEmitter<string[]>()
   @Output() selectionChanged: EventEmitter<Row[]> = new EventEmitter()
 
   @Output() pageChanged: EventEmitter<number> = new EventEmitter()
+  @Output() pageSizeChanged = new EventEmitter<number>()
+
+  @Output() componentStateChanged = new EventEmitter<InteractiveDataViewComponentState>()
+
   selectedGroupKey = ''
   isDeleteItemObserved: boolean | undefined
   isViewItemObserved: boolean | undefined
@@ -269,17 +315,47 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
 
   ngOnInit(): void {
     this.selectedGroupKey = this.defaultGroupKey
-    this.displayedColumns = this.columns
-    if (this.defaultGroupKey) {
-      this.displayedColumns = this.columns.filter((column) =>
-        column.predefinedGroupKeys?.includes(this.defaultGroupKey)
-      )
+    if(!this.displayedColumns || this.displayedColumns.length === 0) {
+      this.displayedColumnKeys = this.columns.map((column) => column.id)
     }
+    if (this.defaultGroupKey) {
+      this.displayedColumnKeys = this.columns.filter((column) =>
+        column.predefinedGroupKeys?.includes(this.defaultGroupKey)
+      ).map((column) => column.id)
+    }
+    this.displayedColumns$ = this.displayedColumnKeys$.pipe(map((columnKeys) => (
+      (columnKeys
+        .map((key) => this.columns.find((col) => col.id === key))
+        .filter((d) => d) as DataTableColumn[]) ?? []
+    )))
+    // TODO: Remove following line once displayedColumns (deprecated) has been removed
     this.displayedColumnsChange.emit(this.displayedColumns)
+    this.displayedColumnKeysChange.emit(this.displayedColumnKeys)
     if (!this.groupSelectionNoGroupSelectedKey) {
       this.groupSelectionNoGroupSelectedKey = 'OCX_INTERACTIVE_DATA_VIEW.NO_GROUP_SELECTED'
     }
     this.firstColumnId = this.columns[0]?.id
+
+    let dataListGridSortingComponentState$: Observable<DataListGridSortingComponentState | Record<string, never>> =
+      this.dataListGridSortingComponentState$
+    if (this.layout === 'table') {
+      dataListGridSortingComponentState$ = dataListGridSortingComponentState$.pipe(startWith({}))
+    }
+    combineLatest([
+      this.columnGroupSelectionComponentState$.pipe(timestamp()),
+      this.customGroupColumnSelectorComponentState$.pipe(timestamp()),
+      this.dataLayoutComponentState$.pipe(timestamp()),
+      dataListGridSortingComponentState$.pipe(timestamp()),
+      this.dataViewComponentState$.pipe(timestamp()),
+    ])
+      .pipe(
+        map((componentStates) => {
+          return orderAndMergeValuesByTimestamp(componentStates)
+        })
+      )
+      .subscribe((val) => {
+        this.componentStateChanged.emit(val)
+      })
   }
 
   ngAfterContentInit() {
@@ -421,9 +497,11 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   }
 
   onColumnGroupSelectionChange(event: GroupSelectionChangedEvent) {
-    this.displayedColumns = event.activeColumns
+    this.displayedColumnKeys = event.activeColumns.map((col) => col.id)
     this.selectedGroupKey = event.groupKey
+    // TODO: Remove following line once displayedColumns (deprecated) has been removed
     this.displayedColumnsChange.emit(this.displayedColumns)
+    this.displayedColumnKeysChange.emit(this.displayedColumnKeys)
   }
 
   registerEventListenerForDataView() {
@@ -461,9 +539,11 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   }
 
   onColumnSelectionChange(event: ColumnSelectionChangedEvent) {
-    this.displayedColumns = event.activeColumns
+    this.displayedColumnKeys = event.activeColumns.map((col) => col.id)
     this.selectedGroupKey = this.customGroupKey
+    // TODO: Remove following line once displayedColumns (deprecated) has been removed
     this.displayedColumnsChange.emit(this.displayedColumns)
+    this.displayedColumnKeysChange.emit(this.displayedColumnKeys)
   }
 
   onActionColumnConfigChange(event: ActionColumnChangedEvent) {
@@ -481,4 +561,10 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
     this.page = event
     this.pageChanged.emit(event)
   }
+
+  onPageSizeChange(event: number) {
+    this.pageSize = event
+    this.pageSizeChanged.emit(event)
+  }
+
 }
