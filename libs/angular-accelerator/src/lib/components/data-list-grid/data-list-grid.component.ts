@@ -21,7 +21,7 @@ import { AppStateService, UserService } from '@onecx/angular-integration-interfa
 import { MfeInfo } from '@onecx/integration-interface'
 import { MenuItem, PrimeIcons, PrimeTemplate } from 'primeng/api'
 import { Menu } from 'primeng/menu'
-import { BehaviorSubject, Observable, combineLatest, debounceTime, map, mergeMap } from 'rxjs'
+import { BehaviorSubject, Observable, combineLatest, debounceTime, first, map, mergeMap } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
@@ -372,10 +372,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
       (!!this.editPermission && this.userService.hasPermission(this.editPermission)) ||
       (!!this.deletePermission && this.userService.hasPermission(this.deletePermission))
 
-      this.componentStateChanged.emit({
-        pageSize: this.pageSize ?? 50,
-        activePage: this.page,
-      })
+      this.emitComponentStateChanged()
   }
 
   ngAfterContentInit() {
@@ -519,13 +516,24 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return ObjectUtils.resolveFieldData(object, key)
   }
 
+  emitComponentStateChanged(state: DataListGridComponentState = {}) {
+    this.displayedPageSize$.pipe(first()).subscribe((pageSize) => {
+          this.componentStateChanged.emit({
+      pageSize,
+      activePage: this.page,
+      ...state
+    })
+    })
+
+  }
+
   onPageChange(event: any) {
     const page = event.first / event.rows
     this.page = page
     this.pageSize = event.rows
     this.pageChanged.emit(page)
     this.pageSizeChanged.emit(event.rows)
-    this.componentStateChanged.emit({
+    this.emitComponentStateChanged({
       activePage: page,
       pageSize: event.rows
     })
@@ -534,10 +542,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   resetPage() {
     this.page = 0
     this.pageChanged.emit(this.page)
-    this.componentStateChanged.emit({
-      pageSize: this.pageSize ?? 50,
-      activePage: this.page,
-    })
+    this.emitComponentStateChanged()
   }
 
   fieldIsTruthy(object: any, key: any) {

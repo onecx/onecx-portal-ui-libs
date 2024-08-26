@@ -147,12 +147,13 @@ export const WithMockData = {
   args: {
     ...defaultComponentArgs,
     selectedRows: [],
-    selectionChanged: ($event: any) => console.log('Selection changed ', $event),
-    componentStateChanged: ($event: any) => console.log('Component state changed ', $event),
   },
 }
 
 export const WithPageSizes = {
+  argTypes: {
+    componentStateChanged: { action: 'componentStateChanged' },
+  },
   render: Template,
   args: {
     ...defaultComponentArgs,
