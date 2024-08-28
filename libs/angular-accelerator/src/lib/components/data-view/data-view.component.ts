@@ -13,15 +13,19 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core'
-import { DataListGridComponent, ListGridData } from '../data-list-grid/data-list-grid.component'
-import { Row, Filter, Sort, DataTableComponent } from '../data-table/data-table.component'
+import { DataListGridComponent, DataListGridComponentState, ListGridData } from '../data-list-grid/data-list-grid.component'
+import { Row, Filter, Sort, DataTableComponent, DataTableComponentState } from '../data-table/data-table.component'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataAction } from '../../model/data-action'
+import { BehaviorSubject, ReplaySubject, timestamp, combineLatest, map, Observable, startWith } from 'rxjs'
+import { orderAndMergeValuesByTimestamp } from '../../utils/rxjs-utils'
 import { PrimeTemplate } from 'primeng/api'
-import { BehaviorSubject, Observable, combineLatest, map } from 'rxjs'
 
 export type RowListGridData = ListGridData & Row
+
+export type DataViewComponentState = DataListGridComponentState & DataTableComponentState
+
 @Component({
   selector: 'ocx-data-view',
   templateUrl: './data-view.component.html',
@@ -46,6 +50,9 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   get dataTable(): DataTableComponent | undefined {
     return this._dataTableComponent
   }
+
+  dataTableComponentState$ = new ReplaySubject<DataTableComponentState>(1)
+  dataListGridComponentState$ = new ReplaySubject<DataListGridComponentState>(1)
 
   @Input() deletePermission: string | undefined
   @Input() editPermission: string | undefined
@@ -318,6 +325,8 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   @Output() editItem = new EventEmitter<RowListGridData>()
   @Output() selectionChanged = new EventEmitter<Row[]>()
   @Output() pageChanged = new EventEmitter<number>()
+  @Output() pageSizeChanged = new EventEmitter<number>()
+  @Output() componentStateChanged = new EventEmitter<DataViewComponentState>()
   isDeleteItemObserved: boolean | undefined
   isViewItemObserved: boolean | undefined
   IsEditItemObserved: boolean | undefined
@@ -370,6 +379,25 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
 
   ngOnInit(): void {
     this.firstColumnId = this.columns[0]?.id
+
+    let dataTableComponentState$: Observable<DataTableComponentState | Record<string, never>> = this.dataTableComponentState$
+    let dataListGridComponentState$: Observable<DataListGridComponentState | Record<string, never>> = this.dataListGridComponentState$
+    if (this.layout === 'table') {
+      dataListGridComponentState$ = dataListGridComponentState$.pipe(startWith({}))
+    } else {
+      dataTableComponentState$ = dataTableComponentState$.pipe(startWith({}))
+    }
+
+    combineLatest([
+      dataTableComponentState$.pipe(timestamp()),
+      dataListGridComponentState$.pipe(timestamp()),
+    ])
+      .pipe(
+        map((componentStates) => {
+          return orderAndMergeValuesByTimestamp(componentStates)
+        })
+      )
+      .subscribe((val) => {this.componentStateChanged.emit(val)})
   }
 
   ngAfterContentInit() {
@@ -570,5 +598,10 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   onPageChange(event: number) {
     this.page = event
     this.pageChanged.emit(event)
+  }
+
+  onPageSizeChange(event: number) {
+    this.pageSize = event
+    this.pageSizeChanged.emit(event)
   }
 }

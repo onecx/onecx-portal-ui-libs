@@ -1,3 +1,10 @@
+## [5.9.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.8.0...v5.9.0) (2024-08-26)
+
+### Features
+
+* create ngrx-accelerator ([#399](https://github.com/onecx/onecx-portal-ui-libs/issues/399)) ([d3007a1](https://github.com/onecx/onecx-portal-ui-libs/commit/d3007a1a2ab5b743b00e5bfdf63aab6149809ea0))
+* publish UI state change events for lib components ([#395](https://github.com/onecx/onecx-portal-ui-libs/issues/395)) ([622ed48](https://github.com/onecx/onecx-portal-ui-libs/commit/622ed48221849c418e4f8c4a2f72ea139be30e17))
+
 ## [5.8.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.7.0...v5.8.0) (2024-08-23)
 
 ### Features
