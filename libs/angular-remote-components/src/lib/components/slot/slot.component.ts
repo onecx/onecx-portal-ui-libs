@@ -118,8 +118,6 @@ export class SlotComponent implements OnInit, OnDestroy {
     })
   }
 
-  updateDataSub: Subscription | undefined
-
   _viewContainers$ = new BehaviorSubject<QueryList<ViewContainerRef> | undefined>(undefined)
   @ViewChildren('slot', { read: ViewContainerRef })
   set viewContainers(value: QueryList<ViewContainerRef>) {
@@ -226,6 +224,5 @@ export class SlotComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe()
-    this.updateDataSub?.unsubscribe()
   }
 }
