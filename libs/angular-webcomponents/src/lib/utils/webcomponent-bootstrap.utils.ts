@@ -165,7 +165,6 @@ function connectMicroFrontendRouter(injector: Injector, warn = true): Subscripti
 
 function connectRouter(router: Router): Subscription {
   const initialUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}`
-  location.hash = location.hash
   router.navigate([initialUrl], { fragment: location.hash.substring(1) })
   let lastUrl = initialUrl
   let lastHash = location.hash
