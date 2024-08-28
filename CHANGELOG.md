@@ -1,3 +1,9 @@
+## [5.9.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.9.1...v5.9.2) (2024-08-28)
+
+### Bug Fixes
+
+* connectRouter using fragment ([#428](https://github.com/onecx/onecx-portal-ui-libs/issues/428)) ([9e36673](https://github.com/onecx/onecx-portal-ui-libs/commit/9e366733613341e09e77a026d666afdac94985f8))
+
 ## [5.9.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.9.0...v5.9.1) (2024-08-28)
 
 ### Bug Fixes
