@@ -1,3 +1,9 @@
+## [5.9.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.9.0...v5.9.1) (2024-08-28)
+
+### Bug Fixes
+
+* add license file ([#427](https://github.com/onecx/onecx-portal-ui-libs/issues/427)) ([90b43ab](https://github.com/onecx/onecx-portal-ui-libs/commit/90b43ab4c8b7aba11bd798f2d4747f226de04052))
+
 ## [5.9.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.8.0...v5.9.0) (2024-08-26)
 
 ### Features
