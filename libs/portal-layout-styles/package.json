@@ -1,6 +1,6 @@
 {
   "name": "@onecx/portal-layout-styles",
-  "version": "5.9.0",
+  "version": "5.9.1",
   "license": "Apache-2.0",
   "peerDependencies": {
     "tslib": "^2.6.3"
