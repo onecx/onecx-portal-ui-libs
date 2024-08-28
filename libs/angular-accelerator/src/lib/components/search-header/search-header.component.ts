@@ -63,12 +63,18 @@ export class SearchHeaderComponent implements AfterViewInit {
     }
   }
 
+  _displayedColumnsIds: string[] = []
+  get displayedColumnsIds(): string[] {
+    return this._displayedColumnsIds
+  }
+
   _displayedColumns: DataTableColumn[] = []
   @Input() get displayedColumns(): DataTableColumn[] {
     return this._displayedColumns
   }
   set displayedColumns(value: DataTableColumn[]) {
     this._displayedColumns = [...value]
+    this._displayedColumnsIds = this._displayedColumns.map((column) => column.id)
   }
 
   @Output() searched: EventEmitter<any> = new EventEmitter()

@@ -1,6 +1,6 @@
 {
     "OCX_CUSTOM_GROUP_COLUMN_SELECTOR": {
-      "DROPDOWN_LABEL": "Spalten",
+      "DROPDOWN_LABEL": "Spaltengruppe",
       "OPEN_BUTTON_DETAIL": "Dialog zur Auswahl einer benutzerdefinierten Gruppe öffnen",
       "ACTIVE_COLUMNS_LABEL": "Aktive Spalten",
       "INACTIVE_COLUMNS_LABEL": "Inaktive Spalten",

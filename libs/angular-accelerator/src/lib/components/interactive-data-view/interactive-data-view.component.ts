@@ -3,18 +3,21 @@ import { DataTableColumn } from '../../model/data-table-column.model'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { Filter, Row, Sort } from '../data-table/data-table.component'
 import { DataViewComponent, RowListGridData } from '../data-view/data-view.component'
-import { GroupSelectionChangedEvent } from '../column-group-selection/column-group-selection.component'
 import {
   ActionColumnChangedEvent,
   ColumnSelectionChangedEvent,
 } from '../custom-group-column-selector/custom-group-column-selector.component'
 import { DataAction } from '../../model/data-action'
+import { SLOT_SERVICE, SlotService } from '@onecx/angular-remote-components'
 
 @Component({
   selector: 'ocx-interactive-data-view',
   templateUrl: './interactive-data-view.component.html',
   styleUrls: ['./interactive-data-view.component.css'],
-  providers: [{ provide: 'InteractiveDataViewComponent', useExisting: InteractiveDataViewComponent }],
+  providers: [
+    { provide: 'InteractiveDataViewComponent', useExisting: InteractiveDataViewComponent },
+    { provide: SLOT_SERVICE, useExisting: SlotService },
+  ],
 })
 export class InteractiveDataViewComponent implements OnInit {
   _dataViewComponent: DataViewComponent | undefined
@@ -52,8 +55,9 @@ export class InteractiveDataViewComponent implements OnInit {
     DataSortDirection.DESCENDING,
     DataSortDirection.NONE,
   ]
+  @Input() pageName: string = ''
   @Input() pageSizes: number[] = [10, 25, 50]
-  @Input() pageSize: number | undefined;
+  @Input() pageSize: number | undefined
   @Input() totalRecordsOnServer: number | undefined
   @Input() layout: 'grid' | 'list' | 'table' = 'table'
   @Input() defaultGroupKey = ''
@@ -105,6 +109,7 @@ export class InteractiveDataViewComponent implements OnInit {
   @Output() dataViewLayoutChange = new EventEmitter<'grid' | 'list' | 'table'>()
   @Output() displayedColumnsChange = new EventEmitter<DataTableColumn[]>()
   @Output() selectionChanged: EventEmitter<Row[]> = new EventEmitter()
+  groupSelectionChanged = new EventEmitter<{ activeColumns: DataTableColumn[]; groupKey: string }>()
 
   @Output() pageChanged: EventEmitter<number> = new EventEmitter()
   selectedGroupKey = ''
@@ -174,6 +179,14 @@ export class InteractiveDataViewComponent implements OnInit {
     this._data = value
   }
 
+  constructor() {
+    this.groupSelectionChanged.subscribe((event: { activeColumns: DataTableColumn[]; groupKey: string }) => {
+      this.displayedColumns = event.activeColumns
+      this.selectedGroupKey = event.groupKey
+      this.displayedColumnsChange.emit(this.displayedColumns)
+    })
+  }
+
   ngOnInit(): void {
     this.selectedGroupKey = this.defaultGroupKey
     this.displayedColumns = this.columns
@@ -231,12 +244,6 @@ export class InteractiveDataViewComponent implements OnInit {
   onSortDirectionChange($event: any) {
     this.sortDirection = $event
     this.sorted.emit({ sortColumn: this.sortField, sortDirection: this.sortDirection })
-  }
-
-  onColumnGroupSelectionChange(event: GroupSelectionChangedEvent) {
-    this.displayedColumns = event.activeColumns
-    this.selectedGroupKey = event.groupKey
-    this.displayedColumnsChange.emit(this.displayedColumns)
   }
 
   registerEventListenerForDataView() {

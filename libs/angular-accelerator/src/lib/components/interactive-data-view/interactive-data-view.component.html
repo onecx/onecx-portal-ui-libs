@@ -22,14 +22,11 @@
     </div>
 
     <div *ngIf="layout === 'table'" class="flex flex-wrap justify-content-between align-items-center gap-2">
-      <ocx-column-group-selection
-        [selectedGroupKey]="selectedGroupKey"
-        [columns]="columns"
-        [defaultGroupKey]="defaultGroupKey"
-        [customGroupKey]="customGroupKey"
-        [placeholderKey]="groupSelectionNoGroupSelectedKey"
-        (groupSelectionChanged)="onColumnGroupSelectionChange($event)"
-      ></ocx-column-group-selection>
+      <ocx-slot
+        name="onecx-shell-column-group-selection"
+        [inputs]="{ pageName: pageName, placeholderKey: groupSelectionNoGroupSelectedKey, defaultGroupKey: defaultGroupKey, customGroupKey: customGroupKey, columns: columns, selectedGroupKey: selectedGroupKey }"
+        [outputs]="{ groupSelectionChanged: groupSelectionChanged }"
+      ></ocx-slot>
 
       <ocx-custom-group-column-selector
         [columns]="columns"
