@@ -1,3 +1,9 @@
+## [5.9.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.9.3...v5.9.4) (2024-08-30)
+
+### Bug Fixes
+
+* connectRouter fix ([#433](https://github.com/onecx/onecx-portal-ui-libs/issues/433)) ([06c2bdb](https://github.com/onecx/onecx-portal-ui-libs/commit/06c2bdb3047cc97716b21574ce64822972256f6b))
+
 ## [5.9.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.9.2...v5.9.3) (2024-08-30)
 
 ### Bug Fixes
