@@ -1,6 +1,6 @@
 {
   "name": "@onecx/ngrx-accelerator",
-  "version": "5.9.2",
+  "version": "5.9.3",
   "peerDependencies": {
     "@angular/core": "^18.0.5",
     "@angular/router": "^18.0.5",
@@ -11,11 +11,8 @@
     "@ngrx/router-store": "^18.0.1",
     "@ngrx/store": "^18.0.1",
     "rxjs": "7.8.1",
-    "tslib": "^2.6.3",
     "zod": "^3.23.8"
   },
-  "main": "./src/index.js",
-  "typings": "./src/index.d.ts",
   "publishConfig": {
     "access": "public"
   }

@@ -1,3 +1,9 @@
+## [5.9.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.9.2...v5.9.3) (2024-08-30)
+
+### Bug Fixes
+
+* fix change ngrx build output structure ([#432](https://github.com/onecx/onecx-portal-ui-libs/issues/432)) ([ab409fc](https://github.com/onecx/onecx-portal-ui-libs/commit/ab409fc4d017f3544985ba21564b777d91036dc4))
+
 ## [5.9.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.9.1...v5.9.2) (2024-08-28)
 
 ### Bug Fixes
