@@ -2,19 +2,27 @@
   "name": "ngrx-accelerator",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/ngrx-accelerator/src",
-  "prefix": "lib",
+  "prefix": "onecx",
   "projectType": "library",
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
+      "executor": "@nx/angular:package",
+      "outputs": [
+        "{workspaceRoot}/dist/{projectRoot}"
+      ],
       "options": {
-        "outputPath": "dist/libs/ngrx-accelerator",
-        "main": "libs/ngrx-accelerator/src/index.ts",
-        "tsConfig": "libs/ngrx-accelerator/tsconfig.lib.json",
-        "assets": ["libs/ngrx-accelerator/*.md"]
-      }
+        "project": "libs/ngrx-accelerator/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/ngrx-accelerator/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/ngrx-accelerator/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
     },
     "test": {
       "executor": "@nx/jest:jest",
