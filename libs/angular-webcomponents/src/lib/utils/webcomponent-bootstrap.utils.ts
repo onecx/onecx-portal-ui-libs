@@ -164,17 +164,15 @@ function connectMicroFrontendRouter(injector: Injector, warn = true): Subscripti
 }
 
 function connectRouter(router: Router): Subscription {
-  const initialUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}`
-  router.navigate([initialUrl], { fragment: location.hash.substring(1) })
+  const initialUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}${location.hash}`
+  router.navigateByUrl(initialUrl)
   let lastUrl = initialUrl
-  let lastHash = location.hash
   const observer = new EventsTopic()
   return observer.pipe(filter((e) => e.type === 'navigated')).subscribe(() => {
-    const routerUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}`
-    if (routerUrl !== lastUrl || location.hash !== lastHash) {
+    const routerUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}${location.hash}`
+    if (routerUrl !== lastUrl) {
       lastUrl = routerUrl
-      lastHash = location.hash
-      router.navigate([routerUrl], { fragment: location.hash.substring(1) })
+      router.navigateByUrl(routerUrl)
     }
   })
 }
