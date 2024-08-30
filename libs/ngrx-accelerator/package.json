@@ -11,7 +11,6 @@
     "@ngrx/router-store": "^18.0.1",
     "@ngrx/store": "^18.0.1",
     "rxjs": "7.8.1",
-    "tslib": "^2.6.3",
     "zod": "^3.23.8"
   },
   "publishConfig": {
