@@ -38,7 +38,18 @@ export class SearchHeaderComponent implements AfterViewInit {
     this.header = value
   }
   @Input() subheader: string | undefined
-  @Input() viewMode: 'basic' | 'advanced' = 'basic'
+  _viewMode: 'basic' | 'advanced' = 'basic'
+  @Input()
+  get viewMode(): 'basic' | 'advanced' {
+    return this._viewMode
+  }
+  set viewMode(viewMode: 'basic' | 'advanced') {
+    if (this.viewMode !== viewMode) {
+      this._viewMode = viewMode
+      this.updateHeaderActions()
+      setTimeout(() => this.addKeyUpEventListener())
+    }
+  }
   @Input() manualBreadcrumbs = false
   _actions: Action[] = []
   @Input()
@@ -82,6 +93,7 @@ export class SearchHeaderComponent implements AfterViewInit {
   @Output() selectedSearchConfigChanged: EventEmitter<{
     inputValues: { [key: string]: unknown }
     displayedColumns: string[]
+    viewMode: 'basic' | 'advanced'
   }> = new EventEmitter()
   @Output() viewModeChanged: EventEmitter<'basic' | 'advanced'> = new EventEmitter()
   @ContentChild('additionalToolbarContent')
@@ -109,8 +121,6 @@ export class SearchHeaderComponent implements AfterViewInit {
   toggleViewMode() {
     this.viewMode = this.viewMode === 'basic' ? 'advanced' : 'basic'
     this.viewModeChanged?.emit(this.viewMode)
-    this.updateHeaderActions()
-    setTimeout(() => this.addKeyUpEventListener())
   }
 
   onResetClicked() {

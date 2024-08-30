@@ -7,7 +7,7 @@
   <ng-template #additionalToolbarContentLeft>
     <ocx-slot
       name="onecx-shell-search-config"
-      [inputs]="{ pageName: pageName, currentInputFieldValues: currentInputFieldValues, displayedColumns: displayedColumnsIds}"
+      [inputs]="{ pageName: pageName, currentInputFieldValues: currentInputFieldValues, displayedColumns: displayedColumnsIds, viewMode: viewMode}"
       [outputs]="{ searchConfigSelected: selectedSearchConfigChanged }"
     ></ocx-slot>
     <ng-container
