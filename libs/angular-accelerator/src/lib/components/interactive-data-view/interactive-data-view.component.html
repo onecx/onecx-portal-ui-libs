@@ -15,7 +15,7 @@
       <ocx-data-list-grid-sorting
         [sortDirection]="sortDirection"
         [sortField]="sortField"
-        [columns]="columns"
+        [columns]="(displayedColumns$ | async) ?? []"
         [sortStates]="sortStates"
         (sortChange)="onSortChange($event)"
         (sortDirectionChange)="onSortDirectionChange($event)"
