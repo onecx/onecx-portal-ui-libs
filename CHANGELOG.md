@@ -1,3 +1,9 @@
+## [5.9.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.9.4...v5.9.5) (2024-09-03)
+
+### Bug Fixes
+
+* only show displayed columns in list grid sorting options ([#436](https://github.com/onecx/onecx-portal-ui-libs/issues/436)) ([33c0559](https://github.com/onecx/onecx-portal-ui-libs/commit/33c0559710856c145a9da0bac807f36a0de8ce6c))
+
 ## [5.9.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.9.3...v5.9.4) (2024-08-30)
 
 ### Bug Fixes
