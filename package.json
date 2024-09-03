@@ -58,7 +58,7 @@
     "@happy-dom/jest-environment": "^14.12.3",
     "@nx/angular": "19.5.7",
     "@nx/esbuild": "19.5.7",
-    "@nx/eslint-plugin": "19.5.7",
+    "@nx/eslint-plugin": "19.6.4",
     "@nx/jest": "19.5.7",
     "@nx/js": "19.5.7",
     "@nx/linter": "19.5.7",
