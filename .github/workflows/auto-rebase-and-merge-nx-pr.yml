@@ -1,0 +1,24 @@
+name: Automatic rebase and merge NX PRs
+on:
+  pull_request_target:
+    types: [opened]
+jobs:
+  rebase:
+    name: Rebase and merge
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.user.login == 'tkit-dev' && startsWith(github.head_ref, 'migrate-nx-to-')
+    steps:
+      - name: Checkout the latest code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0 # otherwise, you will fail to push refs to dest repo
+      - name: Automatic Rebase
+        uses: cirrus-actions/rebase@1.8
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Enable auto-merge for NX PRs
+        run: gh pr merge --auto --merge "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
