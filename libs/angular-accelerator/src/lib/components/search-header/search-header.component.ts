@@ -1,4 +1,5 @@
 import {
+  AfterContentInit,
   AfterViewInit,
   Component,
   ContentChild,
@@ -32,7 +33,7 @@ export interface SearchHeaderComponentState {
   templateUrl: './search-header.component.html',
   providers: [{ provide: SLOT_SERVICE, useExisting: SlotService }],
 })
-export class SearchHeaderComponent implements AfterViewInit {
+export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
   @Input() header = ''
 
   /**
@@ -127,8 +128,7 @@ export class SearchHeaderComponent implements AfterViewInit {
       // })
     })
   }
-
-  ngAfterViewInit(): void {
+  ngAfterContentInit(): void {
     this.fieldValues$ = this.formGroup?.valueChanges.pipe(
       debounceTime(500),
       map((values) =>
@@ -141,7 +141,9 @@ export class SearchHeaderComponent implements AfterViewInit {
         )
       )
     )
+  }
 
+  ngAfterViewInit(): void {
     this.addKeyUpEventListener()
   }
 

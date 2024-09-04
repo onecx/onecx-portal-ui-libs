@@ -25,11 +25,13 @@
 
     <div *ngIf="layout === 'table'" class="flex flex-wrap justify-content-between align-items-center gap-2">
       <ocx-slot
-        name="onecx-shell-column-group-selection"
+        *ngIf="isColumnGroupSelectionComponentDefined$ | async"
+        name="{{columnGroupSlotName}}"
         [inputs]="{ pageName: pageName, placeholderKey: groupSelectionNoGroupSelectedKey, defaultGroupKey: defaultGroupKey, customGroupKey: customGroupKey, columns: columns, selectedGroupKey: selectedGroupKey }"
         [outputs]="{ groupSelectionChanged: groupSelectionChanged }"
       ></ocx-slot>
-      <!-- <ocx-column-group-selection
+      <ocx-column-group-selection
+        *ngIf="!(isColumnGroupSelectionComponentDefined$ | async)"
         [selectedGroupKey]="selectedGroupKey"
         [columns]="columns"
         [defaultGroupKey]="defaultGroupKey"
@@ -37,7 +39,7 @@
         [placeholderKey]="groupSelectionNoGroupSelectedKey"
         (groupSelectionChanged)="onColumnGroupSelectionChange($event)"
         (componentStateChanged)="columnGroupSelectionComponentState$.next($event)"
-      ></ocx-column-group-selection> -->
+      ></ocx-column-group-selection>
 
       <ocx-custom-group-column-selector
         [columns]="columns"
