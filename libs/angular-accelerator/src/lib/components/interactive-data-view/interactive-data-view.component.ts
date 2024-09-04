@@ -320,11 +320,12 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   }
 
   constructor() {
-    // TODO: same as other event
     this.groupSelectionChanged.subscribe((event: { activeColumns: DataTableColumn[]; groupKey: string }) => {
-      this.displayedColumns = event.activeColumns
+      this.displayedColumnKeys = event.activeColumns.map((col) => col.id)
       this.selectedGroupKey = event.groupKey
+      // TODO: Remove following line once displayedColumns (deprecated) has been removed
       this.displayedColumnsChange.emit(this.displayedColumns)
+      this.displayedColumnKeysChange.emit(this.displayedColumnKeys)
     })
   }
 

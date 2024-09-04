@@ -5,10 +5,9 @@
   [actions]="headerActions"
 >
   <ng-template #additionalToolbarContentLeft>
-    <!-- TODO: field values passing change -->
     <ocx-slot
       name="onecx-shell-search-config"
-      [inputs]="{ pageName: pageName, currentFieldValues: undefined, displayedColumnsIds: displayedColumnsIds, viewMode: viewMode}"
+      [inputs]="{ pageName: pageName, currentFieldValues: fieldValues$ | async, displayedColumnsIds: displayedColumnsIds, viewMode: viewMode}"
       [outputs]="{ searchConfigSelected: selectedSearchConfigChanged }"
     ></ocx-slot>
     <ng-container

@@ -11,13 +11,14 @@ import {
 } from '@angular/core'
 import { Action } from '../page-header/page-header.component'
 import { SLOT_SERVICE, SlotService } from '@onecx/angular-remote-components'
+// import { SearchConfigInfo } from '../../model/search-config-info'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { FormGroup, FormGroupDirective } from '@angular/forms'
-import { debounceTime } from 'rxjs'
+import { Observable, debounceTime, map, mergeMap, of } from 'rxjs'
 
 export interface SearchHeaderComponentState {
   activeViewMode?: 'basic' | 'advanced'
-  selectedSearchConfig?: SearchConfigInfo
+  // selectedSearchConfig?: SearchConfigInfo
 }
 
 /**
@@ -111,19 +112,36 @@ export class SearchHeaderComponent implements AfterViewInit {
     return this.additionalToolbarContentLeft
   }
 
-  @ViewChild(FormGroupDirective) formGroup: FormGroup | undefined
+  @ContentChild(FormGroupDirective) formGroup: FormGroup | undefined
   @ViewChild('searchParameterFields') searchParameterFields: ElementRef | undefined
 
   hasAdvanced = false
   headerActions: Action[] = []
 
+  fieldValues$: Observable<{ [key: string]: unknown }> | undefined = of({})
+
   constructor() {
-    this.formGroup?.valueChanges.pipe(debounceTime(500)).subscribe((values) => {
-      console.log(values)
+    this.selectedSearchConfigChanged.subscribe(({ fieldValues, displayedColumnsIds, viewMode }) => {
+      // this.componentStateChanged.emit({
+      //   selectedSearchConfig: searchConfig,
+      // })
     })
   }
 
   ngAfterViewInit(): void {
+    this.fieldValues$ = this.formGroup?.valueChanges.pipe(
+      debounceTime(500),
+      map((values) =>
+        Object.entries(values).reduce(
+          (acc, [key, value]) => ({
+            ...acc,
+            [key]: value || undefined,
+          }),
+          {}
+        )
+      )
+    )
+
     this.addKeyUpEventListener()
   }
 
@@ -173,12 +191,5 @@ export class SearchHeaderComponent implements AfterViewInit {
     if (event.code === 'Enter') {
       this.onSearchClicked()
     }
-  }
-
-  confirmSearchConfig(searchConfig: SearchConfigInfo) {
-    this.selectedSearchConfigChanged?.emit(searchConfig)
-    this.componentStateChanged.emit({
-      selectedSearchConfig: searchConfig,
-    })
   }
 }
