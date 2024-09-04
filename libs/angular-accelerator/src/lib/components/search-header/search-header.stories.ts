@@ -121,6 +121,5 @@ export const WithCustomTemplates = {
       },
     args: {
         header: 'My title',
-        resetted: ($event: any) => console.log($event),
       },
   }

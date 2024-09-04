@@ -4,6 +4,9 @@ import { concatLatestFrom } from '@ngrx/operators'
 import { ActionCreator, Creator } from '@ngrx/store'
 import { tap } from 'rxjs'
 
+/**
+ * @deprecated Please import from \@onecx/ngrx-accelerator
+ */
 export function createQueryParamsEffect<AC extends ActionCreator<string, Creator>>(
   actions$: Actions,
   actionType: AC,

@@ -94,18 +94,22 @@ const defaultComponentArgs: InteractiveDataViewInputTypes = {
       columnType: ColumnType.STRING,
       nameKey: 'Product',
       sortable: false,
+      filterable: true,
+      predefinedGroupKeys: ['test']
     },
     {
       id: 'amount',
       columnType: ColumnType.NUMBER,
       nameKey: 'Amount',
       sortable: true,
+      predefinedGroupKeys: ['test', 'test1']
     },
     {
       id: 'available',
       columnType: ColumnType.STRING,
       nameKey: 'Available',
       sortable: false,
+      predefinedGroupKeys: ['test2']
     },
   ],
   data: [
@@ -135,11 +139,21 @@ const defaultComponentArgs: InteractiveDataViewInputTypes = {
 }
 
 export const WithMockData = {
+  argTypes: {
+    componentStateChanged: { action: 'componentStateChanged' },
+    selectionChanged: { action: 'selectionChanged' },
+  },
   render: Template,
-  args: defaultComponentArgs,
+  args: {
+    ...defaultComponentArgs,
+    selectedRows: [],
+  },
 }
 
 export const WithPageSizes = {
+  argTypes: {
+    componentStateChanged: { action: 'componentStateChanged' },
+  },
   render: Template,
   args: {
     ...defaultComponentArgs,

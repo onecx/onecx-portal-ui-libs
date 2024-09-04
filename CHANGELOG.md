@@ -1,3 +1,77 @@
+## [5.9.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.9.4...v5.9.5) (2024-09-03)
+
+### Bug Fixes
+
+* only show displayed columns in list grid sorting options ([#436](https://github.com/onecx/onecx-portal-ui-libs/issues/436)) ([33c0559](https://github.com/onecx/onecx-portal-ui-libs/commit/33c0559710856c145a9da0bac807f36a0de8ce6c))
+
+## [5.9.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.9.3...v5.9.4) (2024-08-30)
+
+### Bug Fixes
+
+* connectRouter fix ([#433](https://github.com/onecx/onecx-portal-ui-libs/issues/433)) ([06c2bdb](https://github.com/onecx/onecx-portal-ui-libs/commit/06c2bdb3047cc97716b21574ce64822972256f6b))
+
+## [5.9.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.9.2...v5.9.3) (2024-08-30)
+
+### Bug Fixes
+
+* fix change ngrx build output structure ([#432](https://github.com/onecx/onecx-portal-ui-libs/issues/432)) ([ab409fc](https://github.com/onecx/onecx-portal-ui-libs/commit/ab409fc4d017f3544985ba21564b777d91036dc4))
+
+## [5.9.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.9.1...v5.9.2) (2024-08-28)
+
+### Bug Fixes
+
+* connectRouter using fragment ([#428](https://github.com/onecx/onecx-portal-ui-libs/issues/428)) ([9e36673](https://github.com/onecx/onecx-portal-ui-libs/commit/9e366733613341e09e77a026d666afdac94985f8))
+
+## [5.9.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.9.0...v5.9.1) (2024-08-28)
+
+### Bug Fixes
+
+* add license file ([#427](https://github.com/onecx/onecx-portal-ui-libs/issues/427)) ([90b43ab](https://github.com/onecx/onecx-portal-ui-libs/commit/90b43ab4c8b7aba11bd798f2d4747f226de04052))
+
+## [5.9.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.8.0...v5.9.0) (2024-08-26)
+
+### Features
+
+* create ngrx-accelerator ([#399](https://github.com/onecx/onecx-portal-ui-libs/issues/399)) ([d3007a1](https://github.com/onecx/onecx-portal-ui-libs/commit/d3007a1a2ab5b743b00e5bfdf63aab6149809ea0))
+* publish UI state change events for lib components ([#395](https://github.com/onecx/onecx-portal-ui-libs/issues/395)) ([622ed48](https://github.com/onecx/onecx-portal-ui-libs/commit/622ed48221849c418e4f8c4a2f72ea139be30e17))
+
+## [5.8.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.7.0...v5.8.0) (2024-08-23)
+
+### Features
+
+* filter templates for data-table ([#416](https://github.com/onecx/onecx-portal-ui-libs/issues/416)) ([ff38854](https://github.com/onecx/onecx-portal-ui-libs/commit/ff3885410499476e25e6e95a286af32ed45a1769))
+
+### Bug Fixes
+
+* add Apache 2.0 open source license ([#420](https://github.com/onecx/onecx-portal-ui-libs/issues/420)) ([8126189](https://github.com/onecx/onecx-portal-ui-libs/commit/8126189dd0dccbe4fabad57582f53ae700fa259a))
+
+## [5.7.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.6.0...v5.7.0) (2024-08-22)
+
+### Features
+
+* default list view refactor, new way of templating ([#400](https://github.com/onecx/onecx-portal-ui-libs/issues/400)) ([b61da4b](https://github.com/onecx/onecx-portal-ui-libs/commit/b61da4bf182400510200c11d22f768c8fdac5eee))
+
+### Bug Fixes
+
+* fix nx migration and improve storybook action handling ([#418](https://github.com/onecx/onecx-portal-ui-libs/issues/418)) ([e141e4f](https://github.com/onecx/onecx-portal-ui-libs/commit/e141e4f29d2d5d620a872b383123f3100a7b8a1d))
+
+## [5.6.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.5.0...v5.6.0) (2024-08-22)
+
+### Features
+
+* add workspace displayname ([#417](https://github.com/onecx/onecx-portal-ui-libs/issues/417)) ([8aa60a0](https://github.com/onecx/onecx-portal-ui-libs/commit/8aa60a0a94791764652b7d2b1957976e45813927))
+
+### Bug Fixes
+
+* prevent p-menu item text from wrapping ([#415](https://github.com/onecx/onecx-portal-ui-libs/issues/415)) ([3a01639](https://github.com/onecx/onecx-portal-ui-libs/commit/3a016395e3335a9a850fcca8d197210014a883d1))
+
+## [5.5.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.4.0...v5.5.0) (2024-08-20)
+
+### Features
+
+* allow disable of row selection ([#406](https://github.com/onecx/onecx-portal-ui-libs/issues/406)) ([7ff7b50](https://github.com/onecx/onecx-portal-ui-libs/commit/7ff7b505180bf61f48868ae3da083d0c53d945ee))
+* remote component - slot - slot owner binding ([#352](https://github.com/onecx/onecx-portal-ui-libs/issues/352)) ([3e06fc2](https://github.com/onecx/onecx-portal-ui-libs/commit/3e06fc2235f2a8d6c072e57770dcb30c4babe814))
+
 ## [5.4.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.3.2...v5.4.0) (2024-08-19)
 
 ### Features

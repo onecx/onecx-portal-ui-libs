@@ -1,6 +1,8 @@
 import {
+  AfterContentInit,
   Component,
   ContentChild,
+  ContentChildren,
   DoCheck,
   EventEmitter,
   Inject,
@@ -9,22 +11,24 @@ import {
   LOCALE_ID,
   OnInit,
   Output,
+  QueryList,
   TemplateRef,
+  ViewChildren,
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
-import { MenuItem, PrimeIcons } from 'primeng/api'
-import { BehaviorSubject, Observable, combineLatest, map, mergeMap } from 'rxjs'
+import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 import { MfeInfo } from '@onecx/integration-interface'
-import { AppStateService } from '@onecx/angular-integration-interface'
-import { UserService } from '@onecx/angular-integration-interface'
+import { MenuItem, PrimeIcons, PrimeTemplate } from 'primeng/api'
+import { Menu } from 'primeng/menu'
+import { BehaviorSubject, Observable, combineLatest, debounceTime, first, map, mergeMap } from 'rxjs'
+import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { ObjectUtils } from '../../utils/objectutils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { Filter, Row } from '../data-table/data-table.component'
-import { Menu } from 'primeng/menu'
 
 export type ListGridData = {
   id: string | number
@@ -38,12 +42,17 @@ export interface ListGridDataMenuItem extends MenuItem {
   permission: string
 }
 
+export interface DataListGridComponentState {
+  activePage?: number
+  pageSize?: number
+}
+
 @Component({
   selector: 'ocx-data-list-grid',
   templateUrl: './data-list-grid.component.html',
   styleUrls: ['./data-list-grid.component.scss'],
 })
-export class DataListGridComponent extends DataSortBase implements OnInit, DoCheck {
+export class DataListGridComponent extends DataSortBase implements OnInit, DoCheck, AfterContentInit {
   @Input() titleLineId: string | undefined
   @Input() subtitleLineIds: string[] = []
   @Input() clientSideSorting = true
@@ -171,6 +180,57 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return this.gridItemTemplate || this.gridItemChildTemplate
   }
 
+  @Input() listValueTemplate: TemplateRef<any> | undefined
+  @ContentChild('listValue') listValueChildTemplate: TemplateRef<any> | undefined
+  get _listValue(): TemplateRef<any> | undefined {
+    return this.listValueTemplate || this.listValueChildTemplate
+  }
+
+  @Input() translationKeyListValueTemplate: TemplateRef<any> | undefined
+  @ContentChild('translationKeyListValue') translationKeyListValueChildTemplate: TemplateRef<any> | undefined
+  get _translationKeyListValue(): TemplateRef<any> | undefined {
+    return this.translationKeyListValueTemplate || this.translationKeyListValueChildTemplate
+  }
+
+  @Input() numberListValueTemplate: TemplateRef<any> | undefined
+  @ContentChild('numberListValue') numberListValueChildTemplate: TemplateRef<any> | undefined
+  get _numberListValue(): TemplateRef<any> | undefined {
+    return this.numberListValueTemplate || this.numberListValueChildTemplate
+  }
+
+  @Input() relativeDateListValueTemplate: TemplateRef<any> | undefined
+  @ContentChild('relativeDateListValue') relativeDateListValueChildTemplate: TemplateRef<any> | undefined
+  get _relativeDateListValue(): TemplateRef<any> | undefined {
+    return this.relativeDateListValueTemplate || this.relativeDateListValueChildTemplate
+  }
+  /**
+   * @deprecated Will be removed and instead to change the template of a specific column
+   * use the new approach instead by following the naming convention column id + IdListValue
+   * e.g. for a column with the id 'status' use pTemplate="statusIdListValue"
+   */
+  @Input() customListValueTemplate: TemplateRef<any> | undefined
+  /**
+   * @deprecated Will be removed and instead to change the template of a specific column
+   * use the new approach instead by following the naming convention column id + IdListValue
+   * e.g. for a column with the id 'status' use pTemplate="statusIdListValue"
+   */
+  @ContentChild('customListValue') customListValueChildTemplate: TemplateRef<any> | undefined
+  get _customListValue(): TemplateRef<any> | undefined {
+    return this.customListValueTemplate || this.customListValueChildTemplate
+  }
+
+  @Input() stringListValueTemplate: TemplateRef<any> | undefined
+  @ContentChild('stringListValue') stringListValueChildTemplate: TemplateRef<any> | undefined
+  get _stringListValue(): TemplateRef<any> | undefined {
+    return this.stringListValueTemplate || this.stringListValueChildTemplate
+  }
+
+  @Input() dateListValueTemplate: TemplateRef<any> | undefined
+  @ContentChild('dateListValue') dateListValueChildTemplate: TemplateRef<any> | undefined
+  get _dateListValue(): TemplateRef<any> | undefined {
+    return this.dateListValueTemplate || this.dateListValueChildTemplate
+  }
+
   inlineListActions$: Observable<DataAction[]>
   overflowListActions$: Observable<DataAction[]>
   overflowMenuItems$: Observable<MenuItem[]>
@@ -189,6 +249,8 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   @Output() editItem = new EventEmitter<ListGridData>()
   @Output() deleteItem = new EventEmitter<ListGridData>()
   @Output() pageChanged = new EventEmitter<number>()
+  @Output() pageSizeChanged = new EventEmitter<number>()
+  @Output() componentStateChanged = new EventEmitter<DataListGridComponentState>()
 
   get viewItemObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
@@ -216,6 +278,33 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
 
   displayedItems$: Observable<unknown[]> | undefined
   fallbackImagePath$!: Observable<string>
+
+  templates$: BehaviorSubject<QueryList<PrimeTemplate> | undefined> = new BehaviorSubject<
+    QueryList<PrimeTemplate> | undefined
+  >(undefined)
+  @ContentChildren(PrimeTemplate)
+  set templates(value: QueryList<PrimeTemplate> | undefined) {
+    this.templates$.next(value)
+  }
+
+  viewTemplates$: BehaviorSubject<QueryList<PrimeTemplate> | undefined> = new BehaviorSubject<
+    QueryList<PrimeTemplate> | undefined
+  >(undefined)
+  @ViewChildren(PrimeTemplate)
+  set viewTemplates(value: QueryList<PrimeTemplate> | undefined) {
+    this.viewTemplates$.next(value)
+  }
+
+  parentTemplates$: BehaviorSubject<QueryList<PrimeTemplate> | null | undefined> = new BehaviorSubject<
+    QueryList<PrimeTemplate> | null | undefined
+  >(undefined)
+  @Input()
+  set parentTemplates(value: QueryList<PrimeTemplate> | null | undefined) {
+    this.parentTemplates$.next(value)
+  }
+
+  columnType = ColumnType
+  templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
 
   constructor(
     @Inject(LOCALE_ID) locale: string,
@@ -282,6 +371,36 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
       (!!this.viewPermission && this.userService.hasPermission(this.viewPermission)) ||
       (!!this.editPermission && this.userService.hasPermission(this.editPermission)) ||
       (!!this.deletePermission && this.userService.hasPermission(this.deletePermission))
+
+      this.emitComponentStateChanged()
+  }
+
+  ngAfterContentInit() {
+    this.templates?.forEach((item) => {
+      switch (item.getType()) {
+        case 'listValue':
+          this.listValueChildTemplate = item.template
+          break
+        case 'translationKeyListValue':
+          this.translationKeyListValueChildTemplate = item.template
+          break
+        case 'numberListValue':
+          this.numberListValueChildTemplate = item.template
+          break
+        case 'relativeDateListValue':
+          this.relativeDateListValueChildTemplate = item.template
+          break
+        case 'customListValue':
+          this.customListValueChildTemplate = item.template
+          break
+        case 'stringListValue':
+          this.stringListValueChildTemplate = item.template
+          break
+        case 'dateListValue':
+          this.dateListValueChildTemplate = item.template
+          break
+      }
+    })
   }
 
   onDeleteRow(element: ListGridData) {
@@ -397,15 +516,33 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return ObjectUtils.resolveFieldData(object, key)
   }
 
+  emitComponentStateChanged(state: DataListGridComponentState = {}) {
+    this.displayedPageSize$.pipe(first()).subscribe((pageSize) => {
+          this.componentStateChanged.emit({
+      pageSize,
+      activePage: this.page,
+      ...state
+    })
+    })
+
+  }
+
   onPageChange(event: any) {
     const page = event.first / event.rows
     this.page = page
+    this.pageSize = event.rows
     this.pageChanged.emit(page)
+    this.pageSizeChanged.emit(event.rows)
+    this.emitComponentStateChanged({
+      activePage: page,
+      pageSize: event.rows
+    })
   }
 
   resetPage() {
     this.page = 0
     this.pageChanged.emit(this.page)
+    this.emitComponentStateChanged()
   }
 
   fieldIsTruthy(object: any, key: any) {
@@ -427,5 +564,82 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   toggleOverflowMenu(event: MouseEvent, menu: Menu, row: Row) {
     this.currentMenuRow$.next(row)
     menu.toggle(event)
+  }
+
+  getFilteredColumns() {
+    let ids: string[] = [...(this.subtitleLineIds ?? [])]
+    if (this.titleLineId) {
+      ids = [this.titleLineId, ...(this.subtitleLineIds ?? [])]
+    }
+    return this.columns.filter((c) => !ids.includes(c.id))
+  }
+
+  findTemplate(templates: PrimeTemplate[], names: string[]): PrimeTemplate | undefined {
+    for (let index = 0; index < names.length; index++) {
+      const name = names[index]
+      const template = templates.find((template) => template.name === name)
+      if (template) {
+        return template
+      }
+    }
+    return undefined
+  }
+
+  getTemplate(column: DataTableColumn): Observable<TemplateRef<any> | null> {
+    if (!this.templatesObservables[column.id]) {
+      this.templatesObservables[column.id] = combineLatest([
+        this.templates$,
+        this.viewTemplates$,
+        this.parentTemplates$,
+      ]).pipe(
+        map(([t, vt, pt]) => {
+          const templates = [...(t ?? []), ...(vt ?? []), ...(pt ?? [])]
+          const columnTemplate = templates.find((template) => template.name === column.id + 'IdListValue')?.template
+          if (columnTemplate) {
+            return columnTemplate
+          }
+          switch (column.columnType) {
+            case ColumnType.DATE:
+              return (
+                this._dateListValue ??
+                this.findTemplate(templates, ['dateListValue', 'defaultDateListValue'])?.template ??
+                null
+              )
+            case ColumnType.NUMBER:
+              return (
+                this._numberListValue ??
+                this.findTemplate(templates, ['numberListValue', 'defaultNumberListValue'])?.template ??
+                null
+              )
+            case ColumnType.RELATIVE_DATE:
+              return (
+                this._relativeDateListValue ??
+                this.findTemplate(templates, ['relativeDateListValue', 'defaultRelativeDateListValue'])?.template ??
+                null
+              )
+            case ColumnType.TRANSLATION_KEY:
+              return (
+                this._translationKeyListValue ??
+                this.findTemplate(templates, ['translationListValue', 'defaultTranslationListValue'])?.template ??
+                null
+              )
+            case ColumnType.CUSTOM:
+              return (
+                this._customListValue ??
+                this.findTemplate(templates, ['customListValue', 'defaultCustomListValue'])?.template ??
+                null
+              )
+            default:
+              return (
+                this._stringListValue ??
+                this.findTemplate(templates, ['stringListValue', 'defaultStringListValue'])?.template ??
+                null
+              )
+          }
+        }),
+        debounceTime(50)
+      )
+    }
+    return this.templatesObservables[column.id]
   }
 }

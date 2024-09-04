@@ -7,6 +7,10 @@ import { ObjectUtils } from '../../utils/objectutils'
 import { DiagramData } from '../../model/diagram-data'
 import { DiagramType } from '../../model/diagram-type'
 
+export interface GroupByCountDiagramComponentState {
+  activeDiagramType?: DiagramType
+}
+
 @Component({
   selector: 'ocx-group-by-count-diagram',
   templateUrl: './group-by-count-diagram.component.html',
@@ -64,6 +68,7 @@ export class GroupByCountDiagramComponent implements OnInit {
 
   @Output() dataSelected: EventEmitter<any> = new EventEmitter()
   @Output() diagramTypeChanged: EventEmitter<DiagramType> = new EventEmitter()
+  @Output() componentStateChanged: EventEmitter<GroupByCountDiagramComponentState> = new EventEmitter()
 
   constructor(private translateService: TranslateService) {}
 
@@ -99,5 +104,8 @@ export class GroupByCountDiagramComponent implements OnInit {
   onDiagramTypeChanged(newDiagramType: DiagramType) {
     this.diagramType = newDiagramType
     this.diagramTypeChanged.emit(newDiagramType)
+    this.componentStateChanged.emit({
+      activeDiagramType: newDiagramType
+    })
   }
 }

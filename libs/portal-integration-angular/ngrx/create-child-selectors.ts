@@ -12,6 +12,9 @@ function capitalize<T extends string>(text: T): Capitalize<T> {
   return (text.charAt(0).toUpperCase() + text.substring(1)) as Capitalize<T>
 }
 
+/**
+ * @deprecated Please import from \@onecx/ngrx-accelerator
+ */
 export function createChildSelectors<State extends Record<string, any>, ChildState extends Record<string, any>>(
   featureSelector: MemoizedSelector<State, ChildState>,
   initialChildState: ChildState

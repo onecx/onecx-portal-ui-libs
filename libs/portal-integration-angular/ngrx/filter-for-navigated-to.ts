@@ -3,6 +3,9 @@ import { ActivatedRoute, Router } from '@angular/router'
 import { Type } from '@angular/core'
 import { RouterNavigatedAction } from '@ngrx/router-store'
 
+/**
+ * @deprecated Please import from \@onecx/ngrx-accelerator
+ */
 export function filterForNavigatedTo<A extends RouterNavigatedAction>(
   router: Router,
   component: Type<any>

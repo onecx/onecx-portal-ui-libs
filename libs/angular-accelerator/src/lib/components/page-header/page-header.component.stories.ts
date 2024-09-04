@@ -76,11 +76,12 @@ const demoActions: Action[] = [
     icon: PrimeIcons.TRASH,
   },
   {
-    label: 'Some action',
+    label: 'Some action that has a long text',
     actionCallback: () => {
       console.log(`you clicked 'Some action'`)
     },
     show: 'asOverflow',
+    icon: PrimeIcons.ADDRESS_BOOK
   },
   {
     label: 'Other action',
