@@ -12,6 +12,8 @@ import {
 import { Action } from '../page-header/page-header.component'
 import { SLOT_SERVICE, SlotService } from '@onecx/angular-remote-components'
 import { DataTableColumn } from '../../model/data-table-column.model'
+import { FormGroup, FormGroupDirective } from '@angular/forms'
+import { debounceTime } from 'rxjs'
 
 /**
  * To trigger the search when Enter key is pressed inside a search parameter field,
@@ -64,16 +66,6 @@ export class SearchHeaderComponent implements AfterViewInit {
   @Input() resetButtonDisabled = false
   @Input() pageName: string = ''
 
-  _currentInputFieldValues: { [key: string]: unknown } = {}
-  @Input() get currentInputFieldValues(): { [key: string]: unknown } {
-    return this._currentInputFieldValues
-  }
-  set currentInputFieldValues(value: { [key: string]: unknown }) {
-    this._currentInputFieldValues = {
-      ...value,
-    }
-  }
-
   _displayedColumnsIds: string[] = []
   get displayedColumnsIds(): string[] {
     return this._displayedColumnsIds
@@ -91,8 +83,8 @@ export class SearchHeaderComponent implements AfterViewInit {
   @Output() searched: EventEmitter<any> = new EventEmitter()
   @Output() resetted: EventEmitter<any> = new EventEmitter()
   @Output() selectedSearchConfigChanged: EventEmitter<{
-    inputValues: { [key: string]: unknown }
-    displayedColumns: string[]
+    fieldValues: { [key: string]: string }
+    displayedColumnsIds: string[]
     viewMode: 'basic' | 'advanced'
   }> = new EventEmitter()
   @Output() viewModeChanged: EventEmitter<'basic' | 'advanced'> = new EventEmitter()
@@ -109,10 +101,17 @@ export class SearchHeaderComponent implements AfterViewInit {
     return this.additionalToolbarContentLeft
   }
 
+  @ViewChild(FormGroupDirective) formGroup: FormGroup | undefined
   @ViewChild('searchParameterFields') searchParameterFields: ElementRef | undefined
 
   hasAdvanced = false
   headerActions: Action[] = []
+
+  constructor() {
+    this.formGroup?.valueChanges.pipe(debounceTime(500)).subscribe((values) => {
+      console.log(values)
+    })
+  }
 
   ngAfterViewInit(): void {
     this.addKeyUpEventListener()
