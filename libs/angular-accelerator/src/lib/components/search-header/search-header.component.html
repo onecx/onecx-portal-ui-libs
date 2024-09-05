@@ -44,7 +44,7 @@
         icon="pi pi-search"
         [attr.aria-label]="'OCX_SEARCH_HEADER.SEARCH_BUTTON.DETAIL' | translate"
         title="{{ 'OCX_SEARCH_HEADER.SEARCH_BUTTON.DETAIL' | translate }}"
-        [disabled]="searchButtonDisabled"
+        [disabled]="searchButtonDisabled || formGroup?.invalid"
       >
       </p-button>
     </div>
