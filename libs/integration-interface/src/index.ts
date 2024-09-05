@@ -30,8 +30,6 @@ export * from './lib/topics/remote-components/v1/remote-component.model'
 export * from './lib/topics/remote-components/v1/remote-components-info.model'
 export * from './lib/topics/remote-components/v1/slot.model'
 export * from './lib/topics/remote-components/v1/remote-components.topic'
-export * from './lib/topics/search-config/v1/search-config.model'
-export * from './lib/topics/search-config/v1/search-config.topic'
 
 export * from './lib/topics/permissions/v1/permissions.topic'
 
