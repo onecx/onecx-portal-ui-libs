@@ -322,9 +322,9 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   isColumnGroupSelectionComponentDefined$: Observable<boolean>
 
   constructor(private slotService: SlotService) {
-    this.isColumnGroupSelectionComponentDefined$ = this.slotService
-      .isSomeComponentDefinedForSlot(this.columnGroupSlotName)
-      .pipe(tap((v) => console.log(v)))
+    this.isColumnGroupSelectionComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(
+      this.columnGroupSlotName
+    )
 
     this.groupSelectionChanged.subscribe((event: { activeColumns: DataTableColumn[]; groupKey: string }) => {
       this.displayedColumnKeys = event.activeColumns.map((col) => col.id)
