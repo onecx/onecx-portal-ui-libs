@@ -47,6 +47,7 @@ export * from './lib/angular-accelerator-primeng.module'
 
 // functions
 export * from './lib/functions/flatten-object'
+export * from './lib/functions/search-criteria-not-empty-validator'
 
 // utils
 export * from './lib/utils/async-translate-loader.utils'
