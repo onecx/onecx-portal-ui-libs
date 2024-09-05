@@ -27,7 +27,7 @@
       <ocx-slot
         *ngIf="isColumnGroupSelectionComponentDefined$ | async"
         name="{{columnGroupSlotName}}"
-        [inputs]="{ pageName: pageName, placeholderKey: groupSelectionNoGroupSelectedKey, defaultGroupKey: defaultGroupKey, customGroupKey: customGroupKey, columns: columns, selectedGroupKey: selectedGroupKey }"
+        [inputs]="{ placeholderKey: groupSelectionNoGroupSelectedKey, defaultGroupKey: defaultGroupKey, customGroupKey: customGroupKey, columns: columns, selectedGroupKey: selectedGroupKey }"
         [outputs]="{ groupSelectionChanged: groupSelectionChanged }"
       ></ocx-slot>
       <ocx-column-group-selection

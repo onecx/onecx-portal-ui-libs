@@ -88,7 +88,6 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
     DataSortDirection.DESCENDING,
     DataSortDirection.NONE,
   ]
-  @Input() pageName: string = ''
   @Input() pageSizes: number[] = [10, 25, 50]
   @Input() pageSize: number | undefined
   @Input() totalRecordsOnServer: number | undefined

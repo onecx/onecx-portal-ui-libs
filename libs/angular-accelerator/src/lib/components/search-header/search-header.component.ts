@@ -121,13 +121,6 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
 
   fieldValues$: Observable<{ [key: string]: unknown }> | undefined = of({})
 
-  constructor() {
-    // this.selectedSearchConfigChanged.subscribe(({ fieldValues, displayedColumnsIds, viewMode }) => {
-    //   // this.componentStateChanged.emit({
-    //   //   selectedSearchConfig: searchConfig,
-    //   // })
-    // })
-  }
   ngAfterContentInit(): void {
     this.fieldValues$ = this.formGroup?.valueChanges.pipe(
       debounceTime(500),
