@@ -24,3 +24,5 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GIT_AUTHOR_NAME: tkit-dev
           GIT_AUTHOR_EMAIL: tkit-dev@1000kit.org
+          GIT_COMMITTER_NAME: tkit-dev
+          GIT_COMMITTER_EMAIL: tkit-dev@1000kit.org
