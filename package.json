@@ -57,7 +57,7 @@
     "@angular/cli": "~18.2.3",
     "@angular/compiler-cli": "^18.2.3",
     "@angular/language-service": "^18.2.3",
-    "@chromatic-com/storybook": "^1.8.0",
+    "@chromatic-com/storybook": "^1.9.0",
     "@happy-dom/jest-environment": "^14.12.3",
     "@nx/angular": "19.6.5",
     "@nx/esbuild": "19.6.5",
