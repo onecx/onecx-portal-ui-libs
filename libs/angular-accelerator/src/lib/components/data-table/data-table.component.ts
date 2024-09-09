@@ -115,7 +115,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
   set columns(value: DataTableColumn[]) {
     this._columns$.next(value)
-    let obs = value.map((c) => this.getTemplate(c, TemplateType.CELL))
+    const obs = value.map((c) => this.getTemplate(c, TemplateType.CELL))
     this.columnTemplates$ = combineLatest(obs).pipe(
       map(values => Object.fromEntries(value.map((c, i) => [c.id, values[i]])))
     )

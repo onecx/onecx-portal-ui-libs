@@ -104,7 +104,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   }
   set columns(value: DataTableColumn[]) {
     this._columns$.next(value)
-    let obs = value.map((c) => this.getTemplate(c))
+    const obs = value.map((c) => this.getTemplate(c))
     this.columnTemplates$ = combineLatest(obs).pipe(
       map(values => Object.fromEntries(value.map((c, i) => [c.id, values[i]])))
     )
