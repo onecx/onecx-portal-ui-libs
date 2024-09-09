@@ -106,7 +106,7 @@
     "ngx-translate-testing": "^7.0.0",
     "nx": "19.6.5",
     "nx-release": "^3.3.0",
-    "postcss": "^8.4.41",
+    "postcss": "^8.4.45",
     "postcss-import": "~16.1.0",
     "postcss-preset-env": "~10.0.1",
     "postcss-url": "~10.1.3",
