@@ -478,6 +478,9 @@ describe('DataTableComponent', () => {
       expect(component.editTableRowObserved).toBe(true)
       expect(component.deleteTableRowObserved).toBe(true)
 
+      fixture.detectChanges()
+      await fixture.whenStable()
+
       const tableActions = await dataTable.getActionButtons()
       expect(tableActions.length).toBe(3)
       const expectedIcons = ['pi pi-eye', 'pi pi-trash', 'pi pi-pencil']
@@ -499,6 +502,9 @@ describe('DataTableComponent', () => {
       setUpActionButtonMockData()
       component.viewActionEnabledField = 'ready'
 
+      fixture.detectChanges()
+      await fixture.whenStable()
+
       let tableActions = await dataTable.getActionButtons()
       expect(tableActions.length).toBe(3)
 
@@ -517,6 +523,9 @@ describe('DataTableComponent', () => {
       tempRows[0]['ready'] = true
 
       component.rows = [...tempRows]
+
+      fixture.detectChanges()
+      await fixture.whenStable()
 
       tableActions = await dataTable.getActionButtons()
 
@@ -537,7 +546,9 @@ describe('DataTableComponent', () => {
       expect(component.viewTableRowObserved).toBe(true)
       expect(component.editTableRowObserved).toBe(true)
       expect(component.deleteTableRowObserved).toBe(true)
-
+      fixture.detectChanges()
+      await fixture.whenStable()
+      
       const tableActions = await dataTable.getActionButtons()
       expect(tableActions.length).toBe(3)
       const expectedIcons = ['pi pi-eye', 'pi pi-trash', 'pi pi-pencil']
@@ -558,6 +569,9 @@ describe('DataTableComponent', () => {
       setUpActionButtonMockData()
       component.viewActionVisibleField = 'ready'
 
+      fixture.detectChanges()
+      await fixture.whenStable()
+
       let tableActions = await dataTable.getActionButtons()
       expect(tableActions.length).toBe(2)
 
@@ -571,6 +585,9 @@ describe('DataTableComponent', () => {
       tempRows[0]['ready'] = true
 
       component.rows = [...tempRows]
+
+      fixture.detectChanges()
+      await fixture.whenStable()
 
       tableActions = await dataTable.getActionButtons()
       expect(tableActions.length).toBe(3)
