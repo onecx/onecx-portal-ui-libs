@@ -376,7 +376,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   }
 
   ngAfterContentInit() {
-    this.templates?.forEach((item) => {
+    this.templates$.value?.forEach((item) => {
       switch (item.getType()) {
         case 'listValue':
           this.listValueChildTemplate = item.template

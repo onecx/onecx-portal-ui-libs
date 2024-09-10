@@ -453,7 +453,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
 
   ngAfterContentInit() {
-    this.templates?.forEach((item) => {
+    this.templates$.value?.forEach((item) => {
       switch (item.getType()) {
         case 'stringCell':
           this.stringCellChildTemplate = item.template

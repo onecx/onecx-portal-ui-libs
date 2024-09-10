@@ -401,7 +401,7 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   }
 
   ngAfterContentInit() {
-    this.templates?.forEach((item) => {
+    this.templates$.value?.forEach((item) => {
       switch (item.getType()) {
         case 'stringTableCell':
           this.stringTableCellChildTemplate = item.template
