@@ -368,7 +368,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   }
 
   ngAfterContentInit() {
-    this.templates?.forEach((item) => {
+    this.templates$.value?.forEach((item) => {
       switch (item.getType()) {
         case 'tableCell':
           this.tableCell = item.template
