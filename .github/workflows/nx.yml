@@ -16,3 +16,7 @@ jobs:
     - uses: timonmasberg/nx-migration-gh-action@v1.1.13
       with:
         repoToken: ${{ secrets.CI_PAT }}
+    - name: Rebase
+      uses: cirrus-actions/rebase@1.8
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
