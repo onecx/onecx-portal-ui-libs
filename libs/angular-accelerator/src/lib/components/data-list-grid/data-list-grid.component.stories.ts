@@ -12,6 +12,7 @@ import { MockUserService } from '@onecx/angular-integration-interface/mocks'
 import { StorybookTranslateModule } from './../../storybook-translate.module'
 import { DataListGridComponent } from './data-list-grid.component'
 import { HAS_PERMISSION_CHECKER, IfPermissionDirective } from '../../directives/if-permission.directive'
+import { TooltipOnOverflowDirective } from '../../directives/tooltipOnOverflow.directive'
 import { MockAuthModule } from '../../mock-auth/mock-auth.module'
 
 const DataListGridComponentSBConfig: Meta<DataListGridComponent> = {
@@ -28,7 +29,7 @@ const DataListGridComponentSBConfig: Meta<DataListGridComponent> = {
       ],
     }),
     moduleMetadata({
-      declarations: [DataListGridComponent, IfPermissionDirective],
+      declarations: [DataListGridComponent, IfPermissionDirective, TooltipOnOverflowDirective],
       imports: [DataViewModule, MenuModule, ButtonModule, MultiSelectModule, StorybookTranslateModule, MockAuthModule],
     }),
   ],

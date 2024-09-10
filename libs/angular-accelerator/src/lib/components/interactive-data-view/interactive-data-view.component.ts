@@ -338,12 +338,21 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
 
     let dataListGridSortingComponentState$: Observable<DataListGridSortingComponentState | Record<string, never>> =
       this.dataListGridSortingComponentState$
+      let columnGroupSelectionComponentState$: Observable<ColumnGroupSelectionComponentState | Record<string, never>> =
+      this.columnGroupSelectionComponentState$
+      let customGroupColumnSelectorComponentState$: Observable<CustomGroupColumnSelectorComponentState | Record<string, never>> =
+      this.customGroupColumnSelectorComponentState$
+
     if (this.layout === 'table') {
       dataListGridSortingComponentState$ = dataListGridSortingComponentState$.pipe(startWith({}))
+    } else {
+      columnGroupSelectionComponentState$ = columnGroupSelectionComponentState$.pipe(startWith({}))
+      customGroupColumnSelectorComponentState$ = customGroupColumnSelectorComponentState$.pipe(startWith({}))
     }
+
     combineLatest([
-      this.columnGroupSelectionComponentState$.pipe(timestamp()),
-      this.customGroupColumnSelectorComponentState$.pipe(timestamp()),
+      columnGroupSelectionComponentState$.pipe(timestamp()),
+      customGroupColumnSelectorComponentState$.pipe(timestamp()),
       this.dataLayoutComponentState$.pipe(timestamp()),
       dataListGridSortingComponentState$.pipe(timestamp()),
       this.dataViewComponentState$.pipe(timestamp()),
@@ -359,7 +368,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   }
 
   ngAfterContentInit() {
-    this.templates?.forEach((item) => {
+    this.templates$.value?.forEach((item) => {
       switch (item.getType()) {
         case 'tableCell':
           this.tableCell = item.template

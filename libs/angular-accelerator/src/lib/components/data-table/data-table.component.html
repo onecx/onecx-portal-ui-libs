@@ -103,140 +103,130 @@
   </ng-container>
 </ng-template>
 
-<p-table
-  *ngIf="displayedPageSize$ | async as displayedPageSize"
-  [value]="(displayedRows$ | async) ?? []"
-  responsiveLayout="scroll"
-  [paginator]="paginator"
-  [first]="page * displayedPageSize"
-  (onPage)="onPageChange($event)"
-  [rows]="displayedPageSize"
-  [showCurrentPageReport]="true"
-  currentPageReportTemplate="{{ (totalRecordsOnServer ? currentPageShowingWithTotalOnServerKey : currentPageShowingKey) | translate:params }}"
-  [rowsPerPageOptions]="(displayedPageSizes$ | async) ?? []"
-  id="dataTable_{{name}}"
-  (selectionChange)="onSelectionChange($event)"
-  [selection]="(selectedRows$ | async) ?? []"
-  [scrollable]="true"
-  paginatorDropdownAppendTo="body"
->
-  <ng-template pTemplate="header">
-    <tr>
-      <th style="width: 4rem" scope="col" *ngIf="selectionChangedObserved">
-        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-      </th>
-      <ng-container *ngIf="actionColumnPosition === 'left';">
-        <ng-container *ngTemplateOutlet="actionColumnHeader"></ng-container>
-      </ng-container>
-      <ng-container *ngFor="let column of columns">
-        <th *ngIf="column.sortable || column.filterable; else simpleHeader" scope="col">
-          <div class="table-header-wrapper">
-            <span id="{{column.id}}-header-name">{{ column.nameKey | translate }}</span>
-            <span class="icon-button-header-wrapper">
-              <button
-                *ngIf="column.sortable"
-                class="pi sortButton"
-                [class.pi-sort-alt]="(column?.id === sortColumn && sortDirection === 'NONE') || column?.id !== sortColumn"
-                [class.pi-sort-amount-up]="column?.id === sortColumn && sortDirection === 'ASCENDING'"
-                [class.pi-sort-amount-down]="column?.id === sortColumn && sortDirection === 'DESCENDING'"
-                (click)="onSortColumnClick(column.id)"
-                [title]="(sortIconTitle(column.id) | translate)"
-                [attr.aria-label]="('OCX_DATA_TABLE.TOGGLE_BUTTON.ARIA_LABEL' | translate: { column: (column.nameKey | translate), direction: (sortDirectionToTitle(columnNextSortDirection(column.id)) | translate)})"
-              ></button>
-              <p-multiSelect
-                class="filterMultiSelect"
-                *ngIf="column.filterable"
-                [options]="(currentFilterOptions$ | async) || []"
-                [ngModel]="(currentSelectedFilters$ | async) || []"
-                [showToggleAll]="true"
-                emptyFilterMessage="{{ 'OCX_DATA_TABLE.EMPTY_FILTER_MESSAGE' | translate }}"
-                [displaySelectedLabel]="false"
-                [resetFilterOnHide]="true"
-                (onChange)="onFilterChange(column, $event)"
-                placeholder="Icon"
-                appendTo="body"
-                (onClick)="onFilterClick(column)"
-                [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
-                [attr.aria-label]="('OCX_DATA_TABLE.FILTER_ARIA_LABEL' | translate: { column: column.nameKey | translate})"
-              >
-                <ng-template pTemplate="selectedItems" let-value>
-                  <div
-                    class="pi"
-                    [class.pi-filter]="!((filterAmounts$ | async) || {})[column.id]"
-                    [class.pi-filter-fill]="((filterAmounts$ | async) || {})[column.id] > 0"
-                  ></div>
-                </ng-template>
-                <ng-template pTemplate="item" let-value>
-                  <ng-container
-                    *ngIf="getTemplate(column, TemplateType.FILTERCELL) | async as template"
-                    [ngTemplateOutlet]="template"
-                    [ngTemplateOutletContext]="{
-                    rowObject: getRowObjectFromMultiselectItem(value, column),
-                    column: column
-                }"
-                  >
-                  </ng-container>
-                </ng-template>
-              </p-multiSelect>
-            </span>
-          </div>
-        </th>
-        <ng-template #simpleHeader>
-          <th scope="col">{{ column.nameKey | translate }}</th>
-        </ng-template>
-      </ng-container>
-      <ng-container *ngIf="actionColumnPosition === 'right';">
-        <ng-container *ngTemplateOutlet="actionColumnHeader"></ng-container>
-      </ng-container>
-    </tr>
-  </ng-template>
-  <ng-template pTemplate="body" let-rowObject>
-    <tr>
-      <td *ngIf="selectionChangedObserved">
-        <p-tableCheckbox
-          [value]="rowObject"
-          [disabled]="!!selectionEnabledField && !fieldIsTruthy(rowObject, selectionEnabledField)"
-        ></p-tableCheckbox>
-      </td>
-      <ng-container *ngIf="actionColumnPosition === 'left';">
-        <ng-container *ngTemplateOutlet="actionColumn; context: {localRowObject: rowObject}"></ng-container>
-      </ng-container>
-      <td *ngFor="let column of columns">
-        <ng-container
-          [ngTemplateOutlet]="
-            _cell ? _cell: defaultCell
-            "
-          [ngTemplateOutletContext]="{
-                rowObject: rowObject,
-                column: column
-            }"
-        ></ng-container>
-      </td>
-      <ng-container *ngIf="actionColumnPosition === 'right';">
-        <ng-container *ngTemplateOutlet="actionColumn; context: {localRowObject: rowObject}"></ng-container>
-      </ng-container>
-    </tr>
-  </ng-template>
-  <ng-template pTemplate="emptymessage">
-    <tr>
-      <td [colSpan]="columns.length + ((anyRowActionObserved || this.additionalActions.length > 0) ? 1 : 0)">
-        {{ emptyResultsMessage || ("OCX_DATA_TABLE.EMPTY_RESULT" | translate) }}
-      </td>
-    </tr>
-  </ng-template>
-</p-table>
-
-<ng-template #defaultCell let-rowObject="rowObject" let-column="column">
-  <ng-container
-    *ngIf="getTemplate(column, TemplateType.CELL) | async as template"
-    [ngTemplateOutlet]="template"
-    [ngTemplateOutletContext]="{
-                rowObject: rowObject,
-                column: column
-            }"
+<ng-container *ngIf="(displayedPageSize$ | async) as displayedPageSize">
+  <p-table
+    *ngIf="(columnTemplates$ | async) as columnTemplates"
+    [value]="(displayedRows$ | async) ?? []"
+    responsiveLayout="scroll"
+    [paginator]="paginator"
+    [first]="page * displayedPageSize"
+    (onPage)="onPageChange($event)"
+    [rows]="displayedPageSize"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="{{ (totalRecordsOnServer ? currentPageShowingWithTotalOnServerKey : currentPageShowingKey) | translate:params }}"
+    [rowsPerPageOptions]="(displayedPageSizes$ | async) ?? []"
+    id="dataTable_{{name}}"
+    (selectionChange)="onSelectionChange($event)"
+    [selection]="(selectedRows$ | async) ?? []"
+    [scrollable]="true"
+    paginatorDropdownAppendTo="body"
   >
-  </ng-container>
-</ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 4rem" scope="col" *ngIf="selectionChangedObserved">
+          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+        </th>
+        <ng-container *ngIf="actionColumnPosition === 'left';">
+          <ng-container *ngTemplateOutlet="actionColumnHeader"></ng-container>
+        </ng-container>
+        <ng-container *ngFor="let column of columns">
+          <th *ngIf="column.sortable || column.filterable; else simpleHeader" scope="col">
+            <div class="table-header-wrapper">
+              <span id="{{column.id}}-header-name">{{ column.nameKey | translate }}</span>
+              <span class="icon-button-header-wrapper">
+                <button
+                  *ngIf="column.sortable"
+                  class="pi sortButton"
+                  [class.pi-sort-alt]="(column?.id === sortColumn && sortDirection === 'NONE') || column?.id !== sortColumn"
+                  [class.pi-sort-amount-up]="column?.id === sortColumn && sortDirection === 'ASCENDING'"
+                  [class.pi-sort-amount-down]="column?.id === sortColumn && sortDirection === 'DESCENDING'"
+                  (click)="onSortColumnClick(column.id)"
+                  [title]="(sortIconTitle(column.id) | translate)"
+                  [attr.aria-label]="('OCX_DATA_TABLE.TOGGLE_BUTTON.ARIA_LABEL' | translate: { column: (column.nameKey | translate), direction: (sortDirectionToTitle(columnNextSortDirection(column.id)) | translate)})"
+                ></button>
+                <p-multiSelect
+                  class="filterMultiSelect"
+                  *ngIf="column.filterable"
+                  [options]="(currentFilterOptions$ | async) || []"
+                  [ngModel]="(currentSelectedFilters$ | async) || []"
+                  [showToggleAll]="true"
+                  emptyFilterMessage="{{ 'OCX_DATA_TABLE.EMPTY_FILTER_MESSAGE' | translate }}"
+                  [displaySelectedLabel]="false"
+                  [resetFilterOnHide]="true"
+                  (onChange)="onFilterChange(column, $event)"
+                  placeholder="Icon"
+                  appendTo="body"
+                  (onClick)="onFilterClick(column)"
+                  [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
+                  [attr.aria-label]="('OCX_DATA_TABLE.FILTER_ARIA_LABEL' | translate: { column: column.nameKey | translate})"
+                >
+                  <ng-template pTemplate="selectedItems" let-value>
+                    <div
+                      class="pi"
+                      [class.pi-filter]="!((filterAmounts$ | async) || {})[column.id]"
+                      [class.pi-filter-fill]="((filterAmounts$ | async) || {})[column.id] > 0"
+                    ></div>
+                  </ng-template>
+                  <ng-template pTemplate="item" let-value>
+                    <ng-container
+                      *ngIf="columnTemplates[column.id] as template"
+                      [ngTemplateOutlet]="template"
+                      [ngTemplateOutletContext]="{
+                      rowObject: getRowObjectFromMultiselectItem(value, column),
+                      column: column
+                  }"
+                    >
+                    </ng-container>
+                  </ng-template>
+                </p-multiSelect>
+              </span>
+            </div>
+          </th>
+          <ng-template #simpleHeader>
+            <th scope="col">{{ column.nameKey | translate }}</th>
+          </ng-template>
+        </ng-container>
+        <ng-container *ngIf="actionColumnPosition === 'right';">
+          <ng-container *ngTemplateOutlet="actionColumnHeader"></ng-container>
+        </ng-container>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowObject>
+      <tr>
+        <td *ngIf="selectionChangedObserved">
+          <p-tableCheckbox
+            [value]="rowObject"
+            [disabled]="!!selectionEnabledField && !fieldIsTruthy(rowObject, selectionEnabledField)"
+          ></p-tableCheckbox>
+        </td>
+        <ng-container *ngIf="actionColumnPosition === 'left';">
+          <ng-container *ngTemplateOutlet="actionColumn; context: {localRowObject: rowObject}"></ng-container>
+        </ng-container>
+        <td *ngFor="let column of columns">
+          <ng-container
+            [ngTemplateOutlet]="
+              _cell ? _cell: columnTemplates[column.id]
+              "
+            [ngTemplateOutletContext]="{
+                  rowObject: rowObject,
+                  column: column,
+              }"
+          ></ng-container>
+        </td>
+        <ng-container *ngIf="actionColumnPosition === 'right';">
+          <ng-container *ngTemplateOutlet="actionColumn; context: {localRowObject: rowObject}"></ng-container>
+        </ng-container>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td [colSpan]="columns.length + ((anyRowActionObserved || this.additionalActions.length > 0) ? 1 : 0)">
+          {{ emptyResultsMessage || ("OCX_DATA_TABLE.EMPTY_RESULT" | translate) }}
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</ng-container>
 
 <ng-template pTemplate="defaultStringCell" let-rowObject="rowObject" let-column="column">
   <ng-container> {{ resolveFieldData(rowObject, column.id)}} </ng-container>

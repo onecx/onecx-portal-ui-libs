@@ -96,7 +96,19 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   @Input() deleteMenuItemKey: string | undefined
   @Input() paginator = true
   @Input() page = 0
-  @Input() columns: DataTableColumn[] = []
+  columnTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
+  _columns$ = new BehaviorSubject<DataTableColumn[]>([])
+  @Input() 
+  get columns(): DataTableColumn[] {
+    return this._columns$.getValue()
+  }
+  set columns(value: DataTableColumn[]) {
+    this._columns$.next(value)
+    const obs = value.map((c) => this.getTemplate(c))
+    this.columnTemplates$ = combineLatest(obs).pipe(
+      map(values => Object.fromEntries(value.map((c, i) => [c.id, values[i]])))
+    )
+  }
   @Input() name = ''
   @Input()
   get totalRecordsOnServer(): number | undefined {
@@ -372,11 +384,11 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
       (!!this.editPermission && this.userService.hasPermission(this.editPermission)) ||
       (!!this.deletePermission && this.userService.hasPermission(this.deletePermission))
 
-      this.emitComponentStateChanged()
+    this.emitComponentStateChanged()
   }
 
   ngAfterContentInit() {
-    this.templates?.forEach((item) => {
+    this.templates$.value?.forEach((item) => {
       switch (item.getType()) {
         case 'listValue':
           this.listValueChildTemplate = item.template
@@ -518,13 +530,12 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
 
   emitComponentStateChanged(state: DataListGridComponentState = {}) {
     this.displayedPageSize$.pipe(first()).subscribe((pageSize) => {
-          this.componentStateChanged.emit({
-      pageSize,
-      activePage: this.page,
-      ...state
+      this.componentStateChanged.emit({
+        pageSize,
+        activePage: this.page,
+        ...state,
+      })
     })
-    })
-
   }
 
   onPageChange(event: any) {
@@ -535,7 +546,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     this.pageSizeChanged.emit(event.rows)
     this.emitComponentStateChanged({
       activePage: page,
-      pageSize: event.rows
+      pageSize: event.rows,
     })
   }
 
@@ -620,7 +631,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
             case ColumnType.TRANSLATION_KEY:
               return (
                 this._translationKeyListValue ??
-                this.findTemplate(templates, ['translationListValue', 'defaultTranslationListValue'])?.template ??
+                this.findTemplate(templates, ['translationKeyListValue', 'defaultTranslationKeyListValue'])?.template ??
                 null
               )
             case ColumnType.CUSTOM:
