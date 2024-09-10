@@ -123,7 +123,7 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
 
   ngAfterContentInit(): void {
     this.fieldValues$ = this.formGroup?.valueChanges.pipe(
-      debounceTime(500),
+      debounceTime(100),
       map((values) =>
         Object.entries(values).reduce(
           (acc, [key, value]) => ({
