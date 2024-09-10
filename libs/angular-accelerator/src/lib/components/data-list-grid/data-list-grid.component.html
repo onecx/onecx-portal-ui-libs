@@ -1,6 +1,6 @@
 <ng-container *ngIf="(displayedPageSize$ | async) as displayedPageSize">
   <p-dataView
-    *ngIf="(columnTemplates$ | async) as columnTemplates"
+    *ngIf="(columnTemplates$ | async) ?? [] as columnTemplates"
     [value]="(displayedItems$ | async) ?? []"
     [paginator]="paginator"
     [first]="page * displayedPageSize"
