@@ -372,7 +372,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
       (!!this.editPermission && this.userService.hasPermission(this.editPermission)) ||
       (!!this.deletePermission && this.userService.hasPermission(this.deletePermission))
 
-      this.emitComponentStateChanged()
+    this.emitComponentStateChanged()
   }
 
   ngAfterContentInit() {
@@ -518,13 +518,12 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
 
   emitComponentStateChanged(state: DataListGridComponentState = {}) {
     this.displayedPageSize$.pipe(first()).subscribe((pageSize) => {
-          this.componentStateChanged.emit({
-      pageSize,
-      activePage: this.page,
-      ...state
+      this.componentStateChanged.emit({
+        pageSize,
+        activePage: this.page,
+        ...state,
+      })
     })
-    })
-
   }
 
   onPageChange(event: any) {
@@ -535,7 +534,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     this.pageSizeChanged.emit(event.rows)
     this.emitComponentStateChanged({
       activePage: page,
-      pageSize: event.rows
+      pageSize: event.rows,
     })
   }
 
@@ -620,7 +619,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
             case ColumnType.TRANSLATION_KEY:
               return (
                 this._translationKeyListValue ??
-                this.findTemplate(templates, ['translationListValue', 'defaultTranslationListValue'])?.template ??
+                this.findTemplate(templates, ['translationKeyListValue', 'defaultTranslationKeyListValue'])?.template ??
                 null
               )
             case ColumnType.CUSTOM:
