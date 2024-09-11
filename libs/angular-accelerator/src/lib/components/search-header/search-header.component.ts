@@ -3,10 +3,12 @@ import {
   AfterViewInit,
   Component,
   ContentChild,
+  ContentChildren,
   ElementRef,
   EventEmitter,
   Input,
   Output,
+  QueryList,
   TemplateRef,
   ViewChild,
 } from '@angular/core'
@@ -14,8 +16,8 @@ import { Action } from '../page-header/page-header.component'
 import { SLOT_SERVICE, SlotService } from '@onecx/angular-remote-components'
 // import { SearchConfigInfo } from '../../model/search-config-info'
 import { DataTableColumn } from '../../model/data-table-column.model'
-import { FormGroup, FormGroupDirective } from '@angular/forms'
-import { Observable, debounceTime, map, mergeMap, of } from 'rxjs'
+import { FormControlName, FormGroup, FormGroupDirective } from '@angular/forms'
+import { Observable, combineLatest, debounceTime, map, of, startWith } from 'rxjs'
 
 export interface SearchHeaderComponentState {
   activeViewMode?: 'basic' | 'advanced'
@@ -117,6 +119,8 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
   }
 
   @ContentChild(FormGroupDirective) formGroup: FormGroup | undefined
+  @ContentChildren(FormControlName, { descendants: true }) visibleFormControls!: QueryList<FormControlName>
+
   @ViewChild('searchParameterFields') searchParameterFields: ElementRef | undefined
 
   hasAdvanced = false
@@ -125,19 +129,23 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
   fieldValues$: Observable<{ [key: string]: unknown }> | undefined = of({})
 
   ngAfterContentInit(): void {
-    // TODO: Pass only visible values
-    this.fieldValues$ = this.formGroup?.valueChanges.pipe(
-      debounceTime(100),
-      map((values) =>
-        Object.entries(values).reduce(
-          (acc, [key, value]) => ({
-            ...acc,
-            [key]: value || undefined,
-          }),
-          {}
+    if (this.formGroup) {
+      this.fieldValues$ = combineLatest([
+        this.formGroup.valueChanges,
+        this.visibleFormControls.changes.pipe(startWith(null)),
+      ]).pipe(
+        debounceTime(100),
+        map(([values, _]) =>
+          Object.entries(values ?? {}).reduce(
+            (acc, [key, value]) => ({
+              ...acc,
+              [key]: this.isVisible(key) ? value || undefined : undefined,
+            }),
+            {}
+          )
         )
       )
-    )
+    }
   }
 
   ngAfterViewInit(): void {
@@ -190,5 +198,11 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
     if (event.code === 'Enter') {
       this.onSearchClicked()
     }
+  }
+
+  private isVisible(control: string) {
+    return this.visibleFormControls.some(
+      (formControl) => formControl.name !== null && String(formControl.name) === control
+    )
   }
 }
