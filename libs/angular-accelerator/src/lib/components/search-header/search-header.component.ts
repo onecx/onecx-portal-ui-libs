@@ -93,11 +93,14 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
 
   @Output() searched: EventEmitter<any> = new EventEmitter()
   @Output() resetted: EventEmitter<any> = new EventEmitter()
-  @Output() selectedSearchConfigChanged: EventEmitter<{
-    fieldValues: { [key: string]: string }
-    displayedColumnsIds: string[]
-    viewMode: 'basic' | 'advanced'
-  }> = new EventEmitter()
+  @Output() selectedSearchConfigChanged: EventEmitter<
+    | {
+        fieldValues: { [key: string]: string }
+        displayedColumnsIds: string[]
+        viewMode: 'basic' | 'advanced'
+      }
+    | undefined
+  > = new EventEmitter()
   @Output() viewModeChanged: EventEmitter<'basic' | 'advanced'> = new EventEmitter()
   @Output() componentStateChanged: EventEmitter<SearchHeaderComponentState> = new EventEmitter()
   @ContentChild('additionalToolbarContent')
@@ -122,6 +125,7 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
   fieldValues$: Observable<{ [key: string]: unknown }> | undefined = of({})
 
   ngAfterContentInit(): void {
+    // TODO: Pass only visible values
     this.fieldValues$ = this.formGroup?.valueChanges.pipe(
       debounceTime(100),
       map((values) =>
