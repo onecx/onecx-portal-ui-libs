@@ -29,7 +29,13 @@
         name="{{columnGroupSlotName}}"
         [inputs]="{ placeholderKey: groupSelectionNoGroupSelectedKey, defaultGroupKey: defaultGroupKey, customGroupKey: customGroupKey, columns: columns, selectedGroupKey: selectedGroupKey }"
         [outputs]="{ groupSelectionChanged: groupSelectionChanged }"
-      ></ocx-slot>
+      >
+        <ng-template #skeleton>
+          <div class="flex">
+            <p-skeleton width="18rem" height="3rem"></p-skeleton>
+          </div>
+        </ng-template>
+      </ocx-slot>
       <ocx-column-group-selection
         *ngIf="!(isColumnGroupSelectionComponentDefined$ | async)"
         [selectedGroupKey]="selectedGroupKey"

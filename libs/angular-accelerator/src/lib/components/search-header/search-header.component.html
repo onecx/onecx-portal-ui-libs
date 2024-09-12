@@ -9,7 +9,13 @@
       name="onecx-shell-search-config"
       [inputs]="{ pageName: pageName, currentFieldValues: fieldValues$ | async, displayedColumnsIds: displayedColumnsIds, viewMode: viewMode}"
       [outputs]="{ searchConfigSelected: selectedSearchConfigChanged }"
-    ></ocx-slot>
+    >
+      <ng-template #skeleton>
+        <div class="flex">
+          <p-skeleton width="18rem" height="3rem"></p-skeleton>
+        </div>
+      </ng-template>
+    </ocx-slot>
     <ng-container
       *ngIf="_additionalToolbarContentLeft"
       [ngTemplateOutlet]="_additionalToolbarContentLeft"

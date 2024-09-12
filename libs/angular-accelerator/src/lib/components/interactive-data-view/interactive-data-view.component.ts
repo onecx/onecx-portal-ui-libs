@@ -11,7 +11,7 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core'
-import { BehaviorSubject, Observable, ReplaySubject, combineLatest, map, startWith, tap, timestamp } from 'rxjs'
+import { BehaviorSubject, Observable, ReplaySubject, combineLatest, map, startWith, timestamp } from 'rxjs'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
@@ -324,7 +324,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   constructor(private slotService: SlotService) {
     this.isColumnGroupSelectionComponentDefined$ = this.slotService
       .isSomeComponentDefinedForSlot(this.columnGroupSlotName)
-
+      .pipe(startWith(true))
 
     this.groupSelectionChanged.subscribe((event: { activeColumns: DataTableColumn[]; groupKey: string }) => {
       this.displayedColumnKeys = event.activeColumns.map((col) => col.id)
