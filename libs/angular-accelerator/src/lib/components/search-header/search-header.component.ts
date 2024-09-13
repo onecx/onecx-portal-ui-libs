@@ -118,6 +118,10 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
     return this.additionalToolbarContentLeft
   }
 
+  get searchConfigChangeObserved(): boolean {
+    return this.selectedSearchConfigChanged.observed
+  }
+
   @ContentChild(FormGroupDirective) formGroup: FormGroup | undefined
   @ContentChildren(FormControlName, { descendants: true }) visibleFormControls!: QueryList<FormControlName>
 
