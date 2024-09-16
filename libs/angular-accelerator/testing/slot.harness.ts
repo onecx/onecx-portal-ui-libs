@@ -1,4 +1,4 @@
-import { BaseHarnessFilters, ContentContainerComponentHarness, HarnessPredicate } from '@angular/cdk/testing'
+import { BaseHarnessFilters, ContentContainerComponentHarness } from '@angular/cdk/testing'
 
 export interface SlotHarnessFilters extends BaseHarnessFilters {
   name?: string

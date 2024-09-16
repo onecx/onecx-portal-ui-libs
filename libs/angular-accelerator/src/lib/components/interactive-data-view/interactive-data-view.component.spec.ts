@@ -38,10 +38,10 @@ import {
   DefaultGridItemHarness,
   DefaultListItemHarness,
   InteractiveDataViewHarness,
+  SlotHarness,
 } from '../../../../testing'
 import { DateUtils } from '../../utils/dateutils'
 import { provideRouter } from '@angular/router'
-import { SlotHarness } from 'libs/angular-accelerator/testing/slot.harness'
 import { SlotService } from '@onecx/angular-remote-components'
 import { Observable, of, ReplaySubject } from 'rxjs'
 

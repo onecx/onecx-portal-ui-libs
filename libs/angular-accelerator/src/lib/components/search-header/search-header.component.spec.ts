@@ -12,16 +12,13 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { AppStateServiceMock, provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { HarnessLoader } from '@angular/cdk/testing'
-import { SlotHarness } from 'libs/angular-accelerator/testing/slot.harness'
-import { SearchHeaderHarness } from '@onecx/angular-accelerator/testing'
-import { FormControl, FormGroup, Validators } from '@angular/forms'
+import { SlotHarness } from '@onecx/angular-accelerator/testing'
 
 describe('SearchHeaderComponent', () => {
   let mockAppStateService: AppStateServiceMock
   let component: SearchHeaderComponent
   let fixture: ComponentFixture<SearchHeaderComponent>
   let loader: HarnessLoader
-  let searchHeaderHarness: SearchHeaderHarness
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -55,7 +52,6 @@ describe('SearchHeaderComponent', () => {
     fixture.detectChanges()
 
     loader = TestbedHarnessEnvironment.loader(fixture)
-    searchHeaderHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, SearchHeaderHarness)
   })
 
   it('should create', () => {
