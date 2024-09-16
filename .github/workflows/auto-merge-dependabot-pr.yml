@@ -1,0 +1,59 @@
+name: Auto merge dependabot and NX PRs
+on:
+  pull_request_target:
+jobs:
+  auto-merge-dependabot-pr:
+    if: >- 
+      github.event.pull_request.user.login == 'dependabot[bot]' &&
+      (
+        startsWith(github.head_ref, 'dependabot/npm_and_yarn/angular-') ||
+        startsWith(github.head_ref, 'dependabot/npm_and_yarn/onecx-') ||
+        startsWith(github.event.pull_request.title, 'chore(deps-dev)')
+      )
+    runs-on: ubuntu-latest
+    steps:
+      - name: Auto Approve
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const result = await github.pulls.createReview({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            pull_number: context.issue.number,
+            event: "APPROVE"
+            })
+      - name: Enable auto-merge for Dependabot PRs
+        run: gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+  rebase-merge-nx-pr:
+    name: Rebase and merge
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.user.login == 'tkit-dev' && startsWith(github.head_ref, 'migrate-nx-to-')
+    steps:
+      - name: Checkout the latest code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0 # otherwise, you will fail to push refs to dest repo
+      - name: Automatic Rebase
+        uses: cirrus-actions/rebase@1.8
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Auto Approve
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const result = await github.pulls.createReview({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            pull_number: context.issue.number,
+            event: "APPROVE"
+            })
+      - name: Enable auto-merge for NX PRs
+        run: gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

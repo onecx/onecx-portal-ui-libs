@@ -1,42 +1,47 @@
-<p-dataView
-  *ngIf="displayedPageSize$ | async as displayedPageSize"
-  [value]="(displayedItems$ | async) ?? []"
-  [paginator]="paginator"
-  [first]="page * displayedPageSize"
-  (onPage)="onPageChange($event)"
-  [rows]="displayedPageSize"
-  [layout]="layout"
-  [showCurrentPageReport]="true"
-  currentPageReportTemplate="{{ (totalRecordsOnServer ? currentPageShowingWithTotalOnServerKey : currentPageShowingKey) | translate:params }}"
-  [rowsPerPageOptions]="(displayedPageSizes$ | async) ?? []"
-  id="dataListGrid_{{name}}"
-  paginatorDropdownAppendTo="body"
->
-  <ng-template #gridItem let-rows pTemplate="gridItem">
-    <div class="p-grid p-nogutter grid grid-nogutter">
-      <ng-template ngFor let-item [ngForOf]="rows">
-        <ng-container
-          [ngTemplateOutlet]="_gridItem ? _gridItem : defaultGridItem"
-          [ngTemplateOutletContext]="{$implicit:item}"
-        ></ng-container>
-      </ng-template>
-    </div>
-  </ng-template>
-
-  <ng-template #listItem let-rows pTemplate="listItem">
-    <div class="p-grid p-nogutter grid grid-nogutter">
-      <ng-template ngFor let-item [ngForOf]="rows">
-        <ng-container
-          [ngTemplateOutlet]="_listItem ? _listItem : defaultListItem"
-          [ngTemplateOutletContext]="{$implicit:item}"
-        ></ng-container>
-      </ng-template>
-    </div>
-  </ng-template>
-  <ng-template pTemplate="empty">
-    <span>{{ emptyResultsMessage || ("OCX_DATA_LIST_GRID.EMPTY_RESULT" | translate) }}</span>
-  </ng-template>
-</p-dataView>
+<ng-container *ngIf="(displayedPageSize$ | async) as displayedPageSize">
+  <p-dataView
+    *ngIf="(columnTemplates$ | async) ?? [] as columnTemplates"
+    [value]="(displayedItems$ | async) ?? []"
+    [paginator]="paginator"
+    [first]="page * displayedPageSize"
+    (onPage)="onPageChange($event)"
+    [rows]="displayedPageSize"
+    [layout]="layout"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="{{ (totalRecordsOnServer ? currentPageShowingWithTotalOnServerKey : currentPageShowingKey) | translate:params }}"
+    [rowsPerPageOptions]="(displayedPageSizes$ | async) ?? []"
+    id="dataListGrid_{{name}}"
+    paginatorDropdownAppendTo="body"
+  >
+    <ng-template #gridItem let-rows pTemplate="gridItem">
+      <div class="p-grid p-nogutter grid grid-nogutter">
+        <ng-template ngFor let-item [ngForOf]="rows">
+          <ng-container
+            [ngTemplateOutlet]="_gridItem ? _gridItem : defaultGridItem"
+            [ngTemplateOutletContext]="{$implicit:item}"
+          ></ng-container>
+        </ng-template>
+      </div>
+    </ng-template>
+  
+    <ng-template #listItem let-rows pTemplate="listItem">
+      <div class="p-grid p-nogutter grid grid-nogutter">
+        <ng-template ngFor let-item [ngForOf]="rows">
+          <ng-container
+            [ngTemplateOutlet]="_listItem ? _listItem : defaultListItem"
+            [ngTemplateOutletContext]="{
+              item:item,
+              columnTemplates: columnTemplates
+              }"
+          ></ng-container>
+        </ng-template>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="empty">
+      <span>{{ emptyResultsMessage || ("OCX_DATA_LIST_GRID.EMPTY_RESULT" | translate) }}</span>
+    </ng-template>
+  </p-dataView>
+</ng-container>
 
 <ng-template #defaultGridItem let-item>
   <div class="col-12 lg:col-6 xl:col-4 flex">
@@ -79,7 +84,7 @@
     {{ resolveFieldData(item, subtitleLineId) }}
   </div>
 </ng-template>
-<ng-template #defaultListItem let-item>
+<ng-template #defaultListItem let-item="item" let-columnTemplates="columnTemplates">
   <div class="col-12">
     <div class="data-list-items p-3">
       <div class="item-name-row flex flex-row justify-content-between">
@@ -186,7 +191,8 @@
             "
               [ngTemplateOutletContext]="{
                 rowObject: item,
-                column: col
+                column: col,
+                columnTemplates: columnTemplates
             }"
             ></ng-container>
           </div>
@@ -201,9 +207,9 @@
   </div>
 </ng-template>
 
-<ng-template #defaultListValue let-rowObject="rowObject" let-column="column">
+<ng-template #defaultListValue let-rowObject="rowObject" let-column="column" let-columnTemplates="columnTemplates">
   <ng-container
-    [ngTemplateOutlet]="getTemplate(column) | async"
+    [ngTemplateOutlet]="columnTemplates[column.id]"
     [ngTemplateOutletContext]="{
                 rowObject: rowObject,
                 column: column

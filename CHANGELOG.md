@@ -1,3 +1,25 @@
+## [5.10.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.9.6...v5.10.0) (2024-09-06)
+
+### Features
+
+* add searchCriteriaNotEmptyValidator ([#441](https://github.com/onecx/onecx-portal-ui-libs/issues/441)) ([a2fc73e](https://github.com/onecx/onecx-portal-ui-libs/commit/a2fc73e60b3a12722df592b764161cedde3ba651))
+
+### Bug Fixes
+
+* add git committer name and email to release job ([#443](https://github.com/onecx/onecx-portal-ui-libs/issues/443)) ([66733b7](https://github.com/onecx/onecx-portal-ui-libs/commit/66733b77847113577c46aa6e7ef1c5805c9722e1))
+
+## [5.9.6](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.9.5...v5.9.6) (2024-09-06)
+
+### Bug Fixes
+
+* add git env variables for semantic release, delete merge nx pr workflow ([#442](https://github.com/onecx/onecx-portal-ui-libs/issues/442)) ([ce9d9f3](https://github.com/onecx/onecx-portal-ui-libs/commit/ce9d9f3e7e66f0ad1a2d8e5f9833f7c1293622aa))
+* ignore nx libs ([#440](https://github.com/onecx/onecx-portal-ui-libs/issues/440)) ([62fb1bf](https://github.com/onecx/onecx-portal-ui-libs/commit/62fb1bf7db7bd445371eaa0ce8efcbd372d84eca))
+
+### Chores
+
+* add workflow to auto merge dependabot angular PRs ([f91fa98](https://github.com/onecx/onecx-portal-ui-libs/commit/f91fa9804a7cb92f20056e6471e7a7723f1e20a6))
+* add workflow to rebase and merge nx PRs ([6d27695](https://github.com/onecx/onecx-portal-ui-libs/commit/6d2769517b3826ee3591280e519702af4d32a0d0))
+
 ## [5.9.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.9.4...v5.9.5) (2024-09-03)
 
 ### Bug Fixes

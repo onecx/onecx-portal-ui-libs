@@ -46,6 +46,7 @@ export * from './lib/angular-accelerator-primeng.module'
 
 // functions
 export * from './lib/functions/flatten-object'
+export * from './lib/functions/at-least-one-field-filled-validator'
 
 // utils
 export * from './lib/utils/async-translate-loader.utils'

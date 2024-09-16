@@ -107,7 +107,19 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   set sortColumn(value: string) {
     this?._sortColumn$.next(value)
   }
-  @Input() columns: DataTableColumn[] = []
+  columnTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
+  _columns$ = new BehaviorSubject<DataTableColumn[]>([])
+  @Input() 
+  get columns(): DataTableColumn[] {
+    return this._columns$.getValue()
+  }
+  set columns(value: DataTableColumn[]) {
+    this._columns$.next(value)
+    const obs = value.map((c) => this.getTemplate(c, TemplateType.CELL))
+    this.columnTemplates$ = combineLatest(obs).pipe(
+      map(values => Object.fromEntries(value.map((c, i) => [c.id, values[i]])))
+    )
+  }
   @Input() clientSideFiltering = true
   @Input() clientSideSorting = true
   @Input() sortStates: DataSortDirection[] = [DataSortDirection.ASCENDING, DataSortDirection.DESCENDING]
@@ -453,7 +465,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
 
   ngAfterContentInit() {
-    this.templates?.forEach((item) => {
+    this.templates$.value?.forEach((item) => {
       switch (item.getType()) {
         case 'stringCell':
           this.stringCellChildTemplate = item.template
