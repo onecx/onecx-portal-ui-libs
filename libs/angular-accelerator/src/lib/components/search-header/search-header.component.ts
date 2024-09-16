@@ -21,7 +21,13 @@ import { Observable, combineLatest, debounceTime, map, of, startWith } from 'rxj
 
 export interface SearchHeaderComponentState {
   activeViewMode?: 'basic' | 'advanced'
-  // selectedSearchConfig?: SearchConfigInfo
+  selectedSearchConfig?:
+    | {
+        fieldValues: { [key: string]: string }
+        displayedColumnsIds: string[]
+        viewMode: 'basic' | 'advanced'
+      }
+    | undefined
 }
 
 /**
@@ -131,6 +137,14 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
   headerActions: Action[] = []
 
   fieldValues$: Observable<{ [key: string]: unknown }> | undefined = of({})
+
+  constructor() {
+    this.selectedSearchConfigChanged.subscribe((config) => {
+      this.componentStateChanged.emit({
+        selectedSearchConfig: config,
+      })
+    })
+  }
 
   ngAfterContentInit(): void {
     if (this.formGroup) {
