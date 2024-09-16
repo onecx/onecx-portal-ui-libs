@@ -10,11 +10,18 @@ import { SearchHeaderComponent } from './search-header.component'
 import { PageHeaderComponent } from '../page-header/page-header.component'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { AppStateServiceMock, provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
+import { HarnessLoader } from '@angular/cdk/testing'
+import { SlotHarness } from 'libs/angular-accelerator/testing/slot.harness'
+import { SearchHeaderHarness } from '@onecx/angular-accelerator/testing'
+import { FormControl, FormGroup, Validators } from '@angular/forms'
 
 describe('SearchHeaderComponent', () => {
   let mockAppStateService: AppStateServiceMock
   let component: SearchHeaderComponent
   let fixture: ComponentFixture<SearchHeaderComponent>
+  let loader: HarnessLoader
+  let searchHeaderHarness: SearchHeaderHarness
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -46,9 +53,26 @@ describe('SearchHeaderComponent', () => {
     fixture = TestBed.createComponent(SearchHeaderComponent)
     component = fixture.componentInstance
     fixture.detectChanges()
+
+    loader = TestbedHarnessEnvironment.loader(fixture)
+    searchHeaderHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, SearchHeaderHarness)
   })
 
   it('should create', () => {
     expect(component).toBeTruthy()
+  })
+
+  it('should not display search config slot if search config change is not observed', async () => {
+    const slot = await loader.getHarnessOrNull(SlotHarness)
+    expect(slot).toBeFalsy()
+  })
+
+  it('should display search config slot if search config change is observed', async () => {
+    const sub = component.selectedSearchConfigChanged.subscribe()
+
+    const slot = await loader.getHarness(SlotHarness)
+    expect(slot).toBeTruthy()
+
+    sub.unsubscribe()
   })
 })

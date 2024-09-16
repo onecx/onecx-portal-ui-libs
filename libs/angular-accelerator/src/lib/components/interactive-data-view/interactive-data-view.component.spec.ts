@@ -41,6 +41,24 @@ import {
 } from '../../../../testing'
 import { DateUtils } from '../../utils/dateutils'
 import { provideRouter } from '@angular/router'
+import { SlotHarness } from 'libs/angular-accelerator/testing/slot.harness'
+import { SlotService } from '@onecx/angular-remote-components'
+import { Observable, of, ReplaySubject } from 'rxjs'
+
+class SlotServiceMock {
+  _isSomeComponentDefinedForSlot: ReplaySubject<boolean> = new ReplaySubject(1)
+  isSomeComponentDefinedForSlot(): Observable<boolean> {
+    return this._isSomeComponentDefinedForSlot
+  }
+
+  getComponentsForSlot() {
+    return of([])
+  }
+
+  setSomeComponentDefinedForSlot(isDefined: boolean) {
+    this._isSomeComponentDefinedForSlot.next(isDefined)
+  }
+}
 
 describe('InteractiveDataViewComponent', () => {
   const mutationObserverMock = jest.fn(function MutationObserver(callback) {
@@ -63,6 +81,7 @@ describe('InteractiveDataViewComponent', () => {
   let deleteItemEvent: RowListGridData | undefined
 
   let dateUtils: DateUtils
+  let slotService: SlotServiceMock
 
   const mockData = [
     {
@@ -244,6 +263,10 @@ describe('InteractiveDataViewComponent', () => {
       ],
       providers: [
         { provide: UserService, useClass: MockUserService },
+        {
+          provide: SlotService,
+          useClass: SlotServiceMock,
+        },
         provideHttpClient(withInterceptorsFromDi()),
         provideRouter([]),
         provideAppStateServiceMock(),
@@ -270,6 +293,7 @@ describe('InteractiveDataViewComponent', () => {
     interactiveDataViewHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, InteractiveDataViewHarness)
 
     dateUtils = TestBed.inject(DateUtils)
+    slotService = TestBed.inject(SlotService) as any as SlotServiceMock
 
     viewItemEvent = undefined
     editItemEvent = undefined
@@ -290,7 +314,14 @@ describe('InteractiveDataViewComponent', () => {
     expect(dataLayoutSelection).toBeTruthy()
   })
 
+  it('should load column-group-selection slot', async () => {
+    const slot = await loader.getHarness(SlotHarness)
+    expect(slot).toBeTruthy()
+  })
+
   it('should load ColumnGroupSelectionDropdown', async () => {
+    slotService.setSomeComponentDefinedForSlot(false)
+
     const columnGroupSelectionDropdown = await loader.getHarness(ColumnGroupSelectionHarness)
     expect(columnGroupSelectionDropdown).toBeTruthy()
   })
@@ -557,6 +588,8 @@ describe('InteractiveDataViewComponent', () => {
     })
 
     it('should select option in column group selection dropdown', async () => {
+      slotService.setSomeComponentDefinedForSlot(false)
+
       window.HTMLElement.prototype.scrollIntoView = jest.fn()
       const expectedHeaders = [
         'COLUMN_HEADER_NAME.NAME',
@@ -632,6 +665,8 @@ describe('InteractiveDataViewComponent', () => {
     })
 
     it('should select option in column group selection dropdown and sort ascending', async () => {
+      slotService.setSomeComponentDefinedForSlot(false)
+
       window.HTMLElement.prototype.scrollIntoView = jest.fn()
       const expectedRowsData = [
         [
@@ -698,6 +733,8 @@ describe('InteractiveDataViewComponent', () => {
     })
 
     it('should select option in column group selection dropdown and sort descending', async () => {
+      slotService.setSomeComponentDefinedForSlot(false)
+
       window.HTMLElement.prototype.scrollIntoView = jest.fn()
       const expectedRowsData = [
         [
@@ -765,6 +802,8 @@ describe('InteractiveDataViewComponent', () => {
     })
 
     it('should select option in column group selection dropdown and sort default', async () => {
+      slotService.setSomeComponentDefinedForSlot(false)
+
       window.HTMLElement.prototype.scrollIntoView = jest.fn()
       const expectedRowsData = [
         [
@@ -1114,7 +1153,7 @@ describe('InteractiveDataViewComponent', () => {
 
     beforeEach(async () => {
       dataLayoutSelection = await loader.getHarness(DataLayoutSelectionHarness)
-      
+
       const gridLayoutSelectionButton = await dataLayoutSelection.getGridLayoutSelectionButton()
       await gridLayoutSelectionButton?.click()
 
@@ -1451,6 +1490,8 @@ describe('InteractiveDataViewComponent', () => {
     ]
 
     it('should remain sorted after switching data view from table view to grid view and to list view', async () => {
+      slotService.setSomeComponentDefinedForSlot(false)
+
       window.HTMLElement.prototype.scrollIntoView = jest.fn()
       const columnGroupSelectionDropdown = await loader.getHarness(
         PDropdownHarness.with({ id: 'columnGroupSelectionDropdown' })
@@ -1480,6 +1521,8 @@ describe('InteractiveDataViewComponent', () => {
     })
 
     it('should remain sorted after switching data view from table view to list view then sort again and switch to grid view', async () => {
+      slotService.setSomeComponentDefinedForSlot(false)
+
       window.HTMLElement.prototype.scrollIntoView = jest.fn()
       const columnGroupSelectionDropdown = await loader.getHarness(
         PDropdownHarness.with({ id: 'columnGroupSelectionDropdown' })
@@ -1585,7 +1628,7 @@ describe('InteractiveDataViewComponent', () => {
         },
       ]
       component.titleLineId = 'name'
-      
+
       fixture.detectChanges()
       await fixture.whenStable()
     }
@@ -1697,5 +1740,28 @@ describe('InteractiveDataViewComponent', () => {
         expect(await dataTable?.hasAmountOfDisabledActionButtons(0)).toBe(true)
       })
     })
+  })
+
+  fit('should react on group selection change event emit', () => {
+    const columnsChangeSpy = jest.spyOn(component.displayedColumnsChange, 'emit')
+    const columnKeysChangeSpy = jest.spyOn(component.displayedColumnKeysChange, 'emit')
+
+    component.groupSelectionChanged.emit({
+    activeColumns: [{
+      id: 'first-col'
+    } as any, {
+      id: 'second-col'
+    } as any],
+    groupKey: 'my-search-config'
+    })
+
+    expect(component.displayedColumnKeys).toStrictEqual([
+      'first-col','second-col'
+    ])
+    expect(component.selectedGroupKey).toBe('my-search-config')
+    expect(columnsChangeSpy).toHaveBeenCalled()
+    expect(columnKeysChangeSpy).toHaveBeenCalledWith([
+      'first-col','second-col'
+    ])
   })
 })
