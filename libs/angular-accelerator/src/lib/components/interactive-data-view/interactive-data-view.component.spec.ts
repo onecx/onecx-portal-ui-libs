@@ -1742,26 +1742,25 @@ describe('InteractiveDataViewComponent', () => {
     })
   })
 
-  fit('should react on group selection change event emit', () => {
+  it('should react on group selection change event emit', () => {
     const columnsChangeSpy = jest.spyOn(component.displayedColumnsChange, 'emit')
     const columnKeysChangeSpy = jest.spyOn(component.displayedColumnKeysChange, 'emit')
 
     component.groupSelectionChanged.emit({
-    activeColumns: [{
-      id: 'first-col'
-    } as any, {
-      id: 'second-col'
-    } as any],
-    groupKey: 'my-search-config'
+      activeColumns: [
+        {
+          id: 'first-col',
+        } as any,
+        {
+          id: 'second-col',
+        } as any,
+      ],
+      groupKey: 'my-search-config',
     })
 
-    expect(component.displayedColumnKeys).toStrictEqual([
-      'first-col','second-col'
-    ])
+    expect(component.displayedColumnKeys).toStrictEqual(['first-col', 'second-col'])
     expect(component.selectedGroupKey).toBe('my-search-config')
     expect(columnsChangeSpy).toHaveBeenCalled()
-    expect(columnKeysChangeSpy).toHaveBeenCalledWith([
-      'first-col','second-col'
-    ])
+    expect(columnKeysChangeSpy).toHaveBeenCalledWith(['first-col', 'second-col'])
   })
 })
