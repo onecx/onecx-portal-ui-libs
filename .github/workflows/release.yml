@@ -19,8 +19,8 @@ jobs:
         run: npx nx run-many -t test --configuration=ci
       - name: Change git config
         run: |
-          gh config set user.email "tkit-dev@1000kit.org"
-          gh config set user.name "tkit-dev"
+          git config --global user.name "tkit-dev"
+          git config --global user.email "tkit-dev@1000kit.org"
       - name: Release
         run: npx semantic-release
         env:
