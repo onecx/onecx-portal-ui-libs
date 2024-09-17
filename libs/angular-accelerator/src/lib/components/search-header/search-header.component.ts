@@ -84,6 +84,7 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
   @Input() searchButtonDisabled = false
   @Input() resetButtonDisabled = false
   @Input() pageName = ''
+  @Input() layout = ''
 
   _displayedColumnsIds: string[] = []
   get displayedColumnsIds(): string[] {

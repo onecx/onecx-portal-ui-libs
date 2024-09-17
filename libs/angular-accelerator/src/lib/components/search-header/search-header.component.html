@@ -8,7 +8,7 @@
     <ocx-slot
       *ngIf="searchConfigChangeObserved"
       name="onecx-shell-search-config"
-      [inputs]="{ pageName: pageName, currentFieldValues: fieldValues$ | async, displayedColumnsIds: displayedColumnsIds, viewMode: viewMode}"
+      [inputs]="{ pageName: pageName, currentFieldValues: fieldValues$ | async, displayedColumnsIds: displayedColumnsIds, viewMode: viewMode, layout: layout}"
       [outputs]="{ searchConfigSelected: selectedSearchConfigChanged }"
     >
       <ng-template #skeleton>
