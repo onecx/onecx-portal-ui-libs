@@ -1,3 +1,9 @@
+## [5.11.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.11.0...v5.11.1) (2024-09-17)
+
+### Bug Fixes
+
+* use different token for release ([#475](https://github.com/onecx/onecx-portal-ui-libs/issues/475)) ([5ba9cd8](https://github.com/onecx/onecx-portal-ui-libs/commit/5ba9cd88b7710c28b8455b323ca88fa4d2a90403))
+
 ## [5.10.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.9.6...v5.10.0) (2024-09-06)
 
 ### Features
