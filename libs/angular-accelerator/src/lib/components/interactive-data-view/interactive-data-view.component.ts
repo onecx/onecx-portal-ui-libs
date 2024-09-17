@@ -11,7 +11,7 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core'
-import { BehaviorSubject, Observable, ReplaySubject, combineLatest, map, startWith, timestamp } from 'rxjs'
+import { BehaviorSubject, Observable, ReplaySubject, combineLatest, distinctUntilChanged, map, startWith, timestamp } from 'rxjs'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
@@ -202,7 +202,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   @Output() displayedColumnsChange = new EventEmitter<DataTableColumn[]>()
   @Output() displayedColumnKeysChange = new EventEmitter<string[]>()
   @Output() selectionChanged: EventEmitter<Row[]> = new EventEmitter()
-  groupSelectionChanged = new EventEmitter<{ activeColumns: DataTableColumn[]; groupKey: string }>()
+  groupSelectionChanged = new EventEmitter<{ activeColumns: DataTableColumn[]; groupKey: string } | undefined>()
 
   @Output() pageChanged: EventEmitter<number> = new EventEmitter()
   @Output() pageSizeChanged = new EventEmitter<number>()
@@ -326,13 +326,25 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
       .isSomeComponentDefinedForSlot(this.columnGroupSlotName)
       .pipe(startWith(true))
 
-    this.groupSelectionChanged.subscribe((event: { activeColumns: DataTableColumn[]; groupKey: string }) => {
-      this.displayedColumnKeys = event.activeColumns.map((col) => col.id)
-      this.selectedGroupKey = event.groupKey
-      // TODO: Remove following line once displayedColumns (deprecated) has been removed
-      this.displayedColumnsChange.emit(this.displayedColumns)
-      this.displayedColumnKeysChange.emit(this.displayedColumnKeys)
-    })
+    this.groupSelectionChanged.subscribe(
+      (event: { activeColumns: DataTableColumn[]; groupKey: string } | undefined) => {
+        if (event === undefined) {
+          event = {
+            activeColumns: this.displayedColumns,
+            groupKey: this.selectedGroupKey
+          }
+        }
+        this.displayedColumnKeys = event.activeColumns.map((col) => col.id)
+        this.selectedGroupKey = event.groupKey
+        // TODO: Remove following line once displayedColumns (deprecated) has been removed
+        this.displayedColumnsChange.emit(this.displayedColumns)
+        this.displayedColumnKeysChange.emit(this.displayedColumnKeys)
+        this.columnGroupSelectionComponentState$.next({
+          activeColumnGroupKey: event.groupKey,
+          displayedColumns: event.activeColumns,
+        })
+      }
+    )
   }
 
   ngOnInit(): void {
@@ -346,6 +358,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
         .map((column) => column.id)
     }
     this.displayedColumns$ = this.displayedColumnKeys$.pipe(
+      distinctUntilChanged((prev, curr) => prev.length === curr.length && prev.every((v) => curr.includes(v))),
       map(
         (columnKeys) =>
           (columnKeys.map((key) => this.columns.find((col) => col.id === key)).filter((d) => d) as DataTableColumn[]) ??
@@ -362,10 +375,11 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
 
     let dataListGridSortingComponentState$: Observable<DataListGridSortingComponentState | Record<string, never>> =
       this.dataListGridSortingComponentState$
-      let columnGroupSelectionComponentState$: Observable<ColumnGroupSelectionComponentState | Record<string, never>> =
+    let columnGroupSelectionComponentState$: Observable<ColumnGroupSelectionComponentState | Record<string, never>> =
       this.columnGroupSelectionComponentState$
-      let customGroupColumnSelectorComponentState$: Observable<CustomGroupColumnSelectorComponentState | Record<string, never>> =
-      this.customGroupColumnSelectorComponentState$
+    let customGroupColumnSelectorComponentState$: Observable<
+      CustomGroupColumnSelectorComponentState | Record<string, never>
+    > = this.customGroupColumnSelectorComponentState$
 
     if (this.layout === 'table') {
       dataListGridSortingComponentState$ = dataListGridSortingComponentState$.pipe(startWith({}))
