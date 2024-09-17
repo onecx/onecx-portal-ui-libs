@@ -105,7 +105,7 @@
 
 <ng-container *ngIf="(displayedPageSize$ | async) as displayedPageSize">
   <p-table
-    *ngIf="(columnTemplates$ | async) as columnTemplates"
+    *ngIf="(columnTemplates$ | async) ?? {} as columnTemplates"
     [value]="(displayedRows$ | async) ?? []"
     responsiveLayout="scroll"
     [paginator]="paginator"
