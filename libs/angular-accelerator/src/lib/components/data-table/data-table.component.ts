@@ -155,6 +155,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   @Input() editActionVisibleField: string | undefined
   @Input() editActionEnabledField: string | undefined
   @Input() selectionEnabledField: string | undefined
+  @Input() allowSelectAll: boolean = true
   @Input() paginator = true
   @Input() page = 0
   @Input()
