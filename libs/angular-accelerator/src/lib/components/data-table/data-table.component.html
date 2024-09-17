@@ -105,7 +105,7 @@
 
 <ng-container *ngIf="(displayedPageSize$ | async) as displayedPageSize">
   <p-table
-    *ngIf="(columnTemplates$ | async) as columnTemplates"
+    *ngIf="(columnTemplates$ | async) ?? {} as columnTemplates"
     [value]="(displayedRows$ | async) ?? []"
     responsiveLayout="scroll"
     [paginator]="paginator"
@@ -239,7 +239,7 @@
 <ng-template pTemplate="defaultCustomCell" let-rowObject="rowObject" let-column="column"> </ng-template>
 
 <ng-template pTemplate="defaultDateCell" let-rowObject="rowObject" let-column="column">
-  <ng-container> {{ resolveFieldData(rowObject, column.id)| date: 'medium' }} </ng-container>
+  <ng-container> {{ resolveFieldData(rowObject, column.id) | date: column.dateFormat ?? 'medium' }} </ng-container>
 </ng-template>
 
 <ng-template pTemplate="defaultRelativeDateCell" let-rowObject="rowObject" let-column="column">
