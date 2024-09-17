@@ -16,4 +16,3 @@ jobs:
     - uses: timonmasberg/nx-migration-gh-action@v1.1.13
       with:
         repoToken: ${{ secrets.CI_PAT }}
-        
