@@ -358,7 +358,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
 
     this.dataViewLayoutChange
       .pipe(withLatestFrom(this.isColumnGroupSelectionComponentDefined$))
-      .subscribe(([layout, columnGroupComponentDefined]) => {
+      .subscribe(([_, columnGroupComponentDefined]) => {
         if (columnGroupComponentDefined) {
           if (
             !(
