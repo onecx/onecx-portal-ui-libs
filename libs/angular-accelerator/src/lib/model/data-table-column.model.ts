@@ -7,4 +7,5 @@ export interface DataTableColumn {
   sortable?: boolean
   filterable?: boolean
   predefinedGroupKeys?: string[]
+  dateFormat?: string
 }

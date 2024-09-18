@@ -1,6 +1,6 @@
 <ng-container *ngIf="(displayedPageSize$ | async) as displayedPageSize">
   <p-dataView
-    *ngIf="(columnTemplates$ | async) ?? [] as columnTemplates"
+    *ngIf="(columnTemplates$ | async) ?? {} as columnTemplates"
     [value]="(displayedItems$ | async) ?? []"
     [paginator]="paginator"
     [first]="page * displayedPageSize"
@@ -229,7 +229,7 @@
 <ng-template pTemplate="defaultCustomListValue" let-rowObject="rowObject" let-column="column"> </ng-template>
 
 <ng-template pTemplate="defaultDateListValue" let-rowObject="rowObject" let-column="column">
-  <ng-container> {{ resolveFieldData(rowObject, column.id) | date: 'medium' }} </ng-container>
+  <ng-container> {{ resolveFieldData(rowObject, column.id) | date: column.dateFormat ?? 'medium' }} </ng-container>
 </ng-template>
 
 <ng-template pTemplate="defaultRelativeDateListValue" let-rowObject="rowObject" let-column="column">
