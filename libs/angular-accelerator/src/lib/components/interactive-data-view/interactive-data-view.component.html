@@ -38,7 +38,7 @@
       </ocx-slot>
       <ocx-column-group-selection
         *ngIf="(isColumnGroupSelectionComponentDefined$ | async) === false"
-        [selectedGroupKey]="selectedGroupKey"
+        [selectedGroupKey]="selectedGroupKey ?? defaultGroupKey"
         [columns]="columns"
         [defaultGroupKey]="defaultGroupKey"
         [customGroupKey]="customGroupKey"
