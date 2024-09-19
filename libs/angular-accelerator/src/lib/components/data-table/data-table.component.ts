@@ -620,32 +620,41 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
 
   onSelectionChange(selection: Row[]) {
-    const updatedSelection = selection.map((row) => row.id)
+    let newSelectionIds = selection.map((row) => row.id)
     const rows = this._rows$.getValue()
+
     if (this.selectionEnabledField) {
       const disabledRowIds = rows.filter((r) => !this.fieldIsTruthy(r, this.selectionEnabledField)).map((row) => row.id)
-
       if (disabledRowIds.length > 0) {
-        const previouslySelected = this._selectionIds$.getValue()
-        const previouslySelectedAndDisabled = previouslySelected.filter((id) => disabledRowIds.includes(id))
-        const disabledAndPreviouslyDeselected = disabledRowIds.filter((id) => !previouslySelected.includes(id))
-        previouslySelectedAndDisabled.forEach((id) => {
-          if (!updatedSelection.includes(id)) {
-            updatedSelection.push(id)
-          }
-        })
-
-        disabledAndPreviouslyDeselected.forEach((id) => {
-          const index = updatedSelection.indexOf(id)
-          if (index > -1) {
-            updatedSelection.splice(index, 1)
-          }
-        })
+        newSelectionIds = this.mergeWithDisabledKeys(newSelectionIds, disabledRowIds)
       }
     }
-    this._selectionIds$.next(updatedSelection)
-    this.selectionChanged.emit(this._rows$.getValue().filter((row) => updatedSelection.includes(row.id)))
+    
+    this._selectionIds$.next(newSelectionIds)
+    this.selectionChanged.emit(this._rows$.getValue().filter((row) => newSelectionIds.includes(row.id)))
     this.emitComponentStateChanged()
+  }
+
+  mergeWithDisabledKeys(newSelectionIds: (string | number)[], disabledRowIds: (string | number)[]) {
+    const previousSelectionIds = this._selectionIds$.getValue()
+    const previouslySelectedAndDisabled = previousSelectionIds.filter((id) => disabledRowIds.includes(id))
+    const disabledAndPreviouslyDeselected = disabledRowIds.filter((id) => !previousSelectionIds.includes(id))
+    const updatedSelection = [...newSelectionIds]
+
+    previouslySelectedAndDisabled.forEach((id) => {
+      if (!updatedSelection.includes(id)) {
+        updatedSelection.push(id)
+      }
+    })
+
+    disabledAndPreviouslyDeselected.forEach((id) => {
+      const index = updatedSelection.indexOf(id)
+      if (index > -1) {
+        updatedSelection.splice(index, 1)
+      }
+    })
+
+    return updatedSelection
   }
 
   isSelected(row: Row) {
