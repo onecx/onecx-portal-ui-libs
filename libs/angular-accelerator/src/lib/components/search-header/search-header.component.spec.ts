@@ -4,7 +4,7 @@ import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { ButtonModule } from 'primeng/button'
 import { BreadcrumbModule } from 'primeng/breadcrumb'
-import { AppStateService } from '@onecx/angular-integration-interface'
+import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { SearchHeaderComponent } from './search-header.component'
 import { PageHeaderComponent } from '../page-header/page-header.component'
@@ -13,6 +13,7 @@ import { AppStateServiceMock, provideAppStateServiceMock } from '@onecx/angular-
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { HarnessLoader } from '@angular/cdk/testing'
 import { SlotHarness } from '@onecx/angular-accelerator/testing'
+import { IfPermissionDirective } from '../../directives/if-permission.directive'
 
 describe('SearchHeaderComponent', () => {
   let mockAppStateService: AppStateServiceMock
@@ -22,7 +23,7 @@ describe('SearchHeaderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [SearchHeaderComponent, PageHeaderComponent],
+      declarations: [SearchHeaderComponent, PageHeaderComponent, IfPermissionDirective],
       imports: [
         TranslateTestingModule.withTranslations({}),
         RouterTestingModule,
@@ -63,8 +64,13 @@ describe('SearchHeaderComponent', () => {
     expect(slot).toBeFalsy()
   })
 
-  it('should display search config slot if search config change is observed', async () => {
+  it('should display search config slot if search config change is observed, pageName is defined and permission is met', async () => {
+    const userService = TestBed.inject(UserService)
+    jest.spyOn(userService, 'hasPermission').mockReturnValue(true)
     const sub = component.selectedSearchConfigChanged.subscribe()
+    component.pageName = 'myPageName'
+    component.searchConfigPermission = 'PRODUCT#USE_SEARCHCONFIGS'
+    fixture.detectChanges()
 
     const slot = await loader.getHarness(SlotHarness)
     expect(slot).toBeTruthy()

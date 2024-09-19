@@ -44,6 +44,7 @@ import { DateUtils } from '../../utils/dateutils'
 import { provideRouter } from '@angular/router'
 import { SlotService } from '@onecx/angular-remote-components'
 import { Observable, of, ReplaySubject } from 'rxjs'
+import { IfPermissionDirective } from '../../directives/if-permission.directive'
 
 class SlotServiceMock {
   _isSomeComponentDefinedForSlot: ReplaySubject<boolean> = new ReplaySubject(1)
@@ -248,6 +249,7 @@ describe('InteractiveDataViewComponent', () => {
         DataViewComponent,
         ColumnGroupSelectionComponent,
         CustomGroupColumnSelectorComponent,
+        IfPermissionDirective,
       ],
       imports: [
         TranslateModule.forRoot(),
@@ -279,6 +281,7 @@ describe('InteractiveDataViewComponent', () => {
     component.editPermission = 'TEST_MGMT#TEST_EDIT'
     component.deletePermission = 'TEST_MGMT#TEST_DELETE'
     component.defaultGroupKey = 'PREDEFINED_GROUP.DEFAULT'
+    component.searchConfigPermission = 'PRODUCT#USE_SEARCHCONFIG'
     component.viewItem.subscribe((event) => (viewItemEvent = event))
     component.editItem.subscribe((event) => (editItemEvent = event))
     component.deleteItem.subscribe((event) => (deleteItemEvent = event))
@@ -315,6 +318,11 @@ describe('InteractiveDataViewComponent', () => {
   })
 
   it('should load column-group-selection slot', async () => {
+    slotService.setSomeComponentDefinedForSlot(true)
+    const userService = TestBed.inject(UserService)
+    jest.spyOn(userService, 'hasPermission').mockReturnValue(true)
+    fixture.detectChanges()
+
     const slot = await loader.getHarness(SlotHarness)
     expect(slot).toBeTruthy()
   })
@@ -324,6 +332,13 @@ describe('InteractiveDataViewComponent', () => {
 
     const columnGroupSelectionDropdown = await loader.getHarness(ColumnGroupSelectionHarness)
     expect(columnGroupSelectionDropdown).toBeTruthy()
+
+    slotService.setSomeComponentDefinedForSlot(true)
+    const userService = TestBed.inject(UserService)
+    jest.spyOn(userService, 'hasPermission').mockReturnValue(false)
+
+    const columnGroupSelectionDropdownNoPermission = await loader.getHarness(ColumnGroupSelectionHarness)
+    expect(columnGroupSelectionDropdownNoPermission).toBeTruthy()
   })
 
   it('should load CustomGroupColumnSelector', async () => {

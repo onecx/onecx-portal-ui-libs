@@ -15,7 +15,6 @@ import {
 import { Action } from '../page-header/page-header.component'
 import { SLOT_SERVICE, SlotService } from '@onecx/angular-remote-components'
 // import { SearchConfigInfo } from '../../model/search-config-info'
-import { DataTableColumn } from '../../model/data-table-column.model'
 import { FormControlName, FormGroup, FormGroupDirective } from '@angular/forms'
 import { Observable, combineLatest, debounceTime, map, of, startWith } from 'rxjs'
 
