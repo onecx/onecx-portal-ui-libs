@@ -64,7 +64,7 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   @Input() editActionVisibleField: string | undefined
   @Input() editActionEnabledField: string | undefined
   @Input() tableSelectionEnabledField: string | undefined
-  @Input() tableAllowSelectAll: boolean = true
+  @Input() tableAllowSelectAll = true
   @Input() data: RowListGridData[] = []
   @Input() name = 'Data table'
   @Input() titleLineId: string | undefined

@@ -68,7 +68,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   @Input() editActionVisibleField: string | undefined
   @Input() editActionEnabledField: string | undefined
   @Input() tableSelectionEnabledField: string | undefined
-  @Input() tableAllowSelectAll: boolean = true
+  @Input() tableAllowSelectAll = true
   @Input() name = 'Data'
   @Input() titleLineId: string | undefined
   @Input() subtitleLineIds: string[] = []
