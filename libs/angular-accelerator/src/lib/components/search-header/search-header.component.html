@@ -5,18 +5,20 @@
   [actions]="headerActions"
 >
   <ng-template #additionalToolbarContentLeft>
-    <ocx-slot
-      *ngIf="searchConfigChangeObserved"
-      name="onecx-shell-search-config"
-      [inputs]="{ pageName: pageName, currentFieldValues: fieldValues$ | async, displayedColumnsIds: displayedColumnsIds, viewMode: viewMode, layout: layout}"
-      [outputs]="{ searchConfigSelected: selectedSearchConfigChanged }"
-    >
-      <ng-template #skeleton>
-        <div class="flex">
-          <p-skeleton width="18rem" height="3rem"></p-skeleton>
-        </div>
-      </ng-template>
-    </ocx-slot>
+    <ng-container *ngIf="searchConfigChangeObserved">
+      <ocx-slot
+        *ocxIfPermission="searchConfigPermission"
+        name="onecx-shell-search-config"
+        [inputs]="{ pageName: pageName, currentFieldValues: fieldValues$ | async, displayedColumnsIds: displayedColumnsIds, viewMode: viewMode, layout: layout}"
+        [outputs]="{ searchConfigSelected: selectedSearchConfigChanged }"
+      >
+        <ng-template #skeleton>
+          <div class="flex">
+            <p-skeleton width="18rem" height="3rem"></p-skeleton>
+          </div>
+        </ng-template>
+      </ocx-slot>
+    </ng-container>
     <ng-container
       *ngIf="_additionalToolbarContentLeft"
       [ngTemplateOutlet]="_additionalToolbarContentLeft"

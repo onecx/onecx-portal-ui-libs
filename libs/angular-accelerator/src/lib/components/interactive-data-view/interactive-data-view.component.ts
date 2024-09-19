@@ -72,6 +72,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   dataListGridSortingComponentState$ = new ReplaySubject<DataListGridSortingComponentState>(1)
   dataViewComponentState$ = new ReplaySubject<DataViewComponentState>(1)
 
+  @Input() searchConfigPermission: string | undefined
   @Input() deletePermission: string | undefined
   @Input() editPermission: string | undefined
   @Input() viewPermission: string | undefined
