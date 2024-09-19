@@ -4,6 +4,10 @@ module.exports = {
     options: {},
   },
 
-  addons: ['@storybook/addon-a11y', '@chromatic-com/storybook']
+  addons: ['@storybook/addon-a11y', '@chromatic-com/storybook'],
+
+  docs: {
+    autodocs: true
+  }
 }
   
