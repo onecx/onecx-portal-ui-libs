@@ -23,23 +23,31 @@
       ></ocx-data-list-grid-sorting>
     </div>
 
-    <div *ngIf="layout === 'table'" class="flex flex-wrap justify-content-between align-items-center gap-2">
+    <div
+      [ngStyle]="layout !== 'table' ? {
+      'position': 'absolute'
+    } : {}"
+      class="flex flex-wrap justify-content-between align-items-center gap-2"
+    >
       <ng-container *ngIf="isColumnGroupSelectionComponentDefined$ | async; else defaultColumnGroupSelectionComponent">
-        <ocx-slot
-          *ocxIfPermission="searchConfigPermission; elseTemplate: defaultColumnGroupSelectionComponent"
-          name="{{columnGroupSlotName}}"
-          [inputs]="{ placeholderKey: groupSelectionNoGroupSelectedKey, defaultGroupKey: defaultGroupKey, customGroupKey: customGroupKey, columns: columns, selectedGroupKey: selectedGroupKey }"
-          [outputs]="{ groupSelectionChanged: groupSelectionChanged }"
-        >
-          <ng-template #skeleton>
-            <div class="flex">
-              <p-skeleton width="18rem" height="3rem"></p-skeleton>
-            </div>
-          </ng-template>
-        </ocx-slot>
+        <ng-container *ngIf="displayedColumnKeys$ | async as displayedColumnKeys">
+          <ocx-slot
+            *ocxIfPermission="searchConfigPermission; elseTemplate: defaultColumnGroupSelectionComponent"
+            name="{{columnGroupSlotName}}"
+            [inputs]="{ placeholderKey: groupSelectionNoGroupSelectedKey, defaultGroupKey: defaultGroupKey, customGroupKey: customGroupKey, columns: columns, selectedGroupKey: selectedGroupKey, layout: layout, displayedColumnsIds: displayedColumnKeys }"
+            [outputs]="{ groupSelectionChanged: groupSelectionChanged }"
+          >
+            <ng-template #skeleton>
+              <div class="flex">
+                <p-skeleton width="18rem" height="3rem"></p-skeleton>
+              </div>
+            </ng-template>
+          </ocx-slot>
+        </ng-container>
       </ng-container>
 
       <ocx-custom-group-column-selector
+        *ngIf="layout === 'table'"
         [columns]="columns"
         [displayedColumns]="(displayedColumns$ | async) ?? []"
         (columnSelectionChanged)="onColumnSelectionChange($event)"

@@ -84,22 +84,7 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
   @Input() searchConfigPermission: string | undefined
   @Input() searchButtonDisabled = false
   @Input() resetButtonDisabled = false
-  @Input() pageName = ''
-  @Input() layout = ''
-
-  _displayedColumnsIds: string[] = []
-  get displayedColumnsIds(): string[] {
-    return this._displayedColumnsIds
-  }
-
-  _displayedColumns: DataTableColumn[] = []
-  @Input() get displayedColumns(): DataTableColumn[] {
-    return this._displayedColumns
-  }
-  set displayedColumns(value: DataTableColumn[]) {
-    this._displayedColumns = [...value]
-    this._displayedColumnsIds = this._displayedColumns.map((column) => column.id)
-  }
+  @Input() pageName: string | undefined
 
   @Output() searched: EventEmitter<any> = new EventEmitter()
   @Output() resetted: EventEmitter<any> = new EventEmitter()
@@ -151,7 +136,7 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
   ngAfterContentInit(): void {
     if (this.formGroup) {
       this.fieldValues$ = combineLatest([
-        this.formGroup.valueChanges,
+        this.formGroup.valueChanges.pipe(startWith({})),
         this.visibleFormControls.changes.pipe(startWith(null)),
       ]).pipe(
         debounceTime(100),

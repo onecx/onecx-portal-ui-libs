@@ -5,11 +5,11 @@
   [actions]="headerActions"
 >
   <ng-template #additionalToolbarContentLeft>
-    <ng-container *ngIf="searchConfigChangeObserved">
+    <ng-container *ngIf="searchConfigChangeObserved && pageName">
       <ocx-slot
         *ocxIfPermission="searchConfigPermission"
         name="onecx-shell-search-config"
-        [inputs]="{ pageName: pageName, currentFieldValues: fieldValues$ | async, displayedColumnsIds: displayedColumnsIds, viewMode: viewMode, layout: layout}"
+        [inputs]="{ pageName: pageName, currentFieldValues: fieldValues$ | async, viewMode: viewMode }"
         [outputs]="{ searchConfigSelected: selectedSearchConfigChanged }"
       >
         <ng-template #skeleton>
