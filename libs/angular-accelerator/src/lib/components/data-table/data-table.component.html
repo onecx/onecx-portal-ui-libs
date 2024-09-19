@@ -194,10 +194,18 @@
     <ng-template pTemplate="body" let-rowObject>
       <tr>
         <td *ngIf="selectionChangedObserved">
-          <p-tableCheckbox
-            [value]="rowObject"
-            [disabled]="!!selectionEnabledField && !fieldIsTruthy(rowObject, selectionEnabledField)"
-          ></p-tableCheckbox>
+          <p-checkbox
+            *ngIf="(!!selectionEnabledField && !fieldIsTruthy(rowObject, selectionEnabledField)) && isSelected(rowObject); else defaultCheckbox"
+            [(ngModel)]="checked"
+            [binary]="true"
+            [disabled]="true"
+          ></p-checkbox>
+          <ng-template #defaultCheckbox>
+            <p-tableCheckbox
+              [value]="rowObject"
+              [disabled]="!!selectionEnabledField && !fieldIsTruthy(rowObject, selectionEnabledField)"
+            ></p-tableCheckbox>
+          </ng-template>
         </td>
         <ng-container *ngIf="actionColumnPosition === 'left';">
           <ng-container *ngTemplateOutlet="actionColumn; context: {localRowObject: rowObject}"></ng-container>
