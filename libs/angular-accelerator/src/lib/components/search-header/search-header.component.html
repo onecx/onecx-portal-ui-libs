@@ -28,8 +28,9 @@
         (onClick)="onResetClicked()"
         label="{{ 'OCX_SEARCH_HEADER.RESET_BUTTON.TEXT' | translate }}"
         icon="pi pi-eraser"
-        [attr.aria-label]="'OCX_SEARCH_HEADER.RESET_BUTTON.DETAIL' | translate"
-        title="{{ 'OCX_SEARCH_HEADER.RESET_BUTTON.DETAIL' | translate }}"
+        pTooltip="{{ 'OCX_SEARCH_HEADER.RESET_BUTTON.DETAIL' | translate }}"
+        tooltipPosition="top"
+        tooltipEvent="hover"
         [disabled]="resetButtonDisabled"
       >
       </p-button>
@@ -39,8 +40,9 @@
         (onClick)="onSearchClicked()"
         label="{{ 'OCX_SEARCH_HEADER.SEARCH_BUTTON.TEXT' | translate }}"
         icon="pi pi-search"
-        [attr.aria-label]="'OCX_SEARCH_HEADER.SEARCH_BUTTON.DETAIL' | translate"
-        title="{{ 'OCX_SEARCH_HEADER.SEARCH_BUTTON.DETAIL' | translate }}"
+        pTooltip="{{ 'OCX_SEARCH_HEADER.SEARCH_BUTTON.DETAIL' | translate }}"
+        tooltipPosition="top"
+        tooltipEvent="hover"
         [disabled]="searchButtonDisabled"
       >
       </p-button>
