@@ -120,6 +120,7 @@
       "HOME_ARIA_LABEL": "Zu {{page}} navigieren"
     },
     "OCX_DIAGRAM": {
+      "DIAGRAM": "Diagram",
       "SUM": "Gesamtanzahl",
       "NO_DATA": "Es sind keine Daten vorhanden",
       "SWITCH_DIAGRAM_TYPE": {
