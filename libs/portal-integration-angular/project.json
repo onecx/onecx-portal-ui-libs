@@ -24,6 +24,20 @@
       },
       "defaultConfiguration": "production"
     },
+    "buildWithPrimeNGTranslations": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "commands": [
+          "mkdir -p dist/libs/portal-integration-angular/assets/i18n/primeng/",
+          "cp node_modules/primelocale/de.json dist/libs/portal-integration-angular/assets/i18n/primeng/",
+          "cp node_modules/primelocale/en.json dist/libs/portal-integration-angular/assets/i18n/primeng/",
+          "sed -i 's/\"de\":/\"primeng\":/' dist/libs/portal-integration-angular/assets/i18n/primeng/de.json",
+          "sed -i 's/\"en\":/\"primeng\":/' dist/libs/portal-integration-angular/assets/i18n/primeng/en.json"
+        ],
+        "parallel": false
+      }
+    },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": [
