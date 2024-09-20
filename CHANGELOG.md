@@ -1,3 +1,16 @@
+## [5.12.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.11.1...v5.12.0) (2024-09-20)
+
+### Features
+
+* allow hiding of selectAll checkbox & fix initial selection of disabled table rows ([#479](https://github.com/onecx/onecx-portal-ui-libs/issues/479)) ([9097001](https://github.com/onecx/onecx-portal-ui-libs/commit/90970014bf676f4abdb795fc316945896174bf8a))
+
+### Chores
+
+* **deps-dev:** bump @schematics/angular from 18.1.4 to 18.2.4 ([#468](https://github.com/onecx/onecx-portal-ui-libs/issues/468)) ([88d4614](https://github.com/onecx/onecx-portal-ui-libs/commit/88d46144d4103ac1d42b0ba75482125ab27c23f1))
+* **deps-dev:** bump postcss-preset-env from 10.0.1 to 10.0.3 ([#477](https://github.com/onecx/onecx-portal-ui-libs/issues/477)) ([e6aea7f](https://github.com/onecx/onecx-portal-ui-libs/commit/e6aea7f8eee07b235936a1b230e0f5e539eef7de))
+* **deps:** bump the angular group with 12 updates ([#476](https://github.com/onecx/onecx-portal-ui-libs/issues/476)) ([f1c8704](https://github.com/onecx/onecx-portal-ui-libs/commit/f1c8704f60c84d9937a133f25128e2e3bb5dd577))
+* **deps:** bump the angular group with 16 updates ([#480](https://github.com/onecx/onecx-portal-ui-libs/issues/480)) ([236e2c4](https://github.com/onecx/onecx-portal-ui-libs/commit/236e2c45352dfc1b2b100da20e40840db888945f))
+
 ## [5.11.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.11.0...v5.11.1) (2024-09-17)
 
 ### Bug Fixes
