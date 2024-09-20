@@ -14,6 +14,8 @@ import { HAS_PERMISSION_CHECKER, IfPermissionDirective } from '../../directives/
 import { ColumnType } from '../../model/column-type.model'
 import { MenuModule } from 'primeng/menu'
 import { DynamicLocaleId } from '../../utils/dynamic-locale-id'
+import { CheckboxModule } from 'primeng/checkbox'
+import { FormsModule } from '@angular/forms'
 
 type DataTableInputTypes = Pick<DataTableComponent, 'rows' | 'columns' | 'emptyResultsMessage' | 'selectedRows'>
 
@@ -36,7 +38,7 @@ const DataTableComponentSBConfig: Meta<DataTableComponent> = {
     }),
     moduleMetadata({
       declarations: [DataTableComponent, IfPermissionDirective],
-      imports: [TableModule, ButtonModule, MultiSelectModule, StorybookTranslateModule, MockAuthModule, MenuModule],
+      imports: [TableModule, ButtonModule, MultiSelectModule, StorybookTranslateModule, MockAuthModule, MenuModule, CheckboxModule, FormsModule],
     }),
   ],
 }
@@ -52,6 +54,7 @@ const dataTableActionsArgTypes = {
 
 const dataTableSelectionArgTypes = {
   selectionChanged: { action: 'selectionChanged' },
+  componentStateChanged: { action: 'componentStateChanged' },
 }
 
 const defaultComponentArgs: DataTableInputTypes = {
@@ -139,6 +142,16 @@ export const WithRowSelectionAndDefaultSelection = {
         id: 1,
       },
     ],
+  },
+}
+
+export const WithRowSelectionAndDisabledDefaultSelection = {
+  argTypes: dataTableSelectionArgTypes,
+  render: Template,
+  args: {
+    ...defaultComponentArgs,
+    selectedRows: [1],
+    selectionEnabledField: 'available'
   },
 }
 

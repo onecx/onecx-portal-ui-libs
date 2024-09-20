@@ -113,6 +113,8 @@
     [currentPageShowingWithTotalOnServerKey]="currentPageShowingWithTotalOnServerKey"
     (componentStateChanged)="dataViewComponentState$.next($event)"
     [parentTemplates]="templates$ | async"
+    [tableAllowSelectAll]="tableAllowSelectAll"
+    [tableSelectionEnabledField]="tableSelectionEnabledField"
   >
   </ocx-data-view>
 </div>
