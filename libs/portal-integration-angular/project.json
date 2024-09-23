@@ -6,8 +6,22 @@
   "tags": [],
   "projectType": "library",
   "targets": {
+    "copyPrimelocaleTranslations": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "mkdir -p libs/portal-integration-angular/tmp/primelocale",
+          "cp node_modules/primelocale/de.json libs/portal-integration-angular/tmp/primelocale/",
+          "cp node_modules/primelocale/en.json libs/portal-integration-angular/tmp/primelocale/",
+          "sed -i 's/\"de\":/\"primeng\":/' libs/portal-integration-angular/tmp/primelocale/de.json",
+          "sed -i 's/\"en\":/\"primeng\":/' libs/portal-integration-angular/tmp/primelocale/en.json"
+        ],
+        "parallel": false
+      }
+    },
     "build": {
       "executor": "@nx/angular:package",
+      "dependsOn": ["^build", "copyPrimelocaleTranslations"],
       "outputs": [
         "{workspaceRoot}/dist/{projectRoot}"
       ],
