@@ -63,7 +63,7 @@
               tooltipEvent="hover"
               [disabled]="action.disabled ? action.disabled : false"
               [attr.name]="action.icon ? 'ocx-page-header-inline-action-icon-button' : 'ocx-page-header-inline-action-button'"
-              [attr.aria-label]="(action.titleKey ? (action.titleKey | translate) : action.title) || (action.labelKey ? (action.labelKey | translate) : action.label)"
+              [attr.aria-label]=" (action.ariaLabelKey ? (action.ariaLabelKey | translate) : action.ariaLabel) || (action.titleKey ? (action.titleKey | translate) : action.title) || (action.labelKey ? (action.labelKey | translate) : action.label)"
             ></p-button>
           </ng-container>
         </div>
@@ -81,7 +81,7 @@
               class="more-actions-menu-button action-button ml-2"
               (click)="menu.toggle($event)"
               name="ocx-page-header-overflow-action-button"
-              [attr.aria-label]="('OCX_PAGE_HEADER.MORE_ACTIONS' | translate)"
+              [ariaLabel]="('OCX_PAGE_HEADER.MORE_ACTIONS' | translate)"
             ></button>
             <p-menu #menu [popup]="true" [model]="overflowActions" appendTo="body"></p-menu>
           </div>
@@ -128,7 +128,7 @@
               [pTooltip]="item.actionItemTooltip || ''"
               tooltipPosition="top"
               tooltipEvent="hover"
-              [ariaLabel]="item.actionItemTooltip || ''"
+              [ariaLabel]="item.actionItemAriaLabel || item.actionItemTooltip || ''"
               (onClick)="item.actionItemCallback()"
             ></p-button>
           </span>

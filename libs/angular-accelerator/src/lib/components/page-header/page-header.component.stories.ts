@@ -81,7 +81,7 @@ const demoActions: Action[] = [
       console.log(`you clicked 'Some action'`)
     },
     show: 'asOverflow',
-    icon: PrimeIcons.ADDRESS_BOOK
+    icon: PrimeIcons.ADDRESS_BOOK,
   },
   {
     label: 'Other action',
@@ -98,6 +98,14 @@ const demoActions: Action[] = [
     title: 'Tooltip for Disabled',
     disabled: true,
   },
+  {
+    icon: PrimeIcons.BOOK,
+    actionCallback: () => {
+      console.log(`you clicked 'BOOK'`)
+    },
+    show: 'always',
+    ariaLabel: 'Aria label for BOOK action',
+  },
 ]
 
 const demoFields: ObjectDetailItem[] = [
@@ -108,22 +116,29 @@ const demoFields: ObjectDetailItem[] = [
     labelTooltip: 'Label Tooltip',
     actionItemIcon: PrimeIcons.COPY,
     actionItemTooltip: 'Copy to clipboard',
-    actionItemCallback: () => {console.log('Copy to clipboard')},
+    actionItemCallback: () => {
+      console.log('Copy to clipboard')
+    },
   },
   {
     label: 'Status',
     value: 'Confirmed',
-    icon: PrimeIcons.CHECK_CIRCLE
+    icon: PrimeIcons.CHECK_CIRCLE,
   },
   {
     label: 'Start Date',
     value: '14.3.2022',
-    icon: PrimeIcons.CALENDAR
+    icon: PrimeIcons.CALENDAR,
+    actionItemIcon: PrimeIcons.COPY,
+    actionItemCallback: () => {
+      console.log('Copy to clipboard')
+    },
+    actionItemAriaLabel: 'Copy to clipboard',
   },
   {
     label: 'End Date',
     value: '19.06.2024',
-    icon: PrimeIcons.CALENDAR
+    icon: PrimeIcons.CALENDAR,
   },
 ]
 
@@ -361,8 +376,8 @@ export const WithObjectDetailsAndStyledIcons = {
         label: 'Styled Icon',
         value: 'Confirmed',
         icon: PrimeIcons.CHECK_CIRCLE,
-        iconStyleClass: 'text-red-400 fadein animation-duration-1000 animation-iteration-infinite'
-      }
+        iconStyleClass: 'text-red-400 fadein animation-duration-1000 animation-iteration-infinite',
+      },
     ],
     showBreadcrumbs: false,
   },
@@ -389,7 +404,7 @@ export const ForcedColumnLayout = {
     loading: false,
     objectDetails: demoFields,
     showBreadcrumbs: false,
-    enableGridView: false
+    enableGridView: false,
   },
 }
 
@@ -402,7 +417,7 @@ export const ForcedGridLayout = {
     loading: false,
     objectDetails: demoFields,
     showBreadcrumbs: false,
-    enableGridView: true
+    enableGridView: true,
   },
 }
 
