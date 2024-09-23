@@ -32,7 +32,7 @@ describe('CreateTranslateLoader', () => {
   })
 
   describe('without TranslationCache parameter', () => {
-    it('should call httpClient get 3 times if a remoteBaseUrl is set and if global loading is finished', (done) => {
+    it('should call httpClient get 4 times if a remoteBaseUrl is set and if global loading is finished', (done) => {
       currentMfe$ = of({ remoteBaseUrl: 'remoteUrl' })
       globalLoading$ = of(false)
       const translateLoader = environmentInjector.runInContext(() =>
@@ -40,7 +40,7 @@ describe('CreateTranslateLoader', () => {
       )
 
       translateLoader.getTranslation('en').subscribe(() => {
-        expect(httpClientMock.get).toHaveBeenCalledTimes(3)
+        expect(httpClientMock.get).toHaveBeenCalledTimes(4)
         done()
       })
     })
@@ -60,7 +60,7 @@ describe('CreateTranslateLoader', () => {
   })
 
   describe('with TranslationCache parameter', () => {
-    it('should call httpClient get 3 times if a remoteBaseUrl is set and if global loading is finished', (done) => {
+    it('should call httpClient get 4 times if a remoteBaseUrl is set and if global loading is finished', (done) => {
       currentMfe$ = of({ remoteBaseUrl: 'remoteUrl' })
       globalLoading$ = of(false)
       const translateLoader = createTranslateLoader(
@@ -70,7 +70,7 @@ describe('CreateTranslateLoader', () => {
       )
 
       translateLoader.getTranslation('en').subscribe(() => {
-        expect(httpClientMock.get).toHaveBeenCalledTimes(3)
+        expect(httpClientMock.get).toHaveBeenCalledTimes(4)
         done()
       })
     })

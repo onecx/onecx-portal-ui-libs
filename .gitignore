@@ -137,3 +137,6 @@ dist
 .idea
 
 .nx
+
+libs/angular-accelerator/tmp/
+libs/portal-integration-angular/tmp/

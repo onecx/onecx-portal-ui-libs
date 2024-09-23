@@ -34,6 +34,13 @@ export function createTranslateLoader(
             Location.joinWithSlash(currentMfe.remoteBaseUrl, `onecx-portal-lib/assets/i18n/`),
             '.json'
           ),
+          // Primelocale Translations
+          new CachingTranslateLoader(
+            ts,
+            http,
+            Location.joinWithSlash(currentMfe.remoteBaseUrl, `onecx-portal-lib/assets/i18n/primeng/`),
+            '.json'
+          ),
           // translations of the app
           new CachingTranslateLoader(
             ts,
