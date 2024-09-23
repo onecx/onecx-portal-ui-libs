@@ -6,8 +6,22 @@
   "tags": [],
   "projectType": "library",
   "targets": {
+    "copyPrimelocaleTranslations": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "mkdir -p libs/angular-accelerator/tmp/primelocale",
+          "cp node_modules/primelocale/de.json libs/angular-accelerator/tmp/primelocale/",
+          "cp node_modules/primelocale/en.json libs/angular-accelerator/tmp/primelocale/",
+          "sed -i 's/\"de\":/\"primeng\":/' libs/angular-accelerator/tmp/primelocale/de.json",
+          "sed -i 's/\"en\":/\"primeng\":/' libs/angular-accelerator/tmp/primelocale/en.json"
+        ],
+        "parallel": false
+      }
+    },
     "build": {
       "executor": "@nx/angular:package",
+      "dependsOn": ["^build", "copyPrimelocaleTranslations"],
       "outputs": [
         "{workspaceRoot}/dist/{projectRoot}"
       ],
@@ -23,20 +37,6 @@
         }
       },
       "defaultConfiguration": "production"
-    },
-    "buildWithPrimeNGTranslations": {
-      "executor": "nx:run-commands",
-      "dependsOn": ["build"],
-      "options": {
-        "commands": [
-          "mkdir -p dist/libs/angular-accelerator/assets/i18n/primeng/",
-          "cp node_modules/primelocale/de.json dist/libs/angular-accelerator/assets/i18n/primeng/",
-          "cp node_modules/primelocale/en.json dist/libs/angular-accelerator/assets/i18n/primeng/",
-          "sed -i 's/\"de\":/\"primeng\":/' dist/libs/angular-accelerator/assets/i18n/primeng/de.json",
-          "sed -i 's/\"en\":/\"primeng\":/' dist/libs/angular-accelerator/assets/i18n/primeng/en.json"
-        ],
-        "parallel": false
-      }
     },
     "test": {
       "executor": "@nx/jest:jest",
