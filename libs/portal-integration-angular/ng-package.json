@@ -11,6 +11,11 @@
       "input": "src/lib/core/directives",
       "glob": "**/*.scss",
       "output": "assets"
+    },
+    {
+      "input": "tmp/primelocale/",
+      "glob": "{en,de}.json",
+      "output": "assets/i18n/primeng"
     }
   ]
 }
