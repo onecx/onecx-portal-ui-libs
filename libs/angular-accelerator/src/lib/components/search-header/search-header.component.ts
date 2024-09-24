@@ -14,19 +14,12 @@ import {
 } from '@angular/core'
 import { Action } from '../page-header/page-header.component'
 import { SLOT_SERVICE, SlotService } from '@onecx/angular-remote-components'
-// import { SearchConfigInfo } from '../../model/search-config-info'
 import { FormControlName, FormGroup, FormGroupDirective } from '@angular/forms'
 import { Observable, combineLatest, debounceTime, map, of, startWith } from 'rxjs'
 
 export interface SearchHeaderComponentState {
   activeViewMode?: 'basic' | 'advanced'
-  selectedSearchConfig?:
-    | {
-        fieldValues: { [key: string]: string }
-        displayedColumnsIds: string[]
-        viewMode: 'basic' | 'advanced'
-      }
-    | undefined
+  selectedSearchConfig?: string | null
 }
 
 /**
@@ -89,6 +82,7 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
   @Output() resetted: EventEmitter<any> = new EventEmitter()
   @Output() selectedSearchConfigChanged: EventEmitter<
     | {
+        name: string | undefined
         fieldValues: { [key: string]: string }
         displayedColumnsIds: string[]
         viewMode: 'basic' | 'advanced'
@@ -127,7 +121,7 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
   constructor() {
     this.selectedSearchConfigChanged.subscribe((config) => {
       this.componentStateChanged.emit({
-        selectedSearchConfig: config,
+        selectedSearchConfig: config?.name ?? null,
       })
     })
   }
