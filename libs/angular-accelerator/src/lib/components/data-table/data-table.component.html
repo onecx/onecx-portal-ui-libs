@@ -124,7 +124,7 @@
     <ng-template pTemplate="header">
       <tr>
         <th style="width: 4rem" scope="col" *ngIf="selectionChangedObserved">
-          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          <p-tableHeaderCheckbox *ngIf="allowSelectAll"></p-tableHeaderCheckbox>
         </th>
         <ng-container *ngIf="actionColumnPosition === 'left';">
           <ng-container *ngTemplateOutlet="actionColumnHeader"></ng-container>
@@ -194,10 +194,18 @@
     <ng-template pTemplate="body" let-rowObject>
       <tr>
         <td *ngIf="selectionChangedObserved">
-          <p-tableCheckbox
-            [value]="rowObject"
-            [disabled]="!!selectionEnabledField && !fieldIsTruthy(rowObject, selectionEnabledField)"
-          ></p-tableCheckbox>
+          <p-checkbox
+            *ngIf="(!!selectionEnabledField && !fieldIsTruthy(rowObject, selectionEnabledField)) && isSelected(rowObject); else defaultCheckbox"
+            [(ngModel)]="checked"
+            [binary]="true"
+            [disabled]="true"
+          ></p-checkbox>
+          <ng-template #defaultCheckbox>
+            <p-tableCheckbox
+              [value]="rowObject"
+              [disabled]="!!selectionEnabledField && !fieldIsTruthy(rowObject, selectionEnabledField)"
+            ></p-tableCheckbox>
+          </ng-template>
         </td>
         <ng-container *ngIf="actionColumnPosition === 'left';">
           <ng-container *ngTemplateOutlet="actionColumn; context: {localRowObject: rowObject}"></ng-container>

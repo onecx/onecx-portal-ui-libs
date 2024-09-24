@@ -20,7 +20,17 @@ import { isValidDate } from '@onecx/accelerator'
 import { UserService } from '@onecx/angular-integration-interface'
 import { MenuItem, PrimeTemplate, SelectItem } from 'primeng/api'
 import { Menu } from 'primeng/menu'
-import { BehaviorSubject, Observable, combineLatest, debounceTime, first, map, mergeMap, of } from 'rxjs'
+import {
+  BehaviorSubject,
+  Observable,
+  combineLatest,
+  debounceTime,
+  first,
+  map,
+  mergeMap,
+  of,
+  withLatestFrom,
+} from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
@@ -64,7 +74,7 @@ export interface DataTableComponentState {
 })
 export class DataTableComponent extends DataSortBase implements OnInit, AfterContentInit {
   TemplateType = TemplateType
-
+  checked = true
   _rows$ = new BehaviorSubject<Row[]>([])
   @Input()
   get rows(): Row[] {
@@ -74,14 +84,19 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     !this._rows$.getValue().length ?? this.resetPage()
     this._rows$.next(value)
   }
-  _selection$ = new BehaviorSubject<Row[]>([])
+  _selectionIds$ = new BehaviorSubject<(string | number)[]>([])
   @Input()
-  get selectedRows(): Row[] {
-    return this._selection$.getValue()
+  set selectedRows(value: Row[] | string[] | number[]) {
+    this._selectionIds$.next(
+      value.map((row) => {
+        if (typeof row === 'object') {
+          return row.id
+        }
+        return row
+      })
+    )
   }
-  set selectedRows(value: Row[]) {
-    this._selection$.next(value)
-  }
+
   _filters$ = new BehaviorSubject<Filter[]>([])
   @Input()
   get filters(): Filter[] {
@@ -109,7 +124,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
   columnTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
   _columns$ = new BehaviorSubject<DataTableColumn[]>([])
-  @Input() 
+  @Input()
   get columns(): DataTableColumn[] {
     return this._columns$.getValue()
   }
@@ -117,7 +132,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     this._columns$.next(value)
     const obs = value.map((c) => this.getTemplate(c, TemplateType.CELL))
     this.columnTemplates$ = combineLatest(obs).pipe(
-      map(values => Object.fromEntries(value.map((c, i) => [c.id, values[i]])))
+      map((values) => Object.fromEntries(value.map((c, i) => [c.id, values[i]])))
     )
   }
   @Input() clientSideFiltering = true
@@ -155,6 +170,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   @Input() editActionVisibleField: string | undefined
   @Input() editActionEnabledField: string | undefined
   @Input() selectionEnabledField: string | undefined
+  @Input() allowSelectAll = true
   @Input() paginator = true
   @Input() page = 0
   @Input()
@@ -187,13 +203,13 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this.numberCellTemplate || this.numberCellChildTemplate
   }
 
-    /**
+  /**
    * @deprecated Will be removed and instead to change the template of a specific column
    * use the new approach instead by following the naming convention column id + IdCell
    * e.g. for a column with the id 'status' use pTemplate="statusIdCell"
    */
   @Input() customCellTemplate: TemplateRef<any> | undefined
-    /**
+  /**
    * @deprecated Will be removed and instead to change the template of a specific column
    * use the new approach instead by following the naming convention column id + IdCell
    * e.g. for a column with the id 'status' use pTemplate="statusIdCell"
@@ -448,20 +464,21 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
 
   emitComponentStateChanged(state: DataTableComponentState = {}) {
-    combineLatest([this.displayedPageSize$, this._selection$]).pipe(first()).subscribe(([pageSize, selectedRows]) => {
-          this.componentStateChanged.emit({
-      filters: this.filters,
-      sorting: {
-        sortColumn: this.sortColumn,
-        sortDirection: this.sortDirection
-      },
-      pageSize,
-      activePage: this.page,
-      selectedRows,
-      ...state
-    })
-    })
-
+    this.displayedPageSize$
+      .pipe(withLatestFrom(this._selectionIds$, this._rows$), first())
+      .subscribe(([pageSize, selectedIds, rows]) => {
+        this.componentStateChanged.emit({
+          filters: this.filters,
+          sorting: {
+            sortColumn: this.sortColumn,
+            sortDirection: this.sortDirection,
+          },
+          pageSize,
+          activePage: this.page,
+          selectedRows: rows.filter((row) => selectedIds.includes(row.id)),
+          ...state,
+        })
+      })
   }
 
   ngAfterContentInit() {
@@ -523,8 +540,8 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     this.emitComponentStateChanged({
       sorting: {
         sortColumn: sortColumn,
-        sortDirection: newSortDirection
-      }
+        sortDirection: newSortDirection,
+      },
     })
   }
 
@@ -564,7 +581,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     }
     this.filtered.emit(filters)
     this.emitComponentStateChanged({
-      filters
+      filters,
     })
     this.resetPage()
   }
@@ -593,21 +610,55 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
 
   mapSelectionToRows() {
-    this.selectedRows$ = combineLatest([this._selection$, this._rows$]).pipe(
-      map(([selectedRows, rows]) => {
-        return selectedRows.map((row) => {
-          return rows.find((r) => r.id === row.id)
+    this.selectedRows$ = combineLatest([this._selectionIds$, this._rows$]).pipe(
+      map(([selectedRowIds, rows]) => {
+        return selectedRowIds.map((rowId) => {
+          return rows.find((r) => r.id === rowId)
         })
       })
     )
   }
 
-  onSelectionChange(event: Row[]) {
-    this.selectedRows = event;
-    this.selectionChanged.emit(event)
-    this.emitComponentStateChanged({
-      selectedRows: event
+  onSelectionChange(selection: Row[]) {
+    let newSelectionIds = selection.map((row) => row.id)
+    const rows = this._rows$.getValue()
+
+    if (this.selectionEnabledField) {
+      const disabledRowIds = rows.filter((r) => !this.fieldIsTruthy(r, this.selectionEnabledField)).map((row) => row.id)
+      if (disabledRowIds.length > 0) {
+        newSelectionIds = this.mergeWithDisabledKeys(newSelectionIds, disabledRowIds)
+      }
+    }
+    
+    this._selectionIds$.next(newSelectionIds)
+    this.selectionChanged.emit(this._rows$.getValue().filter((row) => newSelectionIds.includes(row.id)))
+    this.emitComponentStateChanged()
+  }
+
+  mergeWithDisabledKeys(newSelectionIds: (string | number)[], disabledRowIds: (string | number)[]) {
+    const previousSelectionIds = this._selectionIds$.getValue()
+    const previouslySelectedAndDisabled = previousSelectionIds.filter((id) => disabledRowIds.includes(id))
+    const disabledAndPreviouslyDeselected = disabledRowIds.filter((id) => !previousSelectionIds.includes(id))
+    const updatedSelection = [...newSelectionIds]
+
+    previouslySelectedAndDisabled.forEach((id) => {
+      if (!updatedSelection.includes(id)) {
+        updatedSelection.push(id)
+      }
     })
+
+    disabledAndPreviouslyDeselected.forEach((id) => {
+      const index = updatedSelection.indexOf(id)
+      if (index > -1) {
+        updatedSelection.splice(index, 1)
+      }
+    })
+
+    return updatedSelection
+  }
+
+  isSelected(row: Row) {
+    return this._selectionIds$.getValue().includes(row.id)
   }
 
   onPageChange(event: any) {
@@ -618,7 +669,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     this.pageSizeChanged.emit(event.rows)
     this.emitComponentStateChanged({
       activePage: page,
-      pageSize: event.rows
+      pageSize: event.rows,
     })
   }
 

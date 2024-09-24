@@ -13,10 +13,12 @@ import { BreadcrumbModule } from 'primeng/breadcrumb'
 import { SkeletonModule } from 'primeng/skeleton'
 import { MessageModule } from 'primeng/message'
 import { SharedModule } from 'primeng/api'
+import { CheckboxModule } from 'primeng/checkbox'
 
 @NgModule({
   imports: [
     BreadcrumbModule,
+    CheckboxModule,
     DropdownModule,
     ButtonModule,
     DialogModule,
@@ -33,6 +35,7 @@ import { SharedModule } from 'primeng/api'
   ],
   exports: [
     BreadcrumbModule,
+    CheckboxModule,
     DropdownModule,
     ButtonModule,
     DialogModule,
