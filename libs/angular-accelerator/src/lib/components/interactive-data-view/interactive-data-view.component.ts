@@ -36,7 +36,7 @@ import {
   ColumnSelectionChangedEvent,
   CustomGroupColumnSelectorComponentState,
 } from '../custom-group-column-selector/custom-group-column-selector.component'
-import { SLOT_SERVICE, SlotService } from '@onecx/angular-remote-components'
+import { SlotService } from '@onecx/angular-remote-components'
 import { DataLayoutSelectionComponentState } from '../data-layout-selection/data-layout-selection.component'
 import { DataListGridSortingComponentState } from '../data-list-grid-sorting/data-list-grid-sorting.component'
 import { Filter, Row, Sort } from '../data-table/data-table.component'
@@ -51,10 +51,7 @@ export type InteractiveDataViewComponentState = ColumnGroupSelectionComponentSta
   selector: 'ocx-interactive-data-view',
   templateUrl: './interactive-data-view.component.html',
   styleUrls: ['./interactive-data-view.component.css'],
-  providers: [
-    { provide: 'InteractiveDataViewComponent', useExisting: InteractiveDataViewComponent },
-    { provide: SLOT_SERVICE, useExisting: SlotService },
-  ],
+  providers: [{ provide: 'InteractiveDataViewComponent', useExisting: InteractiveDataViewComponent }],
 })
 export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   _dataViewComponent: DataViewComponent | undefined

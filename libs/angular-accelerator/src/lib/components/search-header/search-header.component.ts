@@ -13,7 +13,6 @@ import {
   ViewChild,
 } from '@angular/core'
 import { Action } from '../page-header/page-header.component'
-import { SLOT_SERVICE, SlotService } from '@onecx/angular-remote-components'
 import { FormControlName, FormGroup, FormGroupDirective } from '@angular/forms'
 import { Observable, combineLatest, debounceTime, map, of, startWith } from 'rxjs'
 
@@ -31,7 +30,7 @@ export interface SearchHeaderComponentState {
 @Component({
   selector: 'ocx-search-header',
   templateUrl: './search-header.component.html',
-  providers: [{ provide: SLOT_SERVICE, useExisting: SlotService }],
+  providers: [],
 })
 export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
   @Input() header = ''
