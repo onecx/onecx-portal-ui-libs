@@ -141,6 +141,8 @@
     "HOME_ARIA_LABEL": "Zu {{page}} navigieren"
   },
   "OCX_DIAGRAM": {
+    "ARIA_LABEL": "Diagramm: Gesamtanzahl: {{total}}. {{valueString}}.",
+    "EMPTY_ARIA_LABEL": "Diagramm ohne Daten",
     "SUM": "Gesamtanzahl",
     "NO_DATA": "Es sind keine Daten vorhanden",
     "SWITCH_DIAGRAM_TYPE": {
