@@ -10,7 +10,7 @@ export class TranslateCombinedLoader implements TranslateLoader {
       this._loaders.map((l) =>
         l.getTranslation(lang).pipe(
           catchError(err => {
-            console.error('Error while loading translations for loader', l, err)
+            console.error('Failed to load translation file', l, err)
             return of({})
           })
         )
