@@ -266,8 +266,11 @@ export class PageHeaderComponent implements OnInit, OnChanges {
             ...allowedActions.map<MenuItem>((a) => ({
               label: a.labelKey ? translations[a.labelKey] : a.label,
               icon: a.icon,
-              title:
-                (a.titleKey ? translations[a.titleKey] : a.title) || (a.labelKey ? translations[a.labelKey] : a.label),
+              tooltipOptions: {
+                tooltipLabel: a.titleKey ? translations[a.titleKey] : a.title,
+                tooltipEvent: 'hover',
+                tooltipPosition: 'top',
+              },
               command: a.actionCallback,
               disabled: a.disabled,
             })),

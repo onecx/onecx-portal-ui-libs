@@ -82,6 +82,7 @@ const demoActions: Action[] = [
     },
     show: 'asOverflow',
     icon: PrimeIcons.ADDRESS_BOOK,
+    title: 'Tooltip for some action'
   },
   {
     label: 'Other action',

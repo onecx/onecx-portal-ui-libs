@@ -58,7 +58,7 @@
               class="action-button"
               [label]="action.labelKey ? (action.labelKey | translate) : action.label"
               (onClick)="action.actionCallback()"
-              [pTooltip]="(action.titleKey ? (action.titleKey | translate) : action.title) || (action.labelKey ? (action.labelKey | translate) : action.label)"
+              [pTooltip]="(action.titleKey ? (action.titleKey | translate) : action.title)"
               tooltipPosition="top"
               tooltipEvent="hover"
               [disabled]="action.disabled ? action.disabled : false"
