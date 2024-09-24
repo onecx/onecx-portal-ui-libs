@@ -49,6 +49,7 @@
       "EMPTY_RESULT": "Keine Daten gefunden.",
       "EMPTY_FILTER_MESSAGE": "Keine Filter gefunden.",
       "ACTIONS_COLUMN_NAME": "Aktionen",
+      "COLUMN_FILTER_ARIA_LABEL": "Spaltenfilter",
       "FILTER_TITLE": "Filter",
       "FILTER_ARIA_LABEL": "Filter {{column}}",
       "EDITED": "Bearbeitet",
@@ -66,7 +67,9 @@
         "DESCENDING_TITLE": "Absteigend",
         "DEFAULT_TITLE": "Standard",
         "ARIA_LABEL": "{{column}} {{direction}} sortieren"
-      }
+      },
+      "SELECT_ALL_ARIA_LABEL": "Selektiere alle Zeilen der Tabelle",
+      "SELECT_ARIA_LABEL": "Selektiere die Tabellenspalte mit der ID {{key}}"
     },
     "OCX_DATA_LIST_GRID": {
       "EMPTY_RESULT": "Keine Daten gefunden.",
@@ -106,10 +109,12 @@
       "HEADER": "Suche",
       "RESET_BUTTON": {
         "TEXT": "Zurücksetzen",
+        "ARIA_LABEL": "Suchkriterien zurücksetzen",
         "DETAIL": "Suchkriterien zurücksetzen"
       },
       "SEARCH_BUTTON": {
         "TEXT": "Suchen",
+        "ARIA_LABEL": "Suche starten",
         "DETAIL": "Suche starten"
       },
       "EXPORT": "Alle Ereignisse exportieren"
