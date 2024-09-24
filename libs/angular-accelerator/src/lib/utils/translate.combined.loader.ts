@@ -1,12 +1,21 @@
 import { TranslateLoader } from '@ngx-translate/core'
-import { Observable, forkJoin, map } from 'rxjs'
+import { Observable, catchError, forkJoin, map, of } from 'rxjs'
 export class TranslateCombinedLoader implements TranslateLoader {
   private _loaders: TranslateLoader[]
   constructor(...loaders: TranslateLoader[]) {
     this._loaders = loaders
   }
   getTranslation(lang: string): Observable<object> {
-    return forkJoin(this._loaders.map((l) => l.getTranslation(lang))).pipe(
+    return forkJoin(
+      this._loaders.map((l) =>
+        l.getTranslation(lang).pipe(
+          catchError(err => {
+            console.error('Error while loading translations for loader', l, err)
+            return of({})
+          })
+        )
+      )
+    ).pipe(
       map((allTranslations) => {
         let result = {}
         allTranslations.forEach((translations) => {
