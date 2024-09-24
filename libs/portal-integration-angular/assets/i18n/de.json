@@ -96,7 +96,8 @@
       "EDIT": "Bearbeiten",
       "DELETE": "Löschen"
     },
-    "MORE_ACTIONS": "Weitere Aktionen"
+    "MORE_ACTIONS_ARIA_LABEL": "Weitere Aktionen",
+    "MORE_ACTIONS_TOOLTIP": "Weitere Aktionen anzeigen"
   },
   "OCX_DATA_LAYOUT_SELECTION": {
     "LAYOUT": {

@@ -75,7 +75,8 @@
         "EDIT": "Edit",
         "DELETE": "Delete"
       },
-      "MORE_ACTIONS": "More actions"
+      "MORE_ACTIONS_ARIA_LABEL": "More actions",
+      "MORE_ACTIONS_TOOLTIP": "Display more actions"
     },
     "OCX_DATA_LAYOUT_SELECTION": {
       "LAYOUT": {
