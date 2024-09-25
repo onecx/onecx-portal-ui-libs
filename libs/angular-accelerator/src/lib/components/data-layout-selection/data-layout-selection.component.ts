@@ -3,16 +3,37 @@ import { PrimeIcons } from 'primeng/api'
 import { PrimeIcon } from '../../utils/primeicon.utils'
 
 interface ViewingLayouts {
+  id: string
   icon: PrimeIcon
   layout: 'grid' | 'list' | 'table'
-  title?: string
-  titleKey: string
+  tooltip?: string
+  tooltipKey: string
+  label?: string
+  labelKey: string
 }
 
 const ALL_VIEW_LAYOUTS: ViewingLayouts[] = [
-  { icon: PrimeIcons.LIST, layout: 'list', titleKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.LIST' },
-  { icon: PrimeIcons.TH_LARGE, layout: 'grid', titleKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.GRID' },
-  { icon: PrimeIcons.TABLE, layout: 'table', titleKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.TABLE' },
+  {
+    id: 'ocx-data-layout-selection-list',
+    icon: PrimeIcons.LIST,
+    layout: 'list',
+    tooltipKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.LIST',
+    labelKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.LIST',
+  },
+  {
+    id: 'ocx-data-layout-selection-grid',
+    icon: PrimeIcons.TH_LARGE,
+    layout: 'grid',
+    tooltipKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.GRID',
+    labelKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.GRID',
+  },
+  {
+    id: 'ocx-data-layout-selection-table',
+    icon: PrimeIcons.TABLE,
+    layout: 'table',
+    tooltipKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.TABLE',
+    labelKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.TABLE',
+  },
 ]
 
 export interface DataLayoutSelectionComponentState {
@@ -42,14 +63,14 @@ export class DataLayoutSelectionComponent implements OnInit {
   ngOnInit(): void {
     this.viewingLayouts = ALL_VIEW_LAYOUTS.filter((vl) => this.supportedViewLayouts.includes(vl.layout))
     this.componentStateChanged.emit({
-      layout: this.layout
+      layout: this.layout,
     })
   }
 
   onDataViewLayoutChange(event: { icon: PrimeIcon; layout: 'grid' | 'list' | 'table' }): void {
     this.dataViewLayoutChange.emit(event.layout)
     this.componentStateChanged.emit({
-      layout: event.layout
+      layout: event.layout,
     })
   }
 }
