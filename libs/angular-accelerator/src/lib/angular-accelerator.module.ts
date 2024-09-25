@@ -6,6 +6,7 @@ import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateMo
 
 import { UserService } from '@onecx/angular-integration-interface'
 
+import { firstValueFrom, skip } from 'rxjs'
 import { AngularAcceleratorPrimeNgModule } from './angular-accelerator-primeng.module'
 import { ColumnGroupSelectionComponent } from './components/column-group-selection/column-group-selection.component'
 import { CustomGroupColumnSelectorComponent } from './components/custom-group-column-selector/custom-group-column-selector.component'
@@ -18,18 +19,18 @@ import { DiagramComponent } from './components/diagram/diagram.component'
 import { GroupByCountDiagramComponent } from './components/group-by-count-diagram/group-by-count-diagram.component'
 import { InteractiveDataViewComponent } from './components/interactive-data-view/interactive-data-view.component'
 import { PageHeaderComponent } from './components/page-header/page-header.component'
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component'
 import { SearchConfigComponent } from './components/search-config/search-config.component'
 import { SearchHeaderComponent } from './components/search-header/search-header.component'
 import { AdvancedDirective } from './directives/advanced.directive'
 import { IfBreakpointDirective } from './directives/if-breakpoint.directive'
 import { HAS_PERMISSION_CHECKER, IfPermissionDirective } from './directives/if-permission.directive'
 import { SrcDirective } from './directives/src.directive'
+import { TooltipOnOverflowDirective } from './directives/tooltipOnOverflow.directive'
 import { DynamicPipe } from './pipes/dynamic.pipe'
 import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
 import { AppConfigService } from './services/app-config-service'
 import { DynamicLocaleId } from './utils/dynamic-locale-id'
-import { firstValueFrom, skip } from 'rxjs'
-import { TooltipOnOverflowDirective } from './directives/tooltipOnOverflow.directive'
 
 export class AngularAcceleratorMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -68,6 +69,7 @@ function appInitializer(userService: UserService) {
     SearchHeaderComponent,
     DiagramComponent,
     GroupByCountDiagramComponent,
+    PageNotFoundComponent,
     IfPermissionDirective,
     IfBreakpointDirective,
     SrcDirective,
