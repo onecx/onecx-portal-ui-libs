@@ -38,7 +38,16 @@ const DataTableComponentSBConfig: Meta<DataTableComponent> = {
     }),
     moduleMetadata({
       declarations: [DataTableComponent, IfPermissionDirective],
-      imports: [TableModule, ButtonModule, MultiSelectModule, StorybookTranslateModule, MockAuthModule, MenuModule, CheckboxModule, FormsModule],
+      imports: [
+        TableModule,
+        ButtonModule,
+        MultiSelectModule,
+        StorybookTranslateModule,
+        MockAuthModule,
+        MenuModule,
+        CheckboxModule,
+        FormsModule,
+      ],
     }),
   ],
 }
@@ -70,19 +79,21 @@ const defaultComponentArgs: DataTableInputTypes = {
       columnType: ColumnType.NUMBER,
       nameKey: 'Amount',
       sortable: true,
+      filterable: true,
     },
     {
       id: 'available',
       columnType: ColumnType.STRING,
       nameKey: 'Available',
       sortable: false,
+      filterable: true,
     },
     {
       id: 'expiration',
       columnType: ColumnType.DATE,
       nameKey: 'Expiration Date',
       sortable: true,
-    }
+    },
   ],
   rows: [
     {
@@ -151,7 +162,7 @@ export const WithRowSelectionAndDisabledDefaultSelection = {
   args: {
     ...defaultComponentArgs,
     selectedRows: [1],
-    selectionEnabledField: 'available'
+    selectionEnabledField: 'available',
   },
 }
 
@@ -298,9 +309,9 @@ export const WithAdditionalActions = {
         id: '1',
         labelKey: 'Additional 1',
         icon: 'pi pi-plus',
-        permission: 'TEST_MGMT#TEST_VIEW'
-      }
-    ]
+        permission: 'TEST_MGMT#TEST_VIEW',
+      },
+    ],
   },
 }
 
@@ -321,8 +332,8 @@ export const WithConditionallyEnabledAdditionalActions = {
         icon: 'pi pi-plus',
         permission: 'TEST_MGMT#TEST_VIEW',
         actionEnabledField: 'available',
-      }
-    ]
+      },
+    ],
   },
 }
 
@@ -343,8 +354,8 @@ export const WithConditionallyVisibleAdditionalActions = {
         icon: 'pi pi-plus',
         permission: 'TEST_MGMT#TEST_VIEW',
         actionVisibleField: 'available',
-      }
-    ]
+      },
+    ],
   },
 }
 
@@ -380,7 +391,7 @@ export const WithAdditionalOverflowActions = {
         showAsOverflow: true,
         actionEnabledField: 'available',
       },
-    ]
+    ],
   },
 }
 
@@ -412,7 +423,7 @@ export const WithOnlyOverflowActions = {
         showAsOverflow: true,
         actionEnabledField: 'available',
       },
-    ]
+    ],
   },
 }
 
@@ -420,7 +431,7 @@ export const WithPageSizes = {
   render: Template,
   args: {
     ...defaultComponentArgs,
-    pageSizes: [2, 15, 25]
+    pageSizes: [2, 15, 25],
   },
 }
 
