@@ -63,6 +63,7 @@ export interface ObjectDetailItem {
   actionItemIcon?: PrimeIcon
   actionItemCallback?: () => void
   actionItemTooltip?: string
+  actionItemAriaLabelKey?: string
   actionItemAriaLabel?: string
 }
 

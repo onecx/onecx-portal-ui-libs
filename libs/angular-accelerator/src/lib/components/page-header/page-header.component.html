@@ -128,7 +128,7 @@
               [pTooltip]="item.actionItemTooltip || ''"
               tooltipPosition="top"
               tooltipEvent="hover"
-              [ariaLabel]="item.actionItemAriaLabel || item.actionItemTooltip || ''"
+              [ariaLabel]="(item.actionItemAriaLabelKey ? (item.actionItemAriaLabelKey | translate) : item.actionItemAriaLabel) || item.actionItemTooltip || ''"
               (onClick)="item.actionItemCallback()"
             ></p-button>
           </span>
