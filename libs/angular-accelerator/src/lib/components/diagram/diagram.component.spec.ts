@@ -120,11 +120,19 @@ describe('DiagramComponent', () => {
 
   it('should render a diagramType select button if supportedDiagramTypes is specified', async () => {
     const expectedDiagramLayouts: DiagramLayouts[] = [
-      { icon: PrimeIcons.CHART_PIE, layout: DiagramType.PIE, tooltipKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.PIE' },
       {
+        id: 'diagram-pie',
+        icon: PrimeIcons.CHART_PIE,
+        layout: DiagramType.PIE,
+        tooltipKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.PIE',
+        labelKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.PIE',
+      },
+      {
+        id: 'diagram-horizontal-bar',
         icon: PrimeIcons.BARS,
         layout: DiagramType.HORIZONTAL_BAR,
         tooltipKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.HORIZONTAL_BAR',
+        labelKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.HORIZONTAL_BAR',
       },
     ]
 
@@ -171,16 +179,26 @@ describe('DiagramComponent', () => {
 
   it('should dynamically add/remove options to/from the diagramType select button', async () => {
     const allDiagramLayouts: DiagramLayouts[] = [
-      { icon: PrimeIcons.CHART_PIE, layout: DiagramType.PIE, tooltipKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.PIE' },
       {
+        id: 'diagram-pie',
+        icon: PrimeIcons.CHART_PIE,
+        layout: DiagramType.PIE,
+        tooltipKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.PIE',
+        labelKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.PIE',
+      },
+      {
+        id: 'diagram-horizontal-bar',
         icon: PrimeIcons.BARS,
         layout: DiagramType.HORIZONTAL_BAR,
         tooltipKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.HORIZONTAL_BAR',
+        labelKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.HORIZONTAL_BAR',
       },
       {
+        id: 'diagram-vertical-bar',
         icon: PrimeIcons.CHART_BAR,
         layout: DiagramType.VERTICAL_BAR,
         tooltipKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.VERTICAL_BAR',
+        labelKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.VERTICAL_BAR',
       },
     ]
 
