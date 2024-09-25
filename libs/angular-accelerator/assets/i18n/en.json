@@ -1,146 +1,150 @@
 {
-    "OCX_CUSTOM_GROUP_COLUMN_SELECTOR": {
-      "DROPDOWN_LABEL": "Columns",
-      "OPEN_BUTTON_DETAIL": "Open custom group selection dialog",
-      "ACTIVE_COLUMNS_LABEL": "Active columns",
-      "INACTIVE_COLUMNS_LABEL": "Inactive columns",
-      "SAVE_BUTTON_LABEL": "Save",
-      "CANCEL_BUTTON_LABEL": "Cancel",
-      "DIALOG_TITLE": "Custom group column selection",
-      "CONFIGURE_ACTION_COLUMN": {
-        "TITLE": "Configure action column",
-        "FREEZE": "Always show action column",
-        "POSITION": "Position of action column",
-        "YES": "Yes",
-        "NO": "No",
-        "LEFT": "Left",
-        "RIGHT": "Right"
+  "OCX_CUSTOM_GROUP_COLUMN_SELECTOR": {
+    "DROPDOWN_LABEL": "Columns",
+    "OPEN_BUTTON_DETAIL": "Open custom group selection dialog",
+    "ACTIVE_COLUMNS_LABEL": "Active columns",
+    "INACTIVE_COLUMNS_LABEL": "Inactive columns",
+    "SAVE_BUTTON_LABEL": "Save",
+    "CANCEL_BUTTON_LABEL": "Cancel",
+    "DIALOG_TITLE": "Custom group column selection",
+    "CONFIGURE_ACTION_COLUMN": {
+      "TITLE": "Configure action column",
+      "FREEZE": "Always show action column",
+      "POSITION": "Position of action column",
+      "YES": "Yes",
+      "NO": "No",
+      "LEFT": "Left",
+      "RIGHT": "Right"
+    },
+    "ARIA_LABELS": {
+      "UP": "Move column up",
+      "TOP": "Move column to the top",
+      "DOWN": "Move column down",
+      "BOTTOM": "Move column to the bottom",
+      "RIGHT": "Set column as inactive",
+      "ALL_RIGHT": "Set all columns as inactive",
+      "LEFT": "Set column as active",
+      "ALL_LEFT": "Set all columns as active",
+      "CLOSE": "Close dialog"
+    }
+  },
+  "OCX_SEARCH_CONFIG": {
+    "PLACEHOLDER": "Please enter the name of the search configuration",
+    "SAVE_COLUMNS_OPTION": "Do you want to save the shown columns?",
+    "SAVE_INPUT_FIELDS_OPTION": "Do you want to save the input values from the input fields?"
+  },
+  "OCX_LIST_GRID_SORT": {
+    "DROPDOWN": {
+      "PLACEHOLDER": "Select sorting",
+      "TITLE": "Sort by"
+    },
+    "TOGGLE_BUTTON": {
+      "ASCENDING_TITLE": "Ascending",
+      "DESCENDING_TITLE": "Descending",
+      "DEFAULT_TITLE": "Default"
+    },
+    "SORTING_BUTTON_ARIA_LABEL": "Toggle sorting direction to {{direction}}"
+  },
+  "OCX_DATA_TABLE": {
+    "EMPTY_RESULT": "No data found.",
+    "EMPTY_FILTER_MESSAGE": "No filters found.",
+    "ACTIONS_COLUMN_NAME": "Actions",
+    "FILTER_TITLE": "Filter",
+    "FILTER_ARIA_LABEL": "Filter {{column}}",
+    "EDITED": "Edited",
+    "SHOWING": "{{first}} - {{last}} of {{totalRecords}}",
+    "SHOWING_WITH_TOTAL_ON_SERVER": "{{first}} - {{last}} of {{totalRecords}} ({{totalRecordsOnServer}})",
+    "ALL": "All",
+    "MORE_ACTIONS": "More actions",
+    "ACTIONS": {
+      "VIEW": "View",
+      "EDIT": "Edit",
+      "DELETE": "Delete"
+    },
+    "TOGGLE_BUTTON": {
+      "ASCENDING_TITLE": "Ascending",
+      "DESCENDING_TITLE": "Descending",
+      "DEFAULT_TITLE": "Default",
+      "ARIA_LABEL": "Toggle {{column}} sorting direction to {{direction}}"
+    }
+  },
+  "OCX_DATA_LIST_GRID": {
+    "EMPTY_RESULT": "No data found.",
+    "MENU": {
+      "VIEW": "View",
+      "EDIT": "Edit",
+      "DELETE": "Delete"
+    },
+    "MORE_ACTIONS": "More actions"
+  },
+  "OCX_DATA_LAYOUT_SELECTION": {
+    "LAYOUT": {
+      "LIST": "List",
+      "GRID": "Grid",
+      "TABLE": "Table"
+    }
+  },
+  "OCX_INTERACTIVE_DATA_VIEW": {
+    "DEFAULT_GROUP": "Default group",
+    "CUSTOM_GROUP": "Custom group",
+    "NO_GROUP_SELECTED": "No group selected"
+  },
+  "OCX_SEARCH_HEADER": {
+    "TOGGLE_BUTTON": {
+      "SIMPLE": {
+        "TEXT": "Simple",
+        "DETAIL": "Switch to simple search criteria"
       },
-      "ARIA_LABELS": {
-        "UP": "Move column up",
-        "TOP": "Move column to the top",
-        "DOWN": "Move column down",
-        "BOTTOM": "Move column to the bottom",
-        "RIGHT": "Set column as inactive",
-        "ALL_RIGHT": "Set all columns as inactive",
-        "LEFT": "Set column as active",
-        "ALL_LEFT": "Set all columns as active",
-        "CLOSE": "Close dialog"
+      "ADVANCED": {
+        "TEXT": "Advanced",
+        "DETAIL": "Switch to advanced search criteria"
       }
     },
     "OCX_SEARCH_CONFIG": {
-      "PLACEHOLDER": "Please enter the name of the search configuration",
-      "SAVE_COLUMNS_OPTION": "Do you want to save the shown columns?",
-      "SAVE_INPUT_FIELDS_OPTION": "Do you want to save the input values from the input fields?"
+      "DROPDOWN_DEFAULT": "Pick predefined template"
     },
-    "OCX_LIST_GRID_SORT": {
-      "DROPDOWN": {
-        "PLACEHOLDER": "Select sorting",
-        "TITLE": "Sort by"
-      },
-      "TOGGLE_BUTTON": {
-        "ASCENDING_TITLE": "Ascending",
-        "DESCENDING_TITLE": "Descending",
-        "DEFAULT_TITLE": "Default"
-      },
-      "SORTING_BUTTON_ARIA_LABEL": "Toggle sorting direction to {{direction}}"
+    "HEADER": "Search",
+    "RESET_BUTTON": {
+      "TEXT": "Reset",
+      "DETAIL": "Reset search criteria"
     },
-    "OCX_DATA_TABLE": {
-      "EMPTY_RESULT": "No data found.",
-      "EMPTY_FILTER_MESSAGE": "No filters found.",
-      "ACTIONS_COLUMN_NAME": "Actions",
-      "FILTER_TITLE": "Filter",
-      "FILTER_ARIA_LABEL": "Filter {{column}}",
-      "EDITED": "Edited",
-      "SHOWING": "{{first}} - {{last}} of {{totalRecords}}",
-      "SHOWING_WITH_TOTAL_ON_SERVER": "{{first}} - {{last}} of {{totalRecords}} ({{totalRecordsOnServer}})",
-      "ALL": "All",
-      "MORE_ACTIONS": "More actions",
-      "ACTIONS": {
-        "VIEW": "View",
-        "EDIT": "Edit",
-        "DELETE": "Delete"
-      },
-      "TOGGLE_BUTTON": {
-        "ASCENDING_TITLE": "Ascending",
-        "DESCENDING_TITLE": "Descending",
-        "DEFAULT_TITLE": "Default",
-        "ARIA_LABEL": "Toggle {{column}} sorting direction to {{direction}}"
-      }
+    "SEARCH_BUTTON": {
+      "TEXT": "Search",
+      "DETAIL": "Start search"
     },
-    "OCX_DATA_LIST_GRID": {
-      "EMPTY_RESULT": "No data found.",
-      "MENU": {
-        "VIEW": "View",
-        "EDIT": "Edit",
-        "DELETE": "Delete"
-      },
-      "MORE_ACTIONS": "More actions"
-    },
-    "OCX_DATA_LAYOUT_SELECTION": {
-      "LAYOUT": {
-        "LIST": "List",
-        "GRID": "Grid",
-        "TABLE": "Table"
-      }
-    },
-    "OCX_INTERACTIVE_DATA_VIEW": {
-      "DEFAULT_GROUP": "Default group",
-      "CUSTOM_GROUP": "Custom group",
-      "NO_GROUP_SELECTED": "No group selected"
-    },
-    "OCX_SEARCH_HEADER": {
-      "TOGGLE_BUTTON": {
-        "SIMPLE": {
-          "TEXT": "Simple",
-          "DETAIL": "Switch to simple search criteria"
-        },
-        "ADVANCED": {
-          "TEXT": "Advanced",
-          "DETAIL": "Switch to advanced search criteria"
-        }
-      },
-      "OCX_SEARCH_CONFIG": {
-        "DROPDOWN_DEFAULT": "Pick predefined template"
-      },
-      "HEADER": "Search",
-      "RESET_BUTTON": {
-        "TEXT": "Reset",
-        "DETAIL": "Reset search criteria"
-      },
-      "SEARCH_BUTTON": {
-        "TEXT": "Search",
-        "DETAIL": "Start search"
-      },
-      "EXPORT": "Export all events"
-    },
-    "OCX_PAGE_HEADER": {
-      "MORE_ACTIONS": "More actions",
-      "HOME_DEFAULT_ARIA_LABEL": "Go to home page",
-      "HOME_ARIA_LABEL": "Go to {{page}} home page"
-    },
-    "OCX_DIAGRAM": {
-      "ARIA_LABEL": "Chart: Total amount: {{total}}. {{valueString}}.",
-      "EMPTY_ARIA_LABEL": "Chart with no data",
-      "SUM": "Total",
-      "NO_DATA": "There is no data available",
-      "SWITCH_DIAGRAM_TYPE": {
-        "PIE": "Switch to pie chart",
-        "HORIZONTAL_BAR": "Switch to horizontal bar chart",
-        "VERTICAL_BAR": "Switch to vertical bar chart"
-      }
-    },
-    "OCX_TIMEAGO": {
-      "A_DAY_AGO": "a day ago",
-      "A_FEW_SECONDS_AGO": "a few seconds ago",
-      "AN_HOUR_AGO": "an hour ago",
-      "A_MINUTE_AGO": "a minute ago",
-      "A_MONTH_AGO": "a month ago",
-      "A_YEAR_AGO": "a year ago",
-      "DAYS_AGO": "{{days}} days ago",
-      "HOURS_AGO": "{{hours}} hours ago",
-      "MINUTES_AGO": "{{minutes}} minutes ago",
-      "MONTHS_AGO": "{{months}} months ago",
-      "YEARS_AGO": "{{years}} years ago"
+    "EXPORT": "Export all events"
+  },
+  "OCX_PAGE_HEADER": {
+    "MORE_ACTIONS": "More actions",
+    "HOME_DEFAULT_ARIA_LABEL": "Go to home page",
+    "HOME_ARIA_LABEL": "Go to {{page}} home page"
+  },
+  "OCX_DIAGRAM": {
+    "ARIA_LABEL": "Chart: Total amount: {{total}}. {{valueString}}.",
+    "EMPTY_ARIA_LABEL": "Chart with no data",
+    "SUM": "Total",
+    "NO_DATA": "There is no data available",
+    "SWITCH_DIAGRAM_TYPE": {
+      "PIE": "Switch to pie chart",
+      "HORIZONTAL_BAR": "Switch to horizontal bar chart",
+      "VERTICAL_BAR": "Switch to vertical bar chart"
     }
+  },
+  "OCX_TIMEAGO": {
+    "A_DAY_AGO": "a day ago",
+    "A_FEW_SECONDS_AGO": "a few seconds ago",
+    "AN_HOUR_AGO": "an hour ago",
+    "A_MINUTE_AGO": "a minute ago",
+    "A_MONTH_AGO": "a month ago",
+    "A_YEAR_AGO": "a year ago",
+    "DAYS_AGO": "{{days}} days ago",
+    "HOURS_AGO": "{{hours}} hours ago",
+    "MINUTES_AGO": "{{minutes}} minutes ago",
+    "MONTHS_AGO": "{{months}} months ago",
+    "YEARS_AGO": "{{years}} years ago"
+  },
+  "OCX_PAGE_NOT_FOUND": {
+    "TITLE": "The page was not found.",
+    "MESSAGE": "Please contact the administrator if you think this happened due to a system error."
   }
+}
