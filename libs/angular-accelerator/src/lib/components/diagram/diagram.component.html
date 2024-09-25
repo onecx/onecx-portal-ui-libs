@@ -1,16 +1,21 @@
 <ng-container *ngIf="this.data">
   <div class="flex justify-content-center pb-2" *ngIf="shownDiagramTypes.length > 1">
-      <p-selectButton
-        [options]="shownDiagramTypes"
-        [(ngModel)]="selectedDiagramType"
-        optionLabel="icon"
-        (onChange)="onDiagramTypeChanged($event)"
-        name="diagram-type-select-button"
-      >
-        <ng-template let-item pTemplate>
-          <i [class]="item.icon" [title]="item.title || (item.titleKey | translate)"></i>
-        </ng-template>
-      </p-selectButton>
+    <p-selectButton
+      [options]="shownDiagramTypes"
+      [(ngModel)]="selectedDiagramType"
+      optionLabel="icon"
+      (onChange)="onDiagramTypeChanged($event)"
+      name="diagram-type-select-button"
+    >
+      <ng-template let-item pTemplate>
+        <i
+          [class]="item.icon"
+          [pTooltip]="item.title || (item.titleKey | translate)"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        ></i>
+      </ng-template>
+    </p-selectButton>
   </div>
   <div class="w-full flex justify-content-center">
     <p-chart
@@ -20,6 +25,7 @@
       [responsive]="false"
       [options]="chartOptions"
       (onDataSelect)="dataClicked($event)"
+      [ariaLabel]="(data ? 'OCX_DIAGRAM.ARIA_LABEL' : 'OCX_DIAGRAM.EMPTY_ARIA_LABEL') | translate: {total: generateTotal(data), valueString: generateDiagramValueString(data)}"
     ></p-chart>
   </div>
   <div class="w-full flex justify-content-center mt-2 sumKey">

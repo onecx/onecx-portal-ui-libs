@@ -123,6 +123,14 @@ export class DiagramComponent implements OnInit, OnChanges {
     }
   }
 
+  generateTotal(data: DiagramData[]): number {
+    return data.reduce((acc, current) => acc + current.value, 0)
+  }
+
+  generateDiagramValueString(data: DiagramData[]): string {
+    return data.map((item) => `${item.label}:${item.value}`).join(', ')
+  }
+
   private diagramTypeToChartType(
     value: DiagramType
   ): 'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'polarArea' | 'radar' {
@@ -133,7 +141,6 @@ export class DiagramComponent implements OnInit, OnChanges {
 
   dataClicked(event: []) {
     this.dataSelected.emit(event.length)
-    
   }
 
   onDiagramTypeChanged(event: any) {
@@ -141,7 +148,7 @@ export class DiagramComponent implements OnInit, OnChanges {
     this.generateChart(this.colorScale, this.colorRangeInfo)
     this.diagramTypeChanged.emit(event.value.layout)
     this.componentStateChanged.emit({
-      activeDiagramType: event.value.layout
+      activeDiagramType: event.value.layout,
     })
   }
 }
