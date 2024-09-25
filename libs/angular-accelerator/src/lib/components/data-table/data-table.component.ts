@@ -563,7 +563,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     this.editTableRow.emit(selectedTableRow)
   }
 
-  onFilterClick(column: DataTableColumn) {
+  onFilterChosen(column: DataTableColumn) {
     this.currentFilterColumn$.next(column)
   }
 
