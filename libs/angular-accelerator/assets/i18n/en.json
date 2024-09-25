@@ -120,6 +120,8 @@
     "HOME_ARIA_LABEL": "Go to {{page}} home page"
   },
   "OCX_DIAGRAM": {
+    "ARIA_LABEL": "Chart: Total amount: {{total}}. {{valueString}}.",
+    "EMPTY_ARIA_LABEL": "Chart with no data",
     "SUM": "Total",
     "NO_DATA": "There is no data available",
     "SWITCH_DIAGRAM_TYPE": {
