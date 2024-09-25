@@ -19,7 +19,7 @@ import { DiagramComponent } from './components/diagram/diagram.component'
 import { GroupByCountDiagramComponent } from './components/group-by-count-diagram/group-by-count-diagram.component'
 import { InteractiveDataViewComponent } from './components/interactive-data-view/interactive-data-view.component'
 import { PageHeaderComponent } from './components/page-header/page-header.component'
-import { DataNotFoundComponent } from './components/data-not-loaded/data-not-loaded.component'
+import { DataNotLoadedComponent } from './components/data-not-loaded/data-not-loaded.component'
 import { SearchConfigComponent } from './components/search-config/search-config.component'
 import { SearchHeaderComponent } from './components/search-header/search-header.component'
 import { AdvancedDirective } from './directives/advanced.directive'
@@ -69,7 +69,7 @@ function appInitializer(userService: UserService) {
     SearchHeaderComponent,
     DiagramComponent,
     GroupByCountDiagramComponent,
-    DataNotFoundComponent,
+    DataNotLoadedComponent,
     IfPermissionDirective,
     IfBreakpointDirective,
     SrcDirective,
@@ -108,7 +108,7 @@ function appInitializer(userService: UserService) {
     SearchHeaderComponent,
     DiagramComponent,
     GroupByCountDiagramComponent,
-    DataNotFoundComponent,
+    DataNotLoadedComponent,
     IfPermissionDirective,
     IfBreakpointDirective,
     SrcDirective,
