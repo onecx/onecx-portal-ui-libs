@@ -19,7 +19,7 @@ import { DiagramComponent } from './components/diagram/diagram.component'
 import { GroupByCountDiagramComponent } from './components/group-by-count-diagram/group-by-count-diagram.component'
 import { InteractiveDataViewComponent } from './components/interactive-data-view/interactive-data-view.component'
 import { PageHeaderComponent } from './components/page-header/page-header.component'
-import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component'
+import { PageNotFoundComponent } from './components/data-not-loaded-page/data-not-loaded-page.component'
 import { SearchConfigComponent } from './components/search-config/search-config.component'
 import { SearchHeaderComponent } from './components/search-header/search-header.component'
 import { AdvancedDirective } from './directives/advanced.directive'
@@ -76,6 +76,7 @@ function appInitializer(userService: UserService) {
     OcxTimeAgoPipe,
     AdvancedDirective,
     TooltipOnOverflowDirective,
+    PageNotFoundComponent,
   ],
   providers: [
     {
@@ -114,6 +115,7 @@ function appInitializer(userService: UserService) {
     OcxTimeAgoPipe,
     AdvancedDirective,
     TooltipOnOverflowDirective,
+    PageNotFoundComponent,
   ],
 })
 export class AngularAcceleratorModule {}
