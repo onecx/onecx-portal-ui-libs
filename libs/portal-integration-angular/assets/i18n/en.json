@@ -166,5 +166,9 @@
     "MINUTES_AGO": "{{minutes}} minutes ago",
     "MONTHS_AGO": "{{months}} months ago",
     "YEARS_AGO": "{{years}} years ago"
+  },
+  "OCX_PAGE_NOT_FOUND": {
+    "TITLE": "The page was not found.",
+    "MESSAGE": "Please contact the administrator if you think this happened due to a system error."
   }
 }

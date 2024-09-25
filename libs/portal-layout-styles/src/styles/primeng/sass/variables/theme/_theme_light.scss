@@ -48,8 +48,8 @@ $scaleLG: 1.25;
 
 //focus
 $focusOutlineColor: transparent;
-$focusOutline: 0 none;
-$focusOutlineOffset: 0;
+$focusOutline: 1px solid black;
+$focusOutlineOffset: 2px;
 $focusShadow: none;
 
 //action icons
@@ -311,8 +311,8 @@ $calendarCellDateHeight: 2.5rem;
 $calendarCellDateBorderRadius: 50%;
 $calendarCellDateBorder: 1px solid transparent;
 $calendarCellDateHoverBg: rgba(0, 0, 0, 0.04);
-$calendarCellDateTodayBg: #ffffff;
-$calendarCellDateTodayBorderColor: rgba(0, 0, 0, 12);
+$calendarCellDateTodayBg: #e2e8f0;
+$calendarCellDateTodayBorderColor: #ffffff;
 $calendarCellDateTodayTextColor: $textColor;
 
 $calendarButtonBarPadding: 1rem 0;
