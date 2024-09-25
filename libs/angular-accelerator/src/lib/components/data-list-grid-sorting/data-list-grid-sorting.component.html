@@ -6,7 +6,7 @@
     [options]="dropdownOptions"
     [placeholder]="('OCX_LIST_GRID_SORT.DROPDOWN.PLACEHOLDER' | translate)"
     (onChange)="selectSorting($event)"
-    [title]="('OCX_LIST_GRID_SORT.DROPDOWN.TITLE' | translate)"
+    [ariaLabel]="('OCX_LIST_GRID_SORT.DROPDOWN.ARIA_LABEL' | translate)"
   >
     <ng-template let-item pTemplate="item"> {{ item?.columnName ? (item.columnName | translate) : ''}} </ng-template>
     <ng-template let-item pTemplate="selectedItem">
@@ -15,10 +15,13 @@
   >
   <p-button
     id="dataListGridSortingButton"
+    type="button"
     icon="pi {{sortIcon()}}"
     styleClass="p-button-outlined"
     (onClick)="sortDirectionChanged()"
-    [title]="(sortIconTitle() | translate)"
-    [attr.aria-label]="('OCX_LIST_GRID_SORT.SORTING_BUTTON_ARIA_LABEL' | translate:{direction: (sortDirectionToTitle(nextSortDirection())) | translate})"
+    [pTooltip]="(sortIconTitle() | translate)"
+    tooltipPosition="top"
+    tooltipEvent="hover"
+    [ariaLabel]="('OCX_LIST_GRID_SORT.SORTING_BUTTON_ARIA_LABEL' | translate:{direction: (sortDirectionToTitle(nextSortDirection())) | translate})"
   ></p-button>
 </div>

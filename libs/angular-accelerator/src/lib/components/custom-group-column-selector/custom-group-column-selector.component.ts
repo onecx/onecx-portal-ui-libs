@@ -27,6 +27,8 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
   @Input() displayedColumns: DataTableColumn[] = []
   @Input() dialogTitle = ''
   @Input() openButtonTitle = ''
+  @Input() openButtonAriaLabel = ''
+  @Input() openButtonAriaLabelKey = ''
   @Input() saveButtonLabel = ''
   @Input() cancelButtonLabel = ''
   @Input() activeColumnsLabel = ''
@@ -100,7 +102,7 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
           frozen: this.frozenActionColumnModel,
           position: this.actionColumnPositionModel,
         },
-        activeColumnGroupKey: undefined
+        activeColumnGroupKey: undefined,
       })
     }
 
