@@ -162,6 +162,8 @@
     "MONTHS_AGO": "vor {{months}} Monaten",
     "YEARS_AGO": "vor {{years}} Jahren"
   },
-  "OCX_PAGE_NOT_FOUND": "Die Seite wurde nicht gefunden.",
-  "OCX_PAGE_NOT_FOUND_MESSAGE": "Bitte benutzen Sie das Menü, um zu der gewünschten Seite zu navigieren oder kontaktieren Sie den Administrator, wenn Sie glauben, dass es sich hierbei um einen Fehler handelt."
+  "OCX_PAGE_NOT_FOUND": {
+    "TITLE": "Die Seite wurde nicht gefunden.",
+    "MESSAGE": "Bitte kontaktieren Sie den Administrator, wenn Sie glauben, dass es sich hierbei um einen Fehler des Systems handelt."
+  }
 }
