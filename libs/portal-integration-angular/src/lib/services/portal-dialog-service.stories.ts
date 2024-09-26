@@ -1,12 +1,5 @@
 import { Component, Input, importProvidersFrom } from '@angular/core'
-import {
-  Meta,
-  StoryFn,
-  applicationConfig,
-  argsToTemplate,
-  componentWrapperDecorator,
-  moduleMetadata,
-} from '@storybook/angular'
+import { Meta, applicationConfig, argsToTemplate, componentWrapperDecorator, moduleMetadata } from '@storybook/angular'
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { BrowserModule } from '@angular/platform-browser'
 import { ButtonModule } from 'primeng/button'
@@ -19,10 +12,10 @@ import { PrimeIcons } from 'primeng/api'
 import { TooltipModule } from 'primeng/tooltip'
 
 @Component({
-  selector: 'button-dialog-with-portal-dialog-service',
+  selector: 'ocx-ocx-button-dialog-with-portal-dialog-service',
   template: `<button (click)="openDialog()">Open dialog</button>`,
 })
-class ButtonDialogWithPortalDialogService {
+class ButtonDialogWithPortalDialogServiceComponent {
   constructor(private portalDialogService: PortalDialogService) {}
 
   @Input() title = 'Title'
@@ -34,13 +27,15 @@ class ButtonDialogWithPortalDialogService {
   openDialog() {
     this.portalDialogService
       .openDialog(this.title, this.messageOrComponent, this.primaryKey, this.secondaryKey, this.extras)
-      .subscribe(() => {})
+      .subscribe(() => {
+        console.log('dialog closed')
+      })
   }
 }
 
 export default {
   title: 'PortalDialogService',
-  component: ButtonDialogWithPortalDialogService,
+  component: ButtonDialogWithPortalDialogServiceComponent,
   decorators: [
     applicationConfig({
       providers: [
@@ -59,11 +54,7 @@ export default {
     }),
     componentWrapperDecorator((story) => `<div style="margin: 3em">${story}</div>`),
   ],
-} as Meta<ButtonDialogWithPortalDialogService>
-
-const Template: StoryFn = (args) => ({
-  props: args,
-})
+} as Meta<ButtonDialogWithPortalDialogServiceComponent>
 
 export const Basic = {
   render: (args: any) => ({
@@ -71,8 +62,8 @@ export const Basic = {
       ...args,
     },
     template: `
-      <button-dialog-with-portal-dialog-service>
-      </button-dialog-with-portal-dialog-service>
+      <ocx-button-dialog-with-portal-dialog-service>
+      </ocx-button-dialog-with-portal-dialog-service>
         `,
   }),
   args: {},
@@ -84,8 +75,8 @@ export const CustomData = {
       ...args,
     },
     template: `
-        <button-dialog-with-portal-dialog-service ${argsToTemplate(args)}>
-        </button-dialog-with-portal-dialog-service>
+        <ocx-button-dialog-with-portal-dialog-service ${argsToTemplate(args)}>
+        </ocx-button-dialog-with-portal-dialog-service>
           `,
   }),
   args: {
@@ -103,8 +94,8 @@ export const CustomDataWithExtendedButtons = {
       ...args,
     },
     template: `
-          <button-dialog-with-portal-dialog-service ${argsToTemplate(args)}>
-          </button-dialog-with-portal-dialog-service>
+          <ocx-button-dialog-with-portal-dialog-service ${argsToTemplate(args)}>
+          </ocx-button-dialog-with-portal-dialog-service>
             `,
   }),
   args: {
@@ -127,10 +118,10 @@ export const CustomDataWithExtendedButtons = {
 }
 
 @Component({
-  selector: 'my-component-to-display',
+  selector: 'ocx-my-component-to-display',
   template: `<p>Hello, its my component to display</p>`,
 })
-class ComponentToDisplay {}
+class ComponentToDisplayComponent {}
 
 export const ComponentDisplayed = {
   render: (args: any) => ({
@@ -138,14 +129,14 @@ export const ComponentDisplayed = {
       ...args,
     },
     template: `
-            <button-dialog-with-portal-dialog-service ${argsToTemplate(args)}>
-            </button-dialog-with-portal-dialog-service>
+            <ocx-button-dialog-with-portal-dialog-service ${argsToTemplate(args)}>
+            </ocx-button-dialog-with-portal-dialog-service>
               `,
   }),
   args: {
     title: 'Custom title',
     messageOrComponent: {
-      type: ComponentToDisplay,
+      type: ComponentToDisplayComponent,
     },
     primaryKey: {
       key: 'PRIMARY_KEY',

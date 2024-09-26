@@ -1,14 +1,7 @@
 import { importProvidersFrom } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import {
-  Meta,
-  StoryFn,
-  applicationConfig,
-  argsToTemplate,
-  componentWrapperDecorator,
-  moduleMetadata,
-} from '@storybook/angular'
+import { Meta, applicationConfig, argsToTemplate, componentWrapperDecorator, moduleMetadata } from '@storybook/angular'
 import { StorybookTranslateModule } from '../../storybook-translate.module'
 import { ButtonDialogComponent } from './button-dialog.component'
 import { ButtonModule } from 'primeng/button'
@@ -34,10 +27,6 @@ export default {
     componentWrapperDecorator((story) => `<div style="margin: 3em">${story}</div>`),
   ],
 } as Meta<ButtonDialogComponent>
-
-const Template: StoryFn = (args) => ({
-  props: args,
-})
 
 export const ButtonDialogWithInlineContentDefaultButtons = {
   render: (args: any) => ({
