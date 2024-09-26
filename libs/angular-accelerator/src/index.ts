@@ -19,7 +19,7 @@ export * from './lib/components/interactive-data-view/interactive-data-view.comp
 export * from './lib/components/page-header/page-header.component'
 export * from './lib/components/search-config/search-config.component'
 export * from './lib/components/search-header/search-header.component'
-export * from './lib/components/data-loading-error/data-not-loaded.component'
+export * from './lib/components/data-loading-error/data-loading-error.component'
 
 // services
 export * from './lib/services/breadcrumb.service'
