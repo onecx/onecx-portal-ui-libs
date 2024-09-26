@@ -10,15 +10,15 @@ export class DataLayoutSelectionHarness extends ContentContainerComponentHarness
   }
 
   async getListLayoutSelectionButton() {
-    return await this.isDesiredButton(await this.getAllSelectionButtons(), PrimeIcons.LIST)
+    return await this.isDesiredButton(await this.getAllSelectionButtons(), 'ocx-data-layout-selection-list')
   }
 
   async getGridLayoutSelectionButton() {
-    return await this.isDesiredButton(await this.getAllSelectionButtons(), PrimeIcons.TH_LARGE)
+    return await this.isDesiredButton(await this.getAllSelectionButtons(), 'ocx-data-layout-selection-grid')
   }
 
   async getTableLayoutSelectionButton() {
-    return await this.isDesiredButton(await this.getAllSelectionButtons(), PrimeIcons.TABLE)
+    return await this.isDesiredButton(await this.getAllSelectionButtons(), 'ocx-data-layout-selection-table')
   }
 
   async getCurrentLayout() {
@@ -29,9 +29,9 @@ export class DataLayoutSelectionHarness extends ContentContainerComponentHarness
     await (await this.getListLayoutSelectionButton())?.click()
   }
 
-  private async isDesiredButton(value: TestElement[], icon: PrimeIcon) {
+  private async isDesiredButton(value: TestElement[], id: string) {
     for (let index = 0; index < value.length; index++) {
-      if ((await value[index].getAttribute('aria-labelledby')) === icon) {
+      if ((await value[index].getAttribute('aria-labelledby')) === id) {
         return value[index]
       }
     }
