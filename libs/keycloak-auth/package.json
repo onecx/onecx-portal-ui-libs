@@ -9,7 +9,7 @@
     "keycloak-js": "^25.0.1",
     "@onecx/angular-integration-interface": "^5",
     "@onecx/integration-interface": "^5",
-    "rxjs": "7.8.1"
+    "rxjs": "^7.8.1"
   },
   "publishConfig": {
     "access": "public"
