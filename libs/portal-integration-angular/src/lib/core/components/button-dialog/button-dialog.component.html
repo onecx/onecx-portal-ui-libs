@@ -15,6 +15,7 @@
           [disabled]="primaryButtonDisabled$ | async"
           [pTooltip]="dialogData.config.primaryButtonDetails!.tooltipKey ? (dialogData.config.primaryButtonDetails!.tooltipKey | translate) : null"
           [tooltipPosition]="dialogData.config.primaryButtonDetails?.tooltipPosition ?? ''"
+          [attr.aria-label]="dialogData.config.primaryButtonDetails!.key | translate:dialogData.config.primaryButtonDetails?.parameters"
         ></button>
       </div>
       <div>
@@ -28,6 +29,7 @@
           [disabled]="secondaryButtonDisabled$ | async"
           [pTooltip]="dialogData.config.secondaryButtonDetails!.tooltipKey ? (dialogData.config.secondaryButtonDetails!.tooltipKey | translate) : null"
           [tooltipPosition]="dialogData.config.secondaryButtonDetails?.tooltipPosition ?? ''"
+          [attr.aria-label]="dialogData.config.secondaryButtonDetails!.key | translate:dialogData.config.secondaryButtonDetails?.parameters"
         ></button>
       </div>
       <div *ngFor="let button of rightCustomButtons">
@@ -52,5 +54,6 @@
     [disabled]="resolveCustomButtonDisabled((customButtonsDisabled$ | async) ?? {}, button.id)"
     [pTooltip]="button.tooltipKey ? (button.tooltipKey | translate) : null"
     [tooltipPosition]="button.tooltipPosition ?? ''"
+    [attr.aria-label]="button.key | translate:button.parameters"
   ></button>
 </ng-template>
