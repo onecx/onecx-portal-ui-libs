@@ -9,10 +9,13 @@ import { ColorUtils } from '../../utils/colorutils'
 import { PrimeIcon } from '../../utils/primeicon.utils'
 
 export interface DiagramLayouts {
+  id: string
   icon: PrimeIcon
   layout: DiagramType
-  title?: string
-  titleKey: string
+  tooltip?: string
+  tooltipKey: string
+  label?: string
+  labelKey: string
 }
 
 export interface DiagramComponentState {
@@ -20,16 +23,26 @@ export interface DiagramComponentState {
 }
 
 const allDiagramTypes: DiagramLayouts[] = [
-  { icon: PrimeIcons.CHART_PIE, layout: DiagramType.PIE, titleKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.PIE' },
   {
-    icon: PrimeIcons.BARS,
-    layout: DiagramType.HORIZONTAL_BAR,
-    titleKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.HORIZONTAL_BAR',
+    id: 'diagram-pie',
+    icon: PrimeIcons.CHART_PIE,
+    layout: DiagramType.PIE,
+    tooltipKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.PIE',
+    labelKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.PIE',
   },
   {
+    id: 'diagram-horizontal-bar',
+    icon: PrimeIcons.BARS,
+    layout: DiagramType.HORIZONTAL_BAR,
+    tooltipKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.HORIZONTAL_BAR',
+    labelKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.HORIZONTAL_BAR',
+  },
+  {
+    id: 'diagram-vertical-bar',
     icon: PrimeIcons.CHART_BAR,
     layout: DiagramType.VERTICAL_BAR,
-    titleKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.VERTICAL_BAR',
+    tooltipKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.VERTICAL_BAR',
+    labelKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.VERTICAL_BAR',
   },
 ]
 
