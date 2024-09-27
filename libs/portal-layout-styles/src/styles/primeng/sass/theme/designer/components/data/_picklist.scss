@@ -56,7 +56,6 @@
       &.p-focus {
         color: $inputListItemTextFocusColor;
 				background: $inputListItemFocusBg;
-        // @include focused-listitem();
       }
 
       &.p-highlight {

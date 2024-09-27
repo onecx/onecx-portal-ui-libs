@@ -31,47 +31,6 @@
   border-color: var(--error-color);
 }
 
-// @mixin menuitem-link {
-//   padding: var(--menuitem-padding);
-//   color: var(--text-color);
-//   border-radius: var(--menuitem-border-radius);
-//   transition: var(--list-item-transition);
-//   user-select: none;
-
-//   .p-menuitem-text {
-//     color: var(--text-color);
-//   }
-
-//   .p-menuitem-icon {
-//     color: var(--text-secondary-color);
-//     margin-right: var(--inline-spacing);
-//   }
-
-//   .p-submenu-icon {
-//     color: var(--text-secondary-color);
-//   }
-
-//   &:not(.p-disabled):hover {
-//     background: var(--menuitem-hover-bg);
-
-//     .p-menuitem-text {
-//       color: var(--text-color);
-//     }
-
-//     .p-menuitem-icon {
-//       color: var(--text-secondary-color);
-//     }
-
-//     .p-submenu-icon {
-//       color: var(--text-secondary-color);
-//     }
-//   }
-
-//   &:focus {
-//     @include focused-listitem();
-//   }
-// }
-
 @mixin menuitem {
   > .p-menuitem-content {
     color: var(--text-color);

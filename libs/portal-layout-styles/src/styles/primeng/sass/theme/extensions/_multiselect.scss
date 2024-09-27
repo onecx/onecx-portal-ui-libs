@@ -104,7 +104,7 @@
 }
 
 .p-multiselect-panel .p-multiselect-header .p-multiselect-close:focus {
-  outline: 1px solid var(--primary-color);
+  outline: $multiSelectCloseIconFocusOutline;
   outline-offset: 0;
   box-shadow: none;  
 }

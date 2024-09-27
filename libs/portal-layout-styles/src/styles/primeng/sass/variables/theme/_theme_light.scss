@@ -52,6 +52,7 @@ $focusOutlineColor: transparent;
 $focusOutline: 0 none;
 $focusOutlineOffset: 0;
 $focusShadow: none;
+$focusOutlineCustom: 1px solid var(--primary-color);
 
 //action icons
 $actionIconWidth: 2.5rem;
@@ -113,6 +114,9 @@ $inputOverlayBorder: 0 none;
 $inputOverlayShadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14),
   0 3px 14px 2px rgba(0, 0, 0, 0.12);
 
+//multiselect
+$multiSelectCloseIconFocusOutline: $focusOutlineCustom;
+
 //password
 $passwordMeterBg: rgba($primaryColor, 0.32);
 $passwordWeakBg: #d32f2f;
@@ -134,6 +138,7 @@ $buttonTextActiveColor: $primaryTextColor;
 $buttonActiveBorderColor: transparent;
 $raisedButtonShadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
 $roundedButtonBorderRadius: 2rem;
+$buttonFocusOutline: $focusOutlineCustom;
 
 $textButtonHoverBgOpacity: 0.04;
 $textButtonActiveBgOpacity: 0.16;
@@ -325,6 +330,7 @@ $calendarTimePickerTimeFontSize: 1.25rem;
 
 $calendarBreakpoint: 769px;
 $calendarCellDatePaddingSM: 0;
+$calendarFocusOutline: $focusOutlineCustom;
 
 //input switch
 $inputSwitchWidth: 2.75rem;
@@ -463,6 +469,7 @@ $paginatorElementIconHoverColor: $textSecondaryColor;
 $paginatorElementBorderRadius: 50%;
 $paginatorElementMargin: 0.143rem;
 $paginatorElementPadding: 0;
+$paginatorFocusOutline: $focusOutlineCustom;
 
 //table
 $tableHeaderBorder: 1px solid #e4e4e4;
@@ -615,6 +622,7 @@ $dialogHeaderPadding: 1.5rem;
 $dialogContentPadding: 0 1.5rem 1.5rem 1.5rem;
 $dialogFooterBorder: 0 none;
 $dialogFooterPadding: 1rem 1.5rem;
+$dialogHeaderIconFocusOutline: $focusOutlineCustom;
 
 //tooltip
 $tooltipBg: rgba(97, 97, 97, 0.9);
@@ -679,6 +687,7 @@ $breadcrumbItemIconColor: $textSecondaryColor;
 $breadcrumbLastItemTextColor: $textColor;
 $breadcrumbLastItemIconColor: $textSecondaryColor;
 $breadcrumbSeparatorColor: $textSecondaryColor;
+$breadcrumbFocusOutline: $focusOutlineCustom;
 
 $horizontalMenuPadding: 1rem;
 $horizontalMenuBg: transparent;

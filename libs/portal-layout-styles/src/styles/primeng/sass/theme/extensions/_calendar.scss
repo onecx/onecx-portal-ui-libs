@@ -55,13 +55,13 @@
       order: 2;
 
       .p-datepicker-year:focus {
-        outline: 1px solid var(--primary-color);
+        outline: $calendarFocusOutline;
         outline-offset: 0;
         box-shadow: none;
       }
 
       .p-datepicker-month:focus {
-        outline: 1px solid var(--primary-color);
+        outline: $calendarFocusOutline;
         outline-offset: 0;
         box-shadow: none;
       }
@@ -70,7 +70,7 @@
     .p-datepicker-prev {
       order: 1;
       &:focus {
-        outline: 1px solid var(--primary-color);
+        outline: $calendarFocusOutline;
         outline-offset: 0;
         box-shadow: none;
       }
@@ -79,7 +79,7 @@
     .p-datepicker-next {
       order: 3;
       &:focus {
-        outline: 1px solid var(--primary-color);
+        outline: $calendarFocusOutline;
         outline-offset: 0;
         box-shadow: none;
       }
@@ -109,7 +109,7 @@
 }
 
 .p-datepicker:not(.p-disabled) table td span:not(.p-highlight):not(.p-disabled):focus {
-  outline: 1px solid var(--primary-color);
+  outline: $calendarFocusOutline;
   outline-offset: 0;
   box-shadow: none;
 }

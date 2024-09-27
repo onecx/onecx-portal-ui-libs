@@ -3,7 +3,7 @@
   min-width: 4rem;
 
   &:focus {
-    outline: 1px solid var(--primary-color);
+    outline: $buttonFocusOutline;
     outline-offset: 2px;
     box-shadow: none;
   }

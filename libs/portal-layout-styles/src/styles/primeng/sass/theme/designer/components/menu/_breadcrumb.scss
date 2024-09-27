@@ -11,9 +11,8 @@
         border-radius: var(--border-radius);
 
         &:focus-visible{
-          outline: 1px solid black;
+          outline: $breadcrumbFocusOutline;
           outline-offset: 2px;
-          // @include focused();
         }
 
         .p-menuitem-text {
