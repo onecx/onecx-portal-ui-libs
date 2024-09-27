@@ -42,7 +42,7 @@
     "primelocale": "^1.0.3",
     "primeng": "^17.18.10",
     "rxjs": "^7.8.1",
-    "storybook": "^8.3.2",
+    "storybook": "^8.3.3",
     "tslib": "^2.7.0",
     "zod": "^3.23.8",
     "zone.js": "^0.14.10"
