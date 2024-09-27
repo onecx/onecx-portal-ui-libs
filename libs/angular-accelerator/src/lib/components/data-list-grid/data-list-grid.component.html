@@ -75,7 +75,6 @@
             [attr.name]="'data-grid-item-menu-button'"
             [pTooltip]="'OCX_DATA_LIST_GRID.MORE_ACTIONS_TOOLTIP' | translate"
             tooltipPosition="top"
-            tooltipEvent="hover"
           ></button>
         </div>
       </div>
@@ -107,7 +106,6 @@
               class="p-button-rounded p-button-text mb-1 mr-2 viewListItemButton"
               [pTooltip]="(viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW') | translate"
               tooltipPosition="top"
-              tooltipEvent="hover"
               [attr.aria-label]="(viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW') | translate"
               (click)="onViewRow(item)"
               *ocxIfPermission="viewPermission"
@@ -125,7 +123,6 @@
               pButton
               [pTooltip]="(editMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.EDIT') | translate"
               tooltipPosition="top"
-              tooltipEvent="hover"
               [attr.aria-label]="(editMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.EDIT') | translate"
               (click)="onEditRow(item)"
               *ocxIfPermission="editPermission"
@@ -143,7 +140,6 @@
               pButton
               [pTooltip]="(deleteMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.DELETE') | translate"
               tooltipPosition="top"
-              tooltipEvent="hover"
               [attr.aria-label]="(deleteMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.DELETE') | translate"
               (click)="onDeleteRow(item)"
               *ocxIfPermission="deletePermission"
@@ -162,7 +158,6 @@
                 (click)="action.callback(item)"
                 [pTooltip]="action.labelKey ? (action.labelKey | translate) : ''"
                 tooltipPosition="top"
-                tooltipEvent="hover"
                 [attr.aria-label]="action.labelKey ? (action.labelKey | translate) : ''"
                 [disabled]="action.disabled || (!!action.actionEnabledField && !fieldIsTruthy(item, action.actionEnabledField))"
               ></button>
@@ -178,7 +173,6 @@
               [attr.aria-label]="'OCX_DATA_LIST_GRID.MORE_ACTIONS_ARIA_LABEL' | translate"
               [pTooltip]="'OCX_DATA_LIST_GRID.MORE_ACTIONS_TOOLTIP' | translate"
               tooltipPosition="top"
-              tooltipEvent="hover"
             ></button>
           </ng-container>
         </div>
