@@ -24,6 +24,11 @@
       border-color: var(--paginator-element-hover-border-color);
       color: var(--text-secondary-color);
     }
+
+    &:focus-visible{
+      outline: $paginatorFocusOutline;
+      outline-offset: $paginatorFocusOutlineOffset;
+    }
   }
 
   .p-paginator-first {
@@ -86,6 +91,11 @@
         background: var(--paginator-element-hover-bg);
         border-color: var(--paginator-element-hover-border-color);
         color: var(--text-secondary-color);
+      }
+
+      &:focus-visible{
+        outline: $paginatorFocusOutline;
+        outline-offset: $paginatorFocusOutlineOffset;
       }
     }
   }

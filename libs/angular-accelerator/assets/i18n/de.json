@@ -152,8 +152,8 @@
     "MONTHS_AGO": "vor {{months}} Monaten",
     "YEARS_AGO": "vor {{years}} Jahren"
   },
-  "OCX_PAGE_NOT_FOUND": {
-    "TITLE": "Die Seite wurde nicht gefunden.",
-    "MESSAGE": "Bitte kontaktieren Sie den Administrator, wenn Sie glauben, dass es sich hierbei um einen Fehler des Systems handelt."
+  "OCX_DATA_LOADING_ERROR": {
+    "TITLE": "Die Daten konnten nicht geladen werden.",
+    "MESSAGE": "Dies kann folgende Gründe haben: \n -Die Daten existieren nicht oder nicht mehr.\n - Die Daten konnten aufgrund eines Fehlers im System nicht geladen werden.\n - Ihnen fehlt die nötige Berechtigung um die Daten zu laden.\n Bitte kontaktieren Sie den Support, wenn Sie glauben, dass es sich hierbei um einen Fehler des Systems handelt."
   }
 }
