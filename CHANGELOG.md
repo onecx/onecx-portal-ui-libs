@@ -1,3 +1,9 @@
+## [5.12.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.12.1...v5.12.2) (2024-09-24)
+
+### Bug Fixes
+
+* p-calendar, p-button accessibility focus selection ([#488](https://github.com/onecx/onecx-portal-ui-libs/issues/488)) ([d1c7c11](https://github.com/onecx/onecx-portal-ui-libs/commit/d1c7c116190cbd79257b6a0b8522ce9d9469d532))
+
 ## [5.12.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.11.1...v5.12.0) (2024-09-20)
 
 ### Features

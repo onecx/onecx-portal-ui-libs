@@ -70,6 +70,7 @@
     "EMPTY_RESULT": "No data found.",
     "EMPTY_FILTER_MESSAGE": "No filters found.",
     "ACTIONS_COLUMN_NAME": "Actions",
+    "COLUMN_FILTER_ARIA_LABEL": "Column filter",
     "FILTER_TITLE": "Filter",
     "FILTER_ARIA_LABEL": "Filter {{column}}",
     "EDITED": "Edited",
@@ -87,7 +88,9 @@
       "DESCENDING_TITLE": "Descending",
       "DEFAULT_TITLE": "Default",
       "ARIA_LABEL": "Toggle {{column}} sorting direction to {{direction}}"
-    }
+    },
+    "SELECT_ALL_ARIA_LABEL": "Select all table rows",
+    "SELECT_ARIA_LABEL": "Select table row with id {{key}}"
   },
   "OCX_DATA_LIST_GRID": {
     "EMPTY_RESULT": "No data found.",
@@ -127,10 +130,12 @@
     "HEADER": "Search",
     "RESET_BUTTON": {
       "TEXT": "Reset",
+      "ARIA_LABEL": "Reset search criteria",
       "DETAIL": "Reset search criteria"
     },
     "SEARCH_BUTTON": {
       "TEXT": "Search",
+      "ARIA_LABEL": "Start search",
       "DETAIL": "Start search"
     },
     "EXPORT": "Export all events"
@@ -141,6 +146,8 @@
     "HOME_ARIA_LABEL": "Go to {{page}} home page"
   },
   "OCX_DIAGRAM": {
+    "ARIA_LABEL": "Chart: Total amount: {{total}}. {{valueString}}.",
+    "EMPTY_ARIA_LABEL": "Chart with no data",
     "SUM": "Total",
     "NO_DATA": "There is no data available",
     "SWITCH_DIAGRAM_TYPE": {
@@ -161,5 +168,9 @@
     "MINUTES_AGO": "{{minutes}} minutes ago",
     "MONTHS_AGO": "{{months}} months ago",
     "YEARS_AGO": "{{years}} years ago"
+  },
+  "OCX_PAGE_NOT_FOUND": {
+    "TITLE": "The page was not found.",
+    "MESSAGE": "Please contact the administrator if you think this happened due to a system error."
   }
 }
