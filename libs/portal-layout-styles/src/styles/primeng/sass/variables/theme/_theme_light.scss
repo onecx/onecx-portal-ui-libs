@@ -41,6 +41,7 @@ $errorColor: #b00020;
 //selected state
 $highlightBg: rgba($primaryColor, 0.12);
 $highlightTextColor: $primaryColor;
+$highlightFocusBg: rgba($primaryColor, 0.24) !default;
 
 //scale
 $scaleSM: 0.875;
@@ -48,8 +49,8 @@ $scaleLG: 1.25;
 
 //focus
 $focusOutlineColor: transparent;
-$focusOutline: 1px solid black;
-$focusOutlineOffset: 2px;
+$focusOutline: 0 none;
+$focusOutlineOffset: 0;
 $focusShadow: none;
 
 //action icons
@@ -102,6 +103,8 @@ $inputListHeaderMargin: 0;
 $inputListHeaderBg: #ffffff;
 $inputListHeaderTextColor: $textColor;
 $inputListHeaderBorder: 1px solid rgba(0, 0, 0, 0.12);
+$inputListItemTextFocusColor: $textColor;
+$inputListItemFocusBg: #e2e8f0 !default;
 
 //inputs with overlays (e.g. autocomplete, dropdown, multiselect)
 $inputOverlayBg: $inputListBg;
@@ -651,6 +654,8 @@ $menuitemHoverBg: rgba(0, 0, 0, 0.04);
 $menuitemTextActiveColor: $textColor;
 $menuitemIconActiveColor: $textSecondaryColor;
 $menuitemActiveBg: rgba(0, 0, 0, 0.04);
+$menuitemActiveFocusBg: rgba(0, 0, 0, 0.02);
+$menuitemFocusBg: rgba(0, 0, 0, 0.02);
 $menuitemSubmenuIconFontSize: 0.875rem;
 $submenuHeaderMargin: 0;
 $submenuHeaderPadding: 1rem;
@@ -770,6 +775,8 @@ $avatarTextColor: $textColor;
 $chipBg: rgba(0, 0, 0, 0.12);
 $chipTextColor: $textColor;
 $chipBorderRadius: 16px;
+$chipFocusBg: #e2e8f0 !default;
+$chipFocusTextColor: $textColor;
 
 //scrollTop
 $scrollTopBg: $accentColor;

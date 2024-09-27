@@ -6,8 +6,12 @@
   border-radius: var(--border-radius);
   width: var(--menu-width);
 
-  .p-menuitem-link {
-    @include menuitem-link();
+  // .p-menuitem-link {
+  //   @include menuitem-link();
+  // }
+
+  .p-menuitem {
+    @include menuitem();
   }
 
   &.p-menu-overlay {
@@ -31,11 +35,11 @@
     margin: var(--menu-separator-margin);
   }
 
-  .p-menuitem {
-    margin: var(--vertical-menuitem-margin);
+  // .p-menuitem {
+  //   margin: var(--vertical-menuitem-margin);
 
-    &:last-child {
-      margin: 0;
-    }
-  }
+  //   &:last-child {
+  //     margin: 0;
+  //   }
+  // }
 }

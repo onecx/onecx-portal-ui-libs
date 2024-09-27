@@ -44,6 +44,18 @@
     border-top-right-radius: var(--border-radius);
     border-bottom-right-radius: var(--border-radius);
   }
+
+  &.p-variant-filled {
+    background: $inputFilledBg;
+
+    &:not(.p-disabled):hover {
+        background-color: $inputFilledHoverBg;
+    }
+
+    &:not(.p-disabled).p-focus {
+        background-color: $inputFilledFocusBg;
+    }
+  }
 }
 
 .p-inputwrapper-filled {
@@ -111,19 +123,39 @@
       transition: var(--list-item-transition);
       border-radius: var(--input-list-item-border-radius);
 
+      &:first-child {
+        margin-top: 0;
+      }
+
       &.p-highlight {
-        color: var(--primary-color);
-        background: var(--highlight-bg);
+        color: $highlightTextColor;
+        background: $highlightBg;
+
+        &.p-focus {
+            background: $highlightFocusBg;
+        }
       }
 
-      &:not(.p-highlight):not(.p-disabled):hover {
-        color: var(--text-color);
-        background: var(--input-list-item-hover-bg);
+      &:not(.p-highlight):not(.p-disabled) {
+        &.p-focus {
+            color: $inputListItemTextFocusColor;
+            background: $inputListItemHoverBg;
+        }
+
+        &:hover {
+            color: $inputListItemTextHoverColor;
+            background: $inputListItemHoverBg;
+        }
       }
 
-      &:focus {
-        @include focused-listitem();
-      }
+      // &:not(.p-highlight):not(.p-disabled):hover {
+      //   color: var(--text-color);
+      //   background: var(--input-list-item-hover-bg);
+      // }
+
+      // &:focus {
+      //   @include focused-listitem();
+      // }
 
       .p-checkbox {
         margin-right: var(--inline-spacing);

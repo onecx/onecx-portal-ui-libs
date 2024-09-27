@@ -2,6 +2,12 @@
   font-weight: 500;
   min-width: 4rem;
 
+  &:focus {
+    outline: 1px solid var(--primary-color);
+    outline-offset: 2px;
+    box-shadow: none;
+  }
+
   &.p-button-icon-only {
     min-width: auto;
   }

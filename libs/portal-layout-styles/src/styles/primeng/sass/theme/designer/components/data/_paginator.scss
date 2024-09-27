@@ -24,6 +24,10 @@
       border-color: var(--paginator-element-hover-border-color);
       color: var(--text-secondary-color);
     }
+
+    &:focus-visible{
+      outline: 1px solid black;
+    }
   }
 
   .p-paginator-first {
@@ -86,6 +90,10 @@
         background: var(--paginator-element-hover-bg);
         border-color: var(--paginator-element-hover-border-color);
         color: var(--text-secondary-color);
+      }
+
+      &:focus-visible{
+        outline: 1px solid black;
       }
     }
   }

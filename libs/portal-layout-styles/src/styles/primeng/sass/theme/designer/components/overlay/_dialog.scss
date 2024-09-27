@@ -23,6 +23,10 @@
       &:last-child {
         margin-right: 0;
       }
+
+      &:focus-visible{
+        outline: 1px solid black;
+      }
     }
   }
 
