@@ -10,6 +10,8 @@
   }
 
   &:not(.p-disabled).p-focus {
+    outline: 0 none !important;
+    outline-offset: 0;
     box-shadow: inset 0 0 0 1px $inputFocusBorderColor, inset 0 0 0 1px $inputFocusBorderColor,
       inset 0 0 0 1px $inputFocusBorderColor, inset 0 0 0 1px $inputFocusBorderColor;
   }
@@ -18,6 +20,10 @@
 .p-dropdown-item {
   .p-ink {
     background-color: rgba(var(--primary-color-rgb), 0.16);
+  }
+  &:not(.p-disabled).p-focus {
+    background: var(--input-list-item-hover-bg) !important;
+    border-color: inherit;
   }
 }
 
