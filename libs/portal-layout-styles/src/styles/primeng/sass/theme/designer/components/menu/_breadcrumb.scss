@@ -12,7 +12,7 @@
 
         &:focus-visible{
           outline: $breadcrumbFocusOutline;
-          outline-offset: 2px;
+          outline-offset: $breadcrumbFocusOutlineOffset;
         }
 
         .p-menuitem-text {

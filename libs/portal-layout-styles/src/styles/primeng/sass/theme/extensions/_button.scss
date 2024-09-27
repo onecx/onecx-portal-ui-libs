@@ -4,7 +4,7 @@
 
   &:focus {
     outline: $buttonFocusOutline;
-    outline-offset: 2px;
+    outline-offset: $buttonFocusOutlineOffset;
     box-shadow: none;
   }
 
