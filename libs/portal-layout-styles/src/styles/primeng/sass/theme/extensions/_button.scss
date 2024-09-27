@@ -68,6 +68,12 @@
 .p-button.p-button-secondary,
 .p-buttonset.p-button-secondary > .p-button,
 .p-splitbutton.p-button-secondary > .p-button {
+  &:focus {
+    outline: $secondaryButtonFocusOutline;
+    outline-offset: $secondaryButtonFocusOutlineOffset;
+    box-shadow: none;
+  }
+
   &:enabled:focus {
     background: rgba(var(--accent-color-rgb), 0.76);
   }
@@ -95,6 +101,12 @@
 .p-button.p-button-info,
 .p-buttonset.p-button-info > .p-button,
 .p-splitbutton.p-button-info > .p-button {
+  &:focus {
+    outline: $infoButtonFocusOutline;
+    outline-offset: $infoButtonFocusOutlineOffset;
+    box-shadow: none;
+  }
+
   &:enabled:focus {
     background: rgba(var(--info-button-bg-rgb), 0.76);
   }
@@ -122,6 +134,12 @@
 .p-button.p-button-success,
 .p-buttonset.p-button-success > .p-button,
 .p-splitbutton.p-button-success > .p-button {
+  &:focus {
+    outline: $successButtonFocusOutline;
+    outline-offset: $successButtonFocusOutlineOffset;
+    box-shadow: none;
+  }
+
   &:enabled:focus {
     background: rgba(var(--success-button-bg-rgb), 0.76);
   }
@@ -149,6 +167,12 @@
 .p-button.p-button-warning,
 .p-buttonset.p-button-warning > .p-button,
 .p-splitbutton.p-button-warning > .p-button {
+  &:focus {
+    outline: $warningButtonFocusOutline;
+    outline-offset: $warningButtonFocusOutlineOffset;
+    box-shadow: none;
+  }
+
   &:enabled:focus {
     background: rgba(var(--warning-button-bg-rgb), 0.76);
   }
@@ -176,6 +200,12 @@
 .p-button.p-button-help,
 .p-buttonset.p-button-help > .p-button,
 .p-splitbutton.p-button-help > .p-button {
+  &:focus {
+    outline: $helpButtonFocusOutline;
+    outline-offset: $helpButtonFocusOutlineOffset;
+    box-shadow: none;
+  }
+
   &:enabled:focus {
     background: rgba(var(--help-button-bg-rgb), 0.76);
   }
@@ -203,6 +233,12 @@
 .p-button.p-button-danger,
 .p-buttonset.p-button-danger > .p-button,
 .p-splitbutton.p-button-danger > .p-button {
+  &:focus {
+    outline: $dangerButtonFocusOutline;
+    outline-offset: $dangerButtonFocusOutlineOffset;
+    box-shadow: none;
+  }
+
   &:enabled:focus {
     background: rgba(var(--danger-button-bg-rgb), 0.76);
   }

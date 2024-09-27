@@ -160,6 +160,8 @@ $secondaryButtonActiveBg: rgba(var(--accent-color), 0.68);
 $secondaryButtonTextActiveColor: $accentTextColor;
 $secondaryButtonActiveBorderColor: transparent;
 $secondaryButtonFocusShadow: none;
+$secondaryButtonFocusOutline: 1px solid $secondaryButtonBg;
+$secondaryButtonFocusOutlineOffset: $focusOutlineOffsetCustom;
 
 $infoButtonBg: #2196f3;
 $infoButtonTextColor: #ffffff;
@@ -171,6 +173,8 @@ $infoButtonActiveBg: rgba(#2196f3, 0.68);
 $infoButtonTextActiveColor: #ffffff;
 $infoButtonActiveBorderColor: transparent;
 $infoButtonFocusShadow: none;
+$infoButtonFocusOutline: 1px solid $infoButtonBg;
+$infoButtonFocusOutlineOffset: $focusOutlineOffsetCustom;
 
 $successButtonBg: #689f38;
 $successButtonTextColor: #ffffff;
@@ -182,6 +186,8 @@ $successButtonActiveBg: rgba(#689f38, 0.68);
 $successButtonTextActiveColor: #ffffff;
 $successButtonActiveBorderColor: transparent;
 $successButtonFocusShadow: none;
+$successButtonFocusOutline: 1px solid $successButtonBg;
+$successButtonFocusOutlineOffset: $focusOutlineOffsetCustom;
 
 $warningButtonBg: #fbc02d;
 $warningButtonTextColor: #212529;
@@ -193,6 +199,8 @@ $warningButtonActiveBg: rgba(#fbc02d, 0.68);
 $warningButtonTextActiveColor: #212529;
 $warningButtonActiveBorderColor: transparent;
 $warningButtonFocusShadow: none;
+$warningButtonFocusOutline: 1px solid $warningButtonBg;
+$warningButtonFocusOutlineOffset: $focusOutlineOffsetCustom;
 
 $helpButtonBg: #9c27b0;
 $helpButtonTextColor: #ffffff;
@@ -204,6 +212,8 @@ $helpButtonActiveBg: rgba(#9c27b0, 0.68);
 $helpButtonTextActiveColor: #ffffff;
 $helpButtonActiveBorderColor: transparent;
 $helpButtonFocusShadow: none;
+$helpButtonFocusOutline: 1px solid $helpButtonBg;
+$helpButtonFocusOutlineOffset: $focusOutlineOffsetCustom;
 
 $dangerButtonBg: #d32f2f;
 $dangerButtonTextColor: #ffffff;
@@ -215,6 +225,8 @@ $dangerButtonActiveBg: rgba(#d32f2f, 0.68);
 $dangerButtonTextActiveColor: #ffffff;
 $dangerButtonActiveBorderColor: transparent;
 $dangerButtonFocusShadow: none;
+$dangerButtonFocusOutline: 1px solid $dangerButtonBg;
+$dangerButtonFocusOutlineOffset: $focusOutlineOffsetCustom;
 
 $linkButtonColor: $primaryColor;
 $linkButtonHoverColor: $primaryColor;
