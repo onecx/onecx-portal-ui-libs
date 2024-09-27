@@ -28,7 +28,9 @@
       type="button"
       (click)="toggleColumns()"
       pButton
-      [title]="translations?.toggleColumnButtonTooltip || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.OPEN_BUTTON_DETAIL' | translate)"
+      [pTooltip]="translations?.toggleColumnButtonTooltip || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.OPEN_BUTTON_DETAIL' | translate)"
+      tooltipPosition="top"
+      tooltipEvent="hover"
       [attr.aria-label]="translations?.toggleColumnButtonTooltip || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.OPEN_BUTTON_DETAIL' | translate)"
       icon="pi pi-cog"
     ></button>
@@ -45,7 +47,9 @@
         type="text"
         class="search-filter-input data-view-control-border"
         pInputText
-        [title]="translations?.filterInputTooltip || (filterColumns.length > 0 ? ('Filter by ' + filterColumns.join(', ')) : 'Filter')"
+        [pTooltip]="translations?.filterInputTooltip || (filterColumns.length > 0 ? ('Filter by ' + filterColumns.join(', ')) : 'Filter')"
+        tooltipPosition="top"
+        tooltipEvent="hover"
         (input)="searchFilterInput($event)"
       />
       <label for="data-view-control-filter">{{ translations?.filterInputPlaceholder || 'Filter' }}</label>
@@ -82,7 +86,9 @@
       onIcon="pi pi-sort-amount-up"
       offIcon="pi pi-sort-amount-down"
       (onChange)="sortDirection($event)"
-      [title]="!selectedSortDirection ? (translations?.sortOrderTooltips?.ascending || ('OCX_LIST_GRID_SORT.TOGGLE_BUTTON.ASCENDING_TITLE' | translate)) : (translations?.sortOrderTooltips?.descending || ('OCX_LIST_GRID_SORT.TOGGLE_BUTTON.DESCENDING_TITLE' | translate))"
+      [pTooltip]="!selectedSortDirection ? (translations?.sortOrderTooltips?.ascending || ('OCX_LIST_GRID_SORT.TOGGLE_BUTTON.ASCENDING_TITLE' | translate)) : (translations?.sortOrderTooltips?.descending || ('OCX_LIST_GRID_SORT.TOGGLE_BUTTON.DESCENDING_TITLE' | translate))"
+      tooltipPosition="top"
+      tooltipEvent="hover"
       [ariaLabel]="!selectedSortDirection ? (translations?.sortOrderTooltips?.ascending || ('OCX_LIST_GRID_SORT.TOGGLE_BUTTON.ASCENDING_TITLE' | translate)) : (translations?.sortOrderTooltips?.descending || ('OCX_LIST_GRID_SORT.TOGGLE_BUTTON.DESCENDING_TITLE' | translate))"
     ></p-toggleButton>
   </div>
