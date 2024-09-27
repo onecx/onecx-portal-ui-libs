@@ -68,8 +68,8 @@ export class DataListGridSortingComponent implements OnInit {
     this.componentStateChanged.emit({
       sorting: {
         sortColumn: this.sortField,
-        sortDirection: this.sortDirection
-      }
+        sortDirection: this.sortDirection,
+      },
     })
   }
 
@@ -91,11 +91,11 @@ export class DataListGridSortingComponent implements OnInit {
   sortDirectionToTitle(sortDirection: DataSortDirection) {
     switch (sortDirection) {
       case DataSortDirection.ASCENDING:
-        return 'OCX_LIST_GRID_SORT.TOGGLE_BUTTON.ASCENDING_TITLE'
+        return 'OCX_LIST_GRID_SORT.TOGGLE_BUTTON.ASCENDING_TOOLTIP'
       case DataSortDirection.DESCENDING:
-        return 'OCX_LIST_GRID_SORT.TOGGLE_BUTTON.DESCENDING_TITLE'
+        return 'OCX_LIST_GRID_SORT.TOGGLE_BUTTON.DESCENDING_TOOLTIP'
       default:
-        return 'OCX_LIST_GRID_SORT.TOGGLE_BUTTON.DEFAULT_TITLE'
+        return 'OCX_LIST_GRID_SORT.TOGGLE_BUTTON.DEFAULT_TOOLTIP'
     }
   }
 }

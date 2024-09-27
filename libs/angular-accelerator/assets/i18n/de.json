@@ -1,11 +1,15 @@
 {
   "OCX_CUSTOM_GROUP_COLUMN_SELECTOR": {
-    "DROPDOWN_LABEL": "Spalten",
+    "ARIA_LABEL": "Spaltengruppe-Selektor",
+    "DROPDOWN_LABEL": "Spaltengruppe",
     "OPEN_BUTTON_DETAIL": "Dialog zur Auswahl einer benutzerdefinierten Gruppe öffnen",
+    "OPEN_BUTTON_ARIA_LABEL": "Dialog zur Auswahl einer benutzerdefinierten Gruppe öffnen",
     "ACTIVE_COLUMNS_LABEL": "Aktive Spalten",
     "INACTIVE_COLUMNS_LABEL": "Inaktive Spalten",
     "SAVE_BUTTON_LABEL": "Speichern",
+    "SAVE_BUTTON_ARIA_LABEL": "Speichern",
     "CANCEL_BUTTON_LABEL": "Abbrechen",
+    "CANCEL_BUTTON_ARIA_LABEL": "Abbrechen",
     "DIALOG_TITLE": "Spalten für benutzerdefinierte Gruppe auswählen",
     "CONFIGURE_ACTION_COLUMN": {
       "TITLE": "Aktionsspalte konfigurieren",
@@ -36,12 +40,12 @@
   "OCX_LIST_GRID_SORT": {
     "DROPDOWN": {
       "PLACEHOLDER": "Sortierung auswählen",
-      "TITLE": "Sortieren nach"
+      "ARIA_LABEL": "Sortieren nach"
     },
     "TOGGLE_BUTTON": {
-      "ASCENDING_TITLE": "Aufsteigend",
-      "DESCENDING_TITLE": "Absteigend",
-      "DEFAULT_TITLE": "Standard"
+      "ASCENDING_TOOLTIP": "Aufsteigend",
+      "DESCENDING_TOOLTIP": "Absteigend",
+      "DEFAULT_TOOLTIP": "Standard"
     },
     "SORTING_BUTTON_ARIA_LABEL": "{{direction}} sortieren"
   },
@@ -78,7 +82,8 @@
       "EDIT": "Bearbeiten",
       "DELETE": "Löschen"
     },
-    "MORE_ACTIONS": "Weitere Aktionen"
+    "MORE_ACTIONS_ARIA_LABEL": "Weitere Aktionen",
+    "MORE_ACTIONS_TOOLTIP": "Weitere Aktionen anzeigen"
   },
   "OCX_DATA_LAYOUT_SELECTION": {
     "LAYOUT": {

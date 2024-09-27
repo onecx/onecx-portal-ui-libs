@@ -617,7 +617,7 @@ describe('InteractiveDataViewComponent', () => {
       ]
 
       const columnGroupSelectionDropdown = await loader.getHarness(
-        PDropdownHarness.with({ id: 'columnGroupSelectionDropdown' })
+        PDropdownHarness.with({ inputId: 'columnGroupSelectionDropdown' })
       )
       const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
       await dropdownItems[1].selectItem()
@@ -682,7 +682,7 @@ describe('InteractiveDataViewComponent', () => {
       ]
 
       const columnGroupSelectionDropdown = await loader.getHarness(
-        PDropdownHarness.with({ id: 'columnGroupSelectionDropdown' })
+        PDropdownHarness.with({ inputId: 'columnGroupSelectionDropdown' })
       )
       const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
       await dropdownItems[1].selectItem()
@@ -748,7 +748,7 @@ describe('InteractiveDataViewComponent', () => {
       ]
 
       const columnGroupSelectionDropdown = await loader.getHarness(
-        PDropdownHarness.with({ id: 'columnGroupSelectionDropdown' })
+        PDropdownHarness.with({ inputId: 'columnGroupSelectionDropdown' })
       )
       const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
       await dropdownItems[1].selectItem()
@@ -815,7 +815,7 @@ describe('InteractiveDataViewComponent', () => {
       ]
 
       const columnGroupSelectionDropdown = await loader.getHarness(
-        PDropdownHarness.with({ id: 'columnGroupSelectionDropdown' })
+        PDropdownHarness.with({ inputId: 'columnGroupSelectionDropdown' })
       )
       const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
       await dropdownItems[1].selectItem()
@@ -1114,7 +1114,7 @@ describe('InteractiveDataViewComponent', () => {
 
     beforeEach(async () => {
       dataLayoutSelection = await loader.getHarness(DataLayoutSelectionHarness)
-      
+
       const gridLayoutSelectionButton = await dataLayoutSelection.getGridLayoutSelectionButton()
       await gridLayoutSelectionButton?.click()
 
@@ -1453,7 +1453,7 @@ describe('InteractiveDataViewComponent', () => {
     it('should remain sorted after switching data view from table view to grid view and to list view', async () => {
       window.HTMLElement.prototype.scrollIntoView = jest.fn()
       const columnGroupSelectionDropdown = await loader.getHarness(
-        PDropdownHarness.with({ id: 'columnGroupSelectionDropdown' })
+        PDropdownHarness.with({ inputId: 'columnGroupSelectionDropdown' })
       )
       const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
       await dropdownItems[1].selectItem()
@@ -1482,7 +1482,7 @@ describe('InteractiveDataViewComponent', () => {
     it('should remain sorted after switching data view from table view to list view then sort again and switch to grid view', async () => {
       window.HTMLElement.prototype.scrollIntoView = jest.fn()
       const columnGroupSelectionDropdown = await loader.getHarness(
-        PDropdownHarness.with({ id: 'columnGroupSelectionDropdown' })
+        PDropdownHarness.with({ inputId: 'columnGroupSelectionDropdown' })
       )
       const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
       await dropdownItems[1].selectItem()
@@ -1585,7 +1585,7 @@ describe('InteractiveDataViewComponent', () => {
         },
       ]
       component.titleLineId = 'name'
-      
+
       fixture.detectChanges()
       await fixture.whenStable()
     }
