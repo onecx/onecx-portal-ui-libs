@@ -12,7 +12,8 @@
     }
 
     &:not(.p-disabled).p-focus {
-      border-color: nth($checkboxBorder, 3);
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 0.2rem $highlightBg;
     }
 
     &.p-highlight {

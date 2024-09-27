@@ -11,3 +11,26 @@
     }
   }
 }
+
+.p-selectbutton.p-buttonset {
+  .p-button:first-of-type:not(:only-of-type) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  .p-button:not(:last-child),
+  .p-button:not(:last-child):hover {
+    border-right: 0 none;
+  }
+  .p-button:last-of-type:not(:only-of-type) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  .p-button:not(:first-of-type):not(:last-of-type) {
+    border-radius: 0;
+  }
+  .p-button:focus {
+    outline: 0 none;
+    outline-offset: 0;
+    box-shadow: none;
+  }
+}

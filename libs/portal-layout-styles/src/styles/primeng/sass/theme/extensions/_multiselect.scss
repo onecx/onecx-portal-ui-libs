@@ -89,6 +89,26 @@
   }
 }
 
+.p-multiselect-panel .p-multiselect-items .p-multiselect-item {
+  &:not(.p-disabled).p-focus {
+    background: var(--input-list-item-hover-bg);
+    border-color: inherit;
+  }
+}
+
+.p-multiselect-panel .p-multiselect-header .p-multiselect-close {
+  &:not(.p-disabled).p-focus {
+    background: var(--input-list-item-hover-bg);
+    border-color: inherit;
+  }
+}
+
+.p-multiselect-panel .p-multiselect-header .p-multiselect-close:focus {
+  outline: $multiSelectCloseIconFocusOutline;
+  outline-offset: $multiSelectCloseIconFocusOutlineOffset;
+  box-shadow: none;  
+}
+
 p-multiselect.ng-dirty.ng-invalid {
   .p-multiselect {
     &:not(.p-disabled).p-focus {

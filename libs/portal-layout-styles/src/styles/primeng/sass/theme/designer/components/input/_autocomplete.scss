@@ -19,7 +19,9 @@
     }
 
     &:not(.p-disabled).p-focus {
-      @include focused-input();
+      .p-autocomplete-multiple-container {
+        @include focused-input();
+      }
     }
 
     .p-autocomplete-input-token {
@@ -44,6 +46,11 @@
       .p-autocomplete-token-icon {
         margin-left: var(--inline-spacing);
       }
+
+      &.p-focus {
+        background: $chipFocusBg;
+        color: $chipFocusTextColor;
+    }
     }
   }
 }
@@ -85,7 +92,23 @@ p-autocomplete.ng-dirty.ng-invalid > .p-autocomplete > .p-inputtext {
       &.p-highlight {
         color: var(--primary-color);
         background: var(--highlight-bg);
+
+        &.p-focus {
+          background: $highlightFocusBg;
+        }
       }
+
+      &:not(.p-highlight):not(.p-disabled) {
+        &.p-focus {
+            color: $inputListItemTextFocusColor;
+            background: $inputListItemFocusBg;
+        }
+
+        &:hover {
+            color: $inputListItemTextHoverColor;
+            background: $inputListItemHoverBg;
+        }
+    }
     }
 
     .p-autocomplete-empty-message {

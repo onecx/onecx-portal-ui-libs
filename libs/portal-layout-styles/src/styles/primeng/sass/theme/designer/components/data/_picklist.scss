@@ -53,13 +53,18 @@
       background: var(--input-list-item-bg);
       transition: var(--list-item-transition);
 
-      &:focus {
-        @include focused-listitem();
+      &.p-focus {
+        color: $inputListItemTextFocusColor;
+				background: $inputListItemFocusBg;
       }
 
       &.p-highlight {
         color: var(--primary-color);
         background: var(--highlight-bg);
+
+        &.p-focus {
+					background: $highlightFocusBg;
+				}
       }
     }
 

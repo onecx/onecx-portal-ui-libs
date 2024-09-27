@@ -4,14 +4,15 @@
   border-radius: var(--border-radius);
   padding: var(--breadcrumb-padding);
 
-  ol {
+  .p-breadcrumb-list {
     li {
       .p-menuitem-link {
         transition: var(--list-item-transition);
         border-radius: var(--border-radius);
 
-        &:focus {
-          @include focused();
+        &:focus-visible{
+          outline: $breadcrumbFocusOutline;
+          outline-offset: $breadcrumbFocusOutlineOffset;
         }
 
         .p-menuitem-text {
