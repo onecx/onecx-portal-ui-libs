@@ -33,6 +33,8 @@ export interface Action {
   permission?: string
   title?: string
   titleKey?: string
+  ariaLabel?: string
+  ariaLabelKey?: string
   btnClass?: string
   actionCallback(): void
   disabled?: boolean
@@ -61,6 +63,8 @@ export interface ObjectDetailItem {
   actionItemIcon?: PrimeIcon
   actionItemCallback?: () => void
   actionItemTooltip?: string
+  actionItemAriaLabelKey?: string
+  actionItemAriaLabel?: string
 }
 
 export interface HomeItem {
@@ -150,7 +154,7 @@ export class PageHeaderComponent implements OnInit, OnChanges {
 
   objectInfoGridLayoutClasses = 'col-12 flex gap-4 md:col-6 align-items-center p-0'
   objectInfoColumnLayoutClasses = 'flex flex-column align-items-center gap-2 min-w-120'
-  
+
   objectInfoDefaultLayoutClasses = 'flex flex-row md:flex-column md:align-items-center md:gap-2'
 
   protected breadcrumbs: BreadcrumbService
@@ -263,8 +267,11 @@ export class PageHeaderComponent implements OnInit, OnChanges {
             ...allowedActions.map<MenuItem>((a) => ({
               label: a.labelKey ? translations[a.labelKey] : a.label,
               icon: a.icon,
-              title:
-                (a.titleKey ? translations[a.titleKey] : a.title) || (a.labelKey ? translations[a.labelKey] : a.label),
+              tooltipOptions: {
+                tooltipLabel: a.titleKey ? translations[a.titleKey] : a.title,
+                tooltipEvent: 'hover',
+                tooltipPosition: 'top',
+              },
               command: a.actionCallback,
               disabled: a.disabled,
             })),

@@ -10,12 +10,18 @@
     color: var(--emphasis-high);
     border-radius: var(--border-radius);
     transition: var(--form-element-transition);
+    outline-color: transparent;
 
     .p-checkbox-icon {
       transition-duration: var(--transition-duration);
       color: var(--primary-text-color);
       font-size: var(--checkbox-icon-font-size);
     }
+
+    .p-icon {
+      width: var(--checkbox-icon-font-size);
+      height: var(--checkbox-icon-font-size);
+  }
 
     &.p-highlight {
       border-color: var(--primary-color);
