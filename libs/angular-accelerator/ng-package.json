@@ -5,6 +5,11 @@
     "entryFile": "src/index.ts"
   },
   "assets": [
-    "./assets/**"
+    "./assets/**",
+    {
+      "input": "tmp/primelocale/",
+      "glob": "{en,de}.json",
+      "output": "assets/i18n/primeng"
+    }
   ]
 }
