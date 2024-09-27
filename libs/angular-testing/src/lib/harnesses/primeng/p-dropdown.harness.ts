@@ -3,15 +3,22 @@ import { ListItemHarness } from '../list-item.harness'
 
 export interface PDropdownHarnessFilters extends BaseHarnessFilters {
   id?: string
+  inputId?: string
 }
 
 export class PDropdownHarness extends ContentContainerComponentHarness {
   static hostSelector = 'p-dropdown'
 
   static with(options: PDropdownHarnessFilters): HarnessPredicate<PDropdownHarness> {
-    return new HarnessPredicate(PDropdownHarness, options).addOption('id', options.id, (harness, id) =>
-      HarnessPredicate.stringMatches(harness.getId(), id)
-    )
+    return new HarnessPredicate(PDropdownHarness, options)
+      .addOption('id', options.id, (harness, id) => HarnessPredicate.stringMatches(harness.getId(), id))
+      .addOption('inputId', options.inputId, (harness, inputId) =>
+        HarnessPredicate.stringMatches(harness.getInputId(), inputId)
+      )
+  }
+
+  async getInputId(): Promise<string | null> {
+    return await (await this.host()).getAttribute('inputId')
   }
 
   async getId(): Promise<string | null> {

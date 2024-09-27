@@ -21,12 +21,16 @@
     "CANCEL": "Cancel"
   },
   "OCX_CUSTOM_GROUP_COLUMN_SELECTOR": {
-    "DROPDOWN_LABEL": "Columns",
+    "ARIA_LABEL": "Column group selector",
+    "DROPDOWN_LABEL": "Column group",
     "OPEN_BUTTON_DETAIL": "Open custom group selection dialog",
+    "OPEN_BUTTON_ARIA_LABEL": "Open custom group selection dialog",
     "ACTIVE_COLUMNS_LABEL": "Active columns",
     "INACTIVE_COLUMNS_LABEL": "Inactive columns",
     "SAVE_BUTTON_LABEL": "Save",
+    "SAVE_BUTTON_ARIA_LABEL": "Save",
     "CANCEL_BUTTON_LABEL": "Cancel",
+    "CANCEL_BUTTON_ARIA_LABEL": "Cancel",
     "DIALOG_TITLE": "Custom group column selection",
     "CONFIGURE_ACTION_COLUMN": {
       "TITLE": "Configure action column",
@@ -57,12 +61,12 @@
   "OCX_LIST_GRID_SORT": {
     "DROPDOWN": {
       "PLACEHOLDER": "Select sorting",
-      "TITLE": "Sort by"
+      "ARIA_LABEL": "Sort by"
     },
     "TOGGLE_BUTTON": {
-      "ASCENDING_TITLE": "Ascending",
-      "DESCENDING_TITLE": "Descending",
-      "DEFAULT_TITLE": "Default"
+      "ASCENDING_TOOLTIP": "Ascending",
+      "DESCENDING_TOOLTIP": "Descending",
+      "DEFAULT_TOOLTIP": "Default"
     },
     "SORTING_BUTTON_ARIA_LABEL": "Toggle sorting direction to {{direction}}"
   },

@@ -26,11 +26,23 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
   @Input() columns: DataTableColumn[] = []
   @Input() displayedColumns: DataTableColumn[] = []
   @Input() dialogTitle = ''
+  @Input() dialogTitleKey = ''
   @Input() openButtonTitle = ''
+  @Input() openButtonTitleKey = ''
+  @Input() openButtonAriaLabel = ''
+  @Input() openButtonAriaLabelKey = ''
   @Input() saveButtonLabel = ''
+  @Input() saveButtonLabelKey = ''
+  @Input() saveButtonAriaLabel = ''
+  @Input() saveButtonAriaLabelKey = ''
   @Input() cancelButtonLabel = ''
+  @Input() cancelButtonLabelKey = ''
+  @Input() cancelButtonAriaLabel = ''
+  @Input() cancelButtonAriaLabelKey = ''
   @Input() activeColumnsLabel = ''
+  @Input() activeColumnsLabelKey = ''
   @Input() inactiveColumnsLabel = ''
+  @Input() inactiveColumnsLabelKey = ''
   @Input() frozenActionColumn = false
   @Input() actionColumnPosition: 'left' | 'right' = 'right'
 
@@ -100,7 +112,7 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
           frozen: this.frozenActionColumnModel,
           position: this.actionColumnPositionModel,
         },
-        activeColumnGroupKey: undefined
+        activeColumnGroupKey: undefined,
       })
     }
 

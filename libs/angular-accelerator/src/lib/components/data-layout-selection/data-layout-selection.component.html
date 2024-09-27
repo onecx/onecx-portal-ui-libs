@@ -3,11 +3,12 @@
     *ngIf="viewingLayouts.length > 1"
     [options]="viewingLayouts"
     [(ngModel)]="selectedViewLayout"
-    optionLabel="icon"
+    optionLabel="id"
     (onChange)="onDataViewLayoutChange($event.value)"
   >
     <ng-template let-item pTemplate>
-      <i [class]="item.icon" [pTooltip]="item.title || (item.titleKey | translate)" tooltipPosition="top"></i>
+      <i [class]="item.icon" [pTooltip]="item.tooltip || (item.tooltipKey | translate)" tooltipPosition="top"></i>
+      <label style="display: none" id="{{item.id}}">{{item.labelKey | translate}}</label>
     </ng-template>
   </p-selectButton>
 </div>

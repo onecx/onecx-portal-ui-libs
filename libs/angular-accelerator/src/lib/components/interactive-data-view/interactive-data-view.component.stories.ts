@@ -16,6 +16,7 @@ import { MultiSelectModule } from 'primeng/multiselect'
 import { PickListModule } from 'primeng/picklist'
 import { ProgressBarModule } from 'primeng/progressbar'
 import { SelectButtonModule } from 'primeng/selectbutton'
+import { FloatLabelModule } from 'primeng/floatlabel'
 import { TableModule } from 'primeng/table'
 import { IfPermissionDirective } from '../../directives/if-permission.directive'
 import { MockAuthModule } from '../../mock-auth/mock-auth.module'
@@ -79,6 +80,7 @@ const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewComponent> =
         FormsModule,
         ProgressBarModule,
         InputTextModule,
+        FloatLabelModule,
       ],
     }),
   ],
@@ -95,21 +97,21 @@ const defaultComponentArgs: InteractiveDataViewInputTypes = {
       nameKey: 'Product',
       sortable: false,
       filterable: true,
-      predefinedGroupKeys: ['test']
+      predefinedGroupKeys: ['test'],
     },
     {
       id: 'amount',
       columnType: ColumnType.NUMBER,
       nameKey: 'Amount',
       sortable: true,
-      predefinedGroupKeys: ['test', 'test1']
+      predefinedGroupKeys: ['test', 'test1'],
     },
     {
       id: 'available',
       columnType: ColumnType.STRING,
       nameKey: 'Available',
       sortable: false,
-      predefinedGroupKeys: ['test2']
+      predefinedGroupKeys: ['test2'],
     },
   ],
   data: [

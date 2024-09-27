@@ -11,7 +11,7 @@ export class CustomGroupColumnSelectorHarness extends ContentContainerComponentH
   )
 
   getDialog = this.locatorFor(PDialogHarness)
-  getCancelButton = this.locatorFor(PButtonHarness)
+  getCancelButton = this.locatorFor(PButtonHarness.with({ id: 'cancelButton' }))
   getSaveButton = this.locatorFor(PButtonHarness.with({ id: 'saveButton' }))
   getPicklist = this.locatorFor(PPicklistHarness)
   getSelectButtons = this.locatorForOptional('[name]')
