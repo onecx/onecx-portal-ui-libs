@@ -18,15 +18,35 @@ interface ViewingModes {
 }
 
 type ViewMode = {
+  id: string
   icon: PrimeIcon
   mode: string
-  titleKey: string
+  labelKey: string
+  tooltipKey: string
 }
 
 const ALL_VIEW_MODES: ViewMode[] = [
-  { icon: PrimeIcons.LIST, mode: 'list', titleKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.LIST' },
-  { icon: PrimeIcons.TH_LARGE, mode: 'grid', titleKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.GRID' },
-  { icon: PrimeIcons.TABLE, mode: 'table', titleKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.TABLE' },
+  {
+    id: 'ocx-data-layout-selection-list',
+    icon: PrimeIcons.LIST,
+    mode: 'list',
+    tooltipKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.LIST',
+    labelKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.LIST',
+  },
+  {
+    id: 'ocx-data-layout-selection-grid',
+    icon: PrimeIcons.TH_LARGE,
+    mode: 'grid',
+    tooltipKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.GRID',
+    labelKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.GRID',
+  },
+  {
+    id: 'ocx-data-layout-selection-table',
+    icon: PrimeIcons.TABLE,
+    mode: 'table',
+    tooltipKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.TABLE',
+    labelKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.TABLE',
+  },
 ]
 
 interface DefaultColumnDefinition {
@@ -138,7 +158,7 @@ export class DataViewControlsComponent implements OnInit, OnChanges {
   activeColumnIds: string[] = []
   inactiveColumnIds: string[] = []
   selectedSortingOption = ''
-  selectedSortDirection: boolean | undefined = false 
+  selectedSortDirection: boolean | undefined = false
 
   viewingModes: ViewingModes[] = []
 
@@ -153,7 +173,10 @@ export class DataViewControlsComponent implements OnInit, OnChanges {
     disabled: [],
   }
 
-  constructor(private dialogService: DialogService, private translate: TranslateService) {}
+  constructor(
+    private dialogService: DialogService,
+    private translate: TranslateService
+  ) {}
 
   ngOnInit(): void {
     this.defaultCols = this.generateDefaultColumnDefinitions(this.columnDefinitions)
