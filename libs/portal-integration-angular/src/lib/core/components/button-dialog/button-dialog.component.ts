@@ -67,7 +67,10 @@ export class ButtonDialogComponent implements OnInit {
   leftCustomButtons: ButtonDialogCustomButtonDetails[] = []
   rightCustomButtons: ButtonDialogCustomButtonDetails[] = []
 
-  constructor(public dynamicDialogConfig: DynamicDialogConfig, public dynamicDialogRef: DynamicDialogRef) {}
+  constructor(
+    public dynamicDialogConfig: DynamicDialogConfig,
+    public dynamicDialogRef: DynamicDialogRef
+  ) {}
 
   ngOnInit(): void {
     this.loadComponent()
@@ -179,6 +182,7 @@ export class ButtonDialogComponent implements OnInit {
         this.dialogData.config.secondaryButtonDetails = this.config.secondaryButtonDetails
       }
     }
+    this.dialogData.config.customButtons = this.config.customButtons
     this.setupCustomButtons(this.dialogData)
   }
 

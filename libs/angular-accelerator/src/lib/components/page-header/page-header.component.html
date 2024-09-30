@@ -58,12 +58,12 @@
               class="action-button"
               [label]="action.labelKey ? (action.labelKey | translate) : action.label"
               (onClick)="action.actionCallback()"
-              [pTooltip]="(action.titleKey ? (action.titleKey | translate) : action.title) || (action.labelKey ? (action.labelKey | translate) : action.label)"
+              [pTooltip]="(action.titleKey ? (action.titleKey | translate) : action.title)"
               tooltipPosition="top"
               tooltipEvent="hover"
               [disabled]="action.disabled ? action.disabled : false"
               [attr.name]="action.icon ? 'ocx-page-header-inline-action-icon-button' : 'ocx-page-header-inline-action-button'"
-              [attr.aria-label]="(action.titleKey ? (action.titleKey | translate) : action.title) || (action.labelKey ? (action.labelKey | translate) : action.label)"
+              [ariaLabel]=" (action.ariaLabelKey ? (action.ariaLabelKey | translate) : action.ariaLabel) || (action.titleKey ? (action.titleKey | translate) : action.title) || (action.labelKey ? (action.labelKey | translate) : action.label)"
             ></p-button>
           </ng-container>
         </div>
@@ -128,7 +128,7 @@
               [pTooltip]="item.actionItemTooltip || ''"
               tooltipPosition="top"
               tooltipEvent="hover"
-              [ariaLabel]="item.actionItemTooltip || ''"
+              [ariaLabel]="(item.actionItemAriaLabelKey ? (item.actionItemAriaLabelKey | translate) : item.actionItemAriaLabel) || item.actionItemTooltip || ''"
               (onClick)="item.actionItemCallback()"
             ></p-button>
           </span>

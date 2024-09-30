@@ -21,12 +21,16 @@
     "CANCEL": "Cancel"
   },
   "OCX_CUSTOM_GROUP_COLUMN_SELECTOR": {
-    "DROPDOWN_LABEL": "Columns",
+    "ARIA_LABEL": "Column group selector",
+    "DROPDOWN_LABEL": "Column group",
     "OPEN_BUTTON_DETAIL": "Open custom group selection dialog",
+    "OPEN_BUTTON_ARIA_LABEL": "Open custom group selection dialog",
     "ACTIVE_COLUMNS_LABEL": "Active columns",
     "INACTIVE_COLUMNS_LABEL": "Inactive columns",
     "SAVE_BUTTON_LABEL": "Save",
+    "SAVE_BUTTON_ARIA_LABEL": "Save",
     "CANCEL_BUTTON_LABEL": "Cancel",
+    "CANCEL_BUTTON_ARIA_LABEL": "Cancel",
     "DIALOG_TITLE": "Custom group column selection",
     "CONFIGURE_ACTION_COLUMN": {
       "TITLE": "Configure action column",
@@ -57,12 +61,12 @@
   "OCX_LIST_GRID_SORT": {
     "DROPDOWN": {
       "PLACEHOLDER": "Select sorting",
-      "TITLE": "Sort by"
+      "ARIA_LABEL": "Sort by"
     },
     "TOGGLE_BUTTON": {
-      "ASCENDING_TITLE": "Ascending",
-      "DESCENDING_TITLE": "Descending",
-      "DEFAULT_TITLE": "Default"
+      "ASCENDING_TOOLTIP": "Ascending",
+      "DESCENDING_TOOLTIP": "Descending",
+      "DEFAULT_TOOLTIP": "Default"
     },
     "SORTING_BUTTON_ARIA_LABEL": "Toggle sorting direction to {{direction}}"
   },
@@ -70,6 +74,7 @@
     "EMPTY_RESULT": "No data found.",
     "EMPTY_FILTER_MESSAGE": "No filters found.",
     "ACTIONS_COLUMN_NAME": "Actions",
+    "COLUMN_FILTER_ARIA_LABEL": "Column filter",
     "FILTER_TITLE": "Filter",
     "FILTER_ARIA_LABEL": "Filter {{column}}",
     "EDITED": "Edited",
@@ -87,7 +92,9 @@
       "DESCENDING_TITLE": "Descending",
       "DEFAULT_TITLE": "Default",
       "ARIA_LABEL": "Toggle {{column}} sorting direction to {{direction}}"
-    }
+    },
+    "SELECT_ALL_ARIA_LABEL": "Select all table rows",
+    "SELECT_ARIA_LABEL": "Select table row with id {{key}}"
   },
   "OCX_DATA_LIST_GRID": {
     "EMPTY_RESULT": "No data found.",
@@ -96,7 +103,8 @@
       "EDIT": "Edit",
       "DELETE": "Delete"
     },
-    "MORE_ACTIONS": "More actions"
+    "MORE_ACTIONS_ARIA_LABEL": "More actions",
+    "MORE_ACTIONS_TOOLTIP": "Display more actions"
   },
   "OCX_DATA_LAYOUT_SELECTION": {
     "LAYOUT": {
@@ -127,10 +135,12 @@
     "HEADER": "Search",
     "RESET_BUTTON": {
       "TEXT": "Reset",
+      "ARIA_LABEL": "Reset search criteria",
       "DETAIL": "Reset search criteria"
     },
     "SEARCH_BUTTON": {
       "TEXT": "Search",
+      "ARIA_LABEL": "Start search",
       "DETAIL": "Start search"
     },
     "EXPORT": "Export all events"
@@ -141,6 +151,8 @@
     "HOME_ARIA_LABEL": "Go to {{page}} home page"
   },
   "OCX_DIAGRAM": {
+    "ARIA_LABEL": "Chart: Total amount: {{total}}. {{valueString}}.",
+    "EMPTY_ARIA_LABEL": "Chart with no data",
     "SUM": "Total",
     "NO_DATA": "There is no data available",
     "SWITCH_DIAGRAM_TYPE": {
@@ -161,5 +173,9 @@
     "MINUTES_AGO": "{{minutes}} minutes ago",
     "MONTHS_AGO": "{{months}} months ago",
     "YEARS_AGO": "{{years}} years ago"
+  },
+  "OCX_DATA_LOADING_ERROR": {
+    "TITLE": "The data could not be loaded.",
+    "MESSAGE": "This may have the following reasons:\n The data does not exist or no longer exists.\n The data could not be loaded due to an error in the system.\n You do not have the necessary permission to load the data.\n Please contact the support if you think this happened due to a system error."
   }
 }

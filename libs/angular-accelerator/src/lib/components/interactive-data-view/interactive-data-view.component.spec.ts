@@ -665,7 +665,7 @@ describe('InteractiveDataViewComponent', () => {
       ]
 
       const columnGroupSelectionDropdown = await loader.getHarness(
-        PDropdownHarness.with({ id: 'columnGroupSelectionDropdown' })
+        PDropdownHarness.with({ inputId: 'columnGroupSelectionDropdown' })
       )
       const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
       await dropdownItems[1].selectItem()
@@ -732,7 +732,7 @@ describe('InteractiveDataViewComponent', () => {
       ]
 
       const columnGroupSelectionDropdown = await loader.getHarness(
-        PDropdownHarness.with({ id: 'columnGroupSelectionDropdown' })
+        PDropdownHarness.with({ inputId: 'columnGroupSelectionDropdown' })
       )
       const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
       await dropdownItems[1].selectItem()
@@ -800,7 +800,7 @@ describe('InteractiveDataViewComponent', () => {
       ]
 
       const columnGroupSelectionDropdown = await loader.getHarness(
-        PDropdownHarness.with({ id: 'columnGroupSelectionDropdown' })
+        PDropdownHarness.with({ inputId: 'columnGroupSelectionDropdown' })
       )
       const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
       await dropdownItems[1].selectItem()
@@ -869,7 +869,7 @@ describe('InteractiveDataViewComponent', () => {
       ]
 
       const columnGroupSelectionDropdown = await loader.getHarness(
-        PDropdownHarness.with({ id: 'columnGroupSelectionDropdown' })
+        PDropdownHarness.with({ inputId: 'columnGroupSelectionDropdown' })
       )
       const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
       await dropdownItems[1].selectItem()
@@ -1509,7 +1509,7 @@ describe('InteractiveDataViewComponent', () => {
 
       window.HTMLElement.prototype.scrollIntoView = jest.fn()
       const columnGroupSelectionDropdown = await loader.getHarness(
-        PDropdownHarness.with({ id: 'columnGroupSelectionDropdown' })
+        PDropdownHarness.with({ inputId: 'columnGroupSelectionDropdown' })
       )
       const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
       await dropdownItems[1].selectItem()
@@ -1540,7 +1540,7 @@ describe('InteractiveDataViewComponent', () => {
 
       window.HTMLElement.prototype.scrollIntoView = jest.fn()
       const columnGroupSelectionDropdown = await loader.getHarness(
-        PDropdownHarness.with({ id: 'columnGroupSelectionDropdown' })
+        PDropdownHarness.with({ inputId: 'columnGroupSelectionDropdown' })
       )
       const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
       await dropdownItems[1].selectItem()

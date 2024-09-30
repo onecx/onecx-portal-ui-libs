@@ -14,6 +14,7 @@ import { SkeletonModule } from 'primeng/skeleton'
 import { MessageModule } from 'primeng/message'
 import { SharedModule } from 'primeng/api'
 import { CheckboxModule } from 'primeng/checkbox'
+import { FloatLabelModule } from 'primeng/floatlabel'
 
 @NgModule({
   imports: [
@@ -31,6 +32,7 @@ import { CheckboxModule } from 'primeng/checkbox'
     MultiSelectModule,
     SkeletonModule,
     MessageModule,
+    FloatLabelModule,
     SharedModule,
   ],
   exports: [
@@ -48,6 +50,7 @@ import { CheckboxModule } from 'primeng/checkbox'
     MultiSelectModule,
     SkeletonModule,
     MessageModule,
+    FloatLabelModule,
     SharedModule,
   ],
 })

@@ -41,6 +41,7 @@ $errorColor: #b00020;
 //selected state
 $highlightBg: rgba($primaryColor, 0.12);
 $highlightTextColor: $primaryColor;
+$highlightFocusBg: rgba($primaryColor, 0.24) !default;
 
 //scale
 $scaleSM: 0.875;
@@ -51,6 +52,8 @@ $focusOutlineColor: transparent;
 $focusOutline: 0 none;
 $focusOutlineOffset: 0;
 $focusShadow: none;
+$focusOutlineCustom: 1px solid var(--primary-color);
+$focusOutlineOffsetCustom: 2px;
 
 //action icons
 $actionIconWidth: 2.5rem;
@@ -102,6 +105,8 @@ $inputListHeaderMargin: 0;
 $inputListHeaderBg: #ffffff;
 $inputListHeaderTextColor: $textColor;
 $inputListHeaderBorder: 1px solid rgba(0, 0, 0, 0.12);
+$inputListItemTextFocusColor: $textColor;
+$inputListItemFocusBg: #e2e8f0 !default;
 
 //inputs with overlays (e.g. autocomplete, dropdown, multiselect)
 $inputOverlayBg: $inputListBg;
@@ -109,6 +114,10 @@ $inputOverlayHeaderBg: $inputListHeaderBg;
 $inputOverlayBorder: 0 none;
 $inputOverlayShadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14),
   0 3px 14px 2px rgba(0, 0, 0, 0.12);
+
+//multiselect
+$multiSelectCloseIconFocusOutline: $focusOutlineCustom;
+$multiSelectCloseIconFocusOutlineOffset: $focusOutlineOffset;
 
 //password
 $passwordMeterBg: rgba($primaryColor, 0.32);
@@ -131,6 +140,8 @@ $buttonTextActiveColor: $primaryTextColor;
 $buttonActiveBorderColor: transparent;
 $raisedButtonShadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
 $roundedButtonBorderRadius: 2rem;
+$buttonFocusOutline: $focusOutlineCustom;
+$buttonFocusOutlineOffset: $focusOutlineOffsetCustom;
 
 $textButtonHoverBgOpacity: 0.04;
 $textButtonActiveBgOpacity: 0.16;
@@ -149,6 +160,8 @@ $secondaryButtonActiveBg: rgba(var(--accent-color), 0.68);
 $secondaryButtonTextActiveColor: $accentTextColor;
 $secondaryButtonActiveBorderColor: transparent;
 $secondaryButtonFocusShadow: none;
+$secondaryButtonFocusOutline: 1px solid $secondaryButtonBg;
+$secondaryButtonFocusOutlineOffset: $focusOutlineOffsetCustom;
 
 $infoButtonBg: #2196f3;
 $infoButtonTextColor: #ffffff;
@@ -160,6 +173,8 @@ $infoButtonActiveBg: rgba(#2196f3, 0.68);
 $infoButtonTextActiveColor: #ffffff;
 $infoButtonActiveBorderColor: transparent;
 $infoButtonFocusShadow: none;
+$infoButtonFocusOutline: 1px solid $infoButtonBg;
+$infoButtonFocusOutlineOffset: $focusOutlineOffsetCustom;
 
 $successButtonBg: #689f38;
 $successButtonTextColor: #ffffff;
@@ -171,6 +186,8 @@ $successButtonActiveBg: rgba(#689f38, 0.68);
 $successButtonTextActiveColor: #ffffff;
 $successButtonActiveBorderColor: transparent;
 $successButtonFocusShadow: none;
+$successButtonFocusOutline: 1px solid $successButtonBg;
+$successButtonFocusOutlineOffset: $focusOutlineOffsetCustom;
 
 $warningButtonBg: #fbc02d;
 $warningButtonTextColor: #212529;
@@ -182,6 +199,8 @@ $warningButtonActiveBg: rgba(#fbc02d, 0.68);
 $warningButtonTextActiveColor: #212529;
 $warningButtonActiveBorderColor: transparent;
 $warningButtonFocusShadow: none;
+$warningButtonFocusOutline: 1px solid $warningButtonBg;
+$warningButtonFocusOutlineOffset: $focusOutlineOffsetCustom;
 
 $helpButtonBg: #9c27b0;
 $helpButtonTextColor: #ffffff;
@@ -193,6 +212,8 @@ $helpButtonActiveBg: rgba(#9c27b0, 0.68);
 $helpButtonTextActiveColor: #ffffff;
 $helpButtonActiveBorderColor: transparent;
 $helpButtonFocusShadow: none;
+$helpButtonFocusOutline: 1px solid $helpButtonBg;
+$helpButtonFocusOutlineOffset: $focusOutlineOffsetCustom;
 
 $dangerButtonBg: #d32f2f;
 $dangerButtonTextColor: #ffffff;
@@ -204,6 +225,8 @@ $dangerButtonActiveBg: rgba(#d32f2f, 0.68);
 $dangerButtonTextActiveColor: #ffffff;
 $dangerButtonActiveBorderColor: transparent;
 $dangerButtonFocusShadow: none;
+$dangerButtonFocusOutline: 1px solid $dangerButtonBg;
+$dangerButtonFocusOutlineOffset: $focusOutlineOffsetCustom;
 
 $linkButtonColor: $primaryColor;
 $linkButtonHoverColor: $primaryColor;
@@ -311,8 +334,8 @@ $calendarCellDateHeight: 2.5rem;
 $calendarCellDateBorderRadius: 50%;
 $calendarCellDateBorder: 1px solid transparent;
 $calendarCellDateHoverBg: rgba(0, 0, 0, 0.04);
-$calendarCellDateTodayBg: #ffffff;
-$calendarCellDateTodayBorderColor: rgba(0, 0, 0, 12);
+$calendarCellDateTodayBg: #e2e8f0;
+$calendarCellDateTodayBorderColor: #ffffff;
 $calendarCellDateTodayTextColor: $textColor;
 
 $calendarButtonBarPadding: 1rem 0;
@@ -322,6 +345,8 @@ $calendarTimePickerTimeFontSize: 1.25rem;
 
 $calendarBreakpoint: 769px;
 $calendarCellDatePaddingSM: 0;
+$calendarFocusOutline: $focusOutlineCustom;
+$calendarFocusOutlineOffset: $focusOutlineOffset;
 
 //input switch
 $inputSwitchWidth: 2.75rem;
@@ -460,6 +485,8 @@ $paginatorElementIconHoverColor: $textSecondaryColor;
 $paginatorElementBorderRadius: 50%;
 $paginatorElementMargin: 0.143rem;
 $paginatorElementPadding: 0;
+$paginatorFocusOutline: $focusOutlineCustom;
+$paginatorFocusOutlineOffset: 0;
 
 //table
 $tableHeaderBorder: 1px solid #e4e4e4;
@@ -612,6 +639,8 @@ $dialogHeaderPadding: 1.5rem;
 $dialogContentPadding: 0 1.5rem 1.5rem 1.5rem;
 $dialogFooterBorder: 0 none;
 $dialogFooterPadding: 1rem 1.5rem;
+$dialogHeaderIconFocusOutline: $focusOutlineCustom;
+$dialogHeaderIconFocusOutlineOffset: $focusOutlineOffset;
 
 //tooltip
 $tooltipBg: rgba(97, 97, 97, 0.9);
@@ -651,6 +680,8 @@ $menuitemHoverBg: rgba(0, 0, 0, 0.04);
 $menuitemTextActiveColor: $textColor;
 $menuitemIconActiveColor: $textSecondaryColor;
 $menuitemActiveBg: rgba(0, 0, 0, 0.04);
+$menuitemActiveFocusBg: rgba(0, 0, 0, 0.02);
+$menuitemFocusBg: rgba(0, 0, 0, 0.02);
 $menuitemSubmenuIconFontSize: 0.875rem;
 $submenuHeaderMargin: 0;
 $submenuHeaderPadding: 1rem;
@@ -674,6 +705,8 @@ $breadcrumbItemIconColor: $textSecondaryColor;
 $breadcrumbLastItemTextColor: $textColor;
 $breadcrumbLastItemIconColor: $textSecondaryColor;
 $breadcrumbSeparatorColor: $textSecondaryColor;
+$breadcrumbFocusOutline: $focusOutlineCustom;
+$breadcrumbFocusOutlineOffset: $focusOutlineOffsetCustom;
 
 $horizontalMenuPadding: 1rem;
 $horizontalMenuBg: transparent;
@@ -770,6 +803,8 @@ $avatarTextColor: $textColor;
 $chipBg: rgba(0, 0, 0, 0.12);
 $chipTextColor: $textColor;
 $chipBorderRadius: 16px;
+$chipFocusBg: #e2e8f0 !default;
+$chipFocusTextColor: $textColor;
 
 //scrollTop
 $scrollTopBg: $accentColor;
