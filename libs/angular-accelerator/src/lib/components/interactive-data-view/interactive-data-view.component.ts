@@ -212,14 +212,19 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   @Output() displayedColumnsChange = new EventEmitter<DataTableColumn[]>()
   @Output() displayedColumnKeysChange = new EventEmitter<string[]>()
   @Output() selectionChanged: EventEmitter<Row[]> = new EventEmitter()
-  groupSelectionChanged = new EventEmitter<{ activeColumns: DataTableColumn[]; groupKey: string } | undefined>()
 
   @Output() pageChanged: EventEmitter<number> = new EventEmitter()
   @Output() pageSizeChanged = new EventEmitter<number>()
 
   @Output() componentStateChanged = new EventEmitter<InteractiveDataViewComponentState>()
 
-  selectedGroupKey: string | undefined = ''
+  selectedGroupKey$ = new BehaviorSubject<string | undefined>('')
+  get selectedGroupKey(): string | undefined {
+    return this.selectedGroupKey$.getValue()
+  }
+  set selectedGroupKey(value: string | undefined) {
+    this.selectedGroupKey$.next(value)
+  }
   isDeleteItemObserved: boolean | undefined
   isViewItemObserved: boolean | undefined
   isEditItemObserved: boolean | undefined
@@ -330,13 +335,16 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
 
   columnGroupSlotName = 'onecx-shell-column-group-selection'
   isColumnGroupSelectionComponentDefined$: Observable<boolean>
+  groupSelectionChangedSlotEmitter = new EventEmitter<
+    { activeColumns: DataTableColumn[]; groupKey: string } | undefined
+  >()
 
   constructor(private slotService: SlotService) {
     this.isColumnGroupSelectionComponentDefined$ = this.slotService
       .isSomeComponentDefinedForSlot(this.columnGroupSlotName)
       .pipe(startWith(true))
 
-    this.groupSelectionChanged.subscribe(
+    this.groupSelectionChangedSlotEmitter.subscribe(
       (event: { activeColumns: DataTableColumn[]; groupKey: string } | undefined) => {
         if (event === undefined) {
           event = {
@@ -344,8 +352,8 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
             groupKey: this.selectedGroupKey ?? this.defaultGroupKey,
           }
         }
-        this.displayedColumnKeys = event.activeColumns.map((col) => col.id)
-        this.selectedGroupKey = event.groupKey
+        this.displayedColumnKeys$.next(event.activeColumns.map((col) => col.id))
+        this.selectedGroupKey$.next(event.groupKey)
         // TODO: Remove following line once displayedColumns (deprecated) has been removed
         this.displayedColumnsChange.emit(this.displayedColumns)
         this.displayedColumnKeysChange.emit(this.displayedColumnKeys)

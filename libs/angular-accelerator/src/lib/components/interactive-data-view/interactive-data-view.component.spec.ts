@@ -1761,7 +1761,7 @@ describe('InteractiveDataViewComponent', () => {
     const columnsChangeSpy = jest.spyOn(component.displayedColumnsChange, 'emit')
     const columnKeysChangeSpy = jest.spyOn(component.displayedColumnKeysChange, 'emit')
 
-    component.groupSelectionChanged.emit({
+    component.groupSelectionChangedSlotEmitter.emit({
       activeColumns: [
         {
           id: 'first-col',
