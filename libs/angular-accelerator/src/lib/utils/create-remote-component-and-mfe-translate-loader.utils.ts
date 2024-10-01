@@ -8,7 +8,7 @@ import { createRemoteComponentTranslateLoader } from './create-remote-component-
 import { CachingTranslateLoader } from './caching-translate-loader.utils'
 import { Location } from '@angular/common'
 
-export function createRemoteComponentTranslateLoaderWithMfe(
+export function createRemoteComponentAndMfeTranslateLoader(
   httpClient: HttpClient,
   baseUrl: ReplaySubject<string>,
   translationCacheService: TranslationCacheService,
