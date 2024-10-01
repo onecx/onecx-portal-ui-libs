@@ -47,6 +47,11 @@ export type InteractiveDataViewComponentState = ColumnGroupSelectionComponentSta
   DataLayoutSelectionComponentState &
   DataListGridSortingComponentState &
   DataViewComponentState
+
+export interface ColumnGroupData {
+  activeColumns: DataTableColumn[]
+  groupKey: string
+}
 @Component({
   selector: 'ocx-interactive-data-view',
   templateUrl: './interactive-data-view.component.html',
@@ -335,34 +340,30 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
 
   columnGroupSlotName = 'onecx-shell-column-group-selection'
   isColumnGroupSelectionComponentDefined$: Observable<boolean>
-  groupSelectionChangedSlotEmitter = new EventEmitter<
-    { activeColumns: DataTableColumn[]; groupKey: string } | undefined
-  >()
+  groupSelectionChangedSlotEmitter = new EventEmitter<ColumnGroupData | undefined>()
 
   constructor(private slotService: SlotService) {
     this.isColumnGroupSelectionComponentDefined$ = this.slotService
       .isSomeComponentDefinedForSlot(this.columnGroupSlotName)
       .pipe(startWith(true))
 
-    this.groupSelectionChangedSlotEmitter.subscribe(
-      (event: { activeColumns: DataTableColumn[]; groupKey: string } | undefined) => {
-        if (event === undefined) {
-          event = {
-            activeColumns: this.displayedColumns,
-            groupKey: this.selectedGroupKey ?? this.defaultGroupKey,
-          }
+    this.groupSelectionChangedSlotEmitter.subscribe((event: ColumnGroupData | undefined) => {
+      if (event === undefined) {
+        event = {
+          activeColumns: this.displayedColumns,
+          groupKey: this.selectedGroupKey ?? this.defaultGroupKey,
         }
-        this.displayedColumnKeys$.next(event.activeColumns.map((col) => col.id))
-        this.selectedGroupKey$.next(event.groupKey)
-        // TODO: Remove following line once displayedColumns (deprecated) has been removed
-        this.displayedColumnsChange.emit(this.displayedColumns)
-        this.displayedColumnKeysChange.emit(this.displayedColumnKeys)
-        this.columnGroupSelectionComponentState$.next({
-          activeColumnGroupKey: event.groupKey,
-          displayedColumns: event.activeColumns,
-        })
       }
-    )
+      this.displayedColumnKeys$.next(event.activeColumns.map((col) => col.id))
+      this.selectedGroupKey$.next(event.groupKey)
+      // TODO: Remove following line once displayedColumns (deprecated) has been removed
+      this.displayedColumnsChange.emit(this.displayedColumns)
+      this.displayedColumnKeysChange.emit(this.displayedColumnKeys)
+      this.columnGroupSelectionComponentState$.next({
+        activeColumnGroupKey: event.groupKey,
+        displayedColumns: event.activeColumns,
+      })
+    })
 
     this.dataViewLayoutChange
       .pipe(withLatestFrom(this.isColumnGroupSelectionComponentDefined$))

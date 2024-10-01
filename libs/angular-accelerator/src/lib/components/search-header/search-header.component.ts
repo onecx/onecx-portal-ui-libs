@@ -22,6 +22,13 @@ export interface SearchHeaderComponentState {
   selectedSearchConfig?: string | null
 }
 
+export interface SearchConfigData {
+  name: string | undefined
+  fieldValues: { [key: string]: string }
+  displayedColumnsIds: string[]
+  viewMode: 'basic' | 'advanced'
+}
+
 /**
  * To trigger the search when Enter key is pressed inside a search parameter field,
  * an EventListener for keyup enter event is added for HTML elements which have an input.
@@ -80,15 +87,7 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
 
   @Output() searched: EventEmitter<any> = new EventEmitter()
   @Output() resetted: EventEmitter<any> = new EventEmitter()
-  @Output() selectedSearchConfigChanged: EventEmitter<
-    | {
-        name: string | undefined
-        fieldValues: { [key: string]: string }
-        displayedColumnsIds: string[]
-        viewMode: 'basic' | 'advanced'
-      }
-    | undefined
-  > = new EventEmitter()
+  @Output() selectedSearchConfigChanged: EventEmitter<SearchConfigData | undefined> = new EventEmitter()
   @Output() viewModeChanged: EventEmitter<'basic' | 'advanced'> = new EventEmitter()
   @Output() componentStateChanged: EventEmitter<SearchHeaderComponentState> = new EventEmitter()
   @ContentChild('additionalToolbarContent')
@@ -117,15 +116,7 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
   headerActions: Action[] = []
 
   fieldValues$: Observable<{ [key: string]: unknown }> | undefined = of({})
-  searchConfigChangedSlotEmitter: EventEmitter<
-    | {
-        name: string | undefined
-        fieldValues: { [key: string]: string }
-        displayedColumnsIds: string[]
-        viewMode: 'basic' | 'advanced'
-      }
-    | undefined
-  > = new EventEmitter()
+  searchConfigChangedSlotEmitter: EventEmitter<SearchConfigData | undefined> = new EventEmitter()
 
   constructor() {
     this.searchConfigChangedSlotEmitter.subscribe((config) => {
