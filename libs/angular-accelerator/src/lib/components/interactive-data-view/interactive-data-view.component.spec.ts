@@ -43,23 +43,8 @@ import {
 import { DateUtils } from '../../utils/dateutils'
 import { provideRouter } from '@angular/router'
 import { SlotService } from '@onecx/angular-remote-components'
-import { Observable, of, ReplaySubject } from 'rxjs'
+import { SlotServiceMock } from '@onecx/angular-remote-components/mocks'
 import { IfPermissionDirective } from '../../directives/if-permission.directive'
-
-class SlotServiceMock {
-  _isSomeComponentDefinedForSlot: ReplaySubject<boolean> = new ReplaySubject(1)
-  isSomeComponentDefinedForSlot(): Observable<boolean> {
-    return this._isSomeComponentDefinedForSlot
-  }
-
-  getComponentsForSlot() {
-    return of([])
-  }
-
-  setSomeComponentDefinedForSlot(isDefined: boolean) {
-    this._isSomeComponentDefinedForSlot.next(isDefined)
-  }
-}
 
 describe('InteractiveDataViewComponent', () => {
   const mutationObserverMock = jest.fn(function MutationObserver(callback) {
@@ -318,7 +303,7 @@ describe('InteractiveDataViewComponent', () => {
   })
 
   it('should load column-group-selection slot', async () => {
-    slotService.setSomeComponentDefinedForSlot(true)
+    slotService.assignComponentToSlot('column-group-selection', component.columnGroupSlotName)
     const userService = TestBed.inject(UserService)
     jest.spyOn(userService, 'hasPermission').mockReturnValue(true)
     fixture.detectChanges()
@@ -328,12 +313,10 @@ describe('InteractiveDataViewComponent', () => {
   })
 
   it('should load ColumnGroupSelectionDropdown', async () => {
-    slotService.setSomeComponentDefinedForSlot(false)
-
     const columnGroupSelectionDropdown = await loader.getHarness(ColumnGroupSelectionHarness)
     expect(columnGroupSelectionDropdown).toBeTruthy()
 
-    slotService.setSomeComponentDefinedForSlot(true)
+    slotService.assignComponentToSlot('column-group-selection', component.columnGroupSlotName)
     const userService = TestBed.inject(UserService)
     jest.spyOn(userService, 'hasPermission').mockReturnValue(false)
 
@@ -603,8 +586,6 @@ describe('InteractiveDataViewComponent', () => {
     })
 
     it('should select option in column group selection dropdown', async () => {
-      slotService.setSomeComponentDefinedForSlot(false)
-
       window.HTMLElement.prototype.scrollIntoView = jest.fn()
       const expectedHeaders = [
         'COLUMN_HEADER_NAME.NAME',
@@ -680,8 +661,6 @@ describe('InteractiveDataViewComponent', () => {
     })
 
     it('should select option in column group selection dropdown and sort ascending', async () => {
-      slotService.setSomeComponentDefinedForSlot(false)
-
       window.HTMLElement.prototype.scrollIntoView = jest.fn()
       const expectedRowsData = [
         [
@@ -748,8 +727,6 @@ describe('InteractiveDataViewComponent', () => {
     })
 
     it('should select option in column group selection dropdown and sort descending', async () => {
-      slotService.setSomeComponentDefinedForSlot(false)
-
       window.HTMLElement.prototype.scrollIntoView = jest.fn()
       const expectedRowsData = [
         [
@@ -817,8 +794,6 @@ describe('InteractiveDataViewComponent', () => {
     })
 
     it('should select option in column group selection dropdown and sort default', async () => {
-      slotService.setSomeComponentDefinedForSlot(false)
-
       window.HTMLElement.prototype.scrollIntoView = jest.fn()
       const expectedRowsData = [
         [
@@ -1505,8 +1480,6 @@ describe('InteractiveDataViewComponent', () => {
     ]
 
     it('should remain sorted after switching data view from table view to grid view and to list view', async () => {
-      slotService.setSomeComponentDefinedForSlot(false)
-
       window.HTMLElement.prototype.scrollIntoView = jest.fn()
       const columnGroupSelectionDropdown = await loader.getHarness(
         PDropdownHarness.with({ inputId: 'columnGroupSelectionDropdown' })
@@ -1536,8 +1509,6 @@ describe('InteractiveDataViewComponent', () => {
     })
 
     it('should remain sorted after switching data view from table view to list view then sort again and switch to grid view', async () => {
-      slotService.setSomeComponentDefinedForSlot(false)
-
       window.HTMLElement.prototype.scrollIntoView = jest.fn()
       const columnGroupSelectionDropdown = await loader.getHarness(
         PDropdownHarness.with({ inputId: 'columnGroupSelectionDropdown' })
