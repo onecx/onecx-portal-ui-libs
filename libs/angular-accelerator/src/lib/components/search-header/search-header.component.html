@@ -10,7 +10,7 @@
         *ocxIfPermission="searchConfigPermission"
         name="onecx-shell-search-config"
         [inputs]="{ pageName: pageName, currentFieldValues: fieldValues$ | async, viewMode: viewMode }"
-        [outputs]="{ searchConfigSelected: selectedSearchConfigChanged }"
+        [outputs]="{ searchConfigSelected: searchConfigChangedSlotEmitter }"
       >
         <ng-template #skeleton>
           <div class="flex">

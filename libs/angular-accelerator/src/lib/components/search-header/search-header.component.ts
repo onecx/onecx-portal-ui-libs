@@ -15,6 +15,7 @@ import {
 import { Action } from '../page-header/page-header.component'
 import { FormControlName, FormGroup, FormGroupDirective } from '@angular/forms'
 import { Observable, combineLatest, debounceTime, map, of, startWith } from 'rxjs'
+import { getLocation } from '@onecx/accelerator'
 
 export interface SearchHeaderComponentState {
   activeViewMode?: 'basic' | 'advanced'
@@ -75,7 +76,7 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
   @Input() searchConfigPermission: string | undefined
   @Input() searchButtonDisabled = false
   @Input() resetButtonDisabled = false
-  @Input() pageName: string | undefined
+  @Input() pageName: string | undefined = getLocation().applicationPath
 
   @Output() searched: EventEmitter<any> = new EventEmitter()
   @Output() resetted: EventEmitter<any> = new EventEmitter()
@@ -116,12 +117,22 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
   headerActions: Action[] = []
 
   fieldValues$: Observable<{ [key: string]: unknown }> | undefined = of({})
+  searchConfigChangedSlotEmitter: EventEmitter<
+    | {
+        name: string | undefined
+        fieldValues: { [key: string]: string }
+        displayedColumnsIds: string[]
+        viewMode: 'basic' | 'advanced'
+      }
+    | undefined
+  > = new EventEmitter()
 
   constructor() {
-    this.selectedSearchConfigChanged.subscribe((config) => {
+    this.searchConfigChangedSlotEmitter.subscribe((config) => {
       this.componentStateChanged.emit({
         selectedSearchConfig: config?.name ?? null,
       })
+      this.selectedSearchConfigChanged.emit(config)
     })
   }
 
