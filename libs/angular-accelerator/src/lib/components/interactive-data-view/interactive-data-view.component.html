@@ -32,6 +32,7 @@
       <ng-container *ngIf="isColumnGroupSelectionComponentDefined$ | async; else defaultColumnGroupSelectionComponent">
         <ng-container *ngIf="displayedColumnKeys$ | async as displayedColumnKeys">
           <ocx-slot
+            [ngStyle]="layout !== 'table' ? {'display' : 'none'}  : {}"
             *ocxIfPermission="searchConfigPermission; elseTemplate: defaultColumnGroupSelectionComponent"
             name="{{columnGroupSlotName}}"
             [inputs]="{ placeholderKey: groupSelectionNoGroupSelectedKey, defaultGroupKey: defaultGroupKey, customGroupKey: customGroupKey, columns: columns, selectedGroupKey: selectedGroupKey, layout: layout, displayedColumnsIds: displayedColumnKeys }"
