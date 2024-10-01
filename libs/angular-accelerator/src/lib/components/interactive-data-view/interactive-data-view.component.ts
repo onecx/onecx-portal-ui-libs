@@ -374,7 +374,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
               this.selectedGroupKey === this.customGroupKey
             )
           ) {
-            this.selectedGroupKey = undefined
+            this.selectedGroupKey$.next(undefined)
           }
         }
       })
