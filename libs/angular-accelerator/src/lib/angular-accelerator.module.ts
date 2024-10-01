@@ -95,10 +95,6 @@ function appInitializer(userService: UserService) {
       multi: true,
     },
     AppConfigService,
-    {
-      provide: SLOT_SERVICE,
-      useExisting: SlotService,
-    },
   ],
   exports: [
     AngularRemoteComponentsModule,
