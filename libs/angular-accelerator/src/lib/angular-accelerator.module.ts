@@ -5,7 +5,7 @@ import { RouterModule } from '@angular/router'
 import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateModule } from '@ngx-translate/core'
 
 import { AppConfigService, UserService } from '@onecx/angular-integration-interface'
-import { AngularRemoteComponentsModule, SLOT_SERVICE, SlotService } from '@onecx/angular-remote-components'
+import { AngularRemoteComponentsModule } from '@onecx/angular-remote-components'
 
 import { firstValueFrom, skip } from 'rxjs'
 import { AngularAcceleratorPrimeNgModule } from './angular-accelerator-primeng.module'
