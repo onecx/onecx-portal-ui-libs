@@ -356,7 +356,6 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
       }
       this.displayedColumnKeys$.next(event.activeColumns.map((col) => col.id))
       this.selectedGroupKey$.next(event.groupKey)
-      // TODO: Remove following line once displayedColumns (deprecated) has been removed
       this.displayedColumnsChange.emit(this.displayedColumns)
       this.displayedColumnKeysChange.emit(this.displayedColumnKeys)
       this.columnGroupSelectionComponentState$.next({
@@ -399,7 +398,6 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
           []
       )
     )
-    // TODO: Remove following line once displayedColumns (deprecated) has been removed
     this.displayedColumnsChange.emit(this.displayedColumns)
     this.displayedColumnKeysChange.emit(this.displayedColumnKeys)
     if (!this.groupSelectionNoGroupSelectedKey) {

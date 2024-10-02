@@ -11,7 +11,6 @@ export * from './group-by-count-diagram.harness'
 export * from './interactive-data-view.harness'
 export * from './more-actions-menu-button.harness'
 export * from './page-header.harness'
-export * from './search-config.harness'
 export * from './slot.harness'
 export * from './search-header.harness'
 

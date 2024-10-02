@@ -17,7 +17,6 @@ export * from './lib/components/diagram/diagram.component'
 export * from './lib/components/group-by-count-diagram/group-by-count-diagram.component'
 export * from './lib/components/interactive-data-view/interactive-data-view.component'
 export * from './lib/components/page-header/page-header.component'
-export * from './lib/components/search-config/search-config.component'
 export * from './lib/components/search-header/search-header.component'
 export * from './lib/components/data-loading-error/data-loading-error.component'
 
@@ -39,7 +38,6 @@ export * from './lib/model/data-table-column.model'
 export * from './lib/model/diagram-column'
 // export * from './lib/model/diagram-data'
 export * from './lib/model/diagram-type'
-export * from './lib/model/search-config-info'
 
 // core
 export * from './lib/angular-accelerator.module'
