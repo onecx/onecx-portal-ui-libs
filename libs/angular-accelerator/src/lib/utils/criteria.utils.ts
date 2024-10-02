@@ -1,6 +1,6 @@
 import { QueryList } from '@angular/core'
 import { FormGroup } from '@angular/forms'
-import { isValidDate } from '@onecx/accelerator'
+import { getUTCDateWithoutTimezoneIssues, isValidDate } from '@onecx/accelerator'
 import { Calendar } from 'primeng/calendar'
 
 export type hasShowTimeFunction = (key: string) => boolean
@@ -36,7 +36,7 @@ export function buildSearchCriteria<T>(
       return acc
     }
     if (isValidDate(value) && !_hasShowTime(calendars, key)) {
-      value = new Date(Date.UTC(value.getFullYear(), value.getMonth(), value.getDate(), 0, 0, 0))
+      value = getUTCDateWithoutTimezoneIssues(value);
     }
     return {
       ...acc,
