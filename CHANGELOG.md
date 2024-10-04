@@ -1,3 +1,22 @@
+## [5.15.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.14.0...v5.15.0) (2024-10-04)
+
+### Features
+
+* commit for release ([#522](https://github.com/onecx/onecx-portal-ui-libs/issues/522)) ([395c3b8](https://github.com/onecx/onecx-portal-ui-libs/commit/395c3b8ee7fb1adefe21493726d71b7579eb4a85))
+
+## [5.14.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.13.0...v5.14.0) (2024-10-02)
+
+### Features
+
+* added method to correct utc date ([#517](https://github.com/onecx/onecx-portal-ui-libs/issues/517)) ([6c68982](https://github.com/onecx/onecx-portal-ui-libs/commit/6c689829671c832ac3537f88477e643f65feafba))
+* button-dialog and data-view-controls accessibility ([#509](https://github.com/onecx/onecx-portal-ui-libs/issues/509)) ([2adece9](https://github.com/onecx/onecx-portal-ui-libs/commit/2adece90d2e24fea38c20031b2fcd3405c83847b))
+* increased accessibility of data list grid component ([#496](https://github.com/onecx/onecx-portal-ui-libs/issues/496)) ([3804dd6](https://github.com/onecx/onecx-portal-ui-libs/commit/3804dd6613834f999f3e809dc09580ac1c4a8e90))
+* interactive data view and its children accessibility ([#502](https://github.com/onecx/onecx-portal-ui-libs/issues/502)) ([f54c93f](https://github.com/onecx/onecx-portal-ui-libs/commit/f54c93f8c81401981e857348360e0e6a360d3a73))
+
+### Chores
+
+* **deps-dev:** bump @storybook/addon-a11y from 8.3.2 to 8.3.3 ([#512](https://github.com/onecx/onecx-portal-ui-libs/issues/512)) ([460807d](https://github.com/onecx/onecx-portal-ui-libs/commit/460807dad65b8d82d746882049049513a1520410))
+
 ## [5.13.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.12.2...v5.13.0) (2024-09-27)
 
 ### Features
