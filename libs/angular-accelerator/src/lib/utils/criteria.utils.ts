@@ -22,9 +22,9 @@ function _hasShowTime(calendars: QueryList<Calendar>, formKey: string): boolean 
 /**
  * Safely builds the search criteria based on form values
  * @param formValues the form values to use
- * @param calendars a list of calendars of the form (use `@ViewChildren(Calendar) calendars!: QueryList<Calendar>;`)
+ * @param calendars a list of primeng calendars of the form (use `@ViewChildren(Calendar) calendars!: QueryList<Calendar>;`)
  * @param parameters {@link BuildSearchCriteriaParameters}  to use when building the search criteria
- * @returns the search criteria as partial of T (T should be your search criteria type)
+ * @returns the search criteria as partial of T (T = type of the search criteria)
  */
 export function buildSearchCriteria<T>(
   formValues: FormGroup<any>,
