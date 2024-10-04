@@ -1,5 +1,4 @@
 import { QueryList } from '@angular/core'
-import { FormGroup } from '@angular/forms'
 import { getUTCDateWithoutTimezoneIssues, isValidDate } from '@onecx/accelerator'
 import { Calendar } from 'primeng/calendar'
 
@@ -21,22 +20,22 @@ function _hasShowTime(calendars: QueryList<Calendar>, formKey: string): boolean 
 
 /**
  * Safely builds the search criteria based on form values
- * @param formValues the form values to use
+ * @param formRawValue the raw value of the form to use
  * @param calendars a list of primeng calendars of the form (use `@ViewChildren(Calendar) calendars!: QueryList<Calendar>;`)
  * @param parameters {@link BuildSearchCriteriaParameters}  to use when building the search criteria
  * @returns the search criteria as a partial of T (T = type of the search criteria)
  */
 export function buildSearchCriteria<T>(
-  formValues: FormGroup<any>,
+  formRawValue: any,
   calendars: QueryList<Calendar>,
   { removeNullValues = false }: BuildSearchCriteriaParameters
 ) {
-  return Object.entries(formValues).reduce((acc: Partial<T>, [key, value]) => {
+  return Object.entries(formRawValue).reduce((acc: Partial<T>, [key, value]) => {
     if (value == null && removeNullValues) {
       return acc
     }
     if (isValidDate(value) && !_hasShowTime(calendars, key)) {
-      value = getUTCDateWithoutTimezoneIssues(value);
+      value = getUTCDateWithoutTimezoneIssues(value)
     }
     return {
       ...acc,
