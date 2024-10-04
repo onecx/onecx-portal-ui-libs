@@ -1,8 +1,5 @@
 import { Directive, ElementRef, Input, OnChanges, OnInit } from '@angular/core'
 
-/**
- * @deprecated This directive was moved to angular-accelerator lib
- */
 @Directive({ selector: '[ocxContentContainer]' })
 export class OcxContentContainerDirective implements OnInit, OnChanges {
   /**
@@ -37,8 +34,8 @@ export class OcxContentContainerDirective implements OnInit, OnChanges {
     // This way we can avoid multiple contradictory layout classes and unexpected effects
     const removeResponsiveLayoutClasses = () => {
       const classesToRemove: string[] = []
-      const regexPattern = /\w+:flex-row$/
-      this.el.nativeElement.classList.forEach((className: string) => {
+      const regexPattern = /\w+:flex-row$/      
+      this.el.nativeElement.classList.forEach((className: string) => {        
         if (regexPattern.test(className)) {
           classesToRemove.push(className)
         }

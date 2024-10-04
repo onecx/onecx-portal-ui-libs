@@ -1,8 +1,5 @@
 import { Directive, ElementRef, Input, OnChanges, OnInit } from '@angular/core'
 
-/**
- * @deprecated This directive was moved to angular-accelerator lib
- */
 @Directive({ selector: '[ocxContent]' })
 export class OcxContentDirective implements OnInit, OnChanges {
   /**

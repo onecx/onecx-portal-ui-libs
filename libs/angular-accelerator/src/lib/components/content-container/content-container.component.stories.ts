@@ -15,7 +15,7 @@ export default {
     breakpoint: {
       options: ['sm', 'md', 'lg', 'xl'],
       control: { type: 'select' },
-    }
+    },
   },
   decorators: [
     moduleMetadata({
@@ -38,7 +38,7 @@ export const Basic = {
   }),
   args: {
     layout: 'horizontal',
-    breakpoint: 'md'
+    breakpoint: 'md',
   },
 }
 
@@ -60,7 +60,7 @@ export const WithNestedOCXContent = {
   }),
   args: {
     layout: 'horizontal',
-    breakpoint: 'md'
+    breakpoint: 'md',
   },
 }
 
@@ -84,7 +84,23 @@ export const WithNestedOCXContentContainer = {
   }),
   args: {
     layout: 'horizontal',
-    breakpoint: 'md'
+    breakpoint: 'md',
+  },
+}
+
+export const WithStyleClass = {
+  render: (args: OcxContentComponent) => ({
+    props: {
+      ...args,
+    },
+    template: `
+        <ocx-content-container styleClass="${args.styleClass}">
+            <p>Content inside of ocx-content-container with styleClass</p>
+        </ocx-content-container>
+    `,
+  }),
+  args: {
+    styleClass: 'color: red',
   },
 }
 
@@ -102,6 +118,6 @@ export const DirectiveOnly = {
   }),
   args: {
     layout: 'horizontal',
-    breakpoint: 'md'
+    breakpoint: 'md',
   },
 }

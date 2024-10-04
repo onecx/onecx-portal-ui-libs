@@ -1,8 +1,5 @@
 import { Component, Input } from '@angular/core'
 
-/**
- * @deprecated This component was moved to angular-accelerator
- */
 @Component({
   selector: 'ocx-content-container',
   templateUrl: './content-container.component.html',
@@ -19,4 +16,9 @@ export class OcxContentContainerComponent {
    * Default: md
    */
   @Input() breakpoint: 'sm' | 'md' | 'lg' | 'xl' = 'md'
+
+  /**
+   * Optionally allows specifying styles for the container
+   */
+  @Input() styleClass = ''
 }

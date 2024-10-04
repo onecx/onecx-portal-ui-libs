@@ -1,5 +1,5 @@
-import { OcxContentDirective } from '../../directives/content.directive';
-import { OcxContentComponent } from './content.component';
+import { OcxContentDirective } from '../../directives/content.directive'
+import { OcxContentComponent } from './content.component'
 import { moduleMetadata, Meta } from '@storybook/angular'
 
 export default {
@@ -7,9 +7,7 @@ export default {
   component: OcxContentComponent,
   decorators: [
     moduleMetadata({
-      declarations: [
-        OcxContentDirective,
-      ]
+      declarations: [OcxContentDirective],
     }),
   ],
 } as Meta<OcxContentComponent>
@@ -26,7 +24,7 @@ export const WithTitle = {
     `,
   }),
   args: {
-    title: 'My Title'
+    title: 'My Title',
   },
 }
 
@@ -43,6 +41,22 @@ export const WithoutTitle = {
   }),
 }
 
+export const WithStyleClass = {
+  render: (args: OcxContentComponent) => ({
+    props: {
+      ...args,
+    },
+    template: `
+        <ocx-content styleClass="${args.styleClass}">
+            <p>Content inside of ocx-content with styleClass</p>
+        </ocx-content>
+    `,
+  }),
+  args: {
+    styleClass: 'color: red',
+  },
+}
+
 export const DirectiveOnly = {
   render: (args: OcxContentComponent) => ({
     props: {
@@ -55,6 +69,6 @@ export const DirectiveOnly = {
     `,
   }),
   args: {
-    title: 'My Title'
+    title: 'My Title',
   },
 }

@@ -26,32 +26,32 @@ const Template: StoryFn<LifecycleComponent> = (args: LifecycleComponent) => ({
 })
 
 const mockData: LifecycleStep[] = [
-    {
-        id: "todo",
-        title: "ToDo"
-    },
-    {
-        id: "in_progress",
-        title: "In Progress",
-        details: "This event is currently in progress"
-    },
-    {
-        id: "done",
-        title: "Done"
-    }
+  {
+    id: 'todo',
+    title: 'ToDo',
+  },
+  {
+    id: 'in_progress',
+    title: 'In Progress',
+    details: 'This event is currently in progress',
+  },
+  {
+    id: 'done',
+    title: 'Done',
+  },
 ]
 
 export const WithoutHighlightedStep = {
   render: Template,
   args: {
-    steps: mockData
-  }
+    steps: mockData,
+  },
 }
 
 export const WithHighlightedStep = {
-    render: Template,
-    args: {
-      steps: mockData,
-      activeStepId: 'in_progress'
-    }
-  }
+  render: Template,
+  args: {
+    steps: mockData,
+    activeStepId: 'in_progress',
+  },
+}

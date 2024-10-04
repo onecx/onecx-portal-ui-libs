@@ -6,9 +6,6 @@ export interface LifecycleStep {
   details?: string
 }
 
-/**
- * @deprecated This component was moved to angular-accelerator
- */
 @Component({
   selector: 'ocx-lifecycle',
   templateUrl: './lifecycle.component.html',
