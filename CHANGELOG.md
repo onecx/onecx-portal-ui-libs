@@ -1,3 +1,9 @@
+## [5.15.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.14.0...v5.15.0) (2024-10-04)
+
+### Features
+
+* commit for release ([#522](https://github.com/onecx/onecx-portal-ui-libs/issues/522)) ([395c3b8](https://github.com/onecx/onecx-portal-ui-libs/commit/395c3b8ee7fb1adefe21493726d71b7579eb4a85))
+
 ## [5.14.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.13.0...v5.14.0) (2024-10-02)
 
 ### Features
