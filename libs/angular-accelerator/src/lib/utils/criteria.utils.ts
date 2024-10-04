@@ -1,5 +1,4 @@
 import { QueryList } from '@angular/core'
-import { FormGroup } from '@angular/forms'
 import { getUTCDateWithoutTimezoneIssues, isValidDate } from '@onecx/accelerator'
 import { Calendar } from 'primeng/calendar'
 
