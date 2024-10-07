@@ -19,6 +19,6 @@ export interface NestedKeyConfiguration {
     [key: string]: (string | number | NestedKeyConfiguration)[] | CommonKeyConfigurationTypes
   }
 
-export function castToNestedKeyConfiguration(nestedKeyConfiguration: (string | NestedKeyConfiguration)[]): KeyConfiguration[] {
+export function createNestedKeyConfiguration(nestedKeyConfiguration: (string | NestedKeyConfiguration)[]): KeyConfiguration[] {
   return nestedKeyConfiguration as KeyConfiguration[]
 }
