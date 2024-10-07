@@ -1,20 +1,32 @@
 import {
+  AfterContentInit,
   AfterViewInit,
   Component,
   ContentChild,
+  ContentChildren,
   ElementRef,
   EventEmitter,
   Input,
   Output,
+  QueryList,
   TemplateRef,
   ViewChild,
 } from '@angular/core'
 import { Action } from '../page-header/page-header.component'
-import { SearchConfigInfo } from '../../model/search-config-info'
+import { FormControlName, FormGroup, FormGroupDirective } from '@angular/forms'
+import { Observable, combineLatest, debounceTime, map, of, startWith } from 'rxjs'
+import { getLocation } from '@onecx/accelerator'
 
 export interface SearchHeaderComponentState {
   activeViewMode?: 'basic' | 'advanced'
-  selectedSearchConfig?: SearchConfigInfo
+  selectedSearchConfig?: string | null
+}
+
+export interface SearchConfigData {
+  name: string | undefined
+  fieldValues: { [key: string]: string }
+  displayedColumnsIds: string[]
+  viewMode: 'basic' | 'advanced'
 }
 
 /**
@@ -26,9 +38,9 @@ export interface SearchHeaderComponentState {
 @Component({
   selector: 'ocx-search-header',
   templateUrl: './search-header.component.html',
+  providers: [],
 })
-export class SearchHeaderComponent implements AfterViewInit {
-  @Input() searchConfigs: SearchConfigInfo[] | undefined
+export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
   @Input() header = ''
 
   /**
@@ -42,7 +54,22 @@ export class SearchHeaderComponent implements AfterViewInit {
     this.header = value
   }
   @Input() subheader: string | undefined
-  @Input() viewMode: 'basic' | 'advanced' = 'basic'
+  _viewMode: 'basic' | 'advanced' = 'basic'
+  @Input()
+  get viewMode(): 'basic' | 'advanced' {
+    return this._viewMode
+  }
+  set viewMode(viewMode: 'basic' | 'advanced') {
+    if (this.viewMode !== viewMode) {
+      this._viewMode = viewMode
+      this.viewModeChanged?.emit(this.viewMode)
+      this.componentStateChanged.emit({
+        activeViewMode: this.viewMode,
+      })
+      this.updateHeaderActions()
+      setTimeout(() => this.addKeyUpEventListener())
+    }
+  }
   @Input() manualBreadcrumbs = false
   _actions: Action[] = []
   @Input()
@@ -53,12 +80,14 @@ export class SearchHeaderComponent implements AfterViewInit {
     this._actions = value
     this.updateHeaderActions()
   }
+  @Input() searchConfigPermission: string | undefined
   @Input() searchButtonDisabled = false
   @Input() resetButtonDisabled = false
+  @Input() pageName: string | undefined = getLocation().applicationPath
 
   @Output() searched: EventEmitter<any> = new EventEmitter()
   @Output() resetted: EventEmitter<any> = new EventEmitter()
-  @Output() selectedSearchConfigChanged: EventEmitter<SearchConfigInfo> = new EventEmitter()
+  @Output() selectedSearchConfigChanged: EventEmitter<SearchConfigData | undefined> = new EventEmitter()
   @Output() viewModeChanged: EventEmitter<'basic' | 'advanced'> = new EventEmitter()
   @Output() componentStateChanged: EventEmitter<SearchHeaderComponentState> = new EventEmitter()
   @ContentChild('additionalToolbarContent')
@@ -74,10 +103,49 @@ export class SearchHeaderComponent implements AfterViewInit {
     return this.additionalToolbarContentLeft
   }
 
+  get searchConfigChangeObserved(): boolean {
+    return this.selectedSearchConfigChanged.observed
+  }
+
+  @ContentChild(FormGroupDirective) formGroup: FormGroup | undefined
+  @ContentChildren(FormControlName, { descendants: true }) visibleFormControls!: QueryList<FormControlName>
+
   @ViewChild('searchParameterFields') searchParameterFields: ElementRef | undefined
 
   hasAdvanced = false
   headerActions: Action[] = []
+
+  fieldValues$: Observable<{ [key: string]: unknown }> | undefined = of({})
+  searchConfigChangedSlotEmitter: EventEmitter<SearchConfigData | undefined> = new EventEmitter()
+
+  constructor() {
+    this.searchConfigChangedSlotEmitter.subscribe((config) => {
+      this.componentStateChanged.emit({
+        selectedSearchConfig: config?.name ?? null,
+      })
+      this.selectedSearchConfigChanged.emit(config)
+    })
+  }
+
+  ngAfterContentInit(): void {
+    if (this.formGroup) {
+      this.fieldValues$ = combineLatest([
+        this.formGroup.valueChanges.pipe(startWith({})),
+        this.visibleFormControls.changes.pipe(startWith(null)),
+      ]).pipe(
+        debounceTime(100),
+        map(([values, _]) =>
+          Object.entries(values ?? {}).reduce(
+            (acc, [key, value]) => ({
+              ...acc,
+              [key]: this.isVisible(key) ? value || undefined : undefined,
+            }),
+            {}
+          )
+        )
+      )
+    }
+  }
 
   ngAfterViewInit(): void {
     this.addKeyUpEventListener()
@@ -85,12 +153,6 @@ export class SearchHeaderComponent implements AfterViewInit {
 
   toggleViewMode() {
     this.viewMode = this.viewMode === 'basic' ? 'advanced' : 'basic'
-    this.viewModeChanged?.emit(this.viewMode)
-    this.componentStateChanged.emit({
-      activeViewMode: this.viewMode
-    })
-    this.updateHeaderActions()
-    setTimeout(() => this.addKeyUpEventListener())
   }
 
   onResetClicked() {
@@ -137,10 +199,9 @@ export class SearchHeaderComponent implements AfterViewInit {
     }
   }
 
-  confirmSearchConfig(searchConfig: SearchConfigInfo) {
-    this.selectedSearchConfigChanged?.emit(searchConfig)
-    this.componentStateChanged.emit({
-      selectedSearchConfig: searchConfig
-    })
+  private isVisible(control: string) {
+    return this.visibleFormControls.some(
+      (formControl) => formControl.name !== null && String(formControl.name) === control
+    )
   }
 }

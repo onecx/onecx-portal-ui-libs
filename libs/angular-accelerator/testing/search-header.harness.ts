@@ -1,14 +1,12 @@
 import { ComponentHarness } from '@angular/cdk/testing'
 import { PButtonHarness } from '@onecx/angular-testing'
 import { PageHeaderHarness } from './page-header.harness'
-import { SearchConfigHarness } from './search-config.harness'
 import { MoreActionsMenuButtonHarness } from './more-actions-menu-button.harness'
 
 export class SearchHeaderHarness extends ComponentHarness {
   static hostSelector = 'ocx-search-header'
 
   getPageHeader = this.locatorFor(PageHeaderHarness)
-  getSearchConfig = this.locatorFor(SearchConfigHarness)
   getSearchButton = this.locatorFor(
     PButtonHarness.with({
       id: 'searchButton',

@@ -7,6 +7,7 @@ import {
   Input,
   OnDestroy,
   OnInit,
+  Optional,
   QueryList,
   TemplateRef,
   Type,
@@ -118,8 +119,6 @@ export class SlotComponent implements OnInit, OnDestroy {
     })
   }
 
-  updateDataSub: Subscription | undefined
-
   _viewContainers$ = new BehaviorSubject<QueryList<ViewContainerRef> | undefined>(undefined)
   @ViewChildren('slot', { read: ViewContainerRef })
   set viewContainers(value: QueryList<ViewContainerRef>) {
@@ -131,9 +130,13 @@ export class SlotComponent implements OnInit, OnDestroy {
   subscription: Subscription | undefined
   components$: Observable<SlotComponentConfiguration[]> | undefined
 
-  constructor(@Inject(SLOT_SERVICE) private slotService: SlotService) {}
+  constructor(@Optional() @Inject(SLOT_SERVICE) private slotService?: SlotService) {}
 
   ngOnInit(): void {
+    if (!this.slotService) {
+      console.error(`SLOT_SERVICE token was not provided. ${this.name} slot will not be filled with data.`)
+      return
+    }
     this.components$ = this.slotService.getComponentsForSlot(this.name)
     combineLatest([this._assignedComponents$, this._inputs$, this._outputs$]).subscribe(
       ([components, inputs, outputs]) => {

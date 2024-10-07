@@ -22,7 +22,6 @@ import { ButtonDialogComponent } from './components/button-dialog/button-dialog.
 import { DialogMessageContentComponent } from './components/button-dialog/dialog-message-content/dialog-message-content.component'
 import { OcxContentContainerComponent } from './components/content-container/content-container.component'
 import { OcxContentComponent } from './components/content/content.component'
-import { CreateOrEditSearchConfigDialogComponent } from './components/create-or-edit-search-config-dialog/create-or-edit-search-config-dialog.component'
 import { ColumnTogglerComponent } from './components/data-view-controls/column-toggler-component/column-toggler.component'
 import { DataViewControlsComponent } from './components/data-view-controls/data-view-controls.component'
 import { ViewTemplatePickerComponent } from './components/data-view-controls/view-template-picker/view-template-picker.component'
@@ -113,7 +112,6 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     OcxContentContainerDirective,
     OcxContentComponent,
     OcxContentContainerComponent,
-    CreateOrEditSearchConfigDialogComponent,
     LifecycleComponent,
   ],
   providers: [
@@ -169,7 +167,6 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     OcxContentContainerDirective,
     OcxContentComponent,
     OcxContentContainerComponent,
-    CreateOrEditSearchConfigDialogComponent,
     LifecycleComponent,
   ],
 })

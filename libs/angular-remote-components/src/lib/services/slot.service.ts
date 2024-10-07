@@ -59,7 +59,11 @@ export class SlotService implements SlotServiceInterface {
 
   isSomeComponentDefinedForSlot(slotName: string): Observable<boolean> {
     return this.remoteComponents$.pipe(
-      map((remoteComponentsInfo) => remoteComponentsInfo.slots.some((slotMapping) => slotMapping.name === slotName))
+      map((remoteComponentsInfo) =>
+        remoteComponentsInfo.slots.some(
+          (slotMapping) => slotMapping.name === slotName && slotMapping.components.length > 0
+        )
+      )
     )
   }
 
