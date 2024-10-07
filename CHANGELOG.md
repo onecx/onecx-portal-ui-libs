@@ -1,3 +1,9 @@
+## [5.16.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.15.0...v5.16.0) (2024-10-07)
+
+### Features
+
+* search config slot in search header and column group slot in interactive-data-view ([#369](https://github.com/onecx/onecx-portal-ui-libs/issues/369)) ([bbf7073](https://github.com/onecx/onecx-portal-ui-libs/commit/bbf7073e87496d1efb8faeafa846294c1e559ea2))
+
 ## [5.15.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.14.0...v5.15.0) (2024-10-04)
 
 ### Features
