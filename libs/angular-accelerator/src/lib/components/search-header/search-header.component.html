@@ -5,8 +5,20 @@
   [actions]="headerActions"
 >
   <ng-template #additionalToolbarContentLeft>
-    <ocx-search-config [searchConfigs]="searchConfigs" (selectedSearchConfigChanged)="confirmSearchConfig($event)">
-    </ocx-search-config>
+    <ng-container *ngIf="searchConfigChangeObserved && pageName">
+      <ocx-slot
+        *ocxIfPermission="searchConfigPermission"
+        name="onecx-shell-search-config"
+        [inputs]="{ pageName: pageName, currentFieldValues: fieldValues$ | async, viewMode: viewMode }"
+        [outputs]="{ searchConfigSelected: searchConfigChangedSlotEmitter }"
+      >
+        <ng-template #skeleton>
+          <div class="flex">
+            <p-skeleton width="18rem" height="3rem"></p-skeleton>
+          </div>
+        </ng-template>
+      </ocx-slot>
+    </ng-container>
     <ng-container
       *ngIf="_additionalToolbarContentLeft"
       [ngTemplateOutlet]="_additionalToolbarContentLeft"
@@ -28,9 +40,11 @@
         (onClick)="onResetClicked()"
         label="{{ 'OCX_SEARCH_HEADER.RESET_BUTTON.TEXT' | translate }}"
         icon="pi pi-eraser"
-        [attr.aria-label]="'OCX_SEARCH_HEADER.RESET_BUTTON.DETAIL' | translate"
-        title="{{ 'OCX_SEARCH_HEADER.RESET_BUTTON.DETAIL' | translate }}"
+        pTooltip="{{ 'OCX_SEARCH_HEADER.RESET_BUTTON.DETAIL' | translate }}"
+        tooltipPosition="top"
+        tooltipEvent="hover"
         [disabled]="resetButtonDisabled"
+        [ariaLabel]="'OCX_SEARCH_HEADER.RESET_BUTTON.ARIA_LABEL' | translate"
       >
       </p-button>
 
@@ -39,9 +53,11 @@
         (onClick)="onSearchClicked()"
         label="{{ 'OCX_SEARCH_HEADER.SEARCH_BUTTON.TEXT' | translate }}"
         icon="pi pi-search"
-        [attr.aria-label]="'OCX_SEARCH_HEADER.SEARCH_BUTTON.DETAIL' | translate"
-        title="{{ 'OCX_SEARCH_HEADER.SEARCH_BUTTON.DETAIL' | translate }}"
-        [disabled]="searchButtonDisabled"
+        pTooltip="{{ 'OCX_SEARCH_HEADER.SEARCH_BUTTON.DETAIL' | translate }}"
+        tooltipPosition="top"
+        tooltipEvent="hover"
+        [disabled]="searchButtonDisabled || formGroup?.invalid"
+        [ariaLabel]="'OCX_SEARCH_HEADER.SEARCH_BUTTON.ARIA_LABEL' | translate"
       >
       </p-button>
     </div>

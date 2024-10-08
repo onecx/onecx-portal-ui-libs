@@ -12,7 +12,7 @@ import { SelectButtonModule } from 'primeng/selectbutton'
 import { DiagramHarness, TestbedHarnessEnvironment } from '../../../../testing'
 import { DiagramType } from '../../model/diagram-type'
 import { DiagramComponent, DiagramLayouts } from './diagram.component'
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 
 describe('DiagramComponent', () => {
   let translateService: TranslateService
@@ -35,18 +35,20 @@ describe('DiagramComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [DiagramComponent],
-    imports: [NoopAnimationsModule,
+      declarations: [DiagramComponent],
+      imports: [
+        NoopAnimationsModule,
         ChartModule,
         MessageModule,
         SelectButtonModule,
         FormsModule,
         TranslateTestingModule.withTranslations({
-            en: require('./../../../../assets/i18n/en.json'),
-            de: require('./../../../../assets/i18n/de.json'),
-        })],
-    providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
-}).compileComponents()
+          en: require('./../../../../assets/i18n/en.json'),
+          de: require('./../../../../assets/i18n/de.json'),
+        }),
+      ],
+      providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()],
+    }).compileComponents()
 
     fixture = TestBed.createComponent(DiagramComponent)
     component = fixture.componentInstance
@@ -118,11 +120,19 @@ describe('DiagramComponent', () => {
 
   it('should render a diagramType select button if supportedDiagramTypes is specified', async () => {
     const expectedDiagramLayouts: DiagramLayouts[] = [
-      { icon: PrimeIcons.CHART_PIE, layout: DiagramType.PIE, titleKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.PIE' },
       {
+        id: 'diagram-pie',
+        icon: PrimeIcons.CHART_PIE,
+        layout: DiagramType.PIE,
+        tooltipKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.PIE',
+        labelKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.PIE',
+      },
+      {
+        id: 'diagram-horizontal-bar',
         icon: PrimeIcons.BARS,
         layout: DiagramType.HORIZONTAL_BAR,
-        titleKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.HORIZONTAL_BAR',
+        tooltipKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.HORIZONTAL_BAR',
+        labelKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.HORIZONTAL_BAR',
       },
     ]
 
@@ -169,16 +179,26 @@ describe('DiagramComponent', () => {
 
   it('should dynamically add/remove options to/from the diagramType select button', async () => {
     const allDiagramLayouts: DiagramLayouts[] = [
-      { icon: PrimeIcons.CHART_PIE, layout: DiagramType.PIE, titleKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.PIE' },
       {
-        icon: PrimeIcons.BARS,
-        layout: DiagramType.HORIZONTAL_BAR,
-        titleKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.HORIZONTAL_BAR',
+        id: 'diagram-pie',
+        icon: PrimeIcons.CHART_PIE,
+        layout: DiagramType.PIE,
+        tooltipKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.PIE',
+        labelKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.PIE',
       },
       {
+        id: 'diagram-horizontal-bar',
+        icon: PrimeIcons.BARS,
+        layout: DiagramType.HORIZONTAL_BAR,
+        tooltipKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.HORIZONTAL_BAR',
+        labelKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.HORIZONTAL_BAR',
+      },
+      {
+        id: 'diagram-vertical-bar',
         icon: PrimeIcons.CHART_BAR,
         layout: DiagramType.VERTICAL_BAR,
-        titleKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.VERTICAL_BAR',
+        tooltipKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.VERTICAL_BAR',
+        labelKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.VERTICAL_BAR',
       },
     ]
 

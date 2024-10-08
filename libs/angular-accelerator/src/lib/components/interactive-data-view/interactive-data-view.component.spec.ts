@@ -38,9 +38,13 @@ import {
   DefaultGridItemHarness,
   DefaultListItemHarness,
   InteractiveDataViewHarness,
+  SlotHarness,
 } from '../../../../testing'
 import { DateUtils } from '../../utils/dateutils'
 import { provideRouter } from '@angular/router'
+import { SlotService } from '@onecx/angular-remote-components'
+import { SlotServiceMock } from '@onecx/angular-remote-components/mocks'
+import { IfPermissionDirective } from '../../directives/if-permission.directive'
 
 describe('InteractiveDataViewComponent', () => {
   const mutationObserverMock = jest.fn(function MutationObserver(callback) {
@@ -63,6 +67,7 @@ describe('InteractiveDataViewComponent', () => {
   let deleteItemEvent: RowListGridData | undefined
 
   let dateUtils: DateUtils
+  let slotService: SlotServiceMock
 
   const mockData = [
     {
@@ -229,6 +234,7 @@ describe('InteractiveDataViewComponent', () => {
         DataViewComponent,
         ColumnGroupSelectionComponent,
         CustomGroupColumnSelectorComponent,
+        IfPermissionDirective,
       ],
       imports: [
         TranslateModule.forRoot(),
@@ -244,6 +250,10 @@ describe('InteractiveDataViewComponent', () => {
       ],
       providers: [
         { provide: UserService, useClass: MockUserService },
+        {
+          provide: SlotService,
+          useClass: SlotServiceMock,
+        },
         provideHttpClient(withInterceptorsFromDi()),
         provideRouter([]),
         provideAppStateServiceMock(),
@@ -256,6 +266,7 @@ describe('InteractiveDataViewComponent', () => {
     component.editPermission = 'TEST_MGMT#TEST_EDIT'
     component.deletePermission = 'TEST_MGMT#TEST_DELETE'
     component.defaultGroupKey = 'PREDEFINED_GROUP.DEFAULT'
+    component.searchConfigPermission = 'PRODUCT#USE_SEARCHCONFIG'
     component.viewItem.subscribe((event) => (viewItemEvent = event))
     component.editItem.subscribe((event) => (editItemEvent = event))
     component.deleteItem.subscribe((event) => (deleteItemEvent = event))
@@ -270,6 +281,7 @@ describe('InteractiveDataViewComponent', () => {
     interactiveDataViewHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, InteractiveDataViewHarness)
 
     dateUtils = TestBed.inject(DateUtils)
+    slotService = TestBed.inject(SlotService) as any as SlotServiceMock
 
     viewItemEvent = undefined
     editItemEvent = undefined
@@ -290,9 +302,26 @@ describe('InteractiveDataViewComponent', () => {
     expect(dataLayoutSelection).toBeTruthy()
   })
 
+  it('should load column-group-selection slot', async () => {
+    slotService.assignComponentToSlot('column-group-selection', component.columnGroupSlotName)
+    const userService = TestBed.inject(UserService)
+    jest.spyOn(userService, 'hasPermission').mockReturnValue(true)
+    fixture.detectChanges()
+
+    const slot = await loader.getHarness(SlotHarness)
+    expect(slot).toBeTruthy()
+  })
+
   it('should load ColumnGroupSelectionDropdown', async () => {
     const columnGroupSelectionDropdown = await loader.getHarness(ColumnGroupSelectionHarness)
     expect(columnGroupSelectionDropdown).toBeTruthy()
+
+    slotService.assignComponentToSlot('column-group-selection', component.columnGroupSlotName)
+    const userService = TestBed.inject(UserService)
+    jest.spyOn(userService, 'hasPermission').mockReturnValue(false)
+
+    const columnGroupSelectionDropdownNoPermission = await loader.getHarness(ColumnGroupSelectionHarness)
+    expect(columnGroupSelectionDropdownNoPermission).toBeTruthy()
   })
 
   it('should load CustomGroupColumnSelector', async () => {
@@ -617,7 +646,7 @@ describe('InteractiveDataViewComponent', () => {
       ]
 
       const columnGroupSelectionDropdown = await loader.getHarness(
-        PDropdownHarness.with({ id: 'columnGroupSelectionDropdown' })
+        PDropdownHarness.with({ inputId: 'columnGroupSelectionDropdown' })
       )
       const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
       await dropdownItems[1].selectItem()
@@ -682,7 +711,7 @@ describe('InteractiveDataViewComponent', () => {
       ]
 
       const columnGroupSelectionDropdown = await loader.getHarness(
-        PDropdownHarness.with({ id: 'columnGroupSelectionDropdown' })
+        PDropdownHarness.with({ inputId: 'columnGroupSelectionDropdown' })
       )
       const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
       await dropdownItems[1].selectItem()
@@ -748,7 +777,7 @@ describe('InteractiveDataViewComponent', () => {
       ]
 
       const columnGroupSelectionDropdown = await loader.getHarness(
-        PDropdownHarness.with({ id: 'columnGroupSelectionDropdown' })
+        PDropdownHarness.with({ inputId: 'columnGroupSelectionDropdown' })
       )
       const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
       await dropdownItems[1].selectItem()
@@ -815,7 +844,7 @@ describe('InteractiveDataViewComponent', () => {
       ]
 
       const columnGroupSelectionDropdown = await loader.getHarness(
-        PDropdownHarness.with({ id: 'columnGroupSelectionDropdown' })
+        PDropdownHarness.with({ inputId: 'columnGroupSelectionDropdown' })
       )
       const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
       await dropdownItems[1].selectItem()
@@ -933,18 +962,18 @@ describe('InteractiveDataViewComponent', () => {
     it('should move item up in picklist active columns list', async () => {
       const spy = jest.spyOn(CustomGroupColumnSelectorComponent.prototype, 'onSaveClick')
       const expectedHeaders = [
-        'COLUMN_HEADER_NAME.DESCRIPTION',
         'COLUMN_HEADER_NAME.NAME',
+        'COLUMN_HEADER_NAME.DESCRIPTION',
         'COLUMN_HEADER_NAME.STATUS',
         'COLUMN_HEADER_NAME.RESPONSIBLE',
         'Actions',
       ]
       const expectedRowsData = [
-        ['', 'some name', 'some status', 'someone responsible'],
-        ['example description', 'example', 'status example', ''],
-        ['', 'name 1', 'status name 1', ''],
-        ['', 'name 2', 'status name 2', ''],
-        ['', 'name 3', 'status name 3', ''],
+        ['some name', '', 'some status', 'someone responsible'],
+        ['example', 'example description', 'status example', ''],
+        ['name 1', '', 'status name 1', ''],
+        ['name 2', '', 'status name 2', ''],
+        ['name 3', '', 'status name 3', ''],
       ]
       await activeColumnsList[1].selectItem()
       await sourceControlsButtons[0].click()
@@ -963,17 +992,17 @@ describe('InteractiveDataViewComponent', () => {
       const spy = jest.spyOn(CustomGroupColumnSelectorComponent.prototype, 'onSaveClick')
       const expectedHeaders = [
         'COLUMN_HEADER_NAME.NAME',
-        'COLUMN_HEADER_NAME.STATUS',
         'COLUMN_HEADER_NAME.DESCRIPTION',
+        'COLUMN_HEADER_NAME.STATUS',
         'COLUMN_HEADER_NAME.RESPONSIBLE',
         'Actions',
       ]
       const expectedRowsData = [
-        ['some name', 'some status', '', 'someone responsible'],
-        ['example', 'status example', 'example description', ''],
-        ['name 1', 'status name 1', '', ''],
-        ['name 2', 'status name 2', '', ''],
-        ['name 3', 'status name 3', '', ''],
+        ['some name', '', 'some status', 'someone responsible'],
+        ['example', 'example description', 'status example', ''],
+        ['name 1', '', 'status name 1', ''],
+        ['name 2', '', 'status name 2', ''],
+        ['name 3', '', 'status name 3', ''],
       ]
 
       await activeColumnsList[1].selectItem()
@@ -1114,7 +1143,7 @@ describe('InteractiveDataViewComponent', () => {
 
     beforeEach(async () => {
       dataLayoutSelection = await loader.getHarness(DataLayoutSelectionHarness)
-      
+
       const gridLayoutSelectionButton = await dataLayoutSelection.getGridLayoutSelectionButton()
       await gridLayoutSelectionButton?.click()
 
@@ -1453,7 +1482,7 @@ describe('InteractiveDataViewComponent', () => {
     it('should remain sorted after switching data view from table view to grid view and to list view', async () => {
       window.HTMLElement.prototype.scrollIntoView = jest.fn()
       const columnGroupSelectionDropdown = await loader.getHarness(
-        PDropdownHarness.with({ id: 'columnGroupSelectionDropdown' })
+        PDropdownHarness.with({ inputId: 'columnGroupSelectionDropdown' })
       )
       const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
       await dropdownItems[1].selectItem()
@@ -1482,7 +1511,7 @@ describe('InteractiveDataViewComponent', () => {
     it('should remain sorted after switching data view from table view to list view then sort again and switch to grid view', async () => {
       window.HTMLElement.prototype.scrollIntoView = jest.fn()
       const columnGroupSelectionDropdown = await loader.getHarness(
-        PDropdownHarness.with({ id: 'columnGroupSelectionDropdown' })
+        PDropdownHarness.with({ inputId: 'columnGroupSelectionDropdown' })
       )
       const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
       await dropdownItems[1].selectItem()
@@ -1585,7 +1614,7 @@ describe('InteractiveDataViewComponent', () => {
         },
       ]
       component.titleLineId = 'name'
-      
+
       fixture.detectChanges()
       await fixture.whenStable()
     }
@@ -1697,5 +1726,27 @@ describe('InteractiveDataViewComponent', () => {
         expect(await dataTable?.hasAmountOfDisabledActionButtons(0)).toBe(true)
       })
     })
+  })
+
+  it('should react on group selection change event emit', () => {
+    const columnsChangeSpy = jest.spyOn(component.displayedColumnsChange, 'emit')
+    const columnKeysChangeSpy = jest.spyOn(component.displayedColumnKeysChange, 'emit')
+
+    component.groupSelectionChangedSlotEmitter.emit({
+      activeColumns: [
+        {
+          id: 'first-col',
+        } as any,
+        {
+          id: 'second-col',
+        } as any,
+      ],
+      groupKey: 'my-search-config',
+    })
+
+    expect(component.displayedColumnKeys).toStrictEqual(['first-col', 'second-col'])
+    expect(component.selectedGroupKey).toBe('my-search-config')
+    expect(columnsChangeSpy).toHaveBeenCalled()
+    expect(columnKeysChangeSpy).toHaveBeenCalledWith(['first-col', 'second-col'])
   })
 })

@@ -3,17 +3,18 @@
     <p-selectButton
       [options]="shownDiagramTypes"
       [(ngModel)]="selectedDiagramType"
-      optionLabel="icon"
+      optionLabel="id"
       (onChange)="onDiagramTypeChanged($event)"
       name="diagram-type-select-button"
     >
       <ng-template let-item pTemplate>
         <i
           [class]="item.icon"
-          [pTooltip]="item.title || (item.titleKey | translate)"
+          [pTooltip]="item.tooltip || (item.tooltipKey | translate)"
           tooltipPosition="top"
           tooltipEvent="hover"
         ></i>
+        <label style="display: none" id="{{item.id}}"> {{item.label ? item.label : item.labelKey | translate}} </label>
       </ng-template>
     </p-selectButton>
   </div>

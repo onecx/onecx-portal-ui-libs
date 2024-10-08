@@ -17,14 +17,12 @@ export * from './lib/components/diagram/diagram.component'
 export * from './lib/components/group-by-count-diagram/group-by-count-diagram.component'
 export * from './lib/components/interactive-data-view/interactive-data-view.component'
 export * from './lib/components/page-header/page-header.component'
-export * from './lib/components/search-config/search-config.component'
 export * from './lib/components/search-header/search-header.component'
-export * from './lib/components/page-not-found/page-not-found.component'
+export * from './lib/components/data-loading-error/data-loading-error.component'
 
 // services
 export * from './lib/services/breadcrumb.service'
 export * from './lib/services/translation-cache.service'
-export * from './lib/services/app-config-service'
 
 // pipes
 export * from './lib/pipes/dynamic.pipe'
@@ -40,7 +38,6 @@ export * from './lib/model/data-table-column.model'
 export * from './lib/model/diagram-column'
 // export * from './lib/model/diagram-data'
 export * from './lib/model/diagram-type'
-export * from './lib/model/search-config-info'
 
 // core
 export * from './lib/angular-accelerator.module'
@@ -59,5 +56,7 @@ export * from './lib/utils/dateutils'
 export * from './lib/utils/objectutils'
 export * from './lib/utils/primeicon.utils'
 export * from './lib/utils/translate.combined.loader'
+export * from './lib/utils/create-remote-component-and-mfe-translate-loader.utils'
 export * from './lib/utils/create-remote-component-translate-loader.utils'
 export * from './lib/utils/enum-to-dropdown-options.utils'
+export * from './lib/utils/criteria.utils'

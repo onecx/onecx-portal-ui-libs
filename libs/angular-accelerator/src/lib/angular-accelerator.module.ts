@@ -4,7 +4,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
 import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateModule } from '@ngx-translate/core'
 
-import { UserService } from '@onecx/angular-integration-interface'
+import { AppConfigService, UserService } from '@onecx/angular-integration-interface'
+import { AngularRemoteComponentsModule } from '@onecx/angular-remote-components'
 
 import { firstValueFrom, skip } from 'rxjs'
 import { AngularAcceleratorPrimeNgModule } from './angular-accelerator-primeng.module'
@@ -19,8 +20,7 @@ import { DiagramComponent } from './components/diagram/diagram.component'
 import { GroupByCountDiagramComponent } from './components/group-by-count-diagram/group-by-count-diagram.component'
 import { InteractiveDataViewComponent } from './components/interactive-data-view/interactive-data-view.component'
 import { PageHeaderComponent } from './components/page-header/page-header.component'
-import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component'
-import { SearchConfigComponent } from './components/search-config/search-config.component'
+import { DataLoadingErrorComponent } from './components/data-loading-error/data-loading-error.component'
 import { SearchHeaderComponent } from './components/search-header/search-header.component'
 import { AdvancedDirective } from './directives/advanced.directive'
 import { IfBreakpointDirective } from './directives/if-breakpoint.directive'
@@ -29,7 +29,6 @@ import { SrcDirective } from './directives/src.directive'
 import { TooltipOnOverflowDirective } from './directives/tooltipOnOverflow.directive'
 import { DynamicPipe } from './pipes/dynamic.pipe'
 import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
-import { AppConfigService } from './services/app-config-service'
 import { DynamicLocaleId } from './utils/dynamic-locale-id'
 
 export class AngularAcceleratorMissingTranslationHandler implements MissingTranslationHandler {
@@ -49,6 +48,7 @@ function appInitializer(userService: UserService) {
   imports: [
     CommonModule,
     AngularAcceleratorPrimeNgModule,
+    AngularRemoteComponentsModule,
     TranslateModule,
     FormsModule,
     RouterModule,
@@ -63,13 +63,12 @@ function appInitializer(userService: UserService) {
     DataTableComponent,
     DataViewComponent,
     InteractiveDataViewComponent,
-    SearchConfigComponent,
     PageHeaderComponent,
     DynamicPipe,
     SearchHeaderComponent,
     DiagramComponent,
     GroupByCountDiagramComponent,
-    PageNotFoundComponent,
+    DataLoadingErrorComponent,
     IfPermissionDirective,
     IfBreakpointDirective,
     SrcDirective,
@@ -96,6 +95,7 @@ function appInitializer(userService: UserService) {
     AppConfigService,
   ],
   exports: [
+    AngularRemoteComponentsModule,
     ColumnGroupSelectionComponent,
     CustomGroupColumnSelectorComponent,
     DataLayoutSelectionComponent,
@@ -103,11 +103,11 @@ function appInitializer(userService: UserService) {
     DataTableComponent,
     DataViewComponent,
     InteractiveDataViewComponent,
-    SearchConfigComponent,
     PageHeaderComponent,
     SearchHeaderComponent,
     DiagramComponent,
     GroupByCountDiagramComponent,
+    DataLoadingErrorComponent,
     IfPermissionDirective,
     IfBreakpointDirective,
     SrcDirective,

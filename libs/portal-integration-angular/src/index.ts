@@ -39,7 +39,6 @@ export * from './lib/core/components/button-dialog/dialog-message-content/dialog
 export * from './lib/core/components/loading-indicator/loading-indicator.component'
 export * from './lib/core/components/content-container/content-container.component'
 export * from './lib/core/components/content/content.component'
-export * from './lib/core/components/create-or-edit-search-config-dialog/create-or-edit-search-config-dialog.component'
 export * from './lib/core/components/lifecycle/lifecycle.component'
 
 // services
@@ -97,5 +96,5 @@ export {
   APP_CONFIG,
   AUTH_SERVICE,
   SANITY_CHECK,
-  APPLICATION_NAME
+  APPLICATION_NAME,
 } from '@onecx/angular-integration-interface'

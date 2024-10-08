@@ -1,6 +1,6 @@
-<span class="p-float-label">
+<p-floatLabel>
   <p-dropdown
-    id="columnGroupSelectionDropdown"
+    inputId="columnGroupSelectionDropdown"
     *ngIf="(allGroupKeys$ | async)?.length"
     (onClear)="clearGroupSelection()"
     (onChange)="changeGroupSelection($event)"
@@ -8,6 +8,7 @@
     [placeholder]="placeholderKey | translate"
     [showClear]="selectedGroupKey !== defaultGroupKey"
     [(ngModel)]="selectedGroupKey"
+    [ariaLabel]="'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABEL' | translate"
   >
     <ng-template let-item pTemplate="item"> {{ item ? (item | translate) : ''}} </ng-template>
     <ng-template let-item pTemplate="selectedItem"> {{ item ? (item | translate) : ''}} </ng-template>
@@ -15,4 +16,4 @@
   <label *ngIf="(allGroupKeys$ | async)?.length" for="columnGroupSelectionDropdown"
     >{{ ("OCX_CUSTOM_GROUP_COLUMN_SELECTOR.DROPDOWN_LABEL" | translate) }}</label
   >
-</span>
+</p-floatLabel>

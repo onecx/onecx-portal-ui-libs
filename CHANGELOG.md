@@ -1,3 +1,60 @@
+## [5.16.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.16.0...v5.16.1) (2024-10-08)
+
+### Bug Fixes
+
+* angular-remote-component referenced in package of angular-accelerator ([#529](https://github.com/onecx/onecx-portal-ui-libs/issues/529)) ([02eb3a4](https://github.com/onecx/onecx-portal-ui-libs/commit/02eb3a41c45cf937f2a706bd52c15603ff720189))
+
+## [5.16.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.15.0...v5.16.0) (2024-10-07)
+
+### Features
+
+* search config slot in search header and column group slot in interactive-data-view ([#369](https://github.com/onecx/onecx-portal-ui-libs/issues/369)) ([bbf7073](https://github.com/onecx/onecx-portal-ui-libs/commit/bbf7073e87496d1efb8faeafa846294c1e559ea2))
+
+## [5.15.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.14.0...v5.15.0) (2024-10-04)
+
+### Features
+
+* commit for release ([#522](https://github.com/onecx/onecx-portal-ui-libs/issues/522)) ([395c3b8](https://github.com/onecx/onecx-portal-ui-libs/commit/395c3b8ee7fb1adefe21493726d71b7579eb4a85))
+
+## [5.14.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.13.0...v5.14.0) (2024-10-02)
+
+### Features
+
+* added method to correct utc date ([#517](https://github.com/onecx/onecx-portal-ui-libs/issues/517)) ([6c68982](https://github.com/onecx/onecx-portal-ui-libs/commit/6c689829671c832ac3537f88477e643f65feafba))
+* button-dialog and data-view-controls accessibility ([#509](https://github.com/onecx/onecx-portal-ui-libs/issues/509)) ([2adece9](https://github.com/onecx/onecx-portal-ui-libs/commit/2adece90d2e24fea38c20031b2fcd3405c83847b))
+* increased accessibility of data list grid component ([#496](https://github.com/onecx/onecx-portal-ui-libs/issues/496)) ([3804dd6](https://github.com/onecx/onecx-portal-ui-libs/commit/3804dd6613834f999f3e809dc09580ac1c4a8e90))
+* interactive data view and its children accessibility ([#502](https://github.com/onecx/onecx-portal-ui-libs/issues/502)) ([f54c93f](https://github.com/onecx/onecx-portal-ui-libs/commit/f54c93f8c81401981e857348360e0e6a360d3a73))
+
+### Chores
+
+* **deps-dev:** bump @storybook/addon-a11y from 8.3.2 to 8.3.3 ([#512](https://github.com/onecx/onecx-portal-ui-libs/issues/512)) ([460807d](https://github.com/onecx/onecx-portal-ui-libs/commit/460807dad65b8d82d746882049049513a1520410))
+
+## [5.13.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.12.2...v5.13.0) (2024-09-27)
+
+### Features
+
+* add page not found component ([#495](https://github.com/onecx/onecx-portal-ui-libs/issues/495)) ([c94da15](https://github.com/onecx/onecx-portal-ui-libs/commit/c94da156f4f510070a59862ac7631804d6602ddd))
+* data table accessibility ([#497](https://github.com/onecx/onecx-portal-ui-libs/issues/497)) ([1d286a9](https://github.com/onecx/onecx-portal-ui-libs/commit/1d286a987d62d21ce732a41607ad6e8c83f3d98a))
+* diagram component accessibility improvements ([#484](https://github.com/onecx/onecx-portal-ui-libs/issues/484)) ([76c6540](https://github.com/onecx/onecx-portal-ui-libs/commit/76c6540322570c7d6292cb2216eba8a24e780b63))
+* page header accessibility improvements ([#489](https://github.com/onecx/onecx-portal-ui-libs/issues/489)) ([07d5a5b](https://github.com/onecx/onecx-portal-ui-libs/commit/07d5a5b30d84e1fc05069a3091ce55c48d556e44))
+* search header accessibility improvements ([#482](https://github.com/onecx/onecx-portal-ui-libs/issues/482)) ([a9b0e9b](https://github.com/onecx/onecx-portal-ui-libs/commit/a9b0e9bb8aa8699a3cd5033150f8477d47cbdf82))
+* select button accessibility workaround ([#500](https://github.com/onecx/onecx-portal-ui-libs/issues/500)) ([3c24a16](https://github.com/onecx/onecx-portal-ui-libs/commit/3c24a16a4db7a2d8e12e765e643f4cef0a5436ad))
+
+### Bug Fixes
+
+* add caret to @angular-architects/module-federation in peer depen… ([#494](https://github.com/onecx/onecx-portal-ui-libs/issues/494)) ([180df0e](https://github.com/onecx/onecx-portal-ui-libs/commit/180df0e89143d2f33a522c89aa97219e5332fe43))
+* css styling regarding accessibility ([#511](https://github.com/onecx/onecx-portal-ui-libs/issues/511)) ([c925e3c](https://github.com/onecx/onecx-portal-ui-libs/commit/c925e3cb3ffa3ab64168b1ecb357415c02c2153b))
+* refactor page not found component ([#501](https://github.com/onecx/onecx-portal-ui-libs/issues/501)) ([8c11c71](https://github.com/onecx/onecx-portal-ui-libs/commit/8c11c715d72fa1b398b7eafeff9d32076258d08c))
+
+### Chores
+
+* **deps-dev:** bump @storybook/addon-essentials from 8.3.2 to 8.3.3 ([#506](https://github.com/onecx/onecx-portal-ui-libs/issues/506)) ([8677eb3](https://github.com/onecx/onecx-portal-ui-libs/commit/8677eb349ea58f8db1ad145885bc95974f79c391))
+* **deps-dev:** bump @types/node from 22.5.4 to 22.7.1 ([#503](https://github.com/onecx/onecx-portal-ui-libs/issues/503)) ([935967d](https://github.com/onecx/onecx-portal-ui-libs/commit/935967d8f5b694327119d04100055f2868b97e30))
+* **deps-dev:** bump msw from 2.4.4 to 2.4.9 ([#498](https://github.com/onecx/onecx-portal-ui-libs/issues/498)) ([e8a20a6](https://github.com/onecx/onecx-portal-ui-libs/commit/e8a20a65b63e9eb64f025d68c37234b6e29bbea3))
+* **deps-dev:** bump postcss from 8.4.45 to 8.4.47 ([#499](https://github.com/onecx/onecx-portal-ui-libs/issues/499)) ([d1891c4](https://github.com/onecx/onecx-portal-ui-libs/commit/d1891c44354568424bf9df49591fff25b7b9e450))
+* **deps:** bump the angular group across 1 directory with 18 updates ([#510](https://github.com/onecx/onecx-portal-ui-libs/issues/510)) ([c0daf31](https://github.com/onecx/onecx-portal-ui-libs/commit/c0daf318fcc46205c5d4c21bc406f10be933050f))
+* **deps:** bump tslib from 2.6.3 to 2.7.0 ([#461](https://github.com/onecx/onecx-portal-ui-libs/issues/461)) ([b8cf166](https://github.com/onecx/onecx-portal-ui-libs/commit/b8cf1669fc597cd0923c6ad8c1aab753b6ae6676))
+
 ## [5.12.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.12.1...v5.12.2) (2024-09-24)
 
 ### Bug Fixes
