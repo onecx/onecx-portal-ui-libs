@@ -5,7 +5,8 @@
   "scripts": {
     "sass": "npx sass libs/portal-integration-angular/assets/styles.scss libs/portal-integration-angular/assets/output.css",
     "postinstall": "mkdir -p .nx",
-    "build": "nx run-many -t build"
+    "build": "nx run-many -t build",
+    "buildCopy": "nx run-many -t build && cp -r ./dist/libs/. ../../gitlabdevops/ibt-tsg-mgmt-page/node_modules/@onecx"
   },
   "private": true,
   "dependencies": {
