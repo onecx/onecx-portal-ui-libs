@@ -1,3 +1,15 @@
+## [5.16.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.16.0...v5.16.1) (2024-10-08)
+
+### Bug Fixes
+
+* angular-remote-component referenced in package of angular-accelerator ([#529](https://github.com/onecx/onecx-portal-ui-libs/issues/529)) ([02eb3a4](https://github.com/onecx/onecx-portal-ui-libs/commit/02eb3a41c45cf937f2a706bd52c15603ff720189))
+
+## [5.16.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.15.0...v5.16.0) (2024-10-07)
+
+### Features
+
+* search config slot in search header and column group slot in interactive-data-view ([#369](https://github.com/onecx/onecx-portal-ui-libs/issues/369)) ([bbf7073](https://github.com/onecx/onecx-portal-ui-libs/commit/bbf7073e87496d1efb8faeafa846294c1e559ea2))
+
 ## [5.15.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.14.0...v5.15.0) (2024-10-04)
 
 ### Features

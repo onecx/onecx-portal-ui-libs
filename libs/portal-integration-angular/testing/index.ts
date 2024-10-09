@@ -1,7 +1,6 @@
 export * from './button-dialog.harness'
 export * from './content-container.harness'
 export * from './content.harness'
-export * from './create-or-edit-search-config-dialog.harness'
 export * from './dialog-message-content.harness'
 export * from './lifecycle.harness'
 
