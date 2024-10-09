@@ -1,10 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { LifecycleComponent, LifecycleStep } from './lifecycle.component'
 import { TimelineModule } from 'primeng/timeline'
-import { LifecycleHarness, TestbedHarnessEnvironment } from '../../../../../testing'
-import { PrimeNgModule } from '../../primeng.module'
+import { LifecycleHarness } from '../../../../testing/lifecycle.harness'
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { PortalCoreModule } from '../../portal-core.module'
 
 const mockSteps: LifecycleStep[] = [
   {
@@ -30,7 +29,7 @@ describe('LifecycleComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [LifecycleComponent],
-      imports: [TimelineModule, PrimeNgModule, BrowserAnimationsModule, PortalCoreModule],
+      imports: [TimelineModule, BrowserAnimationsModule],
     }).compileComponents()
 
     fixture = TestBed.createComponent(LifecycleComponent)

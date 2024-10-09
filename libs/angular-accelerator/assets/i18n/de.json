@@ -40,7 +40,8 @@
   "OCX_LIST_GRID_SORT": {
     "DROPDOWN": {
       "PLACEHOLDER": "Sortierung auswählen",
-      "ARIA_LABEL": "Sortieren nach"
+      "ARIA_LABEL": "Sortieren nach",
+      "LABEL": "Sortieren nach"
     },
     "TOGGLE_BUTTON": {
       "ASCENDING_TOOLTIP": "Aufsteigend",

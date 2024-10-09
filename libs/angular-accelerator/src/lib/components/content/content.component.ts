@@ -8,5 +8,10 @@ export class OcxContentComponent {
   /**
    * Optionally allows specifying a title for the content card
    */
-  @Input() title = '';
+  @Input() title = ''
+
+  /**
+   * Optionally allows specifying styles for the content card
+   */
+  @Input() styleClass = ''
 }
