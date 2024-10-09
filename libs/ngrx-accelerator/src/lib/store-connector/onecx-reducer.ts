@@ -5,7 +5,7 @@ import { OneCxState } from './onecx-state'
 export const oneCxReducer = createReducer<OneCxState>(
   {},
   on(
-    OneCxActions.onecxNavigated,
+    OneCxActions.navigated,
     (state: OneCxState, action): OneCxState => ({
       ...state,
       location: action.location,
