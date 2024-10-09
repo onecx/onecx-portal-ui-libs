@@ -40,8 +40,8 @@
   --menu-bg-color: #ff00ff;
   --menu-item-text-color: var(--text-color, #000000);
   --menu-item-hover-bg-color: rgb(0 0 0 / 4%);
-  --menu-active-item-bg-color: var(--menu-item-hover-bg-color);
   --menu-active-item-text-color: var(--menu-item-text-color);
+  --menu-active-item-bg-color: var(--menu-item-hover-bg-color);
   --inline-menu-border-color: var(--divider-color);
   --mobile-break-point: #{$mobileBreakpoint};
   --submenu-shadow: #{$submenuShadow};

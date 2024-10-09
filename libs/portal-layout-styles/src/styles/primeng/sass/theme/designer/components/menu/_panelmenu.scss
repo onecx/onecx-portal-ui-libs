@@ -1,74 +1,64 @@
 .p-panelmenu {
   .p-panelmenu-header {
-    .p-panelmenu-header-action {
-      padding: var(--accordion-header-padding);
+    outline: 0 none;
+
+    .p-panelmenu-header-content {
       border: var(--accordion-header-border);
       color: var(--text-color);
       background: var(--accordion-header-bg);
-      font-weight: var(--accordion-header-font-weight);
       border-radius: var(--border-radius);
       transition: var(--list-item-transition);
 
-      chevronrighticon, chevrondownicon {
-        margin-right: var(--inline-spacing);
-      }
+      .p-panelmenu-header-action {
+        color: var(--text-color);
+        padding: var(--accordion-header-padding);
+        font-weight: var(--accordion-header-font-weight);
 
-      .p-menuitem-icon {
-        margin-right: var(--inline-spacing);
-      }
+        .p-submenu-icon {
+            margin-right: var(--inline-spacing);
+        }
 
-      &:focus {
-        @include focused();
-      }
-    }
+        .p-menuitem-icon {
+            margin-right: var(--inline-spacing);
+        }
 
-    > a {
-      padding: var(--accordion-header-padding);
-      border: var(--accordion-header-border);
-      color: var(--text-color);
-      background: var(--accordion-header-bg);
-      font-weight: var(--accordion-header-font-weight);
-      border-radius: var(--border-radius);
-      transition: var(--list-item-transition);
-
-      .p-panelmenu-icon {
-        margin-right: var(--inline-spacing);
-      }
-
-      .p-menuitem-icon {
-        margin-right: var(--inline-spacing);
-      }
-      &:focus {
-        @include focused();
+        &:hover {
+          background: var(--menuitem-hover-bg);
+        }
       }
     }
+      
+    &:not(.p-disabled) {
+      &:focus-visible {
+          .p-panelmenu-header-content {
+              @include focused-inset();
+          }
+        }
+    }
 
-    &:not(.p-highlight):not(.p-disabled) {
-      > a:hover {
+    &:not(.p-highlight):not(.p-disabled):hover {
+      .p-panelmenu-header-content {
         background: var(--accordion-header-hover-bg);
         border-color: var(--accordion-header-hover-border-color);
         color: var(--text-color);
       }
     }
 
-    &.p-highlight {
-      margin-bottom: 0;
-
-      > a {
-        background: var(--accordion-header-active-bg);
-        border-color: var(--accordion-header-active-border-color);
-        color: var(--text-color);
-        border-bottom-right-radius: 0;
-        border-bottom-left-radius: 0;
+    &:not(.p-disabled).p-highlight {
+      .p-panelmenu-header-content {
+          background: var(--accordion-header-hover-bg);
+          border-color: var(--accordion-header-hover-border-color);
+          color: var(--text-color);
+          border-bottom-right-radius: 0;
+          border-bottom-left-radius: 0;
+          margin-bottom: 0;
       }
 
-      &:not(.p-disabled) {
-        > a {
-          &:hover {
-            border-color: var(--accordion-header-active-hover-border-color);
+      &:hover {
+        .p-panelmenu-header-content {
+            border-color: var(--accordion-header-hover-border-color);
             background: var(--accordion-header-active-hover-bg);
             color: var(--text-color);
-          }
         }
       }
     }
@@ -79,29 +69,35 @@
     border: var(--accordion-content-border);
     background: var(--accordion-content-bg);
     color: var(--text-color);
-    margin-bottom: var(--accordion-spacing);
     border-top: 0;
     border-top-right-radius: 0;
     border-top-left-radius: 0;
     border-bottom-right-radius: var(--border-radius);
-    border-bottom-left-radius: var(--border-radius);
+    border-bottom-left-radius :var(--border-radius);
 
-    .p-menuitem {
-      .p-menuitem-link {
-        @include menuitem-link();
-
-        chevronrighticon, chevrondownicon {
-          margin-right: var(--inline-spacing);
-        }
-
-        .p-panelmenu-icon {
-          margin-right: var(--inline-spacing);
-        }
-      }
+    .p-panelmenu-root-list {
+        outline: 0 none;
     }
 
-    .p-submenu-list:not(.p-panelmenu-root-submenu) {
-      padding: var(--tree-node-children-padding);
+    .p-menuitem {
+        @include menuitem();
+
+        .p-menuitem-content {
+            .p-menuitem-link { 
+                .p-submenu-icon {
+                    margin-right: var(--inline-spacing);
+                }
+            }
+        }
+    }
+
+    .p-menuitem-separator {
+        border-top: var(--divider);
+        margin: var(--menu-separator-margin);
+    }
+
+    .p-submenu-list:not(.p-panelmenu-root-list) {
+        padding: var(--tree-node-children-padding);
     }
   }
 
@@ -110,11 +106,7 @@
 
     @if $accordionSpacing == 0 {
       .p-panelmenu-header {
-        .p-panelmenu-header-action {
-          border-radius: 0;
-        }
-
-        > a {
+        .p-panelmenu-header-content {
           border-radius: 0;
         }
       }
@@ -125,17 +117,13 @@
 
       &:not(:first-child) {
         .p-panelmenu-header {
-          .p-panelmenu-header-action {
-            border-top: 0 none;
-          }
-
-          > a {
-            border-top: 0 none;
+          .p-panelmenu-header-content {
+              border-top: 0 none;
           }
 
           &:not(.p-highlight):not(.p-disabled):hover,
           &:not(.p-disabled).p-highlight:hover {
-            > a {
+            .p-panelmenu-header-content {
               border-top: 0 none;
             }
           }
@@ -144,26 +132,16 @@
 
       &:first-child {
         .p-panelmenu-header {
-          .p-panelmenu-header-action {
-            border-top-right-radius: var(--border-radius);
-            border-top-left-radius: var(--border-radius);
-          }
-
-          > a {
-            border-top-right-radius: var(--border-radius);
-            border-top-left-radius: var(--border-radius);
+          .p-panelmenu-header-content {
+              border-top-right-radius: var(--border-radius);
+              border-top-left-radius: var(--border-radius);
           }
         }
       }
 
       &:last-child {
         .p-panelmenu-header:not(.p-highlight) {
-          .p-panelmenu-header-action {
-            border-bottom-right-radius: var(--border-radius);
-            border-bottom-left-radius: var(--border-radius);
-          }
-
-          > a {
+          .p-panelmenu-header-content {
             border-bottom-right-radius: var(--border-radius);
             border-bottom-left-radius: var(--border-radius);
           }
@@ -174,6 +152,6 @@
           border-bottom-left-radius: var(--border-radius);
         }
       }
-    }
+    } 
   }
 }
