@@ -89,7 +89,7 @@ export const WithNestedOCXContentContainer = {
 }
 
 export const WithStyleClass = {
-  render: (args: OcxContentComponent) => ({
+  render: (args: OcxContentContainerComponent) => ({
     props: {
       ...args,
     },
@@ -100,7 +100,7 @@ export const WithStyleClass = {
     `,
   }),
   args: {
-    styleClass: 'color: red',
+    styleClass: 'py-4',
   },
 }
 

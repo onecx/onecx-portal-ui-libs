@@ -47,13 +47,14 @@ export const WithStyleClass = {
       ...args,
     },
     template: `
-        <ocx-content styleClass="${args.styleClass}">
+        <ocx-content title="${args.title}" styleClass="${args.styleClass}">
             <p>Content inside of ocx-content with styleClass</p>
         </ocx-content>
     `,
   }),
   args: {
-    styleClass: 'color: red',
+    title: 'My Title',
+    styleClass: 'py-4',
   },
 }
 

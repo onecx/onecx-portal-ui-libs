@@ -47,4 +47,11 @@ describe('OcxContentContainerComponent', () => {
     expect(await ocxContentContainerHarness.getLayout()).toEqual('vertical')
     expect(await ocxContentContainerHarness.getBreakpoint()).toBeUndefined()
   })
+
+  it('should render a container with a class, when given a styleClass via input', async () => {
+    component.styleClass = 'py-4'
+
+    const expectedStyleClasses = ['flex', 'gap-3', 'flex-column', 'py-4']
+    expect(await ocxContentHarness.getContentClasses()).toEqual(expectedStyleClasses)
+  })
 })

@@ -42,4 +42,11 @@ describe('OcxContentComponent', () => {
     expect(await ocxContentHarness.getTitle()).toEqual(testComponentTitle)
     expect(await ocxContentHarness.getTitleClasses()).toEqual(expectedTitleClasses)
   })
+
+  it('should render a ocxContent card with a class, when given a styleClass via input', async () => {
+    component.styleClass = 'py-4'
+
+    const expectedStyleClasses = ['card', 'py-4']
+    expect(await ocxContentHarness.getContentClasses()).toEqual(expectedStyleClasses)
+  })
 })
