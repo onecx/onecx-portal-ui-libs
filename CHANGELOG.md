@@ -1,3 +1,17 @@
+## [5.17.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.16.1...v5.17.0) (2024-10-09)
+
+### Features
+
+* add util for using nested key definitions in ngrx-local-storage-sync ([#519](https://github.com/onecx/onecx-portal-ui-libs/issues/519)) ([81137cf](https://github.com/onecx/onecx-portal-ui-libs/commit/81137cf258bce2d8b3f9dbbe1e66eeb16bb1abf9))
+* menu focus should be darker ([#531](https://github.com/onecx/onecx-portal-ui-libs/issues/531)) ([3993c50](https://github.com/onecx/onecx-portal-ui-libs/commit/3993c50746e7893981d165891bf42f0c71bccb02))
+* shell base variables fixed ([#530](https://github.com/onecx/onecx-portal-ui-libs/issues/530)) ([3825629](https://github.com/onecx/onecx-portal-ui-libs/commit/382562995f74f728dbb02c833cfbc7bb3a309be4))
+
+## [5.16.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.16.0...v5.16.1) (2024-10-08)
+
+### Bug Fixes
+
+* angular-remote-component referenced in package of angular-accelerator ([#529](https://github.com/onecx/onecx-portal-ui-libs/issues/529)) ([02eb3a4](https://github.com/onecx/onecx-portal-ui-libs/commit/02eb3a41c45cf937f2a706bd52c15603ff720189))
+
 ## [5.16.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.15.0...v5.16.0) (2024-10-07)
 
 ### Features
