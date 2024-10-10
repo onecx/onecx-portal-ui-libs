@@ -1,3 +1,10 @@
+## [5.17.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.17.1...v5.17.2) (2024-10-10)
+
+### Bug Fixes
+
+* app config service exported correctly ([#537](https://github.com/onecx/onecx-portal-ui-libs/issues/537)) ([b05e319](https://github.com/onecx/onecx-portal-ui-libs/commit/b05e31969ddcf7bb2cf5217c08ca193464a09cae))
+* only display column group selection on table view ([#535](https://github.com/onecx/onecx-portal-ui-libs/issues/535)) ([0a40237](https://github.com/onecx/onecx-portal-ui-libs/commit/0a40237548235aa79547d338d3ccca1ba900c5c0))
+
 ## [5.17.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.17.0...v5.17.1) (2024-10-10)
 
 ### Bug Fixes
