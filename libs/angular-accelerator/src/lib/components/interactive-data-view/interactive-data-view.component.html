@@ -135,6 +135,7 @@
 
 <ng-template #defaultColumnGroupSelectionComponent>
   <ocx-column-group-selection
+    *ngIf="layout === 'table'"
     [selectedGroupKey]="selectedGroupKey ?? defaultGroupKey"
     [columns]="columns"
     [defaultGroupKey]="defaultGroupKey"
