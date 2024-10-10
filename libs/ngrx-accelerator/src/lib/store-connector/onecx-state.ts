@@ -1,8 +1,6 @@
-export interface LocationState {
-  url: string
-  isFirst: boolean
-  history: string[]
-}
+import { PayloadNavigatedEvent } from '@onecx/integration-interface'
+
+export type LocationState = PayloadNavigatedEvent
 export interface OneCxState {
   location?: LocationState | undefined
 }

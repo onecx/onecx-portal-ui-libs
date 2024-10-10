@@ -3,7 +3,6 @@ import { ENVIRONMENT_INITIALIZER, Injectable, OnDestroy, inject } from '@angular
 import { Store } from '@ngrx/store'
 import { filter } from 'rxjs'
 import { OneCxActions } from './onecx-actions'
-import { LocationState } from './onecx-state'
 
 export function provideNavigatedEventStoreConnector() {
   return [
@@ -23,7 +22,7 @@ export class NavigatedEventStoreConnectorService implements OnDestroy {
   eventsTopic$ = new EventsTopic()
   constructor(store: Store) {
     this.eventsTopic$.pipe(filter((e) => e.type === 'navigated')).subscribe((eventType) => {
-      store.dispatch(OneCxActions.navigated({ location: eventType.payload as LocationState }))
+      store.dispatch(OneCxActions.navigated({ event: eventType.payload }))
     })
   }
   ngOnDestroy(): void {

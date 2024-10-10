@@ -1,6 +1,7 @@
 import { createReducer, on } from '@ngrx/store'
 import { OneCxActions } from './onecx-actions'
 import { OneCxState } from './onecx-state'
+import { PayloadNavigatedEvent } from '@onecx/integration-interface'
 
 export const oneCxReducer = createReducer<OneCxState>(
   {},
@@ -8,7 +9,7 @@ export const oneCxReducer = createReducer<OneCxState>(
     OneCxActions.navigated,
     (state: OneCxState, action): OneCxState => ({
       ...state,
-      location: action.location,
+      location: action.event as PayloadNavigatedEvent,
     })
   )
 )
