@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core'
 import { Config } from '@onecx/integration-interface'
 import { BehaviorSubject, firstValueFrom } from 'rxjs'
 
-@Injectable({ providedIn: 'any' })
+@Injectable()
 export class AppConfigService {
   config$ = new BehaviorSubject<{ [key: string]: string }>({})
 
