@@ -56,7 +56,7 @@ interface TemplatesData {
   templateNames: Record<ColumnType, Array<string>>
 }
 
-export type Filter = { columnId: string; value: string }
+export type Filter = { columnId: string; value: string; filterNotEmpty: boolean }
 export type Sort = { sortColumn: string; sortDirection: DataSortDirection }
 
 export interface DataTableComponentState {
@@ -412,7 +412,8 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   ngOnInit(): void {
     this.displayedRows$ = combineLatest([this._rows$, this._filters$, this._sortColumn$, this._sortDirection$]).pipe(
       mergeMap((params) => this.translateItems(params, this.columns, this.clientSideFiltering, this.clientSideSorting)),
-      map((params) => this.filterItems(params, this.clientSideFiltering)),
+      withLatestFrom(this.translateService.get('OCX_DATA_TABLE.FILTER_YES')),
+      map(([params, yesOptionValue]) => this.filterItems(params, this.clientSideFiltering, yesOptionValue)),
       map((params) => this.sortItems(params, this.columns, this.clientSideSorting)),
       map(([rows]) => this.flattenItems(rows))
     )
@@ -425,6 +426,21 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       mergeMap(([rows, currentFilterColumn, filters]) => {
         if (!currentFilterColumn?.id) {
           return of([])
+        }
+
+        if (currentFilterColumn.filterNotEmpty) {
+            return this.translateService.get(['OCX_DATA_TABLE.FILTER_YES', 'OCX_DATA_TABLE.FILTER_NO'] as string[])
+            .pipe(
+            map((values) => {
+              return Object.values(values).map(
+                (filterOption) =>
+                  ({
+                    label: filterOption,
+                    value: filterOption,
+                  }) as SelectItem
+              )
+            })
+          )
         }
         const currentFilters = filters
           .filter((filter) => filter.columnId === currentFilterColumn?.id)
@@ -574,6 +590,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         event.value.map((value: Primitive) => ({
           columnId: column.id,
           value,
+          filterNotEmpty: column.filterNotEmpty,
         }))
       )
     if (this.clientSideFiltering) {
@@ -629,7 +646,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         newSelectionIds = this.mergeWithDisabledKeys(newSelectionIds, disabledRowIds)
       }
     }
-    
+
     this._selectionIds$.next(newSelectionIds)
     this.selectionChanged.emit(this._rows$.getValue().filter((row) => newSelectionIds.includes(row.id)))
     this.emitComponentStateChanged()

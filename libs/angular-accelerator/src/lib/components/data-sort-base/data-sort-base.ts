@@ -59,7 +59,8 @@ export class DataSortBase {
       DataSortDirection,
       Record<string, Record<string, string>>,
     ],
-    clientSideFiltering: boolean
+    clientSideFiltering: boolean,
+    yesOptionValue: string
   ): [RowListGridData[], Filter[], string, DataSortDirection, Record<string, Record<string, string>>] {
     if (!clientSideFiltering) {
       return [items, filters, sortColumn, sortDirection, translations]
@@ -72,13 +73,21 @@ export class DataSortBase {
           .every((filterColumnId) =>
             filters
               .filter((filter) => filter.columnId === filterColumnId)
-              .some(
-                (filter) =>
-                  (
-                    translations[filter.columnId]?.[ObjectUtils.resolveFieldData(item, filter.columnId)?.toString()] ||
-                    ObjectUtils.resolveFieldData(item, filter.columnId)
-                  )?.toString() === filter.value.toString()
-              )
+              .some((filter) => {
+                const value = (
+                  translations[filter.columnId]?.[ObjectUtils.resolveFieldData(item, filter.columnId)?.toString()] ||
+                  ObjectUtils.resolveFieldData(item, filter.columnId)
+                )?.toString()
+                if (filter.filterNotEmpty) {
+                  if (filter.value === yesOptionValue) {
+                    return value !== undefined && value !== ''
+                  } else {
+                    return value === undefined || value === ''
+                  }
+                }
+
+                return value === filter.value.toString()
+              })
           )
       ),
       filters,
