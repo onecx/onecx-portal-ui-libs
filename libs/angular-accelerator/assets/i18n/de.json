@@ -73,7 +73,9 @@
       "ARIA_LABEL": "{{column}} {{direction}} sortieren"
     },
     "SELECT_ALL_ARIA_LABEL": "Selektiere alle Zeilen der Tabelle",
-    "SELECT_ARIA_LABEL": "Selektiere die Tabellenspalte mit der ID {{key}}"
+    "SELECT_ARIA_LABEL": "Selektiere die Tabellenspalte mit der ID {{key}}",
+    "FILTER_YES": "Ja",
+    "FILTER_NO": "Nein"
   },
   "OCX_DATA_LIST_GRID": {
     "EMPTY_RESULT": "Keine Daten gefunden.",

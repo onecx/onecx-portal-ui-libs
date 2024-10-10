@@ -98,7 +98,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   @Input() page = 0
   columnTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
   _columns$ = new BehaviorSubject<DataTableColumn[]>([])
-  @Input() 
+  @Input()
   get columns(): DataTableColumn[] {
     return this._columns$.getValue()
   }
@@ -106,7 +106,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     this._columns$.next(value)
     const obs = value.map((c) => this.getTemplate(c))
     this.columnTemplates$ = combineLatest(obs).pipe(
-      map(values => Object.fromEntries(value.map((c, i) => [c.id, values[i]])))
+      map((values) => Object.fromEntries(value.map((c, i) => [c.id, values[i]])))
     )
   }
   @Input() name = ''
