@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
 import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateModule } from '@ngx-translate/core'
 
-import { UserService } from '@onecx/angular-integration-interface'
+import { AppConfigService, UserService } from '@onecx/angular-integration-interface'
 import { AngularRemoteComponentsModule } from '@onecx/angular-remote-components'
 
 import { firstValueFrom, skip } from 'rxjs'
@@ -30,7 +30,6 @@ import { TooltipOnOverflowDirective } from './directives/tooltipOnOverflow.direc
 import { DynamicPipe } from './pipes/dynamic.pipe'
 import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
 import { DynamicLocaleId } from './utils/dynamic-locale-id'
-import { AppConfigService } from './services/app-config-service'
 
 export class AngularAcceleratorMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
