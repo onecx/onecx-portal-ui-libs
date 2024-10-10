@@ -21,7 +21,7 @@ import { AppStateService, UserService } from '@onecx/angular-integration-interfa
 import { MfeInfo } from '@onecx/integration-interface'
 import { MenuItem, PrimeIcons, PrimeTemplate } from 'primeng/api'
 import { Menu } from 'primeng/menu'
-import { BehaviorSubject, Observable, combineLatest, debounceTime, first, map, mergeMap, withLatestFrom } from 'rxjs'
+import { BehaviorSubject, Observable, combineLatest, debounceTime, first, map, mergeMap } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
@@ -374,8 +374,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   ngOnInit(): void {
     this.displayedItems$ = combineLatest([this._data$, this._filters$, this._sortField$, this._sortDirection$]).pipe(
       mergeMap((params) => this.translateItems(params, this.columns, this.clientSideFiltering, this.clientSideSorting)),
-      withLatestFrom(this.translateService.get('OCX_DATA_TABLE.FILTER_YES')),
-      map(([params, yesOptionvalue]) => this.filterItems(params, this.clientSideFiltering, yesOptionvalue)),
+      map((params) => this.filterItems(params, this.clientSideFiltering)),
       map((params) => this.sortItems(params, this.columns, this.clientSideSorting)),
       map(([items]) => items)
     )

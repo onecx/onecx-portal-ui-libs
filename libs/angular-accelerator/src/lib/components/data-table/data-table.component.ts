@@ -25,6 +25,7 @@ import {
   Observable,
   combineLatest,
   debounceTime,
+  filter,
   first,
   map,
   mergeMap,
@@ -56,7 +57,12 @@ interface TemplatesData {
   templateNames: Record<ColumnType, Array<string>>
 }
 
-export type Filter = { columnId: string; value: string; filterNotEmpty: boolean }
+export enum FilterType {
+  EQUAL = 'EQUAL',
+  TRUTHY = 'TRUTHY',
+}
+
+export type Filter = { columnId: string; value: unknown; filterType?: FilterType }
 export type Sort = { sortColumn: string; sortDirection: DataSortDirection }
 
 export interface DataTableComponentState {
@@ -73,6 +79,7 @@ export interface DataTableComponentState {
   styleUrls: ['./data-table.component.scss'],
 })
 export class DataTableComponent extends DataSortBase implements OnInit, AfterContentInit {
+  FilterType = FilterType
   TemplateType = TemplateType
   checked = true
   _rows$ = new BehaviorSubject<Row[]>([])
@@ -312,8 +319,19 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   selectedRows$: Observable<unknown[]> | undefined
 
   currentFilterColumn$ = new BehaviorSubject<DataTableColumn | null>(null)
-  currentFilterOptions$: Observable<SelectItem[]> | undefined
-  currentSelectedFilters$: Observable<string[]> | undefined
+  currentEqualFilterOptions$: Observable<SelectItem[]> | undefined
+  currentEqualSelectedFilters$: Observable<unknown[]> | undefined
+  truthyFilterOptions = [
+    {
+      key: 'OCX_DATA_TABLE.FILTER_YES',
+      value: true,
+    },
+    {
+      key: 'OCX_DATA_TABLE.FILTER_NO',
+      value: false,
+    },
+  ]
+  currentTruthySelectedFilters$: Observable<unknown[]> | undefined
   filterAmounts$: Observable<Record<string, number>> | undefined
 
   overflowActions$: Observable<DataAction[]>
@@ -412,38 +430,47 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   ngOnInit(): void {
     this.displayedRows$ = combineLatest([this._rows$, this._filters$, this._sortColumn$, this._sortDirection$]).pipe(
       mergeMap((params) => this.translateItems(params, this.columns, this.clientSideFiltering, this.clientSideSorting)),
-      withLatestFrom(this.translateService.get('OCX_DATA_TABLE.FILTER_YES')),
-      map(([params, yesOptionValue]) => this.filterItems(params, this.clientSideFiltering, yesOptionValue)),
+      map((params) => this.filterItems(params, this.clientSideFiltering)),
       map((params) => this.sortItems(params, this.columns, this.clientSideSorting)),
       map(([rows]) => this.flattenItems(rows))
     )
-    this.currentSelectedFilters$ = combineLatest([this._filters$, this.currentFilterColumn$]).pipe(
+    this.currentTruthySelectedFilters$ = combineLatest([this._filters$, this.currentFilterColumn$]).pipe(
       map(([filters, currentFilterColumn]) => {
-        return filters.filter((filter) => filter.columnId === currentFilterColumn?.id).map((filter) => filter.value)
+        return filters
+          .filter(
+            (filter) =>
+              filter.columnId === currentFilterColumn?.id && currentFilterColumn.filterType === FilterType.TRUTHY
+          )
+          .map((filter) => filter.value)
       })
     )
-    this.currentFilterOptions$ = combineLatest([this._rows$, this.currentFilterColumn$, this._filters$]).pipe(
+    this.currentEqualSelectedFilters$ = combineLatest([this._filters$, this.currentFilterColumn$]).pipe(
+      map(([filters, currentFilterColumn]) => {
+        return filters
+          .filter(
+            (filter) =>
+              filter.columnId === currentFilterColumn?.id &&
+              (!currentFilterColumn.filterType || currentFilterColumn.filterType === FilterType.EQUAL)
+          )
+          .map((filter) => filter.value)
+      })
+    )
+    this.currentEqualFilterOptions$ = combineLatest([this._rows$, this.currentFilterColumn$, this._filters$]).pipe(
+      filter(
+        ([rows, currentFilterColumn, filters]) =>
+          !currentFilterColumn?.filterType || currentFilterColumn.filterType === FilterType.EQUAL
+      ),
       mergeMap(([rows, currentFilterColumn, filters]) => {
         if (!currentFilterColumn?.id) {
           return of([])
         }
 
-        if (currentFilterColumn.filterNotEmpty) {
-            return this.translateService.get(['OCX_DATA_TABLE.FILTER_YES', 'OCX_DATA_TABLE.FILTER_NO'] as string[])
-            .pipe(
-            map((values) => {
-              return Object.values(values).map(
-                (filterOption) =>
-                  ({
-                    label: filterOption,
-                    value: filterOption,
-                  }) as SelectItem
-              )
-            })
-          )
-        }
         const currentFilters = filters
-          .filter((filter) => filter.columnId === currentFilterColumn?.id)
+          .filter(
+            (filter) =>
+              filter.columnId === currentFilterColumn?.id &&
+              (!currentFilterColumn.filterType || currentFilterColumn.filterType === FilterType.EQUAL)
+          )
           .map((filter) => filter.value)
 
         const columnValues = rows.map((row) => row[currentFilterColumn?.id])
@@ -583,14 +610,14 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     this.currentFilterColumn$.next(column)
   }
 
-  onFilterChange(column: DataTableColumn, event: any) {
+  onMultiselectFilterChange(column: DataTableColumn, event: any) {
     const filters = this.filters
       .filter((filter) => filter.columnId !== column.id)
       .concat(
         event.value.map((value: Primitive) => ({
           columnId: column.id,
           value,
-          filterNotEmpty: column.filterNotEmpty,
+          filterType: column.filterType,
         }))
       )
     if (this.clientSideFiltering) {
@@ -603,7 +630,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     this.resetPage()
   }
 
-  getSelectedFilters(columnId: string): string[] | undefined {
+  getSelectedFilters(columnId: string): unknown[] | undefined {
     return this.filters.filter((filter) => filter.columnId === columnId).map((filter) => filter.value)
   }
 

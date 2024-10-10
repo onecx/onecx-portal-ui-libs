@@ -5,7 +5,7 @@ import { ColumnType } from '../../model/column-type.model'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { ListGridData } from '../../components/data-list-grid/data-list-grid.component'
-import { Row, Filter } from '../../components/data-table/data-table.component'
+import { Row, Filter, FilterType } from '../../components/data-table/data-table.component'
 import { ObjectUtils } from '../../utils/objectutils'
 
 type RowListGridData = ListGridData | Row
@@ -59,8 +59,7 @@ export class DataSortBase {
       DataSortDirection,
       Record<string, Record<string, string>>,
     ],
-    clientSideFiltering: boolean,
-    yesOptionValue: string
+    clientSideFiltering: boolean
   ): [RowListGridData[], Filter[], string, DataSortDirection, Record<string, Record<string, string>>] {
     if (!clientSideFiltering) {
       return [items, filters, sortColumn, sortDirection, translations]
@@ -78,15 +77,14 @@ export class DataSortBase {
                   translations[filter.columnId]?.[ObjectUtils.resolveFieldData(item, filter.columnId)?.toString()] ||
                   ObjectUtils.resolveFieldData(item, filter.columnId)
                 )?.toString()
-                if (filter.filterNotEmpty) {
-                  if (filter.value === yesOptionValue) {
+                switch (filter.filterType) {
+                  case undefined:
+                  case FilterType.EQUAL:
+                    return value === (filter.value as any).toString()
+                  case FilterType.TRUTHY:
                     return value !== undefined && value !== ''
-                  } else {
-                    return value === undefined || value === ''
-                  }
                 }
-
-                return value === filter.value.toString()
+                return false
               })
           )
       ),

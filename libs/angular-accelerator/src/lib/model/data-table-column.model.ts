@@ -1,3 +1,4 @@
+import { FilterType } from '../components/data-table/data-table.component'
 import { ColumnType } from './column-type.model'
 
 export interface DataTableColumn {
@@ -6,7 +7,7 @@ export interface DataTableColumn {
   id: string
   sortable?: boolean
   filterable?: boolean
-  filterNotEmpty?: boolean
+  filterType?: FilterType
   predefinedGroupKeys?: string[]
   dateFormat?: string
 }
