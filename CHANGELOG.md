@@ -1,3 +1,9 @@
+## [5.18.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.17.2...v5.18.0) (2024-10-11)
+
+### Features
+
+* filter for empty value in data table ([#534](https://github.com/onecx/onecx-portal-ui-libs/issues/534)) ([932e9fb](https://github.com/onecx/onecx-portal-ui-libs/commit/932e9fba5a9ace1588ee6c655b8a174f2ea20c21))
+
 ## [5.17.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.17.1...v5.17.2) (2024-10-10)
 
 ### Bug Fixes
