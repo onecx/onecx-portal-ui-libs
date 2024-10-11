@@ -339,7 +339,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
     this._data = value
   }
 
-  columnGroupSlotName = 'onecx-shell-column-group-selection'
+  columnGroupSlotName = 'onecx-column-group-selection'
   isColumnGroupSelectionComponentDefined$: Observable<boolean>
   groupSelectionChangedSlotEmitter = new EventEmitter<ColumnGroupData | undefined>()
 
