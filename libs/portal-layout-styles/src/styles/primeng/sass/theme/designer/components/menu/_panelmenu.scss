@@ -3,16 +3,16 @@
     outline: 0 none;
 
     .p-panelmenu-header-content {
-      border: var(--accordion-header-border);
+      border: var(--panelmenu-header-border);
       color: var(--text-color);
-      background: var(--accordion-header-bg);
+      background: var(--panelmenu-header-bg);
       border-radius: var(--border-radius);
       transition: var(--list-item-transition);
 
       .p-panelmenu-header-action {
         color: var(--text-color);
-        padding: var(--accordion-header-padding);
-        font-weight: var(--accordion-header-font-weight);
+        padding: var(--panelmenu-header-padding);
+        font-weight: var(--panelmenu-header-font-weight);
 
         .p-submenu-icon {
             margin-right: var(--inline-spacing);
@@ -38,16 +38,16 @@
 
     &:not(.p-highlight):not(.p-disabled):hover {
       .p-panelmenu-header-content {
-        background: var(--accordion-header-hover-bg);
-        border-color: var(--accordion-header-hover-border-color);
+        background: var(--panelmenu-header-hover-bg);
+        border-color: var(--panelmenu-header-hover-border-color);
         color: var(--text-color);
       }
     }
 
     &:not(.p-disabled).p-highlight {
       .p-panelmenu-header-content {
-          background: var(--accordion-header-hover-bg);
-          border-color: var(--accordion-header-hover-border-color);
+          background: var(--panelmenu-header-hover-bg);
+          border-color: var(--panelmenu-header-hover-border-color);
           color: var(--text-color);
           border-bottom-right-radius: 0;
           border-bottom-left-radius: 0;
@@ -56,8 +56,8 @@
 
       &:hover {
         .p-panelmenu-header-content {
-            border-color: var(--accordion-header-hover-border-color);
-            background: var(--accordion-header-active-hover-bg);
+            border-color: var(--panelmenu-header-hover-border-color);
+            background: var(--panelmenu-header-active-hover-bg);
             color: var(--text-color);
         }
       }
@@ -66,8 +66,8 @@
 
   .p-panelmenu-content {
     padding: var(--vertical-menu-padding);
-    border: var(--accordion-content-border);
-    background: var(--accordion-content-bg);
+    border: var(--panelmenu-content-border);
+    background: var(--panelmenu-content-bg);
     color: var(--text-color);
     border-top: 0;
     border-top-right-radius: 0;
@@ -102,7 +102,7 @@
   }
 
   .p-panelmenu-panel {
-    margin-bottom: var(--accordion-spacing);
+    margin-bottom: var(--panelmenu-spacing);
 
     @if $accordionSpacing == 0 {
       .p-panelmenu-header {
