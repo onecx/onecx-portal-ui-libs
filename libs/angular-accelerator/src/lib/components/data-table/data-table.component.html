@@ -207,7 +207,7 @@
                       [class.pi-filter-fill]="((filterAmounts$ | async) || {})[column.id] > 0"
                     ></div>
                   </ng-template>
-                  <ng-template pTemplate="item" let-value> {{value | translate}} </ng-template>
+                  <ng-template pTemplate="item" let-value> {{value.key | translate}} </ng-template>
                 </p-multiSelect>
               </span>
             </div>

@@ -28,7 +28,8 @@ import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { ObjectUtils } from '../../utils/objectutils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
-import { Filter, Row } from '../data-table/data-table.component'
+import { Row } from '../data-table/data-table.component'
+import { Filter } from '../../model/filter.model'
 
 export type ListGridData = {
   id: string | number

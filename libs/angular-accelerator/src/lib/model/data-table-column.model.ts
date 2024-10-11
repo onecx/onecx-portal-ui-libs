@@ -1,5 +1,5 @@
-import { FilterType } from '../components/data-table/data-table.component'
 import { ColumnType } from './column-type.model'
+import { FilterType } from './filter.model'
 
 export interface DataTableColumn {
   columnType: ColumnType

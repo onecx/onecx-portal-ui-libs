@@ -39,6 +39,7 @@ import { DataTableColumn } from '../../model/data-table-column.model'
 import { ObjectUtils } from '../../utils/objectutils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { MultiSelectItem } from 'primeng/multiselect'
+import { Filter, FilterType } from '../../model/filter.model'
 
 type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -57,12 +58,6 @@ interface TemplatesData {
   templateNames: Record<ColumnType, Array<string>>
 }
 
-export enum FilterType {
-  EQUAL = 'EQUAL',
-  TRUTHY = 'TRUTHY',
-}
-
-export type Filter = { columnId: string; value: unknown; filterType?: FilterType }
 export type Sort = { sortColumn: string; sortDirection: DataSortDirection }
 
 export interface DataTableComponentState {
@@ -79,7 +74,6 @@ export interface DataTableComponentState {
   styleUrls: ['./data-table.component.scss'],
 })
 export class DataTableComponent extends DataSortBase implements OnInit, AfterContentInit {
-  FilterType = FilterType
   TemplateType = TemplateType
   checked = true
   _rows$ = new BehaviorSubject<Row[]>([])

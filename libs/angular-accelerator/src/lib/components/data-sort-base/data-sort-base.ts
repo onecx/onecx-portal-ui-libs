@@ -5,12 +5,14 @@ import { ColumnType } from '../../model/column-type.model'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { ListGridData } from '../../components/data-list-grid/data-list-grid.component'
-import { Row, Filter, FilterType } from '../../components/data-table/data-table.component'
+import { Row } from '../../components/data-table/data-table.component'
 import { ObjectUtils } from '../../utils/objectutils'
+import { Filter, FilterType } from '../../model/filter.model'
 
 type RowListGridData = ListGridData | Row
 
 export class DataSortBase {
+  FilterType = FilterType
   constructor(
     protected locale: string,
     protected translateService: TranslateService
@@ -82,7 +84,8 @@ export class DataSortBase {
                   case FilterType.EQUAL:
                     return value === (filter.value as any).toString()
                   case FilterType.TRUTHY:
-                    return value !== undefined && value !== ''
+                    const isTruthy = value !== undefined && value !== ''
+                    return filter.value ? isTruthy : !isTruthy
                 }
                 return false
               })
