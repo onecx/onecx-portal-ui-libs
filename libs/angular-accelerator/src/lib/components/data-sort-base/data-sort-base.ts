@@ -12,7 +12,6 @@ import { Filter, FilterType } from '../../model/filter.model'
 type RowListGridData = ListGridData | Row
 
 export class DataSortBase {
-  FilterType = FilterType
   constructor(
     protected locale: string,
     protected translateService: TranslateService
@@ -83,11 +82,11 @@ export class DataSortBase {
                   case undefined:
                   case FilterType.EQUAL:
                     return value === (filter.value as any).toString()
-                  case FilterType.TRUTHY:
+                  case FilterType.TRUTHY: {
                     const isTruthy = value !== undefined && value !== ''
                     return filter.value ? isTruthy : !isTruthy
+                  }
                 }
-                return false
               })
           )
       ),

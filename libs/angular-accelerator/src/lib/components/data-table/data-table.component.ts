@@ -74,6 +74,7 @@ export interface DataTableComponentState {
   styleUrls: ['./data-table.component.scss'],
 })
 export class DataTableComponent extends DataSortBase implements OnInit, AfterContentInit {
+  FilterType = FilterType
   TemplateType = TemplateType
   checked = true
   _rows$ = new BehaviorSubject<Row[]>([])
@@ -451,7 +452,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     )
     this.currentEqualFilterOptions$ = combineLatest([this._rows$, this.currentFilterColumn$, this._filters$]).pipe(
       filter(
-        ([rows, currentFilterColumn, filters]) =>
+        ([_, currentFilterColumn, __]) =>
           !currentFilterColumn?.filterType || currentFilterColumn.filterType === FilterType.EQUAL
       ),
       mergeMap(([rows, currentFilterColumn, filters]) => {
