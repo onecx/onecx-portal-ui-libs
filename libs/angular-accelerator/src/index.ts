@@ -38,6 +38,7 @@ export * from './lib/model/data-table-column.model'
 export * from './lib/model/diagram-column'
 // export * from './lib/model/diagram-data'
 export * from './lib/model/diagram-type'
+export * from './lib/model/filter.model'
 
 // core
 export * from './lib/angular-accelerator.module'
