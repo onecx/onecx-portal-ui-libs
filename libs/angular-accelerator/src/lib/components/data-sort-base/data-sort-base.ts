@@ -83,8 +83,7 @@ export class DataSortBase {
                   case FilterType.EQUAL:
                     return value === filter.value
                   case FilterType.TRUTHY: {
-                    const isTruthy = value !== undefined && value !== ''
-                    return filter.value ? isTruthy : !isTruthy
+                    return filter.value ? !!value : !value
                   }
                 }
               })
