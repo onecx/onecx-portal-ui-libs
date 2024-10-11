@@ -1,3 +1,10 @@
+## [5.18.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.18.0...v5.18.1) (2024-10-11)
+
+### Bug Fixes
+
+* search config slot name changes ([#539](https://github.com/onecx/onecx-portal-ui-libs/issues/539)) ([0faecd9](https://github.com/onecx/onecx-portal-ui-libs/commit/0faecd944bbd0323a844e3167161782c76d3529e))
+* truthy filter check correction ([#538](https://github.com/onecx/onecx-portal-ui-libs/issues/538)) ([996de4e](https://github.com/onecx/onecx-portal-ui-libs/commit/996de4e100f20d5cc4830a29cf38f829b12ccb79))
+
 ## [5.18.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.17.2...v5.18.0) (2024-10-11)
 
 ### Features
