@@ -73,7 +73,9 @@
       "ARIA_LABEL": "Toggle {{column}} sorting direction to {{direction}}"
     },
     "SELECT_ALL_ARIA_LABEL": "Select all table rows",
-    "SELECT_ARIA_LABEL": "Select table row with id {{key}}"
+    "SELECT_ARIA_LABEL": "Select table row with id {{key}}",
+    "FILTER_YES": "Yes",
+    "FILTER_NO": "No"
   },
   "OCX_DATA_LIST_GRID": {
     "EMPTY_RESULT": "No data found.",
