@@ -41,7 +41,7 @@ import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { MultiSelectItem } from 'primeng/multiselect'
 import { Filter, FilterType } from '../../model/filter.model'
 
-type Primitive = number | string | boolean | bigint | Date
+export type Primitive = number | string | boolean | bigint | Date
 export type Row = {
   id: string | number
   [columnId: string]: unknown
