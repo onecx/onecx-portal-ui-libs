@@ -17,6 +17,18 @@
     }
 
     .p-panelmenu-header {
+      &:not(.p-disabled) {
+        &:focus-visible {
+          .p-panelmenu-header-content {
+            outline: 0 none;
+
+            .p-panelmenu-header-action {
+              background: var(--menuitem-focus-bg)
+            }
+          }
+        }
+      }
+
       chevronrighticon, chevrondownicon {
         order: 1;
         margin-left: auto;
