@@ -1,3 +1,17 @@
+## [5.19.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.18.1...v5.19.0) (2024-10-15)
+
+### Features
+
+* add navigation history ([#532](https://github.com/onecx/onecx-portal-ui-libs/issues/532)) ([ae4b583](https://github.com/onecx/onecx-portal-ui-libs/commit/ae4b5835717bdbe258e2977e195d0259dbbf9519))
+* panelmenu component style adjustments ([#533](https://github.com/onecx/onecx-portal-ui-libs/issues/533)) ([3a3ed93](https://github.com/onecx/onecx-portal-ui-libs/commit/3a3ed9322096ec56161b13f3958a03787062b3c8))
+
+## [5.18.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.18.0...v5.18.1) (2024-10-11)
+
+### Bug Fixes
+
+* search config slot name changes ([#539](https://github.com/onecx/onecx-portal-ui-libs/issues/539)) ([0faecd9](https://github.com/onecx/onecx-portal-ui-libs/commit/0faecd944bbd0323a844e3167161782c76d3529e))
+* truthy filter check correction ([#538](https://github.com/onecx/onecx-portal-ui-libs/issues/538)) ([996de4e](https://github.com/onecx/onecx-portal-ui-libs/commit/996de4e100f20d5cc4830a29cf38f829b12ccb79))
+
 ## [5.18.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.17.2...v5.18.0) (2024-10-11)
 
 ### Features
