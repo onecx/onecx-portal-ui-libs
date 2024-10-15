@@ -14,18 +14,18 @@ describe('findEntryWithKeyword', () => {
 
 describe('removeKeyword', () => {
   it('should remove the keyword and trailing details from the input string', () => {
-    expect(removeKeyword('/ibt-tsg-mgmt-page/keyword/123', 'keyword')).toBe('/ibt-tsg-mgmt-page')
-    expect(removeKeyword('/ibt-tsg-mgmt-page/keyword/123/', 'keyword')).toBe('/ibt-tsg-mgmt-page')
-    expect(removeKeyword('/ibt-tsg-mgmt-page/search/123', 'keyword')).toBe('/ibt-tsg-mgmt-page/search/123')
+    expect(removeKeyword('/onecx-mgmt-page/keyword/123', 'keyword')).toBe('/onecx-mgmt-page')
+    expect(removeKeyword('/onecx-mgmt-page/keyword/123/', 'keyword')).toBe('/onecx-mgmt-page')
+    expect(removeKeyword('/onecx-mgmt-page/search/123', 'keyword')).toBe('/onecx-mgmt-page/search/123')
   })
 
   describe('searchPrefixWithSpecialChars', () => {
     it('should return the latest string starting with the prefix followed by ? or #', () => {
-      const exampleUrls1 = ['ibt-tsg-mgmt-page?id', 'ibt-tsg-mgmt-page#id', 'ibt-order-mgmt-page#id']
-      const exampleUrls2 = ['ibt-tsg-mgmt-page#id', 'ibt-tsg-mgmt-page#id', 'ibt-tsg-mgmt-page?id']
-      const prefix = 'ibt-tsg-mgmt-page'
-      const expected1 = 'ibt-tsg-mgmt-page#id'
-      const expected2 = 'ibt-tsg-mgmt-page?id'
+      const exampleUrls1 = ['onecx-mgmt-page?id', 'onecx-mgmt-page#id', 'ibt-order-mgmt-page#id']
+      const exampleUrls2 = ['onecx-mgmt-page#id', 'onecx-mgmt-page#id', 'onecx-mgmt-page?id']
+      const prefix = 'onecx-mgmt-page'
+      const expected1 = 'onecx-mgmt-page#id'
+      const expected2 = 'onecx-mgmt-page?id'
       expect(searchPrefixWithSpecialChars(exampleUrls1, prefix)).toEqual(expected1)
       expect(searchPrefixWithSpecialChars(exampleUrls2, prefix)).toEqual(expected2)
     })
