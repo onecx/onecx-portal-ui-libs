@@ -61,3 +61,4 @@ export * from './lib/utils/create-remote-component-and-mfe-translate-loader.util
 export * from './lib/utils/create-remote-component-translate-loader.utils'
 export * from './lib/utils/enum-to-dropdown-options.utils'
 export * from './lib/utils/criteria.utils'
+export * from './lib/utils/string-and-array-helper-functions.utils'
