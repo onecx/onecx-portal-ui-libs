@@ -24,7 +24,7 @@ export class PortalPageComponent implements OnInit {
   ngOnInit(): void {
     if (!this.helpArticleId) {
       console.warn(
-        `ocx-portal-page on url ${location.pathname} does not have 'heplArticleId' set. Set to some unique string in order to support help management feature.`
+        `ocx-portal-page on url ${location.pathname} does not have 'helpArticleId' set. Set to some unique string in order to support help management feature.`
       )
     }
     this.appState.currentPage$.publish({
