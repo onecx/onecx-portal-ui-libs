@@ -16,11 +16,11 @@
 
     &:not(.p-disabled) {
       .p-accordion-header-link {
-        &:focus {
-          @include focused();
-        }
+          &:focus-visible {
+              @include focused-inset();
+          }
       }
-    }
+  }
 
     &:not(.p-highlight):not(.p-disabled):hover {
       .p-accordion-header-link {
