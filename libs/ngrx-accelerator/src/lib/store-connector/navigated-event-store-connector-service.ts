@@ -21,8 +21,8 @@ export function provideNavigatedEventStoreConnector() {
 export class NavigatedEventStoreConnectorService implements OnDestroy {
   eventsTopic$ = new EventsTopic()
   constructor(store: Store) {
-    this.eventsTopic$.pipe(filter((e) => e.type === 'navigated')).subscribe((eventType) => {
-      store.dispatch(OneCxActions.navigated({ event: eventType.payload }))
+    this.eventsTopic$.pipe(filter((e) => e.type === 'navigated')).subscribe((navigatedEvent) => {
+      store.dispatch(OneCxActions.navigated({ event: navigatedEvent.payload }))
     })
   }
   ngOnDestroy(): void {
