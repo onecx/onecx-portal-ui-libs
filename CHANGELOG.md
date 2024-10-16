@@ -1,3 +1,10 @@
+## [5.19.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.19.0...v5.19.1) (2024-10-16)
+
+### Bug Fixes
+
+* fix type of warning in portal-page-header ([#542](https://github.com/onecx/onecx-portal-ui-libs/issues/542)) ([4e652a1](https://github.com/onecx/onecx-portal-ui-libs/commit/4e652a11068ce5669cd1b7d514cd20122cd0f4ca))
+* renaming payload navigated event to navigated event payload ([#543](https://github.com/onecx/onecx-portal-ui-libs/issues/543)) ([855a16e](https://github.com/onecx/onecx-portal-ui-libs/commit/855a16eba64e28c5e892249a42990428adebe60a))
+
 ## [5.19.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.18.1...v5.19.0) (2024-10-15)
 
 ### Features
