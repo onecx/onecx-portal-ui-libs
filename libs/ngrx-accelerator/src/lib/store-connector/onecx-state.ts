@@ -1,6 +1,6 @@
-import { PayloadNavigatedEvent } from '@onecx/integration-interface'
+import { NavigatedEventPayload } from '@onecx/integration-interface'
 
-export type LocationState = PayloadNavigatedEvent
+export type LocationState = NavigatedEventPayload
 export interface OneCxState {
   location?: LocationState | undefined
 }
