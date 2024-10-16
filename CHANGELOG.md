@@ -1,3 +1,9 @@
+## [5.19.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.19.1...v5.19.2) (2024-10-16)
+
+### Bug Fixes
+
+* revert menu header padding ([#545](https://github.com/onecx/onecx-portal-ui-libs/issues/545)) ([41c880c](https://github.com/onecx/onecx-portal-ui-libs/commit/41c880cd1217d1e1dbcf58c116425a59108ba827))
+
 ## [5.19.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.19.0...v5.19.1) (2024-10-16)
 
 ### Bug Fixes
