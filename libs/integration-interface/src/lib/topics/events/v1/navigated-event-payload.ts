@@ -3,8 +3,3 @@ export type NavigatedEventPayload = {
   isFirst: boolean
   history: string[]
 }
-
-/**
- * @deprecated Replace with NavigatedEventPayload
- */
-export type PayloadNavigatedEvent = NavigatedEventPayload
