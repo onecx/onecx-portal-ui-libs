@@ -21,12 +21,20 @@ export class PDropdownHarness extends ContentContainerComponentHarness {
     return await (await this.host()).getAttribute('inputId')
   }
 
+  async getAriaLabel(): Promise<string | null | undefined> {
+    return (await this.locatorForOptional('span.p-placeholder')())?.getAttribute('aria-label')
+  }
+
   async getId(): Promise<string | null> {
     return await (await this.host()).getAttribute('id')
   }
 
   async getDefaultText() {
     return (await this.locatorForOptional('span.p-placeholder')())?.text()
+  }
+
+  async getSelectedText() {
+    return (await this.locatorForOptional('span.p-dropdown-label')())?.text()
   }
 
   async isOpen(): Promise<boolean> {

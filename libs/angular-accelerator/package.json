@@ -1,6 +1,6 @@
 {
   "name": "@onecx/angular-accelerator",
-  "version": "5.15.0",
+  "version": "5.19.1",
   "license": "Apache-2.0",
   "peerDependencies": {
     "@angular/common": "^18.0.5",
@@ -13,6 +13,7 @@
     "@ngneat/until-destroy": "^10.0.0",
     "@onecx/integration-interface": "^5",
     "@onecx/angular-integration-interface": "^5",
+    "@onecx/angular-remote-components": "^5",
     "chart.js": "^4.4.3",
     "d3-scale-chromatic": "^3.1.0",
     "rxjs": "~7.8.1",

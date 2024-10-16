@@ -1,3 +1,63 @@
+## [5.19.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.19.0...v5.19.1) (2024-10-16)
+
+### Bug Fixes
+
+* fix type of warning in portal-page-header ([#542](https://github.com/onecx/onecx-portal-ui-libs/issues/542)) ([4e652a1](https://github.com/onecx/onecx-portal-ui-libs/commit/4e652a11068ce5669cd1b7d514cd20122cd0f4ca))
+* renaming payload navigated event to navigated event payload ([#543](https://github.com/onecx/onecx-portal-ui-libs/issues/543)) ([855a16e](https://github.com/onecx/onecx-portal-ui-libs/commit/855a16eba64e28c5e892249a42990428adebe60a))
+
+## [5.19.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.18.1...v5.19.0) (2024-10-15)
+
+### Features
+
+* add navigation history ([#532](https://github.com/onecx/onecx-portal-ui-libs/issues/532)) ([ae4b583](https://github.com/onecx/onecx-portal-ui-libs/commit/ae4b5835717bdbe258e2977e195d0259dbbf9519))
+* panelmenu component style adjustments ([#533](https://github.com/onecx/onecx-portal-ui-libs/issues/533)) ([3a3ed93](https://github.com/onecx/onecx-portal-ui-libs/commit/3a3ed9322096ec56161b13f3958a03787062b3c8))
+
+## [5.18.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.18.0...v5.18.1) (2024-10-11)
+
+### Bug Fixes
+
+* search config slot name changes ([#539](https://github.com/onecx/onecx-portal-ui-libs/issues/539)) ([0faecd9](https://github.com/onecx/onecx-portal-ui-libs/commit/0faecd944bbd0323a844e3167161782c76d3529e))
+* truthy filter check correction ([#538](https://github.com/onecx/onecx-portal-ui-libs/issues/538)) ([996de4e](https://github.com/onecx/onecx-portal-ui-libs/commit/996de4e100f20d5cc4830a29cf38f829b12ccb79))
+
+## [5.18.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.17.2...v5.18.0) (2024-10-11)
+
+### Features
+
+* filter for empty value in data table ([#534](https://github.com/onecx/onecx-portal-ui-libs/issues/534)) ([932e9fb](https://github.com/onecx/onecx-portal-ui-libs/commit/932e9fba5a9ace1588ee6c655b8a174f2ea20c21))
+
+## [5.17.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.17.1...v5.17.2) (2024-10-10)
+
+### Bug Fixes
+
+* app config service exported correctly ([#537](https://github.com/onecx/onecx-portal-ui-libs/issues/537)) ([b05e319](https://github.com/onecx/onecx-portal-ui-libs/commit/b05e31969ddcf7bb2cf5217c08ca193464a09cae))
+* only display column group selection on table view ([#535](https://github.com/onecx/onecx-portal-ui-libs/issues/535)) ([0a40237](https://github.com/onecx/onecx-portal-ui-libs/commit/0a40237548235aa79547d338d3ccca1ba900c5c0))
+
+## [5.17.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.17.0...v5.17.1) (2024-10-10)
+
+### Bug Fixes
+
+* revert app config service package change ([#536](https://github.com/onecx/onecx-portal-ui-libs/issues/536)) ([6d0bdb4](https://github.com/onecx/onecx-portal-ui-libs/commit/6d0bdb4cb4f1fa38d30f3b4c9ad79f71ea516c32))
+
+## [5.17.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.16.1...v5.17.0) (2024-10-09)
+
+### Features
+
+* add util for using nested key definitions in ngrx-local-storage-sync ([#519](https://github.com/onecx/onecx-portal-ui-libs/issues/519)) ([81137cf](https://github.com/onecx/onecx-portal-ui-libs/commit/81137cf258bce2d8b3f9dbbe1e66eeb16bb1abf9))
+* menu focus should be darker ([#531](https://github.com/onecx/onecx-portal-ui-libs/issues/531)) ([3993c50](https://github.com/onecx/onecx-portal-ui-libs/commit/3993c50746e7893981d165891bf42f0c71bccb02))
+* shell base variables fixed ([#530](https://github.com/onecx/onecx-portal-ui-libs/issues/530)) ([3825629](https://github.com/onecx/onecx-portal-ui-libs/commit/382562995f74f728dbb02c833cfbc7bb3a309be4))
+
+## [5.16.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.16.0...v5.16.1) (2024-10-08)
+
+### Bug Fixes
+
+* angular-remote-component referenced in package of angular-accelerator ([#529](https://github.com/onecx/onecx-portal-ui-libs/issues/529)) ([02eb3a4](https://github.com/onecx/onecx-portal-ui-libs/commit/02eb3a41c45cf937f2a706bd52c15603ff720189))
+
+## [5.16.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.15.0...v5.16.0) (2024-10-07)
+
+### Features
+
+* search config slot in search header and column group slot in interactive-data-view ([#369](https://github.com/onecx/onecx-portal-ui-libs/issues/369)) ([bbf7073](https://github.com/onecx/onecx-portal-ui-libs/commit/bbf7073e87496d1efb8faeafa846294c1e559ea2))
+
 ## [5.15.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.14.0...v5.15.0) (2024-10-04)
 
 ### Features

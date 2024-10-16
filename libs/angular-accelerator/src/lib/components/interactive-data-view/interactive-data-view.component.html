@@ -23,18 +23,32 @@
       ></ocx-data-list-grid-sorting>
     </div>
 
-    <div *ngIf="layout === 'table'" class="flex flex-wrap justify-content-between align-items-center gap-2">
-      <ocx-column-group-selection
-        [selectedGroupKey]="selectedGroupKey"
-        [columns]="columns"
-        [defaultGroupKey]="defaultGroupKey"
-        [customGroupKey]="customGroupKey"
-        [placeholderKey]="groupSelectionNoGroupSelectedKey"
-        (groupSelectionChanged)="onColumnGroupSelectionChange($event)"
-        (componentStateChanged)="columnGroupSelectionComponentState$.next($event)"
-      ></ocx-column-group-selection>
+    <div
+      [ngStyle]="layout !== 'table' ? {
+      'position': 'absolute'
+    } : {}"
+      class="flex flex-wrap justify-content-between align-items-center gap-2"
+    >
+      <ng-container *ngIf="isColumnGroupSelectionComponentDefined$ | async; else defaultColumnGroupSelectionComponent">
+        <ng-container *ngIf="displayedColumnKeys$ | async as displayedColumnKeys">
+          <ocx-slot
+            [ngStyle]="layout !== 'table' ? {'display' : 'none'}  : {}"
+            *ocxIfPermission="searchConfigPermission; elseTemplate: defaultColumnGroupSelectionComponent"
+            name="{{columnGroupSlotName}}"
+            [inputs]="{ placeholderKey: groupSelectionNoGroupSelectedKey, defaultGroupKey: defaultGroupKey, customGroupKey: customGroupKey, columns: columns, selectedGroupKey: selectedGroupKey, layout: layout, displayedColumnsIds: displayedColumnKeys }"
+            [outputs]="{ groupSelectionChanged: groupSelectionChangedSlotEmitter }"
+          >
+            <ng-template #skeleton>
+              <div class="flex">
+                <p-skeleton width="18rem" height="3rem"></p-skeleton>
+              </div>
+            </ng-template>
+          </ocx-slot>
+        </ng-container>
+      </ng-container>
 
       <ocx-custom-group-column-selector
+        *ngIf="layout === 'table'"
         [columns]="columns"
         [displayedColumns]="(displayedColumns$ | async) ?? []"
         [customGroupKey]="customGroupKey"
@@ -119,6 +133,20 @@
   >
   </ocx-data-view>
 </div>
+
+<ng-template #defaultColumnGroupSelectionComponent>
+  <ocx-column-group-selection
+    *ngIf="layout === 'table'"
+    [selectedGroupKey]="selectedGroupKey ?? defaultGroupKey"
+    [columns]="columns"
+    [defaultGroupKey]="defaultGroupKey"
+    [customGroupKey]="customGroupKey"
+    [placeholderKey]="groupSelectionNoGroupSelectedKey"
+    (groupSelectionChanged)="onColumnGroupSelectionChange($event)"
+    (componentStateChanged)="columnGroupSelectionComponentState$.next($event)"
+  ></ocx-column-group-selection>
+</ng-template>
+
 <ng-template #stringTableCell let-rowObject="rowObject" let-column="column">
   <ng-container
     *ngIf="_stringTableCell"

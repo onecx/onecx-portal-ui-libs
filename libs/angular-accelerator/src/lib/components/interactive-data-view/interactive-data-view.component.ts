@@ -11,7 +11,17 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core'
-import { BehaviorSubject, Observable, ReplaySubject, combineLatest, map, startWith, timestamp } from 'rxjs'
+import {
+  BehaviorSubject,
+  Observable,
+  ReplaySubject,
+  combineLatest,
+  distinctUntilChanged,
+  map,
+  startWith,
+  timestamp,
+  withLatestFrom,
+} from 'rxjs'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
@@ -26,16 +36,23 @@ import {
   ColumnSelectionChangedEvent,
   CustomGroupColumnSelectorComponentState,
 } from '../custom-group-column-selector/custom-group-column-selector.component'
+import { SlotService } from '@onecx/angular-remote-components'
 import { DataLayoutSelectionComponentState } from '../data-layout-selection/data-layout-selection.component'
 import { DataListGridSortingComponentState } from '../data-list-grid-sorting/data-list-grid-sorting.component'
-import { Filter, Row, Sort } from '../data-table/data-table.component'
+import { Row, Sort } from '../data-table/data-table.component'
 import { DataViewComponent, DataViewComponentState, RowListGridData } from '../data-view/data-view.component'
+import { Filter } from '../../model/filter.model'
 
 export type InteractiveDataViewComponentState = ColumnGroupSelectionComponentState &
   CustomGroupColumnSelectorComponentState &
   DataLayoutSelectionComponentState &
   DataListGridSortingComponentState &
   DataViewComponentState
+
+export interface ColumnGroupData {
+  activeColumns: DataTableColumn[]
+  groupKey: string
+}
 @Component({
   selector: 'ocx-interactive-data-view',
   templateUrl: './interactive-data-view.component.html',
@@ -58,6 +75,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   dataListGridSortingComponentState$ = new ReplaySubject<DataListGridSortingComponentState>(1)
   dataViewComponentState$ = new ReplaySubject<DataViewComponentState>(1)
 
+  @Input() searchConfigPermission: string | undefined
   @Input() deletePermission: string | undefined
   @Input() editPermission: string | undefined
   @Input() viewPermission: string | undefined
@@ -206,7 +224,13 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
 
   @Output() componentStateChanged = new EventEmitter<InteractiveDataViewComponentState>()
 
-  selectedGroupKey = ''
+  selectedGroupKey$ = new BehaviorSubject<string | undefined>('')
+  get selectedGroupKey(): string | undefined {
+    return this.selectedGroupKey$.getValue()
+  }
+  set selectedGroupKey(value: string | undefined) {
+    this.selectedGroupKey$.next(value)
+  }
   isDeleteItemObserved: boolean | undefined
   isViewItemObserved: boolean | undefined
   isEditItemObserved: boolean | undefined
@@ -315,6 +339,48 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
     this._data = value
   }
 
+  columnGroupSlotName = 'onecx-column-group-selection'
+  isColumnGroupSelectionComponentDefined$: Observable<boolean>
+  groupSelectionChangedSlotEmitter = new EventEmitter<ColumnGroupData | undefined>()
+
+  constructor(private slotService: SlotService) {
+    this.isColumnGroupSelectionComponentDefined$ = this.slotService
+      .isSomeComponentDefinedForSlot(this.columnGroupSlotName)
+      .pipe(startWith(true))
+
+    this.groupSelectionChangedSlotEmitter.subscribe((event: ColumnGroupData | undefined) => {
+      if (event === undefined) {
+        event = {
+          activeColumns: this.displayedColumns,
+          groupKey: this.selectedGroupKey ?? this.defaultGroupKey,
+        }
+      }
+      this.displayedColumnKeys$.next(event.activeColumns.map((col) => col.id))
+      this.selectedGroupKey$.next(event.groupKey)
+      this.displayedColumnsChange.emit(this.displayedColumns)
+      this.displayedColumnKeysChange.emit(this.displayedColumnKeys)
+      this.columnGroupSelectionComponentState$.next({
+        activeColumnGroupKey: event.groupKey,
+        displayedColumns: event.activeColumns,
+      })
+    })
+
+    this.dataViewLayoutChange
+      .pipe(withLatestFrom(this.isColumnGroupSelectionComponentDefined$))
+      .subscribe(([_, columnGroupComponentDefined]) => {
+        if (columnGroupComponentDefined) {
+          if (
+            !(
+              this.columns.find((c) => c.nameKey === this.selectedGroupKey) ||
+              this.selectedGroupKey === this.customGroupKey
+            )
+          ) {
+            this.selectedGroupKey$.next(undefined)
+          }
+        }
+      })
+  }
+
   ngOnInit(): void {
     this.selectedGroupKey = this.defaultGroupKey
     if (!this.displayedColumns || this.displayedColumns.length === 0) {
@@ -326,13 +392,13 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
         .map((column) => column.id)
     }
     this.displayedColumns$ = this.displayedColumnKeys$.pipe(
+      distinctUntilChanged((prev, curr) => prev.length === curr.length && prev.every((v) => curr.includes(v))),
       map(
         (columnKeys) =>
           (columnKeys.map((key) => this.columns.find((col) => col.id === key)).filter((d) => d) as DataTableColumn[]) ??
           []
       )
     )
-    // TODO: Remove following line once displayedColumns (deprecated) has been removed
     this.displayedColumnsChange.emit(this.displayedColumns)
     this.displayedColumnKeysChange.emit(this.displayedColumnKeys)
     if (!this.groupSelectionNoGroupSelectedKey) {
