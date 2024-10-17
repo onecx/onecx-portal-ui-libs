@@ -139,7 +139,7 @@
     *ngIf="layout === 'table'"
     [selectedGroupKey]="selectedGroupKey ?? defaultGroupKey"
     [columns]="columns"
-    [defaultGroupKey]="defaultGroupKey"
+    [defaultGroupKey]="defaultGroupKey !== customGroupKey ? defaultGroupKey : ''"
     [customGroupKey]="customGroupKey"
     [placeholderKey]="groupSelectionNoGroupSelectedKey"
     (groupSelectionChanged)="onColumnGroupSelectionChange($event)"

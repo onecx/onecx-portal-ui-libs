@@ -471,7 +471,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         const columnValues = rows.map((row) => row[currentFilterColumn?.id])
         const translateObservable =
           this.columns.find((c) => c.id === currentFilterColumn?.id)?.columnType === ColumnType.TRANSLATION_KEY
-            ? this.translateService.get(columnValues as string[])
+            ? this.translateColumnValues(columnValues as string[])
             : of(Object.fromEntries(columnValues.map((cv) => [cv, cv])))
         return translateObservable.pipe(
           map((translatedValues) => {
@@ -499,6 +499,10 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     )
     this.mapSelectionToRows()
     this.emitComponentStateChanged()
+  }
+
+  translateColumnValues(columnValues: string[]): Observable<any> {
+    return !!columnValues.length ? this.translateService.get(columnValues as string[]) : of({})
   }
 
   emitComponentStateChanged(state: DataTableComponentState = {}) {

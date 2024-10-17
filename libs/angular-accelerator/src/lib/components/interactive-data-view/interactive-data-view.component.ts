@@ -386,7 +386,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
     if (!this.displayedColumns || this.displayedColumns.length === 0) {
       this.displayedColumnKeys = this.columns.map((column) => column.id)
     }
-    if (this.defaultGroupKey) {
+    if (this.defaultGroupKey && this.defaultGroupKey !== this.customGroupKey) {
       this.displayedColumnKeys = this.columns
         .filter((column) => column.predefinedGroupKeys?.includes(this.defaultGroupKey))
         .map((column) => column.id)
