@@ -140,7 +140,6 @@
     [selectedGroupKey]="selectedGroupKey ?? defaultGroupKey"
     [columns]="columns"
     [defaultGroupKey]="defaultGroupKey !== customGroupKey ? defaultGroupKey : ''"
-    [customGroupKey]="customGroupKey"
     [placeholderKey]="groupSelectionNoGroupSelectedKey"
     (groupSelectionChanged)="onColumnGroupSelectionChange($event)"
     (componentStateChanged)="columnGroupSelectionComponentState$.next($event)"
