@@ -502,7 +502,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
 
   translateColumnValues(columnValues: string[]): Observable<any> {
-    return !!columnValues.length ? this.translateService.get(columnValues as string[]) : of({})
+    return columnValues.length ? this.translateService.get(columnValues as string[]) : of({})
   }
 
   emitComponentStateChanged(state: DataTableComponentState = {}) {
