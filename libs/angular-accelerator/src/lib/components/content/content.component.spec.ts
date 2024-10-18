@@ -1,8 +1,8 @@
-import { OcxContentHarness } from '../../../../../testing/content.harness';
+import { OcxContentHarness } from '../../../../testing/content.harness'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { OcxContentComponent } from './content.component'
 import { OcxContentDirective } from '../../directives/content.directive'
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 
 describe('OcxContentComponent', () => {
   let component: OcxContentComponent
@@ -41,5 +41,12 @@ describe('OcxContentComponent', () => {
     expect(await ocxContentHarness.hasTitle()).toEqual(true)
     expect(await ocxContentHarness.getTitle()).toEqual(testComponentTitle)
     expect(await ocxContentHarness.getTitleClasses()).toEqual(expectedTitleClasses)
+  })
+
+  it('should render a ocxContent card with a class, when given a styleClass via input', async () => {
+    component.styleClass = 'py-4'
+
+    const expectedStyleClasses = ['card', 'py-4']
+    expect(await ocxContentHarness.getContentClasses()).toEqual(expectedStyleClasses)
   })
 })
