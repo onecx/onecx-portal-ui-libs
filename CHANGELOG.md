@@ -1,3 +1,9 @@
+## [5.19.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.19.2...v5.19.3) (2024-10-18)
+
+### Bug Fixes
+
+* UI state custom group column selector ([#544](https://github.com/onecx/onecx-portal-ui-libs/issues/544)) ([e2cecf3](https://github.com/onecx/onecx-portal-ui-libs/commit/e2cecf3ebc070189fc3ffdb8b1f58305fac6973f))
+
 ## [5.19.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.19.1...v5.19.2) (2024-10-16)
 
 ### Bug Fixes

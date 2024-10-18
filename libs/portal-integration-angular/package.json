@@ -1,6 +1,6 @@
 {
   "name": "@onecx/portal-integration-angular",
-  "version": "5.19.2",
+  "version": "5.19.3",
   "license": "Apache-2.0",
   "peerDependencies": {
     "@angular/common": "^18.0.5",
