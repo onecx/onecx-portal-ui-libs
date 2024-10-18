@@ -1,3 +1,9 @@
+## [5.19.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.19.3...v5.19.4) (2024-10-18)
+
+### Bug Fixes
+
+* cast filter value to string ([#549](https://github.com/onecx/onecx-portal-ui-libs/issues/549)) ([7f01113](https://github.com/onecx/onecx-portal-ui-libs/commit/7f01113c65a929f7960ba24dbdcd48492c988e46))
+
 ## [5.19.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.19.2...v5.19.3) (2024-10-18)
 
 ### Bug Fixes
