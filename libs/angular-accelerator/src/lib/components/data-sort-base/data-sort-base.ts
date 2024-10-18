@@ -10,7 +10,6 @@ import { ObjectUtils } from '../../utils/objectutils'
 import { Filter, FilterType } from '../../model/filter.model'
 
 type RowListGridData = ListGridData | Row
-export type Primitive = number | string | boolean | bigint | Date
 
 export class DataSortBase {
   constructor(
