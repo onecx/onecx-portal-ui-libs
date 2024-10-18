@@ -29,7 +29,7 @@
     "@ngx-translate/core": "^15.0.0",
     "@ngx-translate/http-loader": "^8.0.0",
     "@onecx/portal-layout-styles": "file:libs/portal-layout-styles",
-    "@storybook/addon-interactions": "^8.3.2",
+    "@storybook/addon-interactions": "^8.3.5",
     "axios": "^1.7.3",
     "chart.js": "^4.4.3",
     "d3-scale-chromatic": "^3.1.0",
