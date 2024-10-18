@@ -10,6 +10,7 @@ import { ObjectUtils } from '../../utils/objectutils'
 import { Filter, FilterType } from '../../model/filter.model'
 
 type RowListGridData = ListGridData | Row
+export type Primitive = number | string | boolean | bigint | Date
 
 export class DataSortBase {
   constructor(
@@ -81,7 +82,7 @@ export class DataSortBase {
                 switch (filter.filterType) {
                   case undefined:
                   case FilterType.EQUAL:
-                    return value === filter.value
+                    return value === String(filter.value)
                   case FilterType.TRUTHY: {
                     return filter.value ? !!value : !value
                   }
