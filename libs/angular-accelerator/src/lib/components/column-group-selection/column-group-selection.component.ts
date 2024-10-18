@@ -51,9 +51,12 @@ export class ColumnGroupSelectionComponent implements OnInit {
           .filter((value, index, self) => self.indexOf(value) === index && value != null)
       )
     )
+    const activeColumns = this.columns.filter((c) =>
+      c.predefinedGroupKeys?.includes(this.selectedGroupKey$.getValue() ?? this.defaultGroupKey)
+    )
     this.componentStateChanged.emit({
       activeColumnGroupKey: this.selectedGroupKey,
-      displayedColumns: this.columns,
+      displayedColumns: activeColumns,
     })
   }
 
@@ -65,7 +68,7 @@ export class ColumnGroupSelectionComponent implements OnInit {
     this.groupSelectionChanged.emit({ activeColumns, groupKey: event.value })
     this.componentStateChanged.emit({
       activeColumnGroupKey: event.value,
-      displayedColumns: activeColumns
+      displayedColumns: activeColumns,
     })
   }
 
@@ -77,7 +80,7 @@ export class ColumnGroupSelectionComponent implements OnInit {
     this.groupSelectionChanged.emit({ activeColumns, groupKey: this.defaultGroupKey })
     this.componentStateChanged.emit({
       activeColumnGroupKey: this.defaultGroupKey,
-      displayedColumns: activeColumns
+      displayedColumns: activeColumns,
     })
   }
 }

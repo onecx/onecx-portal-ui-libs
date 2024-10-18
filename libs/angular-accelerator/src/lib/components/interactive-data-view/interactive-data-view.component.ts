@@ -386,7 +386,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
     if (!this.displayedColumns || this.displayedColumns.length === 0) {
       this.displayedColumnKeys = this.columns.map((column) => column.id)
     }
-    if (this.defaultGroupKey) {
+    if (this.defaultGroupKey && this.defaultGroupKey !== this.customGroupKey) {
       this.displayedColumnKeys = this.columns
         .filter((column) => column.predefinedGroupKeys?.includes(this.defaultGroupKey))
         .map((column) => column.id)
@@ -417,8 +417,22 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
     if (this.layout === 'table') {
       dataListGridSortingComponentState$ = dataListGridSortingComponentState$.pipe(startWith({}))
     } else {
-      columnGroupSelectionComponentState$ = columnGroupSelectionComponentState$.pipe(startWith({}))
-      customGroupColumnSelectorComponentState$ = customGroupColumnSelectorComponentState$.pipe(startWith({}))
+      columnGroupSelectionComponentState$ = columnGroupSelectionComponentState$.pipe(
+        startWith({
+          activeColumnGroupKey: this.selectedGroupKey,
+          displayedColumns: this.displayedColumns,
+        })
+      )
+      customGroupColumnSelectorComponentState$ = customGroupColumnSelectorComponentState$.pipe(
+        startWith({
+          actionColumnConfig: {
+            frozen: this.frozenActionColumn,
+            position: this.actionColumnPosition,
+          },
+          displayedColumns: this.displayedColumns,
+          activeColumnGroupKey: this.selectedGroupKey,
+        })
+      )
     }
 
     combineLatest([
