@@ -82,6 +82,7 @@ export * from './lib/core/utils/portal-api-configuration.utils'
 
 export * from '@onecx/angular-accelerator'
 export {
+  AppConfigService,
   AppStateService,
   ConfigurationService,
   UserService,

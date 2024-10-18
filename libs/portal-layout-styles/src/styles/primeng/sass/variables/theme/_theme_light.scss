@@ -680,8 +680,8 @@ $menuitemHoverBg: rgba(0, 0, 0, 0.04);
 $menuitemTextActiveColor: $textColor;
 $menuitemIconActiveColor: $textSecondaryColor;
 $menuitemActiveBg: rgba(0, 0, 0, 0.04);
-$menuitemActiveFocusBg: rgba(0, 0, 0, 0.02);
-$menuitemFocusBg: rgba(0, 0, 0, 0.02);
+$menuitemActiveFocusBg: rgba(0, 0, 0, 0.04);
+$menuitemFocusBg: rgba(0, 0, 0, 0.04);
 $menuitemSubmenuIconFontSize: 0.875rem;
 $submenuHeaderMargin: 0;
 $submenuHeaderPadding: 1rem;
@@ -695,6 +695,18 @@ $overlayMenuShadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0,
 $verticalMenuitemMargin: 0;
 $verticalMenuPadding: 0.5rem 1.25rem;
 $menuSeparatorMargin: 0.5rem 0;
+
+// panel menu
+$panelMenuHeaderBorder: 0 none;
+$panelMenuHeaderBg: #ffffff;
+$panelMenuHeaderPadding: 1rem;
+$panelMenuHeaderFontWeight: 400;
+$panelMenuHeaderHoverBg: #f6f6f6;
+$panelMenuHeaderHoverBorderColor: transparent;
+$panelMenuHeaderActiveHoverBg: #ffffff;
+$panelMenuContentBorder: 0 none;
+$panelMenuContentBg: #ffffff;
+$panelMenuSpacing: 0;
 
 $breadcrumbPadding: 1rem;
 $breadcrumbBg: #ffffff;

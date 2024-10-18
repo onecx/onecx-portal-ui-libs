@@ -38,6 +38,7 @@ export * from './lib/model/data-table-column.model'
 export * from './lib/model/diagram-column'
 // export * from './lib/model/diagram-data'
 export * from './lib/model/diagram-type'
+export * from './lib/model/filter.model'
 
 // core
 export * from './lib/angular-accelerator.module'
@@ -60,3 +61,4 @@ export * from './lib/utils/create-remote-component-and-mfe-translate-loader.util
 export * from './lib/utils/create-remote-component-translate-loader.utils'
 export * from './lib/utils/enum-to-dropdown-options.utils'
 export * from './lib/utils/criteria.utils'
+export * from './lib/utils/string-and-array-helper-functions.utils'

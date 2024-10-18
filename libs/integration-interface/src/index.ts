@@ -38,3 +38,4 @@ export * from './lib/topics/permissions-rpc/v1/permissions-rpc.model'
 
 export * from './lib/topics/events/v1/events-topic'
 export * from './lib/topics/events/v1/topic-event-type'
+export * from './lib/topics/events/v1/navigated-event-payload'

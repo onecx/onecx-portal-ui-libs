@@ -25,6 +25,7 @@ import {
   Observable,
   combineLatest,
   debounceTime,
+  filter,
   first,
   map,
   mergeMap,
@@ -38,8 +39,9 @@ import { DataTableColumn } from '../../model/data-table-column.model'
 import { ObjectUtils } from '../../utils/objectutils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { MultiSelectItem } from 'primeng/multiselect'
+import { Filter, FilterType } from '../../model/filter.model'
 
-type Primitive = number | string | boolean | bigint | Date
+export type Primitive = number | string | boolean | bigint | Date
 export type Row = {
   id: string | number
   [columnId: string]: unknown
@@ -56,7 +58,6 @@ interface TemplatesData {
   templateNames: Record<ColumnType, Array<string>>
 }
 
-export type Filter = { columnId: string; value: string }
 export type Sort = { sortColumn: string; sortDirection: DataSortDirection }
 
 export interface DataTableComponentState {
@@ -73,6 +74,7 @@ export interface DataTableComponentState {
   styleUrls: ['./data-table.component.scss'],
 })
 export class DataTableComponent extends DataSortBase implements OnInit, AfterContentInit {
+  FilterType = FilterType
   TemplateType = TemplateType
   checked = true
   _rows$ = new BehaviorSubject<Row[]>([])
@@ -312,8 +314,19 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   selectedRows$: Observable<unknown[]> | undefined
 
   currentFilterColumn$ = new BehaviorSubject<DataTableColumn | null>(null)
-  currentFilterOptions$: Observable<SelectItem[]> | undefined
-  currentSelectedFilters$: Observable<string[]> | undefined
+  currentEqualFilterOptions$: Observable<SelectItem[]> | undefined
+  currentEqualSelectedFilters$: Observable<unknown[]> | undefined
+  truthyFilterOptions = [
+    {
+      key: 'OCX_DATA_TABLE.FILTER_YES',
+      value: true,
+    },
+    {
+      key: 'OCX_DATA_TABLE.FILTER_NO',
+      value: false,
+    },
+  ]
+  currentTruthySelectedFilters$: Observable<unknown[]> | undefined
   filterAmounts$: Observable<Record<string, number>> | undefined
 
   overflowActions$: Observable<DataAction[]>
@@ -416,24 +429,49 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       map((params) => this.sortItems(params, this.columns, this.clientSideSorting)),
       map(([rows]) => this.flattenItems(rows))
     )
-    this.currentSelectedFilters$ = combineLatest([this._filters$, this.currentFilterColumn$]).pipe(
+    this.currentTruthySelectedFilters$ = combineLatest([this._filters$, this.currentFilterColumn$]).pipe(
       map(([filters, currentFilterColumn]) => {
-        return filters.filter((filter) => filter.columnId === currentFilterColumn?.id).map((filter) => filter.value)
+        return filters
+          .filter(
+            (filter) =>
+              filter.columnId === currentFilterColumn?.id && currentFilterColumn.filterType === FilterType.TRUTHY
+          )
+          .map((filter) => filter.value)
       })
     )
-    this.currentFilterOptions$ = combineLatest([this._rows$, this.currentFilterColumn$, this._filters$]).pipe(
+    this.currentEqualSelectedFilters$ = combineLatest([this._filters$, this.currentFilterColumn$]).pipe(
+      map(([filters, currentFilterColumn]) => {
+        return filters
+          .filter(
+            (filter) =>
+              filter.columnId === currentFilterColumn?.id &&
+              (!currentFilterColumn.filterType || currentFilterColumn.filterType === FilterType.EQUAL)
+          )
+          .map((filter) => filter.value)
+      })
+    )
+    this.currentEqualFilterOptions$ = combineLatest([this._rows$, this.currentFilterColumn$, this._filters$]).pipe(
+      filter(
+        ([_, currentFilterColumn, __]) =>
+          !currentFilterColumn?.filterType || currentFilterColumn.filterType === FilterType.EQUAL
+      ),
       mergeMap(([rows, currentFilterColumn, filters]) => {
         if (!currentFilterColumn?.id) {
           return of([])
         }
+
         const currentFilters = filters
-          .filter((filter) => filter.columnId === currentFilterColumn?.id)
+          .filter(
+            (filter) =>
+              filter.columnId === currentFilterColumn?.id &&
+              (!currentFilterColumn.filterType || currentFilterColumn.filterType === FilterType.EQUAL)
+          )
           .map((filter) => filter.value)
 
         const columnValues = rows.map((row) => row[currentFilterColumn?.id])
         const translateObservable =
           this.columns.find((c) => c.id === currentFilterColumn?.id)?.columnType === ColumnType.TRANSLATION_KEY
-            ? this.translateService.get(columnValues as string[])
+            ? this.translateColumnValues(columnValues as string[])
             : of(Object.fromEntries(columnValues.map((cv) => [cv, cv])))
         return translateObservable.pipe(
           map((translatedValues) => {
@@ -461,6 +499,10 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     )
     this.mapSelectionToRows()
     this.emitComponentStateChanged()
+  }
+
+  translateColumnValues(columnValues: string[]): Observable<any> {
+    return columnValues.length ? this.translateService.get(columnValues as string[]) : of({})
   }
 
   emitComponentStateChanged(state: DataTableComponentState = {}) {
@@ -567,13 +609,14 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     this.currentFilterColumn$.next(column)
   }
 
-  onFilterChange(column: DataTableColumn, event: any) {
+  onMultiselectFilterChange(column: DataTableColumn, event: any) {
     const filters = this.filters
       .filter((filter) => filter.columnId !== column.id)
       .concat(
         event.value.map((value: Primitive) => ({
           columnId: column.id,
           value,
+          filterType: column.filterType,
         }))
       )
     if (this.clientSideFiltering) {
@@ -586,7 +629,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     this.resetPage()
   }
 
-  getSelectedFilters(columnId: string): string[] | undefined {
+  getSelectedFilters(columnId: string): unknown[] | undefined {
     return this.filters.filter((filter) => filter.columnId === columnId).map((filter) => filter.value)
   }
 
@@ -629,7 +672,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         newSelectionIds = this.mergeWithDisabledKeys(newSelectionIds, disabledRowIds)
       }
     }
-    
+
     this._selectionIds$.next(newSelectionIds)
     this.selectionChanged.emit(this._rows$.getValue().filter((row) => newSelectionIds.includes(row.id)))
     this.emitComponentStateChanged()
