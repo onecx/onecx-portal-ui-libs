@@ -142,6 +142,8 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   }
   @Input() frozenActionColumn = false
   @Input() actionColumnPosition: 'left' | 'right' = 'right'
+  @Input() headerStyleClass: string | undefined
+  @Input() contentStyleClass: string | undefined
   @ContentChild('tableCell') tableCell: TemplateRef<any> | undefined
   /**
    * @deprecated Will be replaced by dateTableCell

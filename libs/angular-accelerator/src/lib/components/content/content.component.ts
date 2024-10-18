@@ -13,5 +13,5 @@ export class OcxContentComponent {
   /**
    * Optionally allows specifying styles for the content card
    */
-  @Input() styleClass = ''
+  @Input() styleClass: string | undefined
 }

@@ -52,6 +52,6 @@ describe('OcxContentContainerComponent', () => {
     component.styleClass = 'py-4'
 
     const expectedStyleClasses = ['flex', 'gap-3', 'flex-column', 'py-4']
-    expect(await ocxContentHarness.getContentClasses()).toEqual(expectedStyleClasses)
+    expect(await ocxContentContainerHarness.getLayoutClasses()).toEqual(expectedStyleClasses)
   })
 })

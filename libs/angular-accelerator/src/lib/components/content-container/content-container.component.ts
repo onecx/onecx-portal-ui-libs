@@ -20,5 +20,5 @@ export class OcxContentContainerComponent {
   /**
    * Optionally allows specifying styles for the container
    */
-  @Input() styleClass = ''
+  @Input() styleClass: string | undefined
 }
