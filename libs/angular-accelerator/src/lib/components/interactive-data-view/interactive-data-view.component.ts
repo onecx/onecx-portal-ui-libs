@@ -39,8 +39,9 @@ import {
 import { SlotService } from '@onecx/angular-remote-components'
 import { DataLayoutSelectionComponentState } from '../data-layout-selection/data-layout-selection.component'
 import { DataListGridSortingComponentState } from '../data-list-grid-sorting/data-list-grid-sorting.component'
-import { Filter, Row, Sort } from '../data-table/data-table.component'
+import { Row, Sort } from '../data-table/data-table.component'
 import { DataViewComponent, DataViewComponentState, RowListGridData } from '../data-view/data-view.component'
+import { Filter } from '../../model/filter.model'
 
 export type InteractiveDataViewComponentState = ColumnGroupSelectionComponentState &
   CustomGroupColumnSelectorComponentState &
@@ -340,7 +341,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
     this._data = value
   }
 
-  columnGroupSlotName = 'onecx-shell-column-group-selection'
+  columnGroupSlotName = 'onecx-column-group-selection'
   isColumnGroupSelectionComponentDefined$: Observable<boolean>
   groupSelectionChangedSlotEmitter = new EventEmitter<ColumnGroupData | undefined>()
 
@@ -387,7 +388,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
     if (!this.displayedColumns || this.displayedColumns.length === 0) {
       this.displayedColumnKeys = this.columns.map((column) => column.id)
     }
-    if (this.defaultGroupKey) {
+    if (this.defaultGroupKey && this.defaultGroupKey !== this.customGroupKey) {
       this.displayedColumnKeys = this.columns
         .filter((column) => column.predefinedGroupKeys?.includes(this.defaultGroupKey))
         .map((column) => column.id)
@@ -418,8 +419,22 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
     if (this.layout === 'table') {
       dataListGridSortingComponentState$ = dataListGridSortingComponentState$.pipe(startWith({}))
     } else {
-      columnGroupSelectionComponentState$ = columnGroupSelectionComponentState$.pipe(startWith({}))
-      customGroupColumnSelectorComponentState$ = customGroupColumnSelectorComponentState$.pipe(startWith({}))
+      columnGroupSelectionComponentState$ = columnGroupSelectionComponentState$.pipe(
+        startWith({
+          activeColumnGroupKey: this.selectedGroupKey,
+          displayedColumns: this.displayedColumns,
+        })
+      )
+      customGroupColumnSelectorComponentState$ = customGroupColumnSelectorComponentState$.pipe(
+        startWith({
+          actionColumnConfig: {
+            frozen: this.frozenActionColumn,
+            position: this.actionColumnPosition,
+          },
+          displayedColumns: this.displayedColumns,
+          activeColumnGroupKey: this.selectedGroupKey,
+        })
+      )
     }
 
     combineLatest([
