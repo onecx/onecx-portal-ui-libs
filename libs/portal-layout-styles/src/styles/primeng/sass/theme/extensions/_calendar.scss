@@ -86,6 +86,18 @@
     }
   }
 
+  .p-monthpicker .p-monthpicker-month:not(.p-disabled):not(.p-highlight):focus {
+      outline: $calendarFocusOutline;
+      outline-offset: $calendarFocusOutlineOffset;
+      box-shadow: none;
+    }
+
+  .p-yearpicker .p-yearpicker-year:not(.p-disabled):not(.p-highlight):focus  {
+    outline: $calendarFocusOutline;
+    outline-offset: $calendarFocusOutlineOffset;
+    box-shadow: none;
+  }
+
   table {
     th {
       border-bottom: var(--divider);
