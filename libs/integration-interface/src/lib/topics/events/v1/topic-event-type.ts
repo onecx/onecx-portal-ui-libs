@@ -1,1 +1,3 @@
-export type TopicEventType = { type: string; payload?: unknown | undefined }
+import { NavigatedEvent } from './navigated-event-type'
+
+export type TopicEventType = NavigatedEvent | { type: string; payload?: unknown | undefined }
