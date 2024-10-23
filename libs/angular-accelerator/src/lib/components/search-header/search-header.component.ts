@@ -113,6 +113,12 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
   @ViewChild('searchParameterFields') searchParameterFields: ElementRef | undefined
 
   hasAdvanced = false
+
+  simpleAdvancedAction: Action = {
+    id: 'simpleAdvancedButton',
+    actionCallback: () => this.toggleViewMode(),
+    show: 'always',
+  }
   headerActions: Action[] = []
 
   fieldValues$: Observable<{ [key: string]: unknown }> | undefined = of({})
@@ -166,19 +172,14 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
   updateHeaderActions() {
     const headerActions: Action[] = []
     if (this.hasAdvanced) {
-      headerActions.push({
-        id: 'simpleAdvancedButton',
-        labelKey:
-          this.viewMode === 'basic'
-            ? 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.ADVANCED.TEXT'
-            : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.SIMPLE.TEXT',
-        actionCallback: () => this.toggleViewMode(),
-        show: 'always',
-        titleKey:
-          this.viewMode === 'basic'
-            ? 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.ADVANCED.DETAIL'
-            : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.SIMPLE.DETAIL',
-      })
+      this.simpleAdvancedAction.labelKey = this.viewMode === 'basic'
+      ? 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.ADVANCED.TEXT'
+      : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.SIMPLE.TEXT',
+      this.simpleAdvancedAction.titleKey = this.viewMode === 'basic'
+      ? 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.ADVANCED.DETAIL'
+      : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.SIMPLE.DETAIL',
+      
+      headerActions.push(this.simpleAdvancedAction)
     }
     this.headerActions = headerActions.concat(this.actions)
   }
