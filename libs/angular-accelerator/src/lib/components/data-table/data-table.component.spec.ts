@@ -26,7 +26,6 @@ describe('DataTableComponent', () => {
     OCX_DATA_TABLE: {
       SHOWING: '{{first}} - {{last}} of {{totalRecords}}',
       SHOWING_WITH_TOTAL_ON_SERVER: '{{first}} - {{last}} of {{totalRecords}} ({{totalRecordsOnServer}})',
-      ALL: 'All',
     },
   }
 
@@ -35,7 +34,6 @@ describe('DataTableComponent', () => {
     OCX_DATA_TABLE: {
       SHOWING: '{{first}} - {{last}} von {{totalRecords}}',
       SHOWING_WITH_TOTAL_ON_SERVER: '{{first}} - {{last}} von {{totalRecords}} ({{totalRecordsOnServer}})',
-      ALL: 'Alle',
     },
   }
 
@@ -272,32 +270,12 @@ describe('DataTableComponent', () => {
     })
   })
 
-  describe('should display the paginator rowsPerPageOptions -', () => {
-    it('de', async () => {
-      window.HTMLElement.prototype.scrollIntoView = jest.fn()
-      translateService.use('de')
-      fixture = TestBed.createComponent(DataTableComponent)
-      component = fixture.componentInstance
-      component.rows = mockData
-      component.columns = mockColumns
-      component.paginator = true
-      fixture.detectChanges()
-      const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
-      const paginator = await dataTable.getPaginator()
-      const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
-      const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
-      expect(rowsPerPageOptionsText).toEqual('Alle')
-    })
-
-    it('en', async () => {
-      window.HTMLElement.prototype.scrollIntoView = jest.fn()
-      translateService.use('en')
-      const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
-      const paginator = await dataTable.getPaginator()
-      const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
-      const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
-      expect(rowsPerPageOptionsText).toEqual('All')
-    })
+  it('should display the paginator rowsPerPageOptions', async () => {
+    const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
+    const paginator = await dataTable.getPaginator()
+    const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
+    const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
+    expect(rowsPerPageOptionsText).toEqual('10')
   })
 
   it('should display 10 rows by default for 1000 rows', async () => {
@@ -478,8 +456,6 @@ describe('DataTableComponent', () => {
       expect(component.editTableRowObserved).toBe(true)
       expect(component.deleteTableRowObserved).toBe(true)
 
-
-
       const tableActions = await dataTable.getActionButtons()
       expect(tableActions.length).toBe(3)
       const expectedIcons = ['pi pi-eye', 'pi pi-trash', 'pi pi-pencil']
@@ -501,8 +477,6 @@ describe('DataTableComponent', () => {
       setUpActionButtonMockData()
       component.viewActionEnabledField = 'ready'
 
-
-
       let tableActions = await dataTable.getActionButtons()
       expect(tableActions.length).toBe(3)
 
@@ -521,8 +495,6 @@ describe('DataTableComponent', () => {
       tempRows[0]['ready'] = true
 
       component.rows = [...tempRows]
-
-
 
       tableActions = await dataTable.getActionButtons()
 
@@ -544,7 +516,6 @@ describe('DataTableComponent', () => {
       expect(component.editTableRowObserved).toBe(true)
       expect(component.deleteTableRowObserved).toBe(true)
 
-      
       const tableActions = await dataTable.getActionButtons()
       expect(tableActions.length).toBe(3)
       const expectedIcons = ['pi pi-eye', 'pi pi-trash', 'pi pi-pencil']
@@ -565,8 +536,6 @@ describe('DataTableComponent', () => {
       setUpActionButtonMockData()
       component.viewActionVisibleField = 'ready'
 
-
-
       let tableActions = await dataTable.getActionButtons()
       expect(tableActions.length).toBe(2)
 
@@ -580,8 +549,6 @@ describe('DataTableComponent', () => {
       tempRows[0]['ready'] = true
 
       component.rows = [...tempRows]
-
-
 
       tableActions = await dataTable.getActionButtons()
       expect(tableActions.length).toBe(3)
