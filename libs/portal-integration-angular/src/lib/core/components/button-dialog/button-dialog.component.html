@@ -3,43 +3,46 @@
     <ng-container #container></ng-container>
     <ng-content></ng-content>
   </div>
-  <div class="w-full flex flex-row-reverse justify-content-between column-gap-2">
-    <div class="flex flex-row-reverse flex-wrap column-gap-2 row-gap-2">
-      <div>
-        <button
-          id="buttonDialogPrimaryButton"
-          pButton
-          [icon]="dialogData.config.primaryButtonDetails!.icon !== undefined ? dialogData.config.primaryButtonDetails!.icon : ''"
-          (click)="primaryButtonAction()"
-          [label]="dialogData.config.primaryButtonDetails!.key | translate:dialogData.config.primaryButtonDetails?.parameters"
-          [disabled]="primaryButtonDisabled$ | async"
-          [pTooltip]="dialogData.config.primaryButtonDetails!.tooltipKey ? (dialogData.config.primaryButtonDetails!.tooltipKey | translate) : null"
-          [tooltipPosition]="dialogData.config.primaryButtonDetails?.tooltipPosition ?? ''"
-          [attr.aria-label]="dialogData.config.primaryButtonDetails!.key | translate:dialogData.config.primaryButtonDetails?.parameters"
-        ></button>
-      </div>
-      <div>
-        <button
-          id="buttonDialogSecondaryButton"
-          pButton
-          *ngIf="dialogData.config.secondaryButtonIncluded"
-          [icon]="dialogData.config.secondaryButtonDetails!.icon !== undefined ? dialogData.config.secondaryButtonDetails!.icon : ''"
-          (click)="secondaryButtonAction()"
-          [label]="dialogData.config.secondaryButtonDetails!.key | translate:dialogData.config.secondaryButtonDetails?.parameters"
-          [disabled]="secondaryButtonDisabled$ | async"
-          [pTooltip]="dialogData.config.secondaryButtonDetails!.tooltipKey ? (dialogData.config.secondaryButtonDetails!.tooltipKey | translate) : null"
-          [tooltipPosition]="dialogData.config.secondaryButtonDetails?.tooltipPosition ?? ''"
-          [attr.aria-label]="dialogData.config.secondaryButtonDetails!.key | translate:dialogData.config.secondaryButtonDetails?.parameters"
-        ></button>
-      </div>
-      <div *ngFor="let button of rightCustomButtons">
+  <div
+    class="w-full flex-column sm:flex-row align-content-end sm:align-content-start flex flex-wrap row-gap-2 column-gap-2"
+  >
+    <ng-container *ngFor="let button of leftCustomButtons; index as i">
+      <div [ngStyle]="{'margin-right': (i === leftCustomButtons.length - 1) ? 'auto' : 0}">
         <ng-container *ngTemplateOutlet="customButton; context: {button: button}"> </ng-container>
       </div>
+    </ng-container>
+    <ng-container *ngFor="let button of rightCustomButtons">
+      <div>
+        <ng-container *ngTemplateOutlet="customButton; context: {button: button}"> </ng-container>
+      </div>
+    </ng-container>
+    <div>
+      <button
+        id="buttonDialogSecondaryButton"
+        pButton
+        *ngIf="dialogData.config.secondaryButtonIncluded"
+        [icon]="dialogData.config.secondaryButtonDetails!.icon !== undefined ? dialogData.config.secondaryButtonDetails!.icon : ''"
+        (click)="secondaryButtonAction()"
+        [label]="dialogData.config.secondaryButtonDetails!.key | translate:dialogData.config.secondaryButtonDetails?.parameters"
+        [disabled]="secondaryButtonDisabled$ | async"
+        [pTooltip]="dialogData.config.secondaryButtonDetails!.tooltipKey ? (dialogData.config.secondaryButtonDetails!.tooltipKey | translate) : null"
+        [tooltipPosition]="dialogData.config.secondaryButtonDetails?.tooltipPosition ?? ''"
+        [attr.aria-label]="dialogData.config.secondaryButtonDetails!.key | translate:dialogData.config.secondaryButtonDetails?.parameters"
+      ></button>
     </div>
-    <div class="flex flex-wrap column-gap-2 row-gap-2">
-      <div *ngFor="let button of leftCustomButtons">
-        <ng-container *ngTemplateOutlet="customButton; context: {button: button}"> </ng-container>
-      </div>
+    <div>
+      <button
+        id="buttonDialogPrimaryButton"
+        pButton
+        autofocus
+        [icon]="dialogData.config.primaryButtonDetails!.icon !== undefined ? dialogData.config.primaryButtonDetails!.icon : ''"
+        (click)="primaryButtonAction()"
+        [label]="dialogData.config.primaryButtonDetails!.key | translate:dialogData.config.primaryButtonDetails?.parameters"
+        [disabled]="primaryButtonDisabled$ | async"
+        [pTooltip]="dialogData.config.primaryButtonDetails!.tooltipKey ? (dialogData.config.primaryButtonDetails!.tooltipKey | translate) : null"
+        [tooltipPosition]="dialogData.config.primaryButtonDetails?.tooltipPosition ?? ''"
+        [attr.aria-label]="dialogData.config.primaryButtonDetails!.key | translate:dialogData.config.primaryButtonDetails?.parameters"
+      ></button>
     </div>
   </div>
 </div>
