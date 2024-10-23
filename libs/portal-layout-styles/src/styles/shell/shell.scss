@@ -43,6 +43,7 @@
   --menu-item-hover-bg-color: #e4e4e4;
   --menu-active-item-bg-color: rgba(0, 0, 0, 0.04);
   --menu-active-item-text-color: var(--menu-item-text-color);
+  --menu-active-item-bg-color: var(--menu-item-hover-bg-color);
   --inline-menu-border-color: var(--divider-color);
   --mobile-break-point: #{$mobileBreakpoint};
   --submenu-shadow: #{$submenuShadow};

@@ -81,10 +81,9 @@ export class DataSortBase {
                 switch (filter.filterType) {
                   case undefined:
                   case FilterType.EQUAL:
-                    return value === filter.value
+                    return value === String(filter.value)
                   case FilterType.TRUTHY: {
-                    const isTruthy = value !== undefined && value !== ''
-                    return filter.value ? isTruthy : !isTruthy
+                    return filter.value ? !!value : !value
                   }
                 }
               })

@@ -1,3 +1,42 @@
+## [5.19.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.19.3...v5.19.4) (2024-10-18)
+
+### Bug Fixes
+
+* cast filter value to string ([#549](https://github.com/onecx/onecx-portal-ui-libs/issues/549)) ([7f01113](https://github.com/onecx/onecx-portal-ui-libs/commit/7f01113c65a929f7960ba24dbdcd48492c988e46))
+
+## [5.19.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.19.2...v5.19.3) (2024-10-18)
+
+### Bug Fixes
+
+* UI state custom group column selector ([#544](https://github.com/onecx/onecx-portal-ui-libs/issues/544)) ([e2cecf3](https://github.com/onecx/onecx-portal-ui-libs/commit/e2cecf3ebc070189fc3ffdb8b1f58305fac6973f))
+
+## [5.19.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.19.1...v5.19.2) (2024-10-16)
+
+### Bug Fixes
+
+* revert menu header padding ([#545](https://github.com/onecx/onecx-portal-ui-libs/issues/545)) ([41c880c](https://github.com/onecx/onecx-portal-ui-libs/commit/41c880cd1217d1e1dbcf58c116425a59108ba827))
+
+## [5.19.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.19.0...v5.19.1) (2024-10-16)
+
+### Bug Fixes
+
+* fix type of warning in portal-page-header ([#542](https://github.com/onecx/onecx-portal-ui-libs/issues/542)) ([4e652a1](https://github.com/onecx/onecx-portal-ui-libs/commit/4e652a11068ce5669cd1b7d514cd20122cd0f4ca))
+* renaming payload navigated event to navigated event payload ([#543](https://github.com/onecx/onecx-portal-ui-libs/issues/543)) ([855a16e](https://github.com/onecx/onecx-portal-ui-libs/commit/855a16eba64e28c5e892249a42990428adebe60a))
+
+## [5.19.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.18.1...v5.19.0) (2024-10-15)
+
+### Features
+
+* add navigation history ([#532](https://github.com/onecx/onecx-portal-ui-libs/issues/532)) ([ae4b583](https://github.com/onecx/onecx-portal-ui-libs/commit/ae4b5835717bdbe258e2977e195d0259dbbf9519))
+* panelmenu component style adjustments ([#533](https://github.com/onecx/onecx-portal-ui-libs/issues/533)) ([3a3ed93](https://github.com/onecx/onecx-portal-ui-libs/commit/3a3ed9322096ec56161b13f3958a03787062b3c8))
+
+## [5.18.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.18.0...v5.18.1) (2024-10-11)
+
+### Bug Fixes
+
+* search config slot name changes ([#539](https://github.com/onecx/onecx-portal-ui-libs/issues/539)) ([0faecd9](https://github.com/onecx/onecx-portal-ui-libs/commit/0faecd944bbd0323a844e3167161782c76d3529e))
+* truthy filter check correction ([#538](https://github.com/onecx/onecx-portal-ui-libs/issues/538)) ([996de4e](https://github.com/onecx/onecx-portal-ui-libs/commit/996de4e100f20d5cc4830a29cf38f829b12ccb79))
+
 ## [5.18.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.17.2...v5.18.0) (2024-10-11)
 
 ### Features

@@ -24,7 +24,21 @@ export interface CustomGroupColumnSelectorComponentState {
 })
 export class CustomGroupColumnSelectorComponent implements OnInit {
   @Input() columns: DataTableColumn[] = []
-  @Input() displayedColumns: DataTableColumn[] = []
+  private _displayedColumns: DataTableColumn[] = []
+  @Input()
+  get displayedColumns() {
+    return this._displayedColumns
+  }
+  set displayedColumns(value: DataTableColumn[]) {
+    this._displayedColumns = value
+    this.componentStateChanged.emit({
+      actionColumnConfig: {
+        frozen: this.frozenActionColumn,
+        position: this.actionColumnPosition,
+      },
+      displayedColumns: this._displayedColumns,
+    })
+  }
   @Input() dialogTitle = ''
   @Input() dialogTitleKey = ''
   @Input() openButtonTitle = ''
@@ -108,11 +122,6 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
       this.columnSelectionChanged.emit({ activeColumns: [...this.displayedColumnsModel] })
       this.componentStateChanged.emit({
         displayedColumns: [...this.displayedColumnsModel],
-        actionColumnConfig: {
-          frozen: this.frozenActionColumnModel,
-          position: this.actionColumnPositionModel,
-        },
-        activeColumnGroupKey: undefined,
       })
     }
 
