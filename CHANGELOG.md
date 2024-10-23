@@ -1,3 +1,16 @@
+## [5.20.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.19.4...v5.20.0) (2024-10-23)
+
+### Features
+
+* NavigatedEvent type created ([#555](https://github.com/onecx/onecx-portal-ui-libs/issues/555)) ([9c9157b](https://github.com/onecx/onecx-portal-ui-libs/commit/9c9157b6a59d08fb3e65ca18a07832646eb2b6d5))
+
+### Bug Fixes
+
+* focus order and alignment of buttons in dialog ([#554](https://github.com/onecx/onecx-portal-ui-libs/issues/554)) ([8b866cc](https://github.com/onecx/onecx-portal-ui-libs/commit/8b866cca57c5cb729cabb452727424151b3b9a31))
+* icons hidden in topbar menu ([#540](https://github.com/onecx/onecx-portal-ui-libs/issues/540)) ([afc34c9](https://github.com/onecx/onecx-portal-ui-libs/commit/afc34c9eb905731c816e8fb2f490c93c72fb2b36))
+* remove history ([#556](https://github.com/onecx/onecx-portal-ui-libs/issues/556)) ([fc123a3](https://github.com/onecx/onecx-portal-ui-libs/commit/fc123a3f7395fa23006b93f8fe62921fb9349c49))
+* simple advanced button correction ([#553](https://github.com/onecx/onecx-portal-ui-libs/issues/553)) ([19f4610](https://github.com/onecx/onecx-portal-ui-libs/commit/19f461093ff3af2b6ba8f931a5fb48352765b227))
+
 ## [5.19.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.19.3...v5.19.4) (2024-10-18)
 
 ### Bug Fixes
