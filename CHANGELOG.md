@@ -1,3 +1,9 @@
+## [5.20.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.20.0...v5.20.1) (2024-10-24)
+
+### Bug Fixes
+
+* replace in navigate ([#559](https://github.com/onecx/onecx-portal-ui-libs/issues/559)) ([bb648d1](https://github.com/onecx/onecx-portal-ui-libs/commit/bb648d1b2f60a881d5a1b6ccc4a553d0f2a706b8))
+
 ## [5.20.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.19.4...v5.20.0) (2024-10-23)
 
 ### Features
