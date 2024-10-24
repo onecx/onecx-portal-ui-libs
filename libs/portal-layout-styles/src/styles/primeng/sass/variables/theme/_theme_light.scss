@@ -53,7 +53,7 @@ $focusOutline: 0 none;
 $focusOutlineOffset: 0;
 $focusShadow: none;
 $focusOutlineCustom: 1px solid var(--primary-color);
-$focusOutlineOffsetCustom: 0px;
+$focusOutlineOffsetCustom: 2px;
 
 //action icons
 $actionIconWidth: 2.5rem;
@@ -66,7 +66,7 @@ $actionIconHoverBorderColor: transparent;
 $actionIconHoverColor: $textSecondaryColor;
 $actionIconBorderRadius: 50%;
 $actionIconFocusOutline: $focusOutlineCustom;
-$actionIconFocusOutlineOffset: $focusOutlineOffsetCustom;
+$actionIconFocusOutlineOffset: 0px;
 
 //input field (e.g. inputtext, spinner, inputmask)
 $inputPadding: 1rem 1rem;
