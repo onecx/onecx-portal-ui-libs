@@ -90,7 +90,7 @@
     "@typescript-eslint/utils": "^8.5.0",
     "blob-polyfill": "^9.0.20240710",
     "conventional-changelog-conventionalcommits": "^8.0.0",
-    "esbuild": "^0.19.2",
+    "esbuild": "^0.24.0",
     "eslint": "~8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "happy-dom": "^15.7.4",
