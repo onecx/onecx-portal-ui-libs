@@ -65,6 +65,8 @@ $actionIconHoverBg: rgba(0, 0, 0, 0.04);
 $actionIconHoverBorderColor: transparent;
 $actionIconHoverColor: $textSecondaryColor;
 $actionIconBorderRadius: 50%;
+$actionIconFocusOutline: $focusOutlineCustom;
+$actionIconFocusOutlineOffset: 0px;
 
 //input field (e.g. inputtext, spinner, inputmask)
 $inputPadding: 1rem 1rem;
