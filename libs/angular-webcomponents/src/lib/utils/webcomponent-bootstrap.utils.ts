@@ -172,7 +172,9 @@ function connectRouter(router: Router): Subscription {
     const routerUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}${location.hash}`
     if (routerUrl !== lastUrl) {
       lastUrl = routerUrl
-      router.navigateByUrl(routerUrl)
+      router.navigateByUrl(routerUrl, {
+        replaceUrl: true,
+      })
     }
   })
 }
