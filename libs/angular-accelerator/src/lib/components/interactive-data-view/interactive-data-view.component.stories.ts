@@ -190,4 +190,16 @@ export const WithCustomTemplates = {
   args: defaultComponentArgs,
 }
 
+export const WithCustomStyles = {
+  argTypes: {
+    componentStateChanged: { action: 'componentStateChanged' },
+  },
+  render: Template,
+  args: {
+    ...defaultComponentArgs,
+    headerStyleClass: 'py-2',
+    contentStyleClass: 'py-4',
+  },
+}
+
 export default InteractiveDataViewComponentSBConfig
