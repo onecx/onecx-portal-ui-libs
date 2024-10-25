@@ -39,6 +39,7 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
       displayedColumns: this._displayedColumns,
     })
   }
+  @Input() customGroupKey = ''
   @Input() dialogTitle = ''
   @Input() dialogTitleKey = ''
   @Input() openButtonTitle = ''
@@ -139,6 +140,7 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
           frozen: this.frozenActionColumnModel,
           position: this.actionColumnPositionModel,
         },
+        activeColumnGroupKey: this.customGroupKey,
       })
     }
   }

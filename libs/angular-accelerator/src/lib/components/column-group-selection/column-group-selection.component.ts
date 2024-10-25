@@ -20,6 +20,11 @@ export class ColumnGroupSelectionComponent implements OnInit {
   }
   set selectedGroupKey(value: string) {
     this.selectedGroupKey$.next(value)
+    if (this.selectedGroupKey === this.customGroupKey) {
+      this.componentStateChanged.emit({
+        activeColumnGroupKey: value,
+      })
+    }
   }
 
   columns$ = new BehaviorSubject<DataTableColumn[]>([])
@@ -51,13 +56,19 @@ export class ColumnGroupSelectionComponent implements OnInit {
           .filter((value, index, self) => self.indexOf(value) === index && value != null)
       )
     )
-    const activeColumns = this.columns.filter((c) =>
-      c.predefinedGroupKeys?.includes(this.selectedGroupKey$.getValue() ?? this.defaultGroupKey)
-    )
-    this.componentStateChanged.emit({
-      activeColumnGroupKey: this.selectedGroupKey,
-      displayedColumns: activeColumns,
-    })
+    if (this.selectedGroupKey === this.customGroupKey) {
+      this.componentStateChanged.emit({
+        activeColumnGroupKey: this.selectedGroupKey,
+      })
+    } else {
+      const activeColumns = this.columns.filter((c) =>
+        c.predefinedGroupKeys?.includes(this.selectedGroupKey$.getValue() ?? this.defaultGroupKey)
+      )
+      this.componentStateChanged.emit({
+        activeColumnGroupKey: this.selectedGroupKey,
+        displayedColumns: activeColumns,
+      })
+    }
   }
 
   changeGroupSelection(event: { value: string }) {
@@ -68,18 +79,6 @@ export class ColumnGroupSelectionComponent implements OnInit {
     this.groupSelectionChanged.emit({ activeColumns, groupKey: event.value })
     this.componentStateChanged.emit({
       activeColumnGroupKey: event.value,
-      displayedColumns: activeColumns,
-    })
-  }
-
-  clearGroupSelection() {
-    let activeColumns = this.columns
-    if (this.defaultGroupKey) {
-      activeColumns = this.columns.filter((column) => column.predefinedGroupKeys?.includes(this.defaultGroupKey))
-    }
-    this.groupSelectionChanged.emit({ activeColumns, groupKey: this.defaultGroupKey })
-    this.componentStateChanged.emit({
-      activeColumnGroupKey: this.defaultGroupKey,
       displayedColumns: activeColumns,
     })
   }
