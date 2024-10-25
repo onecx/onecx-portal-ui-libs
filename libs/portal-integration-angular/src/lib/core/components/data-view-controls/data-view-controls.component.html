@@ -84,9 +84,9 @@
       onIcon="pi pi-sort-amount-up"
       offIcon="pi pi-sort-amount-down"
       (onChange)="sortDirection($event)"
-      [pTooltip]="!selectedSortDirection ? (translations?.sortOrderTooltips?.ascending || ('OCX_LIST_GRID_SORT.TOGGLE_BUTTON.ASCENDING_TITLE' | translate)) : (translations?.sortOrderTooltips?.descending || ('OCX_LIST_GRID_SORT.TOGGLE_BUTTON.DESCENDING_TITLE' | translate))"
+      [pTooltip]="!selectedSortDirection ? (translations?.sortOrderTooltips?.ascending || ('OCX_LIST_GRID_SORT.TOGGLE_BUTTON.ASCENDING_TOOLTIP' | translate)) : (translations?.sortOrderTooltips?.descending || ('OCX_LIST_GRID_SORT.TOGGLE_BUTTON.DESCENDING_TOOLTIP' | translate))"
       tooltipPosition="top"
-      [ariaLabel]="!selectedSortDirection ? (translations?.sortOrderTooltips?.ascending || ('OCX_LIST_GRID_SORT.TOGGLE_BUTTON.ASCENDING_TITLE' | translate)) : (translations?.sortOrderTooltips?.descending || ('OCX_LIST_GRID_SORT.TOGGLE_BUTTON.DESCENDING_TITLE' | translate))"
+      [ariaLabel]="!selectedSortDirection ? (translations?.sortOrderTooltips?.ascending || ('OCX_LIST_GRID_SORT.TOGGLE_BUTTON.ASCENDING_TOOLTIP' | translate)) : (translations?.sortOrderTooltips?.descending || ('OCX_LIST_GRID_SORT.TOGGLE_BUTTON.DESCENDING_TOOLTIP' | translate))"
     ></p-toggleButton>
   </div>
 </div>
