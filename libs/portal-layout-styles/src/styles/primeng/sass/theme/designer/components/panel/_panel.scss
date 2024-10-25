@@ -13,6 +13,11 @@
 
     .p-panel-header-icon {
       @include action-icon();
+      &:focus {
+        outline: $actionIconFocusOutline;
+        outline-offset: $actionIconFocusOutlineOffset;
+        box-shadow: var(--focus-shadow);
+      }
     }
   }
 
