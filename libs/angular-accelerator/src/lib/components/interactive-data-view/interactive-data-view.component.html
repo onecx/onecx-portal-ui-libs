@@ -51,6 +51,7 @@
         *ngIf="layout === 'table'"
         [columns]="columns"
         [displayedColumns]="(displayedColumns$ | async) ?? []"
+        [customGroupKey]="customGroupKey"
         (columnSelectionChanged)="onColumnSelectionChange($event)"
         [frozenActionColumn]="frozenActionColumn"
         [actionColumnPosition]="actionColumnPosition"
