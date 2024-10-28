@@ -30,22 +30,22 @@ const ALL_VIEW_MODES: ViewMode[] = [
     id: 'ocx-data-layout-selection-list',
     icon: PrimeIcons.LIST,
     mode: 'list',
-    tooltipKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.LIST',
-    labelKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.LIST',
+    tooltipKey: 'OCX_DATA_VIEW_CONTROLS.LAYOUT.LIST',
+    labelKey: 'OCX_DATA_VIEW_CONTROLS.LAYOUT.LIST',
   },
   {
     id: 'ocx-data-layout-selection-grid',
     icon: PrimeIcons.TH_LARGE,
     mode: 'grid',
-    tooltipKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.GRID',
-    labelKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.GRID',
+    tooltipKey: 'OCX_DATA_VIEW_CONTROLS.LAYOUT.GRID',
+    labelKey: 'OCX_DATA_VIEW_CONTROLS.LAYOUT.GRID',
   },
   {
     id: 'ocx-data-layout-selection-table',
     icon: PrimeIcons.TABLE,
     mode: 'table',
-    tooltipKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.TABLE',
-    labelKey: 'OCX_DATA_LAYOUT_SELECTION.LAYOUT.TABLE',
+    tooltipKey: 'OCX_DATA_VIEW_CONTROLS.LAYOUT.TABLE',
+    labelKey: 'OCX_DATA_VIEW_CONTROLS.LAYOUT.TABLE',
   },
 ]
 
@@ -216,7 +216,7 @@ export class DataViewControlsComponent implements OnInit, OnChanges {
       },
       header:
         this.translations?.columnDialogHeaderText ||
-        this.translate.instant('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.DIALOG_TITLE'),
+        this.translate.instant('OCX_DATA_VIEW_CONTROLS.DIALOG_TITLE'),
       width: '70%',
       contentStyle: { 'max-height': '500px', overflow: 'auto', padding: 0 },
     })
