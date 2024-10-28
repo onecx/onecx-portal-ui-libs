@@ -40,7 +40,7 @@ describe('CreateTranslateLoader', () => {
       )
 
       translateLoader.getTranslation('en').subscribe(() => {
-        expect(httpClientMock.get).toHaveBeenCalledTimes(4)
+        expect(httpClientMock.get).toHaveBeenCalledTimes(5)
         done()
       })
     })
@@ -70,7 +70,7 @@ describe('CreateTranslateLoader', () => {
       )
 
       translateLoader.getTranslation('en').subscribe(() => {
-        expect(httpClientMock.get).toHaveBeenCalledTimes(4)
+        expect(httpClientMock.get).toHaveBeenCalledTimes(5)
         done()
       })
     })
