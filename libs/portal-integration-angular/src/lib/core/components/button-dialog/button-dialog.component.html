@@ -18,7 +18,7 @@
     </ng-container>
     <div>
       <button
-        id="buttonDialogSecondaryButton"
+        id="{{dialogData.config.secondaryButtonDetails?.id ?? 'buttonDialogSecondaryButton'}}"
         pButton
         *ngIf="dialogData.config.secondaryButtonIncluded"
         [icon]="dialogData.config.secondaryButtonDetails!.icon !== undefined ? dialogData.config.secondaryButtonDetails!.icon : ''"
@@ -32,7 +32,7 @@
     </div>
     <div>
       <button
-        id="buttonDialogPrimaryButton"
+        id="{{dialogData.config.primaryButtonDetails?.id ?? 'buttonDialogPrimaryButton'}}"
         pButton
         autofocus
         [icon]="dialogData.config.primaryButtonDetails!.icon !== undefined ? dialogData.config.primaryButtonDetails!.icon : ''"
