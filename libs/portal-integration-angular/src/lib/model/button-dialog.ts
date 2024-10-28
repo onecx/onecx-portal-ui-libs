@@ -22,6 +22,7 @@ import { PrimeIcon } from '@onecx/angular-accelerator'
  */
 export interface ButtonDialogButtonDetails {
   key: string
+  id?: string
   icon?: PrimeIcon
   parameters?: Record<string, unknown>
   tooltipKey?: string
