@@ -115,6 +115,23 @@
       "TABLE": "Table"
     }
   },
+  "OCX_DATA_VIEW_CONTROLS" : {
+    "NO_GROUP_SELECTED": "No group selected",
+    "OPEN_BUTTON_DETAIL": "Open custom group selection dialog",
+    "DROPDOWN": {
+      "ARIA_LABEL": "Sort by"
+    },
+    "TOGGLE_BUTTON": {
+      "ASCENDING_TOOLTIP": "Ascending",
+      "DESCENDING_TOOLTIP": "Descending"
+    },
+    "LAYOUT": {
+      "LIST": "List",
+      "GRID": "Grid",
+      "TABLE": "Table"
+    },
+    "DIALOG_TITLE": "Custom group column selection"
+  },
   "OCX_INTERACTIVE_DATA_VIEW": {
     "DEFAULT_GROUP": "Default group",
     "CUSTOM_GROUP": "Custom group",
