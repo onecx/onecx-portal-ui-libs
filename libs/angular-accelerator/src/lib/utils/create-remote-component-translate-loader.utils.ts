@@ -32,6 +32,8 @@ export function createRemoteComponentTranslateLoader(
             Location.joinWithSlash(baseUrl, `onecx-portal-lib/assets/i18n/`),
             '.json'
           ),
+          // translations of portal-integration-angular of shell
+          new CachingTranslateLoader(ts, http, `./onecx-portal-lib/assets/i18n/`, '.json'),
           // translations of the app
           new CachingTranslateLoader(ts, http, Location.joinWithSlash(baseUrl, `assets/i18n/`), '.json')
         )
