@@ -63,7 +63,7 @@
   }
 }
 
-@media (max-width: $mobileBreakpoint) {
+@media (max-width: $smallScreenBreakpoint) {
   .p-dialog.p-dialog {
     transition: none;
     transform: none;
