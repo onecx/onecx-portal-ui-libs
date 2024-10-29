@@ -1,3 +1,13 @@
+## [5.22.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.21.0...v5.22.0) (2024-10-29)
+
+### Features
+
+* new menu-inline-border-color variable ([#567](https://github.com/onecx/onecx-portal-ui-libs/issues/567)) ([d1ec231](https://github.com/onecx/onecx-portal-ui-libs/commit/d1ec23169bf4ae63f55715136627fa113ffc411a))
+
+### Bug Fixes
+
+* fixed styling that maximizes dialogs on mobiles ([#561](https://github.com/onecx/onecx-portal-ui-libs/issues/561)) ([48ba214](https://github.com/onecx/onecx-portal-ui-libs/commit/48ba214316bd4719a33adbaeacc9eb8e6f9eeff7))
+
 ## [5.21.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.20.1...v5.21.0) (2024-10-29)
 
 ### Features
