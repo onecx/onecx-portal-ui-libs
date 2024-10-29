@@ -3,9 +3,7 @@
     <ng-container #container></ng-container>
     <ng-content></ng-content>
   </div>
-  <div
-    class="w-full flex-column sm:flex-row align-content-end sm:align-content-start flex flex-wrap row-gap-2 column-gap-2"
-  >
+  <div class="w-full flex-row justify-content-end flex flex-wrap gap-2">
     <ng-container *ngFor="let button of leftCustomButtons; index as i">
       <div [ngStyle]="{'margin-right': (i === leftCustomButtons.length - 1) ? 'auto' : 0}">
         <ng-container *ngTemplateOutlet="customButton; context: {button: button}"> </ng-container>
@@ -18,7 +16,7 @@
     </ng-container>
     <div>
       <button
-        id="buttonDialogSecondaryButton"
+        id="{{dialogData.config.secondaryButtonDetails?.id ?? 'buttonDialogSecondaryButton'}}"
         pButton
         *ngIf="dialogData.config.secondaryButtonIncluded"
         [icon]="dialogData.config.secondaryButtonDetails!.icon !== undefined ? dialogData.config.secondaryButtonDetails!.icon : ''"
@@ -32,7 +30,7 @@
     </div>
     <div>
       <button
-        id="buttonDialogPrimaryButton"
+        id="{{dialogData.config.primaryButtonDetails?.id ?? 'buttonDialogPrimaryButton'}}"
         pButton
         autofocus
         [icon]="dialogData.config.primaryButtonDetails!.icon !== undefined ? dialogData.config.primaryButtonDetails!.icon : ''"
