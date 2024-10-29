@@ -1,3 +1,18 @@
+## [5.21.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.20.1...v5.21.0) (2024-10-29)
+
+### Features
+
+* dialog buttons can receive custom id ([#566](https://github.com/onecx/onecx-portal-ui-libs/issues/566)) ([eb78d52](https://github.com/onecx/onecx-portal-ui-libs/commit/eb78d5230aa9ba270463ff548af510607830e3e5))
+
+### Bug Fixes
+
+* calendar month and date items focusable ([#558](https://github.com/onecx/onecx-portal-ui-libs/issues/558)) ([f624545](https://github.com/onecx/onecx-portal-ui-libs/commit/f62454507182ca84b3bb21d9c0b0ce9311be6040))
+* custom group selection saved, displaying correct columns on page reload, remove clear column group selection ([#562](https://github.com/onecx/onecx-portal-ui-libs/issues/562)) ([0a8d9c1](https://github.com/onecx/onecx-portal-ui-libs/commit/0a8d9c1c3a61fa5a4aff0d7b085c8834ac824580))
+* data-view-controls translations ([#563](https://github.com/onecx/onecx-portal-ui-libs/issues/563)) ([fc25ec2](https://github.com/onecx/onecx-portal-ui-libs/commit/fc25ec214da27c48820340751fda4c548305f397))
+* dialog service right aligned buttons pushed to right ([#565](https://github.com/onecx/onecx-portal-ui-libs/issues/565)) ([9e61f05](https://github.com/onecx/onecx-portal-ui-libs/commit/9e61f055add7aadb737c4ae9ea06533e3e0022fb))
+* panel icon focus visible ([#557](https://github.com/onecx/onecx-portal-ui-libs/issues/557)) ([6b0d34f](https://github.com/onecx/onecx-portal-ui-libs/commit/6b0d34f0125427783892481b60d7cf3d937c31ff))
+* shell translations for MFEs and RCs ([#564](https://github.com/onecx/onecx-portal-ui-libs/issues/564)) ([f5f3ff6](https://github.com/onecx/onecx-portal-ui-libs/commit/f5f3ff64c2a876e4274dc7ed9b0757fe1c1f8684))
+
 ## [5.20.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.20.0...v5.20.1) (2024-10-24)
 
 ### Bug Fixes
