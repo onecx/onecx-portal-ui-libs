@@ -1,0 +1,222 @@
+<div *ngIf="columnFilterDataList$ | async as columnFilters" class="flex flex-wrap align-items-center gap-2">
+  <ng-container *ngIf="showChips; else noChipsContent">
+    <ng-container *ocxIfBreakpoint="'desktop'; elseTemplate: noChipsContent">
+      <p-button
+        id="resetFiltersButton"
+        (onClick)="onResetFilersClick()"
+        icon="pi pi-eraser"
+        pTooltip="{{ 'OCX_FILTER_VIEW.RESET_FILTERS_BUTTON.DETAIL' | translate }}"
+        tooltipPosition="top"
+        tooltipEvent="hover"
+        [ariaLabel]="'OCX_FILTER_VIEW.RESET_FILTERS_BUTTON.ARIA_LABEL' | translate"
+      ></p-button>
+      <ng-container *ngIf="columnFilters.length <= 0">
+        <ng-container *ngIf="_fitlerViewNoSelection; else defaultNoFilters" [ngTemplateOutlet]="_fitlerViewNoSelection">
+        </ng-container>
+        <ng-template #defaultNoFilters>
+          <span>{{ 'OCX_FILTER_VIEW.NO_FILTERS' | translate }}</span>
+        </ng-template>
+      </ng-container>
+      <ng-container *ngIf="(chipTemplates$ | async) ?? {} as templates">
+        <ng-container *ngIf="selectDisplayedChips(columnFilters) as selectedColumnFilters">
+          <ng-container *ngFor="let columnFilter of selectedColumnFilters">
+            <p-chip [removable]="true" (onRemove)="onChipRemove(columnFilter)" [styleClass]="chipStyleClass">
+              <ng-container
+                *ngIf="_filterViewChipContent; else chipContentTemplate"
+                [ngTemplateOutlet]="_filterViewChipContent"
+                [ngTemplateOutletContext]="{
+            columnFilter: columnFilter,
+            filterValueTemplates: templates,
+            truthyTemplate: _truthyTemplate,
+            filterValueTemplate: _chipTemplate
+          }"
+              >
+              </ng-container>
+              <ng-template #chipContentTemplate>
+                <span class="p-chip-text flex flex-nowrap"
+                  >{{columnFilter.column.nameKey | translate}}:
+                  <nobr>
+                    <ng-container
+                      *ngIf="columnFilter.filter.filterType === FilterType.EQUAL || !columnFilter.filter.filterType"
+                      [ngTemplateOutlet]="_chipTemplate"
+                      [ngTemplateOutletContext]="{
+                    templates: templates,
+                    columnFilter: columnFilter
+                  }"
+                    ></ng-container>
+                    <ng-container *ngIf="columnFilter.filter.filterType === FilterType.TRUTHY">
+                      <ng-container
+                        [ngTemplateOutlet]="_truthyTemplate"
+                        [ngTemplateOutletContext]="{
+                  value: columnFilter.filter.value
+                }"
+                      ></ng-container>
+                    </ng-container>
+                  </nobr>
+                </span>
+              </ng-template>
+            </p-chip>
+          </ng-container>
+          <ng-container *ngIf="selectedColumnFilters.length < columnFilters.length">
+            <p-chip (click)="showPanel($event)" class="cursor-pointer">
+              <ng-container
+                *ngIf="_filterViewShowMoreChip; else showMoreChipTemplate"
+                [ngTemplateOutlet]="_filterViewShowMoreChip"
+                [ngTemplateOutletContext]="{
+          $implicit: columnFilters.length - selectedColumnFilters.length
+        }"
+              >
+              </ng-container>
+              <ng-template #showMoreChipTemplate>
+                <span class="p-chip-text flex flex-nowrap">
+                  +{{columnFilters.length - selectedColumnFilters.length}}
+                </span>
+              </ng-template>
+            </p-chip>
+            <ng-container [ngTemplateOutlet]="_filterTablePanel"></ng-container>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+  <ng-template #noChipsContent>
+    <p-button
+      id="manageFiltersButton"
+      (onClick)="showPanel($event)"
+      icon="pi pi-sliders-h"
+      label="{{ 'OCX_FILTER_VIEW.MANAGE_FILTERS_BUTTON.LABEL' | translate }}"
+      pTooltip="{{ 'OCX_FILTER_VIEW.MANAGE_FILTERS_BUTTON.DETAIL' | translate }}"
+      tooltipPosition="top"
+      tooltipEvent="hover"
+      [badge]="columnFilters.length"
+      [ariaLabel]="'OCX_FILTER_VIEW.MANAGE_FILTERS_BUTTON.ARIA_LABEL' | translate"
+    ></p-button>
+    <ng-container [ngTemplateOutlet]="_filterTablePanel"></ng-container>
+  </ng-template>
+
+  <ng-template #filterTablePanel>
+    <p-overlayPanel *ngIf="tableTemplates$ | async as templates" #op [showCloseIcon]="true">
+      <ng-template pTemplate="content">
+        <!-- [frozenActionColumn]=""
+        [actionColumnPosition]=""
+        [paginator]=""
+        [page]=""
+        [filters]=""
+        [sortDirection]=""
+        [sortColumn]=""
+        [sortStates]=""
+        [clientSideFiltering]=""
+        [clientSideSorting]=""
+        [pageSizes]=""
+        (sorted)=""
+        (filtered)=""
+        (deleteTableRow)=""
+        [parentTemplates]="templatesForChildren$ | async"
+        (pageChanged)=""
+        (pageSizeChanged)=""
+        [pageSize]=""
+        (componentStateChanged)=""
+        [emptyResultsMessage]=""
+        -->
+        <ocx-data-table [rows]="(columnFilterDataRows$ | async) ?? []" [columns]="columnFilterTableColumns">
+          <ng-template pTemplate="columnIdCell" let-rowObject="rowObject" let-column="column">
+            <ng-container
+              [ngTemplateOutlet]="_tableValueTemplate"
+              [ngTemplateOutletContext]="{
+                templates: templates,
+                rowObject: rowObject,
+                column: column
+              }"
+            >
+            </ng-container>
+          </ng-template>
+          <ng-template pTemplate="valueIdCell" let-rowObject="rowObject" let-column="column">
+            <ng-container
+              [ngTemplateOutlet]="_tableValueTemplate"
+              [ngTemplateOutletContext]="{
+                templates: templates,
+                rowObject: rowObject,
+                column: column
+              }"
+            >
+            </ng-container>
+          </ng-template>
+        </ocx-data-table>
+      </ng-template>
+    </p-overlayPanel>
+  </ng-template>
+</div>
+
+<ng-template #tableValueTemplate let-templates="templates" let-rowObject="rowObject" let-column="column">
+  <ng-container
+    *ngIf="column.id !== 'value'"
+    [ngTemplateOutlet]="templates[column.id]"
+    [ngTemplateOutletContext]="{
+            rowObject: rowObject,
+            column: column
+          }"
+  >
+  </ng-container>
+  <ng-container *ngIf="column.id === 'value'">
+    <ng-container *ngIf="getColumnByNameKey(resolveFieldData(rowObject, 'column')) as valueColumn">
+      <ng-container
+        *ngIf="!valueColumn.filterType || valueColumn.filterType === FilterType.EQUAL"
+        [ngTemplateOutlet]="templates[valueColumn.id]"
+        [ngTemplateOutletContext]="{
+              rowObject: rowObject,
+              column: column
+            }"
+      >
+      </ng-container>
+      <ng-container
+        *ngIf="valueColumn.filterType === FilterType.TRUTHY"
+        [ngTemplateOutlet]="_truthyTemplate"
+        [ngTemplateOutletContext]="{
+        value: resolveFieldData(rowObject, column.id)
+      }"
+      >
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</ng-template>
+
+<ng-template #chipTemplate let-templates="templates" let-columnFilter="columnFilter">
+  <ng-container
+    *ngIf="templates[columnFilter.column.id] as template"
+    [ngTemplateOutlet]="template"
+    [ngTemplateOutletContext]="{
+            rowObject: getRowObjectFromFiterData(columnFilter),
+            column: columnFilter.column
+          }"
+  >
+  </ng-container>
+</ng-template>
+
+<ng-template #truthyTemplate let-value="value">
+  <ng-container *ngIf="value"> {{'OCX_FILTER_VIEW.FILTER_YES' | translate}} </ng-container>
+  <ng-container *ngIf="!value"> {{'OCX_FILTER_VIEW.FILTER_NO' | translate}} </ng-container>
+</ng-template>
+
+<ng-template pTemplate="defaultStringValue" let-rowObject="rowObject" let-column="column">
+  <ng-container> {{ resolveFieldData(rowObject, column.id)}} </ng-container>
+</ng-template>
+
+<ng-template pTemplate="defaultNumberValue" let-rowObject="rowObject" let-column="column">
+  <ng-container> {{ resolveFieldData(rowObject, column.id) | number }} </ng-container>
+</ng-template>
+
+<ng-template pTemplate="defaultCustomValue" let-rowObject="rowObject" let-column="column"> </ng-template>
+
+<ng-template pTemplate="defaultDateValue" let-rowObject="rowObject" let-column="column">
+  <ng-container> {{ resolveFieldData(rowObject, column.id) | date: column.dateFormat ?? 'medium' }} </ng-container>
+</ng-template>
+
+<ng-template pTemplate="defaultRelativeDateValue" let-rowObject="rowObject" let-column="column">
+  <ng-container>
+    {{ 'OCX_DATA_TABLE.EDITED' | translate }} {{ resolveFieldData(rowObject, column.id) | timeago }}
+  </ng-container>
+</ng-template>
+
+<ng-template pTemplate="defaultTranslationKeyValue" let-rowObject="rowObject" let-column="column">
+  <ng-container> {{ resolveFieldData(rowObject, column.id) | translate }}</ng-container>
+</ng-template>

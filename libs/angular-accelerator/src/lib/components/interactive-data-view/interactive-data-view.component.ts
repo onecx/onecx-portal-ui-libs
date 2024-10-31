@@ -41,7 +41,8 @@ import { DataLayoutSelectionComponentState } from '../data-layout-selection/data
 import { DataListGridSortingComponentState } from '../data-list-grid-sorting/data-list-grid-sorting.component'
 import { Row, Sort } from '../data-table/data-table.component'
 import { DataViewComponent, DataViewComponentState, RowListGridData } from '../data-view/data-view.component'
-import { Filter } from '../../model/filter.model'
+import { Filter, ColumnFilterData } from '../../model/filter.model'
+import { limit } from '../../utils/filter.utils'
 
 export type InteractiveDataViewComponentState = ColumnGroupSelectionComponentState &
   CustomGroupColumnSelectorComponentState &
@@ -116,6 +117,11 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   @Input() additionalActions: DataAction[] = []
   @Input() listGridPaginator = true
   @Input() tablePaginator = true
+  @Input() disableFilterView = true
+  @Input() showFilterViewChips = false
+  @Input() filterViewChipStyleClass: string = ''
+  @Input() selectDisplayedChips: (filters: ColumnFilterData[]) => ColumnFilterData[] = (filters) =>
+    limit(filters, 3, { reverse: true })
   @Input() page = 0
   @Input() selectedRows: Row[] = []
   displayedColumnKeys$ = new BehaviorSubject<string[]>([])

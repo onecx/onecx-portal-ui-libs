@@ -40,6 +40,7 @@ import { ObjectUtils } from '../../utils/objectutils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { MultiSelectItem } from 'primeng/multiselect'
 import { Filter, FilterType } from '../../model/filter.model'
+import { findTemplate } from '../../utils/template.utils'
 
 export type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -786,17 +787,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     [TemplateType.FILTERCELL]: this.filterTemplatesData,
   }
 
-  findTemplate(templates: PrimeTemplate[], names: string[]): PrimeTemplate | undefined {
-    for (let index = 0; index < names.length; index++) {
-      const name = names[index]
-      const template = templates.find((template) => template.name === name)
-      if (template) {
-        return template
-      }
-    }
-    return undefined
-  }
-
   getColumnTypeTemplate(templates: PrimeTemplate[], columnType: ColumnType, templateType: TemplateType) {
     let template: TemplateRef<any> | undefined
 
@@ -847,7 +837,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
     return (
       template ??
-      this.findTemplate(templates, this.templatesDataMap[templateType].templateNames[columnType])?.template ??
+      findTemplate(templates, this.templatesDataMap[templateType].templateNames[columnType])?.template ??
       null
     )
   }
@@ -863,7 +853,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       ]).pipe(
         map(([t, vt, pt]) => {
           const templates = [...(t ?? []), ...(vt ?? []), ...(pt ?? [])]
-          const columnTemplate = this.findTemplate(
+          const columnTemplate = findTemplate(
             templates,
             templatesData.idSuffix.map((suffix) => column.id + suffix)
           )?.template

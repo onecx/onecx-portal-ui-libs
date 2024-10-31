@@ -120,6 +120,24 @@
     "CUSTOM_GROUP": "Custom group",
     "NO_GROUP_SELECTED": "No group selected"
   },
+  "OCX_FILTER_VIEW": {
+    "NO_FILTERS": "No filters selected",
+    "RESET_FILTERS_BUTTON": {
+      "ARIA_LABEL": "Reset applied filters",
+      "DETAIL": "Reset applied filters"
+    },
+    "FILTER_YES": "Yes",
+    "FILTER_NO": "No",
+    "MANAGE_FILTERS_BUTTON": {
+      "LABEL": "Filters",
+      "ARIA_LABEL": "Manage active filters",
+      "DETAIL": "Manage active filters"
+    },
+    "TABLE": {
+      "COLUMN_NAME": "Column name",
+      "VALUE": "Filter value"
+    }
+  },
   "OCX_SEARCH_HEADER": {
     "TOGGLE_BUTTON": {
       "SIMPLE": {

@@ -15,10 +15,13 @@ import { MessageModule } from 'primeng/message'
 import { SharedModule } from 'primeng/api'
 import { CheckboxModule } from 'primeng/checkbox'
 import { FloatLabelModule } from 'primeng/floatlabel'
+import { ChipModule } from 'primeng/chip'
+import { OverlayPanelModule } from 'primeng/overlaypanel'
 
 @NgModule({
   imports: [
     BreadcrumbModule,
+    ChipModule,
     CheckboxModule,
     DropdownModule,
     ButtonModule,
@@ -33,10 +36,12 @@ import { FloatLabelModule } from 'primeng/floatlabel'
     SkeletonModule,
     MessageModule,
     FloatLabelModule,
+    OverlayPanelModule,
     SharedModule,
   ],
   exports: [
     BreadcrumbModule,
+    ChipModule,
     CheckboxModule,
     DropdownModule,
     ButtonModule,
@@ -51,6 +56,7 @@ import { FloatLabelModule } from 'primeng/floatlabel'
     SkeletonModule,
     MessageModule,
     FloatLabelModule,
+    OverlayPanelModule,
     SharedModule,
   ],
 })
