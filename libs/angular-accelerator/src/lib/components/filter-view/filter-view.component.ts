@@ -21,7 +21,9 @@ import { limit } from '../../utils/filter.utils'
 import { OverlayPanel } from 'primeng/overlaypanel'
 import { Row } from '../data-table/data-table.component'
 
-export interface FilterViewComponentState {}
+export interface FilterViewComponentState {
+  filters?: Filter[]
+}
 
 @Component({
   selector: 'ocx-filter-view',
@@ -65,7 +67,6 @@ export class FilterViewComponent implements OnInit {
   @Input() chipStyleClass: string = ''
 
   @Output() filtered: EventEmitter<Filter[]> = new EventEmitter()
-  // TODO: Component stage change implement
   @Output() componentStateChanged: EventEmitter<FilterViewComponentState> = new EventEmitter()
 
   columnFilterDataRows$: BehaviorSubject<Row[]> = new BehaviorSubject<Row[]>([])
@@ -250,13 +251,22 @@ export class FilterViewComponent implements OnInit {
   }
 
   onResetFilersClick() {
+    this.filters = []
     this.filtered.emit([])
+    this.componentStateChanged.emit({
+      filters: [],
+    })
   }
 
   onChipRemove(columnFilter: ColumnFilterData) {
-    this.filtered.emit(
-      this.filters.filter((f) => !(f.columnId === columnFilter.column.id && f.value === columnFilter.filter.value))
+    const filters = this.filters.filter(
+      (f) => !(f.columnId === columnFilter.column.id && f.value === columnFilter.filter.value)
     )
+    this.filters = filters
+    this.filtered.emit(filters)
+    this.componentStateChanged.emit({
+      filters: filters,
+    })
   }
 
   showPanel(event: any) {

@@ -43,12 +43,14 @@ import { Row, Sort } from '../data-table/data-table.component'
 import { DataViewComponent, DataViewComponentState, RowListGridData } from '../data-view/data-view.component'
 import { Filter, ColumnFilterData } from '../../model/filter.model'
 import { limit } from '../../utils/filter.utils'
+import { FilterViewComponentState } from '../filter-view/filter-view.component'
 
 export type InteractiveDataViewComponentState = ColumnGroupSelectionComponentState &
   CustomGroupColumnSelectorComponentState &
   DataLayoutSelectionComponentState &
   DataListGridSortingComponentState &
-  DataViewComponentState
+  DataViewComponentState &
+  FilterViewComponentState
 
 export interface ColumnGroupData {
   activeColumns: DataTableColumn[]
@@ -75,6 +77,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   dataLayoutComponentState$ = new ReplaySubject<DataLayoutSelectionComponentState>(1)
   dataListGridSortingComponentState$ = new ReplaySubject<DataListGridSortingComponentState>(1)
   dataViewComponentState$ = new ReplaySubject<DataViewComponentState>(1)
+  filterViewComponentState$ = new ReplaySubject<FilterViewComponentState>(1)
 
   @Input() searchConfigPermission: string | undefined
   @Input() deletePermission: string | undefined
@@ -447,6 +450,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
       this.dataLayoutComponentState$.pipe(timestamp()),
       dataListGridSortingComponentState$.pipe(timestamp()),
       this.dataViewComponentState$.pipe(timestamp()),
+      this.filterViewComponentState$.pipe(timestamp()),
     ])
       .pipe(
         map((componentStates) => {

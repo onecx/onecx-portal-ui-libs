@@ -7,7 +7,6 @@
         (dataViewLayoutChange)="onDataViewLayoutChange($event)"
         (componentStateChanged)="dataLayoutComponentState$.next($event)"
       ></ocx-data-layout-selection>
-      <!-- TODO: Add componentStateChanged event -->
       <ocx-filter-view
         *ngIf="!disableFilterView"
         [filters]="filters"
@@ -17,6 +16,7 @@
         [selectDisplayedChips]="selectDisplayedChips"
         [chipStyleClass]="filterViewChipStyleClass"
         (filtered)="filtering($event)"
+        (componentStateChanged)="filterViewComponentState$.next($event)"
       ></ocx-filter-view>
     </div>
 
