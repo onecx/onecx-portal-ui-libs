@@ -41,7 +41,14 @@ import { limit } from '../../utils/filter.utils'
 
 type InteractiveDataViewInputTypes = Pick<
   InteractiveDataViewComponent,
-  'data' | 'columns' | 'emptyResultsMessage' | 'disableFilterView' | 'showFilterViewChips' | 'selectDisplayedChips'
+  | 'data'
+  | 'columns'
+  | 'emptyResultsMessage'
+  | 'disableFilterView'
+  | 'showFilterViewChips'
+  | 'selectDisplayedChips'
+  | 'filterViewPageSize'
+  | 'filterViewPageSizes'
 >
 const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewComponent> = {
   title: 'InteractiveDataViewComponent',
@@ -178,6 +185,8 @@ const defaultComponentArgs: InteractiveDataViewInputTypes = {
   disableFilterView: true,
   showFilterViewChips: false,
   selectDisplayedChips: (columnFilterData) => limit(columnFilterData, 1, { reverse: true }),
+  filterViewPageSize: undefined,
+  filterViewPageSizes: [5, 10, 25],
 }
 
 export const WithMockData = {
@@ -554,6 +563,17 @@ export const WithFilterViewCustomChipSelection = {
     selectDisplayedChips: (columnFilterData: ColumnFilterData[]) => {
       return columnFilterData.slice(0, 2).reverse()
     },
+  },
+}
+
+export const WithFilterViewCustomTable = {
+  render: Template,
+  args: {
+    ...defaultComponentArgs,
+    disableFilterView: false,
+    showFilterViewChips: false,
+    filterViewPageSize: 2,
+    filterViewPageSizes: [2, 4, 6],
   },
 }
 

@@ -97,28 +97,16 @@
   <ng-template #filterTablePanel>
     <p-overlayPanel *ngIf="tableTemplates$ | async as templates" #op [showCloseIcon]="true">
       <ng-template pTemplate="content">
-        <!-- [frozenActionColumn]=""
-        [actionColumnPosition]=""
-        [paginator]=""
-        [page]=""
-        [filters]=""
-        [sortDirection]=""
-        [sortColumn]=""
-        [sortStates]=""
-        [clientSideFiltering]=""
-        [clientSideSorting]=""
-        [pageSizes]=""
-        (sorted)=""
-        (filtered)=""
-        (deleteTableRow)=""
-        [parentTemplates]="templatesForChildren$ | async"
-        (pageChanged)=""
-        (pageSizeChanged)=""
-        [pageSize]=""
-        (componentStateChanged)=""
-        [emptyResultsMessage]=""
-        -->
-        <ocx-data-table [rows]="(columnFilterDataRows$ | async) ?? []" [columns]="columnFilterTableColumns">
+        <ocx-data-table
+          [rows]="(columnFilterDataRows$ | async) ?? []"
+          [columns]="columnFilterTableColumns"
+          [emptyResultsMessage]="'OCX_FILTER_VIEW.NO_FILTERS' | translate"
+          [actionColumnPosition]="'right'"
+          [paginator]="paginator"
+          [pageSize]="pageSize"
+          [pageSizes]="pageSizes"
+          (deleteTableRow)="onFilterDelete($event)"
+        >
           <ng-template pTemplate="columnIdCell" let-rowObject="rowObject" let-column="column">
             <ng-container
               [ngTemplateOutlet]="_tableValueTemplate"

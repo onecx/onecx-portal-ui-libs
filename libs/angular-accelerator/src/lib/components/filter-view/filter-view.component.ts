@@ -65,6 +65,9 @@ export class FilterViewComponent implements OnInit {
   @Input() selectDisplayedChips: (filters: ColumnFilterData[]) => ColumnFilterData[] = (filters) =>
     limit(filters, 3, { reverse: true })
   @Input() chipStyleClass: string = ''
+  @Input() pageSize: number | undefined
+  @Input() pageSizes: number[] = [5, 10, 25]
+  @Input() paginator: boolean = true
 
   @Output() filtered: EventEmitter<Filter[]> = new EventEmitter()
   @Output() componentStateChanged: EventEmitter<FilterViewComponentState> = new EventEmitter()
@@ -174,6 +177,7 @@ export class FilterViewComponent implements OnInit {
           return data.map((v) => {
             return {
               id: `${v.column.id}-${v.filter.value}`,
+              columnId: v.column.id,
               column: v.column.nameKey,
               value: v.filter.value,
             }
@@ -262,6 +266,15 @@ export class FilterViewComponent implements OnInit {
     const filters = this.filters.filter(
       (f) => !(f.columnId === columnFilter.column.id && f.value === columnFilter.filter.value)
     )
+    this.filters = filters
+    this.filtered.emit(filters)
+    this.componentStateChanged.emit({
+      filters: filters,
+    })
+  }
+
+  onFilterDelete(row: Row) {
+    const filters = this.filters.filter((f) => !(f.columnId === row['columnId'] && f.value === row['value']))
     this.filters = filters
     this.filtered.emit(filters)
     this.componentStateChanged.emit({

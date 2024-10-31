@@ -123,6 +123,9 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   @Input() disableFilterView = true
   @Input() showFilterViewChips = false
   @Input() filterViewChipStyleClass: string = ''
+  @Input() filterViewPageSize: number | undefined
+  @Input() filterViewPageSizes: number[] = [5, 10, 25]
+  @Input() filterViewPaginator: boolean = true
   @Input() selectDisplayedChips: (filters: ColumnFilterData[]) => ColumnFilterData[] = (filters) =>
     limit(filters, 3, { reverse: true })
   @Input() page = 0
