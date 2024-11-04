@@ -165,7 +165,9 @@ function connectMicroFrontendRouter(injector: Injector, warn = true): Subscripti
 
 function connectRouter(router: Router): Subscription {
   const initialUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}${location.hash}`
-  router.navigateByUrl(initialUrl)
+  router.navigateByUrl(initialUrl, {
+    replaceUrl: true,
+  })
   let lastUrl = initialUrl
   const observer = new EventsTopic()
   return observer.pipe(filter((e) => e.type === 'navigated')).subscribe(() => {
