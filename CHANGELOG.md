@@ -1,3 +1,9 @@
+## [5.22.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.22.1...v5.22.2) (2024-11-04)
+
+### Bug Fixes
+
+* introduce AuthProxyService to reduce token calls ([#577](https://github.com/onecx/onecx-portal-ui-libs/issues/577)) ([b8bfcd9](https://github.com/onecx/onecx-portal-ui-libs/commit/b8bfcd9cc99d5b115a487426cc51507adccb2ad3))
+
 ## [5.22.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.22.0...v5.22.1) (2024-11-04)
 
 ### Bug Fixes
