@@ -1,3 +1,9 @@
+## [5.22.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.22.0...v5.22.1) (2024-11-04)
+
+### Bug Fixes
+
+* use replaceUrl for first navigate in router connector ([#576](https://github.com/onecx/onecx-portal-ui-libs/issues/576)) ([affdd8c](https://github.com/onecx/onecx-portal-ui-libs/commit/affdd8c54b794bd45b45e0958c9c400d0a9fd5b5))
+
 ## [5.22.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.21.0...v5.22.0) (2024-10-29)
 
 ### Features
