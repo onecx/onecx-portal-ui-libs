@@ -6,6 +6,7 @@ import { Injectable, Injector } from '@angular/core'
 import { KeycloakAuthService } from './auth_services/keycloak-auth.service'
 import { loadRemoteModule } from '@angular-architects/module-federation'
 import { Config } from '@onecx/integration-interface'
+import './declarations'
 
 @Injectable()
 export class AuthServiceWrapper {
@@ -20,6 +21,16 @@ export class AuthServiceWrapper {
     this.eventsTopic$
       .pipe(filter((e) => e.type === 'authentication#logoutButtonClicked'))
       .subscribe(() => this.authService?.logout())
+    window.onecxAngularAuth ??= {}
+    window.onecxAngularAuth.authServiceProxy ??= {}
+    window.onecxAngularAuth.authServiceProxy.v1 ??= {
+      updateTokenIfNeeded: (): Promise<boolean> => {
+        return this.updateTokenIfNeeded()
+      },
+      getHeaderValues: (): Record<string, string> => {
+        return this.getHeaderValues()
+      },
+    }
   }
   async init(): Promise<boolean | undefined> {
     await this.configService.isInitialized
