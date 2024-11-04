@@ -14,7 +14,7 @@
         <ng-container *ngIf="_fitlerViewNoSelection; else defaultNoFilters" [ngTemplateOutlet]="_fitlerViewNoSelection">
         </ng-container>
         <ng-template #defaultNoFilters>
-          <span>{{ 'OCX_FILTER_VIEW.NO_FILTERS' | translate }}</span>
+          <span id="noFiltersMessage">{{ 'OCX_FILTER_VIEW.NO_FILTERS' | translate }}</span>
         </ng-template>
       </ng-container>
       <ng-container *ngIf="(chipTemplates$ | async) ?? {} as templates">
@@ -27,32 +27,29 @@
                 [ngTemplateOutletContext]="{
             columnFilter: columnFilter,
             filterValueTemplates: templates,
-            truthyTemplate: _truthyTemplate,
-            filterValueTemplate: _chipTemplate
+            truthyTemplate: truthyTemplate,
+            filterValueTemplate: chipTemplate
           }"
               >
               </ng-container>
               <ng-template #chipContentTemplate>
-                <span class="p-chip-text flex flex-nowrap"
-                  >{{columnFilter.column.nameKey | translate}}:
-                  <nobr>
-                    <ng-container
-                      *ngIf="columnFilter.filter.filterType === FilterType.EQUAL || !columnFilter.filter.filterType"
-                      [ngTemplateOutlet]="_chipTemplate"
-                      [ngTemplateOutletContext]="{
+                <span style="white-space: nowrap" class="p-chip-text flex flex-nowrap"
+                  >{{columnFilter.column.nameKey | translate}}:<ng-container
+                    *ngIf="columnFilter.filter.filterType === FilterType.EQUAL || !columnFilter.filter.filterType"
+                    [ngTemplateOutlet]="chipTemplate"
+                    [ngTemplateOutletContext]="{
                     templates: templates,
                     columnFilter: columnFilter
                   }"
-                    ></ng-container>
-                    <ng-container *ngIf="columnFilter.filter.filterType === FilterType.TRUTHY">
-                      <ng-container
-                        [ngTemplateOutlet]="_truthyTemplate"
-                        [ngTemplateOutletContext]="{
+                  ></ng-container>
+                  <ng-container *ngIf="columnFilter.filter.filterType === FilterType.TRUTHY">
+                    <ng-container
+                      [ngTemplateOutlet]="truthyTemplate"
+                      [ngTemplateOutletContext]="{
                   value: columnFilter.filter.value
                 }"
-                      ></ng-container>
-                    </ng-container>
-                  </nobr>
+                    ></ng-container>
+                  </ng-container>
                 </span>
               </ng-template>
             </p-chip>
@@ -73,7 +70,7 @@
                 </span>
               </ng-template>
             </p-chip>
-            <ng-container [ngTemplateOutlet]="_filterTablePanel"></ng-container>
+            <ng-container [ngTemplateOutlet]="filterTablePanel"></ng-container>
           </ng-container>
         </ng-container>
       </ng-container>
@@ -91,7 +88,7 @@
       [badge]="columnFilters.length"
       [ariaLabel]="'OCX_FILTER_VIEW.MANAGE_FILTERS_BUTTON.ARIA_LABEL' | translate"
     ></p-button>
-    <ng-container [ngTemplateOutlet]="_filterTablePanel"></ng-container>
+    <ng-container [ngTemplateOutlet]="filterTablePanel"></ng-container>
   </ng-template>
 
   <ng-template #filterTablePanel>
@@ -105,11 +102,10 @@
           [paginator]="paginator"
           [pageSize]="pageSize"
           [pageSizes]="pageSizes"
-          (deleteTableRow)="onFilterDelete($event)"
         >
           <ng-template pTemplate="columnIdCell" let-rowObject="rowObject" let-column="column">
             <ng-container
-              [ngTemplateOutlet]="_tableValueTemplate"
+              [ngTemplateOutlet]="tableValueTemplate"
               [ngTemplateOutletContext]="{
                 templates: templates,
                 rowObject: rowObject,
@@ -120,7 +116,7 @@
           </ng-template>
           <ng-template pTemplate="valueIdCell" let-rowObject="rowObject" let-column="column">
             <ng-container
-              [ngTemplateOutlet]="_tableValueTemplate"
+              [ngTemplateOutlet]="tableValueTemplate"
               [ngTemplateOutletContext]="{
                 templates: templates,
                 rowObject: rowObject,
@@ -158,7 +154,7 @@
       </ng-container>
       <ng-container
         *ngIf="valueColumn.filterType === FilterType.TRUTHY"
-        [ngTemplateOutlet]="_truthyTemplate"
+        [ngTemplateOutlet]="truthyTemplate"
         [ngTemplateOutletContext]="{
         value: resolveFieldData(rowObject, column.id)
       }"

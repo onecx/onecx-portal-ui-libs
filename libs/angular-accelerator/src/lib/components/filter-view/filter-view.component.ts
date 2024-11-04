@@ -88,26 +88,6 @@ export class FilterViewComponent implements OnInit {
 
   @ViewChild(OverlayPanel) panel!: OverlayPanel
 
-  @ViewChild('chipTemplate') chipTemplate: TemplateRef<any> | undefined
-  get _chipTemplate(): TemplateRef<any> | undefined {
-    return this.chipTemplate
-  }
-
-  @ViewChild('tableValueTemplate') tableValueTemplate: TemplateRef<any> | undefined
-  get _tableValueTemplate(): TemplateRef<any> | undefined {
-    return this.tableValueTemplate
-  }
-
-  @ViewChild('filterTablePanel') filterTablePanel: TemplateRef<any> | undefined
-  get _filterTablePanel(): TemplateRef<any> | undefined {
-    return this.filterTablePanel
-  }
-
-  @ViewChild('truthyTemplate') truthyTemplate: TemplateRef<any> | undefined
-  get _truthyTemplate(): TemplateRef<any> | undefined {
-    return this.truthyTemplate
-  }
-
   fitlerViewNoSelection: TemplateRef<any> | undefined
   get _fitlerViewNoSelection(): TemplateRef<any> | undefined {
     return this.fitlerViewNoSelection
