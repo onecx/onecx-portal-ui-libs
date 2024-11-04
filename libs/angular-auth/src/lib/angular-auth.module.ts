@@ -6,6 +6,7 @@ import { TokenInterceptor } from './token.interceptor'
 import { AuthService } from './auth.service'
 import { AuthServiceWrapper } from './auth-service-wrapper'
 import { KeycloakAuthService } from './auth_services/keycloak-auth.service'
+import { AuthProxyService } from './auth-proxy.service'
 import { KeycloakService } from 'keycloak-angular'
 
 function appInitializer(configService: ConfigurationService, authService: AuthService) {
@@ -15,19 +16,38 @@ function appInitializer(configService: ConfigurationService, authService: AuthSe
   }
 }
 
-@NgModule({
-  imports: [CommonModule],
-  providers: [
-    AuthServiceWrapper,
-    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
+function provideAuthServices() {
+  return [AuthServiceWrapper, KeycloakAuthService, KeycloakService]
+}
+
+export function provideAuthService() {
+  return [
+    provideAuthServices(),
     {
       provide: APP_INITIALIZER,
       useFactory: appInitializer,
       deps: [ConfigurationService, AuthServiceWrapper],
       multi: true,
     },
-    KeycloakAuthService,
-    KeycloakService,
+  ]
+}
+
+export function provideTokenInterceptor() {
+  return [
+    AuthProxyService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true,
+    },
+  ]
+}
+
+@NgModule({
+  imports: [CommonModule],
+  providers: [
+    provideTokenInterceptor(),
+    provideAuthServices(), // Only needed as fallback if shell uses lib version without new auth mechanism
   ],
 })
 export class AngularAuthModule {}
