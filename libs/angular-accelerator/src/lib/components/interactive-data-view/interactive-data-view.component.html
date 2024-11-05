@@ -15,9 +15,7 @@
         [showChips]="showFilterViewChips"
         [selectDisplayedChips]="selectDisplayedChips"
         [chipStyleClass]="filterViewChipStyleClass"
-        [pageSize]="filterViewPageSize"
-        [pageSizes]="filterViewPageSizes"
-        [paginator]="filterViewPaginator"
+        [tableStyle]="filterViewTableStyle"
         (filtered)="filtering($event)"
         (componentStateChanged)="filterViewComponentState$.next($event)"
       ></ocx-filter-view>

@@ -296,7 +296,7 @@ describe('FilterViewComponent', () => {
     })
   })
 
-  describe('data table', () => {
+  describe('overlay', () => {
     it('should show data table with column filters', async () => {
       const datePipe = new DatePipe('en')
       let dataTable = await filterView.getDataTable()
@@ -310,16 +310,58 @@ describe('FilterViewComponent', () => {
       expect(dataTable).toBeTruthy()
       const headers = await dataTable?.getHeaderColumns()
       expect(headers).toBeTruthy()
-      expect(headers?.length).toBe(2)
+      expect(headers?.length).toBe(3)
       expect(await headers![0].getText()).toBe('Column name')
       expect(await headers![1].getText()).toBe('Filter value')
+      expect(await headers![2].getText()).toBe('Actions')
 
       const rows = await dataTable?.getRows()
       expect(rows?.length).toBe(4)
-      expect(await rows![0].getData()).toEqual(['Name', 'name-filter'])
-      expect(await rows![1].getData()).toEqual(['Start date', datePipe.transform(deafultDate, 'medium')])
-      expect(await rows![2].getData()).toEqual(['Status', 'My status'])
-      expect(await rows![3].getData()).toEqual(['Test number', 'Yes'])
+      expect(await rows![0].getData()).toEqual(['Name', 'name-filter', ''])
+      expect(await rows![1].getData()).toEqual(['Start date', datePipe.transform(deafultDate, 'medium'), ''])
+      expect(await rows![2].getData()).toEqual(['Status', 'My status', ''])
+      expect(await rows![3].getData()).toEqual(['Test number', 'Yes', ''])
+    })
+
+    it('should show reset all filters button above the table', async () => {
+      const filtersButton = await filterView.getFiltersButton()
+      await filtersButton?.click()
+      fixture.detectChanges()
+
+      const resetButton = await filterView.getOverlayResetFiltersButton()
+      expect(resetButton).toBeTruthy()
+      const dataTable = await filterView.getDataTable()
+      expect((await dataTable?.getRows())?.length).toBe(4)
+
+      await resetButton?.click()
+      const rows = await dataTable?.getRows()
+      expect(rows?.length).toBe(1)
+      expect(await rows![0].getData()).toEqual(['No filters selected'])
+    })
+
+    it('should show remove filter in action column', async () => {
+      const filteredEmitterSpy = jest.spyOn(component.filtered, 'emit')
+      const componentStateEmitterSpy = jest.spyOn(component.componentStateChanged, 'emit')
+
+      const filtersButton = await filterView.getFiltersButton()
+      await filtersButton?.click()
+      fixture.detectChanges()
+
+      const dataTable = await filterView.getDataTable()
+      let rows = await dataTable?.getRows()
+      expect(rows?.length).toBe(4)
+      const buttons = await rows![0].getAllActionButtons()
+      expect(buttons.length).toBe(1)
+      await buttons[0].click()
+
+      rows = await dataTable?.getRows()
+      expect(rows?.length).toBe(3)
+      expect(component.filters.length).toBe(3)
+      const expectedFilters = mockFilters.filter((f) => f.columnId !== 'name')
+      expect(filteredEmitterSpy).toHaveBeenCalledWith(expectedFilters)
+      expect(componentStateEmitterSpy).toHaveBeenCalledWith({
+        filters: expectedFilters,
+      })
     })
   })
 })

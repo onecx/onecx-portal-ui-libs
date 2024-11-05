@@ -65,9 +65,8 @@ export class FilterViewComponent implements OnInit {
   @Input() selectDisplayedChips: (filters: ColumnFilterData[]) => ColumnFilterData[] = (filters) =>
     limit(filters, 3, { reverse: true })
   @Input() chipStyleClass: string = ''
-  @Input() pageSize: number | undefined
-  @Input() pageSizes: number[] = [5, 10, 25]
-  @Input() paginator: boolean = true
+  @Input() tableStyle: { [klass: string]: any } = { 'max-height': '50vh' }
+  @Input() panelStyle: { [klass: string]: any } = { 'max-width': '90%' }
 
   @Output() filtered: EventEmitter<Filter[]> = new EventEmitter()
   @Output() componentStateChanged: EventEmitter<FilterViewComponentState> = new EventEmitter()
@@ -84,6 +83,11 @@ export class FilterViewComponent implements OnInit {
       filterable: true,
     },
     { id: 'value', columnType: ColumnType.STRING, nameKey: 'OCX_FILTER_VIEW.TABLE.VALUE' },
+    {
+      id: 'actions',
+      columnType: ColumnType.STRING,
+      nameKey: 'OCX_FILTER_VIEW.TABLE.ACTIONS',
+    },
   ]
 
   @ViewChild(OverlayPanel) panel!: OverlayPanel

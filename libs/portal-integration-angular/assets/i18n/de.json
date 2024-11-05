@@ -135,8 +135,12 @@
     },
     "TABLE": {
       "COLUMN_NAME": "Spaltenname",
-      "VALUE": "Filterwert"
-    }
+      "VALUE": "Filterwert",
+      "ACTIONS": "Aktionen",
+      "REMOVE_FILTER_TITLE": "Filter löschen",
+      "REMOVE_FILTER_ARIA_LABEL": "Filter löschen"
+    },
+    "PANEL_TITLE": "Filter"
   },
   "OCX_SEARCH_HEADER": {
     "TOGGLE_BUTTON": {

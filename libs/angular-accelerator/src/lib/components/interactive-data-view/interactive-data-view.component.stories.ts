@@ -37,18 +37,10 @@ import { SlotService } from '@onecx/angular-remote-components'
 import { of } from 'rxjs'
 import { ColumnFilterData, FilterType } from '../../model/filter.model'
 import { FilterViewComponent } from '../filter-view/filter-view.component'
-import { limit } from '../../utils/filter.utils'
 
 type InteractiveDataViewInputTypes = Pick<
   InteractiveDataViewComponent,
-  | 'data'
-  | 'columns'
-  | 'emptyResultsMessage'
-  | 'disableFilterView'
-  | 'showFilterViewChips'
-  | 'selectDisplayedChips'
-  | 'filterViewPageSize'
-  | 'filterViewPageSizes'
+  'data' | 'columns' | 'emptyResultsMessage' | 'disableFilterView' | 'showFilterViewChips'
 >
 const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewComponent> = {
   title: 'InteractiveDataViewComponent',
@@ -184,9 +176,6 @@ const defaultComponentArgs: InteractiveDataViewInputTypes = {
   emptyResultsMessage: 'No results',
   disableFilterView: true,
   showFilterViewChips: false,
-  selectDisplayedChips: (columnFilterData) => limit(columnFilterData, 1, { reverse: true }),
-  filterViewPageSize: undefined,
-  filterViewPageSizes: [5, 10, 25],
 }
 
 export const WithMockData = {
@@ -566,14 +555,14 @@ export const WithFilterViewCustomChipSelection = {
   },
 }
 
-export const WithFilterViewCustomTable = {
+export const WithFilterViewCustomStyles = {
   render: Template,
   args: {
     ...defaultComponentArgs,
     disableFilterView: false,
     showFilterViewChips: false,
-    filterViewPageSize: 2,
-    filterViewPageSizes: [2, 4, 6],
+    filterViewTableStyle: { 'max-height': '30vh' },
+    filterViewPanelStyle: { 'max-width': '80%' },
   },
 }
 

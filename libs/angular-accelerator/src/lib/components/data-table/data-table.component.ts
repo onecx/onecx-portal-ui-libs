@@ -176,6 +176,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   @Input() allowSelectAll = true
   @Input() paginator = true
   @Input() page = 0
+  @Input() tableStyle: { [klass: string]: any } | undefined
   @Input()
   get totalRecordsOnServer(): number | undefined {
     return this.params['totalRecordsOnServer'] ? Number(this.params['totalRecordsOnServer']) : undefined
