@@ -115,6 +115,23 @@
       "TABLE": "Tabelle"
     }
   },
+  "OCX_DATA_VIEW_CONTROLS" : {
+    "NO_GROUP_SELECTED": "Keine Gruppe ausgewählt",
+    "OPEN_BUTTON_DETAIL": "Dialog zur Auswahl einer benutzerdefinierten Gruppe öffnen",
+    "DROPDOWN": {
+      "ARIA_LABEL": "Sortieren nach"
+    },
+    "TOGGLE_BUTTON": {
+      "ASCENDING_TOOLTIP": "Aufsteigend",
+      "DESCENDING_TOOLTIP": "Absteigend"
+    },
+    "LAYOUT": {
+      "LIST": "Liste",
+      "GRID": "Raster",
+      "TABLE": "Tabelle"
+    },
+    "DIALOG_TITLE": "Spalten für benutzerdefinierte Gruppe auswählen"
+  },
   "OCX_INTERACTIVE_DATA_VIEW": {
     "DEFAULT_GROUP": "Standardgruppe",
     "CUSTOM_GROUP": "Benutzerdefinierte Gruppe",
