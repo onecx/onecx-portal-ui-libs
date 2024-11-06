@@ -17,6 +17,7 @@ import { CheckboxModule } from 'primeng/checkbox'
 import { FloatLabelModule } from 'primeng/floatlabel'
 import { ChipModule } from 'primeng/chip'
 import { OverlayPanelModule } from 'primeng/overlaypanel'
+import { FocusTrapModule } from 'primeng/focustrap'
 
 @NgModule({
   imports: [
@@ -37,6 +38,7 @@ import { OverlayPanelModule } from 'primeng/overlaypanel'
     MessageModule,
     FloatLabelModule,
     OverlayPanelModule,
+    FocusTrapModule,
     SharedModule,
   ],
   exports: [
@@ -57,6 +59,7 @@ import { OverlayPanelModule } from 'primeng/overlaypanel'
     MessageModule,
     FloatLabelModule,
     OverlayPanelModule,
+    FocusTrapModule,
     SharedModule,
   ],
 })

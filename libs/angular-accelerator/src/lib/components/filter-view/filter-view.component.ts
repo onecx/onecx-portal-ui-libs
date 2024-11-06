@@ -1,6 +1,7 @@
 import {
+  AfterViewInit,
   Component,
-  ContentChild,
+  ElementRef,
   EventEmitter,
   Input,
   OnInit,
@@ -10,7 +11,7 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core'
-import { Filter, ColumnFilterData, FilterType } from '../../model/filter.model'
+import { Filter, FilterType } from '../../model/filter.model'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { BehaviorSubject, Observable, combineLatest, debounceTime, map } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
@@ -20,6 +21,18 @@ import { ObjectUtils } from '../../utils/objectutils'
 import { limit } from '../../utils/filter.utils'
 import { OverlayPanel } from 'primeng/overlaypanel'
 import { Row } from '../data-table/data-table.component'
+import { Button } from 'primeng/button'
+
+export type FilterViewDisplayMode = 'chips' | 'button'
+export type FilterViewRowDisplayData = {
+  id: string
+  column: string
+  value: unknown
+}
+export type FilterViewRowDetailData = FilterViewRowDisplayData & {
+  columnId: string
+  columnFilterType: FilterType | undefined
+}
 
 export interface FilterViewComponentState {
   filters?: Filter[]
@@ -33,21 +46,21 @@ export interface FilterViewComponentState {
 export class FilterViewComponent implements OnInit {
   ColumnType = ColumnType
   FilterType = FilterType
-  _filters$ = new BehaviorSubject<Filter[]>([])
+  filters$ = new BehaviorSubject<Filter[]>([])
   @Input()
   get filters(): Filter[] {
-    return this._filters$.getValue()
+    return this.filters$.getValue()
   }
   set filters(value: Filter[]) {
-    this._filters$.next(value)
+    this.filters$.next(value)
   }
-  _columns$ = new BehaviorSubject<DataTableColumn[]>([])
+  columns$ = new BehaviorSubject<DataTableColumn[]>([])
   @Input()
   get columns(): DataTableColumn[] {
-    return this._columns$.getValue()
+    return this.columns$.getValue()
   }
   set columns(value: DataTableColumn[]) {
-    this._columns$.next(value)
+    this.columns$.next(value)
     const chipObs = value.map((c) => this.getTemplate(c, this.chipTemplateNames, this.chipTemplates, this.chipIdSuffix))
     this.chipTemplates$ = combineLatest(chipObs).pipe(
       map((values) => Object.fromEntries(value.map((c, i) => [c.id, values[i]])))
@@ -61,8 +74,10 @@ export class FilterViewComponent implements OnInit {
     ).pipe(map((values) => Object.fromEntries(tableTemplateColumns.map((c, i) => [c.id, values[i]]))))
   }
 
-  @Input() showChips: boolean = false
-  @Input() selectDisplayedChips: (filters: ColumnFilterData[]) => ColumnFilterData[] = (filters) =>
+  columnFilterDataRows$: Observable<FilterViewRowDisplayData[]> | undefined
+
+  @Input() displayMode: FilterViewDisplayMode = 'button'
+  @Input() selectDisplayedChips: (filters: Filter[], columns: DataTableColumn[]) => Filter[] = (filters, columns) =>
     limit(filters, 3, { reverse: true })
   @Input() chipStyleClass: string = ''
   @Input() tableStyle: { [klass: string]: any } = { 'max-height': '50vh' }
@@ -71,16 +86,11 @@ export class FilterViewComponent implements OnInit {
   @Output() filtered: EventEmitter<Filter[]> = new EventEmitter()
   @Output() componentStateChanged: EventEmitter<FilterViewComponentState> = new EventEmitter()
 
-  columnFilterDataRows$: BehaviorSubject<Row[]> = new BehaviorSubject<Row[]>([])
-  columnFilterDataList$: BehaviorSubject<ColumnFilterData[]> = new BehaviorSubject<ColumnFilterData[]>([])
-
   columnFilterTableColumns: DataTableColumn[] = [
     {
       id: 'column',
       columnType: ColumnType.TRANSLATION_KEY,
       nameKey: 'OCX_FILTER_VIEW.TABLE.COLUMN_NAME',
-      sortable: true,
-      filterable: true,
     },
     { id: 'value', columnType: ColumnType.STRING, nameKey: 'OCX_FILTER_VIEW.TABLE.VALUE' },
     {
@@ -90,7 +100,32 @@ export class FilterViewComponent implements OnInit {
     },
   ]
 
+  ngOnInit(): void {
+    this.columnFilterDataRows$ = combineLatest([this.filters$, this.columns$]).pipe(
+      map(([filters, columns]) => {
+        const columnIds = columns.map((c) => c.id)
+        return filters
+          .map((f) => {
+            const filterColumn = this.getColumnForFilter(f, columns)
+            if (!filterColumn) return undefined
+            return {
+              id: `${f.columnId}-${f.value}`,
+              column: filterColumn.nameKey,
+              value: f.value,
+              columnId: filterColumn.id,
+              columnFilterType: filterColumn.filterType,
+            } satisfies FilterViewRowDetailData
+          })
+          .filter((v): v is FilterViewRowDetailData => v !== undefined)
+          .slice()
+          .sort((a, b) => columnIds.indexOf(a.columnId) - columnIds.indexOf(b.columnId))
+      })
+    )
+  }
+
   @ViewChild(OverlayPanel) panel!: OverlayPanel
+  @ViewChild('manageButton') manageButton!: Button
+  trigger: HTMLElement | undefined
 
   fitlerViewNoSelection: TemplateRef<any> | undefined
   get _fitlerViewNoSelection(): TemplateRef<any> | undefined {
@@ -138,38 +173,6 @@ export class FilterViewComponent implements OnInit {
 
   chipTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
   tableTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
-
-  ngOnInit(): void {
-    combineLatest([this._filters$, this._columns$])
-      .pipe(
-        map(([filters, columns]): ColumnFilterData[] => {
-          return filters
-            .map((f) => {
-              return {
-                column: columns.find((c) => c.id === f.columnId),
-                filter: f,
-              }
-            })
-            .filter((v): v is ColumnFilterData => !!v.column)
-        })
-      )
-      .subscribe(this.columnFilterDataList$)
-
-    this.columnFilterDataList$
-      .pipe(
-        map((data) => {
-          return data.map((v) => {
-            return {
-              id: `${v.column.id}-${v.filter.value}`,
-              columnId: v.column.id,
-              column: v.column.nameKey,
-              value: v.filter.value,
-            }
-          })
-        })
-      )
-      .subscribe(this.columnFilterDataRows$)
-  }
 
   chipIdSuffix: Array<string> = ['IdFilterChip', 'IdTableFilterCell', 'IdTableCell']
   chipTemplateNames: Record<ColumnType, Array<string>> = {
@@ -246,10 +249,8 @@ export class FilterViewComponent implements OnInit {
     })
   }
 
-  onChipRemove(columnFilter: ColumnFilterData) {
-    const filters = this.filters.filter(
-      (f) => !(f.columnId === columnFilter.column.id && f.value === columnFilter.filter.value)
-    )
+  onChipRemove(filter: Filter) {
+    const filters = this.filters.filter((f) => f.value !== filter.value)
     this.filters = filters
     this.filtered.emit(filters)
     this.componentStateChanged.emit({
@@ -266,21 +267,30 @@ export class FilterViewComponent implements OnInit {
     })
   }
 
+  focusTrigger() {
+    if (this.trigger?.id === 'ocxFilterViewShowMore') {
+      this.trigger?.focus()
+    } else {
+      this.manageButton.focus()
+    }
+  }
+
   showPanel(event: any) {
+    this.trigger = event.srcElement
     this.panel.toggle(event)
   }
 
-  getColumnByNameKey(nameKey: string) {
-    return this.columns.find((c) => c.nameKey === nameKey)
+  getColumnForFilter(filter: Filter, columns: DataTableColumn[]) {
+    return columns.find((c) => c.id === filter.columnId)
   }
 
   resolveFieldData(object: any, key: any) {
     return ObjectUtils.resolveFieldData(object, key)
   }
 
-  getRowObjectFromFiterData(columnFilter: ColumnFilterData) {
+  getRowObjectFromFiterData(filter: Filter) {
     return {
-      [columnFilter.column.id]: columnFilter.filter.value,
+      [filter.columnId]: filter.value,
     }
   }
 }

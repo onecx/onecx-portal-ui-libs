@@ -43,7 +43,7 @@ import { Row, Sort } from '../data-table/data-table.component'
 import { DataViewComponent, DataViewComponentState, RowListGridData } from '../data-view/data-view.component'
 import { Filter, ColumnFilterData } from '../../model/filter.model'
 import { limit } from '../../utils/filter.utils'
-import { FilterViewComponentState } from '../filter-view/filter-view.component'
+import { FilterViewComponentState, FilterViewDisplayMode } from '../filter-view/filter-view.component'
 
 export type InteractiveDataViewComponentState = ColumnGroupSelectionComponentState &
   CustomGroupColumnSelectorComponentState &
@@ -121,11 +121,11 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   @Input() listGridPaginator = true
   @Input() tablePaginator = true
   @Input() disableFilterView = true
-  @Input() showFilterViewChips = false
+  @Input() showFilterDisplayMode: FilterViewDisplayMode = 'button'
   @Input() filterViewChipStyleClass: string = ''
   @Input() filterViewTableStyle: { [klass: string]: any } = { 'max-height': '50vh' }
   @Input() filterViewPanelStyle: { [klass: string]: any } = { 'max-width': '90%' }
-  @Input() selectDisplayedChips: (filters: ColumnFilterData[]) => ColumnFilterData[] = (filters) =>
+  @Input() selectDisplayedChips: (filters: Filter[], columns: DataTableColumn[]) => Filter[] = (filters, columns) =>
     limit(filters, 3, { reverse: true })
   @Input() page = 0
   @Input() selectedRows: Row[] = []
