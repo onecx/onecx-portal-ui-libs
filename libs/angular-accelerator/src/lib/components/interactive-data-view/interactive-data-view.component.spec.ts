@@ -51,6 +51,7 @@ import { FilterViewComponent } from '../filter-view/filter-view.component'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { PrimeIcons } from 'primeng/api'
 import { limit } from '../../utils/filter.utils'
+import { DatePipe } from '@angular/common'
 
 describe('InteractiveDataViewComponent', () => {
   const mutationObserverMock = jest.fn(function MutationObserver(callback) {
@@ -1306,6 +1307,7 @@ describe('InteractiveDataViewComponent', () => {
       })
 
       it('should use provided chip selection strategy', async () => {
+        const datePipe = new DatePipe('en')
         component.filterViewDisplayMode = 'chips'
         component.selectDisplayedChips = (data) => limit(data, 1, { reverse: false })
         fixture.detectChanges()
@@ -1313,7 +1315,9 @@ describe('InteractiveDataViewComponent', () => {
         const chips = await filterViewHarness.getChips()
         expect(chips.length).toBe(2)
 
-        expect(await chips[0].getContent()).toBe('COLUMN_HEADER_NAME.START_DATE: Sep 13, 2023, 11:34:05 AM')
+        expect(await chips[0].getContent()).toBe(
+          'COLUMN_HEADER_NAME.START_DATE: ' + datePipe.transform('2023-09-13T09:34:05Z', 'medium')
+        )
       })
 
       it('should remove filter on chip removal', async () => {
@@ -1365,6 +1369,7 @@ describe('InteractiveDataViewComponent', () => {
 
     describe('overlay', () => {
       it('should show data table with column filters', async () => {
+        const datePipe = new DatePipe('en')
         let dataTable = await filterViewHarness.getDataTable()
         expect(dataTable).toBeFalsy()
 
@@ -1384,7 +1389,11 @@ describe('InteractiveDataViewComponent', () => {
         const rows = await dataTable?.getRows()
         expect(rows?.length).toBe(4)
         expect(await rows![0].getData()).toEqual(['COLUMN_HEADER_NAME.NAME', 'some name', ''])
-        expect(await rows![1].getData()).toEqual(['COLUMN_HEADER_NAME.START_DATE', 'Sep 13, 2023, 11:34:05 AM', ''])
+        expect(await rows![1].getData()).toEqual([
+          'COLUMN_HEADER_NAME.START_DATE',
+          datePipe.transform('2023-09-13T09:34:05Z', 'medium'),
+          '',
+        ])
         expect(await rows![2].getData()).toEqual(['COLUMN_HEADER_NAME.STATUS', 'some status', ''])
         expect(await rows![3].getData()).toEqual(['COLUMN_HEADER_NAME.TEST_TRUTHY', 'Yes', ''])
       })
