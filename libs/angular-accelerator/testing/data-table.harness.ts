@@ -1,4 +1,10 @@
-import { ContentContainerComponentHarness, TestElement, parallel } from '@angular/cdk/testing'
+import {
+  BaseHarnessFilters,
+  ContentContainerComponentHarness,
+  HarnessPredicate,
+  TestElement,
+  parallel,
+} from '@angular/cdk/testing'
 import {
   TableHeaderColumnHarness,
   TableRowHarness,
@@ -6,12 +12,26 @@ import {
   PTableCheckboxHarness,
 } from '@onecx/angular-testing'
 
+export interface DataTableHarnessFilters extends BaseHarnessFilters {
+  id?: string
+}
+
 export class DataTableHarness extends ContentContainerComponentHarness {
   static hostSelector = 'ocx-data-table'
+
+  static with(options: DataTableHarnessFilters): HarnessPredicate<DataTableHarness> {
+    return new HarnessPredicate(DataTableHarness, options).addOption('id', options.id, (harness, id) =>
+      HarnessPredicate.stringMatches(harness.getId(), id)
+    )
+  }
 
   getHeaderColumns = this.locatorForAll(TableHeaderColumnHarness)
   getRows = this.locatorForAll(TableRowHarness)
   getPaginator = this.locatorFor(PPaginatorHarness)
+
+  async getId(): Promise<string | null> {
+    return await (await this.host()).getAttribute('id')
+  }
 
   async rowSelectionIsEnabled(): Promise<boolean> {
     const pTableCheckbox = await this.getHarnessesForCheckboxes('all')

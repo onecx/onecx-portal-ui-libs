@@ -42,12 +42,15 @@ import { DataListGridSortingComponentState } from '../data-list-grid-sorting/dat
 import { Row, Sort } from '../data-table/data-table.component'
 import { DataViewComponent, DataViewComponentState, RowListGridData } from '../data-view/data-view.component'
 import { Filter } from '../../model/filter.model'
+import { limit } from '../../utils/filter.utils'
+import { FilterViewComponentState, FilterViewDisplayMode } from '../filter-view/filter-view.component'
 
 export type InteractiveDataViewComponentState = ColumnGroupSelectionComponentState &
   CustomGroupColumnSelectorComponentState &
   DataLayoutSelectionComponentState &
   DataListGridSortingComponentState &
-  DataViewComponentState
+  DataViewComponentState &
+  FilterViewComponentState
 
 export interface ColumnGroupData {
   activeColumns: DataTableColumn[]
@@ -74,6 +77,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   dataLayoutComponentState$ = new ReplaySubject<DataLayoutSelectionComponentState>(1)
   dataListGridSortingComponentState$ = new ReplaySubject<DataListGridSortingComponentState>(1)
   dataViewComponentState$ = new ReplaySubject<DataViewComponentState>(1)
+  filterViewComponentState$ = new ReplaySubject<FilterViewComponentState>(1)
 
   @Input() searchConfigPermission: string | undefined
   @Input() deletePermission: string | undefined
@@ -116,6 +120,13 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   @Input() additionalActions: DataAction[] = []
   @Input() listGridPaginator = true
   @Input() tablePaginator = true
+  @Input() disableFilterView = true
+  @Input() filterViewDisplayMode: FilterViewDisplayMode = 'button'
+  @Input() filterViewChipStyleClass = ''
+  @Input() filterViewTableStyle: { [klass: string]: any } = { 'max-height': '50vh' }
+  @Input() filterViewPanelStyle: { [klass: string]: any } = { 'max-width': '90%' }
+  @Input() selectDisplayedChips: (filters: Filter[], columns: DataTableColumn[]) => Filter[] = (filters) =>
+    limit(filters, 3, { reverse: true })
   @Input() page = 0
   @Input() selectedRows: Row[] = []
   displayedColumnKeys$ = new BehaviorSubject<string[]>([])
@@ -441,6 +452,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
       this.dataLayoutComponentState$.pipe(timestamp()),
       dataListGridSortingComponentState$.pipe(timestamp()),
       this.dataViewComponentState$.pipe(timestamp()),
+      this.filterViewComponentState$.pipe(timestamp()),
     ])
       .pipe(
         map((componentStates) => {

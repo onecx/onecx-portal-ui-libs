@@ -32,7 +32,9 @@
     transition: var(--action-icon-transition);
 
     &:focus {
-      @include focused();
+      outline: $chipRemoveIconFocusOutline;
+      outline-offset: $chipRemoveIconFocusOutlineOffset;
+      box-shadow: none;  
     }
   }
 }

@@ -1,4 +1,5 @@
 import { BaseHarnessFilters, ComponentHarness, HarnessPredicate } from '@angular/cdk/testing'
+import { SpanHarness } from '../span.harness'
 
 export interface PButtonHarnessFilters extends BaseHarnessFilters {
   id?: string
@@ -9,6 +10,9 @@ export interface PButtonHarnessFilters extends BaseHarnessFilters {
 
 export class PButtonHarness extends ComponentHarness {
   static hostSelector = 'p-button'
+
+  getBadge = this.locatorForOptional(SpanHarness.with({ class: 'p-badge' }))
+  getLabelSpan = this.locatorForOptional(SpanHarness.without({ classes: ['p-badge', 'p-button-icon'] }))
 
   static with(options: PButtonHarnessFilters): HarnessPredicate<PButtonHarness> {
     return new HarnessPredicate(PButtonHarness, options)
@@ -26,7 +30,7 @@ export class PButtonHarness extends ComponentHarness {
   }
 
   async getLabel(): Promise<string | null> {
-    return await (await this.host()).text()
+    return (await (await this.getLabelSpan())?.getText()) ?? null
   }
 
   async getIcon(): Promise<string | null> {
@@ -35,5 +39,9 @@ export class PButtonHarness extends ComponentHarness {
 
   async click() {
     await (await this.locatorFor('button')()).click()
+  }
+
+  async getBadgeValue() {
+    return await (await this.getBadge())?.getText()
   }
 }

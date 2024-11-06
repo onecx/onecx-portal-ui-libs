@@ -1,0 +1,6 @@
+.filter-view-focusable:focus {
+    outline: 1px solid var(--primary-color);
+    outline-offset: 2px;
+    box-shadow: none;
+    border-radius: var(--chip-border-radius);
+}
