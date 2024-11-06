@@ -121,7 +121,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   @Input() listGridPaginator = true
   @Input() tablePaginator = true
   @Input() disableFilterView = true
-  @Input() showFilterDisplayMode: FilterViewDisplayMode = 'button'
+  @Input() filterViewDisplayMode: FilterViewDisplayMode = 'button'
   @Input() filterViewChipStyleClass: string = ''
   @Input() filterViewTableStyle: { [klass: string]: any } = { 'max-height': '50vh' }
   @Input() filterViewPanelStyle: { [klass: string]: any } = { 'max-width': '90%' }

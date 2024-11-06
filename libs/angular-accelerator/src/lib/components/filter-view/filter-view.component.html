@@ -132,6 +132,7 @@
               </div>
             </div>
             <ocx-data-table
+              id="ocxFilterViewDataTable"
               [rows]="(columnFilterDataRows$ | async) ?? []"
               [columns]="columnFilterTableColumns"
               [emptyResultsMessage]="'OCX_FILTER_VIEW.NO_FILTERS' | translate"

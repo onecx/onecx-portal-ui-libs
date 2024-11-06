@@ -42,7 +42,7 @@ import { FocusTrapModule } from 'primeng/focustrap'
 
 type InteractiveDataViewInputTypes = Pick<
   InteractiveDataViewComponent,
-  'data' | 'columns' | 'emptyResultsMessage' | 'disableFilterView' | 'showFilterDisplayMode'
+  'data' | 'columns' | 'emptyResultsMessage' | 'disableFilterView' | 'filterViewDisplayMode'
 >
 const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewComponent> = {
   title: 'InteractiveDataViewComponent',
@@ -178,7 +178,7 @@ const defaultComponentArgs: InteractiveDataViewInputTypes = {
   ],
   emptyResultsMessage: 'No results',
   disableFilterView: true,
-  showFilterDisplayMode: 'button',
+  filterViewDisplayMode: 'button',
 }
 
 export const WithMockData = {
@@ -207,7 +207,7 @@ export const WithPageSizes = {
 const CustomContentInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
   props: args,
   template: `
-  <ocx-interactive-data-view [showFilterDisplayMode]="showFilterDisplayMode" [disableFilterView]="disableFilterView" [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
+  <ocx-interactive-data-view [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
     <ng-template #listItem let-item>
       <div class="w-full px-4 py-2 card mb-4">
         <p>{{item.product}}</p>
@@ -234,7 +234,7 @@ export const WithCustomContentTemplates = {
 const CustomTableCellsInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
   props: args,
   template: `
-  <ocx-interactive-data-view [showFilterDisplayMode]="showFilterDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
+  <ocx-interactive-data-view [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
     <ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
       <ng-container>STRING: {{ rowObject[column.id] }} </ng-container>
     </ng-template>
@@ -252,14 +252,14 @@ export const WithCustomTableCellTemplates = {
   args: {
     ...defaultComponentArgs,
     disableFilterView: false,
-    showFilterDisplayMode: 'button',
+    filterViewDisplayMode: 'button',
   },
 }
 
 const CustomTableFilterCellsInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
   props: args,
   template: `
-  <ocx-interactive-data-view [showFilterDisplayMode]="showFilterDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
+  <ocx-interactive-data-view [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
     <ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
       <ng-container>STRING: {{ rowObject[column.id] }} </ng-container>
     </ng-template>
@@ -283,14 +283,14 @@ export const WithCustomTableFilterCellTemplates = {
   args: {
     ...defaultComponentArgs,
     disableFilterView: false,
-    showFilterDisplayMode: 'button',
+    filterViewDisplayMode: 'button',
   },
 }
 
 const CustomTableColumnCellsInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
   props: args,
   template: `
-  <ocx-interactive-data-view [showFilterDisplayMode]="showFilterDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
+  <ocx-interactive-data-view [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
     <ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
       <ng-container>STRING: {{ rowObject[column.id] }} </ng-container>
     </ng-template>
@@ -326,7 +326,7 @@ export const WithCustomTableColumnTemplates = {
   args: {
     ...defaultComponentArgs,
     disableFilterView: false,
-    showFilterDisplayMode: 'button',
+    filterViewDisplayMode: 'button',
   },
 }
 
@@ -335,7 +335,7 @@ export const WithFilterViewChips = {
   args: {
     ...defaultComponentArgs,
     disableFilterView: false,
-    showFilterDisplayMode: 'chips',
+    filterViewDisplayMode: 'chips',
   },
 }
 
@@ -344,14 +344,14 @@ export const WithFilterViewButton = {
   args: {
     ...defaultComponentArgs,
     disableFilterView: false,
-    showFilterDisplayMode: 'button',
+    filterViewDisplayMode: 'button',
   },
 }
 
 const CustomFilterViewChipsInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
   props: args,
   template: `
-  <ocx-interactive-data-view [showFilterDisplayMode]="showFilterDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
+  <ocx-interactive-data-view [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
     <ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
       <ng-container>STRING: {{ rowObject[column.id] }} </ng-container>
     </ng-template>
@@ -369,14 +369,14 @@ export const WithFilterViewCustomChipsTemplates = {
   args: {
     ...defaultComponentArgs,
     disableFilterView: false,
-    showFilterDisplayMode: 'chips',
+    filterViewDisplayMode: 'chips',
   },
 }
 
 const CustomFilterViewChipsByColumnInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
   props: args,
   template: `
-  <ocx-interactive-data-view [showFilterDisplayMode]="showFilterDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
+  <ocx-interactive-data-view [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
     <ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
       <ng-container>STRING: {{ rowObject[column.id] }} </ng-container>
     </ng-template>
@@ -403,14 +403,14 @@ export const WithFilterViewCustomChipsByColumnTemplates = {
   args: {
     ...defaultComponentArgs,
     disableFilterView: false,
-    showFilterDisplayMode: 'chips',
+    filterViewDisplayMode: 'chips',
   },
 }
 
 const CustomFilterViewCellsInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
   props: args,
   template: `
-  <ocx-interactive-data-view [showFilterDisplayMode]="showFilterDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
+  <ocx-interactive-data-view [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
     <ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
       <ng-container>STRING: {{ rowObject[column.id] }} </ng-container>
     </ng-template>
@@ -428,14 +428,14 @@ export const WithFilterViewCustomCellTemplates = {
   args: {
     ...defaultComponentArgs,
     disableFilterView: false,
-    showFilterDisplayMode: 'button',
+    filterViewDisplayMode: 'button',
   },
 }
 
 const CustomFilterViewCellsByColumnInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
   props: args,
   template: `
-  <ocx-interactive-data-view [showFilterDisplayMode]="showFilterDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
+  <ocx-interactive-data-view [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
     <ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
       <ng-container>STRING: {{ rowObject[column.id] }} </ng-container>
     </ng-template>
@@ -462,14 +462,14 @@ export const WithFilterViewCustomCellByColumnTemplates = {
   args: {
     ...defaultComponentArgs,
     disableFilterView: false,
-    showFilterDisplayMode: 'button',
+    filterViewDisplayMode: 'button',
   },
 }
 
 const CustomFilterViewNoFiltersInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
   props: args,
   template: `
-  <ocx-interactive-data-view [showFilterDisplayMode]="showFilterDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
+  <ocx-interactive-data-view [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
     <ng-template pTemplate="fitlerViewNoSelection">
       <span>Filter data to display chips</span>
     </ng-template>
@@ -481,14 +481,14 @@ export const WithFilterViewCustomNoFiltersTemplate = {
   args: {
     ...defaultComponentArgs,
     disableFilterView: false,
-    showFilterDisplayMode: 'chips',
+    filterViewDisplayMode: 'chips',
   },
 }
 
 const CustomFilterViewChipContentInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
   props: args,
   template: `
-  <ocx-interactive-data-view [showFilterDisplayMode]="showFilterDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data" filterViewChipStyleClass="pl-0 pr-3">
+  <ocx-interactive-data-view [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data" filterViewChipStyleClass="pl-0 pr-3">
     <ng-template pTemplate="filterViewChipContent" let-filter="filter" let-column="column" let-filterValueTemplates="filterValueTemplates" let-truthyTemplate="truthyTemplate" let-filterValueTemplate="filterValueTemplate">
       <span class="bg-primary border-circle w-2rem h-2rem flex align-items-center justify-content-center">{{(column.nameKey | translate).at(0)}}</span>
       <span class="p-chip-text">
@@ -522,14 +522,14 @@ export const WithFilterViewCustomChipContentTemplate = {
   args: {
     ...defaultComponentArgs,
     disableFilterView: false,
-    showFilterDisplayMode: 'chips',
+    filterViewDisplayMode: 'chips',
   },
 }
 
 const CustomFilterViewShowMoreChipInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
   props: args,
   template: `
-  <ocx-interactive-data-view [showFilterDisplayMode]="showFilterDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
+  <ocx-interactive-data-view [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
     <ng-template pTemplate="filterViewShowMoreChip" let-value>
     <span class="p-chip-text flex flex-nowrap align-items-center">
       <i class="pi pi-plus"></i> {{value}}
@@ -543,7 +543,7 @@ export const WithFilterViewCustomShowMoreChipTemplate = {
   args: {
     ...defaultComponentArgs,
     disableFilterView: false,
-    showFilterDisplayMode: 'chips',
+    filterViewDisplayMode: 'chips',
   },
 }
 
@@ -552,7 +552,7 @@ export const WithFilterViewCustomChipSelection = {
   args: {
     ...defaultComponentArgs,
     disableFilterView: false,
-    showFilterDisplayMode: 'chips',
+    filterViewDisplayMode: 'chips',
     selectDisplayedChips: (filters: Filter[], columns: DataTableColumn[]) => {
       return filters.slice(0, 2).reverse()
     },
@@ -564,7 +564,7 @@ export const WithFilterViewCustomStyles = {
   args: {
     ...defaultComponentArgs,
     disableFilterView: false,
-    showFilterDisplayMode: 'button',
+    filterViewDisplayMode: 'button',
     filterViewTableStyle: { 'max-height': '30vh' },
     filterViewPanelStyle: { 'max-width': '80%' },
   },

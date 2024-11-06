@@ -5,7 +5,6 @@ import { PButtonHarness, PChipHarness, SpanHarness } from '.'
 export class FilterViewHarness extends ContentContainerComponentHarness {
   static hostSelector = 'ocx-filter-view'
 
-  getDataTable = this.documentRootLocatorFactory().locatorForOptional(DataTableHarness)
   getOverlayResetFiltersButton = this.documentRootLocatorFactory().locatorForOptional(
     PButtonHarness.with({ id: 'ocxFilterViewOverlayReset' })
   )
@@ -13,4 +12,10 @@ export class FilterViewHarness extends ContentContainerComponentHarness {
   getChipsResetFiltersButton = this.locatorForOptional(PButtonHarness.with({ id: 'ocxFilterViewReset' }))
   getChips = this.locatorForAll(PChipHarness)
   getNoFiltersMessage = this.locatorForOptional(SpanHarness.with({ id: 'ocxFilterViewNoFilters' }))
+
+  async getDataTable() {
+    return await this.documentRootLocatorFactory().locatorForOptional(
+      DataTableHarness.with({ id: 'ocxFilterViewDataTable' })
+    )()
+  }
 }
