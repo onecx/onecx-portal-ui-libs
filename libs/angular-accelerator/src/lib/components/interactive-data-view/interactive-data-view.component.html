@@ -1,11 +1,25 @@
 <div class="p-3 border-bottom-1 surface-border">
   <div class="flex flex-wrap justify-content-between align-items-center py-1 gap-2">
-    <ocx-data-layout-selection
-      [supportedViewLayouts]="supportedViewLayouts"
-      [layout]="layout"
-      (dataViewLayoutChange)="onDataViewLayoutChange($event)"
-      (componentStateChanged)="dataLayoutComponentState$.next($event)"
-    ></ocx-data-layout-selection>
+    <div class="flex flex-wrap justify-content-start align-items-center gap-2">
+      <ocx-data-layout-selection
+        [supportedViewLayouts]="supportedViewLayouts"
+        [layout]="layout"
+        (dataViewLayoutChange)="onDataViewLayoutChange($event)"
+        (componentStateChanged)="dataLayoutComponentState$.next($event)"
+      ></ocx-data-layout-selection>
+      <ocx-filter-view
+        *ngIf="!disableFilterView"
+        [filters]="filters"
+        [columns]="columns"
+        [templates]="templates$ | async"
+        [displayMode]="filterViewDisplayMode"
+        [selectDisplayedChips]="selectDisplayedChips"
+        [chipStyleClass]="filterViewChipStyleClass"
+        [tableStyle]="filterViewTableStyle"
+        (filtered)="filtering($event)"
+        (componentStateChanged)="filterViewComponentState$.next($event)"
+      ></ocx-filter-view>
+    </div>
 
     <div *ngIf="topCenter">
       <ng-container [ngTemplateOutlet]="topCenter"> </ng-container>

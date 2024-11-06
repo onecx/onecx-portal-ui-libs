@@ -30,6 +30,7 @@ import { TooltipOnOverflowDirective } from './directives/tooltipOnOverflow.direc
 import { DynamicPipe } from './pipes/dynamic.pipe'
 import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
 import { DynamicLocaleId } from './utils/dynamic-locale-id'
+import { FilterViewComponent } from './components/filter-view/filter-view.component'
 
 export class AngularAcceleratorMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -75,6 +76,7 @@ function appInitializer(userService: UserService) {
     OcxTimeAgoPipe,
     AdvancedDirective,
     TooltipOnOverflowDirective,
+    FilterViewComponent,
   ],
   providers: [
     {

@@ -99,6 +99,28 @@
     "CUSTOM_GROUP": "Benutzerdefinierte Gruppe",
     "NO_GROUP_SELECTED": "Keine Gruppe ausgewählt"
   },
+  "OCX_FILTER_VIEW": {
+    "NO_FILTERS": "Keine Filter ausgewählt",
+    "RESET_FILTERS_BUTTON": {
+      "ARIA_LABEL": "Angewandte Filter zurücksetzen",
+      "DETAIL": "Angewandte Filter zurücksetzen"
+    },
+    "FILTER_YES": "Ja",
+    "FILTER_NO": "Nein",
+    "MANAGE_FILTERS_BUTTON": {
+      "LABEL": "Filter",
+      "ARIA_LABEL": "Aktive Filter verwalten",
+      "DETAIL": "Aktive Filter verwalten"
+    },
+    "TABLE": {
+      "COLUMN_NAME": "Spaltenname",
+      "VALUE": "Filterwert",
+      "ACTIONS": "Aktionen",
+      "REMOVE_FILTER_TITLE": "Filter löschen",
+      "REMOVE_FILTER_ARIA_LABEL": "Filter löschen"
+    },
+    "PANEL_TITLE": "Filter"
+  },
   "OCX_SEARCH_HEADER": {
     "TOGGLE_BUTTON": {
       "SIMPLE": {
