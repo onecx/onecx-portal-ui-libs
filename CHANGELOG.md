@@ -1,3 +1,9 @@
+## [5.23.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.22.2...v5.23.0) (2024-11-06)
+
+### Features
+
+* filter view component with chips and overlay ([#579](https://github.com/onecx/onecx-portal-ui-libs/issues/579)) ([659c51a](https://github.com/onecx/onecx-portal-ui-libs/commit/659c51a205a406e5f1ee203cac4813bea5d308dd))
+
 ## [5.22.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.22.1...v5.22.2) (2024-11-04)
 
 ### Bug Fixes
