@@ -1199,7 +1199,6 @@ describe('InteractiveDataViewComponent', () => {
       const dataView = await loader.getHarness(DataViewHarness)
       dataTable = await dataView?.getDataTable()
       tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
-      tableRows = (await dataTable?.getRows()) ?? []
 
       expect(await tableHeaders[2].getText()).toBe('COLUMN_HEADER_NAME.START_DATE')
       const startDateFilterMultiSelect = await tableHeaders[2].getFilterMultiSelect()
