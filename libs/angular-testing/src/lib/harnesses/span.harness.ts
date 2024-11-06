@@ -27,7 +27,7 @@ export class SpanHarness extends ComponentHarness {
     )
   }
 
-  async getId(id: string): Promise<string | null> {
+  async getId(): Promise<string | null> {
     return await (await this.host()).getAttribute('id')
   }
 

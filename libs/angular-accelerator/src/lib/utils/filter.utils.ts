@@ -1,4 +1,4 @@
-import { ColumnFilterData, ColumnFilterDataSelectOptions, Filter } from '../model/filter.model'
+import { ColumnFilterDataSelectOptions, Filter } from '../model/filter.model'
 
 export function limit(columnFilterData: Filter[], amount: number, options: ColumnFilterDataSelectOptions): Filter[] {
   return options.reverse

@@ -1183,7 +1183,6 @@ describe('InteractiveDataViewComponent', () => {
   describe('Filter view ', () => {
     let dataTable: DataTableHarness | null
     let tableHeaders: TableHeaderColumnHarness[]
-    let tableRows: TableRowHarness[]
 
     let filterViewHarness: FilterViewHarness
 

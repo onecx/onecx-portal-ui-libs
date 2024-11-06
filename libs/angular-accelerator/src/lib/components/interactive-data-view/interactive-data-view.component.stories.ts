@@ -35,9 +35,8 @@ import { DataViewComponent } from '../data-view/data-view.component'
 import { InteractiveDataViewComponent } from './interactive-data-view.component'
 import { SlotService } from '@onecx/angular-remote-components'
 import { of } from 'rxjs'
-import { ColumnFilterData, Filter, FilterType } from '../../model/filter.model'
+import { Filter, FilterType } from '../../model/filter.model'
 import { FilterViewComponent } from '../filter-view/filter-view.component'
-import { DataTableColumn } from '../../model/data-table-column.model'
 import { FocusTrapModule } from 'primeng/focustrap'
 
 type InteractiveDataViewInputTypes = Pick<
@@ -66,7 +65,7 @@ const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewComponent> =
         {
           provide: SlotService,
           useValue: {
-            isSomeComponentDefinedForSlot(slotName: string) {
+            isSomeComponentDefinedForSlot() {
               return of(false)
             },
           },
@@ -553,7 +552,7 @@ export const WithFilterViewCustomChipSelection = {
     ...defaultComponentArgs,
     disableFilterView: false,
     filterViewDisplayMode: 'chips',
-    selectDisplayedChips: (filters: Filter[], columns: DataTableColumn[]) => {
+    selectDisplayedChips: (filters: Filter[]) => {
       return filters.slice(0, 2).reverse()
     },
   },

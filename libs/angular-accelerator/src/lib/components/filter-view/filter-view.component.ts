@@ -1,7 +1,5 @@
 import {
-  AfterViewInit,
   Component,
-  ElementRef,
   EventEmitter,
   Input,
   OnInit,
@@ -77,9 +75,9 @@ export class FilterViewComponent implements OnInit {
   columnFilterDataRows$: Observable<FilterViewRowDisplayData[]> | undefined
 
   @Input() displayMode: FilterViewDisplayMode = 'button'
-  @Input() selectDisplayedChips: (filters: Filter[], columns: DataTableColumn[]) => Filter[] = (filters, columns) =>
+  @Input() selectDisplayedChips: (filters: Filter[], columns: DataTableColumn[]) => Filter[] = (filters) =>
     limit(filters, 3, { reverse: true })
-  @Input() chipStyleClass: string = ''
+  @Input() chipStyleClass = ''
   @Input() tableStyle: { [klass: string]: any } = { 'max-height': '50vh' }
   @Input() panelStyle: { [klass: string]: any } = { 'max-width': '90%' }
 
