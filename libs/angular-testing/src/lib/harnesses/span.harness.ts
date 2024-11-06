@@ -12,7 +12,7 @@ export class SpanHarness extends ComponentHarness {
   static with(options: SpanHarnessFilters): HarnessPredicate<SpanHarness> {
     return new HarnessPredicate(SpanHarness, options)
       .addOption('class', options.class, (harness, c) => HarnessPredicate.stringMatches(harness.getByClass(c), c))
-      .addOption('id', options.id, (harness, id) => HarnessPredicate.stringMatches(harness.getId(id), id))
+      .addOption('id', options.id, (harness, id) => HarnessPredicate.stringMatches(harness.getId(), id))
   }
 
   static without(options: SpanHarnessFilters): HarnessPredicate<SpanHarness> {
