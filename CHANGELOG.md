@@ -1,3 +1,9 @@
+## [5.23.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.23.0...v5.23.1) (2024-11-07)
+
+### Bug Fixes
+
+* filter-view export ([#582](https://github.com/onecx/onecx-portal-ui-libs/issues/582)) ([2e85993](https://github.com/onecx/onecx-portal-ui-libs/commit/2e859933426e78a72fc059a75052f27b0fbbe7f3))
+
 ## [5.23.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.22.2...v5.23.0) (2024-11-06)
 
 ### Features
