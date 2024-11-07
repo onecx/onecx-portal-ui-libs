@@ -116,6 +116,7 @@ function appInitializer(userService: UserService) {
     OcxTimeAgoPipe,
     AdvancedDirective,
     TooltipOnOverflowDirective,
+    FilterViewComponent,
   ],
 })
 export class AngularAcceleratorModule {}
