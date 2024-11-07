@@ -1,6 +1,6 @@
 {
   "name": "@onecx/angular-accelerator",
-  "version": "5.23.0",
+  "version": "5.23.1",
   "license": "Apache-2.0",
   "peerDependencies": {
     "@angular/common": "^18.0.5",
