@@ -159,4 +159,22 @@ export const WithCustomTableColumnTemplates = {
   },
 }
 
+const ExampleTemplate: StoryFn<InteractiveDataViewComponent & { content: any }> = (args) => ({
+  props: args,
+  template: `
+  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
+    ${args.content}
+  </ocx-interactive-data-view>`,
+})
+
+export const ExampleWithTemplateControl = {
+  render: ExampleTemplate,
+  args: {
+    ...defaultComponentArgs,
+    content: `<ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
+  <ng-container>MY STRING TEMPLATE PROVIDED VIA CONTENT CONTROL: {{ rowObject[column.id] }} </ng-container>
+</ng-template>`,
+  },
+}
+
 export default InteractiveDataViewComponentDefaultSBConfig
