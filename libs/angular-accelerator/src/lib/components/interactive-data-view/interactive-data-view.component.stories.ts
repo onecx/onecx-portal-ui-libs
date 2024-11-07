@@ -42,7 +42,7 @@ export const WithPageSizes = {
 const CustomContentInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
   props: args,
   template: `
-  <ocx-interactive-data-view [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
+  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
     <ng-template #listItem let-item>
       <div class="w-full px-4 py-2 card mb-4">
         <p>{{item.product}}</p>
@@ -69,7 +69,7 @@ export const WithCustomContentTemplates = {
 const CustomTableCellsInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
   props: args,
   template: `
-  <ocx-interactive-data-view [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
+  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
     <ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
       <ng-container>STRING: {{ rowObject[column.id] }} </ng-container>
     </ng-template>
@@ -86,15 +86,13 @@ export const WithCustomTableCellTemplates = {
   render: CustomTableCellsInteractiveDataView,
   args: {
     ...defaultComponentArgs,
-    disableFilterView: false,
-    filterViewDisplayMode: 'button',
   },
 }
 
 const CustomTableFilterCellsInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
   props: args,
   template: `
-  <ocx-interactive-data-view [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
+  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
     <ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
       <ng-container>STRING: {{ rowObject[column.id] }} </ng-container>
     </ng-template>
@@ -117,15 +115,13 @@ export const WithCustomTableFilterCellTemplates = {
   render: CustomTableFilterCellsInteractiveDataView,
   args: {
     ...defaultComponentArgs,
-    disableFilterView: false,
-    filterViewDisplayMode: 'button',
   },
 }
 
 const CustomTableColumnCellsInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
   props: args,
   template: `
-  <ocx-interactive-data-view [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
+  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
     <ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
       <ng-container>STRING: {{ rowObject[column.id] }} </ng-container>
     </ng-template>
@@ -160,8 +156,6 @@ export const WithCustomTableColumnTemplates = {
   render: CustomTableColumnCellsInteractiveDataView,
   args: {
     ...defaultComponentArgs,
-    disableFilterView: false,
-    filterViewDisplayMode: 'button',
   },
 }
 
