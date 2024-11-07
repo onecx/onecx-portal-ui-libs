@@ -17,7 +17,7 @@ import { StorybookBreadcrumbModule } from './../../storybook-breadcrumb.module'
 import { SearchHeaderComponent } from './search-header.component'
 
 export default {
-  title: 'SearchHeaderComponent',
+  title: 'Components/SearchHeaderComponent',
   component: SearchHeaderComponent,
   decorators: [
     applicationConfig({
