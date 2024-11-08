@@ -1,3 +1,9 @@
+## [5.23.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.23.1...v5.23.2) (2024-11-08)
+
+### Bug Fixes
+
+* remove downloading of external fonts ([#583](https://github.com/onecx/onecx-portal-ui-libs/issues/583)) ([58ad93f](https://github.com/onecx/onecx-portal-ui-libs/commit/58ad93f4e0ce2a76610b0039a865d75583fc2fbf))
+
 ## [5.23.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.23.0...v5.23.1) (2024-11-07)
 
 ### Bug Fixes
