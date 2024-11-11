@@ -1,3 +1,9 @@
+## [5.23.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.23.2...v5.23.3) (2024-11-11)
+
+### Bug Fixes
+
+* clean up commented out code, remove google font from output.css ([#584](https://github.com/onecx/onecx-portal-ui-libs/issues/584)) ([c34e05a](https://github.com/onecx/onecx-portal-ui-libs/commit/c34e05a37d0bdc1ac92a535d4b428262f17b025c))
+
 ## [5.23.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.23.1...v5.23.2) (2024-11-08)
 
 ### Bug Fixes
