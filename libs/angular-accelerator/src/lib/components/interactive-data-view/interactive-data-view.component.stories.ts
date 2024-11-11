@@ -38,6 +38,8 @@ import { of } from 'rxjs'
 import { Filter, FilterType } from '../../model/filter.model'
 import { FilterViewComponent } from '../filter-view/filter-view.component'
 import { FocusTrapModule } from 'primeng/focustrap'
+import { TooltipOnOverflowDirective } from '../../directives/tooltipOnOverflow.directive'
+import { SkeletonModule } from 'primeng/skeleton'
 
 type InteractiveDataViewInputTypes = Pick<
   InteractiveDataViewComponent,
@@ -85,6 +87,7 @@ const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewComponent> =
         DataListGridComponent,
         DataListGridSortingComponent,
         FilterViewComponent,
+        TooltipOnOverflowDirective
       ],
       imports: [
         TableModule,
@@ -105,6 +108,7 @@ const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewComponent> =
         OverlayPanelModule,
         FocusTrapModule,
         ChipModule,
+        SkeletonModule
       ],
     }),
   ],
@@ -189,6 +193,71 @@ export const WithMockData = {
   args: {
     ...defaultComponentArgs,
     selectedRows: [],
+  },
+}
+
+function generateColumns(count: number) {
+  const data = []
+  for (let i = 0; i < count; i++) {
+    const row = {
+      id: `${i + 1}`,
+      columnType: ColumnType.STRING,
+      nameKey: `Product${i + 1}`,
+      sortable: false,
+      filterable: true,
+      predefinedGroupKeys: ['test'],
+    };
+    data.push(row)
+  }
+  return data
+}
+
+function generateRows(rowCount: number, columnCount: number) {
+  const data = []
+  for (let i = 0; i < rowCount; i++) {
+    const row = {} as any
+    for(let j = 0; j < columnCount; j++) {
+      row[j+1] = `Test value for ${j+1}`
+    }
+    data.push(row)
+  }
+  return data
+}
+
+function generateColumnTemplates(columnCount: number) {
+  let templates = ''
+  for(let i = 0; i < columnCount; i++) {
+    templates += `
+    <ng-template pTemplate="${i+1}IdListValue" let-rowObject="rowObject" let-column="column">
+      <ng-container>${i+1} {{ rowObject[${i+1}] }} </ng-container>
+    </ng-template>`
+  }
+  return templates
+}
+
+const columnCount = 30;
+const rowCount = 500
+
+const HugeMockDataTemplate: StoryFn<InteractiveDataViewComponent> = (args) => ({
+  props: args,
+  template: `
+  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
+    ${generateColumnTemplates(Math.ceil(columnCount/3))}
+  </ocx-interactive-data-view>`,
+})
+
+export const WithHugeMockData = {
+  argTypes: {
+    componentStateChanged: { action: 'componentStateChanged' },
+    selectionChanged: { action: 'selectionChanged' },
+  },
+  render: HugeMockDataTemplate,
+  args: {
+    columns: generateColumns(columnCount),
+    data: generateRows(rowCount, columnCount),
+    emptyResultsMessage: 'No results',
+    selectedRows: [],
+    pageSize: 50,
   },
 }
 
