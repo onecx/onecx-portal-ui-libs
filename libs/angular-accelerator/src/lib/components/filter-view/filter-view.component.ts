@@ -29,8 +29,6 @@ export type FilterViewRowDisplayData = {
 }
 export type FilterViewRowDetailData = FilterViewRowDisplayData & {
   valueColumnId: string
-  valueColumnFilterType: FilterType | undefined
-  valueColumnDateFormat: string | undefined
 }
 
 export interface FilterViewComponentState {
@@ -112,8 +110,6 @@ export class FilterViewComponent implements OnInit {
               column: filterColumn.nameKey,
               value: f.value,
               valueColumnId: filterColumn.id,
-              valueColumnFilterType: filterColumn.filterType,
-              valueColumnDateFormat: filterColumn.dateFormat,
             } satisfies FilterViewRowDetailData
           })
           .filter((v): v is FilterViewRowDetailData => v !== undefined)
@@ -284,6 +280,10 @@ export class FilterViewComponent implements OnInit {
     return columns.find((c) => c.id === filter.columnId)
   }
 
+  getColumn(colId: string, columns: DataTableColumn[]) {
+    return columns.find((c) => c.id === colId)
+  }
+
   resolveFieldData(object: any, key: any) {
     return ObjectUtils.resolveFieldData(object, key)
   }
@@ -294,10 +294,10 @@ export class FilterViewComponent implements OnInit {
     }
   }
 
-  mergeValueColumnData(column: DataTableColumn, row: Row) {
+  getRowForValueColumn(row: Row): Row {
     return {
-      ...column,
-      dateFormat: row['valueColumnDateFormat'] as string,
-    } satisfies DataTableColumn
+      id: row.id,
+      [row['valueColumnId'] as string]: row['value'],
+    }
   }
 }

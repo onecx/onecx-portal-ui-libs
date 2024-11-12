@@ -141,24 +141,33 @@
             >
               <ng-template pTemplate="columnIdCell" let-rowObject="rowObject" let-column="column">
                 <ng-container
-                  [ngTemplateOutlet]="tableValueTemplate"
+                  [ngTemplateOutlet]="templates[column.id]"
                   [ngTemplateOutletContext]="{
-                    templates: templates,
-                    rowObject: rowObject,
-                    column: column
-                  }"
+            rowObject: rowObject,
+            column: column,
+          }"
                 >
                 </ng-container>
               </ng-template>
               <ng-template pTemplate="valueIdCell" let-rowObject="rowObject" let-column="column">
-                <ng-container
-                  [ngTemplateOutlet]="tableValueTemplate"
-                  [ngTemplateOutletContext]="{
-                    templates: templates,
-                    rowObject: rowObject,
-                    column: column
-                  }"
-                >
+                <ng-container *ngIf="getColumn(rowObject['valueColumnId'], columns) as valueColumn">
+                  <ng-container
+                    *ngIf="!valueColumn.filterType || valueColumn.filterType === FilterType.EQUAL"
+                    [ngTemplateOutlet]="templates[valueColumn.id]"
+                    [ngTemplateOutletContext]="{
+              rowObject: getRowForValueColumn(rowObject),
+              column: valueColumn
+            }"
+                  >
+                  </ng-container>
+                  <ng-container
+                    *ngIf="valueColumn.filterType === FilterType.TRUTHY"
+                    [ngTemplateOutlet]="truthyTemplate"
+                    [ngTemplateOutletContext]="{
+        value: resolveFieldData(rowObject, column.id)
+      }"
+                  >
+                  </ng-container>
                 </ng-container>
               </ng-template>
               <ng-template pTemplate="actionsIdCell" let-rowObject="rowObject" let-column="column">
@@ -180,37 +189,6 @@
     </ng-template>
   </div>
 </ng-container>
-
-<ng-template #tableValueTemplate let-templates="templates" let-rowObject="rowObject" let-column="column">
-  <ng-container
-    *ngIf="column.id !== 'value'"
-    [ngTemplateOutlet]="templates[column.id]"
-    [ngTemplateOutletContext]="{
-            rowObject: rowObject,
-            column: column,
-          }"
-  >
-  </ng-container>
-  <ng-container *ngIf="column.id === 'value'">
-    <ng-container
-      *ngIf="!rowObject['valueColumnFilterType'] || rowObject['valueColumnFilterType'] === FilterType.EQUAL"
-      [ngTemplateOutlet]="templates[rowObject['valueColumnId']]"
-      [ngTemplateOutletContext]="{
-              rowObject: rowObject,
-              column: mergeValueColumnData(column, rowObject)
-            }"
-    >
-    </ng-container>
-    <ng-container
-      *ngIf="rowObject['valueColumnFilterType'] === FilterType.TRUTHY"
-      [ngTemplateOutlet]="truthyTemplate"
-      [ngTemplateOutletContext]="{
-        value: resolveFieldData(rowObject, column.id)
-      }"
-    >
-    </ng-container>
-  </ng-container>
-</ng-template>
 
 <ng-template #chipTemplate let-templates="templates" let-filter="filter" let-column="column">
   <ng-container
