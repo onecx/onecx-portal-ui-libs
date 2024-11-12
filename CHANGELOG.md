@@ -1,3 +1,33 @@
+## [5.23.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.23.4...v5.23.5) (2024-11-12)
+
+### Bug Fixes
+
+* use date format in filter view ([#588](https://github.com/onecx/onecx-portal-ui-libs/issues/588)) ([c9d070e](https://github.com/onecx/onecx-portal-ui-libs/commit/c9d070e72d1cb959629330003cea885c37240bd7))
+
+## [5.23.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.23.3...v5.23.4) (2024-11-12)
+
+### Bug Fixes
+
+* Replace single comment with multi line comment in all scss files ([#587](https://github.com/onecx/onecx-portal-ui-libs/issues/587)) ([82719b7](https://github.com/onecx/onecx-portal-ui-libs/commit/82719b7eadb748c474dd0bb5bae24b5528524199))
+
+## [5.23.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.23.2...v5.23.3) (2024-11-11)
+
+### Bug Fixes
+
+* clean up commented out code, remove google font from output.css ([#584](https://github.com/onecx/onecx-portal-ui-libs/issues/584)) ([c34e05a](https://github.com/onecx/onecx-portal-ui-libs/commit/c34e05a37d0bdc1ac92a535d4b428262f17b025c))
+
+## [5.23.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.23.1...v5.23.2) (2024-11-08)
+
+### Bug Fixes
+
+* remove downloading of external fonts ([#583](https://github.com/onecx/onecx-portal-ui-libs/issues/583)) ([58ad93f](https://github.com/onecx/onecx-portal-ui-libs/commit/58ad93f4e0ce2a76610b0039a865d75583fc2fbf))
+
+## [5.23.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.23.0...v5.23.1) (2024-11-07)
+
+### Bug Fixes
+
+* filter-view export ([#582](https://github.com/onecx/onecx-portal-ui-libs/issues/582)) ([2e85993](https://github.com/onecx/onecx-portal-ui-libs/commit/2e859933426e78a72fc059a75052f27b0fbbe7f3))
+
 ## [5.23.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.22.2...v5.23.0) (2024-11-06)
 
 ### Features
