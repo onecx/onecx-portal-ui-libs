@@ -55,9 +55,9 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   dataTableComponentState$ = new ReplaySubject<DataTableComponentState>(1)
   dataListGridComponentState$ = new ReplaySubject<DataListGridComponentState>(1)
 
-  @Input() deletePermission: string | undefined
-  @Input() editPermission: string | undefined
-  @Input() viewPermission: string | undefined
+  @Input() deletePermission: string | string[] | undefined
+  @Input() editPermission: string | string[] | undefined
+  @Input() viewPermission: string | string[] | undefined
   @Input() deleteActionVisibleField: string | undefined
   @Input() deleteActionEnabledField: string | undefined
   @Input() viewActionVisibleField: string | undefined
