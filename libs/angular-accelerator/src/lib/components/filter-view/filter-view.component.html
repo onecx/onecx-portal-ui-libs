@@ -202,7 +202,7 @@
     >
     </ng-container>
     <ng-container
-      *ngIf="rowObject['columnFilterType'] === FilterType.TRUTHY"
+      *ngIf="rowObject['valueColumnFilterType'] === FilterType.TRUTHY"
       [ngTemplateOutlet]="truthyTemplate"
       [ngTemplateOutletContext]="{
         value: resolveFieldData(rowObject, column.id)
