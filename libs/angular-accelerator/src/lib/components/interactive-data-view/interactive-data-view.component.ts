@@ -79,7 +79,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   dataViewComponentState$ = new ReplaySubject<DataViewComponentState>(1)
   filterViewComponentState$ = new ReplaySubject<FilterViewComponentState>(1)
 
-  @Input() searchConfigPermission: string | undefined
+  @Input() searchConfigPermission: string | string[] | undefined
   @Input() deletePermission: string | string[] | string[] | undefined
   @Input() editPermission: string | string[] | undefined
   @Input() viewPermission: string | string[] | undefined
