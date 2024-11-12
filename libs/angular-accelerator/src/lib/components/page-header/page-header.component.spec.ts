@@ -51,7 +51,7 @@ describe('PageHeaderComponent', () => {
   let component: PageHeaderComponent
   let fixture: ComponentFixture<PageHeaderComponent>
   let pageHeaderHarness: PageHeaderHarness
-  let userServiceSpy: jest.SpyInstance<boolean, [permissionKey: string], any>
+  let userServiceSpy: jest.SpyInstance<boolean, [permissionKey: string | string[]], any>
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({

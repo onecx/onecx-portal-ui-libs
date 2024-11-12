@@ -35,7 +35,10 @@ export class UserService implements OnDestroy {
     this.profile$.destroy()
   }
 
-  hasPermission(permissionKey: string): boolean {
+  hasPermission(permissionKey: string | string[]): boolean {
+    if (Array.isArray(permissionKey)) {
+      return permissionKey.every((key) => this.hasPermission(key))
+    }
     const oldConceptResult = this.permissions$.getValue()
       ? this.permissions$.getValue()?.includes(permissionKey)
       : false
