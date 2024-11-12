@@ -1,3 +1,9 @@
+## [5.23.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.23.3...v5.23.4) (2024-11-12)
+
+### Bug Fixes
+
+* Replace single comment with multi line comment in all scss files ([#587](https://github.com/onecx/onecx-portal-ui-libs/issues/587)) ([82719b7](https://github.com/onecx/onecx-portal-ui-libs/commit/82719b7eadb748c474dd0bb5bae24b5528524199))
+
 ## [5.23.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.23.2...v5.23.3) (2024-11-11)
 
 ### Bug Fixes
