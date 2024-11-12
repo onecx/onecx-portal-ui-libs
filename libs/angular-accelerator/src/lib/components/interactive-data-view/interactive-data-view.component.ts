@@ -446,13 +446,23 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
       )
     }
 
+    let filterViewComponentState$: Observable<FilterViewComponentState | Record<string, never>> =
+      this.filterViewComponentState$
+    if (this.disableFilterView) {
+      filterViewComponentState$ = filterViewComponentState$.pipe(
+        startWith({
+          filters: this.filters,
+        })
+      )
+    }
+
     combineLatest([
       columnGroupSelectionComponentState$.pipe(timestamp()),
       customGroupColumnSelectorComponentState$.pipe(timestamp()),
       this.dataLayoutComponentState$.pipe(timestamp()),
       dataListGridSortingComponentState$.pipe(timestamp()),
       this.dataViewComponentState$.pipe(timestamp()),
-      this.filterViewComponentState$.pipe(timestamp()),
+      filterViewComponentState$.pipe(timestamp()),
     ])
       .pipe(
         map((componentStates) => {
