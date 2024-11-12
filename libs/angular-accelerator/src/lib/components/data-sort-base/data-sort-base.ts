@@ -1,5 +1,5 @@
 import { TranslateService } from '@ngx-translate/core'
-import { Observable, filter, map, of } from 'rxjs'
+import { Observable, map, of } from 'rxjs'
 import { flattenObject } from '../../functions/flatten-object'
 import { ColumnType } from '../../model/column-type.model'
 import { DataSortDirection } from '../../model/data-sort-direction'
