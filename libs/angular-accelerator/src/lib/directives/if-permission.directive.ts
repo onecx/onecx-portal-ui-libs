@@ -71,21 +71,23 @@ export class IfPermissionDirective implements OnInit {
   }
 
   ngOnInit() {
-    if (this.permission) {
-      if (this.negate === this.hasPermission(Array.isArray(this.permission) ? this.permission : [this.permission])) {
-        if (this.ocxIfPermissionElseTemplate) {
-          this.viewContainer.createEmbeddedView(this.ocxIfPermissionElseTemplate)
-        } else {
-          if (this.onMissingPermission === 'disable') {
-            this.renderer.setAttribute(this.el.nativeElement, 'disabled', 'disabled')
-          } else {
-            this.viewContainer.clear()
-          }
-        }
+    if (
+      (this.permission &&
+        this.negate === this.hasPermission(Array.isArray(this.permission) ? this.permission : [this.permission])) ||
+      !this.permission
+    ) {
+      if (this.ocxIfPermissionElseTemplate) {
+        this.viewContainer.createEmbeddedView(this.ocxIfPermissionElseTemplate)
       } else {
-        if (this.templateRef) {
-          this.viewContainer.createEmbeddedView(this.templateRef)
+        if (this.onMissingPermission === 'disable') {
+          this.renderer.setAttribute(this.el.nativeElement, 'disabled', 'disabled')
+        } else {
+          this.viewContainer.clear()
         }
+      }
+    } else {
+      if (this.templateRef) {
+        this.viewContainer.createEmbeddedView(this.templateRef)
       }
     }
   }

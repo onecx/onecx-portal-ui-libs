@@ -1,3 +1,9 @@
+## [5.23.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.23.4...v5.23.5) (2024-11-12)
+
+### Bug Fixes
+
+* use date format in filter view ([#588](https://github.com/onecx/onecx-portal-ui-libs/issues/588)) ([c9d070e](https://github.com/onecx/onecx-portal-ui-libs/commit/c9d070e72d1cb959629330003cea885c37240bd7))
+
 ## [5.23.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.23.3...v5.23.4) (2024-11-12)
 
 ### Bug Fixes
