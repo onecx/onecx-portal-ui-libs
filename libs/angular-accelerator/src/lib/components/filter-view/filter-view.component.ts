@@ -119,6 +119,9 @@ export class FilterViewComponent implements OnInit {
           .sort((a, b) => columnIds.indexOf(a.columnId) - columnIds.indexOf(b.columnId))
       })
     )
+    this.componentStateChanged.emit({
+      filters: this.filters,
+    })
   }
 
   @ViewChild(OverlayPanel) panel!: OverlayPanel
