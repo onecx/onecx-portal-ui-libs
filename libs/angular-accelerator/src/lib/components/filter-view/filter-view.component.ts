@@ -28,8 +28,7 @@ export type FilterViewRowDisplayData = {
   value: unknown
 }
 export type FilterViewRowDetailData = FilterViewRowDisplayData & {
-  columnId: string
-  columnFilterType: FilterType | undefined
+  valueColumnId: string
 }
 
 export interface FilterViewComponentState {
@@ -110,15 +109,17 @@ export class FilterViewComponent implements OnInit {
               id: `${f.columnId}-${f.value}`,
               column: filterColumn.nameKey,
               value: f.value,
-              columnId: filterColumn.id,
-              columnFilterType: filterColumn.filterType,
+              valueColumnId: filterColumn.id,
             } satisfies FilterViewRowDetailData
           })
           .filter((v): v is FilterViewRowDetailData => v !== undefined)
           .slice()
-          .sort((a, b) => columnIds.indexOf(a.columnId) - columnIds.indexOf(b.columnId))
+          .sort((a, b) => columnIds.indexOf(a.valueColumnId) - columnIds.indexOf(b.valueColumnId))
       })
     )
+    this.componentStateChanged.emit({
+      filters: this.filters,
+    })
   }
 
   @ViewChild(OverlayPanel) panel!: OverlayPanel
@@ -257,7 +258,7 @@ export class FilterViewComponent implements OnInit {
   }
 
   onFilterDelete(row: Row) {
-    const filters = this.filters.filter((f) => !(f.columnId === row['columnId'] && f.value === row['value']))
+    const filters = this.filters.filter((f) => !(f.columnId === row['valueColumnId'] && f.value === row['value']))
     this.filters = filters
     this.filtered.emit(filters)
     this.componentStateChanged.emit({
@@ -282,6 +283,10 @@ export class FilterViewComponent implements OnInit {
     return columns.find((c) => c.id === filter.columnId)
   }
 
+  getColumn(colId: string, columns: DataTableColumn[]) {
+    return columns.find((c) => c.id === colId)
+  }
+
   resolveFieldData(object: any, key: any) {
     return ObjectUtils.resolveFieldData(object, key)
   }
@@ -289,6 +294,13 @@ export class FilterViewComponent implements OnInit {
   getRowObjectFromFiterData(filter: Filter) {
     return {
       [filter.columnId]: filter.value,
+    }
+  }
+
+  getRowForValueColumn(row: Row): Row {
+    return {
+      id: row.id,
+      [row['valueColumnId'] as string]: row['value'],
     }
   }
 }

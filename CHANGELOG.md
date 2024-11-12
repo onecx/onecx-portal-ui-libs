@@ -1,3 +1,17 @@
+## [5.23.6](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.23.5...v5.23.6) (2024-11-12)
+
+### Bug Fixes
+
+* dates using default comparator for sorting ([#591](https://github.com/onecx/onecx-portal-ui-libs/issues/591)) ([2940931](https://github.com/onecx/onecx-portal-ui-libs/commit/2940931ba811da6bc2b0b5960436c3d6ffc9c143))
+* filter view state change initialized  ([#592](https://github.com/onecx/onecx-portal-ui-libs/issues/592)) ([d6df36a](https://github.com/onecx/onecx-portal-ui-libs/commit/d6df36acbfa8408e72ccf48798b83918d3f0d2c0))
+* if permission should use else block for undefined permissions ([#589](https://github.com/onecx/onecx-portal-ui-libs/issues/589)) ([137a2a1](https://github.com/onecx/onecx-portal-ui-libs/commit/137a2a10198b6890af8eb90f45a002d4a13138ec))
+
+## [5.23.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.23.4...v5.23.5) (2024-11-12)
+
+### Bug Fixes
+
+* use date format in filter view ([#588](https://github.com/onecx/onecx-portal-ui-libs/issues/588)) ([c9d070e](https://github.com/onecx/onecx-portal-ui-libs/commit/c9d070e72d1cb959629330003cea885c37240bd7))
+
 ## [5.23.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.23.3...v5.23.4) (2024-11-12)
 
 ### Bug Fixes

@@ -81,7 +81,7 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
     this._actions = value
     this.updateHeaderActions()
   }
-  @Input() searchConfigPermission: string | undefined
+  @Input() searchConfigPermission: string | string[] | undefined
   @Input() searchButtonDisabled = false
   @Input() resetButtonDisabled = false
   @Input() pageName: string | undefined = getLocation().applicationPath
