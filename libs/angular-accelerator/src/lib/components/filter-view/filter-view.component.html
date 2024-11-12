@@ -187,17 +187,17 @@
     [ngTemplateOutlet]="templates[column.id]"
     [ngTemplateOutletContext]="{
             rowObject: rowObject,
-            column: column
+            column: column,
           }"
   >
   </ng-container>
   <ng-container *ngIf="column.id === 'value'">
     <ng-container
-      *ngIf="!rowObject['columnFilterType'] || rowObject['columnFilterType'] === FilterType.EQUAL"
-      [ngTemplateOutlet]="templates[rowObject['columnId']]"
+      *ngIf="!rowObject['valueColumnFilterType'] || rowObject['valueColumnFilterType'] === FilterType.EQUAL"
+      [ngTemplateOutlet]="templates[rowObject['valueColumnId']]"
       [ngTemplateOutletContext]="{
               rowObject: rowObject,
-              column: column
+              column: mergeValueColumnData(column, rowObject)
             }"
     >
     </ng-container>

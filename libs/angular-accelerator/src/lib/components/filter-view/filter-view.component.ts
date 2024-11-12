@@ -28,8 +28,9 @@ export type FilterViewRowDisplayData = {
   value: unknown
 }
 export type FilterViewRowDetailData = FilterViewRowDisplayData & {
-  columnId: string
-  columnFilterType: FilterType | undefined
+  valueColumnId: string
+  valueColumnFilterType: FilterType | undefined
+  valueColumnDateFormat: string | undefined
 }
 
 export interface FilterViewComponentState {
@@ -110,13 +111,14 @@ export class FilterViewComponent implements OnInit {
               id: `${f.columnId}-${f.value}`,
               column: filterColumn.nameKey,
               value: f.value,
-              columnId: filterColumn.id,
-              columnFilterType: filterColumn.filterType,
+              valueColumnId: filterColumn.id,
+              valueColumnFilterType: filterColumn.filterType,
+              valueColumnDateFormat: filterColumn.dateFormat,
             } satisfies FilterViewRowDetailData
           })
           .filter((v): v is FilterViewRowDetailData => v !== undefined)
           .slice()
-          .sort((a, b) => columnIds.indexOf(a.columnId) - columnIds.indexOf(b.columnId))
+          .sort((a, b) => columnIds.indexOf(a.valueColumnId) - columnIds.indexOf(b.valueColumnId))
       })
     )
   }
@@ -257,7 +259,7 @@ export class FilterViewComponent implements OnInit {
   }
 
   onFilterDelete(row: Row) {
-    const filters = this.filters.filter((f) => !(f.columnId === row['columnId'] && f.value === row['value']))
+    const filters = this.filters.filter((f) => !(f.columnId === row['valueColumnId'] && f.value === row['value']))
     this.filters = filters
     this.filtered.emit(filters)
     this.componentStateChanged.emit({
@@ -290,5 +292,12 @@ export class FilterViewComponent implements OnInit {
     return {
       [filter.columnId]: filter.value,
     }
+  }
+
+  mergeValueColumnData(column: DataTableColumn, row: Row) {
+    return {
+      ...column,
+      dateFormat: row['valueColumnDateFormat'] as string,
+    } satisfies DataTableColumn
   }
 }
