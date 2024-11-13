@@ -422,6 +422,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         )
       )
     )
+    this.rowSelectable = this.rowSelectable.bind(this)
   }
 
   ngOnInit(): void {
@@ -662,6 +663,14 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         })
       })
     )
+  }
+
+  isRowSelectionDisabled(rowObject: Row) {
+    return !!this.selectionEnabledField && !this.fieldIsTruthy(rowObject, this.selectionEnabledField)
+  }
+
+  rowSelectable(event: any) {
+    return !this.isRowSelectionDisabled(event.data)
   }
 
   onSelectionChange(selection: Row[]) {
