@@ -1,5 +1,6 @@
 import { ContentContainerComponentHarness } from '@angular/cdk/testing'
 import { ButtonHarness } from './button.harness'
+import { waitForDeferredViewsToBeRendered } from '../utils/waitForDeferredViewsToBeRendered'
 
 export class TableRowHarness extends ContentContainerComponentHarness {
   static hostSelector = 'tbody > tr'
@@ -10,6 +11,7 @@ export class TableRowHarness extends ContentContainerComponentHarness {
   getDeleteButton = this.locatorForOptional(ButtonHarness.with({ class: 'deleteTableRowButton' }))
 
   async getData(): Promise<string[]> {
+    await waitForDeferredViewsToBeRendered(this)
     const tds = await this.locatorForAll('td')()
     const isActionsTd = await Promise.all(tds.map((t) => t.hasClass('actions')))
     const textTds = tds.filter((_v, index) => !isActionsTd[index])

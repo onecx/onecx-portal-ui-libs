@@ -233,7 +233,7 @@
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-rowObject>
-      <tr>
+      <tr *ngIf="columnTemplates">
         <td *ngIf="selectionChangedObserved">
           <p-checkbox
             *ngIf="isRowSelectionDisabled(rowObject) && isSelected(rowObject); else defaultCheckbox"
@@ -254,15 +254,21 @@
           <ng-container *ngTemplateOutlet="actionColumn; context: {localRowObject: rowObject}"></ng-container>
         </ng-container>
         <td *ngFor="let column of columns">
+          @defer(on viewport){
           <ng-container
+            *ngIf="columnTemplates[column.id]"
             [ngTemplateOutlet]="
-              _cell ? _cell: columnTemplates[column.id]
+                _cell ? _cell: columnTemplates[column.id]
               "
             [ngTemplateOutletContext]="{
                   rowObject: rowObject,
                   column: column,
               }"
-          ></ng-container>
+          >
+          </ng-container>
+          } @placeholder {
+          <p-skeleton width="3rem" />
+          }
         </td>
         <ng-container *ngIf="actionColumnPosition === 'right';">
           <ng-container *ngTemplateOutlet="actionColumn; context: {localRowObject: rowObject}"></ng-container>

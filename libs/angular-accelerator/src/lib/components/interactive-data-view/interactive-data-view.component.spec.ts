@@ -307,6 +307,8 @@ describe('InteractiveDataViewComponent', () => {
     viewItemEvent = undefined
     editItemEvent = undefined
     deleteItemEvent = undefined
+
+    console.log("Global IntersectionObserver", global.IntersectionObserver)
   })
 
   it('should create', () => {
@@ -433,7 +435,6 @@ describe('InteractiveDataViewComponent', () => {
       ]
       const sortButton = await tableHeaders[0].getSortButton()
       await sortButton.click()
-
       tableRows = (await dataTable?.getRows()) ?? []
       const rows = await parallel(() => tableRows.map((row) => row.getData()))
 

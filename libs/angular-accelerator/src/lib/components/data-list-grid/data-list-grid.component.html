@@ -27,6 +27,7 @@
     <ng-template #listItem let-rows pTemplate="listItem">
       <div class="p-grid p-nogutter grid grid-nogutter">
         <ng-template ngFor let-item [ngForOf]="rows">
+          @defer (on viewport; on idle){
           <ng-container
             [ngTemplateOutlet]="_listItem ? _listItem : defaultListItem"
             [ngTemplateOutletContext]="{
@@ -34,6 +35,9 @@
               columnTemplates: columnTemplates
               }"
           ></ng-container>
+          } @placeholder {
+          <div style="width: 100%; height: 80px"></div>
+          }
         </ng-template>
       </div>
     </ng-template>
@@ -87,7 +91,7 @@
   </div>
 </ng-template>
 <ng-template #defaultListItem let-item="item" let-columnTemplates="columnTemplates">
-  <div class="col-12">
+  <div class="col-12" *ngIf="columnTemplates">
     <div class="data-list-items p-3">
       <div class="item-name-row flex flex-row justify-content-between">
         <div class="item-name mr-3 text-2xl font-medium align-content-center">
@@ -190,16 +194,19 @@
             [ocxTooltipOnOverflow]="col.columnType === columnType.TRANSLATION_KEY ? (resolveFieldData(item,col.id) | translate) : resolveFieldData(item, col.id)"
             tooltipPosition="top"
           >
+            @defer(on viewport;){
             <ng-container
-              [ngTemplateOutlet]="
-            _listValue ? _listValue: defaultListValue
-            "
+              [ngTemplateOutlet]="_listValue ? _listValue: defaultListValue"
               [ngTemplateOutletContext]="{
                 rowObject: item,
                 column: col,
                 columnTemplates: columnTemplates
-            }"
-            ></ng-container>
+                }"
+            >
+            </ng-container>
+            } @placeholder {
+            <p-skeleton width="5rem" />
+            }
           </div>
         </div>
       </div>
@@ -214,6 +221,7 @@
 
 <ng-template #defaultListValue let-rowObject="rowObject" let-column="column" let-columnTemplates="columnTemplates">
   <ng-container
+    *ngIf="columnTemplates[column.id]"
     [ngTemplateOutlet]="columnTemplates[column.id]"
     [ngTemplateOutletContext]="{
                 rowObject: rowObject,
