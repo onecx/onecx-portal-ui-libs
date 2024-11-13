@@ -14,6 +14,7 @@
     "@onecx/integration-interface": "^5",
     "@onecx/angular-integration-interface": "^5",
     "@onecx/angular-remote-components": "^5",
+    "@onecx/angular-testing": "^5",
     "chart.js": "^4.4.3",
     "d3-scale-chromatic": "^3.1.0",
     "rxjs": "~7.8.1",

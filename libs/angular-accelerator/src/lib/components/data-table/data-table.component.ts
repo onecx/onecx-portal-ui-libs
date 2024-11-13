@@ -137,7 +137,8 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     const obs = value.map((c) => this.getTemplate(c, TemplateType.CELL))
     const filterObs = value.map((c) => this.getTemplate(c, TemplateType.FILTERCELL))
     this.columnTemplates$ = combineLatest(obs).pipe(
-      map((values) => Object.fromEntries(value.map((c, i) => [c.id, values[i]])))
+      map((values) => Object.fromEntries(value.map((c, i) => [c.id, values[i]]))),
+      debounceTime(50)
     )
     this.columnFilterTemplates$ = combineLatest(filterObs).pipe(
       map((values) => Object.fromEntries(value.map((c, i) => [c.id, values[i]])))
@@ -908,8 +909,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
             return columnTemplate
           }
           return this.getColumnTypeTemplate(templates, column.columnType, templateType)
-        }),
-        debounceTime(50)
+        })
       )
     }
     return templatesData.templatesObservables[column.id]
