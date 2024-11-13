@@ -316,7 +316,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   selectedRows$: Observable<unknown[]> | undefined
 
   currentFilterColumn$ = new BehaviorSubject<DataTableColumn | null>(null)
-  currentEqualFilterOptions$: Observable<SelectItem[]> | undefined
+  currentEqualFilterOptions$: Observable<{ options: SelectItem[]; column: DataTableColumn | undefined }> | undefined
   currentEqualSelectedFilters$: Observable<unknown[]> | undefined
   truthyFilterOptions = [
     {
@@ -459,7 +459,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       ),
       mergeMap(([rows, currentFilterColumn, filters]) => {
         if (!currentFilterColumn?.id) {
-          return of([])
+          return of({ options: [], column: undefined })
         }
 
         const currentFilters = filters
@@ -487,6 +487,12 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
                     value: filterOption,
                   }) as SelectItem
               )
+          }),
+          map((options) => {
+            return {
+              options: options,
+              column: currentFilterColumn,
+            }
           })
         )
       })
