@@ -435,11 +435,6 @@ describe('InteractiveDataViewComponent', () => {
       ]
       const sortButton = await tableHeaders[0].getSortButton()
       await sortButton.click()
-      await new Promise<void>((resolve) => {
-        setTimeout(() => {
-          resolve()
-        }, 3000);
-      })
       tableRows = (await dataTable?.getRows()) ?? []
       const rows = await parallel(() => tableRows.map((row) => row.getData()))
 
