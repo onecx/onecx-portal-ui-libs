@@ -126,6 +126,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     this?._sortColumn$.next(value)
   }
   columnTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
+  columnFilterTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
   _columns$ = new BehaviorSubject<DataTableColumn[]>([])
   @Input()
   get columns(): DataTableColumn[] {
@@ -134,9 +135,13 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   set columns(value: DataTableColumn[]) {
     this._columns$.next(value)
     const obs = value.map((c) => this.getTemplate(c, TemplateType.CELL))
+    const filterObs = value.map((c) => this.getTemplate(c, TemplateType.FILTERCELL))
     this.columnTemplates$ = combineLatest(obs).pipe(
       map((values) => Object.fromEntries(value.map((c, i) => [c.id, values[i]]))),
       debounceTime(50)
+    )
+    this.columnFilterTemplates$ = combineLatest(filterObs).pipe(
+      map((values) => Object.fromEntries(value.map((c, i) => [c.id, values[i]])))
     )
   }
   @Input() clientSideFiltering = true
@@ -784,18 +789,44 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
   filterTemplatesData: TemplatesData = {
     templatesObservables: {},
-    idSuffix: ['IdTableFilterCell', 'IdFilterCell'],
+    idSuffix: ['IdTableFilterCell', 'IdFilterCell', 'IdTableCell', 'IdCell'],
     templateNames: {
-      [ColumnType.DATE]: ['dateFilterCell', 'dateTableFilterCell', 'defaultDateCell'],
-      [ColumnType.NUMBER]: ['numberFilterCell', 'numberTableFilterCell', 'defaultNumberCell'],
-      [ColumnType.RELATIVE_DATE]: ['relativeDateFilterCell', 'relativeDateTableFilterCell', 'defaultRelativeDateCell'],
+      [ColumnType.DATE]: ['dateFilterCell', 'dateTableFilterCell', 'dateCell', 'dateTableCell', 'defaultDateCell'],
+      [ColumnType.NUMBER]: [
+        'numberFilterCell',
+        'numberTableFilterCell',
+        'numberCell',
+        'numberTableCell',
+        'defaultNumberCell',
+      ],
+      [ColumnType.RELATIVE_DATE]: [
+        'relativeDateFilterCell',
+        'relativeDateTableFilterCell',
+        'relativeDateCell',
+        'relativeDateTableCell',
+        'defaultRelativeDateCell',
+      ],
       [ColumnType.TRANSLATION_KEY]: [
         'translationKeyFilterCell',
         'translationKeyTableFilterCell',
         'defaultTranslationKeyCell',
+        'translationKeyCell',
+        'translationKeyTableCell',
       ],
-      [ColumnType.CUSTOM]: ['customFilterCell', 'customTableFilterCell', 'defaultCustomCell'],
-      [ColumnType.STRING]: ['stringFilterCell', 'stringTableFilterCell', 'defaultStringCell'],
+      [ColumnType.CUSTOM]: [
+        'customFilterCell',
+        'customTableFilterCell',
+        'customCell',
+        'customTableCell',
+        'defaultCustomCell',
+      ],
+      [ColumnType.STRING]: [
+        'stringFilterCell',
+        'stringTableFilterCell',
+        'stringCell',
+        'stringTableCell',
+        'defaultStringCell',
+      ],
     },
   }
 
