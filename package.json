@@ -69,7 +69,7 @@
     "@nx/node": "19.8.0",
     "@nx/storybook": "19.8.0",
     "@nx/workspace": "19.8.0",
-    "@schematics/angular": "~18.2.4",
+    "@schematics/angular": "~18.2.11",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^13.0.0",
     "@semantic-release/exec": "^6.0.3",
