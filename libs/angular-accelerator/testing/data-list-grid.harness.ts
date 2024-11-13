@@ -2,7 +2,7 @@ import { ContentContainerComponentHarness, TestElement, parallel } from '@angula
 import { PPaginatorHarness } from '@onecx/angular-testing'
 import { DefaultGridItemHarness } from './default-grid-item.harness'
 import { DefaultListItemHarness } from './default-list-item.harness'
-import { waitForDeferredViewsToBeRendered } from 'libs/angular-testing/src/lib/utils/waitForDeferredViewsToBeRendered'
+import { waitForDeferredViewsToBeRendered } from '@onecx/angular-testing'
 
 export class DataListGridHarness extends ContentContainerComponentHarness {
   static hostSelector = 'ocx-data-list-grid'

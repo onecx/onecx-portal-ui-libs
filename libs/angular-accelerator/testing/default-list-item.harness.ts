@@ -1,6 +1,6 @@
 import { ComponentHarness } from '@angular/cdk/testing'
 import { ButtonHarness, DivHarness } from '@onecx/angular-testing'
-import { waitForDeferredViewsToBeRendered } from 'libs/angular-testing/src/lib/utils/waitForDeferredViewsToBeRendered'
+import { waitForDeferredViewsToBeRendered } from '@onecx/angular-testing'
 
 export class DefaultListItemHarness extends ComponentHarness {
   static hostSelector = '.data-list-items'
