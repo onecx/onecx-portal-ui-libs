@@ -1,4 +1,4 @@
-export class MockIntersectionObserver {
+export class IntersectionObserverMock {
   private callback: any
   private entries: any[]
   root: any
@@ -36,7 +36,7 @@ export class MockIntersectionObserver {
 }
 
 export function ensureIntersectionObserverMockExists() {
-  if (!global.IntersectionObserver || global.IntersectionObserver !== MockIntersectionObserver) {
-    global.IntersectionObserver = MockIntersectionObserver
+  if (!global.IntersectionObserver || global.IntersectionObserver !== IntersectionObserverMock) {
+    global.IntersectionObserver = IntersectionObserverMock
   }
 }

@@ -22,3 +22,4 @@ export * from '@angular/cdk/testing/testbed'
 export * from '@onecx/angular-testing'
 
 ensureIntersectionObserverMockExists()
+global.origin = ''

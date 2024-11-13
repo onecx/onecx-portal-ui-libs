@@ -2,14 +2,19 @@ import { ContentContainerComponentHarness, TestElement, parallel } from '@angula
 import { PPaginatorHarness } from '@onecx/angular-testing'
 import { DefaultGridItemHarness } from './default-grid-item.harness'
 import { DefaultListItemHarness } from './default-list-item.harness'
+import { waitForDeferredViewsToBeRendered } from 'libs/angular-testing/src/lib/utils/waitForDeferredViewsToBeRendered'
 
 export class DataListGridHarness extends ContentContainerComponentHarness {
   static hostSelector = 'ocx-data-list-grid'
 
   getDefaultGridItems = this.locatorForAll(DefaultGridItemHarness)
-  getDefaultListItems = this.locatorForAll(DefaultListItemHarness)
   getPaginator = this.locatorFor(PPaginatorHarness)
   getMenuButton = this.locatorFor(`[name="data-grid-item-menu-button"]`)
+
+  async getDefaultListItems() {
+    await waitForDeferredViewsToBeRendered(this)
+    return await this.locatorForAll(DefaultListItemHarness)()
+  }
 
   async getActionButtons(actionButtonType: 'list' | 'grid' | 'grid-hidden') {
     if (actionButtonType === 'list') {

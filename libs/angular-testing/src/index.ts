@@ -37,4 +37,4 @@ export * from './lib/harnesses/table-row.harness'
 export * from '@angular/cdk/testing'
 export * from '@angular/cdk/testing/testbed'
 
-export * from './lib/mocks/MockIntersectionObserver'
+export * from './lib/mocks/IntersectionObserverMock'
