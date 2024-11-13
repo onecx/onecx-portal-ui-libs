@@ -121,7 +121,7 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
     show: 'always',
   }
   headerActions: Action[] = []
-  searchButtonsReversed: boolean = false
+  searchButtonsReversed = false
   fieldValues$: Observable<{ [key: string]: unknown }> | undefined = of({})
   searchConfigChangedSlotEmitter: EventEmitter<SearchConfigData | undefined> = new EventEmitter()
 
