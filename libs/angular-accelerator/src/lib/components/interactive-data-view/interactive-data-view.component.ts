@@ -403,7 +403,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
         .map((column) => column.id)
     }
     this.displayedColumns$ = this.displayedColumnKeys$.pipe(
-      distinctUntilChanged((prev, curr) => prev.length === curr.length && prev.every((v) => curr.includes(v))),
+      distinctUntilChanged((prev, curr) => prev.length === curr.length && prev.every((v, i) => curr[i] === v)),
       map(
         (columnKeys) =>
           (columnKeys.map((key) => this.columns.find((col) => col.id === key)).filter((d) => d) as DataTableColumn[]) ??

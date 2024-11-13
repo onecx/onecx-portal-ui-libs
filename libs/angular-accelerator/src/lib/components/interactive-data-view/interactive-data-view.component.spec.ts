@@ -1018,18 +1018,18 @@ describe('InteractiveDataViewComponent', () => {
     it('should move item up in picklist active columns list', async () => {
       const spy = jest.spyOn(CustomGroupColumnSelectorComponent.prototype, 'onSaveClick')
       const expectedHeaders = [
-        'COLUMN_HEADER_NAME.NAME',
         'COLUMN_HEADER_NAME.DESCRIPTION',
+        'COLUMN_HEADER_NAME.NAME',
         'COLUMN_HEADER_NAME.STATUS',
         'COLUMN_HEADER_NAME.RESPONSIBLE',
         'Actions',
       ]
       const expectedRowsData = [
-        ['some name', '', 'some status', 'someone responsible'],
-        ['example', 'example description', 'status example', ''],
-        ['name 1', '', 'status name 1', ''],
-        ['name 2', '', 'status name 2', ''],
-        ['name 3', '', 'status name 3', ''],
+        ['', 'some name', 'some status', 'someone responsible'],
+        ['example description', 'example', 'status example', ''],
+        ['', 'name 1', 'status name 1', ''],
+        ['', 'name 2', 'status name 2', ''],
+        ['', 'name 3', 'status name 3', ''],
       ]
       await activeColumnsList[1].selectItem()
       await sourceControlsButtons[0].click()
@@ -1048,17 +1048,17 @@ describe('InteractiveDataViewComponent', () => {
       const spy = jest.spyOn(CustomGroupColumnSelectorComponent.prototype, 'onSaveClick')
       const expectedHeaders = [
         'COLUMN_HEADER_NAME.NAME',
-        'COLUMN_HEADER_NAME.DESCRIPTION',
         'COLUMN_HEADER_NAME.STATUS',
+        'COLUMN_HEADER_NAME.DESCRIPTION',
         'COLUMN_HEADER_NAME.RESPONSIBLE',
         'Actions',
       ]
       const expectedRowsData = [
-        ['some name', '', 'some status', 'someone responsible'],
-        ['example', 'example description', 'status example', ''],
-        ['name 1', '', 'status name 1', ''],
-        ['name 2', '', 'status name 2', ''],
-        ['name 3', '', 'status name 3', ''],
+        ['some name', 'some status', '', 'someone responsible'],
+        ['example', 'status example', 'example description', ''],
+        ['name 1', 'status name 1', '', ''],
+        ['name 2', 'status name 2', '', ''],
+        ['name 3', 'status name 3', '', ''],
       ]
 
       await activeColumnsList[1].selectItem()
