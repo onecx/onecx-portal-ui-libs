@@ -1,16 +1,16 @@
-// Body Colors and other specifications
+/* Body Colors and other specifications */
 $letterSpacing: normal !default;
 
-// Menu Colors and Shadows
+/* Menu Colors and Shadows */
 $menuShadow: 2px 0 4px -1px rgba(0, 0, 0, 0.2), 4px 0 5px 0 rgba(0, 0, 0, 0.14), 1px 0 10px 0 rgba(0, 0, 0, 0.12);
 $submenuShadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
 
-// Animation
+/* Animation */
 $animationTimingFunction: cubic-bezier(0.05, 0.74, 0.2, 0.99) !default;
 $mobileBreakpoint: 991px !default;
 $smallScreenBreakpoint: 576px !default;
 
-// Headings
+/* Headings */
 $h1FontSize: 2.5rem;
 $h2FontSize: 2rem;
 $h3FontSize: 1.75rem;
@@ -18,7 +18,7 @@ $h4FontSize: 1.5rem;
 $h5FontSize: 1.25rem;
 $h6FontSize: 1rem;
 
-// General Colors
+/* General Colors */
 $pink: #e91e63 !default;
 $indigo: #3f51b5 !default;
 $yellow: #ffc107 !default;
