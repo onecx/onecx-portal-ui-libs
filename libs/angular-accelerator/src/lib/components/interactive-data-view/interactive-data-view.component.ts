@@ -79,10 +79,10 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   dataViewComponentState$ = new ReplaySubject<DataViewComponentState>(1)
   filterViewComponentState$ = new ReplaySubject<FilterViewComponentState>(1)
 
-  @Input() searchConfigPermission: string | undefined
-  @Input() deletePermission: string | undefined
-  @Input() editPermission: string | undefined
-  @Input() viewPermission: string | undefined
+  @Input() searchConfigPermission: string | string[] | undefined
+  @Input() deletePermission: string | string[] | string[] | undefined
+  @Input() editPermission: string | string[] | undefined
+  @Input() viewPermission: string | string[] | undefined
   @Input() deleteActionVisibleField: string | undefined
   @Input() deleteActionEnabledField: string | undefined
   @Input() viewActionVisibleField: string | undefined
@@ -446,13 +446,23 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
       )
     }
 
+    let filterViewComponentState$: Observable<FilterViewComponentState | Record<string, never>> =
+      this.filterViewComponentState$
+    if (this.disableFilterView) {
+      filterViewComponentState$ = filterViewComponentState$.pipe(
+        startWith({
+          filters: this.filters,
+        })
+      )
+    }
+
     combineLatest([
       columnGroupSelectionComponentState$.pipe(timestamp()),
       customGroupColumnSelectorComponentState$.pipe(timestamp()),
       this.dataLayoutComponentState$.pipe(timestamp()),
       dataListGridSortingComponentState$.pipe(timestamp()),
       this.dataViewComponentState$.pipe(timestamp()),
-      this.filterViewComponentState$.pipe(timestamp()),
+      filterViewComponentState$.pipe(timestamp()),
     ])
       .pipe(
         map((componentStates) => {
