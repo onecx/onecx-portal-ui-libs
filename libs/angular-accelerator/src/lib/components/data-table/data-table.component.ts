@@ -164,9 +164,9 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
   @Input() emptyResultsMessage: string | undefined
   @Input() name = ''
-  @Input() deletePermission: string | undefined
-  @Input() viewPermission: string | undefined
-  @Input() editPermission: string | undefined
+  @Input() deletePermission: string | string[] | undefined
+  @Input() viewPermission: string | string[] | undefined
+  @Input() editPermission: string | string[] | undefined
   @Input() deleteActionVisibleField: string | undefined
   @Input() deleteActionEnabledField: string | undefined
   @Input() viewActionVisibleField: string | undefined
@@ -317,7 +317,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   selectedRows$: Observable<unknown[]> | undefined
 
   currentFilterColumn$ = new BehaviorSubject<DataTableColumn | null>(null)
-  currentEqualFilterOptions$: Observable<SelectItem[]> | undefined
+  currentEqualFilterOptions$: Observable<{ options: SelectItem[]; column: DataTableColumn | undefined }> | undefined
   currentEqualSelectedFilters$: Observable<unknown[]> | undefined
   truthyFilterOptions = [
     {
@@ -423,6 +423,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         )
       )
     )
+    this.rowSelectable = this.rowSelectable.bind(this)
   }
 
   ngOnInit(): void {
@@ -460,7 +461,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       ),
       mergeMap(([rows, currentFilterColumn, filters]) => {
         if (!currentFilterColumn?.id) {
-          return of([])
+          return of({ options: [], column: undefined })
         }
 
         const currentFilters = filters
@@ -488,6 +489,12 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
                     value: filterOption,
                   }) as SelectItem
               )
+          }),
+          map((options) => {
+            return {
+              options: options,
+              column: currentFilterColumn,
+            }
           })
         )
       })
@@ -663,6 +670,14 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         })
       })
     )
+  }
+
+  isRowSelectionDisabled(rowObject: Row) {
+    return !!this.selectionEnabledField && !this.fieldIsTruthy(rowObject, this.selectionEnabledField)
+  }
+
+  rowSelectable(event: any) {
+    return !this.isRowSelectionDisabled(event.data)
   }
 
   onSelectionChange(selection: Row[]) {

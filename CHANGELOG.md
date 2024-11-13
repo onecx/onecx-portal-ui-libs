@@ -1,3 +1,35 @@
+## [5.24.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.23.6...v5.24.0) (2024-11-13)
+
+### Features
+
+* search button order config ([#594](https://github.com/onecx/onecx-portal-ui-libs/issues/594)) ([7aa5231](https://github.com/onecx/onecx-portal-ui-libs/commit/7aa523167e3d95864594d46187797be06e404563))
+
+### Bug Fixes
+
+* list title no longer clickable ([#593](https://github.com/onecx/onecx-portal-ui-libs/issues/593)) ([07a9f63](https://github.com/onecx/onecx-portal-ui-libs/commit/07a9f63b83381e01ef2458f04c0da6b38a066d9f))
+* possibility to check for multiple permissions ([#590](https://github.com/onecx/onecx-portal-ui-libs/issues/590)) ([2abc2fd](https://github.com/onecx/onecx-portal-ui-libs/commit/2abc2fde369831943188a203aedd09ed5612b845))
+* table header layout improved ([#595](https://github.com/onecx/onecx-portal-ui-libs/issues/595)) ([596aa1f](https://github.com/onecx/onecx-portal-ui-libs/commit/596aa1f0801eeefaa5214620e75610814c28a607))
+
+## [5.23.6](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.23.5...v5.23.6) (2024-11-12)
+
+### Bug Fixes
+
+* dates using default comparator for sorting ([#591](https://github.com/onecx/onecx-portal-ui-libs/issues/591)) ([2940931](https://github.com/onecx/onecx-portal-ui-libs/commit/2940931ba811da6bc2b0b5960436c3d6ffc9c143))
+* filter view state change initialized  ([#592](https://github.com/onecx/onecx-portal-ui-libs/issues/592)) ([d6df36a](https://github.com/onecx/onecx-portal-ui-libs/commit/d6df36acbfa8408e72ccf48798b83918d3f0d2c0))
+* if permission should use else block for undefined permissions ([#589](https://github.com/onecx/onecx-portal-ui-libs/issues/589)) ([137a2a1](https://github.com/onecx/onecx-portal-ui-libs/commit/137a2a10198b6890af8eb90f45a002d4a13138ec))
+
+## [5.23.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.23.4...v5.23.5) (2024-11-12)
+
+### Bug Fixes
+
+* use date format in filter view ([#588](https://github.com/onecx/onecx-portal-ui-libs/issues/588)) ([c9d070e](https://github.com/onecx/onecx-portal-ui-libs/commit/c9d070e72d1cb959629330003cea885c37240bd7))
+
+## [5.23.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.23.3...v5.23.4) (2024-11-12)
+
+### Bug Fixes
+
+* Replace single comment with multi line comment in all scss files ([#587](https://github.com/onecx/onecx-portal-ui-libs/issues/587)) ([82719b7](https://github.com/onecx/onecx-portal-ui-libs/commit/82719b7eadb748c474dd0bb5bae24b5528524199))
+
 ## [5.23.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.23.2...v5.23.3) (2024-11-11)
 
 ### Bug Fixes
