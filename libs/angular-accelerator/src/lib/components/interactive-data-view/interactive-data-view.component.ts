@@ -11,7 +11,17 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core'
-import { BehaviorSubject, Observable, ReplaySubject, combineLatest, map, startWith, timestamp } from 'rxjs'
+import {
+  BehaviorSubject,
+  Observable,
+  ReplaySubject,
+  combineLatest,
+  distinctUntilChanged,
+  map,
+  startWith,
+  timestamp,
+  withLatestFrom,
+} from 'rxjs'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
@@ -26,16 +36,26 @@ import {
   ColumnSelectionChangedEvent,
   CustomGroupColumnSelectorComponentState,
 } from '../custom-group-column-selector/custom-group-column-selector.component'
+import { SlotService } from '@onecx/angular-remote-components'
 import { DataLayoutSelectionComponentState } from '../data-layout-selection/data-layout-selection.component'
 import { DataListGridSortingComponentState } from '../data-list-grid-sorting/data-list-grid-sorting.component'
-import { Filter, Row, Sort } from '../data-table/data-table.component'
+import { Row, Sort } from '../data-table/data-table.component'
 import { DataViewComponent, DataViewComponentState, RowListGridData } from '../data-view/data-view.component'
+import { Filter } from '../../model/filter.model'
+import { limit } from '../../utils/filter.utils'
+import { FilterViewComponentState, FilterViewDisplayMode } from '../filter-view/filter-view.component'
 
 export type InteractiveDataViewComponentState = ColumnGroupSelectionComponentState &
   CustomGroupColumnSelectorComponentState &
   DataLayoutSelectionComponentState &
   DataListGridSortingComponentState &
-  DataViewComponentState
+  DataViewComponentState &
+  FilterViewComponentState
+
+export interface ColumnGroupData {
+  activeColumns: DataTableColumn[]
+  groupKey: string
+}
 @Component({
   selector: 'ocx-interactive-data-view',
   templateUrl: './interactive-data-view.component.html',
@@ -57,10 +77,12 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   dataLayoutComponentState$ = new ReplaySubject<DataLayoutSelectionComponentState>(1)
   dataListGridSortingComponentState$ = new ReplaySubject<DataListGridSortingComponentState>(1)
   dataViewComponentState$ = new ReplaySubject<DataViewComponentState>(1)
+  filterViewComponentState$ = new ReplaySubject<FilterViewComponentState>(1)
 
-  @Input() deletePermission: string | undefined
-  @Input() editPermission: string | undefined
-  @Input() viewPermission: string | undefined
+  @Input() searchConfigPermission: string | string[] | undefined
+  @Input() deletePermission: string | string[] | string[] | undefined
+  @Input() editPermission: string | string[] | undefined
+  @Input() viewPermission: string | string[] | undefined
   @Input() deleteActionVisibleField: string | undefined
   @Input() deleteActionEnabledField: string | undefined
   @Input() viewActionVisibleField: string | undefined
@@ -98,11 +120,18 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   @Input() additionalActions: DataAction[] = []
   @Input() listGridPaginator = true
   @Input() tablePaginator = true
+  @Input() disableFilterView = true
+  @Input() filterViewDisplayMode: FilterViewDisplayMode = 'button'
+  @Input() filterViewChipStyleClass = ''
+  @Input() filterViewTableStyle: { [klass: string]: any } = { 'max-height': '50vh' }
+  @Input() filterViewPanelStyle: { [klass: string]: any } = { 'max-width': '90%' }
+  @Input() selectDisplayedChips: (filters: Filter[], columns: DataTableColumn[]) => Filter[] = (filters) =>
+    limit(filters, 3, { reverse: true })
   @Input() page = 0
   @Input() selectedRows: Row[] = []
   displayedColumnKeys$ = new BehaviorSubject<string[]>([])
   displayedColumns$: Observable<DataTableColumn[]> | undefined
-  @Input() 
+  @Input()
   get displayedColumnKeys(): string[] {
     return this.displayedColumnKeys$.getValue()
   }
@@ -114,11 +143,11 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
    */
   @Input()
   get displayedColumns(): DataTableColumn[] {
-      return (
-        (this.displayedColumnKeys
-          .map((d) => this.columns.find((c) => c.id === d))
-          .filter((d) => d) as DataTableColumn[]) ?? []
-      );
+    return (
+      (this.displayedColumnKeys
+        .map((d) => this.columns.find((c) => c.id === d))
+        .filter((d) => d) as DataTableColumn[]) ?? []
+    )
   }
   set displayedColumns(value: DataTableColumn[]) {
     this.displayedColumnKeys$.next(value.map((d) => d.id))
@@ -206,7 +235,13 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
 
   @Output() componentStateChanged = new EventEmitter<InteractiveDataViewComponentState>()
 
-  selectedGroupKey = ''
+  selectedGroupKey$ = new BehaviorSubject<string | undefined>('')
+  get selectedGroupKey(): string | undefined {
+    return this.selectedGroupKey$.getValue()
+  }
+  set selectedGroupKey(value: string | undefined) {
+    this.selectedGroupKey$.next(value)
+  }
   isDeleteItemObserved: boolean | undefined
   isViewItemObserved: boolean | undefined
   isEditItemObserved: boolean | undefined
@@ -315,22 +350,66 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
     this._data = value
   }
 
+  columnGroupSlotName = 'onecx-column-group-selection'
+  isColumnGroupSelectionComponentDefined$: Observable<boolean>
+  groupSelectionChangedSlotEmitter = new EventEmitter<ColumnGroupData | undefined>()
+
+  constructor(private slotService: SlotService) {
+    this.isColumnGroupSelectionComponentDefined$ = this.slotService
+      .isSomeComponentDefinedForSlot(this.columnGroupSlotName)
+      .pipe(startWith(true))
+
+    this.groupSelectionChangedSlotEmitter.subscribe((event: ColumnGroupData | undefined) => {
+      if (event === undefined) {
+        event = {
+          activeColumns: this.displayedColumns,
+          groupKey: this.selectedGroupKey ?? this.defaultGroupKey,
+        }
+      }
+      this.displayedColumnKeys$.next(event.activeColumns.map((col) => col.id))
+      this.selectedGroupKey$.next(event.groupKey)
+      this.displayedColumnsChange.emit(this.displayedColumns)
+      this.displayedColumnKeysChange.emit(this.displayedColumnKeys)
+      this.columnGroupSelectionComponentState$.next({
+        activeColumnGroupKey: event.groupKey,
+        displayedColumns: event.activeColumns,
+      })
+    })
+
+    this.dataViewLayoutChange
+      .pipe(withLatestFrom(this.isColumnGroupSelectionComponentDefined$))
+      .subscribe(([_, columnGroupComponentDefined]) => {
+        if (columnGroupComponentDefined) {
+          if (
+            !(
+              this.columns.find((c) => c.nameKey === this.selectedGroupKey) ||
+              this.selectedGroupKey === this.customGroupKey
+            )
+          ) {
+            this.selectedGroupKey$.next(undefined)
+          }
+        }
+      })
+  }
+
   ngOnInit(): void {
     this.selectedGroupKey = this.defaultGroupKey
-    if(!this.displayedColumns || this.displayedColumns.length === 0) {
+    if (!this.displayedColumns || this.displayedColumns.length === 0) {
       this.displayedColumnKeys = this.columns.map((column) => column.id)
     }
-    if (this.defaultGroupKey) {
-      this.displayedColumnKeys = this.columns.filter((column) =>
-        column.predefinedGroupKeys?.includes(this.defaultGroupKey)
-      ).map((column) => column.id)
+    if (this.defaultGroupKey && this.defaultGroupKey !== this.customGroupKey) {
+      this.displayedColumnKeys = this.columns
+        .filter((column) => column.predefinedGroupKeys?.includes(this.defaultGroupKey))
+        .map((column) => column.id)
     }
-    this.displayedColumns$ = this.displayedColumnKeys$.pipe(map((columnKeys) => (
-      (columnKeys
-        .map((key) => this.columns.find((col) => col.id === key))
-        .filter((d) => d) as DataTableColumn[]) ?? []
-    )))
-    // TODO: Remove following line once displayedColumns (deprecated) has been removed
+    this.displayedColumns$ = this.displayedColumnKeys$.pipe(
+      distinctUntilChanged((prev, curr) => prev.length === curr.length && prev.every((v, i) => curr[i] === v)),
+      map(
+        (columnKeys) =>
+          (columnKeys.map((key) => this.columns.find((col) => col.id === key)).filter((d) => d) as DataTableColumn[]) ??
+          []
+      )
+    )
     this.displayedColumnsChange.emit(this.displayedColumns)
     this.displayedColumnKeysChange.emit(this.displayedColumnKeys)
     if (!this.groupSelectionNoGroupSelectedKey) {
@@ -340,16 +419,41 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
 
     let dataListGridSortingComponentState$: Observable<DataListGridSortingComponentState | Record<string, never>> =
       this.dataListGridSortingComponentState$
-      let columnGroupSelectionComponentState$: Observable<ColumnGroupSelectionComponentState | Record<string, never>> =
+    let columnGroupSelectionComponentState$: Observable<ColumnGroupSelectionComponentState | Record<string, never>> =
       this.columnGroupSelectionComponentState$
-      let customGroupColumnSelectorComponentState$: Observable<CustomGroupColumnSelectorComponentState | Record<string, never>> =
-      this.customGroupColumnSelectorComponentState$
+    let customGroupColumnSelectorComponentState$: Observable<
+      CustomGroupColumnSelectorComponentState | Record<string, never>
+    > = this.customGroupColumnSelectorComponentState$
 
     if (this.layout === 'table') {
       dataListGridSortingComponentState$ = dataListGridSortingComponentState$.pipe(startWith({}))
     } else {
-      columnGroupSelectionComponentState$ = columnGroupSelectionComponentState$.pipe(startWith({}))
-      customGroupColumnSelectorComponentState$ = customGroupColumnSelectorComponentState$.pipe(startWith({}))
+      columnGroupSelectionComponentState$ = columnGroupSelectionComponentState$.pipe(
+        startWith({
+          activeColumnGroupKey: this.selectedGroupKey,
+          displayedColumns: this.displayedColumns,
+        })
+      )
+      customGroupColumnSelectorComponentState$ = customGroupColumnSelectorComponentState$.pipe(
+        startWith({
+          actionColumnConfig: {
+            frozen: this.frozenActionColumn,
+            position: this.actionColumnPosition,
+          },
+          displayedColumns: this.displayedColumns,
+          activeColumnGroupKey: this.selectedGroupKey,
+        })
+      )
+    }
+
+    let filterViewComponentState$: Observable<FilterViewComponentState | Record<string, never>> =
+      this.filterViewComponentState$
+    if (this.disableFilterView) {
+      filterViewComponentState$ = filterViewComponentState$.pipe(
+        startWith({
+          filters: this.filters,
+        })
+      )
     }
 
     combineLatest([
@@ -358,6 +462,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
       this.dataLayoutComponentState$.pipe(timestamp()),
       dataListGridSortingComponentState$.pipe(timestamp()),
       this.dataViewComponentState$.pipe(timestamp()),
+      filterViewComponentState$.pipe(timestamp()),
     ])
       .pipe(
         map((componentStates) => {
@@ -577,5 +682,4 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
     this.pageSize = event
     this.pageSizeChanged.emit(event)
   }
-
 }

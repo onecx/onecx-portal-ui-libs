@@ -342,6 +342,16 @@
   --horizontal-menu-root-menuitem-active-bg: #{$horizontalMenuRootMenuitemActiveBg};
   --menu-border: #{$menuBorder};
   --submenu-header-border-radius: #{$submenuHeaderBorderRadius};
+  --panelmenu-header-border: #{$panelMenuHeaderBorder};
+  --panelmenu-header-bg: #{$panelMenuHeaderBg};
+  --panelmenu-header-padding: #{$panelMenuHeaderPadding};
+  --panelmenu-header-font-weight: #{$panelMenuHeaderFontWeight};
+  --panelmenu-header-hover-bg: #{$panelMenuHeaderHoverBg};
+  --panelmenu-header-hover-border-color: #{$panelMenuHeaderHoverBorderColor};
+  --panelmenu-header-active-hover-bg: #{$panelMenuHeaderActiveHoverBg};
+  --panelmenu-content-border: #{$panelMenuContentBorder};
+  --panelmenu-content-bg: #{$panelMenuContentBg};
+  --panelmenu-spacing: #{$panelMenuSpacing};
   --accordion-header-padding: #{$accordionHeaderPadding};
   --accordion-header-border: #{$accordionHeaderBorder};
   --accordion-header-bg: #{$accordionHeaderBg};

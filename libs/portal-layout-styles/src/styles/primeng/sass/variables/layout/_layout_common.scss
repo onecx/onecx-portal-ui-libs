@@ -1,4 +1,4 @@
-//general
+/* general */
 $fontSize: 14px !default;
 $fontFamily: 'Ubuntu' !default;
 $borderRadius: 5px !default;
@@ -7,3 +7,4 @@ $animationTimingFunction: cubic-bezier(0.05, 0.74, 0.2, 0.99) !default;
 $letterSpacing: normal !default;
 $transitionDuration: 0.2s !default;
 $mobileBreakpoint: 991px !default;
+$smallScreenBreakpoint: 576px !default;

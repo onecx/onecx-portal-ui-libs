@@ -73,7 +73,9 @@
       "ARIA_LABEL": "{{column}} {{direction}} sortieren"
     },
     "SELECT_ALL_ARIA_LABEL": "Selektiere alle Zeilen der Tabelle",
-    "SELECT_ARIA_LABEL": "Selektiere die Tabellenspalte mit der ID {{key}}"
+    "SELECT_ARIA_LABEL": "Selektiere die Tabellenspalte mit der ID {{key}}",
+    "FILTER_YES": "Ja",
+    "FILTER_NO": "Nein"
   },
   "OCX_DATA_LIST_GRID": {
     "EMPTY_RESULT": "Keine Daten gefunden.",
@@ -96,6 +98,28 @@
     "DEFAULT_GROUP": "Standardgruppe",
     "CUSTOM_GROUP": "Benutzerdefinierte Gruppe",
     "NO_GROUP_SELECTED": "Keine Gruppe ausgewählt"
+  },
+  "OCX_FILTER_VIEW": {
+    "NO_FILTERS": "Keine Filter ausgewählt",
+    "RESET_FILTERS_BUTTON": {
+      "ARIA_LABEL": "Angewandte Filter zurücksetzen",
+      "DETAIL": "Angewandte Filter zurücksetzen"
+    },
+    "FILTER_YES": "Ja",
+    "FILTER_NO": "Nein",
+    "MANAGE_FILTERS_BUTTON": {
+      "LABEL": "Filter",
+      "ARIA_LABEL": "Aktive Filter verwalten",
+      "DETAIL": "Aktive Filter verwalten"
+    },
+    "TABLE": {
+      "COLUMN_NAME": "Spaltenname",
+      "VALUE": "Filterwert",
+      "ACTIONS": "Aktionen",
+      "REMOVE_FILTER_TITLE": "Filter löschen",
+      "REMOVE_FILTER_ARIA_LABEL": "Filter löschen"
+    },
+    "PANEL_TITLE": "Filter"
   },
   "OCX_SEARCH_HEADER": {
     "TOGGLE_BUTTON": {

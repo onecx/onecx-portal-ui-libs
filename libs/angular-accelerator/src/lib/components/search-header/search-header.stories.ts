@@ -13,9 +13,10 @@ import { SkeletonModule } from 'primeng/skeleton'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
 import { StorybookTranslateModule } from '../../storybook-translate.module'
 import { PageHeaderComponent } from '../page-header/page-header.component'
-import { SearchConfigComponent } from '../search-config/search-config.component'
 import { StorybookBreadcrumbModule } from './../../storybook-breadcrumb.module'
 import { SearchHeaderComponent } from './search-header.component'
+import { ConfigurationService } from '@onecx/angular-integration-interface'
+import { provideHttpClient } from '@angular/common/http'
 
 export default {
   title: 'SearchHeaderComponent',
@@ -26,10 +27,12 @@ export default {
         importProvidersFrom(BrowserModule),
         importProvidersFrom(BrowserAnimationsModule),
         importProvidersFrom(RouterModule.forRoot([], { useHash: true })),
+        importProvidersFrom(ConfigurationService),
+        provideHttpClient(),
       ],
     }),
     moduleMetadata({
-      declarations: [SearchHeaderComponent, DynamicPipe, PageHeaderComponent, SearchConfigComponent],
+      declarations: [SearchHeaderComponent, DynamicPipe, PageHeaderComponent],
       imports: [
         MenuModule,
         InputTextModule,
@@ -115,11 +118,11 @@ const BasicSearchHeader: StoryFn<SearchHeaderComponent> = (args) => ({
 })
 
 export const WithCustomTemplates = {
-    render: BasicSearchHeader,
-    argTypes: {
-        resetted: { action: 'resetted' },
-      },
-    args: {
-        header: 'My title',
-      },
-  }
+  render: BasicSearchHeader,
+  argTypes: {
+    resetted: { action: 'resetted' },
+  },
+  args: {
+    header: 'My title',
+  },
+}

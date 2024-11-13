@@ -29,8 +29,8 @@ export const HAS_PERMISSION_CHECKER = new InjectionToken<HasPermissionChecker>('
 
 @Directive({ selector: '[ocxIfPermission], [ocxIfNotPermission]' })
 export class IfPermissionDirective implements OnInit {
-  @Input('ocxIfPermission') permission: string | undefined
-  @Input('ocxIfNotPermission') set notPermission(value: string | undefined) {
+  @Input('ocxIfPermission') permission: string | string[] | undefined
+  @Input('ocxIfNotPermission') set notPermission(value: string | string[] | undefined) {
     this.permission = value
     this.negate = true
   }
@@ -41,6 +41,13 @@ export class IfPermissionDirective implements OnInit {
   @Input()
   set ocxIfNotPermissionPermissions(value: string[] | undefined) {
     this.ocxIfPermissionPermissions = value
+  }
+
+  @Input()
+  ocxIfPermissionElseTemplate: TemplateRef<any> | undefined
+  @Input()
+  set ocxIfNotPermissionElseTemplate(value: TemplateRef<any> | undefined) {
+    this.ocxIfPermissionElseTemplate = value
   }
 
   private permissionChecker: HasPermissionChecker | undefined
@@ -64,29 +71,35 @@ export class IfPermissionDirective implements OnInit {
   }
 
   ngOnInit() {
-    if (this.permission) {
-      if (this.negate === this.hasPermission(this.permission)) {
+    if (
+      (this.permission &&
+        this.negate === this.hasPermission(Array.isArray(this.permission) ? this.permission : [this.permission])) ||
+      !this.permission
+    ) {
+      if (this.ocxIfPermissionElseTemplate) {
+        this.viewContainer.createEmbeddedView(this.ocxIfPermissionElseTemplate)
+      } else {
         if (this.onMissingPermission === 'disable') {
           this.renderer.setAttribute(this.el.nativeElement, 'disabled', 'disabled')
         } else {
           this.viewContainer.clear()
         }
-      } else {
-        if (this.templateRef) {
-          this.viewContainer.createEmbeddedView(this.templateRef)
-        }
+      }
+    } else {
+      if (this.templateRef) {
+        this.viewContainer.createEmbeddedView(this.templateRef)
       }
     }
   }
 
-  hasPermission(permission: string) {
+  hasPermission(permission: string[]) {
     if (this.ocxIfPermissionPermissions) {
-      const result = this.ocxIfPermissionPermissions.includes(permission)
+      const result = permission.every((p) => this.ocxIfPermissionPermissions?.includes(p))
       if (!result) {
         console.log('👮‍♀️ No permission in overwrites for: `', permission)
       }
       return result
     }
-    return this.permissionChecker?.hasPermission(permission)
+    return permission.every((p) => this.permissionChecker?.hasPermission(p))
   }
 }

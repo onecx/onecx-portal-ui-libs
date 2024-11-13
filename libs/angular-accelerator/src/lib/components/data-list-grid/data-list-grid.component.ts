@@ -28,7 +28,8 @@ import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { ObjectUtils } from '../../utils/objectutils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
-import { Filter, Row } from '../data-table/data-table.component'
+import { Row } from '../data-table/data-table.component'
+import { Filter } from '../../model/filter.model'
 
 export type ListGridData = {
   id: string | number
@@ -82,9 +83,9 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   @Input() emptyResultsMessage: string | undefined
   @Input() fallbackImage = 'placeholder.png'
   @Input() layout: 'grid' | 'list' = 'grid'
-  @Input() viewPermission: string | undefined
-  @Input() editPermission: string | undefined
-  @Input() deletePermission: string | undefined
+  @Input() viewPermission: string | string[] | undefined
+  @Input() editPermission: string | string[] | undefined
+  @Input() deletePermission: string | string[] | undefined
   @Input() deleteActionVisibleField: string | undefined
   @Input() deleteActionEnabledField: string | undefined
   @Input() viewActionVisibleField: string | undefined
@@ -98,7 +99,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   @Input() page = 0
   columnTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
   _columns$ = new BehaviorSubject<DataTableColumn[]>([])
-  @Input() 
+  @Input()
   get columns(): DataTableColumn[] {
     return this._columns$.getValue()
   }
@@ -106,7 +107,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     this._columns$.next(value)
     const obs = value.map((c) => this.getTemplate(c))
     this.columnTemplates$ = combineLatest(obs).pipe(
-      map(values => Object.fromEntries(value.map((c, i) => [c.id, values[i]])))
+      map((values) => Object.fromEntries(value.map((c, i) => [c.id, values[i]])))
     )
   }
   @Input() name = ''

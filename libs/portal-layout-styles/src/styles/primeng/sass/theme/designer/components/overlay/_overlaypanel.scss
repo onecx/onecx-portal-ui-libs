@@ -26,6 +26,12 @@
       background: var(--button-hover-bg);
       color: var(--primary-text-color);
     }
+
+    &:enabled:focus {
+      outline: $buttonFocusOutline;
+      outline-offset: $buttonFocusOutlineOffset;
+      box-shadow: none;  
+    }
   }
 
   &:after {

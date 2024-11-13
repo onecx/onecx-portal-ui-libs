@@ -1,48 +1,16 @@
-// Body Colors and other specifications
-// $bodyBgColor: #f7f7f7 !default;
-// $textColor: #212121 !default;
-// $textSecondaryColor: #616161 !default;
-// $border-width: 1px 0 1px 0;
-// $fontSize: 14px !default;
-// $fontFamily: Ubuntu, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
-// $borderRadius: 5px !default;
+/* Body Colors and other specifications */
 $letterSpacing: normal !default;
-// $rootFontSize: 14px !default;
-// $contentBgColor: #ffffff !default;
-// $contentAltBgColor: #eceff1 !default;
-// $overlayContentBgColor: #ffffff !default;
-// $dividerColor: #e4e4e4 !default;
-// $hoverBgColor: rgba(0, 0, 0, 0.04);
-// $solidSurfaceTextColor: #ffffff !default;
 
-// Menu Colors and Shadows
+/* Menu Colors and Shadows */
 $menuShadow: 2px 0 4px -1px rgba(0, 0, 0, 0.2), 4px 0 5px 0 rgba(0, 0, 0, 0.14), 1px 0 10px 0 rgba(0, 0, 0, 0.12);
 $submenuShadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
-// $menuTooltipBgColor: #1c202c !default;
-// $menuTooltipTextColor: #ffffff !default;
 
-// Top Bar Colors
-// $topbarBgColor: rgb(18, 171, 219);
-// $topbarLeftBgColor: #ececec;
-// $topbarMenuButtonBgColor: rgb(255, 0, 68);
-// $topbarMenuButtonTextColor: #212121;
-// $topbarItemTextColor: #ffffff;
-// $topbarItemTextHoverBgColor: rgba(255, 255, 255, 0.12);
-
-//Animation
-// $animationDuration: 0.2s !default;
+/* Animation */
 $animationTimingFunction: cubic-bezier(0.05, 0.74, 0.2, 0.99) !default;
-// $transitionDuration: 0.2s !default;
 $mobileBreakpoint: 991px !default;
+$smallScreenBreakpoint: 576px !default;
 
-// Menu Light
-// $menuBgColor: #fdfeff;
-// $rootMenuTextColor: #657380;
-// $menuItemTextColor: #515c66;
-// $menuItemHoverBgColor: rgba(0, 0, 0, 0.04);
-// $inlineMenuBorderColor: #e4e4e4;
-
-// Headings
+/* Headings */
 $h1FontSize: 2.5rem;
 $h2FontSize: 2rem;
 $h3FontSize: 1.75rem;
@@ -50,11 +18,7 @@ $h4FontSize: 1.5rem;
 $h5FontSize: 1.25rem;
 $h6FontSize: 1rem;
 
-// General Colors
-// $primaryColor: #3ed1aa;
-// $secondaryColor: #ee4400;
-// $topBarColor: #ececec;
-
+/* General Colors */
 $pink: #e91e63 !default;
 $indigo: #3f51b5 !default;
 $yellow: #ffc107 !default;
@@ -85,64 +49,3 @@ $colors: (
   'bluegray': #607d8b,
   'purple': #9c27b0,
 );
-
-// :root {
-//   // Top Bar Variables
-//   --topbar-bg-color: rgb(18 171 219);
-//   --topbar-text-color: #ffffff;
-//   --topbar-left-bg-color: #ececec;
-//   --topbar-item-text-color: #ffffff;
-//   --topbar-item-text-hover-bg-color: #ffffff;
-//   --topbar-menu-button-bg-color: rgb(255 0 68);
-//   --menu-button-text-color: #ffffff;
-
-//   // Body Variables
-//   --page-padding: 1rem;
-//   --page-padding-lg: calc(var(--page-padding) * 2)
-//   --body-bg-color: #f7f7f7;
-//   --text-color: rgb(0 0 0 / 87%);
-//   --text-secondary-color: #616161;
-//   --font-size: 14px;
-//   --font-family: Ubuntu, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
-//   // --border-width: #{$border-width};
-//   --border-radius: 5px;
-//   --transition-duration: 0.2s;
-//   --root-font-size: 14px;
-
-//   // Contents Variables
-//   --content-bg-color: #ffffff;
-//   --content-alt-bg-color: #eceff1;
-//   --overlay-content-bg-color: #ffffff;
-//   // --hover-bg-color: #{$hoverBgColor};
-//   // --solid-surface-text-color: #{$solidSurfaceTextColor};
-//   --divider-color: #ff00ff;
-
-//   // Animation Variables
-//   --animation-duration: 0.2s;
-//   --animation-timing: #{$animationTimingFunction};
-
-//   // Menu Style Variables
-//   --menu-text-color: #00ff00;
-//   --menu-bg-color: #ff00ff;
-//   --menu-item-text-color: var(--text-color, #000000);
-//   --menu-item-hover-bg-color: rgb(0 0 0 / 4%);
-//   --menu-active-item-bg-color: var(--menu-item-hover-bg-color);
-//   --menu-active-item-text-color: var(--menu-item-text-color);
-//   --inline-menu-border-color: var(--divider-color);
-//   --mobile-break-point: #{$mobileBreakpoint};
-//   --submenu-shadow: #{$submenuShadow};
-//   --menu-shadow: #{$menuShadow};
-//   --menu-wrapper-width: 17rem;
-
-//   // Headings Style Variables
-//   --h1-font-size: #{$h1FontSize};
-//   --h2-font-size: #{$h2FontSize};
-//   --h3-font-size: #{$h3FontSize};
-//   --h4-font-size: #{$h4FontSize};
-//   --h5-font-size: #{$h5FontSize};
-//   --h6-font-size: #{$h6FontSize};
-
-//   // General Colors Variables
-//   --primary-color: rgb(18, 171, 219);
-//   --secondary-color: #ee4400;
-// }

@@ -5,8 +5,9 @@ import { ColumnType } from '../../model/column-type.model'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { ListGridData } from '../../components/data-list-grid/data-list-grid.component'
-import { Row, Filter } from '../../components/data-table/data-table.component'
+import { Row } from '../../components/data-table/data-table.component'
 import { ObjectUtils } from '../../utils/objectutils'
+import { Filter, FilterType } from '../../model/filter.model'
 
 type RowListGridData = ListGridData | Row
 
@@ -72,13 +73,20 @@ export class DataSortBase {
           .every((filterColumnId) =>
             filters
               .filter((filter) => filter.columnId === filterColumnId)
-              .some(
-                (filter) =>
-                  (
-                    translations[filter.columnId]?.[ObjectUtils.resolveFieldData(item, filter.columnId)?.toString()] ||
-                    ObjectUtils.resolveFieldData(item, filter.columnId)
-                  )?.toString() === filter.value.toString()
-              )
+              .some((filter) => {
+                const value = (
+                  translations[filter.columnId]?.[ObjectUtils.resolveFieldData(item, filter.columnId)?.toString()] ||
+                  ObjectUtils.resolveFieldData(item, filter.columnId)
+                )?.toString()
+                switch (filter.filterType) {
+                  case undefined:
+                  case FilterType.EQUAL:
+                    return value === String(filter.value)
+                  case FilterType.TRUTHY: {
+                    return filter.value ? !!value : !value
+                  }
+                }
+              })
           )
       ),
       filters,
@@ -102,17 +110,28 @@ export class DataSortBase {
     if (!clientSideSorting || sortColumn === '') {
       return [items, filters, sortColumn, sortDirection, translations]
     }
-    let translatedColValues: Record<string, string> = Object.fromEntries(
-      items.map((i) => [
-        ObjectUtils.resolveFieldData(i, sortColumn)?.toString(),
-        ObjectUtils.resolveFieldData(i, sortColumn)?.toString(),
-      ])
-    )
-    if (columns.find((h) => h.id === sortColumn)?.columnType === ColumnType.TRANSLATION_KEY) {
-      translatedColValues = translations[sortColumn]
+    const column = columns.find((h) => h.id === sortColumn)
+    let colValues: Record<string, string>
+    if (column?.columnType === ColumnType.DATE || column?.columnType === ColumnType.RELATIVE_DATE) {
+      colValues = Object.fromEntries(
+        items.map((i) => [
+          ObjectUtils.resolveFieldData(i, sortColumn) as Date,
+          ObjectUtils.resolveFieldData(i, sortColumn) as Date,
+        ])
+      )
+    } else {
+      colValues = Object.fromEntries(
+        items.map((i) => [
+          ObjectUtils.resolveFieldData(i, sortColumn)?.toString(),
+          ObjectUtils.resolveFieldData(i, sortColumn)?.toString(),
+        ])
+      )
+    }
+    if (column?.columnType === ColumnType.TRANSLATION_KEY) {
+      colValues = translations[sortColumn]
     }
     return [
-      [...items].sort(this.createCompareFunction(translatedColValues, sortColumn, sortDirection)),
+      [...items].sort(this.createCompareFunction(colValues, sortColumn, sortDirection)),
       filters,
       sortColumn,
       sortDirection,
