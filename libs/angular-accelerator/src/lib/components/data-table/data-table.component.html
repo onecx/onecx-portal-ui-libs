@@ -122,6 +122,7 @@
     scrollHeight="flex"
     [style]="tableStyle"
     paginatorDropdownAppendTo="body"
+    [rowSelectable]="rowSelectable"
     tableStyleClass="h-full"
   >
     <ng-template pTemplate="header">
@@ -235,7 +236,7 @@
       <tr>
         <td *ngIf="selectionChangedObserved">
           <p-checkbox
-            *ngIf="(!!selectionEnabledField && !fieldIsTruthy(rowObject, selectionEnabledField)) && isSelected(rowObject); else defaultCheckbox"
+            *ngIf="isRowSelectionDisabled(rowObject) && isSelected(rowObject); else defaultCheckbox"
             [(ngModel)]="checked"
             [binary]="true"
             [disabled]="true"
@@ -244,7 +245,7 @@
           <ng-template #defaultCheckbox>
             <p-tableCheckbox
               [value]="rowObject"
-              [disabled]="!!selectionEnabledField && !fieldIsTruthy(rowObject, selectionEnabledField)"
+              [disabled]="isRowSelectionDisabled(rowObject)"
               [ariaLabel]="'OCX_DATA_TABLE.SELECT_ARIA_LABEL' | translate: { key: rowObject.id}"
             ></p-tableCheckbox>
           </ng-template>
