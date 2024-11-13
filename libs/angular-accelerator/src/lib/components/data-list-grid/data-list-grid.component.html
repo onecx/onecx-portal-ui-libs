@@ -91,9 +91,7 @@
     <div class="data-list-items p-3">
       <div class="item-name-row flex flex-row justify-content-between">
         <div class="item-name mr-3 text-2xl font-medium align-content-center">
-          <a *ngIf="titleLineId" [routerLink]="" (click)="onViewRow(item)"
-            >{{ resolveFieldData(item, titleLineId) || '' }}</a
-          >
+          <span *ngIf="titleLineId">{{ resolveFieldData(item, titleLineId) || '' }}</span>
         </div>
         <div class="flex flex-row">
           <ng-container
