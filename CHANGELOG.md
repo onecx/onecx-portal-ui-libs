@@ -1,3 +1,15 @@
+## [5.24.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.23.6...v5.24.0) (2024-11-13)
+
+### Features
+
+* search button order config ([#594](https://github.com/onecx/onecx-portal-ui-libs/issues/594)) ([7aa5231](https://github.com/onecx/onecx-portal-ui-libs/commit/7aa523167e3d95864594d46187797be06e404563))
+
+### Bug Fixes
+
+* list title no longer clickable ([#593](https://github.com/onecx/onecx-portal-ui-libs/issues/593)) ([07a9f63](https://github.com/onecx/onecx-portal-ui-libs/commit/07a9f63b83381e01ef2458f04c0da6b38a066d9f))
+* possibility to check for multiple permissions ([#590](https://github.com/onecx/onecx-portal-ui-libs/issues/590)) ([2abc2fd](https://github.com/onecx/onecx-portal-ui-libs/commit/2abc2fde369831943188a203aedd09ed5612b845))
+* table header layout improved ([#595](https://github.com/onecx/onecx-portal-ui-libs/issues/595)) ([596aa1f](https://github.com/onecx/onecx-portal-ui-libs/commit/596aa1f0801eeefaa5214620e75610814c28a607))
+
 ## [5.23.6](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.23.5...v5.23.6) (2024-11-12)
 
 ### Bug Fixes
