@@ -154,42 +154,44 @@
                   [title]="(sortIconTitle(column.id) | translate)"
                   [attr.aria-label]="('OCX_DATA_TABLE.TOGGLE_BUTTON.ARIA_LABEL' | translate: { column: (column.nameKey | translate), direction: (sortDirectionToTitle(columnNextSortDirection(column.id)) | translate)})"
                 ></button>
-                <p-multiSelect
-                  class="filterMultiSelect"
-                  *ngIf="column.filterable && (!column.filterType || column.filterType === FilterType.EQUAL)"
-                  [options]="(currentEqualFilterOptions$ | async) || []"
-                  [ngModel]="(currentEqualSelectedFilters$ | async) || []"
-                  [showToggleAll]="true"
-                  emptyFilterMessage="{{ 'OCX_DATA_TABLE.EMPTY_FILTER_MESSAGE' | translate }}"
-                  [displaySelectedLabel]="false"
-                  [resetFilterOnHide]="true"
-                  (onChange)="onMultiselectFilterChange(column, $event)"
-                  placeholder="Icon"
-                  appendTo="body"
-                  (onFocus)="onFilterChosen(column)"
-                  [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
-                  [ariaLabel]="'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL' | translate"
-                  [ariaFilterLabel]="('OCX_DATA_TABLE.FILTER_ARIA_LABEL' | translate: { column: column.nameKey | translate})"
-                >
-                  <ng-template pTemplate="selectedItems" let-value>
-                    <div
-                      class="pi"
-                      [class.pi-filter]="!((filterAmounts$ | async) || {})[column.id]"
-                      [class.pi-filter-fill]="((filterAmounts$ | async) || {})[column.id] > 0"
-                    ></div>
-                  </ng-template>
-                  <ng-template pTemplate="item" let-value>
-                    <ng-container
-                      *ngIf="columnTemplates[column.id] as template"
-                      [ngTemplateOutlet]="template"
-                      [ngTemplateOutletContext]="{
+                <ng-container *ngIf="currentEqualFilterOptions$ | async as equalFilterOptions">
+                  <p-multiSelect
+                    class="filterMultiSelect"
+                    *ngIf="column.filterable && (!column.filterType || column.filterType === FilterType.EQUAL)"
+                    [options]="equalFilterOptions.column?.id === column.id ? equalFilterOptions.options : []"
+                    [ngModel]="(currentEqualSelectedFilters$ | async) || []"
+                    [showToggleAll]="true"
+                    emptyFilterMessage="{{ 'OCX_DATA_TABLE.EMPTY_FILTER_MESSAGE' | translate }}"
+                    [displaySelectedLabel]="false"
+                    [resetFilterOnHide]="true"
+                    (onChange)="onMultiselectFilterChange(column, $event)"
+                    placeholder="Icon"
+                    appendTo="body"
+                    (onFocus)="onFilterChosen(column)"
+                    [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
+                    [ariaLabel]="'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL' | translate"
+                    [ariaFilterLabel]="('OCX_DATA_TABLE.FILTER_ARIA_LABEL' | translate: { column: column.nameKey | translate})"
+                  >
+                    <ng-template pTemplate="selectedItems" let-value>
+                      <div
+                        class="pi"
+                        [class.pi-filter]="!((filterAmounts$ | async) || {})[column.id]"
+                        [class.pi-filter-fill]="((filterAmounts$ | async) || {})[column.id] > 0"
+                      ></div>
+                    </ng-template>
+                    <ng-template pTemplate="item" let-value>
+                      <ng-container
+                        *ngIf="columnTemplates[column.id] as template"
+                        [ngTemplateOutlet]="template"
+                        [ngTemplateOutletContext]="{
                       rowObject: getRowObjectFromMultiselectItem(value, column),
                       column: column
                   }"
-                    >
-                    </ng-container>
-                  </ng-template>
-                </p-multiSelect>
+                      >
+                      </ng-container>
+                    </ng-template>
+                  </p-multiSelect>
+                </ng-container>
                 <p-multiSelect
                   class="filterMultiSelect"
                   *ngIf="column.filterable && column.filterType === FilterType.TRUTHY"
