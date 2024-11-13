@@ -9,7 +9,7 @@ import {
 
 const InteractiveDataViewComponentFilterViewSBConfig: Meta<InteractiveDataViewComponent> = {
   ...InteractiveDataViewComponentSBConfig,
-  title: 'Components/InteractiveDataViewComponent/FilterView',
+  title: 'Components/InteractiveDataViewComponent/Filtering',
 }
 
 type InteractiveDataViewFilterViewInputTypes = Pick<
