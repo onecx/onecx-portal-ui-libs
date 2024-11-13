@@ -34,3 +34,9 @@ export class MockIntersectionObserver {
     this.entries = []
   }
 }
+
+export function ensureIntersectionObserverMockExists() {
+  if (!global.IntersectionObserver || global.IntersectionObserver !== MockIntersectionObserver) {
+    global.IntersectionObserver = MockIntersectionObserver
+  }
+}

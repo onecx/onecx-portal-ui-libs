@@ -1,4 +1,4 @@
-import { MockIntersectionObserver } from '@onecx/angular-testing'
+import { ensureIntersectionObserverMockExists } from '@onecx/angular-testing'
 
 export * from './column-group-selection.harness'
 export * from './custom-group-column-selector.harness'
@@ -21,6 +21,4 @@ export * from '@angular/cdk/testing'
 export * from '@angular/cdk/testing/testbed'
 export * from '@onecx/angular-testing'
 
-if(!global.IntersectionObserver || global.IntersectionObserver !== MockIntersectionObserver) {
-    global.IntersectionObserver = MockIntersectionObserver
-  }
+ensureIntersectionObserverMockExists()
