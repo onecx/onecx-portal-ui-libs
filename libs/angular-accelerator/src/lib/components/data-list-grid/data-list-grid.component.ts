@@ -83,9 +83,9 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   @Input() emptyResultsMessage: string | undefined
   @Input() fallbackImage = 'placeholder.png'
   @Input() layout: 'grid' | 'list' = 'grid'
-  @Input() viewPermission: string | undefined
-  @Input() editPermission: string | undefined
-  @Input() deletePermission: string | undefined
+  @Input() viewPermission: string | string[] | undefined
+  @Input() editPermission: string | string[] | undefined
+  @Input() deletePermission: string | string[] | undefined
   @Input() deleteActionVisibleField: string | undefined
   @Input() deleteActionEnabledField: string | undefined
   @Input() viewActionVisibleField: string | undefined
