@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http'
+import { HttpClient, HttpResponse } from '@angular/common/http'
 import { Directive, ElementRef, EventEmitter, Input, Output } from '@angular/core'
 
 @Directive({ selector: '[ocxSrc]' })
@@ -13,29 +13,39 @@ export class SrcDirective {
     return this._src
   }
   set ocxSrc(value: string | undefined) {
-    if (value && this._src !== value) {
+    if (value && this._src !== value && window.location.hostname) {
       try {
         if (new URL(value, window.location.origin).hostname === window.location.hostname) {
-          this.httpClient.get(value, { responseType: 'blob' }).subscribe({
-            next: (blob) => {
-              const url = URL.createObjectURL(blob)
-              this.el.nativeElement.onload = () => {
-                URL.revokeObjectURL(url)
+          this.httpClient.get(value, { observe: 'response', responseType: 'blob' }).subscribe(
+            (response: HttpResponse<Blob>) => {
+              // ok with content
+              if (response?.status === 200) {
+                const url = URL.createObjectURL(response.body as Blob)
+                this.el.nativeElement.onload = () => {
+                  URL.revokeObjectURL(url)
+                }
+                this.el.nativeElement.src = url
               }
-              this.el.nativeElement.src = url
-              this.el.nativeElement.style.visibility = 'initial'
+              // no content
+              if (response?.status === 204) {
+                this.error.emit()
+              }
             },
-            error: () => {
+            () => {
+              // on error
               this.error.emit()
-              this.el.nativeElement.style.visibility = 'initial'
             },
-          })
+            () => {
+              // on complete
+              this.el.nativeElement.style.visibility = 'initial'
+            }
+          )
         } else {
           this.el.nativeElement.src = value
           this.el.nativeElement.style.visibility = 'initial'
         }
       } catch (error) {
-        console.log('Cannot parse URL ', value, error)
+        console.error('Cannot parse URL ', value, error)
         this.el.nativeElement.src = value
         this.el.nativeElement.style.visibility = 'initial'
       }
@@ -43,7 +53,10 @@ export class SrcDirective {
     }
   }
 
-  constructor(private el: ElementRef, private httpClient: HttpClient) {
+  constructor(
+    private el: ElementRef,
+    private httpClient: HttpClient
+  ) {
     this.el.nativeElement.style.visibility = 'hidden'
   }
 }
