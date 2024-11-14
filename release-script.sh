@@ -18,11 +18,12 @@ for folder in "${folder_names[@]}"; do
     packageJsonDataLib=$(cat libs/$folder/package.json)
     libPackageVersion=$(echo "$packageJsonDataLib" | jq -r '.version')
     packageJsonDataLib=$(echo "$packageJsonDataLib" | sed -E 's/(@onecx[^"]+?": *?")([^"]+)"/\1^'$1'"/')
-if [[ $libPackageVersion != $1 ]]
-then
-    npx -p replace-json-property rjp libs/$folder/package.json version $1
-    npx nx run $folder:release
-fi  
+    echo $packageJsonDataLib > libs/$folder/package.json
+    if [[ $libPackageVersion != $1 ]]
+    then
+        npx -p replace-json-property rjp libs/$folder/package.json version $1
+        npx nx run $folder:release
+    fi  
 done
 
 
