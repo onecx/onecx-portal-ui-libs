@@ -20,7 +20,7 @@ import { FormsModule } from '@angular/forms'
 type DataTableInputTypes = Pick<DataTableComponent, 'rows' | 'columns' | 'emptyResultsMessage' | 'selectedRows'>
 
 const DataTableComponentSBConfig: Meta<DataTableComponent> = {
-  title: 'DataTableComponent',
+  title: 'Components/DataTableComponent',
   component: DataTableComponent,
   decorators: [
     applicationConfig({

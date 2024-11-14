@@ -19,7 +19,7 @@ import { ConfigurationService } from '@onecx/angular-integration-interface'
 import { provideHttpClient } from '@angular/common/http'
 
 export default {
-  title: 'SearchHeaderComponent',
+  title: 'Components/SearchHeaderComponent',
   component: SearchHeaderComponent,
   decorators: [
     applicationConfig({

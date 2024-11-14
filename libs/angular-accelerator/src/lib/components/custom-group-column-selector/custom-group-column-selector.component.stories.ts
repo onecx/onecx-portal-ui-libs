@@ -27,7 +27,7 @@ type CustomGroupColumnSelectorInputs = Pick<
   | 'inactiveColumnsLabel'
 >
 const CustomGroupColumnSelectorComponentSBConfig: Meta<CustomGroupColumnSelectorComponent> = {
-  title: 'CustomGroupColumnSelectorComponent',
+  title: 'Components/CustomGroupColumnSelectorComponent',
   component: CustomGroupColumnSelectorComponent,
   decorators: [
     applicationConfig({

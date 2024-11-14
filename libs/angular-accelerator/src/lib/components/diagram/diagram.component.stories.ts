@@ -16,7 +16,7 @@ import { DiagramType } from '../../model/diagram-type'
 import { DiagramData } from '../../model/diagram-data'
 
 export default {
-  title: 'DiagramComponent',
+  title: 'Components/DiagramComponent',
   component: DiagramComponent,
   argTypes: {
     diagramType: {

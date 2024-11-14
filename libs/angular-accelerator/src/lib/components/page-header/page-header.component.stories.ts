@@ -15,7 +15,7 @@ import { StorybookBreadcrumbModule } from './../../storybook-breadcrumb.module'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
 
 export default {
-  title: 'PageHeaderComponent',
+  title: 'Components/PageHeaderComponent',
   component: PageHeaderComponent,
   decorators: [
     applicationConfig({
@@ -82,7 +82,7 @@ const demoActions: Action[] = [
     },
     show: 'asOverflow',
     icon: PrimeIcons.ADDRESS_BOOK,
-    title: 'Tooltip for some action'
+    title: 'Tooltip for some action',
   },
   {
     label: 'Other action',
