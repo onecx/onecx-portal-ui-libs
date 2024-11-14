@@ -1,5 +1,6 @@
 import { ComponentHarness } from '@angular/cdk/testing'
 import { ButtonHarness, DivHarness } from '@onecx/angular-testing'
+import { waitForDeferredViewsToBeRendered } from '@onecx/angular-testing'
 
 export class DefaultListItemHarness extends ComponentHarness {
   static hostSelector = '.data-list-items'
@@ -12,6 +13,7 @@ export class DefaultListItemHarness extends ComponentHarness {
   private getAllDivs = this.locatorForAll(DivHarness)
 
   async getData() {
+    await waitForDeferredViewsToBeRendered(this)
     const isDataListItemsDiv = await Promise.all(
       (await this.getAllDivs()).map((innerDivHarness) => this.checkDivsHasClasses(innerDivHarness))
     )

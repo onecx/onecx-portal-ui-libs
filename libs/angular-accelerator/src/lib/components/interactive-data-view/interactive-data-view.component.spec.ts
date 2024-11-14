@@ -307,6 +307,8 @@ describe('InteractiveDataViewComponent', () => {
     viewItemEvent = undefined
     editItemEvent = undefined
     deleteItemEvent = undefined
+
+    console.log("Global IntersectionObserver", global.IntersectionObserver)
   })
 
   it('should create', () => {
@@ -433,7 +435,6 @@ describe('InteractiveDataViewComponent', () => {
       ]
       const sortButton = await tableHeaders[0].getSortButton()
       await sortButton.click()
-
       tableRows = (await dataTable?.getRows()) ?? []
       const rows = await parallel(() => tableRows.map((row) => row.getData()))
 
@@ -1012,18 +1013,18 @@ describe('InteractiveDataViewComponent', () => {
     it('should move item up in picklist active columns list', async () => {
       const spy = jest.spyOn(CustomGroupColumnSelectorComponent.prototype, 'onSaveClick')
       const expectedHeaders = [
-        'COLUMN_HEADER_NAME.NAME',
         'COLUMN_HEADER_NAME.DESCRIPTION',
+        'COLUMN_HEADER_NAME.NAME',
         'COLUMN_HEADER_NAME.STATUS',
         'COLUMN_HEADER_NAME.RESPONSIBLE',
         'Actions',
       ]
       const expectedRowsData = [
-        ['some name', '', 'some status', 'someone responsible'],
-        ['example', 'example description', 'status example', ''],
-        ['name 1', '', 'status name 1', ''],
-        ['name 2', '', 'status name 2', ''],
-        ['name 3', '', 'status name 3', ''],
+        ['', 'some name', 'some status', 'someone responsible'],
+        ['example description', 'example', 'status example', ''],
+        ['', 'name 1', 'status name 1', ''],
+        ['', 'name 2', 'status name 2', ''],
+        ['', 'name 3', 'status name 3', ''],
       ]
       await activeColumnsList[1].selectItem()
       await sourceControlsButtons[0].click()
@@ -1042,17 +1043,17 @@ describe('InteractiveDataViewComponent', () => {
       const spy = jest.spyOn(CustomGroupColumnSelectorComponent.prototype, 'onSaveClick')
       const expectedHeaders = [
         'COLUMN_HEADER_NAME.NAME',
-        'COLUMN_HEADER_NAME.DESCRIPTION',
         'COLUMN_HEADER_NAME.STATUS',
+        'COLUMN_HEADER_NAME.DESCRIPTION',
         'COLUMN_HEADER_NAME.RESPONSIBLE',
         'Actions',
       ]
       const expectedRowsData = [
-        ['some name', '', 'some status', 'someone responsible'],
-        ['example', 'example description', 'status example', ''],
-        ['name 1', '', 'status name 1', ''],
-        ['name 2', '', 'status name 2', ''],
-        ['name 3', '', 'status name 3', ''],
+        ['some name', 'some status', '', 'someone responsible'],
+        ['example', 'status example', 'example description', ''],
+        ['name 1', 'status name 1', '', ''],
+        ['name 2', 'status name 2', '', ''],
+        ['name 3', 'status name 3', '', ''],
       ]
 
       await activeColumnsList[1].selectItem()

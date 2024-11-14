@@ -1,3 +1,17 @@
+## [5.25.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.24.0...v5.25.0) (2024-11-13)
+
+### Features
+
+* correct wording in criteria util ([#525](https://github.com/onecx/onecx-portal-ui-libs/issues/525)) ([f02dac2](https://github.com/onecx/onecx-portal-ui-libs/commit/f02dac2d15e846e9060cdee1575b241afce7d1dc))
+
+### Bug Fixes
+
+* checkbox checked when all selectable items selected ([#598](https://github.com/onecx/onecx-portal-ui-libs/issues/598)) ([cef84ce](https://github.com/onecx/onecx-portal-ui-libs/commit/cef84ce6b5a37cab8c37de2c6afffdfa05c67b22))
+* custom group selector reordering applied to table displayed columns ([#597](https://github.com/onecx/onecx-portal-ui-libs/issues/597)) ([308abe8](https://github.com/onecx/onecx-portal-ui-libs/commit/308abe83424747834fa76ef7bbe6990c936bfc72))
+* data table column filter templating ([#599](https://github.com/onecx/onecx-portal-ui-libs/issues/599)) ([132c7d5](https://github.com/onecx/onecx-portal-ui-libs/commit/132c7d58115a0a3d00f945deedaebba36c2041ad))
+* filter options computed correctly ([#596](https://github.com/onecx/onecx-portal-ui-libs/issues/596)) ([ec220dc](https://github.com/onecx/onecx-portal-ui-libs/commit/ec220dc15cba4f1a0bc207daac8bf88ff90b54a9))
+* lazy render list and table templates ([#585](https://github.com/onecx/onecx-portal-ui-libs/issues/585)) ([cc0faea](https://github.com/onecx/onecx-portal-ui-libs/commit/cc0faeaa3f75d0b442e6bf5ac81e5faedf115cd9))
+
 ## [5.24.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.23.6...v5.24.0) (2024-11-13)
 
 ### Features

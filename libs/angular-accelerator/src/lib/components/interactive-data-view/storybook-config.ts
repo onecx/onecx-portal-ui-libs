@@ -38,6 +38,8 @@ import { FocusTrapModule } from 'primeng/focustrap'
 import { ChipModule } from 'primeng/chip'
 import { ColumnType } from '../../model/column-type.model'
 import { FilterType } from '../../model/filter.model'
+import { TooltipOnOverflowDirective } from '../../directives/tooltipOnOverflow.directive'
+import { SkeletonModule } from 'primeng/skeleton'
 
 export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewComponent> = {
   title: 'Components/InteractiveDataViewComponent',
@@ -81,6 +83,7 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
         DataListGridComponent,
         DataListGridSortingComponent,
         FilterViewComponent,
+        TooltipOnOverflowDirective,
       ],
       imports: [
         TableModule,
@@ -101,6 +104,7 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
         OverlayPanelModule,
         FocusTrapModule,
         ChipModule,
+        SkeletonModule,
       ],
     }),
   ],

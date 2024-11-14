@@ -126,6 +126,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     this?._sortColumn$.next(value)
   }
   columnTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
+  columnFilterTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
   _columns$ = new BehaviorSubject<DataTableColumn[]>([])
   @Input()
   get columns(): DataTableColumn[] {
@@ -134,7 +135,12 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   set columns(value: DataTableColumn[]) {
     this._columns$.next(value)
     const obs = value.map((c) => this.getTemplate(c, TemplateType.CELL))
+    const filterObs = value.map((c) => this.getTemplate(c, TemplateType.FILTERCELL))
     this.columnTemplates$ = combineLatest(obs).pipe(
+      map((values) => Object.fromEntries(value.map((c, i) => [c.id, values[i]]))),
+      debounceTime(50)
+    )
+    this.columnFilterTemplates$ = combineLatest(filterObs).pipe(
       map((values) => Object.fromEntries(value.map((c, i) => [c.id, values[i]])))
     )
   }
@@ -316,7 +322,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   selectedRows$: Observable<unknown[]> | undefined
 
   currentFilterColumn$ = new BehaviorSubject<DataTableColumn | null>(null)
-  currentEqualFilterOptions$: Observable<SelectItem[]> | undefined
+  currentEqualFilterOptions$: Observable<{ options: SelectItem[]; column: DataTableColumn | undefined }> | undefined
   currentEqualSelectedFilters$: Observable<unknown[]> | undefined
   truthyFilterOptions = [
     {
@@ -422,6 +428,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         )
       )
     )
+    this.rowSelectable = this.rowSelectable.bind(this)
   }
 
   ngOnInit(): void {
@@ -459,7 +466,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       ),
       mergeMap(([rows, currentFilterColumn, filters]) => {
         if (!currentFilterColumn?.id) {
-          return of([])
+          return of({ options: [], column: undefined })
         }
 
         const currentFilters = filters
@@ -487,6 +494,12 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
                     value: filterOption,
                   }) as SelectItem
               )
+          }),
+          map((options) => {
+            return {
+              options: options,
+              column: currentFilterColumn,
+            }
           })
         )
       })
@@ -664,6 +677,14 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     )
   }
 
+  isRowSelectionDisabled(rowObject: Row) {
+    return !!this.selectionEnabledField && !this.fieldIsTruthy(rowObject, this.selectionEnabledField)
+  }
+
+  rowSelectable(event: any) {
+    return !this.isRowSelectionDisabled(event.data)
+  }
+
   onSelectionChange(selection: Row[]) {
     let newSelectionIds = selection.map((row) => row.id)
     const rows = this._rows$.getValue()
@@ -768,18 +789,44 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
   filterTemplatesData: TemplatesData = {
     templatesObservables: {},
-    idSuffix: ['IdTableFilterCell', 'IdFilterCell'],
+    idSuffix: ['IdTableFilterCell', 'IdFilterCell', 'IdTableCell', 'IdCell'],
     templateNames: {
-      [ColumnType.DATE]: ['dateFilterCell', 'dateTableFilterCell', 'defaultDateCell'],
-      [ColumnType.NUMBER]: ['numberFilterCell', 'numberTableFilterCell', 'defaultNumberCell'],
-      [ColumnType.RELATIVE_DATE]: ['relativeDateFilterCell', 'relativeDateTableFilterCell', 'defaultRelativeDateCell'],
+      [ColumnType.DATE]: ['dateFilterCell', 'dateTableFilterCell', 'dateCell', 'dateTableCell', 'defaultDateCell'],
+      [ColumnType.NUMBER]: [
+        'numberFilterCell',
+        'numberTableFilterCell',
+        'numberCell',
+        'numberTableCell',
+        'defaultNumberCell',
+      ],
+      [ColumnType.RELATIVE_DATE]: [
+        'relativeDateFilterCell',
+        'relativeDateTableFilterCell',
+        'relativeDateCell',
+        'relativeDateTableCell',
+        'defaultRelativeDateCell',
+      ],
       [ColumnType.TRANSLATION_KEY]: [
         'translationKeyFilterCell',
         'translationKeyTableFilterCell',
         'defaultTranslationKeyCell',
+        'translationKeyCell',
+        'translationKeyTableCell',
       ],
-      [ColumnType.CUSTOM]: ['customFilterCell', 'customTableFilterCell', 'defaultCustomCell'],
-      [ColumnType.STRING]: ['stringFilterCell', 'stringTableFilterCell', 'defaultStringCell'],
+      [ColumnType.CUSTOM]: [
+        'customFilterCell',
+        'customTableFilterCell',
+        'customCell',
+        'customTableCell',
+        'defaultCustomCell',
+      ],
+      [ColumnType.STRING]: [
+        'stringFilterCell',
+        'stringTableFilterCell',
+        'stringCell',
+        'stringTableCell',
+        'defaultStringCell',
+      ],
     },
   }
 
@@ -862,8 +909,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
             return columnTemplate
           }
           return this.getColumnTypeTemplate(templates, column.columnType, templateType)
-        }),
-        debounceTime(50)
+        })
       )
     }
     return templatesData.templatesObservables[column.id]
