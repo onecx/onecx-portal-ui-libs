@@ -16,7 +16,7 @@ import { DiagramComponent } from '../diagram/diagram.component'
 import { ColumnType } from '../../model/column-type.model'
 
 export default {
-  title: 'GroupByCountDiagramComponent',
+  title: 'Components/GroupByCountDiagramComponent',
   component: GroupByCountDiagramComponent,
   argTypes: {
     diagramType: {

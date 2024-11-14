@@ -16,7 +16,7 @@ import { TooltipOnOverflowDirective } from '../../directives/tooltipOnOverflow.d
 import { MockAuthModule } from '../../mock-auth/mock-auth.module'
 
 const DataListGridComponentSBConfig: Meta<DataListGridComponent> = {
-  title: 'DataListGridComponent',
+  title: 'Components/DataListGridComponent',
   component: DataListGridComponent,
   decorators: [
     applicationConfig({
@@ -185,9 +185,9 @@ export const ListWithAdditionalActions = {
         id: '1',
         labelKey: 'Additional 1',
         icon: 'pi pi-plus',
-        permission: 'TEST_MGMT#TEST_VIEW'
-      }
-    ]
+        permission: 'TEST_MGMT#TEST_VIEW',
+      },
+    ],
   },
 }
 
@@ -202,9 +202,9 @@ export const ListWithConditionallyEnabledAdditionalActions = {
         labelKey: 'Additional 1',
         icon: 'pi pi-plus',
         permission: 'TEST_MGMT#TEST_VIEW',
-        actionEnabledField: 'available'
-      }
-    ]
+        actionEnabledField: 'available',
+      },
+    ],
   },
 }
 
@@ -219,9 +219,9 @@ export const ListWithConditionallyVisibleAdditionalActions = {
         labelKey: 'Additional 1',
         icon: 'pi pi-plus',
         permission: 'TEST_MGMT#TEST_VIEW',
-        actionVisibleField: 'available'
-      }
-    ]
+        actionVisibleField: 'available',
+      },
+    ],
   },
 }
 
@@ -254,7 +254,7 @@ export const ListWithAdditionalOverflowActions = {
         showAsOverflow: true,
         actionEnabledField: 'available',
       },
-    ]
+    ],
   },
 }
 
@@ -293,7 +293,7 @@ export const ListWithOnlyAdditionalOverflowActions = {
         showAsOverflow: true,
         actionEnabledField: 'available',
       },
-    ]
+    ],
   },
 }
 
@@ -303,7 +303,7 @@ export const ListWithPageSizes = {
   args: {
     ...defaultComponentArgs,
     pageSizes: [2, 15, 25],
-    data: extendedMockData
+    data: extendedMockData,
   },
 }
 
@@ -359,9 +359,9 @@ export const GridWithAdditionalActions = {
         id: '1',
         labelKey: 'Additional 1',
         icon: 'pi pi-plus',
-        permission: 'TEST_MGMT#TEST_VIEW'
-      }
-    ]
+        permission: 'TEST_MGMT#TEST_VIEW',
+      },
+    ],
   },
 }
 
@@ -377,9 +377,9 @@ export const GridWithConditionallyEnabledAdditionalActions = {
         labelKey: 'Additional 1',
         icon: 'pi pi-plus',
         permission: 'TEST_MGMT#TEST_VIEW',
-        actionEnabledField: 'available'
-      }
-    ]
+        actionEnabledField: 'available',
+      },
+    ],
   },
 }
 
@@ -395,9 +395,9 @@ export const GridWithConditionallyVisibleAdditionalActions = {
         labelKey: 'Additional 1',
         icon: 'pi pi-plus',
         permission: 'TEST_MGMT#TEST_VIEW',
-        actionVisibleField: 'available'
-      }
-    ]
+        actionVisibleField: 'available',
+      },
+    ],
   },
 }
 
