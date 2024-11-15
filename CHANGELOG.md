@@ -1,3 +1,19 @@
+## [5.26.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.25.0...v5.26.0) (2024-11-15)
+
+### Features
+
+* storybooks stories split into subfolders ([#581](https://github.com/onecx/onecx-portal-ui-libs/issues/581)) ([b8e476e](https://github.com/onecx/onecx-portal-ui-libs/commit/b8e476e6880216d90198e33ea60fc7fca12ecf4d))
+
+### Bug Fixes
+
+* on image load rate the 204 as error to display placeholder ([#606](https://github.com/onecx/onecx-portal-ui-libs/issues/606)) ([3129dd5](https://github.com/onecx/onecx-portal-ui-libs/commit/3129dd52d5eca454646df5b5ee9b997e0916137e))
+* onecx versions in libs peerDependencies are now updated correctly ([#607](https://github.com/onecx/onecx-portal-ui-libs/issues/607)) ([b7f2066](https://github.com/onecx/onecx-portal-ui-libs/commit/b7f20667d2234a5dbc4877c7d486a135d662cc18))
+
+### Chores
+
+* **deps:** bump the angular group with 16 updates ([#608](https://github.com/onecx/onecx-portal-ui-libs/issues/608)) ([4ef13b3](https://github.com/onecx/onecx-portal-ui-libs/commit/4ef13b3aa2395ec1f4e2efa3e502484bfaa7fc0e))
+* **deps:** bump the angular group with 20 updates ([#601](https://github.com/onecx/onecx-portal-ui-libs/issues/601)) ([fb3c747](https://github.com/onecx/onecx-portal-ui-libs/commit/fb3c747b021c61348aefc06261a714ee258def69))
+
 ## [5.25.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.24.0...v5.25.0) (2024-11-13)
 
 ### Features
