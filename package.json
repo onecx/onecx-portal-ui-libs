@@ -102,7 +102,7 @@
     "jsonc-eslint-parser": "^2.4.0",
     "msw": "^2.4.9",
     "msw-storybook-addon": "^2.0.2",
-    "ng-mocks": "^14.13.0",
+    "ng-mocks": "^14.13.1",
     "ng-packagr": "^18.2.1",
     "ngx-translate-testing": "^7.0.0",
     "nx": "19.8.0",
