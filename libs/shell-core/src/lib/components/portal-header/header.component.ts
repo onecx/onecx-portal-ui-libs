@@ -2,7 +2,7 @@ import { animate, style, transition, trigger } from '@angular/animations'
 import { Component, EventEmitter, Inject, Input, Optional, Output } from '@angular/core'
 import { UntilDestroy } from '@ngneat/until-destroy'
 import { AppStateService, ThemeService } from '@onecx/angular-integration-interface'
-import { Observable, combineLatest, map, mergeMap, of } from 'rxjs'
+import { Observable, combineLatest, filter, map, mergeMap, of } from 'rxjs'
 import {
   WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER,
   WorkspaceConfigBffService,
@@ -55,6 +55,7 @@ export class HeaderComponent {
       mergeMap(([theme, portal]) => {
         if (!theme.logoUrl && !portal.logoUrl) {
           return (this.workspaceConfigBffService?.getThemeLogoByName(theme.name ?? '') ?? of()).pipe(
+            filter((blob) => !!blob),
             map((blob) => URL.createObjectURL(blob))
           )
         }
@@ -68,6 +69,8 @@ export class HeaderComponent {
   }
 
   onLoad(logoUrl: string) {
-    if (logoUrl.startsWith('blob: ')) URL.revokeObjectURL(logoUrl)
+    if (logoUrl.startsWith('blob: ')) {
+      URL.revokeObjectURL(logoUrl)
+    }
   }
 }

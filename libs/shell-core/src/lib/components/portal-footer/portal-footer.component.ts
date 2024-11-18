@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit, Optional } from '@angular/core'
 import { Router } from '@angular/router'
 import { AppStateService, CONFIG_KEY, ConfigurationService, ThemeService } from '@onecx/angular-integration-interface'
-import { Observable, combineLatest, concat, map, mergeMap, of, withLatestFrom } from 'rxjs'
+import { Observable, combineLatest, concat, filter, map, mergeMap, of, withLatestFrom } from 'rxjs'
 import {
   WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER,
   WorkspaceConfigBffService,
@@ -43,6 +43,7 @@ export class PortalFooterComponent implements OnInit {
       mergeMap(([theme, portalData]) => {
         if (!theme.logoUrl && !portalData.logoUrl) {
           return (this.workspaceConfigBffService?.getThemeLogoByName(theme.name ?? '') ?? of()).pipe(
+            filter((blob) => !!blob),
             map((blob) => URL.createObjectURL(blob))
           )
         }
@@ -76,6 +77,8 @@ export class PortalFooterComponent implements OnInit {
   }
 
   onLoad(logoUrl: string) {
-    if (logoUrl.startsWith('blob: ')) URL.revokeObjectURL(logoUrl)
+    if (logoUrl.startsWith('blob: ')) {
+      URL.revokeObjectURL(logoUrl)
+    }
   }
 }
