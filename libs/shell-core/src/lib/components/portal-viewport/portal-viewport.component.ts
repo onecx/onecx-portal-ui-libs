@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http'
-import { Component, HostListener, Inject, InjectionToken, OnDestroy, OnInit, Optional, Renderer2 } from '@angular/core'
+import { Component, HostListener, Inject, OnDestroy, OnInit, Optional, Renderer2 } from '@angular/core'
 import { Router } from '@angular/router'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import {
@@ -10,13 +10,12 @@ import {
   UserService,
 } from '@onecx/angular-integration-interface'
 import { MessageService, PrimeNGConfig } from 'primeng/api'
-import { BehaviorSubject, filter, first, from, mergeMap, of } from 'rxjs'
-
-export const SHOW_CONTENT_PROVIDER = new InjectionToken<ShowContentProvider>('SHOW_CONTENT_PROVIDER')
-
-export interface ShowContentProvider {
-  showContent$: BehaviorSubject<boolean>
-}
+import { filter, first, from, mergeMap, of } from 'rxjs'
+import { SHOW_CONTENT_PROVIDER, ShowContentProvider } from '../../shell-interface/show-content-provider'
+import {
+  WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER,
+  WorkspaceConfigBffService,
+} from '../../shell-interface/workspace-config-bff-service-provider'
 
 @Component({
   selector: 'ocx-shell-portal-viewport',
@@ -51,7 +50,10 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
     private themeService: ThemeService,
     private httpClient: HttpClient,
     private router: Router,
-    @Optional() @Inject(SHOW_CONTENT_PROVIDER) public showContentProvider: ShowContentProvider | undefined
+    @Optional() @Inject(SHOW_CONTENT_PROVIDER) public showContentProvider: ShowContentProvider | undefined,
+    @Optional()
+    @Inject(WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER)
+    public workspaceConfigBffService: WorkspaceConfigBffService | undefined
   ) {
     this.portalMessageService.message$.subscribe((message: Message) => this.messageService.add(message))
     this.userService.profile$.pipe(untilDestroyed(this)).subscribe((profile) => {
@@ -71,7 +73,9 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
         first(),
         mergeMap((theme) => {
           return theme.faviconUrl
-            ? this.httpClient.get(theme.faviconUrl, { responseType: 'blob' }).pipe(
+            ? this.httpClient.get(theme.faviconUrl ?? '', { responseType: 'blob' })
+            : (this.workspaceConfigBffService?.getThemeFaviconByName(theme.name ?? '') ?? of()).pipe(
+                filter((blob) => !!blob),
                 mergeMap((blob) => {
                   return from(
                     new Promise((resolve) => {
@@ -82,7 +86,6 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
                   )
                 })
               )
-            : of('')
         })
       )
       .subscribe((url) => {

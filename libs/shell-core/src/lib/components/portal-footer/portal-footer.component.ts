@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, Inject, OnInit, Optional } from '@angular/core'
 import { Router } from '@angular/router'
-import { AppStateService, ConfigurationService, CONFIG_KEY, ThemeService } from '@onecx/angular-integration-interface'
-import { ImageLogoUrlUtils } from '@onecx/portal-integration-angular'
-import { combineLatest, concat, map, Observable, of, withLatestFrom } from 'rxjs'
-import { SHELL_BFF_PREFIX } from '../../model/constants'
+import { AppStateService, CONFIG_KEY, ConfigurationService, ThemeService } from '@onecx/angular-integration-interface'
+import { Observable, combineLatest, concat, map, mergeMap, of, withLatestFrom } from 'rxjs'
+import {
+  WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER,
+  WorkspaceConfigBffService,
+} from '../../shell-interface/workspace-config-bff-service-provider'
 
 @Component({
   selector: 'ocx-shell-footer',
@@ -19,7 +21,10 @@ export class PortalFooterComponent implements OnInit {
     private configurationService: ConfigurationService,
     public router: Router,
     private appState: AppStateService,
-    private themeService: ThemeService
+    private themeService: ThemeService,
+    @Optional()
+    @Inject(WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER)
+    public workspaceConfigBffService: WorkspaceConfigBffService | undefined
   ) {
     this.versionInfo$ = this.appState.currentMfe$.pipe(
       withLatestFrom(this.appState.currentPortal$.asObservable()),
@@ -35,7 +40,14 @@ export class PortalFooterComponent implements OnInit {
       this.themeService.currentTheme$.asObservable(),
       this.appState.currentWorkspace$.asObservable(),
     ]).pipe(
-      map(([theme, portalData]) => ImageLogoUrlUtils.createLogoUrl(SHELL_BFF_PREFIX, theme.logoUrl || portalData.logoUrl))
+      mergeMap(([theme, portalData]) => {
+        if (!theme.logoUrl && !portalData.logoUrl) {
+          return (this.workspaceConfigBffService?.getThemeLogoByName(theme.name ?? '') ?? of()).pipe(
+            map((blob) => URL.createObjectURL(blob))
+          )
+        }
+        return of(theme.logoUrl || portalData.logoUrl)
+      })
     )
   }
 
@@ -61,5 +73,9 @@ export class PortalFooterComponent implements OnInit {
 
   public onErrorHandleSrc(): void {
     this.logoUrl$ = of(undefined)
+  }
+
+  onLoad(logoUrl: string) {
+    if (logoUrl.startsWith('blob: ')) URL.revokeObjectURL(logoUrl)
   }
 }
