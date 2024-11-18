@@ -1,6 +1,6 @@
 import { HttpContext, HttpResponse, HttpEvent } from '@angular/common/http'
 import { InjectionToken } from '@angular/core'
-import { BehaviorSubject, Observable } from 'rxjs'
+import { Observable } from 'rxjs'
 
 export const WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER = new InjectionToken<WorkspaceConfigBffService>(
   'WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER'
