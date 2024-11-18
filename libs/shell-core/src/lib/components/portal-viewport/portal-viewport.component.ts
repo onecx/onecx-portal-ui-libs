@@ -72,20 +72,22 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
       .pipe(
         first(),
         mergeMap((theme) => {
-          return theme.faviconUrl
-            ? this.httpClient.get(theme.faviconUrl ?? '', { responseType: 'blob' })
-            : (this.workspaceConfigBffService?.getThemeFaviconByName(theme.name ?? '') ?? of()).pipe(
-                filter((blob) => !!blob),
-                mergeMap((blob) => {
-                  return from(
-                    new Promise((resolve) => {
-                      const reader = new FileReader()
-                      reader.onload = (e) => resolve(e.target?.result)
-                      reader.readAsDataURL(blob)
-                    })
-                  )
+          return (
+            theme.faviconUrl
+              ? this.httpClient.get(theme.faviconUrl ?? '', { responseType: 'blob' })
+              : (this.workspaceConfigBffService?.getThemeFaviconByName(theme.name ?? '') ?? of())
+          ).pipe(
+            filter((blob) => !!blob),
+            mergeMap((blob) => {
+              return from(
+                new Promise((resolve) => {
+                  const reader = new FileReader()
+                  reader.onload = (e) => resolve(e.target?.result)
+                  reader.readAsDataURL(blob)
                 })
               )
+            })
+          )
         })
       )
       .subscribe((url) => {
