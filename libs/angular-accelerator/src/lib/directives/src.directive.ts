@@ -21,9 +21,9 @@ export class SrcDirective {
               // ok with content
               if (response?.status === 200) {
                 const url = URL.createObjectURL(response.body as Blob)
-                this.el.nativeElement.onload = () => {
+                this.el.nativeElement.addEventListener('load', () => {
                   URL.revokeObjectURL(url)
-                }
+                })
                 this.el.nativeElement.src = url
               }
               // no content
