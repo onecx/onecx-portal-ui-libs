@@ -13,7 +13,11 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core'
-import { DataListGridComponent, DataListGridComponentState, ListGridData } from '../data-list-grid/data-list-grid.component'
+import {
+  DataListGridComponent,
+  DataListGridComponentState,
+  ListGridData,
+} from '../data-list-grid/data-list-grid.component'
 import { Row, Sort, DataTableComponent, DataTableComponentState } from '../data-table/data-table.component'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { DataSortDirection } from '../../model/data-sort-direction'
@@ -101,6 +105,7 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   @Input() sortStates: DataSortDirection[] = [DataSortDirection.ASCENDING, DataSortDirection.DESCENDING]
   @Input() pageSizes: number[] = [10, 25, 50]
   @Input() pageSize: number | undefined
+  @Input() showAllOption: boolean = false
 
   @Input() stringTableCellTemplate: TemplateRef<any> | undefined
   @ContentChild('stringTableCell') stringTableCellChildTemplate: TemplateRef<any> | undefined
@@ -383,24 +388,25 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   ngOnInit(): void {
     this.firstColumnId = this.columns[0]?.id
 
-    let dataTableComponentState$: Observable<DataTableComponentState | Record<string, never>> = this.dataTableComponentState$
-    let dataListGridComponentState$: Observable<DataListGridComponentState | Record<string, never>> = this.dataListGridComponentState$
+    let dataTableComponentState$: Observable<DataTableComponentState | Record<string, never>> =
+      this.dataTableComponentState$
+    let dataListGridComponentState$: Observable<DataListGridComponentState | Record<string, never>> =
+      this.dataListGridComponentState$
     if (this.layout === 'table') {
       dataListGridComponentState$ = dataListGridComponentState$.pipe(startWith({}))
     } else {
       dataTableComponentState$ = dataTableComponentState$.pipe(startWith({}))
     }
 
-    combineLatest([
-      dataTableComponentState$.pipe(timestamp()),
-      dataListGridComponentState$.pipe(timestamp()),
-    ])
+    combineLatest([dataTableComponentState$.pipe(timestamp()), dataListGridComponentState$.pipe(timestamp())])
       .pipe(
         map((componentStates) => {
           return orderAndMergeValuesByTimestamp(componentStates)
         })
       )
-      .subscribe((val) => {this.componentStateChanged.emit(val)})
+      .subscribe((val) => {
+        this.componentStateChanged.emit(val)
+      })
   }
 
   ngAfterContentInit() {

@@ -110,6 +110,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   ]
   @Input() pageSizes: number[] = [10, 25, 50]
   @Input() pageSize: number | undefined
+  @Input() showAllOption: boolean = false
   @Input() totalRecordsOnServer: number | undefined
   @Input() layout: 'grid' | 'list' | 'table' = 'table'
   @Input() defaultGroupKey = ''
