@@ -1,3 +1,13 @@
+## [5.27.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.26.0...v5.27.0) (2024-11-19)
+
+### Features
+
+* show all option controlled in all data views ([#613](https://github.com/onecx/onecx-portal-ui-libs/issues/613)) ([ff00417](https://github.com/onecx/onecx-portal-ui-libs/commit/ff0041762f75a94ed81e05584350e2587d5e81f8))
+
+### Chores
+
+* **deps-dev:** bump ng-mocks from 14.13.0 to 14.13.1 ([#610](https://github.com/onecx/onecx-portal-ui-libs/issues/610)) ([5122c72](https://github.com/onecx/onecx-portal-ui-libs/commit/5122c7259684f3e367cec6a6e575f8bb59537f16))
+
 ## [5.26.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.25.0...v5.26.0) (2024-11-15)
 
 ### Features
