@@ -304,6 +304,7 @@ export const ListWithPageSizes = {
     ...defaultComponentArgs,
     pageSizes: [2, 15, 25],
     data: extendedMockData,
+    showAllOption: false,
   },
 }
 
@@ -409,6 +410,7 @@ export const GridWithPageSizes = {
     layout: 'grid',
     pageSizes: [2, 15, 25],
     data: extendedMockData,
+    showAllOption: false,
   },
 }
 

@@ -102,6 +102,7 @@ export const WithPageSizes = {
   args: {
     ...defaultComponentArgs,
     pageSizes: [2, 15, 25],
+    showAllOption: false,
   },
 }
 

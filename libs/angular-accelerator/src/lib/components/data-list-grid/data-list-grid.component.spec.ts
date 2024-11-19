@@ -23,7 +23,7 @@ describe('DataListGridComponent', () => {
     return this
   })
   global.MutationObserver = mutationObserverMock
-  
+
   let fixture: ComponentFixture<DataListGridComponent>
   let component: DataListGridComponent
   let translateService: TranslateService
@@ -306,7 +306,11 @@ describe('DataListGridComponent', () => {
       const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
       const paginator = await dataListGrid.getPaginator()
       const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
-      const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
+      let rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
+      expect(rowsPerPageOptionsText).toEqual('10')
+
+      component.showAllOption = true
+      rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
       expect(rowsPerPageOptionsText).toEqual('Alle')
     })
 
@@ -316,7 +320,11 @@ describe('DataListGridComponent', () => {
       const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
       const paginator = await dataListGrid.getPaginator()
       const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
-      const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
+      let rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
+      expect(rowsPerPageOptionsText).toEqual('10')
+
+      component.showAllOption = true
+      rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
       expect(rowsPerPageOptionsText).toEqual('All')
     })
   })
@@ -356,7 +364,7 @@ describe('DataListGridComponent', () => {
     component.viewPermission = 'VIEW'
     component.editPermission = 'EDIT'
     component.deletePermission = 'DELETE'
-    
+
     fixture.detectChanges()
     await fixture.whenStable()
   }
@@ -502,7 +510,7 @@ describe('DataListGridComponent', () => {
     component.viewPermission = 'VIEW'
     component.editPermission = 'EDIT'
     component.deletePermission = 'DELETE'
-          
+
     fixture.detectChanges()
     await fixture.whenStable()
   }
