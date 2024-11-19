@@ -1,3 +1,9 @@
+## [5.27.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.27.0...v5.27.1) (2024-11-19)
+
+### Bug Fixes
+
+* loading of favicon and logo url ([#612](https://github.com/onecx/onecx-portal-ui-libs/issues/612)) ([477ab49](https://github.com/onecx/onecx-portal-ui-libs/commit/477ab498d95191bdf06d479588f08e84257bf3bf))
+
 ## [5.27.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.26.0...v5.27.0) (2024-11-19)
 
 ### Features
