@@ -285,7 +285,11 @@ describe('DataTableComponent', () => {
       const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
       const paginator = await dataTable.getPaginator()
       const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
-      const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
+      let rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
+      expect(rowsPerPageOptionsText).toEqual('10')
+
+      component.showAllOption = true
+      rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
       expect(rowsPerPageOptionsText).toEqual('Alle')
     })
 
@@ -295,7 +299,11 @@ describe('DataTableComponent', () => {
       const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
       const paginator = await dataTable.getPaginator()
       const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
-      const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
+      let rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
+      expect(rowsPerPageOptionsText).toEqual('10')
+
+      component.showAllOption = true
+      rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
       expect(rowsPerPageOptionsText).toEqual('All')
     })
   })
@@ -478,8 +486,6 @@ describe('DataTableComponent', () => {
       expect(component.editTableRowObserved).toBe(true)
       expect(component.deleteTableRowObserved).toBe(true)
 
-
-
       const tableActions = await dataTable.getActionButtons()
       expect(tableActions.length).toBe(3)
       const expectedIcons = ['pi pi-eye', 'pi pi-trash', 'pi pi-pencil']
@@ -501,8 +507,6 @@ describe('DataTableComponent', () => {
       setUpActionButtonMockData()
       component.viewActionEnabledField = 'ready'
 
-
-
       let tableActions = await dataTable.getActionButtons()
       expect(tableActions.length).toBe(3)
 
@@ -521,8 +525,6 @@ describe('DataTableComponent', () => {
       tempRows[0]['ready'] = true
 
       component.rows = [...tempRows]
-
-
 
       tableActions = await dataTable.getActionButtons()
 
@@ -544,7 +546,6 @@ describe('DataTableComponent', () => {
       expect(component.editTableRowObserved).toBe(true)
       expect(component.deleteTableRowObserved).toBe(true)
 
-      
       const tableActions = await dataTable.getActionButtons()
       expect(tableActions.length).toBe(3)
       const expectedIcons = ['pi pi-eye', 'pi pi-trash', 'pi pi-pencil']
@@ -565,8 +566,6 @@ describe('DataTableComponent', () => {
       setUpActionButtonMockData()
       component.viewActionVisibleField = 'ready'
 
-
-
       let tableActions = await dataTable.getActionButtons()
       expect(tableActions.length).toBe(2)
 
@@ -580,8 +579,6 @@ describe('DataTableComponent', () => {
       tempRows[0]['ready'] = true
 
       component.rows = [...tempRows]
-
-
 
       tableActions = await dataTable.getActionButtons()
       expect(tableActions.length).toBe(3)
