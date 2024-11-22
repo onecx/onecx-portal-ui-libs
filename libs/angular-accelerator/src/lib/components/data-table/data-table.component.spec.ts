@@ -657,7 +657,9 @@ describe('DataTableComponent', () => {
       component.additionalActions = [
         {
           permission: 'VIEW',
-          callback: () => {},
+          callback: () => {
+            console.log('custom action clicked')
+          },
           id: 'actionId',
         },
       ]
