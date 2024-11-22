@@ -99,7 +99,7 @@ describe('DataTableComponent', () => {
       creationUser: '',
       modificationDate: '2023-09-12T09:34:27.184086Z',
       modificationUser: '',
-      id: 'cf9e7d6b-5362-46af-91f8-62f7ef5c6064',
+      id: '734e21ba-14d7-4565-ba0d-ddd25f807931',
       name: 'name 2',
       description: '',
       status: 'status name 2',
@@ -115,7 +115,7 @@ describe('DataTableComponent', () => {
       creationUser: '',
       modificationDate: '2023-09-12T09:34:27.184086Z',
       modificationUser: '',
-      id: 'cf9e7d6b-5362-46af-91f8-62f7ef5c6064',
+      id: '02220a5a-b556-4d7a-ac6e-6416911a00f2',
       name: 'name 3',
       description: '',
       status: 'status name 3',
@@ -454,7 +454,7 @@ describe('DataTableComponent', () => {
         creationUser: '',
         modificationDate: '2023-09-12T09:34:27.184086Z',
         modificationUser: '',
-        id: 'cf9e7d6b-5362-46af-91f8-62f7ef5c6064',
+        id: 'bd7962b8-4887-420e-bb27-36978ebf10ab',
         name: 'name 3',
         description: '',
         status: 'status name 3',
@@ -594,6 +594,80 @@ describe('DataTableComponent', () => {
       }
 
       expect(expectedIcons.length).toBe(0)
+    })
+  })
+
+  describe('Assign ids to action buttons', () => {
+    beforeEach(() => {
+      component.rows = [
+        {
+          version: 0,
+          creationDate: '2023-09-12T09:34:27.184086Z',
+          creationUser: '',
+          modificationDate: '2023-09-12T09:34:27.184086Z',
+          modificationUser: '',
+          id: 'rowId',
+          name: 'name 3',
+          description: '',
+          status: 'status name 3',
+          responsible: '',
+          endDate: '2023-09-15T09:34:24Z',
+          startDate: '2023-09-14T09:34:22Z',
+          imagePath: '',
+          testNumber: '7.1',
+          ready: false,
+        },
+      ]
+    })
+
+    it('should assign id to view button', async () => {
+      component.viewTableRow.subscribe(() => console.log())
+      component.viewPermission = 'VIEW'
+      expect(component.viewTableRowObserved).toBe(true)
+
+      const tableActions = await dataTable.getActionButtons()
+      expect(tableActions.length).toBe(1)
+
+      expect(await tableActions[0].getAttribute('id')).toEqual('rowId-viewButton')
+    })
+
+    it('should assign id to edit button', async () => {
+      component.editTableRow.subscribe(() => console.log())
+      component.editPermission = 'EDIT'
+      expect(component.editTableRowObserved).toBe(true)
+
+      const tableActions = await dataTable.getActionButtons()
+      expect(tableActions.length).toBe(1)
+
+      expect(await tableActions[0].getAttribute('id')).toEqual('rowId-editButton')
+    })
+
+    it('should assign id to delete button', async () => {
+      component.deleteTableRow.subscribe(() => console.log())
+      component.deletePermission = 'DELETE'
+      expect(component.deleteTableRowObserved).toBe(true)
+
+      const tableActions = await dataTable.getActionButtons()
+      expect(tableActions.length).toBe(1)
+
+      expect(await tableActions[0].getAttribute('id')).toEqual('rowId-deleteButton')
+    })
+
+    it('should assign id to additional action button', async () => {
+      component.additionalActions = [
+        {
+          permission: 'VIEW',
+          callback: () => {
+            console.log('custom action clicked')
+          },
+          id: 'actionId',
+        },
+      ]
+
+      const tableActions = await dataTable.getActionButtons()
+      expect(tableActions.length).toBe(1)
+
+      expect(await tableActions[0].getAttribute('id')).toEqual('rowId-actionIdActionButton')
     })
   })
 })

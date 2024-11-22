@@ -102,6 +102,7 @@
             *ngIf="viewItemObserved && (!viewActionVisibleField || fieldIsTruthy(item, viewActionVisibleField))"
           >
             <button
+              id="{{resolveFieldData(item, 'id')}}-viewButton"
               type="button"
               icon="pi pi-eye"
               pButton
@@ -119,6 +120,7 @@
             *ngIf="editItemObserved && (!editActionVisibleField || fieldIsTruthy(item, editActionVisibleField))"
           >
             <button
+              id="{{resolveFieldData(item, 'id')}}-editButton"
               type="button"
               class="p-button-rounded p-button-text mb-1 mr-2 editListItemButton"
               icon="pi pi-pencil"
@@ -136,6 +138,7 @@
             *ngIf="deleteItemObserved && (!deleteActionVisibleField || fieldIsTruthy(item, deleteActionVisibleField))"
           >
             <button
+              id="{{resolveFieldData(item, 'id')}}-deleteButton"
               type="button"
               icon="pi pi-trash"
               class="p-button-rounded p-button-text p-button-danger mb-1 mr-2 deleteListItemButton"
@@ -152,6 +155,7 @@
           <ng-container *ngFor="let action of inlineListActions$ | async">
             <ng-container *ngIf="(!action.actionVisibleField || fieldIsTruthy(item, action.actionVisibleField))">
               <button
+                id="{{resolveFieldData(item, 'id')}}-{{action.id ? action.id.concat('ActionButton') : 'inlineActionButton'}}"
                 *ocxIfPermission="action.permission"
                 pButton
                 class="p-button-rounded p-button-text"
@@ -162,6 +166,7 @@
                 tooltipPosition="top"
                 [attr.aria-label]="action.labelKey ? (action.labelKey | translate) : ''"
                 [disabled]="action.disabled || (!!action.actionEnabledField && !fieldIsTruthy(item, action.actionEnabledField))"
+                [attr.name]="'data-list-action-button'"
               ></button>
             </ng-container>
           </ng-container>
