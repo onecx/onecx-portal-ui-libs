@@ -1,3 +1,9 @@
+## [5.28.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.27.1...v5.28.0) (2024-11-22)
+
+### Features
+
+* action buttons have ids ([#616](https://github.com/onecx/onecx-portal-ui-libs/issues/616)) ([0bdebe6](https://github.com/onecx/onecx-portal-ui-libs/commit/0bdebe641363fa5657d7dd0d730f1dcc9d7768cc))
+
 ## [5.27.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.27.0...v5.27.1) (2024-11-19)
 
 ### Bug Fixes
