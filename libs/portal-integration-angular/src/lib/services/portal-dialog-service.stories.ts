@@ -1,18 +1,30 @@
-import { Component, Input, importProvidersFrom } from '@angular/core'
+import { Component, EventEmitter, Input, importProvidersFrom } from '@angular/core'
 import { Meta, applicationConfig, argsToTemplate, componentWrapperDecorator, moduleMetadata } from '@storybook/angular'
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { BrowserModule } from '@angular/platform-browser'
 import { ButtonModule } from 'primeng/button'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { PortalDialogService } from './portal-dialog.service'
+import {
+  DialogButtonClicked,
+  DialogCustomButtonsDisabled,
+  DialogPrimaryButtonDisabled,
+  DialogResult,
+  DialogSecondaryButtonDisabled,
+  DialogState,
+  PortalDialogService,
+} from './portal-dialog.service'
 import { ButtonDialogComponent } from '../core/components/button-dialog/button-dialog.component'
 import { StorybookTranslateModule } from '../core/storybook-translate.module'
 import { DialogMessageContentComponent } from '../core/components/button-dialog/dialog-message-content/dialog-message-content.component'
 import { PrimeIcons } from 'primeng/api'
 import { TooltipModule } from 'primeng/tooltip'
+import { DialogFooterComponent } from '../core/components/dialog/dialog-footer/dialog-footer.component'
+import { DialogContentComponent } from '../core/components/dialog/dialog-content/dialog-content.component'
+import { Observable } from 'rxjs'
+import { FormsModule } from '@angular/forms'
 
 @Component({
-  selector: 'ocx-ocx-button-dialog-with-portal-dialog-service',
+  selector: 'ocx-button-dialog-with-portal-dialog-service',
   template: `<button (click)="openDialog()">Open dialog</button>`,
 })
 class ButtonDialogWithPortalDialogServiceComponent {
@@ -49,8 +61,13 @@ export default {
       ],
     }),
     moduleMetadata({
-      declarations: [ButtonDialogComponent, DialogMessageContentComponent],
-      imports: [StorybookTranslateModule, ButtonModule, TooltipModule],
+      declarations: [
+        ButtonDialogComponent,
+        DialogMessageContentComponent,
+        DialogFooterComponent,
+        DialogContentComponent,
+      ],
+      imports: [StorybookTranslateModule, ButtonModule, TooltipModule, FormsModule],
     }),
     componentWrapperDecorator((story) => `<div style="margin: 3em">${story}</div>`),
   ],
@@ -151,5 +168,137 @@ export const ComponentDisplayed = {
       tooltipPosition: 'left',
     },
     extras: {},
+  },
+}
+
+@Component({
+  selector: 'ocx-my-component-to-display',
+  template: `<p>Component to display with disabled buttons</p>
+    <button (click)="click1()">Toggle primary button</button>
+    <button (click)="click2()">Toggle secondary button</button>,
+    <button (click)="clickCustom()">Toggle custom button</button>`,
+})
+class ComponentToDisplayComponentWithDisabledButtons
+  implements DialogPrimaryButtonDisabled, DialogSecondaryButtonDisabled, DialogCustomButtonsDisabled
+{
+  secondaryButtonEnabled: EventEmitter<boolean> = new EventEmitter()
+  primaryButtonEnabled: EventEmitter<boolean> = new EventEmitter()
+  customButtonEnabled: EventEmitter<{ id: string; enabled: boolean }> = new EventEmitter()
+
+  primaryState = false
+  secondaryState = false
+  customState = false
+
+  constructor() {}
+
+  click1() {
+    this.primaryState = !this.primaryState
+    this.primaryButtonEnabled.emit(this.primaryState)
+  }
+  click2() {
+    this.secondaryState = !this.secondaryState
+    this.secondaryButtonEnabled.emit(this.secondaryState)
+  }
+  clickCustom() {
+    this.customState = !this.customState
+    this.customButtonEnabled.emit({
+      id: 'custom1',
+      enabled: this.customState,
+    })
+  }
+}
+
+export const ComponentDisplayedWithDisabledButtons = {
+  render: (args: any) => ({
+    props: {
+      ...args,
+    },
+    template: `
+            <ocx-button-dialog-with-portal-dialog-service ${argsToTemplate(args)}>
+            </ocx-button-dialog-with-portal-dialog-service>
+              `,
+  }),
+  args: {
+    title: 'Custom title',
+    messageOrComponent: {
+      type: ComponentToDisplayComponentWithDisabledButtons,
+    },
+    primaryKey: {
+      key: 'PRIMARY_KEY',
+      icon: PrimeIcons.BOOKMARK,
+      tooltipKey: 'TOOLTIP_KEY',
+      tooltipPosition: 'right',
+    },
+    secondaryKey: {
+      key: 'SECONDARY_KEY',
+      icon: PrimeIcons.SEARCH,
+      tooltipKey: 'TOOLTIP_KEY',
+      tooltipPosition: 'left',
+    },
+    extras: {
+      customButtons: [
+        {
+          id: 'custom1',
+          alignment: 'right',
+          key: 'MY_CUSTOM_BUTTON',
+        },
+      ],
+    },
+  },
+}
+
+@Component({
+  selector: 'ocx-my-component-to-display',
+  template: `<p>Component to display with validation</p>
+    <p>It is impossible to close the dialog by clicking secondary button</p>
+    <p>Type result to be able to close the dialog via primary button click</p>
+    <input type="text" (change)="onInputChange($event)" />`,
+})
+class ComponentToDisplayComponentWithValidation implements DialogResult<string>, DialogButtonClicked {
+  dialogResult: string = ''
+
+  constructor() {}
+
+  onInputChange(event: any) {
+    const value: string = event.target.value
+    this.dialogResult = value
+  }
+
+  ocxDialogButtonClicked(
+    state: DialogState<unknown>
+  ): boolean | void | Observable<boolean> | Promise<boolean> | undefined {
+    if (state.button === 'primary' && this.dialogResult === 'result') return true
+
+    return false
+  }
+}
+
+export const ComponentDisplayedWithValidation = {
+  render: (args: any) => ({
+    props: {
+      ...args,
+    },
+    template: `
+            <ocx-button-dialog-with-portal-dialog-service ${argsToTemplate(args)}>
+            </ocx-button-dialog-with-portal-dialog-service>
+              `,
+  }),
+  args: {
+    title: 'Custom title',
+    messageOrComponent: {
+      type: ComponentToDisplayComponentWithValidation,
+    },
+    primaryKey: {
+      key: 'PRIMARY_KEY',
+      icon: PrimeIcons.BOOKMARK,
+      tooltipKey: 'TOOLTIP_KEY',
+      tooltipPosition: 'right',
+    },
+    secondaryKey: {
+      key: 'SECONDARY_KEY',
+      icon: PrimeIcons.SEARCH,
+      tooltipKey: 'TOOLTIP_KEY',
+      tooltipPosition: 'left',
+    },
   },
 }
