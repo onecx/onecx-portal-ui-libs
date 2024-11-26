@@ -8,7 +8,7 @@ const copyBuildToFile = path.join(__dirname, '.copy-build-to');
 // Check if the .copy-build-to file exists
 if (!fs.existsSync(copyBuildToFile)) {
   // Create the .copy-build-to file with instructions
-  fs.writeFileSync(copyBuildToFile, 'Enter the paths where you want to copy the compiled output, each on a new line.\nExample:\n/path/to/destination1\n/path/to/destination2\n');
+  fs.writeFileSync(copyBuildToFile, 'Enter the paths where you want to copy the compiled output, each on a new line.\nExample:\n/path/to/destination1/node_modules/@onecx\n/path/to/destination2/node_modules/@onecx\n');
   console.log('.copy-build-to file created. Please add the paths where you want to copy the compiled output, each on a new line.');
   process.exit(0);
 }
