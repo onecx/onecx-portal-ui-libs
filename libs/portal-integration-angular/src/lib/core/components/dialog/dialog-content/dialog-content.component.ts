@@ -1,15 +1,5 @@
-import {
-  Component,
-  ComponentRef,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-  ViewChild,
-  ViewContainerRef,
-} from '@angular/core'
-import { BehaviorSubject, Observable, Subscription, from, isObservable, map, of, startWith, withLatestFrom } from 'rxjs'
+import { Component, ComponentRef, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core'
+import { Observable, Subscription, from, isObservable, of, startWith } from 'rxjs'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { ButtonDialogData } from 'libs/portal-integration-angular/src/lib/model/button-dialog'
 import { DialogMessageContentComponent } from '../../button-dialog/dialog-message-content/dialog-message-content.component'
@@ -19,7 +9,6 @@ import {
   DialogPrimaryButtonDisabled,
   DialogResult,
   DialogSecondaryButtonDisabled,
-  DialogState,
   PortalDialogServiceData,
 } from 'libs/portal-integration-angular/src/lib/services/portal-dialog.service'
 
@@ -59,6 +48,7 @@ export class DialogContentComponent implements OnInit, OnDestroy {
     this.primaryButtonEnabledSub?.unsubscribe()
     this.secondaryButtonEnabledSub?.unsubscribe()
     this.customButtonEnabledSub?.unsubscribe()
+    this.buttonClickedSub?.unsubscribe()
   }
 
   loadComponent() {

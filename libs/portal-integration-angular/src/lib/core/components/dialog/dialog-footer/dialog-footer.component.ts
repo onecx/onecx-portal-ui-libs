@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
-import { BehaviorSubject, Observable, from, isObservable, map, of, startWith, withLatestFrom } from 'rxjs'
+import { BehaviorSubject, Observable, map, withLatestFrom } from 'rxjs'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import {
   ButtonDialogButtonDetails,
@@ -7,7 +7,6 @@ import {
   ButtonDialogCustomButtonDetails,
   ButtonDialogData,
 } from 'libs/portal-integration-angular/src/lib/model/button-dialog'
-import { DialogMessageContentComponent } from '../../button-dialog/dialog-message-content/dialog-message-content.component'
 import {
   DialogState,
   DialogStateButtonClicked,
@@ -37,6 +36,8 @@ export class DialogFooterComponent implements OnInit {
     componentData: {},
   }
 
+  @Input() config: ButtonDialogConfig = {}
+
   dialogData: ButtonDialogData = this.defaultDialogData
   primaryButtonDisabled$: Observable<boolean | undefined> | undefined
   secondaryButtonDisabled$: Observable<boolean | undefined> | undefined
@@ -44,7 +45,7 @@ export class DialogFooterComponent implements OnInit {
   leftCustomButtons: ButtonDialogCustomButtonDetails[] = []
   rightCustomButtons: ButtonDialogCustomButtonDetails[] = []
 
-  buttonClickedEmitter: EventEmitter<DialogState<unknown>> | undefined
+  @Output() buttonClickedEmitter: EventEmitter<DialogState<unknown>> = new EventEmitter()
 
   constructor(
     public dynamicDialogConfig: DynamicDialogConfig,
@@ -74,7 +75,25 @@ export class DialogFooterComponent implements OnInit {
   loadComponent() {
     if (this.dynamicDialogConfig.data) {
       this.setUpDialogDataForDynamicConfig()
+    } else {
+      this.setUpDialogDataForInput()
     }
+  }
+
+  setUpDialogDataForInput() {
+    if (this.config) {
+      if (!!this.config.primaryButtonDetails && !!this.config.primaryButtonDetails.key) {
+        this.dialogData.config.primaryButtonDetails = this.config.primaryButtonDetails
+      }
+      if (this.config.secondaryButtonIncluded) {
+        this.dialogData.config.secondaryButtonIncluded = this.config.secondaryButtonIncluded
+      }
+      if (!!this.config.secondaryButtonDetails && !!this.config.secondaryButtonDetails.key) {
+        this.dialogData.config.secondaryButtonDetails = this.config.secondaryButtonDetails
+      }
+    }
+    this.dialogData.config.customButtons = this.config.customButtons
+    this.setupCustomButtons(this.dialogData)
   }
 
   setUpDialogDataForDynamicConfig() {

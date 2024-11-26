@@ -58,6 +58,7 @@ import { standaloneInitializer } from './initializer/standalone.initializer'
 import { PrimeNgModule } from './primeng.module'
 import { DialogFooterComponent } from './components/dialog/dialog-footer/dialog-footer.component'
 import { DialogContentComponent } from './components/dialog/dialog-content/dialog-content.component'
+import { DialogInlineComponent } from './components/dialog/dialog-inline/dialog-inline.component'
 
 export class PortalMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -111,6 +112,7 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     ButtonDialogComponent,
     DialogFooterComponent,
     DialogContentComponent,
+    DialogInlineComponent,
     DialogMessageContentComponent,
     OcxContentDirective,
     OcxContentContainerDirective,
@@ -168,6 +170,7 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     ButtonDialogComponent,
     DialogFooterComponent,
     DialogContentComponent,
+    DialogInlineComponent,
     DialogMessageContentComponent,
     OcxContentDirective,
     OcxContentContainerDirective,
