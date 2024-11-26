@@ -140,3 +140,5 @@ dist
 
 libs/angular-accelerator/tmp/
 libs/portal-integration-angular/tmp/
+
+.copy-build-to
