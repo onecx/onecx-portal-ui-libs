@@ -178,7 +178,7 @@ export const ComponentDisplayed = {
     <button (click)="click2()">Toggle secondary button</button>,
     <button (click)="clickCustom()">Toggle custom button</button>`,
 })
-class ComponentToDisplayComponentWithDisabledButtons
+class WithDisabledButtonsComponent
   implements DialogPrimaryButtonDisabled, DialogSecondaryButtonDisabled, DialogCustomButtonsDisabled
 {
   secondaryButtonEnabled: EventEmitter<boolean> = new EventEmitter()
@@ -188,8 +188,6 @@ class ComponentToDisplayComponentWithDisabledButtons
   primaryState = false
   secondaryState = false
   customState = false
-
-  constructor() {}
 
   click1() {
     this.primaryState = !this.primaryState
@@ -221,7 +219,7 @@ export const ComponentDisplayedWithDisabledButtons = {
   args: {
     title: 'Custom title',
     messageOrComponent: {
-      type: ComponentToDisplayComponentWithDisabledButtons,
+      type: WithDisabledButtonsComponent,
     },
     primaryKey: {
       key: 'PRIMARY_KEY',
@@ -254,10 +252,8 @@ export const ComponentDisplayedWithDisabledButtons = {
     <p>Type result to be able to close the dialog via primary button click</p>
     <input type="text" (change)="onInputChange($event)" />`,
 })
-class ComponentToDisplayComponentWithValidation implements DialogResult<string>, DialogButtonClicked {
-  dialogResult: string = ''
-
-  constructor() {}
+class WithValidationComponent implements DialogResult<string>, DialogButtonClicked {
+  dialogResult = ''
 
   onInputChange(event: any) {
     const value: string = event.target.value
@@ -286,7 +282,7 @@ export const ComponentDisplayedWithValidation = {
   args: {
     title: 'Custom title',
     messageOrComponent: {
-      type: ComponentToDisplayComponentWithValidation,
+      type: WithValidationComponent,
     },
     primaryKey: {
       key: 'PRIMARY_KEY',

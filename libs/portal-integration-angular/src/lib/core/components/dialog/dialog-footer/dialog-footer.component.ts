@@ -6,12 +6,12 @@ import {
   ButtonDialogConfig,
   ButtonDialogCustomButtonDetails,
   ButtonDialogData,
-} from 'libs/portal-integration-angular/src/lib/model/button-dialog'
+} from '../../../../model/button-dialog'
 import {
   DialogState,
   DialogStateButtonClicked,
   PortalDialogServiceData,
-} from 'libs/portal-integration-angular/src/lib/services/portal-dialog.service'
+} from '../../../../services/portal-dialog.service'
 
 @Component({
   selector: 'ocx-dialog-footer',

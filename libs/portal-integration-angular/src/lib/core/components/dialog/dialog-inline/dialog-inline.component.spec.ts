@@ -1,19 +1,18 @@
 import { Component, Input } from '@angular/core'
-import { ButtonDialogConfig } from 'libs/portal-integration-angular/src/lib/model/button-dialog'
+import { ButtonDialogConfig } from '../../../../model/button-dialog'
 import { PrimeIcons } from 'primeng/api'
 import { DialogInlineComponent } from './dialog-inline.component'
-import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { TestBed } from '@angular/core/testing'
 import {
   DialogContentHarness,
   DialogFooterHarness,
-  DialogInlineHarness,
   DivHarness,
   TestbedHarnessEnvironment,
 } from '@onecx/portal-integration-angular/testing'
 import { DialogFooterComponent } from '../dialog-footer/dialog-footer.component'
 import { DialogContentComponent } from '../dialog-content/dialog-content.component'
 import { ButtonModule } from 'primeng/button'
-import { MockAuthModule } from 'libs/portal-integration-angular/src/lib/mock-auth/mock-auth.module'
+import { MockAuthModule } from '../../../../mock-auth/mock-auth.module'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 
@@ -58,10 +57,6 @@ class TestHostWithResultSubComponent {
 }
 
 describe('DialogInlineComponent', () => {
-  let component: DialogInlineComponent
-  let fixture: ComponentFixture<DialogInlineComponent>
-  let dialogInlineHarness: DialogInlineHarness
-
   const translations: any = {
     CUSTOM_PRI: 'primaryTranslation',
     CUSTOM_SEC: 'secondaryTranslation',

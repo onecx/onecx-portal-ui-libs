@@ -1,9 +1,9 @@
-import { ComponentFixture, TestBed, fakeAsync, flush, tick } from '@angular/core/testing'
+import { ComponentFixture, TestBed, fakeAsync, flush } from '@angular/core/testing'
 import { DialogContentComponent } from './dialog-content.component'
 import { DialogContentHarness, DivHarness, TestbedHarnessEnvironment } from '@onecx/portal-integration-angular/testing'
-import { MockAuthModule } from 'libs/portal-integration-angular/src/lib/mock-auth/mock-auth.module'
+import { MockAuthModule } from '../../../../mock-auth/mock-auth.module'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
-import { Component, ComponentRef, EventEmitter } from '@angular/core'
+import { Component, EventEmitter } from '@angular/core'
 import {
   DialogButtonClicked,
   DialogCustomButtonsDisabled,
@@ -11,7 +11,7 @@ import {
   DialogResult,
   DialogSecondaryButtonDisabled,
   DialogState,
-} from 'libs/portal-integration-angular/src/lib/services/portal-dialog.service'
+} from '../../../../services/portal-dialog.service'
 import { Observable } from 'rxjs'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { DialogMessageContentComponent } from '../../button-dialog/dialog-message-content/dialog-message-content.component'
@@ -26,14 +26,14 @@ class TestBaseHostComponent {}
 @Component({
   template: ` <div class="test">Test Component</div>`,
 })
-class TestComponentWithDialogResult implements DialogResult<string> {
+class TestWithDialogResultComponent implements DialogResult<string> {
   dialogResult = ''
 }
 
 @Component({
   template: ` <div class="test">Test Component</div>`,
 })
-class TestComponentWithButtonClicked implements DialogButtonClicked {
+class TestWithButtonClickedComponent implements DialogButtonClicked {
   ocxDialogButtonClicked(
     state: DialogState<unknown>
   ): boolean | void | Promise<boolean> | Observable<boolean> | undefined {
@@ -51,7 +51,7 @@ class TestComponentWithButtonClicked implements DialogButtonClicked {
 @Component({
   template: ` <div class="test">Test Component</div>`,
 })
-class TestComponentWithDialogResultAndButtonClicked implements DialogResult<string>, DialogButtonClicked {
+class TestWithDialogResultAndButtonClickedComponent implements DialogResult<string>, DialogButtonClicked {
   ocxDialogButtonClicked(
     state: DialogState<unknown>
   ): boolean | void | Promise<boolean> | Observable<boolean> | undefined {
@@ -71,7 +71,7 @@ class TestComponentWithDialogResultAndButtonClicked implements DialogResult<stri
 @Component({
   template: ` <div class="test">Test Component</div>`,
 })
-class TestComponentWithButtonDisable
+class TestWithButtonDisableComponent
   implements DialogPrimaryButtonDisabled, DialogSecondaryButtonDisabled, DialogCustomButtonsDisabled
 {
   primaryState = false
@@ -156,7 +156,7 @@ describe('DialogContentComponent', () => {
     const buttonClickedEmitter = new EventEmitter<DialogState<unknown>>()
     const dialogConfig = TestBed.inject(DynamicDialogConfig)
     dialogConfig.data = {
-      component: TestComponentWithDialogResult,
+      component: TestWithDialogResultComponent,
       portalDialogServiceData: {
         buttonClicked$: buttonClickedEmitter,
       },
@@ -185,7 +185,7 @@ describe('DialogContentComponent', () => {
     const buttonClickedEmitter = new EventEmitter<DialogState<unknown>>()
     const dialogConfig = TestBed.inject(DynamicDialogConfig)
     dialogConfig.data = {
-      component: TestComponentWithButtonClicked,
+      component: TestWithButtonClickedComponent,
       portalDialogServiceData: {
         buttonClicked$: buttonClickedEmitter,
       },
@@ -214,7 +214,7 @@ describe('DialogContentComponent', () => {
     const buttonClickedEmitter = new EventEmitter<DialogState<unknown>>()
     const dialogConfig = TestBed.inject(DynamicDialogConfig)
     dialogConfig.data = {
-      component: TestComponentWithButtonClicked,
+      component: TestWithButtonClickedComponent,
       portalDialogServiceData: {
         buttonClicked$: buttonClickedEmitter,
       },
@@ -244,7 +244,7 @@ describe('DialogContentComponent', () => {
     const buttonClickedEmitter = new EventEmitter<DialogState<unknown>>()
     const dialogConfig = TestBed.inject(DynamicDialogConfig)
     dialogConfig.data = {
-      component: TestComponentWithButtonClicked,
+      component: TestWithButtonClickedComponent,
       portalDialogServiceData: {
         buttonClicked$: buttonClickedEmitter,
       },
@@ -276,7 +276,7 @@ describe('DialogContentComponent', () => {
     const buttonClickedEmitter = new EventEmitter<DialogState<unknown>>()
     const dialogConfig = TestBed.inject(DynamicDialogConfig)
     dialogConfig.data = {
-      component: TestComponentWithDialogResultAndButtonClicked,
+      component: TestWithDialogResultAndButtonClickedComponent,
       portalDialogServiceData: {
         buttonClicked$: buttonClickedEmitter,
       },
@@ -310,7 +310,7 @@ describe('DialogContentComponent', () => {
     const buttonClickedEmitter = new EventEmitter<DialogState<unknown>>()
     const dialogConfig = TestBed.inject(DynamicDialogConfig)
     dialogConfig.data = {
-      component: TestComponentWithDialogResultAndButtonClicked,
+      component: TestWithDialogResultAndButtonClickedComponent,
       portalDialogServiceData: {
         buttonClicked$: buttonClickedEmitter,
       },
@@ -340,7 +340,7 @@ describe('DialogContentComponent', () => {
       const primaryButtonEnabledEmitter = new EventEmitter<boolean>()
       const dialogConfig = TestBed.inject(DynamicDialogConfig)
       dialogConfig.data = {
-        component: TestComponentWithButtonDisable,
+        component: TestWithButtonDisableComponent,
         portalDialogServiceData: {
           primaryButtonEnabled$: primaryButtonEnabledEmitter,
           buttonClicked$: new EventEmitter(),
@@ -360,7 +360,7 @@ describe('DialogContentComponent', () => {
       const secondaryButtonEnabledEmitter = new EventEmitter<boolean>()
       const dialogConfig = TestBed.inject(DynamicDialogConfig)
       dialogConfig.data = {
-        component: TestComponentWithButtonDisable,
+        component: TestWithButtonDisableComponent,
         portalDialogServiceData: {
           secondaryButtonEnabled$: secondaryButtonEnabledEmitter,
           buttonClicked$: new EventEmitter(),
@@ -380,7 +380,7 @@ describe('DialogContentComponent', () => {
       const customButtonEnabledEmitter = new EventEmitter<{ id: string; enabled: boolean }>()
       const dialogConfig = TestBed.inject(DynamicDialogConfig)
       dialogConfig.data = {
-        component: TestComponentWithButtonDisable,
+        component: TestWithButtonDisableComponent,
         portalDialogServiceData: {
           customButtonEnabled$: customButtonEnabledEmitter,
           buttonClicked$: new EventEmitter(),

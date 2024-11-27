@@ -1,7 +1,7 @@
 import { Component, ComponentRef, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core'
 import { Observable, Subscription, from, isObservable, of, startWith } from 'rxjs'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
-import { ButtonDialogData } from 'libs/portal-integration-angular/src/lib/model/button-dialog'
+import { ButtonDialogData } from '../../../../model/button-dialog'
 import { DialogMessageContentComponent } from '../../button-dialog/dialog-message-content/dialog-message-content.component'
 import {
   DialogButtonClicked,
@@ -10,7 +10,7 @@ import {
   DialogResult,
   DialogSecondaryButtonDisabled,
   PortalDialogServiceData,
-} from 'libs/portal-integration-angular/src/lib/services/portal-dialog.service'
+} from '../../../../services/portal-dialog.service'
 
 @Component({
   selector: 'ocx-dialog-content',
