@@ -1,344 +1,403 @@
-// import { Component, Input } from '@angular/core'
-// import { ComponentFixture, TestBed } from '@angular/core/testing'
-// import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-// import { TranslateTestingModule } from 'ngx-translate-testing'
-// import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
-// import { ButtonModule } from 'primeng/button'
+import { ComponentFixture, TestBed, fakeAsync, flush, tick } from '@angular/core/testing'
+import { DialogContentComponent } from './dialog-content.component'
+import { DialogContentHarness, DivHarness, TestbedHarnessEnvironment } from '@onecx/portal-integration-angular/testing'
+import { MockAuthModule } from 'libs/portal-integration-angular/src/lib/mock-auth/mock-auth.module'
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { Component, ComponentRef, EventEmitter } from '@angular/core'
+import {
+  DialogButtonClicked,
+  DialogCustomButtonsDisabled,
+  DialogPrimaryButtonDisabled,
+  DialogResult,
+  DialogSecondaryButtonDisabled,
+  DialogState,
+} from 'libs/portal-integration-angular/src/lib/services/portal-dialog.service'
+import { Observable } from 'rxjs'
+import { TranslateTestingModule } from 'ngx-translate-testing'
+import { DialogMessageContentComponent } from '../../button-dialog/dialog-message-content/dialog-message-content.component'
 
-// import { ButtonDialogComponent } from './button-dialog.component'
-// import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
-// import { ButtonDialogHarness } from '../../../../../testing'
-// import { DivHarness } from '@onecx/angular-testing'
-// import { ButtonDialogConfig } from '../../../model/button-dialog'
-// import { PrimeIcons } from 'primeng/api'
+@Component({
+  template: `<ocx-dialog-content>
+    <div class="host">HostComponentContent</div>
+  </ocx-dialog-content>`,
+})
+class TestBaseHostComponent {}
 
-// @Component({
-//   template: `<ocx-button-dialog>
-//     <div class="host">HostComponentContent</div>
-//   </ocx-button-dialog>`,
-// })
-// class TestBaseHostComponent {}
+@Component({
+  template: ` <div class="test">Test Component</div>`,
+})
+class TestComponentWithDialogResult implements DialogResult<string> {
+  dialogResult = ''
+}
 
-// const config: ButtonDialogConfig = {
-//   primaryButtonDetails: {
-//     key: 'inlineMain',
-//     icon: PrimeIcons.PLUS,
-//   },
-//   secondaryButtonIncluded: true,
-//   secondaryButtonDetails: {
-//     key: 'inlineSide',
-//     icon: PrimeIcons.TIMES,
-//   },
-// }
+@Component({
+  template: ` <div class="test">Test Component</div>`,
+})
+class TestComponentWithButtonClicked implements DialogButtonClicked {
+  ocxDialogButtonClicked(
+    state: DialogState<unknown>
+  ): boolean | void | Promise<boolean> | Observable<boolean> | undefined {
+    if (this.returnUndefined) return undefined
+    if (state.button === this.expectedButton) {
+      return true
+    }
+    return false
+  }
 
-// @Component({
-//   template: ` <ocx-button-dialog [config]="this.buttonDialogConfig">
-//     <div class="host">HostComponentContent</div>
-//   </ocx-button-dialog>`,
-// })
-// class TestHostWithConfigComponent {
-//   @Input() buttonDialogConfig: ButtonDialogConfig = config
-// }
+  returnUndefined = false
+  expectedButton = 'primary'
+}
 
-// @Component({
-//   template: ` <ocx-button-dialog (resultEmitter)="handleResult($event)">
-//     <div class="host">HostComponentContent</div>
-//   </ocx-button-dialog>`,
-// })
-// class TestHostWithResultSubComponent {
-//   @Input() buttonDialogConfig: ButtonDialogConfig = config
-//   public handleResult(result: any): void {
-//     console.log(result)
-//   }
-// }
+@Component({
+  template: ` <div class="test">Test Component</div>`,
+})
+class TestComponentWithDialogResultAndButtonClicked implements DialogResult<string>, DialogButtonClicked {
+  ocxDialogButtonClicked(
+    state: DialogState<unknown>
+  ): boolean | void | Promise<boolean> | Observable<boolean> | undefined {
+    if (state.button === this.expectedButton && state.result === this.expectedResult) {
+      return true
+    }
+    return false
+  }
 
-// describe('ButtonDialogComponent', () => {
-//   let component: ButtonDialogComponent
-//   let fixture: ComponentFixture<ButtonDialogComponent>
-//   let buttonDialogHarness: ButtonDialogHarness
+  dialogResult = ''
 
-//   const translations: any = {
-//     CUSTOM_PRI: 'primaryTranslation',
-//     CUSTOM_SEC: 'secondaryTranslation',
-//     CUSTOM_PRI_PARAM: 'primary-{{val}}',
-//     CUSTOM_SEC_PARAM: 'secondary-{{val}}',
-//     OCX_BUTTON_DIALOG: {
-//       CONFIRM: 'Confirm',
-//       CANCEL: 'Cancel',
-//     },
-//   }
+  returnUndefined = false
+  expectedButton = 'primary'
+  expectedResult = ''
+}
 
-//   describe('basic usage', () => {
-//     beforeEach(async () => {
-//       await TestBed.configureTestingModule({
-//         declarations: [ButtonDialogComponent],
-//         imports: [
-//           ButtonModule,
-//           MockAuthModule,
-//           TranslateTestingModule.withTranslations({
-//             en: translations,
-//           }),
-//         ],
-//         providers: [DynamicDialogConfig, DynamicDialogRef],
-//       }).compileComponents()
-//       fixture = TestBed.createComponent(ButtonDialogComponent)
-//       component = fixture.componentInstance
-//       fixture.detectChanges()
-//       buttonDialogHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, ButtonDialogHarness)
-//     })
+@Component({
+  template: ` <div class="test">Test Component</div>`,
+})
+class TestComponentWithButtonDisable
+  implements DialogPrimaryButtonDisabled, DialogSecondaryButtonDisabled, DialogCustomButtonsDisabled
+{
+  primaryState = false
+  secondaryState = false
+  customState = false
+  customButtonEnabled: EventEmitter<{ id: string; enabled: boolean }> = new EventEmitter()
+  secondaryButtonEnabled: EventEmitter<boolean> = new EventEmitter()
+  primaryButtonEnabled: EventEmitter<boolean> = new EventEmitter()
 
-//     it('should create button-dialog component', () => {
-//       expect(component).toBeTruthy()
-//     })
+  togglePrimaryButtonEnable() {
+    this.primaryState = !this.primaryState
+    this.primaryButtonEnabled.emit(this.primaryState)
+  }
 
-//     it('should create default button-dialog without passing config', async () => {
-//       // expect correct default initialization
-//       expect(component.dialogData.component).toEqual(undefined)
-//       expect(component.dialogData.componentData).toEqual(undefined)
-//       expect(component.dialogData.config.primaryButtonDetails).toEqual(component.defaultPrimaryButtonDetails)
-//       expect(component.dialogData.config.secondaryButtonIncluded).toEqual(true)
-//       expect(component.dialogData.config.secondaryButtonDetails).toEqual(component.defaultSecondaryButtonDetails)
+  toggleSecondaryButtonEnable() {
+    this.secondaryState = !this.secondaryState
+    this.secondaryButtonEnabled.emit(this.secondaryState)
+  }
 
-//       // expect default emitted value to be label
-//       jest.spyOn(component.resultEmitter, 'emit')
-//       await buttonDialogHarness.clickPrimaryButton()
+  toggleCustomButtonEnable() {
+    this.customState = !this.customState
+    this.customButtonEnabled.emit({
+      id: 'id',
+      enabled: this.customState,
+    })
+  }
+}
 
-//       expect(component.resultEmitter.emit).toHaveBeenCalledWith('primary')
+describe('DialogContentComponent', () => {
+  let component: DialogContentComponent
+  let fixture: ComponentFixture<DialogContentComponent>
 
-//       jest.resetAllMocks()
+  let fixtureWithHost
+  let harnessLoader
 
-//       await buttonDialogHarness.clickSecondaryButton()
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [DialogContentComponent, DialogMessageContentComponent],
+      imports: [MockAuthModule, TranslateTestingModule.withTranslations({})],
+      providers: [DynamicDialogConfig, DynamicDialogRef],
+    }).compileComponents()
 
-//       expect(component.resultEmitter.emit).toHaveBeenCalledWith('secondary')
+    jest.resetAllMocks()
+  })
 
-//       // expect default label
-//       expect(await buttonDialogHarness.getPrimaryButtonLabel()).toBe('Confirm')
-//       expect(await buttonDialogHarness.getSecondaryButtonLabel()).toBe('Cancel')
-//       // expect no icon
-//       expect(await buttonDialogHarness.getPrimaryButtonIcon()).toBe('')
-//       expect(await buttonDialogHarness.getSecondaryButtonIcon()).toBe('')
-//     })
+  it('should ue ng-content', async () => {
+    fixtureWithHost = TestBed.createComponent(TestBaseHostComponent)
+    fixtureWithHost.detectChanges()
+    harnessLoader = await TestbedHarnessEnvironment.loader(fixtureWithHost)
+    const contentHarness = await harnessLoader.getHarness(DialogContentHarness)
 
-//     it('should create customized button-dialog with passing config', async () => {
-//       component.dialogData.config = {
-//         primaryButtonDetails: {
-//           key: 'CustomMain',
-//           icon: PrimeIcons.CHECK,
-//         },
-//         secondaryButtonIncluded: true,
-//         secondaryButtonDetails: {
-//           key: 'CustomSide',
-//           icon: PrimeIcons.TIMES,
-//         },
-//       }
+    const contentDiv = await contentHarness.getHarness(DivHarness.with({ class: 'host' }))
+    expect(contentDiv).toBeDefined()
+    expect(await contentDiv.getText()).toBe('HostComponentContent')
+  })
 
-//       // expect correct label
-//       expect(await buttonDialogHarness.getPrimaryButtonLabel()).toBe('CustomMain')
-//       expect(await buttonDialogHarness.getSecondaryButtonLabel()).toBe('CustomSide')
-//       // expect correct icon
-//       expect(await buttonDialogHarness.getPrimaryButtonIcon()).toBe(PrimeIcons.CHECK)
-//       expect(await buttonDialogHarness.getSecondaryButtonIcon()).toBe(PrimeIcons.TIMES)
-//     })
+  it('should close dialog with result of button click', () => {
+    const buttonClickedEmitter = new EventEmitter<DialogState<unknown>>()
+    const dialogConfig = TestBed.inject(DynamicDialogConfig)
+    dialogConfig.data = {
+      portalDialogServiceData: {
+        buttonClicked$: buttonClickedEmitter,
+      },
+    }
+    const dynamicDialogRef = TestBed.inject(DynamicDialogRef)
+    const dynamicDialogRefSpy = jest.spyOn(dynamicDialogRef, 'close')
 
-//     it('should translate button keys', async () => {
-//       component.dialogData.config = {
-//         primaryButtonDetails: {
-//           key: 'CUSTOM_PRI',
-//         },
-//         secondaryButtonIncluded: true,
-//         secondaryButtonDetails: {
-//           key: 'CUSTOM_SEC',
-//         },
-//       }
+    fixture = TestBed.createComponent(DialogContentComponent)
+    fixture.detectChanges()
+    component = fixture.componentInstance
 
-//       // expect correct label
-//       expect(await buttonDialogHarness.getPrimaryButtonLabel()).toBe(translations['CUSTOM_PRI'])
-//       expect(await buttonDialogHarness.getSecondaryButtonLabel()).toBe(translations['CUSTOM_SEC'])
-//     })
+    const clickedState: DialogState<unknown> = {
+      button: 'primary',
+      result: undefined,
+      id: undefined,
+    }
+    buttonClickedEmitter.emit(clickedState)
 
-//     it('should translate button keys with parameters', async () => {
-//       component.dialogData.config = {
-//         primaryButtonDetails: {
-//           key: 'CUSTOM_PRI_PARAM',
-//           parameters: {
-//             val: 'firstParam',
-//           },
-//         },
-//         secondaryButtonIncluded: true,
-//         secondaryButtonDetails: {
-//           key: 'CUSTOM_SEC_PARAM',
-//           parameters: {
-//             val: 'secondParam',
-//           },
-//         },
-//       }
+    expect(dynamicDialogRefSpy).toHaveBeenCalledWith(clickedState)
+  })
+  it('should close dialog with overwritten state result with component result if DialogResult is implemented', async () => {
+    const buttonClickedEmitter = new EventEmitter<DialogState<unknown>>()
+    const dialogConfig = TestBed.inject(DynamicDialogConfig)
+    dialogConfig.data = {
+      component: TestComponentWithDialogResult,
+      portalDialogServiceData: {
+        buttonClicked$: buttonClickedEmitter,
+      },
+    }
+    const dynamicDialogRef = TestBed.inject(DynamicDialogRef)
+    const dynamicDialogRefSpy = jest.spyOn(dynamicDialogRef, 'close')
 
-//       // expect correct label
-//       expect(await buttonDialogHarness.getPrimaryButtonLabel()).toBe('primary-firstParam')
-//       expect(await buttonDialogHarness.getSecondaryButtonLabel()).toBe('secondary-secondParam')
-//     })
+    fixture = TestBed.createComponent(DialogContentComponent)
+    fixture.detectChanges()
+    component = fixture.componentInstance
 
-//     it('should create Confirm/Cancel button-dialog when sideButton is enabled', async () => {
-//       component.dialogData.config.secondaryButtonIncluded = true
+    component.componentRef.instance.dialogResult = 'componentResult'
+    buttonClickedEmitter.emit({
+      button: 'primary',
+      result: 'buttonClickResult',
+      id: undefined,
+    })
 
-//       expect(await buttonDialogHarness.getPrimaryButtonLabel()).toBe('Confirm')
-//       expect(await buttonDialogHarness.getSecondaryButtonLabel()).toBe('Cancel')
-//     })
+    expect(dynamicDialogRefSpy).toHaveBeenCalledWith({
+      button: 'primary',
+      result: 'componentResult',
+      id: undefined,
+    })
+  })
+  it('should close dialog with state result if DialogButtonClicked resulted in undefined', async () => {
+    const buttonClickedEmitter = new EventEmitter<DialogState<unknown>>()
+    const dialogConfig = TestBed.inject(DynamicDialogConfig)
+    dialogConfig.data = {
+      component: TestComponentWithButtonClicked,
+      portalDialogServiceData: {
+        buttonClicked$: buttonClickedEmitter,
+      },
+    }
+    const dynamicDialogRef = TestBed.inject(DynamicDialogRef)
+    const dynamicDialogRefSpy = jest.spyOn(dynamicDialogRef, 'close')
 
-//     it('should create Confirm only button-dialog when sideButton is disabled', async () => {
-//       component.dialogData.config.secondaryButtonIncluded = false
+    fixture = TestBed.createComponent(DialogContentComponent)
+    fixture.detectChanges()
+    component = fixture.componentInstance
 
-//       expect(await buttonDialogHarness.getPrimaryButtonLabel()).toBe('Confirm')
-//       expect(await buttonDialogHarness.getSecondaryButton()).toBeNull()
-//     })
+    component.componentRef.instance.returnUndefined = true
+    buttonClickedEmitter.emit({
+      button: 'primary',
+      result: 'buttonClickResult',
+      id: undefined,
+    })
 
-//     it('should create CustmMain/Cancel button-dialog when mainButton is defined', async () => {
-//       component.dialogData.config.primaryButtonDetails = {
-//         key: 'CustomMain',
-//       }
+    expect(dynamicDialogRefSpy).toHaveBeenCalledWith({
+      button: 'primary',
+      result: 'buttonClickResult',
+      id: undefined,
+    })
+  })
+  it('should close dialog with overwritten state result if DialogButtonClicked resulted in undefined', async () => {
+    const buttonClickedEmitter = new EventEmitter<DialogState<unknown>>()
+    const dialogConfig = TestBed.inject(DynamicDialogConfig)
+    dialogConfig.data = {
+      component: TestComponentWithButtonClicked,
+      portalDialogServiceData: {
+        buttonClicked$: buttonClickedEmitter,
+      },
+    }
+    const dynamicDialogRef = TestBed.inject(DynamicDialogRef)
+    const dynamicDialogRefSpy = jest.spyOn(dynamicDialogRef, 'close')
 
-//       expect(await buttonDialogHarness.getPrimaryButtonLabel()).toBe('CustomMain')
-//       expect(await buttonDialogHarness.getSecondaryButtonLabel()).toBe('Cancel')
-//     })
+    fixture = TestBed.createComponent(DialogContentComponent)
+    fixture.detectChanges()
+    component = fixture.componentInstance
 
-//     it('should create Confirm/CustomSide button-dialog when sideButton is defined', async () => {
-//       component.dialogData.config.secondaryButtonDetails = {
-//         key: 'CustomSide',
-//       }
+    component.componentRef.instance.returnUndefined = true
 
-//       expect(await buttonDialogHarness.getPrimaryButtonLabel()).toBe('Confirm')
-//       expect(await buttonDialogHarness.getSecondaryButtonLabel()).toBe('CustomSide')
-//     })
+    buttonClickedEmitter.emit({
+      button: 'primary',
+      result: 'buttonClickResult',
+      id: undefined,
+    })
 
-//     it('should create CustomMain/CustomSide button-dialog when both buttons are defined', async () => {
-//       component.dialogData.config.primaryButtonDetails = {
-//         key: 'CustomMain',
-//       }
-//       component.dialogData.config.secondaryButtonDetails = {
-//         key: 'CustomSide',
-//       }
+    expect(dynamicDialogRefSpy).toHaveBeenCalledWith({
+      button: 'primary',
+      result: 'buttonClickResult',
+      id: undefined,
+    })
+  })
+  it('should close dialog with state result if DialogButtonClicked resulted in true', fakeAsync(() => {
+    const buttonClickedEmitter = new EventEmitter<DialogState<unknown>>()
+    const dialogConfig = TestBed.inject(DynamicDialogConfig)
+    dialogConfig.data = {
+      component: TestComponentWithButtonClicked,
+      portalDialogServiceData: {
+        buttonClicked$: buttonClickedEmitter,
+      },
+    }
+    const dynamicDialogRef = TestBed.inject(DynamicDialogRef)
+    const dynamicDialogRefSpy = jest.spyOn(dynamicDialogRef, 'close')
 
-//       expect(await buttonDialogHarness.getPrimaryButtonLabel()).toBe('CustomMain')
-//       expect(await buttonDialogHarness.getSecondaryButtonLabel()).toBe('CustomSide')
-//     })
+    fixture = TestBed.createComponent(DialogContentComponent)
+    fixture.detectChanges()
+    component = fixture.componentInstance
 
-//     it('should create CustomMain only button-dialog when sideButton is disabled', async () => {
-//       component.dialogData.config.primaryButtonDetails = {
-//         key: 'CustomMain',
-//       }
-//       component.dialogData.config.secondaryButtonIncluded = false
+    component.componentRef.instance.expectedButton = 'primary'
 
-//       expect(await buttonDialogHarness.getPrimaryButtonLabel()).toBe('CustomMain')
-//       expect(await buttonDialogHarness.getSecondaryButton()).toBeNull()
-//     })
+    buttonClickedEmitter.emit({
+      button: 'primary',
+      result: 'buttonClickResult',
+      id: undefined,
+    })
 
-//     it('should create CustomMain/Cancel button-dialog when sideButton is enabled', async () => {
-//       component.dialogData.config.primaryButtonDetails = {
-//         key: 'CustomMain',
-//       }
-//       component.dialogData.config.secondaryButtonIncluded = true
+    flush()
 
-//       expect(await buttonDialogHarness.getPrimaryButtonLabel()).toBe('CustomMain')
-//       expect(await buttonDialogHarness.getSecondaryButtonLabel()).toBe('Cancel')
-//     })
+    expect(dynamicDialogRefSpy).toHaveBeenCalledWith({
+      button: 'primary',
+      result: 'buttonClickResult',
+      id: undefined,
+    })
+  }))
+  it('should close dialog with overwritten state result if DialogButtonClicked resulted in true', fakeAsync(() => {
+    const buttonClickedEmitter = new EventEmitter<DialogState<unknown>>()
+    const dialogConfig = TestBed.inject(DynamicDialogConfig)
+    dialogConfig.data = {
+      component: TestComponentWithDialogResultAndButtonClicked,
+      portalDialogServiceData: {
+        buttonClicked$: buttonClickedEmitter,
+      },
+    }
+    const dynamicDialogRef = TestBed.inject(DynamicDialogRef)
+    const dynamicDialogRefSpy = jest.spyOn(dynamicDialogRef, 'close')
 
-//     it('should create Confirm only button-dialog when sideButton is defined but is disabled', async () => {
-//       component.dialogData.config.secondaryButtonDetails = {
-//         key: 'CustomSide',
-//       }
-//       component.dialogData.config.secondaryButtonIncluded = false
+    fixture = TestBed.createComponent(DialogContentComponent)
+    fixture.detectChanges()
+    component = fixture.componentInstance
 
-//       expect(await buttonDialogHarness.getPrimaryButtonLabel()).toBe('Confirm')
-//       expect(await buttonDialogHarness.getSecondaryButton()).toBeNull()
-//     })
+    component.componentRef.instance.expectedButton = 'primary'
+    component.componentRef.instance.expectedResult = 'my-result'
+    component.componentRef.instance.dialogResult = 'my-result'
 
-//     it('should create Confirm/CustomSide button-dialog when sideButton is defined and enabled', async () => {
-//       component.dialogData.config.secondaryButtonDetails = {
-//         key: 'CustomSide',
-//       }
-//       component.dialogData.config.secondaryButtonIncluded = true
+    buttonClickedEmitter.emit({
+      button: 'primary',
+      result: 'buttonClickResult',
+      id: undefined,
+    })
 
-//       expect(await buttonDialogHarness.getPrimaryButtonLabel()).toBe('Confirm')
-//       expect(await buttonDialogHarness.getSecondaryButtonLabel()).toBe('CustomSide')
-//     })
+    flush()
 
-//     it('should create CustomMain only button-dialog when sideButton is defined but is disabled', async () => {
-//       component.dialogData.config = {
-//         primaryButtonDetails: {
-//           key: 'CustomMain',
-//         },
-//         secondaryButtonDetails: {
-//           key: 'CustomSide',
-//         },
-//         secondaryButtonIncluded: false,
-//       }
+    expect(dynamicDialogRefSpy).toHaveBeenCalledWith({
+      button: 'primary',
+      result: 'my-result',
+      id: undefined,
+    })
+  }))
+  it('should not close dialog if DialogButtonClicked resulted in false', async () => {
+    const buttonClickedEmitter = new EventEmitter<DialogState<unknown>>()
+    const dialogConfig = TestBed.inject(DynamicDialogConfig)
+    dialogConfig.data = {
+      component: TestComponentWithDialogResultAndButtonClicked,
+      portalDialogServiceData: {
+        buttonClicked$: buttonClickedEmitter,
+      },
+    }
+    const dynamicDialogRef = TestBed.inject(DynamicDialogRef)
+    const dynamicDialogRefSpy = jest.spyOn(dynamicDialogRef, 'close')
 
-//       expect(await buttonDialogHarness.getPrimaryButtonLabel()).toBe('CustomMain')
-//       expect(await buttonDialogHarness.getSecondaryButton()).toBeNull()
-//     })
-//   })
+    fixture = TestBed.createComponent(DialogContentComponent)
+    fixture.detectChanges()
+    component = fixture.componentInstance
 
-//   describe('inline usage', () => {
-//     let fixtureWithHost
-//     let harnessLoader
+    component.componentRef.instance.expectedButton = 'primary'
+    component.componentRef.instance.expectedResult = 'my-result'
+    component.componentRef.instance.dialogResult = 'my-other-result'
 
-//     beforeEach(async () => {
-//       await TestBed.configureTestingModule({
-//         declarations: [
-//           ButtonDialogComponent,
-//           TestHostWithConfigComponent,
-//           TestBaseHostComponent,
-//           TestHostWithResultSubComponent,
-//         ],
-//         imports: [
-//           ButtonModule,
-//           MockAuthModule,
-//           TranslateTestingModule.withTranslations({
-//             en: translations,
-//           }),
-//         ],
-//         providers: [DynamicDialogConfig, DynamicDialogRef],
-//       }).compileComponents()
-//     })
+    buttonClickedEmitter.emit({
+      button: 'primary',
+      result: 'buttonClickResult',
+      id: undefined,
+    })
 
-//     it('should use ng-content', async () => {
-//       fixtureWithHost = TestBed.createComponent(TestBaseHostComponent)
-//       fixtureWithHost.detectChanges()
-//       harnessLoader = await TestbedHarnessEnvironment.loader(fixtureWithHost)
-//       buttonDialogHarness = await harnessLoader.getHarness(ButtonDialogHarness)
+    expect(dynamicDialogRefSpy).toHaveBeenCalledTimes(0)
+  })
 
-//       const contentDiv = await buttonDialogHarness.getHarness(DivHarness.with({ class: 'host' }))
-//       expect(contentDiv).toBeDefined()
-//       expect(await contentDiv.getText()).toBe('HostComponentContent')
-//     })
+  describe('buttons enablement', () => {
+    it('should emit when primary button enablement changes', () => {
+      const primaryButtonEnabledEmitter = new EventEmitter<boolean>()
+      const dialogConfig = TestBed.inject(DynamicDialogConfig)
+      dialogConfig.data = {
+        component: TestComponentWithButtonDisable,
+        portalDialogServiceData: {
+          primaryButtonEnabled$: primaryButtonEnabledEmitter,
+          buttonClicked$: new EventEmitter(),
+        },
+      }
 
-//     it('should use passed config', async () => {
-//       fixtureWithHost = TestBed.createComponent(TestHostWithConfigComponent)
-//       fixtureWithHost.detectChanges()
-//       harnessLoader = await TestbedHarnessEnvironment.loader(fixtureWithHost)
-//       buttonDialogHarness = await harnessLoader.getHarness(ButtonDialogHarness)
+      fixture = TestBed.createComponent(DialogContentComponent)
+      fixture.detectChanges()
+      component = fixture.componentInstance
 
-//       expect(await buttonDialogHarness.getPrimaryButtonLabel()).toBe('inlineMain')
-//       expect(await buttonDialogHarness.getPrimaryButtonIcon()).toBe(PrimeIcons.PLUS)
-//       expect(await buttonDialogHarness.getSecondaryButtonLabel()).toBe('inlineSide')
-//       expect(await buttonDialogHarness.getSecondaryButtonIcon()).toBe(PrimeIcons.TIMES)
-//     })
+      const emitterSpy = jest.spyOn(primaryButtonEnabledEmitter, 'emit')
+      component.componentRef.instance.togglePrimaryButtonEnable()
 
-//     it('should use default emitter inline', async () => {
-//       await TestBed.compileComponents()
-//       fixtureWithHost = TestBed.createComponent(TestHostWithResultSubComponent)
-//       fixtureWithHost.detectChanges()
-//       buttonDialogHarness = await TestbedHarnessEnvironment.harnessForFixture(fixtureWithHost, ButtonDialogHarness)
+      expect(emitterSpy).toHaveBeenCalledWith(true)
+    })
+    it('should emit when secondary button enablement changes', () => {
+      const secondaryButtonEnabledEmitter = new EventEmitter<boolean>()
+      const dialogConfig = TestBed.inject(DynamicDialogConfig)
+      dialogConfig.data = {
+        component: TestComponentWithButtonDisable,
+        portalDialogServiceData: {
+          secondaryButtonEnabled$: secondaryButtonEnabledEmitter,
+          buttonClicked$: new EventEmitter(),
+        },
+      }
 
-//       jest.spyOn(console, 'log')
+      fixture = TestBed.createComponent(DialogContentComponent)
+      fixture.detectChanges()
+      component = fixture.componentInstance
 
-//       await buttonDialogHarness.clickPrimaryButton()
-//       expect(console.log).toHaveBeenCalledWith('primary')
+      const emitterSpy = jest.spyOn(secondaryButtonEnabledEmitter, 'emit')
+      component.componentRef.instance.toggleSecondaryButtonEnable()
 
-//       jest.resetAllMocks()
+      expect(emitterSpy).toHaveBeenCalledWith(true)
+    })
+    it('should emit when custom button enablement changes', () => {
+      const customButtonEnabledEmitter = new EventEmitter<{ id: string; enabled: boolean }>()
+      const dialogConfig = TestBed.inject(DynamicDialogConfig)
+      dialogConfig.data = {
+        component: TestComponentWithButtonDisable,
+        portalDialogServiceData: {
+          customButtonEnabled$: customButtonEnabledEmitter,
+          buttonClicked$: new EventEmitter(),
+        },
+      }
 
-//       await buttonDialogHarness.clickSecondaryButton()
-//       expect(console.log).toHaveBeenCalledWith('secondary')
-//     })
-//   })
-// })
+      fixture = TestBed.createComponent(DialogContentComponent)
+      fixture.detectChanges()
+      component = fixture.componentInstance
+
+      const emitterSpy = jest.spyOn(customButtonEnabledEmitter, 'emit')
+      component.componentRef.instance.toggleCustomButtonEnable()
+
+      expect(emitterSpy).toHaveBeenCalledWith({
+        id: 'id',
+        enabled: true,
+      })
+    })
+  })
+})
