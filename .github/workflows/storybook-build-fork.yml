@@ -1,8 +1,9 @@
 name: Build Storybook (Fork)
-on: 
+on:
   pull_request:
-      branches:
-        - 'main'
+    branches:
+      - 'main'
+      - 'develop'
 jobs:
   build-storybooks:
     runs-on: ubuntu-latest
@@ -20,6 +21,5 @@ jobs:
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-            name: storybook-dist
-            path: dist/storybook/
-            
+          name: storybook-dist
+          path: dist/storybook/
