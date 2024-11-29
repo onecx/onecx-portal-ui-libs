@@ -1,6 +1,9 @@
 #!/bin/bash
 echo "$1"
+echo "$2"
 export VERSION=$1
+channel=$2
+registry="registry.npmjs.org"
 packageJsonData=$(cat package.json)
 topLevelPackageVersion=$(echo "$packageJsonData" | jq -r '.version')
 if [[ $topLevelPackageVersion != $1 ]]
@@ -14,7 +17,9 @@ while IFS= read -r folder; do
     folder_names+=("$folder")
 done < <(find "$directory" -mindepth 1 -maxdepth 1 -type d | awk -F "/" '{print $NF}' | sort | uniq)
 
+wd=$(pwd)
 for folder in "${folder_names[@]}"; do
+    cd $wd
     packageJsonDataLib=$(cat libs/$folder/package.json)
     libPackageVersion=$(echo "$packageJsonDataLib" | jq -r '.version')
     packageJsonDataLib=$(echo "$packageJsonDataLib" | sed -E 's/(@onecx[^"]+?": *?")([^"]+)"/\1^'$1'"/')
@@ -22,7 +27,9 @@ for folder in "${folder_names[@]}"; do
     if [[ $libPackageVersion != $1 ]]
     then
         npx -p replace-json-property rjp libs/$folder/package.json version $1
-        npx nx run $folder:release
+        npx nx build --project $folder
+        cd ./dist/libs/$folder
+        echo //$registry/:_authToken=$NPM_TOKEN >> .npmrc && npm publish --dry-run --tag=$channel
     fi  
 done
 

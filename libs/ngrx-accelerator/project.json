@@ -44,12 +44,6 @@
       "options": {
         "lintFilePatterns": ["libs/ngrx-accelerator/**/*.ts", "libs/ngrx-accelerator/package.json"]
       }
-    },
-    "release": {
-      "executor": "nx-release:build-update-publish",
-      "options": {
-        "libName": "ngrx-accelerator"
-      }
     }
   }
 }

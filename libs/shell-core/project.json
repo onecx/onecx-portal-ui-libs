@@ -52,12 +52,6 @@
           "libs/shell-core/package.json"
         ]
       }
-    },
-    "release": {
-      "executor": "nx-release:build-update-publish",
-      "options": {
-        "libName": "shell-core"
-      }
     }
   }
 }

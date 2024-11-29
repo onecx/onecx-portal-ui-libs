@@ -51,12 +51,6 @@
           "libs/angular-webcomponents/**/*.html"
         ]
       }
-    },
-    "release": {
-      "executor": "nx-release:build-update-publish",
-      "options": {
-        "libName": "angular-webcomponents"
-      }
     }
   }
 }

@@ -20,13 +20,7 @@
       "options": {
         "lintFilePatterns": ["libs/portal-layout-styles/**/*.ts", "libs/portal-layout-styles/package.json"]
       }
-    },
-    "release": {
-      "executor": "nx-release:build-update-publish",
-      "options": {
-        "libName": "portal-layout-styles"
-      }
-    },    
+    },   
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
