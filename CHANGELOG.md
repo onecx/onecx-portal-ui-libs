@@ -1,3 +1,20 @@
+## [5.29.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.28.0...v5.29.0) (2024-12-02)
+
+### Features
+
+* add CI and storybook to develop ([#622](https://github.com/onecx/onecx-portal-ui-libs/issues/622)) ([3f3da60](https://github.com/onecx/onecx-portal-ui-libs/commit/3f3da6001ed409b909ec80478ec8fa392ada67cf))
+* implemented build-copy command ([#617](https://github.com/onecx/onecx-portal-ui-libs/issues/617)) ([a3dfecc](https://github.com/onecx/onecx-portal-ui-libs/commit/a3dfecc2bb28619fa30418a9084cc76935da83b9))
+* README update ([#620](https://github.com/onecx/onecx-portal-ui-libs/issues/620)) ([bb1ac87](https://github.com/onecx/onecx-portal-ui-libs/commit/bb1ac871af95691567326633afec70bb4fd8b4b2))
+
+### Bug Fixes
+
+* overflow actions should use provided id ([#627](https://github.com/onecx/onecx-portal-ui-libs/issues/627)) ([aa6b9f8](https://github.com/onecx/onecx-portal-ui-libs/commit/aa6b9f86387ae032bbdd83e7852f0cca936e5503))
+* tooltip added for select all in data table ([#626](https://github.com/onecx/onecx-portal-ui-libs/issues/626)) ([d46f65f](https://github.com/onecx/onecx-portal-ui-libs/commit/d46f65f4d192383aa3cf56a716bff0885b91d9bf))
+
+### Chores
+
+* prerelease branch develop added ([#619](https://github.com/onecx/onecx-portal-ui-libs/issues/619)) ([6dd0b41](https://github.com/onecx/onecx-portal-ui-libs/commit/6dd0b41708ea36fa934ced9bf3ee3a67068a9c19))
+
 ## [5.28.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.27.1...v5.28.0) (2024-11-22)
 
 ### Features
