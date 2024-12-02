@@ -1,6 +1,7 @@
 <p-floatLabel>
   <p-dropdown
     inputId="columnGroupSelectionDropdown"
+    id="columnGroupSelectionDropdownElement"
     *ngIf="(allGroupKeys$ | async)?.length"
     (onChange)="changeGroupSelection($event)"
     [options]="(allGroupKeys$ | async) || []"
