@@ -265,6 +265,7 @@ export class PageHeaderComponent implements OnInit, OnChanges {
             })
           this.overflowActions = [
             ...allowedActions.map<MenuItem>((a) => ({
+              id: a.id,
               label: a.labelKey ? translations[a.labelKey] : a.label,
               icon: a.icon,
               tooltipOptions: {
