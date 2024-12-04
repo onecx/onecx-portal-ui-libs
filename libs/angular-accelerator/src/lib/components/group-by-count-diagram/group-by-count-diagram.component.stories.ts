@@ -130,3 +130,39 @@ export const WithDiagramTypeSelection = {
     sumKey: 'Total',
   },
 }
+
+export const WithCustomColors = {
+  render: Template,
+  args: {
+    diagramType: DiagramType.PIE,
+    data: mockData,
+    supportedDiagramTypes: [DiagramType.PIE, DiagramType.HORIZONTAL_BAR, DiagramType.VERTICAL_BAR],
+    column: {
+      id: 'fruitType',
+      type: ColumnType.STRING,
+    },
+    sumKey: 'Total',
+    colors: {
+      ['Apple']: 'green',
+      ['Banana']: 'yellow',
+    },
+  },
+}
+
+export const WithForcedCustomColors = {
+  render: Template,
+  args: {
+    diagramType: DiagramType.PIE,
+    data: mockData,
+    supportedDiagramTypes: [DiagramType.PIE, DiagramType.HORIZONTAL_BAR, DiagramType.VERTICAL_BAR],
+    column: {
+      id: 'fruitType',
+      type: ColumnType.STRING,
+    },
+    sumKey: 'Total',
+    colors: {
+      ['Apple']: 'green',
+    },
+    forceCustomColors: true,
+  },
+}

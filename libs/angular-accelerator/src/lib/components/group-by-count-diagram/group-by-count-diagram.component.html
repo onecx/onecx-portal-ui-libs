@@ -1,5 +1,6 @@
 <ocx-diagram
   [data]="(diagramData$ | async) || []"
+  [forceCustomColors]="forceCustomColors"
   [sumKey]="sumKey"
   [diagramType]="diagramType"
   (onDataSelect)="dataClicked($event)"

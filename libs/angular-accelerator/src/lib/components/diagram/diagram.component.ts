@@ -54,6 +54,12 @@ const allDiagramTypes: DiagramLayouts[] = [
 export class DiagramComponent implements OnInit, OnChanges {
   @Input() data: DiagramData[] | undefined
   @Input() sumKey = 'OCX_DIAGRAM.SUM'
+  /**
+   * Set this property to true if custom colors should be forced to be applied. **It is recommended to set the backgroundColor property for every data item to ensure appropriate color scheme on the diagram.**
+   *
+   * Custom colors are applied only if every data item has backgroundColor property set.
+   */
+  @Input() forceCustomColors = false
   private _diagramType: DiagramType = DiagramType.PIE
   selectedDiagramType: DiagramLayouts | undefined
   public chartType: 'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'polarArea' | 'radar' = 'pie'
@@ -105,7 +111,7 @@ export class DiagramComponent implements OnInit, OnChanges {
       const inputData = this.data.map((diagramData) => diagramData.value)
 
       this.amountOfData = this.data.reduce((acc, current) => acc + current.value, 0)
-      const COLORS = interpolateColors(this.data.length, colorScale, colorRangeInfo)
+      const COLORS = this.generateColors(this.data, colorScale, colorRangeInfo)
       this.chartData = {
         labels: this.data.map((data) => data.label),
         datasets: [
@@ -133,6 +139,20 @@ export class DiagramComponent implements OnInit, OnChanges {
         plugins: { legend: { display: false } },
         scales: { x: { ticks: { precision: 0 } } },
       }),
+    }
+  }
+
+  generateColors(data: DiagramData[], colorScale: any, colorRangeInfo: any) {
+    const dataColors = data.map((diagramData) => diagramData.backgroundColor)
+    if (dataColors.filter((v) => v !== undefined).length === data.length) {
+      return dataColors
+    } else if (this.forceCustomColors) {
+      // it is intended to generate more colors than needed, so interval for generated colors is same as amount of items on the diagram
+      const interpolatedColors = interpolateColors(dataColors.length, colorScale, colorRangeInfo)
+      let interpolatedIndex = 0
+      return dataColors.map((color) => (color === undefined ? interpolatedColors[interpolatedIndex++] : color))
+    } else {
+      return interpolateColors(data.length, colorScale, colorRangeInfo)
     }
   }
 
