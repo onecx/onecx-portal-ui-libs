@@ -15,6 +15,7 @@
           *ngIf="viewTableRowObserved && (!viewActionVisibleField || fieldIsTruthy(rowObject, viewActionVisibleField))"
         >
           <button
+            id="{{resolveFieldData(rowObject, 'id')}}-viewButton"
             *ocxIfPermission="viewPermission"
             [disabled]="!!viewActionEnabledField && !fieldIsTruthy(rowObject, viewActionEnabledField)"
             pButton
@@ -30,6 +31,7 @@
           *ngIf="editTableRowObserved && (!editActionVisibleField || fieldIsTruthy(rowObject, editActionVisibleField))"
         >
           <button
+            id="{{resolveFieldData(rowObject, 'id')}}-editButton"
             *ocxIfPermission="editPermission"
             [disabled]="!!editActionEnabledField && !fieldIsTruthy(rowObject, editActionEnabledField)"
             pButton
@@ -45,6 +47,7 @@
           *ngIf="deleteTableRowObserved && (!deleteActionVisibleField || fieldIsTruthy(rowObject, deleteActionVisibleField))"
         >
           <button
+            id="{{resolveFieldData(rowObject, 'id')}}-deleteButton"
             *ocxIfPermission="deletePermission"
             [disabled]="!!deleteActionEnabledField && !fieldIsTruthy(rowObject, deleteActionEnabledField)"
             pButton
@@ -59,6 +62,7 @@
         <ng-container *ngFor="let action of inlineActions$ | async">
           <ng-container *ngIf="(!action.actionVisibleField || fieldIsTruthy(rowObject, action.actionVisibleField))">
             <button
+              id="{{resolveFieldData(rowObject, 'id')}}-{{action.id ? action.id.concat('ActionButton') : 'inlineActionButton'}}"
               *ocxIfPermission="action.permission"
               pButton
               class="p-button-rounded p-button-text"
@@ -68,6 +72,7 @@
               [title]="action.labelKey ? (action.labelKey | translate) : ''"
               [attr.aria-label]="action.labelKey ? (action.labelKey | translate) : ''"
               [disabled]="action.disabled || (!!action.actionEnabledField && !fieldIsTruthy(rowObject, action.actionEnabledField))"
+              [attr.name]="'data-table-action-button'"
             ></button>
           </ng-container>
         </ng-container>
@@ -130,6 +135,7 @@
         <th style="width: 4rem" scope="col" *ngIf="selectionChangedObserved">
           <p-tableHeaderCheckbox
             *ngIf="allowSelectAll"
+            pTooltip="{{'OCX_DATA_TABLE.SELECT_ALL_TOOLTIP' | translate}}"
             ariaLabel="{{'OCX_DATA_TABLE.SELECT_ALL_ARIA_LABEL' | translate}}"
           ></p-tableHeaderCheckbox>
         </th>
