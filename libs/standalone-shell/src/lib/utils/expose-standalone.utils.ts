@@ -1,6 +1,6 @@
 import { APP_INITIALIZER, InjectionToken } from "@angular/core";
 
-import { AppStateService, ConfigurationService, MfeInfo, ThemeService, UserService } from '@onecx/angular-integration-interface'
+import { AppStateService, ConfigurationService, MfeInfo, ThemeService, TRANSLATION_PATH, UserService } from '@onecx/angular-integration-interface'
 import { TranslateService } from '@ngx-translate/core'
 import { firstValueFrom } from 'rxjs'
 import { initializeRouter } from '@onecx/angular-webcomponents'
@@ -38,6 +38,11 @@ const appInitializer = (
         localeAndTimeSettings: {
           locale: 'en',
           ...(providerConfig?.userProfile?.accountSettings?.localeAndTimeSettings ?? {})  
+        },
+        layoutAndThemeSettings: {
+          menuMode: 'HORIZONTAL',
+          "colorScheme": "AUTO",
+          ...(providerConfig?.userProfile?.accountSettings?.layoutAndThemeSettings ?? {})  
         },
         ...(providerConfig?.userProfile?.accountSettings ?? {})
       },
@@ -87,6 +92,11 @@ export function provideStandaloneProviders(config?: Partial<ProvideStandalonePro
     {
       provide: HAS_PERMISSION_CHECKER,
       useClass: AlwaysGrantPermissionChecker
+    },
+    {
+      provide: TRANSLATION_PATH,
+      useValue: './assets/i18n/',
+      multi: true,
     }
   ]
 }

@@ -10,12 +10,16 @@
     "@onecx/angular-accelerator": "^5.27.0",
     "@onecx/angular-integration-interface": "^5.27.0",
     "@onecx/angular-webcomponents": "^5.27.0",
-    "@onecx/integration-interface": "^5.27.0"
+    "@onecx/integration-interface": "^5.27.0",
+    "primeng": "^17.18.6",
+    "primeflex": "^3.3.1"
   },
   "dependencies": {},
-  "type": "commonjs",
-  "main": "./src/index.js",
-  "typings": "./src/index.d.ts",
+  "exports": {
+    ".": {
+      "style": "./assets/styles.scss"
+    }
+  },
   "publishConfig": {
     "access": "public"
   }
