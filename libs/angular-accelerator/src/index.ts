@@ -1,3 +1,6 @@
+// injection tokens + related utilities
+export * from './lib/injection-tokens/has-permission-checker'
+
 // directives
 export * from './lib/directives/if-permission.directive'
 export * from './lib/directives/if-breakpoint.directive'

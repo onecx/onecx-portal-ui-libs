@@ -1,5 +1,14 @@
 import { CommonModule } from '@angular/common'
-import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core'
+import {
+  APP_INITIALIZER,
+  Injector,
+  LOCALE_ID,
+  NgModule,
+  Optional,
+  Provider,
+  SkipSelf,
+  StaticProvider,
+} from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
 import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateModule } from '@ngx-translate/core'
@@ -24,7 +33,8 @@ import { DataLoadingErrorComponent } from './components/data-loading-error/data-
 import { SearchHeaderComponent } from './components/search-header/search-header.component'
 import { AdvancedDirective } from './directives/advanced.directive'
 import { IfBreakpointDirective } from './directives/if-breakpoint.directive'
-import { HAS_PERMISSION_CHECKER, IfPermissionDirective } from './directives/if-permission.directive'
+import { IfPermissionDirective } from './directives/if-permission.directive'
+import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from './injection-tokens/has-permission-checker'
 import { SrcDirective } from './directives/src.directive'
 import { TooltipOnOverflowDirective } from './directives/tooltipOnOverflow.directive'
 import { DynamicPipe } from './pipes/dynamic.pipe'
@@ -43,6 +53,31 @@ function appInitializer(userService: UserService) {
   return async () => {
     await firstValueFrom(userService.lang$.pipe(skip(1)))
   }
+}
+
+function hasPermissionCheckerFactory(parentInjector: Injector, hasPermissionChecker: HasPermissionChecker) {
+  if (!hasPermissionChecker) {
+    const hasUserService = !!parentInjector.get(UserService, null)
+    const injectorConfig: {
+      providers: Array<Provider | StaticProvider>
+      parent?: Injector
+      name?: string
+    } = {
+      providers: [
+        {
+          provide: HAS_PERMISSION_CHECKER,
+          useExisting: UserService,
+        },
+      ],
+      parent: parentInjector,
+    }
+    if (!hasUserService) {
+      injectorConfig.providers.push(UserService)
+    }
+    const injector = Injector.create(injectorConfig)
+    hasPermissionChecker = injector.get(HAS_PERMISSION_CHECKER)
+  }
+  return hasPermissionChecker
 }
 
 @NgModule({
@@ -86,7 +121,8 @@ function appInitializer(userService: UserService) {
     },
     {
       provide: HAS_PERMISSION_CHECKER,
-      useExisting: UserService,
+      useFactory: hasPermissionCheckerFactory,
+      deps: [Injector, [new Optional(), new SkipSelf(), HAS_PERMISSION_CHECKER]],
     },
     {
       provide: APP_INITIALIZER,

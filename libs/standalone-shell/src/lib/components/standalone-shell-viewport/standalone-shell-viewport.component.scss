@@ -1,0 +1,17 @@
+::ng-deep {
+  .layout-menu-button-hidden {
+    .layout-topbar {
+      .layout-topbar-left {
+        padding-right: 0;
+
+        .layout-menu-button {
+          display: none;
+        }
+      }
+
+      .layout-topbar-right {
+        padding-left: 0;
+      }
+    }
+  }
+}
