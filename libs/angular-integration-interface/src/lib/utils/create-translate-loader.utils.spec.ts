@@ -4,7 +4,7 @@ import { EnvironmentInjector } from '@angular/core'
 import { MockService } from 'ng-mocks'
 import { Observable, of } from 'rxjs'
 import { MfeInfo } from '@onecx/integration-interface'
-import { AppStateService } from '@onecx/angular-integration-interface'
+import { AppStateService } from '../services/app-state.service'
 import { createTranslateLoader } from './create-translate-loader.utils'
 import { TranslationCacheService } from '../services/translation-cache.service'
 
