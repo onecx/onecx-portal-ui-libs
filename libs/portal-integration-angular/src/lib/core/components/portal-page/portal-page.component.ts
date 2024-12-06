@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit } from '@angular/core'
+import { Component, Inject, Input, OnInit, Optional } from '@angular/core'
 import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-accelerator'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import { UserService } from '@onecx/angular-integration-interface'
@@ -20,6 +20,7 @@ export class PortalPageComponent implements OnInit {
     private appState: AppStateService,
     private userService: UserService,
     @Inject(HAS_PERMISSION_CHECKER)
+    @Optional()
     private hasPermissionChecker?: HasPermissionChecker,
   ) {}
 
