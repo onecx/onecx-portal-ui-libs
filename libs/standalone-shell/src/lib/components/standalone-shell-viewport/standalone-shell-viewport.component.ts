@@ -11,5 +11,6 @@ import { Component, Input } from '@angular/core'
   styleUrls: ['./standalone-shell-viewport.component.scss']
 })
 export class StandaloneShellViewportComponent {
-    @Input() displayOneCXShellLayout = true
+    // TODO: Enable by default once we know how to move forward with standalone styling
+    @Input() displayOneCXShellLayout = false
 }
