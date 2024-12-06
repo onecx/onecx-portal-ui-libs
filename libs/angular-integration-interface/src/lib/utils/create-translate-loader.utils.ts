@@ -30,14 +30,14 @@ export function createTranslateLoader(
   const timerId = lastTranslateLoaderTimerId++
 
   const translationPaths = inject(TRANSLATION_PATH)
-  translationPaths.map((value) => toObservable(value))
 
   console.time('createTranslateLoader_' + timerId)
   return new AsyncTranslateLoader(
-    zip(translationPaths).pipe(
+    zip(translationPaths.map((value) => toObservable(value))).pipe(
       map((translationPaths) => {
+        const uniqueTranslationPaths = [...new Set(translationPaths)]
         return new TranslateCombinedLoader(
-          ...translationPaths.map((path) => {
+          ...uniqueTranslationPaths.map((path) => {
             return new CachingTranslateLoader(ts, http, path, '.json')
           })
         )
