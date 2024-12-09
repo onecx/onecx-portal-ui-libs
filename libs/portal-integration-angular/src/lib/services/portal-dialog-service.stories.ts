@@ -179,7 +179,7 @@ export const ComponentDisplayed = {
   selector: 'ocx-my-component-to-display',
   template: `<p>Hello, its my component to display custom buttons</p>`,
 })
-class ComponentToDisplayCustomButtons implements DialogCustomButtonsDisabled, OnInit {
+class ComponentToDisplayCustomButtonsComponent implements DialogCustomButtonsDisabled, OnInit {
   customButtonEnabled: EventEmitter<{ id: string; enabled: boolean }> = new EventEmitter()
 
   ngOnInit(): void {
@@ -200,7 +200,7 @@ export const CustomButtons = {
   args: {
     title: 'Custom title',
     messageOrComponent: {
-      type: ComponentToDisplayCustomButtons,
+      type: ComponentToDisplayCustomButtonsComponent,
     },
     primaryKey: {
       key: 'PRIMARY_KEY',
