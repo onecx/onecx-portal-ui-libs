@@ -19,6 +19,7 @@
         #secondaryButton
         id="{{dialogData.config.secondaryButtonDetails?.id ?? 'buttonDialogSecondaryButton'}}"
         pButton
+        *ngIf="dialogData.config.secondaryButtonIncluded"
         [icon]="dialogData.config.secondaryButtonDetails!.icon !== undefined ? dialogData.config.secondaryButtonDetails!.icon : ''"
         (click)="secondaryButtonAction()"
         [label]="dialogData.config.secondaryButtonDetails!.key | translate:dialogData.config.secondaryButtonDetails?.parameters"
