@@ -262,13 +262,14 @@ describe('DiagramComponent', () => {
       },
     ])
   })
-  it('should interpolate all colors if not all items have custom colors', () => {
+  it('should interpolate all colors if not all items have custom colors and filling missing colors is not allowed', () => {
     const mockData = [
       { label: 'test0', value: 1, backgroundColor: 'blue' },
       { label: 'test1', value: 2 },
     ]
     const mockResult = mockData.map((v, i) => i.toString())
     jest.spyOn(ColorUtils, 'interpolateColors').mockReturnValue(mockResult)
+    component.fillMissingColors = false
 
     component.data = mockData
 
@@ -288,7 +289,6 @@ describe('DiagramComponent', () => {
     ]
     const mockResult = mockData.map((v, i) => i.toString())
     jest.spyOn(ColorUtils, 'interpolateColors').mockReturnValue(mockResult)
-    component.fillMissingColors = true
 
     component.data = mockData
 
