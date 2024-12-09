@@ -126,8 +126,7 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     {
       provide: TRANSLATION_PATH,
       useValue: './onecx-portal-lib/assets/i18n/',
-      multi: true,
-      deps: [AppStateService],
+      multi: true
     },
     {
       provide: MessageService,

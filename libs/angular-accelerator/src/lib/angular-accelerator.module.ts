@@ -13,7 +13,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
 import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateModule } from '@ngx-translate/core'
 
-import { AppConfigService, UserService } from '@onecx/angular-integration-interface'
+import { AppConfigService, TRANSLATION_PATH, UserService } from '@onecx/angular-integration-interface'
 import { AngularRemoteComponentsModule } from '@onecx/angular-remote-components'
 
 import { firstValueFrom, skip } from 'rxjs'
@@ -129,6 +129,11 @@ function hasPermissionCheckerFactory(parentInjector: Injector, hasPermissionChec
       useFactory: appInitializer,
       deps: [UserService],
       multi: true,
+    },
+    {
+      provide: TRANSLATION_PATH,
+      useValue: './onecx-angular-accelerator/assets/i18n/',
+      multi: true
     },
     AppConfigService,
   ],
