@@ -240,7 +240,7 @@ export const CustomButtonsWithAutofocus = {
   args: {
     title: 'Custom title',
     messageOrComponent: {
-      type: ComponentToDisplayCustomButtons,
+      type: ComponentToDisplayCustomButtonsComponent,
     },
     primaryKey: {
       key: 'PRIMARY_KEY',
