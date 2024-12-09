@@ -211,6 +211,7 @@ type Component<T extends unknown> = unknown extends T
       inputs?: Record<string, unknown>
     }
 
+export type DialogButton = 'primary' | 'secondary' | 'custom'
 export type DialogStateButtonClicked = 'primary' | 'secondary' | 'custom'
 
 /**
@@ -225,6 +226,8 @@ export type DialogState<T> = {
 export type PortalDialogConfig = {
   showXButton?: boolean
   customButtons?: ButtonDialogCustomButtonDetails[]
+  autoFocusButton?: DialogButton
+  autoFocusButtonCustomId?: string
   ariaLabelledBy?: string
   width?: string
   height?: string
@@ -250,7 +253,10 @@ export type PortalDialogConfig = {
 
 @Injectable({ providedIn: 'any' })
 export class PortalDialogService {
-  constructor(private dialogService: DialogService, private translateService: TranslateService) {}
+  constructor(
+    private dialogService: DialogService,
+    private translateService: TranslateService
+  ) {}
 
   /**
    * @deprecated
@@ -443,6 +449,8 @@ export class PortalDialogService {
         customButtons: dialogOptions.customButtons?.map(
           (button) => this.buttonDetailsOrTranslationKey(button) as ButtonDialogCustomButtonDetails
         ),
+        autoFocusButton: dialogOptions.autoFocusButton,
+        autoFocusButtonCustomId: dialogOptions.autoFocusButtonCustomId,
       },
       componentData: componentToRender.inputs,
     }
@@ -454,6 +462,7 @@ export class PortalDialogService {
           data: dynamicDialogDataConfig,
           closable: dialogOptions.showXButton && secondaryButtonTranslationKeyOrDetails !== undefined,
           ...dialogOptions,
+          focusOnShow: false,
         }).onClose
       })
     )
