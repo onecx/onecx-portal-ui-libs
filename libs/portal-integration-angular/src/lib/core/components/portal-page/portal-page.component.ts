@@ -1,5 +1,5 @@
 import { Component, Inject, Input, OnInit, Optional } from '@angular/core'
-import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-accelerator'
+import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-integration-interface'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import { UserService } from '@onecx/angular-integration-interface'
 

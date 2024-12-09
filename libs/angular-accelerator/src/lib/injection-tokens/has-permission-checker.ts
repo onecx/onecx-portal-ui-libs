@@ -1,16 +1,15 @@
-import {InjectionToken} from '@angular/core'
+/**
+ * @deprecated Please import from `@onecx/angular-integration-interface` instead.
+ */
+export { HasPermissionChecker } from '@onecx/angular-integration-interface'
 
-export interface HasPermissionChecker {
-    hasPermission(permissionKey: string): boolean
-  }
-  
-  /**
-   * This checker always returns true, basically disabling the permission system on the UI side
-   */
-  export class AlwaysGrantPermissionChecker implements HasPermissionChecker {
-    hasPermission(_permissionKey: string): boolean {
-      return true
-    }
-  }
-  
-  export const HAS_PERMISSION_CHECKER = new InjectionToken<HasPermissionChecker>('hasPermission')
+/**
+ * This checker always returns true, basically disabling the permission system on the UI side
+ * @deprecated Please import from `@onecx/angular-integration-interface` instead.
+ */
+export { AlwaysGrantPermissionChecker } from '@onecx/angular-integration-interface'
+
+/**
+ * @deprecated Please import from `@onecx/angular-integration-interface` instead.
+ */
+export { HAS_PERMISSION_CHECKER } from '@onecx/angular-integration-interface'

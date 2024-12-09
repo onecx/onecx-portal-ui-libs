@@ -34,7 +34,7 @@ import { SearchHeaderComponent } from './components/search-header/search-header.
 import { AdvancedDirective } from './directives/advanced.directive'
 import { IfBreakpointDirective } from './directives/if-breakpoint.directive'
 import { IfPermissionDirective } from './directives/if-permission.directive'
-import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from './injection-tokens/has-permission-checker'
+import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-integration-interface'
 import { SrcDirective } from './directives/src.directive'
 import { TooltipOnOverflowDirective } from './directives/tooltipOnOverflow.directive'
 import { DynamicPipe } from './pipes/dynamic.pipe'

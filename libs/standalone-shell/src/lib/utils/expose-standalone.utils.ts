@@ -1,12 +1,10 @@
 import { APP_INITIALIZER, InjectionToken } from "@angular/core";
 
-import { AppStateService, ConfigurationService, MfeInfo, ThemeService, TRANSLATION_PATH, UserService } from '@onecx/angular-integration-interface'
+import { AppStateService, ConfigurationService, MfeInfo, ThemeService, TRANSLATION_PATH, UserService, AlwaysGrantPermissionChecker, HAS_PERMISSION_CHECKER } from '@onecx/angular-integration-interface'
 import { TranslateService } from '@ngx-translate/core'
 import { firstValueFrom } from 'rxjs'
 import { initializeRouter } from '@onecx/angular-webcomponents'
 import { Router } from '@angular/router'
-// TODO: Should we move permission checker?
-import { AlwaysGrantPermissionChecker, HAS_PERMISSION_CHECKER } from '@onecx/angular-accelerator'
 import { Theme, UserProfile, Workspace } from "@onecx/integration-interface";
 
 const appInitializer = (

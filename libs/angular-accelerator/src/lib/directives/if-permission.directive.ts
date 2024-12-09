@@ -9,8 +9,7 @@ import {
   TemplateRef,
   ViewContainerRef,
 } from '@angular/core'
-import { UserService } from '@onecx/angular-integration-interface'
-import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '../injection-tokens/has-permission-checker'
+import { UserService, HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-integration-interface'
 
 @Directive({ selector: '[ocxIfPermission], [ocxIfNotPermission]' })
 export class IfPermissionDirective implements OnInit {
