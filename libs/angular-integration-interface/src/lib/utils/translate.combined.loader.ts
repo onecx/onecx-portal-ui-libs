@@ -1,9 +1,5 @@
 import { TranslateLoader } from '@ngx-translate/core'
 import { Observable, catchError, forkJoin, map, of } from 'rxjs'
-
-/**
- * @deprecated Please import from `@onecx/angular-integration-interface` instead.
- */
 export class TranslateCombinedLoader implements TranslateLoader {
   private _loaders: TranslateLoader[]
   constructor(...loaders: TranslateLoader[]) {
