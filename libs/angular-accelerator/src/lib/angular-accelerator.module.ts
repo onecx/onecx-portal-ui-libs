@@ -135,6 +135,11 @@ function hasPermissionCheckerFactory(parentInjector: Injector, hasPermissionChec
       useValue: './onecx-angular-accelerator/assets/i18n/',
       multi: true
     },
+    {
+      provide: TRANSLATION_PATH,
+      useValue: './onecx-angular-accelerator/assets/i18n/primeng/',
+      multi: true
+    },
     AppConfigService,
   ],
   exports: [

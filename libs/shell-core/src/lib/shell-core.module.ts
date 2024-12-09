@@ -9,11 +9,11 @@ import { PortalFooterComponent } from './components/portal-footer/portal-footer.
 import { HeaderComponent } from './components/portal-header/header.component'
 import { PortalViewportComponent } from './components/portal-viewport/portal-viewport.component'
 import { SkeletonModule } from 'primeng/skeleton'
-import { PortalCoreModule } from '@onecx/portal-integration-angular'
+import { AppLoadingSpinnerComponent } from './components/app-loading-spinner/app-loading-spinner.component'
 
 @NgModule({
-  imports: [CommonModule, RouterModule, AngularRemoteComponentsModule, AngularAcceleratorModule, ToastModule, SkeletonModule, PortalCoreModule],
-  declarations: [PortalViewportComponent, HeaderComponent, PortalFooterComponent, GlobalErrorComponent],
+  imports: [CommonModule, RouterModule, AngularRemoteComponentsModule, AngularAcceleratorModule, ToastModule, SkeletonModule],
+  declarations: [PortalViewportComponent, HeaderComponent, PortalFooterComponent, GlobalErrorComponent, AppLoadingSpinnerComponent],
   exports: [PortalViewportComponent, HeaderComponent, PortalFooterComponent, ToastModule, GlobalErrorComponent],
 })
 export class ShellCoreModule {}

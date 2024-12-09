@@ -15,11 +15,6 @@
     "@onecx/shell-core": "^5.27.0"
   },
   "dependencies": {},
-  "exports": {
-    ".": {
-      "style": "./assets/styles.scss"
-    }
-  },
   "publishConfig": {
     "access": "public"
   }
