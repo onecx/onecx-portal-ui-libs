@@ -139,6 +139,6 @@ export const WithForcedCustomColors = {
       },
     ],
     supportedDiagramTypes: [DiagramType.PIE, DiagramType.HORIZONTAL_BAR, DiagramType.VERTICAL_BAR],
-    forceCustomColors: true,
+    fillMissingColors: true,
   },
 }

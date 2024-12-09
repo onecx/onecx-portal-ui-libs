@@ -19,11 +19,11 @@ export class GroupByCountDiagramComponent implements OnInit {
   @Input() sumKey = 'SEARCH.SUMMARY_TITLE'
   @Input() diagramType = DiagramType.PIE
   /**
-   * Set this property to true if custom colors should be forced to be applied. **It is recommended to set the colors property to cover for every possible value ensure appropriate color scheme on the diagram.**
+   * This property determines if diagram should generate the colors for the data that does not have any set.
    *
-   * Custom colors are applied only if every possible value has color set.
+   * Setting this property to false will result in using the provided colors only if every data item has one. In the scenario where at least one item does not have a color set, diagram will generate all colors.
    */
-  @Input() forceCustomColors = false
+  @Input() fillMissingColors = false
   /**
    * @deprecated Will be replaced by diagramType
    */

@@ -55,11 +55,11 @@ export class DiagramComponent implements OnInit, OnChanges {
   @Input() data: DiagramData[] | undefined
   @Input() sumKey = 'OCX_DIAGRAM.SUM'
   /**
-   * Set this property to true if custom colors should be forced to be applied. **It is recommended to set the backgroundColor property for every data item to ensure appropriate color scheme on the diagram.**
+   * This property determines if diagram should generate the colors for the data that does not have any set.
    *
-   * Custom colors are applied only if every data item has backgroundColor property set.
+   * Setting this property to false will result in using the provided colors only if every data item has one. In the scenario where at least one item does not have a color set, diagram will generate all colors.
    */
-  @Input() forceCustomColors = false
+  @Input() fillMissingColors = true
   private _diagramType: DiagramType = DiagramType.PIE
   selectedDiagramType: DiagramLayouts | undefined
   public chartType: 'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'polarArea' | 'radar' = 'pie'
@@ -146,7 +146,7 @@ export class DiagramComponent implements OnInit, OnChanges {
     const dataColors = data.map((diagramData) => diagramData.backgroundColor)
     if (dataColors.filter((v) => v !== undefined).length === data.length) {
       return dataColors
-    } else if (this.forceCustomColors) {
+    } else if (this.fillMissingColors) {
       // it is intended to generate more colors than needed, so interval for generated colors is same as amount of items on the diagram
       const interpolatedColors = interpolateColors(dataColors.length, colorScale, colorRangeInfo)
       let interpolatedIndex = 0

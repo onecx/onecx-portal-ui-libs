@@ -163,6 +163,6 @@ export const WithForcedCustomColors = {
     colors: {
       ['Apple']: 'green',
     },
-    forceCustomColors: true,
+    fillMissingColors: true,
   },
 }

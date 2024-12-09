@@ -288,7 +288,7 @@ describe('DiagramComponent', () => {
     ]
     const mockResult = mockData.map((v, i) => i.toString())
     jest.spyOn(ColorUtils, 'interpolateColors').mockReturnValue(mockResult)
-    component.forceCustomColors = true
+    component.fillMissingColors = true
 
     component.data = mockData
 
