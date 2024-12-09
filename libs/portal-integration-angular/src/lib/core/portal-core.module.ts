@@ -11,6 +11,7 @@ import {
   ConfigurationService,
   SANITY_CHECK,
   ThemeService,
+  TRANSLATION_PATH,
   UserService,
 } from '@onecx/angular-integration-interface'
 import { MessageService } from 'primeng/api'
@@ -121,6 +122,12 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
         return userService.lang$.getValue()
       },
       deps: [UserService],
+    },
+    {
+      provide: TRANSLATION_PATH,
+      useValue: './onecx-portal-lib/assets/i18n/',
+      multi: true,
+      deps: [AppStateService],
     },
     {
       provide: MessageService,
