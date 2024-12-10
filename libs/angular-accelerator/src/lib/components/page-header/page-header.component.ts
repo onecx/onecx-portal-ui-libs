@@ -38,6 +38,8 @@ export interface Action {
   btnClass?: string
   actionCallback(): void
   disabled?: boolean
+  disabledTooltip?: string
+  disabledTooltipKey?: string
   show?: 'always' | 'asOverflow'
   conditional?: boolean
   // Note: This currently doesn't work with dynamic values, since a passed in Action is just a copy of the original object.
