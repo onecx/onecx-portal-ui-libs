@@ -1,5 +1,6 @@
 <ocx-diagram
   [data]="(diagramData$ | async) || []"
+  [fillMissingColors]="fillMissingColors"
   [sumKey]="sumKey"
   [diagramType]="diagramType"
   (onDataSelect)="dataClicked($event)"

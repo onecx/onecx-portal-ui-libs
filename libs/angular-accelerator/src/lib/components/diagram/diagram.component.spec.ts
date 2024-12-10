@@ -13,6 +13,7 @@ import { DiagramHarness, TestbedHarnessEnvironment } from '../../../../testing'
 import { DiagramType } from '../../model/diagram-type'
 import { DiagramComponent, DiagramLayouts } from './diagram.component'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { ColorUtils } from '../../utils/colorutils'
 
 describe('DiagramComponent', () => {
   let translateService: TranslateService
@@ -230,5 +231,74 @@ describe('DiagramComponent', () => {
 
     expect(await diagramTypeSelectButtonOptions[0].hasClass('p-highlight')).toBe(false)
     expect(await diagramTypeSelectButtonOptions[1].hasClass('p-highlight')).toBe(true)
+  })
+
+  it('should interpolate colors by default', () => {
+    const mockResult = diagramData.map((v, i) => i.toString())
+    jest.spyOn(ColorUtils, 'interpolateColors').mockReturnValue(mockResult)
+
+    component.ngOnChanges()
+
+    expect(component.chartData?.datasets).toEqual([
+      {
+        data: diagramData.map((d) => d.value),
+        backgroundColor: mockResult,
+      },
+    ])
+  })
+
+  it('should use custom colors', () => {
+    component.data = [
+      { label: 'test0', value: 1, backgroundColor: 'blue' },
+      { label: 'test1', value: 2, backgroundColor: 'red' },
+    ]
+
+    component.ngOnChanges()
+
+    expect(component.chartData?.datasets).toEqual([
+      {
+        data: [1, 2],
+        backgroundColor: ['blue', 'red'],
+      },
+    ])
+  })
+  it('should interpolate all colors if not all items have custom colors and filling missing colors is not allowed', () => {
+    const mockData = [
+      { label: 'test0', value: 1, backgroundColor: 'blue' },
+      { label: 'test1', value: 2 },
+    ]
+    const mockResult = mockData.map((v, i) => i.toString())
+    jest.spyOn(ColorUtils, 'interpolateColors').mockReturnValue(mockResult)
+    component.fillMissingColors = false
+
+    component.data = mockData
+
+    component.ngOnChanges()
+
+    expect(component.chartData?.datasets).toEqual([
+      {
+        data: [1, 2],
+        backgroundColor: ['0', '1'],
+      },
+    ])
+  })
+  it('should use custom colors and interpolate undefined ones if custom colors are forced', () => {
+    const mockData = [
+      { label: 'test0', value: 1, backgroundColor: 'blue' },
+      { label: 'test1', value: 2 },
+    ]
+    const mockResult = mockData.map((v, i) => i.toString())
+    jest.spyOn(ColorUtils, 'interpolateColors').mockReturnValue(mockResult)
+
+    component.data = mockData
+
+    component.ngOnChanges()
+
+    expect(component.chartData?.datasets).toEqual([
+      {
+        data: [1, 2],
+        backgroundColor: ['blue', '0'],
+      },
+    ])
   })
 })

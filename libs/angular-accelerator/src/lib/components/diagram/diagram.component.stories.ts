@@ -98,3 +98,47 @@ export const WithDiagramTypeSelection = {
     supportedDiagramTypes: [DiagramType.PIE, DiagramType.HORIZONTAL_BAR, DiagramType.VERTICAL_BAR],
   },
 }
+
+const mockDataWithColors: DiagramData[] = [
+  {
+    label: 'Apples',
+    value: 10,
+    backgroundColor: 'yellow',
+  },
+  {
+    label: 'Bananas',
+    value: 7,
+    backgroundColor: 'orange',
+  },
+  {
+    label: 'Oranges',
+    value: 3,
+    backgroundColor: 'red',
+  },
+]
+
+export const WithCustomColors = {
+  render: Template,
+  args: {
+    diagramType: DiagramType.PIE,
+    data: mockDataWithColors,
+    supportedDiagramTypes: [DiagramType.PIE, DiagramType.HORIZONTAL_BAR, DiagramType.VERTICAL_BAR],
+  },
+}
+
+export const WithForcedCustomColors = {
+  render: Template,
+  args: {
+    diagramType: DiagramType.PIE,
+    data: [
+      ...mockData,
+      {
+        label: 'Peaches',
+        value: 2,
+        backgroundColor: 'Yellow',
+      },
+    ],
+    supportedDiagramTypes: [DiagramType.PIE, DiagramType.HORIZONTAL_BAR, DiagramType.VERTICAL_BAR],
+    fillMissingColors: true,
+  },
+}
