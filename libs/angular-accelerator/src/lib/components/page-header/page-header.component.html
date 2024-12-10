@@ -51,20 +51,23 @@
       <ng-container *ngIf="!loading; else skeletonActions">
         <div *ngIf="inlineActions && inlineActions.length > 0" class="toolbar flex flex-wrap gap-1 sm:gap-2">
           <ng-container *ngFor="let action of inlineActions">
-            <p-button
-              id="{{ action.id }}"
-              [icon]="action.icon ?? ''"
-              type="button"
-              class="action-button"
-              [label]="action.labelKey ? (action.labelKey | translate) : action.label"
-              (onClick)="action.actionCallback()"
-              [pTooltip]="(action.titleKey ? (action.titleKey | translate) : action.title)"
+            <span
+              [pTooltip]="action.disabled ? (action.disabledTooltipKey ? (action.disabledTooltipKey | translate) : action.disabledTooltip) : (action.titleKey ? (action.titleKey | translate) : action.title)"
               tooltipPosition="top"
               tooltipEvent="hover"
-              [disabled]="action.disabled ? action.disabled : false"
-              [attr.name]="action.icon ? 'ocx-page-header-inline-action-icon-button' : 'ocx-page-header-inline-action-button'"
-              [ariaLabel]=" (action.ariaLabelKey ? (action.ariaLabelKey | translate) : action.ariaLabel) || (action.titleKey ? (action.titleKey | translate) : action.title) || (action.labelKey ? (action.labelKey | translate) : action.label)"
-            ></p-button>
+            >
+              <p-button
+                id="{{ action.id }}"
+                [icon]="action.icon ?? ''"
+                type="button"
+                class="action-button"
+                [label]="action.labelKey ? (action.labelKey | translate) : action.label"
+                (onClick)="action.actionCallback()"
+                [disabled]="action.disabled ? action.disabled : false"
+                [attr.name]="action.icon ? 'ocx-page-header-inline-action-icon-button' : 'ocx-page-header-inline-action-button'"
+                [ariaLabel]=" (action.ariaLabelKey ? (action.ariaLabelKey | translate) : action.ariaLabel) || (action.titleKey ? (action.titleKey | translate) : action.title) || (action.labelKey ? (action.labelKey | translate) : action.label)"
+              ></p-button>
+            </span>
           </ng-container>
         </div>
         <ng-content select="[toolbarItems]"></ng-content>
