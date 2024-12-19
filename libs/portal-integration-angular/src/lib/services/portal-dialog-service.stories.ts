@@ -24,7 +24,7 @@ import { FormsModule } from '@angular/forms'
 
 @Component({
   selector: 'ocx-button-dialog-with-portal-dialog-service',
-  template: `<button (click)="openDialog()">Open dialog</button>`,
+  template: `<p-button label="Open dialog" (click)="openDialog()" />`,
 })
 class ButtonDialogWithPortalDialogServiceComponent {
   constructor(private portalDialogService: PortalDialogService) {}
@@ -44,6 +44,43 @@ class ButtonDialogWithPortalDialogServiceComponent {
   }
 }
 
+@Component({
+  selector: 'ocx-my-component-to-display',
+  template: `<p>Component to display with disabled buttons</p>
+    <div class="flex gap-2">
+      <p-button label="Toggle custom button" (click)="clickCustom()" />
+      <p-button label="Toggle secondary button" (click)="click2()" />
+      <p-button label="Toggle primary button" (click)="click1()" />
+    </div>`,
+})
+class WithDisabledButtonsComponent
+  implements DialogPrimaryButtonDisabled, DialogSecondaryButtonDisabled, DialogCustomButtonsDisabled
+{
+  secondaryButtonEnabled: EventEmitter<boolean> = new EventEmitter()
+  primaryButtonEnabled: EventEmitter<boolean> = new EventEmitter()
+  customButtonEnabled: EventEmitter<{ id: string; enabled: boolean }> = new EventEmitter()
+
+  primaryState = false
+  secondaryState = false
+  customState = false
+
+  click1() {
+    this.primaryState = !this.primaryState
+    this.primaryButtonEnabled.emit(this.primaryState)
+  }
+  click2() {
+    this.secondaryState = !this.secondaryState
+    this.secondaryButtonEnabled.emit(this.secondaryState)
+  }
+  clickCustom() {
+    this.customState = !this.customState
+    this.customButtonEnabled.emit({
+      id: 'custom1',
+      enabled: this.customState,
+    })
+  }
+}
+
 export default {
   title: 'PortalDialogService',
   component: ButtonDialogWithPortalDialogServiceComponent,
@@ -60,7 +97,12 @@ export default {
       ],
     }),
     moduleMetadata({
-      declarations: [DialogMessageContentComponent, DialogFooterComponent, DialogContentComponent],
+      declarations: [
+        DialogMessageContentComponent,
+        DialogFooterComponent,
+        DialogContentComponent,
+        WithDisabledButtonsComponent,
+      ],
       imports: [StorybookTranslateModule, ButtonModule, TooltipModule, FormsModule],
     }),
     componentWrapperDecorator((story) => `<div style="margin: 3em">${story}</div>`),
@@ -163,41 +205,6 @@ export const ComponentDisplayed = {
     },
     extras: {},
   },
-}
-
-@Component({
-  selector: 'ocx-my-component-to-display',
-  template: `<p>Component to display with disabled buttons</p>
-    <button (click)="click1()">Toggle primary button</button>
-    <button (click)="click2()">Toggle secondary button</button>,
-    <button (click)="clickCustom()">Toggle custom button</button>`,
-})
-class WithDisabledButtonsComponent
-  implements DialogPrimaryButtonDisabled, DialogSecondaryButtonDisabled, DialogCustomButtonsDisabled
-{
-  secondaryButtonEnabled: EventEmitter<boolean> = new EventEmitter()
-  primaryButtonEnabled: EventEmitter<boolean> = new EventEmitter()
-  customButtonEnabled: EventEmitter<{ id: string; enabled: boolean }> = new EventEmitter()
-
-  primaryState = false
-  secondaryState = false
-  customState = false
-
-  click1() {
-    this.primaryState = !this.primaryState
-    this.primaryButtonEnabled.emit(this.primaryState)
-  }
-  click2() {
-    this.secondaryState = !this.secondaryState
-    this.secondaryButtonEnabled.emit(this.secondaryState)
-  }
-  clickCustom() {
-    this.customState = !this.customState
-    this.customButtonEnabled.emit({
-      id: 'custom1',
-      enabled: this.customState,
-    })
-  }
 }
 
 export const ComponentDisplayedWithDisabledButtons = {
