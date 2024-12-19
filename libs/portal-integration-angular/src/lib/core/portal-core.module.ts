@@ -11,7 +11,6 @@ import {
   ConfigurationService,
   SANITY_CHECK,
   ThemeService,
-  TRANSLATION_PATH,
   UserService,
 } from '@onecx/angular-integration-interface'
 import { MessageService } from 'primeng/api'
@@ -57,6 +56,7 @@ import { PatchFormGroupValuesDirective } from './directives/patch-form-group-val
 import { SetInputValueDirective } from './directives/set-input-value.directive'
 import { standaloneInitializer } from './initializer/standalone.initializer'
 import { PrimeNgModule } from './primeng.module'
+import { TRANSLATION_PATH } from '@onecx/angular-utils'
 
 export class PortalMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {

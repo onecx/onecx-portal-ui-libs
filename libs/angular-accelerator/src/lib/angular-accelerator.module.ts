@@ -13,7 +13,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
 import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateModule } from '@ngx-translate/core'
 
-import { AppConfigService, TRANSLATION_PATH, UserService } from '@onecx/angular-integration-interface'
+import { AppConfigService, UserService } from '@onecx/angular-integration-interface'
 import { AngularRemoteComponentsModule } from '@onecx/angular-remote-components'
 
 import { firstValueFrom, skip } from 'rxjs'
@@ -34,7 +34,7 @@ import { SearchHeaderComponent } from './components/search-header/search-header.
 import { AdvancedDirective } from './directives/advanced.directive'
 import { IfBreakpointDirective } from './directives/if-breakpoint.directive'
 import { IfPermissionDirective } from './directives/if-permission.directive'
-import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-integration-interface'
+import { HAS_PERMISSION_CHECKER, HasPermissionChecker, TRANSLATION_PATH } from '@onecx/angular-utils'
 import { SrcDirective } from './directives/src.directive'
 import { TooltipOnOverflowDirective } from './directives/tooltipOnOverflow.directive'
 import { DynamicPipe } from './pipes/dynamic.pipe'

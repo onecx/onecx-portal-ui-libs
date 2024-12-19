@@ -12,7 +12,7 @@ import { TranslateCombinedLoader } from './translate.combined.loader'
 let lastTranslateLoaderTimerId = 0
 
 /**
- * @deprecated Please import from `@onecx/angular-integration-interface` instead.
+ * @deprecated Please import from `@onecx/angular-utils` instead.
  */
 export function createTranslateLoader(
   http: HttpClient,

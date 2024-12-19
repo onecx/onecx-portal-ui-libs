@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http'
 import { inject, InjectionToken } from '@angular/core'
 import { TranslateLoader } from '@ngx-translate/core'
-import { AppStateService } from '../services/app-state.service'
+import { AppStateService } from '@onecx/angular-integration-interface'
 import { from, isObservable, map, Observable, tap, zip } from 'rxjs'
 import { TranslationCacheService } from '../services/translation-cache.service'
 import { AsyncTranslateLoader } from './async-translate-loader.utils'

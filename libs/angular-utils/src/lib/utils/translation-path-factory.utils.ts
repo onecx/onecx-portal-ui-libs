@@ -1,5 +1,5 @@
 import { combineLatest, filter, map, Observable } from "rxjs"
-import { AppStateService } from "../services/app-state.service"
+import { AppStateService } from "@onecx/angular-integration-interface"
 import { Location } from "@angular/common"
 
 export function translationPathFactory(path: string) {

@@ -18,7 +18,7 @@ declare global {
 }
 
 /**
- * @deprecated Please import from `@onecx/angular-integration-interface` instead.
+ * @deprecated Please import from `@onecx/angular-utils` instead.
  */
 @Injectable({ providedIn: 'root' })
 export class TranslationCacheService implements OnDestroy {
