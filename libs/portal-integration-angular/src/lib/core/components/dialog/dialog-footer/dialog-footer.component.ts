@@ -1,4 +1,16 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  QueryList,
+  ViewChild,
+  ViewChildren,
+  ViewContainerRef,
+} from '@angular/core'
 import { BehaviorSubject, Observable, map, withLatestFrom } from 'rxjs'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import {
@@ -18,7 +30,7 @@ import {
   templateUrl: './dialog-footer.component.html',
   styleUrls: ['./dialog-footer.component.scss'],
 })
-export class DialogFooterComponent implements OnInit {
+export class DialogFooterComponent implements OnInit, AfterViewInit {
   defaultPrimaryButtonDetails: ButtonDialogButtonDetails = {
     key: 'OCX_BUTTON_DIALOG.CONFIRM',
   }
@@ -47,10 +59,42 @@ export class DialogFooterComponent implements OnInit {
 
   @Output() buttonClickedEmitter: EventEmitter<DialogState<unknown>> = new EventEmitter()
 
+  @ViewChild('primaryButton', { static: true, read: ViewContainerRef })
+  primaryButton!: ViewContainerRef
+  _secondaryButton!: ViewContainerRef
+  @ViewChild('secondaryButton', { static: false, read: ViewContainerRef })
+  set secondaryButton(content: ViewContainerRef) {
+    if (content) {
+      this._secondaryButton = content
+    }
+  }
+  get secondaryButton(): ViewContainerRef {
+    return this._secondaryButton
+  }
+  @ViewChildren('customButton') customButtons!: QueryList<ElementRef>
+
   constructor(
     public dynamicDialogConfig: DynamicDialogConfig,
     public dynamicDialogRef: DynamicDialogRef
   ) {}
+
+  ngAfterViewInit(): void {
+    if (!(this.dynamicDialogConfig.data && this.dynamicDialogConfig.data.config)) return
+
+    const config = this.dynamicDialogConfig.data.config
+    if (config.autoFocusButton === 'primary') {
+      this.primaryButton.element.nativeElement.focus()
+    } else if (config.autoFocusButton === 'secondary') {
+      this.secondaryButton.element.nativeElement.focus()
+    } else if (config.autoFocusButton === 'custom') {
+      const button = this.customButtons.find((customButton) => {
+        return customButton.nativeElement.id === config.autoFocusButtonCustomId
+      })
+      setTimeout(() => {
+        button?.nativeElement.focus()
+      })
+    }
+  }
 
   ngOnInit(): void {
     this.loadComponent()

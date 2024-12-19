@@ -212,6 +212,7 @@ type Component<T extends unknown> = unknown extends T
       inputs?: Record<string, unknown>
     }
 
+export type DialogButton = 'primary' | 'secondary' | 'custom'
 export type DialogStateButtonClicked = 'primary' | 'secondary' | 'custom'
 
 /**
@@ -226,6 +227,8 @@ export type DialogState<T> = {
 export type PortalDialogConfig = {
   showXButton?: boolean
   customButtons?: ButtonDialogCustomButtonDetails[]
+  autoFocusButton?: DialogButton
+  autoFocusButtonCustomId?: string
   ariaLabelledBy?: string
   width?: string
   height?: string
@@ -454,6 +457,8 @@ export class PortalDialogService {
         customButtons: dialogOptions.customButtons?.map(
           (button) => this.buttonDetailsOrTranslationKey(button) as ButtonDialogCustomButtonDetails
         ),
+        autoFocusButton: dialogOptions.autoFocusButton,
+        autoFocusButtonCustomId: dialogOptions.autoFocusButtonCustomId,
       },
       componentData: componentToRender.inputs,
     }
@@ -473,6 +478,7 @@ export class PortalDialogService {
           },
           closable: dialogOptions.showXButton && secondaryButtonTranslationKeyOrDetails !== undefined,
           ...dialogOptions,
+          focusOnShow: false,
           templates: {
             footer: DialogFooterComponent,
           },

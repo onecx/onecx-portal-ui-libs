@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, importProvidersFrom } from '@angular/core'
+import { Component, EventEmitter, Input, OnInit, importProvidersFrom } from '@angular/core'
 import { Meta, applicationConfig, argsToTemplate, componentWrapperDecorator, moduleMetadata } from '@storybook/angular'
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { BrowserModule } from '@angular/platform-browser'
@@ -13,7 +13,6 @@ import {
   DialogState,
   PortalDialogService,
 } from './portal-dialog.service'
-import { ButtonDialogComponent } from '../core/components/button-dialog/button-dialog.component'
 import { StorybookTranslateModule } from '../core/storybook-translate.module'
 import { DialogMessageContentComponent } from '../core/components/button-dialog/dialog-message-content/dialog-message-content.component'
 import { PrimeIcons } from 'primeng/api'
@@ -61,12 +60,7 @@ export default {
       ],
     }),
     moduleMetadata({
-      declarations: [
-        ButtonDialogComponent,
-        DialogMessageContentComponent,
-        DialogFooterComponent,
-        DialogContentComponent,
-      ],
+      declarations: [DialogMessageContentComponent, DialogFooterComponent, DialogContentComponent],
       imports: [StorybookTranslateModule, ButtonModule, TooltipModule, FormsModule],
     }),
     componentWrapperDecorator((story) => `<div style="margin: 3em">${story}</div>`),
@@ -295,6 +289,80 @@ export const ComponentDisplayedWithValidation = {
       icon: PrimeIcons.SEARCH,
       tooltipKey: 'TOOLTIP_KEY',
       tooltipPosition: 'left',
+    },
+  },
+}
+
+export const CustomAutofocus = {
+  render: (args: any) => ({
+    props: {
+      ...args,
+    },
+    template: `
+        <ocx-button-dialog-with-portal-dialog-service ${argsToTemplate(args)}>
+        </ocx-button-dialog-with-portal-dialog-service>
+          `,
+  }),
+  args: {
+    title: 'Custom title',
+    messageOrComponent: 'Custom message',
+    primaryKey: 'Primary Button',
+    secondaryKey: 'Secondary Button',
+    extras: {
+      autoFocusButton: 'secondary',
+    },
+  },
+}
+
+@Component({
+  selector: 'ocx-my-component-to-display',
+  template: `<p>Hello, its my component to display custom buttons</p>`,
+})
+class ComponentToDisplayCustomButtonsComponent implements DialogCustomButtonsDisabled, OnInit {
+  customButtonEnabled: EventEmitter<{ id: string; enabled: boolean }> = new EventEmitter()
+  ngOnInit(): void {
+    this.customButtonEnabled.emit({ id: 'custom1', enabled: true })
+  }
+}
+
+export const CustomButtonsWithAutofocus = {
+  render: (args: any) => ({
+    props: {
+      ...args,
+    },
+    template: `
+            <ocx-button-dialog-with-portal-dialog-service ${argsToTemplate(args)}>
+            </ocx-button-dialog-with-portal-dialog-service>
+              `,
+  }),
+  args: {
+    title: 'Custom title',
+    messageOrComponent: {
+      type: ComponentToDisplayCustomButtonsComponent,
+    },
+    primaryKey: {
+      key: 'PRIMARY_KEY',
+      icon: PrimeIcons.BOOKMARK,
+      tooltipKey: 'TOOLTIP_KEY',
+      tooltipPosition: 'right',
+    },
+    secondaryKey: {
+      key: 'SECONDARY_KEY',
+      icon: PrimeIcons.SEARCH,
+      tooltipKey: 'TOOLTIP_KEY',
+      tooltipPosition: 'left',
+    },
+    extras: {
+      customButtons: [
+        {
+          id: 'custom1',
+          alignment: 'right',
+          key: 'CUSTOM_KEY',
+          icon: 'pi pi-times',
+        },
+      ],
+      autoFocusButton: 'custom',
+      autoFocusButtonCustomId: 'custom1',
     },
   },
 }
