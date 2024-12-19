@@ -5,7 +5,7 @@ import { Meta, moduleMetadata, applicationConfig, StoryFn } from '@storybook/ang
 import { TableModule } from 'primeng/table'
 import { ButtonModule } from 'primeng/button'
 import { MultiSelectModule } from 'primeng/multiselect'
-import { UserService, HAS_PERMISSION_CHECKER } from '@onecx/angular-integration-interface'
+import { UserService } from '@onecx/angular-integration-interface'
 import { MockUserService } from '@onecx/angular-integration-interface/mocks'
 import { DataTableComponent } from './data-table.component'
 import { StorybookTranslateModule } from './../../storybook-translate.module'
@@ -16,6 +16,7 @@ import { MenuModule } from 'primeng/menu'
 import { DynamicLocaleId } from '../../utils/dynamic-locale-id'
 import { CheckboxModule } from 'primeng/checkbox'
 import { FormsModule } from '@angular/forms'
+import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 
 type DataTableInputTypes = Pick<DataTableComponent, 'rows' | 'columns' | 'emptyResultsMessage' | 'selectedRows'>
 
