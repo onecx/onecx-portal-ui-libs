@@ -40,6 +40,9 @@ export * from './lib/core/components/loading-indicator/loading-indicator.compone
 export * from './lib/core/components/content-container/content-container.component'
 export * from './lib/core/components/content/content.component'
 export * from './lib/core/components/lifecycle/lifecycle.component'
+export * from './lib/core/components/dialog/dialog-content/dialog-content.component'
+export * from './lib/core/components/dialog/dialog-inline/dialog-inline.component'
+export * from './lib/core/components/dialog/dialog-footer/dialog-footer.component'
 
 // services
 export * from './lib/services/app.menu.service'
