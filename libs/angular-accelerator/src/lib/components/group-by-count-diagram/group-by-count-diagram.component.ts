@@ -19,6 +19,12 @@ export class GroupByCountDiagramComponent implements OnInit {
   @Input() sumKey = 'SEARCH.SUMMARY_TITLE'
   @Input() diagramType = DiagramType.PIE
   /**
+   * This property determines if diagram should generate the colors for the data that does not have any set.
+   *
+   * Setting this property to false will result in using the provided colors only if every data item has one. In the scenario where at least one item does not have a color set, diagram will generate all colors.
+   */
+  @Input() fillMissingColors = true
+  /**
    * @deprecated Will be replaced by diagramType
    */
   @Input()
@@ -66,6 +72,15 @@ export class GroupByCountDiagramComponent implements OnInit {
     this.columnField = value.id
   }
 
+  private _colors$ = new BehaviorSubject<Record<string, string>>({})
+  @Input()
+  get colors(): Record<string, string> {
+    return this._colors$.getValue()
+  }
+  set colors(value: Record<string, string>) {
+    this._colors$.next(value)
+  }
+
   @Output() dataSelected: EventEmitter<any> = new EventEmitter()
   @Output() diagramTypeChanged: EventEmitter<DiagramType> = new EventEmitter()
   @Output() componentStateChanged: EventEmitter<GroupByCountDiagramComponentState> = new EventEmitter()
@@ -73,20 +88,21 @@ export class GroupByCountDiagramComponent implements OnInit {
   constructor(private translateService: TranslateService) {}
 
   ngOnInit(): void {
-    this.diagramData$ = combineLatest([this._data$, this._columnField$, this._columnType$]).pipe(
-      mergeMap(([data, columnField, columnType]) => {
+    this.diagramData$ = combineLatest([this._data$, this._columnField$, this._columnType$, this._colors$]).pipe(
+      mergeMap(([data, columnField, columnType, colors]) => {
         const columnData = data.map((d) => ObjectUtils.resolveFieldData(d, columnField))
         const occurrences = columnData.reduce((acc, current) => {
           return acc.some((e: { label: any }) => e.label === current)
             ? (acc.find((e: { label: any }) => e.label === current).value++, acc)
-            : [...acc, { label: current, value: 1 }]
+            : [...acc, { label: current, value: 1, backgroundColor: colors[current.toString()] }]
         }, [])
         if (columnType === ColumnType.TRANSLATION_KEY && occurrences.length > 0) {
           return this.translateService.get(occurrences.map((o: { label: any }) => o.label)).pipe(
             map((translations: { [x: string]: any }) =>
-              occurrences.map((o: { label: string; value: any }) => ({
+              occurrences.map((o: { label: string; value: any; backgroundColor: string | undefined }) => ({
                 label: translations[o.label],
                 value: o.value,
+                backgroundColor: o.backgroundColor,
               }))
             )
           )
@@ -105,7 +121,7 @@ export class GroupByCountDiagramComponent implements OnInit {
     this.diagramType = newDiagramType
     this.diagramTypeChanged.emit(newDiagramType)
     this.componentStateChanged.emit({
-      activeDiagramType: newDiagramType
+      activeDiagramType: newDiagramType,
     })
   }
 }
