@@ -48,7 +48,8 @@
       "options": {
         "lintFilePatterns": [
           "libs/angular-testing/**/*.ts",
-          "libs/angular-testing/**/*.html"
+          "libs/angular-testing/**/*.html",
+          "libs/angular-testing/package.json"
         ]
       }
     },

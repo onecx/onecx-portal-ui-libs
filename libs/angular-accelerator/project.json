@@ -63,7 +63,7 @@
         "lintFilePatterns": [
           "libs/angular-accelerator/**/*.ts",
           "libs/angular-accelerator/**/*.html",
-          "libx/angular-accelerator/package.json"
+          "libs/angular-accelerator/package.json"
         ]
       }
     },

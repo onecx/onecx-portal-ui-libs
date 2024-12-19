@@ -48,7 +48,8 @@
       "options": {
         "lintFilePatterns": [
           "libs/angular-webcomponents/**/*.ts",
-          "libs/angular-webcomponents/**/*.html"
+          "libs/angular-webcomponents/**/*.html",
+          "libs/angular-webcomponents/package.json"
         ]
       }
     },

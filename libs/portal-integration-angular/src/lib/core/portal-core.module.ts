@@ -56,6 +56,7 @@ import { PatchFormGroupValuesDirective } from './directives/patch-form-group-val
 import { SetInputValueDirective } from './directives/set-input-value.directive'
 import { standaloneInitializer } from './initializer/standalone.initializer'
 import { PrimeNgModule } from './primeng.module'
+import { TRANSLATION_PATH } from '@onecx/angular-utils'
 
 export class PortalMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -121,6 +122,16 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
         return userService.lang$.getValue()
       },
       deps: [UserService],
+    },
+    {
+      provide: TRANSLATION_PATH,
+      useValue: './onecx-portal-lib/assets/i18n/',
+      multi: true
+    },
+    {
+      provide: TRANSLATION_PATH,
+      useValue: './onecx-portal-lib/assets/i18n/primeng/',
+      multi: true
     },
     {
       provide: MessageService,
