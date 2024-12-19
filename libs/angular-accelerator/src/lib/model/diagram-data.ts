@@ -1,1 +1,1 @@
-export type DiagramData = { label: string; value: number }
+export type DiagramData = { label: string; value: number; backgroundColor?: string }
