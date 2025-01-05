@@ -15,7 +15,7 @@ class TestComponent implements AfterViewInit {
   constructor(public viewContainerRef: ViewContainerRef) {}
 
   ngAfterViewInit() {
-    this.templates.forEach((template, index) => {
+    this.templates.forEach((template, _) => {
       const view = this.viewContainerRef.createEmbeddedView(template.template)
       this.views.push(view)
     })
