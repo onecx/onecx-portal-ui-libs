@@ -1,3 +1,12 @@
+## [5.30.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.29.0...v5.30.0) (2025-01-07)
+
+### Features
+
+* allow to specify autofocus for buttons ([#634](https://github.com/onecx/onecx-portal-ui-libs/issues/634)) ([39230d6](https://github.com/onecx/onecx-portal-ui-libs/commit/39230d616b8a8b255a3594f3b46d0b391472cf0e))
+* column-group-selection dropdown div has an id ([#629](https://github.com/onecx/onecx-portal-ui-libs/issues/629)) ([8656a47](https://github.com/onecx/onecx-portal-ui-libs/commit/8656a47800ecfb9a864051c58034e1a7a76381f8))
+* diagram components colors ([#630](https://github.com/onecx/onecx-portal-ui-libs/issues/630)) ([3d69020](https://github.com/onecx/onecx-portal-ui-libs/commit/3d69020398c46baae923b2def2d815f6ddf4dff0))
+* disabled header action buttons can have tooltip ([#633](https://github.com/onecx/onecx-portal-ui-libs/issues/633)) ([740ac32](https://github.com/onecx/onecx-portal-ui-libs/commit/740ac327f77b0abe690e5414d017a38c5e5e5329))
+
 ## [5.29.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.28.0...v5.29.0) (2024-12-02)
 
 ### Features
