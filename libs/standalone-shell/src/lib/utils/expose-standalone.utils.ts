@@ -69,7 +69,7 @@ export interface ProvideStandaloneProvidersConfig {
   theme: Partial<Theme>
 }
 
-const PROVIDE_STANDALONE_PROVIDERS_CONFIG = new InjectionToken<ProvideStandaloneProvidersConfig>('provideStandaloneProvidersConfig')
+export const PROVIDE_STANDALONE_PROVIDERS_CONFIG = new InjectionToken<ProvideStandaloneProvidersConfig>('provideStandaloneProvidersConfig')
 
 export function provideStandaloneProviders(config?: Partial<ProvideStandaloneProvidersConfig>) {
   return [
