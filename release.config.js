@@ -32,7 +32,7 @@ module.exports = {
     [
       '@semantic-release/exec',
       {
-        prepareCmd: `./release-script.sh \${nextRelease.version}`,
+        prepareCmd: `./release-script.sh \${nextRelease.version} \${nextRelease.channel}`,
       },
     ],
     [
