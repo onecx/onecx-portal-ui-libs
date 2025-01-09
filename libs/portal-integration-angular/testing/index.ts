@@ -1,4 +1,7 @@
 export * from './button-dialog.harness'
+export * from './dialog-content.harness'
+export * from './dialog-footer.harness'
+export * from './dialog-inline.harness'
 export * from './content-container.harness'
 export * from './content.harness'
 export * from './dialog-message-content.harness'
