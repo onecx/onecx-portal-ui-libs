@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
 import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateModule } from '@ngx-translate/core'
 
-import { AppConfigService, UserService } from '@onecx/angular-integration-interface'
+import { AppConfigService, UserService, provideConnectionService } from '@onecx/angular-integration-interface'
 import { AngularRemoteComponentsModule } from '@onecx/angular-remote-components'
 
 import { firstValueFrom, skip } from 'rxjs'
@@ -95,6 +95,7 @@ function appInitializer(userService: UserService) {
       multi: true,
     },
     AppConfigService,
+    provideConnectionService(),
   ],
   exports: [
     AngularRemoteComponentsModule,
