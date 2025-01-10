@@ -2,6 +2,7 @@ import { TranslateService } from '@ngx-translate/core'
 import { firstValueFrom, mergeMap } from 'rxjs'
 import { UserService } from '@onecx/angular-integration-interface'
 
+// TODO: Deprecate?
 export function translateServiceInitializer(
   userService: UserService,
   translateService: TranslateService
