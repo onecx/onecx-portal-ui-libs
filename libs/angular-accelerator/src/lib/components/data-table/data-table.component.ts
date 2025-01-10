@@ -454,7 +454,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         return filters
           .filter(
             (filter) =>
-              filter.columnId === currentFilterColumn?.id && currentFilterColumn.filterType === FilterType.TRUTHY
+              filter.columnId === currentFilterColumn?.id && currentFilterColumn.filterType === FilterType.IS_NOT_EMPTY
           )
           .map((filter) => filter.value)
       })
@@ -465,7 +465,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
           .filter(
             (filter) =>
               filter.columnId === currentFilterColumn?.id &&
-              (!currentFilterColumn.filterType || currentFilterColumn.filterType === FilterType.EQUAL)
+              (!currentFilterColumn.filterType || currentFilterColumn.filterType === FilterType.EQUALS)
           )
           .map((filter) => filter.value)
       })
@@ -473,7 +473,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     this.currentEqualFilterOptions$ = combineLatest([this._rows$, this.currentFilterColumn$, this._filters$]).pipe(
       filter(
         ([_, currentFilterColumn, __]) =>
-          !currentFilterColumn?.filterType || currentFilterColumn.filterType === FilterType.EQUAL
+          !currentFilterColumn?.filterType || currentFilterColumn.filterType === FilterType.EQUALS
       ),
       mergeMap(([rows, currentFilterColumn, filters]) => {
         if (!currentFilterColumn?.id) {
@@ -484,7 +484,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
           .filter(
             (filter) =>
               filter.columnId === currentFilterColumn?.id &&
-              (!currentFilterColumn.filterType || currentFilterColumn.filterType === FilterType.EQUAL)
+              (!currentFilterColumn.filterType || currentFilterColumn.filterType === FilterType.EQUALS)
           )
           .map((filter) => filter.value)
 

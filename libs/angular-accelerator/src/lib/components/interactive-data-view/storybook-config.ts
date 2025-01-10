@@ -139,7 +139,7 @@ export const defaultInteractiveDataViewArgs = {
       nameKey: 'Available',
       sortable: false,
       filterable: true,
-      filterType: FilterType.TRUTHY,
+      filterType: FilterType.IS_NOT_EMPTY,
       predefinedGroupKeys: ['test2'],
     },
     {
