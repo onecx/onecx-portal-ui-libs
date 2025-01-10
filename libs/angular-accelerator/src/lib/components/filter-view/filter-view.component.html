@@ -45,7 +45,7 @@
                       style="white-space: nowrap"
                       class="p-chip-text flex flex-nowrap"
                       >{{column?.nameKey ?? '' | translate }}:<ng-container
-                        *ngIf="filter.filterType === FilterType.EQUAL || !filter.filterType"
+                        *ngIf="filter.filterType === FilterType.EQUALS || !filter.filterType"
                         [ngTemplateOutlet]="chipTemplate"
                         [ngTemplateOutletContext]="{
                         templates: templates,
@@ -53,7 +53,7 @@
                         column: column
                       }"
                       ></ng-container>
-                      <ng-container *ngIf="filter.filterType === FilterType.TRUTHY">
+                      <ng-container *ngIf="filter.filterType === FilterType.IS_NOT_EMPTY">
                         <ng-container
                           [ngTemplateOutlet]="truthyTemplate"
                           [ngTemplateOutletContext]="{
@@ -152,7 +152,7 @@
               <ng-template pTemplate="valueIdCell" let-rowObject="rowObject" let-column="column">
                 <ng-container *ngIf="getColumn(rowObject['valueColumnId'], columns) as valueColumn">
                   <ng-container
-                    *ngIf="!valueColumn.filterType || valueColumn.filterType === FilterType.EQUAL"
+                    *ngIf="!valueColumn.filterType || valueColumn.filterType === FilterType.EQUALS"
                     [ngTemplateOutlet]="templates[valueColumn.id]"
                     [ngTemplateOutletContext]="{
               rowObject: getRowForValueColumn(rowObject),
@@ -161,7 +161,7 @@
                   >
                   </ng-container>
                   <ng-container
-                    *ngIf="valueColumn.filterType === FilterType.TRUTHY"
+                    *ngIf="valueColumn.filterType === FilterType.IS_NOT_EMPTY"
                     [ngTemplateOutlet]="truthyTemplate"
                     [ngTemplateOutletContext]="{
         value: resolveFieldData(rowObject, column.id)
