@@ -8,7 +8,7 @@ import { TemplateDirective } from './template.directive'
     <ng-template ocxTemplate="content"><p>content</p></ng-template>
     <ng-template #footer><p>footer</p></ng-template>`,
 })
-class TestComponentForTemplateDirective implements AfterViewInit {
+class TestForTemplateDirectiveComponent implements AfterViewInit {
   @ViewChildren(TemplateDirective) templates!: QueryList<TemplateDirective>
   views: EmbeddedViewRef<any>[] = []
 
@@ -23,14 +23,14 @@ class TestComponentForTemplateDirective implements AfterViewInit {
 }
 
 describe('TemplateDirective', () => {
-  let component: TestComponentForTemplateDirective
-  let fixture: ComponentFixture<TestComponentForTemplateDirective>
+  let component: TestForTemplateDirectiveComponent
+  let fixture: ComponentFixture<TestForTemplateDirectiveComponent>
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [TestComponentForTemplateDirective, TemplateDirective],
+      declarations: [TestForTemplateDirectiveComponent, TemplateDirective],
     }).compileComponents()
-    fixture = TestBed.createComponent(TestComponentForTemplateDirective)
+    fixture = TestBed.createComponent(TestForTemplateDirectiveComponent)
     component = fixture.componentInstance
     fixture.detectChanges()
   })

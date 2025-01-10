@@ -6,7 +6,7 @@ export class TemplateDirective {
     required: true,
     alias: 'ocxTemplate',
   })
-  name: string = ''
+  name = ''
 
   constructor(public template: TemplateRef<any>) {}
 
