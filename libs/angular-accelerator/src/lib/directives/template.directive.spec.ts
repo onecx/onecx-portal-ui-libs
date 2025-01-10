@@ -47,7 +47,6 @@ describe('TemplateDirective', () => {
   })
 
   it('should have a template reference', () => {
-    console.log(component.views[0].rootNodes)
     expect(component.views[0].rootNodes[0].textContent).toBe('header')
     expect(component.views[1].rootNodes[0].textContent).toBe('content')
   })
