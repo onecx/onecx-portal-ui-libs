@@ -8,7 +8,7 @@ import { TemplateDirective } from './template.directive'
     <ng-template ocxTemplate="content"><p>content</p></ng-template>
     <ng-template #footer><p>footer</p></ng-template>`,
 })
-class TestComponent implements AfterViewInit {
+class TestComponentForTemplateDirective implements AfterViewInit {
   @ViewChildren(TemplateDirective) templates!: QueryList<TemplateDirective>
   views: EmbeddedViewRef<any>[] = []
 
@@ -23,14 +23,14 @@ class TestComponent implements AfterViewInit {
 }
 
 describe('TemplateDirective', () => {
-  let component: TestComponent
-  let fixture: ComponentFixture<TestComponent>
+  let component: TestComponentForTemplateDirective
+  let fixture: ComponentFixture<TestComponentForTemplateDirective>
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [TestComponent, TemplateDirective],
+      declarations: [TestComponentForTemplateDirective, TemplateDirective],
     }).compileComponents()
-    fixture = TestBed.createComponent(TestComponent)
+    fixture = TestBed.createComponent(TestComponentForTemplateDirective)
     component = fixture.componentInstance
     fixture.detectChanges()
   })
@@ -39,7 +39,7 @@ describe('TemplateDirective', () => {
     expect(component.templates.length).toBe(2)
   })
 
-  it('should use provided name as name and type', () => {
+  it('should take the correct data and type', () => {
     expect(component.templates.get(0)?.name).toBe('header')
     expect(component.templates.get(0)?.getType()).toBe('header')
     expect(component.templates.get(1)?.name).toBe('content')
