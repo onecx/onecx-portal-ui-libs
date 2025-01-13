@@ -1,11 +1,8 @@
 import { CommonModule } from '@angular/common'
 import {
   APP_INITIALIZER,
-  Injector,
   LOCALE_ID,
   NgModule,
-  Optional,
-  SkipSelf,
 } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
@@ -32,14 +29,13 @@ import { SearchHeaderComponent } from './components/search-header/search-header.
 import { AdvancedDirective } from './directives/advanced.directive'
 import { IfBreakpointDirective } from './directives/if-breakpoint.directive'
 import { IfPermissionDirective } from './directives/if-permission.directive'
-import { HAS_PERMISSION_CHECKER, TRANSLATION_PATH } from '@onecx/angular-utils'
+import { providePermissionChecker, TRANSLATION_PATH } from '@onecx/angular-utils'
 import { SrcDirective } from './directives/src.directive'
 import { TooltipOnOverflowDirective } from './directives/tooltipOnOverflow.directive'
 import { DynamicPipe } from './pipes/dynamic.pipe'
 import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
 import { DynamicLocaleId } from './utils/dynamic-locale-id'
 import { FilterViewComponent } from './components/filter-view/filter-view.component'
-import { hasPermissionCheckerFactory } from './utils/has-permission-checker-factory'
 
 export class AngularAcceleratorMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -88,15 +84,11 @@ function appInitializer(userService: UserService) {
     FilterViewComponent,
   ],
   providers: [
+    providePermissionChecker(),
     {
       provide: LOCALE_ID,
       useClass: DynamicLocaleId,
       deps: [UserService],
-    },
-    {
-      provide: HAS_PERMISSION_CHECKER,
-      useFactory: hasPermissionCheckerFactory,
-      deps: [Injector, [new Optional(), new SkipSelf(), HAS_PERMISSION_CHECKER]],
     },
     {
       provide: APP_INITIALIZER,

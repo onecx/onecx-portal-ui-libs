@@ -1,6 +1,6 @@
 import { Injector, Provider, StaticProvider } from '@angular/core'
 import { UserService } from '@onecx/angular-integration-interface'
-import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
+import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from './has-permission-checker'
 
 export function hasPermissionCheckerFactory(parentInjector: Injector, hasPermissionChecker: HasPermissionChecker | null) {
   if (!hasPermissionChecker) {

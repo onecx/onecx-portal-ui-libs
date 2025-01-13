@@ -6,7 +6,7 @@ import { firstValueFrom } from 'rxjs'
 import { initializeRouter } from '@onecx/angular-webcomponents'
 import { Router } from '@angular/router'
 import { Theme, UserProfile, Workspace } from "@onecx/integration-interface";
-import { AlwaysGrantPermissionChecker, HAS_PERMISSION_CHECKER, TRANSLATION_PATH } from "@onecx/angular-utils";
+import { provideAlwaysGrantPermissionChecker, TRANSLATION_PATH } from "@onecx/angular-utils";
 
 const appInitializer = (
   appStateService: AppStateService,
@@ -90,13 +90,10 @@ export function provideStandaloneProviders(config?: Partial<ProvideStandalonePro
       deps: [Router, AppStateService]
     },
     {
-      provide: HAS_PERMISSION_CHECKER,
-      useClass: AlwaysGrantPermissionChecker
-    },
-    {
       provide: TRANSLATION_PATH,
       useValue: './assets/i18n/',
       multi: true,
-    }
+    },
+    provideAlwaysGrantPermissionChecker()
   ]
 }

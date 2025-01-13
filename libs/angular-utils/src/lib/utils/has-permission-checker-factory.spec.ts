@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing'
 import { UserService } from '@onecx/angular-integration-interface'
-import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
+import { HAS_PERMISSION_CHECKER } from './has-permission-checker'
 import { hasPermissionCheckerFactory } from './has-permission-checker-factory'
 import { Injector } from '@angular/core'
 
