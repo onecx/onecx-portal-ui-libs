@@ -26,9 +26,7 @@ describe('WorkspaceService', () => {
     mockAppStateService = TestBed.inject(AppStateServiceMock)
 
     mockAppStateService.currentWorkspace$.publish({
-      portalName: 'test-portal',
       workspaceName: 'test-workspace',
-      microfrontendRegistrations: [],
       baseUrl: 'http://example.com',
       routes: [
         {
@@ -59,9 +57,7 @@ describe('WorkspaceService', () => {
 
     it('should return empty string when workspace baseUrl is empty string"', (done) => {
       mockAppStateService.currentWorkspace$.publish({
-        portalName: 'test-portal',
         workspaceName: 'test-workspace',
-        microfrontendRegistrations: [],
         baseUrl: '',
         routes: [],
       })
@@ -74,9 +70,7 @@ describe('WorkspaceService', () => {
 
     it('should return workspace baseUrl when workspace has no routes at all"', (done) => {
       mockAppStateService.currentWorkspace$.publish({
-        portalName: 'test-portal',
         workspaceName: 'test-workspace',
-        microfrontendRegistrations: [],
         baseUrl: 'http://example.com',
       })
 
@@ -88,9 +82,7 @@ describe('WorkspaceService', () => {
 
     it('should return workspace baseUrl when workspace.routes is empty"', (done) => {
       mockAppStateService.currentWorkspace$.publish({
-        portalName: 'test-portal',
         workspaceName: 'test-workspace',
-        microfrontendRegistrations: [],
         baseUrl: 'http://example.com',
         routes: [],
       })
@@ -110,9 +102,7 @@ describe('WorkspaceService', () => {
 
     it('should return workspace baseUrl and endpoints when route has no baseUrl', (done) => {
       mockAppStateService.currentWorkspace$.publish({
-        portalName: 'test-portal',
         workspaceName: 'test-workspace',
-        microfrontendRegistrations: [],
         baseUrl: 'http://example.com',
         routes: [
           {
@@ -135,9 +125,7 @@ describe('WorkspaceService', () => {
 
     it('should return workspace baseUrl with endpoints when route has empty baseUrl', (done) => {
       mockAppStateService.currentWorkspace$.publish({
-        portalName: 'test-portal',
         workspaceName: 'test-workspace',
-        microfrontendRegistrations: [],
         baseUrl: 'http://example.com',
         routes: [
           {
@@ -161,9 +149,7 @@ describe('WorkspaceService', () => {
 
     it('should return route.baseUrl when endpoints are empty"', (done) => {
       mockAppStateService.currentWorkspace$.publish({
-        portalName: 'test-portal',
         workspaceName: 'test-workspace',
-        microfrontendRegistrations: [],
         baseUrl: 'http://example.com',
         routes: [
           {
@@ -211,9 +197,7 @@ describe('WorkspaceService', () => {
 
     it('should return baseurl when endpoint has wrong alias', (done) => {
       mockAppStateService.currentWorkspace$.publish({
-        portalName: 'test-portal',
         workspaceName: 'test-workspace',
-        microfrontendRegistrations: [],
         baseUrl: 'http://example.com',
         routes: [
           {
@@ -236,9 +220,7 @@ describe('WorkspaceService', () => {
 
     it('should return baseurl + endpoint with no endpointparameters', (done) => {
       mockAppStateService.currentWorkspace$.publish({
-        portalName: 'test-portal',
         workspaceName: 'test-workspace',
-        microfrontendRegistrations: [],
         baseUrl: 'http://example.com',
         routes: [
           {
@@ -261,9 +243,7 @@ describe('WorkspaceService', () => {
 
     it('should return baseurl + endpoint with no endpointparameters', (done) => {
       mockAppStateService.currentWorkspace$.publish({
-        portalName: 'test-portal',
         workspaceName: 'test-workspace',
-        microfrontendRegistrations: [],
         baseUrl: 'http://example.com',
         routes: [
           {
@@ -307,9 +287,7 @@ describe('WorkspaceService', () => {
 
     it('should return well formed url with 2 endpointParameters in endpoint', (done) => {
       mockAppStateService.currentWorkspace$.publish({
-        portalName: 'test-portal',
         workspaceName: 'test-workspace',
-        microfrontendRegistrations: [],
         baseUrl: 'http://example.com',
         routes: [
           {
@@ -333,9 +311,7 @@ describe('WorkspaceService', () => {
 
     it('should return route.baseUrl when no endpoints are available"', (done) => {
       mockAppStateService.currentWorkspace$.publish({
-        portalName: 'test-portal',
         workspaceName: 'test-workspace',
-        microfrontendRegistrations: [],
         baseUrl: 'http://example.com',
         routes: [
           {
@@ -354,9 +330,7 @@ describe('WorkspaceService', () => {
 
     it('should return well formed url although double / are retrieved', (done) => {
       mockAppStateService.currentWorkspace$.publish({
-        portalName: 'test-portal',
         workspaceName: 'test-workspace',
-        microfrontendRegistrations: [],
         baseUrl: 'http://example.com',
         routes: [
           {
@@ -394,9 +368,7 @@ describe('WorkspaceService', () => {
     })
     it('should find empty endpoint list in route and return false', (done) => {
       mockAppStateService.currentWorkspace$.publish({
-        portalName: 'test-portal',
         workspaceName: 'test-workspace',
-        microfrontendRegistrations: [],
         baseUrl: 'http://example.com',
         routes: [
           {
@@ -414,9 +386,7 @@ describe('WorkspaceService', () => {
     })
     it('should find no endpoint in route and return false', (done) => {
       mockAppStateService.currentWorkspace$.publish({
-        portalName: 'test-portal',
         workspaceName: 'test-workspace',
-        microfrontendRegistrations: [],
         baseUrl: 'http://example.com',
         routes: [
           {
@@ -439,9 +409,7 @@ describe('WorkspaceService', () => {
     })
     it('should check empty route baseUrl and return false', (done) => {
       mockAppStateService.currentWorkspace$.publish({
-        portalName: 'test-portal',
         workspaceName: 'test-workspace',
-        microfrontendRegistrations: [],
         baseUrl: 'http://example.com',
         routes: [
           {
@@ -459,9 +427,7 @@ describe('WorkspaceService', () => {
 
     it('should check route with no baseUrl and return false', (done) => {
       mockAppStateService.currentWorkspace$.publish({
-        portalName: 'test-portal',
         workspaceName: 'test-workspace',
-        microfrontendRegistrations: [],
         baseUrl: 'http://example.com',
         routes: [
           {

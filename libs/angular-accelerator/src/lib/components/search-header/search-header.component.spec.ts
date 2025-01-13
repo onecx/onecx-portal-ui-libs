@@ -42,10 +42,8 @@ describe('SearchHeaderComponent', () => {
     mockAppStateService = TestBed.inject(AppStateServiceMock)
     mockAppStateService.currentPortal$.publish({
       id: 'i-am-test-portal',
-      portalName: 'test',
       workspaceName: 'test',
       baseUrl: '',
-      microfrontendRegistrations: [],
     })
 
     fixture = TestBed.createComponent(SearchHeaderComponent)

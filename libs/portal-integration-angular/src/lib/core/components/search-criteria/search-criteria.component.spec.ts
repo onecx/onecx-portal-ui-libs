@@ -7,7 +7,7 @@ import { AppStateService, ConfigurationService } from '@onecx/angular-integratio
 import { SearchCriteriaComponent } from './search-criteria.component'
 import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 
 describe('SearchCriteriaComponent', () => {
   const origAddEventListener = window.addEventListener
@@ -37,14 +37,16 @@ describe('SearchCriteriaComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [SearchCriteriaComponent],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    imports: [InputSwitchModule,
-        RouterTestingModule,
-        MockAuthModule,
-        TranslateTestingModule.withTranslations({})],
-    providers: [ConfigurationService, AppStateService, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
-}).compileComponents()
+      declarations: [SearchCriteriaComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      imports: [InputSwitchModule, RouterTestingModule, MockAuthModule, TranslateTestingModule.withTranslations({})],
+      providers: [
+        ConfigurationService,
+        AppStateService,
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+      ],
+    }).compileComponents()
 
     fixture = TestBed.createComponent(SearchCriteriaComponent)
     component = fixture.componentInstance
@@ -52,10 +54,8 @@ describe('SearchCriteriaComponent', () => {
     const appStateService = getTestBed().inject(AppStateService)
     await appStateService.currentPortal$.publish({
       id: 'i-am-test-portal',
-      portalName: 'test',
       workspaceName: 'test',
       baseUrl: '',
-      microfrontendRegistrations: [],
     })
 
     fixture.detectChanges()

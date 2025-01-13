@@ -176,7 +176,7 @@ export class PageHeaderComponent implements OnInit, OnChanges {
             icon: PrimeIcons.HOME,
             routerLink: portal.baseUrl,
           },
-          page: portal.portalName,
+          page: portal.workspaceName,
         }))
       )
     )

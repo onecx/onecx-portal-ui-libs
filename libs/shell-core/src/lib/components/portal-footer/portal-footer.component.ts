@@ -33,7 +33,7 @@ export class PortalFooterComponent implements OnInit {
         const mfeName = mfe?.displayName
         const hostVersion = this.configurationService.getProperty(CONFIG_KEY.APP_VERSION) || 'DEV-LOCAL'
         const mfInfoText = mfeName ? `MF ${mfeName} v${mfeInfoVersion}` : ''
-        return `Portal: ${portal.portalName} v${hostVersion} ${mfInfoText}`
+        return `Portal: ${portal.workspaceName} v${hostVersion} ${mfInfoText}`
       })
     )
     this.logoUrl$ = combineLatest([

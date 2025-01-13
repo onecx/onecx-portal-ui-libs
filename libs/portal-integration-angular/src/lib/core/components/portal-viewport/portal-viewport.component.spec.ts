@@ -22,7 +22,7 @@ import { AppInlineProfileComponent } from '../inline-profile/inline-profile.comp
 import { IfBreakpointDirective } from '@onecx/angular-accelerator'
 import { MockAuthService } from '../../../mock-auth/mock-auth.service'
 import { PortalCoreModule } from '../../portal-core.module'
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 
 describe('PortalViewportComponent', () => {
   const origAddEventListener = window.addEventListener
@@ -52,7 +52,7 @@ describe('PortalViewportComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-    declarations: [
+      declarations: [
         PortalViewportComponent,
         SupportTicketComponent,
         HelpItemEditorComponent,
@@ -63,8 +63,9 @@ describe('PortalViewportComponent', () => {
         PortalMenuComponent,
         AppInlineProfileComponent,
         IfBreakpointDirective,
-    ],
-    imports: [ToastModule,
+      ],
+      imports: [
+        ToastModule,
         DialogModule,
         NoopAnimationsModule,
         FormsModule,
@@ -72,35 +73,34 @@ describe('PortalViewportComponent', () => {
         RouterModule,
         TooltipModule,
         TranslateTestingModule.withTranslations({}),
-        PortalCoreModule],
-    providers: [
+        PortalCoreModule,
+      ],
+      providers: [
         ConfigurationService,
         MessageService,
         { provide: AUTH_SERVICE, useClass: MockAuthService },
         {
-            provide: ActivatedRoute,
-            useValue: {
-                snapshot: {
-                    paramMap: {
-                        get: () => '1',
-                    },
-                },
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              paramMap: {
+                get: () => '1',
+              },
             },
+          },
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
-    ]
-}).compileComponents()
+      ],
+    }).compileComponents()
   })
 
   beforeEach(async () => {
     const appStateService = getTestBed().inject(AppStateService)
     await appStateService.currentPortal$.publish({
       id: 'i-am-test-portal',
-      portalName: 'test',
       workspaceName: 'test',
       baseUrl: '',
-      microfrontendRegistrations: [],
     })
 
     fixture = TestBed.createComponent(PortalViewportComponent)

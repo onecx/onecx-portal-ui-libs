@@ -16,7 +16,6 @@ export * from './lib/topics/user-profile/v1/user-profile.topic'
 export * from './lib/topics/configuration/v1/configuration.topic'
 
 export * from './lib/topics/current-workspace/v1/current-workspace.topic'
-export * from './lib/topics/current-workspace/v1/mfe-portal-registration.model'
 export * from './lib/topics/current-workspace/v1/workspace.model'
 export * from './lib/topics/current-workspace/v1/route.model'
 export * from './lib/topics/current-workspace/v1/endpoint.model'
