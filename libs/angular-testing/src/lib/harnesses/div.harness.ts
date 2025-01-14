@@ -2,19 +2,25 @@ import { BaseHarnessFilters, ComponentHarness, HarnessPredicate } from '@angular
 
 export interface DivHarnessFilters extends BaseHarnessFilters {
   class?: string
+  id?: string
 }
 
 export class DivHarness extends ComponentHarness {
   static hostSelector = 'div'
 
   static with(options: DivHarnessFilters): HarnessPredicate<DivHarness> {
-    return new HarnessPredicate(DivHarness, options).addOption('class', options.class, (harness, c) =>
-      HarnessPredicate.stringMatches(harness.getByClass(c), c)
+    return new HarnessPredicate(DivHarness, options)
+      .addOption('id', options.id, (harness, id) => HarnessPredicate.stringMatches(harness.getId(), id))
+      .addOption('class', options.class, (harness, c) => HarnessPredicate.stringMatches(harness.getByClass(c), c)
     )
   }
 
   async getByClass(c: string): Promise<string> {
     return (await (await this.host()).hasClass(c)) ? c : ''
+  }
+
+  async getId(): Promise<string | null> {
+    return await (await this.host()).getAttribute('id')
   }
 
   async checkHasClass(value: string) {
