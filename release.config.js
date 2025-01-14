@@ -3,6 +3,7 @@ module.exports = {
     'main',
     {
       name: 'develop',
+      channel: 'rc',
       prerelease: 'rc',
     },
   ],
