@@ -29,7 +29,7 @@ describe('LoadingIndicatorDirective', () => {
     component = fixture.componentInstance
   })
 
-  it('should have three loader indicators', () => {
+  it('should have three loaders', () => {
     expect(fixture.debugElement.queryAll(By.css('.loader')).length).toBe(3)
   })
 
@@ -37,11 +37,11 @@ describe('LoadingIndicatorDirective', () => {
     expect(fixture.debugElement.queryAll(By.css('.loader-small')).length).toBe(1)
   })
 
-  it('should be only one fullpage overlay loader', () => {
+  it('should be only one full-overlay loader', () => {
     expect(fixture.debugElement.queryAll(By.css('.full-overlay')).length).toBe(1)
   })
 
-  it('should be only 2 element overlay loader', () => {
+  it('should be two element-overlay loaders', () => {
     expect(fixture.debugElement.queryAll(By.css('.element-overlay')).length).toBe(2)
   })
 
