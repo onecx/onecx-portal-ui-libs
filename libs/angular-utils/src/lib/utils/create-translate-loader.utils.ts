@@ -29,7 +29,7 @@ export function createTranslateLoader(
   const ts = translationCacheService ?? inject(TranslationCacheService)
   const timerId = lastTranslateLoaderTimerId++
 
-  const translationPaths = inject(TRANSLATION_PATH)
+  const translationPaths = inject(TRANSLATION_PATH, {optional: true}) ?? []
 
   console.time('createTranslateLoader_' + timerId)
   return new AsyncTranslateLoader(
