@@ -1109,7 +1109,7 @@ export const mockMenu = [
     key: 'AIE_SW_40',
     name: 'DevOPSv & SE4.0',
     description: null,
-    url: 'https://www.capgemini.com/de-de/wp-content/uploads/sites/5/2021/03/Software4.0._Objektspektrum.pdf',
+    url: 'devops/se40',
     portalName: 'AIE',
     applicationId: null,
     disabled: false,

@@ -10,7 +10,7 @@ export class MockAuthService implements IAuthService {
       displayName: 'Max Musterman',
       firstName: 'Max',
       lastName: 'Mustermann',
-      email: 'max.mustermann@capgemini.com',
+      email: 'max.mustermann@example.com',
       address: {
         street: 'Broadway',
         streetNo: '13',
