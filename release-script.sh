@@ -1,6 +1,8 @@
 #!/bin/bash
 echo "$1"
+echo "$2"
 export VERSION=$1
+export CHANNEL=$2
 packageJsonData=$(cat package.json)
 topLevelPackageVersion=$(echo "$packageJsonData" | jq -r '.version')
 if [[ $topLevelPackageVersion != $1 ]]
