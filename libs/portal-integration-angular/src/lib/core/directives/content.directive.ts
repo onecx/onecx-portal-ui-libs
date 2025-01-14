@@ -8,11 +8,12 @@ export class OcxContentDirective implements OnInit, OnChanges {
    */
   @Input() ocxContent = ''
 
-  private titleElemID = 'ocxContentTitleElement'
+  private titleElemID = 'ocx_content_title_element'
 
   constructor(private el: ElementRef) {}
 
   ngOnInit() {
+    this.titleElemID = this.titleElemID + Math.round(Math.random() * 1000)
     this.init()
   }
 
