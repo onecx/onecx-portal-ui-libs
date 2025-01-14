@@ -8,11 +8,11 @@
     "@angular/core": "^18.0.5",
     "@angular/router": "^18.0.5",
     "@ngx-translate/core": "^15.0.0",
-    "@onecx/angular-integration-interface": "^5.27.0",
-    "@onecx/angular-webcomponents": "^5.27.0",
-    "@onecx/angular-utils": "^5.29.0",
-    "@onecx/integration-interface": "^5.27.0",
-    "@onecx/shell-core": "^5.27.0"
+    "@onecx/angular-integration-interface": "^5.30.0",
+    "@onecx/angular-webcomponents": "^5.30.0",
+    "@onecx/angular-utils": "^5.30.0",
+    "@onecx/integration-interface": "^5.30.0",
+    "@onecx/shell-core": "^5.30.0"
   },
   "dependencies": {},
   "publishConfig": {
