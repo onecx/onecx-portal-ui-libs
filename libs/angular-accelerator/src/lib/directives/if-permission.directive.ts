@@ -2,7 +2,6 @@ import {
   Directive,
   ElementRef,
   Inject,
-  InjectionToken,
   Input,
   OnInit,
   Optional,
@@ -11,21 +10,7 @@ import {
   ViewContainerRef,
 } from '@angular/core'
 import { UserService } from '@onecx/angular-integration-interface'
-
-export interface HasPermissionChecker {
-  hasPermission(permissionKey: string): boolean
-}
-
-/**
- * This checker always returns true, basically disabling the permission system on the UI side
- */
-export class AlwaysGrantPermissionChecker implements HasPermissionChecker {
-  hasPermission(_permissionKey: string): boolean {
-    return true
-  }
-}
-
-export const HAS_PERMISSION_CHECKER = new InjectionToken<HasPermissionChecker>('hasPermission')
+import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
 
 @Directive({ selector: '[ocxIfPermission], [ocxIfNotPermission]' })
 export class IfPermissionDirective implements OnInit {

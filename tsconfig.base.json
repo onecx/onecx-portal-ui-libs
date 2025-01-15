@@ -25,6 +25,7 @@
       "@onecx/angular-remote-components/mocks": ["libs/angular-remote-components/mocks/index.ts"],
       "@onecx/angular-standalone-shell": ["libs/angular-standalone-shell/src/index.ts"],
       "@onecx/angular-testing": ["libs/angular-testing/src/index.ts"],
+      "@onecx/angular-utils": ["libs/angular-utils/src/index.ts"],
       "@onecx/angular-webcomponents": ["libs/angular-webcomponents/src/index.ts"],
       "@onecx/integration-interface": ["libs/integration-interface/src/index.ts"],
       "@onecx/keycloak-auth": ["libs/keycloak-auth/src/index.ts"],
@@ -33,7 +34,8 @@
       "@onecx/portal-integration-angular/mocks": ["libs/portal-integration-angular/mocks/index.ts"],
       "@onecx/portal-integration-angular/testing": ["libs/portal-integration-angular/testing/index.ts"],
       "@onecx/portal-layout-styles": ["libs/portal-layout-styles/src/index.ts"],
-      "@onecx/shell-core": ["libs/shell-core/src/index.ts"]
+      "@onecx/shell-core": ["libs/shell-core/src/index.ts"],
+      "@onecx/standalone-shell": ["libs/standalone-shell/src/index.ts"]
     },
     "allowSyntheticDefaultImports": true
   },

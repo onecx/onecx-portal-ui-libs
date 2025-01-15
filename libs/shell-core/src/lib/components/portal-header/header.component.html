@@ -5,7 +5,7 @@
         <img
           *ngIf="logoUrl && !fallbackImg"
           id="app-logo"
-          [ocxSrc]="logoUrl"
+          [ocxShellSrc]="logoUrl"
           alt="Logo"
           style="max-height: 100%; max-width: 100%"
           (error)="fallbackImg=true"

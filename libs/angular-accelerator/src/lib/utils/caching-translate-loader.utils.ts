@@ -4,6 +4,9 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader'
 import { Observable } from 'rxjs'
 import { TranslationCacheService } from '../services/translation-cache.service'
 
+/**
+ * @deprecated Please import from `@onecx/angular-utils` instead.
+ */
 export class CachingTranslateLoader implements TranslateLoader {
   private translateLoader: TranslateHttpLoader
 

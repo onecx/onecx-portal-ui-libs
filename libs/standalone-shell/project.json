@@ -1,0 +1,61 @@
+{
+  "name": "standalone-shell",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/standalone-shell/src",
+  "prefix": "onecx",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:package",
+      "outputs": [
+        "{workspaceRoot}/dist/{projectRoot}"
+      ],
+      "options": {
+        "project": "libs/standalone-shell/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/standalone-shell/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/standalone-shell/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/standalone-shell/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "libs/standalone-shell/**/*.ts",
+          "libs/standalone-shell/**/*.html",
+          "libs/standalone-shell/package.json"
+        ]
+      }
+    },
+    "release": {
+      "executor": "nx-release:build-update-publish",
+      "options": {
+        "libName": "standalone-shell"
+      }
+    }
+  }
+}
