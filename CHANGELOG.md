@@ -1,3 +1,16 @@
+## [5.31.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.30.0...v5.31.0) (2025-01-15)
+
+### Features
+
+* implement id filter for div harness ([#643](https://github.com/onecx/onecx-portal-ui-libs/issues/643)) ([5bb39f3](https://github.com/onecx/onecx-portal-ui-libs/commit/5bb39f34de76f99b2ebe6085ac2a644d1676e849))
+* nx release with tag ([#644](https://github.com/onecx/onecx-portal-ui-libs/issues/644)) ([b16d8ce](https://github.com/onecx/onecx-portal-ui-libs/commit/b16d8ce565861ab66622fe44f69014f820941b0a))
+* standalone mode ([#614](https://github.com/onecx/onecx-portal-ui-libs/issues/614)) ([fc8a3d3](https://github.com/onecx/onecx-portal-ui-libs/commit/fc8a3d3043394730b351ca88b30d0f786b347816))
+
+### Bug Fixes
+
+* fixed channel for release candidate ([#648](https://github.com/onecx/onecx-portal-ui-libs/issues/648)) ([f18d80e](https://github.com/onecx/onecx-portal-ui-libs/commit/f18d80e9183fa0c42f05d88648919a7799eee3f5))
+* remove unwanted strings ([#645](https://github.com/onecx/onecx-portal-ui-libs/issues/645)) ([76fde91](https://github.com/onecx/onecx-portal-ui-libs/commit/76fde9145432dac819d6774a41aee3d394a62c8b))
+
 ## [5.30.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.29.0...v5.30.0) (2025-01-07)
 
 ### Features

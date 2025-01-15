@@ -1,11 +1,11 @@
 {
   "name": "@onecx/integration-interface",
-  "version": "5.30.0",
+  "version": "5.31.0",
   "license": "Apache-2.0",
   "peerDependencies": {
     "tslib": "^2.6.3",
     "rxjs": "^7.8.1",
-    "@onecx/accelerator": "^5.30.0"
+    "@onecx/accelerator": "^5.31.0"
   },
   "type": "commonjs",
   "main": "./src/index.js",
