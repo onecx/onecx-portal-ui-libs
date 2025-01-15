@@ -1,6 +1,6 @@
 {
   "name": "@onecx/ngrx-accelerator",
-  "version": "5.30.0",
+  "version": "5.31.0",
   "peerDependencies": {
     "@angular/core": "^18.0.5",
     "@angular/router": "^18.0.5",
@@ -10,7 +10,7 @@
     "@ngrx/operators": "^18.0.1",
     "@ngrx/router-store": "^18.0.1",
     "@ngrx/store": "^18.0.1",
-    "@onecx/integration-interface": "^5.30.0",
+    "@onecx/integration-interface": "^5.31.0",
     "rxjs": "^7.8.1",
     "zod": "^3.23.8"
   },
