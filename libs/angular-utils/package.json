@@ -1,0 +1,17 @@
+{
+  "name": "@onecx/angular-utils",
+  "version": "5.31.0",
+  "license": "Apache-2.0",
+  "peerDependencies": {
+    "@angular/common": "^18.0.5",
+    "@angular/core": "^18.0.5",
+    "@ngx-translate/core": "^15.0.0",
+    "@ngx-translate/http-loader": "^8.0.0",
+    "@onecx/accelerator": "^5.31.0",
+    "@onecx/angular-integration-interface": "^5.31.0",
+    "rxjs": "^7.8.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

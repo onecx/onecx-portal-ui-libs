@@ -1,3 +1,25 @@
+## [5.31.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.30.0...v5.31.0) (2025-01-15)
+
+### Features
+
+* implement id filter for div harness ([#643](https://github.com/onecx/onecx-portal-ui-libs/issues/643)) ([5bb39f3](https://github.com/onecx/onecx-portal-ui-libs/commit/5bb39f34de76f99b2ebe6085ac2a644d1676e849))
+* nx release with tag ([#644](https://github.com/onecx/onecx-portal-ui-libs/issues/644)) ([b16d8ce](https://github.com/onecx/onecx-portal-ui-libs/commit/b16d8ce565861ab66622fe44f69014f820941b0a))
+* standalone mode ([#614](https://github.com/onecx/onecx-portal-ui-libs/issues/614)) ([fc8a3d3](https://github.com/onecx/onecx-portal-ui-libs/commit/fc8a3d3043394730b351ca88b30d0f786b347816))
+
+### Bug Fixes
+
+* fixed channel for release candidate ([#648](https://github.com/onecx/onecx-portal-ui-libs/issues/648)) ([f18d80e](https://github.com/onecx/onecx-portal-ui-libs/commit/f18d80e9183fa0c42f05d88648919a7799eee3f5))
+* remove unwanted strings ([#645](https://github.com/onecx/onecx-portal-ui-libs/issues/645)) ([76fde91](https://github.com/onecx/onecx-portal-ui-libs/commit/76fde9145432dac819d6774a41aee3d394a62c8b))
+
+## [5.30.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.29.0...v5.30.0) (2025-01-07)
+
+### Features
+
+* allow to specify autofocus for buttons ([#634](https://github.com/onecx/onecx-portal-ui-libs/issues/634)) ([39230d6](https://github.com/onecx/onecx-portal-ui-libs/commit/39230d616b8a8b255a3594f3b46d0b391472cf0e))
+* column-group-selection dropdown div has an id ([#629](https://github.com/onecx/onecx-portal-ui-libs/issues/629)) ([8656a47](https://github.com/onecx/onecx-portal-ui-libs/commit/8656a47800ecfb9a864051c58034e1a7a76381f8))
+* diagram components colors ([#630](https://github.com/onecx/onecx-portal-ui-libs/issues/630)) ([3d69020](https://github.com/onecx/onecx-portal-ui-libs/commit/3d69020398c46baae923b2def2d815f6ddf4dff0))
+* disabled header action buttons can have tooltip ([#633](https://github.com/onecx/onecx-portal-ui-libs/issues/633)) ([740ac32](https://github.com/onecx/onecx-portal-ui-libs/commit/740ac327f77b0abe690e5414d017a38c5e5e5329))
+
 ## [5.29.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.28.0...v5.29.0) (2024-12-02)
 
 ### Features

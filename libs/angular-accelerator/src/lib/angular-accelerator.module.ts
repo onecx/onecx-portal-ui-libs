@@ -1,5 +1,9 @@
 import { CommonModule } from '@angular/common'
-import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core'
+import {
+  APP_INITIALIZER,
+  LOCALE_ID,
+  NgModule,
+} from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
 import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateModule } from '@ngx-translate/core'
@@ -24,7 +28,8 @@ import { DataLoadingErrorComponent } from './components/data-loading-error/data-
 import { SearchHeaderComponent } from './components/search-header/search-header.component'
 import { AdvancedDirective } from './directives/advanced.directive'
 import { IfBreakpointDirective } from './directives/if-breakpoint.directive'
-import { HAS_PERMISSION_CHECKER, IfPermissionDirective } from './directives/if-permission.directive'
+import { IfPermissionDirective } from './directives/if-permission.directive'
+import { providePermissionChecker, TRANSLATION_PATH } from '@onecx/angular-utils'
 import { SrcDirective } from './directives/src.directive'
 import { TooltipOnOverflowDirective } from './directives/tooltipOnOverflow.directive'
 import { DynamicPipe } from './pipes/dynamic.pipe'
@@ -79,20 +84,27 @@ function appInitializer(userService: UserService) {
     FilterViewComponent,
   ],
   providers: [
+    providePermissionChecker(),
     {
       provide: LOCALE_ID,
       useClass: DynamicLocaleId,
       deps: [UserService],
     },
     {
-      provide: HAS_PERMISSION_CHECKER,
-      useExisting: UserService,
-    },
-    {
       provide: APP_INITIALIZER,
       useFactory: appInitializer,
       deps: [UserService],
       multi: true,
+    },
+    {
+      provide: TRANSLATION_PATH,
+      useValue: './onecx-angular-accelerator/assets/i18n/',
+      multi: true
+    },
+    {
+      provide: TRANSLATION_PATH,
+      useValue: './onecx-angular-accelerator/assets/i18n/primeng/',
+      multi: true
     },
     AppConfigService,
   ],
