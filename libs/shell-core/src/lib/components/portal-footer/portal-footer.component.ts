@@ -56,15 +56,15 @@ export class PortalFooterComponent implements OnInit {
     this.copyrightMsg$ = concat(
       of('All rights reserved.'),
       this.appState.currentWorkspace$.pipe(
-        map((portalData) => {
+        map((workspaceData) => {
           if (
             !(
-              portalData.footerLabel === '' ||
-              portalData.footerLabel === 'string' ||
-              portalData.footerLabel === undefined
+              workspaceData.footerLabel === '' ||
+              workspaceData.footerLabel === 'string' ||
+              workspaceData.footerLabel === undefined
             )
           ) {
-            return portalData.companyName || portalData.footerLabel || 'All rights reserved.'
+            return workspaceData.companyName || workspaceData.footerLabel || 'All rights reserved.'
           }
           return ''
         })
