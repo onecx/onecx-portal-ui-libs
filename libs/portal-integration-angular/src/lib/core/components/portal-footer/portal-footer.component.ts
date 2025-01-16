@@ -48,7 +48,7 @@ export class PortalFooterComponent implements OnInit {
   }
   ngOnInit(): void {
     this.copyrightMsg$ = concat(
-      of('Capgemini. All rights reserved.'),
+      of('All rights reserved.'),
       this.appState.currentWorkspace$.pipe(
         map((workspaceData) => {
           if (
