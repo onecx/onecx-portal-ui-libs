@@ -1,6 +1,6 @@
 {
   "name": "@onecx/portal-integration-angular",
-  "version": "5.30.0",
+  "version": "5.31.0",
   "license": "Apache-2.0",
   "peerDependencies": {
     "@angular/common": "^18.0.5",
@@ -16,10 +16,11 @@
     "@ngrx/router-store": "^18.0.1",
     "@ngrx/store": "^18.0.1",
     "@ngneat/until-destroy": "^10.0.0",
-    "@onecx/angular-accelerator": "^5.30.0",
-    "@onecx/integration-interface": "^5.30.0",
-    "@onecx/angular-integration-interface": "^5.30.0",
-    "@onecx/angular-testing": "^5.30.0",
+    "@onecx/angular-accelerator": "^5.31.0",
+    "@onecx/integration-interface": "^5.31.0",
+    "@onecx/angular-integration-interface": "^5.31.0",
+    "@onecx/angular-testing": "^5.31.0",
+    "@onecx/angular-utils": "^5.31.0",
     "fast-deep-equal": "^3.1.3",
     "msw": "^2.3.1",
     "rxjs": "~7.8.1",

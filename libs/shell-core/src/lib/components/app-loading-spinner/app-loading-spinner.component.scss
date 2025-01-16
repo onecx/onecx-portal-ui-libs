@@ -1,0 +1,48 @@
+$overlay-bg-color: rgba(0, 0, 0, 0.5);
+$loader-border-bottom-color: transparent;
+
+@keyframes rotation {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+.element-overlay {
+	&::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: $overlay-bg-color;
+		z-index: 1;
+	}
+	position: relative;
+	width: 100%;
+	cursor: default;
+	pointer-events: none;
+}
+.loader {
+	width: 28px;
+	height: 28px;
+	border: 3px solid var(--primary-color);
+	border-bottom-color: $loader-border-bottom-color;
+	border-radius: 50%;
+	display: inline-block;
+	box-sizing: border-box;
+	animation: rotation 1s linear infinite;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 2;
+	&.loader-small {
+		width: 20px;
+		height: 20px;
+		top: 20%;
+		left: 45%;
+	}
+}
