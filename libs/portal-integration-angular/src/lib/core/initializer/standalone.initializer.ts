@@ -62,7 +62,7 @@ export function standaloneInitializer(
         throw e
       }
       console.log(`📃 portal OK? `, portal)
-      await appStateService.currentPortal$.publish({
+      await appStateService.currentWorkspace$.publish({
         ...portal,
         workspaceName: portal.portalName,
       })

@@ -21,7 +21,17 @@ export class AppStateServiceMock {
   globalLoading$ = new FakeTopic(false)
   currentMfe$ = new FakeTopic({ mountPath: '/', remoteBaseUrl: '.', baseHref: '/', shellName: 'test' })
   currentPage$ = new FakeTopic<PageInfo | undefined>(undefined)
-  currentPortal$ = new FakeTopic<Workspace>({ baseUrl: '/', workspaceName: 'Test portal' })
-  currentWorkspace$ = new FakeTopic<Workspace>({ baseUrl: '/', workspaceName: 'Test workspace' })
+  currentPortal$ = new FakeTopic<Workspace>({
+    baseUrl: '/',
+    microfrontendRegistrations: [],
+    portalName: 'Test portal',
+    workspaceName: 'Test portal',
+  })
+  currentWorkspace$ = new FakeTopic<Workspace>({
+    baseUrl: '/',
+    microfrontendRegistrations: [],
+    portalName: 'Test workspace',
+    workspaceName: 'Test workspace',
+  })
   isAuthenticated$ = new FakeTopic<null>(null)
 }

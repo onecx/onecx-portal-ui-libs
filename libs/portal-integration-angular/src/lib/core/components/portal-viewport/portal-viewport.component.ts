@@ -74,9 +74,9 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
     this.hideMenuButtonTitle = this.portalUIConfig.getTranslation('hideMenuButton')
     this.showMenuButtonTitle = this.portalUIConfig.getTranslation('showMenuButton')
 
-    this.portalHomeMenuItem$ = this.appStateService.currentPortal$.asObservable().pipe(
-      map((portal) => ({
-        url: portal.homePage,
+    this.portalHomeMenuItem$ = this.appStateService.currentWorkspace$.asObservable().pipe(
+      map((workspace) => ({
+        url: workspace.homePage,
         label: 'Home',
       }))
     )

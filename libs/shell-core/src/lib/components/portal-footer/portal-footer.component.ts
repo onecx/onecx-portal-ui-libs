@@ -27,13 +27,13 @@ export class PortalFooterComponent implements OnInit {
     public workspaceConfigBffService: WorkspaceConfigBffService | undefined
   ) {
     this.versionInfo$ = this.appState.currentMfe$.pipe(
-      withLatestFrom(this.appState.currentPortal$.asObservable()),
-      map(([mfe, portal]) => {
+      withLatestFrom(this.appState.currentWorkspace$.asObservable()),
+      map(([mfe, workspace]) => {
         const mfeInfoVersion = mfe?.version || ''
         const mfeName = mfe?.displayName
         const hostVersion = this.configurationService.getProperty(CONFIG_KEY.APP_VERSION) || 'DEV-LOCAL'
         const mfInfoText = mfeName ? `MF ${mfeName} v${mfeInfoVersion}` : ''
-        return `Portal: ${portal.workspaceName} v${hostVersion} ${mfInfoText}`
+        return `Portal: ${workspace.workspaceName} v${hostVersion} ${mfInfoText}`
       })
     )
     this.logoUrl$ = combineLatest([

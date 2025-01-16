@@ -52,10 +52,12 @@ describe('SearchCriteriaComponent', () => {
     component = fixture.componentInstance
 
     const appStateService = getTestBed().inject(AppStateService)
-    await appStateService.currentPortal$.publish({
+    await appStateService.currentWorkspace$.publish({
       id: 'i-am-test-portal',
+      portalName: 'test',
       workspaceName: 'test',
       baseUrl: '',
+      microfrontendRegistrations: [],
     })
 
     fixture.detectChanges()
