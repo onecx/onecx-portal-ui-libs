@@ -1,3 +1,15 @@
+## [6.0.0-rc.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.2...v6.0.0-rc.3) (2025-01-15)
+
+### Features
+
+* minor version upgrade to rc3 ([#652](https://github.com/onecx/onecx-portal-ui-libs/issues/652)) ([7ebeab8](https://github.com/onecx/onecx-portal-ui-libs/commit/7ebeab84e4a6b9ba83d306ea88ec3a5b982b13aa))
+
+## [6.0.0-rc.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.1...v6.0.0-rc.2) (2025-01-15)
+
+### Features
+
+* minor version upgrade ([#651](https://github.com/onecx/onecx-portal-ui-libs/issues/651)) ([008b49d](https://github.com/onecx/onecx-portal-ui-libs/commit/008b49daf9e2a6fcb77bc59e09b67ca80062194e))
+
 ## [5.30.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.29.0...v5.30.0) (2025-01-07)
 
 ### Features
