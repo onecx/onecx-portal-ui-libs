@@ -4,12 +4,6 @@ export interface ColumnFilterDataSelectOptions {
 
 export type Filter = { columnId: string; value: unknown; filterType?: FilterType }
 
-export interface FilterObject {
-  type: FilterType
-  value1: unknown
-  value2: unknown
-}
-
 export enum FilterType {
   ENDS_WITH = 'endsWith',
   STARTS_WITH = 'startsWith',

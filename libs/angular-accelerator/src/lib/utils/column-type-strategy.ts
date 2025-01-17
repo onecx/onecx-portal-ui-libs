@@ -1,7 +1,7 @@
-import { FilterObject } from '../model/filter.model'
+import { Filter, FilterType } from '../model/filter.model'
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
-export abstract class FilterStrategy {
+export abstract class ColumnTypeStrategy {
   endsWith(value: unknown, target: unknown): boolean {
     console.error('endsWith method not implemented')
     return true
@@ -67,8 +67,12 @@ export abstract class FilterStrategy {
     return 0
   }
 
-  filter(hayStack: unknown[], filterObject: FilterObject): unknown[] {
-    const { type, ...rest } = filterObject
-    return hayStack.filter((item) => this[type](item, rest))
+  filter(hayStack: unknown[], filter: Filter): unknown[] {
+    const { filterType, value } = filter
+    if (!filterType) {
+      console.warn('Filter does not have a type set. All items will resolve as true')
+      return hayStack
+    }
+    return hayStack.filter((item) => this[filterType](item, value))
   }
 }
