@@ -18,9 +18,9 @@ export class AnnouncementBannerComponent {
     private configService: ConfigurationService,
     private appStateService: AppStateService
   ) {
-    this.prioItem$ = this.appStateService.currentPortal$.pipe(
-      mergeMap((portal) =>
-        this.api.getAnnouncements(portal.id || '', this.currentDate, this.currentDate).pipe(
+    this.prioItem$ = this.appStateService.currentWorkspace$.pipe(
+      mergeMap((workspace) =>
+        this.api.getAnnouncements(workspace.id || '', this.currentDate, this.currentDate).pipe(
           map((results) => results.filter((a) => a.priority === AnnouncementPriorityType.Important)),
           switchMap((data) => {
             if (data[0] == undefined) {
