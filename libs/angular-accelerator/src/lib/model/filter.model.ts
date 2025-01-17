@@ -2,7 +2,9 @@ export interface ColumnFilterDataSelectOptions {
   reverse: boolean
 }
 
-export type Filter = { columnId: string; value: unknown; filterType?: FilterType }
+export type FilterObject = { columnId: string; filterType?: FilterType }
+
+export type Filter = FilterObject & { value: unknown }
 
 export enum FilterType {
   ENDS_WITH = 'endsWith',
