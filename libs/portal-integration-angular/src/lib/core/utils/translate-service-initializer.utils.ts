@@ -4,7 +4,7 @@ import { UserService } from '@onecx/angular-integration-interface'
 
 /**
  * @deprecated
- * Provide ConnectionService from @onecx/angular-integration-interface via provideConnectionService instead.
+ * Provide ConnectionService via provideConnectionService from @onecx/angular-accelerator instead.
  */
 export function translateServiceInitializer(
   userService: UserService,
