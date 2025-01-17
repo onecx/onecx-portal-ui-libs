@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core'
-import { UserService } from './user.service'
 import { TranslateService } from '@ngx-translate/core'
+import { UserService } from '@onecx/angular-integration-interface'
 import { Subscription } from 'rxjs'
 
 @Injectable()

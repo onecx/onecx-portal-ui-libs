@@ -1,8 +1,8 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing'
 import { ConnectionService } from './connection.service'
-import { UserService } from './user.service'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { TranslateService } from '@ngx-translate/core'
+import { UserService } from '@onecx/angular-integration-interface'
 
 describe('ConnectionService', () => {
   beforeEach(() => {
