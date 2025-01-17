@@ -6,7 +6,7 @@ import { ColumnType } from '../model/column-type.model'
 
 class NumberOperationStrategy extends DataOperationStrategy {
   override equals(column: DataTableColumn, value: unknown, target: unknown): boolean {
-    return value === target
+    return Number(value) === Number(target)
   }
   override lessThan(column: DataTableColumn, value: unknown, target: unknown): boolean {
     return Number(value) < Number(target)
@@ -18,40 +18,36 @@ class NumberOperationStrategy extends DataOperationStrategy {
 
 class DateOperationStrategy extends DataOperationStrategy {
   override equals(column: DataTableColumn, value: unknown, target: unknown): boolean {
+    if (!value || !(value instanceof Date) || !(target instanceof Date)) return false
+    // different implementation based on the column
     let precision: 'day' | 'year' = 'year'
     if (column.id === 'dayCol') precision = 'day'
 
-    if (value === undefined) return false
-    const valueDate = value as Date
-    const targetDate = target as Date
     if (precision === 'day') {
       return (
-        valueDate.getFullYear() === targetDate.getFullYear() &&
-        valueDate.getMonth() === targetDate.getMonth() &&
-        valueDate.getDate() === targetDate.getDate()
+        value.getFullYear() === target.getFullYear() &&
+        value.getMonth() === target.getMonth() &&
+        value.getDate() === target.getDate()
       )
     }
-    return valueDate.getFullYear() === targetDate.getFullYear()
+    return value.getFullYear() === target.getFullYear()
   }
 
   override isNotEmpty(column: DataTableColumn, value: unknown): boolean {
-    return value !== undefined
+    return !!value
   }
 
-  override compare(a: unknown, b: unknown, column: DataTableColumn): number {
+  override compare(a: Date, b: Date, column: DataTableColumn): number {
     let precision: 'day' | 'year' = 'year'
     if (column.id === 'dayCol') precision = 'day'
 
-    const aDate = a as Date
-    const bDate = b as Date
+    const aYear = a.getFullYear()
+    const aMonth = a.getMonth()
+    const aDay = a.getDate()
 
-    const aYear = aDate.getFullYear()
-    const aMonth = aDate.getMonth()
-    const aDay = aDate.getDate()
-
-    const bYear = bDate.getFullYear()
-    const bMonth = bDate.getMonth()
-    const bDay = bDate.getDate()
+    const bYear = b.getFullYear()
+    const bMonth = b.getMonth()
+    const bDay = b.getDate()
 
     if (aYear !== bYear || precision === 'year') {
       return aYear - bYear
@@ -66,18 +62,22 @@ class DateOperationStrategy extends DataOperationStrategy {
     if (filterObject.filterType === FilterType.IS_NOT_EMPTY) {
       return ['yes', 'no']
     }
+
+    const hayStackValues = hayStack
+      .map((item) => this.mapHaystackItemToValue(item, filterObject))
+      .filter((item) => !!item)
     const column = columns.find((c) => c.id === filterObject.columnId)
     if (!column) {
       console.warn('Filter does not have a column id set. All items will be considered a valid option')
-      return hayStack
+      return hayStackValues
     }
 
     let precision: 'day' | 'year' = 'year'
     if (column.id === 'dayCol') precision = 'day'
 
-    return hayStack
-      .filter((v) => v !== undefined)
-      .filter((item, index, self) => index === self.findIndex((t) => this.compare(t, item, column) === 0))
+    return hayStackValues.filter(
+      (item, index, self) => index === self.findIndex((t) => this.compare(t, item, column) === 0)
+    )
   }
 }
 
@@ -89,7 +89,23 @@ describe('DataOperationStrategy', () => {
   })
 
   describe('NumberOperationStrategy', () => {
-    const items = [1, 2, 3, 2, 4]
+    const items = [
+      {
+        col: 1,
+      },
+      {
+        col: 2,
+      },
+      {
+        col: 3,
+      },
+      {
+        col: 2,
+      },
+      {
+        col: 4,
+      },
+    ]
     let strategy = new NumberOperationStrategy()
     const columns: DataTableColumn[] = [
       {
@@ -109,7 +125,7 @@ describe('DataOperationStrategy', () => {
         },
         columns
       )
-      expect(result).toEqual([2, 2])
+      expect(result).toEqual([{ col: 2 }, { col: 2 }])
     })
 
     it('should result in lower numbers for filter', () => {
@@ -122,7 +138,7 @@ describe('DataOperationStrategy', () => {
         },
         columns
       )
-      expect(result).toEqual([1, 2, 2])
+      expect(result).toEqual([{ col: 1 }, { col: 2 }, { col: 2 }])
     })
 
     it('should result in unique numbers for filterOptions', () => {
@@ -167,21 +183,42 @@ describe('DataOperationStrategy', () => {
           filterType: FilterType.LESS_THAN,
           columnId: 'col',
         },
-        columns
+        []
       )
-      expect(result).toEqual([1, 2, 3, 4])
+      expect(result).toEqual(items.map((i) => i.col))
     })
   })
 
   describe('DateOperationStrategy', () => {
     const items = [
-      new Date(2020, 1, 13),
-      new Date(2020, 1, 13),
-      new Date(2021, 1, 13),
-      new Date(2022, 7, 20),
-      new Date(2022, 1, 13),
-      new Date(2024, 7, 20),
-      undefined,
+      {
+        yearCol: new Date(2020, 1, 13),
+        dayCol: new Date(2020, 1, 13),
+      },
+      {
+        yearCol: new Date(2020, 1, 13),
+        dayCol: new Date(2020, 1, 13),
+      },
+      {
+        yearCol: new Date(2021, 1, 13),
+        dayCol: new Date(2021, 1, 13),
+      },
+      {
+        yearCol: new Date(2022, 7, 20),
+        dayCol: new Date(2022, 7, 20),
+      },
+      {
+        yearCol: new Date(2022, 1, 13),
+        dayCol: new Date(2022, 1, 13),
+      },
+      {
+        yearCol: new Date(2024, 7, 20),
+        dayCol: new Date(2024, 7, 20),
+      },
+      {
+        yearCol: undefined,
+        dayCol: undefined,
+      },
     ]
     let strategy = new DateOperationStrategy()
     const columns: DataTableColumn[] = [
@@ -210,7 +247,10 @@ describe('DataOperationStrategy', () => {
         columns
       )
 
-      expect(result).toEqual([new Date(2022, 7, 20), new Date(2022, 1, 13)])
+      expect(result).toEqual([
+        { yearCol: new Date(2022, 7, 20), dayCol: new Date(2022, 7, 20) },
+        { yearCol: new Date(2022, 1, 13), dayCol: new Date(2022, 1, 13) },
+      ])
     })
 
     it('should result in equal dates with day precision', () => {
@@ -224,7 +264,10 @@ describe('DataOperationStrategy', () => {
         columns
       )
 
-      expect(result).toEqual([new Date(2020, 1, 13), new Date(2020, 1, 13)])
+      expect(result).toEqual([
+        { yearCol: new Date(2020, 1, 13), dayCol: new Date(2020, 1, 13) },
+        { yearCol: new Date(2020, 1, 13), dayCol: new Date(2020, 1, 13) },
+      ])
     })
     it('should result in non empty dates', () => {
       const result = strategy.filter(
@@ -273,6 +316,18 @@ describe('DataOperationStrategy', () => {
         new Date(2022, 1, 13),
         new Date(2024, 7, 20),
       ])
+    })
+    it('should result in yes and no options with not empty filter', () => {
+      const result = strategy.filterOptions(
+        items,
+        {
+          columnId: dayCol,
+          filterType: FilterType.IS_NOT_EMPTY,
+        },
+        columns
+      )
+
+      expect(result).toEqual(['yes', 'no'])
     })
   })
 })

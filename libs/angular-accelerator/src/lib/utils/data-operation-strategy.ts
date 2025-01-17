@@ -1,5 +1,6 @@
 import { DataTableColumn } from '../model/data-table-column.model'
 import { Filter, FilterObject } from '../model/filter.model'
+import { ObjectUtils } from './objectutils'
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export abstract class DataOperationStrategy {
@@ -69,12 +70,15 @@ export abstract class DataOperationStrategy {
   }
 
   filterOptions(hayStack: unknown[], filterObject: FilterObject, columns: DataTableColumn[]): unknown[] {
+    const hayStackOptions = hayStack.map((item) => this.mapHaystackItemToValue(item, filterObject))
     const column = columns.find((c) => c.id === filterObject.columnId)
     if (!column) {
       console.warn('Filter does not have a column id set. All items will be considered a valid option')
-      return hayStack
+      return hayStackOptions
     }
-    return hayStack.filter((item, index, self) => index === self.findIndex((t) => this.compare(t, item, column) === 0))
+    return hayStackOptions.filter(
+      (item, index, self) => index === self.findIndex((t) => this.compare(t, item, column) === 0)
+    )
   }
 
   filter(hayStack: unknown[], filter: Filter, columns: DataTableColumn[]): unknown[] {
@@ -88,6 +92,10 @@ export abstract class DataOperationStrategy {
       console.warn('Filter does not have a column id set. All items will be considered a valid option')
       return hayStack
     }
-    return hayStack.filter((item) => this[filterType](column, item, value))
+    return hayStack.filter((item) => this[filterType](column, this.mapHaystackItemToValue(item, filter), value))
+  }
+
+  mapHaystackItemToValue(item: unknown, filter: Filter | FilterObject) {
+    return ObjectUtils.resolveFieldData(item, filter.columnId)
   }
 }
