@@ -1,5 +1,5 @@
 import { ENVIRONMENT_INITIALIZER, inject } from '@angular/core'
-import { ConnectionService } from '@onecx/angular-integration-interface'
+import { ConnectionService } from '../services/connection.service'
 
 export function provideConnectionService() {
   return [
