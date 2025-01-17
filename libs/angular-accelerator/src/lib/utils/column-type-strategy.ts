@@ -1,4 +1,4 @@
-import { Filter, FilterType } from '../model/filter.model'
+import { Filter } from '../model/filter.model'
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export abstract class ColumnTypeStrategy {
