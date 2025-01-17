@@ -28,33 +28,37 @@ export class PortalFooterComponent implements OnInit {
     private ref: ChangeDetectorRef
   ) {
     this.versionInfo$ = this.appState.currentMfe$.pipe(
-      withLatestFrom(this.appState.currentPortal$.asObservable()),
-      map(([mfe, portal]) => {
+      withLatestFrom(this.appState.currentWorkspace$.asObservable()),
+      map(([mfe, workspace]) => {
         const mfeInfoVersion = mfe?.version || ''
         const mfeName = mfe?.displayName
         const hostVersion = this.configurationService.getProperty(CONFIG_KEY.APP_VERSION) || 'DEV-LOCAL'
         const mfInfoText = mfeName ? `MF ${mfeName} v${mfeInfoVersion}` : ''
-        return `Portal: ${portal.portalName} v${hostVersion} ${mfInfoText}`
+        return `Portal: ${workspace.workspaceName} v${hostVersion} ${mfInfoText}`
       })
     )
     this.logoUrl$ = combineLatest([
       this.themeService.currentTheme$.asObservable(),
-      this.appState.currentPortal$.asObservable(),
-    ]).pipe(map(([theme, portalData]) => ImageLogoUrlUtils.createLogoUrl(API_PREFIX, theme.logoUrl || portalData.logoUrl)))
+      this.appState.currentWorkspace$.asObservable(),
+    ]).pipe(
+      map(([theme, workspaceData]) =>
+        ImageLogoUrlUtils.createLogoUrl(API_PREFIX, theme.logoUrl || workspaceData.logoUrl)
+      )
+    )
   }
   ngOnInit(): void {
     this.copyrightMsg$ = concat(
-      of('Capgemini. All rights reserved.'),
-      this.appState.currentPortal$.pipe(
-        map((portalData) => {
+      of('All rights reserved.'),
+      this.appState.currentWorkspace$.pipe(
+        map((workspaceData) => {
           if (
             !(
-              portalData.footerLabel === '' ||
-              portalData.footerLabel === 'string' ||
-              portalData.footerLabel === undefined
+              workspaceData.footerLabel === '' ||
+              workspaceData.footerLabel === 'string' ||
+              workspaceData.footerLabel === undefined
             )
           ) {
-            return portalData.companyName || portalData.footerLabel || 'All rights reserved.'
+            return workspaceData.companyName || workspaceData.footerLabel || 'All rights reserved.'
           }
           return ''
         })

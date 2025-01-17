@@ -170,13 +170,13 @@ export class PageHeaderComponent implements OnInit, OnChanges {
     this.breadcrumbs = breadcrumbs
     this.home$ = concat(
       of({ menuItem: { icon: PrimeIcons.HOME, routerLink: '/' } }),
-      this.appStateService.currentPortal$.pipe(
-        map((portal) => ({
+      this.appStateService.currentWorkspace$.pipe(
+        map((workspace) => ({
           menuItem: {
             icon: PrimeIcons.HOME,
-            routerLink: portal.baseUrl,
+            routerLink: workspace.baseUrl,
           },
-          page: portal.portalName,
+          page: workspace.workspaceName,
         }))
       )
     )

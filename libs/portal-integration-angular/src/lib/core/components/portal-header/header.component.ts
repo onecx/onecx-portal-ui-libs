@@ -103,7 +103,7 @@ export class HeaderComponent implements OnInit {
 
     this.logoUrl$ = combineLatest([
       this.themeService.currentTheme$.asObservable(),
-      this.appStateService.currentPortal$.asObservable(),
+      this.appStateService.currentWorkspace$.asObservable(),
     ]).pipe(
       map(([theme, portal]) => {
         return ImageLogoUrlUtils.createLogoUrl(API_PREFIX, theme.logoUrl || portal.logoUrl)
