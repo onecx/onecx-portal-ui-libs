@@ -4,6 +4,7 @@ import { DataTableColumn } from '../model/data-table-column.model'
 import { FilterObject, FilterType } from '../model/filter.model'
 import { ColumnType } from '../model/column-type.model'
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
 class NumberOperationStrategy extends DataOperationStrategy {
   override equals(column: DataTableColumn, value: unknown, target: unknown): boolean {
     return Number(value) === Number(target)
@@ -106,7 +107,7 @@ describe('DataOperationStrategy', () => {
         col: 4,
       },
     ]
-    let strategy = new NumberOperationStrategy()
+    const strategy = new NumberOperationStrategy()
     const columns: DataTableColumn[] = [
       {
         id: 'col',
@@ -220,7 +221,7 @@ describe('DataOperationStrategy', () => {
         dayCol: undefined,
       },
     ]
-    let strategy = new DateOperationStrategy()
+    const strategy = new DateOperationStrategy()
     const columns: DataTableColumn[] = [
       {
         id: 'yearCol',
