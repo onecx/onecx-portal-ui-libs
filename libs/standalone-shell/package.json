@@ -10,7 +10,7 @@
     "@ngx-translate/core": "^15.0.0",
     "@onecx/angular-integration-interface": "6.0.0-rc.3",
     "@onecx/angular-webcomponents": "6.0.0-rc.3",
-    "@onecx/angular-utils": "^5.30.0",
+    "@onecx/angular-utils": "^5.31.0",
     "@onecx/integration-interface": "6.0.0-rc.3",
     "@onecx/shell-core": "6.0.0-rc.3"
   },
