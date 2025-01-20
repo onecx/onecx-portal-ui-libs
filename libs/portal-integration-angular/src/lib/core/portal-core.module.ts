@@ -56,6 +56,9 @@ import { PatchFormGroupValuesDirective } from './directives/patch-form-group-val
 import { SetInputValueDirective } from './directives/set-input-value.directive'
 import { standaloneInitializer } from './initializer/standalone.initializer'
 import { PrimeNgModule } from './primeng.module'
+import { DialogFooterComponent } from './components/dialog/dialog-footer/dialog-footer.component'
+import { DialogContentComponent } from './components/dialog/dialog-content/dialog-content.component'
+import { DialogInlineComponent } from './components/dialog/dialog-inline/dialog-inline.component'
 import { TRANSLATION_PATH } from '@onecx/angular-utils'
 
 export class PortalMissingTranslationHandler implements MissingTranslationHandler {
@@ -108,6 +111,9 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     PatchFormGroupValuesDirective,
     SetInputValueDirective,
     ButtonDialogComponent,
+    DialogFooterComponent,
+    DialogContentComponent,
+    DialogInlineComponent,
     DialogMessageContentComponent,
     OcxContentDirective,
     OcxContentContainerDirective,
@@ -173,6 +179,9 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     PatchFormGroupValuesDirective,
     SetInputValueDirective,
     ButtonDialogComponent,
+    DialogFooterComponent,
+    DialogContentComponent,
+    DialogInlineComponent,
     DialogMessageContentComponent,
     OcxContentDirective,
     OcxContentContainerDirective,
