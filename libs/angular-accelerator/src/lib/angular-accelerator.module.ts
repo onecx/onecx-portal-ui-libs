@@ -31,6 +31,7 @@ import { DynamicPipe } from './pipes/dynamic.pipe'
 import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
 import { DynamicLocaleId } from './utils/dynamic-locale-id'
 import { FilterViewComponent } from './components/filter-view/filter-view.component'
+import { provideConnectionService } from './utils/provide-connection-service'
 import { TemplateDirective } from './directives/template.directive'
 
 export class AngularAcceleratorMissingTranslationHandler implements MissingTranslationHandler {
@@ -78,7 +79,7 @@ function appInitializer(userService: UserService) {
     AdvancedDirective,
     TooltipOnOverflowDirective,
     FilterViewComponent,
-    TemplateDirective
+    TemplateDirective,
   ],
   providers: [
     {
@@ -97,6 +98,7 @@ function appInitializer(userService: UserService) {
       multi: true,
     },
     AppConfigService,
+    provideConnectionService(),
   ],
   exports: [
     AngularRemoteComponentsModule,
@@ -119,7 +121,7 @@ function appInitializer(userService: UserService) {
     AdvancedDirective,
     TooltipOnOverflowDirective,
     FilterViewComponent,
-    TemplateDirective
+    TemplateDirective,
   ],
 })
 export class AngularAcceleratorModule {}
