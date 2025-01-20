@@ -240,7 +240,7 @@ describe('InteractiveDataViewComponent', () => {
       nameKey: 'COLUMN_HEADER_NAME.TEST_TRUTHY',
       filterable: true,
       sortable: true,
-      filterType: FilterType.TRUTHY,
+      filterType: FilterType.IS_NOT_EMPTY,
       predefinedGroupKeys: ['PREDEFINED_GROUP.EXTENDED', 'PREDEFINED_GROUP.FULL'],
     },
   ]
@@ -308,7 +308,7 @@ describe('InteractiveDataViewComponent', () => {
     editItemEvent = undefined
     deleteItemEvent = undefined
 
-    console.log("Global IntersectionObserver", global.IntersectionObserver)
+    console.log('Global IntersectionObserver', global.IntersectionObserver)
   })
 
   it('should create', () => {

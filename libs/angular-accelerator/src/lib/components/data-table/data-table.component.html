@@ -164,7 +164,7 @@
                   <ng-container *ngIf="columnFilterTemplates$ | async as columnFilterTemplates">
                     <p-multiSelect
                       class="filterMultiSelect"
-                      *ngIf="column.filterable && (!column.filterType || column.filterType === FilterType.EQUAL)"
+                      *ngIf="column.filterable && (!column.filterType || column.filterType === FilterType.EQUALS)"
                       [options]="equalFilterOptions.column?.id === column.id ? equalFilterOptions.options : []"
                       [ngModel]="(currentEqualSelectedFilters$ | async) || []"
                       [showToggleAll]="true"
@@ -202,7 +202,7 @@
                 </ng-container>
                 <p-multiSelect
                   class="filterMultiSelect"
-                  *ngIf="column.filterable && column.filterType === FilterType.TRUTHY"
+                  *ngIf="column.filterable && column.filterType === FilterType.IS_NOT_EMPTY"
                   [options]="truthyFilterOptions"
                   [ngModel]="(currentTruthySelectedFilters$ | async) || []"
                   [showToggleAll]="true"
