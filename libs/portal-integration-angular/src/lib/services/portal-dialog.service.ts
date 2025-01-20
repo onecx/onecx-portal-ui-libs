@@ -288,11 +288,13 @@ export class PortalDialogService {
    *
    * - {@link DialogSecondaryButtonDisabled} - dialog will use the EventEmitter to determine if the secondary button should be disabled
    *
+   * - {@link DialogCustomButtonsDisabled} - dialog will use the EventEmitter to determine if the custom buttons should be disabled
+   *
    * @param title Translation key for dialog title
    * @param componentOrMessage Either a component or a translation key of a message with optional parameters and icon to be displayed next to the message
    * @param primaryButtonTranslationKeyOrDetails Translation key with optional parameters and icon to be displayed next to the text of the button
    * @param secondaryButtonTranslationKeyOrDetails Translation key with optional parameters and icon to be displayed next to the text of the button
-   * @param showXButton Determines if X (close) button should be visible in the top right corner of the dialog (not displayed if set to false and displayed if set to true). NOTE: If only one button is being used then close button will not be visible on the dialog
+   * @param extras Configuration object allowing for customization of the dialog behavior and visual aspects
    * @returns Observable containing dialog state on close
    *
    *
