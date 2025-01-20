@@ -2,6 +2,10 @@ import { TranslateService } from '@ngx-translate/core'
 import { firstValueFrom, mergeMap } from 'rxjs'
 import { UserService } from '@onecx/angular-integration-interface'
 
+/**
+ * @deprecated
+ * Provide ConnectionService via provideConnectionService from @onecx/angular-accelerator instead.
+ */
 export function translateServiceInitializer(
   userService: UserService,
   translateService: TranslateService

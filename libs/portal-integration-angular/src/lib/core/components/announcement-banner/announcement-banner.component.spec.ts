@@ -7,7 +7,7 @@ import { AppStateService, ConfigurationService } from '@onecx/angular-integratio
 import { AnnouncementBannerComponent } from './announcement-banner.component'
 import { AnnouncementsApiService } from '../../../services/announcements-api.service'
 import { AnnouncementItem, AnnouncementPriorityType } from '../../../model/announcement-item'
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 
 describe('AnnouncementBannerComponent', () => {
   const origAddEventListener = window.addEventListener
@@ -40,13 +40,19 @@ describe('AnnouncementBannerComponent', () => {
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
-    declarations: [AnnouncementBannerComponent],
-    imports: [],
-    providers: [ConfigurationService, AnnouncementsApiService, AppStateService, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
-}).compileComponents()
+      declarations: [AnnouncementBannerComponent],
+      imports: [],
+      providers: [
+        ConfigurationService,
+        AnnouncementsApiService,
+        AppStateService,
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+      ],
+    }).compileComponents()
 
     const appStateService = getTestBed().inject(AppStateService)
-    await appStateService.currentPortal$.publish({
+    await appStateService.currentWorkspace$.publish({
       id: 'i-am-test-portal',
       portalName: 'test',
       workspaceName: 'test',

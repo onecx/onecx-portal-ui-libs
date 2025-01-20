@@ -5,6 +5,7 @@ import { LifecycleHarness, TestbedHarnessEnvironment } from '../../../../../test
 import { PrimeNgModule } from '../../primeng.module'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { PortalCoreModule } from '../../portal-core.module'
+import { TranslateTestingModule } from 'ngx-translate-testing'
 
 const mockSteps: LifecycleStep[] = [
   {
@@ -30,7 +31,13 @@ describe('LifecycleComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [LifecycleComponent],
-      imports: [TimelineModule, PrimeNgModule, BrowserAnimationsModule, PortalCoreModule],
+      imports: [
+        TimelineModule,
+        PrimeNgModule,
+        BrowserAnimationsModule,
+        PortalCoreModule,
+        TranslateTestingModule.withTranslations('en', {}),
+      ],
     }).compileComponents()
 
     fixture = TestBed.createComponent(LifecycleComponent)

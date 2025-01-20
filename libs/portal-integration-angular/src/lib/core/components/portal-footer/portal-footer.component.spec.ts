@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed, getTestBed, waitForAsync } from '@angular/co
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { AppStateService, ConfigurationService } from '@onecx/angular-integration-interface'
 import { PortalFooterComponent } from './portal-footer.component'
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 
 describe('PortalFooterComponent', () => {
   const origAddEventListener = window.addEventListener
@@ -32,13 +32,18 @@ describe('PortalFooterComponent', () => {
 
   beforeEach(waitForAsync(async () => {
     TestBed.configureTestingModule({
-    declarations: [PortalFooterComponent],
-    imports: [],
-    providers: [ConfigurationService, AppStateService, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
-}).compileComponents()
+      declarations: [PortalFooterComponent],
+      imports: [],
+      providers: [
+        ConfigurationService,
+        AppStateService,
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+      ],
+    }).compileComponents()
 
     const appStateService = getTestBed().inject(AppStateService)
-    await appStateService.currentPortal$.publish({
+    await appStateService.currentWorkspace$.publish({
       id: 'i-am-test-portal',
       portalName: 'test',
       workspaceName: 'test',

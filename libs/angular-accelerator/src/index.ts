@@ -4,6 +4,7 @@ export * from './lib/directives/if-breakpoint.directive'
 export * from './lib/directives/src.directive'
 export * from './lib/directives/advanced.directive'
 export * from './lib/directives/tooltipOnOverflow.directive'
+export * from './lib/directives/template.directive'
 
 // components
 export * from './lib/components/column-group-selection/column-group-selection.component'
@@ -23,6 +24,7 @@ export * from './lib/components/data-loading-error/data-loading-error.component'
 
 // services
 export * from './lib/services/breadcrumb.service'
+export * from './lib/services/connection.service'
 export * from './lib/services/translation-cache.service'
 
 // pipes
