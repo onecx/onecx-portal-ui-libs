@@ -12,3 +12,10 @@
   cursor: pointer;
   min-width: 4rem;
 }
+
+// Code example
+$primaryColor: green;
+
+button {
+  background-color: var(--primary-color);
+}

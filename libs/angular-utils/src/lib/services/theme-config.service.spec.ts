@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing'
 import { ThemeConfigService } from './theme-config.service'
-import { ThemeService } from './theme.service'
+import { ThemeService } from '../../../../angular-integration-interface/src/lib/services/theme.service'
 import { PrimeNGConfig } from 'primeng/api'
 import { CurrentThemeTopic } from 'libs/integration-interface/src/lib/topics/current-theme/v1/current-theme.topic'
 
