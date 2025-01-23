@@ -8,12 +8,13 @@ export class OcxContentDirective implements OnInit, OnChanges {
    */
   @Input() ocxContent = ''
 
-  private titleElemID = 'ocx_content_title_element'
+  private baseId = 'ocx_content_title_element'
+  private titleElementId: string | undefined
 
   constructor(private el: ElementRef) {}
 
   ngOnInit() {
-    this.titleElemID = this.titleElemID + Math.round(Math.random() * 1000)
+    this.titleElementId = this.getUniqueTitleID(this.baseId)
     this.init()
   }
 
@@ -36,23 +37,39 @@ export class OcxContentDirective implements OnInit, OnChanges {
   }
 
   private prependTitle() {
-    const titleElement = this.el.nativeElement.querySelector(`#${this.titleElemID}`)
-    if (titleElement) {
-      titleElement.textContent = this.ocxContent
-    } else {
-      const title = document.createElement('p')
-      title.classList.add('font-medium')
-      title.classList.add('text-lg')
-      title.id = this.titleElemID
-      title.textContent = this.ocxContent
-      this.el.nativeElement.prepend(title)
+    if (this.titleElementId) {
+      const titleElement = this.el.nativeElement.querySelector(`#${this.titleElementId}`)
+      if (titleElement) {
+        titleElement.textContent = this.ocxContent
+      } else {
+        const title = document.createElement('p')
+        title.classList.add('font-medium')
+        title.classList.add('text-lg')
+        title.id = this.titleElementId
+        title.textContent = this.ocxContent
+        this.el.nativeElement.prepend(title)
+      }
     }
   }
 
+  private getUniqueTitleID(baseId: string) {
+    let counter = 0
+    let generatedID = baseId
+
+    while (document.getElementById(generatedID)) {
+      generatedID = baseId + counter
+      counter++
+    }
+
+    return generatedID
+  }
+
   private removeTitle() {
-    const titleElement = this.el.nativeElement.querySelector(`#${this.titleElemID}`)
-    if (titleElement) {
-      titleElement.remove()
+    if (this.titleElementId) {
+      const titleElement = this.el.nativeElement.querySelector(`#${this.titleElementId}`)
+      if (titleElement) {
+        titleElement.remove()
+      }
     }
   }
 }
