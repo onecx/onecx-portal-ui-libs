@@ -1,14 +1,16 @@
 {
   "name": "@onecx/angular-webcomponents",
-  "version": "5.30.0",
+  "version": "5.31.0",
   "license": "Apache-2.0",
   "peerDependencies": {
+    "@angular/common": "^18.0.5",
     "@angular/core": "^18.0.5",
     "@angular/platform-browser": "^18.0.5",
     "@angular/elements": "^18.0.5",
     "@angular/router": "^18.0.5",
-    "@onecx/accelerator": "^5.30.0",
-    "@onecx/portal-integration-angular": "^5.30.0",
+    "@onecx/accelerator": "^5.31.0",
+    "@onecx/portal-integration-angular": "^5.31.0",
+    "@onecx/integration-interface": "^5.31.0",
     "rxjs": "~7.8.1"
   },
   "dependencies": {},

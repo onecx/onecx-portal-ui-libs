@@ -9,7 +9,6 @@ import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog'
 import { ButtonModule } from 'primeng/button'
 import { Observable, of } from 'rxjs'
 
-import { ButtonDialogComponent } from '../core/components/button-dialog/button-dialog.component'
 import { DialogMessageContentComponent } from '../core/components/button-dialog/dialog-message-content/dialog-message-content.component'
 import {
   DialogButtonClicked,
@@ -20,8 +19,10 @@ import {
   PortalDialogService,
 } from './portal-dialog.service'
 import { DivHarness, InputHarness } from '@onecx/angular-testing'
-import { ButtonDialogHarness } from '../../../testing/index'
+import { DialogContentHarness, DialogFooterHarness } from '../../../testing/index'
 import { PrimeIcons } from 'primeng/api'
+import { DialogContentComponent } from '../core/components/dialog/dialog-content/dialog-content.component'
+import { DialogFooterComponent } from '../core/components/dialog/dialog-footer/dialog-footer.component'
 
 @Component({
   template: `<h1>BaseTestComponent</h1>`,
@@ -222,7 +223,8 @@ describe('PortalDialogService', () => {
     await TestBed.configureTestingModule({
       declarations: [
         BaseTestComponent,
-        ButtonDialogComponent,
+        DialogContentComponent,
+        DialogFooterComponent,
         DialogMessageContentComponent,
         CompleteDialogComponent,
         DialogButtonClickedWithResultComponent,
@@ -252,7 +254,7 @@ describe('PortalDialogService', () => {
     fixture.componentInstance.show('TITLE_TRANSLATE', 'message', 'button1', 'button2')
 
     expect(pDialogService.open).toHaveBeenCalledWith(
-      ButtonDialogComponent,
+      DialogContentComponent,
       expect.objectContaining({
         header: translations['TITLE_TRANSLATE'],
       })
@@ -270,7 +272,7 @@ describe('PortalDialogService', () => {
     )
 
     expect(pDialogService.open).lastCalledWith(
-      ButtonDialogComponent,
+      DialogContentComponent,
       expect.objectContaining({
         header: 'translatedTitle myParam',
       })
@@ -282,8 +284,8 @@ describe('PortalDialogService', () => {
 
     fixture.componentInstance.show('title', 'MESSAGE', 'button1', 'button2')
 
-    const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    const dialogMessageContentHarness = await dialogHarness.getDialogMessageContent()
+    const contentHarness = await rootLoader.getHarness(DialogContentHarness)
+    const dialogMessageContentHarness = await contentHarness.getDialogMessageContent()
     expect(await dialogMessageContentHarness?.getMessageContent()).toEqual(translations['MESSAGE'])
   })
 
@@ -297,8 +299,8 @@ describe('PortalDialogService', () => {
       'button2'
     )
 
-    const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    const dialogMessageContentHarness = await dialogHarness.getDialogMessageContent()
+    const contentHarness = await rootLoader.getHarness(DialogContentHarness)
+    const dialogMessageContentHarness = await contentHarness.getDialogMessageContent()
     const message = await dialogMessageContentHarness?.getMessageContent()
     expect(message).toEqual('myMessage myMsgParam')
   })
@@ -308,10 +310,10 @@ describe('PortalDialogService', () => {
 
     fixture.componentInstance.show('title', 'message', 'BUTTON', 'BUTTON')
 
-    const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    const primaryButtonLabel = await dialogHarness.getPrimaryButtonLabel()
+    const footerHarness = await rootLoader.getHarness(DialogFooterHarness)
+    const primaryButtonLabel = await footerHarness.getPrimaryButtonLabel()
     expect(primaryButtonLabel).toBe(translations['BUTTON'])
-    const secondaryButtonLabel = await dialogHarness.getSecondaryButtonLabel()
+    const secondaryButtonLabel = await footerHarness.getSecondaryButtonLabel()
     expect(secondaryButtonLabel).toBe(translations['BUTTON'])
   })
 
@@ -325,10 +327,10 @@ describe('PortalDialogService', () => {
       { key: 'BUTTON_PARAM', parameters: { val: 'myButtonParam2' } }
     )
 
-    const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    const primaryButtonLabel = await dialogHarness.getPrimaryButtonLabel()
+    const footerHarness = await rootLoader.getHarness(DialogFooterHarness)
+    const primaryButtonLabel = await footerHarness.getPrimaryButtonLabel()
     expect(primaryButtonLabel).toBe('myButton myButtonParam1')
-    const secondaryButtonLabel = await dialogHarness.getSecondaryButtonLabel()
+    const secondaryButtonLabel = await footerHarness.getSecondaryButtonLabel()
     expect(secondaryButtonLabel).toBe('myButton myButtonParam2')
   })
 
@@ -342,14 +344,14 @@ describe('PortalDialogService', () => {
       { key: 'BUTTON', icon: PrimeIcons.TRASH }
     )
 
-    const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    const primaryButtonLabel = await dialogHarness.getPrimaryButtonLabel()
-    const primaryButtonIcon = await dialogHarness.getPrimaryButtonIcon()
+    const footerHarness = await rootLoader.getHarness(DialogFooterHarness)
+    const primaryButtonLabel = await footerHarness.getPrimaryButtonLabel()
+    const primaryButtonIcon = await footerHarness.getPrimaryButtonIcon()
     expect(primaryButtonLabel).toBe(translations['BUTTON'])
     expect(primaryButtonIcon).toBe(PrimeIcons.TIMES)
 
-    const secondaryButtonLabel = await dialogHarness.getSecondaryButtonLabel()
-    const secondaryButtonIcon = await dialogHarness.getSecondaryButtonIcon()
+    const secondaryButtonLabel = await footerHarness.getSecondaryButtonLabel()
+    const secondaryButtonIcon = await footerHarness.getSecondaryButtonIcon()
     expect(secondaryButtonLabel).toBe(translations['BUTTON'])
     expect(secondaryButtonIcon).toBe(PrimeIcons.TRASH)
   })
@@ -359,8 +361,8 @@ describe('PortalDialogService', () => {
 
     fixture.componentInstance.show('title', { message: 'MESSAGE', icon: PrimeIcons.TIMES }, 'button1', 'button2')
 
-    const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    const dialogMessageContentHarness = await dialogHarness.getDialogMessageContent()
+    const contentHarness = await rootLoader.getHarness(DialogContentHarness)
+    const dialogMessageContentHarness = await contentHarness.getDialogMessageContent()
     const message = await dialogMessageContentHarness?.getMessageContent()
     expect(message).toEqual(translations['MESSAGE'])
     const icon = await dialogMessageContentHarness?.getIconValue()
@@ -377,8 +379,8 @@ describe('PortalDialogService', () => {
       'button2'
     )
 
-    const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    const dialogMessageContentHarness = await dialogHarness.getDialogMessageContent()
+    const contentHarness = await rootLoader.getHarness(DialogContentHarness)
+    const dialogMessageContentHarness = await contentHarness.getDialogMessageContent()
     const message = await dialogMessageContentHarness?.getMessageContent()
     expect(message).toEqual('myMessage dialogMessageParam')
     const icon = await dialogMessageContentHarness?.getIconValue()
@@ -390,8 +392,8 @@ describe('PortalDialogService', () => {
 
     fixture.componentInstance.show('title', TestWithInputsComponent, 'button1', 'button2')
 
-    const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    const headerDiv = await dialogHarness.getHarness(DivHarness.with({ class: 'testHeader' }))
+    const contentHarness = await rootLoader.getHarness(DialogContentHarness)
+    const headerDiv = await contentHarness.getHarness(DivHarness.with({ class: 'testHeader' }))
     const headerValue = await headerDiv.getText()
     expect(headerValue).toEqual('header')
   })
@@ -411,8 +413,8 @@ describe('PortalDialogService', () => {
       'button2'
     )
 
-    const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    const headerDiv = await dialogHarness.getHarness(DivHarness.with({ class: 'testHeader' }))
+    const contentHarness = await rootLoader.getHarness(DialogContentHarness)
+    const headerDiv = await contentHarness.getHarness(DivHarness.with({ class: 'testHeader' }))
     const headerValue = await headerDiv.getText()
     expect(headerValue).toEqual('myCustomHeader')
   })
@@ -422,10 +424,10 @@ describe('PortalDialogService', () => {
 
     fixture.componentInstance.show('title', 'message', 'button1')
 
-    const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    const primaryButtonLabel = await dialogHarness.getPrimaryButtonLabel()
+    const footerHarness = await rootLoader.getHarness(DialogFooterHarness)
+    const primaryButtonLabel = await footerHarness.getPrimaryButtonLabel()
     expect(primaryButtonLabel).toBe('button1')
-    const secondaryButtonLabel = await dialogHarness.getSecondaryButtonLabel()
+    const secondaryButtonLabel = await footerHarness.getSecondaryButtonLabel()
     expect(secondaryButtonLabel).toBeUndefined()
   })
 
@@ -435,7 +437,7 @@ describe('PortalDialogService', () => {
     fixture.componentInstance.show('title', 'message', 'button1', undefined, true)
 
     expect(pDialogService.open).toHaveBeenCalledWith(
-      ButtonDialogComponent,
+      DialogContentComponent,
       expect.objectContaining({
         closable: false,
       })
@@ -448,7 +450,7 @@ describe('PortalDialogService', () => {
     fixture.componentInstance.show('title', 'message', 'button1', 'button2', false)
 
     expect(pDialogService.open).toHaveBeenCalledWith(
-      ButtonDialogComponent,
+      DialogContentComponent,
       expect.objectContaining({
         closable: false,
       })
@@ -461,7 +463,7 @@ describe('PortalDialogService', () => {
     fixture.componentInstance.show('title', 'message', 'button1', 'button2', true)
 
     expect(pDialogService.open).toHaveBeenCalledWith(
-      ButtonDialogComponent,
+      DialogContentComponent,
       expect.objectContaining({
         closable: true,
       })
@@ -473,8 +475,8 @@ describe('PortalDialogService', () => {
 
     fixture.componentInstance.show('title', 'message', 'button1', 'button2')
 
-    const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    await dialogHarness.clickPrimaryButton()
+    const footerHarness = await rootLoader.getHarness(DialogFooterHarness)
+    await footerHarness.clickPrimaryButton()
     const result = fixture.componentInstance.resultFromShow
     expect(result).toBeDefined()
     expect(result?.button).toBe('primary')
@@ -486,8 +488,8 @@ describe('PortalDialogService', () => {
 
     fixture.componentInstance.show('title', 'message', 'button1', 'button2')
 
-    const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    await dialogHarness.clickSecondaryButton()
+    const footerHarness = await rootLoader.getHarness(DialogFooterHarness)
+    await footerHarness.clickSecondaryButton()
     const result = fixture.componentInstance.resultFromShow
     expect(result).toBeDefined()
     expect(result?.button).toBe('secondary')
@@ -504,8 +506,8 @@ describe('PortalDialogService', () => {
       'button2'
     )
 
-    const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    await dialogHarness.clickPrimaryButton()
+    const footerHarness = await rootLoader.getHarness(DialogFooterHarness)
+    await footerHarness.clickPrimaryButton()
     const result = fixture.componentInstance.resultFromShow
     expect(result).toBeDefined()
     expect(result?.button).toBe('primary')
@@ -529,8 +531,8 @@ describe('PortalDialogService', () => {
       'button2'
     )
 
-    const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    await dialogHarness.clickPrimaryButton()
+    const footerHarness = await rootLoader.getHarness(DialogFooterHarness)
+    await footerHarness.clickPrimaryButton()
     const result = fixture.componentInstance.resultFromShow
     expect(result).toBeUndefined()
   })
@@ -552,8 +554,8 @@ describe('PortalDialogService', () => {
       'button2'
     )
 
-    const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    await dialogHarness.clickPrimaryButton()
+    const footerHarness = await rootLoader.getHarness(DialogFooterHarness)
+    await footerHarness.clickPrimaryButton()
     const result = fixture.componentInstance.resultFromShow
     expect(result).toBeDefined()
     expect(result?.button).toBe('primary')
@@ -577,8 +579,8 @@ describe('PortalDialogService', () => {
       'button2'
     )
 
-    const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    await dialogHarness.clickPrimaryButton()
+    const footerHarness = await rootLoader.getHarness(DialogFooterHarness)
+    await footerHarness.clickPrimaryButton()
     const result = fixture.componentInstance.resultFromShow
     expect(result).toBeUndefined()
   })
@@ -600,8 +602,8 @@ describe('PortalDialogService', () => {
       'button2'
     )
 
-    const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    await dialogHarness.clickPrimaryButton()
+    const footerHarness = await rootLoader.getHarness(DialogFooterHarness)
+    await footerHarness.clickPrimaryButton()
     const result = fixture.componentInstance.resultFromShow
     expect(result).toBeDefined()
     expect(result?.button).toBe('primary')
@@ -625,8 +627,8 @@ describe('PortalDialogService', () => {
       'button2'
     )
 
-    const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    await dialogHarness.clickPrimaryButton()
+    const footerHarness = await rootLoader.getHarness(DialogFooterHarness)
+    await footerHarness.clickPrimaryButton()
     const result = fixture.componentInstance.resultFromShow
     expect(result).toBeUndefined()
   })
@@ -648,8 +650,8 @@ describe('PortalDialogService', () => {
       'button2'
     )
 
-    const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    await dialogHarness.clickPrimaryButton()
+    const footerHarness = await rootLoader.getHarness(DialogFooterHarness)
+    await footerHarness.clickPrimaryButton()
     const result = fixture.componentInstance.resultFromShow
     expect(result).toBeDefined()
     expect(result?.button).toBe('primary')
@@ -673,8 +675,8 @@ describe('PortalDialogService', () => {
       'button2'
     )
 
-    const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    await dialogHarness.clickPrimaryButton()
+    const footerHarness = await rootLoader.getHarness(DialogFooterHarness)
+    await footerHarness.clickPrimaryButton()
     const result = fixture.componentInstance.resultFromShow
     expect(result?.button).toBe('primary')
     expect(result?.result).toBe(13)
@@ -692,8 +694,8 @@ describe('PortalDialogService', () => {
       'button2'
     )
 
-    const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    const isPrimaryButtonDisabled = await dialogHarness.getPrimaryButtonDisabled()
+    const footerHarness = await rootLoader.getHarness(DialogFooterHarness)
+    const isPrimaryButtonDisabled = await footerHarness.getPrimaryButtonDisabled()
     expect(isPrimaryButtonDisabled).toBeTruthy()
   })
 
@@ -709,8 +711,8 @@ describe('PortalDialogService', () => {
       'button2'
     )
 
-    const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    const isSecondaryButtonDisabled = await dialogHarness.getSecondaryButtonDisabled()
+    const footerHarness = await rootLoader.getHarness(DialogFooterHarness)
+    const isSecondaryButtonDisabled = await footerHarness.getSecondaryButtonDisabled()
     expect(isSecondaryButtonDisabled).toBeTruthy()
   })
 
@@ -720,52 +722,53 @@ describe('PortalDialogService', () => {
     fixture.componentInstance.showWithType()
 
     // init state
-    const dialogHarness = await rootLoader.getHarness(ButtonDialogHarness)
-    let isPrimaryButtonDisabled = await dialogHarness.getPrimaryButtonDisabled()
+    const footerHarness = await rootLoader.getHarness(DialogFooterHarness)
+    let isPrimaryButtonDisabled = await footerHarness.getPrimaryButtonDisabled()
     expect(isPrimaryButtonDisabled).toBeTruthy()
-    let isSecondaryButtonDisabled = await dialogHarness.getSecondaryButtonDisabled()
+    let isSecondaryButtonDisabled = await footerHarness.getSecondaryButtonDisabled()
     expect(isSecondaryButtonDisabled).toBeTruthy()
-    let nameErrorDiv = await dialogHarness.getHarnessOrNull(DivHarness.with({ class: 'nameError' }))
+    const contentHarness = await rootLoader.getHarness(DialogContentHarness)
+    let nameErrorDiv = await contentHarness.getHarnessOrNull(DivHarness.with({ class: 'nameError' }))
     const nameErrorDivText = await nameErrorDiv?.getText()
     expect(nameErrorDivText).toBe('Name is not correct')
 
     // change surname input to Doe
-    const surnameInput = await dialogHarness.getHarness(InputHarness.with({ id: 'surname' }))
+    const surnameInput = await contentHarness.getHarness(InputHarness.with({ id: 'surname' }))
     await surnameInput.setValue('Doe')
     await (await surnameInput.getTestElement()).dispatchEvent('change')
 
     const surnameValue = await surnameInput.getValue()
     expect(surnameValue).toBe('Doe')
 
-    isPrimaryButtonDisabled = await dialogHarness.getPrimaryButtonDisabled()
+    isPrimaryButtonDisabled = await footerHarness.getPrimaryButtonDisabled()
     expect(isPrimaryButtonDisabled).toBeTruthy()
-    isSecondaryButtonDisabled = await dialogHarness.getSecondaryButtonDisabled()
+    isSecondaryButtonDisabled = await footerHarness.getSecondaryButtonDisabled()
     expect(isSecondaryButtonDisabled).toBeFalsy()
 
     // click secondary button
-    await dialogHarness.clickSecondaryButton()
+    await footerHarness.clickSecondaryButton()
 
-    const messageDiv = await dialogHarness.getHarness(DivHarness.with({ class: 'message' }))
+    const messageDiv = await contentHarness.getHarness(DivHarness.with({ class: 'message' }))
     let messageText = await messageDiv.getText()
     expect(messageText).toBe('Smart but name should be correct too')
 
     // change name input to Albert
-    const nameInput = await dialogHarness.getHarness(InputHarness.with({ id: 'name' }))
+    const nameInput = await contentHarness.getHarness(InputHarness.with({ id: 'name' }))
     await nameInput.setValue('Albert')
     await (await nameInput.getTestElement()).dispatchEvent('change')
 
     let nameValue = await nameInput.getValue()
     expect(nameValue).toBe('Albert')
-    nameErrorDiv = await dialogHarness.getHarnessOrNull(DivHarness.with({ class: 'nameError' }))
+    nameErrorDiv = await contentHarness.getHarnessOrNull(DivHarness.with({ class: 'nameError' }))
     expect(nameErrorDiv).toBeNull()
 
-    isPrimaryButtonDisabled = await dialogHarness.getPrimaryButtonDisabled()
+    isPrimaryButtonDisabled = await footerHarness.getPrimaryButtonDisabled()
     expect(isPrimaryButtonDisabled).toBeFalsy()
-    isSecondaryButtonDisabled = await dialogHarness.getSecondaryButtonDisabled()
+    isSecondaryButtonDisabled = await footerHarness.getSecondaryButtonDisabled()
     expect(isSecondaryButtonDisabled).toBeFalsy()
 
     // click primary button
-    await dialogHarness.clickPrimaryButton()
+    await footerHarness.clickPrimaryButton()
 
     messageText = await messageDiv.getText()
     expect(messageText).toBe('Wrong credentials')
@@ -777,13 +780,13 @@ describe('PortalDialogService', () => {
     nameValue = await nameInput.getValue()
     expect(nameValue).toBe('John')
 
-    isPrimaryButtonDisabled = await dialogHarness.getPrimaryButtonDisabled()
+    isPrimaryButtonDisabled = await footerHarness.getPrimaryButtonDisabled()
     expect(isPrimaryButtonDisabled).toBeFalsy()
-    isSecondaryButtonDisabled = await dialogHarness.getSecondaryButtonDisabled()
+    isSecondaryButtonDisabled = await footerHarness.getSecondaryButtonDisabled()
     expect(isSecondaryButtonDisabled).toBeFalsy()
 
     // click primary button
-    await dialogHarness.clickPrimaryButton()
+    await footerHarness.clickPrimaryButton()
 
     // expect dialog to close with observable containing last state
     const result = fixture.componentInstance.resultFromShow

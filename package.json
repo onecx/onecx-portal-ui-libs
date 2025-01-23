@@ -1,6 +1,6 @@
 {
   "name": "@onecx/onecx-portal-ui-libs",
-  "version": "5.30.0",
+  "version": "5.31.0",
   "license": "Apache-2.0",
   "scripts": {
     "sass": "npx sass libs/portal-integration-angular/assets/styles.scss libs/portal-integration-angular/assets/output.css",
@@ -107,7 +107,7 @@
     "ng-packagr": "^18.2.1",
     "ngx-translate-testing": "^7.0.0",
     "nx": "19.8.0",
-    "nx-release": "^3.3.0",
+    "nx-release": "^3.4.0",
     "postcss": "^8.4.47",
     "postcss-import": "~16.1.0",
     "postcss-preset-env": "~10.0.3",

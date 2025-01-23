@@ -1,6 +1,9 @@
 import { TranslateLoader } from '@ngx-translate/core'
 import { defaultIfEmpty, first, mergeMap, Observable, of, tap } from 'rxjs'
 
+/**
+ * @deprecated Please import from `@onecx/angular-utils` instead.
+ */
 export class AsyncTranslateLoader implements TranslateLoader {
   static lastTimerId = 0
   timerId = AsyncTranslateLoader.lastTimerId++
