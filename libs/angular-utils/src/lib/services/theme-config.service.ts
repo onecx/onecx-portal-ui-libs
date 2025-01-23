@@ -20,9 +20,10 @@ export class ThemeConfigService {
     })
   }
 
-  private applyThemeVariables(oldTheme: Theme): void {
+  applyThemeVariables(oldTheme: Theme): void {
     const oldThemeVariables = oldTheme.properties
     const themeConfig = new ThemeConfig(oldThemeVariables)
     const customPreset = definePreset(Aura, themeConfig)
+    this.primengConfig = customPreset
   }
 }

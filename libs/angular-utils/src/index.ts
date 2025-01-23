@@ -9,3 +9,4 @@ export * from './lib/utils/has-permission-checker-factory'
 
 // Services
 export * from './lib/services/translation-cache.service'
+export * from './lib/services/theme-config.service'
