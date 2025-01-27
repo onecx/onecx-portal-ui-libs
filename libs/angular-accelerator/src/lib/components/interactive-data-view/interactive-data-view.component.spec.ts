@@ -308,7 +308,7 @@ describe('InteractiveDataViewComponent', () => {
     editItemEvent = undefined
     deleteItemEvent = undefined
 
-    console.log("Global IntersectionObserver", global.IntersectionObserver)
+    console.log('Global IntersectionObserver', global.IntersectionObserver)
   })
 
   it('should create', () => {
@@ -2057,13 +2057,13 @@ describe('InteractiveDataViewComponent', () => {
     component.headerStyleClass = 'py-4'
 
     const expectedStyleClasses = ['p-3', 'border-bottom-1', 'surface-border', 'py-4']
-    expect(await interactiveDataViewHarness.getContentClassesById('header')).toEqual(expectedStyleClasses)
+    expect(await interactiveDataViewHarness.getHeaderStyleClasses()).toEqual(expectedStyleClasses)
   })
 
   it('should render the content with a class, when given a contentStyleClass via input', async () => {
     component.contentStyleClass = 'py-4'
 
     const expectedStyleClasses = ['p-3', 'py-4']
-    expect(await interactiveDataViewHarness.getContentClassesById('content')).toEqual(expectedStyleClasses)
+    expect(await interactiveDataViewHarness.getContentStyleClasses()).toEqual(expectedStyleClasses)
   })
 })

@@ -9,11 +9,16 @@ import { SlotHarness } from './slot.harness'
 export class InteractiveDataViewHarness extends ContentContainerComponentHarness {
   static hostSelector = 'ocx-interactive-data-view'
 
-  async getContentClassesById(id: string) {
-    const div = await this.locatorFor(DivHarness.with({ selector: `[id="${id}"]` }))()
-    const actualClassList = await div.getClassList()
+  async getHeaderStyleClasses() {
+    const headerDiv = await this.locatorFor(DivHarness.with({ id: 'interactiveDataViewHeader' }))()
+    const headerClassList = await headerDiv.getClassList()
+    return headerClassList
+  }
 
-    return actualClassList
+  async getContentStyleClasses() {
+    const contentDiv = await this.locatorFor(DivHarness.with({ id: 'interactiveDataViewContent' }))()
+    const contentClassList = await contentDiv.getClassList()
+    return contentClassList
   }
 
   getDataLayoutSelection = this.locatorFor(DataLayoutSelectionHarness)
