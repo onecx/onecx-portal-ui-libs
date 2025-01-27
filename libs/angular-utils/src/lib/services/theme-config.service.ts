@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core'
-import { PrimeNGConfig } from 'primeng/api'
 import { CurrentThemeTopic, Theme } from '@onecx/integration-interface'
 import { ThemeService } from '@onecx/angular-integration-interface'
 import { definePreset } from '@primeng/themes'
 import Aura from '@primeng/themes/aura'
 import ThemeConfig from '../theme/theme-config'
+import { PrimeNG } from 'primeng/config'
 30
 @Injectable({
   providedIn: 'root',
@@ -13,7 +13,7 @@ export class ThemeConfigService {
   private currentThemeTopic$ = new CurrentThemeTopic()
   constructor(
     private themeService: ThemeService,
-    private primengConfig: PrimeNGConfig
+    private primengConfig: PrimeNG
   ) {
     this.currentThemeTopic$.subscribe((theme) => {
       this.applyThemeVariables(theme)

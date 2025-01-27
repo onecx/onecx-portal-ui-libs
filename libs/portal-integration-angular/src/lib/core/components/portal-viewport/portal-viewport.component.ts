@@ -3,7 +3,7 @@ import { HttpClient, HttpResponse } from '@angular/common/http'
 import { NavigationEnd, Router } from '@angular/router'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { catchError, combineLatest, filter, first, map, mergeMap, Observable, of, withLatestFrom } from 'rxjs'
-import { MenuItem, MessageService, PrimeNGConfig } from 'primeng/api'
+import { MenuItem, MessageService } from 'primeng/api'
 import { DialogService } from 'primeng/dynamicdialog'
 import { AppStateService, UserService, ThemeService, PortalMessageService } from '@onecx/angular-integration-interface'
 import { SupportTicketApiService } from './../../../services/support-ticket-api.service'
@@ -12,6 +12,7 @@ import { SupportTicket } from '../../../model/support-ticket'
 import { HelpData } from '../../../model/help-data'
 import { NoHelpItemComponent } from '../no-help-item/no-help-item.component'
 import { HelpPageAPIService } from '../../../services/help-api-service'
+import { PrimeNG } from 'primeng/config'
 
 @Component({
   selector: 'ocx-portal-viewport',
@@ -58,7 +59,7 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
   constructor(
     private renderer: Renderer2,
     private router: Router,
-    private primengConfig: PrimeNGConfig,
+    private primengConfig: PrimeNG,
     private portalUIConfig: PortalUIService,
     private appStateService: AppStateService,
     private themeService: ThemeService,
@@ -152,7 +153,7 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   ngOnInit() {
-    this.primengConfig.ripple = true
+    this.primengConfig.ripple.set(true)
 
     this.appStateService.globalError$
       .pipe(untilDestroyed(this))

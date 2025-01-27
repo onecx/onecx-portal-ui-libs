@@ -9,7 +9,8 @@ import {
   ThemeService,
   UserService,
 } from '@onecx/angular-integration-interface'
-import { MessageService, PrimeNGConfig } from 'primeng/api'
+import { MessageService } from 'primeng/api'
+import { PrimeNG } from 'primeng/config'
 import { filter, first, from, mergeMap, of } from 'rxjs'
 import { SHOW_CONTENT_PROVIDER, ShowContentProvider } from '../../shell-interface/show-content-provider'
 import {
@@ -42,7 +43,6 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
 
   constructor(
     private renderer: Renderer2,
-    private primengConfig: PrimeNGConfig,
     private messageService: MessageService,
     public appStateService: AppStateService,
     private portalMessageService: PortalMessageService,
@@ -50,6 +50,7 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
     private themeService: ThemeService,
     private httpClient: HttpClient,
     private router: Router,
+    private primengConfig: PrimeNG,
     @Optional() @Inject(SHOW_CONTENT_PROVIDER) public showContentProvider: ShowContentProvider | undefined,
     @Optional()
     @Inject(WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER)
@@ -102,7 +103,7 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.primengConfig.ripple = true
+    this.primengConfig.ripple.set(true)
 
     this.appStateService.globalError$
       .pipe(untilDestroyed(this))

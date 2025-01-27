@@ -21,7 +21,7 @@
     "chart.js": "^4.4.3",
     "d3-scale-chromatic": "^3.1.0",
     "rxjs": "~7.8.1",
-    "primeng": "^17.18.6",
+    "primeng": "^18.0.2",
     "@storybook/angular": "^8.3.2"
   },
   "dependencies": {},

@@ -270,7 +270,7 @@ export class FilterViewComponent implements OnInit {
     if (this.trigger?.id === 'ocxFilterViewShowMore') {
       this.trigger?.focus()
     } else {
-      this.manageButton.focus()
+      this.manageButton.el.nativeElement.firstChild.focus()
     }
   }
 

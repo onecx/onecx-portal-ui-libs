@@ -18,6 +18,8 @@ import { FloatLabelModule } from 'primeng/floatlabel'
 import { ChipModule } from 'primeng/chip'
 import { OverlayPanelModule } from 'primeng/overlaypanel'
 import { FocusTrapModule } from 'primeng/focustrap'
+import { Tooltip } from 'primeng/tooltip'
+import { providePrimeNG } from 'primeng/config'
 
 @NgModule({
   imports: [
@@ -39,6 +41,7 @@ import { FocusTrapModule } from 'primeng/focustrap'
     FloatLabelModule,
     OverlayPanelModule,
     FocusTrapModule,
+    Tooltip,
     SharedModule,
   ],
   exports: [
@@ -60,7 +63,9 @@ import { FocusTrapModule } from 'primeng/focustrap'
     FloatLabelModule,
     OverlayPanelModule,
     FocusTrapModule,
+    Tooltip,
     SharedModule,
   ],
+  providers: [providePrimeNG()],
 })
 export class AngularAcceleratorPrimeNgModule {}

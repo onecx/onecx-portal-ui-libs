@@ -10,10 +10,19 @@ import { PortalViewportComponent } from './components/portal-viewport/portal-vie
 import { SkeletonModule } from 'primeng/skeleton'
 import { AppLoadingSpinnerComponent } from './components/app-loading-spinner/app-loading-spinner.component'
 import { ShellSrcDirective } from './directives/src.directive'
+import { providePrimeNG } from 'primeng/config'
 
 @NgModule({
   imports: [CommonModule, RouterModule, AngularRemoteComponentsModule, ToastModule, SkeletonModule],
-  declarations: [PortalViewportComponent, HeaderComponent, PortalFooterComponent, GlobalErrorComponent, AppLoadingSpinnerComponent, ShellSrcDirective],
+  declarations: [
+    PortalViewportComponent,
+    HeaderComponent,
+    PortalFooterComponent,
+    GlobalErrorComponent,
+    AppLoadingSpinnerComponent,
+    ShellSrcDirective,
+  ],
   exports: [PortalViewportComponent, HeaderComponent, PortalFooterComponent, ToastModule, GlobalErrorComponent],
+  providers: [providePrimeNG()],
 })
 export class ShellCoreModule {}
