@@ -69,7 +69,7 @@ describe('OcxContentComponent', () => {
     const titleBaseId = 'ocx_content_title_element' 
     beforeEach(async () => {
       await TestBed.configureTestingModule({
-        declarations: [OcxContentComponent, OcxContentDirective],
+        declarations: [MockComponent, OcxContentComponent, OcxContentDirective],
       }).compileComponents()
   
       fixture = TestBed.createComponent(MockComponent)
@@ -81,7 +81,15 @@ describe('OcxContentComponent', () => {
     })
     
     it('should render 3 ocxContent cards with different title IDs', async () => {
-      // TODO
+      fixture.detectChanges()
+
+      const ocxContents = fixture.debugElement.queryAll(By.directive(OcxContentDirective));
+      expect(ocxContents.length).toEqual(3);
+
+      ocxContents.forEach((_content, index) => {
+        const idSuffix = index > 0 ? `${index-1}` : ''
+        expect(fixture.debugElement.queryAll(By.css(`#${titleBaseId + idSuffix}`)).length).toBe(1)
+      });
     })
   })
 })
