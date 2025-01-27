@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core'
 import { CurrentThemeTopic, Theme } from '@onecx/integration-interface'
 import { ThemeService } from '@onecx/angular-integration-interface'
-import { definePreset } from '@primeng/themes'
-import Aura from '@primeng/themes/aura'
+import { updatePreset, usePreset } from '@primeng/themes'
 import ThemeConfig from '../theme/theme-config'
 import { PrimeNG } from 'primeng/config'
 30
@@ -23,7 +22,8 @@ export class ThemeConfigService {
   applyThemeVariables(oldTheme: Theme): void {
     const oldThemeVariables = oldTheme.properties
     const themeConfig = new ThemeConfig(oldThemeVariables)
-    const customPreset = definePreset(Aura, themeConfig)
-    this.primengConfig = customPreset
+    const customPreset = updatePreset(themeConfig)
+    //usePreset(customPreset)
+    //this.primengConfig = customPreset
   }
 }
