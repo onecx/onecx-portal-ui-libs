@@ -22,8 +22,8 @@ export default class ThemeConfig {
         iconSize: '1rem',
         anchorGutter: '2px',
         primary: {
-          500: this.themeVariables?.['general']['primaryColor'],
-          600: this.themeVariables?.['general']['secondaryColor'],
+          500: (this.themeVariables as any)['general']['primary-color'],
+          600: (this.themeVariables as any)['general']['secondary-color'],
         },
       },
       // TODO: To be expanded
