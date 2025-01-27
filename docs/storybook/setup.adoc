@@ -1,0 +1,34 @@
+[#project-structure]
+== Project structure
+The following examples shows the file structure how to set up storybooks for a lib.
+[subs=+macros]
+----
+├── .storybook
+│   ├── main.js
+│   ├── preview.ts
+│   ├── storybook.css
+│   ├── tsconfig.json
+├── src
+│   ├── lib
+│   │   ├── components
+│   │   │    ├── featurecomponent1
+│   │   │    │    ├── featurecomponent1.component.html
+│   │   │    │    ├── featurecomponent1.component.scss
+│   │   │    │    ├── featurecomponent1.component.spec.ts
+│   │   │    │    ├── featurecomponent1.component.ts
+│   │   │    │    ├── storybook
+│   │   │    │    │    ├── featurecomponent1.stories.ts
+│   │   ├── directives  
+│   │   ├── ...
+│   │   ├── storybook.breadcrumb.module.ts
+│   │   ├── storybook-translate.module.ts        
+│   ├── assets
+│   │   │   ├── i18n
+│   │   │   ├── fonts
+│   │   │   ├── images
+│   │   │   ├── scss
+│   │   │   ├── yamls
+│   ├── environments
+│   │   │   ├── dev
+│   │   │   ├── prod
+----

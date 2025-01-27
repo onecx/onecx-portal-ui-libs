@@ -1,0 +1,85 @@
+= Story creation guidelines
+TODO
+= How to create and view stories
+== Step-by-Step Guide to create Stories for Angular Components
+=== Create a .stories File for Your Component in Storybook
+In the folder of your feature, create a new file with your feature file name and the ending ".stories.ts"
+1. Import your component from the library.
+2. Define a story.
+3. Export the story with the `export const` keyword.
+4. // TODO: Continue here
+Here you can find the code snippet with which you can begin
+[source,terminal]
+----
+import { importProvidersFrom } from '@angular/core'
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
+import { RouterModule } from '@angular/router'
+import { UserService } from '@onecx/angular-integration-interface'
+import { MockUserService } from '@onecx/angular-integration-interface/mocks'
+import { Meta, StoryFn, applicationConfig, moduleMetadata } from '@storybook/angular'
+import { HAS_PERMISSION_CHECKER } from '../../directives/if-permission.directive'
+import { MockAuthModule } from '../../mock-auth/mock-auth.module'
+import { StorybookTranslateModule } from '../../storybook-translate.module'
+import { BrowserModule } from '@angular/platform-browser'
+import { ExampleFeatureComponent } from './column-group-selection.component'
+const ExampleFeatureComponentSBConfig: Meta<ExampleFeatureComponent> = {
+  title: 'Components/ExampleFeatureComponent',
+  component: ExampleFeatureComponent,
+  decorators: [
+    applicationConfig({
+      providers: [
+        importProvidersFrom(BrowserModule),
+        importProvidersFrom(BrowserAnimationsModule),
+        { provide: UserService, useClass: MockUserService },
+        { provide: HAS_PERMISSION_CHECKER, useClass: MockUserService },
+        importProvidersFrom(RouterModule.forRoot([], { useHash: true })),
+      ],
+    }),
+    moduleMetadata({
+      declarations: [], // TODO: Add required Components and Directives here
+    }),
+  ],
+  args: {
+    config: {
+      // TODO: Add additional modules if required.
+      imports: [StorybookTranslateModule, MockAuthModule],
+    },
+  },
+}
+const Template: StoryFn = (args) => ({
+  props: args,
+})
+const defaultComponentArgs = {
+  data: [], // TODO
+}
+const defaultArgTypes = {
+  // TODO
+}
+const extendedMockData = [
+  // TODO
+]
+// Add more example data if needed
+export default ExampleFeatureComponentSBConfig
+----
+=== Check the storybook configuration
+Check the files inside your .storybook folder.
+=== Run Storybook
+To run a storybook, please navigate in the terminal to the root folder and run the following command:
+[source,terminal]
+----
+npx nx run <LIBRARY_NAME>:storybook
+----
+Example for the lib angular-accelerator
+[source,terminal]
+----
+npx nx run angular-accelerator:storybook
+----
+After running the command, you will retrieve the information "Storybook x.x.x for angular started". You can click then on URL which is provided 
+=== View Your Component's Story in Storybook
+image::assets/images/storybook-angular-viewing-story.png[Angular Viewing Story]
+=== Add a Button to Your Story
+ TODO
+=== Add a Button Click Event Handler to Your Story
+ TODO
+=== View Your Component's Props in Storybook
+ TODO
