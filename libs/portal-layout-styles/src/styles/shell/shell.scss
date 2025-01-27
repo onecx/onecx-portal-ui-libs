@@ -1,7 +1,7 @@
-@import './_variables'; // The variables were checked
+@import './_variables';
 
 :root {
-  // Top Bar Variables
+  /* Top Bar Variables */
   --topbar-bg-color: #0D3650;
   --topbar-text-color: #ffffff;
   --topbar-left-bg-color: #0D3650;
@@ -11,7 +11,7 @@
   --menu-button-text-color: #ffffff;
   --logo-color: #ffffff
 
-  // Body Variables
+  /* Body Variables */
   --page-padding: 1rem;
   --page-padding-lg: calc(var(--page-padding) * 2);
   --body-bg-color: #f7f7f7;
@@ -19,12 +19,11 @@
   --text-secondary-color: #262626;
   --font-size: 14px;
   --font-family: Ubuntu, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
-  // --border-width: #{$border-width};
   --border-radius: 5px;
   --transition-duration: 0.2s;
   --root-font-size: 14px;
 
-  // Contents Variables
+  /* Contents Variables */
   --content-bg-color: #ffffff;
   --content-alt-bg-color: #ffffff;
   --overlay-content-bg-color: #ffffff;
@@ -32,11 +31,11 @@
   --solid-surface-text-color: #ffffff;
   --divider-color: #e4e4e4;
 
-  // Animation Variables
+  /* Animation Variables */
   --animation-duration: 0.2s;
   --animation-timing: #{$animationTimingFunction};
 
-  // Menu Style Variables
+  /* Menu Style Variables */
   --menu-text-color: #274B5F;
   --menu-bg-color: #fdfeff;
   --menu-item-text-color: #515c66;
@@ -45,12 +44,13 @@
   --menu-active-item-text-color: var(--menu-item-text-color);
   --menu-active-item-bg-color: var(--menu-item-hover-bg-color);
   --inline-menu-border-color: var(--divider-color);
+  --menu-inline-border-color: var(--divider-color);
   --mobile-break-point: #{$mobileBreakpoint};
   --submenu-shadow: #{$submenuShadow};
   --menu-shadow: #{$menuShadow};
   --menu-wrapper-width: 17rem;
 
-  // Headings Style Variables
+  /* Headings Style Variables */
   --h1-font-size: #{$h1FontSize};
   --h2-font-size: #{$h2FontSize};
   --h3-font-size: #{$h3FontSize};
@@ -58,30 +58,22 @@
   --h5-font-size: #{$h5FontSize};
   --h6-font-size: #{$h6FontSize};
 
-  // General Colors Variables
+  /* General Colors Variables */
   --primary-color: #274B5F;
   --secondary-color: #1C4257;
 }
 
-@import '_mixins'; // The variables were checked
-@import '_common'; // The variables were checked
-@import '_colors'; // The variables were checked
-@import './_typography'; //The variables were checked
+@import '_mixins';
+@import '_common';
+@import '_colors';
+@import './_typography';
 @import '_fonts';
-// @import './_loader';
-@import './_animation'; // The variables were checked
-@import './_utils'; // The variables were checked
-@import './topbar/_topbar'; //The variables were checked
-// @import './_rightmenu';
-@import './menu/_menu'; // The variables were checked
-// @import './_megamenu';
-// @import './_widgets';
-@import './_main'; // The variables were checked
-@import './_footer'; // Coud not find the color for the footer Colors
-// @import './_help';
-@import './_breadcrumb'; // The variables were checked
+@import './_animation';
+@import './_utils';
+@import './topbar/_topbar';
+@import './menu/_menu';
+@import './_main';
+@import './_footer';
+@import './_breadcrumb';
 @import './_input_styles';
-@import './_validation'; // control validation
-
-
-// TODO check the included files, remove those not needed, cleanup those that are required
+@import './_validation';

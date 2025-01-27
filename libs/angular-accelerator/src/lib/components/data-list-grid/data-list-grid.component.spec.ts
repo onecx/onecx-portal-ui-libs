@@ -23,7 +23,7 @@ describe('DataListGridComponent', () => {
     return this
   })
   global.MutationObserver = mutationObserverMock
-  
+
   let fixture: ComponentFixture<DataListGridComponent>
   let component: DataListGridComponent
   let translateService: TranslateService
@@ -107,7 +107,7 @@ describe('DataListGridComponent', () => {
       creationUser: '',
       modificationDate: '2023-09-12T09:34:27.184086Z',
       modificationUser: '',
-      id: 'cf9e7d6b-5362-46af-91f8-62f7ef5c6064',
+      id: '734e21ba-14d7-4565-ba0d-ddd25f807931',
       name: 'name 2',
       description: '',
       status: 'status name 2',
@@ -123,7 +123,7 @@ describe('DataListGridComponent', () => {
       creationUser: '',
       modificationDate: '2023-09-12T09:34:27.184086Z',
       modificationUser: '',
-      id: 'cf9e7d6b-5362-46af-91f8-62f7ef5c6064',
+      id: '02220a5a-b556-4d7a-ac6e-6416911a00f2',
       name: 'name 3',
       description: '',
       status: 'status name 3',
@@ -306,7 +306,11 @@ describe('DataListGridComponent', () => {
       const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
       const paginator = await dataListGrid.getPaginator()
       const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
-      const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
+      let rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
+      expect(rowsPerPageOptionsText).toEqual('10')
+
+      component.showAllOption = true
+      rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
       expect(rowsPerPageOptionsText).toEqual('Alle')
     })
 
@@ -316,7 +320,11 @@ describe('DataListGridComponent', () => {
       const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
       const paginator = await dataListGrid.getPaginator()
       const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
-      const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
+      let rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
+      expect(rowsPerPageOptionsText).toEqual('10')
+
+      component.showAllOption = true
+      rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
       expect(rowsPerPageOptionsText).toEqual('All')
     })
   })
@@ -356,7 +364,7 @@ describe('DataListGridComponent', () => {
     component.viewPermission = 'VIEW'
     component.editPermission = 'EDIT'
     component.deletePermission = 'DELETE'
-    
+
     fixture.detectChanges()
     await fixture.whenStable()
   }
@@ -477,6 +485,92 @@ describe('DataListGridComponent', () => {
       expect(listActions.length).toBe(3)
     })
   })
+  describe('Assign ids to list action buttons', () => {
+    beforeEach(() => {
+      component.layout = 'list'
+
+      component.data = [
+        {
+          version: 0,
+          creationDate: '2023-09-12T09:34:27.184086Z',
+          creationUser: '',
+          modificationDate: '2023-09-12T09:34:27.184086Z',
+          modificationUser: '',
+          id: 'rowId',
+          name: 'name 3',
+          description: '',
+          status: 'status name 3',
+          responsible: '',
+          endDate: '2023-09-15T09:34:24Z',
+          startDate: '2023-09-14T09:34:22Z',
+          imagePath: '',
+          testNumber: '7.1',
+          ready: false,
+        },
+      ]
+    })
+
+    it('should assign id to view button', async () => {
+      component.viewItem.subscribe(() => console.log())
+      component.viewPermission = 'VIEW'
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      expect(component.viewItemObserved).toBe(true)
+
+      const tableActions = await listGrid.getActionButtons('list')
+      expect(tableActions.length).toBe(1)
+
+      expect(await tableActions[0].getAttribute('id')).toEqual('rowId-viewButton')
+    })
+
+    it('should assign id to edit button', async () => {
+      component.editItem.subscribe(() => console.log())
+      component.editPermission = 'EDIT'
+      fixture.detectChanges()
+      await fixture.whenStable()
+      expect(component.editItemObserved).toBe(true)
+
+      const tableActions = await listGrid.getActionButtons('list')
+      expect(tableActions.length).toBe(1)
+
+      expect(await tableActions[0].getAttribute('id')).toEqual('rowId-editButton')
+    })
+
+    it('should assign id to delete button', async () => {
+      component.deleteItem.subscribe(() => console.log())
+      component.deletePermission = 'DELETE'
+      fixture.detectChanges()
+      await fixture.whenStable()
+      expect(component.deleteItemObserved).toBe(true)
+
+      const tableActions = await listGrid.getActionButtons('list')
+      expect(tableActions.length).toBe(1)
+
+      expect(await tableActions[0].getAttribute('id')).toEqual('rowId-deleteButton')
+    })
+
+    it('should assign id to additional action button', async () => {
+      component.additionalActions = [
+        {
+          permission: 'VIEW',
+          callback: () => {
+            console.log('custom action clicked')
+          },
+          id: 'actionId',
+        },
+      ]
+
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      const tableActions = await listGrid.getActionButtons('list')
+      expect(tableActions.length).toBe(1)
+
+      expect(await tableActions[0].getAttribute('id')).toEqual('rowId-actionIdActionButton')
+    })
+  })
+
   const setUpGridActionButtonMockData = async () => {
     component.columns = [
       ...mockColumns,
@@ -502,7 +596,7 @@ describe('DataListGridComponent', () => {
     component.viewPermission = 'VIEW'
     component.editPermission = 'EDIT'
     component.deletePermission = 'DELETE'
-          
+
     fixture.detectChanges()
     await fixture.whenStable()
   }

@@ -18,7 +18,7 @@ $emphasis-low: rgba(0, 0, 0, 0.38);
 $emphasis-lower: rgba(0, 0, 0, 0.12);
 $overlayColor: #000000;
 
-//global
+/*  global */
 $fontFamily: Ubuntu, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
 $fontSize: 1rem;
 $fontWeight: normal;
@@ -38,16 +38,16 @@ $maskBg: rgba(0, 0, 0, 0.32);
 $loadingIconFontSize: 2rem;
 $errorColor: #b00020;
 
-//selected state
+/* selected state */
 $highlightBg: rgba($primaryColor, 0.12);
 $highlightTextColor: $primaryColor;
 $highlightFocusBg: rgba($primaryColor, 0.24) !default;
 
-//scale
+/* scale */
 $scaleSM: 0.875;
 $scaleLG: 1.25;
 
-//focus
+/* focus */
 $focusOutlineColor: transparent;
 $focusOutline: 0 none;
 $focusOutlineOffset: 0;
@@ -55,7 +55,7 @@ $focusShadow: none;
 $focusOutlineCustom: 1px solid var(--primary-color);
 $focusOutlineOffsetCustom: 2px;
 
-//action icons
+/* action icons */
 $actionIconWidth: 2.5rem;
 $actionIconHeight: 2.5rem;
 $actionIconBg: transparent;
@@ -65,8 +65,10 @@ $actionIconHoverBg: rgba(0, 0, 0, 0.04);
 $actionIconHoverBorderColor: transparent;
 $actionIconHoverColor: $textSecondaryColor;
 $actionIconBorderRadius: 50%;
+$actionIconFocusOutline: $focusOutlineCustom;
+$actionIconFocusOutlineOffset: 0px;
 
-//input field (e.g. inputtext, spinner, inputmask)
+/* input field (e.g. inputtext, spinner, inputmask) */
 $inputPadding: 1rem 1rem;
 $inputTextFontSize: 1rem;
 $inputBg: #ffffff;
@@ -81,12 +83,12 @@ $inputFilledBg: #f5f5f5;
 $inputFilledHoverBg: #ececec;
 $inputFilledFocusBg: #dcdcdc;
 
-//input groups
+/* input groups */
 $inputGroupBg: $inputBg;
 $inputGroupTextColor: $emphasis-medium;
 $inputGroupAddOnMinWidth: 2.357rem;
 
-//input lists (e.g. dropdown, autocomplete, multiselect, orderlist)
+/* input lists (e.g. dropdown, autocomplete, multiselect, orderlist) */
 $inputListBg: #ffffff;
 $inputListTextColor: $textColor;
 $inputListBorder: $inputBorder;
@@ -108,24 +110,28 @@ $inputListHeaderBorder: 1px solid rgba(0, 0, 0, 0.12);
 $inputListItemTextFocusColor: $textColor;
 $inputListItemFocusBg: #e2e8f0 !default;
 
-//inputs with overlays (e.g. autocomplete, dropdown, multiselect)
+/* inputs with overlays (e.g. autocomplete, dropdown, multiselect) */
 $inputOverlayBg: $inputListBg;
 $inputOverlayHeaderBg: $inputListHeaderBg;
 $inputOverlayBorder: 0 none;
 $inputOverlayShadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14),
   0 3px 14px 2px rgba(0, 0, 0, 0.12);
 
-//multiselect
+/* multiselect */
 $multiSelectCloseIconFocusOutline: $focusOutlineCustom;
 $multiSelectCloseIconFocusOutlineOffset: $focusOutlineOffset;
 
-//password
+/* chip */
+$chipRemoveIconFocusOutline: $focusOutlineCustom;
+$chipRemoveIconFocusOutlineOffset: $focusOutlineOffset;
+
+/* password */
 $passwordMeterBg: rgba($primaryColor, 0.32);
 $passwordWeakBg: #d32f2f;
 $passwordMediumBg: #fbc02d;
 $passwordStrongBg: #689f38;
 
-//button
+/* button */
 $buttonPadding: 0.714rem 1rem;
 $buttonIconOnlyWidth: 3rem;
 $buttonIconOnlyPadding: 0.714rem;
@@ -233,7 +239,7 @@ $linkButtonHoverColor: $primaryColor;
 $linkButtonTextHoverDecoration: underline;
 $linkButtonFocusShadow: none;
 
-//checkbox
+/* checkbox */
 $checkboxWidth: 18px;
 $checkboxHeight: 18px;
 $checkboxBorder: 2px solid #757575;
@@ -245,7 +251,7 @@ $checkboxActiveHoverBg: $primaryColor;
 $checkboxIconActiveHoverColor: $primaryTextColor;
 $checkboxActiveHoverBorderColor: $primaryColor;
 
-//radiobutton
+/* radiobutton */
 $radiobuttonWidth: 20px;
 $radiobuttonHeight: 20px;
 $radiobuttonBorder: 2px solid #757575;
@@ -257,7 +263,7 @@ $radiobuttonActiveHoverBg: $primaryTextColor;
 $radiobuttonIconActiveHoverColor: $primaryColor;
 $radiobuttonActiveHoverBorderColor: $primaryColor;
 
-//colorpicker
+/* colorpicker */
 $colorPickerPreviewWidth: 2rem;
 $colorPickerPreviewHeight: 2rem;
 $colorPickerBg: #323232;
@@ -265,7 +271,7 @@ $colorPickerBorderColor: #191919;
 $colorPickerBorder: 1px solid #191919 !default;
 $colorPickerHandleColor: #ffffff;
 
-//togglebutton
+/* togglebutton */
 $toggleButtonBg: #ffffff;
 $toggleButtonBorder: 1px solid rgba(0, 0, 0, 0.12);
 $toggleButtonTextColor: $textColor;
@@ -283,12 +289,12 @@ $toggleButtonActiveHoverBorderColor: #d9d8d9;
 $toggleButtonTextActiveHoverColor: $textColor;
 $toggleButtonIconActiveHoverColor: $textSecondaryColor;
 
-//inplace
+/* inplace */
 $inplacePadding: $inputPadding;
 $inplaceHoverBg: rgba(0, 0, 0, 0.04);
 $inplaceTextHoverColor: $textColor;
 
-//rating
+/* rating */
 $ratingIconFontSize: 1.143rem;
 $ratingCancelIconColor: #b00020;
 $ratingCancelIconHoverColor: #b00020;
@@ -296,7 +302,7 @@ $ratingStarIconOffColor: $primaryColor;
 $ratingStarIconOnColor: $primaryColor;
 $ratingStarIconHoverColor: $primaryColor;
 
-//slider
+/* slider */
 $sliderBg: #c1c1c1;
 $sliderBorder: 0 none;
 $sliderHorizontalHeight: 2px;
@@ -310,7 +316,7 @@ $sliderHandleHoverBorderColor: 0 none;
 $sliderHandleHoverBg: $primaryColor;
 $sliderRangeBg: $primaryColor;
 
-//calendar
+/* calendar */
 $calendarTableMargin: 0.5rem 0;
 $calendarPadding: 0.5rem;
 $calendarBg: #ffffff;
@@ -348,7 +354,7 @@ $calendarCellDatePaddingSM: 0;
 $calendarFocusOutline: $focusOutlineCustom;
 $calendarFocusOutlineOffset: $focusOutlineOffset;
 
-//input switch
+/* input switch */
 $inputSwitchWidth: 2.75rem;
 $inputSwitchHeight: 1rem;
 $inputSwitchBorderRadius: 0.5rem;
@@ -363,7 +369,7 @@ $inputSwitchSliderOnBg: rgba($primaryColor, 0.5);
 $inputSwitchSliderOnHoverBg: rgba($primaryColor, 0.5);
 $inputSwitchHandleOnBg: $primaryColor;
 
-//panel
+/* panel */
 $panelHeaderBorderColor: #e0e0e0 !default;
 $panelHeaderBorder: 1px solid #e0e0e0;
 $panelHeaderBg: #ffffff;
@@ -387,7 +393,7 @@ $panelFooterBg: #ffffff;
 $panelFooterTextColor: $textColor;
 $panelFooterPadding: 1rem 1rem;
 
-//accordion
+/* accordion */
 $accordionSpacing: 0;
 $accordionHeaderBorder: 0 none;
 $accordionHeaderBg: #ffffff;
@@ -412,7 +418,7 @@ $accordionContentBg: #ffffff;
 $accordionContentTextColor: $textColor;
 $accordionContentPadding: 1rem 1.5rem;
 
-//tabview
+/* tabview */
 $tabviewNavBorder: solid rgba(0, 0, 0, 0.12);
 $tabviewNavBorderWidth: 0 0 1px 0;
 $tabviewNavBg: #ffffff;
@@ -440,15 +446,15 @@ $tabviewContentBg: #ffffff;
 $tabviewContentTextColor: $textColor;
 $tabviewContentPadding: $panelContentPadding;
 
-//upload
+/* upload */
 $fileUploadProgressBarHeight: 4px;
 $fileUploadContentPadding: 2rem 1rem;
 
-//scrollpanel
+/* scrollpanel */
 $scrollPanelTrackBorder: 0 none;
 $scrollPanelTrackBg: rgba(0, 0, 0, 0.12);
 
-//card
+/* card */
 $cardBodyPadding: 1rem;
 $cardTitleFontSize: 1.5rem;
 $cardTitleFontWeight: 700;
@@ -458,7 +464,7 @@ $cardContentPadding: 1rem 0;
 $cardFooterPadding: 1rem 0 0 0;
 $cardShadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
 
-//editor
+/* editor */
 $editorToolbarBg: $panelHeaderBg;
 $editorToolbarBorder: $panelHeaderBorder;
 $editorToolbarPadding: $panelHeaderPadding;
@@ -468,7 +474,7 @@ $editorIconActiveColor: $primaryColor;
 $editorContentBorder: $panelContentBorder;
 $editorContentBg: $panelContentBg;
 
-//paginator
+/* paginator */
 $paginatorBg: #ffffff;
 $paginatorTextColor: $textColor;
 $paginatorBorder: solid #e4e4e4;
@@ -488,7 +494,7 @@ $paginatorElementPadding: 0;
 $paginatorFocusOutline: $focusOutlineCustom;
 $paginatorFocusOutlineOffset: 0;
 
-//table
+/* table */
 $tableHeaderBorder: 1px solid #e4e4e4;
 $tableHeaderBorderWidth: 0 0 1px 0;
 $tableHeaderBg: #ffffff;
@@ -543,29 +549,29 @@ $tableBottomPaginatorBorderWidth: 0 0 1px 0;
 $tableScaleSM: 0.5;
 $tableScaleLG: 1.25;
 
-//dataview
+/* dataview */
 $dataViewContentPadding: 1rem 0;
 $dataViewContentBorder: 0 none;
 $dataViewListItemBorder: solid rgba(0, 0, 0, 0.12);
 $dataViewListItemBorderWidth: 0 0 1px 0;
 
-//orderlist, picklist
+/* orderlist, picklist */
 $orderListBreakpoint: 769px;
 $pickListBreakpoint: 769px;
 
-//schedule
+/* schedule */
 $fullCalendarEventBg: $highlightBg;
 $fullCalendarEventBorderColor: $highlightBg !default;
 $fullCalendarEventBorder: 1px solid $highlightBg;
 $fullCalendarEventTextColor: $highlightTextColor;
 
-//tree
+/* tree */
 $treeNodePadding: 0.25rem;
 $treeNodeContentPadding: 0.75rem;
 $treeNodeChildrenPadding: 0 0 0 1rem;
 $treeNodeIconColor: $textSecondaryColor;
 
-//timeline
+/* timeline */
 $timelineVerticalEventContentPadding: 0 1rem !default;
 $timelineHorizontalEventContentPadding: 1rem 0 !default;
 $timelineEventMarkerWidth: 1rem !default;
@@ -576,10 +582,10 @@ $timelineEventMarkerBackground: #bdbdbd !default;
 $timelineEventConnectorSize: 2px !default;
 $timelineEventColor: #bdbdbd !default;
 
-//org chart
+/* org chart */
 $organizationChartConnectorColor: rgba(0, 0, 0, 0.12);
 
-//message
+/* message */
 $messageMargin: 1rem 0;
 $messagePadding: 1.25rem 1.5rem;
 $messageBorderWidth: 0 0 0 0;
@@ -587,14 +593,14 @@ $messageIconFontSize: 1.5rem;
 $messageTextFontSize: 1rem;
 $messageTextFontWeight: 500;
 
-//inline message
+/* inline message */
 $inlineMessagePadding: $inputPadding;
 $inlineMessageMargin: 0;
 $inlineMessageIconFontSize: 1rem;
 $inlineMessageTextFontSize: 1rem;
 $inlineMessageBorderWidth: 1px;
 
-//toast
+/* toast */
 $toastIconFontSize: 2rem;
 $toastMessageTextMargin: 0 0 0 1rem;
 $toastMargin: 0 0 1rem 0;
@@ -605,7 +611,7 @@ $toastOpacity: 0.9;
 $toastTitleFontWeight: 700;
 $toastDetailMargin: $inlineSpacing 0 0 0;
 
-//severities
+/* severities */
 $infoMessageBg: #b3e5fc;
 $infoMessageBorder: solid transparent;
 $infoMessageTextColor: #01579b;
@@ -623,13 +629,13 @@ $errorMessageBorder: solid transparent;
 $errorMessageTextColor: #b71c1c;
 $errorMessageIconColor: #b71c1c;
 
-//overlays
+/* overlays */
 $overlayContentBorder: 0 none;
 $overlayContentBg: $panelContentBg;
 $overlayContainerShadow: 0 11px 15px -7px rgba(0, 0, 0, 0.2), 0 24px 38px 3px rgba(0, 0, 0, 0.14),
   0 9px 46px 8px rgba(0, 0, 0, 0.12);
 
-//dialog
+/* dialog */
 $dialogHeaderBg: #ffffff;
 $dialogHeaderBorder: 0 none;
 $dialogHeaderTextColor: $textColor;
@@ -642,12 +648,12 @@ $dialogFooterPadding: 1rem 1.5rem;
 $dialogHeaderIconFocusOutline: $focusOutlineCustom;
 $dialogHeaderIconFocusOutlineOffset: $focusOutlineOffset;
 
-//tooltip
+/* tooltip */
 $tooltipBg: rgba(97, 97, 97, 0.9);
 $tooltipTextColor: #ffffff;
 $tooltipPadding: 0.5rem;
 
-//steps
+/* steps */
 $stepsItemBg: transparent;
 $stepsItemBorder: 1px solid transparent;
 $stepsItemTextColor: $textColor;
@@ -658,14 +664,14 @@ $stepsItemNumberColor: $textColor;
 $stepsItemNumberBorderRadius: 50%;
 $stepsItemActiveFontWeight: 500;
 
-//progressbar
+/* progressbar */
 $progressBarHeight: 4px;
 $progressBarBorder: 0 none;
 $progressBarBg: rgba($primaryColor, 0.32);
 $progressBarValueBg: $primaryColor;
 $progressBarValueTextColor: $primaryTextColor !default;
 
-//menu (e.g. menu, menubar, tieredmenu)
+/* menu (e.g. menu, menubar, tieredmenu) */
 $menuWidth: 12.5rem;
 $menuBg: #ffffff;
 $menuBorder: 1px solid #e5e5e5;
@@ -696,7 +702,7 @@ $verticalMenuitemMargin: 0;
 $verticalMenuPadding: 0.5rem 1.25rem;
 $menuSeparatorMargin: 0.5rem 0;
 
-// panel menu
+/*  panel menu */
 $panelMenuHeaderBorder: 0 none;
 $panelMenuHeaderBg: #ffffff;
 $panelMenuHeaderPadding: 1rem;
@@ -710,7 +716,7 @@ $panelMenuSpacing: 0;
 
 $breadcrumbPadding: 1rem;
 $breadcrumbBg: #ffffff;
-// $breadcrumbBorder:1px solid #e5e5e5;
+/*  $breadcrumbBorder:1px solid #e5e5e5; */
 $breadcrumbBorder: none;
 $breadcrumbItemTextColor: $textColor;
 $breadcrumbItemIconColor: $textSecondaryColor;
@@ -735,7 +741,7 @@ $horizontalMenuRootMenuitemTextActiveColor: $textColor;
 $horizontalMenuRootMenuitemIconActiveColor: $textSecondaryColor;
 $horizontalMenuRootMenuitemActiveBg: rgba(0, 0, 0, 0.04);
 
-//badge and tag
+/* badge and tag */
 $badgeBg: $primaryColor;
 $badgeTextColor: $primaryTextColor;
 $badgeMinWidth: 1.5rem;
@@ -745,7 +751,7 @@ $badgeFontSize: 0.75rem;
 
 $tagPadding: 0.25rem 0.4rem;
 
-//carousel
+/* carousel */
 $carouselIndicatorsPadding: 1rem;
 $carouselIndicatorBg: #dcdcdc;
 $carouselIndicatorHoverBg: #ececec;
@@ -753,7 +759,7 @@ $carouselIndicatorBorderRadius: 0;
 $carouselIndicatorWidth: 2rem;
 $carouselIndicatorHeight: 0.5rem;
 
-//galleria
+/* galleria */
 $galleriaMaskBg: rgba(0, 0, 0, 0.9);
 $galleriaCloseIconMargin: 0.5rem;
 $galleriaCloseIconFontSize: 2rem;
@@ -799,7 +805,7 @@ $galleriaThumbnailNavigatorBorderRadius: 50%;
 $galleriaThumbnailNavigatorWidth: 2rem;
 $galleriaThumbnailNavigatorHeight: 2rem;
 
-//divider
+/* divider */
 $dividerHorizontalMargin: 1.25rem 0;
 $dividerHorizontalPadding: 0 1.25rem;
 $dividerVerticalMargin: 0 1.25rem;
@@ -807,18 +813,18 @@ $dividerVerticalPadding: 1.25rem 0;
 $dividerSize: 1px;
 $dividerColor: rgba(0, 0, 0, 0.12);
 
-//avatar
+/* avatar */
 $avatarBg: rgba(0, 0, 0, 0.12);
 $avatarTextColor: $textColor;
 
-//chip
+/* chip */
 $chipBg: rgba(0, 0, 0, 0.12);
 $chipTextColor: $textColor;
 $chipBorderRadius: 16px;
 $chipFocusBg: #e2e8f0 !default;
 $chipFocusTextColor: $textColor;
 
-//scrollTop
+/* scrollTop */
 $scrollTopBg: $accentColor;
 $scrollTopHoverBg: rgba($accentColor, 0.92);
 $scrollTopWidth: 3rem;
@@ -827,15 +833,15 @@ $scrollTopBorderRadius: 50%;
 $scrollTopFontSize: 1.5rem;
 $scrollTopTextColor: $accentTextColor;
 
-//skeleton
+/* skeleton */
 $skeletonBg: rgba(0, 0, 0, 0.08);
 $skeletonAnimationBg: rgba(255, 255, 255, 0.4);
 
-//splitter
+/* splitter */
 $splitterGutterBg: rgba(0, 0, 0, 0.04);
 $splitterGutterHandleBg: rgba(0, 0, 0, 0.12);
 
-//speeddial
+/* speeddial */
 $speedDialButtonWidth: 4rem !default;
 $speedDialButtonHeight: 4rem !default;
 $speedDialButtonIconFontSize: 2rem !default;
@@ -846,7 +852,7 @@ $speedDialActionHoverBg: rgba($accentColor, 0.92) !default;
 $speedDialActionTextColor: #fff !default;
 $speedDialActionTextHoverColor: #fff !default;
 
-//dock
+/* dock */
 $dockActionWidth: 4rem !default;
 $dockActionHeight: 4rem !default;
 $dockItemPadding: 0.5rem !default;
@@ -858,7 +864,7 @@ $dockBorder: 1px solid rgba(255, 255, 255, 0.2) !default;
 $dockPadding: 0.5rem 0.5rem !default;
 $dockBorderRadius: 0.5rem !default;
 
-//image
+/* image */
 $imageMaskBg: rgba(0, 0, 0, 0.9) !default;
 $imagePreviewToolbarPadding: 1rem !default;
 $imagePreviewIndicatorColor: #f8f9fa !default;

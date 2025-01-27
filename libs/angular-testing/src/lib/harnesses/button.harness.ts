@@ -32,6 +32,7 @@ export class ButtonHarness extends ComponentHarness {
     } else {
       console.warn('Button cannot be clicked, because it is disabled!')
     }
+    await this.waitForTasksOutsideAngular()
   }
 
   async isDisabled(): Promise<boolean> {

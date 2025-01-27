@@ -3,10 +3,11 @@ import { TranslateService } from '@ngx-translate/core'
 import { Observable, mergeMap } from 'rxjs'
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 
-import { ButtonDialogComponent } from '../core/components/button-dialog/button-dialog.component'
 import { ButtonDialogButtonDetails, ButtonDialogCustomButtonDetails, ButtonDialogData } from '../model/button-dialog'
 import { DialogMessageContentComponent } from '../core/components/button-dialog/dialog-message-content/dialog-message-content.component'
 import { PrimeIcon } from '@onecx/angular-accelerator'
+import { DialogFooterComponent } from '../core/components/dialog/dialog-footer/dialog-footer.component'
+import { DialogContentComponent } from '../core/components/dialog/dialog-content/dialog-content.component'
 
 /**
  * Object containing key for translation with parameters object for translation
@@ -211,6 +212,7 @@ type Component<T extends unknown> = unknown extends T
       inputs?: Record<string, unknown>
     }
 
+export type DialogButton = 'primary' | 'secondary' | 'custom'
 export type DialogStateButtonClicked = 'primary' | 'secondary' | 'custom'
 
 /**
@@ -225,6 +227,8 @@ export type DialogState<T> = {
 export type PortalDialogConfig = {
   showXButton?: boolean
   customButtons?: ButtonDialogCustomButtonDetails[]
+  autoFocusButton?: DialogButton
+  autoFocusButtonCustomId?: string
   ariaLabelledBy?: string
   width?: string
   height?: string
@@ -248,9 +252,19 @@ export type PortalDialogConfig = {
   closeAriaLabel?: string
 }
 
+export interface PortalDialogServiceData {
+  primaryButtonEnabled$: EventEmitter<boolean>
+  secondaryButtonEnabled$: EventEmitter<boolean>
+  customButtonEnabled$: EventEmitter<{ id: string; enabled: boolean }>
+  buttonClicked$: EventEmitter<DialogState<unknown>>
+}
+
 @Injectable({ providedIn: 'any' })
 export class PortalDialogService {
-  constructor(private dialogService: DialogService, private translateService: TranslateService) {}
+  constructor(
+    private dialogService: DialogService,
+    private translateService: TranslateService
+  ) {}
 
   /**
    * @deprecated
@@ -274,11 +288,13 @@ export class PortalDialogService {
    *
    * - {@link DialogSecondaryButtonDisabled} - dialog will use the EventEmitter to determine if the secondary button should be disabled
    *
+   * - {@link DialogCustomButtonsDisabled} - dialog will use the EventEmitter to determine if the custom buttons should be disabled
+   *
    * @param title Translation key for dialog title
    * @param componentOrMessage Either a component or a translation key of a message with optional parameters and icon to be displayed next to the message
    * @param primaryButtonTranslationKeyOrDetails Translation key with optional parameters and icon to be displayed next to the text of the button
    * @param secondaryButtonTranslationKeyOrDetails Translation key with optional parameters and icon to be displayed next to the text of the button
-   * @param showXButton Determines if X (close) button should be visible in the top right corner of the dialog (not displayed if set to false and displayed if set to true). NOTE: If only one button is being used then close button will not be visible on the dialog
+   * @param extras Configuration object allowing for customization of the dialog behavior and visual aspects
    * @returns Observable containing dialog state on close
    *
    *
@@ -443,17 +459,31 @@ export class PortalDialogService {
         customButtons: dialogOptions.customButtons?.map(
           (button) => this.buttonDetailsOrTranslationKey(button) as ButtonDialogCustomButtonDetails
         ),
+        autoFocusButton: dialogOptions.autoFocusButton,
+        autoFocusButtonCustomId: dialogOptions.autoFocusButtonCustomId,
       },
       componentData: componentToRender.inputs,
     }
 
     return this.translateService.get(translateParams.key, translateParams.parameters).pipe(
       mergeMap((dialogTitle) => {
-        return this.dialogService.open(ButtonDialogComponent, {
+        return this.dialogService.open(DialogContentComponent, {
           header: dialogTitle,
-          data: dynamicDialogDataConfig,
+          data: {
+            ...dynamicDialogDataConfig,
+            portalDialogServiceData: {
+              primaryButtonEnabled$: new EventEmitter(),
+              secondaryButtonEnabled$: new EventEmitter(),
+              customButtonEnabled$: new EventEmitter(),
+              buttonClicked$: new EventEmitter(),
+            } satisfies PortalDialogServiceData,
+          },
           closable: dialogOptions.showXButton && secondaryButtonTranslationKeyOrDetails !== undefined,
           ...dialogOptions,
+          focusOnShow: false,
+          templates: {
+            footer: DialogFooterComponent,
+          },
         }).onClose
       })
     )

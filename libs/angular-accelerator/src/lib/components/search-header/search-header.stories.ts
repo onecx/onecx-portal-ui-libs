@@ -15,9 +15,11 @@ import { StorybookTranslateModule } from '../../storybook-translate.module'
 import { PageHeaderComponent } from '../page-header/page-header.component'
 import { StorybookBreadcrumbModule } from './../../storybook-breadcrumb.module'
 import { SearchHeaderComponent } from './search-header.component'
+import { ConfigurationService } from '@onecx/angular-integration-interface'
+import { provideHttpClient } from '@angular/common/http'
 
 export default {
-  title: 'SearchHeaderComponent',
+  title: 'Components/SearchHeaderComponent',
   component: SearchHeaderComponent,
   decorators: [
     applicationConfig({
@@ -25,6 +27,8 @@ export default {
         importProvidersFrom(BrowserModule),
         importProvidersFrom(BrowserAnimationsModule),
         importProvidersFrom(RouterModule.forRoot([], { useHash: true })),
+        importProvidersFrom(ConfigurationService),
+        provideHttpClient(),
       ],
     }),
     moduleMetadata({

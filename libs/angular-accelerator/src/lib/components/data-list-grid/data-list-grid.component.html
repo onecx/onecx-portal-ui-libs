@@ -27,6 +27,7 @@
     <ng-template #listItem let-rows pTemplate="listItem">
       <div class="p-grid p-nogutter grid grid-nogutter">
         <ng-template ngFor let-item [ngForOf]="rows">
+          @defer (on viewport; on idle){
           <ng-container
             [ngTemplateOutlet]="_listItem ? _listItem : defaultListItem"
             [ngTemplateOutletContext]="{
@@ -34,6 +35,9 @@
               columnTemplates: columnTemplates
               }"
           ></ng-container>
+          } @placeholder {
+          <div style="width: 100%; height: 80px"></div>
+          }
         </ng-template>
       </div>
     </ng-template>
@@ -87,19 +91,18 @@
   </div>
 </ng-template>
 <ng-template #defaultListItem let-item="item" let-columnTemplates="columnTemplates">
-  <div class="col-12">
+  <div class="col-12" *ngIf="columnTemplates">
     <div class="data-list-items p-3">
       <div class="item-name-row flex flex-row justify-content-between">
         <div class="item-name mr-3 text-2xl font-medium align-content-center">
-          <a *ngIf="titleLineId" [routerLink]="" (click)="onViewRow(item)"
-            >{{ resolveFieldData(item, titleLineId) || '' }}</a
-          >
+          <span *ngIf="titleLineId">{{ resolveFieldData(item, titleLineId) || '' }}</span>
         </div>
         <div class="flex flex-row">
           <ng-container
             *ngIf="viewItemObserved && (!viewActionVisibleField || fieldIsTruthy(item, viewActionVisibleField))"
           >
             <button
+              id="{{resolveFieldData(item, 'id')}}-viewButton"
               type="button"
               icon="pi pi-eye"
               pButton
@@ -117,6 +120,7 @@
             *ngIf="editItemObserved && (!editActionVisibleField || fieldIsTruthy(item, editActionVisibleField))"
           >
             <button
+              id="{{resolveFieldData(item, 'id')}}-editButton"
               type="button"
               class="p-button-rounded p-button-text mb-1 mr-2 editListItemButton"
               icon="pi pi-pencil"
@@ -134,6 +138,7 @@
             *ngIf="deleteItemObserved && (!deleteActionVisibleField || fieldIsTruthy(item, deleteActionVisibleField))"
           >
             <button
+              id="{{resolveFieldData(item, 'id')}}-deleteButton"
               type="button"
               icon="pi pi-trash"
               class="p-button-rounded p-button-text p-button-danger mb-1 mr-2 deleteListItemButton"
@@ -150,6 +155,7 @@
           <ng-container *ngFor="let action of inlineListActions$ | async">
             <ng-container *ngIf="(!action.actionVisibleField || fieldIsTruthy(item, action.actionVisibleField))">
               <button
+                id="{{resolveFieldData(item, 'id')}}-{{action.id ? action.id.concat('ActionButton') : 'inlineActionButton'}}"
                 *ocxIfPermission="action.permission"
                 pButton
                 class="p-button-rounded p-button-text"
@@ -160,6 +166,7 @@
                 tooltipPosition="top"
                 [attr.aria-label]="action.labelKey ? (action.labelKey | translate) : ''"
                 [disabled]="action.disabled || (!!action.actionEnabledField && !fieldIsTruthy(item, action.actionEnabledField))"
+                [attr.name]="'data-list-action-button'"
               ></button>
             </ng-container>
           </ng-container>
@@ -192,16 +199,19 @@
             [ocxTooltipOnOverflow]="col.columnType === columnType.TRANSLATION_KEY ? (resolveFieldData(item,col.id) | translate) : resolveFieldData(item, col.id)"
             tooltipPosition="top"
           >
+            @defer(on viewport;){
             <ng-container
-              [ngTemplateOutlet]="
-            _listValue ? _listValue: defaultListValue
-            "
+              [ngTemplateOutlet]="_listValue ? _listValue: defaultListValue"
               [ngTemplateOutletContext]="{
                 rowObject: item,
                 column: col,
                 columnTemplates: columnTemplates
-            }"
-            ></ng-container>
+                }"
+            >
+            </ng-container>
+            } @placeholder {
+            <p-skeleton width="5rem" />
+            }
           </div>
         </div>
       </div>
@@ -216,6 +226,7 @@
 
 <ng-template #defaultListValue let-rowObject="rowObject" let-column="column" let-columnTemplates="columnTemplates">
   <ng-container
+    *ngIf="columnTemplates[column.id]"
     [ngTemplateOutlet]="columnTemplates[column.id]"
     [ngTemplateOutletContext]="{
                 rowObject: rowObject,

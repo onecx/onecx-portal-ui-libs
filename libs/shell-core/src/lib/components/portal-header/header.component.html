@@ -1,14 +1,17 @@
 <div class="layout-topbar shadow-4" id="header" role="banner">
   <div class="layout-topbar-left">
     <a class="layout-topbar-logo">
-      <img
-        id="app-logo"
-        [ocxSrc]="(logoUrl$ | async) ?? ''"
-        alt="Logo"
-        style="max-height: 100%; max-width: 100%"
-        *ngIf="(logoUrl$ | async) && !fallbackImg"
-        (error)="fallbackImg=true"
-      />
+      <ng-container *ngIf="logoUrl$ | async as logoUrl">
+        <img
+          *ngIf="logoUrl && !fallbackImg"
+          id="app-logo"
+          [ocxShellSrc]="logoUrl"
+          alt="Logo"
+          style="max-height: 100%; max-width: 100%"
+          (error)="fallbackImg=true"
+          (load)="onLoad(logoUrl)"
+        />
+      </ng-container>
       <svg *ngIf="((logoUrl$ | async) === null) || fallbackImg" width="160" viewBox="0 0 283 72" class="default-logo">
         <defs id="SvgjsDefs4962"></defs>
         <g

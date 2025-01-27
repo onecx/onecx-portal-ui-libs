@@ -1,3 +1,6 @@
+// injection tokens + related utilities
+export * from './lib/injection-tokens/has-permission-checker'
+
 // directives
 export * from './lib/directives/if-permission.directive'
 export * from './lib/directives/if-breakpoint.directive'
@@ -14,6 +17,7 @@ export * from './lib/components/data-list-grid-sorting/data-list-grid-sorting.co
 export * from './lib/components/data-table/data-table.component'
 export * from './lib/components/data-view/data-view.component'
 export * from './lib/components/diagram/diagram.component'
+export * from './lib/components/filter-view/filter-view.component'
 export * from './lib/components/group-by-count-diagram/group-by-count-diagram.component'
 export * from './lib/components/interactive-data-view/interactive-data-view.component'
 export * from './lib/components/page-header/page-header.component'
@@ -62,3 +66,5 @@ export * from './lib/utils/create-remote-component-translate-loader.utils'
 export * from './lib/utils/enum-to-dropdown-options.utils'
 export * from './lib/utils/criteria.utils'
 export * from './lib/utils/string-and-array-helper-functions.utils'
+export * from './lib/utils/template.utils'
+export * from './lib/utils/filter.utils'

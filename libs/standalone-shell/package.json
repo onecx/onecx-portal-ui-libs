@@ -1,0 +1,21 @@
+{
+  "name": "@onecx/standalone-shell",
+  "version": "5.31.0",
+  "license": "Apache-2.0",
+  "peerDependencies": {
+    "@angular/common": "^18.0.5",
+    "rxjs": "^7.8.1",
+    "@angular/core": "^18.0.5",
+    "@angular/router": "^18.0.5",
+    "@ngx-translate/core": "^15.0.0",
+    "@onecx/angular-integration-interface": "^5.31.0",
+    "@onecx/angular-webcomponents": "^5.31.0",
+    "@onecx/angular-utils": "^5.31.0",
+    "@onecx/integration-interface": "^5.31.0",
+    "@onecx/shell-core": "^5.31.0"
+  },
+  "dependencies": {},
+  "publishConfig": {
+    "access": "public"
+  }
+}

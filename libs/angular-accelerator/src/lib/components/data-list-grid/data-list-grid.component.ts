@@ -79,13 +79,18 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   set pageSize(value: number | undefined) {
     this._pageSize$.next(value)
   }
+  _showAllOption$ = new BehaviorSubject<boolean>(false)
+  @Input()
+  set showAllOption(value: boolean) {
+    this._showAllOption$.next(value)
+  }
 
   @Input() emptyResultsMessage: string | undefined
   @Input() fallbackImage = 'placeholder.png'
   @Input() layout: 'grid' | 'list' = 'grid'
-  @Input() viewPermission: string | undefined
-  @Input() editPermission: string | undefined
-  @Input() deletePermission: string | undefined
+  @Input() viewPermission: string | string[] | undefined
+  @Input() editPermission: string | string[] | undefined
+  @Input() deletePermission: string | string[] | undefined
   @Input() deleteActionVisibleField: string | undefined
   @Input() deleteActionEnabledField: string | undefined
   @Input() viewActionVisibleField: string | undefined
@@ -107,7 +112,8 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     this._columns$.next(value)
     const obs = value.map((c) => this.getTemplate(c))
     this.columnTemplates$ = combineLatest(obs).pipe(
-      map((values) => Object.fromEntries(value.map((c, i) => [c.id, values[i]])))
+      map((values) => Object.fromEntries(value.map((c, i) => [c.id, values[i]]))),
+      debounceTime(50)
     )
   }
   @Input() name = ''
@@ -332,8 +338,14 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     this.fallbackImagePath$ = this.appStateService.currentMfe$.pipe(
       map((currentMfe) => this.getFallbackImagePath(currentMfe))
     )
-    this.displayedPageSizes$ = combineLatest([this._pageSizes$, this.translateService.get('OCX_DATA_TABLE.ALL')]).pipe(
-      map(([pageSizes, translation]) => pageSizes.concat({ showAll: translation }))
+    this.displayedPageSizes$ = combineLatest([
+      this._pageSizes$,
+      this.translateService.get('OCX_DATA_TABLE.ALL'),
+      this._showAllOption$,
+    ]).pipe(
+      map(([pageSizes, translation, showAllOption]) =>
+        showAllOption ? pageSizes.concat({ showAll: translation }) : pageSizes
+      )
     )
     this.displayedPageSize$ = combineLatest([this._pageSize$, this._pageSizes$]).pipe(
       map(([pageSize, pageSizes]) => pageSize ?? pageSizes.find((val): val is number => typeof val === 'number') ?? 50)
@@ -648,8 +660,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
                 null
               )
           }
-        }),
-        debounceTime(50)
+        })
       )
     }
     return this.templatesObservables[column.id]

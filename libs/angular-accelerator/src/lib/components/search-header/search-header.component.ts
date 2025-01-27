@@ -16,6 +16,7 @@ import { Action } from '../page-header/page-header.component'
 import { FormControlName, FormGroup, FormGroupDirective } from '@angular/forms'
 import { Observable, combineLatest, debounceTime, map, of, startWith } from 'rxjs'
 import { getLocation } from '@onecx/accelerator'
+import { CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
 
 export interface SearchHeaderComponentState {
   activeViewMode?: 'basic' | 'advanced'
@@ -80,7 +81,7 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
     this._actions = value
     this.updateHeaderActions()
   }
-  @Input() searchConfigPermission: string | undefined
+  @Input() searchConfigPermission: string | string[] | undefined
   @Input() searchButtonDisabled = false
   @Input() resetButtonDisabled = false
   @Input() pageName: string | undefined = getLocation().applicationPath
@@ -113,18 +114,26 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
   @ViewChild('searchParameterFields') searchParameterFields: ElementRef | undefined
 
   hasAdvanced = false
-  headerActions: Action[] = []
 
+  simpleAdvancedAction: Action = {
+    id: 'simpleAdvancedButton',
+    actionCallback: () => this.toggleViewMode(),
+    show: 'always',
+  }
+  headerActions: Action[] = []
+  searchButtonsReversed = false
   fieldValues$: Observable<{ [key: string]: unknown }> | undefined = of({})
   searchConfigChangedSlotEmitter: EventEmitter<SearchConfigData | undefined> = new EventEmitter()
 
-  constructor() {
+  constructor(configurationService: ConfigurationService) {
     this.searchConfigChangedSlotEmitter.subscribe((config) => {
       this.componentStateChanged.emit({
         selectedSearchConfig: config?.name ?? null,
       })
       this.selectedSearchConfigChanged.emit(config)
     })
+    this.searchButtonsReversed =
+      configurationService.getProperty(CONFIG_KEY.ONECX_PORTAL_SEARCH_BUTTONS_REVERSED) === 'true'
   }
 
   ngAfterContentInit(): void {
@@ -166,19 +175,14 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
   updateHeaderActions() {
     const headerActions: Action[] = []
     if (this.hasAdvanced) {
-      headerActions.push({
-        id: 'simpleAdvancedButton',
-        labelKey:
-          this.viewMode === 'basic'
-            ? 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.ADVANCED.TEXT'
-            : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.SIMPLE.TEXT',
-        actionCallback: () => this.toggleViewMode(),
-        show: 'always',
-        titleKey:
-          this.viewMode === 'basic'
-            ? 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.ADVANCED.DETAIL'
-            : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.SIMPLE.DETAIL',
-      })
+      this.simpleAdvancedAction.labelKey = this.viewMode === 'basic'
+      ? 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.ADVANCED.TEXT'
+      : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.SIMPLE.TEXT',
+      this.simpleAdvancedAction.titleKey = this.viewMode === 'basic'
+      ? 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.ADVANCED.DETAIL'
+      : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.SIMPLE.DETAIL',
+      
+      headerActions.push(this.simpleAdvancedAction)
     }
     this.headerActions = headerActions.concat(this.actions)
   }

@@ -1,5 +1,12 @@
 module.exports = {
-  branches: ['main'],
+  branches: [
+    'main',
+    {
+      name: 'develop',
+      channel: 'rc',
+      prerelease: 'rc',
+    },
+  ],
   preset: 'conventionalcommits',
   presetConfig: {
     types: [
@@ -26,7 +33,7 @@ module.exports = {
     [
       '@semantic-release/exec',
       {
-       prepareCmd: `./release-script.sh \${nextRelease.version}`,
+        prepareCmd: `./release-script.sh \${nextRelease.version} \${nextRelease.channel}`,
       },
     ],
     [

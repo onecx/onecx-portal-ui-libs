@@ -39,12 +39,19 @@ import {
   DefaultListItemHarness,
   InteractiveDataViewHarness,
   SlotHarness,
+  FilterViewHarness,
 } from '../../../../testing'
 import { DateUtils } from '../../utils/dateutils'
 import { provideRouter } from '@angular/router'
 import { SlotService } from '@onecx/angular-remote-components'
 import { SlotServiceMock } from '@onecx/angular-remote-components/mocks'
 import { IfPermissionDirective } from '../../directives/if-permission.directive'
+import { FilterType } from '../../model/filter.model'
+import { FilterViewComponent } from '../filter-view/filter-view.component'
+import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
+import { PrimeIcons } from 'primeng/api'
+import { limit } from '../../utils/filter.utils'
+import { DatePipe } from '@angular/common'
 
 describe('InteractiveDataViewComponent', () => {
   const mutationObserverMock = jest.fn(function MutationObserver(callback) {
@@ -85,6 +92,7 @@ describe('InteractiveDataViewComponent', () => {
       startDate: '2023-09-13T09:34:05Z',
       imagePath: '/path/to/image',
       testNumber: '1',
+      testTruthy: 'value',
     },
     {
       version: 0,
@@ -101,6 +109,7 @@ describe('InteractiveDataViewComponent', () => {
       startDate: '2023-09-12T09:33:53Z',
       imagePath: '',
       testNumber: '3.141',
+      testTruthy: 'value2',
     },
     {
       version: 0,
@@ -133,6 +142,7 @@ describe('InteractiveDataViewComponent', () => {
       startDate: '2023-09-14T09:34:22Z',
       imagePath: '',
       testNumber: '12345.6789',
+      testTruthy: 'value3',
     },
     {
       version: 0,
@@ -224,6 +234,15 @@ describe('InteractiveDataViewComponent', () => {
       sortable: true,
       predefinedGroupKeys: ['PREDEFINED_GROUP.EXTENDED', 'PREDEFINED_GROUP.FULL'],
     },
+    {
+      columnType: ColumnType.STRING,
+      id: 'testTruthy',
+      nameKey: 'COLUMN_HEADER_NAME.TEST_TRUTHY',
+      filterable: true,
+      sortable: true,
+      filterType: FilterType.TRUTHY,
+      predefinedGroupKeys: ['PREDEFINED_GROUP.EXTENDED', 'PREDEFINED_GROUP.FULL'],
+    },
   ]
 
   beforeEach(async () => {
@@ -235,6 +254,7 @@ describe('InteractiveDataViewComponent', () => {
         ColumnGroupSelectionComponent,
         CustomGroupColumnSelectorComponent,
         IfPermissionDirective,
+        FilterViewComponent,
       ],
       imports: [
         TranslateModule.forRoot(),
@@ -243,6 +263,7 @@ describe('InteractiveDataViewComponent', () => {
         PickListModule,
         AngularAcceleratorModule,
         NoopAnimationsModule,
+        AngularAcceleratorPrimeNgModule,
         TranslateTestingModule.withTranslations({
           en: require('./../../../../assets/i18n/en.json'),
           de: require('./../../../../assets/i18n/de.json'),
@@ -286,6 +307,8 @@ describe('InteractiveDataViewComponent', () => {
     viewItemEvent = undefined
     editItemEvent = undefined
     deleteItemEvent = undefined
+
+    console.log("Global IntersectionObserver", global.IntersectionObserver)
   })
 
   it('should create', () => {
@@ -327,6 +350,14 @@ describe('InteractiveDataViewComponent', () => {
   it('should load CustomGroupColumnSelector', async () => {
     const customGroupColumnSelectorButton = await loader.getHarness(CustomGroupColumnSelectorHarness)
     expect(customGroupColumnSelectorButton).toBeTruthy()
+  })
+
+  it('should load FilterView', async () => {
+    component.disableFilterView = false
+    fixture.detectChanges()
+
+    const filterView = await loader.getHarness(FilterViewHarness)
+    expect(filterView).toBeTruthy()
   })
 
   it('should load DataListGridSortingDropdown', async () => {
@@ -404,7 +435,6 @@ describe('InteractiveDataViewComponent', () => {
       ]
       const sortButton = await tableHeaders[0].getSortButton()
       await sortButton.click()
-
       tableRows = (await dataTable?.getRows()) ?? []
       const rows = await parallel(() => tableRows.map((row) => row.getData()))
 
@@ -595,6 +625,7 @@ describe('InteractiveDataViewComponent', () => {
         'COLUMN_HEADER_NAME.STATUS',
         'COLUMN_HEADER_NAME.RESPONSIBLE',
         'COLUMN_HEADER_NAME.TEST_NUMBER',
+        'COLUMN_HEADER_NAME.TEST_TRUTHY',
         'Actions',
       ]
       const expectedRowsData = [
@@ -606,6 +637,7 @@ describe('InteractiveDataViewComponent', () => {
           'some status',
           'someone responsible',
           '1',
+          'value',
         ],
         [
           'example',
@@ -615,6 +647,7 @@ describe('InteractiveDataViewComponent', () => {
           'status example',
           '',
           '3.141',
+          'value2',
         ],
         [
           'name 1',
@@ -624,6 +657,7 @@ describe('InteractiveDataViewComponent', () => {
           'status name 1',
           '',
           '123,456,789',
+          '',
         ],
         [
           'name 2',
@@ -633,6 +667,7 @@ describe('InteractiveDataViewComponent', () => {
           'status name 2',
           '',
           '12,345.679',
+          'value3',
         ],
         [
           'name 3',
@@ -642,6 +677,7 @@ describe('InteractiveDataViewComponent', () => {
           'status name 3',
           '',
           '7.1',
+          '',
         ],
       ]
 
@@ -671,6 +707,7 @@ describe('InteractiveDataViewComponent', () => {
           'some status',
           'someone responsible',
           '1',
+          'value',
         ],
         [
           'example',
@@ -680,6 +717,7 @@ describe('InteractiveDataViewComponent', () => {
           'status example',
           '',
           '3.141',
+          'value2',
         ],
         [
           'name 3',
@@ -689,6 +727,7 @@ describe('InteractiveDataViewComponent', () => {
           'status name 3',
           '',
           '7.1',
+          '',
         ],
         [
           'name 2',
@@ -698,6 +737,7 @@ describe('InteractiveDataViewComponent', () => {
           'status name 2',
           '',
           '12,345.679',
+          'value3',
         ],
         [
           'name 1',
@@ -707,6 +747,7 @@ describe('InteractiveDataViewComponent', () => {
           'status name 1',
           '',
           '123,456,789',
+          '',
         ],
       ]
 
@@ -737,6 +778,7 @@ describe('InteractiveDataViewComponent', () => {
           'status name 1',
           '',
           '123,456,789',
+          '',
         ],
         [
           'name 2',
@@ -746,6 +788,7 @@ describe('InteractiveDataViewComponent', () => {
           'status name 2',
           '',
           '12,345.679',
+          'value3',
         ],
         [
           'name 3',
@@ -755,6 +798,7 @@ describe('InteractiveDataViewComponent', () => {
           'status name 3',
           '',
           '7.1',
+          '',
         ],
         [
           'example',
@@ -764,6 +808,7 @@ describe('InteractiveDataViewComponent', () => {
           'status example',
           '',
           '3.141',
+          'value2',
         ],
         [
           'some name',
@@ -773,6 +818,7 @@ describe('InteractiveDataViewComponent', () => {
           'some status',
           'someone responsible',
           '1',
+          'value',
         ],
       ]
 
@@ -804,6 +850,7 @@ describe('InteractiveDataViewComponent', () => {
           'some status',
           'someone responsible',
           '1',
+          'value',
         ],
         [
           'example',
@@ -813,6 +860,7 @@ describe('InteractiveDataViewComponent', () => {
           'status example',
           '',
           '3.141',
+          'value2',
         ],
         [
           'name 1',
@@ -822,6 +870,7 @@ describe('InteractiveDataViewComponent', () => {
           'status name 1',
           '',
           '123,456,789',
+          '',
         ],
         [
           'name 2',
@@ -831,6 +880,7 @@ describe('InteractiveDataViewComponent', () => {
           'status name 2',
           '',
           '12,345.679',
+          'value3',
         ],
         [
           'name 3',
@@ -840,6 +890,7 @@ describe('InteractiveDataViewComponent', () => {
           'status name 3',
           '',
           '7.1',
+          '',
         ],
       ]
 
@@ -962,18 +1013,18 @@ describe('InteractiveDataViewComponent', () => {
     it('should move item up in picklist active columns list', async () => {
       const spy = jest.spyOn(CustomGroupColumnSelectorComponent.prototype, 'onSaveClick')
       const expectedHeaders = [
-        'COLUMN_HEADER_NAME.NAME',
         'COLUMN_HEADER_NAME.DESCRIPTION',
+        'COLUMN_HEADER_NAME.NAME',
         'COLUMN_HEADER_NAME.STATUS',
         'COLUMN_HEADER_NAME.RESPONSIBLE',
         'Actions',
       ]
       const expectedRowsData = [
-        ['some name', '', 'some status', 'someone responsible'],
-        ['example', 'example description', 'status example', ''],
-        ['name 1', '', 'status name 1', ''],
-        ['name 2', '', 'status name 2', ''],
-        ['name 3', '', 'status name 3', ''],
+        ['', 'some name', 'some status', 'someone responsible'],
+        ['example description', 'example', 'status example', ''],
+        ['', 'name 1', 'status name 1', ''],
+        ['', 'name 2', 'status name 2', ''],
+        ['', 'name 3', 'status name 3', ''],
       ]
       await activeColumnsList[1].selectItem()
       await sourceControlsButtons[0].click()
@@ -992,17 +1043,17 @@ describe('InteractiveDataViewComponent', () => {
       const spy = jest.spyOn(CustomGroupColumnSelectorComponent.prototype, 'onSaveClick')
       const expectedHeaders = [
         'COLUMN_HEADER_NAME.NAME',
-        'COLUMN_HEADER_NAME.DESCRIPTION',
         'COLUMN_HEADER_NAME.STATUS',
+        'COLUMN_HEADER_NAME.DESCRIPTION',
         'COLUMN_HEADER_NAME.RESPONSIBLE',
         'Actions',
       ]
       const expectedRowsData = [
-        ['some name', '', 'some status', 'someone responsible'],
-        ['example', 'example description', 'status example', ''],
-        ['name 1', '', 'status name 1', ''],
-        ['name 2', '', 'status name 2', ''],
-        ['name 3', '', 'status name 3', ''],
+        ['some name', 'some status', '', 'someone responsible'],
+        ['example', 'status example', 'example description', ''],
+        ['name 1', 'status name 1', '', ''],
+        ['name 2', 'status name 2', '', ''],
+        ['name 3', 'status name 3', '', ''],
       ]
 
       await activeColumnsList[1].selectItem()
@@ -1128,6 +1179,258 @@ describe('InteractiveDataViewComponent', () => {
       expect(rightActionColumn).toBeTruthy()
       expect(await dataTable?.columnIsFrozen(rightActionColumnHeader)).toBe(true)
       expect(await dataTable?.columnIsFrozen(rightActionColumn)).toBe(true)
+    })
+  })
+
+  describe('Filter view ', () => {
+    let dataTable: DataTableHarness | null
+    let tableHeaders: TableHeaderColumnHarness[]
+
+    let filterViewHarness: FilterViewHarness
+
+    beforeEach(async () => {
+      component.disableFilterView = false
+      fixture.detectChanges()
+      // select FULL group
+      const columnGroupSelectionDropdown = await loader.getHarness(
+        PDropdownHarness.with({ inputId: 'columnGroupSelectionDropdown' })
+      )
+      const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
+      await dropdownItems[2].selectItem()
+
+      const dataView = await loader.getHarness(DataViewHarness)
+      dataTable = await dataView?.getDataTable()
+      tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
+
+      expect(await tableHeaders[2].getText()).toBe('COLUMN_HEADER_NAME.START_DATE')
+      const startDateFilterMultiSelect = await tableHeaders[2].getFilterMultiSelect()
+      const startDateAllFilterOptions = await startDateFilterMultiSelect.getAllOptions()
+      await startDateAllFilterOptions[0].click()
+      await startDateFilterMultiSelect.close()
+
+      expect(await tableHeaders[0].getText()).toBe('COLUMN_HEADER_NAME.NAME')
+      const nameFilterMultiSelect = await tableHeaders[0].getFilterMultiSelect()
+      const nameAllFilterOptions = await nameFilterMultiSelect.getAllOptions()
+      await nameAllFilterOptions[0].click()
+      await nameFilterMultiSelect.close()
+
+      expect(await tableHeaders[4].getText()).toBe('COLUMN_HEADER_NAME.STATUS')
+      const statusFilterMultiSelect = await tableHeaders[4].getFilterMultiSelect()
+      const statusAllFilterOptions = await statusFilterMultiSelect.getAllOptions()
+      await statusAllFilterOptions[0].click()
+      await statusFilterMultiSelect.close()
+
+      expect(await tableHeaders[9].getText()).toBe('COLUMN_HEADER_NAME.TEST_TRUTHY')
+      const testTruthyFilterMultiSelect = await tableHeaders[9].getFilterMultiSelect()
+      const testTruthyAllFilterOptions = await testTruthyFilterMultiSelect.getAllOptions()
+      await testTruthyAllFilterOptions[0].click()
+      await testTruthyFilterMultiSelect.close()
+
+      filterViewHarness = await loader.getHarness(FilterViewHarness)
+    })
+
+    it('should show button by default', async () => {
+      const filtersButton = await filterViewHarness.getFiltersButton()
+      expect(filtersButton).toBeTruthy()
+      expect(await filtersButton?.getLabel()).toBe('Filters')
+      expect(await filtersButton?.getBadgeValue()).toBe('4')
+    })
+
+    describe('chip section', () => {
+      it('should show chips when specified and breakpoint is not mobile', async () => {
+        component.filterViewDisplayMode = 'chips'
+        fixture.detectChanges()
+        let filtersButton = await filterViewHarness.getFiltersButton()
+        expect(filtersButton).toBeFalsy()
+
+        let chipResetFiltersButton = await filterViewHarness.getChipsResetFiltersButton()
+        expect(chipResetFiltersButton).toBeTruthy()
+        expect(await chipResetFiltersButton?.getIcon()).toBe(PrimeIcons.ERASER)
+
+        let chips = await filterViewHarness.getChips()
+        expect(chips).toBeTruthy()
+        expect(chips.length).toBe(4)
+
+        expect(await chips[0].getContent()).toBe('COLUMN_HEADER_NAME.TEST_TRUTHY: Yes')
+        expect(await chips[1].getContent()).toBe('COLUMN_HEADER_NAME.STATUS: some status')
+        expect(await chips[2].getContent()).toBe('COLUMN_HEADER_NAME.NAME: some name')
+        expect(await chips[3].getContent()).toBe('+1')
+
+        const orgMatchMedia = window.matchMedia
+        window.matchMedia = jest.fn(() => {
+          return {
+            matches: true,
+          }
+        }) as any
+        window.dispatchEvent(new Event('resize'))
+
+        fixture.detectChanges()
+        filtersButton = await filterViewHarness.getFiltersButton()
+        expect(filtersButton).toBeTruthy()
+
+        chipResetFiltersButton = await filterViewHarness.getChipsResetFiltersButton()
+        expect(chipResetFiltersButton).toBeFalsy()
+
+        chips = await filterViewHarness.getChips()
+        expect(chips.length).toBe(0)
+
+        window.matchMedia = orgMatchMedia
+      })
+
+      it('should show no filters message when no filters selected', async () => {
+        component.filters = []
+        component.filterViewDisplayMode = 'chips'
+        fixture.detectChanges()
+
+        const chipResetFiltersButton = await filterViewHarness.getChipsResetFiltersButton()
+        expect(chipResetFiltersButton).toBeTruthy()
+
+        const chips = await filterViewHarness.getChips()
+        expect(chips.length).toBe(0)
+
+        const noFilters = await filterViewHarness.getNoFiltersMessage()
+        expect(noFilters).toBeTruthy()
+        expect(await noFilters?.getText()).toBe('No filters selected')
+      })
+
+      it('should reset filters on reset filters button click', async () => {
+        component.filterViewDisplayMode = 'chips'
+        fixture.detectChanges()
+
+        const chips = await filterViewHarness.getChips()
+        expect(chips.length).toBe(4)
+
+        const chipResetFiltersButton = await filterViewHarness.getChipsResetFiltersButton()
+        await chipResetFiltersButton?.click()
+        expect(component.filters).toEqual([])
+        const chipsAfterReset = await filterViewHarness.getChips()
+        expect(chipsAfterReset.length).toBe(0)
+      })
+
+      it('should use provided chip selection strategy', async () => {
+        const datePipe = new DatePipe('en')
+        component.filterViewDisplayMode = 'chips'
+        component.selectDisplayedChips = (data) => limit(data, 1, { reverse: false })
+        fixture.detectChanges()
+
+        const chips = await filterViewHarness.getChips()
+        expect(chips.length).toBe(2)
+
+        expect(await chips[0].getContent()).toBe(
+          'COLUMN_HEADER_NAME.START_DATE: ' + datePipe.transform('2023-09-13T09:34:05Z', 'medium')
+        )
+      })
+
+      it('should remove filter on chip removal', async () => {
+        component.filterViewDisplayMode = 'chips'
+        fixture.detectChanges()
+
+        const chips = await filterViewHarness.getChips()
+        expect(chips.length).toBe(4)
+        expect(component.filters.length).toBe(4)
+        await chips[0].clickRemove()
+
+        const chipsAfterRemove = await filterViewHarness.getChips()
+        expect(chipsAfterRemove.length).toBe(3)
+        expect(component.filters.length).toBe(3)
+        expect(await chipsAfterRemove[0].getContent()).toBe('COLUMN_HEADER_NAME.STATUS: some status')
+      })
+
+      it('should show panel on show more chips click', async () => {
+        component.filterViewDisplayMode = 'chips'
+        fixture.detectChanges()
+
+        let dataTable = await filterViewHarness.getDataTable()
+        expect(dataTable).toBeFalsy()
+
+        const chips = await filterViewHarness.getChips()
+        expect(chips.length).toBe(4)
+        expect(await chips[3].getContent()).toBe('+1')
+        await chips[3].click()
+        fixture.detectChanges()
+
+        dataTable = await filterViewHarness.getDataTable()
+        expect(dataTable).toBeTruthy()
+      })
+    })
+
+    describe('without chips', () => {
+      it('should show panel on button click', async () => {
+        let dataTable = await filterViewHarness.getDataTable()
+        expect(dataTable).toBeFalsy()
+
+        const filtersButton = await filterViewHarness.getFiltersButton()
+        await filtersButton?.click()
+        fixture.detectChanges()
+
+        dataTable = await filterViewHarness.getDataTable()
+        expect(dataTable).toBeTruthy()
+      })
+    })
+
+    describe('overlay', () => {
+      it('should show data table with column filters', async () => {
+        const datePipe = new DatePipe('en')
+        let dataTable = await filterViewHarness.getDataTable()
+        expect(dataTable).toBeFalsy()
+
+        const filtersButton = await filterViewHarness.getFiltersButton()
+        await filtersButton?.click()
+        fixture.detectChanges()
+
+        dataTable = await filterViewHarness.getDataTable()
+        expect(dataTable).toBeTruthy()
+        const headers = await dataTable?.getHeaderColumns()
+        expect(headers).toBeTruthy()
+        expect(headers?.length).toBe(3)
+        expect(await headers![0].getText()).toBe('Column name')
+        expect(await headers![1].getText()).toBe('Filter value')
+        expect(await headers![2].getText()).toBe('Actions')
+
+        const rows = await dataTable?.getRows()
+        expect(rows?.length).toBe(4)
+        expect(await rows![0].getData()).toEqual(['COLUMN_HEADER_NAME.NAME', 'some name', ''])
+        expect(await rows![1].getData()).toEqual([
+          'COLUMN_HEADER_NAME.START_DATE',
+          datePipe.transform('2023-09-13T09:34:05Z', 'medium'),
+          '',
+        ])
+        expect(await rows![2].getData()).toEqual(['COLUMN_HEADER_NAME.STATUS', 'some status', ''])
+        expect(await rows![3].getData()).toEqual(['COLUMN_HEADER_NAME.TEST_TRUTHY', 'Yes', ''])
+      })
+
+      it('should show reset all filters button above the table', async () => {
+        const filtersButton = await filterViewHarness.getFiltersButton()
+        await filtersButton?.click()
+        fixture.detectChanges()
+
+        const resetButton = await filterViewHarness.getOverlayResetFiltersButton()
+        expect(resetButton).toBeTruthy()
+        const dataTable = await filterViewHarness.getDataTable()
+        expect((await dataTable?.getRows())?.length).toBe(4)
+
+        await resetButton?.click()
+        const rows = await dataTable?.getRows()
+        expect(rows?.length).toBe(1)
+        expect(await rows![0].getData()).toEqual(['No filters selected'])
+      })
+
+      it('should show remove filter in action column', async () => {
+        const filtersButton = await filterViewHarness.getFiltersButton()
+        await filtersButton?.click()
+        fixture.detectChanges()
+
+        const dataTable = await filterViewHarness.getDataTable()
+        let rows = await dataTable?.getRows()
+        expect(rows?.length).toBe(4)
+        const buttons = await rows![0].getAllActionButtons()
+        expect(buttons.length).toBe(1)
+        await buttons[0].click()
+
+        rows = await dataTable?.getRows()
+        expect(rows?.length).toBe(3)
+        expect(component.filters.length).toBe(3)
+      })
     })
   })
 

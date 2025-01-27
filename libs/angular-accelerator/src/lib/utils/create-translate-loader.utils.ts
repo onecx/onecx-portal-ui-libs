@@ -11,6 +11,9 @@ import { TranslateCombinedLoader } from './translate.combined.loader'
 
 let lastTranslateLoaderTimerId = 0
 
+/**
+ * @deprecated Please import from `@onecx/angular-utils` instead.
+ */
 export function createTranslateLoader(
   http: HttpClient,
   appStateService: AppStateService,
@@ -34,6 +37,8 @@ export function createTranslateLoader(
             Location.joinWithSlash(currentMfe.remoteBaseUrl, `onecx-portal-lib/assets/i18n/`),
             '.json'
           ),
+          // translations of portal-integration-angular of shell
+          new CachingTranslateLoader(ts, http, `./onecx-portal-lib/assets/i18n/`, '.json'),
           // Primelocale Translations
           new CachingTranslateLoader(
             ts,

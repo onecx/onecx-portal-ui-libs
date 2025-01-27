@@ -40,6 +40,7 @@ import { ObjectUtils } from '../../utils/objectutils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { MultiSelectItem } from 'primeng/multiselect'
 import { Filter, FilterType } from '../../model/filter.model'
+import { findTemplate } from '../../utils/template.utils'
 
 export type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -125,6 +126,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     this?._sortColumn$.next(value)
   }
   columnTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
+  columnFilterTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
   _columns$ = new BehaviorSubject<DataTableColumn[]>([])
   @Input()
   get columns(): DataTableColumn[] {
@@ -133,7 +135,12 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   set columns(value: DataTableColumn[]) {
     this._columns$.next(value)
     const obs = value.map((c) => this.getTemplate(c, TemplateType.CELL))
+    const filterObs = value.map((c) => this.getTemplate(c, TemplateType.FILTERCELL))
     this.columnTemplates$ = combineLatest(obs).pipe(
+      map((values) => Object.fromEntries(value.map((c, i) => [c.id, values[i]]))),
+      debounceTime(50)
+    )
+    this.columnFilterTemplates$ = combineLatest(filterObs).pipe(
       map((values) => Object.fromEntries(value.map((c, i) => [c.id, values[i]])))
     )
   }
@@ -159,12 +166,17 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   set pageSize(value: number | undefined) {
     this._pageSize$.next(value)
   }
+  _showAllOption$ = new BehaviorSubject<boolean>(false)
+  @Input()
+  set showAllOption(value: boolean) {
+    this._showAllOption$.next(value)
+  }
 
   @Input() emptyResultsMessage: string | undefined
   @Input() name = ''
-  @Input() deletePermission: string | undefined
-  @Input() viewPermission: string | undefined
-  @Input() editPermission: string | undefined
+  @Input() deletePermission: string | string[] | undefined
+  @Input() viewPermission: string | string[] | undefined
+  @Input() editPermission: string | string[] | undefined
   @Input() deleteActionVisibleField: string | undefined
   @Input() deleteActionEnabledField: string | undefined
   @Input() viewActionVisibleField: string | undefined
@@ -175,6 +187,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   @Input() allowSelectAll = true
   @Input() paginator = true
   @Input() page = 0
+  @Input() tableStyle: { [klass: string]: any } | undefined
   @Input()
   get totalRecordsOnServer(): number | undefined {
     return this.params['totalRecordsOnServer'] ? Number(this.params['totalRecordsOnServer']) : undefined
@@ -314,7 +327,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   selectedRows$: Observable<unknown[]> | undefined
 
   currentFilterColumn$ = new BehaviorSubject<DataTableColumn | null>(null)
-  currentEqualFilterOptions$: Observable<SelectItem[]> | undefined
+  currentEqualFilterOptions$: Observable<{ options: SelectItem[]; column: DataTableColumn | undefined }> | undefined
   currentEqualSelectedFilters$: Observable<unknown[]> | undefined
   truthyFilterOptions = [
     {
@@ -390,8 +403,14 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   ) {
     super(locale, translateService)
     this.name = this.name || this.router.url.replace(/[^A-Za-z0-9]/, '_')
-    this.displayedPageSizes$ = combineLatest([this._pageSizes$, this.translateService.get('OCX_DATA_TABLE.ALL')]).pipe(
-      map(([pageSizes, translation]) => pageSizes.concat({ showAll: translation }))
+    this.displayedPageSizes$ = combineLatest([
+      this._pageSizes$,
+      this.translateService.get('OCX_DATA_TABLE.ALL'),
+      this._showAllOption$,
+    ]).pipe(
+      map(([pageSizes, translation, showAllOption]) =>
+        showAllOption ? pageSizes.concat({ showAll: translation }) : pageSizes
+      )
     )
     this.displayedPageSize$ = combineLatest([this._pageSize$, this._pageSizes$]).pipe(
       map(([pageSize, pageSizes]) => pageSize ?? pageSizes.find((val): val is number => typeof val === 'number') ?? 50)
@@ -420,6 +439,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         )
       )
     )
+    this.rowSelectable = this.rowSelectable.bind(this)
   }
 
   ngOnInit(): void {
@@ -457,7 +477,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       ),
       mergeMap(([rows, currentFilterColumn, filters]) => {
         if (!currentFilterColumn?.id) {
-          return of([])
+          return of({ options: [], column: undefined })
         }
 
         const currentFilters = filters
@@ -485,6 +505,12 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
                     value: filterOption,
                   }) as SelectItem
               )
+          }),
+          map((options) => {
+            return {
+              options: options,
+              column: currentFilterColumn,
+            }
           })
         )
       })
@@ -662,6 +688,14 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     )
   }
 
+  isRowSelectionDisabled(rowObject: Row) {
+    return !!this.selectionEnabledField && !this.fieldIsTruthy(rowObject, this.selectionEnabledField)
+  }
+
+  rowSelectable(event: any) {
+    return !this.isRowSelectionDisabled(event.data)
+  }
+
   onSelectionChange(selection: Row[]) {
     let newSelectionIds = selection.map((row) => row.id)
     const rows = this._rows$.getValue()
@@ -766,35 +800,50 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
   filterTemplatesData: TemplatesData = {
     templatesObservables: {},
-    idSuffix: ['IdTableFilterCell', 'IdFilterCell'],
+    idSuffix: ['IdTableFilterCell', 'IdFilterCell', 'IdTableCell', 'IdCell'],
     templateNames: {
-      [ColumnType.DATE]: ['dateFilterCell', 'dateTableFilterCell', 'defaultDateCell'],
-      [ColumnType.NUMBER]: ['numberFilterCell', 'numberTableFilterCell', 'defaultNumberCell'],
-      [ColumnType.RELATIVE_DATE]: ['relativeDateFilterCell', 'relativeDateTableFilterCell', 'defaultRelativeDateCell'],
+      [ColumnType.DATE]: ['dateFilterCell', 'dateTableFilterCell', 'dateCell', 'dateTableCell', 'defaultDateCell'],
+      [ColumnType.NUMBER]: [
+        'numberFilterCell',
+        'numberTableFilterCell',
+        'numberCell',
+        'numberTableCell',
+        'defaultNumberCell',
+      ],
+      [ColumnType.RELATIVE_DATE]: [
+        'relativeDateFilterCell',
+        'relativeDateTableFilterCell',
+        'relativeDateCell',
+        'relativeDateTableCell',
+        'defaultRelativeDateCell',
+      ],
       [ColumnType.TRANSLATION_KEY]: [
         'translationKeyFilterCell',
         'translationKeyTableFilterCell',
         'defaultTranslationKeyCell',
+        'translationKeyCell',
+        'translationKeyTableCell',
       ],
-      [ColumnType.CUSTOM]: ['customFilterCell', 'customTableFilterCell', 'defaultCustomCell'],
-      [ColumnType.STRING]: ['stringFilterCell', 'stringTableFilterCell', 'defaultStringCell'],
+      [ColumnType.CUSTOM]: [
+        'customFilterCell',
+        'customTableFilterCell',
+        'customCell',
+        'customTableCell',
+        'defaultCustomCell',
+      ],
+      [ColumnType.STRING]: [
+        'stringFilterCell',
+        'stringTableFilterCell',
+        'stringCell',
+        'stringTableCell',
+        'defaultStringCell',
+      ],
     },
   }
 
   templatesDataMap: Record<TemplateType, TemplatesData> = {
     [TemplateType.CELL]: this.cellTemplatesData,
     [TemplateType.FILTERCELL]: this.filterTemplatesData,
-  }
-
-  findTemplate(templates: PrimeTemplate[], names: string[]): PrimeTemplate | undefined {
-    for (let index = 0; index < names.length; index++) {
-      const name = names[index]
-      const template = templates.find((template) => template.name === name)
-      if (template) {
-        return template
-      }
-    }
-    return undefined
   }
 
   getColumnTypeTemplate(templates: PrimeTemplate[], columnType: ColumnType, templateType: TemplateType) {
@@ -847,7 +896,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
     return (
       template ??
-      this.findTemplate(templates, this.templatesDataMap[templateType].templateNames[columnType])?.template ??
+      findTemplate(templates, this.templatesDataMap[templateType].templateNames[columnType])?.template ??
       null
     )
   }
@@ -863,7 +912,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       ]).pipe(
         map(([t, vt, pt]) => {
           const templates = [...(t ?? []), ...(vt ?? []), ...(pt ?? [])]
-          const columnTemplate = this.findTemplate(
+          const columnTemplate = findTemplate(
             templates,
             templatesData.idSuffix.map((suffix) => column.id + suffix)
           )?.template
@@ -871,8 +920,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
             return columnTemplate
           }
           return this.getColumnTypeTemplate(templates, column.columnType, templateType)
-        }),
-        debounceTime(50)
+        })
       )
     }
     return templatesData.templatesObservables[column.id]

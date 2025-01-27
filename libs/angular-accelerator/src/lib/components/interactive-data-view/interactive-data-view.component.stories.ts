@@ -1,143 +1,20 @@
-import { importProvidersFrom } from '@angular/core'
-import { FormsModule } from '@angular/forms'
-import { BrowserModule } from '@angular/platform-browser'
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { ActivatedRoute } from '@angular/router'
-import { UserService } from '@onecx/angular-integration-interface'
-import { MockUserService } from '@onecx/angular-integration-interface/mocks'
-import { Meta, StoryFn, applicationConfig, moduleMetadata } from '@storybook/angular'
-import { ButtonModule } from 'primeng/button'
-import { DataViewModule } from 'primeng/dataview'
-import { DialogModule } from 'primeng/dialog'
-import { DropdownModule } from 'primeng/dropdown'
-import { InputTextModule } from 'primeng/inputtext'
-import { MenuModule } from 'primeng/menu'
-import { MultiSelectModule } from 'primeng/multiselect'
-import { PickListModule } from 'primeng/picklist'
-import { ProgressBarModule } from 'primeng/progressbar'
-import { SelectButtonModule } from 'primeng/selectbutton'
-import { FloatLabelModule } from 'primeng/floatlabel'
-import { TableModule } from 'primeng/table'
-import { IfPermissionDirective } from '../../directives/if-permission.directive'
-import { MockAuthModule } from '../../mock-auth/mock-auth.module'
-import { ColumnType } from '../../model/column-type.model'
-import { StorybookTranslateModule } from '../../storybook-translate.module'
-import { ColumnGroupSelectionComponent } from '../column-group-selection/column-group-selection.component'
-import { CustomGroupColumnSelectorComponent } from '../custom-group-column-selector/custom-group-column-selector.component'
-import { DataLayoutSelectionComponent } from '../data-layout-selection/data-layout-selection.component'
-import { DataListGridSortingComponent } from '../data-list-grid-sorting/data-list-grid-sorting.component'
-import { DataListGridComponent } from '../data-list-grid/data-list-grid.component'
-import { DataTableComponent } from '../data-table/data-table.component'
-import { DataViewComponent } from '../data-view/data-view.component'
+import { Meta, StoryFn } from '@storybook/angular'
 import { InteractiveDataViewComponent } from './interactive-data-view.component'
+import {
+  InteractiveDataViewComponentSBConfig,
+  defaultInteractiveDataViewArgs,
+  InteractiveDataViewTemplate,
+} from './storybook-config'
+import { ColumnType } from '../../model/column-type.model'
 
-type InteractiveDataViewInputTypes = Pick<InteractiveDataViewComponent, 'data' | 'columns' | 'emptyResultsMessage'>
-const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewComponent> = {
-  title: 'InteractiveDataViewComponent',
-  component: InteractiveDataViewComponent,
-  decorators: [
-    applicationConfig({
-      providers: [
-        importProvidersFrom(BrowserModule),
-        importProvidersFrom(BrowserAnimationsModule),
-        { provide: UserService, useClass: MockUserService },
-        {
-          provide: ActivatedRoute,
-          useValue: {
-            snapshot: {
-              paramMap: {
-                get: () => '1',
-              },
-            },
-          },
-        },
-      ],
-    }),
-    moduleMetadata({
-      declarations: [
-        InteractiveDataViewComponent,
-        IfPermissionDirective,
-        CustomGroupColumnSelectorComponent,
-        ColumnGroupSelectionComponent,
-        DataViewComponent,
-        DataTableComponent,
-        DataLayoutSelectionComponent,
-        DataListGridComponent,
-        DataListGridSortingComponent,
-      ],
-      imports: [
-        TableModule,
-        ButtonModule,
-        MultiSelectModule,
-        StorybookTranslateModule,
-        MockAuthModule,
-        MenuModule,
-        PickListModule,
-        SelectButtonModule,
-        DialogModule,
-        DataViewModule,
-        DropdownModule,
-        FormsModule,
-        ProgressBarModule,
-        InputTextModule,
-        FloatLabelModule,
-      ],
-    }),
-  ],
+const InteractiveDataViewComponentDefaultSBConfig: Meta<InteractiveDataViewComponent> = {
+  ...InteractiveDataViewComponentSBConfig,
+  title: 'Components/InteractiveDataViewComponent',
 }
-const Template: StoryFn = (args) => ({
-  props: args,
-})
+type InteractiveDataViewInputTypes = Pick<InteractiveDataViewComponent, 'data' | 'columns' | 'emptyResultsMessage'>
 
 const defaultComponentArgs: InteractiveDataViewInputTypes = {
-  columns: [
-    {
-      id: 'product',
-      columnType: ColumnType.STRING,
-      nameKey: 'Product',
-      sortable: false,
-      filterable: true,
-      predefinedGroupKeys: ['test'],
-    },
-    {
-      id: 'amount',
-      columnType: ColumnType.NUMBER,
-      nameKey: 'Amount',
-      sortable: true,
-      predefinedGroupKeys: ['test', 'test1'],
-    },
-    {
-      id: 'available',
-      columnType: ColumnType.STRING,
-      nameKey: 'Available',
-      sortable: false,
-      predefinedGroupKeys: ['test2'],
-    },
-  ],
-  data: [
-    {
-      id: 1,
-      product: 'Apples',
-      amount: 2,
-      available: false,
-      imagePath: '',
-    },
-    {
-      id: 2,
-      product: 'Bananas',
-      amount: 10,
-      available: true,
-      imagePath: '',
-    },
-    {
-      id: 3,
-      product: 'Strawberries',
-      amount: 5,
-      available: false,
-      imagePath: '',
-    },
-  ],
-  emptyResultsMessage: 'No results',
+  ...defaultInteractiveDataViewArgs,
 }
 
 export const WithMockData = {
@@ -145,10 +22,75 @@ export const WithMockData = {
     componentStateChanged: { action: 'componentStateChanged' },
     selectionChanged: { action: 'selectionChanged' },
   },
-  render: Template,
+  render: InteractiveDataViewTemplate,
   args: {
     ...defaultComponentArgs,
     selectedRows: [],
+  },
+}
+
+function generateColumns(count: number) {
+  const data = []
+  for (let i = 0; i < count; i++) {
+    const row = {
+      id: `${i + 1}`,
+      columnType: ColumnType.STRING,
+      nameKey: `Product${i + 1}`,
+      sortable: false,
+      filterable: true,
+      predefinedGroupKeys: ['test'],
+    }
+    data.push(row)
+  }
+  return data
+}
+
+function generateRows(rowCount: number, columnCount: number) {
+  const data = []
+  for (let i = 0; i < rowCount; i++) {
+    const row = {} as any
+    for (let j = 0; j < columnCount; j++) {
+      row[j + 1] = `Test value for ${j + 1}`
+    }
+    data.push(row)
+  }
+  return data
+}
+
+function generateColumnTemplates(columnCount: number) {
+  let templates = ''
+  for (let i = 0; i < columnCount; i++) {
+    templates += `
+    <ng-template pTemplate="${i + 1}IdListValue" let-rowObject="rowObject" let-column="column">
+      <ng-container>${i + 1} {{ rowObject[${i + 1}] }} </ng-container>
+    </ng-template>`
+  }
+  return templates
+}
+
+const columnCount = 30
+const rowCount = 500
+
+const HugeMockDataTemplate: StoryFn<InteractiveDataViewComponent> = (args) => ({
+  props: args,
+  template: `
+  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
+    ${generateColumnTemplates(Math.ceil(columnCount / 3))}
+  </ocx-interactive-data-view>`,
+})
+
+export const WithHugeMockData = {
+  argTypes: {
+    componentStateChanged: { action: 'componentStateChanged' },
+    selectionChanged: { action: 'selectionChanged' },
+  },
+  render: HugeMockDataTemplate,
+  args: {
+    columns: generateColumns(columnCount),
+    data: generateRows(rowCount, columnCount),
+    emptyResultsMessage: 'No results',
+    selectedRows: [],
+    pageSize: 50,
   },
 }
 
@@ -156,14 +98,15 @@ export const WithPageSizes = {
   argTypes: {
     componentStateChanged: { action: 'componentStateChanged' },
   },
-  render: Template,
+  render: InteractiveDataViewTemplate,
   args: {
     ...defaultComponentArgs,
     pageSizes: [2, 15, 25],
+    showAllOption: false,
   },
 }
 
-const CustomizedInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
+const CustomContentInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
   props: args,
   template: `
   <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
@@ -185,8 +128,8 @@ const CustomizedInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (ar
   </ocx-interactive-data-view>`,
 })
 
-export const WithCustomTemplates = {
-  render: CustomizedInteractiveDataView,
+export const WithCustomContentTemplates = {
+  render: CustomContentInteractiveDataView,
   args: defaultComponentArgs,
 }
 
@@ -194,7 +137,7 @@ export const WithCustomStyles = {
   argTypes: {
     componentStateChanged: { action: 'componentStateChanged' },
   },
-  render: Template,
+  render: InteractiveDataViewTemplate,
   args: {
     ...defaultComponentArgs,
     headerStyleClass: 'py-2',
@@ -202,4 +145,115 @@ export const WithCustomStyles = {
   },
 }
 
-export default InteractiveDataViewComponentSBConfig
+const CustomTableCellsInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
+  props: args,
+  template: `
+  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
+    <ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
+      <ng-container>STRING: {{ rowObject[column.id] }} </ng-container>
+    </ng-template>
+    <ng-template pTemplate="dateTableCell" let-rowObject="rowObject" let-column="column">
+      <ng-container>DATE: {{ rowObject[column.id] | date }} </ng-container>
+    </ng-template>
+    <ng-template pTemplate="numberTableCell" let-rowObject="rowObject" let-column="column">
+      <ng-container>NUMBER: {{ rowObject[column.id] }} </ng-container>
+    </ng-template>
+  </ocx-interactive-data-view>`,
+})
+
+export const WithCustomTableCellTemplates = {
+  render: CustomTableCellsInteractiveDataView,
+  args: {
+    ...defaultComponentArgs,
+  },
+}
+
+const CustomTableFilterCellsInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
+  props: args,
+  template: `
+  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
+    <ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
+      <ng-container>STRING: {{ rowObject[column.id] }} </ng-container>
+    </ng-template>
+    <ng-template pTemplate="stringTableFilterCell" let-rowObject="rowObject" let-column="column">
+      <ng-container>STRING FILTER: {{ rowObject[column.id] }} </ng-container>
+    </ng-template>
+    <ng-template pTemplate="dateTableCell" let-rowObject="rowObject" let-column="column">
+      <ng-container>DATE: {{ rowObject[column.id] | date }} </ng-container>
+    </ng-template>
+    <ng-template pTemplate="dateTableFilterCell" let-rowObject="rowObject" let-column="column">
+      <ng-container>DATE FILTER: {{ rowObject[column.id] | date }} </ng-container>
+    </ng-template>
+    <ng-template pTemplate="numberTableCell" let-rowObject="rowObject" let-column="column">
+      <ng-container>NUMBER: {{ rowObject[column.id] }} </ng-container>
+    </ng-template>
+  </ocx-interactive-data-view>`,
+})
+
+export const WithCustomTableFilterCellTemplates = {
+  render: CustomTableFilterCellsInteractiveDataView,
+  args: {
+    ...defaultComponentArgs,
+  },
+}
+
+const CustomTableColumnCellsInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
+  props: args,
+  template: `
+  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
+    <ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
+      <ng-container>STRING: {{ rowObject[column.id] }} </ng-container>
+    </ng-template>
+    <ng-template pTemplate="stringTableFilterCell" let-rowObject="rowObject" let-column="column">
+      <ng-container>STRING FILTER: {{ rowObject[column.id] }} </ng-container>
+    </ng-template>
+    <ng-template pTemplate="productIdTableCell" let-rowObject="rowObject" let-column="column">
+      <ng-container> PRODUCT (ID): {{ rowObject[column.id] }} </ng-container>
+    </ng-template>
+    <ng-template pTemplate="productIdTableFilterCell" let-rowObject="rowObject" let-column="column">
+      <ng-container> PRODUCT FILTER (ID): {{ rowObject[column.id] }} </ng-container>
+    </ng-template>
+    <ng-template pTemplate="dateTableCell" let-rowObject="rowObject" let-column="column">
+      <ng-container>DATE: {{ rowObject[column.id] | date }} </ng-container>
+    </ng-template>
+    <ng-template pTemplate="dateTableFilterCell" let-rowObject="rowObject" let-column="column">
+      <ng-container>DATE FILTER: {{ rowObject[column.id] | date }} </ng-container>
+    </ng-template>
+    <ng-template pTemplate="dateIdTableCell" let-rowObject="rowObject" let-column="column">
+      <ng-container> DATE (ID): {{ rowObject[column.id] | date }} </ng-container>
+    </ng-template>
+    <ng-template pTemplate="dateIdTableFilterCell" let-rowObject="rowObject" let-column="column">
+      <ng-container> DATE FILTER (ID): {{ rowObject[column.id] | date }} </ng-container>
+    </ng-template>
+    <ng-template pTemplate="numberTableCell" let-rowObject="rowObject" let-column="column">
+      <ng-container>NUMBER: {{ rowObject[column.id] }} </ng-container>
+    </ng-template>
+  </ocx-interactive-data-view>`,
+})
+
+export const WithCustomTableColumnTemplates = {
+  render: CustomTableColumnCellsInteractiveDataView,
+  args: {
+    ...defaultComponentArgs,
+  },
+}
+
+const ExampleTemplate: StoryFn<InteractiveDataViewComponent & { content: any }> = (args) => ({
+  props: args,
+  template: `
+  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
+    ${args.content}
+  </ocx-interactive-data-view>`,
+})
+
+export const ExampleWithTemplateControl = {
+  render: ExampleTemplate,
+  args: {
+    ...defaultComponentArgs,
+    content: `<ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
+  <ng-container>MY STRING TEMPLATE PROVIDED VIA CONTENT CONTROL: {{ rowObject[column.id] }} </ng-container>
+</ng-template>`,
+  },
+}
+
+export default InteractiveDataViewComponentDefaultSBConfig

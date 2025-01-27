@@ -19,8 +19,14 @@ const preview: Preview = {
         date: /Date$/,
       },
     },
+    options: {
+      storySort: {
+        method: 'alphabetical',
+        order: ['Components', '*'],
+      },
+    },
   },
-  tags: ['autodocs', 'autodocs', 'autodocs']
+  tags: ['autodocs', 'autodocs', 'autodocs'],
 }
 
 export default preview

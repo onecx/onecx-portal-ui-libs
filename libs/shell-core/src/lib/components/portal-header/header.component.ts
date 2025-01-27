@@ -1,10 +1,12 @@
 import { animate, style, transition, trigger } from '@angular/animations'
-import { Component, EventEmitter, Input, Output } from '@angular/core'
+import { Component, EventEmitter, Inject, Input, Optional, Output } from '@angular/core'
 import { UntilDestroy } from '@ngneat/until-destroy'
 import { AppStateService, ThemeService } from '@onecx/angular-integration-interface'
-import { ImageLogoUrlUtils } from '@onecx/portal-integration-angular'
-import { combineLatest, map, Observable } from 'rxjs'
-import { SHELL_BFF_PREFIX } from '../../model/constants'
+import { Observable, combineLatest, filter, map, mergeMap, of } from 'rxjs'
+import {
+  WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER,
+  WorkspaceConfigBffService,
+} from '../../shell-interface/workspace-config-bff-service-provider'
 
 @Component({
   selector: 'ocx-shell-header',
@@ -39,18 +41,36 @@ export class HeaderComponent {
 
   logoUrl$: Observable<string | undefined>
 
-  constructor(private themeService: ThemeService, private appStateService: AppStateService) {
+  constructor(
+    private themeService: ThemeService,
+    private appStateService: AppStateService,
+    @Optional()
+    @Inject(WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER)
+    public workspaceConfigBffService: WorkspaceConfigBffService | undefined
+  ) {
     this.logoUrl$ = combineLatest([
       this.themeService.currentTheme$.asObservable(),
       this.appStateService.currentWorkspace$.asObservable(),
     ]).pipe(
-      map(([theme, portal]) => {
-        return ImageLogoUrlUtils.createLogoUrl(SHELL_BFF_PREFIX, theme.logoUrl || portal.logoUrl)
+      mergeMap(([theme, portal]) => {
+        if (!theme.logoUrl && !portal.logoUrl) {
+          return (this.workspaceConfigBffService?.getThemeLogoByName(theme.name ?? '') ?? of()).pipe(
+            filter((blob) => !!blob),
+            map((blob) => URL.createObjectURL(blob))
+          )
+        }
+        return of(theme.logoUrl || portal.logoUrl)
       })
     )
   }
 
   onMenuButtonClick(e: Event) {
     this.menuButtonClick.emit(e)
+  }
+
+  onLoad(logoUrl: string) {
+    if (logoUrl.startsWith('blob: ')) {
+      URL.revokeObjectURL(logoUrl)
+    }
   }
 }

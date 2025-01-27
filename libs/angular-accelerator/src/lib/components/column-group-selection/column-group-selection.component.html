@@ -1,12 +1,11 @@
 <p-floatLabel>
   <p-dropdown
     inputId="columnGroupSelectionDropdown"
+    id="columnGroupSelectionDropdownElement"
     *ngIf="(allGroupKeys$ | async)?.length"
-    (onClear)="clearGroupSelection()"
     (onChange)="changeGroupSelection($event)"
     [options]="(allGroupKeys$ | async) || []"
     [placeholder]="placeholderKey | translate"
-    [showClear]="selectedGroupKey !== defaultGroupKey"
     [(ngModel)]="selectedGroupKey"
     [ariaLabel]="'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABEL' | translate"
   >

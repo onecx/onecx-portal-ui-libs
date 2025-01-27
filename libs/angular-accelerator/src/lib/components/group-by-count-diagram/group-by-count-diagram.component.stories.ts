@@ -16,7 +16,7 @@ import { DiagramComponent } from '../diagram/diagram.component'
 import { ColumnType } from '../../model/column-type.model'
 
 export default {
-  title: 'GroupByCountDiagramComponent',
+  title: 'Components/GroupByCountDiagramComponent',
   component: GroupByCountDiagramComponent,
   argTypes: {
     diagramType: {
@@ -128,5 +128,41 @@ export const WithDiagramTypeSelection = {
       type: ColumnType.STRING,
     },
     sumKey: 'Total',
+  },
+}
+
+export const WithCustomColors = {
+  render: Template,
+  args: {
+    diagramType: DiagramType.PIE,
+    data: mockData,
+    supportedDiagramTypes: [DiagramType.PIE, DiagramType.HORIZONTAL_BAR, DiagramType.VERTICAL_BAR],
+    column: {
+      id: 'fruitType',
+      type: ColumnType.STRING,
+    },
+    sumKey: 'Total',
+    colors: {
+      ['Apple']: 'green',
+      ['Banana']: 'yellow',
+    },
+  },
+}
+
+export const WithForcedCustomColors = {
+  render: Template,
+  args: {
+    diagramType: DiagramType.PIE,
+    data: mockData,
+    supportedDiagramTypes: [DiagramType.PIE, DiagramType.HORIZONTAL_BAR, DiagramType.VERTICAL_BAR],
+    column: {
+      id: 'fruitType',
+      type: ColumnType.STRING,
+    },
+    sumKey: 'Total',
+    colors: {
+      ['Apple']: 'green',
+    },
+    fillMissingColors: true,
   },
 }

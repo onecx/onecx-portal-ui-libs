@@ -42,12 +42,15 @@ import { DataListGridSortingComponentState } from '../data-list-grid-sorting/dat
 import { Row, Sort } from '../data-table/data-table.component'
 import { DataViewComponent, DataViewComponentState, RowListGridData } from '../data-view/data-view.component'
 import { Filter } from '../../model/filter.model'
+import { limit } from '../../utils/filter.utils'
+import { FilterViewComponentState, FilterViewDisplayMode } from '../filter-view/filter-view.component'
 
 export type InteractiveDataViewComponentState = ColumnGroupSelectionComponentState &
   CustomGroupColumnSelectorComponentState &
   DataLayoutSelectionComponentState &
   DataListGridSortingComponentState &
-  DataViewComponentState
+  DataViewComponentState &
+  FilterViewComponentState
 
 export interface ColumnGroupData {
   activeColumns: DataTableColumn[]
@@ -74,11 +77,12 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   dataLayoutComponentState$ = new ReplaySubject<DataLayoutSelectionComponentState>(1)
   dataListGridSortingComponentState$ = new ReplaySubject<DataListGridSortingComponentState>(1)
   dataViewComponentState$ = new ReplaySubject<DataViewComponentState>(1)
+  filterViewComponentState$ = new ReplaySubject<FilterViewComponentState>(1)
 
-  @Input() searchConfigPermission: string | undefined
-  @Input() deletePermission: string | undefined
-  @Input() editPermission: string | undefined
-  @Input() viewPermission: string | undefined
+  @Input() searchConfigPermission: string | string[] | undefined
+  @Input() deletePermission: string | string[] | string[] | undefined
+  @Input() editPermission: string | string[] | undefined
+  @Input() viewPermission: string | string[] | undefined
   @Input() deleteActionVisibleField: string | undefined
   @Input() deleteActionEnabledField: string | undefined
   @Input() viewActionVisibleField: string | undefined
@@ -106,6 +110,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   ]
   @Input() pageSizes: number[] = [10, 25, 50]
   @Input() pageSize: number | undefined
+  @Input() showAllOption = false
   @Input() totalRecordsOnServer: number | undefined
   @Input() layout: 'grid' | 'list' | 'table' = 'table'
   @Input() defaultGroupKey = ''
@@ -116,6 +121,13 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   @Input() additionalActions: DataAction[] = []
   @Input() listGridPaginator = true
   @Input() tablePaginator = true
+  @Input() disableFilterView = true
+  @Input() filterViewDisplayMode: FilterViewDisplayMode = 'button'
+  @Input() filterViewChipStyleClass = ''
+  @Input() filterViewTableStyle: { [klass: string]: any } = { 'max-height': '50vh' }
+  @Input() filterViewPanelStyle: { [klass: string]: any } = { 'max-width': '90%' }
+  @Input() selectDisplayedChips: (filters: Filter[], columns: DataTableColumn[]) => Filter[] = (filters) =>
+    limit(filters, 3, { reverse: true })
   @Input() page = 0
   @Input() selectedRows: Row[] = []
   displayedColumnKeys$ = new BehaviorSubject<string[]>([])
@@ -394,7 +406,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
         .map((column) => column.id)
     }
     this.displayedColumns$ = this.displayedColumnKeys$.pipe(
-      distinctUntilChanged((prev, curr) => prev.length === curr.length && prev.every((v) => curr.includes(v))),
+      distinctUntilChanged((prev, curr) => prev.length === curr.length && prev.every((v, i) => curr[i] === v)),
       map(
         (columnKeys) =>
           (columnKeys.map((key) => this.columns.find((col) => col.id === key)).filter((d) => d) as DataTableColumn[]) ??
@@ -437,12 +449,23 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
       )
     }
 
+    let filterViewComponentState$: Observable<FilterViewComponentState | Record<string, never>> =
+      this.filterViewComponentState$
+    if (this.disableFilterView) {
+      filterViewComponentState$ = filterViewComponentState$.pipe(
+        startWith({
+          filters: this.filters,
+        })
+      )
+    }
+
     combineLatest([
       columnGroupSelectionComponentState$.pipe(timestamp()),
       customGroupColumnSelectorComponentState$.pipe(timestamp()),
       this.dataLayoutComponentState$.pipe(timestamp()),
       dataListGridSortingComponentState$.pipe(timestamp()),
       this.dataViewComponentState$.pipe(timestamp()),
+      filterViewComponentState$.pipe(timestamp()),
     ])
       .pipe(
         map((componentStates) => {

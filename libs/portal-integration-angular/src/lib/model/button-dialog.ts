@@ -1,5 +1,6 @@
 import { Type } from '@angular/core'
 import { PrimeIcon } from '@onecx/angular-accelerator'
+import { DialogButton } from '../services/portal-dialog.service'
 
 /**
  * Object describing details for button rendering containing key for translation, optional icon and optional parameters for translation
@@ -22,6 +23,7 @@ import { PrimeIcon } from '@onecx/angular-accelerator'
  */
 export interface ButtonDialogButtonDetails {
   key: string
+  id?: string
   icon?: PrimeIcon
   parameters?: Record<string, unknown>
   tooltipKey?: string
@@ -38,6 +40,8 @@ export interface ButtonDialogConfig {
   secondaryButtonIncluded?: boolean
   secondaryButtonDetails?: ButtonDialogButtonDetails
   customButtons?: ButtonDialogCustomButtonDetails[]
+  autoFocusButton?: DialogButton
+  autoFocusButtonCustomId?: string
 }
 
 export interface ButtonDialogData {

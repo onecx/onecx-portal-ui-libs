@@ -2,7 +2,6 @@ import {
   Directive,
   ElementRef,
   Inject,
-  InjectionToken,
   Input,
   OnInit,
   Optional,
@@ -11,21 +10,7 @@ import {
   ViewContainerRef,
 } from '@angular/core'
 import { UserService } from '@onecx/angular-integration-interface'
-
-export interface HasPermissionChecker {
-  hasPermission(permissionKey: string): boolean
-}
-
-/**
- * This checker always returns true, basically disabling the permission system on the UI side
- */
-export class AlwaysGrantPermissionChecker implements HasPermissionChecker {
-  hasPermission(_permissionKey: string): boolean {
-    return true
-  }
-}
-
-export const HAS_PERMISSION_CHECKER = new InjectionToken<HasPermissionChecker>('hasPermission')
+import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
 
 @Directive({ selector: '[ocxIfPermission], [ocxIfNotPermission]' })
 export class IfPermissionDirective implements OnInit {
@@ -71,21 +56,23 @@ export class IfPermissionDirective implements OnInit {
   }
 
   ngOnInit() {
-    if (this.permission) {
-      if (this.negate === this.hasPermission(Array.isArray(this.permission) ? this.permission : [this.permission])) {
-        if (this.ocxIfPermissionElseTemplate) {
-          this.viewContainer.createEmbeddedView(this.ocxIfPermissionElseTemplate)
-        } else {
-          if (this.onMissingPermission === 'disable') {
-            this.renderer.setAttribute(this.el.nativeElement, 'disabled', 'disabled')
-          } else {
-            this.viewContainer.clear()
-          }
-        }
+    if (
+      (this.permission &&
+        this.negate === this.hasPermission(Array.isArray(this.permission) ? this.permission : [this.permission])) ||
+      !this.permission
+    ) {
+      if (this.ocxIfPermissionElseTemplate) {
+        this.viewContainer.createEmbeddedView(this.ocxIfPermissionElseTemplate)
       } else {
-        if (this.templateRef) {
-          this.viewContainer.createEmbeddedView(this.templateRef)
+        if (this.onMissingPermission === 'disable') {
+          this.renderer.setAttribute(this.el.nativeElement, 'disabled', 'disabled')
+        } else {
+          this.viewContainer.clear()
         }
+      }
+    } else {
+      if (this.templateRef) {
+        this.viewContainer.createEmbeddedView(this.templateRef)
       }
     }
   }

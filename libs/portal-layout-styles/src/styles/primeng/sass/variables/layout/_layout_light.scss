@@ -43,7 +43,7 @@ $topbarItemTextHoverBgColor: rgba(255, 255, 255, 0.12);
 :root {
   --divider-color: #{$dividerColor};
 
-  // --changes onecx
+  /* --changes onecx */
 
   --topbar-bg-color: #{$topbarBgColor};
   --topbar-text-color: #{$topbarItemTextColor};
@@ -55,7 +55,7 @@ $topbarItemTextHoverBgColor: rgba(255, 255, 255, 0.12);
 
   --topbar-menu-button-bg-color: #{$topbarMenuButtonBgColor};
   --menu-button-text-color: #{$topbarMenuButtonTextColor};
-  // end header custom vars
+  /* end header custom vars */
 
   --body-bg-color: #{$bodyBgColor};
   --text-color: #{$textColor};
@@ -68,7 +68,7 @@ $topbarItemTextHoverBgColor: rgba(255, 255, 255, 0.12);
   --hover-bg-color: #{$hoverBgColor};
   --solid-surface-text-color: #{$solidSurfaceTextColor};
 
-  // --end changes onecx
+  /* --end changes onecx */
 }
 
 @import './_layout_common';
