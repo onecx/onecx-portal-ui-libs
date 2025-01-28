@@ -11,8 +11,8 @@ export class OcxContentHarness extends ComponentHarness {
     return actualClassList
   }
 
-  async getTitleClasses() {
-    const p = await this.getTitleHarness()
+  async getTitleClasses(titleElementId: string) {
+    const p = await this.getTitleHarness(titleElementId)
     if (p) {
       const actualClassList = await p.getClassList()
       return actualClassList
@@ -20,8 +20,8 @@ export class OcxContentHarness extends ComponentHarness {
     return null
   }
 
-  async getTitle() {
-    const p = await this.getTitleHarness()
+  async getTitle(titleElementId: string) {
+    const p = await this.getTitleHarness(titleElementId)
     if (p) {
       const titleContent = await p.getText()
       return titleContent
@@ -29,13 +29,13 @@ export class OcxContentHarness extends ComponentHarness {
     return null
   }
 
-  async getTitleHarness() {
-    const pHarness = await this.locatorForOptional(PHarness.with({ id: 'ocxContentTitleElement' }))()
+  async getTitleHarness(titleElementId: string) {
+    const pHarness = await this.locatorForOptional(PHarness.with({ id: titleElementId }))()
     return pHarness
   }
 
-  async hasTitle(): Promise<boolean> {
-    const title = await this.getTitleHarness()
+  async hasTitle(titleElementId: string): Promise<boolean> {
+    const title = await this.getTitleHarness(titleElementId)
     return !!title
   }
 }
