@@ -86,8 +86,7 @@ export default {
           // INFO: --input-bg used input background
           // TODO: Check with surface value
           // TODO: Can be background: '#ffffff'
-          // background: '{surface.0}',
-          background: '#ffffff',
+          background: '{surface.0}',
           // INFO: --input-filled-bg used input background
           // TODO: Check with surface value
           // TODO: Can be filledBackground: '#f5f5f5'
