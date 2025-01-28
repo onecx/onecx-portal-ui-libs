@@ -50,6 +50,52 @@ export default {
       },
       transitionDuration: '{transition.duration}',
     },
+    overlay: {
+      // INFO: Components allowing selection
+      select: {
+        // INFO: --border-radius is used
+        // TODO: Can be borderRadius: 4px
+        // borderRadius: '{border.radius.md}',
+        borderRadius: '{border.radius.sm}',
+        // INFO: --input-overlay-shadow is used
+        // shadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)',
+        shadow:
+          '0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12)',
+      },
+      // INFO: Components that pop up (p-password, tooltip)
+      popover: {
+        // INFO: --border-radius is used
+        // TODO: Can be borderRadius: 4px
+        // borderRadius: '{border.radius.md}',
+        borderRadius: '{border.radius.sm}',
+        // INFO: for tooltip its 0.5rem
+        // INFO: for overlaypanel and password 0.75rem
+        padding: '0.75rem',
+        // INFO: --input-overlay-shadow used
+        // shadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)',
+        shadow:
+          '0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12)',
+      },
+      // INFO: The only usage of this token is related to p-dialog
+      modal: {
+        // INFO: --border-radius is used
+        // TODO: Can be borderRadius: 4px
+        // borderRadius: '{border.radius.md}',
+        borderRadius: '{border.radius.sm}',
+        // INFO: --dialog-header-padding is used and --dialog-content-padding is used
+        padding: '1.25rem',
+        // INFO: --overlay-container-shadow is used
+        // shadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+        shadow:
+          '0 11px 15px -7px rgba(0, 0, 0, 0.2), 0 24px 38px 3px rgba(0, 0, 0, 0.14), 0 9px 46px 8px rgba(0, 0, 0, 0.12)',
+      },
+      // INFO: All menu components
+      navigation: {
+        // INFO: --overlay-menu-shadow is used
+        // shadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)',
+        shadow: '0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12)',
+      },
+    },
     colorScheme: {
       light: {
         surface: {
@@ -147,6 +193,43 @@ export default {
           floatLabelActiveColor: '{surface.500}',
           // INFO: $errorColor color is used for invalid border
           floatLabelInvalidColor: '{form.field.invalid.placeholder.color}',
+        },
+        overlay: {
+          select: {
+            // INFO: --input-list-bg used
+            // TODO: Check with surface value
+            // TODO: Can be background: '#ffffff'
+            background: '{surface.0}',
+            // INFO: --input-overlay-border used
+            // INFO: border: 0 none
+            // TODO: Should border be none or should overlay have a border?
+            borderColor: '{surface.200}',
+            // INFO: --text-color used
+            color: '{text.color}',
+          },
+          popover: {
+            // INFO: --panel-content-bg used
+            // TODO: Check with surface value
+            // TODO: Can be background: '#ffffff'
+            background: '{surface.0}',
+            // INFO: --panel-content-bg used
+            // INFO: border: 0 none
+            // TODO: Should border be none or should overlay have a border?
+            borderColor: '{surface.200}',
+            // INFO: --text-color used
+            color: '{text.color}',
+          },
+          modal: {
+            // INFO: --dialog-header-bg, dialog-content-bg used
+            // INFO: Can be background: '#ffffff'
+            background: '{surface.0}',
+            // INFO: --overlay-content-border used
+            // INFO: border: 0 none
+            // TODO: Should border be none or should overlay have a border?
+            borderColor: '{surface.200}',
+            // INFO: --text-color used
+            color: '{text.color}',
+          },
         },
       },
     },
