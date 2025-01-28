@@ -49,6 +49,10 @@ export default {
       },
       transitionDuration: '{transition.duration}',
     },
+    mask: {
+      // INFO: No variable for this, so probably was default PrimeNG value
+      transitionDuration: '0.15s',
+    },
     // INFO: All menu components
     navigation: {
       list: {
@@ -145,8 +149,16 @@ export default {
         },
         primary: {
           color: '{primary.500}',
-          // TODO: Consider using theme variable for surface value so background and borders are set correctly
         },
+        mask: {
+          // INFO: --maskbg used
+          // INFO: Mask applied on image, speedDial with mask prop. Determines what color is the mask
+          // background: 'rgba(0,0,0,0.4)',
+          background: 'rgba(0, 0, 0, 0.32)',
+          // INFO: Color of any text content inside a mask?
+          color: '{surface.200}',
+        },
+        // TODO: Consider using theme variable for surface value so background and borders are set correctly
         formField: {
           // INFO: dev -> on focus primary color is used
           focusBorderColor: '{primary.color}',
