@@ -4,7 +4,6 @@ export default {
     // OneCX semantic variables extension
     extend: {
       errorColor: '#b00020',
-      backgroundColor: '#ffffff',
     },
     transitionDuration: '0.2s',
     focusRing: {
@@ -49,6 +48,38 @@ export default {
         shadow: 'none',
       },
       transitionDuration: '{transition.duration}',
+    },
+    // INFO: All menu components
+    navigation: {
+      list: {
+        // INFO: --vertical-menu-padding used
+        // padding: '0.25rem 0.25rem',
+        padding: '0.5rem 1.25rem',
+        // INFO: new variable, gap between each item in list
+        gap: '2px',
+      },
+      item: {
+        // INFO: --menuitem-padding used
+        // padding: '0.5rem 0.75rem',
+        padding: '0.75rem 0.75rem',
+        // INFO: --menuitem-border-radius used
+        // borderRadius: '{border.radius.sm}',
+        borderRadius: '0',
+        // INFO: new variable, gap between items in a single item, e.g., icon and text
+        gap: '0.5rem',
+      },
+      submenuLabel: {
+        // INFO: --submenu-header-padding used
+        // padding: '0.5rem 0.75rem',
+        padding: '0.75rem',
+        // INFO: --submenu-header-font-weight used
+        // fontWeight: '600',
+        fontWeight: '400',
+      },
+      submenuIcon: {
+        // INFO: --menuitem-submenu-icon-font-size used
+        size: '0.875rem',
+      },
     },
     overlay: {
       // INFO: Components allowing selection
@@ -229,6 +260,55 @@ export default {
             borderColor: '{surface.200}',
             // INFO: --text-color used
             color: '{text.color}',
+          },
+        },
+        // INFO: All menu components
+        navigation: {
+          item: {
+            // INFO: --menuitem-focus-bg, --menuitem-hover-bg used
+            // INFO: Could be focusBackground: 'rgba(0, 0, 0, 0.04)'
+            focusBackground: '{surface.100}',
+            // INFO: --menuitem-active-bg, --menuitem-active-focus-bg used
+            // INFO: Could be activeBackground: 'rgba(0, 0, 0, 0.04)'
+            activeBackground: '{surface.100}',
+            // INFO: --text-color used
+            color: '{text.color}',
+            // INFO: --text-color used
+            // TODO: Maybe it makes sense to leave hover color?
+            focusColor: '{text.hover.color}',
+            // INFO: --text-color used
+            // TODO: Maybe it makes sense to leave hover color?
+            activeColor: '{text.hover.color}',
+            icon: {
+              // INFO: --text-secondary-color used
+              // TODO: Decide on secondary color or surface
+              color: '{surface.400}',
+              // INFO: --text-secondary-color used
+              // TODO: Decide on secondary color or surface
+              focusColor: '{surface.500}',
+              // INFO: --text-secondary-color used
+              // TODO: Decide on secondary color or surface
+              activeColor: '{surface.500}',
+            },
+          },
+          submenuLabel: {
+            // INFO: --submenu-header-bg used
+            // INFO: Could be background: '#ffffff'
+            background: 'transparent',
+            // INFO: --text-secondary-color used
+            // TODO: Decide on secondary color or surface
+            color: '{text.muted.color}',
+          },
+          submenuIcon: {
+            // INFO: --text-secondary-color used
+            // TODO: Decide on secondary color or surface
+            color: '{surface.400}',
+            // INFO: --text-secondary-color used
+            // TODO: Decide on secondary color or surface
+            focusColor: '{surface.500}',
+            // INFO: --text-secondary-color used
+            // TODO: Decide on secondary color or surface
+            activeColor: '{surface.500}',
           },
         },
       },
