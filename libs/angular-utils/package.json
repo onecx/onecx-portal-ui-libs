@@ -5,11 +5,15 @@
   "peerDependencies": {
     "@angular/common": "^18.0.5",
     "@angular/core": "^18.0.5",
+    "@angular/platform-browser": "^18.2.12",
     "@ngx-translate/core": "^15.0.0",
     "@ngx-translate/http-loader": "^8.0.0",
     "@onecx/accelerator": "6.0.0-rc.3",
+    "@onecx/integration-interface": "5.31.0",
     "@onecx/angular-integration-interface": "6.0.0-rc.3",
-    "rxjs": "^7.8.1"
+    "@primeng/themes": "^19.0.5",
+    "rxjs": "^7.8.1",
+    "primeng": "^18.0.2"
   },
   "publishConfig": {
     "access": "public"

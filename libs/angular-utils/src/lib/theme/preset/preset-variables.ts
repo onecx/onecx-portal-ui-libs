@@ -68,7 +68,8 @@ export default {
         },
         primary: {
           color: '{primary.500}',
-        // TODO: Consider using theme variable for surface value so background and borders are set correctly
+          // TODO: Consider using theme variable for surface value so background and borders are set correctly
+        },
         formField: {
           // INFO: dev -> on focus primary color is used
           focusBorderColor: '{primary.color}',
@@ -149,6 +150,6 @@ export default {
           floatLabelInvalidColor: '{form.field.invalid.placeholder.color}',
         },
       },
-        },
+    },
   },
 }
