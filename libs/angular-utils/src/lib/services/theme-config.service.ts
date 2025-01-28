@@ -1,5 +1,5 @@
 import { ENVIRONMENT_INITIALIZER, Injectable, inject } from '@angular/core'
-import { CurrentThemeTopic, Theme } from '@onecx/integration-interface'
+import { Theme } from '@onecx/integration-interface'
 import { ThemeService } from '@onecx/angular-integration-interface'
 import { updatePreset, usePreset } from '@primeng/themes'
 import ThemeConfig from '../theme/theme-config'
@@ -22,12 +22,8 @@ export function provideThemeConfigService() {
   providedIn: 'root',
 })
 export class ThemeConfigService {
-  private currentThemeTopic$ = new CurrentThemeTopic()
-  constructor(
-    private themeService: ThemeService,
-    private primengConfig: PrimeNG
-  ) {
-    this.currentThemeTopic$.subscribe((theme) => {
+  constructor(private themeService: ThemeService) {
+    this.themeService.currentTheme$.subscribe((theme) => {
       this.applyThemeVariables(theme)
     })
   }
