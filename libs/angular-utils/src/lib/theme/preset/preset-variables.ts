@@ -148,6 +148,7 @@ export default {
           // INFO: $errorColor color is used for invalid border
           floatLabelInvalidColor: '{form.field.invalid.placeholder.color}',
         },
+      },
         },
   },
 }
