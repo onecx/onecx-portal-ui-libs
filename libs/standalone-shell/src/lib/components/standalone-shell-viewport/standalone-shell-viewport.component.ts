@@ -4,11 +4,12 @@ import { Component, Input } from '@angular/core'
   standalone: false,
   selector: 'ocx-standalone-shell-viewport',
   template: `
-    <ocx-shell-portal-viewport *ngIf="displayOneCXShellLayout; else plainStandalone"></ocx-shell-portal-viewport>
-    <ng-template #plainStandalone>
+    @if (displayOneCXShellLayout) {
+      <ocx-shell-portal-viewport></ocx-shell-portal-viewport>
+    } @else {
       <router-outlet></router-outlet>
-    </ng-template>
-  `,
+    }
+    `,
   styleUrls: ['./standalone-shell-viewport.component.scss'],
 })
 export class StandaloneShellViewportComponent {

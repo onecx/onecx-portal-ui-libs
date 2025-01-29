@@ -4,14 +4,16 @@
     [actions]="actions"
     [subheader]="subheader"
     [manualBreadcrumbs]="manualBreadcrumbs"
-  >
+    >
     <div toolbarItems class="toolbar-items-wrap flex gap-2 align-items-center">
-      <ocx-criteria-template class="ocx-criteria-template" *ngIf="criteriaTemplate"></ocx-criteria-template>
+      @if (criteriaTemplate) {
+        <ocx-criteria-template class="ocx-criteria-template"></ocx-criteria-template>
+      }
       <ng-content select="[toolbarItems]"> </ng-content>
     </div>
 
     <div class="flex flex-column md:flex-row md:gap-4 md:align-items-center row-gap-3">
-      <ng-container *ngIf="!advancedSearchActive || disableAdvancedToggle">
+      @if (!advancedSearchActive || disableAdvancedToggle) {
         <ng-content select="[simpleCriteria]"> </ng-content>
         <div class="flex justify-content-start gap-2">
           <button
@@ -24,8 +26,8 @@
             (click)="emitSearchEvent()"
           ></button>
         </div>
-      </ng-container>
-      <ng-container *ngIf="advancedSearchActive && !disableAdvancedToggle">
+      }
+      @if (advancedSearchActive && !disableAdvancedToggle) {
         <ng-content select="[advancedCriteria]"> </ng-content>
         <div class="flex flex-row justify-content-start gap-2">
           <button
@@ -37,18 +39,19 @@
             title="Trigger"
             (click)="emitSearchEvent()"
           ></button>
-          <button
-            id="ocx-reset-button"
-            *ngIf="advancedSearchActive && !disableAdvancedToggle"
-            class="p-button"
-            pButton
-            icon="pi pi-eraser"
-            type="button"
-            label="Reset"
-            (click)="emitResetEvent()"
-          ></button>
+          @if (advancedSearchActive && !disableAdvancedToggle) {
+            <button
+              id="ocx-reset-button"
+              class="p-button"
+              pButton
+              icon="pi pi-eraser"
+              type="button"
+              label="Reset"
+              (click)="emitResetEvent()"
+            ></button>
+          }
         </div>
-      </ng-container>
+      }
     </div>
   </ocx-page-header>
 </div>

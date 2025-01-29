@@ -7,7 +7,7 @@
       <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{isMFE$ | async}}</div>
     </li>
 
-    <ng-container *ngIf="mfeInfo$">
+    @if (mfeInfo$) {
       <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
         <div class="text-500 w-6 md:w-2 font-medium">Shell Name</div>
         <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{(mfeInfo$ | async)?.shellName}}</div>
@@ -32,6 +32,6 @@
         <div class="text-500 w-6 md:w-2 font-medium">Remote Version</div>
         <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{(mfeInfo$ | async)?.version}}</div>
       </li>
-    </ng-container>
+    }
   </ul>
 </div>

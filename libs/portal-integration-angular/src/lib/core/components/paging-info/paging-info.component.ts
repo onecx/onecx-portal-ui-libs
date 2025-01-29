@@ -5,15 +5,16 @@ import { PortalUIService } from '../../../services/portal-ui.service'
   standalone: false,
   selector: 'ocx-paging-info',
   template: `
-    <span *ngIf="resultsCount > 0 && state.totalRecords > 0; else noResults">
-      {{ textShowing }} {{ state.first + 1 }} -
-      {{ state.rows * (state.page + 1) < state.totalRecords ? state.rows * (state.page + 1) : state.totalRecords }}
-      {{ textOf }} {{ state.totalRecords }}
-    </span>
-    <ng-template #noResults>
+    @if (resultsCount > 0 && state.totalRecords > 0) {
+      <span>
+        {{ textShowing }} {{ state.first + 1 }} -
+        {{ state.rows * (state.page + 1) < state.totalRecords ? state.rows * (state.page + 1) : state.totalRecords }}
+        {{ textOf }} {{ state.totalRecords }}
+      </span>
+    } @else {
       {{ textNoResults }}
-    </ng-template>
-  `,
+    }
+    `,
 })
 export class PagingInfoComponent {
   @Input() resultsCount = 0

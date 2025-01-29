@@ -140,14 +140,18 @@ interface NameAndSurnameObject {
 @Component({
   standalone: false,
   template: `<div>
-    <h1>CompleteDialogComponent</h1>
-    <div class="nameError" *ngIf="!isNameValid">Name is not correct</div>
-    <label for="name">Name:</label>
-    <input id="name" type="text" (change)="onNameChange($event)" />
-    <label for="surname">Surname:</label>
-    <input id="surname" type="text" (change)="onSurnameChange($event)" />
-    <div class="message" *ngIf="message !== undefined">{{ message }}</div>
-  </div>`,
+      <h1>CompleteDialogComponent</h1>
+      @if (!isNameValid) {
+        <div class="nameError">Name is not correct</div>
+      }
+      <label for="name">Name:</label>
+      <input id="name" type="text" (change)="onNameChange($event)" />
+      <label for="surname">Surname:</label>
+      <input id="surname" type="text" (change)="onSurnameChange($event)" />
+      @if (message !== undefined) {
+        <div class="message">{{ message }}</div>
+      }
+    </div>`,
 })
 export class CompleteDialogComponent
   implements
