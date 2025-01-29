@@ -3,7 +3,7 @@ import { HttpClient, HttpResponse } from '@angular/common/http'
 import { NavigationEnd, Router } from '@angular/router'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { catchError, combineLatest, filter, first, map, mergeMap, Observable, of, withLatestFrom } from 'rxjs'
-import { MenuItem, MessageService, PrimeNGConfig } from 'primeng/api'
+import { MenuItem, MessageService } from 'primeng/api'
 import { DialogService } from 'primeng/dynamicdialog'
 import { AppStateService, UserService, ThemeService, PortalMessageService } from '@onecx/angular-integration-interface'
 import { SupportTicketApiService } from './../../../services/support-ticket-api.service'
@@ -12,6 +12,7 @@ import { SupportTicket } from '../../../model/support-ticket'
 import { HelpData } from '../../../model/help-data'
 import { NoHelpItemComponent } from '../no-help-item/no-help-item.component'
 import { HelpPageAPIService } from '../../../services/help-api-service'
+import { PrimeNG } from 'primeng/config'
 
 @Component({
   standalone: false,
@@ -22,19 +23,19 @@ import { HelpPageAPIService } from '../../../services/help-api-service'
 })
 @UntilDestroy()
 export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy {
-  private renderer = inject(Renderer2);
-  private router = inject(Router);
-  private primengConfig = inject(PrimeNGConfig);
-  private portalUIConfig = inject(PortalUIService);
-  private appStateService = inject(AppStateService);
-  private themeService = inject(ThemeService);
-  private messageService = inject(MessageService);
-  private supportTicketApiService = inject(SupportTicketApiService);
-  private helpDataService = inject(HelpPageAPIService);
-  private dialogService = inject(DialogService);
-  private userService = inject(UserService);
-  private portalMessageService = inject(PortalMessageService);
-  private httpClient = inject(HttpClient);
+  private renderer = inject(Renderer2)
+  private router = inject(Router)
+  private primengConfig = inject(PrimeNG)
+  private portalUIConfig = inject(PortalUIService)
+  private appStateService = inject(AppStateService)
+  private themeService = inject(ThemeService)
+  private messageService = inject(MessageService)
+  private supportTicketApiService = inject(SupportTicketApiService)
+  private helpDataService = inject(HelpPageAPIService)
+  private dialogService = inject(DialogService)
+  private userService = inject(UserService)
+  private portalMessageService = inject(PortalMessageService)
+  private httpClient = inject(HttpClient)
 
   @Input()
   showProfileInSidebar = true
@@ -71,7 +72,7 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
   helpDataItem$: Observable<HelpData> | undefined
 
   /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
+  constructor(...args: unknown[])
 
   constructor() {
     this.portalMessageService.message$.subscribe((message) => this.messageService.add(message))
@@ -156,7 +157,7 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   ngOnInit() {
-    this.primengConfig.ripple = true
+    this.primengConfig.ripple.set(true)
 
     this.appStateService.globalError$
       .pipe(untilDestroyed(this))

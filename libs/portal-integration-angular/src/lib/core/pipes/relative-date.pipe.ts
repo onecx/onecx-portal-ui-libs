@@ -13,14 +13,15 @@ const DIVISIONS: { amount: number; name: Intl.RelativeTimeFormatUnit }[] = [
 
 @Pipe({
   name: 'relativeDate',
+  standalone: false,
 })
 export class RelativeDatePipe implements PipeTransform {
-  private translateService = inject(TranslateService);
+  private translateService = inject(TranslateService)
 
   rtf: Intl.RelativeTimeFormat
 
   /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
+  constructor(...args: unknown[])
 
   constructor() {
     this.rtf = new Intl.RelativeTimeFormat(this.translateService.currentLang, {

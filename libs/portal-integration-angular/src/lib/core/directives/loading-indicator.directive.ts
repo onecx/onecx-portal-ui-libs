@@ -1,13 +1,24 @@
-import { ComponentRef, Directive, ElementRef, Input, OnChanges, Renderer2, SimpleChanges, ViewContainerRef, inject } from '@angular/core'
+import {
+  ComponentRef,
+  Directive,
+  ElementRef,
+  Input,
+  OnChanges,
+  Renderer2,
+  SimpleChanges,
+  ViewContainerRef,
+  inject,
+} from '@angular/core'
 import { LoadingIndicatorComponent } from '../components/loading-indicator/loading-indicator.component'
 
 @Directive({
   selector: '[ocxLoadingIndicator]',
+  standalone: false,
 })
 export class LoadingIndicatorDirective implements OnChanges {
-  private viewContainerRef = inject(ViewContainerRef);
-  private el = inject(ElementRef);
-  private renderer = inject(Renderer2);
+  private viewContainerRef = inject(ViewContainerRef)
+  private el = inject(ElementRef)
+  private renderer = inject(Renderer2)
 
   @Input() ocxLoadingIndicator = false
   @Input() overlayFullPage = false
@@ -16,7 +27,7 @@ export class LoadingIndicatorDirective implements OnChanges {
   private componentRef: ComponentRef<LoadingIndicatorComponent> | undefined
 
   /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
+  constructor(...args: unknown[])
 
   constructor() {}
 

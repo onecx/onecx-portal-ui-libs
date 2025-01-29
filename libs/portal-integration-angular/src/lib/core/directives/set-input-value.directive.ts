@@ -3,9 +3,10 @@ import { NgControl } from '@angular/forms'
 
 @Directive({
   selector: '[ocxSetInputValue]',
+  standalone: false,
 })
 export class SetInputValueDirective {
-  private ngControl = inject(NgControl, { optional: true })!;
+  private ngControl = inject(NgControl, { optional: true })!
 
   @Input()
   set ocxSetInputValue(val: any) {
@@ -15,7 +16,7 @@ export class SetInputValueDirective {
   }
 
   /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
+  constructor(...args: unknown[])
 
   constructor() {}
 }

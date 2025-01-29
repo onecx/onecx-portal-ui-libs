@@ -1,8 +1,8 @@
 import { Directive, ElementRef, Input, OnChanges, OnInit, inject } from '@angular/core'
 
-@Directive({ selector: '[ocxContent]' })
+@Directive({ selector: '[ocxContent]', standalone: false })
 export class OcxContentDirective implements OnInit, OnChanges {
-  private el = inject(ElementRef);
+  private el = inject(ElementRef)
 
   /**
    * Used for passing a title text which should be rendered in the upper left corner of the content area.
@@ -14,7 +14,7 @@ export class OcxContentDirective implements OnInit, OnChanges {
   private titleElementId: string | undefined
 
   /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
+  constructor(...args: unknown[])
 
   constructor() {}
 
