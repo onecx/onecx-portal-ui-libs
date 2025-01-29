@@ -1,4 +1,4 @@
-import { Inject, Injectable, Optional } from '@angular/core'
+import { Injectable, inject } from '@angular/core'
 import { Router } from '@angular/router'
 import { APP_BASE_HREF, PlatformLocation } from '@angular/common'
 import { MenuItem } from 'primeng/api'
@@ -9,6 +9,13 @@ import { MenuApiService } from './menu-api.service'
 
 @Injectable({ providedIn: 'root' })
 export class MenuService {
+  private api = inject(MenuApiService);
+  private config = inject(ConfigurationService);
+  private router = inject(Router);
+  private platformLoc = inject(PlatformLocation);
+  private baseURL = inject(APP_BASE_HREF, { optional: true })!;
+  private userService = inject(UserService);
+
   private menuSource = new Subject<string>()
   private resetSource = new Subject()
   private menuItems$: Observable<MenuItem[]> | undefined
@@ -16,14 +23,10 @@ export class MenuService {
   menuSource$ = this.menuSource.asObservable()
   resetSource$ = this.resetSource.asObservable()
 
-  constructor(
-    private api: MenuApiService,
-    private config: ConfigurationService,
-    private router: Router,
-    private platformLoc: PlatformLocation,
-    @Inject(APP_BASE_HREF) @Optional() private baseURL: string,
-    private userService: UserService
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     if (!this.baseURL) {
       this.baseURL = this.platformLoc.getBaseHrefFromDOM()
     }

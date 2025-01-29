@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core'
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core'
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { PortalMessageService } from '@onecx/angular-integration-interface'
 import { HelpData } from '../../../model/help-data'
@@ -10,6 +10,9 @@ import { HelpData } from '../../../model/help-data'
   styleUrls: ['./help-item-editor.component.scss'],
 })
 export class HelpItemEditorComponent implements OnChanges {
+  private fb = inject(FormBuilder);
+  private portalMessageService = inject(PortalMessageService);
+
   @Input() public displayDialog = true
   @Output() public displayDialogChange = new EventEmitter<boolean>()
 
@@ -17,10 +20,10 @@ export class HelpItemEditorComponent implements OnChanges {
   @Output() saveHelpItem = new EventEmitter<HelpData>()
 
   public formGroup!: FormGroup
-  constructor(
-    private fb: FormBuilder,
-    private portalMessageService: PortalMessageService
-  ) {
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+  constructor() {
     this.formGroup = this.fb.group({
       appId: new FormControl({ value: null, disabled: true }, [Validators.required]),
       helpItemId: new FormControl({ value: null, disabled: true }, [Validators.required]),

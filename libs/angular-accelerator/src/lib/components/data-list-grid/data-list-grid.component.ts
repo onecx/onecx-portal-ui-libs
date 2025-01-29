@@ -1,20 +1,4 @@
-import {
-  AfterContentInit,
-  Component,
-  ContentChild,
-  ContentChildren,
-  DoCheck,
-  EventEmitter,
-  Inject,
-  Injector,
-  Input,
-  LOCALE_ID,
-  OnInit,
-  Output,
-  QueryList,
-  TemplateRef,
-  ViewChildren,
-} from '@angular/core'
+import { AfterContentInit, Component, ContentChild, ContentChildren, DoCheck, EventEmitter, Injector, Input, LOCALE_ID, OnInit, Output, QueryList, TemplateRef, ViewChildren, inject } from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
@@ -55,6 +39,11 @@ export interface DataListGridComponentState {
   styleUrls: ['./data-list-grid.component.scss'],
 })
 export class DataListGridComponent extends DataSortBase implements OnInit, DoCheck, AfterContentInit {
+  private userService = inject(UserService);
+  private router = inject(Router);
+  private injector = inject(Injector);
+  private appStateService = inject(AppStateService);
+
   @Input() titleLineId: string | undefined
   @Input() subtitleLineIds: string[] = []
   @Input() clientSideSorting = true
@@ -326,14 +315,13 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   columnType = ColumnType
   templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
 
-  constructor(
-    @Inject(LOCALE_ID) locale: string,
-    translateService: TranslateService,
-    private userService: UserService,
-    private router: Router,
-    private injector: Injector,
-    private appStateService: AppStateService
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
+    const locale = inject(LOCALE_ID);
+    const translateService = inject(TranslateService);
+
     super(locale, translateService)
     this.name = this.name || this.router.url.replace(/[^A-Za-z0-9]/, '_')
     this.fallbackImagePath$ = this.appStateService.currentMfe$.pipe(

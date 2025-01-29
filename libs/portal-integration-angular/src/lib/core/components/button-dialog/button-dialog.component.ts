@@ -1,17 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  ComponentRef,
-  ElementRef,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  QueryList,
-  ViewChild,
-  ViewChildren,
-  ViewContainerRef,
-} from '@angular/core'
+import { AfterViewInit, Component, ComponentRef, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChild, ViewChildren, ViewContainerRef, inject } from '@angular/core'
 import { BehaviorSubject, Observable, from, isObservable, map, of, startWith, withLatestFrom } from 'rxjs'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 
@@ -39,6 +26,9 @@ import {
   styleUrls: ['./button-dialog.component.scss'],
 })
 export class ButtonDialogComponent implements OnInit, AfterViewInit {
+  dynamicDialogConfig = inject(DynamicDialogConfig);
+  dynamicDialogRef = inject(DynamicDialogRef);
+
   defaultPrimaryButtonDetails: ButtonDialogButtonDetails = {
     key: 'OCX_BUTTON_DIALOG.CONFIRM',
   }
@@ -85,10 +75,10 @@ export class ButtonDialogComponent implements OnInit, AfterViewInit {
   leftCustomButtons: ButtonDialogCustomButtonDetails[] = []
   rightCustomButtons: ButtonDialogCustomButtonDetails[] = []
 
-  constructor(
-    public dynamicDialogConfig: DynamicDialogConfig,
-    public dynamicDialogRef: DynamicDialogRef
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
   ngAfterViewInit(): void {
     if (this.dialogData.config.autoFocusButton === 'primary' || !this.dialogData.config.autoFocusButton) {
       this.primaryButton.element.nativeElement.focus()

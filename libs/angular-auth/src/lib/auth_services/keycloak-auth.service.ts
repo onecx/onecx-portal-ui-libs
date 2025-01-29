@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core'
+import { Injectable, inject } from '@angular/core'
 import { ConfigurationService, CONFIG_KEY } from '@onecx/angular-integration-interface'
 import { KeycloakEventType, KeycloakOptions, KeycloakService } from 'keycloak-angular'
 import { KeycloakConfig } from 'keycloak-js'
@@ -10,10 +10,16 @@ const KC_TOKEN_LS = 'onecx_kc_token'
 
 @Injectable()
 export class KeycloakAuthService implements AuthService {
+  private keycloakService = inject(KeycloakService);
+  private configService = inject(ConfigurationService);
+
 
   kcConfig?: Record<string, unknown>
 
-  constructor(private keycloakService: KeycloakService, private configService: ConfigurationService) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   public async init(config?: Record<string, unknown>): Promise<boolean> {
     console.time('KeycloakAuthService')

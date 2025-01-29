@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, importProvidersFrom } from '@angular/core'
+import { Component, EventEmitter, Input, OnInit, importProvidersFrom, inject } from '@angular/core'
 import { Meta, applicationConfig, argsToTemplate, componentWrapperDecorator, moduleMetadata } from '@storybook/angular'
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { BrowserModule } from '@angular/platform-browser'
@@ -28,7 +28,12 @@ import { FormsModule } from '@angular/forms'
   template: `<p-button label="Open dialog" (click)="openDialog()" />`,
 })
 class ButtonDialogWithPortalDialogServiceComponent {
-  constructor(private portalDialogService: PortalDialogService) {}
+  private portalDialogService = inject(PortalDialogService);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   @Input() title = 'Title'
   @Input() messageOrComponent = 'Message'

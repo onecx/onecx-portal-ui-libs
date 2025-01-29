@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http'
-import { Injectable } from '@angular/core'
+import { Injectable, inject } from '@angular/core'
 import { Observable } from 'rxjs'
 import { AnnouncementItem } from '../model/announcement-item'
 
@@ -7,11 +7,16 @@ import { AnnouncementItem } from '../model/announcement-item'
   providedIn: 'root',
 })
 export class AnnouncementsApiService {
+  private http = inject(HttpClient);
+
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
   }
 
-  constructor(private http: HttpClient) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   public getAnnouncements(
     appId: string,

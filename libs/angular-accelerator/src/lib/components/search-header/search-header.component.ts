@@ -1,17 +1,4 @@
-import {
-  AfterContentInit,
-  AfterViewInit,
-  Component,
-  ContentChild,
-  ContentChildren,
-  ElementRef,
-  EventEmitter,
-  Input,
-  Output,
-  QueryList,
-  TemplateRef,
-  ViewChild,
-} from '@angular/core'
+import { AfterContentInit, AfterViewInit, Component, ContentChild, ContentChildren, ElementRef, EventEmitter, Input, Output, QueryList, TemplateRef, ViewChild, inject } from '@angular/core'
 import { Action } from '../page-header/page-header.component'
 import { FormControlName, FormGroup, FormGroupDirective } from '@angular/forms'
 import { Observable, combineLatest, debounceTime, map, of, startWith } from 'rxjs'
@@ -126,7 +113,12 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
   fieldValues$: Observable<{ [key: string]: unknown }> | undefined = of({})
   searchConfigChangedSlotEmitter: EventEmitter<SearchConfigData | undefined> = new EventEmitter()
 
-  constructor(configurationService: ConfigurationService) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
+    const configurationService = inject(ConfigurationService);
+
     this.searchConfigChangedSlotEmitter.subscribe((config) => {
       this.componentStateChanged.emit({
         selectedSearchConfig: config?.name ?? null,

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, OnInit, inject } from '@angular/core'
 import { DynamicDialogRef } from 'primeng/dynamicdialog'
 import { DynamicDialogConfig } from 'primeng/dynamicdialog'
 
@@ -9,13 +9,16 @@ import { DynamicDialogConfig } from 'primeng/dynamicdialog'
   styleUrls: ['./delete-dialog.component.scss'],
 })
 export class DeleteDialogComponent implements OnInit {
+  ref = inject(DynamicDialogRef);
+  config = inject(DynamicDialogConfig);
+
   yesDelete = 'Delete'
   cancelDelete = 'Cancel'
 
-  constructor(
-    public ref: DynamicDialogRef,
-    public config: DynamicDialogConfig
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit() {
     this.yesDelete = this.config.data.yesDelete

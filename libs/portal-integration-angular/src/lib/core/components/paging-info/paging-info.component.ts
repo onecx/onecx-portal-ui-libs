@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core'
+import { Component, Input, inject } from '@angular/core'
 import { PortalUIService } from '../../../services/portal-ui.service'
 
 @Component({
@@ -17,6 +17,8 @@ import { PortalUIService } from '../../../services/portal-ui.service'
     `,
 })
 export class PagingInfoComponent {
+  private api = inject(PortalUIService);
+
   @Input() resultsCount = 0
   @Input() state!: CustomTableState
 
@@ -26,7 +28,10 @@ export class PagingInfoComponent {
   textOf?: string
   textNoResults?: string
 
-  constructor(private api: PortalUIService) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this.textShowing = this.api.getTranslation('pagingShowing')
     this.textRows = this.api.getTranslation('pagingRows')
     this.textTotal = this.api.getTranslation('pagingTotal')

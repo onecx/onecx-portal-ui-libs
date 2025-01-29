@@ -1,8 +1,11 @@
 import { HttpClient, HttpResponse } from '@angular/common/http'
-import { Directive, ElementRef, EventEmitter, Input, Output } from '@angular/core'
+import { Directive, ElementRef, EventEmitter, Input, Output, inject } from '@angular/core'
 
 @Directive({ selector: '[ocxSrc]' })
 export class SrcDirective {
+  private el = inject(ElementRef);
+  private httpClient = inject(HttpClient);
+
   private _src: string | undefined
 
   // eslint-disable-next-line @angular-eslint/no-output-native
@@ -53,10 +56,10 @@ export class SrcDirective {
     }
   }
 
-  constructor(
-    private el: ElementRef,
-    private httpClient: HttpClient
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this.el.nativeElement.style.visibility = 'hidden'
   }
 }

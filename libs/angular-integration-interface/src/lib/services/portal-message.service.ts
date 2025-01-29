@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core'
+import { Injectable, OnDestroy, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { combineLatest, first, of } from 'rxjs'
 import { MessageTopic } from '@onecx/integration-interface'
@@ -21,7 +21,12 @@ export type Message = {
 
 @Injectable({ providedIn: 'any' })
 export class PortalMessageService implements OnDestroy {
-  constructor(private translateService: TranslateService) {}
+  private translateService = inject(TranslateService);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   message$ = new MessageTopic()
 

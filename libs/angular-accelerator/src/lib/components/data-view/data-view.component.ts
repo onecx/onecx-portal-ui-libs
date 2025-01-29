@@ -1,18 +1,4 @@
-import {
-  AfterContentInit,
-  Component,
-  ContentChild,
-  ContentChildren,
-  DoCheck,
-  EventEmitter,
-  Injector,
-  Input,
-  OnInit,
-  Output,
-  QueryList,
-  TemplateRef,
-  ViewChild,
-} from '@angular/core'
+import { AfterContentInit, Component, ContentChild, ContentChildren, DoCheck, EventEmitter, Injector, Input, OnInit, Output, QueryList, TemplateRef, ViewChild, inject } from '@angular/core'
 import {
   DataListGridComponent,
   DataListGridComponentState,
@@ -39,6 +25,8 @@ export type DataViewComponentState = DataListGridComponentState & DataTableCompo
   providers: [{ provide: 'DataViewComponent', useExisting: DataViewComponent }],
 })
 export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
+  private injector = inject(Injector);
+
   _dataListGridComponent: DataListGridComponent | undefined
   @ViewChild(DataListGridComponent) set listGrid(ref: DataListGridComponent | undefined) {
     this._dataListGridComponent = ref
@@ -384,7 +372,10 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
     )
   }
 
-  constructor(private injector: Injector) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {
     this.firstColumnId = this.columns[0]?.id

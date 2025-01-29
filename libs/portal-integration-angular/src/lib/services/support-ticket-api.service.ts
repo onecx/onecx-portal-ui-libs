@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core'
+import { Injectable, inject } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { SupportTicket } from '../model/support-ticket'
 import { CreateIssueRequest } from '../model/create-issue-request'
@@ -7,9 +7,14 @@ import { CreateIssueRequest } from '../model/create-issue-request'
   providedIn: 'root',
 })
 export class SupportTicketApiService {
+  private http = inject(HttpClient);
+
   private baseUrl = './portal-api/v1/supportTicket/send'
 
-  constructor(private http: HttpClient) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   createSupportTicket(ticket: SupportTicket, appId: string | undefined) {
     const request: CreateIssueRequest = {

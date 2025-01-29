@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http'
-import { Injectable } from '@angular/core'
+import { Injectable, inject } from '@angular/core'
 // import { withCache } from '@ngneat/cashew'
 import { Observable } from 'rxjs'
 import { Portal } from '../model/portal'
@@ -7,7 +7,12 @@ import { PortalWrapper } from '../model/portal-wrapper'
 
 @Injectable({ providedIn: 'root' })
 export class PortalApiService {
-  constructor(private readonly httpClient: HttpClient) {}
+  private readonly httpClient = inject(HttpClient);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
   baseUrlV1 = './portal-api/v1/portals'
   baseUrlInternal = './portal-api/internal/portals'
 

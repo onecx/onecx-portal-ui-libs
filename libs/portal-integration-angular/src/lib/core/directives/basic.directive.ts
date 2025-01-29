@@ -1,13 +1,18 @@
-import { Directive, DoCheck, Optional, TemplateRef, ViewContainerRef } from '@angular/core'
+import { Directive, DoCheck, TemplateRef, ViewContainerRef, inject } from '@angular/core'
 import { SearchHeaderComponent } from '@onecx/angular-accelerator'
 
 @Directive({ selector: '[ocxBasic]' })
 export class BasicDirective implements DoCheck {
-  constructor(
-    private viewContainer: ViewContainerRef,
-    @Optional() private templateRef?: TemplateRef<any>,
-    @Optional() private searchHeader?: SearchHeaderComponent
-  ) {
+  private viewContainer = inject(ViewContainerRef);
+  private templateRef = inject<TemplateRef<any>>(TemplateRef, { optional: true });
+  private searchHeader = inject(SearchHeaderComponent, { optional: true });
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
+    const searchHeader = this.searchHeader;
+
     if (!searchHeader) {
       throw 'Basic directive can only be used inside search header component'
     }

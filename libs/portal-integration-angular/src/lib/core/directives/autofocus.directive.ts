@@ -1,8 +1,13 @@
-import { Directive, ElementRef, OnInit } from '@angular/core'
+import { Directive, ElementRef, OnInit, inject } from '@angular/core'
 
 @Directive({ selector: '[ocxAutofocus]' })
 export class AutofocusDirective implements OnInit {
-  constructor(private el: ElementRef) {}
+  private el = inject(ElementRef);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit() {
     window.setTimeout(() => this.el.nativeElement.focus())

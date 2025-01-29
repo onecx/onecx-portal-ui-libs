@@ -1,5 +1,5 @@
 import { ColumnViewTemplate } from '../../../../model/column-view-template'
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
+import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { DropdownChangeEvent } from 'primeng/dropdown'
 @Component({
@@ -9,6 +9,8 @@ import { DropdownChangeEvent } from 'primeng/dropdown'
   styleUrls: ['./view-template-picker.component.scss'],
 })
 export class ViewTemplatePickerComponent implements OnInit {
+  private translate = inject(TranslateService);
+
   @Input() templates: ColumnViewTemplate[] = []
   @Input() placeholder = ''
   @Output() templateChanged: EventEmitter<{ activeCols: string[]; inactiveCols: string[] }> = new EventEmitter()
@@ -16,7 +18,10 @@ export class ViewTemplatePickerComponent implements OnInit {
   public labels: { label: string; value: string }[] = []
   public value: null | string = null
   public placeholderText = ''
-  constructor(private translate: TranslateService) {}
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+  constructor() {}
   ngOnInit() {
     if (this.templates.length > 0) {
       this.templates.forEach((template) => {

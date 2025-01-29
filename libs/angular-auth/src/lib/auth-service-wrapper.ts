@@ -2,7 +2,7 @@ import { filter } from 'rxjs/internal/operators/filter'
 import { AuthService, AuthServiceFactory, Injectables } from './auth.service'
 import { EventsTopic } from '@onecx/integration-interface'
 import { AppStateService, CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
-import { Injectable, Injector } from '@angular/core'
+import { Injectable, Injector, inject } from '@angular/core'
 import { KeycloakAuthService } from './auth_services/keycloak-auth.service'
 import { loadRemoteModule } from '@angular-architects/module-federation'
 import { Config } from '@onecx/integration-interface'
@@ -10,14 +10,17 @@ import './declarations'
 
 @Injectable()
 export class AuthServiceWrapper {
+  private configService = inject(ConfigurationService);
+  private appStateService = inject(AppStateService);
+  private injector = inject(Injector);
+
   private eventsTopic$ = new EventsTopic()
   private authService: AuthService | undefined
 
-  constructor(
-    private configService: ConfigurationService,
-    private appStateService: AppStateService,
-    private injector: Injector
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this.eventsTopic$
       .pipe(filter((e) => e.type === 'authentication#logoutButtonClicked'))
       .subscribe(() => this.authService?.logout())

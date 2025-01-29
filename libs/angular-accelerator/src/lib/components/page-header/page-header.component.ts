@@ -1,16 +1,4 @@
-import {
-  Component,
-  ContentChild,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  SimpleChanges,
-  TemplateRef,
-  Type,
-  ViewEncapsulation,
-} from '@angular/core'
+import { Component, ContentChild, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, TemplateRef, Type, ViewEncapsulation, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { MenuItem, PrimeIcons } from 'primeng/api'
 import { concat, map, Observable, of } from 'rxjs'
@@ -84,6 +72,10 @@ export type GridColumnOptions = 1 | 2 | 3 | 4 | 6 | 12
   encapsulation: ViewEncapsulation.None,
 })
 export class PageHeaderComponent implements OnInit, OnChanges {
+  private translateService = inject(TranslateService);
+  private appStateService = inject(AppStateService);
+  private userService = inject(UserService);
+
   @Input()
   public header: string | undefined
 
@@ -162,12 +154,12 @@ export class PageHeaderComponent implements OnInit, OnChanges {
 
   protected breadcrumbs: BreadcrumbService
 
-  constructor(
-    breadcrumbs: BreadcrumbService,
-    private translateService: TranslateService,
-    private appStateService: AppStateService,
-    private userService: UserService
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
+    const breadcrumbs = inject(BreadcrumbService);
+
     this.breadcrumbs = breadcrumbs
     this.home$ = concat(
       of({ menuItem: { icon: PrimeIcons.HOME, routerLink: '/' } }),

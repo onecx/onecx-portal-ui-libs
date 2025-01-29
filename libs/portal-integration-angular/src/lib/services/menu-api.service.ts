@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http'
-import { Injectable } from '@angular/core'
+import { Injectable, inject } from '@angular/core'
 // import { withCache } from '@ngneat/cashew'
 import { Observable, of } from 'rxjs'
 import { PortalMenuItem } from '../model/menu-item.model'
@@ -8,13 +8,18 @@ import { PortalMenuItem } from '../model/menu-item.model'
   providedIn: 'root',
 })
 export class MenuApiService {
+  private http = inject(HttpClient);
+
   private menuUrl = './portal-api/v1/portals' // URL to web api
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
   }
 
-  constructor(private http: HttpClient) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   getMenuItems(portalId: string): Observable<PortalMenuItem[]> {
     return this.http.get<PortalMenuItem[]>(`${this.menuUrl}/${portalId}/menu`)

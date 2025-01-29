@@ -1,16 +1,4 @@
-import {
-  AfterContentInit,
-  Component,
-  ContentChild,
-  ContentChildren,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  QueryList,
-  TemplateRef,
-  ViewChild,
-} from '@angular/core'
+import { AfterContentInit, Component, ContentChild, ContentChildren, EventEmitter, Input, OnInit, Output, QueryList, TemplateRef, ViewChild, inject } from '@angular/core'
 import {
   BehaviorSubject,
   Observable,
@@ -64,6 +52,8 @@ export interface ColumnGroupData {
   providers: [{ provide: 'InteractiveDataViewComponent', useExisting: InteractiveDataViewComponent }],
 })
 export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
+  private slotService = inject(SlotService);
+
   _dataViewComponent: DataViewComponent | undefined
   @ViewChild(DataViewComponent) set dataView(ref: DataViewComponent | undefined) {
     this._dataViewComponent = ref
@@ -356,7 +346,10 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   isColumnGroupSelectionComponentDefined$: Observable<boolean>
   groupSelectionChangedSlotEmitter = new EventEmitter<ColumnGroupData | undefined>()
 
-  constructor(private slotService: SlotService) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this.isColumnGroupSelectionComponentDefined$ = this.slotService
       .isSomeComponentDefinedForSlot(this.columnGroupSlotName)
       .pipe(startWith(true))

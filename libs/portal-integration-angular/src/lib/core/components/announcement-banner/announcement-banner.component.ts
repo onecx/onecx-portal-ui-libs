@@ -1,4 +1,4 @@
-import { Component } from '@angular/core'
+import { Component, inject } from '@angular/core'
 import { catchError, map, Observable, of, switchMap, tap, throwError, EMPTY, mergeMap } from 'rxjs'
 import { AppStateService, ConfigurationService } from '@onecx/angular-integration-interface'
 import { AnnouncementItem, AnnouncementPriorityType } from '../../../model/announcement-item'
@@ -11,14 +11,17 @@ import { AnnouncementsApiService } from '../../../services/announcements-api.ser
   styleUrls: ['./announcement-banner.component.css'],
 })
 export class AnnouncementBannerComponent {
+  private api = inject(AnnouncementsApiService);
+  private configService = inject(ConfigurationService);
+  private appStateService = inject(AppStateService);
+
   private currentDate = new Date().toISOString()
   shouldShow = false
   prioItem$: Observable<AnnouncementItem>
-  constructor(
-    private api: AnnouncementsApiService,
-    private configService: ConfigurationService,
-    private appStateService: AppStateService
-  ) {
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+  constructor() {
     this.prioItem$ = this.appStateService.currentWorkspace$.pipe(
       mergeMap((workspace) =>
         this.api.getAnnouncements(workspace.id || '', this.currentDate, this.currentDate).pipe(

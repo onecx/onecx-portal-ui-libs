@@ -20,7 +20,12 @@ export function provideNavigatedEventStoreConnector() {
 @Injectable()
 export class NavigatedEventStoreConnectorService implements OnDestroy {
   eventsTopic$ = new EventsTopic()
-  constructor(store: Store) {
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+  constructor() {
+    const store = inject(Store);
+
     this.eventsTopic$.pipe(filter((e) => e.type === 'navigated')).subscribe((navigatedEvent) => {
       store.dispatch(OneCxActions.navigated({ event: navigatedEvent.payload }))
     })

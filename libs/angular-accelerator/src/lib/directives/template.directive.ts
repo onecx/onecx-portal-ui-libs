@@ -1,14 +1,19 @@
-import { Directive, Input, TemplateRef } from '@angular/core'
+import { Directive, Input, TemplateRef, inject } from '@angular/core'
 
 @Directive({ selector: '[ocxTemplate]' })
 export class TemplateDirective {
+  template = inject<TemplateRef<any>>(TemplateRef);
+
   @Input({
     required: true,
     alias: 'ocxTemplate',
   })
   name = ''
 
-  constructor(public template: TemplateRef<any>) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   getType(): string {
     return this.name

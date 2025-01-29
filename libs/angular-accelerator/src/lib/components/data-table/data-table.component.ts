@@ -1,19 +1,4 @@
-import {
-  AfterContentInit,
-  Component,
-  ContentChild,
-  ContentChildren,
-  EventEmitter,
-  Inject,
-  Injector,
-  Input,
-  LOCALE_ID,
-  OnInit,
-  Output,
-  QueryList,
-  TemplateRef,
-  ViewChildren,
-} from '@angular/core'
+import { AfterContentInit, Component, ContentChild, ContentChildren, EventEmitter, Injector, Input, LOCALE_ID, OnInit, Output, QueryList, TemplateRef, ViewChildren, inject } from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { isValidDate } from '@onecx/accelerator'
@@ -76,6 +61,10 @@ export interface DataTableComponentState {
   styleUrls: ['./data-table.component.scss'],
 })
 export class DataTableComponent extends DataSortBase implements OnInit, AfterContentInit {
+  private router = inject(Router);
+  private injector = inject(Injector);
+  private userService = inject(UserService);
+
   FilterType = FilterType
   TemplateType = TemplateType
   checked = true
@@ -395,13 +384,13 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
   templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
 
-  constructor(
-    @Inject(LOCALE_ID) locale: string,
-    translateService: TranslateService,
-    private router: Router,
-    private injector: Injector,
-    private userService: UserService
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
+    const locale = inject(LOCALE_ID);
+    const translateService = inject(TranslateService);
+
     super(locale, translateService)
     this.name = this.name || this.router.url.replace(/[^A-Za-z0-9]/, '_')
     this.displayedPageSizes$ = combineLatest([

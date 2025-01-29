@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, OnChanges, Output, ViewChild, ElementRef } from '@angular/core'
+import { Component, EventEmitter, Input, OnInit, OnChanges, Output, ViewChild, ElementRef, inject } from '@angular/core'
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { TranslateService } from '@ngx-translate/core'
 import { Column } from '../../../model/column'
@@ -128,6 +128,9 @@ export interface DataViewControlTranslations {
   providers: [DialogService],
 })
 export class DataViewControlsComponent implements OnInit, OnChanges {
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+
   @Input() supportedViews: Array<string> = []
   @Input() initialViewMode: string | undefined
   @Input() filterValue: string | undefined
@@ -174,10 +177,10 @@ export class DataViewControlsComponent implements OnInit, OnChanges {
     disabled: [],
   }
 
-  constructor(
-    private dialogService: DialogService,
-    private translate: TranslateService
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {
     this.defaultCols = this.generateDefaultColumnDefinitions(this.columnDefinitions)

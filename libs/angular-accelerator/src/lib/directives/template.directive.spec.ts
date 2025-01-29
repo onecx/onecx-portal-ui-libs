@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EmbeddedViewRef, QueryList, ViewChildren, ViewContainerRef } from '@angular/core'
+import { AfterViewInit, Component, EmbeddedViewRef, QueryList, ViewChildren, ViewContainerRef, inject } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { TemplateDirective } from './template.directive'
 
@@ -10,10 +10,15 @@ import { TemplateDirective } from './template.directive'
     <ng-template #footer><p>footer</p></ng-template>`,
 })
 class TestForTemplateDirectiveComponent implements AfterViewInit {
+  viewContainerRef = inject(ViewContainerRef);
+
   @ViewChildren(TemplateDirective) templates!: QueryList<TemplateDirective>
   views: EmbeddedViewRef<any>[] = []
 
-  constructor(public viewContainerRef: ViewContainerRef) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngAfterViewInit() {
     this.templates.forEach((template, _) => {

@@ -1,7 +1,9 @@
-import { Directive, ElementRef, Input, OnChanges, OnInit } from '@angular/core'
+import { Directive, ElementRef, Input, OnChanges, OnInit, inject } from '@angular/core'
 
 @Directive({ selector: '[ocxContentContainer]' })
 export class OcxContentContainerDirective implements OnInit, OnChanges {
+  private el = inject(ElementRef);
+
   /**
    * Used for passing the direction, in which the content inside the container should be rendered.
    * Default: horizontal
@@ -17,7 +19,10 @@ export class OcxContentContainerDirective implements OnInit, OnChanges {
    */
   @Input() breakpoint: 'sm' | 'md' | 'lg' | 'xl' = 'md'
 
-  constructor(private el: ElementRef) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit() {
     this.addContainerStyles()

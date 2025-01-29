@@ -1,4 +1,4 @@
-import { Injectable, Optional } from '@angular/core'
+import { Injectable, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { combineLatest, of } from 'rxjs'
 // eslint-disable-next-line
@@ -15,7 +15,12 @@ export function providePortalMessageServiceMock() {
 
 @Injectable()
 export class PortalMessageServiceMock {
-  constructor(@Optional() private translateService?: TranslateService) {}
+  private translateService = inject(TranslateService, { optional: true });
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
   lastMessages: { type: 'success' | 'info' | 'error' | 'warning'; value: Message }[] = []
   message$ = new FakeTopic<TopicMessage>()
 

@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core'
+import { Pipe, PipeTransform, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 
 const DIVISIONS: { amount: number; name: Intl.RelativeTimeFormatUnit }[] = [
@@ -15,9 +15,14 @@ const DIVISIONS: { amount: number; name: Intl.RelativeTimeFormatUnit }[] = [
   name: 'relativeDate',
 })
 export class RelativeDatePipe implements PipeTransform {
+  private translateService = inject(TranslateService);
+
   rtf: Intl.RelativeTimeFormat
 
-  constructor(private translateService: TranslateService) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this.rtf = new Intl.RelativeTimeFormat(this.translateService.currentLang, {
       style: 'long',
     })

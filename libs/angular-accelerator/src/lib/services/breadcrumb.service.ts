@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core'
+import { Injectable, inject } from '@angular/core'
 import { ActivatedRoute, ActivatedRouteSnapshot, Data, NavigationEnd, ParamMap, Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
@@ -23,16 +23,19 @@ class ManualBreadcrumbsTopic extends SyncableTopic<ManualBreadcrumbs> {
 @Injectable({ providedIn: 'any' })
 @UntilDestroy()
 export class BreadcrumbService {
+  private router = inject(Router);
+  private activeRoute = inject(ActivatedRoute);
+  private translateService = inject(TranslateService);
+
   private itemsSource$ = new ManualBreadcrumbsTopic()
   generatedItemsSource = new BehaviorSubject<MenuItem[]>([])
 
   itemsHandler = this.itemsSource$.pipe(map((manualBreadcrumbs) => manualBreadcrumbs.menuItems))
 
-  constructor(
-    private router: Router,
-    private activeRoute: ActivatedRoute,
-    private translateService: TranslateService
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this.generateBreadcrumbs(this.activeRoute.snapshot)
     this.router.events
       .pipe(

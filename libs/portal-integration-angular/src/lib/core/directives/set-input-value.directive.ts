@@ -1,10 +1,12 @@
-import { Directive, Input, Optional } from '@angular/core'
+import { Directive, Input, inject } from '@angular/core'
 import { NgControl } from '@angular/forms'
 
 @Directive({
   selector: '[ocxSetInputValue]',
 })
 export class SetInputValueDirective {
+  private ngControl = inject(NgControl, { optional: true })!;
+
   @Input()
   set ocxSetInputValue(val: any) {
     if (this.ngControl.control) {
@@ -12,5 +14,8 @@ export class SetInputValueDirective {
     }
   }
 
-  constructor(@Optional() private ngControl: NgControl) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 }

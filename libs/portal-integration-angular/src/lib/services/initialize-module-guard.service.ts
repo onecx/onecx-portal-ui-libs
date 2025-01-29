@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core'
+import { Injectable, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService, ConfigurationService, UserService, InitializeModuleGuard as _InitializeModuleGuard } from '@onecx/angular-integration-interface'
 /**
@@ -9,12 +9,16 @@ import { AppStateService, ConfigurationService, UserService, InitializeModuleGua
 
 @Injectable({ providedIn: 'any' })
 export class InitializeModuleGuard extends _InitializeModuleGuard {
-  constructor(
-    translateService: TranslateService,
-    configService: ConfigurationService,
-    appStateService: AppStateService,
-    userService: UserService
-  ) {
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
+    const translateService = inject(TranslateService);
+    const configService = inject(ConfigurationService);
+    const appStateService = inject(AppStateService);
+    const userService = inject(UserService);
+
     super(translateService, configService, appStateService, userService)
   }
 }

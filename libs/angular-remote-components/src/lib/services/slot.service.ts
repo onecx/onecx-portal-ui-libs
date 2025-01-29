@@ -1,5 +1,5 @@
 import { loadRemoteModule } from '@angular-architects/module-federation'
-import { Injectable, InjectionToken, Type } from '@angular/core'
+import { Injectable, InjectionToken, Type, inject } from '@angular/core'
 import { RemoteComponent, RemoteComponentsTopic, Technologies } from '@onecx/integration-interface'
 import { Observable, map, shareReplay } from 'rxjs'
 import { PermissionService } from './permission.service'
@@ -28,9 +28,14 @@ export interface SlotServiceInterface {
 
 @Injectable({ providedIn: 'root' })
 export class SlotService implements SlotServiceInterface {
+  private permissionsService = inject(PermissionService);
+
   remoteComponents$ = new RemoteComponentsTopic()
 
-  constructor(private permissionsService: PermissionService) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   async init(): Promise<void> {
     return Promise.resolve()

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http'
-import { Component, HostListener, Inject, OnDestroy, OnInit, Optional, Renderer2 } from '@angular/core'
+import { Component, HostListener, OnDestroy, OnInit, Renderer2, inject } from '@angular/core'
 import { Router } from '@angular/router'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import {
@@ -25,6 +25,18 @@ import {
 })
 @UntilDestroy()
 export class PortalViewportComponent implements OnInit, OnDestroy {
+  private renderer = inject(Renderer2);
+  private primengConfig = inject(PrimeNGConfig);
+  private messageService = inject(MessageService);
+  appStateService = inject(AppStateService);
+  private portalMessageService = inject(PortalMessageService);
+  private userService = inject(UserService);
+  private themeService = inject(ThemeService);
+  private httpClient = inject(HttpClient);
+  private router = inject(Router);
+  showContentProvider = inject<ShowContentProvider | undefined>(SHOW_CONTENT_PROVIDER, { optional: true });
+  workspaceConfigBffService = inject<WorkspaceConfigBffService | undefined>(WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER, { optional: true });
+
   menuButtonTitle = ''
   menuActive = true
   activeTopbarItem: string | undefined
@@ -41,21 +53,10 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
 
   globalErrMsg: string | undefined
 
-  constructor(
-    private renderer: Renderer2,
-    private primengConfig: PrimeNGConfig,
-    private messageService: MessageService,
-    public appStateService: AppStateService,
-    private portalMessageService: PortalMessageService,
-    private userService: UserService,
-    private themeService: ThemeService,
-    private httpClient: HttpClient,
-    private router: Router,
-    @Optional() @Inject(SHOW_CONTENT_PROVIDER) public showContentProvider: ShowContentProvider | undefined,
-    @Optional()
-    @Inject(WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER)
-    public workspaceConfigBffService: WorkspaceConfigBffService | undefined
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this.portalMessageService.message$.subscribe((message: Message) => this.messageService.add(message))
     this.userService.profile$.pipe(untilDestroyed(this)).subscribe((profile) => {
       this.menuMode =

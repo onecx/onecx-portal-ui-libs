@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core'
+import { Injectable, inject } from '@angular/core'
 import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, UrlTree } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { filter, from, isObservable, map, mergeMap, Observable, of, tap, zip } from 'rxjs'
@@ -8,14 +8,17 @@ import { UserService } from './user.service';
 
 @Injectable({ providedIn: 'any' })
 export class InitializeModuleGuard implements CanActivate {
+  protected translateService = inject(TranslateService);
+  protected configService = inject(ConfigurationService);
+  protected appStateService = inject(AppStateService);
+  protected userService = inject(UserService);
+
   private SUPPORTED_LANGS = ['en', 'de']
   private DEFAULT_LANG = 'en'
-  constructor(
-    protected translateService: TranslateService,
-    protected configService: ConfigurationService,
-    protected appStateService: AppStateService,
-    protected userService: UserService
-  ) {}
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+  constructor() {}
 
   canActivate(
     _route: ActivatedRouteSnapshot,

@@ -1,6 +1,6 @@
 import { CommonModule, registerLocaleData } from '@angular/common'
 import de from '@angular/common/locales/de'
-import { APP_INITIALIZER, Inject, LOCALE_ID, ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core'
+import { APP_INITIALIZER, LOCALE_ID, ModuleWithProviders, NgModule, inject } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
 import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateModule } from '@ngx-translate/core'
@@ -226,10 +226,13 @@ export class PortalCoreModule {
     return module
   }
 
-  constructor(
-    @Optional() @Inject(SANITY_CHECK) sanityCheck?: string,
-    @Optional() @SkipSelf() @Inject(SANITY_CHECK) parentSanityCheck?: string
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
+    const sanityCheck = inject(SANITY_CHECK, { optional: true });
+    const parentSanityCheck = inject(SANITY_CHECK, { optional: true, skipSelf: true });
+
     console.log(`*** Portal Core module constructor, mode:  ${sanityCheck}`)
     if (sanityCheck === undefined) {
       throw new Error(`Always import PortalCoreModule using either 'forRoot()' or 'forMicroFrontend()' helper methods.`)

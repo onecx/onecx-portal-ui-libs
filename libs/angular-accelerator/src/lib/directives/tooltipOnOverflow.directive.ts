@@ -1,16 +1,4 @@
-import {
-    AfterViewInit,
-    Directive,
-    ElementRef,
-    Inject,
-    Input,
-    NgZone,
-    OnDestroy,
-    PLATFORM_ID,
-    Renderer2,
-    TemplateRef,
-    ViewContainerRef,
-} from '@angular/core'
+import { AfterViewInit, Directive, ElementRef, Input, NgZone, OnDestroy, PLATFORM_ID, Renderer2, TemplateRef, ViewContainerRef, inject } from '@angular/core'
 import { PrimeNGConfig } from 'primeng/api'
 import { Tooltip } from 'primeng/tooltip'
 
@@ -42,14 +30,17 @@ export class TooltipOnOverflowDirective extends Tooltip implements OnDestroy, Af
     this.mutationObserver.observe(this.el.nativeElement, { subtree: true, characterData: true, childList: true })
   }
 
-  constructor(
-    @Inject(PLATFORM_ID) platformId: any,
-    el: ElementRef,
-    zone: NgZone,
-    config: PrimeNGConfig,
-    renderer: Renderer2,
-    viewContainer: ViewContainerRef
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
+    const platformId = inject(PLATFORM_ID);
+    const el = inject(ElementRef);
+    const zone = inject(NgZone);
+    const config = inject(PrimeNGConfig);
+    const renderer = inject(Renderer2);
+    const viewContainer = inject(ViewContainerRef);
+
     super(platformId, el, zone, config, renderer, viewContainer)
     renderer.setStyle(this.el.nativeElement, 'text-overflow', 'ellipsis')
     renderer.setStyle(this.el.nativeElement, 'overflow', 'hidden')

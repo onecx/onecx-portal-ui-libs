@@ -1,4 +1,4 @@
-import { Inject, Injectable, Optional } from '@angular/core'
+import { Injectable, inject } from '@angular/core'
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http'
 import { AUTH_SERVICE, IAuthService } from '@onecx/angular-integration-interface'
 import { Observable } from 'rxjs'
@@ -9,10 +9,13 @@ const WHITELIST = ['assets']
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
-  constructor(
-    @Inject(AUTH_SERVICE) private authService: IAuthService,
-    @Inject(KEYCLOAK_AUTH_CONFIG) @Optional() private kcModuleConfig: KeycloakAuthModuleConfig
-  ) {}
+  private authService = inject<IAuthService>(AUTH_SERVICE);
+  private kcModuleConfig = inject<KeycloakAuthModuleConfig>(KEYCLOAK_AUTH_CONFIG, { optional: true })!;
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const skip = (this.kcModuleConfig?.tokenInterceptorWhitelist || WHITELIST).some((str) => request.url.includes(str))

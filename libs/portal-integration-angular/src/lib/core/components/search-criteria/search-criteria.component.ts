@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Inject, Input, OnInit, Optional, Output } from '@angular/core'
+import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core'
 import { BreadcrumbService } from '@onecx/angular-accelerator'
 import { Action, PageHeaderComponent } from '@onecx/angular-accelerator'
 import { PortalSearchPage } from './search-page'
@@ -16,6 +16,8 @@ import { UserService } from '@onecx/angular-integration-interface'
   styleUrls: ['./search-criteria.component.scss'],
 })
 export class SearchCriteriaComponent extends PageHeaderComponent implements OnInit {
+  private searchPage = inject<PortalSearchPage<unknown>>(PortalSearchPage, { optional: true });
+
   /** Whether to show advanced toggle button or not*/
   @Input() disableAdvancedToggle = false
 
@@ -71,13 +73,15 @@ export class SearchCriteriaComponent extends PageHeaderComponent implements OnIn
     },
   }
 
-  constructor(
-    breadcrumbs: BreadcrumbService,
-    translateService: TranslateService,
-    appStateService: AppStateService,
-    userService: UserService,
-    @Inject(PortalSearchPage) @Optional() private searchPage?: PortalSearchPage<unknown>
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
+    const breadcrumbs = inject(BreadcrumbService);
+    const translateService = inject(TranslateService);
+    const appStateService = inject(AppStateService);
+    const userService = inject(UserService);
+
     super(breadcrumbs, translateService, appStateService, userService)
   }
 

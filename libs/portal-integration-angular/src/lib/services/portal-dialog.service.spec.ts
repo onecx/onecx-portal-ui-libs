@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
-import { Component, EventEmitter, Input, Output } from '@angular/core'
+import { Component, EventEmitter, Input, Output, inject as inject_1 } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { HarnessLoader } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
@@ -29,10 +29,15 @@ import { DialogFooterComponent } from '../core/components/dialog/dialog-footer/d
   template: `<h1>BaseTestComponent</h1>`,
 })
 class BaseTestComponent {
+  portalDialogService = inject_1(PortalDialogService);
+
   resultFromShow: DialogState<any> | undefined = undefined
   nameResult: string | undefined
   surnameResult: string | undefined
-  constructor(public portalDialogService: PortalDialogService) {}
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+  constructor() {}
 
   show(title: any, message: any, button1: any, button2?: any, showXButton: any = true) {
     this.portalDialogService.openDialog(title, message, button1, button2, showXButton).subscribe({
@@ -73,9 +78,14 @@ class TestWithInputsComponent {
   template: `<h1>DialogResultTestComponent</h1>`,
 })
 class DialogResultTestComponent implements DialogResult<string> {
+  portalDialogService = inject_1(PortalDialogService);
+
   @Input() dialogResult = ''
 
-  constructor(public portalDialogService: PortalDialogService) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 }
 
 @Component({
@@ -83,11 +93,16 @@ class DialogResultTestComponent implements DialogResult<string> {
   template: `<h1>DialogButtonClickedWithResultComponent</h1>`,
 })
 class DialogButtonClickedWithResultComponent implements DialogResult<number>, DialogButtonClicked {
+  portalDialogService = inject_1(PortalDialogService);
+
   @Input() dialogResult = 13
   @Input() returnType: 'boolean' | 'observable' | 'promise' | 'undefined' = 'boolean'
   @Input() expectedDialogResult = 25
 
-  constructor(public portalDialogService: PortalDialogService) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ocxDialogButtonClicked(state: DialogState<number>): boolean | Observable<boolean> | Promise<boolean> | undefined {
     if (this.returnType === 'boolean') {

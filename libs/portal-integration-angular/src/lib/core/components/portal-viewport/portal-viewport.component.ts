@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, HostListener, Input, OnDestroy, OnInit, Renderer2 } from '@angular/core'
+import { AfterViewInit, Component, HostListener, Input, OnDestroy, OnInit, Renderer2, inject } from '@angular/core'
 import { HttpClient, HttpResponse } from '@angular/common/http'
 import { NavigationEnd, Router } from '@angular/router'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
@@ -22,6 +22,20 @@ import { HelpPageAPIService } from '../../../services/help-api-service'
 })
 @UntilDestroy()
 export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy {
+  private renderer = inject(Renderer2);
+  private router = inject(Router);
+  private primengConfig = inject(PrimeNGConfig);
+  private portalUIConfig = inject(PortalUIService);
+  private appStateService = inject(AppStateService);
+  private themeService = inject(ThemeService);
+  private messageService = inject(MessageService);
+  private supportTicketApiService = inject(SupportTicketApiService);
+  private helpDataService = inject(HelpPageAPIService);
+  private dialogService = inject(DialogService);
+  private userService = inject(UserService);
+  private portalMessageService = inject(PortalMessageService);
+  private httpClient = inject(HttpClient);
+
   @Input()
   showProfileInSidebar = true
 
@@ -56,21 +70,10 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
   applicationId$: Observable<string> | undefined
   helpDataItem$: Observable<HelpData> | undefined
 
-  constructor(
-    private renderer: Renderer2,
-    private router: Router,
-    private primengConfig: PrimeNGConfig,
-    private portalUIConfig: PortalUIService,
-    private appStateService: AppStateService,
-    private themeService: ThemeService,
-    private messageService: MessageService,
-    private supportTicketApiService: SupportTicketApiService,
-    private helpDataService: HelpPageAPIService,
-    private dialogService: DialogService,
-    private userService: UserService,
-    private portalMessageService: PortalMessageService,
-    private httpClient: HttpClient
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this.portalMessageService.message$.subscribe((message) => this.messageService.add(message))
     this.hideMenuButtonTitle = this.portalUIConfig.getTranslation('hideMenuButton')
     this.showMenuButtonTitle = this.portalUIConfig.getTranslation('showMenuButton')

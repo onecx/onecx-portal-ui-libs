@@ -1,4 +1,4 @@
-import { EventEmitter, Injectable, Type, isDevMode } from '@angular/core'
+import { EventEmitter, Injectable, Type, isDevMode, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { Observable, mergeMap } from 'rxjs'
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
@@ -261,10 +261,13 @@ export interface PortalDialogServiceData {
 
 @Injectable({ providedIn: 'any' })
 export class PortalDialogService {
-  constructor(
-    private dialogService: DialogService,
-    private translateService: TranslateService
-  ) {}
+  private dialogService = inject(DialogService);
+  private translateService = inject(TranslateService);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   /**
    * @deprecated

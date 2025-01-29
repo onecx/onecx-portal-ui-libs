@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core'
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core'
 import { Router } from '@angular/router'
 import { combineLatest, concat, map, Observable, of, withLatestFrom } from 'rxjs'
 import { MenuItem } from 'primeng/api'
@@ -13,6 +13,13 @@ import { ImageLogoUrlUtils } from '../../utils/image-logo-url.utils'
   styleUrls: ['./portal-footer.component.scss'],
 })
 export class PortalFooterComponent implements OnInit {
+  private configurationService = inject(ConfigurationService);
+  router = inject(Router);
+  private appState = inject(AppStateService);
+  private menuService = inject(MenuService);
+  private themeService = inject(ThemeService);
+  private ref = inject(ChangeDetectorRef);
+
   copyrightMsg$: Observable<string> | undefined
   logoUrl$: Observable<string | undefined>
   currentYear = new Date().getFullYear()
@@ -20,14 +27,10 @@ export class PortalFooterComponent implements OnInit {
   versionInfo$: Observable<string | undefined>
   apiPrefix: string = API_PREFIX
 
-  constructor(
-    private configurationService: ConfigurationService,
-    public router: Router,
-    private appState: AppStateService,
-    private menuService: MenuService,
-    private themeService: ThemeService,
-    private ref: ChangeDetectorRef
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this.versionInfo$ = this.appState.currentMfe$.pipe(
       withLatestFrom(this.appState.currentWorkspace$.asObservable()),
       map(([mfe, workspace]) => {

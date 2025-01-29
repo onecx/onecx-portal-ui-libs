@@ -1,14 +1,19 @@
 import { Location } from '@angular/common'
 import { HttpClient } from '@angular/common/http'
-import { Injectable } from '@angular/core'
+import { Injectable, inject } from '@angular/core'
 import { Config } from '@onecx/integration-interface'
 import { BehaviorSubject, firstValueFrom } from 'rxjs'
 
 @Injectable()
 export class AppConfigService {
+  private http = inject(HttpClient);
+
   config$ = new BehaviorSubject<{ [key: string]: string }>({})
 
-  constructor(private http: HttpClient) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   public init(baseUrl: string): Promise<void> {
     return new Promise((resolve, reject) => {

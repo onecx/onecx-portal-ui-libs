@@ -1,4 +1,4 @@
-import { Inject, Injectable, LOCALE_ID } from '@angular/core'
+import { Injectable, LOCALE_ID, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { firstValueFrom, map, Observable, of } from 'rxjs'
 import { DateUtils } from '@onecx/angular-accelerator'
@@ -7,11 +7,14 @@ import { ColumnType } from '@onecx/angular-accelerator'
 
 @Injectable({ providedIn: 'any' })
 export class ExportDataService {
-  constructor(
-    private dateUtils: DateUtils,
-    private translateService: TranslateService,
-    @Inject(LOCALE_ID) private locale: string
-  ) {}
+  private dateUtils = inject(DateUtils);
+  private translateService = inject(TranslateService);
+  private locale = inject(LOCALE_ID);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   async exportCsv<T extends string | number | symbol>(
     columns: { id: string; nameKey: string; columnType: ColumnType }[],
