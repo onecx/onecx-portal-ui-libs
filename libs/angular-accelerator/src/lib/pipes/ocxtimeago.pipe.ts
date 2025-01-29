@@ -3,25 +3,26 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core'
 
 @Pipe({
   name: 'timeago',
+  standalone: false,
 })
 // eslint-disable-next-line @angular-eslint/use-pipe-transform-interface
 export class OcxTimeAgoPipe extends TranslatePipe implements OnDestroy, PipeTransform {
-  private changeDetectorRef: ChangeDetectorRef;
-  private ngZone = inject(NgZone);
-  private translateService: TranslateService;
+  private changeDetectorRef: ChangeDetectorRef
+  private ngZone = inject(NgZone)
+  private translateService: TranslateService
 
   private timer: number | undefined | null
 
   /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
+  constructor(...args: unknown[])
   constructor() {
-    const changeDetectorRef = inject(ChangeDetectorRef);
-    const translateService = inject(TranslateService);
+    const changeDetectorRef = inject(ChangeDetectorRef)
+    const translateService = inject(TranslateService)
 
     super(translateService, changeDetectorRef)
-  
-    this.changeDetectorRef = changeDetectorRef;
-    this.translateService = translateService;
+
+    this.changeDetectorRef = changeDetectorRef
+    this.translateService = translateService
   }
   override transform(value: string) {
     this.removeTimer()

@@ -1,4 +1,20 @@
-import { AfterContentInit, Component, ContentChild, ContentChildren, DoCheck, EventEmitter, Injector, Input, LOCALE_ID, OnInit, Output, QueryList, TemplateRef, ViewChildren, inject } from '@angular/core'
+import {
+  AfterContentInit,
+  Component,
+  ContentChild,
+  ContentChildren,
+  DoCheck,
+  EventEmitter,
+  Injector,
+  Input,
+  LOCALE_ID,
+  OnInit,
+  Output,
+  QueryList,
+  TemplateRef,
+  ViewChildren,
+  inject,
+} from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
@@ -39,10 +55,10 @@ export interface DataListGridComponentState {
   styleUrls: ['./data-list-grid.component.scss'],
 })
 export class DataListGridComponent extends DataSortBase implements OnInit, DoCheck, AfterContentInit {
-  private userService = inject(UserService);
-  private router = inject(Router);
-  private injector = inject(Injector);
-  private appStateService = inject(AppStateService);
+  private userService = inject(UserService)
+  private router = inject(Router)
+  private injector = inject(Injector)
+  private appStateService = inject(AppStateService)
 
   @Input() titleLineId: string | undefined
   @Input() subtitleLineIds: string[] = []
@@ -131,7 +147,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return this._data$.getValue()
   }
   set data(value: RowListGridData[]) {
-    !this._data$.getValue().length ?? this.resetPage()
+    if (this._data$.getValue().length) this.resetPage()
     this._originalData = [...value]
     this._data$.next([...value])
   }
@@ -141,7 +157,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return this._filters$.getValue()
   }
   set filters(value: Filter[]) {
-    !this._filters$.getValue().length ?? this.resetPage()
+    if (this._filters$.getValue().length) this.resetPage()
     this._filters$.next(value)
   }
   _originalData: RowListGridData[] = []
@@ -316,11 +332,11 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
 
   /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
+  constructor(...args: unknown[])
 
   constructor() {
-    const locale = inject(LOCALE_ID);
-    const translateService = inject(TranslateService);
+    const locale = inject(LOCALE_ID)
+    const translateService = inject(TranslateService)
 
     super(locale, translateService)
     this.name = this.name || this.router.url.replace(/[^A-Za-z0-9]/, '_')

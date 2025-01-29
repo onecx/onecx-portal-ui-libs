@@ -1,4 +1,19 @@
-import { AfterContentInit, Component, ContentChild, ContentChildren, EventEmitter, Injector, Input, LOCALE_ID, OnInit, Output, QueryList, TemplateRef, ViewChildren, inject } from '@angular/core'
+import {
+  AfterContentInit,
+  Component,
+  ContentChild,
+  ContentChildren,
+  EventEmitter,
+  Injector,
+  Input,
+  LOCALE_ID,
+  OnInit,
+  Output,
+  QueryList,
+  TemplateRef,
+  ViewChildren,
+  inject,
+} from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { isValidDate } from '@onecx/accelerator'
@@ -61,9 +76,9 @@ export interface DataTableComponentState {
   styleUrls: ['./data-table.component.scss'],
 })
 export class DataTableComponent extends DataSortBase implements OnInit, AfterContentInit {
-  private router = inject(Router);
-  private injector = inject(Injector);
-  private userService = inject(UserService);
+  private router = inject(Router)
+  private injector = inject(Injector)
+  private userService = inject(UserService)
 
   FilterType = FilterType
   TemplateType = TemplateType
@@ -74,7 +89,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this._rows$.getValue()
   }
   set rows(value: Row[]) {
-    !this._rows$.getValue().length ?? this.resetPage()
+    !this._rows$.getValue().length
     this._rows$.next(value)
   }
   _selectionIds$ = new BehaviorSubject<(string | number)[]>([])
@@ -96,7 +111,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this._filters$.getValue()
   }
   set filters(value: Filter[]) {
-    !this._filters$.getValue().length ?? this.resetPage()
+    !this._filters$.getValue().length
     this._filters$.next(value)
   }
   _sortDirection$ = new BehaviorSubject<DataSortDirection>(DataSortDirection.NONE)
@@ -385,11 +400,11 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
 
   /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
+  constructor(...args: unknown[])
 
   constructor() {
-    const locale = inject(LOCALE_ID);
-    const translateService = inject(TranslateService);
+    const locale = inject(LOCALE_ID)
+    const translateService = inject(TranslateService)
 
     super(locale, translateService)
     this.name = this.name || this.router.url.replace(/[^A-Za-z0-9]/, '_')

@@ -1,9 +1,9 @@
 import { Directive, HostListener, Input, OnInit, TemplateRef, ViewContainerRef, inject } from '@angular/core'
 
-@Directive({ selector: '[ocxIfBreakpoint]' })
+@Directive({ selector: '[ocxIfBreakpoint]', standalone: false })
 export class IfBreakpointDirective implements OnInit {
-  private viewContainer = inject(ViewContainerRef);
-  private templateRef = inject<TemplateRef<unknown>>(TemplateRef, { optional: true });
+  private viewContainer = inject(ViewContainerRef)
+  private templateRef = inject<TemplateRef<unknown>>(TemplateRef, { optional: true })
 
   @Input('ocxIfBreakpoint') breakpoint: 'mobile' | 'desktop' | undefined
 
@@ -13,7 +13,7 @@ export class IfBreakpointDirective implements OnInit {
   state: 'mobile' | 'desktop' | undefined
 
   /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
+  constructor(...args: unknown[])
 
   constructor() {}
 

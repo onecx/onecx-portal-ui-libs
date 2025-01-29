@@ -1,17 +1,17 @@
 import { Directive, DoCheck, TemplateRef, ViewContainerRef, inject } from '@angular/core'
 import { SearchHeaderComponent } from '../components/search-header/search-header.component'
 
-@Directive({ selector: '[ocxAdvanced]' })
+@Directive({ selector: '[ocxAdvanced]', standalone: false })
 export class AdvancedDirective implements DoCheck {
-  private viewContainer = inject(ViewContainerRef);
-  private templateRef = inject<TemplateRef<any>>(TemplateRef, { optional: true });
-  private searchHeader = inject(SearchHeaderComponent, { optional: true });
+  private viewContainer = inject(ViewContainerRef)
+  private templateRef = inject<TemplateRef<any>>(TemplateRef, { optional: true })
+  private searchHeader = inject(SearchHeaderComponent, { optional: true })
 
   /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
+  constructor(...args: unknown[])
 
   constructor() {
-    const searchHeader = this.searchHeader;
+    const searchHeader = this.searchHeader
 
     if (!searchHeader) {
       throw 'Advanced directive can only be used inside search header component'

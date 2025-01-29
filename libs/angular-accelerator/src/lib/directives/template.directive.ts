@@ -1,8 +1,8 @@
 import { Directive, Input, TemplateRef, inject } from '@angular/core'
 
-@Directive({ selector: '[ocxTemplate]' })
+@Directive({ selector: '[ocxTemplate]', standalone: false })
 export class TemplateDirective {
-  template = inject<TemplateRef<any>>(TemplateRef);
+  template = inject<TemplateRef<any>>(TemplateRef)
 
   @Input({
     required: true,
@@ -11,7 +11,7 @@ export class TemplateDirective {
   name = ''
 
   /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
+  constructor(...args: unknown[])
 
   constructor() {}
 

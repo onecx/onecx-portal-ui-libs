@@ -3,16 +3,17 @@ import { Injector, LOCALE_ID, Pipe, PipeTransform, Type, inject } from '@angular
 
 @Pipe({
   name: 'dynamicPipe',
+  standalone: false,
 })
 export class DynamicPipe implements PipeTransform {
-  private injector = inject(Injector);
+  private injector = inject(Injector)
 
   knownPipes: { [name: string]: PipeTransform } = {}
 
   /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
+  constructor(...args: unknown[])
   public constructor() {
-    const locale = inject(LOCALE_ID);
+    const locale = inject(LOCALE_ID)
 
     this.knownPipes = {
       currency: new CurrencyPipe(locale),
