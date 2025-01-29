@@ -4,6 +4,7 @@ import { PortalMessageService } from '@onecx/angular-integration-interface'
 import { HelpData } from '../../../model/help-data'
 
 @Component({
+  standalone: false,
   selector: 'ocx-help-item-editor',
   templateUrl: './help-item-editor.component.html',
   styleUrls: ['./help-item-editor.component.scss'],
@@ -16,7 +17,10 @@ export class HelpItemEditorComponent implements OnChanges {
   @Output() saveHelpItem = new EventEmitter<HelpData>()
 
   public formGroup!: FormGroup
-  constructor(private fb: FormBuilder, private portalMessageService: PortalMessageService) {
+  constructor(
+    private fb: FormBuilder,
+    private portalMessageService: PortalMessageService
+  ) {
     this.formGroup = this.fb.group({
       appId: new FormControl({ value: null, disabled: true }, [Validators.required]),
       helpItemId: new FormControl({ value: null, disabled: true }, [Validators.required]),

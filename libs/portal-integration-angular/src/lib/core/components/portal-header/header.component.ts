@@ -21,6 +21,7 @@ import { API_PREFIX } from '../../../api/constants'
 
 type MenuItemPerm = MenuItem & { permission: string }
 @Component({
+  standalone: false,
   selector: 'ocx-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],

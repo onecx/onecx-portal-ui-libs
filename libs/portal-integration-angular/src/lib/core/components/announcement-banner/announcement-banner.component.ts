@@ -5,6 +5,7 @@ import { AnnouncementItem, AnnouncementPriorityType } from '../../../model/annou
 import { AnnouncementsApiService } from '../../../services/announcements-api.service'
 
 @Component({
+  standalone: false,
   selector: 'ocx-announcement-banner',
   templateUrl: './announcement-banner.component.html',
   styleUrls: ['./announcement-banner.component.css'],

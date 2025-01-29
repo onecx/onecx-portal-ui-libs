@@ -10,6 +10,7 @@ import { UserService } from '@onecx/angular-integration-interface'
  * @deprecated Will be replaced by ocx-search-header
  */
 @Component({
+  standalone: false,
   selector: 'ocx-search-criteria',
   templateUrl: './search-criteria.component.html',
   styleUrls: ['./search-criteria.component.scss'],

@@ -8,6 +8,7 @@ import { UserProfile } from '../../../model/user-profile.model'
  * @deprecated Replace with onecx-avatar-image slot
  */
 @Component({
+  standalone: false,
   selector: 'ocx-user-avatar',
   templateUrl: './user-avatar.component.html',
   styleUrls: ['./user-avatar.component.scss'],

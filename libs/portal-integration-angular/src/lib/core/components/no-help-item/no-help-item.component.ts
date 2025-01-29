@@ -2,6 +2,7 @@ import { Component } from '@angular/core'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 
 @Component({
+  standalone: false,
   selector: 'ocx-no-help-item',
   templateUrl: './no-help-item.component.html',
   styleUrls: ['./no-help-item.component.scss'],
@@ -9,7 +10,10 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 export class NoHelpItemComponent {
   public helpArticleId: string
 
-  constructor(public config: DynamicDialogConfig, public ref: DynamicDialogRef) {
+  constructor(
+    public config: DynamicDialogConfig,
+    public ref: DynamicDialogRef
+  ) {
     this.helpArticleId = config.data.helpArticleId
   }
 

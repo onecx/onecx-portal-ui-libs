@@ -49,6 +49,7 @@ export interface DataListGridComponentState {
 }
 
 @Component({
+  standalone: false,
   selector: 'ocx-data-list-grid',
   templateUrl: './data-list-grid.component.html',
   styleUrls: ['./data-list-grid.component.scss'],

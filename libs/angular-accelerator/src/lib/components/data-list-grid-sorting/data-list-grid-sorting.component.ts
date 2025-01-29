@@ -11,6 +11,7 @@ export interface DataListGridSortingComponentState {
 }
 
 @Component({
+  standalone: false,
   selector: 'ocx-data-list-grid-sorting',
   templateUrl: './data-list-grid-sorting.component.html',
   styleUrls: ['./data-list-grid-sorting.component.scss'],

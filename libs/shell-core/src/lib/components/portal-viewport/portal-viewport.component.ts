@@ -18,6 +18,7 @@ import {
 } from '../../shell-interface/workspace-config-bff-service-provider'
 
 @Component({
+  standalone: false,
   selector: 'ocx-shell-portal-viewport',
   templateUrl: './portal-viewport.component.html',
   styleUrls: ['./portal-viewport.component.scss'],

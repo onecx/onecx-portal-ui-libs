@@ -32,6 +32,7 @@ export type RowListGridData = ListGridData & Row
 export type DataViewComponentState = DataListGridComponentState & DataTableComponentState
 
 @Component({
+  standalone: false,
   selector: 'ocx-data-view',
   templateUrl: './data-view.component.html',
   styleUrls: ['./data-view.component.css'],

@@ -14,6 +14,7 @@ import { NoHelpItemComponent } from '../no-help-item/no-help-item.component'
 import { HelpPageAPIService } from '../../../services/help-api-service'
 
 @Component({
+  standalone: false,
   selector: 'ocx-portal-viewport',
   templateUrl: './portal-viewport.component.html',
   styleUrls: ['./portal-viewport.component.scss'],

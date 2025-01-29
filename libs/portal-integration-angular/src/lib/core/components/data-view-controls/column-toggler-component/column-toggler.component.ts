@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core'
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 
 @Component({
+  standalone: false,
   templateUrl: './column-toggler.component.html',
   providers: [DialogService],
 })
@@ -17,7 +18,10 @@ export class ColumnTogglerComponent implements OnInit {
   activeCols: string[] = []
   inactiveCols: string[] = []
 
-  constructor(private ref: DynamicDialogRef, private config: DynamicDialogConfig) {}
+  constructor(
+    private ref: DynamicDialogRef,
+    private config: DynamicDialogConfig
+  ) {}
 
   submitResults(
     colActive: { field: string; header: string; active: boolean; translationPrefix?: string }[],

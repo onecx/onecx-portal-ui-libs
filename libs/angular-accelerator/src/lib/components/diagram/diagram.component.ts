@@ -47,6 +47,7 @@ const allDiagramTypes: DiagramLayouts[] = [
 ]
 
 @Component({
+  standalone: false,
   selector: 'ocx-diagram',
   templateUrl: './diagram.component.html',
   styleUrls: ['./diagram.component.scss'],

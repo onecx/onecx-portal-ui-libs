@@ -21,6 +21,7 @@ import { Technologies } from '@onecx/integration-interface'
 import { RemoteComponentConfig } from '../../model/remote-component-config.model'
 
 @Component({
+  standalone: false,
   selector: 'ocx-slot[name]',
   templateUrl: './slot.component.html',
 })
@@ -73,7 +74,7 @@ export class SlotComponent implements OnInit, OnDestroy {
    * ## Component with slot in a template
    * ```
    * ⁣@Component({
-   *  selector: 'my-component',
+standalone: false,   *  selector: 'my-component',
    *  templateUrl: './my-component.component.html',
    * })
    * export class MyComponent {

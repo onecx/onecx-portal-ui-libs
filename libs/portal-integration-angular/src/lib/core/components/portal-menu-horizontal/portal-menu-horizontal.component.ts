@@ -4,6 +4,7 @@ import { MenuItem } from 'primeng/api'
 import { Menubar } from 'primeng/menubar'
 
 @Component({
+  standalone: false,
   selector: 'ocx-portal-menu-horizontal',
   templateUrl: './portal-menu-horizontal.component.html',
   styleUrls: ['./portal-menu-horizontal.component.scss'],
@@ -15,7 +16,11 @@ export class PortalMenuHorizontalComponent implements AfterViewChecked {
   private _mainMenuItems: MenuItem[] = []
   private _sizeCache: DOMRect[] | null = [] // perf: valid cache on init
 
-  constructor(private menuService: MenuService, private elementRef: ElementRef, private renderer: Renderer2) {
+  constructor(
+    private menuService: MenuService,
+    private elementRef: ElementRef,
+    private renderer: Renderer2
+  ) {
     this.menuService.getMenuItems().subscribe((el) => this.onMenuItemsChange(el))
   }
 

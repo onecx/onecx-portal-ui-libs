@@ -25,6 +25,7 @@ import { DialogContentComponent } from '../core/components/dialog/dialog-content
 import { DialogFooterComponent } from '../core/components/dialog/dialog-footer/dialog-footer.component'
 
 @Component({
+  standalone: false,
   template: `<h1>BaseTestComponent</h1>`,
 })
 class BaseTestComponent {
@@ -60,6 +61,7 @@ class BaseTestComponent {
 }
 
 @Component({
+  standalone: false,
   template: `<div class="testHeader">{{ header }}</div>`,
 })
 class TestWithInputsComponent {
@@ -67,6 +69,7 @@ class TestWithInputsComponent {
 }
 
 @Component({
+  standalone: false,
   template: `<h1>DialogResultTestComponent</h1>`,
 })
 class DialogResultTestComponent implements DialogResult<string> {
@@ -76,6 +79,7 @@ class DialogResultTestComponent implements DialogResult<string> {
 }
 
 @Component({
+  standalone: false,
   template: `<h1>DialogButtonClickedWithResultComponent</h1>`,
 })
 class DialogButtonClickedWithResultComponent implements DialogResult<number>, DialogButtonClicked {
@@ -111,6 +115,7 @@ class DialogButtonClickedWithResultComponent implements DialogResult<number>, Di
 }
 
 @Component({
+  standalone: false,
   template: `<h1>DialogPrimaryButtonDisabledComponent</h1>`,
 })
 class DialogPrimaryButtonDisabledComponent implements DialogPrimaryButtonDisabled {
@@ -119,6 +124,7 @@ class DialogPrimaryButtonDisabledComponent implements DialogPrimaryButtonDisable
 }
 
 @Component({
+  standalone: false,
   template: `<h1>DialogSecondaryButtonDisabledComponent</h1>`,
 })
 class DialogSecondaryButtonDisabledComponent implements DialogSecondaryButtonDisabled {
@@ -132,6 +138,7 @@ interface NameAndSurnameObject {
 }
 
 @Component({
+  standalone: false,
   template: `<div>
     <h1>CompleteDialogComponent</h1>
     <div class="nameError" *ngIf="!isNameValid">Name is not correct</div>

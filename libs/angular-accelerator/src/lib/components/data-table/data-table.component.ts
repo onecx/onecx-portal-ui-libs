@@ -70,6 +70,7 @@ export interface DataTableComponentState {
 }
 
 @Component({
+  standalone: false,
   selector: 'ocx-data-table',
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],

@@ -23,6 +23,7 @@ import { Observable } from 'rxjs'
 import { FormsModule } from '@angular/forms'
 
 @Component({
+  standalone: false,
   selector: 'ocx-button-dialog-with-portal-dialog-service',
   template: `<p-button label="Open dialog" (click)="openDialog()" />`,
 })
@@ -45,6 +46,7 @@ class ButtonDialogWithPortalDialogServiceComponent {
 }
 
 @Component({
+  standalone: false,
   selector: 'ocx-my-component-to-display',
   template: `<p>Component to display with disabled buttons</p>
     <div class="flex gap-2">
@@ -171,6 +173,7 @@ export const CustomDataWithExtendedButtons = {
 }
 
 @Component({
+  standalone: false,
   selector: 'ocx-my-component-to-display',
   template: `<p>Hello, its my component to display</p>`,
 })
@@ -247,6 +250,7 @@ export const ComponentDisplayedWithDisabledButtons = {
 }
 
 @Component({
+  standalone: false,
   selector: 'ocx-my-component-to-display',
   template: `<p>Component to display with validation</p>
     <p>It is impossible to close the dialog by clicking secondary button</p>
@@ -322,6 +326,7 @@ export const CustomAutofocus = {
 }
 
 @Component({
+  standalone: false,
   selector: 'ocx-my-component-to-display',
   template: `<p>Hello, its my component to display custom buttons</p>`,
 })

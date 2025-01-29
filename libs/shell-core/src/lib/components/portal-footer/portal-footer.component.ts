@@ -8,6 +8,7 @@ import {
 } from '../../shell-interface/workspace-config-bff-service-provider'
 
 @Component({
+  standalone: false,
   selector: 'ocx-shell-footer',
   templateUrl: './portal-footer.component.html',
   styleUrls: ['./portal-footer.component.scss'],

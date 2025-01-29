@@ -9,6 +9,7 @@ import { UserProfile } from '../../../model/user-profile.model'
 import { EventsPublisher } from '@onecx/integration-interface'
 
 @Component({
+  standalone: false,
   selector: 'ocx-inline-profile',
   templateUrl: 'inline-profile.component.html',
   styleUrls: ['./inline-profile.component.scss'],

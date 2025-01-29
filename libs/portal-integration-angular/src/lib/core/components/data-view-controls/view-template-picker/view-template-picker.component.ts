@@ -3,6 +3,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { DropdownChangeEvent } from 'primeng/dropdown'
 @Component({
+  standalone: false,
   templateUrl: './view-template-picker.component.html',
   selector: 'ocx-data-view-template-picker',
   styleUrls: ['./view-template-picker.component.scss'],

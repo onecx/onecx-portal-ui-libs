@@ -18,6 +18,7 @@ export interface CustomGroupColumnSelectorComponentState {
 }
 
 @Component({
+  standalone: false,
   selector: 'ocx-custom-group-column-selector',
   templateUrl: './custom-group-column-selector.component.html',
   styleUrls: ['./custom-group-column-selector.component.scss'],

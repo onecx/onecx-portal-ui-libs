@@ -13,6 +13,7 @@ import {
 } from '../../../../services/portal-dialog.service'
 
 @Component({
+  standalone: false,
   selector: 'ocx-dialog-content',
   templateUrl: './dialog-content.component.html',
   styleUrls: ['./dialog-content.component.scss'],

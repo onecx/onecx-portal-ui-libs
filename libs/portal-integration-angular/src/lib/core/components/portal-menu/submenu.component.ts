@@ -8,6 +8,7 @@ import { filter } from 'rxjs'
 import { PortalUIService } from '../../../services/portal-ui.service'
 
 @Component({
+  standalone: false,
   selector: 'ocx-submenu',
   templateUrl: './submenu.component.html',
   styleUrls: ['./submenu.component.scss'],

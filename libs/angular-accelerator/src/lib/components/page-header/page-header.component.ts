@@ -77,6 +77,7 @@ export interface HomeItem {
 export type GridColumnOptions = 1 | 2 | 3 | 4 | 6 | 12
 
 @Component({
+  standalone: false,
   selector: 'ocx-page-header',
   templateUrl: './page-header.component.html',
   styleUrls: ['./page-header.component.scss'],

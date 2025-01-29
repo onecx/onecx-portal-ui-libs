@@ -36,6 +36,7 @@ export interface FilterViewComponentState {
 }
 
 @Component({
+  standalone: false,
   selector: 'ocx-filter-view',
   templateUrl: './filter-view.component.html',
   styleUrls: ['./filter-view.component.scss'],

@@ -4,6 +4,7 @@ import { AppStateService } from '@onecx/angular-integration-interface'
 import { UserService } from '@onecx/angular-integration-interface'
 
 @Component({
+  standalone: false,
   selector: 'ocx-portal-page',
   templateUrl: './portal-page.component.html',
   styleUrls: ['./portal-page.component.scss'],
@@ -21,11 +22,11 @@ export class PortalPageComponent implements OnInit {
     private userService: UserService,
     @Inject(HAS_PERMISSION_CHECKER)
     @Optional()
-    private hasPermissionChecker?: HasPermissionChecker,
+    private hasPermissionChecker?: HasPermissionChecker
   ) {}
 
   hasAccess() {
-    if(this.hasPermissionChecker) {
+    if (this.hasPermissionChecker) {
       return this.permission ? this.hasPermissionChecker.hasPermission(this.permission) : true
     }
     return this.permission ? this.userService.hasPermission(this.permission) : true

@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms'
 import { SupportTicket } from '../../../model/support-ticket'
 
 @Component({
+  standalone: false,
   selector: 'ocx-support-ticket',
   templateUrl: './support-ticket.component.html',
   styleUrls: ['./support-ticket.component.scss'],

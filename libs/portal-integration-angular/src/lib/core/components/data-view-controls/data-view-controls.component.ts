@@ -121,6 +121,7 @@ export interface DataViewControlTranslations {
  * @deprecated Will be split up in separate compoments for better abstraction layers
  */
 @Component({
+  standalone: false,
   selector: 'ocx-data-view-controls',
   templateUrl: './data-view-controls.component.html',
   styleUrls: ['./data-view-controls.component.scss'],
@@ -215,8 +216,7 @@ export class DataViewControlsComponent implements OnInit, OnChanges {
         saveButtonLabel: this.translations?.columnDialogSaveButtonLabel,
       },
       header:
-        this.translations?.columnDialogHeaderText ||
-        this.translate.instant('OCX_DATA_VIEW_CONTROLS.DIALOG_TITLE'),
+        this.translations?.columnDialogHeaderText || this.translate.instant('OCX_DATA_VIEW_CONTROLS.DIALOG_TITLE'),
       width: '70%',
       contentStyle: { 'max-height': '500px', overflow: 'auto', padding: 0 },
     })

@@ -12,6 +12,7 @@ export interface GroupByCountDiagramComponentState {
 }
 
 @Component({
+  standalone: false,
   selector: 'ocx-group-by-count-diagram',
   templateUrl: './group-by-count-diagram.component.html',
 })

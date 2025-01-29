@@ -26,6 +26,7 @@ import {
 } from '../../../../services/portal-dialog.service'
 
 @Component({
+  standalone: false,
   selector: 'ocx-dialog-footer',
   templateUrl: './dialog-footer.component.html',
   styleUrls: ['./dialog-footer.component.scss'],

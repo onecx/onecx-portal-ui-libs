@@ -4,6 +4,7 @@ import { MfeInfo } from '../../../model/mfe-info.model'
 import { AppStateService } from '@onecx/angular-integration-interface'
 
 @Component({
+  standalone: false,
   selector: 'ocx-mfe-debug',
   templateUrl: './mfe-debug.component.html',
 })

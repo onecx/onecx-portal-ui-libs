@@ -7,6 +7,7 @@ import { MenuService } from '../../../services/app.menu.service'
 import { API_PREFIX } from '../../../api/constants'
 import { ImageLogoUrlUtils } from '../../utils/image-logo-url.utils'
 @Component({
+  standalone: false,
   selector: 'ocx-footer',
   templateUrl: './portal-footer.component.html',
   styleUrls: ['./portal-footer.component.scss'],

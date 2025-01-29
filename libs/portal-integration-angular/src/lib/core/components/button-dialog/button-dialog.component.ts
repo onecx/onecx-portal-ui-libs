@@ -33,6 +33,7 @@ import {
 } from '../../../services/portal-dialog.service'
 
 @Component({
+  standalone: false,
   selector: 'ocx-button-dialog',
   templateUrl: './button-dialog.component.html',
   styleUrls: ['./button-dialog.component.scss'],

@@ -5,6 +5,7 @@ import { MenuService } from '../../../services/app.menu.service'
 import { map } from 'rxjs/operators'
 
 @Component({
+  standalone: false,
   selector: 'ocx-portal-menu',
   templateUrl: './portal-menu.component.html',
   styleUrls: ['./portal-menu.component.css'],

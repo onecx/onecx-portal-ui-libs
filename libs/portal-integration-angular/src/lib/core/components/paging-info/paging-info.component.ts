@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core'
 import { PortalUIService } from '../../../services/portal-ui.service'
 
 @Component({
+  standalone: false,
   selector: 'ocx-paging-info',
   template: `
     <span *ngIf="resultsCount > 0 && state.totalRecords > 0; else noResults">

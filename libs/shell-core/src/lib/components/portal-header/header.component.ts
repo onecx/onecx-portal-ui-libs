@@ -9,6 +9,7 @@ import {
 } from '../../shell-interface/workspace-config-bff-service-provider'
 
 @Component({
+  standalone: false,
   selector: 'ocx-shell-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
