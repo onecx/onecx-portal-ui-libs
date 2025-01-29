@@ -1,10 +1,10 @@
 import { HttpClient, HttpResponse } from '@angular/common/http'
 import { Directive, ElementRef, EventEmitter, Input, Output, inject } from '@angular/core'
 
-@Directive({ selector: '[ocxShellSrc]' })
+@Directive({ selector: '[ocxShellSrc]', standalone: false })
 export class ShellSrcDirective {
-  private el = inject(ElementRef);
-  private httpClient = inject(HttpClient);
+  private el = inject(ElementRef)
+  private httpClient = inject(HttpClient)
 
   private _src: string | undefined
 
@@ -57,7 +57,7 @@ export class ShellSrcDirective {
   }
 
   /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
+  constructor(...args: unknown[])
 
   constructor() {
     this.el.nativeElement.style.visibility = 'hidden'

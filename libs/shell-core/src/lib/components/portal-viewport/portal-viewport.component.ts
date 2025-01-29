@@ -9,7 +9,8 @@ import {
   ThemeService,
   UserService,
 } from '@onecx/angular-integration-interface'
-import { MessageService, PrimeNGConfig } from 'primeng/api'
+import { MessageService } from 'primeng/api'
+import { PrimeNG } from 'primeng/config'
 import { filter, first, from, mergeMap, of } from 'rxjs'
 import { SHOW_CONTENT_PROVIDER, ShowContentProvider } from '../../shell-interface/show-content-provider'
 import {
@@ -25,17 +26,19 @@ import {
 })
 @UntilDestroy()
 export class PortalViewportComponent implements OnInit, OnDestroy {
-  private renderer = inject(Renderer2);
-  private primengConfig = inject(PrimeNGConfig);
-  private messageService = inject(MessageService);
-  appStateService = inject(AppStateService);
-  private portalMessageService = inject(PortalMessageService);
-  private userService = inject(UserService);
-  private themeService = inject(ThemeService);
-  private httpClient = inject(HttpClient);
-  private router = inject(Router);
-  showContentProvider = inject<ShowContentProvider | undefined>(SHOW_CONTENT_PROVIDER, { optional: true });
-  workspaceConfigBffService = inject<WorkspaceConfigBffService | undefined>(WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER, { optional: true });
+  private renderer = inject(Renderer2)
+  private primengConfig = inject(PrimeNG)
+  private messageService = inject(MessageService)
+  appStateService = inject(AppStateService)
+  private portalMessageService = inject(PortalMessageService)
+  private userService = inject(UserService)
+  private themeService = inject(ThemeService)
+  private httpClient = inject(HttpClient)
+  private router = inject(Router)
+  showContentProvider = inject<ShowContentProvider | undefined>(SHOW_CONTENT_PROVIDER, { optional: true })
+  workspaceConfigBffService = inject<WorkspaceConfigBffService | undefined>(WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER, {
+    optional: true,
+  })
 
   menuButtonTitle = ''
   menuActive = true
@@ -54,7 +57,7 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
   globalErrMsg: string | undefined
 
   /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
+  constructor(...args: unknown[])
 
   constructor() {
     this.portalMessageService.message$.subscribe((message: Message) => this.messageService.add(message))
@@ -104,7 +107,7 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.primengConfig.ripple = true
+    this.primengConfig.ripple.set(true)
 
     this.appStateService.globalError$
       .pipe(untilDestroyed(this))
