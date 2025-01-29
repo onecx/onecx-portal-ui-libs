@@ -53,6 +53,18 @@ export default {
       // INFO: No variable for this, so probably was default PrimeNG value
       transitionDuration: '0.15s',
     },
+    content: {
+      // INFO: dev -> on focus primary color is used
+      background: '#f7f7f7',
+      // INFO: dev system #EEEEEE is used, surface.300 is most close
+      hoverBackground: '{surface.300}',
+      borderColor: '{surface.200}',
+      // INFO: --text-color used
+      color: '{text.color}',
+      // INFO: --text-color used
+      // TODO: Maybe it makes sense to leave hover color?
+      hoverColor: '{text.hover.color}',
+    },
     // INFO: All menu components
     navigation: {
       list: {
@@ -236,6 +248,10 @@ export default {
           floatLabelActiveColor: '{surface.500}',
           // INFO: $errorColor color is used for invalid border
           floatLabelInvalidColor: '{form.field.invalid.placeholder.color}',
+        },
+        content: {
+          // INFO: --border-radius is used
+          borderRadius: '{border.radius.md}',
         },
         overlay: {
           select: {

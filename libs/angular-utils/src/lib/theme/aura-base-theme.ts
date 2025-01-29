@@ -455,7 +455,7 @@ export default {
           hoverMutedColor: '{surface.600}',
         },
         content: {
-          background: themevariables.general.bodyBgColor, // unsicher
+          background: themevariables.general.bodyBgColor, // {surface.0} by default
           hoverBackground: themevariables.general.hoverBgColor,
           borderColor: '{surface.200}',
           color: '{text.color}',
