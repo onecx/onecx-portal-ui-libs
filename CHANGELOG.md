@@ -1,3 +1,18 @@
+## [5.32.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.31.0...v5.32.0) (2025-01-31)
+
+### Features
+
+* added permissions store connector service ([#661](https://github.com/onecx/onecx-portal-ui-libs/issues/661)) ([7e9f6dd](https://github.com/onecx/onecx-portal-ui-libs/commit/7e9f6dd6f000d3379d1c8848bb96d250845d7445))
+* portal dialog service templating ([#618](https://github.com/onecx/onecx-portal-ui-libs/issues/618)) ([d51ef88](https://github.com/onecx/onecx-portal-ui-libs/commit/d51ef885f2e3d6bbb3881546b495f867135f3a2f))
+
+### Bug Fixes
+
+* portal dialog service docs fix ([#636](https://github.com/onecx/onecx-portal-ui-libs/issues/636)) ([c92cd51](https://github.com/onecx/onecx-portal-ui-libs/commit/c92cd51ca6d4311ed183ebdb047f757e4d449722))
+
+### Refactoring
+
+* ensure unique ocx content title id ([#646](https://github.com/onecx/onecx-portal-ui-libs/issues/646)) ([9180db9](https://github.com/onecx/onecx-portal-ui-libs/commit/9180db91ec644fbcc2e2d55466723fd1d762ae46))
+
 ## [5.31.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.30.0...v5.31.0) (2025-01-15)
 
 ### Features
