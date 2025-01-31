@@ -11,5 +11,12 @@ export const oneCxReducer = createReducer<OneCxState>(
       ...state,
       location: action.event as NavigatedEventPayload,
     })
+  ),
+  on(
+    OneCxActions.permissionsReceived,
+    (state: OneCxState, action): OneCxState => ({
+      ...state,
+      permissions: action.permissions,
+    })
   )
 )
