@@ -6,7 +6,7 @@ export const OneCxActions = createActionGroup({
     navigated: props<{
       event: undefined | unknown
     }>(),
-    permissionsReceived: props<{
+    permissionsChanged: props<{
       permissions: string[]
     }>(),
   },

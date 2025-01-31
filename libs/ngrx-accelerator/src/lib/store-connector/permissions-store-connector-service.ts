@@ -21,7 +21,7 @@ export class PermissionsStoreConnectorService implements OnDestroy {
   permissionsTopic$ = new PermissionsTopic()
   constructor(store: Store) {
     this.permissionsTopic$.subscribe((permissions) => {
-      store.dispatch(OneCxActions.permissionsReceived({ permissions }))
+      store.dispatch(OneCxActions.permissionsChanged({ permissions }))
     })
   }
   ngOnDestroy(): void {

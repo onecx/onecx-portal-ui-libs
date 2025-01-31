@@ -13,7 +13,7 @@ export const oneCxReducer = createReducer<OneCxState>(
     })
   ),
   on(
-    OneCxActions.permissionsReceived,
+    OneCxActions.permissionsChanged,
     (state: OneCxState, action): OneCxState => ({
       ...state,
       permissions: action.permissions,
