@@ -13,6 +13,7 @@ export * from './lib/utils/local-storage/create-nested-key-configuration'
 
 // Store Connector
 export * from './lib/store-connector/navigated-event-store-connector-service'
+export * from './lib/store-connector/permissions-store-connector-service'
 export * from './lib/store-connector/onecx-actions'
 export * from './lib/store-connector/onecx-reducer'
 export * from './lib/store-connector/onecx-selectors'
