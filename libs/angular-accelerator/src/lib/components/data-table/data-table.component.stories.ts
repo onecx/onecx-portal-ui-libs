@@ -17,6 +17,7 @@ import { DynamicLocaleId } from '../../utils/dynamic-locale-id'
 import { CheckboxModule } from 'primeng/checkbox'
 import { FormsModule } from '@angular/forms'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
+import { StorybookThemeModule } from '../../storybook-theme.module'
 
 type DataTableInputTypes = Pick<DataTableComponent, 'rows' | 'columns' | 'emptyResultsMessage' | 'selectedRows'>
 
@@ -35,6 +36,7 @@ const DataTableComponentSBConfig: Meta<DataTableComponent> = {
           useClass: DynamicLocaleId,
           deps: [UserService],
         },
+        importProvidersFrom(StorybookThemeModule),
       ],
     }),
     moduleMetadata({

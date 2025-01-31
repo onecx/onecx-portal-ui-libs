@@ -17,7 +17,7 @@ import { PrimeTemplate } from 'primeng/api'
 import { findTemplate } from '../../utils/template.utils'
 import { ObjectUtils } from '../../utils/objectutils'
 import { limit } from '../../utils/filter.utils'
-import { OverlayPanel } from 'primeng/overlaypanel'
+import { Popover } from 'primeng/popover'
 import { Row } from '../data-table/data-table.component'
 import { Button } from 'primeng/button'
 
@@ -123,7 +123,7 @@ export class FilterViewComponent implements OnInit {
     })
   }
 
-  @ViewChild(OverlayPanel) panel!: OverlayPanel
+  @ViewChild(Popover) panel!: Popover
   @ViewChild('manageButton') manageButton!: Button
   trigger: HTMLElement | undefined
 

@@ -6,7 +6,7 @@ import { RouterModule } from '@angular/router'
 import { Meta, StoryFn, applicationConfig, moduleMetadata } from '@storybook/angular'
 import { BreadcrumbModule } from 'primeng/breadcrumb'
 import { ButtonModule } from 'primeng/button'
-import { DropdownModule } from 'primeng/dropdown'
+import { SelectModule } from 'primeng/select'
 import { InputTextModule } from 'primeng/inputtext'
 import { MenuModule } from 'primeng/menu'
 import { SkeletonModule } from 'primeng/skeleton'
@@ -17,6 +17,7 @@ import { StorybookBreadcrumbModule } from './../../storybook-breadcrumb.module'
 import { SearchHeaderComponent } from './search-header.component'
 import { ConfigurationService } from '@onecx/angular-integration-interface'
 import { provideHttpClient } from '@angular/common/http'
+import { StorybookThemeModule } from '../../storybook-theme.module'
 
 export default {
   title: 'Components/SearchHeaderComponent',
@@ -29,6 +30,7 @@ export default {
         importProvidersFrom(RouterModule.forRoot([], { useHash: true })),
         importProvidersFrom(ConfigurationService),
         provideHttpClient(),
+        importProvidersFrom(StorybookThemeModule),
       ],
     }),
     moduleMetadata({
@@ -38,7 +40,7 @@ export default {
         InputTextModule,
         BreadcrumbModule,
         ButtonModule,
-        DropdownModule,
+        SelectModule,
         ReactiveFormsModule,
         SkeletonModule,
         StorybookTranslateModule,

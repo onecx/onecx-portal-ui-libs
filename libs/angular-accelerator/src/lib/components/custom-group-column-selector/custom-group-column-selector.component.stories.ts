@@ -5,12 +5,13 @@ import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { FormsModule } from '@angular/forms'
 import { ButtonModule } from 'primeng/button'
-import { DropdownModule } from 'primeng/dropdown'
+import { SelectModule } from 'primeng/select'
 import { DialogModule } from 'primeng/dialog'
 import { PickListModule } from 'primeng/picklist'
 import { CheckboxModule } from 'primeng/checkbox'
 import { SelectButtonModule } from 'primeng/selectbutton'
 import { StorybookTranslateModule } from '../../storybook-translate.module'
+import { StorybookThemeModule } from '../../storybook-theme.module'
 import { ColumnType } from '../../model/column-type.model'
 import { CustomGroupColumnSelectorComponent } from './custom-group-column-selector.component'
 
@@ -35,12 +36,13 @@ const CustomGroupColumnSelectorComponentSBConfig: Meta<CustomGroupColumnSelector
         importProvidersFrom(BrowserModule),
         importProvidersFrom(BrowserAnimationsModule),
         importProvidersFrom(TranslateModule.forRoot({})),
+        importProvidersFrom(StorybookThemeModule),
       ],
     }),
     moduleMetadata({
       declarations: [CustomGroupColumnSelectorComponent],
       imports: [
-        DropdownModule,
+        SelectModule,
         DialogModule,
         PickListModule,
         ButtonModule,

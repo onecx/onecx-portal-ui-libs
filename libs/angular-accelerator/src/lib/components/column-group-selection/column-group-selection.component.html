@@ -1,6 +1,6 @@
 <p-floatLabel>
   @if ((allGroupKeys$ | async)?.length) {
-    <p-dropdown
+    <p-select
       inputId="columnGroupSelectionDropdown"
       id="columnGroupSelectionDropdownElement"
       (onChange)="changeGroupSelection($event)"
@@ -11,7 +11,7 @@
       >
       <ng-template let-item pTemplate="item"> {{ item ? (item | translate) : ''}} </ng-template>
       <ng-template let-item pTemplate="selectedItem"> {{ item ? (item | translate) : ''}} </ng-template>
-    </p-dropdown>
+    </p-select>
   }
   @if ((allGroupKeys$ | async)?.length) {
     <label for="columnGroupSelectionDropdown"

@@ -100,7 +100,7 @@
   </ng-template>
   <ng-template #filterTablePanel>
     @if (tableTemplates$ | async; as templates) {
-    <p-overlayPanel #op [style]="panelStyle" (onHide)="focusTrigger()">
+    <p-popover #op [style]="panelStyle" (onHide)="focusTrigger()">
       <ng-template pTemplate="content">
         <div pFocusTrap>
           <div class="flex justify-content-between align-items-center mb-2">
@@ -173,7 +173,7 @@
           </ocx-data-table>
         </div>
       </ng-template>
-    </p-overlayPanel>
+    </p-popover>
     }
   </ng-template>
 </div>

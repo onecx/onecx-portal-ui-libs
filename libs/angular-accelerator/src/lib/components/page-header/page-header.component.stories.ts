@@ -13,6 +13,7 @@ import { DynamicPipe } from '../../pipes/dynamic.pipe'
 import { StorybookTranslateModule } from '../../storybook-translate.module'
 import { StorybookBreadcrumbModule } from './../../storybook-breadcrumb.module'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
+import { StorybookThemeModule } from '../../storybook-theme.module'
 
 export default {
   title: 'Components/PageHeaderComponent',
@@ -23,6 +24,7 @@ export default {
         importProvidersFrom(BrowserModule),
         importProvidersFrom(BrowserAnimationsModule),
         importProvidersFrom(RouterModule.forRoot([], { useHash: true })),
+        importProvidersFrom(StorybookThemeModule),
       ],
     }),
     moduleMetadata({
