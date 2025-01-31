@@ -44,7 +44,21 @@
     [leftButtonAriaLabel]="('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABELS.LEFT' | translate)"
     [allLeftButtonAriaLabel]="('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABELS.ALL_LEFT' | translate)"
   >
-    <ng-template let-item pTemplate="item">
+    <!-- TODO: tmp fixes https://github.com/primefaces/primeng/issues/17536 -->
+    <ng-template #sourceHeader>
+      <div class="p-picklist-title">
+        {{activeColumnsLabel || (activeColumnsLabelKey | translate) ||
+        ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ACTIVE_COLUMNS_LABEL' | translate)}}
+      </div>
+    </ng-template>
+    <!-- TODO: tmp fixes https://github.com/primefaces/primeng/issues/17536 -->
+    <ng-template #targetHeader>
+      <div class="p-picklist-title">
+        {{inactiveColumnsLabel || (inactiveColumnsLabelKey | translate) ||
+        ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.INACTIVE_COLUMNS_LABEL' | translate)}}
+      </div>
+    </ng-template>
+    <ng-template let-item #item>
       <div>{{ item.nameKey | translate }}</div>
     </ng-template>
   </p-pickList>
@@ -61,10 +75,9 @@
           optionValue="value"
           id="frozenActionColumn"
           name="frozen-action-column-select-button"
+          [allowEmpty]="false"
         >
-          <ng-template let-option pTemplate>
-            <label id="{{option.label}}">{{option.label | translate}}</label>
-          </ng-template>
+          <ng-template #item let-option> {{option.label | translate}} </ng-template>
         </p-selectButton>
       </div>
       <div>
@@ -75,12 +88,10 @@
           optionLabel="label"
           optionValue="value"
           id="actionColumnPosition"
-          class="mt-2"
           name="action-column-position-select-button"
+          [allowEmpty]="false"
         >
-          <ng-template let-option pTemplate>
-            <label id="{{option.label}}">{{option.label | translate}}</label>
-          </ng-template>
+          <ng-template #item let-option> {{option.label | translate}} </ng-template>
         </p-selectButton>
       </div>
     </div>

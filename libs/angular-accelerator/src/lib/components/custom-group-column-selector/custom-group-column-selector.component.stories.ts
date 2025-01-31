@@ -14,6 +14,7 @@ import { StorybookTranslateModule } from '../../storybook-translate.module'
 import { StorybookThemeModule } from '../../storybook-theme.module'
 import { ColumnType } from '../../model/column-type.model'
 import { CustomGroupColumnSelectorComponent } from './custom-group-column-selector.component'
+import { TooltipModule } from 'primeng/tooltip'
 
 type CustomGroupColumnSelectorInputs = Pick<
   CustomGroupColumnSelectorComponent,
@@ -49,6 +50,7 @@ const CustomGroupColumnSelectorComponentSBConfig: Meta<CustomGroupColumnSelector
         CheckboxModule,
         FormsModule,
         SelectButtonModule,
+        TooltipModule,
         StorybookTranslateModule,
       ],
     }),
