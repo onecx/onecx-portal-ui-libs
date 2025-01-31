@@ -75,7 +75,6 @@
         "browserTarget": "angular-accelerator:build-storybook",
         "compodoc": false,
         "styles": [
-          "node_modules/primeng/resources/primeng.min.css",
           "node_modules/primeicons/primeicons.css",
           "libs/angular-accelerator/assets/styles.scss",
           "libs/angular-accelerator/.storybook/storybook.css"
@@ -96,7 +95,6 @@
         "browserTarget": "angular-accelerator:build-storybook",
         "compodoc": false,
         "styles": [
-          "node_modules/primeng/resources/primeng.min.css",
           "node_modules/primeicons/primeicons.css",
           "libs/angular-accelerator/assets/styles.scss",
           "libs/angular-accelerator/.storybook/storybook.css"
