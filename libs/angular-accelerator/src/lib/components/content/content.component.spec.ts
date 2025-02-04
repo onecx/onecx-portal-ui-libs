@@ -3,50 +3,100 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { OcxContentComponent } from './content.component'
 import { OcxContentDirective } from '../../directives/content.directive'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
+import { Component } from '@angular/core'
+import { By } from '@angular/platform-browser'
+
+@Component({
+  template: `
+    <ocx-content title="Test 1">
+      <p>Content inside of ocx-content with title</p>
+    </ocx-content>
+    <ocx-content title="Test 2">
+      <p>Content inside of ocx-content with title</p>
+    </ocx-content>
+    <ocx-content title="Test 3">
+      <p>Content inside of ocx-content with title</p>
+    </ocx-content>
+  `,
+})
+class MockComponent {}
 
 describe('OcxContentComponent', () => {
-  let component: OcxContentComponent
-  let fixture: ComponentFixture<OcxContentComponent>
-  let ocxContentHarness: OcxContentHarness
-  const testComponentTitle = 'My cool title'
+  describe('1 component per page', () => {
+    let component: OcxContentComponent
+    let fixture: ComponentFixture<OcxContentComponent>
+    let ocxContentHarness: OcxContentHarness
+    const testComponentTitle = 'My cool title'
+    const titleBaseId = 'ocx_content_title_element'
+    beforeEach(async () => {
+      await TestBed.configureTestingModule({
+        declarations: [OcxContentComponent, OcxContentDirective],
+      }).compileComponents()
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [OcxContentComponent, OcxContentDirective],
-    }).compileComponents()
+      fixture = TestBed.createComponent(OcxContentComponent)
+      component = fixture.componentInstance
+      ocxContentHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, OcxContentHarness)
+    })
 
-    fixture = TestBed.createComponent(OcxContentComponent)
-    component = fixture.componentInstance
-    ocxContentHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, OcxContentHarness)
+    it('should create', () => {
+      expect(component).toBeTruthy()
+    })
+
+    it('should render a ocxContent card with no title by default', async () => {
+      const expectedClasses = ['card']
+      expect(await ocxContentHarness.getContentClasses()).toEqual(expectedClasses)
+      expect(await ocxContentHarness.hasTitle(titleBaseId)).toEqual(false)
+    })
+
+    it('should render a ocxContent card with a title, when given a title via input', async () => {
+      const expectedClasses = ['card']
+      expect(await ocxContentHarness.getContentClasses()).toEqual(expectedClasses)
+      expect(await ocxContentHarness.hasTitle(titleBaseId)).toEqual(false)
+
+      component.title = testComponentTitle
+
+      const expectedTitleClasses = ['font-medium', 'text-lg']
+      expect(await ocxContentHarness.hasTitle(titleBaseId)).toEqual(true)
+      expect(await ocxContentHarness.hasTitle(titleBaseId + '0')).toEqual(false)
+      expect(await ocxContentHarness.getTitle(titleBaseId)).toEqual(testComponentTitle)
+      expect(await ocxContentHarness.getTitleClasses(titleBaseId)).toEqual(expectedTitleClasses)
+    })
+
+    it('should render a ocxContent card with a class, when given a styleClass via input', async () => {
+      component.styleClass = 'py-4'
+
+      const expectedStyleClasses = ['card', 'py-4']
+      expect(await ocxContentHarness.getContentClasses()).toEqual(expectedStyleClasses)
+    })
   })
 
-  it('should create', () => {
-    expect(component).toBeTruthy()
-  })
+  describe('Multiple components per page', () => {
+    let component: MockComponent
+    let fixture: ComponentFixture<MockComponent>
+    const titleBaseId = 'ocx_content_title_element'
+    beforeEach(async () => {
+      await TestBed.configureTestingModule({
+        declarations: [MockComponent, OcxContentComponent, OcxContentDirective],
+      }).compileComponents()
 
-  it('should render a ocxContent card with no title by default', async () => {
-    const expectedClasses = ['card']
-    expect(await ocxContentHarness.getContentClasses()).toEqual(expectedClasses)
-    expect(await ocxContentHarness.hasTitle()).toEqual(false)
-  })
+      fixture = TestBed.createComponent(MockComponent)
+      component = fixture.componentInstance
+    })
 
-  it('should render a ocxContent card with a title, when given a title via input', async () => {
-    const expectedClasses = ['card']
-    expect(await ocxContentHarness.getContentClasses()).toEqual(expectedClasses)
-    expect(await ocxContentHarness.hasTitle()).toEqual(false)
+    it('should create', () => {
+      expect(component).toBeTruthy()
+    })
 
-    component.title = testComponentTitle
+    it('should render 3 ocxContent cards with different title IDs', async () => {
+      fixture.detectChanges()
 
-    const expectedTitleClasses = ['font-medium', 'text-lg']
-    expect(await ocxContentHarness.hasTitle()).toEqual(true)
-    expect(await ocxContentHarness.getTitle()).toEqual(testComponentTitle)
-    expect(await ocxContentHarness.getTitleClasses()).toEqual(expectedTitleClasses)
-  })
+      const ocxContents = fixture.debugElement.queryAll(By.directive(OcxContentDirective))
+      expect(ocxContents.length).toEqual(3)
 
-  it('should render a ocxContent card with a class, when given a styleClass via input', async () => {
-    component.styleClass = 'py-4'
-
-    const expectedStyleClasses = ['card', 'py-4']
-    expect(await ocxContentHarness.getContentClasses()).toEqual(expectedStyleClasses)
+      ocxContents.forEach((_content, index) => {
+        const idSuffix = index > 0 ? `${index - 1}` : ''
+        expect(fixture.debugElement.queryAll(By.css(`#${titleBaseId + idSuffix}`)).length).toBe(1)
+      })
+    })
   })
 })

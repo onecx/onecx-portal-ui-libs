@@ -28,6 +28,28 @@ export const WithTitle = {
   },
 }
 
+export const MultipleWithUniqueIds = {
+  render: (args: OcxContentComponent) => ({
+    props: {
+      ...args,
+    },
+    template: `
+        <div ocxContent="${args.title}" class="mb-4">
+            <p>Content inside of a div with the ocxContent directive applied to it.</p>
+        </div>
+        <div ocxContent="${args.title}" class="mb-4">
+            <p>Content inside of a div with the ocxContent directive applied to it.</p>
+        </div>
+        <div ocxContent="${args.title}">
+            <p>Content inside of a div with the ocxContent directive applied to it.</p>
+        </div>
+    `,
+  }),
+  args: {
+    title: 'My Title'
+  },
+}
+
 export const WithoutTitle = {
   render: (args: OcxContentComponent) => ({
     props: {
