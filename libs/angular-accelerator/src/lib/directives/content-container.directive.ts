@@ -34,20 +34,34 @@ export class OcxContentContainerDirective implements OnInit, OnChanges {
     // This way we can avoid multiple contradictory layout classes and unexpected effects
     const removeResponsiveLayoutClasses = () => {
       const classesToRemove: string[] = []
-      const regexPattern = /\w+:flex-row$/      
-      this.el.nativeElement.classList.forEach((className: string) => {        
+      const regexPattern = /\w+:flex-row$/
+      this.el.nativeElement.classList.forEach((className: string) => {
         if (regexPattern.test(className)) {
           classesToRemove.push(className)
         }
       })
       removeClasses(classesToRemove)
     }
-    const sharedClasses = ['flex', 'gap-3', 'flex-column']
-    removeResponsiveLayoutClasses()
-    addClasses(sharedClasses)
-    if (this.layout != 'vertical') {
-      const responsiveLayoutClass = `${this.breakpoint || 'md'}:flex-row`
-      addClasses([responsiveLayoutClass])
+    const addSharedClasses = () => {
+      const styleClasses = Array.from(this.el.nativeElement.classList as string[])
+      console.log(styleClasses)
+      const classList: string[] = ['flex']
+
+      if (!styleClasses.some((cls) => cls.startsWith('gap-'))) {
+        classList.push('gap-3')
+      }
+      const flexClasses = ['flex-row', 'flex-column', 'flex-row-reverse', 'flex-column-reverse']
+      if (!styleClasses.some((cls) => flexClasses.includes(cls))) {
+        classList.push('flex-column')
+      }
+      if (this.layout != 'vertical') {
+        const responsiveLayoutClass = `${this.breakpoint || 'md'}:flex-row`
+        classList.push(responsiveLayoutClass)
+      }
+      addClasses(classList)
     }
+
+    removeResponsiveLayoutClasses()
+    addSharedClasses()
   }
 }

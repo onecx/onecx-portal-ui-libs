@@ -95,8 +95,8 @@ export const WithStyleClass = {
     },
     template: `
         <ocx-content-container styleClass="${args.styleClass}">
-            <p>Content inside of ocx-content-container with styleClass</p>
-            <p>Content inside of ocx-content-container with styleClass</p>
+            <p>Content 1 inside of ocx-content-container with styleClass</p>
+            <p>Content 2 inside of ocx-content-container with styleClass</p>
         </ocx-content-container>
     `,
   }),
