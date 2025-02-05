@@ -1,11 +1,11 @@
 import { Injectable, OnDestroy } from '@angular/core'
 import { Observable, filter, first, map, of, tap } from 'rxjs'
-import { SyncableTopic } from '@onecx/accelerator'
+import { Topic } from '@onecx/accelerator'
 
 // This topic is defined here and not in integration-interface, because
 // it is not used as framework independent integration but for improving
 // angular specific things
-class TranslationCacheTopic extends SyncableTopic<string> {
+class TranslationCacheTopic extends Topic<string> {
   constructor() {
     super('translationCache', 2)
   }
