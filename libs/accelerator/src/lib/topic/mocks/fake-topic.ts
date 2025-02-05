@@ -29,4 +29,6 @@ export class FakeTopic<T> {
     this.state.next(value)
     return Promise.resolve()
   }
+
+  destroy(){}
 }
