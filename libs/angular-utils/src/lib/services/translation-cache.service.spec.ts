@@ -24,30 +24,32 @@ describe('TranslationCacheService', () => {
     expect(translationCache).toBeTruthy();
   });
 
-  it('should return cached translation if available', (done) => {
+  describe('getTranslationFile', () => {
+    it('should return cached translation if available', (done) => {
+      
+      window['onecxTranslations'] = { 'testUrl': { key: 'cachedValue' } };
+      translationCache.getTranslationFile('testUrl', () => of({ key: 'value' })).subscribe((result) => {
+        expect(result).toEqual({ key: 'cachedValue' });
+        done();
+      });
+    });
     
-    window['onecxTranslations'] = { 'testUrl': { key: 'cachedValue' } };
-    translationCache.getTranslationFile('testUrl', () => of({ key: 'value' })).subscribe((result) => {
-      expect(result).toEqual({ key: 'cachedValue' });
+    it('should load and cache translation if not available', (done) => {
+
+      const subject = new ReplaySubject<any>(1);
+
+      let counter = 0;
+      let v1 = undefined;
+      let v2 = undefined;
+      translationCache.getTranslationFile('testUrl', () => {counter++; return subject}).subscribe((v)=> {v1 = v});
+      translationCache.getTranslationFile('testUrl', () => {counter++; return subject}).subscribe((v)=> {v2 = v});
+      expect(counter).toBe(1);
+
+      const trans = { key: 'value' };
+      subject.next(trans);
+      expect(v1).toBe(trans);
+      expect(v2).toBe(trans);
       done();
     });
-  });
-  
-  it('should load and cache translation if not available', (done) => {
-
-    const subject = new ReplaySubject<any>(1);
-
-    let counter = 0;
-    let v1 = undefined;
-    let v2 = undefined;
-    translationCache.getTranslationFile('testUrl', () => {counter++; return subject}).subscribe((v)=> {v1 = v});
-    translationCache.getTranslationFile('testUrl', () => {counter++; return subject}).subscribe((v)=> {v2 = v});
-    expect(counter).toBe(1);
-
-    const trans = { key: 'value' };
-    subject.next(trans);
-    expect(v1).toBe(trans);
-    expect(v2).toBe(trans);
-    done();
   });
 });
