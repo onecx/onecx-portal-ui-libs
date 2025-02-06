@@ -4,7 +4,7 @@ import { combineLatest, of } from 'rxjs'
 // eslint-disable-next-line
 import { Message, PortalMessageService } from '@onecx/angular-integration-interface'
 import { Message as TopicMessage } from '@onecx/integration-interface'
-import { FakeTopic } from './fake-topic'
+import { FakeTopic } from '@onecx/accelerator'
 
 export function providePortalMessageServiceMock() {
   return [
