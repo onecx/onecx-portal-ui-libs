@@ -30,5 +30,7 @@ export class FakeTopic<T> {
     return Promise.resolve()
   }
 
-  destroy(){}
+  destroy(): void {
+    this.state.complete();
+  }
 }

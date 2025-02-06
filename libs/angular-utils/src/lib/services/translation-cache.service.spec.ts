@@ -1,5 +1,5 @@
 import { TestBed } from "@angular/core/testing";
-import { of } from 'rxjs';
+import { ReplaySubject, of } from 'rxjs';
 import { TranslationCacheService } from "./translation-cache.service";
 import { FakeTopic } from "@onecx/accelerator";
 
@@ -17,7 +17,7 @@ describe('TranslationCacheService', () => {
   });
 
   afterEach(() => {
-    translationCache.ngOnDestroy();
+    window['onecxTranslations'] = {};
   });
 
   it('should be created', () => {
@@ -25,55 +25,29 @@ describe('TranslationCacheService', () => {
   });
 
   it('should return cached translation if available', (done) => {
+    
     window['onecxTranslations'] = { 'testUrl': { key: 'cachedValue' } };
     translationCache.getTranslationFile('testUrl', () => of({ key: 'value' })).subscribe((result) => {
       expect(result).toEqual({ key: 'cachedValue' });
       done();
     });
   });
+  
+  it('should load and cache translation if not available', (done) => {
 
-  it('should return null if translation is being fetched', (done) => {
-    window['onecxTranslations'] = { 'testUrl': null };
-    const fakeTopic = (translationCache as any).translationTopic$;
-    jest.spyOn(fakeTopic, 'publish');
+    const subject = new ReplaySubject<any>(1);
 
-    translationCache.getTranslationFile('testUrl', () => of({ key: 'value' })).subscribe((result) => {
-      expect(result).toBeNull();
-      done();
-    });
+    let counter = 0;
+    let v1 = undefined;
+    let v2 = undefined;
+    translationCache.getTranslationFile('testUrl', () => {counter++; return subject}).subscribe((v)=> {v1 = v});
+    translationCache.getTranslationFile('testUrl', () => {counter++; return subject}).subscribe((v)=> {v2 = v});
+    expect(counter).toBe(1);
 
-    // Simulate the publish event
-    (translationCache as any).translationTopic$.publish('testUrl');
-  });
-
-  it('should fetch and cache translation if not available', (done) => {
-    window['onecxTranslations'] = {};
-    translationCache.getTranslationFile('testUrl', () => of({ key: 'value' })).subscribe((result) => {
-      expect(result).toEqual({ key: 'value' });
-      expect(window['onecxTranslations']['testUrl']).toEqual({ key: 'value' });
-      done();
-    });
-  });
-
-  it('should publish the URL after fetching translation', (done) => {
-    const publishSpy = jest.spyOn((translationCache as any).translationTopic$, 'publish');
-    window['onecxTranslations'] = {};
-    translationCache.getTranslationFile('testUrl', () => of({ key: 'value' })).subscribe(() => {
-      expect(publishSpy).toHaveBeenCalledWith('testUrl');
-      done();
-    });
-  });
-
-  it('should notify subscribers when translation is fetched', (done) => {
-    window['onecxTranslations'] = { 'testUrl': null };
-    const fakeTopic = (translationCache as any).translationTopic$ as FakeTopic<string>;
-    const subscription = fakeTopic.subscribe((url) => {
-      expect(url).toBe('testUrl');
-      done();
-    });
-
-    // Simulate the publish event
-    (translationCache as any).translationTopic$.publish('testUrl');
-
+    const trans = { key: 'value' };
+    subject.next(trans);
+    expect(v1).toBe(trans);
+    expect(v2).toBe(trans);
+    done();
   });
 });
