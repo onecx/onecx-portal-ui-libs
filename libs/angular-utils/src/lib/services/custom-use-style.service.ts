@@ -4,7 +4,6 @@ import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-r
 import { AppStateService } from '@onecx/angular-integration-interface'
 import { firstValueFrom, map, ReplaySubject } from 'rxjs'
 
-export const STYLE_BASE_NAME = new InjectionToken<string>('STYLE_BASE_NAME')
 export const SKIP_STYLE_SCOPING = new InjectionToken<boolean>('SKIP_STYLE_SCOPING')
 
 @Injectable({ providedIn: 'any' })
@@ -51,30 +50,30 @@ export class CustomUseStyle extends UseStyle {
 
   createFakeUseResponse(css: any, options: any) {
     const returnObject: {
-      id: any,
-      css: any,
-      name: any,
+      id: any
+      css: any
+      name: any
       el: any
     } = {
       id: options.id ?? undefined,
       css: css,
       name: undefined,
-      el: undefined
+      el: undefined,
     }
 
     Object.defineProperties(returnObject, {
       name: {
         get() {
-            console.error("Unexpected read of CustomUseStyle.use return value name")
-            return undefined;
-          },
+          console.error('Unexpected read of CustomUseStyle.use return value name')
+          return undefined
+        },
       },
       el: {
         get() {
-            console.error("Unexpected read of CustomUseStyle.use return value el")
-            return undefined;
-          },
-      }
+          console.error('Unexpected read of CustomUseStyle.use return value el')
+          return undefined
+        },
+      },
     })
     return returnObject
   }
