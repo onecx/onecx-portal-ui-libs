@@ -22,6 +22,7 @@ export function getBaseHrefOfRoute(route: Route): string {
     console.warn(
       'mfeInfo was not provided for route. initializeRouter function is required to be registered as app initializer.'
     )
+    return url
   }
   return mfeBaseHref
 }
