@@ -8,6 +8,7 @@ import { CustomUseStyle } from './custom-use-style.service'
 import { UseStyle } from 'primeng/usestyle'
 import { Theme } from '@primeuix/styled';
 import Aura from "@primeng/themes/aura"
+import { mergeDeep } from '../utils/deep-merge.utils'
 
 export const THEME_OVERRIDES = new InjectionToken<any>('THEME_OVERRIDES')
 
@@ -45,34 +46,14 @@ export class ThemeConfigService {
     })
   }
 
-  isObject(item: any): any {
-    return item && typeof item === 'object' && !Array.isArray(item)
-  }
-
-  // TODO: Extract to utils and remove from translate.combined.loader
-  mergeDeep(target: any, source: any): any {
-    const output = Object.assign({}, target)
-    if (this.isObject(target) && this.isObject(source)) {
-      Object.keys(source).forEach((key) => {
-        if (this.isObject(source[key])) {
-          if (!(key in target)) Object.assign(output, { [key]: source[key] })
-          else output[key] = this.mergeDeep(target[key], source[key])
-        } else {
-          Object.assign(output, { [key]: source[key] })
-        }
-      })
-    }
-    return output
-  }
-
   async applyThemeVariables(oldTheme: OneCXTheme): Promise<void> {
     const oldThemeVariables = oldTheme.properties
     const themeConfig = new ThemeConfig(oldThemeVariables)
     const computedPrefix = await this.useStyleService.getStyleIdentifier()
-    const themeOverrides = this.mergeDeep(themeConfig.getConfig(), this.themeOverrides ?? {})
+    const themeOverrides = mergeDeep(themeConfig.getConfig(), this.themeOverrides ?? {})
     this.primeNG.setThemeConfig({
       theme: {
-        preset: this.mergeDeep(Aura, themeOverrides),
+        preset: mergeDeep(Aura, themeOverrides),
         options: {
           prefix: computedPrefix === '' ? 'p' : computedPrefix
         }
