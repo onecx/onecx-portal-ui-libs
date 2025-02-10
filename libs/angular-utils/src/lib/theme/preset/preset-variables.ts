@@ -49,6 +49,38 @@ export default {
       },
       transitionDuration: '{transition.duration}',
     },
+    // INFO: Lists in all select and list components (except for tree select and menus)
+    list: {
+      // INFO: List container doesn't seem to have padding in our apps
+      // padding: '0.25rem 0.25rem',
+      // TODO: Do we set a padding here and reduce the padding of the individual items?
+      padding: '0',
+      // INFO: new variable, gap between each item in list
+      gap: '2px',
+      header: {
+        // INFO: --input-list-header-padding used
+        //padding: '0.5rem 1rem 0.25rem 1rem',
+        padding: '0.75rem',
+      },
+      option: {
+        // INFO: --input-list-item-padding used
+        // padding: '0.25rem 0.25rem',
+        // TODO: Do we reduce this because of the newly introduced gap?
+        padding: '0.75rem 0.75rem',
+        // INFO: --input-list-item-border-radius used
+        // borderRadius: '{border.radius.sm}',
+        // TODO: If we decide to add padding to list container, a little bit of border radius would look great
+        borderRadius: 0,
+      },
+      optionGroup: {
+        // INFO: --submenu-header-padding used
+        // padding: '0.5rem 0.75rem',
+        padding: '0.75rem',
+        // INFO: --submenu-header-font-weight used (400) -> no difference to weight of normal list item
+        // TODO: Decide if we want to keep 600 or revert back to 400
+        fontWeight: '600',
+      },
+    },
     mask: {
       // INFO: No variable for this, so probably was default PrimeNG value
       transitionDuration: '0.15s',
@@ -248,6 +280,38 @@ export default {
           floatLabelActiveColor: '{surface.500}',
           // INFO: $errorColor color is used for invalid border
           floatLabelInvalidColor: '{form.field.invalid.placeholder.color}',
+        },
+        // INFO: Lists in all select and list components (except for tree select and menus)
+        list: {
+          // INFO: List container doesn't seem to have padding in our apps
+          // padding: '0.25rem 0.25rem',
+          // TODO: Do we set a padding here and reduce the padding of the individual items?
+          padding: '0',
+          // INFO: new variable, gap between each item in list
+          gap: '2px',
+          header: {
+            // INFO: --input-list-header-padding used
+            //padding: '0.5rem 1rem 0.25rem 1rem',
+            padding: '0.75rem',
+          },
+          option: {
+            // INFO: --input-list-item-padding used
+            // padding: '0.25rem 0.25rem',
+            // TODO: Do we reduce this because of the newly introduced gap?
+            padding: '0.75rem 0.75rem',
+            // INFO: --input-list-item-border-radius used
+            // borderRadius: '{border.radius.sm}',
+            // TODO: If we decide to add padding to list container, a little bit of border radius would look great
+            borderRadius: 0,
+          },
+          optionGroup: {
+            // INFO: --submenu-header-padding used
+            // padding: '0.5rem 0.75rem',
+            padding: '0.75rem',
+            // INFO: --submenu-header-font-weight used (400) -> no difference to weight of normal list item
+            // TODO: Decide if we want to keep 600 or revert back to 400
+            fontWeight: '600',
+          },
         },
         content: {
           // INFO: --border-radius is used
