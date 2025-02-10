@@ -1,4 +1,3 @@
-import themevariables from './default-theme-variables'
 export default {
   semantic: {
     // OneCX semantic variables extension
@@ -17,8 +16,8 @@ export default {
     iconSize: '1rem',
     anchorGutter: '2px',
     primary: {
-      500: themevariables.general.primaryColor,
-      600: themevariables.general.secondaryColor,
+      500: '#274B5F', // primary.500 is used as primary.color
+      600: '#1C4257',
     },
     formField: {
       // INFO: --input-padding from dev env has equal values 0.75rem 0.75rem
@@ -162,6 +161,16 @@ export default {
         primary: {
           color: '{primary.500}',
         },
+        highlight: {
+          // --highlight-bg is used, rgba($primaryColor, 0.12);
+          background: '{primary.100}',
+          // $highlightFocusBg is used, rgba($primaryColor, 0.24) !default;
+          focusBackground: '{primary.200}',
+          // primaryColor is used for highlightTextColor
+          color: '{primary.color}',
+          // textColor is used for $inputListItemTextFocusColor
+          focusColor: '{text.color}',
+        },
         mask: {
           // INFO: --maskbg used
           // INFO: Mask applied on image, speedDial with mask prop. Determines what color is the mask
@@ -248,6 +257,13 @@ export default {
           floatLabelActiveColor: '{surface.500}',
           // INFO: $errorColor color is used for invalid border
           floatLabelInvalidColor: '{form.field.invalid.placeholder.color}',
+        },
+        text: {
+          // INFO: --text-color used
+          color: '{text.color}',
+          // INFO: textColor used for inplaceTextHoverColor, toggleButtonTextHoverColor
+          hoverColor: '{text.color}',
+          // mutedColor and hovermuted are not available in the theme
         },
         content: {
           // INFO: --border-radius is used

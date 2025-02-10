@@ -16,6 +16,10 @@ export default class ThemeConfig {
         },
         colorScheme: {
           light: {
+            text: {
+              color: (this.themeVariables as any)['general']['text-color'],
+              hoverColor: (this.themeVariables as any)['general']['text-secondary-color'],
+            },
             content: {
               background: (this.themeVariables as any)['general']['content-bg-color'],
               hoverBackground: (this.themeVariables as any)['general']['hover-bg-color'],

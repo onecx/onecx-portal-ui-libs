@@ -397,6 +397,7 @@ export default {
     colorScheme: {
       light: {
         surface: {
+          // HINT: will be handled by the colorPalette in the future
           0: '#ffffff',
           50: '{slate.50}',
           100: '{slate.100}',
@@ -418,6 +419,7 @@ export default {
           // if buttonActiveBg is not set, it should be primary.400
         },
         highlight: {
+          // TODO
           background: '{primary.50}',
           focusBackground: '{primary.100}',
           color: '{primary.700}',
