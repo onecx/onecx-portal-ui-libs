@@ -329,10 +329,8 @@ export default {
             // INFO: Could be focusBackground: 'rgba(0, 0, 0, 0.04)'
             focusBackground: '{surface.100}',
             // INFO: --highlight-bg used
-            // TODO: Should we use some variable from our theme configurator?
             selectedBackground: '{highlight.background}',
             // INFO: --highlight-bg used
-            // TODO: Should we use some variable from our theme configurator?
             selectedFocusBackground: '{highlight.focus.background}',
             // INFO: --text-color used
             color: '{text.color}',
@@ -340,11 +338,9 @@ export default {
             // TODO: Maybe it makes sense to leave hover color?
             focusColor: '{text.hover.color}',
             // INFO: --primary-color used
-            // selectedColor: '{highlight.color}',
-            selectedColor: themevariables.general.primaryColor,
+            selectedColor: '{highlight.color}',
             // INFO: --primary-color used
-            // selectedFocusColor: '{highlight.focus.color}',
-            selectedFocusColor: themevariables.general.primaryColor,
+            selectedFocusColor: '{highlight.focus.color}',
             icon: {
               // INFO: --text-secondary-color used
               // TODO: Decide on secondary color or surface
@@ -357,7 +353,7 @@ export default {
           optionGroup: {
             // INFO: --submenu-header-bg used
             // INFO: Could be background: '#ffffff'
-            background: 'transparent',
+            background: '{surface.0}',
             // INFO: --text-secondary-color used
             // TODO: Decide on secondary color or text.muted
             color: '{text.muted.color}',
