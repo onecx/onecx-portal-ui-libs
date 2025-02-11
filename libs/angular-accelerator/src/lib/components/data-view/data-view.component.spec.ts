@@ -16,6 +16,7 @@ import { DataTableComponent } from '../data-table/data-table.component'
 import { ColumnType } from '../../model/column-type.model'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { TooltipStyle } from 'primeng/tooltip'
 
 describe('DataViewComponent', () => {
   const mutationObserverMock = jest.fn(function MutationObserver(callback) {
@@ -228,6 +229,7 @@ describe('DataViewComponent', () => {
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         provideAppStateServiceMock(),
+        TooltipStyle,
       ],
     }).compileComponents()
 
@@ -460,17 +462,19 @@ describe('DataViewComponent', () => {
         const dataView = await dataViewHarness.getDataListGrid()
         await (await dataView?.getMenuButton())?.click()
         expect(await dataView?.hasAmountOfActionButtons('grid', 3)).toBe(true)
-        expect(await dataView?.hasAmountOfActionButtons('grid-hidden', 0)).toBe(true)
         expect(await dataView?.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
       })
 
       it('should hide a button based on a given field path', async () => {
         await setUpMockData('grid')
-        component.viewActionVisibleField = 'ready'
         const dataView = await dataViewHarness.getDataListGrid()
         await (await dataView?.getMenuButton())?.click()
+        expect(await dataView?.hasAmountOfActionButtons('grid', 3)).toBe(true)
+        await (await dataView?.getMenuButton())?.click()
+
+        component.viewActionVisibleField = 'ready'
+        await (await dataView?.getMenuButton())?.click()
         expect(await dataView?.hasAmountOfActionButtons('grid', 2)).toBe(true)
-        expect(await dataView?.hasAmountOfActionButtons('grid-hidden', 1)).toBe(true)
         expect(await dataView?.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
       })
     })

@@ -19,7 +19,7 @@ export class PTableCheckboxHarness extends ComponentHarness {
   }
 
   async checkBox(): Promise<void> {
-    const checkBoxElement = await this.locatorFor('.p-checkbox-box')()
+    const checkBoxElement = await this.locatorFor('.p-checkbox-input')()
     return checkBoxElement.click()
   }
 }

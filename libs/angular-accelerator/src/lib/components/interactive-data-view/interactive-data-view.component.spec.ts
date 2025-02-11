@@ -10,7 +10,7 @@ import { ButtonModule } from 'primeng/button'
 import { DialogModule } from 'primeng/dialog'
 import { PickListModule } from 'primeng/picklist'
 import {
-  PDropdownHarness,
+  PSelectHarness,
   PButtonHarness,
   PPicklistHarness,
   ButtonHarness,
@@ -52,6 +52,7 @@ import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-prime
 import { PrimeIcons } from 'primeng/api'
 import { limit } from '../../utils/filter.utils'
 import { DatePipe } from '@angular/common'
+import { TooltipStyle } from 'primeng/tooltip'
 
 describe('InteractiveDataViewComponent', () => {
   const mutationObserverMock = jest.fn(function MutationObserver(callback) {
@@ -278,6 +279,7 @@ describe('InteractiveDataViewComponent', () => {
         provideHttpClient(withInterceptorsFromDi()),
         provideRouter([]),
         provideAppStateServiceMock(),
+        TooltipStyle,
       ],
     }).compileComponents()
 
@@ -362,19 +364,17 @@ describe('InteractiveDataViewComponent', () => {
 
   it('should load DataListGridSortingDropdown', async () => {
     const dataLayoutSelection = await loader.getHarness(DataLayoutSelectionHarness)
-    const gridLayoutSelectionButton = await dataLayoutSelection.getGridLayoutSelectionButton()
-    await gridLayoutSelectionButton?.click()
+    await dataLayoutSelection.selectGridLayout()
 
     const dataListGridSortingDropdown = await loader.getHarness(
-      PDropdownHarness.with({ id: 'dataListGridSortingDropdown' })
+      PSelectHarness.with({ id: 'dataListGridSortingDropdown' })
     )
     expect(dataListGridSortingDropdown).toBeTruthy()
   })
 
   it('should load DataListGridSortingButton', async () => {
     const dataLayoutSelection = await loader.getHarness(DataLayoutSelectionHarness)
-    const gridLayoutSelectionButton = await dataLayoutSelection.getGridLayoutSelectionButton()
-    await gridLayoutSelectionButton?.click()
+    await dataLayoutSelection.selectGridLayout()
 
     const dataListGridSortingButton = await loader.getHarness(PButtonHarness.with({ id: 'dataListGridSortingButton' }))
     expect(dataListGridSortingButton).toBeTruthy()
@@ -682,9 +682,9 @@ describe('InteractiveDataViewComponent', () => {
       ]
 
       const columnGroupSelectionDropdown = await loader.getHarness(
-        PDropdownHarness.with({ inputId: 'columnGroupSelectionDropdown' })
+        PSelectHarness.with({ inputId: 'columnGroupSelectionDropdown' })
       )
-      const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
+      const dropdownItems = await columnGroupSelectionDropdown.getSelectItems()
       await dropdownItems[1].selectItem()
 
       tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
@@ -752,9 +752,9 @@ describe('InteractiveDataViewComponent', () => {
       ]
 
       const columnGroupSelectionDropdown = await loader.getHarness(
-        PDropdownHarness.with({ inputId: 'columnGroupSelectionDropdown' })
+        PSelectHarness.with({ inputId: 'columnGroupSelectionDropdown' })
       )
-      const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
+      const dropdownItems = await columnGroupSelectionDropdown.getSelectItems()
       await dropdownItems[1].selectItem()
 
       tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
@@ -823,9 +823,9 @@ describe('InteractiveDataViewComponent', () => {
       ]
 
       const columnGroupSelectionDropdown = await loader.getHarness(
-        PDropdownHarness.with({ inputId: 'columnGroupSelectionDropdown' })
+        PSelectHarness.with({ inputId: 'columnGroupSelectionDropdown' })
       )
-      const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
+      const dropdownItems = await columnGroupSelectionDropdown.getSelectItems()
       await dropdownItems[1].selectItem()
 
       tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
@@ -895,9 +895,9 @@ describe('InteractiveDataViewComponent', () => {
       ]
 
       const columnGroupSelectionDropdown = await loader.getHarness(
-        PDropdownHarness.with({ inputId: 'columnGroupSelectionDropdown' })
+        PSelectHarness.with({ inputId: 'columnGroupSelectionDropdown' })
       )
-      const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
+      const dropdownItems = await columnGroupSelectionDropdown.getSelectItems()
       await dropdownItems[1].selectItem()
 
       tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
@@ -1193,9 +1193,9 @@ describe('InteractiveDataViewComponent', () => {
       fixture.detectChanges()
       // select FULL group
       const columnGroupSelectionDropdown = await loader.getHarness(
-        PDropdownHarness.with({ inputId: 'columnGroupSelectionDropdown' })
+        PSelectHarness.with({ inputId: 'columnGroupSelectionDropdown' })
       )
-      const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
+      const dropdownItems = await columnGroupSelectionDropdown.getSelectItems()
       await dropdownItems[2].selectItem()
 
       const dataView = await loader.getHarness(DataViewHarness)
@@ -1440,20 +1440,19 @@ describe('InteractiveDataViewComponent', () => {
     let dataGrid: DataListGridHarness | null
     let gridItems: DefaultGridItemHarness[]
 
-    let sortingDropdown: PDropdownHarness
+    let sortingDropdown: PSelectHarness
     let sortingDropdownItems: ListItemHarness[]
     let dataListGridSortingButton: PButtonHarness
 
     beforeEach(async () => {
       dataLayoutSelection = await loader.getHarness(DataLayoutSelectionHarness)
 
-      const gridLayoutSelectionButton = await dataLayoutSelection.getGridLayoutSelectionButton()
-      await gridLayoutSelectionButton?.click()
+      await dataLayoutSelection.selectGridLayout()
 
       dataView = await loader.getHarness(DataViewHarness)
       dataGrid = await dataView?.getDataListGrid()
-      sortingDropdown = await loader.getHarness(PDropdownHarness.with({ id: 'dataListGridSortingDropdown' }))
-      sortingDropdownItems = await sortingDropdown.getDropdownItems()
+      sortingDropdown = await loader.getHarness(PSelectHarness.with({ id: 'dataListGridSortingDropdown' }))
+      sortingDropdownItems = await sortingDropdown.getSelectItems()
       dataListGridSortingButton = await loader.getHarness(PButtonHarness.with({ id: 'dataListGridSortingButton' }))
     })
     const expectedInitialGridItemsData = [
@@ -1586,22 +1585,21 @@ describe('InteractiveDataViewComponent', () => {
     let dataList: DataListGridHarness | null
     let listItems: DefaultListItemHarness[]
 
-    let sortingDropdown: PDropdownHarness
+    let sortingDropdown: PSelectHarness
     let sortingDropdownItems: ListItemHarness[]
     let dataListGridSortingButton: PButtonHarness
 
     beforeEach(async () => {
       dataLayoutSelection = await loader.getHarness(DataLayoutSelectionHarness)
-      const listLayoutSelectionButton = await dataLayoutSelection.getListLayoutSelectionButton()
-      await listLayoutSelectionButton?.click()
+      await dataLayoutSelection.selectListLayout()
 
       fixture.detectChanges()
       await fixture.whenStable()
 
       dataView = await loader.getHarness(DataViewHarness)
       dataList = await dataView?.getDataListGrid()
-      sortingDropdown = await loader.getHarness(PDropdownHarness.with({ id: 'dataListGridSortingDropdown' }))
-      sortingDropdownItems = await sortingDropdown.getDropdownItems()
+      sortingDropdown = await loader.getHarness(PSelectHarness.with({ id: 'dataListGridSortingDropdown' }))
+      sortingDropdownItems = await sortingDropdown.getSelectItems()
       dataListGridSortingButton = await loader.getHarness(PButtonHarness.with({ id: 'dataListGridSortingButton' }))
     })
     const expectedInitialListItemsData = [
@@ -1733,18 +1731,18 @@ describe('InteractiveDataViewComponent', () => {
 
     let dataList: DataListGridHarness | null
     let listItems: DefaultListItemHarness[]
-    let listLayoutSelectionButton: TestElement | null
+    // let listLayoutSelectionButton: TestElement | null
 
     let dataGrid: DataListGridHarness | null
     let gridItems: DefaultGridItemHarness[]
-    let gridLayoutSelectionButton: TestElement | null
+    // let gridLayoutSelectionButton: any
 
     beforeEach(async () => {
       component.subtitleLineIds = ['startDate', 'testNumber']
 
       dataLayoutSelection = await loader.getHarness(DataLayoutSelectionHarness)
-      listLayoutSelectionButton = await dataLayoutSelection.getListLayoutSelectionButton()
-      gridLayoutSelectionButton = await dataLayoutSelection.getGridLayoutSelectionButton()
+      // listLayoutSelectionButton = await dataLayoutSelection.getListLayoutSelectionButton()
+      // gridLayoutSelectionButton = await dataLayoutSelection.getGridLayoutSelectionButton()
 
       dataView = await loader.getHarness(DataViewHarness)
       dataTable = await dataView.getDataTable()
@@ -1785,16 +1783,16 @@ describe('InteractiveDataViewComponent', () => {
     it('should remain sorted after switching data view from table view to grid view and to list view', async () => {
       window.HTMLElement.prototype.scrollIntoView = jest.fn()
       const columnGroupSelectionDropdown = await loader.getHarness(
-        PDropdownHarness.with({ inputId: 'columnGroupSelectionDropdown' })
+        PSelectHarness.with({ inputId: 'columnGroupSelectionDropdown' })
       )
-      const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
+      const dropdownItems = await columnGroupSelectionDropdown.getSelectItems()
       await dropdownItems[1].selectItem()
 
       tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
       const sortButton = await tableHeaders?.[6].getSortButton()
       await sortButton?.click()
 
-      await gridLayoutSelectionButton?.click()
+      await dataLayoutSelection.selectGridLayout()
 
       dataGrid = await dataView.getDataListGrid()
       gridItems = (await dataGrid?.getDefaultGridItems()) ?? []
@@ -1802,7 +1800,7 @@ describe('InteractiveDataViewComponent', () => {
 
       expect(gridItemsData).toEqual(expectedSortedGridItemsDataAscending)
 
-      await listLayoutSelectionButton?.click()
+      await dataLayoutSelection.selectListLayout()
 
       dataList = await dataView.getDataListGrid()
       listItems = (await dataList?.getDefaultListItems()) ?? []
@@ -1814,16 +1812,16 @@ describe('InteractiveDataViewComponent', () => {
     it('should remain sorted after switching data view from table view to list view then sort again and switch to grid view', async () => {
       window.HTMLElement.prototype.scrollIntoView = jest.fn()
       const columnGroupSelectionDropdown = await loader.getHarness(
-        PDropdownHarness.with({ inputId: 'columnGroupSelectionDropdown' })
+        PSelectHarness.with({ inputId: 'columnGroupSelectionDropdown' })
       )
-      const dropdownItems = await columnGroupSelectionDropdown.getDropdownItems()
+      const dropdownItems = await columnGroupSelectionDropdown.getSelectItems()
       await dropdownItems[1].selectItem()
 
       tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
       const sortButton = await tableHeaders?.[6].getSortButton()
       await sortButton?.click()
 
-      await listLayoutSelectionButton?.click()
+      await dataLayoutSelection.selectListLayout()
 
       dataList = await dataView.getDataListGrid()
       listItems = (await dataList?.getDefaultListItems()) ?? []
@@ -1831,7 +1829,7 @@ describe('InteractiveDataViewComponent', () => {
 
       expect(listItemsData).toEqual(expectedSortedListItemsDataAscending)
 
-      const sortingDropdown = await loader.getHarness(PDropdownHarness.with({ id: 'dataListGridSortingDropdown' }))
+      const sortingDropdown = await loader.getHarness(PSelectHarness.with({ id: 'dataListGridSortingDropdown' }))
       const dataListGridSortingButton = await loader.getHarness(
         PButtonHarness.with({ id: 'dataListGridSortingButton' })
       )
@@ -1844,7 +1842,7 @@ describe('InteractiveDataViewComponent', () => {
 
       expect(listItemsData).toEqual(expectedSortedListItemsDataDescending)
 
-      await gridLayoutSelectionButton?.click()
+      await dataLayoutSelection.selectGridLayout()
 
       dataGrid = await dataView.getDataListGrid()
       gridItems = (await dataGrid?.getDefaultGridItems()) ?? []
@@ -1869,7 +1867,7 @@ describe('InteractiveDataViewComponent', () => {
 
       expect(rows).toEqual(expectedFilteredRowsData)
 
-      await gridLayoutSelectionButton?.click()
+      await dataLayoutSelection.selectGridLayout()
 
       dataGrid = await dataView.getDataListGrid()
       gridItems = (await dataGrid?.getDefaultGridItems()) ?? []
@@ -1877,7 +1875,7 @@ describe('InteractiveDataViewComponent', () => {
 
       expect(gridItemsData).toEqual(expectedFilteredGridItemsData)
 
-      await listLayoutSelectionButton?.click()
+      await dataLayoutSelection.selectListLayout()
 
       dataList = await dataView.getDataListGrid()
       listItems = (await dataList?.getDefaultListItems()) ?? []
@@ -2004,11 +2002,15 @@ describe('InteractiveDataViewComponent', () => {
 
       it('should hide a button based on a given field path', async () => {
         await setUpMockData('grid')
-        component.viewActionVisibleField = 'ready'
         const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
         await (await dataView?.getMenuButton())?.click()
+        expect(await dataView?.hasAmountOfActionButtons('grid', 3)).toBe(true)
+        await (await dataView?.getMenuButton())?.click()
+
+        component.viewActionVisibleField = 'ready'
+        await (await dataView?.getMenuButton())?.click()
+
         expect(await dataView?.hasAmountOfActionButtons('grid', 2)).toBe(true)
-        expect(await dataView?.hasAmountOfActionButtons('grid-hidden', 1)).toBe(true)
         expect(await dataView?.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
       })
     })
