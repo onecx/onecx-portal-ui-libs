@@ -24,6 +24,12 @@ export default class ThemeConfig {
               background: (this.themeVariables as any)['general']['content-bg-color'],
               hoverBackground: (this.themeVariables as any)['general']['hover-bg-color'],
             },
+            list: {
+              option: {
+                selectedColor: (this.themeVariables as any)['general']['primary-color'],
+                selectedFocusColor: (this.themeVariables as any)['general']['primary-color']
+              }
+            }
           },
         },
       },
