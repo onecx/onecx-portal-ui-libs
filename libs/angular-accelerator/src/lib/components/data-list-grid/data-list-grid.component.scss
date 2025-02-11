@@ -12,3 +12,15 @@
   cursor: pointer;
   min-width: 4rem;
 }
+
+.list-border-divider {
+  border-top: 0.0625rem;
+  border-top-style: solid;
+  border-color: var(--p-surface-200);
+}
+
+.grid-border-divider {
+  border: 0.0625rem;
+  border-style: solid;
+  border-color: var(--p-surface-200);
+}

@@ -13,7 +13,7 @@
   paginatorDropdownAppendTo="body"
 >
   <ng-template #grid let-rows>
-    <div class="p-grid p-nogutter grid grid-nogutter">
+    <div class="grid grid-cols-12 gap-4">
       @for (item of rows; track item) {
       <ng-container
         [ngTemplateOutlet]="_gridItem ? _gridItem : defaultGridItem"
@@ -24,11 +24,12 @@
   </ng-template>
   <ng-template #list let-rows>
     <div class="p-grid p-nogutter grid grid-nogutter">
-      @for (item of rows; track item) { @defer (on viewport; on idle){
+      @for (item of rows; track item; let first = $first) { @defer (on viewport; on idle){
       <ng-container
         [ngTemplateOutlet]="_listItem ? _listItem : defaultListItem"
         [ngTemplateOutletContext]="{
               item:item,
+              first:first,
               columnTemplates: columnTemplates
               }"
       ></ng-container>
@@ -44,7 +45,7 @@
 } }
 
 <ng-template #defaultGridItem let-item>
-  <div class="col-12 lg:col-6 xl:col-4 flex">
+  <div class="col-12 lg:col-6 xl:col-4 p-1 flex justify-content-center grid-border-divider">
     <div class="data-grid-item card flex flex-column justify-content-between w-12 lg:w-11 mb-4 mt-4 align-self-stretch">
       <div class="flex justify-content-center mb-3">
         <img
@@ -86,10 +87,10 @@
   <div class="subtitleLine edit-time text-xl my-3">{{ resolveFieldData(item, subtitleLineId) }}</div>
   }
 </ng-template>
-<ng-template #defaultListItem let-item="item" let-columnTemplates="columnTemplates">
+<ng-template #defaultListItem let-item="item" let-first="first" let-columnTemplates="columnTemplates">
   @if (columnTemplates) {
   <div class="col-12">
-    <div class="data-list-items p-3">
+    <div class="data-list-items p-1" [ngClass]="{ 'list-border-divider': !first }">
       <div class="item-name-row flex flex-row justify-content-between">
         <div class="item-name mr-3 text-2xl font-medium align-content-center">
           @if (titleLineId) {
