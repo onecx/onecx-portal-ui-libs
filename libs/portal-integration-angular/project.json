@@ -90,7 +90,6 @@
         "browserTarget": "portal-integration-angular:build-storybook",
         "compodoc": false,
         "styles": [
-          "node_modules/primeng/resources/primeng.min.css",
           "node_modules/primeicons/primeicons.css",
           "libs/portal-integration-angular/assets/styles.scss",
           "libs/portal-integration-angular/.storybook/storybook.css"
@@ -116,7 +115,6 @@
         "browserTarget": "portal-integration-angular:build-storybook",
         "compodoc": false,
         "styles": [
-          "node_modules/primeng/resources/primeng.min.css",
           "node_modules/primeicons/primeicons.css",
           "libs/portal-integration-angular/assets/styles.scss",
           "libs/portal-integration-angular/.storybook/storybook.css"
