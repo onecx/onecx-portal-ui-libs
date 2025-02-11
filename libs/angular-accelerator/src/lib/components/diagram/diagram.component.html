@@ -1,14 +1,15 @@
 @if (this.data) {
   @if (shownDiagramTypes.length > 1) {
     <div class="flex justify-content-center pb-2">
-      <p-selectButton
+      <p-selectbutton
         [options]="shownDiagramTypes"
         [(ngModel)]="selectedDiagramType"
         optionLabel="id"
         (onChange)="onDiagramTypeChanged($event)"
         name="diagram-type-select-button"
+        [allowEmpty]="false"
         >
-        <ng-template let-item pTemplate>
+        <ng-template #item let-item>
           <i
             [class]="item.icon"
             [pTooltip]="item.tooltip || (item.tooltipKey | translate)"
@@ -17,7 +18,7 @@
           ></i>
           <label style="display: none" id="{{item.id}}"> {{item.label ? item.label : item.labelKey | translate}} </label>
         </ng-template>
-      </p-selectButton>
+      </p-selectbutton>
     </div>
   }
   <div class="w-full flex justify-content-center">
