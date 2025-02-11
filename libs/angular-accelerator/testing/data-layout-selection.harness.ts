@@ -1,4 +1,4 @@
-import { ContentContainerComponentHarness, TestElement } from '@angular/cdk/testing'
+import { ContentContainerComponentHarness } from '@angular/cdk/testing'
 import { PToggleButtonHarness } from 'libs/angular-testing/src/lib/harnesses/primeng/p-togglebutton.harness'
 
 export class DataLayoutSelectionHarness extends ContentContainerComponentHarness {

@@ -19,6 +19,7 @@ export * from './lib/harnesses/primeng/p-paginator.harness'
 export * from './lib/harnesses/primeng/p-password.harness'
 export * from './lib/harnesses/primeng/p-picklist.harness'
 export * from './lib/harnesses/primeng/p-selectButton.harness'
+export * from './lib/harnesses/primeng/p-togglebutton.harness'
 
 export * from './lib/harnesses/utils/primeicon.utils'
 
