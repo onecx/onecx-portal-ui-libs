@@ -110,16 +110,16 @@ const CustomContentInteractiveDataView: StoryFn<InteractiveDataViewComponent> = 
   props: args,
   template: `
   <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
-    <ng-template #listItem let-item>
+    <ng-template #list let-item>
       <div class="w-full px-4 py-2 card mb-4">
         <p>{{item.product}}</p>
         <p-progressBar [value]="item.amount" />
       </div>
     </ng-template>
-    <ng-template #gridItem let-item>
+    <ng-template #grid let-item>
       <div class="w-3 px-4 py-2 card m-0 mr-4">
         <p>{{item.product}}</p>
-        <p-progressBar [value]="item.amount" />
+        <p-progressBar [value]="item.amount" showValue="false"/>
       </div>
   </ng-template>
   <ng-template #topCenter>
