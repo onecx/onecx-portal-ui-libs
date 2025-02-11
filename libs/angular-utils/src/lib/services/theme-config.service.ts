@@ -1,10 +1,20 @@
-import { ENVIRONMENT_INITIALIZER, Injectable, inject } from '@angular/core'
-import { Theme } from '@onecx/integration-interface'
+import { ENVIRONMENT_INITIALIZER, Inject, Injectable, InjectionToken, Optional, inject } from '@angular/core'
 import { ThemeService } from '@onecx/angular-integration-interface'
-import { updatePreset } from '@primeng/themes'
+import { Theme as OneCXTheme} from '@onecx/integration-interface'
+import { Base } from 'primeng/base'
+import { PrimeNG } from 'primeng/config'
 import ThemeConfig from '../theme/theme-config'
+import { CustomUseStyle } from './custom-use-style.service'
+import { UseStyle } from 'primeng/usestyle'
+import { Theme } from '@primeuix/styled';
+import Aura from "@primeng/themes/aura"
+import { mergeDeep } from '../utils/deep-merge.utils'
+
+export const THEME_OVERRIDES = new InjectionToken<any>('THEME_OVERRIDES')
 
 export function provideThemeConfigService() {
+  Theme.clearLoadedStyleNames()
+  Base.clearLoadedStyleNames()
   return [
     {
       provide: ENVIRONMENT_INITIALIZER,
@@ -14,6 +24,10 @@ export function provideThemeConfigService() {
       },
     },
     ThemeConfigService,
+    {
+      provide: UseStyle,
+      useClass: CustomUseStyle
+    },
   ]
 }
 
@@ -21,17 +35,29 @@ export function provideThemeConfigService() {
   providedIn: 'root',
 })
 export class ThemeConfigService {
-  constructor(private themeService: ThemeService) {
+  constructor(
+    private themeService: ThemeService,
+    private primeNG: PrimeNG,
+    private useStyleService: CustomUseStyle,
+    @Optional() @Inject(THEME_OVERRIDES) private themeOverrides?: any,
+  ) {
     this.themeService.currentTheme$.subscribe((theme) => {
       this.applyThemeVariables(theme)
     })
   }
 
-  applyThemeVariables(oldTheme: Theme): void {
+  async applyThemeVariables(oldTheme: OneCXTheme): Promise<void> {
     const oldThemeVariables = oldTheme.properties
     const themeConfig = new ThemeConfig(oldThemeVariables)
-    updatePreset(themeConfig.getConfig())
-    //usePreset(customPreset)
-    //this.primengConfig = customPreset
+    const computedPrefix = await this.useStyleService.getStyleIdentifier()
+    const themeOverrides = mergeDeep(themeConfig.getConfig(), this.themeOverrides ?? {})
+    this.primeNG.setThemeConfig({
+      theme: {
+        preset: mergeDeep(Aura, themeOverrides),
+        options: {
+          prefix: computedPrefix === '' ? 'p' : computedPrefix
+        }
+      }
+    })
   }
 }

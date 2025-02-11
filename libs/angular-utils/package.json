@@ -11,9 +11,11 @@
     "@onecx/accelerator": "6.0.0-rc.3",
     "@onecx/integration-interface": "5.31.0",
     "@onecx/angular-integration-interface": "6.0.0-rc.3",
+    "@onecx/angular-remote-components": "6.0.0-rc.3",
     "@primeng/themes": "^19.0.5",
     "rxjs": "^7.8.1",
-    "primeng": "^18.0.2"
+    "primeng": "^18.0.2",
+    "@primeuix/styled": "^0.3.2"
   },
   "publishConfig": {
     "access": "public"
