@@ -14,6 +14,7 @@ import { StorybookTranslateModule } from '../../storybook-translate.module'
 import { StorybookBreadcrumbModule } from './../../storybook-breadcrumb.module'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
 import { StorybookThemeModule } from '../../storybook-theme.module'
+import { TooltipModule } from 'primeng/tooltip'
 
 export default {
   title: 'Components/PageHeaderComponent',
@@ -39,6 +40,7 @@ export default {
           { label: 'Level 1', routerLink: ['/something'] },
           { label: 'Level 2', url: '/' },
         ]),
+        TooltipModule,
       ],
     }),
   ],
@@ -269,12 +271,12 @@ const TemplateWithFigureProjection: StoryFn<PageHeaderComponent> = (args) => ({
   props: args,
   template: `
   <ocx-page-header [header]="header" [subheader]="subheader" [actions]="actions" [figureBackground]="false">
-    <div figureImage  class="bg-orange-500 text-white w-full h-full">
+    <div figureImage [ngStyle]="{backgroundColor:'var(--p-orange-500)'}" class="text-white w-full h-full">
       <div><i class="pi pi-user"></i></div>
     </div>
     <div>
       The figure is an html with the following content:
-      <textarea readonly class="block w-full"><div class="bg-orange-500 text-white"><i class="pi pi-user"></i></div></textarea>
+      <textarea readonly class="block w-full"><div [ngStyle]="{backgroundColor:'var(--p-orange-500)'}" class="text-white"><i class="pi pi-user"></i></div></textarea>
     </div>
   </ocx-page-header>`,
 })

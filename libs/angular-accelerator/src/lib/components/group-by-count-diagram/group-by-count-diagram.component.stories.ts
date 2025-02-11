@@ -15,6 +15,7 @@ import { GroupByCountDiagramComponent } from './group-by-count-diagram.component
 import { DiagramComponent } from '../diagram/diagram.component'
 import { ColumnType } from '../../model/column-type.model'
 import { StorybookThemeModule } from '../../storybook-theme.module'
+import { TooltipModule } from 'primeng/tooltip';
 
 export default {
   title: 'Components/GroupByCountDiagramComponent',
@@ -43,6 +44,7 @@ export default {
         StorybookTranslateModule,
         ChartModule,
         SelectButtonModule,
+        TooltipModule,
       ],
     }),
   ],

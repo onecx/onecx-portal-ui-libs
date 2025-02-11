@@ -15,6 +15,7 @@ import { DiagramComponent } from './diagram.component'
 import { DiagramType } from '../../model/diagram-type'
 import { DiagramData } from '../../model/diagram-data'
 import { StorybookThemeModule } from '../../storybook-theme.module'
+import { TooltipModule } from 'primeng/tooltip';
 
 export default {
   title: 'Components/DiagramComponent',
@@ -44,6 +45,7 @@ export default {
         ChartModule,
         SelectButtonModule,
         FormsModule,
+        TooltipModule,
       ],
     }),
   ],

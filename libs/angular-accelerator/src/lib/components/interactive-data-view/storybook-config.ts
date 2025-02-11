@@ -41,6 +41,8 @@ import { FilterType } from '../../model/filter.model'
 import { TooltipOnOverflowDirective } from '../../directives/tooltipOnOverflow.directive'
 import { SkeletonModule } from 'primeng/skeleton'
 import { StorybookThemeModule } from '../../storybook-theme.module'
+import { TooltipModule } from 'primeng/tooltip';
+import { TooltipStyle } from 'primeng/tooltip'
 
 export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewComponent> = {
   title: 'Components/InteractiveDataViewComponent',
@@ -70,6 +72,7 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
           },
         },
         importProvidersFrom(StorybookThemeModule),
+        TooltipStyle,
       ],
     }),
     moduleMetadata({
@@ -107,6 +110,7 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
         FocusTrapModule,
         ChipModule,
         SkeletonModule,
+        TooltipModule,
       ],
     }),
   ],

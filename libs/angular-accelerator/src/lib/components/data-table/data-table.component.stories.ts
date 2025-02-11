@@ -18,6 +18,8 @@ import { CheckboxModule } from 'primeng/checkbox'
 import { FormsModule } from '@angular/forms'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { StorybookThemeModule } from '../../storybook-theme.module'
+import { TooltipModule } from 'primeng/tooltip';
+import { SkeletonModule } from 'primeng/skeleton';
 
 type DataTableInputTypes = Pick<DataTableComponent, 'rows' | 'columns' | 'emptyResultsMessage' | 'selectedRows'>
 
@@ -50,6 +52,8 @@ const DataTableComponentSBConfig: Meta<DataTableComponent> = {
         MenuModule,
         CheckboxModule,
         FormsModule,
+        TooltipModule,
+        SkeletonModule,
       ],
     }),
   ],
