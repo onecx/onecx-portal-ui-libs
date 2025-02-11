@@ -49,6 +49,38 @@ export default {
       },
       transitionDuration: '{transition.duration}',
     },
+    // INFO: Lists in all select and list components (except for tree select and menus)
+    list: {
+      // INFO: List container doesn't seem to have padding in our apps
+      // padding: '0.25rem 0.25rem',
+      // TODO: Do we set a padding here and reduce the padding of the individual items?
+      padding: '0',
+      // INFO: new variable, gap between each item in list
+      gap: '2px',
+      header: {
+        // INFO: --input-list-header-padding used
+        //padding: '0.5rem 1rem 0.25rem 1rem',
+        padding: '0.75rem',
+      },
+      option: {
+        // INFO: --input-list-item-padding used
+        // padding: '0.25rem 0.25rem',
+        // TODO: Do we reduce this because of the newly introduced gap?
+        padding: '0.75rem 0.75rem',
+        // INFO: --input-list-item-border-radius used
+        // borderRadius: '{border.radius.sm}',
+        // TODO: If we decide to add padding to list container, a little bit of border radius would look great
+        borderRadius: 0,
+      },
+      optionGroup: {
+        // INFO: --submenu-header-padding used
+        // padding: '0.5rem 0.75rem',
+        padding: '0.75rem',
+        // INFO: --submenu-header-font-weight used (400) -> no difference to weight of normal list item
+        // TODO: Decide if we want to keep 600 or revert back to 400
+        fontWeight: '600',
+      },
+    },
     mask: {
       // INFO: No variable for this, so probably was default PrimeNG value
       transitionDuration: '0.15s',
@@ -288,6 +320,43 @@ export default {
             borderColor: '{surface.200}',
             // INFO: --text-color used
             color: '{text.color}',
+          },
+        },
+        // INFO: Lists in all select and list components (except for tree select and menus)
+        list: {
+          option: {
+            // INFO: --input-list-item-hover-bg used
+            // INFO: Could be focusBackground: 'rgba(0, 0, 0, 0.04)'
+            focusBackground: '{surface.100}',
+            // INFO: --highlight-bg used
+            selectedBackground: '{highlight.background}',
+            // INFO: --highlight-bg used
+            selectedFocusBackground: '{highlight.focus.background}',
+            // INFO: --text-color used
+            color: '{text.color}',
+            // INFO: --text-color used
+            // TODO: Maybe it makes sense to leave hover color?
+            focusColor: '{text.hover.color}',
+            // INFO: --primary-color used
+            selectedColor: '{highlight.color}',
+            // INFO: --primary-color used
+            selectedFocusColor: '{highlight.focus.color}',
+            icon: {
+              // INFO: --text-secondary-color used
+              // TODO: Decide on secondary color or surface
+              color: '{surface.400}',
+              // INFO: --text-secondary-color used
+              // TODO: Decide on secondary color or surface
+              focusColor: '{surface.500}',
+            },
+          },
+          optionGroup: {
+            // INFO: --submenu-header-bg used
+            // INFO: Could be background: '#ffffff'
+            background: '{surface.0}',
+            // INFO: --text-secondary-color used
+            // TODO: Decide on secondary color or text.muted
+            color: '{text.muted.color}',
           },
         },
         // INFO: All menu components

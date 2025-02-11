@@ -1,4 +1,4 @@
-import themevariables from './default-theme-variables'
+import themevariables from './preset/default-theme-variables'
 export default {
   primitive: {
     borderRadius: {
