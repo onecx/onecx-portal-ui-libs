@@ -120,7 +120,7 @@
       [rowSelectable]="rowSelectable"
       tableStyleClass="h-full"
       >
-      <ng-template pTemplate="header">
+      <ng-template #header>
         <tr style="vertical-align: top">
           @if (selectionChangedObserved) {
             <th style="width: 4rem" scope="col">
@@ -158,7 +158,7 @@
                     @if (currentEqualFilterOptions$ | async; as equalFilterOptions) {
                       @if (columnFilterTemplates$ | async; as columnFilterTemplates) {
                         @if (column.filterable && (!column.filterType || column.filterType === FilterType.EQUALS)) {
-                          <p-multiSelect
+                          <p-multiselect
                             class="filterMultiSelect"
                             [options]="equalFilterOptions.column?.id === column.id ? equalFilterOptions.options : []"
                             [ngModel]="(currentEqualSelectedFilters$ | async) || []"
@@ -167,21 +167,21 @@
                             [displaySelectedLabel]="false"
                             [resetFilterOnHide]="true"
                             (onChange)="onMultiselectFilterChange(column, $event)"
-                            placeholder="Icon"
+                            placeholder=" "
                             appendTo="body"
                             (onFocus)="onFilterChosen(column)"
                             [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
                             [ariaLabel]="'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL' | translate"
                             [ariaFilterLabel]="('OCX_DATA_TABLE.FILTER_ARIA_LABEL' | translate: { column: column.nameKey | translate})"
                             >
-                            <ng-template pTemplate="selectedItems" let-value>
+                            <ng-template #selecteditems let-value>
                               <div
                                 class="pi"
                                 [class.pi-filter]="!((filterAmounts$ | async) || {})[column.id]"
                                 [class.pi-filter-fill]="((filterAmounts$ | async) || {})[column.id] > 0"
                               ></div>
                             </ng-template>
-                            <ng-template pTemplate="item" let-value>
+                            <ng-template #item let-value>
                               @if (columnFilterTemplates[column.id]; as template) {
                                 <ng-container
                                   [ngTemplateOutlet]="template"
@@ -193,12 +193,12 @@
                                 </ng-container>
                               }
                             </ng-template>
-                          </p-multiSelect>
+                          </p-multiselect>
                         }
                       }
                     }
                     @if (column.filterable && column.filterType === FilterType.IS_NOT_EMPTY) {
-                      <p-multiSelect
+                      <p-multiselect
                         class="filterMultiSelect"
                         [options]="truthyFilterOptions"
                         [ngModel]="(currentTruthySelectedFilters$ | async) || []"
@@ -207,22 +207,22 @@
                         [displaySelectedLabel]="false"
                         [resetFilterOnHide]="true"
                         (onChange)="onMultiselectFilterChange(column, $event)"
-                        placeholder="Icon"
+                        placeholder=" "
                         appendTo="body"
                         (onFocus)="onFilterChosen(column)"
                         [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
                         [ariaLabel]="'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL' | translate"
                         [ariaFilterLabel]="('OCX_DATA_TABLE.FILTER_ARIA_LABEL' | translate: { column: column.nameKey | translate})"
                         >
-                        <ng-template pTemplate="selectedItems" let-value>
+                        <ng-template #selecteditems let-value>
                           <div
                             class="pi"
                             [class.pi-filter]="!((filterAmounts$ | async) || {})[column.id]"
                             [class.pi-filter-fill]="((filterAmounts$ | async) || {})[column.id] > 0"
                           ></div>
                         </ng-template>
-                        <ng-template pTemplate="item" let-value> {{value.key | translate}} </ng-template>
-                      </p-multiSelect>
+                        <ng-template #item let-value> {{value.key | translate}} </ng-template>
+                      </p-multiselect>
                     }
                   </span>
                 </div>
@@ -236,7 +236,7 @@
           }
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-rowObject>
+      <ng-template #body let-rowObject>
         @if (columnTemplates) {
           <tr>
             @if (selectionChangedObserved) {
@@ -286,7 +286,7 @@
         </tr>
       }
     </ng-template>
-    <ng-template pTemplate="emptymessage">
+    <ng-template #emptymessage>
       <tr>
         <td [colSpan]="columns.length + ((anyRowActionObserved || this.additionalActions.length > 0) ? 1 : 0)">
           {{ emptyResultsMessage || ("OCX_DATA_TABLE.EMPTY_RESULT" | translate) }}
