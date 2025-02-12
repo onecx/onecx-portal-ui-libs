@@ -9,8 +9,8 @@
       [(ngModel)]="selectedGroupKey"
       [ariaLabel]="'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABEL' | translate"
       >
-      <ng-template let-item pTemplate="item"> {{ item ? (item | translate) : ''}} </ng-template>
-      <ng-template let-item pTemplate="selectedItem"> {{ item ? (item | translate) : ''}} </ng-template>
+      <ng-template let-item #item> {{ item ? (item | translate) : ''}} </ng-template>
+      <ng-template let-item #selectedItem> {{ item ? (item | translate) : ''}} </ng-template>
     </p-select>
   }
   @if ((allGroupKeys$ | async)?.length) {
