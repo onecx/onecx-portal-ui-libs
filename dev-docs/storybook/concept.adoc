@@ -16,7 +16,7 @@ After looking at the OneCX Storybooks, developers should have a clear understand
 
 Based on the purpose outlined above, the following ideal structure for OneCX Storybooks can be derived:
 
-There should be one top-level Storybook for all of OneCX. This Storybook should explain what OneCX is, where developers can report bugs or submit feature requests and how they can contribute to the project. Additionally it should contain a subfolder for migration guides (e.g. v5 to v6) or link to the respective guide, should it exist in some other location (e.g. in OneCX Docs). In addition to the migration guides, the top-level Storybook should also link to all other external resources that might be relevant for developers using OneCX. This includes but isn't limited to links to the OneCX GitHub organization and the OneCX Docs. Lastly, it should list all @onecx libraries, briefly mention what their purpose is and link to their respective Storybooks. The library Storybooks should be added as child Storybooks inside the top-level Storybook. Child Storybooks can be added using xref:https://storybook.js.org/docs/sharing/storybook-composition[Storybook's composition feature].
+There should be one top-level Storybook for all of OneCX. This Storybook should explain what OneCX is, where developers can report bugs or submit feature requests and how they can contribute to the project. Additionally it should contain a subfolder for migration guides (e.g. v5 to v6) or link to the respective guide, should it exist in some other location (e.g. in OneCX Docs). In addition to the migration guides, the top-level Storybook should also link to all other external resources that might be relevant for developers using OneCX. This includes but isn't limited to links to the OneCX GitHub organization and the OneCX Docs. Lastly, it should list all @onecx libraries, briefly mention what their purpose is and link to their respective Storybooks. The library Storybooks should be added as child Storybooks inside the top-level Storybook. Child Storybooks can be added using https://storybook.js.org/docs/sharing/storybook-composition[Storybook's composition feature].
 
 Each lib-specific Storybook should be seen as the first entrypoint for developers wanting to work with a specific library. It should explain the respective library and its components in greater detail. The recommended structure for these Storybooks is as follows:
 
@@ -28,7 +28,7 @@ Each lib-specific Storybook should be seen as the first entrypoint for developer
 
 . Versions folder 
 * Contains one subfolder for each major version of the library
-* Contents of subfolders should be pulled in from version-specific Storybooks using xref:https://storybook.js.org/docs/sharing/storybook-composition[Storybook's composition feature]
+* Contents of subfolders should be pulled in from version-specific Storybooks using https://storybook.js.org/docs/sharing/storybook-composition[Storybook's composition feature]
 
 Each version-specific Storybook should contain the following sections:
 
@@ -46,19 +46,19 @@ Each version-specific Storybook should contain the following sections:
 * Contains subfolders for each of the library's main components (e.g. components, directives, pipes, services, utils)
 .. Components folder (if applicable)
 ... One folder for each component
-.... Contains a top-level page explaining the component, its inputs/outputs and its purpose/use-cases -> should be written in xref:https://storybook.js.org/docs/6/writing-docs/docs-page#with-mdx-documentation[MDX]
+.... Contains a top-level page explaining the component, its inputs/outputs and its purpose/use-cases -> should be written in https://storybook.js.org/docs/6/writing-docs/docs-page#with-mdx-documentation[MDX]
 .... Contains a kitchen sink story providing "controls" for all possible configuration options
 *** Enables developers to play around with the component and find the configuration that fits their needs
 .... Contains one story for each of the component's main use-cases (niche use-cases don't have to be covered as they are covered by the kitchen sink story)
 
 .. Directives folder (if applicable)
 ... One folder or page for each directive
-.... Contains a top-level page explaining the directive, usage options and its purpose/use-cases -> should be written in xref:https://storybook.js.org/docs/6/writing-docs/docs-page#with-mdx-documentation[MDX]
+.... Contains a top-level page explaining the directive, usage options and its purpose/use-cases -> should be written in https://storybook.js.org/docs/6/writing-docs/docs-page#with-mdx-documentation[MDX]
 .... (Optional) Contains stories showing the directive in action (e.g. applied to different components and using different configurations)
 
 .. Pipes folder (if applicable)
 ... One folder or page for each pipe
-.... Contains a top-level page explaining the pipe and its purpose/use-cases -> should be written in xref:https://storybook.js.org/docs/6/writing-docs/docs-page#with-mdx-documentation[MDX]
+.... Contains a top-level page explaining the pipe and its purpose/use-cases -> should be written in https://storybook.js.org/docs/6/writing-docs/docs-page#with-mdx-documentation[MDX]
 .... Contains story/stories showing the pipe in action (e.g. applied to a string)
 .. Services folder (if applicable)
 ... (Optional) Contains folders grouping services by their purpose
@@ -68,6 +68,7 @@ Each version-specific Storybook should contain the following sections:
 ... One page for each utility function explaining the function and its purpose/use-cases
 . Other topics folder (e.g. Theming, Templating, etc.)
 * Contains pages explaining other important topics related to the library
+* Depending on how overarching the topic is, it might also make sense to move it to the top-level Storybook of the respective library instead of keeping it in the version-specific Storybook
 
-One example for a well-structured Storybook containing most of the elements mentioned above is the documentation of the open source library xref:https://circuit.sumup.com/?path=/docs/introduction-welcome--docs[Circuit UI by SumUp]
+One example for a well-structured Storybook containing most of the elements mentioned above is the documentation of the open source library https://circuit.sumup.com[Circuit UI by SumUp].
 
