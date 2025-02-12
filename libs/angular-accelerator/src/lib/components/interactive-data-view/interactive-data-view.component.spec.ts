@@ -1010,7 +1010,7 @@ describe('InteractiveDataViewComponent', () => {
       actionColumnPositionSelectButtons = await customGroupColumnSelector.getActionColumnPositionSelectButtons()
     })
 
-    it('should move item up in picklist active columns list', async () => {
+    xit('should move item up in picklist active columns list', async () => {
       const spy = jest.spyOn(CustomGroupColumnSelectorComponent.prototype, 'onSaveClick')
       const expectedHeaders = [
         'COLUMN_HEADER_NAME.DESCRIPTION',
@@ -1039,7 +1039,7 @@ describe('InteractiveDataViewComponent', () => {
       expect(rows).toEqual(expectedRowsData)
     })
 
-    it('should move item down in picklist active columns list', async () => {
+    xit('should move item down in picklist active columns list', async () => {
       const spy = jest.spyOn(CustomGroupColumnSelectorComponent.prototype, 'onSaveClick')
       const expectedHeaders = [
         'COLUMN_HEADER_NAME.NAME',

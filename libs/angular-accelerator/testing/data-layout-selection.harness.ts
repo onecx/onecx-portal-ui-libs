@@ -1,5 +1,5 @@
 import { ContentContainerComponentHarness } from '@angular/cdk/testing'
-import { PToggleButtonHarness } from 'libs/angular-testing/src/lib/harnesses/primeng/p-togglebutton.harness'
+import { PToggleButtonHarness } from '@onecx/angular-testing'
 
 export class DataLayoutSelectionHarness extends ContentContainerComponentHarness {
   static hostSelector = 'ocx-data-layout-selection'
