@@ -4,6 +4,7 @@ import {
   InteractiveDataViewComponentSBConfig,
   defaultInteractiveDataViewArgs,
   InteractiveDataViewTemplate,
+  defaultInteractiveDataViewArgTypes,
 } from './storybook-config'
 import { ColumnType } from '../../model/column-type.model'
 
@@ -17,8 +18,13 @@ const defaultComponentArgs: InteractiveDataViewInputTypes = {
   ...defaultInteractiveDataViewArgs,
 }
 
+const defaultComponentArgTypes = {
+  ...defaultInteractiveDataViewArgTypes,
+}
+
 export const WithMockData = {
   argTypes: {
+    ...defaultComponentArgTypes,
     componentStateChanged: { action: 'componentStateChanged' },
     selectionChanged: { action: 'selectionChanged' },
   },
@@ -81,11 +87,13 @@ const HugeMockDataTemplate: StoryFn<InteractiveDataViewComponent> = (args) => ({
 
 export const WithHugeMockData = {
   argTypes: {
+    ...defaultComponentArgTypes,
     componentStateChanged: { action: 'componentStateChanged' },
     selectionChanged: { action: 'selectionChanged' },
   },
   render: HugeMockDataTemplate,
   args: {
+    ...defaultComponentArgs,
     columns: generateColumns(columnCount),
     data: generateRows(rowCount, columnCount),
     emptyResultsMessage: 'No results',
@@ -96,6 +104,7 @@ export const WithHugeMockData = {
 
 export const WithPageSizes = {
   argTypes: {
+    ...defaultComponentArgTypes,
     componentStateChanged: { action: 'componentStateChanged' },
   },
   render: InteractiveDataViewTemplate,

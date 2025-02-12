@@ -41,8 +41,9 @@ import { FilterType } from '../../model/filter.model'
 import { TooltipOnOverflowDirective } from '../../directives/tooltipOnOverflow.directive'
 import { SkeletonModule } from 'primeng/skeleton'
 import { StorybookThemeModule } from '../../storybook-theme.module'
-import { TooltipModule } from 'primeng/tooltip';
+import { TooltipModule } from 'primeng/tooltip'
 import { TooltipStyle } from 'primeng/tooltip'
+import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 
 export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewComponent> = {
   title: 'Components/InteractiveDataViewComponent',
@@ -71,6 +72,8 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
             },
           },
         },
+        { provide: UserService, useClass: MockUserService },
+        { provide: HAS_PERMISSION_CHECKER, useClass: MockUserService },
         importProvidersFrom(StorybookThemeModule),
         TooltipStyle,
       ],
@@ -182,4 +185,13 @@ export const defaultInteractiveDataViewArgs = {
     },
   ],
   emptyResultsMessage: 'No results',
+  deletePermission: 'TEST_MGMT#TEST_DELETE',
+  editPermission: 'TEST_MGMT#TEST_EDIT',
+  viewPermission: 'TEST_MGMT#TEST_VIEW',
+}
+
+export const defaultInteractiveDataViewArgTypes = {
+  deleteItem: { action: 'deleteItem' },
+  editItem: { action: 'editItem' },
+  viewItem: { action: 'viewItem' },
 }
