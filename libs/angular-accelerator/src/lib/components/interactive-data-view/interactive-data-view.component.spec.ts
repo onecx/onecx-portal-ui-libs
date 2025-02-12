@@ -53,6 +53,25 @@ import { PrimeIcons } from 'primeng/api'
 import { limit } from '../../utils/filter.utils'
 import { DatePipe } from '@angular/common'
 import { TooltipStyle } from 'primeng/tooltip'
+import { DomHandler } from 'primeng/dom'
+
+// primeng version 19.0.6 workaround for frozen column failing in tests
+DomHandler.siblings = (element) => {
+  return Array.prototype.filter.call(element.closest('*').children, function (child) {
+    return child !== element
+  })
+}
+
+// primeng version 19.0.6 workaround for frozen column failing in tests
+DomHandler.index = (element) => {
+  let children = element.closest('*').childNodes
+  let num = 0
+  for (var i = 0; i < children.length; i++) {
+    if (children[i] == element) return num
+    if (children[i].nodeType == 1) num++
+  }
+  return -1
+}
 
 describe('InteractiveDataViewComponent', () => {
   const mutationObserverMock = jest.fn(function MutationObserver(callback) {
