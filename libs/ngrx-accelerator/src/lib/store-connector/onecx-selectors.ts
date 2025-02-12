@@ -8,6 +8,7 @@ export function createOneCxSelector<State extends Record<string, any>>(): Memoiz
 export type OneCxSelectors<V> = {
   selectLocation: MemoizedSelector<V, LocationState | undefined>
   selectBackNavigationPossible: MemoizedSelector<V, boolean>
+  selectPermissions: MemoizedSelector<V, string[] | undefined>
 }
 
 export function getOneCxSelectors<V extends Record<string, any>>(
@@ -15,8 +16,10 @@ export function getOneCxSelectors<V extends Record<string, any>>(
 ): OneCxSelectors<V> {
   const selectLocation = createSelector(selectState, (state) => state.location)
   const selectBackNavigationPossible = createSelector(selectLocation, (location) => !!location && !location?.isFirst)
+  const selectPermissions = createSelector(selectState, (state) => state.permissions)
   return {
     selectLocation,
     selectBackNavigationPossible,
+    selectPermissions,
   }
 }
