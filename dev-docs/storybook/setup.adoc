@@ -1,34 +1,7 @@
-[#project-structure]
-== Project structure
-The following examples shows the file structure how to set up storybooks for a lib.
-[subs=+macros]
-----
-├── .storybook
-│   ├── main.js
-│   ├── preview.ts
-│   ├── storybook.css
-│   ├── tsconfig.json
-├── src
-│   ├── lib
-│   │   ├── components
-│   │   │    ├── featurecomponent1
-│   │   │    │    ├── featurecomponent1.component.html
-│   │   │    │    ├── featurecomponent1.component.scss
-│   │   │    │    ├── featurecomponent1.component.spec.ts
-│   │   │    │    ├── featurecomponent1.component.ts
-│   │   │    │    ├── storybook
-│   │   │    │    │    ├── featurecomponent1.stories.ts
-│   │   ├── directives  
-│   │   ├── ...
-│   │   ├── storybook.breadcrumb.module.ts
-│   │   ├── storybook-translate.module.ts        
-│   ├── assets
-│   │   │   ├── i18n
-│   │   │   ├── fonts
-│   │   │   ├── images
-│   │   │   ├── scss
-│   │   │   ├── yamls
-│   ├── environments
-│   │   │   ├── dev
-│   │   │   ├── prod
-----
+= Storybook Setup in OneCX (WIP)
+
+When setting up a Storybook for a new OneCX library, we mostly follow the default setup instructions provided by Storybook. 
+
+For an example of how we set up and use Storybooks in OneCX, you can take a look at the files and source code related to `@onecx/angular-accelerator` in the https://github.com/onecx/onecx-portal-ui-libs[`onecx/onecx-portal-ui-libs` repository].
+
+A comprehensive overview of Storybook, its core concepts and how to get started with it can be found in the https://storybook.js.org/docs[official Storybook documentation].
