@@ -78,11 +78,11 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   set pageSize(value: number | undefined) {
     this._pageSize$.next(value)
   }
-  _showAllOption$ = new BehaviorSubject<boolean>(false)
+  /**
+   * @deprecated
+   */
   @Input()
-  set showAllOption(value: boolean) {
-    this._showAllOption$.next(value)
-  }
+  set showAllOption(value: boolean) {}
 
   @Input() emptyResultsMessage: string | undefined
   @Input() fallbackImage = 'placeholder.png'
