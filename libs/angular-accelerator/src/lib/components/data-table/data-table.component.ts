@@ -148,13 +148,12 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   @Input() clientSideSorting = true
   @Input() sortStates: DataSortDirection[] = [DataSortDirection.ASCENDING, DataSortDirection.DESCENDING]
 
-  displayedPageSizes$: Observable<(number | { showAll: string })[]>
-  _pageSizes$ = new BehaviorSubject<(number | { showAll: string })[]>([10, 25, 50])
+  _pageSizes$ = new BehaviorSubject<number[]>([10, 25, 50])
   @Input()
-  get pageSizes(): (number | { showAll: string })[] {
+  get pageSizes(): number[] {
     return this._pageSizes$.getValue()
   }
-  set pageSizes(value: (number | { showAll: string })[]) {
+  set pageSizes(value: number[]) {
     this._pageSizes$.next(value)
   }
   displayedPageSize$: Observable<number>
@@ -403,15 +402,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   ) {
     super(locale, translateService)
     this.name = this.name || this.router.url.replace(/[^A-Za-z0-9]/, '_')
-    this.displayedPageSizes$ = combineLatest([
-      this._pageSizes$,
-      this.translateService.get('OCX_DATA_TABLE.ALL'),
-      this._showAllOption$,
-    ]).pipe(
-      map(([pageSizes, translation, showAllOption]) =>
-        showAllOption ? pageSizes.concat({ showAll: translation }) : pageSizes
-      )
-    )
     this.displayedPageSize$ = combineLatest([this._pageSize$, this._pageSizes$]).pipe(
       map(([pageSize, pageSizes]) => pageSize ?? pageSizes.find((val): val is number => typeof val === 'number') ?? 50)
     )

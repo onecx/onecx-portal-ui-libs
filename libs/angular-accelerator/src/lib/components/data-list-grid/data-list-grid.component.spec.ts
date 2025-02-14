@@ -34,7 +34,6 @@ describe('DataListGridComponent', () => {
     OCX_DATA_TABLE: {
       SHOWING: '{{first}} - {{last}} of {{totalRecords}}',
       SHOWING_WITH_TOTAL_ON_SERVER: '{{first}} - {{last}} of {{totalRecords}} ({{totalRecordsOnServer}})',
-      ALL: 'All',
     },
   }
 
@@ -43,7 +42,6 @@ describe('DataListGridComponent', () => {
     OCX_DATA_TABLE: {
       SHOWING: '{{first}} - {{last}} von {{totalRecords}}',
       SHOWING_WITH_TOTAL_ON_SERVER: '{{first}} - {{last}} von {{totalRecords}} ({{totalRecordsOnServer}})',
-      ALL: 'Alle',
     },
   }
 
@@ -293,40 +291,12 @@ describe('DataListGridComponent', () => {
     })
   })
 
-  describe('should display the paginator rowsPerPageOptions -', () => {
-    it('de', async () => {
-      window.HTMLElement.prototype.scrollIntoView = jest.fn()
-      translateService.use('de')
-      fixture = TestBed.createComponent(DataListGridComponent)
-      component = fixture.componentInstance
-      component.data = mockData
-      component.columns = mockColumns
-      component.paginator = true
-      fixture.detectChanges()
-      const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
-      const paginator = await dataListGrid.getPaginator()
-      const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
-      let rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
-      expect(rowsPerPageOptionsText).toEqual('10')
-
-      component.showAllOption = true
-      rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
-      expect(rowsPerPageOptionsText).toEqual('Alle')
-    })
-
-    it('en', async () => {
-      window.HTMLElement.prototype.scrollIntoView = jest.fn()
-      translateService.use('en')
-      const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
-      const paginator = await dataListGrid.getPaginator()
-      const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
-      let rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
-      expect(rowsPerPageOptionsText).toEqual('10')
-
-      component.showAllOption = true
-      rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
-      expect(rowsPerPageOptionsText).toEqual('All')
-    })
+  it('should display the paginator rowsPerPageOptions', async () => {
+    const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
+    const paginator = await dataListGrid.getPaginator()
+    const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
+    const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
+    expect(rowsPerPageOptionsText).toEqual('10')
   })
 
   const setUpListActionButtonMockData = async () => {
