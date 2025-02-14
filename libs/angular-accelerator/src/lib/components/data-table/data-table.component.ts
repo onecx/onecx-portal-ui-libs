@@ -165,10 +165,11 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   set pageSize(value: number | undefined) {
     this._pageSize$.next(value)
   }
-  _showAllOption$ = new BehaviorSubject<boolean>(false)
+  /**
+   * @deprecated
+   */
   @Input()
   set showAllOption(value: boolean) {
-    this._showAllOption$.next(value)
   }
 
   @Input() emptyResultsMessage: string | undefined

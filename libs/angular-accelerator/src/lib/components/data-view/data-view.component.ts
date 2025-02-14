@@ -105,6 +105,9 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   @Input() sortStates: DataSortDirection[] = [DataSortDirection.ASCENDING, DataSortDirection.DESCENDING]
   @Input() pageSizes: number[] = [10, 25, 50]
   @Input() pageSize: number | undefined
+  /**
+   * @deprecated
+   */
   @Input() showAllOption = false
 
   @Input() stringTableCellTemplate: TemplateRef<any> | undefined
