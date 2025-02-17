@@ -1,3 +1,4 @@
+import { formatDate } from '@angular/common'
 import {
   AfterContentInit,
   Component,
@@ -20,6 +21,7 @@ import { isValidDate } from '@onecx/accelerator'
 import { UserService } from '@onecx/angular-integration-interface'
 import { MenuItem, PrimeTemplate, SelectItem } from 'primeng/api'
 import { Menu } from 'primeng/menu'
+import { MultiSelectItem } from 'primeng/multiselect'
 import {
   BehaviorSubject,
   Observable,
@@ -36,11 +38,10 @@ import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
-import { ObjectUtils } from '../../utils/objectutils'
-import { DataSortBase } from '../data-sort-base/data-sort-base'
-import { MultiSelectItem } from 'primeng/multiselect'
 import { Filter, FilterType } from '../../model/filter.model'
+import { ObjectUtils } from '../../utils/objectutils'
 import { findTemplate } from '../../utils/template.utils'
+import { DataSortBase } from '../data-sort-base/data-sort-base'
 
 export type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -479,6 +480,21 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
           .map((filter) => filter.value)
 
         const columnValues = rows.map((row) => row[currentFilterColumn?.id])
+
+        if (currentFilterColumn.columnType === ColumnType.DATE) {
+          return of({
+            options: columnValues.map(
+              (c) =>
+                ({
+                  label: c,
+                  value: c,
+                  toFilterBy: formatDate(`${c}`, currentFilterColumn.dateFormat ?? 'medium', this.locale),
+                }) as SelectItem
+            ),
+            column: currentFilterColumn,
+          })
+        }
+
         const translateObservable =
           this.columns.find((c) => c.id === currentFilterColumn?.id)?.columnType === ColumnType.TRANSLATION_KEY
             ? this.translateColumnValues(columnValues as string[])
@@ -493,6 +509,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
                   ({
                     label: filterOption,
                     value: filterOption,
+                    toFilterBy: filterOption
                   }) as SelectItem
               )
           }),
