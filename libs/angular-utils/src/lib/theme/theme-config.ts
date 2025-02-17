@@ -1,21 +1,25 @@
+import { createPalette, standardColorAdjustment } from '../utils/create-color-palette'
+
 interface ThemeVariables {
   [key: string]: {
     [key: string]: string
   }
 }
-
 export default class ThemeConfig {
   constructor(private themeVariables: ThemeVariables | undefined) {}
 
   getConfig() {
+    let primaryColor = (this.themeVariables as any)['general']['primary-color']
     return {
       semantic: {
         primary: {
-          500: (this.themeVariables as any)['general']['primary-color'],
-          600: (this.themeVariables as any)['general']['secondary-color'],
+          ...createPalette(primaryColor, standardColorAdjustment),
         },
         colorScheme: {
           light: {
+            primary: {
+              ...createPalette(primaryColor, standardColorAdjustment),
+            },
             text: {
               color: (this.themeVariables as any)['general']['text-color'],
               hoverColor: (this.themeVariables as any)['general']['text-secondary-color'],
@@ -24,12 +28,6 @@ export default class ThemeConfig {
               background: (this.themeVariables as any)['general']['content-bg-color'],
               hoverBackground: (this.themeVariables as any)['general']['hover-bg-color'],
             },
-            list: {
-              option: {
-                selectedColor: (this.themeVariables as any)['general']['primary-color'],
-                selectedFocusColor: (this.themeVariables as any)['general']['primary-color']
-              }
-            }
           },
         },
       },

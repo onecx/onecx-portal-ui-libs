@@ -1,3 +1,6 @@
+import { createPalette, standardColorAdjustment } from '../../utils/create-color-palette'
+
+const primaryDefaultColor = '#0D3650'
 export default {
   semantic: {
     // OneCX semantic variables extension
@@ -16,8 +19,7 @@ export default {
     iconSize: '1rem',
     anchorGutter: '2px',
     primary: {
-      500: '#274B5F', // primary.500 is used as primary.color
-      600: '#1C4257',
+      ...createPalette(primaryDefaultColor, standardColorAdjustment),
     },
     formField: {
       // INFO: --input-padding from dev env has equal values 0.75rem 0.75rem
@@ -341,6 +343,10 @@ export default {
         // INFO: Lists in all select and list components (except for tree select and menus)
         list: {
           option: {
+            option: {
+              selectedColor: '{primary.color}',
+              selectedFocusColor: '{primary.color}',
+            },
             // INFO: --input-list-item-hover-bg used
             // INFO: Could be focusBackground: 'rgba(0, 0, 0, 0.04)'
             focusBackground: '{surface.100}',
