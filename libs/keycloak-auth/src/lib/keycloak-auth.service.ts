@@ -1,9 +1,9 @@
 import { Injectable, inject } from '@angular/core'
-import { AppStateService, ConfigurationService, CONFIG_KEY } from '@onecx/angular-integration-interface'
-import { KeycloakEventType, KeycloakOptions, KeycloakService } from 'keycloak-angular'
+import { AppStateService, CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
+import { EventsTopic } from '@onecx/integration-interface'
+import { KeycloakEventTypeLegacy, KeycloakOptions, KeycloakService } from 'keycloak-angular'
 import { KeycloakConfig } from 'keycloak-js'
 import { filter } from 'rxjs'
-import { EventsTopic } from '@onecx/integration-interface'
 
 const KC_REFRESH_TOKEN_LS = 'onecx_kc_refreshToken'
 const KC_ID_TOKEN_LS = 'onecx_kc_idToken'
@@ -11,17 +11,19 @@ const KC_TOKEN_LS = 'onecx_kc_token'
 
 @Injectable()
 export class KeycloakAuthService {
-  private keycloakService = inject(KeycloakService);
-  private configService = inject(ConfigurationService);
-  private appStateService = inject(AppStateService);
+  private keycloakService = inject(KeycloakService)
+  private configService = inject(ConfigurationService)
+  private appStateService = inject(AppStateService)
 
   private eventsTopic$ = new EventsTopic()
 
   /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
+  constructor(...args: unknown[])
 
   constructor() {
-    this.eventsTopic$.pipe(filter((e) => e.type === 'authentication#logoutButtonClicked')).subscribe(() => this.logout())
+    this.eventsTopic$
+      .pipe(filter((e) => e.type === 'authentication#logoutButtonClicked'))
+      .subscribe(() => this.logout())
   }
 
   public async init(): Promise<boolean> {
@@ -132,7 +134,7 @@ export class KeycloakAuthService {
       } else {
         localStorage.removeItem(KC_REFRESH_TOKEN_LS)
       }
-      if (ke.type === KeycloakEventType.OnAuthLogout) {
+      if (ke.type === KeycloakEventTypeLegacy.OnAuthLogout) {
         console.log('SSO logout nav to root')
         this.clearKCStateFromLocalstorage()
         this.keycloakService.login()

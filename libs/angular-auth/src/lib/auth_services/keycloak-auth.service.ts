@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core'
-import { ConfigurationService, CONFIG_KEY } from '@onecx/angular-integration-interface'
-import { KeycloakEventType, KeycloakOptions, KeycloakService } from 'keycloak-angular'
+import { CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
+import { KeycloakEventTypeLegacy, KeycloakOptions, KeycloakService } from 'keycloak-angular'
 import { KeycloakConfig } from 'keycloak-js'
 import { AuthService } from '../auth.service'
 
@@ -10,14 +10,13 @@ const KC_TOKEN_LS = 'onecx_kc_token'
 
 @Injectable()
 export class KeycloakAuthService implements AuthService {
-  private keycloakService = inject(KeycloakService);
-  private configService = inject(ConfigurationService);
-
+  private keycloakService = inject(KeycloakService)
+  private configService = inject(ConfigurationService)
 
   kcConfig?: Record<string, unknown>
 
   /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
+  constructor(...args: unknown[])
 
   constructor() {}
 
@@ -120,7 +119,7 @@ export class KeycloakAuthService implements AuthService {
       } else {
         localStorage.removeItem(KC_REFRESH_TOKEN_LS)
       }
-      if (ke.type === KeycloakEventType.OnAuthLogout) {
+      if (ke.type === KeycloakEventTypeLegacy.OnAuthLogout) {
         console.log('SSO logout nav to root')
         this.clearKCStateFromLocalstorage()
         this.keycloakService.login(this.kcConfig)
