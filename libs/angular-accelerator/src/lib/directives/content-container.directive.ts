@@ -44,7 +44,6 @@ export class OcxContentContainerDirective implements OnInit, OnChanges {
     }
     const addSharedClasses = () => {
       const styleClasses = Array.from(this.el.nativeElement.classList as string[])
-      console.log(styleClasses)
       const classList: string[] = ['flex']
 
       if (!styleClasses.some((cls) => cls.startsWith('gap-'))) {
