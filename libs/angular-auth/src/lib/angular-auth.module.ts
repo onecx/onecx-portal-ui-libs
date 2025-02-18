@@ -1,12 +1,11 @@
-import { APP_INITIALIZER, NgModule, inject, provideAppInitializer } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { HTTP_INTERCEPTORS } from '@angular/common/http'
+import { NgModule, inject, provideAppInitializer } from '@angular/core'
 import { ConfigurationService } from '@onecx/angular-integration-interface'
-import { TokenInterceptor } from './token.interceptor'
-import { AuthService } from './auth.service'
+import { AuthProxyService } from './auth-proxy.service'
 import { AuthServiceWrapper } from './auth-service-wrapper'
 import { KeycloakAuthService } from './auth_services/keycloak-auth.service'
-import { AuthProxyService } from './auth-proxy.service'
+import { TokenInterceptor } from './token.interceptor'
 
 function provideAuthServices() {
   return [AuthServiceWrapper, KeycloakAuthService]

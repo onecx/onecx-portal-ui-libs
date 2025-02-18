@@ -51,13 +51,13 @@ export class KeycloakAuthService implements AuthService {
       })
       .catch((err) => {
         console.log(`Keycloak err: ${err}, try force login`)
-        return this.keycloak!.login(this.config)
+        return this.keycloak?.login(this.config)
       })
       .then((loginOk) => {
         if (loginOk) {
-          return this.keycloak!.token
+          return this.keycloak?.token
         } else {
-          return this.keycloak!.login(this.config).then(() => 'login')
+          return this.keycloak?.login(this.config).then(() => 'login')
         }
       })
       .then(() => {
