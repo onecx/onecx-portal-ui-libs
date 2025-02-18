@@ -3,16 +3,7 @@ import { AppStateService, UserService, ConfigurationService } from '@onecx/angul
 import { InitializeModuleGuard } from '../../services/initialize-module-guard.service'
 import { addInitializeModuleGuard } from './add-initialize-module-guard.utils'
 
-class MockInitializeModuleGuard extends InitializeModuleGuard {
-  constructor(
-    translateService: TranslateService,
-    configService: ConfigurationService,
-    appStateService: AppStateService,
-    userService: UserService
-  ) {
-    super(translateService, configService, appStateService, userService)
-  }
-}
+class MockInitializeModuleGuard extends InitializeModuleGuard {}
 
 describe('AddInitializeGuard', () => {
   it('should add canActivate array with InitializeModuleGuard to routes without canActivate and redirectTo properties', () => {

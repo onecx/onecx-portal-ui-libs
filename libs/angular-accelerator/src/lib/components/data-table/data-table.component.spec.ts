@@ -274,7 +274,7 @@ describe('DataTableComponent', () => {
     const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
     const paginator = await dataTable.getPaginator()
     const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
-    const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
+    const rowsPerPageOptionsText = await rowsPerPageOptions.selectedSelectItemText(0)
     expect(rowsPerPageOptionsText).toEqual('10')
   })
 
