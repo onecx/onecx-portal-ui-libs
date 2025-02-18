@@ -9,6 +9,8 @@ import { DialogInlineComponent } from './dialog-inline.component'
 import { DialogContentComponent } from '../dialog-content/dialog-content.component'
 import { DialogFooterComponent } from '../dialog-footer/dialog-footer.component'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { TooltipModule } from 'primeng/tooltip'
+import { StorybookThemeModule } from '../../../storybook-theme.module'
 
 export default {
   title: 'DialogInlineComponent',
@@ -18,13 +20,14 @@ export default {
       providers: [
         importProvidersFrom(BrowserModule),
         importProvidersFrom(BrowserAnimationsModule),
+        importProvidersFrom(StorybookThemeModule),
         DynamicDialogConfig,
         DynamicDialogRef,
       ],
     }),
     moduleMetadata({
       declarations: [DialogInlineComponent, DialogContentComponent, DialogFooterComponent],
-      imports: [StorybookTranslateModule, ButtonModule],
+      imports: [StorybookTranslateModule, ButtonModule, TooltipModule],
     }),
     componentWrapperDecorator((story) => `<div style="margin: 3em">${story}</div>`),
   ],
