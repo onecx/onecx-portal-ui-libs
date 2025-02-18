@@ -1,9 +1,10 @@
 export default {
   font: {
-    fontFamily: null,
+    fontFamily: 'Ubuntu, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif',
     fontSize: null,
   },
   topbar: {
+    // done - added as extended tokens
     topbarBgColor: '#0D3650',
     topbarItemTextColor: '#ffffff',
     topbarTextColor: '#ffffff',
@@ -12,20 +13,23 @@ export default {
     topbarMenuButtonBgColor: 'rgb(255 0 68)',
     logoColor: '#ffffff',
   },
+  sidebar: {
+    // done - added as extended tokens
+  },
   general: {
     primaryColor: '#274B5F', // done
-    secondaryColor: '#1C4257', // done
-    textColor: 'rgba(0, 0, 0, 0.87)', // done
-    textSecondaryColor: '#262626', // done - used as hoverColor
-    bodyBgColor: '#f7f7f7', // done - used as backgroundColor
+    secondaryColor: '#1C4257', // not used
+    textColor: 'rgba(0, 0, 0, 0.87)',
+    textSecondaryColor: '#262626',
+    bodyBgColor: '#f7f7f7',
     contentBgColor: '#ffffff',
     contentAltBgColor: null,
     overlayContentBgColor: '#ffffff',
-    hoverBgColor: '#ad1457', // done
+    hoverBgColor: '#ad1457',
     solidSurfaceTextColor: '#ffffff',
     dividerColor: '#e4e4e4',
-    buttonHoverBg: '#ad1457', // done
-    buttonActiveBg: null, // done
+    buttonHoverBg: '#ad1457',
+    buttonActiveBg: null,
     dangerButtonBg: '#D32F2F',
     infoMessageBg: '#b3e5fc',
     successMessageBg: '#c8e6c9',

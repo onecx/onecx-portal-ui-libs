@@ -16,3 +16,4 @@ export * from './lib/services/custom-use-style.service'
 
 // Theme
 export * from './lib/theme/application-config'
+export * from './lib/theme/preset/custom-preset'

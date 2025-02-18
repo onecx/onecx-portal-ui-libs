@@ -1,3 +1,7 @@
+:root {
+  font-family: Ubuntu, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
+}
+
 .demo-border {
   border: 5px dashed red;
 }

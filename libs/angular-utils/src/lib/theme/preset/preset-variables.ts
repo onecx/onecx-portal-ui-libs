@@ -1,10 +1,15 @@
 import { createPalette, standardColorAdjustment } from '../../utils/create-color-palette'
 
-const primaryDefaultColor = '#0D3650'
+import defaultVariables from './default-theme-variables'
+
+const primaryDefaultColor = defaultVariables.general.primaryColor
 export default {
   semantic: {
     // OneCX semantic variables extension
     extend: {
+      font: defaultVariables.font,
+      topbar: defaultVariables.topbar,
+      sidebar: defaultVariables.sidebar,
       errorColor: '#b00020',
     },
     transitionDuration: '0.2s',
@@ -293,8 +298,7 @@ export default {
           floatLabelInvalidColor: '{form.field.invalid.placeholder.color}',
         },
         text: {
-          // INFO: --text-color used
-          color: '{text.color}',
+          color: defaultVariables.general.textColor,
           // INFO: textColor used for inplaceTextHoverColor, toggleButtonTextHoverColor
           hoverColor: '{text.color}',
           // mutedColor and hovermuted are not available in the theme
