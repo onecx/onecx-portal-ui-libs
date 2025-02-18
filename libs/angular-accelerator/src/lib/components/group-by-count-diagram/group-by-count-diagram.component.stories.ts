@@ -14,6 +14,8 @@ import { DiagramType } from '../../model/diagram-type'
 import { GroupByCountDiagramComponent } from './group-by-count-diagram.component'
 import { DiagramComponent } from '../diagram/diagram.component'
 import { ColumnType } from '../../model/column-type.model'
+import { StorybookThemeModule } from '../../storybook-theme.module'
+import { TooltipModule } from 'primeng/tooltip';
 
 export default {
   title: 'Components/GroupByCountDiagramComponent',
@@ -26,7 +28,11 @@ export default {
   },
   decorators: [
     applicationConfig({
-      providers: [importProvidersFrom(BrowserModule), importProvidersFrom(BrowserAnimationsModule)],
+      providers: [
+        importProvidersFrom(BrowserModule),
+        importProvidersFrom(BrowserAnimationsModule),
+        importProvidersFrom(StorybookThemeModule),
+      ],
     }),
     moduleMetadata({
       declarations: [GroupByCountDiagramComponent, DiagramComponent, DynamicPipe],
@@ -38,6 +44,7 @@ export default {
         StorybookTranslateModule,
         ChartModule,
         SelectButtonModule,
+        TooltipModule,
       ],
     }),
   ],

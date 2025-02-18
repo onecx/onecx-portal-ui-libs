@@ -4,6 +4,7 @@ interface SearchCriteriaTemplate {
   value: string
 }
 @Component({
+  standalone: false,
   selector: 'ocx-criteria-template',
   templateUrl: './criteria-template.component.html',
   styleUrls: ['./criteria-template.component.scss'],

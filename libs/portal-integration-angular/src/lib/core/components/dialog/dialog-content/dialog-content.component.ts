@@ -1,4 +1,4 @@
-import { Component, ComponentRef, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core'
+import { Component, ComponentRef, OnDestroy, OnInit, ViewChild, ViewContainerRef, inject } from '@angular/core'
 import { Observable, Subscription, from, isObservable, of, startWith } from 'rxjs'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { ButtonDialogData } from '../../../../model/button-dialog'
@@ -13,11 +13,15 @@ import {
 } from '../../../../services/portal-dialog.service'
 
 @Component({
+  standalone: false,
   selector: 'ocx-dialog-content',
   templateUrl: './dialog-content.component.html',
   styleUrls: ['./dialog-content.component.scss'],
 })
 export class DialogContentComponent implements OnInit, OnDestroy {
+  dynamicDialogConfig = inject(DynamicDialogConfig)
+  dynamicDialogRef = inject(DynamicDialogRef)
+
   defaultDialogData: ButtonDialogData = {
     component: DialogMessageContentComponent,
     config: {},
@@ -34,11 +38,6 @@ export class DialogContentComponent implements OnInit, OnDestroy {
   secondaryButtonEnabledSub?: Subscription
   customButtonEnabledSub?: Subscription
   buttonClickedSub?: Subscription
-
-  constructor(
-    public dynamicDialogConfig: DynamicDialogConfig,
-    public dynamicDialogRef: DynamicDialogRef
-  ) {}
 
   ngOnInit(): void {
     this.loadComponent()

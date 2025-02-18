@@ -274,7 +274,7 @@ describe('DataTableComponent', () => {
     const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
     const paginator = await dataTable.getPaginator()
     const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
-    const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
+    const rowsPerPageOptionsText = await rowsPerPageOptions.selectedSelectItemText(0)
     expect(rowsPerPageOptionsText).toEqual('10')
   })
 
@@ -389,7 +389,7 @@ describe('DataTableComponent', () => {
       expect(await dataTable.columnIsFrozen(rightActionColumn)).toBe(false)
     })
 
-    it('should render an pinned action column on the specified side of the table', async () => {
+    it('should render a pinned action column on the specified side of the table', async () => {
       component.viewTableRow.subscribe((event) => console.log(event))
 
       component.frozenActionColumn = true

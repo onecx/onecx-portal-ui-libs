@@ -1,21 +1,26 @@
-import { AfterViewChecked, Component, ElementRef, HostListener, Renderer2, ViewChild } from '@angular/core'
-import { MenuService } from '../../../services/app.menu.service'
+import { AfterViewChecked, Component, ElementRef, HostListener, Renderer2, ViewChild, inject } from '@angular/core'
 import { MenuItem } from 'primeng/api'
 import { Menubar } from 'primeng/menubar'
+import { MenuService } from '../../../services/app.menu.service'
 
 @Component({
+  standalone: false,
   selector: 'ocx-portal-menu-horizontal',
   templateUrl: './portal-menu-horizontal.component.html',
   styleUrls: ['./portal-menu-horizontal.component.scss'],
 })
 export class PortalMenuHorizontalComponent implements AfterViewChecked {
+  private menuService = inject(MenuService)
+  private elementRef = inject(ElementRef)
+  private renderer = inject(Renderer2)
+
   @ViewChild('menubar') menubar?: Menubar
   menuItems: MenuItem[] = []
 
   private _mainMenuItems: MenuItem[] = []
-  private _sizeCache: DOMRect[] | null = [] // perf: valid cache on init
+  private _sizeCache: DOMRect[] | null = []
 
-  constructor(private menuService: MenuService, private elementRef: ElementRef, private renderer: Renderer2) {
+  constructor() {
     this.menuService.getMenuItems().subscribe((el) => this.onMenuItemsChange(el))
   }
 

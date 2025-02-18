@@ -1,9 +1,17 @@
-import { Component, EventEmitter, Input, OnInit, importProvidersFrom } from '@angular/core'
-import { Meta, applicationConfig, argsToTemplate, componentWrapperDecorator, moduleMetadata } from '@storybook/angular'
-import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { Component, EventEmitter, Input, OnInit, importProvidersFrom, inject } from '@angular/core'
+import { FormsModule } from '@angular/forms'
 import { BrowserModule } from '@angular/platform-browser'
-import { ButtonModule } from 'primeng/button'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
+import { Meta, applicationConfig, argsToTemplate, componentWrapperDecorator, moduleMetadata } from '@storybook/angular'
+import { PrimeIcons } from 'primeng/api'
+import { ButtonModule } from 'primeng/button'
+import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { TooltipModule } from 'primeng/tooltip'
+import { Observable } from 'rxjs'
+import { DialogMessageContentComponent } from '../core/components/button-dialog/dialog-message-content/dialog-message-content.component'
+import { DialogContentComponent } from '../core/components/dialog/dialog-content/dialog-content.component'
+import { DialogFooterComponent } from '../core/components/dialog/dialog-footer/dialog-footer.component'
+import { StorybookTranslateModule } from '../core/storybook-translate.module'
 import {
   DialogButtonClicked,
   DialogCustomButtonsDisabled,
@@ -13,21 +21,14 @@ import {
   DialogState,
   PortalDialogService,
 } from './portal-dialog.service'
-import { StorybookTranslateModule } from '../core/storybook-translate.module'
-import { DialogMessageContentComponent } from '../core/components/button-dialog/dialog-message-content/dialog-message-content.component'
-import { PrimeIcons } from 'primeng/api'
-import { TooltipModule } from 'primeng/tooltip'
-import { DialogFooterComponent } from '../core/components/dialog/dialog-footer/dialog-footer.component'
-import { DialogContentComponent } from '../core/components/dialog/dialog-content/dialog-content.component'
-import { Observable } from 'rxjs'
-import { FormsModule } from '@angular/forms'
 
 @Component({
+  standalone: false,
   selector: 'ocx-button-dialog-with-portal-dialog-service',
   template: `<p-button label="Open dialog" (click)="openDialog()" />`,
 })
 class ButtonDialogWithPortalDialogServiceComponent {
-  constructor(private portalDialogService: PortalDialogService) {}
+  private portalDialogService = inject(PortalDialogService)
 
   @Input() title = 'Title'
   @Input() messageOrComponent = 'Message'
@@ -45,6 +46,7 @@ class ButtonDialogWithPortalDialogServiceComponent {
 }
 
 @Component({
+  standalone: false,
   selector: 'ocx-my-component-to-display',
   template: `<p>Component to display with disabled buttons</p>
     <div class="flex gap-2">
@@ -171,6 +173,7 @@ export const CustomDataWithExtendedButtons = {
 }
 
 @Component({
+  standalone: false,
   selector: 'ocx-my-component-to-display',
   template: `<p>Hello, its my component to display</p>`,
 })
@@ -247,6 +250,7 @@ export const ComponentDisplayedWithDisabledButtons = {
 }
 
 @Component({
+  standalone: false,
   selector: 'ocx-my-component-to-display',
   template: `<p>Component to display with validation</p>
     <p>It is impossible to close the dialog by clicking secondary button</p>
@@ -322,6 +326,7 @@ export const CustomAutofocus = {
 }
 
 @Component({
+  standalone: false,
   selector: 'ocx-my-component-to-display',
   template: `<p>Hello, its my component to display custom buttons</p>`,
 })

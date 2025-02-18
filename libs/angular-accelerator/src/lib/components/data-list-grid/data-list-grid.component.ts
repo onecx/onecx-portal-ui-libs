@@ -5,7 +5,6 @@ import {
   ContentChildren,
   DoCheck,
   EventEmitter,
-  Inject,
   Injector,
   Input,
   LOCALE_ID,
@@ -14,6 +13,7 @@ import {
   QueryList,
   TemplateRef,
   ViewChildren,
+  inject,
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
@@ -26,10 +26,10 @@ import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
+import { Filter } from '../../model/filter.model'
 import { ObjectUtils } from '../../utils/objectutils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { Row } from '../data-table/data-table.component'
-import { Filter } from '../../model/filter.model'
 
 export type ListGridData = {
   id: string | number
@@ -49,11 +49,17 @@ export interface DataListGridComponentState {
 }
 
 @Component({
+  standalone: false,
   selector: 'ocx-data-list-grid',
   templateUrl: './data-list-grid.component.html',
   styleUrls: ['./data-list-grid.component.scss'],
 })
 export class DataListGridComponent extends DataSortBase implements OnInit, DoCheck, AfterContentInit {
+  private userService = inject(UserService)
+  private router = inject(Router)
+  private injector = inject(Injector)
+  private appStateService = inject(AppStateService)
+
   @Input() titleLineId: string | undefined
   @Input() subtitleLineIds: string[] = []
   @Input() clientSideSorting = true
@@ -140,7 +146,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return this._data$.getValue()
   }
   set data(value: RowListGridData[]) {
-    !this._data$.getValue().length ?? this.resetPage()
+    if (this._data$.getValue().length) this.resetPage()
     this._originalData = [...value]
     this._data$.next([...value])
   }
@@ -150,7 +156,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return this._filters$.getValue()
   }
   set filters(value: Filter[]) {
-    !this._filters$.getValue().length ?? this.resetPage()
+    if (this._filters$.getValue().length) this.resetPage()
     this._filters$.next(value)
   }
   _originalData: RowListGridData[] = []
@@ -324,14 +330,10 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   columnType = ColumnType
   templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
 
-  constructor(
-    @Inject(LOCALE_ID) locale: string,
-    translateService: TranslateService,
-    private userService: UserService,
-    private router: Router,
-    private injector: Injector,
-    private appStateService: AppStateService
-  ) {
+  constructor() {
+    const locale = inject(LOCALE_ID)
+    const translateService = inject(TranslateService)
+
     super(locale, translateService)
     this.name = this.name || this.router.url.replace(/[^A-Za-z0-9]/, '_')
     this.fallbackImagePath$ = this.appStateService.currentMfe$.pipe(

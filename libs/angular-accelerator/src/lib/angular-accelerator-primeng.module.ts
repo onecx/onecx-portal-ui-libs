@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core'
-import { DropdownModule } from 'primeng/dropdown'
+import { SelectModule } from 'primeng/select'
 import { ButtonModule } from 'primeng/button'
 import { DialogModule } from 'primeng/dialog'
 import { PickListModule } from 'primeng/picklist'
@@ -16,15 +16,17 @@ import { SharedModule } from 'primeng/api'
 import { CheckboxModule } from 'primeng/checkbox'
 import { FloatLabelModule } from 'primeng/floatlabel'
 import { ChipModule } from 'primeng/chip'
-import { OverlayPanelModule } from 'primeng/overlaypanel'
+import { PopoverModule } from 'primeng/popover'
 import { FocusTrapModule } from 'primeng/focustrap'
+import { Tooltip } from 'primeng/tooltip'
+import { providePrimeNG } from 'primeng/config'
 
 @NgModule({
   imports: [
     BreadcrumbModule,
     ChipModule,
     CheckboxModule,
-    DropdownModule,
+    SelectModule,
     ButtonModule,
     DialogModule,
     PickListModule,
@@ -37,15 +39,16 @@ import { FocusTrapModule } from 'primeng/focustrap'
     SkeletonModule,
     MessageModule,
     FloatLabelModule,
-    OverlayPanelModule,
+    PopoverModule,
     FocusTrapModule,
+    Tooltip,
     SharedModule,
   ],
   exports: [
     BreadcrumbModule,
     ChipModule,
     CheckboxModule,
-    DropdownModule,
+    SelectModule,
     ButtonModule,
     DialogModule,
     PickListModule,
@@ -58,9 +61,11 @@ import { FocusTrapModule } from 'primeng/focustrap'
     SkeletonModule,
     MessageModule,
     FloatLabelModule,
-    OverlayPanelModule,
+    PopoverModule,
     FocusTrapModule,
+    Tooltip,
     SharedModule,
   ],
+  providers: [providePrimeNG()],
 })
 export class AngularAcceleratorPrimeNgModule {}

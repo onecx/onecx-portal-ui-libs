@@ -13,6 +13,7 @@ import { ButtonDialogConfig } from '../../../model/button-dialog'
 import { PrimeIcons } from 'primeng/api'
 
 @Component({
+  standalone: false,
   template: `<ocx-button-dialog>
     <div class="host">HostComponentContent</div>
   </ocx-button-dialog>`,
@@ -32,6 +33,7 @@ const config: ButtonDialogConfig = {
 }
 
 @Component({
+  standalone: false,
   template: ` <ocx-button-dialog [config]="this.buttonDialogConfig">
     <div class="host">HostComponentContent</div>
   </ocx-button-dialog>`,
@@ -41,6 +43,7 @@ class TestHostWithConfigComponent {
 }
 
 @Component({
+  standalone: false,
   template: ` <ocx-button-dialog (resultEmitter)="handleResult($event)">
     <div class="host">HostComponentContent</div>
   </ocx-button-dialog>`,

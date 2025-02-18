@@ -17,6 +17,7 @@ import { TranslateTestingModule } from 'ngx-translate-testing'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 
 @Component({
+  standalone: false,
   template: `<ocx-dialog-inline>
     <div class="host">HostComponentContent</div>
   </ocx-dialog-inline>`,
@@ -36,6 +37,7 @@ const config: ButtonDialogConfig = {
 }
 
 @Component({
+  standalone: false,
   template: ` <ocx-dialog-inline [config]="this.buttonDialogConfig">
     <div class="host">HostComponentContent</div>
   </ocx-dialog-inline>`,
@@ -45,6 +47,7 @@ class TestHostWithConfigComponent {
 }
 
 @Component({
+  standalone: false,
   template: ` <ocx-dialog-inline (resultEmitter)="handleResult($event)">
     <div class="host">HostComponentContent</div>
   </ocx-dialog-inline>`,

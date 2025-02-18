@@ -22,9 +22,7 @@
     "build": {
       "executor": "@nx/angular:package",
       "dependsOn": ["^build", "copyPrimelocaleTranslations"],
-      "outputs": [
-        "{workspaceRoot}/dist/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
       "options": {
         "project": "libs/angular-accelerator/ng-package.json"
       },
@@ -40,9 +38,7 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "libs/angular-accelerator/jest.config.ts",
         "passWithNoTests": true
@@ -55,10 +51,8 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
           "libs/angular-accelerator/**/*.ts",
@@ -81,7 +75,6 @@
         "browserTarget": "angular-accelerator:build-storybook",
         "compodoc": false,
         "styles": [
-          "node_modules/primeng/resources/primeng.min.css",
           "node_modules/primeicons/primeicons.css",
           "libs/angular-accelerator/assets/styles.scss",
           "libs/angular-accelerator/.storybook/storybook.css"
@@ -95,16 +88,13 @@
     },
     "build-storybook": {
       "executor": "@storybook/angular:build-storybook",
-      "outputs": [
-        "{options.outputDir}"
-      ],
+      "outputs": ["{options.outputDir}"],
       "options": {
         "outputDir": "dist/storybook/angular-accelerator",
         "configDir": "libs/angular-accelerator/.storybook",
         "browserTarget": "angular-accelerator:build-storybook",
         "compodoc": false,
         "styles": [
-          "node_modules/primeng/resources/primeng.min.css",
           "node_modules/primeicons/primeicons.css",
           "libs/angular-accelerator/assets/styles.scss",
           "libs/angular-accelerator/.storybook/storybook.css"

@@ -1,5 +1,5 @@
 import { animate, style, transition, trigger } from '@angular/animations'
-import { Component, EventEmitter, Inject, Input, Optional, Output } from '@angular/core'
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core'
 import { UntilDestroy } from '@ngneat/until-destroy'
 import { AppStateService, ThemeService } from '@onecx/angular-integration-interface'
 import { Observable, combineLatest, filter, map, mergeMap, of } from 'rxjs'
@@ -9,6 +9,7 @@ import {
 } from '../../shell-interface/workspace-config-bff-service-provider'
 
 @Component({
+  standalone: false,
   selector: 'ocx-shell-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
@@ -24,6 +25,12 @@ import {
 })
 @UntilDestroy()
 export class HeaderComponent {
+  private themeService = inject(ThemeService)
+  private appStateService = inject(AppStateService)
+  workspaceConfigBffService = inject<WorkspaceConfigBffService | undefined>(WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER, {
+    optional: true,
+  })
+
   menuExpanded = false
   fallbackImg = false
 
@@ -41,13 +48,7 @@ export class HeaderComponent {
 
   logoUrl$: Observable<string | undefined>
 
-  constructor(
-    private themeService: ThemeService,
-    private appStateService: AppStateService,
-    @Optional()
-    @Inject(WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER)
-    public workspaceConfigBffService: WorkspaceConfigBffService | undefined
-  ) {
+  constructor() {
     this.logoUrl$ = combineLatest([
       this.themeService.currentTheme$.asObservable(),
       this.appStateService.currentWorkspace$.asObservable(),

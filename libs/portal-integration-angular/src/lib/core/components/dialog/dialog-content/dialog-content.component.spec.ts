@@ -17,6 +17,7 @@ import { TranslateTestingModule } from 'ngx-translate-testing'
 import { DialogMessageContentComponent } from '../../button-dialog/dialog-message-content/dialog-message-content.component'
 
 @Component({
+  standalone: false,
   template: `<ocx-dialog-content>
     <div class="host">HostComponentContent</div>
   </ocx-dialog-content>`,
@@ -24,6 +25,7 @@ import { DialogMessageContentComponent } from '../../button-dialog/dialog-messag
 class TestBaseHostComponent {}
 
 @Component({
+  standalone: false,
   template: ` <div class="test">Test Component</div>`,
 })
 class TestWithDialogResultComponent implements DialogResult<string> {
@@ -31,6 +33,7 @@ class TestWithDialogResultComponent implements DialogResult<string> {
 }
 
 @Component({
+  standalone: false,
   template: ` <div class="test">Test Component</div>`,
 })
 class TestWithButtonClickedComponent implements DialogButtonClicked {
@@ -49,6 +52,7 @@ class TestWithButtonClickedComponent implements DialogButtonClicked {
 }
 
 @Component({
+  standalone: false,
   template: ` <div class="test">Test Component</div>`,
 })
 class TestWithDialogResultAndButtonClickedComponent implements DialogResult<string>, DialogButtonClicked {
@@ -69,6 +73,7 @@ class TestWithDialogResultAndButtonClickedComponent implements DialogResult<stri
 }
 
 @Component({
+  standalone: false,
   template: ` <div class="test">Test Component</div>`,
 })
 class TestWithButtonDisableComponent

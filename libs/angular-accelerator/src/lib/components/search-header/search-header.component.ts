@@ -11,12 +11,13 @@ import {
   QueryList,
   TemplateRef,
   ViewChild,
+  inject,
 } from '@angular/core'
-import { Action } from '../page-header/page-header.component'
 import { FormControlName, FormGroup, FormGroupDirective } from '@angular/forms'
-import { Observable, combineLatest, debounceTime, map, of, startWith } from 'rxjs'
 import { getLocation } from '@onecx/accelerator'
 import { CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
+import { Observable, combineLatest, debounceTime, map, of, startWith } from 'rxjs'
+import { Action } from '../page-header/page-header.component'
 
 export interface SearchHeaderComponentState {
   activeViewMode?: 'basic' | 'advanced'
@@ -37,6 +38,7 @@ export interface SearchConfigData {
  * which do not have an input element.
  */
 @Component({
+  standalone: false,
   selector: 'ocx-search-header',
   templateUrl: './search-header.component.html',
   providers: [],
@@ -125,7 +127,9 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
   fieldValues$: Observable<{ [key: string]: unknown }> | undefined = of({})
   searchConfigChangedSlotEmitter: EventEmitter<SearchConfigData | undefined> = new EventEmitter()
 
-  constructor(configurationService: ConfigurationService) {
+  constructor() {
+    const configurationService = inject(ConfigurationService)
+
     this.searchConfigChangedSlotEmitter.subscribe((config) => {
       this.componentStateChanged.emit({
         selectedSearchConfig: config?.name ?? null,
@@ -175,14 +179,15 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
   updateHeaderActions() {
     const headerActions: Action[] = []
     if (this.hasAdvanced) {
-      this.simpleAdvancedAction.labelKey = this.viewMode === 'basic'
-      ? 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.ADVANCED.TEXT'
-      : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.SIMPLE.TEXT',
-      this.simpleAdvancedAction.titleKey = this.viewMode === 'basic'
-      ? 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.ADVANCED.DETAIL'
-      : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.SIMPLE.DETAIL',
-      
-      headerActions.push(this.simpleAdvancedAction)
+      ;(this.simpleAdvancedAction.labelKey =
+        this.viewMode === 'basic'
+          ? 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.ADVANCED.TEXT'
+          : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.SIMPLE.TEXT'),
+        (this.simpleAdvancedAction.titleKey =
+          this.viewMode === 'basic'
+            ? 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.ADVANCED.DETAIL'
+            : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.SIMPLE.DETAIL'),
+        headerActions.push(this.simpleAdvancedAction)
     }
     this.headerActions = headerActions.concat(this.actions)
   }
