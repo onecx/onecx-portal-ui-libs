@@ -26,15 +26,6 @@ export default class ThemeConfig {
             primary: {
               ...createPalette(primaryColor, standardColorAdjustment),
             },
-            text: {
-              // Possible that could be '{general.text.color}'
-              color: (this.themeVariables as any)['general']['text-color'],
-              hoverColor: (this.themeVariables as any)['general']['text-secondary-color'],
-            },
-            content: {
-              background: (this.themeVariables as any)['general']['content-bg-color'],
-              hoverBackground: (this.themeVariables as any)['general']['hover-bg-color'],
-            },
           },
         },
       },
