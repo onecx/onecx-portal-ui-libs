@@ -24,7 +24,7 @@ export interface CustomGroupColumnSelectorComponentState {
   styleUrls: ['./custom-group-column-selector.component.scss'],
 })
 export class CustomGroupColumnSelectorComponent implements OnInit {
-  private translate = inject(TranslateService);
+  private translate = inject(TranslateService)
 
   @Input() columns: DataTableColumn[] = []
   private _displayedColumns: DataTableColumn[] = []
@@ -94,11 +94,6 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
       value: false,
     },
   ]
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  constructor() {}
 
   ngOnInit(): void {
     this.componentStateChanged.emit({

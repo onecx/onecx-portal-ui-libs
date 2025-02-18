@@ -56,9 +56,6 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
 
   globalErrMsg: string | undefined
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[])
-
   constructor() {
     this.portalMessageService.message$.subscribe((message: Message) => this.messageService.add(message))
     this.userService.profile$.pipe(untilDestroyed(this)).subscribe((profile) => {

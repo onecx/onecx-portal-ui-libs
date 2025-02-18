@@ -16,6 +16,4 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
     }),
   ],
 })
-export class StorybookThemeModule {
-  constructor() {}
-}
+export class StorybookThemeModule {}

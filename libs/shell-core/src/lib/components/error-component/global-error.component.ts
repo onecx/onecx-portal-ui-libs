@@ -8,15 +8,12 @@ import { ActivatedRoute, Router } from '@angular/router'
   styleUrls: ['./global-error.component.scss'],
 })
 export class GlobalErrorComponent {
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
+  private router = inject(Router)
+  private route = inject(ActivatedRoute)
 
   @Input()
   errCode: string | undefined
   backUrl: string
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
 
   constructor() {
     this.errCode = this.route.snapshot.queryParamMap.get('err') || 'E1001_FAILED_START'

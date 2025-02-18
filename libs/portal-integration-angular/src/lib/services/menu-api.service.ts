@@ -8,18 +8,13 @@ import { PortalMenuItem } from '../model/menu-item.model'
   providedIn: 'root',
 })
 export class MenuApiService {
-  private http = inject(HttpClient);
+  private http = inject(HttpClient)
 
   private menuUrl = './portal-api/v1/portals' // URL to web api
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
   }
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  constructor() {}
 
   getMenuItems(portalId: string): Observable<PortalMenuItem[]> {
     return this.http.get<PortalMenuItem[]>(`${this.menuUrl}/${portalId}/menu`)

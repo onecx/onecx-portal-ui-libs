@@ -10,8 +10,6 @@ export class DynamicPipe implements PipeTransform {
 
   knownPipes: { [name: string]: PipeTransform } = {}
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[])
   public constructor() {
     const locale = inject(LOCALE_ID)
 

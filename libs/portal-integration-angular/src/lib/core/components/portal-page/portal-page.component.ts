@@ -1,7 +1,6 @@
 import { Component, Input, OnInit, inject } from '@angular/core'
+import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
-import { AppStateService } from '@onecx/angular-integration-interface'
-import { UserService } from '@onecx/angular-integration-interface'
 
 @Component({
   standalone: false,
@@ -10,9 +9,9 @@ import { UserService } from '@onecx/angular-integration-interface'
   styleUrls: ['./portal-page.component.scss'],
 })
 export class PortalPageComponent implements OnInit {
-  private appState = inject(AppStateService);
-  private userService = inject(UserService);
-  private hasPermissionChecker = inject<HasPermissionChecker>(HAS_PERMISSION_CHECKER, { optional: true });
+  private appState = inject(AppStateService)
+  private userService = inject(UserService)
+  private hasPermissionChecker = inject<HasPermissionChecker>(HAS_PERMISSION_CHECKER, { optional: true })
 
   @Input() permission = ''
   @Input() helpArticleId = ''
@@ -20,11 +19,6 @@ export class PortalPageComponent implements OnInit {
   @Input() applicationId = ''
 
   collapsed = false
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  constructor() {}
 
   hasAccess() {
     if (this.hasPermissionChecker) {

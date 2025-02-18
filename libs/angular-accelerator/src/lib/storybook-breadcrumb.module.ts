@@ -7,13 +7,9 @@ import { StorybookTranslateModule } from './storybook-translate.module'
   imports: [StorybookTranslateModule],
 })
 export class StorybookBreadcrumbModule {
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
   constructor() {
-    const breadcrumbService = inject(BreadcrumbService);
-    const breadcrumbs = inject<BreadCrumbMenuItem[]>('BREADCRUMBS' as any);
+    const breadcrumbService = inject(BreadcrumbService)
+    const breadcrumbs = inject<BreadCrumbMenuItem[]>('BREADCRUMBS' as any)
 
     breadcrumbService.setItems(breadcrumbs)
   }

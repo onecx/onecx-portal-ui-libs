@@ -53,7 +53,7 @@ const allDiagramTypes: DiagramLayouts[] = [
   styleUrls: ['./diagram.component.scss'],
 })
 export class DiagramComponent implements OnInit, OnChanges {
-  private translateService = inject(TranslateService);
+  private translateService = inject(TranslateService)
 
   @Input() data: DiagramData[] | undefined
   @Input() sumKey = 'OCX_DIAGRAM.SUM'
@@ -99,11 +99,6 @@ export class DiagramComponent implements OnInit, OnChanges {
   }
   // Changing the colorScale, will change the thematic color appearance of the diagram.
   private colorScale = d3.interpolateCool
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  constructor() {}
 
   ngOnChanges(): void {
     this.generateChart(this.colorScale, this.colorRangeInfo)

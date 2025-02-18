@@ -14,10 +14,10 @@ import { PortalUIService } from '../../../services/portal-ui.service'
     } @else {
       {{ textNoResults }}
     }
-    `,
+  `,
 })
 export class PagingInfoComponent {
-  private api = inject(PortalUIService);
+  private api = inject(PortalUIService)
 
   @Input() resultsCount = 0
   @Input() state!: CustomTableState
@@ -27,9 +27,6 @@ export class PagingInfoComponent {
   textTotal?: string
   textOf?: string
   textNoResults?: string
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
 
   constructor() {
     this.textShowing = this.api.getTranslation('pagingShowing')

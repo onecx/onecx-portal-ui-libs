@@ -3,9 +3,9 @@ import { TranslateService } from '@ngx-translate/core'
 import { BehaviorSubject, Observable, combineLatest, map, mergeMap, of } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DiagramColumn } from '../../model/diagram-column'
-import { ObjectUtils } from '../../utils/objectutils'
 import { DiagramData } from '../../model/diagram-data'
 import { DiagramType } from '../../model/diagram-type'
+import { ObjectUtils } from '../../utils/objectutils'
 
 export interface GroupByCountDiagramComponentState {
   activeDiagramType?: DiagramType
@@ -17,7 +17,7 @@ export interface GroupByCountDiagramComponentState {
   templateUrl: './group-by-count-diagram.component.html',
 })
 export class GroupByCountDiagramComponent implements OnInit {
-  private translateService = inject(TranslateService);
+  private translateService = inject(TranslateService)
 
   @Input() sumKey = 'SEARCH.SUMMARY_TITLE'
   @Input() diagramType = DiagramType.PIE
@@ -87,11 +87,6 @@ export class GroupByCountDiagramComponent implements OnInit {
   @Output() dataSelected: EventEmitter<any> = new EventEmitter()
   @Output() diagramTypeChanged: EventEmitter<DiagramType> = new EventEmitter()
   @Output() componentStateChanged: EventEmitter<GroupByCountDiagramComponentState> = new EventEmitter()
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  constructor() {}
 
   ngOnInit(): void {
     this.diagramData$ = combineLatest([this._data$, this._columnField$, this._columnType$, this._colors$]).pipe(

@@ -1,9 +1,23 @@
-import { AfterContentInit, AfterViewInit, Component, ContentChild, ContentChildren, ElementRef, EventEmitter, Input, Output, QueryList, TemplateRef, ViewChild, inject } from '@angular/core'
-import { Action } from '../page-header/page-header.component'
+import {
+  AfterContentInit,
+  AfterViewInit,
+  Component,
+  ContentChild,
+  ContentChildren,
+  ElementRef,
+  EventEmitter,
+  Input,
+  Output,
+  QueryList,
+  TemplateRef,
+  ViewChild,
+  inject,
+} from '@angular/core'
 import { FormControlName, FormGroup, FormGroupDirective } from '@angular/forms'
-import { Observable, combineLatest, debounceTime, map, of, startWith } from 'rxjs'
 import { getLocation } from '@onecx/accelerator'
 import { CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
+import { Observable, combineLatest, debounceTime, map, of, startWith } from 'rxjs'
+import { Action } from '../page-header/page-header.component'
 
 export interface SearchHeaderComponentState {
   activeViewMode?: 'basic' | 'advanced'
@@ -113,11 +127,8 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
   fieldValues$: Observable<{ [key: string]: unknown }> | undefined = of({})
   searchConfigChangedSlotEmitter: EventEmitter<SearchConfigData | undefined> = new EventEmitter()
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
   constructor() {
-    const configurationService = inject(ConfigurationService);
+    const configurationService = inject(ConfigurationService)
 
     this.searchConfigChangedSlotEmitter.subscribe((config) => {
       this.componentStateChanged.emit({

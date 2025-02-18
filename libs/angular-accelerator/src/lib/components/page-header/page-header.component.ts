@@ -1,9 +1,21 @@
-import { Component, ContentChild, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, TemplateRef, Type, ViewEncapsulation, inject } from '@angular/core'
+import {
+  Component,
+  ContentChild,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+  TemplateRef,
+  Type,
+  ViewEncapsulation,
+  inject,
+} from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
+import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 import { MenuItem, PrimeIcons } from 'primeng/api'
-import { concat, map, Observable, of } from 'rxjs'
-import { AppStateService } from '@onecx/angular-integration-interface'
-import { UserService } from '@onecx/angular-integration-interface'
+import { Observable, concat, map, of } from 'rxjs'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { PrimeIcon } from '../../utils/primeicon.utils'
 
@@ -72,9 +84,9 @@ export type GridColumnOptions = 1 | 2 | 3 | 4 | 6 | 12
   encapsulation: ViewEncapsulation.None,
 })
 export class PageHeaderComponent implements OnInit, OnChanges {
-  private translateService = inject(TranslateService);
-  private appStateService = inject(AppStateService);
-  private userService = inject(UserService);
+  private translateService = inject(TranslateService)
+  private appStateService = inject(AppStateService)
+  private userService = inject(UserService)
 
   @Input()
   public header: string | undefined
@@ -154,11 +166,8 @@ export class PageHeaderComponent implements OnInit, OnChanges {
 
   protected breadcrumbs: BreadcrumbService
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
   constructor() {
-    const breadcrumbs = inject(BreadcrumbService);
+    const breadcrumbs = inject(BreadcrumbService)
 
     this.breadcrumbs = breadcrumbs
     this.home$ = concat(

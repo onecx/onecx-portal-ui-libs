@@ -15,12 +15,8 @@ export function providePortalMessageServiceMock() {
 
 @Injectable()
 export class PortalMessageServiceMock {
-  private translateService = inject(TranslateService, { optional: true });
+  private translateService = inject(TranslateService, { optional: true })
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  constructor() {}
   lastMessages: { type: 'success' | 'info' | 'error' | 'warning'; value: Message }[] = []
   message$ = new FakeTopic<TopicMessage>()
 

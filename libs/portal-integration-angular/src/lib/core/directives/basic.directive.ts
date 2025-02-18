@@ -7,9 +7,6 @@ export class BasicDirective implements DoCheck {
   private templateRef = inject<TemplateRef<any>>(TemplateRef, { optional: true })
   private searchHeader = inject(SearchHeaderComponent, { optional: true })
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[])
-
   constructor() {
     const searchHeader = this.searchHeader
 

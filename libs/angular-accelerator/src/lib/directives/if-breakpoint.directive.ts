@@ -12,11 +12,6 @@ export class IfBreakpointDirective implements OnInit {
 
   state: 'mobile' | 'desktop' | undefined
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[])
-
-  constructor() {}
-
   ngOnInit() {
     this.onResize()
   }

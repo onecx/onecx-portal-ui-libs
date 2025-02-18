@@ -7,8 +7,8 @@ import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dy
   providers: [DialogService],
 })
 export class ColumnTogglerComponent implements OnInit {
-  private ref = inject(DynamicDialogRef);
-  private config = inject(DynamicDialogConfig);
+  private ref = inject(DynamicDialogRef)
+  private config = inject(DynamicDialogConfig)
 
   sourceLabel = 'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ACTIVE_COLUMNS_LABEL'
   targetLabel = 'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.INACTIVE_COLUMNS_LABEL'
@@ -20,11 +20,6 @@ export class ColumnTogglerComponent implements OnInit {
 
   activeCols: string[] = []
   inactiveCols: string[] = []
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  constructor() {}
 
   submitResults(
     colActive: { field: string; header: string; active: boolean; translationPrefix?: string }[],

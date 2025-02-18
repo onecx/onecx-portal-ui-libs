@@ -14,9 +14,4 @@ export class SetInputValueDirective {
       this.ngControl.control.setValue(val, { emitEvent: false })
     }
   }
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[])
-
-  constructor() {}
 }

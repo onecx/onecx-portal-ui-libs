@@ -7,11 +7,9 @@ import { Subscription } from 'rxjs'
 export class ConnectionService implements OnDestroy {
   languageSub: Subscription
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
   constructor() {
-    const userService = inject(UserService);
-    const translateService = inject(TranslateService);
+    const userService = inject(UserService)
+    const translateService = inject(TranslateService)
 
     this.languageSub = userService.lang$.subscribe((lang) => translateService.use(lang))
   }

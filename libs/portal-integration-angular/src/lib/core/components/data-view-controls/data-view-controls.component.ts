@@ -1,14 +1,14 @@
-import { Component, EventEmitter, Input, OnInit, OnChanges, Output, ViewChild, ElementRef, inject } from '@angular/core'
-import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
+import { PrimeIcon } from '@onecx/angular-accelerator'
+import { PrimeIcons } from 'primeng/api'
+import { DropdownChangeEvent } from 'primeng/dropdown'
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { ToggleButtonChangeEvent } from 'primeng/togglebutton'
 import { Column } from '../../../model/column'
 import { ColumnViewTemplate } from '../../../model/column-view-template'
 import { ColumnTogglerComponent } from './column-toggler-component/column-toggler.component'
 import { ViewTemplatePickerComponent } from './view-template-picker/view-template-picker.component'
-import { PrimeIcons } from 'primeng/api'
-import { PrimeIcon } from '@onecx/angular-accelerator'
-import { DropdownChangeEvent } from 'primeng/dropdown'
-import { ToggleButtonChangeEvent } from 'primeng/togglebutton'
 
 interface ViewingModes {
   icon: PrimeIcon
@@ -128,8 +128,8 @@ export interface DataViewControlTranslations {
   providers: [DialogService],
 })
 export class DataViewControlsComponent implements OnInit, OnChanges {
-  private dialogService = inject(DialogService);
-  private translate = inject(TranslateService);
+  private dialogService = inject(DialogService)
+  private translate = inject(TranslateService)
 
   @Input() supportedViews: Array<string> = []
   @Input() initialViewMode: string | undefined
@@ -176,11 +176,6 @@ export class DataViewControlsComponent implements OnInit, OnChanges {
     active: [],
     disabled: [],
   }
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  constructor() {}
 
   ngOnInit(): void {
     this.defaultCols = this.generateDefaultColumnDefinitions(this.columnDefinitions)

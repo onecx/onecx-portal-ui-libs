@@ -7,12 +7,8 @@ import { PortalWrapper } from '../model/portal-wrapper'
 
 @Injectable({ providedIn: 'root' })
 export class PortalApiService {
-  private readonly httpClient = inject(HttpClient);
+  private readonly httpClient = inject(HttpClient)
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  constructor() {}
   baseUrlV1 = './portal-api/v1/portals'
   baseUrlInternal = './portal-api/internal/portals'
 

@@ -14,18 +14,17 @@ import {
   styleUrls: ['./portal-footer.component.scss'],
 })
 export class PortalFooterComponent implements OnInit {
-  private configurationService = inject(ConfigurationService);
-  router = inject(Router);
-  private appState = inject(AppStateService);
-  private themeService = inject(ThemeService);
-  workspaceConfigBffService = inject<WorkspaceConfigBffService | undefined>(WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER, { optional: true });
+  private configurationService = inject(ConfigurationService)
+  router = inject(Router)
+  private appState = inject(AppStateService)
+  private themeService = inject(ThemeService)
+  workspaceConfigBffService = inject<WorkspaceConfigBffService | undefined>(WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER, {
+    optional: true,
+  })
 
   logoUrl$: Observable<string | undefined>
   copyrightMsg$: Observable<string> | undefined
   versionInfo$: Observable<string | undefined>
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
 
   constructor() {
     this.versionInfo$ = this.appState.currentMfe$.pipe(

@@ -10,8 +10,8 @@ import { HelpData } from '../../../model/help-data'
   styleUrls: ['./help-item-editor.component.scss'],
 })
 export class HelpItemEditorComponent implements OnChanges {
-  private fb = inject(FormBuilder);
-  private portalMessageService = inject(PortalMessageService);
+  private fb = inject(FormBuilder)
+  private portalMessageService = inject(PortalMessageService)
 
   @Input() public displayDialog = true
   @Output() public displayDialogChange = new EventEmitter<boolean>()
@@ -21,8 +21,6 @@ export class HelpItemEditorComponent implements OnChanges {
 
   public formGroup!: FormGroup
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
   constructor() {
     this.formGroup = this.fb.group({
       appId: new FormControl({ value: null, disabled: true }, [Validators.required]),

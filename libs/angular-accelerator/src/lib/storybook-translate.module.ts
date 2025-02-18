@@ -1,11 +1,11 @@
-import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core'
-import { NgModule, inject } from '@angular/core'
+import { registerLocaleData } from '@angular/common'
 import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import localeDE from '@angular/common/locales/de'
+import { NgModule, inject } from '@angular/core'
+import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
 import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { TranslateCombinedLoader } from './utils/translate.combined.loader'
-import { registerLocaleData } from '@angular/common'
-import localeDE from '@angular/common/locales/de'
 
 export function translateLoader(http: HttpClient) {
   return new TranslateCombinedLoader(new TranslateHttpLoader(http, `./assets/i18n/`, '.json'))
@@ -28,12 +28,10 @@ export function translateLoader(http: HttpClient) {
   providers: [provideAppStateServiceMock(), provideHttpClient(withInterceptorsFromDi())],
 })
 export class StorybookTranslateModule {
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
+  constructor(...args: unknown[])
 
   constructor() {
-    const translateService = inject(TranslateService);
+    const translateService = inject(TranslateService)
 
     registerLocaleData(localeDE)
     const lang = translateService.getBrowserLang()

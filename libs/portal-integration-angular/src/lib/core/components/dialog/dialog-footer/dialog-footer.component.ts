@@ -1,6 +1,19 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChild, ViewChildren, ViewContainerRef, inject } from '@angular/core'
-import { BehaviorSubject, Observable, map, withLatestFrom } from 'rxjs'
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  QueryList,
+  ViewChild,
+  ViewChildren,
+  ViewContainerRef,
+  inject,
+} from '@angular/core'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { BehaviorSubject, Observable, map, withLatestFrom } from 'rxjs'
 import {
   ButtonDialogButtonDetails,
   ButtonDialogConfig,
@@ -20,8 +33,8 @@ import {
   styleUrls: ['./dialog-footer.component.scss'],
 })
 export class DialogFooterComponent implements OnInit, AfterViewInit {
-  dynamicDialogConfig = inject(DynamicDialogConfig);
-  dynamicDialogRef = inject(DynamicDialogRef);
+  dynamicDialogConfig = inject(DynamicDialogConfig)
+  dynamicDialogRef = inject(DynamicDialogRef)
 
   defaultPrimaryButtonDetails: ButtonDialogButtonDetails = {
     key: 'OCX_BUTTON_DIALOG.CONFIRM',
@@ -64,11 +77,6 @@ export class DialogFooterComponent implements OnInit, AfterViewInit {
     return this._secondaryButton
   }
   @ViewChildren('customButton') customButtons!: QueryList<ElementRef>
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  constructor() {}
 
   ngAfterViewInit(): void {
     if (!(this.dynamicDialogConfig.data && this.dynamicDialogConfig.data.config)) return

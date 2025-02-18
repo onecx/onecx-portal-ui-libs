@@ -6,14 +6,9 @@ import { BehaviorSubject, firstValueFrom } from 'rxjs'
 
 @Injectable()
 export class AppConfigService {
-  private http = inject(HttpClient);
+  private http = inject(HttpClient)
 
   config$ = new BehaviorSubject<{ [key: string]: string }>({})
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  constructor() {}
 
   public init(baseUrl: string): Promise<void> {
     return new Promise((resolve, reject) => {

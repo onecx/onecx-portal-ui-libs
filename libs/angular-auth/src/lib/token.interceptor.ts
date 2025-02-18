@@ -7,12 +7,7 @@ const WHITELIST = ['assets']
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
-  private authService = inject(AuthProxyService);
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  constructor() {}
+  private authService = inject(AuthProxyService)
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const skip = WHITELIST.some((str) => request.url.includes(str))

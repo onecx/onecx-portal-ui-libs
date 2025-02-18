@@ -13,8 +13,6 @@ export class OcxTimeAgoPipe extends TranslatePipe implements OnDestroy, PipeTran
 
   private timer: number | undefined | null
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[])
   constructor() {
     const changeDetectorRef = inject(ChangeDetectorRef)
     const translateService = inject(TranslateService)

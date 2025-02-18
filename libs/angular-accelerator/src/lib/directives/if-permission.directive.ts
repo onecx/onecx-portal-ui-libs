@@ -35,9 +35,6 @@ export class IfPermissionDirective implements OnInit {
   private permissionChecker: HasPermissionChecker | undefined | null
   negate = false
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[])
-
   constructor() {
     const hasPermissionChecker = this.hasPermissionChecker
     const userService = this.userService

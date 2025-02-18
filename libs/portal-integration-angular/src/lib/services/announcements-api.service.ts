@@ -7,16 +7,11 @@ import { AnnouncementItem } from '../model/announcement-item'
   providedIn: 'root',
 })
 export class AnnouncementsApiService {
-  private http = inject(HttpClient);
+  private http = inject(HttpClient)
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
   }
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  constructor() {}
 
   public getAnnouncements(
     appId: string,

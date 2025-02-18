@@ -25,9 +25,11 @@ import {
 })
 @UntilDestroy()
 export class HeaderComponent {
-  private themeService = inject(ThemeService);
-  private appStateService = inject(AppStateService);
-  workspaceConfigBffService = inject<WorkspaceConfigBffService | undefined>(WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER, { optional: true });
+  private themeService = inject(ThemeService)
+  private appStateService = inject(AppStateService)
+  workspaceConfigBffService = inject<WorkspaceConfigBffService | undefined>(WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER, {
+    optional: true,
+  })
 
   menuExpanded = false
   fallbackImg = false
@@ -45,9 +47,6 @@ export class HeaderComponent {
   menuButtonClick: EventEmitter<any> = new EventEmitter()
 
   logoUrl$: Observable<string | undefined>
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
 
   constructor() {
     this.logoUrl$ = combineLatest([

@@ -4,12 +4,7 @@ import { Injectable, LOCALE_ID, inject } from '@angular/core'
   providedIn: 'root',
 })
 export class DateUtils {
-  protected locale = inject(LOCALE_ID);
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  constructor() {}
+  protected locale = inject(LOCALE_ID)
 
   options: Intl.DateTimeFormatOptions = {
     month: 'short',
@@ -31,5 +26,5 @@ export class DateUtils {
  * @deprecated Will be removed. Please use isValidDate() from @onecx/accelerator
  */
 export function isValidDate(value: any): value is Date {
-  return value instanceof Date && !isNaN(value as any);
+  return value instanceof Date && !isNaN(value as any)
 }

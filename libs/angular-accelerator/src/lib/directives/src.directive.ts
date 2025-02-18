@@ -56,9 +56,6 @@ export class SrcDirective {
     }
   }
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[])
-
   constructor() {
     this.el.nativeElement.style.visibility = 'hidden'
   }

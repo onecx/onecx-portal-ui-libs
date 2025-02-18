@@ -8,16 +8,13 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
   styleUrls: ['./no-help-item.component.scss'],
 })
 export class NoHelpItemComponent {
-  config = inject(DynamicDialogConfig);
-  ref = inject(DynamicDialogRef);
+  config = inject(DynamicDialogConfig)
+  ref = inject(DynamicDialogRef)
 
   public helpArticleId: string
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
   constructor() {
-    const config = this.config;
+    const config = this.config
 
     this.helpArticleId = config.data.helpArticleId
   }

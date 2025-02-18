@@ -1,9 +1,17 @@
 import { Component, EventEmitter, Input, OnInit, importProvidersFrom, inject } from '@angular/core'
-import { Meta, applicationConfig, argsToTemplate, componentWrapperDecorator, moduleMetadata } from '@storybook/angular'
-import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { FormsModule } from '@angular/forms'
 import { BrowserModule } from '@angular/platform-browser'
-import { ButtonModule } from 'primeng/button'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
+import { Meta, applicationConfig, argsToTemplate, componentWrapperDecorator, moduleMetadata } from '@storybook/angular'
+import { PrimeIcons } from 'primeng/api'
+import { ButtonModule } from 'primeng/button'
+import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { TooltipModule } from 'primeng/tooltip'
+import { Observable } from 'rxjs'
+import { DialogMessageContentComponent } from '../core/components/button-dialog/dialog-message-content/dialog-message-content.component'
+import { DialogContentComponent } from '../core/components/dialog/dialog-content/dialog-content.component'
+import { DialogFooterComponent } from '../core/components/dialog/dialog-footer/dialog-footer.component'
+import { StorybookTranslateModule } from '../core/storybook-translate.module'
 import {
   DialogButtonClicked,
   DialogCustomButtonsDisabled,
@@ -13,14 +21,6 @@ import {
   DialogState,
   PortalDialogService,
 } from './portal-dialog.service'
-import { StorybookTranslateModule } from '../core/storybook-translate.module'
-import { DialogMessageContentComponent } from '../core/components/button-dialog/dialog-message-content/dialog-message-content.component'
-import { PrimeIcons } from 'primeng/api'
-import { TooltipModule } from 'primeng/tooltip'
-import { DialogFooterComponent } from '../core/components/dialog/dialog-footer/dialog-footer.component'
-import { DialogContentComponent } from '../core/components/dialog/dialog-content/dialog-content.component'
-import { Observable } from 'rxjs'
-import { FormsModule } from '@angular/forms'
 
 @Component({
   standalone: false,
@@ -28,12 +28,7 @@ import { FormsModule } from '@angular/forms'
   template: `<p-button label="Open dialog" (click)="openDialog()" />`,
 })
 class ButtonDialogWithPortalDialogServiceComponent {
-  private portalDialogService = inject(PortalDialogService);
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  constructor() {}
+  private portalDialogService = inject(PortalDialogService)
 
   @Input() title = 'Title'
   @Input() messageOrComponent = 'Message'

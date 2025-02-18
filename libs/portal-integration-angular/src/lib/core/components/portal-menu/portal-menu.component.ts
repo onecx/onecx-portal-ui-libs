@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core'
 import { MenuItem } from 'primeng/api'
 import { Observable } from 'rxjs'
-import { MenuService } from '../../../services/app.menu.service'
 import { map } from 'rxjs/operators'
+import { MenuService } from '../../../services/app.menu.service'
 
 @Component({
   standalone: false,
@@ -11,12 +11,10 @@ import { map } from 'rxjs/operators'
   styleUrls: ['./portal-menu.component.css'],
 })
 export class PortalMenuComponent {
-  private menuService = inject(MenuService);
+  private menuService = inject(MenuService)
 
   menuItems$: Observable<MenuItem[]>
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
   constructor() {
     this.menuItems$ = this.menuService.getMenuItems().pipe(
       map((el) => {

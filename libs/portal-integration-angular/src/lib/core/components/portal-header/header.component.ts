@@ -1,23 +1,23 @@
 import { animate, style, transition, trigger } from '@angular/animations'
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, inject } from '@angular/core'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
-import { combineLatest, filter, map, Observable } from 'rxjs'
-import { MenuItem, MenuItemCommandEvent } from 'primeng/api/menuitem'
 import { PrimeIcons } from 'primeng/api'
+import { MenuItem, MenuItemCommandEvent } from 'primeng/api/menuitem'
+import { Observable, combineLatest, filter, map } from 'rxjs'
 
 import {
   AppStateService,
-  UserService,
-  ThemeService,
-  ConfigurationService,
   CONFIG_KEY,
+  ConfigurationService,
+  ThemeService,
+  UserService,
 } from '@onecx/angular-integration-interface'
 
+import { EventsPublisher } from '@onecx/integration-interface'
+import { API_PREFIX } from '../../../api/constants'
 import { UserProfile } from '../../../model/user-profile.model'
 import { MenuService } from '../../../services/app.menu.service'
 import { ImageLogoUrlUtils } from '../../utils/image-logo-url.utils'
-import { EventsPublisher } from '@onecx/integration-interface'
-import { API_PREFIX } from '../../../api/constants'
 
 type MenuItemPerm = MenuItem & { permission: string }
 @Component({
@@ -37,11 +37,11 @@ type MenuItemPerm = MenuItem & { permission: string }
 })
 @UntilDestroy()
 export class HeaderComponent implements OnInit {
-  private config = inject(ConfigurationService);
-  private menuService = inject(MenuService);
-  private themeService = inject(ThemeService);
-  private userService = inject(UserService);
-  private appStateService = inject(AppStateService);
+  private config = inject(ConfigurationService)
+  private menuService = inject(MenuService)
+  private themeService = inject(ThemeService)
+  private userService = inject(UserService)
+  private appStateService = inject(AppStateService)
 
   menuExpanded = false
   searchUrl: string | undefined
@@ -96,9 +96,6 @@ export class HeaderComponent implements OnInit {
   logoUrl$: Observable<string | undefined>
   currentUser$: Observable<UserProfile>
   eventsPublisher$: EventsPublisher = new EventsPublisher()
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
 
   constructor() {
     this.currentUser$ = this.userService.profile$

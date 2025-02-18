@@ -19,8 +19,8 @@ import {
   styleUrls: ['./dialog-content.component.scss'],
 })
 export class DialogContentComponent implements OnInit, OnDestroy {
-  dynamicDialogConfig = inject(DynamicDialogConfig);
-  dynamicDialogRef = inject(DynamicDialogRef);
+  dynamicDialogConfig = inject(DynamicDialogConfig)
+  dynamicDialogRef = inject(DynamicDialogRef)
 
   defaultDialogData: ButtonDialogData = {
     component: DialogMessageContentComponent,
@@ -38,11 +38,6 @@ export class DialogContentComponent implements OnInit, OnDestroy {
   secondaryButtonEnabledSub?: Subscription
   customButtonEnabledSub?: Subscription
   buttonClickedSub?: Subscription
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  constructor() {}
 
   ngOnInit(): void {
     this.loadComponent()

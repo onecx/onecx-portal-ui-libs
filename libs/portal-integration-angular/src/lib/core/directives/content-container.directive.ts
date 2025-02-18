@@ -19,11 +19,6 @@ export class OcxContentContainerDirective implements OnInit, OnChanges {
    */
   @Input() breakpoint: 'sm' | 'md' | 'lg' | 'xl' = 'md'
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[])
-
-  constructor() {}
-
   ngOnInit() {
     this.addContainerStyles()
   }

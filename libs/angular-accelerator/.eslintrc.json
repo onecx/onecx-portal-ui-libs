@@ -27,7 +27,9 @@
           {
             "selector": "CallExpression[callee.object.name=\"console\"][callee.property.name=/^(debug|info|time|timeEnd|trace)$/]"
           }
-        ]
+        ],
+        "@angular-eslint/prefer-standalone": "off"
+
       }
     },
     {

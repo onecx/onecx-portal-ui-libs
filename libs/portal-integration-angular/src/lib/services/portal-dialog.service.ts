@@ -1,13 +1,13 @@
-import { EventEmitter, Injectable, Type, isDevMode, inject } from '@angular/core'
+import { EventEmitter, Injectable, Type, inject, isDevMode } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
-import { Observable, mergeMap } from 'rxjs'
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { Observable, mergeMap } from 'rxjs'
 
-import { ButtonDialogButtonDetails, ButtonDialogCustomButtonDetails, ButtonDialogData } from '../model/button-dialog'
-import { DialogMessageContentComponent } from '../core/components/button-dialog/dialog-message-content/dialog-message-content.component'
 import { PrimeIcon } from '@onecx/angular-accelerator'
-import { DialogFooterComponent } from '../core/components/dialog/dialog-footer/dialog-footer.component'
+import { DialogMessageContentComponent } from '../core/components/button-dialog/dialog-message-content/dialog-message-content.component'
 import { DialogContentComponent } from '../core/components/dialog/dialog-content/dialog-content.component'
+import { DialogFooterComponent } from '../core/components/dialog/dialog-footer/dialog-footer.component'
+import { ButtonDialogButtonDetails, ButtonDialogCustomButtonDetails, ButtonDialogData } from '../model/button-dialog'
 
 /**
  * Object containing key for translation with parameters object for translation
@@ -261,13 +261,8 @@ export interface PortalDialogServiceData {
 
 @Injectable({ providedIn: 'any' })
 export class PortalDialogService {
-  private dialogService = inject(DialogService);
-  private translateService = inject(TranslateService);
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  constructor() {}
+  private dialogService = inject(DialogService)
+  private translateService = inject(TranslateService)
 
   /**
    * @deprecated

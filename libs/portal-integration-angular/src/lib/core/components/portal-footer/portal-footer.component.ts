@@ -1,10 +1,10 @@
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core'
 import { Router } from '@angular/router'
-import { combineLatest, concat, map, Observable, of, withLatestFrom } from 'rxjs'
+import { AppStateService, CONFIG_KEY, ConfigurationService, ThemeService } from '@onecx/angular-integration-interface'
 import { MenuItem } from 'primeng/api'
-import { AppStateService, ConfigurationService, ThemeService, CONFIG_KEY } from '@onecx/angular-integration-interface'
-import { MenuService } from '../../../services/app.menu.service'
+import { Observable, combineLatest, concat, map, of, withLatestFrom } from 'rxjs'
 import { API_PREFIX } from '../../../api/constants'
+import { MenuService } from '../../../services/app.menu.service'
 import { ImageLogoUrlUtils } from '../../utils/image-logo-url.utils'
 @Component({
   standalone: false,
@@ -13,12 +13,12 @@ import { ImageLogoUrlUtils } from '../../utils/image-logo-url.utils'
   styleUrls: ['./portal-footer.component.scss'],
 })
 export class PortalFooterComponent implements OnInit {
-  private configurationService = inject(ConfigurationService);
-  router = inject(Router);
-  private appState = inject(AppStateService);
-  private menuService = inject(MenuService);
-  private themeService = inject(ThemeService);
-  private ref = inject(ChangeDetectorRef);
+  private configurationService = inject(ConfigurationService)
+  router = inject(Router)
+  private appState = inject(AppStateService)
+  private menuService = inject(MenuService)
+  private themeService = inject(ThemeService)
+  private ref = inject(ChangeDetectorRef)
 
   copyrightMsg$: Observable<string> | undefined
   logoUrl$: Observable<string | undefined>
@@ -26,9 +26,6 @@ export class PortalFooterComponent implements OnInit {
   portalMenuItems: MenuItem[] = []
   versionInfo$: Observable<string | undefined>
   apiPrefix: string = API_PREFIX
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
 
   constructor() {
     this.versionInfo$ = this.appState.currentMfe$.pipe(

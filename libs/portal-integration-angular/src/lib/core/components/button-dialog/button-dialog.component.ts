@@ -1,6 +1,20 @@
-import { AfterViewInit, Component, ComponentRef, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChild, ViewChildren, ViewContainerRef, inject } from '@angular/core'
-import { BehaviorSubject, Observable, from, isObservable, map, of, startWith, withLatestFrom } from 'rxjs'
+import {
+  AfterViewInit,
+  Component,
+  ComponentRef,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  QueryList,
+  ViewChild,
+  ViewChildren,
+  ViewContainerRef,
+  inject,
+} from '@angular/core'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { BehaviorSubject, Observable, from, isObservable, map, of, startWith, withLatestFrom } from 'rxjs'
 
 import {
   ButtonDialogButtonDetails,
@@ -8,7 +22,6 @@ import {
   ButtonDialogCustomButtonDetails,
   ButtonDialogData,
 } from '../../../model/button-dialog'
-import { DialogMessageContentComponent } from './dialog-message-content/dialog-message-content.component'
 import {
   DialogButtonClicked,
   DialogCustomButtonsDisabled,
@@ -18,6 +31,7 @@ import {
   DialogState,
   DialogStateButtonClicked,
 } from '../../../services/portal-dialog.service'
+import { DialogMessageContentComponent } from './dialog-message-content/dialog-message-content.component'
 
 @Component({
   standalone: false,
@@ -26,8 +40,8 @@ import {
   styleUrls: ['./button-dialog.component.scss'],
 })
 export class ButtonDialogComponent implements OnInit, AfterViewInit {
-  dynamicDialogConfig = inject(DynamicDialogConfig);
-  dynamicDialogRef = inject(DynamicDialogRef);
+  dynamicDialogConfig = inject(DynamicDialogConfig)
+  dynamicDialogRef = inject(DynamicDialogRef)
 
   defaultPrimaryButtonDetails: ButtonDialogButtonDetails = {
     key: 'OCX_BUTTON_DIALOG.CONFIRM',
@@ -75,10 +89,6 @@ export class ButtonDialogComponent implements OnInit, AfterViewInit {
   leftCustomButtons: ButtonDialogCustomButtonDetails[] = []
   rightCustomButtons: ButtonDialogCustomButtonDetails[] = []
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  constructor() {}
   ngAfterViewInit(): void {
     if (this.dialogData.config.autoFocusButton === 'primary' || !this.dialogData.config.autoFocusButton) {
       this.primaryButton.element.nativeElement.focus()

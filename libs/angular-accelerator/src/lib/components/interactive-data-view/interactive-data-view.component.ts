@@ -1,4 +1,19 @@
-import { AfterContentInit, Component, ContentChild, ContentChildren, EventEmitter, Input, OnInit, Output, QueryList, TemplateRef, ViewChild, inject } from '@angular/core'
+import {
+  AfterContentInit,
+  Component,
+  ContentChild,
+  ContentChildren,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  QueryList,
+  TemplateRef,
+  ViewChild,
+  inject,
+} from '@angular/core'
+import { SlotService } from '@onecx/angular-remote-components'
+import { PrimeTemplate } from 'primeng/api'
 import {
   BehaviorSubject,
   Observable,
@@ -13,24 +28,22 @@ import {
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
+import { Filter } from '../../model/filter.model'
+import { limit } from '../../utils/filter.utils'
 import { orderAndMergeValuesByTimestamp } from '../../utils/rxjs-utils'
 import {
   ColumnGroupSelectionComponentState,
   GroupSelectionChangedEvent,
 } from '../column-group-selection/column-group-selection.component'
-import { PrimeTemplate } from 'primeng/api'
 import {
   ActionColumnChangedEvent,
   ColumnSelectionChangedEvent,
   CustomGroupColumnSelectorComponentState,
 } from '../custom-group-column-selector/custom-group-column-selector.component'
-import { SlotService } from '@onecx/angular-remote-components'
 import { DataLayoutSelectionComponentState } from '../data-layout-selection/data-layout-selection.component'
 import { DataListGridSortingComponentState } from '../data-list-grid-sorting/data-list-grid-sorting.component'
 import { Row, Sort } from '../data-table/data-table.component'
 import { DataViewComponent, DataViewComponentState, RowListGridData } from '../data-view/data-view.component'
-import { Filter } from '../../model/filter.model'
-import { limit } from '../../utils/filter.utils'
 import { FilterViewComponentState, FilterViewDisplayMode } from '../filter-view/filter-view.component'
 
 export type InteractiveDataViewComponentState = ColumnGroupSelectionComponentState &
@@ -52,7 +65,7 @@ export interface ColumnGroupData {
   providers: [{ provide: 'InteractiveDataViewComponent', useExisting: InteractiveDataViewComponent }],
 })
 export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
-  private slotService = inject(SlotService);
+  private slotService = inject(SlotService)
 
   _dataViewComponent: DataViewComponent | undefined
   @ViewChild(DataViewComponent) set dataView(ref: DataViewComponent | undefined) {
@@ -345,9 +358,6 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   columnGroupSlotName = 'onecx-column-group-selection'
   isColumnGroupSelectionComponentDefined$: Observable<boolean>
   groupSelectionChangedSlotEmitter = new EventEmitter<ColumnGroupData | undefined>()
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
 
   constructor() {
     this.isColumnGroupSelectionComponentDefined$ = this.slotService

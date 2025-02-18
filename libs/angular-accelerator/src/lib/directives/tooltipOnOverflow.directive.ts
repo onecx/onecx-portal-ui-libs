@@ -39,9 +39,6 @@ export class TooltipOnOverflowDirective extends Tooltip implements OnDestroy, Af
     this.mutationObserver.observe(this.el.nativeElement, { subtree: true, characterData: true, childList: true })
   }
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[])
-
   constructor() {
     const zone = inject(NgZone)
     const renderer = inject(Renderer2)

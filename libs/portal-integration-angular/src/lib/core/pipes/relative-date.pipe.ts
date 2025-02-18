@@ -20,9 +20,6 @@ export class RelativeDatePipe implements PipeTransform {
 
   rtf: Intl.RelativeTimeFormat
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[])
-
   constructor() {
     this.rtf = new Intl.RelativeTimeFormat(this.translateService.currentLang, {
       style: 'long',

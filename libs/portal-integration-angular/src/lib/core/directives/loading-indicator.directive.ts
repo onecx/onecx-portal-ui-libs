@@ -26,11 +26,6 @@ export class LoadingIndicatorDirective implements OnChanges {
 
   private componentRef: ComponentRef<LoadingIndicatorComponent> | undefined
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[])
-
-  constructor() {}
-
   ngOnChanges(changes: SimpleChanges) {
     if (changes['ocxLoadingIndicator'] || changes['overlayFullPage']) {
       this.toggleLoadingIndicator()

@@ -9,7 +9,7 @@ import { SupportTicket } from '../../../model/support-ticket'
   styleUrls: ['./support-ticket.component.scss'],
 })
 export class SupportTicketComponent implements OnInit {
-  private fb = inject(FormBuilder);
+  private fb = inject(FormBuilder)
 
   public formGroup!: FormGroup
 
@@ -18,11 +18,6 @@ export class SupportTicketComponent implements OnInit {
 
   @Output()
   submitTicket: EventEmitter<SupportTicket> = new EventEmitter()
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  constructor() {}
 
   ngOnInit(): void {
     this.formGroup = this.fb.group({

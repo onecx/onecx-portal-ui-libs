@@ -26,10 +26,10 @@ import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
+import { Filter } from '../../model/filter.model'
 import { ObjectUtils } from '../../utils/objectutils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { Row } from '../data-table/data-table.component'
-import { Filter } from '../../model/filter.model'
 
 export type ListGridData = {
   id: string | number
@@ -330,9 +330,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
 
   columnType = ColumnType
   templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[])
 
   constructor() {
     const locale = inject(LOCALE_ID)

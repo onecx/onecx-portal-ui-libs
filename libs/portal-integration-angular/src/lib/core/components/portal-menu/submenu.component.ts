@@ -55,10 +55,10 @@ import { PortalUIService } from '../../../services/portal-ui.service'
 })
 @UntilDestroy()
 export class SubMenuComponent implements OnInit {
-  router = inject(Router);
-  private activeRoute = inject(ActivatedRoute);
-  uiConfig = inject(PortalUIService);
-  private sanitizer = inject(DomSanitizer);
+  router = inject(Router)
+  private activeRoute = inject(ActivatedRoute)
+  uiConfig = inject(PortalUIService)
+  private sanitizer = inject(DomSanitizer)
 
   @Input() item!: MenuItem
 
@@ -77,9 +77,6 @@ export class SubMenuComponent implements OnInit {
   // key!: string
   // isParent: boolean | undefined
   type: 'parent' | 'routerLink' | 'href' | 'command' | 'label' = 'label'
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
 
   constructor() {
     this.router.events

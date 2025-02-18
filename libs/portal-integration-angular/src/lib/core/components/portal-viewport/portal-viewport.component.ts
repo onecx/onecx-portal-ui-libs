@@ -1,18 +1,18 @@
-import { AfterViewInit, Component, HostListener, Input, OnDestroy, OnInit, Renderer2, inject } from '@angular/core'
 import { HttpClient, HttpResponse } from '@angular/common/http'
+import { AfterViewInit, Component, HostListener, Input, OnDestroy, OnInit, Renderer2, inject } from '@angular/core'
 import { NavigationEnd, Router } from '@angular/router'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
-import { catchError, combineLatest, filter, first, map, mergeMap, Observable, of, withLatestFrom } from 'rxjs'
+import { AppStateService, PortalMessageService, ThemeService, UserService } from '@onecx/angular-integration-interface'
 import { MenuItem, MessageService } from 'primeng/api'
-import { DialogService } from 'primeng/dynamicdialog'
-import { AppStateService, UserService, ThemeService, PortalMessageService } from '@onecx/angular-integration-interface'
-import { SupportTicketApiService } from './../../../services/support-ticket-api.service'
-import { PortalUIService } from '../../../services/portal-ui.service'
-import { SupportTicket } from '../../../model/support-ticket'
-import { HelpData } from '../../../model/help-data'
-import { NoHelpItemComponent } from '../no-help-item/no-help-item.component'
-import { HelpPageAPIService } from '../../../services/help-api-service'
 import { PrimeNG } from 'primeng/config'
+import { DialogService } from 'primeng/dynamicdialog'
+import { Observable, catchError, combineLatest, filter, first, map, mergeMap, of, withLatestFrom } from 'rxjs'
+import { HelpData } from '../../../model/help-data'
+import { SupportTicket } from '../../../model/support-ticket'
+import { HelpPageAPIService } from '../../../services/help-api-service'
+import { PortalUIService } from '../../../services/portal-ui.service'
+import { NoHelpItemComponent } from '../no-help-item/no-help-item.component'
+import { SupportTicketApiService } from './../../../services/support-ticket-api.service'
 
 @Component({
   standalone: false,
@@ -70,9 +70,6 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
   helpArticleId$: Observable<string> | undefined
   applicationId$: Observable<string> | undefined
   helpDataItem$: Observable<HelpData> | undefined
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[])
 
   constructor() {
     this.portalMessageService.message$.subscribe((message) => this.messageService.add(message))

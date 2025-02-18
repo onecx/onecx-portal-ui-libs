@@ -10,11 +10,6 @@ export class TemplateDirective {
   })
   name = ''
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[])
-
-  constructor() {}
-
   getType(): string {
     return this.name
   }

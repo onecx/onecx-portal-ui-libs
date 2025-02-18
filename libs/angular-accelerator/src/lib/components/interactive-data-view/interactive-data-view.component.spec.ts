@@ -64,9 +64,9 @@ DomHandler.siblings = (element) => {
 
 // primeng version 19.0.6 workaround for frozen column failing in tests
 DomHandler.index = (element) => {
-  let children = element.closest('*').childNodes
+  const children = element.closest('*').childNodes
   let num = 0
-  for (var i = 0; i < children.length; i++) {
+  for (let i = 0; i < children.length; i++) {
     if (children[i] == element) return num
     if (children[i].nodeType == 1) num++
   }
@@ -1399,23 +1399,28 @@ describe('InteractiveDataViewComponent', () => {
 
         dataTable = await filterViewHarness.getDataTable()
         expect(dataTable).toBeTruthy()
-        const headers = await dataTable?.getHeaderColumns()
-        expect(headers).toBeTruthy()
-        expect(headers?.length).toBe(3)
-        expect(await headers![0].getText()).toBe('Column name')
-        expect(await headers![1].getText()).toBe('Filter value')
-        expect(await headers![2].getText()).toBe('Actions')
 
-        const rows = await dataTable?.getRows()
-        expect(rows?.length).toBe(4)
-        expect(await rows![0].getData()).toEqual(['COLUMN_HEADER_NAME.NAME', 'some name', ''])
-        expect(await rows![1].getData()).toEqual([
-          'COLUMN_HEADER_NAME.START_DATE',
-          datePipe.transform('2023-09-13T09:34:05Z', 'medium'),
-          '',
-        ])
-        expect(await rows![2].getData()).toEqual(['COLUMN_HEADER_NAME.STATUS', 'some status', ''])
-        expect(await rows![3].getData()).toEqual(['COLUMN_HEADER_NAME.TEST_TRUTHY', 'Yes', ''])
+        if (dataTable) {
+          const headers = await dataTable.getHeaderColumns()
+          expect(headers).toBeTruthy()
+          expect(headers.length).toBe(3)
+          expect(await headers[0].getText()).toBe('Column name')
+          expect(await headers[1].getText()).toBe('Filter value')
+          expect(await headers[2].getText()).toBe('Actions')
+
+          if (dataTable) {
+            const rows = await dataTable.getRows()
+            expect(rows.length).toBe(4)
+            expect(await rows[0].getData()).toEqual(['COLUMN_HEADER_NAME.NAME', 'some name', ''])
+            expect(await rows[1].getData()).toEqual([
+              'COLUMN_HEADER_NAME.START_DATE',
+              datePipe.transform('2023-09-13T09:34:05Z', 'medium'),
+              '',
+            ])
+            expect(await rows[2].getData()).toEqual(['COLUMN_HEADER_NAME.STATUS', 'some status', ''])
+            expect(await rows[3].getData()).toEqual(['COLUMN_HEADER_NAME.TEST_TRUTHY', 'Yes', ''])
+          }
+        }
       })
 
       it('should show reset all filters button above the table', async () => {
@@ -1425,13 +1430,16 @@ describe('InteractiveDataViewComponent', () => {
 
         const resetButton = await filterViewHarness.getOverlayResetFiltersButton()
         expect(resetButton).toBeTruthy()
-        const dataTable = await filterViewHarness.getDataTable()
-        expect((await dataTable?.getRows())?.length).toBe(4)
 
-        await resetButton?.click()
-        const rows = await dataTable?.getRows()
-        expect(rows?.length).toBe(1)
-        expect(await rows![0].getData()).toEqual(['No filters selected'])
+        const dataTable = await filterViewHarness.getDataTable()
+        if (dataTable) {
+          expect((await dataTable.getRows()).length).toBe(4)
+
+          await resetButton?.click()
+          const rows = await dataTable.getRows()
+          expect(rows.length).toBe(1)
+          expect(await rows[0].getData()).toEqual(['No filters selected'])
+        }
       })
 
       it('should show remove filter in action column', async () => {
@@ -1440,15 +1448,17 @@ describe('InteractiveDataViewComponent', () => {
         fixture.detectChanges()
 
         const dataTable = await filterViewHarness.getDataTable()
-        let rows = await dataTable?.getRows()
-        expect(rows?.length).toBe(4)
-        const buttons = await rows![0].getAllActionButtons()
-        expect(buttons.length).toBe(1)
-        await buttons[0].click()
-
-        rows = await dataTable?.getRows()
-        expect(rows?.length).toBe(3)
-        expect(component.filters.length).toBe(3)
+        if(dataTable) {
+          let rows = await dataTable.getRows()
+            expect(rows.length).toBe(4)
+            const buttons = await rows[0].getAllActionButtons()
+            expect(buttons.length).toBe(1)
+            await buttons[0].click()
+    
+            rows = await dataTable.getRows()
+            expect(rows.length).toBe(3)
+            expect(component.filters.length).toBe(3)
+        }
       })
     })
   })

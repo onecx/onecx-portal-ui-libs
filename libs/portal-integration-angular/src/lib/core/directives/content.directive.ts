@@ -13,11 +13,6 @@ export class OcxContentDirective implements OnInit, OnChanges {
   private baseId = 'ocx_content_title_element'
   private titleElementId: string | undefined
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[])
-
-  constructor() {}
-
   ngOnInit() {
     this.titleElementId = this.getUniqueTitleID(this.baseId)
     this.init()
