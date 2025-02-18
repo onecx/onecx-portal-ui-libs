@@ -1,10 +1,10 @@
-import { Injectable, Optional } from '@angular/core'
+import { Injectable, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { combineLatest, of } from 'rxjs'
 // eslint-disable-next-line
 import { Message, PortalMessageService } from '@onecx/angular-integration-interface'
 import { Message as TopicMessage } from '@onecx/integration-interface'
-import { FakeTopic } from './fake-topic'
+import { FakeTopic } from '@onecx/accelerator'
 
 export function providePortalMessageServiceMock() {
   return [
@@ -15,7 +15,8 @@ export function providePortalMessageServiceMock() {
 
 @Injectable()
 export class PortalMessageServiceMock {
-  constructor(@Optional() private translateService?: TranslateService) {}
+  private translateService = inject(TranslateService, { optional: true })
+
   lastMessages: { type: 'success' | 'info' | 'error' | 'warning'; value: Message }[] = []
   message$ = new FakeTopic<TopicMessage>()
 

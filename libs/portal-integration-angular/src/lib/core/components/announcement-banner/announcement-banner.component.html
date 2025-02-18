@@ -1,19 +1,21 @@
-<ng-container *ngIf="prioItem$ | async as item">
-  <div class="p-2 bg-orange-200 text-orange-800 border-round mb-2 flex align-items-center" *ngIf="shouldShow">
-    <div class="px-4">
-      <i class="pi pi-info-circle text-xl"></i>
+@if (prioItem$ | async; as item) {
+  @if (shouldShow) {
+    <div class="p-2 bg-orange-200 text-orange-800 border-round mb-2 flex align-items-center">
+      <div class="px-4">
+        <i class="pi pi-info-circle text-xl"></i>
+      </div>
+      <div class="flex-1">
+        <div class="font-bold pb-1">{{item.title}}</div>
+        <div>{{item.content}}</div>
+      </div>
+      <div>
+        <button
+          class="p-button-rounded p-button-text text-orange-800"
+          pButton
+          (click)="hide(item.id!)"
+          icon="pi pi-times"
+        ></button>
+      </div>
     </div>
-    <div class="flex-1">
-      <div class="font-bold pb-1">{{item.title}}</div>
-      <div>{{item.content}}</div>
-    </div>
-    <div>
-      <button
-        class="p-button-rounded p-button-text text-orange-800"
-        pButton
-        (click)="hide(item.id!)"
-        icon="pi pi-times"
-      ></button>
-    </div>
-  </div>
-</ng-container>
+  }
+}

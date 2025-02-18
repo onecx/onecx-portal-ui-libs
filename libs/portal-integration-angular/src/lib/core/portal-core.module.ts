@@ -1,6 +1,6 @@
 import { CommonModule, registerLocaleData } from '@angular/common'
 import de from '@angular/common/locales/de'
-import { APP_INITIALIZER, Inject, LOCALE_ID, ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core'
+import { APP_INITIALIZER, LOCALE_ID, ModuleWithProviders, NgModule, inject } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
 import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateModule } from '@ngx-translate/core'
@@ -13,6 +13,7 @@ import {
   ThemeService,
   UserService,
 } from '@onecx/angular-integration-interface'
+import { TRANSLATION_PATH } from '@onecx/angular-utils'
 import { MessageService } from 'primeng/api'
 import { ConfirmDialogModule } from 'primeng/confirmdialog'
 import { PortalApiService } from '../services/portal-api.service'
@@ -26,6 +27,9 @@ import { ColumnTogglerComponent } from './components/data-view-controls/column-t
 import { DataViewControlsComponent } from './components/data-view-controls/data-view-controls.component'
 import { ViewTemplatePickerComponent } from './components/data-view-controls/view-template-picker/view-template-picker.component'
 import { DeleteDialogComponent } from './components/delete-dialog/delete-dialog.component'
+import { DialogContentComponent } from './components/dialog/dialog-content/dialog-content.component'
+import { DialogFooterComponent } from './components/dialog/dialog-footer/dialog-footer.component'
+import { DialogInlineComponent } from './components/dialog/dialog-inline/dialog-inline.component'
 import { GlobalErrorComponent } from './components/error-component/global-error.component'
 import { HelpItemEditorComponent } from './components/help-item-editor/help-item-editor.component'
 import { AppInlineProfileComponent } from './components/inline-profile/inline-profile.component'
@@ -56,10 +60,6 @@ import { PatchFormGroupValuesDirective } from './directives/patch-form-group-val
 import { SetInputValueDirective } from './directives/set-input-value.directive'
 import { standaloneInitializer } from './initializer/standalone.initializer'
 import { PrimeNgModule } from './primeng.module'
-import { DialogFooterComponent } from './components/dialog/dialog-footer/dialog-footer.component'
-import { DialogContentComponent } from './components/dialog/dialog-content/dialog-content.component'
-import { DialogInlineComponent } from './components/dialog/dialog-inline/dialog-inline.component'
-import { TRANSLATION_PATH } from '@onecx/angular-utils'
 
 export class PortalMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -132,12 +132,12 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     {
       provide: TRANSLATION_PATH,
       useValue: './onecx-portal-lib/assets/i18n/',
-      multi: true
+      multi: true,
     },
     {
       provide: TRANSLATION_PATH,
       useValue: './onecx-portal-lib/assets/i18n/primeng/',
-      multi: true
+      multi: true,
     },
     {
       provide: MessageService,
@@ -226,10 +226,10 @@ export class PortalCoreModule {
     return module
   }
 
-  constructor(
-    @Optional() @Inject(SANITY_CHECK) sanityCheck?: string,
-    @Optional() @SkipSelf() @Inject(SANITY_CHECK) parentSanityCheck?: string
-  ) {
+  constructor() {
+    const sanityCheck = inject(SANITY_CHECK, { optional: true })
+    const parentSanityCheck = inject(SANITY_CHECK, { optional: true, skipSelf: true })
+
     console.log(`*** Portal Core module constructor, mode:  ${sanityCheck}`)
     if (sanityCheck === undefined) {
       throw new Error(`Always import PortalCoreModule using either 'forRoot()' or 'forMicroFrontend()' helper methods.`)

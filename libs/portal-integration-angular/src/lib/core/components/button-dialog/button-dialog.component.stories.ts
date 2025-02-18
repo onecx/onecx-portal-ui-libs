@@ -7,6 +7,8 @@ import { ButtonDialogComponent } from './button-dialog.component'
 import { ButtonModule } from 'primeng/button'
 import { PrimeIcons } from 'primeng/api'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { TooltipModule } from 'primeng/tooltip'
+import { StorybookThemeModule } from '../../storybook-theme.module'
 
 export default {
   title: 'ButtonDialogComponent',
@@ -16,13 +18,14 @@ export default {
       providers: [
         importProvidersFrom(BrowserModule),
         importProvidersFrom(BrowserAnimationsModule),
+        importProvidersFrom(StorybookThemeModule),
         DynamicDialogConfig,
         DynamicDialogRef,
       ],
     }),
     moduleMetadata({
       declarations: [ButtonDialogComponent],
-      imports: [StorybookTranslateModule, ButtonModule],
+      imports: [StorybookTranslateModule, ButtonModule, TooltipModule],
     }),
     componentWrapperDecorator((story) => `<div style="margin: 3em">${story}</div>`),
   ],

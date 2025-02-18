@@ -1,7 +1,9 @@
-import { Directive, ElementRef, Input, OnChanges, OnInit } from '@angular/core'
+import { Directive, ElementRef, Input, OnChanges, OnInit, inject } from '@angular/core'
 
-@Directive({ selector: '[ocxContentContainer]' })
+@Directive({ selector: '[ocxContentContainer]', standalone: false })
 export class OcxContentContainerDirective implements OnInit, OnChanges {
+  private el = inject(ElementRef)
+
   /**
    * Used for passing the direction, in which the content inside the container should be rendered.
    * Default: horizontal
@@ -16,8 +18,6 @@ export class OcxContentContainerDirective implements OnInit, OnChanges {
    * Default: md
    */
   @Input() breakpoint: 'sm' | 'md' | 'lg' | 'xl' = 'md'
-
-  constructor(private el: ElementRef) {}
 
   ngOnInit() {
     this.addContainerStyles()
@@ -34,8 +34,8 @@ export class OcxContentContainerDirective implements OnInit, OnChanges {
     // This way we can avoid multiple contradictory layout classes and unexpected effects
     const removeResponsiveLayoutClasses = () => {
       const classesToRemove: string[] = []
-      const regexPattern = /\w+:flex-row$/      
-      this.el.nativeElement.classList.forEach((className: string) => {        
+      const regexPattern = /\w+:flex-row$/
+      this.el.nativeElement.classList.forEach((className: string) => {
         if (regexPattern.test(className)) {
           classesToRemove.push(className)
         }

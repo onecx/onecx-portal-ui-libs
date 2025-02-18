@@ -1,18 +1,18 @@
 import { HttpClient } from '@angular/common/http'
-import { Inject, Injectable, OnDestroy, Optional } from '@angular/core'
-import { firstValueFrom } from 'rxjs'
+import { Injectable, OnDestroy, inject } from '@angular/core'
 import { Config, ConfigurationTopic } from '@onecx/integration-interface'
+import { firstValueFrom } from 'rxjs'
 import { APP_CONFIG } from '../api/injection-tokens'
 import { CONFIG_KEY } from '../model/config-key.model'
 
 @Injectable({ providedIn: 'root' })
 export class ConfigurationService implements OnDestroy {
-  config$ = new ConfigurationTopic()
+  private http = inject(HttpClient)
+  private defaultConfig = inject<{
+    [key: string]: string
+  }>(APP_CONFIG, { optional: true })
 
-  constructor(
-    private http: HttpClient,
-    @Optional() @Inject(APP_CONFIG) private defaultConfig?: { [key: string]: string }
-  ) {}
+  config$ = new ConfigurationTopic()
 
   ngOnDestroy(): void {
     this.config$.destroy()

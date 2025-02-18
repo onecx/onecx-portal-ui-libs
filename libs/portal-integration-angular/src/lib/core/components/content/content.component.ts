@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core'
 
 @Component({
+  standalone: false,
   selector: 'ocx-content',
   templateUrl: './content.component.html',
 })
@@ -8,5 +9,5 @@ export class OcxContentComponent {
   /**
    * Optionally allows specifying a title for the content card
    */
-  @Input() title = '';
+  @Input() title = ''
 }

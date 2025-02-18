@@ -1,28 +1,29 @@
 <div class="w-full flex-row justify-content-end flex flex-wrap gap-2">
-  <ng-container *ngFor="let button of leftCustomButtons; index as i">
+  @for (button of leftCustomButtons; track button; let i = $index) {
     <div [ngStyle]="{'margin-right': (i === leftCustomButtons.length - 1) ? 'auto' : 0}">
       <ng-container *ngTemplateOutlet="customButtonTemplate; context: {button: button}"> </ng-container>
     </div>
-  </ng-container>
-  <ng-container *ngFor="let button of rightCustomButtons">
+  }
+  @for (button of rightCustomButtons; track button) {
     <div>
       <ng-container *ngTemplateOutlet="customButtonTemplate; context: {button: button}"> </ng-container>
     </div>
-  </ng-container>
+  }
   <div>
-    <button
-      #secondaryButton
-      id="{{dialogData.config.secondaryButtonDetails?.id ?? 'buttonDialogSecondaryButton'}}"
-      pButton
-      *ngIf="dialogData.config.secondaryButtonIncluded"
-      [icon]="dialogData.config.secondaryButtonDetails!.icon !== undefined ? dialogData.config.secondaryButtonDetails!.icon : ''"
-      (click)="secondaryButtonAction()"
-      [label]="dialogData.config.secondaryButtonDetails!.key | translate:dialogData.config.secondaryButtonDetails?.parameters"
-      [disabled]="secondaryButtonDisabled$ | async"
-      [pTooltip]="dialogData.config.secondaryButtonDetails!.tooltipKey ? (dialogData.config.secondaryButtonDetails!.tooltipKey | translate) : null"
-      [tooltipPosition]="dialogData.config.secondaryButtonDetails?.tooltipPosition ?? ''"
-      [attr.aria-label]="dialogData.config.secondaryButtonDetails!.key | translate:dialogData.config.secondaryButtonDetails?.parameters"
-    ></button>
+    @if (dialogData.config.secondaryButtonIncluded) {
+      <button
+        #secondaryButton
+        id="{{dialogData.config.secondaryButtonDetails?.id ?? 'buttonDialogSecondaryButton'}}"
+        pButton
+        [icon]="dialogData.config.secondaryButtonDetails!.icon !== undefined ? dialogData.config.secondaryButtonDetails!.icon : ''"
+        (click)="secondaryButtonAction()"
+        [label]="dialogData.config.secondaryButtonDetails!.key | translate:dialogData.config.secondaryButtonDetails?.parameters"
+        [disabled]="secondaryButtonDisabled$ | async"
+        [pTooltip]="dialogData.config.secondaryButtonDetails!.tooltipKey ? (dialogData.config.secondaryButtonDetails!.tooltipKey | translate) : null"
+        [tooltipPosition]="dialogData.config.secondaryButtonDetails?.tooltipPosition ?? ''"
+        [attr.aria-label]="dialogData.config.secondaryButtonDetails!.key | translate:dialogData.config.secondaryButtonDetails?.parameters"
+      ></button>
+    }
   </div>
   <div>
     <button

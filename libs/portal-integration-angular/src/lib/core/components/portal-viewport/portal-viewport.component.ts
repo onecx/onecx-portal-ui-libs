@@ -1,20 +1,21 @@
-import { AfterViewInit, Component, HostListener, Input, OnDestroy, OnInit, Renderer2 } from '@angular/core'
 import { HttpClient, HttpResponse } from '@angular/common/http'
+import { AfterViewInit, Component, HostListener, Input, OnDestroy, OnInit, Renderer2, inject } from '@angular/core'
 import { NavigationEnd, Router } from '@angular/router'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
-import { catchError, combineLatest, filter, first, map, mergeMap, Observable, of, withLatestFrom } from 'rxjs'
+import { AppStateService, PortalMessageService, ThemeService, UserService } from '@onecx/angular-integration-interface'
 import { MenuItem, MessageService } from 'primeng/api'
-import { DialogService } from 'primeng/dynamicdialog'
-import { AppStateService, UserService, ThemeService, PortalMessageService } from '@onecx/angular-integration-interface'
-import { SupportTicketApiService } from './../../../services/support-ticket-api.service'
-import { PortalUIService } from '../../../services/portal-ui.service'
-import { SupportTicket } from '../../../model/support-ticket'
-import { HelpData } from '../../../model/help-data'
-import { NoHelpItemComponent } from '../no-help-item/no-help-item.component'
-import { HelpPageAPIService } from '../../../services/help-api-service'
 import { PrimeNG } from 'primeng/config'
+import { DialogService } from 'primeng/dynamicdialog'
+import { Observable, catchError, combineLatest, filter, first, map, mergeMap, of, withLatestFrom } from 'rxjs'
+import { HelpData } from '../../../model/help-data'
+import { SupportTicket } from '../../../model/support-ticket'
+import { HelpPageAPIService } from '../../../services/help-api-service'
+import { PortalUIService } from '../../../services/portal-ui.service'
+import { NoHelpItemComponent } from '../no-help-item/no-help-item.component'
+import { SupportTicketApiService } from './../../../services/support-ticket-api.service'
 
 @Component({
+  standalone: false,
   selector: 'ocx-portal-viewport',
   templateUrl: './portal-viewport.component.html',
   styleUrls: ['./portal-viewport.component.scss'],
@@ -22,6 +23,20 @@ import { PrimeNG } from 'primeng/config'
 })
 @UntilDestroy()
 export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy {
+  private renderer = inject(Renderer2)
+  private router = inject(Router)
+  private primengConfig = inject(PrimeNG)
+  private portalUIConfig = inject(PortalUIService)
+  private appStateService = inject(AppStateService)
+  private themeService = inject(ThemeService)
+  private messageService = inject(MessageService)
+  private supportTicketApiService = inject(SupportTicketApiService)
+  private helpDataService = inject(HelpPageAPIService)
+  private dialogService = inject(DialogService)
+  private userService = inject(UserService)
+  private portalMessageService = inject(PortalMessageService)
+  private httpClient = inject(HttpClient)
+
   @Input()
   showProfileInSidebar = true
 
@@ -56,21 +71,7 @@ export class PortalViewportComponent implements OnInit, AfterViewInit, OnDestroy
   applicationId$: Observable<string> | undefined
   helpDataItem$: Observable<HelpData> | undefined
 
-  constructor(
-    private renderer: Renderer2,
-    private router: Router,
-    private primengConfig: PrimeNG,
-    private portalUIConfig: PortalUIService,
-    private appStateService: AppStateService,
-    private themeService: ThemeService,
-    private messageService: MessageService,
-    private supportTicketApiService: SupportTicketApiService,
-    private helpDataService: HelpPageAPIService,
-    private dialogService: DialogService,
-    private userService: UserService,
-    private portalMessageService: PortalMessageService,
-    private httpClient: HttpClient
-  ) {
+  constructor() {
     this.portalMessageService.message$.subscribe((message) => this.messageService.add(message))
     this.hideMenuButtonTitle = this.portalUIConfig.getTranslation('hideMenuButton')
     this.showMenuButtonTitle = this.portalUIConfig.getTranslation('showMenuButton')

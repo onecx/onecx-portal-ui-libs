@@ -7,10 +7,11 @@ import {
   Renderer2,
   TemplateRef,
   ViewContainerRef,
+  inject,
 } from '@angular/core'
 import { Tooltip } from 'primeng/tooltip'
 
-@Directive({ selector: '[ocxTooltipOnOverflow]' })
+@Directive({ selector: '[ocxTooltipOnOverflow]', standalone: false })
 export class TooltipOnOverflowDirective extends Tooltip implements OnDestroy, AfterViewInit {
   mutationObserver = new MutationObserver(() => {
     this.zone.run(() => {
@@ -38,7 +39,11 @@ export class TooltipOnOverflowDirective extends Tooltip implements OnDestroy, Af
     this.mutationObserver.observe(this.el.nativeElement, { subtree: true, characterData: true, childList: true })
   }
 
-  constructor(zone: NgZone, renderer: Renderer2, viewContainer: ViewContainerRef) {
+  constructor() {
+    const zone = inject(NgZone)
+    const renderer = inject(Renderer2)
+    const viewContainer = inject(ViewContainerRef)
+
     super(zone, viewContainer)
     renderer.setStyle(this.el.nativeElement, 'text-overflow', 'ellipsis')
     renderer.setStyle(this.el.nativeElement, 'overflow', 'hidden')

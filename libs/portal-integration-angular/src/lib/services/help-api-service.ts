@@ -1,16 +1,17 @@
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http'
-import { Injectable } from '@angular/core'
-import { map, Observable } from 'rxjs'
+import { Injectable, inject } from '@angular/core'
+import { Observable, map } from 'rxjs'
 import { HelpData } from '../model/help-data'
 
 const baseUrl = './ahm-api/internal/applications'
 
 @Injectable({ providedIn: 'root' })
 export class HelpPageAPIService {
+  private httpClient = inject(HttpClient)
+
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
   }
-  constructor(private httpClient: HttpClient) {}
 
   /* eslint-disable @typescript-eslint/no-unused-vars */
   getHelpDataItem(appId: string, helpItemId: string, type = 'PAGE'): Observable<HelpData> {

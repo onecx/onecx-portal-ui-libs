@@ -1,6 +1,8 @@
 <div class="dialogMessageContent">
   <div>
-    <i *ngIf="icon !== ''" [class]="icon"></i>
+    @if (icon !== '') {
+      <i [class]="icon"></i>
+    }
     <span id="dialogMessage">{{message | translate:messageParameters}}</span>
   </div>
 </div>

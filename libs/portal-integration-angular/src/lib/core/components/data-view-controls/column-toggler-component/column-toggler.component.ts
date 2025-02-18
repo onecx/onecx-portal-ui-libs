@@ -1,11 +1,15 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, OnInit, inject } from '@angular/core'
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 
 @Component({
+  standalone: false,
   templateUrl: './column-toggler.component.html',
   providers: [DialogService],
 })
 export class ColumnTogglerComponent implements OnInit {
+  private ref = inject(DynamicDialogRef)
+  private config = inject(DynamicDialogConfig)
+
   sourceLabel = 'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ACTIVE_COLUMNS_LABEL'
   targetLabel = 'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.INACTIVE_COLUMNS_LABEL'
   saveButtonLabel = 'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.SAVE_BUTTON_LABEL'
@@ -16,8 +20,6 @@ export class ColumnTogglerComponent implements OnInit {
 
   activeCols: string[] = []
   inactiveCols: string[] = []
-
-  constructor(private ref: DynamicDialogRef, private config: DynamicDialogConfig) {}
 
   submitResults(
     colActive: { field: string; header: string; active: boolean; translationPrefix?: string }[],

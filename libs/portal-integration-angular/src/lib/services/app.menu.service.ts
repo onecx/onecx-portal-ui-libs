@@ -1,14 +1,21 @@
-import { Inject, Injectable, Optional } from '@angular/core'
-import { Router } from '@angular/router'
 import { APP_BASE_HREF, PlatformLocation } from '@angular/common'
+import { Injectable, inject } from '@angular/core'
+import { Router } from '@angular/router'
+import { CONFIG_KEY, ConfigurationService, UserService } from '@onecx/angular-integration-interface'
 import { MenuItem } from 'primeng/api'
-import { map, Observable, of, shareReplay, Subject, withLatestFrom } from 'rxjs'
-import { UserService, ConfigurationService, CONFIG_KEY } from '@onecx/angular-integration-interface'
+import { Observable, Subject, map, of, shareReplay, withLatestFrom } from 'rxjs'
 import { PortalMenuItem } from '../model/menu-item.model'
 import { MenuApiService } from './menu-api.service'
 
 @Injectable({ providedIn: 'root' })
 export class MenuService {
+  private api = inject(MenuApiService)
+  private config = inject(ConfigurationService)
+  private router = inject(Router)
+  private platformLoc = inject(PlatformLocation)
+  private baseURL = inject(APP_BASE_HREF, { optional: true })!
+  private userService = inject(UserService)
+
   private menuSource = new Subject<string>()
   private resetSource = new Subject()
   private menuItems$: Observable<MenuItem[]> | undefined
@@ -16,14 +23,7 @@ export class MenuService {
   menuSource$ = this.menuSource.asObservable()
   resetSource$ = this.resetSource.asObservable()
 
-  constructor(
-    private api: MenuApiService,
-    private config: ConfigurationService,
-    private router: Router,
-    private platformLoc: PlatformLocation,
-    @Inject(APP_BASE_HREF) @Optional() private baseURL: string,
-    private userService: UserService
-  ) {
+  constructor() {
     if (!this.baseURL) {
       this.baseURL = this.platformLoc.getBaseHrefFromDOM()
     }

@@ -1,13 +1,14 @@
 <div class="ml-3 py-2 lg:ml-5 flex flex-wrap align-items-center justify-content-between row-gap-1">
   <div class="flex flex-wrap align-items-center justify-content-start gap-3 row-gap-1">
-    <img
-      *ngIf="logoUrl$ | async as logoUrl"
-      alt="logo"
-      class="max-h-1rem"
-      [ocxShellSrc]="(logoUrl$ | async) ?? ''"
-      (error)="onErrorHandleSrc()"
-      (load)="onLoad(logoUrl)"
-    />
+    @if (logoUrl$ | async; as logoUrl) {
+      <img
+        alt="logo"
+        class="max-h-1rem"
+        [ocxShellSrc]="logoUrl ?? ''"
+        (error)="onErrorHandleSrc()"
+        (load)="onLoad(logoUrl)"
+        />
+    }
     <div class="flex-none text-sm">&copy; {{copyrightMsg$ | async}}</div>
     <ocx-slot name="onecx-shell-footer"></ocx-slot>
   </div>

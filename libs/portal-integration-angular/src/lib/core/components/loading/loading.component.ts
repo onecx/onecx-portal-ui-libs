@@ -1,6 +1,7 @@
 import { Component } from '@angular/core'
 
 @Component({
+  standalone: false,
   selector: 'ocx-loading',
   template: `
     <div class="loading-panel p-2">

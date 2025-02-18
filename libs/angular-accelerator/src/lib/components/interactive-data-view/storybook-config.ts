@@ -28,18 +28,22 @@ import { PickListModule } from 'primeng/picklist'
 import { SelectButtonModule } from 'primeng/selectbutton'
 import { DialogModule } from 'primeng/dialog'
 import { DataViewModule } from 'primeng/dataview'
-import { DropdownModule } from 'primeng/dropdown'
+import { SelectModule } from 'primeng/select'
 import { FormsModule } from '@angular/forms'
 import { ProgressBarModule } from 'primeng/progressbar'
 import { InputTextModule } from 'primeng/inputtext'
 import { FloatLabelModule } from 'primeng/floatlabel'
-import { OverlayPanelModule } from 'primeng/overlaypanel'
+import { PopoverModule } from 'primeng/popover'
 import { FocusTrapModule } from 'primeng/focustrap'
 import { ChipModule } from 'primeng/chip'
 import { ColumnType } from '../../model/column-type.model'
 import { FilterType } from '../../model/filter.model'
 import { TooltipOnOverflowDirective } from '../../directives/tooltipOnOverflow.directive'
 import { SkeletonModule } from 'primeng/skeleton'
+import { StorybookThemeModule } from '../../storybook-theme.module'
+import { TooltipModule } from 'primeng/tooltip'
+import { TooltipStyle } from 'primeng/tooltip'
+import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 
 export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewComponent> = {
   title: 'Components/InteractiveDataViewComponent',
@@ -68,6 +72,10 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
             },
           },
         },
+        { provide: UserService, useClass: MockUserService },
+        { provide: HAS_PERMISSION_CHECKER, useClass: MockUserService },
+        importProvidersFrom(StorybookThemeModule),
+        TooltipStyle,
       ],
     }),
     moduleMetadata({
@@ -96,15 +104,16 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
         SelectButtonModule,
         DialogModule,
         DataViewModule,
-        DropdownModule,
+        SelectModule,
         FormsModule,
         ProgressBarModule,
         InputTextModule,
         FloatLabelModule,
-        OverlayPanelModule,
+        PopoverModule,
         FocusTrapModule,
         ChipModule,
         SkeletonModule,
+        TooltipModule,
       ],
     }),
   ],
@@ -176,4 +185,13 @@ export const defaultInteractiveDataViewArgs = {
     },
   ],
   emptyResultsMessage: 'No results',
+  deletePermission: 'TEST_MGMT#TEST_DELETE',
+  editPermission: 'TEST_MGMT#TEST_EDIT',
+  viewPermission: 'TEST_MGMT#TEST_VIEW',
+}
+
+export const defaultInteractiveDataViewArgTypes = {
+  deleteItem: { action: 'deleteItem' },
+  editItem: { action: 'editItem' },
+  viewItem: { action: 'viewItem' },
 }
