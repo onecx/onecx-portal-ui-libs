@@ -7,7 +7,6 @@ import ThemeConfig from '../theme/theme-config'
 import { CustomUseStyle } from './custom-use-style.service'
 import { UseStyle } from 'primeng/usestyle'
 import { Theme } from '@primeuix/styled'
-import Aura from '@primeng/themes/aura'
 import { mergeDeep } from '../utils/deep-merge.utils'
 import CustomPreset from '../theme/preset/custom-preset'
 

@@ -9,7 +9,7 @@ export default class ThemeConfig {
   constructor(private themeVariables: ThemeVariables | undefined) {}
 
   getConfig() {
-    let primaryColor = (this.themeVariables as any)['general']['primary-color']
+    const primaryColor = (this.themeVariables as any)['general']['primary-color']
     return {
       semantic: {
         extend: {

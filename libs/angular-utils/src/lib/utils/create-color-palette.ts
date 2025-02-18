@@ -33,7 +33,7 @@ export function adjustColor(color: string, channelOffSet: number): string {
     colorBeginsWithHash = true
   }
 
-  let num = parseInt(color, 16)
+  const num = parseInt(color, 16)
 
   let r = (num >> 16) + channelOffSet
   if (r > 255) r = 255
@@ -68,18 +68,18 @@ export function createPalette(primaryColor: string, adjustments: ColorAdjustment
  */
 export function colorDelta(color1: string, color2: string): number {
   function hexToRgb(hex: string): { r: number; g: number; b: number } {
-    let color = hex.startsWith('#') ? hex.slice(1) : hex
-    let bigint = parseInt(color, 16)
-    let r = (bigint >> 16) & 255
-    let g = (bigint >> 8) & 255
-    let b = bigint & 255
+    const color = hex.startsWith('#') ? hex.slice(1) : hex
+    const bigint = parseInt(color, 16)
+    const r = (bigint >> 16) & 255
+    const g = (bigint >> 8) & 255
+    const b = bigint & 255
     return { r, g, b }
   }
 
-  let rgb1 = hexToRgb(color1)
-  let rgb2 = hexToRgb(color2)
+  const rgb1 = hexToRgb(color1)
+  const rgb2 = hexToRgb(color2)
 
-  let delta = Math.sqrt(Math.pow(rgb1.r - rgb2.r, 2) + Math.pow(rgb1.g - rgb2.g, 2) + Math.pow(rgb1.b - rgb2.b, 2))
+  const delta = Math.sqrt(Math.pow(rgb1.r - rgb2.r, 2) + Math.pow(rgb1.g - rgb2.g, 2) + Math.pow(rgb1.b - rgb2.b, 2))
 
   return delta
 }

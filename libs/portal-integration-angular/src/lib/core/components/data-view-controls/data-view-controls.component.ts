@@ -296,7 +296,7 @@ export class DataViewControlsComponent implements OnInit, OnChanges {
     this.filterChange.emit((event.target as HTMLInputElement).value)
   }
 
-  sortDirection(event: any): void {
+  sortDirection(event: ToggleButtonChangeEvent): void {
     this.selectedSortDirection = event.checked
     this.sortDirectionChange.emit(event.checked)
   }
