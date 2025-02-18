@@ -4,7 +4,6 @@ export default {
     fontSize: null,
   },
   topbar: {
-    // done - added as extended tokens
     topbarBgColor: '#0D3650',
     topbarItemTextColor: '#ffffff',
     topbarTextColor: '#ffffff',
@@ -14,11 +13,18 @@ export default {
     logoColor: '#ffffff',
   },
   sidebar: {
-    // done - added as extended tokens
+    menuTextColor: '#274B5F',
+    menuBgColor: ' #fdfeff',
+    menuItemTextColor: ' #515c66',
+    menuItemBgColor: null,
+    menuItemHoverBgColor: '#d0021b',
+    menuActiveItemTextColor: '#515c66',
+    menuActiveItemBgColor: 'rgba(0, 0, 0, 0.04)',
+    menuInlineBorderColor: null,
   },
   general: {
-    primaryColor: '#274B5F', // done
-    secondaryColor: '#1C4257', // not used
+    primaryColor: '#274B5F',
+    secondaryColor: '#1C4257',
     textColor: 'rgba(0, 0, 0, 0.87)',
     textSecondaryColor: '#262626',
     bodyBgColor: '#f7f7f7',

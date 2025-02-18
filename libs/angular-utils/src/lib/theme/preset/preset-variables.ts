@@ -2,7 +2,6 @@ import { createPalette, standardColorAdjustment } from '../../utils/create-color
 
 import defaultVariables from './default-theme-variables'
 
-const primaryDefaultColor = defaultVariables.general.primaryColor
 export default {
   semantic: {
     // OneCX semantic variables extension
@@ -10,6 +9,7 @@ export default {
       font: defaultVariables.font,
       topbar: defaultVariables.topbar,
       sidebar: defaultVariables.sidebar,
+      general: defaultVariables.general,
       errorColor: '#b00020',
     },
     transitionDuration: '0.2s',
@@ -24,7 +24,7 @@ export default {
     iconSize: '1rem',
     anchorGutter: '2px',
     primary: {
-      ...createPalette(primaryDefaultColor, standardColorAdjustment),
+      ...createPalette(defaultVariables.general.primaryColor, standardColorAdjustment),
     },
     formField: {
       // INFO: --input-padding from dev env has equal values 0.75rem 0.75rem
@@ -92,16 +92,8 @@ export default {
       transitionDuration: '0.15s',
     },
     content: {
-      // INFO: dev -> on focus primary color is used
-      background: '#f7f7f7',
-      // INFO: dev system #EEEEEE is used, surface.300 is most close
-      hoverBackground: '{surface.300}',
-      borderColor: '{surface.200}',
-      // INFO: --text-color used
-      color: '{text.color}',
-      // INFO: --text-color used
-      // TODO: Maybe it makes sense to leave hover color?
-      hoverColor: '{text.hover.color}',
+      // INFO: --border-radius is used
+      borderRadius: '{border.radius.md}',
     },
     // INFO: All menu components
     navigation: {
@@ -199,6 +191,10 @@ export default {
         },
         primary: {
           color: '{primary.500}',
+          contrastColor: '#ffffff',
+          hoverColor: '{general.button.hover.bg}', // button-hover-bg
+          activeColor: '{general.button.active.bg}', // button-active-bg
+          // if buttonActiveBg is not set, it should be primary.400
         },
         highlight: {
           // --highlight-bg is used, rgba($primaryColor, 0.12);
@@ -298,14 +294,19 @@ export default {
           floatLabelInvalidColor: '{form.field.invalid.placeholder.color}',
         },
         text: {
-          color: defaultVariables.general.textColor,
+          color: '{general.text.color}',
           // INFO: textColor used for inplaceTextHoverColor, toggleButtonTextHoverColor
-          hoverColor: '{text.color}',
+          hoverColor: '{general.text.secondary.color}',
           // mutedColor and hovermuted are not available in the theme
+          mutedColor: '{surface.500}',
+          hoverMutedColor: '{surface.600}',
         },
         content: {
-          // INFO: --border-radius is used
-          borderRadius: '{border.radius.md}',
+          background: '{general.content.bg.color}',
+          hoverBackground: '{general.hover.bg.color}',
+          borderColor: '{surface.200}',
+          color: '{text.color}',
+          hoverColor: '{text.hover.color}',
         },
         overlay: {
           select: {

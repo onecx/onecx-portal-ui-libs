@@ -16,6 +16,7 @@ export default class ThemeConfig {
           font: (this.themeVariables as any)['font'],
           topbar: (this.themeVariables as any)['topbar'],
           sidebar: (this.themeVariables as any)['sidebar'],
+          general: (this.themeVariables as any)['general'],
         },
         primary: {
           ...createPalette(primaryColor, standardColorAdjustment),
@@ -26,6 +27,7 @@ export default class ThemeConfig {
               ...createPalette(primaryColor, standardColorAdjustment),
             },
             text: {
+              // Possible that could be '{general.text.color}'
               color: (this.themeVariables as any)['general']['text-color'],
               hoverColor: (this.themeVariables as any)['general']['text-secondary-color'],
             },
