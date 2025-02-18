@@ -1,5 +1,3 @@
-import { TranslateService } from '@ngx-translate/core'
-import { AppStateService, UserService, ConfigurationService } from '@onecx/angular-integration-interface'
 import { InitializeModuleGuard } from '../../services/initialize-module-guard.service'
 import { addInitializeModuleGuard } from './add-initialize-module-guard.utils'
 
