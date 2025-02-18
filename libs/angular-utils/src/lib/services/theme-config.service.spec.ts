@@ -1,23 +1,21 @@
 import { TestBed } from '@angular/core/testing'
 import { ThemeConfigService } from './theme-config.service'
 import { ThemeService } from '@onecx/angular-integration-interface'
-import { CurrentThemeTopic } from '@onecx/integration-interface'
+import { FakeTopic } from '@onecx/accelerator'
 
 describe('ThemeConfigService', () => {
   let service: ThemeConfigService
 
   beforeEach(() => {
-    const themeServiceMock = jasmine.createSpyObj('ThemeService', [''])
+    const themeServiceMock = {
+      currentTheme$: new FakeTopic(),
+    }
 
-    const currentThemeTopicMock = jasmine.createSpyObj('CurrentThemeTopic', ['subscribe'])
-
-    TestBed.configureTestingModule({
-      providers: [
-        ThemeConfigService,
-        { provide: ThemeService, useValue: themeServiceMock },
-        { provide: CurrentThemeTopic, useValue: currentThemeTopicMock },
-      ],
+    const currentThemeTopicMock = TestBed.configureTestingModule({
+      providers: [ThemeConfigService, { provide: ThemeService, useValue: themeServiceMock }],
     })
+
+    service = TestBed.inject(ThemeConfigService)
   })
 
   it('should be created', () => {
