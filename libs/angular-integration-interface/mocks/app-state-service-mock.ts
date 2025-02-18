@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core'
 import { PageInfo, Workspace } from '@onecx/integration-interface'
 // eslint-disable-next-line
 import { AppStateService } from '@onecx/angular-integration-interface'
-import { FakeTopic } from './fake-topic'
+import { FakeTopic } from '@onecx/accelerator'
 
 /**
  * @deprecated use provideAppStateServiceMock()

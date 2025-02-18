@@ -66,13 +66,12 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   @Input() clientSideFiltering = true
   @Input() sortStates: DataSortDirection[] = []
 
-  displayedPageSizes$: Observable<(number | { showAll: string })[]>
-  _pageSizes$ = new BehaviorSubject<(number | { showAll: string })[]>([10, 25, 50])
+  _pageSizes$ = new BehaviorSubject<number[]>([10, 25, 50])
   @Input()
-  get pageSizes(): (number | { showAll: string })[] {
+  get pageSizes(): number[] {
     return this._pageSizes$.getValue()
   }
-  set pageSizes(value: (number | { showAll: string })[]) {
+  set pageSizes(value: number[]) {
     this._pageSizes$.next(value)
   }
 
@@ -339,15 +338,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     this.name = this.name || this.router.url.replace(/[^A-Za-z0-9]/, '_')
     this.fallbackImagePath$ = this.appStateService.currentMfe$.pipe(
       map((currentMfe) => this.getFallbackImagePath(currentMfe))
-    )
-    this.displayedPageSizes$ = combineLatest([
-      this._pageSizes$,
-      this.translateService.get('OCX_DATA_TABLE.ALL'),
-      this._showAllOption$,
-    ]).pipe(
-      map(([pageSizes, translation, showAllOption]) =>
-        showAllOption ? pageSizes.concat({ showAll: translation }) : pageSizes
-      )
     )
     this.displayedPageSize$ = combineLatest([this._pageSize$, this._pageSizes$]).pipe(
       map(([pageSize, pageSizes]) => pageSize ?? pageSizes.find((val): val is number => typeof val === 'number') ?? 50)

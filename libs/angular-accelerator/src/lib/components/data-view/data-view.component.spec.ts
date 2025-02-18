@@ -28,7 +28,7 @@ describe('DataViewComponent', () => {
     return this
   })
   global.MutationObserver = mutationObserverMock
-  
+
   let component: DataViewComponent
   let fixture: ComponentFixture<DataViewComponent>
   let dataViewHarness: DataViewHarness
@@ -38,7 +38,6 @@ describe('DataViewComponent', () => {
     OCX_DATA_TABLE: {
       SHOWING: '{{first}} - {{last}} of {{totalRecords}}',
       SHOWING_WITH_TOTAL_ON_SERVER: '{{first}} - {{last}} of {{totalRecords}} ({{totalRecordsOnServer}})',
-      ALL: 'All',
     },
   }
 

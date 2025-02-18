@@ -17,6 +17,7 @@
     "@ngrx/store": "^19.0.0",
     "@ngneat/until-destroy": "^10.0.0",
     "@onecx/angular-accelerator": "^6.0.0-rc.3",
+    "@onecx/accelerator": "^6.0.0-rc.3",
     "@onecx/integration-interface": "^6.0.0-rc.3",
     "@onecx/angular-integration-interface": "^6.0.0-rc.3",
     "@onecx/angular-testing": "^6.0.0-rc.3",
