@@ -1,9 +1,5 @@
 import { CommonModule } from '@angular/common'
-import {
-  APP_INITIALIZER,
-  LOCALE_ID,
-  NgModule,
-} from '@angular/core'
+import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
 import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateModule } from '@ngx-translate/core'
@@ -102,12 +98,12 @@ function appInitializer(userService: UserService) {
     {
       provide: TRANSLATION_PATH,
       useValue: './onecx-angular-accelerator/assets/i18n/',
-      multi: true
+      multi: true,
     },
     {
       provide: TRANSLATION_PATH,
       useValue: './onecx-angular-accelerator/assets/i18n/primeng/',
-      multi: true
+      multi: true,
     },
     AppConfigService,
     provideConnectionService(),

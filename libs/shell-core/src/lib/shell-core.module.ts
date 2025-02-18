@@ -14,8 +14,15 @@ import { ShellSrcDirective } from './directives/src.directive'
 
 @NgModule({
   imports: [CommonModule, RouterModule, AngularRemoteComponentsModule, ToastModule, SkeletonModule],
-  declarations: [PortalViewportComponent, HeaderComponent, PortalFooterComponent, GlobalErrorComponent, AppLoadingSpinnerComponent, ShellSrcDirective],
+  declarations: [
+    PortalViewportComponent,
+    HeaderComponent,
+    PortalFooterComponent,
+    GlobalErrorComponent,
+    AppLoadingSpinnerComponent,
+    ShellSrcDirective,
+  ],
   exports: [PortalViewportComponent, HeaderComponent, PortalFooterComponent, ToastModule, GlobalErrorComponent],
-  providers: [providePrimeNG()]
+  providers: [providePrimeNG()],
 })
 export class ShellCoreModule {}
