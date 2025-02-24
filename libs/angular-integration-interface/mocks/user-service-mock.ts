@@ -1,6 +1,6 @@
 import { BehaviorSubject } from 'rxjs'
 
-export class MockUserService {
+export class UserServiceMock {
   lang$ = new BehaviorSubject<string>('en')
   /* eslint-disable @typescript-eslint/no-unused-vars */
   hasPermission(permissionKey: string | string[]): boolean {
