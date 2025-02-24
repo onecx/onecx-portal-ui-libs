@@ -5,7 +5,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { PTableCheckboxHarness } from '@onecx/angular-testing'
 import { UserService } from '@onecx/angular-integration-interface'
-import { MockUserService } from '@onecx/angular-integration-interface/mocks'
+import { UserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { DataTableComponent, Row } from './data-table.component'
@@ -211,7 +211,7 @@ describe('DataTableComponent', () => {
         AngularAcceleratorModule,
         MockAuthModule,
       ],
-      providers: [{ provide: UserService, useClass: MockUserService }],
+      providers: [{ provide: UserService, useClass: UserServiceMock }],
     }).compileComponents()
 
     fixture = TestBed.createComponent(DataTableComponent)

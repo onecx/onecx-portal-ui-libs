@@ -20,7 +20,7 @@ import {
   ListItemHarness,
 } from '@onecx/angular-testing'
 import { UserService } from '@onecx/angular-integration-interface'
-import { MockUserService, provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
+import { UserServiceMock, provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { InteractiveDataViewComponent } from './interactive-data-view.component'
 import { DataLayoutSelectionComponent } from '../data-layout-selection/data-layout-selection.component'
@@ -270,7 +270,7 @@ describe('InteractiveDataViewComponent', () => {
         }),
       ],
       providers: [
-        { provide: UserService, useClass: MockUserService },
+        { provide: UserService, useClass: UserServiceMock },
         {
           provide: SlotService,
           useClass: SlotServiceMock,
@@ -308,7 +308,7 @@ describe('InteractiveDataViewComponent', () => {
     editItemEvent = undefined
     deleteItemEvent = undefined
 
-    console.log("Global IntersectionObserver", global.IntersectionObserver)
+    console.log('Global IntersectionObserver', global.IntersectionObserver)
   })
 
   it('should create', () => {
