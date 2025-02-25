@@ -1,22 +1,11 @@
 import { Injectable } from '@angular/core'
 import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, UrlTree } from '@angular/router'
 import { of, Observable } from 'rxjs'
-import { TranslateService } from '@ngx-translate/core'
-import { ConfigurationService } from '../src/lib/services/configuration.service'
-import { AppStateService } from '../src/lib/services/app-state.service'
-import { UserService } from '../src/lib/services/user.service'
 
 @Injectable({ providedIn: 'any' })
 export class InitializeModuleGuardServiceMock implements CanActivate {
   private SUPPORTED_LANGS = ['en', 'de']
   private DEFAULT_LANG = 'en'
-
-  constructor(
-    protected translateService: TranslateService,
-    protected configService: ConfigurationService,
-    protected appStateService: AppStateService,
-    protected userService: UserService
-  ) {}
 
   canActivate(
     _route: ActivatedRouteSnapshot,

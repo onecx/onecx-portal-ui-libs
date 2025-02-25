@@ -1,22 +1,14 @@
-import { HttpClient } from '@angular/common/http'
-import { Inject, Injectable, OnDestroy, Optional } from '@angular/core'
-import { firstValueFrom } from 'rxjs'
+import { Inject, Injectable, Optional } from '@angular/core'
 import { Config, ConfigurationTopic } from '@onecx/integration-interface'
 import { APP_CONFIG } from '../src/lib/api/injection-tokens'
 import { CONFIG_KEY } from '../src/lib/model/config-key.model'
+import { FakeTopic } from './fake-topic'
 
 @Injectable({ providedIn: 'root' })
-export class ConfigurationServiceMock implements OnDestroy {
-  config$ = new ConfigurationTopic()
+export class ConfigurationServiceMock {
+  config$ = new FakeTopic()
 
-  constructor(
-    private http: HttpClient,
-    @Optional() @Inject(APP_CONFIG) private defaultConfig?: { [key: string]: string }
-  ) {}
-
-  ngOnDestroy(): void {
-    this.config$.destroy()
-  }
+  constructor(@Optional() @Inject(APP_CONFIG) private defaultConfig?: { [key: string]: string }) {}
 
   public init(): Promise<boolean> {
     return Promise.resolve(true)
@@ -30,11 +22,12 @@ export class ConfigurationServiceMock implements OnDestroy {
     return this.defaultConfig ? this.defaultConfig[key] : undefined
   }
 
-  public async setProperty(key: string, val: string) {
-    const currentValues = await firstValueFrom(this.config$.asObservable())
-    currentValues[key] = val
-    await this.config$.publish(currentValues)
-  }
+  // unsure
+  // public async setProperty(key: string, val: string) {
+  //   const currentValues = await firstValueFrom(this.config$.asObservable())
+  //   currentValues[key] = val
+  //   await this.config$.publish(currentValues)
+  // }
 
   public getConfig(): Config | undefined {
     return this.defaultConfig

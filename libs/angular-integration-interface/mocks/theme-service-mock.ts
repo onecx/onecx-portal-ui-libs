@@ -1,26 +1,18 @@
-import { HttpClient } from '@angular/common/http'
-import { Injectable, OnDestroy } from '@angular/core'
+import { Injectable } from '@angular/core'
 import { of, from } from 'rxjs'
 import { map, mergeMap } from 'rxjs/operators'
-import { CurrentThemeTopic, Theme } from '@onecx/integration-interface'
-import { ConfigurationService } from '../src/lib/services/configuration.service'
-import { CONFIG_KEY } from '../src/lib/model/config-key.model'
+import { Theme } from '@onecx/integration-interface'
+import { FakeTopic } from './fake-topic'
 
 const defaultThemeServerUrl = 'http://portal-theme-management:8080'
 
 @Injectable({ providedIn: 'root' })
-export class ThemeServiceMock implements OnDestroy {
+export class ThemeServiceMock {
   baseUrlV1 = './portal-api'
-  currentTheme$ = new CurrentThemeTopic()
-
-  constructor(
-    private configService: ConfigurationService,
-    private http: HttpClient
-  ) {}
+  currentTheme$ = new FakeTopic<Theme>()
 
   getThemeHref(themeId: string): string {
-    const themeServerUrl =
-      this.configService.getProperty(CONFIG_KEY.TKIT_PORTAL_THEME_SERVER_URL) || defaultThemeServerUrl
+    const themeServerUrl = defaultThemeServerUrl
     return `${themeServerUrl}/themes/${themeId}/${themeId}.min.css`
   }
 
@@ -43,9 +35,5 @@ export class ThemeServiceMock implements OnDestroy {
         }
       })
     }
-  }
-
-  ngOnDestroy(): void {
-    this.currentTheme$.destroy()
   }
 }

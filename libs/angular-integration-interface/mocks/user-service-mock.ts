@@ -1,31 +1,24 @@
-import { Injectable, OnDestroy } from '@angular/core'
-import { BehaviorSubject, of } from 'rxjs'
-import { PermissionsTopic, UserProfile, UserProfileTopic } from '@onecx/integration-interface'
+import { Injectable } from '@angular/core'
+import { BehaviorSubject } from 'rxjs'
+import { PermissionsTopic, UserProfile } from '@onecx/integration-interface'
 import { DEFAULT_LANG } from '../src/lib/api/constants'
+import { FakeTopic } from './fake-topic'
 
 @Injectable({ providedIn: 'root' })
-export class UserServiceMock implements OnDestroy {
-  profile$ = new UserProfileTopic()
+export class UserServiceMock {
+  profile$ = new FakeTopic<UserProfile>()
   permissions$ = new BehaviorSubject<string[]>(['mocked-permission'])
   lang$ = new BehaviorSubject(DEFAULT_LANG)
 
-  private permissionsTopic$ = new PermissionsTopic()
-  private oldStylePermissionsInitialized: Promise<string[]> = Promise.resolve(['mocked-permission'])
-
-  constructor() {}
-
-  ngOnDestroy(): void {
-    this.profile$.destroy()
-  }
+  private permissionsTopic$ = new FakeTopic<Permissions>()
 
   hasPermission(permissionKey: string | string[]): boolean {
     if (Array.isArray(permissionKey)) {
       return permissionKey.every((key) => this.hasPermission(key))
     }
-    return (
-      this.permissions$.getValue().includes(permissionKey) ||
-      (this.permissionsTopic$.getValue()?.includes(permissionKey) ?? false)
-    )
+    return this.permissions$.getValue().includes(permissionKey)
+    // ||
+    // (this.permissionsTopic$.getValue()?.includes(permissionKey) ?? false)
   }
 
   private determineLanguage(): string | undefined {

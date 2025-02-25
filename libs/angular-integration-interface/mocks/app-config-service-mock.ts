@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http'
 import { Injectable } from '@angular/core'
 import { BehaviorSubject } from 'rxjs'
 import { Config } from '@onecx/integration-interface'
@@ -6,8 +5,6 @@ import { Config } from '@onecx/integration-interface'
 @Injectable()
 export class MockAppConfigService {
   config$ = new BehaviorSubject<{ [key: string]: string }>({})
-
-  constructor(private http: HttpClient) {}
 
   public init(baseUrl: string): Promise<void> {
     return new Promise((resolve) => {

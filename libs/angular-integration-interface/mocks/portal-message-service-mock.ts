@@ -1,7 +1,7 @@
-import { Injectable, OnDestroy } from '@angular/core'
+import { Injectable } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { combineLatest, first, of } from 'rxjs'
-import { MessageTopic } from '@onecx/integration-interface'
+import { FakeTopic } from './fake-topic'
 
 export type Message = {
   summaryKey?: string
@@ -20,10 +20,10 @@ export type Message = {
 }
 
 @Injectable({ providedIn: 'any' })
-export class PortalMessageServiceMock implements OnDestroy {
+export class PortalMessageServiceMock {
   constructor(private translateService: TranslateService) {}
 
-  message$ = new MessageTopic()
+  message$ = new FakeTopic<Message>()
 
   success(msg: Message) {
     this.addTranslated('success', msg)
@@ -41,6 +41,7 @@ export class PortalMessageServiceMock implements OnDestroy {
     this.addTranslated('warning', msg)
   }
 
+  // unsure
   private addTranslated(severity: string, msg: Message) {
     combineLatest([
       msg.summaryKey ? this.translateService.get(msg.summaryKey || '', msg.summaryParameters) : of(undefined),
@@ -50,14 +51,10 @@ export class PortalMessageServiceMock implements OnDestroy {
       .subscribe(([summaryTranslation, detailTranslation]: string[]) => {
         this.message$.publish({
           ...msg,
-          severity: severity,
-          summary: summaryTranslation,
-          detail: detailTranslation,
+          // severity: severity,
+          // summary: summaryTranslation,
+          // detail: detailTranslation,
         })
       })
-  }
-
-  ngOnDestroy(): void {
-    this.message$.destroy()
   }
 }

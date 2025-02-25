@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core'
 import { of, Observable } from 'rxjs'
 import { Route } from '@onecx/integration-interface'
-import { AppStateService } from '../src/lib/services/app-state.service'
 
 @Injectable({
   providedIn: 'root',
@@ -11,8 +10,6 @@ export class WorkspaceServiceMock {
   private aliasEnd = ']]'
   private paramStart = '{'
   private paramEnd = '}'
-
-  constructor(protected appStateService: AppStateService) {}
 
   getUrl(
     productName: string,
