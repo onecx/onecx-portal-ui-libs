@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
 import { BehaviorSubject } from 'rxjs'
-import { PermissionsTopic, UserProfile } from '@onecx/integration-interface'
+import { UserProfile } from '@onecx/integration-interface'
 import { DEFAULT_LANG } from '../src/lib/api/constants'
 import { FakeTopic } from './fake-topic'
 
@@ -10,15 +10,8 @@ export class UserServiceMock {
   permissions$ = new BehaviorSubject<string[]>(['mocked-permission'])
   lang$ = new BehaviorSubject(DEFAULT_LANG)
 
-  private permissionsTopic$ = new FakeTopic<Permissions>()
-
   hasPermission(permissionKey: string | string[]): boolean {
-    if (Array.isArray(permissionKey)) {
-      return permissionKey.every((key) => this.hasPermission(key))
-    }
-    return this.permissions$.getValue().includes(permissionKey)
-    // ||
-    // (this.permissionsTopic$.getValue()?.includes(permissionKey) ?? false)
+    return true
   }
 
   private determineLanguage(): string | undefined {

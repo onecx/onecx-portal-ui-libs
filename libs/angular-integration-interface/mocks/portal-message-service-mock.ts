@@ -1,29 +1,10 @@
 import { Injectable } from '@angular/core'
-import { TranslateService } from '@ngx-translate/core'
-import { combineLatest, first, of } from 'rxjs'
 import { FakeTopic } from './fake-topic'
-
-export type Message = {
-  summaryKey?: string
-  summaryParameters?: object
-  detailKey?: string
-  detailParameters?: object
-  id?: any
-  key?: string
-  life?: number
-  sticky?: boolean
-  closable?: boolean
-  data?: any
-  icon?: string
-  contentStyleClass?: string
-  styleClass?: string
-}
+import { Message } from '../src/lib/services/portal-message.service'
 
 @Injectable({ providedIn: 'any' })
 export class PortalMessageServiceMock {
-  constructor(private translateService: TranslateService) {}
-
-  message$ = new FakeTopic<Message>()
+  message$ = new FakeTopic() // or FakeTopic<Message>() ?
 
   success(msg: Message) {
     this.addTranslated('success', msg)
@@ -41,20 +22,15 @@ export class PortalMessageServiceMock {
     this.addTranslated('warning', msg)
   }
 
-  // unsure
   private addTranslated(severity: string, msg: Message) {
-    combineLatest([
-      msg.summaryKey ? this.translateService.get(msg.summaryKey || '', msg.summaryParameters) : of(undefined),
-      msg.detailKey ? this.translateService.get(msg.detailKey, msg.detailParameters) : of(undefined),
-    ])
-      .pipe(first())
-      .subscribe(([summaryTranslation, detailTranslation]: string[]) => {
-        this.message$.publish({
-          ...msg,
-          // severity: severity,
-          // summary: summaryTranslation,
-          // detail: detailTranslation,
-        })
-      })
+    const summaryTranslation = msg.summaryKey ? `Translated: ${msg.summaryKey}` : undefined
+    const detailTranslation = msg.detailKey ? `Translated: ${msg.detailKey}` : undefined
+
+    this.message$.publish({
+      ...msg,
+      severity,
+      summary: summaryTranslation,
+      detail: detailTranslation,
+    })
   }
 }

@@ -6,11 +6,6 @@ import { Route } from '@onecx/integration-interface'
   providedIn: 'root',
 })
 export class WorkspaceServiceMock {
-  private aliasStart = '[['
-  private aliasEnd = ']]'
-  private paramStart = '{'
-  private paramEnd = '}'
-
   getUrl(
     productName: string,
     appId: string,
