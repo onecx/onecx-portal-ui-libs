@@ -4,13 +4,6 @@ import { PageInfo, Workspace } from '@onecx/integration-interface'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import { FakeTopic } from './fake-topic'
 
-/**
- * @deprecated use provideAppStateServiceMock()
- */
-export function provideAppServiceMock() {
-  return provideAppStateServiceMock()
-}
-
 export function provideAppStateServiceMock() {
   return [AppStateServiceMock, { provide: AppStateService, useExisting: AppStateServiceMock }]
 }
@@ -21,7 +14,17 @@ export class AppStateServiceMock {
   globalLoading$ = new FakeTopic(false)
   currentMfe$ = new FakeTopic({ mountPath: '/', remoteBaseUrl: '.', baseHref: '/', shellName: 'test' })
   currentPage$ = new FakeTopic<PageInfo | undefined>(undefined)
-  currentPortal$ = new FakeTopic<Workspace>({ baseUrl: '/', microfrontendRegistrations: [], portalName: 'Test portal', workspaceName: 'Test portal' })
-  currentWorkspace$ = new FakeTopic<Workspace>({ baseUrl: '/', microfrontendRegistrations: [], portalName: 'Test workspace', workspaceName: 'Test workspace' })
+  currentPortal$ = new FakeTopic<Workspace>({
+    baseUrl: '/',
+    microfrontendRegistrations: [],
+    portalName: 'Test portal',
+    workspaceName: 'Test portal',
+  })
+  currentWorkspace$ = new FakeTopic<Workspace>({
+    baseUrl: '/',
+    microfrontendRegistrations: [],
+    portalName: 'Test workspace',
+    workspaceName: 'Test workspace',
+  })
   isAuthenticated$ = new FakeTopic<null>(null)
 }

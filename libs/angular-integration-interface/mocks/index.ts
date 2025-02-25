@@ -1,3 +1,11 @@
-export * from './user-service-mock'
+// mocks
+export * from './app-config-service-mock'
 export * from './app-state-service-mock'
 export * from './fake-topic'
+export * from './configuration-service-mock'
+export * from './initialize-module-guard-service-mock'
+export * from './portal-message-service-mock'
+export * from './remote-components-service-mock'
+export * from './theme-service-mock'
+export * from './user-service-mock'
+export * from './workspace-service-mock'
