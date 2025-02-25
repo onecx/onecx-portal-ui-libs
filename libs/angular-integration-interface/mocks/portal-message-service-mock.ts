@@ -4,7 +4,7 @@ import { Message } from '../src/lib/services/portal-message.service'
 
 @Injectable({ providedIn: 'any' })
 export class PortalMessageServiceMock {
-  message$ = new FakeTopic() // or FakeTopic<Message>() ?
+  message$ = new FakeTopic<Message>()
 
   success(msg: Message) {
     this.addTranslated('success', msg)
@@ -28,9 +28,6 @@ export class PortalMessageServiceMock {
 
     this.message$.publish({
       ...msg,
-      severity,
-      summary: summaryTranslation,
-      detail: detailTranslation,
     })
   }
 }

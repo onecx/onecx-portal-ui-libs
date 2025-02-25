@@ -1,10 +1,9 @@
 import { Inject, Injectable, Optional } from '@angular/core'
-import { Config, ConfigurationTopic } from '@onecx/integration-interface'
+import { Config } from '@onecx/integration-interface'
 import { APP_CONFIG } from '../src/lib/api/injection-tokens'
 import { CONFIG_KEY } from '../src/lib/model/config-key.model'
 import { FakeTopic } from './fake-topic'
 import { firstValueFrom } from 'rxjs/internal/firstValueFrom'
-import { KeyConfiguration } from '@onecx/ngrx-accelerator'
 
 @Injectable({ providedIn: 'root' })
 export class ConfigurationServiceMock {
@@ -13,7 +12,7 @@ export class ConfigurationServiceMock {
   constructor(@Optional() @Inject(APP_CONFIG) private defaultConfig?: { [key: string]: string }) {}
 
   public init(): Promise<boolean> {
-    return Promise.resolve(true)
+    return this.config$.publish(this.defaultConfig).then(() => true)
   }
 
   get isInitialized(): Promise<void> {
@@ -24,9 +23,8 @@ export class ConfigurationServiceMock {
     return this.defaultConfig ? this.defaultConfig[key] : undefined
   }
 
-  // TODO: improve as Config
-  public async setProperty(key: string, val: string) {
-    const currentValues = (await firstValueFrom(this.config$.asObservable())) as Config
+  public async setProperty(key: string, val: string): Promise<void> {
+    const currentValues = await firstValueFrom(this.config$.asObservable())
     currentValues[key] = val
     await this.config$.publish(currentValues)
   }

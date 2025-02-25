@@ -4,6 +4,13 @@ import { PageInfo, Workspace } from '@onecx/integration-interface'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import { FakeTopic } from './fake-topic'
 
+/**
+ * @deprecated use provideAppStateServiceMock()
+ */
+export function provideAppServiceMock() {
+  return provideAppStateServiceMock()
+}
+
 export function provideAppStateServiceMock() {
   return [AppStateServiceMock, { provide: AppStateService, useExisting: AppStateServiceMock }]
 }

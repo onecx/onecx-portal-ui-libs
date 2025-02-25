@@ -13,12 +13,14 @@ export class UserServiceMock {
   hasPermission(permissionKey: string | string[]): boolean {
     return true
   }
-
-  private determineLanguage(): string | undefined {
+  lacksPermission(permissionKey: string | string[]): boolean {
+    return true
+  }
+  determineLanguage(): string | undefined {
     return 'mocked-lang'
   }
 
-  private extractPermissions(userProfile: UserProfile): string[] | null {
+  extractPermissions(userProfile: UserProfile): string[] | null {
     return ['mocked-permission']
   }
 

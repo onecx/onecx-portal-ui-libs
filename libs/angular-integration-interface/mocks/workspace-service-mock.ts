@@ -16,14 +16,15 @@ export class WorkspaceServiceMock {
   }
 
   doesUrlExistFor(productName: string, appId: string, endpointName?: string): Observable<boolean> {
+    // TODO: extend to control this somehow
     return of(true)
   }
 
-  private constructBaseUrlFromWorkspace(workspace: any): string {
+  constructBaseUrlFromWorkspace(workspace: any): string {
     return 'mocked-base-url'
   }
 
-  private constructRouteUrl(
+  constructRouteUrl(
     workspace: any,
     appId: string,
     productName: string,
@@ -33,27 +34,23 @@ export class WorkspaceServiceMock {
     return 'mocked-route-url'
   }
 
-  private constructEndpointUrl(
-    route: any,
-    endpointName: string,
-    endpointParameters: Record<string, unknown> = {}
-  ): string {
+  constructEndpointUrl(route: any, endpointName: string, endpointParameters: Record<string, unknown> = {}): string {
     return 'mocked-endpoint-url'
   }
 
-  private filterRouteFromList(routes: Array<Route>, appId: string, productName: string): Route | undefined {
+  filterRouteFromList(routes: Array<Route>, appId: string, productName: string): Route | undefined {
     return { appId, productName, baseUrl: 'mocked-base-url', endpoints: [] }
   }
 
-  private dissolveEndpoint(endpointName: string, endpoints: Array<any>): any | undefined {
+  dissolveEndpoint(endpointName: string, endpoints: Array<any>): any | undefined {
     return { name: endpointName, path: 'mocked-path' }
   }
 
-  private fillParamsForPath(path: string, endpointParameters: Record<string, unknown>): string {
+  fillParamsForPath(path: string, endpointParameters: Record<string, unknown>): string {
     return 'mocked-filled-path'
   }
 
-  private getStringFromUnknown(value: unknown): string {
+  getStringFromUnknown(value: unknown): string {
     return 'mocked-string'
   }
 }
