@@ -6,7 +6,8 @@
     "@angular/core": "^18.0.5",
     "@onecx/integration-interface": "^6.0.0-rc.3",
     "@onecx/accelerator": "^6.0.0-rc.3",
-    "rxjs": "~7.8.1"
+    "rxjs": "~7.8.1",
+    "ts-semaphore": "^1.0.0"
   },
   "dependencies": {},
   "publishConfig": {

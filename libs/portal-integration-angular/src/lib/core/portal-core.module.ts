@@ -1,22 +1,13 @@
 import { CommonModule, registerLocaleData } from '@angular/common'
 import de from '@angular/common/locales/de'
-import { APP_INITIALIZER, Inject, LOCALE_ID, ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core'
+import { Inject, LOCALE_ID, ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
 import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateModule } from '@ngx-translate/core'
 import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
-import {
-  APPLICATION_NAME,
-  AppStateService,
-  ConfigurationService,
-  SANITY_CHECK,
-  ThemeService,
-  UserService,
-} from '@onecx/angular-integration-interface'
+import { APPLICATION_NAME, SANITY_CHECK, UserService } from '@onecx/angular-integration-interface'
 import { MessageService } from 'primeng/api'
 import { ConfirmDialogModule } from 'primeng/confirmdialog'
-import { PortalApiService } from '../services/portal-api.service'
-import { UserProfileAPIService } from '../services/userprofile-api.service'
 import { AnnouncementBannerComponent } from './components/announcement-banner/announcement-banner.component'
 import { ButtonDialogComponent } from './components/button-dialog/button-dialog.component'
 import { DialogMessageContentComponent } from './components/button-dialog/dialog-message-content/dialog-message-content.component'
@@ -28,7 +19,6 @@ import { ViewTemplatePickerComponent } from './components/data-view-controls/vie
 import { DeleteDialogComponent } from './components/delete-dialog/delete-dialog.component'
 import { GlobalErrorComponent } from './components/error-component/global-error.component'
 import { HelpItemEditorComponent } from './components/help-item-editor/help-item-editor.component'
-import { AppInlineProfileComponent } from './components/inline-profile/inline-profile.component'
 import { LifecycleComponent } from './components/lifecycle/lifecycle.component'
 import { LoadingIndicatorComponent } from './components/loading-indicator/loading-indicator.component'
 import { LoadingComponent } from './components/loading/loading.component'
@@ -36,13 +26,7 @@ import { MfeDebugComponent } from './components/mfe-debug/mfe-debug.component'
 import { NoHelpItemComponent } from './components/no-help-item/no-help-item.component'
 import { PageContentComponent } from './components/page-content/page-content.component'
 import { PagingInfoComponent } from './components/paging-info/paging-info.component'
-import { PortalFooterComponent } from './components/portal-footer/portal-footer.component'
-import { HeaderComponent } from './components/portal-header/header.component'
-import { PortalMenuHorizontalComponent } from './components/portal-menu-horizontal/portal-menu-horizontal.component'
-import { PortalMenuComponent } from './components/portal-menu/portal-menu.component'
-import { SubMenuComponent } from './components/portal-menu/submenu.component'
 import { PortalPageComponent } from './components/portal-page/portal-page.component'
-import { PortalViewportComponent } from './components/portal-viewport/portal-viewport.component'
 import { CriteriaTemplateComponent } from './components/search-criteria/criteria-template/criteria-template.component'
 import { SearchCriteriaComponent } from './components/search-criteria/search-criteria.component'
 import { SupportTicketComponent } from './components/support-ticket/support-ticket.component'
@@ -54,11 +38,9 @@ import { OcxContentDirective } from './directives/content.directive'
 import { LoadingIndicatorDirective } from './directives/loading-indicator.directive'
 import { PatchFormGroupValuesDirective } from './directives/patch-form-group-values.driective'
 import { SetInputValueDirective } from './directives/set-input-value.directive'
-import { standaloneInitializer } from './initializer/standalone.initializer'
 import { PrimeNgModule } from './primeng.module'
 import { DialogFooterComponent } from './components/dialog/dialog-footer/dialog-footer.component'
 import { DialogContentComponent } from './components/dialog/dialog-content/dialog-content.component'
-import { DialogInlineComponent } from './components/dialog/dialog-inline/dialog-inline.component'
 import { TRANSLATION_PATH } from '@onecx/angular-utils'
 
 export class PortalMissingTranslationHandler implements MissingTranslationHandler {
@@ -81,27 +63,20 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
   ],
   declarations: [
     AnnouncementBannerComponent,
-    AppInlineProfileComponent,
     AutofocusDirective,
     ColumnTogglerComponent,
     CriteriaTemplateComponent,
     DataViewControlsComponent,
     DeleteDialogComponent,
     GlobalErrorComponent,
-    HeaderComponent,
     HelpItemEditorComponent,
     LoadingComponent,
     MfeDebugComponent,
     NoHelpItemComponent,
     PageContentComponent,
     PagingInfoComponent,
-    PortalFooterComponent,
-    PortalMenuComponent,
-    PortalMenuHorizontalComponent,
     PortalPageComponent,
-    PortalViewportComponent,
     SearchCriteriaComponent,
-    SubMenuComponent,
     SupportTicketComponent,
     UserAvatarComponent,
     ViewTemplatePickerComponent,
@@ -113,7 +88,6 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     ButtonDialogComponent,
     DialogFooterComponent,
     DialogContentComponent,
-    DialogInlineComponent,
     DialogMessageContentComponent,
     OcxContentDirective,
     OcxContentContainerDirective,
@@ -132,12 +106,12 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     {
       provide: TRANSLATION_PATH,
       useValue: './onecx-portal-lib/assets/i18n/',
-      multi: true
+      multi: true,
     },
     {
       provide: TRANSLATION_PATH,
       useValue: './onecx-portal-lib/assets/i18n/primeng/',
-      multi: true
+      multi: true,
     },
     {
       provide: MessageService,
@@ -147,27 +121,20 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
   exports: [
     AngularAcceleratorModule,
     AnnouncementBannerComponent,
-    AppInlineProfileComponent,
     AutofocusDirective,
     ColumnTogglerComponent,
     CriteriaTemplateComponent,
     DataViewControlsComponent,
     DeleteDialogComponent,
     GlobalErrorComponent,
-    HeaderComponent,
     HelpItemEditorComponent,
     LoadingComponent,
     MfeDebugComponent,
     NoHelpItemComponent,
     PageContentComponent,
     PagingInfoComponent,
-    PortalFooterComponent,
-    PortalMenuComponent,
-    PortalMenuHorizontalComponent,
     PortalPageComponent,
-    PortalViewportComponent,
     SearchCriteriaComponent,
-    SubMenuComponent,
     SupportTicketComponent,
     UserAvatarComponent,
     ViewTemplatePickerComponent,
@@ -181,7 +148,6 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     ButtonDialogComponent,
     DialogFooterComponent,
     DialogContentComponent,
-    DialogInlineComponent,
     DialogMessageContentComponent,
     OcxContentDirective,
     OcxContentContainerDirective,
@@ -198,30 +164,13 @@ export class PortalCoreModule {
     }
   }
 
-  public static forRoot(appName: string, disableInitializer = false): ModuleWithProviders<PortalCoreModule> {
+  public static forRoot(appName: string): ModuleWithProviders<PortalCoreModule> {
     const module: ModuleWithProviders<PortalCoreModule> = {
       ngModule: PortalCoreModule,
       providers: [
         { provide: SANITY_CHECK, useValue: 'root' },
         { provide: APPLICATION_NAME, useValue: appName },
       ],
-    }
-    if (!disableInitializer) {
-      module.providers &&
-        module.providers.push({
-          provide: APP_INITIALIZER,
-          multi: true,
-          useFactory: standaloneInitializer,
-          deps: [
-            ConfigurationService,
-            PortalApiService,
-            ThemeService,
-            APPLICATION_NAME,
-            AppStateService,
-            UserService,
-            UserProfileAPIService,
-          ],
-        })
     }
     return module
   }

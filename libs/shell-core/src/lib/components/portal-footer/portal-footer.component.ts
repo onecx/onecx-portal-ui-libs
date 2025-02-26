@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit, Optional } from '@angular/core'
 import { Router } from '@angular/router'
 import { AppStateService, CONFIG_KEY, ConfigurationService, ThemeService } from '@onecx/angular-integration-interface'
-import { Observable, combineLatest, concat, filter, map, mergeMap, of, withLatestFrom } from 'rxjs'
+import { Observable, combineLatest, concat, filter, from, map, mergeMap, of, withLatestFrom } from 'rxjs'
 import {
   WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER,
   WorkspaceConfigBffService,
@@ -31,9 +31,11 @@ export class PortalFooterComponent implements OnInit {
       map(([mfe, workspace]) => {
         const mfeInfoVersion = mfe?.version || ''
         const mfeName = mfe?.displayName
-        const hostVersion = this.configurationService.getProperty(CONFIG_KEY.APP_VERSION) || 'DEV-LOCAL'
+        const hostVersion$ = from(this.configurationService.getProperty(CONFIG_KEY.APP_VERSION)).pipe(
+          map((config) => config || 'DEV-LOCAL')
+        )
         const mfInfoText = mfeName ? `MF ${mfeName} v${mfeInfoVersion}` : ''
-        return `Portal: ${workspace.workspaceName} v${hostVersion} ${mfInfoText}`
+        return `Portal: ${workspace.workspaceName} v${hostVersion$} ${mfInfoText}`
       })
     )
     this.logoUrl$ = combineLatest([

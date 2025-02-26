@@ -12,11 +12,14 @@ export class ThemeService implements OnDestroy {
   baseUrlV1 = './portal-api'
   currentTheme$ = new CurrentThemeTopic()
 
-  constructor(private configService: ConfigurationService, private http: HttpClient) {}
+  constructor(
+    private configService: ConfigurationService,
+    private http: HttpClient
+  ) {}
 
-  getThemeHref(themeId: string): string {
+  async getThemeHref(themeId: string): Promise<string> {
     const themeServerUrl =
-      this.configService.getProperty(CONFIG_KEY.TKIT_PORTAL_THEME_SERVER_URL) || defaultThemeServerUrl
+      (await this.configService.getProperty(CONFIG_KEY.TKIT_PORTAL_THEME_SERVER_URL)) || defaultThemeServerUrl
     return `${themeServerUrl}/themes/${themeId}/${themeId}.min.css`
   }
 

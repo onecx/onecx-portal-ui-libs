@@ -55,7 +55,7 @@ export class AuthServiceWrapper {
   }
 
   async initializeAuthService(): Promise<void> {
-    const serviceTypeConfig = this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE) ?? 'keycloak'
+    const serviceTypeConfig = (await this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE)) ?? 'keycloak'
 
     switch (serviceTypeConfig) {
       case 'keycloak':
@@ -71,7 +71,7 @@ export class AuthServiceWrapper {
     }
   }
 
-  retrieveInjectables(injectable: Injectables): KeycloakAuthService | Config | undefined {
+  async retrieveInjectables(injectable: Injectables): Promise<KeycloakAuthService | Config | undefined> {
     if (injectable === Injectables.KEYCLOAK_AUTH_SERVICE) {
       return this.injector.get(KeycloakAuthService)
     } else if (injectable === Injectables.CONFIG) {
@@ -81,13 +81,14 @@ export class AuthServiceWrapper {
   }
 
   async getAuthServiceFactory(): Promise<AuthServiceFactory> {
-    if (!this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL)) {
+    if (await !this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL)) {
       throw new Error('URL of the custom auth service is not defined')
     }
     const module = await loadRemoteModule({
       type: 'module',
-      remoteEntry: this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL) ?? '',
-      exposedModule: this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_MODULE_NAME) ?? './CustomAuth',
+      remoteEntry: (await this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL)) ?? '',
+      exposedModule:
+        (await this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_MODULE_NAME)) ?? './CustomAuth',
     })
     return module.default as AuthServiceFactory
   }

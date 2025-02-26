@@ -18,7 +18,9 @@ export class KeycloakAuthService {
     private configService: ConfigurationService,
     private appStateService: AppStateService
   ) {
-    this.eventsTopic$.pipe(filter((e) => e.type === 'authentication#logoutButtonClicked')).subscribe(() => this.logout())
+    this.eventsTopic$
+      .pipe(filter((e) => e.type === 'authentication#logoutButtonClicked'))
+      .subscribe(() => this.logout())
   }
 
   public async init(): Promise<boolean> {
@@ -41,13 +43,14 @@ export class KeycloakAuthService {
     this.setupEventListener()
 
     // try constructing the KC config from values in env
-    let kcConfig: KeycloakConfig | string = this.getValidKCConfig()
+    let kcConfig: KeycloakConfig | string = await this.getValidKCConfig()
     // If any of the required props is missing, fallback to loading KC conf from file
     if (!kcConfig.clientId || !kcConfig.realm || !kcConfig.url) {
       kcConfig = './assets/keycloak.json'
     }
 
-    const enableSilentSSOCheck = this.configService.getProperty(CONFIG_KEY.KEYCLOAK_ENABLE_SILENT_SSO) === 'true'
+    const enableSilentSSOCheck =
+      (await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_ENABLE_SILENT_SSO)) === 'true'
 
     const kcOptions: KeycloakOptions = {
       loadUserProfileAtStartUp: false,
@@ -92,17 +95,18 @@ export class KeycloakAuthService {
       })
   }
 
-  private getValidKCConfig(): KeycloakConfig {
-    const clientId = this.configService.getProperty(CONFIG_KEY.KEYCLOAK_CLIENT_ID)
+  private async getValidKCConfig(): Promise<KeycloakConfig> {
+    const clientId = await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_CLIENT_ID)
     if (!clientId) {
       throw new Error('Invalid KC config, missing clientId')
     }
-    const realm = this.configService.getProperty(CONFIG_KEY.KEYCLOAK_REALM)
+    const realm = await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_REALM)
     if (!realm) {
       throw new Error('Invalid KC config, missing realm')
     }
+    const url = await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_URL)
     return {
-      url: this.configService.getProperty(CONFIG_KEY.KEYCLOAK_URL),
+      url,
       clientId,
       realm,
     }
