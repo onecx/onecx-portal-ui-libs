@@ -15,14 +15,3 @@ export function provideThemeConfig() {
     provideThemeConfigService(),
   ]
 }
-
-export const appConfig: ApplicationConfig = {
-  providers: [
-    provideAnimationsAsync(),
-    providePrimeNG({
-      theme: {
-        preset: CustomPreset,
-      },
-    }),
-  ],
-}
