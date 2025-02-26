@@ -11,11 +11,12 @@ export class UserServiceMock {
   lang$ = new BehaviorSubject(DEFAULT_LANG)
 
   hasPermission(permissionKey: string | string[]): boolean {
-    return true
+    if (Array.isArray(permissionKey)) {
+      return permissionKey.every((key) => this.permissions$.getValue().includes(key))
+    }
+    return this.permissions$.getValue().includes(permissionKey)
   }
-  lacksPermission(permissionKey: string | string[]): boolean {
-    return true
-  }
+
   determineLanguage(): string | undefined {
     return 'mocked-lang'
   }
