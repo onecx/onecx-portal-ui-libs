@@ -130,11 +130,11 @@ function setNgZone(ngZone: NgZone): void {
   getWindowState().ngZone = ngZone
 }
 
-function getNgZone(): NgZone {
+export function getNgZone(): NgZone {
   return getWindowState().ngZone
 }
 
-function cachePlatform(production: boolean): PlatformRef {
+export function cachePlatform(production: boolean): PlatformRef {
   let platformCache: Map<Version, PlatformRef> = getWindowState().platformCache
   if (!platformCache) {
     platformCache = new Map<Version, PlatformRef>()
