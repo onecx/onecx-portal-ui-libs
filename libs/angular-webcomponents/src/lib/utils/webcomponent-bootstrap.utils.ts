@@ -91,6 +91,13 @@ function createEntrypoint(
     injector: injector,
   })
 
+  const originalConnectedCallback = myRemoteComponentAsWebComponent.prototype.connectedCallback
+
+  myRemoteComponentAsWebComponent.prototype.connectedCallback = function () {
+    this.dataset.noPls = ''
+    originalConnectedCallback.call(this)
+  }
+
   customElements.define(elementName, myRemoteComponentAsWebComponent)
 }
 
