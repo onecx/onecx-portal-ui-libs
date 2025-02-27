@@ -6,7 +6,7 @@ import { TableModule } from 'primeng/table'
 import { ButtonModule } from 'primeng/button'
 import { MultiSelectModule } from 'primeng/multiselect'
 import { UserService } from '@onecx/angular-integration-interface'
-import { MockUserService } from '@onecx/angular-integration-interface/mocks'
+import { UserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { DataTableComponent } from './data-table.component'
 import { StorybookTranslateModule } from './../../storybook-translate.module'
 import { MockAuthModule } from '../../mock-auth/mock-auth.module'
@@ -28,8 +28,8 @@ const DataTableComponentSBConfig: Meta<DataTableComponent> = {
       providers: [
         importProvidersFrom(BrowserModule),
         importProvidersFrom(BrowserAnimationsModule),
-        { provide: UserService, useClass: MockUserService },
-        { provide: HAS_PERMISSION_CHECKER, useClass: MockUserService },
+        { provide: UserService, useClass: UserServiceMock },
+        { provide: HAS_PERMISSION_CHECKER, useClass: UserServiceMock },
         {
           provide: LOCALE_ID,
           useClass: DynamicLocaleId,
