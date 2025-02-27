@@ -1,6 +1,8 @@
 .menu-wrapper {
   background-color: var(--menu-bg-color);
-  box-shadow: var(--menu-shadow);
+  border-right-style: solid;
+  border-right-width: 3px;
+  border-right-color: var(--menu-inline-border-color);
 
   .layout-menu-container {
     .layout-menu {
@@ -10,7 +12,7 @@
             color: var(--menu-text-color);
           }
         }
-/*
+        /*
         > ul {
           background-color: var(--menu-bg-color);
         }
@@ -27,7 +29,7 @@
         a {
           color: var(--menu-item-text-color);
           border-left: 4px solid transparent;
-/*
+          /*
           i {
             color: var(--menu-item-text-color);
           }
@@ -48,7 +50,7 @@
             color: var(--menu-active-item-text-color);
             font-weight: bold;
             border-left: 4px solid var(--primary-color);
-/*
+            /*
             > i {
               color: $activeMenuItemTextColor;
             }
@@ -68,7 +70,7 @@
       .layout-inline-menu-action,
       .layout-inline-menu-action-panel .layout-inline-menu-action-item {
         color: var(--menu-item-text-color);
-/*
+        /*
         i {
           color: var(--menu-item-text-color);
         }
