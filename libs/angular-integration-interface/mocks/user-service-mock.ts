@@ -3,6 +3,11 @@ import { BehaviorSubject } from 'rxjs'
 import { UserProfile } from '@onecx/integration-interface'
 import { DEFAULT_LANG } from '../src/lib/api/constants'
 import { FakeTopic } from './fake-topic'
+import { UserService } from '../src/lib/services/user.service'
+
+export function provideUserServiceMock() {
+  return [UserServiceMock, { provide: UserService, useExisting: UserServiceMock }]
+}
 
 @Injectable({ providedIn: 'root' })
 export class UserServiceMock {
@@ -29,3 +34,5 @@ export class UserServiceMock {
     return Promise.resolve()
   }
 }
+
+export type MockUserService = UserServiceMock

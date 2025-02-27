@@ -4,14 +4,18 @@ import { APP_CONFIG } from '../src/lib/api/injection-tokens'
 import { CONFIG_KEY } from '../src/lib/model/config-key.model'
 import { FakeTopic } from './fake-topic'
 import { firstValueFrom } from 'rxjs/internal/firstValueFrom'
+import { ConfigurationService } from '../src/lib/services/configuration.service'
+
+export function provideConfigurationServiceMock() {
+  return [ConfigurationServiceMock, { provide: ConfigurationService, useExisting: ConfigurationServiceMock }]
+}
 
 @Injectable({ providedIn: 'root' })
 export class ConfigurationServiceMock {
   config$ = new FakeTopic()
 
-  constructor(@Optional() @Inject(APP_CONFIG) private defaultConfig?: { [key: string]: string }) {}
-
   public init(): Promise<boolean> {
+    // TODO: Adapt
     return this.config$.publish(this.defaultConfig).then(() => true)
   }
 
@@ -20,7 +24,7 @@ export class ConfigurationServiceMock {
   }
 
   public getProperty(key: CONFIG_KEY): string | undefined {
-    return this.defaultConfig ? this.defaultConfig[key] : undefined
+    return this.config$.getValue()
   }
 
   public async setProperty(key: string, val: string): Promise<void> {
@@ -30,6 +34,6 @@ export class ConfigurationServiceMock {
   }
 
   public getConfig(): Config | undefined {
-    return this.defaultConfig
+    return this.config$.getValue()
   }
 }

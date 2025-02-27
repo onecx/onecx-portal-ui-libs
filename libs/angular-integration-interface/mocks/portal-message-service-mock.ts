@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core'
 import { FakeTopic } from './fake-topic'
-import { Message } from '../src/lib/services/portal-message.service'
+import { Message, PortalMessageService } from '../src/lib/services/portal-message.service'
 
+export function providePortalMessageServiceMock() {
+  return [PortalMessageServiceMock, { provide: PortalMessageService, useExisting: PortalMessageServiceMock }]
+}
 @Injectable({ providedIn: 'any' })
 export class PortalMessageServiceMock {
   message$ = new FakeTopic<Message>()

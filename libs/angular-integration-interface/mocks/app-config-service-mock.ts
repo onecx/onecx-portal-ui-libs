@@ -1,14 +1,18 @@
 import { Injectable } from '@angular/core'
 import { BehaviorSubject } from 'rxjs'
 import { Config } from '@onecx/integration-interface'
+import { AppConfigService } from '../src/lib/services/app-config-service'
 
+export function provideAppConfigServiceMock() {
+  return [AppConfigServiceMock, { provide: AppConfigService, useExisting: AppConfigServiceMock }]
+}
 @Injectable()
-export class MockAppConfigService {
+export class AppConfigServiceMock {
   config$ = new BehaviorSubject<{ [key: string]: string }>({})
 
   public init(baseUrl: string): Promise<void> {
     return new Promise((resolve) => {
-      const mockConfig: Config = { key: baseUrl }
+      const mockConfig: Config = { key: 'config' }
       this.config$.next(mockConfig)
       resolve()
     })
