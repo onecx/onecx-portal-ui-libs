@@ -29,4 +29,11 @@ export class FakeTopic<T> {
     this.state.next(value)
     return Promise.resolve()
   }
+
+  getValue(): T | undefined {
+    if (this.state instanceof BehaviorSubject) {
+      return this.state.getValue()
+    }
+    throw new Error('Not a BehaviorSubject')
+  }
 }

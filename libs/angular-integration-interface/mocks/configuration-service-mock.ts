@@ -22,7 +22,11 @@ export class ConfigurationServiceMock {
   }
 
   public getProperty(key: CONFIG_KEY): string | undefined {
-    return 'config'
+    const config = this.config$.getValue()
+    if (config && typeof config[key] === 'string') {
+      return config[key]
+    }
+    return undefined
   }
 
   public async setProperty(key: string, val: string): Promise<void> {
@@ -32,6 +36,6 @@ export class ConfigurationServiceMock {
   }
 
   public getConfig(): Config | undefined {
-    return { config: 'config' }
+    return this.config$.getValue()
   }
 }
