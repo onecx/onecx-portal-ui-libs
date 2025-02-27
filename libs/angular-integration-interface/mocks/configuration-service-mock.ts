@@ -1,6 +1,5 @@
-import { Inject, Injectable, Optional } from '@angular/core'
+import { Injectable } from '@angular/core'
 import { Config } from '@onecx/integration-interface'
-import { APP_CONFIG } from '../src/lib/api/injection-tokens'
 import { CONFIG_KEY } from '../src/lib/model/config-key.model'
 import { FakeTopic } from './fake-topic'
 import { firstValueFrom } from 'rxjs/internal/firstValueFrom'
@@ -12,11 +11,10 @@ export function provideConfigurationServiceMock() {
 
 @Injectable({ providedIn: 'root' })
 export class ConfigurationServiceMock {
-  config$ = new FakeTopic()
+  config$ = new FakeTopic<Config>()
 
   public init(): Promise<boolean> {
-    // TODO: Adapt
-    return this.config$.publish(this.defaultConfig).then(() => true)
+    return this.config$.publish({ config: 'config' }).then(() => true)
   }
 
   get isInitialized(): Promise<void> {
@@ -24,7 +22,7 @@ export class ConfigurationServiceMock {
   }
 
   public getProperty(key: CONFIG_KEY): string | undefined {
-    return this.config$.getValue()
+    return 'config'
   }
 
   public async setProperty(key: string, val: string): Promise<void> {
@@ -34,6 +32,6 @@ export class ConfigurationServiceMock {
   }
 
   public getConfig(): Config | undefined {
-    return this.config$.getValue()
+    return { config: 'config' }
   }
 }
