@@ -99,7 +99,6 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.primengConfig.ripple = true
-    //this.globalErrMsg = 'Hard coded error message.'
 
     this.appStateService.globalError$
       .pipe(untilDestroyed(this))
