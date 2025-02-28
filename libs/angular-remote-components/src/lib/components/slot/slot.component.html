@@ -1,3 +1,3 @@
-<div *ngFor="let component of (components$ | async);" #slot>
-    <ng-container *ngIf="skeleton" [ngTemplateOutlet]="skeleton"></ng-container>
+<div *ngFor="let component of (components$ | async);" #slot data-style-isolation>
+  <ng-container *ngIf="skeleton" [ngTemplateOutlet]="skeleton"></ng-container>
 </div>
