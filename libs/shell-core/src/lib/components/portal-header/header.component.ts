@@ -1,8 +1,9 @@
-import { animate, style, transition, trigger } from '@angular/animations'
 import { Component, EventEmitter, Inject, Input, Optional, Output } from '@angular/core'
+import { animate, style, transition, trigger } from '@angular/animations'
 import { UntilDestroy } from '@ngneat/until-destroy'
-import { AppStateService, ThemeService } from '@onecx/angular-integration-interface'
 import { Observable, combineLatest, filter, map, mergeMap, of } from 'rxjs'
+
+import { AppStateService, ThemeService } from '@onecx/angular-integration-interface'
 import {
   WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER,
   WorkspaceConfigBffService,
@@ -24,21 +25,15 @@ import {
 })
 @UntilDestroy()
 export class HeaderComponent {
+  @Input() menuButtonTitle: string | undefined
+  @Input() fullPortalLayout = true
+  @Input() homeNavUrl = '/'
+  @Input() homeNavTitle = 'Home'
+  @Input() isHorizontalMenu = false
+  @Output() menuButtonClick: EventEmitter<any> = new EventEmitter()
+
   menuExpanded = false
   fallbackImg = false
-
-  @Input()
-  menuButtonTitle: string | undefined
-  @Input()
-  fullPortalLayout = true
-  @Input()
-  homeNavUrl = '/'
-  @Input()
-  homeNavTitle = 'Home'
-
-  @Output()
-  menuButtonClick: EventEmitter<any> = new EventEmitter()
-
   logoUrl$: Observable<string | undefined>
 
   constructor(

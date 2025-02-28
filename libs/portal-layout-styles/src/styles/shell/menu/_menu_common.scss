@@ -51,7 +51,9 @@
           // border-radius: 4px;
           cursor: pointer;
           user-select: none;
-          transition: background-color var(--transition-duration), color var(--transition-duration);
+          transition:
+            background-color var(--transition-duration),
+            color var(--transition-duration);
 
           .layout-menuitem-text {
             margin-left: 0.75rem;
