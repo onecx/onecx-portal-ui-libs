@@ -17,8 +17,11 @@
     align-items: center;
     height: 100%;
     position: relative;
-    flex: 0 0 var(--menu-wrapper-width);
-    /* padding-right: 1.25rem; */
+    min-width: 10rem;
+
+    &.vertical-menu {
+      flex: 0 0 var(--menu-wrapper-width);
+    }
 
     .layout-topbar-logo {
       width: 100%;
