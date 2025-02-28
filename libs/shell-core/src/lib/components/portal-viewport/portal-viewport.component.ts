@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http'
-import { Component, HostListener, OnDestroy, OnInit, Renderer2, inject } from '@angular/core'
-import { Router } from '@angular/router'
+import { Component, HostListener, OnDestroy, OnInit, inject } from '@angular/core'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import {
   AppStateService,
@@ -26,7 +25,6 @@ import {
 })
 @UntilDestroy()
 export class PortalViewportComponent implements OnInit, OnDestroy {
-  private renderer = inject(Renderer2)
   private primengConfig = inject(PrimeNG)
   private messageService = inject(MessageService)
   appStateService = inject(AppStateService)
@@ -34,7 +32,6 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
   private userService = inject(UserService)
   private themeService = inject(ThemeService)
   private httpClient = inject(HttpClient)
-  private router = inject(Router)
   showContentProvider = inject<ShowContentProvider | undefined>(SHOW_CONTENT_PROVIDER, { optional: true })
   workspaceConfigBffService = inject<WorkspaceConfigBffService | undefined>(WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER, {
     optional: true,
@@ -46,14 +43,11 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
 
   removeDocumentClickListener: (() => void) | undefined
 
-  topbarTheme = 'var'
   colorScheme: 'auto' | 'light' | 'dark' = 'light'
-  layoutMode: 'auto' | 'light' | 'dark' = 'light'
   menuMode: 'horizontal' | 'static' | 'overlay' | 'slim' | 'slimplus' = 'static'
   inputStyle = 'outline'
   ripple = true
   isMobile = false
-
   globalErrMsg: string | undefined
 
   constructor() {
@@ -62,12 +56,12 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
       this.menuMode =
         (profile?.accountSettings?.layoutAndThemeSettings?.menuMode?.toLowerCase() as
           | typeof this.menuMode
-          | undefined) || this.menuMode
+          | undefined) ?? this.menuMode
 
       this.colorScheme =
         (profile?.accountSettings?.layoutAndThemeSettings?.colorScheme?.toLowerCase() as
           | typeof this.colorScheme
-          | undefined) || this.colorScheme
+          | undefined) ?? this.colorScheme
     })
 
     this.themeService.currentTheme$
@@ -110,6 +104,7 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
       .pipe(untilDestroyed(this))
       .pipe(filter((i) => i !== undefined))
       .subscribe((err: string | undefined) => {
+        console.error('global error')
         this.globalErrMsg = err
       })
 

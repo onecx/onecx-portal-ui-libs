@@ -1,6 +1,6 @@
 {
   "OCX_HEADER": {
-    "MENU_TOGGLE": "Menu"
+    "MENU_TOGGLE": "Menu on/off"
   },
   "OCX_PORTAL_VIEWPORT": {
     "SUCCESS": "Success!",
@@ -115,7 +115,7 @@
       "TABLE": "Table"
     }
   },
-  "OCX_DATA_VIEW_CONTROLS" : {
+  "OCX_DATA_VIEW_CONTROLS": {
     "NO_GROUP_SELECTED": "No group selected",
     "OPEN_BUTTON_DETAIL": "Open custom group selection dialog",
     "DROPDOWN": {

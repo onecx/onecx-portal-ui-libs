@@ -1,5 +1,5 @@
-<div class="ml-3 py-2 lg:ml-5 flex flex-wrap align-items-center justify-content-between row-gap-1">
-  <div class="flex flex-wrap align-items-center justify-content-start gap-3 row-gap-1">
+<div class="mx-3 sm:ml-4 py-2 flex flex-wrap align-items-center justify-content-between row-gap-1">
+  <div class="flex flex-wrap align-items-center justify-content-start column-gap-3 row-gap-1">
     @if (logoUrl$ | async; as logoUrl) {
       <img
         alt="logo"
@@ -9,8 +9,7 @@
         (load)="onLoad(logoUrl)"
         />
     }
-    <div class="flex-none text-sm">&copy; {{copyrightMsg$ | async}}</div>
     <ocx-slot name="onecx-shell-footer"></ocx-slot>
   </div>
-  <div class="mr-5 text-sm">{{versionInfo$ | async}}</div>
+  <div class="text-xs">{{versionInfo$ | async}}</div>
 </div>
