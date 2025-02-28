@@ -1,6 +1,6 @@
 import { Location } from '@angular/common'
 import { Router } from '@angular/router'
-import { AppStateService } from '@onecx/portal-integration-angular'
+import { AppStateService } from '@onecx/angular-integration-interface'
 import { firstValueFrom, map } from 'rxjs'
 
 export function initializeRouter(router: Router, appStateService: AppStateService) {
