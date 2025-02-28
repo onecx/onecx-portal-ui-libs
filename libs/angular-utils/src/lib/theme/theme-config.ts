@@ -13,10 +13,10 @@ export default class ThemeConfig {
     return {
       semantic: {
         extend: {
-          font: (this.themeVariables as any)['font'],
-          topbar: (this.themeVariables as any)['topbar'],
-          sidebar: (this.themeVariables as any)['sidebar'],
-          general: (this.themeVariables as any)['general'],
+          ...(this.themeVariables as any)['font'],
+          ...(this.themeVariables as any)['topbar'],
+          ...(this.themeVariables as any)['sidebar'],
+          ...(this.themeVariables as any)['general'],
         },
         primary: {
           ...createPalette(primaryColor, standardColorAdjustment),

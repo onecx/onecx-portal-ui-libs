@@ -6,11 +6,12 @@ export default {
   semantic: {
     // OneCX semantic variables extension
     extend: {
-      font: defaultVariables.font,
-      topbar: defaultVariables.topbar,
-      sidebar: defaultVariables.sidebar,
-      general: defaultVariables.general,
+      ...defaultVariables.font,
+      ...defaultVariables.topbar,
+      ...defaultVariables.sidebar,
+      ...defaultVariables.general,
       errorColor: '#b00020',
+      animationDuration: '0.2s',
     },
     transitionDuration: '0.2s',
     focusRing: {
