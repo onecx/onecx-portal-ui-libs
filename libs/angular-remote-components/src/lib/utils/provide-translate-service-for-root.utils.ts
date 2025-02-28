@@ -13,7 +13,7 @@ import {
   TranslateStore,
   USE_DEFAULT_LANG,
   USE_EXTEND,
-  USE_STORE,
+  ISOLATE_TRANSLATE_SERVICE,
 } from '@ngx-translate/core'
 
 export function provideTranslateServiceForRoot(config: TranslateModuleConfig = {}) {
@@ -23,7 +23,7 @@ export function provideTranslateServiceForRoot(config: TranslateModuleConfig = {
     config.parser || { provide: TranslateParser, useClass: TranslateDefaultParser },
     config.missingTranslationHandler || { provide: MissingTranslationHandler, useClass: FakeMissingTranslationHandler },
     TranslateStore,
-    { provide: USE_STORE, useValue: config.isolate },
+    { provide: ISOLATE_TRANSLATE_SERVICE, useValue: config.isolate },
     { provide: USE_DEFAULT_LANG, useValue: config.useDefaultLang },
     { provide: USE_EXTEND, useValue: config.extend },
     { provide: DEFAULT_LANGUAGE, useValue: config.defaultLanguage },
