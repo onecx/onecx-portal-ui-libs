@@ -94,7 +94,7 @@ function createEntrypoint(
   const originalConnectedCallback = myRemoteComponentAsWebComponent.prototype.connectedCallback
 
   myRemoteComponentAsWebComponent.prototype.connectedCallback = function () {
-    this.dataset.noPls = ''
+    this.dataset.noPortalLayoutStyles = ''
     originalConnectedCallback.call(this)
   }
 
