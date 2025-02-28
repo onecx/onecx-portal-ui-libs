@@ -19,7 +19,14 @@ export class CustomUseStyle extends UseStyle {
     this.getStyleIdentifier().then((scopedStyleId) => {
       if (scopedStyleId !== '' && !(options.name as string).endsWith('-variables')) {
         css = `
-    [data-style-id="${scopedStyleId}"] {
+        @scope([data-style-id="${scopedStyleId}"]) to ([data-style-isolation]) {
+                ${css}
+            }
+        `
+      }
+      if (scopedStyleId === '' && !(options.name as string).endsWith('-variables')) {
+        css = `
+        @scope([data-style-id="shell-ui"]) to ([data-style-isolation]) {
                 ${css}
             }
         `
