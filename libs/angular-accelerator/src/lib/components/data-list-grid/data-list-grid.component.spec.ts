@@ -5,7 +5,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { UserService } from '@onecx/angular-integration-interface'
-import { MockUserService, provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
+import { UserServiceMock, provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { DataListGridComponent } from './data-list-grid.component'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { ColumnType } from '../../model/column-type.model'
@@ -230,7 +230,7 @@ describe('DataListGridComponent', () => {
             },
           },
         },
-        { provide: UserService, useClass: MockUserService },
+        { provide: UserService, useClass: UserServiceMock },
         provideAppStateServiceMock(),
       ],
     }).compileComponents()
