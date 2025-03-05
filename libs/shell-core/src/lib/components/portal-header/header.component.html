@@ -1,18 +1,16 @@
-<div class="layout-topbar shadow-4" id="header" role="banner">
-  <div class="layout-topbar-left">
-    <a class="layout-topbar-logo">
-      <ng-container *ngIf="logoUrl$ | async as logoUrl">
-        <img
-          *ngIf="logoUrl && !fallbackImg"
-          id="app-logo"
-          [ocxShellSrc]="logoUrl"
-          alt="Logo"
-          style="max-height: 100%; max-width: 100%"
-          (error)="fallbackImg=true"
-          (load)="onLoad(logoUrl)"
-        />
-      </ng-container>
-      <svg *ngIf="((logoUrl$ | async) === null) || fallbackImg" width="160" viewBox="0 0 283 72" class="default-logo">
+<div class="layout-topbar" id="ocx_header" role="banner">
+  <div class="layout-topbar-left" [ngClass]="{'vertical-menu': !isHorizontalMenu}">
+    <div *ngIf="logoUrl$ | async as logoUrl" class="layout-topbar-logo">
+      <img
+        *ngIf="logoUrl && !fallbackImg"
+        id="ocx_app_logo"
+        [ocxShellSrc]="logoUrl"
+        alt="Logo"
+        (error)="fallbackImg = true"
+        (load)="onLoad(logoUrl)"
+      />
+
+      <svg *ngIf="logoUrl === null || fallbackImg" width="160" viewBox="0 0 283 72" class="default-logo">
         <defs id="SvgjsDefs4962"></defs>
         <g
           id="SvgjsG4963"
@@ -35,13 +33,15 @@
           ></path>
         </g>
       </svg>
-    </a>
-
+    </div>
     <a
-      class="layout-menu-button shadow-6"
+      id="ocx_vertical_menu_action_toggle"
+      class="layout-menu-button"
       (click)="onMenuButtonClick($event)"
       pRipple
-      [title]="menuButtonTitle ?? ('OCX_HEADER.MENU_TOGGLE')"
+      [pTooltip]="'OCX_HEADER.MENU_TOGGLE' | translate"
+      tooltipPosition="top"
+      tooltipEvent="hover"
     >
       <i class="pi pi-chevron-right"></i>
     </a>
