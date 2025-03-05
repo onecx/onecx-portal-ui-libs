@@ -8,7 +8,7 @@ import { DataViewModule } from 'primeng/dataview'
 
 import { DataListGridHarness, DataTableHarness, DataViewHarness } from '@onecx/angular-accelerator/testing'
 import { UserService } from '@onecx/angular-integration-interface'
-import { MockUserService, provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
+import { UserServiceMock, provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { DataViewComponent } from './data-view.component'
 import { MockAuthModule } from '../../mock-auth/mock-auth.module'
 import { DataListGridComponent } from '../data-list-grid/data-list-grid.component'
@@ -27,7 +27,7 @@ describe('DataViewComponent', () => {
     return this
   })
   global.MutationObserver = mutationObserverMock
-  
+
   let component: DataViewComponent
   let fixture: ComponentFixture<DataViewComponent>
   let dataViewHarness: DataViewHarness
@@ -214,7 +214,7 @@ describe('DataViewComponent', () => {
         NoopAnimationsModule,
       ],
       providers: [
-        { provide: UserService, useClass: MockUserService },
+        { provide: UserService, useClass: UserServiceMock },
         {
           provide: ActivatedRoute,
           useValue: {
