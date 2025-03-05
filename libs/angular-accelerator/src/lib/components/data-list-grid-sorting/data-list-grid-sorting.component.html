@@ -1,6 +1,6 @@
 <div class="flex align-items-center gap-2">
   <p-floatLabel>
-    <p-dropdown
+    <p-select
       id="dataListGridSortingDropdown"
       [(ngModel)]="selectedSortingOption"
       class="sort-dropdown"
@@ -12,7 +12,7 @@
       <ng-template let-item pTemplate="item"> {{ item?.columnName ? (item.columnName | translate) : ''}} </ng-template>
       <ng-template let-item pTemplate="selectedItem">
         {{ item?.columnName ? (item.columnName | translate) : ''}}
-      </ng-template></p-dropdown
+      </ng-template></p-select
     >
     <label for="dataListGridSortingDropdown">{{ ("OCX_LIST_GRID_SORT.DROPDOWN.LABEL" | translate) }}</label>
   </p-floatLabel>
