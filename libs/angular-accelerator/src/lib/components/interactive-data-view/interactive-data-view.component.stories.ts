@@ -133,6 +133,18 @@ export const WithCustomContentTemplates = {
   args: defaultComponentArgs,
 }
 
+export const WithCustomStyles = {
+  argTypes: {
+    componentStateChanged: { action: 'componentStateChanged' },
+  },
+  render: InteractiveDataViewTemplate,
+  args: {
+    ...defaultComponentArgs,
+    headerStyleClass: 'py-2',
+    contentStyleClass: 'py-4',
+  },
+}
+
 const CustomTableCellsInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
   props: args,
   template: `

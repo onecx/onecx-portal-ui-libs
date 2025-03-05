@@ -1,4 +1,4 @@
-import { OcxContentContainerHarness } from '../../../../../testing/content-container.harness'
+import { OcxContentContainerHarness } from '../../../../testing/content-container.harness'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { OcxContentContainerComponent } from './content-container.component'
 import { OcxContentContainerDirective } from '../../directives/content-container.directive'
@@ -46,5 +46,12 @@ describe('OcxContentContainerComponent', () => {
     expect(await ocxContentContainerHarness.getLayoutClasses()).toEqual(expectedClasses)
     expect(await ocxContentContainerHarness.getLayout()).toEqual('vertical')
     expect(await ocxContentContainerHarness.getBreakpoint()).toBeUndefined()
+  })
+
+  it('should render a container with a class, when given a styleClass via input', async () => {
+    component.styleClass = 'py-4'
+
+    const expectedStyleClasses = ['flex', 'gap-3', 'flex-column', 'md:flex-row', 'py-4']
+    expect(await ocxContentContainerHarness.getLayoutClasses()).toEqual(expectedStyleClasses)
   })
 })
