@@ -178,6 +178,7 @@ standalone: false,   *  selector: 'my-component',
       const componentRef = viewContainer?.createComponent<any>(componentType)
       const componentHTML = componentRef?.location.nativeElement as HTMLElement
       this.addDataStyleId(componentHTML, componentInfo.remoteComponent)
+      this.addDataStyleIsolation(componentHTML)
       if (componentRef && 'ocxInitRemoteComponent' in componentRef.instance) {
         ;(componentRef.instance as ocxRemoteComponent).ocxInitRemoteComponent({
           appId: componentInfo.remoteComponent.appId,
@@ -195,6 +196,7 @@ standalone: false,   *  selector: 'my-component',
       if (componentInfo.remoteComponent.elementName) {
         const element = document.createElement(componentInfo.remoteComponent.elementName)
         this.addDataStyleId(element, componentInfo.remoteComponent)
+        this.addDataStyleIsolation(element)
         ;(element as any)['ocxRemoteComponentConfig'] = {
           appId: componentInfo.remoteComponent.appId,
           productName: componentInfo.remoteComponent.productName,
@@ -211,6 +213,10 @@ standalone: false,   *  selector: 'my-component',
 
   private addDataStyleId(element: HTMLElement, rcInfo: RemoteComponentInfo) {
     element.dataset['styleId'] = `${rcInfo.productName}|${rcInfo.appId}`
+  }
+
+  private addDataStyleIsolation(element: HTMLElement) {
+    element.dataset['styleIsolation'] = ''
   }
 
   private updateComponentData(
