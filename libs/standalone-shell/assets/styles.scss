@@ -2,18 +2,18 @@
 @import 'primeflex/primeflex.scss';
 
 body {
-    font-family: var(--font-family);
-    font-size: var(--font-size);
-    color: var(--text-color);
+    font-family: var(--p-font-family);
+    font-size: var(--p-font-size);
+    color: var(--p-text-color);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     padding: 0;
     margin: 0;
-    background-color: var(--body-bg-color);
+    background-color: var(--p-body-bg-color);
     min-height: 100%;
   
     a {
       text-decoration: none;
-      color: var(--text-secondary-color);
+      color: var(--p-text-secondary-color);
     }
   }

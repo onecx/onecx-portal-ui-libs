@@ -1,5 +1,5 @@
 @for (component of (components$ | async); track component) {
-<div #slot data-style-isolation>
+<div #slot>
   @if (skeleton) {
   <ng-container [ngTemplateOutlet]="skeleton"></ng-container>
   }
