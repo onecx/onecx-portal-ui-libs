@@ -42,6 +42,7 @@ import { OcxContentComponent } from './components/content/content.component'
 import { OcxContentContainerComponent } from './components/content-container/content-container.component'
 import { OcxContentDirective } from './directives/content.directive'
 import { OcxContentContainerDirective } from './directives/content-container.directive'
+import { LifecycleComponent } from './components/lifecycle/lifecycle.component'
 
 export class AngularAcceleratorMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -75,6 +76,7 @@ function appInitializer(userService: UserService) {
     DataTableComponent,
     DataViewComponent,
     InteractiveDataViewComponent,
+    LifecycleComponent,
     PageHeaderComponent,
     DynamicPipe,
     SearchHeaderComponent,
@@ -129,6 +131,7 @@ function appInitializer(userService: UserService) {
     DataTableComponent,
     DataViewComponent,
     InteractiveDataViewComponent,
+    LifecycleComponent,
     PageHeaderComponent,
     SearchHeaderComponent,
     DiagramComponent,

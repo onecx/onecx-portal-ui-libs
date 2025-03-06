@@ -31,7 +31,6 @@ import { DialogInlineComponent } from './components/dialog/dialog-inline/dialog-
 import { GlobalErrorComponent } from './components/error-component/global-error.component'
 import { HelpItemEditorComponent } from './components/help-item-editor/help-item-editor.component'
 import { AppInlineProfileComponent } from './components/inline-profile/inline-profile.component'
-import { LifecycleComponent } from './components/lifecycle/lifecycle.component'
 import { LoadingIndicatorComponent } from './components/loading-indicator/loading-indicator.component'
 import { LoadingComponent } from './components/loading/loading.component'
 import { MfeDebugComponent } from './components/mfe-debug/mfe-debug.component'
@@ -111,7 +110,6 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     DialogContentComponent,
     DialogInlineComponent,
     DialogMessageContentComponent,
-    LifecycleComponent,
   ],
   providers: [
     {
@@ -175,7 +173,6 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     DialogContentComponent,
     DialogInlineComponent,
     DialogMessageContentComponent,
-    LifecycleComponent,
   ],
 })
 export class PortalCoreModule {
