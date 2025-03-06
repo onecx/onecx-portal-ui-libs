@@ -1,6 +1,8 @@
 import { ensureIntersectionObserverMockExists } from '@onecx/angular-testing'
 
 export * from './column-group-selection.harness'
+export * from './content-container.harness'
+export * from './content.harness'
 export * from './custom-group-column-selector.harness'
 export * from './data-layout-selection.harness'
 export * from './data-list-grid.harness'

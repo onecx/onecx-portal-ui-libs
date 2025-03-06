@@ -5,7 +5,7 @@ import { OcxContentContainerComponent } from './content-container.component'
 import { moduleMetadata, Meta } from '@storybook/angular'
 
 export default {
-  title: 'ContentContainerComponent',
+  title: 'Components/ContentContainerComponent',
   component: OcxContentContainerComponent,
   argTypes: {
     layout: {

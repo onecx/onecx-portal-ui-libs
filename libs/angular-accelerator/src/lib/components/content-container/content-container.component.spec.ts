@@ -1,4 +1,4 @@
-import { OcxContentContainerHarness } from '../../../../../testing/content-container.harness'
+import { OcxContentContainerHarness } from '../../../../testing/content-container.harness'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { OcxContentContainerComponent } from './content-container.component'
 import { OcxContentContainerDirective } from '../../directives/content-container.directive'

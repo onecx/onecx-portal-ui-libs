@@ -3,7 +3,7 @@ import { OcxContentComponent } from './content.component';
 import { moduleMetadata, Meta } from '@storybook/angular'
 
 export default {
-  title: 'ContentComponent',
+  title: 'Components/ContentComponent',
   component: OcxContentComponent,
   decorators: [
     moduleMetadata({

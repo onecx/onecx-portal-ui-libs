@@ -2,6 +2,8 @@
 export * from './lib/injection-tokens/has-permission-checker'
 
 // directives
+export * from './lib/directives/content-container.directive'
+export * from './lib/directives/content.directive'
 export * from './lib/directives/if-permission.directive'
 export * from './lib/directives/if-breakpoint.directive'
 export * from './lib/directives/src.directive'
@@ -11,6 +13,8 @@ export * from './lib/directives/template.directive'
 
 // components
 export * from './lib/components/column-group-selection/column-group-selection.component'
+export * from './lib/components/content/content.component'
+export * from './lib/components/content-container/content-container.component'
 export * from './lib/components/custom-group-column-selector/custom-group-column-selector.component'
 export * from './lib/components/data-layout-selection/data-layout-selection.component'
 export * from './lib/components/data-list-grid/data-list-grid.component'
