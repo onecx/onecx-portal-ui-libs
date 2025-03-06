@@ -105,3 +105,20 @@ export const DirectiveOnly = {
     breakpoint: 'md'
   },
 }
+
+export const WithCustomStyleClasses = {
+  render: (args: OcxContentContainerComponent) => ({
+    props: {
+      ...args,
+    },
+    template: `
+        <ocx-content-container styleClass="${args.styleClass}">
+            <p>Content 1 inside of ocx-content-container with styleClass</p>
+            <p>Content 2 inside of ocx-content-container with styleClass</p>
+        </ocx-content-container>
+    `,
+  }),
+  args: {
+    styleClass: 'py-4 flex-row',
+  },
+}

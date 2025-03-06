@@ -62,6 +62,11 @@ describe('OcxContentComponent', () => {
       expect(await ocxContentHarness.getTitle(titleBaseId)).toEqual(testComponentTitle)
       expect(await ocxContentHarness.getTitleClasses(titleBaseId)).toEqual(expectedTitleClasses)
     })
+    it('should apply classes specified via input', async () => {
+      component.styleClass = 'py-4 mt-2'
+      const expectedStyleClasses = ['card', 'py-4', 'mt-2']
+      expect(await ocxContentHarness.getContentClasses()).toEqual(expectedStyleClasses)
+    })
   })
 
   describe('Multiple components per page', () => {

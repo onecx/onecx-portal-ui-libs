@@ -42,12 +42,26 @@ export class OcxContentContainerDirective implements OnInit, OnChanges {
       })
       removeClasses(classesToRemove)
     }
-    const sharedClasses = ['flex', 'gap-3', 'flex-column']
-    removeResponsiveLayoutClasses()
-    addClasses(sharedClasses)
-    if (this.layout != 'vertical') {
-      const responsiveLayoutClass = `${this.breakpoint || 'md'}:flex-row`
-      addClasses([responsiveLayoutClass])
+    const addSharedClasses = () => {
+      const styleClasses = Array.from(this.el.nativeElement.classList as string[])
+      const classList: string[] = ['flex']
+      console.log("StyleClasses ", styleClasses);
+      
+      if (!styleClasses.some((cls) => cls.startsWith('gap-'))) {
+        classList.push('gap-3')
+      }
+      const flexClasses = ['flex-row', 'flex-column', 'flex-row-reverse', 'flex-column-reverse']
+      if (!styleClasses.some((cls) => flexClasses.includes(cls))) {
+        classList.push('flex-column')
+      }
+      if (this.layout != 'vertical') {
+        const responsiveLayoutClass = `${this.breakpoint || 'md'}:flex-row`
+        classList.push(responsiveLayoutClass)
+      }
+      addClasses(classList)
     }
+
+    removeResponsiveLayoutClasses()
+    addSharedClasses()
   }
 }

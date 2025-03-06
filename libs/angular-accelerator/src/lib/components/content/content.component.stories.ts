@@ -80,3 +80,20 @@ export const DirectiveOnly = {
     title: 'My Title'
   },
 }
+
+export const WithCustomStyleClasses = {
+  render: (args: OcxContentComponent) => ({
+    props: {
+      ...args,
+    },
+    template: `
+        <ocx-content title="${args.title}" styleClass="${args.styleClass}">
+            <p>Content inside of ocx-content with styleClass</p>
+        </ocx-content>
+    `,
+  }),
+  args: {
+    title: 'My Title',
+    styleClass: 'py-4 mt-2',
+  },
+}
