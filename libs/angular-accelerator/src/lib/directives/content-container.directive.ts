@@ -20,6 +20,7 @@ export class OcxContentContainerDirective implements OnInit, OnChanges {
   @Input() breakpoint: 'sm' | 'md' | 'lg' | 'xl' = 'md'
 
   ngOnInit() {
+    this.el.nativeElement.classList.add('flex', 'gap-3', 'flex-column', 'md:flex-row')
     this.addContainerStyles()
   }
 
@@ -43,22 +44,21 @@ export class OcxContentContainerDirective implements OnInit, OnChanges {
       removeClasses(classesToRemove)
     }
     const addSharedClasses = () => {
-      const styleClasses = Array.from(this.el.nativeElement.classList as string[])
-      const classList: string[] = ['flex']
-      console.log("StyleClasses ", styleClasses);
-      
-      if (!styleClasses.some((cls) => cls.startsWith('gap-'))) {
-        classList.push('gap-3')
+      let styleClasses = Array.from(this.el.nativeElement.classList as string[])
+      const defaultClasses = ['gap-3', 'flex-column', 'md:flex-row']
+      removeClasses(defaultClasses)
+      if (styleClasses.some((cls) => cls.startsWith('gap-') && cls !== 'gap-3')) {
+        styleClasses = styleClasses.filter((cls) => !cls.startsWith('gap-3'))
       }
-      const flexClasses = ['flex-row', 'flex-column', 'flex-row-reverse', 'flex-column-reverse']
-      if (!styleClasses.some((cls) => flexClasses.includes(cls))) {
-        classList.push('flex-column')
+      const flexClasses = ['flex-row', 'flex-row-reverse', 'flex-column-reverse']
+      if (styleClasses.some((cls) => flexClasses.includes(cls))) {
+        styleClasses = styleClasses.filter((cls) => cls !== 'flex-column')
       }
       if (this.layout != 'vertical') {
         const responsiveLayoutClass = `${this.breakpoint || 'md'}:flex-row`
-        classList.push(responsiveLayoutClass)
+        styleClasses.push(responsiveLayoutClass)
       }
-      addClasses(classList)
+      addClasses(styleClasses)
     }
 
     removeResponsiveLayoutClasses()
