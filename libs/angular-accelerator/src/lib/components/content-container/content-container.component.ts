@@ -17,4 +17,9 @@ export class OcxContentContainerComponent {
    * Default: md
    */
   @Input() breakpoint: 'sm' | 'md' | 'lg' | 'xl' = 'md'
+
+  /**
+   * Optionally allows specifying styles for the container
+   */
+  @Input() styleClass: string | undefined
 }

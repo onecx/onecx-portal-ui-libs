@@ -8,7 +8,7 @@ import { TimelineModule } from 'primeng/timeline'
 import { CardModule } from 'primeng/card'
 
 export default {
-  title: 'LifecycleComponent',
+  title: 'Components/LifecycleComponent',
   component: LifecycleComponent,
   decorators: [
     applicationConfig({

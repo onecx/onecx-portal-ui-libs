@@ -20,6 +20,7 @@ import { PopoverModule } from 'primeng/popover'
 import { FocusTrapModule } from 'primeng/focustrap'
 import { Tooltip } from 'primeng/tooltip'
 import { providePrimeNG } from 'primeng/config'
+import { TimelineModule } from 'primeng/timeline'
 
 @NgModule({
   imports: [
@@ -42,6 +43,7 @@ import { providePrimeNG } from 'primeng/config'
     PopoverModule,
     FocusTrapModule,
     Tooltip,
+    TimelineModule,
     SharedModule,
   ],
   exports: [
@@ -64,6 +66,7 @@ import { providePrimeNG } from 'primeng/config'
     PopoverModule,
     FocusTrapModule,
     Tooltip,
+    TimelineModule,
     SharedModule,
   ],
   providers: [providePrimeNG()],

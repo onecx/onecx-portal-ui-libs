@@ -115,6 +115,18 @@ export const WithPageSizes = {
   },
 }
 
+export const WithCustomStyleClasses = {
+  argTypes: {
+    componentStateChanged: { action: 'componentStateChanged' },
+  },
+  render: InteractiveDataViewTemplate,
+  args: {
+    ...defaultComponentArgs,
+    headerStyleClass: 'py-2',
+    contentStyleClass: 'py-4',
+  },
+}
+
 const CustomContentInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
   props: args,
   template: `
