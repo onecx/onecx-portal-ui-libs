@@ -5,6 +5,7 @@
     "entryFile": "src/index.ts"
   },
   "assets": [
-    "./assets/**"
+    "./assets/**",
+    "./migrations.json"
   ]
 }

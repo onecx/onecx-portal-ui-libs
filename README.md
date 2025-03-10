@@ -52,6 +52,17 @@ In some cases, there might be a requirement to make a change directly on a main 
 - The `main` branch is merged into `develop` branch
 - Libs pre-release is released via the `develop` branch
 
+# Migrating to Angular 19, PrimeNG 19 and OneCX v6
+Run the following commands in your terminal and follow the instructions:
+
+1. `npm i`
+2. `npx nx migrate @onecx/angular-accelerator` (don't run `npm i` after this, Step 3 will do that for you)
+3. `npx nx migrate --run-migrations=migrations.json`
+4. Step 3 wil probably fail at first, so remove `node_modules` and `package-lock.json`, run `npm i` and then do Step 3 again
+5. `npx nx g @nx/eslint:convert-to-flat-config` (this is only necessary if you have the `.eslint.json` still) (https://nx.dev/nx-api/eslint/generators/convert-to-flat-config)
+6. `npx nx generate @angular/core:control-flow` (https://angular.dev/reference/migrations/control-flow)
+7. `npx nx generate @angular/core:inject` (https://angular.dev/reference/migrations/inject-function)
+
 # Update from v3 to v4 guide
 
 [Update guide](update-guide.md)
