@@ -24,7 +24,7 @@ describe('ThemeConfigService', () => {
       currentTheme$: new FakeTopic(),
     }
 
-    const currentThemeTopicMock = TestBed.configureTestingModule({
+    TestBed.configureTestingModule({
       providers: [
         ThemeConfigService,
         { provide: ThemeService, useValue: themeServiceMock },
