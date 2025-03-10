@@ -21,8 +21,6 @@ import { UserProfileAPIService } from '../services/userprofile-api.service'
 import { AnnouncementBannerComponent } from './components/announcement-banner/announcement-banner.component'
 import { ButtonDialogComponent } from './components/button-dialog/button-dialog.component'
 import { DialogMessageContentComponent } from './components/button-dialog/dialog-message-content/dialog-message-content.component'
-import { OcxContentContainerComponent } from './components/content-container/content-container.component'
-import { OcxContentComponent } from './components/content/content.component'
 import { ColumnTogglerComponent } from './components/data-view-controls/column-toggler-component/column-toggler.component'
 import { DataViewControlsComponent } from './components/data-view-controls/data-view-controls.component'
 import { ViewTemplatePickerComponent } from './components/data-view-controls/view-template-picker/view-template-picker.component'
@@ -33,7 +31,6 @@ import { DialogInlineComponent } from './components/dialog/dialog-inline/dialog-
 import { GlobalErrorComponent } from './components/error-component/global-error.component'
 import { HelpItemEditorComponent } from './components/help-item-editor/help-item-editor.component'
 import { AppInlineProfileComponent } from './components/inline-profile/inline-profile.component'
-import { LifecycleComponent } from './components/lifecycle/lifecycle.component'
 import { LoadingIndicatorComponent } from './components/loading-indicator/loading-indicator.component'
 import { LoadingComponent } from './components/loading/loading.component'
 import { MfeDebugComponent } from './components/mfe-debug/mfe-debug.component'
@@ -53,8 +50,6 @@ import { SupportTicketComponent } from './components/support-ticket/support-tick
 import { UserAvatarComponent } from './components/user-avatar/user-avatar.component'
 import { AutofocusDirective } from './directives/autofocus.directive'
 import { BasicDirective } from './directives/basic.directive'
-import { OcxContentContainerDirective } from './directives/content-container.directive'
-import { OcxContentDirective } from './directives/content.directive'
 import { LoadingIndicatorDirective } from './directives/loading-indicator.directive'
 import { PatchFormGroupValuesDirective } from './directives/patch-form-group-values.driective'
 import { SetInputValueDirective } from './directives/set-input-value.directive'
@@ -115,11 +110,6 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     DialogContentComponent,
     DialogInlineComponent,
     DialogMessageContentComponent,
-    OcxContentDirective,
-    OcxContentContainerDirective,
-    OcxContentComponent,
-    OcxContentContainerComponent,
-    LifecycleComponent,
   ],
   providers: [
     {
@@ -183,11 +173,6 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     DialogContentComponent,
     DialogInlineComponent,
     DialogMessageContentComponent,
-    OcxContentDirective,
-    OcxContentContainerDirective,
-    OcxContentComponent,
-    OcxContentContainerComponent,
-    LifecycleComponent,
   ],
 })
 export class PortalCoreModule {

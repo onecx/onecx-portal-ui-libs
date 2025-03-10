@@ -38,6 +38,11 @@ import { DynamicLocaleId } from './utils/dynamic-locale-id'
 import { FilterViewComponent } from './components/filter-view/filter-view.component'
 import { provideConnectionService } from './utils/provide-connection-service'
 import { TemplateDirective } from './directives/template.directive'
+import { OcxContentComponent } from './components/content/content.component'
+import { OcxContentContainerComponent } from './components/content-container/content-container.component'
+import { OcxContentDirective } from './directives/content.directive'
+import { OcxContentContainerDirective } from './directives/content-container.directive'
+import { LifecycleComponent } from './components/lifecycle/lifecycle.component'
 
 export class AngularAcceleratorMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -71,12 +76,15 @@ function appInitializer(userService: UserService) {
     DataTableComponent,
     DataViewComponent,
     InteractiveDataViewComponent,
+    LifecycleComponent,
     PageHeaderComponent,
     DynamicPipe,
     SearchHeaderComponent,
     DiagramComponent,
     GroupByCountDiagramComponent,
     DataLoadingErrorComponent,
+    OcxContentComponent,
+    OcxContentContainerComponent,
     IfPermissionDirective,
     IfBreakpointDirective,
     SrcDirective,
@@ -85,6 +93,8 @@ function appInitializer(userService: UserService) {
     TooltipOnOverflowDirective,
     FilterViewComponent,
     TemplateDirective,
+    OcxContentDirective,
+    OcxContentContainerDirective
   ],
   providers: [
     providePermissionChecker(),
@@ -121,11 +131,14 @@ function appInitializer(userService: UserService) {
     DataTableComponent,
     DataViewComponent,
     InteractiveDataViewComponent,
+    LifecycleComponent,
     PageHeaderComponent,
     SearchHeaderComponent,
     DiagramComponent,
     GroupByCountDiagramComponent,
     DataLoadingErrorComponent,
+    OcxContentComponent,
+    OcxContentContainerComponent,
     IfPermissionDirective,
     IfBreakpointDirective,
     SrcDirective,
@@ -134,6 +147,8 @@ function appInitializer(userService: UserService) {
     TooltipOnOverflowDirective,
     FilterViewComponent,
     TemplateDirective,
+    OcxContentDirective,
+    OcxContentContainerDirective
   ],
 })
 export class AngularAcceleratorModule {}

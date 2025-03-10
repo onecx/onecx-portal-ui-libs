@@ -5,7 +5,7 @@ import { OcxContentContainerComponent } from './content-container.component'
 import { moduleMetadata, Meta } from '@storybook/angular'
 
 export default {
-  title: 'ContentContainerComponent',
+  title: 'Components/ContentContainerComponent',
   component: OcxContentContainerComponent,
   argTypes: {
     layout: {
@@ -103,5 +103,22 @@ export const DirectiveOnly = {
   args: {
     layout: 'horizontal',
     breakpoint: 'md'
+  },
+}
+
+export const WithCustomStyleClasses = {
+  render: (args: OcxContentContainerComponent) => ({
+    props: {
+      ...args,
+    },
+    template: `
+        <ocx-content-container styleClass="${args.styleClass}">
+            <p>Content 1 inside of ocx-content-container with styleClass</p>
+            <p>Content 2 inside of ocx-content-container with styleClass</p>
+        </ocx-content-container>
+    `,
+  }),
+  args: {
+    styleClass: 'py-4 flex-row',
   },
 }
