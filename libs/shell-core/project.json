@@ -6,6 +6,17 @@
   "tags": [],
   "projectType": "library",
   "targets": {
+    "build-migrations": {
+      "dependsOn": [
+        "build"
+      ],
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "tsc -p libs/shell-core/migrations/tsconfig.migrations.json"
+        ]
+      }
+    },
     "build": {
       "executor": "@nx/angular:package",
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],

@@ -1,6 +1,6 @@
 {
   "name": "@onecx/angular-accelerator",
-  "version": "6.0.0-rc.3",
+  "version": "6.0.0-rc.76",
   "license": "Apache-2.0",
   "peerDependencies": {
     "@angular/common": "^19.0.0",
@@ -9,15 +9,15 @@
     "@angular/forms": "^19.0.0",
     "@angular/platform-browser": "^19.0.0",
     "@angular/router": "^19.0.0",
-    "@ngx-translate/core": "^15.0.0",
-    "@ngx-translate/http-loader": "^8.0.0",
     "@ngneat/until-destroy": "^10.0.0",
-    "@onecx/integration-interface": "^6.0.0-rc.3",
-    "@onecx/angular-integration-interface": "^6.0.0-rc.3",
-    "@onecx/angular-remote-components": "^6.0.0-rc.3",
-    "@onecx/angular-testing": "^6.0.0-rc.3",
-    "@onecx/accelerator": "^6.0.0-rc.3",
-    "@onecx/angular-utils": "^5.31.0",
+    "@ngx-translate/core": "^16.0.4",
+    "@ngx-translate/http-loader": "^8.0.0",
+    "@onecx/accelerator": "^6.0.0-rc.4",
+    "@onecx/angular-integration-interface": "^6.0.0-rc.4",
+    "@onecx/angular-remote-components": "^6.0.0-rc.4",
+    "@onecx/angular-testing": "^6.0.0-rc.4",
+    "@onecx/angular-utils": "^6.0.0-rc.4",
+    "@onecx/integration-interface": "^6.0.0-rc.4",
     "@primeng/themes": "^19.0.0",
     "chart.js": "^4.4.3",
     "d3-scale-chromatic": "^3.1.0",
@@ -29,9 +29,17 @@
   "exports": {
     ".": {
       "style": "./assets/styles.scss"
-    }
+    },
+    "./migrations.json": "./migrations.json"
   },
   "publishConfig": {
     "access": "public"
+  },
+  "nx-migrations": {
+    "migrations": "./migrations.json"
+  },
+  "ng-update": {
+    "requirements": {},
+    "migrations": "./migrations.json"
   }
 }
