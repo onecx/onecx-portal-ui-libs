@@ -111,7 +111,7 @@ function adaptRemoteComponentRoutes(injector: Injector) {
   }
 }
 
-function getWindowState(): any {
+export function getWindowState(): any {
   const state = window as any
   state['@onecx/angular-webcomponents'] ??= {} as unknown
   return state['@onecx/angular-webcomponents']
