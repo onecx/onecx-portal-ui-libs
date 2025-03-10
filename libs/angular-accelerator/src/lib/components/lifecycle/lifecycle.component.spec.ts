@@ -1,11 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { LifecycleComponent, LifecycleStep } from './lifecycle.component'
 import { TimelineModule } from 'primeng/timeline'
-import { LifecycleHarness, TestbedHarnessEnvironment } from '../../../../../testing'
-import { PrimeNgModule } from '../../primeng.module'
+import { LifecycleHarness, TestbedHarnessEnvironment } from '../../../../testing'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { PortalCoreModule } from '../../portal-core.module'
 import { TranslateTestingModule } from 'ngx-translate-testing'
+import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 
 const mockSteps: LifecycleStep[] = [
   {
@@ -33,9 +32,8 @@ describe('LifecycleComponent', () => {
       declarations: [LifecycleComponent],
       imports: [
         TimelineModule,
-        PrimeNgModule,
+        AngularAcceleratorModule,
         BrowserAnimationsModule,
-        PortalCoreModule,
         TranslateTestingModule.withTranslations('en', {}),
       ],
     }).compileComponents()
