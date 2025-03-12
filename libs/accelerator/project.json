@@ -17,24 +17,36 @@
     },
     "build": {
       "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/libs/accelerator",
         "main": "libs/accelerator/src/index.ts",
         "tsConfig": "libs/accelerator/tsconfig.lib.json",
-        "assets": ["libs/accelerator/*.md"]
+        "assets": [
+          "libs/accelerator/*.md",
+          "./migrations.json"
+        ]
       }
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
-        "lintFilePatterns": ["libs/accelerator/**/*.ts", "libs/accelerator/package.json"]
+        "lintFilePatterns": [
+          "libs/accelerator/**/*.ts",
+          "libs/accelerator/package.json"
+        ]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
       "options": {
         "jestConfig": "libs/accelerator/jest.config.ts",
         "passWithNoTests": true

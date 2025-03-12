@@ -14,9 +14,5 @@
   },
   "nx-migrations": {
     "migrations": "./migrations.json"
-  },
-  "ng-update": {
-    "requirements": {},
-    "migrations": "./migrations.json"
   }
 }

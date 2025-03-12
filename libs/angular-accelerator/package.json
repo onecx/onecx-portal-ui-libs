@@ -1,6 +1,6 @@
 {
   "name": "@onecx/angular-accelerator",
-  "version": "6.0.0-rc.76",
+  "version": "6.0.0-rc.3",
   "license": "Apache-2.0",
   "peerDependencies": {
     "@angular/common": "^19.0.0",
@@ -36,10 +36,6 @@
     "access": "public"
   },
   "nx-migrations": {
-    "migrations": "./migrations.json"
-  },
-  "ng-update": {
-    "requirements": {},
     "migrations": "./migrations.json"
   }
 }
