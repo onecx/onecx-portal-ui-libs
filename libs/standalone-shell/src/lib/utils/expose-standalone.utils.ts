@@ -7,8 +7,6 @@ import {
   ThemeService,
   UserService,
 } from '@onecx/angular-integration-interface'
-import { TranslateService } from '@ngx-translate/core'
-import { firstValueFrom } from 'rxjs'
 import { initializeRouter } from '@onecx/angular-webcomponents'
 import { Router } from '@angular/router'
 import { Theme, UserProfile, Workspace } from '@onecx/integration-interface'
@@ -28,7 +26,6 @@ async function apply(themeService: ThemeService, theme: Theme): Promise<void> {
 
 const appInitializer = (
   appStateService: AppStateService,
-  translateService: TranslateService,
   userService: UserService,
   configService: ConfigurationService,
   themeService: ThemeService,
@@ -47,7 +44,6 @@ const appInitializer = (
     await appStateService.globalLoading$.publish(true)
     await appStateService.currentMfe$.publish(standaloneMfeInfo)
     await appStateService.globalLoading$.publish(false)
-    await firstValueFrom(translateService.use('en'))
     await configService.init()
     await userService.profile$.publish({
       person: {},
@@ -101,14 +97,7 @@ export function provideStandaloneProviders(config?: Partial<ProvideStandalonePro
       provide: APP_INITIALIZER,
       useFactory: appInitializer,
       multi: true,
-      deps: [
-        AppStateService,
-        TranslateService,
-        UserService,
-        ConfigurationService,
-        ThemeService,
-        PROVIDE_STANDALONE_PROVIDERS_CONFIG,
-      ],
+      deps: [AppStateService, UserService, ConfigurationService, ThemeService, PROVIDE_STANDALONE_PROVIDERS_CONFIG],
     },
     {
       provide: APP_INITIALIZER,

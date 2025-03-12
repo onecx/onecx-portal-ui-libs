@@ -11,9 +11,19 @@ import { PortalViewportComponent } from './components/portal-viewport/portal-vie
 import { SkeletonModule } from 'primeng/skeleton'
 import { AppLoadingSpinnerComponent } from './components/app-loading-spinner/app-loading-spinner.component'
 import { ShellSrcDirective } from './directives/src.directive'
+import { TranslateModule } from '@ngx-translate/core'
+import { TooltipModule } from 'primeng/tooltip'
 
 @NgModule({
-  imports: [CommonModule, RouterModule, AngularRemoteComponentsModule, ToastModule, SkeletonModule],
+  imports: [
+    AngularRemoteComponentsModule,
+    CommonModule,
+    RouterModule,
+    SkeletonModule,
+    ToastModule,
+    TooltipModule,
+    TranslateModule,
+  ],
   declarations: [
     PortalViewportComponent,
     HeaderComponent,
@@ -22,7 +32,15 @@ import { ShellSrcDirective } from './directives/src.directive'
     AppLoadingSpinnerComponent,
     ShellSrcDirective,
   ],
-  exports: [PortalViewportComponent, HeaderComponent, PortalFooterComponent, ToastModule, GlobalErrorComponent],
+  exports: [
+    GlobalErrorComponent,
+    HeaderComponent,
+    PortalViewportComponent,
+    PortalFooterComponent,
+    ToastModule,
+    TooltipModule,
+    TranslateModule,
+  ],
   providers: [providePrimeNG()],
 })
 export class ShellCoreModule {}
