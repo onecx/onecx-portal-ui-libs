@@ -5,6 +5,7 @@ import { AppStateService } from '@onecx/angular-integration-interface'
 import { firstValueFrom, map, ReplaySubject } from 'rxjs'
 
 export const SKIP_STYLE_SCOPING = new InjectionToken<boolean>('SKIP_STYLE_SCOPING')
+const notCharacterOrDashRegex = /[^a-zA-Z0-9\-]/g
 
 @Injectable({ providedIn: 'any' })
 export class CustomUseStyle extends UseStyle {
@@ -17,6 +18,9 @@ export class CustomUseStyle extends UseStyle {
   }
   override use(css: any, options?: any): { id: any; name: any; el: any; css: any } {
     this.getStyleIdentifier().then((scopedStyleId) => {
+      if (scopedStyleId !== '') {
+        css = css.replaceAll('--p-', this.styleIdentifierToVariablePrefix(scopedStyleId))
+      }
       if (scopedStyleId !== '' && !(options.name as string).endsWith('-variables')) {
         css = `
         @scope([data-style-id="${scopedStyleId}"][data-no-portal-layout-styles]) to ([data-style-isolation]) {
@@ -53,6 +57,10 @@ export class CustomUseStyle extends UseStyle {
       }
     }
     return scopedStyleId
+  }
+
+  private styleIdentifierToVariablePrefix(styleId: string) {
+    return '--' + styleId.replace(notCharacterOrDashRegex, '-') + '-'
   }
 
   createFakeUseResponse(css: any, options: any) {
