@@ -16,5 +16,8 @@
   "dependencies": {},
   "publishConfig": {
     "access": "public"
+  },
+  "nx-migrations": {
+    "migrations": "./migrations.json"
   }
 }
