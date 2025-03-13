@@ -9,7 +9,7 @@
     "@angular/forms": "^19.0.0",
     "@angular/platform-browser": "^19.0.0",
     "@angular/router": "^19.0.0",
-    "@ngx-translate/core": "^15.0.0",
+    "@ngx-translate/core": "^16.0.0",
     "@angular/animations": "^19.0.0",
     "@ngrx/effects": "^19.0.0",
     "@ngrx/operators": "^19.0.0",

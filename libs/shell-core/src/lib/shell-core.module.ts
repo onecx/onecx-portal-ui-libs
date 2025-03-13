@@ -41,6 +41,6 @@ import { TooltipModule } from 'primeng/tooltip'
     TooltipModule,
     TranslateModule,
   ],
-  providers: [providePrimeNG()]
+  providers: [providePrimeNG()],
 })
 export class ShellCoreModule {}

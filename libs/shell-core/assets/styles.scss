@@ -1,3 +1,11 @@
-.layout-topbar-items > * {
-    margin: auto;
-  }
+$mobileBreakpoint: 991px !default;
+$fallbackFontFamily: Ubuntu, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
+$fallbackFontSize: 1rem;
+:root {
+    --mobile-break-point: #{$mobileBreakpoint};
+    font-size: var(--font-size, $fallbackFontSize);
+}
+
+body {
+  font-family: var(--font-family, $fallbackFontFamily);
+}

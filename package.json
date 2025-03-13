@@ -27,7 +27,7 @@
     "@ngrx/router-store": "^19.0.0",
     "@ngrx/store": "^19.0.0",
     "@ngrx/store-devtools": "^19.0.0",
-    "@ngx-translate/core": "^15.0.0",
+    "@ngx-translate/core": "^16.0.0",
     "@ngx-translate/http-loader": "^8.0.0",
     "@onecx/portal-layout-styles": "file:libs/portal-layout-styles",
     "@primeng/themes": "^19.0.0",

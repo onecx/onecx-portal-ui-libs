@@ -3,6 +3,9 @@ export default {
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   coverageDirectory: '../../coverage/libs/angular-utils',
+  moduleNameMapper: {
+    '@primeng/themes': '<rootDir>/../../node_modules/@primeng/themes/index.mjs',
+  },
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [
       'jest-preset-angular',
