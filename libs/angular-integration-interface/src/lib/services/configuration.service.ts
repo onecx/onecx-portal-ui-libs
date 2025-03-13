@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http'
 import { Inject, Injectable, OnDestroy, Optional } from '@angular/core'
-import { firstValueFrom, map, tap } from 'rxjs'
+import { firstValueFrom, map } from 'rxjs'
 import { Config, ConfigurationTopic } from '@onecx/integration-interface'
 import { APP_CONFIG } from '../api/injection-tokens'
 import { CONFIG_KEY } from '../model/config-key.model'

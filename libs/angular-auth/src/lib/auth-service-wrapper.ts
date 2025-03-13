@@ -63,7 +63,9 @@ export class AuthServiceWrapper {
         break
       case 'custom': {
         const factory = await this.getAuthServiceFactory()
-        this.authService = factory((injectable: Injectables) => this.retrieveInjectables(injectable))
+        this.authService = await Promise.resolve(
+          factory((injectable: Injectables) => this.retrieveInjectables(injectable))
+        )
         break
       }
       default:
