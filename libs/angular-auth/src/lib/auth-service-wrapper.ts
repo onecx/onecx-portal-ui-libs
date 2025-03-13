@@ -62,6 +62,10 @@ export class AuthServiceWrapper {
         this.authService = this.injector.get(KeycloakAuthService)
         break
       case 'custom': {
+        // remote module is exposing function as default export (this is a convention)
+        // this function is responsible for creating the custom auth service
+        // to have access to the dependency mechanism of the shell
+        // the function gets a callback which is returning the requested injectable
         const factory = await this.getAuthServiceFactory()
         this.authService = await Promise.resolve(
           factory((injectable: Injectables) => this.retrieveInjectables(injectable))
