@@ -111,7 +111,7 @@ function adaptRemoteComponentRoutes(injector: Injector) {
   }
 }
 
-function getWindowState(): any {
+export function getWindowState(): any {
   const state = window as any
   state['@onecx/angular-webcomponents'] ??= {} as unknown
   return state['@onecx/angular-webcomponents']
@@ -130,11 +130,11 @@ function setNgZone(ngZone: NgZone): void {
   getWindowState().ngZone = ngZone
 }
 
-function getNgZone(): NgZone {
+export function getNgZone(): NgZone {
   return getWindowState().ngZone
 }
 
-function cachePlatform(production: boolean): PlatformRef {
+export function cachePlatform(production: boolean): PlatformRef {
   let platformCache: Map<Version, PlatformRef> = getWindowState().platformCache
   if (!platformCache) {
     platformCache = new Map<Version, PlatformRef>()
