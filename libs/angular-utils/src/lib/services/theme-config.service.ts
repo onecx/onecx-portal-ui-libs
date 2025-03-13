@@ -38,7 +38,6 @@ export class ThemeConfigService {
   constructor(
     private themeService: ThemeService,
     private primeNG: PrimeNG,
-    private useStyleService: CustomUseStyle,
     @Optional() @Inject(THEME_OVERRIDES) private themeOverrides?: any
   ) {
     this.themeService.currentTheme$.subscribe((theme) => {
@@ -49,14 +48,10 @@ export class ThemeConfigService {
   async applyThemeVariables(oldTheme: OneCXTheme): Promise<void> {
     const oldThemeVariables = oldTheme.properties
     const themeConfig = new ThemeConfig(oldThemeVariables)
-    const computedPrefix = await this.useStyleService.getStyleIdentifier()
     const themeOverrides = mergeDeep(themeConfig.getConfig(), this.themeOverrides ?? {})
     this.primeNG.setThemeConfig({
       theme: {
         preset: mergeDeep(CustomPreset, themeOverrides),
-        options: {
-          prefix: computedPrefix === '' ? 'p' : computedPrefix,
-        },
       },
     })
   }
