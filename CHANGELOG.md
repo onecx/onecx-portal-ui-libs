@@ -1,3 +1,13 @@
+## [5.33.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.32.1...v5.33.0) (2025-03-13)
+
+### Features
+
+* theming adjustments for angular 18 ([#677](https://github.com/onecx/onecx-portal-ui-libs/issues/677)) ([88ed0d7](https://github.com/onecx/onecx-portal-ui-libs/commit/88ed0d72ca65cc482dcbda1ab4c826e5a33d310e))
+
+### Bug Fixes
+
+* remove redundant dependency on ngx-translate TranslateService in… ([#673](https://github.com/onecx/onecx-portal-ui-libs/issues/673)) ([080cb47](https://github.com/onecx/onecx-portal-ui-libs/commit/080cb4700986ebede2fdae2901b2cf406c9285f3))
+
 ## [5.32.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.32.0...v5.32.1) (2025-02-28)
 
 ### Bug Fixes
