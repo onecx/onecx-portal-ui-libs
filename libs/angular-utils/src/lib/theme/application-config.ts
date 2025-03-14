@@ -3,9 +3,12 @@ import { providePrimeNG } from 'primeng/config'
 import CustomPreset from './preset/custom-preset'
 import { THEME_OVERRIDES, provideThemeConfigService } from '../services/theme-config.service'
 
+export type ThemeOverrides = (() => Promise<any> | any) | Promise<any> | any
+
 export interface ThemeConfigProviderOptions {
-  overrides?: any
+  overrides?: ThemeOverrides
 }
+
 
 export function provideThemeConfig(options?: ThemeConfigProviderOptions) {
   const dynamicProviders = []

@@ -1,4 +1,4 @@
-import { ENVIRONMENT_INITIALIZER, Inject, Injectable, InjectionToken, Optional, inject } from '@angular/core'
+import { ENVIRONMENT_INITIALIZER, Injectable, InjectionToken, inject } from '@angular/core'
 import { ThemeService } from '@onecx/angular-integration-interface'
 import { Theme as OneCXTheme } from '@onecx/integration-interface'
 import { Base } from 'primeng/base'
@@ -9,8 +9,9 @@ import { UseStyle } from 'primeng/usestyle'
 import { Theme } from '@primeuix/styled'
 import { mergeDeep } from '../utils/deep-merge.utils'
 import CustomPreset from '../theme/preset/custom-preset'
+import { ThemeOverrides } from '../theme/application-config'
 
-export const THEME_OVERRIDES = new InjectionToken<any>('THEME_OVERRIDES')
+export const THEME_OVERRIDES = new InjectionToken<ThemeOverrides>('THEME_OVERRIDES')
 
 export function provideThemeConfigService() {
   Theme.clearLoadedStyleNames()
@@ -37,8 +38,7 @@ export function provideThemeConfigService() {
 export class ThemeConfigService {
   constructor(
     private themeService: ThemeService,
-    private primeNG: PrimeNG,
-    @Optional() @Inject(THEME_OVERRIDES) private themeOverrides?: any
+    private primeNG: PrimeNG
   ) {
     this.themeService.currentTheme$.subscribe((theme) => {
       this.applyThemeVariables(theme)
@@ -48,10 +48,9 @@ export class ThemeConfigService {
   async applyThemeVariables(oldTheme: OneCXTheme): Promise<void> {
     const oldThemeVariables = oldTheme.properties
     const themeConfig = new ThemeConfig(oldThemeVariables)
-    const themeOverrides = mergeDeep(themeConfig.getConfig(), this.themeOverrides ?? {})
     this.primeNG.setThemeConfig({
       theme: {
-        preset: mergeDeep(CustomPreset, themeOverrides),
+        preset: mergeDeep(CustomPreset, themeConfig.getConfig()),
       },
     })
   }
