@@ -19,37 +19,41 @@ export class CustomUseStyle extends UseStyle {
     super()
   }
   override use(css: any, options?: any): { id: any; name: any; el: any; css: any } {
-    css = this.applyOverrides(css)
-    this.getStyleIdentifier().then((scopedStyleId) => {
-      css = this.replacePrefix(css, scopedStyleId)
-
-      if (!(options.name as string).endsWith('-variables')) {
-        css = this.scopeStyle(css, scopedStyleId)
-      }
+    this.getScopeIdentifier().then((scopeId) => {
+      this.applyOverrides(scopeId)
+      css = this.replacePrefix(css, scopeId)
+      css = this.isStyle(options.name as string) ? this.scopeStyle(css, scopeId) : css
 
       options = {
         ...options,
-        name: (options.name ?? '') + (scopedStyleId === '' ? scopedStyleId : '-' + scopedStyleId),
+        name: (options.name ?? '') + (scopeId === '' ? scopeId : '-' + scopeId),
       }
       super.use(css, options)
     })
     return this.createFakeUseResponse(css, options)
   }
 
-  private applyOverrides(css: string): string {
-    if (!this.themeOverrides) return css
+  private applyOverrides(scopeId: string): void {
+    if (!this.themeOverrides) return
 
-    let cssWithOverrides = css
-    for (const override of this.themeOverrides) {
-      const [variable, value] = override.split(':')
-      const regex = new RegExp(`(${variable}:)\\s*[^;]+;`, 'g')
-      cssWithOverrides = cssWithOverrides.replace(regex, `$1 ${value}`)
-    }
-    return cssWithOverrides
+    const styleRef = this.createOrUpdateOverrideElement(scopeId)
+    styleRef.textContent = this.replacePrefix(this.themeOverrides.css, scopeId)
   }
 
-  private scopeStyle(css: string, styleId: string) {
-    if (styleId === '') {
+  private createOrUpdateOverrideElement(scopeId: string): Element {
+    const styleRef =
+      this.document.querySelector(`style[data-variable-override-id="${scopeId}"]`) ||
+      this.document.createElement('style')
+    if (!styleRef.isConnected) {
+      styleRef.setAttribute('data-variable-override-id', scopeId)
+    }
+    // Always make sure it is the last child of the document head
+    this.document.head.appendChild(styleRef)
+    return styleRef
+  }
+
+  private scopeStyle(css: string, scopeId: string) {
+    if (scopeId === '') {
       return `
       @scope([data-style-id="shell-ui"]) to ([data-style-isolation]) {
               ${css}
@@ -57,34 +61,34 @@ export class CustomUseStyle extends UseStyle {
       `
     } else {
       return `
-      @scope([data-style-id="${styleId}"][data-no-portal-layout-styles]) to ([data-style-isolation]) {
+      @scope([data-style-id="${scopeId}"][data-no-portal-layout-styles]) to ([data-style-isolation]) {
               ${css}
           }
       `
     }
   }
 
-  private replacePrefix(css: string, styleId: string) {
-    if (styleId === '') {
+  private replacePrefix(css: string, scopeId: string) {
+    if (scopeId === '') {
       return css
     }
 
-    return css.replaceAll('--p-', this.styleIdentifierToVariablePrefix(styleId))
+    return css.replaceAll('--p-', this.scopeIdentifierToVariablePrefix(scopeId))
   }
 
-  private async getStyleIdentifier() {
-    let scopedStyleId = ''
+  private async getScopeIdentifier() {
+    let scopeId = ''
     if (!this.skipStyleScoping) {
       if (this.remoteComponentConfig) {
         const rcConfig = await firstValueFrom(this.remoteComponentConfig)
-        scopedStyleId = `${rcConfig.productName}|${rcConfig.appId}`
+        scopeId = `${rcConfig.productName}|${rcConfig.appId}`
       } else {
-        scopedStyleId = await firstValueFrom(
+        scopeId = await firstValueFrom(
           this.appStateService.currentMfe$.pipe(map((mfeInfo) => `${mfeInfo.productName}|${mfeInfo.appId}`))
         )
       }
     }
-    return scopedStyleId
+    return scopeId
   }
 
   private createFakeUseResponse(css: any, options: any) {
@@ -117,7 +121,15 @@ export class CustomUseStyle extends UseStyle {
     return returnObject
   }
 
-  private styleIdentifierToVariablePrefix(styleId: string) {
-    return '--' + styleId.replace(notCharacterOrDashRegex, '-') + '-'
+  private scopeIdentifierToVariablePrefix(scopeId: string) {
+    return '--' + scopeId.replace(notCharacterOrDashRegex, '-') + '-'
+  }
+
+  private isVariables(cssName: string) {
+    return cssName.endsWith('-variables')
+  }
+
+  private isStyle(cssName: string) {
+    return !this.isVariables(cssName)
   }
 }

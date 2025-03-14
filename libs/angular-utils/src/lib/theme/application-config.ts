@@ -5,7 +5,10 @@ import { provideThemeConfigService } from '../services/theme-config.service'
 import { toVariables } from '@primeuix/styled'
 import { InjectionToken } from '@angular/core'
 
-export type ThemeOverridesCssVariables = Array<string>
+export interface ThemeOverridesCssVariables {
+  value: Array<string>
+  css: string
+}
 export type ThemeOverrides = (() => Promise<any> | any) | Promise<any> | any
 export const THEME_OVERRIDES = new InjectionToken<ThemeOverridesCssVariables>('THEME_OVERRIDES')
 
@@ -33,8 +36,15 @@ export function provideThemeConfig(options?: ThemeConfigProviderOptions) {
   ]
 }
 
-function mapOverridesToThemeVariableValues(overrides: ThemeOverrides): Array<string> {
-  if (!overrides) return []
+function mapOverridesToThemeVariableValues(overrides: ThemeOverrides): ThemeOverridesCssVariables {
+  if (!overrides)
+    return {
+      value: [],
+      css: '',
+    }
   const variablesData = toVariables(overrides)
-  return variablesData.value
+  return {
+    value: variablesData.value,
+    css: variablesData.css,
+  }
 }
