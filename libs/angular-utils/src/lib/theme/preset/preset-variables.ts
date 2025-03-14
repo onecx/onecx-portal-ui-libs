@@ -6,12 +6,14 @@ export default {
   semantic: {
     // OneCX semantic variables extension
     extend: {
-      ...defaultVariables.font,
-      ...defaultVariables.topbar,
-      ...defaultVariables.sidebar,
-      ...defaultVariables.general,
-      errorColor: '#b00020',
-      animationDuration: '0.2s',
+      onecx: {
+        ...defaultVariables.font,
+        ...defaultVariables.topbar,
+        ...defaultVariables.sidebar,
+        ...defaultVariables.general,
+        errorColor: '#b00020',
+        animationDuration: '0.2s',
+      },
     },
     transitionDuration: '0.2s',
     focusRing: {
@@ -193,8 +195,8 @@ export default {
         primary: {
           color: '{primary.500}',
           contrastColor: '#ffffff',
-          hoverColor: '{general.button.hover.bg}', // button-hover-bg
-          activeColor: '{general.button.active.bg}', // button-active-bg
+          hoverColor: '{onecx.button.hover.bg}', // button-hover-bg
+          activeColor: '{onecx.button.active.bg}', // button-active-bg
           // if buttonActiveBg is not set, it should be primary.400
         },
         highlight: {
@@ -223,11 +225,11 @@ export default {
           // TODO: When button is invalid, hover/focus is applied for border
           // INFO: $errorColor color is used for invalid border
           // invalidBorderColor: '{red.400}',
-          invalidBorderColor: '{error.color}', // using $errorCode
+          invalidBorderColor: '{onecx.error.color}', // using $errorCode
 
           // INFO: $errorColor color is used for invalid border
           // invalidPlaceholderColor: '{red.600}',
-          invalidPlaceholderColor: '{error.color}', // using $errorCode
+          invalidPlaceholderColor: '{onecx.error.color}', // using $errorCode
 
           // INFO: --input-bg used input background
           // TODO: Check with surface value
@@ -295,16 +297,16 @@ export default {
           floatLabelInvalidColor: '{form.field.invalid.placeholder.color}',
         },
         text: {
-          color: '{general.text.color}',
+          color: '{onecx.text.color}',
           // INFO: textColor used for inplaceTextHoverColor, toggleButtonTextHoverColor
-          hoverColor: '{general.text.secondary.color}',
+          hoverColor: '{onecx.text.secondary.color}',
           // mutedColor and hovermuted are not available in the theme
           mutedColor: '{surface.500}',
           hoverMutedColor: '{surface.600}',
         },
         content: {
-          background: '{general.content.bg.color}',
-          hoverBackground: '{general.hover.bg.color}',
+          background: '{onecx.content.bg.color}',
+          hoverBackground: '{onecx.hover.bg.color}',
           borderColor: '{surface.200}',
           color: '{text.color}',
           hoverColor: '{text.hover.color}',
