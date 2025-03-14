@@ -225,7 +225,7 @@ $menuShadow: 2px 0 4px -1px rgba(0, 0, 0, 0.2), 4px 0 5px 0 rgba(0, 0, 0, 0.14),
 }
 
 .menu-wrapper {
-  background-color: var(--p-menu-bg-color);
+  background-color: var(--p-onecx-menu-bg-color);
   box-shadow: $menuShadow;
 
   .layout-menu-container {
@@ -233,12 +233,12 @@ $menuShadow: 2px 0 4px -1px rgba(0, 0, 0, 0.2), 4px 0 5px 0 rgba(0, 0, 0, 0.14),
       > li {
         > div {
           .layout-menuitem-text {
-            color: var(--p-menu-text-color);
+            color: var(--p-onecx-menu-text-color);
           }
         }
         /*
         > ul {
-          background-color: var(--p-menu-bg-color);
+          background-color: var(--p-onecx-menu-bg-color);
         }
 */
       }
@@ -247,33 +247,33 @@ $menuShadow: 2px 0 4px -1px rgba(0, 0, 0, 0.2), 4px 0 5px 0 rgba(0, 0, 0, 0.14),
         border-left: 0px;
         &.active-menu-parent.parent-menu {
           /* background: #ececec; */
-          border-left: 4px solid var(--p-primary-color);
+          border-left: 4px solid var(--p-onecx-primary-color);
         }
 
         a {
-          color: var(--p-menu-item-text-color);
+          color: var(--p-onecx-menu-item-text-color);
           border-left: 4px solid transparent;
           /*
           i {
-            color: var(--p-menu-item-text-color);
+            color: var(--p-onecx-menu-item-text-color);
           }
 */
           &:hover {
-            background-color: var(--p-menu-item-hover-bg-color);
+            background-color: var(--p-onecx-menu-item-hover-bg-color);
           }
         }
         a.active-menuitem-routerlink {
-          background-color: var(--p-menu-active-item-bg-color);
-          color: var(--p-menu-active-item-text-color);
+          background-color: var(--p-onecx-menu-active-item-bg-color);
+          color: var(--p-onecx-menu-active-item-text-color);
           font-weight: bold;
-          border-left: 4px solid var(--p-primary-color);
+          border-left: 4px solid var(--p-onecx-primary-color);
         }
         &.active-menuitem {
           > a {
-            background-color: var(--p-menu-active-item-bg-color);
-            color: var(--p-menu-active-item-text-color);
+            background-color: var(--p-onecx-menu-active-item-bg-color);
+            color: var(--p-onecx-menu-active-item-text-color);
             font-weight: bold;
-            border-left: 4px solid var(--p-primary-color);
+            border-left: 4px solid var(--p-onecx-primary-color);
             /*
             > i {
               color: $activeMenuItemTextColor;
@@ -285,27 +285,27 @@ $menuShadow: 2px 0 4px -1px rgba(0, 0, 0, 0.2), 4px 0 5px 0 rgba(0, 0, 0, 0.14),
     }
 
     .layout-inline-menu {
-      border-color: var(--p-menu-inline-border-color);
+      border-color: var(--p-onecx-menu-inline-border-color);
 
       a {
-        color: var(--p-menu-item-text-color);
+        color: var(--p-onecx-menu-item-text-color);
       }
 
       .layout-inline-menu-action,
       .layout-inline-menu-action-panel .layout-inline-menu-action-item {
-        color: var(--p-menu-item-text-color);
+        color: var(--p-onecx-menu-item-text-color);
         /*
         i {
-          color: var(--p-menu-item-text-color);
+          color: var(--p-onecx-menu-item-text-color);
         }
 */
         &:hover {
-          background-color: var(--p-menu-item-hover-bg-color);
+          background-color: var(--p-onecx-menu-item-hover-bg-color);
         }
       }
 
       .layout-inline-menu-action-panel {
-        background-color: var(--p-menu-bg-color);
+        background-color: var(--p-onecx-menu-bg-color);
       }
     }
   }
@@ -314,12 +314,12 @@ $menuShadow: 2px 0 4px -1px rgba(0, 0, 0, 0.2), 4px 0 5px 0 rgba(0, 0, 0, 0.14),
 .layout-wrapper {
   .menu-wrapper {
     transform: translate3d(-17rem, 0px, 0px);
-    transition: transform var(--p-animation-duration);
+    transition: transform var(--p-onecx-animation-duration);
     transition-timing-function: cubic-bezier(0.86, 0, 0.07, 1);
   }
 
   .layout-main {
-    transition: margin-left var(--p-animation-duration);
+    transition: margin-left var(--p-onecx-animation-duration);
   }
 
   &.layout-menu-active {

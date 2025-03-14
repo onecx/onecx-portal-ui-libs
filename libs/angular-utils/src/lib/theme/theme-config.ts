@@ -15,10 +15,12 @@ export default class ThemeConfig {
     return {
       semantic: {
         extend: {
-          ...(this.themeVariables as any)['font'],
-          ...(this.themeVariables as any)['topbar'],
-          ...(this.themeVariables as any)['sidebar'],
-          ...(this.themeVariables as any)['general'],
+          onecx: {
+            ...(this.themeVariables as any)['font'],
+            ...(this.themeVariables as any)['topbar'],
+            ...(this.themeVariables as any)['sidebar'],
+            ...(this.themeVariables as any)['general'],
+          },
         },
         primary: {
           ...createPalette(primaryColor, standardColorAdjustment),
