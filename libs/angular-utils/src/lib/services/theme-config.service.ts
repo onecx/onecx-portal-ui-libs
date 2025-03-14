@@ -1,4 +1,4 @@
-import { ENVIRONMENT_INITIALIZER, Injectable, InjectionToken, inject } from '@angular/core'
+import { ENVIRONMENT_INITIALIZER, Injectable, inject } from '@angular/core'
 import { ThemeService } from '@onecx/angular-integration-interface'
 import { Theme as OneCXTheme } from '@onecx/integration-interface'
 import { Base } from 'primeng/base'
@@ -9,9 +9,6 @@ import { UseStyle } from 'primeng/usestyle'
 import { Theme } from '@primeuix/styled'
 import { mergeDeep } from '../utils/deep-merge.utils'
 import CustomPreset from '../theme/preset/custom-preset'
-import { ThemeOverrides } from '../theme/application-config'
-
-export const THEME_OVERRIDES = new InjectionToken<ThemeOverrides>('THEME_OVERRIDES')
 
 export function provideThemeConfigService() {
   Theme.clearLoadedStyleNames()
