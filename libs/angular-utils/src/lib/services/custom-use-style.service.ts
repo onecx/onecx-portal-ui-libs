@@ -3,7 +3,8 @@ import { UseStyle } from 'primeng/usestyle'
 import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-remote-components'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import { firstValueFrom, map, ReplaySubject } from 'rxjs'
-import { THEME_OVERRIDES, ThemeOverridesCssVariables } from '../theme/application-config'
+import { THEME_OVERRIDES, ThemeOverrides } from '../theme/application-config'
+import { toVariables } from '@primeuix/styled'
 
 export const SKIP_STYLE_SCOPING = new InjectionToken<boolean>('SKIP_STYLE_SCOPING')
 const notCharacterOrDashRegex = /[^a-zA-Z0-9\-]/g
@@ -14,13 +15,12 @@ export class CustomUseStyle extends UseStyle {
     private appStateService: AppStateService,
     @Optional() @Inject(SKIP_STYLE_SCOPING) private skipStyleScoping?: boolean,
     @Optional() @Inject(REMOTE_COMPONENT_CONFIG) private remoteComponentConfig?: ReplaySubject<RemoteComponentConfig>,
-    @Optional() @Inject(THEME_OVERRIDES) private themeOverrides?: ThemeOverridesCssVariables
+    @Optional() @Inject(THEME_OVERRIDES) private themeOverrides?: ThemeOverrides
   ) {
     super()
   }
   override use(css: any, options?: any): { id: any; name: any; el: any; css: any } {
     this.getScopeIdentifier().then((scopeId) => {
-      this.applyOverrides(scopeId)
       css = this.replacePrefix(css, scopeId)
       css = this.isStyle(options.name as string) ? this.scopeStyle(css, scopeId) : css
 
@@ -29,15 +29,23 @@ export class CustomUseStyle extends UseStyle {
         name: (options.name ?? '') + (scopeId === '' ? scopeId : '-' + scopeId),
       }
       super.use(css, options)
+      return this.applyOverrides(scopeId)
     })
     return this.createFakeUseResponse(css, options)
   }
 
-  private applyOverrides(scopeId: string): void {
-    if (!this.themeOverrides) return
+  private applyOverrides(scopeId: string): Promise<any> {
+    if (!this.themeOverrides) return Promise.resolve()
 
     const styleRef = this.createOrUpdateOverrideElement(scopeId)
-    styleRef.textContent = this.replacePrefix(this.themeOverrides.css, scopeId)
+    const overrides = Promise.resolve(
+      typeof this.themeOverrides === 'function' ? this.themeOverrides() : this.themeOverrides
+    )
+    return overrides.then((resolvedOverrides) => {
+      const variablesData = toVariables(resolvedOverrides)
+      const prefixedOverrides = this.replacePrefix(variablesData.css, scopeId)
+      styleRef.textContent = prefixedOverrides
+    })
   }
 
   private createOrUpdateOverrideElement(scopeId: string): Element {
