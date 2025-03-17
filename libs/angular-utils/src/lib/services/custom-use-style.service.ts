@@ -41,26 +41,28 @@ export class CustomUseStyle extends UseStyle {
   private applyOverrides(scopeId: string): Promise<any> {
     if (!this.themeOverrides) return Promise.resolve()
 
-    const styleRef = this.createOrUpdateOverrideElement(scopeId)
+    const styleRef = this.createOrRetrieveOverrideElement(scopeId ? scopeId : 'shell-ui')
     const overrides = Promise.resolve(
       typeof this.themeOverrides === 'function' ? this.themeOverrides() : this.themeOverrides
     )
     return overrides.then((resolvedOverrides) => {
       const variablesData = toVariables(resolvedOverrides)
+      if (variablesData.value.length === 0) return
+
       const prefixedOverrides = this.replacePrefix(variablesData.css, scopeId)
       styleRef.textContent = prefixedOverrides
+      // Always make sure it is the last child of the document head
+      this.document.head.appendChild(styleRef)
     })
   }
 
-  private createOrUpdateOverrideElement(scopeId: string): Element {
+  private createOrRetrieveOverrideElement(overrideId: string): Element {
     const styleRef =
-      this.document.querySelector(`style[data-variable-override-id="${scopeId}"]`) ||
+      this.document.querySelector(`style[data-variable-override-id="${overrideId}"]`) ||
       this.document.createElement('style')
     if (!styleRef.isConnected) {
-      styleRef.setAttribute('data-variable-override-id', scopeId)
+      styleRef.setAttribute('data-variable-override-id', overrideId)
     }
-    // Always make sure it is the last child of the document head
-    this.document.head.appendChild(styleRef)
     return styleRef
   }
 

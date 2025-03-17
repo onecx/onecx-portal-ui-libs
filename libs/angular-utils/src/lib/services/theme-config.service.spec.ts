@@ -4,6 +4,7 @@ import { ThemeService } from '@onecx/angular-integration-interface'
 import { FakeTopic } from '@onecx/accelerator'
 import { PrimeNG } from 'primeng/config'
 import { SKIP_STYLE_SCOPING } from './custom-use-style.service'
+import defaultThemeVariables from '../theme/preset/default-theme-variables'
 
 describe('ThemeConfigService', () => {
   let service: ThemeConfigService
@@ -58,5 +59,8 @@ describe('ThemeConfigService', () => {
 
     const args = spy.mock.calls.pop()
     expect((args![0] as any).theme.preset.semantic.primary['500']).toEqual(theme.properties.general['primary-color'])
+    expect((args![0] as any).theme.preset.semantic.extend.onecx.topbarBgColor).toEqual(
+      defaultThemeVariables.topbar.topbarBgColor
+    )
   }))
 })
