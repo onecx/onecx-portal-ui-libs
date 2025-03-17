@@ -1,6 +1,5 @@
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async'
 import { providePrimeNG } from 'primeng/config'
-import CustomPreset from './preset/custom-preset'
 import { provideThemeConfigService } from '../services/theme-config.service'
 import { InjectionToken } from '@angular/core'
 
@@ -19,14 +18,5 @@ export function provideThemeConfig(options?: ThemeConfigProviderOptions) {
       useValue: options.overrides,
     })
   }
-  return [
-    provideAnimationsAsync(),
-    providePrimeNG({
-      theme: {
-        preset: CustomPreset,
-      },
-    }),
-    provideThemeConfigService(),
-    ...dynamicProviders,
-  ]
+  return [provideAnimationsAsync(), providePrimeNG({}), provideThemeConfigService(), ...dynamicProviders]
 }
