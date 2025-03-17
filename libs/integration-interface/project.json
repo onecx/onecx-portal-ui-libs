@@ -26,7 +26,11 @@
         "tsConfig": "libs/integration-interface/tsconfig.lib.json",
         "assets": [
           "libs/integration-interface/*.md",
-          "./migrations.json"
+          {
+            "input": "./libs/integration-interface",
+            "glob": "migrations.json",
+            "output": "."
+          }
         ]
       }
     },

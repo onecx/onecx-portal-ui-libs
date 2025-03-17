@@ -26,7 +26,11 @@
         "tsConfig": "libs/accelerator/tsconfig.lib.json",
         "assets": [
           "libs/accelerator/*.md",
-          "./migrations.json"
+          {
+            "input": "./libs/accelerator",
+            "glob": "migrations.json",
+            "output": "."
+          }
         ]
       }
     },

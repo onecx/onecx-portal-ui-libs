@@ -57,11 +57,13 @@ Run the following commands in your terminal and follow the instructions:
 
 1. `npm i`
 2. `npx nx g @nx/eslint:convert-to-flat-config` (this is only necessary if you have the `.eslint.json` still) 
-3. `npx nx migrate @onecx/name-of-library` (don't run `npm i` after this, Step 4 will do that for you)
-4. `npx nx migrate --run-migrations`
-5. Step 4 wil probably fail at first, so remove `node_modules` and `package-lock.json`, run `npm i` and then do Step 4 again
-6. `npx nx generate @angular/core:control-flow` (https://angular.dev/reference/migrations/control-flow)
-7. `npx nx generate @angular/core:inject` (https://angular.dev/reference/migrations/inject-function)
+3. `npx nx generate @angular/core:control-flow` (https://angular.dev/reference/migrations/control-flow)
+4. `npx nx generate @angular/core:inject` (https://angular.dev/reference/migrations/inject-function) 
+5. `npx nx migrate @onecx/name-of-library` (don't run `npm i` after this, Step 4 will do that for you)
+6. `npx nx migrate --run-migrations` 
+7. In case step 6 fails and throws an error, remove `node_modules` and `package-lock.json`, run `npm i` and then do Step 6 again
+8. remove `node_modules` and run `npm i`
+9. run `npm run build`
 
 # Update from v3 to v4 guide
 
