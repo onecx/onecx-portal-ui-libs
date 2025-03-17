@@ -41,7 +41,6 @@ export class CustomUseStyle extends UseStyle {
   private applyOverrides(scopeId: string): Promise<any> {
     if (!this.themeOverrides) return Promise.resolve()
 
-    const styleRef = this.createOrRetrieveOverrideElement(scopeId ? scopeId : 'shell-ui')
     const overrides = Promise.resolve(
       typeof this.themeOverrides === 'function' ? this.themeOverrides() : this.themeOverrides
     )
@@ -49,6 +48,7 @@ export class CustomUseStyle extends UseStyle {
       const variablesData = toVariables(resolvedOverrides)
       if (variablesData.value.length === 0) return
 
+      const styleRef = this.createOrRetrieveOverrideElement(scopeId ? scopeId : 'shell-ui')
       const prefixedOverrides = this.replacePrefix(variablesData.css, scopeId)
       styleRef.textContent = prefixedOverrides
       // Always make sure it is the last child of the document head
