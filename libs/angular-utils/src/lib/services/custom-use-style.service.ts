@@ -19,6 +19,8 @@ export class CustomUseStyle extends UseStyle {
   ) {
     super()
   }
+  // PrimeNg defines CSS variables and styles globally in <style> elements
+  // Each Application needs to isolate the CSS variables and styles from others
   override use(css: any, options?: any): { id: any; name: any; el: any; css: any } {
     this.getScopeIdentifier().then((scopeId) => {
       css = this.replacePrefix(css, scopeId)
@@ -31,6 +33,8 @@ export class CustomUseStyle extends UseStyle {
       super.use(css, options)
       return this.applyOverrides(scopeId)
     })
+    // Fake response is returned because async action is done in sync context
+    // Fake response should indicate usage by displaying errors when dummy data is used
     return this.createFakeUseResponse(css, options)
   }
 

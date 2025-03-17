@@ -7,6 +7,7 @@ interface ThemeVariables {
 }
 export default class ThemeConfig {
   constructor(private themeVariables: ThemeVariables | undefined) {
+    // ThemeVariables are saved in kebab case but PrimeNg expects camel case
     this.themeVariables = this.transformVariablesToCamelCase(this.themeVariables ?? {})
   }
 
