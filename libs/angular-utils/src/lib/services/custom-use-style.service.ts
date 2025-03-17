@@ -7,7 +7,7 @@ import { THEME_OVERRIDES, ThemeOverrides } from '../theme/application-config'
 import { toVariables } from '@primeuix/styled'
 
 export const SKIP_STYLE_SCOPING = new InjectionToken<boolean>('SKIP_STYLE_SCOPING')
-const notCharacterOrDashRegex = /[^a-zA-Z0-9\-]/g
+const notCharacterOrDashRegex = /[^a-zA-Z0-9-]/g
 
 @Injectable({ providedIn: 'any' })
 export class CustomUseStyle extends UseStyle {

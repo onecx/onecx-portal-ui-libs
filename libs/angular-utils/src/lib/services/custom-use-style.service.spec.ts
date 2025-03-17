@@ -11,8 +11,8 @@ class ElementMock {
   // extension
   tagName: string
   // Element data
-  isConnected: boolean = false
-  textContent: string = ''
+  isConnected = false
+  textContent = ''
   attribute = ''
   constructor(tagName: string) {
     this.tagName = tagName
