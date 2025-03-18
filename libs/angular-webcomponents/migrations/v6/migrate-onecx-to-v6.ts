@@ -244,7 +244,7 @@ function migratePrimeNgCalendar(tree: Tree, directoryPath: string) {
       if (fileContent) {
         const updatedContent = fileContent
           .replace(
-            /@ViewChildren(Calendar) calendars!: QueryList<Calendar>;?/,
+            /@ViewChildren\(Calendar\) calendars!: QueryList<Calendar>;?/,
             '@ViewChildren(DatePicker) calendars!: QueryList<DatePicker>;'
           )
           .replace(/import { Calendar } from 'primeng\/calendar';?/, "import { DatePicker } from 'primeng/datepicker';")
