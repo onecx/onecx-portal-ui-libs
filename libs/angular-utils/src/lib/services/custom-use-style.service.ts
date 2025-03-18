@@ -7,7 +7,7 @@ import { THEME_OVERRIDES, ThemeOverrides } from '../theme/application-config'
 import { toVariables } from '@primeuix/styled'
 
 export const SKIP_STYLE_SCOPING = new InjectionToken<boolean>('SKIP_STYLE_SCOPING')
-const notCharacterOrDashRegex = /[^a-zA-Z0-9-]/g
+const everythingNotACharacterOrNumberRegex = /[^a-zA-Z0-9-]/g
 
 @Injectable({ providedIn: 'any' })
 export class CustomUseStyle extends UseStyle {
@@ -33,8 +33,8 @@ export class CustomUseStyle extends UseStyle {
       super.use(css, options)
       return this.applyOverrides(scopeId)
     })
-    // Fake response is returned because async action is done in sync context
-    // Fake response should indicate usage by displaying errors when dummy data is used
+    // Result of this call is not used at the moment
+    // Fake response ensures its possible to detect future usages of the result of this call
     return this.createFakeUseResponse(css, options)
   }
 
@@ -90,6 +90,9 @@ export class CustomUseStyle extends UseStyle {
     return css.replaceAll('--p-', this.scopeIdentifierToVariablePrefix(scopeId))
   }
 
+  // Style scoping should be skipped for Shell
+  // For Remote Components application data from config is taken
+  // For MFE data from currentMfe topic is taken
   private async getScopeIdentifier() {
     let scopeId = ''
     if (!this.skipStyleScoping) {
@@ -136,7 +139,7 @@ export class CustomUseStyle extends UseStyle {
   }
 
   private scopeIdentifierToVariablePrefix(scopeId: string) {
-    return '--' + scopeId.replace(notCharacterOrDashRegex, '-') + '-'
+    return '--' + scopeId.replace(everythingNotACharacterOrNumberRegex, '-') + '-'
   }
 
   private isVariables(cssName: string) {
