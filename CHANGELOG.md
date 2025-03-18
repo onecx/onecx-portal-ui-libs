@@ -1,3 +1,9 @@
+## [6.0.0-rc.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.4...v6.0.0-rc.5) (2025-03-18)
+
+### Features
+
+* theme override functionality ([#684](https://github.com/onecx/onecx-portal-ui-libs/issues/684)) ([f02b8ea](https://github.com/onecx/onecx-portal-ui-libs/commit/f02b8eab464f9e785f2cea9129ad99685ccfc0bf))
+
 ## [6.0.0-rc.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.3...v6.0.0-rc.4) (2025-03-13)
 
 ### Features
