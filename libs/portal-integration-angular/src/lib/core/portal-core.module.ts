@@ -55,6 +55,7 @@ import { PatchFormGroupValuesDirective } from './directives/patch-form-group-val
 import { SetInputValueDirective } from './directives/set-input-value.directive'
 import { standaloneInitializer } from './initializer/standalone.initializer'
 import { PrimeNgModule } from './primeng.module'
+import { HttpClient } from '@angular/common/http'
 
 export class PortalMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -205,6 +206,7 @@ export class PortalCoreModule {
             AppStateService,
             UserService,
             UserProfileAPIService,
+            HttpClient
           ],
         })
     }

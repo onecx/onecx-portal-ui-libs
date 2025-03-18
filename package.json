@@ -1,6 +1,6 @@
 {
   "name": "@onecx/onecx-portal-ui-libs",
-  "version": "6.0.0-rc.3",
+  "version": "6.0.0-rc.5",
   "license": "Apache-2.0",
   "scripts": {
     "sass": "npx sass libs/portal-integration-angular/assets/styles.scss libs/portal-integration-angular/assets/output.css",
@@ -27,7 +27,7 @@
     "@ngrx/router-store": "^19.0.0",
     "@ngrx/store": "^19.0.0",
     "@ngrx/store-devtools": "^19.0.0",
-    "@ngx-translate/core": "^15.0.0",
+    "@ngx-translate/core": "^16.0.0",
     "@ngx-translate/http-loader": "^8.0.0",
     "@nx/plugin": "^20.4.6",
     "@onecx/portal-layout-styles": "file:libs/portal-layout-styles",
