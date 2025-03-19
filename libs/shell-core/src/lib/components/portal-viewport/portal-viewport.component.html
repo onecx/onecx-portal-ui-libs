@@ -1,7 +1,7 @@
 <div
   *ngIf="!globalErrMsg; else globalError"
   [ngClass]="{
-    'layout-wrapper layout-topbar-var': appStateService.currentWorkspace$ | async,
+    'layout-wrapper layout-topbar-var': themeService.currentTheme$ | async,
     'p-input-filled': inputStyle === 'filled', 
     'p-ripple-disabled': !ripple,
     'layout-menu-active': isStaticalMenuVisible(),
@@ -9,7 +9,7 @@
   }"
   [class]="'layout-menu-' + this.colorScheme"
 >
-  <ng-container *ngIf="appStateService.currentWorkspace$ | async; else noWorkspace">
+  <ng-container *ngIf="themeService.currentTheme$ | async; else noTheme">
     <ocx-shell-header
       [menuButtonTitle]="menuButtonTitle"
       (menuButtonClick)="onMenuButtonClick($event)"
@@ -53,7 +53,7 @@
     <div *ngIf="menuActive || !!activeTopbarItem" class="layout-mask modal-in"></div>
   </ng-container>
 
-  <ng-template #noWorkspace>
+  <ng-template #noTheme>
     <div class="layout-main">
       <div class="layout-content relative">
         <ng-content></ng-content>
