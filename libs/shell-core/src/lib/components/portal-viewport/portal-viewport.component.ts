@@ -27,10 +27,10 @@ import {
 export class PortalViewportComponent implements OnInit, OnDestroy {
   private primengConfig = inject(PrimeNG)
   private messageService = inject(MessageService)
-  appStateService = inject(AppStateService)
+  private appStateService = inject(AppStateService)
   private portalMessageService = inject(PortalMessageService)
   private userService = inject(UserService)
-  private themeService = inject(ThemeService)
+  themeService = inject(ThemeService)
   private httpClient = inject(HttpClient)
   showContentProvider = inject<ShowContentProvider | undefined>(SHOW_CONTENT_PROVIDER, { optional: true })
   workspaceConfigBffService = inject<WorkspaceConfigBffService | undefined>(WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER, {
