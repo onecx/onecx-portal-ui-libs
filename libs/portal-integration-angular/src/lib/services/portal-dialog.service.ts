@@ -1,6 +1,6 @@
 import { EventEmitter, Injectable, OnDestroy, Type, isDevMode } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
-import { Observable, filter, mergeMap, tap } from 'rxjs'
+import { Observable, filter, mergeMap } from 'rxjs'
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 
 import { ButtonDialogButtonDetails, ButtonDialogCustomButtonDetails, ButtonDialogData } from '../model/button-dialog'
