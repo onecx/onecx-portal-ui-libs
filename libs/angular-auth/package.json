@@ -9,7 +9,8 @@
     "@onecx/angular-integration-interface": "^6.0.0-rc.5",
     "@onecx/integration-interface": "^6.0.0-rc.5",
     "keycloak-js": "^25.0.1",
-    "rxjs": "~7.8.0"
+    "rxjs": "~7.8.0",
+    "@nx/devkit": "^20.3.0"
   },
   "publishConfig": {
     "access": "public"

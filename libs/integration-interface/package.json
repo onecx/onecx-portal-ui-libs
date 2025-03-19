@@ -5,7 +5,8 @@
   "peerDependencies": {
     "tslib": "^2.6.3",
     "rxjs": "^7.8.1",
-    "@onecx/accelerator": "^6.0.0-rc.5"
+    "@onecx/accelerator": "^6.0.0-rc.5",
+    "@nx/devkit": "^20.3.0"
   },
   "type": "commonjs",
   "main": "./src/index.js",

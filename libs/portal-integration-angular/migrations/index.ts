@@ -1,1 +1,0 @@
-export * from './migrate-onecx-to-v6'
