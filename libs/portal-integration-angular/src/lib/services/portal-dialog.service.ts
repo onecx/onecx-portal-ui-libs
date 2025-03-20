@@ -500,6 +500,7 @@ export class PortalDialogService implements OnDestroy {
           closable: dialogOptions.showXButton && secondaryButtonTranslationKeyOrDetails !== undefined,
           ...dialogOptions,
           focusOnShow: false,
+          appendTo: 'body', // Important for the function findBodyChild
           templates: {
             footer: DialogFooterComponent,
           },
