@@ -1,7 +1,7 @@
 import { EventEmitter, Injectable, OnDestroy, Type, isDevMode } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { Observable, filter, mergeMap } from 'rxjs'
-import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { DialogService, DynamicDialogComponent, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 
 import { ButtonDialogButtonDetails, ButtonDialogCustomButtonDetails, ButtonDialogData } from '../model/button-dialog'
 import { DialogMessageContentComponent } from '../core/components/button-dialog/dialog-message-content/dialog-message-content.component'
@@ -264,6 +264,7 @@ export interface PortalDialogServiceData {
 @Injectable({ providedIn: 'any' })
 export class PortalDialogService implements OnDestroy {
   private dialogRef: DynamicDialogRef | null = null
+  private dialogComponent: DynamicDialogComponent | null = null
   private eventsTopic: EventsTopic = new EventsTopic()
   constructor(
     private dialogService: DialogService,
@@ -505,6 +506,7 @@ export class PortalDialogService implements OnDestroy {
             footer: DialogFooterComponent,
           },
         })
+        this.dialogComponent = this.dialogService.getInstance(this.dialogRef)
         return this.dialogRef.onClose
       })
     )
@@ -513,16 +515,17 @@ export class PortalDialogService implements OnDestroy {
   private cleanupAndCloseDialog() {
     if (this.dialogRef) {
       this.dialogRef.close()
-      this.removeDialogFromHtml(this.dialogRef)
+      this.removeDialogFromHtml()
       this.dialogRef = null
+      this.dialogComponent = null
     }
   }
 
-  private removeDialogFromHtml(dialogRef: DynamicDialogRef) {
-    const originalWrapper = this.dialogService.getInstance(dialogRef).wrapper
-    if (!originalWrapper) return
-    const onecxWrapper = this.findBodyChild(originalWrapper)
-    document.body.removeChild(onecxWrapper)
+  private removeDialogFromHtml() {
+    const conatiner = this.dialogComponent?.container
+    if (!conatiner) return
+    const bodyChild = this.findBodyChild(conatiner)
+    bodyChild && document.body.removeChild(bodyChild)
   }
 
   private findBodyChild(element: HTMLElement) {
@@ -530,7 +533,7 @@ export class PortalDialogService implements OnDestroy {
     while (currentNode.parentElement && currentNode.parentElement != document.body) {
       currentNode = currentNode.parentElement
     }
-    return currentNode
+    return currentNode.parentElement === document.body ? currentNode : undefined
   }
 
   private prepareTitleForTranslation(title: TranslationKey | null): TranslationKeyWithParameters {
