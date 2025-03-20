@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common'
-import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations'
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { Component, EventEmitter, Input, Output } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { HarnessLoader } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { DialogService, DynamicDialogComponent, DynamicDialogModule } from 'primeng/dynamicdialog'
+import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog'
 import { ButtonModule } from 'primeng/button'
 import { Observable, of } from 'rxjs'
 
