@@ -25,10 +25,8 @@ export class PortalMessageServiceMock {
     this.addTranslated('warning', msg)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private addTranslated(severity: string, msg: Message) {
-    const summaryTranslation = msg.summaryKey ? `Translated: ${msg.summaryKey}` : undefined
-    const detailTranslation = msg.detailKey ? `Translated: ${msg.detailKey}` : undefined
-
     this.message$.publish({
       ...msg,
     })

@@ -10,6 +10,7 @@ export function provideAppConfigServiceMock() {
 export class AppConfigServiceMock {
   config$ = new BehaviorSubject<{ [key: string]: string }>({})
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public init(baseUrl: string): Promise<void> {
     return new Promise((resolve) => {
       const mockConfig: Config = { key: 'config' }

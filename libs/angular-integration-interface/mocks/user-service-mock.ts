@@ -26,6 +26,7 @@ export class UserServiceMock {
     return 'mocked-lang'
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   extractPermissions(userProfile: UserProfile): string[] | null {
     return ['mocked-permission']
   }
