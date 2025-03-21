@@ -7,8 +7,7 @@ import { ButtonModule } from 'primeng/button'
 import { MultiSelectModule } from 'primeng/multiselect'
 import { DataViewModule } from 'primeng/dataview'
 import { MenuModule } from 'primeng/menu'
-import { UserService } from '@onecx/angular-integration-interface'
-import { UserServiceMock } from '@onecx/angular-integration-interface/mocks'
+import { UserServiceMock, provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { StorybookTranslateModule } from './../../storybook-translate.module'
 import { DataListGridComponent } from './data-list-grid.component'
 import { IfPermissionDirective } from '../../directives/if-permission.directive'
@@ -24,7 +23,7 @@ const DataListGridComponentSBConfig: Meta<DataListGridComponent> = {
       providers: [
         importProvidersFrom(BrowserModule),
         importProvidersFrom(BrowserAnimationsModule),
-        { provide: UserService, useClass: UserServiceMock },
+        provideUserServiceMock(),
         { provide: HAS_PERMISSION_CHECKER, useClass: UserServiceMock },
         importProvidersFrom(RouterModule.forRoot([], { useHash: true })),
       ],

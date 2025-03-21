@@ -10,8 +10,8 @@ import { ButtonModule } from 'primeng/button'
 import { UserService } from '@onecx/angular-integration-interface'
 import {
   AppStateServiceMock,
-  UserServiceMock,
   provideAppStateServiceMock,
+  provideUserServiceMock,
 } from '@onecx/angular-integration-interface/mocks'
 import { PageHeaderHarness, TestbedHarnessEnvironment } from '../../../../testing'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
@@ -68,7 +68,7 @@ describe('PageHeaderComponent', () => {
         NoopAnimationsModule,
       ],
       providers: [
-        { provide: UserService, useClass: UserServiceMock },
+        provideUserServiceMock(),
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         provideAppStateServiceMock(),
