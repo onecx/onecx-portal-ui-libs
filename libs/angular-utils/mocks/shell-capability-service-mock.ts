@@ -1,9 +1,11 @@
+import { Injectable } from '@angular/core'
 import { Capability, ShellCapabilityService } from '@onecx/angular-utils'
 
 export function provideShellCapabilityServiceMock() {
   return [ShellCapabilityServiceMock, { provide: ShellCapabilityService, useExisting: ShellCapabilityServiceMock }]
 }
 
+@Injectable()
 export class ShellCapabilityServiceMock {
   static capabilities: Capability[] = []
 
