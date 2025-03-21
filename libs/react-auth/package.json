@@ -1,0 +1,12 @@
+{
+  "name": "@onecx/react-auth",
+  "version": "0.0.1",
+  "license": "Apache-2.0",
+  "peerDependencies": {
+    "axios": "^1.7.3"
+  },
+  "dependencies": {},
+  "publishConfig": {
+    "access": "public"
+  }
+}
