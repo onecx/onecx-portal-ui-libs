@@ -30,7 +30,7 @@ export class NavigatedEventStoreConnectorService implements OnDestroy {
     let observer: Observable<TopicEventType | CurrentLocationTopicPayload> =
       this.appStateService.currentLocation$.asObservable()
     if (!this.capabilityService.hasCapability(Capability.CURRENT_LOCATION_TOPIC)) {
-      observer = new EventsTopic().pipe(filter((e) => e.type === 'navigated'))
+      observer = this.eventsTopic$.pipe(filter((e) => e.type === 'navigated'))
     }
     observer.subscribe((navigatedEvent) => {
       let event: unknown = navigatedEvent as CurrentLocationTopicPayload
