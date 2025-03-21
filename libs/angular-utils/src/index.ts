@@ -9,6 +9,7 @@ export * from './lib/utils/has-permission-checker-factory'
 export * from './lib/utils/deep-merge.utils'
 export * from './lib/utils/create-color-palette'
 export * from './lib/utils/remote-component-translation-path-factory.utils'
+export * from './lib/utils/scope.utils'
 
 // Services
 export * from './lib/services/translation-cache.service'

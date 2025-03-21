@@ -29,7 +29,8 @@
     "primeng": "^19.0.0",
     "zod": "^3.23.8",
     "@ngx-translate/http-loader": "^8.0.0",
-    "@angular-architects/module-federation": "^18.0.4"
+    "@angular-architects/module-federation": "^18.0.4",
+    "@onecx/angular-remote-components": "6.0.0-rc.5"
   },
   "dependencies": {},
   "exports": {
