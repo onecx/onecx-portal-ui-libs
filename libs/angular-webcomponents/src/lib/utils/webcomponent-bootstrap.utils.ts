@@ -15,8 +15,9 @@ import {
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { getLocation } from '@onecx/accelerator'
-import { EventsTopic } from '@onecx/integration-interface'
-import { Subscription, filter } from 'rxjs'
+import { CurrentLocationTopic, EventsTopic, CurrentLocationTopicPayload, TopicEventType } from '@onecx/integration-interface'
+import { Observable, Subscription, filter } from 'rxjs'
+import { ShellCapabilityService, Capability } from '@onecx/angular-utils'
 
 /**
  * Implementation inspired by @angular-architects/module-federation-plugin https://github.com/angular-architects/module-federation-plugin/blob/main/libs/mf-tools/src/lib/web-components/bootstrap-utils.ts
@@ -167,15 +168,22 @@ function connectRouter(router: Router): Subscription {
   const initialUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}${location.hash}`
   router.navigateByUrl(initialUrl, {
     replaceUrl: true,
+    state: { isRouterSync: true },
   })
   let lastUrl = initialUrl
-  const observer = new EventsTopic()
-  return observer.pipe(filter((e) => e.type === 'navigated')).subscribe(() => {
+  const capabilityService = new ShellCapabilityService()
+  // TODO: Clarify if CurrentLocationTopic from appStateService should be used here
+  let observer: Observable<TopicEventType | CurrentLocationTopicPayload> = new CurrentLocationTopic().asObservable()
+  if (!capabilityService.hasCapability(Capability.CURRENT_LOCATION_TOPIC)) {
+    observer = new EventsTopic().pipe(filter((e) => e.type === 'navigated'))
+  }
+  return observer.subscribe(() => {
     const routerUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}${location.hash}`
     if (routerUrl !== lastUrl) {
       lastUrl = routerUrl
       router.navigateByUrl(routerUrl, {
         replaceUrl: true,
+        state: { isRouterSync: true },
       })
     }
   })
