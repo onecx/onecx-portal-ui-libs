@@ -78,9 +78,10 @@ function createEntrypoint(
   entrypointType: EntrypointType
 ) {
   let sub: Subscription | null
+  const eventsTopic = new EventsTopic()
   const originalNgInit = component.prototype.ngOnInit
   component.prototype.ngOnInit = function () {
-    sub = connectMicroFrontendRouter(injector, entrypointType === 'microfrontend')
+    sub = connectMicroFrontendRouter(injector, entrypointType === 'microfrontend', eventsTopic)
     if (originalNgInit !== undefined) {
       originalNgInit.call(this)
     }
@@ -88,6 +89,7 @@ function createEntrypoint(
   const originalNgDestroy = component.prototype.ngOnDestroy
   component.prototype.ngOnDestroy = function () {
     sub?.unsubscribe()
+    eventsTopic.destroy()
     if (originalNgDestroy !== undefined) {
       originalNgDestroy.call(this)
     }
@@ -156,7 +158,7 @@ export function cachePlatform(production: boolean): PlatformRef {
   return platform
 }
 
-function connectMicroFrontendRouter(injector: Injector, warn = true): Subscription | null {
+function connectMicroFrontendRouter(injector: Injector, warn = true, eventsTopic: EventsTopic): Subscription | null {
   const router = injector.get(Router)
   const appStateService = injector.get(AppStateService)
   if (!router) {
@@ -166,10 +168,10 @@ function connectMicroFrontendRouter(injector: Injector, warn = true): Subscripti
     return null
   }
 
-  return connectRouter(router, appStateService)
+  return connectRouter(router, appStateService, eventsTopic)
 }
 
-function connectRouter(router: Router, appStateService: AppStateService): Subscription {
+function connectRouter(router: Router, appStateService: AppStateService, eventsTopic: EventsTopic): Subscription {
   const initialUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}${location.hash}`
   router.navigateByUrl(initialUrl, {
     replaceUrl: true,
@@ -180,7 +182,7 @@ function connectRouter(router: Router, appStateService: AppStateService): Subscr
   let observer: Observable<TopicEventType | CurrentLocationTopicPayload> =
     appStateService.currentLocation$.asObservable()
   if (!capabilityService.hasCapability(Capability.CURRENT_LOCATION_TOPIC)) {
-    observer = new EventsTopic().pipe(filter((e) => e.type === 'navigated'))
+    observer = eventsTopic.pipe(filter((e) => e.type === 'navigated'))
   }
   return observer.subscribe(() => {
     const routerUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}${location.hash}`
