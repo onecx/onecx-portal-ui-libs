@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core'
 
 declare global {
   interface Window {
-    'onecx-shell-capabilities': string[]
+    'onecx-shell-capabilities': Capability[]
   }
 }
 

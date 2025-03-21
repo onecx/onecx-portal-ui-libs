@@ -15,9 +15,14 @@ import {
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { getLocation } from '@onecx/accelerator'
-import { CurrentLocationTopic, EventsTopic, CurrentLocationTopicPayload, TopicEventType } from '@onecx/integration-interface'
+import {
+  EventsTopic,
+  CurrentLocationTopicPayload,
+  TopicEventType,
+} from '@onecx/integration-interface'
 import { Observable, Subscription, filter } from 'rxjs'
 import { ShellCapabilityService, Capability } from '@onecx/angular-utils'
+import { AppStateService } from '@onecx/angular-integration-interface'
 
 /**
  * Implementation inspired by @angular-architects/module-federation-plugin https://github.com/angular-architects/module-federation-plugin/blob/main/libs/mf-tools/src/lib/web-components/bootstrap-utils.ts
@@ -153,7 +158,7 @@ export function cachePlatform(production: boolean): PlatformRef {
 
 function connectMicroFrontendRouter(injector: Injector, warn = true): Subscription | null {
   const router = injector.get(Router)
-
+  const appStateService = injector.get(AppStateService)
   if (!router) {
     if (warn) {
       console.warn('No router to connect found')
@@ -161,10 +166,10 @@ function connectMicroFrontendRouter(injector: Injector, warn = true): Subscripti
     return null
   }
 
-  return connectRouter(router)
+  return connectRouter(router, appStateService)
 }
 
-function connectRouter(router: Router): Subscription {
+function connectRouter(router: Router, appStateService: AppStateService): Subscription {
   const initialUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}${location.hash}`
   router.navigateByUrl(initialUrl, {
     replaceUrl: true,
@@ -172,8 +177,8 @@ function connectRouter(router: Router): Subscription {
   })
   let lastUrl = initialUrl
   const capabilityService = new ShellCapabilityService()
-  // TODO: Clarify if CurrentLocationTopic from appStateService should be used here
-  let observer: Observable<TopicEventType | CurrentLocationTopicPayload> = new CurrentLocationTopic().asObservable()
+  let observer: Observable<TopicEventType | CurrentLocationTopicPayload> =
+    appStateService.currentLocation$.asObservable()
   if (!capabilityService.hasCapability(Capability.CURRENT_LOCATION_TOPIC)) {
     observer = new EventsTopic().pipe(filter((e) => e.type === 'navigated'))
   }

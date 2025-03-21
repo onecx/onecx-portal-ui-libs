@@ -1,5 +1,5 @@
 import { Topic, TopicPublisher } from '@onecx/accelerator'
-import { CurrentLocationTopicPayload } from './location.model'
+import { CurrentLocationTopicPayload } from './current-location.model'
 
 export class CurrentLocationPublisher extends TopicPublisher<CurrentLocationTopicPayload> {
   constructor() {

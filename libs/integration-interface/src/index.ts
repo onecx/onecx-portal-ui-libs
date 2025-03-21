@@ -41,5 +41,5 @@ export * from './lib/topics/events/v1/topic-event-type'
 export * from './lib/topics/events/v1/navigated-event-type'
 export * from './lib/topics/events/v1/navigated-event-payload'
 
-export * from './lib/topics/current-location/v1/location.model'
+export * from './lib/topics/current-location/v1/current-location.model'
 export * from './lib/topics/current-location/v1/current-location.topic'
