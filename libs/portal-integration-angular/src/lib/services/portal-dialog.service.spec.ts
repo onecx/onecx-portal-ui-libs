@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { CommonModule } from '@angular/common'
 import { Component, EventEmitter, Input, Output, inject as inject_1 } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
+import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { ButtonModule } from 'primeng/button'
 import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog'
@@ -252,7 +252,7 @@ describe('PortalDialogService', () => {
         TranslateTestingModule.withTranslations('en', translations),
         DynamicDialogModule,
         CommonModule,
-        BrowserAnimationsModule,
+        NoopAnimationsModule,
         ButtonModule,
       ],
       providers: [PortalDialogService, DialogService],
