@@ -22,15 +22,20 @@
     "d3-scale-chromatic": "^3.1.0",
     "rxjs": "~7.8.1",
     "primeng": "^19.0.0",
-    "@storybook/angular": "^8.3.2"
+    "@storybook/angular": "^8.3.2",
+    "@nx/devkit": "^20.3.0"
   },
   "dependencies": {},
   "exports": {
     ".": {
       "style": "./assets/styles.scss"
-    }
+    },
+    "./migrations.json": "./migrations.json"
   },
   "publishConfig": {
     "access": "public"
+  },
+  "nx-migrations": {
+    "migrations": "./migrations.json"
   }
 }

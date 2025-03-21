@@ -10,6 +10,7 @@
       "input": "tmp/primelocale/",
       "glob": "{en,de}.json",
       "output": "assets/i18n/primeng"
-    }
+    },
+    "./migrations.json"
   ]
 }

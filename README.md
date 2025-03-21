@@ -52,6 +52,18 @@ In some cases, there might be a requirement to make a change directly on a main 
 - The `main` branch is merged into `develop` branch
 - Libs pre-release is released via the `develop` branch
 
+# Migrating to Angular 19, PrimeNG 19 and OneCX v6
+Run the following commands in your project's terminal and follow the instructions:
+
+1. `npx nx g @nx/eslint:convert-to-flat-config` (this is only necessary if you have the `.eslint.json` still) 
+2. `npx nx generate @angular/core:control-flow` (https://angular.dev/reference/migrations/control-flow)
+3. `npx nx generate @angular/core:inject` (https://angular.dev/reference/migrations/inject-function) 
+4. run the following command in your project's terminal to run onecx migrations:
+    ```
+    m='{"migrations": []}'; p=(); f() { [ -f "migrations.json" ] && m=$(jq -s '.[0].migrations + .[1].migrations | unique_by(.name) | {migrations: .}' <(echo "$m") migrations.json) && rm migrations.json; }; for d in node_modules/@onecx/*; do [ -d "$d" ] && p+=("@onecx/$(basename "$d")"); done; dep=$(jq -r '.dependencies | keys[] | select(startswith("@onecx/"))' package.json); devDep=$(jq -r '.devDependencies | keys[] | select(startswith("@onecx/"))' package.json); for e in $dep $devDep; do [[ ! " ${p[@]} " =~ " ${e} " ]] && p+=("$e"); done; for pkg in "${p[@]}"; do npx nx migrate "$pkg"; f; done; echo "$m" > migrations.json; npx nx migrate --run-migrations --if-exists || { rm -rf node_modules package-lock.json; npm i --package-lock-only; npx nx migrate --run-migrations --if-exists; npm i --package-lock-only; }; npm i
+    ```
+5. `npm run build` to check if it builds successfully after the migrations
+
 # Update from v3 to v4 guide
 
 [Update guide](update-guide.md)

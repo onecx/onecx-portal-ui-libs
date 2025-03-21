@@ -5,7 +5,7 @@
   "scripts": {
     "sass": "npx sass libs/portal-integration-angular/assets/styles.scss libs/portal-integration-angular/assets/output.css",
     "postinstall": "mkdir -p .nx",
-    "build": "nx run-many -t build",
+    "build": "nx run-many -t build build-migrations",
     "build-copy": "npm run build && node copy-build.js"
   },
   "private": true,
@@ -29,6 +29,7 @@
     "@ngrx/store-devtools": "^19.0.0",
     "@ngx-translate/core": "^16.0.0",
     "@ngx-translate/http-loader": "^8.0.0",
+    "@nx/plugin": "^20.4.6",
     "@onecx/portal-layout-styles": "file:libs/portal-layout-styles",
     "@primeng/themes": "^19.0.0",
     "@storybook/addon-interactions": "^8.3.2",
@@ -63,10 +64,10 @@
     "@happy-dom/jest-environment": "^15.7.3",
     "@nx/angular": "20.4.0",
     "@nx/esbuild": "20.4.0",
+    "@nx/eslint": "20.4.0",
     "@nx/eslint-plugin": "20.4.0",
     "@nx/jest": "20.4.0",
     "@nx/js": "20.4.0",
-    "@nx/eslint": "20.4.0",
     "@nx/node": "20.4.0",
     "@nx/storybook": "20.4.0",
     "@nx/workspace": "20.4.0",
