@@ -11,6 +11,7 @@
     "@onecx/accelerator": "^5.33.0",
     "@onecx/angular-integration-interface": "^5.33.0",
     "@onecx/integration-interface": "^5.33.0",
+    "@onecx/angular-utils": "^5.33.0",
     "rxjs": "~7.8.1"
   },
   "dependencies": {},
