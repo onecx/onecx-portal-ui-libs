@@ -1,29 +1,22 @@
-import r2wc from '@r2wc/react-to-web-component';
-import { type ReactNode } from 'react';
-import { createRoot, type Root } from 'react-dom/client';
-import { type Router, type NextRouter } from 'next/router';
-import { RouterContext } from 'next/dist/shared/lib/router-context.shared-runtime';
-import { getLocation } from '@onecx/accelerator';
-import {
-  AppStateProvider,
-  ConfigurationProvider,
-} from '@onecx/react-integration-interface';
-import { type NextComponentType } from 'next';
-import { useAppHref } from './routing.utils';
-import { type AppProps } from 'next/app';
+import r2wc from '@r2wc/react-to-web-component'
+import { type ReactNode } from 'react'
+import { createRoot, type Root } from 'react-dom/client'
+import { type Router, type NextRouter } from 'next/router'
+import { RouterContext } from 'next/dist/shared/lib/router-context.shared-runtime'
+import { getLocation } from '@onecx/accelerator'
+import { AppStateProvider, ConfigurationProvider } from '@onecx/react-integration-interface'
+import { type NextComponentType } from 'next'
+import { useAppHref } from './routing.utils'
+import { type AppProps } from 'next/app'
 
-const createNextjsWebComponent = (
-  component: NextComponentType,
-  elementName: string
-) => {
+const createNextjsWebComponent = (component: NextComponentType, elementName: string) => {
   const WebComponent = r2wc(component, {
     props: {},
-  });
-  customElements.define(elementName, WebComponent);
-};
+  })
+  customElements.define(elementName, WebComponent)
+}
 
-const normalizePath = (path: string) =>
-  path.replace(/\/+$/, '').replace(/^\/?/, '/');
+const normalizePath = (path: string) => path.replace(/\/+$/, '').replace(/^\/?/, '/')
 
 const createNextjsAppWebComponent = (
   CustomPage: ({ Component, pageProps }: AppProps) => JSX.Element,
@@ -34,34 +27,28 @@ const createNextjsAppWebComponent = (
     router,
     renderPage,
   }: {
-    router: NextRouter;
-    renderPage: (Component: NextComponentType) => ReactNode;
+    router: NextRouter
+    renderPage: (Component: NextComponentType) => ReactNode
   }) => {
-    const { href } = useAppHref();
-    const baseHref = normalizePath(href);
-    const currentPath = normalizePath(router.pathname);
+    const { href } = useAppHref()
+    const baseHref = normalizePath(href)
+    const currentPath = normalizePath(router.pathname)
 
-    const relativePath = currentPath.startsWith(baseHref)
-      ? currentPath.slice(baseHref.length) || '/'
-      : currentPath;
+    const relativePath = currentPath.startsWith(baseHref) ? currentPath.slice(baseHref.length) || '/' : currentPath
 
-    const Component = routes[relativePath] || (() => <div>Page not found</div>);
+    const Component = routes[relativePath] || (() => <div>Page not found</div>)
 
-    return (
-      <RouterContext.Provider value={router}>
-        {renderPage(Component)}
-      </RouterContext.Provider>
-    );
-  };
+    return <RouterContext.Provider value={router}>{renderPage(Component)}</RouterContext.Provider>
+  }
 
   class CustomWebComponent extends HTMLElement {
-    private _router: NextRouter;
-    private _root?: Root;
+    private _router: NextRouter
+    private _root?: Root
 
     constructor() {
-      super();
+      super()
 
-      const initialPath = `${getLocation().pathname}`;
+      const initialPath = `${getLocation().pathname}`
 
       this._router = {
         pathname: initialPath,
@@ -74,14 +61,14 @@ const createNextjsAppWebComponent = (
         isLocaleDomain: false,
         isPreview: false,
         push: async (path: string) => {
-          window.history.pushState({}, '', path);
-          this.updatePath(path);
-          return true;
+          window.history.pushState({}, '', path)
+          this.updatePath(path)
+          return true
         },
         replace: async (path: string) => {
-          window.history.replaceState({}, '', path);
-          this.updatePath(path);
-          return true;
+          window.history.replaceState({}, '', path)
+          this.updatePath(path)
+          return true
         },
         reload: () => window.location.reload(),
         back: () => window.history.back(),
@@ -96,28 +83,26 @@ const createNextjsAppWebComponent = (
           // eslint-disable-next-line @typescript-eslint/no-empty-function
           emit: () => {},
         },
-      };
+      }
 
-      window.addEventListener('popstate', () =>
-        this.updatePath(window.location.pathname)
-      );
+      window.addEventListener('popstate', () => this.updatePath(window.location.pathname))
     }
 
     connectedCallback(): void {
-      const mountPoint = document.createElement('div');
-      this.appendChild(mountPoint);
+      const mountPoint = document.createElement('div')
+      this.appendChild(mountPoint)
 
       if (!this._root) {
-        this._root = createRoot(mountPoint);
+        this._root = createRoot(mountPoint)
       }
 
-      this.render();
+      this.render()
     }
 
     updatePath(path: string): void {
-      this._router.pathname = path;
-      this._router.asPath = path;
-      this.render();
+      this._router.pathname = path
+      this._router.asPath = path
+      this.render()
     }
 
     private render(): void {
@@ -127,20 +112,16 @@ const createNextjsAppWebComponent = (
             <ContextHandler
               router={this._router}
               renderPage={(Component) => (
-                <CustomPage
-                  pageProps={{}}
-                  Component={Component}
-                  router={this._router as Router}
-                />
+                <CustomPage pageProps={{}} Component={Component} router={this._router as Router} />
               )}
             />
           </ConfigurationProvider>
         </AppStateProvider>
-      );
+      )
     }
   }
 
-  customElements.define(elementName, CustomWebComponent);
-};
+  customElements.define(elementName, CustomWebComponent)
+}
 
-export { createNextjsWebComponent, createNextjsAppWebComponent };
+export { createNextjsWebComponent, createNextjsAppWebComponent }
