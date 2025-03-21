@@ -5,6 +5,7 @@ import { AppStateService } from '@onecx/angular-integration-interface'
 import { firstValueFrom, map, ReplaySubject } from 'rxjs'
 import { THEME_OVERRIDES, ThemeOverrides } from '../theme/application-config'
 import { toVariables } from '@primeuix/styled'
+import { getScopeIdentifier } from '../utils/scope.utils'
 
 export const SKIP_STYLE_SCOPING = new InjectionToken<boolean>('SKIP_STYLE_SCOPING')
 const everythingNotACharacterOrNumberRegex = /[^a-zA-Z0-9-]/g
@@ -22,7 +23,7 @@ export class CustomUseStyle extends UseStyle {
   // PrimeNg defines CSS variables and styles globally in <style> elements
   // Each Application needs to isolate the CSS variables and styles from others
   override use(css: any, options?: any): { id: any; name: any; el: any; css: any } {
-    this.getScopeIdentifier().then((scopeId) => {
+    getScopeIdentifier(this.appStateService, this.skipStyleScoping, this.remoteComponentConfig).then((scopeId) => {
       css = this.replacePrefix(css, scopeId)
       css = this.isStyle(options.name as string) ? this.scopeStyle(css, scopeId) : css
 
@@ -88,24 +89,6 @@ export class CustomUseStyle extends UseStyle {
     }
 
     return css.replaceAll('--p-', this.scopeIdentifierToVariablePrefix(scopeId))
-  }
-
-  // Style scoping should be skipped for Shell
-  // For Remote Components application data from config is taken
-  // For MFE data from currentMfe topic is taken
-  private async getScopeIdentifier() {
-    let scopeId = ''
-    if (!this.skipStyleScoping) {
-      if (this.remoteComponentConfig) {
-        const rcConfig = await firstValueFrom(this.remoteComponentConfig)
-        scopeId = `${rcConfig.productName}|${rcConfig.appId}`
-      } else {
-        scopeId = await firstValueFrom(
-          this.appStateService.currentMfe$.pipe(map((mfeInfo) => `${mfeInfo.productName}|${mfeInfo.appId}`))
-        )
-      }
-    }
-    return scopeId
   }
 
   private createFakeUseResponse(css: any, options: any) {
