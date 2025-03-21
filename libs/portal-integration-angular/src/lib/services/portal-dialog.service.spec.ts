@@ -23,6 +23,8 @@ import { DialogContentHarness, DialogFooterHarness } from '../../../testing/inde
 import { PrimeIcons } from 'primeng/api'
 import { DialogContentComponent } from '../core/components/dialog/dialog-content/dialog-content.component'
 import { DialogFooterComponent } from '../core/components/dialog/dialog-footer/dialog-footer.component'
+import { provideShellCapabilityServiceMock } from '@onecx/angular-utils/mocks'
+import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 
 @Component({
   template: `<h1>BaseTestComponent</h1>`,
@@ -243,7 +245,12 @@ describe('PortalDialogService', () => {
         BrowserAnimationsModule,
         ButtonModule,
       ],
-      providers: [PortalDialogService, DialogService],
+      providers: [
+        PortalDialogService,
+        DialogService,
+        provideShellCapabilityServiceMock(),
+        provideAppStateServiceMock(),
+      ],
     }).compileComponents()
     fixture = TestBed.createComponent(BaseTestComponent)
     pDialogService = TestBed.inject(DialogService)

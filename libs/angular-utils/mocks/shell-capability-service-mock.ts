@@ -1,4 +1,8 @@
-import { Capability } from '@onecx/angular-utils'
+import { Capability, ShellCapabilityService } from '@onecx/angular-utils'
+
+export function provideShellCapabilityServiceMock() {
+  return [ShellCapabilityServiceMock, { provide: ShellCapabilityService, useExisting: ShellCapabilityServiceMock }]
+}
 
 export class ShellCapabilityServiceMock {
   static capabilities: Capability[] = []
