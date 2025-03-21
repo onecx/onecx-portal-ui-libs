@@ -231,6 +231,9 @@ describe('PortalDialogService', () => {
     BUTTON_PARAM: 'myButton {{val}}',
   }
 
+  const removeChildSpy = jest.fn()
+  Object.defineProperty(global.document.body, 'removeChild', { value: removeChildSpy })
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [
@@ -809,5 +812,34 @@ describe('PortalDialogService', () => {
     })
     expect(fixture.componentInstance.nameResult).toBe('Submitted John')
     expect(fixture.componentInstance.surnameResult).toBe('Submitted Doe')
+  })
+
+  it('should close dialog and remove it from html on destroy', async () => {
+    jest.spyOn(pDialogService, 'open')
+
+    fixture.componentInstance.show(
+      'title',
+      { key: 'MESSAGE_PARAM', parameters: { val: 'myMsgParam' } },
+      'button1',
+      'button2'
+    )
+
+    const dialogRefSpy = jest.spyOn((fixture.componentInstance.portalDialogService as any).dialogRef, 'close')
+
+    const containerParent = {
+      parentElement: document.body,
+    }
+    ;(fixture.componentInstance.portalDialogService as any).dialogComponent.container = {
+      parentElement: containerParent,
+      style: {
+        zIndex: 0,
+      },
+    }
+
+    fixture.detectChanges()
+
+    fixture.componentInstance.portalDialogService.ngOnDestroy()
+    expect(dialogRefSpy).toHaveBeenCalledTimes(1)
+    expect(removeChildSpy).toHaveBeenCalledWith(containerParent)
   })
 })
