@@ -40,10 +40,10 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
   constructor(
     private primengConfig: PrimeNGConfig,
     private messageService: MessageService,
-    public appStateService: AppStateService,
+    private appStateService: AppStateService,
     private portalMessageService: PortalMessageService,
     private userService: UserService,
-    private themeService: ThemeService,
+    public themeService: ThemeService,
     private httpClient: HttpClient,
     private router: Router,
     @Optional() @Inject(SHOW_CONTENT_PROVIDER) public showContentProvider: ShowContentProvider | undefined,
