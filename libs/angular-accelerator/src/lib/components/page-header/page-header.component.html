@@ -59,6 +59,7 @@
               <p-button
                 id="{{ action.id }}"
                 [icon]="action.icon ?? ''"
+                [iconPos]="action.iconPos ?? 'left'"
                 type="button"
                 class="action-button"
                 [label]="action.labelKey ? (action.labelKey | translate) : action.label"
