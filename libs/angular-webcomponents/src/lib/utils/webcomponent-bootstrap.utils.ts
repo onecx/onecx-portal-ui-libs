@@ -15,11 +15,7 @@ import {
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { getLocation } from '@onecx/accelerator'
-import {
-  EventsTopic,
-  CurrentLocationTopicPayload,
-  TopicEventType,
-} from '@onecx/integration-interface'
+import { EventsTopic, CurrentLocationTopicPayload, TopicEventType } from '@onecx/integration-interface'
 import { Observable, Subscription, filter } from 'rxjs'
 import { ShellCapabilityService, Capability } from '@onecx/angular-utils'
 import { AppStateService } from '@onecx/angular-integration-interface'
@@ -78,7 +74,9 @@ function createEntrypoint(
   entrypointType: EntrypointType
 ) {
   let sub: Subscription | null
-  const eventsTopic = new EventsTopic()
+  const capabilityService = new ShellCapabilityService()
+  const currentLocationCapabilityAvailable = capabilityService.hasCapability(Capability.CURRENT_LOCATION_TOPIC)
+  const eventsTopic = currentLocationCapabilityAvailable ? new EventsTopic() : undefined
   const originalNgInit = component.prototype.ngOnInit
   component.prototype.ngOnInit = function () {
     sub = connectMicroFrontendRouter(injector, entrypointType === 'microfrontend', eventsTopic)
@@ -89,7 +87,9 @@ function createEntrypoint(
   const originalNgDestroy = component.prototype.ngOnDestroy
   component.prototype.ngOnDestroy = function () {
     sub?.unsubscribe()
-    eventsTopic.destroy()
+    if (currentLocationCapabilityAvailable && eventsTopic) {
+      eventsTopic.destroy()
+    }
     if (originalNgDestroy !== undefined) {
       originalNgDestroy.call(this)
     }
@@ -158,30 +158,34 @@ export function cachePlatform(production: boolean): PlatformRef {
   return platform
 }
 
-function connectMicroFrontendRouter(injector: Injector, warn = true, eventsTopic: EventsTopic): Subscription | null {
-  const router = injector.get(Router)
-  const appStateService = injector.get(AppStateService)
+function connectMicroFrontendRouter(injector: Injector, warnOnMissingRouter: boolean, eventsTopic: EventsTopic | undefined): Subscription | null {
+  const router = injector.get(Router, null)
+  const appStateService = injector.get(AppStateService, null)
   if (!router) {
-    if (warn) {
+    if (warnOnMissingRouter) {
       console.warn('No router to connect found')
     }
+    return null
+  }
+
+  if (!appStateService) {
+    console.warn('No appStateService found')
     return null
   }
 
   return connectRouter(router, appStateService, eventsTopic)
 }
 
-function connectRouter(router: Router, appStateService: AppStateService, eventsTopic: EventsTopic): Subscription {
+function connectRouter(router: Router, appStateService: AppStateService, eventsTopic: EventsTopic | undefined): Subscription {
   const initialUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}${location.hash}`
   router.navigateByUrl(initialUrl, {
     replaceUrl: true,
     state: { isRouterSync: true },
   })
   let lastUrl = initialUrl
-  const capabilityService = new ShellCapabilityService()
   let observer: Observable<TopicEventType | CurrentLocationTopicPayload> =
     appStateService.currentLocation$.asObservable()
-  if (!capabilityService.hasCapability(Capability.CURRENT_LOCATION_TOPIC)) {
+  if (eventsTopic !== undefined) {
     observer = eventsTopic.pipe(filter((e) => e.type === 'navigated'))
   }
   return observer.subscribe(() => {

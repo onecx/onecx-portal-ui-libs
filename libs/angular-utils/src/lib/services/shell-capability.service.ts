@@ -10,7 +10,7 @@ export enum Capability {
     CURRENT_LOCATION_TOPIC = 'currentLocationTopic',
 }
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ShellCapabilityService {
   static setCapabilities(capabilities: Capability[]): void {
     window['onecx-shell-capabilities'] = capabilities
