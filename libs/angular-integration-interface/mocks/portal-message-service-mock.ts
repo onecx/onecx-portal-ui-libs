@@ -8,26 +8,26 @@ export function providePortalMessageServiceMock() {
 }
 @Injectable({ providedIn: 'any' })
 export class PortalMessageServiceMock {
-  message$ = new FakeTopic<Message | PortalMessage>()
+  message$ = new FakeTopic<Message>()
 
-  success(msg: Message | PortalMessage) {
+  success(msg: PortalMessage) {
     this.addTranslated('success', msg)
   }
 
-  info(msg: Message | PortalMessage) {
+  info(msg: PortalMessage) {
     this.addTranslated('info', msg)
   }
 
-  error(msg: Message | PortalMessage) {
+  error(msg: PortalMessage) {
     this.addTranslated('error', msg)
   }
 
-  warning(msg: Message | PortalMessage) {
+  warning(msg: PortalMessage) {
     this.addTranslated('warning', msg)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private addTranslated(severity: string, msg: Message | PortalMessage) {
+  private addTranslated(severity: string, msg: PortalMessage) {
     this.message$.publish({
       ...msg,
       severity: severity,
