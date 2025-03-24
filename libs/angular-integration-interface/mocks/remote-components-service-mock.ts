@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { FakeTopic } from './fake-topic'
+import { FakeTopic } from '@onecx/accelerator'
 import { RemoteComponent } from '@onecx/integration-interface'
 import { RemoteComponentsService } from '@onecx/angular-integration-interface'
 
