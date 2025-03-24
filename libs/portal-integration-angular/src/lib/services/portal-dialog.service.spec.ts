@@ -826,20 +826,12 @@ describe('PortalDialogService', () => {
 
     const dialogRefSpy = jest.spyOn((fixture.componentInstance.portalDialogService as any).dialogRef, 'close')
 
-    const containerParent = {
-      parentElement: document.body,
-    }
-    ;(fixture.componentInstance.portalDialogService as any).dialogComponent.container = {
-      parentElement: containerParent,
-      style: {
-        zIndex: 0,
-      },
-    }
+    const dialogElement = (fixture.componentInstance.portalDialogService as any).dialogComponent.el.nativeElement
 
     fixture.detectChanges()
 
     fixture.componentInstance.portalDialogService.ngOnDestroy()
     expect(dialogRefSpy).toHaveBeenCalledTimes(1)
-    expect(removeChildSpy).toHaveBeenCalledWith(containerParent)
+    expect(removeChildSpy).toHaveBeenCalledWith(dialogElement)
   })
 })
