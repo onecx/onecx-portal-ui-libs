@@ -1,5 +1,5 @@
+import { Component, HostListener, Inject, OnDestroy, OnInit, Optional } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
-import { Component, HostListener, Inject, OnDestroy, OnInit, Optional, Renderer2 } from '@angular/core'
 import { Router } from '@angular/router'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import {
@@ -30,24 +30,20 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
 
   removeDocumentClickListener: (() => void) | undefined
 
-  topbarTheme = 'var'
   colorScheme: 'auto' | 'light' | 'dark' = 'light'
-  layoutMode: 'auto' | 'light' | 'dark' = 'light'
   menuMode: 'horizontal' | 'static' | 'overlay' | 'slim' | 'slimplus' = 'static'
   inputStyle = 'outline'
   ripple = true
   isMobile = false
-
   globalErrMsg: string | undefined
 
   constructor(
-    private renderer: Renderer2,
     private primengConfig: PrimeNGConfig,
     private messageService: MessageService,
-    public appStateService: AppStateService,
+    private appStateService: AppStateService,
     private portalMessageService: PortalMessageService,
     private userService: UserService,
-    private themeService: ThemeService,
+    public themeService: ThemeService,
     private httpClient: HttpClient,
     private router: Router,
     @Optional() @Inject(SHOW_CONTENT_PROVIDER) public showContentProvider: ShowContentProvider | undefined,
@@ -60,12 +56,12 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
       this.menuMode =
         (profile?.accountSettings?.layoutAndThemeSettings?.menuMode?.toLowerCase() as
           | typeof this.menuMode
-          | undefined) || this.menuMode
+          | undefined) ?? this.menuMode
 
       this.colorScheme =
         (profile?.accountSettings?.layoutAndThemeSettings?.colorScheme?.toLowerCase() as
           | typeof this.colorScheme
-          | undefined) || this.colorScheme
+          | undefined) ?? this.colorScheme
     })
 
     this.themeService.currentTheme$
@@ -108,6 +104,7 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
       .pipe(untilDestroyed(this))
       .pipe(filter((i) => i !== undefined))
       .subscribe((err: string | undefined) => {
+        console.error('global error')
         this.globalErrMsg = err
       })
 

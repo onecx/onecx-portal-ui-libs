@@ -134,6 +134,35 @@ describe('PageHeaderComponent', () => {
     expect(userServiceSpy).toHaveBeenCalledTimes(3)
   })
 
+  it('should render inline actions buttons with icons', async () => {
+    component.actions = [
+      {
+        label: 'Action with left icon',
+        show: 'always',
+        actionCallback: () => {
+          console.log('My Test Action')
+        },
+        permission: 'TEST#TEST_PERMISSION',
+        icon: PrimeIcons.LOCK,
+      },
+      {
+        label: 'Action with right icon',
+        show: 'always',
+        actionCallback: () => {
+          console.log('My Test Action')
+        },
+        permission: 'TEST#TEST_PERMISSION',
+        icon: PrimeIcons.LOCK,
+        iconPos: 'right',
+      },
+    ]
+
+    const inlineButtons = await pageHeaderHarness.getInlineActionButtons()
+    expect(inlineButtons).toHaveLength(2)
+    expect(await (await inlineButtons[0].getIconSpan())?.checkHasClass('p-button-icon-left')).toBeTruthy()
+    expect(await (await inlineButtons[1].getIconSpan())?.checkHasClass('p-button-icon-right')).toBeTruthy()
+  })
+
   it('should render objectDetails as object info in the page header', async () => {
     const objectDetailsWithoutIcons = [
       {

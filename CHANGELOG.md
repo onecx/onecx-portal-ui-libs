@@ -1,3 +1,21 @@
+## [5.33.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.32.1...v5.33.0) (2025-03-13)
+
+### Features
+
+* theming adjustments for angular 18 ([#677](https://github.com/onecx/onecx-portal-ui-libs/issues/677)) ([88ed0d7](https://github.com/onecx/onecx-portal-ui-libs/commit/88ed0d72ca65cc482dcbda1ab4c826e5a33d310e))
+
+### Bug Fixes
+
+* remove redundant dependency on ngx-translate TranslateService in… ([#673](https://github.com/onecx/onecx-portal-ui-libs/issues/673)) ([080cb47](https://github.com/onecx/onecx-portal-ui-libs/commit/080cb4700986ebede2fdae2901b2cf406c9285f3))
+
+## [5.32.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.32.0...v5.32.1) (2025-02-28)
+
+### Bug Fixes
+
+* cleanup basic layout: header, footer, menu ([#676](https://github.com/onecx/onecx-portal-ui-libs/issues/676)) ([1f60e53](https://github.com/onecx/onecx-portal-ui-libs/commit/1f60e53194aa19dbb85f4450c5fa620dd36001bd))
+* date column filtering ([#666](https://github.com/onecx/onecx-portal-ui-libs/issues/666)) ([7cb2388](https://github.com/onecx/onecx-portal-ui-libs/commit/7cb238864e81c3b783e55b9c421d11ad910a669b))
+* logo loaded twice ([#668](https://github.com/onecx/onecx-portal-ui-libs/issues/668)) ([1f51904](https://github.com/onecx/onecx-portal-ui-libs/commit/1f5190428f6fc603e5064b7b7b8f8385116d5255))
+
 ## [5.32.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.31.0...v5.32.0) (2025-01-31)
 
 ### Features
