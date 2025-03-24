@@ -76,6 +76,8 @@ describe('PageHeaderComponent', () => {
     }).compileComponents()
 
     mockAppStateService = TestBed.inject(AppStateServiceMock)
+    const userService = TestBed.inject(UserService)
+    userService.permissions$.next(['TEST#TEST_PERMISSION'])
     mockAppStateService.currentPortal$.publish({
       id: 'i-am-test-portal',
       portalName: 'test',
