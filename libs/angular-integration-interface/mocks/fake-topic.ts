@@ -34,6 +34,6 @@ export class FakeTopic<T> {
     if (this.state instanceof BehaviorSubject) {
       return this.state.getValue()
     }
-    throw new Error('Not a BehaviorSubject')
+    throw new Error('Only possible for FakeTopic with initial value')
   }
 }
