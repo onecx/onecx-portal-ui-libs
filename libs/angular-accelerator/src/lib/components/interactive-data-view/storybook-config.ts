@@ -3,8 +3,7 @@ import { InteractiveDataViewComponent } from './interactive-data-view.component'
 import { importProvidersFrom } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { MockUserService } from '@onecx/angular-integration-interface/mocks'
-import { UserService } from '@onecx/angular-integration-interface'
+import { provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { ActivatedRoute } from '@angular/router'
 import { SlotService } from '@onecx/angular-remote-components'
 import { of } from 'rxjs'
@@ -53,7 +52,7 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
       providers: [
         importProvidersFrom(BrowserModule),
         importProvidersFrom(BrowserAnimationsModule),
-        { provide: UserService, useClass: MockUserService },
+        provideUserServiceMock(),
         {
           provide: ActivatedRoute,
           useValue: {
