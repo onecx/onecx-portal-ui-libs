@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core'
 import { BehaviorSubject } from 'rxjs'
 import { Config } from '@onecx/integration-interface'
-import { AppConfigService } from '../src/lib/services/app-config-service'
+import { AppConfigService } from '@onecx/angular-integration-interface'
 
 export function provideAppConfigServiceMock() {
   return [AppConfigServiceMock, { provide: AppConfigService, useExisting: AppConfigServiceMock }]

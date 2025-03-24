@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
 import { FakeTopic } from './fake-topic'
-import { Message as PortalMessage, PortalMessageService } from '../src/lib/services/portal-message.service'
+import { Message as PortalMessage, PortalMessageService } from '@onecx/angular-integration-interface'
 import { Message } from '@onecx/integration-interface'
 
 export function providePortalMessageServiceMock() {

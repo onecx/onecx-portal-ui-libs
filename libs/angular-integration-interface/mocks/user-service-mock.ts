@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core'
 import { BehaviorSubject } from 'rxjs'
 import { UserProfile } from '@onecx/integration-interface'
-import { DEFAULT_LANG } from '../src/lib/api/constants'
 import { FakeTopic } from './fake-topic'
-import { UserService } from '../src/lib/services/user.service'
+import { UserService } from '@onecx/angular-integration-interface'
 
 export function provideUserServiceMock() {
   return [UserServiceMock, { provide: UserService, useExisting: UserServiceMock }]
@@ -13,7 +12,7 @@ export function provideUserServiceMock() {
 export class UserServiceMock {
   profile$ = new FakeTopic<UserProfile>()
   permissions$ = new BehaviorSubject<string[]>(['mocked-permission'])
-  lang$ = new BehaviorSubject(DEFAULT_LANG)
+  lang$ = new BehaviorSubject('en')
 
   hasPermission(permissionKey: string | string[]): boolean {
     if (Array.isArray(permissionKey)) {
