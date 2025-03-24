@@ -6,7 +6,7 @@ import { Injector } from '@angular/core'
 
 describe('hasPermissionCheckerFactory', () => {
   let injector: Injector
-  const mockUserService = {
+  const userServiceMock = {
     hasPermission: jest.fn(),
   }
 
@@ -19,7 +19,7 @@ describe('hasPermissionCheckerFactory', () => {
     beforeEach(() => {
       TestBed.configureTestingModule({
         providers: [
-          { provide: UserService, useValue: mockUserService },
+          { provide: UserService, useValue: userServiceMock },
           { provide: HAS_PERMISSION_CHECKER, useValue: customPermissionChecker },
         ],
       })
@@ -32,7 +32,7 @@ describe('hasPermissionCheckerFactory', () => {
 
     it('should return a UserService instance when hasPermissionChecker is not provided but UserService exists', () => {
       const result = hasPermissionCheckerFactory(injector, null)
-      expect(result).toBe(mockUserService)
+      expect(result).toBe(userServiceMock)
     })
   })
 
