@@ -4,8 +4,8 @@
     'layout-wrapper layout-topbar-var': themeService.currentTheme$ | async,
     'p-input-filled': inputStyle === 'filled', 
     'p-ripple-disabled': !ripple,
-    'layout-menu-active': isStaticalMenuVisible(),
-    'layout-menu-button-hidden': isHorizontalMenuMode()
+    'layout-menu-active': isStaticalMenuVisible() && (isVerticalMenuComponentDefined$ | async),
+    'layout-menu-button-hidden': isHorizontalMenuMode() || (isVerticalMenuComponentDefined$ | async) === false
   }"
   [class]="'layout-menu-' + this.colorScheme"
 >
