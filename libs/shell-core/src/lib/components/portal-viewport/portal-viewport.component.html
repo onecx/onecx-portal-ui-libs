@@ -15,7 +15,7 @@
       (menuButtonClick)="onMenuButtonClick($event)"
       [isHorizontalMenu]="isHorizontalMenuMode()"
     >
-      <div *ngIf="isHorizontalMenuVisible()">
+      <div [hidden]="!isHorizontalMenuVisible()">
         <ocx-slot name="onecx-shell-horizontal-menu">
           <ng-template #skeleton>
             <div class="ml-4 flex flex-row gap-4">
@@ -29,7 +29,7 @@
 
     <p-toast></p-toast>
 
-    <div *ngIf="isStaticalMenuVisible()" class="menu-wrapper">
+    <div [hidden]="!isStaticalMenuVisible()" class="menu-wrapper">
       <div class="layout-menu-container overflow-auto">
         <ocx-slot name="onecx-shell-vertical-menu">
           <ng-template #skeleton>
