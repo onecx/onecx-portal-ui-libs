@@ -10,8 +10,8 @@ import { ButtonModule } from 'primeng/button'
 import { UserService } from '@onecx/angular-integration-interface'
 import {
   AppStateServiceMock,
-  MockUserService,
   provideAppStateServiceMock,
+  provideUserServiceMock,
 } from '@onecx/angular-integration-interface/mocks'
 import { PageHeaderHarness, TestbedHarnessEnvironment } from '../../../../testing'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
@@ -68,7 +68,7 @@ describe('PageHeaderComponent', () => {
         NoopAnimationsModule,
       ],
       providers: [
-        { provide: UserService, useClass: MockUserService },
+        provideUserServiceMock(),
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         provideAppStateServiceMock(),
@@ -76,6 +76,8 @@ describe('PageHeaderComponent', () => {
     }).compileComponents()
 
     mockAppStateService = TestBed.inject(AppStateServiceMock)
+    const userService = TestBed.inject(UserService)
+    userService.permissions$.next(['TEST#TEST_PERMISSION'])
     mockAppStateService.currentWorkspace$.publish({
       id: 'i-am-test-portal',
       portalName: 'test',

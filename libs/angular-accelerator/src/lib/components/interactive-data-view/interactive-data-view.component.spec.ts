@@ -20,7 +20,7 @@ import {
   ListItemHarness,
 } from '@onecx/angular-testing'
 import { UserService } from '@onecx/angular-integration-interface'
-import { MockUserService, provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
+import { provideAppStateServiceMock, provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { InteractiveDataViewComponent } from './interactive-data-view.component'
 import { DataLayoutSelectionComponent } from '../data-layout-selection/data-layout-selection.component'
@@ -290,7 +290,7 @@ describe('InteractiveDataViewComponent', () => {
         }),
       ],
       providers: [
-        { provide: UserService, useClass: MockUserService },
+        provideUserServiceMock(),
         {
           provide: SlotService,
           useClass: SlotServiceMock,
@@ -304,6 +304,13 @@ describe('InteractiveDataViewComponent', () => {
 
     fixture = TestBed.createComponent(InteractiveDataViewComponent)
     component = fixture.componentInstance
+    const userService = TestBed.inject(UserService)
+    userService.permissions$.next([
+      'TEST_MGMT#TEST_View',
+      'TEST_MGMT#TEST_EDIT',
+      'TEST_MGMT#TEST_DELETE',
+      'PRODUCT#USE_SEARCHCONFIG',
+    ])
     component.viewPermission = 'TEST_MGMT#TEST_View'
     component.editPermission = 'TEST_MGMT#TEST_EDIT'
     component.deletePermission = 'TEST_MGMT#TEST_DELETE'
@@ -1915,6 +1922,8 @@ describe('InteractiveDataViewComponent', () => {
   })
   describe('Dynamically disable/hide based on field path in interactive data view', () => {
     const setUpMockData = async (viewType: 'grid' | 'list' | 'table') => {
+      const userService = TestBed.inject(UserService)
+      userService.permissions$.next(['VIEW', 'EDIT', 'DELETE'])
       component.viewItem.subscribe(() => console.log())
       component.editItem.subscribe(() => console.log())
       component.deleteItem.subscribe(() => console.log())

@@ -7,8 +7,7 @@ import { TranslateTestingModule } from 'ngx-translate-testing'
 import { DataViewModule } from 'primeng/dataview'
 
 import { DataListGridHarness, DataTableHarness, DataViewHarness } from '@onecx/angular-accelerator/testing'
-import { UserService } from '@onecx/angular-integration-interface'
-import { MockUserService, provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
+import { provideAppStateServiceMock, provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { DataViewComponent } from './data-view.component'
 import { MockAuthModule } from '../../mock-auth/mock-auth.module'
 import { DataListGridComponent } from '../data-list-grid/data-list-grid.component'
@@ -17,6 +16,7 @@ import { ColumnType } from '../../model/column-type.model'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { TooltipStyle } from 'primeng/tooltip'
+import { UserService } from '@onecx/angular-integration-interface'
 
 describe('DataViewComponent', () => {
   const mutationObserverMock = jest.fn(function MutationObserver(callback) {
@@ -214,7 +214,7 @@ describe('DataViewComponent', () => {
         NoopAnimationsModule,
       ],
       providers: [
-        { provide: UserService, useClass: MockUserService },
+        provideUserServiceMock(),
         {
           provide: ActivatedRoute,
           useValue: {
@@ -236,6 +236,8 @@ describe('DataViewComponent', () => {
     component = fixture.componentInstance
     component.data = mockData
     component.columns = mockColumns
+    const userService = TestBed.inject(UserService)
+    userService.permissions$.next(['VIEW', 'EDIT', 'DELETE'])
     fixture.detectChanges()
     dataViewHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataViewHarness)
   })

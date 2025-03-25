@@ -3,7 +3,7 @@ import { ConnectionService } from './connection.service'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { TranslateService } from '@ngx-translate/core'
 import { UserService } from '@onecx/angular-integration-interface'
-import { MockUserService } from '@onecx/angular-integration-interface/mocks'
+import { provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
 
 describe('ConnectionService', () => {
   let service: ConnectionService
@@ -11,7 +11,7 @@ describe('ConnectionService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [TranslateTestingModule.withTranslations('en', {})],
-      providers: [{ provide: UserService, useClass: MockUserService }],
+      providers: [provideUserServiceMock()],
     })
   })
 
