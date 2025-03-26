@@ -1,10 +1,10 @@
+import { formatDate } from '@angular/common'
 import {
   AfterContentInit,
   Component,
   ContentChild,
   ContentChildren,
   EventEmitter,
-  Inject,
   Injector,
   Input,
   LOCALE_ID,
@@ -13,6 +13,7 @@ import {
   QueryList,
   TemplateRef,
   ViewChildren,
+  inject,
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
@@ -20,6 +21,7 @@ import { isValidDate } from '@onecx/accelerator'
 import { UserService } from '@onecx/angular-integration-interface'
 import { MenuItem, PrimeTemplate, SelectItem } from 'primeng/api'
 import { Menu } from 'primeng/menu'
+import { MultiSelectItem } from 'primeng/multiselect'
 import {
   BehaviorSubject,
   Observable,
@@ -36,11 +38,10 @@ import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
-import { ObjectUtils } from '../../utils/objectutils'
-import { DataSortBase } from '../data-sort-base/data-sort-base'
-import { MultiSelectItem } from 'primeng/multiselect'
 import { Filter, FilterType } from '../../model/filter.model'
+import { ObjectUtils } from '../../utils/objectutils'
 import { findTemplate } from '../../utils/template.utils'
+import { DataSortBase } from '../data-sort-base/data-sort-base'
 
 export type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -70,11 +71,16 @@ export interface DataTableComponentState {
 }
 
 @Component({
+  standalone: false,
   selector: 'ocx-data-table',
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
 })
 export class DataTableComponent extends DataSortBase implements OnInit, AfterContentInit {
+  private router = inject(Router)
+  private injector = inject(Injector)
+  private userService = inject(UserService)
+
   FilterType = FilterType
   TemplateType = TemplateType
   checked = true
@@ -84,7 +90,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this._rows$.getValue()
   }
   set rows(value: Row[]) {
-    !this._rows$.getValue().length ?? this.resetPage()
+    !this._rows$.getValue().length
     this._rows$.next(value)
   }
   _selectionIds$ = new BehaviorSubject<(string | number)[]>([])
@@ -106,7 +112,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this._filters$.getValue()
   }
   set filters(value: Filter[]) {
-    !this._filters$.getValue().length ?? this.resetPage()
+    !this._filters$.getValue().length
     this._filters$.next(value)
   }
   _sortDirection$ = new BehaviorSubject<DataSortDirection>(DataSortDirection.NONE)
@@ -394,13 +400,10 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
   templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
 
-  constructor(
-    @Inject(LOCALE_ID) locale: string,
-    translateService: TranslateService,
-    private router: Router,
-    private injector: Injector,
-    private userService: UserService
-  ) {
+  constructor() {
+    const locale = inject(LOCALE_ID)
+    const translateService = inject(TranslateService)
+
     super(locale, translateService)
     this.name = this.name || this.router.url.replace(/[^A-Za-z0-9]/, '_')
     this.displayedPageSize$ = combineLatest([this._pageSize$, this._pageSizes$]).pipe(
@@ -480,6 +483,21 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
           .map((filter) => filter.value)
 
         const columnValues = rows.map((row) => row[currentFilterColumn?.id])
+
+        if (currentFilterColumn.columnType === ColumnType.DATE) {
+          return of({
+            options: columnValues.map(
+              (c) =>
+                ({
+                  label: c,
+                  value: c,
+                  toFilterBy: formatDate(`${c}`, currentFilterColumn.dateFormat ?? 'medium', this.locale),
+                }) as SelectItem
+            ),
+            column: currentFilterColumn,
+          })
+        }
+
         const translateObservable =
           this.columns.find((c) => c.id === currentFilterColumn?.id)?.columnType === ColumnType.TRANSLATION_KEY
             ? this.translateColumnValues(columnValues as string[])
@@ -494,6 +512,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
                   ({
                     label: filterOption,
                     value: filterOption,
+                    toFilterBy: filterOption
                   }) as SelectItem
               )
           }),

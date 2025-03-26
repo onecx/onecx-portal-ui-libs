@@ -1,14 +1,15 @@
 import { animate, state, style, transition, trigger } from '@angular/animations'
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
+import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
-import { map, Observable } from 'rxjs'
-import { MenuItem } from 'primeng/api'
 import { UserService } from '@onecx/angular-integration-interface'
-import { MenuService } from '../../../services/app.menu.service'
-import { UserProfile } from '../../../model/user-profile.model'
 import { EventsPublisher } from '@onecx/integration-interface'
+import { MenuItem } from 'primeng/api'
+import { Observable, map } from 'rxjs'
+import { UserProfile } from '../../../model/user-profile.model'
+import { MenuService } from '../../../services/app.menu.service'
 
 @Component({
+  standalone: false,
   selector: 'ocx-inline-profile',
   templateUrl: 'inline-profile.component.html',
   styleUrls: ['./inline-profile.component.scss'],
@@ -55,6 +56,9 @@ import { EventsPublisher } from '@onecx/integration-interface'
 })
 @UntilDestroy()
 export class AppInlineProfileComponent implements OnInit {
+  private menuService = inject(MenuService)
+  private userService = inject(UserService)
+
   userProfile$: Observable<UserProfile> | undefined
   activeInlineMenuElement: string | undefined
   userMenuItems: MenuItem[] = []
@@ -71,11 +75,6 @@ export class AppInlineProfileComponent implements OnInit {
 
   displayName$: Observable<string> | undefined
   eventsPublisher$: EventsPublisher = new EventsPublisher()
-
-  constructor(
-    private menuService: MenuService,
-    private userService: UserService
-  ) {}
 
   ngOnInit() {
     this.userProfile$ = this.userService.profile$.asObservable()

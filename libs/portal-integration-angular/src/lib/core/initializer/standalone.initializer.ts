@@ -5,15 +5,36 @@ import {
   ThemeService,
   UserService,
 } from '@onecx/angular-integration-interface'
-import { MfeInfo } from '@onecx/integration-interface'
-import { firstValueFrom } from 'rxjs'
+import { MfeInfo, Theme } from '@onecx/integration-interface'
+import { firstValueFrom, from, map, mergeMap } from 'rxjs'
 import { PortalApiService } from '../../services/portal-api.service'
 import { UserProfileAPIService } from '../../services/userprofile-api.service'
+import { HttpClient } from '@angular/common/http'
 
 const CONFIG_INIT_ERR = 'CONFIG_INIT_ERR'
 const USER_INIT_ERR = 'USER_INIT_ERR'
 const THEME_INIT_ERR = 'THEME_INIT_ERR'
 const PORTAL_LOAD_INIT_ERR = 'PORTAL_LOAD_INIT_ERR'
+
+async function apply(themeService: ThemeService, theme: Theme): Promise<void> {
+  console.log(`🎨 Applying theme: ${theme.name}`)
+  await themeService.currentTheme$.publish(theme)
+  if (theme.properties) {
+    Object.values(theme.properties).forEach((group) => {
+      for (const [key, value] of Object.entries(group)) {
+        document.documentElement.style.setProperty(`--${key}`, value)
+      }
+    })
+  }
+}
+
+function loadAndApplyTheme(themeService: ThemeService, http: HttpClient, themeName: string) {
+  return http.get<Theme>(`./portal-api/internal/themes/${encodeURI(themeName)}`).pipe(
+    mergeMap((theme) => {
+      return from(apply(themeService, theme)).pipe(map(() => theme))
+    })
+  )
+}
 
 /**
  * This initializer only runs in standalone mode of the apps and not in portal-mf-shell
@@ -25,7 +46,8 @@ export function standaloneInitializer(
   appName: string,
   appStateService: AppStateService,
   userService: UserService,
-  userProfileAPIService: UserProfileAPIService
+  userProfileAPIService: UserProfileAPIService,
+  http: HttpClient
 ): () => Promise<any> {
   // eslint-disable-next-line no-restricted-syntax
   console.time('initializer')
@@ -87,7 +109,7 @@ export function standaloneInitializer(
       } else {
         try {
           if (portal.themeName) {
-            theme = await firstValueFrom(themeService.loadAndApplyTheme(portal.themeName))
+            theme = await firstValueFrom(loadAndApplyTheme(themeService, http, portal.themeName))
           }
         } catch (e) {
           errCause = THEME_INIT_ERR

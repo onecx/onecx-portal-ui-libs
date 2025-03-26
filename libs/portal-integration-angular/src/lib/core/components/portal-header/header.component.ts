@@ -1,26 +1,27 @@
 import { animate, style, transition, trigger } from '@angular/animations'
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core'
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, inject } from '@angular/core'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
-import { combineLatest, filter, map, Observable } from 'rxjs'
-import { MenuItem, MenuItemCommandEvent } from 'primeng/api/menuitem'
 import { PrimeIcons } from 'primeng/api'
+import { MenuItem, MenuItemCommandEvent } from 'primeng/api/menuitem'
+import { Observable, combineLatest, filter, map } from 'rxjs'
 
 import {
   AppStateService,
-  UserService,
-  ThemeService,
-  ConfigurationService,
   CONFIG_KEY,
+  ConfigurationService,
+  ThemeService,
+  UserService,
 } from '@onecx/angular-integration-interface'
 
+import { EventsPublisher } from '@onecx/integration-interface'
+import { API_PREFIX } from '../../../api/constants'
 import { UserProfile } from '../../../model/user-profile.model'
 import { MenuService } from '../../../services/app.menu.service'
 import { ImageLogoUrlUtils } from '../../utils/image-logo-url.utils'
-import { EventsPublisher } from '@onecx/integration-interface'
-import { API_PREFIX } from '../../../api/constants'
 
 type MenuItemPerm = MenuItem & { permission: string }
 @Component({
+  standalone: false,
   selector: 'ocx-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
@@ -36,6 +37,12 @@ type MenuItemPerm = MenuItem & { permission: string }
 })
 @UntilDestroy()
 export class HeaderComponent implements OnInit {
+  private config = inject(ConfigurationService)
+  private menuService = inject(MenuService)
+  private themeService = inject(ThemeService)
+  private userService = inject(UserService)
+  private appStateService = inject(AppStateService)
+
   menuExpanded = false
   searchUrl: string | undefined
   favoritesDisabled = false
@@ -90,13 +97,7 @@ export class HeaderComponent implements OnInit {
   currentUser$: Observable<UserProfile>
   eventsPublisher$: EventsPublisher = new EventsPublisher()
 
-  constructor(
-    private config: ConfigurationService,
-    private menuService: MenuService,
-    private themeService: ThemeService,
-    private userService: UserService,
-    private appStateService: AppStateService
-  ) {
+  constructor() {
     this.currentUser$ = this.userService.profile$
       .pipe(untilDestroyed(this))
       .pipe(filter((x) => x !== undefined)) as Observable<UserProfile>

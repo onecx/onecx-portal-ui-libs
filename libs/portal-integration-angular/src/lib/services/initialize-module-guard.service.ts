@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core'
-import { TranslateService } from '@ngx-translate/core'
-import { AppStateService, ConfigurationService, UserService, InitializeModuleGuard as _InitializeModuleGuard } from '@onecx/angular-integration-interface'
+import { InitializeModuleGuard as _InitializeModuleGuard } from '@onecx/angular-integration-interface'
 /**
  * @deprecated
  * Please import from @onecx/angular-integration-interface, because in edge cases permission errors occur,
@@ -8,13 +7,4 @@ import { AppStateService, ConfigurationService, UserService, InitializeModuleGua
  */
 
 @Injectable({ providedIn: 'any' })
-export class InitializeModuleGuard extends _InitializeModuleGuard {
-  constructor(
-    translateService: TranslateService,
-    configService: ConfigurationService,
-    appStateService: AppStateService,
-    userService: UserService
-  ) {
-    super(translateService, configService, appStateService, userService)
-  }
-}
+export class InitializeModuleGuard extends _InitializeModuleGuard {}

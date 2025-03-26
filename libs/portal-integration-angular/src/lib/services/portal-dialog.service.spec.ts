@@ -1,15 +1,20 @@
-import { CommonModule } from '@angular/common'
-import { NoopAnimationsModule } from '@angular/platform-browser/animations'
-import { Component, EventEmitter, Input, Output } from '@angular/core'
-import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { HarnessLoader } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
+import { CommonModule } from '@angular/common'
+import { Component, EventEmitter, Input, Output, inject as inject_1 } from '@angular/core'
+import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog'
 import { ButtonModule } from 'primeng/button'
+import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog'
 import { Observable, of } from 'rxjs'
 
+import { DivHarness, InputHarness } from '@onecx/angular-testing'
+import { PrimeIcons } from 'primeng/api'
+import { DialogContentHarness, DialogFooterHarness } from '../../../testing/index'
 import { DialogMessageContentComponent } from '../core/components/button-dialog/dialog-message-content/dialog-message-content.component'
+import { DialogContentComponent } from '../core/components/dialog/dialog-content/dialog-content.component'
+import { DialogFooterComponent } from '../core/components/dialog/dialog-footer/dialog-footer.component'
 import {
   DialogButtonClicked,
   DialogPrimaryButtonDisabled,
@@ -18,20 +23,17 @@ import {
   DialogState,
   PortalDialogService,
 } from './portal-dialog.service'
-import { DivHarness, InputHarness } from '@onecx/angular-testing'
-import { DialogContentHarness, DialogFooterHarness } from '../../../testing/index'
-import { PrimeIcons } from 'primeng/api'
-import { DialogContentComponent } from '../core/components/dialog/dialog-content/dialog-content.component'
-import { DialogFooterComponent } from '../core/components/dialog/dialog-footer/dialog-footer.component'
 
 @Component({
+  standalone: false,
   template: `<h1>BaseTestComponent</h1>`,
 })
 class BaseTestComponent {
+  portalDialogService = inject_1(PortalDialogService)
+
   resultFromShow: DialogState<any> | undefined = undefined
   nameResult: string | undefined
   surnameResult: string | undefined
-  constructor(public portalDialogService: PortalDialogService) {}
 
   show(title: any, message: any, button1: any, button2?: any, showXButton: any = true) {
     this.portalDialogService.openDialog(title, message, button1, button2, showXButton).subscribe({
@@ -60,6 +62,7 @@ class BaseTestComponent {
 }
 
 @Component({
+  standalone: false,
   template: `<div class="testHeader">{{ header }}</div>`,
 })
 class TestWithInputsComponent {
@@ -67,23 +70,25 @@ class TestWithInputsComponent {
 }
 
 @Component({
+  standalone: false,
   template: `<h1>DialogResultTestComponent</h1>`,
 })
 class DialogResultTestComponent implements DialogResult<string> {
-  @Input() dialogResult = ''
+  portalDialogService = inject_1(PortalDialogService)
 
-  constructor(public portalDialogService: PortalDialogService) {}
+  @Input() dialogResult = ''
 }
 
 @Component({
+  standalone: false,
   template: `<h1>DialogButtonClickedWithResultComponent</h1>`,
 })
 class DialogButtonClickedWithResultComponent implements DialogResult<number>, DialogButtonClicked {
+  portalDialogService = inject_1(PortalDialogService)
+
   @Input() dialogResult = 13
   @Input() returnType: 'boolean' | 'observable' | 'promise' | 'undefined' = 'boolean'
   @Input() expectedDialogResult = 25
-
-  constructor(public portalDialogService: PortalDialogService) {}
 
   ocxDialogButtonClicked(state: DialogState<number>): boolean | Observable<boolean> | Promise<boolean> | undefined {
     if (this.returnType === 'boolean') {
@@ -111,6 +116,7 @@ class DialogButtonClickedWithResultComponent implements DialogResult<number>, Di
 }
 
 @Component({
+  standalone: false,
   template: `<h1>DialogPrimaryButtonDisabledComponent</h1>`,
 })
 class DialogPrimaryButtonDisabledComponent implements DialogPrimaryButtonDisabled {
@@ -119,6 +125,7 @@ class DialogPrimaryButtonDisabledComponent implements DialogPrimaryButtonDisable
 }
 
 @Component({
+  standalone: false,
   template: `<h1>DialogSecondaryButtonDisabledComponent</h1>`,
 })
 class DialogSecondaryButtonDisabledComponent implements DialogSecondaryButtonDisabled {
@@ -132,14 +139,19 @@ interface NameAndSurnameObject {
 }
 
 @Component({
+  standalone: false,
   template: `<div>
     <h1>CompleteDialogComponent</h1>
-    <div class="nameError" *ngIf="!isNameValid">Name is not correct</div>
+    @if (!isNameValid) {
+      <div class="nameError">Name is not correct</div>
+    }
     <label for="name">Name:</label>
     <input id="name" type="text" (change)="onNameChange($event)" />
     <label for="surname">Surname:</label>
     <input id="surname" type="text" (change)="onSurnameChange($event)" />
-    <div class="message" *ngIf="message !== undefined">{{ message }}</div>
+    @if (message !== undefined) {
+      <div class="message">{{ message }}</div>
+    }
   </div>`,
 })
 export class CompleteDialogComponent
@@ -218,6 +230,9 @@ describe('PortalDialogService', () => {
     BUTTON: 'myButton',
     BUTTON_PARAM: 'myButton {{val}}',
   }
+
+  const removeChildSpy = jest.fn()
+  Object.defineProperty(global.document.body, 'removeChild', { value: removeChildSpy })
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -797,5 +812,26 @@ describe('PortalDialogService', () => {
     })
     expect(fixture.componentInstance.nameResult).toBe('Submitted John')
     expect(fixture.componentInstance.surnameResult).toBe('Submitted Doe')
+  })
+
+  it('should close dialog and remove it from html on destroy', async () => {
+    jest.spyOn(pDialogService, 'open')
+
+    fixture.componentInstance.show(
+      'title',
+      { key: 'MESSAGE_PARAM', parameters: { val: 'myMsgParam' } },
+      'button1',
+      'button2'
+    )
+
+    const dialogRefSpy = jest.spyOn((fixture.componentInstance.portalDialogService as any).dialogRef, 'close')
+
+    const dialogElement = (fixture.componentInstance.portalDialogService as any).dialogComponent.el.nativeElement
+
+    fixture.detectChanges()
+
+    fixture.componentInstance.portalDialogService.ngOnDestroy()
+    expect(dialogRefSpy).toHaveBeenCalledTimes(1)
+    expect(removeChildSpy).toHaveBeenCalledWith(dialogElement)
   })
 })

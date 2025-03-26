@@ -1,20 +1,24 @@
-import { Component, Input } from '@angular/core'
+import { Component, Input, inject } from '@angular/core'
 import { PortalUIService } from '../../../services/portal-ui.service'
 
 @Component({
+  standalone: false,
   selector: 'ocx-paging-info',
   template: `
-    <span *ngIf="resultsCount > 0 && state.totalRecords > 0; else noResults">
-      {{ textShowing }} {{ state.first + 1 }} -
-      {{ state.rows * (state.page + 1) < state.totalRecords ? state.rows * (state.page + 1) : state.totalRecords }}
-      {{ textOf }} {{ state.totalRecords }}
-    </span>
-    <ng-template #noResults>
+    @if (resultsCount > 0 && state.totalRecords > 0) {
+      <span>
+        {{ textShowing }} {{ state.first + 1 }} -
+        {{ state.rows * (state.page + 1) < state.totalRecords ? state.rows * (state.page + 1) : state.totalRecords }}
+        {{ textOf }} {{ state.totalRecords }}
+      </span>
+    } @else {
       {{ textNoResults }}
-    </ng-template>
+    }
   `,
 })
 export class PagingInfoComponent {
+  private api = inject(PortalUIService)
+
   @Input() resultsCount = 0
   @Input() state!: CustomTableState
 
@@ -24,7 +28,7 @@ export class PagingInfoComponent {
   textOf?: string
   textNoResults?: string
 
-  constructor(private api: PortalUIService) {
+  constructor() {
     this.textShowing = this.api.getTranslation('pagingShowing')
     this.textRows = this.api.getTranslation('pagingRows')
     this.textTotal = this.api.getTranslation('pagingTotal')

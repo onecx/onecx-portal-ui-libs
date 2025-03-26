@@ -1,14 +1,14 @@
-import { Component, EventEmitter, Input, OnInit, OnChanges, Output, ViewChild, ElementRef } from '@angular/core'
-import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
+import { PrimeIcon } from '@onecx/angular-accelerator'
+import { PrimeIcons } from 'primeng/api'
+import { DropdownChangeEvent } from 'primeng/dropdown'
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { ToggleButtonChangeEvent } from 'primeng/togglebutton'
 import { Column } from '../../../model/column'
 import { ColumnViewTemplate } from '../../../model/column-view-template'
 import { ColumnTogglerComponent } from './column-toggler-component/column-toggler.component'
 import { ViewTemplatePickerComponent } from './view-template-picker/view-template-picker.component'
-import { PrimeIcons } from 'primeng/api'
-import { PrimeIcon } from '@onecx/angular-accelerator'
-import { DropdownChangeEvent } from 'primeng/dropdown'
-import { ToggleButtonChangeEvent } from 'primeng/togglebutton'
 
 interface ViewingModes {
   icon: PrimeIcon
@@ -121,12 +121,16 @@ export interface DataViewControlTranslations {
  * @deprecated Will be split up in separate compoments for better abstraction layers
  */
 @Component({
+  standalone: false,
   selector: 'ocx-data-view-controls',
   templateUrl: './data-view-controls.component.html',
   styleUrls: ['./data-view-controls.component.scss'],
   providers: [DialogService],
 })
 export class DataViewControlsComponent implements OnInit, OnChanges {
+  private dialogService = inject(DialogService)
+  private translate = inject(TranslateService)
+
   @Input() supportedViews: Array<string> = []
   @Input() initialViewMode: string | undefined
   @Input() filterValue: string | undefined
@@ -173,11 +177,6 @@ export class DataViewControlsComponent implements OnInit, OnChanges {
     disabled: [],
   }
 
-  constructor(
-    private dialogService: DialogService,
-    private translate: TranslateService
-  ) {}
-
   ngOnInit(): void {
     this.defaultCols = this.generateDefaultColumnDefinitions(this.columnDefinitions)
     this.viewingModes = ALL_VIEW_MODES.filter((vm) => this.supportedViews.includes(vm.mode))
@@ -215,8 +214,7 @@ export class DataViewControlsComponent implements OnInit, OnChanges {
         saveButtonLabel: this.translations?.columnDialogSaveButtonLabel,
       },
       header:
-        this.translations?.columnDialogHeaderText ||
-        this.translate.instant('OCX_DATA_VIEW_CONTROLS.DIALOG_TITLE'),
+        this.translations?.columnDialogHeaderText || this.translate.instant('OCX_DATA_VIEW_CONTROLS.DIALOG_TITLE'),
       width: '70%',
       contentStyle: { 'max-height': '500px', overflow: 'auto', padding: 0 },
     })

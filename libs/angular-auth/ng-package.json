@@ -6,6 +6,7 @@
   },
   "assets": [
     "CHANGELOG.md",
-    "./assets/**"
+    "./assets/**",
+    "./migrations.json"
   ]
 }

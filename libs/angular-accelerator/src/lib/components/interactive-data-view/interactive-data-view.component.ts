@@ -10,7 +10,10 @@ import {
   QueryList,
   TemplateRef,
   ViewChild,
+  inject,
 } from '@angular/core'
+import { SlotService } from '@onecx/angular-remote-components'
+import { PrimeTemplate } from 'primeng/api'
 import {
   BehaviorSubject,
   Observable,
@@ -25,24 +28,22 @@ import {
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
+import { Filter } from '../../model/filter.model'
+import { limit } from '../../utils/filter.utils'
 import { orderAndMergeValuesByTimestamp } from '../../utils/rxjs-utils'
 import {
   ColumnGroupSelectionComponentState,
   GroupSelectionChangedEvent,
 } from '../column-group-selection/column-group-selection.component'
-import { PrimeTemplate } from 'primeng/api'
 import {
   ActionColumnChangedEvent,
   ColumnSelectionChangedEvent,
   CustomGroupColumnSelectorComponentState,
 } from '../custom-group-column-selector/custom-group-column-selector.component'
-import { SlotService } from '@onecx/angular-remote-components'
 import { DataLayoutSelectionComponentState } from '../data-layout-selection/data-layout-selection.component'
 import { DataListGridSortingComponentState } from '../data-list-grid-sorting/data-list-grid-sorting.component'
 import { Row, Sort } from '../data-table/data-table.component'
 import { DataViewComponent, DataViewComponentState, RowListGridData } from '../data-view/data-view.component'
-import { Filter } from '../../model/filter.model'
-import { limit } from '../../utils/filter.utils'
 import { FilterViewComponentState, FilterViewDisplayMode } from '../filter-view/filter-view.component'
 
 export type InteractiveDataViewComponentState = ColumnGroupSelectionComponentState &
@@ -57,12 +58,15 @@ export interface ColumnGroupData {
   groupKey: string
 }
 @Component({
+  standalone: false,
   selector: 'ocx-interactive-data-view',
   templateUrl: './interactive-data-view.component.html',
   styleUrls: ['./interactive-data-view.component.css'],
   providers: [{ provide: 'InteractiveDataViewComponent', useExisting: InteractiveDataViewComponent }],
 })
 export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
+  private slotService = inject(SlotService)
+
   _dataViewComponent: DataViewComponent | undefined
   @ViewChild(DataViewComponent) set dataView(ref: DataViewComponent | undefined) {
     this._dataViewComponent = ref
@@ -158,6 +162,8 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   }
   @Input() frozenActionColumn = false
   @Input() actionColumnPosition: 'left' | 'right' = 'right'
+  @Input() headerStyleClass: string | undefined
+  @Input() contentStyleClass: string | undefined
   @ContentChild('tableCell') tableCell: TemplateRef<any> | undefined
   /**
    * @deprecated Will be replaced by dateTableCell
@@ -358,7 +364,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   isColumnGroupSelectionComponentDefined$: Observable<boolean>
   groupSelectionChangedSlotEmitter = new EventEmitter<ColumnGroupData | undefined>()
 
-  constructor(private slotService: SlotService) {
+  constructor() {
     this.isColumnGroupSelectionComponentDefined$ = this.slotService
       .isSomeComponentDefinedForSlot(this.columnGroupSlotName)
       .pipe(startWith(true))

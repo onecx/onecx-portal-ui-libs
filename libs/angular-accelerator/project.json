@@ -19,9 +19,23 @@
         "parallel": false
       }
     },
+    "build-migrations": {
+      "dependsOn": [
+        "build"
+      ],
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "tsc -p libs/angular-accelerator/migrations/tsconfig.migrations.json"
+        ]
+      }
+    },
     "build": {
       "executor": "@nx/angular:package",
-      "dependsOn": ["^build", "copyPrimelocaleTranslations"],
+      "dependsOn": [
+        "^build",
+        "copyPrimelocaleTranslations"
+      ],
       "outputs": [
         "{workspaceRoot}/dist/{projectRoot}"
       ],
@@ -55,7 +69,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": [
         "{options.outputFile}"
       ],
@@ -81,7 +95,6 @@
         "browserTarget": "angular-accelerator:build-storybook",
         "compodoc": false,
         "styles": [
-          "node_modules/primeng/resources/primeng.min.css",
           "node_modules/primeicons/primeicons.css",
           "libs/angular-accelerator/assets/styles.scss",
           "libs/angular-accelerator/.storybook/storybook.css"
@@ -104,7 +117,6 @@
         "browserTarget": "angular-accelerator:build-storybook",
         "compodoc": false,
         "styles": [
-          "node_modules/primeng/resources/primeng.min.css",
           "node_modules/primeicons/primeicons.css",
           "libs/angular-accelerator/assets/styles.scss",
           "libs/angular-accelerator/.storybook/storybook.css"

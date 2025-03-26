@@ -1,12 +1,18 @@
 import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common'
-import { Inject, Injector, LOCALE_ID, Pipe, PipeTransform, Type } from '@angular/core'
+import { Injector, LOCALE_ID, Pipe, PipeTransform, Type, inject } from '@angular/core'
 
 @Pipe({
   name: 'dynamicPipe',
+  standalone: false,
 })
 export class DynamicPipe implements PipeTransform {
+  private injector = inject(Injector)
+
   knownPipes: { [name: string]: PipeTransform } = {}
-  public constructor(@Inject(LOCALE_ID) locale: string, private injector: Injector) {
+
+  public constructor() {
+    const locale = inject(LOCALE_ID)
+
     this.knownPipes = {
       currency: new CurrencyPipe(locale),
       decimal: new DecimalPipe(locale),

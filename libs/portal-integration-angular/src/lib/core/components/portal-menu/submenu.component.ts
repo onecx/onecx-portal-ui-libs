@@ -1,5 +1,5 @@
 import { animate, state, style, transition, trigger } from '@angular/animations'
-import { Component, Input, OnInit } from '@angular/core'
+import { Component, Input, OnInit, inject } from '@angular/core'
 import { DomSanitizer } from '@angular/platform-browser'
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
@@ -8,6 +8,7 @@ import { filter } from 'rxjs'
 import { PortalUIService } from '../../../services/portal-ui.service'
 
 @Component({
+  standalone: false,
   selector: 'ocx-submenu',
   templateUrl: './submenu.component.html',
   styleUrls: ['./submenu.component.scss'],
@@ -54,6 +55,11 @@ import { PortalUIService } from '../../../services/portal-ui.service'
 })
 @UntilDestroy()
 export class SubMenuComponent implements OnInit {
+  router = inject(Router)
+  private activeRoute = inject(ActivatedRoute)
+  uiConfig = inject(PortalUIService)
+  private sanitizer = inject(DomSanitizer)
+
   @Input() item!: MenuItem
 
   @Input() index!: number
@@ -72,12 +78,7 @@ export class SubMenuComponent implements OnInit {
   // isParent: boolean | undefined
   type: 'parent' | 'routerLink' | 'href' | 'command' | 'label' = 'label'
 
-  constructor(
-    public router: Router,
-    private activeRoute: ActivatedRoute,
-    public uiConfig: PortalUIService,
-    private sanitizer: DomSanitizer
-  ) {
+  constructor() {
     this.router.events
       .pipe(untilDestroyed(this))
       .pipe(filter((event) => event instanceof NavigationEnd))

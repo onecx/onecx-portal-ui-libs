@@ -1,59 +1,60 @@
-<div
-  *ngIf="!globalErrMsg; else globalError"
-  class="layout-wrapper"
+@if (!globalErrMsg) {
+  <div
+    class="layout-wrapper"
   [ngClass]="{
     'p-input-filled': inputStyle === 'filled', 
     'p-ripple-disabled': !ripple,
     'layout-menu-active': isStaticalMenuVisible(),
     'layout-menu-button-hidden': isHorizontalMenuMode()
   }"
-  [class]="'layout-menu-' + colorScheme + ' layout-topbar-' + topbarTheme"
->
-  <ocx-header
-    [menuButtonTitle]="menuButtonTitle"
-    [activeTopbarItem]="activeTopbarItem"
-    [disableBreadcrumbs]="!enableBreadcrumbs"
-    [homeNavTitle]="(portalHomeMenuItem$ | async)?.label!"
-    [homeNavUrl]="(portalHomeMenuItem$ | async)?.url!"
-    [fullPortalLayout]="fullPortalLayout"
-    (menuButtonClick)="onMenuButtonClick($event)"
-    (topbarItemClick)="onTopbarItemClick($event.event, $event.arg)"
-    (openSupportTicket)="onSupportTicketClick()"
-    (openHelpPage)="openHelpPage($event)"
-    (openHelpPageEditor)="openHelpPageEditor()"
-  >
-    <ocx-portal-menu-horizontal *ngIf="isHorizontalMenuVisible()"></ocx-portal-menu-horizontal>
-  </ocx-header>
-
-  <p-toast></p-toast>
-
-  <div class="menu-wrapper">
-    <div class="layout-menu-container" *ngIf="isStaticalMenuVisible()">
-      <ocx-inline-profile
-        *ngIf="showProfileInSidebar"
-        [inlineMenuActive]="inlineProfileActive"
-        (inlineMenuClick)="onInlineProfileClick($event)"
-      ></ocx-inline-profile>
-      <ocx-portal-menu></ocx-portal-menu>
+    [class]="'layout-menu-' + colorScheme + ' layout-topbar-' + topbarTheme"
+    >
+    <ocx-header
+      [menuButtonTitle]="menuButtonTitle"
+      [activeTopbarItem]="activeTopbarItem"
+      [disableBreadcrumbs]="!enableBreadcrumbs"
+      [homeNavTitle]="(portalHomeMenuItem$ | async)?.label!"
+      [homeNavUrl]="(portalHomeMenuItem$ | async)?.url!"
+      [fullPortalLayout]="fullPortalLayout"
+      (menuButtonClick)="onMenuButtonClick($event)"
+      (topbarItemClick)="onTopbarItemClick($event.event, $event.arg)"
+      (openSupportTicket)="onSupportTicketClick()"
+      (openHelpPage)="openHelpPage($event)"
+      (openHelpPageEditor)="openHelpPageEditor()"
+      >
+      @if (isHorizontalMenuVisible()) {
+        <ocx-portal-menu-horizontal></ocx-portal-menu-horizontal>
+      }
+    </ocx-header>
+    <p-toast></p-toast>
+    <div class="menu-wrapper">
+      @if (isStaticalMenuVisible()) {
+        <div class="layout-menu-container">
+          @if (showProfileInSidebar) {
+            <ocx-inline-profile
+              [inlineMenuActive]="inlineProfileActive"
+              (inlineMenuClick)="onInlineProfileClick($event)"
+            ></ocx-inline-profile>
+          }
+          <ocx-portal-menu></ocx-portal-menu>
+        </div>
+      }
     </div>
-  </div>
-
-  <div class="layout-main">
-    <div class="layout-content relative">
-      <ocx-announcement-banner></ocx-announcement-banner>
-
-      <ng-content></ng-content>
-      <router-outlet></router-outlet>
+    <div class="layout-main">
+      <div class="layout-content relative">
+        <ocx-announcement-banner></ocx-announcement-banner>
+        <ng-content></ng-content>
+        <router-outlet></router-outlet>
+      </div>
+      <ocx-footer></ocx-footer>
     </div>
-
-    <ocx-footer></ocx-footer>
+    @if (menuActive || !!activeTopbarItem) {
+      <div class="layout-mask modal-in"></div>
+    }
   </div>
-
-  <div *ngIf="menuActive || !!activeTopbarItem" class="layout-mask modal-in"></div>
-</div>
-<ng-template #globalError>
+} @else {
   <ocx-error [errCode]="globalErrMsg"></ocx-error>
-</ng-template>
+}
 <ocx-support-ticket
   [(displayDialog)]="supportTicketDisplayed"
   (submitTicket)="onSubmitTicket($event)"

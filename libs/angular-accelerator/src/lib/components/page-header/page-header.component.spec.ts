@@ -10,8 +10,8 @@ import { ButtonModule } from 'primeng/button'
 import { UserService } from '@onecx/angular-integration-interface'
 import {
   AppStateServiceMock,
-  MockUserService,
   provideAppStateServiceMock,
+  provideUserServiceMock,
 } from '@onecx/angular-integration-interface/mocks'
 import { PageHeaderHarness, TestbedHarnessEnvironment } from '../../../../testing'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
@@ -68,7 +68,7 @@ describe('PageHeaderComponent', () => {
         NoopAnimationsModule,
       ],
       providers: [
-        { provide: UserService, useClass: MockUserService },
+        provideUserServiceMock(),
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         provideAppStateServiceMock(),
@@ -76,6 +76,8 @@ describe('PageHeaderComponent', () => {
     }).compileComponents()
 
     mockAppStateService = TestBed.inject(AppStateServiceMock)
+    const userService = TestBed.inject(UserService)
+    userService.permissions$.next(['TEST#TEST_PERMISSION'])
     mockAppStateService.currentWorkspace$.publish({
       id: 'i-am-test-portal',
       portalName: 'test',
@@ -130,6 +132,35 @@ describe('PageHeaderComponent', () => {
     expect(await pageHeaderHarness.getOverFlowMenuItems()).toHaveLength(0)
     expect(await pageHeaderHarness.getElementByAriaLabel('More actions')).toBeFalsy()
     expect(userServiceSpy).toHaveBeenCalledTimes(3)
+  })
+
+  it('should render inline actions buttons with icons', async () => {
+    component.actions = [
+      {
+        label: 'Action with left icon',
+        show: 'always',
+        actionCallback: () => {
+          console.log('My Test Action')
+        },
+        permission: 'TEST#TEST_PERMISSION',
+        icon: PrimeIcons.LOCK,
+      },
+      {
+        label: 'Action with right icon',
+        show: 'always',
+        actionCallback: () => {
+          console.log('My Test Action')
+        },
+        permission: 'TEST#TEST_PERMISSION',
+        icon: PrimeIcons.LOCK,
+        iconPos: 'right',
+      },
+    ]
+
+    const inlineButtons = await pageHeaderHarness.getInlineActionButtons()
+    expect(inlineButtons).toHaveLength(2)
+    expect(await (await inlineButtons[0].getIconSpan())?.checkHasClass('p-button-icon-left')).toBeTruthy()
+    expect(await (await inlineButtons[1].getIconSpan())?.checkHasClass('p-button-icon-right')).toBeTruthy()
   })
 
   it('should render objectDetails as object info in the page header', async () => {

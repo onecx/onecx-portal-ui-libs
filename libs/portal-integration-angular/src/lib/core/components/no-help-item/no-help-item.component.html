@@ -1,9 +1,11 @@
 <div>
   <div class="dialog-content">
     <span>No help items were found for this page. Please ask your system administrator to add it.</span>
-    <div *ngIf="helpArticleId">
-      <span> The help Item ID for this page is:</span>
-      <span class="code p-my-2">{{ helpArticleId }}</span>
-    </div>
+    @if (helpArticleId) {
+      <div>
+        <span> The help Item ID for this page is:</span>
+        <span class="code p-my-2">{{ helpArticleId }}</span>
+      </div>
+    }
   </div>
 </div>

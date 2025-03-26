@@ -3,28 +3,30 @@ import {
   ComponentRef,
   ContentChild,
   EventEmitter,
-  Inject,
   Input,
   OnDestroy,
   OnInit,
-  Optional,
   QueryList,
   TemplateRef,
   Type,
   ViewChildren,
   ViewContainerRef,
+  inject,
 } from '@angular/core'
-import { BehaviorSubject, Subscription, Observable, combineLatest } from 'rxjs'
-import { RemoteComponentInfo, SLOT_SERVICE, SlotComponentConfiguration, SlotService } from '../../services/slot.service'
-import { ocxRemoteComponent } from '../../model/remote-component'
 import { Technologies } from '@onecx/integration-interface'
+import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs'
+import { ocxRemoteComponent } from '../../model/remote-component'
 import { RemoteComponentConfig } from '../../model/remote-component-config.model'
+import { RemoteComponentInfo, SLOT_SERVICE, SlotComponentConfiguration, SlotService } from '../../services/slot.service'
 
 @Component({
+  standalone: false,
   selector: 'ocx-slot[name]',
   templateUrl: './slot.component.html',
 })
 export class SlotComponent implements OnInit, OnDestroy {
+  private slotService = inject<SlotService>(SLOT_SERVICE, { optional: true })
+
   @Input()
   name!: string
 
@@ -73,7 +75,7 @@ export class SlotComponent implements OnInit, OnDestroy {
    * ## Component with slot in a template
    * ```
    * ⁣@Component({
-   *  selector: 'my-component',
+standalone: false,   *  selector: 'my-component',
    *  templateUrl: './my-component.component.html',
    * })
    * export class MyComponent {
@@ -130,8 +132,6 @@ export class SlotComponent implements OnInit, OnDestroy {
   subscription: Subscription | undefined
   components$: Observable<SlotComponentConfiguration[]> | undefined
 
-  constructor(@Optional() @Inject(SLOT_SERVICE) private slotService?: SlotService) {}
-
   ngOnInit(): void {
     if (!this.slotService) {
       console.error(`SLOT_SERVICE token was not provided. ${this.name} slot will not be filled with data.`)
@@ -176,6 +176,9 @@ export class SlotComponent implements OnInit, OnDestroy {
     viewContainer?.element.nativeElement.replaceChildren()
     if (componentType) {
       const componentRef = viewContainer?.createComponent<any>(componentType)
+      const componentHTML = componentRef?.location.nativeElement as HTMLElement
+      this.addDataStyleId(componentHTML, componentInfo.remoteComponent)
+      this.addDataStyleIsolation(componentHTML)
       if (componentRef && 'ocxInitRemoteComponent' in componentRef.instance) {
         ;(componentRef.instance as ocxRemoteComponent).ocxInitRemoteComponent({
           appId: componentInfo.remoteComponent.appId,
@@ -192,6 +195,8 @@ export class SlotComponent implements OnInit, OnDestroy {
     ) {
       if (componentInfo.remoteComponent.elementName) {
         const element = document.createElement(componentInfo.remoteComponent.elementName)
+        this.addDataStyleId(element, componentInfo.remoteComponent)
+        this.addDataStyleIsolation(element)
         ;(element as any)['ocxRemoteComponentConfig'] = {
           appId: componentInfo.remoteComponent.appId,
           productName: componentInfo.remoteComponent.productName,
@@ -204,6 +209,14 @@ export class SlotComponent implements OnInit, OnDestroy {
     }
 
     return
+  }
+
+  private addDataStyleId(element: HTMLElement, rcInfo: RemoteComponentInfo) {
+    element.dataset['styleId'] = `${rcInfo.productName}|${rcInfo.appId}`
+  }
+
+  private addDataStyleIsolation(element: HTMLElement) {
+    element.dataset['styleIsolation'] = ''
   }
 
   private updateComponentData(

@@ -12,32 +12,36 @@ import {
   QueryList,
   TemplateRef,
   ViewChild,
+  inject,
 } from '@angular/core'
+import { PrimeTemplate } from 'primeng/api'
+import { BehaviorSubject, Observable, ReplaySubject, combineLatest, map, startWith, timestamp } from 'rxjs'
+import { DataAction } from '../../model/data-action'
+import { DataSortDirection } from '../../model/data-sort-direction'
+import { DataTableColumn } from '../../model/data-table-column.model'
+import { Filter } from '../../model/filter.model'
+import { orderAndMergeValuesByTimestamp } from '../../utils/rxjs-utils'
 import {
   DataListGridComponent,
   DataListGridComponentState,
   ListGridData,
 } from '../data-list-grid/data-list-grid.component'
-import { Row, Sort, DataTableComponent, DataTableComponentState } from '../data-table/data-table.component'
-import { DataTableColumn } from '../../model/data-table-column.model'
-import { DataSortDirection } from '../../model/data-sort-direction'
-import { DataAction } from '../../model/data-action'
-import { BehaviorSubject, ReplaySubject, timestamp, combineLatest, map, Observable, startWith } from 'rxjs'
-import { orderAndMergeValuesByTimestamp } from '../../utils/rxjs-utils'
-import { PrimeTemplate } from 'primeng/api'
-import { Filter } from '../../model/filter.model'
+import { DataTableComponent, DataTableComponentState, Row, Sort } from '../data-table/data-table.component'
 
 export type RowListGridData = ListGridData & Row
 
 export type DataViewComponentState = DataListGridComponentState & DataTableComponentState
 
 @Component({
+  standalone: false,
   selector: 'ocx-data-view',
   templateUrl: './data-view.component.html',
   styleUrls: ['./data-view.component.css'],
   providers: [{ provide: 'DataViewComponent', useExisting: DataViewComponent }],
 })
 export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
+  private injector = inject(Injector)
+
   _dataListGridComponent: DataListGridComponent | undefined
   @ViewChild(DataListGridComponent) set listGrid(ref: DataListGridComponent | undefined) {
     this._dataListGridComponent = ref
@@ -385,8 +389,6 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
       this.selectionChanged.observed
     )
   }
-
-  constructor(private injector: Injector) {}
 
   ngOnInit(): void {
     this.firstColumnId = this.columns[0]?.id

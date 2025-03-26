@@ -1,3 +1,33 @@
+## [6.0.0-rc.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.4...v6.0.0-rc.5) (2025-03-18)
+
+### Features
+
+* theme override functionality ([#684](https://github.com/onecx/onecx-portal-ui-libs/issues/684)) ([f02b8ea](https://github.com/onecx/onecx-portal-ui-libs/commit/f02b8eab464f9e785f2cea9129ad99685ccfc0bf))
+
+## [6.0.0-rc.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.3...v6.0.0-rc.4) (2025-03-13)
+
+### Features
+
+* connection service ([#641](https://github.com/onecx/onecx-portal-ui-libs/issues/641)) ([60d9de7](https://github.com/onecx/onecx-portal-ui-libs/commit/60d9de71e47575b4451c2d66c39cf3c0619eb45c))
+* current workspace moved to topic from synced topic ([#642](https://github.com/onecx/onecx-portal-ui-libs/issues/642)) ([8d99688](https://github.com/onecx/onecx-portal-ui-libs/commit/8d996888499f930a86cc64ea2119eeb87ec05e40))
+* filter strategy ([#640](https://github.com/onecx/onecx-portal-ui-libs/issues/640)) ([85fd00c](https://github.com/onecx/onecx-portal-ui-libs/commit/85fd00cee3bbcdffdab408d7203a095946cf5e65))
+* merge main to develop ([#654](https://github.com/onecx/onecx-portal-ui-libs/issues/654)) ([16cc51b](https://github.com/onecx/onecx-portal-ui-libs/commit/16cc51b93757922cd71b93fa80be52277d698123)), closes [#643](https://github.com/onecx/onecx-portal-ui-libs/issues/643) [#614](https://github.com/onecx/onecx-portal-ui-libs/issues/614) [#636](https://github.com/onecx/onecx-portal-ui-libs/issues/636) [#618](https://github.com/onecx/onecx-portal-ui-libs/issues/618)
+* new primeng theming ([#659](https://github.com/onecx/onecx-portal-ui-libs/issues/659)) ([4744037](https://github.com/onecx/onecx-portal-ui-libs/commit/47440376a28d4ccb116fc8c546086a1820dbe8f4)), closes [#9](https://github.com/onecx/onecx-portal-ui-libs/issues/9)
+* ocxTemplate directive ([#639](https://github.com/onecx/onecx-portal-ui-libs/issues/639)) ([766f270](https://github.com/onecx/onecx-portal-ui-libs/commit/766f27009fc85134f53412448ed8e9a368ee4bcd))
+* primeng and angular 19 ([#660](https://github.com/onecx/onecx-portal-ui-libs/issues/660)) ([434dc80](https://github.com/onecx/onecx-portal-ui-libs/commit/434dc803214cd7542a9a1d18f0d0be5d19a36af5))
+* remove all option ([#670](https://github.com/onecx/onecx-portal-ui-libs/issues/670)) ([3b9aa17](https://github.com/onecx/onecx-portal-ui-libs/commit/3b9aa1723a05cda48ec0d4cae5f6c9b6138ccdb2))
+* TranslationCacheTopic becomes Topic ([#663](https://github.com/onecx/onecx-portal-ui-libs/issues/663)) ([80382bd](https://github.com/onecx/onecx-portal-ui-libs/commit/80382bdca5beab18a0d2b1c79e5f23156c7d7fc9))
+* update develop ([#669](https://github.com/onecx/onecx-portal-ui-libs/issues/669)) ([d433d0a](https://github.com/onecx/onecx-portal-ui-libs/commit/d433d0a0d0fe5a25df7fc8c3c208a1969936105b)), closes [#661](https://github.com/onecx/onecx-portal-ui-libs/issues/661) [#666](https://github.com/onecx/onecx-portal-ui-libs/issues/666) [#668](https://github.com/onecx/onecx-portal-ui-libs/issues/668)
+
+### Bug Fixes
+
+* cherry pick cleanup basic layout: header, footer, menu ([#678](https://github.com/onecx/onecx-portal-ui-libs/issues/678)) ([5e31e33](https://github.com/onecx/onecx-portal-ui-libs/commit/5e31e330c5422fd58973c91dcd98be3dd5a2d134))
+* remove redundant dependency on ngx-translate TranslateService in… ([#673](https://github.com/onecx/onecx-portal-ui-libs/issues/673)) ([#679](https://github.com/onecx/onecx-portal-ui-libs/issues/679)) ([597fcbe](https://github.com/onecx/onecx-portal-ui-libs/commit/597fcbeffc27019c1638f2aea37ab5a8de510c9d))
+
+### Refactoring
+
+* move PIA components to angular-accelerator and add minor improvements ([#681](https://github.com/onecx/onecx-portal-ui-libs/issues/681)) ([cfb9cbd](https://github.com/onecx/onecx-portal-ui-libs/commit/cfb9cbd06792c3c62b472ec6e80cad30e0915e8d)), closes [#673](https://github.com/onecx/onecx-portal-ui-libs/issues/673)
+
 ## [6.0.0-rc.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.2...v6.0.0-rc.3) (2025-01-15)
 
 ### Features

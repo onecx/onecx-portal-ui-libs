@@ -26,18 +26,18 @@
         width: 100%;
       }
 
-      border: 1.5px solid var(--divider-color);
+      border: 1.5px solid var(--p-onecx-divider-color);
       border-radius: 6px;
 
       > .card {
-        background-color: var(--content-alt-bg-color);
+        background-color: var(--p-onecx-content-alt-bg-color);
       }
     }
 
     .pages-header {
       margin-top: -3rem;
-      color: var(--primary-color-text);
-      border: 1.5px solid var(--divider-color);
+      color: #ffffff;
+      border: 1.5px solid var(--p-onecx-divider-color);
       border-radius: 4px;
       margin-left: auto;
       margin-right: auto;
@@ -48,13 +48,13 @@
     }
 
     .pages-detail {
-      color: var(--text-secondary-color);
+      color: var(--p-onecx-text-secondary-color);
     }
   }
 
   &.error-page {
     background-size: cover;
-    background-color: var(--primary-color);
+    background-color: var(--p-onecx-primary-color);
 
     .pages-panel {
       .pages-header {

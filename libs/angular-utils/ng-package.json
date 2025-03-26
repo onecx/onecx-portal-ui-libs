@@ -5,6 +5,7 @@
     "entryFile": "src/index.ts"
   },
   "assets": [
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "./migrations.json"
   ]
 }

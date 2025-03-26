@@ -1,143 +1,144 @@
 <div class="onecx-page-header mb-4" name="ocx-page-header-wrapper">
-  <ng-container *ngIf="showBreadcrumbs">
-    <p-breadcrumb
-      [model]="items"
-      *ngIf="breadcrumbs$ | async  as items"
-      [home]="(home$ | async)?.menuItem ?? {}"
-      [homeAriaLabel]="(home$ | async)?.page ? ('OCX_PAGE_HEADER.HOME_ARIA_LABEL' | translate: { page: (home$ | async)?.page}) : ('OCX_PAGE_HEADER.HOME_DEFAULT_ARIA_LABEL' | translate)"
-      [attr.manual]="manualBreadcrumbs"
-    ></p-breadcrumb>
-  </ng-container>
+  @if (showBreadcrumbs) { @if (breadcrumbs$ | async ; as items) {
+  <p-breadcrumb
+    [model]="items"
+    [home]="(home$ | async)?.menuItem ?? {}"
+    [homeAriaLabel]="(home$ | async)?.page ? ('OCX_PAGE_HEADER.HOME_ARIA_LABEL' | translate: { page: (home$ | async)?.page}) : ('OCX_PAGE_HEADER.HOME_DEFAULT_ARIA_LABEL' | translate)"
+    [attr.manual]="manualBreadcrumbs"
+  ></p-breadcrumb>
+  } }
   <div class="title-bar flex flex-row md:justify-content-between p-3">
     <div class="title-wrap">
-      <div class="figure flex h-2rem w-2rem md:h-3rem md:w-3rem" *ngIf="showFigure">
+      @if (showFigure) {
+      <div class="figure flex h-2rem w-2rem md:h-3rem md:w-3rem">
         <div #previewImage class="figure-image absolute top-0 left-0 right-0 bottom-0">
           <ng-content select="[figureImage]"></ng-content>
-          <img
-            *ngIf="figureImage && !figureImageLoadError"
-            [ocxSrc]="figureImage"
-            alt="Figure image"
-            class="w-full"
-            (error)="handleImageError()"
-          />
+          @if (figureImage && !figureImageLoadError) {
+          <img [ocxSrc]="figureImage" alt="Figure image" class="w-full" (error)="handleImageError()" />
+          }
         </div>
-        <div
-          class="colorblob flex-1 border-round"
-          *ngIf="previewImage.children.length === 0 || figureImageLoadError"
-        ></div>
+        @if (previewImage.children.length === 0 || figureImageLoadError) {
+        <div class="colorblob flex-1 border-round"></div>
+        }
       </div>
-      <ng-template #skeletonBar>
-        <div class="header justify-content-evenly">
-          <p-skeleton width="10rem"></p-skeleton>
-          <p-skeleton width="10rem"></p-skeleton>
-        </div>
-      </ng-template>
-      <div class="header" *ngIf="!loading; else skeletonBar">
-        <h1 id="page-header" *ngIf="!!header">{{ header }}</h1>
-        <h2 id="page-subheader" *ngIf="!!subheader">{{ subheader }}</h2>
+      } @if (!loading) {
+      <div class="header">
+        @if (!!header) {
+        <h1 id="page-header">{{ header }}</h1>
+        } @if (!!subheader) {
+        <h2 id="page-subheader">{{ subheader }}</h2>
+        }
       </div>
+      } @else {
+      <div class="header justify-content-evenly">
+        <p-skeleton width="10rem"></p-skeleton>
+        <p-skeleton width="10rem"></p-skeleton>
+      </div>
+      }
     </div>
     <div class="action-items-wrap mt-2 md:mt-0">
-      <ng-container *ngIf="additionalToolbarContentLeft" [ngTemplateOutlet]="additionalToolbarContentLeft">
-      </ng-container>
-
-      <ng-container *ngIf="!disableDefaultActions"> </ng-container>
-      <ng-template #skeletonActions>
-        <div class="flex">
-          <p-skeleton width="5rem" height="2rem" styleClass="mr-2"></p-skeleton>
-          <p-skeleton width="2rem" height="2rem" styleClass="mb-2"></p-skeleton>
+      @if (additionalToolbarContentLeft) {
+      <ng-container [ngTemplateOutlet]="additionalToolbarContentLeft"> </ng-container>
+      } @if (!loading) { @if (inlineActions && inlineActions.length > 0) {
+      <div class="toolbar flex flex-wrap gap-1 sm:gap-2">
+        @for (action of inlineActions; track action) {
+        <span
+          [pTooltip]="action.disabled ? (action.disabledTooltipKey ? (action.disabledTooltipKey | translate) : action.disabledTooltip) : (action.titleKey ? (action.titleKey | translate) : action.title)"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        >
+          <p-button
+            id="{{ action.id }}"
+            [icon]="action.icon ?? ''"
+            [iconPos]="action.iconPos ?? 'left'"
+            type="button"
+            class="action-button"
+            [label]="action.labelKey ? (action.labelKey | translate) : action.label"
+            (onClick)="action.actionCallback()"
+            [disabled]="action.disabled ? action.disabled : false"
+            [attr.name]="action.icon ? 'ocx-page-header-inline-action-icon-button' : 'ocx-page-header-inline-action-button'"
+            [ariaLabel]=" (action.ariaLabelKey ? (action.ariaLabelKey | translate) : action.ariaLabel) || (action.titleKey ? (action.titleKey | translate) : action.title) || (action.labelKey ? (action.labelKey | translate) : action.label)"
+          ></p-button>
+        </span>
+        }
+      </div>
+      }
+      <ng-content select="[toolbarItems]"></ng-content>
+      <ng-container>
+        @if (overflowActions.length !== 0) {
+        <div>
+          <button
+            id="pageHeaderMenuButton"
+            type="button"
+            pButton
+            icon="pi pi-ellipsis-v"
+            pTooltip="{{ 'OCX_PAGE_HEADER.MORE_ACTIONS' | translate }}"
+            tooltipEvent="hover"
+            tooltipPosition="top"
+            class="more-actions-menu-button action-button ml-2"
+            (click)="menu.toggle($event)"
+            name="ocx-page-header-overflow-action-button"
+            [attr.aria-label]="('OCX_PAGE_HEADER.MORE_ACTIONS' | translate)"
+          ></button>
+          <p-menu #menu [popup]="true" [model]="overflowActions" appendTo="body"></p-menu>
         </div>
-      </ng-template>
-      <ng-container *ngIf="!loading; else skeletonActions">
-        <div *ngIf="inlineActions && inlineActions.length > 0" class="toolbar flex flex-wrap gap-1 sm:gap-2">
-          <ng-container *ngFor="let action of inlineActions">
-            <span
-              [pTooltip]="action.disabled ? (action.disabledTooltipKey ? (action.disabledTooltipKey | translate) : action.disabledTooltip) : (action.titleKey ? (action.titleKey | translate) : action.title)"
-              tooltipPosition="top"
-              tooltipEvent="hover"
-            >
-              <p-button
-                id="{{ action.id }}"
-                [icon]="action.icon ?? ''"
-                type="button"
-                class="action-button"
-                [label]="action.labelKey ? (action.labelKey | translate) : action.label"
-                (onClick)="action.actionCallback()"
-                [disabled]="action.disabled ? action.disabled : false"
-                [attr.name]="action.icon ? 'ocx-page-header-inline-action-icon-button' : 'ocx-page-header-inline-action-button'"
-                [ariaLabel]=" (action.ariaLabelKey ? (action.ariaLabelKey | translate) : action.ariaLabel) || (action.titleKey ? (action.titleKey | translate) : action.title) || (action.labelKey ? (action.labelKey | translate) : action.label)"
-              ></p-button>
-            </span>
-          </ng-container>
-        </div>
-        <ng-content select="[toolbarItems]"></ng-content>
-        <ng-container>
-          <div *ngIf="overflowActions.length !== 0">
-            <button
-              id="pageHeaderMenuButton"
-              type="button"
-              pButton
-              icon="pi pi-ellipsis-v"
-              pTooltip="{{ 'OCX_PAGE_HEADER.MORE_ACTIONS' | translate }}"
-              tooltipEvent="hover"
-              tooltipPosition="top"
-              class="more-actions-menu-button action-button ml-2"
-              (click)="menu.toggle($event)"
-              name="ocx-page-header-overflow-action-button"
-              [attr.aria-label]="('OCX_PAGE_HEADER.MORE_ACTIONS' | translate)"
-            ></button>
-            <p-menu #menu [popup]="true" [model]="overflowActions" appendTo="body"></p-menu>
-          </div>
-        </ng-container>
+        }
       </ng-container>
-      <ng-container *ngIf="additionalToolbarContent" [ngTemplateOutlet]="additionalToolbarContent"> </ng-container>
+      } @else {
+      <div class="flex">
+        <p-skeleton width="5rem" height="2rem" styleClass="mr-2"></p-skeleton>
+        <p-skeleton width="2rem" height="2rem" styleClass="mb-2"></p-skeleton>
+      </div>
+      } @if (additionalToolbarContent) {
+      <ng-container [ngTemplateOutlet]="additionalToolbarContent"> </ng-container>
+      }
     </div>
   </div>
 
   <div class="object-panel" [ngClass]="getObjectPanelLayoutClasses()">
-    <ng-container *ngIf="objectDetails">
-      <div class="object-info" [ngClass]="getObjectInfoLayoutClasses()" *ngFor="let item of objectDetails">
+    @if (objectDetails) { @for (item of objectDetails; track item) {
+    <div class="object-info" [ngClass]="getObjectInfoLayoutClasses()">
+      <span
+        class="flex font-medium text-600 object-info-grid-label"
+        name="object-detail-label"
+        [pTooltip]="item.labelTooltip || ''"
+        tooltipEvent="hover"
+        tooltipPosition="top"
+        >{{ item.label | dynamicPipe:item.labelPipe }}</span
+      >
+      @if (item.icon || item.value) {
+      <span class="object-info-grid-value">
         <span
-          class="flex font-medium text-600 object-info-grid-label"
-          name="object-detail-label"
-          [pTooltip]="item.labelTooltip || ''"
-          tooltipEvent="hover"
-          tooltipPosition="top"
-          >{{ item.label | dynamicPipe:item.labelPipe }}</span
+          class="flex text-900 align-items-center gap-2 w-max"
+          [ngClass]="generateItemStyle(item)"
+          name="object-detail-value"
         >
-        <span *ngIf="item.icon || item.value" class="object-info-grid-value">
           <span
-            class="flex text-900 align-items-center gap-2 w-max"
-            [ngClass]="generateItemStyle(item)"
-            name="object-detail-value"
+            class="flex align-items-center gap-2"
+            [pTooltip]="item.valueTooltip || item.tooltip || ''"
+            tooltipEvent="hover"
+            tooltipPosition="top"
           >
-            <span
-              class="flex align-items-center gap-2"
-              [pTooltip]="item.valueTooltip || item.tooltip || ''"
-              tooltipEvent="hover"
-              tooltipPosition="top"
-            >
-              <i
-                *ngIf="item.icon"
-                class='{{item.icon + " " + (item.iconStyleClass || "")}}'
-                name="object-detail-icon"
-              ></i>
-              {{ item.value | dynamicPipe:item.valuePipe:item.valuePipeArgs}}
-            </span>
-            <p-button
-              *ngIf="item.actionItemIcon && item.actionItemCallback"
-              [icon]="item.actionItemIcon"
-              styleClass="p-button-text p-0 w-full"
-              [pTooltip]="item.actionItemTooltip || ''"
-              tooltipPosition="top"
-              tooltipEvent="hover"
-              [ariaLabel]="(item.actionItemAriaLabelKey ? (item.actionItemAriaLabelKey | translate) : item.actionItemAriaLabel) || item.actionItemTooltip || ''"
-              (onClick)="item.actionItemCallback()"
-            ></p-button>
+            @if (item.icon) {
+            <i class='{{item.icon + " " + (item.iconStyleClass || "")}}' name="object-detail-icon"></i>
+            } {{ item.value | dynamicPipe:item.valuePipe:item.valuePipeArgs}}
           </span>
+          @if (item.actionItemIcon && item.actionItemCallback) {
+          <p-button
+            [icon]="item.actionItemIcon"
+            styleClass="p-button-text p-0 w-full"
+            [pTooltip]="item.actionItemTooltip || ''"
+            tooltipPosition="top"
+            tooltipEvent="hover"
+            [ariaLabel]="(item.actionItemAriaLabelKey ? (item.actionItemAriaLabelKey | translate) : item.actionItemAriaLabel) || item.actionItemTooltip || ''"
+            (onClick)="item.actionItemCallback()"
+          ></p-button>
+          }
         </span>
-      </div>
-    </ng-container>
+      </span>
+      }
+    </div>
+    } }
     <ng-content></ng-content>
   </div>
 </div>

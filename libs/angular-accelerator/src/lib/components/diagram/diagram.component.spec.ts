@@ -14,6 +14,7 @@ import { DiagramType } from '../../model/diagram-type'
 import { DiagramComponent, DiagramLayouts } from './diagram.component'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { ColorUtils } from '../../utils/colorutils'
+import { TooltipModule } from 'primeng/tooltip';
 
 describe('DiagramComponent', () => {
   let translateService: TranslateService
@@ -47,6 +48,7 @@ describe('DiagramComponent', () => {
           en: require('./../../../../assets/i18n/en.json'),
           de: require('./../../../../assets/i18n/de.json'),
         }),
+        TooltipModule,
       ],
       providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()],
     }).compileComponents()
@@ -229,8 +231,8 @@ describe('DiagramComponent', () => {
     const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
     const diagramTypeSelectButtonOptions = await diagram.getAllSelectionButtons()
 
-    expect(await diagramTypeSelectButtonOptions[0].hasClass('p-highlight')).toBe(false)
-    expect(await diagramTypeSelectButtonOptions[1].hasClass('p-highlight')).toBe(true)
+    expect(await diagramTypeSelectButtonOptions[0].hasClass('p-togglebutton-checked')).toBe(false)
+    expect(await diagramTypeSelectButtonOptions[1].hasClass('p-togglebutton-checked')).toBe(true)
   })
 
   it('should interpolate colors by default', () => {

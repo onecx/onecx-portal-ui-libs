@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http'
-import { Component, HostListener, Inject, OnDestroy, OnInit, Optional, Renderer2 } from '@angular/core'
-import { Router } from '@angular/router'
+import { Component, HostListener, OnDestroy, OnInit, inject } from '@angular/core'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import {
   AppStateService,
@@ -9,7 +8,8 @@ import {
   ThemeService,
   UserService,
 } from '@onecx/angular-integration-interface'
-import { MessageService, PrimeNGConfig } from 'primeng/api'
+import { MessageService } from 'primeng/api'
+import { PrimeNG } from 'primeng/config'
 import { filter, first, from, mergeMap, of } from 'rxjs'
 import { SHOW_CONTENT_PROVIDER, ShowContentProvider } from '../../shell-interface/show-content-provider'
 import {
@@ -18,54 +18,50 @@ import {
 } from '../../shell-interface/workspace-config-bff-service-provider'
 
 @Component({
+  standalone: false,
   selector: 'ocx-shell-portal-viewport',
   templateUrl: './portal-viewport.component.html',
   styleUrls: ['./portal-viewport.component.scss'],
 })
 @UntilDestroy()
 export class PortalViewportComponent implements OnInit, OnDestroy {
+  private primengConfig = inject(PrimeNG)
+  private messageService = inject(MessageService)
+  private appStateService = inject(AppStateService)
+  private portalMessageService = inject(PortalMessageService)
+  private userService = inject(UserService)
+  themeService = inject(ThemeService)
+  private httpClient = inject(HttpClient)
+  showContentProvider = inject<ShowContentProvider | undefined>(SHOW_CONTENT_PROVIDER, { optional: true })
+  workspaceConfigBffService = inject<WorkspaceConfigBffService | undefined>(WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER, {
+    optional: true,
+  })
+
   menuButtonTitle = ''
   menuActive = true
   activeTopbarItem: string | undefined
 
   removeDocumentClickListener: (() => void) | undefined
 
-  topbarTheme = 'var'
   colorScheme: 'auto' | 'light' | 'dark' = 'light'
-  layoutMode: 'auto' | 'light' | 'dark' = 'light'
   menuMode: 'horizontal' | 'static' | 'overlay' | 'slim' | 'slimplus' = 'static'
   inputStyle = 'outline'
   ripple = true
   isMobile = false
-
   globalErrMsg: string | undefined
 
-  constructor(
-    private renderer: Renderer2,
-    private primengConfig: PrimeNGConfig,
-    private messageService: MessageService,
-    public appStateService: AppStateService,
-    private portalMessageService: PortalMessageService,
-    private userService: UserService,
-    private themeService: ThemeService,
-    private httpClient: HttpClient,
-    private router: Router,
-    @Optional() @Inject(SHOW_CONTENT_PROVIDER) public showContentProvider: ShowContentProvider | undefined,
-    @Optional()
-    @Inject(WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER)
-    public workspaceConfigBffService: WorkspaceConfigBffService | undefined
-  ) {
+  constructor() {
     this.portalMessageService.message$.subscribe((message: Message) => this.messageService.add(message))
     this.userService.profile$.pipe(untilDestroyed(this)).subscribe((profile) => {
       this.menuMode =
         (profile?.accountSettings?.layoutAndThemeSettings?.menuMode?.toLowerCase() as
           | typeof this.menuMode
-          | undefined) || this.menuMode
+          | undefined) ?? this.menuMode
 
       this.colorScheme =
         (profile?.accountSettings?.layoutAndThemeSettings?.colorScheme?.toLowerCase() as
           | typeof this.colorScheme
-          | undefined) || this.colorScheme
+          | undefined) ?? this.colorScheme
     })
 
     this.themeService.currentTheme$
@@ -102,12 +98,13 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.primengConfig.ripple = true
+    this.primengConfig.ripple.set(true)
 
     this.appStateService.globalError$
       .pipe(untilDestroyed(this))
       .pipe(filter((i) => i !== undefined))
       .subscribe((err: string | undefined) => {
+        console.error('global error')
         this.globalErrMsg = err
       })
 

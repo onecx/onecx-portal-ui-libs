@@ -4,6 +4,17 @@
   "sourceRoot": "libs/integration-interface/src",
   "projectType": "library",
   "targets": {
+    "build-migrations": {
+      "dependsOn": [
+        "build"
+      ],
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "tsc -p libs/integration-interface/migrations/tsconfig.migrations.json"
+        ]
+      }
+    },
     "build": {
       "executor": "@nx/js:tsc",
       "outputs": [
@@ -14,12 +25,17 @@
         "main": "libs/integration-interface/src/index.ts",
         "tsConfig": "libs/integration-interface/tsconfig.lib.json",
         "assets": [
-          "libs/integration-interface/*.md"
+          "libs/integration-interface/*.md",
+          {
+            "input": "./libs/integration-interface",
+            "glob": "migrations.json",
+            "output": "."
+          }
         ]
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": [
         "{options.outputFile}"
       ],
