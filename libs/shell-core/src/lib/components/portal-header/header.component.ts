@@ -30,6 +30,7 @@ export class HeaderComponent {
   @Input() fullPortalLayout = true
   @Input() homeNavUrl = '/'
   @Input() homeNavTitle = 'Home'
+  @Input() isStaticalMenu = false
   @Input() isHorizontalMenu = false
   @Output() menuButtonClick: EventEmitter<any> = new EventEmitter()
 

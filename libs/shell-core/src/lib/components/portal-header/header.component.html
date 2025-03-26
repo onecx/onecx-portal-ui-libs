@@ -1,4 +1,4 @@
-<div class="layout-topbar" id="ocx_header" role="banner">
+<div [ngClass]="{'layout-menu-button-hidden': isHorizontalMenu}" class="layout-topbar" id="ocx_header" role="banner">
   <div class="layout-topbar-left" [ngClass]="{'vertical-menu': !isHorizontalMenu}">
     @if (logoUrl$ | async; as logoUrl) {
     <div class="layout-topbar-logo">
@@ -47,7 +47,7 @@
       tooltipPosition="top"
       tooltipEvent="hover"
     >
-      <i class="pi pi-chevron-right"></i>
+      <i [ngClass]="{'toggle-button-direction': isStaticalMenu}" class="pi pi-chevron-right"></i>
     </a>
   </div>
 

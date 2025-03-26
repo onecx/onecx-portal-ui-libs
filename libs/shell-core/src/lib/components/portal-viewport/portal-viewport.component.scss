@@ -42,22 +42,6 @@ $menuShadow: 2px 0 4px -1px rgba(0, 0, 0, 0.2), 4px 0 5px 0 rgba(0, 0, 0, 0.14),
   }
 }
 
-.layout-menu-button-hidden {
-  .layout-topbar {
-    .layout-topbar-left {
-      padding-right: 0;
-
-      .layout-menu-button {
-        display: none;
-      }
-    }
-
-    .layout-topbar-right {
-      padding-left: 0;
-    }
-  }
-}
-
 .menu-wrapper {
   .layout-inline-menu {
     display: flex;

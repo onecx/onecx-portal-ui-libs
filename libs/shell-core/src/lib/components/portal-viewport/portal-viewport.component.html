@@ -4,8 +4,7 @@
     'layout-wrapper layout-topbar-var': themeService.currentTheme$ | async,
     'p-input-filled': inputStyle === 'filled', 
     'p-ripple-disabled': !ripple,
-    'layout-menu-active': isStaticalMenuVisible(),
-    'layout-menu-button-hidden': isHorizontalMenuMode()
+    'layout-menu-active': isStaticalMenuVisible() && (isVerticalMenuComponentDefined$ | async),
   }"
   [class]="'layout-menu-' + this.colorScheme"
 >
@@ -13,9 +12,10 @@
     <ocx-shell-header
       [menuButtonTitle]="menuButtonTitle"
       (menuButtonClick)="onMenuButtonClick($event)"
-      [isHorizontalMenu]="isHorizontalMenuMode()"
+      [isStaticalMenu]="isStaticalMenuVisible() && (isVerticalMenuComponentDefined$ | async) === true"
+      [isHorizontalMenu]="isHorizontalMenuMode() || (isVerticalMenuComponentDefined$ | async) === false"
     >
-      <div *ngIf="isHorizontalMenuVisible()">
+      <div [hidden]="!isHorizontalMenuVisible()">
         <ocx-slot name="onecx-shell-horizontal-menu">
           <ng-template #skeleton>
             <div class="ml-4 flex flex-row gap-4">
@@ -29,7 +29,7 @@
 
     <p-toast></p-toast>
 
-    <div *ngIf="isStaticalMenuVisible()" class="menu-wrapper">
+    <div [hidden]="!isStaticalMenuVisible()" class="menu-wrapper">
       <div class="layout-menu-container overflow-auto">
         <ocx-slot name="onecx-shell-vertical-menu">
           <ng-template #skeleton>
