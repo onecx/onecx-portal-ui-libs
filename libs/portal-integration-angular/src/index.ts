@@ -34,6 +34,7 @@ export * from './lib/core/components/content-container/content-container.compone
 export * from './lib/core/components/content/content.component'
 export * from './lib/core/components/lifecycle/lifecycle.component'
 export * from './lib/core/components/dialog/dialog-content/dialog-content.component'
+export * from './lib/core/components/dialog/dialog-inline/dialog-inline.component'
 export * from './lib/core/components/dialog/dialog-footer/dialog-footer.component'
 
 // services
