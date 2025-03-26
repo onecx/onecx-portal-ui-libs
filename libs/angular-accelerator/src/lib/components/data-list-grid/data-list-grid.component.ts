@@ -88,6 +88,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
    * @deprecated
    */
   @Input()
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   set showAllOption(value: boolean) {}
 
   @Input() emptyResultsMessage: string | undefined

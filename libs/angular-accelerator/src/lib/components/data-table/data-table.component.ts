@@ -175,8 +175,8 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
    * @deprecated
    */
   @Input()
-  set showAllOption(value: boolean) {
-  }
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  set showAllOption(value: boolean) {}
 
   @Input() emptyResultsMessage: string | undefined
   @Input() name = ''
@@ -512,7 +512,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
                   ({
                     label: filterOption,
                     value: filterOption,
-                    toFilterBy: filterOption
+                    toFilterBy: filterOption,
                   }) as SelectItem
               )
           }),
