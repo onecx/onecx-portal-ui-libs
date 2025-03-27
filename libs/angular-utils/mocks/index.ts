@@ -1,1 +1,0 @@
-export * from './shell-capability-service-mock'

@@ -10,7 +10,7 @@ import { DialogFooterComponent } from '../core/components/dialog/dialog-footer/d
 import { DialogContentComponent } from '../core/components/dialog/dialog-content/dialog-content.component'
 import { NavigationStart, Router } from '@angular/router'
 import { CurrentLocationTopicPayload, EventsTopic, TopicEventType } from '@onecx/integration-interface'
-import { Capability, ShellCapabilityService } from '@onecx/angular-utils'
+import { Capability, ShellCapabilityService } from '@onecx/angular-integration-interface'
 import { AppStateService } from '@onecx/angular-integration-interface'
 
 /**

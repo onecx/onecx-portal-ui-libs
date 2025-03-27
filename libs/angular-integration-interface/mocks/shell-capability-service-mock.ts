@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { Capability, ShellCapabilityService } from '@onecx/angular-utils'
+import { Capability, ShellCapabilityService } from '@onecx/angular-integration-interface'
 
 export function provideShellCapabilityServiceMock() {
   return [ShellCapabilityServiceMock, { provide: ShellCapabilityService, useExisting: ShellCapabilityServiceMock }]

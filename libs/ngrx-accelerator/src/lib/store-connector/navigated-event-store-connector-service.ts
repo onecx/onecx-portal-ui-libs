@@ -1,5 +1,5 @@
 import { EventsTopic, CurrentLocationTopicPayload, TopicEventType } from '@onecx/integration-interface'
-import { Capability, ShellCapabilityService } from '@onecx/angular-utils'
+import { Capability, ShellCapabilityService } from '@onecx/angular-integration-interface'
 import { ENVIRONMENT_INITIALIZER, Injectable, OnDestroy, inject } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { filter, Observable } from 'rxjs'

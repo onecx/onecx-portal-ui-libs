@@ -17,7 +17,7 @@ import { Router } from '@angular/router'
 import { getLocation } from '@onecx/accelerator'
 import { EventsTopic, CurrentLocationTopicPayload, TopicEventType } from '@onecx/integration-interface'
 import { Observable, Subscription, filter } from 'rxjs'
-import { ShellCapabilityService, Capability } from '@onecx/angular-utils'
+import { ShellCapabilityService, Capability } from '@onecx/angular-integration-interface'
 import { AppStateService } from '@onecx/angular-integration-interface'
 
 /**
