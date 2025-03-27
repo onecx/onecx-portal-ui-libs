@@ -8,6 +8,7 @@ export * from './lib/services/theme.service'
 export * from './lib/services/remote-components.service'
 export * from './lib/services/initialize-module-guard.service'
 export * from './lib/services/workspace.service'
+export * from './lib/services/shell-capability.service'
 
 // models
 export * from './lib/model/config-key.model'
