@@ -12,8 +12,8 @@
     <ocx-shell-header
       [menuButtonTitle]="menuButtonTitle"
       (menuButtonClick)="onMenuButtonClick($event)"
-      [isStaticalMenu]="isStaticalMenuVisible() && (isVerticalMenuComponentDefined$ | async) === true"
-      [isHorizontalMenu]="isHorizontalMenuMode() || (isVerticalMenuComponentDefined$ | async) === false"
+      [isStaticalMenu]="isStaticalMenuVisible()"
+      [isHorizontalMenu]="isHorizontalMenuMode()"
     >
       <div [hidden]="!isHorizontalMenuVisible()">
         <ocx-slot name="onecx-shell-horizontal-menu">
