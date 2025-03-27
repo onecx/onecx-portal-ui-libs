@@ -280,12 +280,12 @@ export class PortalDialogService implements OnDestroy {
         this.cleanupAndCloseDialog()
       }
     })
-    let observer: Observable<TopicEventType | CurrentLocationTopicPayload> =
+    let observable: Observable<TopicEventType | CurrentLocationTopicPayload> =
       this.appStateService.currentLocation$.asObservable()
     if (!this.capabilityService.hasCapability(Capability.CURRENT_LOCATION_TOPIC)) {
-      observer = this.eventsTopic.pipe(filter((e) => e.type === 'navigated'))
+      observable = this.eventsTopic.pipe(filter((e) => e.type === 'navigated'))
     }
-    observer.subscribe(() => {
+    observable.subscribe(() => {
       this.cleanupAndCloseDialog()
     })
   }

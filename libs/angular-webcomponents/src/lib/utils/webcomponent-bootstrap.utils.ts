@@ -183,12 +183,12 @@ function connectRouter(router: Router, appStateService: AppStateService, eventsT
     state: { isRouterSync: true },
   })
   let lastUrl = initialUrl
-  let observer: Observable<TopicEventType | CurrentLocationTopicPayload> =
+  let observable: Observable<TopicEventType | CurrentLocationTopicPayload> =
     appStateService.currentLocation$.asObservable()
   if (eventsTopic !== undefined) {
-    observer = eventsTopic.pipe(filter((e) => e.type === 'navigated'))
+    observable = eventsTopic.pipe(filter((e) => e.type === 'navigated'))
   }
-  return observer.subscribe(() => {
+  return observable.subscribe(() => {
     const routerUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}${location.hash}`
     if (routerUrl !== lastUrl) {
       lastUrl = routerUrl
