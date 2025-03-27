@@ -1,5 +1,13 @@
-<div class="layout-topbar" id="ocx_header" role="banner">
-  <div class="layout-topbar-left" [ngClass]="{'vertical-menu': !isHorizontalMenu}">
+<div
+  [ngClass]="{'layout-menu-button-hidden': isHorizontalMenu || (isVerticalMenuComponentDefined$ | async) === false}"
+  class="layout-topbar"
+  id="ocx_header"
+  role="banner"
+>
+  <div
+    class="layout-topbar-left"
+    [ngClass]="{'vertical-menu': !(isHorizontalMenu || (isVerticalMenuComponentDefined$ | async) === false)}"
+  >
     @if (logoUrl$ | async; as logoUrl) {
     <div class="layout-topbar-logo">
       @if (logoUrl && !fallbackImg) {
@@ -47,7 +55,10 @@
       tooltipPosition="top"
       tooltipEvent="hover"
     >
-      <i class="pi pi-chevron-right"></i>
+      <i
+        [ngClass]="{'toggle-button-direction': isStaticalMenu && (isVerticalMenuComponentDefined$ | async) === true}"
+        class="pi pi-chevron-right"
+      ></i>
     </a>
   </div>
 
