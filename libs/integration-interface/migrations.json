@@ -1,0 +1,16 @@
+{
+  "generators": {
+    "warn-for-events-topic-navigated": {
+      "cli": "nx",
+      "version": "5.33.0",
+      "description": "Detects and warns for usage of the EventsTopic in the context of navigation",
+      "factory": "migrations/v5/warn-for-events-topic-navigated"
+    },
+    "warn-for-events-publisher-navigated": {
+      "cli": "nx",
+      "version": "5.33.0",
+      "description": "Detects and warns for usage of the EventsPublisher in the context of navigation",
+      "factory": "migrations/v5/warn-for-events-publisher-navigated"
+    }
+  }
+}
