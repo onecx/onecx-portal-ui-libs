@@ -1,15 +1,15 @@
 import { ENVIRONMENT_INITIALIZER, inject } from '@angular/core'
-import { ConnectionService } from '../services/connection.service'
+import { TranslationConnectionService } from '../services/translation-connection.service'
 
-export function provideConnectionService() {
+export function provideTranslationConnectionService() {
   return [
     {
       provide: ENVIRONMENT_INITIALIZER,
       multi: true,
       useFactory() {
-        return () => inject(ConnectionService)
+        return () => inject(TranslationConnectionService)
       },
     },
-    ConnectionService,
+    TranslationConnectionService,
   ]
 }

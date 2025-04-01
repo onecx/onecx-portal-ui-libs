@@ -1,12 +1,12 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing'
-import { ConnectionService } from './connection.service'
+import { TranslationConnectionService } from './translation-connection.service'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { TranslateService } from '@ngx-translate/core'
 import { UserService } from '@onecx/angular-integration-interface'
 import { provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
 
 describe('ConnectionService', () => {
-  let service: ConnectionService
+  let service: TranslationConnectionService
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -17,7 +17,7 @@ describe('ConnectionService', () => {
 
   it('should create', fakeAsync(() => {
     TestBed.runInInjectionContext(() => {
-      service = new ConnectionService()
+      service = new TranslationConnectionService()
     })
 
     const userService = TestBed.inject(UserService)

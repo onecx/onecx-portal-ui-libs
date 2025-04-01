@@ -32,7 +32,7 @@ export * from './lib/components/data-loading-error/data-loading-error.component'
 
 // services
 export * from './lib/services/breadcrumb.service'
-export * from './lib/services/connection.service'
+export * from './lib/services/translation-connection.service'
 export * from './lib/services/translation-cache.service'
 
 // pipes
