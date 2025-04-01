@@ -68,15 +68,24 @@ export class CustomUseStyle extends UseStyle {
   }
 
   private scopeStyle(css: string, scopeId: string) {
+    const isScopeSupported = (typeof CSSScopeRule !== 'undefined')
     if (scopeId === '') {
-      return `
+      return isScopeSupported ? `
       @scope([data-style-id="shell-ui"]) to ([data-style-isolation]) {
+              ${css}
+          }
+      ` : `
+      @supports (@scope([data-style-id="shell-ui"]) to ([data-style-isolation])) {
               ${css}
           }
       `
     } else {
-      return `
+      return isScopeSupported ? `
       @scope([data-style-id="${scopeId}"][data-no-portal-layout-styles]) to ([data-style-isolation]) {
+              ${css}
+          }
+      ` : `
+      @supports (@scope([data-style-id="${scopeId}"][data-no-portal-layout-styles]) to ([data-style-isolation])) {
               ${css}
           }
       `
