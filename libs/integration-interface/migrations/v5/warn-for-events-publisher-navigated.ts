@@ -7,9 +7,7 @@ export default async function warnForEventsPublisherNavigated(tree: Tree) {
     '⚠️ You might be using EventsPublisher to publish navigation events. Please switch to using CurrentLocationPublisher.'
   const pattern = /\.publish\(\s*{\s*type\s*:\s*['"]navigated['"]/
 
-  const rootDir = tree.root
-
-  const results = findPatternInFiles(tree, rootDir, pattern)
+  const results = findPatternInFiles(tree, './src', pattern)
 
   printWarnings(warning, results)
 }
