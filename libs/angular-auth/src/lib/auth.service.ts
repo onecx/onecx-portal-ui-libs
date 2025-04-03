@@ -13,4 +13,6 @@ export enum Injectables {
   CONFIG = 'CONFIG',
 }
 
-export type AuthServiceFactory = (injectorFunction: (injectable: Injectables) => unknown) => AuthService
+export type AuthServiceFactory = (
+  injectorFunction: (injectable: Injectables) => Promise<unknown> | unknown
+) => AuthService | Promise<AuthService>

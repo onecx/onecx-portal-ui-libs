@@ -36,7 +36,7 @@
         <ng-content></ng-content>
       </div>
     </div>
-    <div class="flex flex-wrap gap-2" [ngClass]="searchButtonsReversed ? 'flex-row-reverse' : 'flex-row'">
+    <div class="flex flex-wrap gap-2" [ngClass]="(searchButtonsReversed$ | async) ? 'flex-row-reverse' : 'flex-row'">
       @if (resetted.observed) {
         <p-button
           id="resetButton"

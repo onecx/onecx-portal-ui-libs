@@ -54,15 +54,21 @@ export class AuthServiceWrapper {
   }
 
   async initializeAuthService(): Promise<void> {
-    const serviceTypeConfig = this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE) ?? 'keycloak'
+    const serviceTypeConfig = (await this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE)) ?? 'keycloak'
 
     switch (serviceTypeConfig) {
       case 'keycloak':
         this.authService = this.injector.get(KeycloakAuthService)
         break
       case 'custom': {
+        // remote module is exposing function as default export (this is a convention)
+        // this function is responsible for creating the custom auth service
+        // to have access to the dependency mechanism of the shell
+        // the function gets a callback which is returning the requested injectable
         const factory = await this.getAuthServiceFactory()
-        this.authService = factory((injectable: Injectables) => this.retrieveInjectables(injectable))
+        this.authService = await Promise.resolve(
+          factory((injectable: Injectables) => this.retrieveInjectables(injectable))
+        )
         break
       }
       default:
@@ -70,7 +76,7 @@ export class AuthServiceWrapper {
     }
   }
 
-  retrieveInjectables(injectable: Injectables): KeycloakAuthService | Config | undefined {
+  async retrieveInjectables(injectable: Injectables): Promise<KeycloakAuthService | Config | undefined> {
     if (injectable === Injectables.KEYCLOAK_AUTH_SERVICE) {
       return this.injector.get(KeycloakAuthService)
     } else if (injectable === Injectables.CONFIG) {
@@ -80,13 +86,14 @@ export class AuthServiceWrapper {
   }
 
   async getAuthServiceFactory(): Promise<AuthServiceFactory> {
-    if (!this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL)) {
+    if (await !this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL)) {
       throw new Error('URL of the custom auth service is not defined')
     }
     const module = await loadRemoteModule({
       type: 'module',
-      remoteEntry: this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL) ?? '',
-      exposedModule: this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_MODULE_NAME) ?? './CustomAuth',
+      remoteEntry: (await this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL)) ?? '',
+      exposedModule:
+        (await this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_MODULE_NAME)) ?? './CustomAuth',
     })
     return module.default as AuthServiceFactory
   }
