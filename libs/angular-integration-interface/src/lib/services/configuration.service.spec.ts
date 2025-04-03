@@ -19,8 +19,6 @@ describe('ConfigurationService', () => {
     ;(configuration as any).config$.publish({ [CONFIG_KEY.IS_SHELL]: 'true' })
   })
 
-  afterEach(() => {})
-
   it('should be created', () => {
     expect(configuration).toBeTruthy()
   })
