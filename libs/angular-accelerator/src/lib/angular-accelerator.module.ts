@@ -32,7 +32,7 @@ import { DynamicPipe } from './pipes/dynamic.pipe'
 import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
 import { DynamicLocaleId } from './utils/dynamic-locale-id'
 import { FilterViewComponent } from './components/filter-view/filter-view.component'
-import { provideConnectionService } from './utils/provide-connection-service'
+import { provideTranslationConnectionService } from './utils/provide-connection-service'
 import { TemplateDirective } from './directives/template.directive'
 import { OcxContentComponent } from './components/content/content.component'
 import { OcxContentContainerComponent } from './components/content-container/content-container.component'
@@ -90,7 +90,7 @@ function appInitializer(userService: UserService) {
     FilterViewComponent,
     TemplateDirective,
     OcxContentDirective,
-    OcxContentContainerDirective
+    OcxContentContainerDirective,
   ],
   providers: [
     providePermissionChecker(),
@@ -116,7 +116,7 @@ function appInitializer(userService: UserService) {
       multi: true,
     },
     AppConfigService,
-    provideConnectionService(),
+    provideTranslationConnectionService(),
   ],
   exports: [
     AngularRemoteComponentsModule,
@@ -144,7 +144,7 @@ function appInitializer(userService: UserService) {
     FilterViewComponent,
     TemplateDirective,
     OcxContentDirective,
-    OcxContentContainerDirective
+    OcxContentContainerDirective,
   ],
 })
 export class AngularAcceleratorModule {}

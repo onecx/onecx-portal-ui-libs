@@ -171,11 +171,12 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   set pageSize(value: number | undefined) {
     this._pageSize$.next(value)
   }
-  _showAllOption$ = new BehaviorSubject<boolean>(false)
+  /**
+   * @deprecated
+   */
   @Input()
-  set showAllOption(value: boolean) {
-    this._showAllOption$.next(value)
-  }
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  set showAllOption(value: boolean) {}
 
   @Input() emptyResultsMessage: string | undefined
   @Input() name = ''
@@ -511,7 +512,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
                   ({
                     label: filterOption,
                     value: filterOption,
-                    toFilterBy: filterOption
+                    toFilterBy: filterOption,
                   }) as SelectItem
               )
           }),
