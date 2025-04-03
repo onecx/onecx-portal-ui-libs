@@ -29,8 +29,6 @@ export class KeycloakAuthService implements AuthService {
       }
     }
 
-    this.setupEventListener()
-
     let kcConfig: KeycloakConfig | string
     const validKCConfig = await this.getValidKCConfig()
     kcConfig = { ...validKCConfig, ...(config ?? {}) }

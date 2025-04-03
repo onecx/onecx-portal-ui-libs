@@ -4,6 +4,7 @@ import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ConfigurationService } from './configuration.service'
 import { FakeTopic } from '@onecx/accelerator'
 import { CONFIG_KEY } from '../model/config-key.model'
+import { Config } from '@onecx/integration-interface'
 
 describe('ConfigurationService', () => {
   let configuration: ConfigurationService
@@ -15,7 +16,7 @@ describe('ConfigurationService', () => {
       providers: [ConfigurationService, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()],
     }).compileComponents()
     configuration = TestBed.inject(ConfigurationService)
-    ;(configuration as any).config$ = new FakeTopic<string>()
+    ;(configuration as any).config$ = new FakeTopic<Config>()
     ;(configuration as any).config$.publish({ [CONFIG_KEY.IS_SHELL]: 'true' })
   })
 
