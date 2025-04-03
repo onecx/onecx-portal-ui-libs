@@ -5,14 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
 import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateModule } from '@ngx-translate/core'
 import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
-import {
-  APPLICATION_NAME,
-  AppStateService,
-  ConfigurationService,
-  SANITY_CHECK,
-  ThemeService,
-  UserService,
-} from '@onecx/angular-integration-interface'
+import { APPLICATION_NAME, SANITY_CHECK, UserService } from '@onecx/angular-integration-interface'
 import { TRANSLATION_PATH } from '@onecx/angular-utils'
 import { MessageService } from 'primeng/api'
 import { ConfirmDialogModule } from 'primeng/confirmdialog'
@@ -28,7 +21,6 @@ import { DialogFooterComponent } from './components/dialog/dialog-footer/dialog-
 import { DialogInlineComponent } from './components/dialog/dialog-inline/dialog-inline.component'
 import { GlobalErrorComponent } from './components/error-component/global-error.component'
 import { HelpItemEditorComponent } from './components/help-item-editor/help-item-editor.component'
-import { AppInlineProfileComponent } from './components/inline-profile/inline-profile.component'
 import { LoadingIndicatorComponent } from './components/loading-indicator/loading-indicator.component'
 import { LoadingComponent } from './components/loading/loading.component'
 import { MfeDebugComponent } from './components/mfe-debug/mfe-debug.component'
@@ -46,7 +38,6 @@ import { LoadingIndicatorDirective } from './directives/loading-indicator.direct
 import { PatchFormGroupValuesDirective } from './directives/patch-form-group-values.driective'
 import { SetInputValueDirective } from './directives/set-input-value.directive'
 import { PrimeNgModule } from './primeng.module'
-import { HttpClient } from '@angular/common/http'
 
 export class PortalMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
