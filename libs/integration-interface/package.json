@@ -12,5 +12,8 @@
   "typings": "./src/index.d.ts",
   "publishConfig": {
     "access": "public"
+  },
+  "nx-migrations": {
+    "migrations": "./migrations.json"
   }
 }
