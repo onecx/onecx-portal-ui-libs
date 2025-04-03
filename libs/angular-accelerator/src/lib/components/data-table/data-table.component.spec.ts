@@ -4,14 +4,14 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { PTableCheckboxHarness } from '@onecx/angular-testing'
-import { UserService } from '@onecx/angular-integration-interface'
-import { MockUserService } from '@onecx/angular-integration-interface/mocks'
+import { provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { DataTableComponent, Row } from './data-table.component'
 import { ColumnType } from '../../model/column-type.model'
 import { DataTableHarness } from '../../../../testing'
 import { MockAuthModule } from '../../mock-auth/mock-auth.module'
+import { UserService } from '@onecx/angular-integration-interface'
 
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>
@@ -209,7 +209,7 @@ describe('DataTableComponent', () => {
         AngularAcceleratorModule,
         MockAuthModule,
       ],
-      providers: [{ provide: UserService, useClass: MockUserService }],
+      providers: [provideUserServiceMock()],
     }).compileComponents()
 
     fixture = TestBed.createComponent(DataTableComponent)
@@ -219,6 +219,8 @@ describe('DataTableComponent', () => {
     component.paginator = true
     translateService = TestBed.inject(TranslateService)
     translateService.use('en')
+    const userService = TestBed.inject(UserService)
+    userService.permissions$.next(['VIEW', 'EDIT', 'DELETE'])
     fixture.detectChanges()
     dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
   })
@@ -274,7 +276,7 @@ describe('DataTableComponent', () => {
     const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
     const paginator = await dataTable.getPaginator()
     const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
-    const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
+    const rowsPerPageOptionsText = await rowsPerPageOptions.selectedSelectItemText(0)
     expect(rowsPerPageOptionsText).toEqual('10')
   })
 
@@ -389,7 +391,7 @@ describe('DataTableComponent', () => {
       expect(await dataTable.columnIsFrozen(rightActionColumn)).toBe(false)
     })
 
-    it('should render an pinned action column on the specified side of the table', async () => {
+    it('should render a pinned action column on the specified side of the table', async () => {
       component.viewTableRow.subscribe((event) => console.log(event))
 
       component.frozenActionColumn = true

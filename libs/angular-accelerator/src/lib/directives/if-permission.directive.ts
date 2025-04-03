@@ -1,19 +1,16 @@
-import {
-  Directive,
-  ElementRef,
-  Inject,
-  Input,
-  OnInit,
-  Optional,
-  Renderer2,
-  TemplateRef,
-  ViewContainerRef,
-} from '@angular/core'
+import { Directive, ElementRef, Input, OnInit, Renderer2, TemplateRef, ViewContainerRef, inject } from '@angular/core'
 import { UserService } from '@onecx/angular-integration-interface'
 import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
 
-@Directive({ selector: '[ocxIfPermission], [ocxIfNotPermission]' })
+@Directive({ selector: '[ocxIfPermission], [ocxIfNotPermission]', standalone: false })
 export class IfPermissionDirective implements OnInit {
+  private renderer = inject(Renderer2)
+  private el = inject(ElementRef)
+  private viewContainer = inject(ViewContainerRef)
+  private hasPermissionChecker = inject<HasPermissionChecker>(HAS_PERMISSION_CHECKER, { optional: true })
+  private templateRef = inject<TemplateRef<any>>(TemplateRef, { optional: true })
+  private userService = inject(UserService, { optional: true })
+
   @Input('ocxIfPermission') permission: string | string[] | undefined
   @Input('ocxIfNotPermission') set notPermission(value: string | string[] | undefined) {
     this.permission = value
@@ -35,19 +32,13 @@ export class IfPermissionDirective implements OnInit {
     this.ocxIfPermissionElseTemplate = value
   }
 
-  private permissionChecker: HasPermissionChecker | undefined
+  private permissionChecker: HasPermissionChecker | undefined | null
   negate = false
 
-  constructor(
-    private renderer: Renderer2,
-    private el: ElementRef,
-    private viewContainer: ViewContainerRef,
-    @Optional()
-    @Inject(HAS_PERMISSION_CHECKER)
-    private hasPermissionChecker?: HasPermissionChecker,
-    @Optional() private templateRef?: TemplateRef<any>,
-    @Optional() private userService?: UserService
-  ) {
+  constructor() {
+    const hasPermissionChecker = this.hasPermissionChecker
+    const userService = this.userService
+
     if (!(hasPermissionChecker || userService)) {
       throw 'IfPermission requires UserService or HasPermissionChecker to be provided!'
     }

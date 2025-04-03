@@ -1,9 +1,5 @@
 import { CommonModule } from '@angular/common'
-import {
-  APP_INITIALIZER,
-  LOCALE_ID,
-  NgModule,
-} from '@angular/core'
+import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
 import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateModule } from '@ngx-translate/core'
@@ -36,8 +32,13 @@ import { DynamicPipe } from './pipes/dynamic.pipe'
 import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
 import { DynamicLocaleId } from './utils/dynamic-locale-id'
 import { FilterViewComponent } from './components/filter-view/filter-view.component'
-import { provideConnectionService } from './utils/provide-connection-service'
+import { provideTranslationConnectionService } from './utils/provide-connection-service'
 import { TemplateDirective } from './directives/template.directive'
+import { OcxContentComponent } from './components/content/content.component'
+import { OcxContentContainerComponent } from './components/content-container/content-container.component'
+import { OcxContentDirective } from './directives/content.directive'
+import { OcxContentContainerDirective } from './directives/content-container.directive'
+import { LifecycleComponent } from './components/lifecycle/lifecycle.component'
 
 export class AngularAcceleratorMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -71,12 +72,15 @@ function appInitializer(userService: UserService) {
     DataTableComponent,
     DataViewComponent,
     InteractiveDataViewComponent,
+    LifecycleComponent,
     PageHeaderComponent,
     DynamicPipe,
     SearchHeaderComponent,
     DiagramComponent,
     GroupByCountDiagramComponent,
     DataLoadingErrorComponent,
+    OcxContentComponent,
+    OcxContentContainerComponent,
     IfPermissionDirective,
     IfBreakpointDirective,
     SrcDirective,
@@ -85,6 +89,8 @@ function appInitializer(userService: UserService) {
     TooltipOnOverflowDirective,
     FilterViewComponent,
     TemplateDirective,
+    OcxContentDirective,
+    OcxContentContainerDirective,
   ],
   providers: [
     providePermissionChecker(),
@@ -102,15 +108,15 @@ function appInitializer(userService: UserService) {
     {
       provide: TRANSLATION_PATH,
       useValue: './onecx-angular-accelerator/assets/i18n/',
-      multi: true
+      multi: true,
     },
     {
       provide: TRANSLATION_PATH,
       useValue: './onecx-angular-accelerator/assets/i18n/primeng/',
-      multi: true
+      multi: true,
     },
     AppConfigService,
-    provideConnectionService(),
+    provideTranslationConnectionService(),
   ],
   exports: [
     AngularRemoteComponentsModule,
@@ -121,11 +127,14 @@ function appInitializer(userService: UserService) {
     DataTableComponent,
     DataViewComponent,
     InteractiveDataViewComponent,
+    LifecycleComponent,
     PageHeaderComponent,
     SearchHeaderComponent,
     DiagramComponent,
     GroupByCountDiagramComponent,
     DataLoadingErrorComponent,
+    OcxContentComponent,
+    OcxContentContainerComponent,
     IfPermissionDirective,
     IfBreakpointDirective,
     SrcDirective,
@@ -134,6 +143,8 @@ function appInitializer(userService: UserService) {
     TooltipOnOverflowDirective,
     FilterViewComponent,
     TemplateDirective,
+    OcxContentDirective,
+    OcxContentContainerDirective,
   ],
 })
 export class AngularAcceleratorModule {}

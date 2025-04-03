@@ -6,7 +6,7 @@ import { TableModule } from 'primeng/table'
 import { ButtonModule } from 'primeng/button'
 import { MultiSelectModule } from 'primeng/multiselect'
 import { UserService } from '@onecx/angular-integration-interface'
-import { MockUserService } from '@onecx/angular-integration-interface/mocks'
+import { UserServiceMock, provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { DataTableComponent } from './data-table.component'
 import { StorybookTranslateModule } from './../../storybook-translate.module'
 import { MockAuthModule } from '../../mock-auth/mock-auth.module'
@@ -17,6 +17,9 @@ import { DynamicLocaleId } from '../../utils/dynamic-locale-id'
 import { CheckboxModule } from 'primeng/checkbox'
 import { FormsModule } from '@angular/forms'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
+import { StorybookThemeModule } from '../../storybook-theme.module'
+import { TooltipModule } from 'primeng/tooltip';
+import { SkeletonModule } from 'primeng/skeleton';
 
 type DataTableInputTypes = Pick<DataTableComponent, 'rows' | 'columns' | 'emptyResultsMessage' | 'selectedRows'>
 
@@ -28,13 +31,14 @@ const DataTableComponentSBConfig: Meta<DataTableComponent> = {
       providers: [
         importProvidersFrom(BrowserModule),
         importProvidersFrom(BrowserAnimationsModule),
-        { provide: UserService, useClass: MockUserService },
-        { provide: HAS_PERMISSION_CHECKER, useClass: MockUserService },
+        provideUserServiceMock(),
+        { provide: HAS_PERMISSION_CHECKER, useClass: UserServiceMock },
         {
           provide: LOCALE_ID,
           useClass: DynamicLocaleId,
           deps: [UserService],
         },
+        importProvidersFrom(StorybookThemeModule),
       ],
     }),
     moduleMetadata({
@@ -48,6 +52,8 @@ const DataTableComponentSBConfig: Meta<DataTableComponent> = {
         MenuModule,
         CheckboxModule,
         FormsModule,
+        TooltipModule,
+        SkeletonModule,
       ],
     }),
   ],

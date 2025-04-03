@@ -1,25 +1,34 @@
 import { CommonModule, registerLocaleData } from '@angular/common'
 import de from '@angular/common/locales/de'
-import { Inject, LOCALE_ID, ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core'
+import { LOCALE_ID, ModuleWithProviders, NgModule, inject } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
 import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateModule } from '@ngx-translate/core'
 import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
-import { APPLICATION_NAME, SANITY_CHECK, UserService } from '@onecx/angular-integration-interface'
+import {
+  APPLICATION_NAME,
+  AppStateService,
+  ConfigurationService,
+  SANITY_CHECK,
+  ThemeService,
+  UserService,
+} from '@onecx/angular-integration-interface'
+import { TRANSLATION_PATH } from '@onecx/angular-utils'
 import { MessageService } from 'primeng/api'
 import { ConfirmDialogModule } from 'primeng/confirmdialog'
 import { AnnouncementBannerComponent } from './components/announcement-banner/announcement-banner.component'
 import { ButtonDialogComponent } from './components/button-dialog/button-dialog.component'
 import { DialogMessageContentComponent } from './components/button-dialog/dialog-message-content/dialog-message-content.component'
-import { OcxContentContainerComponent } from './components/content-container/content-container.component'
-import { OcxContentComponent } from './components/content/content.component'
 import { ColumnTogglerComponent } from './components/data-view-controls/column-toggler-component/column-toggler.component'
 import { DataViewControlsComponent } from './components/data-view-controls/data-view-controls.component'
 import { ViewTemplatePickerComponent } from './components/data-view-controls/view-template-picker/view-template-picker.component'
 import { DeleteDialogComponent } from './components/delete-dialog/delete-dialog.component'
+import { DialogContentComponent } from './components/dialog/dialog-content/dialog-content.component'
+import { DialogFooterComponent } from './components/dialog/dialog-footer/dialog-footer.component'
+import { DialogInlineComponent } from './components/dialog/dialog-inline/dialog-inline.component'
 import { GlobalErrorComponent } from './components/error-component/global-error.component'
 import { HelpItemEditorComponent } from './components/help-item-editor/help-item-editor.component'
-import { LifecycleComponent } from './components/lifecycle/lifecycle.component'
+import { AppInlineProfileComponent } from './components/inline-profile/inline-profile.component'
 import { LoadingIndicatorComponent } from './components/loading-indicator/loading-indicator.component'
 import { LoadingComponent } from './components/loading/loading.component'
 import { MfeDebugComponent } from './components/mfe-debug/mfe-debug.component'
@@ -33,16 +42,11 @@ import { SupportTicketComponent } from './components/support-ticket/support-tick
 import { UserAvatarComponent } from './components/user-avatar/user-avatar.component'
 import { AutofocusDirective } from './directives/autofocus.directive'
 import { BasicDirective } from './directives/basic.directive'
-import { OcxContentContainerDirective } from './directives/content-container.directive'
-import { OcxContentDirective } from './directives/content.directive'
 import { LoadingIndicatorDirective } from './directives/loading-indicator.directive'
 import { PatchFormGroupValuesDirective } from './directives/patch-form-group-values.driective'
 import { SetInputValueDirective } from './directives/set-input-value.directive'
 import { PrimeNgModule } from './primeng.module'
-import { DialogFooterComponent } from './components/dialog/dialog-footer/dialog-footer.component'
-import { DialogContentComponent } from './components/dialog/dialog-content/dialog-content.component'
-import { DialogInlineComponent } from './components/dialog/dialog-inline/dialog-inline.component'
-import { TRANSLATION_PATH } from '@onecx/angular-utils'
+import { HttpClient } from '@angular/common/http'
 
 export class PortalMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -91,11 +95,6 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     DialogContentComponent,
     DialogInlineComponent,
     DialogMessageContentComponent,
-    OcxContentDirective,
-    OcxContentContainerDirective,
-    OcxContentComponent,
-    OcxContentContainerComponent,
-    LifecycleComponent,
   ],
   providers: [
     {
@@ -152,11 +151,6 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     DialogContentComponent,
     DialogInlineComponent,
     DialogMessageContentComponent,
-    OcxContentDirective,
-    OcxContentContainerDirective,
-    OcxContentComponent,
-    OcxContentContainerComponent,
-    LifecycleComponent,
   ],
 })
 export class PortalCoreModule {
@@ -178,10 +172,10 @@ export class PortalCoreModule {
     return module
   }
 
-  constructor(
-    @Optional() @Inject(SANITY_CHECK) sanityCheck?: string,
-    @Optional() @SkipSelf() @Inject(SANITY_CHECK) parentSanityCheck?: string
-  ) {
+  constructor() {
+    const sanityCheck = inject(SANITY_CHECK, { optional: true })
+    const parentSanityCheck = inject(SANITY_CHECK, { optional: true, skipSelf: true })
+
     console.log(`*** Portal Core module constructor, mode:  ${sanityCheck}`)
     if (sanityCheck === undefined) {
       throw new Error(`Always import PortalCoreModule using either 'forRoot()' or 'forMicroFrontend()' helper methods.`)

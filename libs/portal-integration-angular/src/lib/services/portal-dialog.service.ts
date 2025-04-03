@@ -1,13 +1,18 @@
-import { EventEmitter, Injectable, Type, isDevMode } from '@angular/core'
+import { EventEmitter, Injectable, OnDestroy, Type, inject, isDevMode } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
-import { Observable, mergeMap } from 'rxjs'
-import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { DialogService, DynamicDialogComponent, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { Observable, filter, mergeMap } from 'rxjs'
 
-import { ButtonDialogButtonDetails, ButtonDialogCustomButtonDetails, ButtonDialogData } from '../model/button-dialog'
-import { DialogMessageContentComponent } from '../core/components/button-dialog/dialog-message-content/dialog-message-content.component'
 import { PrimeIcon } from '@onecx/angular-accelerator'
-import { DialogFooterComponent } from '../core/components/dialog/dialog-footer/dialog-footer.component'
+import { DialogMessageContentComponent } from '../core/components/button-dialog/dialog-message-content/dialog-message-content.component'
 import { DialogContentComponent } from '../core/components/dialog/dialog-content/dialog-content.component'
+import { DialogFooterComponent } from '../core/components/dialog/dialog-footer/dialog-footer.component'
+import { ButtonDialogButtonDetails, ButtonDialogCustomButtonDetails, ButtonDialogData } from '../model/button-dialog'
+import { NavigationStart, Router } from '@angular/router'
+import { EventsTopic } from '@onecx/integration-interface'
+import { SKIP_STYLE_SCOPING, getScopeIdentifier } from '@onecx/angular-utils'
+import { REMOTE_COMPONENT_CONFIG } from '@onecx/angular-remote-components'
+import { AppStateService } from '@onecx/angular-integration-interface'
 
 /**
  * Object containing key for translation with parameters object for translation
@@ -260,11 +265,32 @@ export interface PortalDialogServiceData {
 }
 
 @Injectable({ providedIn: 'any' })
-export class PortalDialogService {
-  constructor(
-    private dialogService: DialogService,
-    private translateService: TranslateService
-  ) {}
+export class PortalDialogService implements OnDestroy {
+  private dialogService = inject(DialogService)
+  private translateService = inject(TranslateService)
+  private router = inject(Router)
+  private dialogRef: DynamicDialogRef | null = null
+  private dialogComponent: DynamicDialogComponent | null = null
+  private eventsTopic: EventsTopic = new EventsTopic()
+  private skipStyleScoping = inject(SKIP_STYLE_SCOPING, { optional: true })
+  private remoteComponentConfig = inject(REMOTE_COMPONENT_CONFIG, { optional: true })
+  private appStateService = inject(AppStateService)
+
+  constructor() {
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        this.cleanupAndCloseDialog()
+      }
+    })
+    this.eventsTopic.pipe(filter((value) => value.type === 'navigated')).subscribe(() => {
+      this.cleanupAndCloseDialog()
+    })
+  }
+
+  ngOnDestroy(): void {
+    this.cleanupAndCloseDialog()
+    this.eventsTopic.destroy()
+  }
 
   /**
    * @deprecated
@@ -467,7 +493,7 @@ export class PortalDialogService {
 
     return this.translateService.get(translateParams.key, translateParams.parameters).pipe(
       mergeMap((dialogTitle) => {
-        return this.dialogService.open(DialogContentComponent, {
+        this.dialogRef = this.dialogService.open(DialogContentComponent, {
           header: dialogTitle,
           data: {
             ...dynamicDialogDataConfig,
@@ -479,14 +505,61 @@ export class PortalDialogService {
             } satisfies PortalDialogServiceData,
           },
           closable: dialogOptions.showXButton && secondaryButtonTranslationKeyOrDetails !== undefined,
+          modal: true,
           ...dialogOptions,
           focusOnShow: false,
+          appendTo: 'body', // Important for the function findBodyChild
           templates: {
             footer: DialogFooterComponent,
           },
-        }).onClose
+        })
+        this.dialogComponent = this.dialogService.getInstance(this.dialogRef)
+        this.setScopeIdentifier()
+        return this.dialogRef.onClose
       })
     )
+  }
+
+  private cleanupAndCloseDialog() {
+    if (this.dialogRef) {
+      this.dialogRef.close()
+      this.removeDialogFromHtml()
+      this.dialogRef = null
+      this.dialogComponent = null
+    }
+  }
+
+  private removeDialogFromHtml() {
+    const bodyChild = this.findDialogComponentBodyChild()
+    bodyChild && document.body.removeChild(bodyChild)
+  }
+
+  private setScopeIdentifier() {
+    getScopeIdentifier(
+      this.appStateService,
+      this.skipStyleScoping ?? undefined,
+      this.remoteComponentConfig ?? undefined
+    ).then((scopeId) => {
+      const bodyChild = this.findDialogComponentBodyChild()
+      if (bodyChild) {
+        bodyChild.dataset['styleId'] = scopeId
+        bodyChild.dataset['noPortalLayoutStyles'] = ''
+      }
+    })
+  }
+
+  private findDialogComponentBodyChild() {
+    const element = this.dialogComponent?.el.nativeElement
+    if (!element) return
+    return this.findBodyChild(element)
+  }
+
+  private findBodyChild(element: HTMLElement) {
+    let currentNode = element
+    while (currentNode.parentElement && currentNode.parentElement != document.body) {
+      currentNode = currentNode.parentElement
+    }
+    return currentNode.parentElement === document.body ? currentNode : undefined
   }
 
   private prepareTitleForTranslation(title: TranslationKey | null): TranslationKeyWithParameters {

@@ -1,6 +1,6 @@
 {
   "OCX_HEADER": {
-    "MENU_TOGGLE": "Menü"
+    "MENU_TOGGLE": "Menü ein/aus"
   },
   "OCX_PORTAL_VIEWPORT": {
     "SUCCESS": "Erfolg!",
@@ -115,7 +115,7 @@
       "TABLE": "Tabelle"
     }
   },
-  "OCX_DATA_VIEW_CONTROLS" : {
+  "OCX_DATA_VIEW_CONTROLS": {
     "NO_GROUP_SELECTED": "Keine Gruppe ausgewählt",
     "OPEN_BUTTON_DETAIL": "Dialog zur Auswahl einer benutzerdefinierten Gruppe öffnen",
     "DROPDOWN": {

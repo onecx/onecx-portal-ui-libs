@@ -1,20 +1,19 @@
-import { Component, EventEmitter, Inject, Input, OnInit, Optional, Output } from '@angular/core'
-import { BreadcrumbService } from '@onecx/angular-accelerator'
+import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core'
 import { Action, PageHeaderComponent } from '@onecx/angular-accelerator'
 import { PortalSearchPage } from './search-page'
-import { TranslateService } from '@ngx-translate/core'
-import { AppStateService } from '@onecx/angular-integration-interface'
-import { UserService } from '@onecx/angular-integration-interface'
 
 /**
  * @deprecated Will be replaced by ocx-search-header
  */
 @Component({
+  standalone: false,
   selector: 'ocx-search-criteria',
   templateUrl: './search-criteria.component.html',
   styleUrls: ['./search-criteria.component.scss'],
 })
 export class SearchCriteriaComponent extends PageHeaderComponent implements OnInit {
+  private searchPage = inject<PortalSearchPage<unknown>>(PortalSearchPage, { optional: true })
+
   /** Whether to show advanced toggle button or not*/
   @Input() disableAdvancedToggle = false
 
@@ -70,15 +69,14 @@ export class SearchCriteriaComponent extends PageHeaderComponent implements OnIn
     },
   }
 
-  constructor(
-    breadcrumbs: BreadcrumbService,
-    translateService: TranslateService,
-    appStateService: AppStateService,
-    userService: UserService,
-    @Inject(PortalSearchPage) @Optional() private searchPage?: PortalSearchPage<unknown>
-  ) {
-    super(breadcrumbs, translateService, appStateService, userService)
-  }
+  // constructor() {
+  //   const breadcrumbs = inject(BreadcrumbService);
+  //   const translateService = inject(TranslateService);
+  //   const appStateService = inject(AppStateService);
+  //   const userService = inject(UserService);
+
+  //   super(breadcrumbs, translateService, appStateService, userService)
+  // }
 
   override ngOnInit(): void {
     if (!this.actions) {

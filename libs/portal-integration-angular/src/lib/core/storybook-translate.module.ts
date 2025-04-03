@@ -1,9 +1,9 @@
-import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core'
-import { NgModule } from '@angular/core'
 import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
-import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
-import { TranslateCombinedLoader } from '@onecx/angular-accelerator'
+import { NgModule, inject } from '@angular/core'
+import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+import { TranslateCombinedLoader } from '@onecx/angular-accelerator'
+import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 
 export function translateLoader(http: HttpClient) {
   return new TranslateCombinedLoader(new TranslateHttpLoader(http, `./assets/i18n/`, '.json'))
@@ -26,7 +26,9 @@ export function translateLoader(http: HttpClient) {
   providers: [provideAppStateServiceMock(), provideHttpClient(withInterceptorsFromDi())],
 })
 export class StorybookTranslateModule {
-  constructor(translateService: TranslateService) {
+  constructor() {
+    const translateService = inject(TranslateService)
+
     const lang = translateService.getBrowserLang()
     const supportedLanguages = ['de', 'en']
     if (lang && supportedLanguages.includes(lang)) {

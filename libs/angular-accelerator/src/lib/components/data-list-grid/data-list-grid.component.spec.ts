@@ -4,14 +4,15 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ActivatedRoute, RouterModule } from '@angular/router'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { UserService } from '@onecx/angular-integration-interface'
-import { MockUserService, provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
+import { provideUserServiceMock, provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { DataListGridComponent } from './data-list-grid.component'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { ColumnType } from '../../model/column-type.model'
 import { DataListGridHarness } from '../../../../testing/data-list-grid.harness'
 import { DataTableHarness } from '../../../../testing/data-table.harness'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
+import { TooltipStyle } from 'primeng/tooltip'
+import { UserService } from '@onecx/angular-integration-interface'
 
 describe('DataListGridComponent', () => {
   const mutationObserverMock = jest.fn(function MutationObserver(callback) {
@@ -228,8 +229,9 @@ describe('DataListGridComponent', () => {
             },
           },
         },
-        { provide: UserService, useClass: MockUserService },
+        provideUserServiceMock(),
         provideAppStateServiceMock(),
+        TooltipStyle,
       ],
     }).compileComponents()
 
@@ -240,6 +242,8 @@ describe('DataListGridComponent', () => {
     component.paginator = true
     translateService = TestBed.inject(TranslateService)
     translateService.use('en')
+    const userService = TestBed.inject(UserService)
+    userService.permissions$.next(['VIEW', 'EDIT', 'DELETE'])
     fixture.detectChanges()
     listGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataListGridHarness)
   })
@@ -295,7 +299,7 @@ describe('DataListGridComponent', () => {
     const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
     const paginator = await dataListGrid.getPaginator()
     const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
-    const rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
+    const rowsPerPageOptionsText = await rowsPerPageOptions.selectedSelectItemText(0)
     expect(rowsPerPageOptionsText).toEqual('10')
   })
 
@@ -659,17 +663,19 @@ describe('DataListGridComponent', () => {
     it('should dynamically hide/show an action button based on the contents of a specified field', async () => {
       component.layout = 'grid'
       await setUpGridActionButtonMockData()
-      component.viewActionVisibleField = 'ready'
       const gridMenuButton = await listGrid.getMenuButton()
 
       await gridMenuButton.click()
 
       let gridActions = await listGrid.getActionButtons('grid')
-      expect(gridActions.length).toBe(2)
+      expect(gridActions.length).toBe(3)
+      await gridMenuButton.click()
 
-      let hiddenGridActions = await listGrid.getActionButtons('grid-hidden')
-      expect(hiddenGridActions.length).toBe(1)
-      expect(await hiddenGridActions[0].text()).toBe('OCX_DATA_LIST_GRID.MENU.VIEW')
+      component.viewActionVisibleField = 'ready'
+
+      await gridMenuButton.click()
+      gridActions = await listGrid.getActionButtons('grid')
+      expect(gridActions.length).toBe(2)
 
       for (const action of gridActions) {
         const text = await action.text()
@@ -686,8 +692,6 @@ describe('DataListGridComponent', () => {
       await gridMenuButton.click()
       gridActions = await listGrid.getActionButtons('grid')
       expect(gridActions.length).toBe(3)
-      hiddenGridActions = await listGrid.getActionButtons('grid-hidden')
-      expect(hiddenGridActions.length).toBe(0)
     })
   })
 })

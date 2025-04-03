@@ -2,6 +2,8 @@
 export * from './lib/injection-tokens/has-permission-checker'
 
 // directives
+export * from './lib/directives/content-container.directive'
+export * from './lib/directives/content.directive'
 export * from './lib/directives/if-permission.directive'
 export * from './lib/directives/if-breakpoint.directive'
 export * from './lib/directives/src.directive'
@@ -11,6 +13,8 @@ export * from './lib/directives/template.directive'
 
 // components
 export * from './lib/components/column-group-selection/column-group-selection.component'
+export * from './lib/components/content/content.component'
+export * from './lib/components/content-container/content-container.component'
 export * from './lib/components/custom-group-column-selector/custom-group-column-selector.component'
 export * from './lib/components/data-layout-selection/data-layout-selection.component'
 export * from './lib/components/data-list-grid/data-list-grid.component'
@@ -21,13 +25,14 @@ export * from './lib/components/diagram/diagram.component'
 export * from './lib/components/filter-view/filter-view.component'
 export * from './lib/components/group-by-count-diagram/group-by-count-diagram.component'
 export * from './lib/components/interactive-data-view/interactive-data-view.component'
+export * from './lib/components/lifecycle/lifecycle.component'
 export * from './lib/components/page-header/page-header.component'
 export * from './lib/components/search-header/search-header.component'
 export * from './lib/components/data-loading-error/data-loading-error.component'
 
 // services
 export * from './lib/services/breadcrumb.service'
-export * from './lib/services/connection.service'
+export * from './lib/services/translation-connection.service'
 export * from './lib/services/translation-cache.service'
 
 // pipes

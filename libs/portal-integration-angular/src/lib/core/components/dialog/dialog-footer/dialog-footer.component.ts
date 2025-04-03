@@ -10,9 +10,10 @@ import {
   ViewChild,
   ViewChildren,
   ViewContainerRef,
+  inject,
 } from '@angular/core'
-import { BehaviorSubject, Observable, map, withLatestFrom } from 'rxjs'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { BehaviorSubject, Observable, map, withLatestFrom } from 'rxjs'
 import {
   ButtonDialogButtonDetails,
   ButtonDialogConfig,
@@ -26,11 +27,15 @@ import {
 } from '../../../../services/portal-dialog.service'
 
 @Component({
+  standalone: false,
   selector: 'ocx-dialog-footer',
   templateUrl: './dialog-footer.component.html',
   styleUrls: ['./dialog-footer.component.scss'],
 })
 export class DialogFooterComponent implements OnInit, AfterViewInit {
+  dynamicDialogConfig = inject(DynamicDialogConfig)
+  dynamicDialogRef = inject(DynamicDialogRef)
+
   defaultPrimaryButtonDetails: ButtonDialogButtonDetails = {
     key: 'OCX_BUTTON_DIALOG.CONFIRM',
   }
@@ -72,11 +77,6 @@ export class DialogFooterComponent implements OnInit, AfterViewInit {
     return this._secondaryButton
   }
   @ViewChildren('customButton') customButtons!: QueryList<ElementRef>
-
-  constructor(
-    public dynamicDialogConfig: DynamicDialogConfig,
-    public dynamicDialogRef: DynamicDialogRef
-  ) {}
 
   ngAfterViewInit(): void {
     if (!(this.dynamicDialogConfig.data && this.dynamicDialogConfig.data.config)) return

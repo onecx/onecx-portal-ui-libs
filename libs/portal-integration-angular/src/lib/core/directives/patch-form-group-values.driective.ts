@@ -2,6 +2,7 @@ import { Directive, Input } from '@angular/core'
 
 @Directive({
   selector: '[ocxPatchFormGroupValues]',
+  standalone: false,
 })
 export class PatchFormGroupValuesDirective {
   @Input() formGroup: any

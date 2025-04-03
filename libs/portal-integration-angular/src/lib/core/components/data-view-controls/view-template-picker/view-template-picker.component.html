@@ -1,9 +1,10 @@
-<p-dropdown
-  *ngIf="labels.length > 0"
-  (onClear)="handleTemplateReset()"
-  (onChange)="handleTemplateChange($event)"
-  [options]="labels"
-  [placeholder]="placeholderText"
-  [showClear]="true"
-  [(ngModel)]="value"
-></p-dropdown>
+@if (labels.length > 0) {
+  <p-dropdown
+    (onClear)="handleTemplateReset()"
+    (onChange)="handleTemplateChange($event)"
+    [options]="labels"
+    [placeholder]="placeholderText"
+    [showClear]="true"
+    [(ngModel)]="value"
+  ></p-dropdown>
+}

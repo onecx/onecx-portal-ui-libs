@@ -1,3 +1,7 @@
-<div *ngFor="let component of (components$ | async);" #slot>
-    <ng-container *ngIf="skeleton" [ngTemplateOutlet]="skeleton"></ng-container>
+@for (component of (components$ | async); track component) {
+<div #slot>
+  @if (skeleton) {
+  <ng-container [ngTemplateOutlet]="skeleton"></ng-container>
+  }
 </div>
+}

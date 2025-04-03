@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http'
-import { Inject, Injectable, OnDestroy, Optional } from '@angular/core'
+import { Injectable, OnDestroy, inject } from '@angular/core'
 import { firstValueFrom, map } from 'rxjs'
 import { Config, ConfigurationTopic } from '@onecx/integration-interface'
 import { APP_CONFIG } from '../api/injection-tokens'
@@ -8,13 +8,13 @@ import Semaphore from 'ts-semaphore'
 
 @Injectable({ providedIn: 'root' })
 export class ConfigurationService implements OnDestroy {
+  private http = inject(HttpClient)
+  private defaultConfig = inject<{
+    [key: string]: string
+  }>(APP_CONFIG, { optional: true })
+
   private config$ = new ConfigurationTopic()
   private semaphore = new Semaphore(1)
-
-  constructor(
-    private http: HttpClient,
-    @Optional() @Inject(APP_CONFIG) private defaultConfig?: { [key: string]: string }
-  ) {}
 
   ngOnDestroy(): void {
     this.config$.destroy()
