@@ -1,3 +1,17 @@
+## [5.34.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.33.0...v5.34.0) (2025-04-04)
+
+### Features
+
+* added iconPos for Actions ([#687](https://github.com/onecx/onecx-portal-ui-libs/issues/687)) ([c2c8732](https://github.com/onecx/onecx-portal-ui-libs/commit/c2c87321417f4e10d19913a457a208647fb4cd22))
+* mock creation for services ([#672](https://github.com/onecx/onecx-portal-ui-libs/issues/672)) ([6697032](https://github.com/onecx/onecx-portal-ui-libs/commit/6697032e6a353346cc754f11683bff64fd46d99c))
+* replace shell footer with workspace footer, improve header left logo loading and layout ([#697](https://github.com/onecx/onecx-portal-ui-libs/issues/697)) ([a5d8293](https://github.com/onecx/onecx-portal-ui-libs/commit/a5d8293afa6f2c945929354a710f5df5e2642f70))
+
+### Bug Fixes
+
+* assert theme presence instead of workspace to display content ([#685](https://github.com/onecx/onecx-portal-ui-libs/issues/685)) ([#686](https://github.com/onecx/onecx-portal-ui-libs/issues/686)) ([fa9180d](https://github.com/onecx/onecx-portal-ui-libs/commit/fa9180d8bf08fd4d69e2d02c13e965957bdf2e74))
+* menu sidebar, improve menu handling and re-rendering ([#693](https://github.com/onecx/onecx-portal-ui-libs/issues/693)) ([43fb503](https://github.com/onecx/onecx-portal-ui-libs/commit/43fb503252d7204b8fc710d19aea85c02a65169f))
+* remove dialog when route changes ([#688](https://github.com/onecx/onecx-portal-ui-libs/issues/688)) ([64e3953](https://github.com/onecx/onecx-portal-ui-libs/commit/64e3953c4ec999f82e0debe2b0ece09b1b7bba90))
+
 ## [5.33.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.32.1...v5.33.0) (2025-03-13)
 
 ### Features
