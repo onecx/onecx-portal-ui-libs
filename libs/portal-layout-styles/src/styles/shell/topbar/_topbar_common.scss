@@ -13,28 +13,10 @@
   }
 
   .layout-topbar-left {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    position: relative;
     min-width: 10rem;
 
     &.vertical-menu {
       flex: 0 0 var(--menu-wrapper-width);
-    }
-
-    .layout-topbar-logo {
-      width: 100%;
-      height: 100%;
-      padding: 0.7rem 0.9rem;
-
-      > * {
-        object-fit: contain;
-        width: 100%;
-        height: 100%;
-        max-width: 100%;
-        max-height: 100%;
-      }
     }
 
     .layout-menu-button {
