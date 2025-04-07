@@ -1,3 +1,9 @@
+## [5.34.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.34.0...v5.34.1) (2025-04-07)
+
+### Bug Fixes
+
+* displaying topbar action buttons responsive ([#698](https://github.com/onecx/onecx-portal-ui-libs/issues/698)) ([74705a6](https://github.com/onecx/onecx-portal-ui-libs/commit/74705a62afef71b5517ca597913871ea5d09b0c7))
+
 ## [5.34.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.33.0...v5.34.0) (2025-04-04)
 
 ### Features
