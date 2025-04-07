@@ -9,7 +9,7 @@
     "@angular/elements": "^19.0.0",
     "@angular/router": "^19.0.0",
     "@onecx/accelerator": "^6.0.0-rc.5",
-    "@onecx/portal-integration-angular": "^6.0.0-rc.5",
+    "@onecx/angular-integration-interface": "^6.0.0-rc.5",
     "@onecx/integration-interface": "^6.0.0-rc.5",
     "rxjs": "~7.8.1",
     "@nx/devkit": "^20.3.0"
