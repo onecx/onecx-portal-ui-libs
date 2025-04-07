@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core'
-import { CurrentThemeTopic  } from '@onecx/integration-interface'
+import { CurrentThemeTopic } from '@onecx/integration-interface'
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService implements OnDestroy {
