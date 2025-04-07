@@ -1,3 +1,24 @@
+## [6.0.0-rc.6](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.5...v6.0.0-rc.6) (2025-04-07)
+
+### Features
+
+* ConfigurationTopic becomes async ([#674](https://github.com/onecx/onecx-portal-ui-libs/issues/674)) ([f817953](https://github.com/onecx/onecx-portal-ui-libs/commit/f81795343763edfedcbce559fffec54bbdc2257b))
+* deprecated unused show all inputs ([#671](https://github.com/onecx/onecx-portal-ui-libs/issues/671)) ([a180357](https://github.com/onecx/onecx-portal-ui-libs/commit/a1803576b0af69b2dfb2bd017f89444569b95b7e))
+* merge main ([#690](https://github.com/onecx/onecx-portal-ui-libs/issues/690)) ([e74b701](https://github.com/onecx/onecx-portal-ui-libs/commit/e74b701d25d0c3dbb1d548ba307be08ad06b6e63)), closes [#687](https://github.com/onecx/onecx-portal-ui-libs/issues/687) [#688](https://github.com/onecx/onecx-portal-ui-libs/issues/688)
+* migrations files for v6 ([#682](https://github.com/onecx/onecx-portal-ui-libs/issues/682)) ([156286e](https://github.com/onecx/onecx-portal-ui-libs/commit/156286e39496b9f823ab7567f2465b9574cd9a0e))
+* mock creation for services ([#672](https://github.com/onecx/onecx-portal-ui-libs/issues/672)) ([#692](https://github.com/onecx/onecx-portal-ui-libs/issues/692)) ([43494ca](https://github.com/onecx/onecx-portal-ui-libs/commit/43494ca0f50e4e7169e261867bf46e943e4bf86a))
+* replace AppStateService with angular-integration-interface ([#700](https://github.com/onecx/onecx-portal-ui-libs/issues/700)) ([1cea777](https://github.com/onecx/onecx-portal-ui-libs/commit/1cea7775a35f6ae25594f34207a39b84c508c2d7))
+
+### Bug Fixes
+
+* assert theme presence instead of workspace to display content ([#685](https://github.com/onecx/onecx-portal-ui-libs/issues/685)) ([f6219f7](https://github.com/onecx/onecx-portal-ui-libs/commit/f6219f7879832970dd0b1746e49ad0ac9c8d07d5))
+* dialog service mask and style ([#691](https://github.com/onecx/onecx-portal-ui-libs/issues/691)) ([189b79f](https://github.com/onecx/onecx-portal-ui-libs/commit/189b79f2915e9cbd2291278af939dafcf26cc248))
+* menu sidebar, improve menu handling and re-rendering ([#694](https://github.com/onecx/onecx-portal-ui-libs/issues/694)) ([47a3121](https://github.com/onecx/onecx-portal-ui-libs/commit/47a3121879e885de488857ee10b7c34ab6ea862e))
+
+### Refactoring
+
+* ConnectionService renamed to TranslationConnectionService ([#696](https://github.com/onecx/onecx-portal-ui-libs/issues/696)) ([016c234](https://github.com/onecx/onecx-portal-ui-libs/commit/016c234c13559def1d41b5e12aa0107432ce51d2))
+
 ## [6.0.0-rc.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.4...v6.0.0-rc.5) (2025-03-18)
 
 ### Features
