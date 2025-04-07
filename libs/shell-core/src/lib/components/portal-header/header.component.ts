@@ -36,7 +36,7 @@ export class HeaderComponent {
 
   menuExpanded = false
   // slot configuration: get theme logo
-  public slotName = 'onecx-theme-infos'
+  public slotName = 'onecx-theme-data'
   public isComponentDefined$: Observable<boolean> // check a component was assigned
   public currentTheme$: Observable<Theme>
   public logoLoadingEmitter = new EventEmitter<boolean>()
