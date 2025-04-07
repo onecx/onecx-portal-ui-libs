@@ -14,9 +14,9 @@ import {
   inject,
 } from '@angular/core'
 import { FormControlName, FormGroup, FormGroupDirective } from '@angular/forms'
+import { Observable, combineLatest, debounceTime, from, map, of, startWith } from 'rxjs'
 import { getLocation } from '@onecx/accelerator'
 import { CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
-import { Observable, combineLatest, debounceTime, map, of, startWith } from 'rxjs'
 import { Action } from '../page-header/page-header.component'
 
 export interface SearchHeaderComponentState {
@@ -123,7 +123,7 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
     show: 'always',
   }
   headerActions: Action[] = []
-  searchButtonsReversed = false
+  searchButtonsReversed$ = of(false)
   fieldValues$: Observable<{ [key: string]: unknown }> | undefined = of({})
   searchConfigChangedSlotEmitter: EventEmitter<SearchConfigData | undefined> = new EventEmitter()
 
@@ -136,8 +136,9 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
       })
       this.selectedSearchConfigChanged.emit(config)
     })
-    this.searchButtonsReversed =
-      configurationService.getProperty(CONFIG_KEY.ONECX_PORTAL_SEARCH_BUTTONS_REVERSED) === 'true'
+    this.searchButtonsReversed$ = from(
+      configurationService.getProperty(CONFIG_KEY.ONECX_PORTAL_SEARCH_BUTTONS_REVERSED)
+    ).pipe(map((config) => config === 'true'))
   }
 
   ngAfterContentInit(): void {
