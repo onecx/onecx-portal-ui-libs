@@ -290,10 +290,9 @@ function checkConfigurationServiceUsage(tree: Tree, directoryPath: string) {
     if (!fileContent) return
 
     const contentAst = ast(fileContent)
+    const referencesNodes = query(contentAst, 'Identifier[name="ConfigurationService"]')
 
-    const found = query(contentAst, 'Identifier[name="ConfigurationService"]')
-
-    if (found.length > 0) {
+    if (referencesNodes.length > 0) {
       foundInFiles.push(filePath)
     }
   })
