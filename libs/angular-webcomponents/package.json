@@ -12,7 +12,8 @@
     "@onecx/portal-integration-angular": "^6.0.0-rc.5",
     "@onecx/integration-interface": "^6.0.0-rc.5",
     "rxjs": "~7.8.1",
-    "@nx/devkit": "^20.3.0"
+    "@nx/devkit": "^20.3.0",
+    "@phenomnomnominal/tsquery": "^6.1.3"
   },
   "dependencies": {},
   "publishConfig": {

@@ -2,6 +2,7 @@ import {
   addDependenciesToPackageJson,
   formatFiles,
   installPackagesTask,
+  logger,
   readJson,
   removeDependenciesFromPackageJson,
   Tree,
@@ -10,6 +11,7 @@ import {
   writeJson,
 } from '@nx/devkit'
 import { execSync } from 'child_process'
+import { ast, query } from '@phenomnomnominal/tsquery'
 
 export default async function migrateOnecxToV6(tree: Tree) {
   const rootPath = tree.root
@@ -27,10 +29,11 @@ export default async function migrateOnecxToV6(tree: Tree) {
     const ngrxDependencies = Object.keys(json.dependencies).filter((dep) => dep.startsWith('@ngrx/'))
     const angularDevDependencies = Object.keys(json.devDependencies).filter((dep) => dep.startsWith('@angular/'))
     const nxDevDependencies = Object.keys(json.devDependencies).filter((dep) => dep.startsWith('@nx/'))
+    const customOnecxDependencies = Object.keys(json.dependencies).filter((dep) => /@.*\/nx-plugin/.test(dep))
 
     const dependenciesToUpdate: Record<string, string> = {
       '@angular/cdk': '^19.0.5',
-      '@onecx/nx-plugin': '1.10.0',
+      '@onecx/nx-plugin': '^1.10.0',
       '@ngx-translate/core': '^16.0.4',
       'keycloak-angular': '^19.0.2',
       'ngrx-store-localstorage': '^19.0.0',
@@ -56,7 +59,7 @@ export default async function migrateOnecxToV6(tree: Tree) {
       '@swc/core': '~1.10.18',
       '@swc/helpers': '~0.5.15',
       '@types/jest': '^29.5.14',
-      '@types/node': '22.13.4',
+      '@types/node': '^22.13.4',
       '@typescript-eslint/eslint-plugin': '^8.25.0',
       '@typescript-eslint/parser': '^8.25.0',
       '@typescript-eslint/utils': '^8.13.0',
@@ -70,7 +73,7 @@ export default async function migrateOnecxToV6(tree: Tree) {
       nx: '~20.3.4',
       prettier: '^3.5.1',
       'ts-jest': '^29.2.5',
-      'ts-node': '10.9.2',
+      'ts-node': '^10.9.2',
       tslib: '^2.8.1',
       'typescript-eslint': '^8.13.0',
     }
@@ -89,6 +92,9 @@ export default async function migrateOnecxToV6(tree: Tree) {
     })
     nxDevDependencies.forEach((dep) => {
       json.devDependencies[dep] = '~20.3.4'
+    })
+    customOnecxDependencies.forEach((dep) => {
+      json.dependencies[dep] = '^1.0.1'
     })
 
     Object.keys(dependenciesToUpdate).forEach((dep) => {
@@ -121,6 +127,8 @@ export default async function migrateOnecxToV6(tree: Tree) {
   installPackagesTask(tree, true)
 
   await formatFiles(tree)
+
+  checkConfigurationServiceUsage(tree, srcDirectoryPath)
 }
 
 function removeOnecxKeycloakAuth(tree: Tree) {
@@ -222,13 +230,9 @@ function migrateFastDeepEqualImport(tree: Tree, directoryPath: string) {
     if (filePath.endsWith('.ts')) {
       const fileContent = tree.read(filePath, 'utf-8')
       if (fileContent) {
-        const updatedContent = fileContent.replace(
-          /import \* as equal from 'fast-deep-equal';?/,
-          "import equal from 'fast-deep-equal';"
-        ).replace(
-          /import \* as deepEqual from 'fast-deep-equal';?/,
-          "import deepEqual from 'fast-deep-equal';"
-        )
+        const updatedContent = fileContent
+          .replace(/import \* as equal from 'fast-deep-equal';?/, "import equal from 'fast-deep-equal';")
+          .replace(/import \* as deepEqual from 'fast-deep-equal';?/, "import deepEqual from 'fast-deep-equal';")
 
         tree.write(filePath, updatedContent)
       }
@@ -274,4 +278,35 @@ function migratePrimeNgCalendar(tree: Tree, directoryPath: string) {
       }
     }
   })
+}
+
+function checkConfigurationServiceUsage(tree: Tree, directoryPath: string) {
+  const foundInFiles: string[] = []
+  const warning = '⚠️ ConfigurationService is now asynchronous. Please check if usage needs to be adapted.'
+
+  visitNotIgnoredFiles(tree, directoryPath, (filePath) => {
+    const fileContent = tree.read(filePath, 'utf-8')
+
+    if (!fileContent) return
+
+    const contentAst = ast(fileContent)
+
+    const found = query(contentAst, 'Identifier[name="ConfigurationService"]')
+
+    if (found.length > 0) {
+      foundInFiles.push(filePath)
+    }
+  })
+
+  printWarnings(warning, foundInFiles)
+}
+
+export function printWarnings(warning: string, affectedFiles: string[]) {
+  if (affectedFiles.length > 0) {
+    logger.warn(warning)
+    logger.warn(`Found in:`)
+    affectedFiles.forEach((file) => {
+      logger.warn(`  - ${file}`)
+    })
+  }
 }
