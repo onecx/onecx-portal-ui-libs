@@ -29,7 +29,6 @@ export default async function migrateOnecxToV6(tree: Tree) {
     const ngrxDependencies = Object.keys(json.dependencies).filter((dep) => dep.startsWith('@ngrx/'))
     const angularDevDependencies = Object.keys(json.devDependencies).filter((dep) => dep.startsWith('@angular/'))
     const nxDevDependencies = Object.keys(json.devDependencies).filter((dep) => dep.startsWith('@nx/'))
-    const customOnecxDependencies = Object.keys(json.dependencies).filter((dep) => /@.*\/nx-plugin/.test(dep))
 
     const dependenciesToUpdate: Record<string, string> = {
       '@angular/cdk': '^19.0.5',
@@ -92,9 +91,6 @@ export default async function migrateOnecxToV6(tree: Tree) {
     })
     nxDevDependencies.forEach((dep) => {
       json.devDependencies[dep] = '~20.3.4'
-    })
-    customOnecxDependencies.forEach((dep) => {
-      json.dependencies[dep] = '^1.0.1'
     })
 
     Object.keys(dependenciesToUpdate).forEach((dep) => {
