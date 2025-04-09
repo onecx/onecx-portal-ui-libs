@@ -1,5 +1,5 @@
 @media (max-width: $mobileBreakpoint) {
-  .layout-topbar {
+  .layout-topbar_flex {
     .layout-topbar-left {
       flex-shrink: 1;
     }
@@ -7,7 +7,7 @@
     .layout-topbar-right {
       min-width: auto;
 
-      .layout-topbar-actions-right {
+      .layout-topbar-actions-right_flex {
         padding-right: 0.25rem;
 
         .layout-topbar-items .layout-topbar-item .layout-topbar-action-panel {
