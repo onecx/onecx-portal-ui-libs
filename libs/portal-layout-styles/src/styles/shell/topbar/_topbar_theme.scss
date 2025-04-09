@@ -1,6 +1,7 @@
 .layout-topbar {
   color: var(--topbar-item-text-color);
   background-color: var(--topbar-bg-color);
+  /*
   a {
     color: var(--topbar-item-text-color);
 
@@ -9,7 +10,7 @@
       color: var(--topbar-item-text-hover-color, var(--topbar-item-text-color));
       transition: background-color var(--transition-duration);
     }
-  }
+  }*/
 
   .layout-topbar-left {
     background-color: var(--topbar-left-bg-color);
@@ -33,7 +34,7 @@
               .p-submenu-icon {
                 color: var(--topbar-item-text-color);
               }
-  
+
               &:not(.p-disabled):hover {
                 background: var(--topbar-item-text-hover-bg-color);
                 transition: background-color var(--transition-duration);
@@ -59,24 +60,16 @@
       }
     }
 
-    .layout-topbar-actions-right {
+    .layout-topbar-actions-right_flex {
       .layout-topbar-items {
         .layout-topbar-action-panel {
           background-color: var(--overlay-content-bg-color);
           color: var(--text-color);
 
-          a {
-            color: var(--text-color);
-
-            &:hover {
-              background-color: transparent;
-              transition: none;
-            }
-          }
-
           .layout-topbar-action-item {
+            color: var(--menu-item-text-color);
             &:hover {
-              background-color: var(--hover-bg-color);
+              background-color: var(--menu-item-hover-bg-color);
               transition: background-color var(--transition-duration);
             }
           }
