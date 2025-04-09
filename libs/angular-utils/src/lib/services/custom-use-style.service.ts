@@ -5,10 +5,9 @@ import { AppStateService } from '@onecx/angular-integration-interface'
 import { ReplaySubject } from 'rxjs'
 import { THEME_OVERRIDES, ThemeOverrides } from '../theme/application-config'
 import { toVariables } from '@primeuix/styled'
-import { getScopeIdentifier } from '../utils/scope.utils'
+import { dataVariableOverrideIdAttibute, getScopeIdentifier, replacePrefix, scopeStyle } from '../utils/scope.utils'
 
 export const SKIP_STYLE_SCOPING = new InjectionToken<boolean>('SKIP_STYLE_SCOPING')
-const everythingNotACharacterOrNumberRegex = /[^a-zA-Z0-9-]/g
 
 @Injectable({ providedIn: 'any' })
 export class CustomUseStyle extends UseStyle {
@@ -24,8 +23,8 @@ export class CustomUseStyle extends UseStyle {
   // Each Application needs to isolate the CSS variables and styles from others
   override use(css: any, options?: any): { id: any; name: any; el: any; css: any } {
     getScopeIdentifier(this.appStateService, this.skipStyleScoping, this.remoteComponentConfig).then((scopeId) => {
-      css = this.replacePrefix(css, scopeId)
-      css = this.isStyle(options.name as string) ? this.scopeStyle(css, scopeId) : css
+      css = replacePrefix(css, scopeId)
+      css = this.isStyle(options.name as string) ? scopeStyle(css, scopeId) : css
 
       options = {
         ...options,
@@ -50,7 +49,7 @@ export class CustomUseStyle extends UseStyle {
       if (variablesData.value.length === 0) return
 
       const styleRef = this.createOrRetrieveOverrideElement(scopeId ? scopeId : 'shell-ui')
-      const prefixedOverrides = this.replacePrefix(variablesData.css, scopeId)
+      const prefixedOverrides = replacePrefix(variablesData.css, scopeId)
       styleRef.textContent = prefixedOverrides
       // Always make sure it is the last child of the document head
       this.document.head.appendChild(styleRef)
@@ -59,45 +58,12 @@ export class CustomUseStyle extends UseStyle {
 
   private createOrRetrieveOverrideElement(overrideId: string): Element {
     const styleRef =
-      this.document.querySelector(`style[data-variable-override-id="${overrideId}"]`) ||
+      this.document.querySelector(`style[${dataVariableOverrideIdAttibute}="${overrideId}"]`) ||
       this.document.createElement('style')
     if (!styleRef.isConnected) {
-      styleRef.setAttribute('data-variable-override-id', overrideId)
+      styleRef.setAttribute(`${dataVariableOverrideIdAttibute}`, overrideId)
     }
     return styleRef
-  }
-
-  private scopeStyle(css: string, scopeId: string) {
-    const isScopeSupported = (typeof CSSScopeRule !== 'undefined')
-    if (scopeId === '') {
-      return isScopeSupported ? `
-      @scope([data-style-id="shell-ui"]) to ([data-style-isolation]) {
-              ${css}
-          }
-      ` : `
-      @supports (@scope([data-style-id="shell-ui"]) to ([data-style-isolation])) {
-              ${css}
-          }
-      `
-    } else {
-      return isScopeSupported ? `
-      @scope([data-style-id="${scopeId}"][data-no-portal-layout-styles]) to ([data-style-isolation]) {
-              ${css}
-          }
-      ` : `
-      @supports (@scope([data-style-id="${scopeId}"][data-no-portal-layout-styles]) to ([data-style-isolation])) {
-              ${css}
-          }
-      `
-    }
-  }
-
-  private replacePrefix(css: string, scopeId: string) {
-    if (scopeId === '') {
-      return css
-    }
-
-    return css.replaceAll('--p-', this.scopeIdentifierToVariablePrefix(scopeId))
   }
 
   private createFakeUseResponse(css: any, options: any) {
@@ -128,10 +94,6 @@ export class CustomUseStyle extends UseStyle {
       },
     })
     return returnObject
-  }
-
-  private scopeIdentifierToVariablePrefix(scopeId: string) {
-    return '--' + scopeId.replace(everythingNotACharacterOrNumberRegex, '-') + '-'
   }
 
   private isVariables(cssName: string) {

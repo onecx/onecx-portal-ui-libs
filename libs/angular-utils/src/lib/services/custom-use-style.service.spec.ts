@@ -34,6 +34,14 @@ jest.mock('@primeuix/utils', () => ({
   setAttributes: jest.fn(),
 }))
 
+// const actualModule = jest.requireActual('../utils/scope.utils')
+// console.log(actualModule)
+
+// jest.mock('../utils/scope.utils', () => ({
+//   ...actualModule,
+//   isScopeSupported: jest.fn().mockReturnValue(true),
+// }))
+
 describe('CustomUseStyleService', () => {
   let service: CustomUseStyle
   let styleList: Array<ElementMock> = []
@@ -41,7 +49,6 @@ describe('CustomUseStyleService', () => {
 
   const documentMock: Partial<Document> = {
     querySelector(selectors: string) {
-      console.log(selectors, styleList)
       return styleList.find((s) => `style[${s.attribute}]` === selectors) ?? null
     },
     createElement(tagName: string) {
@@ -124,9 +131,22 @@ describe('CustomUseStyleService', () => {
     } as MfeInfo)
   }
 
+  const removeScopeRule = () => {
+    delete (global as any).CSSScopeRule
+  }
+
+  const setScopeRule = () => {
+    ;(global as any).CSSScopeRule = 'CSSScopeRule'
+  }
+
+  beforeEach(() => {
+    setScopeRule()
+  })
+
   afterEach(() => {
     styleList = []
     mockOverrides = {}
+    removeScopeRule()
   })
 
   describe('for Shell', () => {
@@ -160,7 +180,25 @@ describe('CustomUseStyleService', () => {
 
       tick(100)
       expect(styleList.length).toBe(1)
-      expect(styleList.at(0)?.textContent).toEqual(expectedCss)
+      expect(removeSpacesAndNewlines(styleList.at(0)?.textContent)).toEqual(removeSpacesAndNewlines(expectedCss))
+    }))
+
+    it('should create styles when scope is not supported', fakeAsync(() => {
+      removeScopeRule()
+      const css = '.p-button{display:inline-flex;color:var(--p-button-primary-color)}'
+      const expectedCss = `
+      @supports (@scope([data-style-id="shell-ui"]) to ([data-style-isolation])) {
+              ${css}
+          }
+      `
+
+      service.use(css, {
+        name: 'button-styles',
+      })
+
+      tick(100)
+      expect(styleList.length).toBe(1)
+      expect(removeSpacesAndNewlines(styleList.at(0)?.textContent)).toEqual(removeSpacesAndNewlines(expectedCss))
     }))
 
     it('should create additional style element for overrides', fakeAsync(() => {
@@ -213,6 +251,23 @@ describe('CustomUseStyleService', () => {
       expect(removeSpacesAndNewlines(styleList.at(0)?.textContent)).toEqual(removeSpacesAndNewlines(expectedCss))
     }))
 
+    it('should create styles when scope is not supported', fakeAsync(() => {
+      removeScopeRule()
+      const css = '.p-button{display:inline-flex;color:var(--p-button-primary-color)}'
+      const expectedCss = `
+            @supports (@scope([data-style-id="test|test-ui"][data-no-portal-layout-styles]) to ([data-style-isolation])) {
+                .p-button{display:inline-flex;color:var(--test-test-ui-button-primary-color)}}
+            `
+
+      service.use(css, {
+        name: 'button-styles',
+      })
+
+      tick(100)
+      expect(styleList.length).toBe(1)
+      expect(removeSpacesAndNewlines(styleList.at(0)?.textContent)).toEqual(removeSpacesAndNewlines(expectedCss))
+    }))
+
     it('should create additional style element for overrides', fakeAsync(() => {
       const regularCss = ":root{--p-primary-color: '#ababab';}"
       const overrides = TestBed.inject(THEME_OVERRIDES)
@@ -251,6 +306,23 @@ describe('CustomUseStyleService', () => {
       const css = '.p-button{display:inline-flex;color:var(--p-button-primary-color)}'
       const expectedCss = `
                   @scope([data-style-id="test|test-ui"][data-no-portal-layout-styles]) to ([data-style-isolation]) {
+                      .p-button{display:inline-flex;color:var(--test-test-ui-button-primary-color)}}
+                  `
+
+      service.use(css, {
+        name: 'button-styles',
+      })
+
+      tick(100)
+      expect(styleList.length).toBe(1)
+      expect(removeSpacesAndNewlines(styleList.at(0)?.textContent)).toEqual(removeSpacesAndNewlines(expectedCss))
+    }))
+
+    it('should create styles when scope is not supported', fakeAsync(() => {
+      removeScopeRule()
+      const css = '.p-button{display:inline-flex;color:var(--p-button-primary-color)}'
+      const expectedCss = `
+                  @supports (@scope([data-style-id="test|test-ui"][data-no-portal-layout-styles]) to ([data-style-isolation])) {
                       .p-button{display:inline-flex;color:var(--test-test-ui-button-primary-color)}}
                   `
 
