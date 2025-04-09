@@ -1,3 +1,10 @@
+## [5.34.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.34.1...v5.34.2) (2025-04-09)
+
+### Bug Fixes
+
+* ensure origin mock exists in angular-accelerator testing and data list grid tests ([#703](https://github.com/onecx/onecx-portal-ui-libs/issues/703)) ([ba533b4](https://github.com/onecx/onecx-portal-ui-libs/commit/ba533b4aac79d7e951b449abf49f31483d52495a))
+* use menu item colors for topbar action panel list items ([#701](https://github.com/onecx/onecx-portal-ui-libs/issues/701)) ([58df30c](https://github.com/onecx/onecx-portal-ui-libs/commit/58df30ce3cdb35155437a47850026335e3eb81a3))
+
 ## [5.34.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.34.0...v5.34.1) (2025-04-07)
 
 ### Bug Fixes
