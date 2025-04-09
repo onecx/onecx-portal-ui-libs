@@ -10,12 +10,13 @@ import {
 } from '@onecx/angular-integration-interface'
 import { MessageService } from 'primeng/api'
 import { PrimeNG } from 'primeng/config'
-import { filter, first, from, mergeMap, of } from 'rxjs'
+import { filter, first, from, mergeMap, Observable, of } from 'rxjs'
 import { SHOW_CONTENT_PROVIDER, ShowContentProvider } from '../../shell-interface/show-content-provider'
 import {
   WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER,
   WorkspaceConfigBffService,
 } from '../../shell-interface/workspace-config-bff-service-provider'
+import { SlotService } from '@onecx/angular-remote-components'
 
 @Component({
   standalone: false,
@@ -36,6 +37,7 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
   workspaceConfigBffService = inject<WorkspaceConfigBffService | undefined>(WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER, {
     optional: true,
   })
+  private slotService = inject(SlotService)
 
   menuButtonTitle = ''
   menuActive = true
@@ -49,6 +51,9 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
   ripple = true
   isMobile = false
   globalErrMsg: string | undefined
+
+  verticalMenuSlotName = 'onecx-shell-vertical-menu'
+  isVerticalMenuComponentDefined$: Observable<boolean>
 
   constructor() {
     this.portalMessageService.message$.subscribe((message: Message) => this.messageService.add(message))
@@ -95,6 +100,8 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
         }
         link.href = url
       })
+
+      this.isVerticalMenuComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.verticalMenuSlotName)
   }
 
   ngOnInit() {

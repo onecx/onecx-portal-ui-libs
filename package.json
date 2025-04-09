@@ -1,6 +1,6 @@
 {
   "name": "@onecx/onecx-portal-ui-libs",
-  "version": "6.0.0-rc.5",
+  "version": "6.0.0-rc.6",
   "license": "Apache-2.0",
   "scripts": {
     "sass": "npx sass libs/portal-integration-angular/assets/styles.scss libs/portal-integration-angular/assets/output.css",
@@ -45,6 +45,7 @@
     "primeng": "^19.0.6",
     "rxjs": "^7.8.1",
     "storybook": "^8.3.2",
+    "ts-semaphore": "^1.0.0",
     "tslib": "^2.7.0",
     "zod": "^3.23.8",
     "zone.js": "^0.15.0"

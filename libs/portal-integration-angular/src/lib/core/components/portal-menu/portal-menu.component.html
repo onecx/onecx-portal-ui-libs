@@ -1,7 +1,0 @@
-<ul class="layout-menu" id="nav" role="navigation">
-  @if (menuItems$ | async; as items) { @for (item of items; track item; let i = $index) {
-  <ocx-submenu [item]="item" [index]="i" [root]="true"></ocx-submenu>
-  } } @else {
-  <!-- TODO implement me -->
-  loading... }
-</ul>

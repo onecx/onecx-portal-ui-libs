@@ -8,6 +8,7 @@ import {
   WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER,
   WorkspaceConfigBffService,
 } from '../../shell-interface/workspace-config-bff-service-provider'
+import { SlotService } from '@onecx/angular-remote-components'
 
 @Component({
   standalone: false,
@@ -30,6 +31,7 @@ export class HeaderComponent {
   @Input() fullPortalLayout = true
   @Input() homeNavUrl = '/'
   @Input() homeNavTitle = 'Home'
+  @Input() isStaticalMenu = false
   @Input() isHorizontalMenu = false
   @Output() menuButtonClick: EventEmitter<any> = new EventEmitter()
 
@@ -38,10 +40,14 @@ export class HeaderComponent {
   workspaceConfigBffService = inject<WorkspaceConfigBffService | undefined>(WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER, {
     optional: true,
   })
+  private slotService = inject(SlotService)
 
   menuExpanded = false
   fallbackImg = false
   logoUrl$: Observable<string | undefined>
+
+  verticalMenuSlotName = 'onecx-shell-vertical-menu'
+  isVerticalMenuComponentDefined$: Observable<boolean>
 
   constructor() {
     this.logoUrl$ = combineLatest([
@@ -58,6 +64,8 @@ export class HeaderComponent {
         return of(theme.logoUrl || portal.logoUrl)
       })
     )
+
+    this.isVerticalMenuComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.verticalMenuSlotName)
   }
 
   onMenuButtonClick(e: Event) {

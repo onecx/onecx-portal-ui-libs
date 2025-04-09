@@ -29,12 +29,16 @@ export class KeycloakAuthService implements AuthService {
       }
     }
 
-    let kcConfig: KeycloakConfig | string = { ...this.getValidKCConfig(), ...(this.config ?? {}) }
+    let kcConfig: KeycloakConfig | string
+    const validKCConfig = await this.getValidKCConfig()
+    kcConfig = { ...validKCConfig, ...(config ?? {}) }
+
     if (!kcConfig.clientId || !kcConfig.realm || !kcConfig.url) {
       kcConfig = './assets/keycloak.json'
     }
 
-    const enableSilentSSOCheck = this.configService.getProperty(CONFIG_KEY.KEYCLOAK_ENABLE_SILENT_SSO) === 'true'
+    const enableSilentSSOCheck =
+      (await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_ENABLE_SILENT_SSO)) === 'true'
 
     this.keycloak = new Keycloak(kcConfig)
 
@@ -69,17 +73,18 @@ export class KeycloakAuthService implements AuthService {
       })
   }
 
-  protected getValidKCConfig(): KeycloakConfig {
-    const clientId = this.configService.getProperty(CONFIG_KEY.KEYCLOAK_CLIENT_ID)
+  protected async getValidKCConfig(): Promise<KeycloakConfig> {
+    const clientId = await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_CLIENT_ID)
     if (!clientId) {
       throw new Error('Invalid KC config, missing clientId')
     }
-    const realm = this.configService.getProperty(CONFIG_KEY.KEYCLOAK_REALM)
+    const realm = await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_REALM)
     if (!realm) {
       throw new Error('Invalid KC config, missing realm')
     }
+    const url = await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_URL)
     return {
-      url: this.configService.getProperty(CONFIG_KEY.KEYCLOAK_URL),
+      url,
       clientId,
       realm,
     }

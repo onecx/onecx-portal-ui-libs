@@ -4,7 +4,7 @@ import { UserService } from '@onecx/angular-integration-interface'
 import { Subscription } from 'rxjs'
 
 @Injectable()
-export class ConnectionService implements OnDestroy {
+export class TranslationConnectionService implements OnDestroy {
   languageSub: Subscription
 
   constructor() {
