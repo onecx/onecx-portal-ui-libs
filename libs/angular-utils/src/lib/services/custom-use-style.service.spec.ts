@@ -34,14 +34,6 @@ jest.mock('@primeuix/utils', () => ({
   setAttributes: jest.fn(),
 }))
 
-// const actualModule = jest.requireActual('../utils/scope.utils')
-// console.log(actualModule)
-
-// jest.mock('../utils/scope.utils', () => ({
-//   ...actualModule,
-//   isScopeSupported: jest.fn().mockReturnValue(true),
-// }))
-
 describe('CustomUseStyleService', () => {
   let service: CustomUseStyle
   let styleList: Array<ElementMock> = []
