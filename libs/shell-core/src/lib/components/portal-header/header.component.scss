@@ -42,36 +42,22 @@ $menuWrapperWidth: 17rem;
   width: 100%;
   height: 4rem;
   transition: width var(--p-transition-duration);
+  // flex content:
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  row-gap: 1rem;
 
   ul {
     @include reset-list;
   }
 
   .layout-topbar-left {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    position: relative;
     min-width: 10rem;
     /* padding-right: 1.25rem; */
 
     &.vertical-menu {
       flex: 0 0 $menuWrapperWidth;
-    }
-
-    .layout-topbar-logo {
-      width: 100%;
-      height: 100%;
-      padding: 0.7rem 0.9rem;
-
-      >* {
-        object-fit: contain;
-        width: 100%;
-        height: 100%;
-        max-width: 100%;
-        max-height: 100%;
-      }
     }
 
     .layout-menu-button {
@@ -108,6 +94,8 @@ $menuWrapperWidth: 17rem;
     flex-grow: 1;
     align-items: center;
     justify-content: space-between;
+    row-gap: 0;
+    margin-left: 1.5rem; /* distance to chevron switcher */
     padding-left: 1.25rem;
     height: 100%;
     min-width: 0;
@@ -128,12 +116,15 @@ $menuWrapperWidth: 17rem;
 
     .layout-topbar-actions-right_flex {
       height: 100%;
-      padding-right: 0.9rem;
+      margin-right: 0.75rem;
 
       .layout-topbar-items {
         display: flex;
         flex-direction: row;
+        flex-wrap: wrap;
         justify-content: center;
+        align-items: center;
+        gap: 0.25rem;
         height: 100%;
 
         .layout-topbar-item {
@@ -143,14 +134,22 @@ $menuWrapperWidth: 17rem;
 
           .layout-topbar-action {
             user-select: none;
-            padding: 0 0.8rem;
-            margin: 0 0.1rem;
-            border-radius: 4px;
+            justify-content: center;
             height: 3.2rem;
-            min-width: 3.2rem;
-            display: flex;
-            align-items: center;
+            width: 3.2rem;
+            min-width: 3.2rem; // fix button setting
+            border-radius: 50%;
             cursor: pointer;
+            margin: 0;
+            padding: 0.5rem !important; // fix uneven button dimensions
+            color: var(--p-onecx-topbar-item-text-color);
+            background-color: var(--p-onecx-topbar-bg-color);
+            &:hover,
+            &:focus {
+              color: var(--p-onecx-topbar-item-text-hover-color);
+              background-color: var(--p-onecx-topbar-item-text-hover-bg-color);
+              transition: background-color var(--p-transition-duration);
+            }
           }
 
           .layout-topbar-action-panel {
@@ -158,13 +157,12 @@ $menuWrapperWidth: 17rem;
             top: 4rem;
             right: 0;
             z-index: 1000;
-            min-width: 25rem;
-            padding: 1rem 0;
+            min-width: 13rem;
+            padding: 0.5rem 0;
             @include material-overlay-transform;
 
             .layout-topbar-action-item {
               cursor: pointer;
-              padding: 1rem;
             }
           }
 
@@ -260,19 +258,9 @@ $menuWrapperWidth: 17rem;
   }
 }
 
-.layout-topbar {
+.layout-topbar_flex {
   color: var(--p-onecx-topbar-item-text-color);
   background-color: var(--p-onecx-topbar-bg-color);
-
-  a {
-    color: var(--p-onecx-topbar-item-text-color);
-
-    &:hover {
-      background-color: var(--p-onecx-topbar-item-text-hover-bg-color);
-      color: var(--p-onecx-topbar-item-text-color);
-      transition: background-color var(--p-transition-duration);
-    }
-  }
 
   .layout-topbar-left {
     background-color: var(--p-onecx-topbar-left-bg-color);
@@ -330,18 +318,10 @@ $menuWrapperWidth: 17rem;
           background-color: var(--p-onecx-overlay-content-bg-color);
           color: var(--p-onecx-text-color);
 
-          a {
-            color: var(--p-onecx-text-color);
-
-            &:hover {
-              background-color: transparent;
-              transition: none;
-            }
-          }
-
           .layout-topbar-action-item {
+            color: var(--p-onecx-menu-item-text-color);
             &:hover {
-              background-color: var(--p-onecx-hover-bg-color);
+              background-color: var(--p-onecx-menu-item-hover-bg-color);
               transition: background-color var(--p-transition-duration);
             }
           }
