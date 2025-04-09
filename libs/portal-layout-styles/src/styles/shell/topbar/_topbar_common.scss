@@ -1,4 +1,4 @@
-.layout-topbar {
+.layout-topbar_flex {
   position: fixed;
   top: 0;
   left: 0;
@@ -178,7 +178,7 @@
 }
 
 .layout-menu-button-hidden {
-  .layout-topbar {
+  .layout-topbar_flex {
     .layout-topbar-left {
       padding-right: 0;
 
