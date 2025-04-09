@@ -126,7 +126,7 @@ $menuWrapperWidth: 17rem;
       }
     }
 
-    .layout-topbar-actions-right {
+    .layout-topbar-actions-right_flex {
       height: 100%;
       padding-right: 0.9rem;
 
@@ -244,7 +244,7 @@ $menuWrapperWidth: 17rem;
     .layout-topbar-right {
       min-width: auto;
 
-      .layout-topbar-actions-right {
+      .layout-topbar-actions-right_flex {
         padding-right: 0.25rem;
 
         .layout-topbar-items .layout-topbar-item .layout-topbar-action-panel {
@@ -322,7 +322,7 @@ $menuWrapperWidth: 17rem;
       }
     }
 
-    .layout-topbar-actions-right {
+    .layout-topbar-actions-right_flex {
       .layout-topbar-items {
         .layout-topbar-action-panel {
           background-color: var(--p-onecx-overlay-content-bg-color);
