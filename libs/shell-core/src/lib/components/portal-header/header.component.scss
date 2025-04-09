@@ -34,7 +34,7 @@ $menuWrapperWidth: 17rem;
   list-style-type: none;
 }
 
-.layout-topbar {
+.layout-topbar_flex  {
   position: fixed;
   top: 0;
   left: 0;
@@ -218,16 +218,18 @@ $menuWrapperWidth: 17rem;
 }
 
 .layout-menu-button-hidden {
-  .layout-topbar-left {
-    padding-right: 0;
+  .layout-topbar_flex {
+    .layout-topbar-left {
+      padding-right: 0;
 
-    .layout-menu-button {
-      display: none;
+      .layout-menu-button {
+        display: none;
+      }
     }
-  }
 
-  .layout-topbar-right {
-    padding-left: 0;
+    .layout-topbar-right {
+      padding-left: 0;
+    }
   }
 }
 
@@ -236,7 +238,7 @@ $menuWrapperWidth: 17rem;
 }
 
 @media (max-width: var(--mobile-break-point)) {
-  .layout-topbar {
+  .layout-topbar_flex  {
     .layout-topbar-left {
       flex-shrink: 1;
     }
