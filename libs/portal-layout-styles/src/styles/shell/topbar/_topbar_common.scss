@@ -1,4 +1,4 @@
-.layout-topbar {
+.layout-topbar_flex {
   position: fixed;
   top: 0;
   left: 0;
@@ -119,13 +119,12 @@
             top: 4rem;
             right: 0;
             z-index: 1000;
-            min-width: 25rem;
-            padding: 1rem 0;
+            min-width: 13rem;
+            padding: 0.5rem 0;
             @include material-overlay-transform;
 
             .layout-topbar-action-item {
               cursor: pointer;
-              padding: 1rem;
             }
           }
 
@@ -179,7 +178,7 @@
 }
 
 .layout-menu-button-hidden {
-  .layout-topbar {
+  .layout-topbar_flex {
     .layout-topbar-left {
       padding-right: 0;
 

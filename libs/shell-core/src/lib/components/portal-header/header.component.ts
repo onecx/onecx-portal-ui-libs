@@ -47,7 +47,6 @@ export class HeaderComponent {
     this.currentTheme$ = this.themeService.currentTheme$.asObservable()
     this.logoLoadingEmitter.subscribe((data: boolean) => {
       this.themeLogoLoadingFailed = data
-      console.log('themeLogoLoadingFailed => ' + this.themeLogoLoadingFailed)
     })
   }
 
