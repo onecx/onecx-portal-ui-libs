@@ -22,8 +22,8 @@ export class ConfigurationServiceMock {
     })
   }
 
-  public init(): Promise<boolean> {
-    return this.config$.publish({ config: 'config' }).then(() => {
+  public init(config?: Config): Promise<boolean> {
+    return this.config$.publish(config ?? {}).then(() => {
       this.resolveInitPromise()
       return true
     })
