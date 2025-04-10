@@ -1,3 +1,9 @@
+## [5.34.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.34.3...v5.34.4) (2025-04-10)
+
+### Bug Fixes
+
+* configuration service init ([#709](https://github.com/onecx/onecx-portal-ui-libs/issues/709)) ([d5c6199](https://github.com/onecx/onecx-portal-ui-libs/commit/d5c619904170a0fe7068c0f00247770ab47de8ec))
+
 ## [5.34.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.34.2...v5.34.3) (2025-04-10)
 
 ### Bug Fixes
