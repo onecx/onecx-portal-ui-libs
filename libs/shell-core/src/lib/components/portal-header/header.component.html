@@ -4,7 +4,7 @@
     [ngClass]="{'vertical-menu': !isHorizontalMenu}"
   >
     <!-- LOGO -->
-    @if (currentTheme$ | async as theme) { @if (isComponentDefined$ | async) {
+    @if (currentTheme$ | async; as theme) { @if (isComponentDefined$ | async) {
     <ocx-slot
       [name]="slotName"
       [inputs]="{
@@ -30,7 +30,7 @@
       tooltipEvent="hover"
     >
       <i
-        [ngClass]="{'toggle-button-direction': isStaticalMenu && (isVerticalMenuComponentDefined$ | async) === true}"
+        [ngClass]="{'toggle-button-direction': isStaticalMenu && (isComponentDefined$ | async) === true}"
         class="pi pi-chevron-right"
       ></i>
     </a>
