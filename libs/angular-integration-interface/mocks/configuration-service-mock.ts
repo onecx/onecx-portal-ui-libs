@@ -11,7 +11,7 @@ export function provideConfigurationServiceMock() {
 
 @Injectable({ providedIn: 'root' })
 export class ConfigurationServiceMock {
-  config$ = new FakeTopic<Config>()
+  config$ = new FakeTopic<Config>({})
 
   private resolveInitPromise!: (value: void | PromiseLike<void>) => void
   private isInitializedPromise: Promise<void>
