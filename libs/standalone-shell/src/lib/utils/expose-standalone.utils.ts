@@ -9,7 +9,7 @@ import {
 } from '@onecx/angular-integration-interface'
 import { initializeRouter } from '@onecx/angular-webcomponents'
 import { Router } from '@angular/router'
-import { Theme, UserProfile, Workspace } from '@onecx/integration-interface'
+import { PermissionsTopic, Theme, UserProfile, Workspace } from '@onecx/integration-interface'
 import { provideAlwaysGrantPermissionChecker, TRANSLATION_PATH } from '@onecx/angular-utils'
 import { provideAuthService, provideTokenInterceptor } from '@onecx/angular-auth'
 
@@ -51,6 +51,9 @@ const appInitializer = (
       },
       ...(providerConfig?.userProfile ?? {}),
     })
+    const permissionsTopic = new PermissionsTopic()
+    await permissionsTopic.publish(providerConfig?.permissions ?? [])
+    permissionsTopic.destroy()
     await appStateService.currentWorkspace$.publish({
       workspaceName: 'Standalone',
       baseUrl: '/',
@@ -69,6 +72,7 @@ export interface ProvideStandaloneProvidersConfig {
   userProfile: Partial<UserProfile>
   mfeInfo: Partial<MfeInfo>
   theme: Partial<Theme>
+  permissions?: string[]
 }
 
 export const PROVIDE_STANDALONE_PROVIDERS_CONFIG = new InjectionToken<ProvideStandaloneProvidersConfig>(
