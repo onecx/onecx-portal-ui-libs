@@ -13,12 +13,24 @@ export function provideConfigurationServiceMock() {
 export class ConfigurationServiceMock {
   config$ = new FakeTopic<Config>()
 
-  public init(): Promise<boolean> {
-    return this.config$.publish({ config: 'config' }).then(() => true)
+  private resolveInitPromise!: (value: void | PromiseLike<void>) => void
+  private isInitializedPromise: Promise<void>
+
+  constructor() {
+    this.isInitializedPromise = new Promise<void>((resolve) => {
+      this.resolveInitPromise = resolve
+    })
+  }
+
+  public init(config?: Config): Promise<boolean> {
+    return this.config$.publish(config ?? {}).then(() => {
+      this.resolveInitPromise()
+      return true
+    })
   }
 
   get isInitialized(): Promise<void> {
-    return Promise.resolve()
+    return this.isInitializedPromise
   }
 
   public getProperty(key: CONFIG_KEY): string | undefined {
