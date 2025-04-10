@@ -1,23 +1,24 @@
 <div class="onecx-page-header mb-4" name="ocx-page-header-wrapper">
   <ng-container *ngIf="showBreadcrumbs">
     <p-breadcrumb
+      *ngIf="breadcrumbs$ | async as items"
       [model]="items"
-      *ngIf="breadcrumbs$ | async  as items"
       [home]="(home$ | async)?.menuItem ?? {}"
       [homeAriaLabel]="(home$ | async)?.page ? ('OCX_PAGE_HEADER.HOME_ARIA_LABEL' | translate: { page: (home$ | async)?.page}) : ('OCX_PAGE_HEADER.HOME_DEFAULT_ARIA_LABEL' | translate)"
       [attr.manual]="manualBreadcrumbs"
     ></p-breadcrumb>
   </ng-container>
-  <div class="title-bar flex flex-row md:justify-content-between p-3">
+
+  <div class="p-3 title-bar flex flex-row flex-wrap justify-content-between align-items-center gap-2">
     <div class="title-wrap">
-      <div class="figure flex h-2rem w-2rem md:h-3rem md:w-3rem" *ngIf="showFigure">
+      <div class="mr-2 figure relative flex h-2rem w-2rem md:h-3rem md:w-3rem" *ngIf="showFigure">
         <div #previewImage class="figure-image absolute top-0 left-0 right-0 bottom-0">
           <ng-content select="[figureImage]"></ng-content>
           <img
             *ngIf="figureImage && !figureImageLoadError"
             [ocxSrc]="figureImage"
-            alt="Figure image"
-            class="w-full"
+            alt="Figure Image"
+            class="w-full border-round-sm"
             (error)="handleImageError()"
           />
         </div>
@@ -37,6 +38,7 @@
         <h2 id="page-subheader" *ngIf="!!subheader">{{ subheader }}</h2>
       </div>
     </div>
+
     <div class="action-items-wrap mt-2 md:mt-0">
       <ng-container *ngIf="additionalToolbarContentLeft" [ngTemplateOutlet]="additionalToolbarContentLeft">
       </ng-container>
