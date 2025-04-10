@@ -1,3 +1,9 @@
+## [5.34.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.34.4...v5.34.5) (2025-04-10)
+
+### Bug Fixes
+
+* configuratio service topic type ([#710](https://github.com/onecx/onecx-portal-ui-libs/issues/710)) ([12cd1cd](https://github.com/onecx/onecx-portal-ui-libs/commit/12cd1cdea1de95b9426c8e00efe216cfffb9b64d))
+
 ## [5.34.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.34.3...v5.34.4) (2025-04-10)
 
 ### Bug Fixes
