@@ -1,10 +1,16 @@
-import { APP_INITIALIZER, InjectionToken } from "@angular/core";
+import { APP_INITIALIZER, InjectionToken } from '@angular/core'
 
-import { AppStateService, ConfigurationService, MfeInfo, ThemeService, UserService } from '@onecx/angular-integration-interface'
+import {
+  AppStateService,
+  ConfigurationService,
+  MfeInfo,
+  ThemeService,
+  UserService,
+} from '@onecx/angular-integration-interface'
 import { initializeRouter } from '@onecx/angular-webcomponents'
 import { Router } from '@angular/router'
-import { Theme, UserProfile, Workspace } from "@onecx/integration-interface";
-import { provideAlwaysGrantPermissionChecker, TRANSLATION_PATH } from "@onecx/angular-utils";
+import { Theme, UserProfile, Workspace } from '@onecx/integration-interface'
+import { provideAlwaysGrantPermissionChecker, TRANSLATION_PATH } from '@onecx/angular-utils'
 
 const appInitializer = (
   appStateService: AppStateService,
@@ -21,7 +27,7 @@ const appInitializer = (
       shellName: 'standalone',
       appId: '',
       productName: '',
-      ...(providerConfig?.mfeInfo ?? {})
+      ...(providerConfig?.mfeInfo ?? {}),
     }
     await appStateService.globalLoading$.publish(true)
     await appStateService.currentMfe$.publish(standaloneMfeInfo)
@@ -33,63 +39,64 @@ const appInitializer = (
       accountSettings: {
         localeAndTimeSettings: {
           locale: 'en',
-          ...(providerConfig?.userProfile?.accountSettings?.localeAndTimeSettings ?? {})  
+          ...(providerConfig?.userProfile?.accountSettings?.localeAndTimeSettings ?? {}),
         },
         layoutAndThemeSettings: {
           menuMode: 'HORIZONTAL',
-          "colorScheme": "AUTO",
-          ...(providerConfig?.userProfile?.accountSettings?.layoutAndThemeSettings ?? {})  
+          colorScheme: 'AUTO',
+          ...(providerConfig?.userProfile?.accountSettings?.layoutAndThemeSettings ?? {}),
         },
-        ...(providerConfig?.userProfile?.accountSettings ?? {})
+        ...(providerConfig?.userProfile?.accountSettings ?? {}),
       },
-      memberships: [],
-      ...(providerConfig?.userProfile ?? {})
+      ...(providerConfig?.userProfile ?? {}),
     })
     await appStateService.currentWorkspace$.publish({
       workspaceName: 'Standalone',
       baseUrl: '/',
       portalName: 'Standalone',
       microfrontendRegistrations: [],
-      ...(providerConfig?.workspace ?? {})
+      ...(providerConfig?.workspace ?? {}),
     })
     await themeService.apply({
-      ...(providerConfig?.theme ?? {})
+      ...(providerConfig?.theme ?? {}),
     })
   }
 }
 
 export interface ProvideStandaloneProvidersConfig {
-  workspace: Partial<Workspace>,
-  userProfile: Partial<UserProfile>,
-  mfeInfo: Partial<MfeInfo>;
+  workspace: Partial<Workspace>
+  userProfile: Partial<UserProfile>
+  mfeInfo: Partial<MfeInfo>
   theme: Partial<Theme>
 }
 
-export const PROVIDE_STANDALONE_PROVIDERS_CONFIG = new InjectionToken<ProvideStandaloneProvidersConfig>('provideStandaloneProvidersConfig')
+export const PROVIDE_STANDALONE_PROVIDERS_CONFIG = new InjectionToken<ProvideStandaloneProvidersConfig>(
+  'provideStandaloneProvidersConfig'
+)
 
 export function provideStandaloneProviders(config?: Partial<ProvideStandaloneProvidersConfig>) {
   return [
     {
       provide: PROVIDE_STANDALONE_PROVIDERS_CONFIG,
-      useValue: config
+      useValue: config,
     },
     {
       provide: APP_INITIALIZER,
       useFactory: appInitializer,
       multi: true,
-      deps: [AppStateService, UserService, ConfigurationService, ThemeService, PROVIDE_STANDALONE_PROVIDERS_CONFIG]
+      deps: [AppStateService, UserService, ConfigurationService, ThemeService, PROVIDE_STANDALONE_PROVIDERS_CONFIG],
     },
     {
       provide: APP_INITIALIZER,
       useFactory: initializeRouter,
       multi: true,
-      deps: [Router, AppStateService]
+      deps: [Router, AppStateService],
     },
     {
       provide: TRANSLATION_PATH,
       useValue: './assets/i18n/',
       multi: true,
     },
-    provideAlwaysGrantPermissionChecker()
+    provideAlwaysGrantPermissionChecker(),
   ]
 }
