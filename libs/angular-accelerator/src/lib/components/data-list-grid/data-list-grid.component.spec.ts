@@ -13,6 +13,9 @@ import { DataTableHarness } from '../../../../testing/data-table.harness'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { TooltipStyle } from 'primeng/tooltip'
 import { UserService } from '@onecx/angular-integration-interface'
+import { ensureOriginMockExists } from '@onecx/angular-testing'
+
+ensureOriginMockExists()
 
 describe('DataListGridComponent', () => {
   const mutationObserverMock = jest.fn(function MutationObserver(callback) {
