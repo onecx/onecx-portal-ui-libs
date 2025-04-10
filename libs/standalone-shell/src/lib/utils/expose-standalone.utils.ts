@@ -60,7 +60,6 @@ const appInitializer = (
         },
         ...(providerConfig?.userProfile?.accountSettings ?? {}),
       },
-      memberships: [],
       ...(providerConfig?.userProfile ?? {}),
     })
     await appStateService.currentWorkspace$.publish({
