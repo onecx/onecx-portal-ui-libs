@@ -7,6 +7,9 @@ import {
   WorkspaceConfigBffService,
 } from '../../shell-interface/workspace-config-bff-service-provider'
 
+/**
+ * @deprecated Replaced by Page Footer
+ */
 @Component({
   standalone: false,
   selector: 'ocx-shell-footer',
