@@ -1,6 +1,6 @@
 import { Tree, visitNotIgnoredFiles } from '@nx/devkit'
 import { ast, query } from '@phenomnomnominal/tsquery'
-import { CallExpression, isBinaryExpression, isCallExpression, isExpressionStatement, isPropertyDeclaration, isVariableDeclaration, SourceFile, SyntaxKind } from 'typescript'
+import { CallExpression, isBinaryExpression, isCallExpression, isExpressionStatement, isIdentifier, isPropertyAccessExpression, isPropertyDeclaration, isVariableDeclaration, SourceFile, SyntaxKind } from 'typescript'
 
 type MatchingMethodCalls = Map<string, CallExpression[]>
 type DeclarationType = 'PropertyDeclaration' | 'VariableDeclaration'
@@ -30,8 +30,13 @@ function getAssignmentNames(contentAst: SourceFile, className: string): string[]
       const binaryExpression = node.expression
       if (isBinaryExpression(binaryExpression)) {
         if (binaryExpression.operatorToken.kind == SyntaxKind.EqualsToken) {
-          // TODO: Improve typing
-          return ((binaryExpression.left as any).name.escapedText)
+          if(isPropertyAccessExpression(binaryExpression.left)) {
+            return binaryExpression.left.name.escapedText.toString()
+          } else if (isIdentifier(binaryExpression.left)) {
+            return binaryExpression.left.escapedText.toString()
+          } else {
+            throw new Error('Node is not a PropertyAccessExpression or Identifier')
+          }
         }
       }
     }
