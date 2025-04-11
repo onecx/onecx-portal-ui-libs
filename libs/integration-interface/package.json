@@ -7,7 +7,8 @@
     "rxjs": "^7.8.1",
     "@phenomnomnominal/tsquery": "^6",
     "@nx/devkit": "^19.8.0",
-    "@onecx/accelerator": "^5.34.5"
+    "@onecx/accelerator": "^5.34.5",
+    "typescript": "^5.5.4"
   },
   "type": "commonjs",
   "main": "./src/index.js",
