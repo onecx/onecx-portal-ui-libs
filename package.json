@@ -30,6 +30,7 @@
     "@ngx-translate/core": "^15.0.0",
     "@ngx-translate/http-loader": "^8.0.0",
     "@onecx/portal-layout-styles": "file:libs/portal-layout-styles",
+    "@phenomnomnominal/tsquery": "^6",
     "@storybook/addon-interactions": "^8.3.2",
     "axios": "^1.7.3",
     "chart.js": "^4.4.3",
