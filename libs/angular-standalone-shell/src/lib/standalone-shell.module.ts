@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core'
-import { provideStandaloneProviders } from './utils/expose-standalone.utils'
 import { StandaloneShellViewportComponent } from './components/standalone-shell-viewport/standalone-shell-viewport.component'
 import { RouterModule } from '@angular/router'
 import { CommonModule } from '@angular/common'
@@ -8,6 +7,6 @@ import { CommonModule } from '@angular/common'
   declarations: [StandaloneShellViewportComponent],
   imports: [CommonModule, RouterModule],
   exports: [StandaloneShellViewportComponent],
-  providers: [provideStandaloneProviders()],
+  providers: [],
 })
 export class StandaloneShellModule {}
