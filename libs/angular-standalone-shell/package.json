@@ -1,5 +1,5 @@
 {
-  "name": "@onecx/standalone-shell",
+  "name": "@onecx/angular-standalone-shell",
   "version": "6.0.0-rc.6",
   "license": "Apache-2.0",
   "peerDependencies": {
@@ -10,7 +10,7 @@
     "@onecx/angular-webcomponents": "^6.0.0-rc.6",
     "@onecx/angular-utils": "^6.0.0-rc.6",
     "@onecx/integration-interface": "^6.0.0-rc.6",
-    "@onecx/shell-core": "^6.0.0-rc.6",
+    "@onecx/angular-auth": "^6.0.0-rc.6",
     "@nx/devkit": "^20.3.0"
   },
   "dependencies": {},

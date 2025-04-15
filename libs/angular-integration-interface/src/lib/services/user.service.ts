@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core'
-import { BehaviorSubject, map, filter, firstValueFrom, skip } from 'rxjs'
+import { BehaviorSubject, map, filter, firstValueFrom, skip, Observable, merge } from 'rxjs'
 import { PermissionsTopic, UserProfile, UserProfileTopic } from '@onecx/integration-interface'
 import { DEFAULT_LANG } from '../api/constants'
 
@@ -9,6 +9,7 @@ export class UserService implements OnDestroy {
   permissions$ = new BehaviorSubject<string[]>([])
   lang$ = new BehaviorSubject(this.determineLanguage() ?? DEFAULT_LANG)
 
+  private effectivePermissions$: Observable<string[]>
   private permissionsTopic$ = new PermissionsTopic()
   private oldStylePermissionsInitialized: Promise<string[]>
 
@@ -23,6 +24,7 @@ export class UserService implements OnDestroy {
       .subscribe(this.lang$)
 
     this.oldStylePermissionsInitialized = firstValueFrom(this.permissions$.pipe(skip(1)))
+    this.effectivePermissions$ = merge(this.permissions$.pipe(skip(1)), this.permissionsTopic$.asObservable())
     this.profile$
       .pipe(
         map((profile) => this.extractPermissions(profile)),
@@ -33,6 +35,10 @@ export class UserService implements OnDestroy {
 
   ngOnDestroy(): void {
     this.profile$.destroy()
+  }
+
+  getPermissions() {
+    return this.effectivePermissions$
   }
 
   hasPermission(permissionKey: string | string[]): boolean {
