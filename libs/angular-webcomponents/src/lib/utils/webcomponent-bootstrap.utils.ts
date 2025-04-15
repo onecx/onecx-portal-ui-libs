@@ -76,7 +76,7 @@ function createEntrypoint(
   let sub: Subscription | null
   const capabilityService = new ShellCapabilityService()
   const currentLocationCapabilityAvailable = capabilityService.hasCapability(Capability.CURRENT_LOCATION_TOPIC)
-  const eventsTopic = currentLocationCapabilityAvailable ? new EventsTopic() : undefined
+  const eventsTopic = currentLocationCapabilityAvailable ? undefined : new EventsTopic()
   const originalNgInit = component.prototype.ngOnInit
   component.prototype.ngOnInit = function () {
     sub = connectMicroFrontendRouter(injector, entrypointType === 'microfrontend', eventsTopic)
