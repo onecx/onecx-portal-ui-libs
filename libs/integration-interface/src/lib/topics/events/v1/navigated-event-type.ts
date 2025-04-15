@@ -1,5 +1,4 @@
 import { NavigatedEventPayload } from './navigated-event-payload'
-// TODO: Write migration that detects usage of EventTopic with type 'navigated' and throws a warning/manual todo
 /**
  * @deprecated Use CurrentLocationTopic instead of EventsTopic for navigated events
  */
