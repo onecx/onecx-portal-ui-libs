@@ -1,3 +1,15 @@
+## [6.0.0-rc.7](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.6...v6.0.0-rc.7) (2025-04-16)
+
+### Features
+
+* supports rule when scope is not available ([#702](https://github.com/onecx/onecx-portal-ui-libs/issues/702)) ([d4ab508](https://github.com/onecx/onecx-portal-ui-libs/commit/d4ab508f55649a68b9dbe5b2c881687ee9281a9e))
+
+### Bug Fixes
+
+* configuration service mock cherry pick ([#708](https://github.com/onecx/onecx-portal-ui-libs/issues/708)) ([4143dd6](https://github.com/onecx/onecx-portal-ui-libs/commit/4143dd625b049135f516ea92b0042e898c5a06bc)), closes [#706](https://github.com/onecx/onecx-portal-ui-libs/issues/706) [#709](https://github.com/onecx/onecx-portal-ui-libs/issues/709)
+* ensure origin mock exists in angular-accelerator testing and data list grid tests ([#703](https://github.com/onecx/onecx-portal-ui-libs/issues/703)) ([#704](https://github.com/onecx/onecx-portal-ui-libs/issues/704)) ([7aba4ac](https://github.com/onecx/onecx-portal-ui-libs/commit/7aba4acf0e24c81055057b582b753d7ae21f4e78))
+* removed memberships from userProfile publish ([#707](https://github.com/onecx/onecx-portal-ui-libs/issues/707)) ([928f048](https://github.com/onecx/onecx-portal-ui-libs/commit/928f04852e555f6c9cb67503a82f5196429aaef2))
+
 ## [6.0.0-rc.6](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.5...v6.0.0-rc.6) (2025-04-07)
 
 ### Features
