@@ -18,7 +18,7 @@ import { FloatLabelModule } from 'primeng/floatlabel'
 import { ChipModule } from 'primeng/chip'
 import { PopoverModule } from 'primeng/popover'
 import { FocusTrapModule } from 'primeng/focustrap'
-import { Tooltip } from 'primeng/tooltip'
+import { TooltipModule, TooltipStyle } from 'primeng/tooltip'
 import { providePrimeNG } from 'primeng/config'
 import { TimelineModule } from 'primeng/timeline'
 
@@ -42,7 +42,7 @@ import { TimelineModule } from 'primeng/timeline'
     FloatLabelModule,
     PopoverModule,
     FocusTrapModule,
-    Tooltip,
+    TooltipModule,
     TimelineModule,
     SharedModule,
   ],
@@ -65,10 +65,10 @@ import { TimelineModule } from 'primeng/timeline'
     FloatLabelModule,
     PopoverModule,
     FocusTrapModule,
-    Tooltip,
+    TooltipModule,
     TimelineModule,
     SharedModule,
   ],
-  providers: [providePrimeNG()],
+  providers: [providePrimeNG(), TooltipStyle],
 })
 export class AngularAcceleratorPrimeNgModule {}

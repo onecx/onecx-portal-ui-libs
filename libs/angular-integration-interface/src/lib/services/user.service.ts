@@ -25,9 +25,11 @@ export class UserService implements OnDestroy {
     this.profile$.destroy()
   }
 
-  async hasPermission(permissionKey: string | string[]): Promise<boolean> {
+  async hasPermission(permissionKey: string | string[] | undefined): Promise<boolean> {
+    if (!permissionKey) return true
+
     if (Array.isArray(permissionKey)) {
-      return permissionKey.every((key) => this.hasPermission(key))
+      return permissionKey.every(async (key) => await this.hasPermission(key))
     }
 
     return firstValueFrom(

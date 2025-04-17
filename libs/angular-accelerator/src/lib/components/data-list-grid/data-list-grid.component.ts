@@ -21,7 +21,19 @@ import { AppStateService, UserService } from '@onecx/angular-integration-interfa
 import { MfeInfo } from '@onecx/integration-interface'
 import { MenuItem, PrimeIcons, PrimeTemplate } from 'primeng/api'
 import { Menu } from 'primeng/menu'
-import { BehaviorSubject, Observable, combineLatest, debounceTime, first, map, mergeMap } from 'rxjs'
+import {
+  BehaviorSubject,
+  Observable,
+  combineLatest,
+  debounceTime,
+  first,
+  forkJoin,
+  from,
+  map,
+  mergeMap,
+  of,
+  tap,
+} from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
@@ -296,7 +308,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return 0
   }
 
-  showMenu = false
+  // showMenu = false
   gridMenuItems: MenuItem[] = []
   selectedItem: ListGridData | undefined
   observedOutputs = 0
@@ -352,17 +364,22 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     this.overflowMenuItems$ = combineLatest([this.overflowListActions$, this.currentMenuRow$]).pipe(
       mergeMap(([actions, row]) =>
         this.translateService.get([...actions.map((a) => a.labelKey || '')]).pipe(
-          map((translations) => {
-            return actions
-              .filter((a) => this.userService.hasPermission(a.permission))
-              .map((a) => ({
-                label: translations[a.labelKey || ''],
-                icon: a.icon,
-                styleClass: (a.classes || []).join(' '),
-                disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
-                visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
-                command: () => a.callback(row),
-              }))
+          mergeMap(async (translations) => {
+            const filteredActions: DataAction[] = []
+            for (const a of actions) {
+              if (await this.userService.hasPermission(a.permission)) {
+                filteredActions.push(a)
+              }
+            }
+
+            return filteredActions.map((a) => ({
+              label: translations[a.labelKey || ''],
+              icon: a.icon,
+              styleClass: (a.classes || []).join(' '),
+              disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
+              visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
+              command: () => a.callback(row),
+            }))
           })
         )
       )
@@ -385,10 +402,11 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
       map(([items]) => items)
     )
 
-    this.showMenu =
-      (!!this.viewPermission && this.userService.hasPermission(this.viewPermission)) ||
-      (!!this.editPermission && this.userService.hasPermission(this.editPermission)) ||
-      (!!this.deletePermission && this.userService.hasPermission(this.deletePermission))
+    // not used anywhere?
+    // this.showMenu =
+    //   (!!this.viewPermission && this.userService.hasPermission(this.viewPermission)) ||
+    //   (!!this.editPermission && this.userService.hasPermission(this.editPermission)) ||
+    //   (!!this.deletePermission && this.userService.hasPermission(this.deletePermission))
 
     this.emitComponentStateChanged()
   }
@@ -425,8 +443,10 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     this.deleteItem.emit(element)
   }
 
-  onViewRow(element: ListGridData) {
-    if (!!this.viewPermission && this.userService.hasPermission(this.viewPermission)) {
+  async onViewRow(element: ListGridData) {
+    // is this permission check also necessary?
+    // or is the permission directive in thet html enough
+    if (!!this.viewPermission && (await this.userService.hasPermission(this.viewPermission))) {
       this.viewItem.emit(element)
     }
   }
@@ -468,6 +488,8 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
         !this.deleteActionVisibleField || this.fieldIsTruthy(this.selectedItem, this.deleteActionVisibleField)
     }
 
+    // const hasPermission$ = from(this.userService.hasPermission(this.viewPermission || '')).pipe(map((permission) => permission === true))
+
     this.translateService
       .get([
         this.viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW',
@@ -476,53 +498,70 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
         ...this.additionalActions.map((a) => a.labelKey || ''),
       ])
       .subscribe((translations) => {
-        let menuItems: MenuItem[] = []
+        const menuItems: MenuItem[] = []
         const automationId = 'data-grid-action-button'
         const automationIdHidden = 'data-grid-action-button-hidden'
-        if (this.viewItem.observed && this.userService.hasPermission(this.viewPermission || '')) {
-          menuItems.push({
-            label: translations[this.viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW'],
-            icon: PrimeIcons.EYE,
-            command: () => this.viewItem.emit(this.selectedItem),
-            disabled: viewDisabled,
-            visible: viewVisible,
-            automationId: viewVisible ? automationId : automationIdHidden,
+
+        this.userService.hasPermission(this.viewPermission).then((hasViewPermission) => {
+          if (this.viewItem.observed && hasViewPermission) {
+            menuItems.push({
+              label: translations[this.viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW'],
+              icon: PrimeIcons.EYE,
+              command: () => this.viewItem.emit(this.selectedItem),
+              disabled: viewDisabled,
+              visible: viewVisible,
+              automationId: viewVisible ? automationId : automationIdHidden,
+            })
+          }
+        })
+
+        this.userService.hasPermission(this.editPermission).then((hasEditPermission) => {
+          if (this.editItem.observed && hasEditPermission) {
+            menuItems.push({
+              label: translations[this.editMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.EDIT'],
+              icon: PrimeIcons.PENCIL,
+              command: () => this.editItem.emit(this.selectedItem),
+              disabled: editDisabled,
+              visible: editVisible,
+              automationId: editVisible ? automationId : automationIdHidden,
+            })
+          }
+        })
+
+        this.userService.hasPermission(this.deletePermission).then((hasDeletePermission) => {
+          if (this.deleteItem.observed && hasDeletePermission) {
+            menuItems.push({
+              label: translations[this.deleteMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.DELETE'],
+              icon: PrimeIcons.TRASH,
+              command: () => this.deleteItem.emit(this.selectedItem),
+              disabled: deleteDisabled,
+              visible: deleteVisible,
+              automationId: deleteVisible ? automationId : automationIdHidden,
+            })
+          }
+        })
+
+        Promise.all(
+          this.additionalActions.map((a) => {
+            return this.userService.hasPermission(a.permission).then((hasPermission) => {
+              if (hasPermission) {
+                return {
+                  label: translations[a.labelKey || ''],
+                  icon: a.icon,
+                  styleClass: (a.classes || []).join(' '),
+                  disabled:
+                    a.disabled ||
+                    (!!a.actionEnabledField && !this.fieldIsTruthy(this.selectedItem, a.actionEnabledField)),
+                  visible: !a.actionVisibleField || this.fieldIsTruthy(this.selectedItem, a.actionVisibleField),
+                  command: () => a.callback(this.selectedItem),
+                }
+              }
+              return null
+            })
           })
-        }
-        if (this.editItem.observed && this.userService.hasPermission(this.editPermission || '')) {
-          menuItems.push({
-            label: translations[this.editMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.EDIT'],
-            icon: PrimeIcons.PENCIL,
-            command: () => this.editItem.emit(this.selectedItem),
-            disabled: editDisabled,
-            visible: editVisible,
-            automationId: editVisible ? automationId : automationIdHidden,
-          })
-        }
-        if (this.deleteItem.observed && this.userService.hasPermission(this.deletePermission || '')) {
-          menuItems.push({
-            label: translations[this.deleteMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.DELETE'],
-            icon: PrimeIcons.TRASH,
-            command: () => this.deleteItem.emit(this.selectedItem),
-            disabled: deleteDisabled,
-            visible: deleteVisible,
-            automationId: deleteVisible ? automationId : automationIdHidden,
-          })
-        }
-        menuItems = menuItems.concat(
-          this.additionalActions
-            .filter((a) => this.userService.hasPermission(a.permission))
-            .map((a) => ({
-              label: translations[a.labelKey || ''],
-              icon: a.icon,
-              styleClass: (a.classes || []).join(' '),
-              disabled:
-                a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(this.selectedItem, a.actionEnabledField)),
-              visible: !a.actionVisibleField || this.fieldIsTruthy(this.selectedItem, a.actionVisibleField),
-              command: () => a.callback(this.selectedItem),
-            }))
-        )
-        this.gridMenuItems = menuItems
+        ).then((additionalMenuItems) => {
+          this.gridMenuItems = menuItems.concat(additionalMenuItems.filter((item) => item !== null))
+        })
       })
   }
 
@@ -566,16 +605,34 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return !!this.resolveFieldData(object, key)
   }
 
-  hasVisibleOverflowMenuItems(item: any) {
-    return this.overflowListActions$.pipe(
-      map((actions) =>
-        actions.some(
-          (a) =>
-            (!a.actionVisibleField || this.fieldIsTruthy(item, a.actionVisibleField)) &&
-            this.userService.hasPermission(a.permission)
+  private visibilityCache = new Map<string, Observable<boolean>>()
+
+  hasVisibleOverflowMenuItems(item: any): Observable<boolean> {
+    const cacheKey = this.generateCacheKey(item)
+    const cachedObservable = this.visibilityCache.get(cacheKey)
+    if (cachedObservable) {
+      return cachedObservable
+    }
+
+    const observable = this.overflowListActions$.pipe(
+      mergeMap((actions) =>
+        forkJoin(
+          actions.map((a) =>
+            !a.actionVisibleField || this.fieldIsTruthy(item, a.actionVisibleField)
+              ? from(this.userService.hasPermission(a.permission))
+              : of(false)
+          )
         )
-      )
+      ),
+      map((results) => results.some((isVisible) => isVisible))
     )
+
+    this.visibilityCache.set(cacheKey, observable)
+    return observable
+  }
+
+  private generateCacheKey(item: any): string {
+    return JSON.stringify(item)
   }
 
   toggleOverflowMenu(event: MouseEvent, menu: Menu, row: Row) {

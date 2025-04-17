@@ -68,7 +68,7 @@ export class IfPermissionDirective implements OnInit {
     }
   }
 
-  async hasPermission(permission: string[]): Promise<boolean> {
+  hasPermission(permission: string[]) {
     if (this.ocxIfPermissionPermissions) {
       const result = permission.every((p) => this.ocxIfPermissionPermissions?.includes(p))
       if (!result) {

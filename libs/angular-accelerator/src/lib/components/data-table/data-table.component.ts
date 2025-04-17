@@ -29,10 +29,15 @@ import {
   debounceTime,
   filter,
   first,
+  forkJoin,
+  from,
   map,
   mergeMap,
   of,
-  withLatestFrom,
+  shareReplay,
+  switchMap,
+  toArray,
+  withLatestFrom
 } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
@@ -400,6 +405,8 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
   templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
 
+  private cachedOverflowActions$: Observable<DataAction[]>
+
   constructor() {
     const locale = inject(LOCALE_ID)
     const translateService = inject(TranslateService)
@@ -418,22 +425,40 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     this.overflowMenuItems$ = combineLatest([this.overflowActions$, this.currentMenuRow$]).pipe(
       mergeMap(([actions, row]) =>
         this.translateService.get([...actions.map((a) => a.labelKey || '')]).pipe(
-          map((translations) => {
-            return actions
-              .filter((a) => this.userService.hasPermission(a.permission))
-              .map((a) => ({
-                label: translations[a.labelKey || ''],
-                icon: a.icon,
-                styleClass: (a.classes || []).join(' '),
-                disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
-                visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
-                command: () => a.callback(row),
-              }))
-          })
+          switchMap((translations) =>
+            from(actions).pipe(
+              mergeMap((a) =>
+                from(this.userService.hasPermission(a.permission)).pipe(
+                  map((hasPermission) => ({
+                    ...a,
+                    hasPermission,
+                  }))
+                )
+              ),
+              toArray(),
+              map((actionsWithPermissions) =>
+                actionsWithPermissions
+                  .filter((a) => a.hasPermission)
+                  .map((a) => ({
+                    label: translations[a.labelKey || ''],
+                    icon: a.icon,
+                    styleClass: (a.classes || []).join(' '),
+                    disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
+                    visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
+                    command: () => a.callback(row),
+                  }))
+              )
+            )
+          )
         )
       )
     )
+
     this.rowSelectable = this.rowSelectable.bind(this)
+
+    this.cachedOverflowActions$ = this.overflowActions$.pipe(
+      shareReplay(1) // Cache the last emitted value
+    )
   }
 
   ngOnInit(): void {
@@ -775,16 +800,34 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     menu.toggle(event)
   }
 
-  hasVisibleOverflowMenuItems(row: any) {
-    return this.overflowActions$.pipe(
-      map((actions) =>
-        actions.some(
-          (a) =>
-            !a.actionVisibleField ||
-            (this.fieldIsTruthy(row, a.actionVisibleField) && this.userService.hasPermission(a.permission))
+  private visibilityCache = new Map<string, Observable<boolean>>()
+
+  hasVisibleOverflowMenuItems(item: any): Observable<boolean> {
+    const cacheKey = this.generateCacheKey(item)
+    const cachedObservable = this.visibilityCache.get(cacheKey)
+    if (cachedObservable) {
+      return cachedObservable
+    }
+
+    const observable = this.overflowActions$.pipe(
+      mergeMap((actions) =>
+        forkJoin(
+          actions.map((a) =>
+            !a.actionVisibleField || this.fieldIsTruthy(item, a.actionVisibleField)
+              ? from(this.userService.hasPermission(a.permission))
+              : of(false)
+          )
         )
-      )
+      ),
+      map((results) => results.some((isVisible) => isVisible))
     )
+
+    this.visibilityCache.set(cacheKey, observable)
+    return observable
+  }
+
+  private generateCacheKey(item: any): string {
+    return JSON.stringify(item)
   }
 
   isDate(value: Date | string | number) {

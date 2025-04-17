@@ -14,7 +14,7 @@ export class UserServiceMock {
   permissions$ = new BehaviorSubject<string[]>(['mocked-permission'])
   lang$ = new BehaviorSubject('en')
 
-  hasPermission(permissionKey: string | string[]): boolean {
+  async hasPermission(permissionKey: string | string[]): Promise<boolean> {
     if (Array.isArray(permissionKey)) {
       return permissionKey.every((key) => this.permissions$.getValue().includes(key))
     }
