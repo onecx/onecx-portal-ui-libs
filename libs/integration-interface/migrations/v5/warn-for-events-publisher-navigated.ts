@@ -1,6 +1,5 @@
 import { Tree } from '@nx/devkit'
-import printWarnings from '../utils/print-warnings'
-import { detectMethodCallsInFiles } from '../utils/detect-method-calls-in-files'
+import { detectMethodCallsInFiles, printWarnings } from '@onecx/nx-migration-utils'
 import { CallExpression } from 'typescript'
 
 function argsMatchExpectedPayload(callExpression: CallExpression): boolean {

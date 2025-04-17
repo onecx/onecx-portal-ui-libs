@@ -1,19 +1,7 @@
 import { Tree } from '@nx/devkit'
-import printWarnings from '../utils/print-warnings'
-import { detectMethodCallsInFiles } from '../utils/detect-method-calls-in-files'
+import { detectMethodCallsInFiles, printWarnings } from '@onecx/nx-migration-utils'
 import { CallExpression } from 'typescript'
 import { ast, query } from '@phenomnomnominal/tsquery'
-
-/*
-  Case 1:
-  new EventsTopic().pipe(filter((e) => e.type === 'navigated'))
-  Case 2:
-  const eventsTopic = new EventsTopic()
-  eventsTopic.pipe(filter((e) => e.type === 'navigated'))
-  Case 3:
-  public eventsTopic = new EventsTopic()
-  this.eventsTopic.pipe(filter((e) => e.type === 'navigated'))
- */
 
 function argsContainFilterForTypeNavigated(callExpression: CallExpression): boolean {
   const callExpressionAst = ast(callExpression.getText())
