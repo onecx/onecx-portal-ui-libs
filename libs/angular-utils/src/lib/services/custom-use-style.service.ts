@@ -5,7 +5,13 @@ import { AppStateService } from '@onecx/angular-integration-interface'
 import { ReplaySubject } from 'rxjs'
 import { THEME_OVERRIDES, ThemeOverrides } from '../theme/application-config'
 import { toVariables } from '@primeuix/styled'
-import { dataVariableOverrideIdAttibute, getScopeIdentifier, replacePrefix, scopeStyle } from '../utils/scope.utils'
+import {
+  dataVariableOverrideIdAttibute,
+  getScopeIdentifier,
+  replacePrefix,
+  scopeStyle,
+  shellScopeId,
+} from '../utils/scope.utils'
 
 export const SKIP_STYLE_SCOPING = new InjectionToken<boolean>('SKIP_STYLE_SCOPING')
 
@@ -48,7 +54,7 @@ export class CustomUseStyle extends UseStyle {
       const variablesData = toVariables(resolvedOverrides)
       if (variablesData.value.length === 0) return
 
-      const styleRef = this.createOrRetrieveOverrideElement(scopeId ? scopeId : 'shell-ui')
+      const styleRef = this.createOrRetrieveOverrideElement(scopeId ? scopeId : shellScopeId)
       const prefixedOverrides = replacePrefix(variablesData.css, scopeId)
       styleRef.textContent = prefixedOverrides
       // Always make sure it is the last child of the document head

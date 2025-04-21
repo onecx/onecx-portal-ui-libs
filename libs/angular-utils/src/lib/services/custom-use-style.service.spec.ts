@@ -6,6 +6,7 @@ import { ReplaySubject } from 'rxjs'
 import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { AppStateService, MfeInfo } from '@onecx/angular-integration-interface'
 import { THEME_OVERRIDES } from '../theme/application-config'
+import { shellScopeId } from '../utils/scope.utils'
 
 class ElementMock {
   // extension
@@ -161,7 +162,7 @@ describe('CustomUseStyleService', () => {
     it('should create styles', fakeAsync(() => {
       const css = '.p-button{display:inline-flex;color:var(--p-button-primary-color)}'
       const expectedCss = `
-      @scope([data-style-id="shell-ui"]) to ([data-style-isolation]) {
+      @scope([data-style-id="${shellScopeId}"]) to ([data-style-isolation]) {
               ${css}
           }
       `
@@ -179,7 +180,7 @@ describe('CustomUseStyleService', () => {
       removeScopeRule()
       const css = '.p-button{display:inline-flex;color:var(--p-button-primary-color)}'
       const expectedCss = `
-      @supports (@scope([data-style-id="shell-ui"]) to ([data-style-isolation])) {
+      @supports (@scope([data-style-id="${shellScopeId}"]) to ([data-style-isolation])) {
               ${css}
           }
       `
