@@ -125,6 +125,7 @@ export default async function migrateOnecxToV6(tree: Tree) {
   await formatFiles(tree)
 
   checkConfigurationServiceUsage(tree, srcDirectoryPath)
+  warnOcxPortalViewport(tree, srcDirectoryPath)
 }
 
 function removeOnecxKeycloakAuth(tree: Tree) {
@@ -294,6 +295,22 @@ function checkConfigurationServiceUsage(tree: Tree, directoryPath: string) {
   })
 
   printWarnings(warning, foundInFiles)
+}
+
+function warnOcxPortalViewport(tree: Tree, directoryPath: string) {
+  const foundInFiles: string[] = []
+  const warning =
+    '⚠️ ocx-portal-viewport was removed. Please refer to the standalone guide for adaptations: https://onecx.github.io/docs/guides/current/angular/cookbook/migrations/enable-standalone/index.html'
+
+  visitNotIgnoredFiles(tree, directoryPath, (filePath) => {
+    if (filePath.endsWith('.html')) {
+      const fileContent = tree.read(filePath, 'utf-8')
+      if (fileContent?.includes('ocx-portal-viewport')) {
+        foundInFiles.push(filePath)
+        printWarnings(warning, foundInFiles)
+      }
+    }
+  })
 }
 
 export function printWarnings(warning: string, affectedFiles: string[]) {
