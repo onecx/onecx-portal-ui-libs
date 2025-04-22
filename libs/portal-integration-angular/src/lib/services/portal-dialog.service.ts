@@ -1,4 +1,4 @@
-import { ComponentRef, EventEmitter, Injectable, OnDestroy, Type, isDevMode } from '@angular/core'
+import { EventEmitter, Injectable, OnDestroy, Type, isDevMode } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { Observable, filter, mergeMap } from 'rxjs'
 import { DialogService, DynamicDialogComponent, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
@@ -12,7 +12,6 @@ import { NavigationStart, Router } from '@angular/router'
 import { CurrentLocationTopicPayload, EventsTopic, TopicEventType } from '@onecx/integration-interface'
 import { Capability, ShellCapabilityService } from '@onecx/angular-integration-interface'
 import { AppStateService } from '@onecx/angular-integration-interface'
-import { ButtonDialogComponent } from '../core/components/button-dialog/button-dialog.component'
 
 /**
  * Object containing key for translation with parameters object for translation
