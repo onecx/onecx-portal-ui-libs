@@ -63,7 +63,7 @@ echo "$m" > migrations.json
 
 npx nx migrate --run-migrations --if-exists || {
   rm -rf node_modules package-lock.json
-  npm i --package-lock-only
+  npm i
   npx nx migrate --run-migrations --if-exists
   npm i --package-lock-only
 }
