@@ -1,8 +1,8 @@
 export default {
-  displayName: 'standalone-shell',
+  displayName: 'angular-standalone-shell',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  coverageDirectory: '../../coverage/libs/standalone-shell',
+  coverageDirectory: '../../coverage/libs/angular-standalone-shell',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [
       'jest-preset-angular',
