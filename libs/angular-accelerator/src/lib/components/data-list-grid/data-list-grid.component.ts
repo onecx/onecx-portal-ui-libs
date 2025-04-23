@@ -32,7 +32,6 @@ import {
   map,
   mergeMap,
   of,
-  tap,
 } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'

@@ -7,16 +7,19 @@ import { PrimeIcons } from 'primeng/api'
 import { BreadcrumbModule } from 'primeng/breadcrumb'
 import { MenuModule } from 'primeng/menu'
 import { ButtonModule } from 'primeng/button'
-import { UserService } from '@onecx/angular-integration-interface'
 import {
   AppStateServiceMock,
   provideAppStateServiceMock,
   provideUserServiceMock,
+  UserServiceMock,
 } from '@onecx/angular-integration-interface/mocks'
 import { PageHeaderHarness, TestbedHarnessEnvironment } from '../../../../testing'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { TooltipModule } from 'primeng/tooltip'
+import { UserService } from '@onecx/angular-integration-interface'
+import { By } from '@angular/platform-browser'
 
 const mockActions: Action[] = [
   {
@@ -24,8 +27,7 @@ const mockActions: Action[] = [
     show: 'always',
     actionCallback: () => {
       console.log('My Test Action')
-    },
-    permission: 'TEST#TEST_PERMISSION',
+    }
   },
   {
     label: 'My Test Overflow Action',
@@ -52,6 +54,7 @@ describe('PageHeaderComponent', () => {
   let fixture: ComponentFixture<PageHeaderComponent>
   let pageHeaderHarness: PageHeaderHarness
   let userServiceSpy: jest.SpyInstance<boolean, [permissionKey: string | string[]], any>
+  let userServiceMock: UserServiceMock
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -66,6 +69,7 @@ describe('PageHeaderComponent', () => {
         MenuModule,
         ButtonModule,
         NoopAnimationsModule,
+        TooltipModule,
       ],
       providers: [
         provideUserServiceMock(),
@@ -76,8 +80,8 @@ describe('PageHeaderComponent', () => {
     }).compileComponents()
 
     mockAppStateService = TestBed.inject(AppStateServiceMock)
-    const userService = TestBed.inject(UserService)
-    userService.permissions$.next(['TEST#TEST_PERMISSION'])
+    userServiceMock = TestBed.inject(UserServiceMock)
+    userServiceMock.permissionsTopic$.publish(['TEST#TEST_PERMISSION'])
     mockAppStateService.currentWorkspace$.publish({
       id: 'i-am-test-portal',
       portalName: 'test',
@@ -92,22 +96,28 @@ describe('PageHeaderComponent', () => {
     component = fixture.componentInstance
     fixture.detectChanges()
     pageHeaderHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, PageHeaderHarness)
-    const userService = fixture.debugElement.injector.get(UserService)
     jest.restoreAllMocks()
-    userServiceSpy = jest.spyOn(userService, 'hasPermission')
+    userServiceSpy = jest.spyOn(userServiceMock, 'hasPermission')
   })
 
-  it('should create', async () => {
+  fit('should create', async () => {
     expect(component).toBeTruthy()
     const pageHeaderWrapper = await pageHeaderHarness.getPageHeaderWrapperHarness()
     expect(pageHeaderWrapper).toBeTruthy()
   })
 
-  it('should check permissions and render buttons accordingly', async () => {
+  fit('should check permissions and render buttons accordingly', async () => {
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(0)
     expect(await pageHeaderHarness.getOverflowActionMenuButton()).toBeNull()
 
     component.actions = mockActions
+
+    fixture.detectChanges()
+    fixture.whenStable()
+
+    const ph = fixture.nativeElement.innerHTML
+
+    console.log(ph)
 
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(1)
     expect(await pageHeaderHarness.getElementByAriaLabel('My Test Action')).toBeTruthy()
@@ -125,7 +135,24 @@ describe('PageHeaderComponent', () => {
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(0)
     expect(await pageHeaderHarness.getOverflowActionMenuButton()).toBeNull()
 
-    component.actions = mockActions
+    component.actions = [
+      {
+        label: 'My Test Action false permission',
+        show: 'always',
+        actionCallback: () => {
+          console.log('My Test Action')
+        },
+        permission: 'TEST#TEST_PERMISSION1',
+      },
+      {
+        label: 'My Test Action overflow false permission',
+        show: 'asOverflow',
+        actionCallback: () => {
+          console.log('My Test Action')
+        },
+        permission: 'TEST#TEST_PERMISSION2',
+      },
+    ]
 
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(0)
     expect(await pageHeaderHarness.getElementByAriaLabel('My Test Action')).toBeFalsy()

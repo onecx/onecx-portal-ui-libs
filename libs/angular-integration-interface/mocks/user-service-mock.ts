@@ -11,14 +11,21 @@ export function provideUserServiceMock() {
 @Injectable({ providedIn: 'root' })
 export class UserServiceMock {
   profile$ = new FakeTopic<UserProfile>()
-  permissions$ = new BehaviorSubject<string[]>(['mocked-permission'])
+  permissionsTopic$ = new FakeTopic<string[]>(['mocked-permission'])
   lang$ = new BehaviorSubject('en')
 
-  async hasPermission(permissionKey: string | string[]): Promise<boolean> {
+  hasPermission(permissionKey: string | string[]): boolean {
+    console.log('---------------------- ', permissionKey)
     if (Array.isArray(permissionKey)) {
-      return permissionKey.every((key) => this.permissions$.getValue().includes(key))
+      return permissionKey.every((key) => this.hasPermission(key))
     }
-    return this.permissions$.getValue().includes(permissionKey)
+
+    const result = this.permissionsTopic$.getValue()?.includes(permissionKey)
+    if (!result) {
+      console.log(`👮‍♀️ No permission for: ${permissionKey}`)
+    }
+    console.log('=========================== ', result)
+    return !!result
   }
 
   determineLanguage(): string | undefined {

@@ -47,35 +47,38 @@ export class IfPermissionDirective implements OnInit {
   }
 
   ngOnInit() {
-    if (
-      (this.permission &&
-        this.negate === this.hasPermission(Array.isArray(this.permission) ? this.permission : [this.permission])) ||
-      !this.permission
-    ) {
-      if (this.ocxIfPermissionElseTemplate) {
-        this.viewContainer.createEmbeddedView(this.ocxIfPermissionElseTemplate)
-      } else {
-        if (this.onMissingPermission === 'disable') {
-          this.renderer.setAttribute(this.el.nativeElement, 'disabled', 'disabled')
+    const permissions = (Array.isArray(this.permission) ? this.permission : [this.permission]).filter(
+      (p): p is string => p !== undefined
+    )
+
+    this.hasPermission(permissions).then((hasPerm) => {
+      if ((this.permission && this.negate === hasPerm) || !this.permission) {
+        if (this.ocxIfPermissionElseTemplate) {
+          this.viewContainer.createEmbeddedView(this.ocxIfPermissionElseTemplate)
         } else {
-          this.viewContainer.clear()
+          if (this.onMissingPermission === 'disable') {
+            this.renderer.setAttribute(this.el.nativeElement, 'disabled', 'disabled')
+          } else {
+            this.viewContainer.clear()
+          }
+        }
+      } else {
+        if (this.templateRef) {
+          this.viewContainer.createEmbeddedView(this.templateRef)
         }
       }
-    } else {
-      if (this.templateRef) {
-        this.viewContainer.createEmbeddedView(this.templateRef)
-      }
-    }
+    })
   }
 
-  hasPermission(permission: string[]) {
+  async hasPermission(permission: string[]): Promise<boolean> {
     if (this.ocxIfPermissionPermissions) {
       const result = permission.every((p) => this.ocxIfPermissionPermissions?.includes(p))
       if (!result) {
         console.log('👮‍♀️ No permission in overwrites for: `', permission)
       }
-      return result
+      return Promise.resolve(result)
     }
-    return permission.every((p) => this.permissionChecker?.hasPermission(p))
+    const results = await Promise.all(permission.map((p_1) => this.permissionChecker?.hasPermission(p_1)))
+    return results.every((result_1) => result_1)
   }
 }

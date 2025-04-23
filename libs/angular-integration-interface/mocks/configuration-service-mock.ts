@@ -21,12 +21,8 @@ export class ConfigurationServiceMock {
     return Promise.resolve()
   }
 
-  public getProperty(key: CONFIG_KEY): string | undefined {
-    const config = this.config$.getValue()
-    if (config && typeof config[key] === 'string') {
-      return config[key]
-    }
-    return undefined
+  public getProperty(key: CONFIG_KEY): Promise<string | undefined> {
+    return firstValueFrom(this.config$.asObservable()).then((config) => config[key])
   }
 
   public async setProperty(key: string, val: string): Promise<void> {
@@ -35,7 +31,7 @@ export class ConfigurationServiceMock {
     await this.config$.publish(currentValues)
   }
 
-  public getConfig(): Config | undefined {
-    return this.config$.getValue()
+  public getConfig(): Promise<Config | undefined> {
+    return firstValueFrom(this.config$.asObservable())
   }
 }
