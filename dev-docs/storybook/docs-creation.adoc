@@ -59,6 +59,10 @@ Using JSDoc comments offers several advantages. One of the key benefits is the a
 
 
 == MDX Files in Storybook
+As mentioned above, there are several ways to write Storybook documentation. The simplest method is through autodocs. However, writing documentation using MDX files offers several advantages:
+
+. The documentation can be personalized.
+. The documentation can highlight individual components.
 
 === How to Create a Document with MDX
 
@@ -90,6 +94,7 @@ This is a description of your component.
 ----
 
 === How to Replace Autodocs with an MDX File
+There are two ways to replace an Autodocs page. The first is to disable it in the component and replace it with an MDX file. The second is to overwrite it with an MDX file. 
 
 To replace an Autodocs page with an MDX file, you have two options:
 
@@ -121,17 +126,21 @@ import * as YourComponentStories from './your-component.component.stories.ts';
 <Canvas of={YourComponentStories.YourComponentSecondary} />
 ----
 
-=== When Does It Make Sense to Disable Autodocs and When to Overwrite Them?
+== Autodocs vs. MDX Files in Storybook
 
-Disable Autodocs:
+=== Autodocs: Quick and Simple Documentation
 
-* *Customization Needs*: When you need specific, customized documentation that goes beyond the automatically generated one.
-* *Complex Components*: For complex components that require detailed explanations and examples that cannot be automatically generated.
+Autodocs provide an out-of-the-box solution for quickly creating documentation. If JSDoc comments are present in the components, the automatically generated documentation becomes even richer in content.
 
-Use Autodocs:
+=== Customizing Documentation with MDX Files
 
-* *Enhanced Documentation*: When you want to provide more detailed and tailored documentation for your components.
-* *Specific Use Cases*: For components with unique use cases that require specific documentation not covered by autodocs.
+If you want to customize and write more detailed documentation, it is advisable to use MDX files. As mentioned above, there are several ways to replace Autodocs. The simplest and most convenient method is to disable Autodocs for the components. This makes handling easier and saves the effort of manually overwriting them. The advantage is that you can now use Storybook blocks without selecting a component.
 
-Autodocs are useful for quickly and consistently creating documentation, while MDX files offer more flexibility and customization options.
+=== Overwriting Autodocs
+
+However, you can also easily overwrite Autodocs. To do this, as described above, you need to set the `<Meta title="" />` tag with Storybook blocks. Then, you must explicitly declare the components used.
+
+=== Choosing Between Overwriting and Disabling Autodocs
+
+Whether you overwrite or disable Autodocs ultimately comes down to convenience. There are no significant advantages or disadvantages. The main drawback is that if Autodocs are disabled and the MDX file is missing, there will be no documentation for the components. This issue does not occur with the overwriting method.
 
