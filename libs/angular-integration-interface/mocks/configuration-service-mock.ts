@@ -11,7 +11,7 @@ export function provideConfigurationServiceMock() {
 
 @Injectable({ providedIn: 'root' })
 export class ConfigurationServiceMock {
-  config$ = new FakeTopic<Config>()
+  config$ = new FakeTopic<Config>({})
 
   private resolveInitPromise!: (value: void | PromiseLike<void>) => void
   private isInitializedPromise: Promise<void>
@@ -22,8 +22,8 @@ export class ConfigurationServiceMock {
     })
   }
 
-  public init(): Promise<boolean> {
-    return this.config$.publish({ config: 'config' }).then(() => {
+  public init(config?: Config): Promise<boolean> {
+    return this.config$.publish(config ?? {}).then(() => {
       this.resolveInitPromise()
       return true
     })

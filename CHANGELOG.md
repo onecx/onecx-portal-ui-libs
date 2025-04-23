@@ -1,3 +1,21 @@
+## [5.34.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.34.4...v5.34.5) (2025-04-10)
+
+### Bug Fixes
+
+* configuratio service topic type ([#710](https://github.com/onecx/onecx-portal-ui-libs/issues/710)) ([12cd1cd](https://github.com/onecx/onecx-portal-ui-libs/commit/12cd1cdea1de95b9426c8e00efe216cfffb9b64d))
+
+## [5.34.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.34.3...v5.34.4) (2025-04-10)
+
+### Bug Fixes
+
+* configuration service init ([#709](https://github.com/onecx/onecx-portal-ui-libs/issues/709)) ([d5c6199](https://github.com/onecx/onecx-portal-ui-libs/commit/d5c619904170a0fe7068c0f00247770ab47de8ec))
+
+## [5.34.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.34.2...v5.34.3) (2025-04-10)
+
+### Bug Fixes
+
+* isInitialized resolve after init called ([#706](https://github.com/onecx/onecx-portal-ui-libs/issues/706)) ([812cd96](https://github.com/onecx/onecx-portal-ui-libs/commit/812cd964a7f4c0c329b91905cac3dcd96c7340d7))
+
 ## [5.34.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.34.1...v5.34.2) (2025-04-09)
 
 ### Bug Fixes
