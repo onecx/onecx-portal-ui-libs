@@ -15,7 +15,7 @@ export default async function warnForEventsTopicNavigated(tree: Tree) {
     '⚠️ EventsTopic usages were detected. Please double-check if EventsTopic is used for subscribing to navigation events and switch to CurrentLocationTopic/appStateService.currentLocation$ if so.'
 
   const warningForExactMatches =
-    '⚠️ You are using EventsTopic to publish navigation events. Please switch to using CurrentLocationTopic/appStateService.currentLocation$.'
+    '⚠️ You are using EventsTopic to listen for navigation events. Please switch to using CurrentLocationTopic/appStateService.currentLocation$.'
 
   const potentialMatches = detectMethodCallsInFiles(tree, './src', 'pipe', 'EventsTopic')
 
