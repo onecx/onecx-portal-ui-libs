@@ -30,6 +30,8 @@
       "@onecx/integration-interface": ["libs/integration-interface/src/index.ts"],
       "@onecx/keycloak-auth": ["libs/keycloak-auth/src/index.ts"],
       "@onecx/ngrx-accelerator": ["libs/ngrx-accelerator/src/index.ts"],
+      "@onecx/nx-migration-utils": ["libs/nx-migration-utils/src/index.ts"],
+      "@onecx/nx-migration-utils/angular": ["libs/nx-migration-utils/src/lib/angular/index.ts"],
       "@onecx/portal-integration-angular": ["libs/portal-integration-angular/src/index.ts"],
       "@onecx/portal-integration-angular/mocks": ["libs/portal-integration-angular/mocks/index.ts"],
       "@onecx/portal-integration-angular/testing": ["libs/portal-integration-angular/testing/index.ts"],
