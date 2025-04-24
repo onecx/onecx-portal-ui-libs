@@ -14,17 +14,15 @@ export class UserServiceMock {
   permissionsTopic$ = new FakeTopic<string[]>(['mocked-permission'])
   lang$ = new BehaviorSubject('en')
 
-  hasPermission(permissionKey: string | string[]): boolean {
-    console.log('---------------------- ', permissionKey)
+  async hasPermission(permissionKey: string | string[]): Promise<boolean> {
     if (Array.isArray(permissionKey)) {
-      return permissionKey.every((key) => this.hasPermission(key))
+      return permissionKey.every(async (key) => await this.hasPermission(key))
     }
 
     const result = this.permissionsTopic$.getValue()?.includes(permissionKey)
     if (!result) {
       console.log(`👮‍♀️ No permission for: ${permissionKey}`)
     }
-    console.log('=========================== ', result)
     return !!result
   }
 

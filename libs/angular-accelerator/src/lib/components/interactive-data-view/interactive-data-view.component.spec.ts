@@ -1,59 +1,61 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing'
-
 import { HarnessLoader, parallel, TestElement } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { NoopAnimationsModule } from '@angular/platform-browser/animations'
+import { DatePipe } from '@angular/common'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { NoopAnimationsModule } from '@angular/platform-browser/animations'
+import { provideRouter } from '@angular/router'
 import { TranslateModule } from '@ngx-translate/core'
-import { TranslateTestingModule } from 'ngx-translate-testing'
-import { ButtonModule } from 'primeng/button'
-import { DialogModule } from 'primeng/dialog'
-import { PickListModule } from 'primeng/picklist'
 import {
-  PSelectHarness,
-  PButtonHarness,
-  PPicklistHarness,
+  provideAppStateServiceMock,
+  provideUserServiceMock,
+  UserServiceMock,
+} from '@onecx/angular-integration-interface/mocks'
+import { SlotService } from '@onecx/angular-remote-components'
+import { SlotServiceMock } from '@onecx/angular-remote-components/mocks'
+import {
   ButtonHarness,
+  ListItemHarness,
+  PButtonHarness,
   PMultiSelectListItemHarness,
+  PPicklistHarness,
+  PSelectHarness,
   TableHeaderColumnHarness,
   TableRowHarness,
-  ListItemHarness,
 } from '@onecx/angular-testing'
-import { UserService } from '@onecx/angular-integration-interface'
-import { provideAppStateServiceMock, provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
-import { AngularAcceleratorModule } from '../../angular-accelerator.module'
-import { InteractiveDataViewComponent } from './interactive-data-view.component'
-import { DataLayoutSelectionComponent } from '../data-layout-selection/data-layout-selection.component'
-import { DataViewComponent, RowListGridData } from '../data-view/data-view.component'
-import { ColumnGroupSelectionComponent } from '../column-group-selection/column-group-selection.component'
-import { CustomGroupColumnSelectorComponent } from '../custom-group-column-selector/custom-group-column-selector.component'
-import { ColumnType } from '../../model/column-type.model'
+import { TranslateTestingModule } from 'ngx-translate-testing'
+import { PrimeIcons } from 'primeng/api'
+import { ButtonModule } from 'primeng/button'
+import { DialogModule } from 'primeng/dialog'
+import { DomHandler } from 'primeng/dom'
+import { PickListModule } from 'primeng/picklist'
+import { TooltipStyle } from 'primeng/tooltip'
 import {
-  DataViewHarness,
   ColumnGroupSelectionHarness,
   CustomGroupColumnSelectorHarness,
   DataLayoutSelectionHarness,
-  DataTableHarness,
   DataListGridHarness,
+  DataTableHarness,
+  DataViewHarness,
   DefaultGridItemHarness,
   DefaultListItemHarness,
+  FilterViewHarness,
   InteractiveDataViewHarness,
   SlotHarness,
-  FilterViewHarness,
 } from '../../../../testing'
-import { DateUtils } from '../../utils/dateutils'
-import { provideRouter } from '@angular/router'
-import { SlotService } from '@onecx/angular-remote-components'
-import { SlotServiceMock } from '@onecx/angular-remote-components/mocks'
-import { IfPermissionDirective } from '../../directives/if-permission.directive'
-import { FilterType } from '../../model/filter.model'
-import { FilterViewComponent } from '../filter-view/filter-view.component'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
-import { PrimeIcons } from 'primeng/api'
+import { AngularAcceleratorModule } from '../../angular-accelerator.module'
+import { IfPermissionDirective } from '../../directives/if-permission.directive'
+import { ColumnType } from '../../model/column-type.model'
+import { FilterType } from '../../model/filter.model'
+import { DateUtils } from '../../utils/dateutils'
 import { limit } from '../../utils/filter.utils'
-import { DatePipe } from '@angular/common'
-import { TooltipStyle } from 'primeng/tooltip'
-import { DomHandler } from 'primeng/dom'
+import { ColumnGroupSelectionComponent } from '../column-group-selection/column-group-selection.component'
+import { CustomGroupColumnSelectorComponent } from '../custom-group-column-selector/custom-group-column-selector.component'
+import { DataLayoutSelectionComponent } from '../data-layout-selection/data-layout-selection.component'
+import { DataViewComponent, RowListGridData } from '../data-view/data-view.component'
+import { FilterViewComponent } from '../filter-view/filter-view.component'
+import { InteractiveDataViewComponent } from './interactive-data-view.component'
 
 // primeng version 19.0.6 workaround for frozen column failing in tests
 DomHandler.siblings = (element) => {
@@ -95,6 +97,7 @@ describe('InteractiveDataViewComponent', () => {
 
   let dateUtils: DateUtils
   let slotService: SlotServiceMock
+  let userServiceMock: UserServiceMock
 
   const mockData = [
     {
@@ -304,8 +307,8 @@ describe('InteractiveDataViewComponent', () => {
 
     fixture = TestBed.createComponent(InteractiveDataViewComponent)
     component = fixture.componentInstance
-    const userService = TestBed.inject(UserService)
-    userService.permissions$.next([
+    userServiceMock = TestBed.inject(UserServiceMock)
+    userServiceMock.permissionsTopic$.publish([
       'TEST_MGMT#TEST_View',
       'TEST_MGMT#TEST_EDIT',
       'TEST_MGMT#TEST_DELETE',
@@ -355,9 +358,10 @@ describe('InteractiveDataViewComponent', () => {
 
   it('should load column-group-selection slot', async () => {
     slotService.assignComponentToSlot('column-group-selection', component.columnGroupSlotName)
-    const userService = TestBed.inject(UserService)
-    jest.spyOn(userService, 'hasPermission').mockReturnValue(true)
+    jest.spyOn(userServiceMock, 'hasPermission').mockReturnValue(Promise.resolve(true))
+    
     fixture.detectChanges()
+    await fixture.whenStable()
 
     const slot = await loader.getHarness(SlotHarness)
     expect(slot).toBeTruthy()
@@ -368,8 +372,10 @@ describe('InteractiveDataViewComponent', () => {
     expect(columnGroupSelectionDropdown).toBeTruthy()
 
     slotService.assignComponentToSlot('column-group-selection', component.columnGroupSlotName)
-    const userService = TestBed.inject(UserService)
-    jest.spyOn(userService, 'hasPermission').mockReturnValue(false)
+    jest.spyOn(userServiceMock, 'hasPermission').mockReturnValue(Promise.resolve(false))
+
+    fixture.detectChanges()
+    await fixture.whenStable()
 
     const columnGroupSelectionDropdownNoPermission = await loader.getHarness(ColumnGroupSelectionHarness)
     expect(columnGroupSelectionDropdownNoPermission).toBeTruthy()
@@ -1455,16 +1461,16 @@ describe('InteractiveDataViewComponent', () => {
         fixture.detectChanges()
 
         const dataTable = await filterViewHarness.getDataTable()
-        if(dataTable) {
+        if (dataTable) {
           let rows = await dataTable.getRows()
-            expect(rows.length).toBe(4)
-            const buttons = await rows[0].getAllActionButtons()
-            expect(buttons.length).toBe(1)
-            await buttons[0].click()
-    
-            rows = await dataTable.getRows()
-            expect(rows.length).toBe(3)
-            expect(component.filters.length).toBe(3)
+          expect(rows.length).toBe(4)
+          const buttons = await rows[0].getAllActionButtons()
+          expect(buttons.length).toBe(1)
+          await buttons[0].click()
+
+          rows = await dataTable.getRows()
+          expect(rows.length).toBe(3)
+          expect(component.filters.length).toBe(3)
         }
       })
     })
@@ -1922,8 +1928,8 @@ describe('InteractiveDataViewComponent', () => {
   })
   describe('Dynamically disable/hide based on field path in interactive data view', () => {
     const setUpMockData = async (viewType: 'grid' | 'list' | 'table') => {
-      const userService = TestBed.inject(UserService)
-      userService.permissions$.next(['VIEW', 'EDIT', 'DELETE'])
+      const userServiceMock = TestBed.inject(UserServiceMock)
+      userServiceMock.permissionsTopic$.publish(['VIEW', 'EDIT', 'DELETE'])
       component.viewItem.subscribe(() => console.log())
       component.editItem.subscribe(() => console.log())
       component.deleteItem.subscribe(() => console.log())
