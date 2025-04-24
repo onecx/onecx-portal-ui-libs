@@ -16,6 +16,9 @@ import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-prime
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { ColumnType } from '../../model/column-type.model'
 import { DataListGridComponent } from './data-list-grid.component'
+import { ensureOriginMockExists } from '@onecx/angular-testing'
+
+ensureOriginMockExists()
 
 describe('DataListGridComponent', () => {
   const mutationObserverMock = jest.fn(function MutationObserver(callback) {

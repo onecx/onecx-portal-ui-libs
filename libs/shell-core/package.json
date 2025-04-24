@@ -1,6 +1,6 @@
 {
   "name": "@onecx/shell-core",
-  "version": "6.0.0-rc.5",
+  "version": "6.0.0-rc.7",
   "license": "Apache-2.0",
   "peerDependencies": {
     "rxjs": "^7.8.1",
@@ -9,8 +9,8 @@
     "@angular/core": "^19.0.0",
     "@angular/router": "^19.0.0",
     "@ngneat/until-destroy": "^10.0.0",
-    "@onecx/angular-integration-interface": "^6.0.0-rc.5",
-    "@onecx/angular-remote-components": "^6.0.0-rc.5",
+    "@onecx/angular-integration-interface": "^6.0.0-rc.7",
+    "@onecx/angular-remote-components": "^6.0.0-rc.7",
     "@ngx-translate/core": "^16.0.0",
     "primeng": "^19.0.0",
     "@nx/devkit": "^20.3.0"
