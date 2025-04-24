@@ -4,17 +4,6 @@
   "sourceRoot": "libs/integration-interface/src",
   "projectType": "library",
   "targets": {
-    "build-migrations": {
-      "dependsOn": [
-        "build"
-      ],
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "tsc -p libs/integration-interface/migrations/tsconfig.migrations.json"
-        ]
-      }
-    },
     "build": {
       "executor": "@nx/js:tsc",
       "outputs": [
