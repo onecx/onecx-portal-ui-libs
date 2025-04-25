@@ -1,1 +1,3 @@
-export interface ExecutorSchema {} // eslint-disable-line
+export interface ReleaseWithMigrationsExecutorOptions {
+  buildWithMigrationsTarget: string
+}

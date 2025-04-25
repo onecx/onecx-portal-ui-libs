@@ -1,10 +1,10 @@
-import { ExecutorContext } from '@nx/devkit'
+import { ExecutorContext } from 'nx-release/node_modules/@nx/devkit'
 
-import executor, { ReleaseWithMigrationsExecutorOptions } from './executor'
+import executor from './executor'
+import { ReleaseWithMigrationsExecutorOptions } from './schema'
 
 const options: ReleaseWithMigrationsExecutorOptions = {
-  libName: "test",
-  buildWithMigrationsTarget: ""
+  buildWithMigrationsTarget: "build-with-migrations",
 }
 const context: ExecutorContext = {
   root: '',

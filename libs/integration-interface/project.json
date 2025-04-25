@@ -63,10 +63,7 @@
       }
     },
     "release": {
-      "executor": "@onecx/release:release-with-migrations",
-      "options": {
-        "libName": "integration-interface"
-      }
+      "executor": "@onecx/release:release-with-migrations"
     }
   },
   "tags": []

@@ -1,19 +1,15 @@
-import type { ExecutorContext } from '@nx/devkit'
 import { exec } from 'child_process'
 import { promisify } from 'util'
 import updateVersion from 'nx-release/src/executors/update-version/executor'
 import npmPublish from 'nx-release/src/executors/npm-publish/executor'
-
-export interface ReleaseWithMigrationsExecutorOptions {
-  libName: string
-  buildWithMigrationsTarget: string
-}
+import { ExecutorContext } from 'nx-release/node_modules/@nx/devkit'
+import { ReleaseWithMigrationsExecutorOptions } from './schema'
 
 export default async function releaseWithMigrationsExecutor(
   options: ReleaseWithMigrationsExecutorOptions,
   context: ExecutorContext
 ): Promise<{ success: boolean }> {
-  console.info(`Releasing library ${options.libName} with build command:`)
+  console.info(`Releasing library ${context.projectName} with build command:`)
   console.info(`nx ${options.buildWithMigrationsTarget} --project ${context.projectName}`)
   console.info()
 
@@ -21,17 +17,17 @@ export default async function releaseWithMigrationsExecutor(
 
   const { stdout: buildOutput, stderr: buildError } = await promisify(exec)(
     `nx ${options.buildWithMigrationsTarget} --project ${context.projectName}`
-  );
+  )
 
-  if(buildOutput) {
-    console.log(buildOutput);
+  if (buildOutput) {
+    console.log(buildOutput)
   }
 
-  if(buildError) {
-    console.log(buildError);
+  if (buildError) {
+    console.error(buildError)
+  } else {
+    await npmPublish({}, context)
   }
-
-  await npmPublish({}, context);
 
   return { success: !buildError }
 }
