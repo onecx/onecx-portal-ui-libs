@@ -1,3 +1,5 @@
+// nx-release uses an older version of @nx/devkit 
+// --> Type has to be imported from modules of nx-release to avoid version conflicts and type errors
 import { ExecutorContext } from 'nx-release/node_modules/@nx/devkit'
 
 import executor from './executor'
