@@ -2,14 +2,14 @@ import { exec } from 'child_process'
 import { promisify } from 'util'
 import updateVersion from 'nx-release/src/executors/update-version/executor'
 import npmPublish from 'nx-release/src/executors/npm-publish/executor'
-// nx-release uses an older version of @nx/devkit 
+// nx-release uses an older version of @nx/devkit
 // --> Type has to be imported from modules of nx-release to avoid version conflicts and type errors
 import { ExecutorContext } from 'nx-release/node_modules/@nx/devkit'
 import { ReleaseWithMigrationsExecutorOptions } from './schema'
 
 /**
  * A custom executor that replicates the behavior of `nx-release:build-update-publish` and adds the ability to specify a custom execution target other than `build`.
- * 
+ *
  * @param options Configuration options that can be passed to the executor (defined in schema.json)
  * @param context Context that the executor is running in --> provided automatically by nx
  * @returns A promise that resolves to an object with a success indicator
@@ -39,10 +39,11 @@ export default async function releaseWithMigrationsExecutor(
   // If the build command fails, abort the release process
   if (buildError) {
     console.error(buildError)
-  } else {
-    // Publish the package to npm using additional configuration values from environment variables --> default behavior of nx-release
-    await npmPublish({}, context)
+    throw new Error(`Build failed for project ${context.projectName} with target ${options.buildWithMigrationsTarget}`)
   }
+
+  // Publish the package to npm using additional configuration values from environment variables --> default behavior of nx-release
+  await npmPublish({}, context)
 
   return { success: !buildError }
 }
