@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "version": 2,
+  "title": "Release with Migrations",
+  "description": "Executor for releasing a onecx library with migrations.",
+  "type": "object",
+  "properties": {
+    "libName": {
+      "type": "string",
+      "description": "The name of the library to release."
+    },
+    "buildWithMigrationsTarget": {
+      "type": "string",
+      "description": "The specified target for building the library with migrations.", 
+      "default": "build-migrations"
+    }
+  },
+  "required": [
+    "libName"
+  ]
+}
