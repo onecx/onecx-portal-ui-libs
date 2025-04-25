@@ -1,9 +1,9 @@
 {
   "executors": {
-    "release-with-migrations": {
-      "implementation": "./src/executors/release-with-migrations/executor",
-      "schema": "./src/executors/release-with-migrations/schema.json",
-      "description": "Executor for releasing a onecx library with migrations."
+    "update-build-publish": {
+      "implementation": "./src/executors/update-build-publish/executor",
+      "schema": "./src/executors/update-build-publish/schema.json",
+      "description": "Executor for releasing a onecx library."
     }
   }
 }

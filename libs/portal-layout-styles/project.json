@@ -22,10 +22,7 @@
       }
     },
     "release": {
-      "executor": "nx-release:build-update-publish",
-      "options": {
-        "libName": "portal-layout-styles"
-      }
+      "executor": "@onecx/release:update-build-publish"
     },    
     "test": {
       "executor": "@nx/jest:jest",

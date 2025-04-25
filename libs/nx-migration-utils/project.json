@@ -42,10 +42,7 @@
       }
     },
     "release": {
-      "executor": "nx-release:build-update-publish",
-      "options": {
-        "libName": "nx-migration-utils"
-      }
-    }    
+      "executor": "@onecx/release:update-build-publish"
+    }   
   }
 }
