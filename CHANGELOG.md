@@ -1,3 +1,10 @@
+## [5.35.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.34.5...v5.35.0) (2025-04-24)
+
+### Features
+
+* create and use CurrentLocationTopic, add CapabilityService and topic debugger ([#689](https://github.com/onecx/onecx-portal-ui-libs/issues/689)) ([b85bff7](https://github.com/onecx/onecx-portal-ui-libs/commit/b85bff7ae46d923efac7d466c91fe3f3cd92a690))
+* standalone improvements from develop ([#712](https://github.com/onecx/onecx-portal-ui-libs/issues/712)) ([56023a6](https://github.com/onecx/onecx-portal-ui-libs/commit/56023a635673100dde47bc848709639543affef5))
+
 ## [5.34.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.34.4...v5.34.5) (2025-04-10)
 
 ### Bug Fixes
