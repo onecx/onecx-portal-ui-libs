@@ -31,7 +31,7 @@ export default async function updateBuildPublishExecutor(
 
   // Builds the project using the specified build target (defaults to build) --> this was not supported in nx-release
   // The specified target must be defined in the project.json file of the respective library
-  const { stdout: buildOutput, stderr: buildError } = await promisify(exec)(
+  const { stdout: buildOutput, stderr } = await promisify(exec)(
     buildCommand
   )
 
@@ -39,14 +39,16 @@ export default async function updateBuildPublishExecutor(
     console.log(buildOutput)
   }
 
-  // If the build target fails, abort the release process
-  if (buildError) {
-    console.error(buildError)
-    throw new Error(`Build failed for project ${context.projectName} with target ${options.buildTarget}`)
+  if(stderr) {
+    // stderr does not result in a script interruption here because @nx/angular:package seems to wrongfully output normal logs as stderr in some cases
+    // --> led to the wrongful early termination of our script
+    // Instead we rely on exceptions that are being thrown by subprocesses to interrupt the script execution
+    console.log("stderr", stderr)
   }
 
   // Publish the package to npm using additional configuration values from environment variables --> default behavior of nx-release
   await npmPublish({}, context)
 
-  return { success: !buildError }
+  // We can always return success from executor, because exceptions in commands leads to script interruption
+  return { success: true }
 }
