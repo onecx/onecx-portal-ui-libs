@@ -6,6 +6,7 @@ import {
   dataRcStylesAttribute,
   dataRcStylesKey,
   dataRcStylesStart,
+  fetchAppCss,
   getAppStyleByScope,
   getStyleUsageCount,
   isAppStyleForScope,
@@ -37,7 +38,7 @@ export async function udpateStylesForRcCreation(
 
   // Create new style element if none was found for the component
   const styleElement = createStyleUsedByRc(scopeId, slotName)
-  const css = await fetchComponentStyles(httpClient, rcUrl)
+  const css = await fetchAppCss(httpClient, rcUrl)
   const scopedCss = createScopedCss(css, scopeId)
   replaceStyleConent(styleElement, scopedCss)
 }
@@ -99,10 +100,4 @@ function removeRcUsageFromStyle(styleElement: HTMLStyleElement, slotName: string
  */
 function getAllStylesUsedByRc(slotName: string): HTMLStyleElement[] {
   return Array.from(document.head.querySelectorAll<HTMLStyleElement>(`style[${dataRcStylesAttribute(slotName)}]`))
-}
-
-async function fetchComponentStyles(http: HttpClient, appUrl: string) {
-  return await firstValueFrom(
-    http.request('get', Location.joinWithSlash(appUrl, 'styles.css'), { responseType: 'text' })
-  )
 }

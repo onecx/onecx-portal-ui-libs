@@ -13,6 +13,7 @@ import {
   removeAttributeFromStyle,
   replaceStyleConent,
   createScopedCss,
+  fetchAppCss,
 } from './styles.utils'
 
 /**
@@ -37,7 +38,7 @@ export async function updateStylesForMfeChange(
 
   // Create new style element if none was found for the current mfe
   const styleElement = createStyleUsedByMfe(scopeId)
-  const css = await fetchMfeCss(httpClient, mfeUrl)
+  const css = await fetchAppCss(httpClient, mfeUrl)
   const scopedCss = createScopedCss(css, scopeId)
   replaceStyleConent(styleElement, scopedCss)
 }
@@ -98,10 +99,4 @@ function removeMfeUsageFromStyle(styleElement: HTMLStyleElement) {
  */
 function getAllStylesUsedByMfe(): HTMLStyleElement[] {
   return Array.from(document.head.querySelectorAll<HTMLStyleElement>(`style[${dataMfeStylesAttribute}]`))
-}
-
-async function fetchMfeCss(http: HttpClient, appUrl: string): Promise<string> {
-  return await firstValueFrom(
-    http.request('get', Location.joinWithSlash(appUrl, 'styles.css'), { responseType: 'text' })
-  )
 }

@@ -1,6 +1,9 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { dataStyleIdAttribute, dataStyleIsolationAttribute, isCssScopeRuleSupported } from '../scope.utils'
 import { isStyleUsedByMfe } from './mfe-styles.utils'
 import { getStyleUsageCountForRc } from './rc-styles.utils'
+import { firstValueFrom } from 'rxjs'
+import { Location } from '@angular/common'
 
 // Style isolation management
 export const dataRcStylesStart = 'slot'
@@ -130,4 +133,23 @@ export function isAppStyle(styleElement: HTMLStyleElement): boolean {
  */
 export function isAppStyleForScope(styleElement: HTMLStyleElement, scopeId: string): boolean {
   return styleElement.dataset[dataAppStylesKey] === scopeId
+}
+
+/**
+ * Creates HttpHeaders for Css request
+ */
+export function createCssRequestHeaders() {
+  return new HttpHeaders({}).set('Content-Type', 'text/css')
+}
+
+/**
+ * Fetches the css for an application
+ */
+export async function fetchAppCss(http: HttpClient, appUrl: string): Promise<string> {
+  return await firstValueFrom(
+    http.request('get', Location.joinWithSlash(appUrl, 'styles.css'), {
+      responseType: 'text',
+      headers: createCssRequestHeaders(),
+    })
+  )
 }
