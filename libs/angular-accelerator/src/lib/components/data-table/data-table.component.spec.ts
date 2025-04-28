@@ -4,14 +4,14 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { PTableCheckboxHarness } from '@onecx/angular-testing'
-import { UserService } from '@onecx/angular-integration-interface'
-import { MockUserService } from '@onecx/angular-integration-interface/mocks'
+import { provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { DataTableComponent, Row } from './data-table.component'
 import { ColumnType } from '../../model/column-type.model'
 import { DataTableHarness } from '../../../../testing'
 import { MockAuthModule } from '../../mock-auth/mock-auth.module'
+import { UserService } from '@onecx/angular-integration-interface'
 
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>
@@ -211,7 +211,7 @@ describe('DataTableComponent', () => {
         AngularAcceleratorModule,
         MockAuthModule,
       ],
-      providers: [{ provide: UserService, useClass: MockUserService }],
+      providers: [provideUserServiceMock()],
     }).compileComponents()
 
     fixture = TestBed.createComponent(DataTableComponent)
@@ -221,6 +221,8 @@ describe('DataTableComponent', () => {
     component.paginator = true
     translateService = TestBed.inject(TranslateService)
     translateService.use('en')
+    const userService = TestBed.inject(UserService)
+    userService.permissions$.next(['VIEW', 'EDIT', 'DELETE'])
     fixture.detectChanges()
     dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
   })

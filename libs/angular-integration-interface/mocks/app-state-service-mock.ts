@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { PageInfo, Workspace } from '@onecx/integration-interface'
+import { CurrentLocationTopicPayload, PageInfo, Workspace } from '@onecx/integration-interface'
 // eslint-disable-next-line
 import { AppStateService } from '@onecx/angular-integration-interface'
 import { FakeTopic } from './fake-topic'
@@ -21,7 +21,21 @@ export class AppStateServiceMock {
   globalLoading$ = new FakeTopic(false)
   currentMfe$ = new FakeTopic({ mountPath: '/', remoteBaseUrl: '.', baseHref: '/', shellName: 'test' })
   currentPage$ = new FakeTopic<PageInfo | undefined>(undefined)
-  currentPortal$ = new FakeTopic<Workspace>({ baseUrl: '/', microfrontendRegistrations: [], portalName: 'Test portal', workspaceName: 'Test portal' })
-  currentWorkspace$ = new FakeTopic<Workspace>({ baseUrl: '/', microfrontendRegistrations: [], portalName: 'Test workspace', workspaceName: 'Test workspace' })
+  currentPortal$ = new FakeTopic<Workspace>({
+    baseUrl: '/',
+    microfrontendRegistrations: [],
+    portalName: 'Test portal',
+    workspaceName: 'Test portal',
+  })
+  currentWorkspace$ = new FakeTopic<Workspace>({
+    baseUrl: '/',
+    microfrontendRegistrations: [],
+    portalName: 'Test workspace',
+    workspaceName: 'Test workspace',
+  })
+  currentLocation$ = new FakeTopic<CurrentLocationTopicPayload>({
+    url: '/',
+    isFirst: true,
+  })
   isAuthenticated$ = new FakeTopic<null>(null)
 }

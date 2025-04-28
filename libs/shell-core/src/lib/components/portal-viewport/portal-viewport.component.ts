@@ -1,6 +1,5 @@
 import { Component, HostListener, Inject, OnDestroy, OnInit, Optional } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
-import { Router } from '@angular/router'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import {
   AppStateService,
@@ -10,12 +9,13 @@ import {
   UserService,
 } from '@onecx/angular-integration-interface'
 import { MessageService, PrimeNGConfig } from 'primeng/api'
-import { filter, first, from, mergeMap, of } from 'rxjs'
+import { filter, first, from, mergeMap, Observable, of } from 'rxjs'
 import { SHOW_CONTENT_PROVIDER, ShowContentProvider } from '../../shell-interface/show-content-provider'
 import {
   WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER,
   WorkspaceConfigBffService,
 } from '../../shell-interface/workspace-config-bff-service-provider'
+import { SlotService } from '@onecx/angular-remote-components'
 
 @Component({
   selector: 'ocx-shell-portal-viewport',
@@ -36,6 +36,8 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
   ripple = true
   isMobile = false
   globalErrMsg: string | undefined
+  verticalMenuSlotName = 'onecx-shell-vertical-menu'
+  isVerticalMenuComponentDefined$: Observable<boolean>
 
   constructor(
     private primengConfig: PrimeNGConfig,
@@ -45,7 +47,7 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
     private userService: UserService,
     public themeService: ThemeService,
     private httpClient: HttpClient,
-    private router: Router,
+    private slotService: SlotService,
     @Optional() @Inject(SHOW_CONTENT_PROVIDER) public showContentProvider: ShowContentProvider | undefined,
     @Optional()
     @Inject(WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER)
@@ -95,6 +97,8 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
         }
         link.href = url
       })
+
+    this.isVerticalMenuComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.verticalMenuSlotName)
   }
 
   ngOnInit() {

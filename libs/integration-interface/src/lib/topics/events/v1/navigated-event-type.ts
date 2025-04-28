@@ -1,3 +1,8 @@
 import { NavigatedEventPayload } from './navigated-event-payload'
-
-export type NavigatedEvent = { type: 'navigated'; payload: NavigatedEventPayload }
+/**
+ * @deprecated Use CurrentLocationTopic instead of EventsTopic for navigated events
+ */
+export type NavigatedEvent = {
+  type: 'navigated'
+  payload: NavigatedEventPayload
+}

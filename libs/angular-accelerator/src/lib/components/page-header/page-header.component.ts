@@ -27,6 +27,7 @@ export interface Action {
   label?: string
   labelKey?: string
   icon?: string
+  iconPos?: 'left' | 'right' | 'top' | 'bottom'
   /**
    * Permission for this action. If the current user does not have this permission, the action will not be shown.
    */

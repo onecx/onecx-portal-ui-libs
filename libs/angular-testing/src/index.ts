@@ -38,4 +38,5 @@ export * from '@angular/cdk/testing'
 export * from '@angular/cdk/testing/testbed'
 
 export * from './lib/mocks/IntersectionObserverMock'
+export * from './lib/mocks/OriginMock'
 export * from './lib/utils/waitForDeferredViewsToBeRendered'

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common'
-import { NoopAnimationsModule } from '@angular/platform-browser/animations'
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { Component, EventEmitter, Input, Output } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { HarnessLoader } from '@angular/cdk/testing'
@@ -23,6 +23,8 @@ import { DialogContentHarness, DialogFooterHarness } from '../../../testing/inde
 import { PrimeIcons } from 'primeng/api'
 import { DialogContentComponent } from '../core/components/dialog/dialog-content/dialog-content.component'
 import { DialogFooterComponent } from '../core/components/dialog/dialog-footer/dialog-footer.component'
+import { provideShellCapabilityServiceMock } from '@onecx/angular-integration-interface/mocks'
+import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 
 @Component({
   template: `<h1>BaseTestComponent</h1>`,
@@ -219,6 +221,9 @@ describe('PortalDialogService', () => {
     BUTTON_PARAM: 'myButton {{val}}',
   }
 
+  const removeChildSpy = jest.fn()
+  Object.defineProperty(global.document.body, 'removeChild', { value: removeChildSpy })
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [
@@ -237,10 +242,15 @@ describe('PortalDialogService', () => {
         TranslateTestingModule.withTranslations('en', translations),
         DynamicDialogModule,
         CommonModule,
-        NoopAnimationsModule,
+        BrowserAnimationsModule,
         ButtonModule,
       ],
-      providers: [PortalDialogService, DialogService],
+      providers: [
+        PortalDialogService,
+        DialogService,
+        provideShellCapabilityServiceMock(),
+        provideAppStateServiceMock(),
+      ],
     }).compileComponents()
     fixture = TestBed.createComponent(BaseTestComponent)
     pDialogService = TestBed.inject(DialogService)
@@ -797,5 +807,37 @@ describe('PortalDialogService', () => {
     })
     expect(fixture.componentInstance.nameResult).toBe('Submitted John')
     expect(fixture.componentInstance.surnameResult).toBe('Submitted Doe')
+  })
+
+  it('should close dialog and remove it from html on destroy', async () => {
+    jest.spyOn(pDialogService, 'open')
+
+    fixture.componentInstance.show(
+      'title',
+      { key: 'MESSAGE_PARAM', parameters: { val: 'myMsgParam' } },
+      'button1',
+      'button2'
+    )
+
+    const dialogService = TestBed.inject(DialogService)
+    expect(dialogService.dialogComponentRefMap.size).toBe(1)
+    const dialogRef = dialogService.dialogComponentRefMap.keys().next().value
+    const dialogRefSpy = jest.spyOn(dialogRef, 'close')
+
+    const containerParent = {
+      parentElement: document.body,
+    }
+    dialogService.getInstance(dialogRef).container = {
+      parentElement: containerParent,
+      style: {
+        zIndex: 0,
+      },
+    } as any
+
+    fixture.detectChanges()
+
+    fixture.componentInstance.portalDialogService.ngOnDestroy()
+    expect(dialogRefSpy).toHaveBeenCalledTimes(1)
+    expect(removeChildSpy).toHaveBeenCalledWith(containerParent)
   })
 })

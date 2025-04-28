@@ -1,13 +1,17 @@
-import { EventEmitter, Injectable, Type, isDevMode } from '@angular/core'
+import { EventEmitter, Injectable, OnDestroy, Type, isDevMode } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
-import { Observable, mergeMap } from 'rxjs'
-import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { Observable, filter, mergeMap } from 'rxjs'
+import { DialogService, DynamicDialogComponent, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 
 import { ButtonDialogButtonDetails, ButtonDialogCustomButtonDetails, ButtonDialogData } from '../model/button-dialog'
 import { DialogMessageContentComponent } from '../core/components/button-dialog/dialog-message-content/dialog-message-content.component'
 import { PrimeIcon } from '@onecx/angular-accelerator'
 import { DialogFooterComponent } from '../core/components/dialog/dialog-footer/dialog-footer.component'
 import { DialogContentComponent } from '../core/components/dialog/dialog-content/dialog-content.component'
+import { NavigationStart, Router } from '@angular/router'
+import { CurrentLocationTopicPayload, EventsTopic, TopicEventType } from '@onecx/integration-interface'
+import { Capability, ShellCapabilityService } from '@onecx/angular-integration-interface'
+import { AppStateService } from '@onecx/angular-integration-interface'
 
 /**
  * Object containing key for translation with parameters object for translation
@@ -260,11 +264,34 @@ export interface PortalDialogServiceData {
 }
 
 @Injectable({ providedIn: 'any' })
-export class PortalDialogService {
+export class PortalDialogService implements OnDestroy {
+  private eventsTopic: EventsTopic = new EventsTopic()
   constructor(
     private dialogService: DialogService,
-    private translateService: TranslateService
-  ) {}
+    private translateService: TranslateService,
+    private capabilityService: ShellCapabilityService,
+    private appStateService: AppStateService,
+    private router: Router
+  ) {
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        this.cleanupAndCloseDialog()
+      }
+    })
+    let observable: Observable<TopicEventType | CurrentLocationTopicPayload> =
+      this.appStateService.currentLocation$.asObservable()
+    if (!this.capabilityService.hasCapability(Capability.CURRENT_LOCATION_TOPIC)) {
+      observable = this.eventsTopic.pipe(filter((e) => e.type === 'navigated'))
+    }
+    observable.subscribe(() => {
+      this.cleanupAndCloseDialog()
+    })
+  }
+
+  ngOnDestroy(): void {
+    this.cleanupAndCloseDialog()
+    this.eventsTopic.destroy()
+  }
 
   /**
    * @deprecated
@@ -481,12 +508,39 @@ export class PortalDialogService {
           closable: dialogOptions.showXButton && secondaryButtonTranslationKeyOrDetails !== undefined,
           ...dialogOptions,
           focusOnShow: false,
+          appendTo: 'body', // Important for the function findBodyChild
+          duplicate: true, // Since dialog always opens DialogContentComponent, duplicates must be always allowed
           templates: {
             footer: DialogFooterComponent,
           },
         }).onClose
       })
     )
+  }
+
+  private cleanupAndCloseDialog() {
+    if (this.dialogService.dialogComponentRefMap.size > 0) {
+      this.dialogService.dialogComponentRefMap.forEach((_, dialogRef) => {
+        const dialogComponent = this.dialogService.getInstance(dialogRef)
+        dialogRef.close()
+        this.removeDialogFromHtml(dialogComponent)
+      })
+    }
+  }
+
+  private removeDialogFromHtml(dialogComponent: DynamicDialogComponent) {
+    const container = dialogComponent.container
+    if (!container) return
+    const bodyChild = this.findBodyChild(container)
+    bodyChild && document.body.removeChild(bodyChild)
+  }
+
+  private findBodyChild(element: HTMLElement) {
+    let currentNode = element
+    while (currentNode.parentElement && currentNode.parentElement != document.body) {
+      currentNode = currentNode.parentElement
+    }
+    return currentNode.parentElement === document.body ? currentNode : undefined
   }
 
   private prepareTitleForTranslation(title: TranslationKey | null): TranslationKeyWithParameters {
