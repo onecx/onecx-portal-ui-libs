@@ -40,6 +40,12 @@ export class SlotComponent implements OnInit, OnDestroy {
   @Input()
   name!: string
 
+  @Input()
+  slotStyles: { [key: string]: any } = {}
+
+  @Input()
+  slotClasses: string | string[] | Set<string> | { [key: string]: any } = ''
+
   private _assignedComponents$ = new BehaviorSubject<AssignedComponent[]>([])
 
   /**
