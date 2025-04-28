@@ -1042,7 +1042,7 @@ describe('InteractiveDataViewComponent', () => {
       actionColumnPositionSelectButtons = await customGroupColumnSelector.getActionColumnPositionSelectButtons()
     })
 
-    xit('should move item up in picklist active columns list', async () => {
+    it('should move item up in picklist active columns list', async () => {
       const spy = jest.spyOn(CustomGroupColumnSelectorComponent.prototype, 'onSaveClick')
       const expectedHeaders = [
         'COLUMN_HEADER_NAME.DESCRIPTION',
@@ -1071,7 +1071,7 @@ describe('InteractiveDataViewComponent', () => {
       expect(rows).toEqual(expectedRowsData)
     })
 
-    xit('should move item down in picklist active columns list', async () => {
+    it('should move item down in picklist active columns list', async () => {
       const spy = jest.spyOn(CustomGroupColumnSelectorComponent.prototype, 'onSaveClick')
       const expectedHeaders = [
         'COLUMN_HEADER_NAME.NAME',
@@ -1773,18 +1773,14 @@ describe('InteractiveDataViewComponent', () => {
 
     let dataList: DataListGridHarness | null
     let listItems: DefaultListItemHarness[]
-    // let listLayoutSelectionButton: TestElement | null
 
     let dataGrid: DataListGridHarness | null
     let gridItems: DefaultGridItemHarness[]
-    // let gridLayoutSelectionButton: any
 
     beforeEach(async () => {
       component.subtitleLineIds = ['startDate', 'testNumber']
 
       dataLayoutSelection = await loader.getHarness(DataLayoutSelectionHarness)
-      // listLayoutSelectionButton = await dataLayoutSelection.getListLayoutSelectionButton()
-      // gridLayoutSelectionButton = await dataLayoutSelection.getGridLayoutSelectionButton()
 
       dataView = await loader.getHarness(DataViewHarness)
       dataTable = await dataView.getDataTable()

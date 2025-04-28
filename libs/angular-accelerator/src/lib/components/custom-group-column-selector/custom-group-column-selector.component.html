@@ -44,20 +44,6 @@
     [leftButtonAriaLabel]="('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABELS.LEFT' | translate)"
     [allLeftButtonAriaLabel]="('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABELS.ALL_LEFT' | translate)"
   >
-    <!-- TODO: tmp fixes https://github.com/primefaces/primeng/issues/17536 -->
-    <ng-template #sourceHeader>
-      <div class="p-picklist-title">
-        {{activeColumnsLabel || (activeColumnsLabelKey | translate) ||
-        ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ACTIVE_COLUMNS_LABEL' | translate)}}
-      </div>
-    </ng-template>
-    <!-- TODO: tmp fixes https://github.com/primefaces/primeng/issues/17536 -->
-    <ng-template #targetHeader>
-      <div class="p-picklist-title">
-        {{inactiveColumnsLabel || (inactiveColumnsLabelKey | translate) ||
-        ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.INACTIVE_COLUMNS_LABEL' | translate)}}
-      </div>
-    </ng-template>
     <ng-template let-item #item>
       <div>{{ item.nameKey | translate }}</div>
     </ng-template>
