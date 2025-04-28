@@ -37,7 +37,7 @@ import {
   shareReplay,
   switchMap,
   toArray,
-  withLatestFrom
+  withLatestFrom,
 } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
@@ -800,16 +800,24 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     menu.toggle(event)
   }
 
-  private visibilityCache = new Map<string, Observable<boolean>>()
+  // Because of the usage, a new Observable is created with every ChangeDetection.
+  // Then a subscribtion is done via the async pipe, which triggers a new ChangeDetection when a new value is emitted.
+  // That again leads to the creation of a new Observable that is subscribed upon causing an infinite loop.
+  // Therefore, we need to cache the Observable, so that it won't be created anew with every ChangeDetection.
+  private overflowMenuItemsVisibilityCache = new Map<string, Observable<boolean>>()
+
+  private generateCacheKey(item: any): string {
+    return JSON.stringify(item)
+  }
 
   hasVisibleOverflowMenuItems(item: any): Observable<boolean> {
     const cacheKey = this.generateCacheKey(item)
-    const cachedObservable = this.visibilityCache.get(cacheKey)
-    if (cachedObservable) {
-      return cachedObservable
+    const cachedOverflowMenuItemsVisibility$ = this.overflowMenuItemsVisibilityCache.get(cacheKey)
+    if (cachedOverflowMenuItemsVisibility$) {
+      return cachedOverflowMenuItemsVisibility$
     }
 
-    const observable = this.overflowActions$.pipe(
+    const overflowMenuItemsVisibility$ = this.overflowActions$.pipe(
       mergeMap((actions) =>
         forkJoin(
           actions.map((a) =>
@@ -822,12 +830,8 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       map((results) => results.some((isVisible) => isVisible))
     )
 
-    this.visibilityCache.set(cacheKey, observable)
-    return observable
-  }
-
-  private generateCacheKey(item: any): string {
-    return JSON.stringify(item)
+    this.overflowMenuItemsVisibilityCache.set(cacheKey, overflowMenuItemsVisibility$)
+    return overflowMenuItemsVisibility$
   }
 
   isDate(value: Date | string | number) {
