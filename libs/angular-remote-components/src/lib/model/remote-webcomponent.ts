@@ -1,4 +1,4 @@
-import { RemoteComponentConfig } from './remote-component-config.model'
+import { RemoteComponentConfig } from '@onecx/angular-integration-interface'
 
 export interface ocxRemoteWebcomponent {
   ocxRemoteComponentConfig: RemoteComponentConfig

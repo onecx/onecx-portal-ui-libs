@@ -1,10 +1,9 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing'
 import { CustomUseStyle, SKIP_STYLE_SCOPING } from './custom-use-style.service'
 import { DOCUMENT } from '@angular/common'
-import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-remote-components'
 import { ReplaySubject } from 'rxjs'
 import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
-import { AppStateService, MfeInfo } from '@onecx/angular-integration-interface'
+import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig, AppStateService, MfeInfo } from '@onecx/angular-integration-interface'
 import { THEME_OVERRIDES } from '../theme/application-config'
 import { shellScopeId } from '../utils/scope.utils'
 

@@ -14,10 +14,12 @@ import {
   inject,
 } from '@angular/core'
 import { Technologies } from '@onecx/integration-interface'
-import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs'
+import { BehaviorSubject, Observable, Subscription, combineLatest, lastValueFrom } from 'rxjs'
 import { ocxRemoteComponent } from '../../model/remote-component'
-import { RemoteComponentConfig } from '../../model/remote-component-config.model'
 import { RemoteComponentInfo, SLOT_SERVICE, SlotComponentConfiguration, SlotService } from '../../services/slot.service'
+import { udpateStylesForRcCreation, updateStyleForRcRemoval } from '@onecx/angular-utils'
+import { HttpClient } from '@angular/common/http'
+import { RemoteComponentConfig } from '@onecx/angular-integration-interface'
 
 @Component({
   standalone: false,
@@ -26,6 +28,7 @@ import { RemoteComponentInfo, SLOT_SERVICE, SlotComponentConfiguration, SlotServ
 })
 export class SlotComponent implements OnInit, OnDestroy {
   private slotService = inject<SlotService>(SLOT_SERVICE, { optional: true })
+  private http = inject(HttpClient)
 
   @Input()
   name!: string
@@ -177,6 +180,7 @@ standalone: false,   *  selector: 'my-component',
     if (componentType) {
       const componentRef = viewContainer?.createComponent<any>(componentType)
       const componentHTML = componentRef?.location.nativeElement as HTMLElement
+      this.updateComponentStyles(componentInfo)
       this.addDataStyleId(componentHTML, componentInfo.remoteComponent)
       this.addDataStyleIsolation(componentHTML)
       if (componentRef && 'ocxInitRemoteComponent' in componentRef.instance) {
@@ -195,6 +199,7 @@ standalone: false,   *  selector: 'my-component',
     ) {
       if (componentInfo.remoteComponent.elementName) {
         const element = document.createElement(componentInfo.remoteComponent.elementName)
+        this.updateComponentStyles(componentInfo)
         this.addDataStyleId(element, componentInfo.remoteComponent)
         this.addDataStyleIsolation(element)
         ;(element as any)['ocxRemoteComponentConfig'] = {
@@ -217,6 +222,16 @@ standalone: false,   *  selector: 'my-component',
 
   private addDataStyleIsolation(element: HTMLElement) {
     element.dataset['styleIsolation'] = ''
+  }
+
+  private updateComponentStyles(componentInfo: { remoteComponent: RemoteComponentInfo }) {
+    udpateStylesForRcCreation(
+      componentInfo.remoteComponent.productName,
+      componentInfo.remoteComponent.appId,
+      this.http,
+      componentInfo.remoteComponent.baseUrl,
+      this.name
+    )
   }
 
   private updateComponentData(
@@ -242,5 +257,13 @@ standalone: false,   *  selector: 'my-component',
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe()
+    const componentsToDestroy = this.components$ && lastValueFrom(this.components$)
+    if (componentsToDestroy) {
+      componentsToDestroy.then((components) => {
+        components.forEach((component) => {
+          updateStyleForRcRemoval(component.remoteComponent.productName, component.remoteComponent.appId, this.name)
+        })
+      })
+    }
   }
 }

@@ -1,5 +1,7 @@
 import { InjectionToken } from '@angular/core'
 import { IAuthService } from './iauth.service'
+import { ReplaySubject } from 'rxjs'
+import { RemoteComponentConfig } from '../model/remote-component-config.model'
 
 export interface LibConfig {
   appId: string
@@ -25,3 +27,12 @@ export const AUTH_SERVICE = new InjectionToken<IAuthService>('AUTH_SERVICE')
 export const SANITY_CHECK = new InjectionToken<string>('OCXSANITY_CHECK')
 
 export const APPLICATION_NAME = new InjectionToken<string>('APPLICATION_NAME')
+
+/**
+ * @deprecated Please use baseURL included in REMOTE_COMPONENT_CONFIG instead
+ */
+export const BASE_URL = new InjectionToken<ReplaySubject<string>>('BASE_URL')
+
+export const REMOTE_COMPONENT_CONFIG = new InjectionToken<ReplaySubject<RemoteComponentConfig>>(
+  'REMOTE_COMPONENT_CONFIG'
+)

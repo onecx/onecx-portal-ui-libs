@@ -10,6 +10,7 @@ export * from './lib/utils/deep-merge.utils'
 export * from './lib/utils/create-color-palette'
 export * from './lib/utils/remote-component-translation-path-factory.utils'
 export * from './lib/utils/scope.utils'
+export * from './lib/utils/styles'
 
 // Services
 export * from './lib/services/translation-cache.service'

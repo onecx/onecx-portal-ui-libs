@@ -11,6 +11,7 @@ export * from './lib/services/workspace.service'
 
 // models
 export * from './lib/model/config-key.model'
+export * from './lib/model/remote-component-config.model'
 
 // core
 export * from './lib/api/iauth.service'

@@ -1,5 +1,4 @@
-import { AppStateService } from '@onecx/angular-integration-interface'
-import { RemoteComponentConfig } from '@onecx/angular-remote-components'
+import { AppStateService, RemoteComponentConfig } from '@onecx/angular-integration-interface'
 import { ReplaySubject, firstValueFrom, map } from 'rxjs'
 
 export const shellScopeId = 'shell-ui'
@@ -13,6 +12,8 @@ export const dataIntermediateStyleIdKey = 'intermediateStyleId'
 export const dataIntermediateStyleIsolationKey = 'intermediateStyleIsolation'
 export const dataIntermediateNoPortalLayoutStylesKey = 'intermediateNoPortalLayoutStyles'
 export const dataVariableOverrideIdKey = 'VariableOverrideId'
+export const dataPortalLayoutStylesKey = `portalLayoutStylesStyles`
+export const dataDynamicPortalLayoutStylesKey = `dynamicContentPortalLayoutStyles`
 
 export const dataStyleIdAttribute = 'data-style-id'
 export const dataStyleIsolationAttribute = 'data-style-isolation'
@@ -22,18 +23,6 @@ export const dataIntermediateStyleIsolationAttribute = 'data-intermediate-style-
 export const dataIntermediateNoPortalLayoutStylesAttribute = 'data-intermediate-no-portal-layout-styles'
 export const dataVariableOverrideIdAttibute = 'data-variable-override-id'
 
-// Style isolation management
-export const dataAppStylesKey = 'appStyles'
-export const dataMfeStylesKey = 'mfeStyles'
-export const dataRcStylesKey = (slotName: string) => `${slotName}Styles`
-export const dataShellStylesKey = `ShellStyles`
-export const dataPortalLayoutStylesKey = `portalLayoutStylesStyles`
-export const dataDynamicPortalLayoutStylesKey = `dynamicContentPortalLayoutStyles`
-
-export const dataAppStylesAttribute = 'data-app-styles'
-export const dataMfeStylesAttribute = 'data-mfe-styles'
-export const dataRcStylesAttribute = (slotName: string) => `data-${slotName}-styles`
-export const dataShellStylesAttribute = `data-shell-styles`
 export const dataPortalLayoutStylesAttribute = `data-portal-layout-styles`
 export const dataDynamicPortalLayoutStylesAttribute = `data-dynamic-content-portal-layout-styles`
 
