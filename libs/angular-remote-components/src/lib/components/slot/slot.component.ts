@@ -3,9 +3,11 @@ import {
   ComponentRef,
   ContentChild,
   EventEmitter,
+  Inject,
   Input,
   OnDestroy,
   OnInit,
+  Optional,
   QueryList,
   TemplateRef,
   Type,
@@ -13,32 +15,31 @@ import {
   ViewContainerRef,
   inject,
 } from '@angular/core'
+
 import { Technologies } from '@onecx/integration-interface'
-import { BehaviorSubject, Observable, Subscription, combineLatest, lastValueFrom } from 'rxjs'
+import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs'
 import { ocxRemoteComponent } from '../../model/remote-component'
 import { RemoteComponentInfo, SLOT_SERVICE, SlotComponentConfiguration, SlotService } from '../../services/slot.service'
-import {
-  dataStyleIdKey,
-  dataStyleIsolationKey,
-  udpateStylesForRcCreation,
-  updateStyleForRcRemoval,
-} from '@onecx/angular-utils'
+import { udpateStylesForRcCreation, updateStyleForRcRemoval } from '@onecx/angular-utils'
 import { HttpClient } from '@angular/common/http'
 import { RemoteComponentConfig } from '@onecx/angular-integration-interface'
 
+interface AssignedComponent {
+  refOrElement: ComponentRef<any> | HTMLElement
+  remoteInfo: RemoteComponentInfo
+}
+
 @Component({
-  standalone: false,
   selector: 'ocx-slot[name]',
   templateUrl: './slot.component.html',
 })
 export class SlotComponent implements OnInit, OnDestroy {
-  private slotService = inject<SlotService>(SLOT_SERVICE, { optional: true })
   private http = inject(HttpClient)
 
   @Input()
   name!: string
 
-  private _assignedComponents$ = new BehaviorSubject<(ComponentRef<any> | HTMLElement)[]>([])
+  private _assignedComponents$ = new BehaviorSubject<AssignedComponent[]>([])
 
   /**
    * Inputs to be passed to components inside a slot.
@@ -83,7 +84,7 @@ export class SlotComponent implements OnInit, OnDestroy {
    * ## Component with slot in a template
    * ```
    * ⁣@Component({
-standalone: false,   *  selector: 'my-component',
+   *  selector: 'my-component',
    *  templateUrl: './my-component.component.html',
    * })
    * export class MyComponent {
@@ -140,6 +141,8 @@ standalone: false,   *  selector: 'my-component',
   subscription: Subscription | undefined
   components$: Observable<SlotComponentConfiguration[]> | undefined
 
+  constructor(@Optional() @Inject(SLOT_SERVICE) private slotService?: SlotService) {}
+
   ngOnInit(): void {
     if (!this.slotService) {
       console.error(`SLOT_SERVICE token was not provided. ${this.name} slot will not be filled with data.`)
@@ -149,7 +152,7 @@ standalone: false,   *  selector: 'my-component',
     combineLatest([this._assignedComponents$, this._inputs$, this._outputs$]).subscribe(
       ([components, inputs, outputs]) => {
         components.forEach((component) => {
-          this.updateComponentData(component, inputs, outputs)
+          this.updateComponentData(component.refOrElement, inputs, outputs)
         })
       }
     )
@@ -163,7 +166,11 @@ standalone: false,   *  selector: 'my-component',
                 Promise.resolve(componentInfo.permissions),
               ]).then(([componentType, permissions]) => {
                 const component = this.createComponent(componentType, componentInfo, permissions, viewContainers, i)
-                if (component) this._assignedComponents$.next([...this._assignedComponents$.getValue(), component])
+                if (component)
+                  this._assignedComponents$.next([
+                    ...this._assignedComponents$.getValue(),
+                    { refOrElement: component, remoteInfo: componentInfo.remoteComponent },
+                  ])
               })
             }
           })
@@ -222,11 +229,11 @@ standalone: false,   *  selector: 'my-component',
   }
 
   private addDataStyleId(element: HTMLElement, rcInfo: RemoteComponentInfo) {
-    element.dataset[dataStyleIdKey] = `${rcInfo.productName}|${rcInfo.appId}`
+    element.dataset['styleId'] = `${rcInfo.productName}|${rcInfo.appId}`
   }
 
   private addDataStyleIsolation(element: HTMLElement) {
-    element.dataset[dataStyleIsolationKey] = ''
+    element.dataset['styleIsolation'] = ''
   }
 
   private updateComponentStyles(componentInfo: { remoteComponent: RemoteComponentInfo }) {
@@ -262,13 +269,8 @@ standalone: false,   *  selector: 'my-component',
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe()
-    const componentsToDestroy = this.components$ && lastValueFrom(this.components$)
-    if (componentsToDestroy) {
-      componentsToDestroy.then((components) => {
-        components.forEach((component) => {
-          updateStyleForRcRemoval(component.remoteComponent.productName, component.remoteComponent.appId, this.name)
-        })
-      })
-    }
+    this._assignedComponents$.getValue().forEach((component) => {
+      updateStyleForRcRemoval(component.remoteInfo.productName, component.remoteInfo.appId, this.name)
+    })
   }
 }
