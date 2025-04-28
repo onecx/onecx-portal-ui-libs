@@ -81,7 +81,7 @@ export function addStyleToHead(content: string, datasetAttributes?: { [key: stri
 /**
  * Replaces current content of a given style element with provided content
  */
-export function replaceStyleConent(
+export function replaceStyleContent(
   selectorOrElement: string | HTMLStyleElement,
   content: string
 ): HTMLStyleElement | null {

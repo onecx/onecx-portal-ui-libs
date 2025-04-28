@@ -11,12 +11,10 @@ import {
   getStyleUsageCount,
   isAppStyleForScope,
   removeAttributeFromStyle,
-  replaceStyleConent,
+  replaceStyleContent,
   slotNameToPropertyName,
 } from './styles.utils'
 import { scopeIdFromProductNameAndAppId } from '../scope.utils'
-import { firstValueFrom } from 'rxjs'
-import { Location } from '@angular/common'
 
 /**
  * Create or updates style of the rc application
@@ -41,10 +39,13 @@ export async function udpateStylesForRcCreation(
   const css = await fetchAppCss(httpClient, rcUrl)
   if (!css) {
     removeRcUsageFromStyle(styleElement, slotName)
+    if (getStyleUsageCount(styleElement) === 0) {
+      styleElement.remove()
+    }
     return
   }
   const scopedCss = createScopedCss(css, scopeId)
-  replaceStyleConent(styleElement, scopedCss)
+  replaceStyleContent(styleElement, scopedCss)
 }
 
 /**

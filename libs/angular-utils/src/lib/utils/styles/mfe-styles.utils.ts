@@ -1,6 +1,4 @@
-import { Location } from '@angular/common'
 import { HttpClient } from '@angular/common/http'
-import { firstValueFrom } from 'rxjs'
 import { scopeIdFromProductNameAndAppId } from '../scope.utils'
 import {
   addStyleToHead,
@@ -11,7 +9,7 @@ import {
   getStyleUsageCount,
   isAppStyleForScope,
   removeAttributeFromStyle,
-  replaceStyleConent,
+  replaceStyleContent,
   createScopedCss,
   fetchAppCss,
 } from './styles.utils'
@@ -41,10 +39,13 @@ export async function updateStylesForMfeChange(
   const css = await fetchAppCss(httpClient, mfeUrl)
   if (!css) {
     removeMfeUsageFromStyle(styleElement)
+    if (getStyleUsageCount(styleElement) === 0) {
+      styleElement.remove()
+    }
     return
   }
   const scopedCss = createScopedCss(css, scopeId)
-  replaceStyleConent(styleElement, scopedCss)
+  replaceStyleContent(styleElement, scopedCss)
 }
 
 /**
