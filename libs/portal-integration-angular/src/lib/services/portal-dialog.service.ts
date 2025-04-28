@@ -10,7 +10,7 @@ import { DialogFooterComponent } from '../core/components/dialog/dialog-footer/d
 import { ButtonDialogButtonDetails, ButtonDialogCustomButtonDetails, ButtonDialogData } from '../model/button-dialog'
 import { NavigationStart, Router } from '@angular/router'
 import { EventsTopic } from '@onecx/integration-interface'
-import { SKIP_STYLE_SCOPING, getScopeIdentifier } from '@onecx/angular-utils'
+import { SKIP_STYLE_SCOPING, dataNoPortalLayoutStylesKey, dataStyleIdKey, getScopeIdentifier } from '@onecx/angular-utils'
 import { REMOTE_COMPONENT_CONFIG } from '@onecx/angular-remote-components'
 import { AppStateService } from '@onecx/angular-integration-interface'
 
@@ -542,8 +542,8 @@ export class PortalDialogService implements OnDestroy {
     ).then((scopeId) => {
       const bodyChild = this.findDialogComponentBodyChild()
       if (bodyChild) {
-        bodyChild.dataset['styleId'] = scopeId
-        bodyChild.dataset['noPortalLayoutStyles'] = ''
+        bodyChild.dataset[dataStyleIdKey] = scopeId
+        bodyChild.dataset[dataNoPortalLayoutStylesKey] = ''
       }
     })
   }

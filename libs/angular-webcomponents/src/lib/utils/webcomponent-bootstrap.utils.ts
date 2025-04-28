@@ -17,6 +17,7 @@ import { Router } from '@angular/router'
 import { getLocation } from '@onecx/accelerator'
 import { EventsTopic } from '@onecx/integration-interface'
 import { Subscription, filter } from 'rxjs'
+import { dataNoPortalLayoutStylesKey } from '@onecx/angular-utils'
 
 /**
  * Implementation inspired by @angular-architects/module-federation-plugin https://github.com/angular-architects/module-federation-plugin/blob/main/libs/mf-tools/src/lib/web-components/bootstrap-utils.ts
@@ -94,7 +95,7 @@ function createEntrypoint(
   const originalConnectedCallback = myRemoteComponentAsWebComponent.prototype.connectedCallback
 
   myRemoteComponentAsWebComponent.prototype.connectedCallback = function () {
-    this.dataset.noPortalLayoutStyles = ''
+    this.dataset[dataNoPortalLayoutStylesKey] = ''
     originalConnectedCallback.call(this)
   }
 

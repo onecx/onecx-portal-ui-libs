@@ -17,7 +17,12 @@ import { Technologies } from '@onecx/integration-interface'
 import { BehaviorSubject, Observable, Subscription, combineLatest, lastValueFrom } from 'rxjs'
 import { ocxRemoteComponent } from '../../model/remote-component'
 import { RemoteComponentInfo, SLOT_SERVICE, SlotComponentConfiguration, SlotService } from '../../services/slot.service'
-import { udpateStylesForRcCreation, updateStyleForRcRemoval } from '@onecx/angular-utils'
+import {
+  dataStyleIdKey,
+  dataStyleIsolationKey,
+  udpateStylesForRcCreation,
+  updateStyleForRcRemoval,
+} from '@onecx/angular-utils'
 import { HttpClient } from '@angular/common/http'
 import { RemoteComponentConfig } from '@onecx/angular-integration-interface'
 
@@ -217,11 +222,11 @@ standalone: false,   *  selector: 'my-component',
   }
 
   private addDataStyleId(element: HTMLElement, rcInfo: RemoteComponentInfo) {
-    element.dataset['styleId'] = `${rcInfo.productName}|${rcInfo.appId}`
+    element.dataset[dataStyleIdKey] = `${rcInfo.productName}|${rcInfo.appId}`
   }
 
   private addDataStyleIsolation(element: HTMLElement) {
-    element.dataset['styleIsolation'] = ''
+    element.dataset[dataStyleIsolationKey] = ''
   }
 
   private updateComponentStyles(componentInfo: { remoteComponent: RemoteComponentInfo }) {
