@@ -46,6 +46,7 @@ export class SlotComponent implements OnInit, OnDestroy {
   @Input()
   slotClasses: string | string[] | Set<string> | { [key: string]: any } = ''
 
+  private slotService = inject<SlotService>(SLOT_SERVICE, { optional: true })
   private _assignedComponents$ = new BehaviorSubject<AssignedComponent[]>([])
 
   /**
@@ -148,7 +149,7 @@ export class SlotComponent implements OnInit, OnDestroy {
   subscription: Subscription | undefined
   components$: Observable<SlotComponentConfiguration[]> | undefined
 
-  constructor(@Optional() @Inject(SLOT_SERVICE) private slotService?: SlotService) {}
+  constructor() {}
 
   ngOnInit(): void {
     if (!this.slotService) {
