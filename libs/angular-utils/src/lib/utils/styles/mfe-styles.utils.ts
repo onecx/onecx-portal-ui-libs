@@ -39,6 +39,10 @@ export async function updateStylesForMfeChange(
   // Create new style element if none was found for the current mfe
   const styleElement = createStyleUsedByMfe(scopeId)
   const css = await fetchAppCss(httpClient, mfeUrl)
+  if (!css) {
+    removeMfeUsageFromStyle(styleElement)
+    return
+  }
   const scopedCss = createScopedCss(css, scopeId)
   replaceStyleConent(styleElement, scopedCss)
 }

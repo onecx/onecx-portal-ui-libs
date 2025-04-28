@@ -1,8 +1,8 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http'
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http'
 import { dataStyleIdAttribute, dataStyleIsolationAttribute, isCssScopeRuleSupported } from '../scope.utils'
 import { isStyleUsedByMfe } from './mfe-styles.utils'
 import { getStyleUsageCountForRc } from './rc-styles.utils'
-import { firstValueFrom } from 'rxjs'
+import { catchError, firstValueFrom, mergeMap, of, throwError } from 'rxjs'
 import { Location } from '@angular/common'
 
 // Style isolation management
@@ -136,20 +136,47 @@ export function isAppStyleForScope(styleElement: HTMLStyleElement, scopeId: stri
 }
 
 /**
- * Creates HttpHeaders for Css request
+ * Fetches the css for an application
  */
-export function createCssRequestHeaders() {
-  return new HttpHeaders({}).set('Content-Type', 'text/css')
+export async function fetchAppCss(http: HttpClient, appUrl: string): Promise<string | undefined | null> {
+  return await firstValueFrom(
+    http
+      .get(Location.joinWithSlash(appUrl, 'styles.css'), {
+        headers: createCssRequestHeaders(),
+        observe: 'response',
+        responseType: 'text',
+      })
+      .pipe(
+        mergeMap((response) => {
+          if (!isResponseValidCss(response)) {
+            return throwError(
+              () =>
+                new Error(
+                  `Application returned different content type than text/css: ${response.headers.get('Content-Type')}`
+                )
+            )
+          }
+
+          return of(response.body)
+        }),
+        catchError((error: Error) => {
+          console.error(`Error while loading app css for ${appUrl}: ${error.message}`)
+          return of(undefined)
+        })
+      )
+  )
 }
 
 /**
- * Fetches the css for an application
+ * Creates HttpHeaders for Css request
  */
-export async function fetchAppCss(http: HttpClient, appUrl: string): Promise<string> {
-  return await firstValueFrom(
-    http.request('get', Location.joinWithSlash(appUrl, 'styles.css'), {
-      responseType: 'text',
-      headers: createCssRequestHeaders(),
-    })
-  )
+function createCssRequestHeaders() {
+  return new HttpHeaders({}).set('Accept', 'text/css')
+}
+
+/**
+ * Returns if response is valid css
+ */
+function isResponseValidCss<T>(response: HttpResponse<T>) {
+  return response.headers.get('Content-Type') === 'text/css'
 }

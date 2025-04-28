@@ -39,6 +39,10 @@ export async function udpateStylesForRcCreation(
   // Create new style element if none was found for the component
   const styleElement = createStyleUsedByRc(scopeId, slotName)
   const css = await fetchAppCss(httpClient, rcUrl)
+  if (!css) {
+    removeRcUsageFromStyle(styleElement, slotName)
+    return
+  }
   const scopedCss = createScopedCss(css, scopeId)
   replaceStyleConent(styleElement, scopedCss)
 }
