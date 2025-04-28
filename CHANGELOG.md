@@ -1,3 +1,10 @@
+## [5.35.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.35.0...v5.35.1) (2025-04-28)
+
+### Bug Fixes
+
+* multiple dialogs ([#718](https://github.com/onecx/onecx-portal-ui-libs/issues/718)) ([07c6d2c](https://github.com/onecx/onecx-portal-ui-libs/commit/07c6d2cbc110a6da9b91e9e8fa2f745b98173c54))
+* remove negative margin on active menu items in horizontal menu ([#715](https://github.com/onecx/onecx-portal-ui-libs/issues/715)) ([a54ffb8](https://github.com/onecx/onecx-portal-ui-libs/commit/a54ffb8c469c046963289afd862e1708b0d7e700))
+
 ## [5.35.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.34.5...v5.35.0) (2025-04-24)
 
 ### Features
