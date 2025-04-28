@@ -32,6 +32,7 @@ import {
   map,
   mergeMap,
   of,
+  shareReplay,
 } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
@@ -342,6 +343,8 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   columnType = ColumnType
   templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
 
+  private cachedOverflowMenuItemsVisibility$: Observable<boolean> | undefined
+
   constructor() {
     const locale = inject(LOCALE_ID)
     const translateService = inject(TranslateService)
@@ -604,21 +607,12 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return !!this.resolveFieldData(object, key)
   }
 
-  // Because of the usage, a new Observable is created with every ChangeDetection.
-  // Then a subscribtion is done via the async pipe, which triggers a new ChangeDetection when a new value is emitted.
-  // That again leads to the creation of a new Observable that is subscribed upon causing an infinite loop.
-  // Therefore, we need to cache the Observable, so that it won't be created anew with every ChangeDetection.
-  private overflowMenuItemsVisibilityCache = new Map<string, Observable<boolean>>()
-
-  private generateCacheKey(item: any): string {
-    return JSON.stringify(item)
-  }
-
+  // A new Observable is created with each ChangeDetection.
+  // The async pipe subscribes to it, triggering another ChangeDetection when a new value is emitted, which creates a loop.
+  // To prevent this, cache the Observable by using shareReplay to avoid recreating it with every ChangeDetection.
   hasVisibleOverflowMenuItems(item: any): Observable<boolean> {
-    const cacheKey = this.generateCacheKey(item)
-    const cachedOverflowMenuItemsVisibility$ = this.overflowMenuItemsVisibilityCache.get(cacheKey)
-    if (cachedOverflowMenuItemsVisibility$) {
-      return cachedOverflowMenuItemsVisibility$
+    if (this.cachedOverflowMenuItemsVisibility$) {
+      return this.cachedOverflowMenuItemsVisibility$
     }
 
     const overflowMenuItemsVisibility$ = this.overflowListActions$.pipe(
@@ -634,8 +628,9 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
       map((results) => results.some((isVisible) => isVisible))
     )
 
-    this.overflowMenuItemsVisibilityCache.set(cacheKey, overflowMenuItemsVisibility$)
-    return overflowMenuItemsVisibility$
+    this.cachedOverflowMenuItemsVisibility$ = overflowMenuItemsVisibility$.pipe(shareReplay(1))
+
+    return this.cachedOverflowMenuItemsVisibility$
   }
 
   toggleOverflowMenu(event: MouseEvent, menu: Menu, row: Row) {

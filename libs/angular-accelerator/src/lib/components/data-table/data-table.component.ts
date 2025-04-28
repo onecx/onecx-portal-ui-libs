@@ -406,6 +406,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
 
   private cachedOverflowActions$: Observable<DataAction[]>
+  private cachedOverflowMenuItemsVisibility$: Observable<boolean> | undefined
 
   constructor() {
     const locale = inject(LOCALE_ID)
@@ -800,21 +801,12 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     menu.toggle(event)
   }
 
-  // Because of the usage, a new Observable is created with every ChangeDetection.
-  // Then a subscribtion is done via the async pipe, which triggers a new ChangeDetection when a new value is emitted.
-  // That again leads to the creation of a new Observable that is subscribed upon causing an infinite loop.
-  // Therefore, we need to cache the Observable, so that it won't be created anew with every ChangeDetection.
-  private overflowMenuItemsVisibilityCache = new Map<string, Observable<boolean>>()
-
-  private generateCacheKey(item: any): string {
-    return JSON.stringify(item)
-  }
-
+  // A new Observable is created with each ChangeDetection.
+  // The async pipe subscribes to it, triggering another ChangeDetection when a new value is emitted, which creates a loop.
+  // To prevent this, cache the Observable by using shareReplay to avoid recreating it with every ChangeDetection.
   hasVisibleOverflowMenuItems(item: any): Observable<boolean> {
-    const cacheKey = this.generateCacheKey(item)
-    const cachedOverflowMenuItemsVisibility$ = this.overflowMenuItemsVisibilityCache.get(cacheKey)
-    if (cachedOverflowMenuItemsVisibility$) {
-      return cachedOverflowMenuItemsVisibility$
+    if (this.cachedOverflowMenuItemsVisibility$) {
+      return this.cachedOverflowMenuItemsVisibility$
     }
 
     const overflowMenuItemsVisibility$ = this.overflowActions$.pipe(
@@ -830,8 +822,9 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       map((results) => results.some((isVisible) => isVisible))
     )
 
-    this.overflowMenuItemsVisibilityCache.set(cacheKey, overflowMenuItemsVisibility$)
-    return overflowMenuItemsVisibility$
+    this.cachedOverflowMenuItemsVisibility$ = overflowMenuItemsVisibility$.pipe(shareReplay(1))
+
+    return this.cachedOverflowMenuItemsVisibility$
   }
 
   isDate(value: Date | string | number) {
