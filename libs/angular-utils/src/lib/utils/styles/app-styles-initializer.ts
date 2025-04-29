@@ -1,6 +1,6 @@
 import { inject, provideEnvironmentInitializer } from '@angular/core'
 import { getAppStyleByScope, replaceStyleContent } from './styles.utils'
-import { getScopeIdentifier, replacePrefix } from '../scope.utils'
+import { getScopeIdentifier, replacePrimengPrefix } from '../scope.utils'
 import { AppStateService, REMOTE_COMPONENT_CONFIG } from '@onecx/angular-integration-interface'
 import { SKIP_STYLE_SCOPING } from '../../services/custom-use-style.service'
 
@@ -16,6 +16,6 @@ async function updateAppStyle() {
 
   const styleElement = getAppStyleByScope(scopeId)
   if (styleElement && styleElement.textContent) {
-    replaceStyleContent(styleElement, replacePrefix(styleElement.textContent, scopeId))
+    replaceStyleContent(styleElement, replacePrimengPrefix(styleElement.textContent, scopeId))
   }
 }

@@ -5,11 +5,32 @@ import { getStyleUsageCountForRc } from './rc-styles.utils'
 import { catchError, firstValueFrom, mergeMap, of, throwError } from 'rxjs'
 import { Location } from '@angular/common'
 
-// Style isolation management
 export const dataRcStylesStart = 'slot'
 export function slotNameToPropertyName(slotName: string) {
   return slotName.replace(/-([a-z])/g, (match, letter) => letter.toUpperCase())
 }
+
+// Style isolation management
+// Variables for attributes and html element dataset keys for managing the application styles
+// AppStyles
+// data-app-styles="scopeId" (e.g. data-app-styles="onecx-workspace|onecx-workspace-ui")
+// Marks style element as one containing styles for scopeId (which is based on the application)
+// Such style sheet contains variables applied globally and css scoped to a given scope utill style isolation
+//
+// MfeStyles
+// data-mfe-styles
+// Marks style element as one used by the current mfe
+//
+// SlotStyles
+// data-slot-SLOT_NAME-styles
+// Marks style element as one used by any component in a slot given by the SLOT_NAME
+//
+//
+// ShellStyles
+// data-shell-styles
+// Marks style element as one containing styles for the shell
+// Such style sheet contains variables applied globally and css scoped to a shell scope utill style isolation
+//
 
 export const dataAppStylesKey = 'appStyles'
 export const dataMfeStylesKey = 'mfeStyles'

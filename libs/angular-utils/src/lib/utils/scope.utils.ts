@@ -5,6 +5,48 @@ export const shellScopeId = 'shell-ui'
 
 const everythingNotACharacterOrNumberRegex = /[^a-zA-Z0-9-]/g
 // Style scope management
+// Variables for attributes and html element dataset keys for managing the scoping of styles
+// StyleId
+// data-style-id="scopeId"
+// Marks start of scope section for scopeId (e.g. data-style-id="onecx-workspace|onecx-workspace-ui")
+// Present for MFE and RC components as well as dynamic content
+//
+// StyleIsolation
+// data-style-isolation
+// Marks end of scope section
+// Present for MFE and RC components as well as dynamic content
+//
+// NoPortalLayoutStyles
+// data-no-portal-layout-styles
+// Should always be in pair with styleId
+// Marks that scope section does not request portal layout styles
+// Present for MFE and RC components as well as dynamic content since libs v6
+//
+// IntermediateStyleId
+// data-intermediate-style-id="scopeId" (e.g. data-intermediate-style-id="onecx-workspace|onecx-workspace-ui")
+// Metadata used when appending dynamic content to ensure style scoping outside the application
+//
+// IntermediateStyleIsolation
+// data-intermediate-style-isolation
+// Metadata used when appending dynamic content to ensure style scoping outside the application
+//
+// IntermediateNoPortalLayoutStyles
+// data-intermediate-no-portal-layout-styles
+// Metadata used when appending dynamic content to ensure style scoping outside the application
+//
+// VariableOverrideId
+// data-variable-override-id="scopeId"
+// Marks the style element as one containing overrides for scope sections with scopeId
+//
+// PortalLayoutStylesStyles
+// data-portal-layout-styles-styles
+// Marks the style element as one containing portal layout styles styles
+//
+//
+// DynamicPortalLayoutStyles
+// data-dynamic-portal-layout-styles
+// Marks the style element as one containing portal layout styles styles for the dynamic content
+
 export const dataStyleIdKey = 'styleId'
 export const dataStyleIsolationKey = 'styleIsolation'
 export const dataNoPortalLayoutStylesKey = 'noPortalLayoutStyles'
@@ -29,6 +71,9 @@ export const dataDynamicPortalLayoutStylesAttribute = `data-dynamic-content-port
 export const portalLayoutStylesSheetId = `[${dataStyleIdAttribute}]:not([${dataNoPortalLayoutStylesAttribute}])`
 export const dynamicPortalLayoutStylesSheetId = `body>:not([${dataNoPortalLayoutStylesAttribute}])`
 
+/**
+ * Gets the scope identifier based on the application context
+ */
 // Style scoping should be skipped for Shell
 // For Remote Components application data from config is taken
 // For MFE data from currentMfe topic is taken
@@ -51,6 +96,7 @@ export async function getScopeIdentifier(
   return scopeId
 }
 
+// If scope rule is not supported, its wrapped via supports rule to be handled by the polyfill
 export function scopeStyle(css: string, scopeId: string) {
   const isScopeSupported = isCssScopeRuleSupported()
   if (scopeId === '') {
@@ -80,7 +126,8 @@ export function scopeStyle(css: string, scopeId: string) {
   }
 }
 
-export function replacePrefix(css: string, scopeId: string) {
+// Primeng variables have --p- prefix and style scoping requires each scope to have its own version of such variable
+export function replacePrimengPrefix(css: string, scopeId: string) {
   if (scopeId === '') {
     return css
   }

@@ -7,7 +7,7 @@ import { toVariables } from '@primeuix/styled'
 import {
   dataVariableOverrideIdAttibute,
   getScopeIdentifier,
-  replacePrefix,
+  replacePrimengPrefix,
   scopeStyle,
   shellScopeId,
 } from '../utils/scope.utils'
@@ -28,7 +28,7 @@ export class CustomUseStyle extends UseStyle {
   // Each Application needs to isolate the CSS variables and styles from others
   override use(css: any, options?: any): { id: any; name: any; el: any; css: any } {
     getScopeIdentifier(this.appStateService, this.skipStyleScoping, this.remoteComponentConfig).then((scopeId) => {
-      css = replacePrefix(css, scopeId)
+      css = replacePrimengPrefix(css, scopeId)
       css = this.isStyle(options.name as string) ? scopeStyle(css, scopeId) : css
 
       options = {
@@ -54,7 +54,7 @@ export class CustomUseStyle extends UseStyle {
       if (variablesData.value.length === 0) return
 
       const styleRef = this.createOrRetrieveOverrideElement(scopeId ? scopeId : shellScopeId)
-      const prefixedOverrides = replacePrefix(variablesData.css, scopeId)
+      const prefixedOverrides = replacePrimengPrefix(variablesData.css, scopeId)
       styleRef.textContent = prefixedOverrides
       // Always make sure it is the last child of the document head
       this.document.head.appendChild(styleRef)
