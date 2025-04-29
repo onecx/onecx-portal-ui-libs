@@ -835,7 +835,7 @@ describe('PortalDialogService', () => {
     expect(dialogService.dialogComponentRefMap.size).toBe(1)
     const dialogRef = dialogService.dialogComponentRefMap.keys().next().value as DynamicDialogRef
     expect(dialogRef).toBeDefined()
-    const dialogRefSpy = jest.spyOn(dialogRef as any, 'close')
+    const dialogRefSpy = jest.spyOn(dialogRef, 'close')
 
     const dialogElement = dialogService.getInstance(dialogRef).el.nativeElement
 
