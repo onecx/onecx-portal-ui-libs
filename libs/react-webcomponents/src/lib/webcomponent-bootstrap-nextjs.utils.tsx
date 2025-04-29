@@ -1,13 +1,18 @@
-import r2wc from '@r2wc/react-to-web-component'
 import { type ReactNode } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
+import { type NextComponentType } from 'next'
+import { type AppProps } from 'next/app'
 import { type Router, type NextRouter } from 'next/router'
 import { RouterContext } from 'next/dist/shared/lib/router-context.shared-runtime'
+import r2wc from '@r2wc/react-to-web-component'
 import { getLocation } from '@onecx/accelerator'
 import { AppStateProvider, ConfigurationProvider } from '@onecx/react-integration-interface'
-import { type NextComponentType } from 'next'
 import { useAppHref } from './routing.utils'
-import { type AppProps } from 'next/app'
+
+type ContextHandlerProps = {
+  router: NextRouter
+  renderPage: (Component: NextComponentType) => ReactNode
+}
 
 const createNextjsWebComponent = (component: NextComponentType, elementName: string) => {
   const WebComponent = r2wc(component, {
@@ -23,13 +28,7 @@ const createNextjsAppWebComponent = (
   routes: Record<string, NextComponentType>,
   elementName: string
 ) => {
-  const ContextHandler = ({
-    router,
-    renderPage,
-  }: {
-    router: NextRouter
-    renderPage: (Component: NextComponentType) => ReactNode
-  }) => {
+  const ContextHandler = ({ router, renderPage }: ContextHandlerProps) => {
     const { href } = useAppHref()
     const baseHref = normalizePath(href)
     const currentPath = normalizePath(router.pathname)

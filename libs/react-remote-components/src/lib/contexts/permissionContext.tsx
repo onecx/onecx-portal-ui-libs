@@ -1,6 +1,6 @@
-import { type PermissionsRpc, PermissionsRpcTopic } from '@onecx/integration-interface'
 import { type FC, createContext, useContext, type PropsWithChildren, useState, useEffect } from 'react'
 import { filter, firstValueFrom, map } from 'rxjs'
+import { type PermissionsRpc, PermissionsRpcTopic } from '@onecx/integration-interface'
 
 interface PermissionContextType {
   permissions: PermissionsRpc[]
@@ -18,10 +18,10 @@ export const PermissionProvider: FC<PropsWithChildren> = ({ children }) => {
     const permissions = firstValueFrom(
       permissionsTopic$.pipe(
         filter(
-          (message) =>
+          (message: PermissionsRpc) =>
             message.appId === appId && message.productName === productName && Array.isArray(message.permissions)
         ),
-        map((message) => message.permissions ?? [])
+        map((message: PermissionsRpc) => message.permissions ?? [])
       )
     )
     permissionsTopic$.publish({ appId: appId, productName: productName })
@@ -31,7 +31,7 @@ export const PermissionProvider: FC<PropsWithChildren> = ({ children }) => {
   useEffect(() => {
     return () => {
       permissionsTopic$
-        .subscribe((message) => {
+        .subscribe((message: PermissionsRpc) => {
           setPermissions((prev) => [...prev, message])
         })
         .unsubscribe()

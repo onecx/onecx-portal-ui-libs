@@ -12,19 +12,13 @@ import {
 
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs'
 import { RemoteComponentInfo, SlotComponentConfiguration, useSlot } from '../contexts/slotContext'
+import { RemoteComponentConfig } from '../model/remote-component-config.model'
 
 type SlotProps = {
   name: string
   inputs?: Record<string, unknown>
   outputs?: Record<string, (payload: any) => void>
   skeleton?: ReactNode
-}
-
-type RemoteComponentConfig = {
-  appId: string
-  productName: string
-  baseUrl: string
-  permissions: string[]
 }
 
 type CreateComponentProps = {
