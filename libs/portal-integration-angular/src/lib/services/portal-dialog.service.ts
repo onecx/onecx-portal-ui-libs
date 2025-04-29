@@ -265,8 +265,6 @@ export interface PortalDialogServiceData {
 
 @Injectable({ providedIn: 'any' })
 export class PortalDialogService implements OnDestroy {
-  private dialogRef: DynamicDialogRef | null = null
-  private dialogComponent: DynamicDialogComponent | null = null
   private eventsTopic: EventsTopic = new EventsTopic()
   constructor(
     private dialogService: DialogService,
@@ -496,7 +494,7 @@ export class PortalDialogService implements OnDestroy {
 
     return this.translateService.get(translateParams.key, translateParams.parameters).pipe(
       mergeMap((dialogTitle) => {
-        this.dialogRef = this.dialogService.open(DialogContentComponent, {
+        return this.dialogService.open(DialogContentComponent, {
           header: dialogTitle,
           data: {
             ...dynamicDialogDataConfig,
@@ -511,29 +509,29 @@ export class PortalDialogService implements OnDestroy {
           ...dialogOptions,
           focusOnShow: false,
           appendTo: 'body', // Important for the function findBodyChild
+          duplicate: true, // Since dialog always opens DialogContentComponent, duplicates must be always allowed
           templates: {
             footer: DialogFooterComponent,
           },
-        })
-        this.dialogComponent = this.dialogService.getInstance(this.dialogRef)
-        return this.dialogRef.onClose
+        }).onClose
       })
     )
   }
 
   private cleanupAndCloseDialog() {
-    if (this.dialogRef) {
-      this.dialogRef.close()
-      this.removeDialogFromHtml()
-      this.dialogRef = null
-      this.dialogComponent = null
+    if (this.dialogService.dialogComponentRefMap.size > 0) {
+      this.dialogService.dialogComponentRefMap.forEach((_, dialogRef) => {
+        const dialogComponent = this.dialogService.getInstance(dialogRef)
+        dialogRef.close()
+        this.removeDialogFromHtml(dialogComponent)
+      })
     }
   }
 
-  private removeDialogFromHtml() {
-    const conatiner = this.dialogComponent?.container
-    if (!conatiner) return
-    const bodyChild = this.findBodyChild(conatiner)
+  private removeDialogFromHtml(dialogComponent: DynamicDialogComponent) {
+    const container = dialogComponent.container
+    if (!container) return
+    const bodyChild = this.findBodyChild(container)
     bodyChild && document.body.removeChild(bodyChild)
   }
 
