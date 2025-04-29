@@ -62,10 +62,13 @@ Run the following commands in your project's terminal and follow the instruction
 # Update to latest minor version of libs
 
 1. run the following command in your project's terminal to run onecx migrations:
-    ```
-    curl -sL https://raw.githubusercontent.com/onecx/onecx-portal-ui-libs/refs/heads/main/update_libs.sh | bash - 
-    ```
-2. `npm run build` to check if it builds successfully after the migrations
+
+```
+curl -sL https://raw.githubusercontent.com/onecx/onecx-portal-ui-libs/refs/heads/develop/update_libs.sh | bash - 
+```
+
+2. run `npm run build` to check if it builds successfully after the migrations
+
 
 # Update from v3 to v4 guide
 

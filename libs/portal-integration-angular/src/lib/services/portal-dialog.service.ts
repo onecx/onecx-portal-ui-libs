@@ -9,9 +9,10 @@ import { DialogContentComponent } from '../core/components/dialog/dialog-content
 import { DialogFooterComponent } from '../core/components/dialog/dialog-footer/dialog-footer.component'
 import { ButtonDialogButtonDetails, ButtonDialogCustomButtonDetails, ButtonDialogData } from '../model/button-dialog'
 import { NavigationStart, Router } from '@angular/router'
-import { EventsTopic } from '@onecx/integration-interface'
 import { SKIP_STYLE_SCOPING, getScopeIdentifier } from '@onecx/angular-utils'
 import { REMOTE_COMPONENT_CONFIG } from '@onecx/angular-remote-components'
+import { CurrentLocationTopicPayload, EventsTopic, TopicEventType } from '@onecx/integration-interface'
+import { Capability, ShellCapabilityService } from '@onecx/angular-integration-interface'
 import { AppStateService } from '@onecx/angular-integration-interface'
 
 /**
@@ -275,6 +276,7 @@ export class PortalDialogService implements OnDestroy {
   private skipStyleScoping = inject(SKIP_STYLE_SCOPING, { optional: true })
   private remoteComponentConfig = inject(REMOTE_COMPONENT_CONFIG, { optional: true })
   private appStateService = inject(AppStateService)
+  private capabilityService = inject(ShellCapabilityService)
 
   constructor() {
     this.router.events.subscribe((event) => {
@@ -282,7 +284,12 @@ export class PortalDialogService implements OnDestroy {
         this.cleanupAndCloseDialog()
       }
     })
-    this.eventsTopic.pipe(filter((value) => value.type === 'navigated')).subscribe(() => {
+    let observable: Observable<TopicEventType | CurrentLocationTopicPayload> =
+      this.appStateService.currentLocation$.asObservable()
+    if (!this.capabilityService.hasCapability(Capability.CURRENT_LOCATION_TOPIC)) {
+      observable = this.eventsTopic.pipe(filter((e) => e.type === 'navigated'))
+    }
+    observable.subscribe(() => {
       this.cleanupAndCloseDialog()
     })
   }
