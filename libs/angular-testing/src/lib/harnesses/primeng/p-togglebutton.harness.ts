@@ -20,6 +20,6 @@ export class PToggleButtonHarness extends ContentContainerComponentHarness {
   }
 
   async click() {
-    await (await this.locatorFor('button')()).click()
+    await (await this.host()).click()
   }
 }
