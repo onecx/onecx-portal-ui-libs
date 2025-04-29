@@ -5,6 +5,13 @@ import { CallExpression, isBinaryExpression, isCallExpression, isExpressionState
 type MatchingMethodCalls = Map<string, CallExpression[]>
 type DeclarationType = 'PropertyDeclaration' | 'VariableDeclaration'
 
+/**
+ * Retrieves the names of all declarations that are of the specified type and contain a NewExpression with the specified class name.
+ * @param contentAst The abstract syntax tree of the file to search in.
+ * @param className The name of the class to search for (e.g. 'MyClass').
+ * @param type The type of declaration to search for (PropertyDeclaration' or 'VariableDeclaration').
+ * @returns A string array of names of the declarations that match the criteria.
+ */
 function getDeclarationNames(contentAst: SourceFile, className: string, type: DeclarationType): string[] {
   const declarations = query(
     contentAst,
@@ -20,6 +27,12 @@ function getDeclarationNames(contentAst: SourceFile, className: string, type: De
   return memberNames
 }
 
+/**
+ * Retrieves the names of all properties and variables that are assigned a value from a NewExpression with the specified class name.
+ * @param contentAst The abstract syntax tree of the file to search in.
+ * @param className The name of the class to search for (e.g. 'MyClass').
+ * @returns A string array of names of the assignments that match the criteria.
+ */
 function getAssignmentNames(contentAst: SourceFile, className: string): string[] {
   const assignments = query(
     contentAst,
@@ -46,6 +59,13 @@ function getAssignmentNames(contentAst: SourceFile, className: string): string[]
   return assignmentNames
 }
 
+/**
+ * Generates an array of computed queries to find method calls with a given method name on identifiers that are either variables or properties of a specified class.
+ * @param contentAst The abstract syntax tree of the file to search in.
+ * @param className The name of the class to search for (e.g. 'MyClass').
+ * @param methodName The name of the method to search for (e.g. 'myMethod').
+ * @returns A string array of computed queries to find method calls on identifiers.
+ */
 function getIdentifierCallQueries(contentAst: SourceFile, className: string, methodName: string): string[] {
   const variableNames = getDeclarationNames(contentAst, className, 'VariableDeclaration')
 
@@ -66,6 +86,14 @@ function getIdentifierCallQueries(contentAst: SourceFile, className: string, met
   return identifierCallPatterns
 }
 
+/**
+ * Detects method calls with a given name on a specified class in files within a specified directory or its subdirectories.
+ * @param tree The file tree to search in.
+ * @param rootDir The directory to start searching from.
+ * @param methodName The name of the method to search for (e.g. 'myMethod').
+ * @param className The name of the class to search for (e.g. 'MyClass').
+ * @returns A map where the keys are file paths and the values are arrays of CallExpression nodes representing the detected method calls in the respective files.
+ */
 export function detectMethodCallsInFiles(
   tree: Tree,
   rootDir: string,
