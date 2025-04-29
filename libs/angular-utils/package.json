@@ -11,6 +11,7 @@
     "@onecx/integration-interface": "^6.0.0-rc.7",
     "@onecx/angular-integration-interface": "^6.0.0-rc.7",
     "@onecx/angular-remote-components": "^6.0.0-rc.7",
+    "@onecx/nx-migration-utils": "^6.0.0-rc.7",
     "@primeng/themes": "^19.0.5",
     "rxjs": "^7.8.1",
     "primeng": "^19.0.6",

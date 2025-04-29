@@ -2,7 +2,6 @@ import {
   addDependenciesToPackageJson,
   formatFiles,
   installPackagesTask,
-  logger,
   readJson,
   removeDependenciesFromPackageJson,
   Tree,
@@ -10,8 +9,9 @@ import {
   visitNotIgnoredFiles,
   writeJson,
 } from '@nx/devkit'
-import { execSync } from 'child_process'
+import { printWarnings } from '@onecx/nx-migration-utils'
 import { ast, query } from '@phenomnomnominal/tsquery'
+import { execSync } from 'child_process'
 
 export default async function migrateOnecxToV6(tree: Tree) {
   const rootPath = tree.root
@@ -81,7 +81,7 @@ export default async function migrateOnecxToV6(tree: Tree) {
       json.dependencies[dep] = '^19.0.7'
     })
     onecxDependencies.forEach((dep) => {
-      json.dependencies[dep] = '^6.0.0'
+      json.dependencies[dep] = '^6.0.0-rc.20'
     })
     ngrxDependencies.forEach((dep) => {
       json.dependencies[dep] = '^19.0.1'
@@ -311,14 +311,4 @@ function warnOcxPortalViewport(tree: Tree, directoryPath: string) {
       }
     }
   })
-}
-
-export function printWarnings(warning: string, affectedFiles: string[]) {
-  if (affectedFiles.length > 0) {
-    logger.warn(warning)
-    logger.warn(`Found in:`)
-    affectedFiles.forEach((file) => {
-      logger.warn(`  - ${file}`)
-    })
-  }
 }
