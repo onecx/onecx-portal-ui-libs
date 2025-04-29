@@ -9,7 +9,7 @@ type DeclarationType = 'PropertyDeclaration' | 'VariableDeclaration'
  * Retrieves the names of all declarations that are of the specified type and contain a NewExpression with the specified class name.
  * @param contentAst The abstract syntax tree of the file to search in.
  * @param className The name of the class to search for (e.g. 'MyClass').
- * @param type The type of declaration to search for (PropertyDeclaration' or 'VariableDeclaration').
+ * @param type The type of declaration to search for ('PropertyDeclaration' or 'VariableDeclaration').
  * @returns A string array of names of the declarations that match the criteria.
  */
 function getDeclarationNames(contentAst: SourceFile, className: string, type: DeclarationType): string[] {
