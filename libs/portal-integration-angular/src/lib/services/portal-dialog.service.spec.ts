@@ -6,7 +6,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { ButtonModule } from 'primeng/button'
-import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog'
+import { DialogService, DynamicDialogModule, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { Observable, of } from 'rxjs'
 
 import { DivHarness, InputHarness } from '@onecx/angular-testing'
@@ -826,23 +826,16 @@ describe('PortalDialogService', () => {
 
     const dialogService = TestBed.inject(DialogService)
     expect(dialogService.dialogComponentRefMap.size).toBe(1)
-    const dialogRef = dialogService.dialogComponentRefMap.keys().next().value
-    const dialogRefSpy = jest.spyOn(dialogRef, 'close')
+    const dialogRef = dialogService.dialogComponentRefMap.keys().next().value as DynamicDialogRef
+    expect(dialogRef).toBeDefined()
+    const dialogRefSpy = jest.spyOn(dialogRef as any, 'close')
 
-    const containerParent = {
-      parentElement: document.body,
-    }
-    dialogService.getInstance(dialogRef).container = {
-      parentElement: containerParent,
-      style: {
-        zIndex: 0,
-      },
-    } as any
+    const dialogElement = dialogService.getInstance(dialogRef).el.nativeElement
 
     fixture.detectChanges()
 
     fixture.componentInstance.portalDialogService.ngOnDestroy()
     expect(dialogRefSpy).toHaveBeenCalledTimes(1)
-    expect(removeChildSpy).toHaveBeenCalledWith(containerParent)
+    expect(removeChildSpy).toHaveBeenCalledWith(dialogElement)
   })
 })
