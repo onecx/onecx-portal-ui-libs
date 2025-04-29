@@ -6,7 +6,7 @@ type MatchingMethodCalls = Map<string, CallExpression[]>
 type DeclarationType = 'PropertyDeclaration' | 'VariableDeclaration'
 
 /**
- * Retrieves the names of all declarations that are of the specified type and contain a NewExpression with the specified class name.
+ * Retrieves the names of all declarations that are of the specified type and contain a NewExpression (e.g., 'new MyClass()') with the specified class name.
  * @param contentAst The abstract syntax tree of the file to search in.
  * @param className The name of the class to search for (e.g. 'MyClass').
  * @param type The type of declaration to search for ('PropertyDeclaration' or 'VariableDeclaration').
@@ -28,7 +28,7 @@ function getDeclarationNames(contentAst: SourceFile, className: string, type: De
 }
 
 /**
- * Retrieves the names of all properties and variables that are assigned a value from a NewExpression with the specified class name.
+ * Retrieves the names of all properties and variables that are assigned a value from a NewExpression (e.g., 'new MyClass()') with the specified class name.
  * @param contentAst The abstract syntax tree of the file to search in.
  * @param className The name of the class to search for (e.g. 'MyClass').
  * @returns A string array of names of the assignments that match the criteria.
@@ -60,7 +60,7 @@ function getAssignmentNames(contentAst: SourceFile, className: string): string[]
 }
 
 /**
- * Generates an array of computed queries to find method calls with a given method name on identifiers that are either variables or properties of a specified class.
+ * Generates an array of computed queries to find method calls with a given method name on identifiers that are either variables or properties and type of the specified class.
  * @param contentAst The abstract syntax tree of the file to search in.
  * @param className The name of the class to search for (e.g. 'MyClass').
  * @param methodName The name of the method to search for (e.g. 'myMethod').
