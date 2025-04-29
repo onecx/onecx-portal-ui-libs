@@ -23,6 +23,8 @@ import {
   DialogState,
   PortalDialogService,
 } from './portal-dialog.service'
+import { provideShellCapabilityServiceMock } from '@onecx/angular-integration-interface/mocks'
+import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 
 @Component({
   standalone: false,
@@ -255,7 +257,12 @@ describe('PortalDialogService', () => {
         NoopAnimationsModule,
         ButtonModule,
       ],
-      providers: [PortalDialogService, DialogService],
+      providers: [
+        PortalDialogService,
+        DialogService,
+        provideShellCapabilityServiceMock(),
+        provideAppStateServiceMock(),
+      ],
     }).compileComponents()
     fixture = TestBed.createComponent(BaseTestComponent)
     pDialogService = TestBed.inject(DialogService)
