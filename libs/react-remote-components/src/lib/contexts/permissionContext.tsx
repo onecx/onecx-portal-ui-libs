@@ -18,10 +18,10 @@ export const PermissionProvider: FC<PropsWithChildren> = ({ children }) => {
     const permissions = firstValueFrom(
       permissionsTopic$.pipe(
         filter(
-          (message: PermissionsRpc) =>
+          (message) =>
             message.appId === appId && message.productName === productName && Array.isArray(message.permissions)
         ),
-        map((message: PermissionsRpc) => message.permissions ?? [])
+        map((message) => message.permissions ?? [])
       )
     )
     permissionsTopic$.publish({ appId: appId, productName: productName })
@@ -31,7 +31,7 @@ export const PermissionProvider: FC<PropsWithChildren> = ({ children }) => {
   useEffect(() => {
     return () => {
       permissionsTopic$
-        .subscribe((message: PermissionsRpc) => {
+        .subscribe((message) => {
           setPermissions((prev) => [...prev, message])
         })
         .unsubscribe()
