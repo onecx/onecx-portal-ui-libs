@@ -275,6 +275,7 @@ export class SlotComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe()
+    // Removes RC styles on unmount to avoid ghost styles
     this._assignedComponents$.getValue().forEach((component) => {
       updateStylesForRcRemoval(component.remoteInfo.productName, component.remoteInfo.appId, this.name)
     })
