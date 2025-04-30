@@ -218,7 +218,7 @@ export async function fetchAppCss(http: HttpClient, appUrl: string): Promise<str
             return throwError(
               () =>
                 new Error(
-                  `Application returned different content type than text/css: ${response.headers.get('Content-Type')}. Please, make sure that the application exposes the styles.css file in your application.`
+                  `Application returned different content type than text/css: ${response.headers.get('Content-Type')}. Please, make sure that the application exposes the styles.css file.`
                 )
             )
           }
