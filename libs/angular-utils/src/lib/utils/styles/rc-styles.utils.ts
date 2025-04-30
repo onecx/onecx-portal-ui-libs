@@ -90,7 +90,7 @@ export function getStyleUsageCountForRc(styleElement: HTMLStyleElement): number 
 
 /**
  * Registers the RC as a user of the style element.
- * @param styleElement - style element to modify
+ * @param styleElement - style element to register for
  * @param slotName - name of the slot hosting the RC
  */
 function useStyleForRc(styleElement: HTMLStyleElement, slotName: string) {
