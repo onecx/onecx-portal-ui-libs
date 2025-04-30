@@ -8,8 +8,8 @@ module.exports = withNx(
     outputPath: '../../dist/libs/react-webcomponents',
     tsConfig: './tsconfig.lib.json',
     compiler: 'babel',
-    external: ['react', 'react-dom', 'react/jsx-runtime'],
-    format: ['esm'],
+    external: ['react', 'react-dom', 'react/jsx-runtime', 'next','next/router'],
+    format: ['esm', 'cjs'],
     assets: [{ input: '.', output: '.', glob: 'README.md' }],
   },
   {
