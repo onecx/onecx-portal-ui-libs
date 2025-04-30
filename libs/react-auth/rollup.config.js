@@ -1,7 +1,6 @@
 const { withNx } = require('@nx/rollup/with-nx')
 const url = require('@rollup/plugin-url')
 const svg = require('@svgr/rollup')
-const { nodeResolve } = require('@rollup/plugin-node-resolve')
 
 module.exports = withNx(
   {
@@ -9,17 +8,13 @@ module.exports = withNx(
     outputPath: '../../dist/libs/react-auth',
     tsConfig: './tsconfig.lib.json',
     compiler: 'babel',
-    external: ['axios', 'fs'],
+    external: ['axios'],
     format: ['esm', 'cjs'],
     assets: [{ input: '.', output: '.', glob: 'README.md' }],
   },
   {
     // Provide additional rollup configuration here. See: https://rollupjs.org/configuration-options
     plugins: [
-      nodeResolve({
-        browser: true,
-        preferBuiltins: false,
-      }),
       svg({
         svgo: false,
         titleProp: true,

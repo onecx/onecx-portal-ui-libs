@@ -8,7 +8,7 @@ module.exports = withNx(
     outputPath: '../../dist/libs/react-remote-components',
     tsConfig: './tsconfig.lib.json',
     compiler: 'babel',
-    external: ['react', 'react-dom', 'react/jsx-runtime'],
+    external: ['react', 'react-dom', 'react/jsx-runtime', '@module-federation/enhanced/runtime'],
     format: ['esm', 'cjs'],
     assets: [{ input: '.', output: '.', glob: 'README.md' }],
   },
