@@ -3,11 +3,9 @@ import {
   ComponentRef,
   ContentChild,
   EventEmitter,
-  Inject,
   Input,
   OnDestroy,
   OnInit,
-  Optional,
   QueryList,
   TemplateRef,
   Type,
@@ -148,8 +146,6 @@ export class SlotComponent implements OnInit, OnDestroy {
 
   subscription: Subscription | undefined
   components$: Observable<SlotComponentConfiguration[]> | undefined
-
-  constructor() {}
 
   ngOnInit(): void {
     if (!this.slotService) {
