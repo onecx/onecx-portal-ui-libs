@@ -15,8 +15,10 @@ import {
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { getLocation } from '@onecx/accelerator'
-import { EventsTopic } from '@onecx/integration-interface'
-import { Subscription, filter } from 'rxjs'
+import { EventsTopic, CurrentLocationTopicPayload, TopicEventType } from '@onecx/integration-interface'
+import { Observable, Subscription, filter } from 'rxjs'
+import { ShellCapabilityService, Capability } from '@onecx/angular-integration-interface'
+import { AppStateService } from '@onecx/angular-integration-interface'
 
 /**
  * Implementation inspired by @angular-architects/module-federation-plugin https://github.com/angular-architects/module-federation-plugin/blob/main/libs/mf-tools/src/lib/web-components/bootstrap-utils.ts
@@ -72,9 +74,12 @@ function createEntrypoint(
   entrypointType: EntrypointType
 ) {
   let sub: Subscription | null
+  const capabilityService = new ShellCapabilityService()
+  const currentLocationCapabilityAvailable = capabilityService.hasCapability(Capability.CURRENT_LOCATION_TOPIC)
+  const eventsTopic = currentLocationCapabilityAvailable ? undefined : new EventsTopic()
   const originalNgInit = component.prototype.ngOnInit
   component.prototype.ngOnInit = function () {
-    sub = connectMicroFrontendRouter(injector, entrypointType === 'microfrontend')
+    sub = connectMicroFrontendRouter(injector, entrypointType === 'microfrontend', eventsTopic)
     if (originalNgInit !== undefined) {
       originalNgInit.call(this)
     }
@@ -82,6 +87,9 @@ function createEntrypoint(
   const originalNgDestroy = component.prototype.ngOnDestroy
   component.prototype.ngOnDestroy = function () {
     sub?.unsubscribe()
+    if (currentLocationCapabilityAvailable && eventsTopic) {
+      eventsTopic.destroy()
+    }
     if (originalNgDestroy !== undefined) {
       originalNgDestroy.call(this)
     }
@@ -157,32 +165,43 @@ export function cachePlatform(production: boolean): PlatformRef {
   return platform
 }
 
-function connectMicroFrontendRouter(injector: Injector, warn = true): Subscription | null {
-  const router = injector.get(Router)
-
+function connectMicroFrontendRouter(injector: Injector, warnOnMissingRouter: boolean, eventsTopic: EventsTopic | undefined): Subscription | null {
+  const router = injector.get(Router, null)
+  const appStateService = injector.get(AppStateService, null)
   if (!router) {
-    if (warn) {
+    if (warnOnMissingRouter) {
       console.warn('No router to connect found')
     }
     return null
   }
 
-  return connectRouter(router)
+  if (!appStateService) {
+    console.warn('No appStateService found')
+    return null
+  }
+
+  return connectRouter(router, appStateService, eventsTopic)
 }
 
-function connectRouter(router: Router): Subscription {
+function connectRouter(router: Router, appStateService: AppStateService, eventsTopic: EventsTopic | undefined): Subscription {
   const initialUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}${location.hash}`
   router.navigateByUrl(initialUrl, {
     replaceUrl: true,
+    state: { isRouterSync: true },
   })
   let lastUrl = initialUrl
-  const observer = new EventsTopic()
-  return observer.pipe(filter((e) => e.type === 'navigated')).subscribe(() => {
+  let observable: Observable<TopicEventType | CurrentLocationTopicPayload> =
+    appStateService.currentLocation$.asObservable()
+  if (eventsTopic !== undefined) {
+    observable = eventsTopic.pipe(filter((e) => e.type === 'navigated'))
+  }
+  return observable.subscribe(() => {
     const routerUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}${location.hash}`
     if (routerUrl !== lastUrl) {
       lastUrl = routerUrl
       router.navigateByUrl(routerUrl, {
         replaceUrl: true,
+        state: { isRouterSync: true },
       })
     }
   })

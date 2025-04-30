@@ -10,11 +10,11 @@
   <div class="title-bar flex flex-row md:justify-content-between p-3">
     <div class="title-wrap">
       @if (showFigure) {
-      <div class="figure flex h-2rem w-2rem md:h-3rem md:w-3rem">
+      <div class="mr-2 figure relative flex h-2rem w-2rem md:h-3rem md:w-3rem">
         <div #previewImage class="figure-image absolute top-0 left-0 right-0 bottom-0">
           <ng-content select="[figureImage]"></ng-content>
           @if (figureImage && !figureImageLoadError) {
-          <img [ocxSrc]="figureImage" alt="Figure image" class="w-full" (error)="handleImageError()" />
+          <img [ocxSrc]="figureImage" alt="Figure Image" class="w-full border-round-sm" (error)="handleImageError()" />
           }
         </div>
         @if (previewImage.children.length === 0 || figureImageLoadError) {
@@ -36,6 +36,7 @@
       </div>
       }
     </div>
+
     <div class="action-items-wrap mt-2 md:mt-0">
       @if (additionalToolbarContentLeft) {
       <ng-container [ngTemplateOutlet]="additionalToolbarContentLeft"> </ng-container>
