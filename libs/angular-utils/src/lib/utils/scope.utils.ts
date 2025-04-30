@@ -4,69 +4,118 @@ import { ReplaySubject, firstValueFrom, map } from 'rxjs'
 export const shellScopeId = 'shell-ui'
 
 const everythingNotACharacterOrNumberRegex = /[^a-zA-Z0-9-]/g
-// Style scope management
-// Variables for attributes and html element dataset keys for managing the scoping of styles
-// StyleId
-// data-style-id="scopeId"
-// Marks start of scope section for scopeId (e.g. data-style-id="onecx-workspace|onecx-workspace-ui")
-// Present for MFE and RC components as well as dynamic content
-//
-// StyleIsolation
-// data-style-isolation
-// Marks end of scope section
-// Present for MFE and RC components as well as dynamic content
-//
-// NoPortalLayoutStyles
-// data-no-portal-layout-styles
-// Should always be in pair with styleId
-// Marks that scope section does not request portal layout styles
-// Present for MFE and RC components as well as dynamic content since libs v6
-//
-// IntermediateStyleId
-// data-intermediate-style-id="scopeId" (e.g. data-intermediate-style-id="onecx-workspace|onecx-workspace-ui")
-// Metadata used when appending dynamic content to ensure style scoping outside the application
-//
-// IntermediateStyleIsolation
-// data-intermediate-style-isolation
-// Metadata used when appending dynamic content to ensure style scoping outside the application
-//
-// IntermediateNoPortalLayoutStyles
-// data-intermediate-no-portal-layout-styles
-// Metadata used when appending dynamic content to ensure style scoping outside the application
-//
-// VariableOverrideId
-// data-variable-override-id="scopeId"
-// Marks the style element as one containing overrides for scope sections with scopeId
-//
-// PortalLayoutStylesStyles
-// data-portal-layout-styles-styles
-// Marks the style element as one containing portal layout styles styles
-//
-//
-// DynamicPortalLayoutStyles
-// data-dynamic-portal-layout-styles
-// Marks the style element as one containing portal layout styles styles for the dynamic content
-
+/**
+ * @constant {string} dataStyleIdKey
+ * @description Marks start of scope section for scopeId (e.g. data-style-id="onecx-workspace|onecx-workspace-ui")
+ * Present for MFE and RC components as well as dynamic content
+ */
 export const dataStyleIdKey = 'styleId'
+
+/**
+ * @constant {string} dataStyleIsolationKey
+ * @description Marks end of scope section
+ * Present for MFE and RC components as well as dynamic content
+ */
 export const dataStyleIsolationKey = 'styleIsolation'
+
+/**
+ * @constant {string} dataNoPortalLayoutStylesKey
+ * @description Should always be in pair with styleId
+ * Marks that scope section does not request portal layout styles
+ * Present for MFE and RC components as well as dynamic content since libs v6
+ */
 export const dataNoPortalLayoutStylesKey = 'noPortalLayoutStyles'
+
+/**
+ * @constant {string} dataIntermediateStyleIdKey
+ * @description Metadata used when appending dynamic content to ensure style scoping outside the application
+ * (e.g. data-intermediate-style-id="onecx-workspace|onecx-workspace-ui")
+ */
 export const dataIntermediateStyleIdKey = 'intermediateStyleId'
+
+/**
+ * @constant {string} dataIntermediateStyleIsolationKey
+ * @description Metadata used when appending dynamic content to ensure style scoping outside the application
+ */
 export const dataIntermediateStyleIsolationKey = 'intermediateStyleIsolation'
+
+/**
+ * @constant {string} dataIntermediateNoPortalLayoutStylesKey
+ * @description Metadata used when appending dynamic content to ensure style scoping outside the application
+ */
 export const dataIntermediateNoPortalLayoutStylesKey = 'intermediateNoPortalLayoutStyles'
+
+/**
+ * @constant {string} dataVariableOverrideIdKey
+ * @description Marks the style element as one containing overrides for scope sections with scopeId
+ */
 export const dataVariableOverrideIdKey = 'VariableOverrideId'
-export const dataPortalLayoutStylesKey = `portalLayoutStylesStyles`
-export const dataDynamicPortalLayoutStylesKey = `dynamicContentPortalLayoutStyles`
 
+/**
+ * @constant {string} dataPortalLayoutStylesKey
+ * @description Marks the style element as one containing portal layout styles styles
+ */
+export const dataPortalLayoutStylesKey = 'portalLayoutStylesStyles'
+
+/**
+ * @constant {string} dataDynamicPortalLayoutStylesKey
+ * @description Marks the style element as one containing portal layout styles styles for the dynamic content
+ */
+export const dataDynamicPortalLayoutStylesKey = 'dynamicContentPortalLayoutStyles'
+
+/**
+ * @constant {string} dataStyleIdAttribute
+ * @description HTML attribute for styleId. See {@link dataStyleIdKey} for more details.
+ */
 export const dataStyleIdAttribute = 'data-style-id'
-export const dataStyleIsolationAttribute = 'data-style-isolation'
-export const dataNoPortalLayoutStylesAttribute = 'data-no-portal-layout-styles'
-export const dataIntermediateStyleIdAttribute = 'data-intermediate-style-id'
-export const dataIntermediateStyleIsolationAttribute = 'data-intermediate-style-ssolation'
-export const dataIntermediateNoPortalLayoutStylesAttribute = 'data-intermediate-no-portal-layout-styles'
-export const dataVariableOverrideIdAttibute = 'data-variable-override-id'
 
-export const dataPortalLayoutStylesAttribute = `data-portal-layout-styles`
-export const dataDynamicPortalLayoutStylesAttribute = `data-dynamic-content-portal-layout-styles`
+/**
+ * @constant {string} dataStyleIsolationAttribute
+ * @description HTML attribute for styleIsolation. See {@link dataStyleIsolationKey} for more details.
+ */
+export const dataStyleIsolationAttribute = 'data-style-isolation'
+
+/**
+ * @constant {string} dataNoPortalLayoutStylesAttribute
+ * @description HTML attribute for noPortalLayoutStyles. See {@link dataNoPortalLayoutStylesKey} for more details.
+ */
+export const dataNoPortalLayoutStylesAttribute = 'data-no-portal-layout-styles'
+
+/**
+ * @constant {string} dataIntermediateStyleIdAttribute
+ * @description HTML attribute for intermediateStyleId. See {@link dataIntermediateStyleIdKey} for more details.
+ */
+export const dataIntermediateStyleIdAttribute = 'data-intermediate-style-id'
+
+/**
+ * @constant {string} dataIntermediateStyleIsolationAttribute
+ * @description HTML attribute for intermediateStyleIsolation. See {@link dataIntermediateStyleIsolationKey} for more details.
+ */
+export const dataIntermediateStyleIsolationAttribute = 'data-intermediate-style-isolation'
+
+/**
+ * @constant {string} dataIntermediateNoPortalLayoutStylesAttribute
+ * @description HTML attribute for intermediateNoPortalLayoutStyles. See {@link dataIntermediateNoPortalLayoutStylesKey} for more details.
+ */
+export const dataIntermediateNoPortalLayoutStylesAttribute = 'data-intermediate-no-portal-layout-styles'
+
+/**
+ * @constant {string} dataVariableOverrideIdAttribute
+ * @description HTML attribute for variableOverrideId. See {@link dataVariableOverrideIdKey} for more details.
+ */
+export const dataVariableOverrideIdAttribute = 'data-variable-override-id'
+
+/**
+ * @constant {string} dataPortalLayoutStylesAttribute
+ * @description HTML attribute for portalLayoutStyles. See {@link dataPortalLayoutStylesKey} for more details.
+ */
+export const dataPortalLayoutStylesAttribute = 'data-portal-layout-styles'
+
+/**
+ * @constant {string} dataDynamicPortalLayoutStylesAttribute
+ * @description HTML attribute for dynamicPortalLayoutStyles. See {@link dataDynamicPortalLayoutStylesKey} for more details.
+ */
+export const dataDynamicPortalLayoutStylesAttribute = 'data-dynamic-content-portal-layout-styles'
 
 export const portalLayoutStylesSheetId = `[${dataStyleIdAttribute}]:not([${dataNoPortalLayoutStylesAttribute}])`
 export const dynamicPortalLayoutStylesSheetId = `body>:not([${dataNoPortalLayoutStylesAttribute}])`
@@ -86,10 +135,12 @@ export async function getScopeIdentifier(
   if (!skipStyleScoping) {
     if (remoteComponentConfig) {
       const rcConfig = await firstValueFrom(remoteComponentConfig)
-      scopeId = `${rcConfig.productName}|${rcConfig.appId}`
+      scopeId = scopeIdFromProductNameAndAppId(rcConfig.productName, rcConfig.appId)
     } else {
       scopeId = await firstValueFrom(
-        appStateService.currentMfe$.pipe(map((mfeInfo) => `${mfeInfo.productName}|${mfeInfo.appId}`))
+        appStateService.currentMfe$.pipe(
+          map((mfeInfo) => scopeIdFromProductNameAndAppId(mfeInfo.productName, mfeInfo.appId))
+        )
       )
     }
   }
@@ -140,6 +191,16 @@ export function scopeIdentifierToVariablePrefix(scopeId: string) {
 }
 
 export function scopeIdFromProductNameAndAppId(productName: string, appId: string) {
+  if (productName.length === 0) {
+    console.error(
+      `Error while creating scope id for: productName = ${productName}, appId = ${appId}. Name of the product is empty. Please validate the microfrontend and remote components configuration.`
+    )
+  }
+  if (appId.length === 0) {
+    console.error(
+      `Error while creating scope id for: productName = ${productName}, appId = ${appId}. Id of the application is empty. Please validate the microfrontend and remote components configuration.`
+    )
+  }
   return `${productName}|${appId}`
 }
 

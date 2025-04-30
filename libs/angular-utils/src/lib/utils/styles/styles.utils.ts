@@ -10,43 +10,66 @@ export function slotNameToPropertyName(slotName: string) {
   return slotName.replace(/-([a-z])/g, (match, letter) => letter.toUpperCase())
 }
 
-// Style isolation management
-// Variables for attributes and html element dataset keys for managing the application styles
-// AppStyles
-// data-app-styles="scopeId" (e.g. data-app-styles="onecx-workspace|onecx-workspace-ui")
-// Marks style element as one containing styles for scopeId (which is based on the application)
-// Such style sheet contains variables applied globally and css scoped to a given scope utill style isolation
-//
-// MfeStyles
-// data-mfe-styles
-// Marks style element as one used by the current mfe
-//
-// SlotStyles
-// data-slot-SLOT_NAME-styles
-// Marks style element as one used by any component in a slot given by the SLOT_NAME
-//
-//
-// ShellStyles
-// data-shell-styles
-// Marks style element as one containing styles for the shell
-// Such style sheet contains variables applied globally and css scoped to a shell scope utill style isolation
-//
-
+/**
+ * @constant {string} dataAppStylesKey
+ * @description Marks style element as one containing styles for scopeId (which is based on the application)
+ * Such style sheet contains variables applied globally and CSS scoped to a given scope until style isolation.
+ * (e.g. data-app-styles="onecx-workspace|onecx-workspace-ui")
+ */
 export const dataAppStylesKey = 'appStyles'
-export const dataMfeStylesKey = 'mfeStyles'
-export const dataRcStylesKey = (slotName: string) =>
-  `${dataRcStylesStart}${slotName.replace(slotName.charAt(0), slotName.charAt(0).toUpperCase())}Styles`
-export const dataShellStylesKey = `shellStyles`
-
-export const dataAppStylesAttribute = 'data-app-styles'
-export const dataMfeStylesAttribute = 'data-mfe-styles'
-export const dataRcStylesAttribute = (slotName: string) => `data-${dataRcStylesStart}-${slotName}-styles`
-export const dataShellStylesAttribute = `data-shell-styles`
 
 /**
- * Extract :root variables from a given css
+ * @constant {string} dataMfeStylesKey
+ * @description Marks style element as one used by the current MFE.
  */
-export function extractRootCssVariables(css: string): string {
+export const dataMfeStylesKey = 'mfeStyles'
+
+/**
+ * @function dataRcStylesKey
+ * @description Marks style element as one used by any component in a slot given by the SLOT_NAME.
+ * @param {string} slotName - The name of the slot.
+ * @returns {string} The key for the slot styles.
+ */
+export const dataRcStylesKey = (slotName: string) =>
+  `${dataRcStylesStart}${slotName.replace(slotName.charAt(0), slotName.charAt(0).toUpperCase())}Styles`
+
+/**
+ * @constant {string} dataShellStylesKey
+ * @description Marks style element as one containing styles for the shell.
+ * Such style sheet contains variables applied globally and CSS scoped to a shell scope until style isolation.
+ */
+export const dataShellStylesKey = 'shellStyles'
+
+/**
+ * @constant {string} dataAppStylesAttribute
+ * @description HTML attribute for appStyles. See {@link dataAppStylesKey} for more details.
+ */
+export const dataAppStylesAttribute = 'data-app-styles'
+
+/**
+ * @constant {string} dataMfeStylesAttribute
+ * @description HTML attribute for mfeStyles. See {@link dataMfeStylesKey} for more details.
+ */
+export const dataMfeStylesAttribute = 'data-mfe-styles'
+
+/**
+ * @function dataRcStylesAttribute
+ * @description HTML attribute for slot styles. See {@link dataRcStylesKey} for more details.
+ * @param {string} slotName - The name of the slot.
+ * @returns {string} The attribute for the slot styles.
+ */
+export const dataRcStylesAttribute = (slotName: string) => `data-${dataRcStylesStart}-${slotName}-styles`
+
+/**
+ * @constant {string} dataShellStylesAttribute
+ * @description HTML attribute for shellStyles. See {@link dataShellStylesKey} for more details.
+ */
+export const dataShellStylesAttribute = 'data-shell-styles'
+
+/**
+ * Extract rules for ":root" selector from a given css.
+ */
+export function extractRootRules(css: string): string {
   const matches = css.match(/:root\s*\{[^}]*\}/g)
   if (!matches) return ''
 
@@ -54,9 +77,9 @@ export function extractRootCssVariables(css: string): string {
 }
 
 /**
- * Extract everything apart from :root variables from a given css
+ * Extract everything apart from rules for ":root" selector from a given css.
  */
-export function extractCssStyles(css: string): string {
+export function extractNonRootRules(css: string): string {
   return css.replace(/:root\s*\{[^}]*\}/g, '')
 }
 
@@ -70,15 +93,15 @@ export function createScopedCss(css: string, scopeId: string): string {
   const isScopeSupported = isCssScopeRuleSupported()
   return isScopeSupported
     ? `
-  ${extractRootCssVariables(css)}
+  ${extractRootRules(css)}
 @scope([${dataStyleIdAttribute}="${scopeId}"]) to ([${dataStyleIsolationAttribute}]) {
-        ${extractCssStyles(css)}
+        ${extractNonRootRules(css)}
     }
 `
     : `
-  ${extractRootCssVariables(css)}
+  ${extractRootRules(css)}
 @supports (@scope([${dataStyleIdAttribute}="${scopeId}"]) to ([${dataStyleIsolationAttribute}])) {
-        ${extractCssStyles(css)}
+        ${extractNonRootRules(css)}
     }
 `
 }
@@ -133,7 +156,7 @@ export function getAppStyleByScope(scopeId: string): HTMLStyleElement | null {
 }
 
 /**
- * Returns the count of Mfe and Rc usages for style element
+ * Returns the count of Mfes and RCs using the style element
  */
 export function getStyleUsageCount(styleElement: HTMLStyleElement): number {
   let usages = 0
@@ -173,7 +196,7 @@ export async function fetchAppCss(http: HttpClient, appUrl: string): Promise<str
             return throwError(
               () =>
                 new Error(
-                  `Application returned different content type than text/css: ${response.headers.get('Content-Type')}`
+                  `Application returned different content type than text/css: ${response.headers.get('Content-Type')}. Please, make sure that the application exposes the styles.css file in your application.`
                 )
             )
           }
@@ -181,7 +204,9 @@ export async function fetchAppCss(http: HttpClient, appUrl: string): Promise<str
           return of(response.body)
         }),
         catchError((error: Error) => {
-          console.error(`Error while loading app css for ${appUrl}: ${error.message}`)
+          console.error(
+            `Error while loading app css for ${appUrl}: ${error.message}.  Please, make sure that the application exposes the styles.css file in your application.`
+          )
           return of(undefined)
         })
       )

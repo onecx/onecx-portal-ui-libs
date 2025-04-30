@@ -5,7 +5,7 @@ import { ReplaySubject } from 'rxjs'
 import { THEME_OVERRIDES, ThemeOverrides } from '../theme/application-config'
 import { toVariables } from '@primeuix/styled'
 import {
-  dataVariableOverrideIdAttibute,
+  dataVariableOverrideIdAttribute,
   getScopeIdentifier,
   replacePrimengPrefix,
   scopeStyle,
@@ -63,10 +63,10 @@ export class CustomUseStyle extends UseStyle {
 
   private createOrRetrieveOverrideElement(overrideId: string): Element {
     const styleRef =
-      this.document.querySelector(`style[${dataVariableOverrideIdAttibute}="${overrideId}"]`) ||
+      this.document.querySelector(`style[${dataVariableOverrideIdAttribute}="${overrideId}"]`) ||
       this.document.createElement('style')
     if (!styleRef.isConnected) {
-      styleRef.setAttribute(`${dataVariableOverrideIdAttibute}`, overrideId)
+      styleRef.setAttribute(`${dataVariableOverrideIdAttribute}`, overrideId)
     }
     return styleRef
   }

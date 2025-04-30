@@ -20,7 +20,7 @@ import { Technologies } from '@onecx/integration-interface'
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs'
 import { ocxRemoteComponent } from '../../model/remote-component'
 import { RemoteComponentInfo, SLOT_SERVICE, SlotComponentConfiguration, SlotService } from '../../services/slot.service'
-import { udpateStylesForRcCreation, updateStyleForRcRemoval } from '@onecx/angular-utils'
+import { udpateStylesForRcCreation, updateStylesForRcRemoval } from '@onecx/angular-utils'
 import { HttpClient } from '@angular/common/http'
 import { RemoteComponentConfig } from '@onecx/angular-integration-interface'
 
@@ -164,6 +164,7 @@ export class SlotComponent implements OnInit, OnDestroy {
         })
       }
     )
+    // Components can be created only when component information is available and view containers are created for all remote components
     this.subscription = combineLatest([this._viewContainers$, this.components$]).subscribe(
       ([viewContainers, components]) => {
         if (viewContainers && viewContainers.length === components.length) {
@@ -244,6 +245,7 @@ export class SlotComponent implements OnInit, OnDestroy {
     element.dataset['styleIsolation'] = ''
   }
 
+  // Load styles exposed by the application the remote component belongs to if its not done already
   private updateComponentStyles(componentInfo: { remoteComponent: RemoteComponentInfo }) {
     udpateStylesForRcCreation(
       componentInfo.remoteComponent.productName,
@@ -278,7 +280,7 @@ export class SlotComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscription?.unsubscribe()
     this._assignedComponents$.getValue().forEach((component) => {
-      updateStyleForRcRemoval(component.remoteInfo.productName, component.remoteInfo.appId, this.name)
+      updateStylesForRcRemoval(component.remoteInfo.productName, component.remoteInfo.appId, this.name)
     })
   }
 }

@@ -15,7 +15,11 @@ import {
 } from './styles.utils'
 
 /**
- * Update all style elements related to app styles. It removes old mfe usages and unused style elements and creates or updates current mfe styles
+ * Update page styles.
+ *
+ * It removes old mfe usages and unused style elements.
+ * Loads and creates new style element with MFE application styles css and registers the MFE for the usage.
+ * If style element for the MFE application is already created, it only registers for the usage.
  */
 export async function updateStylesForMfeChange(
   productName: string,
@@ -73,7 +77,7 @@ async function updateInactiveMfeStyles(scopeId: string) {
 }
 
 /**
- * Registers the mfe as the user of the style element
+ * Registers the mfe as a user of the style element,
  */
 function useStyleForMfe(styleElement: HTMLStyleElement) {
   styleElement.dataset[dataMfeStylesKey] = ''
