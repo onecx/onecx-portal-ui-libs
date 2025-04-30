@@ -27,7 +27,7 @@ import { scopeIdFromProductNameAndAppId } from '../scope.utils'
  * @param rcUrl - url of the RC application to make requests
  * @param slotName - name of the slot hosting the RC
  */
-export async function udpateStylesForRcCreation(
+export async function updateStylesForRcCreation(
   productName: string,
   appId: string,
   httpClient: HttpClient,

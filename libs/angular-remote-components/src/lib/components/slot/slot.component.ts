@@ -18,7 +18,7 @@ import { Technologies } from '@onecx/integration-interface'
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs'
 import { ocxRemoteComponent } from '../../model/remote-component'
 import { RemoteComponentInfo, SLOT_SERVICE, SlotComponentConfiguration, SlotService } from '../../services/slot.service'
-import { udpateStylesForRcCreation, updateStylesForRcRemoval } from '@onecx/angular-utils'
+import { updateStylesForRcCreation, updateStylesForRcRemoval } from '@onecx/angular-utils'
 import { HttpClient } from '@angular/common/http'
 import { RemoteComponentConfig } from '@onecx/angular-integration-interface'
 
@@ -243,7 +243,7 @@ export class SlotComponent implements OnInit, OnDestroy {
 
   // Load styles exposed by the application the remote component belongs to if its not done already
   private updateComponentStyles(componentInfo: { remoteComponent: RemoteComponentInfo }) {
-    udpateStylesForRcCreation(
+    updateStylesForRcCreation(
       componentInfo.remoteComponent.productName,
       componentInfo.remoteComponent.appId,
       this.http,
