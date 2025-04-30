@@ -270,8 +270,6 @@ export class PortalDialogService implements OnDestroy {
   private dialogService = inject(DialogService)
   private translateService = inject(TranslateService)
   private router = inject(Router)
-  private dialogRef: DynamicDialogRef | null = null
-  private dialogComponent: DynamicDialogComponent | null = null
   private eventsTopic: EventsTopic = new EventsTopic()
   private skipStyleScoping = inject(SKIP_STYLE_SCOPING, { optional: true })
   private remoteComponentConfig = inject(REMOTE_COMPONENT_CONFIG, { optional: true })
@@ -500,7 +498,7 @@ export class PortalDialogService implements OnDestroy {
 
     return this.translateService.get(translateParams.key, translateParams.parameters).pipe(
       mergeMap((dialogTitle) => {
-        this.dialogRef = this.dialogService.open(DialogContentComponent, {
+        const dialogRef = this.dialogService.open(DialogContentComponent, {
           header: dialogTitle,
           data: {
             ...dynamicDialogDataConfig,
@@ -516,38 +514,39 @@ export class PortalDialogService implements OnDestroy {
           ...dialogOptions,
           focusOnShow: false,
           appendTo: 'body', // Important for the function findBodyChild
+          duplicate: true, // Since dialog always opens DialogContentComponent, duplicates must be always allowed
           templates: {
             footer: DialogFooterComponent,
           },
         })
-        this.dialogComponent = this.dialogService.getInstance(this.dialogRef)
-        this.setScopeIdentifier()
-        return this.dialogRef.onClose
+        this.setScopeIdentifier(this.dialogService.getInstance(dialogRef))
+        return dialogRef.onClose
       })
     )
   }
 
   private cleanupAndCloseDialog() {
-    if (this.dialogRef) {
-      this.dialogRef.close()
-      this.removeDialogFromHtml()
-      this.dialogRef = null
-      this.dialogComponent = null
+    if (this.dialogService.dialogComponentRefMap.size > 0) {
+      this.dialogService.dialogComponentRefMap.forEach((_, dialogRef) => {
+        const dialogComponent = this.dialogService.getInstance(dialogRef)
+        dialogRef.close()
+        this.removeDialogFromHtml(dialogComponent)
+      })
     }
   }
 
-  private removeDialogFromHtml() {
-    const bodyChild = this.findDialogComponentBodyChild()
+  private removeDialogFromHtml(dialogComponent: DynamicDialogComponent) {
+    const bodyChild = this.findDialogComponentBodyChild(dialogComponent)
     bodyChild && document.body.removeChild(bodyChild)
   }
 
-  private setScopeIdentifier() {
+  private setScopeIdentifier(dialogComponent: DynamicDialogComponent) {
     getScopeIdentifier(
       this.appStateService,
       this.skipStyleScoping ?? undefined,
       this.remoteComponentConfig ?? undefined
     ).then((scopeId) => {
-      const bodyChild = this.findDialogComponentBodyChild()
+      const bodyChild = this.findDialogComponentBodyChild(dialogComponent)
       if (bodyChild) {
         bodyChild.dataset['styleId'] = scopeId
         bodyChild.dataset['noPortalLayoutStyles'] = ''
@@ -555,8 +554,8 @@ export class PortalDialogService implements OnDestroy {
     })
   }
 
-  private findDialogComponentBodyChild() {
-    const element = this.dialogComponent?.el.nativeElement
+  private findDialogComponentBodyChild(dialogComponent: DynamicDialogComponent) {
+    const element = dialogComponent.el.nativeElement
     if (!element) return
     return this.findBodyChild(element)
   }
