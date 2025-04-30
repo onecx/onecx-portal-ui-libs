@@ -1,6 +1,6 @@
-import { type PermissionsRpc, PermissionsRpcTopic } from '@onecx/integration-interface'
 import { type FC, createContext, useContext, type PropsWithChildren, useState, useEffect } from 'react'
 import { filter, firstValueFrom, map } from 'rxjs'
+import { type PermissionsRpc, PermissionsRpcTopic } from '@onecx/integration-interface'
 
 interface PermissionContextType {
   permissions: PermissionsRpc[]

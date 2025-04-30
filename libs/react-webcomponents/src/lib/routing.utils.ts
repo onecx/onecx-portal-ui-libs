@@ -1,60 +1,53 @@
-import { useEffect, useState } from 'react';
-import { firstValueFrom } from 'rxjs';
-import { map } from 'rxjs/operators';
-import {
-  useAppState,
-  useConfiguration,
-} from '@onecx/react-integration-interface';
+import { useEffect, useState } from 'react'
+import { firstValueFrom } from 'rxjs'
+import { map } from 'rxjs/operators'
+import { useAppState, useConfiguration } from '@onecx/react-integration-interface'
 
 const normalizeHref = (appBaseHref: string, baseHref: string): string => {
-  const cleanedAppBaseHref = appBaseHref.replace(/\/$/, '');
-  const cleanedBaseHref = baseHref.replace(/^\//, '');
-  const normalizedHref = `${cleanedAppBaseHref}/${cleanedBaseHref}`;
-  return removeTrailingSlash(normalizedHref);
-};
+  const cleanedAppBaseHref = appBaseHref.replace(/\/$/, '')
+  const cleanedBaseHref = baseHref.replace(/^\//, '')
+  const normalizedHref = `${cleanedAppBaseHref}/${cleanedBaseHref}`
+  return removeTrailingSlash(normalizedHref)
+}
 const removeTrailingSlash = (url: string): string => {
-  return url.replace(/\/$/, '');
-};
+  return url.replace(/\/$/, '')
+}
 
 /**
  * Needs to be used within Configuration and AppState Contexts
  * returns baseUrl, appBaseHref and href
  */
 export const useAppHref = () => {
-  const { currentMfe$, currentWorkspace$ } = useAppState();
-  const { config } = useConfiguration();
+  const { currentMfe$, currentWorkspace$ } = useAppState()
+  const { config } = useConfiguration()
   const [hrefs, setHrefs] = useState({
     baseUrl: '',
     appBaseHref: '',
     baseHref: '',
-  });
+  })
 
   useEffect(() => {
     const fetchBaseHref = async () => {
-      const baseHref = currentMfe$
-        ? await firstValueFrom(
-            currentMfe$.pipe(map((data) => data.baseHref || ''))
-          )
-        : '';
-      const baseUrl = currentWorkspace$
-        ? await firstValueFrom(
-            currentWorkspace$.pipe(map((data) => data.baseUrl || ''))
-          )
-        : '';
-      const appBaseHref = config?.APP_BASE_HREF ?? '';
+      const baseHref: string = currentMfe$
+        ? await firstValueFrom(currentMfe$.pipe(map((data) => data.baseHref || '')))
+        : ''
+      const baseUrl: string = currentWorkspace$
+        ? await firstValueFrom(currentWorkspace$.pipe(map((data) => data.baseUrl || '')))
+        : ''
+      const appBaseHref = config?.APP_BASE_HREF ?? ''
 
-      setHrefs({ baseUrl, appBaseHref, baseHref });
-    };
+      setHrefs({ baseUrl, appBaseHref, baseHref })
+    }
 
-    fetchBaseHref();
+    fetchBaseHref()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentMfe$, config]);
+  }, [currentMfe$, config])
 
-  const href = normalizeHref(hrefs.appBaseHref, hrefs.baseHref);
+  const href = normalizeHref(hrefs.appBaseHref, hrefs.baseHref)
 
   return {
     baseUrl: hrefs.baseUrl,
     appBaseHref: removeTrailingSlash(hrefs.appBaseHref),
     href,
-  };
-};
+  }
+}

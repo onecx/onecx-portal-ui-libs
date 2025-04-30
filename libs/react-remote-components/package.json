@@ -1,4 +1,14 @@
 {
   "name": "@onecx/react-remote-components",
-  "version": "0.0.1"
+  "version": "0.0.1",
+  "license": "Apache-2.0",
+  "peerDependencies": {
+    "@onecx/react-integration-interface": "^0.0.1",
+    "react": "18.3.1",
+    "rxjs": "^7.8.1"
+  },
+  "dependencies": {},
+  "publishConfig": {
+    "access": "public"
+  }
 }
