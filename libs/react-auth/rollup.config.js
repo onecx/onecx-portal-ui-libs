@@ -9,7 +9,7 @@ module.exports = withNx(
     outputPath: '../../dist/libs/react-auth',
     tsConfig: './tsconfig.lib.json',
     compiler: 'babel',
-    external: ['fs', 'stream', 'util', 'path', 'http', 'https', 'zlib'],
+    external: ['axios'],
     format: ['esm', 'cjs'],
     assets: [{ input: '.', output: '.', glob: 'README.md' }],
   },

@@ -4,6 +4,9 @@
   "license": "Apache-2.0",
   "sideEffects": false,
   "dependencies": {},
+  "peerDependencies": {
+    "axios": "^1.7.3"
+  },
   "exports": {
     ".": {
       "import": "./dist/libs/react-auth/esm/index.js",
