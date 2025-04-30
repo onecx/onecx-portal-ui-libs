@@ -68,6 +68,8 @@ export const dataShellStylesAttribute = 'data-shell-styles'
 
 /**
  * Extract rules for ":root" selector from a given css.
+ * @param css - css text to transform
+ * @returns {string} css with only rules for ":root" selector
  */
 export function extractRootRules(css: string): string {
   const matches = css.match(/:root\s*\{[^}]*\}/g)
@@ -78,16 +80,18 @@ export function extractRootRules(css: string): string {
 
 /**
  * Extract everything apart from rules for ":root" selector from a given css.
+ * @param css - css text to transform
+ * @returns {string} css without rules for ":root" selector
  */
 export function extractNonRootRules(css: string): string {
   return css.replace(/:root\s*\{[^}]*\}/g, '')
 }
 
 /**
- * Returns string with variables and styles scoped based on the provided id, from a given css
+ * Creates a string with scoped css.
  * @param css - css for scoping
- * @param scopeId - scope id related to the mfe
- * @returns scoped css
+ * @param scopeId - scope id for scoping
+ * @returns {string} css scoped by the given id
  */
 export function createScopedCss(css: string, scopeId: string): string {
   const isScopeSupported = isCssScopeRuleSupported()
@@ -107,7 +111,10 @@ export function createScopedCss(css: string, scopeId: string): string {
 }
 
 /**
- * Creates new style sheet with given content and optional dataset attributes and appends it to the document head
+ * Creates new style sheet with given content and optional dataset attributes and appends it to the document head.
+ * @param content - content for new style sheet
+ * @param datasetAttributes - attributes to add to new style element
+ * @returns {HTMLStyleElement} new style element
  */
 export function addStyleToHead(content: string, datasetAttributes?: { [key: string]: string }): HTMLStyleElement {
   const style = document.createElement('style')
@@ -123,7 +130,10 @@ export function addStyleToHead(content: string, datasetAttributes?: { [key: stri
 }
 
 /**
- * Replaces current content of a given style element with provided content
+ * Replaces content of a given style element.
+ * @param selectorOrElement - selector for a style element or exact element
+ * @param content - content to be put in the style element
+ * @returns {HTMLStyleElement} updated style element
  */
 export function replaceStyleContent(
   selectorOrElement: string | HTMLStyleElement,
@@ -140,23 +150,27 @@ export function replaceStyleContent(
 }
 
 /**
- * Removes given attribute from style element's dataset
+ * Removes attribute from style element's dataset.
+ * @param styleElement - style element to modify
+ * @param attribute - attribute to remove
  */
 export function removeAttributeFromStyle(styleElement: HTMLStyleElement, attribute: string): void {
   delete styleElement.dataset[attribute]
 }
 
 /**
- * Returns the style element related for a given scope
+ * Get the style element for a scope.
  * @param scopeId - scope id related to the app
- * @returns the style element related for a given scope
+ * @returns {HTMLStyleElement | null} the style element related for a given scope
  */
 export function getAppStyleByScope(scopeId: string): HTMLStyleElement | null {
   return document.head.querySelector<HTMLStyleElement>(`style[${dataAppStylesAttribute}="${scopeId}"]`)
 }
 
 /**
- * Returns the count of Mfes and RCs using the style element
+ * Returns the count of MFEs and RCs using the style element.
+ * @param styleElement - style element
+ * @returns {number} number of MFEs and RCs using the style element
  */
 export function getStyleUsageCount(styleElement: HTMLStyleElement): number {
   let usages = 0
@@ -167,6 +181,8 @@ export function getStyleUsageCount(styleElement: HTMLStyleElement): number {
 
 /**
  * Checks if style is an app style
+ * @param styleElement - style element to check
+ * @returns {boolean} if style element is an app style element
  */
 export function isAppStyle(styleElement: HTMLStyleElement): boolean {
   return styleElement.dataset[dataAppStylesKey] !== undefined
@@ -174,13 +190,19 @@ export function isAppStyle(styleElement: HTMLStyleElement): boolean {
 
 /**
  * Checks if style is related to an app with given scope
+ * @param styleElement - style element to check
+ * @param scopeId - id of a scope to check
+ * @returns {boolean} if style element and app are related
  */
 export function isAppStyleForScope(styleElement: HTMLStyleElement, scopeId: string): boolean {
   return styleElement.dataset[dataAppStylesKey] === scopeId
 }
 
 /**
- * Fetches the css for an application
+ * Fetches the css for an application.
+ * @param http - http client for making requests
+ * @param appUrl - url of the application used for making requests
+ * @returns {Promise<string | undefined | null>} application css content
  */
 export async function fetchAppCss(http: HttpClient, appUrl: string): Promise<string | undefined | null> {
   return await firstValueFrom(
@@ -214,14 +236,16 @@ export async function fetchAppCss(http: HttpClient, appUrl: string): Promise<str
 }
 
 /**
- * Creates HttpHeaders for Css request
+ * Creates HttpHeaders for Css request.
  */
 function createCssRequestHeaders() {
   return new HttpHeaders({}).set('Accept', 'text/css')
 }
 
 /**
- * Returns if response is valid css
+ * Returns if response is valid css.
+ * @param response - response to validate
+ * @returns {boolean} if response is valid css
  */
 function isResponseValidCss<T>(response: HttpResponse<T>) {
   return response.headers.get('Content-Type') === 'text/css'

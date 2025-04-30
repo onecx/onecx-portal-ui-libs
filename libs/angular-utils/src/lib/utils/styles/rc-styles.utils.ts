@@ -21,6 +21,11 @@ import { scopeIdFromProductNameAndAppId } from '../scope.utils'
  *
  * Loads and creates new style element with RC application styles css and registers the RC for the usage.
  * If style element for the RC application is already created, it only registers for the usage.
+ * @param productName - product name RC belongs to
+ * @param appId - id of the application RC belongs to
+ * @param httpClient - http client to make requests
+ * @param rcUrl - url of the RC application to make requests
+ * @param slotName - name of the slot hosting the RC
  */
 export async function udpateStylesForRcCreation(
   productName: string,
@@ -56,6 +61,9 @@ export async function udpateStylesForRcCreation(
  *
  * Remove usages of the RC from the style elements it is register for.
  * If usage removal leads to style element not being used by any MFE or RC its removed from the page.
+ * @param productName - product name RC belongs to
+ * @param appId - id of the application RC belongs to
+ * @param slotName - name of the slot hosting the RC
  */
 export function updateStylesForRcRemoval(productName: string, appId: string, slotName: string) {
   const scopeId = scopeIdFromProductNameAndAppId(productName, appId)
@@ -73,6 +81,8 @@ export function updateStylesForRcRemoval(productName: string, appId: string, slo
 
 /**
  * Returns the count of RCs using a given style element.
+ * @param styleElement - style element to check
+ * @returns {number} the count of RCs using a given style element
  */
 export function getStyleUsageCountForRc(styleElement: HTMLStyleElement): number {
   return Object.keys(styleElement.dataset).filter((key) => key.startsWith(dataRcStylesStart)).length
@@ -80,16 +90,18 @@ export function getStyleUsageCountForRc(styleElement: HTMLStyleElement): number 
 
 /**
  * Registers the RC as a user of the style element.
+ * @param styleElement - style element to modify
+ * @param slotName - name of the slot hosting the RC
  */
 function useStyleForRc(styleElement: HTMLStyleElement, slotName: string) {
   styleElement.dataset[slotNameToPropertyName(dataRcStylesKey(slotName))] = ''
 }
 
 /**
- * Creates new style element and register RC as the user of it
+ * Creates new style element and register RC as a user of it.
  * @param scopeId - scope id related to the RC
- * @param slotName - RC instance slot name
- * @returns style element with RC registered
+ * @param slotName - name of the slot hosting the RC
+ * @returns {HTMLStyleElement} style element with RC registration
  */
 function createStyleUsedByRc(scopeId: string, slotName: string): HTMLStyleElement {
   const element = addStyleToHead('', {
@@ -100,14 +112,18 @@ function createStyleUsedByRc(scopeId: string, slotName: string): HTMLStyleElemen
 }
 
 /**
- * Removes the RC from list of users of the style element
+ * Removes the RC from list of users of the style element.
+ * @param styleElement - style element to modify
+ * @param slotName - name of the slot hosting the RC
  */
 function removeRcUsageFromStyle(styleElement: HTMLStyleElement, slotName: string) {
   removeAttributeFromStyle(styleElement, slotNameToPropertyName(dataRcStylesKey(slotName)))
 }
 
 /**
- * Returns all style elements used by the RC
+ * Returns all style elements used by the RC.
+ * @param slotName - name of the slot hosting the RC
+ * @returns {HTMLStyleElement[]} list of style elements used by RC
  */
 function getAllStylesUsedByRc(slotName: string): HTMLStyleElement[] {
   return Array.from(document.head.querySelectorAll<HTMLStyleElement>(`style[${dataRcStylesAttribute(slotName)}]`))
