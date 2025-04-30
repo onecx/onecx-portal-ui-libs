@@ -81,7 +81,7 @@ export default async function migrateOnecxToV6(tree: Tree) {
       json.dependencies[dep] = '^19.0.7'
     })
     onecxDependencies.forEach((dep) => {
-      json.dependencies[dep] = '^6.0.0-rc.20'
+      json.dependencies[dep] = '^6.0.0'
     })
     ngrxDependencies.forEach((dep) => {
       json.dependencies[dep] = '^19.0.1'
