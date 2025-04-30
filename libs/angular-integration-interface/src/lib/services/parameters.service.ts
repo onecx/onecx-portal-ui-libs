@@ -1,8 +1,8 @@
 import { Injectable, OnDestroy, inject } from '@angular/core'
 import { ParametersTopic } from '@onecx/integration-interface'
-import { firstValueFrom, from, map, mergeMap, of } from 'rxjs'
-import { Capability, ShellCapabilityService } from './shell-capability.service'
+import { firstValueFrom, map } from 'rxjs'
 import { AppStateService } from './app-state.service'
+import { Capability, ShellCapabilityService } from './shell-capability.service'
 
 type Parameter = boolean | number | string | object
 
@@ -15,12 +15,6 @@ export class ParametersService implements OnDestroy {
   ngOnDestroy(): void {
     this.parameters$.destroy()
   }
-
-  //Besser immer nur beim Start der Shell checken ob die Parameter noch aktuell sind. Sonst arbeitet man mit inconsistenten Parametern
-  //Shell schreibt die Parameter aber immer ins Topic. NUR die Shell ließt den localstorage
-  //defaultValue sollte Promise zulassen
-  //Parameter sind app spezifisch -> Cache app-spezifisch -> delta anfragen -> ReplaySubject im RouterService -> Topic im RouterService beim Wechsel füllen
-  // besser immer alle publishen, damit es auch für RCs funktioniert
 
   /**
    * Use this method to get a parameter value in applications
