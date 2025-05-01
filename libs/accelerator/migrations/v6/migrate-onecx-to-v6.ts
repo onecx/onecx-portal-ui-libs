@@ -10,16 +10,16 @@ import {
   writeJson,
 } from '@nx/devkit'
 import { execSync } from 'child_process'
-
-import { findPatternInFiles } from '../utils/find-pattern-in-files'
+import { findPatternInFiles } from '@onecx/nx-migration-utils'
 import {
   detectModulesImportingModule,
   detectVariablesIncludingModule,
+  detectVariablesIncludingProvider,
+  importProviderIfDoesNotExist,
   includeProviderInModuleIfDoesNotExist,
-} from '../utils/module.utils'
-import { detectVariablesIncludingProvider, importProviderIfDoesNotExist } from '../utils/provider.utils.'
-import { ProviderInfo } from '../model/provider-info.model'
-import { ModuleInfo } from '../model/module-info.model'
+  Module,
+  Provider,
+} from '@onecx/nx-migration-utils/angular'
 
 const standaloneShellPackageRegex = /@onecx\/standalone-shell/
 const angularStandaloneShellPackage = '@onecx/angular-standalone-shell'
@@ -312,10 +312,10 @@ function replaceStandaloneShellImport(tree: Tree, directoryPath: string) {
 }
 
 function provideStandaloneProvidersIfModuleUsed(tree: Tree, directoryPath: string) {
-  const moduleInfo: ModuleInfo = {
+  const moduleInfo: Module = {
     name: 'StandaloneShellModule',
   }
-  const providerInfo: ProviderInfo = {
+  const providerInfo: Provider = {
     name: 'provideStandaloneProviders',
     importPath: angularStandaloneShellPackage,
   }

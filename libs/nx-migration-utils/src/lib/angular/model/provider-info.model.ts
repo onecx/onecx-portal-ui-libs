@@ -1,4 +1,4 @@
-export interface ProviderInfo {
+export interface Provider {
   name: string
   importPath: string
 }

@@ -1,5 +1,12 @@
 import { Tree, visitNotIgnoredFiles } from '@nx/devkit'
 
+/**
+ * Retrieves the paths of the files that contain a pattern.
+ * @param tree - the file tree to search in
+ * @param rootDir - the directory to start searching from
+ * @param matcher - string or RegExp to match
+ * @returns {string[]} list of file paths containing the pattern
+ */
 export function findPatternInFiles(tree: Tree, rootDir: string, matcher: string | RegExp): string[] {
   const matchingFiles: string[] = []
 
