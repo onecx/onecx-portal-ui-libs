@@ -6,7 +6,8 @@
     "sass": "npx sass libs/portal-integration-angular/assets/styles.scss libs/portal-integration-angular/assets/output.css",
     "postinstall": "mkdir -p .nx",
     "build": "nx run-many -t build build-migrations",
-    "build-copy": "npm run build && node copy-build.js"
+    "build-copy": "npm run build && node copy-build.js",
+    "test:ci": "nx run-many -t test --watch=false --browsers=ChromeHeadless --coverage"
   },
   "private": true,
   "dependencies": {
@@ -102,6 +103,8 @@
     "jest-environment-node": "^29.7.0",
     "jest-preset-angular": "^14.2.2",
     "jsonc-eslint-parser": "^2.4.0",
+    "jest-sonar": "^0.2.16",
+    "jest-sonar-reporter": "^2.0.0",
     "msw": "^2.4.9",
     "msw-storybook-addon": "^2.0.2",
     "ng-mocks": "^14.13.1",
@@ -117,7 +120,9 @@
     "replace-json-property": "^1.9.0",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "sonar-scanner": "^3.1.0",
+    "sonarqube-scanner": "^4.3.0"
   },
   "nx": {
     "includedScripts": []

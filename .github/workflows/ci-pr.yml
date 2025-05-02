@@ -1,18 +1,22 @@
-name: CI on Push
+name: CI on Pull Request
 
 on:
-  workflow_dispatch:
-  push:
+  pull_request:
     branches:
-      - '*'
-      - '*/*'
-      - '**'
+      - main
+      - develop
+      - v3
 
 jobs:
+  dependency-review:
+    uses: onecx/ci-common/.github/workflows/dependency-review.yml@v1
+    secrets: inherit
+    with:
+      failOnSeverity: 'high'
+
   codeql:
     uses: onecx/ci-angular/.github/workflows/angular-codeql.yml@v1
     secrets: inherit
-
   ci-lint:
     uses: ./.github/workflows/ci-lint.yml
     secrets: inherit

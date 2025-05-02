@@ -1,0 +1,79 @@
+name: Dynamic SonarQube Scan
+
+on:
+  workflow_call:
+    inputs:
+      node:
+        description: 'Node version'
+        default: '20'
+        required: false
+        type: string
+
+jobs:
+  set-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Download path files
+        uses: actions/download-artifact@v4
+        with:
+          name: path-files
+
+      - name: Read raw_paths from file
+        id: set-matrix
+        run: |
+          matrix=$(cat raw_paths.txt | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+
+  sonar-scan:
+    needs: set-matrix
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        path: ${{ fromJson(needs.set-matrix.outputs.matrix) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node }}
+          cache: 'npm'
+
+      - name: Download reports
+        uses: actions/download-artifact@v4
+        with:
+          name: package
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_URL: 'https://sonarcloud.io'
+        with:
+          projectBaseDir: libs/${{ matrix.path }}/
+          args: >
+            -Dsonar.projectKey=${{ github.repository_owner }}_${{ github.event.repository.name }}_${{ matrix.path }}
+            -Dsonar.host.url=$SONAR_URL
+            -Dsonar.organization=${{ github.repository_owner }}
+            -Dsonar.scm.disabled=true
+            -Dsonar.sourceEncoding=UTF-8
+            -Dsonar.javascript.coveragePlugin=lcov
+            -Dsonar.javascript.lcov.reportPaths=../../reports/${{ matrix.path }}/coverage/lcov.info
+            -Dsonar.testExecutionReportPaths=../../reports/${{ matrix.path }}/sonarqube_report.xml
+            -Dsonar.working.directory=../../reports/${{ matrix.path }}/.scannerwork
+            -Dsonar.javascript.maximumFunctionParameters=10"
+            -Dsonar.typescript.maximumFunctionParameters=10"
+            -Dsonar.cdp.javascript.maximumFunctionParameters=10"
+            -Dsonar.cdp.typescript.maximumFunctionParameters=10"
+            -Dsonar.javascript.exclusions=src/app/shared/generated/**/*"
+            -Dsonar.cpd.exclusions=src//**/*.ts"
+            -Dsonar.coverage.exclusions=*.ts,*.js,src/*.ts,src/**/*.module.ts,src/**/*.main.ts,src/**/*.bootstrap.ts,src/environments/*,src/assets/**/*,src/app/shared/generated/**/*"
+            -Dsonar.test.inclusions=src/**/*.spec.ts"

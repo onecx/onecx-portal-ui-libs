@@ -1,0 +1,50 @@
+name: ci-test
+
+on:
+  workflow_call:
+
+jobs:
+  ci-test-runner:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - uses: nrwl/nx-set-shas@v3
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Run Tests
+        run: |
+          npx nx run-many -t test --watch=false --browsers=ChromeHeadless --coverage
+
+      - name: Download path files
+        uses: actions/download-artifact@v4
+        with:
+          name: path-files
+
+      - name: Modify lcov.info files
+        run: |
+          while IFS= read -r path; do
+          if [ -f "$path" ]; then
+            sed -i 's|^SF:|SF:/|' "$path"
+          else
+            echo "File not found: $path"
+          fi
+          done < lcov_paths.txt
+
+      - name: Upload Sonar artefacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: package
+          path: |
+            package.json      
+            reports/
+          retention-days: 1
+          if-no-files-found: ignore

@@ -3,7 +3,6 @@ export default {
   displayName: 'angular-integration-interface',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  coverageDirectory: '../../coverage/libs/angular-integration-interface',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [
       'jest-preset-angular',
@@ -18,5 +17,21 @@ export default {
     'jest-preset-angular/build/serializers/no-ng-attributes',
     'jest-preset-angular/build/serializers/ng-snapshot',
     'jest-preset-angular/build/serializers/html-comment',
+  ],
+  testMatch: ['<rootDir>/src/lib/**/*.spec.ts'],
+  coverageDirectory: '../../reports/angular-integration-interface/coverage',
+  collectCoverage: true,
+  coverageReporters: ['json', ['lcov', { projectRoot: '/' }], 'text', 'text-summary', 'html'],
+  testResultsProcessor: 'jest-sonar-reporter',
+  reporters: [
+    'default',
+    [
+      'jest-sonar',
+      {
+        outputDirectory: './reports/angular-integration-interface',
+        outputName: 'sonarqube_report.xml',
+        reportedFilePath: 'absolute',
+      },
+    ],
   ],
 }
