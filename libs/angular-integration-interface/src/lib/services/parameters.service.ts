@@ -34,7 +34,7 @@ export class ParametersService implements OnDestroy {
    * @param defaultValue The default value that will be returned if the parameter is not found or if the shell is not yet providing the parameters because it is to old.
    * @param productName The name of the product in which the parameter is defined.
    * @param appId The id of the application in which the parameter is defined.
-   * @returns 
+   * @returns The value of the parameter or the default value.
    */
   public async get<T extends Parameter>(
     key: string,
