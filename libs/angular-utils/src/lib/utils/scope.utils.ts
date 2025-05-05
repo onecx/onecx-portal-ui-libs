@@ -148,7 +148,7 @@ export async function getScopeIdentifier(
 }
 
 // If scope rule is not supported, its wrapped via supports rule to be handled by the polyfill
-export function scopeStyle(css: string, scopeId: string) {
+export function scopeCss(css: string, scopeId: string) {
   const isScopeSupported = isCssScopeRuleSupported()
   if (scopeId === '') {
     return isScopeSupported

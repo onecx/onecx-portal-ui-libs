@@ -72,10 +72,13 @@ export const dataShellStylesAttribute = 'data-shell-styles'
  * @returns {string} css with only rules for ":root" selector
  */
 export function extractRootRules(css: string): string {
-  const matches = css.match(/:root\s*\{[^}]*\}/g)
+  const matches = css.match(/:root\{([^\}]*)}/g)
   if (!matches) return ''
 
-  return matches.join(' ')
+  // This removes the ":root{" and replaces last curly brace "}" with a semicolon ";".
+  // Without this the css is invalid because the last property is never closed.
+  const extractedRules = matches.map((match) => match.replace(/:root\s*\{/, '').slice(0, -1) + ';')
+  return extractedRules.join(' ')
 }
 
 /**
@@ -97,14 +100,14 @@ export function createScopedCss(css: string, scopeId: string): string {
   const isScopeSupported = isCssScopeRuleSupported()
   return isScopeSupported
     ? `
-  ${extractRootRules(css)}
-@scope([${dataStyleIdAttribute}="${scopeId}"]) to ([${dataStyleIsolationAttribute}]) {
+    @scope([${dataStyleIdAttribute}="${scopeId}"]) to ([${dataStyleIsolationAttribute}]) {
+        ${extractRootRules(css)}
         ${extractNonRootRules(css)}
     }
 `
     : `
-  ${extractRootRules(css)}
-@supports (@scope([${dataStyleIdAttribute}="${scopeId}"]) to ([${dataStyleIsolationAttribute}])) {
+    @supports (@scope([${dataStyleIdAttribute}="${scopeId}"]) to ([${dataStyleIsolationAttribute}])) {
+        ${extractRootRules(css)}
         ${extractNonRootRules(css)}
     }
 `
