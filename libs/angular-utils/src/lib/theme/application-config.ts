@@ -2,6 +2,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { providePrimeNG } from 'primeng/config'
 import { provideThemeConfigService } from '../services/theme-config.service'
 import { InjectionToken } from '@angular/core'
+import { provideAppStylesInitializer } from '../utils/styles/app-styles-initializer'
 
 export type ThemeOverrides = (() => Promise<any> | any) | Promise<any> | any
 export const THEME_OVERRIDES = new InjectionToken<ThemeOverrides>('THEME_OVERRIDES')
@@ -18,5 +19,11 @@ export function provideThemeConfig(options?: ThemeConfigProviderOptions) {
       useValue: options.overrides,
     })
   }
-  return [provideAnimationsAsync(), providePrimeNG({}), provideThemeConfigService(), ...dynamicProviders]
+  return [
+    provideAnimationsAsync(),
+    providePrimeNG({}),
+    provideThemeConfigService(),
+    provideAppStylesInitializer(),
+    ...dynamicProviders,
+  ]
 }
