@@ -1,5 +1,10 @@
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http'
-import { dataStyleIdAttribute, dataStyleIsolationAttribute, isCssScopeRuleSupported } from '../scope.utils'
+import {
+  dataNoPortalLayoutStylesAttribute,
+  dataStyleIdAttribute,
+  dataStyleIsolationAttribute,
+  isCssScopeRuleSupported,
+} from '../scope.utils'
 import { isStyleUsedByMfe } from './mfe-styles.utils'
 import { getStyleUsageCountForRc } from './rc-styles.utils'
 import { catchError, firstValueFrom, mergeMap, of, throwError } from 'rxjs'
@@ -98,13 +103,13 @@ export function createScopedCss(css: string, scopeId: string): string {
   return isScopeSupported
     ? `
   ${extractRootRules(css)}
-@scope([${dataStyleIdAttribute}="${scopeId}"]) to ([${dataStyleIsolationAttribute}]) {
+@scope([${dataStyleIdAttribute}="${scopeId}"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]) {
         ${extractNonRootRules(css)}
     }
 `
     : `
   ${extractRootRules(css)}
-@supports (@scope([${dataStyleIdAttribute}="${scopeId}"]) to ([${dataStyleIsolationAttribute}])) {
+@supports (@scope([${dataStyleIdAttribute}="${scopeId}"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}])) {
         ${extractNonRootRules(css)}
     }
 `
