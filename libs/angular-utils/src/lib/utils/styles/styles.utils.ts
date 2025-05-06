@@ -103,13 +103,13 @@ export function createScopedCss(css: string, scopeId: string): string {
   return isScopeSupported
     ? `
   ${extractRootRules(css)}
-@scope([${dataStyleIdAttribute}="${scopeId}"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]) {
+@scope([${dataStyleIdAttribute}="${scopeId}"]) to ([${dataStyleIsolationAttribute}]) {
         ${extractNonRootRules(css)}
     }
 `
     : `
   ${extractRootRules(css)}
-@supports (@scope([${dataStyleIdAttribute}="${scopeId}"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}])) {
+@supports (@scope([${dataStyleIdAttribute}="${scopeId}"]) to ([${dataStyleIsolationAttribute}])) {
         ${extractNonRootRules(css)}
     }
 `
