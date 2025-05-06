@@ -10,7 +10,6 @@ import {
   writeJson,
 } from '@nx/devkit'
 import { printWarnings } from '@onecx/nx-migration-utils'
-import { ast, query } from '@phenomnomnominal/tsquery'
 import { execSync } from 'child_process'
 
 export default async function migrateOnecxToV6(tree: Tree) {
@@ -124,7 +123,6 @@ export default async function migrateOnecxToV6(tree: Tree) {
 
   await formatFiles(tree)
 
-  checkConfigurationServiceUsage(tree, srcDirectoryPath)
   warnOcxPortalViewport(tree, srcDirectoryPath)
 }
 
@@ -275,26 +273,6 @@ function migratePrimeNgCalendar(tree: Tree, directoryPath: string) {
       }
     }
   })
-}
-
-function checkConfigurationServiceUsage(tree: Tree, directoryPath: string) {
-  const foundInFiles: string[] = []
-  const warning = '⚠️ ConfigurationService is now asynchronous. Please check if usage needs to be adapted.'
-
-  visitNotIgnoredFiles(tree, directoryPath, (filePath) => {
-    const fileContent = tree.read(filePath, 'utf-8')
-
-    if (!fileContent) return
-
-    const contentAst = ast(fileContent)
-    const referencesNodes = query(contentAst, 'Identifier[name="ConfigurationService"]')
-
-    if (referencesNodes.length > 0) {
-      foundInFiles.push(filePath)
-    }
-  })
-
-  printWarnings(warning, foundInFiles)
 }
 
 function warnOcxPortalViewport(tree: Tree, directoryPath: string) {
