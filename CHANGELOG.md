@@ -1,3 +1,21 @@
+## [6.0.0-rc.8](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.7...v6.0.0-rc.8) (2025-05-06)
+
+### Features
+
+* add align-items center to pageheader ([#725](https://github.com/onecx/onecx-portal-ui-libs/issues/725)) ([ba49d3d](https://github.com/onecx/onecx-portal-ui-libs/commit/ba49d3d294bb4ed1ae6984940dc80256f0d44719))
+* cherry pick from main ([#705](https://github.com/onecx/onecx-portal-ui-libs/issues/705)) ([91f7675](https://github.com/onecx/onecx-portal-ui-libs/commit/91f7675e9d93c0e95beda75cb958cac3a380d0c9)), closes [#697](https://github.com/onecx/onecx-portal-ui-libs/issues/697) [#698](https://github.com/onecx/onecx-portal-ui-libs/issues/698) [#701](https://github.com/onecx/onecx-portal-ui-libs/issues/701)
+* create and use CurrentLocationTopic, add CapabilityService and topic debugger ([#689](https://github.com/onecx/onecx-portal-ui-libs/issues/689)) ([#719](https://github.com/onecx/onecx-portal-ui-libs/issues/719)) ([e8b51ed](https://github.com/onecx/onecx-portal-ui-libs/commit/e8b51ede589c9d14bf181d7c54be8ab4757f958f))
+* multiple dialogs cherry pick ([#722](https://github.com/onecx/onecx-portal-ui-libs/issues/722)) ([673d1e6](https://github.com/onecx/onecx-portal-ui-libs/commit/673d1e64f6c69efda52389cdf9239b981cf4abcb)), closes [#718](https://github.com/onecx/onecx-portal-ui-libs/issues/718)
+* pass css via slot ([#717](https://github.com/onecx/onecx-portal-ui-libs/issues/717)) ([eaca563](https://github.com/onecx/onecx-portal-ui-libs/commit/eaca563b0a94024c1a141400f47a0945c14ce68d))
+* style isolation ([#713](https://github.com/onecx/onecx-portal-ui-libs/issues/713)) ([0764e67](https://github.com/onecx/onecx-portal-ui-libs/commit/0764e6707c17d093400f6218ef5e6de3deba73ff))
+
+### Bug Fixes
+
+* app style scoping and fake topic ([#727](https://github.com/onecx/onecx-portal-ui-libs/issues/727)) ([cbe13ab](https://github.com/onecx/onecx-portal-ui-libs/commit/cbe13ab6e764c11ad33f356d5f86b4973782af23))
+* disable dark mode ([#721](https://github.com/onecx/onecx-portal-ui-libs/issues/721)) ([263aeeb](https://github.com/onecx/onecx-portal-ui-libs/commit/263aeeb3262d078014b0afe84a50e547f622ecc5))
+* picklist move up down test, source-/targetHeader properties ([#720](https://github.com/onecx/onecx-portal-ui-libs/issues/720)) ([3810e43](https://github.com/onecx/onecx-portal-ui-libs/commit/3810e4304adb8427250062690949146e2619e9af))
+* revert app style scoping change ([#730](https://github.com/onecx/onecx-portal-ui-libs/issues/730)) ([a09d0ca](https://github.com/onecx/onecx-portal-ui-libs/commit/a09d0ca7aaff4ee72074abd3a98789a168778cf7))
+
 ## [6.0.0-rc.7](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.6...v6.0.0-rc.7) (2025-04-16)
 
 ### Features
