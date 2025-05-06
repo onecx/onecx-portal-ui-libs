@@ -1,10 +1,5 @@
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http'
-import {
-  dataNoPortalLayoutStylesAttribute,
-  dataStyleIdAttribute,
-  dataStyleIsolationAttribute,
-  isCssScopeRuleSupported,
-} from '../scope.utils'
+import { dataStyleIdAttribute, dataStyleIsolationAttribute, isCssScopeRuleSupported } from '../scope.utils'
 import { isStyleUsedByMfe } from './mfe-styles.utils'
 import { getStyleUsageCountForRc } from './rc-styles.utils'
 import { catchError, firstValueFrom, mergeMap, of, throwError } from 'rxjs'
