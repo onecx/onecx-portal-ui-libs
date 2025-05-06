@@ -28,6 +28,14 @@ export const dataStyleIsolationKey = 'styleIsolation'
 export const dataNoPortalLayoutStylesKey = 'noPortalLayoutStyles'
 
 /**
+ * @constant {string} dataMfeElementKey
+ * @description Marks element as the mfe content
+ * Marks that scope section does not request portal layout styles
+ * Present for MFE and its dynamic content
+ */
+export const dataMfeElementKey = 'mfeElement'
+
+/**
  * @constant {string} dataIntermediateStyleIdKey
  * @description Metadata used when appending dynamic content to ensure style scoping outside the application
  * (e.g. data-intermediate-style-id="onecx-workspace|onecx-workspace-ui")
@@ -69,6 +77,12 @@ export const dataDynamicPortalLayoutStylesKey = 'dynamicContentPortalLayoutStyle
  * @description HTML attribute for styleId. See {@link dataStyleIdKey} for more details.
  */
 export const dataStyleIdAttribute = 'data-style-id'
+
+/**
+ * @constant {string} dataMfeElementAttribute
+ * @description HTML attribute for mfe element. See {@link dataMfeElementKey} for more details.
+ */
+export const dataMfeElementAttribute = 'data-mfe-element'
 
 /**
  * @constant {string} dataStyleIsolationAttribute
