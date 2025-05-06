@@ -34,7 +34,7 @@ export class FakeTopic<T> {
     this.state.complete()
   }
 
-  getValue(): T | undefined {
+  getValue(): T {
     if (this.state instanceof BehaviorSubject) {
       return this.state.getValue()
     }
