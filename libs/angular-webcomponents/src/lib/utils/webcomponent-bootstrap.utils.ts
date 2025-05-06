@@ -15,8 +15,10 @@ import {
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { getLocation } from '@onecx/accelerator'
+
 import { EventsTopic, CurrentLocationTopicPayload, TopicEventType } from '@onecx/integration-interface'
 import { Observable, Subscription, filter } from 'rxjs'
+import { dataNoPortalLayoutStylesKey } from '@onecx/angular-utils'
 import { ShellCapabilityService, Capability } from '@onecx/angular-integration-interface'
 import { AppStateService } from '@onecx/angular-integration-interface'
 
@@ -102,7 +104,7 @@ function createEntrypoint(
   const originalConnectedCallback = myRemoteComponentAsWebComponent.prototype.connectedCallback
 
   myRemoteComponentAsWebComponent.prototype.connectedCallback = function () {
-    this.dataset.noPortalLayoutStyles = ''
+    this.dataset[dataNoPortalLayoutStylesKey] = ''
     originalConnectedCallback.call(this)
   }
 
@@ -165,7 +167,11 @@ export function cachePlatform(production: boolean): PlatformRef {
   return platform
 }
 
-function connectMicroFrontendRouter(injector: Injector, warnOnMissingRouter: boolean, eventsTopic: EventsTopic | undefined): Subscription | null {
+function connectMicroFrontendRouter(
+  injector: Injector,
+  warnOnMissingRouter: boolean,
+  eventsTopic: EventsTopic | undefined
+): Subscription | null {
   const router = injector.get(Router, null)
   const appStateService = injector.get(AppStateService, null)
   if (!router) {
@@ -183,7 +189,11 @@ function connectMicroFrontendRouter(injector: Injector, warnOnMissingRouter: boo
   return connectRouter(router, appStateService, eventsTopic)
 }
 
-function connectRouter(router: Router, appStateService: AppStateService, eventsTopic: EventsTopic | undefined): Subscription {
+function connectRouter(
+  router: Router,
+  appStateService: AppStateService,
+  eventsTopic: EventsTopic | undefined
+): Subscription {
   const initialUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}${location.hash}`
   router.navigateByUrl(initialUrl, {
     replaceUrl: true,
