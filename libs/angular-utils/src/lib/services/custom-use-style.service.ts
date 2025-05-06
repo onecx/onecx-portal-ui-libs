@@ -1,11 +1,18 @@
 import { Inject, Injectable, InjectionToken, Optional } from '@angular/core'
 import { UseStyle } from 'primeng/usestyle'
-import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-remote-components'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import { ReplaySubject } from 'rxjs'
 import { THEME_OVERRIDES, ThemeOverrides } from '../theme/application-config'
+import { REMOTE_COMPONENT_CONFIG } from '../model/injection-tokens'
+import { RemoteComponentConfig } from '../model/remote-component-config.model'
 import { toVariables } from '@primeuix/styled'
-import { dataVariableOverrideIdAttibute, getScopeIdentifier, replacePrefix, scopeStyle } from '../utils/scope.utils'
+import {
+  dataVariableOverrideIdAttribute,
+  getScopeIdentifier,
+  replacePrimengPrefix,
+  scopeStyle,
+  shellScopeId,
+} from '../utils/scope.utils'
 
 export const SKIP_STYLE_SCOPING = new InjectionToken<boolean>('SKIP_STYLE_SCOPING')
 
@@ -23,7 +30,7 @@ export class CustomUseStyle extends UseStyle {
   // Each Application needs to isolate the CSS variables and styles from others
   override use(css: any, options?: any): { id: any; name: any; el: any; css: any } {
     getScopeIdentifier(this.appStateService, this.skipStyleScoping, this.remoteComponentConfig).then((scopeId) => {
-      css = replacePrefix(css, scopeId)
+      css = replacePrimengPrefix(css, scopeId)
       css = this.isStyle(options.name as string) ? scopeStyle(css, scopeId) : css
 
       options = {
@@ -48,8 +55,8 @@ export class CustomUseStyle extends UseStyle {
       const variablesData = toVariables(resolvedOverrides)
       if (variablesData.value.length === 0) return
 
-      const styleRef = this.createOrRetrieveOverrideElement(scopeId ? scopeId : 'shell-ui')
-      const prefixedOverrides = replacePrefix(variablesData.css, scopeId)
+      const styleRef = this.createOrRetrieveOverrideElement(scopeId ? scopeId : shellScopeId)
+      const prefixedOverrides = replacePrimengPrefix(variablesData.css, scopeId)
       styleRef.textContent = prefixedOverrides
       // Always make sure it is the last child of the document head
       this.document.head.appendChild(styleRef)
@@ -58,10 +65,10 @@ export class CustomUseStyle extends UseStyle {
 
   private createOrRetrieveOverrideElement(overrideId: string): Element {
     const styleRef =
-      this.document.querySelector(`style[${dataVariableOverrideIdAttibute}="${overrideId}"]`) ||
+      this.document.querySelector(`style[${dataVariableOverrideIdAttribute}="${overrideId}"]`) ||
       this.document.createElement('style')
     if (!styleRef.isConnected) {
-      styleRef.setAttribute(`${dataVariableOverrideIdAttibute}`, overrideId)
+      styleRef.setAttribute(`${dataVariableOverrideIdAttribute}`, overrideId)
     }
     return styleRef
   }
