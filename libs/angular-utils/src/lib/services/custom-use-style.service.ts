@@ -1,8 +1,10 @@
 import { Inject, Injectable, InjectionToken, Optional } from '@angular/core'
 import { UseStyle } from 'primeng/usestyle'
-import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig, AppStateService } from '@onecx/angular-integration-interface'
+import { AppStateService } from '@onecx/angular-integration-interface'
 import { ReplaySubject } from 'rxjs'
 import { THEME_OVERRIDES, ThemeOverrides } from '../theme/application-config'
+import { REMOTE_COMPONENT_CONFIG } from '../model/injection-tokens'
+import { RemoteComponentConfig } from '../model/remote-component-config.model'
 import { toVariables } from '@primeuix/styled'
 import {
   dataVariableOverrideIdAttribute,

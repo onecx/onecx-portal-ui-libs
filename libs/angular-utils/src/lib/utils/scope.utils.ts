@@ -1,5 +1,6 @@
-import { AppStateService, RemoteComponentConfig } from '@onecx/angular-integration-interface'
+import { AppStateService } from '@onecx/angular-integration-interface'
 import { ReplaySubject, firstValueFrom, map } from 'rxjs'
+import { RemoteComponentConfig } from '../model/remote-component-config.model'
 
 export const shellScopeId = 'shell-ui'
 
