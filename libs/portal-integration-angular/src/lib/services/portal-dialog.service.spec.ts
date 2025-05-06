@@ -6,7 +6,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { ButtonModule } from 'primeng/button'
-import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog'
+import { DialogService, DynamicDialogModule, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { Observable, of } from 'rxjs'
 
 import { DivHarness, InputHarness } from '@onecx/angular-testing'
@@ -831,9 +831,13 @@ describe('PortalDialogService', () => {
       'button2'
     )
 
-    const dialogRefSpy = jest.spyOn((fixture.componentInstance.portalDialogService as any).dialogRef, 'close')
+    const dialogService = TestBed.inject(DialogService)
+    expect(dialogService.dialogComponentRefMap.size).toBe(1)
+    const dialogRef = dialogService.dialogComponentRefMap.keys().next().value as DynamicDialogRef
+    expect(dialogRef).toBeDefined()
+    const dialogRefSpy = jest.spyOn(dialogRef, 'close')
 
-    const dialogElement = (fixture.componentInstance.portalDialogService as any).dialogComponent.el.nativeElement
+    const dialogElement = dialogService.getInstance(dialogRef).el.nativeElement
 
     fixture.detectChanges()
 
