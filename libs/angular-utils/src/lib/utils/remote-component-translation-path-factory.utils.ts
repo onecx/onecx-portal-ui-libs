@@ -1,6 +1,6 @@
 import { map, Observable, ReplaySubject } from 'rxjs'
 import { Location } from '@angular/common'
-import { RemoteComponentConfig } from '@onecx/angular-integration-interface'
+import { RemoteComponentConfig } from '../model/remote-component-config.model'
 
 export function remoteComponentTranslationPathFactory(path: string) {
   return function TranslationPathFactory(

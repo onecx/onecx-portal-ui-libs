@@ -12,6 +12,10 @@ export * from './lib/utils/remote-component-translation-path-factory.utils'
 export * from './lib/utils/scope.utils'
 export * from './lib/utils/styles'
 
+// Model
+export * from './lib/model/injection-tokens'
+export * from './lib/model/remote-component-config.model'
+
 // Services
 export * from './lib/services/translation-cache.service'
 export * from './lib/services/theme-config.service'

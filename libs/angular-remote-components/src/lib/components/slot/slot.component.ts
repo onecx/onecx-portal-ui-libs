@@ -18,9 +18,8 @@ import { Technologies } from '@onecx/integration-interface'
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs'
 import { ocxRemoteComponent } from '../../model/remote-component'
 import { RemoteComponentInfo, SLOT_SERVICE, SlotComponentConfiguration, SlotService } from '../../services/slot.service'
-import { updateStylesForRcCreation, updateStylesForRcRemoval } from '@onecx/angular-utils'
+import { updateStylesForRcCreation, updateStylesForRcRemoval, RemoteComponentConfig } from '@onecx/angular-utils'
 import { HttpClient } from '@angular/common/http'
-import { RemoteComponentConfig } from '@onecx/angular-integration-interface'
 
 interface AssignedComponent {
   refOrElement: ComponentRef<any> | HTMLElement

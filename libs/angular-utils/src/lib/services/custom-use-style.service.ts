@@ -1,14 +1,16 @@
 import { Inject, Injectable, InjectionToken, Optional } from '@angular/core'
 import { UseStyle } from 'primeng/usestyle'
-import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig, AppStateService } from '@onecx/angular-integration-interface'
+import { AppStateService } from '@onecx/angular-integration-interface'
 import { ReplaySubject } from 'rxjs'
 import { THEME_OVERRIDES, ThemeOverrides } from '../theme/application-config'
+import { REMOTE_COMPONENT_CONFIG } from '../model/injection-tokens'
+import { RemoteComponentConfig } from '../model/remote-component-config.model'
 import { toVariables } from '@primeuix/styled'
 import {
   dataVariableOverrideIdAttribute,
   getScopeIdentifier,
   replacePrimengPrefix,
-  scopeCss,
+  scopePrimengCss,
   shellScopeId,
 } from '../utils/scope.utils'
 import { replaceRootWithScope } from '../utils/styles'
@@ -29,7 +31,7 @@ export class CustomUseStyle extends UseStyle {
   // Each Application needs to isolate the CSS variables and styles from others
   override use(css: any, options?: any): { id: any; name: any; el: any; css: any } {
     getScopeIdentifier(this.appStateService, this.skipStyleScoping, this.remoteComponentConfig).then((scopeId) => {
-      css = scopeCss(replaceRootWithScope(replacePrimengPrefix(css, scopeId)), scopeId)
+      css = scopePrimengCss(replaceRootWithScope(replacePrimengPrefix(css, scopeId)), scopeId)
 
       options = {
         ...options,
