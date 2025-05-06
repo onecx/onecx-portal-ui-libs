@@ -20,32 +20,34 @@ export class PortalPageComponent implements OnInit {
   @Input() applicationId = ''
 
   collapsed = false
-  cachedAccessPermissionChecker$: Observable<boolean> | undefined
-  cachedAccessUserService$: Observable<boolean> | undefined
+  cachedHasPermissionChecker$: Observable<boolean> | undefined
+  cachedUserService$: Observable<boolean> | undefined
 
   hasAccess(): Observable<boolean> {
-    if (this.cachedAccessPermissionChecker$) {
-      return this.cachedAccessPermissionChecker$
+    if (this.cachedHasPermissionChecker$) {
+      return this.cachedHasPermissionChecker$
     }
 
-    if (this.cachedAccessUserService$) {
-      return this.cachedAccessUserService$
+    if (this.cachedUserService$) {
+      return this.cachedUserService$
     }
 
     if (this.hasPermissionChecker) {
-      const hpc$ = this.permission
+      const hasPermissionChecker$ = this.permission
         ? from(this.hasPermissionChecker.hasPermission(this.permission))
         : from(Promise.resolve(true))
 
-        this.cachedAccessPermissionChecker$ = hpc$.pipe(shareReplay(1))
-        
-        return this.cachedAccessPermissionChecker$
+      this.cachedHasPermissionChecker$ = hasPermissionChecker$.pipe(shareReplay(1))
+
+      return this.cachedHasPermissionChecker$
     }
 
-    const hpu$ = this.permission ? from(this.userService.hasPermission(this.permission)) : from(Promise.resolve(true))
-    this.cachedAccessUserService$ = hpu$.pipe(shareReplay(1))
-    
-    return this.cachedAccessUserService$
+    const userServiceHasPermission$ = this.permission
+      ? from(this.userService.hasPermission(this.permission))
+      : from(Promise.resolve(true))
+    this.cachedUserService$ = userServiceHasPermission$.pipe(shareReplay(1))
+
+    return this.cachedUserService$
   }
 
   ngOnInit(): void {

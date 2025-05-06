@@ -308,7 +308,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return 0
   }
 
-  // showMenu = false
   gridMenuItems: MenuItem[] = []
   selectedItem: ListGridData | undefined
   observedOutputs = 0
@@ -404,12 +403,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
       map(([items]) => items)
     )
 
-    // not used anywhere?
-    // this.showMenu =
-    //   (!!this.viewPermission && this.userService.hasPermission(this.viewPermission)) ||
-    //   (!!this.editPermission && this.userService.hasPermission(this.editPermission)) ||
-    //   (!!this.deletePermission && this.userService.hasPermission(this.deletePermission))
-
     this.emitComponentStateChanged()
   }
 
@@ -445,11 +438,16 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     this.deleteItem.emit(element)
   }
 
-  async onViewRow(element: ListGridData) {
-    // is this permission check also necessary?
-    // or is the permission directive in thet html enough
-    if (!!this.viewPermission && (await this.userService.hasPermission(this.viewPermission))) {
-      this.viewItem.emit(element)
+  onViewRow(element: ListGridData) {
+    console.log('ON VIEW')
+    if (this.viewPermission) {
+      console.log('VIEW PERMISSION ', this.viewPermission)
+      this.userService.hasPermission(this.viewPermission).then((hasPermission) => {
+        console.log('VIEW HASPERMISSION ', hasPermission)
+        if (hasPermission) {
+          this.viewItem.emit(element)
+        }
+      })
     }
   }
 
@@ -489,8 +487,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
       deleteVisible =
         !this.deleteActionVisibleField || this.fieldIsTruthy(this.selectedItem, this.deleteActionVisibleField)
     }
-
-    // const hasPermission$ = from(this.userService.hasPermission(this.viewPermission || '')).pipe(map((permission) => permission === true))
 
     this.translateService
       .get([

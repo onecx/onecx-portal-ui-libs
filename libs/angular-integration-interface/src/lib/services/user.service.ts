@@ -29,7 +29,8 @@ export class UserService implements OnDestroy {
     if (!permissionKey) return true
 
     if (Array.isArray(permissionKey)) {
-      return permissionKey.every(async (key) => await this.hasPermission(key))
+      const permissions = await Promise.all(permissionKey.map((key) => this.hasPermission(key)))
+      return permissions.every((hasPermission) => hasPermission)
     }
 
     return firstValueFrom(

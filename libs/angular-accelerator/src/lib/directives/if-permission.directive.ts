@@ -78,7 +78,7 @@ export class IfPermissionDirective implements OnInit {
       }
       return Promise.resolve(result)
     }
-    const results = await Promise.all(permission.map((p_1) => this.permissionChecker?.hasPermission(p_1)))
-    return results.every((result_1) => result_1)
+    const results = await Promise.all(permission.map((p) => this.permissionChecker?.hasPermission(p)))
+    return results.every((result) => result)
   }
 }

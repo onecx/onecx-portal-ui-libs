@@ -58,7 +58,7 @@
       <div class="flex flex-row justify-content-between align-items-center">
         <div class="data-grid-items flex-row">
           <div class="item-name font-medium mr-3 text-2xl">
-            <a [routerLink]="" (click)="onViewRow">{{ resolveFieldData(item, titleLineId) || '' }}</a>
+            <a [routerLink]="" (click)="onViewRow(item)">{{ resolveFieldData(item, titleLineId) || '' }}</a>
           </div>
           <ng-container
             [ngTemplateOutlet]="_gridItemSubtitleLines ? _gridItemSubtitleLines : defaultGridItemSubtitleLines"
