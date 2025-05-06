@@ -40,4 +40,7 @@ export class FakeTopic<T> {
     }
     throw new Error('Only possible for FakeTopic with initial value')
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  destroy(): void {}
 }
