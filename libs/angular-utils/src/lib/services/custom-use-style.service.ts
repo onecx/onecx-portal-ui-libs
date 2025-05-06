@@ -10,7 +10,7 @@ import {
   dataVariableOverrideIdAttribute,
   getScopeIdentifier,
   replacePrimengPrefix,
-  scopeStyle,
+  scopePrimengCss,
   shellScopeId,
 } from '../utils/scope.utils'
 
@@ -31,7 +31,7 @@ export class CustomUseStyle extends UseStyle {
   override use(css: any, options?: any): { id: any; name: any; el: any; css: any } {
     getScopeIdentifier(this.appStateService, this.skipStyleScoping, this.remoteComponentConfig).then((scopeId) => {
       css = replacePrimengPrefix(css, scopeId)
-      css = this.isStyle(options.name as string) ? scopeStyle(css, scopeId) : css
+      css = this.isStyle(options.name as string) ? scopePrimengCss(css, scopeId) : css
 
       options = {
         ...options,
