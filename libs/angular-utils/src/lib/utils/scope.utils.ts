@@ -43,6 +43,12 @@ export const dataMfeElementKey = 'mfeElement'
 export const dataIntermediateStyleIdKey = 'intermediateStyleId'
 
 /**
+ * @constant {string} dataIntermediateMfeElementKey
+ * @description Metadata used when appending dynamic content to ensure style scoping outside the application
+ */
+export const dataIntermediateMfeElementKey = 'intermediateMfeElement'
+
+/**
  * @constant {string} dataIntermediateStyleIsolationKey
  * @description Metadata used when appending dynamic content to ensure style scoping outside the application
  */
@@ -101,6 +107,12 @@ export const dataNoPortalLayoutStylesAttribute = 'data-no-portal-layout-styles'
  * @description HTML attribute for intermediateStyleId. See {@link dataIntermediateStyleIdKey} for more details.
  */
 export const dataIntermediateStyleIdAttribute = 'data-intermediate-style-id'
+
+/**
+ * @constant {string} dataIntermediateMfeElementAttribute
+ * @description HTML attribute for intermediateMfeElement. See {@link dataIntermediateMfeElementKey} for more details.
+ */
+export const dataIntermediateMfeElementAttribute = 'data-intermediate-mfe-element'
 
 /**
  * @constant {string} dataIntermediateStyleIsolationAttribute
