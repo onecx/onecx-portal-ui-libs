@@ -11,7 +11,7 @@ import {
   scopeCss,
   shellScopeId,
 } from '../utils/scope.utils'
-import { extractRootRules } from '../utils/styles'
+import { replaceRootWithScope } from '../utils/styles'
 
 export const SKIP_STYLE_SCOPING = new InjectionToken<boolean>('SKIP_STYLE_SCOPING')
 
@@ -29,12 +29,7 @@ export class CustomUseStyle extends UseStyle {
   // Each Application needs to isolate the CSS variables and styles from others
   override use(css: any, options?: any): { id: any; name: any; el: any; css: any } {
     getScopeIdentifier(this.appStateService, this.skipStyleScoping, this.remoteComponentConfig).then((scopeId) => {
-      css = replacePrimengPrefix(css, scopeId)
-      if (this.isStyle(options.name as string)) {
-        css = scopeCss(css, scopeId)
-      } else if (this.isVariables(options.name as string)) {
-        css = scopeCss(this.extractPrimengVariables(css), scopeId)
-      }
+      css = scopeCss(replaceRootWithScope(replacePrimengPrefix(css, scopeId)), scopeId)
 
       options = {
         ...options,
@@ -46,11 +41,6 @@ export class CustomUseStyle extends UseStyle {
     // Result of this call is not used at the moment
     // Fake response ensures its possible to detect future usages of the result of this call
     return this.createFakeUseResponse(css, options)
-  }
-
-  // PrimeNG defines all variables in a ":root" selector
-  private extractPrimengVariables(css: string) {
-    return extractRootRules(css)
   }
 
   private applyOverrides(scopeId: string): Promise<any> {

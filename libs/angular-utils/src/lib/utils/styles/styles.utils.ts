@@ -67,27 +67,12 @@ export const dataRcStylesAttribute = (slotName: string) => `data-${dataRcStylesS
 export const dataShellStylesAttribute = 'data-shell-styles'
 
 /**
- * Extract rules for ":root" selector from a given css.
+ * Replace ":root" selector with ":scope" for a given css
  * @param css - css text to transform
- * @returns {string} css with only rules for ":root" selector
+ * @returns {string} css with replaced selector
  */
-export function extractRootRules(css: string): string {
-  const matches = css.match(/:root\{([^\}]*)}/g)
-  if (!matches) return ''
-
-  // This removes the ":root{" and replaces last curly brace "}" with a semicolon ";".
-  // Without this the css is invalid because the last property is never closed.
-  const extractedRules = matches.map((match) => match.replace(/:root\s*\{/, '').slice(0, -1) + ';')
-  return extractedRules.join(' ')
-}
-
-/**
- * Extract everything apart from rules for ":root" selector from a given css.
- * @param css - css text to transform
- * @returns {string} css without rules for ":root" selector
- */
-export function extractNonRootRules(css: string): string {
-  return css.replace(/:root\s*\{[^}]*\}/g, '')
+export function replaceRootWithScope(css: string): string {
+  return css.replaceAll(':root', ':scope')
 }
 
 /**
@@ -101,14 +86,12 @@ export function createScopedCss(css: string, scopeId: string): string {
   return isScopeSupported
     ? `
     @scope([${dataStyleIdAttribute}="${scopeId}"]) to ([${dataStyleIsolationAttribute}]) {
-        ${extractRootRules(css)}
-        ${extractNonRootRules(css)}
+        ${replaceRootWithScope(css)}
     }
 `
     : `
     @supports (@scope([${dataStyleIdAttribute}="${scopeId}"]) to ([${dataStyleIsolationAttribute}])) {
-        ${extractRootRules(css)}
-        ${extractNonRootRules(css)}
+      ${replaceRootWithScope(css)}
     }
 `
 }
