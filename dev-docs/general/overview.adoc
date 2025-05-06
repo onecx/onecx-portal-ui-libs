@@ -1,0 +1,53 @@
+# Overview
+This page gives an overview about onecx libs.
+
+## Libraries
+[cols="1,3", options="header"]
+|===
+|Lib |Description
+
+|accelerator
+|Contains everything which is needed to simplify things (independent of Angular)
+
+|angular-accelerator
+|Contains everything which is needed to accelerate development - Prefabricated building blocks to drive industrialisation and standardisation
+
+|angular-auth
+|Is used by the shell to perform authentication and for Angular apps to access the existing authentication. Therefore, there will also be react.auth in the future
+
+|angular-integration-interface
+|Instantiation of integration-interface in the Angular world, no additional logic
+
+|angular-remote-components
+|Is needed to load or build remote components in Angular
+
+|angular-testing
+|Contains various things to simplify testing in Angular, utility functions and harnesses
+
+|angular-utils
+|Things we provide to make it easier to integrate Angular apps into the shell (e.g. translation loader)
+
+|angular-webcomponents
+|Helps to split the bootstrapping of angular webcomponents into bootstrapping Angular and launching the app
+
+|integration-interface
+|Contains and handles technology-independent communication interface between shell and the apps, Important: Data structures must not receive any breaking changes!
+
+|keycloak-auth
+|Deprecated
+
+|ngrx-accelerator
+|Contains things you need to standardise and industrialise development with ngrx
+
+|portal-integration-angular
+|Will be removed soon
+
+|portal-layout-styles
+|Will be removed soon
+
+|shell-core
+|Contains everything that shell and the standalone shell share
+
+|standalone-shell
+|Includes everything you need to start an application in standalone mode
+|===
