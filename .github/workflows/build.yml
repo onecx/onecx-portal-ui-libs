@@ -1,10 +1,10 @@
-name: ci-build
+name: build
 
 on:
   workflow_call:
 
 jobs:
-  ci-build-runner:
+  build-affected-libs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,6 +20,6 @@ jobs:
       - name: Install deps
         run: npm ci
 
-      - name: Run Build
+      - name: Run affected Build
         run: |
-          npx nx run-many -t build
+          npx nx affected -t build

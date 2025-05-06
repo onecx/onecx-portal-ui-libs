@@ -1,10 +1,10 @@
-name: ci-lint
+name: lint
 
 on:
   workflow_call:
 
 jobs:
-  ci-lint-runner:
+  lint-affected-libs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,6 +20,6 @@ jobs:
       - name: Install deps
         run: npm ci
 
-      - name: Run Lint
+      - name: Run affected Lint
         run: |
-          npx nx run-many -t lint
+          npx nx affected -t lint

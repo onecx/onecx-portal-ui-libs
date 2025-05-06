@@ -1,4 +1,4 @@
-name: CI on Pull Request
+name: On PR
 
 on:
   pull_request:
@@ -17,24 +17,25 @@ jobs:
   codeql:
     uses: onecx/ci-angular/.github/workflows/angular-codeql.yml@v1
     secrets: inherit
-  ci-lint:
-    uses: ./.github/workflows/ci-lint.yml
+
+  lint:
+    uses: ./.github/workflows/lint.yml
     secrets: inherit
 
-  ci-build:
-    uses: ./.github/workflows/ci-build.yml
+  build:
+    uses: ./.github/workflows/build.yml
     secrets: inherit
 
-  ci-find-paths:
-    uses: ./.github/workflows/ci-find-paths.yml
+  find-paths:
+    uses: ./.github/workflows/find-paths.yml
     secrets: inherit
 
-  ci-test:
-    needs: ci-find-paths
-    uses: ./.github/workflows/ci-test.yml
+  test:
+    needs: find-paths
+    uses: ./.github/workflows/test.yml
     secrets: inherit
 
-  ci-sonar:
-    needs: ci-test
-    uses: ./.github/workflows/ci-sonar.yml
+  sonar:
+    needs: test
+    uses: ./.github/workflows/sonar.yml
     secrets: inherit

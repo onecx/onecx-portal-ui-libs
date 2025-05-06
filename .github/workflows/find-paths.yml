@@ -1,10 +1,10 @@
-name: ci-dynamic-pahtfinder
+name: pahtfinder
 
 on:
   workflow_call:
 
 jobs:
-  find-path-runner:
+  extract-relevant-lib-pahts:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
@@ -24,7 +24,7 @@ jobs:
             echo "$path"
           done > raw_paths.txt
 
-      - name: Upload path files
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: path-files

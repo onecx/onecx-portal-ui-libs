@@ -1,10 +1,10 @@
-name: ci-test
+name: test
 
 on:
   workflow_call:
 
 jobs:
-  ci-test-runner:
+  test-affected-libs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,11 +20,11 @@ jobs:
       - name: Install deps
         run: npm ci
 
-      - name: Run Tests
+      - name: Run affected Tests
         run: |
-          npx nx run-many -t test --watch=false --browsers=ChromeHeadless --coverage
+          npx nx affected -t test --watch=false --browsers=ChromeHeadless --coverage
 
-      - name: Download path files
+      - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: path-files
@@ -39,7 +39,7 @@ jobs:
           fi
           done < lcov_paths.txt
 
-      - name: Upload Sonar artefacts
+      - name: Upload artefacts
         uses: actions/upload-artifact@v4
         with:
           name: package
