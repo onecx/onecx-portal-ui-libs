@@ -1,0 +1,20 @@
+{
+  "name": "@onecx/react-auth",
+  "version": "0.0.1",
+  "license": "Apache-2.0",
+  "sideEffects": false,
+  "dependencies": {},
+  "peerDependencies": {
+    "axios": "^1.7.3"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/libs/react-auth/esm/index.js",
+      "require": "./dist/libs/react-auth/cjs/index.js",
+      "types": "./dist/libs/react-auth/types/index.d.ts"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

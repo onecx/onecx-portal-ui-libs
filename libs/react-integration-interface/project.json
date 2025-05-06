@@ -1,0 +1,9 @@
+{
+  "name": "react-integration-interface",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/react-integration-interface/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project react-integration-interface --web",
+  "targets": {}
+}

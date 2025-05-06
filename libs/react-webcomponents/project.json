@@ -1,0 +1,9 @@
+{
+  "name": "react-webcomponents",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/react-webcomponents/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project react-webcomponents --web",
+  "targets": {}
+}

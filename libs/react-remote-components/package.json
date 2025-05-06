@@ -1,0 +1,22 @@
+{
+  "name": "@onecx/react-remote-components",
+  "version": "0.0.1",
+  "license": "Apache-2.0",
+  "sideEffects": false,
+  "peerDependencies": {
+    "@module-federation/enhanced": "0.10.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "dependencies": {},
+  "exports": {
+    ".": {
+      "import": "./dist/libs/react-remote-components/esm/index.js",
+      "require": "./dist/libs/react-remote-components/cjs/index.js",
+      "types": "./dist/libs/react-remote-components/types/index.d.ts"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
