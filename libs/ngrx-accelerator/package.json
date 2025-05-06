@@ -12,6 +12,7 @@
     "@ngrx/store": "^19.0.0",
     "@onecx/angular-integration-interface": "^6.0.0-rc.8",
     "@onecx/integration-interface": "^6.0.0-rc.8",
+    "@onecx/nx-migration-utils": "^6.0.0-rc.8",
     "rxjs": "^7.8.1",
     "zod": "^3.23.8",
     "@nx/devkit": "^20.3.0"
