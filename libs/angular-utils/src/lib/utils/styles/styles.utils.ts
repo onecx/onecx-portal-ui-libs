@@ -82,7 +82,7 @@ export function replaceRootWithScope(css: string): string {
 }
 
 /**
- * Creates a string with scoped css.
+ * Creates a string with application scoped css.
  * @param css - css for scoping
  * @param scopeId - scope id for scoping
  * @returns {string} css scoped by the given id
