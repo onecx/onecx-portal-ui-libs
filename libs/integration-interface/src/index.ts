@@ -43,3 +43,5 @@ export * from './lib/topics/events/v1/navigated-event-payload'
 
 export * from './lib/topics/current-location/v1/current-location.model'
 export * from './lib/topics/current-location/v1/current-location.topic'
+
+export * from './lib/topics/parameters/v1/parameters.topic'
