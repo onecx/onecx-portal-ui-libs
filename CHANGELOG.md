@@ -1,3 +1,13 @@
+## [6.0.0-rc.9](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.8...v6.0.0-rc.9) (2025-05-07)
+
+### Features
+
+* add parameters service ([#724](https://github.com/onecx/onecx-portal-ui-libs/issues/724)) ([#731](https://github.com/onecx/onecx-portal-ui-libs/issues/731)) ([5b8f520](https://github.com/onecx/onecx-portal-ui-libs/commit/5b8f520c586a9839ca22fee1a6f84c4b7cc05c22))
+
+### Bug Fixes
+
+* app style isolation for v6 elements and MFEs ([#732](https://github.com/onecx/onecx-portal-ui-libs/issues/732)) ([dacbc0c](https://github.com/onecx/onecx-portal-ui-libs/commit/dacbc0cb173036ff7c3efe8d7146985c9818665a))
+
 ## [6.0.0-rc.8](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.7...v6.0.0-rc.8) (2025-05-06)
 
 ### Features
