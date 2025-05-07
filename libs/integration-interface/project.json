@@ -63,9 +63,9 @@
       }
     },
     "release": {
-      "executor": "nx-release:build-update-publish",
+      "executor": "@onecx/release:update-build-publish",
       "options": {
-        "libName": "integration-interface"
+        "buildTarget": "build-migrations"
       }
     }
   },

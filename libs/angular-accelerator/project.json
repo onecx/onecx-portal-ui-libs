@@ -68,10 +68,7 @@
       }
     },
     "release": {
-      "executor": "nx-release:build-update-publish",
-      "options": {
-        "libName": "angular-accelerator"
-      }
+      "executor": "@onecx/release:update-build-publish"
     },
     "storybook": {
       "executor": "@storybook/angular:start-storybook",

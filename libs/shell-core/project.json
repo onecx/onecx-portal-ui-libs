@@ -54,10 +54,7 @@
       }
     },
     "release": {
-      "executor": "nx-release:build-update-publish",
-      "options": {
-        "libName": "shell-core"
-      }
+      "executor": "@onecx/release:update-build-publish"
     }
   }
 }
