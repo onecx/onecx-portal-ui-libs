@@ -73,7 +73,10 @@ export const dataRcStylesAttribute = (slotName: string) => `data-${dataRcStylesS
 export const dataShellStylesAttribute = 'data-shell-styles'
 
 /**
- * Replace ":root" selector with ":scope" for a given css
+ * Replace ":root" selector with ":scope" for a given css.
+ *
+ * :scope === :root if "@scope" is not used
+ * :scope === top level element of the scope if "@scope" is used
  * @param css - css text to transform
  * @returns {string} css with replaced selector
  */
