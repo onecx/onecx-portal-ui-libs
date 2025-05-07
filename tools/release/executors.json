@@ -1,0 +1,9 @@
+{
+  "executors": {
+    "update-build-publish": {
+      "implementation": "./src/executors/update-build-publish/executor",
+      "schema": "./src/executors/update-build-publish/schema.json",
+      "description": "Executor for releasing a onecx library."
+    }
+  }
+}

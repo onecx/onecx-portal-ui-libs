@@ -9,6 +9,7 @@
   },
   "private": true,
   "dependencies": {
+    "@nx/devkit": "19.8.0",
     "@angular-architects/module-federation": "18.0.6",
     "@angular/animations": "^19.0.0",
     "@angular/cdk": "^19.0.0",
@@ -73,6 +74,7 @@
     "@nx/node": "20.4.0",
     "@nx/storybook": "20.4.0",
     "@nx/workspace": "20.4.0",
+    "@nx/plugin": "^20.4.0",
     "@schematics/angular": "~18.2.4",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^13.0.0",
@@ -84,6 +86,7 @@
     "@storybook/angular": "^8.3.2",
     "@storybook/core-server": "^8.3.2",
     "@swc-node/register": "~1.10.0",
+    "@swc/cli": "~0.3.12",
     "@swc/core": "~1.7.10",
     "@swc/helpers": "~0.5.13",
     "@types/d3": "^7.4.3",
@@ -124,5 +127,6 @@
   },
   "nx": {
     "includedScripts": []
-  }
+  },
+  "executors": "./executors.json"
 }

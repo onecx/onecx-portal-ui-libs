@@ -73,10 +73,7 @@
       }
     },
     "release": {
-      "executor": "nx-release:build-update-publish",
-      "options": {
-        "libName": "angular-integration-interface"
-      }
+      "executor": "@onecx/release:update-build-publish"
     }
   }
 }
