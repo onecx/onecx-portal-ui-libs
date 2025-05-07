@@ -1,5 +1,11 @@
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http'
-import { dataStyleIdAttribute, dataStyleIsolationAttribute, isCssScopeRuleSupported } from '../scope.utils'
+import {
+  dataMfeElementAttribute,
+  dataNoPortalLayoutStylesAttribute,
+  dataStyleIdAttribute,
+  dataStyleIsolationAttribute,
+  isCssScopeRuleSupported,
+} from '../scope.utils'
 import { isStyleUsedByMfe } from './mfe-styles.utils'
 import { getStyleUsageCountForRc } from './rc-styles.utils'
 import { catchError, firstValueFrom, mergeMap, of, throwError } from 'rxjs'
@@ -88,23 +94,24 @@ export function extractNonRootRules(css: string): string {
 }
 
 /**
- * Creates a string with scoped css.
+ * Creates a string with application scoped css.
  * @param css - css for scoping
  * @param scopeId - scope id for scoping
  * @returns {string} css scoped by the given id
  */
 export function createScopedCss(css: string, scopeId: string): string {
   const isScopeSupported = isCssScopeRuleSupported()
+  // Apply styles to all v6 elements and the MFE
   return isScopeSupported
     ? `
   ${extractRootRules(css)}
-@scope([${dataStyleIdAttribute}="${scopeId}"]) to ([${dataStyleIsolationAttribute}]) {
+@scope([${dataStyleIdAttribute}="${scopeId}"]:is([${dataNoPortalLayoutStylesAttribute}], [${dataMfeElementAttribute}])) to ([${dataStyleIsolationAttribute}]) {
         ${extractNonRootRules(css)}
     }
 `
     : `
   ${extractRootRules(css)}
-@supports (@scope([${dataStyleIdAttribute}="${scopeId}"]) to ([${dataStyleIsolationAttribute}])) {
+@supports (@scope([${dataStyleIdAttribute}="${scopeId}"]:is([${dataNoPortalLayoutStylesAttribute}], [${dataMfeElementAttribute}])) to ([${dataStyleIsolationAttribute}])) {
         ${extractNonRootRules(css)}
     }
 `
