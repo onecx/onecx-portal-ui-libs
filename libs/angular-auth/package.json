@@ -10,7 +10,8 @@
     "@onecx/integration-interface": "^6.0.0-rc.9",
     "keycloak-js": "^25.0.1",
     "rxjs": "~7.8.0",
-    "@nx/devkit": "^20.3.0"
+    "@nx/devkit": "^20.3.0",
+    "@onecx/nx-migration-utils": "6.0.0-rc.9"
   },
   "publishConfig": {
     "access": "public"

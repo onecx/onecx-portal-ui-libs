@@ -38,7 +38,7 @@ export function doesIncludeNamespaceImport(fileContent: string, importPath: stri
  * @returns {string} new file content after modification
  */
 export function addToFirstImport(fileContent: string, importPath: string, importSpecifier: string) {
-  let isAdded = false
+  const isAdded = false
   const newContent = replace(fileContent, importNamedImportsPattern(importPath), (node) => {
     if (isAdded) return null
     const niNode = node as NamedImports

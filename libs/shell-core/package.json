@@ -13,7 +13,8 @@
     "@onecx/angular-remote-components": "^6.0.0-rc.9",
     "@ngx-translate/core": "^16.0.0",
     "primeng": "^19.0.0",
-    "@nx/devkit": "^20.3.0"
+    "@nx/devkit": "^20.3.0",
+    "@onecx/nx-migration-utils": "6.0.0-rc.9"
   },
   "dependencies": {},
   "type": "commonjs",

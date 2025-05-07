@@ -15,7 +15,8 @@
     "primeng": "^19.0.6",
     "@primeuix/styled": "^0.3.2",
     "@angular/platform-browser": "^19.0.0",
-    "@nx/devkit": "^20.3.0"
+    "@nx/devkit": "^20.3.0",
+    "@onecx/nx-migration-utils": "6.0.0-rc.9"
   },
   "publishConfig": {
     "access": "public"
