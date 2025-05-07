@@ -28,11 +28,25 @@ export const dataStyleIsolationKey = 'styleIsolation'
 export const dataNoPortalLayoutStylesKey = 'noPortalLayoutStyles'
 
 /**
+ * @constant {string} dataMfeElementKey
+ * @description Marks element as the mfe content
+ * Marks that scope section does not request portal layout styles
+ * Present for MFE and its dynamic content
+ */
+export const dataMfeElementKey = 'mfeElement'
+
+/**
  * @constant {string} dataIntermediateStyleIdKey
  * @description Metadata used when appending dynamic content to ensure style scoping outside the application
  * (e.g. data-intermediate-style-id="onecx-workspace|onecx-workspace-ui")
  */
 export const dataIntermediateStyleIdKey = 'intermediateStyleId'
+
+/**
+ * @constant {string} dataIntermediateMfeElementKey
+ * @description Metadata used when appending dynamic content to ensure style scoping outside the application
+ */
+export const dataIntermediateMfeElementKey = 'intermediateMfeElement'
 
 /**
  * @constant {string} dataIntermediateStyleIsolationKey
@@ -71,6 +85,12 @@ export const dataDynamicPortalLayoutStylesKey = 'dynamicContentPortalLayoutStyle
 export const dataStyleIdAttribute = 'data-style-id'
 
 /**
+ * @constant {string} dataMfeElementAttribute
+ * @description HTML attribute for mfe element. See {@link dataMfeElementKey} for more details.
+ */
+export const dataMfeElementAttribute = 'data-mfe-element'
+
+/**
  * @constant {string} dataStyleIsolationAttribute
  * @description HTML attribute for styleIsolation. See {@link dataStyleIsolationKey} for more details.
  */
@@ -87,6 +107,12 @@ export const dataNoPortalLayoutStylesAttribute = 'data-no-portal-layout-styles'
  * @description HTML attribute for intermediateStyleId. See {@link dataIntermediateStyleIdKey} for more details.
  */
 export const dataIntermediateStyleIdAttribute = 'data-intermediate-style-id'
+
+/**
+ * @constant {string} dataIntermediateMfeElementAttribute
+ * @description HTML attribute for intermediateMfeElement. See {@link dataIntermediateMfeElementKey} for more details.
+ */
+export const dataIntermediateMfeElementAttribute = 'data-intermediate-mfe-element'
 
 /**
  * @constant {string} dataIntermediateStyleIsolationAttribute
