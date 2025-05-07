@@ -1,15 +1,16 @@
 {
   "name": "@onecx/onecx-portal-ui-libs",
-  "version": "5.34.5",
+  "version": "5.37.0",
   "license": "Apache-2.0",
   "scripts": {
     "sass": "npx sass libs/portal-integration-angular/assets/styles.scss libs/portal-integration-angular/assets/output.css",
     "postinstall": "mkdir -p .nx",
-    "build": "nx run-many -t build",
+    "build": "nx run-many -t build build-migrations",
     "build-copy": "npm run build && node copy-build.js"
   },
   "private": true,
   "dependencies": {
+    "@nx/devkit": "19.8.0",
     "@angular-architects/module-federation": "18.0.6",
     "@angular/animations": "^18.2.12",
     "@angular/cdk": "^18.2.13",
@@ -30,6 +31,7 @@
     "@ngx-translate/core": "^15.0.0",
     "@ngx-translate/http-loader": "^8.0.0",
     "@onecx/portal-layout-styles": "file:libs/portal-layout-styles",
+    "@phenomnomnominal/tsquery": "^6",
     "@storybook/addon-interactions": "^8.3.2",
     "axios": "^1.7.3",
     "chart.js": "^4.4.3",
@@ -68,6 +70,7 @@
     "@nx/js": "19.8.0",
     "@nx/linter": "19.8.0",
     "@nx/node": "19.8.0",
+    "@nx/plugin": "^19.8.0",
     "@nx/storybook": "19.8.0",
     "@nx/workspace": "19.8.0",
     "@schematics/angular": "~18.2.4",
@@ -81,6 +84,7 @@
     "@storybook/angular": "^8.3.2",
     "@storybook/core-server": "^8.3.2",
     "@swc-node/register": "~1.10.0",
+    "@swc/cli": "~0.3.12",
     "@swc/core": "~1.7.10",
     "@swc/helpers": "~0.5.13",
     "@types/d3": "^7.4.3",
@@ -120,5 +124,6 @@
   },
   "nx": {
     "includedScripts": []
-  }
+  },
+  "executors": "./executors.json"
 }

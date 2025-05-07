@@ -9,7 +9,9 @@ import { PrimeIcon } from '@onecx/angular-accelerator'
 import { DialogFooterComponent } from '../core/components/dialog/dialog-footer/dialog-footer.component'
 import { DialogContentComponent } from '../core/components/dialog/dialog-content/dialog-content.component'
 import { NavigationStart, Router } from '@angular/router'
-import { EventsTopic } from '@onecx/integration-interface'
+import { CurrentLocationTopicPayload, EventsTopic, TopicEventType } from '@onecx/integration-interface'
+import { Capability, ShellCapabilityService } from '@onecx/angular-integration-interface'
+import { AppStateService } from '@onecx/angular-integration-interface'
 
 /**
  * Object containing key for translation with parameters object for translation
@@ -263,12 +265,12 @@ export interface PortalDialogServiceData {
 
 @Injectable({ providedIn: 'any' })
 export class PortalDialogService implements OnDestroy {
-  private dialogRef: DynamicDialogRef | null = null
-  private dialogComponent: DynamicDialogComponent | null = null
   private eventsTopic: EventsTopic = new EventsTopic()
   constructor(
     private dialogService: DialogService,
     private translateService: TranslateService,
+    private capabilityService: ShellCapabilityService,
+    private appStateService: AppStateService,
     private router: Router
   ) {
     this.router.events.subscribe((event) => {
@@ -276,7 +278,12 @@ export class PortalDialogService implements OnDestroy {
         this.cleanupAndCloseDialog()
       }
     })
-    this.eventsTopic.pipe(filter((value) => value.type === 'navigated')).subscribe(() => {
+    let observable: Observable<TopicEventType | CurrentLocationTopicPayload> =
+      this.appStateService.currentLocation$.asObservable()
+    if (!this.capabilityService.hasCapability(Capability.CURRENT_LOCATION_TOPIC)) {
+      observable = this.eventsTopic.pipe(filter((e) => e.type === 'navigated'))
+    }
+    observable.subscribe(() => {
       this.cleanupAndCloseDialog()
     })
   }
@@ -487,7 +494,7 @@ export class PortalDialogService implements OnDestroy {
 
     return this.translateService.get(translateParams.key, translateParams.parameters).pipe(
       mergeMap((dialogTitle) => {
-        this.dialogRef = this.dialogService.open(DialogContentComponent, {
+        return this.dialogService.open(DialogContentComponent, {
           header: dialogTitle,
           data: {
             ...dynamicDialogDataConfig,
@@ -502,29 +509,29 @@ export class PortalDialogService implements OnDestroy {
           ...dialogOptions,
           focusOnShow: false,
           appendTo: 'body', // Important for the function findBodyChild
+          duplicate: true, // Since dialog always opens DialogContentComponent, duplicates must be always allowed
           templates: {
             footer: DialogFooterComponent,
           },
-        })
-        this.dialogComponent = this.dialogService.getInstance(this.dialogRef)
-        return this.dialogRef.onClose
+        }).onClose
       })
     )
   }
 
   private cleanupAndCloseDialog() {
-    if (this.dialogRef) {
-      this.dialogRef.close()
-      this.removeDialogFromHtml()
-      this.dialogRef = null
-      this.dialogComponent = null
+    if (this.dialogService.dialogComponentRefMap.size > 0) {
+      this.dialogService.dialogComponentRefMap.forEach((_, dialogRef) => {
+        const dialogComponent = this.dialogService.getInstance(dialogRef)
+        dialogRef.close()
+        this.removeDialogFromHtml(dialogComponent)
+      })
     }
   }
 
-  private removeDialogFromHtml() {
-    const conatiner = this.dialogComponent?.container
-    if (!conatiner) return
-    const bodyChild = this.findBodyChild(conatiner)
+  private removeDialogFromHtml(dialogComponent: DynamicDialogComponent) {
+    const container = dialogComponent.container
+    if (!container) return
+    const bodyChild = this.findBodyChild(container)
     bodyChild && document.body.removeChild(bodyChild)
   }
 
