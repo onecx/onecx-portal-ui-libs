@@ -1,11 +1,13 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing'
 import { CustomUseStyle, SKIP_STYLE_SCOPING } from './custom-use-style.service'
 import { DOCUMENT } from '@angular/common'
-import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-remote-components'
 import { ReplaySubject } from 'rxjs'
 import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { AppStateService, MfeInfo } from '@onecx/angular-integration-interface'
 import { THEME_OVERRIDES } from '../theme/application-config'
+import { shellScopeId } from '../utils/scope.utils'
+import { REMOTE_COMPONENT_CONFIG } from '../model/injection-tokens'
+import { RemoteComponentConfig } from '../model/remote-component-config.model'
 
 class ElementMock {
   // extension
@@ -161,7 +163,7 @@ describe('CustomUseStyleService', () => {
     it('should create styles', fakeAsync(() => {
       const css = '.p-button{display:inline-flex;color:var(--p-button-primary-color)}'
       const expectedCss = `
-      @scope([data-style-id="shell-ui"]) to ([data-style-isolation]) {
+      @scope([data-style-id="${shellScopeId}"][data-no-portal-layout-styles]) to ([data-style-isolation]) {
               ${css}
           }
       `
@@ -179,7 +181,7 @@ describe('CustomUseStyleService', () => {
       removeScopeRule()
       const css = '.p-button{display:inline-flex;color:var(--p-button-primary-color)}'
       const expectedCss = `
-      @supports (@scope([data-style-id="shell-ui"]) to ([data-style-isolation])) {
+      @supports (@scope([data-style-id="${shellScopeId}"][data-no-portal-layout-styles]) to ([data-style-isolation])) {
               ${css}
           }
       `
