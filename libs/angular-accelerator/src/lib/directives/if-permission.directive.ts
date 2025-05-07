@@ -76,9 +76,9 @@ export class IfPermissionDirective implements OnInit {
       if (!result) {
         console.log('👮‍♀️ No permission in overwrites for: `', permission)
       }
-      return Promise.resolve(result)
+      return result
     }
-    const results = await Promise.all(permission.map((p) => this.permissionChecker?.hasPermission(p)))
-    return results.every((result) => result)
+
+    return (await this.permissionChecker?.hasPermission(permission)) ?? false
   }
 }
