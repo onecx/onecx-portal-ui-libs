@@ -5,7 +5,12 @@ import { ReplaySubject } from 'rxjs'
 import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { AppStateService, MfeInfo } from '@onecx/angular-integration-interface'
 import { THEME_OVERRIDES } from '../theme/application-config'
-import { shellScopeId } from '../utils/scope.utils'
+import {
+  dataNoPortalLayoutStylesAttribute,
+  dataStyleIdAttribute,
+  dataStyleIsolationAttribute,
+  shellScopeId,
+} from '../utils/scope.utils'
 import { REMOTE_COMPONENT_CONFIG } from '../model/injection-tokens'
 import { RemoteComponentConfig } from '../model/remote-component-config.model'
 
@@ -101,6 +106,7 @@ describe('CustomUseStyleService', () => {
       permissions: [],
       baseUrl: 'test',
     })
+    return { styleId: 'test|test-ui', prefix: 'test-test-ui' }
   }
 
   const configureMfe = () => {
@@ -123,6 +129,7 @@ describe('CustomUseStyleService', () => {
       appId: 'test-ui',
       productName: 'test',
     } as MfeInfo)
+    return { styleId: 'test|test-ui', prefix: 'test-test-ui' }
   }
 
   const removeScopeRule = () => {
@@ -150,14 +157,14 @@ describe('CustomUseStyleService', () => {
 
     it('should create variables', fakeAsync(() => {
       const css = ":root{--p-primary-color: '#ababab';}"
-      const expectedCss = ":root{--p-primary-color: '#ababab';}"
+      const expectedCss = `@scope([${dataStyleIdAttribute}="${shellScopeId}"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--p-primary-color: '#ababab';}}`
       service.use(css, {
         name: 'semantic-variables',
       })
 
       tick(100)
       expect(styleList.length).toBe(1)
-      expect(styleList.at(0)?.textContent).toEqual(expectedCss)
+      expect(removeSpacesAndNewlines(styleList.at(0)?.textContent)).toEqual(removeSpacesAndNewlines(expectedCss))
     }))
 
     it('should create styles', fakeAsync(() => {
@@ -213,12 +220,16 @@ describe('CustomUseStyleService', () => {
   })
 
   describe('for Remote Component', () => {
+    let styleId: string
+    let prefix: string
     beforeEach(() => {
-      configureRemoteComponent()
+      const config = configureRemoteComponent()
+      styleId = config.styleId
+      prefix = config.prefix
     })
     it('should create variables', fakeAsync(() => {
       const css = ":root{--p-primary-color: '#ababab'}"
-      const expectedCss = ":root{--test-test-ui-primary-color: '#ababab'}"
+      const expectedCss = `@scope([${dataStyleIdAttribute}="${styleId}"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--${prefix}-primary-color: '#ababab'}}`
 
       service.use(css, {
         name: 'semantic-variables',
@@ -226,14 +237,14 @@ describe('CustomUseStyleService', () => {
 
       tick(100)
       expect(styleList.length).toBe(1)
-      expect(styleList.at(0)?.textContent).toEqual(expectedCss)
+      expect(removeSpacesAndNewlines(styleList.at(0)?.textContent)).toEqual(removeSpacesAndNewlines(expectedCss))
     }))
 
     it('should create styles', fakeAsync(() => {
       const css = '.p-button{display:inline-flex;color:var(--p-button-primary-color)}'
       const expectedCss = `
-            @scope([data-style-id="test|test-ui"][data-no-portal-layout-styles]) to ([data-style-isolation]) {
-                .p-button{display:inline-flex;color:var(--test-test-ui-button-primary-color)}}
+            @scope([data-style-id="${styleId}"][data-no-portal-layout-styles]) to ([data-style-isolation]) {
+                .p-button{display:inline-flex;color:var(--${prefix}-button-primary-color)}}
             `
 
       service.use(css, {
@@ -249,8 +260,8 @@ describe('CustomUseStyleService', () => {
       removeScopeRule()
       const css = '.p-button{display:inline-flex;color:var(--p-button-primary-color)}'
       const expectedCss = `
-            @supports (@scope([data-style-id="test|test-ui"][data-no-portal-layout-styles]) to ([data-style-isolation])) {
-                .p-button{display:inline-flex;color:var(--test-test-ui-button-primary-color)}}
+            @supports (@scope([data-style-id="${styleId}"][data-no-portal-layout-styles]) to ([data-style-isolation])) {
+                .p-button{display:inline-flex;color:var(--${prefix}-button-primary-color)}}
             `
 
       service.use(css, {
@@ -268,7 +279,7 @@ describe('CustomUseStyleService', () => {
       overrides['semantic'] = {
         primaryColor: 'red',
       }
-      const expectedOverrideCss = ':root{--test-test-ui-primary-color:red;}'
+      const expectedOverrideCss = `:root{--${prefix}-primary-color:red;}`
       service.use(regularCss, {
         name: 'semantic-variables',
       })
@@ -280,12 +291,16 @@ describe('CustomUseStyleService', () => {
   })
 
   describe('for MFE', () => {
+    let styleId: string
+    let prefix: string
     beforeEach(() => {
-      configureMfe()
+      const config = configureMfe()
+      styleId = config.styleId
+      prefix = config.prefix
     })
     it('should create variables', fakeAsync(() => {
       const css = ":root{--p-primary-color: '#ababab'}"
-      const expectedCss = ":root{--test-test-ui-primary-color: '#ababab'}"
+      const expectedCss = `@scope([${dataStyleIdAttribute}="${styleId}"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--${prefix}-primary-color: '#ababab'}}`
 
       service.use(css, {
         name: 'semantic-variables',
@@ -293,14 +308,14 @@ describe('CustomUseStyleService', () => {
 
       tick(100)
       expect(styleList.length).toBe(1)
-      expect(styleList.at(0)?.textContent).toEqual(expectedCss)
+      expect(removeSpacesAndNewlines(styleList.at(0)?.textContent)).toEqual(removeSpacesAndNewlines(expectedCss))
     }))
 
     it('should create styles', fakeAsync(() => {
       const css = '.p-button{display:inline-flex;color:var(--p-button-primary-color)}'
       const expectedCss = `
-                  @scope([data-style-id="test|test-ui"][data-no-portal-layout-styles]) to ([data-style-isolation]) {
-                      .p-button{display:inline-flex;color:var(--test-test-ui-button-primary-color)}}
+                  @scope([data-style-id="${styleId}"][data-no-portal-layout-styles]) to ([data-style-isolation]) {
+                      .p-button{display:inline-flex;color:var(--${prefix}-button-primary-color)}}
                   `
 
       service.use(css, {
@@ -316,8 +331,8 @@ describe('CustomUseStyleService', () => {
       removeScopeRule()
       const css = '.p-button{display:inline-flex;color:var(--p-button-primary-color)}'
       const expectedCss = `
-                  @supports (@scope([data-style-id="test|test-ui"][data-no-portal-layout-styles]) to ([data-style-isolation])) {
-                      .p-button{display:inline-flex;color:var(--test-test-ui-button-primary-color)}}
+                  @supports (@scope([data-style-id="${styleId}"][data-no-portal-layout-styles]) to ([data-style-isolation])) {
+                      .p-button{display:inline-flex;color:var(--${prefix}-button-primary-color)}}
                   `
 
       service.use(css, {
@@ -335,7 +350,7 @@ describe('CustomUseStyleService', () => {
       overrides['semantic'] = {
         primaryColor: 'red',
       }
-      const expectedOverrideCss = ':root{--test-test-ui-primary-color:red;}'
+      const expectedOverrideCss = `:root{--${prefix}-primary-color:red;}`
       service.use(regularCss, {
         name: 'semantic-variables',
       })
@@ -348,13 +363,13 @@ describe('CustomUseStyleService', () => {
 
   describe('overrides', () => {
     it('should accept object with overrides', fakeAsync(() => {
-      configureMfe()
+      const { prefix } = configureMfe()
       const regularCss = ":root{--p-primary-color: '#ababab';}"
       const overrides = TestBed.inject(THEME_OVERRIDES)
       overrides['semantic'] = {
         primaryColor: 'red',
       }
-      const expectedOverrideCss = ':root{--test-test-ui-primary-color:red;}'
+      const expectedOverrideCss = `:root{--${prefix}-primary-color:red;}`
       service.use(regularCss, {
         name: 'semantic-variables',
       })
@@ -484,9 +499,9 @@ describe('CustomUseStyleService', () => {
 
   describe('style element update', () => {
     it('should update existing style tag wih new css', fakeAsync(() => {
-      configureMfe()
+      const { styleId, prefix } = configureMfe()
       const css = ":root{--p-primary-color: '#ababab'}"
-      const expectedCss = ":root{--test-test-ui-primary-color: '#ababab'}"
+      const expectedCss = `@scope([${dataStyleIdAttribute}="${styleId}"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--${prefix}-primary-color: '#ababab'}}`
 
       service.use(css, {
         name: 'semantic-variables',
@@ -494,10 +509,10 @@ describe('CustomUseStyleService', () => {
 
       tick(100)
       expect(styleList.length).toBe(1)
-      expect(styleList.at(0)?.textContent).toEqual(expectedCss)
+      expect(removeSpacesAndNewlines(styleList.at(0)?.textContent)).toEqual(removeSpacesAndNewlines(expectedCss))
 
       const newCss = ":root{--p-primary-color: '#aabbcc'}"
-      const newExpectedCss = ":root{--test-test-ui-primary-color: '#aabbcc'}"
+      const newExpectedCss = `@scope([${dataStyleIdAttribute}="${styleId}"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--${prefix}-primary-color: '#aabbcc'}}`
 
       service.use(newCss, {
         name: 'semantic-variables',
@@ -505,7 +520,7 @@ describe('CustomUseStyleService', () => {
 
       tick(100)
       expect(styleList.length).toBe(1)
-      expect(styleList.at(0)?.textContent).toEqual(newExpectedCss)
+      expect(removeSpacesAndNewlines(styleList.at(0)?.textContent)).toEqual(removeSpacesAndNewlines(newExpectedCss))
     }))
   })
 })
