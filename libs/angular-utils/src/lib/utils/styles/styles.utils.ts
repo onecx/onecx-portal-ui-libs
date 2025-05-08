@@ -244,5 +244,5 @@ function createCssRequestHeaders() {
  * @returns {boolean} if response is valid css
  */
 function isResponseValidCss<T>(response: HttpResponse<T>) {
-  return response.headers.get('Content-Type') === 'text/css'
+  return response.headers.get('Content-Type')?.includes('text/css')
 }
