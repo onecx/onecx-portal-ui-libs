@@ -1,0 +1,146 @@
+= Documentation Creation Guidelines
+This document provides a step-by-step guide on how to create documentation for Angular components in Storybook, highlighting multipile ways of documentation creation.
+
+== Introduction
+Storybook automatically creates documentation due to the tag `tags:['autodocs]` in the `angular-accelerator/.storybook/preview.ts` file. This can be disabled in the stories e.g.
+`your-component.component.stories.ts` (see, https://storybook.js.org/docs/writing-docs/autodocs#set-up-automated-documentation)
+
+[source, JavaScript]
+----
+export default {
+title: 'Components/YourComponent',
+component: YourComponent,
+tags:['!autodocs'],
+...
+}
+----
+
+To recognize MDX files, the attribute `stories` in `angular-accelerator/.storybook/main.ts` must be extended by the line `../src/**/*.mdx` (see, https://storybook.js.org/docs/writing-docs/mdx#setup-custom-documentation).
+[source, JavaScript]
+----
+module.exports = {
+  ...rootMain,
+  staticDirs: [{ from: '../assets', to: '/assets' }],
+  stories: [
+    '../src/**/*.mdx',
+    '../src/lib/**/*.stories.@(js|jsx|ts|tsx)'
+  ]
+}
+----
+
+Now MDX files can be recognized in the folder structure.
+
+== JSDoc Comments
+
+JSDoc comments are a powerful way to add detailed descriptions to your stories, which can be automatically included in your Storybook documentation. These comments are placed directly above the story element they describe.
+
+=== Writing JSDoc Comments
+
+To write JSDoc comments, use the `/** */` notation. Here is an example (see, https://storybook.js.org/docs/api/doc-blocks/doc-block-description#description):
+
+`your-component.component.storie.ts`
+[source, JavaScript]
+----
+/**
+* Description of your Story
+*/
+export const YourStorie = {
+  render: Template,
+
+  args: {
+    diagramType: YourComponent.Example,
+    data: mockData,
+  },
+}
+----
+
+=== Why using JSDoc?
+Using JSDoc comments offers several advantages. One of the key benefits is the ability to easily display these comments in your documentation using the <Description /> block. This integration allows you to automatically pull detailed descriptions directly from your code, ensuring that your documentation is always up-to-date and accurately reflects the latest changes.
+
+
+== MDX Files in Storybook
+As mentioned above, there are several ways to write Storybook documentation. The simplest method is through autodocs. However, writing documentation using MDX files offers several advantages:
+
+. The documentation can be personalized.
+. The documentation can highlight individual components.
+
+=== How to Create a Document with MDX
+
+MDX files combine Markdown and JSX to create interactive documentation. Here are the steps to create an MDX document:
+
+. *Create an MDX File*: Create a new file with the `.mdx` extension in your project directory.
+. *Import the Required Blocks*: Import the https://storybook.js.org/docs/writing-docs/doc-blocks#available-blocks[Storybook blocks] you want to use.
+
+[source, JavaScript]
+----
+import { Meta, Story, Primary, Controls, Title, Stories, Canvas } from '@storybook/blocks';
+
+import * as YourComponentStories from './your-component.component.stories.ts';
+
+<Meta of={YourComponentStories} />
+<Title />
+<Description />
+<Primary />
+<Controls />
+<Stories />
+----
+
+*Add Markdown Content*: You can add regular Markdown text to complement your documentation.
+
+[source, Markdown]
+----
+# Your Component
+This is a description of your component.
+----
+
+=== How to Replace Autodocs with an MDX File
+There are two ways to replace an Autodocs page. The first is to disable it in the component and replace it with an MDX file. The second is to overwrite it with an MDX file. 
+
+To replace an Autodocs page with an MDX file, you have two options:
+
+*Disable Autodocs for the Specific Component*: Remove the autodocs tag in the story file.
+
+[source, JavaScript]
+----
+export default {
+  title: 'Components/YourComponent',
+  component: YourComponent,
+  tags: ['!autodocs'],
+  ...
+}
+----
+
+*Create an MDX File for the Documentation*: Create a new .mdx file and import the required blocks. It is *important* that the title in the Meta tag is the name of the component to be replaced.
+
+[source, JavaScript]
+----
+import { Meta, Story, Primary, Controls, Title, Stories, Canvas } from '@storybook/blocks';
+
+import * as YourComponentStories from './your-component.component.stories.ts';
+
+<Meta title='Components/YourComponent' />
+
+<Title of={YourComponentStories} />
+<Primary of={YourComponentStories.default} />
+<Controls of={YourComponentStories.default} />
+<Canvas of={YourComponentStories.YourComponentSecondary} />
+----
+
+== Autodocs vs. MDX Files in Storybook
+
+=== Autodocs: Quick and Simple Documentation
+
+Autodocs provide an out-of-the-box solution for quickly creating documentation. If JSDoc comments are present in the components, the automatically generated documentation becomes even richer in content.
+
+=== Customizing Documentation with MDX Files
+
+If you want to customize and write more detailed documentation, it is advisable to use MDX files. As mentioned above, there are several ways to replace Autodocs. The simplest and most convenient method is to disable Autodocs for the components. This makes handling easier and saves the effort of manually overwriting them. The advantage is that you can now use Storybook blocks without selecting a component.
+
+=== Overwriting Autodocs
+
+However, you can also easily overwrite Autodocs. To do this, as described above, you need to set the `<Meta title="" />` tag with Storybook blocks. Then, you must explicitly declare the components used.
+
+=== Choosing Between Overwriting and Disabling Autodocs
+
+Whether you overwrite or disable Autodocs ultimately comes down to convenience. There are no significant advantages or disadvantages. The main drawback is that if Autodocs are disabled and the MDX file is missing, there will be no documentation for the components. This issue does not occur with the overwriting method.
+
