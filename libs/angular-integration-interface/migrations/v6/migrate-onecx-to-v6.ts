@@ -9,6 +9,8 @@ import {
   visitNotIgnoredFiles,
   writeJson,
 } from '@nx/devkit'
+import { printWarnings } from '@onecx/nx-migration-utils'
+import { ast, query } from '@phenomnomnominal/tsquery'
 import { execSync } from 'child_process'
 
 export default async function migrateOnecxToV6(tree: Tree) {
@@ -30,7 +32,7 @@ export default async function migrateOnecxToV6(tree: Tree) {
 
     const dependenciesToUpdate: Record<string, string> = {
       '@angular/cdk': '^19.0.5',
-      '@onecx/nx-plugin': '1.10.0',
+      '@onecx/nx-plugin': '^1.10.0',
       '@ngx-translate/core': '^16.0.4',
       'keycloak-angular': '^19.0.2',
       'ngrx-store-localstorage': '^19.0.0',
@@ -56,7 +58,7 @@ export default async function migrateOnecxToV6(tree: Tree) {
       '@swc/core': '~1.10.18',
       '@swc/helpers': '~0.5.15',
       '@types/jest': '^29.5.14',
-      '@types/node': '22.13.4',
+      '@types/node': '^22.13.4',
       '@typescript-eslint/eslint-plugin': '^8.25.0',
       '@typescript-eslint/parser': '^8.25.0',
       '@typescript-eslint/utils': '^8.13.0',
@@ -70,7 +72,7 @@ export default async function migrateOnecxToV6(tree: Tree) {
       nx: '~20.3.4',
       prettier: '^3.5.1',
       'ts-jest': '^29.2.5',
-      'ts-node': '10.9.2',
+      'ts-node': '^10.9.2',
       tslib: '^2.8.1',
       'typescript-eslint': '^8.13.0',
     }
@@ -121,6 +123,9 @@ export default async function migrateOnecxToV6(tree: Tree) {
   installPackagesTask(tree, true)
 
   await formatFiles(tree)
+
+  checkConfigurationServiceUsage(tree, srcDirectoryPath)
+  warnOcxPortalViewport(tree, srcDirectoryPath)
 }
 
 function removeOnecxKeycloakAuth(tree: Tree) {
@@ -222,13 +227,9 @@ function migrateFastDeepEqualImport(tree: Tree, directoryPath: string) {
     if (filePath.endsWith('.ts')) {
       const fileContent = tree.read(filePath, 'utf-8')
       if (fileContent) {
-        const updatedContent = fileContent.replace(
-          /import \* as equal from 'fast-deep-equal';?/,
-          "import equal from 'fast-deep-equal';"
-        ).replace(
-          /import \* as deepEqual from 'fast-deep-equal';?/,
-          "import deepEqual from 'fast-deep-equal';"
-        )
+        const updatedContent = fileContent
+          .replace(/import \* as equal from 'fast-deep-equal';?/, "import equal from 'fast-deep-equal';")
+          .replace(/import \* as deepEqual from 'fast-deep-equal';?/, "import deepEqual from 'fast-deep-equal';")
 
         tree.write(filePath, updatedContent)
       }
@@ -271,6 +272,42 @@ function migratePrimeNgCalendar(tree: Tree, directoryPath: string) {
         const updatedContent = fileContent.replace(/p-calendar/g, 'p-datepicker')
 
         tree.write(filePath, updatedContent)
+      }
+    }
+  })
+}
+
+function checkConfigurationServiceUsage(tree: Tree, directoryPath: string) {
+  const foundInFiles: string[] = []
+  const warning = '⚠️ ConfigurationService is now asynchronous. Please check if usage needs to be adapted.'
+
+  visitNotIgnoredFiles(tree, directoryPath, (filePath) => {
+    const fileContent = tree.read(filePath, 'utf-8')
+
+    if (!fileContent) return
+
+    const contentAst = ast(fileContent)
+    const referencesNodes = query(contentAst, 'Identifier[name="ConfigurationService"]')
+
+    if (referencesNodes.length > 0) {
+      foundInFiles.push(filePath)
+    }
+  })
+
+  printWarnings(warning, foundInFiles)
+}
+
+function warnOcxPortalViewport(tree: Tree, directoryPath: string) {
+  const foundInFiles: string[] = []
+  const warning =
+    '⚠️ ocx-portal-viewport was removed. Please refer to the standalone guide for adaptations: https://onecx.github.io/docs/guides/current/angular/cookbook/migrations/enable-standalone/index.html'
+
+  visitNotIgnoredFiles(tree, directoryPath, (filePath) => {
+    if (filePath.endsWith('.html')) {
+      const fileContent = tree.read(filePath, 'utf-8')
+      if (fileContent?.includes('ocx-portal-viewport')) {
+        foundInFiles.push(filePath)
+        printWarnings(warning, foundInFiles)
       }
     }
   })
