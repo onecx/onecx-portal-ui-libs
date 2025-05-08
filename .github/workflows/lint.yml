@@ -1,0 +1,28 @@
+name: lint
+
+on:
+  workflow_call:
+    inputs:
+      node:
+        description: 'Node version'
+        default: '20'
+        required: false
+        type: string
+
+jobs:
+  lint-affected-libs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Environment
+        uses: ./.github/actions/setup-environment
+        with:
+          node-version: ${{ inputs.node }}
+
+      - name: Run affected Lint
+        run: |
+          npx nx affected -t lint
