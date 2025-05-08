@@ -46,7 +46,7 @@ This page gives an overview about onecx libs.
 |Will be removed soon
 
 |shell-core
-|Contains everything that shell and the standalone shell share
+|Contains core building blocks for the shell
 
 |standalone-shell
 |Includes everything you need to start an application in standalone mode
