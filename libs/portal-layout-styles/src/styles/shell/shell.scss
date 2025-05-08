@@ -2,46 +2,19 @@
 
 :root {
   /* Top Bar Variables */
-  --topbar-bg-color: #0d3650;
-  --topbar-text-color: #ffffff;
-  --topbar-left-bg-color: #0d3650;
-  --topbar-item-text-color: #ffffff;
-  --topbar-item-text-hover-bg-color: #262626;
-  --topbar-menu-button-bg-color: rgb(255 0 68);
   --menu-button-text-color: #ffffff;
-  --logo-color: #ffffff /* Body Variables */ --page-padding: 1rem;
+  /* Body Variables */ --page-padding: 1rem;
   --page-padding-lg: calc(var(--page-padding) * 2);
-  --body-bg-color: #f7f7f7;
-  --text-color: rgb(0 0 0 / 87%);
-  --text-secondary-color: #262626;
-  --font-size: 14px;
-  --font-family: Ubuntu, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
   --border-radius: 5px;
   --transition-duration: 0.2s;
   --root-font-size: 14px;
-
-  /* Contents Variables */
-  --content-bg-color: #ffffff;
-  --content-alt-bg-color: #ffffff;
-  --overlay-content-bg-color: #ffffff;
-  --hover-bg-color: #ad1457;
-  --solid-surface-text-color: #ffffff;
-  --divider-color: #e4e4e4;
 
   /* Animation Variables */
   --animation-duration: 0.2s;
   --animation-timing: #{$animationTimingFunction};
 
   /* Menu Style Variables */
-  --menu-text-color: #274b5f;
-  --menu-bg-color: #fdfeff;
-  --menu-item-text-color: #515c66;
-  --menu-item-hover-bg-color: #e4e4e4;
-  --menu-active-item-bg-color: rgba(0, 0, 0, 0.04);
-  --menu-active-item-text-color: var(--menu-item-text-color);
-  --menu-active-item-bg-color: var(--menu-item-hover-bg-color);
   --inline-menu-border-color: var(--divider-color);
-  --menu-inline-border-color: #c4c4c4;
   --mobile-break-point: #{$mobileBreakpoint};
   --submenu-shadow: #{$submenuShadow};
   --menu-shadow: #{$menuShadow};
@@ -54,10 +27,6 @@
   --h4-font-size: #{$h4FontSize};
   --h5-font-size: #{$h5FontSize};
   --h6-font-size: #{$h6FontSize};
-
-  /* General Colors Variables */
-  --primary-color: #274b5f;
-  --secondary-color: #1c4257;
 }
 
 @import '_mixins';

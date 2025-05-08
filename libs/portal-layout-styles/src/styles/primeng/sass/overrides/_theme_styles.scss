@@ -5,8 +5,6 @@
 }
 
 :root {
-  --font-family: #{$fontFamily};
-  --font-size: #{$fontSize};
   --font-weight: #{$fontWeight};
   --mask-bg: #{$maskBg};
   --transition-duration: #{$transitionDuration};
@@ -18,13 +16,10 @@
   --focus-outline: #{$focusOutline};
   --focus-outline-offset: #{$focusOutlineOffset};
   --focus-shadow: #{$focusShadow};
-  --primary-color: #{$primaryColor};
   --input-list-item-focus-shadow: #{$inputListItemFocusShadow};
   --menuitem-padding: #{$menuitemPadding};
-  --text-color: #{$textColor};
   --menuitem-border-radius: #{$menuitemBorderRadius};
   --list-item-transition: #{$listItemTransition};
-  --text-secondary-color: #{$textSecondaryColor};
   --inline-spacing: #{$inlineSpacing};
   --menuitem-hover-bg: #{$menuitemHoverBg};
   --horizontal-menu-root-menuitem-padding: #{$horizontalMenuRootMenuitemPadding};
@@ -48,9 +43,7 @@
   --button-border: #{$buttonBorder};
   --button-padding: #{$buttonPadding};
   --form-element-transition: #{$formElementTransition};
-  --button-hover-bg: #{$buttonHoverBg};
   --button-hover-border-color: #{$buttonHoverBorderColor};
-  --button-active-bg: #{$buttonActiveBg};
   --button-active-border-color: #{$buttonActiveBorderColor};
   --outlined-button-border: #{$outlinedButtonBorder};
   --plain-button-hover-bg-color: #{$plainButtonHoverBgColor};
@@ -108,7 +101,6 @@
   --help-button-text-active-color: #{$helpButtonTextActiveColor};
   --help-button-active-border-color: #{$helpButtonActiveBorderColor};
   --danger-button-text-color: #{$dangerButtonTextColor};
-  --danger-button-bg: #{$dangerButtonBg};
   --danger-button-border: #{$dangerButtonBorder};
   --danger-button-hover-bg: #{$dangerButtonHoverBg};
   --danger-button-text-hover-color: #{$dangerButtonTextHoverColor};
@@ -388,20 +380,16 @@
   --tabview-header-active-bg: #{$tabviewHeaderActiveBg};
   --tabview-header-active-border-color: #{$tabviewHeaderActiveBorderColor};
   --inline-message-margin: #{$inlineMessageMargin};
-  --info-message-bg: #{$infoMessageBg};
   --info-message-border: #{$infoMessageBorder};
   --inline-message-border-width: #{$inlineMessageBorderWidth};
   --info-message-text-color: #{$infoMessageTextColor};
   --info-message-icon-color: #{$infoMessageIconColor};
-  --success-message-bg: #{$successMessageBg};
   --success-message-border: #{$successMessageBorder};
   --success-message-text-color: #{$successMessageTextColor};
   --success-message-icon-color: #{$successMessageIconColor};
-  --warning-message-bg: #{$warningMessageBg};
   --warning-message-border: #{$warningMessageBorder};
   --warning-message-text-color: #{$warningMessageTextColor};
   --warning-message-icon-color: #{$warningMessageIconColor};
-  --error-message-bg: #{$errorMessageBg};
   --error-message-border: #{$errorMessageBorder};
   --error-message-text-color: #{$errorMessageTextColor};
   --error-message-icon-color: #{$errorMessageIconColor};
