@@ -52,10 +52,7 @@
       }
     },
     "release": {
-      "executor": "nx-release:build-update-publish",
-      "options": {
-        "libName": "angular-utils"
-      }
+      "executor": "@onecx/release:update-build-publish"
     }
   }
 }

@@ -1,3 +1,15 @@
+## [5.37.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.36.0...v5.37.0) (2025-05-07)
+
+### Features
+
+* style isolation cherry-pick ([#729](https://github.com/onecx/onecx-portal-ui-libs/issues/729)) ([b759790](https://github.com/onecx/onecx-portal-ui-libs/commit/b759790af5865dd83e4671d9871efc6283556b3c)), closes [#713](https://github.com/onecx/onecx-portal-ui-libs/issues/713)
+
+## [5.36.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.35.1...v5.36.0) (2025-05-07)
+
+### Features
+
+* add parameters service ([#724](https://github.com/onecx/onecx-portal-ui-libs/issues/724)) ([82539e0](https://github.com/onecx/onecx-portal-ui-libs/commit/82539e0099848219b7003aa375a53bfbf871884e))
+
 ## [5.35.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.35.0...v5.35.1) (2025-04-28)
 
 ### Bug Fixes

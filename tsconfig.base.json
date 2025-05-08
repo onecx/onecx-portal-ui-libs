@@ -36,6 +36,7 @@
       "@onecx/portal-integration-angular/mocks": ["libs/portal-integration-angular/mocks/index.ts"],
       "@onecx/portal-integration-angular/testing": ["libs/portal-integration-angular/testing/index.ts"],
       "@onecx/portal-layout-styles": ["libs/portal-layout-styles/src/index.ts"],
+      "@onecx/release": ["tools/release/src/index.ts"],
       "@onecx/shell-core": ["libs/shell-core/src/index.ts"],
       "@onecx/standalone-shell": ["libs/standalone-shell/src/index.ts"]
     },
