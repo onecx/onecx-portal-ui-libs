@@ -1,18 +1,21 @@
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ActivatedRoute, RouterModule } from '@angular/router'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
+import {
+  provideAppStateServiceMock,
+  provideUserServiceMock,
+  UserServiceMock,
+} from '@onecx/angular-integration-interface/mocks'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { provideUserServiceMock, provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
-import { DataListGridComponent } from './data-list-grid.component'
-import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
-import { ColumnType } from '../../model/column-type.model'
+import { TooltipStyle } from 'primeng/tooltip'
 import { DataListGridHarness } from '../../../../testing/data-list-grid.harness'
 import { DataTableHarness } from '../../../../testing/data-table.harness'
+import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
-import { TooltipStyle } from 'primeng/tooltip'
-import { UserService } from '@onecx/angular-integration-interface'
+import { ColumnType } from '../../model/column-type.model'
+import { DataListGridComponent } from './data-list-grid.component'
 import { ensureOriginMockExists } from '@onecx/angular-testing'
 
 ensureOriginMockExists()
@@ -245,8 +248,8 @@ describe('DataListGridComponent', () => {
     component.paginator = true
     translateService = TestBed.inject(TranslateService)
     translateService.use('en')
-    const userService = TestBed.inject(UserService)
-    userService.permissions$.next(['VIEW', 'EDIT', 'DELETE'])
+    const userServiceMock = TestBed.inject(UserServiceMock)
+    userServiceMock.permissionsTopic$.publish(['VIEW', 'EDIT', 'DELETE'])
     fixture.detectChanges()
     listGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataListGridHarness)
   })
@@ -342,7 +345,7 @@ describe('DataListGridComponent', () => {
     component.editPermission = 'EDIT'
     component.deletePermission = 'DELETE'
 
-    fixture.detectChanges()
+    fixture.autoDetectChanges()
     await fixture.whenStable()
   }
   describe('Disable list action buttons based on field path', () => {
@@ -490,7 +493,8 @@ describe('DataListGridComponent', () => {
     it('should assign id to view button', async () => {
       component.viewItem.subscribe(() => console.log())
       component.viewPermission = 'VIEW'
-      fixture.detectChanges()
+
+      fixture.autoDetectChanges()
       await fixture.whenStable()
 
       expect(component.viewItemObserved).toBe(true)
@@ -504,8 +508,10 @@ describe('DataListGridComponent', () => {
     it('should assign id to edit button', async () => {
       component.editItem.subscribe(() => console.log())
       component.editPermission = 'EDIT'
-      fixture.detectChanges()
+
+      fixture.autoDetectChanges()
       await fixture.whenStable()
+
       expect(component.editItemObserved).toBe(true)
 
       const tableActions = await listGrid.getActionButtons('list')
@@ -517,8 +523,10 @@ describe('DataListGridComponent', () => {
     it('should assign id to delete button', async () => {
       component.deleteItem.subscribe(() => console.log())
       component.deletePermission = 'DELETE'
-      fixture.detectChanges()
+
+      fixture.autoDetectChanges()
       await fixture.whenStable()
+
       expect(component.deleteItemObserved).toBe(true)
 
       const tableActions = await listGrid.getActionButtons('list')
@@ -538,7 +546,7 @@ describe('DataListGridComponent', () => {
         },
       ]
 
-      fixture.detectChanges()
+      fixture.autoDetectChanges()
       await fixture.whenStable()
 
       const tableActions = await listGrid.getActionButtons('list')

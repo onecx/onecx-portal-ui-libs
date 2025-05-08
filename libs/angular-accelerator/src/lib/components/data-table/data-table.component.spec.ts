@@ -1,17 +1,16 @@
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { TranslateTestingModule } from 'ngx-translate-testing'
+import { provideUserServiceMock, UserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { PTableCheckboxHarness } from '@onecx/angular-testing'
-import { provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
+import { TranslateTestingModule } from 'ngx-translate-testing'
+import { DataTableHarness } from '../../../../testing'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
-import { DataTableComponent, Row } from './data-table.component'
-import { ColumnType } from '../../model/column-type.model'
-import { DataTableHarness } from '../../../../testing'
 import { MockAuthModule } from '../../mock-auth/mock-auth.module'
-import { UserService } from '@onecx/angular-integration-interface'
+import { ColumnType } from '../../model/column-type.model'
+import { DataTableComponent, Row } from './data-table.component'
 
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>
@@ -219,8 +218,8 @@ describe('DataTableComponent', () => {
     component.paginator = true
     translateService = TestBed.inject(TranslateService)
     translateService.use('en')
-    const userService = TestBed.inject(UserService)
-    userService.permissions$.next(['VIEW', 'EDIT', 'DELETE'])
+    const userServiceMock = TestBed.inject(UserServiceMock)
+    userServiceMock.permissionsTopic$.publish(['VIEW', 'EDIT', 'DELETE'])
     fixture.detectChanges()
     dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
   })
@@ -409,7 +408,7 @@ describe('DataTableComponent', () => {
     })
   })
 
-  const setUpActionButtonMockData = () => {
+  const setUpActionButtonMockData = async () => {
     component.columns = [
       ...mockColumns,
       {
@@ -444,6 +443,9 @@ describe('DataTableComponent', () => {
     component.viewPermission = 'VIEW'
     component.editPermission = 'EDIT'
     component.deletePermission = 'DELETE'
+
+    fixture.detectChanges()
+    await fixture.whenStable()
   }
 
   describe('Disable action buttons based on field path', () => {
@@ -452,7 +454,7 @@ describe('DataTableComponent', () => {
       expect(component.editTableRowObserved).toBe(false)
       expect(component.deleteTableRowObserved).toBe(false)
 
-      setUpActionButtonMockData()
+      await setUpActionButtonMockData()
 
       expect(component.viewTableRowObserved).toBe(true)
       expect(component.editTableRowObserved).toBe(true)
@@ -476,7 +478,7 @@ describe('DataTableComponent', () => {
     })
 
     it('should dynamically enable/disable an action button based on the contents of a specified column', async () => {
-      setUpActionButtonMockData()
+      await setUpActionButtonMockData()
       component.viewActionEnabledField = 'ready'
 
       let tableActions = await dataTable.getActionButtons()
@@ -512,7 +514,7 @@ describe('DataTableComponent', () => {
       expect(component.editTableRowObserved).toBe(false)
       expect(component.deleteTableRowObserved).toBe(false)
 
-      setUpActionButtonMockData()
+      await setUpActionButtonMockData()
 
       expect(component.viewTableRowObserved).toBe(true)
       expect(component.editTableRowObserved).toBe(true)
@@ -535,7 +537,7 @@ describe('DataTableComponent', () => {
     })
 
     it('should dynamically hide/show an action button based on the contents of a specified column', async () => {
-      setUpActionButtonMockData()
+      await setUpActionButtonMockData()
       component.viewActionVisibleField = 'ready'
 
       let tableActions = await dataTable.getActionButtons()
@@ -551,6 +553,9 @@ describe('DataTableComponent', () => {
       tempRows[0]['ready'] = true
 
       component.rows = [...tempRows]
+
+      fixture.detectChanges()
+      await fixture.whenStable()
 
       tableActions = await dataTable.getActionButtons()
       expect(tableActions.length).toBe(3)
@@ -595,6 +600,9 @@ describe('DataTableComponent', () => {
     it('should assign id to view button', async () => {
       component.viewTableRow.subscribe(() => console.log())
       component.viewPermission = 'VIEW'
+      fixture.detectChanges()
+      await fixture.whenStable()
+
       expect(component.viewTableRowObserved).toBe(true)
 
       const tableActions = await dataTable.getActionButtons()
@@ -606,6 +614,9 @@ describe('DataTableComponent', () => {
     it('should assign id to edit button', async () => {
       component.editTableRow.subscribe(() => console.log())
       component.editPermission = 'EDIT'
+      fixture.detectChanges()
+      await fixture.whenStable()
+
       expect(component.editTableRowObserved).toBe(true)
 
       const tableActions = await dataTable.getActionButtons()
@@ -617,6 +628,9 @@ describe('DataTableComponent', () => {
     it('should assign id to delete button', async () => {
       component.deleteTableRow.subscribe(() => console.log())
       component.deletePermission = 'DELETE'
+      fixture.detectChanges()
+      await fixture.whenStable()
+
       expect(component.deleteTableRowObserved).toBe(true)
 
       const tableActions = await dataTable.getActionButtons()
@@ -635,6 +649,8 @@ describe('DataTableComponent', () => {
           id: 'actionId',
         },
       ]
+      fixture.detectChanges()
+      await fixture.whenStable()
 
       const tableActions = await dataTable.getActionButtons()
       expect(tableActions.length).toBe(1)

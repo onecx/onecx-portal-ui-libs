@@ -19,8 +19,8 @@
         (click)="secondaryButtonAction()"
         [label]="dialogData.config.secondaryButtonDetails!.key | translate:dialogData.config.secondaryButtonDetails?.parameters"
         [disabled]="secondaryButtonDisabled$ | async"
-        [pTooltip]="dialogData.config.secondaryButtonDetails!.tooltipKey ? (dialogData.config.secondaryButtonDetails!.tooltipKey | translate) : null"
-        [tooltipPosition]="dialogData.config.secondaryButtonDetails?.tooltipPosition ?? ''"
+        pTooltip="dialogData.config.secondaryButtonDetails!.tooltipKey ? (dialogData.config.secondaryButtonDetails!.tooltipKey | translate) : null"
+        tooltipPosition="dialogData.config.secondaryButtonDetails?.tooltipPosition ?? ''"
         [attr.aria-label]="dialogData.config.secondaryButtonDetails!.key | translate:dialogData.config.secondaryButtonDetails?.parameters"
       ></button>
     }
@@ -35,8 +35,8 @@
       (click)="primaryButtonAction()"
       [label]="dialogData.config.primaryButtonDetails!.key | translate:dialogData.config.primaryButtonDetails?.parameters"
       [disabled]="primaryButtonDisabled$ | async"
-      [pTooltip]="dialogData.config.primaryButtonDetails!.tooltipKey ? (dialogData.config.primaryButtonDetails!.tooltipKey | translate) : null"
-      [tooltipPosition]="dialogData.config.primaryButtonDetails?.tooltipPosition ?? ''"
+      pTooltip="dialogData.config.primaryButtonDetails!.tooltipKey ? (dialogData.config.primaryButtonDetails!.tooltipKey | translate) : null"
+      tooltipPosition="dialogData.config.primaryButtonDetails?.tooltipPosition ?? ''"
       [attr.aria-label]="dialogData.config.primaryButtonDetails!.key | translate:dialogData.config.primaryButtonDetails?.parameters"
     ></button>
   </div>
@@ -51,8 +51,8 @@
     (click)="customButtonAction(button)"
     [label]="button.key | translate:button.parameters"
     [disabled]="resolveCustomButtonDisabled((customButtonsDisabled$ | async) ?? {}, button.id)"
-    [pTooltip]="button.tooltipKey ? (button.tooltipKey | translate) : null"
-    [tooltipPosition]="button.tooltipPosition ?? ''"
+    pTooltip="button.tooltipKey ? (button.tooltipKey | translate) : null"
+    tooltipPosition="button.tooltipPosition ?? ''"
     [attr.aria-label]="button.key | translate:button.parameters"
   ></button>
 </ng-template>

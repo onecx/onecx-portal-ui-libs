@@ -1,22 +1,25 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
-import { ActivatedRoute, RouterModule } from '@angular/router'
+import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
+import { ActivatedRoute, RouterModule } from '@angular/router'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { DataViewModule } from 'primeng/dataview'
 
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { DataListGridHarness, DataTableHarness, DataViewHarness } from '@onecx/angular-accelerator/testing'
-import { provideAppStateServiceMock, provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
-import { DataViewComponent } from './data-view.component'
+import {
+  provideAppStateServiceMock,
+  provideUserServiceMock,
+  UserServiceMock,
+} from '@onecx/angular-integration-interface/mocks'
+import { TooltipStyle } from 'primeng/tooltip'
+import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { MockAuthModule } from '../../mock-auth/mock-auth.module'
+import { ColumnType } from '../../model/column-type.model'
 import { DataListGridComponent } from '../data-list-grid/data-list-grid.component'
 import { DataTableComponent } from '../data-table/data-table.component'
-import { ColumnType } from '../../model/column-type.model'
-import { AngularAcceleratorModule } from '../../angular-accelerator.module'
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
-import { TooltipStyle } from 'primeng/tooltip'
-import { UserService } from '@onecx/angular-integration-interface'
+import { DataViewComponent } from './data-view.component'
 
 describe('DataViewComponent', () => {
   const mutationObserverMock = jest.fn(function MutationObserver(callback) {
@@ -236,8 +239,8 @@ describe('DataViewComponent', () => {
     component = fixture.componentInstance
     component.data = mockData
     component.columns = mockColumns
-    const userService = TestBed.inject(UserService)
-    userService.permissions$.next(['VIEW', 'EDIT', 'DELETE'])
+    const userServiceMock = TestBed.inject(UserServiceMock)
+    userServiceMock.permissionsTopic$.publish(['VIEW', 'EDIT', 'DELETE'])
     fixture.detectChanges()
     dataViewHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataViewHarness)
   })

@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { PortalPageComponent } from './portal-page.component'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { TranslateTestingModule } from 'ngx-translate-testing'
 
 describe('PortalPageComponent', () => {
   let component: PortalPageComponent
@@ -8,10 +9,15 @@ describe('PortalPageComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-    declarations: [PortalPageComponent],
-    imports: [],
-    providers: [provideHttpClient(withInterceptorsFromDi())]
-}).compileComponents()
+      declarations: [PortalPageComponent],
+      imports: [
+        TranslateTestingModule.withTranslations({
+          en: require('./../../../../../assets/i18n/en.json'),
+          de: require('./../../../../../assets/i18n/de.json'),
+        }),
+      ],
+      providers: [provideHttpClient(withInterceptorsFromDi())],
+    }).compileComponents()
   }))
 
   beforeEach(() => {
