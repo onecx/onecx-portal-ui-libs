@@ -10,6 +10,19 @@ import {
   writeJson,
 } from '@nx/devkit'
 import { execSync } from 'child_process'
+import { findPatternInFiles } from '@onecx/nx-migration-utils'
+import {
+  detectModulesImportingModule,
+  detectVariablesIncludingModule,
+  detectVariablesIncludingProvider,
+  importProviderIfDoesNotExist,
+  includeProviderInModuleIfDoesNotExist,
+  Module,
+  Provider,
+} from '@onecx/nx-migration-utils/angular'
+
+const standaloneShellPackageRegex = /@onecx\/standalone-shell/
+const angularStandaloneShellPackage = '@onecx/angular-standalone-shell'
 
 export default async function migrateOnecxToV6(tree: Tree) {
   const rootPath = tree.root
@@ -22,6 +35,7 @@ export default async function migrateOnecxToV6(tree: Tree) {
   )
 
   updateJson(tree, `package.json`, (json) => {
+    replaceStandaloneShellInPackage(json)
     const angularDependencies = Object.keys(json.dependencies).filter((dep) => dep.startsWith('@angular/'))
     const onecxDependencies = Object.keys(json.dependencies).filter((dep) => dep.startsWith('@onecx/'))
     const ngrxDependencies = Object.keys(json.dependencies).filter((dep) => dep.startsWith('@ngrx/'))
@@ -117,6 +131,7 @@ export default async function migrateOnecxToV6(tree: Tree) {
   migrateFastDeepEqualImport(tree, srcDirectoryPath)
   migratePrimeng(tree)
   migratePrimeNgCalendar(tree, srcDirectoryPath)
+  migrateStandaloneShell(tree, srcDirectoryPath)
 
   installPackagesTask(tree, true)
 
@@ -222,13 +237,9 @@ function migrateFastDeepEqualImport(tree: Tree, directoryPath: string) {
     if (filePath.endsWith('.ts')) {
       const fileContent = tree.read(filePath, 'utf-8')
       if (fileContent) {
-        const updatedContent = fileContent.replace(
-          /import \* as equal from 'fast-deep-equal';?/,
-          "import equal from 'fast-deep-equal';"
-        ).replace(
-          /import \* as deepEqual from 'fast-deep-equal';?/,
-          "import deepEqual from 'fast-deep-equal';"
-        )
+        const updatedContent = fileContent
+          .replace(/import \* as equal from 'fast-deep-equal';?/, "import equal from 'fast-deep-equal';")
+          .replace(/import \* as deepEqual from 'fast-deep-equal';?/, "import deepEqual from 'fast-deep-equal';")
 
         tree.write(filePath, updatedContent)
       }
@@ -273,5 +284,47 @@ function migratePrimeNgCalendar(tree: Tree, directoryPath: string) {
         tree.write(filePath, updatedContent)
       }
     }
+  })
+}
+
+function replaceStandaloneShellInPackage(json: any) {
+  if (json.dependencies && json.dependencies['@onecx/standalone-shell']) {
+    json.dependencies['@onecx/angular-standalone-shell'] = json.dependencies['@onecx/standalone-shell']
+    delete json.dependencies['@onecx/standalone-shell']
+  }
+}
+
+function migrateStandaloneShell(tree: Tree, directoryPath: string) {
+  replaceStandaloneShellImport(tree, directoryPath)
+  provideStandaloneProvidersIfModuleUsed(tree, directoryPath)
+}
+
+function replaceStandaloneShellImport(tree: Tree, directoryPath: string) {
+  const files = findPatternInFiles(tree, directoryPath, standaloneShellPackageRegex)
+  files.push('webpack.config.js')
+  for (const file of files) {
+    const contents = tree.read(file)?.toString()
+    if (!contents) continue
+
+    const newContents = contents.replace(standaloneShellPackageRegex, angularStandaloneShellPackage)
+    tree.write(file, newContents)
+  }
+}
+
+function provideStandaloneProvidersIfModuleUsed(tree: Tree, directoryPath: string) {
+  const moduleInfo: Module = {
+    name: 'StandaloneShellModule',
+  }
+  const providerInfo: Provider = {
+    name: 'provideStandaloneProviders',
+    importPath: angularStandaloneShellPackage,
+  }
+
+  const variablesWithModule = detectVariablesIncludingModule(tree, directoryPath, moduleInfo)
+  const modules = detectModulesImportingModule(tree, directoryPath, moduleInfo, variablesWithModule)
+  const variablesWithProvider = detectVariablesIncludingProvider(tree, directoryPath, providerInfo)
+  modules.forEach((moduleName) => {
+    includeProviderInModuleIfDoesNotExist(tree, moduleName, providerInfo, variablesWithProvider)
+    importProviderIfDoesNotExist(tree, moduleName.filePath, providerInfo)
   })
 }
