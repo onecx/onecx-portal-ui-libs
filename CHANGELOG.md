@@ -1,3 +1,13 @@
+## [5.38.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.37.0...v5.38.0) (2025-05-08)
+
+### Features
+
+* add release-with-migrations executor ([#716](https://github.com/onecx/onecx-portal-ui-libs/issues/716)) ([482aad9](https://github.com/onecx/onecx-portal-ui-libs/commit/482aad9d41f94c7664325b9315d75058ede9b49d))
+
+### Bug Fixes
+
+* dynamic css variables ([#733](https://github.com/onecx/onecx-portal-ui-libs/issues/733)) ([#734](https://github.com/onecx/onecx-portal-ui-libs/issues/734)) ([27bda33](https://github.com/onecx/onecx-portal-ui-libs/commit/27bda33d7b50b210b7c1540834ad78b83a6c28c5))
+
 ## [5.37.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.36.0...v5.37.0) (2025-05-07)
 
 ### Features
