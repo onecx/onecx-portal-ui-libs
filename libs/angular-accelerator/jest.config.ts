@@ -1,4 +1,6 @@
 /* eslint-disable */
+import { createReportsConfig } from '../../jest-config-factory'
+
 export default {
   displayName: 'angular-accelerator',
   preset: '../../jest.preset.js',
@@ -22,20 +24,5 @@ export default {
     'jest-preset-angular/build/serializers/html-comment',
   ],
   testEnvironment: '@happy-dom/jest-environment',
-  testMatch: ['<rootDir>/src/**/*.spec.ts'],
-  coverageDirectory: '../../reports/angular-accelerator/coverage',
-  collectCoverage: true,
-  coverageReporters: ['json', ['lcov', { projectRoot: '/' }], 'text', 'text-summary', 'html'],
-  testResultsProcessor: 'jest-sonar-reporter',
-  reporters: [
-    'default',
-    [
-      'jest-sonar',
-      {
-        outputDirectory: './reports/angular-accelerator',
-        outputName: 'sonarqube_report.xml',
-        reportedFilePath: 'absolute',
-      },
-    ],
-  ],
+  ...createReportsConfig('angular-accelerator'),
 }

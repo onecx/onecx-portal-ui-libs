@@ -2,42 +2,33 @@ name: test
 
 on:
   workflow_call:
+    inputs:
+      node:
+        description: 'Node version'
+        default: '20'
+        required: false
+        type: string
 
 jobs:
   test-affected-libs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v3
+      - name: Setup Environment
+        uses: ./.github/actions/setup-environment
         with:
-          node-version: 20
-
-      - uses: nrwl/nx-set-shas@v3
-
-      - name: Install deps
-        run: npm ci
+          node-version: ${{ inputs.node }}
 
       - name: Run affected Tests
         run: |
           npx nx affected -t test --watch=false --browsers=ChromeHeadless --coverage
 
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: path-files
-
-      - name: Modify lcov.info files
-        run: |
-          while IFS= read -r path; do
-          if [ -f "$path" ]; then
-            sed -i 's|^SF:|SF:/|' "$path"
-          else
-            echo "File not found: $path"
-          fi
-          done < lcov_paths.txt
+      - name: Find affected paths
+        uses: ./.github/actions/pathfinder-modify_lcov
 
       - name: Upload artefacts
         uses: actions/upload-artifact@v4

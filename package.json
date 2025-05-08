@@ -6,8 +6,7 @@
     "sass": "npx sass libs/portal-integration-angular/assets/styles.scss libs/portal-integration-angular/assets/output.css",
     "postinstall": "mkdir -p .nx",
     "build": "nx run-many -t build build-migrations",
-    "build-copy": "npm run build && node copy-build.js",
-    "test:ci": "nx run-many -t test --watch=false --browsers=ChromeHeadless --coverage"
+    "build-copy": "npm run build && node copy-build.js"
   },
   "private": true,
   "dependencies": {

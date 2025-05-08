@@ -20,12 +20,7 @@ jobs:
     uses: ./.github/workflows/build.yml
     secrets: inherit
 
-  find-paths:
-    uses: ./.github/workflows/find-paths.yml
-    secrets: inherit
-
   test:
-    needs: find-paths
     uses: ./.github/workflows/test.yml
     secrets: inherit
 

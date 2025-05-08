@@ -1,3 +1,6 @@
+/* eslint-disable */
+import { createReportsConfig } from '../../jest-config-factory'
+
 export default {
   displayName: 'standalone-shell',
   preset: '../../jest.preset.js',
@@ -17,20 +20,5 @@ export default {
     'jest-preset-angular/build/serializers/ng-snapshot',
     'jest-preset-angular/build/serializers/html-comment',
   ],
-  testMatch: ['<rootDir>/src/lib/**/*.spec.ts'],
-  coverageDirectory: '../../reports/standalone-shell/coverage',
-  collectCoverage: true,
-  coverageReporters: ['json', ['lcov', { projectRoot: '/' }], 'text', 'text-summary', 'html'],
-  testResultsProcessor: 'jest-sonar-reporter',
-  reporters: [
-    'default',
-    [
-      'jest-sonar',
-      {
-        outputDirectory: './reports/standalone-shell',
-        outputName: 'sonarqube_report.xml',
-        reportedFilePath: 'absolute',
-      },
-    ],
-  ],
+  ...createReportsConfig('standalone-shell'),
 }

@@ -1,4 +1,6 @@
 /* eslint-disable */
+import { createReportsConfig } from '../../jest-config-factory'
+
 export default {
   displayName: 'angular-auth',
   preset: '../../jest.preset.js',
@@ -18,20 +20,6 @@ export default {
     'jest-preset-angular/build/serializers/ng-snapshot',
     'jest-preset-angular/build/serializers/html-comment',
   ],
-  testMatch: ['<rootDir>/src/lib/**/*.spec.ts'],
-  coverageDirectory: '../../reports/angular-auth/coverage',
-  collectCoverage: true,
-  coverageReporters: ['json', ['lcov', { projectRoot: '/' }], 'text', 'text-summary', 'html'],
-  testResultsProcessor: 'jest-sonar-reporter',
-  reporters: [
-    'default',
-    [
-      'jest-sonar',
-      {
-        outputDirectory: './reports/angular-auth',
-        outputName: 'sonarqube_report.xml',
-        reportedFilePath: 'absolute',
-      },
-    ],
-  ],
+
+  ...createReportsConfig('angular-auth'),
 }
