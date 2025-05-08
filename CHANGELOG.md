@@ -1,3 +1,9 @@
+## [6.0.0-rc.10](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.9...v6.0.0-rc.10) (2025-05-08)
+
+### Bug Fixes
+
+* dynamic css variables ([#733](https://github.com/onecx/onecx-portal-ui-libs/issues/733)) ([66cd679](https://github.com/onecx/onecx-portal-ui-libs/commit/66cd6795b922ac09a9aaae2c274bbda096ade8de))
+
 ## [6.0.0-rc.9](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.8...v6.0.0-rc.9) (2025-05-07)
 
 ### Features
