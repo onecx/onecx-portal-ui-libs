@@ -439,11 +439,8 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   }
 
   onViewRow(element: ListGridData) {
-    console.log('ON VIEW')
     if (this.viewPermission) {
-      console.log('VIEW PERMISSION ', this.viewPermission)
       this.userService.hasPermission(this.viewPermission).then((hasPermission) => {
-        console.log('VIEW HASPERMISSION ', hasPermission)
         if (hasPermission) {
           this.viewItem.emit(element)
         }
@@ -496,11 +493,18 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
         ...this.additionalActions.map((a) => a.labelKey || ''),
       ])
       .subscribe((translations) => {
-        const menuItems: MenuItem[] = []
         const automationId = 'data-grid-action-button'
         const automationIdHidden = 'data-grid-action-button-hidden'
 
-        this.userService.hasPermission(this.viewPermission).then((hasViewPermission) => {
+        const permissionChecks = Promise.all([
+          this.userService.hasPermission(this.viewPermission),
+          this.userService.hasPermission(this.editPermission),
+          this.userService.hasPermission(this.deletePermission),
+        ])
+
+        permissionChecks.then(([hasViewPermission, hasEditPermission, hasDeletePermission]) => {
+          const menuItems: MenuItem[] = []
+
           if (this.viewItem.observed && hasViewPermission) {
             menuItems.push({
               label: translations[this.viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW'],
@@ -511,9 +515,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
               automationId: viewVisible ? automationId : automationIdHidden,
             })
           }
-        })
 
-        this.userService.hasPermission(this.editPermission).then((hasEditPermission) => {
           if (this.editItem.observed && hasEditPermission) {
             menuItems.push({
               label: translations[this.editMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.EDIT'],
@@ -524,9 +526,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
               automationId: editVisible ? automationId : automationIdHidden,
             })
           }
-        })
 
-        this.userService.hasPermission(this.deletePermission).then((hasDeletePermission) => {
           if (this.deleteItem.observed && hasDeletePermission) {
             menuItems.push({
               label: translations[this.deleteMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.DELETE'],
@@ -537,12 +537,13 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
               automationId: deleteVisible ? automationId : automationIdHidden,
             })
           }
-        })
 
-        Promise.all(
-          this.additionalActions.map((a) => {
-            return this.userService.hasPermission(a.permission).then((hasPermission) => {
-              if (hasPermission) {
+          Promise.all(
+            this.additionalActions.map((a) =>
+              this.userService.hasPermission(a.permission).then((hasPermission) => {
+                if (!hasPermission) return null
+
+                const visible = !a.actionVisibleField || this.fieldIsTruthy(this.selectedItem, a.actionVisibleField)
                 return {
                   label: translations[a.labelKey || ''],
                   icon: a.icon,
@@ -550,15 +551,14 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
                   disabled:
                     a.disabled ||
                     (!!a.actionEnabledField && !this.fieldIsTruthy(this.selectedItem, a.actionEnabledField)),
-                  visible: !a.actionVisibleField || this.fieldIsTruthy(this.selectedItem, a.actionVisibleField),
+                  visible,
                   command: () => a.callback(this.selectedItem),
                 }
-              }
-              return null
-            })
+              })
+            )
+          ).then((additionalMenuItems) => {
+            this.gridMenuItems = menuItems.concat(additionalMenuItems.filter((item) => item !== null))
           })
-        ).then((additionalMenuItems) => {
-          this.gridMenuItems = menuItems.concat(additionalMenuItems.filter((item) => item !== null))
         })
       })
   }
