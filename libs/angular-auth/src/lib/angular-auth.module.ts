@@ -6,9 +6,10 @@ import { AuthProxyService } from './auth-proxy.service'
 import { AuthServiceWrapper } from './auth-service-wrapper'
 import { KeycloakAuthService } from './auth_services/keycloak-auth.service'
 import { TokenInterceptor } from './token.interceptor'
+import { DisabledAuthService } from './auth_services/disabled-auth.service'
 
 function provideAuthServices() {
-  return [AuthServiceWrapper, KeycloakAuthService]
+  return [AuthServiceWrapper, KeycloakAuthService, DisabledAuthService]
 }
 
 export function provideAuthService() {
