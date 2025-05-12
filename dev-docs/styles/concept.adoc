@@ -1,0 +1,55 @@
+= Styles
+
+:idprefix:
+:idseparator: -
+:scope_at_rule: https://developer.mozilla.org/en-US/docs/Web/CSS/@scope
+
+The goal of this document is to explain styles mechanisms available in OneCX and technical details behind them. After reading this document it should be clear how every content rendered inside the Shell is styled.
+
+[#style-isolation-idea]
+== Style Isolation
+Style isolation is a concept that aims to address the issue of styles sharing between different Microfrontends on a single page. By design, on a single page there will be at least Shell UI content and the current Microfrontend's content, making it 2 active applications that require different CSS styles for appropriate presentation. With Remote Components, the amount of the active applications grows to larger numbers making it more likely that CSS rules are clashing with each other. This can lead to potential unwanted side effects for the application display.
+
+Style isolation concept assumes that each application needs to setup the required CSS rules for itself and none of them are leaking to other application's content. In OneCX style isolation concept is implemented since version 6.
+
+[#scoped-styles]
+=== Scoped Styles
+To support the style isolation concept in OneCX, all style sheets (apart from Shell UI's global style sheet) are scoped. Scoped style sheet is a CSS style sheet that contains no global CSS rules but only ones that are utilizing the {scope_at_rule}[CSS @scope at-rule]. This rule ensures that all CSS rules defined in it will be scoped to a certain boundaries on a page.
+
+// TODO: Add link
+More details on how scoping works in OneCX can be accessed {}[here]
+
+[#application-styles]
+=== Application Styles
+As already mentioned, each application has to take care of its own styles since nothing is declared globally. This is possible by dynamic css loading. Whenever a Microfrontend or Remote Component is created, the CSS style sheet of the application they belong to will be loaded on the page. The only requirement for the application is to expose the `styles.css` file.
+
+The styles.css file has to be exposed by the application on the remote url level. As an example, if the remote url of the Microfronted is `localhost:4200/deploymentUrl`, the style sheet has to be exposed on the `localhost:4200/deploymentUrl/styles.css` url.
+
+Its recommended to to the following modification to the angular.json or project.json file to ensure its exposed correctly (where input is a path to the application styles):
+
+.angular.json/project.json modification
+```
+{
+    ...
+    "styles": [
+        {
+            "input": "./src/styles.scss",
+            "bundleName": "styles",
+            "inject": false
+        }
+    ],
+    ...
+}
+```
+
+[#component-styles]
+==== Component Styles
+Component styles are a special case of style sheets that exists in technologies like Angular. In case of Angular, those style sheets are usually scoped by their definition (scoped to the component). Apart from the application styles, those are the other option to define styles for your content.
+
+[#at-rule-scope-support]
+==== @scope support
+The `@scope` at-rule is not widely supported yet in all browsers. For that reason, a polyfill has been prepared (located in the Shell UI) that automatically takes care of the scoping for all browsers that do not support the rule.
+
+[#technical-details]
+== Technical details
+In this section, the technical details on how content is styled in OneCX.
