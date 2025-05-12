@@ -41,33 +41,10 @@ $topbarItemTextColor: #ffffff;
 $topbarItemTextHoverBgColor: rgba(255, 255, 255, 0.12);
 
 :root {
-  --divider-color: #{$dividerColor};
 
   /* --changes onecx */
-
-  --topbar-bg-color: #{$topbarBgColor};
-  --topbar-text-color: #{$topbarItemTextColor};
-
-  --topbar-left-bg-color: #{$topbarLeftBgColor};
-
-  --topbar-item-text-color: #{$topbarItemTextColor};
-  --topbar-item-text-hover-bg-color: #{$topbarItemTextHoverBgColor};
-
-  --topbar-menu-button-bg-color: #{$topbarMenuButtonBgColor};
   --menu-button-text-color: #{$topbarMenuButtonTextColor};
   /* end header custom vars */
-
-  --body-bg-color: #{$bodyBgColor};
-  --text-color: #{$textColor};
-  --text-secondary-color: #{$textSecondaryColor};
-
-  --content-bg-color: #{$contentBgColor};
-  --content-alt-bg-color: #{$contentAltBgColor};
-  --overlay-content-bg-color: #{$overlayContentBgColor};
-  --divider-color: #{$dividerColor};
-  --hover-bg-color: #{$hoverBgColor};
-  --solid-surface-text-color: #{$solidSurfaceTextColor};
-
   /* --end changes onecx */
 }
 
