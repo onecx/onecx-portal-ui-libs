@@ -73,24 +73,15 @@ export const dataRcStylesAttribute = (slotName: string) => `data-${dataRcStylesS
 export const dataShellStylesAttribute = 'data-shell-styles'
 
 /**
- * Extract rules for ":root" selector from a given css.
+ * Replace ":root" selector with ":scope" for a given css.
+ *
+ * :scope === :root if "@scope" is not used
+ * :scope === top level element of the scope if "@scope" is used
  * @param css - css text to transform
- * @returns {string} css with only rules for ":root" selector
+ * @returns {string} css with replaced selector
  */
-export function extractRootRules(css: string): string {
-  const matches = css.match(/:root\s*\{[^}]*\}/g)
-  if (!matches) return ''
-
-  return matches.join(' ')
-}
-
-/**
- * Extract everything apart from rules for ":root" selector from a given css.
- * @param css - css text to transform
- * @returns {string} css without rules for ":root" selector
- */
-export function extractNonRootRules(css: string): string {
-  return css.replace(/:root\s*\{[^}]*\}/g, '')
+export function replaceRootWithScope(css: string): string {
+  return css.replaceAll(':root', ':scope')
 }
 
 /**
@@ -104,15 +95,13 @@ export function createScopedCss(css: string, scopeId: string): string {
   // Apply styles to all v6 elements and the MFE
   return isScopeSupported
     ? `
-  ${extractRootRules(css)}
 @scope([${dataStyleIdAttribute}="${scopeId}"]:is([${dataNoPortalLayoutStylesAttribute}], [${dataMfeElementAttribute}])) to ([${dataStyleIsolationAttribute}]) {
-        ${extractNonRootRules(css)}
+  ${replaceRootWithScope(css)}
     }
 `
     : `
-  ${extractRootRules(css)}
 @supports (@scope([${dataStyleIdAttribute}="${scopeId}"]:is([${dataNoPortalLayoutStylesAttribute}], [${dataMfeElementAttribute}])) to ([${dataStyleIsolationAttribute}])) {
-        ${extractNonRootRules(css)}
+  ${replaceRootWithScope(css)}
     }
 `
 }
@@ -255,5 +244,5 @@ function createCssRequestHeaders() {
  * @returns {boolean} if response is valid css
  */
 function isResponseValidCss<T>(response: HttpResponse<T>) {
-  return response.headers.get('Content-Type') === 'text/css'
+  return response.headers.get('Content-Type')?.includes('text/css')
 }
