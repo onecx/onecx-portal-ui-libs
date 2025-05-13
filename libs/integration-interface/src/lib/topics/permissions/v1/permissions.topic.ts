@@ -1,6 +1,6 @@
-import { SyncableTopic } from '@onecx/accelerator'
+import { Topic } from '@onecx/accelerator'
 
-export class PermissionsTopic extends SyncableTopic<string[]> {
+export class PermissionsTopic extends Topic<string[]> {
   constructor() {
     super('permissions', 1)
   }
