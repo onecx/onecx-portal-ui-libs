@@ -6,8 +6,10 @@
     "@angular/core": "^19.0.0",
     "@onecx/integration-interface": "^6.0.0-rc.10",
     "@onecx/accelerator": "^6.0.0-rc.10",
+    "@onecx/nx-migration-utils": "^6.0.0-rc.10",
     "rxjs": "~7.8.1",
     "@nx/devkit": "^20.3.0",
+    "@phenomnomnominal/tsquery": "^6",
     "ts-semaphore": "^1.0.0"
   },
   "dependencies": {},

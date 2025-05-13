@@ -5,7 +5,8 @@
   "peerDependencies": {
     "@angular/cdk": "^19.0.0",
     "primeng": "^19.0.0",
-    "@nx/devkit": "^20.3.0"
+    "@nx/devkit": "^20.3.0",
+    "@onecx/nx-migration-utils": "^6.0.0-rc.10"
   },
   "dependencies": {},
   "publishConfig": {

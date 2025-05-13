@@ -39,6 +39,7 @@ export class SearchCriteriaComponent extends PageHeaderComponent implements OnIn
   }
 
   /** Event emitted when the search button has been pressed. */
+  // eslint-disable-next-line @angular-eslint/no-output-native
   @Output() readonly search: EventEmitter<'basic' | 'advanced'> = new EventEmitter<'basic' | 'advanced'>()
 
   /** Event emitted when the reset button has been pressed. */
