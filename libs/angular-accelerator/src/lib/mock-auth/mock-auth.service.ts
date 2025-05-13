@@ -70,7 +70,7 @@ export class MockAuthService implements IAuthService {
   }
 
   /* eslint-disable @typescript-eslint/no-unused-vars */
-  hasPermission(permissionKey: string): boolean {
+  async hasPermission(permissionKey: string): Promise<boolean> {
     return true
   }
 

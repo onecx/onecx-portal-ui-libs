@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, inject } from '@angular/core'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
+import { from, Observable, shareReplay } from 'rxjs'
 
 @Component({
   standalone: false,
@@ -19,12 +20,34 @@ export class PortalPageComponent implements OnInit {
   @Input() applicationId = ''
 
   collapsed = false
+  cachedHasPermissionChecker$: Observable<boolean> | undefined
+  cachedUserService$: Observable<boolean> | undefined
 
-  hasAccess() {
-    if (this.hasPermissionChecker) {
-      return this.permission ? this.hasPermissionChecker.hasPermission(this.permission) : true
+  hasAccess(): Observable<boolean> {
+    if (this.cachedHasPermissionChecker$) {
+      return this.cachedHasPermissionChecker$
     }
-    return this.permission ? this.userService.hasPermission(this.permission) : true
+
+    if (this.cachedUserService$) {
+      return this.cachedUserService$
+    }
+
+    if (this.hasPermissionChecker) {
+      const hasPermissionChecker$ = this.permission
+        ? from(this.hasPermissionChecker.hasPermission(this.permission))
+        : from(Promise.resolve(true))
+
+      this.cachedHasPermissionChecker$ = hasPermissionChecker$.pipe(shareReplay(1))
+
+      return this.cachedHasPermissionChecker$
+    }
+
+    const userServiceHasPermission$ = this.permission
+      ? from(this.userService.hasPermission(this.permission))
+      : from(Promise.resolve(true))
+    this.cachedUserService$ = userServiceHasPermission$.pipe(shareReplay(1))
+
+    return this.cachedUserService$
   }
 
   ngOnInit(): void {
