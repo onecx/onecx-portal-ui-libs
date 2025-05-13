@@ -25,6 +25,10 @@ export class UserService implements OnDestroy {
     this.profile$.destroy()
   }
 
+  getPermissions() {
+    return this.permissionsTopic$.asObservable()
+  }
+
   async hasPermission(permissionKey: string | string[] | undefined): Promise<boolean> {
     if (!permissionKey) return true
 
