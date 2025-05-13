@@ -14,11 +14,18 @@ import {
   ViewChildren,
   ViewContainerRef,
 } from '@angular/core'
-import { BehaviorSubject, Subscription, Observable, combineLatest } from 'rxjs'
-import { RemoteComponentInfo, SLOT_SERVICE, SlotComponentConfiguration, SlotService } from '../../services/slot.service'
-import { ocxRemoteComponent } from '../../model/remote-component'
+
 import { Technologies } from '@onecx/integration-interface'
-import { RemoteComponentConfig } from '../../model/remote-component-config.model'
+import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs'
+import { ocxRemoteComponent } from '../../model/remote-component'
+import { RemoteComponentInfo, SLOT_SERVICE, SlotComponentConfiguration, SlotService } from '../../services/slot.service'
+import { updateStylesForRcCreation, updateStylesForRcRemoval, RemoteComponentConfig } from '@onecx/angular-utils'
+import { HttpClient } from '@angular/common/http'
+
+interface AssignedComponent {
+  refOrElement: ComponentRef<any> | HTMLElement
+  remoteInfo: RemoteComponentInfo
+}
 
 @Component({
   selector: 'ocx-slot[name]',
@@ -28,7 +35,7 @@ export class SlotComponent implements OnInit, OnDestroy {
   @Input()
   name!: string
 
-  private _assignedComponents$ = new BehaviorSubject<(ComponentRef<any> | HTMLElement)[]>([])
+  private _assignedComponents$ = new BehaviorSubject<AssignedComponent[]>([])
 
   /**
    * Inputs to be passed to components inside a slot.
@@ -130,7 +137,10 @@ export class SlotComponent implements OnInit, OnDestroy {
   subscription: Subscription | undefined
   components$: Observable<SlotComponentConfiguration[]> | undefined
 
-  constructor(@Optional() @Inject(SLOT_SERVICE) private slotService?: SlotService) {}
+  constructor(
+    private http: HttpClient,
+    @Optional() @Inject(SLOT_SERVICE) private slotService?: SlotService
+  ) {}
 
   ngOnInit(): void {
     if (!this.slotService) {
@@ -141,10 +151,11 @@ export class SlotComponent implements OnInit, OnDestroy {
     combineLatest([this._assignedComponents$, this._inputs$, this._outputs$]).subscribe(
       ([components, inputs, outputs]) => {
         components.forEach((component) => {
-          this.updateComponentData(component, inputs, outputs)
+          this.updateComponentData(component.refOrElement, inputs, outputs)
         })
       }
     )
+    // Components can be created only when component information is available and view containers are created for all remote components
     this.subscription = combineLatest([this._viewContainers$, this.components$]).subscribe(
       ([viewContainers, components]) => {
         if (viewContainers && viewContainers.length === components.length) {
@@ -155,7 +166,11 @@ export class SlotComponent implements OnInit, OnDestroy {
                 Promise.resolve(componentInfo.permissions),
               ]).then(([componentType, permissions]) => {
                 const component = this.createComponent(componentType, componentInfo, permissions, viewContainers, i)
-                if (component) this._assignedComponents$.next([...this._assignedComponents$.getValue(), component])
+                if (component)
+                  this._assignedComponents$.next([
+                    ...this._assignedComponents$.getValue(),
+                    { refOrElement: component, remoteInfo: componentInfo.remoteComponent },
+                  ])
               })
             }
           })
@@ -177,6 +192,7 @@ export class SlotComponent implements OnInit, OnDestroy {
     if (componentType) {
       const componentRef = viewContainer?.createComponent<any>(componentType)
       const componentHTML = componentRef?.location.nativeElement as HTMLElement
+      this.updateComponentStyles(componentInfo)
       this.addDataStyleId(componentHTML, componentInfo.remoteComponent)
       this.addDataStyleIsolation(componentHTML)
       if (componentRef && 'ocxInitRemoteComponent' in componentRef.instance) {
@@ -195,6 +211,7 @@ export class SlotComponent implements OnInit, OnDestroy {
     ) {
       if (componentInfo.remoteComponent.elementName) {
         const element = document.createElement(componentInfo.remoteComponent.elementName)
+        this.updateComponentStyles(componentInfo)
         this.addDataStyleId(element, componentInfo.remoteComponent)
         this.addDataStyleIsolation(element)
         ;(element as any)['ocxRemoteComponentConfig'] = {
@@ -217,6 +234,17 @@ export class SlotComponent implements OnInit, OnDestroy {
 
   private addDataStyleIsolation(element: HTMLElement) {
     element.dataset['styleIsolation'] = ''
+  }
+
+  // Load styles exposed by the application the remote component belongs to if its not done already
+  private updateComponentStyles(componentInfo: { remoteComponent: RemoteComponentInfo }) {
+    updateStylesForRcCreation(
+      componentInfo.remoteComponent.productName,
+      componentInfo.remoteComponent.appId,
+      this.http,
+      componentInfo.remoteComponent.baseUrl,
+      this.name
+    )
   }
 
   private updateComponentData(
@@ -242,5 +270,9 @@ export class SlotComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe()
+    // Removes RC styles on unmount to avoid ghost styles
+    this._assignedComponents$.getValue().forEach((component) => {
+      updateStylesForRcRemoval(component.remoteInfo.productName, component.remoteInfo.appId, this.name)
+    })
   }
 }

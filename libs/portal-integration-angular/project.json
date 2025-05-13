@@ -68,10 +68,7 @@
       }
     },
     "release": {
-      "executor": "nx-release:build-update-publish",
-      "options": {
-        "libName": "portal-integration-angular"
-      }
+      "executor": "@onecx/release:update-build-publish"
     },
     "copy-additional-styles": {
       "executor": "nx:run-commands",

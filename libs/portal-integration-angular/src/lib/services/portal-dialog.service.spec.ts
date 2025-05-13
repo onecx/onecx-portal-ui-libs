@@ -23,6 +23,8 @@ import { DialogContentHarness, DialogFooterHarness } from '../../../testing/inde
 import { PrimeIcons } from 'primeng/api'
 import { DialogContentComponent } from '../core/components/dialog/dialog-content/dialog-content.component'
 import { DialogFooterComponent } from '../core/components/dialog/dialog-footer/dialog-footer.component'
+import { provideShellCapabilityServiceMock } from '@onecx/angular-integration-interface/mocks'
+import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 
 @Component({
   template: `<h1>BaseTestComponent</h1>`,
@@ -243,7 +245,12 @@ describe('PortalDialogService', () => {
         BrowserAnimationsModule,
         ButtonModule,
       ],
-      providers: [PortalDialogService, DialogService],
+      providers: [
+        PortalDialogService,
+        DialogService,
+        provideShellCapabilityServiceMock(),
+        provideAppStateServiceMock(),
+      ],
     }).compileComponents()
     fixture = TestBed.createComponent(BaseTestComponent)
     pDialogService = TestBed.inject(DialogService)
@@ -812,17 +819,20 @@ describe('PortalDialogService', () => {
       'button2'
     )
 
-    const dialogRefSpy = jest.spyOn((fixture.componentInstance.portalDialogService as any).dialogRef, 'close')
+    const dialogService = TestBed.inject(DialogService)
+    expect(dialogService.dialogComponentRefMap.size).toBe(1)
+    const dialogRef = dialogService.dialogComponentRefMap.keys().next().value
+    const dialogRefSpy = jest.spyOn(dialogRef, 'close')
 
     const containerParent = {
       parentElement: document.body,
     }
-    ;(fixture.componentInstance.portalDialogService as any).dialogComponent.container = {
+    dialogService.getInstance(dialogRef).container = {
       parentElement: containerParent,
       style: {
         zIndex: 0,
       },
-    }
+    } as any
 
     fixture.detectChanges()
 

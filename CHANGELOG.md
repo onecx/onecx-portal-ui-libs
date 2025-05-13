@@ -1,3 +1,39 @@
+## [5.38.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.37.0...v5.38.0) (2025-05-08)
+
+### Features
+
+* add release-with-migrations executor ([#716](https://github.com/onecx/onecx-portal-ui-libs/issues/716)) ([482aad9](https://github.com/onecx/onecx-portal-ui-libs/commit/482aad9d41f94c7664325b9315d75058ede9b49d))
+
+### Bug Fixes
+
+* dynamic css variables ([#733](https://github.com/onecx/onecx-portal-ui-libs/issues/733)) ([#734](https://github.com/onecx/onecx-portal-ui-libs/issues/734)) ([27bda33](https://github.com/onecx/onecx-portal-ui-libs/commit/27bda33d7b50b210b7c1540834ad78b83a6c28c5))
+
+## [5.37.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.36.0...v5.37.0) (2025-05-07)
+
+### Features
+
+* style isolation cherry-pick ([#729](https://github.com/onecx/onecx-portal-ui-libs/issues/729)) ([b759790](https://github.com/onecx/onecx-portal-ui-libs/commit/b759790af5865dd83e4671d9871efc6283556b3c)), closes [#713](https://github.com/onecx/onecx-portal-ui-libs/issues/713)
+
+## [5.36.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.35.1...v5.36.0) (2025-05-07)
+
+### Features
+
+* add parameters service ([#724](https://github.com/onecx/onecx-portal-ui-libs/issues/724)) ([82539e0](https://github.com/onecx/onecx-portal-ui-libs/commit/82539e0099848219b7003aa375a53bfbf871884e))
+
+## [5.35.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.35.0...v5.35.1) (2025-04-28)
+
+### Bug Fixes
+
+* multiple dialogs ([#718](https://github.com/onecx/onecx-portal-ui-libs/issues/718)) ([07c6d2c](https://github.com/onecx/onecx-portal-ui-libs/commit/07c6d2cbc110a6da9b91e9e8fa2f745b98173c54))
+* remove negative margin on active menu items in horizontal menu ([#715](https://github.com/onecx/onecx-portal-ui-libs/issues/715)) ([a54ffb8](https://github.com/onecx/onecx-portal-ui-libs/commit/a54ffb8c469c046963289afd862e1708b0d7e700))
+
+## [5.35.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.34.5...v5.35.0) (2025-04-24)
+
+### Features
+
+* create and use CurrentLocationTopic, add CapabilityService and topic debugger ([#689](https://github.com/onecx/onecx-portal-ui-libs/issues/689)) ([b85bff7](https://github.com/onecx/onecx-portal-ui-libs/commit/b85bff7ae46d923efac7d466c91fe3f3cd92a690))
+* standalone improvements from develop ([#712](https://github.com/onecx/onecx-portal-ui-libs/issues/712)) ([56023a6](https://github.com/onecx/onecx-portal-ui-libs/commit/56023a635673100dde47bc848709639543affef5))
+
 ## [5.34.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.34.4...v5.34.5) (2025-04-10)
 
 ### Bug Fixes
