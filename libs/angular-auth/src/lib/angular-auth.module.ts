@@ -10,7 +10,6 @@ import { AuthProxyService } from './auth-proxy.service'
 import { KeycloakService } from 'keycloak-angular'
 import { DisabledAuthService } from './auth_services/disabled-auth.service'
 
-
 function appInitializer(configService: ConfigurationService, authService: AuthService) {
   return async () => {
     await configService.isInitialized
