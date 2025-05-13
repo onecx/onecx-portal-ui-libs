@@ -1,9 +1,9 @@
 export default {
     datatable: {
         headerCell: {
-            background: 'formField.background',
-            hoverBackground: 'rgba(0, 0, 0, .04)',
-            selectedBackground: 'rgba(0, 0, 0, .04)'
+            background: '{surface.0}',
+            hoverBackground: '{surface.50}', 
+            selectedBackground: '{surface.50}'
         },
         columnTitle: {
             fontWeight: '500'

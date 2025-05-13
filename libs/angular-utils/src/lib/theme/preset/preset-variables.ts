@@ -10,6 +10,7 @@ import fieldset from './component-presets/fieldset'
 import floatlabel from './component-presets/floatlabel'
 import inputtext from './component-presets/inputtext'
 import paginator from './component-presets/paginator'
+import fileupload from './component-presets/fileupload'
 
 // Structure of this object has to match https://github.com/primefaces/primeuix/tree/main/packages/themes/src/presets/aura
 export default {
@@ -20,6 +21,7 @@ export default {
     ...datatable,
     ...dialog,
     ...fieldset,
+    ...fileupload,
     ...floatlabel,
     ...inputtext,
     ...paginator,
@@ -328,7 +330,7 @@ export default {
         content: {
           background: '{onecx.content.bg.color}',
           hoverBackground: '{onecx.hover.bg.color}',
-          borderColor: '{surface.200}',
+          borderColor: '{surface.100}',
           color: '{text.color}',
           hoverColor: '{text.hover.color}',
         },
