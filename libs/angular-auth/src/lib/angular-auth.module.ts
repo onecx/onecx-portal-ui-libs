@@ -8,6 +8,7 @@ import { AuthServiceWrapper } from './auth-service-wrapper'
 import { KeycloakAuthService } from './auth_services/keycloak-auth.service'
 import { AuthProxyService } from './auth-proxy.service'
 import { KeycloakService } from 'keycloak-angular'
+import { DisabledAuthService } from './auth_services/disabled-auth.service'
 
 function appInitializer(configService: ConfigurationService, authService: AuthService) {
   return async () => {
@@ -17,7 +18,7 @@ function appInitializer(configService: ConfigurationService, authService: AuthSe
 }
 
 function provideAuthServices() {
-  return [AuthServiceWrapper, KeycloakAuthService, KeycloakService]
+  return [AuthServiceWrapper, KeycloakAuthService, KeycloakService, DisabledAuthService]
 }
 
 export function provideAuthService() {

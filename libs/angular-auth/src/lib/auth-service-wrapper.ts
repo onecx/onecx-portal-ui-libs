@@ -7,6 +7,7 @@ import { KeycloakAuthService } from './auth_services/keycloak-auth.service'
 import { loadRemoteModule } from '@angular-architects/module-federation'
 import { Config } from '@onecx/integration-interface'
 import './declarations'
+import { DisabledAuthService } from './auth_services/disabled-auth.service'
 
 @Injectable()
 export class AuthServiceWrapper {
@@ -66,6 +67,9 @@ export class AuthServiceWrapper {
         this.authService = factory((injectable: Injectables) => this.retrieveInjectables(injectable))
         break
       }
+      case 'disabled':
+        this.authService = this.injector.get(DisabledAuthService)
+        break
       default:
         throw new Error('Configured AuthService not found')
     }
