@@ -12,6 +12,7 @@
     "@onecx/angular-utils": "^6.0.0-rc.10",
     "@onecx/integration-interface": "^6.0.0-rc.10",
     "@onecx/angular-auth": "^6.0.0-rc.10",
+    "@onecx/nx-migration-utils": "^6.0.0-rc.10",
     "@nx/devkit": "^20.3.0"
   },
   "dependencies": {},

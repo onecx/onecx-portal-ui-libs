@@ -9,9 +9,9 @@ import {
   ViewContainerRef,
   inject,
 } from '@angular/core'
-import { Tooltip } from 'primeng/tooltip'
+import { Tooltip, TooltipStyle } from 'primeng/tooltip'
 
-@Directive({ selector: '[ocxTooltipOnOverflow]', standalone: false })
+@Directive({ selector: '[ocxTooltipOnOverflow]', standalone: false, providers: [TooltipStyle] })
 export class TooltipOnOverflowDirective extends Tooltip implements OnDestroy, AfterViewInit {
   mutationObserver = new MutationObserver(() => {
     this.zone.run(() => {

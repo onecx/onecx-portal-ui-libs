@@ -47,28 +47,30 @@ export class IfPermissionDirective implements OnInit {
   }
 
   ngOnInit() {
-    if (
-      (this.permission &&
-        this.negate === this.hasPermission(Array.isArray(this.permission) ? this.permission : [this.permission])) ||
-      !this.permission
-    ) {
-      if (this.ocxIfPermissionElseTemplate) {
-        this.viewContainer.createEmbeddedView(this.ocxIfPermissionElseTemplate)
-      } else {
-        if (this.onMissingPermission === 'disable') {
-          this.renderer.setAttribute(this.el.nativeElement, 'disabled', 'disabled')
+    const permissions = (Array.isArray(this.permission) ? this.permission : [this.permission]).filter(
+      (p): p is string => p !== undefined
+    )
+
+    this.hasPermission(permissions).then((hasPerm) => {
+      if ((this.permission && this.negate === hasPerm) || !this.permission) {
+        if (this.ocxIfPermissionElseTemplate) {
+          this.viewContainer.createEmbeddedView(this.ocxIfPermissionElseTemplate)
         } else {
-          this.viewContainer.clear()
+          if (this.onMissingPermission === 'disable') {
+            this.renderer.setAttribute(this.el.nativeElement, 'disabled', 'disabled')
+          } else {
+            this.viewContainer.clear()
+          }
+        }
+      } else {
+        if (this.templateRef) {
+          this.viewContainer.createEmbeddedView(this.templateRef)
         }
       }
-    } else {
-      if (this.templateRef) {
-        this.viewContainer.createEmbeddedView(this.templateRef)
-      }
-    }
+    })
   }
 
-  hasPermission(permission: string[]) {
+  async hasPermission(permission: string[]): Promise<boolean> {
     if (this.ocxIfPermissionPermissions) {
       const result = permission.every((p) => this.ocxIfPermissionPermissions?.includes(p))
       if (!result) {
@@ -76,6 +78,7 @@ export class IfPermissionDirective implements OnInit {
       }
       return result
     }
-    return permission.every((p) => this.permissionChecker?.hasPermission(p))
+
+    return (await this.permissionChecker?.hasPermission(permission)) ?? false
   }
 }
