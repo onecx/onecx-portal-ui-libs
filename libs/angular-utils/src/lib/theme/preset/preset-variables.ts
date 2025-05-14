@@ -1,8 +1,31 @@
 import { createPalette, standardColorAdjustment } from '../../utils/create-color-palette'
 
 import defaultVariables from './default-theme-variables'
+import breadcrumb from './component-presets/breadcrumb'
+import autocomplete from './component-presets/autocomplete'
+import button from './component-presets/button'
+import datatable from './component-presets/datatable'
+import dialog from './component-presets/dialog'
+import fieldset from './component-presets/fieldset'
+import floatlabel from './component-presets/floatlabel'
+import inputtext from './component-presets/inputtext'
+import paginator from './component-presets/paginator'
+import fileupload from './component-presets/fileupload'
 
+// Structure of this object has to match https://github.com/primefaces/primeuix/tree/main/packages/themes/src/presets/aura
 export default {
+  components: {
+    ...autocomplete,
+    ...breadcrumb,
+    ...button,
+    ...datatable,
+    ...dialog,
+    ...fieldset,
+    ...fileupload,
+    ...floatlabel,
+    ...inputtext,
+    ...paginator,
+  },
   semantic: {
     // OneCX semantic variables extension
     extend: {
@@ -307,7 +330,7 @@ export default {
         content: {
           background: '{onecx.content.bg.color}',
           hoverBackground: '{onecx.hover.bg.color}',
-          borderColor: '{surface.200}',
+          borderColor: '{surface.100}',
           color: '{text.color}',
           hoverColor: '{text.hover.color}',
         },
