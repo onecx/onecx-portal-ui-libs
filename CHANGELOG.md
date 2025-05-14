@@ -1,3 +1,13 @@
+## [6.0.0-rc.12](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.11...v6.0.0-rc.12) (2025-05-14)
+
+### Features
+
+* include design token changes ([#737](https://github.com/onecx/onecx-portal-ui-libs/issues/737)) ([7c0d6f5](https://github.com/onecx/onecx-portal-ui-libs/commit/7c0d6f59919cd9ed4379309b21f43ee50eb5c019))
+
+### Bug Fixes
+
+* export disabled auth service ([#741](https://github.com/onecx/onecx-portal-ui-libs/issues/741)) ([d0ef9cb](https://github.com/onecx/onecx-portal-ui-libs/commit/d0ef9cbfb4f7f5fc2d70f846a5eb8166d9763fdb))
+
 ## [6.0.0-rc.11](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.10...v6.0.0-rc.11) (2025-05-14)
 
 ### Features
