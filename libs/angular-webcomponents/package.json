@@ -14,7 +14,8 @@
     "@onecx/nx-migration-utils": "^6.0.0-rc.11",
     "rxjs": "~7.8.1",
     "@nx/devkit": "^20.3.0",
-    "@onecx/angular-utils": "^6.0.0-rc.11"
+    "@onecx/angular-utils": "^6.0.0-rc.11",
+    "@onecx/nx-migration-utils": "^6.0.0-rc.11"
   },
   "dependencies": {},
   "publishConfig": {
