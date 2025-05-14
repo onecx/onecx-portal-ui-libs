@@ -1,3 +1,16 @@
+## [6.0.0-rc.11](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.10...v6.0.0-rc.11) (2025-05-14)
+
+### Features
+
+* added disabled-auth-service ([#736](https://github.com/onecx/onecx-portal-ui-libs/issues/736)) ([711b5d3](https://github.com/onecx/onecx-portal-ui-libs/commit/711b5d39c99d438766a5774da7e1733898584649))
+* configurationservice migrations and other migrations fixes ([#699](https://github.com/onecx/onecx-portal-ui-libs/issues/699)) ([935865f](https://github.com/onecx/onecx-portal-ui-libs/commit/935865f1bf11bb5a1a4d98d4ee0a907fe26ef9f4))
+* permission topic non syncable ([#714](https://github.com/onecx/onecx-portal-ui-libs/issues/714)) ([78c7d1b](https://github.com/onecx/onecx-portal-ui-libs/commit/78c7d1ba96a8ce803817db1da86e69bd9abbf1e9))
+
+### Bug Fixes
+
+* add effectivePermissions back ([#738](https://github.com/onecx/onecx-portal-ui-libs/issues/738)) ([dc6f6c7](https://github.com/onecx/onecx-portal-ui-libs/commit/dc6f6c7617301631d0fd3d522eee1d3f8a36d5a7))
+* css fetch request validation ([#735](https://github.com/onecx/onecx-portal-ui-libs/issues/735)) ([6b12e9a](https://github.com/onecx/onecx-portal-ui-libs/commit/6b12e9a74a2e6d7a04d3830b83ea4b0de12c103d))
+
 ## [6.0.0-rc.10](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.9...v6.0.0-rc.10) (2025-05-08)
 
 ### Bug Fixes
