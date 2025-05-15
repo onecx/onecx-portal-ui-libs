@@ -1,0 +1,9 @@
+= Scope polyfill
+
+:idprefix:
+:idseparator: -
+
+The goal of this document is to explain CSS `@scope` at-rul polyfill. After reading this document it should be clear how `@scope` is enabled for browsers that don't support it.
+
+[#overview]
+== Overview

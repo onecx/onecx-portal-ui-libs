@@ -1,0 +1,53 @@
+= PrimeNG Styles Scoping
+
+:idprefix:
+:idseparator: -
+
+The goal of this document is to explain styles scoping mechanisms related to PrimeNG available in OneCX and technical details behind them. After reading this document it should be clear how PrimeNG style sheets are scoped on the pages.
+
+[#overview]
+== Overview
+Since version 19, PrimeNG injects its own style sheets that contain CSS rules with styles and variables. Those style sheets are related to PrimeNG theming and component separation in the PrimeNG library.
+
+PrimeNG does not recognize need for multiple different applications on a single Page, therefore enabling styles scoping for PrimeNG CSS rules required a couple of modifications.
+
+[#style-scoping]
+== Style Scoping
+// TODO: Link
+For overall guide of style scoping in OneCX, please refer to the {}[style scoping document].
+
+[#custom-use-style]
+== Custom Use Style
+Every application that uses PrimeNG version 19+, needs to use link:../../libs/angular-utils/src/lib/theme/application-config.ts[provideThemeConfig] in the Microfrontend or Remote Component providers. This provider will replace the default `UseStyle` with link:../../libs/angular-utils/src/lib/services/custom-use-style.service.ts[CustomUseStyle]. The replaced service is responsible for:
+
+* scoping all PrimeNG style sheets
+* applying theme overrides
+
+[#scoping-primeng-style-sheets]
+=== Scoping PrimeNG Style Sheets
+In PrimeNG 19 there are 2 types of style sheets:
+
+* style sheet with variables (based on design token values)
+* style sheet with other rules
+
+For both cases, `CustomUseStyle` is going to compute appropriate `data-style-id` value and modify the style sheet content:
+
+* `variables` sheet - all variables should be wrapped with `@scope` at-rule and `:scope` selector
+* `styles` sheet - all styles should be wrapped with `@scope` at-rule
+
+[#theme-overrides]
+=== Theme Overrides
+// TODO: Add link
+Details on how theme overrides work can be found {theme_overrides_details}[here].
+
+
+[#primeng-dynamic-content]
+== Dynamic Content
+
+* each application has to replace the following operations by adding appropriate plugins in the webpack configuration (Shell UI does that as well so it is a good reference)
+** `document.createElement` replaced with `document.createElementFromPrimeNg`
+** `Theme.setLoadedStyleName` replaced with `(function(_){})`
+
+`document.createElement` method replacement aims to ensure that the correct scope is set for new elements created by PrimeNG source code by adding intermediate attributes to the created elements.
+
+`Theme.setLoadedStyleName` replacement aims to remove unwanted Theme recomputation.

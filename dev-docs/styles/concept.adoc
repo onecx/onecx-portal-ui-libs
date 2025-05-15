@@ -35,7 +35,7 @@ Its recommended to to the following modification to the angular.json or project.
         {
             "input": "./src/styles.scss",
             "bundleName": "styles",
-            "inject": false
+            "inject": true
         }
     ],
     ...
@@ -52,4 +52,9 @@ The `@scope` at-rule is not widely supported yet in all browsers. For that reaso
 
 [#technical-details]
 == Technical details
-In this section, the technical details on how content is styled in OneCX.
+Access the technical details for the following topics:
+
+* {}[Style scoping details] - how style scoping is used in OneCX to ensure style isolation
+* {}[Style sheets on the page] - what different style sheets are on a single OneCX page
+* {}[PrimeNG variable overrides] - how application and component style sheets are affected when using PrimeNG design token variables
+* {}[@scope polyfill] - details on how the @scope polyfill works

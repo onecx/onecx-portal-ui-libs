@@ -57,7 +57,7 @@ In order to apply theme variables to the PrimeNG design tokens:
 * theme has to be activated on the page
 * link:../../libs/angular-utils/src/lib/theme/application-config.ts[provideThemeConfig] has to be provided in the Microfrontend or Remote Component providers
 
-The provideThemeConfig provider is essential to setup PrimeNG and other functionalities that are required to integrate OneCX theming with PrimeNG theming.
+The `provideThemeConfig` provider is essential to setup PrimeNG and other functionalities that are required to integrate OneCX theming with PrimeNG theming.
 
 [#theme-config-service]
 ==== Theme Config Service
@@ -67,8 +67,3 @@ ThemeConfigService utilizes link:../../libs/angular-utils/src/lib/theme/theme-co
 
 // TODO: Link style isolation
 Apart from this its also responsible for providing the link:../../libs/angular-utils/src/lib/services/custom-use-style.service.ts[CustomUseStyle] which is used for {}[style isolation] purposes.
-
-[#theme-overrides-details]
-=== Theme Overrides
-// TODO: Add link
-Details on how them overrides work can be found {theme_overrides_details}[here].

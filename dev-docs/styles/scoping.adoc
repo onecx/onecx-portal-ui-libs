@@ -1,0 +1,92 @@
+= Styles Scoping
+
+:idprefix:
+:idseparator: -
+:scope_at_rule: https://developer.mozilla.org/en-US/docs/Web/CSS/@scope
+
+The goal of this document is to explain styles scoping mechanisms available in OneCX and technical details behind them. After reading this document it should be clear how style sheets are scoped on the pages.
+
+[#css-style-scoping]
+== CSS Style Scoping
+{scope_at_rule}[CSS @scope at-rule] allows to define styles that will be applied within specified boundaries based on the `from` and `to` selectors. In OneCX, this is useful for applying different CSS rules to the content from each application.
+
+[#html-attributes-for-scoping]
+== HTML Attributes For Scoping
+In order to scope CSS rules with the `@scope` CSS rule, we defined a set of attributes that aim to support style scoping. Below is a table with link:../../libs/angular-utils/src/lib/utils/scope.utils.ts[all attributes that are used for style scoping purposes].
+
+[cols="1,3"]
+|===
+|Attribute |Description 
+
+|data-style-id="value"
+|Element containing this attribute marks the start of the style scoping section for the given value.
+
+|data-style-isolation
+|Element containing this attribute marks the end of style scoping. Starting from this element, no styles available for its parent should be applied to its children. 
+
+|data-no-portal-layout-styles
+|Element containing this attribute should *always have data-style-id set as well*. With the combination of those 2 attributes, the style scoping section will not receive portal-layout-styles legacy CSS rules. *This usually marks the content as libs version 6 compatible*.
+
+|data-mfe-element
+|Element containing this attribute is the start of the microfrontend's content.
+|=== 
+
+[#expected-behavior]
+== Expected Behavior
+Every element that is:
+
+* the first element of microfrontend's content (attributes added in Shell UI)
+* the first element of the remote component's content (attributes added in Slot Component)
+* the first element of the shell UI (attributes added in Shell UI)
+
+is going to have:
+
+* data-style-id attribute with the id related to the application owning it
+* data-style-isolation attribute to isolate itself from other applications
+* (optional) data-no-portal-layout-styles attribute if content does not require portal-layout-style legacy CSS rules
+* (optional) data-mfe-element attribute if content is the first element of microfrontend's content
+
+[#scoping-css-rules]
+== Scoping CSS Rules
+There is a difference with how styles scoping works for CSS variables and other style rules.
+
+[#scoping-css-variables]
+=== Scoping CSS Variables
+All CSS variables that are not intended to be available globally, should be available in their style scope section only. Therefore, they should always be wrapped with the `@scope` at-rule and the `:scope` selector. This ensures that the variable is only available for the given style scope section.
+
+[#scoping-css-other-css-rules]
+=== Scoping Other CSS Rules
+All CSS Rules other than variables should be wrapped with the `@scope` at-rule with no additional requirements.
+
+[#scoped-style-example]
+== Scoped Style Example
+An example of the scoped style rule:
+
+.scoped style sheet content
+```
+<style>
+    @scope([data-style-id="onecx-workspace|onecx-workspace-ui"][data-no-portal-layout-styles]) to ([data-style-isolation]) {
+        :scope {
+            --my-css-variable: red;
+        }
+        .my-scoped-class {
+            color: red;
+        }
+    }
+</style>
+```
+
+In the example, `my-scoped-class` rule and `--my-css-variable` variable will be applied only to the content related to the *workspace* application that has been migrated to version 6 of libs. If any workspace content would render a remote component, the `my-scoped-class` rule would not be available for that remote component.
+
+[#dynamic-content]
+== Dynamic Content
+Dynamic content can be constructed in several different ways depending on the used technology, however the resulting operation will always be appending new element in the DOM. In situations where this new element is appended outside the current application scope, we need to make sure that the style scoping attributes are present for the dynamic content as well. If we fail to do so, contents of this dynamically appended element will not be styled properly.
+
+To support this scenario, Shell UI uses `bodyChildListenerInitializer` on its startup. This initializer takes care of the following:
+
+* intercept `document.body.appendChild` calls and add style scoping attributes based on the call context
+* intercept `document.body.removeChild` calls and remove any additional elements added by `document.body.appendChild` intercept
+// TODO: Link
+* prepare `document.createElementFromPrimeNg` method used for PrimeNG dynamic content support
+
+Dynamic content mechanism rely on few additional HTML attributes called `intermediate` attributes. Those attributes should exist only for a short period between elements creation and the moment of adding this element to the DOM. Those attributes should not be used for scoping itself but only as an intermediate information of what scope should be set for created elements. 
