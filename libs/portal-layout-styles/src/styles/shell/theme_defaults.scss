@@ -1,5 +1,8 @@
 @import './_variables';
 
+$primaryColor:  #274b5f;
+$primaryColorRGB: 39, 75, 95;
+
 :root {
     /* Top Bar Variables */
     --topbar-bg-color: #0d3650;
@@ -22,8 +25,8 @@
     --hover-bg-color: #ad1457;
     --solid-surface-text-color: #ffffff;
     --divider-color: #e4e4e4;
-    --button-hover-bg: rgba($primaryColor, 0.92);
-    --button-active-bg: rgba($primaryColor, 0.68);
+    --button-hover-bg: rgba(#{$primaryColorRGB}, 0.92);
+    --button-active-bg: rgba(#{$primaryColorRGB}, 0.68);
     --danger-button-bg : #d32f2f;
     --info-message-bg: #b3e5fc;
     --success-message-bg: #c8e6c9;
@@ -42,6 +45,6 @@
     --menu-inline-border-color: #c4c4c4;
   
     /* General Colors Variables */
-    --primary-color: #274b5f;
+    --primary-color: #{$primaryColor};
     --secondary-color: #1c4257;
   }
