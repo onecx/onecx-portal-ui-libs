@@ -62,7 +62,7 @@ done
 echo "$m" > migrations.json
 
 # Install dependencies before running migrations
-npm i
+npm i --force
 
 # Run migrations without re-installing packages to avoid peer dependency issues
 NX_MIGRATE_SKIP_INSTALL=true npx nx migrate --run-migrations --if-exists || {
