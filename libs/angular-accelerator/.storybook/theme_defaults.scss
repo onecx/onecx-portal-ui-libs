@@ -1,7 +1,4 @@
-@import './_variables';
-
-$primaryColor:  #274b5f;
-$primaryColorRGB: 39, 75, 95;
+$primaryColorRGB: 39, 75, 95; //rgb for #274b5f
 
 :root {
     /* Top Bar Variables */
@@ -17,7 +14,7 @@ $primaryColorRGB: 39, 75, 95;
     --logo-color: #ffffff;
     --font-size: 14px;
     --font-family: Ubuntu, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
-  
+
     /* Contents Variables */
     --content-bg-color: #ffffff;
     --content-alt-bg-color: #ffffff;
@@ -32,7 +29,7 @@ $primaryColorRGB: 39, 75, 95;
     --success-message-bg: #c8e6c9;
     --warning-message-bg: #ffecb3;
     --error-message-bg: #ffcdd2;
-  
+
     /* Menu Style Variables */
     --menu-text-color: #274b5f;
     --menu-bg-color: #fdfeff;
@@ -43,8 +40,8 @@ $primaryColorRGB: 39, 75, 95;
     --menu-active-item-text-color: var(--menu-item-text-color);
     --menu-active-item-bg-color: var(--menu-item-hover-bg-color);
     --menu-inline-border-color: #c4c4c4;
-  
+
     /* General Colors Variables */
-    --primary-color: #{$primaryColor};
+    --primary-color: rgb(#{$primaryColorRGB});
     --secondary-color: #1c4257;
   }
