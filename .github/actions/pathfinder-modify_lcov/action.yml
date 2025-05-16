@@ -1,0 +1,44 @@
+name: 'pathfinder-modify_lcov'
+description: 'Find paths and modify lcov.info paths for coverage reporting'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: extract relavent paths
+      run: |
+        # Find all subdirectories in the 'reports' folder
+        paths=$(find reports -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)
+
+        for path in $paths; do
+          echo "reports/$path/coverage/lcov.info"
+        done > lcov_paths.txt
+
+        for path in $paths; do
+          echo "$path"
+        done > raw_paths.txt
+      shell: bash
+
+    - name: modify lcov.info files
+      run: |
+        # Read each line from lcov_paths.txt
+        while IFS= read -r path; do
+          if [ -f "$path" ]; then
+
+            # Modify the lcov.info file in-place: prepend a slash to each 'SF:' line
+            # This ensures absolute paths for SonarQube 
+            # "SF:home/..." -> "SF:/home/..." 
+            sed -i 's|^SF:|SF:/|' "$path"
+          else
+            echo "File not found: $path"
+          fi
+        done < lcov_paths.txt
+      shell: bash
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: paths
+        path: |
+          raw_paths.txt
+        retention-days: 1
+        if-no-files-found: ignore

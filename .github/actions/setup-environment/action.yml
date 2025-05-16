@@ -1,0 +1,21 @@
+name: 'setup-environment'
+description: 'Check out repo, setup Node.js, install dependencies'
+inputs:
+  node-version:
+    description: 'Node Version'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Set SHAs for affected commands
+      uses: nrwl/nx-set-shas@v3
+
+    - name: Install deps
+      run: npm ci
+      shell: bash
