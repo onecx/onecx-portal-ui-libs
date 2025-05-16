@@ -1,0 +1,87 @@
+= Story Creation Guidelines
+This document provides a step-by-step guide on how to create stories for Angular components in Storybook, highlighting some best practices and conventions.
+
+== Instructions
+To create a new story for an Angular component the https://storybook.js.org/docs/writing-stories[respective pages in the official Storybook documentation] provide a good starting point.
+Additionally, follow the steps below to create a basic boilerplate for your story.
+
+1. If it doesn't exist yet, create a new folder called `storybook` in the folder of your component. This folder will contain your stories file, as well as any other storybook-related files, such as mocks.
+2. Inside the `storybook` folder, create a new file with the name of your component file and the ending `.stories.ts`. This file will contain the stories for your component (e.g. `button.component.stories.ts`).
+3. Insert the basic file structure, including a `meta` object for your component. The `meta` object should be the default export of your stories file and contain the following properties:
+   - `title`: The title of your component (e.g. `Components/Button`).
+   - `component`: The component you are creating the story for.
+   - `decorators`: An array of decorators that should be applied to your component in the storybook.
+   - `args`: An object containing the default global input values for your component (see https://storybook.js.org/docs/writing-stories/args).
+   - `argTypes`: An object containing the types for the component's inputs (see https://storybook.js.org/docs/api/arg-types)
+	
+  import type { Meta, StoryObj } from '@storybook/angular/'
+
+  import { YourComponent } from '../your-component.component'
+  import { moduleMetadata } from '@storybook/angular'
+
+  const meta: Meta<YourComponent> = {
+    component: YourComponent,
+    title: "Components/YourComponent",
+    decorators: [
+      moduleMetadata({
+        declarations: [YourComponent],
+        imports: [/* Add required imports here */],
+        providers: [/* Add required providers here */],
+      }),
+    ],
+    args: {
+      /* Add all default global input values for your component here */
+    },
+    argTypes: {
+      /* Add types for your component inputs */
+    },
+  }
+
+  export default meta
+
+  type Story = StoryObj<YourComponent>
+
+  // Base story without any args overrides
+  export const Base: Story = {}
+
+4. Define additional stories for your component by creating additional named exports in your stories file. Each story should be of type `Story` and contain e.g. specific input value overrides for a certain use case.
+
+  export const WithCustomText: Story = {
+    args: {
+      text: 'Custom Text',
+    },
+  }
+
+5. Run the Storybook to view your component's stories and make sure they are displayed correctly (by running `npx nx run <LIBRARY_NAME>:storybook`).
+
+6. Extend the basic boilerplate file to reflect all major use cases of your component. Refer to the other sections of this document for more information on how to create stories with custom inputs etc.
+
+== Defining Args and ArgTypes
+Args and ArgTypes can be specified on a file-level or story-level. Args specify the configuration of your component (the inputs passed to your component). ArgTypes specify the behavior of Args, by defining typings for the values that an Arg can receive. ArgTypes could for example be used to specify a set of select options for a specific Arg instead of allowing users to specify the value for an Arg using a textbox. We recommend creating Args and ArgTypes for all of your component inputs. This allows stakeholders of your Storybook to play around with all possible variations of your component. For more information on how to specify Args and ArgTypes refer to the following pages in the official Storybook documentation:
+
+* https://storybook.js.org/docs/writing-stories/args[Args]
+* https://storybook.js.org/docs/api/arg-types[ArgTypes]
+
+== Listen to outputs by specifying "Actions"
+Storybook allows developers to specify "Actions" that listen for certain events to be fired by your component and print the payload of the event in Storybooks "Actions" panel. For more information on how to specify "Actions" refer to the https://storybook.js.org/docs/essentials/actions#via-storybooktest-fn-spy-function[official Storybook documentation]. We recommend the creation of "Actions" for each of your component outputs using the `fn` spy function (see documentation).
+
+== Creating Docs Pages
+Storybook allows developers to provide in depth documentation for components. We recommend that you create one documentation page for each of your components. To get started, create a new file with the name of your component file and the ending `.stories.mdx` in your components `storybook` folder (e.g. `button.component.stories.mdx`). Your documentation page should, at least, contain the default documentation structure used in the automatically generated docs pages provided by Storybook. You can find the default structure https://storybook.js.org/docs/writing-docs/doc-blocks#customizing-the-automatic-docs-page[here]. In addition to the default documentation structure, we recommend that you document the purpose of your component, as well as best practices/dos and donts related to the use of the component.
+
+**Disclaimer:** Adding custom MDX documentation pages to Storybooks that were created using the `@storybook/angular` framework preset is not supported out of the box and requires some additional configuration. The necessary configuration has not yet been added to the OneCX Storybook setup and will be implemented as soon as possible.
+
+== OneCX Specific Considerations
+When writing stories for OneCX components, be sure to import or declare all used components, directives and other dependencies in the `moduleMetadata` decorator. 
+
+To enable translation support for your component's stories, add the `StorybookTranslateModule`, which is currently located in `libs/angular-accelerator/src/lib/storybook-translate.module.ts`, to the `imports` array of the `moduleMetadata` decorator.
+
+== Pro Tip: Use of GenAI
+GenAI tools such as Microsoft Copilot are quite helpful when creating story files for your components. They can write most boilerplate code for you and even suggest stories based on your component's inputs and outputs. 
+
+The following prompt has worked reasonably well during initial testing and took care of generating all boilerplate code for the story files of specific components:
+```
+Generate a storybook file for the following component. Only respond with valid CSF3 code compatible with the latest version of storybook or with follow-up questions should there be any. Only include one base story specifying all possible inputs and outputs and ask me what other stories I want.
+
+YOUR_COMPONENT_CODE_HERE
+```
+As always, AI tools can make mistakes or hallucinate. Always double-check and test the generated code before committing it to the repository.
