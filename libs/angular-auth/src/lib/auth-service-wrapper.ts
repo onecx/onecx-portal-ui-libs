@@ -6,6 +6,7 @@ import { filter } from 'rxjs/internal/operators/filter'
 import { AuthService, AuthServiceFactory, Injectables } from './auth.service'
 import { KeycloakAuthService } from './auth_services/keycloak-auth.service'
 import './declarations'
+import { DisabledAuthService } from './auth_services/disabled-auth.service'
 
 @Injectable()
 export class AuthServiceWrapper {
@@ -71,6 +72,9 @@ export class AuthServiceWrapper {
         )
         break
       }
+      case 'disabled':
+        this.authService = this.injector.get(DisabledAuthService)
+        break
       default:
         throw new Error('Configured AuthService not found')
     }

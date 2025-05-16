@@ -2,14 +2,14 @@ import { InjectionToken, Injector, Optional, SkipSelf } from '@angular/core'
 import { hasPermissionCheckerFactory } from './has-permission-checker-factory'
 
 export interface HasPermissionChecker {
-  hasPermission(permissionKey: string): boolean
+  hasPermission(permissionKey: string | string[]): Promise<boolean>
 }
 
 /**
  * This checker always returns true, basically disabling the permission system on the UI side
  */
 export class AlwaysGrantPermissionChecker implements HasPermissionChecker {
-  hasPermission(_permissionKey: string): boolean {
+  async hasPermission(_permissionKey: string | string[]): Promise<boolean> {
     return true
   }
 }
