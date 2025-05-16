@@ -1,6 +1,18 @@
 import { Tree, visitNotIgnoredFiles } from '@nx/devkit'
 import { ast, query } from '@phenomnomnominal/tsquery'
-import { CallExpression, isBinaryExpression, isCallExpression, isExpressionStatement, isIdentifier, isPropertyAccessExpression, isPropertyDeclaration, isVariableDeclaration, SourceFile, SyntaxKind } from 'typescript'
+import {
+  CallExpression,
+  isBinaryExpression,
+  isCallExpression,
+  isExpressionStatement,
+  isIdentifier,
+  isParameter,
+  isPropertyAccessExpression,
+  isPropertyDeclaration,
+  isVariableDeclaration,
+  SourceFile,
+  SyntaxKind,
+} from 'typescript'
 
 type MatchingMethodCalls = Map<string, CallExpression[]>
 type DeclarationType = 'PropertyDeclaration' | 'VariableDeclaration'
@@ -13,12 +25,12 @@ type DeclarationType = 'PropertyDeclaration' | 'VariableDeclaration'
  * @returns A string array of names of the declarations that match the criteria.
  */
 function getDeclarationNames(contentAst: SourceFile, className: string, type: DeclarationType): string[] {
-  const declarations = query(
-    contentAst,
-    `${type}:has(NewExpression > Identifier[name="${className}"])`
-  )
+  const declarations = query(contentAst, `${type}:has(NewExpression > Identifier[name="${className}"])`)
   const memberNames = declarations.map((node) => {
-    if ((type === 'VariableDeclaration' && isVariableDeclaration(node)) || (type === 'PropertyDeclaration' && isPropertyDeclaration(node))) {
+    if (
+      (type === 'VariableDeclaration' && isVariableDeclaration(node)) ||
+      (type === 'PropertyDeclaration' && isPropertyDeclaration(node))
+    ) {
       return node.name.getText()
     }
     throw new Error(`Node is not a ${type}`)
@@ -43,7 +55,7 @@ function getAssignmentNames(contentAst: SourceFile, className: string): string[]
       const binaryExpression = node.expression
       if (isBinaryExpression(binaryExpression)) {
         if (binaryExpression.operatorToken.kind == SyntaxKind.EqualsToken) {
-          if(isPropertyAccessExpression(binaryExpression.left)) {
+          if (isPropertyAccessExpression(binaryExpression.left)) {
             return binaryExpression.left.name.escapedText.toString()
           } else if (isIdentifier(binaryExpression.left)) {
             return binaryExpression.left.escapedText.toString()
@@ -60,6 +72,47 @@ function getAssignmentNames(contentAst: SourceFile, className: string): string[]
 }
 
 /**
+ * Retrieves the names of all parameters that are of type className and constructor-based injections (e.g., myClass: MyClass).
+ * @param contentAst The abstract syntax tree of the file to search in.
+ * @param className The name of the class to search for (e.g. 'MyClass').
+ * @returns A string array of names of the parameters that match the criteria.
+ */
+export function getParameterNames(contentAst: SourceFile, className: string): string[] {
+  const parameters = query(contentAst, `Parameter:has(TypeReference:has(Identifier[name="${className}"]))`)
+
+  const parameterNames = parameters.map((node) => {
+    if (isParameter(node)) {
+      return node.name.getText()
+    }
+    throw new Error('Node is not a Parameter')
+  })
+
+  return parameterNames
+}
+
+/**
+ * Retrieves the names of all injections that are injected via the inject CallExpression (e.g., myService = inject(MyService)).
+ * @param contentAst The abstract syntax tree of the file to search in.
+ * @param className The name of the class to search for (e.g. 'MyClass').
+ * @returns A string array of names of the injections that match the criteria.
+ */
+function getInjectionNames(contentAst: SourceFile, className: string): string[] {
+  const injections = query(
+    contentAst,
+    `PropertyDeclaration:has(CallExpression:has(Identifier[name="inject"]) > Identifier[name="${className}"])`
+  )
+
+  const injectionNames = injections.map((node) => {
+    if (isPropertyDeclaration(node)) {
+      return node.name.getText()
+    }
+    throw new Error('Node is not a PropertyDeclaration')
+  })
+
+  return injectionNames
+}
+
+/**
  * Generates an array of computed queries to find method calls with a given method name on identifiers that are either variables or properties and type of the specified class.
  * @param contentAst The abstract syntax tree of the file to search in.
  * @param className The name of the class to search for (e.g. 'MyClass').
@@ -71,9 +124,13 @@ function getIdentifierCallQueries(contentAst: SourceFile, className: string, met
 
   const memberNames = getDeclarationNames(contentAst, className, 'PropertyDeclaration')
 
-  const assignmentNames = getAssignmentNames(contentAst, className);
+  const assignmentNames = getAssignmentNames(contentAst, className)
 
-  const allIdentifiers = [...variableNames, ...memberNames, ...assignmentNames]
+  const parameterNames = getParameterNames(contentAst, className)
+
+  const injectionNames = getInjectionNames(contentAst, className)
+
+  const allIdentifiers = [...variableNames, ...memberNames, ...assignmentNames, ...parameterNames, ...injectionNames]
 
   // Only check variables once, even if their value is set multiple times
   const distinctIdentifiers = Array.from(new Set(allIdentifiers))
@@ -129,3 +186,4 @@ export function detectMethodCallsInFiles(
 
   return matchingFiles
 }
+
