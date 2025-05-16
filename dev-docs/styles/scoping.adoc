@@ -1,18 +1,22 @@
+
 = Styles Scoping
+
 
 :idprefix:
 :idseparator: -
 :scope_at_rule: https://developer.mozilla.org/en-US/docs/Web/CSS/@scope
+:scope_utils: ../../libs/angular-utils/src/lib/utils/scope.utils.ts
+:primeng-dynamic-content: ./primeng-scoping#primeng-dynamic-content
 
-The goal of this document is to explain styles scoping mechanisms available in OneCX and technical details behind them. After reading this document it should be clear how style sheets are scoped on the pages.
+This document outlines the styles scoping mechanisms in OneCX, detailing how styles are scoped on pages and the technical implementation behind them. It provides insights to help developers understand how to apply scoped styles effectively.
 
 [#css-style-scoping]
 == CSS Style Scoping
-{scope_at_rule}[CSS @scope at-rule] allows to define styles that will be applied within specified boundaries based on the `from` and `to` selectors. In OneCX, this is useful for applying different CSS rules to the content from each application.
+{scope_at_rule}[CSS @scope at-rule] allows defining styles that will be applied within specified boundaries based on the `from` and `to` selectors. In OneCX, this is useful for applying different CSS rules to the content from each application.
 
 [#html-attributes-for-scoping]
 == HTML Attributes For Scoping
-In order to scope CSS rules with the `@scope` CSS rule, we defined a set of attributes that aim to support style scoping. Below is a table with link:../../libs/angular-utils/src/lib/utils/scope.utils.ts[all attributes that are used for style scoping purposes].
+To scope CSS rules with the `@scope` CSS rule, we defined a set of attributes that support style scoping. Below is a table with link:{scope_utils}[all attributes used for style scoping purposes].
 
 [cols="1,3"]
 |===
@@ -25,7 +29,7 @@ In order to scope CSS rules with the `@scope` CSS rule, we defined a set of attr
 |Element containing this attribute marks the end of style scoping. Starting from this element, no styles available for its parent should be applied to its children. 
 
 |data-no-portal-layout-styles
-|Element containing this attribute should *always have data-style-id set as well*. With the combination of those 2 attributes, the style scoping section will not receive portal-layout-styles legacy CSS rules. *This usually marks the content as libs version 6 compatible*.
+|Element containing this attribute should *always have data-style-id set as well*. With the combination of these 2 attributes, the style scoping section will not receive portal-layout-styles legacy CSS rules. *This usually marks the content as libs version 6 compatible*.
 
 |data-mfe-element
 |Element containing this attribute is the start of the microfrontend's content.
@@ -48,11 +52,11 @@ is going to have:
 
 [#scoping-css-rules]
 == Scoping CSS Rules
-There is a difference with how styles scoping works for CSS variables and other style rules.
+There is a difference in how styles scoping works for CSS variables and other style rules.
 
 [#scoping-css-variables]
 === Scoping CSS Variables
-All CSS variables that are not intended to be available globally, should be available in their style scope section only. Therefore, they should always be wrapped with the `@scope` at-rule and the `:scope` selector. This ensures that the variable is only available for the given style scope section.
+All CSS variables that are not intended to be available globally should be available in their style scope section only. Therefore, they should always be wrapped with the `@scope` at-rule and the `:scope` selector. This ensures that the variable is only available for the given style scope section.
 
 [#scoping-css-other-css-rules]
 === Scoping Other CSS Rules
@@ -86,7 +90,6 @@ To support this scenario, Shell UI uses `bodyChildListenerInitializer` on its st
 
 * intercept `document.body.appendChild` calls and add style scoping attributes based on the call context
 * intercept `document.body.removeChild` calls and remove any additional elements added by `document.body.appendChild` intercept
-// TODO: Link
-* prepare `document.createElementFromPrimeNg` method used for PrimeNG dynamic content support
+* prepare link:{primeng-dynamic-content}[document.createElementFromPrimeNg] method used for PrimeNG dynamic content support
 
-Dynamic content mechanism rely on few additional HTML attributes called `intermediate` attributes. Those attributes should exist only for a short period between elements creation and the moment of adding this element to the DOM. Those attributes should not be used for scoping itself but only as an intermediate information of what scope should be set for created elements. 
+Dynamic content mechanism rely on few additional HTML attributes called `intermediate` attributes. Those attributes should exist only for a short period between elements creation and the moment of adding this element to the DOM. Those attributes should not be used for scoping itself but only as an intermediate information of what scope should be set for created elements.

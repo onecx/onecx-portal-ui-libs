@@ -1,33 +1,34 @@
+
 = Style Types
 
 :idprefix:
 :idseparator: -
+:application_styles: ./concept.adoc#application-styles
 
 The goal of this document is to explain style types located on the OneCX page. After reading this document it should be clear what different styles are available on the OneCX page and what is their purpose.
 
 [#overview]
 == Overview
-In the document head, there is plenty of different style sheets. Those style sheets are present for different use-cases and are constructed in several different ways. Those style sheets can be split into groups based on their purpose:
+In the document head, there are plenty of different style sheets. These style sheets are present for different use-cases and are constructed in several different ways. These style sheets can be split into groups based on their purpose:
 
 * Shell scoped - sheet that should be used only by the shell.
 * Application scoped - sheet that should be used only by the respective application.
 * Global scoped - sheet that should be available globally on the whole page.
 * Legacy - sheet that should be used only by respective content for legacy reasons.
-* PrimeNG - sheet that defined PrimeNG CSS rules used by PrimeNG components.
-
+* PrimeNG - sheet that defines PrimeNG CSS rules used by PrimeNG components.
 
 [#style-sheet-list]
-== Style Sheet list
-There are plenty of style sheet's on each page in OneCX. In order to distinguish style elements on the page and reduce the amount of http calls, we defined a set of HTML attributes. Below is a list of all possible style sheets on the page:
+== Style Sheet List
+There are plenty of style sheets on each page in OneCX. In order to distinguish style elements on the page and reduce the number of HTTP calls, we defined a set of HTML attributes. Below is a list of all possible style sheets on the page:
 
 [cols="1,1,1,3"]
 |===
 |Purpose |Location |Attribute |Description 
 
-|PrimeNg
+|PrimeNG
 |PrimeNG library
 |data-primeng-style-id
-|Contains CSS(variables or other rules) for PrimeNG components.
+|Contains CSS (variables or other rules) for PrimeNG components.
 
 |PrimeNG
 |Generated based on theme overrides
@@ -37,7 +38,7 @@ There are plenty of style sheet's on each page in OneCX. In order to distinguish
 |Application
 |Application's component
 |None
-|Contains CSS for component implemented by the respective application.
+|Contains CSS for components implemented by the respective application.
 
 |Application
 |Application styles (exposed via styles.css)
@@ -68,12 +69,11 @@ There are plenty of style sheet's on each page in OneCX. In order to distinguish
 |Shell UI - portal-layout-styles.scss
 |data-dynamic-content-portal-layout-styles
 |Contains CSS for dynamic content that requires portal layout styles legacy CSS rules.
-
 |=== 
 
 [#primeng]
 === Purpose - PrimeNG
-PrimeNG style sheets are constructed by the PrimeNG library and modified by OneCX and in case of theme overrides style sheets are constructed by OneCX completely.
+PrimeNG style sheets are constructed by the PrimeNG library and modified by OneCX, and in the case of theme overrides, style sheets are constructed by OneCX completely.
 
 [#global]
 === Purpose - Global
@@ -81,43 +81,39 @@ Global style sheets aim to define crucial CSS rules for the whole page to run co
 
 [#shell]
 === Purpose - Shell
-Shell is a special case of the application that is not loaded dynamically but hosting other applications. For that reason a separate specific sheet has been prepared for it.
+Shell is a special case of the application that is not loaded dynamically but hosts other applications. For that reason, a separate specific sheet has been prepared for it.
 
 Shell styles are loaded by the Shell on its initialization.
 
 [#legacy]
 === Purpose - Legacy
-In the past (Shell with Angular 18 and libs version 5), Shell UI was injecting a style sheet that was shared between the applications. For that reason, legacy style sheets were prepared. Those sheets contain all rules that were previously available in a global fashion. However, they are scoped as well and should be available for only those applications that rely on that global styles being available.
+In the past (Shell with Angular 18 and libs version 5), Shell UI was injecting a style sheet that was shared between the applications. For that reason, legacy style sheets were prepared. These sheets contain all rules that were previously available in a global fashion. However, they are scoped as well and should be available for only those applications that rely on those global styles being available.
 
-In essence, every application that has libs version 5 and less, should require the legacy styles to work properly.
+In essence, every application that has libs version 5 and less should require the legacy styles to work properly.
 
 Legacy styles are loaded by the Shell on its initialization.
 
 [#application]
 === Purpose - Application
-// TODO: Link
-To style each application developers should use the component styles available by the respective technology of the application. If those are not available or there are some rules that should be shared between components, each application can expose a style sheet that contains them. The only requirement is that it should be {}[exposed correctly via styles.css file] that will be loaded dynamically by the Shell. This style sheet will be available for that application only and will not be shared with other applications.
+To style each application, developers should use the component styles available by the respective technology of the application. If those are not available or there are some rules that should be shared between components, each application can expose a style sheet that contains them. The only requirement is that it should be link:{application_styles}[exposed correctly via styles.css file] that will be loaded dynamically by the Shell. This style sheet will be available for that application only and will not be shared with other applications.
 
 [#application-styles-details]
 == Application Styles Details
-On a single page in OneCX there can content originating from multiple different applications:
+On a single page in OneCX, there can be content originating from multiple different applications:
 
 * Shell UI overlay
 * A microfrontend
 * Many remote components (from different applications)
 
-Microfrontend and remote components can be originating from the same application and therefore there is no need to load a style sheet every time new microfrontend or remote component is displayed. The following attributes play crucial role in reducing the amount of style sheet loading:
+Microfrontend and remote components can originate from the same application, and therefore there is no need to load a style sheet every time a new microfrontend or remote component is displayed. The following attributes play a crucial role in reducing the amount of style sheet loading:
 
 * data-app-styles="scopeId" - Marks style sheet as application sheet for the respective scope.
-* data-mfe-styles - Marks style sheet as used by current microfrontend.
-* data-slot-$SLOT_NAME-styles - Marks style sheet as used by one of the remote components inside a slot with name equal to $SLOT_NAME(slot name is lowercase, '-' separated string)
+* data-mfe-styles - Marks style sheet as used by the current microfrontend.
+* data-slot-$SLOT_NAME-styles - Marks style sheet as used by one of the remote components inside a slot with a name equal to $SLOT_NAME (slot name is a lowercase, '-' separated string).
 
-The application style sheet is loaded only when a new microfrontend or remote component (originating from respective application) is created. However, before loading happens, its checked if there is an existing style sheet with expected data-app-styles attribute. If that's the case, the sheet is not loaded.
+The application style sheet is loaded only when a new microfrontend or remote component (originating from the respective application) is created. However, before loading happens, it is checked if there is an existing style sheet with the expected data-app-styles attribute. If that's the case, the sheet is not loaded.
 
-* If the style sheet load was initiated by microfrontend creation it receives data-mfe-styles attribute.
-
-* If the style sheet load was initiated by remote component creation it receives data-slot-$SLOT_NAME-styles attribute.
-
+* If the style sheet load was initiated by microfrontend creation, it receives the data-mfe-styles attribute.
+* If the style sheet load was initiated by remote component creation, it receives the data-slot-$SLOT_NAME-styles attribute.
 * In cases where the style sheet already exists, the respective attributes are appended to the appropriate sheet.
-
-* On microfrontend or remote component removal(technically slot removal), the attributes are deleted from the style sheet and if there are no other usages(no other slot or microfrontend use the style sheet) it is removed from the DOM.
+* On microfrontend or remote component removal (technically slot removal), the attributes are deleted from the style sheet, and if there are no other usages (no other slot or microfrontend uses the style sheet), it is removed from the DOM.

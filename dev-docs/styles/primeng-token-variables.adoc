@@ -2,21 +2,22 @@
 
 :idprefix:
 :idseparator: -
+:custom_use_style: ../../libs/angular-utils/src/lib/services/custom-use-style.service.ts
+:provide_app_styles_initializer: ../../libs/angular-utils/src/lib/utils/styles/app-styles-initializer.ts
 
-Design tokens in PrimeNG 19+ are internally transformed to CSS variables that PrimeNG injects on the page via style sheets. Those variables are then used in the style sheets containing other CSS rules and can be used by any application.
+Design tokens in PrimeNG 19+ are internally transformed to CSS variables that PrimeNG injects on the page via style sheets. These variables are then used in the style sheets containing other CSS rules and can be used by any application.
 
-To reduce possibilities of name clashing, every PrimeNG CSS variable definition and usage is overwritten to use a prefix appropriate to the scope of the variable. For example, CSS variable that normally is called `--p-surface-500` would be defined as `--onecx-help-onecx-help-ui-surface-500` in the scope with `data-style-id="onecx-help|onecx-help-ui"`.
+To reduce the possibility of name clashes, every PrimeNG CSS variable definition and usage is overwritten to use a prefix appropriate to the scope of the variable. For example, a CSS variable that is normally called --p-surface-500 would be defined as --onecx-help-onecx-help-ui-surface-500 in the scope with data-style-id="onecx-help|onecx-help-ui".
 
-The following mechanisms are in charge of those overwrites:
+The following mechanisms are in charge of these overwrites:
 
-* link:../../libs/angular-utils/src/lib/services/custom-use-style.service.ts[CustomUseStyle] - replacement on PrimeNG style sheets adding and updates
-// TODO: Add link
-* link:../../libs/angular-utils/src/lib/utils/styles/app-styles-initializer.ts[provideAppStylesInitializer] - used when application provides `provideThemeConfig`, replacement of PrimeNG CSS variables (every CSS variable with `--p-` prefix) for {}[application styles]
-* `styleChangesListenerInitializer` - defined in Shell UI, replacement of PrimeNG CSS variables (every CSS variable with `--p-` prefix) for Angular components changes. Replacement is done every time any style sheet in document head is added/removed/updated.
+* link:{custom_use_style}[CustomUseStyle] - replacement on PrimeNG style sheets adding and updates
+* link:{provide_app_styles_initializer}[provideAppStylesInitializer] - used when the application provides provideThemeConfig, replacement of PrimeNG CSS variables (every CSS variable with --p- prefix) for application styles
+* `styleChangesListenerInitializer` - defined in Shell UI, replacement of PrimeNG CSS variables (every CSS variable with --p- prefix) for Angular components changes. Replacement is done every time any style sheet in the document head is added/removed/updated.
 
 [#usage-in-applications]
 == Usage In Applications
-For both application styles and Angular component styles, usage should be same as if variables were never overwritten. It means that in every case where `--p-surface-500` variable has to be used, it should be used directly with no changes.
+For both application styles and Angular component styles, usage should be the same as if variables were never overwritten. It means that in every case where the --p-surface-500 variable has to be used, it should be used directly with no changes.
 
 .styles.css or component.css
 ```
@@ -27,7 +28,7 @@ For both application styles and Angular component styles, usage should be same a
 }
 ```
 
-This style sheet content will be replaced by OneCX dynamically and the result on the page will be the following:
+This style sheet content will be replaced by OneCX dynamically, and the result on the page will be the following:
 
 .transformed styles.css or component.css on the page
 ```

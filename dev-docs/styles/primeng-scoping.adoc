@@ -1,7 +1,12 @@
+
 = PrimeNG Styles Scoping
 
 :idprefix:
 :idseparator: -
+:scoping: ./scoping.adoc
+:provide_theme_config: ../../libs/angular-utils/src/lib/theme/application-config.ts
+:custom_use_style: ../../libs/angular-utils/src/lib/services/custom-use-style.service.ts
+:theme_overrides: ../theming/theme-overrides.adoc
 
 The goal of this document is to explain styles scoping mechanisms related to PrimeNG available in OneCX and technical details behind them. After reading this document it should be clear how PrimeNG style sheets are scoped on the pages.
 
@@ -13,12 +18,11 @@ PrimeNG does not recognize need for multiple different applications on a single 
 
 [#style-scoping]
 == Style Scoping
-// TODO: Link
-For overall guide of style scoping in OneCX, please refer to the {}[style scoping document].
+For overall guide of style scoping in OneCX, please refer to the link:{scoping}[style scoping document].
 
 [#custom-use-style]
 == Custom Use Style
-Every application that uses PrimeNG version 19+, needs to use link:../../libs/angular-utils/src/lib/theme/application-config.ts[provideThemeConfig] in the Microfrontend or Remote Component providers. This provider will replace the default `UseStyle` with link:../../libs/angular-utils/src/lib/services/custom-use-style.service.ts[CustomUseStyle]. The replaced service is responsible for:
+Every application that uses PrimeNG version 19+, needs to use link:{provide_theme_config}[provideThemeConfig] in the Microfrontend or Remote Component providers. This provider will replace the default `UseStyle` with link:{custom_use_style}[CustomUseStyle]. The replaced service is responsible for:
 
 * scoping all PrimeNG style sheets
 * applying theme overrides
@@ -37,9 +41,7 @@ For both cases, `CustomUseStyle` is going to compute appropriate `data-style-id`
 
 [#theme-overrides]
 === Theme Overrides
-// TODO: Add link
-Details on how theme overrides work can be found {theme_overrides_details}[here].
-
+Details on how theme overrides work can be found link:{theme_overrides}[here].
 
 [#primeng-dynamic-content]
 == Dynamic Content

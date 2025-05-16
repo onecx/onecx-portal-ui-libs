@@ -1,20 +1,19 @@
+
 = Scope polyfill
 
 :idprefix:
 :idseparator: -
 :scope_at_rule: https://developer.mozilla.org/en-US/docs/Web/CSS/@scope
 
-The goal of this document is to explain CSS `@scope` at-rule polyfill. After reading this document it should be clear how `@scope` is enabled for browsers that don't support it.
-
 [#overview]
 == Overview
-The {scope_at_rule}[CSS @scope at-rule] is not broadly available yet and plays crucial part in style isolation done in OneCX. Because of that a polyfill was created. It is applied in the Shell UI to allow browsers that do not support this rule to still display the pages.
+The {scope_at_rule}[CSS @scope at-rule] is not broadly available yet and plays a crucial part in style isolation done in OneCX. Because of that, a polyfill was created. It is applied in the Shell UI to allow browsers that do not support this rule to still display the pages.
 
 [#polyfill-idea]
 == Polyfill Idea
-For all browsers that do not support the `@scope` at rule the polyfill is active.
+For all browsers that do not support the `@scope` at-rule, the polyfill is active.
 
-On Shell UI application start, a MutationObserver is created that watches all changes (DOM structure, attributes) of the document.body node and its children. Then when observer detects a batch of mutations, the style sheet update happens.
+On Shell UI application start, a MutationObserver is created that watches all changes (DOM structure, attributes) of the document.body node and its children. Then, when the observer detects a batch of mutations, the style sheet update happens.
 
 Additionally, the following operations cause style sheets to be updated:
 
@@ -33,19 +32,19 @@ Every style sheet containing at least one `@supports` rule will be considered fo
 
 [#style-sheets-update]
 === Style Sheets Update
-Each style sheet update has to be caused by appropriate mutations on a page. Based on those mutations a subset of style sheets that require an update is identified and necessary changes are applied to ensure the rules are correctly updated.
+Each style sheet update has to be caused by appropriate mutations on a page. Based on those mutations, a subset of style sheets that require an update is identified and necessary changes are applied to ensure the rules are correctly updated.
 
 Style sheet update in detail:
 
-. If style sheet has not been transformed yet, it is transformed into a scoped style sheet. It extracts the scope information from the supports rule and saves it in the OcxCSSStyleSheet interface. It then moves the supports rules to the top level and applies the initial scope.
+. If the style sheet has not been transformed yet, it is transformed into a scoped style sheet. It extracts the scope information from the supports rule and saves it in the OcxCSSStyleSheet interface. It then moves the supports rules to the top level and applies the initial scope.
 . For each rule that has to be scoped in the style sheet:
-.. its checked if rule needs to be updated based on the mutations that caused the update
-.. rule's selector is updated
-... a query to find all elements fulfilling rule's original selector are found in the scope
-... ":where" selector is appended to the rule's original selector with selector for each found element
+.. it is checked if the rule needs to be updated based on the mutations that caused the update
+.. the rule's selector is updated
+... a query to find all elements fulfilling the rule's original selector are found in the scope
+... ":where" selector is appended to the rule's original selector with a selector for each found element
 ... ":root > :nth-child(x) > :nth-child(y) > ..." selector is used to select every element
-.. rule's children are updated
+.. the rule's children are updated
 
-For example, if original selector is .custom-class, and the matching elements are the second child of the first child of the root element, the updated selector would be .custom-class:where(:nth-child(1) > :nth-child(2)).
+For example, if the original selector is .custom-class, and the matching elements are the second child of the first child of the root element, the updated selector would be .custom-class:where(:nth-child(1) > :nth-child(2)).
 
 This approach ensures that the scoped styles are applied correctly, even in browsers that do not support the native @scope CSS rule.
