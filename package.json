@@ -30,7 +30,6 @@
     "@ngx-translate/core": "^16.0.0",
     "@ngx-translate/http-loader": "^8.0.0",
     "@nx/plugin": "^20.4.6",
-    "@onecx/portal-layout-styles": "file:libs/portal-layout-styles",
     "@primeng/themes": "^19.0.0",
     "@phenomnomnominal/tsquery": "^6",
     "@storybook/addon-interactions": "^8.3.2",
