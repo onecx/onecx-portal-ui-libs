@@ -1,9 +1,9 @@
 import { Tree, visitNotIgnoredFiles } from '@nx/devkit'
 import { ast, query, replace } from '@phenomnomnominal/tsquery'
 import { readFileSync, writeFileSync } from 'fs'
-import { parse } from 'node-html-parser'
-import * as path from 'path'
+import { dirname, resolve } from 'path'
 import { isStringLiteral, Node, ScriptKind } from 'typescript'
+import { replaceTagInHtml } from '../utils/html-files.utils'
 
 /**
  * Changes all occurrences of a specific HTML tag name in Angular component templates.
@@ -13,37 +13,12 @@ import { isStringLiteral, Node, ScriptKind } from 'typescript'
  * @param oldTagName - The tag name to replace.
  * @param newTagName - The new tag name to use.
  */
-export function changeTagName(tree: Tree, dirPath: string, oldTagName: string, newTagName: string) {
+export function replaceTagInAngularTemplates(tree: Tree, dirPath: string, oldTagName: string, newTagName: string) {
   visitNotIgnoredFiles(tree, dirPath, (file) => {
     if (file.endsWith('.ts')) {
-      processFile(tree, file, oldTagName, newTagName)
+      replaceTagInInlineAndExternalTemplate(tree, file, oldTagName, newTagName)
     }
   })
-}
-
-/**
- * Modifies all occurrences of a specific tag name in an HTML string.
- *
- * @param html - The HTML content as a string.
- * @param oldTagName - The tag name to replace.
- * @param newTagName - The new tag name to use.
- * @returns The modified HTML string.
- */
-function modifyTagName(html: string, oldTagName: string, newTagName: string): string {
-  try {
-    const root = parse(html)
-    const elements = root.querySelectorAll(oldTagName)
-
-    if (!elements.length) return html
-
-    elements.forEach((element) => {
-      element.tagName = newTagName
-    })
-    return root.toString()
-  } catch (error) {
-    console.error('Error modifying tag name in HTML: ', error)
-    return html
-  }
 }
 
 /**
@@ -51,14 +26,20 @@ function modifyTagName(html: string, oldTagName: string, newTagName: string): st
  *
  * @param tree - The Nx Tree.
  * @param filePath - Path to the TypeScript file.
- * @param node - AST node representing the inline template.
+ * @param inlineTemplate - AST node representing the inline template.
  * @param oldTagName - The tag name to replace.
  * @param newTagName - The new tag name to use.
  */
-function processInlineTemplate(tree: Tree, filePath: string, node: Node, oldTagName: string, newTagName: string) {
+function replaceTagInInlineTemplate(
+  tree: Tree,
+  filePath: string,
+  inlineTemplate: Node,
+  oldTagName: string,
+  newTagName: string
+) {
   try {
-    const nodeText = node.getText()
-    const updatedHtml = modifyTagName(nodeText, oldTagName, newTagName)
+    const nodeText = inlineTemplate.getText()
+    const updatedHtml = replaceTagInHtml(nodeText, oldTagName, newTagName)
     const fileContent = tree.read(filePath, 'utf-8')
     const inlineTemplatesQuery = 'PropertyAssignment:has(Identifier[name="template"]) > NoSubstitutionTemplateLiteral'
 
@@ -78,10 +59,10 @@ function processInlineTemplate(tree: Tree, filePath: string, node: Node, oldTagN
  * @param oldTagName - The tag name to replace.
  * @param newTagName - The new tag name to use.
  */
-function processExternalTemplate(filePath: string, oldTagName: string, newTagName: string) {
+function replaceTagInExternalTemplate(filePath: string, oldTagName: string, newTagName: string) {
   try {
     const html = readFileSync(filePath, 'utf8')
-    const modifiedHtml = modifyTagName(html, oldTagName, newTagName)
+    const modifiedHtml = replaceTagInHtml(html, oldTagName, newTagName)
     writeFileSync(filePath, modifiedHtml)
   } catch (error) {
     console.error(`Failed to process external template at ${filePath}: `, error)
@@ -96,7 +77,7 @@ function processExternalTemplate(filePath: string, oldTagName: string, newTagNam
  * @param oldTagName - The tag name to replace.
  * @param newTagName - The new tag name to use.
  */
-function processFile(tree: Tree, filePath: string, oldTagName: string, newTagName: string) {
+function replaceTagInInlineAndExternalTemplate(tree: Tree, filePath: string, oldTagName: string, newTagName: string) {
   try {
     const tsContent = readFileSync(filePath, 'utf8')
     const contentAst = ast(tsContent)
@@ -105,7 +86,7 @@ function processFile(tree: Tree, filePath: string, oldTagName: string, newTagNam
       contentAst,
       'PropertyAssignment:has(Identifier[name="template"]) > NoSubstitutionTemplateLiteral'
     )
-    inlineTemplates.forEach((node) => processInlineTemplate(tree, filePath, node, oldTagName, newTagName))
+    inlineTemplates.forEach((node) => replaceTagInInlineTemplate(tree, filePath, node, oldTagName, newTagName))
 
     const externalTemplates = query(
       contentAst,
@@ -114,9 +95,9 @@ function processFile(tree: Tree, filePath: string, oldTagName: string, newTagNam
     externalTemplates.forEach((node) => {
       if (isStringLiteral(node)) {
         const templateUrl = node.text
-        const templatePath = path.resolve(path.dirname(filePath), templateUrl)
+        const templatePath = resolve(dirname(filePath), templateUrl)
 
-        processExternalTemplate(templatePath, oldTagName, newTagName)
+        replaceTagInExternalTemplate(templatePath, oldTagName, newTagName)
       }
     })
   } catch (error) {

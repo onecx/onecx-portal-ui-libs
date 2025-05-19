@@ -1,25 +1,26 @@
 import {
-  Tree,
   addDependenciesToPackageJson,
   formatFiles,
   installPackagesTask,
   readJson,
   removeDependenciesFromPackageJson,
+  Tree,
   updateJson,
   writeJson,
 } from '@nx/devkit'
 import { execSync } from 'child_process'
-import { detectMethodCallsInFiles } from '../utils/detect-method-calls-in-files'
-import { changeTagName } from '../utils/handle-html'
+import { detectMethodCallsInFiles } from '../utils/detect-method-calls-in-files.utils'
+
+import { replaceTagInAngularTemplates } from '../angular/html-templates.utils'
 import {
-  removeImportStatement,
+  removeImportsByModuleSpecifier,
   removeImportValuesFromModule,
-  removeParameters,
-  replaceImportValueAndModuleName,
   replaceImportValues,
-  updateContentFiles,
-} from '../utils/handle-import-statements'
-import { printWarnings } from '../utils/print-warnings'
+  replaceImportValuesAndModule,
+} from '../angular/import-statements.utils'
+import { removeParameters } from '../angular/parameters.utils'
+import { replaceInFiles } from '../angular/replacement-in-files.utils'
+import { printWarnings } from '../utils/print-warnings.utils'
 
 export async function commonMigrateOnecxToV6(tree: Tree) {
   const rootPath = tree.root
@@ -89,7 +90,7 @@ export async function commonMigrateOnecxToV6(tree: Tree) {
       json.dependencies[dep] = '^19.0.7'
     })
     onecxDependencies.forEach((dep) => {
-      json.dependencies[dep] = '^6.0.0-rc.69'
+      json.dependencies[dep] = '^6.0.0-rc.31'
     })
     ngrxDependencies.forEach((dep) => {
       json.dependencies[dep] = '^19.0.1'
@@ -138,7 +139,7 @@ export async function commonMigrateOnecxToV6(tree: Tree) {
 function removeOnecxKeycloakAuth(tree: Tree, directoryPath: string) {
   removeDependenciesFromPackageJson(tree, ['@onecx/keycloak-auth'], [])
 
-  removeImportStatement(tree, directoryPath, '@onecx/keycloak-auth')
+  removeImportsByModuleSpecifier(tree, directoryPath, '@onecx/keycloak-auth')
 
   const webpackConfigJsPath = 'webpack.config.js'
   const webpackConfigJsContent = tree.read(webpackConfigJsPath, 'utf-8')
@@ -155,7 +156,7 @@ function removeOnecxKeycloakAuth(tree: Tree, directoryPath: string) {
   }
 
   const keycloakModuleQuery = `ClassDeclaration > Decorator > CallExpression:has(Identifier[name="NgModule"]) Identifier[name="KeycloakAuthModule"]`
-  updateContentFiles(tree, 'src', keycloakModuleQuery, '')
+  replaceInFiles(tree, directoryPath, keycloakModuleQuery, '')
 
   installPackagesTask(tree, true)
 }
@@ -174,16 +175,16 @@ function migratePrimeng(tree: Tree) {
 
   writeJson(tree, projectJsonPath, projectJson)
 
-  replaceImportValueAndModuleName(tree, 'src', [
+  replaceImportValuesAndModule(tree, 'src', [
     {
-      oldImportModuleName: 'primeng/api',
-      newImportModuleName: 'primeng/config',
-      valueReplacements: [{ oldImportValue: 'PrimeNGConfig', newImportValue: 'PrimeNG' }],
+      oldModuleSpecifier: 'primeng/api',
+      newModuleSpecifier: 'primeng/config',
+      valueReplacements: [{ oldValue: 'PrimeNGConfig', newValue: 'PrimeNG' }],
     },
   ])
 
   const primengConfigClassQuery = `Identifier[name="PrimeNGConfig"]`
-  updateContentFiles(tree, 'src', primengConfigClassQuery, 'PrimeNG')
+  replaceInFiles(tree, 'src', primengConfigClassQuery, 'PrimeNG')
 }
 
 function migrateApiConfigProviderUtils(tree: Tree, directoryPath: string) {
@@ -202,7 +203,7 @@ function migrateApiConfigProviderUtils(tree: Tree, directoryPath: string) {
 
 function migrateFilterTypes(tree: Tree, directoryPath: string) {
   const queryFiltertypeTruthy = 'PropertyAccessExpression:has(Identifier[name="FilterType"]) Identifier[name="TRUTHY"]'
-  updateContentFiles(tree, directoryPath, queryFiltertypeTruthy, 'IS_NOT_EMPTY')
+  replaceInFiles(tree, directoryPath, queryFiltertypeTruthy, 'IS_NOT_EMPTY')
 }
 
 function migrateFastDeepEqualImport(tree: Tree, directoryPath: string) {
@@ -211,24 +212,24 @@ function migrateFastDeepEqualImport(tree: Tree, directoryPath: string) {
 }
 
 function migratePrimeNgCalendar(tree: Tree, directoryPath: string) {
-  replaceImportValueAndModuleName(tree, directoryPath, [
+  replaceImportValuesAndModule(tree, directoryPath, [
     {
-      oldImportModuleName: 'primeng/calendar',
-      newImportModuleName: 'primeng/datepicker',
+      oldModuleSpecifier: 'primeng/calendar',
+      newModuleSpecifier: 'primeng/datepicker',
       valueReplacements: [
-        { oldImportValue: 'Calendar', newImportValue: 'DatePicker' },
-        { oldImportValue: 'CalendarModule', newImportValue: 'DatePickerModule' },
+        { oldValue: 'Calendar', newValue: 'DatePicker' },
+        { oldValue: 'CalendarModule', newValue: 'DatePickerModule' },
       ],
     },
   ])
 
   const calendarQuery = `PropertyDeclaration > Decorator > CallExpression:has(Identifier[name="ViewChildren"]) Identifier[name="Calendar"], TypeReference > Identifier[name="Calendar"]`
-  updateContentFiles(tree, directoryPath, calendarQuery, 'DatePicker')
+  replaceInFiles(tree, directoryPath, calendarQuery, 'DatePicker')
 
-  const calendarModuleQuery = `ClassDeclaration > Decorator > CallExpression:has(Identifier[name="NgModule"]) Identifier[name="CalendarModule"]`
-  updateContentFiles(tree, directoryPath, calendarModuleQuery, 'DatePickerModule')
+  const calendarModuleQuery = `Identifier[name="CalendarModule"]`
+  replaceInFiles(tree, directoryPath, calendarModuleQuery, 'DatePickerModule')
 
-  changeTagName(tree, directoryPath, 'p-calendar', 'p-datepicker')
+  replaceTagInAngularTemplates(tree, directoryPath, 'p-calendar', 'p-datepicker')
 }
 
 function warnUserServiceHasPermission(tree: Tree, srcDirectoryPath: string) {
