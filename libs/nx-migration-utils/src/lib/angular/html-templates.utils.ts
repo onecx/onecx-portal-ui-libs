@@ -30,7 +30,7 @@ export function replaceTagInAngularTemplates(tree: Tree, dirPath: string, oldTag
  * @param oldTagName - The tag name to replace.
  * @param newTagName - The new tag name to use.
  */
-function replaceTagInInlineTemplate(
+export function replaceTagInInlineTemplate(
   tree: Tree,
   filePath: string,
   inlineTemplate: Node,
@@ -77,7 +77,7 @@ function replaceTagInExternalTemplate(filePath: string, oldTagName: string, newT
  * @param oldTagName - The tag name to replace.
  * @param newTagName - The new tag name to use.
  */
-function replaceTagInInlineAndExternalTemplate(tree: Tree, filePath: string, oldTagName: string, newTagName: string) {
+export function replaceTagInInlineAndExternalTemplate(tree: Tree, filePath: string, oldTagName: string, newTagName: string) {
   try {
     const tsContent = readFileSync(filePath, 'utf8')
     const contentAst = ast(tsContent)
