@@ -1,4 +1,15 @@
 import { Tree, visitNotIgnoredFiles } from '@nx/devkit'
+import { ast, query } from '@phenomnomnominal/tsquery'
+import {
+  createPrinter,
+  factory,
+  ImportDeclaration,
+  ImportSpecifier,
+  NamedImports,
+  NodeArray,
+  SourceFile,
+  SyntaxKind,
+} from 'typescript'
 import { fileMatchesQuery } from '../utils/typescript-files.utils'
 import { replaceInFile, replaceInFiles } from './replacement-in-files.utils'
 
@@ -21,10 +32,7 @@ interface ModuleImportReplacement {
  * @param moduleSpecifier - The module name whose import statements should be removed.
  */
 export function removeImportsByModuleSpecifier(tree: Tree, directoryPath: string, moduleSpecifier: string) {
-  const importModuleSpecifierQuery = `
-        ImportDeclaration:has(StringLiteral[value="${moduleSpecifier}"]),
-        VariableStatement:has(CallExpression:has(Identifier[name=require]):has(StringLiteral[value="${moduleSpecifier}"]))
-    `
+  const importModuleSpecifierQuery = `ImportDeclaration:has(StringLiteral[value="${moduleSpecifier}"]), VariableStatement:has(CallExpression:has(Identifier[name=require]):has(StringLiteral[value="${moduleSpecifier}"]))`
 
   replaceInFiles(tree, directoryPath, importModuleSpecifierQuery, '')
 }
@@ -38,10 +46,7 @@ export function removeImportsByModuleSpecifier(tree: Tree, directoryPath: string
  * @param newModule - The new module name to use in import statements.
  */
 export function replaceImportModuleSpecifier(tree: Tree, directoryPath: string, oldModule: string, newModule: string) {
-  const importModuleSpecifierQuery = `
-        ImportDeclaration > StringLiteral[value="${oldModule}"],
-        VariableStatement CallExpression:has(Identifier[name=require]) > StringLiteral[value="${oldModule}"]
-    `
+  const importModuleSpecifierQuery = `ImportDeclaration > StringLiteral[value="${oldModule}"], VariableStatement CallExpression:has(Identifier[name=require]) > StringLiteral[value="${oldModule}"]`
 
   replaceInFiles(tree, directoryPath, importModuleSpecifierQuery, `'${newModule}'`)
 }
@@ -78,40 +83,6 @@ export function replaceImportValues(
   } else {
     replaceInFiles(tree, directoryOrFilePath, combinedQuery, newImportValue)
   }
-}
-
-/**
- * Replaces both named imports and module specifiers in two steps, with optional filtering using a tsquery string.
- *
- * @param tree - The Nx virtual file system tree.
- * @param directoryPath - Path to a directory to search for `.ts` files.
- * @param importReplacements - An array of import replacement instructions, each containing:
- * - `oldModule`: the original module name to match.
- * - `newModule`: the new module name to replace with.
- * - `valueReplacements`: an array of named import replacements `{ oldValue, newValue }`.
- * @param filterQuery - Optional custom string query to filter files before applying changes.
- * This can be used to limit the operation to files containing specific content (e.g., a class name or decorator).
- */
-export function replaceImportValuesAndModule(
-  tree: Tree,
-  directoryPath: string,
-  importReplacements: ModuleImportReplacement[],
-  filterQuery?: string
-) {
-  visitNotIgnoredFiles(tree, directoryPath, (filePath) => {
-    if (!filePath.endsWith('.ts')) return
-
-    try {
-      const fileContent = tree.read(filePath, 'utf-8')
-      if (!fileContent) return
-
-      if (filterQuery && !fileMatchesQuery(fileContent, filterQuery)) return
-
-      applyImportReplacements(tree, filePath, importReplacements)
-    } catch (error) {
-      console.error(`Error replacing import values and module for file ${filePath}:`, error)
-    }
-  })
 }
 
 /**
@@ -153,27 +124,217 @@ export function removeImportValuesFromModule(
 }
 
 /**
- * Applies a set of import transformations to a single TypeScript file.
- *
- * This includes:
- * - Replacing specific named imports from a given module.
- * - Updating the module specifier if it has changed.
+ * Replaces both import values and module names in TypeScript files.
  *
  * @param tree - The Nx virtual file system tree.
- * @param filePath - The path to the TypeScript file to modify.
- * @param replacements - An array of import replacement instructions. Each instruction includes:
- * - `oldModule`: The original module name to match.
- * - `newModule`: The new module name to replace it with.
- * - `valueReplacements`: An array of named import replacements `{ oldValue, newValue }`.
+ * @param directoryPath - Directory to search for files.
+ * @param importReplacements - List of import module and value replacements.
+ * @param filterQuery - Optional query to filter files before applying changes.
  */
-function applyImportReplacements(tree: Tree, filePath: string, replacements: ModuleImportReplacement[]) {
-  for (const { oldModuleSpecifier, newModuleSpecifier, valueReplacements } of replacements) {
-    for (const { oldValue, newValue } of valueReplacements) {
-      replaceImportValues(tree, filePath, oldModuleSpecifier, oldValue, newValue)
+export function replaceImportValuesAndModule(
+  tree: Tree,
+  directoryPath: string,
+  importReplacements: ModuleImportReplacement[],
+  filterQuery?: string
+) {
+  visitNotIgnoredFiles(tree, directoryPath, (filePath) => {
+    if (!filePath.endsWith('.ts')) return
+
+    try {
+      const fileContent = tree.read(filePath, 'utf-8')
+      if (!fileContent) return
+
+      const updatedContent = replaceImportsInFile(fileContent, importReplacements, filterQuery)
+      if (updatedContent && updatedContent !== fileContent) {
+        tree.write(filePath, updatedContent)
+      }
+    } catch (error) {
+      console.error(`Error replacing/removing ImportValue and ModuleName for file ${filePath}: `, error)
+    }
+  })
+}
+
+/**
+ * Processes a file's AST to apply import replacements.
+ *
+ * @param fileContent - The content of the file to process.
+ * @param replacements - List of module and value replacements.
+ * @param filterQuery - Optional custom string query to filter files before applying changes.
+ * This can be used to limit the operation to files containing specific content (e.g., a class name or decorator).
+ * @returns The updated file content, or null if no changes were made.
+ */
+function replaceImportsInFile(
+  fileContent: string,
+  replacements: ModuleImportReplacement[],
+  filterQuery?: string
+): string | null {
+  try {
+    if (filterQuery && !fileMatchesQuery(fileContent, filterQuery)) {
+      return null
     }
 
-    if (oldModuleSpecifier !== newModuleSpecifier) {
-      replaceImportModuleSpecifier(tree, filePath, oldModuleSpecifier, newModuleSpecifier)
+    let contenAst = ast(fileContent)
+    let hasChanges = false
+
+    for (const replacement of replacements) {
+      const updatedContenAst = applyImportReplacement(contenAst, replacement, () => {
+        hasChanges = true
+      })
+      if (updatedContenAst) {
+        contenAst = updatedContenAst
+      }
     }
+
+    return hasChanges ? createPrinter().printFile(contenAst) : null
+  } catch (error) {
+    console.error('Error processing AST for import replacements:', error)
+    return null
+  }
+}
+
+/**
+ * Applies import replacements to a TypeScript AST.
+ *
+ * @param contenAst - The AST of the source file.
+ * @param replacement - The module and value replacement configuration.
+ * @param onChange - Callback to trigger when a change is made.
+ * @returns The updated AST, or null if no changes were made.
+ */
+function applyImportReplacement(
+  contenAst: SourceFile,
+  replacement: ModuleImportReplacement,
+  onChange: () => void
+): SourceFile | null {
+  try {
+    const importDeclaration = findImportDeclaration(contenAst, replacement.oldModuleSpecifier)
+    if (!importDeclaration?.importClause) {
+      return null
+    }
+
+    const updatedImportDecl = updateImportDeclaration(
+      importDeclaration,
+      replacement.valueReplacements,
+      replacement.newModuleSpecifier,
+      onChange
+    )
+
+    const updatedStatements = factory.createNodeArray(
+      contenAst.statements.map((statement) => (statement === importDeclaration ? updatedImportDecl : statement))
+    )
+
+    return factory.updateSourceFile(contenAst, updatedStatements)
+  } catch (error) {
+    console.error(`Error applying import replacement for module "${replacement.oldModuleSpecifier}":`, error)
+    return null
+  }
+}
+
+/**
+ * Updates an import declaration with new named imports and module specifier.
+ *
+ * @param originalImport - The original import declaration node.
+ * @param importValueReplacements - List of named import replacements.
+ * @param newModuleName - The new module specifier.
+ * @param onChange - Callback to trigger when a change is made.
+ * @returns The updated import declaration.
+ */
+function updateImportDeclaration(
+  originalImport: ImportDeclaration,
+  importValueReplacements: ImportValueReplacement[],
+  newModuleName: string,
+  onChange: () => void
+): ImportDeclaration {
+  try {
+    const namedBindings = getNamedImports(originalImport)
+    if (!namedBindings) {
+      return originalImport
+    }
+
+    const updatedSpecifiers = updateImportSpecifiers(namedBindings.elements, importValueReplacements, onChange)
+
+    const newNamedImports = factory.createNamedImports(updatedSpecifiers)
+    const newImportClause = factory.createImportClause(false, undefined, newNamedImports)
+
+    return factory.createImportDeclaration(
+      undefined,
+      newImportClause,
+      factory.createStringLiteral(newModuleName),
+      undefined
+    )
+  } catch (error) {
+    console.error(`Failed to update import declaration for module "${newModuleName}":`, error)
+    return originalImport
+  }
+}
+
+/**
+ * Finds the first import declaration for a given module name.
+ *
+ * @param sourceFile - The TypeScript source file AST.
+ * @param moduleName - The module name to search for.
+ * @returns The matching ImportDeclaration node, if found.
+ */
+function findImportDeclaration(sourceFile: SourceFile, moduleName: string): ImportDeclaration | undefined {
+  try {
+    return query(sourceFile, `ImportDeclaration:has(StringLiteral[value="${moduleName}"])`)[0] as ImportDeclaration
+  } catch (error) {
+    console.error(`Error finding import declaration for module ${moduleName}: `, error)
+    return undefined
+  }
+}
+
+/**
+ * Extracts named imports from an import declaration.
+ *
+ * @param importDeclaration - The import declaration node.
+ * @returns The NamedImports node, if present.
+ */
+function getNamedImports(importDeclaration: ImportDeclaration): NamedImports | undefined {
+  try {
+    const namedBindings = importDeclaration.importClause?.namedBindings
+    if (namedBindings && namedBindings.kind === SyntaxKind.NamedImports) {
+      return namedBindings as NamedImports
+    }
+    console.warn('Named bindings are not of type NamedImports:', namedBindings)
+    return undefined
+  } catch (error) {
+    console.error('Error extracting named imports:', error)
+    return undefined
+  }
+}
+
+/**
+ * Updates import specifiers based on provided replacements.
+ *
+ * @param specifiers - The original import specifiers.
+ * @param replacements - List of replacements to apply.
+ * @param onChange - Callback to trigger when a change is made.
+ * @returns The updated list of import specifiers.
+ */
+function updateImportSpecifiers(
+  importSpecifiers: NodeArray<ImportSpecifier>,
+  replacements: ImportValueReplacement[],
+  onChange: () => void
+): ImportSpecifier[] {
+  try {
+    return importSpecifiers.map((importSpecifier) => {
+      const originalName = importSpecifier.name.text
+      const replacement = replacements.find((r) => r.oldValue === originalName)
+
+      if (replacement) {
+        onChange()
+
+        return factory.createImportSpecifier(
+          false,
+          importSpecifier.propertyName,
+          factory.createIdentifier(replacement.newValue)
+        )
+      }
+
+      return importSpecifier
+    })
+  } catch (error) {
+    console.error('Error updating import specifiers:', error)
+    return [...importSpecifiers]
   }
 }

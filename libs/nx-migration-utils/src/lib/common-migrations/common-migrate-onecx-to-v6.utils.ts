@@ -90,7 +90,7 @@ export async function commonMigrateOnecxToV6(tree: Tree) {
       json.dependencies[dep] = '^19.0.7'
     })
     onecxDependencies.forEach((dep) => {
-      json.dependencies[dep] = '^6.0.0-rc.31'
+      json.dependencies[dep] = '^6.0.0'
     })
     ngrxDependencies.forEach((dep) => {
       json.dependencies[dep] = '^19.0.1'
@@ -155,7 +155,7 @@ function removeOnecxKeycloakAuth(tree: Tree, directoryPath: string) {
     console.error('Cannot find webpack.config.js')
   }
 
-  const keycloakModuleQuery = `ClassDeclaration > Decorator > CallExpression:has(Identifier[name="NgModule"]) Identifier[name="KeycloakAuthModule"]`
+  const keycloakModuleQuery = `Identifier[name="KeycloakAuthModule"]`
   replaceInFiles(tree, directoryPath, keycloakModuleQuery, '')
 
   installPackagesTask(tree, true)
