@@ -163,7 +163,7 @@ export function replaceImportValuesAndModule(
  * This can be used to limit the operation to files containing specific content (e.g., a class name or decorator).
  * @returns The updated file content, or null if no changes were made.
  */
-function replaceImportsInFile(
+export function replaceImportsInFile(
   fileContent: string,
   replacements: ModuleImportReplacement[],
   filterQuery?: string
@@ -200,7 +200,7 @@ function replaceImportsInFile(
  * @param onChange - Callback to trigger when a change is made.
  * @returns The updated AST, or null if no changes were made.
  */
-function applyImportReplacement(
+export function applyImportReplacement(
   contenAst: SourceFile,
   replacement: ModuleImportReplacement,
   onChange: () => void
@@ -238,7 +238,7 @@ function applyImportReplacement(
  * @param onChange - Callback to trigger when a change is made.
  * @returns The updated import declaration.
  */
-function updateImportDeclaration(
+export function updateImportDeclaration(
   originalImport: ImportDeclaration,
   importValueReplacements: ImportValueReplacement[],
   newModuleName: string,
@@ -274,7 +274,7 @@ function updateImportDeclaration(
  * @param moduleName - The module name to search for.
  * @returns The matching ImportDeclaration node, if found.
  */
-function findImportDeclaration(sourceFile: SourceFile, moduleName: string): ImportDeclaration | undefined {
+export function findImportDeclaration(sourceFile: SourceFile, moduleName: string): ImportDeclaration | undefined {
   try {
     return query(sourceFile, `ImportDeclaration:has(StringLiteral[value="${moduleName}"])`)[0] as ImportDeclaration
   } catch (error) {
@@ -289,7 +289,7 @@ function findImportDeclaration(sourceFile: SourceFile, moduleName: string): Impo
  * @param importDeclaration - The import declaration node.
  * @returns The NamedImports node, if present.
  */
-function getNamedImports(importDeclaration: ImportDeclaration): NamedImports | undefined {
+export function getNamedImports(importDeclaration: ImportDeclaration): NamedImports | undefined {
   try {
     const namedBindings = importDeclaration.importClause?.namedBindings
     if (namedBindings && namedBindings.kind === SyntaxKind.NamedImports) {
@@ -311,7 +311,7 @@ function getNamedImports(importDeclaration: ImportDeclaration): NamedImports | u
  * @param onChange - Callback to trigger when a change is made.
  * @returns The updated list of import specifiers.
  */
-function updateImportSpecifiers(
+export function updateImportSpecifiers(
   importSpecifiers: NodeArray<ImportSpecifier>,
   replacements: ImportValueReplacement[],
   onChange: () => void
