@@ -6,10 +6,10 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { ButtonModule } from 'primeng/button'
 
 import { ButtonDialogComponent } from './button-dialog.component'
-import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
-import { ButtonDialogHarness } from '../../../../../testing'
+import { MockAuthModule } from '../../mock-auth/mock-auth.module'
+import { ButtonDialogHarness } from '../../../../testing'
 import { DivHarness } from '@onecx/angular-testing'
-import { ButtonDialogConfig } from '../../../model/button-dialog'
+import { ButtonDialogConfig } from '../../model/button-dialog'
 import { PrimeIcons } from 'primeng/api'
 
 @Component({

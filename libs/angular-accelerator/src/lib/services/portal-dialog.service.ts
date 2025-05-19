@@ -3,10 +3,7 @@ import { TranslateService } from '@ngx-translate/core'
 import { DialogService, DynamicDialogComponent, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { Observable, filter, mergeMap } from 'rxjs'
 
-import { PrimeIcon } from '@onecx/angular-accelerator'
-import { DialogMessageContentComponent } from '../core/components/button-dialog/dialog-message-content/dialog-message-content.component'
-import { DialogContentComponent } from '../core/components/dialog/dialog-content/dialog-content.component'
-import { DialogFooterComponent } from '../core/components/dialog/dialog-footer/dialog-footer.component'
+
 import { ButtonDialogButtonDetails, ButtonDialogCustomButtonDetails, ButtonDialogData } from '../model/button-dialog'
 import { NavigationStart, Router } from '@angular/router'
 import {
@@ -17,8 +14,11 @@ import {
 } from '@onecx/angular-utils'
 import { REMOTE_COMPONENT_CONFIG } from '@onecx/angular-remote-components'
 import { CurrentLocationTopicPayload, EventsTopic, TopicEventType } from '@onecx/integration-interface'
-import { Capability, ShellCapabilityService } from '@onecx/angular-integration-interface'
-import { AppStateService } from '@onecx/angular-integration-interface'
+import { Capability, ShellCapabilityService, AppStateService } from '@onecx/angular-integration-interface'
+import { PrimeIcon } from '../utils/primeicon.utils'
+import { DialogContentComponent } from '../components/dialog/dialog-content/dialog-content.component'
+import { DialogFooterComponent } from '../components/dialog/dialog-footer/dialog-footer.component'
+import { DialogMessageContentComponent } from '../components/button-dialog/dialog-message-content/dialog-message-content.component'
 
 /**
  * Object containing key for translation with parameters object for translation
@@ -215,13 +215,13 @@ export interface DialogButtonClicked<T = unknown> {
 // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
 type Component<T extends unknown> = unknown extends T
   ? {
-      type: Type<any>
-      inputs?: Record<string, unknown>
-    }
+    type: Type<any>
+    inputs?: Record<string, unknown>
+  }
   : {
-      type: Type<DialogResult<T>>
-      inputs?: Record<string, unknown>
-    }
+    type: Type<DialogResult<T>>
+    inputs?: Record<string, unknown>
+  }
 
 export type DialogButton = 'primary' | 'secondary' | 'custom'
 export type DialogStateButtonClicked = 'primary' | 'secondary' | 'custom'
@@ -481,8 +481,8 @@ export class PortalDialogService implements OnDestroy {
       typeof extrasOrShowXButton === 'object'
         ? extrasOrShowXButton
         : {
-            showXButton: extrasOrShowXButton,
-          }
+          showXButton: extrasOrShowXButton,
+        }
     const translateParams = this.prepareTitleForTranslation(title)
 
     const componentToRender: Component<any> = this.getComponentToRender(componentOrMessage)

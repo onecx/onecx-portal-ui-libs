@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { DateUtils } from '@onecx/angular-accelerator'
-import { ColumnType } from '@onecx/angular-accelerator'
 import { ExportDataService } from './export-data.service'
+import { DateUtils } from '../utils/dateutils'
+import { ColumnType } from '../model/column-type.model'
 
 describe('ExportDataService', () => {
   class ElementMock {

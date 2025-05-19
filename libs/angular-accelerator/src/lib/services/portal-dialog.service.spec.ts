@@ -12,9 +12,9 @@ import { Observable, of } from 'rxjs'
 import { DivHarness, InputHarness } from '@onecx/angular-testing'
 import { PrimeIcons } from 'primeng/api'
 import { DialogContentHarness, DialogFooterHarness } from '../../../testing/index'
-import { DialogMessageContentComponent } from '../core/components/button-dialog/dialog-message-content/dialog-message-content.component'
-import { DialogContentComponent } from '../core/components/dialog/dialog-content/dialog-content.component'
-import { DialogFooterComponent } from '../core/components/dialog/dialog-footer/dialog-footer.component'
+import { DialogMessageContentComponent } from '../components/button-dialog/dialog-message-content/dialog-message-content.component'
+import { DialogContentComponent } from '../components/dialog/dialog-content/dialog-content.component'
+import { DialogFooterComponent } from '../components/dialog/dialog-footer/dialog-footer.component'
 import {
   DialogButtonClicked,
   DialogPrimaryButtonDisabled,
