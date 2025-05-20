@@ -18,6 +18,14 @@
         "@nx/angular": {
           "version": "~20.3.0",
           "alwaysAddToPackageJson": false
+        },
+        "@ngx-translate/core": {
+          "version": "~16.0.4",
+          "alwaysAddToPackageJson": false
+        },
+        "primeng": {
+          "version": "~19.0.0",
+          "alwaysAddToPackageJson": false
         }
       }
     },
