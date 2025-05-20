@@ -99,11 +99,11 @@ export function getParameterNames(contentAst: SourceFile, className: string): st
 function getInjectionNames(contentAst: SourceFile, className: string): string[] {
   const injections = query(
     contentAst,
-    `PropertyDeclaration:has(CallExpression:has(Identifier[name="inject"]) > Identifier[name="${className}"])`
+    `PropertyDeclaration:has(CallExpression:has(Identifier[name="inject"]) > Identifier[name="${className}"]), VariableDeclaration:has(CallExpression:has(Identifier[name="inject"]):has(Identifier[name="${className}"]))`
   )
 
   const injectionNames = injections.map((node) => {
-    if (isPropertyDeclaration(node)) {
+    if (isPropertyDeclaration(node) || isVariableDeclaration(node)) {
       return node.name.getText()
     }
     throw new Error('Node is not a PropertyDeclaration')
@@ -186,4 +186,3 @@ export function detectMethodCallsInFiles(
 
   return matchingFiles
 }
-

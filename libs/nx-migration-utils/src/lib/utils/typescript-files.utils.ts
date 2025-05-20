@@ -4,7 +4,6 @@ import { createPrinter, EmitHint, factory, isArrayLiteralExpression, ScriptKind,
 
 /**
  * Checks if a file's content matches a given tsquery string.
- *
  * @param fileContent - The content of the TypeScript file.
  * @param queryStr - A tsquery selector string.
  * @returns True if the file matches the query; otherwise, false.
@@ -21,7 +20,6 @@ export function fileMatchesQuery(fileContent: string, queryStr: string): boolean
 /**
  * Removes empty slots (i.e., omitted expressions like `[1,,2]`) from all array literals
  * in a given TypeScript code string.
- *
  * @param code - The TypeScript source code as a string.
  * @returns A new string with all empty array slots removed.
  */
@@ -48,6 +46,11 @@ export function removeEmptySlotsFromArrays(code: string): string {
   }
 }
 
+/**
+ * Determines whether a given string is likely to represent a file path.
+ * @param input - The input string to evaluate.
+ * @returns `true` if the input appears to be a file path, otherwise `false`.
+ */
 export function isFilePath(input: string): boolean {
   const hasExtension = !!extname(input)
   const looksLikePath = input.includes('/') || isAbsolute(input)

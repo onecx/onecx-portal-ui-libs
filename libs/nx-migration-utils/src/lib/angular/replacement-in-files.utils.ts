@@ -5,7 +5,6 @@ import { removeEmptySlotsFromArrays } from '../utils/typescript-files.utils'
 
 /**
  * Applies a tsquery-based replacement to a single TypeScript file.
- *
  * @param tree - The Nx virtual file system tree.
  * @param filePath - Path to the TypeScript file to update.
  * @param queryStr - A tsquery selector string used to identify nodes for replacement.
@@ -31,7 +30,6 @@ export function replaceInFile(tree: Tree, filePath: string, queryStr: string, re
 
 /**
  * Applies a tsquery-based replacement to all `.ts` files in a given directory.
- *
  * @param tree - The Nx virtual file system tree.
  * @param directoryPath - Path to the directory containing TypeScript files.
  * @param queryStr - A tsquery selector string used to identify nodes for replacement.
