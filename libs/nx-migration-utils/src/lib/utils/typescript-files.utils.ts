@@ -1,4 +1,5 @@
 import { ast, query, replace } from '@phenomnomnominal/tsquery'
+import { extname, isAbsolute } from 'path'
 import { createPrinter, EmitHint, factory, isArrayLiteralExpression, ScriptKind, SyntaxKind } from 'typescript'
 
 /**
@@ -47,6 +48,8 @@ export function removeEmptySlotsFromArrays(code: string): string {
   }
 }
 
-export function isFilePath(path: string): boolean {
-  return /\.[^.]+$/.test(path)
+export function isFilePath(input: string): boolean {
+  const hasExtension = !!extname(input)
+  const looksLikePath = input.includes('/') || isAbsolute(input)
+  return hasExtension && looksLikePath
 }
