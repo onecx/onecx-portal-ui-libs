@@ -6,6 +6,7 @@ import {
   removeDependenciesFromPackageJson,
   Tree,
   updateJson,
+  visitNotIgnoredFiles,
   writeJson,
 } from '@nx/devkit'
 import { execSync } from 'child_process'
@@ -14,6 +15,7 @@ import { detectMethodCallsInFiles } from '../utils/detect-method-calls-in-files.
 import { replaceTagInAngularTemplates } from '../angular/html-templates.utils'
 import { removeParameters } from '../angular/parameters.utils'
 import { replaceInFiles } from '../angular/replacement-in-files.utils'
+import { hasHtmlTag } from '../utils/html-files.utils'
 import {
   removeImportsByModuleSpecifier,
   removeImportValuesFromModule,
@@ -135,6 +137,7 @@ export async function commonMigrateOnecxToV6(tree: Tree) {
   installPackagesTask(tree, true)
 
   warnUserServiceHasPermission(tree, srcDirectoryPath)
+  warnOcxPortalViewport(tree, srcDirectoryPath)
 
   await formatFiles(tree)
 
@@ -245,4 +248,17 @@ function warnUserServiceHasPermission(tree: Tree, srcDirectoryPath: string) {
   if (detectedMethodCalls.size > 0) {
     printWarnings(warningHasPermissionCalls, Array.from(detectedMethodCalls.keys()))
   }
+}
+
+function warnOcxPortalViewport(tree: Tree, directoryPath: string) {
+  const foundInFiles: string[] = []
+  const warning =
+    '⚠️ ocx-portal-viewport was removed. Please refer to the standalone guide for adaptations: https://onecx.github.io/docs/guides/current/angular/cookbook/migrations/enable-standalone/index.html'
+
+  visitNotIgnoredFiles(tree, directoryPath, (filePath) => {
+    if (hasHtmlTag(tree, filePath, 'ocx-portal-viewport')) {
+      foundInFiles.push(filePath)
+      printWarnings(warning, foundInFiles)
+    }
+  })
 }
