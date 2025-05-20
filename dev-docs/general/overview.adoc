@@ -42,9 +42,6 @@ This page gives an overview about onecx libs.
 |portal-integration-angular
 |Will be removed soon
 
-|portal-layout-styles
-|Will be removed soon
-
 |shell-core
 |Contains core building blocks for the shell
 

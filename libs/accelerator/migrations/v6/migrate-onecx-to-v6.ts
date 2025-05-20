@@ -11,6 +11,9 @@ import {
 } from '@nx/devkit'
 import { printWarnings } from '@onecx/nx-migration-utils'
 import { execSync } from 'child_process'
+import postcss from 'postcss'
+
+const PLS = '@onecx/portal-layout-styles'
 
 export default async function migrateOnecxToV6(tree: Tree) {
   const rootPath = tree.root
@@ -113,6 +116,7 @@ export default async function migrateOnecxToV6(tree: Tree) {
   })
 
   removeOnecxKeycloakAuth(tree)
+  removeOnecxPortalLayoutStyles(tree, rootPath)
   migrateApiConfigProviderUtils(tree)
   migrateFilterTypes(tree, srcDirectoryPath)
   migrateFastDeepEqualImport(tree, srcDirectoryPath)
@@ -155,6 +159,19 @@ function removeOnecxKeycloakAuth(tree: Tree) {
   } else {
     console.error('Cannot find webpack.config.js')
   }
+
+  installPackagesTask(tree, true)
+}
+
+function removeOnecxPortalLayoutStyles(tree: Tree, dirPath: string) {
+  const warning =
+    '⚠️ @onecx/portal-layout-styles library was removed. Please make sure that all references are removed and the application is not relying on @onecx/portal-layout-styles style sheets.'
+
+  removeDependenciesFromPackageJson(tree, [PLS], [])
+
+  removeImportFromStyleSheets(tree, dirPath, PLS, { warn: true, warning })
+
+  removeOnecxPortalLayoutStylesFromJsonFiles(tree, dirPath, { warn: true, warning })
 
   installPackagesTask(tree, true)
 }
@@ -289,4 +306,105 @@ function warnOcxPortalViewport(tree: Tree, directoryPath: string) {
       }
     }
   })
+}
+
+function removeOnecxPortalLayoutStylesFromJsonFiles(
+  tree: Tree,
+  dirPath: string,
+  options?: { warn: boolean; warning: string }
+) {
+  const foundInFiles: string[] = []
+
+  visitNotIgnoredFiles(tree, dirPath, (file) => {
+    if (file.endsWith('.json')) {
+      file.includes(PLS) && foundInFiles.push(file)
+      removeStyleReferencesFromJson(tree, file, PLS)
+    }
+  })
+
+  options?.warn && printWarnings(options.warning, foundInFiles)
+}
+
+export function removeStyleReferencesFromJson(tree: Tree, dirPath: string, packageName: string) {
+  visitNotIgnoredFiles(tree, dirPath, (filePath) => {
+    if (filePath.endsWith('.json')) {
+      const content = tree.read(filePath, 'utf-8')
+      if (!content) return
+
+      try {
+        const json = JSON.parse(content)
+        const updatedJson = removePackageReferences(json, packageName)
+
+        if (JSON.stringify(json) !== JSON.stringify(updatedJson)) {
+          tree.write(filePath, JSON.stringify(updatedJson, null, 2))
+        }
+      } catch (e) {
+        console.warn(`Skipping invalid JSON file: ${filePath}`)
+      }
+    }
+  })
+}
+
+function removePackageReferences(obj: any, packageName: string): any {
+  if (typeof obj === 'string') {
+    return obj.includes(packageName) ? undefined : obj
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map((item) => removePackageReferences(item, packageName)).filter((item) => item !== undefined)
+  }
+
+  if (typeof obj === 'object' && obj !== null) {
+    const newObj: any = {}
+    for (const key in obj) {
+      const value = removePackageReferences(obj[key], packageName)
+      if (value !== undefined) {
+        newObj[key] = value
+      }
+    }
+    return newObj
+  }
+
+  return obj
+}
+
+function removeImportFromStyleSheets(
+  tree: Tree,
+  dirPath: string,
+  importQuery: string,
+  options?: { warn: boolean; warning: string }
+) {
+  const foundInFiles: string[] = []
+
+  visitNotIgnoredFiles(tree, dirPath, (file) => {
+    if (isStyleSheet(file)) {
+      file.includes(importQuery) && foundInFiles.push(file)
+      removeImportFromStyleSheet(tree, file, importQuery)
+    }
+  })
+
+  options?.warn && printWarnings(options.warning, foundInFiles)
+}
+
+function removeImportFromStyleSheet(tree: Tree, filePath: string, importQuery: string) {
+  const cssContent = tree.read(filePath, 'utf-8')
+  if (!cssContent) return
+
+  const root = postcss.parse(cssContent)
+
+  root.walkAtRules('import', (atRule) => {
+    if (atRule.params.includes(importQuery)) {
+      atRule.remove()
+    }
+  })
+
+  const updatedContent = root.toString()
+
+  if (updatedContent !== cssContent) {
+    tree.write(filePath, updatedContent)
+  }
+}
+
+function isStyleSheet(file: string) {
+  return file.endsWith('.css') || file.endsWith('.scss')
 }
