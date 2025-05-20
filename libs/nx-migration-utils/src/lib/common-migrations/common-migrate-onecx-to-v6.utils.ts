@@ -12,20 +12,21 @@ import { execSync } from 'child_process'
 import { detectMethodCallsInFiles } from '../utils/detect-method-calls-in-files.utils'
 
 import { replaceTagInAngularTemplates } from '../angular/html-templates.utils'
+import { removeParameters } from '../angular/parameters.utils'
+import { replaceInFiles } from '../angular/replacement-in-files.utils'
 import {
   removeImportsByModuleSpecifier,
   removeImportValuesFromModule,
   replaceImportValues,
   replaceImportValuesAndModule,
-} from '../angular/import-statements.utils'
-import { removeParameters } from '../angular/parameters.utils'
-import { replaceInFiles } from '../angular/replacement-in-files.utils'
+} from '../utils/import-statements.utils'
 import { printWarnings } from '../utils/print-warnings.utils'
+import { addGitignoreEntry, removeGitignoreEntry } from '../utils/update-gitignore.utils'
 
 export async function commonMigrateOnecxToV6(tree: Tree) {
   const rootPath = tree.root
   const srcDirectoryPath = 'src'
-  removeDependenciesFromPackageJson(tree, ['@nx/angular', '@nx/devkit', '@nx/plugin'], [])
+  removeDependenciesFromPackageJson(tree, ['@nx/angular', '@nx/devkit', '@nx/plugin'], ['eslint-plugin-deprecation'])
   addDependenciesToPackageJson(
     tree,
     { '@primeng/themes': '^19.0.6' },
@@ -45,7 +46,7 @@ export async function commonMigrateOnecxToV6(tree: Tree) {
       '@ngx-translate/core': '^16.0.4',
       'keycloak-angular': '^19.0.2',
       'ngrx-store-localstorage': '^19.0.0',
-      primeng: '^19.0.9',
+      primeng: '^19.1.0',
       rxjs: '~7.8.2',
       zod: '^3.24.2',
       'zone.js': '~0.15.0',
@@ -117,6 +118,8 @@ export async function commonMigrateOnecxToV6(tree: Tree) {
     return json
   })
 
+  addGitignoreEntry(tree, '/src/app/shared/generated')
+
   execSync('npm run apigen', {
     cwd: rootPath,
     stdio: 'inherit',
@@ -134,6 +137,8 @@ export async function commonMigrateOnecxToV6(tree: Tree) {
   warnUserServiceHasPermission(tree, srcDirectoryPath)
 
   await formatFiles(tree)
+
+  removeGitignoreEntry(tree, '/src/app/shared/generated')
 }
 
 function removeOnecxKeycloakAuth(tree: Tree, directoryPath: string) {

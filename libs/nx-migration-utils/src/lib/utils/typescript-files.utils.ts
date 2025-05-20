@@ -46,3 +46,7 @@ export function removeEmptySlotsFromArrays(code: string): string {
     return code
   }
 }
+
+export function isFilePath(path: string): boolean {
+  return /\.[^.]+$/.test(path)
+}
