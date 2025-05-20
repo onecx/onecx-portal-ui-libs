@@ -38,7 +38,6 @@ interface SplitImportSpecifiersResult {
 
 /**
  * Removes all import statements (ESM or CommonJS) for a given module from TypeScript files in a directory.
- *
  * @param tree - The Nx virtual file system tree.
  * @param directoryPath - Path to the directory containing TypeScript files.
  * @param moduleSpecifier - The module name whose import statements should be removed.
@@ -55,7 +54,6 @@ export function removeImportsByModuleSpecifier(tree: Tree, directoryPath: string
 
 /**
  * Replaces the module specifier in import statements with a new module name.
- *
  * @param tree - The Nx virtual file system tree.
  * @param directoryPath - Path to the directory containing TypeScript files.
  * @param oldModule - The current module name to be replaced.
@@ -75,8 +73,7 @@ export function replaceImportModuleSpecifier(tree: Tree, directoryPath: string, 
 }
 
 /**
- * Replaces specific named imports from a module with a new identifier.
- *
+ * Replaces specific named imports from a module with a new identifier
  * @param tree - The Nx virtual file system tree.
  * @param directoryOrFilePath - Path to a directory or a specific file.
  * @param moduleSpecifier - The module from which imports are being replaced.
@@ -113,7 +110,6 @@ export function replaceImportValues(
 
 /**
  * Removes specific named imports from a module by replacing them with an empty string.
- *
  * @param tree - The Nx virtual file system tree.
  * @param directoryPath - Path to the directory containing TypeScript files.
  * @param moduleSpecifier - The module from which to remove imports.
@@ -155,7 +151,6 @@ export function removeImportValuesFromModule(
 
 /**
  * Replaces both import values and module names in TypeScript files.
- *
  * @param tree - The Nx virtual file system tree.
  * @param directoryPath - Directory to search for files.
  * @param importReplacements - List of import module and value replacements.
@@ -186,7 +181,6 @@ export function replaceImportValuesAndModule(
 
 /**
  * Processes a file's AST to apply import replacements.
- *
  * @param fileContent - The content of the file to process.
  * @param replacements - List of module and value replacements.
  * @param filterQuery - Optional custom string query to filter files before applying changes.
@@ -224,7 +218,6 @@ export function replaceImportsInFile(
 
 /**
  * Applies import replacements to a TypeScript AST.
- *
  * @param contentAst - The AST of the source file.
  * @param replacement - The module and value replacement configuration.
  * @returns The updated AST, or null if no changes were made.
@@ -267,7 +260,6 @@ export function applyImportReplacement(contenAst: SourceFile, replacement: Modul
 /**
  * Updates an import declaration by replacing specific named imports and updating the module specifier.
  * Only creates a new import if at least one named import is matched and replaced.
- * 
  * @param originalImport - The original import declaration node.
  * @param importValueReplacements - List of named import replacements.
  * @param newModuleName - The new module specifier.
@@ -298,25 +290,28 @@ export function updateImportDeclaration(
 
 /**
  * Creates an updated import declaration with matched specifiers.
- * 
+ * When you want to move or rename specific named imports to a new module.
  * @param matchedSpecifiers - The matched import specifiers.
  * @param newModuleName - The new module specifier.
  * @returns The updated import declaration, or null if no specifiers were matched.
- * 
+ *
  */
-export function createUpdatedImport(matchedSpecifiers: ImportSpecifier[], newModuleName: string): ImportDeclaration | null {
+export function createUpdatedImport(
+  matchedSpecifiers: ImportSpecifier[],
+  newModuleName: string
+): ImportDeclaration | null {
   return matchedSpecifiers.length > 0 ? buildImportDeclaration(matchedSpecifiers, newModuleName) : null
 }
 
 /**
  * Creates a remaining import declaration with unmatched specifiers.
- * 
+ * To preserve the parts of the import that are not being changed.
  * @param unmatchedSpecifiers - The unmatched import specifiers.
  * @param originalCount - The original count of specifiers.
  * @param newModuleName - The new module specifier.
  * @param originalImport - The original import declaration.
  * @returns The remaining import declaration, or null if no specifiers were unmatched.
- * 
+ *
  */
 export function createRemainingImport(
   unmatchedSpecifiers: ImportSpecifier[],
@@ -335,7 +330,6 @@ export function createRemainingImport(
 
 /**
  * Constructs a new import declaration with the given specifiers and module name.
- *
  * @param specifiers - The updated import specifiers.
  * @param moduleName - The new module specifier.
  * @returns A new ImportDeclaration node.
@@ -354,7 +348,6 @@ export function buildImportDeclaration(specifiers: ImportSpecifier[], moduleName
 /**
  * Splits import specifiers into matched and unmatched based on replacements.
  * Separate import specifiers that need to be replaced from those that don't.
- * 
  * @param specifiers - The original import specifiers.
  * @param replacements - List of replacements to apply.
  * @returns An object containing matched and unmatched specifiers.
@@ -384,7 +377,6 @@ export function splitSpecifiers(
 
 /**
  * Extracts named imports from an import declaration.
- *
  * @param importDeclaration - The import declaration node.
  * @returns The NamedImports node, if present.
  */
@@ -404,7 +396,6 @@ export function getNamedImports(importDeclaration: ImportDeclaration): NamedImpo
 
 /**
  * Finds the first import declaration for a given module name.
- *
  * @param sourceFile - The TypeScript source file AST.
  * @param moduleName - The module name to search for.
  * @returns The matching ImportDeclaration node, if found.
