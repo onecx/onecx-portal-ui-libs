@@ -1,0 +1,19 @@
+= Definition of Done - Stories and Component Documentation
+This document contains some questions that should be answered to determine if a component is sufficiently documented using Storybook. The questions outlined in this document should be viewed as an addition to any already existing Definition of Done (DoD) in a specific project.
+
+== Questions
+. Will the component be used in multiple places and/or by external teams?
+.. Yes: Continue with the next question.
+.. No: The component does not need to be documented using Storybook.
+. Does the component folder already contain a `storybook` folder with a story file?
+.. Yes: Continue with the next question.
+.. No: Create a `storybook` folder in the component folder and add a file called `ComponentName.component.stories.ts` (e.g. `button.component.stories.ts`).
+. Does the story file contain all necessary boilerplate code and a "Base" story that allows for the dynamic modification of all component inputs through the Storybook "Controls" feature?
+.. Yes: Continue with the next question.
+.. No: Add the necessary boilerplate code and a "Base" story fulfilling the requirements outlined in the question.
+. Are all component outputs/event emitters captured in the "Actions" tab of Storybook?
+.. Yes: Continue with the next question.
+.. No: Specify argTypes for all outputs/event emitters in the story file to capture them in the "Actions" tab.
+. Does the story file contain stories for all commonly used states/variations of the component? Edge cases or less common use cases can be omitted as they are taken care of by the "Base" story and the Storybook "Controls" feature.
+.. Yes: The component is sufficiently documented using Storybook.
+.. No: Add stories for all commonly used states/variations of the component.
