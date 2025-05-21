@@ -48,6 +48,7 @@ export class ThemeConfigService {
     this.primeNG.setThemeConfig({
       theme: {
         preset: mergeDeep(CustomPreset, themeConfig.getConfig()),
+        options: {darkModeSelector: false}
       },
     })
   }
