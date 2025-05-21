@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core'
-import { ButtonDialogConfig } from '../../../../model/button-dialog'
+import { ButtonDialogConfig } from '../../../model/button-dialog'
 import { PrimeIcons } from 'primeng/api'
 import { DialogInlineComponent } from './dialog-inline.component'
 import { TestBed } from '@angular/core/testing'
@@ -8,11 +8,11 @@ import {
   DialogFooterHarness,
   DivHarness,
   TestbedHarnessEnvironment,
-} from '@onecx/portal-integration-angular/testing'
+} from '../../../../../testing'
 import { DialogFooterComponent } from '../dialog-footer/dialog-footer.component'
 import { DialogContentComponent } from '../dialog-content/dialog-content.component'
 import { ButtonModule } from 'primeng/button'
-import { MockAuthModule } from '../../../../mock-auth/mock-auth.module'
+import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 

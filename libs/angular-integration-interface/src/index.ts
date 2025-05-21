@@ -19,5 +19,6 @@ export * from './lib/api/injection-tokens'
 
 // utils
 export * from './lib/utils/add-initialize-module-guard.utils'
+export * from './lib/utils/portal-api-configuration.utils'
 
 export { MfeInfo, Theme } from '@onecx/integration-interface'

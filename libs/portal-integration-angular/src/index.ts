@@ -1,16 +1,13 @@
 // directives
 export * from './lib/core/directives/autofocus.directive'
-export * from './lib/core/directives/basic.directive'
 export * from './lib/core/directives/patch-form-group-values.driective'
 export * from './lib/core/directives/set-input-value.directive'
-export * from './lib/core/directives/loading-indicator.directive'
 
 // components
 export * from './lib/core/components/loading/loading.component'
 export * from './lib/core/components/mfe-debug/mfe-debug.component'
 export * from './lib/core/components/page-content/page-content.component'
 export * from './lib/core/components/paging-info/paging-info.component'
-export * from './lib/core/components/portal-page/portal-page.component'
 export * from './lib/core/components/search-criteria/search-criteria.component'
 export * from './lib/core/components/delete-dialog/delete-dialog.component'
 export * from './lib/core/components/support-ticket/support-ticket.component'
@@ -23,24 +20,13 @@ export * from './lib/core/components/user-avatar/user-avatar.component'
 export * from './lib/core/components/data-view-controls/data-view-controls.component'
 export * from './lib/core/components/data-view-controls/column-toggler-component/column-toggler.component'
 export * from './lib/core/components/debug/debug.component'
-export * from './lib/core/components/error-component/global-error.component'
 export * from './lib/core/components/search-criteria/search-page'
-export * from './lib/core/components/button-dialog/button-dialog.component'
-export * from './lib/core/components/button-dialog/dialog-message-content/dialog-message-content.component'
-export * from './lib/core/components/loading-indicator/loading-indicator.component'
-export * from './lib/core/components/dialog/dialog-content/dialog-content.component'
-export * from './lib/core/components/dialog/dialog-inline/dialog-inline.component'
-export * from './lib/core/components/dialog/dialog-footer/dialog-footer.component'
 
 // services
 export * from './lib/services/menu-api.service'
 export * from './lib/services/portal-api.service'
 export * from './lib/services/initialize-module-guard.service'
 export * from './lib/services/userprofile-api.service'
-export * from './lib/services/portal-dialog.service'
-export * from './lib/services/export-data.service'
-// pipes
-export * from './lib/core/pipes/relative-date.pipe'
 
 // models
 export * from './lib/mock-auth/mock-auth.module'
@@ -55,7 +41,6 @@ export * from './lib/model/person.model'
 export * from './lib/model/page-info.model'
 export * from './lib/model/portal'
 export * from './lib/model/user-profile.model'
-export * from './lib/model/button-dialog'
 
 // core
 export * from './lib/api/constants'
@@ -65,10 +50,8 @@ export * from './lib/core/portal-core.module'
 export * from './lib/core/primeng.module'
 
 // utils
-export * from './lib/core/utils/image-logo-url.utils'
 export * from './lib/core/utils/add-initialize-module-guard.utils'
 export * from './lib/core/utils/translate-service-initializer.utils'
-export * from './lib/core/utils/portal-api-configuration.utils'
 
 export * from '@onecx/angular-accelerator'
 export {

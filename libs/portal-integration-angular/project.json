@@ -67,15 +67,8 @@
         "libName": "portal-integration-angular"
       }
     },
-    "copy-additional-styles": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "mkdir -p node_modules/@onecx/portal-integration-angular/assets/ && cp libs/portal-integration-angular/src/lib/core/directives/loading-indicator.directive.scss node_modules/@onecx/portal-integration-angular/assets/"
-      }
-    },
     "storybook": {
       "executor": "@storybook/angular:start-storybook",
-      "dependsOn": ["copy-additional-styles"],
       "options": {
         "port": 4400,
         "configDir": "libs/portal-integration-angular/.storybook",
@@ -95,7 +88,6 @@
     },
     "build-storybook": {
       "executor": "@storybook/angular:build-storybook",
-      "dependsOn": ["copy-additional-styles"],
       "outputs": ["{options.outputDir}"],
       "options": {
         "outputDir": "dist/storybook/portal-integration-angular",

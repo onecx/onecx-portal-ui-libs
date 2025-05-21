@@ -10,31 +10,21 @@ import { TRANSLATION_PATH } from '@onecx/angular-utils'
 import { MessageService } from 'primeng/api'
 import { ConfirmDialogModule } from 'primeng/confirmdialog'
 import { AnnouncementBannerComponent } from './components/announcement-banner/announcement-banner.component'
-import { ButtonDialogComponent } from './components/button-dialog/button-dialog.component'
-import { DialogMessageContentComponent } from './components/button-dialog/dialog-message-content/dialog-message-content.component'
 import { ColumnTogglerComponent } from './components/data-view-controls/column-toggler-component/column-toggler.component'
 import { DataViewControlsComponent } from './components/data-view-controls/data-view-controls.component'
 import { ViewTemplatePickerComponent } from './components/data-view-controls/view-template-picker/view-template-picker.component'
 import { DeleteDialogComponent } from './components/delete-dialog/delete-dialog.component'
-import { DialogContentComponent } from './components/dialog/dialog-content/dialog-content.component'
-import { DialogFooterComponent } from './components/dialog/dialog-footer/dialog-footer.component'
-import { DialogInlineComponent } from './components/dialog/dialog-inline/dialog-inline.component'
-import { GlobalErrorComponent } from './components/error-component/global-error.component'
 import { HelpItemEditorComponent } from './components/help-item-editor/help-item-editor.component'
-import { LoadingIndicatorComponent } from './components/loading-indicator/loading-indicator.component'
 import { LoadingComponent } from './components/loading/loading.component'
 import { MfeDebugComponent } from './components/mfe-debug/mfe-debug.component'
 import { NoHelpItemComponent } from './components/no-help-item/no-help-item.component'
 import { PageContentComponent } from './components/page-content/page-content.component'
 import { PagingInfoComponent } from './components/paging-info/paging-info.component'
-import { PortalPageComponent } from './components/portal-page/portal-page.component'
 import { CriteriaTemplateComponent } from './components/search-criteria/criteria-template/criteria-template.component'
 import { SearchCriteriaComponent } from './components/search-criteria/search-criteria.component'
 import { SupportTicketComponent } from './components/support-ticket/support-ticket.component'
 import { UserAvatarComponent } from './components/user-avatar/user-avatar.component'
 import { AutofocusDirective } from './directives/autofocus.directive'
-import { BasicDirective } from './directives/basic.directive'
-import { LoadingIndicatorDirective } from './directives/loading-indicator.directive'
 import { PatchFormGroupValuesDirective } from './directives/patch-form-group-values.driective'
 import { SetInputValueDirective } from './directives/set-input-value.directive'
 import { PrimeNgModule } from './primeng.module'
@@ -64,28 +54,22 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     CriteriaTemplateComponent,
     DataViewControlsComponent,
     DeleteDialogComponent,
-    GlobalErrorComponent,
+
     HelpItemEditorComponent,
     LoadingComponent,
     MfeDebugComponent,
     NoHelpItemComponent,
     PageContentComponent,
     PagingInfoComponent,
-    PortalPageComponent,
+    
     SearchCriteriaComponent,
     SupportTicketComponent,
     UserAvatarComponent,
     ViewTemplatePickerComponent,
-    LoadingIndicatorComponent,
-    LoadingIndicatorDirective,
-    BasicDirective,
+
     PatchFormGroupValuesDirective,
     SetInputValueDirective,
-    ButtonDialogComponent,
-    DialogFooterComponent,
-    DialogContentComponent,
-    DialogInlineComponent,
-    DialogMessageContentComponent,
+
   ],
   providers: [
     {
@@ -118,30 +102,20 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
     CriteriaTemplateComponent,
     DataViewControlsComponent,
     DeleteDialogComponent,
-    GlobalErrorComponent,
     HelpItemEditorComponent,
     LoadingComponent,
     MfeDebugComponent,
     NoHelpItemComponent,
     PageContentComponent,
     PagingInfoComponent,
-    PortalPageComponent,
     SearchCriteriaComponent,
     SupportTicketComponent,
     UserAvatarComponent,
     ViewTemplatePickerComponent,
     TranslateModule,
     PrimeNgModule,
-    LoadingIndicatorComponent,
-    LoadingIndicatorDirective,
-    BasicDirective,
     PatchFormGroupValuesDirective,
     SetInputValueDirective,
-    ButtonDialogComponent,
-    DialogFooterComponent,
-    DialogContentComponent,
-    DialogInlineComponent,
-    DialogMessageContentComponent,
   ],
 })
 export class PortalCoreModule {

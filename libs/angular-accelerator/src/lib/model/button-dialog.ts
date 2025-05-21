@@ -1,6 +1,6 @@
 import { Type } from '@angular/core'
-import { PrimeIcon } from '@onecx/angular-accelerator'
 import { DialogButton } from '../services/portal-dialog.service'
+import { PrimeIcon } from '../utils/primeicon.utils'
 
 /**
  * Object describing details for button rendering containing key for translation, optional icon and optional parameters for translation

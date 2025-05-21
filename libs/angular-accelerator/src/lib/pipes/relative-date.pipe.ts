@@ -16,7 +16,7 @@ const DIVISIONS: { amount: number; name: Intl.RelativeTimeFormatUnit }[] = [
   standalone: false,
 })
 export class RelativeDatePipe implements PipeTransform {
-  private translateService = inject(TranslateService)
+  private readonly translateService = inject(TranslateService)
 
   rtf: Intl.RelativeTimeFormat
 

@@ -10,6 +10,8 @@ export * from './lib/directives/src.directive'
 export * from './lib/directives/advanced.directive'
 export * from './lib/directives/tooltipOnOverflow.directive'
 export * from './lib/directives/template.directive'
+export * from './lib/directives/basic.directive'
+export * from './lib/directives/loading-indicator.directive'
 
 // components
 export * from './lib/components/column-group-selection/column-group-selection.component'
@@ -29,20 +31,33 @@ export * from './lib/components/lifecycle/lifecycle.component'
 export * from './lib/components/page-header/page-header.component'
 export * from './lib/components/search-header/search-header.component'
 export * from './lib/components/data-loading-error/data-loading-error.component'
+export * from './lib/components/button-dialog/button-dialog.component'
+export * from './lib/components/button-dialog/dialog-message-content/dialog-message-content.component'
+export * from './lib/components/loading-indicator/loading-indicator.component'
+export * from './lib/components/dialog/dialog-content/dialog-content.component'
+export * from './lib/components/dialog/dialog-inline/dialog-inline.component'
+export * from './lib/components/dialog/dialog-footer/dialog-footer.component'
+export * from './lib/components/portal-page/portal-page.component'
+export * from './lib/components/error-component/global-error.component'
 
 // services
 export * from './lib/services/breadcrumb.service'
 export * from './lib/services/translation-connection.service'
 export * from './lib/services/translation-cache.service'
+export * from './lib/services/portal-dialog.service'
+export * from './lib/services/export-data.service'
 
 // pipes
 export * from './lib/pipes/dynamic.pipe'
 export * from './lib/pipes/ocxtimeago.pipe'
+export * from './lib/pipes/relative-date.pipe'
 
 // models
 export * from './lib/model/breadcrumb-menu-item.model'
 export * from './lib/model/column-type.model'
 export * from './lib/model/data-action'
+export * from './lib/model/button-dialog'
+
 // export * from './lib/model/data-column-name-id.model'
 export * from './lib/model/data-sort-direction'
 export * from './lib/model/data-table-column.model'
@@ -76,3 +91,4 @@ export * from './lib/utils/criteria.utils'
 export * from './lib/utils/string-and-array-helper-functions.utils'
 export * from './lib/utils/template.utils'
 export * from './lib/utils/filter.utils'
+export * from './lib/utils/image-logo-url.utils'

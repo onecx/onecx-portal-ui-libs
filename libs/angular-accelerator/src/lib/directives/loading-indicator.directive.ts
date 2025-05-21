@@ -11,6 +11,7 @@ import {
 } from '@angular/core'
 import { LoadingIndicatorComponent } from '../components/loading-indicator/loading-indicator.component'
 
+
 @Directive({
   selector: '[ocxLoadingIndicator]',
   standalone: false,

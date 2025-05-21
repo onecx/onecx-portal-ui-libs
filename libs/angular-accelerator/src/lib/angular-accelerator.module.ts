@@ -39,6 +39,16 @@ import { OcxContentContainerComponent } from './components/content-container/con
 import { OcxContentDirective } from './directives/content.directive'
 import { OcxContentContainerDirective } from './directives/content-container.directive'
 import { LifecycleComponent } from './components/lifecycle/lifecycle.component'
+import { ButtonDialogComponent } from './components/button-dialog/button-dialog.component'
+import { DialogMessageContentComponent } from './components/button-dialog/dialog-message-content/dialog-message-content.component'
+import { DialogContentComponent } from './components/dialog/dialog-content/dialog-content.component'
+import { DialogFooterComponent } from './components/dialog/dialog-footer/dialog-footer.component'
+import { DialogInlineComponent } from './components/dialog/dialog-inline/dialog-inline.component'
+import { GlobalErrorComponent } from './components/error-component/global-error.component'
+import { LoadingIndicatorComponent } from './components/loading-indicator/loading-indicator.component'
+import { PortalPageComponent } from './components/portal-page/portal-page.component'
+import { BasicDirective } from './directives/basic.directive'
+import { LoadingIndicatorDirective } from './directives/loading-indicator.directive'
 
 export class AngularAcceleratorMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -91,6 +101,16 @@ function appInitializer(userService: UserService) {
     TemplateDirective,
     OcxContentDirective,
     OcxContentContainerDirective,
+    GlobalErrorComponent,
+    PortalPageComponent,
+    LoadingIndicatorComponent,
+    LoadingIndicatorDirective,
+    BasicDirective,
+    ButtonDialogComponent,
+    DialogFooterComponent,
+    DialogContentComponent,
+    DialogInlineComponent,
+    DialogMessageContentComponent,
   ],
   providers: [
     providePermissionChecker(),
@@ -145,6 +165,16 @@ function appInitializer(userService: UserService) {
     TemplateDirective,
     OcxContentDirective,
     OcxContentContainerDirective,
+    GlobalErrorComponent,
+    PortalPageComponent,
+    LoadingIndicatorComponent,
+    LoadingIndicatorDirective,
+    BasicDirective,
+    ButtonDialogComponent,
+    DialogFooterComponent,
+    DialogContentComponent,
+    DialogInlineComponent,
+    DialogMessageContentComponent,
   ],
 })
 export class AngularAcceleratorModule {}

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core'
-import { ButtonDialogConfig } from '../../../../model/button-dialog'
-import { DialogState } from '../../../../services/portal-dialog.service'
+import { ButtonDialogConfig } from '../../../model/button-dialog'
+import { DialogState } from '../../../services/portal-dialog.service'
 
 @Component({
   standalone: false,

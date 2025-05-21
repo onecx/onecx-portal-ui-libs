@@ -19,12 +19,12 @@ import {
   ButtonDialogConfig,
   ButtonDialogCustomButtonDetails,
   ButtonDialogData,
-} from '../../../../model/button-dialog'
+} from '../../../model/button-dialog'
 import {
   DialogState,
   DialogStateButtonClicked,
   PortalDialogServiceData,
-} from '../../../../services/portal-dialog.service'
+} from '../../../services/portal-dialog.service'
 
 @Component({
   standalone: false,
