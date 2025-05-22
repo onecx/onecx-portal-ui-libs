@@ -10,8 +10,5 @@
   "typings": "./src/index.d.ts",
   "publishConfig": {
     "access": "public"
-  },
-  "devDependencies": {
-    "@nx/cypress": "^19.8.0"
   }
 }
