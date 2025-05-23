@@ -31,8 +31,4 @@ $lime: #dce775 !default;
 $deeporange: #ff8a65 !default;
 $brown: #a1887f !default;
 
-:root {
-  --divider-color: #{$dividerColor};
-}
-
 @import './_layout_common';
