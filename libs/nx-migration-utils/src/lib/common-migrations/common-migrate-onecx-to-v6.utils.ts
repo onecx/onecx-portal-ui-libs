@@ -14,16 +14,23 @@ import { detectMethodCallsInFiles } from '../utils/detect-method-calls-in-files.
 
 import { replaceTagInAngularTemplates } from '../angular/html-templates.utils'
 import { removeParameters } from '../angular/parameters.utils'
-import { replaceInFiles } from '../angular/replacement-in-files.utils'
-import { hasHtmlTag } from '../utils/html-files.utils'
+import { replaceInFile, replaceInFiles } from '../angular/replacement-in-files.utils'
 import {
   removeImportsByModuleSpecifier,
   removeImportValuesFromModule,
+  replaceImportModuleSpecifier,
   replaceImportValues,
   replaceImportValuesAndModule,
 } from '../utils/import-statements.utils'
 import { printWarnings } from '../utils/print-warnings.utils'
 import { addGitignoreEntry, removeGitignoreEntry } from '../utils/update-gitignore.utils'
+import { Module, Provider } from '../angular'
+import { detectVariablesWithModule } from '../angular/utils/detection/detect-variables-with-module.utils'
+import { detectModulesImportingModule } from '../angular/utils/detection/detect-modules-importing-module.utils'
+import { detectVariablesWithProvider } from '../angular/utils/detection/detect-variables-with-provider.utils'
+import { addProviderInModuleIfDoesNotExist } from '../angular/utils/modification/add-provider-in-module-if-does-not-exist.utils'
+import { addProviderImportIfDoesNotExist } from '../angular/utils/modification/add-provider-import-if-does-not-exist.utils'
+import { hasHtmlTag } from '../utils/validation/has-html-tag.utils'
 
 export async function commonMigrateOnecxToV6(tree: Tree) {
   const rootPath = tree.root
@@ -36,6 +43,7 @@ export async function commonMigrateOnecxToV6(tree: Tree) {
   )
 
   updateJson(tree, `package.json`, (json) => {
+    replaceStandaloneShellInPackage(json)
     const angularDependencies = Object.keys(json.dependencies).filter((dep) => dep.startsWith('@angular/'))
     const onecxDependencies = Object.keys(json.dependencies).filter((dep) => dep.startsWith('@onecx/'))
     const ngrxDependencies = Object.keys(json.dependencies).filter((dep) => dep.startsWith('@ngrx/'))
@@ -133,6 +141,7 @@ export async function commonMigrateOnecxToV6(tree: Tree) {
   migrateFastDeepEqualImport(tree, srcDirectoryPath)
   migratePrimeng(tree)
   migratePrimeNgCalendar(tree, srcDirectoryPath)
+  migrateStandaloneShell(tree)
 
   installPackagesTask(tree, true)
 
@@ -260,5 +269,44 @@ function warnOcxPortalViewport(tree: Tree, directoryPath: string) {
       foundInFiles.push(filePath)
       printWarnings(warning, foundInFiles)
     }
+  })
+}
+
+function replaceStandaloneShellInPackage(json: any) {
+  if (json.dependencies && json.dependencies['@onecx/standalone-shell']) {
+    json.dependencies['@onecx/angular-standalone-shell'] = json.dependencies['@onecx/standalone-shell']
+    delete json.dependencies['@onecx/standalone-shell']
+  }
+}
+
+function migrateStandaloneShell(tree: Tree) {
+  replaceStandaloneShellImport(tree)
+  provideStandaloneProvidersIfModuleUsed(tree)
+}
+
+function replaceStandaloneShellImport(tree: Tree) {
+  const standaloneShell = '@onecx/standalone-shell'
+  const angularStandaloneShell = '@onecx/angular-standalone-shell'
+  replaceImportModuleSpecifier(tree, 'src', standaloneShell, angularStandaloneShell)
+  replaceInFile(tree, 'webpack.config.js', standaloneShell, angularStandaloneShell)
+}
+
+function provideStandaloneProvidersIfModuleUsed(tree: Tree) {
+  const srcPath = 'src'
+
+  const module: Module = {
+    name: 'StandaloneShellModule',
+  }
+  const provider: Provider = {
+    name: 'provideStandaloneProviders',
+    importPath: '@onecx/angular-standalone-shell',
+  }
+
+  const variablesWithModule = detectVariablesWithModule(tree, srcPath, module)
+  const modules = detectModulesImportingModule(tree, srcPath, module, variablesWithModule)
+  const variablesWithProvider = detectVariablesWithProvider(tree, srcPath, provider)
+  modules.forEach((moduleName) => {
+    addProviderInModuleIfDoesNotExist(tree, moduleName, provider, variablesWithProvider)
+    addProviderImportIfDoesNotExist(tree, moduleName.filePath, provider)
   })
 }
