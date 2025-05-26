@@ -288,7 +288,13 @@ function replaceStandaloneShellImport(tree: Tree) {
   const standaloneShell = '@onecx/standalone-shell'
   const angularStandaloneShell = '@onecx/angular-standalone-shell'
   replaceImportModuleSpecifier(tree, 'src', standaloneShell, angularStandaloneShell)
-  replaceInFile(tree, 'webpack.config.js', standaloneShell, angularStandaloneShell)
+  const webpackConfigJsContent = tree.read('webpack.config.js', 'utf-8')
+  if (webpackConfigJsContent) {
+    const updatedContent = webpackConfigJsContent.replace(standaloneShell, angularStandaloneShell)
+    tree.write('webpack.config.js', updatedContent)
+  } else {
+    console.error('Cannot find webpack.config.js')
+  }
 }
 
 function provideStandaloneProvidersIfModuleUsed(tree: Tree) {
