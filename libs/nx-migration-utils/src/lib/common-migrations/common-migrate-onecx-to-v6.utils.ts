@@ -27,7 +27,6 @@ import { addGitignoreEntry, removeGitignoreEntry } from '../utils/update-gitigno
 import { updateJsonFiles } from '../utils/modification/update-json-files.utils'
 import { removeReferences } from '../utils/modification/remove-json-references.utils'
 import { updateStyleSheets } from '../utils/modification/update-style-sheets.utils'
-import postcss from 'postcss'
 
 const PORTAL_LAYOUT_STYLES = '@onecx/portal-layout-styles'
 
