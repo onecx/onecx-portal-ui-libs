@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { CommonModule } from '@angular/common'
-import { Component, EventEmitter, Input, Output, destroyPlatform, inject as inject_1 } from '@angular/core'
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateTestingModule } from 'ngx-translate-testing'
@@ -32,7 +32,7 @@ import { provideAppStateServiceMock } from '@onecx/angular-integration-interface
   template: `<h1>BaseTestComponent</h1>`,
 })
 class BaseTestComponent {
-  portalDialogService = inject_1(PortalDialogService)
+  portalDialogService = inject(PortalDialogService)
 
   resultFromShow: DialogState<any> | undefined = undefined
   nameResult: string | undefined
@@ -79,7 +79,7 @@ class TestWithInputsComponent {
   template: `<h1>DialogResultTestComponent</h1>`,
 })
 class DialogResultTestComponent implements DialogResult<string> {
-  portalDialogService = inject_1(PortalDialogService)
+  portalDialogService = inject(PortalDialogService)
 
   @Input() dialogResult = ''
 }
@@ -92,7 +92,7 @@ class DialogResultTestComponent implements DialogResult<string> {
   template: `<h1>DialogButtonClickedWithResultComponent</h1>`,
 })
 class DialogButtonClickedWithResultComponent implements DialogResult<number>, DialogButtonClicked {
-  portalDialogService = inject_1(PortalDialogService)
+  portalDialogService = inject(PortalDialogService)
 
   @Input() dialogResult = 13
   @Input() returnType: 'boolean' | 'observable' | 'promise' | 'undefined' = 'boolean'
