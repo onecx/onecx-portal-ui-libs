@@ -14,7 +14,7 @@ import { detectMethodCallsInFiles } from '../utils/detect-method-calls-in-files.
 
 import { replaceTagInAngularTemplates } from '../angular/html-templates.utils'
 import { removeParameters } from '../angular/parameters.utils'
-import { replaceInFile, replaceInFiles } from '../angular/replacement-in-files.utils'
+import { replaceInFiles } from '../angular/replacement-in-files.utils'
 import {
   removeImportsByModuleSpecifier,
   removeImportValuesFromModule,
