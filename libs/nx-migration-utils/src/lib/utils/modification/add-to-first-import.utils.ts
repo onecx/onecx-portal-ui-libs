@@ -10,12 +10,11 @@ import { NamedImports } from 'typescript'
  * @returns {string} new file content after modification
  */
 export function addToFirstImport(fileContent: string, importPath: string, importSpecifier: string) {
-  const isAdded = false
-  const newContent = replace(fileContent, importNamedImportsPattern(importPath), (node) => {
-    if (isAdded) return null
+  return replace(fileContent, importNamedImportsPattern(importPath), (node) => {
     const niNode = node as NamedImports
-    const newSpecifiers: string[] = [...niNode.elements.map((namedImport) => namedImport.getText()), importSpecifier]
+    const newSpecifiers: string[] = Array.from(
+      new Set([...niNode.elements.map((namedImport) => namedImport.getText()), importSpecifier])
+    )
     return `{${newSpecifiers.join(',')}}`
   })
-  return newContent
 }

@@ -41,9 +41,9 @@ export async function commonMigrateOnecxToV6(tree: Tree) {
     { '@primeng/themes': '^19.0.6' },
     { '@nx/angular': '~20.3.4', '@nx/devkit': '~20.3.4', '@nx/plugin': '~20.3.4' }
   )
+  replaceStandaloneShellInPackage(tree)
 
   updateJson(tree, `package.json`, (json) => {
-    replaceStandaloneShellInPackage(json)
     const angularDependencies = Object.keys(json.dependencies).filter((dep) => dep.startsWith('@angular/'))
     const onecxDependencies = Object.keys(json.dependencies).filter((dep) => dep.startsWith('@onecx/'))
     const ngrxDependencies = Object.keys(json.dependencies).filter((dep) => dep.startsWith('@ngrx/'))
@@ -141,7 +141,7 @@ export async function commonMigrateOnecxToV6(tree: Tree) {
   migrateFastDeepEqualImport(tree, srcDirectoryPath)
   migratePrimeng(tree)
   migratePrimeNgCalendar(tree, srcDirectoryPath)
-  migrateStandaloneShell(tree)
+  migrateStandaloneShell(tree, srcDirectoryPath)
 
   installPackagesTask(tree, true)
 
@@ -272,22 +272,20 @@ function warnOcxPortalViewport(tree: Tree, directoryPath: string) {
   })
 }
 
-function replaceStandaloneShellInPackage(json: any) {
-  if (json.dependencies && json.dependencies['@onecx/standalone-shell']) {
-    json.dependencies['@onecx/angular-standalone-shell'] = json.dependencies['@onecx/standalone-shell']
-    delete json.dependencies['@onecx/standalone-shell']
-  }
+function replaceStandaloneShellInPackage(tree: Tree) {
+  removeDependenciesFromPackageJson(tree, ['@onecx/standalone-shell'], [])
+  addDependenciesToPackageJson(tree, { '@onecx/angular-standalone-shell': '^6.0.0' }, {})
 }
 
-function migrateStandaloneShell(tree: Tree) {
-  replaceStandaloneShellImport(tree)
-  provideStandaloneProvidersIfModuleUsed(tree)
+function migrateStandaloneShell(tree: Tree, dirPath: string) {
+  replaceStandaloneShellImport(tree, dirPath)
+  provideStandaloneProvidersIfModuleUsed(tree, dirPath)
 }
 
-function replaceStandaloneShellImport(tree: Tree) {
+function replaceStandaloneShellImport(tree: Tree, dirPath: string) {
   const standaloneShell = '@onecx/standalone-shell'
   const angularStandaloneShell = '@onecx/angular-standalone-shell'
-  replaceImportModuleSpecifier(tree, 'src', standaloneShell, angularStandaloneShell)
+  replaceImportModuleSpecifier(tree, dirPath, standaloneShell, angularStandaloneShell)
   const webpackConfigJsContent = tree.read('webpack.config.js', 'utf-8')
   if (webpackConfigJsContent) {
     const updatedContent = webpackConfigJsContent.replace(standaloneShell, angularStandaloneShell)
@@ -297,9 +295,7 @@ function replaceStandaloneShellImport(tree: Tree) {
   }
 }
 
-function provideStandaloneProvidersIfModuleUsed(tree: Tree) {
-  const srcPath = 'src'
-
+function provideStandaloneProvidersIfModuleUsed(tree: Tree, dirPath: string) {
   const module: Module = {
     name: 'StandaloneShellModule',
   }
@@ -308,9 +304,9 @@ function provideStandaloneProvidersIfModuleUsed(tree: Tree) {
     importPath: '@onecx/angular-standalone-shell',
   }
 
-  const variablesWithModule = detectVariablesWithModule(tree, srcPath, module)
-  const modules = detectModulesImportingModule(tree, srcPath, module, variablesWithModule)
-  const variablesWithProvider = detectVariablesWithProvider(tree, srcPath, provider)
+  const variablesWithModule = detectVariablesWithModule(tree, dirPath, module)
+  const modules = detectModulesImportingModule(tree, dirPath, module, variablesWithModule)
+  const variablesWithProvider = detectVariablesWithProvider(tree, dirPath, provider)
   modules.forEach((moduleName) => {
     addProviderInModuleIfDoesNotExist(tree, moduleName, provider, variablesWithProvider)
     addProviderImportIfDoesNotExist(tree, moduleName.filePath, provider)
