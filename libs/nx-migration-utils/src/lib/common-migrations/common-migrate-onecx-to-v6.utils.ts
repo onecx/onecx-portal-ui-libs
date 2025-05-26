@@ -24,6 +24,12 @@ import {
 } from '../utils/import-statements.utils'
 import { printWarnings } from '../utils/print-warnings.utils'
 import { addGitignoreEntry, removeGitignoreEntry } from '../utils/update-gitignore.utils'
+import { updateJsonFiles } from '../utils/modification/update-json-files.utils'
+import { removeReferences } from '../utils/modification/remove-json-references.utils'
+import { updateStyleSheets } from '../utils/modification/update-style-sheets.utils'
+import postcss from 'postcss'
+
+const PORTAL_LAYOUT_STYLES = '@onecx/portal-layout-styles'
 
 export async function commonMigrateOnecxToV6(tree: Tree) {
   const rootPath = tree.root
@@ -128,6 +134,7 @@ export async function commonMigrateOnecxToV6(tree: Tree) {
   })
 
   removeOnecxKeycloakAuth(tree, srcDirectoryPath)
+  removeOnecxPortalLayoutStyles(tree)
   migrateApiConfigProviderUtils(tree, srcDirectoryPath)
   migrateFilterTypes(tree, srcDirectoryPath)
   migrateFastDeepEqualImport(tree, srcDirectoryPath)
@@ -165,6 +172,29 @@ function removeOnecxKeycloakAuth(tree: Tree, directoryPath: string) {
 
   const keycloakModuleQuery = `Identifier[name="KeycloakAuthModule"]`
   replaceInFiles(tree, directoryPath, keycloakModuleQuery, '')
+
+  installPackagesTask(tree, true)
+}
+
+function removeOnecxPortalLayoutStyles(tree: Tree) {
+  const warning =
+    '⚠️ @onecx/portal-layout-styles library was removed. Please make sure that all references are removed and the application is not relying on @onecx/portal-layout-styles style sheets.'
+
+  const warnOptions = {
+    warn: true,
+    warning,
+    contentCondition: PORTAL_LAYOUT_STYLES,
+  }
+
+  const rootPath = '.'
+
+  removeDependenciesFromPackageJson(tree, [PORTAL_LAYOUT_STYLES], [])
+
+  removeOnecxPortalLayoutStylesImportsFromStyleSheets(tree, rootPath, warnOptions)
+
+  removeOnecxPortalLayoutStylesFromJsonFiles(tree, rootPath, warnOptions)
+
+  removeOnecxPortalLayoutStylesFromWebpack(tree)
 
   installPackagesTask(tree, true)
 }
@@ -261,4 +291,49 @@ function warnOcxPortalViewport(tree: Tree, directoryPath: string) {
       printWarnings(warning, foundInFiles)
     }
   })
+}
+
+function removeOnecxPortalLayoutStylesFromJsonFiles(
+  tree: Tree,
+  dirPath: string,
+  options?: { warn: boolean; warning: string; contentCondition: string }
+) {
+  updateJsonFiles(tree, dirPath, (json: any) => removeReferences(json, PORTAL_LAYOUT_STYLES), options)
+}
+
+function removeOnecxPortalLayoutStylesImportsFromStyleSheets(
+  tree: Tree,
+  dirPath: string,
+  options?: { warn: boolean; warning: string; contentCondition: string }
+) {
+  updateStyleSheets(
+    tree,
+    dirPath,
+    (root) => {
+      root.walkAtRules('import', (atRule) => {
+        if (atRule.params.includes(PORTAL_LAYOUT_STYLES)) {
+          atRule.remove()
+        }
+      })
+
+      return root.toString()
+    },
+    options
+  )
+}
+
+function removeOnecxPortalLayoutStylesFromWebpack(tree: Tree) {
+  const webpackConfigJsPath = 'webpack.config.js'
+  const webpackConfigJsContent = tree.read(webpackConfigJsPath, 'utf-8')
+
+  if (webpackConfigJsContent) {
+    const updatedContent = webpackConfigJsContent.replace(
+      /'@onecx\/portal-layout-styles':\s*{\s*requiredVersion:\s*'auto',\s*includeSecondaries:\s*true\s*,?\s*},?/g,
+      ''
+    )
+
+    tree.write(webpackConfigJsPath, updatedContent)
+  } else {
+    console.error('Cannot find webpack.config.js')
+  }
 }
