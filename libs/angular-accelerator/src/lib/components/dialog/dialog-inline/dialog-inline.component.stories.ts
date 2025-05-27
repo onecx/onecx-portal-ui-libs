@@ -13,7 +13,7 @@ import { TooltipModule } from 'primeng/tooltip'
 import { StorybookThemeModule } from '../../../storybook-theme.module'
 
 export default {
-  title: 'DialogInlineComponent',
+  title: 'Components/DialogInlineComponent',
   component: DialogInlineComponent,
   decorators: [
     applicationConfig({

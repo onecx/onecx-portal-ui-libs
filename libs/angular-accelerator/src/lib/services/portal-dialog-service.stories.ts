@@ -84,7 +84,7 @@ class WithDisabledButtonsComponent
 }
 
 export default {
-  title: 'PortalDialogService',
+  title: 'Components/PortalDialogService',
   component: ButtonDialogWithPortalDialogServiceComponent,
   decorators: [
     applicationConfig({
