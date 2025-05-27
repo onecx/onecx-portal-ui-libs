@@ -13,7 +13,9 @@ import { ColumnType } from '../../model/column-type.model'
 import { DiagramComponent } from '../diagram/diagram.component'
 import { GroupByCountDiagramComponent } from './group-by-count-diagram.component'
 import { DiagramType } from '../../model/diagram-type'
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
+import { FormsModule } from '@angular/forms'
 
 describe('GroupByCountDiagramComponent', () => {
   let translateService: TranslateService
@@ -148,15 +150,17 @@ describe('GroupByCountDiagramComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [GroupByCountDiagramComponent, DiagramComponent],
-    imports: [ChartModule,
-        MessageModule,
+      declarations: [GroupByCountDiagramComponent, DiagramComponent],
+      imports: [
+        AngularAcceleratorPrimeNgModule,
+        FormsModule,
         TranslateTestingModule.withTranslations({
-            en: require('./../../../../assets/i18n/en.json'),
-            de: require('./../../../../assets/i18n/de.json'),
-        })],
-    providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
-}).compileComponents()
+          en: require('./../../../../assets/i18n/en.json'),
+          de: require('./../../../../assets/i18n/de.json'),
+        }),
+      ],
+      providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()],
+    }).compileComponents()
 
     fixture = TestBed.createComponent(GroupByCountDiagramComponent)
     component = fixture.componentInstance

@@ -11,6 +11,7 @@ import { ButtonDialogHarness } from '../../../../testing'
 import { DivHarness } from '@onecx/angular-testing'
 import { ButtonDialogConfig } from '../../model/button-dialog'
 import { PrimeIcons } from 'primeng/api'
+import { TooltipModule } from 'primeng/tooltip'
 
 @Component({
   standalone: false,
@@ -77,6 +78,7 @@ describe('ButtonDialogComponent', () => {
         declarations: [ButtonDialogComponent],
         imports: [
           ButtonModule,
+          TooltipModule,
           MockAuthModule,
           TranslateTestingModule.withTranslations({
             en: translations,
@@ -296,6 +298,7 @@ describe('ButtonDialogComponent', () => {
         imports: [
           ButtonModule,
           MockAuthModule,
+          TooltipModule,
           TranslateTestingModule.withTranslations({
             en: translations,
           }),

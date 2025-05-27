@@ -44,6 +44,7 @@ import { TimelineModule } from 'primeng/timeline'
     FocusTrapModule,
     TooltipModule,
     TimelineModule,
+    SelectButtonModule,
     SharedModule,
   ],
   exports: [
@@ -67,6 +68,7 @@ import { TimelineModule } from 'primeng/timeline'
     FocusTrapModule,
     TooltipModule,
     TimelineModule,
+    SelectButtonModule,
     SharedModule,
   ],
   providers: [providePrimeNG()],
