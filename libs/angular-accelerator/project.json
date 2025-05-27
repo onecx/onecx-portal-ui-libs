@@ -74,15 +74,8 @@
         "libName": "angular-accelerator"
       }
     },
-    "copy-additional-styles": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "mkdir -p node_modules/@onecx/angular-accelerator/assets/ && cp libs/angular-accelerator/src/lib/directives/loading-indicator.directive.scss node_modules/@onecx/angular-accelerator/assets/"
-      }
-    },
     "storybook": {
       "executor": "@storybook/angular:start-storybook",
-      "dependsOn": ["copy-additional-styles"],
       "options": {
         "port": 4400,
         "configDir": "libs/angular-accelerator/.storybook",
@@ -91,7 +84,8 @@
         "styles": [
           "node_modules/primeicons/primeicons.css",
           "libs/angular-accelerator/assets/styles.scss",
-          "libs/angular-accelerator/.storybook/storybook.css"
+          "libs/angular-accelerator/.storybook/storybook.css",
+          "libs/angular-accelerator/src/lib/directives/loading-indicator.directive.scss"
         ]
       },
       "configurations": {
@@ -102,7 +96,6 @@
     },
     "build-storybook": {
       "executor": "@storybook/angular:build-storybook",
-      "dependsOn": ["copy-additional-styles"],
       "outputs": ["{options.outputDir}"],
       "options": {
         "outputDir": "dist/storybook/angular-accelerator",
@@ -112,7 +105,8 @@
         "styles": [
           "node_modules/primeicons/primeicons.css",
           "libs/angular-accelerator/assets/styles.scss",
-          "libs/angular-accelerator/.storybook/storybook.css"
+          "libs/angular-accelerator/.storybook/storybook.css",
+          "libs/angular-accelerator/src/lib/directives/loading-indicator.directive.scss"
         ]
       },
       "configurations": {
