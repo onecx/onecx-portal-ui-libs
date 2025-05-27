@@ -342,6 +342,7 @@ function removeOnecxPortalLayoutStylesFromWebpack(tree: Tree) {
 
     tree.write(webpackConfigJsPath, updatedContent)
   }
+}
 
 function replaceStandaloneShellInPackage(tree: Tree) {
   removeDependenciesFromPackageJson(tree, ['@onecx/standalone-shell'], [])
