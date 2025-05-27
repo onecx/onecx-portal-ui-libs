@@ -2,7 +2,8 @@ import { Tree, visitNotIgnoredFiles } from '@nx/devkit'
 import { ast, query, replace } from '@phenomnomnominal/tsquery'
 import { dirname, join } from 'path'
 import { isStringLiteral, Node } from 'typescript'
-import { hasHtmlTag, replaceTagInHtml } from '../utils/html-files.utils'
+import { hasHtmlTag } from '../utils/validation/has-html-tag.utils'
+import { replaceTagInHtml } from '../utils/modification/replace-tag-in-html.utils'
 
 /**
  * Changes all occurrences of a specific HTML tag name in Angular component templates.
