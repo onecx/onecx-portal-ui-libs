@@ -8,10 +8,10 @@ import { ButtonModule } from 'primeng/button'
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { TooltipModule } from 'primeng/tooltip'
 import { Observable } from 'rxjs'
-import { DialogMessageContentComponent } from '../core/components/button-dialog/dialog-message-content/dialog-message-content.component'
-import { DialogContentComponent } from '../core/components/dialog/dialog-content/dialog-content.component'
-import { DialogFooterComponent } from '../core/components/dialog/dialog-footer/dialog-footer.component'
-import { StorybookTranslateModule } from '../core/storybook-translate.module'
+import { DialogMessageContentComponent } from '../components/button-dialog/dialog-message-content/dialog-message-content.component'
+import { DialogContentComponent } from '../components/dialog/dialog-content/dialog-content.component'
+import { DialogFooterComponent } from '../components/dialog/dialog-footer/dialog-footer.component'
+import { StorybookTranslateModule } from '../storybook-translate.module'
 import {
   DialogButtonClicked,
   DialogCustomButtonsDisabled,
@@ -84,7 +84,7 @@ class WithDisabledButtonsComponent
 }
 
 export default {
-  title: 'PortalDialogService',
+  title: 'Components/PortalDialogService',
   component: ButtonDialogWithPortalDialogServiceComponent,
   decorators: [
     applicationConfig({

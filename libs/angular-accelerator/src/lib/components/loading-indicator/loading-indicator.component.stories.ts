@@ -6,7 +6,7 @@ import { StorybookTranslateModule } from '../../storybook-translate.module'
 import { LoadingIndicatorComponent } from './loading-indicator.component'
 
 export default {
-  title: 'LoadaingIndicatorComponent',
+  title: 'Components/LoadaingIndicatorComponent',
   component: LoadingIndicatorComponent,
   decorators: [
     applicationConfig({

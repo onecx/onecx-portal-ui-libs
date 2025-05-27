@@ -21,7 +21,7 @@ import {
   ButtonDialogConfig,
   ButtonDialogCustomButtonDetails,
   ButtonDialogData,
-} from '../../../model/button-dialog'
+} from '../../model/button-dialog'
 import {
   DialogButtonClicked,
   DialogCustomButtonsDisabled,
@@ -30,7 +30,7 @@ import {
   DialogSecondaryButtonDisabled,
   DialogState,
   DialogStateButtonClicked,
-} from '../../../services/portal-dialog.service'
+} from '../../services/portal-dialog.service'
 import { DialogMessageContentComponent } from './dialog-message-content/dialog-message-content.component'
 
 @Component({

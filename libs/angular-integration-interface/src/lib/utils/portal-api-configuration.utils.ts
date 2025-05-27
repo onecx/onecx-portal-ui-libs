@@ -1,7 +1,7 @@
 import { Location } from '@angular/common'
 import { inject } from '@angular/core'
-import { AppStateService } from '@onecx/angular-integration-interface'
 import { BehaviorSubject, first, map } from 'rxjs'
+import { AppStateService } from '../services/app-state.service'
 
 type Config = {
   credentials: { [key: string]: string | (() => string | undefined) }
@@ -13,10 +13,10 @@ type Config = {
 }
 
 export class PortalApiConfiguration {
-  private configuration = this.activator(this.configurationClassOfGenerator)
+  private configuration: Config
   appStateService: AppStateService = inject(AppStateService)
 
-  protected basePath$ = new BehaviorSubject<string>(Location.joinWithSlash('.', this.apiPrefix))
+  protected basePath$: BehaviorSubject<string>
   get basePath() {
     return this.basePath$.value
   }
@@ -42,6 +42,8 @@ export class PortalApiConfiguration {
     private configurationClassOfGenerator: unknown,
     private apiPrefix: string
   ) {
+    this.configuration = this.activator(this.configurationClassOfGenerator)
+    this.basePath$ = new BehaviorSubject<string>(Location.joinWithSlash('.', this.apiPrefix))
     this.appStateService.currentMfe$
       .pipe(
         first(),

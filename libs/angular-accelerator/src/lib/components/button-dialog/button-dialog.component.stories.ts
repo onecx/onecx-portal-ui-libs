@@ -11,7 +11,7 @@ import { TooltipModule } from 'primeng/tooltip'
 import { StorybookThemeModule } from '../../storybook-theme.module'
 
 export default {
-  title: 'ButtonDialogComponent',
+  title: 'Components/ButtonDialogComponent',
   component: ButtonDialogComponent,
   decorators: [
     applicationConfig({

@@ -1,5 +1,5 @@
 import { Directive, DoCheck, TemplateRef, ViewContainerRef, inject } from '@angular/core'
-import { SearchHeaderComponent } from '@onecx/angular-accelerator'
+import { SearchHeaderComponent } from '../components/search-header/search-header.component'
 
 @Directive({ selector: '[ocxBasic]', standalone: false })
 export class BasicDirective implements DoCheck {

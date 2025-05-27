@@ -6,11 +6,12 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { ButtonModule } from 'primeng/button'
 
 import { ButtonDialogComponent } from './button-dialog.component'
-import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
-import { ButtonDialogHarness } from '../../../../../testing'
+import { MockAuthModule } from '../../mock-auth/mock-auth.module'
+import { ButtonDialogHarness } from '../../../../testing'
 import { DivHarness } from '@onecx/angular-testing'
-import { ButtonDialogConfig } from '../../../model/button-dialog'
+import { ButtonDialogConfig } from '../../model/button-dialog'
 import { PrimeIcons } from 'primeng/api'
+import { TooltipModule } from 'primeng/tooltip'
 
 @Component({
   standalone: false,
@@ -77,6 +78,7 @@ describe('ButtonDialogComponent', () => {
         declarations: [ButtonDialogComponent],
         imports: [
           ButtonModule,
+          TooltipModule,
           MockAuthModule,
           TranslateTestingModule.withTranslations({
             en: translations,
@@ -296,6 +298,7 @@ describe('ButtonDialogComponent', () => {
         imports: [
           ButtonModule,
           MockAuthModule,
+          TooltipModule,
           TranslateTestingModule.withTranslations({
             en: translations,
           }),
