@@ -1,3 +1,16 @@
+## [5.39.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.38.0...v5.39.0) (2025-05-27)
+
+### Features
+
+* cherry-pick disabled auth service ([#739](https://github.com/onecx/onecx-portal-ui-libs/issues/739)) ([22b2da8](https://github.com/onecx/onecx-portal-ui-libs/commit/22b2da8188eca2a2dd9e7ec2336b8c6f7c49031a))
+* create new library integration-tests ([#750](https://github.com/onecx/onecx-portal-ui-libs/issues/750)) ([c7eecb2](https://github.com/onecx/onecx-portal-ui-libs/commit/c7eecb2893e3d5d8b1af218dc8e0a825eea008b8))
+* prepared typescript script in integration-tests ([#751](https://github.com/onecx/onecx-portal-ui-libs/issues/751)) ([57ebf28](https://github.com/onecx/onecx-portal-ui-libs/commit/57ebf2859fe6f7e4cbabf23b584bb4e9706e50da))
+
+### Bug Fixes
+
+* fix storybook rendering ([#742](https://github.com/onecx/onecx-portal-ui-libs/issues/742)) ([60df27a](https://github.com/onecx/onecx-portal-ui-libs/commit/60df27a10b9056dff551f441a3cd5e2f3a1a2fbb))
+* toast message word breaks ([#740](https://github.com/onecx/onecx-portal-ui-libs/issues/740)) ([e238be7](https://github.com/onecx/onecx-portal-ui-libs/commit/e238be7f975f25124ef3f5485c2b00757e3c8e6b))
+
 ## [5.38.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.37.0...v5.38.0) (2025-05-08)
 
 ### Features
