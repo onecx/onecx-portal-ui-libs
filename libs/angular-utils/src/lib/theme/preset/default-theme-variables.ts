@@ -35,7 +35,7 @@ export default {
     solidSurfaceTextColor: '#ffffff',
     dividerColor: '#e4e4e4',
     buttonHoverBg: '#ad1457',
-    buttonActiveBg: null,
+    buttonActiveBg: 'rgba(39, 75, 95, 0.68)',
     dangerButtonBg: '#D32F2F',
     infoMessageBg: '#b3e5fc',
     successMessageBg: '#c8e6c9',
