@@ -15,15 +15,22 @@ import { detectMethodCallsInFiles } from '../utils/detect-method-calls-in-files.
 import { replaceTagInAngularTemplates } from '../angular/html-templates.utils'
 import { removeParameters } from '../angular/parameters.utils'
 import { replaceInFiles } from '../angular/replacement-in-files.utils'
-import { hasHtmlTag } from '../utils/html-files.utils'
 import {
   removeImportsByModuleSpecifier,
   removeImportValuesFromModule,
+  replaceImportModuleSpecifier,
   replaceImportValues,
   replaceImportValuesAndModule,
 } from '../utils/import-statements.utils'
 import { printWarnings } from '../utils/print-warnings.utils'
 import { addGitignoreEntry, removeGitignoreEntry } from '../utils/update-gitignore.utils'
+import { Module, Provider } from '../angular'
+import { detectVariablesWithModule } from '../angular/utils/detection/detect-variables-with-module.utils'
+import { detectModulesImportingModule } from '../angular/utils/detection/detect-modules-importing-module.utils'
+import { detectVariablesWithProvider } from '../angular/utils/detection/detect-variables-with-provider.utils'
+import { addProviderInModuleIfDoesNotExist } from '../angular/utils/modification/add-provider-in-module-if-does-not-exist.utils'
+import { addProviderImportIfDoesNotExist } from '../angular/utils/modification/add-provider-import-if-does-not-exist.utils'
+import { hasHtmlTag } from '../utils/validation/has-html-tag.utils'
 import { updateJsonFiles } from '../utils/modification/update-json-files.utils'
 import { removeReferences } from '../utils/modification/remove-json-references.utils'
 import { updateStyleSheets } from '../utils/modification/update-style-sheets.utils'
@@ -39,6 +46,7 @@ export async function commonMigrateOnecxToV6(tree: Tree) {
     { '@primeng/themes': '^19.0.6' },
     { '@nx/angular': '~20.3.4', '@nx/devkit': '~20.3.4', '@nx/plugin': '~20.3.4' }
   )
+  replaceStandaloneShellInPackage(tree)
 
   updateJson(tree, `package.json`, (json) => {
     const angularDependencies = Object.keys(json.dependencies).filter((dep) => dep.startsWith('@angular/'))
@@ -139,6 +147,7 @@ export async function commonMigrateOnecxToV6(tree: Tree) {
   migrateFastDeepEqualImport(tree, srcDirectoryPath)
   migratePrimeng(tree)
   migratePrimeNgCalendar(tree, srcDirectoryPath)
+  migrateStandaloneShell(tree, srcDirectoryPath)
 
   installPackagesTask(tree, true)
 
@@ -332,7 +341,45 @@ function removeOnecxPortalLayoutStylesFromWebpack(tree: Tree) {
     )
 
     tree.write(webpackConfigJsPath, updatedContent)
+  }
+
+function replaceStandaloneShellInPackage(tree: Tree) {
+  removeDependenciesFromPackageJson(tree, ['@onecx/standalone-shell'], [])
+  addDependenciesToPackageJson(tree, { '@onecx/angular-standalone-shell': '^6.0.0' }, {})
+}
+
+function migrateStandaloneShell(tree: Tree, dirPath: string) {
+  replaceStandaloneShellImport(tree, dirPath)
+  provideStandaloneProvidersIfModuleUsed(tree, dirPath)
+}
+
+function replaceStandaloneShellImport(tree: Tree, dirPath: string) {
+  const standaloneShell = '@onecx/standalone-shell'
+  const angularStandaloneShell = '@onecx/angular-standalone-shell'
+  replaceImportModuleSpecifier(tree, dirPath, standaloneShell, angularStandaloneShell)
+  const webpackConfigJsContent = tree.read('webpack.config.js', 'utf-8')
+  if (webpackConfigJsContent) {
+    const updatedContent = webpackConfigJsContent.replace(standaloneShell, angularStandaloneShell)
+    tree.write('webpack.config.js', updatedContent)
   } else {
     console.error('Cannot find webpack.config.js')
   }
+}
+
+function provideStandaloneProvidersIfModuleUsed(tree: Tree, dirPath: string) {
+  const module: Module = {
+    name: 'StandaloneShellModule',
+  }
+  const provider: Provider = {
+    name: 'provideStandaloneProviders',
+    importPath: '@onecx/angular-standalone-shell',
+  }
+
+  const variablesWithModule = detectVariablesWithModule(tree, dirPath, module)
+  const modules = detectModulesImportingModule(tree, dirPath, module, variablesWithModule)
+  const variablesWithProvider = detectVariablesWithProvider(tree, dirPath, provider)
+  modules.forEach((moduleName) => {
+    addProviderInModuleIfDoesNotExist(tree, moduleName, provider, variablesWithProvider)
+    addProviderImportIfDoesNotExist(tree, moduleName.filePath, provider)
+  })
 }
