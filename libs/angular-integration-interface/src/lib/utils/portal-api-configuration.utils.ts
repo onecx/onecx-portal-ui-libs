@@ -13,9 +13,9 @@ type Config = {
 }
 
 export class PortalApiConfiguration {
-  private configuration = this.activator(this.configurationClassOfGenerator)
+  private configuration: Config
 
-  protected basePath$ = new BehaviorSubject<string>(Location.joinWithSlash('.', this.apiPrefix))
+  protected basePath$: BehaviorSubject<string>
   get basePath() {
     return this.basePath$.value
   }
@@ -43,6 +43,8 @@ export class PortalApiConfiguration {
     configService: ConfigurationService,
     appStateService: AppStateService
   ) {
+    this.configuration = this.activator(this.configurationClassOfGenerator)
+    this.basePath$ = new BehaviorSubject<string>(Location.joinWithSlash('.', this.apiPrefix))
     appStateService.currentMfe$
       .pipe(
         first(),
