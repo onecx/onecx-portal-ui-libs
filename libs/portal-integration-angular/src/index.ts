@@ -100,5 +100,6 @@ export {
   AUTH_SERVICE,
   SANITY_CHECK,
   APPLICATION_NAME,
-  PortalApiConfiguration,
 } from '@onecx/angular-integration-interface'
+
+export { PortalApiConfiguration } from '@onecx/angular-utils'
