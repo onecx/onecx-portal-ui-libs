@@ -1,6 +1,7 @@
 import { Location } from '@angular/common'
 import { BehaviorSubject, first, map } from 'rxjs'
-import { AppStateService, ConfigurationService } from '@onecx/angular-integration-interface'
+import { ConfigurationService } from '../services/configuration.service'
+import { AppStateService } from '../services/app-state.service'
 
 type Config = {
   credentials: { [key: string]: string | (() => string | undefined) }

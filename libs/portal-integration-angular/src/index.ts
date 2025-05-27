@@ -81,7 +81,6 @@ export * from './lib/core/primeng.module'
 export * from './lib/core/utils/image-logo-url.utils'
 export * from './lib/core/utils/add-initialize-module-guard.utils'
 export * from './lib/core/utils/translate-service-initializer.utils'
-export * from './lib/core/utils/portal-api-configuration.utils'
 
 export * from '@onecx/angular-accelerator'
 export {
@@ -101,4 +100,5 @@ export {
   AUTH_SERVICE,
   SANITY_CHECK,
   APPLICATION_NAME,
+  PortalApiConfiguration,
 } from '@onecx/angular-integration-interface'
