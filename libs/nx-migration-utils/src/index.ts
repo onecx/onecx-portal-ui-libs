@@ -1,3 +1,15 @@
 // General purpose and framework-agnostic utilities for NX migrations
-export * from './lib/utils/detect-method-calls-in-files'
-export * from './lib/utils/print-warnings'
+export * from './lib/common-migrations/common-migrate-onecx-to-v6.utils'
+
+export * from './lib/utils/detect-method-calls-in-files.utils'
+export * from './lib/utils/import-statements.utils'
+export * from './lib/utils/print-warnings.utils'
+export * from './lib/utils/typescript-files.utils'
+export * from './lib/utils/update-gitignore.utils'
+export * from './lib/utils/detection/detect-variables-with-identifier.utils'
+export * from './lib/utils/modification/add-new-import.utils'
+export * from './lib/utils/modification/add-to-first-import.utils'
+export * from './lib/utils/modification/replace-tag-in-html.utils'
+export * from './lib/utils/validation/has-html-tag.utils'
+export * from './lib/utils/validation/is-import-in-content.utils'
+export * from './lib/utils/validation/is-namespace-import-in-content.utils'
