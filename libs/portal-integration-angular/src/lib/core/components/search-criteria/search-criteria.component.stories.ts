@@ -19,6 +19,7 @@ import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
 import { StorybookTranslateModule } from '../../storybook-translate.module'
 import { CriteriaTemplateComponent } from './criteria-template/criteria-template.component'
 import { SearchCriteriaComponent } from './search-criteria.component'
+import { StorybookThemeModule } from '../../storybook-theme.module'
 
 export default {
   title: 'SearchCriteriaComponent',
@@ -30,6 +31,7 @@ export default {
         importProvidersFrom(RouterModule.forRoot([], { useHash: true })),
         importProvidersFrom(MockAuthModule),
         provideHttpClient(withInterceptorsFromDi()),
+        importProvidersFrom(StorybookThemeModule),
         provideHttpClientTesting(),
         ConfigurationService,
         { provide: APP_CONFIG, useValue: {} },

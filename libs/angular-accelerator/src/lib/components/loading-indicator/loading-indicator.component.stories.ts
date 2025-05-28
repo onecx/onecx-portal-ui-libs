@@ -4,13 +4,18 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { Meta, StoryFn, applicationConfig, moduleMetadata } from '@storybook/angular'
 import { StorybookTranslateModule } from '../../storybook-translate.module'
 import { LoadingIndicatorComponent } from './loading-indicator.component'
+import { StorybookThemeModule } from '../../storybook-theme.module'
 
 export default {
   title: 'Components/LoadaingIndicatorComponent',
   component: LoadingIndicatorComponent,
   decorators: [
     applicationConfig({
-      providers: [importProvidersFrom(BrowserModule), importProvidersFrom(BrowserAnimationsModule)],
+      providers: [
+        importProvidersFrom(BrowserModule),
+        importProvidersFrom(BrowserAnimationsModule),
+        importProvidersFrom(StorybookThemeModule),
+      ],
     }),
     moduleMetadata({
       declarations: [LoadingIndicatorComponent],

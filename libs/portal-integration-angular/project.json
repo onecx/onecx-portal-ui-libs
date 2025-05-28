@@ -77,7 +77,8 @@
         "styles": [
           "node_modules/primeicons/primeicons.css",
           "libs/portal-integration-angular/assets/styles.scss",
-          "libs/portal-integration-angular/.storybook/storybook.css"
+          "libs/portal-integration-angular/.storybook/storybook.css",
+          "libs/portal-integration-angular/.storybook/theme_defaults.scss"
         ]
       },
       "configurations": {
@@ -97,7 +98,8 @@
         "styles": [
           "node_modules/primeicons/primeicons.css",
           "libs/portal-integration-angular/assets/styles.scss",
-          "libs/portal-integration-angular/.storybook/storybook.css"
+          "libs/portal-integration-angular/.storybook/storybook.css",
+          "libs/portal-integration-angular/.storybook/theme_defaults.scss"
         ]
       },
       "configurations": {
