@@ -9,9 +9,9 @@ import { printWarnings } from '../../utils/print-warnings.utils'
  * @param dirPath - The directory path to search for JSON files.
  * @param updater - A function that receives the parsed JSON and returns the updated object.
  * @param options - Optional settings:
- *   - warn: Whether to print warnings.
- *   - warning: The warning message to display.
- *   - contentCondition: A string to match in file paths for triggering warnings.
+ *  - warn: Whether to print warnings.
+ *  - warning: The warning message to display.
+ *  - contentCondition: A string to match in file paths for triggering warnings.
  */
 export function updateJsonFiles(
   tree: Tree,
