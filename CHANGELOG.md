@@ -1,3 +1,9 @@
+## [5.40.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.39.0...v5.40.0) (2025-05-28)
+
+### Features
+
+* move PoratlApiConfiguration to angular-integration-interface ([#753](https://github.com/onecx/onecx-portal-ui-libs/issues/753)) ([e3d1d3d](https://github.com/onecx/onecx-portal-ui-libs/commit/e3d1d3d47de73d00f78a2466ddd7dd3afec9ed25))
+
 ## [5.39.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.38.0...v5.39.0) (2025-05-27)
 
 ### Features
