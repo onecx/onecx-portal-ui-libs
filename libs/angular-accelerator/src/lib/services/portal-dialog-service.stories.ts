@@ -21,7 +21,7 @@ import {
   DialogState,
   PortalDialogService,
 } from './portal-dialog.service'
-import { StorybookThemeModule } from '../core/storybook-theme.module'
+import { StorybookThemeModule } from '../storybook-theme.module'
 
 @Component({
   standalone: false,
