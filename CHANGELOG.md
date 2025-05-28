@@ -1,3 +1,9 @@
+## [5.40.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.40.0...v5.40.1) (2025-05-28)
+
+### Bug Fixes
+
+* export disabled auth service ([#755](https://github.com/onecx/onecx-portal-ui-libs/issues/755)) ([1b27d8c](https://github.com/onecx/onecx-portal-ui-libs/commit/1b27d8cebe843929a2e599c265822271e18615db))
+
 ## [5.40.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.39.0...v5.40.0) (2025-05-28)
 
 ### Features
