@@ -9,7 +9,6 @@ export * from './lib/utils/update-gitignore.utils'
 
 export * from './lib/utils/detection/detect-variables-with-identifier.utils'
 
-export * from './lib/utils/modification/update-json-file.utils'
 export * from './lib/utils/modification/update-json-files.utils'
 export * from './lib/utils/modification/update-style-sheets.utils'
 export * from './lib/utils/modification/update-style-sheet.utils'

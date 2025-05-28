@@ -18,5 +18,6 @@ export function removeReferences(obj: any, reference: string): any {
     return newObj
   }
 
+  // return type is always object (modified source object with removed reference)
   return obj
 }
