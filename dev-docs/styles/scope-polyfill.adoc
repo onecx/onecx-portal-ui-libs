@@ -40,9 +40,9 @@ Style sheet update in detail:
 . For each rule that has to be scoped in the style sheet:
 .. it is checked if the rule needs to be updated based on the mutations that caused the update
 .. the rule's selector is updated
-... a query to find all elements fulfilling the rule's original selector are found in the scope
-... ":where" selector is appended to the rule's original selector with a selector for each found element
-... ":root > :nth-child(x) > :nth-child(y) > ..." selector is used to select every element
+... a query(`document.querySelectorAll()`) to find all elements fulfilling the rule's original selector are found in the scope
+... `:where` selector is appended to the rule's original selector with a selector for each found element
+... `:root > :nth-child(x) > :nth-child(y) > ...` selector is used to select every element
 .. the rule's children are updated
 
 For example, if the original selector is .custom-class, and the matching elements are the second child of the first child of the root element, the updated selector would be .custom-class:where(:nth-child(1) > :nth-child(2)).

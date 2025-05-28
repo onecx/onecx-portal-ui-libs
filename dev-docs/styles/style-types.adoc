@@ -5,7 +5,7 @@
 :idseparator: -
 :application_styles: ./concept.adoc#application-styles
 
-The goal of this document is to explain style types located on the OneCX page. After reading this document it should be clear what different styles are available on the OneCX page and what is their purpose.
+The goal of this document is to explain style types located on the OneCX page. After reading this document it should be clear what different styles are available on the OneCX page and and what their purpose is.
 
 [#overview]
 == Overview

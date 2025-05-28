@@ -11,12 +11,6 @@
 :theme_config: ../../libs/angular-utils/src/lib/theme/theme-config.ts
 :theme_config_service: ../../libs/angular-utils/src/lib/services/theme-config.service.ts
 
-This document outlines the theming capabilities in **OneCX**, focusing on how themes are structured, applied, and managed. It provides both conceptual and technical insights to help developers and administrators understand how to implement and customize themes effectively. After reading, you should be able to:
-
-- Understand what a theme is in OneCX.
-- Use theme variables in your styles.
-- Know how themes are applied at runtime.
-
 [#primeng-theming]
 == PrimeNG Theming
 In version 19, PrimeNG introduced {primeng_theming}[theming mechanism based on design tokens]. All PrimeNG components are going to adapt to the appearance specified in the configuration for design tokens.

@@ -22,6 +22,6 @@ Explanation of theme overrides mechanism and an example from the application sid
 
 [#technical-details]
 == Technical details
-link:{custom_use_style_service}[CustomUseStyle] is responsible for applying overrides. Every time any PrimeNG style sheet is created/updated it is making sure that overrides are present and that are overwriting the default values.
+link:{custom_use_style_service}[CustomUseStyle] is responsible for applying overrides. Every time any PrimeNG style sheet is created/updated it is making sure that overrides are present and that they are overwriting the default values.
 
-On every PrimeNG style sheet update, link:{custom_use_style_service}[CustomUseStyle] checks if overrides were provided by its owner application. If that was the case, it makes sure that a style sheet with those overrides is present in the DOM and then makes sure that its located *AFTER* any PrimeNG style sheet. Because of the CSS rules priority, the overrides will be applied prior to any PrimeNG CSS variables.
+On every PrimeNG style sheet update, link:{custom_use_style_service}[CustomUseStyle] checks if overrides were provided by its owner application. If that was the case, it makes sure that a style sheet with those overrides is present in the DOM and then makes sure that it's located *AFTER* any PrimeNG style sheet. Because of the CSS rules priority, the overrides will be applied prior to any PrimeNG CSS variables.

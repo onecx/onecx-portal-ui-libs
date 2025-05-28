@@ -80,7 +80,7 @@ An example of the scoped style rule:
 </style>
 ```
 
-In the example, `my-scoped-class` rule and `--my-css-variable` variable will be applied only to the content related to the *workspace* application that has been migrated to version 6 of libs. If any workspace content would render a remote component, the `my-scoped-class` rule would not be available for that remote component.
+In the example, `my-scoped-class` rule and `--my-css-variable` variable will be applied only to the content related to the *workspace* application that has been migrated to version 6 of libs. If workspace microfrontend (or remote component that originates from workspace UI) would render a slot with some remote component, the `my-scoped-class` rule would not be available for that remote component.
 
 [#dynamic-content]
 == Dynamic Content

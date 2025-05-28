@@ -46,7 +46,7 @@ Details on how theme overrides work can be found link:{theme_overrides}[here].
 [#primeng-dynamic-content]
 == Dynamic Content
 
-* each application has to replace the following operations by adding appropriate plugins in the webpack configuration (Shell UI does that as well so it is a good reference)
+* each application has to replace the following operations by adding appropriate plugins in the webpack configuration (https://github.com/onecx/onecx-shell-ui/blob/develop/webpack.config.js#L39[Shell UI does that as well so it is a good reference])
 ** `document.createElement` replaced with `document.createElementFromPrimeNg`
 ** `Theme.setLoadedStyleName` replaced with `(function(_){})`
 

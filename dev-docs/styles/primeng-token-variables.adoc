@@ -7,7 +7,7 @@
 
 Design tokens in PrimeNG 19+ are internally transformed to CSS variables that PrimeNG injects on the page via style sheets. These variables are then used in the style sheets containing other CSS rules and can be used by any application.
 
-To reduce the possibility of name clashes, every PrimeNG CSS variable definition and usage is overwritten to use a prefix appropriate to the scope of the variable. For example, a CSS variable that is normally called --p-surface-500 would be defined as --onecx-help-onecx-help-ui-surface-500 in the scope with data-style-id="onecx-help|onecx-help-ui".
+To reduce the possibility of name clashes, every PrimeNG CSS variable definition and usage is overwritten to use a prefix appropriate to the scope of the variable. For example, a CSS variable that is normally called `--p-surface-500` would be defined as `--onecx-help-onecx-help-ui-surface-500` in the scope with `data-style-id="onecx-help|onecx-help-ui"`.
 
 The following mechanisms are in charge of these overwrites:
 
@@ -33,9 +33,9 @@ This style sheet content will be replaced by OneCX dynamically, and the result o
 .transformed styles.css or component.css on the page
 ```
 {
-    @scope(data-style-id="onecx-workspace|oncx-workspace-ui") to (data-style-isolation) {
+    @scope(data-style-id="onecx-workspace|onecx-workspace-ui") to (data-style-isolation) {
         .my-button {
-            background-color: `--onecx-workspace-oncx-workspace-ui-surface-500`
+            background-color: `--onecx-workspace-onecx-workspace-ui-surface-500`
         }
     }
 }

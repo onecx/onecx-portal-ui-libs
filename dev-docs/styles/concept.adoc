@@ -10,6 +10,7 @@
 :scope_polyfill: ./scope-polyfill.adoc
 
 This document outlines the styles mechanisms available in OneCX, focusing on how styles are structured, applied, and managed. It provides both conceptual and technical insights to help developers and administrators understand how to implement and customize styles effectively. After reading, you should be able to:
+
 - Understand the concept of style isolation in OneCX.
 - Use scoped styles and application styles.
 - Know how to apply and manage styles at runtime.
@@ -35,7 +36,8 @@ The `styles.css` file has to be exposed by the application on the remote URL lev
 It's recommended to do the following modification to the `angular.json` or `project.json` file to ensure it's exposed correctly (where input is a path to the application styles):
 
 .angular.json/project.json modification
-
+[source,json]
+----
 {
     ...
     "styles": [
@@ -47,6 +49,7 @@ It's recommended to do the following modification to the `angular.json` or `proj
     ],
     ...
 }
+----
 
 [#component-styles]
 ==== Component Styles
