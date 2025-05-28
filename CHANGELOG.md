@@ -1,3 +1,17 @@
+## [6.0.0-rc.13](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.12...v6.0.0-rc.13) (2025-05-27)
+
+### Features
+
+* dev-docs from main to develop ([#747](https://github.com/onecx/onecx-portal-ui-libs/issues/747)) ([572f70e](https://github.com/onecx/onecx-portal-ui-libs/commit/572f70ef89490993b58b5e9a1dc2d6e597facc39))
+* extend nx-migration-utils to handle import statements and html … ([#744](https://github.com/onecx/onecx-portal-ui-libs/issues/744)) ([98403a8](https://github.com/onecx/onecx-portal-ui-libs/commit/98403a8cd15f242d0147276172c189f4b8ac26f3))
+* move remaining pia functionality to other libs ([#748](https://github.com/onecx/onecx-portal-ui-libs/issues/748)) ([ea82154](https://github.com/onecx/onecx-portal-ui-libs/commit/ea82154e5f6e35d5ea499a219dfbc763ab38b05c))
+* standalone improvements migrations ([#752](https://github.com/onecx/onecx-portal-ui-libs/issues/752)) ([bf5bfcd](https://github.com/onecx/onecx-portal-ui-libs/commit/bf5bfcd1815303b245f44679b59da8bc2d2bc221))
+
+### Bug Fixes
+
+* cherry-pick fix storybook rendering ([#743](https://github.com/onecx/onecx-portal-ui-libs/issues/743)) ([0182bfa](https://github.com/onecx/onecx-portal-ui-libs/commit/0182bfac68533f280ca6468bd2038c658c12c1c1))
+* set darkmodeSelector to false in the theme options resulting in expected forced light mode behavior ([#749](https://github.com/onecx/onecx-portal-ui-libs/issues/749)) ([293912c](https://github.com/onecx/onecx-portal-ui-libs/commit/293912c64b7fe61b4eae1416040db13e2e119f71))
+
 ## [6.0.0-rc.12](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.11...v6.0.0-rc.12) (2025-05-14)
 
 ### Features

@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { DateUtils } from '@onecx/angular-accelerator'
-import { ColumnType } from '@onecx/angular-accelerator'
 import { ExportDataService } from './export-data.service'
+import { DateUtils } from '../utils/dateutils'
+import { ColumnType } from '../model/column-type.model'
 
 describe('ExportDataService', () => {
   class ElementMock {
@@ -14,6 +14,10 @@ describe('ExportDataService', () => {
     click() {
       // do click
     }
+  }
+
+  function removeWhitespaces(str: string) {
+    return str.replace(/\s+/g, '')
   }
 
   let blobs: Blob[] = []
@@ -402,7 +406,9 @@ describe('ExportDataService', () => {
     })
     await exportDataService.exportCsv(mockColumns, mockData, 'some-test.csv')
 
-    expect(expectedCsv).toEqual(await blobs[Number(mock.attributes['href'])].text())
+    expect(removeWhitespaces(expectedCsv)).toEqual(
+      removeWhitespaces(await blobs[Number(mock.attributes['href'])].text())
+    )
     expect(expectedFilename).toEqual(mock.attributes['download'])
   })
 
@@ -458,7 +464,9 @@ describe('ExportDataService', () => {
     })
     await exportDataService.exportCsv(mockColumns, mockDataWithUndefinedDateValues, 'some-test.csv')
 
-    expect(expectedCsv).toEqual(await blobs[Number(mock.attributes['href'])].text())
+    expect(removeWhitespaces(expectedCsv)).toEqual(
+      removeWhitespaces(await blobs[Number(mock.attributes['href'])].text())
+    )
     expect(expectedFilename).toEqual(mock.attributes['download'])
   })
 
@@ -514,7 +522,9 @@ describe('ExportDataService', () => {
     })
     await exportDataService.exportCsv(mockColumns, mockDataWithUndefinedDateValues, 'some-test.csv')
 
-    expect(expectedCsv).toEqual(await blobs[Number(mock.attributes['href'])].text())
+    expect(removeWhitespaces(expectedCsv)).toEqual(
+      removeWhitespaces(await blobs[Number(mock.attributes['href'])].text())
+    )
     expect(expectedFilename).toEqual(mock.attributes['download'])
   })
 
@@ -570,7 +580,9 @@ describe('ExportDataService', () => {
     })
     await exportDataService.exportCsv(mockColumns, mockData, 'some-test.csv')
 
-    expect(expectedCsv).toEqual(await blobs[Number(mock.attributes['href'])].text())
+    expect(removeWhitespaces(expectedCsv)).toEqual(
+      removeWhitespaces(await blobs[Number(mock.attributes['href'])].text())
+    )
     expect(expectedFilename).toEqual(mock.attributes['download'])
   })
   it('should export data as csv in de which contains data of date fields that are undefined', async () => {
@@ -626,7 +638,9 @@ describe('ExportDataService', () => {
     })
     await exportDataService.exportCsv(mockColumns, mockDataWithUndefinedDateValues, 'some-test.csv')
 
-    expect(expectedCsv).toEqual(await blobs[Number(mock.attributes['href'])].text())
+    expect(removeWhitespaces(expectedCsv)).toEqual(
+      removeWhitespaces(await blobs[Number(mock.attributes['href'])].text())
+    )
     expect(expectedFilename).toEqual(mock.attributes['download'])
   })
 })

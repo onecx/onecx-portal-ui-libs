@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed, fakeAsync, flush } from '@angular/core/testing'
 import { DialogContentComponent } from './dialog-content.component'
-import { DialogContentHarness, DivHarness, TestbedHarnessEnvironment } from '@onecx/portal-integration-angular/testing'
-import { MockAuthModule } from '../../../../mock-auth/mock-auth.module'
+import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { Component, EventEmitter } from '@angular/core'
 import {
@@ -11,10 +10,12 @@ import {
   DialogResult,
   DialogSecondaryButtonDisabled,
   DialogState,
-} from '../../../../services/portal-dialog.service'
+} from '../../../services/portal-dialog.service'
 import { Observable } from 'rxjs'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { DialogMessageContentComponent } from '../../button-dialog/dialog-message-content/dialog-message-content.component'
+import { DivHarness, TestbedHarnessEnvironment } from '@onecx/angular-testing'
+import { DialogContentHarness } from '../../../../../testing'
 
 @Component({
   standalone: false,
@@ -22,7 +23,7 @@ import { DialogMessageContentComponent } from '../../button-dialog/dialog-messag
     <div class="host">HostComponentContent</div>
   </ocx-dialog-content>`,
 })
-class TestBaseHostComponent {}
+class TestBaseHostComponent { }
 
 @Component({
   standalone: false,
@@ -77,8 +78,7 @@ class TestWithDialogResultAndButtonClickedComponent implements DialogResult<stri
   template: ` <div class="test">Test Component</div>`,
 })
 class TestWithButtonDisableComponent
-  implements DialogPrimaryButtonDisabled, DialogSecondaryButtonDisabled, DialogCustomButtonsDisabled
-{
+  implements DialogPrimaryButtonDisabled, DialogSecondaryButtonDisabled, DialogCustomButtonsDisabled {
   primaryState = false
   secondaryState = false
   customState = false

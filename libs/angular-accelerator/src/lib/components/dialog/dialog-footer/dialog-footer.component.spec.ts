@@ -1,11 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { DialogFooterComponent } from './dialog-footer.component'
-import { DialogFooterHarness, TestbedHarnessEnvironment } from '@onecx/portal-integration-angular/testing'
 import { ButtonModule } from 'primeng/button'
-import { MockAuthModule } from '../../../../mock-auth/mock-auth.module'
+import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { PrimeIcons } from 'primeng/api'
+import { DialogFooterHarness, TestbedHarnessEnvironment } from '../../../../../testing'
+
 
 describe('DialogFooterComponent', () => {
   let component: DialogFooterComponent
