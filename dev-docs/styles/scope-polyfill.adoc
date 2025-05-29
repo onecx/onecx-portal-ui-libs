@@ -1,0 +1,50 @@
+
+= Scope polyfill
+
+:idprefix:
+:idseparator: -
+:scope_at_rule: https://developer.mozilla.org/en-US/docs/Web/CSS/@scope
+
+[#overview]
+== Overview
+The {scope_at_rule}[CSS @scope at-rule] is not broadly available yet and plays a crucial part in style isolation done in OneCX. Because of that, a polyfill was created. It is applied in the Shell UI to allow browsers that do not support this rule to still display the pages.
+
+[#polyfill-idea]
+== Polyfill Idea
+For all browsers that do not support the `@scope` at-rule, the polyfill is active.
+
+On Shell UI application start, a MutationObserver is created that watches all changes (DOM structure, attributes) of the document.body node and its children. Then, when the observer detects a batch of mutations, the style sheet update happens.
+
+Additionally, the following operations cause style sheets to be updated:
+
+* `appendChild` call for any HTMLElement
+* `className` property assignment for any HTMLElement
+* `classList` object calls for any HTMLElement:
+** `add`
+** `remove`
+** `replace`
+** `toggle`
+* style sheet content change (a MutationObserver created for each scoped style sheet)
+
+[#style-sheet-consideration]
+=== Style Sheet Consideration
+Every style sheet containing at least one https://developer.mozilla.org/en-US/docs/Web/CSS/@supports[@supports] rule will be considered for the polyfill. The polyfill will try to deconstruct the `@scope` rule that should be wrapped by the https://developer.mozilla.org/en-US/docs/Web/CSS/@supports[@supports] to find out what was the original scoping.
+
+[#style-sheets-update]
+=== Style Sheets Update
+Each style sheet update has to be caused by appropriate mutations on a page. Based on those mutations, a subset of style sheets that require an update is identified and necessary changes are applied to ensure the rules are correctly updated.
+
+Style sheet update in detail:
+
+. If the style sheet has not been transformed yet, it is transformed into a scoped style sheet. It extracts the scope information from the supports rule and saves it in the https://github.com/onecx/onecx-shell-ui/blob/develop/src/scope-polyfill/data.ts[OcxCSSStyleSheet interface]. It then moves the supports rules to the top level and applies the initial scope.
+. For each rule that has to be scoped in the style sheet:
+.. it is checked if the rule needs to be updated based on the mutations that caused the update
+.. the rule's selector is updated
+... a query(`document.querySelectorAll()`) to find all elements fulfilling the rule's original selector are found in the scope
+... `:where` selector is appended to the rule's original selector with a selector for each found element
+... `:root > :nth-child(x) > :nth-child(y) > ...` selector is used to select every element
+.. the rule's children are updated
+
+For example, if the original selector is .custom-class, and the matching elements are the second child of the first child of the root element, the updated selector would be .custom-class:where(:nth-child(1) > :nth-child(2)).
+
+This approach ensures that the scoped styles are applied correctly, even in browsers that do not support the native @scope CSS rule.
