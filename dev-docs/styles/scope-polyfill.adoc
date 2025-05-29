@@ -20,15 +20,15 @@ Additionally, the following operations cause style sheets to be updated:
 * `appendChild` call for any HTMLElement
 * `className` property assignment for any HTMLElement
 * `classList` object calls for any HTMLElement:
-** `add` call
-** `remove` call
-** `replace` call
-** `toggle` call
+** `add`
+** `remove`
+** `replace`
+** `toggle`
 * style sheet content change (a MutationObserver created for each scoped style sheet)
 
 [#style-sheet-consideration]
 === Style Sheet Consideration
-Every style sheet containing at least one `@supports` rule will be considered for the polyfill. The polyfill will try to deconstruct the `@scope` rule that should be wrapped by the `@supports` to find out what was the original scoping.
+Every style sheet containing at least one https://developer.mozilla.org/en-US/docs/Web/CSS/@supports[@supports] rule will be considered for the polyfill. The polyfill will try to deconstruct the `@scope` rule that should be wrapped by the https://developer.mozilla.org/en-US/docs/Web/CSS/@supports[@supports] to find out what was the original scoping.
 
 [#style-sheets-update]
 === Style Sheets Update
@@ -36,7 +36,7 @@ Each style sheet update has to be caused by appropriate mutations on a page. Bas
 
 Style sheet update in detail:
 
-. If the style sheet has not been transformed yet, it is transformed into a scoped style sheet. It extracts the scope information from the supports rule and saves it in the OcxCSSStyleSheet interface. It then moves the supports rules to the top level and applies the initial scope.
+. If the style sheet has not been transformed yet, it is transformed into a scoped style sheet. It extracts the scope information from the supports rule and saves it in the https://github.com/onecx/onecx-shell-ui/blob/develop/src/scope-polyfill/data.ts[OcxCSSStyleSheet interface]. It then moves the supports rules to the top level and applies the initial scope.
 . For each rule that has to be scoped in the style sheet:
 .. it is checked if the rule needs to be updated based on the mutations that caused the update
 .. the rule's selector is updated
