@@ -1,12 +1,8 @@
 import { Component, Inject, Input, OnInit, Optional } from '@angular/core'
-import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
+import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '../../utils/has-permission-checker'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import { UserService } from '@onecx/angular-integration-interface'
 
-/**
- * @deprecated
- * Please import from `@onecx/angular-utils` instead.
- */
 @Component({
   selector: 'ocx-portal-page',
   templateUrl: './portal-page.component.html',
