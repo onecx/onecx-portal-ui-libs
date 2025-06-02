@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { UserService } from '@onecx/angular-integration-interface'
 import { HAS_PERMISSION_CHECKER } from '../utils/has-permission-checker'
-import { Observable, of } from 'rxjs'
+import { Observable } from 'rxjs'
 
 @Injectable({ providedIn: 'root' })
 export class PermissionService {
