@@ -9,7 +9,7 @@ export class PermissionService {
   private hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
   constructor() {
     if (!(this.hasPermissionChecker || this.userService)) {
-      throw 'UserService or HasPermissionChecker have to be provided to check permissions!'
+      throw new Error('UserService or HasPermissionChecker have to be provided to check permissions!')
     }
   }
 
