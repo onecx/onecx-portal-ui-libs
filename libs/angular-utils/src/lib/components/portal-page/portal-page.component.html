@@ -5,9 +5,9 @@
 </div>
 
 <ng-template #noAccess>
-  <h3>Unauthorized</h3>
+  <h3>{{'OCX_PORTAL_PAGE.UNAUTHORIZED_TITLE' | translate}}</h3>
   <p>
-    Sorry, you do not have the permission required to view this page.
-    <span>Missing permission key: '{{ permission }}'</span>
+    {{'OCX_PORTAL_PAGE.UNAUTHORIZED_MESSAGE' | translate}}
+    <span>{{'OCX_PORTAL_PAGE.MISSING_PERMISSION' | translate : {permission: permission} }}</span>
   </p>
 </ng-template>
