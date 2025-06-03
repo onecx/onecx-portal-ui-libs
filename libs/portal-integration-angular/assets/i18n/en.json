@@ -218,10 +218,5 @@
   "OCX_DATA_LOADING_ERROR": {
     "TITLE": "The data could not be loaded.",
     "MESSAGE": "This may have the following reasons:\n The data does not exist or no longer exists.\n The data could not be loaded due to an error in the system.\n You do not have the necessary permission to load the data.\n Please contact the support if you think this happened due to a system error."
-  },
-  "OCX_PORTAL_PAGE": {
-    "UNAUTHORIZED_TITLE": "Unauthorized KEY",
-    "UNAUTHORIZED_MESSAGE": "Sorry, you do not have the permission required to view this page.",
-    "MISSING_PERMISSION": "Missing permission key: {{permission}}"
   }
 }

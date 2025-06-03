@@ -218,10 +218,5 @@
   "OCX_DATA_LOADING_ERROR": {
     "TITLE": "Die Daten konnten nicht geladen werden.",
     "MESSAGE": "Dies kann folgende Gründe haben: \n - Die Daten existieren nicht oder nicht mehr. \n - Die Daten konnten aufgrund eines Fehlers im System nicht geladen werden. \n - Ihnen fehlt die nötige Berechtigung um die Daten zu laden. \nBitte kontaktieren Sie den Support, wenn Sie glauben, dass es sich hierbei um einen Fehler des Systems handelt."
-  },
-  "OCX_PORTAL_PAGE": {
-    "UNAUTHORIZED_TITLE": "Nicht autorisiert",
-    "UNAUTHORIZED_MESSAGE": "Leider verfügen Sie nicht über die erforderliche Berechtigung zum Anzeigen dieser Seite.",
-    "MISSING_PERMISSION": "Fehlender Berechtigungsschlüssel: {{permission}}"
   }
 }
