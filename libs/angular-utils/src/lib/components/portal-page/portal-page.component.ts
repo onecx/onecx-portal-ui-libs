@@ -1,13 +1,31 @@
-import { Component, Input, OnInit, inject } from '@angular/core'
+import { Component, Input, LOCALE_ID, OnInit, inject } from '@angular/core'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
-import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
+import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '../../utils/has-permission-checker'
 import { from, Observable, shareReplay } from 'rxjs'
+import { CommonModule } from '@angular/common'
+import { TranslateModule } from '@ngx-translate/core'
+import { TRANSLATION_PATH } from '../../utils/create-translate-loader.utils'
 
 @Component({
-  standalone: false,
   selector: 'ocx-portal-page',
   templateUrl: './portal-page.component.html',
   styleUrls: ['./portal-page.component.scss'],
+  standalone: true,
+  imports: [CommonModule, TranslateModule],
+  providers: [
+    {
+      provide: LOCALE_ID,
+      useFactory: (userService: UserService) => {
+        return userService.lang$.getValue()
+      },
+      deps: [UserService],
+    },
+    {
+      provide: TRANSLATION_PATH,
+      useValue: './onecx-angular-utils/assets/i18n/',
+      multi: true,
+    },
+  ],
 })
 export class PortalPageComponent implements OnInit {
   private appState = inject(AppStateService)

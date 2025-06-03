@@ -37,7 +37,6 @@ export * from './lib/components/loading-indicator/loading-indicator.component'
 export * from './lib/components/dialog/dialog-content/dialog-content.component'
 export * from './lib/components/dialog/dialog-inline/dialog-inline.component'
 export * from './lib/components/dialog/dialog-footer/dialog-footer.component'
-export * from './lib/components/portal-page/portal-page.component'
 export * from './lib/components/error-component/global-error.component'
 
 // services

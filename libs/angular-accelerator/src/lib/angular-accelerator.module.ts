@@ -46,7 +46,6 @@ import { DialogFooterComponent } from './components/dialog/dialog-footer/dialog-
 import { DialogInlineComponent } from './components/dialog/dialog-inline/dialog-inline.component'
 import { GlobalErrorComponent } from './components/error-component/global-error.component'
 import { LoadingIndicatorComponent } from './components/loading-indicator/loading-indicator.component'
-import { PortalPageComponent } from './components/portal-page/portal-page.component'
 import { BasicDirective } from './directives/basic.directive'
 import { LoadingIndicatorDirective } from './directives/loading-indicator.directive'
 
@@ -102,7 +101,6 @@ function appInitializer(userService: UserService) {
     OcxContentDirective,
     OcxContentContainerDirective,
     GlobalErrorComponent,
-    PortalPageComponent,
     LoadingIndicatorComponent,
     LoadingIndicatorDirective,
     BasicDirective,
@@ -166,7 +164,6 @@ function appInitializer(userService: UserService) {
     OcxContentDirective,
     OcxContentContainerDirective,
     GlobalErrorComponent,
-    PortalPageComponent,
     LoadingIndicatorComponent,
     LoadingIndicatorDirective,
     BasicDirective,
