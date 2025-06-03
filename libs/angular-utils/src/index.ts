@@ -21,6 +21,7 @@ export * from './lib/model/remote-component-config.model'
 export * from './lib/services/translation-cache.service'
 export * from './lib/services/theme-config.service'
 export * from './lib/services/custom-use-style.service'
+export * from './lib/services/permission.service'
 
 // Theme
 export * from './lib/theme/application-config'
