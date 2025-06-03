@@ -13,13 +13,13 @@ export class PermissionService {
     }
   }
 
-  hasPermission(permissionKey: string | string[]): Observable<boolean> | boolean {
+  hasPermission(permissionKey: string | string[]): Promise<boolean> {
     if (this.hasPermissionChecker) {
-      return this.hasPermissionChecker.hasPermission(permissionKey)
+      return Promise.resolve(this.hasPermissionChecker.hasPermission(permissionKey))
     } else if (this.userService) {
-      return this.userService.hasPermission(permissionKey)
+      return Promise.resolve(this.userService.hasPermission(permissionKey))
     }
-    return false
+    return Promise.resolve(false);
   }
 
   getPermissions(): Observable<string[]> | undefined {
