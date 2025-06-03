@@ -1,3 +1,13 @@
+## [5.41.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.40.1...v5.41.0) (2025-06-03)
+
+### Features
+
+* permission service ([#759](https://github.com/onecx/onecx-portal-ui-libs/issues/759)) ([65c0e1e](https://github.com/onecx/onecx-portal-ui-libs/commit/65c0e1e310cd326f99d071d383b64883162b1c91))
+
+### Refactoring
+
+* copy portal-page to angular-utils ([#760](https://github.com/onecx/onecx-portal-ui-libs/issues/760)) ([69caeab](https://github.com/onecx/onecx-portal-ui-libs/commit/69caeab640d2d5ab7902e11f792e94088887c2e7))
+
 ## [5.40.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.40.0...v5.40.1) (2025-05-28)
 
 ### Bug Fixes
