@@ -37,7 +37,6 @@ export class PortalPageComponent implements OnInit {
   @Input() pageName = ''
   @Input() applicationId = ''
 
-  collapsed = false
   cachedHasPermissionChecker$: Observable<boolean> | undefined
   cachedUserService$: Observable<boolean> | undefined
 
