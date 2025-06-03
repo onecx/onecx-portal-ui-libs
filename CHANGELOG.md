@@ -1,3 +1,11 @@
+## [6.0.0-rc.14](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.13...v6.0.0-rc.14) (2025-06-03)
+
+### Features
+
+* move to angular-utils ([#754](https://github.com/onecx/onecx-portal-ui-libs/issues/754)) ([1945a80](https://github.com/onecx/onecx-portal-ui-libs/commit/1945a80a9ffe97a50e2c812ff183a8a3a6cf6b7e))
+* portal-layout-styles removed ([#746](https://github.com/onecx/onecx-portal-ui-libs/issues/746)) ([a87f711](https://github.com/onecx/onecx-portal-ui-libs/commit/a87f7116165331d3bd89efc2a2cb5e0c0c455321))
+* theming styling documentation ([#745](https://github.com/onecx/onecx-portal-ui-libs/issues/745)) ([30c5eda](https://github.com/onecx/onecx-portal-ui-libs/commit/30c5edaba1761daefd9eaff75fa57e942ded270e))
+
 ## [6.0.0-rc.13](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.12...v6.0.0-rc.13) (2025-05-27)
 
 ### Features
