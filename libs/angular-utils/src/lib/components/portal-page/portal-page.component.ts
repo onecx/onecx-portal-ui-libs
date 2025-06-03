@@ -1,16 +1,31 @@
-import { Component, Inject, Input, OnInit, Optional } from '@angular/core'
-import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
+import { Component, Inject, Input, LOCALE_ID, OnInit, Optional } from '@angular/core'
+import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '../../utils/has-permission-checker'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import { UserService } from '@onecx/angular-integration-interface'
+import { CommonModule } from '@angular/common'
+import { TranslateModule } from '@ngx-translate/core'
+import { TRANSLATION_PATH } from '../../utils/create-translate-loader.utils'
 
-/**
- * @deprecated
- * Please import from `@onecx/angular-utils` instead.
- */
 @Component({
   selector: 'ocx-portal-page',
   templateUrl: './portal-page.component.html',
   styleUrls: ['./portal-page.component.scss'],
+  standalone: true,
+  imports: [CommonModule, TranslateModule],
+  providers: [
+    {
+      provide: LOCALE_ID,
+      useFactory: (userService: UserService) => {
+        return userService.lang$.getValue()
+      },
+      deps: [UserService],
+    },
+    {
+      provide: TRANSLATION_PATH,
+      useValue: './onecx-angular-utils/assets/i18n/',
+      multi: true,
+    },
+  ],
 })
 export class PortalPageComponent implements OnInit {
   @Input() permission = ''
@@ -18,18 +33,16 @@ export class PortalPageComponent implements OnInit {
   @Input() pageName = ''
   @Input() applicationId = ''
 
-  collapsed = false
-
   constructor(
     private appState: AppStateService,
     private userService: UserService,
     @Inject(HAS_PERMISSION_CHECKER)
     @Optional()
-    private hasPermissionChecker?: HasPermissionChecker,
+    private hasPermissionChecker?: HasPermissionChecker
   ) {}
 
   hasAccess() {
-    if(this.hasPermissionChecker) {
+    if (this.hasPermissionChecker) {
       return this.permission ? this.hasPermissionChecker.hasPermission(this.permission) : true
     }
     return this.permission ? this.userService.hasPermission(this.permission) : true
