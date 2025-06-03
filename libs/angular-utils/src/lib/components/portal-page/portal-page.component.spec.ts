@@ -8,8 +8,7 @@ describe('PortalPageComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-    declarations: [PortalPageComponent],
-    imports: [],
+    imports: [PortalPageComponent],
     providers: [provideHttpClient(withInterceptorsFromDi())]
 }).compileComponents()
   }))
