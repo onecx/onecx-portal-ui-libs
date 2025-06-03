@@ -33,8 +33,6 @@ export class PortalPageComponent implements OnInit {
   @Input() pageName = ''
   @Input() applicationId = ''
 
-  collapsed = false
-
   constructor(
     private appState: AppStateService,
     private userService: UserService,
