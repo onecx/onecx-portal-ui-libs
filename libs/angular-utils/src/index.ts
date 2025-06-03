@@ -26,3 +26,6 @@ export * from './lib/services/permission.service'
 // Theme
 export * from './lib/theme/application-config'
 export * from './lib/theme/preset/custom-preset'
+
+// Components
+export * from './lib/components/portal-page/portal-page.component'

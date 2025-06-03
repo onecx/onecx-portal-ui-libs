@@ -10,8 +10,8 @@ describe('PortalPageComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [PortalPageComponent],
       imports: [
+        PortalPageComponent,
         TranslateTestingModule.withTranslations({
           en: require('./../../../../assets/i18n/en.json'),
           de: require('./../../../../assets/i18n/de.json'),
