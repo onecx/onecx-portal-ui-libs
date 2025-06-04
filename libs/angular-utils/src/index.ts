@@ -16,3 +16,7 @@ export * from './lib/model/remote-component-config.model'
 
 // Services
 export * from './lib/services/translation-cache.service'
+export * from './lib/services/permission.service'
+
+// Components
+export * from './lib/components/portal-page/portal-page.component'

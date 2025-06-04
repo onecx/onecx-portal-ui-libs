@@ -1,0 +1,13 @@
+<div class="content-wrapper">
+  <ng-container *ngIf="hasAccess(); else noAccess">
+    <ng-content></ng-content>
+  </ng-container>
+</div>
+
+<ng-template #noAccess>
+  <h3>{{'OCX_PORTAL_PAGE.UNAUTHORIZED_TITLE' | translate}}</h3>
+  <p>
+    {{'OCX_PORTAL_PAGE.UNAUTHORIZED_MESSAGE' | translate}}
+    <span>{{'OCX_PORTAL_PAGE.MISSING_PERMISSION' | translate : {permission: permission} }}</span>
+  </p>
+</ng-template>
