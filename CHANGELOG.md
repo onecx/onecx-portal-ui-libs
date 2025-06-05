@@ -1,3 +1,9 @@
+## [5.41.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.41.0...v5.41.1) (2025-06-05)
+
+### Bug Fixes
+
+* fix permission service + translation handling ([#763](https://github.com/onecx/onecx-portal-ui-libs/issues/763)) ([5d7d343](https://github.com/onecx/onecx-portal-ui-libs/commit/5d7d3435c6b26177443107ca1abb8cac3371bfe7))
+
 ## [5.41.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.40.1...v5.41.0) (2025-06-03)
 
 ### Features
