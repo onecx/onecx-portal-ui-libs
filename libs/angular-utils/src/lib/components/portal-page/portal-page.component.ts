@@ -1,10 +1,9 @@
-import { Component, Inject, Input, LOCALE_ID, OnInit, Optional } from '@angular/core'
-import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '../../utils/has-permission-checker'
+import { Component, Input, OnInit } from '@angular/core'
 import { AppStateService } from '@onecx/angular-integration-interface'
-import { UserService } from '@onecx/angular-integration-interface'
 import { CommonModule } from '@angular/common'
 import { TranslateModule } from '@ngx-translate/core'
-import { TRANSLATION_PATH } from '../../utils/create-translate-loader.utils'
+import { PermissionService } from '../../services/permission.service'
+import { of } from 'rxjs'
 
 @Component({
   selector: 'ocx-portal-page',
@@ -12,40 +11,20 @@ import { TRANSLATION_PATH } from '../../utils/create-translate-loader.utils'
   styleUrls: ['./portal-page.component.scss'],
   standalone: true,
   imports: [CommonModule, TranslateModule],
-  providers: [
-    {
-      provide: LOCALE_ID,
-      useFactory: (userService: UserService) => {
-        return userService.lang$.getValue()
-      },
-      deps: [UserService],
-    },
-    {
-      provide: TRANSLATION_PATH,
-      useValue: './onecx-angular-utils/assets/i18n/',
-      multi: true,
-    },
-  ],
 })
 export class PortalPageComponent implements OnInit {
   @Input() permission = ''
   @Input() helpArticleId = ''
   @Input() pageName = ''
   @Input() applicationId = ''
-
+  private trueObservable = of(true)
   constructor(
     private appState: AppStateService,
-    private userService: UserService,
-    @Inject(HAS_PERMISSION_CHECKER)
-    @Optional()
-    private hasPermissionChecker?: HasPermissionChecker
+    private permissionService: PermissionService
   ) {}
 
   hasAccess() {
-    if (this.hasPermissionChecker) {
-      return this.permission ? this.hasPermissionChecker.hasPermission(this.permission) : true
-    }
-    return this.permission ? this.userService.hasPermission(this.permission) : true
+    return this.permission ? this.permissionService.hasPermission(this.permission) : this.trueObservable
   }
 
   ngOnInit(): void {
