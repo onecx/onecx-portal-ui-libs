@@ -17,7 +17,7 @@ export class PortalPageComponent implements OnInit {
   @Input() helpArticleId = ''
   @Input() pageName = ''
   @Input() applicationId = ''
-  private defaultPermissionObs = of(true)
+  private trueObservable = of(true)
   constructor(
     private appState: AppStateService,
     private permissionService: PermissionService
