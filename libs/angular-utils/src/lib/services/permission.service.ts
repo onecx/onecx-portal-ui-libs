@@ -37,9 +37,6 @@ export class PermissionService {
    * @returns An observable that emits true if the user has the permission(s), false otherwise.
    */
   hasPermission(permissionKey: string | string[]): Observable<boolean> {
-    if (!this.availableHasPermissionChecker) {
-      return this.falseObservable
-    }
     return this.lookupPermission(permissionKey)
   }
 
