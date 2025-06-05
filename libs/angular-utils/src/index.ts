@@ -29,3 +29,8 @@ export * from './lib/theme/preset/custom-preset'
 
 // Components
 export * from './lib/components/portal-page/portal-page.component'
+
+// Providers
+export * from './lib/providers/angular-utils.providers'
+export * from './lib/providers/translation-path.providers'
+export * from './lib/providers/permission-service.providers'
