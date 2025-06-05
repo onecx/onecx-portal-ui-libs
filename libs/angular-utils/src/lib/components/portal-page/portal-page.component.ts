@@ -24,7 +24,7 @@ export class PortalPageComponent implements OnInit {
   ) {}
 
   hasAccess() {
-    return this.permission ? this.permissionService.hasPermission(this.permission) : this.defaultPermissionObs
+    return this.permission ? this.permissionService.hasPermission(this.permission) : this.trueObservable
   }
 
   ngOnInit(): void {
