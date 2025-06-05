@@ -3,6 +3,7 @@ import { PortalPageComponent } from './portal-page.component'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
+import { provideAngularUtils } from '../../providers/angular-utils.providers'
 
 describe('PortalPageComponent', () => {
   let component: PortalPageComponent
@@ -17,7 +18,7 @@ describe('PortalPageComponent', () => {
           de: require('./../../../../assets/i18n/de.json'),
         }),
       ],
-      providers: [provideHttpClient(withInterceptorsFromDi()), provideAppStateServiceMock()],
+      providers: [provideAngularUtils() ,provideHttpClient(withInterceptorsFromDi()), provideAppStateServiceMock()],
     }).compileComponents()
   }))
 
