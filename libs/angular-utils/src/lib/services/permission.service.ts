@@ -50,7 +50,7 @@ export class PermissionService {
       return this.falseObservable
     }
 
-    const cacheKey = Array.isArray(permissionKey) ? permissionKey.join() : permissionKey
+    const cacheKey = JSON.stringify(permissionKey)
 
     if (!this.cachedPermissions.has(cacheKey)) {
       this.cachedPermissions.set(cacheKey, of(permissionChecker.hasPermission(permissionKey)))
