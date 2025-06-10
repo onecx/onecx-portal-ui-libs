@@ -980,7 +980,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return ObjectUtils.resolveFieldData(object, key)
   }
 
-  getRowObjectFromMultiselectItem(value: MultiSelectItem, column: DataTableColumn) {
+  getRowObjectFromMultiselectItem(value: MultiSelectItem, column: DataTableColumn): Record<string, string | undefined> {
     return {
       [column.id]: value.label,
     }

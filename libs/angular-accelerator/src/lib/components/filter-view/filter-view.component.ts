@@ -292,7 +292,7 @@ export class FilterViewComponent implements OnInit {
     return ObjectUtils.resolveFieldData(object, key)
   }
 
-  getRowObjectFromFiterData(filter: Filter) {
+  getRowObjectFromFiterData(filter: Filter): Record<string, unknown> {
     return {
       [filter.columnId]: filter.value,
     }
