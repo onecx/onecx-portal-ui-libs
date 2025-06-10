@@ -1,20 +1,42 @@
 import { LOCALE_ID, Provider } from '@angular/core'
 import { TRANSLATION_PATH } from '../utils/create-translate-loader.utils'
-import { UserService } from '@onecx/angular-integration-interface'
+import { AppStateService, UserService } from '@onecx/angular-integration-interface'
+import { translationPathFactory } from '../utils/translation-path-factory.utils'
+import { REMOTE_COMPONENT_CONFIG } from '../model/injection-tokens'
+import { ReplaySubject } from 'rxjs'
+import { RemoteComponentConfig } from '../model/remote-component-config.model'
+import { remoteComponentTranslationPathFactory } from '../utils/remote-component-translation-path-factory.utils'
 
-export function provideTranslationPaths(): Provider[] {
+const localProvider = {
+  provide: LOCALE_ID,
+  useFactory: (userService: UserService) => {
+    return userService.lang$.getValue()
+  },
+  deps: [UserService],
+}
+
+export function provideTranslationPathsForMfe(): Provider[] {
   return [
-    {
-      provide: LOCALE_ID,
-      useFactory: (userService: UserService) => {
-        return userService.lang$.getValue()
-      },
-      deps: [UserService],
-    },
+    localProvider,
     {
       provide: TRANSLATION_PATH,
-      useValue: './onecx-angular-utils/assets/i18n/',
+      useFactory: (appStateService: AppStateService) =>
+        translationPathFactory('onecx-angular-utils/assets/i18n/')(appStateService),
       multi: true,
+      deps: [AppStateService],
+    },
+  ]
+}
+
+export function provideTranslationPathsForRemoteComponent(): Provider[] {
+  return [
+    localProvider,
+    {
+      provide: TRANSLATION_PATH,
+      useFactory: (remoteComponentConfig: ReplaySubject<RemoteComponentConfig>) =>
+        remoteComponentTranslationPathFactory('onecx-angular-utils/assets/i18n/')(remoteComponentConfig),
+      multi: true,
+      deps: [REMOTE_COMPONENT_CONFIG],
     },
   ]
 }

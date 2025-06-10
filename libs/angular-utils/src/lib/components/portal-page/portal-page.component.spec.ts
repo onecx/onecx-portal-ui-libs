@@ -9,9 +9,9 @@ describe('PortalPageComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-    imports: [PortalPageComponent],
-    providers: [provideAngularUtils(), provideHttpClient(withInterceptorsFromDi())]
-}).compileComponents()
+      imports: [PortalPageComponent],
+      providers: [provideAngularUtils({ contentType: 'microfrontend' }), provideHttpClient(withInterceptorsFromDi())],
+    }).compileComponents()
   }))
 
   beforeEach(() => {
