@@ -10,7 +10,9 @@
     "@onecx/angular-integration-interface": "^5.41.2",
     "@onecx/angular-webcomponents": "^5.41.2",
     "@onecx/angular-utils": "^5.41.2",
-    "@onecx/integration-interface": "^5.41.2"
+    "@onecx/integration-interface": "^5.41.2",
+    "@ngx-translate/core": "^15.0.0",
+    "primeng": "^17.18.6"
   },
   "dependencies": {},
   "publishConfig": {
