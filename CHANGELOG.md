@@ -1,3 +1,9 @@
+## [5.41.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.41.1...v5.41.2) (2025-06-10)
+
+### Bug Fixes
+
+* translation path providing for angular utils ([#765](https://github.com/onecx/onecx-portal-ui-libs/issues/765)) ([ce16ecc](https://github.com/onecx/onecx-portal-ui-libs/commit/ce16eccda1b949e31d29a3f23f54be92a477d778))
+
 ## [5.41.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.41.0...v5.41.1) (2025-06-05)
 
 ### Bug Fixes
