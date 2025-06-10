@@ -1,3 +1,9 @@
+## [5.42.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.41.2...v5.42.0) (2025-06-10)
+
+### Features
+
+* add toast handling to standalone shell ([#766](https://github.com/onecx/onecx-portal-ui-libs/issues/766)) ([eaa81a4](https://github.com/onecx/onecx-portal-ui-libs/commit/eaa81a40782a68fccff66db85758fcd3e5aaa07b))
+
 ## [5.41.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.41.1...v5.41.2) (2025-06-10)
 
 ### Bug Fixes
