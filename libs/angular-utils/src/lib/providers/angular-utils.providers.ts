@@ -4,13 +4,13 @@ import { provideTranslationPathsForMfe, provideTranslationPathsForRemoteComponen
 
 export type ContentType = 'microfrontend' | 'remoteComponent'
 
-export interface AngularUtilsProviderOptions {
+export interface AngularUtilsProviderConfig {
   contentType: ContentType
 }
 
-export function provideAngularUtils(options: AngularUtilsProviderOptions): Provider[] {
+export function provideAngularUtils(config: AngularUtilsProviderConfig): Provider[] {
   const providers = [...providePermissionService()]
-  providers.push(prepareTranslationPathProviders(options?.contentType))
+  providers.push(prepareTranslationPathProviders(config.contentType))
   return providers
 }
 
