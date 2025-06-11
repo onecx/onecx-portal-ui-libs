@@ -9,6 +9,7 @@ export * from './lib/utils/has-permission-checker-factory'
 export * from './lib/utils/scope.utils'
 export * from './lib/utils/styles'
 export * from './lib/utils/portal-api-configuration.utils'
+export * from './lib/utils/remote-component-translation-path-factory.utils'
 
 // Model
 export * from './lib/model/injection-tokens'
@@ -20,3 +21,8 @@ export * from './lib/services/permission.service'
 
 // Components
 export * from './lib/components/portal-page/portal-page.component'
+
+// Providers
+export * from './lib/providers/angular-utils.providers'
+export * from './lib/providers/translation-path.providers'
+export * from './lib/providers/permission-service.providers'

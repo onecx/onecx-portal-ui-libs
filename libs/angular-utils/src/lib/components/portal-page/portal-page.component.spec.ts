@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { PortalPageComponent } from './portal-page.component'
+import { provideAngularUtils } from '../../providers/angular-utils.providers'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 
 describe('PortalPageComponent', () => {
@@ -8,9 +9,9 @@ describe('PortalPageComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-    imports: [PortalPageComponent],
-    providers: [provideHttpClient(withInterceptorsFromDi())]
-}).compileComponents()
+      imports: [PortalPageComponent],
+      providers: [provideAngularUtils({ contentType: 'microfrontend' }), provideHttpClient(withInterceptorsFromDi())],
+    }).compileComponents()
   }))
 
   beforeEach(() => {
