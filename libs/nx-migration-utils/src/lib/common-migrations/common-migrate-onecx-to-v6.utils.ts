@@ -1,7 +1,6 @@
 import {
   addDependenciesToPackageJson,
   formatFiles,
-  installPackagesTask,
   readJson,
   removeDependenciesFromPackageJson,
   Tree,
@@ -149,8 +148,6 @@ export async function commonMigrateOnecxToV6(tree: Tree) {
   migratePrimeNgCalendar(tree, srcDirectoryPath)
   migrateStandaloneShell(tree, srcDirectoryPath)
 
-  installPackagesTask(tree, true)
-
   warnUserServiceHasPermission(tree, srcDirectoryPath)
   warnOcxPortalViewport(tree, srcDirectoryPath)
 
@@ -180,8 +177,6 @@ function removeOnecxKeycloakAuth(tree: Tree, directoryPath: string) {
 
   const keycloakModuleQuery = `Identifier[name="KeycloakAuthModule"]`
   replaceInFiles(tree, directoryPath, keycloakModuleQuery, '')
-
-  installPackagesTask(tree, true)
 }
 
 function removeOnecxPortalLayoutStyles(tree: Tree) {
@@ -203,8 +198,6 @@ function removeOnecxPortalLayoutStyles(tree: Tree) {
   removeOnecxPortalLayoutStylesFromJsonFiles(tree, rootPath, warnOptions)
 
   removeOnecxPortalLayoutStylesFromWebpack(tree)
-
-  installPackagesTask(tree, true)
 }
 
 function migratePrimeng(tree: Tree) {
