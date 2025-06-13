@@ -41,7 +41,6 @@ export * from './lib/components/error-component/global-error.component'
 
 // services
 export * from './lib/services/breadcrumb.service'
-export * from './lib/services/translation-connection.service'
 export * from './lib/services/translation-cache.service'
 export * from './lib/services/portal-dialog.service'
 export * from './lib/services/export-data.service'
