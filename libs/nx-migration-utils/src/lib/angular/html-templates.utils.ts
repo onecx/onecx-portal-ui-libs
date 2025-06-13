@@ -1,7 +1,7 @@
 import { Tree, visitNotIgnoredFiles } from '@nx/devkit'
 import { ast, query, replace } from '@phenomnomnominal/tsquery'
 import { dirname, join } from 'path'
-import { isStringLiteral, Node } from 'typescript'
+import { isStringLiteral, Node, ScriptKind } from 'typescript'
 import { hasHtmlTag } from '../utils/validation/has-html-tag.utils'
 import { replaceTagInHtml } from '../utils/modification/replace-tag-in-html.utils'
 
@@ -61,14 +61,19 @@ export function replaceTagInInlineTemplates(tree: Tree, filePath: string, oldTag
   const querySelectorInlineTemplate =
     'PropertyAssignment:has(Identifier[name="template"]) > NoSubstitutionTemplateLiteral'
 
-  const updatedContent = replace(fileContent, querySelectorInlineTemplate, (node) => {
-    const originalText = node.getText()
+  const updatedContent = replace(
+    fileContent,
+    querySelectorInlineTemplate,
+    (node) => {
+      const originalText = node.getText()
 
-    if (!hasHtmlTag(tree, originalText, oldTagName)) return originalText
+      if (!hasHtmlTag(tree, originalText, oldTagName)) return originalText
 
-    const updatedHtml = replaceTagInHtml(tree, originalText, oldTagName, newTagName)
-    return updatedHtml
-  })
+      const updatedHtml = replaceTagInHtml(tree, originalText, oldTagName, newTagName)
+      return updatedHtml
+    },
+    ScriptKind.TS
+  )
 
   if (updatedContent !== fileContent) {
     tree.write(filePath, updatedContent)
