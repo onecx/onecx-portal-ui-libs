@@ -222,12 +222,9 @@ export function replaceImportsInFile(
  * @param replacement - The module and value replacement configuration.
  * @returns The updated AST, or null if no changes were made.
  */
-export function applyImportReplacement(
-  contentAst: SourceFile,
-  replacement: ModuleImportReplacement
-): SourceFile | null {
+export function applyImportReplacement(contenAst: SourceFile, replacement: ModuleImportReplacement): SourceFile | null {
   try {
-    const importDecl = findImportDeclaration(contentAst, replacement.oldModuleSpecifier)
+    const importDecl = findImportDeclaration(contenAst, replacement.oldModuleSpecifier)
     if (!importDecl?.importClause) {
       return null
     }
@@ -239,12 +236,11 @@ export function applyImportReplacement(
     )
 
     if (!updatedImportDeclaration && !remainingImportDeclaration) {
-      const updatedStatements = factory.createNodeArray(contentAst.statements.filter((stmt) => stmt !== importDecl))
-      return factory.updateSourceFile(contentAst, updatedStatements)
+      return null
     }
 
     const updatedStatements = factory.createNodeArray(
-      contentAst.statements.flatMap((statement): Statement[] => {
+      contenAst.statements.flatMap((statement): Statement[] => {
         if (statement === importDecl) {
           return [remainingImportDeclaration, updatedImportDeclaration].filter(
             (stmt): stmt is ImportDeclaration => stmt !== null
@@ -254,7 +250,7 @@ export function applyImportReplacement(
       })
     )
 
-    return factory.updateSourceFile(contentAst, updatedStatements)
+    return factory.updateSourceFile(contenAst, updatedStatements)
   } catch (error) {
     console.error(`Error applying import replacement for module "${replacement.oldModuleSpecifier}": `, error)
     return null
@@ -264,7 +260,6 @@ export function applyImportReplacement(
 /**
  * Updates an import declaration by replacing specific named imports and updating the module specifier.
  * Only creates a new import if at least one named import is matched and replaced.
- * Remove import statement if all named imports are removed.
  * @param originalImport - The original import declaration node.
  * @param importValueReplacements - List of named import replacements.
  * @param newModuleName - The new module specifier.
@@ -281,12 +276,6 @@ export function updateImportDeclaration(
   }
 
   const { matchedSpecifiers, unmatchedSpecifiers } = splitSpecifiers(namedImports.elements, importValueReplacements)
-
-  const allRemoved = importValueReplacements.every((r) => r.newValue.trim() === '') && unmatchedSpecifiers.length === 0
-
-  if (allRemoved) {
-    return { updatedImportDeclaration: null, remainingImportDeclaration: null }
-  }
 
   const updatedImportDeclaration = createUpdatedImport(matchedSpecifiers, newModuleName)
   const remainingImportDeclaration = createRemainingImport(
@@ -316,7 +305,6 @@ export function createUpdatedImport(
 
 /**
  * Creates a remaining import declaration with unmatched specifiers.
- * If no unmatched specifiers remain, remove the entire import.
  * To preserve the parts of the import that are not being changed.
  * @param unmatchedSpecifiers - The unmatched import specifiers.
  * @param originalCount - The original count of specifiers.
@@ -333,15 +321,11 @@ export function createRemainingImport(
 ): ImportDeclaration | null {
   const originalModuleName = isStringLiteral(originalImport.moduleSpecifier) ? originalImport.moduleSpecifier.text : ''
 
-  if (unmatchedSpecifiers.length === 0) {
-    return null
-  }
+  const shouldCreate =
+    unmatchedSpecifiers.length > 0 &&
+    (unmatchedSpecifiers.length !== originalCount || originalModuleName !== newModuleName)
 
-  if (unmatchedSpecifiers.length === originalCount && originalModuleName === newModuleName) {
-    return originalImport
-  }
-
-  return buildImportDeclaration(unmatchedSpecifiers, originalModuleName)
+  return shouldCreate ? buildImportDeclaration(unmatchedSpecifiers, originalModuleName) : null
 }
 
 /**
