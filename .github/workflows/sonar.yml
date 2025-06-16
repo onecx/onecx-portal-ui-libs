@@ -21,18 +21,26 @@ jobs:
       - name: Read affected lib from coverage-directories.txt
         id: set-matrix
         run: |
-          # This step creates a matrix containing the names of the affected libraries found in the reports directory. These names were previously identified and written to a file by the pathfinder-lcov-normalizer
+          if [ -s coverage-directories.txt ]; then
 
-          # Read the contents of coverage-directories.txt into a JSON array
-          # Each line in the file becomes an element in the array
-          # -R: read raw strings
-          # -s: read the entire input as a single string
-          # -c: compact output (JSON array)
-          # map(select(length > 0)): remove empty lines
-          matrix=$(cat coverage-directories.txt | jq -R -s -c 'split("\n") | map(select(length > 0))')
-
+            # This step creates a matrix containing the names of the affected libraries found in the reports directory. These names were previously identified and written to a file by the pathfinder-lcov-normalizer
+            # Read the contents of coverage-directories.txt into a JSON array
+            # Each line in the file becomes an element in the array
+            # -R: read raw strings
+            # -s: read the entire input as a single string
+            # -c: compact output (JSON array)
+            # map(select(length > 0)): remove empty lines
+            matrix=$(cat coverage-directories.txt | jq -R -s -c 'split("\n") | map(select(length > 0))')
+            run_scan=true
+          else
+            matrix='[]'
+            run_scan=false
+          fi
           # Export the result as a GitHub Actions output variable named "matrix"
           echo "matrix=$matrix" >> $GITHUB_OUTPUT
+
+          # Export a flag indicating whether the scan job should run (true if the file is not empty)
+          echo "run_scan=$run_scan" >> $GITHUB_OUTPUT
 
   sonar-scan:
     needs: set-matrix

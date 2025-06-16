@@ -6,32 +6,44 @@ runs:
   steps:
     - name: extract relavent paths
       run: |
-        # Find all subdirectories in the 'reports' folder
-        paths=$(find reports -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)
+        if [ -d 'reports' ]; then
+          # Find all subdirectories in the 'reports' folder
+          paths=$(find reports -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)
 
-        for path in $paths; do
-          echo "reports/$path/coverage/lcov.info"
-        done > sonar-lcov-files.txt
+          for path in $paths; do
+            echo "reports/$path/coverage/lcov.info"
+          done > sonar-lcov-files.txt
 
-        for path in $paths; do
-          echo "$path"
-        done > coverage-directories.txt
+          for path in $paths; do
+            echo "$path"
+          done > coverage-directories.txt
+
+        else
+        # Create empty files if 'reports' does not exist
+          touch sonar-lcov-files.txt
+          touch coverage-directories.txt
+        fi
       shell: bash
 
     - name: modify lcov.info files
       run: |
-        # Read each line from sonar-lcov-files.txt
-        while IFS= read -r path; do
-          if [ -f "$path" ]; then
+        if [ ! -s sonar-lcov-files.txt ]; then 
+          echo "No lcov files to modify - sonar-lcov-files.txt is empty"
+        else
 
-            # Modify the lcov.info file in-place: prepend a slash to each 'SF:' line
-            # This ensures absolute paths for SonarCloud 
-            # "SF:home/..." -> "SF:/home/..." 
-            sed -i 's|^SF:|SF:/|' "$path"
-          else
-            echo "File not found: $path"
-          fi
-        done < sonar-lcov-files.txt
+          # Read each line from sonar-lcov-files.txt
+          while IFS= read -r path; do
+            if [ -f "$path" ]; then
+
+              # Modify the lcov.info file in-place: prepend a slash to each 'SF:' line
+              # This ensures absolute paths for SonarCloud 
+              # "SF:home/..." -> "SF:/home/..." 
+              sed -i 's|^SF:|SF:/|' "$path"
+            else
+              echo "File not found: $path"
+            fi
+          done < sonar-lcov-files.txt
+        fi
       shell: bash
 
     - name: Upload artifacts
