@@ -1,3 +1,14 @@
+## [5.43.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.42.0...v5.43.0) (2025-06-16)
+
+### Features
+
+* add option to disable portal layout styles ([#771](https://github.com/onecx/onecx-portal-ui-libs/issues/771)) ([6bf11b4](https://github.com/onecx/onecx-portal-ui-libs/commit/6bf11b416111ec0850316f8aa6ef703fc837f635))
+* added issuer in user profile ([#772](https://github.com/onecx/onecx-portal-ui-libs/issues/772)) ([d243b25](https://github.com/onecx/onecx-portal-ui-libs/commit/d243b253cd808d38e7a46b744c7c6ef759d38bd9))
+
+### Bug Fixes
+
+* filter filter-values null, undefined, empty ([#756](https://github.com/onecx/onecx-portal-ui-libs/issues/756)) ([8cb435e](https://github.com/onecx/onecx-portal-ui-libs/commit/8cb435e7ad1622fdccf57ae608c9423780e704b2))
+
 ## [5.42.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.41.2...v5.42.0) (2025-06-10)
 
 ### Features
