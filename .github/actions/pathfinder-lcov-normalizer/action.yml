@@ -1,5 +1,5 @@
-name: 'pathfinder-modify_lcov'
-description: 'Find paths and modify lcov.info paths for coverage reporting'
+name: 'pathfinder-lcov-normalizer'
+description: 'Find coverage paths and modify lcov.info files for SonarCloud compatibility'
 
 runs:
   using: 'composite'
@@ -11,27 +11,27 @@ runs:
 
         for path in $paths; do
           echo "reports/$path/coverage/lcov.info"
-        done > lcov_paths.txt
+        done > sonar-lcov-files.txt
 
         for path in $paths; do
           echo "$path"
-        done > raw_paths.txt
+        done > coverage-directories.txt
       shell: bash
 
     - name: modify lcov.info files
       run: |
-        # Read each line from lcov_paths.txt
+        # Read each line from sonar-lcov-files.txt
         while IFS= read -r path; do
           if [ -f "$path" ]; then
 
             # Modify the lcov.info file in-place: prepend a slash to each 'SF:' line
-            # This ensures absolute paths for SonarQube 
+            # This ensures absolute paths for SonarCloud 
             # "SF:home/..." -> "SF:/home/..." 
             sed -i 's|^SF:|SF:/|' "$path"
           else
             echo "File not found: $path"
           fi
-        done < lcov_paths.txt
+        done < sonar-lcov-files.txt
       shell: bash
 
     - name: Upload artifacts
@@ -39,6 +39,6 @@ runs:
       with:
         name: paths
         path: |
-          raw_paths.txt
+          coverage-directories.txt
         retention-days: 1
         if-no-files-found: ignore

@@ -2,12 +2,6 @@ name: build
 
 on:
   workflow_call:
-    inputs:
-      node:
-        description: 'Node version'
-        default: '20'
-        required: false
-        type: string
 
 jobs:
   build-affected-libs:
@@ -20,8 +14,6 @@ jobs:
 
       - name: Setup Environment
         uses: ./.github/actions/setup-environment
-        with:
-          node-version: ${{ inputs.node }}
 
       - name: Run affected Build
         run: |

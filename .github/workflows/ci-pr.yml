@@ -14,23 +14,6 @@ jobs:
     with:
       failOnSeverity: 'high'
 
-  codeql:
-    uses: onecx/ci-angular/.github/workflows/angular-codeql.yml@v1
-    secrets: inherit
-
-  lint:
-    uses: ./.github/workflows/lint.yml
-    secrets: inherit
-
-  build:
-    uses: ./.github/workflows/build.yml
-    secrets: inherit
-
-  test:
-    uses: ./.github/workflows/test.yml
-    secrets: inherit
-
-  sonar:
-    needs: test
-    uses: ./.github/workflows/sonar.yml
+  ci-common:
+    uses: ./.github/workflows/ci-common.yml
     secrets: inherit

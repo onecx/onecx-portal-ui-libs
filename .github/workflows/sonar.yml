@@ -2,12 +2,6 @@ name: SonarQube Scan
 
 on:
   workflow_call:
-    inputs:
-      node:
-        description: 'Node version'
-        default: '20'
-        required: false
-        type: string
 
 jobs:
   set-matrix:
@@ -24,16 +18,18 @@ jobs:
         with:
           name: paths
 
-      - name: Read raw_paths from file raw_paths.txt
+      - name: Read affected lib from coverage-directories.txt
         id: set-matrix
         run: |
-          # Read the contents of raw_paths.txt and convert it into a JSON array
+          # This step creates a matrix containing the names of the affected libraries found in the reports directory. These names were previously identified and written to a file by the pathfinder-lcov-normalizer
+
+          # Read the contents of coverage-directories.txt into a JSON array
           # Each line in the file becomes an element in the array
           # -R: read raw strings
           # -s: read the entire input as a single string
           # -c: compact output (JSON array)
           # map(select(length > 0)): remove empty lines
-          matrix=$(cat raw_paths.txt | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          matrix=$(cat coverage-directories.txt | jq -R -s -c 'split("\n") | map(select(length > 0))')
 
           # Export the result as a GitHub Actions output variable named "matrix"
           echo "matrix=$matrix" >> $GITHUB_OUTPUT
@@ -53,32 +49,13 @@ jobs:
 
       - name: Setup Node
         uses: actions/setup-node@v4
-        with:
-          node-version: ${{ inputs.node }}
-          cache: 'npm'
 
       - name: Download reports
         uses: actions/download-artifact@v4
         with:
           name: package
 
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v5
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_URL: 'https://sonarcloud.io'
+      - name: Run SonarCloud Scan
+        uses: ./.github/actions/sonarcloud-scan
         with:
-          projectBaseDir: libs/${{ matrix.path }}/
-          args: >
-            -Dsonar.projectKey=${{ github.repository_owner }}_${{ github.event.repository.name }}_${{ matrix.path }}
-            -Dsonar.host.url=$SONAR_URL
-            -Dsonar.organization=${{ github.repository_owner }}
-            -Dsonar.scm.disabled=true
-            -Dsonar.sourceEncoding=UTF-8
-            -Dsonar.javascript.coveragePlugin=lcov
-            -Dsonar.javascript.lcov.reportPaths=../../reports/${{ matrix.path }}/coverage/lcov.info
-            -Dsonar.testExecutionReportPaths=../../reports/${{ matrix.path }}/sonarqube_report.xml
-            -Dsonar.working.directory=../../reports/${{ matrix.path }}/.scannerwork
-            -Dsonar.coverage.exclusions=**/*.ts,**/*.js,**/*.module.ts,**/*.main.ts,**/environments/**,**/assets/**,**/generated/**,**/*.stories.ts,**/*.harness, 
-            -Dsonar.test.inclusions=/**/*.spec.ts"
+          path: ${{matrix.path}}
