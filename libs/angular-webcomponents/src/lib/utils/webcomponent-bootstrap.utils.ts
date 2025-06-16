@@ -19,6 +19,7 @@ import { EventsTopic, CurrentLocationTopicPayload, TopicEventType } from '@onecx
 import { Observable, Subscription, filter } from 'rxjs'
 import { ShellCapabilityService, Capability } from '@onecx/angular-integration-interface'
 import { AppStateService } from '@onecx/angular-integration-interface'
+import { dataNoPortalLayoutStylesKey } from '@onecx/angular-utils'
 
 /**
  * Implementation inspired by @angular-architects/module-federation-plugin https://github.com/angular-architects/module-federation-plugin/blob/main/libs/mf-tools/src/lib/web-components/bootstrap-utils.ts
@@ -26,6 +27,10 @@ import { AppStateService } from '@onecx/angular-integration-interface'
 
 export type AppType = 'shell' | 'microfrontend'
 export type EntrypointType = 'microfrontend' | 'component'
+
+export interface AppOptions {
+  usePortalLayoutStyles?: boolean
+}
 
 export function bootstrapModule<M>(module: Type<M>, appType: AppType, production: boolean): Promise<NgModuleRef<M>> {
   return cachePlatform(production)
@@ -44,7 +49,8 @@ export async function bootstrapRemoteComponent(
   component: Type<any>,
   elementName: string,
   production: boolean,
-  providers: (Provider | EnvironmentProviders)[]
+  providers: (Provider | EnvironmentProviders)[],
+  options?: AppOptions
 ): Promise<void> {
   const app = await createApplication({
     providers: [
@@ -60,18 +66,24 @@ export async function bootstrapRemoteComponent(
 
   cachePlatform(production)
   adaptRemoteComponentRoutes(app.injector)
-  createEntrypoint(component, elementName, app.injector, 'component')
+  createEntrypoint(component, elementName, app.injector, 'component', options)
 }
 
-export function createAppEntrypoint(component: Type<any>, elementName: string, injector: Injector) {
-  createEntrypoint(component, elementName, injector, 'microfrontend')
+export function createAppEntrypoint(
+  component: Type<any>,
+  elementName: string,
+  injector: Injector,
+  options?: AppOptions
+) {
+  createEntrypoint(component, elementName, injector, 'microfrontend', options)
 }
 
 function createEntrypoint(
   component: Type<any>,
   elementName: string,
   injector: Injector,
-  entrypointType: EntrypointType
+  entrypointType: EntrypointType,
+  options?: AppOptions
 ) {
   let sub: Subscription | null
   const capabilityService = new ShellCapabilityService()
@@ -98,6 +110,15 @@ function createEntrypoint(
   const myRemoteComponentAsWebComponent = createCustomElement(component, {
     injector: injector,
   })
+
+  const originalConnectedCallback = myRemoteComponentAsWebComponent.prototype.connectedCallback
+
+  myRemoteComponentAsWebComponent.prototype.connectedCallback = function () {
+    if (options && options.usePortalLayoutStyles === false) {
+      this.dataset[dataNoPortalLayoutStylesKey] = ''
+    }
+    originalConnectedCallback.call(this)
+  }
 
   customElements.define(elementName, myRemoteComponentAsWebComponent)
 }
@@ -158,7 +179,11 @@ export function cachePlatform(production: boolean): PlatformRef {
   return platform
 }
 
-function connectMicroFrontendRouter(injector: Injector, warnOnMissingRouter: boolean, eventsTopic: EventsTopic | undefined): Subscription | null {
+function connectMicroFrontendRouter(
+  injector: Injector,
+  warnOnMissingRouter: boolean,
+  eventsTopic: EventsTopic | undefined
+): Subscription | null {
   const router = injector.get(Router, null)
   const appStateService = injector.get(AppStateService, null)
   if (!router) {
@@ -176,7 +201,11 @@ function connectMicroFrontendRouter(injector: Injector, warnOnMissingRouter: boo
   return connectRouter(router, appStateService, eventsTopic)
 }
 
-function connectRouter(router: Router, appStateService: AppStateService, eventsTopic: EventsTopic | undefined): Subscription {
+function connectRouter(
+  router: Router,
+  appStateService: AppStateService,
+  eventsTopic: EventsTopic | undefined
+): Subscription {
   const initialUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}${location.hash}`
   router.navigateByUrl(initialUrl, {
     replaceUrl: true,
