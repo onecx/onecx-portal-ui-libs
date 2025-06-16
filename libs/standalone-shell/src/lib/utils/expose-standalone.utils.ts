@@ -12,6 +12,7 @@ import { Router } from '@angular/router'
 import { PermissionsTopic, Theme, UserProfile, Workspace } from '@onecx/integration-interface'
 import { provideAlwaysGrantPermissionChecker, TRANSLATION_PATH } from '@onecx/angular-utils'
 import { provideAuthService, provideTokenInterceptor } from '@onecx/angular-auth'
+import { MessageService } from 'primeng/api'
 
 const appInitializer = (
   appStateService: AppStateService,
@@ -105,5 +106,6 @@ export function provideStandaloneProviders(config?: Partial<ProvideStandalonePro
     provideAlwaysGrantPermissionChecker(),
     provideTokenInterceptor(),
     provideAuthService(),
+    MessageService
   ]
 }

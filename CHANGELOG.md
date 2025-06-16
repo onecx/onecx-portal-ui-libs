@@ -1,3 +1,15 @@
+## [5.42.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.41.2...v5.42.0) (2025-06-10)
+
+### Features
+
+* add toast handling to standalone shell ([#766](https://github.com/onecx/onecx-portal-ui-libs/issues/766)) ([eaa81a4](https://github.com/onecx/onecx-portal-ui-libs/commit/eaa81a40782a68fccff66db85758fcd3e5aaa07b))
+
+## [5.41.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.41.1...v5.41.2) (2025-06-10)
+
+### Bug Fixes
+
+* translation path providing for angular utils ([#765](https://github.com/onecx/onecx-portal-ui-libs/issues/765)) ([ce16ecc](https://github.com/onecx/onecx-portal-ui-libs/commit/ce16eccda1b949e31d29a3f23f54be92a477d778))
+
 ## [5.41.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.41.0...v5.41.1) (2025-06-05)
 
 ### Bug Fixes
