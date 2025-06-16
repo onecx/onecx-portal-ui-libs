@@ -1,5 +1,4 @@
 // injection tokens + related utilities
-export * from './lib/injection-tokens/has-permission-checker'
 
 // directives
 export * from './lib/directives/content-container.directive'
@@ -30,9 +29,7 @@ export * from './lib/components/interactive-data-view/interactive-data-view.comp
 export * from './lib/components/lifecycle/lifecycle.component'
 export * from './lib/components/page-header/page-header.component'
 export * from './lib/components/search-header/search-header.component'
-export * from './lib/components/data-loading-error/data-loading-error.component'
-export * from './lib/components/button-dialog/button-dialog.component'
-export * from './lib/components/button-dialog/dialog-message-content/dialog-message-content.component'
+export * from './lib/components/dialog/dialog-message-content/dialog-message-content.component'
 export * from './lib/components/loading-indicator/loading-indicator.component'
 export * from './lib/components/dialog/dialog-content/dialog-content.component'
 export * from './lib/components/dialog/dialog-inline/dialog-inline.component'
@@ -41,7 +38,6 @@ export * from './lib/components/error-component/global-error.component'
 
 // services
 export * from './lib/services/breadcrumb.service'
-export * from './lib/services/translation-cache.service'
 export * from './lib/services/portal-dialog.service'
 export * from './lib/services/export-data.service'
 
@@ -73,17 +69,11 @@ export * from './lib/functions/flatten-object'
 export * from './lib/functions/at-least-one-field-filled-validator'
 
 // utils
-export * from './lib/utils/async-translate-loader.utils'
-export * from './lib/utils/caching-translate-loader.utils'
 export * from './lib/utils/colorutils'
 export * from './lib/utils/data-operation-strategy'
-export * from './lib/utils/create-translate-loader.utils'
 export * from './lib/utils/dateutils'
 export * from './lib/utils/objectutils'
 export * from './lib/utils/primeicon.utils'
-export * from './lib/utils/translate.combined.loader'
-export * from './lib/utils/create-remote-component-and-mfe-translate-loader.utils'
-export * from './lib/utils/create-remote-component-translate-loader.utils'
 export * from './lib/utils/enum-to-dropdown-options.utils'
 export * from './lib/utils/criteria.utils'
 export * from './lib/utils/string-and-array-helper-functions.utils'

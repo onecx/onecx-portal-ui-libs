@@ -13,7 +13,7 @@ import {
 } from '../../../services/portal-dialog.service'
 import { Observable } from 'rxjs'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { DialogMessageContentComponent } from '../../button-dialog/dialog-message-content/dialog-message-content.component'
+import { DialogMessageContentComponent } from '../dialog-message-content/dialog-message-content.component'
 import { DivHarness, TestbedHarnessEnvironment } from '@onecx/angular-testing'
 import { DialogContentHarness } from '../../../../../testing'
 
@@ -23,7 +23,7 @@ import { DialogContentHarness } from '../../../../../testing'
     <div class="host">HostComponentContent</div>
   </ocx-dialog-content>`,
 })
-class TestBaseHostComponent { }
+class TestBaseHostComponent {}
 
 @Component({
   standalone: false,
@@ -78,7 +78,8 @@ class TestWithDialogResultAndButtonClickedComponent implements DialogResult<stri
   template: ` <div class="test">Test Component</div>`,
 })
 class TestWithButtonDisableComponent
-  implements DialogPrimaryButtonDisabled, DialogSecondaryButtonDisabled, DialogCustomButtonsDisabled {
+  implements DialogPrimaryButtonDisabled, DialogSecondaryButtonDisabled, DialogCustomButtonsDisabled
+{
   primaryState = false
   secondaryState = false
   customState = false
