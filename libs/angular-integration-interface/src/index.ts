@@ -13,7 +13,6 @@ export * from './lib/services/shell-capability.service'
 export * from './lib/model/config-key.model'
 
 // core
-export * from './lib/api/iauth.service'
 export * from './lib/api/injection-tokens'
 
 // utils
