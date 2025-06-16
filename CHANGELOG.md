@@ -1,3 +1,77 @@
+## [5.43.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.42.0...v5.43.0) (2025-06-16)
+
+### Features
+
+* add option to disable portal layout styles ([#771](https://github.com/onecx/onecx-portal-ui-libs/issues/771)) ([6bf11b4](https://github.com/onecx/onecx-portal-ui-libs/commit/6bf11b416111ec0850316f8aa6ef703fc837f635))
+* added issuer in user profile ([#772](https://github.com/onecx/onecx-portal-ui-libs/issues/772)) ([d243b25](https://github.com/onecx/onecx-portal-ui-libs/commit/d243b253cd808d38e7a46b744c7c6ef759d38bd9))
+
+### Bug Fixes
+
+* filter filter-values null, undefined, empty ([#756](https://github.com/onecx/onecx-portal-ui-libs/issues/756)) ([8cb435e](https://github.com/onecx/onecx-portal-ui-libs/commit/8cb435e7ad1622fdccf57ae608c9423780e704b2))
+
+## [5.42.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.41.2...v5.42.0) (2025-06-10)
+
+### Features
+
+* add toast handling to standalone shell ([#766](https://github.com/onecx/onecx-portal-ui-libs/issues/766)) ([eaa81a4](https://github.com/onecx/onecx-portal-ui-libs/commit/eaa81a40782a68fccff66db85758fcd3e5aaa07b))
+
+## [5.41.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.41.1...v5.41.2) (2025-06-10)
+
+### Bug Fixes
+
+* translation path providing for angular utils ([#765](https://github.com/onecx/onecx-portal-ui-libs/issues/765)) ([ce16ecc](https://github.com/onecx/onecx-portal-ui-libs/commit/ce16eccda1b949e31d29a3f23f54be92a477d778))
+
+## [5.41.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.41.0...v5.41.1) (2025-06-05)
+
+### Bug Fixes
+
+* fix permission service + translation handling ([#763](https://github.com/onecx/onecx-portal-ui-libs/issues/763)) ([5d7d343](https://github.com/onecx/onecx-portal-ui-libs/commit/5d7d3435c6b26177443107ca1abb8cac3371bfe7))
+
+## [5.41.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.40.1...v5.41.0) (2025-06-03)
+
+### Features
+
+* permission service ([#759](https://github.com/onecx/onecx-portal-ui-libs/issues/759)) ([65c0e1e](https://github.com/onecx/onecx-portal-ui-libs/commit/65c0e1e310cd326f99d071d383b64883162b1c91))
+
+### Refactoring
+
+* copy portal-page to angular-utils ([#760](https://github.com/onecx/onecx-portal-ui-libs/issues/760)) ([69caeab](https://github.com/onecx/onecx-portal-ui-libs/commit/69caeab640d2d5ab7902e11f792e94088887c2e7))
+
+## [5.40.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.40.0...v5.40.1) (2025-05-28)
+
+### Bug Fixes
+
+* export disabled auth service ([#755](https://github.com/onecx/onecx-portal-ui-libs/issues/755)) ([1b27d8c](https://github.com/onecx/onecx-portal-ui-libs/commit/1b27d8cebe843929a2e599c265822271e18615db))
+
+## [5.40.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.39.0...v5.40.0) (2025-05-28)
+
+### Features
+
+* move PoratlApiConfiguration to angular-integration-interface ([#753](https://github.com/onecx/onecx-portal-ui-libs/issues/753)) ([e3d1d3d](https://github.com/onecx/onecx-portal-ui-libs/commit/e3d1d3d47de73d00f78a2466ddd7dd3afec9ed25))
+
+## [5.39.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.38.0...v5.39.0) (2025-05-27)
+
+### Features
+
+* cherry-pick disabled auth service ([#739](https://github.com/onecx/onecx-portal-ui-libs/issues/739)) ([22b2da8](https://github.com/onecx/onecx-portal-ui-libs/commit/22b2da8188eca2a2dd9e7ec2336b8c6f7c49031a))
+* create new library integration-tests ([#750](https://github.com/onecx/onecx-portal-ui-libs/issues/750)) ([c7eecb2](https://github.com/onecx/onecx-portal-ui-libs/commit/c7eecb2893e3d5d8b1af218dc8e0a825eea008b8))
+* prepared typescript script in integration-tests ([#751](https://github.com/onecx/onecx-portal-ui-libs/issues/751)) ([57ebf28](https://github.com/onecx/onecx-portal-ui-libs/commit/57ebf2859fe6f7e4cbabf23b584bb4e9706e50da))
+
+### Bug Fixes
+
+* fix storybook rendering ([#742](https://github.com/onecx/onecx-portal-ui-libs/issues/742)) ([60df27a](https://github.com/onecx/onecx-portal-ui-libs/commit/60df27a10b9056dff551f441a3cd5e2f3a1a2fbb))
+* toast message word breaks ([#740](https://github.com/onecx/onecx-portal-ui-libs/issues/740)) ([e238be7](https://github.com/onecx/onecx-portal-ui-libs/commit/e238be7f975f25124ef3f5485c2b00757e3c8e6b))
+
+## [5.38.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.37.0...v5.38.0) (2025-05-08)
+
+### Features
+
+* add release-with-migrations executor ([#716](https://github.com/onecx/onecx-portal-ui-libs/issues/716)) ([482aad9](https://github.com/onecx/onecx-portal-ui-libs/commit/482aad9d41f94c7664325b9315d75058ede9b49d))
+
+### Bug Fixes
+
+* dynamic css variables ([#733](https://github.com/onecx/onecx-portal-ui-libs/issues/733)) ([#734](https://github.com/onecx/onecx-portal-ui-libs/issues/734)) ([27bda33](https://github.com/onecx/onecx-portal-ui-libs/commit/27bda33d7b50b210b7c1540834ad78b83a6c28c5))
+
 ## [5.37.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.36.0...v5.37.0) (2025-05-07)
 
 ### Features
