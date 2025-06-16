@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed, fakeAsync, flush } from '@angular/core/testing'
 import { DialogContentComponent } from './dialog-content.component'
-import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { Component, EventEmitter } from '@angular/core'
 import {
@@ -116,7 +115,7 @@ describe('DialogContentComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DialogContentComponent, DialogMessageContentComponent],
-      imports: [MockAuthModule, TranslateTestingModule.withTranslations({})],
+      imports: [TranslateTestingModule.withTranslations({})],
       providers: [DynamicDialogConfig, DynamicDialogRef],
     }).compileComponents()
 

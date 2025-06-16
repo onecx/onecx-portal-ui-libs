@@ -4,7 +4,6 @@ import { DialogModule } from 'primeng/dialog'
 
 import { SupportTicketComponent } from './support-ticket.component'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
-import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
 
 describe('SupportTicketComponent', () => {
   let component: SupportTicketComponent
@@ -13,7 +12,7 @@ describe('SupportTicketComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [SupportTicketComponent],
-      imports: [DialogModule, BrowserAnimationsModule, FormsModule, ReactiveFormsModule, MockAuthModule],
+      imports: [DialogModule, BrowserAnimationsModule, FormsModule, ReactiveFormsModule],
     }).compileComponents()
 
     fixture = TestBed.createComponent(SupportTicketComponent)
