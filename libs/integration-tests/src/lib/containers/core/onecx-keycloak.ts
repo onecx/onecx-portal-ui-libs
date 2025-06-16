@@ -1,149 +1,170 @@
-import { StartedNetwork, StartedTestContainer } from 'testcontainers'
-import { commonEnv } from '../../config/env'
-import { OneCXContainer, StartedOneCXContainer } from '../abstract/onecx-container'
+import { AbstractStartedContainer, GenericContainer, StartedTestContainer, Wait } from 'testcontainers'
 import * as path from 'path'
+import { StartedOnecxPostgresContainer } from './onecx-postgres'
+import { HealthCheck } from 'testcontainers/build/types'
 
-export interface OneCXKeycloakDetails {
+interface OnecxKeycloakEnvironment {
   onecxRealm: string
-  adminRealm: string
   adminUsername: string
   adminPassword: string
+  username: string
+  database: string
+  password: string
+  hostname: string
+  keycloakPort: number
+  networkAliases: string[] | undefined
 }
 
-export class OneCXKeycloakContainer extends OneCXContainer {
-  private onecxStartCommand: string[] = ['start-dev', '--import-realm']
-  private onecxKeycloakDetails: OneCXKeycloakDetails = {
-    onecxRealm: commonEnv.KC_REALM,
-    adminRealm: 'master',
+export class OnecxKeycloakContainer extends GenericContainer {
+  private onecxKeycloakEnvironment: OnecxKeycloakEnvironment = {
+    onecxRealm: 'onecx',
     adminUsername: 'admin',
     adminPassword: 'admin',
+    username: 'keycloak',
+    database: 'keycloak',
+    password: 'keycloak',
+    hostname: 'keycloak-app',
+    keycloakPort: 8080,
+    networkAliases: undefined,
   }
-  private onecxStartTimeout = 100_000
-  private initDataPaths: string[] = []
-  private defaultInitDataPath = 'libs/integration-tests/src/init-data/keycloak/imports'
-  private defaultInitEnabled = true
+  private defaultHealthCheck: HealthCheck = {
+    test: [
+      'CMD-SHELL',
+      `{ printf >&3 'GET /realms/${this.onecxKeycloakEnvironment.onecxRealm}/.well-known/openid-configuration HTTP/1.0\\r\\nHost: localhost\\r\\n\\r\\n'; cat <&3; } 3<>/dev/tcp/localhost/${this.onecxKeycloakEnvironment.keycloakPort} | head -1 | grep 200`,
+    ],
+    interval: 10_000,
+    timeout: 5_000,
+    retries: 10,
+  }
+  private initDefaultRealms: string[] = []
+  private initDefaultRealm = 'libs/integration-tests/src/init-data/keycloak/imports'
 
   constructor(
     image: string,
-    network: StartedNetwork,
-    private readonly databaseContainer: OneCXContainer | StartedOneCXContainer
+    private readonly databaseContainer: StartedOnecxPostgresContainer
   ) {
-    const name = 'keycloak-app'
-    const alias = 'keycloak-app'
-    const port = 8080
-    super(image, name, alias, network)
-
-    this.withOneCXRealm(commonEnv.KC_REALM)
-      .withOneCXEnvironment({
-        KEYCLOAK_ADMIN: this.onecxKeycloakDetails.adminUsername,
-        KEYCLOAK_ADMIN_PASSWORD: this.onecxKeycloakDetails.adminPassword,
-        KC_DB: 'postgres',
-        KC_DB_POOL_INITIAL_SIZE: '1',
-        KC_DB_POOL_MAX_SIZE: '5',
-        KC_DB_POOL_MIN_SIZE: '2',
-        KC_DB_URL_DATABASE: 'keycloak',
-        KC_DB_URL_HOST: `${databaseContainer.getOneCXAlias()}`,
-        KC_DB_USERNAME: 'keycloak',
-        KC_DB_PASSWORD: 'keycloak',
-        KC_HOSTNAME: `${alias}`,
-        KC_HOSTNAME_STRICT: 'false',
-        KC_HTTP_ENABLED: 'true',
-        KC_HTTP_PORT: `${port}`,
-        KC_HEALTH_ENABLED: 'true',
-      })
-      .withOneCXHealthCheck({
-        test: [
-          'CMD-SHELL',
-          `{ printf >&3 'GET /realms/${this.getOneCXRealm()}/.well-known/openid-configuration HTTP/1.0\\r\\nHost: localhost\\r\\n\\r\\n'; cat <&3; } 3<>/dev/tcp/localhost/${port} | head -1 | grep 200`,
-        ],
-        interval: 10_000,
-        timeout: 5_000,
-        retries: 10,
-      })
-      .withOneCXExposedPort(port)
+    super(image)
+    this.withCommand(['start-dev', '--import-realm'])
+    this.withHealthCheck(this.defaultHealthCheck)
+    this.withExposedPorts(this.onecxKeycloakEnvironment.keycloakPort)
+    this.withNetworkAliases('keycloak-app')
   }
 
-  public override withOneCXAlias(alias: string): this {
-    super.withOneCXAlias(alias)
-
-    this.updateEnv()
+  withOnecxRealm(onecxRealm: string): this {
+    this.onecxKeycloakEnvironment.onecxRealm = onecxRealm
     return this
   }
 
-  public override withOneCXExposedPort(port: number): this {
-    super.withOneCXExposedPort(port)
-
-    this.updateEnv()
-
-    this.updateHealthCheck()
+  withAdminUsername(adminUsername: string): this {
+    this.onecxKeycloakEnvironment.adminUsername = adminUsername
     return this
   }
 
-  public withOneCXStartCommand(startCommand: string[]) {
-    this.onecxStartCommand = startCommand
+  withAdminPassword(adminPassword: string): this {
+    this.onecxKeycloakEnvironment.adminPassword = adminPassword
     return this
   }
 
-  public withOneCXStartupTimeout(timeout: number) {
-    this.onecxStartTimeout = timeout
-  }
-
-  public withOneCXRealm(realm: string) {
-    this.onecxKeycloakDetails.onecxRealm = realm
+  withUsername(username: string): this {
+    this.onecxKeycloakEnvironment.username = username
     return this
   }
 
-  public withOneCXAdminRealm(realm: string) {
-    this.onecxKeycloakDetails.adminRealm = realm
+  withPassword(password: string): this {
+    this.onecxKeycloakEnvironment.password = password
     return this
   }
 
-  public withOneCXAdminUsername(username: string) {
-    this.onecxKeycloakDetails.adminUsername = username
+  withEnvironmentHostname(hostname: string): this {
+    this.onecxKeycloakEnvironment.hostname = hostname
     return this
   }
 
-  public withOneCXAdminPassword(password: string) {
-    this.onecxKeycloakDetails.adminPassword = password
+  withInitPath(path: string) {
+    this.initDefaultRealms.push(path)
     return this
   }
 
-  public withOneCXDefaultInitEnabled(enabled: boolean) {
-    this.defaultInitEnabled = enabled
+  withDatabase(database: string): this {
+    this.onecxKeycloakEnvironment.database = database
     return this
   }
 
-  public withOneCXInitPath(path: string) {
-    this.initDataPaths.push(path)
-    return this
+  // GET-Methoden
+  getOnecxRealm(): string {
+    return this.onecxKeycloakEnvironment.onecxRealm
   }
 
-  public getOneCXStartCommand() {
-    return this.onecxStartCommand
+  getAdminUsername(): string {
+    return this.onecxKeycloakEnvironment.adminUsername
   }
 
-  public getOneCXRealm() {
-    return this.onecxKeycloakDetails.onecxRealm
+  getAdminPassword(): string {
+    return this.onecxKeycloakEnvironment.adminPassword
   }
 
-  public getOneCXAdminRealm() {
-    return this.onecxKeycloakDetails.adminRealm
+  getUsername(): string {
+    return this.onecxKeycloakEnvironment.username
   }
 
-  public getOneCXAdminUsername() {
-    return this.onecxKeycloakDetails.adminUsername
+  getPassword(): string {
+    return this.onecxKeycloakEnvironment.password
   }
 
-  public getOneCXAdminPassword() {
-    return this.onecxKeycloakDetails.adminPassword
+  getEnvironmentHostname(): string {
+    return this.onecxKeycloakEnvironment.hostname
   }
 
-  override async start(): Promise<StartedOneCXKeycloakContainer> {
-    this.withCommand(this.onecxStartCommand).withStartupTimeout(this.onecxStartTimeout)
+  getKeycloakPort(): number {
+    return this.onecxKeycloakEnvironment.keycloakPort
+  }
 
-    this.defaultInitEnabled && this.initDataPaths.push(this.defaultInitDataPath)
+  getNetworkAliases(): string[] {
+    if (this.onecxKeycloakEnvironment.networkAliases === undefined) {
+      this.onecxKeycloakEnvironment.networkAliases = []
+    }
+    return this.onecxKeycloakEnvironment.networkAliases
+  }
 
-    for (const p of this.initDataPaths) {
+  getDatabase() {
+    return this.onecxKeycloakEnvironment.database
+  }
+
+  override async start(): Promise<StartedOnecxKeycloakContainer> {
+    this.databaseContainer.createUserAndDatabase(
+      this.onecxKeycloakEnvironment.username,
+      this.onecxKeycloakEnvironment.password
+    )
+    if (JSON.stringify(this.healthCheck) === JSON.stringify(this.defaultHealthCheck)) {
+      this.withHealthCheck(this.defaultHealthCheck)
+    }
+    this.withEnvironment({
+      ...this.environment,
+      KEYCLOAK_ADMIN: this.onecxKeycloakEnvironment.adminUsername,
+      KEYCLOAK_ADMIN_PASSWORD: this.onecxKeycloakEnvironment.adminPassword,
+      KC_DB: this.databaseContainer.getDatabase(),
+      // where do I get this informaiton?
+      KC_DB_POOL_INITIAL_SIZE: '1',
+      KC_DB_POOL_MAX_SIZE: '5',
+      KC_DB_POOL_MIN_SIZE: '2',
+      KC_DB_URL_DATABASE: this.onecxKeycloakEnvironment.database,
+      KC_DB_URL_HOST: this.databaseContainer.getNetworkAliases()[0],
+      KC_DB_USERNAME: this.onecxKeycloakEnvironment.username,
+      KC_DB_PASSWORD: this.onecxKeycloakEnvironment.password,
+      KC_HOSTNAME: this.onecxKeycloakEnvironment.hostname,
+      KC_HOSTNAME_STRICT: 'false',
+      KC_HTTP_ENABLED: 'true',
+      KC_HTTP_PORT: `${this.onecxKeycloakEnvironment.keycloakPort}`,
+      KC_HEALTH_ENABLED: 'true',
+    })
+    this.withLogConsumer((stream) => {
+      stream.on('data', (line) => console.log(`${this.onecxKeycloakEnvironment.username}: `, line))
+      stream.on('err', (line) => console.error(`${this.onecxKeycloakEnvironment.username}: `, line))
+      stream.on('end', () => console.log(`${this.onecxKeycloakEnvironment.username}: Stream closed`))
+    })
+    this.withInitPath(this.initDefaultRealm)
+
+    for (const p of this.initDefaultRealms) {
       this.withCopyDirectoriesToContainer([
         {
           source: path.resolve(p),
@@ -151,75 +172,56 @@ export class OneCXKeycloakContainer extends OneCXContainer {
         },
       ])
     }
+    this.withWaitStrategy(Wait.forAll([Wait.forHealthCheck(), Wait.forListeningPorts()]))
+    this.onecxKeycloakEnvironment.networkAliases = this.networkAliases
 
-    return new StartedOneCXKeycloakContainer(
-      await super.start(),
-      this.getOneCXName(),
-      this.getOneCXAlias(),
-      this.getOneCXNetwork(),
-      this.onecxKeycloakDetails,
-      this.getOneCXExposedPort()
-    )
-  }
-
-  private updateEnv() {
-    this.withOneCXEnvironment({
-      KEYCLOAK_ADMIN: this.onecxKeycloakDetails.adminUsername,
-      KEYCLOAK_ADMIN_PASSWORD: this.onecxKeycloakDetails.adminPassword,
-      KC_DB: 'postgres',
-      KC_DB_POOL_INITIAL_SIZE: '1',
-      KC_DB_POOL_MAX_SIZE: '5',
-      KC_DB_POOL_MIN_SIZE: '2',
-      KC_DB_URL_DATABASE: 'keycloak',
-      KC_DB_URL_HOST: `${this.databaseContainer.getOneCXAlias()}`,
-      KC_DB_USERNAME: 'keycloak',
-      KC_DB_PASSWORD: 'keycloak',
-      KC_HOSTNAME: `${this.getOneCXAlias()}`,
-      KC_HOSTNAME_STRICT: 'false',
-      KC_HTTP_ENABLED: 'true',
-      KC_HTTP_PORT: `${this.getOneCXExposedPort()}`,
-      KC_HEALTH_ENABLED: 'true',
-    })
-  }
-
-  private updateHealthCheck() {
-    this.withOneCXHealthCheck({
-      test: [
-        'CMD-SHELL',
-        `{ printf >&3 'GET /realms/${this.getOneCXRealm()}/.well-known/openid-configuration HTTP/1.0\\r\\nHost: localhost\\r\\n\\r\\n'; cat <&3; } 3<>/dev/tcp/localhost/${this.getOneCXExposedPort()} | head -1 | grep 200`,
-      ],
-      interval: 10_000,
-      timeout: 5_000,
-      retries: 10,
-    })
+    return new StartedOnecxKeycloakContainer(await super.start(), this.onecxKeycloakEnvironment)
   }
 }
 
-export class StartedOneCXKeycloakContainer extends StartedOneCXContainer {
+export class StartedOnecxKeycloakContainer extends AbstractStartedContainer {
   constructor(
     startedTestContainer: StartedTestContainer,
-    name: string,
-    alias: string,
-    network: StartedNetwork,
-    private readonly onecxKeycloakDetails: OneCXKeycloakDetails,
-    exposedPort: number | undefined
+    private readonly onecxKeycloakEnvironment: OnecxKeycloakEnvironment
   ) {
-    super(startedTestContainer, name, alias, network, exposedPort)
+    super(startedTestContainer)
+  }
+  getOnecxRealm(): string {
+    return this.onecxKeycloakEnvironment.onecxRealm
   }
 
-  public getOneCXRealm() {
-    return this.onecxKeycloakDetails.onecxRealm
+  getAdminUsername(): string {
+    return this.onecxKeycloakEnvironment.adminUsername
   }
 
-  public getOneCXAdminRealm() {
-    return this.onecxKeycloakDetails.adminRealm
+  getAdminPassword(): string {
+    return this.onecxKeycloakEnvironment.adminPassword
   }
 
-  public getOneCXAdminUsername() {
-    return this.onecxKeycloakDetails.adminUsername
+  getUsername(): string {
+    return this.onecxKeycloakEnvironment.username
   }
 
-  public getOneCXAdminPassword() {
-    return this.onecxKeycloakDetails.adminPassword
+  getPassword(): string {
+    return this.onecxKeycloakEnvironment.password
+  }
+
+  getEnvironmentHostname(): string {
+    return this.onecxKeycloakEnvironment.hostname
+  }
+
+  getDatabase(): string {
+    return this.onecxKeycloakEnvironment.database
+  }
+
+  getKeycloakPort(): number {
+    return this.onecxKeycloakEnvironment.keycloakPort
+  }
+
+  getNetworkAliases(): string[] {
+    if (this.onecxKeycloakEnvironment.networkAliases === undefined) {
+      this.onecxKeycloakEnvironment.networkAliases = []
+    }
+    return this.onecxKeycloakEnvironment.networkAliases
   }
 }
