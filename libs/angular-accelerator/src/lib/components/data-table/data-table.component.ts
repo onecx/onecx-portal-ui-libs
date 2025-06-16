@@ -508,7 +508,9 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
           )
           .map((filter) => filter.value)
 
-        const columnValues = rows.map((row) => row[currentFilterColumn?.id])
+        const columnValues = rows
+          .map((row) => row[currentFilterColumn?.id])
+          .filter((value) => value !== null && value !== undefined && value !== '')
 
         if (currentFilterColumn.columnType === ColumnType.DATE) {
           return of({
@@ -532,7 +534,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
           map((translatedValues) => {
             return Object.values(translatedValues)
               .concat(currentFilters)
-              .filter((value, index, self) => self.indexOf(value) === index && value != null)
+              .filter((value, index, self) => self.indexOf(value) === index && value !== null && value !== '')
               .map(
                 (filterOption) =>
                   ({

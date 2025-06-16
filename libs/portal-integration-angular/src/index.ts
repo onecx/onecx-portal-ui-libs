@@ -25,7 +25,6 @@ export * from './lib/core/components/search-criteria/search-page'
 // services
 export * from './lib/services/menu-api.service'
 export * from './lib/services/portal-api.service'
-export * from './lib/services/initialize-module-guard.service'
 export * from './lib/services/userprofile-api.service'
 
 // models
@@ -50,7 +49,6 @@ export * from './lib/core/portal-core.module'
 export * from './lib/core/primeng.module'
 
 // utils
-export * from './lib/core/utils/add-initialize-module-guard.utils'
 export * from './lib/core/utils/translate-service-initializer.utils'
 
 export * from '@onecx/angular-accelerator'

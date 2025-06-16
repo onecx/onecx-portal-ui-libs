@@ -12,6 +12,7 @@ export * from './lib/utils/remote-component-translation-path-factory.utils'
 export * from './lib/utils/scope.utils'
 export * from './lib/utils/styles'
 export * from './lib/utils/portal-api-configuration.utils'
+export * from './lib/utils/provide-connection-service'
 
 // Model
 export * from './lib/model/injection-tokens'
@@ -22,6 +23,7 @@ export * from './lib/services/translation-cache.service'
 export * from './lib/services/theme-config.service'
 export * from './lib/services/custom-use-style.service'
 export * from './lib/services/permission.service'
+export * from './lib/services/translation-connection.service'
 
 // Theme
 export * from './lib/theme/application-config'
@@ -29,3 +31,8 @@ export * from './lib/theme/preset/custom-preset'
 
 // Components
 export * from './lib/components/portal-page/portal-page.component'
+
+// Providers
+export * from './lib/providers/angular-utils.providers'
+export * from './lib/providers/translation-path.providers'
+export * from './lib/providers/permission-service.providers'
