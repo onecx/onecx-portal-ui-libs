@@ -2,7 +2,6 @@ import { assert } from 'console'
 import { OnecxPostgresContainer, StartedOnecxPostgresContainer } from '../containers/core/onecx-postgres'
 import { Client } from 'pg'
 
-// Tests are not complete and need to be expanded
 describe('Default Postgres Testcontainer', () => {
   let client: Client
   let pgContainer: StartedOnecxPostgresContainer
@@ -14,9 +13,9 @@ describe('Default Postgres Testcontainer', () => {
     client = new Client({
       host: pgContainer.getHost(),
       port: pgContainer.getPort(),
-      user: pgContainer.getUsername(),
-      password: pgContainer.getPassword(),
-      database: pgContainer.getDatabase(),
+      user: pgContainer.getPostgresUsername(),
+      password: pgContainer.getPostgresPassword(),
+      database: pgContainer.getPostgresDatabase(),
     })
     await client.connect()
   })
@@ -27,10 +26,15 @@ describe('Default Postgres Testcontainer', () => {
     await pgContainer.createUserAndDatabase(username, password)
     assert(true, await pgContainer.doesDatabaseExist(username))
   })
+  it('should create user', async () => {
+    const username = 'booky'
+    const password = 'booky'
+    await expect(pgContainer.createDatabaseUser(username, password)).resolves.not.toThrow()
+  })
   it('should return correct database details', () => {
-    expect(pgContainer.getDatabase()).toBe('postgres')
-    expect(pgContainer.getUsername()).toBe('postgres')
-    expect(pgContainer.getPassword()).toBe('admin')
+    expect(pgContainer.getPostgresDatabase()).toBe('postgres')
+    expect(pgContainer.getPostgresUsername()).toBe('postgres')
+    expect(pgContainer.getPostgresPassword()).toBe('admin')
   })
   it('should have valid network aliases', () => {
     const aliases = pgContainer.getNetworkAliases()

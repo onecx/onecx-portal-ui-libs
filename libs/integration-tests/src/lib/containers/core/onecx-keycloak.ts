@@ -63,13 +63,13 @@ export class OnecxKeycloakContainer extends GenericContainer {
     return this
   }
 
-  withUsername(username: string): this {
-    this.onecxEnvironment.keycloakDatabaseUsername = username
+  withKeycloakUsername(keycloakDatabaseUsername: string): this {
+    this.onecxEnvironment.keycloakDatabaseUsername = keycloakDatabaseUsername
     return this
   }
 
-  withPassword(password: string): this {
-    this.onecxEnvironment.keycloakDatabasePassword = password
+  withKeycloakPassword(keycloakDatabasePassword: string): this {
+    this.onecxEnvironment.keycloakDatabasePassword = keycloakDatabasePassword
     return this
   }
 
@@ -83,12 +83,12 @@ export class OnecxKeycloakContainer extends GenericContainer {
     return this
   }
 
-  withDatabase(database: string): this {
-    this.onecxEnvironment.keycloakDatabase = database
+  withKeycloakDatabase(keycloakDatabase: string): this {
+    this.onecxEnvironment.keycloakDatabase = keycloakDatabase
     return this
   }
 
-  getOnecxRealm(): string {
+  getRealm(): string {
     return this.onecxEnvironment.realm
   }
 
@@ -100,11 +100,11 @@ export class OnecxKeycloakContainer extends GenericContainer {
     return this.onecxEnvironment.adminPassword
   }
 
-  getUsername(): string {
+  getKeycloakDatabaseUsername(): string {
     return this.onecxEnvironment.keycloakDatabaseUsername
   }
 
-  getPassword(): string {
+  getKeycloakDatabasePassword(): string {
     return this.onecxEnvironment.keycloakDatabasePassword
   }
 
@@ -116,7 +116,7 @@ export class OnecxKeycloakContainer extends GenericContainer {
     return this.onecxEnvironment.port
   }
 
-  getDatabase() {
+  getKeycloakDatabase() {
     return this.onecxEnvironment.keycloakDatabase
   }
 
@@ -136,7 +136,7 @@ export class OnecxKeycloakContainer extends GenericContainer {
       ...this.environment,
       KEYCLOAK_ADMIN: this.onecxEnvironment.adminUsername,
       KEYCLOAK_ADMIN_PASSWORD: this.onecxEnvironment.adminPassword,
-      KC_DB: this.databaseContainer.getDatabase(),
+      KC_DB: this.databaseContainer.getPostgresDatabase(),
       KC_DB_POOL_INITIAL_SIZE: '1',
       KC_DB_POOL_MAX_SIZE: '5',
       KC_DB_POOL_MIN_SIZE: '2',
@@ -191,11 +191,11 @@ export class StartedOnecxKeycloakContainer extends AbstractStartedContainer {
     return this.onecxKeycloakEnvironment.adminPassword
   }
 
-  getUsername(): string {
+  getKeycloakDatabaseUsername(): string {
     return this.onecxKeycloakEnvironment.keycloakDatabaseUsername
   }
 
-  getPassword(): string {
+  getKeycloakDatabasePassword(): string {
     return this.onecxKeycloakEnvironment.keycloakDatabasePassword
   }
 
@@ -203,12 +203,12 @@ export class StartedOnecxKeycloakContainer extends AbstractStartedContainer {
     return this.onecxKeycloakEnvironment.keycloakHostname
   }
 
-  getDatabase(): string {
+  getKeycloakDatabase(): string {
     return this.onecxKeycloakEnvironment.keycloakDatabase
   }
 
   getPort(): number {
-    return this.onecxKeycloakEnvironment.port
+    return super.getMappedPort(this.onecxKeycloakEnvironment.port)
   }
 
   getNetworkAliases(): string[] {

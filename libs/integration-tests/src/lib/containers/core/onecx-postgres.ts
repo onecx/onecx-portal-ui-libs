@@ -30,30 +30,30 @@ export class OnecxPostgresContainer extends GenericContainer {
     this.withNetworkAliases('postgresdb')
   }
 
-  public withDatabase(database: string): this {
-    this.onecxPostgresDetails.postgresDatabase = database
+  public withPostgresDatabase(postgresDatabase: string): this {
+    this.onecxPostgresDetails.postgresDatabase = postgresDatabase
     return this
   }
 
-  public withUsername(username: string): this {
-    this.onecxPostgresDetails.postgresUsername = username
+  public withPostgresUsername(postgresUsername: string): this {
+    this.onecxPostgresDetails.postgresUsername = postgresUsername
     return this
   }
 
-  public withPassword(password: string): this {
-    this.onecxPostgresDetails.postgresPassword = password
+  public withPostgresPassword(postgresPassword: string): this {
+    this.onecxPostgresDetails.postgresPassword = postgresPassword
     return this
   }
 
-  public getDatabase() {
+  public getPostgresDatabase() {
     return this.onecxPostgresDetails.postgresDatabase
   }
 
-  public getUser() {
+  public getPostgresUsername() {
     return this.onecxPostgresDetails.postgresUsername
   }
 
-  public getPassword() {
+  public getPostgresPassword() {
     return this.onecxPostgresDetails.postgresPassword
   }
 
@@ -91,15 +91,15 @@ export class StartedOnecxPostgresContainer extends AbstractStartedContainer {
     super(startedTestContainer)
   }
 
-  public getDatabase(): string {
+  public getPostgresDatabase(): string {
     return this.onecxPostgresDetails.postgresDatabase
   }
 
-  public getUsername(): string {
+  public getPostgresUsername(): string {
     return this.onecxPostgresDetails.postgresUsername
   }
 
-  public getPassword(): string {
+  public getPostgresPassword(): string {
     return this.onecxPostgresDetails.postgresPassword
   }
 
@@ -119,7 +119,7 @@ export class StartedOnecxPostgresContainer extends AbstractStartedContainer {
           '-v',
           'ON_ERROR_STOP=1',
           '-U',
-          this.getUsername(),
+          this.getPostgresUsername(),
           '-d',
           'postgres',
           '-c',

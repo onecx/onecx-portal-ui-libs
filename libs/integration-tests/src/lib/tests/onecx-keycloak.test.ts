@@ -14,16 +14,17 @@ describe('Default Keycloak Testcontainer', () => {
     pgContainer = await new OnecxPostgresContainer(imagePg).withNetwork(network).start()
     kcContainer = await new OnecxKeycloakContainer(imageKc, pgContainer).withNetwork(network).start()
   })
-  it('should set default environment values', async () => {
+
+  it('should set default environment values', () => {
     expect(kcContainer.getRealm()).toBe('onecx')
     expect(kcContainer.getAdminUsername()).toBe('admin')
-    expect(kcContainer.getPassword()).toBe('keycloak')
-    expect(kcContainer.getPort()).toBe(8080)
+    expect(kcContainer.getAdminPassword()).toBe('admin')
   })
 
   it('should expose correct database and user configuration', async () => {
-    expect(kcContainer.getUsername()).toBe('keycloak')
-    expect(kcContainer.getDatabase()).toBe('keycloak')
+    expect(kcContainer.getKeycloakDatabaseUsername()).toBe('keycloak')
+    expect(kcContainer.getKeycloakDatabasePassword()).toBe('keycloak')
+    expect(kcContainer.getKeycloakDatabase()).toBe('keycloak')
     expect(kcContainer.getEnvironmentHostname()).toBe('keycloak-app')
   })
 
