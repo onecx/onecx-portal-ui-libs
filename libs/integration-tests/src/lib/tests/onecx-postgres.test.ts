@@ -2,30 +2,24 @@ import { assert } from 'console'
 import { OnecxPostgresContainer, StartedOnecxPostgresContainer } from '../containers/core/onecx-postgres'
 import { Client } from 'pg'
 
-let client: Client
-let pgContainer: StartedOnecxPostgresContainer
-
-beforeAll(async () => {
-  const imagePg = 'docker.io/library/postgres:13.4'
-
-  pgContainer = await new OnecxPostgresContainer(imagePg).start()
-
-  client = new Client({
-    host: pgContainer.getHost(),
-    port: pgContainer.getPort(),
-    user: pgContainer.getUsername(),
-    password: pgContainer.getPassword(),
-    database: pgContainer.getDatabase(),
-  })
-  await client.connect()
-})
-
-afterAll(async () => {
-  if (client) await client.end()
-  await pgContainer.stop()
-})
 // Tests are not complete and need to be expanded
 describe('Default Postgres Testcontainer', () => {
+  let client: Client
+  let pgContainer: StartedOnecxPostgresContainer
+  const imagePg = 'docker.io/library/postgres:13.4'
+
+  beforeAll(async () => {
+    pgContainer = await new OnecxPostgresContainer(imagePg).start()
+
+    client = new Client({
+      host: pgContainer.getHost(),
+      port: pgContainer.getPort(),
+      user: pgContainer.getUsername(),
+      password: pgContainer.getPassword(),
+      database: pgContainer.getDatabase(),
+    })
+    await client.connect()
+  })
   it('should create database', async () => {
     const username = 'keycloak'
     const password = 'keycloak'
@@ -42,5 +36,9 @@ describe('Default Postgres Testcontainer', () => {
     const aliases = pgContainer.getNetworkAliases()
     expect(Array.isArray(aliases)).toBe(true)
     expect(aliases).toContain('postgresdb')
+  })
+  afterAll(async () => {
+    if (client) await client.end()
+    await pgContainer.stop()
   })
 })

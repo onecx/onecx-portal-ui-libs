@@ -3,34 +3,32 @@ import * as path from 'path'
 import { StartedOnecxPostgresContainer } from './onecx-postgres'
 import { HealthCheck } from 'testcontainers/build/types'
 
-interface OnecxKeycloakEnvironment {
-  onecxRealm: string
+interface OnecxEnvironment {
+  realm: string
   adminUsername: string
   adminPassword: string
-  username: string
-  database: string
-  password: string
-  hostname: string
-  keycloakPort: number
-  networkAliases: string[] | undefined
+  keycloakDatabaseUsername: string
+  keycloakDatabasePassword: string
+  keycloakDatabase: string
+  keycloakHostname: string
+  port: number
 }
 
 export class OnecxKeycloakContainer extends GenericContainer {
-  private onecxKeycloakEnvironment: OnecxKeycloakEnvironment = {
-    onecxRealm: 'onecx',
+  private onecxEnvironment: OnecxEnvironment = {
+    realm: 'onecx',
     adminUsername: 'admin',
     adminPassword: 'admin',
-    username: 'keycloak',
-    database: 'keycloak',
-    password: 'keycloak',
-    hostname: 'keycloak-app',
-    keycloakPort: 8080,
-    networkAliases: undefined,
+    keycloakDatabaseUsername: 'keycloak',
+    keycloakDatabasePassword: 'keycloak',
+    keycloakDatabase: 'keycloak',
+    keycloakHostname: 'keycloak-app',
+    port: 8080,
   }
   private defaultHealthCheck: HealthCheck = {
     test: [
       'CMD-SHELL',
-      `{ printf >&3 'GET /realms/${this.onecxKeycloakEnvironment.onecxRealm}/.well-known/openid-configuration HTTP/1.0\\r\\nHost: localhost\\r\\n\\r\\n'; cat <&3; } 3<>/dev/tcp/localhost/${this.onecxKeycloakEnvironment.keycloakPort} | head -1 | grep 200`,
+      `{ printf >&3 'GET /realms/${this.onecxEnvironment.realm}/.well-known/openid-configuration HTTP/1.0\\r\\nHost: localhost\\r\\n\\r\\n'; cat <&3; } 3<>/dev/tcp/localhost/${this.onecxEnvironment.port} | head -1 | grep 200`,
     ],
     interval: 10_000,
     timeout: 5_000,
@@ -46,37 +44,37 @@ export class OnecxKeycloakContainer extends GenericContainer {
     super(image)
     this.withCommand(['start-dev', '--import-realm'])
     this.withHealthCheck(this.defaultHealthCheck)
-    this.withExposedPorts(this.onecxKeycloakEnvironment.keycloakPort)
+    this.withExposedPorts(this.onecxEnvironment.port)
     this.withNetworkAliases('keycloak-app')
   }
 
-  withOnecxRealm(onecxRealm: string): this {
-    this.onecxKeycloakEnvironment.onecxRealm = onecxRealm
+  withRealm(realm: string): this {
+    this.onecxEnvironment.realm = realm
     return this
   }
 
   withAdminUsername(adminUsername: string): this {
-    this.onecxKeycloakEnvironment.adminUsername = adminUsername
+    this.onecxEnvironment.adminUsername = adminUsername
     return this
   }
 
   withAdminPassword(adminPassword: string): this {
-    this.onecxKeycloakEnvironment.adminPassword = adminPassword
+    this.onecxEnvironment.adminPassword = adminPassword
     return this
   }
 
   withUsername(username: string): this {
-    this.onecxKeycloakEnvironment.username = username
+    this.onecxEnvironment.keycloakDatabaseUsername = username
     return this
   }
 
   withPassword(password: string): this {
-    this.onecxKeycloakEnvironment.password = password
+    this.onecxEnvironment.keycloakDatabasePassword = password
     return this
   }
 
   withEnvironmentHostname(hostname: string): this {
-    this.onecxKeycloakEnvironment.hostname = hostname
+    this.onecxEnvironment.keycloakHostname = hostname
     return this
   }
 
@@ -86,81 +84,76 @@ export class OnecxKeycloakContainer extends GenericContainer {
   }
 
   withDatabase(database: string): this {
-    this.onecxKeycloakEnvironment.database = database
+    this.onecxEnvironment.keycloakDatabase = database
     return this
   }
 
-  // GET-Methoden
   getOnecxRealm(): string {
-    return this.onecxKeycloakEnvironment.onecxRealm
+    return this.onecxEnvironment.realm
   }
 
   getAdminUsername(): string {
-    return this.onecxKeycloakEnvironment.adminUsername
+    return this.onecxEnvironment.adminUsername
   }
 
   getAdminPassword(): string {
-    return this.onecxKeycloakEnvironment.adminPassword
+    return this.onecxEnvironment.adminPassword
   }
 
   getUsername(): string {
-    return this.onecxKeycloakEnvironment.username
+    return this.onecxEnvironment.keycloakDatabaseUsername
   }
 
   getPassword(): string {
-    return this.onecxKeycloakEnvironment.password
+    return this.onecxEnvironment.keycloakDatabasePassword
   }
 
   getEnvironmentHostname(): string {
-    return this.onecxKeycloakEnvironment.hostname
+    return this.onecxEnvironment.keycloakHostname
   }
 
-  getKeycloakPort(): number {
-    return this.onecxKeycloakEnvironment.keycloakPort
-  }
-
-  getNetworkAliases(): string[] {
-    if (this.onecxKeycloakEnvironment.networkAliases === undefined) {
-      this.onecxKeycloakEnvironment.networkAliases = []
-    }
-    return this.onecxKeycloakEnvironment.networkAliases
+  getPort(): number {
+    return this.onecxEnvironment.port
   }
 
   getDatabase() {
-    return this.onecxKeycloakEnvironment.database
+    return this.onecxEnvironment.keycloakDatabase
   }
 
   override async start(): Promise<StartedOnecxKeycloakContainer> {
     this.databaseContainer.createUserAndDatabase(
-      this.onecxKeycloakEnvironment.username,
-      this.onecxKeycloakEnvironment.password
+      this.onecxEnvironment.keycloakDatabaseUsername,
+      this.onecxEnvironment.keycloakDatabasePassword
     )
+    // Re-apply the default health check explicitly if it has not been overridden.
+    // This ensures the healthcheck is correctly registered before container startup
     if (JSON.stringify(this.healthCheck) === JSON.stringify(this.defaultHealthCheck)) {
       this.withHealthCheck(this.defaultHealthCheck)
     }
+    // Spread existing environment variables to preserve previously set values.
+    // This ensures that calling withEnvironment() does not override earlier configurations.
     this.withEnvironment({
       ...this.environment,
-      KEYCLOAK_ADMIN: this.onecxKeycloakEnvironment.adminUsername,
-      KEYCLOAK_ADMIN_PASSWORD: this.onecxKeycloakEnvironment.adminPassword,
+      KEYCLOAK_ADMIN: this.onecxEnvironment.adminUsername,
+      KEYCLOAK_ADMIN_PASSWORD: this.onecxEnvironment.adminPassword,
       KC_DB: this.databaseContainer.getDatabase(),
-      // where do I get this informaiton?
       KC_DB_POOL_INITIAL_SIZE: '1',
       KC_DB_POOL_MAX_SIZE: '5',
       KC_DB_POOL_MIN_SIZE: '2',
-      KC_DB_URL_DATABASE: this.onecxKeycloakEnvironment.database,
+      KC_DB_URL_DATABASE: this.onecxEnvironment.keycloakDatabase,
       KC_DB_URL_HOST: this.databaseContainer.getNetworkAliases()[0],
-      KC_DB_USERNAME: this.onecxKeycloakEnvironment.username,
-      KC_DB_PASSWORD: this.onecxKeycloakEnvironment.password,
-      KC_HOSTNAME: this.onecxKeycloakEnvironment.hostname,
+      KC_DB_USERNAME: this.onecxEnvironment.keycloakDatabaseUsername,
+      KC_DB_PASSWORD: this.onecxEnvironment.keycloakDatabasePassword,
+      KC_HOSTNAME: this.onecxEnvironment.keycloakHostname,
       KC_HOSTNAME_STRICT: 'false',
       KC_HTTP_ENABLED: 'true',
-      KC_HTTP_PORT: `${this.onecxKeycloakEnvironment.keycloakPort}`,
+      KC_HTTP_PORT: `${this.onecxEnvironment.port}`,
       KC_HEALTH_ENABLED: 'true',
     })
     this.withLogConsumer((stream) => {
-      stream.on('data', (line) => console.log(`${this.onecxKeycloakEnvironment.username}: `, line))
-      stream.on('err', (line) => console.error(`${this.onecxKeycloakEnvironment.username}: `, line))
-      stream.on('end', () => console.log(`${this.onecxKeycloakEnvironment.username}: Stream closed`))
+      stream.on('data', (line) => console.log(`${this.onecxEnvironment.keycloakDatabaseUsername}: `, line))
+      stream.on('err', (line) => console.error(`${this.onecxEnvironment.keycloakDatabaseUsername}: `, line))
+      stream.on('end', () => console.log(`${this.onecxEnvironment.keycloakDatabaseUsername}: Stream closed`))
     })
     this.withInitPath(this.initDefaultRealm)
 
@@ -173,21 +166,21 @@ export class OnecxKeycloakContainer extends GenericContainer {
       ])
     }
     this.withWaitStrategy(Wait.forAll([Wait.forHealthCheck(), Wait.forListeningPorts()]))
-    this.onecxKeycloakEnvironment.networkAliases = this.networkAliases
 
-    return new StartedOnecxKeycloakContainer(await super.start(), this.onecxKeycloakEnvironment)
+    return new StartedOnecxKeycloakContainer(await super.start(), this.onecxEnvironment, this.networkAliases)
   }
 }
 
 export class StartedOnecxKeycloakContainer extends AbstractStartedContainer {
   constructor(
     startedTestContainer: StartedTestContainer,
-    private readonly onecxKeycloakEnvironment: OnecxKeycloakEnvironment
+    private readonly onecxKeycloakEnvironment: OnecxEnvironment,
+    private readonly networkAliases: string[]
   ) {
     super(startedTestContainer)
   }
-  getOnecxRealm(): string {
-    return this.onecxKeycloakEnvironment.onecxRealm
+  getRealm(): string {
+    return this.onecxKeycloakEnvironment.realm
   }
 
   getAdminUsername(): string {
@@ -199,29 +192,26 @@ export class StartedOnecxKeycloakContainer extends AbstractStartedContainer {
   }
 
   getUsername(): string {
-    return this.onecxKeycloakEnvironment.username
+    return this.onecxKeycloakEnvironment.keycloakDatabaseUsername
   }
 
   getPassword(): string {
-    return this.onecxKeycloakEnvironment.password
+    return this.onecxKeycloakEnvironment.keycloakDatabasePassword
   }
 
   getEnvironmentHostname(): string {
-    return this.onecxKeycloakEnvironment.hostname
+    return this.onecxKeycloakEnvironment.keycloakHostname
   }
 
   getDatabase(): string {
-    return this.onecxKeycloakEnvironment.database
+    return this.onecxKeycloakEnvironment.keycloakDatabase
   }
 
-  getKeycloakPort(): number {
-    return this.onecxKeycloakEnvironment.keycloakPort
+  getPort(): number {
+    return this.onecxKeycloakEnvironment.port
   }
 
   getNetworkAliases(): string[] {
-    if (this.onecxKeycloakEnvironment.networkAliases === undefined) {
-      this.onecxKeycloakEnvironment.networkAliases = []
-    }
-    return this.onecxKeycloakEnvironment.networkAliases
+    return this.networkAliases
   }
 }

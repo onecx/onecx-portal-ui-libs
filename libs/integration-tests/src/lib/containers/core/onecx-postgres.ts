@@ -2,23 +2,21 @@ import { AbstractStartedContainer, GenericContainer, StartedTestContainer, Wait 
 import { HealthCheck } from 'testcontainers/build/types'
 
 interface OnecxPostgresDetails {
-  database: string
-  username: string
-  password: string
-  postgresPort: number
-  networkAliases?: string[] | undefined
+  postgresDatabase: string
+  postgresUsername: string
+  postgresPassword: string
+  port: number
 }
 
 export class OnecxPostgresContainer extends GenericContainer {
   private onecxPostgresDetails: OnecxPostgresDetails = {
-    database: 'postgres',
-    username: 'postgres',
-    password: 'admin',
-    postgresPort: 5432,
-    networkAliases: undefined,
+    postgresDatabase: 'postgres',
+    postgresUsername: 'postgres',
+    postgresPassword: 'admin',
+    port: 5432,
   }
   private defaultHealthCheck: HealthCheck = {
-    test: ['CMD-SHELL', `pg_isready -U ${this.onecxPostgresDetails.username}`],
+    test: ['CMD-SHELL', `pg_isready -U ${this.onecxPostgresDetails.postgresUsername}`],
     interval: 10_000,
     timeout: 5_000,
     retries: 3,
@@ -28,92 +26,89 @@ export class OnecxPostgresContainer extends GenericContainer {
     super(image)
     this.withCommand(['-cmax_prepared_transactions=100'])
     this.withHealthCheck(this.defaultHealthCheck)
-    this.withExposedPorts(this.onecxPostgresDetails.postgresPort)
+    this.withExposedPorts(this.onecxPostgresDetails.port)
     this.withNetworkAliases('postgresdb')
   }
 
   public withDatabase(database: string): this {
-    this.onecxPostgresDetails.database = database
+    this.onecxPostgresDetails.postgresDatabase = database
     return this
   }
 
   public withUsername(username: string): this {
-    this.onecxPostgresDetails.username = username
+    this.onecxPostgresDetails.postgresUsername = username
     return this
   }
 
   public withPassword(password: string): this {
-    this.onecxPostgresDetails.password = password
+    this.onecxPostgresDetails.postgresPassword = password
     return this
   }
 
   public getDatabase() {
-    return this.onecxPostgresDetails.database
+    return this.onecxPostgresDetails.postgresDatabase
   }
 
   public getUser() {
-    return this.onecxPostgresDetails.username
+    return this.onecxPostgresDetails.postgresUsername
   }
 
   public getPassword() {
-    return this.onecxPostgresDetails.password
-  }
-
-  public getNetworkAliases() {
-    return this.onecxPostgresDetails.networkAliases
+    return this.onecxPostgresDetails.postgresPassword
   }
 
   override async start(): Promise<StartedOnecxPostgresContainer> {
+    // Re-apply the default health check explicitly if it has not been overridden.
+    // This ensures the healthcheck is correctly registered before container startup
     if (JSON.stringify(this.healthCheck) === JSON.stringify(this.defaultHealthCheck)) {
       this.withHealthCheck(this.defaultHealthCheck)
     }
+    // Spread existing environment variables to preserve previously set values.
+    // This ensures that calling withEnvironment() does not override earlier configurations.
     this.withEnvironment({
       ...this.environment,
-      POSTGRES_DB: this.onecxPostgresDetails.database,
-      POSTGRES_USER: this.onecxPostgresDetails.username,
-      POSTGRES_PASSWORD: this.onecxPostgresDetails.password,
+      POSTGRES_DB: this.onecxPostgresDetails.postgresDatabase,
+      POSTGRES_USER: this.onecxPostgresDetails.postgresUsername,
+      POSTGRES_PASSWORD: this.onecxPostgresDetails.postgresPassword,
     })
 
     this.withLogConsumer((stream) => {
-      stream.on('data', (line) => console.log(`${this.onecxPostgresDetails.username}: `, line))
-      stream.on('err', (line) => console.error(`${this.onecxPostgresDetails.username}: `, line))
-      stream.on('end', () => console.log(`${this.onecxPostgresDetails.username}: Stream closed`))
+      stream.on('data', (line) => console.log(`${this.onecxPostgresDetails.postgresUsername}: `, line))
+      stream.on('err', (line) => console.error(`${this.onecxPostgresDetails.postgresUsername}: `, line))
+      stream.on('end', () => console.log(`${this.onecxPostgresDetails.postgresUsername}: Stream closed`))
     })
     this.withWaitStrategy(Wait.forAll([Wait.forHealthCheck(), Wait.forListeningPorts()]))
-    this.onecxPostgresDetails.networkAliases = this.networkAliases
-    return new StartedOnecxPostgresContainer(await super.start(), this.onecxPostgresDetails)
+    return new StartedOnecxPostgresContainer(await super.start(), this.onecxPostgresDetails, this.networkAliases)
   }
 }
 
 export class StartedOnecxPostgresContainer extends AbstractStartedContainer {
   constructor(
     startedTestContainer: StartedTestContainer,
-    private readonly onecxPostgresDetails: OnecxPostgresDetails
+    private readonly onecxPostgresDetails: OnecxPostgresDetails,
+    private readonly networkAliases: string[]
   ) {
     super(startedTestContainer)
   }
 
   public getDatabase(): string {
-    return this.onecxPostgresDetails.database
+    return this.onecxPostgresDetails.postgresDatabase
   }
 
   public getUsername(): string {
-    return this.onecxPostgresDetails.username
+    return this.onecxPostgresDetails.postgresUsername
   }
 
   public getPassword(): string {
-    return this.onecxPostgresDetails.password
+    return this.onecxPostgresDetails.postgresPassword
   }
 
   public getPort(): number {
-    return super.getMappedPort(this.onecxPostgresDetails.postgresPort)
+    return super.getMappedPort(this.onecxPostgresDetails.port)
   }
 
   public getNetworkAliases(): string[] {
-    if (this.onecxPostgresDetails.networkAliases === undefined) {
-      this.onecxPostgresDetails.networkAliases = []
-    }
-    return this.onecxPostgresDetails.networkAliases
+    return this.networkAliases
   }
 
   private async execCommandsSQL(commands: string[]): Promise<void> {
@@ -141,7 +136,6 @@ export class StartedOnecxPostgresContainer extends AbstractStartedContainer {
     }
   }
 
-  // TODO make sure that password and user is a valid value. (check for sql injection)
   public async getDatabases(): Promise<string[]> {
     const { output, stderr, exitCode } = await this.exec([
       'psql',
