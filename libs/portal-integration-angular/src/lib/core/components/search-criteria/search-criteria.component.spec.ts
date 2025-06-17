@@ -5,7 +5,6 @@ import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { InputSwitchModule } from 'primeng/inputswitch'
 import { AppStateService, ConfigurationService } from '@onecx/angular-integration-interface'
 import { SearchCriteriaComponent } from './search-criteria.component'
-import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 
@@ -39,7 +38,7 @@ describe('SearchCriteriaComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [SearchCriteriaComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      imports: [InputSwitchModule, RouterTestingModule, MockAuthModule, TranslateTestingModule.withTranslations({})],
+      imports: [InputSwitchModule, RouterTestingModule, TranslateTestingModule.withTranslations({})],
       providers: [
         ConfigurationService,
         AppStateService,

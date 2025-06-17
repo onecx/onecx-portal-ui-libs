@@ -28,7 +28,6 @@ export * from './lib/services/portal-api.service'
 export * from './lib/services/userprofile-api.service'
 
 // models
-export * from './lib/mock-auth/mock-auth.module'
 export * from './lib/model/avatar-info.model'
 export * from './lib/model/microfrontend'
 export * from './lib/model/portal-wrapper'
@@ -61,12 +60,10 @@ export {
   ThemeService,
   RemoteComponentsService,
   CONFIG_KEY,
-  IAuthService,
   LibConfig,
   MfeInfo,
   Theme,
   APP_CONFIG,
-  AUTH_SERVICE,
   SANITY_CHECK,
   APPLICATION_NAME,
 } from '@onecx/angular-integration-interface'

@@ -15,7 +15,6 @@ import { MenuModule } from 'primeng/menu'
 import { SkeletonModule } from 'primeng/skeleton'
 import { PageHeaderComponent } from '@onecx/angular-accelerator'
 import { ConfigurationService, APP_CONFIG } from '@onecx/angular-integration-interface'
-import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
 import { StorybookTranslateModule } from '../../storybook-translate.module'
 import { CriteriaTemplateComponent } from './criteria-template/criteria-template.component'
 import { SearchCriteriaComponent } from './search-criteria.component'
@@ -29,7 +28,6 @@ export default {
       providers: [
         importProvidersFrom(BrowserAnimationsModule),
         importProvidersFrom(RouterModule.forRoot([], { useHash: true })),
-        importProvidersFrom(MockAuthModule),
         provideHttpClient(withInterceptorsFromDi()),
         importProvidersFrom(StorybookThemeModule),
         provideHttpClientTesting(),

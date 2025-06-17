@@ -5,7 +5,6 @@ import { AngularRemoteComponentsModule } from '@onecx/angular-remote-components'
 import { ToastModule } from 'primeng/toast'
 import { providePrimeNG } from 'primeng/config'
 import { GlobalErrorComponent } from './components/error-component/global-error.component'
-import { PortalFooterComponent } from './components/portal-footer/portal-footer.component'
 import { HeaderComponent } from './components/portal-header/header.component'
 import { PortalViewportComponent } from './components/portal-viewport/portal-viewport.component'
 import { SkeletonModule } from 'primeng/skeleton'
@@ -27,7 +26,6 @@ import { TooltipModule } from 'primeng/tooltip'
   declarations: [
     PortalViewportComponent,
     HeaderComponent,
-    PortalFooterComponent,
     GlobalErrorComponent,
     AppLoadingSpinnerComponent,
     ShellSrcDirective,
@@ -36,7 +34,6 @@ import { TooltipModule } from 'primeng/tooltip'
     GlobalErrorComponent,
     HeaderComponent,
     PortalViewportComponent,
-    PortalFooterComponent,
     ToastModule,
     TooltipModule,
     TranslateModule,

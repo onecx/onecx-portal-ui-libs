@@ -21,10 +21,3 @@ export class DateUtils {
       : ''
   }
 }
-
-/**
- * @deprecated Will be removed. Please use isValidDate() from @onecx/accelerator
- */
-export function isValidDate(value: any): value is Date {
-  return value instanceof Date && !isNaN(value as any)
-}

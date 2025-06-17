@@ -15,7 +15,6 @@ import {
 } from '@onecx/angular-integration-interface/mocks'
 import { TooltipStyle } from 'primeng/tooltip'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
-import { MockAuthModule } from '../../mock-auth/mock-auth.module'
 import { ColumnType } from '../../model/column-type.model'
 import { DataListGridComponent } from '../data-list-grid/data-list-grid.component'
 import { DataTableComponent } from '../data-table/data-table.component'
@@ -210,7 +209,6 @@ describe('DataViewComponent', () => {
       declarations: [DataViewComponent, DataListGridComponent, DataTableComponent],
       imports: [
         DataViewModule,
-        MockAuthModule,
         TranslateTestingModule.withTranslations(TRANSLATIONS),
         AngularAcceleratorModule,
         RouterModule,
