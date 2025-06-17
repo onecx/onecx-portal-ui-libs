@@ -1,3 +1,22 @@
+## [6.0.0-rc.15](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.14...v6.0.0-rc.15) (2025-06-16)
+
+### Features
+
+* permission service ([#759](https://github.com/onecx/onecx-portal-ui-libs/issues/759)) ([#762](https://github.com/onecx/onecx-portal-ui-libs/issues/762)) ([a3881ae](https://github.com/onecx/onecx-portal-ui-libs/commit/a3881aeee629f1bfa61c8f9e6181ee6155ee0d0e))
+* remove initialize module guard, move translation connection service ([1b32d16](https://github.com/onecx/onecx-portal-ui-libs/commit/1b32d16cceaa2dc34ae421310fdd926d5bfcb03b))
+* remove initialize module guard, move translation connection service ([#769](https://github.com/onecx/onecx-portal-ui-libs/issues/769)) ([57c246b](https://github.com/onecx/onecx-portal-ui-libs/commit/57c246ba881583f001619570590950186a1c3df7))
+* replace html with :scope in app styles ([#773](https://github.com/onecx/onecx-portal-ui-libs/issues/773)) ([c99df1d](https://github.com/onecx/onecx-portal-ui-libs/commit/c99df1db67ce73a808a7ba67456390243f3b2463))
+
+### Bug Fixes
+
+* filter filter-values null, undefined, empty ([#756](https://github.com/onecx/onecx-portal-ui-libs/issues/756)) ([#768](https://github.com/onecx/onecx-portal-ui-libs/issues/768)) ([ee3eba9](https://github.com/onecx/onecx-portal-ui-libs/commit/ee3eba9d1138615cc53668dd0152366b52f83e84))
+* method signatures after build ([#767](https://github.com/onecx/onecx-portal-ui-libs/issues/767)) ([5f3af3f](https://github.com/onecx/onecx-portal-ui-libs/commit/5f3af3f4b88fc183729a606ea5df4c037078142f))
+
+### Refactoring
+
+* fix permission.service and improve translation loading ([#764](https://github.com/onecx/onecx-portal-ui-libs/issues/764)) ([72b7f7c](https://github.com/onecx/onecx-portal-ui-libs/commit/72b7f7c38897bb34e4f0a0e099cfc619fc51328a))
+* v6 - move portal-page from angular-accelerator to angular-utils ([#761](https://github.com/onecx/onecx-portal-ui-libs/issues/761)) ([008dd88](https://github.com/onecx/onecx-portal-ui-libs/commit/008dd88ba0f906305fe124b187656d9521339887))
+
 ## [6.0.0-rc.14](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.13...v6.0.0-rc.14) (2025-06-03)
 
 ### Features
