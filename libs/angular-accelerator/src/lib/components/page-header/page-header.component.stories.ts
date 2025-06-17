@@ -256,7 +256,7 @@ export const WithLoadingState = {
 const TemplateWithProjection: StoryFn<PageHeaderComponent> = (args) => ({
   props: args,
   template: `
-  <ocx-page-header [header]="title" [subheader]="subTitle" [actions]="actions">
+  <ocx-page-header [header]="header" [subheader]="subheader" [actions]="actions">
     <div>
       <span>My dynamic content</span>
       <ul>
