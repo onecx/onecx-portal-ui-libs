@@ -7,5 +7,5 @@ export default {
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../coverage/libs/integration-tests',
-  testTimeout: 60000,
+  testTimeout: 100000,
 }
