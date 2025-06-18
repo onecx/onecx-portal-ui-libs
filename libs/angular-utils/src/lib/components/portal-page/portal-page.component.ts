@@ -1,38 +1,30 @@
-import { Component, Inject, Input, OnInit, Optional } from '@angular/core'
-import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
+import { Component, Input, OnInit } from '@angular/core'
 import { AppStateService } from '@onecx/angular-integration-interface'
-import { UserService } from '@onecx/angular-integration-interface'
+import { CommonModule } from '@angular/common'
+import { TranslateModule } from '@ngx-translate/core'
+import { PermissionService } from '../../services/permission.service'
+import { of } from 'rxjs'
 
-/**
- * @deprecated
- * Please import from `@onecx/angular-utils` instead.
- */
 @Component({
   selector: 'ocx-portal-page',
   templateUrl: './portal-page.component.html',
   styleUrls: ['./portal-page.component.scss'],
+  standalone: true,
+  imports: [CommonModule, TranslateModule],
 })
 export class PortalPageComponent implements OnInit {
   @Input() permission = ''
   @Input() helpArticleId = ''
   @Input() pageName = ''
   @Input() applicationId = ''
-
-  collapsed = false
-
+  private trueObservable = of(true)
   constructor(
     private appState: AppStateService,
-    private userService: UserService,
-    @Inject(HAS_PERMISSION_CHECKER)
-    @Optional()
-    private hasPermissionChecker?: HasPermissionChecker,
+    private permissionService: PermissionService
   ) {}
 
   hasAccess() {
-    if(this.hasPermissionChecker) {
-      return this.permission ? this.hasPermissionChecker.hasPermission(this.permission) : true
-    }
-    return this.permission ? this.userService.hasPermission(this.permission) : true
+    return this.permission ? this.permissionService.hasPermission(this.permission) : this.trueObservable
   }
 
   ngOnInit(): void {
