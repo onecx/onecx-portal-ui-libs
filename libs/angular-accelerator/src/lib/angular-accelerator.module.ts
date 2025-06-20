@@ -45,6 +45,7 @@ import { GlobalErrorComponent } from './components/error-component/global-error.
 import { LoadingIndicatorComponent } from './components/loading-indicator/loading-indicator.component'
 import { BasicDirective } from './directives/basic.directive'
 import { LoadingIndicatorDirective } from './directives/loading-indicator.directive'
+import { MessageService } from 'primeng/api'
 
 export class AngularAcceleratorMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -127,6 +128,10 @@ function appInitializer(userService: UserService) {
       provide: TRANSLATION_PATH,
       useValue: './onecx-angular-accelerator/assets/i18n/primeng/',
       multi: true,
+    },
+    {
+      provide: MessageService,
+      useClass: MessageService,
     },
     AppConfigService,
     provideTranslationConnectionService(),
