@@ -1,7 +1,7 @@
 module.exports = {
   branches: [
     'main',
-    { 
+    {
       name: 'develop',
       channel: 'rc',
       prerelease: 'rc',
