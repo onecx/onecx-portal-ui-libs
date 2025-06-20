@@ -1,4 +1,3 @@
-import { Component, HostListener, Inject, OnDestroy, OnInit, Optional } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { Component, HostListener, OnDestroy, OnInit, inject } from '@angular/core'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
@@ -52,9 +51,6 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
   ripple = true
   isMobile = false
   globalErrMsg: string | undefined
-  verticalMenuSlotName = 'onecx-shell-vertical-menu'
-  isVerticalMenuComponentDefined$: Observable<boolean>
-
   verticalMenuSlotName = 'onecx-shell-vertical-menu'
   isVerticalMenuComponentDefined$: Observable<boolean>
 

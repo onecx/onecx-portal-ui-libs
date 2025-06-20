@@ -8,7 +8,7 @@
     "@phenomnomnominal/tsquery": "^6",
     "@nx/devkit": "^20.3.0",
     "typescript": "^5.5.4",
-    "postcss": "^8.5.3"W
+    "postcss": "^8.5.3"
   },
   "type": "commonjs",
   "main": "./src/index.js",
