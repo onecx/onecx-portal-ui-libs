@@ -18,7 +18,11 @@ describe('PortalPageComponent', () => {
           de: require('./../../../../assets/i18n/de.json'),
         }),
       ],
-      providers: [provideAngularUtils(), provideHttpClient(withInterceptorsFromDi()), provideAppStateServiceMock()],
+      providers: [
+        provideAngularUtils({ contentType: 'microfrontend' }),
+        provideHttpClient(withInterceptorsFromDi()),
+        provideAppStateServiceMock(),
+      ],
     }).compileComponents()
   }))
 

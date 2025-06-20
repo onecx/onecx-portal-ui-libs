@@ -24,6 +24,7 @@ import {
 } from './portal-dialog.service'
 import { provideShellCapabilityServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
+import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 
 // This component is in charge of dialog display
 @Component({
@@ -275,6 +276,7 @@ describe('PortalDialogService', () => {
         TranslateTestingModule.withTranslations('en', translations),
         DynamicDialogModule,
         CommonModule,
+        NoopAnimationsModule,
         ButtonModule,
       ],
       providers: [
