@@ -21,4 +21,3 @@ function prepareTranslationPathProviders(contentType: ContentType) {
     case 'remoteComponent':
       return provideTranslationPathsForRemoteComponent()
   }
-}

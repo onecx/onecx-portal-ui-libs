@@ -3,7 +3,7 @@ import { InteractiveDataViewComponent } from './interactive-data-view.component'
 import { importProvidersFrom } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
+import { UserServiceMock, provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { ActivatedRoute } from '@angular/router'
 import { SlotService } from '@onecx/angular-remote-components'
 import { of } from 'rxjs'
@@ -21,24 +21,27 @@ import { TableModule } from 'primeng/table'
 import { ButtonModule } from 'primeng/button'
 import { MultiSelectModule } from 'primeng/multiselect'
 import { StorybookTranslateModule } from '../../storybook-translate.module'
-import { MockAuthModule } from '../../mock-auth/mock-auth.module'
 import { MenuModule } from 'primeng/menu'
 import { PickListModule } from 'primeng/picklist'
 import { SelectButtonModule } from 'primeng/selectbutton'
 import { DialogModule } from 'primeng/dialog'
 import { DataViewModule } from 'primeng/dataview'
-import { DropdownModule } from 'primeng/dropdown'
+import { SelectModule } from 'primeng/select'
 import { FormsModule } from '@angular/forms'
 import { ProgressBarModule } from 'primeng/progressbar'
 import { InputTextModule } from 'primeng/inputtext'
 import { FloatLabelModule } from 'primeng/floatlabel'
-import { OverlayPanelModule } from 'primeng/overlaypanel'
+import { PopoverModule } from 'primeng/popover'
 import { FocusTrapModule } from 'primeng/focustrap'
 import { ChipModule } from 'primeng/chip'
 import { ColumnType } from '../../model/column-type.model'
 import { FilterType } from '../../model/filter.model'
 import { TooltipOnOverflowDirective } from '../../directives/tooltipOnOverflow.directive'
 import { SkeletonModule } from 'primeng/skeleton'
+import { StorybookThemeModule } from '../../storybook-theme.module'
+import { TooltipModule } from 'primeng/tooltip'
+import { TooltipStyle } from 'primeng/tooltip'
+import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 
 export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewComponent> = {
   title: 'Components/InteractiveDataViewComponent',
@@ -48,7 +51,6 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
       providers: [
         importProvidersFrom(BrowserModule),
         importProvidersFrom(BrowserAnimationsModule),
-        provideUserServiceMock(),
         {
           provide: ActivatedRoute,
           useValue: {
@@ -67,6 +69,10 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
             },
           },
         },
+        provideUserServiceMock(),
+        { provide: HAS_PERMISSION_CHECKER, useClass: UserServiceMock },
+        importProvidersFrom(StorybookThemeModule),
+        TooltipStyle,
       ],
     }),
     moduleMetadata({
@@ -89,21 +95,21 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
         ButtonModule,
         MultiSelectModule,
         StorybookTranslateModule,
-        MockAuthModule,
         MenuModule,
         PickListModule,
         SelectButtonModule,
         DialogModule,
         DataViewModule,
-        DropdownModule,
+        SelectModule,
         FormsModule,
         ProgressBarModule,
         InputTextModule,
         FloatLabelModule,
-        OverlayPanelModule,
+        PopoverModule,
         FocusTrapModule,
         ChipModule,
         SkeletonModule,
+        TooltipModule,
       ],
     }),
   ],
@@ -138,7 +144,7 @@ export const defaultInteractiveDataViewArgs = {
       nameKey: 'Available',
       sortable: false,
       filterable: true,
-      filterType: FilterType.TRUTHY,
+      filterType: FilterType.IS_NOT_EMPTY,
       predefinedGroupKeys: ['test2'],
     },
     {
@@ -175,4 +181,13 @@ export const defaultInteractiveDataViewArgs = {
     },
   ],
   emptyResultsMessage: 'No results',
+  deletePermission: 'TEST_MGMT#TEST_DELETE',
+  editPermission: 'TEST_MGMT#TEST_EDIT',
+  viewPermission: 'TEST_MGMT#TEST_VIEW',
+}
+
+export const defaultInteractiveDataViewArgTypes = {
+  deleteItem: { action: 'deleteItem' },
+  editItem: { action: 'editItem' },
+  viewItem: { action: 'viewItem' },
 }

@@ -3,6 +3,7 @@ import { InteractiveDataViewComponent } from './interactive-data-view.component'
 import { Filter } from '../../model/filter.model'
 import {
   defaultInteractiveDataViewArgs,
+  defaultInteractiveDataViewArgTypes,
   InteractiveDataViewComponentSBConfig,
   InteractiveDataViewTemplate,
 } from './storybook-config'
@@ -22,17 +23,21 @@ const defaultArgs: InteractiveDataViewFilterViewInputTypes = {
   filterViewDisplayMode: 'button',
 }
 
+const defaultComponentArgTypes = {
+  ...defaultInteractiveDataViewArgTypes,
+}
+
 const CustomContentInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
   props: args,
   template: `
     <ocx-interactive-data-view [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
-      <ng-template #listItem let-item>
+      <ng-template #list let-item>
         <div class="w-full px-4 py-2 card mb-4">
           <p>{{item.product}}</p>
           <p-progressBar [value]="item.amount" />
         </div>
       </ng-template>
-      <ng-template #gridItem let-item>
+      <ng-template #grid let-item>
         <div class="w-3 px-4 py-2 card m-0 mr-4">
           <p>{{item.product}}</p>
           <p-progressBar [value]="item.amount" />
@@ -45,6 +50,9 @@ const CustomContentInteractiveDataView: StoryFn<InteractiveDataViewComponent> = 
 })
 
 export const WithFilterViewChips = {
+  argTypes: {
+    ...defaultComponentArgTypes,
+  },
   render: CustomContentInteractiveDataView,
   args: {
     ...defaultArgs,
@@ -54,6 +62,9 @@ export const WithFilterViewChips = {
 }
 
 export const WithFilterViewButton = {
+  argTypes: {
+    ...defaultComponentArgTypes,
+  },
   render: CustomContentInteractiveDataView,
   args: {
     ...defaultArgs,
@@ -79,6 +90,9 @@ const CustomFilterViewChipsInteractiveDataView: StoryFn<InteractiveDataViewCompo
 })
 
 export const WithFilterViewCustomChipsTemplates = {
+  argTypes: {
+    ...defaultComponentArgTypes,
+  },
   render: CustomFilterViewChipsInteractiveDataView,
   args: {
     ...defaultArgs,
@@ -113,6 +127,9 @@ const CustomFilterViewChipsByColumnInteractiveDataView: StoryFn<InteractiveDataV
 })
 
 export const WithFilterViewCustomChipsByColumnTemplates = {
+  argTypes: {
+    ...defaultComponentArgTypes,
+  },
   render: CustomFilterViewChipsByColumnInteractiveDataView,
   args: {
     ...defaultArgs,
@@ -138,6 +155,9 @@ const CustomFilterViewCellsInteractiveDataView: StoryFn<InteractiveDataViewCompo
 })
 
 export const WithFilterViewCustomCellTemplates = {
+  argTypes: {
+    ...defaultComponentArgTypes,
+  },
   render: CustomFilterViewCellsInteractiveDataView,
   args: {
     ...defaultArgs,
@@ -172,6 +192,9 @@ const CustomFilterViewCellsByColumnInteractiveDataView: StoryFn<InteractiveDataV
 })
 
 export const WithFilterViewCustomCellByColumnTemplates = {
+  argTypes: {
+    ...defaultComponentArgTypes,
+  },
   render: CustomFilterViewCellsByColumnInteractiveDataView,
   args: {
     ...defaultArgs,
@@ -191,6 +214,9 @@ const CustomFilterViewNoFiltersInteractiveDataView: StoryFn<InteractiveDataViewC
 })
 
 export const WithFilterViewCustomNoFiltersTemplate = {
+  argTypes: {
+    ...defaultComponentArgTypes,
+  },
   render: CustomFilterViewNoFiltersInteractiveDataView,
   args: {
     ...defaultArgs,
@@ -232,6 +258,9 @@ const CustomFilterViewChipContentInteractiveDataView: StoryFn<InteractiveDataVie
 })
 
 export const WithFilterViewCustomChipContentTemplate = {
+  argTypes: {
+    ...defaultComponentArgTypes,
+  },
   render: CustomFilterViewChipContentInteractiveDataView,
   args: {
     ...defaultArgs,
@@ -253,6 +282,9 @@ const CustomFilterViewShowMoreChipInteractiveDataView: StoryFn<InteractiveDataVi
 })
 
 export const WithFilterViewCustomShowMoreChipTemplate = {
+  argTypes: {
+    ...defaultComponentArgTypes,
+  },
   render: CustomFilterViewShowMoreChipInteractiveDataView,
   args: {
     ...defaultArgs,
@@ -262,6 +294,9 @@ export const WithFilterViewCustomShowMoreChipTemplate = {
 }
 
 export const WithFilterViewCustomChipSelection = {
+  argTypes: {
+    ...defaultComponentArgTypes,
+  },
   render: InteractiveDataViewTemplate,
   args: {
     ...defaultArgs,
@@ -274,6 +309,9 @@ export const WithFilterViewCustomChipSelection = {
 }
 
 export const WithFilterViewCustomStyles = {
+  argTypes: {
+    ...defaultComponentArgTypes,
+  },
   render: InteractiveDataViewTemplate,
   args: {
     ...defaultArgs,

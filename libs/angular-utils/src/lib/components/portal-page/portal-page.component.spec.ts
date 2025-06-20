@@ -1,7 +1,9 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { PortalPageComponent } from './portal-page.component'
-import { provideAngularUtils } from '../../providers/angular-utils.providers'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { TranslateTestingModule } from 'ngx-translate-testing'
+import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
+import { provideAngularUtils } from '../../providers/angular-utils.providers'
 
 describe('PortalPageComponent', () => {
   let component: PortalPageComponent
@@ -9,8 +11,14 @@ describe('PortalPageComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [PortalPageComponent],
-      providers: [provideAngularUtils({ contentType: 'microfrontend' }), provideHttpClient(withInterceptorsFromDi())],
+      imports: [
+        PortalPageComponent,
+        TranslateTestingModule.withTranslations({
+          en: require('./../../../../assets/i18n/en.json'),
+          de: require('./../../../../assets/i18n/de.json'),
+        }),
+      ],
+      providers: [provideAngularUtils(), provideHttpClient(withInterceptorsFromDi()), provideAppStateServiceMock()],
     }).compileComponents()
   }))
 

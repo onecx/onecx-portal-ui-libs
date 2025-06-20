@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core'
+import { Injectable, inject } from '@angular/core'
 import { ActivatedRoute, ActivatedRouteSnapshot, Data, NavigationEnd, ParamMap, Router } from '@angular/router'
-import { TranslateService } from '@ngx-translate/core'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
-import { BehaviorSubject, filter, map } from 'rxjs'
-import { MenuItem } from 'primeng/api'
-import { BreadCrumbMenuItem } from '../model/breadcrumb-menu-item.model'
+import { TranslateService } from '@ngx-translate/core'
 import { SyncableTopic } from '@onecx/accelerator'
+import { MenuItem } from 'primeng/api'
+import { BehaviorSubject, filter, map } from 'rxjs'
+import { BreadCrumbMenuItem } from '../model/breadcrumb-menu-item.model'
 
 interface ManualBreadcrumbs {
   menuItems: MenuItem[]
@@ -23,16 +23,16 @@ class ManualBreadcrumbsTopic extends SyncableTopic<ManualBreadcrumbs> {
 @Injectable({ providedIn: 'any' })
 @UntilDestroy()
 export class BreadcrumbService {
+  private router = inject(Router)
+  private activeRoute = inject(ActivatedRoute)
+  private translateService = inject(TranslateService)
+
   private itemsSource$ = new ManualBreadcrumbsTopic()
   generatedItemsSource = new BehaviorSubject<MenuItem[]>([])
 
   itemsHandler = this.itemsSource$.pipe(map((manualBreadcrumbs) => manualBreadcrumbs.menuItems))
 
-  constructor(
-    private router: Router,
-    private activeRoute: ActivatedRoute,
-    private translateService: TranslateService
-  ) {
+  constructor() {
     this.generateBreadcrumbs(this.activeRoute.snapshot)
     this.router.events
       .pipe(

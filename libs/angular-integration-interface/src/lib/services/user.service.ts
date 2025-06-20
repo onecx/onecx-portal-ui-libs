@@ -1,17 +1,15 @@
 import { Injectable, OnDestroy } from '@angular/core'
-import { BehaviorSubject, map, filter, firstValueFrom, skip, Observable, merge } from 'rxjs'
-import { PermissionsTopic, UserProfile, UserProfileTopic } from '@onecx/integration-interface'
+import { PermissionsTopic, UserProfileTopic } from '@onecx/integration-interface'
+import { BehaviorSubject, firstValueFrom, map } from 'rxjs'
 import { DEFAULT_LANG } from '../api/constants'
 
 @Injectable({ providedIn: 'root' })
 export class UserService implements OnDestroy {
   profile$ = new UserProfileTopic()
-  permissions$ = new BehaviorSubject<string[]>([])
   lang$ = new BehaviorSubject(this.determineLanguage() ?? DEFAULT_LANG)
 
   private effectivePermissions$: Observable<string[]>
   private permissionsTopic$ = new PermissionsTopic()
-  private oldStylePermissionsInitialized: Promise<string[]>
 
   constructor() {
     this.profile$
@@ -22,15 +20,6 @@ export class UserService implements OnDestroy {
         )
       )
       .subscribe(this.lang$)
-
-    this.oldStylePermissionsInitialized = firstValueFrom(this.permissions$.pipe(skip(1)))
-    this.effectivePermissions$ = merge(this.permissions$.pipe(skip(1)), this.permissionsTopic$.asObservable())
-    this.profile$
-      .pipe(
-        map((profile) => this.extractPermissions(profile)),
-        filter((permissions): permissions is string[] => !!permissions)
-      )
-      .subscribe(this.permissions$)
   }
 
   ngOnDestroy(): void {
@@ -38,24 +27,28 @@ export class UserService implements OnDestroy {
   }
 
   getPermissions() {
-    return this.effectivePermissions$
+    return this.permissionsTopic$.asObservable()
   }
 
-  hasPermission(permissionKey: string | string[]): boolean {
-    if (Array.isArray(permissionKey)) {
-      return permissionKey.every((key) => this.hasPermission(key))
-    }
-    const oldConceptResult = this.permissions$.getValue()
-      ? this.permissions$.getValue()?.includes(permissionKey)
-      : false
-    const result = this.permissionsTopic$.getValue()
-      ? this.permissionsTopic$.getValue()?.includes(permissionKey)
-      : oldConceptResult
+  async hasPermission(permissionKey: string | string[] | undefined): Promise<boolean> {
+    if (!permissionKey) return true
 
-    if (!result) {
-      console.log(`👮‍♀️ No permission for: ${permissionKey}`)
+    if (Array.isArray(permissionKey)) {
+      const permissions = await Promise.all(permissionKey.map((key) => this.hasPermission(key)))
+      return permissions.every((hasPermission) => hasPermission)
     }
-    return !!result
+
+    return firstValueFrom(
+      this.permissionsTopic$.pipe(
+        map((permissions) => {
+          const result = permissions.includes(permissionKey)
+          if (!result) {
+            console.log(`👮‍♀️ No permission for: ${permissionKey}`)
+          }
+          return !!result
+        })
+      )
+    )
   }
 
   private determineLanguage(): string | undefined {
@@ -81,30 +74,9 @@ export class UserService implements OnDestroy {
     return browserLang
   }
 
-  private extractPermissions(userProfile: UserProfile) {
-    if (userProfile) {
-      if (userProfile.memberships) {
-        const permissions: string[] = []
-        userProfile.memberships.forEach((m) => {
-          m.roleMemberships?.forEach((r) => {
-            r.permissions?.forEach((p) => {
-              if (p) {
-                if (p.key !== undefined) {
-                  permissions.push(p.key)
-                }
-              }
-            })
-          })
-        })
-        return permissions
-      }
-    }
-    return null
-  }
-
   get isInitialized(): Promise<void> {
     return Promise.all([
-      Promise.race([this.permissionsTopic$.isInitialized, this.oldStylePermissionsInitialized]),
+      this.permissionsTopic$.isInitialized,
       this.profile$.isInitialized,
       // eslint-disable-next-line @typescript-eslint/no-empty-function
     ]).then(() => {})

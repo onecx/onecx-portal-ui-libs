@@ -1,18 +1,20 @@
 import { HttpClient } from '@angular/common/http'
-import { Inject, Injectable, OnDestroy, Optional } from '@angular/core'
-import { firstValueFrom } from 'rxjs'
+import { Injectable, OnDestroy, inject } from '@angular/core'
+import { firstValueFrom, map } from 'rxjs'
 import { Config, ConfigurationTopic } from '@onecx/integration-interface'
 import { APP_CONFIG } from '../api/injection-tokens'
 import { CONFIG_KEY } from '../model/config-key.model'
+import Semaphore from 'ts-semaphore'
 
 @Injectable({ providedIn: 'root' })
 export class ConfigurationService implements OnDestroy {
-  config$ = new ConfigurationTopic()
+  private http = inject(HttpClient)
+  private defaultConfig = inject<{
+    [key: string]: string
+  }>(APP_CONFIG, { optional: true })
 
-  constructor(
-    private http: HttpClient,
-    @Optional() @Inject(APP_CONFIG) private defaultConfig?: { [key: string]: string }
-  ) {}
+  private config$ = new ConfigurationTopic()
+  private semaphore = new Semaphore(1)
 
   ngOnDestroy(): void {
     this.config$.destroy()
@@ -57,20 +59,22 @@ export class ConfigurationService implements OnDestroy {
     return this.config$.isInitialized
   }
 
-  public getProperty(key: CONFIG_KEY): string | undefined {
+  public async getProperty(key: CONFIG_KEY): Promise<string | undefined> {
     if (!Object.values(CONFIG_KEY).includes(key)) {
       console.error('Invalid config key ', key)
     }
-    return this.config$.getValue()?.[key]
+    return firstValueFrom(this.config$.pipe(map((config) => config[key])))
   }
 
-  public async setProperty(key: string, val: string): Promise<void> {
-    const currentValues = await firstValueFrom(this.config$.asObservable())
-    currentValues[key] = val
-    await this.config$.publish(currentValues)
+  public async setProperty(key: string, val: string) {
+    return this.semaphore.use(async () => {
+      const currentValues = await firstValueFrom(this.config$.asObservable())
+      currentValues[key] = val
+      await this.config$.publish(currentValues)
+    })
   }
 
-  public getConfig(): Config | undefined {
-    return this.config$.getValue()
+  public async getConfig(): Promise<Config | undefined> {
+    return firstValueFrom(this.config$.asObservable())
   }
 }

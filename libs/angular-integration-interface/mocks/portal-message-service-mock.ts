@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { FakeTopic } from './fake-topic'
+import { FakeTopic } from '@onecx/accelerator'
 import { Message as PortalMessage, PortalMessageService } from '@onecx/angular-integration-interface'
 import { Message } from '@onecx/integration-interface'
 

@@ -4,12 +4,17 @@
   "license": "Apache-2.0",
   "peerDependencies": {
     "tslib": "^2.6.3",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "@nx/devkit": "^20.3.0",
+    "@onecx/nx-migration-utils": "^6.0.0-rc.15"
   },
   "type": "commonjs",
   "main": "./src/index.js",
   "typings": "./src/index.d.ts",
   "publishConfig": {
     "access": "public"
+  },
+  "nx-migrations": {
+    "migrations": "./migrations.json"
   }
 }
