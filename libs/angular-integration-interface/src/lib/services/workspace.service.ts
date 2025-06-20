@@ -1,20 +1,19 @@
-import { Injectable } from '@angular/core'
-import { AppStateService } from './app-state.service'
-import { Observable, map } from 'rxjs'
-import { Route } from '@onecx/integration-interface'
-import { Endpoint } from '@onecx/integration-interface'
 import { Location } from '@angular/common'
+import { Injectable, inject } from '@angular/core'
+import { Endpoint, Route } from '@onecx/integration-interface'
+import { Observable, map } from 'rxjs'
+import { AppStateService } from './app-state.service'
 
 @Injectable({
   providedIn: 'root',
 })
 export class WorkspaceService {
+  protected appStateService = inject(AppStateService)
+
   private aliasStart = '[['
   private aliasEnd = ']]'
   private paramStart = '{'
   private paramEnd = '}'
-
-  constructor(protected appStateService: AppStateService) {}
 
   getUrl(
     productName: string,

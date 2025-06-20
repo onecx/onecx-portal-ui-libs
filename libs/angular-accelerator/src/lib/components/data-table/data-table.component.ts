@@ -5,7 +5,6 @@ import {
   ContentChild,
   ContentChildren,
   EventEmitter,
-  Inject,
   Injector,
   Input,
   LOCALE_ID,
@@ -14,6 +13,7 @@ import {
   QueryList,
   TemplateRef,
   ViewChildren,
+  inject,
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
@@ -29,9 +29,14 @@ import {
   debounceTime,
   filter,
   first,
+  forkJoin,
+  from,
   map,
   mergeMap,
   of,
+  shareReplay,
+  switchMap,
+  toArray,
   withLatestFrom,
 } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
@@ -71,11 +76,16 @@ export interface DataTableComponentState {
 }
 
 @Component({
+  standalone: false,
   selector: 'ocx-data-table',
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
 })
 export class DataTableComponent extends DataSortBase implements OnInit, AfterContentInit {
+  private router = inject(Router)
+  private injector = inject(Injector)
+  private userService = inject(UserService)
+
   FilterType = FilterType
   TemplateType = TemplateType
   checked = true
@@ -85,7 +95,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this._rows$.getValue()
   }
   set rows(value: Row[]) {
-    !this._rows$.getValue().length ?? this.resetPage()
+    !this._rows$.getValue().length
     this._rows$.next(value)
   }
   _selectionIds$ = new BehaviorSubject<(string | number)[]>([])
@@ -107,7 +117,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this._filters$.getValue()
   }
   set filters(value: Filter[]) {
-    !this._filters$.getValue().length ?? this.resetPage()
+    !this._filters$.getValue().length
     this._filters$.next(value)
   }
   _sortDirection$ = new BehaviorSubject<DataSortDirection>(DataSortDirection.NONE)
@@ -149,13 +159,12 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   @Input() clientSideSorting = true
   @Input() sortStates: DataSortDirection[] = [DataSortDirection.ASCENDING, DataSortDirection.DESCENDING]
 
-  displayedPageSizes$: Observable<(number | { showAll: string })[]>
-  _pageSizes$ = new BehaviorSubject<(number | { showAll: string })[]>([10, 25, 50])
+  _pageSizes$ = new BehaviorSubject<number[]>([10, 25, 50])
   @Input()
-  get pageSizes(): (number | { showAll: string })[] {
+  get pageSizes(): number[] {
     return this._pageSizes$.getValue()
   }
-  set pageSizes(value: (number | { showAll: string })[]) {
+  set pageSizes(value: number[]) {
     this._pageSizes$.next(value)
   }
   displayedPageSize$: Observable<number>
@@ -167,11 +176,12 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   set pageSize(value: number | undefined) {
     this._pageSize$.next(value)
   }
-  _showAllOption$ = new BehaviorSubject<boolean>(false)
+  /**
+   * @deprecated
+   */
   @Input()
-  set showAllOption(value: boolean) {
-    this._showAllOption$.next(value)
-  }
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  set showAllOption(value: boolean) {}
 
   @Input() emptyResultsMessage: string | undefined
   @Input() name = ''
@@ -395,24 +405,15 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
   templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
 
-  constructor(
-    @Inject(LOCALE_ID) locale: string,
-    translateService: TranslateService,
-    private router: Router,
-    private injector: Injector,
-    private userService: UserService
-  ) {
+  private cachedOverflowActions$: Observable<DataAction[]>
+  private cachedOverflowMenuItemsVisibility$: Observable<boolean> | undefined
+
+  constructor() {
+    const locale = inject(LOCALE_ID)
+    const translateService = inject(TranslateService)
+
     super(locale, translateService)
     this.name = this.name || this.router.url.replace(/[^A-Za-z0-9]/, '_')
-    this.displayedPageSizes$ = combineLatest([
-      this._pageSizes$,
-      this.translateService.get('OCX_DATA_TABLE.ALL'),
-      this._showAllOption$,
-    ]).pipe(
-      map(([pageSizes, translation, showAllOption]) =>
-        showAllOption ? pageSizes.concat({ showAll: translation }) : pageSizes
-      )
-    )
     this.displayedPageSize$ = combineLatest([this._pageSize$, this._pageSizes$]).pipe(
       map(([pageSize, pageSizes]) => pageSize ?? pageSizes.find((val): val is number => typeof val === 'number') ?? 50)
     )
@@ -425,22 +426,40 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     this.overflowMenuItems$ = combineLatest([this.overflowActions$, this.currentMenuRow$]).pipe(
       mergeMap(([actions, row]) =>
         this.translateService.get([...actions.map((a) => a.labelKey || '')]).pipe(
-          map((translations) => {
-            return actions
-              .filter((a) => this.userService.hasPermission(a.permission))
-              .map((a) => ({
-                label: translations[a.labelKey || ''],
-                icon: a.icon,
-                styleClass: (a.classes || []).join(' '),
-                disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
-                visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
-                command: () => a.callback(row),
-              }))
-          })
+          switchMap((translations) =>
+            from(actions).pipe(
+              mergeMap((a) =>
+                from(this.userService.hasPermission(a.permission)).pipe(
+                  map((hasPermission) => ({
+                    ...a,
+                    hasPermission,
+                  }))
+                )
+              ),
+              toArray(),
+              map((actionsWithPermissions) =>
+                actionsWithPermissions
+                  .filter((a) => a.hasPermission)
+                  .map((a) => ({
+                    label: translations[a.labelKey || ''],
+                    icon: a.icon,
+                    styleClass: (a.classes || []).join(' '),
+                    disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
+                    visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
+                    command: () => a.callback(row),
+                  }))
+              )
+            )
+          )
         )
       )
     )
+
     this.rowSelectable = this.rowSelectable.bind(this)
+
+    this.cachedOverflowActions$ = this.overflowActions$.pipe(
+      shareReplay(1) // Cache the last emitted value
+    )
   }
 
   ngOnInit(): void {
@@ -455,7 +474,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         return filters
           .filter(
             (filter) =>
-              filter.columnId === currentFilterColumn?.id && currentFilterColumn.filterType === FilterType.TRUTHY
+              filter.columnId === currentFilterColumn?.id && currentFilterColumn.filterType === FilterType.IS_NOT_EMPTY
           )
           .map((filter) => filter.value)
       })
@@ -466,7 +485,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
           .filter(
             (filter) =>
               filter.columnId === currentFilterColumn?.id &&
-              (!currentFilterColumn.filterType || currentFilterColumn.filterType === FilterType.EQUAL)
+              (!currentFilterColumn.filterType || currentFilterColumn.filterType === FilterType.EQUALS)
           )
           .map((filter) => filter.value)
       })
@@ -474,7 +493,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     this.currentEqualFilterOptions$ = combineLatest([this._rows$, this.currentFilterColumn$, this._filters$]).pipe(
       filter(
         ([_, currentFilterColumn, __]) =>
-          !currentFilterColumn?.filterType || currentFilterColumn.filterType === FilterType.EQUAL
+          !currentFilterColumn?.filterType || currentFilterColumn.filterType === FilterType.EQUALS
       ),
       mergeMap(([rows, currentFilterColumn, filters]) => {
         if (!currentFilterColumn?.id) {
@@ -485,7 +504,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
           .filter(
             (filter) =>
               filter.columnId === currentFilterColumn?.id &&
-              (!currentFilterColumn.filterType || currentFilterColumn.filterType === FilterType.EQUAL)
+              (!currentFilterColumn.filterType || currentFilterColumn.filterType === FilterType.EQUALS)
           )
           .map((filter) => filter.value)
 
@@ -784,16 +803,30 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     menu.toggle(event)
   }
 
-  hasVisibleOverflowMenuItems(row: any) {
-    return this.overflowActions$.pipe(
-      map((actions) =>
-        actions.some(
-          (a) =>
-            !a.actionVisibleField ||
-            (this.fieldIsTruthy(row, a.actionVisibleField) && this.userService.hasPermission(a.permission))
+  // A new Observable is created with each ChangeDetection.
+  // The async pipe subscribes to it, triggering another ChangeDetection when a new value is emitted, which creates a loop.
+  // To prevent this, cache the Observable by using shareReplay to avoid recreating it with every ChangeDetection.
+  hasVisibleOverflowMenuItems(item: any): Observable<boolean> {
+    if (this.cachedOverflowMenuItemsVisibility$) {
+      return this.cachedOverflowMenuItemsVisibility$
+    }
+
+    const overflowMenuItemsVisibility$ = this.overflowActions$.pipe(
+      mergeMap((actions) =>
+        forkJoin(
+          actions.map((a) =>
+            !a.actionVisibleField || this.fieldIsTruthy(item, a.actionVisibleField)
+              ? from(this.userService.hasPermission(a.permission))
+              : of(false)
+          )
         )
-      )
+      ),
+      map((results) => results.some((isVisible) => isVisible))
     )
+
+    this.cachedOverflowMenuItemsVisibility$ = overflowMenuItemsVisibility$.pipe(shareReplay(1))
+
+    return this.cachedOverflowMenuItemsVisibility$
   }
 
   isDate(value: Date | string | number) {
@@ -949,7 +982,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return ObjectUtils.resolveFieldData(object, key)
   }
 
-  getRowObjectFromMultiselectItem(value: MultiSelectItem, column: DataTableColumn) {
+  getRowObjectFromMultiselectItem(value: MultiSelectItem, column: DataTableColumn): Record<string, string | undefined> {
     return {
       [column.id]: value.label,
     }

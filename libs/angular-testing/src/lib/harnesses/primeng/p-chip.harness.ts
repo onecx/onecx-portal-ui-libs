@@ -3,7 +3,7 @@ import { ComponentHarness } from '@angular/cdk/testing'
 export class PChipHarness extends ComponentHarness {
   static hostSelector = 'p-chip'
 
-  getRemoveButton = this.locatorForOptional('.pi-chip-remove-icon')
+  getRemoveButton = this.locatorForOptional('.p-chip-remove-icon')
 
   async getContent() {
     return await (await this.host()).text()

@@ -91,6 +91,6 @@ export class DataTableHarness extends ContentContainerComponentHarness {
     if (column === null || column === undefined) {
       throw new Error('Given column is null')
     }
-    return await column.hasClass('p-frozen-column')
+    return await column.hasClass('p-datatable-frozen-column')
   }
 }
