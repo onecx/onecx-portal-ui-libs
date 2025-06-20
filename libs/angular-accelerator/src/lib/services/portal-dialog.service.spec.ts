@@ -275,7 +275,6 @@ describe('PortalDialogService', () => {
         TranslateTestingModule.withTranslations('en', translations),
         DynamicDialogModule,
         CommonModule,
-        BrowserAnimationsModule,
         ButtonModule,
       ],
       providers: [
