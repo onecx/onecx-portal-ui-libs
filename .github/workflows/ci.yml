@@ -27,7 +27,7 @@ jobs:
       - name: Lint affected
         run: npx nx affected -t lint
       - name: Test affected
-        run: npx nx affected -t test --configuration=ci > tee jest-output.log
+        run: npx nx affected -t test --configuration=ci | tee jest-output.log
       - name: Upload Jest Logs
         if: always()
         uses: actions/upload-artifact@v4
