@@ -29,6 +29,7 @@ jobs:
       - name: Test affected
         run: npx nx affected -t test --configuration=ci > jest-output.log
       - name: Upload Jest Logs
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: jest-logs
