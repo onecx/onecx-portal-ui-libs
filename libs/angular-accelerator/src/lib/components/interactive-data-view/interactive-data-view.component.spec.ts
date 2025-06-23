@@ -75,7 +75,7 @@ DomHandler.index = (element) => {
   return -1
 }
 
-xdescribe('InteractiveDataViewComponent', () => {
+describe('InteractiveDataViewComponent', () => {
   const mutationObserverMock = jest.fn(function MutationObserver(callback) {
     this.observe = jest.fn()
     this.disconnect = jest.fn()
@@ -1231,8 +1231,10 @@ xdescribe('InteractiveDataViewComponent', () => {
       await dropdownItems[2].selectItem()
 
       const dataView = await loader.getHarness(DataViewHarness)
-      dataTable = await dataView?.getDataTable()
-      tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
+      expect(dataView).toBeDefined()
+      dataTable = await dataView.getDataTable()
+      expect(dataTable).toBeDefined()
+      tableHeaders = await dataTable!.getHeaderColumns()
 
       expect(await tableHeaders[2].getText()).toBe('COLUMN_HEADER_NAME.START_DATE')
       const startDateFilterMultiSelect = await tableHeaders[2].getFilterMultiSelect()
