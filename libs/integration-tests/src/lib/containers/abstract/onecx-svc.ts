@@ -34,7 +34,7 @@ export abstract class OnecxSvcContainer extends GenericContainer {
     this.onecxSvcDetails = onecxSvcDetails
     this.withHealthCheck(this.defaultHealthCheck)
     this.withExposedPorts(this.port)
-    this.withStartupTimeout(100_000)
+    this.withStartupTimeout(180_000)
   }
 
   withSvcPort(svcPort: number): this {

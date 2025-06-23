@@ -72,7 +72,7 @@ export abstract class OnecxIamKcContainer extends GenericContainer {
     // This ensures that calling withEnvironment() does not override earlier configurations.
     this.withEnvironment({
       ...this.environment,
-      QUARKUS_KEYCLOAK_ADMIN_CLIENT_SERVER_URL: `http://${this.keycloakContainer.getNetworkAliases()[0]}: ${this.keycloakContainer.getPort()}`,
+      QUARKUS_KEYCLOAK_ADMIN_CLIENT_SERVER_URL: `http://${this.keycloakContainer.getNetworkAliases()[0]}:${this.keycloakContainer.getPort()}`,
       QUARKUS_KEYCLOAK_ADMIN_CLIENT_REALM: `${this.keycloakContainer.getAdminRealm()}`,
       QUARKUS_KEYCLOAK_ADMIN_CLIENT_USERNAME: `${this.keycloakContainer.getAdminUsername()}`,
       QUARKUS_KEYCLOAK_ADMIN_CLIENT_PASSWORD: `${this.keycloakContainer.getAdminPassword()}`,
@@ -114,7 +114,7 @@ export class StartedOnecxSvcContainer extends AbstractStartedContainer {
   }
 
   getPort(): number {
-    return super.getMappedPort(this.getFirstMappedPort())
+    return this.onecxSvcDetails.port
   }
 
   getNetworkAliases(): string[] {
