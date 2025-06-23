@@ -99,91 +99,95 @@ describe('InteractiveDataViewComponent', () => {
   let slotService: SlotServiceMock
   let userServiceMock: UserServiceMock
 
-  const mockData = [
-    {
-      version: 0,
-      creationDate: '2023-09-12T09:34:11.997048Z',
-      creationUser: 'creation user',
-      modificationDate: '2023-09-12T09:34:11.997048Z',
-      modificationUser: '',
-      id: '195ee34e-41c6-47b7-8fc4-3f245dee7651',
-      name: 'some name',
-      description: '',
-      status: 'some status',
-      responsible: 'someone responsible',
-      endDate: '2023-09-14T09:34:09Z',
-      startDate: '2023-09-13T09:34:05Z',
-      imagePath: '/path/to/image',
-      testNumber: '1',
-      testTruthy: 'value',
-    },
-    {
-      version: 0,
-      creationDate: '2023-09-12T09:33:58.544494Z',
-      creationUser: '',
-      modificationDate: '2023-09-12T09:33:58.544494Z',
-      modificationUser: '',
-      id: '5f8bb05b-d089-485e-a234-0bb6ff25234e',
-      name: 'example',
-      description: 'example description',
-      status: 'status example',
-      responsible: '',
-      endDate: '2023-09-13T09:33:55Z',
-      startDate: '2023-09-12T09:33:53Z',
-      imagePath: '',
-      testNumber: '3.141',
-      testTruthy: 'value2',
-    },
-    {
-      version: 0,
-      creationDate: '2023-09-12T09:34:27.184086Z',
-      creationUser: '',
-      modificationDate: '2023-09-12T09:34:27.184086Z',
-      modificationUser: '',
-      id: 'cf9e7d6b-5362-46af-91f8-62f7ef5c6064',
-      name: 'name 1',
-      description: '',
-      status: 'status name 1',
-      responsible: '',
-      endDate: '2023-09-15T09:34:24Z',
-      startDate: '2023-09-14T09:34:22Z',
-      imagePath: '',
-      testNumber: '123456789',
-    },
-    {
-      version: 0,
-      creationDate: '2023-09-12T09:34:27.184086Z',
-      creationUser: '',
-      modificationDate: '2023-09-12T09:34:27.184086Z',
-      modificationUser: '',
-      id: 'cf9e7d6b-5362-46af-91f8-62f7ef5c6064',
-      name: 'name 2',
-      description: '',
-      status: 'status name 2',
-      responsible: '',
-      endDate: '2023-09-15T09:34:24Z',
-      startDate: '2023-09-14T09:34:22Z',
-      imagePath: '',
-      testNumber: '12345.6789',
-      testTruthy: 'value3',
-    },
-    {
-      version: 0,
-      creationDate: '2023-09-12T09:34:27.184086Z',
-      creationUser: '',
-      modificationDate: '2023-09-12T09:34:27.184086Z',
-      modificationUser: '',
-      id: 'cf9e7d6b-5362-46af-91f8-62f7ef5c6064',
-      name: 'name 3',
-      description: '',
-      status: 'status name 3',
-      responsible: '',
-      endDate: '2023-09-15T09:34:24Z',
-      startDate: '2023-09-14T09:34:22Z',
-      imagePath: '',
-      testNumber: '7.1',
-    },
-  ]
+  const mock1 = {
+    version: 0,
+    creationDate: '2023-09-12T09:34:11.997048Z',
+    creationUser: 'creation user 1',
+    modificationDate: '2023-09-12T09:34:11.997048Z',
+    modificationUser: 'mod user 1',
+    id: '195ee34e-41c6-47b7-8fc4-3f245dee7651',
+    name: 'some name',
+    description: 'dsc 1',
+    status: 'some status',
+    responsible: 'someone responsible',
+    endDate: '2023-09-14T09:34:09Z',
+    startDate: '2023-09-13T09:34:05Z',
+    imagePath: '/path/to/image',
+    testNumber: '1',
+    testTruthy: 'value',
+  }
+
+  const mock2 = {
+    version: 0,
+    creationDate: '2023-09-12T09:33:58.544494Z',
+    creationUser: 'creation user 2',
+    modificationDate: '2023-09-12T09:33:58.544494Z',
+    modificationUser: 'mod user 2',
+    id: '5f8bb05b-d089-485e-a234-0bb6ff25234e',
+    name: 'example',
+    description: 'example description',
+    status: 'status example',
+    responsible: 'someone responsible 2',
+    endDate: '2023-09-13T09:33:55Z',
+    startDate: '2023-09-12T09:33:53Z',
+    imagePath: '/path/to/image2',
+    testNumber: '3.141',
+    testTruthy: 'value2',
+  }
+
+  const mock3 = {
+    version: 0,
+    creationDate: '2023-09-12T09:34:27.184086Z',
+    creationUser: 'creation user 3',
+    modificationDate: '2023-09-12T09:34:27.184086Z',
+    modificationUser: 'mod user 3',
+    id: 'cf9e7d6b-5362-46af-91f8-62f7ef5c6064',
+    name: 'name 1',
+    description: 'dsc 3',
+    status: 'status name 1',
+    responsible: 'someone responsible 3',
+    endDate: '2023-09-15T09:34:24Z',
+    startDate: '2023-09-14T09:34:22Z',
+    imagePath: '/path/to/image3',
+    testNumber: '123456789',
+  }
+
+  const mock4 = {
+    version: 0,
+    creationDate: '2023-09-12T09:34:27.184086Z',
+    creationUser: 'creation user 4',
+    modificationDate: '2023-09-12T09:34:27.184086Z',
+    modificationUser: 'mod user 4',
+    id: 'cf9e7d6b-5362-46af-91f8-62f7ef5c6064',
+    name: 'name 2',
+    description: 'dsc 4',
+    status: 'status name 2',
+    responsible: 'someone responsible 4',
+    endDate: '2023-09-15T09:34:24Z',
+    startDate: '2023-09-14T09:34:22Z',
+    imagePath: '/path/to/image4',
+    testNumber: '12345.6789',
+    testTruthy: 'value3',
+  }
+
+  const mock5 = {
+    version: 0,
+    creationDate: '2023-09-12T09:34:27.184086Z',
+    creationUser: 'creation user 5',
+    modificationDate: '2023-09-12T09:34:27.184086Z',
+    modificationUser: 'mod user 5',
+    id: 'cf9e7d6b-5362-46af-91f8-62f7ef5c6064',
+    name: 'name 3',
+    description: 'dsc 5',
+    status: 'status name 3',
+    responsible: 'someone responsible 5',
+    endDate: '2023-09-15T09:34:24Z',
+    startDate: '2023-09-14T09:34:22Z',
+    imagePath: '',
+    testNumber: '7.1',
+  }
+
+  const mockData = [mock1, mock2, mock3, mock4, mock5]
   const mockColumns = [
     {
       columnType: ColumnType.STRING,
@@ -438,11 +442,11 @@ describe('InteractiveDataViewComponent', () => {
       'Actions',
     ]
     const expectedInitialRowsData = [
-      ['some name', '', 'some status', 'someone responsible'],
-      ['example', 'example description', 'status example', ''],
-      ['name 1', '', 'status name 1', ''],
-      ['name 2', '', 'status name 2', ''],
-      ['name 3', '', 'status name 3', ''],
+      ['some name', 'dsc 1', 'some status', 'someone responsible'],
+      ['example', 'example description', 'status example', 'someone responsible 2'],
+      ['name 1', 'dsc 3', 'status name 1', 'someone responsible 3'],
+      ['name 2', 'dsc 4', 'status name 2', 'someone responsible 4'],
+      ['name 3', 'dsc 5', 'status name 3', 'someone responsible 5'],
     ]
 
     it('should load table', async () => {
@@ -459,11 +463,11 @@ describe('InteractiveDataViewComponent', () => {
 
     it('should sort data by first table column in ascending order', async () => {
       const expectedRowsDataAfterSorting = [
-        ['example', 'example description', 'status example', ''],
-        ['name 1', '', 'status name 1', ''],
-        ['name 2', '', 'status name 2', ''],
-        ['name 3', '', 'status name 3', ''],
-        ['some name', '', 'some status', 'someone responsible'],
+        ['example', 'example description', 'status example', 'someone responsible 2'],
+        ['name 1', 'dsc 3', 'status name 1', 'someone responsible 3'],
+        ['name 2', 'dsc 4', 'status name 2', 'someone responsible 4'],
+        ['name 3', 'dsc 5', 'status name 3', 'someone responsible 5'],
+        ['some name', 'dsc 1', 'some status', 'someone responsible'],
       ]
       const sortButton = await tableHeaders[0].getSortButton()
       await sortButton.click()
@@ -475,11 +479,11 @@ describe('InteractiveDataViewComponent', () => {
 
     it('should sort data by third table column in ascending order', async () => {
       const expectedRowsDataAfterSorting = [
-        ['some name', '', 'some status', 'someone responsible'],
-        ['example', 'example description', 'status example', ''],
-        ['name 1', '', 'status name 1', ''],
-        ['name 2', '', 'status name 2', ''],
-        ['name 3', '', 'status name 3', ''],
+        ['some name', 'dsc 1', 'some status', 'someone responsible'],
+        ['example', 'example description', 'status example', 'someone responsible 2'],
+        ['name 1', 'dsc 3', 'status name 1', 'someone responsible 3'],
+        ['name 2', 'dsc 4', 'status name 2', 'someone responsible 4'],
+        ['name 3', 'dsc 5', 'status name 3', 'someone responsible 5'],
       ]
       const sortButton = await tableHeaders[2].getSortButton()
       await sortButton.click()
@@ -492,11 +496,11 @@ describe('InteractiveDataViewComponent', () => {
 
     it('should sort data by first table column in descending order', async () => {
       const expectedRowsDataAfterSorting = [
-        ['some name', '', 'some status', 'someone responsible'],
-        ['name 3', '', 'status name 3', ''],
-        ['name 2', '', 'status name 2', ''],
-        ['name 1', '', 'status name 1', ''],
-        ['example', 'example description', 'status example', ''],
+        ['some name', 'dsc 1', 'some status', 'someone responsible'],
+        ['name 3', 'dsc 5', 'status name 3', 'someone responsible 5'],
+        ['name 2', 'dsc 4', 'status name 2', 'someone responsible 4'],
+        ['name 1', 'dsc 3', 'status name 1', 'someone responsible 3'],
+        ['example', 'example description', 'status example', 'someone responsible 2'],
       ]
       const sortButton = await tableHeaders[0].getSortButton()
       await sortButton.click()
@@ -510,11 +514,11 @@ describe('InteractiveDataViewComponent', () => {
 
     it('should sort data by third table column in descending order', async () => {
       const expectedRowsDataAfterSorting = [
-        ['name 3', '', 'status name 3', ''],
-        ['name 2', '', 'status name 2', ''],
-        ['name 1', '', 'status name 1', ''],
-        ['example', 'example description', 'status example', ''],
-        ['some name', '', 'some status', 'someone responsible'],
+        ['name 3', 'dsc 5', 'status name 3', 'someone responsible 5'],
+        ['name 2', 'dsc 4', 'status name 2', 'someone responsible 4'],
+        ['name 1', 'dsc 3', 'status name 1', 'someone responsible 3'],
+        ['example', 'example description', 'status example', 'someone responsible 2'],
+        ['some name', 'dsc 1', 'some status', 'someone responsible'],
       ]
       const sortButton = await tableHeaders[2].getSortButton()
       await sortButton.click()
@@ -549,7 +553,9 @@ describe('InteractiveDataViewComponent', () => {
     })
 
     it('should filter data by first table column with second filter option', async () => {
-      const expectedRowsDataAfterFilter = [['example', 'example description', 'status example', '']]
+      const expectedRowsDataAfterFilter = [
+        ['example', 'example description', 'status example', 'someone responsible 2'],
+      ]
 
       const filterMultiSelect = await tableHeaders[0].getFilterMultiSelect()
       allFilterOptions = await filterMultiSelect.getAllOptions()
@@ -564,8 +570,8 @@ describe('InteractiveDataViewComponent', () => {
     it('should filter data by first table column with second and third filter option', async () => {
       const expectedSelectedOptions = ['example', 'name 1']
       const expectedRowsDataAfterFilter = [
-        ['example', 'example description', 'status example', ''],
-        ['name 1', '', 'status name 1', ''],
+        ['example', 'example description', 'status example', 'someone responsible 2'],
+        ['name 1', 'dsc 3', 'status name 1', 'someone responsible 3'],
       ]
 
       const filterMultiSelect = await tableHeaders[0].getFilterMultiSelect()
@@ -585,7 +591,7 @@ describe('InteractiveDataViewComponent', () => {
 
     it('should filter data by first table column with third filter option after selecting second and third option then unselecting second option', async () => {
       const expectedSelectedOption = ['name 1']
-      const expectedRowsDataAfterFilter = [['name 1', '', 'status name 1', '']]
+      const expectedRowsDataAfterFilter = [['name 1', 'dsc 3', 'status name 1', 'someone responsible 3']]
 
       const filterMultiSelect = await tableHeaders[0].getFilterMultiSelect()
       allFilterOptions = await filterMultiSelect.getAllOptions()
@@ -663,7 +669,7 @@ describe('InteractiveDataViewComponent', () => {
       const expectedRowsData = [
         [
           'some name',
-          '',
+          'dsc 1',
           dateUtils.localizedDate('2023-09-13T09:34:05Z'),
           dateUtils.localizedDate('2023-09-14T09:34:09Z'),
           'some status',
@@ -677,37 +683,37 @@ describe('InteractiveDataViewComponent', () => {
           dateUtils.localizedDate('2023-09-12T09:33:53Z'),
           dateUtils.localizedDate('2023-09-13T09:33:55Z'),
           'status example',
-          '',
+          'someone responsible 2',
           '3.141',
           'value2',
         ],
         [
           'name 1',
-          '',
+          'dsc 3',
           dateUtils.localizedDate('2023-09-14T09:34:22Z'),
           dateUtils.localizedDate('2023-09-15T09:34:24Z'),
           'status name 1',
-          '',
+          'someone responsible 3',
           '123,456,789',
           '',
         ],
         [
           'name 2',
-          '',
+          'dsc 4',
           dateUtils.localizedDate('2023-09-14T09:34:22Z'),
           dateUtils.localizedDate('2023-09-15T09:34:24Z'),
           'status name 2',
-          '',
+          'someone responsible 4',
           '12,345.679',
           'value3',
         ],
         [
           'name 3',
-          '',
+          'dsc 5',
           dateUtils.localizedDate('2023-09-14T09:34:22Z'),
           dateUtils.localizedDate('2023-09-15T09:34:24Z'),
           'status name 3',
-          '',
+          'someone responsible 5',
           '7.1',
           '',
         ],
@@ -733,7 +739,7 @@ describe('InteractiveDataViewComponent', () => {
       const expectedRowsData = [
         [
           'some name',
-          '',
+          'dsc 1',
           dateUtils.localizedDate('2023-09-13T09:34:05Z'),
           dateUtils.localizedDate('2023-09-14T09:34:09Z'),
           'some status',
@@ -747,37 +753,37 @@ describe('InteractiveDataViewComponent', () => {
           dateUtils.localizedDate('2023-09-12T09:33:53Z'),
           dateUtils.localizedDate('2023-09-13T09:33:55Z'),
           'status example',
-          '',
+          'someone responsible 2',
           '3.141',
           'value2',
         ],
         [
           'name 3',
-          '',
+          'dsc 5',
           dateUtils.localizedDate('2023-09-14T09:34:22Z'),
           dateUtils.localizedDate('2023-09-15T09:34:24Z'),
           'status name 3',
-          '',
+          'someone responsible 5',
           '7.1',
           '',
         ],
         [
           'name 2',
-          '',
+          'dsc 4',
           dateUtils.localizedDate('2023-09-14T09:34:22Z'),
           dateUtils.localizedDate('2023-09-15T09:34:24Z'),
           'status name 2',
-          '',
+          'someone responsible 4',
           '12,345.679',
           'value3',
         ],
         [
           'name 1',
-          '',
+          'dsc 3',
           dateUtils.localizedDate('2023-09-14T09:34:22Z'),
           dateUtils.localizedDate('2023-09-15T09:34:24Z'),
           'status name 1',
-          '',
+          'someone responsible 3',
           '123,456,789',
           '',
         ],
@@ -804,31 +810,31 @@ describe('InteractiveDataViewComponent', () => {
       const expectedRowsData = [
         [
           'name 1',
-          '',
+          'dsc 3',
           dateUtils.localizedDate('2023-09-14T09:34:22Z'),
           dateUtils.localizedDate('2023-09-15T09:34:24Z'),
           'status name 1',
-          '',
+          'someone responsible 3',
           '123,456,789',
           '',
         ],
         [
           'name 2',
-          '',
+          'dsc 4',
           dateUtils.localizedDate('2023-09-14T09:34:22Z'),
           dateUtils.localizedDate('2023-09-15T09:34:24Z'),
           'status name 2',
-          '',
+          'someone responsible 4',
           '12,345.679',
           'value3',
         ],
         [
           'name 3',
-          '',
+          'dsc 5',
           dateUtils.localizedDate('2023-09-14T09:34:22Z'),
           dateUtils.localizedDate('2023-09-15T09:34:24Z'),
           'status name 3',
-          '',
+          'someone responsible 5',
           '7.1',
           '',
         ],
@@ -838,13 +844,13 @@ describe('InteractiveDataViewComponent', () => {
           dateUtils.localizedDate('2023-09-12T09:33:53Z'),
           dateUtils.localizedDate('2023-09-13T09:33:55Z'),
           'status example',
-          '',
+          'someone responsible 2',
           '3.141',
           'value2',
         ],
         [
           'some name',
-          '',
+          'dsc 1',
           dateUtils.localizedDate('2023-09-13T09:34:05Z'),
           dateUtils.localizedDate('2023-09-14T09:34:09Z'),
           'some status',
@@ -876,7 +882,7 @@ describe('InteractiveDataViewComponent', () => {
       const expectedRowsData = [
         [
           'some name',
-          '',
+          'dsc 1',
           dateUtils.localizedDate('2023-09-13T09:34:05Z'),
           dateUtils.localizedDate('2023-09-14T09:34:09Z'),
           'some status',
@@ -890,37 +896,37 @@ describe('InteractiveDataViewComponent', () => {
           dateUtils.localizedDate('2023-09-12T09:33:53Z'),
           dateUtils.localizedDate('2023-09-13T09:33:55Z'),
           'status example',
-          '',
+          'someone responsible 2',
           '3.141',
           'value2',
         ],
         [
           'name 1',
-          '',
+          'dsc 3',
           dateUtils.localizedDate('2023-09-14T09:34:22Z'),
           dateUtils.localizedDate('2023-09-15T09:34:24Z'),
           'status name 1',
-          '',
+          'someone responsible 3',
           '123,456,789',
           '',
         ],
         [
           'name 2',
-          '',
+          'dsc 4',
           dateUtils.localizedDate('2023-09-14T09:34:22Z'),
           dateUtils.localizedDate('2023-09-15T09:34:24Z'),
           'status name 2',
-          '',
+          'someone responsible 4',
           '12,345.679',
           'value3',
         ],
         [
           'name 3',
-          '',
+          'dsc 5',
           dateUtils.localizedDate('2023-09-14T09:34:22Z'),
           dateUtils.localizedDate('2023-09-15T09:34:24Z'),
           'status name 3',
-          '',
+          'someone responsible 5',
           '7.1',
           '',
         ],
@@ -1052,11 +1058,11 @@ describe('InteractiveDataViewComponent', () => {
         'Actions',
       ]
       const expectedRowsData = [
-        ['', 'some name', 'some status', 'someone responsible'],
-        ['example description', 'example', 'status example', ''],
-        ['', 'name 1', 'status name 1', ''],
-        ['', 'name 2', 'status name 2', ''],
-        ['', 'name 3', 'status name 3', ''],
+        ['dsc 1', 'some name', 'some status', 'someone responsible'],
+        ['example description', 'example', 'status example', 'someone responsible 2'],
+        ['dsc 3', 'name 1', 'status name 1', 'someone responsible 3'],
+        ['dsc 4', 'name 2', 'status name 2', 'someone responsible 4'],
+        ['dsc 5', 'name 3', 'status name 3', 'someone responsible 5'],
       ]
       await activeColumnsList[1].selectItem()
       await sourceControlsButtons[0].click()
@@ -1081,11 +1087,11 @@ describe('InteractiveDataViewComponent', () => {
         'Actions',
       ]
       const expectedRowsData = [
-        ['some name', 'some status', '', 'someone responsible'],
-        ['example', 'status example', 'example description', ''],
-        ['name 1', 'status name 1', '', ''],
-        ['name 2', 'status name 2', '', ''],
-        ['name 3', 'status name 3', '', ''],
+        ['some name', 'some status', 'dsc 1', 'someone responsible'],
+        ['example', 'status example', 'example description', 'someone responsible 2'],
+        ['name 1', 'status name 1', 'dsc 3', 'someone responsible 3'],
+        ['name 2', 'status name 2', 'dsc 4', 'someone responsible 4'],
+        ['name 3', 'status name 3', 'dsc 5', 'someone responsible 5'],
       ]
 
       await activeColumnsList[1].selectItem()
@@ -1113,11 +1119,11 @@ describe('InteractiveDataViewComponent', () => {
         'Actions',
       ]
       const expectedRowsData = [
-        ['', 'some status', 'someone responsible'],
-        ['example description', 'status example', ''],
-        ['', 'status name 1', ''],
-        ['', 'status name 2', ''],
-        ['', 'status name 3', ''],
+        ['dsc 1', 'some status', 'someone responsible'],
+        ['example description', 'status example', 'someone responsible 2'],
+        ['dsc 3', 'status name 1', 'someone responsible 3'],
+        ['dsc 4', 'status name 2', 'someone responsible 4'],
+        ['dsc 5', 'status name 3', 'someone responsible 5'],
       ]
 
       await activeColumnsList[0].selectItem()
@@ -1147,11 +1153,17 @@ describe('InteractiveDataViewComponent', () => {
         'Actions',
       ]
       const expectedRowsData = [
-        ['some name', '', 'some status', 'someone responsible', dateUtils.localizedDate('2023-09-13T09:34:05Z')],
-        ['example', 'example description', 'status example', '', dateUtils.localizedDate('2023-09-12T09:33:53Z')],
-        ['name 1', '', 'status name 1', '', dateUtils.localizedDate('2023-09-14T09:34:22Z')],
-        ['name 2', '', 'status name 2', '', dateUtils.localizedDate('2023-09-14T09:34:22Z')],
-        ['name 3', '', 'status name 3', '', dateUtils.localizedDate('2023-09-14T09:34:22Z')],
+        ['some name', 'dsc 1', 'some status', 'someone responsible', dateUtils.localizedDate('2023-09-13T09:34:05Z')],
+        [
+          'example',
+          'example description',
+          'status example',
+          'someone responsible 2',
+          dateUtils.localizedDate('2023-09-12T09:33:53Z'),
+        ],
+        ['name 1', 'dsc 3', 'status name 1', 'someone responsible 3', dateUtils.localizedDate('2023-09-14T09:34:22Z')],
+        ['name 2', 'dsc 4', 'status name 2', 'someone responsible 4', dateUtils.localizedDate('2023-09-14T09:34:22Z')],
+        ['name 3', 'dsc 5', 'status name 3', 'someone responsible 5', dateUtils.localizedDate('2023-09-14T09:34:22Z')],
       ]
 
       await inActiveColumnsList[0].selectItem()
@@ -1501,9 +1513,9 @@ describe('InteractiveDataViewComponent', () => {
     })
     const expectedInitialGridItemsData = [
       ['/path/to/image', 'some name', '2023-09-13T09:34:05Z'],
-      ['./onecx-portal-lib/assets/images/placeholder.png', 'example', '2023-09-12T09:33:53Z'],
-      ['./onecx-portal-lib/assets/images/placeholder.png', 'name 1', '2023-09-14T09:34:22Z'],
-      ['./onecx-portal-lib/assets/images/placeholder.png', 'name 2', '2023-09-14T09:34:22Z'],
+      ['/path/to/image2', 'example', '2023-09-12T09:33:53Z'],
+      ['/path/to/image3', 'name 1', '2023-09-14T09:34:22Z'],
+      ['/path/to/image4', 'name 2', '2023-09-14T09:34:22Z'],
       ['./onecx-portal-lib/assets/images/placeholder.png', 'name 3', '2023-09-14T09:34:22Z'],
     ]
 
@@ -1521,9 +1533,9 @@ describe('InteractiveDataViewComponent', () => {
 
     it('should be sorted by first sorting dropdown item in ascending order', async () => {
       const expectedGridItemsDataAfterSorting = [
-        ['./onecx-portal-lib/assets/images/placeholder.png', 'example', '2023-09-12T09:33:53Z'],
-        ['./onecx-portal-lib/assets/images/placeholder.png', 'name 1', '2023-09-14T09:34:22Z'],
-        ['./onecx-portal-lib/assets/images/placeholder.png', 'name 2', '2023-09-14T09:34:22Z'],
+        ['/path/to/image2', 'example', '2023-09-12T09:33:53Z'],
+        ['/path/to/image3', 'name 1', '2023-09-14T09:34:22Z'],
+        ['/path/to/image4', 'name 2', '2023-09-14T09:34:22Z'],
         ['./onecx-portal-lib/assets/images/placeholder.png', 'name 3', '2023-09-14T09:34:22Z'],
         ['/path/to/image', 'some name', '2023-09-13T09:34:05Z'],
       ]
@@ -1541,9 +1553,9 @@ describe('InteractiveDataViewComponent', () => {
       const expectedGridItemsDataAfterSorting = [
         ['/path/to/image', 'some name', '2023-09-13T09:34:05Z'],
         ['./onecx-portal-lib/assets/images/placeholder.png', 'name 3', '2023-09-14T09:34:22Z'],
-        ['./onecx-portal-lib/assets/images/placeholder.png', 'name 2', '2023-09-14T09:34:22Z'],
-        ['./onecx-portal-lib/assets/images/placeholder.png', 'name 1', '2023-09-14T09:34:22Z'],
-        ['./onecx-portal-lib/assets/images/placeholder.png', 'example', '2023-09-12T09:33:53Z'],
+        ['/path/to/image4', 'name 2', '2023-09-14T09:34:22Z'],
+        ['/path/to/image3', 'name 1', '2023-09-14T09:34:22Z'],
+        ['/path/to/image2', 'example', '2023-09-12T09:33:53Z'],
       ]
 
       await sortingDropdownItems[0].selectItem()
@@ -1805,19 +1817,19 @@ describe('InteractiveDataViewComponent', () => {
       ['example', '2023-09-12T09:33:53Z', '3.141'],
       ['some name', '2023-09-13T09:34:05Z', '1'],
     ]
+    const expectedSortedGridItemsDataDescending = [
+      ['/path/to/image3', 'name 1', '2023-09-14T09:34:22Z', '123456789'],
+      ['/path/to/image4', 'name 2', '2023-09-14T09:34:22Z', '12345.6789'],
+      ['./onecx-portal-lib/assets/images/placeholder.png', 'name 3', '2023-09-14T09:34:22Z', '7.1'],
+      ['/path/to/image2', 'example', '2023-09-12T09:33:53Z', '3.141'],
+      ['/path/to/image', 'some name', '2023-09-13T09:34:05Z', '1'],
+    ]
     const expectedSortedGridItemsDataAscending = [
       ['/path/to/image', 'some name', '2023-09-13T09:34:05Z', '1'],
-      ['./onecx-portal-lib/assets/images/placeholder.png', 'example', '2023-09-12T09:33:53Z', '3.141'],
+      ['/path/to/image2', 'example', '2023-09-12T09:33:53Z', '3.141'],
       ['./onecx-portal-lib/assets/images/placeholder.png', 'name 3', '2023-09-14T09:34:22Z', '7.1'],
-      ['./onecx-portal-lib/assets/images/placeholder.png', 'name 2', '2023-09-14T09:34:22Z', '12345.6789'],
-      ['./onecx-portal-lib/assets/images/placeholder.png', 'name 1', '2023-09-14T09:34:22Z', '123456789'],
-    ]
-    const expectedSortedGridItemsDataDescending = [
-      ['./onecx-portal-lib/assets/images/placeholder.png', 'name 1', '2023-09-14T09:34:22Z', '123456789'],
-      ['./onecx-portal-lib/assets/images/placeholder.png', 'name 2', '2023-09-14T09:34:22Z', '12345.6789'],
-      ['./onecx-portal-lib/assets/images/placeholder.png', 'name 3', '2023-09-14T09:34:22Z', '7.1'],
-      ['./onecx-portal-lib/assets/images/placeholder.png', 'example', '2023-09-12T09:33:53Z', '3.141'],
-      ['/path/to/image', 'some name', '2023-09-13T09:34:05Z', '1'],
+      ['/path/to/image4', 'name 2', '2023-09-14T09:34:22Z', '12345.6789'],
+      ['/path/to/image3', 'name 1', '2023-09-14T09:34:22Z', '123456789'],
     ]
 
     it('should remain sorted after switching data view from table view to grid view and to list view', async () => {
@@ -1892,11 +1904,9 @@ describe('InteractiveDataViewComponent', () => {
     })
 
     it('should remain filtered with third filter option after switching view data view from table view to grid view and to list view', async () => {
-      const expectedFilteredRowsData = [['name 1', '', 'status name 1', '']]
+      const expectedFilteredRowsData = [['name 1', 'dsc 3', 'status name 1', 'someone responsible 3']]
       const expectedFilteredListItemsData = [['name 1', '2023-09-14T09:34:22Z', '123456789']]
-      const expectedFilteredGridItemsData = [
-        ['./onecx-portal-lib/assets/images/placeholder.png', 'name 1', '2023-09-14T09:34:22Z', '123456789'],
-      ]
+      const expectedFilteredGridItemsData = [['/path/to/image3', 'name 1', '2023-09-14T09:34:22Z', '123456789']]
       const filterMultiSelect = await tableHeaders?.[0].getFilterMultiSelect()
 
       allFilterOptions = await filterMultiSelect?.getAllOptions()
