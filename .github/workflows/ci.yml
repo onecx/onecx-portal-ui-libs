@@ -27,6 +27,11 @@ jobs:
       - name: Lint affected
         run: npx nx affected -t lint
       - name: Test affected
-        run: npx nx affected -t test --configuration=ci
+        run: npx nx affected -t test --configuration=ci > test-results/jest-output.log
+      - name: Upload Jest Logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: jest-logs
+          path: test-results/jest-output.log
       - name: Build affected
         run: npx nx affected -t build
