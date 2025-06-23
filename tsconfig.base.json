@@ -32,9 +32,6 @@
       "@onecx/ngrx-accelerator": ["libs/ngrx-accelerator/src/index.ts"],
       "@onecx/nx-migration-utils": ["libs/nx-migration-utils/src/index.ts"],
       "@onecx/nx-migration-utils/angular": ["libs/nx-migration-utils/src/lib/angular/index.ts"],
-      "@onecx/portal-integration-angular": ["libs/portal-integration-angular/src/index.ts"],
-      "@onecx/portal-integration-angular/mocks": ["libs/portal-integration-angular/mocks/index.ts"],
-      "@onecx/portal-integration-angular/testing": ["libs/portal-integration-angular/testing/index.ts"],
       "@onecx/shell-core": ["libs/shell-core/src/index.ts"],
       "@onecx/standalone-shell": ["libs/standalone-shell/src/index.ts"]
     },

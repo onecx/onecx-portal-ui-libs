@@ -2,7 +2,7 @@ import { Component, ComponentRef, OnDestroy, OnInit, ViewChild, ViewContainerRef
 import { Observable, Subscription, from, isObservable, of, startWith } from 'rxjs'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { ButtonDialogData } from '../../../model/button-dialog'
-import { DialogMessageContentComponent } from '../../button-dialog/dialog-message-content/dialog-message-content.component'
+import { DialogMessageContentComponent } from '../dialog-message-content/dialog-message-content.component'
 import {
   DialogButtonClicked,
   DialogCustomButtonsDisabled,

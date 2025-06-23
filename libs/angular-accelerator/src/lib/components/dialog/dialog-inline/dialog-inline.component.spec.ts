@@ -12,7 +12,6 @@ import {
 import { DialogFooterComponent } from '../dialog-footer/dialog-footer.component'
 import { DialogContentComponent } from '../dialog-content/dialog-content.component'
 import { ButtonModule } from 'primeng/button'
-import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 
@@ -86,7 +85,6 @@ describe('DialogInlineComponent', () => {
       ],
       imports: [
         ButtonModule,
-        MockAuthModule,
         TranslateTestingModule.withTranslations({
           en: translations,
         }),

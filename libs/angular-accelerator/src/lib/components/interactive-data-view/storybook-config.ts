@@ -21,7 +21,6 @@ import { TableModule } from 'primeng/table'
 import { ButtonModule } from 'primeng/button'
 import { MultiSelectModule } from 'primeng/multiselect'
 import { StorybookTranslateModule } from '../../storybook-translate.module'
-import { MockAuthModule } from '../../mock-auth/mock-auth.module'
 import { MenuModule } from 'primeng/menu'
 import { PickListModule } from 'primeng/picklist'
 import { SelectButtonModule } from 'primeng/selectbutton'
@@ -96,7 +95,6 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
         ButtonModule,
         MultiSelectModule,
         StorybookTranslateModule,
-        MockAuthModule,
         MenuModule,
         PickListModule,
         SelectButtonModule,

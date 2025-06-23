@@ -8,7 +8,6 @@ import { TranslateTestingModule } from 'ngx-translate-testing'
 import { DataTableHarness } from '../../../../testing'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
-import { MockAuthModule } from '../../mock-auth/mock-auth.module'
 import { ColumnType } from '../../model/column-type.model'
 import { DataTableComponent, Row } from './data-table.component'
 
@@ -206,7 +205,6 @@ describe('DataTableComponent', () => {
         TranslateModule.forRoot(),
         TranslateTestingModule.withTranslations(TRANSLATIONS),
         AngularAcceleratorModule,
-        MockAuthModule,
       ],
       providers: [provideUserServiceMock()],
     }).compileComponents()

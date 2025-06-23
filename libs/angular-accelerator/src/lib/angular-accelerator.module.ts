@@ -20,7 +20,6 @@ import { DiagramComponent } from './components/diagram/diagram.component'
 import { GroupByCountDiagramComponent } from './components/group-by-count-diagram/group-by-count-diagram.component'
 import { InteractiveDataViewComponent } from './components/interactive-data-view/interactive-data-view.component'
 import { PageHeaderComponent } from './components/page-header/page-header.component'
-import { DataLoadingErrorComponent } from './components/data-loading-error/data-loading-error.component'
 import { SearchHeaderComponent } from './components/search-header/search-header.component'
 import { AdvancedDirective } from './directives/advanced.directive'
 import { IfBreakpointDirective } from './directives/if-breakpoint.directive'
@@ -38,8 +37,7 @@ import { OcxContentContainerComponent } from './components/content-container/con
 import { OcxContentDirective } from './directives/content.directive'
 import { OcxContentContainerDirective } from './directives/content-container.directive'
 import { LifecycleComponent } from './components/lifecycle/lifecycle.component'
-import { ButtonDialogComponent } from './components/button-dialog/button-dialog.component'
-import { DialogMessageContentComponent } from './components/button-dialog/dialog-message-content/dialog-message-content.component'
+import { DialogMessageContentComponent } from './components/dialog/dialog-message-content/dialog-message-content.component'
 import { DialogContentComponent } from './components/dialog/dialog-content/dialog-content.component'
 import { DialogFooterComponent } from './components/dialog/dialog-footer/dialog-footer.component'
 import { DialogInlineComponent } from './components/dialog/dialog-inline/dialog-inline.component'
@@ -86,7 +84,6 @@ function appInitializer(userService: UserService) {
     SearchHeaderComponent,
     DiagramComponent,
     GroupByCountDiagramComponent,
-    DataLoadingErrorComponent,
     OcxContentComponent,
     OcxContentContainerComponent,
     IfPermissionDirective,
@@ -103,7 +100,6 @@ function appInitializer(userService: UserService) {
     LoadingIndicatorComponent,
     LoadingIndicatorDirective,
     BasicDirective,
-    ButtonDialogComponent,
     DialogFooterComponent,
     DialogContentComponent,
     DialogInlineComponent,
@@ -149,7 +145,6 @@ function appInitializer(userService: UserService) {
     SearchHeaderComponent,
     DiagramComponent,
     GroupByCountDiagramComponent,
-    DataLoadingErrorComponent,
     OcxContentComponent,
     OcxContentContainerComponent,
     IfPermissionDirective,
@@ -166,7 +161,6 @@ function appInitializer(userService: UserService) {
     LoadingIndicatorComponent,
     LoadingIndicatorDirective,
     BasicDirective,
-    ButtonDialogComponent,
     DialogFooterComponent,
     DialogContentComponent,
     DialogInlineComponent,

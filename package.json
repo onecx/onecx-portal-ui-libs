@@ -3,7 +3,6 @@
   "version": "6.0.0-rc.15",
   "license": "Apache-2.0",
   "scripts": {
-    "sass": "npx sass libs/portal-integration-angular/assets/styles.scss libs/portal-integration-angular/assets/output.css",
     "postinstall": "mkdir -p .nx",
     "build": "nx run-many -t build build-migrations",
     "build-copy": "npm run build && node copy-build.js"

@@ -1,12 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { DialogFooterComponent } from './dialog-footer.component'
 import { ButtonModule } from 'primeng/button'
-import { MockAuthModule } from '../../../mock-auth/mock-auth.module'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { PrimeIcons } from 'primeng/api'
 import { DialogFooterHarness, TestbedHarnessEnvironment } from '../../../../../testing'
-
 
 describe('DialogFooterComponent', () => {
   let component: DialogFooterComponent
@@ -29,7 +27,6 @@ describe('DialogFooterComponent', () => {
       declarations: [DialogFooterComponent],
       imports: [
         ButtonModule,
-        MockAuthModule,
         TranslateTestingModule.withTranslations({
           en: translations,
         }),
