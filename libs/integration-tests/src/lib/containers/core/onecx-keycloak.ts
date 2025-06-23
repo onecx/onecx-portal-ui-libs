@@ -5,6 +5,7 @@ import { HealthCheck } from 'testcontainers/build/types'
 
 interface OnecxEnvironment {
   realm: string
+  adminRealm: string
   adminUsername: string
   adminPassword: string
   keycloakDatabaseUsername: string
@@ -17,6 +18,7 @@ interface OnecxEnvironment {
 export class OnecxKeycloakContainer extends GenericContainer {
   private onecxEnvironment: OnecxEnvironment = {
     realm: 'onecx',
+    adminRealm: 'master',
     adminUsername: 'admin',
     adminPassword: 'admin',
     keycloakDatabaseUsername: 'keycloak',
@@ -89,8 +91,17 @@ export class OnecxKeycloakContainer extends GenericContainer {
     return this
   }
 
+  withAdminRealm(adminRealm: string): this {
+    this.onecxEnvironment.adminRealm = adminRealm
+    return this
+  }
+
   getRealm(): string {
     return this.onecxEnvironment.realm
+  }
+
+  getAdminRealm(): string {
+    return this.onecxEnvironment.adminRealm
   }
 
   getAdminUsername(): string {
@@ -180,8 +191,13 @@ export class StartedOnecxKeycloakContainer extends AbstractStartedContainer {
   ) {
     super(startedTestContainer)
   }
+
   getRealm(): string {
     return this.onecxKeycloakEnvironment.realm
+  }
+
+  getAdminRealm(): string {
+    return this.onecxKeycloakEnvironment.adminRealm
   }
 
   getAdminUsername(): string {
@@ -209,7 +225,7 @@ export class StartedOnecxKeycloakContainer extends AbstractStartedContainer {
   }
 
   getPort(): number {
-    return super.getMappedPort(this.onecxKeycloakEnvironment.port)
+    return this.onecxKeycloakEnvironment.port
   }
 
   getNetworkAliases(): string[] {
