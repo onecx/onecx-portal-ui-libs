@@ -9,6 +9,7 @@ export interface UserProfile {
   organization?: string
   tenantId?: string
   tenantName?: string
+  issuer?: string
   person: UserPerson
   avatar?: AvatarInfo
   accountSettings?: UserProfileAccountSettings
