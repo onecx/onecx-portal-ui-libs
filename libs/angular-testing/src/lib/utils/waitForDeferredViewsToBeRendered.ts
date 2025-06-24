@@ -8,7 +8,7 @@ export async function waitForDeferredViewsToBeRendered(harness: ComponentHarness
       //   'waitForTasksOutsideAngular has not finished within 500ms. We are not waiting any longer to not cause timeouts.'
       // );
       ;(harness as any).forceStabilize().then(() => resolve())
-    }, 500)
+    }, 2_000)
     // waitForTasksOutsideAngular makes sure that the observe method of the IntersectionObserver is called for each defer block.
     // setTimeout makes sure that we are only continuing after the IntersectionObserverMock has called ther callback for each
     // defer block, because js scheduling is making sure that all methods which are scheduled via setTimeout are executed in the
