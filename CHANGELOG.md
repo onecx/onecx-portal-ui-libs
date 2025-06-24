@@ -1,3 +1,13 @@
+## [6.0.0-rc.16](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.15...v6.0.0-rc.16) (2025-06-24)
+
+### Features
+
+* remove deprecated and unused ([#774](https://github.com/onecx/onecx-portal-ui-libs/issues/774)) ([e191c2b](https://github.com/onecx/onecx-portal-ui-libs/commit/e191c2b7bd96e9d9671c62853aaa83dabdcbee27))
+
+### Refactoring
+
+* remove portal-integration-angular ([#776](https://github.com/onecx/onecx-portal-ui-libs/issues/776)) ([eafc5bf](https://github.com/onecx/onecx-portal-ui-libs/commit/eafc5bf90ef85638276a8222577471820ed947c7))
+
 ## [6.0.0-rc.15](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.14...v6.0.0-rc.15) (2025-06-16)
 
 ### Features
