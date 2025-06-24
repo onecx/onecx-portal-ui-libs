@@ -15,9 +15,9 @@ runs:
         node-version: ${{ inputs.node }}
         cache: 'npm'
         cache-dependency-path: |
-          ~/.nx
-          ~/package-lock.json
-          ~/libs/**/package-lock.json
+          .nx
+          package-lock.json
+          libs/**/package-lock.json
 
     - name: Set SHAs for affected commands
       uses: nrwl/nx-set-shas@v3
