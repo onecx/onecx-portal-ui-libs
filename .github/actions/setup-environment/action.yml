@@ -1,5 +1,5 @@
 name: 'setup-environment'
-description: 'Check out repo, setup Node.js, install dependencies'
+description: 'Setup Node.js, install dependencies'
 inputs:
   node:
     description: 'Node version'
@@ -12,7 +12,7 @@ runs:
     - name: Setup Node
       uses: actions/setup-node@v4
       with:
-        node-version: ${{ inputs.node-version }}
+        node-version: ${{ inputs.node }}
         cache: 'npm'
         cache-dependency-path: |
           ~/.nx

@@ -25,7 +25,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: package
+          name: coverage-reports
           path: |
             package.json      
             reports/

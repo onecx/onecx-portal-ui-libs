@@ -55,13 +55,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Setup Environment
+        uses: ./.github/actions/setup-environment
 
       - name: Download reports
         uses: actions/download-artifact@v4
         with:
-          name: package
+          name: coverage-reports
 
       - name: Run SonarCloud Scan
         uses: ./.github/actions/sonarcloud-scan
