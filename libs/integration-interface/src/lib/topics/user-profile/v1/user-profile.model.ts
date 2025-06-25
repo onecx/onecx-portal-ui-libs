@@ -1,26 +1,50 @@
 export interface UserProfile {
-  id?: string
   userId: string
-  identityProvider?: string
+  person: UserPerson
   /**
    * user id in external identity provider, e.g. in keycloak
    */
-  identityProviderId?: string
   organization?: string
   tenantId?: string
-  tenantName?: string
   issuer?: string
-  person: UserPerson
-  avatar?: AvatarInfo
   accountSettings?: UserProfileAccountSettings
+  /**
+   * @deprecated
+   */
+  id?: string
+  /**
+   * @deprecated
+   */
+  identityProvider?: string
+  /**
+   * @deprecated
+   */
+  identityProviderId?: string
+  /**
+   * @deprecated
+   */
+  tenantName?: string
+  /**
+   * @deprecated
+   */
+  avatar?: AvatarInfo
+  /**
+   * @deprecated
+   */
   memberships?: Array<Membership>
 }
 
 export interface UserProfileAccountSettings {
-  privacySettings?: UserProfileAccountSettingsPrivacySettings
-  notificationSettings?: UserProfileAccountSettingsNotificationSettings
   localeAndTimeSettings?: UserProfileAccountSettingsLocaleAndTimeSettings
   layoutAndThemeSettings?: UserProfileAccountSettingsLayoutAndThemeSettings
+  /**
+   * @deprecated
+   */
+  privacySettings?: UserProfileAccountSettingsPrivacySettings
+  /**
+   * @deprecated
+   */
+  notificationSettings?: UserProfileAccountSettingsNotificationSettings
 }
 
 export interface UserProfileAccountSettingsLocaleAndTimeSettings {
@@ -28,6 +52,9 @@ export interface UserProfileAccountSettingsLocaleAndTimeSettings {
   timezone?: string
 }
 
+/**
+ * @deprecated
+ */
 export interface UserProfileAccountSettingsNotificationSettings {
   todo?: string
 }
@@ -40,6 +67,9 @@ export interface UserProfilePreference {
   value?: string
 }
 
+/**
+ * @deprecated
+ */
 export interface UserProfileAccountSettingsPrivacySettings {
   hideMyProfile?: string
 }
