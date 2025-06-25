@@ -48,7 +48,7 @@ export class OnecxKeycloakContainer extends GenericContainer {
     this.withHealthCheck(this.defaultHealthCheck)
     this.withExposedPorts(this.onecxEnvironment.port)
     this.withNetworkAliases('keycloak-app')
-    this.withStartupTimeout(180_000)
+    this.withStartupTimeout(120_000)
   }
 
   withRealm(realm: string): this {

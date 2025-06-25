@@ -1,29 +1,18 @@
-import { OnecxSvcContainer, OnecxSvcDetails, StartedOnecxSvcContainer } from '../abstract/onecx-svc'
+import { SvcContainer, StartedSvcContainer } from '../abstract/onecx-svc'
 import { StartedOnecxKeycloakContainer } from '../core/onecx-keycloak'
 import { StartedOnecxPostgresContainer } from '../core/onecx-postgres'
 
-export class OnecxThemeSvcContainer extends OnecxSvcContainer {
+export class ThemeSvcContainer extends SvcContainer {
   constructor(
     image: string,
     databaseContainer: StartedOnecxPostgresContainer,
     keycloakContainer: StartedOnecxKeycloakContainer
   ) {
-    const onecxSvcDetails: OnecxSvcDetails = {
-      svcUsername: 'onecx_theme',
-      svcPassword: 'onecx_theme',
-    }
-    super(image, { databaseContainer, keycloakContainer }, onecxSvcDetails)
+    super(image, { databaseContainer, keycloakContainer })
     this.withNetworkAliases('onecx-theme-svc')
-  }
-  withSvcUsername(svcUsername: string): this {
-    this.onecxSvcDetails.svcUsername = svcUsername
-    return this
-  }
-
-  withSvcPassword(svcPassword: string): this {
-    this.onecxSvcDetails.svcPassword = svcPassword
-    return this
+    this.withDatabaseUsername('onecx_theme')
+    this.withDatabasePassword('onecx_theme')
   }
 }
 
-export class StartedOnecxThemeSvcContainer extends StartedOnecxSvcContainer {}
+export class StartedThemeSvcContainer extends StartedSvcContainer {}

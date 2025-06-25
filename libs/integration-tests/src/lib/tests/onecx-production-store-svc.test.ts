@@ -2,22 +2,19 @@ import { POSTGRES, KEYCLOAK, onecxSvcImages } from '../config/env'
 import { Network, StartedNetwork } from 'testcontainers'
 import { OnecxKeycloakContainer, StartedOnecxKeycloakContainer } from '../containers/core/onecx-keycloak'
 import { OnecxPostgresContainer, StartedOnecxPostgresContainer } from '../containers/core/onecx-postgres'
-import {
-  OnecxProductStoreSvcContainer,
-  StartedOnecxProductStoreSvcContainer,
-} from '../containers/svc/onecx-product-store-svc'
+import { ProductStoreSvcContainer, StartedProductStoreSvcContainer } from '../containers/svc/onecx-product-store-svc'
 import axios from 'axios'
 
 describe('Default workspace-svc Testcontainer', () => {
   let pgContainer: StartedOnecxPostgresContainer
   let kcContainer: StartedOnecxKeycloakContainer
-  let productStoreSvcContainer: StartedOnecxProductStoreSvcContainer
+  let productStoreSvcContainer: StartedProductStoreSvcContainer
 
   beforeAll(async () => {
     const network: StartedNetwork = await new Network().start()
     pgContainer = await new OnecxPostgresContainer(POSTGRES).withNetwork(network).start()
     kcContainer = await new OnecxKeycloakContainer(KEYCLOAK, pgContainer).withNetwork(network).start()
-    productStoreSvcContainer = await new OnecxProductStoreSvcContainer(
+    productStoreSvcContainer = await new ProductStoreSvcContainer(
       onecxSvcImages.ONECX_PRODUCT_STORE_SVC,
       pgContainer,
       kcContainer

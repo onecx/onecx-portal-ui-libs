@@ -1,33 +1,21 @@
-import { OnecxSvcContainer, OnecxSvcDetails, StartedOnecxSvcContainer } from '../abstract/onecx-svc'
+import { SvcContainer, StartedSvcContainer } from '../abstract/onecx-svc'
 import { StartedOnecxKeycloakContainer } from '../core/onecx-keycloak'
 import { StartedOnecxPostgresContainer } from '../core/onecx-postgres'
 
-export class OnecxWorkspaceSvcContainer extends OnecxSvcContainer {
+export class WorkspaceSvcContainer extends SvcContainer {
   constructor(
     image: string,
     databaseContainer: StartedOnecxPostgresContainer,
     keycloakContainer: StartedOnecxKeycloakContainer
   ) {
-    const onecxSvcDetails: OnecxSvcDetails = {
-      svcUsername: 'onecx_workspace',
-      svcPassword: 'onecx_workspace',
-    }
-    super(image, { databaseContainer, keycloakContainer }, onecxSvcDetails)
+    super(image, { databaseContainer, keycloakContainer })
     this.withEnvironment({
       TKIT_RS_CONTEXT_TENANT_ID_ENABLED: 'false',
     })
     this.withNetworkAliases('onecx-workspace-svc')
-  }
-
-  withSvcUsername(svcUsername: string): this {
-    this.onecxSvcDetails.svcUsername = svcUsername
-    return this
-  }
-
-  withSvcPassword(svcPassword: string): this {
-    this.onecxSvcDetails.svcPassword = svcPassword
-    return this
+    this.withDatabaseUsername('onecx_workspace')
+    this.withDatabasePassword('onecx_workspace')
   }
 }
 
-export class StartedOnecxWorkspaceSvcContainer extends StartedOnecxSvcContainer {}
+export class StartedWorkspaceSvcContainer extends StartedSvcContainer {}

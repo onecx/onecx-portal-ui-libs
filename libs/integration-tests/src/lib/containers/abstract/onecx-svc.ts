@@ -1,20 +1,14 @@
 import { AbstractStartedContainer, GenericContainer, StartedTestContainer, Wait } from 'testcontainers'
 import { HealthCheck } from 'testcontainers/build/types'
-import { StartedOnecxPostgresContainer } from '../core/onecx-postgres'
-import { StartedOnecxKeycloakContainer } from '../core/onecx-keycloak'
+import { SvcDetails, SvcContainerServices } from '../../model/service.model'
 
-export interface OnecxSvcDetails {
-  svcUsername: string
-  svcPassword: string
-}
+export abstract class SvcContainer extends GenericContainer {
+  protected svcDetails: SvcDetails = {
+    databaseUsername: '',
+    databasePassword: '',
+  }
 
-interface OnecxSvcContainerServices {
-  databaseContainer: StartedOnecxPostgresContainer
-  keycloakContainer: StartedOnecxKeycloakContainer
-}
-
-export abstract class OnecxSvcContainer extends GenericContainer {
-  protected onecxSvcDetails: OnecxSvcDetails
+  protected shouldCreateDatabase = true
 
   private port = 8080
 
@@ -27,18 +21,21 @@ export abstract class OnecxSvcContainer extends GenericContainer {
 
   constructor(
     image: string,
-    private services: OnecxSvcContainerServices,
-    onecxSvcDetails: OnecxSvcDetails
+    private services: SvcContainerServices
   ) {
     super(image)
-    this.onecxSvcDetails = onecxSvcDetails
     this.withHealthCheck(this.defaultHealthCheck)
     this.withExposedPorts(this.port)
-    this.withStartupTimeout(180_000)
+    this.withStartupTimeout(120_000)
   }
 
-  withSvcPort(svcPort: number): this {
-    this.port = svcPort
+  withDatabaseUsername(databaseUsername: string): this {
+    this.svcDetails.databaseUsername = databaseUsername
+    return this
+  }
+
+  withDatabasePassword(databasePassword: string): this {
+    this.svcDetails.databasePassword = databasePassword
     return this
   }
 
@@ -50,11 +47,29 @@ export abstract class OnecxSvcContainer extends GenericContainer {
     return this.services.databaseContainer
   }
 
-  override async start(): Promise<StartedOnecxSvcContainer> {
-    await this.services.databaseContainer.createUserAndDatabase(
-      this.onecxSvcDetails.svcUsername,
-      this.onecxSvcDetails.svcPassword
-    )
+  protected validateDatabaseCredentials(): void {
+    if (!this.svcDetails.databaseUsername || !this.svcDetails.databasePassword) {
+      throw new Error('Database credentials must be set using withDatabaseUsername and withDatabasePassword')
+    }
+  }
+
+  createDatabaseAtStart(shouldStart: boolean) {
+    this.shouldCreateDatabase = shouldStart
+  }
+
+  override async start(): Promise<StartedSvcContainer> {
+    if (this.shouldCreateDatabase) {
+      this.validateDatabaseCredentials()
+      await this.services.databaseContainer?.createUserAndDatabase(
+        this.svcDetails.databaseUsername,
+        this.svcDetails.databaseUsername
+      )
+      this.withEnvironment({
+        QUARKUS_DATASOURCE_USERNAME: this.svcDetails.databaseUsername,
+        QUARKUS_DATASOURCE_PASSWORD: this.svcDetails.databaseUsername,
+        QUARKUS_DATASOURCE_JDBC_URL: `jdbc:postgresql://${this.services.databaseContainer?.getNetworkAliases()[0]}:${this.services.databaseContainer?.getPort()}/${this.svcDetails.databaseUsername}?sslmode=disable`,
+      })
+    }
     // Re-apply the default health check explicitly if it has not been overridden.
     // This ensures the healthcheck is correctly registered before container startup
     if (JSON.stringify(this.healthCheck) === JSON.stringify(this.defaultHealthCheck)) {
@@ -64,9 +79,6 @@ export abstract class OnecxSvcContainer extends GenericContainer {
     // This ensures that calling withEnvironment() does not override earlier configurations.
     this.withEnvironment({
       ...this.environment,
-      QUARKUS_DATASOURCE_USERNAME: this.onecxSvcDetails.svcUsername,
-      QUARKUS_DATASOURCE_PASSWORD: this.onecxSvcDetails.svcPassword,
-      QUARKUS_DATASOURCE_JDBC_URL: `jdbc:postgresql://${this.services.databaseContainer.getNetworkAliases()[0]}:${this.services.databaseContainer.getPort()}/${this.onecxSvcDetails.svcUsername}?sslmode=disable`,
       KC_REALM: `${this.services.keycloakContainer.getRealm()}`,
       QUARKUS_OIDC_AUTH_SERVER_URL: `http://${this.services.keycloakContainer.getNetworkAliases()[0]}:${this.services.keycloakContainer.getPort()}/realms/${this.services.keycloakContainer.getRealm()}`,
       QUARKUS_OIDC_TOKEN_ISSUER: `http://${this.services.keycloakContainer.getNetworkAliases()[0]}/realms/${this.services.keycloakContainer.getRealm()}`,
@@ -78,31 +90,31 @@ export abstract class OnecxSvcContainer extends GenericContainer {
       ONECX_TENANT_CACHE_ENABLED: 'false',
     })
     this.withLogConsumer((stream) => {
-      stream.on('data', (line) => console.log(`${this.onecxSvcDetails.svcUsername}: `, line))
-      stream.on('err', (line) => console.error(`${this.onecxSvcDetails.svcUsername}: `, line))
-      stream.on('end', () => console.log(`${this.onecxSvcDetails.svcUsername}: Stream closed`))
+      stream.on('data', (line) => console.log(`${this.svcDetails.databaseUsername}: `, line))
+      stream.on('err', (line) => console.error(`${this.svcDetails.databaseUsername}: `, line))
+      stream.on('end', () => console.log(`${this.svcDetails.databaseUsername}: Stream closed`))
     })
     this.withWaitStrategy(Wait.forAll([Wait.forHealthCheck(), Wait.forListeningPorts()]))
-    return new StartedOnecxSvcContainer(await super.start(), this.onecxSvcDetails, this.networkAliases, this.port)
+    return new StartedSvcContainer(await super.start(), this.svcDetails, this.networkAliases, this.port)
   }
 }
 
-export class StartedOnecxSvcContainer extends AbstractStartedContainer {
+export class StartedSvcContainer extends AbstractStartedContainer {
   constructor(
     startedTestContainer: StartedTestContainer,
-    private readonly onecxSvcDetails: OnecxSvcDetails,
+    private readonly SvcDetails: SvcDetails,
     private readonly networkAliases: string[],
     private readonly port: number
   ) {
     super(startedTestContainer)
   }
 
-  getSvcUsername(): string {
-    return this.onecxSvcDetails.svcUsername
+  getDatabaseUsername(): string {
+    return this.SvcDetails.databaseUsername
   }
 
-  getSvcPassword(): string {
-    return this.onecxSvcDetails.svcPassword
+  getDatabasePassword(): string {
+    return this.SvcDetails.databasePassword
   }
 
   getPort(): number {
