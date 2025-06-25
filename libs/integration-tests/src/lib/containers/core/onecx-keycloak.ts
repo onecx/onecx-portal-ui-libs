@@ -177,7 +177,14 @@ export class OnecxKeycloakContainer extends GenericContainer {
         },
       ])
     }
-    this.withWaitStrategy(Wait.forAll([Wait.forHealthCheck(), Wait.forListeningPorts()]))
+    this.withWaitStrategy(
+      Wait.forAll([
+        Wait.forHttp(
+          `/realms/${this.onecxEnvironment.realm}/.well-known/openid-configuration`,
+          this.onecxEnvironment.port
+        ).forStatusCode(200),
+      ])
+    )
 
     return new StartedOnecxKeycloakContainer(await super.start(), this.onecxEnvironment, this.networkAliases)
   }
