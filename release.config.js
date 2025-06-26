@@ -6,6 +6,11 @@ module.exports = {
       channel: 'rc',
       prerelease: 'rc',
     },
+    { 
+      name: "v5",
+      range: "5.x.x",
+      channel: "5.x.x" 
+    }
   ],
   preset: 'conventionalcommits',
   presetConfig: {
