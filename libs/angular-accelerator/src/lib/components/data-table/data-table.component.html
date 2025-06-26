@@ -123,6 +123,8 @@
     id="dataTable_{{name}}"
     (selectionChange)="onSelectionChange($event)"
     [selection]="(selectedRows$ | async) ?? []"
+    dataKey="id"
+    [rowTrackBy]="rowTrackByFunction"
     [scrollable]="true"
     scrollHeight="flex"
     [style]="tableStyle"
