@@ -41,18 +41,9 @@ export class TooltipOnOverflowDirective extends Tooltip implements OnDestroy, Af
         this.disabled = this.el.nativeElement.scrollWidth <= this.el.nativeElement.offsetWidth
         this.setOption({ disabled: this.disabled })
       }, this)
-      this.observeMutations()
+      this.mutationObserver.observe(this.el.nativeElement, { subtree: true, characterData: true, childList: true })
     }, 0)
   }
-
-  private observeMutations() {
-    this.mutationObserver.observe(this.el.nativeElement, {
-      subtree: true,
-      characterData: true,
-      childList: true,
-    });
-  }
-
   constructor() {
     const zone = inject(NgZone)
     const renderer = inject(Renderer2)
