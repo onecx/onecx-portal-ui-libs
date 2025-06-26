@@ -37,6 +37,8 @@ export class TooltipOnOverflowDirective extends Tooltip implements OnDestroy, Af
   override ngAfterViewInit(): void {
     super.ngAfterViewInit()
     setTimeout(() => {
+      // Needed to ensure change detection picks up the correct state of 'disabled'
+      // Without this the tooltip for some elements won't update properly
       this.zone.run(() => {
         this.disabled = this.el.nativeElement.scrollWidth <= this.el.nativeElement.offsetWidth
         this.setOption({ disabled: this.disabled })
