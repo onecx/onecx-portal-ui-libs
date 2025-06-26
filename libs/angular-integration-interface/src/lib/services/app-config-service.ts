@@ -1,14 +1,14 @@
 import { Location } from '@angular/common'
 import { HttpClient } from '@angular/common/http'
-import { Injectable } from '@angular/core'
+import { Injectable, inject } from '@angular/core'
 import { Config } from '@onecx/integration-interface'
 import { BehaviorSubject, firstValueFrom } from 'rxjs'
 
 @Injectable()
 export class AppConfigService {
-  config$ = new BehaviorSubject<{ [key: string]: string }>({})
+  private http = inject(HttpClient)
 
-  constructor(private http: HttpClient) {}
+  config$ = new BehaviorSubject<{ [key: string]: string }>({})
 
   public init(baseUrl: string): Promise<void> {
     return new Promise((resolve, reject) => {

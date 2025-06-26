@@ -16,6 +16,10 @@ $clr-neutral-700: #262626;
     display: none;
   }
 
+  .p-multiselect-dropdown {
+    display: none;
+  }
+
   .p-multiselect-label.p-placeholder {
     color: $clr-neutral-700;
     font-size: 0.9rem;

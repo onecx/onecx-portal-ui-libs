@@ -3,16 +3,15 @@ import {
   ComponentRef,
   ContentChild,
   EventEmitter,
-  Inject,
   Input,
   OnDestroy,
   OnInit,
-  Optional,
   QueryList,
   TemplateRef,
   Type,
   ViewChildren,
   ViewContainerRef,
+  inject,
 } from '@angular/core'
 
 import { Technologies } from '@onecx/integration-interface'
@@ -28,13 +27,23 @@ interface AssignedComponent {
 }
 
 @Component({
+  standalone: false,
   selector: 'ocx-slot[name]',
   templateUrl: './slot.component.html',
 })
 export class SlotComponent implements OnInit, OnDestroy {
+  private http = inject(HttpClient)
+
   @Input()
   name!: string
 
+  @Input()
+  slotStyles: { [key: string]: any } = {}
+
+  @Input()
+  slotClasses: string | string[] | Set<string> | { [key: string]: any } = ''
+
+  private slotService = inject<SlotService>(SLOT_SERVICE, { optional: true })
   private _assignedComponents$ = new BehaviorSubject<AssignedComponent[]>([])
 
   /**
@@ -80,7 +89,7 @@ export class SlotComponent implements OnInit, OnDestroy {
    * ## Component with slot in a template
    * ```
    * ⁣@Component({
-   *  selector: 'my-component',
+   *  standalone: false, * selector: 'my-component',
    *  templateUrl: './my-component.component.html',
    * })
    * export class MyComponent {
@@ -136,11 +145,6 @@ export class SlotComponent implements OnInit, OnDestroy {
 
   subscription: Subscription | undefined
   components$: Observable<SlotComponentConfiguration[]> | undefined
-
-  constructor(
-    private http: HttpClient,
-    @Optional() @Inject(SLOT_SERVICE) private slotService?: SlotService
-  ) {}
 
   ngOnInit(): void {
     if (!this.slotService) {

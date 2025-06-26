@@ -15,11 +15,12 @@ import {
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { getLocation } from '@onecx/accelerator'
+
 import { EventsTopic, CurrentLocationTopicPayload, TopicEventType } from '@onecx/integration-interface'
 import { Observable, Subscription, filter } from 'rxjs'
+import { dataNoPortalLayoutStylesKey } from '@onecx/angular-utils'
 import { ShellCapabilityService, Capability } from '@onecx/angular-integration-interface'
 import { AppStateService } from '@onecx/angular-integration-interface'
-import { dataNoPortalLayoutStylesKey } from '@onecx/angular-utils'
 
 /**
  * Implementation inspired by @angular-architects/module-federation-plugin https://github.com/angular-architects/module-federation-plugin/blob/main/libs/mf-tools/src/lib/web-components/bootstrap-utils.ts
@@ -27,10 +28,6 @@ import { dataNoPortalLayoutStylesKey } from '@onecx/angular-utils'
 
 export type AppType = 'shell' | 'microfrontend'
 export type EntrypointType = 'microfrontend' | 'component'
-
-export interface AppOptions {
-  usePortalLayoutStyles?: boolean
-}
 
 export function bootstrapModule<M>(module: Type<M>, appType: AppType, production: boolean): Promise<NgModuleRef<M>> {
   return cachePlatform(production)
@@ -49,8 +46,7 @@ export async function bootstrapRemoteComponent(
   component: Type<any>,
   elementName: string,
   production: boolean,
-  providers: (Provider | EnvironmentProviders)[],
-  options?: AppOptions
+  providers: (Provider | EnvironmentProviders)[]
 ): Promise<void> {
   const app = await createApplication({
     providers: [
@@ -66,24 +62,18 @@ export async function bootstrapRemoteComponent(
 
   cachePlatform(production)
   adaptRemoteComponentRoutes(app.injector)
-  createEntrypoint(component, elementName, app.injector, 'component', options)
+  createEntrypoint(component, elementName, app.injector, 'component')
 }
 
-export function createAppEntrypoint(
-  component: Type<any>,
-  elementName: string,
-  injector: Injector,
-  options?: AppOptions
-) {
-  createEntrypoint(component, elementName, injector, 'microfrontend', options)
+export function createAppEntrypoint(component: Type<any>, elementName: string, injector: Injector) {
+  createEntrypoint(component, elementName, injector, 'microfrontend')
 }
 
 function createEntrypoint(
   component: Type<any>,
   elementName: string,
   injector: Injector,
-  entrypointType: EntrypointType,
-  options?: AppOptions
+  entrypointType: EntrypointType
 ) {
   let sub: Subscription | null
   const capabilityService = new ShellCapabilityService()
@@ -114,9 +104,7 @@ function createEntrypoint(
   const originalConnectedCallback = myRemoteComponentAsWebComponent.prototype.connectedCallback
 
   myRemoteComponentAsWebComponent.prototype.connectedCallback = function () {
-    if (options && options.usePortalLayoutStyles === false) {
-      this.dataset[dataNoPortalLayoutStylesKey] = ''
-    }
+    this.dataset[dataNoPortalLayoutStylesKey] = ''
     originalConnectedCallback.call(this)
   }
 

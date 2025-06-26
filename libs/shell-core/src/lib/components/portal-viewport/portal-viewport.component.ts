@@ -1,5 +1,5 @@
-import { Component, HostListener, Inject, OnDestroy, OnInit, Optional } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
+import { Component, HostListener, OnDestroy, OnInit, inject } from '@angular/core'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import {
   AppStateService,
@@ -8,7 +8,8 @@ import {
   ThemeService,
   UserService,
 } from '@onecx/angular-integration-interface'
-import { MessageService, PrimeNGConfig } from 'primeng/api'
+import { MessageService } from 'primeng/api'
+import { PrimeNG } from 'primeng/config'
 import { filter, first, from, mergeMap, Observable, of } from 'rxjs'
 import { SHOW_CONTENT_PROVIDER, ShowContentProvider } from '../../shell-interface/show-content-provider'
 import {
@@ -18,12 +19,26 @@ import {
 import { SlotService } from '@onecx/angular-remote-components'
 
 @Component({
+  standalone: false,
   selector: 'ocx-shell-portal-viewport',
   templateUrl: './portal-viewport.component.html',
   styleUrls: ['./portal-viewport.component.scss'],
 })
 @UntilDestroy()
 export class PortalViewportComponent implements OnInit, OnDestroy {
+  private primengConfig = inject(PrimeNG)
+  private messageService = inject(MessageService)
+  private appStateService = inject(AppStateService)
+  private portalMessageService = inject(PortalMessageService)
+  private userService = inject(UserService)
+  themeService = inject(ThemeService)
+  private httpClient = inject(HttpClient)
+  showContentProvider = inject<ShowContentProvider | undefined>(SHOW_CONTENT_PROVIDER, { optional: true })
+  workspaceConfigBffService = inject<WorkspaceConfigBffService | undefined>(WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER, {
+    optional: true,
+  })
+  private slotService = inject(SlotService)
+
   menuButtonTitle = ''
   menuActive = true
   activeTopbarItem: string | undefined
@@ -39,20 +54,7 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
   verticalMenuSlotName = 'onecx-shell-vertical-menu'
   isVerticalMenuComponentDefined$: Observable<boolean>
 
-  constructor(
-    private primengConfig: PrimeNGConfig,
-    private messageService: MessageService,
-    private appStateService: AppStateService,
-    private portalMessageService: PortalMessageService,
-    private userService: UserService,
-    public themeService: ThemeService,
-    private httpClient: HttpClient,
-    private slotService: SlotService,
-    @Optional() @Inject(SHOW_CONTENT_PROVIDER) public showContentProvider: ShowContentProvider | undefined,
-    @Optional()
-    @Inject(WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER)
-    public workspaceConfigBffService: WorkspaceConfigBffService | undefined
-  ) {
+  constructor() {
     this.portalMessageService.message$.subscribe((message: Message) => this.messageService.add(message))
     this.userService.profile$.pipe(untilDestroyed(this)).subscribe((profile) => {
       this.menuMode =
@@ -102,7 +104,7 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.primengConfig.ripple = true
+    this.primengConfig.ripple.set(true)
 
     this.appStateService.globalError$
       .pipe(untilDestroyed(this))

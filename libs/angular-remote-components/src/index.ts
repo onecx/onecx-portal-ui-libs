@@ -1,6 +1,5 @@
 export * from './lib/model/remote-component'
 export * from './lib/model/remote-webcomponent'
-export * from './lib/model/injection-tokens'
 export * from './lib/components/slot/slot.component'
 export * from './lib/angular-remote-components.module'
 export * from './lib/services/slot.service'

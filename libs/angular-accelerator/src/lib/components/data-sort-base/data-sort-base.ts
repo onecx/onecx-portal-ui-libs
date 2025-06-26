@@ -80,11 +80,13 @@ export class DataSortBase {
                 )?.toString()
                 switch (filter.filterType) {
                   case undefined:
-                  case FilterType.EQUAL:
+                  case FilterType.EQUALS:
                     return value === String(filter.value)
-                  case FilterType.TRUTHY: {
+                  case FilterType.IS_NOT_EMPTY: {
                     return filter.value ? !!value : !value
                   }
+                  default:
+                    return true
                 }
               })
           )

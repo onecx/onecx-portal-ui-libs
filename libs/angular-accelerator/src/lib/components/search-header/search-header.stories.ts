@@ -6,7 +6,7 @@ import { RouterModule } from '@angular/router'
 import { Meta, StoryFn, applicationConfig, moduleMetadata } from '@storybook/angular'
 import { BreadcrumbModule } from 'primeng/breadcrumb'
 import { ButtonModule } from 'primeng/button'
-import { DropdownModule } from 'primeng/dropdown'
+import { SelectModule } from 'primeng/select'
 import { InputTextModule } from 'primeng/inputtext'
 import { MenuModule } from 'primeng/menu'
 import { SkeletonModule } from 'primeng/skeleton'
@@ -17,6 +17,9 @@ import { StorybookBreadcrumbModule } from './../../storybook-breadcrumb.module'
 import { SearchHeaderComponent } from './search-header.component'
 import { ConfigurationService } from '@onecx/angular-integration-interface'
 import { provideHttpClient } from '@angular/common/http'
+import { StorybookThemeModule } from '../../storybook-theme.module'
+import { TooltipModule } from 'primeng/tooltip'
+import { FloatLabelModule } from 'primeng/floatlabel'
 
 export default {
   title: 'Components/SearchHeaderComponent',
@@ -29,6 +32,7 @@ export default {
         importProvidersFrom(RouterModule.forRoot([], { useHash: true })),
         importProvidersFrom(ConfigurationService),
         provideHttpClient(),
+        importProvidersFrom(StorybookThemeModule),
       ],
     }),
     moduleMetadata({
@@ -38,7 +42,7 @@ export default {
         InputTextModule,
         BreadcrumbModule,
         ButtonModule,
-        DropdownModule,
+        SelectModule,
         ReactiveFormsModule,
         SkeletonModule,
         StorybookTranslateModule,
@@ -46,6 +50,8 @@ export default {
           { label: 'Level 1', routerLink: ['/something'] },
           { label: 'Level 2', url: '/' },
         ]),
+        TooltipModule,
+        FloatLabelModule,
       ],
     }),
   ],
@@ -69,7 +75,7 @@ const BasicSearchHeader: StoryFn<SearchHeaderComponent> = (args) => ({
     <ocx-search-header [header]="header" (resetted)="resetted">
         <form>
           <div class="flex flex-wrap gap-3">
-            <span class="p-float-label">
+            <p-floatlabel variant="on">
                 <input
                     id="name"
                     pInputText
@@ -82,8 +88,8 @@ const BasicSearchHeader: StoryFn<SearchHeaderComponent> = (args) => ({
                 <label for="name" style="white-space: nowrap">
                     Name
                 </label>
-            </span>
-            <span class="p-float-label">
+            </p-floatlabel>
+            <p-floatlabel variant="on">
                 <input
                     id="name"
                     pInputText
@@ -96,21 +102,21 @@ const BasicSearchHeader: StoryFn<SearchHeaderComponent> = (args) => ({
                 <label for="name" style="white-space: nowrap">
                     Name
                 </label>
-            </span>
-            <span class="p-float-label">
-            <input
-                id="name"
-                pInputText
-                type="text"
-                class="w-18rem"
-                [pTooltip]="'Name'"
-                tooltipPosition="top"
-                tooltipEvent="hover"
-            />
-            <label for="name" style="white-space: nowrap">
-                Name
-            </label>
-        </span>
+            </p-floatlabel>
+            <p-floatlabel variant="on">
+                <input
+                    id="name"
+                    pInputText
+                    type="text"
+                    class="w-18rem"
+                    [pTooltip]="'Name'"
+                    tooltipPosition="top"
+                    tooltipEvent="hover"
+                />
+                <label for="name" style="white-space: nowrap">
+                    Name
+                </label>
+            </p-floatlabel>
           </div>
         </form>
     </ocx-search-header>

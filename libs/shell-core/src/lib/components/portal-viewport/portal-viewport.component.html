@@ -5,7 +5,6 @@
     'p-input-filled': inputStyle === 'filled', 
     'p-ripple-disabled': !ripple,
     'layout-menu-active': isStaticalMenuVisible() && (isVerticalMenuComponentDefined$ | async),
-    'layout-menu-button-hidden': isHorizontalMenuMode() || (isVerticalMenuComponentDefined$ | async) === false
   }"
   [class]="'layout-menu-' + this.colorScheme"
 >
@@ -13,6 +12,7 @@
     <ocx-shell-header
       [menuButtonTitle]="menuButtonTitle"
       (menuButtonClick)="onMenuButtonClick($event)"
+      [isStaticalMenu]="isStaticalMenuVisible()"
       [isHorizontalMenu]="isHorizontalMenuMode()"
     >
       <div [hidden]="!isHorizontalMenuVisible()">
