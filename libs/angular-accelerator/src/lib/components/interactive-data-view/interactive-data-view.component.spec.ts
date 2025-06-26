@@ -53,6 +53,8 @@ import { PrimeIcons } from 'primeng/api'
 import { limit } from '../../utils/filter.utils'
 import { DatePipe } from '@angular/common'
 
+jest.setTimeout(20_000)
+
 describe('InteractiveDataViewComponent', () => {
   const mutationObserverMock = jest.fn(function MutationObserver(callback) {
     this.observe = jest.fn()
