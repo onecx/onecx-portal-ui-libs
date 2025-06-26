@@ -104,7 +104,7 @@ export class StartedOnecxPostgresContainer extends AbstractStartedContainer {
   }
 
   public getPort(): number {
-    return super.getMappedPort(this.onecxPostgresDetails.port)
+    return this.onecxPostgresDetails.port
   }
 
   public getNetworkAliases(): string[] {
