@@ -146,7 +146,7 @@
         "attributes": {}
       },
       {
-        "name": "Telekom_Magic_Admin",
+        "name": "Project_Admin",
         "composite": false,
         "clientRole": false,
         "containerId": "onecx",
@@ -555,7 +555,7 @@
         "tkit-apm-user",
         "portal-mgmt-user",
         "tkit-ahm-user",
-        "Telekom_Magic_Admin"
+        "Project_Admin"
       ],
       "attributes": {
         "orgId": ["onecx"],
@@ -580,7 +580,7 @@
         "tkit-apm-user",
         "portal-mgmt-user",
         "tkit-ahm-user",
-        "Telekom_Magic_Admin"
+        "Project_Admin"
       ],
       "attributes": {
         "orgId": ["dtag"],
@@ -605,7 +605,7 @@
         "tkit-apm-user",
         "portal-mgmt-user",
         "tkit-ahm-user",
-        "Telekom_Magic_Admin"
+        "Project_Admin"
       ],
       "attributes": {
         "orgId": ["gfnw"],
