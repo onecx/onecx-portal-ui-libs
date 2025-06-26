@@ -954,4 +954,8 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       [column.id]: value.label,
     }
   }
+
+  rowTrackByFunction = (item: any) => {
+    return item.id
+  }
 }
