@@ -1,9 +1,6 @@
 export interface UserProfile {
   userId: string
   person: UserPerson
-  /**
-   * user id in external identity provider, e.g. in keycloak
-   */
   organization?: string
   tenantId?: string
   issuer?: string
@@ -18,6 +15,7 @@ export interface UserProfile {
   identityProvider?: string
   /**
    * @deprecated
+   * user id in external identity provider, e.g. in keycloak
    */
   identityProviderId?: string
   /**
