@@ -3,7 +3,7 @@ import { HealthCheck } from 'testcontainers/build/types'
 import { SvcDetails, SvcContainerServices } from '../../model/service.model'
 
 export abstract class SvcContainer extends GenericContainer {
-  protected svcDetails: SvcDetails = {
+  protected details: SvcDetails = {
     databaseUsername: '',
     databasePassword: '',
   }
@@ -26,16 +26,15 @@ export abstract class SvcContainer extends GenericContainer {
     super(image)
     this.withHealthCheck(this.defaultHealthCheck)
     this.withExposedPorts(this.port)
-    this.withStartupTimeout(120_000)
   }
 
   withDatabaseUsername(databaseUsername: string): this {
-    this.svcDetails.databaseUsername = databaseUsername
+    this.details.databaseUsername = databaseUsername
     return this
   }
 
   withDatabasePassword(databasePassword: string): this {
-    this.svcDetails.databasePassword = databasePassword
+    this.details.databasePassword = databasePassword
     return this
   }
 
@@ -48,7 +47,7 @@ export abstract class SvcContainer extends GenericContainer {
   }
 
   protected validateDatabaseCredentials(): void {
-    if (!this.svcDetails.databaseUsername || !this.svcDetails.databasePassword) {
+    if (!this.details.databaseUsername || !this.details.databasePassword) {
       throw new Error('Database credentials must be set using withDatabaseUsername and withDatabasePassword')
     }
   }
@@ -61,14 +60,9 @@ export abstract class SvcContainer extends GenericContainer {
     if (this.shouldCreateDatabase) {
       this.validateDatabaseCredentials()
       await this.services.databaseContainer?.createUserAndDatabase(
-        this.svcDetails.databaseUsername,
-        this.svcDetails.databaseUsername
+        this.details.databaseUsername,
+        this.details.databaseUsername
       )
-      this.withEnvironment({
-        QUARKUS_DATASOURCE_USERNAME: this.svcDetails.databaseUsername,
-        QUARKUS_DATASOURCE_PASSWORD: this.svcDetails.databaseUsername,
-        QUARKUS_DATASOURCE_JDBC_URL: `jdbc:postgresql://${this.services.databaseContainer?.getNetworkAliases()[0]}:${this.services.databaseContainer?.getPort()}/${this.svcDetails.databaseUsername}?sslmode=disable`,
-      })
     }
     // Re-apply the default health check explicitly if it has not been overridden.
     // This ensures the healthcheck is correctly registered before container startup
@@ -79,6 +73,9 @@ export abstract class SvcContainer extends GenericContainer {
     // This ensures that calling withEnvironment() does not override earlier configurations.
     this.withEnvironment({
       ...this.environment,
+      QUARKUS_DATASOURCE_USERNAME: this.details.databaseUsername,
+      QUARKUS_DATASOURCE_PASSWORD: this.details.databaseUsername,
+      QUARKUS_DATASOURCE_JDBC_URL: `jdbc:postgresql://${this.services.databaseContainer?.getNetworkAliases()[0]}:${this.services.databaseContainer?.getPort()}/${this.details.databaseUsername}?sslmode=disable`,
       KC_REALM: `${this.services.keycloakContainer.getRealm()}`,
       QUARKUS_OIDC_AUTH_SERVER_URL: `http://${this.services.keycloakContainer.getNetworkAliases()[0]}:${this.services.keycloakContainer.getPort()}/realms/${this.services.keycloakContainer.getRealm()}`,
       QUARKUS_OIDC_TOKEN_ISSUER: `http://${this.services.keycloakContainer.getNetworkAliases()[0]}/realms/${this.services.keycloakContainer.getRealm()}`,
@@ -90,19 +87,19 @@ export abstract class SvcContainer extends GenericContainer {
       ONECX_TENANT_CACHE_ENABLED: 'false',
     })
     this.withLogConsumer((stream) => {
-      stream.on('data', (line) => console.log(`${this.svcDetails.databaseUsername}: `, line))
-      stream.on('err', (line) => console.error(`${this.svcDetails.databaseUsername}: `, line))
-      stream.on('end', () => console.log(`${this.svcDetails.databaseUsername}: Stream closed`))
+      stream.on('data', (line) => console.log(`${this.details.databaseUsername}: `, line))
+      stream.on('err', (line) => console.error(`${this.details.databaseUsername}: `, line))
+      stream.on('end', () => console.log(`${this.details.databaseUsername}: Stream closed`))
     })
     this.withWaitStrategy(Wait.forAll([Wait.forHealthCheck(), Wait.forListeningPorts()]))
-    return new StartedSvcContainer(await super.start(), this.svcDetails, this.networkAliases, this.port)
+    return new StartedSvcContainer(await super.start(), this.details, this.networkAliases, this.port)
   }
 }
 
 export class StartedSvcContainer extends AbstractStartedContainer {
   constructor(
     startedTestContainer: StartedTestContainer,
-    private readonly SvcDetails: SvcDetails,
+    private readonly details: SvcDetails,
     private readonly networkAliases: string[],
     private readonly port: number
   ) {
@@ -110,11 +107,11 @@ export class StartedSvcContainer extends AbstractStartedContainer {
   }
 
   getDatabaseUsername(): string {
-    return this.SvcDetails.databaseUsername
+    return this.details.databaseUsername
   }
 
   getDatabasePassword(): string {
-    return this.SvcDetails.databasePassword
+    return this.details.databasePassword
   }
 
   getPort(): number {
