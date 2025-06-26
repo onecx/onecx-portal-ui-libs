@@ -36,7 +36,21 @@ export class TooltipOnOverflowDirective extends Tooltip implements OnDestroy, Af
 
   override ngAfterViewInit(): void {
     super.ngAfterViewInit()
-    this.mutationObserver.observe(this.el.nativeElement, { subtree: true, characterData: true, childList: true })
+    setTimeout(() => {
+      this.zone.run(() => {
+        this.disabled = this.el.nativeElement.scrollWidth <= this.el.nativeElement.offsetWidth
+        this.setOption({ disabled: this.disabled })
+      }, this)
+      this.observeMutations()
+    }, 0)
+  }
+
+  private observeMutations() {
+    this.mutationObserver.observe(this.el.nativeElement, {
+      subtree: true,
+      characterData: true,
+      childList: true,
+    });
   }
 
   constructor() {
