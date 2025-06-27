@@ -2,12 +2,6 @@ name: 'SonarCloud Scan'
 description: 'Run SonarQube scan for a given path'
 
 inputs:
-  GITHUB_TOKEN:
-    description: 'Github token'
-    required: true
-  SONAR_TOKEN:
-    description: 'SonarCloud token'
-    required: true
   path:
     description: 'Paths from matrix'
     required: true
@@ -18,8 +12,8 @@ runs:
     - name: SonarCloud Scan
       uses: SonarSource/sonarqube-scan-action@v5
       env:
-        GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ inputs.SONAR_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_URL: 'https://sonarcloud.io'
       with:
         projectBaseDir: libs/${{ inputs.path }}/
@@ -35,3 +29,4 @@ runs:
           -Dsonar.working.directory=../../reports/${{ inputs.path }}/.scannerwork
           -Dsonar.coverage.exclusions=**/*.ts,**/*.js,**/*.module.ts,**/*.main.ts,**/environments/**,**/assets/**,**/generated/**,**/*.stories.ts,**/*.harness
           -Dsonar.test.inclusions=/**/*.spec.ts
+          -Dsonar.token=${{ secrets.SONAR_TOKEN }}
