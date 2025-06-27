@@ -28,6 +28,7 @@
       <ng-container
         [ngTemplateOutlet]="_listItem ? _listItem : defaultListItem"
         [ngTemplateOutletContext]="{
+              $implicit: item,
               item:item,
               first:first,
               columnTemplates: columnTemplates

@@ -165,61 +165,115 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   @Input() headerStyleClass: string | undefined
   @Input() contentStyleClass: string | undefined
   @ContentChild('tableCell') tableCell: TemplateRef<any> | undefined
+  primeNgTableCell: TemplateRef<any> | undefined
   /**
    * @deprecated Will be replaced by dateTableCell
    */
   @ContentChild('tableDateCell') tableDateCell: TemplateRef<any> | undefined
+  /**
+   * @deprecated Will be replaced by primeNgDateTableCell
+   */
+  primeNgTableDateCell: TemplateRef<any> | undefined
   @ContentChild('dateTableCell') dateTableCell: TemplateRef<any> | undefined
+  primeNgDateTableCell: TemplateRef<any> | undefined
 
   /**
    * @deprecated Will be replaced by relativeDateTableCell
    */
   @ContentChild('tableRelativeDateCell') tableRelativeDateCell: TemplateRef<any> | undefined
+  /**
+   * @deprecated Will be replaced by primeNgRelativeDateTableCell
+   */
+  primeNgTableRelativeDateCell: TemplateRef<any> | undefined
   @ContentChild('relativeDateTableCell') relativeDateTableCell: TemplateRef<any> | undefined
+  primeNgRelativeDateTableCell: TemplateRef<any> | undefined
 
   /**
    * @deprecated Will be replaced by translationKeyTableCell
    */
   @ContentChild('tableTranslationKeyCell') tableTranslationKeyCell: TemplateRef<any> | undefined
+  /**
+   * @deprecated Will be replaced by primeNgTranslationKeyTableCell
+   */
+  primeNgTableTranslationKeyCell: TemplateRef<any> | undefined
   @ContentChild('translationKeyTableCell') translationKeyTableCell: TemplateRef<any> | undefined
+  primeNgTranslationKeyTableCell: TemplateRef<any> | undefined
 
   @ContentChild('gridItemSubtitleLines') gridItemSubtitleLines: TemplateRef<any> | undefined
+  primeNgGridItemSubtitleLines: TemplateRef<any> | undefined
   @ContentChild('listItemSubtitleLines') listItemSubtitleLines: TemplateRef<any> | undefined
+  primeNgListItemSubtitleLines: TemplateRef<any> | undefined
+  // TODO: Implement same fix for other templates and child components
   @ContentChild('stringTableCell') stringTableCell: TemplateRef<any> | undefined
+  primeNgStringTableCell: TemplateRef<any> | undefined
   @ContentChild('numberTableCell') numberTableCell: TemplateRef<any> | undefined
+  primeNgNumberTableCell: TemplateRef<any> | undefined
   /**
    * @deprecated Will be removed and instead to change the template of a specific column
    * use the new approach instead by following the naming convention column id + IdTableCell
    * e.g. for a column with the id 'status' in DataTable use pTemplate="statusIdTableCell"
    */
   @ContentChild('customTableCell') customTableCell: TemplateRef<any> | undefined
+  /**
+   * @deprecated Will be removed and instead to change the template of a specific column
+   * use the new approach instead by following the naming convention column id + IdTableCell
+   * e.g. for a column with the id 'status' in DataTable use pTemplate="statusIdTableCell"
+   */
+  primeNgCustomTableCell: TemplateRef<any> | undefined
   @ContentChild('gridItem') gridItem: TemplateRef<any> | undefined
+  primeNgGridItem: TemplateRef<any> | undefined
   @ContentChild('listItem') listItem: TemplateRef<any> | undefined
+  primeNgListItem: TemplateRef<any> | undefined
   @ContentChild('topCenter') topCenter: TemplateRef<any> | undefined
+  primeNgTopCenter: TemplateRef<any> | undefined
   @ContentChild('listValue') listValue: TemplateRef<any> | undefined
+  primeNgListValue: TemplateRef<any> | undefined
   @ContentChild('translationKeyListValue') translationKeyListValue: TemplateRef<any> | undefined
+  primeNgTranslationKeyListValue: TemplateRef<any> | undefined
   @ContentChild('numberListValue') numberListValue: TemplateRef<any> | undefined
+  primeNgNumberListValue: TemplateRef<any> | undefined
   @ContentChild('relativeDateListValue') relativeDateListValue: TemplateRef<any> | undefined
+  primeNgRelativeDateListValue: TemplateRef<any> | undefined
   /**
    * @deprecated Will be removed and instead to change the template of a specific column
    * use the new approach instead by following the naming convention column id + IdListValue
    * e.g. for a column with the id 'status' DataListGrid use pTemplate="statusIdListValue"
    */
   @ContentChild('customListValue') customListValue: TemplateRef<any> | undefined
+  /**
+   * @deprecated Will be removed and instead to change the template of a specific column
+   * use the new approach instead by following the naming convention column id + IdListValue
+   * e.g. for a column with the id 'status' DataListGrid use pTemplate="statusIdListValue"
+   */
+  primeNgCustomListValue: TemplateRef<any> | undefined
   @ContentChild('stringListValue') stringListValue: TemplateRef<any> | undefined
+  primeNgStringListValue: TemplateRef<any> | undefined
   @ContentChild('dateListValue') dateListValue: TemplateRef<any> | undefined
+  primeNgDateListValue: TemplateRef<any> | undefined
   @ContentChild('tableFilterCell') tableFilterCell: TemplateRef<any> | undefined
+  primeNgTableFilterCell: TemplateRef<any> | undefined
   @ContentChild('dateTableFilterCell') dateTableFilterCell: TemplateRef<any> | undefined
+  primeNgDateTableFilterCell: TemplateRef<any> | undefined
   @ContentChild('relativeDateTableFilterCell') relativeDateTableFilterCell: TemplateRef<any> | undefined
+  primeNgRelativeDateTableFilterCell: TemplateRef<any> | undefined
   @ContentChild('translationKeyTableFilterCell') translationKeyTableFilterCell: TemplateRef<any> | undefined
+  primeNgTranslationKeyTableFilterCell: TemplateRef<any> | undefined
   @ContentChild('stringTableFilterCell') stringTableFilterCell: TemplateRef<any> | undefined
+  primeNgStringTableFilterCell: TemplateRef<any> | undefined
   @ContentChild('numberTableFilterCell') numberTableFilterCell: TemplateRef<any> | undefined
+  primeNgNumberTableFilterCell: TemplateRef<any> | undefined
   /**
    * @deprecated Will be removed and instead to change the template of a specific column filter
    * use the new approach instead by following the naming convention column id + IdTableFilterCell
    * e.g. for a column with the id 'status' in DataTable use pTemplate="statusIdTableFilterCell"
    */
   @ContentChild('customTableFilterCell') customTableFilterCell: TemplateRef<any> | undefined
+  /**
+   * @deprecated Will be removed and instead to change the template of a specific column filter
+   * use the new approach instead by following the naming convention column id + IdTableFilterCell
+   * e.g. for a column with the id 'status' in DataTable use pTemplate="statusIdTableFilterCell"
+   */
+  primeNgCustomTableFilterCell: TemplateRef<any> | undefined
 
   templates$: BehaviorSubject<QueryList<PrimeTemplate> | undefined> = new BehaviorSubject<
     QueryList<PrimeTemplate> | undefined
@@ -488,91 +542,91 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
     this.templates$.value?.forEach((item) => {
       switch (item.getType()) {
         case 'tableCell':
-          this.tableCell = item.template
+          this.primeNgTableCell = item.template
           break
         case 'tableDateCell':
-          this.tableDateCell = item.template
+          this.primeNgTableDateCell = item.template
           break
         case 'dateTableCell':
-          this.dateTableCell = item.template
+          this.primeNgDateTableCell = item.template
           break
         case 'tableRelativeDateCell':
-          this.tableRelativeDateCell = item.template
+          this.primeNgTableRelativeDateCell = item.template
           break
         case 'relativeDateTableCell':
-          this.relativeDateTableCell = item.template
+          this.primeNgRelativeDateTableCell = item.template
           break
         case 'tableTranslationKeyCell':
-          this.tableTranslationKeyCell = item.template
+          this.primeNgTableTranslationKeyCell = item.template
           break
         case 'translationKeyTableCell':
-          this.translationKeyTableCell = item.template
+          this.primeNgTranslationKeyTableCell = item.template
           break
         case 'gridItemSubtitleLines':
-          this.gridItemSubtitleLines = item.template
+          this.primeNgGridItemSubtitleLines = item.template
           break
         case 'listItemSubtitleLines':
-          this.listItemSubtitleLines = item.template
+          this.primeNgListItemSubtitleLines = item.template
           break
         case 'stringTableCell':
-          this.stringTableCell = item.template
+          this.primeNgStringTableCell = item.template
           break
         case 'numberTableCell':
-          this.numberTableCell = item.template
+          this.primeNgNumberTableCell = item.template
           break
         case 'customTableCell':
-          this.customTableCell = item.template
+          this.primeNgCustomTableCell = item.template
           break
         case 'gridItem':
-          this.gridItem = item.template
+          this.primeNgGridItem = item.template
           break
         case 'listItem':
-          this.listItem = item.template
+          this.primeNgListItem = item.template
           break
         case 'topCenter':
-          this.topCenter = item.template
+          this.primeNgTopCenter = item.template
           break
         case 'listValue':
-          this.listValue = item.template
+          this.primeNgListValue = item.template
           break
         case 'translationKeyListValue':
-          this.translationKeyListValue = item.template
+          this.primeNgTranslationKeyListValue = item.template
           break
         case 'numberListValue':
-          this.numberListValue = item.template
+          this.primeNgNumberListValue = item.template
           break
         case 'relativeDateListValue':
-          this.relativeDateListValue = item.template
+          this.primeNgRelativeDateListValue = item.template
           break
         case 'customListValue':
-          this.customListValue = item.template
+          this.primeNgCustomListValue = item.template
           break
         case 'stringListValue':
-          this.stringListValue = item.template
+          this.primeNgStringListValue = item.template
           break
         case 'dateListValue':
-          this.dateListValue = item.template
+          this.primeNgDateListValue = item.template
           break
         case 'tableFilterCell':
-          this.tableFilterCell = item.template
+          this.primeNgTableFilterCell = item.template
           break
         case 'dateTableFilterCell':
-          this.dateTableFilterCell = item.template
+          this.primeNgDateTableFilterCell = item.template
           break
         case 'relativeDateTableFilterCell':
-          this.relativeDateTableFilterCell = item.template
+          this.primeNgRelativeDateTableFilterCell = item.template
           break
         case 'translationKeyTableFilterCell':
-          this.translationKeyTableFilterCell = item.template
+          this.primeNgTranslationKeyTableFilterCell = item.template
           break
         case 'stringTableFilterCell':
-          this.stringTableFilterCell = item.template
+          this.primeNgStringTableFilterCell = item.template
           break
         case 'numberTableFilterCell':
-          this.numberTableFilterCell = item.template
+          this.primeNgNumberTableFilterCell = item.template
           break
         case 'customTableFilterCell':
-          this.customTableFilterCell = item.template
+          this.primeNgCustomTableFilterCell = item.template
           break
       }
     })
