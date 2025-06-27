@@ -124,10 +124,6 @@ export class OnecxKeycloakContainer extends GenericContainer {
     return this.onecxEnvironment.keycloakHostname
   }
 
-  getPort(): number {
-    return this.onecxEnvironment.port
-  }
-
   getKeycloakDatabase() {
     return this.onecxEnvironment.keycloakDatabase
   }
@@ -229,10 +225,6 @@ export class StartedOnecxKeycloakContainer extends AbstractStartedContainer {
 
   getKeycloakDatabase(): string {
     return this.onecxKeycloakEnvironment.keycloakDatabase
-  }
-
-  getPort(): number {
-    return this.onecxKeycloakEnvironment.port
   }
 
   getNetworkAliases(): string[] {

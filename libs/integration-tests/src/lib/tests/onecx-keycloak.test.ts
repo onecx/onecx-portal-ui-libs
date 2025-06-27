@@ -40,7 +40,7 @@ describe('Default Keycloak Testcontainer', () => {
   })
 
   it('should respond with 200 on OpenID configuration endpoint', async () => {
-    const port = kcContainer.getMappedPort(kcContainer.getPort())
+    const port = kcContainer.getFirstMappedPort()
     const realm = kcContainer.getRealm()
 
     const response = await axios.get(`http://localhost:${port}/realms/${realm}/.well-known/openid-configuration`)

@@ -28,7 +28,7 @@ describe('Default workspace-svc Testcontainer', () => {
   })
 
   it('should respond with 200 on /q/health', async () => {
-    const port = userProfileSvcContainer.getMappedPort(userProfileSvcContainer.getPort())
+    const port = userProfileSvcContainer.getFirstMappedPort()
     const response = axios.get(`http://localhost:${port}/q/health`)
 
     expect((await response).status).toBe(200)

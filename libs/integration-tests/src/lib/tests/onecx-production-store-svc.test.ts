@@ -28,7 +28,7 @@ describe('Default workspace-svc Testcontainer', () => {
   })
 
   it('should respond with 200 on /q/health', async () => {
-    const port = productStoreSvcContainer.getMappedPort(productStoreSvcContainer.getPort())
+    const port = productStoreSvcContainer.getFirstMappedPort()
     const response = axios.get(`http://localhost:${port}/q/health`)
 
     expect((await response).status).toBe(200)

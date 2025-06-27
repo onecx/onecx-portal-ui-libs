@@ -77,7 +77,7 @@ export abstract class SvcContainer extends GenericContainer {
       QUARKUS_DATASOURCE_PASSWORD: this.details.databaseUsername,
       QUARKUS_DATASOURCE_JDBC_URL: `jdbc:postgresql://${this.services.databaseContainer?.getNetworkAliases()[0]}:${this.services.databaseContainer?.getPort()}/${this.details.databaseUsername}?sslmode=disable`,
       KC_REALM: `${this.services.keycloakContainer.getRealm()}`,
-      QUARKUS_OIDC_AUTH_SERVER_URL: `http://${this.services.keycloakContainer.getNetworkAliases()[0]}:${this.services.keycloakContainer.getPort()}/realms/${this.services.keycloakContainer.getRealm()}`,
+      QUARKUS_OIDC_AUTH_SERVER_URL: `http://${this.services.keycloakContainer.getNetworkAliases()[0]}:${this.services.keycloakContainer.getFirstMappedPort()}/realms/${this.services.keycloakContainer.getRealm()}`,
       QUARKUS_OIDC_TOKEN_ISSUER: `http://${this.services.keycloakContainer.getNetworkAliases()[0]}/realms/${this.services.keycloakContainer.getRealm()}`,
       TKIT_SECURITY_AUTH_ENABLED: 'false',
       TKIT_RS_CONTEXT_TENANT_ID_MOCK_ENABLED: 'false',
@@ -92,7 +92,7 @@ export abstract class SvcContainer extends GenericContainer {
       stream.on('end', () => console.log(`${this.details.databaseUsername}: Stream closed`))
     })
     this.withWaitStrategy(Wait.forAll([Wait.forHealthCheck(), Wait.forListeningPorts()]))
-    return new StartedSvcContainer(await super.start(), this.details, this.networkAliases, this.port)
+    return new StartedSvcContainer(await super.start(), this.details, this.networkAliases)
   }
 }
 
@@ -100,8 +100,7 @@ export class StartedSvcContainer extends AbstractStartedContainer {
   constructor(
     startedTestContainer: StartedTestContainer,
     private readonly details: SvcDetails,
-    private readonly networkAliases: string[],
-    private readonly port: number
+    private readonly networkAliases: string[]
   ) {
     super(startedTestContainer)
   }
@@ -112,10 +111,6 @@ export class StartedSvcContainer extends AbstractStartedContainer {
 
   getDatabasePassword(): string {
     return this.details.databasePassword
-  }
-
-  getPort(): number {
-    return this.port
   }
 
   getNetworkAliases(): string[] {

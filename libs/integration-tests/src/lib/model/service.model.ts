@@ -10,3 +10,7 @@ export interface SvcContainerServices {
   databaseContainer?: StartedOnecxPostgresContainer
   keycloakContainer: StartedOnecxKeycloakContainer
 }
+
+export interface BffDetails {
+  permissionsProductName: string
+}
