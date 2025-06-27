@@ -1,6 +1,7 @@
 import { Network, StartedNetwork } from 'testcontainers'
 import { OnecxKeycloakContainer, StartedOnecxKeycloakContainer } from '../containers/core/onecx-keycloak'
 import { OnecxPostgresContainer, StartedOnecxPostgresContainer } from '../containers/core/onecx-postgres'
+import axios from 'axios'
 
 const imagePg = 'docker.io/library/postgres:13.4'
 const imageKc = 'quay.io/keycloak/keycloak:23.0.4'
@@ -36,6 +37,16 @@ describe('Default Keycloak Testcontainer', () => {
 
   it('database should be created', async () => {
     await expect(pgContainer.doesDatabaseExist('keycloak')).resolves.not.toThrow()
+  })
+
+  it('should respond with 200 on OpenID configuration endpoint', async () => {
+    const port = kcContainer.getMappedPort(kcContainer.getPort())
+    const realm = kcContainer.getRealm()
+
+    const response = await axios.get(`http://localhost:${port}/realms/${realm}/.well-known/openid-configuration`)
+
+    expect(response.status).toBe(200)
+    expect(response.data.issuer).toContain(`/realms/${realm}`)
   })
 
   afterAll(async () => {
