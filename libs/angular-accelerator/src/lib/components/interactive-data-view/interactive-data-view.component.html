@@ -114,10 +114,10 @@
     [stringTableCellTemplate]="primeNgStringTableCell ?? _stringTableCell"
     [numberTableCellTemplate]="primeNgNumberTableCell ?? _numberTableCell"
     [customTableCellTemplate]="primeNgCustomTableCell ?? _customTableCell"
-    [dateTableCellTemplate]="primeNgDateTableCell ?? _dateTableCell"
-    [relativeDateTableCellTemplate]="primeNgRelativeDateTableCell ?? _relativeDateTableCell"
+    [dateTableCellTemplate]="primeNgDateTableCell ?? _dateTableCell ?? primeNgTableDateCell ?? _tableDateCell"
+    [relativeDateTableCellTemplate]="primeNgRelativeDateTableCell ?? _relativeDateTableCell ?? primeNgTableRelativeDateCell ?? _tableRelativeDateCell"
     [tableCellTemplate]="primeNgTableCell ?? _tableCell"
-    [translationKeyTableCellTemplate]="primeNgTranslationKeyTableCell ?? _translationKeyTableCell"
+    [translationKeyTableCellTemplate]="primeNgTranslationKeyTableCell ?? _translationKeyTableCell ?? primeNgTableTranslationKeyCell ?? _tableTranslationKeyCell"
     [gridItemSubtitleLinesTemplate]="primeNgGridItemSubtitleLines ?? _gridItemSubtitleLines"
     [listItemSubtitleLinesTemplate]="primeNgListItemSubtitleLines ?? _listItemSubtitleLines"
     [listItemTemplate]="primeNgListItem ?? _listItem"
@@ -222,7 +222,7 @@
   <ng-container
     *ngIf="_tableTranslationKeyCell"
     [ngTemplateOutlet]="_tableTranslationKeyCell"
-    [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
+    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
   >
   </ng-container
 ></ng-template>
@@ -230,7 +230,7 @@
   <ng-container
     *ngIf="_translationKeyTableCell"
     [ngTemplateOutlet]="_translationKeyTableCell"
-    [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
+    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
   >
   </ng-container
 ></ng-template>
