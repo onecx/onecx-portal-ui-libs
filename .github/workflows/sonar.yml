@@ -81,6 +81,6 @@ jobs:
             -Dsonar.javascript.lcov.reportPaths=../../reports/${{ matrix.path }}/coverage/lcov.info
             -Dsonar.testExecutionReportPaths=../../reports/${{ matrix.path }}/sonarqube_report.xml
             -Dsonar.working.directory=../../reports/${{ matrix.path }}/.scannerwork
-            -Dsonar.coverage.exclusions=**/*.ts,**/*.js,**/*.module.ts,**/*.main.ts,**/environments/**,**/assets/**,**/generated/**,**/*.stories.ts,**/*.harness, 
-            -Dsonar.test.inclusions=/**/*.spec.ts"
+            -Dsonar.coverage.exclusions=**/*.ts,**/*.js,**/*.module.ts,**/*.main.ts,**/environments/**,**/assets/**,**/generated/**,**/*.stories.ts,**/*.harness 
+            -Dsonar.test.inclusions=**/*.spec.ts
             -Dsonar.token=${{ secrets.SONAR_TOKEN }}
