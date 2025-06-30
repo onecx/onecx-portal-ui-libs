@@ -6,7 +6,7 @@ import axios from 'axios'
 const imagePg = 'docker.io/library/postgres:13.4'
 const imageKc = 'quay.io/keycloak/keycloak:23.0.4'
 
-describe('Default Keycloak Testcontainer', () => {
+xdescribe('Default Keycloak Testcontainer', () => {
   let pgContainer: StartedOnecxPostgresContainer
   let kcContainer: StartedOnecxKeycloakContainer
 

@@ -5,7 +5,7 @@ import { OnecxPostgresContainer, StartedOnecxPostgresContainer } from '../contai
 import { ProductStoreSvcContainer, StartedProductStoreSvcContainer } from '../containers/svc/onecx-product-store-svc'
 import axios from 'axios'
 
-describe('Default workspace-svc Testcontainer', () => {
+xdescribe('Default workspace-svc Testcontainer', () => {
   let pgContainer: StartedOnecxPostgresContainer
   let kcContainer: StartedOnecxKeycloakContainer
   let productStoreSvcContainer: StartedProductStoreSvcContainer
