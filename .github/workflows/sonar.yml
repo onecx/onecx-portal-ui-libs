@@ -63,24 +63,8 @@ jobs:
         with:
           name: coverage-reports
 
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v5
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_URL: 'https://sonarcloud.io'
+      - name: Run SonarCloud Scan
+        uses: ./.github/actions/sonarcloud-scan
         with:
-          projectBaseDir: libs/${{ matrix.path }}/
-          args: >
-            -Dsonar.projectKey=${{ github.repository_owner }}_${{ github.event.repository.name }}_${{ matrix.path }}
-            -Dsonar.host.url=$SONAR_URL
-            -Dsonar.organization=${{ github.repository_owner }}
-            -Dsonar.scm.disabled=true
-            -Dsonar.sourceEncoding=UTF-8
-            -Dsonar.javascript.coveragePlugin=lcov
-            -Dsonar.javascript.lcov.reportPaths=../../reports/${{ matrix.path }}/coverage/lcov.info
-            -Dsonar.testExecutionReportPaths=../../reports/${{ matrix.path }}/sonarqube_report.xml
-            -Dsonar.working.directory=../../reports/${{ matrix.path }}/.scannerwork
-            -Dsonar.coverage.exclusions=**/*.ts,**/*.js,**/*.module.ts,**/*.main.ts,**/environments/**,**/assets/**,**/generated/**,**/*.stories.ts,**/*.harness 
-            -Dsonar.test.inclusions=**/*.spec.ts
-            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+          path: ${{matrix.path}}
+          secrets: inherit
