@@ -12,7 +12,7 @@ describe('Default Postgres Testcontainer', () => {
 
     client = new Client({
       host: pgContainer.getHost(),
-      port: pgContainer.getPort(),
+      port: pgContainer.getMappedPort(pgContainer.getPort()),
       user: pgContainer.getPostgresUsername(),
       password: pgContainer.getPostgresPassword(),
       database: pgContainer.getPostgresDatabase(),
@@ -41,6 +41,13 @@ describe('Default Postgres Testcontainer', () => {
     expect(Array.isArray(aliases)).toBe(true)
     expect(aliases).toContain('postgresdb')
   })
+
+  it('should pass pg_isready health check', async () => {
+    const result = await pgContainer.exec(['pg_isready', '-U', pgContainer.getPostgresUsername()])
+
+    expect(result.output).toContain('accepting connections')
+  })
+
   afterAll(async () => {
     if (client) await client.end()
     await pgContainer.stop()
