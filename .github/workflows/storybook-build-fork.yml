@@ -4,6 +4,7 @@ on:
     branches:
       - 'main'
       - 'develop'
+      - 'v5'
 jobs:
   build-storybooks:
     runs-on: ubuntu-latest

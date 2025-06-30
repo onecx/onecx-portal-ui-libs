@@ -31,6 +31,7 @@
           <ng-container
             [ngTemplateOutlet]="_listItem ? _listItem : defaultListItem"
             [ngTemplateOutletContext]="{
+              $implicit:item,
               item:item,
               columnTemplates: columnTemplates
               }"
