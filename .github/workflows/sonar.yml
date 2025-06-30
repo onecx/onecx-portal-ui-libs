@@ -13,11 +13,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Download path files
-        uses: actions/download-artifact@v4
-        with:
-          name: paths
-
       - name: Download reports
         uses: actions/download-artifact@v4
         with:
