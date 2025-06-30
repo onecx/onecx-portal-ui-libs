@@ -1,3 +1,11 @@
+## [6.0.0-rc.17](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.16...v6.0.0-rc.17) (2025-06-30)
+
+### Bug Fixes
+
+* cherry-pick angular-accelrator testing imports ([#790](https://github.com/onecx/onecx-portal-ui-libs/issues/790)) ([a5d342e](https://github.com/onecx/onecx-portal-ui-libs/commit/a5d342e42d35799dca8063412ecb5c9c752cacf1))
+* fix template rendering issues ([#787](https://github.com/onecx/onecx-portal-ui-libs/issues/787)) ([#789](https://github.com/onecx/onecx-portal-ui-libs/issues/789)) ([99325b6](https://github.com/onecx/onecx-portal-ui-libs/commit/99325b643dd5b60ec4c9b2984756b5724b3f8573)), closes [#791](https://github.com/onecx/onecx-portal-ui-libs/issues/791)
+* tooltip on overflow on column name ([#788](https://github.com/onecx/onecx-portal-ui-libs/issues/788)) ([293ff94](https://github.com/onecx/onecx-portal-ui-libs/commit/293ff941bcd5f8b860f1cc430645e190a1b05bef))
+
 ## [6.0.0-rc.16](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.15...v6.0.0-rc.16) (2025-06-24)
 
 ### Features
