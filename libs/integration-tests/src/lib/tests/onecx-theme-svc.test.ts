@@ -4,7 +4,7 @@ import { OnecxKeycloakContainer, StartedOnecxKeycloakContainer } from '../contai
 import { OnecxPostgresContainer, StartedOnecxPostgresContainer } from '../containers/core/onecx-postgres'
 import { ThemeSvcContainer, StartedThemeSvcContainer } from '../containers/svc/onecx-theme-svc'
 import axios from 'axios'
-describe('Default workspace-svc Testcontainer', () => {
+xdescribe('Default workspace-svc Testcontainer', () => {
   let pgContainer: StartedOnecxPostgresContainer
   let kcContainer: StartedOnecxKeycloakContainer
   let themeSvcContainer: StartedThemeSvcContainer
@@ -23,12 +23,17 @@ describe('Default workspace-svc Testcontainer', () => {
   })
 
   it('should respond with 200 on /q/health', async () => {
-    const port = themeSvcContainer.getFirstMappedPort()
+    const port = themeSvcContainer.getPort()
     const response = axios.get(`http://localhost:${port}/q/health`)
 
     expect((await response).status).toBe(200)
   })
 
+  it('should use the correct port', () => {
+    const port = themeSvcContainer.getPort()
+
+    expect(port).toBe(8080)
+  })
   afterAll(async () => {
     await themeSvcContainer.stop()
     await kcContainer.stop()

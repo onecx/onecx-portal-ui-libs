@@ -219,6 +219,10 @@ export class StartedOnecxKeycloakContainer extends AbstractStartedContainer {
     return this.onecxKeycloakEnvironment.keycloakDatabasePassword
   }
 
+  getPort(): number {
+    return this.onecxKeycloakEnvironment.port
+  }
+
   getEnvironmentHostname(): string {
     return this.onecxKeycloakEnvironment.keycloakHostname
   }

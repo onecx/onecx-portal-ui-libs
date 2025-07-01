@@ -11,7 +11,7 @@ export class PermissionSvcContainer extends SvcContainer {
   ) {
     super(image, { databaseContainer, keycloakContainer })
     this.withEnvironment({
-      QUARKUS_REST_CLIENT__TENANT_URL: `https://${tenantSvcContainer.getNetworkAliases()[0]}:${tenantSvcContainer.getFirstMappedPort()}`,
+      QUARKUS_REST_CLIENT__TENANT_URL: `https://${tenantSvcContainer.getNetworkAliases()[0]}:${tenantSvcContainer.getPort()}`,
       ONECX_PERMISSION_TOKEN_VERIFIED: 'false',
       TKIT_RS_CONTEXT_TENANT_ID_ENABLED: 'false',
     })

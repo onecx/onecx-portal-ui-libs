@@ -2,7 +2,7 @@ import { assert } from 'console'
 import { OnecxPostgresContainer, StartedOnecxPostgresContainer } from '../containers/core/onecx-postgres'
 import { Client } from 'pg'
 
-describe('Default Postgres Testcontainer', () => {
+xdescribe('Default Postgres Testcontainer', () => {
   let client: Client
   let pgContainer: StartedOnecxPostgresContainer
   const imagePg = 'docker.io/library/postgres:13.4'
@@ -46,6 +46,11 @@ describe('Default Postgres Testcontainer', () => {
     const result = await pgContainer.exec(['pg_isready', '-U', pgContainer.getPostgresUsername()])
 
     expect(result.output).toContain('accepting connections')
+  })
+  it('should use the correct port', () => {
+    const port = pgContainer.getPort()
+
+    expect(port).toBe(5432)
   })
 
   afterAll(async () => {

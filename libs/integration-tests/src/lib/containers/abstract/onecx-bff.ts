@@ -42,7 +42,7 @@ export abstract class BffContainer extends GenericContainer {
       ...this.environment,
       ONECX_PERMISSIONS_PROCUCT_NAME: this.details.permissionsProductName,
       KC_REALM: `${this.keycloakContainer.getRealm()}`,
-      QUARKUS_OIDC_AUTH_SERVER_URL: `http://${this.keycloakContainer.getNetworkAliases()[0]}:${this.keycloakContainer.getFirstMappedPort()}/realms/${this.keycloakContainer.getRealm()}`,
+      QUARKUS_OIDC_AUTH_SERVER_URL: `http://${this.keycloakContainer.getNetworkAliases()[0]}:${this.keycloakContainer.getPort()}/realms/${this.keycloakContainer.getRealm()}`,
       QUARKUS_OIDC_TOKEN_ISSUER: `http://${this.keycloakContainer.getNetworkAliases()[0]}/realms/${this.keycloakContainer.getRealm()}`,
       TKIT_SECURITY_AUTH_ENABLED: 'false',
       TKIT_RS_CONTEXT_TENANT_ID_MOCK_ENABLED: 'false',
@@ -55,7 +55,7 @@ export abstract class BffContainer extends GenericContainer {
       stream.on('end', () => console.log(`${this.details.permissionsProductName}: Stream closed`))
     })
     this.withWaitStrategy(Wait.forHttp(`http://localhost:${this.port}/q/health`, this.port).forStatusCode(200))
-    return new StartedBffContainer(await super.start(), this.details, this.networkAliases)
+    return new StartedBffContainer(await super.start(), this.details, this.networkAliases, this.port)
   }
 }
 
@@ -63,7 +63,8 @@ export class StartedBffContainer extends AbstractStartedContainer {
   constructor(
     startedTestContainer: StartedTestContainer,
     private readonly details: BffDetails,
-    private readonly networkAliases: string[]
+    private readonly networkAliases: string[],
+    private readonly port: number
   ) {
     super(startedTestContainer)
   }
@@ -74,5 +75,9 @@ export class StartedBffContainer extends AbstractStartedContainer {
 
   getNetworkAliases(): string[] {
     return this.networkAliases
+  }
+
+  getPort(): number {
+    return this.port
   }
 }
