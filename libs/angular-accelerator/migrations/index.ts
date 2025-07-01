@@ -1,1 +1,5 @@
 export * from './v6/migrate-onecx-to-v6'
+export * from './v6/replace-permission-checker'
+export * from './v6/warn-for-removed-components'
+export * from './v6/warn-for-removed-utils'
+export * from './v6/warn-for-translations-utils'
