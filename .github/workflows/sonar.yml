@@ -75,4 +75,3 @@ jobs:
             -Dsonar.working.directory=../../reports/${{ matrix.path }}/.scannerwork
             -Dsonar.coverage.exclusions=**/*.ts,**/*.js,**/*.module.ts,**/*.main.ts,**/environments/**,**/assets/**,**/generated/**,**/*.stories.ts,**/*.harness
             -Dsonar.test.inclusions=/**/*.spec.ts
-            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
