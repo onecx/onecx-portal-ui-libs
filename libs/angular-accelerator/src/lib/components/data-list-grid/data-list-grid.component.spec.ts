@@ -12,9 +12,10 @@ import { DataListGridHarness } from '../../../../testing/data-list-grid.harness'
 import { DataTableHarness } from '../../../../testing/data-table.harness'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { UserService } from '@onecx/angular-integration-interface'
-import { ensureOriginMockExists } from '@onecx/angular-testing'
+import { ensureIntersectionObserverMockExists, ensureOriginMockExists } from '@onecx/angular-testing'
 
 ensureOriginMockExists()
+ensureIntersectionObserverMockExists()
 
 describe('DataListGridComponent', () => {
   const mutationObserverMock = jest.fn(function MutationObserver(callback) {
