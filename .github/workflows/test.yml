@@ -19,9 +19,6 @@ jobs:
         run: |
           npx nx affected -t test --watch=false --browsers=ChromeHeadless --coverage
 
-      - name: Find affected paths
-        uses: ./.github/actions/pathfinder-lcov-normalizer
-
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:

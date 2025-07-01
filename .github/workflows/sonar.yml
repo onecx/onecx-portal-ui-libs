@@ -23,7 +23,6 @@ jobs:
         run: |
           paths=$(find reports -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)
           coverage_reports=$(printf '%s\n' $paths | jq -R . | jq -s -c)
-
           echo "matrix=$coverage_reports" >> $GITHUB_OUTPUT
 
   sonar-scan:
@@ -38,6 +37,22 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Download reports
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-reports
+
+      - name: Normalize lcov.info for SonarCloud
+        run: |
+          lcov_path="reports/${{matrix.path}}/coverage/lcov.info"
+            echo "Normalizing $lcov_path" 
+
+            # Modify the lcov.info file in-place: prepend a slash to each 'SF:' line
+            # This ensures absolute paths for SonarCloud 
+            # "SF:home/..." -> "SF:/home/..." 
+            sed -i 's|^SF:|SF:/|' "$lcov_path"
+        shell: bash
 
       - name: Run SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v5
