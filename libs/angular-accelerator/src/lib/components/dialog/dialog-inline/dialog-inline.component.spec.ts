@@ -14,6 +14,7 @@ import { DialogContentComponent } from '../dialog-content/dialog-content.compone
 import { ButtonModule } from 'primeng/button'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { TooltipModule } from 'primeng/tooltip'
 
 @Component({
   standalone: false,
@@ -88,6 +89,7 @@ describe('DialogInlineComponent', () => {
         TranslateTestingModule.withTranslations({
           en: translations,
         }),
+        TooltipModule,
       ],
       providers: [DynamicDialogConfig, DynamicDialogRef],
     }).compileComponents()

@@ -23,7 +23,7 @@ export class PMultiSelectHarness extends ComponentHarness {
     return (await (await this.host()).hasClass(c)) ? c : ''
   }
 
-  async getHarnessLoaderForPMultiSelectPanel(): Promise<HarnessLoader> {
+  async getHarnessLoaderForPMultiSelectPanel(): Promise<HarnessLoader | null> {
     const rootLocator = this.documentRootLocatorFactory()
     return rootLocator.harnessLoaderFor('.p-multiselect-overlay')
   }
@@ -32,17 +32,17 @@ export class PMultiSelectHarness extends ComponentHarness {
     if (!(await this.isOpen())) {
       await this.open()
     }
-    return await (await this.getHarnessLoaderForPMultiSelectPanel()).getAllHarnesses(PMultiSelectListItemHarness)
+    const panel = await this.getHarnessLoaderForPMultiSelectPanel()
+    if (!panel) {
+      throw new Error('Unable to access multiselect panel after opening.')
+    }
+    return await panel.getAllHarnesses(PMultiSelectListItemHarness)
   }
 
   async isOpen(): Promise<boolean> {
-    try {
-      await this.getHarnessLoaderForPMultiSelectPanel()
-      return true
-    } catch (error) {
-      console.error(error)
-      return false
-    }
+    const panel = await this.getHarnessLoaderForPMultiSelectPanel()
+    if (!panel) return false
+    return true
   }
 
   async open() {
