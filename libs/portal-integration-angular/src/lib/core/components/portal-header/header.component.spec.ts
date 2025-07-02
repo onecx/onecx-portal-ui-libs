@@ -8,7 +8,8 @@ import { ConfigurationService, AUTH_SERVICE } from '@onecx/angular-integration-i
 import { HeaderComponent } from './header.component'
 import { MockAuthService } from '../../../mock-auth/mock-auth.service'
 import { UserAvatarComponent } from '../user-avatar/user-avatar.component'
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { PortalCoreModule } from '../../portal-core.module'
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent
@@ -16,25 +17,25 @@ describe('HeaderComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-    declarations: [HeaderComponent, UserAvatarComponent, IfBreakpointDirective],
-    imports: [RouterModule, TooltipModule, TranslateTestingModule.withTranslations({})],
-    providers: [
+      declarations: [HeaderComponent, UserAvatarComponent, IfBreakpointDirective],
+      imports: [RouterModule, TooltipModule, TranslateTestingModule.withTranslations({}), PortalCoreModule],
+      providers: [
         { provide: AUTH_SERVICE, useClass: MockAuthService },
         ConfigurationService,
         {
-            provide: ActivatedRoute,
-            useValue: {
-                snapshot: {
-                    paramMap: {
-                        get: () => '1',
-                    },
-                },
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              paramMap: {
+                get: () => '1',
+              },
             },
+          },
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
-    ]
-}).compileComponents()
+      ],
+    }).compileComponents()
   }))
 
   beforeEach(() => {
