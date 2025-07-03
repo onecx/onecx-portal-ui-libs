@@ -18,10 +18,12 @@ describe('replace-filterForQueryParamsChanged', () => {
       `
       import { filterForQueryParamsChanged } from '@onecx/ngrx-accelerator';
 
-      export class Component {
-        ngOnInit() {
-          const result = filterForQueryParamsChanged();
-        }
+      export class Effects {
+        effect$ = createEffect(() => {
+          return this.actions$.pipe(
+            filterForQueryParamsChanged(this.router, queryParamsTypeDef, false)
+          );
+        });
       }
       `
     )
@@ -32,10 +34,12 @@ describe('replace-filterForQueryParamsChanged', () => {
     expect(content).toEqualIgnoringWhitespace(`
       import { filterOutQueryParamsHaveNotChanged } from '@onecx/ngrx-accelerator';
 
-      export class Component {
-        ngOnInit() {
-          const result = filterOutQueryParamsHaveNotChanged();
-        }
+      export class Effects {
+        effect$ = createEffect(() => {
+          return this.actions$.pipe(
+            filterOutQueryParamsHaveNotChanged(this.router, queryParamsTypeDef, false)
+          );
+        });
       }
       `
     )
@@ -48,10 +52,12 @@ describe('replace-filterForQueryParamsChanged', () => {
       `
       import { filterForOnlyQueryParamsChanged } from '@onecx/ngrx-accelerator';
 
-      export class Component {
-        ngOnInit() {
-          const result = filterForOnlyQueryParamsChanged();
-        }
+      export class Effects {
+        effect$ = createEffect(() => {
+          return this.actions$.pipe(
+            filterForOnlyQueryParamsChanged(this.router, queryParamsTypeDef, false)
+          );
+        });
       }
       `
     )
@@ -62,10 +68,12 @@ describe('replace-filterForQueryParamsChanged', () => {
     expect(content).toEqualIgnoringWhitespace(`
       import { filterOutOnlyQueryParamsChanged } from '@onecx/ngrx-accelerator';
 
-      export class Component {
-        ngOnInit() {
-          const result = filterOutOnlyQueryParamsChanged();
-        }
+      export class Effects {
+        effect$ = createEffect(() => {
+          return this.actions$.pipe(
+            filterOutOnlyQueryParamsChanged(this.router, queryParamsTypeDef, false)
+          );
+        });
       }
       `
     )
@@ -76,7 +84,7 @@ describe('replace-filterForQueryParamsChanged', () => {
     tree.write(
       filePath,
       `
-      import { test } from '@onecx/ngrx-accelerator';
+      import { filterForNavigatedTo } from '@onecx/ngrx-accelerator';
 
       export class Component {
         ngOnInit() {
@@ -90,7 +98,7 @@ describe('replace-filterForQueryParamsChanged', () => {
     const content = tree.read(filePath)?.toString()
 
     expect(content).toEqualIgnoringWhitespace(`
-      import { test } from '@onecx/ngrx-accelerator';
+      import { filterForNavigatedTo } from '@onecx/ngrx-accelerator';
 
       export class Component {
         ngOnInit() {
