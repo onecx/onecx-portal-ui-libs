@@ -45,17 +45,6 @@ export interface SearchConfigData {
 })
 export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
   @Input() header = ''
-
-  /**
-   * @deprecated Will be replaced by header
-   */
-  @Input()
-  get headline(): string {
-    return this.header
-  }
-  set headline(value: string) {
-    this.header = value
-  }
   @Input() subheader: string | undefined
   _viewMode: 'basic' | 'advanced' = 'basic'
   @Input()

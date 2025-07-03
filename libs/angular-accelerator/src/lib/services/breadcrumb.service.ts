@@ -106,16 +106,16 @@ export class BreadcrumbService {
 
   setItems(items: BreadCrumbMenuItem[]) {
     const translationKeys = [
-      ...items.map((i) => i.labelKey || '').filter((l) => !!l),
-      ...items.map((i) => i.titleKey || '').filter((l) => !!l),
+      ...items.map((i) => i.labelKey ?? '').filter((l) => !!l),
+      ...items.map((i) => i.titleKey ?? '').filter((l) => !!l),
     ]
     if (translationKeys.length) {
       this.translateService.get(translationKeys).subscribe((translations: any) => {
         this.itemsSource$.publish({
           menuItems: items.map((i) => ({
             ...i,
-            label: translations[i.labelKey || ''] || i.label,
-            title: translations[i.titleKey || ''] || i.title,
+            label: translations[i.labelKey ?? ''],
+            title: translations[i.titleKey ?? ''],
           })),
         })
       })

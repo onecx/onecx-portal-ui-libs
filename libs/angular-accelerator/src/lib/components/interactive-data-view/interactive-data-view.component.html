@@ -115,11 +115,10 @@
     [actionColumnPosition]="actionColumnPosition"
     [stringTableCellTemplate]="primeNgStringTableCell ?? _stringTableCell"
     [numberTableCellTemplate]="primeNgNumberTableCell ?? _numberTableCell"
-    [customTableCellTemplate]="primeNgCustomTableCell ?? _customTableCell"
-    [dateTableCellTemplate]="primeNgDateTableCell ?? _dateTableCell ?? primeNgTableDateCell ?? _tableDateCell"
-    [relativeDateTableCellTemplate]="primeNgRelativeDateTableCell ?? _relativeDateTableCell ?? primeNgTableRelativeDateCell ?? _tableRelativeDateCell"
+    [dateTableCellTemplate]="primeNgDateTableCell ?? _dateTableCell"
+    [relativeDateTableCellTemplate]="primeNgRelativeDateTableCell ?? _relativeDateTableCell"
     [tableCellTemplate]="primeNgTableCell ?? _tableCell"
-    [translationKeyTableCellTemplate]="primeNgTranslationKeyTableCell ?? _translationKeyTableCell ?? primeNgTableTranslationKeyCell ?? _tableTranslationKeyCell"
+    [translationKeyTableCellTemplate]="primeNgTranslationKeyTableCell ?? _translationKeyTableCell"
     [gridItemSubtitleLinesTemplate]="primeNgGridItemSubtitleLines ?? _gridItemSubtitleLines"
     [listItemSubtitleLinesTemplate]="primeNgListItemSubtitleLines ?? _listItemSubtitleLines"
     [listItemTemplate]="primeNgListItem ?? _listItem"
@@ -127,13 +126,11 @@
     [translationKeyListValueTemplate]="primeNgTranslationKeyListValue ?? _translationKeyListValue"
     [numberListValueTemplate]="primeNgNumberListValue ?? _numberListValue"
     [relativeDateListValueTemplate]="primeNgRelativeDateListValue ?? _relativeDateListValue"
-    [customListValueTemplate]="primeNgCustomListValue ?? _customListValue"
     [stringListValueTemplate]="primeNgStringListValue ?? _stringListValue"
     [dateListValueTemplate]="primeNgDateListValue ?? _dateListValue"
     [gridItemTemplate]="primeNgGridItem ?? _gridItem"
     [tableFilterCellTemplate]="primeNgTableFilterCell ?? _tableFilterCell"
     [dateTableFilterCellTemplate]="primeNgDateTableFilterCell ?? _dateTableFilterCell"
-    [customTableFilterCellTemplate]="primeNgCustomTableFilterCell ?? _customTableFilterCell"
     [numberTableFilterCellTemplate]="primeNgNumberTableFilterCell ?? _numberTableFilterCell"
     [stringTableFilterCellTemplate]="primeNgStringTableFilterCell ?? _stringTableFilterCell"
     [relativeDateTableFilterCellTemplate]="primeNgRelativeDateTableFilterCell ?? _relativeDateTableFilterCell"
@@ -177,24 +174,9 @@
   </ng-container>
   }</ng-template
 >
-<ng-template #tableDateCell let-rowObject="rowObject" let-column="column">
-  @if (_tableDateCell) {
-  <ng-container [ngTemplateOutlet]="_tableDateCell" [ngTemplateOutletContext]="{rowObject:rowObject, column:column}">
-  </ng-container>
-  }</ng-template
->
 <ng-template #dateTableCell let-rowObject="rowObject" let-column="column">
   @if (_dateTableCell) {
   <ng-container [ngTemplateOutlet]="_dateTableCell" [ngTemplateOutletContext]="{rowObject:rowObject, column:column}">
-  </ng-container>
-  }</ng-template
->
-<ng-template #tableRelativeDateCell let-rowObject="rowObject" let-column="column">
-  @if (_tableRelativeDateCell) {
-  <ng-container
-    [ngTemplateOutlet]="_tableRelativeDateCell"
-    [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
-  >
   </ng-container>
   }</ng-template
 >
@@ -210,15 +192,6 @@
 <ng-template #tableCell let-rowObject="rowObject" let-column="column">
   @if (_tableCell) {
   <ng-container [ngTemplateOutlet]="_tableCell" [ngTemplateOutletContext]="{rowObject: rowObject, column:column}">
-  </ng-container>
-  }</ng-template
->
-<ng-template #tableTranslationKeyCell let-rowObject="rowObject" let-column="column">
-  @if (_tableTranslationKeyCell) {
-  <ng-container
-    [ngTemplateOutlet]="_tableTranslationKeyCell"
-    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
-  >
   </ng-container>
   }</ng-template
 >
@@ -283,12 +256,6 @@
   </ng-container>
   }</ng-template
 >
-<ng-template #customListValue let-rowObject="rowObject" let-column="column">
-  @if (_customListValue) {
-  <ng-container [ngTemplateOutlet]="_customListValue" [ngTemplateOutletContext]="{rowObject: rowObject, column:column}">
-  </ng-container>
-  }</ng-template
->
 <ng-template #stringListValue let-rowObject="rowObject" let-column="column">
   @if (_stringListValue) {
   <ng-container [ngTemplateOutlet]="_stringListValue" [ngTemplateOutletContext]="{rowObject: rowObject, column:column}">
@@ -315,15 +282,6 @@
   @if (_numberTableFilterCell) {
   <ng-container
     [ngTemplateOutlet]="_numberTableFilterCell"
-    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
-  >
-  </ng-container>
-  }</ng-template
->
-<ng-template #customTableFilterCell let-rowObject="rowObject" let-column="column">
-  @if (_customTableFilterCell) {
-  <ng-container
-    [ngTemplateOutlet]="_customTableFilterCell"
     [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
   >
   </ng-container>
