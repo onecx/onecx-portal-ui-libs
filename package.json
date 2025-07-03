@@ -126,6 +126,10 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4"
   },
+  "overrides": {
+    "jsdom": "25.0.1",
+    "rrweb-cssom": "0.8.0"
+  },
   "nx": {
     "includedScripts": []
   },

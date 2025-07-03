@@ -4,11 +4,9 @@ import { AUTH_SERVICE } from '@onecx/angular-integration-interface'
 import { MockAuthService } from './mock-auth.service'
 
 function initializer(authService: MockAuthService): () => Promise<any> {
-  console.log(`Start Mock auth initializer`)
 
   return (): Promise<any> =>
     authService.init().then((res) => {
-      console.log(`mock auth app_initializer resolved ${res}`)
       return res
     })
 }

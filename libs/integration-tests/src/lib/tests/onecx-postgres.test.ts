@@ -12,7 +12,7 @@ xdescribe('Default Postgres Testcontainer', () => {
 
     client = new Client({
       host: pgContainer.getHost(),
-      port: pgContainer.getFirstMappedPort(),
+      port: pgContainer.getPort(),
       user: pgContainer.getPostgresUsername(),
       password: pgContainer.getPostgresPassword(),
       database: pgContainer.getPostgresDatabase(),

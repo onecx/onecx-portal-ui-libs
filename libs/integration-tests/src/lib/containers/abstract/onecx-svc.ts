@@ -114,11 +114,11 @@ export class StartedSvcContainer extends AbstractStartedContainer {
     return this.details.databasePassword
   }
 
-  getNetworkAliases(): string[] {
-    return this.networkAliases
-  }
-
   getPort(): number {
     return this.port
+  }
+
+  getNetworkAliases(): string[] {
+    return this.networkAliases
   }
 }
