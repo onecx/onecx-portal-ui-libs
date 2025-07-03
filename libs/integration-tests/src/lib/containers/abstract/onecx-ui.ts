@@ -1,4 +1,4 @@
-import { AbstractStartedContainer, GenericContainer, StartedTestContainer } from 'testcontainers'
+import { AbstractStartedContainer, GenericContainer, StartedTestContainer, Wait } from 'testcontainers'
 import { StartedOnecxKeycloakContainer } from '../core/onecx-keycloak'
 import { UiDetails } from '../../model/service.model'
 
@@ -9,11 +9,14 @@ export abstract class UiContainer extends GenericContainer {
     productName: '',
   }
 
+  private port = 8080
+
   constructor(
     image: string,
     protected keycloakContainer?: StartedOnecxKeycloakContainer
   ) {
     super(image)
+    this.withExposedPorts(this.port)
   }
 
   withAppBaseHref(appBaseHref: string): this {
@@ -35,8 +38,19 @@ export abstract class UiContainer extends GenericContainer {
     this.withEnvironment({
       ...this.environment,
       APP_BASE_HREF: `${this.details.appBaseHref}`,
+      APP_ID: `${this.details.appId}`,
+      PRODUCT_NAME: `${this.details.productName}`,
     })
-    return new StartedUiContainer(await super.start(), this.details, this.networkAliases)
+
+    this.withLogConsumer((stream) => {
+      stream.on('data', (line) => console.log(`${this.details.productName}: `, line))
+      stream.on('err', (line) => console.error(`${this.details.productName}: `, line))
+      stream.on('end', () => console.log(`${this.details.productName}: Stream closed`))
+    })
+
+    this.withWaitStrategy(Wait.forAll([Wait.forHealthCheck(), Wait.forListeningPorts()]))
+
+    return new StartedUiContainer(await super.start(), this.details, this.networkAliases, this.port)
   }
 }
 
@@ -44,7 +58,8 @@ export class StartedUiContainer extends AbstractStartedContainer {
   constructor(
     startedTestContainer: StartedTestContainer,
     private readonly details: UiDetails,
-    private readonly networkAliases: string[]
+    private readonly networkAliases: string[],
+    private readonly port: number
   ) {
     super(startedTestContainer)
   }
@@ -63,5 +78,9 @@ export class StartedUiContainer extends AbstractStartedContainer {
 
   getNetworkAliases(): string[] {
     return this.networkAliases
+  }
+
+  getPort(): number {
+    return this.port
   }
 }

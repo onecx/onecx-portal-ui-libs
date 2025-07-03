@@ -8,7 +8,6 @@ export class ShellUiContainer extends UiContainer {
       ONECX_PERMISSIONS_ENABLED: 'true',
       ONECX_PERMISSIONS_CACHE_ENABLED: 'false',
       ONECX_PERMISSIONS_PRODUCT_NAME: 'onecx-shell',
-      APP_BASE_HREF: '/onecx-shell/',
       KEYCLOAK_URL: `http://${keycloakContainer.getNetworkAliases()[0]}`,
       ONECX_VAR_REMAP: 'KEYCLOAK_REALM=KC_REALM;KEYCLOAK_CLIENT_ID=CLIENT_USER_ID',
       CLIENT_USER_ID: 'onecx-shell-ui-client',
@@ -21,6 +20,7 @@ export class ShellUiContainer extends UiContainer {
       TKIT_OIDC_HEALTH_ENABLED: 'false',
     })
     this.withNetworkAliases('onecx-shell-ui')
+    this.withAppBaseHref('/onecx-shell/')
   }
 }
 
