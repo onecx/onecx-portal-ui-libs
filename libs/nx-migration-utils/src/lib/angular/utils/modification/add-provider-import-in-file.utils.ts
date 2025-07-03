@@ -14,7 +14,7 @@ export function addProviderImportInFile(fileContent: string, provider: Provider)
   if (isNamespaceImportInContent(fileContent, provider.importPath)) {
     return fileContent
   } else if (isImportInContent(fileContent, provider.importPath)) {
-    return addToFirstImport(fileContent, provider.importPath, provider.name)
+    return addToFirstImport(fileContent, provider.importPath, [provider.name])
   } else {
     return addNewImport(fileContent, provider.importPath, [provider.name])
   }

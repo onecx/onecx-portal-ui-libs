@@ -3,15 +3,20 @@ import { ast, query } from '@phenomnomnominal/tsquery'
 import { VariableDeclaration } from 'typescript'
 import { variableContainingIdentifierPattern } from '../patterns.utils'
 
+export interface VariableMatch {
+  name: string
+  declaration: VariableDeclaration
+}
+
 /**
  * Detects variables that include the identifier.
  * @param tree - the file tree to search in
  * @param rootDir - the directory to start searching from
  * @param identifierName - the name of the identifier to search for (e.g., 'MyClass')
- * @returns {string[]} a list of variable names that include the identifier
+ * @returns {VariableMatch[]} a list of variable names that include the identifier
  */
-export function detectVariablesWithIdentifier(tree: Tree, rootDir: string, identifierName: string): string[] {
-  const variableNames = new Set<string>()
+export function detectVariablesWithIdentifier(tree: Tree, rootDir: string, identifierName: string): VariableMatch[] {
+  const variables = new Set<VariableMatch>()
   visitNotIgnoredFiles(tree, rootDir, (file) => {
     const content = tree.read(file, 'utf-8')
     if (!content) return
@@ -19,12 +24,18 @@ export function detectVariablesWithIdentifier(tree: Tree, rootDir: string, ident
     const contentAst = ast(content)
 
     // Query for import via a variable
-    const names = query<VariableDeclaration>(contentAst, variableContainingIdentifierPattern(identifierName)).map(
-      (node) => node.name.getText()
-    )
+    const foundVariables: VariableMatch[] = query<VariableDeclaration>(
+      contentAst,
+      variableContainingIdentifierPattern(identifierName)
+    ).map((node) => {
+      return {
+        name: node.name.getText(),
+        declaration: node,
+      }
+    })
 
-    names.forEach((name) => variableNames.add(name))
+    foundVariables.forEach((variable) => variables.add(variable))
   })
 
-  return Array.from(variableNames)
+  return Array.from(variables)
 }

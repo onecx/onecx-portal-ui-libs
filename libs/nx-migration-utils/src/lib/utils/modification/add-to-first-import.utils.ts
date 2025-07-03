@@ -9,17 +9,22 @@ import { NamedImports, ScriptKind } from 'typescript'
  * @param importSpecifier - import specifier to add, e.g. "myFunctionName"
  * @returns {string} new file content after modification
  */
-export function addToFirstImport(fileContent: string, importPath: string, importSpecifier: string) {
-  return replace(
+export function addToFirstImport(fileContent: string, importPath: string, importSpecifiers: string[]) {
+  let replaceTimes = 1
+  const updatedFile = replace(
     fileContent,
     importNamedImportsPattern(importPath),
     (node) => {
+      if (replaceTimes <= 0) return node.getText()
       const niNode = node as NamedImports
       const newSpecifiers: string[] = Array.from(
-        new Set([...niNode.elements.map((namedImport) => namedImport.getText()), importSpecifier])
+        new Set([...niNode.elements.map((namedImport) => namedImport.getText()), ...importSpecifiers])
       )
+      replaceTimes -= 1
       return `{${newSpecifiers.join(',')}}`
     },
     ScriptKind.TS
   )
+
+  return updatedFile
 }

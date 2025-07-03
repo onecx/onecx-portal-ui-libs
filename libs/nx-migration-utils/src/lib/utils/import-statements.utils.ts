@@ -4,8 +4,10 @@ import {
   createPrinter,
   factory,
   ImportDeclaration,
+  isImportDeclaration,
   ImportSpecifier,
   isNamedImports,
+  StringLiteral,
   isStringLiteral,
   NamedImports,
   NodeArray,
@@ -243,13 +245,31 @@ export function applyImportReplacement(
       return factory.updateSourceFile(contentAst, updatedStatements)
     }
 
+    const existingTargetImport = findImportByModule(contentAst, replacement.newModuleSpecifier)
+
     const updatedStatements = factory.createNodeArray(
       contentAst.statements.flatMap((statement): Statement[] => {
         if (statement === importDecl) {
-          return [remainingImportDeclaration, updatedImportDeclaration].filter(
-            (stmt): stmt is ImportDeclaration => stmt !== null
-          )
+          const result: Statement[] = []
+          // Add remaining declarations to statement
+          if (remainingImportDeclaration) result.push(remainingImportDeclaration)
+
+          // Add new imports to statement
+          if (!existingTargetImport && updatedImportDeclaration) {
+            result.push(updatedImportDeclaration)
+          }
+
+          return result
         }
+
+        // Add new imports to existing statement
+        if (existingTargetImport && statement === existingTargetImport && updatedImportDeclaration) {
+          const merged = mergeNamedImports(existingTargetImport, updatedImportDeclaration)
+          if (merged) {
+            return [merged]
+          }
+        }
+
         return [statement]
       })
     )
@@ -423,4 +443,21 @@ export function findImportDeclaration(sourceFile: SourceFile, moduleName: string
     console.error(`Error finding import declaration for module "${moduleName}": `, error)
     return undefined
   }
+}
+
+function findImportByModule(sourceFile: SourceFile, moduleName: string): ImportDeclaration | undefined {
+  return sourceFile.statements.find(
+    (stmt): stmt is ImportDeclaration =>
+      isImportDeclaration(stmt) && isStringLiteral(stmt.moduleSpecifier) && stmt.moduleSpecifier.text === moduleName
+  )
+}
+
+function mergeNamedImports(existingImport: ImportDeclaration, newImport: ImportDeclaration): ImportDeclaration | null {
+  const existingBindings = getNamedImports(existingImport)?.elements ?? []
+  const newBindings = getNamedImports(newImport)?.elements ?? []
+
+  const existingNames = new Set(existingBindings.map((b) => b.name.text))
+  const mergedBindings = [...existingBindings, ...newBindings.filter((b) => !existingNames.has(b.name.text))]
+
+  return buildImportDeclaration(mergedBindings, (existingImport.moduleSpecifier as StringLiteral).text)
 }

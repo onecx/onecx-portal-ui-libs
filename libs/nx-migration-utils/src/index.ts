@@ -10,11 +10,15 @@ export * from './lib/utils/update-gitignore.utils'
 
 export * from './lib/utils/detection/detect-variables-with-identifier.utils'
 
+export * from './lib/utils/modification/update-node.utils'
 export * from './lib/utils/modification/update-json-files.utils'
 export * from './lib/utils/modification/update-style-sheets.utils'
 export * from './lib/utils/modification/update-style-sheet.utils'
 export * from './lib/utils/modification/remove-json-references.utils'
 export * from './lib/utils/modification/add-new-import.utils'
+export * from './lib/utils/modification/add-import-if-does-not-exist.utils'
+export * from './lib/utils/modification/add-imports-if-do-not-exist.utils'
+export * from './lib/utils/modification/add-import-in-file.utils'
 export * from './lib/utils/modification/add-to-first-import.utils'
 export * from './lib/utils/modification/replace-tag-in-html.utils'
 

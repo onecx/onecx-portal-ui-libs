@@ -1,0 +1,364 @@
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing'
+import { Tree, logger } from '@nx/devkit'
+import replaceTranslationsUtils from './replace-translations-utils'
+
+import '../test-utils/custom-matchers'
+
+describe('warn-for-translations-utils', () => {
+  let tree: Tree
+  let loggerWarnSpy
+
+  beforeEach(() => {
+    tree = createTreeWithEmptyWorkspace()
+    loggerWarnSpy = jest.spyOn(logger, 'warn').mockImplementation(jest.fn())
+  })
+
+  it('should update for RC', async () => {
+    const filePath = 'src/app/main.ts'
+    tree.write(
+      filePath,
+      `
+    import { HttpClient } from "@angular/common/http";
+    import { TranslateLoader } from "@ngx-translate/core";
+    import { ReplaySubject } from "rxjs";
+    import { createRemoteComponentTranslateLoader } from "@onecx/angular-accelerator";
+    import {
+        provideTranslateServiceForRoot
+    } from "@onecx/angular-remote-components";
+    import {
+        REMOTE_COMPONENT_CONFIG
+    } from "@onecx/angular-utils";
+
+    @Component({
+        providers: [
+            provideTranslateServiceForRoot({
+                isolate: true,
+                loader: {
+                    provide: TranslateLoader,
+                    useFactory: createRemoteComponentTranslateLoader,
+                    deps: [HttpClient, REMOTE_COMPONENT_CONFIG]
+                }
+            })
+        ]
+    })
+    export class Component { }`
+    )
+    await replaceTranslationsUtils(tree)
+
+    const content = tree.read(filePath)?.toString()
+
+    expect(content).toEqualIgnoringWhitespace(`
+    import { HttpClient } from "@angular/common/http";
+    import { TranslateLoader } from "@ngx-translate/core";
+    import { ReplaySubject } from "rxjs";
+    import {
+        provideTranslateServiceForRoot
+    } from "@onecx/angular-remote-components";
+    import {
+        REMOTE_COMPONENT_CONFIG,
+        createTranslateLoader,
+        TRANSLATION_PATH,
+        RemoteComponentConfig,
+        remoteComponentTranslationPathFactory
+    } from "@onecx/angular-utils";
+
+    @Component({
+        providers: [
+            provideTranslateServiceForRoot({
+                isolate: true,
+                loader: {
+                    provide: TranslateLoader,
+                    useFactory: createTranslateLoader,
+                    deps: [HttpClient]
+                }
+            }),
+            {
+                provide: TRANSLATION_PATH,
+                useFactory: (remoteComponentConfig: ReplaySubject<RemoteComponentConfig>) =>
+                  remoteComponentTranslationPathFactory('assets/i18n/')(remoteComponentConfig),
+                multi: true,
+                deps: [REMOTE_COMPONENT_CONFIG]
+            }
+        ]
+    })
+    export class Component { }`)
+  })
+
+  it('should update for RC with mfe loader', async () => {
+    const filePath = 'src/app/main.ts'
+    tree.write(
+      filePath,
+      `
+      import { HttpClient } from "@angular/common/http";
+      import { TranslateLoader } from "@ngx-translate/core";
+      import { ReplaySubject } from "rxjs";
+      import { createRemoteComponentAndMfeTranslateLoader } from "@onecx/angular-accelerator";
+      import {
+          provideTranslateServiceForRoot
+      } from "@onecx/angular-remote-components";
+      import {
+          REMOTE_COMPONENT_CONFIG
+      } from "@onecx/angular-utils";
+  
+      @Component({
+          providers: [
+              provideTranslateServiceForRoot({
+                  isolate: true,
+                  loader: {
+                      provide: TranslateLoader,
+                      useFactory: createRemoteComponentAndMfeTranslateLoader,
+                      deps: [HttpClient, REMOTE_COMPONENT_CONFIG]
+                  }
+              })
+          ]
+      })
+      export class Component { }`
+    )
+    await replaceTranslationsUtils(tree)
+
+    const content = tree.read(filePath)?.toString()
+
+    expect(content).toEqualIgnoringWhitespace(`
+    import { HttpClient } from "@angular/common/http";
+    import { TranslateLoader } from "@ngx-translate/core";
+    import { ReplaySubject } from "rxjs";
+    import {
+        provideTranslateServiceForRoot
+    } from "@onecx/angular-remote-components";
+    import {
+        REMOTE_COMPONENT_CONFIG,
+        createTranslateLoader,
+        TRANSLATION_PATH,
+        RemoteComponentConfig,
+        remoteComponentTranslationPathFactory
+    } from "@onecx/angular-utils";
+
+    @Component({
+        providers: [
+            provideTranslateServiceForRoot({
+                isolate: true,
+                loader: {
+                    provide: TranslateLoader,
+                    useFactory: createTranslateLoader,
+                    deps: [HttpClient]
+                }
+            }),
+            {
+                provide: TRANSLATION_PATH,
+                useFactory: (remoteComponentConfig: ReplaySubject<RemoteComponentConfig>) =>
+                  remoteComponentTranslationPathFactory('assets/i18n/')(remoteComponentConfig),
+                multi: true,
+                deps: [REMOTE_COMPONENT_CONFIG]
+            }
+        ]
+    })
+    export class Component { }
+    `)
+  })
+
+  it('should update for RC when BASE_URL is defined', async () => {
+    const filePath = 'src/app/main.ts'
+    tree.write(
+      filePath,
+      `
+      import { HttpClient } from "@angular/common/http";
+      import { TranslateLoader } from "@ngx-translate/core";
+      import { ReplaySubject } from "rxjs";
+      import { createRemoteComponentAndMfeTranslateLoader } from "@onecx/angular-accelerator";
+      import {
+          provideTranslateServiceForRoot,
+          BASE_URL
+      } from "@onecx/angular-remote-components";
+  
+      @Component({
+          providers: [
+              provideTranslateServiceForRoot({
+                  isolate: true,
+                  loader: {
+                      provide: TranslateLoader,
+                      useFactory: createRemoteComponentAndMfeTranslateLoader,
+                      deps: [HttpClient, BASE_URL]
+                  }
+              })
+          ]
+      })
+      export class Component { }`
+    )
+    await replaceTranslationsUtils(tree)
+
+    const content = tree.read(filePath)?.toString()
+
+    expect(content).toEqualIgnoringWhitespace(`
+    import { HttpClient } from "@angular/common/http";
+    import { TranslateLoader } from "@ngx-translate/core";
+    import { ReplaySubject } from "rxjs";
+    import {
+        createTranslateLoader,
+        TRANSLATION_PATH,
+        RemoteComponentConfig,
+        remoteComponentTranslationPathFactory,
+        REMOTE_COMPONENT_CONFIG
+    } from "@onecx/angular-utils";
+    import {
+        provideTranslateServiceForRoot,
+        BASE_URL
+    } from "@onecx/angular-remote-components";
+
+    @Component({
+        providers: [
+            provideTranslateServiceForRoot({
+                isolate: true,
+                loader: {
+                    provide: TranslateLoader,
+                    useFactory: createTranslateLoader,
+                    deps: [HttpClient]
+                }
+            }),
+            {
+                provide: TRANSLATION_PATH,
+                useFactory: (remoteComponentConfig: ReplaySubject<RemoteComponentConfig>) =>
+                  remoteComponentTranslationPathFactory('assets/i18n/')(remoteComponentConfig),
+                multi: true,
+                deps: [REMOTE_COMPONENT_CONFIG]
+            }
+        ]
+    })
+    export class Component { }
+    `)
+  })
+
+  xit('should update for mfe', async () => {
+    const filePath = 'src/app/main.ts'
+    tree.write(
+      filePath,
+      `
+    import { HttpClient } from "@angular/common/http";
+    import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
+    import { createTranslateLoader } from "@onecx/angular-accelerator";
+    import { AppStateService } from "@onecx/angular-integration-interface';
+
+    @NgModule({
+    imports: [
+        TranslateModule.forRoot({
+            isolate: true,
+            loader: {
+                provide: TranslateLoader,
+                useFactory: createTranslateLoader,
+                deps: [HttpClient, AppStateService]
+            }
+        })
+    ]
+    })
+    export class AppModule { }`
+    )
+    await replaceTranslationsUtils(tree)
+
+    const content = tree.read(filePath)?.toString()
+
+    expect(content).toEqualIgnoringWhitespace(`
+    import { HttpClient } from "@angular/common/http";
+    import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
+    import { createTranslateLoader } from "@onecx/angular-accelerator";
+    import { AppStateService } from "@onecx/angular-integration-interface";
+    import {
+        TRANSLATION_PATH,
+        translationPathFactory
+    } from "@onecx/angular-utils";
+    
+    @NgModule({
+    imports: [
+        TranslateModule.forRoot({
+            isolate: true,
+            loader: {
+                provide: TranslateLoader,
+                useFactory: createTranslateLoader,
+                deps: [HttpClient]
+            }
+        })
+    ],
+    providers: [
+        {
+            provide: TRANSLATION_PATH,
+            useFactory: (appStateService: AppStateService) =>
+              translationPathFactory('assets/i18n/')(appStateService),
+            multi: true,
+            deps: [AppStateService]
+        }
+    ]
+    })
+    export class AppModule { }`)
+  })
+
+  xit('should update for mfe when defined in commonImports', async () => {
+    tree.write(
+      'src/app/common.ts',
+      `
+        export commonImports = [
+            TranslateModule.forRoot({
+                isolate: true,
+                loader: {
+                    provide: TranslateLoader,
+                    useFactory: createTranslateLoader,
+                    deps: [HttpClient, AppStateService]
+                }
+            })
+        ]
+        `
+    )
+    const filePath = 'src/app/main.ts'
+    tree.write(
+      filePath,
+      `
+    import { commonImports } from "./app.module";
+
+    @NgModule({
+    imports: [
+        ...commonImports
+    ]
+    })
+    export class AppModule { }`
+    )
+    await replaceTranslationsUtils(tree)
+
+    const content = tree.read(filePath)?.toString()
+
+    expect(content).toEqualIgnoringWhitespace(`
+    import { commonImports } from "./app.module";
+    import { AppStateService } from "@onecx/angular-integration-interface";
+    import {
+        TRANSLATION_PATH,
+        translationPathFactory
+    } from "@onecx/angular-utils";
+    
+    @NgModule({
+    imports: [
+        ...commonImports
+    ],
+    providers: [
+        {
+            provide: TRANSLATION_PATH,
+            useFactory: (appStateService: AppStateService) =>
+              translationPathFactory('assets/i18n/')(appStateService),
+            multi: true,
+            deps: [AppStateService]
+        }
+    ]
+    })
+    export class AppModule { }`)
+  })
+
+  it('should update imports', async () => {
+    const filePath = 'src/app/main.ts'
+    tree.write(
+      filePath,
+      `
+    import { TranslationCacheService, AsyncTranslateLoader, CachingTranslateLoader, TranslateCombinedLoader } from "@onecx/angular-accelerator";`
+    )
+    await replaceTranslationsUtils(tree)
+
+    const content = tree.read(filePath)?.toString()
+
+    expect(content).toEqualIgnoringWhitespace(`
+    import { TranslationCacheService, AsyncTranslateLoader, CachingTranslateLoader, TranslateCombinedLoader } from "@onecx/angular-utils";`)
+  })
+})
