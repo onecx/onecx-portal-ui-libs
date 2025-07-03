@@ -1,16 +1,16 @@
 module.exports = {
   branches: [
-    'main',
     {
       name: 'develop',
       channel: 'rc',
       prerelease: 'rc',
     },
-    { 
-      name: "v5",
-      range: "5.x.x",
-      channel: "5.x.x" 
-    }
+    {
+      name: 'v5',
+      range: '5.x.x',
+      channel: '5.x.x',
+    },
+    'main',
   ],
   preset: 'conventionalcommits',
   presetConfig: {
