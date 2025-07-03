@@ -96,6 +96,11 @@ export class OnecxKeycloakContainer extends GenericContainer {
     return this
   }
 
+  withPort(port: number): this {
+    this.onecxEnvironment.port = port
+    return this
+  }
+
   getRealm(): string {
     return this.onecxEnvironment.realm
   }
@@ -173,15 +178,8 @@ export class OnecxKeycloakContainer extends GenericContainer {
         },
       ])
     }
-    this.withWaitStrategy(
-      Wait.forAll([
-        Wait.forHttp(
-          `/realms/${this.onecxEnvironment.realm}/.well-known/openid-configuration`,
-          this.onecxEnvironment.port
-        ).forStatusCode(200),
-      ])
-    )
 
+    this.withWaitStrategy(Wait.forAll([Wait.forHealthCheck(), Wait.forListeningPorts()]).withStartupTimeout(120_000))
     return new StartedOnecxKeycloakContainer(await super.start(), this.onecxEnvironment, this.networkAliases)
   }
 }

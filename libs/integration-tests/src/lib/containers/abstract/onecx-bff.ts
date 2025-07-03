@@ -28,6 +28,11 @@ export abstract class BffContainer extends GenericContainer {
     return this
   }
 
+  withPort(port: number): this {
+    this.port = port
+    return this
+  }
+
   getKeycloakContainer() {
     return this.keycloakContainer
   }
@@ -54,7 +59,8 @@ export abstract class BffContainer extends GenericContainer {
       stream.on('err', (line) => console.error(`${this.details.permissionsProductName}: `, line))
       stream.on('end', () => console.log(`${this.details.permissionsProductName}: Stream closed`))
     })
-    this.withWaitStrategy(Wait.forHttp(`http://localhost:${this.port}/q/health`, this.port).forStatusCode(200))
+
+    this.withWaitStrategy(Wait.forAll([Wait.forHealthCheck(), Wait.forListeningPorts()]))
     return new StartedBffContainer(await super.start(), this.details, this.networkAliases, this.port)
   }
 }
