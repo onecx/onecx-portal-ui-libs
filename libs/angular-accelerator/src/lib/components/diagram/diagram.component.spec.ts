@@ -6,14 +6,12 @@ import { TranslateService } from '@ngx-translate/core'
 import 'jest-canvas-mock'
 import { PrimeIcons } from 'primeng/api'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { ChartModule } from 'primeng/chart'
-import { MessageModule } from 'primeng/message'
-import { SelectButtonModule } from 'primeng/selectbutton'
 import { DiagramHarness, TestbedHarnessEnvironment } from '../../../../testing'
 import { DiagramType } from '../../model/diagram-type'
 import { DiagramComponent, DiagramLayouts } from './diagram.component'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { ColorUtils } from '../../utils/colorutils'
+import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 
 describe('DiagramComponent', () => {
   let translateService: TranslateService
@@ -39,9 +37,7 @@ describe('DiagramComponent', () => {
       declarations: [DiagramComponent],
       imports: [
         NoopAnimationsModule,
-        ChartModule,
-        MessageModule,
-        SelectButtonModule,
+        AngularAcceleratorPrimeNgModule,
         FormsModule,
         TranslateTestingModule.withTranslations({
           en: require('./../../../../assets/i18n/en.json'),

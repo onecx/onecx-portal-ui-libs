@@ -52,6 +52,12 @@ import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-prime
 import { PrimeIcons } from 'primeng/api'
 import { limit } from '../../utils/filter.utils'
 import { DatePipe } from '@angular/common'
+import { ensureIntersectionObserverMockExists, ensureOriginMockExists } from '@onecx/angular-testing'
+
+jest.setTimeout(20_000)
+
+ensureOriginMockExists()
+ensureIntersectionObserverMockExists()
 
 jest.setTimeout(20_000)
 

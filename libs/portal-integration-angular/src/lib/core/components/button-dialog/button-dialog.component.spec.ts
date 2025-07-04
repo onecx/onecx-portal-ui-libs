@@ -11,6 +11,7 @@ import { ButtonDialogHarness } from '../../../../../testing'
 import { DivHarness } from '@onecx/angular-testing'
 import { ButtonDialogConfig } from '../../../model/button-dialog'
 import { PrimeIcons } from 'primeng/api'
+import { TooltipModule } from 'primeng/tooltip'
 
 @Component({
   template: `<ocx-button-dialog>
@@ -78,6 +79,7 @@ describe('ButtonDialogComponent', () => {
           TranslateTestingModule.withTranslations({
             en: translations,
           }),
+          TooltipModule,
         ],
         providers: [DynamicDialogConfig, DynamicDialogRef],
       }).compileComponents()
@@ -296,6 +298,7 @@ describe('ButtonDialogComponent', () => {
           TranslateTestingModule.withTranslations({
             en: translations,
           }),
+          TooltipModule,
         ],
         providers: [DynamicDialogConfig, DynamicDialogRef],
       }).compileComponents()

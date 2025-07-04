@@ -15,6 +15,7 @@ import { ButtonModule } from 'primeng/button'
 import { MockAuthModule } from '../../../../mock-auth/mock-auth.module'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { TooltipModule } from 'primeng/tooltip'
 
 @Component({
   template: `<ocx-dialog-inline>
@@ -87,6 +88,7 @@ describe('DialogInlineComponent', () => {
         TranslateTestingModule.withTranslations({
           en: translations,
         }),
+        TooltipModule,
       ],
       providers: [DynamicDialogConfig, DynamicDialogRef],
     }).compileComponents()
