@@ -30,6 +30,11 @@ export abstract class UiContainer extends GenericContainer {
     return this
   }
 
+  withPort(port: number): this {
+    this.port = port
+    return this
+  }
+
   override async start(): Promise<StartedUiContainer> {
     this.withEnvironment({
       ...this.environment,

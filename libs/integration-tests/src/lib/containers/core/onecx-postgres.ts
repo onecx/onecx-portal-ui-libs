@@ -24,10 +24,10 @@ export class OnecxPostgresContainer extends GenericContainer {
 
   constructor(image: string) {
     super(image)
-    this.withCommand(['-cmax_prepared_transactions=100'])
-    this.withHealthCheck(this.defaultHealthCheck)
-    this.withExposedPorts(this.onecxPostgresDetails.port)
     this.withNetworkAliases('postgresdb')
+      .withCommand(['-cmax_prepared_transactions=100'])
+      .withHealthCheck(this.defaultHealthCheck)
+      .withExposedPorts(this.onecxPostgresDetails.port)
   }
 
   public withPostgresDatabase(postgresDatabase: string): this {

@@ -15,9 +15,9 @@ export class PermissionSvcContainer extends SvcContainer {
       ONECX_PERMISSION_TOKEN_VERIFIED: 'false',
       TKIT_RS_CONTEXT_TENANT_ID_ENABLED: 'false',
     })
-    this.withNetworkAliases('onecx-permission-svc')
-    this.withDatabaseUsername('onecx_permission')
-    this.withDatabasePassword('onecx_permission')
+      .withNetworkAliases('onecx-permission-svc')
+      .withDatabaseUsername('onecx_permission')
+      .withDatabasePassword('onecx_permission')
   }
 }
 export class StartedPermissionSvcContainer extends StartedSvcContainer {}

@@ -44,11 +44,11 @@ export class OnecxKeycloakContainer extends GenericContainer {
     private readonly databaseContainer: StartedOnecxPostgresContainer
   ) {
     super(image)
-    this.withCommand(['start-dev', '--import-realm'])
-    this.withHealthCheck(this.defaultHealthCheck)
-    this.withExposedPorts(this.onecxEnvironment.port)
     this.withNetworkAliases('keycloak-app')
-    this.withStartupTimeout(120_000)
+      .withCommand(['start-dev', '--import-realm'])
+      .withHealthCheck(this.defaultHealthCheck)
+      .withExposedPorts(this.onecxEnvironment.port)
+      .withStartupTimeout(120_000)
   }
 
   withRealm(realm: string): this {
