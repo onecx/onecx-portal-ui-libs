@@ -49,6 +49,12 @@ xdescribe('Default Keycloak Testcontainer', () => {
     expect(response.data.issuer).toContain(`/realms/${realm}`)
   })
 
+  it('should use the correct port', () => {
+    const port = kcContainer.getPort()
+
+    expect(port).toBe(8080)
+  })
+
   afterAll(async () => {
     await kcContainer.stop()
     await pgContainer.stop()
