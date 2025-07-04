@@ -1,6 +1,5 @@
-import { AbstractStartedContainer, GenericContainer, StartedTestContainer, Wait } from 'testcontainers'
-import { StartedOnecxKeycloakContainer } from '../core/onecx-keycloak'
-import { UiDetails } from '../../model/service.model'
+import { AbstractStartedContainer, GenericContainer, StartedTestContainer } from 'testcontainers'
+import { UiDetails } from '../../model/ui.model'
 
 export abstract class UiContainer extends GenericContainer {
   private details: UiDetails = {
@@ -11,10 +10,7 @@ export abstract class UiContainer extends GenericContainer {
 
   private port = 8080
 
-  constructor(
-    image: string,
-    protected keycloakContainer?: StartedOnecxKeycloakContainer
-  ) {
+  constructor(image: string) {
     super(image)
     this.withExposedPorts(this.port)
   }
@@ -34,6 +30,11 @@ export abstract class UiContainer extends GenericContainer {
     return this
   }
 
+  withPort(port: number): this {
+    this.port = port
+    return this
+  }
+
   override async start(): Promise<StartedUiContainer> {
     this.withEnvironment({
       ...this.environment,
@@ -47,8 +48,6 @@ export abstract class UiContainer extends GenericContainer {
       stream.on('err', (line) => console.error(`${this.details.productName}: `, line))
       stream.on('end', () => console.log(`${this.details.productName}: Stream closed`))
     })
-
-    this.withWaitStrategy(Wait.forAll([Wait.forHealthCheck(), Wait.forListeningPorts()]))
 
     return new StartedUiContainer(await super.start(), this.details, this.networkAliases, this.port)
   }

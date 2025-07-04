@@ -10,9 +10,3 @@ export interface SvcContainerServices {
   databaseContainer?: StartedOnecxPostgresContainer
   keycloakContainer: StartedOnecxKeycloakContainer
 }
-
-export interface UiDetails {
-  appBaseHref: string
-  appId: string
-  productName: string
-}

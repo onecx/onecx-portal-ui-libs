@@ -9,8 +9,7 @@ export abstract class IamKcContainer extends SvcContainer {
       QUARKUS_KEYCLOAK_ADMIN_CLIENT_REALM: `${keycloakContainer.getAdminRealm()}`,
       QUARKUS_KEYCLOAK_ADMIN_CLIENT_USERNAME: `${keycloakContainer.getAdminUsername()}`,
       QUARKUS_KEYCLOAK_ADMIN_CLIENT_PASSWORD: `${keycloakContainer.getAdminPassword()}`,
-    })
-    this.createDatabaseAtStart(false)
+    }).createDatabaseAtStart(false)
     this.withNetworkAliases('onecx-iam-kc-svc')
   }
 }

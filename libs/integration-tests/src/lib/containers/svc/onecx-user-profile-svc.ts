@@ -10,8 +10,8 @@ export class UserProfileSvcContainer extends SvcContainer {
   ) {
     super(image, { databaseContainer, keycloakContainer })
     this.withNetworkAliases('onecx-user-profile-svc')
-    this.withDatabaseUsername('onecx_user_profile')
-    this.withDatabasePassword('onecx_user_profile')
+      .withDatabaseUsername('onecx_user_profile')
+      .withDatabasePassword('onecx_user_profile')
   }
 }
 
