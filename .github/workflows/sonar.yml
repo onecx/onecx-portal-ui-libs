@@ -23,7 +23,6 @@ jobs:
         run: |
           paths=$(find reports -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)
           coverage_reports=$(printf '%s\n' $paths | jq -R . | jq -s -c)
-
           echo "matrix=$coverage_reports" >> $GITHUB_OUTPUT
 
   sonar-scan:
