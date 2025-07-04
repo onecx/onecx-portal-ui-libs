@@ -19,8 +19,7 @@ export abstract class BffContainer extends GenericContainer {
     private readonly keycloakContainer: StartedOnecxKeycloakContainer
   ) {
     super(image)
-    this.withHealthCheck(this.defaultHealthCheck)
-    this.withExposedPorts(this.port)
+    this.withHealthCheck(this.defaultHealthCheck).withExposedPorts(this.port)
   }
 
   withPermissionsProductName(permissionsProductName: string): this {

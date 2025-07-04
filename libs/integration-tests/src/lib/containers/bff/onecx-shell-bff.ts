@@ -4,8 +4,7 @@ import { StartedOnecxKeycloakContainer } from '../core/onecx-keycloak'
 export class ShellBffContainer extends BffContainer {
   constructor(image: string, keycloakContainer: StartedOnecxKeycloakContainer) {
     super(image, keycloakContainer)
-    this.withPermissionsProductName('onecx-shell')
-    this.withNetworkAliases('onecx-shell-bff')
+    this.withPermissionsProductName('onecx-shell').withNetworkAliases('onecx-shell-bff')
   }
 }
 
