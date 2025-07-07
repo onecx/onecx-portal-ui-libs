@@ -4,11 +4,10 @@ import replaceTranslationsUtils from './replace-translations-utils'
 
 describe('replace-translations-utils', () => {
   let tree: Tree
-  let loggerWarnSpy
 
   beforeEach(() => {
     tree = createTreeWithEmptyWorkspace()
-    loggerWarnSpy = jest.spyOn(logger, 'warn').mockImplementation(jest.fn())
+    jest.spyOn(logger, 'warn').mockImplementation(jest.fn())
   })
 
   it('should update for RC', async () => {

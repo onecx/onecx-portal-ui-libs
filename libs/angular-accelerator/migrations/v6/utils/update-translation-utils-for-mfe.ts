@@ -37,7 +37,7 @@ function removeAppStateServiceFromDeps(tree: Tree, dirPath: string) {
     tree,
     dirPath,
     TRANSLATE_MODULE_WITH_CREATE_TRANSLATE_LOADER,
-    (node, filePath) => {
+    (_, __) => {
       return `
       TranslateModule.forRoot({
         isolate: true,

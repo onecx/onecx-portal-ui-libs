@@ -1,5 +1,5 @@
 import { Tree } from '@nx/devkit'
-import { ast, query, replace } from '@phenomnomnominal/tsquery'
+import { query, replace } from '@phenomnomnominal/tsquery'
 import { ArrayLiteralExpression, ObjectLiteralExpression, ScriptKind } from 'typescript'
 import { addImportIfDoesNotExist } from '../../../utils/modification/add-import-if-does-not-exist.utils'
 

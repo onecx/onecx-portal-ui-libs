@@ -10,7 +10,7 @@ describe('warn-for-removed-utils', () => {
   })
 
   it('should warn when isValidDate is used', async () => {
-    const spy = jest.spyOn(logger, 'warn').mockImplementation(() => {})
+    const spy = jest.spyOn(logger, 'warn').mockImplementation(jest.fn())
     tree.write(
       'src/app/main.ts',
       `

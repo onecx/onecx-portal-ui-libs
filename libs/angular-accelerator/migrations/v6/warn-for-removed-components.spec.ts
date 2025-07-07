@@ -10,7 +10,7 @@ describe('warn-for-removed-components', () => {
   })
 
   it('should warn when DataLoadingErrorComponent is used', async () => {
-    const spy = jest.spyOn(logger, 'warn').mockImplementation(() => {})
+    const spy = jest.spyOn(logger, 'warn').mockImplementation(jest.fn())
     tree.write(
       'src/app/main.ts',
       `
@@ -28,7 +28,7 @@ describe('warn-for-removed-components', () => {
   })
 
   it('should warn when ocx-data-loading-error is used', async () => {
-    const spy = jest.spyOn(logger, 'warn').mockImplementation(() => {})
+    const spy = jest.spyOn(logger, 'warn').mockImplementation(jest.fn())
     tree.write(
       'src/app/comp.html',
       `
