@@ -2,8 +2,6 @@ import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing'
 import { Tree } from '@nx/devkit'
 import replacePermissionChecker from './replace-permission-checker'
 
-import '../test-utils/custom-matchers'
-
 describe('replace-permission-checker', () => {
   let tree: Tree
 

@@ -6,5 +6,5 @@
  * @returns {string} new file content after modification
  */
 export function addNewImport(fileContent: string, importPath: string, importSpecifiers: string[]) {
-  return `import {${importSpecifiers.join(',')}} from "${importPath}"\n${fileContent}`
+  return `import {${importSpecifiers.join(',')}} from "${importPath}";\n${fileContent}`
 }

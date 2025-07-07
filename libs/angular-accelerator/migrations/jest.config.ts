@@ -1,11 +1,11 @@
 export default {
   displayName: 'angular-accelerator-migrations',
   preset: '../../../jest.preset.js',
+  setupFilesAfterEnv: ['<rootDir>/test-utils/test-setup.ts'],
   coverageDirectory: '../../coverage/libs/angular-accelerator/migrations',
-  testEnvironment: '@happy-dom/jest-environment',
-  setupFilesAfterEnv: ['<rootDir>/test-utils/setup-jest.ts'],
+  testEnvironment: 'node',
   testMatch: ['**/*.spec.ts'],
   transform: {
-    '^.+\\.[tj]s$': 'ts-jest',
+    '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
   },
 }

@@ -9,6 +9,7 @@ export * from './lib/utils/typescript-files.utils'
 export * from './lib/utils/update-gitignore.utils'
 
 export * from './lib/utils/detection/detect-variables-with-identifier.utils'
+export * from './lib/utils/detection/detect-variables.utils'
 
 export * from './lib/utils/modification/update-node.utils'
 export * from './lib/utils/modification/update-json-files.utils'
