@@ -1,6 +1,6 @@
-import { EventEmitter, Injectable, OnDestroy, Type, inject, isDevMode } from '@angular/core'
+import { EventEmitter, Injectable, OnDestroy, Type, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
-import { DialogService, DynamicDialogComponent, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { DialogService, DynamicDialogComponent } from 'primeng/dynamicdialog'
 import { Observable, filter, mergeMap } from 'rxjs'
 
 import { ButtonDialogButtonDetails, ButtonDialogCustomButtonDetails, ButtonDialogData } from '../model/button-dialog'
@@ -302,16 +302,6 @@ export class PortalDialogService implements OnDestroy {
   }
 
   /**
-   * @deprecated
-   */
-  open(componentType: Type<any>, config: DynamicDialogConfig): DynamicDialogRef {
-    if (isDevMode()) {
-      console.warn('You are using a deprecated method to display a dialog. Please move to the new one')
-    }
-    return this.dialogService.open(componentType, config)
-  }
-
-  /**
    * Opens dialog with a component or message to display and one or two buttons. This method allows you to customize the dialog using parameters and by implementic specific interfaces via component to be displayed. The dialog is only shown if if you subscribe to this function.
    *
    * Displaying component inisde the dialog can be achieved by providing the component class with optional inputs. By default the component will be shown without any interaction with the dialog, however you can implement the following interfaces by your component class to allow for some interactions:
@@ -458,16 +448,6 @@ export class PortalDialogService implements OnDestroy {
     primaryButtonTranslationKeyOrDetails: TranslationKey | ButtonDialogButtonDetails,
     secondaryButtonTranslationKeyOrDetails?: TranslationKey | ButtonDialogButtonDetails,
     extras?: PortalDialogConfig
-  ): Observable<DialogState<T>>
-  /**
-   * @deprecated Use `extras` instead of `showXButton`
-   */
-  openDialog<T>(
-    title: TranslationKey | null,
-    componentOrMessage: Type<any> | Type<DialogResult<T>> | Component<T> | TranslationKey | DialogMessage,
-    primaryButtonTranslationKeyOrDetails: TranslationKey | ButtonDialogButtonDetails,
-    secondaryButtonTranslationKeyOrDetails?: TranslationKey | ButtonDialogButtonDetails,
-    showXButton?: boolean
   ): Observable<DialogState<T>>
   openDialog<T>(
     title: TranslationKey | null,
