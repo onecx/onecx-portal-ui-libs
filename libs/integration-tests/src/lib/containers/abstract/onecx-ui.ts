@@ -12,7 +12,6 @@ export abstract class UiContainer extends GenericContainer {
 
   constructor(image: string) {
     super(image)
-    this.withExposedPorts(this.port)
   }
 
   withAppBaseHref(appBaseHref: string): this {
@@ -30,6 +29,11 @@ export abstract class UiContainer extends GenericContainer {
     return this
   }
 
+  withPort(port: number): this {
+    this.port = port
+    return this
+  }
+
   override async start(): Promise<StartedUiContainer> {
     this.withEnvironment({
       ...this.environment,
@@ -38,11 +42,13 @@ export abstract class UiContainer extends GenericContainer {
       PRODUCT_NAME: `${this.details.productName}`,
     })
 
-    this.withLogConsumer((stream) => {
-      stream.on('data', (line) => console.log(`${this.details.productName}: `, line))
-      stream.on('err', (line) => console.error(`${this.details.productName}: `, line))
-      stream.on('end', () => console.log(`${this.details.productName}: Stream closed`))
-    })
+      .withLogConsumer((stream) => {
+        stream.on('data', (line) => console.log(`${this.details.productName}: `, line))
+        stream.on('err', (line) => console.error(`${this.details.productName}: `, line))
+        stream.on('end', () => console.log(`${this.details.productName}: Stream closed`))
+      })
+
+      .withExposedPorts(this.port)
 
     return new StartedUiContainer(await super.start(), this.details, this.networkAliases, this.port)
   }

@@ -5,6 +5,7 @@ import { OnecxPostgresContainer, StartedOnecxPostgresContainer } from '../contai
 import { PermissionSvcContainer, StartedPermissionSvcContainer } from '../containers/svc/onecx-permission-svc'
 import axios from 'axios'
 import { TenantSvcContainer, StartedTenantSvcContainer } from '../containers/svc/onecx-tenant-svc'
+
 xdescribe('Default workspace-svc Testcontainer', () => {
   jest.mock('axios')
   let pgContainer: StartedOnecxPostgresContainer
@@ -38,6 +39,41 @@ xdescribe('Default workspace-svc Testcontainer', () => {
     const response = axios.get(`http://localhost:${port}/q/health`)
 
     expect((await response).status).toBe(200)
+  })
+
+  it('should have expected environment variables in permission-svc container, QUARKUS_DATASOURCE_USERNAME', async () => {
+    const execResult = await permissionSvcContainer.exec(['printenv', 'QUARKUS_DATASOURCE_USERNAME'])
+    const output = execResult.output.trim()
+
+    expect(output).toContain('onecx_permission')
+  })
+
+  it('should have expected environment variables in permission-svc container, QUARKUS_DATASOURCE_PASSWORD', async () => {
+    const execResult = await permissionSvcContainer.exec(['printenv', 'QUARKUS_DATASOURCE_PASSWORD'])
+    const output = execResult.output.trim()
+
+    expect(output).toContain('onecx_permission')
+  })
+
+  it('should have expected environment variables in permission-svc container, KC_REALM', async () => {
+    const execResult = await permissionSvcContainer.exec(['printenv', 'KC_REALM'])
+    const output = execResult.output.trim()
+
+    expect(output).toContain('onecx')
+  })
+
+  it('should have expected environment variables in permission-svc container, TKIT_OIDC_HEALTH_ENABLED', async () => {
+    const execResult = await permissionSvcContainer.exec(['printenv', 'TKIT_OIDC_HEALTH_ENABLED'])
+    const output = execResult.output.trim()
+
+    expect(output).toContain('false')
+  })
+
+  it('should have expected environment variables in permission-svc container, TKIT_DATAIMPORT_ENABLED', async () => {
+    const execResult = await permissionSvcContainer.exec(['printenv', 'TKIT_DATAIMPORT_ENABLED'])
+    const output = execResult.output.trim()
+
+    expect(output).toContain('true')
   })
 
   afterAll(async () => {

@@ -1,4 +1,4 @@
-import { getCommonEnvVars } from '../../utils/common-env'
+import { getCommonEnvironmentVariables } from '../../utils/common-env'
 import { StartedUiContainer, UiContainer } from '../abstract/onecx-ui'
 import { StartedOnecxKeycloakContainer } from '../core/onecx-keycloak'
 
@@ -16,7 +16,7 @@ export class ShellUiContainer extends UiContainer {
       ONECX_VAR_REMAP: 'KEYCLOAK_REALM=KC_REALM;KEYCLOAK_CLIENT_ID=CLIENT_USER_ID',
       CLIENT_USER_ID: 'onecx-shell-ui-client',
     })
-      .withEnvironment(getCommonEnvVars(this.keycloakContainer))
+      .withEnvironment(getCommonEnvironmentVariables(this.keycloakContainer))
       .withNetworkAliases('onecx-shell-ui')
       .withAppBaseHref('/onecx-shell/')
   }

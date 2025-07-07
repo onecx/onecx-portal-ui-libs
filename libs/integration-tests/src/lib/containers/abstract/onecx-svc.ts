@@ -1,7 +1,7 @@
 import { AbstractStartedContainer, GenericContainer, StartedTestContainer, Wait } from 'testcontainers'
 import { HealthCheck } from 'testcontainers/build/types'
 import { SvcDetails, SvcContainerServices } from '../../model/service.model'
-import { getCommonEnvVars } from '../../utils/common-env'
+import { getCommonEnvironmentVariables } from '../../utils/common-env'
 
 export abstract class SvcContainer extends GenericContainer {
   protected details: SvcDetails = {
@@ -80,7 +80,7 @@ export abstract class SvcContainer extends GenericContainer {
       TKIT_DATAIMPORT_ENABLED: 'true',
       ONECX_TENANT_CACHE_ENABLED: 'false',
     })
-      .withEnvironment(getCommonEnvVars(this.services.keycloakContainer))
+      .withEnvironment(getCommonEnvironmentVariables(this.services.keycloakContainer))
 
       .withLogConsumer((stream) => {
         stream.on('data', (line) => console.log(`${this.details.databaseUsername}: `, line))
