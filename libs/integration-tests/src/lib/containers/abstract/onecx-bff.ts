@@ -7,19 +7,23 @@ export abstract class BffContainer extends GenericContainer {
   private details: BffDetails = {
     permissionsProductName: '',
   }
+
   private port = 8080
-  private defaultHealthCheck: HealthCheck = {
-    test: ['CMD-SHELL', `curl --head -fsS http://localhost:${this.port}/q/health`],
-    interval: 10_000,
-    timeout: 5_000,
-    retries: 3,
-  }
+
   constructor(
     image: string,
     private readonly keycloakContainer: StartedOnecxKeycloakContainer
   ) {
     super(image)
-    this.withHealthCheck(this.defaultHealthCheck).withExposedPorts(this.port)
+  }
+
+  private setDefaultHealthCheck(port: number): HealthCheck {
+    return {
+      test: ['CMD-SHELL', `curl --head -fsS http://localhost:${port}/q/health`],
+      interval: 10_000,
+      timeout: 5_000,
+      retries: 3,
+    }
   }
 
   withPermissionsProductName(permissionsProductName: string): this {
@@ -35,11 +39,17 @@ export abstract class BffContainer extends GenericContainer {
   getKeycloakContainer() {
     return this.keycloakContainer
   }
+
+  getPort() {
+    return this.port
+  }
+
   override async start(): Promise<StartedBffContainer> {
-    // Re-apply the default health check explicitly if it has not been overridden.
+    // Apply the default health check explicitly if it has not been set.
     // This ensures the healthcheck is correctly registered before container startup
-    if (JSON.stringify(this.healthCheck) === JSON.stringify(this.defaultHealthCheck)) {
-      this.withHealthCheck(this.defaultHealthCheck)
+    if (!this.healthCheck) {
+      const defaultHealthCheck: HealthCheck = this.setDefaultHealthCheck(this.port)
+      this.withHealthCheck(defaultHealthCheck)
     }
 
     this.withEnvironment({
@@ -53,13 +63,16 @@ export abstract class BffContainer extends GenericContainer {
       TKIT_LOG_JSON_ENABLED: 'false',
       TKIT_OIDC_HEALTH_ENABLED: 'false',
     })
-    this.withLogConsumer((stream) => {
-      stream.on('data', (line) => console.log(`${this.details.permissionsProductName}: `, line))
-      stream.on('err', (line) => console.error(`${this.details.permissionsProductName}: `, line))
-      stream.on('end', () => console.log(`${this.details.permissionsProductName}: Stream closed`))
-    })
 
-    this.withWaitStrategy(Wait.forAll([Wait.forHealthCheck(), Wait.forListeningPorts()]))
+      .withLogConsumer((stream) => {
+        stream.on('data', (line) => console.log(`${this.details.permissionsProductName}: `, line))
+        stream.on('err', (line) => console.error(`${this.details.permissionsProductName}: `, line))
+        stream.on('end', () => console.log(`${this.details.permissionsProductName}: Stream closed`))
+      })
+
+      .withExposedPorts(this.port)
+
+      .withWaitStrategy(Wait.forAll([Wait.forHealthCheck(), Wait.forListeningPorts()]))
     return new StartedBffContainer(await super.start(), this.details, this.networkAliases, this.port)
   }
 }

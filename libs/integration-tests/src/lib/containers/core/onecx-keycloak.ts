@@ -1,4 +1,10 @@
-import { AbstractStartedContainer, GenericContainer, StartedTestContainer, Wait } from 'testcontainers'
+import {
+  AbstractStartedContainer,
+  GenericContainer,
+  PortWithOptionalBinding,
+  StartedTestContainer,
+  Wait,
+} from 'testcontainers'
 import * as path from 'path'
 import { StartedOnecxPostgresContainer } from './onecx-postgres'
 import { HealthCheck } from 'testcontainers/build/types'
@@ -27,16 +33,9 @@ export class OnecxKeycloakContainer extends GenericContainer {
     keycloakHostname: 'keycloak-app',
     port: 8080,
   }
-  private defaultHealthCheck: HealthCheck = {
-    test: [
-      'CMD-SHELL',
-      `{ printf >&3 'GET /realms/${this.onecxEnvironment.realm}/.well-known/openid-configuration HTTP/1.0\\r\\nHost: localhost\\r\\n\\r\\n'; cat <&3; } 3<>/dev/tcp/localhost/${this.onecxEnvironment.port} | head -1 | grep 200`,
-    ],
-    interval: 10_000,
-    timeout: 5_000,
-    retries: 10,
-  }
+
   private initDefaultRealms: string[] = []
+
   private initDefaultRealm = 'libs/integration-tests/src/init-data/keycloak/imports'
 
   constructor(
@@ -44,11 +43,19 @@ export class OnecxKeycloakContainer extends GenericContainer {
     private readonly databaseContainer: StartedOnecxPostgresContainer
   ) {
     super(image)
-    this.withCommand(['start-dev', '--import-realm'])
-    this.withHealthCheck(this.defaultHealthCheck)
-    this.withExposedPorts(this.onecxEnvironment.port)
-    this.withNetworkAliases('keycloak-app')
-    this.withStartupTimeout(120_000)
+    this.withCommand(['start-dev', '--import-realm']).withNetworkAliases('keycloak-app').withStartupTimeout(120_000)
+  }
+
+  private setDefaultHealthCheck(realm: string, port: number): HealthCheck {
+    return {
+      test: [
+        'CMD-SHELL',
+        `{ printf >&3 'GET /realms/${realm}/.well-known/openid-configuration HTTP/1.0\\r\\nHost: localhost\\r\\n\\r\\n'; cat <&3; } 3<>/dev/tcp/localhost/${port} | head -1 | grep 200`,
+      ],
+      interval: 10_000,
+      timeout: 5_000,
+      retries: 10,
+    }
   }
 
   withRealm(realm: string): this {
@@ -96,6 +103,11 @@ export class OnecxKeycloakContainer extends GenericContainer {
     return this
   }
 
+  withPort(port: number): this {
+    this.onecxEnvironment.port = port
+    return this
+  }
+
   getRealm(): string {
     return this.onecxEnvironment.realm
   }
@@ -137,11 +149,17 @@ export class OnecxKeycloakContainer extends GenericContainer {
       this.onecxEnvironment.keycloakDatabaseUsername,
       this.onecxEnvironment.keycloakDatabasePassword
     )
-    // Re-apply the default health check explicitly if it has not been overridden.
+
+    // Apply the default health check explicitly if it has not been set.
     // This ensures the healthcheck is correctly registered before container startup
-    if (JSON.stringify(this.healthCheck) === JSON.stringify(this.defaultHealthCheck)) {
-      this.withHealthCheck(this.defaultHealthCheck)
+    if (!this.healthCheck) {
+      const defaultHealthCheck: HealthCheck = this.setDefaultHealthCheck(
+        this.onecxEnvironment.realm,
+        this.onecxEnvironment.port
+      )
+      this.withHealthCheck(defaultHealthCheck)
     }
+
     // Spread existing environment variables to preserve previously set values.
     // This ensures that calling withEnvironment() does not override earlier configurations.
     this.withEnvironment({
@@ -162,12 +180,12 @@ export class OnecxKeycloakContainer extends GenericContainer {
       KC_HTTP_PORT: `${this.onecxEnvironment.port}`,
       KC_HEALTH_ENABLED: 'true',
     })
-    this.withLogConsumer((stream) => {
-      stream.on('data', (line) => console.log(`${this.onecxEnvironment.keycloakDatabaseUsername}: `, line))
-      stream.on('err', (line) => console.error(`${this.onecxEnvironment.keycloakDatabaseUsername}: `, line))
-      stream.on('end', () => console.log(`${this.onecxEnvironment.keycloakDatabaseUsername}: Stream closed`))
-    })
-    this.withInitPath(this.initDefaultRealm)
+      .withLogConsumer((stream) => {
+        stream.on('data', (line) => console.log(`${this.onecxEnvironment.keycloakDatabaseUsername}: `, line))
+        stream.on('err', (line) => console.error(`${this.onecxEnvironment.keycloakDatabaseUsername}: `, line))
+        stream.on('end', () => console.log(`${this.onecxEnvironment.keycloakDatabaseUsername}: Stream closed`))
+      })
+      .withInitPath(this.initDefaultRealm)
 
     for (const p of this.initDefaultRealms) {
       this.withCopyDirectoriesToContainer([
@@ -177,13 +195,9 @@ export class OnecxKeycloakContainer extends GenericContainer {
         },
       ])
     }
-    this.withWaitStrategy(
-      Wait.forAll([
-        Wait.forHttp(
-          `/realms/${this.onecxEnvironment.realm}/.well-known/openid-configuration`,
-          this.onecxEnvironment.port
-        ).forStatusCode(200),
-      ])
+
+    this.withExposedPorts(this.onecxEnvironment.port).withWaitStrategy(
+      Wait.forAll([Wait.forHealthCheck(), Wait.forListeningPorts()])
     )
 
     return new StartedOnecxKeycloakContainer(await super.start(), this.onecxEnvironment, this.networkAliases)
