@@ -1,8 +1,6 @@
 import { QueryParamsHandling } from '@angular/router'
 import { MenuItem } from 'primeng/api'
 export interface BreadCrumbMenuItem {
-  /** @deprecated use labelKey instead */
-  label?: string
   labelKey?: string
   icon?: string
   command?: (event?: any) => void
@@ -21,8 +19,6 @@ export interface BreadCrumbMenuItem {
   badgeStyleClass?: string
   style?: any
   styleClass?: string
-  /** @deprecated use titleKey instead */
-  title?: string
   titleKey?: string
   id?: string
   automationId?: any

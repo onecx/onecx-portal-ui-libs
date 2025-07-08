@@ -96,12 +96,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   set pageSize(value: number | undefined) {
     this._pageSize$.next(value)
   }
-  /**
-   * @deprecated
-   */
-  @Input()
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  set showAllOption(value: boolean) {}
 
   @Input() emptyResultsMessage: string | undefined
   @Input() fallbackImage = 'placeholder.png'
@@ -239,21 +233,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   @ContentChild('relativeDateListValue') relativeDateListValueChildTemplate: TemplateRef<any> | undefined
   get _relativeDateListValue(): TemplateRef<any> | undefined {
     return this.relativeDateListValueTemplate || this.relativeDateListValueChildTemplate
-  }
-  /**
-   * @deprecated Will be removed and instead to change the template of a specific column
-   * use the new approach instead by following the naming convention column id + IdListValue
-   * e.g. for a column with the id 'status' use pTemplate="statusIdListValue"
-   */
-  @Input() customListValueTemplate: TemplateRef<any> | undefined
-  /**
-   * @deprecated Will be removed and instead to change the template of a specific column
-   * use the new approach instead by following the naming convention column id + IdListValue
-   * e.g. for a column with the id 'status' use pTemplate="statusIdListValue"
-   */
-  @ContentChild('customListValue') customListValueChildTemplate: TemplateRef<any> | undefined
-  get _customListValue(): TemplateRef<any> | undefined {
-    return this.customListValueTemplate || this.customListValueChildTemplate
   }
 
   @Input() stringListValueTemplate: TemplateRef<any> | undefined
@@ -420,9 +399,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
           break
         case 'relativeDateListValue':
           this.relativeDateListValueChildTemplate = item.template
-          break
-        case 'customListValue':
-          this.customListValueChildTemplate = item.template
           break
         case 'stringListValue':
           this.stringListValueChildTemplate = item.template
@@ -689,12 +665,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
               return (
                 this._translationKeyListValue ??
                 this.findTemplate(templates, ['translationKeyListValue', 'defaultTranslationKeyListValue'])?.template ??
-                null
-              )
-            case ColumnType.CUSTOM:
-              return (
-                this._customListValue ??
-                this.findTemplate(templates, ['customListValue', 'defaultCustomListValue'])?.template ??
                 null
               )
             default:

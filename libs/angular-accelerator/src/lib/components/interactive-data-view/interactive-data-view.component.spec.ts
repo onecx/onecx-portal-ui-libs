@@ -2074,7 +2074,7 @@ describe('InteractiveDataViewComponent', () => {
   })
 
   it('should react on group selection change event emit', () => {
-    const columnsChangeSpy = jest.spyOn(component.displayedColumnsChange, 'emit')
+    const columnsChangeSpy = jest.spyOn(component.displayedColumnKeysChange, 'emit')
     const columnKeysChangeSpy = jest.spyOn(component.displayedColumnKeysChange, 'emit')
 
     component.groupSelectionChangedSlotEmitter.emit({
