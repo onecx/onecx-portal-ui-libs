@@ -27,16 +27,6 @@ export class GroupByCountDiagramComponent implements OnInit {
    * Setting this property to false will result in using the provided colors only if every data item has one. In the scenario where at least one item does not have a color set, diagram will generate all colors.
    */
   @Input() fillMissingColors = true
-  /**
-   * @deprecated Will be replaced by diagramType
-   */
-  @Input()
-  get type(): DiagramType {
-    return this.diagramType
-  }
-  set type(value: DiagramType) {
-    this.diagramType = value
-  }
   @Input() supportedDiagramTypes: DiagramType[] = []
   private _data$ = new BehaviorSubject<unknown[]>([])
   @Input()

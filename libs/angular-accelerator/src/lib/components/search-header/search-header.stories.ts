@@ -47,8 +47,8 @@ export default {
         SkeletonModule,
         StorybookTranslateModule,
         StorybookBreadcrumbModule.init([
-          { label: 'Level 1', routerLink: ['/something'] },
-          { label: 'Level 2', url: '/' },
+          { labelKey: 'Level 1', routerLink: ['/something'] },
+          { labelKey: 'Level 2', url: '/' },
         ]),
         TooltipModule,
         FloatLabelModule,

@@ -82,9 +82,9 @@ export interface DataTableComponentState {
   styleUrls: ['./data-table.component.scss'],
 })
 export class DataTableComponent extends DataSortBase implements OnInit, AfterContentInit {
-  private router = inject(Router)
-  private injector = inject(Injector)
-  private userService = inject(UserService)
+  private readonly router = inject(Router)
+  private readonly injector = inject(Injector)
+  private readonly userService = inject(UserService)
 
   FilterType = FilterType
   TemplateType = TemplateType
@@ -176,12 +176,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   set pageSize(value: number | undefined) {
     this._pageSize$.next(value)
   }
-  /**
-   * @deprecated
-   */
-  @Input()
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  set showAllOption(value: boolean) {}
 
   @Input() emptyResultsMessage: string | undefined
   @Input() name = ''
@@ -229,22 +223,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this.numberCellTemplate || this.numberCellChildTemplate
   }
 
-  /**
-   * @deprecated Will be removed and instead to change the template of a specific column
-   * use the new approach instead by following the naming convention column id + IdCell
-   * e.g. for a column with the id 'status' use pTemplate="statusIdCell"
-   */
-  @Input() customCellTemplate: TemplateRef<any> | undefined
-  /**
-   * @deprecated Will be removed and instead to change the template of a specific column
-   * use the new approach instead by following the naming convention column id + IdCell
-   * e.g. for a column with the id 'status' use pTemplate="statusIdCell"
-   */
-  @ContentChild('customCell') customCellChildTemplate: TemplateRef<any> | undefined
-  get _customCell(): TemplateRef<any> | undefined {
-    return this.customCellTemplate || this.customCellChildTemplate
-  }
-
   @Input() dateCellTemplate: TemplateRef<any> | undefined
   @ContentChild('dateCell') dateCellChildTemplate: TemplateRef<any> | undefined
   get _dateCell(): TemplateRef<any> | undefined {
@@ -276,21 +254,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   @ContentChild('numberFilterCell') numberFilterCellChildTemplate: TemplateRef<any> | undefined
   get _numberFilterCell(): TemplateRef<any> | undefined {
     return this.numberFilterCellTemplate || this.numberFilterCellChildTemplate
-  }
-  /**
-   * @deprecated Will be removed and instead to change the template of a specific column filter
-   * use the new approach instead by following the naming convention column id + IdFilterCell
-   * e.g. for a column with the id 'status' use pTemplate="statusIdFilterCell"
-   */
-  @Input() customFilterCellTemplate: TemplateRef<any> | undefined
-  /**
-   * @deprecated Will be removed and instead to change the template of a specific column filter
-   * use the new approach instead by following the naming convention column id + IdFilterCell
-   * e.g. for a column with the id 'status' use pTemplate="statusIdFilterCell"
-   */
-  @ContentChild('customFilterCell') customFilterCellChildTemplate: TemplateRef<any> | undefined
-  get _customFilterCell(): TemplateRef<any> | undefined {
-    return this.customFilterCellTemplate || this.customFilterCellChildTemplate
   }
   @Input() dateFilterCellTemplate: TemplateRef<any> | undefined
   @ContentChild('dateFilterCell') dateFilterCellChildTemplate: TemplateRef<any> | undefined
@@ -596,9 +559,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         case 'numberCell':
           this.numberCellChildTemplate = item.template
           break
-        case 'customCell':
-          this.customCellChildTemplate = item.template
-          break
         case 'dateCell':
           this.dateCellChildTemplate = item.template
           break
@@ -616,9 +576,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
           break
         case 'numberFilterCell':
           this.numberFilterCellChildTemplate = item.template
-          break
-        case 'customFilterCell':
-          this.customFilterCellChildTemplate = item.template
           break
         case 'dateFilterCell':
           this.dateFilterCellChildTemplate = item.template
@@ -845,7 +802,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       [ColumnType.NUMBER]: ['numberCell', 'numberTableCell', 'defaultNumberCell'],
       [ColumnType.RELATIVE_DATE]: ['relativeDateCell', 'relativeDateTableCell', 'defaultRelativeDateCell'],
       [ColumnType.TRANSLATION_KEY]: ['translationKeyCell', 'translationKeyTableCell', 'defaultTranslationKeyCell'],
-      [ColumnType.CUSTOM]: ['customCell', 'customTableCell', 'defaultCustomCell'],
       [ColumnType.STRING]: ['stringCell', 'stringTableCell', 'defaultStringCell'],
     },
   }
@@ -875,13 +831,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         'defaultTranslationKeyCell',
         'translationKeyCell',
         'translationKeyTableCell',
-      ],
-      [ColumnType.CUSTOM]: [
-        'customFilterCell',
-        'customTableFilterCell',
-        'customCell',
-        'customTableCell',
-        'defaultCustomCell',
       ],
       [ColumnType.STRING]: [
         'stringFilterCell',
@@ -916,9 +865,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
           case ColumnType.TRANSLATION_KEY:
             template = this._translationKeyCell
             break
-          case ColumnType.CUSTOM:
-            template = this._customCell
-            break
           default:
             template = this._stringCell
         }
@@ -936,9 +882,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
             break
           case ColumnType.TRANSLATION_KEY:
             template = this._translationKeyFilterCell
-            break
-          case ColumnType.CUSTOM:
-            template = this._customFilterCell
             break
           default:
             template = this._stringFilterCell
