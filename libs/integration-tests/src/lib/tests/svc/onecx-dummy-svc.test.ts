@@ -4,7 +4,7 @@ import { OnecxKeycloakContainer, StartedOnecxKeycloakContainer } from '../../con
 import { OnecxPostgresContainer, StartedOnecxPostgresContainer } from '../../containers/core/onecx-postgres'
 import { DummySvcContainer, StartedDummySvcContainer } from '../../containers/svc/onecx-dummy-svc'
 
-describe('Default workspace-svc Testcontainer', () => {
+describe('Dummy Svc Testcontainer with worpsace-svc image', () => {
   let pgContainer: StartedOnecxPostgresContainer
   let kcContainer: StartedOnecxKeycloakContainer
   let dummyContainer: StartedDummySvcContainer
@@ -13,9 +13,13 @@ describe('Default workspace-svc Testcontainer', () => {
     const network: StartedNetwork = await new Network().start()
     pgContainer = await new OnecxPostgresContainer(POSTGRES).withNetwork(network).start()
     kcContainer = await new OnecxKeycloakContainer(KEYCLOAK, pgContainer).withNetwork(network).start()
-    dummyContainer = await new DummySvcContainer(onecxSvcImages.ONECX_IAM_KC_SVC, kcContainer)
+    dummyContainer = await new DummySvcContainer(onecxSvcImages.ONECX_WORKSPACE_SVC, pgContainer, kcContainer)
       .withNetwork(network)
       .start()
+  })
+
+  it('database should be created', async () => {
+    await expect(pgContainer.doesDatabaseExist('onecx_dummy')).resolves.not.toBeTruthy()
   })
 
   it('should have expected environment variables in dummy-svc container', async () => {
@@ -33,6 +37,12 @@ describe('Default workspace-svc Testcontainer', () => {
 
       expect(output).toContain(expected)
     }
+  })
+
+  it('should use the correct port', () => {
+    const port = dummyContainer.getPort()
+
+    expect(port).toBe(8080)
   })
 
   afterAll(async () => {
