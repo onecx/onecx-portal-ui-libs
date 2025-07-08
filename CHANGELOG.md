@@ -1,3 +1,27 @@
+## [5.44.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.43.0...v5.44.0) (2025-07-03)
+
+### Features
+
+* disable integration tests ([#796](https://github.com/onecx/onecx-portal-ui-libs/issues/796)) ([4d3b62a](https://github.com/onecx/onecx-portal-ui-libs/commit/4d3b62ab751415eb74c8da42b801bf30b30f801e))
+* prepare testcontainers ([#757](https://github.com/onecx/onecx-portal-ui-libs/issues/757)) ([52c92e3](https://github.com/onecx/onecx-portal-ui-libs/commit/52c92e3c85e4bb2159524b1e026db9e23f797adf))
+
+### Bug Fixes
+
+* fix storybook build for v5 ([1229b66](https://github.com/onecx/onecx-portal-ui-libs/commit/1229b66ac4c3f69f3f2eb9d6a877343ce69dff02))
+* multiselect harness ([#797](https://github.com/onecx/onecx-portal-ui-libs/issues/797)) ([3401eee](https://github.com/onecx/onecx-portal-ui-libs/commit/3401eee76c5219cb8a5a727f18bb6fab11a111f6))
+* release config for v5 ([#794](https://github.com/onecx/onecx-portal-ui-libs/issues/794)) ([cc484a9](https://github.com/onecx/onecx-portal-ui-libs/commit/cc484a9051d056b6e0add22ec69a17deb3c7d7f5))
+* rename title and subtitle to header and subheader ([#775](https://github.com/onecx/onecx-portal-ui-libs/issues/775)) ([2052efa](https://github.com/onecx/onecx-portal-ui-libs/commit/2052efa0a7c3c4283210c10649b8f24a10321eca))
+* revert v5 config ([#798](https://github.com/onecx/onecx-portal-ui-libs/issues/798)) ([27fefe0](https://github.com/onecx/onecx-portal-ui-libs/commit/27fefe0be2842b796bdfcb21148d6fb48e37f3a5))
+
+### Chores
+
+* merge main into v5 ([#792](https://github.com/onecx/onecx-portal-ui-libs/issues/792)) ([887810d](https://github.com/onecx/onecx-portal-ui-libs/commit/887810db55c8cbb88b946336fc98bc304dc1f2f3)), closes [#782](https://github.com/onecx/onecx-portal-ui-libs/issues/782) [#784](https://github.com/onecx/onecx-portal-ui-libs/issues/784) [#779](https://github.com/onecx/onecx-portal-ui-libs/issues/779)
+
+### Refactoring
+
+* add v5 to release.config ([#777](https://github.com/onecx/onecx-portal-ui-libs/issues/777)) ([57f1d30](https://github.com/onecx/onecx-portal-ui-libs/commit/57f1d30dcef4d3764c1f6cc91a31c1c0e2ddcf64))
+* **release:** update release channel for v5 ([a4ecd02](https://github.com/onecx/onecx-portal-ui-libs/commit/a4ecd020d6b7912825d0843b3863a72f453fcd64))
+
 ## [5.43.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.42.0...v5.43.0) (2025-06-16)
 
 ### Features

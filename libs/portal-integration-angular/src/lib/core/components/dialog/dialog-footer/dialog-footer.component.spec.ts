@@ -6,6 +6,7 @@ import { MockAuthModule } from '../../../../mock-auth/mock-auth.module'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { PrimeIcons } from 'primeng/api'
+import { TooltipModule } from 'primeng/tooltip'
 
 describe('DialogFooterComponent', () => {
   let component: DialogFooterComponent
@@ -32,6 +33,7 @@ describe('DialogFooterComponent', () => {
         TranslateTestingModule.withTranslations({
           en: translations,
         }),
+        TooltipModule,
       ],
       providers: [DynamicDialogConfig, DynamicDialogRef],
     }).compileComponents()
