@@ -1,5 +1,5 @@
 import { assert } from 'console'
-import { OnecxPostgresContainer, StartedOnecxPostgresContainer } from '../containers/core/onecx-postgres'
+import { OnecxPostgresContainer, StartedOnecxPostgresContainer } from '../../containers/core/onecx-postgres'
 import { Client } from 'pg'
 
 xdescribe('Default Postgres Testcontainer', () => {

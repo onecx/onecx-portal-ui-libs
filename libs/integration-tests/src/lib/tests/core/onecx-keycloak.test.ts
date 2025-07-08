@@ -1,6 +1,6 @@
 import { Network, StartedNetwork } from 'testcontainers'
-import { OnecxKeycloakContainer, StartedOnecxKeycloakContainer } from '../containers/core/onecx-keycloak'
-import { OnecxPostgresContainer, StartedOnecxPostgresContainer } from '../containers/core/onecx-postgres'
+import { OnecxKeycloakContainer, StartedOnecxKeycloakContainer } from '../../containers/core/onecx-keycloak'
+import { OnecxPostgresContainer, StartedOnecxPostgresContainer } from '../../containers/core/onecx-postgres'
 import axios from 'axios'
 
 const imagePg = 'docker.io/library/postgres:13.4'

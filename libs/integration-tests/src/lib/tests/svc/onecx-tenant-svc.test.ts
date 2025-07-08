@@ -1,8 +1,8 @@
-import { POSTGRES, KEYCLOAK, onecxSvcImages } from '../config/env'
+import { POSTGRES, KEYCLOAK, onecxSvcImages } from '../../config/env'
 import { Network, StartedNetwork } from 'testcontainers'
-import { OnecxKeycloakContainer, StartedOnecxKeycloakContainer } from '../containers/core/onecx-keycloak'
-import { OnecxPostgresContainer, StartedOnecxPostgresContainer } from '../containers/core/onecx-postgres'
-import { TenantSvcContainer, StartedTenantSvcContainer } from '../containers/svc/onecx-tenant-svc'
+import { OnecxKeycloakContainer, StartedOnecxKeycloakContainer } from '../../containers/core/onecx-keycloak'
+import { OnecxPostgresContainer, StartedOnecxPostgresContainer } from '../../containers/core/onecx-postgres'
+import { TenantSvcContainer, StartedTenantSvcContainer } from '../../containers/svc/onecx-tenant-svc'
 import axios from 'axios'
 xdescribe('Default workspace-svc Testcontainer', () => {
   let pgContainer: StartedOnecxPostgresContainer
