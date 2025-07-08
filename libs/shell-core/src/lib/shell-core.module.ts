@@ -12,6 +12,7 @@ import { AppLoadingSpinnerComponent } from './components/app-loading-spinner/app
 import { ShellSrcDirective } from './directives/src.directive'
 import { TranslateModule } from '@ngx-translate/core'
 import { TooltipModule } from 'primeng/tooltip'
+import { MessageService } from 'primeng/api'
 
 @NgModule({
   imports: [
@@ -38,6 +39,6 @@ import { TooltipModule } from 'primeng/tooltip'
     TooltipModule,
     TranslateModule,
   ],
-  providers: [providePrimeNG()],
+  providers: [providePrimeNG(), { provide: MessageService, useClass: MessageService }],
 })
 export class ShellCoreModule {}
