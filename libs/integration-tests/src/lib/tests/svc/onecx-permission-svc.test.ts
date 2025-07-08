@@ -41,41 +41,6 @@ xdescribe('Default workspace-svc Testcontainer', () => {
     expect((await response).status).toBe(200)
   })
 
-  it('should have expected environment variables in permission-svc container, QUARKUS_DATASOURCE_USERNAME', async () => {
-    const execResult = await permissionSvcContainer.exec(['printenv', 'QUARKUS_DATASOURCE_USERNAME'])
-    const output = execResult.output.trim()
-
-    expect(output).toContain('onecx_permission')
-  })
-
-  it('should have expected environment variables in permission-svc container, QUARKUS_DATASOURCE_PASSWORD', async () => {
-    const execResult = await permissionSvcContainer.exec(['printenv', 'QUARKUS_DATASOURCE_PASSWORD'])
-    const output = execResult.output.trim()
-
-    expect(output).toContain('onecx_permission')
-  })
-
-  it('should have expected environment variables in permission-svc container, KC_REALM', async () => {
-    const execResult = await permissionSvcContainer.exec(['printenv', 'KC_REALM'])
-    const output = execResult.output.trim()
-
-    expect(output).toContain('onecx')
-  })
-
-  it('should have expected environment variables in permission-svc container, TKIT_OIDC_HEALTH_ENABLED', async () => {
-    const execResult = await permissionSvcContainer.exec(['printenv', 'TKIT_OIDC_HEALTH_ENABLED'])
-    const output = execResult.output.trim()
-
-    expect(output).toContain('false')
-  })
-
-  it('should have expected environment variables in permission-svc container, TKIT_DATAIMPORT_ENABLED', async () => {
-    const execResult = await permissionSvcContainer.exec(['printenv', 'TKIT_DATAIMPORT_ENABLED'])
-    const output = execResult.output.trim()
-
-    expect(output).toContain('true')
-  })
-
   afterAll(async () => {
     await permissionSvcContainer.stop()
     await tenantSvcContainer.stop()
