@@ -13,16 +13,6 @@ import { TopicMessage } from './topic-message'
 import { TopicMessageType } from './topic-message-type'
 import { TopicPublisher } from './topic-publisher'
 
-declare global {
-  interface Window {
-    '@onecx/accelerator': {
-      topic: {
-        debug: string[]
-      }
-    }
-  }
-}
-
 export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
   protected isInitializedPromise: Promise<void>
   protected data = new BehaviorSubject<TopicDataMessage<T> | undefined>(undefined)
@@ -153,7 +143,11 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
   }
 
   private onMessage(m: MessageEvent<TopicMessage>): any {
-    if (window['@onecx/accelerator']?.topic?.debug?.includes(this.name) && m.data?.name === this.name && m.data?.version === this.version) {
+    if (
+      window['@onecx/accelerator']?.topic?.debug?.includes(this.name) &&
+      m.data?.name === this.name &&
+      m.data?.version === this.version
+    ) {
       console.log('Topic', this.name, ':', this.version, 'received message', m.data)
     }
     switch (m.data.type) {
