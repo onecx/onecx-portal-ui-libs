@@ -9,7 +9,7 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true
   },
-  "files": [],
+  "files": ["./src/lib/declarations.ts"],
   "include": [],
   "references": [
     {

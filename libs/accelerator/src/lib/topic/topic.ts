@@ -14,16 +14,6 @@ import { TopicMessageType } from './topic-message-type'
 import { TopicPublisher } from './topic-publisher'
 import { TopicResolveMessage } from './topic-resolve-message'
 
-declare global {
-  interface Window {
-    '@onecx/accelerator': {
-      topic: {
-        debug: string[]
-      }
-    }
-  }
-}
-
 export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
   protected isInitializedPromise: Promise<void>
   protected data = new BehaviorSubject<TopicDataMessage<T> | undefined>(undefined)
