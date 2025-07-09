@@ -1,14 +1,14 @@
 import { normalizeKeys } from './normalize-preset-keys.utils'
 
 describe('normalizeKeys', () => {
-  it('should handle keys with multiple camelCase segments', () => {
-    const input = { veryDeepCamelCaseKey: 'value' }
+  it('should handle keys with multiple camelCase segments and leave the value as it is', () => {
+    const input = { veryDeepCamelCaseKey: '{general.textSecondaryColor}' }
     const expected = {
       very: {
         deep: {
           camel: {
             case: {
-              key: 'value',
+              key: '{general.textSecondaryColor}',
             },
           },
         },
