@@ -2,9 +2,9 @@ import { POSTGRES, KEYCLOAK, onecxSvcImages } from '../../config/env'
 import { Network, StartedNetwork } from 'testcontainers'
 import { OnecxKeycloakContainer, StartedOnecxKeycloakContainer } from '../../containers/core/onecx-keycloak'
 import { OnecxPostgresContainer, StartedOnecxPostgresContainer } from '../../containers/core/onecx-postgres'
-import { DummySvcContainer, StartedDummySvcContainer } from '../../containers/svc/onecx-dummy-svc'
+import { DummySvcContainer, StartedDummySvcContainer } from './onecx-dummy-svc'
 
-describe('Dummy Svc Testcontainer with worpsace-svc image', () => {
+describe('Svc Testcontainer with worpsace-svc image', () => {
   let pgContainer: StartedOnecxPostgresContainer
   let kcContainer: StartedOnecxKeycloakContainer
   let dummyContainer: StartedDummySvcContainer

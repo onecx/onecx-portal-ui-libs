@@ -1,6 +1,6 @@
-import { StartedSvcContainer, SvcContainer } from '../abstract/onecx-svc'
-import { StartedOnecxKeycloakContainer } from '../core/onecx-keycloak'
-import { StartedOnecxPostgresContainer } from '../core/onecx-postgres'
+import { StartedSvcContainer, SvcContainer } from '../../containers/abstract/onecx-svc'
+import { StartedOnecxKeycloakContainer } from '../../containers/core/onecx-keycloak'
+import { StartedOnecxPostgresContainer } from '../../containers/core/onecx-postgres'
 
 export class DummySvcContainer extends SvcContainer {
   constructor(
