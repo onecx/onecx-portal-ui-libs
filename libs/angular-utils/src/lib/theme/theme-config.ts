@@ -1,5 +1,5 @@
 import { createPalette, standardColorAdjustment } from '../utils/create-color-palette'
-import { normalizeKeys } from '../utils/normalize-keys.utils'
+import { normalizeKeys } from '../utils/normalize-preset-keys.utils'
 
 interface ThemeVariables {
   [key: string]: {
