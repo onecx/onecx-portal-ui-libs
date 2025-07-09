@@ -34,4 +34,40 @@ describe('normalizeKeys', () => {
 
     expect(normalizeKeys(input)).toEqual(expected)
   })
+
+  it('normalizes flat camelCase keys', () => {
+    const input = { hoverColor: '#fff' }
+    const output = normalizeKeys(input)
+    expect(output).toEqual({ hover: { color: '#fff' } })
+  })
+
+  it('normalizes nested camelCase keys', () => {
+    const input = {
+      hoverColor: {
+        backgroundColor: '#eee',
+      },
+    }
+    const output = normalizeKeys(input)
+    expect(output).toEqual({
+      hover: {
+        color: {
+          background: { color: '#eee' },
+        },
+      },
+    })
+  })
+
+  it('handles mixed keys correctly', () => {
+    const input = {
+      hoverColor: '#fff',
+      primitive: {
+        baseColor: '#000',
+      },
+    }
+    const output = normalizeKeys(input)
+    expect(output).toEqual({
+      hover: { color: '#fff' },
+      primitive: { base: { color: '#000' } },
+    })
+  })
 })
