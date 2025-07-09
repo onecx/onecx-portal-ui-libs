@@ -58,19 +58,21 @@ export function normalizeKeys(obj: any): Record<string, any> {
  * @param value - The value associated with the key.
  */
 function processKey(result: Record<string, any>, key: string, value: any) {
+  const normalizedValue = normalizeKeys(value)
+
   if (matchRegex(key, excludedKeyRegex)) {
-    result[key] = normalizeKeys(value)
+    result[key] = normalizedValue
     return
   }
 
   const decomposedKey = splitCamelCase(key)
-  insertValue(result, decomposedKey, value)
+  insertValue(result, decomposedKey, normalizedValue)
 }
 
 /**
  * Inserts a value into a nested object structure based on the decomposed key segments.
- * If the segment is the last one, it assigns the value directly; otherwise, it creates
- * nested objects as needed.
+ * If the segment is the last one, it assigns the value directly.
+ * Otherwise it creates nested objects as needed.
  *
  * @param result - The result object to insert into.
  * @param decomposedKey - An array of segments representing the key.
