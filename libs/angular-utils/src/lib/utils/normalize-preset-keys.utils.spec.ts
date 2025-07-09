@@ -1,4 +1,4 @@
-import { normalizeKeys } from './normalize-keys.utils'
+import { normalizeKeys } from './normalize-preset-keys.utils'
 
 describe('normalizeKeys', () => {
   it('should handle keys with multiple camelCase segments', () => {
