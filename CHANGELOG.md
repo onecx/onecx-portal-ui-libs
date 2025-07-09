@@ -1,3 +1,15 @@
+## [6.0.0-rc.18](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.17...v6.0.0-rc.18) (2025-07-09)
+
+### Features
+
+* deprecate unused data from the UserProfileTopic ([#783](https://github.com/onecx/onecx-portal-ui-libs/issues/783)) ([#806](https://github.com/onecx/onecx-portal-ui-libs/issues/806)) ([58f4470](https://github.com/onecx/onecx-portal-ui-libs/commit/58f447060096034f71e5eac85adeeb8b7fae82c6)), closes [#782](https://github.com/onecx/onecx-portal-ui-libs/issues/782) [#784](https://github.com/onecx/onecx-portal-ui-libs/issues/784) [#779](https://github.com/onecx/onecx-portal-ui-libs/issues/779)
+* remove deprecated code ([#795](https://github.com/onecx/onecx-portal-ui-libs/issues/795)) ([fc1ab7f](https://github.com/onecx/onecx-portal-ui-libs/commit/fc1ab7fe7f6885c242eca75c059264deef8eb5e8))
+* update primeflex version, fix storybook dark mode styles ([#800](https://github.com/onecx/onecx-portal-ui-libs/issues/800)) ([88c8860](https://github.com/onecx/onecx-portal-ui-libs/commit/88c88604fa610c84e3af60085e3e40eea929cab6))
+
+### Bug Fixes
+
+* provide message service in shell core ([#807](https://github.com/onecx/onecx-portal-ui-libs/issues/807)) ([c5dc56f](https://github.com/onecx/onecx-portal-ui-libs/commit/c5dc56f1237974a4b005abe6f5ad35f011321d8b))
+
 ## [6.0.0-rc.17](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.16...v6.0.0-rc.17) (2025-06-30)
 
 ### Bug Fixes
