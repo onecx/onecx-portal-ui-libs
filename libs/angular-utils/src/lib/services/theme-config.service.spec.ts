@@ -58,8 +58,8 @@ describe('ThemeConfigService', () => {
     tick(100)
 
     const args = spy.mock.calls.pop()
-    expect((args![0] as any).theme.preset.semantic.primary['500']).toEqual(theme.properties.general['primary-color'])
-    expect((args![0] as any).theme.preset.semantic.extend.onecx.topbarBgColor).toEqual(
+    expect((args?.[0] as any).theme.preset.semantic.primary['500']).toEqual(theme.properties.general['primary-color'])
+    expect((args?.[0] as any).theme.preset.semantic.extend.onecx.topbar.bg.color).toEqual(
       defaultThemeVariables.topbar.topbarBgColor
     )
   }))

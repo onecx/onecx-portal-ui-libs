@@ -19,13 +19,13 @@ describe('ThemeConfig', () => {
     })
   })
 
-  it('should generate config object with camel case variables', () => {
+  it('should generate config object with normalized variables', () => {
     const themeConfig = new ThemeConfig(themeVariables)
 
     const result = themeConfig.getConfig()
-    expect(result.semantic.extend.onecx).toEqual({
-      primaryColor: '#ababab',
-      fontSize: '14px',
+    expect(result['semantic'].extend.onecx).toEqual({
+      primary: { color: '#ababab' },
+      font: { size: '14px' },
     })
   })
 })
