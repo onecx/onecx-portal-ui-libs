@@ -1,5 +1,7 @@
 export default {
-    floatlabel: {
-        fontWeight: '400'
-    }
+  floatlabel: {
+    root: {
+      fontWeight: '400',
+    },
+  },
 }
