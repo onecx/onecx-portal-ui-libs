@@ -34,6 +34,12 @@ xdescribe('Default workspace-svc Testcontainer', () => {
     expect((await response).status).toBe(200)
   })
 
+  it('should use the correct port', () => {
+    const port = userProfileSvcContainer.getPort()
+
+    expect(port).toBe(8080)
+  })
+
   afterAll(async () => {
     await userProfileSvcContainer.stop()
     await kcContainer.stop()
