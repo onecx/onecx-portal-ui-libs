@@ -1,10 +1,4 @@
-import {
-  AbstractStartedContainer,
-  GenericContainer,
-  PortWithOptionalBinding,
-  StartedTestContainer,
-  Wait,
-} from 'testcontainers'
+import { AbstractStartedContainer, GenericContainer, StartedTestContainer, Wait } from 'testcontainers'
 import * as path from 'path'
 import { StartedOnecxPostgresContainer } from './onecx-postgres'
 import { HealthCheck } from 'testcontainers/build/types'
