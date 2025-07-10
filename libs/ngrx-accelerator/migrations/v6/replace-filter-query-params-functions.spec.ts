@@ -2,8 +2,6 @@ import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing'
 import { Tree } from '@nx/devkit'
 import replaceFilterForQueryParamsChanged from './replace-filter-query-params-functions'
 
-import '../test-utils/custom-matchers'
-
 describe('replace-filterForQueryParamsChanged', () => {
   let tree: Tree
 
