@@ -32,7 +32,7 @@
     "@nx/devkit": "19.8.0",
     "@onecx/portal-layout-styles": "file:libs/portal-layout-styles",
     "@phenomnomnominal/tsquery": "^6",
-    "@storybook/addon-interactions": "^8.3.2",
+    "@storybook/addon-interactions": "^8.6.14",
     "axios": "^1.10.0",
     "chart.js": "^4.4.3",
     "d3-scale-chromatic": "^3.1.0",
