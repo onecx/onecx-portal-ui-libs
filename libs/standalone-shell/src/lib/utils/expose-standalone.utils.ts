@@ -106,6 +106,6 @@ export function provideStandaloneProviders(config?: Partial<ProvideStandalonePro
     provideAlwaysGrantPermissionChecker(),
     provideTokenInterceptor(),
     provideAuthService(),
-    MessageService
+    MessageService,
   ]
 }

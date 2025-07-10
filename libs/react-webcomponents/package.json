@@ -1,0 +1,22 @@
+{
+  "name": "@onecx/react-webcomponents",
+  "version": "0.0.1",
+  "license": "Apache-2.0",
+  "sideEffects": false,
+  "peerDependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "next": "^14.2.16"
+  },
+  "dependencies": {},
+  "exports": {
+    ".": {
+      "import": "./dist/libs/react-webcomponents/esm/index.js",
+      "require": "./dist/libs/react-webcomponents/cjs/index.js",
+      "types": "./dist/libs/react-webcomponents/types/index.d.ts"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
