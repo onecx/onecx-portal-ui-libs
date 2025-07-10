@@ -1,8 +1,7 @@
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { Tree } from '@nx/devkit';
 import replaceProvideAppServiceMock from './replace-provide-app-service-mock';
-
-import '../test-utils/custom-matchers';
+import exp from 'constants';
 
 describe('replace-provide-app-service-mock', () => {
   let tree: Tree
@@ -50,9 +49,7 @@ describe('replace-provide-app-service-mock', () => {
 
   it('should not replace if provideAppServiceMock is imported from a different package', async () => {
     const filePath = 'src/app/component2.ts';
-    tree.write(
-      filePath,
-      `
+    const expectedCode =  `
       import { provideAppServiceMock } from 'some-other-package';
       import { TestBed } from '@angular/core/testing';
       describe('OtherService', () => {
@@ -63,24 +60,11 @@ describe('replace-provide-app-service-mock', () => {
             ]
           });
         });
-      });
-      `
-    );
+      });`
+    tree.write(filePath, expectedCode);
     await replaceProvideAppServiceMock(tree);
     const content = tree.read(filePath)?.toString();
-    expect(content).toEqualIgnoringWhitespace(`
-      import { provideAppServiceMock } from 'some-other-package';
-      import { TestBed } from '@angular/core/testing';
-      describe('OtherService', () => {
-        beforeEach(() => {
-          TestBed.configureTestingModule({
-            providers: [
-              provideAppServiceMock(),
-            ]
-          });
-        });
-      });
-      `);
+    expect(content).toEqualIgnoringWhitespace(expectedCode);
   });
 
   it('should replace provideAppServiceMock only when imported from the correct package, even with alias', async () => {
@@ -118,9 +102,7 @@ describe('replace-provide-app-service-mock', () => {
 
   it('should not replace if provideAppServiceMock is not imported', async () => {
     const filePath = 'src/app/component4.ts';
-    tree.write(
-      filePath,
-      `
+    const expectedCode = `
       import { SomethingElse } from '@onecx/angular-integration-interface/mocks';
       describe('NoProviderImport', () => {
         beforeEach(() => {
@@ -132,20 +114,9 @@ describe('replace-provide-app-service-mock', () => {
         });
       });
       `
-    );
+    tree.write(filePath, expectedCode);
     await replaceProvideAppServiceMock(tree);
     const content = tree.read(filePath)?.toString();
-    expect(content).toEqualIgnoringWhitespace(`
-      import { SomethingElse } from '@onecx/angular-integration-interface/mocks';
-      describe('NoProviderImport', () => {
-        beforeEach(() => {
-          TestBed.configureTestingModule({
-            providers: [
-              provideAppServiceMock(),
-            ]
-          });
-        });
-      });
-      `);
+    expect(content).toEqualIgnoringWhitespace(expectedCode);
   });
 });

@@ -2,8 +2,6 @@ import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing'
 import { Tree, logger } from '@nx/devkit'
 import removeAuthService from './remove-auth-service';
 
-import '../test-utils/custom-matchers';
-
 describe('remove-auth-service', () => {
   let tree: Tree
   let spy: jest.SpyInstance;
@@ -60,7 +58,7 @@ describe('remove-auth-service', () => {
       `
     );
     expect(spy).toHaveBeenCalledWith(
-      'AUTH_SERVICE is no longer available. Please adapt the usages accordingly. Found in: src/app/header.component.ts'
+      'AUTH_SERVICE is no longer available. Please adapt the usages accordingly and use permission service or user service instead. Found in: src/app/header.component.ts'
     )
   });
 
@@ -107,7 +105,7 @@ describe('remove-auth-service', () => {
       `
     );
     expect(spy).toHaveBeenCalledWith(
-      'AUTH_SERVICE is no longer available. Please adapt the usages accordingly. Found in: src/app/header2.component.ts'
+      'AUTH_SERVICE is no longer available. Please adapt the usages accordingly and use permission service or user service instead. Found in: src/app/header2.component.ts'
     )
   });
 
@@ -155,7 +153,7 @@ describe('remove-auth-service', () => {
       `
     );
     expect(spy).not.toHaveBeenCalledWith(
-      'AUTH_SERVICE is no longer available. Please adapt the usages accordingly. Found in: src/app/header3.component.ts'
+      'AUTH_SERVICE is no longer available. Please adapt the usages accordingly and use permission service or user service instead. Found in: src/app/header3.component.ts'
     )
   });
 
@@ -178,7 +176,30 @@ describe('remove-auth-service', () => {
       `
     );
     expect(spy).toHaveBeenCalledWith(
-      'IAuthService is no longer available. Please adapt the usages accordingly and use permission service or user service instead. Found in: src/app/test.component.ts'
+      'IAuthService is no longer available. Please adapt the usages accordingly. Found in: src/app/test.component.ts'
+    )
+  });
+
+   it('should remove IAuthService import when imported from @onecx/portal-integration-angular', async () => {
+    tree.write(
+      'src/app/test.component.ts',
+      `
+      import { IAuthService } from "@onecx/portal-integration-angular";
+
+      authService.getIdToken();
+
+      `
+    );
+   
+    await removeAuthService(tree);
+    const content = tree.read('src/app/test.component.ts')?.toString();
+    expect(content).toEqualIgnoringWhitespace(
+      `
+      authService.getIdToken();
+      `
+    );
+    expect(spy).toHaveBeenCalledWith(
+      'IAuthService is no longer available. Please adapt the usages accordingly. Found in: src/app/test.component.ts'
     )
   });
 
@@ -206,7 +227,7 @@ describe('remove-auth-service', () => {
       `
     );
     expect(spy).not.toHaveBeenCalledWith(
-      'IAuthService is no longer available. Please adapt the usages accordingly and use permission service or user service instead. Found in: src/app/test.component.ts'
+      'IAuthService is no longer available. Please adapt the usages accordingly. Found in: src/app/test.component.ts'
     )
   });
 });
