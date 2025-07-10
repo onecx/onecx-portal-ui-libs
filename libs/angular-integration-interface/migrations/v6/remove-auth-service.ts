@@ -16,7 +16,7 @@ export default async function removeAuthService(tree: Tree) {
 
   visitNotIgnoredFiles(tree, 'src', (filePath) => {
     if (!filePath.endsWith('.ts')) return;
-    let fileContent = tree.read(filePath, 'utf-8');
+    const fileContent = tree.read(filePath, 'utf-8');
     if (!fileContent) return;
 
     for (const importPath of IMPORT_PATHS) {

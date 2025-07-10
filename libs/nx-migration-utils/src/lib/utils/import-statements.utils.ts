@@ -448,7 +448,6 @@ export function deleteImportSpecifierFromImport(tree: Tree, filePath: string, im
   // AST: Remove the entire import if it is now empty
   const astSource = ast(updated);
   const importDecls = query(astSource, `ImportDeclaration:has(StringLiteral[value="${importPath}"])`);
-  let changed = false;
   for (const decl of importDecls) {
   const importDecl = decl as ImportDeclaration;
   const namedBindings = importDecl.importClause?.namedBindings;
@@ -459,7 +458,6 @@ export function deleteImportSpecifierFromImport(tree: Tree, filePath: string, im
       () => '',
       ScriptKind.TS
     );
-    changed = true;
   }
 }
 
