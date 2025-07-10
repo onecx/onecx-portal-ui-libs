@@ -2,7 +2,6 @@ import { Tree, visitNotIgnoredFiles } from '@nx/devkit'
 import { replace } from '@phenomnomnominal/tsquery'
 import { ScriptKind } from 'typescript'
 import { fileMatchesQuery, removeEmptySlotsFromArrays } from '../utils/typescript-files.utils'
-import { fileMatchesQuery, removeEmptySlotsFromArrays } from '../utils/typescript-files.utils'
 
 /**
  * Applies a tsquery-based replacement to a single TypeScript file.
@@ -37,15 +36,8 @@ export function replaceInFile(tree: Tree, filePath: string, queryStr: string, re
  * @param replacement - The replacement string. If empty, trailing commas and empty array slots are cleaned up.
  */
 export function replaceInFiles(tree: Tree, directoryPath: string, queryStr: string, replacement: string, filterQuery?: string) {
-export function replaceInFiles(tree: Tree, directoryPath: string, queryStr: string, replacement: string, filterQuery?: string) {
   visitNotIgnoredFiles(tree, directoryPath, (filePath) => {
     if (!filePath.endsWith('.ts')) return
-
-    const fileContent = tree.read(filePath, 'utf-8')
-    if (!fileContent) return
-
-    if (filterQuery && !fileMatchesQuery(fileContent, filterQuery)) return
-
 
     const fileContent = tree.read(filePath, 'utf-8')
     if (!fileContent) return
