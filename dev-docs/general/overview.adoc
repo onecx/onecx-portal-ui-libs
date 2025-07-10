@@ -50,4 +50,16 @@ This page gives an overview about onecx libs.
 
 |standalone-shell
 |Includes everything you need to start an application in standalone mode
+
+|react-auth
+|Authentication library for React apps, used to integrate authentication mechanisms compatible with the shell (analogue to angular-auth).
+
+|react-integration-interface
+|Technology-independent integration interface for React apps, provides communication and context between shell and React microfrontends.
+
+|react-remote-components
+|Library for loading and managing remote React components in a microfrontend architecture.
+
+|react-webcomponents
+|Helps to bootstrap and integrate React web components with the shell and other apps.
 |===
