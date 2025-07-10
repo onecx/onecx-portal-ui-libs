@@ -9,7 +9,6 @@ import {
   isStringLiteral,
   NamedImports,
   NodeArray,
-  ScriptKind,
   SourceFile,
   Statement,
 } from 'typescript'

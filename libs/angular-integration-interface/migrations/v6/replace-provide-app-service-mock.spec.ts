@@ -1,7 +1,6 @@
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { Tree } from '@nx/devkit';
 import replaceProvideAppServiceMock from './replace-provide-app-service-mock';
-import exp from 'constants';
 
 describe('replace-provide-app-service-mock', () => {
   let tree: Tree
