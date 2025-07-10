@@ -12,6 +12,7 @@ import { CustomPreset } from '@onecx/angular-utils'
     providePrimeNG({
       theme: {
         preset: CustomPreset,
+        options: { darkModeSelector: false },
       },
     }),
   ],

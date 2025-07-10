@@ -7,7 +7,7 @@
       (onChange)="onDataViewLayoutChange($event.value)"
       >
       <ng-template #item let-item>
-        <i [class]="item.icon" [pTooltip]="item.tooltip || (item.tooltipKey | translate)" tooltipPosition="top"></i>
+        <i [class]="item.icon" [pTooltip]="item.tooltipKey | translate" tooltipPosition="top"></i>
         <label style="display: none" id="{{item.id}}">{{item.labelKey | translate}}</label>
       </ng-template>
     </p-selectbutton>

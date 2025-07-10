@@ -190,7 +190,6 @@ export class FilterViewComponent implements OnInit {
       'translationKeyTableCell',
       'defaultTranslationKeyValue',
     ],
-    [ColumnType.CUSTOM]: ['customFilterChipValue', 'customTableFilterCell', 'customTableCell', 'defaultCustomValue'],
     [ColumnType.STRING]: ['stringFilterChipValue', 'stringTableFilterCell', 'stringTableCell', 'defaultStringValue'],
   }
   chipTemplates: Record<string, Observable<TemplateRef<any> | null>> = {}
@@ -211,7 +210,6 @@ export class FilterViewComponent implements OnInit {
       'translationKeyTableCell',
       'defaultTranslationKeyValue',
     ],
-    [ColumnType.CUSTOM]: ['customFilterViewCell', 'customTableFilterCell', 'customTableCell', 'defaultCustomValue'],
     [ColumnType.STRING]: ['stringFilterViewCell', 'stringTableFilterCell', 'stringTableCell', 'defaultStringValue'],
   }
   tableTemplates: Record<string, Observable<TemplateRef<any> | null>> = {}

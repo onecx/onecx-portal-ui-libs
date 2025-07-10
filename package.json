@@ -1,6 +1,6 @@
 {
   "name": "@onecx/onecx-portal-ui-libs",
-  "version": "6.0.0-rc.17",
+  "version": "6.0.0-rc.18",
   "license": "Apache-2.0",
   "scripts": {
     "postinstall": "mkdir -p .nx",
@@ -40,7 +40,7 @@
     "keycloak-js": "^25.0.1",
     "ngx-color": "^9.0.0",
     "node-html-parser": "^7.0.1",
-    "primeflex": "^3.3.1",
+    "primeflex": "^4.0.0",
     "primeicons": "^7.0.0",
     "primelocale": "^1.0.3",
     "primeng": "^19.1.0",
