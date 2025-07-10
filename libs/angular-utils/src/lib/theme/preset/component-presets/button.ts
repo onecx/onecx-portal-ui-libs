@@ -1,5 +1,7 @@
 export default {
-    button: {
-        paddingY: '0.643rem'
-    }
+  button: {
+    root: {
+      paddingY: '0.643rem',
+    },
+  },
 }
