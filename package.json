@@ -102,6 +102,7 @@
     "jest-canvas-mock": "^2.5.2",
     "jest-environment-jsdom": "^29.7.0",
     "jest-environment-node": "^29.7.0",
+    "jest-extended": "^6.0.0",
     "jest-preset-angular": "^14.2.2",
     "jsonc-eslint-parser": "^2.4.0",
     "msw": "^2.4.9",
