@@ -13,8 +13,8 @@ export class WorkspaceSvcContainer extends SvcContainer {
       TKIT_RS_CONTEXT_TENANT_ID_ENABLED: 'false',
     })
     this.withNetworkAliases('onecx-workspace-svc')
-    this.withDatabaseUsername('onecx_workspace')
-    this.withDatabasePassword('onecx_workspace')
+      .withDatabaseUsername('onecx_workspace')
+      .withDatabasePassword('onecx_workspace')
   }
 }
 
