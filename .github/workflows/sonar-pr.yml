@@ -66,11 +66,13 @@ jobs:
           fetch-depth: 0
 
       - name: Checkout base branch
+        env:
+          BRANCH_NAME: ${{ github.event.workflow_run.head_branch }}
         run: |
           git remote add upstream ${{ github.event.repository.clone_url }}
           git fetch upstream
           git checkout -B ${{ fromJson(steps.get_pr_data.outputs.data).base.ref }} upstream/${{ fromJson(steps.get_pr_data.outputs.data).base.ref }}
-          git checkout -- ${{ github.event.workflow_run.head_branch }}
+          git checkout "$BRANCH_NAME"
           git clean -ffdx && git reset --hard HEAD
 
       - name: Download reports
