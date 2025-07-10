@@ -1,10 +1,11 @@
-import { POSTGRES, KEYCLOAK, onecxSvcImages } from '../config/env'
+import { POSTGRES, KEYCLOAK, onecxSvcImages } from '../../config/env'
 import { Network, StartedNetwork } from 'testcontainers'
-import { OnecxKeycloakContainer, StartedOnecxKeycloakContainer } from '../containers/core/onecx-keycloak'
-import { OnecxPostgresContainer, StartedOnecxPostgresContainer } from '../containers/core/onecx-postgres'
-import { PermissionSvcContainer, StartedPermissionSvcContainer } from '../containers/svc/onecx-permission-svc'
+import { OnecxKeycloakContainer, StartedOnecxKeycloakContainer } from '../../containers/core/onecx-keycloak'
+import { OnecxPostgresContainer, StartedOnecxPostgresContainer } from '../../containers/core/onecx-postgres'
+import { PermissionSvcContainer, StartedPermissionSvcContainer } from '../../containers/svc/onecx-permission-svc'
 import axios from 'axios'
-import { TenantSvcContainer, StartedTenantSvcContainer } from '../containers/svc/onecx-tenant-svc'
+import { TenantSvcContainer, StartedTenantSvcContainer } from '../../containers/svc/onecx-tenant-svc'
+
 xdescribe('Default workspace-svc Testcontainer', () => {
   jest.mock('axios')
   let pgContainer: StartedOnecxPostgresContainer
