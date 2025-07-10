@@ -43,12 +43,27 @@
       },
       "defaultConfiguration": "production"
     },
+    "test-migrations": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/angular-accelerator/migrations/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "libs/angular-accelerator/jest.config.ts",
-        "passWithNoTests": true
+        "passWithNoTests": true,
+        "testPathIgnorePatterns": ["libs/angular-accelerator/migrations/"]
       },
       "configurations": {
         "ci": {

@@ -24,7 +24,10 @@
     "rxjs": "~7.8.1",
     "primeng": "^19.0.0",
     "@storybook/angular": "^8.3.2",
-    "@nx/devkit": "^20.3.0"
+    "@nx/devkit": "^20.3.0",
+    "@jest/globals": "29.7.0",
+    "jest-extended": "^6.0.0",
+    "typescript": "^5.5.4"
   },
   "dependencies": {},
   "exports": {

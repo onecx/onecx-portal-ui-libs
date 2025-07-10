@@ -369,9 +369,9 @@ function provideStandaloneProvidersIfModuleUsed(tree: Tree, dirPath: string) {
     importPath: '@onecx/angular-standalone-shell',
   }
 
-  const variablesWithModule = detectVariablesWithModule(tree, dirPath, module)
+  const variablesWithModule = detectVariablesWithModule(tree, dirPath, module).map((match) => match.name)
   const modules = detectModulesImportingModule(tree, dirPath, module, variablesWithModule)
-  const variablesWithProvider = detectVariablesWithProvider(tree, dirPath, provider)
+  const variablesWithProvider = detectVariablesWithProvider(tree, dirPath, provider).map((match) => match.name)
   modules.forEach((moduleName) => {
     addProviderInModuleIfDoesNotExist(tree, moduleName, provider, variablesWithProvider)
     addProviderImportIfDoesNotExist(tree, moduleName.filePath, provider)
