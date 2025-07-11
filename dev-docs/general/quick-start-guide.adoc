@@ -1,0 +1,138 @@
+= Quick Start Guide: Creating a Web Component from Your React Application
+
+This guide explains how to turn your React application or component into a reusable Web Component using the provided libraries. The approach depends on whether you are using Vite/standard React or Next.js.
+
+== Prerequisites
+
+- Node.js and npm installed
+- Basic knowledge of React
+- Your React component or application code
+
+== 1. Install Required Packages
+
+Add the necessary dependency to your project:
+
+----
+npm install @onecx/react-webcomponents
+----
+
+== 2. Prepare Your React Component
+
+Ensure your component is exported as the default export. For example:
+
+----javascript
+// src/MyComponent.jsx
+import React from 'react';
+
+const MyComponent = () => (
+  <div>Hello from MyComponent!</div>
+);
+
+export default MyComponent;
+----
+
+== 3. Create a Web Component Wrapper
+
+Choose the correct utility function for your environment:
+
+=== For Vite or Standard React Projects
+Use `createViteAppWebComponent` from `@onecx/react-webcomponents` (see `webcomponent-bootstrap-vite.utils.ts`).
+
+----javascript
+import MyComponent from './MyComponent';
+import { createViteAppWebComponent } from '@onecx/react-webcomponents';
+
+createViteAppWebComponent(MyComponent, 'my-react-component');
+----
+
+This will register `<my-react-component>` as a custom element.
+
+=== For Next.js Projects
+Use `createNextjsAppWebComponent` from `@onecx/react-webcomponents` (see `webcomponent-bootstrap-nextjs.utils.tsx`). This function provides advanced routing and context support for Next.js apps.
+
+You need to provide:
+- A custom App component (usually rendering the current page)
+- A routes object mapping paths to page components
+- The custom element name
+
+Example:
+
+----javascript
+import { createNextjsAppWebComponent } from '@onecx/react-webcomponents';
+import MyApp from './MyApp';
+import * as routes from './routes'; // { '/': HomePage, '/about': AboutPage, ... }
+
+createNextjsAppWebComponent(MyApp, routes, 'my-nextjs-app');
+----
+
+The Next.js integration uses the `useAppHref` hook (from `routing.utils.ts`) to handle base URLs and routing context within the web component.
+
+== 4. Use the Web Component
+
+You can now use your new Web Component in any HTML or JavaScript application:
+
+----html
+<my-react-component></my-react-component>
+----
+
+or for Next.js:
+
+----html
+<my-nextjs-app></my-nextjs-app>
+----
+
+== 5. Build and Bundle
+
+Bundle your component using your preferred bundler (e.g., Webpack, Vite, or Rollup). Make sure to output a single JS file that registers the custom element.
+
+== 6. Advanced Usage
+
+- Pass properties and attributes to your Web Component as you would with any HTML element.
+- Listen for custom events dispatched from your React component.
+
+== Troubleshooting
+
+- Ensure all peer dependencies (like React and ReactDOM) are available in your bundle or as externals.
+- If you see errors about multiple React versions, check your dependencies and bundler configuration.
+
+== Resources
+
+- https://react.dev/[React Documentation]
+- https://developer.mozilla.org/en-US/docs/Web/Web_Components[Web Components Guide (MDN)]
+- @onecx/react-webcomponents Documentation (replace with actual link)
+
+
+== 4. Use the Web Component
+
+You can now use your new Web Component in any HTML or JavaScript application:
+
+----html
+<my-react-component></my-react-component>
+----
+
+If you build and publish your component, it can be imported as a script and used in other projects.
+
+== 5. Build and Bundle
+
+Bundle your component using your preferred bundler (e.g., Webpack, Vite, or Rollup). Make sure to output a single JS file that registers the custom element.
+
+Example with Webpack:
+
+- Entry: the file where you call `createReactWebComponent`
+- Output: UMD or IIFE format for easy inclusion
+
+== 6. Advanced Usage
+
+- Pass properties and attributes to your Web Component as you would with any HTML element.
+- Listen for custom events dispatched from your React component.
+
+== Troubleshooting
+
+- Ensure all peer dependencies (like React and ReactDOM) are available in your bundle or as externals.
+- If you see errors about multiple React versions, check your dependencies and bundler configuration.
+
+== Resources
+
+- https://react.dev/[React Documentation]
+- https://developer.mozilla.org/en-US/docs/Web/Web_Components[Web Components Guide (MDN)]
+- @onecx/react-webcomponents Documentation (replace with actual link)

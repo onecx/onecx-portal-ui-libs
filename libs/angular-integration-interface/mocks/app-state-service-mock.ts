@@ -19,7 +19,14 @@ export function provideAppStateServiceMock() {
 export class AppStateServiceMock {
   globalError$ = new FakeTopic()
   globalLoading$ = new FakeTopic(false)
-  currentMfe$ = new FakeTopic<MfeInfo>({ mountPath: '/', remoteBaseUrl: '.', baseHref: '/', shellName: 'test', appId: 'test', productName: 'test' })
+  currentMfe$ = new FakeTopic<MfeInfo>({
+    mountPath: '/',
+    remoteBaseUrl: '.',
+    baseHref: '/',
+    shellName: 'test',
+    appId: 'test',
+    productName: 'test',
+  })
   currentPage$ = new FakeTopic<PageInfo | undefined>(undefined)
   currentPortal$ = new FakeTopic<Workspace>({
     baseUrl: '/',

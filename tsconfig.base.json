@@ -37,6 +37,10 @@
       "@onecx/portal-integration-angular/mocks": ["libs/portal-integration-angular/mocks/index.ts"],
       "@onecx/portal-integration-angular/testing": ["libs/portal-integration-angular/testing/index.ts"],
       "@onecx/portal-layout-styles": ["libs/portal-layout-styles/src/index.ts"],
+      "@onecx/react-auth": ["libs/react-auth/src/index.ts"],
+      "@onecx/react-integration-interface": ["libs/react-integration-interface/src/index.ts"],
+      "@onecx/react-remote-components": ["libs/react-remote-components/src/index.ts"],
+      "@onecx/react-webcomponents": ["libs/react-webcomponents/src/index.ts"],
       "@onecx/release": ["tools/release/src/index.ts"],
       "@onecx/shell-core": ["libs/shell-core/src/index.ts"],
       "@onecx/standalone-shell": ["libs/standalone-shell/src/index.ts"]
