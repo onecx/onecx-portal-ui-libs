@@ -161,9 +161,9 @@ describe('Topic', () => {
   it('should have no values if publish is not awaited', () => {
     const original = window.postMessage
     window.postMessage = (m: any) => {
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       listeners.forEach((l) => {
         // Set timeout to simulate async behavior
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         setTimeout(() => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }), 0)
       })
     }
@@ -189,9 +189,9 @@ describe('Topic', () => {
   it('should have values if publish is awaited', async () => {
     const original = window.postMessage
     window.postMessage = (m: any) => {
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       listeners.forEach((l) => {
         // Set timeout to simulate async behavior
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         setTimeout(() => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }), 0)
       })
     }
@@ -217,9 +217,9 @@ describe('Topic', () => {
   it('should have all values if publish is awaited on first created topic', async () => {
     const original = window.postMessage
     window.postMessage = (m: any) => {
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       listeners.forEach((l) => {
         // Set timeout to simulate async behavior
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         setTimeout(() => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }), 0)
       })
     }

@@ -1,5 +1,4 @@
 import { TopicDataMessage } from './topic-data-message'
-import { TopicMessage } from './topic-message'
 import { TopicMessageType } from './topic-message-type'
 import { TopicResolveMessage } from './topic-resolve-message'
 

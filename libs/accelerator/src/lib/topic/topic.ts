@@ -162,7 +162,7 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
       console.log('Topic', this.name, ':', this.version, 'received message', m.data)
     }
     switch (m.data.type) {
-      case TopicMessageType.TopicNext:
+      case TopicMessageType.TopicNext: {
         if (m.data.name !== this.name || m.data.version !== this.version) {
           break
         }
@@ -189,20 +189,23 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
           )
         }
         break
-      case TopicMessageType.TopicGet:
+      }
+      case TopicMessageType.TopicGet: {
         if (m.data.name === this.name && m.data.version === this.version && this.isInit && this.data.value) {
           window.postMessage(this.data.value, '*')
           m.stopImmediatePropagation()
           m.stopPropagation()
         }
         break
-      case TopicMessageType.TopicResolve:
+      }
+      case TopicMessageType.TopicResolve: {
         const publishPromiseResolver = this.publishPromiseResolver[(<TopicResolveMessage>m.data).resolveId]
         if (publishPromiseResolver) {
           publishPromiseResolver()
           delete this.publishPromiseResolver[(<TopicResolveMessage>m.data).resolveId]
         }
         break
+      }
     }
   }
 }
