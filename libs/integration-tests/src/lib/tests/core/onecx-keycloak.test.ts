@@ -1,6 +1,6 @@
 import { Network, StartedNetwork } from 'testcontainers'
-import { OnecxKeycloakContainer, StartedOnecxKeycloakContainer } from '../containers/core/onecx-keycloak'
-import { OnecxPostgresContainer, StartedOnecxPostgresContainer } from '../containers/core/onecx-postgres'
+import { OnecxKeycloakContainer, StartedOnecxKeycloakContainer } from '../../containers/core/onecx-keycloak'
+import { OnecxPostgresContainer, StartedOnecxPostgresContainer } from '../../containers/core/onecx-postgres'
 import axios from 'axios'
 
 const imagePg = 'docker.io/library/postgres:13.4'
@@ -47,6 +47,12 @@ xdescribe('Default Keycloak Testcontainer', () => {
 
     expect(response.status).toBe(200)
     expect(response.data.issuer).toContain(`/realms/${realm}`)
+  })
+
+  it('should use the correct port', () => {
+    const port = kcContainer.getPort()
+
+    expect(port).toBe(8080)
   })
 
   afterAll(async () => {
