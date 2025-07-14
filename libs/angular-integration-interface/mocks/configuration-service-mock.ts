@@ -3,7 +3,7 @@ import { Config } from '@onecx/integration-interface'
 import { CONFIG_KEY } from '@onecx/angular-integration-interface'
 import { firstValueFrom } from 'rxjs/internal/firstValueFrom'
 import { ConfigurationService } from '@onecx/angular-integration-interface'
-import { FakeTopic } from '@onecx/accelerator'
+import { FakeTopic } from './fake-topic'
 
 export function provideConfigurationServiceMock() {
   return [ConfigurationServiceMock, { provide: ConfigurationService, useExisting: ConfigurationServiceMock }]
