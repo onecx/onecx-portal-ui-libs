@@ -12,6 +12,7 @@ import { TopicDataMessage } from './topic-data-message'
 import { TopicMessage } from './topic-message'
 import { TopicMessageType } from './topic-message-type'
 import { TopicPublisher } from './topic-publisher'
+import { TopicResolveMessage } from './topic-resolve-message'
 
 declare global {
   interface Window {
@@ -153,11 +154,15 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
   }
 
   private onMessage(m: MessageEvent<TopicMessage>): any {
-    if (window['@onecx/accelerator']?.topic?.debug?.includes(this.name) && m.data?.name === this.name && m.data?.version === this.version) {
+    if (
+      window['@onecx/accelerator']?.topic?.debug?.includes(this.name) &&
+      m.data?.name === this.name &&
+      m.data?.version === this.version
+    ) {
       console.log('Topic', this.name, ':', this.version, 'received message', m.data)
     }
     switch (m.data.type) {
-      case TopicMessageType.TopicNext:
+      case TopicMessageType.TopicNext: {
         if (m.data.name !== this.name || m.data.version !== this.version) {
           break
         }
@@ -173,11 +178,6 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
           this.isInit = true
           this.data.next(<TopicDataMessage<T>>m.data)
           this.resolveInitPromise()
-          const publishPromiseResolver = this.publishPromiseResolver[m.data.timestamp]
-          if (publishPromiseResolver) {
-            publishPromiseResolver()
-            delete this.publishPromiseResolver[m.data.timestamp]
-          }
         } else if (
           this.data.value &&
           this.isInit &&
@@ -189,13 +189,23 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
           )
         }
         break
-      case TopicMessageType.TopicGet:
+      }
+      case TopicMessageType.TopicGet: {
         if (m.data.name === this.name && m.data.version === this.version && this.isInit && this.data.value) {
           window.postMessage(this.data.value, '*')
           m.stopImmediatePropagation()
           m.stopPropagation()
         }
         break
+      }
+      case TopicMessageType.TopicResolve: {
+        const publishPromiseResolver = this.publishPromiseResolver[(<TopicResolveMessage>m.data).resolveId]
+        if (publishPromiseResolver) {
+          publishPromiseResolver()
+          delete this.publishPromiseResolver[(<TopicResolveMessage>m.data).resolveId]
+        }
+        break
+      }
     }
   }
 }
