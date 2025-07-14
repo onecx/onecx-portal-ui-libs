@@ -1,7 +1,7 @@
 import { StartedOnecxKeycloakContainer } from '../core/onecx-keycloak'
 import { StartedSvcContainer, SvcContainer } from '../abstract/onecx-svc'
 
-export abstract class IamKcContainer extends SvcContainer {
+export class IamKcContainer extends SvcContainer {
   constructor(image: string, keycloakContainer: StartedOnecxKeycloakContainer) {
     super(image, { keycloakContainer })
     this.withEnvironment({

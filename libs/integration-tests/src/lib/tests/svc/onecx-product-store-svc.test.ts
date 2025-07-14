@@ -1,8 +1,8 @@
-import { POSTGRES, KEYCLOAK, onecxSvcImages } from '../config/env'
+import { POSTGRES, KEYCLOAK, onecxSvcImages } from '../../config/env'
 import { Network, StartedNetwork } from 'testcontainers'
-import { OnecxKeycloakContainer, StartedOnecxKeycloakContainer } from '../containers/core/onecx-keycloak'
-import { OnecxPostgresContainer, StartedOnecxPostgresContainer } from '../containers/core/onecx-postgres'
-import { ProductStoreSvcContainer, StartedProductStoreSvcContainer } from '../containers/svc/onecx-product-store-svc'
+import { OnecxKeycloakContainer, StartedOnecxKeycloakContainer } from '../../containers/core/onecx-keycloak'
+import { OnecxPostgresContainer, StartedOnecxPostgresContainer } from '../../containers/core/onecx-postgres'
+import { ProductStoreSvcContainer, StartedProductStoreSvcContainer } from '../../containers/svc/onecx-product-store-svc'
 import axios from 'axios'
 
 xdescribe('Default workspace-svc Testcontainer', () => {
@@ -32,6 +32,12 @@ xdescribe('Default workspace-svc Testcontainer', () => {
     const response = axios.get(`http://localhost:${port}/q/health`)
 
     expect((await response).status).toBe(200)
+  })
+
+  it('should use the correct port', () => {
+    const port = productStoreSvcContainer.getPort()
+
+    expect(port).toBe(8080)
   })
 
   afterAll(async () => {

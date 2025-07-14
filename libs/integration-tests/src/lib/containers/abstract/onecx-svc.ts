@@ -1,6 +1,7 @@
 import { AbstractStartedContainer, GenericContainer, StartedTestContainer, Wait } from 'testcontainers'
 import { HealthCheck } from 'testcontainers/build/types'
 import { SvcDetails, SvcContainerServices } from '../../model/service.model'
+import { getCommonEnvironmentVariables } from '../../utils/common-env'
 
 export abstract class SvcContainer extends GenericContainer {
   protected details: SvcDetails = {
@@ -76,22 +77,17 @@ export abstract class SvcContainer extends GenericContainer {
       QUARKUS_DATASOURCE_USERNAME: this.details.databaseUsername,
       QUARKUS_DATASOURCE_PASSWORD: this.details.databaseUsername,
       QUARKUS_DATASOURCE_JDBC_URL: `jdbc:postgresql://${this.services.databaseContainer?.getNetworkAliases()[0]}:${this.services.databaseContainer?.getPort()}/${this.details.databaseUsername}?sslmode=disable`,
-      KC_REALM: `${this.services.keycloakContainer.getRealm()}`,
-      QUARKUS_OIDC_AUTH_SERVER_URL: `http://${this.services.keycloakContainer.getNetworkAliases()[0]}:${this.services.keycloakContainer.getPort()}/realms/${this.services.keycloakContainer.getRealm()}`,
-      QUARKUS_OIDC_TOKEN_ISSUER: `http://${this.services.keycloakContainer.getNetworkAliases()[0]}/realms/${this.services.keycloakContainer.getRealm()}`,
-      TKIT_SECURITY_AUTH_ENABLED: 'false',
-      TKIT_RS_CONTEXT_TENANT_ID_MOCK_ENABLED: 'false',
-      TKIT_LOG_JSON_ENABLED: 'false',
-      TKIT_OIDC_HEALTH_ENABLED: 'false',
       TKIT_DATAIMPORT_ENABLED: 'true',
       ONECX_TENANT_CACHE_ENABLED: 'false',
     })
-    this.withLogConsumer((stream) => {
-      stream.on('data', (line) => console.log(`${this.details.databaseUsername}: `, line))
-      stream.on('err', (line) => console.error(`${this.details.databaseUsername}: `, line))
-      stream.on('end', () => console.log(`${this.details.databaseUsername}: Stream closed`))
-    })
-    this.withWaitStrategy(Wait.forAll([Wait.forHealthCheck(), Wait.forListeningPorts()]))
+      .withEnvironment(getCommonEnvironmentVariables(this.services.keycloakContainer))
+
+      .withLogConsumer((stream) => {
+        stream.on('data', (line) => console.log(`${this.details.databaseUsername}: `, line))
+        stream.on('err', (line) => console.error(`${this.details.databaseUsername}: `, line))
+        stream.on('end', () => console.log(`${this.details.databaseUsername}: Stream closed`))
+      })
+      .withWaitStrategy(Wait.forAll([Wait.forHealthCheck(), Wait.forListeningPorts()]))
     return new StartedSvcContainer(await super.start(), this.details, this.networkAliases, this.port)
   }
 }
