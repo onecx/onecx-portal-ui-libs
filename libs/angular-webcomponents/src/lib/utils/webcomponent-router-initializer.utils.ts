@@ -1,10 +1,9 @@
 import { Location } from '@angular/common'
 import { Router } from '@angular/router'
 import { AppStateService } from '@onecx/angular-integration-interface'
-import { GuardWrapper, wrapGuards } from '@onecx/angular-utils'
 import { firstValueFrom, map } from 'rxjs'
 
-export function initializeRouter(router: Router, appStateService: AppStateService, guardWrapper: GuardWrapper) {
+export function initializeRouter(router: Router, appStateService: AppStateService) {
   return () =>
     firstValueFrom(
       appStateService.currentMfe$.asObservable().pipe(
@@ -18,8 +17,7 @@ export function initializeRouter(router: Router, appStateService: AppStateServic
               (route.redirectTo =
                 route.redirectTo && typeof route.redirectTo === 'string'
                   ? Location.joinWithSlash(mfeInfo.baseHref, route.redirectTo)
-                  : route.redirectTo))
-            wrapGuards(route, guardWrapper)
+                  : route.redirectTo)
           })
           routes.push({
             path: '**',

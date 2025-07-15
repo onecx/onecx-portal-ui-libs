@@ -24,18 +24,13 @@ type RouteGuards = Map<
   }
 >
 
-// TODO: Make them simple and serializable
-type CanActivateGuardResultRequest = { route: ActivatedRouteSnapshot; state: RouterStateSnapshot }
+type CanActivateGuardResultRequest = {
+  url: string
+}
 
 type CanActivateGuardResultResponse = boolean
 
-// TODO: Make them simple and serializable
-type CanDeactivateGuardResultRequest = {
-  component: any
-  currentRoute: ActivatedRouteSnapshot
-  currentState: RouterStateSnapshot
-  nextState: RouterStateSnapshot
-}
+type CanDeactivateGuardResultRequest = CanActivateGuardResultRequest
 
 type CanDeactivateGuardResultResponse = boolean
 
@@ -87,6 +82,7 @@ export class GuardWrapper implements CanActivate, CanDeactivate<any>, OnDestroy 
    * Activate guard performing checks for activate guards related to required route. Behavior is dependent on the mode chosen based on the navigation state.
    */
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): MaybeAsync<GuardResult> {
+    console.log('Performing canActivate for', route, state)
     if ('isRouterSync' in state.root && state.root.isRouterSync) {
       return this.preformRouterSyncGuard()
     }
@@ -99,6 +95,9 @@ export class GuardWrapper implements CanActivate, CanDeactivate<any>, OnDestroy 
     }
 
     if (GUARD_CHECK.ACTIVATE in state.root && state.root[GUARD_CHECK.ACTIVATE]) {
+      console.log(
+        'Activate check requested, returning false for activate checks and resolving promise with guards results.'
+      )
       const myGuardsResult = this.executeActivateGuards(route, state, this.combineToBoolean)
       return myGuardsResult.then((result) => {
         const routeUrl = this.getUrlFromSnapshot(route)
@@ -213,6 +212,7 @@ export class GuardWrapper implements CanActivate, CanDeactivate<any>, OnDestroy 
   }
 
   private performScatteredActivateGuard(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+    console.log('Performing scattered activate guard after running my own guards', route, state)
     const myGuardsResult = this.executeActivateGuards(route, state, this.combineToGuardResult)
 
     return myGuardsResult.then((result) => {
@@ -227,7 +227,10 @@ export class GuardWrapper implements CanActivate, CanDeactivate<any>, OnDestroy 
         return result
       }
 
-      return this.activateGuardsGatherer.gather({ route, state }).then((results) => this.combineToBoolean(results))
+      console.log('Will gather activate from others for route', route)
+      return this.activateGuardsGatherer
+        .gather({ url: this.getUrlFromSnapshot(route) })
+        .then((results) => Array.isArray(results) && this.combineToBoolean(results))
     })
   }
 
@@ -257,9 +260,10 @@ export class GuardWrapper implements CanActivate, CanDeactivate<any>, OnDestroy 
         return result
       }
 
+      console.log('Will gather deactivate from others for route', currentRoute)
       return this.deactivateGuardsGatherer
-        .gather({ component, currentRoute, currentState, nextState })
-        .then((results) => this.combineToBoolean(results))
+        .gather({ url: this.getUrlFromSnapshot(currentRoute) })
+        .then((results) => Array.isArray(results) && this.combineToBoolean(results))
     })
   }
 
@@ -273,7 +277,7 @@ export class GuardWrapper implements CanActivate, CanDeactivate<any>, OnDestroy 
   private executeActivateCallback(request: CanActivateGuardResultRequest): Promise<CanActivateGuardResultResponse> {
     console.log('Executing activate callback for request:', request)
     let resolve: (value: CanActivateGuardResultResponse) => void
-    const routeUrl = this.getUrlFromSnapshot(request.route)
+    const routeUrl = request.url
 
     // Fake navigation to request guard check
     this.router.navigateByUrl(routeUrl, {
@@ -291,7 +295,7 @@ export class GuardWrapper implements CanActivate, CanDeactivate<any>, OnDestroy 
   ): Promise<CanDeactivateGuardResultResponse> {
     console.log('Executing deactivate callback for request:', request)
     let resolve: (value: CanDeactivateGuardResultResponse) => void
-    const routeUrl = this.getUrlFromSnapshot(request.currentRoute)
+    const routeUrl = request.url
 
     // Fake navigation to request guard check
     this.router.navigateByUrl(routeUrl, {

@@ -18,6 +18,10 @@ export class Gatherer<Request, Response> {
     this.topic.subscribe((m) => {
       if (!this.isOwnerOfRequest(m) && window['@onecx/accelerator']?.gatherer?.promises) {
         this.logReceivedIfDebug(name, version, m)
+        if (!window['@onecx/accelerator'].gatherer.promises[m.id]) {
+          console.warn('Expected an array of promises to gather for id ', m.id, ' but the id was not present')
+          return
+        }
         let resolve: (value: Response) => void
         window['@onecx/accelerator'].gatherer.promises[m.id].push(
           new Promise((r) => {
