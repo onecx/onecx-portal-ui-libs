@@ -1,4 +1,4 @@
-import { inject, Injectable, OnDestroy } from '@angular/core'
+import { inject, Injectable, Injector, OnDestroy, Type } from '@angular/core'
 import {
   ActivatedRouteSnapshot,
   CanActivate,
@@ -19,8 +19,8 @@ import { isObservable, lastValueFrom } from 'rxjs'
 type RouteGuards = Map<
   Route,
   {
-    activateGuards: Array<CanActivate | CanActivateFn>
-    deactivateGuards: Array<CanDeactivate<any> | CanDeactivateFn<any>>
+    activateGuards: Array<Type<CanActivate> | CanActivateFn>
+    deactivateGuards: Array<Type<CanDeactivate<any>> | CanDeactivateFn<any>>
   }
 >
 
@@ -68,6 +68,7 @@ export class GuardWrapper implements CanActivate, CanDeactivate<any>, OnDestroy 
   private deactivateGuardsChecks = new Map<string, (value: CanDeactivateGuardResultResponse) => void>()
 
   private router = inject(Router)
+  private injector = inject(Injector)
 
   constructor() {
     console.log('GuardWrapper')
@@ -82,19 +83,14 @@ export class GuardWrapper implements CanActivate, CanDeactivate<any>, OnDestroy 
    * Activate guard performing checks for activate guards related to required route. Behavior is dependent on the mode chosen based on the navigation state.
    */
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): MaybeAsync<GuardResult> {
-    console.log('Performing canActivate for', route, state)
-    if ('isRouterSync' in state.root && state.root.isRouterSync) {
+    const navigationState = this.router.getCurrentNavigation()?.extras.state ?? {}
+    console.log('Performing canActivate for', route, state, navigationState)
+
+    if ('isRouterSync' in navigationState && navigationState['isRouterSync']) {
       return this.preformRouterSyncGuard()
     }
 
-    if (GUARD_CHECK.DEACTIVATE in state.root && state.root[GUARD_CHECK.DEACTIVATE]) {
-      console.log('Deactivate check requested, returning true for activate checks.')
-
-      // Important to return true so we move to deactivate checks
-      return true
-    }
-
-    if (GUARD_CHECK.ACTIVATE in state.root && state.root[GUARD_CHECK.ACTIVATE]) {
+    if (GUARD_CHECK.ACTIVATE in navigationState && navigationState[GUARD_CHECK.ACTIVATE]) {
       console.log(
         'Activate check requested, returning false for activate checks and resolving promise with guards results.'
       )
@@ -121,11 +117,21 @@ export class GuardWrapper implements CanActivate, CanDeactivate<any>, OnDestroy 
     currentState: RouterStateSnapshot,
     nextState: RouterStateSnapshot
   ): MaybeAsync<GuardResult> {
-    if ('isRouterSync' in currentState.root && currentState.root.isRouterSync) {
+    const navigationState = this.router.getCurrentNavigation()?.extras.state ?? {}
+    console.log('Performing canDeactivate for', component, currentRoute, currentState, nextState, navigationState)
+
+    if ('isRouterSync' in navigationState && navigationState['isRouterSync']) {
       return this.preformRouterSyncGuard()
     }
 
-    if (GUARD_CHECK.DEACTIVATE in currentState.root && currentState.root[GUARD_CHECK.DEACTIVATE]) {
+    if (GUARD_CHECK.ACTIVATE in navigationState && navigationState[GUARD_CHECK.ACTIVATE]) {
+      console.log('Activate check requested, returning true for deactivate checks.')
+
+      // Important to return true so we move to activate checks
+      return true
+    }
+
+    if (GUARD_CHECK.DEACTIVATE in navigationState && navigationState[GUARD_CHECK.DEACTIVATE]) {
       const myGuardsResult = this.executeDeactivateGuards(
         component,
         currentRoute,
@@ -152,7 +158,7 @@ export class GuardWrapper implements CanActivate, CanDeactivate<any>, OnDestroy 
    * @param route - Route to set activate guards for.
    * @param newGuards - Array of activate guards to be set.
    */
-  setActivateGuards(route: Route, guards: Array<CanActivate | CanActivateFn>): void {
+  setActivateGuards(route: Route, guards: Array<Type<CanActivate> | CanActivateFn>): void {
     this.routeGuards.set(route, {
       activateGuards: guards,
       deactivateGuards: this.routeGuards.get(route)?.deactivateGuards || [],
@@ -164,7 +170,7 @@ export class GuardWrapper implements CanActivate, CanDeactivate<any>, OnDestroy 
    * @param route - Route to set deactivate guards for.
    * @param newGuards - Array of deactivate guards to be set.
    */
-  setDeactivateGuards(route: Route, guards: Array<CanDeactivate<any> | CanDeactivateFn<any>>): void {
+  setDeactivateGuards(route: Route, guards: Array<Type<CanDeactivate<any>> | CanDeactivateFn<any>>): void {
     this.routeGuards.set(route, {
       activateGuards: this.routeGuards.get(route)?.activateGuards || [],
       deactivateGuards: guards,
@@ -175,7 +181,7 @@ export class GuardWrapper implements CanActivate, CanDeactivate<any>, OnDestroy 
    * Get activate guards for a route.
    * @param route - Route to get activate guards for.
    */
-  getActivateGuards(route: Route): Array<CanActivate | CanActivateFn> {
+  getActivateGuards(route: Route): Array<Type<CanActivate> | CanActivateFn> {
     return this.routeGuards.get(route)?.activateGuards || []
   }
 
@@ -183,7 +189,7 @@ export class GuardWrapper implements CanActivate, CanDeactivate<any>, OnDestroy 
    * Get deactivate guards for a route.
    * @param route - Route to get deactivate guards for.
    */
-  getDeactivateGuards(route: Route): Array<CanDeactivate<any> | CanDeactivateFn<any>> {
+  getDeactivateGuards(route: Route): Array<Type<CanDeactivate<any>> | CanDeactivateFn<any>> {
     return this.routeGuards.get(route)?.deactivateGuards || []
   }
 
@@ -192,7 +198,7 @@ export class GuardWrapper implements CanActivate, CanDeactivate<any>, OnDestroy 
    * @param route - Route to add activate guards for.
    * @param newGuards - Array of activate guards to be added.
    */
-  addActivateGuards(route: Route, newGuards: Array<CanActivate | CanActivateFn>): void {
+  addActivateGuards(route: Route, newGuards: Array<Type<CanActivate> | CanActivateFn>): void {
     this.routeGuards.set(route, {
       activateGuards: [...(this.routeGuards.get(route)?.activateGuards || []), ...newGuards],
       deactivateGuards: this.routeGuards.get(route)?.deactivateGuards || [],
@@ -204,7 +210,7 @@ export class GuardWrapper implements CanActivate, CanDeactivate<any>, OnDestroy 
    * @param route - Route to add deactivate guards for.
    * @param newGuards - Array of deactivate guards to be added.
    */
-  addDeactivateGuards(route: Route, newGuards: Array<CanDeactivate<any> | CanDeactivateFn<any>>): void {
+  addDeactivateGuards(route: Route, newGuards: Array<Type<CanDeactivate<any>> | CanDeactivateFn<any>>): void {
     this.routeGuards.set(route, {
       activateGuards: this.routeGuards.get(route)?.activateGuards || [],
       deactivateGuards: [...(this.routeGuards.get(route)?.deactivateGuards || []), ...newGuards],
@@ -283,6 +289,7 @@ export class GuardWrapper implements CanActivate, CanDeactivate<any>, OnDestroy 
     this.router.navigateByUrl(routeUrl, {
       // replaceUrl: true,
       state: { [GUARD_CHECK.ACTIVATE]: true },
+      onSameUrlNavigation: 'reload',
     })
     return new Promise((r) => {
       resolve = r
@@ -301,6 +308,8 @@ export class GuardWrapper implements CanActivate, CanDeactivate<any>, OnDestroy 
     this.router.navigateByUrl(routeUrl, {
       // replaceUrl: true,
       state: { [GUARD_CHECK.DEACTIVATE]: true },
+      // Force navigation
+      onSameUrlNavigation: 'reload',
     })
     return new Promise((r) => {
       resolve = r
@@ -398,7 +407,7 @@ export class GuardWrapper implements CanActivate, CanDeactivate<any>, OnDestroy 
       currentRoute = currentRoute.parent
     }
 
-    return '/' + segments.join('/')
+    return segments.join('/')
   }
 
   private resolveToPromise(maybeAsync: MaybeAsync<GuardResult>): Promise<GuardResult> {
@@ -412,12 +421,14 @@ export class GuardWrapper implements CanActivate, CanDeactivate<any>, OnDestroy 
   }
 
   private mapActivateGuardToFunctionReturningPromise(
-    guard: CanActivate | CanActivateFn
+    guard: Type<CanActivate> | CanActivateFn
   ): (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => Promise<GuardResult> {
-    if (typeof guard === 'function') {
+    if (this.isCanActivateClassBasedGuard(guard)) {
+      // guard for CanActivate is not a guard instance but class definition
+      const guardInstance = this.injector.get(guard)
+      return (route, state) => this.resolveToPromise(guardInstance.canActivate(route, state))
+    } else if (typeof guard === 'function') {
       return (route, state) => this.resolveToPromise(guard(route, state))
-    } else if (guard.canActivate) {
-      return (route, state) => this.resolveToPromise(guard.canActivate(route, state))
     }
 
     console.warn('Guard does not implement canActivate:', guard)
@@ -425,22 +436,34 @@ export class GuardWrapper implements CanActivate, CanDeactivate<any>, OnDestroy 
   }
 
   private mapDeactivateGuardToFunctionReturningPromise(
-    guard: CanDeactivate<any> | CanDeactivateFn<any>
+    guard: Type<CanDeactivate<any>> | CanDeactivateFn<any>
   ): (
     component: any,
     currentRoute: ActivatedRouteSnapshot,
     currentState: RouterStateSnapshot,
     nextState: RouterStateSnapshot
   ) => Promise<GuardResult> {
-    if (typeof guard === 'function') {
+    if (this.isCanDeactivateClassBasedGuard(guard)) {
+      // guard for CanDeactivate is not a guard instance but class definition
+      const guardInstance = this.injector.get(guard)
+      return (component, currentRoute, currentState, nextState) =>
+        this.resolveToPromise(guardInstance.canDeactivate(component, currentRoute, currentState, nextState))
+    } else if (typeof guard === 'function') {
       return (component, currentRoute, currentState, nextState) =>
         this.resolveToPromise(guard(component, currentRoute, currentState, nextState))
-    } else if (guard.canDeactivate) {
-      return (component, currentRoute, currentState, nextState) =>
-        this.resolveToPromise(guard.canDeactivate(component, currentRoute, currentState, nextState))
     }
 
     console.warn('Guard does not implement canDeactivate:', guard)
     return () => Promise.resolve(true)
+  }
+
+  private isCanActivateClassBasedGuard(guard: Type<CanActivate> | CanActivateFn): guard is Type<CanActivate> {
+    return typeof guard === 'function' && guard.prototype && 'canActivate' in guard.prototype
+  }
+
+  private isCanDeactivateClassBasedGuard(
+    guard: Type<CanDeactivate<any>> | CanDeactivateFn<any>
+  ): guard is Type<CanDeactivate<any>> {
+    return typeof guard === 'function' && guard.prototype && 'canDeactivate' in guard.prototype
   }
 }

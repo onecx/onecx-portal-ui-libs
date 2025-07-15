@@ -1,3 +1,4 @@
+import { version } from 'os'
 import { Topic } from '../topic/topic'
 
 window['@onecx/accelerator'] ??= {}
@@ -57,11 +58,15 @@ export class Gatherer<Request, Response> {
     // Publish the request to the topic.
     // This will trigger the callback for all instances of gatherer.
     // Await is crucial here to ensure that promises are created before awaiting them.
-    await this.topic.publish({ id, request })
+    const message = { id, request }
+    await this.topic.publish(message)
     const promises = (window['@onecx/accelerator']?.gatherer?.promises?.[id] ?? []) as Promise<Response>[]
     delete window['@onecx/accelerator'].gatherer.promises[id]
     this.ownIds.delete(id)
-    return Promise.all(promises)
+    return Promise.all(promises).then((v) => {
+      console.log('Finished gathering responses', v)
+      return v
+    })
   }
 
   private logReceivedIfDebug(name: string, version: number, m: { id: number; request: Request }) {
