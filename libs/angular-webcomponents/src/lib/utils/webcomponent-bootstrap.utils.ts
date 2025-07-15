@@ -19,7 +19,7 @@ import { EventsTopic, CurrentLocationTopicPayload, TopicEventType } from '@onecx
 import { Observable, Subscription, filter } from 'rxjs'
 import { ShellCapabilityService, Capability } from '@onecx/angular-integration-interface'
 import { AppStateService } from '@onecx/angular-integration-interface'
-import { dataNoPortalLayoutStylesKey } from '@onecx/angular-utils'
+import { dataNoPortalLayoutStylesKey, GuardWrapper, wrapGuards } from '@onecx/angular-utils'
 
 /**
  * Implementation inspired by @angular-architects/module-federation-plugin https://github.com/angular-architects/module-federation-plugin/blob/main/libs/mf-tools/src/lib/web-components/bootstrap-utils.ts
@@ -186,6 +186,7 @@ function connectMicroFrontendRouter(
 ): Subscription | null {
   const router = injector.get(Router, null)
   const appStateService = injector.get(AppStateService, null)
+  const guardWrapper = injector.get(GuardWrapper)
   if (!router) {
     if (warnOnMissingRouter) {
       console.warn('No router to connect found')
@@ -198,13 +199,14 @@ function connectMicroFrontendRouter(
     return null
   }
 
-  return connectRouter(router, appStateService, eventsTopic)
+  return connectRouter(router, appStateService, eventsTopic, guardWrapper)
 }
 
 function connectRouter(
   router: Router,
   appStateService: AppStateService,
-  eventsTopic: EventsTopic | undefined
+  eventsTopic: EventsTopic | undefined,
+  guardWrapper: GuardWrapper
 ): Subscription {
   const initialUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}${location.hash}`
   router.navigateByUrl(initialUrl, {
@@ -220,11 +222,19 @@ function connectRouter(
   return observable.subscribe(() => {
     const routerUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}${location.hash}`
     if (routerUrl !== lastUrl) {
+      ensureRouterGuardsWrapped(router, guardWrapper)
       lastUrl = routerUrl
       router.navigateByUrl(routerUrl, {
         replaceUrl: true,
         state: { isRouterSync: true },
       })
     }
+  })
+}
+
+function ensureRouterGuardsWrapped(router: Router, guardWrapper: GuardWrapper): void {
+  const routes = router.config
+  routes.forEach((route) => {
+    wrapGuards(route, guardWrapper)
   })
 }
