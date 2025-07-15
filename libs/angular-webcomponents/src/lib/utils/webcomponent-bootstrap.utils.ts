@@ -215,6 +215,8 @@ function connectRouter(
     replaceUrl: true,
     state: { isRouterSync: true },
   })
+  // TODO: What if we are trying to sync url that is guarded?
+  ensureRouterGuardsWrapped(router, guardWrapper)
   let lastUrl = initialUrl
   let observable: Observable<TopicEventType | CurrentLocationTopicPayload> =
     appStateService.currentLocation$.asObservable()
@@ -224,6 +226,7 @@ function connectRouter(
   return observable.subscribe(() => {
     const routerUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}${location.hash}`
     if (routerUrl !== lastUrl) {
+      // Make sure that all routes (even lazy-loaded) are wrapped
       ensureRouterGuardsWrapped(router, guardWrapper)
       lastUrl = routerUrl
       router.navigateByUrl(routerUrl, {

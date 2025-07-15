@@ -5,6 +5,8 @@ export function wrapGuards(route: Route, guardWrapper: GuardWrapper) {
   console.log('wrapGuards', route, route.canActivate, route.canDeactivate)
   wrapActivateGuards(route, guardWrapper)
   wrapDeactivateGuards(route, guardWrapper)
+
+  forceGuardRun(route)
 }
 
 function wrapActivateGuards(route: Route, guardWrapper: GuardWrapper): void {
@@ -39,6 +41,10 @@ function wrapDeactivateGuards(route: Route, guardWrapper: GuardWrapper): void {
     )
     route.canDeactivate = [GuardWrapper]
   }
+}
+
+function forceGuardRun(route: Route) {
+  route.runGuardsAndResolvers = 'always'
 }
 
 function addActivateGuards(route: Route, wrapper: GuardWrapper, guards: Array<any>) {
