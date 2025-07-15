@@ -31,7 +31,7 @@ export type EntrypointType = 'microfrontend' | 'component'
 
 export interface AppOptions {
   /**
-   * @deprecated Portal Layout Styles is not available anymore.
+   * @deprecated Don't provide anymore since portal layout styles is not available anymore. Providing the value will not change the behavior.
    */
   usePortalLayoutStyles?: boolean
 }
