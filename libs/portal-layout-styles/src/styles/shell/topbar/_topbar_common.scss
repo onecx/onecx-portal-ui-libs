@@ -17,7 +17,7 @@
   }
 
   .layout-topbar-left {
-    min-width: 10rem;
+    width: 10rem;
 
     &.vertical-menu {
       flex: 0 0 var(--menu-wrapper-width);
@@ -58,7 +58,7 @@
     align-items: center;
     justify-content: space-between;
     row-gap: 0;
-    margin-left: 1.5rem; /* distance to chevron switcher */
+    /* margin-left: 1.5rem;  distance to chevron switcher */
     height: 100%;
     min-width: 0;
 

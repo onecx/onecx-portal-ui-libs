@@ -12,7 +12,7 @@
           dataType: 'logo',
           themeName: theme.name,
           imageUrl: theme.logoUrl,
-          imageStyleClass: 'max-h-3rem max-w-11rem',
+          imageStyleClass: 'max-h-3rem max-w-9rem',
           logEnabled: false,
           logPrefix: 'header left logo'
         }"
@@ -29,7 +29,11 @@
       tooltipPosition="top"
       tooltipEvent="hover"
     >
-      <i class="pi pi-chevron-right"></i>
+      <i
+        id="ocx_vertical_menu_action_toggle_icon"
+        class="pi"
+        [ngClass]="'pi-chevron-' + (isVerticalMenuHidden ? 'right' : 'left')"
+      ></i>
     </a>
   </div>
 
