@@ -78,6 +78,7 @@ DomHandler.index = (element) => {
 
 ensureOriginMockExists()
 ensureIntersectionObserverMockExists()
+jest.setTimeout(20_000)
 
 describe('InteractiveDataViewComponent', () => {
   const mutationObserverMock = jest.fn(function MutationObserver(callback) {

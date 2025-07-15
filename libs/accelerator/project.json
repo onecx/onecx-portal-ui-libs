@@ -63,10 +63,7 @@
       }
     },
     "release": {
-      "executor": "nx-release:build-update-publish",
-      "options": {
-        "libName": "accelerator"
-      }
+      "executor": "@onecx/release:update-build-publish"
     }
   },
   "tags": []
