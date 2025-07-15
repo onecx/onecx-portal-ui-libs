@@ -1,6 +1,6 @@
 {
   "name": "@onecx/nx-migration-utils",
-  "version": "6.0.0-rc.18",
+  "version": "6.0.0-rc.19",
   "license": "Apache-2.0",
   "peerDependencies": {
     "node-html-parser": "^7.0.1",

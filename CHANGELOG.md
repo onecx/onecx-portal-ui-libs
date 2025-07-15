@@ -1,3 +1,15 @@
+## [6.0.0-rc.19](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.18...v6.0.0-rc.19) (2025-07-15)
+
+### Features
+
+* migrations for removed angular-intergation-interface content ([#810](https://github.com/onecx/onecx-portal-ui-libs/issues/810)) ([72ef247](https://github.com/onecx/onecx-portal-ui-libs/commit/72ef2479a8a24d368a8c0d3ef814d33d07f6bcbc))
+* migrations for removed ngrx-accelerator functions ([#801](https://github.com/onecx/onecx-portal-ui-libs/issues/801)) ([96236fd](https://github.com/onecx/onecx-portal-ui-libs/commit/96236fd6474aec70be3127b80e62511abecf1ced))
+* normalize keys utils for themes ([#808](https://github.com/onecx/onecx-portal-ui-libs/issues/808)) ([445b4f0](https://github.com/onecx/onecx-portal-ui-libs/commit/445b4f0eb7e9c4b9fe0ee2f3c36efc0bcf7e17c2))
+
+### Bug Fixes
+
+* topic publish await v5 ([#815](https://github.com/onecx/onecx-portal-ui-libs/issues/815)) ([#816](https://github.com/onecx/onecx-portal-ui-libs/issues/816)) ([719d153](https://github.com/onecx/onecx-portal-ui-libs/commit/719d15355e590f59afe2f3eaf313fb6c767182dd))
+
 ## [6.0.0-rc.18](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.17...v6.0.0-rc.18) (2025-07-09)
 
 ### Features
