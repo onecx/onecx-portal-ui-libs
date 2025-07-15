@@ -87,7 +87,7 @@ function createEntrypoint(
   elementName: string,
   injector: Injector,
   entrypointType: EntrypointType,
-  options?: AppOptions
+  _?: AppOptions
 ) {
   let sub: Subscription | null
   const capabilityService = new ShellCapabilityService()
