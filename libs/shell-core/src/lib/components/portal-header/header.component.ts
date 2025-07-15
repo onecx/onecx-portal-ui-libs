@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core'
+import { Component, EventEmitter, Input, Output } from '@angular/core'
 import { animate, style, transition, trigger } from '@angular/animations'
 import { UntilDestroy } from '@ngneat/until-destroy'
 import { Observable } from 'rxjs'
@@ -27,6 +27,7 @@ export class HeaderComponent {
   @Input() homeNavUrl = '/'
   @Input() homeNavTitle = 'Home'
   @Input() isHorizontalMenu = false
+  @Input() isStaticMenuVisible = false
   @Output() menuButtonClick: EventEmitter<any> = new EventEmitter()
 
   // slot configuration: get theme logo
@@ -35,7 +36,6 @@ export class HeaderComponent {
   public currentTheme$: Observable<Theme>
   public logoLoadingEmitter = new EventEmitter<boolean>()
   public themeLogoLoadingFailed = false
-  public isVerticalMenuHidden = this.isHorizontalMenu
 
   constructor(
     private readonly themeService: ThemeService,
@@ -50,21 +50,5 @@ export class HeaderComponent {
 
   onMenuButtonClick(e: Event) {
     this.menuButtonClick.emit(e)
-    this.isVerticalMenuHidden = !this.isVerticalMenuHidden
-
-    // get content child ...
-    // @ContentChild
-    // @ViewChild
   }
-
-  @ViewChild('#ocx_vertical_menu_wrapper', { read: ElementRef, static: true })
-  ocx_vertical_menu_wrapper?: ElementRef
-
-  /*
-  @ContentChild('additionalToolbarContent')
-  additionalToolbarContent: TemplateRef<any> | undefined
-  get _additionalToolbarContent(): TemplateRef<any> | undefined {
-    return this.additionalToolbarContent
-  }
-  */
 }
