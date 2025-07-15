@@ -12,7 +12,9 @@
     "@onecx/integration-interface": "^6.0.0-rc.19",
     "@onecx/angular-auth": "^6.0.0-rc.19",
     "@onecx/nx-migration-utils": "^6.0.0-rc.19",
-    "@nx/devkit": "^20.3.0"
+    "@nx/devkit": "^20.3.0",
+    "@ngx-translate/core": "^16.0.0",
+    "primeng": "^19.1.0"
   },
   "dependencies": {},
   "publishConfig": {
