@@ -1,13 +1,26 @@
 import { AfterContentInit, Component, ElementRef, Input, inject } from '@angular/core'
+import { Message, PortalMessageService } from '@onecx/angular-integration-interface'
+import { MessageService } from 'primeng/api'
 
 @Component({
   standalone: false,
   selector: 'ocx-standalone-shell-viewport',
-  template: `<ng-content><router-outlet></router-outlet></ng-content>`,
+  template: `
+    <ng-content>
+      <router-outlet></router-outlet>
+      <p-toast [style]="{ 'word-break': 'break-word' }"></p-toast>
+    </ng-content>
+  `,
   styleUrls: ['./standalone-shell-viewport.component.scss'],
 })
 export class StandaloneShellViewportComponent implements AfterContentInit {
   private el = inject(ElementRef)
+  private messageService = inject(MessageService)
+  private portalMessageService = inject(PortalMessageService)
+
+  constructor() {
+    this.portalMessageService.message$.subscribe((message: Message) => this.messageService.add(message))
+  }
 
   ngAfterContentInit(): void {
     if (!this.isRouterDefined()) {
