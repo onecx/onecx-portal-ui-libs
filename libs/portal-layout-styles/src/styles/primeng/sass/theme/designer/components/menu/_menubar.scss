@@ -92,7 +92,7 @@
   }
 }
 
-@media screen and (max-width: 960px) {
+@media screen and (max-width: --mobile-break-point) {
   .p-menubar {
     position: relative;
 
