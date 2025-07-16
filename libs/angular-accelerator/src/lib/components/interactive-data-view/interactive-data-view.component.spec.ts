@@ -79,7 +79,8 @@ jest.setTimeout(20_000)
 
 jest.setTimeout(20_000)
 
-// TODO:
+// Tests are disabled because of very high flakiness
+// TODO: Remove flakiness and enable the tests
 xdescribe('InteractiveDataViewComponent', () => {
   const mutationObserverMock = jest.fn(function MutationObserver(callback) {
     this.observe = jest.fn()
