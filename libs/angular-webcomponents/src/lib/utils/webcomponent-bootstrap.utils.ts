@@ -29,6 +29,13 @@ import { AppStateService } from '@onecx/angular-integration-interface'
 export type AppType = 'shell' | 'microfrontend'
 export type EntrypointType = 'microfrontend' | 'component'
 
+export interface AppOptions {
+  /**
+   * @deprecated Don't provide anymore since portal layout styles is not available anymore. Providing the value will not change the behavior.
+   */
+  usePortalLayoutStyles?: boolean
+}
+
 export function bootstrapModule<M>(module: Type<M>, appType: AppType, production: boolean): Promise<NgModuleRef<M>> {
   return cachePlatform(production)
     .bootstrapModule(module, {
@@ -46,7 +53,8 @@ export async function bootstrapRemoteComponent(
   component: Type<any>,
   elementName: string,
   production: boolean,
-  providers: (Provider | EnvironmentProviders)[]
+  providers: (Provider | EnvironmentProviders)[],
+  options?: AppOptions
 ): Promise<void> {
   const app = await createApplication({
     providers: [
@@ -62,18 +70,24 @@ export async function bootstrapRemoteComponent(
 
   cachePlatform(production)
   adaptRemoteComponentRoutes(app.injector)
-  createEntrypoint(component, elementName, app.injector, 'component')
+  createEntrypoint(component, elementName, app.injector, 'component', options)
 }
 
-export function createAppEntrypoint(component: Type<any>, elementName: string, injector: Injector) {
-  createEntrypoint(component, elementName, injector, 'microfrontend')
+export function createAppEntrypoint(
+  component: Type<any>,
+  elementName: string,
+  injector: Injector,
+  options?: AppOptions
+) {
+  createEntrypoint(component, elementName, injector, 'microfrontend', options)
 }
 
 function createEntrypoint(
   component: Type<any>,
   elementName: string,
   injector: Injector,
-  entrypointType: EntrypointType
+  entrypointType: EntrypointType,
+  _?: AppOptions
 ) {
   let sub: Subscription | null
   const capabilityService = new ShellCapabilityService()

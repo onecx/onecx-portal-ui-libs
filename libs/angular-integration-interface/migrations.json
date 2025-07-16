@@ -11,6 +11,18 @@
       "version": "6.0.0",
       "description": "Removes all occurrences of addInitializeModuleGuard.",
       "factory": "migrations/v6/remove-add-initialize-module-guard"
+    },
+    "replace-provide-app-service-mock": {
+      "cli": "nx",
+      "version": "6.0.0",
+      "description": "Detects and replaces all occurrences of provideAppServiceMock with provideAppStateServiceMock.",
+      "factory": "migrations/v6/replace-provide-app-service-mock"
+    },
+    "remove-auth-service": {
+      "cli": "nx",
+      "version": "6.0.0",
+      "description": "Removes all imports of IAuthService and AUTH_SERVICE and warns for usage.",
+      "factory": "migrations/v6/remove-auth-service"
     }
   },
   "packageJsonUpdates": {

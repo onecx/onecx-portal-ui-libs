@@ -55,10 +55,7 @@
       }
     },
     "release": {
-      "executor": "nx-release:build-update-publish",
-      "options": {
-        "libName": "angular-standalone-shell"
-      }
+      "executor": "@onecx/release:update-build-publish"
     }
   }
 }

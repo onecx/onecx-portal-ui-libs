@@ -1,6 +1,6 @@
 {
   "name": "@onecx/angular-standalone-shell",
-  "version": "6.0.0-rc.16",
+  "version": "6.0.0-rc.20",
   "license": "Apache-2.0",
   "peerDependencies": {
     "@angular/common": "^19.0.0",

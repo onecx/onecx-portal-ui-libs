@@ -1,4 +1,5 @@
 import { createPalette, standardColorAdjustment } from '../utils/create-color-palette'
+import { normalizeKeys } from '../utils/normalize-preset-keys.utils'
 
 interface ThemeVariables {
   [key: string]: {
@@ -13,7 +14,7 @@ export default class ThemeConfig {
 
   getConfig() {
     const primaryColor = (this.themeVariables as any)['general']['primaryColor']
-    return {
+    return normalizeKeys({
       semantic: {
         extend: {
           onecx: {
@@ -34,7 +35,7 @@ export default class ThemeConfig {
           },
         },
       },
-    }
+    })
   }
 
   private transformVariablesToCamelCase(themeVariables: ThemeVariables) {

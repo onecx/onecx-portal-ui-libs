@@ -37,8 +37,8 @@ export default {
         SkeletonModule,
         StorybookTranslateModule,
         StorybookBreadcrumbModule.init([
-          { label: 'Level 1', routerLink: ['/something'] },
-          { label: 'Level 2', url: '/' },
+          { labelKey: 'Level 1', routerLink: ['/something'] },
+          { labelKey: 'Level 2', url: '/' },
         ]),
         TooltipModule,
       ],
@@ -117,7 +117,7 @@ const demoFields: ObjectDetailItem[] = [
   {
     label: 'Venue',
     value: 'AIE Munich ',
-    tooltip: 'AIE Munich',
+    valueTooltip: 'AIE Munich',
     labelTooltip: 'Label Tooltip',
     actionItemIcon: PrimeIcons.COPY,
     actionItemTooltip: 'Copy to clipboard',

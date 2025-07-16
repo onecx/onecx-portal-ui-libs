@@ -1,10 +1,10 @@
 import { ContentContainerComponentHarness } from '@angular/cdk/testing'
 import { DivHarness, PButtonHarness } from '@onecx/angular-testing'
 import { PSelectHarness } from '@onecx/angular-testing'
-import { CustomGroupColumnSelectorHarness } from '.'
 import { DataLayoutSelectionHarness } from './data-layout-selection.harness'
 import { DataViewHarness } from './data-view.harness'
 import { SlotHarness } from './slot.harness'
+import { CustomGroupColumnSelectorHarness } from './custom-group-column-selector.harness'
 
 export class InteractiveDataViewHarness extends ContentContainerComponentHarness {
   static hostSelector = 'ocx-interactive-data-view'

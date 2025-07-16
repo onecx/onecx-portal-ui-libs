@@ -13,6 +13,8 @@ export * from './lib/utils/scope.utils'
 export * from './lib/utils/styles'
 export * from './lib/utils/portal-api-configuration.utils'
 export * from './lib/utils/provide-connection-service'
+export * from './lib/utils/normalize-preset-keys.utils'
+export * from './lib/utils/remote-component-translation-path-factory.utils'
 
 // Model
 export * from './lib/model/injection-tokens'
