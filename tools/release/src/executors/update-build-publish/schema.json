@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "version": 2,
+  "title": "Update Build Publish Executor",
+  "description": "Executor for updating the package version, building and publishing the library.",
+  "type": "object",
+  "properties": {
+    "buildTarget": {
+      "type": "string",
+      "description": "The NX target that builds the library. Defaults to 'build'.",
+      "default": "build"
+    }
+  },
+  "required": []
+}

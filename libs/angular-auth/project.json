@@ -7,14 +7,10 @@
   "projectType": "library",
   "targets": {
     "build-migrations": {
-      "dependsOn": [
-        "build"
-      ],
+      "dependsOn": ["build"],
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "tsc -p libs/angular-auth/migrations/tsconfig.migrations.json"
-        ]
+        "commands": ["tsc -p libs/angular-auth/migrations/tsconfig.migrations.json"]
       }
     },
     "build": {
@@ -59,10 +55,7 @@
       }
     },
     "release": {
-      "executor": "nx-release:build-update-publish",
-      "options": {
-        "libName": "angular-auth"
-      }
+      "executor": "@onecx/release:update-build-publish"
     }
   }
 }

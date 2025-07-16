@@ -59,10 +59,7 @@
       }
     },
     "release": {
-      "executor": "nx-release:build-update-publish",
-      "options": {
-        "libName": "angular-remote-components"
-      }
+      "executor": "@onecx/release:update-build-publish"
     }
   }
 }
