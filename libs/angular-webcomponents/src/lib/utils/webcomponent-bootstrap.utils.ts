@@ -20,7 +20,7 @@ import { EventsTopic, CurrentLocationTopicPayload, TopicEventType, EventType } f
 import { Observable, Subscription, filter } from 'rxjs'
 import { ShellCapabilityService, Capability } from '@onecx/angular-integration-interface'
 import { AppStateService } from '@onecx/angular-integration-interface'
-import { dataNoPortalLayoutStylesKey, GuardWrapper, wrapGuards } from '@onecx/angular-utils'
+import { dataNoPortalLayoutStylesKey, GuardsGatherer, wrapGuards } from '@onecx/angular-utils'
 
 /**
  * Implementation inspired by @angular-architects/module-federation-plugin https://github.com/angular-architects/module-federation-plugin/blob/main/libs/mf-tools/src/lib/web-components/bootstrap-utils.ts
@@ -94,6 +94,8 @@ function createEntrypoint(
   const currentLocationCapabilityAvailable = capabilityService.hasCapability(Capability.CURRENT_LOCATION_TOPIC)
   const eventsTopic = currentLocationCapabilityAvailable ? undefined : new EventsTopic()
   const originalNgInit = component.prototype.ngOnInit
+  const guardsGatherer = injector.get(GuardsGatherer)
+
   component.prototype.ngOnInit = function () {
     sub = connectMicroFrontendRouter(injector, entrypointType === 'microfrontend', eventsTopic)
     if (originalNgInit !== undefined) {
@@ -105,6 +107,9 @@ function createEntrypoint(
     sub?.unsubscribe()
     if (currentLocationCapabilityAvailable && eventsTopic) {
       eventsTopic.destroy()
+    }
+    if (guardsGatherer) {
+      guardsGatherer.destroy()
     }
     if (originalNgDestroy !== undefined) {
       originalNgDestroy.call(this)
@@ -188,7 +193,6 @@ function connectMicroFrontendRouter(
 ): Subscription | null {
   const router = injector.get(Router, null)
   const appStateService = injector.get(AppStateService, null)
-  const guardWrapper = injector.get(GuardWrapper)
   if (!router) {
     if (warnOnMissingRouter) {
       console.warn('No router to connect found')
@@ -201,14 +205,13 @@ function connectMicroFrontendRouter(
     return null
   }
 
-  return connectRouter(router, appStateService, eventsTopic, guardWrapper)
+  return connectRouter(router, appStateService, eventsTopic)
 }
 
 function connectRouter(
   router: Router,
   appStateService: AppStateService,
-  eventsTopic: EventsTopic | undefined,
-  guardWrapper: GuardWrapper
+  eventsTopic: EventsTopic | undefined
 ): Subscription {
   const initialUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}${location.hash}`
   router.navigateByUrl(initialUrl, {
@@ -216,7 +219,7 @@ function connectRouter(
     state: { isRouterSync: true },
   })
   // TODO: What if we are trying to sync url that is guarded?
-  ensureRouterGuardsWrapped(router, guardWrapper)
+  ensureRouterGuardsWrapped(router)
   let lastUrl = initialUrl
   let observable: Observable<TopicEventType | CurrentLocationTopicPayload> =
     appStateService.currentLocation$.asObservable()
@@ -227,7 +230,7 @@ function connectRouter(
     const routerUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}${location.hash}`
     if (routerUrl !== lastUrl) {
       // Make sure that all routes (even lazy-loaded) are wrapped
-      ensureRouterGuardsWrapped(router, guardWrapper)
+      // ensureRouterGuardsWrapped(router)
       lastUrl = routerUrl
       router.navigateByUrl(routerUrl, {
         replaceUrl: true,
@@ -237,9 +240,9 @@ function connectRouter(
   })
 }
 
-function ensureRouterGuardsWrapped(router: Router, guardWrapper: GuardWrapper): void {
+function ensureRouterGuardsWrapped(router: Router): void {
   const routes = router.config
   routes.forEach((route) => {
-    wrapGuards(route, guardWrapper)
+    wrapGuards(route)
   })
 }
