@@ -1,2 +1,5 @@
-export * from './guard-wrapper'
+export * from './guards-wrapper'
+export * from './activate-guards-wrapper'
+export * from './deactivate-guards-wrapper'
+export * from './guards-gatherer'
 export * from './wrap-guards.utils'
