@@ -27,9 +27,9 @@ export class HeaderComponent {
   @Input() homeNavUrl = '/'
   @Input() homeNavTitle = 'Home'
   @Input() isHorizontalMenu = false
+  @Input() isStaticMenuVisible = false
   @Output() menuButtonClick: EventEmitter<any> = new EventEmitter()
 
-  menuExpanded = false
   // slot configuration: get theme logo
   public slotName = 'onecx-theme-data'
   public isComponentDefined$: Observable<boolean> // check a component was assigned
