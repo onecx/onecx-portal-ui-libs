@@ -4,22 +4,22 @@
     [ngClass]="{'vertical-menu': !isHorizontalMenu}"
   >
     <!-- LOGO -->
-    <ng-container *ngIf="currentTheme$ | async as theme">
-      <ocx-slot
-        *ngIf="isComponentDefined$ | async"
-        [name]="slotName"
-        [inputs]="{
-          dataType: 'logo',
-          themeName: theme.name,
-          imageUrl: theme.logoUrl,
-          imageStyleClass: 'max-h-3rem max-w-11rem',
-          logEnabled: false,
-          logPrefix: 'header left logo'
-        }"
-        [outputs]="{ imageLoadingFailed: logoLoadingEmitter }"
-      ></ocx-slot>
-      <div *ngIf="themeLogoLoadingFailed"><!-- portal logo --></div>
-    </ng-container>
+    @if (currentTheme$ | async; as theme) { @if (isComponentDefined$ | async) {
+    <ocx-slot
+      [name]="slotName"
+      [inputs]="{
+            dataType: 'logo',
+            themeName: theme.name,
+            imageUrl: theme.logoUrl,
+            imageStyleClass: 'max-h-3rem max-w-11rem',
+            logEnabled: false,
+            logPrefix: 'header left logo'
+          }"
+      [outputs]="{ imageLoadingFailed: logoLoadingEmitter }"
+    ></ocx-slot>
+    } @if (themeLogoLoadingFailed) {
+    <div><!-- portal logo --></div>
+    } }
     <a
       id="ocx_vertical_menu_action_toggle"
       class="layout-menu-button"
@@ -29,7 +29,10 @@
       tooltipPosition="top"
       tooltipEvent="hover"
     >
-      <i class="pi pi-chevron-right"></i>
+      <i
+        [ngClass]="{'toggle-button-direction': isStaticalMenu && (isComponentDefined$ | async) === true}"
+        class="pi pi-chevron-right"
+      ></i>
     </a>
   </div>
 

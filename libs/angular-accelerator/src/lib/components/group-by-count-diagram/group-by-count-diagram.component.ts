@@ -1,21 +1,24 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
+import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { BehaviorSubject, Observable, combineLatest, map, mergeMap, of } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DiagramColumn } from '../../model/diagram-column'
-import { ObjectUtils } from '../../utils/objectutils'
 import { DiagramData } from '../../model/diagram-data'
 import { DiagramType } from '../../model/diagram-type'
+import { ObjectUtils } from '../../utils/objectutils'
 
 export interface GroupByCountDiagramComponentState {
   activeDiagramType?: DiagramType
 }
 
 @Component({
+  standalone: false,
   selector: 'ocx-group-by-count-diagram',
   templateUrl: './group-by-count-diagram.component.html',
 })
 export class GroupByCountDiagramComponent implements OnInit {
+  private translateService = inject(TranslateService)
+
   @Input() sumKey = 'SEARCH.SUMMARY_TITLE'
   @Input() diagramType = DiagramType.PIE
   /**
@@ -24,16 +27,6 @@ export class GroupByCountDiagramComponent implements OnInit {
    * Setting this property to false will result in using the provided colors only if every data item has one. In the scenario where at least one item does not have a color set, diagram will generate all colors.
    */
   @Input() fillMissingColors = true
-  /**
-   * @deprecated Will be replaced by diagramType
-   */
-  @Input()
-  get type(): DiagramType {
-    return this.diagramType
-  }
-  set type(value: DiagramType) {
-    this.diagramType = value
-  }
   @Input() supportedDiagramTypes: DiagramType[] = []
   private _data$ = new BehaviorSubject<unknown[]>([])
   @Input()
@@ -84,8 +77,6 @@ export class GroupByCountDiagramComponent implements OnInit {
   @Output() dataSelected: EventEmitter<any> = new EventEmitter()
   @Output() diagramTypeChanged: EventEmitter<DiagramType> = new EventEmitter()
   @Output() componentStateChanged: EventEmitter<GroupByCountDiagramComponentState> = new EventEmitter()
-
-  constructor(private translateService: TranslateService) {}
 
   ngOnInit(): void {
     this.diagramData$ = combineLatest([this._data$, this._columnField$, this._columnType$, this._colors$]).pipe(

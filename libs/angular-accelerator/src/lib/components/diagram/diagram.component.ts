@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core'
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { ChartData, ChartOptions } from 'chart.js'
 import * as d3 from 'd3-scale-chromatic'
@@ -47,11 +47,14 @@ const allDiagramTypes: DiagramLayouts[] = [
 ]
 
 @Component({
+  standalone: false,
   selector: 'ocx-diagram',
   templateUrl: './diagram.component.html',
   styleUrls: ['./diagram.component.scss'],
 })
 export class DiagramComponent implements OnInit, OnChanges {
+  private translateService = inject(TranslateService)
+
   @Input() data: DiagramData[] | undefined
   @Input() sumKey = 'OCX_DIAGRAM.SUM'
   /**
@@ -96,8 +99,6 @@ export class DiagramComponent implements OnInit, OnChanges {
   }
   // Changing the colorScale, will change the thematic color appearance of the diagram.
   private colorScale = d3.interpolateCool
-
-  constructor(private translateService: TranslateService) {}
 
   ngOnChanges(): void {
     this.generateChart(this.colorScale, this.colorRangeInfo)

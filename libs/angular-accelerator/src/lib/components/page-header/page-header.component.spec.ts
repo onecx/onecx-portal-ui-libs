@@ -1,22 +1,23 @@
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterTestingModule } from '@angular/router/testing'
-import { provideHttpClientTesting } from '@angular/common/http/testing'
-import { TranslateTestingModule } from 'ngx-translate-testing'
-import { PrimeIcons } from 'primeng/api'
-import { BreadcrumbModule } from 'primeng/breadcrumb'
-import { MenuModule } from 'primeng/menu'
-import { ButtonModule } from 'primeng/button'
-import { UserService } from '@onecx/angular-integration-interface'
 import {
   AppStateServiceMock,
   provideAppStateServiceMock,
   provideUserServiceMock,
+  UserServiceMock,
 } from '@onecx/angular-integration-interface/mocks'
+import { TranslateTestingModule } from 'ngx-translate-testing'
+import { PrimeIcons } from 'primeng/api'
+import { BreadcrumbModule } from 'primeng/breadcrumb'
+import { ButtonModule } from 'primeng/button'
+import { MenuModule } from 'primeng/menu'
+import { TooltipModule } from 'primeng/tooltip'
 import { PageHeaderHarness, TestbedHarnessEnvironment } from '../../../../testing'
-import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
 
 const mockActions: Action[] = [
   {
@@ -51,7 +52,8 @@ describe('PageHeaderComponent', () => {
   let component: PageHeaderComponent
   let fixture: ComponentFixture<PageHeaderComponent>
   let pageHeaderHarness: PageHeaderHarness
-  let userServiceSpy: jest.SpyInstance<boolean, [permissionKey: string | string[]], any>
+  let userServiceSpy: jest.SpyInstance<Promise<boolean>, [permissionKey: string | string[]], any>
+  let userServiceMock: UserServiceMock
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -66,6 +68,7 @@ describe('PageHeaderComponent', () => {
         MenuModule,
         ButtonModule,
         NoopAnimationsModule,
+        TooltipModule,
       ],
       providers: [
         provideUserServiceMock(),
@@ -76,9 +79,9 @@ describe('PageHeaderComponent', () => {
     }).compileComponents()
 
     mockAppStateService = TestBed.inject(AppStateServiceMock)
-    const userService = TestBed.inject(UserService)
-    userService.permissions$.next(['TEST#TEST_PERMISSION'])
-    mockAppStateService.currentPortal$.publish({
+    userServiceMock = TestBed.inject(UserServiceMock)
+    userServiceMock.permissionsTopic$.publish(['TEST#TEST_PERMISSION'])
+    mockAppStateService.currentWorkspace$.publish({
       id: 'i-am-test-portal',
       portalName: 'test',
       workspaceName: 'test',
@@ -92,9 +95,8 @@ describe('PageHeaderComponent', () => {
     component = fixture.componentInstance
     fixture.detectChanges()
     pageHeaderHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, PageHeaderHarness)
-    const userService = fixture.debugElement.injector.get(UserService)
     jest.restoreAllMocks()
-    userServiceSpy = jest.spyOn(userService, 'hasPermission')
+    userServiceSpy = jest.spyOn(userServiceMock, 'hasPermission')
   })
 
   it('should create', async () => {
@@ -109,6 +111,9 @@ describe('PageHeaderComponent', () => {
 
     component.actions = mockActions
 
+    fixture.detectChanges()
+    await fixture.whenStable()
+
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(1)
     expect(await pageHeaderHarness.getElementByAriaLabel('My Test Action')).toBeTruthy()
     await (await pageHeaderHarness.getOverflowActionMenuButton())?.click()
@@ -120,18 +125,65 @@ describe('PageHeaderComponent', () => {
   it("should check permissions and not render button that user isn't allowed to see", async () => {
     userServiceSpy.mockClear()
 
-    userServiceSpy.mockReturnValue(false)
-
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(0)
     expect(await pageHeaderHarness.getOverflowActionMenuButton()).toBeNull()
 
-    component.actions = mockActions
+    component.actions = [
+      {
+        label: 'My Test Action',
+        show: 'always',
+        actionCallback: () => {
+          console.log('My Test Action')
+        },
+        permission: 'TEST#TEST_PERMISSION1',
+      },
+      {
+        label: 'My Test Overflow Action',
+        show: 'asOverflow',
+        actionCallback: () => {
+          console.log('My Test Overflow Action')
+        },
+        permission: 'TEST#TEST_PERMISSION2',
+      },
+    ]
+
+    fixture.detectChanges()
+    await fixture.whenStable()
 
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(0)
     expect(await pageHeaderHarness.getElementByAriaLabel('My Test Action')).toBeFalsy()
     expect(await pageHeaderHarness.getOverFlowMenuItems()).toHaveLength(0)
     expect(await pageHeaderHarness.getElementByAriaLabel('More actions')).toBeFalsy()
-    expect(userServiceSpy).toHaveBeenCalledTimes(3)
+    expect(userServiceSpy).toHaveBeenCalledTimes(2)
+  })
+
+  it('should render inline actions buttons with icons', async () => {
+    component.actions = [
+      {
+        label: 'Action with left icon',
+        show: 'always',
+        actionCallback: () => {
+          console.log('My Test Action')
+        },
+        permission: 'TEST#TEST_PERMISSION',
+        icon: PrimeIcons.LOCK,
+      },
+      {
+        label: 'Action with right icon',
+        show: 'always',
+        actionCallback: () => {
+          console.log('My Test Action')
+        },
+        permission: 'TEST#TEST_PERMISSION',
+        icon: PrimeIcons.LOCK,
+        iconPos: 'right',
+      },
+    ]
+
+    const inlineButtons = await pageHeaderHarness.getInlineActionButtons()
+    expect(inlineButtons).toHaveLength(2)
+    expect(await (await inlineButtons[0].getIconSpan())?.checkHasClass('p-button-icon-left')).toBeTruthy()
+    expect(await (await inlineButtons[1].getIconSpan())?.checkHasClass('p-button-icon-right')).toBeTruthy()
   })
 
   it('should render inline actions buttons with icons', async () => {
@@ -254,6 +306,9 @@ describe('PageHeaderComponent', () => {
   it('should show overflow actions when menu overflow button clicked', async () => {
     component.actions = mockActions
 
+    fixture.detectChanges()
+    await fixture.whenStable()
+
     const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
 
     expect(menuOverflowButton).toBeTruthy()
@@ -270,6 +325,9 @@ describe('PageHeaderComponent', () => {
 
     component.actions = mockActions
 
+    fixture.detectChanges()
+    await fixture.whenStable()
+
     const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
 
     expect(menuOverflowButton).toBeTruthy()
@@ -280,13 +338,16 @@ describe('PageHeaderComponent', () => {
     const enabledActionElement = await menuItems[0].host()
     expect(await enabledActionElement.hasClass('p-disabled')).toBe(false)
     await enabledActionElement.click()
-    expect(console.log).toHaveBeenCalledTimes(1)
+    expect(console.log).toHaveBeenCalledWith('My Test Overflow Action')
   })
 
   it('should disable overflow button when action is disabled', async () => {
     jest.spyOn(console, 'log')
 
     component.actions = mockActions
+
+    fixture.detectChanges()
+    await fixture.whenStable()
 
     const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
     expect(menuOverflowButton).toBeTruthy()
@@ -300,6 +361,6 @@ describe('PageHeaderComponent', () => {
     expect(disabledActionElement).toBeTruthy()
     expect(await (await disabledActionElement.host()).hasClass('p-disabled')).toBe(true)
     await (await disabledActionElement.host()).click()
-    expect(console.log).toHaveBeenCalledTimes(0)
+    expect(console.log).not.toHaveBeenCalledWith('My Test Overflow Disabled Action')
   })
 })

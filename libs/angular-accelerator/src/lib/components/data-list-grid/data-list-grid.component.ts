@@ -5,7 +5,6 @@ import {
   ContentChildren,
   DoCheck,
   EventEmitter,
-  Inject,
   Injector,
   Input,
   LOCALE_ID,
@@ -14,6 +13,7 @@ import {
   QueryList,
   TemplateRef,
   ViewChildren,
+  inject,
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
@@ -21,15 +21,27 @@ import { AppStateService, UserService } from '@onecx/angular-integration-interfa
 import { MfeInfo } from '@onecx/integration-interface'
 import { MenuItem, PrimeIcons, PrimeTemplate } from 'primeng/api'
 import { Menu } from 'primeng/menu'
-import { BehaviorSubject, Observable, combineLatest, debounceTime, first, map, mergeMap } from 'rxjs'
+import {
+  BehaviorSubject,
+  Observable,
+  combineLatest,
+  debounceTime,
+  first,
+  forkJoin,
+  from,
+  map,
+  mergeMap,
+  of,
+  shareReplay,
+} from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
+import { Filter } from '../../model/filter.model'
 import { ObjectUtils } from '../../utils/objectutils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { Row } from '../data-table/data-table.component'
-import { Filter } from '../../model/filter.model'
 
 export type ListGridData = {
   id: string | number
@@ -49,24 +61,29 @@ export interface DataListGridComponentState {
 }
 
 @Component({
+  standalone: false,
   selector: 'ocx-data-list-grid',
   templateUrl: './data-list-grid.component.html',
   styleUrls: ['./data-list-grid.component.scss'],
 })
 export class DataListGridComponent extends DataSortBase implements OnInit, DoCheck, AfterContentInit {
+  private userService = inject(UserService)
+  private router = inject(Router)
+  private injector = inject(Injector)
+  private appStateService = inject(AppStateService)
+
   @Input() titleLineId: string | undefined
   @Input() subtitleLineIds: string[] = []
   @Input() clientSideSorting = true
   @Input() clientSideFiltering = true
   @Input() sortStates: DataSortDirection[] = []
 
-  displayedPageSizes$: Observable<(number | { showAll: string })[]>
-  _pageSizes$ = new BehaviorSubject<(number | { showAll: string })[]>([10, 25, 50])
+  _pageSizes$ = new BehaviorSubject<number[]>([10, 25, 50])
   @Input()
-  get pageSizes(): (number | { showAll: string })[] {
+  get pageSizes(): number[] {
     return this._pageSizes$.getValue()
   }
-  set pageSizes(value: (number | { showAll: string })[]) {
+  set pageSizes(value: number[]) {
     this._pageSizes$.next(value)
   }
 
@@ -78,11 +95,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   }
   set pageSize(value: number | undefined) {
     this._pageSize$.next(value)
-  }
-  _showAllOption$ = new BehaviorSubject<boolean>(false)
-  @Input()
-  set showAllOption(value: boolean) {
-    this._showAllOption$.next(value)
   }
 
   @Input() emptyResultsMessage: string | undefined
@@ -141,7 +153,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return this._data$.getValue()
   }
   set data(value: RowListGridData[]) {
-    !this._data$.getValue().length ?? this.resetPage()
+    if (this._data$.getValue().length) this.resetPage()
     this._originalData = [...value]
     this._data$.next([...value])
   }
@@ -151,7 +163,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return this._filters$.getValue()
   }
   set filters(value: Filter[]) {
-    !this._filters$.getValue().length ?? this.resetPage()
+    if (this._filters$.getValue().length) this.resetPage()
     this._filters$.next(value)
   }
   _originalData: RowListGridData[] = []
@@ -222,21 +234,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   get _relativeDateListValue(): TemplateRef<any> | undefined {
     return this.relativeDateListValueTemplate || this.relativeDateListValueChildTemplate
   }
-  /**
-   * @deprecated Will be removed and instead to change the template of a specific column
-   * use the new approach instead by following the naming convention column id + IdListValue
-   * e.g. for a column with the id 'status' use pTemplate="statusIdListValue"
-   */
-  @Input() customListValueTemplate: TemplateRef<any> | undefined
-  /**
-   * @deprecated Will be removed and instead to change the template of a specific column
-   * use the new approach instead by following the naming convention column id + IdListValue
-   * e.g. for a column with the id 'status' use pTemplate="statusIdListValue"
-   */
-  @ContentChild('customListValue') customListValueChildTemplate: TemplateRef<any> | undefined
-  get _customListValue(): TemplateRef<any> | undefined {
-    return this.customListValueTemplate || this.customListValueChildTemplate
-  }
 
   @Input() stringListValueTemplate: TemplateRef<any> | undefined
   @ContentChild('stringListValue') stringListValueChildTemplate: TemplateRef<any> | undefined
@@ -290,7 +287,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return 0
   }
 
-  showMenu = false
   gridMenuItems: MenuItem[] = []
   selectedItem: ListGridData | undefined
   observedOutputs = 0
@@ -325,27 +321,16 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   columnType = ColumnType
   templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
 
-  constructor(
-    @Inject(LOCALE_ID) locale: string,
-    translateService: TranslateService,
-    private userService: UserService,
-    private router: Router,
-    private injector: Injector,
-    private appStateService: AppStateService
-  ) {
+  private cachedOverflowMenuItemsVisibility$: Observable<boolean> | undefined
+
+  constructor() {
+    const locale = inject(LOCALE_ID)
+    const translateService = inject(TranslateService)
+
     super(locale, translateService)
     this.name = this.name || this.router.url.replace(/[^A-Za-z0-9]/, '_')
     this.fallbackImagePath$ = this.appStateService.currentMfe$.pipe(
       map((currentMfe) => this.getFallbackImagePath(currentMfe))
-    )
-    this.displayedPageSizes$ = combineLatest([
-      this._pageSizes$,
-      this.translateService.get('OCX_DATA_TABLE.ALL'),
-      this._showAllOption$,
-    ]).pipe(
-      map(([pageSizes, translation, showAllOption]) =>
-        showAllOption ? pageSizes.concat({ showAll: translation }) : pageSizes
-      )
     )
     this.displayedPageSize$ = combineLatest([this._pageSize$, this._pageSizes$]).pipe(
       map(([pageSize, pageSizes]) => pageSize ?? pageSizes.find((val): val is number => typeof val === 'number') ?? 50)
@@ -359,17 +344,22 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     this.overflowMenuItems$ = combineLatest([this.overflowListActions$, this.currentMenuRow$]).pipe(
       mergeMap(([actions, row]) =>
         this.translateService.get([...actions.map((a) => a.labelKey || '')]).pipe(
-          map((translations) => {
-            return actions
-              .filter((a) => this.userService.hasPermission(a.permission))
-              .map((a) => ({
-                label: translations[a.labelKey || ''],
-                icon: a.icon,
-                styleClass: (a.classes || []).join(' '),
-                disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
-                visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
-                command: () => a.callback(row),
-              }))
+          mergeMap(async (translations) => {
+            const filteredActions: DataAction[] = []
+            for (const a of actions) {
+              if (await this.userService.hasPermission(a.permission)) {
+                filteredActions.push(a)
+              }
+            }
+
+            return filteredActions.map((a) => ({
+              label: translations[a.labelKey || ''],
+              icon: a.icon,
+              styleClass: (a.classes || []).join(' '),
+              disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
+              visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
+              command: () => a.callback(row),
+            }))
           })
         )
       )
@@ -392,11 +382,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
       map(([items]) => items)
     )
 
-    this.showMenu =
-      (!!this.viewPermission && this.userService.hasPermission(this.viewPermission)) ||
-      (!!this.editPermission && this.userService.hasPermission(this.editPermission)) ||
-      (!!this.deletePermission && this.userService.hasPermission(this.deletePermission))
-
     this.emitComponentStateChanged()
   }
 
@@ -415,9 +400,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
         case 'relativeDateListValue':
           this.relativeDateListValueChildTemplate = item.template
           break
-        case 'customListValue':
-          this.customListValueChildTemplate = item.template
-          break
         case 'stringListValue':
           this.stringListValueChildTemplate = item.template
           break
@@ -433,8 +415,12 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   }
 
   onViewRow(element: ListGridData) {
-    if (!!this.viewPermission && this.userService.hasPermission(this.viewPermission)) {
-      this.viewItem.emit(element)
+    if (this.viewPermission) {
+      this.userService.hasPermission(this.viewPermission).then((hasPermission) => {
+        if (hasPermission) {
+          this.viewItem.emit(element)
+        }
+      })
     }
   }
 
@@ -483,53 +469,73 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
         ...this.additionalActions.map((a) => a.labelKey || ''),
       ])
       .subscribe((translations) => {
-        let menuItems: MenuItem[] = []
         const automationId = 'data-grid-action-button'
         const automationIdHidden = 'data-grid-action-button-hidden'
-        if (this.viewItem.observed && this.userService.hasPermission(this.viewPermission || '')) {
-          menuItems.push({
-            label: translations[this.viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW'],
-            icon: PrimeIcons.EYE,
-            command: () => this.viewItem.emit(this.selectedItem),
-            disabled: viewDisabled,
-            visible: viewVisible,
-            automationId: viewVisible ? automationId : automationIdHidden,
+
+        const permissionChecks = Promise.all([
+          this.userService.hasPermission(this.viewPermission),
+          this.userService.hasPermission(this.editPermission),
+          this.userService.hasPermission(this.deletePermission),
+        ])
+
+        permissionChecks.then(([hasViewPermission, hasEditPermission, hasDeletePermission]) => {
+          const menuItems: MenuItem[] = []
+
+          if (this.viewItem.observed && hasViewPermission) {
+            menuItems.push({
+              label: translations[this.viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW'],
+              icon: PrimeIcons.EYE,
+              command: () => this.viewItem.emit(this.selectedItem),
+              disabled: viewDisabled,
+              visible: viewVisible,
+              automationId: viewVisible ? automationId : automationIdHidden,
+            })
+          }
+
+          if (this.editItem.observed && hasEditPermission) {
+            menuItems.push({
+              label: translations[this.editMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.EDIT'],
+              icon: PrimeIcons.PENCIL,
+              command: () => this.editItem.emit(this.selectedItem),
+              disabled: editDisabled,
+              visible: editVisible,
+              automationId: editVisible ? automationId : automationIdHidden,
+            })
+          }
+
+          if (this.deleteItem.observed && hasDeletePermission) {
+            menuItems.push({
+              label: translations[this.deleteMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.DELETE'],
+              icon: PrimeIcons.TRASH,
+              command: () => this.deleteItem.emit(this.selectedItem),
+              disabled: deleteDisabled,
+              visible: deleteVisible,
+              automationId: deleteVisible ? automationId : automationIdHidden,
+            })
+          }
+
+          Promise.all(
+            this.additionalActions.map((a) =>
+              this.userService.hasPermission(a.permission).then((hasPermission) => {
+                if (!hasPermission) return null
+
+                const visible = !a.actionVisibleField || this.fieldIsTruthy(this.selectedItem, a.actionVisibleField)
+                return {
+                  label: translations[a.labelKey || ''],
+                  icon: a.icon,
+                  styleClass: (a.classes || []).join(' '),
+                  disabled:
+                    a.disabled ||
+                    (!!a.actionEnabledField && !this.fieldIsTruthy(this.selectedItem, a.actionEnabledField)),
+                  visible,
+                  command: () => a.callback(this.selectedItem),
+                }
+              })
+            )
+          ).then((additionalMenuItems) => {
+            this.gridMenuItems = menuItems.concat(additionalMenuItems.filter((item) => item !== null))
           })
-        }
-        if (this.editItem.observed && this.userService.hasPermission(this.editPermission || '')) {
-          menuItems.push({
-            label: translations[this.editMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.EDIT'],
-            icon: PrimeIcons.PENCIL,
-            command: () => this.editItem.emit(this.selectedItem),
-            disabled: editDisabled,
-            visible: editVisible,
-            automationId: editVisible ? automationId : automationIdHidden,
-          })
-        }
-        if (this.deleteItem.observed && this.userService.hasPermission(this.deletePermission || '')) {
-          menuItems.push({
-            label: translations[this.deleteMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.DELETE'],
-            icon: PrimeIcons.TRASH,
-            command: () => this.deleteItem.emit(this.selectedItem),
-            disabled: deleteDisabled,
-            visible: deleteVisible,
-            automationId: deleteVisible ? automationId : automationIdHidden,
-          })
-        }
-        menuItems = menuItems.concat(
-          this.additionalActions
-            .filter((a) => this.userService.hasPermission(a.permission))
-            .map((a) => ({
-              label: translations[a.labelKey || ''],
-              icon: a.icon,
-              styleClass: (a.classes || []).join(' '),
-              disabled:
-                a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(this.selectedItem, a.actionEnabledField)),
-              visible: !a.actionVisibleField || this.fieldIsTruthy(this.selectedItem, a.actionVisibleField),
-              command: () => a.callback(this.selectedItem),
-            }))
-        )
-        this.gridMenuItems = menuItems
+        })
       })
   }
 
@@ -573,16 +579,30 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return !!this.resolveFieldData(object, key)
   }
 
-  hasVisibleOverflowMenuItems(item: any) {
-    return this.overflowListActions$.pipe(
-      map((actions) =>
-        actions.some(
-          (a) =>
-            (!a.actionVisibleField || this.fieldIsTruthy(item, a.actionVisibleField)) &&
-            this.userService.hasPermission(a.permission)
+  // A new Observable is created with each ChangeDetection.
+  // The async pipe subscribes to it, triggering another ChangeDetection when a new value is emitted, which creates a loop.
+  // To prevent this, cache the Observable by using shareReplay to avoid recreating it with every ChangeDetection.
+  hasVisibleOverflowMenuItems(item: any): Observable<boolean> {
+    if (this.cachedOverflowMenuItemsVisibility$) {
+      return this.cachedOverflowMenuItemsVisibility$
+    }
+
+    const overflowMenuItemsVisibility$ = this.overflowListActions$.pipe(
+      mergeMap((actions) =>
+        forkJoin(
+          actions.map((a) =>
+            !a.actionVisibleField || this.fieldIsTruthy(item, a.actionVisibleField)
+              ? from(this.userService.hasPermission(a.permission))
+              : of(false)
+          )
         )
-      )
+      ),
+      map((results) => results.some((isVisible) => isVisible))
     )
+
+    this.cachedOverflowMenuItemsVisibility$ = overflowMenuItemsVisibility$.pipe(shareReplay(1))
+
+    return this.cachedOverflowMenuItemsVisibility$
   }
 
   toggleOverflowMenu(event: MouseEvent, menu: Menu, row: Row) {
@@ -645,12 +665,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
               return (
                 this._translationKeyListValue ??
                 this.findTemplate(templates, ['translationKeyListValue', 'defaultTranslationKeyListValue'])?.template ??
-                null
-              )
-            case ColumnType.CUSTOM:
-              return (
-                this._customListValue ??
-                this.findTemplate(templates, ['customListValue', 'defaultCustomListValue'])?.template ??
                 null
               )
             default:

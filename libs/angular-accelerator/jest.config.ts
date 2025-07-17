@@ -16,6 +16,7 @@ export default {
   transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$)'],
   moduleNameMapper: {
     '^d3-(.*)$': `d3-$1/dist/d3-$1`,
+    '@primeng/themes': '<rootDir>/../../node_modules/@primeng/themes/index.mjs',
   },
   snapshotSerializers: [
     'jest-preset-angular/build/serializers/no-ng-attributes',

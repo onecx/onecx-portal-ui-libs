@@ -1,19 +1,16 @@
-import {
-  Directive,
-  ElementRef,
-  Inject,
-  Input,
-  OnInit,
-  Optional,
-  Renderer2,
-  TemplateRef,
-  ViewContainerRef,
-} from '@angular/core'
+import { Directive, ElementRef, Input, OnInit, Renderer2, TemplateRef, ViewContainerRef, inject } from '@angular/core'
 import { UserService } from '@onecx/angular-integration-interface'
 import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
 
-@Directive({ selector: '[ocxIfPermission], [ocxIfNotPermission]' })
+@Directive({ selector: '[ocxIfPermission], [ocxIfNotPermission]', standalone: false })
 export class IfPermissionDirective implements OnInit {
+  private renderer = inject(Renderer2)
+  private el = inject(ElementRef)
+  private viewContainer = inject(ViewContainerRef)
+  private hasPermissionChecker = inject<HasPermissionChecker>(HAS_PERMISSION_CHECKER, { optional: true })
+  private templateRef = inject<TemplateRef<any>>(TemplateRef, { optional: true })
+  private userService = inject(UserService, { optional: true })
+
   @Input('ocxIfPermission') permission: string | string[] | undefined
   @Input('ocxIfNotPermission') set notPermission(value: string | string[] | undefined) {
     this.permission = value
@@ -35,19 +32,13 @@ export class IfPermissionDirective implements OnInit {
     this.ocxIfPermissionElseTemplate = value
   }
 
-  private permissionChecker: HasPermissionChecker | undefined
+  private permissionChecker: HasPermissionChecker | undefined | null
   negate = false
 
-  constructor(
-    private renderer: Renderer2,
-    private el: ElementRef,
-    private viewContainer: ViewContainerRef,
-    @Optional()
-    @Inject(HAS_PERMISSION_CHECKER)
-    private hasPermissionChecker?: HasPermissionChecker,
-    @Optional() private templateRef?: TemplateRef<any>,
-    @Optional() private userService?: UserService
-  ) {
+  constructor() {
+    const hasPermissionChecker = this.hasPermissionChecker
+    const userService = this.userService
+
     if (!(hasPermissionChecker || userService)) {
       throw 'IfPermission requires UserService or HasPermissionChecker to be provided!'
     }
@@ -56,28 +47,30 @@ export class IfPermissionDirective implements OnInit {
   }
 
   ngOnInit() {
-    if (
-      (this.permission &&
-        this.negate === this.hasPermission(Array.isArray(this.permission) ? this.permission : [this.permission])) ||
-      !this.permission
-    ) {
-      if (this.ocxIfPermissionElseTemplate) {
-        this.viewContainer.createEmbeddedView(this.ocxIfPermissionElseTemplate)
-      } else {
-        if (this.onMissingPermission === 'disable') {
-          this.renderer.setAttribute(this.el.nativeElement, 'disabled', 'disabled')
+    const permissions = (Array.isArray(this.permission) ? this.permission : [this.permission]).filter(
+      (p): p is string => p !== undefined
+    )
+
+    this.hasPermission(permissions).then((hasPerm) => {
+      if ((this.permission && this.negate === hasPerm) || !this.permission) {
+        if (this.ocxIfPermissionElseTemplate) {
+          this.viewContainer.createEmbeddedView(this.ocxIfPermissionElseTemplate)
         } else {
-          this.viewContainer.clear()
+          if (this.onMissingPermission === 'disable') {
+            this.renderer.setAttribute(this.el.nativeElement, 'disabled', 'disabled')
+          } else {
+            this.viewContainer.clear()
+          }
+        }
+      } else {
+        if (this.templateRef) {
+          this.viewContainer.createEmbeddedView(this.templateRef)
         }
       }
-    } else {
-      if (this.templateRef) {
-        this.viewContainer.createEmbeddedView(this.templateRef)
-      }
-    }
+    })
   }
 
-  hasPermission(permission: string[]) {
+  async hasPermission(permission: string[]): Promise<boolean> {
     if (this.ocxIfPermissionPermissions) {
       const result = permission.every((p) => this.ocxIfPermissionPermissions?.includes(p))
       if (!result) {
@@ -85,6 +78,7 @@ export class IfPermissionDirective implements OnInit {
       }
       return result
     }
-    return permission.every((p) => this.permissionChecker?.hasPermission(p))
+
+    return (await this.permissionChecker?.hasPermission(permission)) ?? false
   }
 }

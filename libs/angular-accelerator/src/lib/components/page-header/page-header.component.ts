@@ -10,12 +10,12 @@ import {
   TemplateRef,
   Type,
   ViewEncapsulation,
+  inject,
 } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
+import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 import { MenuItem, PrimeIcons } from 'primeng/api'
-import { concat, map, Observable, of } from 'rxjs'
-import { AppStateService } from '@onecx/angular-integration-interface'
-import { UserService } from '@onecx/angular-integration-interface'
+import { Observable, concat, map, of } from 'rxjs'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { PrimeIcon } from '../../utils/primeicon.utils'
 
@@ -51,10 +51,6 @@ export interface Action {
 export interface ObjectDetailItem {
   label: string
   value?: string
-  /**
-   * @deprecated Use `valueTooltip` instead
-   */
-  tooltip?: string
   labelTooltip?: string
   valueTooltip?: string
   icon?: PrimeIcon
@@ -78,12 +74,17 @@ export interface HomeItem {
 export type GridColumnOptions = 1 | 2 | 3 | 4 | 6 | 12
 
 @Component({
+  standalone: false,
   selector: 'ocx-page-header',
   templateUrl: './page-header.component.html',
   styleUrls: ['./page-header.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
 export class PageHeaderComponent implements OnInit, OnChanges {
+  private translateService = inject(TranslateService)
+  private appStateService = inject(AppStateService)
+  private userService = inject(UserService)
+
   @Input()
   public header: string | undefined
 
@@ -162,22 +163,19 @@ export class PageHeaderComponent implements OnInit, OnChanges {
 
   protected breadcrumbs: BreadcrumbService
 
-  constructor(
-    breadcrumbs: BreadcrumbService,
-    private translateService: TranslateService,
-    private appStateService: AppStateService,
-    private userService: UserService
-  ) {
+  constructor() {
+    const breadcrumbs = inject(BreadcrumbService)
+
     this.breadcrumbs = breadcrumbs
     this.home$ = concat(
       of({ menuItem: { icon: PrimeIcons.HOME, routerLink: '/' } }),
-      this.appStateService.currentPortal$.pipe(
-        map((portal) => ({
+      this.appStateService.currentWorkspace$.pipe(
+        map((workspace) => ({
           menuItem: {
             icon: PrimeIcons.HOME,
-            routerLink: portal.baseUrl,
+            routerLink: workspace.baseUrl,
           },
-          page: portal.portalName,
+          page: workspace.workspaceName,
         }))
       )
     )
@@ -254,6 +252,8 @@ export class PageHeaderComponent implements OnInit, OnChanges {
       const translations$ = translationKeys.length ? this.translateService.get(translationKeys) : of([])
       translations$.subscribe((translations) => {
         const allowedActions: Action[] = []
+        const permissionPromises: Promise<void>[] = []
+
         if (this.actions) {
           this.actions
             .filter((a) => a.show === 'asOverflow')
@@ -264,22 +264,26 @@ export class PageHeaderComponent implements OnInit, OnChanges {
               } else return a
             })
             .forEach((action) => {
-              this.checkActionPermission(allowedActions, action)
+              const permissionPromise = this.checkActionPermission(allowedActions, action)
+              permissionPromises.push(permissionPromise)
             })
-          this.overflowActions = [
-            ...allowedActions.map<MenuItem>((a) => ({
-              id: a.id,
-              label: a.labelKey ? translations[a.labelKey] : a.label,
-              icon: a.icon,
-              tooltipOptions: {
-                tooltipLabel: a.titleKey ? translations[a.titleKey] : a.title,
-                tooltipEvent: 'hover',
-                tooltipPosition: 'top',
-              },
-              command: a.actionCallback,
-              disabled: a.disabled,
-            })),
-          ]
+
+          Promise.all(permissionPromises).then(() => {
+            this.overflowActions = [
+              ...allowedActions.map<MenuItem>((a) => ({
+                id: a.id,
+                label: a.labelKey ? translations[a.labelKey] : a.label,
+                icon: a.icon,
+                tooltipOptions: {
+                  tooltipLabel: a.titleKey ? translations[a.titleKey] : a.title,
+                  tooltipEvent: 'hover',
+                  tooltipPosition: 'top',
+                },
+                command: a.actionCallback,
+                disabled: a.disabled,
+              })),
+            ]
+          })
         }
       })
     }
@@ -292,6 +296,7 @@ export class PageHeaderComponent implements OnInit, OnChanges {
     if (this.actions) {
       // Temp array to hold all inline actions that should be visible to the current user
       const allowedActions: Action[] = []
+      const permissionPromises: Promise<void>[] = []
       // Check permissions for all actions that should be rendered 'always'
       this.actions
         .filter((a) => a.show === 'always')
@@ -301,9 +306,13 @@ export class PageHeaderComponent implements OnInit, OnChanges {
           } else return a
         })
         .forEach((action) => {
-          this.checkActionPermission(allowedActions, action)
+          const permissionPromise = this.checkActionPermission(allowedActions, action)
+          permissionPromises.push(permissionPromise)
         })
-      this.inlineActions = [...allowedActions]
+
+      Promise.all(permissionPromises).then(() => {
+        this.inlineActions = [...allowedActions]
+      })
     }
   }
   /**
@@ -312,14 +321,19 @@ export class PageHeaderComponent implements OnInit, OnChanges {
    * @param action Action for which a permission check should be executed
    */
   private checkActionPermission(allowedActions: Action[], action: Action) {
-    if (action.permission) {
-      if (this.userService.hasPermission(action.permission)) {
-        // Push action to allowed array if user has sufficient permissions
+    return new Promise<void>((resolve) => {
+      if (action.permission) {
+        this.userService.hasPermission(action.permission).then((hasPermission) => {
+          if (hasPermission) {
+            allowedActions.push(action)
+          }
+          resolve()
+        })
+      } else {
+        // Push action to allowed array if no permission was specified
         allowedActions.push(action)
+        resolve()
       }
-    } else {
-      // Push action to allowed array if no permission was specified
-      allowedActions.push(action)
-    }
+    })
   }
 }

@@ -1,24 +1,43 @@
 import { MicrofrontendRegistration } from './mfe-portal-registration.model'
-import {Route} from './route.model'
+import { Route } from './route.model'
 
 export interface Workspace {
-  id?: string
-  displayName?: string
+  baseUrl: string
+  workspaceName: string
   /**
    * @deprecated will be renamed to workspaceName
    */
   portalName: string
-  workspaceName: string
+  displayName?: string
+  homePage?: string
+  routes?: Array<Route>
+  /**
+   * @deprecated will be removed
+   */
+  id?: string
   /**
    * @deprecated will be removed
    */
   description?: string
+  /**
+   * @deprecated will be removed
+   */
   themeId?: string
+  /**
+   * @deprecated will be removed
+   */
   themeName?: string
+  /**
+   * @deprecated will be removed
+   */
   footerLabel?: string
-  homePage?: string
-  baseUrl: string
+  /**
+   * @deprecated will be removed
+   */
   companyName?: string
+  /**
+   * @deprecated will be removed
+   */
   portalRoles?: string[]
   /**
    * @deprecated will be removed
@@ -49,18 +68,22 @@ export interface Workspace {
     {
       label?: string
       url?: string
-    }
+    },
   ]
   /**
    * @deprecated will be removed
    */
   microfrontendRegistrations: Array<MicrofrontendRegistration>
+  /**
+   * @deprecated will be removed
+   */
   logoUrl?: string
   /**
    * @deprecated will be removed
    */
   userUploaded?: boolean
-  logoSmallImageUrl?: string,
-
-  routes?: Array<Route>
+  /**
+   * @deprecated will be removed
+   */
+  logoSmallImageUrl?: string
 }
