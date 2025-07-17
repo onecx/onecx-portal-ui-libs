@@ -8,7 +8,7 @@ export interface AngularUtilsProviderConfig {
   contentType: ContentType
 }
 
-export function provideAngularUtils(config: AngularUtilsProviderConfig): Provider[] {
+export function provideAngularUtils(): Provider[] {
   const providers = [...providePermissionService()]
   providers.push(provideTranslationPaths())
   return providers
