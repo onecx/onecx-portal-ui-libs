@@ -1,0 +1,71 @@
+
+= Theming with PrimeNG
+
+:idprefix:
+:idseparator: -
+:primeng_theming: https://primeng.org/theming
+:theme_overrides: https://onecx.github.io/docs/guides/current/angular/cookbook/theming.html#theme-overrides
+:custom_use_style: ../../libs/angular-utils/src/lib/services/custom-use-style.service.ts
+:style_isolation: ../styles/concept.adoc#style-isolation-idea
+:provide_theme_config: ../../libs/angular-utils/src/lib/theme/application-config.ts
+:theme_config: ../../libs/angular-utils/src/lib/theme/theme-config.ts
+:theme_config_service: ../../libs/angular-utils/src/lib/services/theme-config.service.ts
+
+[#primeng-theming]
+== PrimeNG Theming
+In version 19, PrimeNG introduced {primeng_theming}[theming mechanism based on design tokens]. All PrimeNG components are going to adapt to the appearance specified in the configuration for design tokens.
+
+[#onecx-theming-with-primeng-theming]
+=== OneCX Theming With PrimeNG Theming
+With OneCX theming, a suite of CSS variables is always available to ensure that UIs have a common look and feel in a certain workspace. On theme change, those variables are used to update the preset of design tokens used by all PrimeNG components to reflect the theme changes in them as well.
+
+[#theme-overrides]
+=== Theme Overrides
+OneCX theming integration with PrimeNG theming is based on some assumptions related to OneCX theme variable association to PrimeNG design tokens. Because of that, some tokens are affected by the theme variables and some are not. Because of this and the fact that each UI can have its own requirements related to PrimeNG component styles, theme overrides were introduced.
+
+Explanation of the theme overrides mechanism and an example can be found {theme_overrides}[here].
+
+[#technical-details]
+== Technical Details
+In this section, the technical details on how OneCX theming integrates with PrimeNG theming are explained.
+
+[#onecx-default-preset]
+=== OneCX Default Preset
+Important files:
+
+* link:../../libs/angular-utils/src/lib/theme/preset/custom-preset.ts[The custom OneCX preset]
+* link:../../libs/angular-utils/src/lib/theme/preset/preset-variables.ts[Token values for custom OneCX preset]
+** Contains default tokens values
+** Contains OneCX extended section
+* link:../../libs/angular-utils/src/lib/theme/preset/default-theme-variables.ts[Default theme variables values]
+** Contains default theme variables values
+
+The custom OneCX preset is the base for OneCX that does not take the theme set for the accessed workspace into consideration.
+
+[#onecx-extend-section]
+=== OneCX Extend Section
+The OneCX custom preset contains the theme variables values as design tokens in the extended `onecx` object. This section also contains all custom design tokens defined by OneCX like the `errorColor` token. Those tokens can be utilized as any other tokens:
+
+* errorColor
+** Design token usage - `{onecx.error.color}`
+** CSS variable usage - `--p-onecx-error-color`
+* contentBgColor
+** Design token usage - `{onecx.content.bg.color}`
+** CSS variable usage - `--p-onecx-content-bg-color`
+
+[#theme-appliance]
+=== Theme Appliance
+In order to apply theme variables to the PrimeNG design tokens:
+
+* The theme has to be activated on the page.
+* link:{provide_theme_config}[provideThemeConfig] has to be provided in the Microfrontend or Remote Component providers.
+
+The `provideThemeConfig` provider is essential to set up PrimeNG and other functionalities that are required to integrate OneCX theming with PrimeNG theming.
+
+[#theme-config-service]
+==== Theme Config Service
+One of the essential services is link:{theme_config_service}[ThemeConfigService]. In the theming context, every time the theme changes, it is responsible for updating the OneCX custom preset with the theme variables and applying it.
+
+ThemeConfigService utilizes link:{theme_config}[ThemeConfig] object to update the extended `onecx` section of design tokens and recreates the primary palette.
+
+Apart from this, it is also responsible for providing the link:{custom_use_style}[CustomUseStyle] which is used for link:{style_isolation}[style isolation] purposes.

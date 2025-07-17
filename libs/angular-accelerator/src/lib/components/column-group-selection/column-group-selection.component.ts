@@ -8,6 +8,7 @@ export interface ColumnGroupSelectionComponentState {
   displayedColumns?: DataTableColumn[]
 }
 @Component({
+  standalone: false,
   templateUrl: './column-group-selection.component.html',
   selector: 'ocx-column-group-selection',
   styleUrls: ['./column-group-selection.component.scss'],

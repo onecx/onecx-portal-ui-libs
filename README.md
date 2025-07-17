@@ -52,16 +52,35 @@ In some cases, there might be a requirement to make a change directly on a main 
 - The `main` branch is merged into `develop` branch
 - Libs pre-release is released via the `develop` branch
 
+# Migrating to Angular 19, PrimeNG 19 and OneCX v6
+
+Run the following commands in your project's terminal and follow the instructions:
+
+1. `npx nx g @nx/eslint:convert-to-flat-config` (this is only necessary if you have the `.eslint.json` still)
+2. `npx nx generate @angular/core:control-flow` (https://angular.dev/reference/migrations/control-flow)
+3. `npx nx generate @angular/core:inject` (https://angular.dev/reference/migrations/inject-function)
+
 # Update to latest minor version of libs
 
 1. run the following command in your project's terminal to run onecx migrations:
 
 ```
-curl -sL https://raw.githubusercontent.com/onecx/onecx-portal-ui-libs/refs/heads/main/update_libs.sh | bash - 
+curl -sL https://raw.githubusercontent.com/onecx/onecx-portal-ui-libs/refs/heads/main/update_libs.sh | bash -
 ```
 
 2. run `npm run build` to check if it builds successfully after the migrations
 
+# Local migration testing
+
+To test migration locally use verdaccio and the migration guide.
+
+The [v6 migration file](./libs/nx-migration-utils/src/lib/common-migrations/common-migrate-onecx-to-v6.utils.ts) has to be updated with appropriate OneCX packages version.
+
+```
+onecxDependencies.forEach((dep) => {
+      json.dependencies[dep] = '^6.0.0-rc.X'
+    })
+```
 
 # Update from v3 to v4 guide
 

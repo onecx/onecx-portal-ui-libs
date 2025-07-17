@@ -4,3 +4,7 @@
   background: none;
   cursor: pointer;
 }
+
+:host ::ng-deep .p-select {
+  min-width: 12rem;
+}

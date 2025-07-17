@@ -3,7 +3,7 @@ import { BehaviorSubject } from 'rxjs'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataColumnNameId } from '../../model/data-column-name-id.model'
 import { DataTableColumn } from '../../model/data-table-column.model'
-import { DropdownChangeEvent } from 'primeng/dropdown'
+import { SelectChangeEvent } from 'primeng/select'
 
 export type ListGridSort = { sortColumn: string; sortDirection: DataSortDirection }
 export interface DataListGridSortingComponentState {
@@ -11,6 +11,7 @@ export interface DataListGridSortingComponentState {
 }
 
 @Component({
+  standalone: false,
   selector: 'ocx-data-list-grid-sorting',
   templateUrl: './data-list-grid-sorting.component.html',
   styleUrls: ['./data-list-grid-sorting.component.scss'],
@@ -48,7 +49,7 @@ export class DataListGridSortingComponent implements OnInit {
     this.emitComponentStateChange()
   }
 
-  selectSorting(event: DropdownChangeEvent): void {
+  selectSorting(event: SelectChangeEvent): void {
     this._sortField$.next(event.value.columnId)
     this.sortChange.emit(event.value.columnId)
     this.emitComponentStateChange()

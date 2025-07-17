@@ -12,8 +12,9 @@ import { StorybookTranslateModule } from './../../storybook-translate.module'
 import { DataListGridComponent } from './data-list-grid.component'
 import { IfPermissionDirective } from '../../directives/if-permission.directive'
 import { TooltipOnOverflowDirective } from '../../directives/tooltipOnOverflow.directive'
-import { MockAuthModule } from '../../mock-auth/mock-auth.module'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
+import { StorybookThemeModule } from '../../storybook-theme.module'
+import { TooltipModule } from 'primeng/tooltip'
 
 const DataListGridComponentSBConfig: Meta<DataListGridComponent> = {
   title: 'Components/DataListGridComponent',
@@ -26,11 +27,12 @@ const DataListGridComponentSBConfig: Meta<DataListGridComponent> = {
         provideUserServiceMock(),
         { provide: HAS_PERMISSION_CHECKER, useClass: UserServiceMock },
         importProvidersFrom(RouterModule.forRoot([], { useHash: true })),
+        importProvidersFrom(StorybookThemeModule),
       ],
     }),
     moduleMetadata({
       declarations: [DataListGridComponent, IfPermissionDirective, TooltipOnOverflowDirective],
-      imports: [DataViewModule, MenuModule, ButtonModule, MultiSelectModule, StorybookTranslateModule, MockAuthModule],
+      imports: [DataViewModule, MenuModule, ButtonModule, MultiSelectModule, TooltipModule, StorybookTranslateModule],
     }),
   ],
 }

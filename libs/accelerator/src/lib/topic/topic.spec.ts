@@ -158,6 +158,138 @@ describe('Topic', () => {
     })
   })
 
+  it('should have no values if publish is not awaited', () => {
+    const original = window.postMessage
+    window.postMessage = (m: any) => {
+      listeners.forEach((l) => {
+        // Set timeout to simulate async behavior
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        setTimeout(() => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }), 0)
+      })
+    }
+
+    const val1: number[] = []
+    const val2: number[] = []
+
+    const testTopic1 = new Topic<number>('SpecificTestTopic', 1, false)
+    const testTopic2 = new Topic<number>('SpecificTestTopic', 1, false)
+    testTopic1.subscribe((val) => {
+      val1.push(val)
+    })
+    testTopic2.subscribe((val) => val2.push(val))
+
+    testTopic1.publish(123)
+
+    expect(val1).toEqual([])
+    expect(val2).toEqual([])
+
+    window.postMessage = original
+  })
+
+  it('should have values if publish is awaited', async () => {
+    const original = window.postMessage
+    window.postMessage = (m: any) => {
+      listeners.forEach((l) => {
+        // Set timeout to simulate async behavior
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        setTimeout(() => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }), 0)
+      })
+    }
+
+    const val1: number[] = []
+    const val2: number[] = []
+
+    const testTopic1 = new Topic<number>('SpecificTestTopic', 1, false)
+    const testTopic2 = new Topic<number>('SpecificTestTopic', 1, false)
+    testTopic1.subscribe((val) => {
+      val1.push(val)
+    })
+    testTopic2.subscribe((val) => val2.push(val))
+
+    await testTopic1.publish(123)
+
+    expect(val1).toEqual([123])
+    expect(val2).toEqual([123])
+
+    window.postMessage = original
+  })
+
+  it('should have all values if publish is awaited on first created topic', async () => {
+    const original = window.postMessage
+    window.postMessage = (m: any) => {
+      listeners.forEach((l) => {
+        // Set timeout to simulate async behavior
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        setTimeout(() => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }), 0)
+      })
+    }
+
+    const val1: number[] = []
+    const val2: number[] = []
+    const val3: number[] = []
+
+    const testTopic1 = new Topic<number>('SpecificTestTopic', 1, false)
+    const testTopic2 = new Topic<number>('SpecificTestTopic', 1, false)
+    const testTopic3 = new Topic<number>('SpecificTestTopic', 1, false)
+    testTopic1.subscribe((val) => {
+      val1.push(val)
+    })
+    testTopic2.subscribe((val) => val2.push(val))
+    testTopic3.subscribe((val) => val3.push(val))
+
+    await testTopic1.publish(123)
+
+    expect(val1).toEqual([123])
+    expect(val2).toEqual([123])
+    expect(val3).toEqual([123])
+
+    window.postMessage = original
+  })
+
+  it('should have values if publish is awaited for all topics', async () => {
+    const original = window.postMessage
+    window.postMessage = (m: any) => {
+      listeners.forEach((l) => {
+        // Set timeout to simulate async behavior
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        setTimeout(() => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }), 0)
+      })
+    }
+
+    const val1: number[] = []
+    const val2: number[] = []
+    const val3: number[] = []
+
+    const testTopic1 = new Topic<number>('SpecificTestTopic', 1, false)
+    const testTopic2 = new Topic<number>('SpecificTestTopic', 1, false)
+    const testTopic3 = new Topic<number>('SpecificTestTopic', 1, false)
+    testTopic1.subscribe((val) => {
+      val1.push(val)
+    })
+    testTopic2.subscribe((val) => val2.push(val))
+    testTopic3.subscribe((val) => val3.push(val))
+
+    await testTopic1.publish(1)
+
+    expect(val1).toEqual([1])
+    expect(val2).toEqual([1])
+    expect(val3).toEqual([1])
+
+    await testTopic2.publish(2)
+
+    expect(val1).toEqual([1, 2])
+    expect(val2).toEqual([1, 2])
+    expect(val3).toEqual([1, 2])
+
+    await testTopic3.publish(3)
+
+    expect(val1).toEqual([1, 2, 3])
+    expect(val2).toEqual([1, 2, 3])
+    expect(val3).toEqual([1, 2, 3])
+
+    window.postMessage = original
+  })
+
   describe('integration with older versions of library', () => {
     let previousMessage: TopicDataMessage<string>
     let incomingMessage: MessageEvent<TopicDataMessage<string>>

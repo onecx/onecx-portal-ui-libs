@@ -12,7 +12,7 @@ export interface PPicklistListWrapperFilters extends BaseHarnessFilters {
 }
 
 export class PPicklistControlsButtonsHarness extends ContentContainerComponentHarness {
-  static hostSelector = '.p-picklist-buttons'
+  static hostSelector = '.p-picklist-controls'
 
   getButtons = this.locatorForAll(ButtonHarness)
 
@@ -30,7 +30,7 @@ export class PPicklistControlsButtonsHarness extends ContentContainerComponentHa
 }
 
 export class PPicklistListWrapperHarness extends ContentContainerComponentHarness {
-  static hostSelector = '.p-picklist-list-wrapper'
+  static hostSelector = '.p-picklist-list-container'
 
   getHeader = this.locatorFor(DivHarness.with({ class: 'p-picklist-header' }))
   getAllListItems = this.locatorForAll(ListItemHarness)
@@ -53,14 +53,14 @@ export class PPicklistHarness extends ContentContainerComponentHarness {
     PPicklistControlsButtonsHarness.with({ class: 'p-picklist-source-controls' })
   )
   private getPicklistTransferControls = this.locatorFor(
-    PPicklistControlsButtonsHarness.with({ class: 'p-picklist-transfer-buttons' })
+    PPicklistControlsButtonsHarness.with({ class: 'p-picklist-transfer-controls' })
   )
   private getPicklistTargetControls = this.locatorFor(
     PPicklistControlsButtonsHarness.with({ class: 'p-picklist-target-controls' })
   )
 
-  private getPicklistSource = this.locatorFor(PPicklistListWrapperHarness.with({ class: 'p-picklist-source-wrapper' }))
-  private getPicklistTarget = this.locatorFor(PPicklistListWrapperHarness.with({ class: 'p-picklist-target-wrapper' }))
+  private getPicklistSource = this.locatorFor(PPicklistListWrapperHarness.with({ class: 'p-picklist-source-list-container' }))
+  private getPicklistTarget = this.locatorFor(PPicklistListWrapperHarness.with({ class: 'p-picklist-target-list-container' }))
 
   async getSourceControlsButtons(): Promise<ButtonHarness[]> {
     return await (await this.getPicklistSourceControls()).getButtons()

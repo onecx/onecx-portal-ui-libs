@@ -1,18 +1,26 @@
-import { ChangeDetectorRef, NgZone, OnDestroy, Pipe, PipeTransform } from '@angular/core'
+import { ChangeDetectorRef, NgZone, OnDestroy, Pipe, PipeTransform, inject } from '@angular/core'
 import { TranslatePipe, TranslateService } from '@ngx-translate/core'
 
 @Pipe({
   name: 'timeago',
+  standalone: false,
 })
 // eslint-disable-next-line @angular-eslint/use-pipe-transform-interface
 export class OcxTimeAgoPipe extends TranslatePipe implements OnDestroy, PipeTransform {
+  private changeDetectorRef: ChangeDetectorRef
+  private ngZone = inject(NgZone)
+  private translateService: TranslateService
+
   private timer: number | undefined | null
-  constructor(
-    private changeDetectorRef: ChangeDetectorRef,
-    private ngZone: NgZone,
-    private translateService: TranslateService
-  ) {
+
+  constructor() {
+    const changeDetectorRef = inject(ChangeDetectorRef)
+    const translateService = inject(TranslateService)
+
     super(translateService, changeDetectorRef)
+
+    this.changeDetectorRef = changeDetectorRef
+    this.translateService = translateService
   }
   override transform(value: string) {
     this.removeTimer()

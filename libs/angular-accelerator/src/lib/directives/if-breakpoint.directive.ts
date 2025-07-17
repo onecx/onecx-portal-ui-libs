@@ -1,18 +1,16 @@
-import { Directive, HostListener, Input, OnInit, Optional, TemplateRef, ViewContainerRef } from '@angular/core'
+import { Directive, HostListener, Input, OnInit, TemplateRef, ViewContainerRef, inject } from '@angular/core'
 
-@Directive({ selector: '[ocxIfBreakpoint]' })
+@Directive({ selector: '[ocxIfBreakpoint]', standalone: false })
 export class IfBreakpointDirective implements OnInit {
+  private viewContainer = inject(ViewContainerRef)
+  private templateRef = inject<TemplateRef<unknown>>(TemplateRef, { optional: true })
+
   @Input('ocxIfBreakpoint') breakpoint: 'mobile' | 'desktop' | undefined
 
   @Input()
   ocxIfBreakpointElseTemplate: TemplateRef<any> | undefined
 
   state: 'mobile' | 'desktop' | undefined
-
-  constructor(
-    private viewContainer: ViewContainerRef,
-    @Optional() private templateRef?: TemplateRef<unknown>
-  ) {}
 
   ngOnInit() {
     this.onResize()

@@ -21,6 +21,9 @@ This page gives an overview about onecx libs.
 |angular-remote-components
 |Is needed to load or build remote components in Angular
 
+|angular-standalone-shell
+|Includes everything you need to start an application in standalone mode
+
 |angular-testing
 |Contains various things to simplify testing in Angular, utility functions and harnesses
 
@@ -33,21 +36,9 @@ This page gives an overview about onecx libs.
 |integration-interface
 |Contains and handles technology-independent communication interface between shell and the apps, Important: Data structures must not receive any breaking changes!
 
-|keycloak-auth
-|Deprecated
-
 |ngrx-accelerator
 |Contains things you need to standardise and industrialise development with ngrx
 
-|portal-integration-angular
-|Will be removed soon
-
-|portal-layout-styles
-|Will be removed soon
-
 |shell-core
 |Contains core building blocks for the shell
-
-|standalone-shell
-|Includes everything you need to start an application in standalone mode
 |===

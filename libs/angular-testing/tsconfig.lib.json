@@ -6,7 +6,8 @@
     "declarationMap": true,
     "inlineSources": true,
     "target": "es2022",
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false,
+    "types": ["node"],
   },
   "exclude": ["**/*.spec.ts", "src/test-setup.ts", "jest.config.ts", "**/*.test.ts", "**/*.stories.ts", "jest.config.ts"],
   "include": ["**/*.ts"]

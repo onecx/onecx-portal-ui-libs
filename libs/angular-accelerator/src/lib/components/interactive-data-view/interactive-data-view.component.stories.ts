@@ -4,6 +4,7 @@ import {
   InteractiveDataViewComponentSBConfig,
   defaultInteractiveDataViewArgs,
   InteractiveDataViewTemplate,
+  defaultInteractiveDataViewArgTypes,
 } from './storybook-config'
 import { ColumnType } from '../../model/column-type.model'
 
@@ -17,8 +18,13 @@ const defaultComponentArgs: InteractiveDataViewInputTypes = {
   ...defaultInteractiveDataViewArgs,
 }
 
+const defaultComponentArgTypes = {
+  ...defaultInteractiveDataViewArgTypes,
+}
+
 export const WithMockData = {
   argTypes: {
+    ...defaultComponentArgTypes,
     componentStateChanged: { action: 'componentStateChanged' },
     selectionChanged: { action: 'selectionChanged' },
   },
@@ -81,11 +87,13 @@ const HugeMockDataTemplate: StoryFn<InteractiveDataViewComponent> = (args) => ({
 
 export const WithHugeMockData = {
   argTypes: {
+    ...defaultComponentArgTypes,
     componentStateChanged: { action: 'componentStateChanged' },
     selectionChanged: { action: 'selectionChanged' },
   },
   render: HugeMockDataTemplate,
   args: {
+    ...defaultComponentArgs,
     columns: generateColumns(columnCount),
     data: generateRows(rowCount, columnCount),
     emptyResultsMessage: 'No results',
@@ -96,6 +104,7 @@ export const WithHugeMockData = {
 
 export const WithPageSizes = {
   argTypes: {
+    ...defaultComponentArgTypes,
     componentStateChanged: { action: 'componentStateChanged' },
   },
   render: InteractiveDataViewTemplate,
@@ -106,20 +115,32 @@ export const WithPageSizes = {
   },
 }
 
+export const WithCustomStyleClasses = {
+  argTypes: {
+    componentStateChanged: { action: 'componentStateChanged' },
+  },
+  render: InteractiveDataViewTemplate,
+  args: {
+    ...defaultComponentArgs,
+    headerStyleClass: 'py-2',
+    contentStyleClass: 'py-4',
+  },
+}
+
 const CustomContentInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
   props: args,
   template: `
   <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
-    <ng-template #listItem let-item>
+    <ng-template #list let-item>
       <div class="w-full px-4 py-2 card mb-4">
         <p>{{item.product}}</p>
         <p-progressBar [value]="item.amount" />
       </div>
     </ng-template>
-    <ng-template #gridItem let-item>
+    <ng-template #grid let-item>
       <div class="w-3 px-4 py-2 card m-0 mr-4">
         <p>{{item.product}}</p>
-        <p-progressBar [value]="item.amount" />
+        <p-progressBar [value]="item.amount" showValue="false"/>
       </div>
   </ng-template>
   <ng-template #topCenter>

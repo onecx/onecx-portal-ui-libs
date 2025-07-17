@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core'
+import { Injectable, inject } from '@angular/core'
 import { ActivatedRoute, ActivatedRouteSnapshot, Data, NavigationEnd, ParamMap, Router } from '@angular/router'
-import { TranslateService } from '@ngx-translate/core'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
-import { BehaviorSubject, filter, map } from 'rxjs'
-import { MenuItem } from 'primeng/api'
-import { BreadCrumbMenuItem } from '../model/breadcrumb-menu-item.model'
+import { TranslateService } from '@ngx-translate/core'
 import { SyncableTopic } from '@onecx/accelerator'
+import { MenuItem } from 'primeng/api'
+import { BehaviorSubject, filter, map } from 'rxjs'
+import { BreadCrumbMenuItem } from '../model/breadcrumb-menu-item.model'
 
 interface ManualBreadcrumbs {
   menuItems: MenuItem[]
@@ -23,16 +23,16 @@ class ManualBreadcrumbsTopic extends SyncableTopic<ManualBreadcrumbs> {
 @Injectable({ providedIn: 'any' })
 @UntilDestroy()
 export class BreadcrumbService {
+  private router = inject(Router)
+  private activeRoute = inject(ActivatedRoute)
+  private translateService = inject(TranslateService)
+
   private itemsSource$ = new ManualBreadcrumbsTopic()
   generatedItemsSource = new BehaviorSubject<MenuItem[]>([])
 
   itemsHandler = this.itemsSource$.pipe(map((manualBreadcrumbs) => manualBreadcrumbs.menuItems))
 
-  constructor(
-    private router: Router,
-    private activeRoute: ActivatedRoute,
-    private translateService: TranslateService
-  ) {
+  constructor() {
     this.generateBreadcrumbs(this.activeRoute.snapshot)
     this.router.events
       .pipe(
@@ -106,16 +106,16 @@ export class BreadcrumbService {
 
   setItems(items: BreadCrumbMenuItem[]) {
     const translationKeys = [
-      ...items.map((i) => i.labelKey || '').filter((l) => !!l),
-      ...items.map((i) => i.titleKey || '').filter((l) => !!l),
+      ...items.map((i) => i.labelKey ?? '').filter((l) => !!l),
+      ...items.map((i) => i.titleKey ?? '').filter((l) => !!l),
     ]
     if (translationKeys.length) {
       this.translateService.get(translationKeys).subscribe((translations: any) => {
         this.itemsSource$.publish({
           menuItems: items.map((i) => ({
             ...i,
-            label: translations[i.labelKey || ''] || i.label,
-            title: translations[i.titleKey || ''] || i.title,
+            label: translations[i.labelKey ?? ''],
+            title: translations[i.titleKey ?? ''],
           })),
         })
       })

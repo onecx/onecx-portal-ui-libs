@@ -1,0 +1,8 @@
+<div class="dialogMessageContent">
+  <div>
+    @if (icon !== '') {
+      <i [class]="icon"></i>
+    }
+    <span id="dialogMessage">{{message | translate:messageParameters}}</span>
+  </div>
+</div>

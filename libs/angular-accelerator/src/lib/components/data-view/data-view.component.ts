@@ -12,32 +12,36 @@ import {
   QueryList,
   TemplateRef,
   ViewChild,
+  inject,
 } from '@angular/core'
+import { PrimeTemplate } from 'primeng/api'
+import { BehaviorSubject, Observable, ReplaySubject, combineLatest, map, startWith, timestamp } from 'rxjs'
+import { DataAction } from '../../model/data-action'
+import { DataSortDirection } from '../../model/data-sort-direction'
+import { DataTableColumn } from '../../model/data-table-column.model'
+import { Filter } from '../../model/filter.model'
+import { orderAndMergeValuesByTimestamp } from '../../utils/rxjs-utils'
 import {
   DataListGridComponent,
   DataListGridComponentState,
   ListGridData,
 } from '../data-list-grid/data-list-grid.component'
-import { Row, Sort, DataTableComponent, DataTableComponentState } from '../data-table/data-table.component'
-import { DataTableColumn } from '../../model/data-table-column.model'
-import { DataSortDirection } from '../../model/data-sort-direction'
-import { DataAction } from '../../model/data-action'
-import { BehaviorSubject, ReplaySubject, timestamp, combineLatest, map, Observable, startWith } from 'rxjs'
-import { orderAndMergeValuesByTimestamp } from '../../utils/rxjs-utils'
-import { PrimeTemplate } from 'primeng/api'
-import { Filter } from '../../model/filter.model'
+import { DataTableComponent, DataTableComponentState, Row, Sort } from '../data-table/data-table.component'
 
 export type RowListGridData = ListGridData & Row
 
 export type DataViewComponentState = DataListGridComponentState & DataTableComponentState
 
 @Component({
+  standalone: false,
   selector: 'ocx-data-view',
   templateUrl: './data-view.component.html',
   styleUrls: ['./data-view.component.css'],
   providers: [{ provide: 'DataViewComponent', useExisting: DataViewComponent }],
 })
 export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
+  private readonly injector = inject(Injector)
+
   _dataListGridComponent: DataListGridComponent | undefined
   @ViewChild(DataListGridComponent) set listGrid(ref: DataListGridComponent | undefined) {
     this._dataListGridComponent = ref
@@ -105,7 +109,6 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   @Input() sortStates: DataSortDirection[] = [DataSortDirection.ASCENDING, DataSortDirection.DESCENDING]
   @Input() pageSizes: number[] = [10, 25, 50]
   @Input() pageSize: number | undefined
-  @Input() showAllOption = false
 
   @Input() stringTableCellTemplate: TemplateRef<any> | undefined
   @ContentChild('stringTableCell') stringTableCellChildTemplate: TemplateRef<any> | undefined
@@ -118,40 +121,11 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   get _numberTableCell(): TemplateRef<any> | undefined {
     return this.numberTableCellTemplate || this.numberTableCellChildTemplate
   }
-  /**
-   * @deprecated Will be removed and instead to change the template of a specific column
-   * use the new approach instead by following the naming convention column id + IdTableCell
-   * e.g. for a column with the id 'status' in DataTable use pTemplate="statusIdTableCell"
-   */
-  @Input() customTableCellTemplate: TemplateRef<any> | undefined
-  /**
-   * @deprecated Will be removed and instead to change the template of a specific column
-   * use the new approach instead by following the naming convention column id + IdTableCell
-   * e.g. for a column with the id 'status' in DataTable use pTemplate="statusIdTableCell"
-   */
-  @ContentChild('customTableCell') customTableCellChildTemplate: TemplateRef<any> | undefined
-  get _customTableCell(): TemplateRef<any> | undefined {
-    return this.customTableCellTemplate || this.customTableCellChildTemplate
-  }
 
   @Input() dateTableCellTemplate: TemplateRef<any> | undefined
-  /**
-   * @deprecated Will be replaced by dateTableCellTemplate
-   */
-  @Input()
-  get tableDateCellTemplate(): TemplateRef<any> | undefined {
-    return this.dateTableCellTemplate
-  }
-  set tableDateCellTemplate(value: TemplateRef<any> | undefined) {
-    this.dateTableCellTemplate = value
-  }
-  /**
-   * @deprecated Will be replaced by dateTableCellChildTemplate
-   */
-  @ContentChild('tableDateCell') tableDateCellChildTemplate: TemplateRef<any> | undefined
   @ContentChild('dateTableCell') dateTableCellChildTemplate: TemplateRef<any> | undefined
   get _dateTableCell(): TemplateRef<any> | undefined {
-    return this.dateTableCellTemplate || this.dateTableCellChildTemplate || this.tableDateCellChildTemplate
+    return this.dateTableCellTemplate || this.dateTableCellChildTemplate
   }
 
   @Input() tableCellTemplate: TemplateRef<any> | undefined
@@ -161,27 +135,9 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   }
 
   @Input() translationKeyTableCellTemplate: TemplateRef<any> | undefined
-  /**
-   * @deprecated Will be replaced by translationKeyTableCellTemplate
-   */
-  @Input()
-  get tableTranslationKeyCellTemplate(): TemplateRef<any> | undefined {
-    return this.translationKeyTableCellTemplate
-  }
-  set tableTranslationKeyCellTemplate(value: TemplateRef<any> | undefined) {
-    this.translationKeyTableCellTemplate = value
-  }
-  /**
-   * @deprecated Will be replaced by translationKeyTableCellChildTemplate
-   */
-  @ContentChild('tableTranslationKeyCell') tableTranslationKeyCellChildTemplate: TemplateRef<any> | undefined
   @ContentChild('translationKeyTableCell') translationKeyTableCellChildTemplate: TemplateRef<any> | undefined
   get _translationKeyTableCell(): TemplateRef<any> | undefined {
-    return (
-      this.translationKeyTableCellTemplate ||
-      this.translationKeyTableCellChildTemplate ||
-      this.tableTranslationKeyCellChildTemplate
-    )
+    return this.translationKeyTableCellTemplate || this.translationKeyTableCellChildTemplate
   }
 
   @Input() gridItemSubtitleLinesTemplate: TemplateRef<any> | undefined
@@ -208,27 +164,9 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   }
 
   @Input() relativeDateTableCellTemplate: TemplateRef<any> | undefined
-  /**
-   * @deprecated Will be replaced by relativeDateTableCellTemplate
-   */
-  @Input()
-  get tableRelativeDateCellTemplate(): TemplateRef<any> | undefined {
-    return this.relativeDateTableCellTemplate
-  }
-  set tableRelativeDateCellTemplate(value: TemplateRef<any> | undefined) {
-    this.relativeDateTableCellTemplate = value
-  }
-  /**
-   * @deprecated Will be replace by relativeDateTableCellChildTemplate
-   */
-  @ContentChild('tableRelativeDateCell') tableRelativeDateCellChildTemplate: TemplateRef<any> | undefined
   @ContentChild('relativeDateTableCell') relativeDateTableCellChildTemplate: TemplateRef<any> | undefined
   get _relativeDateTableCell(): TemplateRef<any> | undefined {
-    return (
-      this.relativeDateTableCellTemplate ||
-      this.relativeDateTableCellChildTemplate ||
-      this.tableRelativeDateCellChildTemplate
-    )
+    return this.relativeDateTableCellTemplate || this.relativeDateTableCellChildTemplate
   }
 
   @Input() listValueTemplate: TemplateRef<any> | undefined
@@ -250,21 +188,6 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   @ContentChild('relativeDateListValue') relativeDateListValueChildTemplate: TemplateRef<any> | undefined
   get _relativeDateListValue(): TemplateRef<any> | undefined {
     return this.relativeDateListValueTemplate || this.relativeDateListValueChildTemplate
-  }
-  /**
-   * @deprecated Will be removed and instead to change the template of a specific column
-   * use the new approach instead by following the naming convention column id + IdListValue
-   * e.g. for a column with the id 'status' in DataListGrid use pTemplate="statusIdListValue"
-   */
-  @Input() customListValueTemplate: TemplateRef<any> | undefined
-  /**
-   * @deprecated Will be removed and instead to change the template of a specific column
-   * use the new approach instead by following the naming convention column id + IdListValue
-   * e.g. for a column with the id 'status' DataListGrid use pTemplate="statusIdListValue"
-   */
-  @ContentChild('customListValue') customListValueChildTemplate: TemplateRef<any> | undefined
-  get _customListValue(): TemplateRef<any> | undefined {
-    return this.customListValueTemplate || this.customListValueChildTemplate
   }
   @Input() stringListValueTemplate: TemplateRef<any> | undefined
   @ContentChild('stringListValue') stringListValueChildTemplate: TemplateRef<any> | undefined
@@ -307,21 +230,6 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   @ContentChild('numberTableFilterCell') numberTableFilterCellChildTemplate: TemplateRef<any> | undefined
   get _numberTableFilterCell(): TemplateRef<any> | undefined {
     return this.numberTableFilterCellTemplate || this.numberTableFilterCellChildTemplate
-  }
-  /**
-   * @deprecated Will be removed and instead to change the template of a specific column filter
-   * use the new approach instead by following the naming convention column id + IdTableFilterCell
-   * e.g. for a column with the id 'status' in DataTable use pTemplate="statusIdTableFilterCell"
-   */
-  @Input() customTableFilterCellTemplate: TemplateRef<any> | undefined
-  /**
-   * @deprecated Will be removed and instead to change the template of a specific column filter
-   * use the new approach instead by following the naming convention column id + IdTableFilterCell
-   * e.g. for a column with the id 'status' in DataTable use pTemplate="statusIdTableFilterCell"
-   */
-  @ContentChild('customTableFilterCell') customTableFilterCellChildTemplate: TemplateRef<any> | undefined
-  get _customTableFilterCell(): TemplateRef<any> | undefined {
-    return this.customTableFilterCellTemplate || this.customTableFilterCellChildTemplate
   }
 
   @Input() additionalActions: DataAction[] = []
@@ -383,8 +291,6 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
     )
   }
 
-  constructor(private injector: Injector) {}
-
   ngOnInit(): void {
     this.firstColumnId = this.columns[0]?.id
 
@@ -418,20 +324,11 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
         case 'numberTableCell':
           this.numberTableCellChildTemplate = item.template
           break
-        case 'customTableCell':
-          this.customTableCellChildTemplate = item.template
-          break
-        case 'tableDateCell':
-          this.tableDateCellChildTemplate = item.template
-          break
         case 'dateTableCell':
           this.dateTableCellChildTemplate = item.template
           break
         case 'tableCell':
           this.tableCellChildTemplate = item.template
-          break
-        case 'tableTranslationKeyCell':
-          this.tableTranslationKeyCellChildTemplate = item.template
           break
         case 'translationKeyTableCell':
           this.translationKeyTableCellChildTemplate = item.template
@@ -448,9 +345,6 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
         case 'listItem':
           this.listItemChildTemplate = item.template
           break
-        case 'tableRelativeDateCell':
-          this.tableRelativeDateCellChildTemplate = item.template
-          break
         case 'relativeDateTableCell':
           this.relativeDateTableCellChildTemplate = item.template
           break
@@ -465,9 +359,6 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
           break
         case 'relativeDateListValue':
           this.relativeDateListValueChildTemplate = item.template
-          break
-        case 'customListValue':
-          this.customListValueChildTemplate = item.template
           break
         case 'stringListValue':
           this.stringListValueChildTemplate = item.template
@@ -492,9 +383,6 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
           break
         case 'numberTableFilterCell':
           this.numberTableFilterCellChildTemplate = item.template
-          break
-        case 'customTableFilterCell':
-          this.customTableFilterCellChildTemplate = item.template
           break
       }
     })

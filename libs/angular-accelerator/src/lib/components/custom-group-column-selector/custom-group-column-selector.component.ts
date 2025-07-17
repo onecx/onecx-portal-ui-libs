@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
+import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { DataTableColumn } from '../../model/data-table-column.model'
 
@@ -18,11 +18,14 @@ export interface CustomGroupColumnSelectorComponentState {
 }
 
 @Component({
+  standalone: false,
   selector: 'ocx-custom-group-column-selector',
   templateUrl: './custom-group-column-selector.component.html',
   styleUrls: ['./custom-group-column-selector.component.scss'],
 })
 export class CustomGroupColumnSelectorComponent implements OnInit {
+  private translate = inject(TranslateService)
+
   @Input() columns: DataTableColumn[] = []
   private _displayedColumns: DataTableColumn[] = []
   @Input()
@@ -91,8 +94,6 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
       value: false,
     },
   ]
-
-  constructor(private translate: TranslateService) {}
 
   ngOnInit(): void {
     this.componentStateChanged.emit({

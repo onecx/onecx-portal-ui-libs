@@ -6,14 +6,12 @@ import { TranslateService } from '@ngx-translate/core'
 import 'jest-canvas-mock'
 import { PrimeIcons } from 'primeng/api'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { ChartModule } from 'primeng/chart'
-import { MessageModule } from 'primeng/message'
-import { SelectButtonModule } from 'primeng/selectbutton'
 import { DiagramHarness, TestbedHarnessEnvironment } from '../../../../testing'
 import { DiagramType } from '../../model/diagram-type'
 import { DiagramComponent, DiagramLayouts } from './diagram.component'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { ColorUtils } from '../../utils/colorutils'
+import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 
 describe('DiagramComponent', () => {
   let translateService: TranslateService
@@ -39,10 +37,8 @@ describe('DiagramComponent', () => {
       declarations: [DiagramComponent],
       imports: [
         NoopAnimationsModule,
-        ChartModule,
-        MessageModule,
-        SelectButtonModule,
         FormsModule,
+        AngularAcceleratorPrimeNgModule,
         TranslateTestingModule.withTranslations({
           en: require('./../../../../assets/i18n/en.json'),
           de: require('./../../../../assets/i18n/de.json'),
@@ -229,8 +225,8 @@ describe('DiagramComponent', () => {
     const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
     const diagramTypeSelectButtonOptions = await diagram.getAllSelectionButtons()
 
-    expect(await diagramTypeSelectButtonOptions[0].hasClass('p-highlight')).toBe(false)
-    expect(await diagramTypeSelectButtonOptions[1].hasClass('p-highlight')).toBe(true)
+    expect(await diagramTypeSelectButtonOptions[0].hasClass('p-togglebutton-checked')).toBe(false)
+    expect(await diagramTypeSelectButtonOptions[1].hasClass('p-togglebutton-checked')).toBe(true)
   })
 
   it('should interpolate colors by default', () => {

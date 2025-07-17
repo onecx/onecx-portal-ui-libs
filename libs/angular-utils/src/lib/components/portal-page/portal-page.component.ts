@@ -1,9 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core'
+import { Component, Input, OnInit, inject } from '@angular/core'
 import { AppStateService } from '@onecx/angular-integration-interface'
+import { Observable, of } from 'rxjs'
 import { CommonModule } from '@angular/common'
 import { TranslateModule } from '@ngx-translate/core'
 import { PermissionService } from '../../services/permission.service'
-import { of } from 'rxjs'
 
 @Component({
   selector: 'ocx-portal-page',
@@ -13,17 +13,16 @@ import { of } from 'rxjs'
   imports: [CommonModule, TranslateModule],
 })
 export class PortalPageComponent implements OnInit {
+  private appState = inject(AppStateService)
+  private permissionService = inject(PermissionService)
+  private trueObservable = of(true)
+
   @Input() permission = ''
   @Input() helpArticleId = ''
   @Input() pageName = ''
   @Input() applicationId = ''
-  private trueObservable = of(true)
-  constructor(
-    private appState: AppStateService,
-    private permissionService: PermissionService
-  ) {}
 
-  hasAccess() {
+  hasAccess(): Observable<boolean> {
     return this.permission ? this.permissionService.hasPermission(this.permission) : this.trueObservable
   }
 

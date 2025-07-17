@@ -14,6 +14,8 @@ import { DynamicPipe } from '../../pipes/dynamic.pipe'
 import { DiagramComponent } from './diagram.component'
 import { DiagramType } from '../../model/diagram-type'
 import { DiagramData } from '../../model/diagram-data'
+import { StorybookThemeModule } from '../../storybook-theme.module'
+import { TooltipModule } from 'primeng/tooltip';
 
 export default {
   title: 'Components/DiagramComponent',
@@ -26,7 +28,11 @@ export default {
   },
   decorators: [
     applicationConfig({
-      providers: [importProvidersFrom(BrowserModule), importProvidersFrom(BrowserAnimationsModule)],
+      providers: [
+        importProvidersFrom(BrowserModule),
+        importProvidersFrom(BrowserAnimationsModule),
+        importProvidersFrom(StorybookThemeModule),
+      ],
     }),
     moduleMetadata({
       declarations: [DiagramComponent, DynamicPipe],
@@ -39,6 +45,7 @@ export default {
         ChartModule,
         SelectButtonModule,
         FormsModule,
+        TooltipModule,
       ],
     }),
   ],

@@ -9,7 +9,6 @@ jobs:
         if: ${{ github.event.workflow_run.conclusion == 'success' }}
         environment: Storybook
         env:
-          PIA_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN_PIA }}
           AA_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN_AA }}
         runs-on: ubuntu-latest
         steps:
@@ -23,13 +22,6 @@ jobs:
               run_id: ${{ github.event.workflow_run.id }}
               name: storybook-dist
               path: './storybook-dist'
-          - name: Publish to PIA Chromatic
-            uses: chromaui/action@latest
-            if: ${{ (env.PIA_TOKEN != null) && (env.PIA_TOKEN != '') }}
-            with:
-              projectToken: ${{ env.PIA_TOKEN }}
-              storybookBuildDir: storybook-dist/portal-integration-angular
-              skip: 'dependabot/**'
           - name: Publish to AA Chromatic
             uses: chromaui/action@latest
             if: ${{ (env.AA_TOKEN != null) && (env.AA_TOKEN != '') }}

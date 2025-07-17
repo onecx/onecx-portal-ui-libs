@@ -22,16 +22,6 @@ export class AppStateService implements OnDestroy {
    */
   currentPage$ = new CurrentPageTopic()
   currentWorkspace$ = new CurrentWorkspaceTopic()
-  
-  /**
-   * @deprecated Will be replaced by currentWorkspace$
-   */
-  get currentPortal$() {
-    return this.currentWorkspace$
-  }
-  set currentPortal$(value: CurrentWorkspaceTopic) {
-    this.currentWorkspace$ = value
-  }
 
   /**
    * This Topic is initialized as soon as the authentication is done
@@ -43,7 +33,6 @@ export class AppStateService implements OnDestroy {
     this.globalLoading$.destroy()
     this.currentMfe$.destroy()
     this.currentPage$.destroy()
-    this.currentPortal$.destroy()
     this.currentLocation$.destroy()
     this.currentWorkspace$.destroy()
     this.isAuthenticated$.destroy()

@@ -5,10 +5,10 @@
   "peerDependencies": {
     "tslib": "^2.6.3",
     "rxjs": "^7.8.1",
-    "@phenomnomnominal/tsquery": "^6",
-    "@nx/devkit": "^19.8.0",
     "@onecx/accelerator": "^5.43.0",
     "@onecx/nx-migration-utils": "^5.43.0",
+    "@nx/devkit": "^20.3.0",
+    "@phenomnomnominal/tsquery": "^6",
     "typescript": "^5.5.4"
   },
   "type": "commonjs",

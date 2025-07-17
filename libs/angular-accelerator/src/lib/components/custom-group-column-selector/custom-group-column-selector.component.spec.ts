@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { ButtonModule } from 'primeng/button'
-import { DialogModule } from 'primeng/dialog'
-import { PickListModule } from 'primeng/picklist'
 import { CustomGroupColumnSelectorComponent } from './custom-group-column-selector.component'
+import { CommonModule } from '@angular/common'
+import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
+import { FormsModule } from '@angular/forms'
 
 describe('CustomGroupColumnSelectorComponent', () => {
   let component: CustomGroupColumnSelectorComponent
@@ -12,7 +12,12 @@ describe('CustomGroupColumnSelectorComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [CustomGroupColumnSelectorComponent],
-      imports: [TranslateTestingModule.withTranslations({}), ButtonModule, DialogModule, PickListModule],
+      imports: [
+        CommonModule,
+        TranslateTestingModule.withTranslations({}),
+        AngularAcceleratorPrimeNgModule,
+        FormsModule,
+      ],
     }).compileComponents()
 
     fixture = TestBed.createComponent(CustomGroupColumnSelectorComponent)

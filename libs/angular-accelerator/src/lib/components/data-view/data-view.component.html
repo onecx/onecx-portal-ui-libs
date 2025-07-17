@@ -1,4 +1,5 @@
-<div *ngIf="layout !== 'table'">
+@if (layout !== 'table') {
+<div>
   <ocx-data-list-grid
     #ocxdatalistgrid
     [name]="name"
@@ -15,7 +16,6 @@
     [clientSideSorting]="true"
     [pageSizes]="pageSizes"
     [pageSize]="pageSize"
-    [showAllOption]="showAllOption"
     [paginator]="listGridPaginator"
     [page]="page"
     (pageChanged)="onPageChange($event)"
@@ -40,7 +40,6 @@
     [translationKeyListValueTemplate]="_translationKeyListValue ? translationKeyListValue : undefined"
     [numberListValueTemplate]="_numberListValue ? numberListValue : undefined"
     [relativeDateListValueTemplate]="_relativeDateListValue ? relativeDateListValue : undefined"
-    [customListValueTemplate]="_customListValue ? customListValue : undefined"
     [stringListValueTemplate]="_stringListValue ? stringListValue : undefined"
     [dateListValueTemplate]="_dateListValue ? dateListValue : undefined"
     [gridItemTemplate]="_gridItem ? gridItem  : undefined"
@@ -49,88 +48,78 @@
   >
   </ocx-data-list-grid>
   <ng-template #listItemSubtitleLines let-item>
-    <ng-container
-      *ngIf="_listItemSubtitleLines"
-      [ngTemplateOutlet]="_listItemSubtitleLines"
-      [ngTemplateOutletContext]="{$implicit:item}"
-    >
-    </ng-container
-  ></ng-template>
+    @if (_listItemSubtitleLines) {
+    <ng-container [ngTemplateOutlet]="_listItemSubtitleLines" [ngTemplateOutletContext]="{$implicit:item}">
+    </ng-container>
+    }</ng-template
+  >
   <ng-template #gridItemSubtitleLines let-item>
-    <ng-container
-      *ngIf="_gridItemSubtitleLines"
-      [ngTemplateOutlet]="_gridItemSubtitleLines"
-      [ngTemplateOutletContext]="{$implicit:item}"
-    >
-    </ng-container
-  ></ng-template>
+    @if (_gridItemSubtitleLines) {
+    <ng-container [ngTemplateOutlet]="_gridItemSubtitleLines" [ngTemplateOutletContext]="{$implicit:item}">
+    </ng-container>
+    }</ng-template
+  >
   <ng-template #gridItem let-item>
-    <ng-container *ngIf="_gridItem" [ngTemplateOutlet]="_gridItem" [ngTemplateOutletContext]="{$implicit:item}">
-    </ng-container
-  ></ng-template>
+    @if (_gridItem) {
+    <ng-container [ngTemplateOutlet]="_gridItem" [ngTemplateOutletContext]="{$implicit:item}"> </ng-container>
+    }</ng-template
+  >
   <ng-template #listItem let-item>
-    <ng-container *ngIf="_listItem" [ngTemplateOutlet]="_listItem" [ngTemplateOutletContext]="{$implicit:item}">
-    </ng-container
-  ></ng-template>
+    @if (_listItem) {
+    <ng-container [ngTemplateOutlet]="_listItem" [ngTemplateOutletContext]="{$implicit:item}"> </ng-container>
+    }</ng-template
+  >
   <ng-template #listValue let-rowObject="rowObject" let-column="column">
-    <ng-container
-      *ngIf="_listValue"
-      [ngTemplateOutlet]="_listValue"
-      [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
-    >
-    </ng-container
-  ></ng-template>
+    @if (_listValue) {
+    <ng-container [ngTemplateOutlet]="_listValue" [ngTemplateOutletContext]="{rowObject: rowObject, column:column}">
+    </ng-container>
+    }</ng-template
+  >
   <ng-template #translationKeyListValue let-rowObject="rowObject" let-column="column">
+    @if (_translationKeyListValue) {
     <ng-container
-      *ngIf="_translationKeyListValue"
       [ngTemplateOutlet]="_translationKeyListValue"
       [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
     >
-    </ng-container
-  ></ng-template>
+    </ng-container>
+    }</ng-template
+  >
   <ng-template #numberListValue let-rowObject="rowObject" let-column="column">
+    @if (_numberListValue) {
     <ng-container
-      *ngIf="_numberListValue"
       [ngTemplateOutlet]="_numberListValue"
       [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
     >
-    </ng-container
-  ></ng-template>
+    </ng-container>
+    }</ng-template
+  >
   <ng-template #relativeDateListValue let-rowObject="rowObject" let-column="column">
+    @if (_relativeDateListValue) {
     <ng-container
-      *ngIf="_relativeDateListValue"
       [ngTemplateOutlet]="_relativeDateListValue"
       [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
     >
-    </ng-container
-  ></ng-template>
-  <ng-template #customListValue let-rowObject="rowObject" let-column="column">
-    <ng-container
-      *ngIf="_customListValue"
-      [ngTemplateOutlet]="_customListValue"
-      [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
-    >
-    </ng-container
-  ></ng-template>
+    </ng-container>
+    }</ng-template
+  >
   <ng-template #stringListValue let-rowObject="rowObject" let-column="column">
+    @if (_stringListValue) {
     <ng-container
-      *ngIf="_stringListValue"
       [ngTemplateOutlet]="_stringListValue"
       [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
     >
-    </ng-container
-  ></ng-template>
+    </ng-container>
+    }</ng-template
+  >
   <ng-template #dateListValue let-rowObject="rowObject" let-column="column">
-    <ng-container
-      *ngIf="_dateListValue"
-      [ngTemplateOutlet]="_dateListValue"
-      [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
-    >
-    </ng-container
-  ></ng-template>
+    @if (_dateListValue) {
+    <ng-container [ngTemplateOutlet]="_dateListValue" [ngTemplateOutletContext]="{rowObject: rowObject, column:column}">
+    </ng-container>
+    }</ng-template
+  >
 </div>
-
-<div *ngIf="layout === 'table'">
+} @if (layout === 'table') {
+<div>
   <ocx-data-table
     #ocxdatatable
     [rows]="data"
@@ -143,7 +132,6 @@
     [clientSideSorting]="clientSideSorting"
     [pageSizes]="pageSizes"
     [pageSize]="pageSize"
-    [showAllOption]="showAllOption"
     [paginator]="tablePaginator"
     [page]="page"
     (pageChanged)="onPageChange($event)"
@@ -166,14 +154,12 @@
     [additionalActions]="additionalActions"
     [stringCellTemplate]="_stringTableCell ? stringCell : undefined"
     [numberCellTemplate]="_numberTableCell ? numberCell : undefined"
-    [customCellTemplate]="_customTableCell ? customCell : undefined"
     [dateCellTemplate]="_dateTableCell ? dateCell : undefined"
     [relativeDateCellTemplate]="_relativeDateTableCell ? relativeDateCell : undefined"
     [cellTemplate]="_tableCell ? cell : undefined"
     [translationKeyCellTemplate]="_translationKeyTableCell ? translationKeyCell : undefined"
     [filterCellTemplate]="_tableFilterCell ? filterCell : undefined"
     [dateFilterCellTemplate]="_dateTableFilterCell ? dateFilterCell : undefined"
-    [customFilterCellTemplate]="_customTableFilterCell ? customFilterCell : undefined"
     [numberFilterCellTemplate]="_numberTableFilterCell ? numberFilterCell : undefined"
     [stringFilterCellTemplate]="_stringTableFilterCell ? stringFilterCell : undefined"
     [relativeDateFilterCellTemplate]="_relativeDateTableFilterCell ? relativeDateFilterCell : undefined"
@@ -189,115 +175,106 @@
   >
   </ocx-data-table>
   <ng-template #stringCell let-rowObject="rowObject" let-column="column">
+    @if (_stringTableCell) {
     <ng-container
-      *ngIf="_stringTableCell"
       [ngTemplateOutlet]="_stringTableCell"
       [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
     >
-    </ng-container
-  ></ng-template>
+    </ng-container>
+    }</ng-template
+  >
   <ng-template #numberCell let-rowObject="rowObject" let-column="column">
+    @if (_numberTableCell) {
     <ng-container
-      *ngIf="_numberTableCell"
       [ngTemplateOutlet]="_numberTableCell"
       [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
     >
-    </ng-container
-  ></ng-template>
-  <ng-template #customCell let-rowObject="rowObject" let-column="column">
-    <ng-container
-      *ngIf="_customTableCell"
-      [ngTemplateOutlet]="_customTableCell"
-      [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
-    >
-    </ng-container
-  ></ng-template>
+    </ng-container>
+    }</ng-template
+  >
   <ng-template #dateCell let-rowObject="rowObject" let-column="column">
-    <ng-container
-      *ngIf="_dateTableCell"
-      [ngTemplateOutlet]="_dateTableCell"
-      [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
-    >
-    </ng-container
-  ></ng-template>
+    @if (_dateTableCell) {
+    <ng-container [ngTemplateOutlet]="_dateTableCell" [ngTemplateOutletContext]="{rowObject:rowObject, column:column}">
+    </ng-container>
+    }</ng-template
+  >
   <ng-template #relativeDateCell let-rowObject="rowObject" let-column="column">
+    @if (_relativeDateTableCell) {
     <ng-container
-      *ngIf="_relativeDateTableCell"
       [ngTemplateOutlet]="_relativeDateTableCell"
       [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
     >
-    </ng-container
-  ></ng-template>
+    </ng-container>
+    }</ng-template
+  >
   <ng-template #cell let-rowObject="rowObject" let-column="column">
-    <ng-container
-      *ngIf="_tableCell"
-      [ngTemplateOutlet]="_tableCell"
-      [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
-    >
-    </ng-container
-  ></ng-template>
+    @if (_tableCell) {
+    <ng-container [ngTemplateOutlet]="_tableCell" [ngTemplateOutletContext]="{rowObject: rowObject, column:column}">
+    </ng-container>
+    }</ng-template
+  >
   <ng-template #translationKeyCell let-rowObject="rowObject" let-column="column">
+    @if (_translationKeyTableCell) {
     <ng-container
-      *ngIf="_translationKeyTableCell"
       [ngTemplateOutlet]="_translationKeyTableCell"
       [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
     >
-    </ng-container
-  ></ng-template>
+    </ng-container>
+    }</ng-template
+  >
   <ng-template #stringFilterCell let-rowObject="rowObject" let-column="column">
+    @if (_stringTableFilterCell) {
     <ng-container
-      *ngIf="_stringTableFilterCell"
       [ngTemplateOutlet]="_stringTableFilterCell"
       [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
     >
-    </ng-container
-  ></ng-template>
+    </ng-container>
+    }</ng-template
+  >
   <ng-template #filterCell let-rowObject="rowObject" let-column="column">
+    @if (_tableFilterCell) {
     <ng-container
-      *ngIf="_tableFilterCell"
       [ngTemplateOutlet]="_tableFilterCell"
       [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
     >
     </ng-container>
+    }
   </ng-template>
   <ng-template #dateFilterCell let-rowObject="rowObject" let-column="column">
+    @if (_dateTableFilterCell) {
     <ng-container
-      *ngIf="_dateTableFilterCell"
       [ngTemplateOutlet]="_dateTableFilterCell"
       [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
     >
     </ng-container>
-  </ng-template>
-  <ng-template #customFilterCell let-rowObject="rowObject" let-column="column">
-    <ng-container
-      *ngIf="_customTableFilterCell"
-      [ngTemplateOutlet]="_customTableFilterCell"
-      [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
-    >
-    </ng-container>
+    }
   </ng-template>
   <ng-template #numberFilterCell let-rowObject="rowObject" let-column="column">
+    @if (_numberTableFilterCell) {
     <ng-container
-      *ngIf="_numberTableFilterCell"
       [ngTemplateOutlet]="_numberTableFilterCell"
       [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
     >
     </ng-container>
+    }
   </ng-template>
   <ng-template #relativeDateFilterCell let-rowObject="rowObject" let-column="column">
+    @if (_relativeDateTableFilterCell) {
     <ng-container
-      *ngIf="_relativeDateTableFilterCell"
       [ngTemplateOutlet]="_relativeDateTableFilterCell"
       [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
     >
     </ng-container>
+    }
   </ng-template>
   <ng-template #translationKeyFilterCell let-rowObject="rowObject" let-column="column">
+    @if (_translationKeyTableFilterCell) {
     <ng-container
-      *ngIf="_translationKeyTableFilterCell"
       [ngTemplateOutlet]="_translationKeyTableFilterCell"
       [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
     >
     </ng-container>
+    }
   </ng-template>
 </div>
+}

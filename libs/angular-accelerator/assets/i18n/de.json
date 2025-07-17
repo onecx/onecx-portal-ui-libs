@@ -40,7 +40,8 @@
   "OCX_LIST_GRID_SORT": {
     "DROPDOWN": {
       "PLACEHOLDER": "Sortierung auswählen",
-      "ARIA_LABEL": "Sortieren nach"
+      "ARIA_LABEL": "Sortieren nach",
+      "LABEL": "Sortieren nach"
     },
     "TOGGLE_BUTTON": {
       "ASCENDING_TOOLTIP": "Aufsteigend",
@@ -59,7 +60,6 @@
     "EDITED": "Bearbeitet",
     "SHOWING": "{{first}} - {{last}} von {{totalRecords}}",
     "SHOWING_WITH_TOTAL_ON_SERVER": "{{first}} - {{last}} von {{totalRecords}} ({{totalRecordsOnServer}})",
-    "ALL": "Alle",
     "MORE_ACTIONS": "Weitere Aktionen",
     "ACTIONS": {
       "VIEW": "Anzeigen",

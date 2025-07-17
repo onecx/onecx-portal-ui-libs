@@ -1,9 +1,0 @@
-@import './_topbar_common';
-@import './topbar_responsive';
-
-.layout-topbar-var {
-  // --changes onecx
-  // moved to top level layout
-  // --end changes onecx
-  @import './_topbar_theme';
-}

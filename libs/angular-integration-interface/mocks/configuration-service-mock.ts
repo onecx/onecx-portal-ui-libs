@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core'
 import { Config } from '@onecx/integration-interface'
 import { CONFIG_KEY } from '@onecx/angular-integration-interface'
-import { FakeTopic } from './fake-topic'
 import { firstValueFrom } from 'rxjs/internal/firstValueFrom'
 import { ConfigurationService } from '@onecx/angular-integration-interface'
+import { FakeTopic } from '@onecx/accelerator'
 
 export function provideConfigurationServiceMock() {
   return [ConfigurationServiceMock, { provide: ConfigurationService, useExisting: ConfigurationServiceMock }]
@@ -33,12 +33,8 @@ export class ConfigurationServiceMock {
     return this.isInitializedPromise
   }
 
-  public getProperty(key: CONFIG_KEY): string | undefined {
-    const config = this.config$.getValue()
-    if (config && typeof config[key] === 'string') {
-      return config[key]
-    }
-    return undefined
+  public getProperty(key: CONFIG_KEY): Promise<string | undefined> {
+    return firstValueFrom(this.config$.asObservable()).then((config) => config[key])
   }
 
   public async setProperty(key: string, val: string): Promise<void> {
@@ -47,7 +43,7 @@ export class ConfigurationServiceMock {
     await this.config$.publish(currentValues)
   }
 
-  public getConfig(): Config | undefined {
-    return this.config$.getValue()
+  public getConfig(): Promise<Config | undefined> {
+    return firstValueFrom(this.config$.asObservable())
   }
 }

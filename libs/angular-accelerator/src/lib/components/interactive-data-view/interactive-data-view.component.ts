@@ -10,7 +10,10 @@ import {
   QueryList,
   TemplateRef,
   ViewChild,
+  inject,
 } from '@angular/core'
+import { SlotService } from '@onecx/angular-remote-components'
+import { PrimeTemplate } from 'primeng/api'
 import {
   BehaviorSubject,
   Observable,
@@ -25,24 +28,22 @@ import {
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
+import { Filter } from '../../model/filter.model'
+import { limit } from '../../utils/filter.utils'
 import { orderAndMergeValuesByTimestamp } from '../../utils/rxjs-utils'
 import {
   ColumnGroupSelectionComponentState,
   GroupSelectionChangedEvent,
 } from '../column-group-selection/column-group-selection.component'
-import { PrimeTemplate } from 'primeng/api'
 import {
   ActionColumnChangedEvent,
   ColumnSelectionChangedEvent,
   CustomGroupColumnSelectorComponentState,
 } from '../custom-group-column-selector/custom-group-column-selector.component'
-import { SlotService } from '@onecx/angular-remote-components'
 import { DataLayoutSelectionComponentState } from '../data-layout-selection/data-layout-selection.component'
 import { DataListGridSortingComponentState } from '../data-list-grid-sorting/data-list-grid-sorting.component'
 import { Row, Sort } from '../data-table/data-table.component'
 import { DataViewComponent, DataViewComponentState, RowListGridData } from '../data-view/data-view.component'
-import { Filter } from '../../model/filter.model'
-import { limit } from '../../utils/filter.utils'
 import { FilterViewComponentState, FilterViewDisplayMode } from '../filter-view/filter-view.component'
 
 export type InteractiveDataViewComponentState = ColumnGroupSelectionComponentState &
@@ -57,12 +58,15 @@ export interface ColumnGroupData {
   groupKey: string
 }
 @Component({
+  standalone: false,
   selector: 'ocx-interactive-data-view',
   templateUrl: './interactive-data-view.component.html',
   styleUrls: ['./interactive-data-view.component.css'],
   providers: [{ provide: 'InteractiveDataViewComponent', useExisting: InteractiveDataViewComponent }],
 })
 export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
+  private readonly slotService = inject(SlotService)
+
   _dataViewComponent: DataViewComponent | undefined
   @ViewChild(DataViewComponent) set dataView(ref: DataViewComponent | undefined) {
     this._dataViewComponent = ref
@@ -80,7 +84,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   filterViewComponentState$ = new ReplaySubject<FilterViewComponentState>(1)
 
   @Input() searchConfigPermission: string | string[] | undefined
-  @Input() deletePermission: string | string[] | string[] | undefined
+  @Input() deletePermission: string | string[] | undefined
   @Input() editPermission: string | string[] | undefined
   @Input() viewPermission: string | string[] | undefined
   @Input() deleteActionVisibleField: string | undefined
@@ -110,7 +114,6 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   ]
   @Input() pageSizes: number[] = [10, 25, 50]
   @Input() pageSize: number | undefined
-  @Input() showAllOption = false
   @Input() totalRecordsOnServer: number | undefined
   @Input() layout: 'grid' | 'list' | 'table' = 'table'
   @Input() defaultGroupKey = ''
@@ -139,54 +142,18 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   set displayedColumnKeys(value: string[]) {
     this.displayedColumnKeys$.next(value)
   }
-  /**
-   * @deprecated Use `displayedColumnKeys` and pass in column ids instead of `DataTableColumn` objects
-   */
-  @Input()
-  get displayedColumns(): DataTableColumn[] {
-    return (
-      (this.displayedColumnKeys
-        .map((d) => this.columns.find((c) => c.id === d))
-        .filter((d) => d) as DataTableColumn[]) ?? []
-    )
-  }
-  set displayedColumns(value: DataTableColumn[]) {
-    this.displayedColumnKeys$.next(value.map((d) => d.id))
-  }
   @Input() frozenActionColumn = false
   @Input() actionColumnPosition: 'left' | 'right' = 'right'
+  @Input() headerStyleClass: string | undefined
+  @Input() contentStyleClass: string | undefined
   @ContentChild('tableCell') tableCell: TemplateRef<any> | undefined
   primeNgTableCell: TemplateRef<any> | undefined
-  /**
-   * @deprecated Will be replaced by dateTableCell
-   */
-  @ContentChild('tableDateCell') tableDateCell: TemplateRef<any> | undefined
-  /**
-   * @deprecated Will be replaced by primeNgDateTableCell
-   */
-  primeNgTableDateCell: TemplateRef<any> | undefined
   @ContentChild('dateTableCell') dateTableCell: TemplateRef<any> | undefined
   primeNgDateTableCell: TemplateRef<any> | undefined
 
-  /**
-   * @deprecated Will be replaced by relativeDateTableCell
-   */
-  @ContentChild('tableRelativeDateCell') tableRelativeDateCell: TemplateRef<any> | undefined
-  /**
-   * @deprecated Will be replaced by primeNgRelativeDateTableCell
-   */
-  primeNgTableRelativeDateCell: TemplateRef<any> | undefined
   @ContentChild('relativeDateTableCell') relativeDateTableCell: TemplateRef<any> | undefined
   primeNgRelativeDateTableCell: TemplateRef<any> | undefined
 
-  /**
-   * @deprecated Will be replaced by translationKeyTableCell
-   */
-  @ContentChild('tableTranslationKeyCell') tableTranslationKeyCell: TemplateRef<any> | undefined
-  /**
-   * @deprecated Will be replaced by primeNgTranslationKeyTableCell
-   */
-  primeNgTableTranslationKeyCell: TemplateRef<any> | undefined
   @ContentChild('translationKeyTableCell') translationKeyTableCell: TemplateRef<any> | undefined
   primeNgTranslationKeyTableCell: TemplateRef<any> | undefined
 
@@ -199,18 +166,6 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   primeNgStringTableCell: TemplateRef<any> | undefined
   @ContentChild('numberTableCell') numberTableCell: TemplateRef<any> | undefined
   primeNgNumberTableCell: TemplateRef<any> | undefined
-  /**
-   * @deprecated Will be removed and instead to change the template of a specific column
-   * use the new approach instead by following the naming convention column id + IdTableCell
-   * e.g. for a column with the id 'status' in DataTable use pTemplate="statusIdTableCell"
-   */
-  @ContentChild('customTableCell') customTableCell: TemplateRef<any> | undefined
-  /**
-   * @deprecated Will be removed and instead to change the template of a specific column
-   * use the new approach instead by following the naming convention column id + IdTableCell
-   * e.g. for a column with the id 'status' in DataTable use pTemplate="statusIdTableCell"
-   */
-  primeNgCustomTableCell: TemplateRef<any> | undefined
   @ContentChild('gridItem') gridItem: TemplateRef<any> | undefined
   primeNgGridItem: TemplateRef<any> | undefined
   @ContentChild('listItem') listItem: TemplateRef<any> | undefined
@@ -225,18 +180,6 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   primeNgNumberListValue: TemplateRef<any> | undefined
   @ContentChild('relativeDateListValue') relativeDateListValue: TemplateRef<any> | undefined
   primeNgRelativeDateListValue: TemplateRef<any> | undefined
-  /**
-   * @deprecated Will be removed and instead to change the template of a specific column
-   * use the new approach instead by following the naming convention column id + IdListValue
-   * e.g. for a column with the id 'status' DataListGrid use pTemplate="statusIdListValue"
-   */
-  @ContentChild('customListValue') customListValue: TemplateRef<any> | undefined
-  /**
-   * @deprecated Will be removed and instead to change the template of a specific column
-   * use the new approach instead by following the naming convention column id + IdListValue
-   * e.g. for a column with the id 'status' DataListGrid use pTemplate="statusIdListValue"
-   */
-  primeNgCustomListValue: TemplateRef<any> | undefined
   @ContentChild('stringListValue') stringListValue: TemplateRef<any> | undefined
   primeNgStringListValue: TemplateRef<any> | undefined
   @ContentChild('dateListValue') dateListValue: TemplateRef<any> | undefined
@@ -253,18 +196,6 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   primeNgStringTableFilterCell: TemplateRef<any> | undefined
   @ContentChild('numberTableFilterCell') numberTableFilterCell: TemplateRef<any> | undefined
   primeNgNumberTableFilterCell: TemplateRef<any> | undefined
-  /**
-   * @deprecated Will be removed and instead to change the template of a specific column filter
-   * use the new approach instead by following the naming convention column id + IdTableFilterCell
-   * e.g. for a column with the id 'status' in DataTable use pTemplate="statusIdTableFilterCell"
-   */
-  @ContentChild('customTableFilterCell') customTableFilterCell: TemplateRef<any> | undefined
-  /**
-   * @deprecated Will be removed and instead to change the template of a specific column filter
-   * use the new approach instead by following the naming convention column id + IdTableFilterCell
-   * e.g. for a column with the id 'status' in DataTable use pTemplate="statusIdTableFilterCell"
-   */
-  primeNgCustomTableFilterCell: TemplateRef<any> | undefined
 
   templates$: BehaviorSubject<QueryList<PrimeTemplate> | undefined> = new BehaviorSubject<
     QueryList<PrimeTemplate> | undefined
@@ -280,8 +211,6 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   @Output() viewItem = new EventEmitter<RowListGridData>()
   @Output() editItem = new EventEmitter<RowListGridData>()
   @Output() dataViewLayoutChange = new EventEmitter<'grid' | 'list' | 'table'>()
-  // TODO: Remove following line once displayedColumns (deprecated) has been removed
-  @Output() displayedColumnsChange = new EventEmitter<DataTableColumn[]>()
   @Output() displayedColumnKeysChange = new EventEmitter<string[]>()
   @Output() selectionChanged: EventEmitter<Row[]> = new EventEmitter()
 
@@ -326,23 +255,11 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   get _numberTableCell(): TemplateRef<any> | undefined {
     return this.numberTableCell
   }
-  get _customTableCell(): TemplateRef<any> | undefined {
-    return this.customTableCell
-  }
-  get _tableDateCell(): TemplateRef<any> | undefined {
-    return this.dateTableCell ?? this.tableDateCell
-  }
   get _dateTableCell(): TemplateRef<any> | undefined {
     return this.dateTableCell
   }
-  get _tableRelativeDateCell(): TemplateRef<any> | undefined {
-    return this.relativeDateTableCell ?? this.tableRelativeDateCell
-  }
   get _relativeDateTableCell(): TemplateRef<any> | undefined {
     return this.relativeDateTableCell
-  }
-  get _tableTranslationKeyCell(): TemplateRef<any> | undefined {
-    return this.translationKeyTableCell ?? this.tableTranslationKeyCell
   }
   get _translationKeyTableCell(): TemplateRef<any> | undefined {
     return this.translationKeyTableCell
@@ -364,9 +281,6 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   }
   get _relativeDateListValue(): TemplateRef<any> | undefined {
     return this.relativeDateListValue
-  }
-  get _customListValue(): TemplateRef<any> | undefined {
-    return this.customListValue
   }
   get _stringListValue(): TemplateRef<any> | undefined {
     return this.stringListValue
@@ -392,9 +306,6 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   get _numberTableFilterCell(): TemplateRef<any> | undefined {
     return this.numberTableFilterCell
   }
-  get _customTableFilterCell(): TemplateRef<any> | undefined {
-    return this.customTableFilterCell
-  }
 
   _data: RowListGridData[] = []
   @Input()
@@ -409,21 +320,18 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   isColumnGroupSelectionComponentDefined$: Observable<boolean>
   groupSelectionChangedSlotEmitter = new EventEmitter<ColumnGroupData | undefined>()
 
-  constructor(private slotService: SlotService) {
+  constructor() {
     this.isColumnGroupSelectionComponentDefined$ = this.slotService
       .isSomeComponentDefinedForSlot(this.columnGroupSlotName)
       .pipe(startWith(true))
 
     this.groupSelectionChangedSlotEmitter.subscribe((event: ColumnGroupData | undefined) => {
-      if (event === undefined) {
-        event = {
-          activeColumns: this.displayedColumns,
-          groupKey: this.selectedGroupKey ?? this.defaultGroupKey,
-        }
+      event ??= {
+        activeColumns: this.getDisplayedColumns(),
+        groupKey: this.selectedGroupKey ?? this.defaultGroupKey,
       }
       this.displayedColumnKeys$.next(event.activeColumns.map((col) => col.id))
       this.selectedGroupKey$.next(event.groupKey)
-      this.displayedColumnsChange.emit(this.displayedColumns)
       this.displayedColumnKeysChange.emit(this.displayedColumnKeys)
       this.columnGroupSelectionComponentState$.next({
         activeColumnGroupKey: event.groupKey,
@@ -449,9 +357,6 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
 
   ngOnInit(): void {
     this.selectedGroupKey = this.defaultGroupKey
-    if (!this.displayedColumns || this.displayedColumns.length === 0) {
-      this.displayedColumnKeys = this.columns.map((column) => column.id)
-    }
     if (this.defaultGroupKey && this.defaultGroupKey !== this.customGroupKey) {
       this.displayedColumnKeys = this.columns
         .filter((column) => column.predefinedGroupKeys?.includes(this.defaultGroupKey))
@@ -465,7 +370,6 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
           []
       )
     )
-    this.displayedColumnsChange.emit(this.displayedColumns)
     this.displayedColumnKeysChange.emit(this.displayedColumnKeys)
     if (!this.groupSelectionNoGroupSelectedKey) {
       this.groupSelectionNoGroupSelectedKey = 'OCX_INTERACTIVE_DATA_VIEW.NO_GROUP_SELECTED'
@@ -486,7 +390,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
       columnGroupSelectionComponentState$ = columnGroupSelectionComponentState$.pipe(
         startWith({
           activeColumnGroupKey: this.selectedGroupKey,
-          displayedColumns: this.displayedColumns,
+          displayedColumns: this.getDisplayedColumns(),
         })
       )
       customGroupColumnSelectorComponentState$ = customGroupColumnSelectorComponentState$.pipe(
@@ -495,7 +399,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
             frozen: this.frozenActionColumn,
             position: this.actionColumnPosition,
           },
-          displayedColumns: this.displayedColumns,
+          displayedColumns: this.getDisplayedColumns(),
           activeColumnGroupKey: this.selectedGroupKey,
         })
       )
@@ -535,20 +439,11 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
         case 'tableCell':
           this.primeNgTableCell = item.template
           break
-        case 'tableDateCell':
-          this.primeNgTableDateCell = item.template
-          break
         case 'dateTableCell':
           this.primeNgDateTableCell = item.template
           break
-        case 'tableRelativeDateCell':
-          this.primeNgTableRelativeDateCell = item.template
-          break
         case 'relativeDateTableCell':
           this.primeNgRelativeDateTableCell = item.template
-          break
-        case 'tableTranslationKeyCell':
-          this.primeNgTableTranslationKeyCell = item.template
           break
         case 'translationKeyTableCell':
           this.primeNgTranslationKeyTableCell = item.template
@@ -564,9 +459,6 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
           break
         case 'numberTableCell':
           this.primeNgNumberTableCell = item.template
-          break
-        case 'customTableCell':
-          this.primeNgCustomTableCell = item.template
           break
         case 'gridItem':
           this.primeNgGridItem = item.template
@@ -588,9 +480,6 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
           break
         case 'relativeDateListValue':
           this.primeNgRelativeDateListValue = item.template
-          break
-        case 'customListValue':
-          this.primeNgCustomListValue = item.template
           break
         case 'stringListValue':
           this.primeNgStringListValue = item.template
@@ -615,9 +504,6 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
           break
         case 'numberTableFilterCell':
           this.primeNgNumberTableFilterCell = item.template
-          break
-        case 'customTableFilterCell':
-          this.primeNgCustomTableFilterCell = item.template
           break
       }
     })
@@ -670,8 +556,6 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   onColumnGroupSelectionChange(event: GroupSelectionChangedEvent) {
     this.displayedColumnKeys = event.activeColumns.map((col) => col.id)
     this.selectedGroupKey = event.groupKey
-    // TODO: Remove following line once displayedColumns (deprecated) has been removed
-    this.displayedColumnsChange.emit(this.displayedColumns)
     this.displayedColumnKeysChange.emit(this.displayedColumnKeys)
   }
 
@@ -712,8 +596,6 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   onColumnSelectionChange(event: ColumnSelectionChangedEvent) {
     this.displayedColumnKeys = event.activeColumns.map((col) => col.id)
     this.selectedGroupKey = this.customGroupKey
-    // TODO: Remove following line once displayedColumns (deprecated) has been removed
-    this.displayedColumnsChange.emit(this.displayedColumns)
     this.displayedColumnKeysChange.emit(this.displayedColumnKeys)
   }
 
@@ -736,5 +618,13 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   onPageSizeChange(event: number) {
     this.pageSize = event
     this.pageSizeChanged.emit(event)
+  }
+
+  getDisplayedColumns(): DataTableColumn[] {
+    return (
+      (this.displayedColumnKeys
+        .map((key) => this.columns.find((c) => c.id === key))
+        .filter((d) => d) as DataTableColumn[]) ?? []
+    )
   }
 }

@@ -40,6 +40,7 @@ export interface DataLayoutSelectionComponentState {
   layout?: 'grid' | 'list' | 'table'
 }
 @Component({
+  standalone: false,
   selector: 'ocx-data-layout-selection',
   templateUrl: './data-layout-selection.component.html',
   styleUrls: ['./data-layout-selection.component.scss'],

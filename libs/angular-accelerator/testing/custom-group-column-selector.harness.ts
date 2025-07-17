@@ -17,11 +17,11 @@ export class CustomGroupColumnSelectorHarness extends ContentContainerComponentH
   getSelectButtons = this.locatorForOptional('[name]')
 
   async getFrozenActionColumnSelectButton() {
-    return await this.locatorForAll(`[name="frozen-action-column-select-button"] .p-button`)()
+    return await this.locatorForAll(`[name="frozen-action-column-select-button"] .p-togglebutton`)()
   }
 
   async getActionColumnPositionSelectButtons() {
-    return await this.locatorForAll(`[name="action-column-position-select-button"] .p-button`)()
+    return await this.locatorForAll(`[name="action-column-position-select-button"] .p-togglebutton`)()
   }
 
   async openCustomGroupColumnSelectorDialog() {

@@ -1,5 +1,4 @@
 import { InjectionToken } from '@angular/core'
-import { IAuthService } from './iauth.service'
 
 export interface LibConfig {
   appId: string
@@ -14,13 +13,6 @@ export interface LibConfig {
   remoteConfigURL: string
 }
 export const APP_CONFIG = new InjectionToken<LibConfig>('APP_CONFIG')
-
-/**
- * @deprecated
- * Please do not inject the auth service at all.
- * There are better ways to achieve what you want. Please use permission service or user service.
- */
-export const AUTH_SERVICE = new InjectionToken<IAuthService>('AUTH_SERVICE')
 
 export const SANITY_CHECK = new InjectionToken<string>('OCXSANITY_CHECK')
 

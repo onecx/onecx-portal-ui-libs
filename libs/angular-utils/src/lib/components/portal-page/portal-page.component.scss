@@ -1,9 +1,8 @@
-@import '@onecx/portal-layout-styles/src/styles/shell/_variables.scss';
 :host {
   display: block;
   padding: var(--page-padding, 1rem);
 }
-@media (min-width: $mobileBreakpoint) {
+@media (max-width: var(--mobile-break-point)) {
   :host {
     padding: var(--page-padding-lg, 1rem);
     padding-top: var(--page-padding, 1rem);
