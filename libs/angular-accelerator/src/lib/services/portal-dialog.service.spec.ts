@@ -25,6 +25,7 @@ import {
 } from './portal-dialog.service'
 import { provideShellCapabilityServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
+import { TooltipModule } from 'primeng/tooltip'
 
 // This component is in charge of dialog display
 @Component({
@@ -278,6 +279,8 @@ describe('PortalDialogService', () => {
         CommonModule,
         NoopAnimationsModule,
         ButtonModule,
+        NoopAnimationsModule,
+        TooltipModule,
       ],
       providers: [
         PortalDialogService,
