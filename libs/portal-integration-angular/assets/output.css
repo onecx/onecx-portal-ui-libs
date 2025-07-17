@@ -8,7 +8,7 @@
 }
 
 .grid > .col,
-.grid > [class*=col] {
+.grid > [class*='col'] {
   box-sizing: border-box;
 }
 
@@ -19,7 +19,7 @@
 }
 
 .grid-nogutter > .col,
-.grid-nogutter > [class*=col-] {
+.grid-nogutter > [class*='col-'] {
   padding: 0;
 }
 
@@ -6019,675 +6019,675 @@
 }
 
 .bg-white-alpha-10 {
-  background-color: rgba(255,255,255,0.1) !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
 }
 .bg-white-alpha-20 {
-  background-color: rgba(255,255,255,0.2) !important;
+  background-color: rgba(255, 255, 255, 0.2) !important;
 }
 .bg-white-alpha-30 {
-  background-color: rgba(255,255,255,0.3) !important;
+  background-color: rgba(255, 255, 255, 0.3) !important;
 }
 .bg-white-alpha-40 {
-  background-color: rgba(255,255,255,0.4) !important;
+  background-color: rgba(255, 255, 255, 0.4) !important;
 }
 .bg-white-alpha-50 {
-  background-color: rgba(255,255,255,0.5) !important;
+  background-color: rgba(255, 255, 255, 0.5) !important;
 }
 .bg-white-alpha-60 {
-  background-color: rgba(255,255,255,0.6) !important;
+  background-color: rgba(255, 255, 255, 0.6) !important;
 }
 .bg-white-alpha-70 {
-  background-color: rgba(255,255,255,0.7) !important;
+  background-color: rgba(255, 255, 255, 0.7) !important;
 }
 .bg-white-alpha-80 {
-  background-color: rgba(255,255,255,0.8) !important;
+  background-color: rgba(255, 255, 255, 0.8) !important;
 }
 .bg-white-alpha-90 {
-  background-color: rgba(255,255,255,0.9) !important;
+  background-color: rgba(255, 255, 255, 0.9) !important;
 }
 
 .hover\:bg-white-alpha-10:hover {
-  background-color: rgba(255,255,255,0.1) !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
 }
 .hover\:bg-white-alpha-20:hover {
-  background-color: rgba(255,255,255,0.2) !important;
+  background-color: rgba(255, 255, 255, 0.2) !important;
 }
 .hover\:bg-white-alpha-30:hover {
-  background-color: rgba(255,255,255,0.3) !important;
+  background-color: rgba(255, 255, 255, 0.3) !important;
 }
 .hover\:bg-white-alpha-40:hover {
-  background-color: rgba(255,255,255,0.4) !important;
+  background-color: rgba(255, 255, 255, 0.4) !important;
 }
 .hover\:bg-white-alpha-50:hover {
-  background-color: rgba(255,255,255,0.5) !important;
+  background-color: rgba(255, 255, 255, 0.5) !important;
 }
 .hover\:bg-white-alpha-60:hover {
-  background-color: rgba(255,255,255,0.6) !important;
+  background-color: rgba(255, 255, 255, 0.6) !important;
 }
 .hover\:bg-white-alpha-70:hover {
-  background-color: rgba(255,255,255,0.7) !important;
+  background-color: rgba(255, 255, 255, 0.7) !important;
 }
 .hover\:bg-white-alpha-80:hover {
-  background-color: rgba(255,255,255,0.8) !important;
+  background-color: rgba(255, 255, 255, 0.8) !important;
 }
 .hover\:bg-white-alpha-90:hover {
-  background-color: rgba(255,255,255,0.9) !important;
+  background-color: rgba(255, 255, 255, 0.9) !important;
 }
 
 .focus\:bg-white-alpha-10:focus {
-  background-color: rgba(255,255,255,0.1) !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
 }
 .focus\:bg-white-alpha-20:focus {
-  background-color: rgba(255,255,255,0.2) !important;
+  background-color: rgba(255, 255, 255, 0.2) !important;
 }
 .focus\:bg-white-alpha-30:focus {
-  background-color: rgba(255,255,255,0.3) !important;
+  background-color: rgba(255, 255, 255, 0.3) !important;
 }
 .focus\:bg-white-alpha-40:focus {
-  background-color: rgba(255,255,255,0.4) !important;
+  background-color: rgba(255, 255, 255, 0.4) !important;
 }
 .focus\:bg-white-alpha-50:focus {
-  background-color: rgba(255,255,255,0.5) !important;
+  background-color: rgba(255, 255, 255, 0.5) !important;
 }
 .focus\:bg-white-alpha-60:focus {
-  background-color: rgba(255,255,255,0.6) !important;
+  background-color: rgba(255, 255, 255, 0.6) !important;
 }
 .focus\:bg-white-alpha-70:focus {
-  background-color: rgba(255,255,255,0.7) !important;
+  background-color: rgba(255, 255, 255, 0.7) !important;
 }
 .focus\:bg-white-alpha-80:focus {
-  background-color: rgba(255,255,255,0.8) !important;
+  background-color: rgba(255, 255, 255, 0.8) !important;
 }
 .focus\:bg-white-alpha-90:focus {
-  background-color: rgba(255,255,255,0.9) !important;
+  background-color: rgba(255, 255, 255, 0.9) !important;
 }
 
 .active\:bg-white-alpha-10:active {
-  background-color: rgba(255,255,255,0.1) !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
 }
 .active\:bg-white-alpha-20:active {
-  background-color: rgba(255,255,255,0.2) !important;
+  background-color: rgba(255, 255, 255, 0.2) !important;
 }
 .active\:bg-white-alpha-30:active {
-  background-color: rgba(255,255,255,0.3) !important;
+  background-color: rgba(255, 255, 255, 0.3) !important;
 }
 .active\:bg-white-alpha-40:active {
-  background-color: rgba(255,255,255,0.4) !important;
+  background-color: rgba(255, 255, 255, 0.4) !important;
 }
 .active\:bg-white-alpha-50:active {
-  background-color: rgba(255,255,255,0.5) !important;
+  background-color: rgba(255, 255, 255, 0.5) !important;
 }
 .active\:bg-white-alpha-60:active {
-  background-color: rgba(255,255,255,0.6) !important;
+  background-color: rgba(255, 255, 255, 0.6) !important;
 }
 .active\:bg-white-alpha-70:active {
-  background-color: rgba(255,255,255,0.7) !important;
+  background-color: rgba(255, 255, 255, 0.7) !important;
 }
 .active\:bg-white-alpha-80:active {
-  background-color: rgba(255,255,255,0.8) !important;
+  background-color: rgba(255, 255, 255, 0.8) !important;
 }
 .active\:bg-white-alpha-90:active {
-  background-color: rgba(255,255,255,0.9) !important;
+  background-color: rgba(255, 255, 255, 0.9) !important;
 }
 
 .bg-black-alpha-10 {
-  background-color: rgba(0,0,0,0.1) !important;
+  background-color: rgba(0, 0, 0, 0.1) !important;
 }
 .bg-black-alpha-20 {
-  background-color: rgba(0,0,0,0.2) !important;
+  background-color: rgba(0, 0, 0, 0.2) !important;
 }
 .bg-black-alpha-30 {
-  background-color: rgba(0,0,0,0.3) !important;
+  background-color: rgba(0, 0, 0, 0.3) !important;
 }
 .bg-black-alpha-40 {
-  background-color: rgba(0,0,0,0.4) !important;
+  background-color: rgba(0, 0, 0, 0.4) !important;
 }
 .bg-black-alpha-50 {
-  background-color: rgba(0,0,0,0.5) !important;
+  background-color: rgba(0, 0, 0, 0.5) !important;
 }
 .bg-black-alpha-60 {
-  background-color: rgba(0,0,0,0.6) !important;
+  background-color: rgba(0, 0, 0, 0.6) !important;
 }
 .bg-black-alpha-70 {
-  background-color: rgba(0,0,0,0.7) !important;
+  background-color: rgba(0, 0, 0, 0.7) !important;
 }
 .bg-black-alpha-80 {
-  background-color: rgba(0,0,0,0.8) !important;
+  background-color: rgba(0, 0, 0, 0.8) !important;
 }
 .bg-black-alpha-90 {
-  background-color: rgba(0,0,0,0.9) !important;
+  background-color: rgba(0, 0, 0, 0.9) !important;
 }
 
 .hover\:bg-black-alpha-10:hover {
-  background-color: rgba(0,0,0,0.1) !important;
+  background-color: rgba(0, 0, 0, 0.1) !important;
 }
 .hover\:bg-black-alpha-20:hover {
-  background-color: rgba(0,0,0,0.2) !important;
+  background-color: rgba(0, 0, 0, 0.2) !important;
 }
 .hover\:bg-black-alpha-30:hover {
-  background-color: rgba(0,0,0,0.3) !important;
+  background-color: rgba(0, 0, 0, 0.3) !important;
 }
 .hover\:bg-black-alpha-40:hover {
-  background-color: rgba(0,0,0,0.4) !important;
+  background-color: rgba(0, 0, 0, 0.4) !important;
 }
 .hover\:bg-black-alpha-50:hover {
-  background-color: rgba(0,0,0,0.5) !important;
+  background-color: rgba(0, 0, 0, 0.5) !important;
 }
 .hover\:bg-black-alpha-60:hover {
-  background-color: rgba(0,0,0,0.6) !important;
+  background-color: rgba(0, 0, 0, 0.6) !important;
 }
 .hover\:bg-black-alpha-70:hover {
-  background-color: rgba(0,0,0,0.7) !important;
+  background-color: rgba(0, 0, 0, 0.7) !important;
 }
 .hover\:bg-black-alpha-80:hover {
-  background-color: rgba(0,0,0,0.8) !important;
+  background-color: rgba(0, 0, 0, 0.8) !important;
 }
 .hover\:bg-black-alpha-90:hover {
-  background-color: rgba(0,0,0,0.9) !important;
+  background-color: rgba(0, 0, 0, 0.9) !important;
 }
 
 .focus\:bg-black-alpha-10:focus {
-  background-color: rgba(0,0,0,0.1) !important;
+  background-color: rgba(0, 0, 0, 0.1) !important;
 }
 .focus\:bg-black-alpha-20:focus {
-  background-color: rgba(0,0,0,0.2) !important;
+  background-color: rgba(0, 0, 0, 0.2) !important;
 }
 .focus\:bg-black-alpha-30:focus {
-  background-color: rgba(0,0,0,0.3) !important;
+  background-color: rgba(0, 0, 0, 0.3) !important;
 }
 .focus\:bg-black-alpha-40:focus {
-  background-color: rgba(0,0,0,0.4) !important;
+  background-color: rgba(0, 0, 0, 0.4) !important;
 }
 .focus\:bg-black-alpha-50:focus {
-  background-color: rgba(0,0,0,0.5) !important;
+  background-color: rgba(0, 0, 0, 0.5) !important;
 }
 .focus\:bg-black-alpha-60:focus {
-  background-color: rgba(0,0,0,0.6) !important;
+  background-color: rgba(0, 0, 0, 0.6) !important;
 }
 .focus\:bg-black-alpha-70:focus {
-  background-color: rgba(0,0,0,0.7) !important;
+  background-color: rgba(0, 0, 0, 0.7) !important;
 }
 .focus\:bg-black-alpha-80:focus {
-  background-color: rgba(0,0,0,0.8) !important;
+  background-color: rgba(0, 0, 0, 0.8) !important;
 }
 .focus\:bg-black-alpha-90:focus {
-  background-color: rgba(0,0,0,0.9) !important;
+  background-color: rgba(0, 0, 0, 0.9) !important;
 }
 
 .active\:bg-black-alpha-10:active {
-  background-color: rgba(0,0,0,0.1) !important;
+  background-color: rgba(0, 0, 0, 0.1) !important;
 }
 .active\:bg-black-alpha-20:active {
-  background-color: rgba(0,0,0,0.2) !important;
+  background-color: rgba(0, 0, 0, 0.2) !important;
 }
 .active\:bg-black-alpha-30:active {
-  background-color: rgba(0,0,0,0.3) !important;
+  background-color: rgba(0, 0, 0, 0.3) !important;
 }
 .active\:bg-black-alpha-40:active {
-  background-color: rgba(0,0,0,0.4) !important;
+  background-color: rgba(0, 0, 0, 0.4) !important;
 }
 .active\:bg-black-alpha-50:active {
-  background-color: rgba(0,0,0,0.5) !important;
+  background-color: rgba(0, 0, 0, 0.5) !important;
 }
 .active\:bg-black-alpha-60:active {
-  background-color: rgba(0,0,0,0.6) !important;
+  background-color: rgba(0, 0, 0, 0.6) !important;
 }
 .active\:bg-black-alpha-70:active {
-  background-color: rgba(0,0,0,0.7) !important;
+  background-color: rgba(0, 0, 0, 0.7) !important;
 }
 .active\:bg-black-alpha-80:active {
-  background-color: rgba(0,0,0,0.8) !important;
+  background-color: rgba(0, 0, 0, 0.8) !important;
 }
 .active\:bg-black-alpha-90:active {
-  background-color: rgba(0,0,0,0.9) !important;
+  background-color: rgba(0, 0, 0, 0.9) !important;
 }
 
 .border-white-alpha-10 {
-  border-color: rgba(255,255,255,0.1) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
 }
 .border-white-alpha-20 {
-  border-color: rgba(255,255,255,0.2) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
 }
 .border-white-alpha-30 {
-  border-color: rgba(255,255,255,0.3) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
 }
 .border-white-alpha-40 {
-  border-color: rgba(255,255,255,0.4) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
 }
 .border-white-alpha-50 {
-  border-color: rgba(255,255,255,0.5) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
 }
 .border-white-alpha-60 {
-  border-color: rgba(255,255,255,0.6) !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
 }
 .border-white-alpha-70 {
-  border-color: rgba(255,255,255,0.7) !important;
+  border-color: rgba(255, 255, 255, 0.7) !important;
 }
 .border-white-alpha-80 {
-  border-color: rgba(255,255,255,0.8) !important;
+  border-color: rgba(255, 255, 255, 0.8) !important;
 }
 .border-white-alpha-90 {
-  border-color: rgba(255,255,255,0.9) !important;
+  border-color: rgba(255, 255, 255, 0.9) !important;
 }
 
 .hover\:border-white-alpha-10:hover {
-  border-color: rgba(255,255,255,0.1) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
 }
 .hover\:border-white-alpha-20:hover {
-  border-color: rgba(255,255,255,0.2) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
 }
 .hover\:border-white-alpha-30:hover {
-  border-color: rgba(255,255,255,0.3) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
 }
 .hover\:border-white-alpha-40:hover {
-  border-color: rgba(255,255,255,0.4) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
 }
 .hover\:border-white-alpha-50:hover {
-  border-color: rgba(255,255,255,0.5) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
 }
 .hover\:border-white-alpha-60:hover {
-  border-color: rgba(255,255,255,0.6) !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
 }
 .hover\:border-white-alpha-70:hover {
-  border-color: rgba(255,255,255,0.7) !important;
+  border-color: rgba(255, 255, 255, 0.7) !important;
 }
 .hover\:border-white-alpha-80:hover {
-  border-color: rgba(255,255,255,0.8) !important;
+  border-color: rgba(255, 255, 255, 0.8) !important;
 }
 .hover\:border-white-alpha-90:hover {
-  border-color: rgba(255,255,255,0.9) !important;
+  border-color: rgba(255, 255, 255, 0.9) !important;
 }
 
 .focus\:border-white-alpha-10:focus {
-  border-color: rgba(255,255,255,0.1) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
 }
 .focus\:border-white-alpha-20:focus {
-  border-color: rgba(255,255,255,0.2) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
 }
 .focus\:border-white-alpha-30:focus {
-  border-color: rgba(255,255,255,0.3) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
 }
 .focus\:border-white-alpha-40:focus {
-  border-color: rgba(255,255,255,0.4) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
 }
 .focus\:border-white-alpha-50:focus {
-  border-color: rgba(255,255,255,0.5) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
 }
 .focus\:border-white-alpha-60:focus {
-  border-color: rgba(255,255,255,0.6) !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
 }
 .focus\:border-white-alpha-70:focus {
-  border-color: rgba(255,255,255,0.7) !important;
+  border-color: rgba(255, 255, 255, 0.7) !important;
 }
 .focus\:border-white-alpha-80:focus {
-  border-color: rgba(255,255,255,0.8) !important;
+  border-color: rgba(255, 255, 255, 0.8) !important;
 }
 .focus\:border-white-alpha-90:focus {
-  border-color: rgba(255,255,255,0.9) !important;
+  border-color: rgba(255, 255, 255, 0.9) !important;
 }
 
 .active\:border-white-alpha-10:active {
-  border-color: rgba(255,255,255,0.1) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
 }
 .active\:border-white-alpha-20:active {
-  border-color: rgba(255,255,255,0.2) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
 }
 .active\:border-white-alpha-30:active {
-  border-color: rgba(255,255,255,0.3) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
 }
 .active\:border-white-alpha-40:active {
-  border-color: rgba(255,255,255,0.4) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
 }
 .active\:border-white-alpha-50:active {
-  border-color: rgba(255,255,255,0.5) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
 }
 .active\:border-white-alpha-60:active {
-  border-color: rgba(255,255,255,0.6) !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
 }
 .active\:border-white-alpha-70:active {
-  border-color: rgba(255,255,255,0.7) !important;
+  border-color: rgba(255, 255, 255, 0.7) !important;
 }
 .active\:border-white-alpha-80:active {
-  border-color: rgba(255,255,255,0.8) !important;
+  border-color: rgba(255, 255, 255, 0.8) !important;
 }
 .active\:border-white-alpha-90:active {
-  border-color: rgba(255,255,255,0.9) !important;
+  border-color: rgba(255, 255, 255, 0.9) !important;
 }
 
 .border-black-alpha-10 {
-  border-color: rgba(0,0,0,0.1) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
 }
 .border-black-alpha-20 {
-  border-color: rgba(0,0,0,0.2) !important;
+  border-color: rgba(0, 0, 0, 0.2) !important;
 }
 .border-black-alpha-30 {
-  border-color: rgba(0,0,0,0.3) !important;
+  border-color: rgba(0, 0, 0, 0.3) !important;
 }
 .border-black-alpha-40 {
-  border-color: rgba(0,0,0,0.4) !important;
+  border-color: rgba(0, 0, 0, 0.4) !important;
 }
 .border-black-alpha-50 {
-  border-color: rgba(0,0,0,0.5) !important;
+  border-color: rgba(0, 0, 0, 0.5) !important;
 }
 .border-black-alpha-60 {
-  border-color: rgba(0,0,0,0.6) !important;
+  border-color: rgba(0, 0, 0, 0.6) !important;
 }
 .border-black-alpha-70 {
-  border-color: rgba(0,0,0,0.7) !important;
+  border-color: rgba(0, 0, 0, 0.7) !important;
 }
 .border-black-alpha-80 {
-  border-color: rgba(0,0,0,0.8) !important;
+  border-color: rgba(0, 0, 0, 0.8) !important;
 }
 .border-black-alpha-90 {
-  border-color: rgba(0,0,0,0.9) !important;
+  border-color: rgba(0, 0, 0, 0.9) !important;
 }
 
 .hover\:border-black-alpha-10:hover {
-  border-color: rgba(0,0,0,0.1) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
 }
 .hover\:border-black-alpha-20:hover {
-  border-color: rgba(0,0,0,0.2) !important;
+  border-color: rgba(0, 0, 0, 0.2) !important;
 }
 .hover\:border-black-alpha-30:hover {
-  border-color: rgba(0,0,0,0.3) !important;
+  border-color: rgba(0, 0, 0, 0.3) !important;
 }
 .hover\:border-black-alpha-40:hover {
-  border-color: rgba(0,0,0,0.4) !important;
+  border-color: rgba(0, 0, 0, 0.4) !important;
 }
 .hover\:border-black-alpha-50:hover {
-  border-color: rgba(0,0,0,0.5) !important;
+  border-color: rgba(0, 0, 0, 0.5) !important;
 }
 .hover\:border-black-alpha-60:hover {
-  border-color: rgba(0,0,0,0.6) !important;
+  border-color: rgba(0, 0, 0, 0.6) !important;
 }
 .hover\:border-black-alpha-70:hover {
-  border-color: rgba(0,0,0,0.7) !important;
+  border-color: rgba(0, 0, 0, 0.7) !important;
 }
 .hover\:border-black-alpha-80:hover {
-  border-color: rgba(0,0,0,0.8) !important;
+  border-color: rgba(0, 0, 0, 0.8) !important;
 }
 .hover\:border-black-alpha-90:hover {
-  border-color: rgba(0,0,0,0.9) !important;
+  border-color: rgba(0, 0, 0, 0.9) !important;
 }
 
 .focus\:border-black-alpha-10:focus {
-  border-color: rgba(0,0,0,0.1) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
 }
 .focus\:border-black-alpha-20:focus {
-  border-color: rgba(0,0,0,0.2) !important;
+  border-color: rgba(0, 0, 0, 0.2) !important;
 }
 .focus\:border-black-alpha-30:focus {
-  border-color: rgba(0,0,0,0.3) !important;
+  border-color: rgba(0, 0, 0, 0.3) !important;
 }
 .focus\:border-black-alpha-40:focus {
-  border-color: rgba(0,0,0,0.4) !important;
+  border-color: rgba(0, 0, 0, 0.4) !important;
 }
 .focus\:border-black-alpha-50:focus {
-  border-color: rgba(0,0,0,0.5) !important;
+  border-color: rgba(0, 0, 0, 0.5) !important;
 }
 .focus\:border-black-alpha-60:focus {
-  border-color: rgba(0,0,0,0.6) !important;
+  border-color: rgba(0, 0, 0, 0.6) !important;
 }
 .focus\:border-black-alpha-70:focus {
-  border-color: rgba(0,0,0,0.7) !important;
+  border-color: rgba(0, 0, 0, 0.7) !important;
 }
 .focus\:border-black-alpha-80:focus {
-  border-color: rgba(0,0,0,0.8) !important;
+  border-color: rgba(0, 0, 0, 0.8) !important;
 }
 .focus\:border-black-alpha-90:focus {
-  border-color: rgba(0,0,0,0.9) !important;
+  border-color: rgba(0, 0, 0, 0.9) !important;
 }
 
 .active\:border-black-alpha-10:active {
-  border-color: rgba(0,0,0,0.1) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
 }
 .active\:border-black-alpha-20:active {
-  border-color: rgba(0,0,0,0.2) !important;
+  border-color: rgba(0, 0, 0, 0.2) !important;
 }
 .active\:border-black-alpha-30:active {
-  border-color: rgba(0,0,0,0.3) !important;
+  border-color: rgba(0, 0, 0, 0.3) !important;
 }
 .active\:border-black-alpha-40:active {
-  border-color: rgba(0,0,0,0.4) !important;
+  border-color: rgba(0, 0, 0, 0.4) !important;
 }
 .active\:border-black-alpha-50:active {
-  border-color: rgba(0,0,0,0.5) !important;
+  border-color: rgba(0, 0, 0, 0.5) !important;
 }
 .active\:border-black-alpha-60:active {
-  border-color: rgba(0,0,0,0.6) !important;
+  border-color: rgba(0, 0, 0, 0.6) !important;
 }
 .active\:border-black-alpha-70:active {
-  border-color: rgba(0,0,0,0.7) !important;
+  border-color: rgba(0, 0, 0, 0.7) !important;
 }
 .active\:border-black-alpha-80:active {
-  border-color: rgba(0,0,0,0.8) !important;
+  border-color: rgba(0, 0, 0, 0.8) !important;
 }
 .active\:border-black-alpha-90:active {
-  border-color: rgba(0,0,0,0.9) !important;
+  border-color: rgba(0, 0, 0, 0.9) !important;
 }
 
 .text-white-alpha-10 {
-  color: rgba(255,255,255,0.1) !important;
+  color: rgba(255, 255, 255, 0.1) !important;
 }
 .text-white-alpha-20 {
-  color: rgba(255,255,255,0.2) !important;
+  color: rgba(255, 255, 255, 0.2) !important;
 }
 .text-white-alpha-30 {
-  color: rgba(255,255,255,0.3) !important;
+  color: rgba(255, 255, 255, 0.3) !important;
 }
 .text-white-alpha-40 {
-  color: rgba(255,255,255,0.4) !important;
+  color: rgba(255, 255, 255, 0.4) !important;
 }
 .text-white-alpha-50 {
-  color: rgba(255,255,255,0.5) !important;
+  color: rgba(255, 255, 255, 0.5) !important;
 }
 .text-white-alpha-60 {
-  color: rgba(255,255,255,0.6) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
 }
 .text-white-alpha-70 {
-  color: rgba(255,255,255,0.7) !important;
+  color: rgba(255, 255, 255, 0.7) !important;
 }
 .text-white-alpha-80 {
-  color: rgba(255,255,255,0.8) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
 }
 .text-white-alpha-90 {
-  color: rgba(255,255,255,0.9) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
 }
 
 .hover\:text-white-alpha-10:hover {
-  color: rgba(255,255,255,0.1) !important;
+  color: rgba(255, 255, 255, 0.1) !important;
 }
 .hover\:text-white-alpha-20:hover {
-  color: rgba(255,255,255,0.2) !important;
+  color: rgba(255, 255, 255, 0.2) !important;
 }
 .hover\:text-white-alpha-30:hover {
-  color: rgba(255,255,255,0.3) !important;
+  color: rgba(255, 255, 255, 0.3) !important;
 }
 .hover\:text-white-alpha-40:hover {
-  color: rgba(255,255,255,0.4) !important;
+  color: rgba(255, 255, 255, 0.4) !important;
 }
 .hover\:text-white-alpha-50:hover {
-  color: rgba(255,255,255,0.5) !important;
+  color: rgba(255, 255, 255, 0.5) !important;
 }
 .hover\:text-white-alpha-60:hover {
-  color: rgba(255,255,255,0.6) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
 }
 .hover\:text-white-alpha-70:hover {
-  color: rgba(255,255,255,0.7) !important;
+  color: rgba(255, 255, 255, 0.7) !important;
 }
 .hover\:text-white-alpha-80:hover {
-  color: rgba(255,255,255,0.8) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
 }
 .hover\:text-white-alpha-90:hover {
-  color: rgba(255,255,255,0.9) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
 }
 
 .focus\:text-white-alpha-10:focus {
-  color: rgba(255,255,255,0.1) !important;
+  color: rgba(255, 255, 255, 0.1) !important;
 }
 .focus\:text-white-alpha-20:focus {
-  color: rgba(255,255,255,0.2) !important;
+  color: rgba(255, 255, 255, 0.2) !important;
 }
 .focus\:text-white-alpha-30:focus {
-  color: rgba(255,255,255,0.3) !important;
+  color: rgba(255, 255, 255, 0.3) !important;
 }
 .focus\:text-white-alpha-40:focus {
-  color: rgba(255,255,255,0.4) !important;
+  color: rgba(255, 255, 255, 0.4) !important;
 }
 .focus\:text-white-alpha-50:focus {
-  color: rgba(255,255,255,0.5) !important;
+  color: rgba(255, 255, 255, 0.5) !important;
 }
 .focus\:text-white-alpha-60:focus {
-  color: rgba(255,255,255,0.6) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
 }
 .focus\:text-white-alpha-70:focus {
-  color: rgba(255,255,255,0.7) !important;
+  color: rgba(255, 255, 255, 0.7) !important;
 }
 .focus\:text-white-alpha-80:focus {
-  color: rgba(255,255,255,0.8) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
 }
 .focus\:text-white-alpha-90:focus {
-  color: rgba(255,255,255,0.9) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
 }
 
 .active\:text-white-alpha-10:active {
-  color: rgba(255,255,255,0.1) !important;
+  color: rgba(255, 255, 255, 0.1) !important;
 }
 .active\:text-white-alpha-20:active {
-  color: rgba(255,255,255,0.2) !important;
+  color: rgba(255, 255, 255, 0.2) !important;
 }
 .active\:text-white-alpha-30:active {
-  color: rgba(255,255,255,0.3) !important;
+  color: rgba(255, 255, 255, 0.3) !important;
 }
 .active\:text-white-alpha-40:active {
-  color: rgba(255,255,255,0.4) !important;
+  color: rgba(255, 255, 255, 0.4) !important;
 }
 .active\:text-white-alpha-50:active {
-  color: rgba(255,255,255,0.5) !important;
+  color: rgba(255, 255, 255, 0.5) !important;
 }
 .active\:text-white-alpha-60:active {
-  color: rgba(255,255,255,0.6) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
 }
 .active\:text-white-alpha-70:active {
-  color: rgba(255,255,255,0.7) !important;
+  color: rgba(255, 255, 255, 0.7) !important;
 }
 .active\:text-white-alpha-80:active {
-  color: rgba(255,255,255,0.8) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
 }
 .active\:text-white-alpha-90:active {
-  color: rgba(255,255,255,0.9) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
 }
 
 .text-black-alpha-10 {
-  color: rgba(0,0,0,0.1) !important;
+  color: rgba(0, 0, 0, 0.1) !important;
 }
 .text-black-alpha-20 {
-  color: rgba(0,0,0,0.2) !important;
+  color: rgba(0, 0, 0, 0.2) !important;
 }
 .text-black-alpha-30 {
-  color: rgba(0,0,0,0.3) !important;
+  color: rgba(0, 0, 0, 0.3) !important;
 }
 .text-black-alpha-40 {
-  color: rgba(0,0,0,0.4) !important;
+  color: rgba(0, 0, 0, 0.4) !important;
 }
 .text-black-alpha-50 {
-  color: rgba(0,0,0,0.5) !important;
+  color: rgba(0, 0, 0, 0.5) !important;
 }
 .text-black-alpha-60 {
-  color: rgba(0,0,0,0.6) !important;
+  color: rgba(0, 0, 0, 0.6) !important;
 }
 .text-black-alpha-70 {
-  color: rgba(0,0,0,0.7) !important;
+  color: rgba(0, 0, 0, 0.7) !important;
 }
 .text-black-alpha-80 {
-  color: rgba(0,0,0,0.8) !important;
+  color: rgba(0, 0, 0, 0.8) !important;
 }
 .text-black-alpha-90 {
-  color: rgba(0,0,0,0.9) !important;
+  color: rgba(0, 0, 0, 0.9) !important;
 }
 
 .hover\:text-black-alpha-10:hover {
-  color: rgba(0,0,0,0.1) !important;
+  color: rgba(0, 0, 0, 0.1) !important;
 }
 .hover\:text-black-alpha-20:hover {
-  color: rgba(0,0,0,0.2) !important;
+  color: rgba(0, 0, 0, 0.2) !important;
 }
 .hover\:text-black-alpha-30:hover {
-  color: rgba(0,0,0,0.3) !important;
+  color: rgba(0, 0, 0, 0.3) !important;
 }
 .hover\:text-black-alpha-40:hover {
-  color: rgba(0,0,0,0.4) !important;
+  color: rgba(0, 0, 0, 0.4) !important;
 }
 .hover\:text-black-alpha-50:hover {
-  color: rgba(0,0,0,0.5) !important;
+  color: rgba(0, 0, 0, 0.5) !important;
 }
 .hover\:text-black-alpha-60:hover {
-  color: rgba(0,0,0,0.6) !important;
+  color: rgba(0, 0, 0, 0.6) !important;
 }
 .hover\:text-black-alpha-70:hover {
-  color: rgba(0,0,0,0.7) !important;
+  color: rgba(0, 0, 0, 0.7) !important;
 }
 .hover\:text-black-alpha-80:hover {
-  color: rgba(0,0,0,0.8) !important;
+  color: rgba(0, 0, 0, 0.8) !important;
 }
 .hover\:text-black-alpha-90:hover {
-  color: rgba(0,0,0,0.9) !important;
+  color: rgba(0, 0, 0, 0.9) !important;
 }
 
 .focus\:text-black-alpha-10:focus {
-  color: rgba(0,0,0,0.1) !important;
+  color: rgba(0, 0, 0, 0.1) !important;
 }
 .focus\:text-black-alpha-20:focus {
-  color: rgba(0,0,0,0.2) !important;
+  color: rgba(0, 0, 0, 0.2) !important;
 }
 .focus\:text-black-alpha-30:focus {
-  color: rgba(0,0,0,0.3) !important;
+  color: rgba(0, 0, 0, 0.3) !important;
 }
 .focus\:text-black-alpha-40:focus {
-  color: rgba(0,0,0,0.4) !important;
+  color: rgba(0, 0, 0, 0.4) !important;
 }
 .focus\:text-black-alpha-50:focus {
-  color: rgba(0,0,0,0.5) !important;
+  color: rgba(0, 0, 0, 0.5) !important;
 }
 .focus\:text-black-alpha-60:focus {
-  color: rgba(0,0,0,0.6) !important;
+  color: rgba(0, 0, 0, 0.6) !important;
 }
 .focus\:text-black-alpha-70:focus {
-  color: rgba(0,0,0,0.7) !important;
+  color: rgba(0, 0, 0, 0.7) !important;
 }
 .focus\:text-black-alpha-80:focus {
-  color: rgba(0,0,0,0.8) !important;
+  color: rgba(0, 0, 0, 0.8) !important;
 }
 .focus\:text-black-alpha-90:focus {
-  color: rgba(0,0,0,0.9) !important;
+  color: rgba(0, 0, 0, 0.9) !important;
 }
 
 .active\:text-black-alpha-10:active {
-  color: rgba(0,0,0,0.1) !important;
+  color: rgba(0, 0, 0, 0.1) !important;
 }
 .active\:text-black-alpha-20:active {
-  color: rgba(0,0,0,0.2) !important;
+  color: rgba(0, 0, 0, 0.2) !important;
 }
 .active\:text-black-alpha-30:active {
-  color: rgba(0,0,0,0.3) !important;
+  color: rgba(0, 0, 0, 0.3) !important;
 }
 .active\:text-black-alpha-40:active {
-  color: rgba(0,0,0,0.4) !important;
+  color: rgba(0, 0, 0, 0.4) !important;
 }
 .active\:text-black-alpha-50:active {
-  color: rgba(0,0,0,0.5) !important;
+  color: rgba(0, 0, 0, 0.5) !important;
 }
 .active\:text-black-alpha-60:active {
-  color: rgba(0,0,0,0.6) !important;
+  color: rgba(0, 0, 0, 0.6) !important;
 }
 .active\:text-black-alpha-70:active {
-  color: rgba(0,0,0,0.7) !important;
+  color: rgba(0, 0, 0, 0.7) !important;
 }
 .active\:text-black-alpha-80:active {
-  color: rgba(0,0,0,0.8) !important;
+  color: rgba(0, 0, 0, 0.8) !important;
 }
 .active\:text-black-alpha-90:active {
-  color: rgba(0,0,0,0.9) !important;
+  color: rgba(0, 0, 0, 0.9) !important;
 }
 
 .text-primary {
@@ -13068,35 +13068,59 @@
 }
 
 .shadow-1 {
-  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.02), 0px 0px 2px rgba(0, 0, 0, 0.05), 0px 1px 4px rgba(0, 0, 0, 0.08) !important;
+  box-shadow:
+    0px 3px 5px rgba(0, 0, 0, 0.02),
+    0px 0px 2px rgba(0, 0, 0, 0.05),
+    0px 1px 4px rgba(0, 0, 0, 0.08) !important;
 }
 
 .shadow-2 {
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.03), 0px 0px 2px rgba(0, 0, 0, 0.06), 0px 2px 6px rgba(0, 0, 0, 0.12) !important;
+  box-shadow:
+    0px 4px 10px rgba(0, 0, 0, 0.03),
+    0px 0px 2px rgba(0, 0, 0, 0.06),
+    0px 2px 6px rgba(0, 0, 0, 0.12) !important;
 }
 
 .shadow-3 {
-  box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.08), 0px 3px 4px rgba(0, 0, 0, 0.1), 0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
+  box-shadow:
+    0px 1px 8px rgba(0, 0, 0, 0.08),
+    0px 3px 4px rgba(0, 0, 0, 0.1),
+    0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
 }
 
 .shadow-4 {
-  box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+  box-shadow:
+    0px 1px 10px rgba(0, 0, 0, 0.12),
+    0px 4px 5px rgba(0, 0, 0, 0.14),
+    0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
 }
 
 .shadow-5 {
-  box-shadow: 0px 1px 7px rgba(0, 0, 0, 0.1), 0px 4px 5px -2px rgba(0, 0, 0, 0.12), 0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
+  box-shadow:
+    0px 1px 7px rgba(0, 0, 0, 0.1),
+    0px 4px 5px -2px rgba(0, 0, 0, 0.12),
+    0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
 }
 
 .shadow-6 {
-  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.06), 0px 7px 9px rgba(0, 0, 0, 0.12), 0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
+  box-shadow:
+    0px 3px 5px rgba(0, 0, 0, 0.06),
+    0px 7px 9px rgba(0, 0, 0, 0.12),
+    0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
 }
 
 .shadow-7 {
-  box-shadow: 0px 7px 30px rgba(0, 0, 0, 0.08), 0px 22px 30px 2px rgba(0, 0, 0, 0.15), 0px 8px 10px rgba(0, 0, 0, 0.15) !important;
+  box-shadow:
+    0px 7px 30px rgba(0, 0, 0, 0.08),
+    0px 22px 30px 2px rgba(0, 0, 0, 0.15),
+    0px 8px 10px rgba(0, 0, 0, 0.15) !important;
 }
 
 .shadow-8 {
-  box-shadow: 0px 9px 46px 8px rgba(0, 0, 0, 0.12), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 11px 15px rgba(0, 0, 0, 0.2) !important;
+  box-shadow:
+    0px 9px 46px 8px rgba(0, 0, 0, 0.12),
+    0px 24px 38px 3px rgba(0, 0, 0, 0.14),
+    0px 11px 15px rgba(0, 0, 0, 0.2) !important;
 }
 
 .focus\:shadow-none:focus {
@@ -13112,99 +13136,171 @@
 }
 
 .focus\:shadow-1:focus {
-  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.02), 0px 0px 2px rgba(0, 0, 0, 0.05), 0px 1px 4px rgba(0, 0, 0, 0.08) !important;
+  box-shadow:
+    0px 3px 5px rgba(0, 0, 0, 0.02),
+    0px 0px 2px rgba(0, 0, 0, 0.05),
+    0px 1px 4px rgba(0, 0, 0, 0.08) !important;
 }
 
 .hover\:shadow-1:hover {
-  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.02), 0px 0px 2px rgba(0, 0, 0, 0.05), 0px 1px 4px rgba(0, 0, 0, 0.08) !important;
+  box-shadow:
+    0px 3px 5px rgba(0, 0, 0, 0.02),
+    0px 0px 2px rgba(0, 0, 0, 0.05),
+    0px 1px 4px rgba(0, 0, 0, 0.08) !important;
 }
 
 .active\:shadow-1:active {
-  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.02), 0px 0px 2px rgba(0, 0, 0, 0.05), 0px 1px 4px rgba(0, 0, 0, 0.08) !important;
+  box-shadow:
+    0px 3px 5px rgba(0, 0, 0, 0.02),
+    0px 0px 2px rgba(0, 0, 0, 0.05),
+    0px 1px 4px rgba(0, 0, 0, 0.08) !important;
 }
 
 .focus\:shadow-2:focus {
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.03), 0px 0px 2px rgba(0, 0, 0, 0.06), 0px 2px 6px rgba(0, 0, 0, 0.12) !important;
+  box-shadow:
+    0px 4px 10px rgba(0, 0, 0, 0.03),
+    0px 0px 2px rgba(0, 0, 0, 0.06),
+    0px 2px 6px rgba(0, 0, 0, 0.12) !important;
 }
 
 .hover\:shadow-2:hover {
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.03), 0px 0px 2px rgba(0, 0, 0, 0.06), 0px 2px 6px rgba(0, 0, 0, 0.12) !important;
+  box-shadow:
+    0px 4px 10px rgba(0, 0, 0, 0.03),
+    0px 0px 2px rgba(0, 0, 0, 0.06),
+    0px 2px 6px rgba(0, 0, 0, 0.12) !important;
 }
 
 .active\:shadow-2:active {
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.03), 0px 0px 2px rgba(0, 0, 0, 0.06), 0px 2px 6px rgba(0, 0, 0, 0.12) !important;
+  box-shadow:
+    0px 4px 10px rgba(0, 0, 0, 0.03),
+    0px 0px 2px rgba(0, 0, 0, 0.06),
+    0px 2px 6px rgba(0, 0, 0, 0.12) !important;
 }
 
 .focus\:shadow-3:focus {
-  box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.08), 0px 3px 4px rgba(0, 0, 0, 0.1), 0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
+  box-shadow:
+    0px 1px 8px rgba(0, 0, 0, 0.08),
+    0px 3px 4px rgba(0, 0, 0, 0.1),
+    0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
 }
 
 .hover\:shadow-3:hover {
-  box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.08), 0px 3px 4px rgba(0, 0, 0, 0.1), 0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
+  box-shadow:
+    0px 1px 8px rgba(0, 0, 0, 0.08),
+    0px 3px 4px rgba(0, 0, 0, 0.1),
+    0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
 }
 
 .active\:shadow-3:active {
-  box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.08), 0px 3px 4px rgba(0, 0, 0, 0.1), 0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
+  box-shadow:
+    0px 1px 8px rgba(0, 0, 0, 0.08),
+    0px 3px 4px rgba(0, 0, 0, 0.1),
+    0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
 }
 
 .focus\:shadow-4:focus {
-  box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+  box-shadow:
+    0px 1px 10px rgba(0, 0, 0, 0.12),
+    0px 4px 5px rgba(0, 0, 0, 0.14),
+    0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
 }
 
 .hover\:shadow-4:hover {
-  box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+  box-shadow:
+    0px 1px 10px rgba(0, 0, 0, 0.12),
+    0px 4px 5px rgba(0, 0, 0, 0.14),
+    0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
 }
 
 .active\:shadow-4:active {
-  box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+  box-shadow:
+    0px 1px 10px rgba(0, 0, 0, 0.12),
+    0px 4px 5px rgba(0, 0, 0, 0.14),
+    0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
 }
 
 .focus\:shadow-5:focus {
-  box-shadow: 0px 1px 7px rgba(0, 0, 0, 0.1), 0px 4px 5px -2px rgba(0, 0, 0, 0.12), 0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
+  box-shadow:
+    0px 1px 7px rgba(0, 0, 0, 0.1),
+    0px 4px 5px -2px rgba(0, 0, 0, 0.12),
+    0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
 }
 
 .hover\:shadow-5:hover {
-  box-shadow: 0px 1px 7px rgba(0, 0, 0, 0.1), 0px 4px 5px -2px rgba(0, 0, 0, 0.12), 0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
+  box-shadow:
+    0px 1px 7px rgba(0, 0, 0, 0.1),
+    0px 4px 5px -2px rgba(0, 0, 0, 0.12),
+    0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
 }
 
 .active\:shadow-5:active {
-  box-shadow: 0px 1px 7px rgba(0, 0, 0, 0.1), 0px 4px 5px -2px rgba(0, 0, 0, 0.12), 0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
+  box-shadow:
+    0px 1px 7px rgba(0, 0, 0, 0.1),
+    0px 4px 5px -2px rgba(0, 0, 0, 0.12),
+    0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
 }
 
 .focus\:shadow-6:focus {
-  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.06), 0px 7px 9px rgba(0, 0, 0, 0.12), 0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
+  box-shadow:
+    0px 3px 5px rgba(0, 0, 0, 0.06),
+    0px 7px 9px rgba(0, 0, 0, 0.12),
+    0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
 }
 
 .hover\:shadow-6:hover {
-  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.06), 0px 7px 9px rgba(0, 0, 0, 0.12), 0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
+  box-shadow:
+    0px 3px 5px rgba(0, 0, 0, 0.06),
+    0px 7px 9px rgba(0, 0, 0, 0.12),
+    0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
 }
 
 .active\:shadow-6:active {
-  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.06), 0px 7px 9px rgba(0, 0, 0, 0.12), 0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
+  box-shadow:
+    0px 3px 5px rgba(0, 0, 0, 0.06),
+    0px 7px 9px rgba(0, 0, 0, 0.12),
+    0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
 }
 
 .focus\:shadow-7:focus {
-  box-shadow: 0px 7px 30px rgba(0, 0, 0, 0.08), 0px 22px 30px 2px rgba(0, 0, 0, 0.15), 0px 8px 10px rgba(0, 0, 0, 0.15) !important;
+  box-shadow:
+    0px 7px 30px rgba(0, 0, 0, 0.08),
+    0px 22px 30px 2px rgba(0, 0, 0, 0.15),
+    0px 8px 10px rgba(0, 0, 0, 0.15) !important;
 }
 
 .hover\:shadow-7:hover {
-  box-shadow: 0px 7px 30px rgba(0, 0, 0, 0.08), 0px 22px 30px 2px rgba(0, 0, 0, 0.15), 0px 8px 10px rgba(0, 0, 0, 0.15) !important;
+  box-shadow:
+    0px 7px 30px rgba(0, 0, 0, 0.08),
+    0px 22px 30px 2px rgba(0, 0, 0, 0.15),
+    0px 8px 10px rgba(0, 0, 0, 0.15) !important;
 }
 
 .active\:shadow-7:active {
-  box-shadow: 0px 7px 30px rgba(0, 0, 0, 0.08), 0px 22px 30px 2px rgba(0, 0, 0, 0.15), 0px 8px 10px rgba(0, 0, 0, 0.15) !important;
+  box-shadow:
+    0px 7px 30px rgba(0, 0, 0, 0.08),
+    0px 22px 30px 2px rgba(0, 0, 0, 0.15),
+    0px 8px 10px rgba(0, 0, 0, 0.15) !important;
 }
 
 .focus\:shadow-8:focus {
-  box-shadow: 0px 9px 46px 8px rgba(0, 0, 0, 0.12), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 11px 15px rgba(0, 0, 0, 0.2) !important;
+  box-shadow:
+    0px 9px 46px 8px rgba(0, 0, 0, 0.12),
+    0px 24px 38px 3px rgba(0, 0, 0, 0.14),
+    0px 11px 15px rgba(0, 0, 0, 0.2) !important;
 }
 
 .hover\:shadow-8:hover {
-  box-shadow: 0px 9px 46px 8px rgba(0, 0, 0, 0.12), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 11px 15px rgba(0, 0, 0, 0.2) !important;
+  box-shadow:
+    0px 9px 46px 8px rgba(0, 0, 0, 0.12),
+    0px 24px 38px 3px rgba(0, 0, 0, 0.14),
+    0px 11px 15px rgba(0, 0, 0, 0.2) !important;
 }
 
 .active\:shadow-8:active {
-  box-shadow: 0px 9px 46px 8px rgba(0, 0, 0, 0.12), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 11px 15px rgba(0, 0, 0, 0.2) !important;
+  box-shadow:
+    0px 9px 46px 8px rgba(0, 0, 0, 0.12),
+    0px 24px 38px 3px rgba(0, 0, 0, 0.14),
+    0px 11px 15px rgba(0, 0, 0, 0.2) !important;
 }
 
 @media screen and (min-width: 576px) {
@@ -13212,28 +13308,52 @@
     box-shadow: none !important;
   }
   .sm\:shadow-1 {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.02), 0px 0px 2px rgba(0, 0, 0, 0.05), 0px 1px 4px rgba(0, 0, 0, 0.08) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.02),
+      0px 0px 2px rgba(0, 0, 0, 0.05),
+      0px 1px 4px rgba(0, 0, 0, 0.08) !important;
   }
   .sm\:shadow-2 {
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.03), 0px 0px 2px rgba(0, 0, 0, 0.06), 0px 2px 6px rgba(0, 0, 0, 0.12) !important;
+    box-shadow:
+      0px 4px 10px rgba(0, 0, 0, 0.03),
+      0px 0px 2px rgba(0, 0, 0, 0.06),
+      0px 2px 6px rgba(0, 0, 0, 0.12) !important;
   }
   .sm\:shadow-3 {
-    box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.08), 0px 3px 4px rgba(0, 0, 0, 0.1), 0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
+    box-shadow:
+      0px 1px 8px rgba(0, 0, 0, 0.08),
+      0px 3px 4px rgba(0, 0, 0, 0.1),
+      0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
   }
   .sm\:shadow-4 {
-    box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 10px rgba(0, 0, 0, 0.12),
+      0px 4px 5px rgba(0, 0, 0, 0.14),
+      0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
   }
   .sm\:shadow-5 {
-    box-shadow: 0px 1px 7px rgba(0, 0, 0, 0.1), 0px 4px 5px -2px rgba(0, 0, 0, 0.12), 0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 7px rgba(0, 0, 0, 0.1),
+      0px 4px 5px -2px rgba(0, 0, 0, 0.12),
+      0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
   }
   .sm\:shadow-6 {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.06), 0px 7px 9px rgba(0, 0, 0, 0.12), 0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.06),
+      0px 7px 9px rgba(0, 0, 0, 0.12),
+      0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
   }
   .sm\:shadow-7 {
-    box-shadow: 0px 7px 30px rgba(0, 0, 0, 0.08), 0px 22px 30px 2px rgba(0, 0, 0, 0.15), 0px 8px 10px rgba(0, 0, 0, 0.15) !important;
+    box-shadow:
+      0px 7px 30px rgba(0, 0, 0, 0.08),
+      0px 22px 30px 2px rgba(0, 0, 0, 0.15),
+      0px 8px 10px rgba(0, 0, 0, 0.15) !important;
   }
   .sm\:shadow-8 {
-    box-shadow: 0px 9px 46px 8px rgba(0, 0, 0, 0.12), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 11px 15px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 9px 46px 8px rgba(0, 0, 0, 0.12),
+      0px 24px 38px 3px rgba(0, 0, 0, 0.14),
+      0px 11px 15px rgba(0, 0, 0, 0.2) !important;
   }
   .sm\:focus\:shadow-none:focus {
     box-shadow: none !important;
@@ -13245,76 +13365,148 @@
     box-shadow: none !important;
   }
   .sm\:focus\:shadow-1:focus {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.02), 0px 0px 2px rgba(0, 0, 0, 0.05), 0px 1px 4px rgba(0, 0, 0, 0.08) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.02),
+      0px 0px 2px rgba(0, 0, 0, 0.05),
+      0px 1px 4px rgba(0, 0, 0, 0.08) !important;
   }
   .sm\:hover\:shadow-1:hover {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.02), 0px 0px 2px rgba(0, 0, 0, 0.05), 0px 1px 4px rgba(0, 0, 0, 0.08) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.02),
+      0px 0px 2px rgba(0, 0, 0, 0.05),
+      0px 1px 4px rgba(0, 0, 0, 0.08) !important;
   }
   .sm\:active\:shadow-1:active {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.02), 0px 0px 2px rgba(0, 0, 0, 0.05), 0px 1px 4px rgba(0, 0, 0, 0.08) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.02),
+      0px 0px 2px rgba(0, 0, 0, 0.05),
+      0px 1px 4px rgba(0, 0, 0, 0.08) !important;
   }
   .sm\:focus\:shadow-2:focus {
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.03), 0px 0px 2px rgba(0, 0, 0, 0.06), 0px 2px 6px rgba(0, 0, 0, 0.12) !important;
+    box-shadow:
+      0px 4px 10px rgba(0, 0, 0, 0.03),
+      0px 0px 2px rgba(0, 0, 0, 0.06),
+      0px 2px 6px rgba(0, 0, 0, 0.12) !important;
   }
   .sm\:hover\:shadow-2:hover {
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.03), 0px 0px 2px rgba(0, 0, 0, 0.06), 0px 2px 6px rgba(0, 0, 0, 0.12) !important;
+    box-shadow:
+      0px 4px 10px rgba(0, 0, 0, 0.03),
+      0px 0px 2px rgba(0, 0, 0, 0.06),
+      0px 2px 6px rgba(0, 0, 0, 0.12) !important;
   }
   .sm\:active\:shadow-2:active {
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.03), 0px 0px 2px rgba(0, 0, 0, 0.06), 0px 2px 6px rgba(0, 0, 0, 0.12) !important;
+    box-shadow:
+      0px 4px 10px rgba(0, 0, 0, 0.03),
+      0px 0px 2px rgba(0, 0, 0, 0.06),
+      0px 2px 6px rgba(0, 0, 0, 0.12) !important;
   }
   .sm\:focus\:shadow-3:focus {
-    box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.08), 0px 3px 4px rgba(0, 0, 0, 0.1), 0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
+    box-shadow:
+      0px 1px 8px rgba(0, 0, 0, 0.08),
+      0px 3px 4px rgba(0, 0, 0, 0.1),
+      0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
   }
   .sm\:hover\:shadow-3:hover {
-    box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.08), 0px 3px 4px rgba(0, 0, 0, 0.1), 0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
+    box-shadow:
+      0px 1px 8px rgba(0, 0, 0, 0.08),
+      0px 3px 4px rgba(0, 0, 0, 0.1),
+      0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
   }
   .sm\:active\:shadow-3:active {
-    box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.08), 0px 3px 4px rgba(0, 0, 0, 0.1), 0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
+    box-shadow:
+      0px 1px 8px rgba(0, 0, 0, 0.08),
+      0px 3px 4px rgba(0, 0, 0, 0.1),
+      0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
   }
   .sm\:focus\:shadow-4:focus {
-    box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 10px rgba(0, 0, 0, 0.12),
+      0px 4px 5px rgba(0, 0, 0, 0.14),
+      0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
   }
   .sm\:hover\:shadow-4:hover {
-    box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 10px rgba(0, 0, 0, 0.12),
+      0px 4px 5px rgba(0, 0, 0, 0.14),
+      0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
   }
   .sm\:active\:shadow-4:active {
-    box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 10px rgba(0, 0, 0, 0.12),
+      0px 4px 5px rgba(0, 0, 0, 0.14),
+      0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
   }
   .sm\:focus\:shadow-5:focus {
-    box-shadow: 0px 1px 7px rgba(0, 0, 0, 0.1), 0px 4px 5px -2px rgba(0, 0, 0, 0.12), 0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 7px rgba(0, 0, 0, 0.1),
+      0px 4px 5px -2px rgba(0, 0, 0, 0.12),
+      0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
   }
   .sm\:hover\:shadow-5:hover {
-    box-shadow: 0px 1px 7px rgba(0, 0, 0, 0.1), 0px 4px 5px -2px rgba(0, 0, 0, 0.12), 0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 7px rgba(0, 0, 0, 0.1),
+      0px 4px 5px -2px rgba(0, 0, 0, 0.12),
+      0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
   }
   .sm\:active\:shadow-5:active {
-    box-shadow: 0px 1px 7px rgba(0, 0, 0, 0.1), 0px 4px 5px -2px rgba(0, 0, 0, 0.12), 0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 7px rgba(0, 0, 0, 0.1),
+      0px 4px 5px -2px rgba(0, 0, 0, 0.12),
+      0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
   }
   .sm\:focus\:shadow-6:focus {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.06), 0px 7px 9px rgba(0, 0, 0, 0.12), 0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.06),
+      0px 7px 9px rgba(0, 0, 0, 0.12),
+      0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
   }
   .sm\:hover\:shadow-6:hover {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.06), 0px 7px 9px rgba(0, 0, 0, 0.12), 0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.06),
+      0px 7px 9px rgba(0, 0, 0, 0.12),
+      0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
   }
   .sm\:active\:shadow-6:active {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.06), 0px 7px 9px rgba(0, 0, 0, 0.12), 0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.06),
+      0px 7px 9px rgba(0, 0, 0, 0.12),
+      0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
   }
   .sm\:focus\:shadow-7:focus {
-    box-shadow: 0px 7px 30px rgba(0, 0, 0, 0.08), 0px 22px 30px 2px rgba(0, 0, 0, 0.15), 0px 8px 10px rgba(0, 0, 0, 0.15) !important;
+    box-shadow:
+      0px 7px 30px rgba(0, 0, 0, 0.08),
+      0px 22px 30px 2px rgba(0, 0, 0, 0.15),
+      0px 8px 10px rgba(0, 0, 0, 0.15) !important;
   }
   .sm\:hover\:shadow-7:hover {
-    box-shadow: 0px 7px 30px rgba(0, 0, 0, 0.08), 0px 22px 30px 2px rgba(0, 0, 0, 0.15), 0px 8px 10px rgba(0, 0, 0, 0.15) !important;
+    box-shadow:
+      0px 7px 30px rgba(0, 0, 0, 0.08),
+      0px 22px 30px 2px rgba(0, 0, 0, 0.15),
+      0px 8px 10px rgba(0, 0, 0, 0.15) !important;
   }
   .sm\:active\:shadow-7:active {
-    box-shadow: 0px 7px 30px rgba(0, 0, 0, 0.08), 0px 22px 30px 2px rgba(0, 0, 0, 0.15), 0px 8px 10px rgba(0, 0, 0, 0.15) !important;
+    box-shadow:
+      0px 7px 30px rgba(0, 0, 0, 0.08),
+      0px 22px 30px 2px rgba(0, 0, 0, 0.15),
+      0px 8px 10px rgba(0, 0, 0, 0.15) !important;
   }
   .sm\:focus\:shadow-8:focus {
-    box-shadow: 0px 9px 46px 8px rgba(0, 0, 0, 0.12), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 11px 15px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 9px 46px 8px rgba(0, 0, 0, 0.12),
+      0px 24px 38px 3px rgba(0, 0, 0, 0.14),
+      0px 11px 15px rgba(0, 0, 0, 0.2) !important;
   }
   .sm\:hover\:shadow-8:hover {
-    box-shadow: 0px 9px 46px 8px rgba(0, 0, 0, 0.12), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 11px 15px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 9px 46px 8px rgba(0, 0, 0, 0.12),
+      0px 24px 38px 3px rgba(0, 0, 0, 0.14),
+      0px 11px 15px rgba(0, 0, 0, 0.2) !important;
   }
   .sm\:active\:shadow-8:active {
-    box-shadow: 0px 9px 46px 8px rgba(0, 0, 0, 0.12), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 11px 15px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 9px 46px 8px rgba(0, 0, 0, 0.12),
+      0px 24px 38px 3px rgba(0, 0, 0, 0.14),
+      0px 11px 15px rgba(0, 0, 0, 0.2) !important;
   }
 }
 @media screen and (min-width: 768px) {
@@ -13322,28 +13514,52 @@
     box-shadow: none !important;
   }
   .md\:shadow-1 {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.02), 0px 0px 2px rgba(0, 0, 0, 0.05), 0px 1px 4px rgba(0, 0, 0, 0.08) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.02),
+      0px 0px 2px rgba(0, 0, 0, 0.05),
+      0px 1px 4px rgba(0, 0, 0, 0.08) !important;
   }
   .md\:shadow-2 {
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.03), 0px 0px 2px rgba(0, 0, 0, 0.06), 0px 2px 6px rgba(0, 0, 0, 0.12) !important;
+    box-shadow:
+      0px 4px 10px rgba(0, 0, 0, 0.03),
+      0px 0px 2px rgba(0, 0, 0, 0.06),
+      0px 2px 6px rgba(0, 0, 0, 0.12) !important;
   }
   .md\:shadow-3 {
-    box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.08), 0px 3px 4px rgba(0, 0, 0, 0.1), 0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
+    box-shadow:
+      0px 1px 8px rgba(0, 0, 0, 0.08),
+      0px 3px 4px rgba(0, 0, 0, 0.1),
+      0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
   }
   .md\:shadow-4 {
-    box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 10px rgba(0, 0, 0, 0.12),
+      0px 4px 5px rgba(0, 0, 0, 0.14),
+      0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
   }
   .md\:shadow-5 {
-    box-shadow: 0px 1px 7px rgba(0, 0, 0, 0.1), 0px 4px 5px -2px rgba(0, 0, 0, 0.12), 0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 7px rgba(0, 0, 0, 0.1),
+      0px 4px 5px -2px rgba(0, 0, 0, 0.12),
+      0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
   }
   .md\:shadow-6 {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.06), 0px 7px 9px rgba(0, 0, 0, 0.12), 0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.06),
+      0px 7px 9px rgba(0, 0, 0, 0.12),
+      0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
   }
   .md\:shadow-7 {
-    box-shadow: 0px 7px 30px rgba(0, 0, 0, 0.08), 0px 22px 30px 2px rgba(0, 0, 0, 0.15), 0px 8px 10px rgba(0, 0, 0, 0.15) !important;
+    box-shadow:
+      0px 7px 30px rgba(0, 0, 0, 0.08),
+      0px 22px 30px 2px rgba(0, 0, 0, 0.15),
+      0px 8px 10px rgba(0, 0, 0, 0.15) !important;
   }
   .md\:shadow-8 {
-    box-shadow: 0px 9px 46px 8px rgba(0, 0, 0, 0.12), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 11px 15px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 9px 46px 8px rgba(0, 0, 0, 0.12),
+      0px 24px 38px 3px rgba(0, 0, 0, 0.14),
+      0px 11px 15px rgba(0, 0, 0, 0.2) !important;
   }
   .md\:focus\:shadow-none:focus {
     box-shadow: none !important;
@@ -13355,76 +13571,148 @@
     box-shadow: none !important;
   }
   .md\:focus\:shadow-1:focus {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.02), 0px 0px 2px rgba(0, 0, 0, 0.05), 0px 1px 4px rgba(0, 0, 0, 0.08) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.02),
+      0px 0px 2px rgba(0, 0, 0, 0.05),
+      0px 1px 4px rgba(0, 0, 0, 0.08) !important;
   }
   .md\:hover\:shadow-1:hover {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.02), 0px 0px 2px rgba(0, 0, 0, 0.05), 0px 1px 4px rgba(0, 0, 0, 0.08) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.02),
+      0px 0px 2px rgba(0, 0, 0, 0.05),
+      0px 1px 4px rgba(0, 0, 0, 0.08) !important;
   }
   .md\:active\:shadow-1:active {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.02), 0px 0px 2px rgba(0, 0, 0, 0.05), 0px 1px 4px rgba(0, 0, 0, 0.08) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.02),
+      0px 0px 2px rgba(0, 0, 0, 0.05),
+      0px 1px 4px rgba(0, 0, 0, 0.08) !important;
   }
   .md\:focus\:shadow-2:focus {
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.03), 0px 0px 2px rgba(0, 0, 0, 0.06), 0px 2px 6px rgba(0, 0, 0, 0.12) !important;
+    box-shadow:
+      0px 4px 10px rgba(0, 0, 0, 0.03),
+      0px 0px 2px rgba(0, 0, 0, 0.06),
+      0px 2px 6px rgba(0, 0, 0, 0.12) !important;
   }
   .md\:hover\:shadow-2:hover {
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.03), 0px 0px 2px rgba(0, 0, 0, 0.06), 0px 2px 6px rgba(0, 0, 0, 0.12) !important;
+    box-shadow:
+      0px 4px 10px rgba(0, 0, 0, 0.03),
+      0px 0px 2px rgba(0, 0, 0, 0.06),
+      0px 2px 6px rgba(0, 0, 0, 0.12) !important;
   }
   .md\:active\:shadow-2:active {
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.03), 0px 0px 2px rgba(0, 0, 0, 0.06), 0px 2px 6px rgba(0, 0, 0, 0.12) !important;
+    box-shadow:
+      0px 4px 10px rgba(0, 0, 0, 0.03),
+      0px 0px 2px rgba(0, 0, 0, 0.06),
+      0px 2px 6px rgba(0, 0, 0, 0.12) !important;
   }
   .md\:focus\:shadow-3:focus {
-    box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.08), 0px 3px 4px rgba(0, 0, 0, 0.1), 0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
+    box-shadow:
+      0px 1px 8px rgba(0, 0, 0, 0.08),
+      0px 3px 4px rgba(0, 0, 0, 0.1),
+      0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
   }
   .md\:hover\:shadow-3:hover {
-    box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.08), 0px 3px 4px rgba(0, 0, 0, 0.1), 0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
+    box-shadow:
+      0px 1px 8px rgba(0, 0, 0, 0.08),
+      0px 3px 4px rgba(0, 0, 0, 0.1),
+      0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
   }
   .md\:active\:shadow-3:active {
-    box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.08), 0px 3px 4px rgba(0, 0, 0, 0.1), 0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
+    box-shadow:
+      0px 1px 8px rgba(0, 0, 0, 0.08),
+      0px 3px 4px rgba(0, 0, 0, 0.1),
+      0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
   }
   .md\:focus\:shadow-4:focus {
-    box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 10px rgba(0, 0, 0, 0.12),
+      0px 4px 5px rgba(0, 0, 0, 0.14),
+      0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
   }
   .md\:hover\:shadow-4:hover {
-    box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 10px rgba(0, 0, 0, 0.12),
+      0px 4px 5px rgba(0, 0, 0, 0.14),
+      0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
   }
   .md\:active\:shadow-4:active {
-    box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 10px rgba(0, 0, 0, 0.12),
+      0px 4px 5px rgba(0, 0, 0, 0.14),
+      0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
   }
   .md\:focus\:shadow-5:focus {
-    box-shadow: 0px 1px 7px rgba(0, 0, 0, 0.1), 0px 4px 5px -2px rgba(0, 0, 0, 0.12), 0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 7px rgba(0, 0, 0, 0.1),
+      0px 4px 5px -2px rgba(0, 0, 0, 0.12),
+      0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
   }
   .md\:hover\:shadow-5:hover {
-    box-shadow: 0px 1px 7px rgba(0, 0, 0, 0.1), 0px 4px 5px -2px rgba(0, 0, 0, 0.12), 0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 7px rgba(0, 0, 0, 0.1),
+      0px 4px 5px -2px rgba(0, 0, 0, 0.12),
+      0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
   }
   .md\:active\:shadow-5:active {
-    box-shadow: 0px 1px 7px rgba(0, 0, 0, 0.1), 0px 4px 5px -2px rgba(0, 0, 0, 0.12), 0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 7px rgba(0, 0, 0, 0.1),
+      0px 4px 5px -2px rgba(0, 0, 0, 0.12),
+      0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
   }
   .md\:focus\:shadow-6:focus {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.06), 0px 7px 9px rgba(0, 0, 0, 0.12), 0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.06),
+      0px 7px 9px rgba(0, 0, 0, 0.12),
+      0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
   }
   .md\:hover\:shadow-6:hover {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.06), 0px 7px 9px rgba(0, 0, 0, 0.12), 0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.06),
+      0px 7px 9px rgba(0, 0, 0, 0.12),
+      0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
   }
   .md\:active\:shadow-6:active {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.06), 0px 7px 9px rgba(0, 0, 0, 0.12), 0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.06),
+      0px 7px 9px rgba(0, 0, 0, 0.12),
+      0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
   }
   .md\:focus\:shadow-7:focus {
-    box-shadow: 0px 7px 30px rgba(0, 0, 0, 0.08), 0px 22px 30px 2px rgba(0, 0, 0, 0.15), 0px 8px 10px rgba(0, 0, 0, 0.15) !important;
+    box-shadow:
+      0px 7px 30px rgba(0, 0, 0, 0.08),
+      0px 22px 30px 2px rgba(0, 0, 0, 0.15),
+      0px 8px 10px rgba(0, 0, 0, 0.15) !important;
   }
   .md\:hover\:shadow-7:hover {
-    box-shadow: 0px 7px 30px rgba(0, 0, 0, 0.08), 0px 22px 30px 2px rgba(0, 0, 0, 0.15), 0px 8px 10px rgba(0, 0, 0, 0.15) !important;
+    box-shadow:
+      0px 7px 30px rgba(0, 0, 0, 0.08),
+      0px 22px 30px 2px rgba(0, 0, 0, 0.15),
+      0px 8px 10px rgba(0, 0, 0, 0.15) !important;
   }
   .md\:active\:shadow-7:active {
-    box-shadow: 0px 7px 30px rgba(0, 0, 0, 0.08), 0px 22px 30px 2px rgba(0, 0, 0, 0.15), 0px 8px 10px rgba(0, 0, 0, 0.15) !important;
+    box-shadow:
+      0px 7px 30px rgba(0, 0, 0, 0.08),
+      0px 22px 30px 2px rgba(0, 0, 0, 0.15),
+      0px 8px 10px rgba(0, 0, 0, 0.15) !important;
   }
   .md\:focus\:shadow-8:focus {
-    box-shadow: 0px 9px 46px 8px rgba(0, 0, 0, 0.12), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 11px 15px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 9px 46px 8px rgba(0, 0, 0, 0.12),
+      0px 24px 38px 3px rgba(0, 0, 0, 0.14),
+      0px 11px 15px rgba(0, 0, 0, 0.2) !important;
   }
   .md\:hover\:shadow-8:hover {
-    box-shadow: 0px 9px 46px 8px rgba(0, 0, 0, 0.12), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 11px 15px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 9px 46px 8px rgba(0, 0, 0, 0.12),
+      0px 24px 38px 3px rgba(0, 0, 0, 0.14),
+      0px 11px 15px rgba(0, 0, 0, 0.2) !important;
   }
   .md\:active\:shadow-8:active {
-    box-shadow: 0px 9px 46px 8px rgba(0, 0, 0, 0.12), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 11px 15px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 9px 46px 8px rgba(0, 0, 0, 0.12),
+      0px 24px 38px 3px rgba(0, 0, 0, 0.14),
+      0px 11px 15px rgba(0, 0, 0, 0.2) !important;
   }
 }
 @media screen and (min-width: 992px) {
@@ -13432,28 +13720,52 @@
     box-shadow: none !important;
   }
   .lg\:shadow-1 {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.02), 0px 0px 2px rgba(0, 0, 0, 0.05), 0px 1px 4px rgba(0, 0, 0, 0.08) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.02),
+      0px 0px 2px rgba(0, 0, 0, 0.05),
+      0px 1px 4px rgba(0, 0, 0, 0.08) !important;
   }
   .lg\:shadow-2 {
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.03), 0px 0px 2px rgba(0, 0, 0, 0.06), 0px 2px 6px rgba(0, 0, 0, 0.12) !important;
+    box-shadow:
+      0px 4px 10px rgba(0, 0, 0, 0.03),
+      0px 0px 2px rgba(0, 0, 0, 0.06),
+      0px 2px 6px rgba(0, 0, 0, 0.12) !important;
   }
   .lg\:shadow-3 {
-    box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.08), 0px 3px 4px rgba(0, 0, 0, 0.1), 0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
+    box-shadow:
+      0px 1px 8px rgba(0, 0, 0, 0.08),
+      0px 3px 4px rgba(0, 0, 0, 0.1),
+      0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
   }
   .lg\:shadow-4 {
-    box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 10px rgba(0, 0, 0, 0.12),
+      0px 4px 5px rgba(0, 0, 0, 0.14),
+      0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
   }
   .lg\:shadow-5 {
-    box-shadow: 0px 1px 7px rgba(0, 0, 0, 0.1), 0px 4px 5px -2px rgba(0, 0, 0, 0.12), 0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 7px rgba(0, 0, 0, 0.1),
+      0px 4px 5px -2px rgba(0, 0, 0, 0.12),
+      0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
   }
   .lg\:shadow-6 {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.06), 0px 7px 9px rgba(0, 0, 0, 0.12), 0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.06),
+      0px 7px 9px rgba(0, 0, 0, 0.12),
+      0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
   }
   .lg\:shadow-7 {
-    box-shadow: 0px 7px 30px rgba(0, 0, 0, 0.08), 0px 22px 30px 2px rgba(0, 0, 0, 0.15), 0px 8px 10px rgba(0, 0, 0, 0.15) !important;
+    box-shadow:
+      0px 7px 30px rgba(0, 0, 0, 0.08),
+      0px 22px 30px 2px rgba(0, 0, 0, 0.15),
+      0px 8px 10px rgba(0, 0, 0, 0.15) !important;
   }
   .lg\:shadow-8 {
-    box-shadow: 0px 9px 46px 8px rgba(0, 0, 0, 0.12), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 11px 15px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 9px 46px 8px rgba(0, 0, 0, 0.12),
+      0px 24px 38px 3px rgba(0, 0, 0, 0.14),
+      0px 11px 15px rgba(0, 0, 0, 0.2) !important;
   }
   .lg\:focus\:shadow-none:focus {
     box-shadow: none !important;
@@ -13465,76 +13777,148 @@
     box-shadow: none !important;
   }
   .lg\:focus\:shadow-1:focus {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.02), 0px 0px 2px rgba(0, 0, 0, 0.05), 0px 1px 4px rgba(0, 0, 0, 0.08) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.02),
+      0px 0px 2px rgba(0, 0, 0, 0.05),
+      0px 1px 4px rgba(0, 0, 0, 0.08) !important;
   }
   .lg\:hover\:shadow-1:hover {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.02), 0px 0px 2px rgba(0, 0, 0, 0.05), 0px 1px 4px rgba(0, 0, 0, 0.08) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.02),
+      0px 0px 2px rgba(0, 0, 0, 0.05),
+      0px 1px 4px rgba(0, 0, 0, 0.08) !important;
   }
   .lg\:active\:shadow-1:active {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.02), 0px 0px 2px rgba(0, 0, 0, 0.05), 0px 1px 4px rgba(0, 0, 0, 0.08) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.02),
+      0px 0px 2px rgba(0, 0, 0, 0.05),
+      0px 1px 4px rgba(0, 0, 0, 0.08) !important;
   }
   .lg\:focus\:shadow-2:focus {
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.03), 0px 0px 2px rgba(0, 0, 0, 0.06), 0px 2px 6px rgba(0, 0, 0, 0.12) !important;
+    box-shadow:
+      0px 4px 10px rgba(0, 0, 0, 0.03),
+      0px 0px 2px rgba(0, 0, 0, 0.06),
+      0px 2px 6px rgba(0, 0, 0, 0.12) !important;
   }
   .lg\:hover\:shadow-2:hover {
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.03), 0px 0px 2px rgba(0, 0, 0, 0.06), 0px 2px 6px rgba(0, 0, 0, 0.12) !important;
+    box-shadow:
+      0px 4px 10px rgba(0, 0, 0, 0.03),
+      0px 0px 2px rgba(0, 0, 0, 0.06),
+      0px 2px 6px rgba(0, 0, 0, 0.12) !important;
   }
   .lg\:active\:shadow-2:active {
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.03), 0px 0px 2px rgba(0, 0, 0, 0.06), 0px 2px 6px rgba(0, 0, 0, 0.12) !important;
+    box-shadow:
+      0px 4px 10px rgba(0, 0, 0, 0.03),
+      0px 0px 2px rgba(0, 0, 0, 0.06),
+      0px 2px 6px rgba(0, 0, 0, 0.12) !important;
   }
   .lg\:focus\:shadow-3:focus {
-    box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.08), 0px 3px 4px rgba(0, 0, 0, 0.1), 0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
+    box-shadow:
+      0px 1px 8px rgba(0, 0, 0, 0.08),
+      0px 3px 4px rgba(0, 0, 0, 0.1),
+      0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
   }
   .lg\:hover\:shadow-3:hover {
-    box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.08), 0px 3px 4px rgba(0, 0, 0, 0.1), 0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
+    box-shadow:
+      0px 1px 8px rgba(0, 0, 0, 0.08),
+      0px 3px 4px rgba(0, 0, 0, 0.1),
+      0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
   }
   .lg\:active\:shadow-3:active {
-    box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.08), 0px 3px 4px rgba(0, 0, 0, 0.1), 0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
+    box-shadow:
+      0px 1px 8px rgba(0, 0, 0, 0.08),
+      0px 3px 4px rgba(0, 0, 0, 0.1),
+      0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
   }
   .lg\:focus\:shadow-4:focus {
-    box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 10px rgba(0, 0, 0, 0.12),
+      0px 4px 5px rgba(0, 0, 0, 0.14),
+      0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
   }
   .lg\:hover\:shadow-4:hover {
-    box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 10px rgba(0, 0, 0, 0.12),
+      0px 4px 5px rgba(0, 0, 0, 0.14),
+      0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
   }
   .lg\:active\:shadow-4:active {
-    box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 10px rgba(0, 0, 0, 0.12),
+      0px 4px 5px rgba(0, 0, 0, 0.14),
+      0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
   }
   .lg\:focus\:shadow-5:focus {
-    box-shadow: 0px 1px 7px rgba(0, 0, 0, 0.1), 0px 4px 5px -2px rgba(0, 0, 0, 0.12), 0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 7px rgba(0, 0, 0, 0.1),
+      0px 4px 5px -2px rgba(0, 0, 0, 0.12),
+      0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
   }
   .lg\:hover\:shadow-5:hover {
-    box-shadow: 0px 1px 7px rgba(0, 0, 0, 0.1), 0px 4px 5px -2px rgba(0, 0, 0, 0.12), 0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 7px rgba(0, 0, 0, 0.1),
+      0px 4px 5px -2px rgba(0, 0, 0, 0.12),
+      0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
   }
   .lg\:active\:shadow-5:active {
-    box-shadow: 0px 1px 7px rgba(0, 0, 0, 0.1), 0px 4px 5px -2px rgba(0, 0, 0, 0.12), 0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 7px rgba(0, 0, 0, 0.1),
+      0px 4px 5px -2px rgba(0, 0, 0, 0.12),
+      0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
   }
   .lg\:focus\:shadow-6:focus {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.06), 0px 7px 9px rgba(0, 0, 0, 0.12), 0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.06),
+      0px 7px 9px rgba(0, 0, 0, 0.12),
+      0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
   }
   .lg\:hover\:shadow-6:hover {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.06), 0px 7px 9px rgba(0, 0, 0, 0.12), 0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.06),
+      0px 7px 9px rgba(0, 0, 0, 0.12),
+      0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
   }
   .lg\:active\:shadow-6:active {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.06), 0px 7px 9px rgba(0, 0, 0, 0.12), 0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.06),
+      0px 7px 9px rgba(0, 0, 0, 0.12),
+      0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
   }
   .lg\:focus\:shadow-7:focus {
-    box-shadow: 0px 7px 30px rgba(0, 0, 0, 0.08), 0px 22px 30px 2px rgba(0, 0, 0, 0.15), 0px 8px 10px rgba(0, 0, 0, 0.15) !important;
+    box-shadow:
+      0px 7px 30px rgba(0, 0, 0, 0.08),
+      0px 22px 30px 2px rgba(0, 0, 0, 0.15),
+      0px 8px 10px rgba(0, 0, 0, 0.15) !important;
   }
   .lg\:hover\:shadow-7:hover {
-    box-shadow: 0px 7px 30px rgba(0, 0, 0, 0.08), 0px 22px 30px 2px rgba(0, 0, 0, 0.15), 0px 8px 10px rgba(0, 0, 0, 0.15) !important;
+    box-shadow:
+      0px 7px 30px rgba(0, 0, 0, 0.08),
+      0px 22px 30px 2px rgba(0, 0, 0, 0.15),
+      0px 8px 10px rgba(0, 0, 0, 0.15) !important;
   }
   .lg\:active\:shadow-7:active {
-    box-shadow: 0px 7px 30px rgba(0, 0, 0, 0.08), 0px 22px 30px 2px rgba(0, 0, 0, 0.15), 0px 8px 10px rgba(0, 0, 0, 0.15) !important;
+    box-shadow:
+      0px 7px 30px rgba(0, 0, 0, 0.08),
+      0px 22px 30px 2px rgba(0, 0, 0, 0.15),
+      0px 8px 10px rgba(0, 0, 0, 0.15) !important;
   }
   .lg\:focus\:shadow-8:focus {
-    box-shadow: 0px 9px 46px 8px rgba(0, 0, 0, 0.12), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 11px 15px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 9px 46px 8px rgba(0, 0, 0, 0.12),
+      0px 24px 38px 3px rgba(0, 0, 0, 0.14),
+      0px 11px 15px rgba(0, 0, 0, 0.2) !important;
   }
   .lg\:hover\:shadow-8:hover {
-    box-shadow: 0px 9px 46px 8px rgba(0, 0, 0, 0.12), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 11px 15px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 9px 46px 8px rgba(0, 0, 0, 0.12),
+      0px 24px 38px 3px rgba(0, 0, 0, 0.14),
+      0px 11px 15px rgba(0, 0, 0, 0.2) !important;
   }
   .lg\:active\:shadow-8:active {
-    box-shadow: 0px 9px 46px 8px rgba(0, 0, 0, 0.12), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 11px 15px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 9px 46px 8px rgba(0, 0, 0, 0.12),
+      0px 24px 38px 3px rgba(0, 0, 0, 0.14),
+      0px 11px 15px rgba(0, 0, 0, 0.2) !important;
   }
 }
 @media screen and (min-width: 1200px) {
@@ -13542,28 +13926,52 @@
     box-shadow: none !important;
   }
   .xl\:shadow-1 {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.02), 0px 0px 2px rgba(0, 0, 0, 0.05), 0px 1px 4px rgba(0, 0, 0, 0.08) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.02),
+      0px 0px 2px rgba(0, 0, 0, 0.05),
+      0px 1px 4px rgba(0, 0, 0, 0.08) !important;
   }
   .xl\:shadow-2 {
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.03), 0px 0px 2px rgba(0, 0, 0, 0.06), 0px 2px 6px rgba(0, 0, 0, 0.12) !important;
+    box-shadow:
+      0px 4px 10px rgba(0, 0, 0, 0.03),
+      0px 0px 2px rgba(0, 0, 0, 0.06),
+      0px 2px 6px rgba(0, 0, 0, 0.12) !important;
   }
   .xl\:shadow-3 {
-    box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.08), 0px 3px 4px rgba(0, 0, 0, 0.1), 0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
+    box-shadow:
+      0px 1px 8px rgba(0, 0, 0, 0.08),
+      0px 3px 4px rgba(0, 0, 0, 0.1),
+      0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
   }
   .xl\:shadow-4 {
-    box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 10px rgba(0, 0, 0, 0.12),
+      0px 4px 5px rgba(0, 0, 0, 0.14),
+      0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
   }
   .xl\:shadow-5 {
-    box-shadow: 0px 1px 7px rgba(0, 0, 0, 0.1), 0px 4px 5px -2px rgba(0, 0, 0, 0.12), 0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 7px rgba(0, 0, 0, 0.1),
+      0px 4px 5px -2px rgba(0, 0, 0, 0.12),
+      0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
   }
   .xl\:shadow-6 {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.06), 0px 7px 9px rgba(0, 0, 0, 0.12), 0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.06),
+      0px 7px 9px rgba(0, 0, 0, 0.12),
+      0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
   }
   .xl\:shadow-7 {
-    box-shadow: 0px 7px 30px rgba(0, 0, 0, 0.08), 0px 22px 30px 2px rgba(0, 0, 0, 0.15), 0px 8px 10px rgba(0, 0, 0, 0.15) !important;
+    box-shadow:
+      0px 7px 30px rgba(0, 0, 0, 0.08),
+      0px 22px 30px 2px rgba(0, 0, 0, 0.15),
+      0px 8px 10px rgba(0, 0, 0, 0.15) !important;
   }
   .xl\:shadow-8 {
-    box-shadow: 0px 9px 46px 8px rgba(0, 0, 0, 0.12), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 11px 15px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 9px 46px 8px rgba(0, 0, 0, 0.12),
+      0px 24px 38px 3px rgba(0, 0, 0, 0.14),
+      0px 11px 15px rgba(0, 0, 0, 0.2) !important;
   }
   .xl\:focus\:shadow-none:focus {
     box-shadow: none !important;
@@ -13575,76 +13983,148 @@
     box-shadow: none !important;
   }
   .xl\:focus\:shadow-1:focus {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.02), 0px 0px 2px rgba(0, 0, 0, 0.05), 0px 1px 4px rgba(0, 0, 0, 0.08) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.02),
+      0px 0px 2px rgba(0, 0, 0, 0.05),
+      0px 1px 4px rgba(0, 0, 0, 0.08) !important;
   }
   .xl\:hover\:shadow-1:hover {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.02), 0px 0px 2px rgba(0, 0, 0, 0.05), 0px 1px 4px rgba(0, 0, 0, 0.08) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.02),
+      0px 0px 2px rgba(0, 0, 0, 0.05),
+      0px 1px 4px rgba(0, 0, 0, 0.08) !important;
   }
   .xl\:active\:shadow-1:active {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.02), 0px 0px 2px rgba(0, 0, 0, 0.05), 0px 1px 4px rgba(0, 0, 0, 0.08) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.02),
+      0px 0px 2px rgba(0, 0, 0, 0.05),
+      0px 1px 4px rgba(0, 0, 0, 0.08) !important;
   }
   .xl\:focus\:shadow-2:focus {
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.03), 0px 0px 2px rgba(0, 0, 0, 0.06), 0px 2px 6px rgba(0, 0, 0, 0.12) !important;
+    box-shadow:
+      0px 4px 10px rgba(0, 0, 0, 0.03),
+      0px 0px 2px rgba(0, 0, 0, 0.06),
+      0px 2px 6px rgba(0, 0, 0, 0.12) !important;
   }
   .xl\:hover\:shadow-2:hover {
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.03), 0px 0px 2px rgba(0, 0, 0, 0.06), 0px 2px 6px rgba(0, 0, 0, 0.12) !important;
+    box-shadow:
+      0px 4px 10px rgba(0, 0, 0, 0.03),
+      0px 0px 2px rgba(0, 0, 0, 0.06),
+      0px 2px 6px rgba(0, 0, 0, 0.12) !important;
   }
   .xl\:active\:shadow-2:active {
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.03), 0px 0px 2px rgba(0, 0, 0, 0.06), 0px 2px 6px rgba(0, 0, 0, 0.12) !important;
+    box-shadow:
+      0px 4px 10px rgba(0, 0, 0, 0.03),
+      0px 0px 2px rgba(0, 0, 0, 0.06),
+      0px 2px 6px rgba(0, 0, 0, 0.12) !important;
   }
   .xl\:focus\:shadow-3:focus {
-    box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.08), 0px 3px 4px rgba(0, 0, 0, 0.1), 0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
+    box-shadow:
+      0px 1px 8px rgba(0, 0, 0, 0.08),
+      0px 3px 4px rgba(0, 0, 0, 0.1),
+      0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
   }
   .xl\:hover\:shadow-3:hover {
-    box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.08), 0px 3px 4px rgba(0, 0, 0, 0.1), 0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
+    box-shadow:
+      0px 1px 8px rgba(0, 0, 0, 0.08),
+      0px 3px 4px rgba(0, 0, 0, 0.1),
+      0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
   }
   .xl\:active\:shadow-3:active {
-    box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.08), 0px 3px 4px rgba(0, 0, 0, 0.1), 0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
+    box-shadow:
+      0px 1px 8px rgba(0, 0, 0, 0.08),
+      0px 3px 4px rgba(0, 0, 0, 0.1),
+      0px 1px 4px -1px rgba(0, 0, 0, 0.1) !important;
   }
   .xl\:focus\:shadow-4:focus {
-    box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 10px rgba(0, 0, 0, 0.12),
+      0px 4px 5px rgba(0, 0, 0, 0.14),
+      0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
   }
   .xl\:hover\:shadow-4:hover {
-    box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 10px rgba(0, 0, 0, 0.12),
+      0px 4px 5px rgba(0, 0, 0, 0.14),
+      0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
   }
   .xl\:active\:shadow-4:active {
-    box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.12), 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 10px rgba(0, 0, 0, 0.12),
+      0px 4px 5px rgba(0, 0, 0, 0.14),
+      0px 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
   }
   .xl\:focus\:shadow-5:focus {
-    box-shadow: 0px 1px 7px rgba(0, 0, 0, 0.1), 0px 4px 5px -2px rgba(0, 0, 0, 0.12), 0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 7px rgba(0, 0, 0, 0.1),
+      0px 4px 5px -2px rgba(0, 0, 0, 0.12),
+      0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
   }
   .xl\:hover\:shadow-5:hover {
-    box-shadow: 0px 1px 7px rgba(0, 0, 0, 0.1), 0px 4px 5px -2px rgba(0, 0, 0, 0.12), 0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 7px rgba(0, 0, 0, 0.1),
+      0px 4px 5px -2px rgba(0, 0, 0, 0.12),
+      0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
   }
   .xl\:active\:shadow-5:active {
-    box-shadow: 0px 1px 7px rgba(0, 0, 0, 0.1), 0px 4px 5px -2px rgba(0, 0, 0, 0.12), 0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 1px 7px rgba(0, 0, 0, 0.1),
+      0px 4px 5px -2px rgba(0, 0, 0, 0.12),
+      0px 10px 15px -5px rgba(0, 0, 0, 0.2) !important;
   }
   .xl\:focus\:shadow-6:focus {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.06), 0px 7px 9px rgba(0, 0, 0, 0.12), 0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.06),
+      0px 7px 9px rgba(0, 0, 0, 0.12),
+      0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
   }
   .xl\:hover\:shadow-6:hover {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.06), 0px 7px 9px rgba(0, 0, 0, 0.12), 0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.06),
+      0px 7px 9px rgba(0, 0, 0, 0.12),
+      0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
   }
   .xl\:active\:shadow-6:active {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.06), 0px 7px 9px rgba(0, 0, 0, 0.12), 0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
+    box-shadow:
+      0px 3px 5px rgba(0, 0, 0, 0.06),
+      0px 7px 9px rgba(0, 0, 0, 0.12),
+      0px 20px 25px -8px rgba(0, 0, 0, 0.18) !important;
   }
   .xl\:focus\:shadow-7:focus {
-    box-shadow: 0px 7px 30px rgba(0, 0, 0, 0.08), 0px 22px 30px 2px rgba(0, 0, 0, 0.15), 0px 8px 10px rgba(0, 0, 0, 0.15) !important;
+    box-shadow:
+      0px 7px 30px rgba(0, 0, 0, 0.08),
+      0px 22px 30px 2px rgba(0, 0, 0, 0.15),
+      0px 8px 10px rgba(0, 0, 0, 0.15) !important;
   }
   .xl\:hover\:shadow-7:hover {
-    box-shadow: 0px 7px 30px rgba(0, 0, 0, 0.08), 0px 22px 30px 2px rgba(0, 0, 0, 0.15), 0px 8px 10px rgba(0, 0, 0, 0.15) !important;
+    box-shadow:
+      0px 7px 30px rgba(0, 0, 0, 0.08),
+      0px 22px 30px 2px rgba(0, 0, 0, 0.15),
+      0px 8px 10px rgba(0, 0, 0, 0.15) !important;
   }
   .xl\:active\:shadow-7:active {
-    box-shadow: 0px 7px 30px rgba(0, 0, 0, 0.08), 0px 22px 30px 2px rgba(0, 0, 0, 0.15), 0px 8px 10px rgba(0, 0, 0, 0.15) !important;
+    box-shadow:
+      0px 7px 30px rgba(0, 0, 0, 0.08),
+      0px 22px 30px 2px rgba(0, 0, 0, 0.15),
+      0px 8px 10px rgba(0, 0, 0, 0.15) !important;
   }
   .xl\:focus\:shadow-8:focus {
-    box-shadow: 0px 9px 46px 8px rgba(0, 0, 0, 0.12), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 11px 15px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 9px 46px 8px rgba(0, 0, 0, 0.12),
+      0px 24px 38px 3px rgba(0, 0, 0, 0.14),
+      0px 11px 15px rgba(0, 0, 0, 0.2) !important;
   }
   .xl\:hover\:shadow-8:hover {
-    box-shadow: 0px 9px 46px 8px rgba(0, 0, 0, 0.12), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 11px 15px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 9px 46px 8px rgba(0, 0, 0, 0.12),
+      0px 24px 38px 3px rgba(0, 0, 0, 0.14),
+      0px 11px 15px rgba(0, 0, 0, 0.2) !important;
   }
   .xl\:active\:shadow-8:active {
-    box-shadow: 0px 9px 46px 8px rgba(0, 0, 0, 0.12), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 11px 15px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0px 9px 46px 8px rgba(0, 0, 0, 0.12),
+      0px 24px 38px 3px rgba(0, 0, 0, 0.14),
+      0px 11px 15px rgba(0, 0, 0, 0.2) !important;
   }
 }
 .border-none {
@@ -19188,39 +19668,39 @@
 }
 
 .opacity-10 {
-  opacity: .1 !important;
+  opacity: 0.1 !important;
 }
 
 .opacity-20 {
-  opacity: .2 !important;
+  opacity: 0.2 !important;
 }
 
 .opacity-30 {
-  opacity: .3 !important;
+  opacity: 0.3 !important;
 }
 
 .opacity-40 {
-  opacity: .4 !important;
+  opacity: 0.4 !important;
 }
 
 .opacity-50 {
-  opacity: .5 !important;
+  opacity: 0.5 !important;
 }
 
 .opacity-60 {
-  opacity: .6 !important;
+  opacity: 0.6 !important;
 }
 
 .opacity-70 {
-  opacity: .7 !important;
+  opacity: 0.7 !important;
 }
 
 .opacity-80 {
-  opacity: .8 !important;
+  opacity: 0.8 !important;
 }
 
 .opacity-90 {
-  opacity: .9 !important;
+  opacity: 0.9 !important;
 }
 
 .opacity-100 {
@@ -19240,7 +19720,7 @@
 }
 
 .transition-colors {
-  transition-property: background-color,border-color,color !important;
+  transition-property: background-color, border-color, color !important;
 }
 
 .transition-transform {
@@ -19707,7 +20187,9 @@
   0% {
     opacity: 0;
     transform: scaleY(0.8);
-    transition: transform 0.12s cubic-bezier(0, 0, 0.2, 1), opacity 0.12s cubic-bezier(0, 0, 0.2, 1);
+    transition:
+      transform 0.12s cubic-bezier(0, 0, 0.2, 1),
+      opacity 0.12s cubic-bezier(0, 0, 0.2, 1);
   }
   100% {
     opacity: 1;
@@ -19734,7 +20216,9 @@
   0% {
     opacity: 0;
     transform: translateX(-100%);
-    transition: transform 0.12s cubic-bezier(0, 0, 0.2, 1), opacity 0.12s cubic-bezier(0, 0, 0.2, 1);
+    transition:
+      transform 0.12s cubic-bezier(0, 0, 0.2, 1),
+      opacity 0.12s cubic-bezier(0, 0, 0.2, 1);
   }
   100% {
     opacity: 1;
@@ -19745,7 +20229,9 @@
   0% {
     opacity: 1;
     transform: translateX(0%);
-    transition: transform 0.12s cubic-bezier(0, 0, 0.2, 1), opacity 0.12s cubic-bezier(0, 0, 0.2, 1);
+    transition:
+      transform 0.12s cubic-bezier(0, 0, 0.2, 1),
+      opacity 0.12s cubic-bezier(0, 0, 0.2, 1);
   }
   100% {
     opacity: 0;
@@ -19756,7 +20242,9 @@
   0% {
     opacity: 0;
     transform: translateX(100%);
-    transition: transform 0.12s cubic-bezier(0, 0, 0.2, 1), opacity 0.12s cubic-bezier(0, 0, 0.2, 1);
+    transition:
+      transform 0.12s cubic-bezier(0, 0, 0.2, 1),
+      opacity 0.12s cubic-bezier(0, 0, 0.2, 1);
   }
   100% {
     opacity: 1;
@@ -19767,7 +20255,9 @@
   0% {
     opacity: 1;
     transform: translateX(0%);
-    transition: transform 0.12s cubic-bezier(0, 0, 0.2, 1), opacity 0.12s cubic-bezier(0, 0, 0.2, 1);
+    transition:
+      transform 0.12s cubic-bezier(0, 0, 0.2, 1),
+      opacity 0.12s cubic-bezier(0, 0, 0.2, 1);
   }
   100% {
     opacity: 0;
@@ -19778,7 +20268,9 @@
   0% {
     opacity: 0;
     transform: translateY(-100%);
-    transition: transform 0.12s cubic-bezier(0, 0, 0.2, 1), opacity 0.12s cubic-bezier(0, 0, 0.2, 1);
+    transition:
+      transform 0.12s cubic-bezier(0, 0, 0.2, 1),
+      opacity 0.12s cubic-bezier(0, 0, 0.2, 1);
   }
   100% {
     opacity: 1;
@@ -19789,7 +20281,9 @@
   0% {
     opacity: 1;
     transform: translateY(0%);
-    transition: transform 0.12s cubic-bezier(0, 0, 0.2, 1), opacity 0.12s cubic-bezier(0, 0, 0.2, 1);
+    transition:
+      transform 0.12s cubic-bezier(0, 0, 0.2, 1),
+      opacity 0.12s cubic-bezier(0, 0, 0.2, 1);
   }
   100% {
     opacity: 0;
@@ -19800,7 +20294,9 @@
   0% {
     opacity: 0;
     transform: translateY(100%);
-    transition: transform 0.12s cubic-bezier(0, 0, 0.2, 1), opacity 0.12s cubic-bezier(0, 0, 0.2, 1);
+    transition:
+      transform 0.12s cubic-bezier(0, 0, 0.2, 1),
+      opacity 0.12s cubic-bezier(0, 0, 0.2, 1);
   }
   100% {
     opacity: 1;
@@ -19811,7 +20307,9 @@
   0% {
     opacity: 1;
     transform: translateY(0%);
-    transition: transform 0.12s cubic-bezier(0, 0, 0.2, 1), opacity 0.12s cubic-bezier(0, 0, 0.2, 1);
+    transition:
+      transform 0.12s cubic-bezier(0, 0, 0.2, 1),
+      opacity 0.12s cubic-bezier(0, 0, 0.2, 1);
   }
   100% {
     opacity: 0;
@@ -20148,8 +20646,9 @@
   --menu-active-item-bg-color: var(--menu-item-hover-bg-color);
   --menu-active-item-text-color: var(--menu-item-text-color);
   --inline-menu-border-color: var(--divider-color);
-  --mobile-break-point: 991px;
-  --submenu-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
+  --mobile-break-point: 767px;
+  --submenu-shadow:
+    0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
   --menu-shadow: 2px 0 4px -1px rgba(0, 0, 0, 0.2), 4px 0 5px 0 rgba(0, 0, 0, 0.14), 1px 0 10px 0 rgba(0, 0, 0, 0.12);
   --menu-wrapper-width: 17rem;
   --h1-font-size: 2.5rem;
@@ -20481,7 +20980,7 @@ p:last-child {
 }
 /* Utils */
 .clearfix:after {
-  content: " ";
+  content: ' ';
   display: block;
   clear: both;
 }
@@ -20498,7 +20997,10 @@ p:last-child {
   background-color: var(--content-bg-color);
   padding: 1rem;
   margin-bottom: 2rem;
-  box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+  box-shadow:
+    0 2px 1px -1px rgba(0, 0, 0, 0.2),
+    0 1px 1px 0 rgba(0, 0, 0, 0.14),
+    0 1px 3px 0 rgba(0, 0, 0, 0.12);
   border-radius: var(--border-radius);
 }
 .card:last-child {
@@ -20524,7 +21026,9 @@ p:last-child {
   margin: -1rem 0 1rem 0;
 }
 
-.p-toast.p-toast-top-right, .p-toast.p-toast-top-left, .p-toast.p-toast-top-center {
+.p-toast.p-toast-top-right,
+.p-toast.p-toast-top-left,
+.p-toast.p-toast-top-center {
   top: 70px;
 }
 
@@ -20876,7 +21380,13 @@ body .p-overlay-badge .p-badge {
   height: 100%;
   min-width: 0;
 }
-.layout-topbar .layout-topbar-right .layout-topbar-actions-left .layout-menubar .p-menubar-root-list > .p-menuitem .p-menuitem-text {
+.layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-left
+  .layout-menubar
+  .p-menubar-root-list
+  > .p-menuitem
+  .p-menuitem-text {
   white-space: nowrap;
 }
 .layout-topbar .layout-topbar-right .layout-topbar-actions-right {
@@ -20894,7 +21404,12 @@ body .p-overlay-badge .p-badge {
   align-items: center;
   position: relative;
 }
-.layout-topbar .layout-topbar-right .layout-topbar-actions-right .layout-topbar-items .layout-topbar-item .layout-topbar-action {
+.layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-right
+  .layout-topbar-items
+  .layout-topbar-item
+  .layout-topbar-action {
   user-select: none;
   padding: 0 0.8rem;
   margin: 0 0.1rem;
@@ -20905,7 +21420,12 @@ body .p-overlay-badge .p-badge {
   align-items: center;
   cursor: pointer;
 }
-.layout-topbar .layout-topbar-right .layout-topbar-actions-right .layout-topbar-items .layout-topbar-item .layout-topbar-action-panel {
+.layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-right
+  .layout-topbar-items
+  .layout-topbar-item
+  .layout-topbar-action-panel {
   position: absolute;
   top: 4rem;
   right: 0;
@@ -20914,11 +21434,22 @@ body .p-overlay-badge .p-badge {
   padding: 1rem 0;
   transform-origin: top;
 }
-.layout-topbar .layout-topbar-right .layout-topbar-actions-right .layout-topbar-items .layout-topbar-item .layout-topbar-action-panel .layout-topbar-action-item {
+.layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-right
+  .layout-topbar-items
+  .layout-topbar-item
+  .layout-topbar-action-panel
+  .layout-topbar-action-item {
   cursor: pointer;
   padding: 1rem;
 }
-.layout-topbar .layout-topbar-right .layout-topbar-actions-right .layout-topbar-items .layout-topbar-item.layout-search-item .layout-search-panel {
+.layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-right
+  .layout-topbar-items
+  .layout-topbar-item.layout-search-item
+  .layout-search-panel {
   height: 4rem;
   width: 100%;
   position: fixed;
@@ -20927,29 +21458,93 @@ body .p-overlay-badge .p-badge {
   z-index: 1000;
   transform-origin: top;
 }
-.layout-topbar .layout-topbar-right .layout-topbar-actions-right .layout-topbar-items .layout-topbar-item.layout-search-item .layout-search-panel input {
+.layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-right
+  .layout-topbar-items
+  .layout-topbar-item.layout-search-item
+  .layout-search-panel
+  input {
   border-radius: 0;
   border: 0 none;
 }
-.layout-topbar .layout-topbar-right .layout-topbar-actions-right .layout-topbar-items .layout-topbar-item.layout-search-item .layout-search-panel input:focus {
+.layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-right
+  .layout-topbar-items
+  .layout-topbar-item.layout-search-item
+  .layout-search-panel
+  input:focus {
   outline: 0 none;
   box-shadow: none;
 }
-.layout-topbar .layout-topbar-right .layout-topbar-actions-right .layout-topbar-items .layout-topbar-item.layout-search-item .layout-search-panel i {
+.layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-right
+  .layout-topbar-items
+  .layout-topbar-item.layout-search-item
+  .layout-search-panel
+  i {
   font-weight: bold;
 }
-.layout-topbar .layout-topbar-right .layout-topbar-actions-right .layout-topbar-items .layout-topbar-item.layout-search-item .layout-search-panel .p-inputgroup-addon {
+.layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-right
+  .layout-topbar-items
+  .layout-topbar-item.layout-search-item
+  .layout-search-panel
+  .p-inputgroup-addon {
   border: 0 none;
 }
-.layout-topbar .layout-topbar-right .layout-topbar-actions-right .layout-topbar-items .layout-topbar-item.layout-search-item .layout-search-panel .p-inputgroup-addon:first-child,
-.layout-topbar .layout-topbar-right .layout-topbar-actions-right .layout-topbar-items .layout-topbar-item.layout-search-item .layout-search-panel .p-inputgroup button:first-child,
-.layout-topbar .layout-topbar-right .layout-topbar-actions-right .layout-topbar-items .layout-topbar-item.layout-search-item .layout-search-panel .p-inputgroup input:first-child {
+.layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-right
+  .layout-topbar-items
+  .layout-topbar-item.layout-search-item
+  .layout-search-panel
+  .p-inputgroup-addon:first-child,
+.layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-right
+  .layout-topbar-items
+  .layout-topbar-item.layout-search-item
+  .layout-search-panel
+  .p-inputgroup
+  button:first-child,
+.layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-right
+  .layout-topbar-items
+  .layout-topbar-item.layout-search-item
+  .layout-search-panel
+  .p-inputgroup
+  input:first-child {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
-.layout-topbar .layout-topbar-right .layout-topbar-actions-right .layout-topbar-items .layout-topbar-item.layout-search-item .layout-search-panel .p-inputgroup-addon:last-child,
-.layout-topbar .layout-topbar-right .layout-topbar-actions-right .layout-topbar-items .layout-topbar-item.layout-search-item .layout-search-panel .p-inputgroup button:last-child,
-.layout-topbar .layout-topbar-right .layout-topbar-actions-right .layout-topbar-items .layout-topbar-item.layout-search-item .layout-search-panel .p-inputgroup input:last-child {
+.layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-right
+  .layout-topbar-items
+  .layout-topbar-item.layout-search-item
+  .layout-search-panel
+  .p-inputgroup-addon:last-child,
+.layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-right
+  .layout-topbar-items
+  .layout-topbar-item.layout-search-item
+  .layout-search-panel
+  .p-inputgroup
+  button:last-child,
+.layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-right
+  .layout-topbar-items
+  .layout-topbar-item.layout-search-item
+  .layout-search-panel
+  .p-inputgroup
+  input:last-child {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }
@@ -20974,7 +21569,12 @@ body .p-overlay-badge .p-badge {
   .layout-topbar .layout-topbar-right .layout-topbar-actions-right {
     padding-right: 0.25rem;
   }
-  .layout-topbar .layout-topbar-right .layout-topbar-actions-right .layout-topbar-items .layout-topbar-item .layout-topbar-action-panel {
+  .layout-topbar
+    .layout-topbar-right
+    .layout-topbar-actions-right
+    .layout-topbar-items
+    .layout-topbar-item
+    .layout-topbar-action-panel {
     position: fixed;
     min-width: 100vw;
     max-width: 100vw;
@@ -21004,55 +21604,189 @@ body .p-overlay-badge .p-badge {
   background: none;
   border: none;
 }
-.layout-topbar-var .layout-topbar .layout-topbar-right .layout-topbar-actions-left .layout-menubar.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-link .p-menuitem-text,
-.layout-topbar-var .layout-topbar .layout-topbar-right .layout-topbar-actions-left .layout-menubar.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-link .p-menuitem-icon,
-.layout-topbar-var .layout-topbar .layout-topbar-right .layout-topbar-actions-left .layout-menubar.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-link .p-submenu-icon {
+.layout-topbar-var
+  .layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-left
+  .layout-menubar.p-menubar
+  .p-menubar-root-list
+  > .p-menuitem
+  > .p-menuitem-link
+  .p-menuitem-text,
+.layout-topbar-var
+  .layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-left
+  .layout-menubar.p-menubar
+  .p-menubar-root-list
+  > .p-menuitem
+  > .p-menuitem-link
+  .p-menuitem-icon,
+.layout-topbar-var
+  .layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-left
+  .layout-menubar.p-menubar
+  .p-menubar-root-list
+  > .p-menuitem
+  > .p-menuitem-link
+  .p-submenu-icon {
   color: var(--topbar-item-text-color);
 }
-.layout-topbar-var .layout-topbar .layout-topbar-right .layout-topbar-actions-left .layout-menubar.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-link:not(.p-disabled):hover {
+.layout-topbar-var
+  .layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-left
+  .layout-menubar.p-menubar
+  .p-menubar-root-list
+  > .p-menuitem
+  > .p-menuitem-link:not(.p-disabled):hover {
   background: var(--topbar-item-text-hover-bg-color);
   transition: background-color var(--transition-duration);
 }
-.layout-topbar-var .layout-topbar .layout-topbar-right .layout-topbar-actions-left .layout-menubar.p-menubar .p-menuitem .p-menuitem-icon,
-.layout-topbar-var .layout-topbar .layout-topbar-right .layout-topbar-actions-left .layout-menubar.p-menubar .p-menuitem .p-menuitem-badge {
+.layout-topbar-var
+  .layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-left
+  .layout-menubar.p-menubar
+  .p-menuitem
+  .p-menuitem-icon,
+.layout-topbar-var
+  .layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-left
+  .layout-menubar.p-menubar
+  .p-menuitem
+  .p-menuitem-badge {
   display: none;
 }
-.layout-topbar-var .layout-topbar .layout-topbar-right .layout-topbar-actions-right .layout-topbar-items .layout-topbar-action-panel {
+.layout-topbar-var
+  .layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-right
+  .layout-topbar-items
+  .layout-topbar-action-panel {
   background-color: var(--overlay-content-bg-color);
   color: var(--text-color);
 }
-.layout-topbar-var .layout-topbar .layout-topbar-right .layout-topbar-actions-right .layout-topbar-items .layout-topbar-action-panel a {
+.layout-topbar-var
+  .layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-right
+  .layout-topbar-items
+  .layout-topbar-action-panel
+  a {
   color: var(--text-color);
 }
-.layout-topbar-var .layout-topbar .layout-topbar-right .layout-topbar-actions-right .layout-topbar-items .layout-topbar-action-panel a:hover {
+.layout-topbar-var
+  .layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-right
+  .layout-topbar-items
+  .layout-topbar-action-panel
+  a:hover {
   background-color: transparent;
   transition: none;
 }
-.layout-topbar-var .layout-topbar .layout-topbar-right .layout-topbar-actions-right .layout-topbar-items .layout-topbar-action-panel .layout-topbar-action-item:hover {
+.layout-topbar-var
+  .layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-right
+  .layout-topbar-items
+  .layout-topbar-action-panel
+  .layout-topbar-action-item:hover {
   background-color: var(--hover-bg-color);
   transition: background-color var(--transition-duration);
 }
-.layout-topbar-var .layout-topbar .layout-topbar-right .layout-topbar-actions-right .layout-topbar-items .layout-topbar-item.layout-search-item .layout-search-panel input {
+.layout-topbar-var
+  .layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-right
+  .layout-topbar-items
+  .layout-topbar-item.layout-search-item
+  .layout-search-panel
+  input {
   background-color: var(--body-bg-color);
   color: var(--text-color);
 }
-.layout-topbar-var .layout-topbar .layout-topbar-right .layout-topbar-actions-right .layout-topbar-items .layout-topbar-item.layout-search-item .layout-search-panel input:hover {
+.layout-topbar-var
+  .layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-right
+  .layout-topbar-items
+  .layout-topbar-item.layout-search-item
+  .layout-search-panel
+  input:hover {
   background-color: var(--body-bg-color);
   color: var(--text-color);
 }
-.layout-topbar-var .layout-topbar .layout-topbar-right .layout-topbar-actions-right .layout-topbar-items .layout-topbar-item.layout-search-item .layout-search-panel .p-inputgroup-addon:first-child,
-.layout-topbar-var .layout-topbar .layout-topbar-right .layout-topbar-actions-right .layout-topbar-items .layout-topbar-item.layout-search-item .layout-search-panel .p-inputgroup button:first-child,
-.layout-topbar-var .layout-topbar .layout-topbar-right .layout-topbar-actions-right .layout-topbar-items .layout-topbar-item.layout-search-item .layout-search-panel .p-inputgroup input:first-child {
+.layout-topbar-var
+  .layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-right
+  .layout-topbar-items
+  .layout-topbar-item.layout-search-item
+  .layout-search-panel
+  .p-inputgroup-addon:first-child,
+.layout-topbar-var
+  .layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-right
+  .layout-topbar-items
+  .layout-topbar-item.layout-search-item
+  .layout-search-panel
+  .p-inputgroup
+  button:first-child,
+.layout-topbar-var
+  .layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-right
+  .layout-topbar-items
+  .layout-topbar-item.layout-search-item
+  .layout-search-panel
+  .p-inputgroup
+  input:first-child {
   background-color: var(--body-bg-color);
   color: var(--text-color);
 }
-.layout-topbar-var .layout-topbar .layout-topbar-right .layout-topbar-actions-right .layout-topbar-items .layout-topbar-item.layout-search-item .layout-search-panel .p-inputgroup-addon:last-child,
-.layout-topbar-var .layout-topbar .layout-topbar-right .layout-topbar-actions-right .layout-topbar-items .layout-topbar-item.layout-search-item .layout-search-panel .p-inputgroup button:last-child,
-.layout-topbar-var .layout-topbar .layout-topbar-right .layout-topbar-actions-right .layout-topbar-items .layout-topbar-item.layout-search-item .layout-search-panel .p-inputgroup input:last-child {
+.layout-topbar-var
+  .layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-right
+  .layout-topbar-items
+  .layout-topbar-item.layout-search-item
+  .layout-search-panel
+  .p-inputgroup-addon:last-child,
+.layout-topbar-var
+  .layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-right
+  .layout-topbar-items
+  .layout-topbar-item.layout-search-item
+  .layout-search-panel
+  .p-inputgroup
+  button:last-child,
+.layout-topbar-var
+  .layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-right
+  .layout-topbar-items
+  .layout-topbar-item.layout-search-item
+  .layout-search-panel
+  .p-inputgroup
+  input:last-child {
   background-color: var(--body-bg-color);
   color: var(--text-color);
 }
-.layout-topbar-var .layout-topbar .layout-topbar-right .layout-topbar-actions-right .layout-topbar-items .layout-topbar-item.layout-search-item .layout-search-panel .p-inputgroup-addon .p-button-text {
+.layout-topbar-var
+  .layout-topbar
+  .layout-topbar-right
+  .layout-topbar-actions-right
+  .layout-topbar-items
+  .layout-topbar-item.layout-search-item
+  .layout-search-panel
+  .p-inputgroup-addon
+  .p-button-text {
   color: var(--text-color);
 }
 
@@ -21139,7 +21873,9 @@ body .p-overlay-badge .p-badge {
   padding: 0.75rem;
   cursor: pointer;
   user-select: none;
-  transition: background-color var(--transition-duration), color var(--transition-duration);
+  transition:
+    background-color var(--transition-duration),
+    color var(--transition-duration);
 }
 .menu-wrapper .layout-menu-container .layout-menu li > a .layout-menuitem-text {
   margin-left: 0.75rem;
@@ -21256,11 +21992,19 @@ body .p-overlay-badge .p-badge {
   color: var(--menu-item-text-color);
 }
 .menu-wrapper .layout-menu-container .layout-inline-menu .layout-inline-menu-action,
-.menu-wrapper .layout-menu-container .layout-inline-menu .layout-inline-menu-action-panel .layout-inline-menu-action-item {
+.menu-wrapper
+  .layout-menu-container
+  .layout-inline-menu
+  .layout-inline-menu-action-panel
+  .layout-inline-menu-action-item {
   color: var(--menu-item-text-color);
 }
 .menu-wrapper .layout-menu-container .layout-inline-menu .layout-inline-menu-action:hover,
-.menu-wrapper .layout-menu-container .layout-inline-menu .layout-inline-menu-action-panel .layout-inline-menu-action-item:hover {
+.menu-wrapper
+  .layout-menu-container
+  .layout-inline-menu
+  .layout-inline-menu-action-panel
+  .layout-inline-menu-action-item:hover {
   background-color: var(--menu-item-hover-bg-color);
 }
 .menu-wrapper .layout-menu-container .layout-inline-menu .layout-inline-menu-action-panel {
@@ -21341,7 +22085,7 @@ body a {
 
 label.ocx-required-label:after {
   color: #d00;
-  content: "*";
+  content: '*';
   margin-left: 1px;
 }
 
@@ -22938,13 +23682,17 @@ p-selectbutton.ng-dirty.ng-invalid > .p-selectbutton > .p-button {
   border-color: var(--slider-handle-hover-border-color);
 }
 .p-slider.p-slider-animate.p-slider-horizontal .p-slider-handle {
-  transition: var(--form-element-transition), left 0.2s;
+  transition:
+    var(--form-element-transition),
+    left 0.2s;
 }
 .p-slider.p-slider-animate.p-slider-horizontal .p-slider-range {
   transition: width 0.2s;
 }
 .p-slider.p-slider-animate.p-slider-vertical .p-slider-handle {
-  transition: var(--form-element-transition), bottom 0.2s;
+  transition:
+    var(--form-element-transition),
+    bottom 0.2s;
 }
 .p-slider.p-slider-animate.p-slider-vertical .p-slider-range {
   transition: height 0.2s;
@@ -23702,7 +24450,8 @@ p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
 .p-speeddial-quarter-circle .p-speeddial-item {
   margin: 0;
 }
-.p-speeddial-circle .p-speeddial-item:first-child, .p-speeddial-circle .p-speeddial-item:last-child,
+.p-speeddial-circle .p-speeddial-item:first-child,
+.p-speeddial-circle .p-speeddial-item:last-child,
 .p-speeddial-semi-circle .p-speeddial-item:first-child,
 .p-speeddial-semi-circle .p-speeddial-item:last-child,
 .p-speeddial-quarter-circle .p-speeddial-item:first-child,
@@ -24039,11 +24788,13 @@ p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
   border-color: var(--action-icon-hover-border-color);
   background: var(--action-icon-hover-bg);
 }
-.p-column-filter-menu-button.p-column-filter-menu-button-open, .p-column-filter-menu-button.p-column-filter-menu-button-open:hover {
+.p-column-filter-menu-button.p-column-filter-menu-button-open,
+.p-column-filter-menu-button.p-column-filter-menu-button-open:hover {
   background: var(--action-icon-hover-bg);
   color: var(--text-secondary-color);
 }
-.p-column-filter-menu-button.p-column-filter-menu-button-active, .p-column-filter-menu-button.p-column-filter-menu-button-active:hover {
+.p-column-filter-menu-button.p-column-filter-menu-button-active,
+.p-column-filter-menu-button.p-column-filter-menu-button-active:hover {
   background: var(--highlight-bg);
   color: var(--primary-color);
 }
@@ -24195,7 +24946,7 @@ p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
   box-shadow: var(--focus-shadow);
 }
 .fc.fc-unthemed .fc-toolbar .fc-button .fc-icon-chevron-left {
-  font-family: "PrimeIcons" !important;
+  font-family: 'PrimeIcons' !important;
   text-indent: 0;
   font-size: var(--prime-icon-font-size);
 }
@@ -24203,7 +24954,7 @@ p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
   content: var(--icon);
 }
 .fc.fc-unthemed .fc-toolbar .fc-button .fc-icon-chevron-right {
-  font-family: "PrimeIcons" !important;
+  font-family: 'PrimeIcons' !important;
   text-indent: 0;
   font-size: var(--prime-icon-font-size);
 }
@@ -24215,28 +24966,38 @@ p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
   outline-offset: var(--focus-outline-offset);
   box-shadow: var(--focus-shadow);
 }
-.fc.fc-unthemed .fc-toolbar .fc-button.fc-dayGridMonth-button, .fc.fc-unthemed .fc-toolbar .fc-button.fc-timeGridWeek-button, .fc.fc-unthemed .fc-toolbar .fc-button.fc-timeGridDay-button {
+.fc.fc-unthemed .fc-toolbar .fc-button.fc-dayGridMonth-button,
+.fc.fc-unthemed .fc-toolbar .fc-button.fc-timeGridWeek-button,
+.fc.fc-unthemed .fc-toolbar .fc-button.fc-timeGridDay-button {
   background: var(--toggle-button-bg);
   border: var(--toggle-button-border);
   color: var(--text-color);
   transition: var(--form-element-transition);
 }
-.fc.fc-unthemed .fc-toolbar .fc-button.fc-dayGridMonth-button:hover, .fc.fc-unthemed .fc-toolbar .fc-button.fc-timeGridWeek-button:hover, .fc.fc-unthemed .fc-toolbar .fc-button.fc-timeGridDay-button:hover {
+.fc.fc-unthemed .fc-toolbar .fc-button.fc-dayGridMonth-button:hover,
+.fc.fc-unthemed .fc-toolbar .fc-button.fc-timeGridWeek-button:hover,
+.fc.fc-unthemed .fc-toolbar .fc-button.fc-timeGridDay-button:hover {
   background: var(--toggle-button-hover-bg);
   border-color: var(--toggle-button-hover-border-color);
   color: var(--text-color);
 }
-.fc.fc-unthemed .fc-toolbar .fc-button.fc-dayGridMonth-button.fc-button-active, .fc.fc-unthemed .fc-toolbar .fc-button.fc-timeGridWeek-button.fc-button-active, .fc.fc-unthemed .fc-toolbar .fc-button.fc-timeGridDay-button.fc-button-active {
+.fc.fc-unthemed .fc-toolbar .fc-button.fc-dayGridMonth-button.fc-button-active,
+.fc.fc-unthemed .fc-toolbar .fc-button.fc-timeGridWeek-button.fc-button-active,
+.fc.fc-unthemed .fc-toolbar .fc-button.fc-timeGridDay-button.fc-button-active {
   background: var(--toggle-button-active-bg);
   border-color: var(--toggle-button-active-border-color);
   color: var(--text-color);
 }
-.fc.fc-unthemed .fc-toolbar .fc-button.fc-dayGridMonth-button.fc-button-active:hover, .fc.fc-unthemed .fc-toolbar .fc-button.fc-timeGridWeek-button.fc-button-active:hover, .fc.fc-unthemed .fc-toolbar .fc-button.fc-timeGridDay-button.fc-button-active:hover {
+.fc.fc-unthemed .fc-toolbar .fc-button.fc-dayGridMonth-button.fc-button-active:hover,
+.fc.fc-unthemed .fc-toolbar .fc-button.fc-timeGridWeek-button.fc-button-active:hover,
+.fc.fc-unthemed .fc-toolbar .fc-button.fc-timeGridDay-button.fc-button-active:hover {
   background: var(--toggle-button-active-hover-bg);
   border-color: var(--toggle-button-active-hover-border-color);
   color: var(--text-color);
 }
-.fc.fc-unthemed .fc-toolbar .fc-button.fc-dayGridMonth-button:focus, .fc.fc-unthemed .fc-toolbar .fc-button.fc-timeGridWeek-button:focus, .fc.fc-unthemed .fc-toolbar .fc-button.fc-timeGridDay-button:focus {
+.fc.fc-unthemed .fc-toolbar .fc-button.fc-dayGridMonth-button:focus,
+.fc.fc-unthemed .fc-toolbar .fc-button.fc-timeGridWeek-button:focus,
+.fc.fc-unthemed .fc-toolbar .fc-button.fc-timeGridDay-button:focus {
   outline: var(--focus-outline);
   outline-offset: var(--focus-outline-offset);
   box-shadow: var(--focus-shadow);
@@ -24284,7 +25045,7 @@ p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  font-family: "PrimeIcons" !important;
+  font-family: 'PrimeIcons' !important;
   font-size: var(--prime-icon-font-size);
   width: var(--action-icon-width);
   height: var(--action-icon-height);
@@ -24363,7 +25124,7 @@ p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
   border: var(--button-border);
 }
 .fc.fc-theme-standard .fc-toolbar .fc-button .fc-icon-chevron-left {
-  font-family: "PrimeIcons" !important;
+  font-family: 'PrimeIcons' !important;
   text-indent: 0;
   font-size: var(--prime-icon-font-size);
 }
@@ -24371,7 +25132,7 @@ p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
   content: var(--icon);
 }
 .fc.fc-theme-standard .fc-toolbar .fc-button .fc-icon-chevron-right {
-  font-family: "PrimeIcons" !important;
+  font-family: 'PrimeIcons' !important;
   text-indent: 0;
   font-size: var(--prime-icon-font-size);
 }
@@ -24383,28 +25144,38 @@ p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
   outline-offset: var(--focus-outline-offset);
   box-shadow: var(--focus-shadow);
 }
-.fc.fc-theme-standard .fc-toolbar .fc-button.fc-dayGridMonth-button, .fc.fc-theme-standard .fc-toolbar .fc-button.fc-timeGridWeek-button, .fc.fc-theme-standard .fc-toolbar .fc-button.fc-timeGridDay-button {
+.fc.fc-theme-standard .fc-toolbar .fc-button.fc-dayGridMonth-button,
+.fc.fc-theme-standard .fc-toolbar .fc-button.fc-timeGridWeek-button,
+.fc.fc-theme-standard .fc-toolbar .fc-button.fc-timeGridDay-button {
   background: var(--toggle-button-bg);
   border: var(--toggle-button-border);
   color: var(--text-color);
   transition: var(--form-element-transition);
 }
-.fc.fc-theme-standard .fc-toolbar .fc-button.fc-dayGridMonth-button:hover, .fc.fc-theme-standard .fc-toolbar .fc-button.fc-timeGridWeek-button:hover, .fc.fc-theme-standard .fc-toolbar .fc-button.fc-timeGridDay-button:hover {
+.fc.fc-theme-standard .fc-toolbar .fc-button.fc-dayGridMonth-button:hover,
+.fc.fc-theme-standard .fc-toolbar .fc-button.fc-timeGridWeek-button:hover,
+.fc.fc-theme-standard .fc-toolbar .fc-button.fc-timeGridDay-button:hover {
   background: var(--toggle-button-hover-bg);
   border-color: var(--toggle-button-hover-border-color);
   color: var(--text-color);
 }
-.fc.fc-theme-standard .fc-toolbar .fc-button.fc-dayGridMonth-button.fc-button-active, .fc.fc-theme-standard .fc-toolbar .fc-button.fc-timeGridWeek-button.fc-button-active, .fc.fc-theme-standard .fc-toolbar .fc-button.fc-timeGridDay-button.fc-button-active {
+.fc.fc-theme-standard .fc-toolbar .fc-button.fc-dayGridMonth-button.fc-button-active,
+.fc.fc-theme-standard .fc-toolbar .fc-button.fc-timeGridWeek-button.fc-button-active,
+.fc.fc-theme-standard .fc-toolbar .fc-button.fc-timeGridDay-button.fc-button-active {
   background: var(--toggle-button-active-bg);
   border-color: var(--toggle-button-active-border-color);
   color: var(--text-color);
 }
-.fc.fc-theme-standard .fc-toolbar .fc-button.fc-dayGridMonth-button.fc-button-active:hover, .fc.fc-theme-standard .fc-toolbar .fc-button.fc-timeGridWeek-button.fc-button-active:hover, .fc.fc-theme-standard .fc-toolbar .fc-button.fc-timeGridDay-button.fc-button-active:hover {
+.fc.fc-theme-standard .fc-toolbar .fc-button.fc-dayGridMonth-button.fc-button-active:hover,
+.fc.fc-theme-standard .fc-toolbar .fc-button.fc-timeGridWeek-button.fc-button-active:hover,
+.fc.fc-theme-standard .fc-toolbar .fc-button.fc-timeGridDay-button.fc-button-active:hover {
   background: var(--toggle-button-active-hover-bg);
   border-color: var(--toggle-button-active-hover-border-color);
   color: var(--text-color);
 }
-.fc.fc-theme-standard .fc-toolbar .fc-button.fc-dayGridMonth-button:not(:disabled):focus, .fc.fc-theme-standard .fc-toolbar .fc-button.fc-timeGridWeek-button:not(:disabled):focus, .fc.fc-theme-standard .fc-toolbar .fc-button.fc-timeGridDay-button:not(:disabled):focus {
+.fc.fc-theme-standard .fc-toolbar .fc-button.fc-dayGridMonth-button:not(:disabled):focus,
+.fc.fc-theme-standard .fc-toolbar .fc-button.fc-timeGridWeek-button:not(:disabled):focus,
+.fc.fc-theme-standard .fc-toolbar .fc-button.fc-timeGridDay-button:not(:disabled):focus {
   outline: var(--focus-outline);
   outline-offset: var(--focus-outline-offset);
   box-shadow: var(--focus-shadow);
@@ -25124,7 +25895,14 @@ p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
 .p-accordion p-accordiontab:not(:first-child) .p-accordion-header .p-accordion-header-link {
   border-top: 0 none;
 }
-.p-accordion p-accordiontab:not(:first-child) .p-accordion-header:not(.p-highlight):not(.p-disabled):hover .p-accordion-header-link, .p-accordion p-accordiontab:not(:first-child) .p-accordion-header:not(.p-disabled).p-highlight:hover .p-accordion-header-link {
+.p-accordion
+  p-accordiontab:not(:first-child)
+  .p-accordion-header:not(.p-highlight):not(.p-disabled):hover
+  .p-accordion-header-link,
+.p-accordion
+  p-accordiontab:not(:first-child)
+  .p-accordion-header:not(.p-disabled).p-highlight:hover
+  .p-accordion-header-link {
   border-top: 0 none;
 }
 .p-accordion p-accordiontab:first-child .p-accordion-header .p-accordion-header-link {
@@ -25770,45 +26548,55 @@ p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
   height: var(--dock-action-height);
 }
 .p-dock.p-dock-top .p-dock-item-second-prev,
-.p-dock.p-dock-top .p-dock-item-second-next, .p-dock.p-dock-bottom .p-dock-item-second-prev,
+.p-dock.p-dock-top .p-dock-item-second-next,
+.p-dock.p-dock-bottom .p-dock-item-second-prev,
 .p-dock.p-dock-bottom .p-dock-item-second-next {
   margin: 0 0.9rem;
 }
 .p-dock.p-dock-top .p-dock-item-prev,
-.p-dock.p-dock-top .p-dock-item-next, .p-dock.p-dock-bottom .p-dock-item-prev,
+.p-dock.p-dock-top .p-dock-item-next,
+.p-dock.p-dock-bottom .p-dock-item-prev,
 .p-dock.p-dock-bottom .p-dock-item-next {
   margin: 0 1.3rem;
 }
-.p-dock.p-dock-top .p-dock-item-current, .p-dock.p-dock-bottom .p-dock-item-current {
+.p-dock.p-dock-top .p-dock-item-current,
+.p-dock.p-dock-bottom .p-dock-item-current {
   margin: 0 1.5rem;
 }
 .p-dock.p-dock-left .p-dock-item-second-prev,
-.p-dock.p-dock-left .p-dock-item-second-next, .p-dock.p-dock-right .p-dock-item-second-prev,
+.p-dock.p-dock-left .p-dock-item-second-next,
+.p-dock.p-dock-right .p-dock-item-second-prev,
 .p-dock.p-dock-right .p-dock-item-second-next {
   margin: var(--dock-second-items-margin) 0;
 }
 .p-dock.p-dock-left .p-dock-item-prev,
-.p-dock.p-dock-left .p-dock-item-next, .p-dock.p-dock-right .p-dock-item-prev,
+.p-dock.p-dock-left .p-dock-item-next,
+.p-dock.p-dock-right .p-dock-item-prev,
 .p-dock.p-dock-right .p-dock-item-next {
   margin: var(--dock-first-items-margin) 0;
 }
-.p-dock.p-dock-left .p-dock-item-current, .p-dock.p-dock-right .p-dock-item-current {
+.p-dock.p-dock-left .p-dock-item-current,
+.p-dock.p-dock-right .p-dock-item-current {
   margin: var(--dock-current-item-margin) 0;
 }
 
 @media screen and (max-width: 960px) {
-  .p-dock.p-dock-top .p-dock-list-container, .p-dock.p-dock-bottom .p-dock-list-container {
+  .p-dock.p-dock-top .p-dock-list-container,
+  .p-dock.p-dock-bottom .p-dock-list-container {
     overflow-x: auto;
     width: 100%;
   }
-  .p-dock.p-dock-top .p-dock-list-container .p-dock-list, .p-dock.p-dock-bottom .p-dock-list-container .p-dock-list {
+  .p-dock.p-dock-top .p-dock-list-container .p-dock-list,
+  .p-dock.p-dock-bottom .p-dock-list-container .p-dock-list {
     margin: 0 auto;
   }
-  .p-dock.p-dock-left .p-dock-list-container, .p-dock.p-dock-right .p-dock-list-container {
+  .p-dock.p-dock-left .p-dock-list-container,
+  .p-dock.p-dock-right .p-dock-list-container {
     overflow-y: auto;
     height: 100%;
   }
-  .p-dock.p-dock-left .p-dock-list-container .p-dock-list, .p-dock.p-dock-right .p-dock-list-container .p-dock-list {
+  .p-dock.p-dock-left .p-dock-list-container .p-dock-list,
+  .p-dock.p-dock-right .p-dock-list-container .p-dock-list {
     margin: auto 0;
   }
   .p-dock .p-dock-list .p-dock-item {
@@ -25863,15 +26651,27 @@ p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
   background: var(--horizontal-menu-root-menuitem-active-bg);
 }
 .p-megamenu .p-megamenu-root-list > .p-menuitem.p-menuitem-active > .p-menuitem-link .p-menuitem-text,
-.p-megamenu .p-megamenu-root-list > .p-menuitem.p-menuitem-active > .p-menuitem-link:not(.p-disabled):hover .p-menuitem-text {
+.p-megamenu
+  .p-megamenu-root-list
+  > .p-menuitem.p-menuitem-active
+  > .p-menuitem-link:not(.p-disabled):hover
+  .p-menuitem-text {
   color: var(--text-color);
 }
 .p-megamenu .p-megamenu-root-list > .p-menuitem.p-menuitem-active > .p-menuitem-link .p-menuitem-icon,
-.p-megamenu .p-megamenu-root-list > .p-menuitem.p-menuitem-active > .p-menuitem-link:not(.p-disabled):hover .p-menuitem-icon {
+.p-megamenu
+  .p-megamenu-root-list
+  > .p-menuitem.p-menuitem-active
+  > .p-menuitem-link:not(.p-disabled):hover
+  .p-menuitem-icon {
   color: var(--text-secondary-color);
 }
 .p-megamenu .p-megamenu-root-list > .p-menuitem.p-menuitem-active > .p-menuitem-link .p-submenu-icon,
-.p-megamenu .p-megamenu-root-list > .p-menuitem.p-menuitem-active > .p-menuitem-link:not(.p-disabled):hover .p-submenu-icon {
+.p-megamenu
+  .p-megamenu-root-list
+  > .p-menuitem.p-menuitem-active
+  > .p-menuitem-link:not(.p-disabled):hover
+  .p-submenu-icon {
   color: var(--text-secondary-color);
 }
 .p-megamenu .p-menuitem-link {
@@ -26106,15 +26906,27 @@ p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
   background: var(--horizontal-menu-root-menuitem-active-bg);
 }
 .p-menubar .p-menubar-root-list > .p-menuitem.p-menuitem-active > .p-menuitem-link .p-menuitem-text,
-.p-menubar .p-menubar-root-list > .p-menuitem.p-menuitem-active > .p-menuitem-link:not(.p-disabled):hover .p-menuitem-text {
+.p-menubar
+  .p-menubar-root-list
+  > .p-menuitem.p-menuitem-active
+  > .p-menuitem-link:not(.p-disabled):hover
+  .p-menuitem-text {
   color: var(--text-color);
 }
 .p-menubar .p-menubar-root-list > .p-menuitem.p-menuitem-active > .p-menuitem-link .p-menuitem-icon,
-.p-menubar .p-menubar-root-list > .p-menuitem.p-menuitem-active > .p-menuitem-link:not(.p-disabled):hover .p-menuitem-icon {
+.p-menubar
+  .p-menubar-root-list
+  > .p-menuitem.p-menuitem-active
+  > .p-menuitem-link:not(.p-disabled):hover
+  .p-menuitem-icon {
   color: var(--text-secondary-color);
 }
 .p-menubar .p-menubar-root-list > .p-menuitem.p-menuitem-active > .p-menuitem-link .p-submenu-icon,
-.p-menubar .p-menubar-root-list > .p-menuitem.p-menuitem-active > .p-menuitem-link:not(.p-disabled):hover .p-submenu-icon {
+.p-menubar
+  .p-menubar-root-list
+  > .p-menuitem.p-menuitem-active
+  > .p-menuitem-link:not(.p-disabled):hover
+  .p-submenu-icon {
   color: var(--text-secondary-color);
 }
 .p-menubar .p-submenu-list {
@@ -26386,7 +27198,8 @@ p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
 .p-panelmenu .p-panelmenu-panel:not(:first-child) .p-panelmenu-header > a {
   border-top: 0 none;
 }
-.p-panelmenu .p-panelmenu-panel:not(:first-child) .p-panelmenu-header:not(.p-highlight):not(.p-disabled):hover > a, .p-panelmenu .p-panelmenu-panel:not(:first-child) .p-panelmenu-header:not(.p-disabled).p-highlight:hover > a {
+.p-panelmenu .p-panelmenu-panel:not(:first-child) .p-panelmenu-header:not(.p-highlight):not(.p-disabled):hover > a,
+.p-panelmenu .p-panelmenu-panel:not(:first-child) .p-panelmenu-header:not(.p-disabled).p-highlight:hover > a {
   border-top: 0 none;
 }
 .p-panelmenu .p-panelmenu-panel:first-child .p-panelmenu-header > a {
@@ -26512,7 +27325,7 @@ p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
   color: var(--emphasis-high);
 }
 .p-steps .p-steps-item:before {
-  content: " ";
+  content: ' ';
   border-top: var(--divider);
   width: 100%;
   top: 50%;
@@ -26921,10 +27734,12 @@ p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
   background: var(--highlight-bg);
   color: var(--primary-color);
 }
-.p-galleria.p-galleria-indicators-bottom .p-galleria-indicator, .p-galleria.p-galleria-indicators-top .p-galleria-indicator {
+.p-galleria.p-galleria-indicators-bottom .p-galleria-indicator,
+.p-galleria.p-galleria-indicators-top .p-galleria-indicator {
   margin-right: var(--inline-spacing);
 }
-.p-galleria.p-galleria-indicators-left .p-galleria-indicator, .p-galleria.p-galleria-indicators-right .p-galleria-indicator {
+.p-galleria.p-galleria-indicators-left .p-galleria-indicator,
+.p-galleria.p-galleria-indicators-right .p-galleria-indicator {
   margin-bottom: var(--inline-spacing);
 }
 .p-galleria.p-galleria-indicator-onitem .p-galleria-indicators {
@@ -27205,7 +28020,10 @@ p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
 }
 
 .p-accordion .p-accordion-tab {
-  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  box-shadow:
+    0 3px 1px -2px rgba(0, 0, 0, 0.2),
+    0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 1px 5px 0 rgba(0, 0, 0, 0.12);
   margin-bottom: 0;
   border-radius: 0;
   position: relative;
@@ -27244,7 +28062,11 @@ p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
 }
 
 .p-autocomplete .p-autocomplete-multiple-container:not(.p-disabled).p-focus {
-  box-shadow: inset 0 0 0 1px rgb(18, 171, 219), inset 0 0 0 1px rgb(18, 171, 219), inset 0 0 0 1px rgb(18, 171, 219), inset 0 0 0 1px rgb(18, 171, 219);
+  box-shadow:
+    inset 0 0 0 1px rgb(18, 171, 219),
+    inset 0 0 0 1px rgb(18, 171, 219),
+    inset 0 0 0 1px rgb(18, 171, 219),
+    inset 0 0 0 1px rgb(18, 171, 219);
 }
 
 .p-input-filled .p-autocomplete .p-autocomplete-multiple-container {
@@ -27252,9 +28074,15 @@ p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
   border-bottom-right-radius: 0;
   border: 1px solid transparent;
   background: var(--input-filled-bg) no-repeat;
-  background-image: linear-gradient(to bottom, rgb(18, 171, 219), rgb(18, 171, 219)), linear-gradient(to bottom, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.38));
-  background-size: 0 2px, 100% 1px;
-  background-position: 50% 100%, 50% 100%;
+  background-image:
+    linear-gradient(to bottom, rgb(18, 171, 219), rgb(18, 171, 219)),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.38));
+  background-size:
+    0 2px,
+    100% 1px;
+  background-position:
+    50% 100%,
+    50% 100%;
   background-origin: border-box;
 }
 .p-input-filled .p-autocomplete .p-autocomplete-multiple-container .p-inputtext {
@@ -27264,15 +28092,21 @@ p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
 .p-input-filled .p-autocomplete .p-autocomplete-multiple-container:not(.p-disabled):hover {
   background-color: var(--input-filled-hover-bg);
   border-color: transparent;
-  background-image: linear-gradient(to bottom, rgb(18, 171, 219), rgb(18, 171, 219)), linear-gradient(to bottom, rgba(0, 0, 0, 0.87), rgba(0, 0, 0, 0.87));
+  background-image:
+    linear-gradient(to bottom, rgb(18, 171, 219), rgb(18, 171, 219)),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.87), rgba(0, 0, 0, 0.87));
 }
-.p-input-filled .p-autocomplete .p-autocomplete-multiple-container:not(.p-disabled).p-focus, .p-input-filled .p-autocomplete .p-autocomplete-multiple-container:not(.p-disabled).p-inputwrapper-focus {
+.p-input-filled .p-autocomplete .p-autocomplete-multiple-container:not(.p-disabled).p-focus,
+.p-input-filled .p-autocomplete .p-autocomplete-multiple-container:not(.p-disabled).p-inputwrapper-focus {
   box-shadow: none;
   background-color: var(--input-filled-focus-bg);
   border-color: transparent;
-  background-size: 100% 2px, 100% 1px;
+  background-size:
+    100% 2px,
+    100% 1px;
 }
-.p-input-filled .p-autocomplete .p-autocomplete-multiple-container .p-inputtext:enabled:hover, .p-input-filled .p-autocomplete .p-autocomplete-multiple-container .p-inputtext:enabled:focus {
+.p-input-filled .p-autocomplete .p-autocomplete-multiple-container .p-inputtext:enabled:hover,
+.p-input-filled .p-autocomplete .p-autocomplete-multiple-container .p-inputtext:enabled:focus {
   background-image: none;
   background: transparent;
 }
@@ -27285,7 +28119,12 @@ p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
   padding-top: 0;
   padding-bottom: 0;
 }
-.p-input-filled .p-float-label .p-autocomplete .p-autocomplete-multiple-container .p-autocomplete-token .p-autocomplete-token-icon {
+.p-input-filled
+  .p-float-label
+  .p-autocomplete
+  .p-autocomplete-multiple-container
+  .p-autocomplete-token
+  .p-autocomplete-token-icon {
   font-size: 75%;
 }
 .p-input-filled .p-float-label .p-autocomplete .p-autocomplete-multiple-container .p-autocomplete-input-token {
@@ -27303,16 +28142,27 @@ p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
   border-color: transparent;
   background-image: linear-gradient(to bottom, #b00020, #b00020), linear-gradient(to bottom, #b00020, #b00020);
 }
-.p-input-filled p-autocomplete.ng-dirty.ng-invalid .p-autocomplete .p-autocomplete-multiple-container:not(.p-disabled).p-focus {
+.p-input-filled
+  p-autocomplete.ng-dirty.ng-invalid
+  .p-autocomplete
+  .p-autocomplete-multiple-container:not(.p-disabled).p-focus {
   box-shadow: none;
   border-color: transparent;
 }
 
 p-autocomplete.ng-dirty.ng-invalid .p-autocomplete > .p-inputtext:enabled:focus {
-  box-shadow: inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020;
+  box-shadow:
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020;
 }
 p-autocomplete.ng-dirty.ng-invalid .p-autocomplete .p-autocomplete-multiple-container:not(.p-disabled).p-focus {
-  box-shadow: inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020;
+  box-shadow:
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020;
 }
 
 .p-button {
@@ -27334,13 +28184,16 @@ p-autocomplete.ng-dirty.ng-invalid .p-autocomplete .p-autocomplete-multiple-cont
 .p-button.p-button-outlined:enabled:active {
   box-shadow: inset 0 0 0 1px;
 }
-.p-button.p-button-text:enabled:focus, .p-button.p-button-outlined:enabled:focus {
+.p-button.p-button-text:enabled:focus,
+.p-button.p-button-outlined:enabled:focus {
   background: rgba(var(--primary-color-rgb), 0.12);
 }
-.p-button.p-button-text:enabled:active, .p-button.p-button-outlined:enabled:active {
+.p-button.p-button-text:enabled:active,
+.p-button.p-button-outlined:enabled:active {
   background: rgba(var(--primary-color-rgb), 0.16);
 }
-.p-button.p-button-text .p-ink, .p-button.p-button-outlined .p-ink {
+.p-button.p-button-text .p-ink,
+.p-button.p-button-outlined .p-ink {
   background-color: rgba(var(--primary-color-rgb), 0.16);
 }
 .p-button:disabled {
@@ -27371,21 +28224,24 @@ p-autocomplete.ng-dirty.ng-invalid .p-autocomplete .p-autocomplete-multiple-cont
 .p-splitbutton.p-button-secondary > .p-button:enabled:active {
   background: rgba(var(--accent-color-rgb), 0.68);
 }
-.p-button.p-button-secondary.p-button-text:enabled:focus, .p-button.p-button-secondary.p-button-outlined:enabled:focus,
+.p-button.p-button-secondary.p-button-text:enabled:focus,
+.p-button.p-button-secondary.p-button-outlined:enabled:focus,
 .p-buttonset.p-button-secondary > .p-button.p-button-text:enabled:focus,
 .p-buttonset.p-button-secondary > .p-button.p-button-outlined:enabled:focus,
 .p-splitbutton.p-button-secondary > .p-button.p-button-text:enabled:focus,
 .p-splitbutton.p-button-secondary > .p-button.p-button-outlined:enabled:focus {
   background: rgba(var(--accent-color-rgb), 0.12);
 }
-.p-button.p-button-secondary.p-button-text:enabled:active, .p-button.p-button-secondary.p-button-outlined:enabled:active,
+.p-button.p-button-secondary.p-button-text:enabled:active,
+.p-button.p-button-secondary.p-button-outlined:enabled:active,
 .p-buttonset.p-button-secondary > .p-button.p-button-text:enabled:active,
 .p-buttonset.p-button-secondary > .p-button.p-button-outlined:enabled:active,
 .p-splitbutton.p-button-secondary > .p-button.p-button-text:enabled:active,
 .p-splitbutton.p-button-secondary > .p-button.p-button-outlined:enabled:active {
   background: rgba(var(--accent-color-rgb), 0.16);
 }
-.p-button.p-button-secondary.p-button-text .p-ink, .p-button.p-button-secondary.p-button-outlined .p-ink,
+.p-button.p-button-secondary.p-button-text .p-ink,
+.p-button.p-button-secondary.p-button-outlined .p-ink,
 .p-buttonset.p-button-secondary > .p-button.p-button-text .p-ink,
 .p-buttonset.p-button-secondary > .p-button.p-button-outlined .p-ink,
 .p-splitbutton.p-button-secondary > .p-button.p-button-text .p-ink,
@@ -27403,21 +28259,24 @@ p-autocomplete.ng-dirty.ng-invalid .p-autocomplete .p-autocomplete-multiple-cont
 .p-splitbutton.p-button-info > .p-button:enabled:active {
   background: rgba(var(--info-button-bg-rgb), 0.68);
 }
-.p-button.p-button-info.p-button-text:enabled:focus, .p-button.p-button-info.p-button-outlined:enabled:focus,
+.p-button.p-button-info.p-button-text:enabled:focus,
+.p-button.p-button-info.p-button-outlined:enabled:focus,
 .p-buttonset.p-button-info > .p-button.p-button-text:enabled:focus,
 .p-buttonset.p-button-info > .p-button.p-button-outlined:enabled:focus,
 .p-splitbutton.p-button-info > .p-button.p-button-text:enabled:focus,
 .p-splitbutton.p-button-info > .p-button.p-button-outlined:enabled:focus {
   background: rgba(var(--info-button-bg-rgb), 0.12);
 }
-.p-button.p-button-info.p-button-text:enabled:active, .p-button.p-button-info.p-button-outlined:enabled:active,
+.p-button.p-button-info.p-button-text:enabled:active,
+.p-button.p-button-info.p-button-outlined:enabled:active,
 .p-buttonset.p-button-info > .p-button.p-button-text:enabled:active,
 .p-buttonset.p-button-info > .p-button.p-button-outlined:enabled:active,
 .p-splitbutton.p-button-info > .p-button.p-button-text:enabled:active,
 .p-splitbutton.p-button-info > .p-button.p-button-outlined:enabled:active {
   background: rgba(var(--info-button-bg-rgb), 0.16);
 }
-.p-button.p-button-info.p-button-text .p-ink, .p-button.p-button-info.p-button-outlined .p-ink,
+.p-button.p-button-info.p-button-text .p-ink,
+.p-button.p-button-info.p-button-outlined .p-ink,
 .p-buttonset.p-button-info > .p-button.p-button-text .p-ink,
 .p-buttonset.p-button-info > .p-button.p-button-outlined .p-ink,
 .p-splitbutton.p-button-info > .p-button.p-button-text .p-ink,
@@ -27435,21 +28294,24 @@ p-autocomplete.ng-dirty.ng-invalid .p-autocomplete .p-autocomplete-multiple-cont
 .p-splitbutton.p-button-success > .p-button:enabled:active {
   background: rgba(var(--success-button-bg-rgb), 0.68);
 }
-.p-button.p-button-success.p-button-text:enabled:focus, .p-button.p-button-success.p-button-outlined:enabled:focus,
+.p-button.p-button-success.p-button-text:enabled:focus,
+.p-button.p-button-success.p-button-outlined:enabled:focus,
 .p-buttonset.p-button-success > .p-button.p-button-text:enabled:focus,
 .p-buttonset.p-button-success > .p-button.p-button-outlined:enabled:focus,
 .p-splitbutton.p-button-success > .p-button.p-button-text:enabled:focus,
 .p-splitbutton.p-button-success > .p-button.p-button-outlined:enabled:focus {
   background: rgba(var(--success-button-bg-rgb), 0.12);
 }
-.p-button.p-button-success.p-button-text:enabled:active, .p-button.p-button-success.p-button-outlined:enabled:active,
+.p-button.p-button-success.p-button-text:enabled:active,
+.p-button.p-button-success.p-button-outlined:enabled:active,
 .p-buttonset.p-button-success > .p-button.p-button-text:enabled:active,
 .p-buttonset.p-button-success > .p-button.p-button-outlined:enabled:active,
 .p-splitbutton.p-button-success > .p-button.p-button-text:enabled:active,
 .p-splitbutton.p-button-success > .p-button.p-button-outlined:enabled:active {
   background: rgba(var(--success-button-bg-rgb), 0.16);
 }
-.p-button.p-button-success.p-button-text .p-ink, .p-button.p-button-success.p-button-outlined .p-ink,
+.p-button.p-button-success.p-button-text .p-ink,
+.p-button.p-button-success.p-button-outlined .p-ink,
 .p-buttonset.p-button-success > .p-button.p-button-text .p-ink,
 .p-buttonset.p-button-success > .p-button.p-button-outlined .p-ink,
 .p-splitbutton.p-button-success > .p-button.p-button-text .p-ink,
@@ -27467,21 +28329,24 @@ p-autocomplete.ng-dirty.ng-invalid .p-autocomplete .p-autocomplete-multiple-cont
 .p-splitbutton.p-button-warning > .p-button:enabled:active {
   background: rgba(var(--warning-button-bg-rgb), 0.68);
 }
-.p-button.p-button-warning.p-button-text:enabled:focus, .p-button.p-button-warning.p-button-outlined:enabled:focus,
+.p-button.p-button-warning.p-button-text:enabled:focus,
+.p-button.p-button-warning.p-button-outlined:enabled:focus,
 .p-buttonset.p-button-warning > .p-button.p-button-text:enabled:focus,
 .p-buttonset.p-button-warning > .p-button.p-button-outlined:enabled:focus,
 .p-splitbutton.p-button-warning > .p-button.p-button-text:enabled:focus,
 .p-splitbutton.p-button-warning > .p-button.p-button-outlined:enabled:focus {
   background: rgba(var(--warning-button-bg-rgb), 0.12);
 }
-.p-button.p-button-warning.p-button-text:enabled:active, .p-button.p-button-warning.p-button-outlined:enabled:active,
+.p-button.p-button-warning.p-button-text:enabled:active,
+.p-button.p-button-warning.p-button-outlined:enabled:active,
 .p-buttonset.p-button-warning > .p-button.p-button-text:enabled:active,
 .p-buttonset.p-button-warning > .p-button.p-button-outlined:enabled:active,
 .p-splitbutton.p-button-warning > .p-button.p-button-text:enabled:active,
 .p-splitbutton.p-button-warning > .p-button.p-button-outlined:enabled:active {
   background: rgba(var(--warning-button-bg-rgb), 0.16);
 }
-.p-button.p-button-warning.p-button-text .p-ink, .p-button.p-button-warning.p-button-outlined .p-ink,
+.p-button.p-button-warning.p-button-text .p-ink,
+.p-button.p-button-warning.p-button-outlined .p-ink,
 .p-buttonset.p-button-warning > .p-button.p-button-text .p-ink,
 .p-buttonset.p-button-warning > .p-button.p-button-outlined .p-ink,
 .p-splitbutton.p-button-warning > .p-button.p-button-text .p-ink,
@@ -27499,21 +28364,24 @@ p-autocomplete.ng-dirty.ng-invalid .p-autocomplete .p-autocomplete-multiple-cont
 .p-splitbutton.p-button-help > .p-button:enabled:active {
   background: rgba(var(--help-button-bg-rgb), 0.68);
 }
-.p-button.p-button-help.p-button-text:enabled:focus, .p-button.p-button-help.p-button-outlined:enabled:focus,
+.p-button.p-button-help.p-button-text:enabled:focus,
+.p-button.p-button-help.p-button-outlined:enabled:focus,
 .p-buttonset.p-button-help > .p-button.p-button-text:enabled:focus,
 .p-buttonset.p-button-help > .p-button.p-button-outlined:enabled:focus,
 .p-splitbutton.p-button-help > .p-button.p-button-text:enabled:focus,
 .p-splitbutton.p-button-help > .p-button.p-button-outlined:enabled:focus {
   background: rgba(var(--help-button-bg-rgb), 0.12);
 }
-.p-button.p-button-help.p-button-text:enabled:active, .p-button.p-button-help.p-button-outlined:enabled:active,
+.p-button.p-button-help.p-button-text:enabled:active,
+.p-button.p-button-help.p-button-outlined:enabled:active,
 .p-buttonset.p-button-help > .p-button.p-button-text:enabled:active,
 .p-buttonset.p-button-help > .p-button.p-button-outlined:enabled:active,
 .p-splitbutton.p-button-help > .p-button.p-button-text:enabled:active,
 .p-splitbutton.p-button-help > .p-button.p-button-outlined:enabled:active {
   background: rgba(var(--help-button-bg-rgb), 0.16);
 }
-.p-button.p-button-help.p-button-text .p-ink, .p-button.p-button-help.p-button-outlined .p-ink,
+.p-button.p-button-help.p-button-text .p-ink,
+.p-button.p-button-help.p-button-outlined .p-ink,
 .p-buttonset.p-button-help > .p-button.p-button-text .p-ink,
 .p-buttonset.p-button-help > .p-button.p-button-outlined .p-ink,
 .p-splitbutton.p-button-help > .p-button.p-button-text .p-ink,
@@ -27531,21 +28399,24 @@ p-autocomplete.ng-dirty.ng-invalid .p-autocomplete .p-autocomplete-multiple-cont
 .p-splitbutton.p-button-danger > .p-button:enabled:active {
   background: rgba(var(--danger-button-bg-rgb), 0.68);
 }
-.p-button.p-button-danger.p-button-text:enabled:focus, .p-button.p-button-danger.p-button-outlined:enabled:focus,
+.p-button.p-button-danger.p-button-text:enabled:focus,
+.p-button.p-button-danger.p-button-outlined:enabled:focus,
 .p-buttonset.p-button-danger > .p-button.p-button-text:enabled:focus,
 .p-buttonset.p-button-danger > .p-button.p-button-outlined:enabled:focus,
 .p-splitbutton.p-button-danger > .p-button.p-button-text:enabled:focus,
 .p-splitbutton.p-button-danger > .p-button.p-button-outlined:enabled:focus {
   background: rgba(var(--danger-button-bg-rgb), 0.12);
 }
-.p-button.p-button-danger.p-button-text:enabled:active, .p-button.p-button-danger.p-button-outlined:enabled:active,
+.p-button.p-button-danger.p-button-text:enabled:active,
+.p-button.p-button-danger.p-button-outlined:enabled:active,
 .p-buttonset.p-button-danger > .p-button.p-button-text:enabled:active,
 .p-buttonset.p-button-danger > .p-button.p-button-outlined:enabled:active,
 .p-splitbutton.p-button-danger > .p-button.p-button-text:enabled:active,
 .p-splitbutton.p-button-danger > .p-button.p-button-outlined:enabled:active {
   background: rgba(var(--danger-button-bg-rgb), 0.16);
 }
-.p-button.p-button-danger.p-button-text .p-ink, .p-button.p-button-danger.p-button-outlined .p-ink,
+.p-button.p-button-danger.p-button-text .p-ink,
+.p-button.p-button-danger.p-button-outlined .p-ink,
 .p-buttonset.p-button-danger > .p-button.p-button-text .p-ink,
 .p-buttonset.p-button-danger > .p-button.p-button-outlined .p-ink,
 .p-splitbutton.p-button-danger > .p-button.p-button-text .p-ink,
@@ -27577,7 +28448,8 @@ p-autocomplete.ng-dirty.ng-invalid .p-autocomplete .p-autocomplete-multiple-cont
 .p-calendar-w-btn .p-datepicker-trigger.p-button:enabled:hover {
   background: rgba(var(--overlay-color-rgb), 0.04);
 }
-.p-calendar-w-btn .p-datepicker-trigger.p-button:enabled:active, .p-calendar-w-btn .p-datepicker-trigger.p-button:focus {
+.p-calendar-w-btn .p-datepicker-trigger.p-button:enabled:active,
+.p-calendar-w-btn .p-datepicker-trigger.p-button:focus {
   background: rgba(var(--overlay-color-rgb), 0.12);
 }
 .p-calendar-w-btn:not(.p-disabled):hover {
@@ -27585,7 +28457,11 @@ p-autocomplete.ng-dirty.ng-invalid .p-autocomplete .p-autocomplete-multiple-cont
 }
 .p-calendar-w-btn:not(.p-disabled).p-focus {
   border-color: var(--primary-color);
-  box-shadow: inset 0 0 0 1px rgb(18, 171, 219), inset 0 0 0 1px rgb(18, 171, 219), inset 0 0 0 1px rgb(18, 171, 219), inset 0 0 0 1px rgb(18, 171, 219);
+  box-shadow:
+    inset 0 0 0 1px rgb(18, 171, 219),
+    inset 0 0 0 1px rgb(18, 171, 219),
+    inset 0 0 0 1px rgb(18, 171, 219),
+    inset 0 0 0 1px rgb(18, 171, 219);
 }
 
 .p-datepicker .p-datepicker-header {
@@ -27615,7 +28491,11 @@ p-autocomplete.ng-dirty.ng-invalid .p-autocomplete .p-autocomplete-multiple-cont
 }
 
 p-calendar.ng-dirty.ng-invalid .p-inputtext:enabled:focus {
-  box-shadow: inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020;
+  box-shadow:
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020;
 }
 p-calendar.ng-dirty.ng-invalid .p-calendar-w-btn {
   border-color: var(--error-color);
@@ -27624,7 +28504,11 @@ p-calendar.ng-dirty.ng-invalid .p-calendar-w-btn .p-inputtext:enabled:focus {
   box-shadow: none;
 }
 p-calendar.ng-dirty.ng-invalid .p-calendar-w-btn:not(.p-disabled).p-focus {
-  box-shadow: inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020;
+  box-shadow:
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020;
 }
 
 .p-input-filled .p-calendar-w-btn {
@@ -27632,9 +28516,15 @@ p-calendar.ng-dirty.ng-invalid .p-calendar-w-btn:not(.p-disabled).p-focus {
   border-bottom-right-radius: 0;
   border: 1px solid transparent;
   background: var(--input-filled-bg) no-repeat;
-  background-image: linear-gradient(to bottom, rgb(18, 171, 219), rgb(18, 171, 219)), linear-gradient(to bottom, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.38));
-  background-size: 0 2px, 100% 1px;
-  background-position: 50% 100%, 50% 100%;
+  background-image:
+    linear-gradient(to bottom, rgb(18, 171, 219), rgb(18, 171, 219)),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.38));
+  background-size:
+    0 2px,
+    100% 1px;
+  background-position:
+    50% 100%,
+    50% 100%;
   background-origin: border-box;
 }
 .p-input-filled .p-calendar-w-btn .p-inputtext {
@@ -27644,15 +28534,21 @@ p-calendar.ng-dirty.ng-invalid .p-calendar-w-btn:not(.p-disabled).p-focus {
 .p-input-filled .p-calendar-w-btn:not(.p-disabled):hover {
   background-color: var(--input-filled-hover-bg);
   border-color: transparent;
-  background-image: linear-gradient(to bottom, rgb(18, 171, 219), rgb(18, 171, 219)), linear-gradient(to bottom, rgba(0, 0, 0, 0.87), rgba(0, 0, 0, 0.87));
+  background-image:
+    linear-gradient(to bottom, rgb(18, 171, 219), rgb(18, 171, 219)),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.87), rgba(0, 0, 0, 0.87));
 }
-.p-input-filled .p-calendar-w-btn:not(.p-disabled).p-focus, .p-input-filled .p-calendar-w-btn:not(.p-disabled).p-inputwrapper-focus {
+.p-input-filled .p-calendar-w-btn:not(.p-disabled).p-focus,
+.p-input-filled .p-calendar-w-btn:not(.p-disabled).p-inputwrapper-focus {
   box-shadow: none;
   background-color: var(--input-filled-focus-bg);
   border-color: transparent;
-  background-size: 100% 2px, 100% 1px;
+  background-size:
+    100% 2px,
+    100% 1px;
 }
-.p-input-filled .p-calendar-w-btn .p-inputtext:enabled:hover, .p-input-filled .p-calendar-w-btn .p-inputtext:enabled:focus {
+.p-input-filled .p-calendar-w-btn .p-inputtext:enabled:hover,
+.p-input-filled .p-calendar-w-btn .p-inputtext:enabled:focus {
   background-image: none;
   background: transparent;
 }
@@ -27689,7 +28585,11 @@ p-calendar.ng-dirty.ng-invalid .p-calendar-w-btn:not(.p-disabled).p-focus {
   border: 0 none;
 }
 .p-cascadeselect:not(.p-disabled).p-focus {
-  box-shadow: inset 0 0 0 1px rgb(18, 171, 219), inset 0 0 0 1px rgb(18, 171, 219), inset 0 0 0 1px rgb(18, 171, 219), inset 0 0 0 1px rgb(18, 171, 219);
+  box-shadow:
+    inset 0 0 0 1px rgb(18, 171, 219),
+    inset 0 0 0 1px rgb(18, 171, 219),
+    inset 0 0 0 1px rgb(18, 171, 219),
+    inset 0 0 0 1px rgb(18, 171, 219);
 }
 
 .p-cascadeselect-item .p-ink {
@@ -27701,9 +28601,15 @@ p-calendar.ng-dirty.ng-invalid .p-calendar-w-btn:not(.p-disabled).p-focus {
   border-bottom-right-radius: 0;
   border: 1px solid transparent;
   background: var(--input-filled-bg) no-repeat;
-  background-image: linear-gradient(to bottom, rgb(18, 171, 219), rgb(18, 171, 219)), linear-gradient(to bottom, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.38));
-  background-size: 0 2px, 100% 1px;
-  background-position: 50% 100%, 50% 100%;
+  background-image:
+    linear-gradient(to bottom, rgb(18, 171, 219), rgb(18, 171, 219)),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.38));
+  background-size:
+    0 2px,
+    100% 1px;
+  background-position:
+    50% 100%,
+    50% 100%;
   background-origin: border-box;
 }
 .p-input-filled .p-cascadeselect .p-inputtext {
@@ -27713,15 +28619,21 @@ p-calendar.ng-dirty.ng-invalid .p-calendar-w-btn:not(.p-disabled).p-focus {
 .p-input-filled .p-cascadeselect:not(.p-disabled):hover {
   background-color: var(--input-filled-hover-bg);
   border-color: transparent;
-  background-image: linear-gradient(to bottom, rgb(18, 171, 219), rgb(18, 171, 219)), linear-gradient(to bottom, rgba(0, 0, 0, 0.87), rgba(0, 0, 0, 0.87));
+  background-image:
+    linear-gradient(to bottom, rgb(18, 171, 219), rgb(18, 171, 219)),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.87), rgba(0, 0, 0, 0.87));
 }
-.p-input-filled .p-cascadeselect:not(.p-disabled).p-focus, .p-input-filled .p-cascadeselect:not(.p-disabled).p-inputwrapper-focus {
+.p-input-filled .p-cascadeselect:not(.p-disabled).p-focus,
+.p-input-filled .p-cascadeselect:not(.p-disabled).p-inputwrapper-focus {
   box-shadow: none;
   background-color: var(--input-filled-focus-bg);
   border-color: transparent;
-  background-size: 100% 2px, 100% 1px;
+  background-size:
+    100% 2px,
+    100% 1px;
 }
-.p-input-filled .p-cascadeselect .p-inputtext:enabled:hover, .p-input-filled .p-cascadeselect .p-inputtext:enabled:focus {
+.p-input-filled .p-cascadeselect .p-inputtext:enabled:hover,
+.p-input-filled .p-cascadeselect .p-inputtext:enabled:focus {
   background-image: none;
   background: transparent;
 }
@@ -27738,7 +28650,11 @@ p-calendar.ng-dirty.ng-invalid .p-calendar-w-btn:not(.p-disabled).p-focus {
 }
 
 p-cascadeselect.ng-dirty.ng-invalid .p-cascadeselect:not(.p-disabled).p-focus {
-  box-shadow: inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020;
+  box-shadow:
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020;
 }
 
 .p-carousel .p-carousel-indicators .p-carousel-indicator.p-highlight button {
@@ -27765,7 +28681,7 @@ p-cascadeselect.ng-dirty.ng-invalid .p-cascadeselect:not(.p-disabled).p-focus {
   border-color: var(--primary-color);
 }
 .p-checkbox .p-checkbox-box.p-highlight .p-checkbox-icon.pi-check:before {
-  content: "";
+  content: '';
   position: absolute;
   top: 6px;
   left: 1px;
@@ -27815,7 +28731,11 @@ p-cascadeselect.ng-dirty.ng-invalid .p-cascadeselect:not(.p-disabled).p-focus {
   }
 }
 .p-chips .p-chips-multiple-container:not(.p-disabled).p-focus {
-  box-shadow: inset 0 0 0 1px rgb(18, 171, 219), inset 0 0 0 1px rgb(18, 171, 219), inset 0 0 0 1px rgb(18, 171, 219), inset 0 0 0 1px rgb(18, 171, 219);
+  box-shadow:
+    inset 0 0 0 1px rgb(18, 171, 219),
+    inset 0 0 0 1px rgb(18, 171, 219),
+    inset 0 0 0 1px rgb(18, 171, 219),
+    inset 0 0 0 1px rgb(18, 171, 219);
 }
 
 .p-input-filled .p-chips-multiple-container {
@@ -27823,9 +28743,15 @@ p-cascadeselect.ng-dirty.ng-invalid .p-cascadeselect:not(.p-disabled).p-focus {
   border-bottom-right-radius: 0;
   border: 1px solid transparent;
   background: var(--input-filled-bg) no-repeat;
-  background-image: linear-gradient(to bottom, rgb(18, 171, 219), rgb(18, 171, 219)), linear-gradient(to bottom, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.38));
-  background-size: 0 2px, 100% 1px;
-  background-position: 50% 100%, 50% 100%;
+  background-image:
+    linear-gradient(to bottom, rgb(18, 171, 219), rgb(18, 171, 219)),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.38));
+  background-size:
+    0 2px,
+    100% 1px;
+  background-position:
+    50% 100%,
+    50% 100%;
   background-origin: border-box;
 }
 .p-input-filled .p-chips-multiple-container .p-inputtext {
@@ -27835,15 +28761,21 @@ p-cascadeselect.ng-dirty.ng-invalid .p-cascadeselect:not(.p-disabled).p-focus {
 .p-input-filled .p-chips-multiple-container:not(.p-disabled):hover {
   background-color: var(--input-filled-hover-bg);
   border-color: transparent;
-  background-image: linear-gradient(to bottom, rgb(18, 171, 219), rgb(18, 171, 219)), linear-gradient(to bottom, rgba(0, 0, 0, 0.87), rgba(0, 0, 0, 0.87));
+  background-image:
+    linear-gradient(to bottom, rgb(18, 171, 219), rgb(18, 171, 219)),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.87), rgba(0, 0, 0, 0.87));
 }
-.p-input-filled .p-chips-multiple-container:not(.p-disabled).p-focus, .p-input-filled .p-chips-multiple-container:not(.p-disabled).p-inputwrapper-focus {
+.p-input-filled .p-chips-multiple-container:not(.p-disabled).p-focus,
+.p-input-filled .p-chips-multiple-container:not(.p-disabled).p-inputwrapper-focus {
   box-shadow: none;
   background-color: var(--input-filled-focus-bg);
   border-color: transparent;
-  background-size: 100% 2px, 100% 1px;
+  background-size:
+    100% 2px,
+    100% 1px;
 }
-.p-input-filled .p-chips-multiple-container .p-inputtext:enabled:hover, .p-input-filled .p-chips-multiple-container .p-inputtext:enabled:focus {
+.p-input-filled .p-chips-multiple-container .p-inputtext:enabled:hover,
+.p-input-filled .p-chips-multiple-container .p-inputtext:enabled:focus {
   background-image: none;
   background: transparent;
 }
@@ -27872,7 +28804,11 @@ p-cascadeselect.ng-dirty.ng-invalid .p-cascadeselect:not(.p-disabled).p-focus {
 }
 
 p-chips.ng-dirty.ng-invalid .p-chips .p-chips-multiple-container:not(.p-disabled).p-focus {
-  box-shadow: inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020;
+  box-shadow:
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020;
 }
 
 .p-datatable .p-sortable-column {
@@ -27897,7 +28833,11 @@ p-chips.ng-dirty.ng-invalid .p-chips .p-chips-multiple-container:not(.p-disabled
   border: 0 none;
 }
 .p-dropdown:not(.p-disabled).p-focus {
-  box-shadow: inset 0 0 0 1px rgb(18, 171, 219), inset 0 0 0 1px rgb(18, 171, 219), inset 0 0 0 1px rgb(18, 171, 219), inset 0 0 0 1px rgb(18, 171, 219);
+  box-shadow:
+    inset 0 0 0 1px rgb(18, 171, 219),
+    inset 0 0 0 1px rgb(18, 171, 219),
+    inset 0 0 0 1px rgb(18, 171, 219),
+    inset 0 0 0 1px rgb(18, 171, 219);
 }
 
 .p-dropdown-item .p-ink {
@@ -27909,9 +28849,15 @@ p-chips.ng-dirty.ng-invalid .p-chips .p-chips-multiple-container:not(.p-disabled
   border-bottom-right-radius: 0;
   border: 1px solid transparent;
   background: var(--input-filled-bg) no-repeat;
-  background-image: linear-gradient(to bottom, rgb(18, 171, 219), rgb(18, 171, 219)), linear-gradient(to bottom, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.38));
-  background-size: 0 2px, 100% 1px;
-  background-position: 50% 100%, 50% 100%;
+  background-image:
+    linear-gradient(to bottom, rgb(18, 171, 219), rgb(18, 171, 219)),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.38));
+  background-size:
+    0 2px,
+    100% 1px;
+  background-position:
+    50% 100%,
+    50% 100%;
   background-origin: border-box;
 }
 .p-input-filled .p-dropdown .p-inputtext {
@@ -27921,15 +28867,21 @@ p-chips.ng-dirty.ng-invalid .p-chips .p-chips-multiple-container:not(.p-disabled
 .p-input-filled .p-dropdown:not(.p-disabled):hover {
   background-color: var(--input-filled-hover-bg);
   border-color: transparent;
-  background-image: linear-gradient(to bottom, rgb(18, 171, 219), rgb(18, 171, 219)), linear-gradient(to bottom, rgba(0, 0, 0, 0.87), rgba(0, 0, 0, 0.87));
+  background-image:
+    linear-gradient(to bottom, rgb(18, 171, 219), rgb(18, 171, 219)),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.87), rgba(0, 0, 0, 0.87));
 }
-.p-input-filled .p-dropdown:not(.p-disabled).p-focus, .p-input-filled .p-dropdown:not(.p-disabled).p-inputwrapper-focus {
+.p-input-filled .p-dropdown:not(.p-disabled).p-focus,
+.p-input-filled .p-dropdown:not(.p-disabled).p-inputwrapper-focus {
   box-shadow: none;
   background-color: var(--input-filled-focus-bg);
   border-color: transparent;
-  background-size: 100% 2px, 100% 1px;
+  background-size:
+    100% 2px,
+    100% 1px;
 }
-.p-input-filled .p-dropdown .p-inputtext:enabled:hover, .p-input-filled .p-dropdown .p-inputtext:enabled:focus {
+.p-input-filled .p-dropdown .p-inputtext:enabled:hover,
+.p-input-filled .p-dropdown .p-inputtext:enabled:focus {
   background-image: none;
   background: transparent;
 }
@@ -27946,7 +28898,11 @@ p-chips.ng-dirty.ng-invalid .p-chips .p-chips-multiple-container:not(.p-disabled
 }
 
 p-dropdown.ng-dirty.ng-invalid .p-dropdown:not(.p-disabled).p-focus {
-  box-shadow: inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020;
+  box-shadow:
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020;
 }
 
 .p-galleria .p-galleria-indicators {
@@ -27962,10 +28918,18 @@ p-dropdown.ng-dirty.ng-invalid .p-dropdown:not(.p-disabled).p-focus {
 }
 
 .p-inputtext:enabled:focus {
-  box-shadow: inset 0 0 0 1px rgb(18, 171, 219), inset 0 0 0 1px rgb(18, 171, 219), inset 0 0 0 1px rgb(18, 171, 219), inset 0 0 0 1px rgb(18, 171, 219);
+  box-shadow:
+    inset 0 0 0 1px rgb(18, 171, 219),
+    inset 0 0 0 1px rgb(18, 171, 219),
+    inset 0 0 0 1px rgb(18, 171, 219),
+    inset 0 0 0 1px rgb(18, 171, 219);
 }
 .p-inputtext:enabled:focus.ng-invalid.ng-dirty {
-  box-shadow: inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020;
+  box-shadow:
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020;
 }
 
 .p-input-filled .p-inputtext {
@@ -27973,21 +28937,31 @@ p-dropdown.ng-dirty.ng-invalid .p-dropdown:not(.p-disabled).p-focus {
   border-bottom-right-radius: 0;
   border: 1px solid transparent;
   background: var(--input-filled-bg) no-repeat;
-  background-image: linear-gradient(to bottom, rgb(18, 171, 219), rgb(18, 171, 219)), linear-gradient(to bottom, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.38));
-  background-size: 0 2px, 100% 1px;
-  background-position: 50% 100%, 50% 100%;
+  background-image:
+    linear-gradient(to bottom, rgb(18, 171, 219), rgb(18, 171, 219)),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.38));
+  background-size:
+    0 2px,
+    100% 1px;
+  background-position:
+    50% 100%,
+    50% 100%;
   background-origin: border-box;
 }
 .p-input-filled .p-inputtext:enabled:hover {
   background-color: var(--input-filled-hover-bg);
   border-color: transparent;
-  background-image: linear-gradient(to bottom, rgb(18, 171, 219), rgb(18, 171, 219)), linear-gradient(to bottom, rgba(0, 0, 0, 0.87), rgba(0, 0, 0, 0.87));
+  background-image:
+    linear-gradient(to bottom, rgb(18, 171, 219), rgb(18, 171, 219)),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.87), rgba(0, 0, 0, 0.87));
 }
 .p-input-filled .p-inputtext:enabled:focus {
   box-shadow: none;
   background-color: var(--input-filled-focus-bg);
   border-color: transparent;
-  background-size: 100% 2px, 100% 1px;
+  background-size:
+    100% 2px,
+    100% 1px;
 }
 .p-input-filled .p-inputtext.ng-invalid.ng-dirty {
   border-color: transparent;
@@ -28003,9 +28977,15 @@ p-dropdown.ng-dirty.ng-invalid .p-dropdown:not(.p-disabled).p-focus {
   border-bottom-right-radius: 0;
   border: 1px solid transparent;
   background: var(--input-filled-bg) no-repeat;
-  background-image: linear-gradient(to bottom, rgb(18, 171, 219), rgb(18, 171, 219)), linear-gradient(to bottom, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.38));
-  background-size: 0 2px, 100% 1px;
-  background-position: 50% 100%, 50% 100%;
+  background-image:
+    linear-gradient(to bottom, rgb(18, 171, 219), rgb(18, 171, 219)),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.38));
+  background-size:
+    0 2px,
+    100% 1px;
+  background-position:
+    50% 100%,
+    50% 100%;
   background-origin: border-box;
 }
 .p-input-filled .p-inputgroup .p-inputgroup-addon:last-child {
@@ -28029,7 +29009,11 @@ p-dropdown.ng-dirty.ng-invalid .p-dropdown:not(.p-disabled).p-focus {
 }
 
 p-inputmask.ng-dirty.ng-invalid .p-inputtext:enabled:focus {
-  box-shadow: inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020;
+  box-shadow:
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020;
 }
 
 .p-input-filled p-inputmask.ng-dirty.ng-invalid .p-inputtext {
@@ -28042,7 +29026,11 @@ p-inputmask.ng-dirty.ng-invalid .p-inputtext:enabled:focus {
 }
 
 p-inputnumber.ng-dirty.ng-invalid .p-inputtext:enabled:focus {
-  box-shadow: inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020;
+  box-shadow:
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020;
 }
 
 .p-input-filled p-inputnumber.ng-dirty.ng-invalid .p-inputtext {
@@ -28056,19 +29044,40 @@ p-inputnumber.ng-dirty.ng-invalid .p-inputtext:enabled:focus {
 
 .p-inputswitch .p-inputswitch-slider:before {
   transition-property: box-shadow transform;
-  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  box-shadow:
+    0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+    0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+    0px 1px 5px 0px rgba(0, 0, 0, 0.12);
 }
 .p-inputswitch:not(.p-disabled):hover .p-inputswitch-slider:before {
-  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12), 0 0 1px 10px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+    0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+    0px 1px 5px 0px rgba(0, 0, 0, 0.12),
+    0 0 1px 10px rgba(0, 0, 0, 0.04);
 }
-.p-inputswitch.p-inputswitch-focus .p-inputswitch-slider:before, .p-inputswitch.p-inputswitch-focus:not(.p-disabled):hover .p-inputswitch-slider:before {
-  box-shadow: 0 0 1px 10px rgba(0, 0, 0, 0.12), 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+.p-inputswitch.p-inputswitch-focus .p-inputswitch-slider:before,
+.p-inputswitch.p-inputswitch-focus:not(.p-disabled):hover .p-inputswitch-slider:before {
+  box-shadow:
+    0 0 1px 10px rgba(0, 0, 0, 0.12),
+    0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+    0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+    0px 1px 5px 0px rgba(0, 0, 0, 0.12);
 }
 .p-inputswitch.p-inputswitch-checked:not(.p-disabled):hover .p-inputswitch-slider:before {
-  box-shadow: 0 0 1px 10px rgba(18, 171, 219, 0.04), 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  box-shadow:
+    0 0 1px 10px rgba(18, 171, 219, 0.04),
+    0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+    0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+    0px 1px 5px 0px rgba(0, 0, 0, 0.12);
 }
-.p-inputswitch.p-inputswitch-checked.p-inputswitch-focus .p-inputswitch-slider:before, .p-inputswitch.p-inputswitch-checked.p-inputswitch-focus:not(.p-disabled):hover .p-inputswitch-slider:before {
-  box-shadow: 0 0 1px 10px rgba(18, 171, 219, 0.12), 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+.p-inputswitch.p-inputswitch-checked.p-inputswitch-focus .p-inputswitch-slider:before,
+.p-inputswitch.p-inputswitch-checked.p-inputswitch-focus:not(.p-disabled):hover .p-inputswitch-slider:before {
+  box-shadow:
+    0 0 1px 10px rgba(18, 171, 219, 0.12),
+    0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+    0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+    0px 1px 5px 0px rgba(0, 0, 0, 0.12);
 }
 
 .p-fieldset .p-fieldset-legend {
@@ -28125,7 +29134,11 @@ p-inputnumber.ng-dirty.ng-invalid .p-inputtext:enabled:focus {
   border: 0 none;
 }
 .p-multiselect:not(.p-disabled).p-focus {
-  box-shadow: inset 0 0 0 1px rgb(18, 171, 219), inset 0 0 0 1px rgb(18, 171, 219), inset 0 0 0 1px rgb(18, 171, 219), inset 0 0 0 1px rgb(18, 171, 219);
+  box-shadow:
+    inset 0 0 0 1px rgb(18, 171, 219),
+    inset 0 0 0 1px rgb(18, 171, 219),
+    inset 0 0 0 1px rgb(18, 171, 219),
+    inset 0 0 0 1px rgb(18, 171, 219);
 }
 
 .p-multiselect-item .p-ink {
@@ -28137,9 +29150,15 @@ p-inputnumber.ng-dirty.ng-invalid .p-inputtext:enabled:focus {
   border-bottom-right-radius: 0;
   border: 1px solid transparent;
   background: var(--input-filled-bg) no-repeat;
-  background-image: linear-gradient(to bottom, rgb(18, 171, 219), rgb(18, 171, 219)), linear-gradient(to bottom, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.38));
-  background-size: 0 2px, 100% 1px;
-  background-position: 50% 100%, 50% 100%;
+  background-image:
+    linear-gradient(to bottom, rgb(18, 171, 219), rgb(18, 171, 219)),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.38));
+  background-size:
+    0 2px,
+    100% 1px;
+  background-position:
+    50% 100%,
+    50% 100%;
   background-origin: border-box;
 }
 .p-input-filled .p-multiselect .p-inputtext {
@@ -28149,15 +29168,21 @@ p-inputnumber.ng-dirty.ng-invalid .p-inputtext:enabled:focus {
 .p-input-filled .p-multiselect:not(.p-disabled):hover {
   background-color: var(--input-filled-hover-bg);
   border-color: transparent;
-  background-image: linear-gradient(to bottom, rgb(18, 171, 219), rgb(18, 171, 219)), linear-gradient(to bottom, rgba(0, 0, 0, 0.87), rgba(0, 0, 0, 0.87));
+  background-image:
+    linear-gradient(to bottom, rgb(18, 171, 219), rgb(18, 171, 219)),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.87), rgba(0, 0, 0, 0.87));
 }
-.p-input-filled .p-multiselect:not(.p-disabled).p-focus, .p-input-filled .p-multiselect:not(.p-disabled).p-inputwrapper-focus {
+.p-input-filled .p-multiselect:not(.p-disabled).p-focus,
+.p-input-filled .p-multiselect:not(.p-disabled).p-inputwrapper-focus {
   box-shadow: none;
   background-color: var(--input-filled-focus-bg);
   border-color: transparent;
-  background-size: 100% 2px, 100% 1px;
+  background-size:
+    100% 2px,
+    100% 1px;
 }
-.p-input-filled .p-multiselect .p-inputtext:enabled:hover, .p-input-filled .p-multiselect .p-inputtext:enabled:focus {
+.p-input-filled .p-multiselect .p-inputtext:enabled:hover,
+.p-input-filled .p-multiselect .p-inputtext:enabled:focus {
   background-image: none;
   background: transparent;
 }
@@ -28188,7 +29213,12 @@ p-inputnumber.ng-dirty.ng-invalid .p-inputtext:enabled:focus {
   margin-top: 0;
   margin-bottom: 0;
 }
-.p-input-filled .p-float-label .p-inputwrapper-filled .p-multiselect.p-multiselect-chip .p-multiselect-token .p-multiselect-token-icon {
+.p-input-filled
+  .p-float-label
+  .p-inputwrapper-filled
+  .p-multiselect.p-multiselect-chip
+  .p-multiselect-token
+  .p-multiselect-token-icon {
   font-size: 75%;
 }
 .p-input-filled p-multiselect.ng-dirty.ng-invalid .p-multiselect {
@@ -28201,7 +29231,11 @@ p-inputnumber.ng-dirty.ng-invalid .p-inputtext:enabled:focus {
 }
 
 p-multiselect.ng-dirty.ng-invalid .p-multiselect:not(.p-disabled).p-focus {
-  box-shadow: inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020, inset 0 0 0 1px #b00020;
+  box-shadow:
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020,
+    inset 0 0 0 1px #b00020;
 }
 
 .p-overlaypanel .p-overlaypanel-content {
@@ -28225,7 +29259,10 @@ p-multiselect.ng-dirty.ng-invalid .p-multiselect:not(.p-disabled).p-focus {
 }
 
 .p-panelmenu .p-panelmenu-panel {
-  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  box-shadow:
+    0 3px 1px -2px rgba(0, 0, 0, 0.2),
+    0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 1px 5px 0 rgba(0, 0, 0, 0.12);
   margin-bottom: 0;
   border-radius: 0;
   position: relative;
@@ -28304,7 +29341,9 @@ p-multiselect.ng-dirty.ng-invalid .p-multiselect:not(.p-disabled).p-focus {
 }
 
 .p-slider .p-slider-handle {
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
   transform: scale(0.7);
 }
 .p-slider .p-slider-handle:focus {
@@ -28494,7 +29533,9 @@ p-multiselect.ng-dirty.ng-invalid .p-multiselect:not(.p-disabled).p-focus {
   --primary-text-color: #ffffff;
   --button-border: 0 none;
   --button-padding: 0.643rem 0.75rem;
-  --form-element-transition: background-color 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s, background-size 0.2s cubic-bezier(0.64, 0.09, 0.08, 1);
+  --form-element-transition:
+    background-color 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s,
+    background-size 0.2s cubic-bezier(0.64, 0.09, 0.08, 1);
   --button-hover-bg: rgba(18, 171, 219, 0.92);
   --button-hover-border-color: transparent;
   --button-active-bg: rgba(18, 171, 219, 0.68);
@@ -28502,7 +29543,8 @@ p-multiselect.ng-dirty.ng-invalid .p-multiselect:not(.p-disabled).p-focus {
   --outlined-button-border: 0 none;
   --plain-button-hover-bg-color: rgba(0, 0, 0, 0.04);
   --plain-button-active-bg-color: rgba(0, 0, 0, 0.16);
-  --raised-button-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  --raised-button-shadow:
+    0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
   --rounded-button-border-radius: 2rem;
   --button-icon-only-width: 2.75rem;
   --button-icon-only-padding: 0.643rem;
@@ -28624,7 +29666,8 @@ p-multiselect.ng-dirty.ng-invalid .p-multiselect:not(.p-disabled).p-focus {
   --panel-content-padding: 0.75rem;
   --input-list-bg: #ffffff;
   --input-overlay-border: 0 none;
-  --input-overlay-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+  --input-overlay-shadow:
+    0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
   --menu-width: 12.5rem;
   --input-list-padding: 0;
   --input-list-item-margin: 0;
@@ -28768,7 +29811,8 @@ p-multiselect.ng-dirty.ng-invalid .p-multiselect:not(.p-disabled).p-focus {
   --vertical-menu-padding: 0.5rem 0;
   --menu-bg: #ffffff;
   --overlay-menu-border: 0 none;
-  --overlay-menu-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
+  --overlay-menu-shadow:
+    0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
   --vertical-menuitem-margin: 0;
   --menuitem-active-bg: rgba(0, 0, 0, 0.04);
   --dock-bg: rgba(255, 255, 255, 0.1);
@@ -28850,7 +29894,8 @@ p-multiselect.ng-dirty.ng-invalid .p-multiselect:not(.p-disabled).p-focus {
   --message-icon-font-size: 1.5rem;
   --toast-opacity: 0.9;
   --toast-margin: 0 0 1rem 0;
-  --toast-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+  --toast-shadow:
+    0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
   --toast-padding: 1.25rem;
   --toast-border-width: 0 0 0 0;
   --toast-message-text-margin: 0 0 0 1rem;
@@ -28923,7 +29968,8 @@ p-multiselect.ng-dirty.ng-invalid .p-multiselect:not(.p-disabled).p-focus {
   --image-preview-action-icon-hover-bg: rgba(255, 255, 255, 0.1);
   --image-preview-action-icon-font-size: 1.5rem;
   --panel-content-bg-rgb: 255, 255, 255;
-  --overlay-container-shadow: 0 11px 15px -7px rgba(0, 0, 0, 0.2), 0 24px 38px 3px rgba(0, 0, 0, 0.14), 0 9px 46px 8px rgba(0, 0, 0, 0.12);
+  --overlay-container-shadow:
+    0 11px 15px -7px rgba(0, 0, 0, 0.2), 0 24px 38px 3px rgba(0, 0, 0, 0.14), 0 9px 46px 8px rgba(0, 0, 0, 0.12);
   --dialog-header-border: 0 none;
   --dialog-header-bg: #ffffff;
   --dialog-header-padding: 1.25rem;
@@ -28979,7 +30025,7 @@ p-multiselect.ng-dirty.ng-invalid .p-multiselect:not(.p-disabled).p-focus {
   pointer-events: none;
 }
 .element-overlay::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
