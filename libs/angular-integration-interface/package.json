@@ -1,12 +1,12 @@
 {
   "name": "@onecx/angular-integration-interface",
-  "version": "6.0.0-rc.19",
+  "version": "6.0.0-rc.20",
   "license": "Apache-2.0",
   "peerDependencies": {
     "@angular/core": "^19.0.0",
-    "@onecx/integration-interface": "^6.0.0-rc.19",
-    "@onecx/accelerator": "^6.0.0-rc.19",
-    "@onecx/nx-migration-utils": "^6.0.0-rc.19",
+    "@onecx/integration-interface": "^6.0.0-rc.20",
+    "@onecx/accelerator": "^6.0.0-rc.20",
+    "@onecx/nx-migration-utils": "^6.0.0-rc.20",
     "rxjs": "~7.8.1",
     "@nx/devkit": "^20.3.0",
     "@phenomnomnominal/tsquery": "^6",
