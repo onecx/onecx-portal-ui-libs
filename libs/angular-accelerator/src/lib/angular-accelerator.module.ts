@@ -29,7 +29,7 @@ import { SearchHeaderComponent } from './components/search-header/search-header.
 import { AdvancedDirective } from './directives/advanced.directive'
 import { IfBreakpointDirective } from './directives/if-breakpoint.directive'
 import { IfPermissionDirective } from './directives/if-permission.directive'
-import { providePermissionChecker, TRANSLATION_PATH } from '@onecx/angular-utils'
+import { providePermissionChecker, provideTranslationPathFromMeta } from '@onecx/angular-utils'
 import { SrcDirective } from './directives/src.directive'
 import { TooltipOnOverflowDirective } from './directives/tooltipOnOverflow.directive'
 import { DynamicPipe } from './pipes/dynamic.pipe'
@@ -96,16 +96,8 @@ function appInitializer(userService: UserService) {
       deps: [UserService],
       multi: true,
     },
-    {
-      provide: TRANSLATION_PATH,
-      useValue: './onecx-angular-accelerator/assets/i18n/',
-      multi: true
-    },
-    {
-      provide: TRANSLATION_PATH,
-      useValue: './onecx-angular-accelerator/assets/i18n/primeng/',
-      multi: true
-    },
+    provideTranslationPathFromMeta(import.meta, 'onecx-angular-accelerator/assets/i18n/'),
+    provideTranslationPathFromMeta(import.meta, 'onecx-angular-accelerator/assets/i18n/primeng/'),
     AppConfigService,
   ],
   exports: [

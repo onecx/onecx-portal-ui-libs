@@ -59,7 +59,7 @@ import { PrimeNgModule } from './primeng.module'
 import { DialogFooterComponent } from './components/dialog/dialog-footer/dialog-footer.component'
 import { DialogContentComponent } from './components/dialog/dialog-content/dialog-content.component'
 import { DialogInlineComponent } from './components/dialog/dialog-inline/dialog-inline.component'
-import { TRANSLATION_PATH } from '@onecx/angular-utils'
+import { provideTranslationPathFromMeta } from '@onecx/angular-utils'
 
 export class PortalMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams) {
@@ -129,16 +129,8 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
       },
       deps: [UserService],
     },
-    {
-      provide: TRANSLATION_PATH,
-      useValue: './onecx-portal-lib/assets/i18n/',
-      multi: true
-    },
-    {
-      provide: TRANSLATION_PATH,
-      useValue: './onecx-portal-lib/assets/i18n/primeng/',
-      multi: true
-    },
+    provideTranslationPathFromMeta(import.meta, 'onecx-portal-lib/assets/i18n/'),
+    provideTranslationPathFromMeta(import.meta, 'onecx-portal-lib/assets/i18n/primeng/'),
     {
       provide: MessageService,
       useClass: MessageService,
