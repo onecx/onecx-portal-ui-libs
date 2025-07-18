@@ -3,8 +3,8 @@ import { TRANSLATION_PATH } from '../utils/create-translate-loader.utils';
 
 describe('provideTranslationPathFromMeta', () => {
   it('should remove file name and append custom path', () => {
-    const meta = {url: 'https://dev.one-cx.org/mfe/workspace/3204.512.js'} as ImportMeta;
-    const provider = provideTranslationPathFromMeta(meta, 'assets/pathName/');
+    const url = 'https://dev.one-cx.org/mfe/workspace/3204.512.js'
+    const provider = provideTranslationPathFromMeta(url, 'assets/pathName/');
     expect(provider).toEqual({
       provide: TRANSLATION_PATH,
       useValue: 'https://dev.one-cx.org/mfe/workspace/assets/pathName/',
@@ -13,8 +13,8 @@ describe('provideTranslationPathFromMeta', () => {
   });
 
   it('should default to /i18n/ if path is undefined', () => {
-    const meta = {url: 'https://dev.one-cx.org/mfe/workspace/3204.512.js'} as ImportMeta;
-    const provider = provideTranslationPathFromMeta(meta);
+    const url = 'https://dev.one-cx.org/mfe/workspace/3204.512.js'
+    const provider = provideTranslationPathFromMeta(url);
     expect(provider).toEqual({
       provide: TRANSLATION_PATH,
       useValue: 'https://dev.one-cx.org/mfe/workspace/assets/i18n/',
@@ -23,8 +23,24 @@ describe('provideTranslationPathFromMeta', () => {
   });
 
   it('should handle URLs with no file name', () => {
-    const meta ={url: 'https://dev.one-cx.org/mfe/workspace/'} as ImportMeta;
-    const provider = provideTranslationPathFromMeta(meta, 'assets/pathName/');
+    const url = 'https://dev.one-cx.org/mfe/workspace/'
+    const provider = provideTranslationPathFromMeta(url, 'assets/pathName/');
     expect(provider).toEqual(expect.objectContaining({ useValue: 'https://dev.one-cx.org/mfe/workspace/assets/pathName/'}));
+  });
+
+  it('should throw error for local file URLs', () => {
+    expect(() => provideTranslationPathFromMeta('file:///some/local/file.js')).toThrow(
+      /Cannot construct translation path from local file URL/
+    );
+  });
+
+  it('should add trailing slash if path does not end with slash', () => {
+    const url = 'https://dev.one-cx.org/mfe/workspace/3204.512.js'
+    const provider = provideTranslationPathFromMeta(url, 'assets/i18n');
+     expect(provider).toEqual({
+      provide: TRANSLATION_PATH,
+      useValue: 'https://dev.one-cx.org/mfe/workspace/assets/i18n/',
+      multi: true,
+    });
   });
 });

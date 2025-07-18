@@ -19,7 +19,7 @@ describe('PortalPageComponent', () => {
         }),
       ],
       providers: [
-        provideAngularUtils(),
+        provideAngularUtils({ contentType: 'microfrontend' }),
         provideHttpClient(withInterceptorsFromDi()),
         provideAppStateServiceMock(),
       ],
