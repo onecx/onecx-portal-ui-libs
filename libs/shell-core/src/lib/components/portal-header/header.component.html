@@ -25,15 +25,17 @@
       class="layout-menu-button"
       (click)="onMenuButtonClick($event)"
       pRipple
+      [attr.aria-label]="'OCX_HEADER.MENU_TOGGLE' | translate"
       [pTooltip]="'OCX_HEADER.MENU_TOGGLE' | translate"
       tooltipPosition="top"
       tooltipEvent="hover"
     >
-      <i
+      <span
         id="ocx_vertical_menu_action_toggle_icon"
         class="pi"
         [ngClass]="'pi-chevron-' + (isStaticMenuVisible ? 'left' : 'right')"
-      ></i>
+        aria-hidden="true"
+      ></span>
     </a>
   </div>
 
