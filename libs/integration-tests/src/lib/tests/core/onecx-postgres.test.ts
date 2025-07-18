@@ -1,14 +1,14 @@
 import { assert } from 'console'
 import { OnecxPostgresContainer, StartedOnecxPostgresContainer } from '../../containers/core/onecx-postgres'
 import { Client } from 'pg'
+import { POSTGRES } from '../../config/env'
 
 xdescribe('Default Postgres Testcontainer', () => {
   let client: Client
   let pgContainer: StartedOnecxPostgresContainer
-  const imagePg = 'docker.io/library/postgres:13.4'
 
   beforeAll(async () => {
-    pgContainer = await new OnecxPostgresContainer(imagePg).start()
+    pgContainer = await new OnecxPostgresContainer(POSTGRES).start()
 
     client = new Client({
       host: pgContainer.getHost(),
@@ -18,7 +18,7 @@ xdescribe('Default Postgres Testcontainer', () => {
       database: pgContainer.getPostgresDatabase(),
     })
     await client.connect()
-  })
+  }, 120_000)
   it('should create database', async () => {
     const username = 'keycloak'
     const password = 'keycloak'

@@ -1,3 +1,4 @@
+/* eslint-disable */
 export default {
   displayName: 'integration-tests',
   preset: '../../jest.preset.js',
@@ -7,5 +8,4 @@ export default {
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../coverage/libs/integration-tests',
-  testTimeout: 200000,
 }
