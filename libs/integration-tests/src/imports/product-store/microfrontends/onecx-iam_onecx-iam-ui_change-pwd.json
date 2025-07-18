@@ -1,0 +1,15 @@
+{
+    "appVersion": "xxx",
+    "appName": "onecx-iam-ui",
+    "description": "onecx-iam-ui",
+    "remoteBaseUrl": "/mfe/iam/",
+    "remoteEntry": "/mfe/iam/remoteEntry.js",
+    "note": "Imported MFE",
+    "exposedModule": "./OneCXChangePasswordComponent",
+    "technology": "WEBCOMPONENTMODULE",
+    "remoteName": "onecx-iam",
+    "tagName": "ocx-change-password-component",
+    "type": "COMPONENT",
+    "deprecated": false,
+    "undeployed": false
+}

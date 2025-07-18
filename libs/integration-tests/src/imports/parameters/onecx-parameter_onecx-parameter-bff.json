@@ -1,0 +1,8 @@
+{
+    "parameters": [
+        {"name": "param1", "displayName": "Test paremeter 1", "description": "Test paremeter 1", "value": {"a": 1}},
+        {"name": "param2", "displayName": "Test paremeter 2", "description": "Test paremeter 2", "value": "text"},
+        {"name": "param3", "displayName": "Test paremeter 3", "description": "Test paremeter 3", "value": true},
+        {"name": "param4", "displayName": "Test paremeter 4", "description": "Test paremeter 4", "value": 100}
+    ]
+}

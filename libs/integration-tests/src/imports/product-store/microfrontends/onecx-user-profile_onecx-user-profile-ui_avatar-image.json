@@ -1,0 +1,15 @@
+{
+    "appVersion": "xxx",
+    "appName": "onecx-user-profile-ui",
+    "description": "User avatar image component",
+    "remoteBaseUrl": "/mfe/user-profile/",
+    "remoteEntry": "/mfe/user-profile/remoteEntry.js",
+    "note": "Imported MFE",
+    "exposedModule": "./OneCXAvatarImageComponent",
+    "technology": "WEBCOMPONENTMODULE",
+    "remoteName": "onecx-user-profile",
+    "tagName": "ocx-avatar-image-component",
+    "type": "COMPONENT",
+    "deprecated": false,
+    "undeployed": false
+}

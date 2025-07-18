@@ -1,0 +1,15 @@
+{
+    "appVersion": "xxx",
+    "appName": "onecx-iam-ui",
+    "description": "onecx-iam-ui",
+    "remoteBaseUrl": "/mfe/iam/",
+    "remoteEntry": "/mfe/iam/remoteEntry.js",
+    "note": "Imported MFE",
+    "exposedModule": "./OneCXIamModule",
+    "technology": "WEBCOMPONENTMODULE",
+    "remoteName": "onecx-iam",
+    "tagName": "ocx-iam-component",
+    "type": "MODULE",
+    "deprecated": false,
+    "undeployed": false
+}
