@@ -66,6 +66,7 @@
                 [title]="item.label"
                 [pTooltip]="item.label || ''"
                 tooltipPosition="bottom"
+                tooltipEvent="hover"
               >
                 <i [ngClass]="item.icon || ''" class="fs-large"></i>
               </a>
@@ -138,9 +139,10 @@
             class="layout-topbar-action flex flex-row justify-content-center align-items-center px-2 rounded-circle"
             pRipple
             (click)="onTopbarItemClick($event, 'profile')"
-            title="Profile"
-            pTooltip="Profile"
+            [attr.aria-label]="'OCX_HEADER.USER_SETTINGS' | translate"
+            [pTooltip]="'OCX_HEADER.USER_SETTINGS' | translate"
             tooltipPosition="bottom"
+            tooltipEvent="hover"
           >
             <ocx-user-avatar [user$]="currentUser$"></ocx-user-avatar>
           </a>
