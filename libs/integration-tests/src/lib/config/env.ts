@@ -11,3 +11,8 @@ export const onecxSvcImages = {
   ONECX_WORKSPACE_SVC: `${DOCKER_REPO}/onecx-workspace-svc:main-native`,
   ONECX_USER_PROFILE_SVC: `${DOCKER_REPO}/onecx-user-profile-svc:main-native`,
 }
+
+export const onecxShellUiImages = {
+  ONECX_SHELL_BFF: `${DOCKER_REPO}/onecx-shell-bff:main-native`,
+  ONECX_SHELL_UI: `${DOCKER_REPO}/onecx-shell-ui:1.x`,
+}

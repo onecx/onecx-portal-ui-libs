@@ -1,3 +1,21 @@
+## [5.45.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.45.0...v5.45.1) (2025-07-17)
+
+### Bug Fixes
+
+* improve topbar layout and re-set mobile breakpoint ([#817](https://github.com/onecx/onecx-portal-ui-libs/issues/817)) ([e9e82d0](https://github.com/onecx/onecx-portal-ui-libs/commit/e9e82d03ec0723dc58f5cdc7e8289bd8780ccc6b))
+
+## [5.45.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.44.0...v5.45.0) (2025-07-15)
+
+### Features
+
+* cleaned bff testcontainer ([#804](https://github.com/onecx/onecx-portal-ui-libs/issues/804)) ([12716dc](https://github.com/onecx/onecx-portal-ui-libs/commit/12716dc6750f952ab062081749678950d28801b8))
+* cleaned UI testcontainer ([#803](https://github.com/onecx/onecx-portal-ui-libs/issues/803)) ([b6ecd5b](https://github.com/onecx/onecx-portal-ui-libs/commit/b6ecd5b85abf75da7e4f3bc7cb95928331dc7dd8))
+* deprecate unused data from the UserProfileTopic ([#783](https://github.com/onecx/onecx-portal-ui-libs/issues/783)) ([0488363](https://github.com/onecx/onecx-portal-ui-libs/commit/04883632ea6953b432bbef4107a0e4ee98bc387c)), closes [#782](https://github.com/onecx/onecx-portal-ui-libs/issues/782) [#784](https://github.com/onecx/onecx-portal-ui-libs/issues/784) [#779](https://github.com/onecx/onecx-portal-ui-libs/issues/779)
+
+### Bug Fixes
+
+* topic publish await v5 ([#815](https://github.com/onecx/onecx-portal-ui-libs/issues/815)) ([1739d93](https://github.com/onecx/onecx-portal-ui-libs/commit/1739d934f3081ee8f310240dea9823049702779b))
+
 ## [5.44.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.43.0...v5.44.0) (2025-07-03)
 
 ### Features

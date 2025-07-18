@@ -6,6 +6,8 @@
       [home]="(home$ | async)?.menuItem ?? {}"
       [homeAriaLabel]="(home$ | async)?.page ? ('OCX_PAGE_HEADER.HOME_ARIA_LABEL' | translate: { page: (home$ | async)?.page}) : ('OCX_PAGE_HEADER.HOME_DEFAULT_ARIA_LABEL' | translate)"
       [attr.manual]="manualBreadcrumbs"
+    >
+      <ng-template pTemplate="separator"> <span class="pi pi-chevron-right" aria-hidden="true"></span> </ng-template
     ></p-breadcrumb>
   </ng-container>
 
@@ -17,7 +19,7 @@
           <img
             *ngIf="figureImage && !figureImageLoadError"
             [ocxSrc]="figureImage"
-            alt="Figure Image"
+            [alt]="'OCX_PAGE_HEADER.IMAGE' | translate"
             class="w-full border-round-sm"
             (error)="handleImageError()"
           />
@@ -81,13 +83,13 @@
               type="button"
               pButton
               icon="pi pi-ellipsis-v"
-              pTooltip="{{ 'OCX_PAGE_HEADER.MORE_ACTIONS' | translate }}"
-              tooltipEvent="hover"
-              tooltipPosition="top"
               class="more-actions-menu-button action-button ml-2"
               (click)="menu.toggle($event)"
               name="ocx-page-header-overflow-action-button"
-              [attr.aria-label]="('OCX_PAGE_HEADER.MORE_ACTIONS' | translate)"
+              [attr.aria-label]="'OCX_PAGE_HEADER.MORE_ACTIONS' | translate"
+              [pTooltip]="'OCX_PAGE_HEADER.MORE_ACTIONS' | translate"
+              tooltipEvent="hover"
+              tooltipPosition="top"
             ></button>
             <p-menu #menu [popup]="true" [model]="overflowActions" appendTo="body"></p-menu>
           </div>
