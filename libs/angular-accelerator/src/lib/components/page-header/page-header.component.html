@@ -6,6 +6,8 @@
       [home]="(home$ | async)?.menuItem ?? {}"
       [homeAriaLabel]="(home$ | async)?.page ? ('OCX_PAGE_HEADER.HOME_ARIA_LABEL' | translate: { page: (home$ | async)?.page}) : ('OCX_PAGE_HEADER.HOME_DEFAULT_ARIA_LABEL' | translate)"
       [attr.manual]="manualBreadcrumbs"
+    >
+      <ng-template pTemplate="separator"> <span class="pi pi-chevron-right" aria-hidden="true"></span> </ng-template
     ></p-breadcrumb>
   </ng-container>
 

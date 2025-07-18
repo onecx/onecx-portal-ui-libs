@@ -1,25 +1,22 @@
 <div class="layout-topbar_flex" id="ocx_header" role="banner">
   <div
-    class="layout-topbar-left flex relative justify-content-center align-items-center"
+    class="layout-topbar-left relative flex justify-content-center align-items-center"
     [ngClass]="{'vertical-menu': !isHorizontalMenu}"
   >
-    <!-- LOGO -->
-    <ng-container *ngIf="currentTheme$ | async as theme">
-      <ocx-slot
-        *ngIf="isComponentDefined$ | async"
-        [name]="slotName"
-        [inputs]="{
-          dataType: 'logo',
-          themeName: theme.name,
-          imageUrl: theme.logoUrl,
-          imageStyleClass: 'max-h-3rem max-w-8rem',
-          logEnabled: false,
-          logPrefix: 'header left logo'
-        }"
-        [outputs]="{ imageLoadingFailed: logoLoadingEmitter }"
-      ></ocx-slot>
-      <div *ngIf="themeLogoLoadingFailed"><!-- portal logo --></div>
-    </ng-container>
+    <ocx-slot
+      name="onecx-shell-header-left"
+      class="flex flex-row flex-wrap align-items-center column-gap-3 row-gap-1"
+      [inputs]="{ imageStyleClass: 'h-3rem vertical-align-middle' }"
+      [outputs]="{ imageLoadingFailed: logoLoadingEmitter }"
+    >
+      <ng-template #skeleton>
+        <div class="flex align-items-center h-full justify-content-center" style="width: 26px">
+          <p-skeleton shape="circle" size="2rem" class="h-full flex align-items-center"></p-skeleton>
+        </div>
+      </ng-template>
+    </ocx-slot>
+    <div *ngIf="themeLogoLoadingFailed"><!-- portal logo --></div>
+
     <a
       id="ocx_vertical_menu_action_toggle"
       class="layout-menu-button"
