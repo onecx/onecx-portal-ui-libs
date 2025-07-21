@@ -76,7 +76,7 @@ jobs:
           git clean -ffdx && git reset --hard HEAD
 
       - name: Download reports
-        uses: dawidd6/action-download-artifact@v3
+        uses: dawidd6/action-download-artifact@v11
         with:
           run_id: ${{ github.event.workflow_run.id }}
           name: coverage-reports
