@@ -125,9 +125,11 @@
     "testcontainers": "^10.28.0",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
-    "typescript": "^5.5.4",
-    "sonar-scanner": "^3.1.0",
-    "sonarqube-scanner": "^4.3.0"
+    "typescript": "^5.5.4"
+  },
+  "overrides": {
+    "jsdom": "25.0.1",
+    "rrweb-cssom": "0.8.0"
   },
   "nx": {
     "includedScripts": []
