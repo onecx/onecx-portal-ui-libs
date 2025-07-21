@@ -42,7 +42,7 @@ jobs:
         path: ${{ fromJson(needs.set-matrix.outputs.matrix) }}
 
     steps:
-      - uses: dawidd6/action-download-artifact@v3
+      - uses: dawidd6/action-download-artifact@v11
         with:
           run_id: ${{ github.event.workflow_run.id }}
           name: github-action-pr
