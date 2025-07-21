@@ -1,7 +1,8 @@
 export function createReportsConfig(projectName: string) {
+  const reportsRoot = `${process.cwd()}/reports/${projectName}`
   return {
     testMatch: ['<rootDir>/src/lib/**/*.spec.ts'],
-    coverageDirectory: `../../reports/${projectName}/coverage`,
+    coverageDirectory: `${reportsRoot}/coverage`,
     collectCoverage: true,
     coverageReporters: ['json', ['lcov', { projectRoot: '/' }], 'text', 'text-summary', 'html'],
     testResultsProcessor: 'jest-sonar-reporter',
@@ -10,7 +11,7 @@ export function createReportsConfig(projectName: string) {
       [
         'jest-sonar',
         {
-          outputDirectory: `./reports/${projectName}`,
+          outputDirectory: reportsRoot,
           outputName: 'sonarqube_report.xml',
           reportedFilePath: 'absolute',
         },
