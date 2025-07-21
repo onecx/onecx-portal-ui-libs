@@ -1,6 +1,4 @@
 /* eslint-disable */
-import { createReportsConfig } from '../../jest-config-factory'
-
 export default {
   displayName: 'portal-integration-angular',
   preset: '../../jest.preset.js',
@@ -23,5 +21,5 @@ export default {
     'jest-preset-angular/build/serializers/ng-snapshot',
     'jest-preset-angular/build/serializers/html-comment',
   ],
-  ...createReportsConfig('portal-integration-angular'),
+  coverageDirectory: '../../coverage/libs/portal-integration-angular',
 }
