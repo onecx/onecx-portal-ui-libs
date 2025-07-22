@@ -17,15 +17,16 @@ describe('removeImportSpecifierFromImport', () => {
     );
     removeImportSpecifierFromImport(tree, filePath, 'ngrx-accelerator', 'testImport');
     const result = tree.read(filePath, 'utf-8');
-    expect(result).toEqualIgnoringWhitespace(`import { testImport2 } from 'ngrx-accelerator';
-      @NgModule()`);
+    expect(result).toEqualIgnoringWhitespace(`import { testImport2 } from 'ngrx-accelerator';`)
   });
 
   it('removes the entire import if it was the only specifier', () => {
     const filePath = 'src/test2.ts';
     tree.write(
       filePath,
-      `import { testImport } from 'ngrx-accelerator';`
+      `import { testImport } from 'ngrx-accelerator';
+      export class Test {}
+      `
     );
     removeImportSpecifierFromImport(tree, filePath, 'ngrx-accelerator', 'testImport');
     const result = tree.read(filePath, 'utf-8');
