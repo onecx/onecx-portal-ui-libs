@@ -5,7 +5,7 @@ import { updateTranslationPathProvider } from './utils/update-translation-path-p
 export default async function replaceTranslationPathFactories(tree: Tree) {
   visitNotIgnoredFiles(tree, 'src', (filePath) => {
     if (!filePath.endsWith('.ts')) return;
-    let fileContent = tree.read(filePath, 'utf-8');
+    const fileContent = tree.read(filePath, 'utf-8');
     if (!fileContent) return;
 
   let updatedContent = updateTranslationPathImports(tree, filePath, fileContent);

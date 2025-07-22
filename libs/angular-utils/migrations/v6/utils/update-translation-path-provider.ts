@@ -1,6 +1,5 @@
-import { Tree } from "@nx/devkit"
-import { ast, query, replace } from "@phenomnomnominal/tsquery"
-import { isCallExpression, isObjectLiteralExpression, isPropertyAssignment, isStringLiteral, ScriptKind, SourceFile } from "typescript"
+import { ast, replace } from "@phenomnomnominal/tsquery"
+import { ScriptKind } from "typescript"
 import { extractTranslationPath } from "./extract-translation-path";
 
 // AST-based replacement of translation path provider
@@ -19,8 +18,8 @@ export function updateTranslationPathProvider(fileContent: string) {
 
   // Remove trailing commas in providers arrays
   if (fileContent) {
-    fileContent = fileContent.replace(/,\s*([\]\)])/g, '$1');
+    fileContent = fileContent.replace(/,\s*([\])])/g, '$1');
   }
-  
+
   return fileContent;
 }
