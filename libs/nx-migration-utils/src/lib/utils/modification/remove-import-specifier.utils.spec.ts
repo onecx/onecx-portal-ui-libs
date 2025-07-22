@@ -13,8 +13,7 @@ describe('removeImportSpecifierFromImport', () => {
     const filePath = 'src/test.ts';
     tree.write(
       filePath,
-      `import { testImport, testImport2 } from 'ngrx-accelerator';
-      @NgModule()`
+      `import { testImport, testImport2 } from 'ngrx-accelerator';`
     );
     removeImportSpecifierFromImport(tree, filePath, 'ngrx-accelerator', 'testImport');
     const result = tree.read(filePath, 'utf-8');
@@ -26,9 +25,7 @@ describe('removeImportSpecifierFromImport', () => {
     const filePath = 'src/test2.ts';
     tree.write(
       filePath,
-      `import { testImport } from 'ngrx-accelerator';
-      export class Test {}
-      `
+      `import { testImport } from 'ngrx-accelerator';`
     );
     removeImportSpecifierFromImport(tree, filePath, 'ngrx-accelerator', 'testImport');
     const result = tree.read(filePath, 'utf-8');

@@ -6,14 +6,14 @@ export function updateTranslationPathImports(tree: Tree, filePath: string, fileC
     // Remove old import specifiers from @onecx/angular-utils
     const specifiers = ['TRANSLATION_PATH', 'remoteComponentTranslationPathFactory', 'translationPathFactory']
     for (const specifier of specifiers) {
-      removeImportSpecifierFromImport(tree, filePath, '@onecx/angular-utils', specifier);
-      fileContent = tree.read(filePath, 'utf-8') ?? '';
+        removeImportSpecifierFromImport(tree, filePath, '@onecx/angular-utils', specifier);
+        fileContent = tree.read(filePath, 'utf-8') ?? '';
     }
 
     // Add provideTranslationPathFromMeta to imports if not present
-    // if (fileContent) {
-    //   fileContent = addProviderImportInFile(fileContent, { name: 'provideTranslationPathFromMeta', importPath: '@onecx/angular-utils' });
-    // }
+    if (fileContent) {
+        fileContent = addProviderImportInFile(fileContent, { name: 'provideTranslationPathFromMeta', importPath: '@onecx/angular-utils' });
+    }
 
     return fileContent;
 }

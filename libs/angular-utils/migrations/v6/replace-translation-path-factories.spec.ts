@@ -10,7 +10,7 @@ describe('replace-translation-path-factories', () => {
   })
 
   it('should replace provider with remoteComponentTranslationPathFactory with provideTranslationPathFromMeta', async () => {
-    const filePath = 'src/app/main.ts'
+    const filePath = 'src/app/test1.module.ts'
     tree.write(
       filePath,
       `
@@ -60,14 +60,69 @@ describe('replace-translation-path-factories', () => {
             deps: [HttpClient]
             }
         }),
-        provideTranslationPathFromMeta(import.meta.url, 'path/i18n/'),
+        provideTranslationPathFromMeta(import.meta.url, 'path/i18n/')
     ]);
     `
     )
   })
 
   it('should replace provider with translationPathFactory with provideTranslationPathFromMeta', async () => {
-    const filePath = 'src/app/main.ts'
+    const filePath = 'src/app/test2.module.ts'
+    tree.write(
+      filePath,
+      `
+    import { APP_INITIALIZER, NgModule } from '@angular/core';
+    import { TranslateService } from '@ngx-translate/core';
+    import { TRANSLATION_PATH, translationPathFactory } from '@onecx/angular-utils';
+    import { APP_CONFIG, AppStateService, UserService } from '@onecx/angular-integration-interface';
+
+    @NgModule({
+    providers: [
+        {
+        provide: APP_INITIALIZER,
+        useFactory: translateServiceInitializer,
+        multi: true,
+        deps: [UserService, TranslateService]
+        },
+        {
+        provide: TRANSLATION_PATH,
+        useFactory: (appStateService: AppStateService) => translationPathFactory('path/to/assets/i18n/')(appStateService),
+        multi: true,
+        deps: [AppStateService]
+        }
+    ]
+    })
+    export class AppModule {};
+    `
+    )
+    await replaceTranslationPathFactories(tree)
+
+    const content = tree.read(filePath)?.toString()
+
+    expect(content).toEqualIgnoringWhitespace(`
+    import { provideTranslationPathFromMeta } from '@onecx/angular-utils';
+    import { APP_INITIALIZER, NgModule } from '@angular/core';
+    import { TranslateService } from '@ngx-translate/core';
+    import { APP_CONFIG, AppStateService, UserService } from '@onecx/angular-integration-interface';
+
+    @NgModule({
+    providers: [
+        {
+        provide: APP_INITIALIZER,
+        useFactory: translateServiceInitializer,
+        multi: true,
+        deps: [UserService, TranslateService]
+        },
+        provideTranslationPathFromMeta(import.meta.url, 'path/to/assets/i18n/')
+    ]
+    })
+    export class AppModule {};
+    `
+    )
+  })
+
+  it('should replace provider with translationPathFactory with provideTranslationPathFromMeta in NgModule', async () => {
+    const filePath = 'src/app/app-module.ts'
     tree.write(
       filePath,
       `
@@ -75,7 +130,7 @@ describe('replace-translation-path-factories', () => {
     import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
     import { AppStateService } from '@onecx/angular-integration-interface';
 
-    @NgModule()
+    @NgModule({
     providers: [
       {
         provide: TRANSLATION_PATH,
@@ -83,8 +138,10 @@ describe('replace-translation-path-factories', () => {
         multi: true,
         deps: [AppStateService]
       },
-        provideHttpClient(withInterceptorsFromDi()),
-    ];`
+        provideHttpClient(withInterceptorsFromDi())
+    ]
+    })
+    class AppModule {};`
     )
     await replaceTranslationPathFactories(tree)
 
@@ -95,40 +152,14 @@ describe('replace-translation-path-factories', () => {
     import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
     import { AppStateService } from '@onecx/angular-integration-interface';
 
-    @NgModule()
+    @NgModule({ 
     providers: [
       provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/'),
-      provideHttpClient(withInterceptorsFromDi()),
-    ];
+      provideHttpClient(withInterceptorsFromDi())
+    ]
+    })
+    class AppModule {};
     `
     )
   })
-
-  it('should adjust webpack config for importMeta in module exports', async () => {
-    const filePath = 'src/webpack.config.js'
-    tree.write(
-      filePath,
-      `
-    module.exports = {
-        ...config,
-        plugins,
-        output: { uniqueName: 'onecx-app-ui', publicPath: 'auto' },
-    }`
-    )
-    await replaceTranslationPathFactories(tree)
-
-    const content = tree.read(filePath)?.toString()
-
-    expect(content).toEqualIgnoringWhitespace(`
-    module.exports = {
-        ...config,
-        plugins,
-        output: { uniqueName: 'onecx-app-ui', publicPath: 'auto' },
-        module: { parser: { javascript: { importMeta: false } } },
-    }
-    `
-    )
-  })
-
-
 })
