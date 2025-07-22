@@ -6,6 +6,7 @@ import { REMOTE_COMPONENT_CONFIG } from '../model/injection-tokens'
 import { ReplaySubject } from 'rxjs'
 import { RemoteComponentConfig } from '../model/remote-component-config.model'
 import { remoteComponentTranslationPathFactory } from '../utils/remote-component-translation-path-factory.utils'
+import { provideTranslationPathFromMeta } from './translation-path-from-meta.providers'
 
 const localProvider = {
   provide: LOCALE_ID,
@@ -15,28 +16,9 @@ const localProvider = {
   deps: [UserService],
 }
 
-export function provideTranslationPathsForMfe(): Provider[] {
+export function provideTranslationPaths(): Provider[] {
   return [
     localProvider,
-    {
-      provide: TRANSLATION_PATH,
-      useFactory: (appStateService: AppStateService) =>
-        translationPathFactory('onecx-angular-utils/assets/i18n/')(appStateService),
-      multi: true,
-      deps: [AppStateService],
-    },
-  ]
-}
-
-export function provideTranslationPathsForRemoteComponent(): Provider[] {
-  return [
-    localProvider,
-    {
-      provide: TRANSLATION_PATH,
-      useFactory: (remoteComponentConfig: ReplaySubject<RemoteComponentConfig>) =>
-        remoteComponentTranslationPathFactory('onecx-angular-utils/assets/i18n/')(remoteComponentConfig),
-      multi: true,
-      deps: [REMOTE_COMPONENT_CONFIG],
-    },
+    provideTranslationPathFromMeta(import.meta.url, 'onecx-angular-utils/assets/i18n/'),
   ]
 }
