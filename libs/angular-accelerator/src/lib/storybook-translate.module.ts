@@ -28,7 +28,7 @@ export function translateLoader(http: HttpClient) {
   providers: [
     provideAppStateServiceMock(),
     provideHttpClient(withInterceptorsFromDi()),
-    provideTranslationPathFromMeta(import.meta.url, '/assets/i18n/'),
+    provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/'),
   ],
 })
 export class StorybookTranslateModule {
