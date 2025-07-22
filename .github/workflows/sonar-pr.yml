@@ -17,9 +17,10 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download reports
-        uses: actions/download-artifact@v4
+        uses: dawidd6/action-download-artifact@v11
         with:
-          name: coverage-reports
+          run_id: ${{ github.event.workflow_run.id }}
+          name: github-action-pr
 
       - name: Find affected lib coverage directories
         id: set-matrix
