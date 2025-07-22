@@ -1,4 +1,4 @@
-name: test
+name: Test Affected Libs
 
 on:
   workflow_call:
