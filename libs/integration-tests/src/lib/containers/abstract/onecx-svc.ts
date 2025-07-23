@@ -62,7 +62,7 @@ export abstract class SvcContainer extends GenericContainer {
       this.validateDatabaseCredentials()
       await this.services.databaseContainer?.createUserAndDatabase(
         this.details.databaseUsername,
-        this.details.databaseUsername
+        this.details.databasePassword
       )
     }
     // Re-apply the default health check explicitly if it has not been overridden.

@@ -27,7 +27,8 @@
 
   <p-toast></p-toast>
 
-  <div class="menu-wrapper">
+  <!-- Vertical = Static - hidden on smaller screens or horizontal menu -->
+  <div id="ocx_vertical_menu_wrapper" class="menu-wrapper">
     <div class="layout-menu-container" *ngIf="isStaticalMenuVisible()">
       <ocx-inline-profile
         *ngIf="showProfileInSidebar"

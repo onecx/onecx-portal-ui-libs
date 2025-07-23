@@ -8,7 +8,7 @@ module.exports = {
     {
       name: 'v5',
       range: '5.x.x',
-      channel: false,
+      channel: 'v5-lts',
     },
     'main',
   ],

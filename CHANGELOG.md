@@ -1,3 +1,21 @@
+## [5.46.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.45.1...v5.46.0) (2025-07-21)
+
+### Features
+
+* change channel of v5 branch ([#840](https://github.com/onecx/onecx-portal-ui-libs/issues/840)) ([552b50a](https://github.com/onecx/onecx-portal-ui-libs/commit/552b50a271ec6d783e239253e590a35077f64f26))
+* use slots: shell-footer and shell-header-left ([#839](https://github.com/onecx/onecx-portal-ui-libs/issues/839)) ([8d6d88a](https://github.com/onecx/onecx-portal-ui-libs/commit/8d6d88a5a20cf1d0b42a4a0d7919492f7ac79351))
+
+### Bug Fixes
+
+* Fix v5 release ([b544fde](https://github.com/onecx/onecx-portal-ui-libs/commit/b544fde9df0d89abe693ac93ba7b4e000195f2b7))
+* pass correct password to createUserAndDatabase ([#832](https://github.com/onecx/onecx-portal-ui-libs/issues/832)) ([015d3c0](https://github.com/onecx/onecx-portal-ui-libs/commit/015d3c0f66f48f7f04ade2bce7ba1cea862644e5))
+
+## [5.45.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.45.0...v5.45.1) (2025-07-17)
+
+### Bug Fixes
+
+* improve topbar layout and re-set mobile breakpoint ([#817](https://github.com/onecx/onecx-portal-ui-libs/issues/817)) ([e9e82d0](https://github.com/onecx/onecx-portal-ui-libs/commit/e9e82d03ec0723dc58f5cdc7e8289bd8780ccc6b))
+
 ## [5.45.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.44.0...v5.45.0) (2025-07-15)
 
 ### Features
