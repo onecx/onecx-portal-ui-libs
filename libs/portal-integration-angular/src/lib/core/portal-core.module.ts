@@ -129,8 +129,8 @@ export class PortalMissingTranslationHandler implements MissingTranslationHandle
       },
       deps: [UserService],
     },
-    provideTranslationPathFromMeta(import.meta, 'onecx-portal-lib/assets/i18n/'),
-    provideTranslationPathFromMeta(import.meta, 'onecx-portal-lib/assets/i18n/primeng/'),
+    provideTranslationPathFromMeta(import.meta.url, 'onecx-portal-lib/assets/i18n/'),
+    provideTranslationPathFromMeta(import.meta.url, 'onecx-portal-lib/assets/i18n/primeng/'),
     {
       provide: MessageService,
       useClass: MessageService,
