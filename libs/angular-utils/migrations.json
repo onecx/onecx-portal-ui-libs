@@ -1,0 +1,16 @@
+{
+  "generators": {
+    "replace-translation-path-factories": {
+      "cli": "nx",
+      "version": "5.46.1",
+      "description": "Replaces deprecated translationPathFactory and remoteComponentTranslationPathFactory with provideTranslationPathFromMeta.",
+      "factory": "migrations/v5/replace-translation-path-factories"
+    },
+    "add-import-meta-to-webpack-config": {
+      "cli": "nx",
+      "version": "5.46.1",
+      "description": "Adds importMeta configuration to module.exports of the webpack config.",
+      "factory": "migrations/v5/add-import-meta-to-webpack-config"
+    }
+  }
+}

@@ -9,7 +9,11 @@
     "@ngx-translate/http-loader": "^8.0.0",
     "@onecx/accelerator": "^5.46.0",
     "@onecx/angular-integration-interface": "^5.46.0",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "@jest/globals": "29.7.0",
+    "jest-extended": "^6.0.0",
+    "@phenomnomnominal/tsquery": "^6",
+    "typescript": "^5.5.4"
   },
   "publishConfig": {
     "access": "public"
