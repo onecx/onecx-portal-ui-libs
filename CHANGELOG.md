@@ -1,3 +1,9 @@
+## [6.1.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0...v6.1.0) (2025-07-25)
+
+### Features
+
+* use shell-footer instead page-footer ([#848](https://github.com/onecx/onecx-portal-ui-libs/issues/848)) ([52eff52](https://github.com/onecx/onecx-portal-ui-libs/commit/52eff520ce625d924bcd0ae3580f87474dfd03c7))
+
 ## [6.0.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.999.0...v6.0.0) (2025-07-18)
 
 ### ⚠ BREAKING CHANGES
