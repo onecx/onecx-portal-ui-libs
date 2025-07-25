@@ -7,8 +7,8 @@ export function updateTranslationPathImports(tree: Tree, filePath: string, fileC
     const specifiers = ['TRANSLATION_PATH', 'remoteComponentTranslationPathFactory', 'translationPathFactory']
     for (const specifier of specifiers) {
         removeImportSpecifierFromImport(tree, filePath, '@onecx/angular-utils', specifier);
-        fileContent = tree.read(filePath, 'utf-8') ?? '';
     }
+    fileContent = tree.read(filePath, 'utf-8') ?? '';
 
     // Add provideTranslationPathFromMeta to imports if not present
     if (fileContent) {
