@@ -11,7 +11,7 @@
             dataType: 'logo',
             themeName: theme.name,
             imageUrl: theme.logoUrl,
-            imageStyleClass: 'max-h-3rem max-w-11rem',
+            imageStyleClass: 'max-h-3rem max-w-8rem',
             logEnabled: false,
             logPrefix: 'header left logo'
           }"
@@ -30,6 +30,7 @@
       tooltipEvent="hover"
     >
       <i
+        id="ocx_vertical_menu_action_toggle_icon"
         [ngClass]="{'toggle-button-direction': isStaticalMenu && (isComponentDefined$ | async) === true}"
         class="pi pi-chevron-right"
       ></i>

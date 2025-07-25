@@ -48,8 +48,19 @@
         </ng-container>
       </div>
 
-      <ocx-slot name="onecx-page-footer"></ocx-slot>
+      <ocx-slot
+        name="onecx-shell-footer"
+        class="onecx-shell-footer mx-3 py-2 flex flex-row flex-wrap align-items-center column-gap-3 row-gap-1 text-sm"
+        [inputs]="{ imageStyleClass: 'h-1rem vertical-align-middle' }"
+      >
+        <ng-template #skeleton>
+          <div class="flex align-items-center h-full justify-content-center" style="width: 26px">
+            <p-skeleton shape="circle" size="2rem" class="h-full flex align-items-center"></p-skeleton>
+          </div>
+        </ng-template>
+      </ocx-slot>
     </div>
+
     <div *ngIf="menuActive || !!activeTopbarItem" class="layout-mask modal-in"></div>
   </ng-container>
 
