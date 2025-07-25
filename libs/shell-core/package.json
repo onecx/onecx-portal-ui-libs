@@ -11,6 +11,7 @@
     "@ngneat/until-destroy": "^10.0.0",
     "@onecx/angular-integration-interface": "^6.0.0",
     "@onecx/angular-remote-components": "^6.0.0",
+    "@onecx/angular-utils": "^6.0.0",
     "@ngx-translate/core": "^16.0.0",
     "primeng": "^19.0.0",
     "@nx/devkit": "^20.3.0",
