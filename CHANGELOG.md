@@ -1,3 +1,25 @@
+## [6.1.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0...v6.1.0) (2025-07-25)
+
+### Features
+
+* use shell-footer instead page-footer ([#848](https://github.com/onecx/onecx-portal-ui-libs/issues/848)) ([52eff52](https://github.com/onecx/onecx-portal-ui-libs/commit/52eff520ce625d924bcd0ae3580f87474dfd03c7))
+
+## [6.0.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.999.0...v6.0.0) (2025-07-18)
+
+### ⚠ BREAKING CHANGES
+
+* merge libs v6 to main (#778)
+
+### Features
+
+* merge libs v6 to main ([#778](https://github.com/onecx/onecx-portal-ui-libs/issues/778)) ([396bca4](https://github.com/onecx/onecx-portal-ui-libs/commit/396bca4371192ea65c478121ce287efe03e0a2b1)), closes [#649](https://github.com/onecx/onecx-portal-ui-libs/issues/649) [#651](https://github.com/onecx/onecx-portal-ui-libs/issues/651) [#652](https://github.com/onecx/onecx-portal-ui-libs/issues/652) [#639](https://github.com/onecx/onecx-portal-ui-libs/issues/639) [#642](https://github.com/onecx/onecx-portal-ui-libs/issues/642)
+
+### Chores
+
+* **deps-dev:** bump @swc/cli from 0.7.7 to 0.7.8 ([#835](https://github.com/onecx/onecx-portal-ui-libs/issues/835)) ([63018d2](https://github.com/onecx/onecx-portal-ui-libs/commit/63018d28a6e02659ce238fba42eeb6033a05c783))
+* **deps-dev:** bump @swc/core from 1.7.42 to 1.12.14 ([#837](https://github.com/onecx/onecx-portal-ui-libs/issues/837)) ([6ef5e18](https://github.com/onecx/onecx-portal-ui-libs/commit/6ef5e18433e9a9743aa15fa17fb5f954aa157bd3))
+* **deps-dev:** bump @types/node from 22.7.9 to 24.0.14 ([#834](https://github.com/onecx/onecx-portal-ui-libs/issues/834)) ([0be9b8b](https://github.com/onecx/onecx-portal-ui-libs/commit/0be9b8b692688b0aaec49ceab52f119e590ff31e))
+
 ## [5.43.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.42.0...v5.43.0) (2025-06-16)
 
 ### Features
