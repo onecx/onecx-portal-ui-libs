@@ -1,4 +1,4 @@
-.layout-topbar-items>* {
+.layout-topbar-items > * {
   margin: auto;
 }
 
@@ -34,7 +34,7 @@ $menuWrapperWidth: 17rem;
   list-style-type: none;
 }
 
-.layout-topbar_flex  {
+.layout-topbar_flex {
   position: fixed;
   top: 0;
   left: 0;
@@ -53,8 +53,7 @@ $menuWrapperWidth: 17rem;
   }
 
   .layout-topbar-left {
-    min-width: 10rem;
-    /* padding-right: 1.25rem; */
+    width: 10rem;
 
     &.vertical-menu {
       flex: 0 0 $menuWrapperWidth;
@@ -95,7 +94,6 @@ $menuWrapperWidth: 17rem;
     align-items: center;
     justify-content: space-between;
     row-gap: 0;
-    margin-left: 1.5rem; /* distance to chevron switcher */
     padding-left: 1.25rem;
     height: 100%;
     min-width: 0;
@@ -107,7 +105,7 @@ $menuWrapperWidth: 17rem;
       height: 100%;
       min-width: 0;
 
-      .layout-menubar .p-menubar-root-list>.p-menuitem {
+      .layout-menubar .p-menubar-root-list > .p-menuitem {
         .p-menuitem-text {
           white-space: nowrap;
         }
@@ -236,7 +234,7 @@ $menuWrapperWidth: 17rem;
 }
 
 @media (max-width: var(--mobile-break-point)) {
-  .layout-topbar_flex  {
+  .layout-topbar_flex {
     .layout-topbar-left {
       flex-shrink: 1;
     }
@@ -246,13 +244,6 @@ $menuWrapperWidth: 17rem;
 
       .layout-topbar-actions-right_flex {
         padding-right: 0.25rem;
-
-        .layout-topbar-items .layout-topbar-item .layout-topbar-action-panel {
-          position: fixed;
-          min-width: 100vw;
-          max-width: 100vw;
-          width: 100vw;
-        }
       }
     }
   }
@@ -276,10 +267,9 @@ $menuWrapperWidth: 17rem;
         background: none;
         border: none;
 
-        &.p-menubar .p-menubar-root-list>.p-menuitem {
-          >.p-menuitem-content {
+        &.p-menubar .p-menubar-root-list > .p-menuitem {
+          > .p-menuitem-content {
             .p-menuitem-link {
-
               .p-menuitem-text,
               .p-menuitem-icon,
               .p-submenu-icon {
@@ -294,9 +284,8 @@ $menuWrapperWidth: 17rem;
           }
         }
 
-        &.p-menubar .p-menubar-root-list>.p-menuitem {
-          >.p-menuitem-link {
-
+        &.p-menubar .p-menubar-root-list > .p-menuitem {
+          > .p-menuitem-link {
             .p-menuitem-text,
             .p-menuitem-icon,
             .p-submenu-icon {
