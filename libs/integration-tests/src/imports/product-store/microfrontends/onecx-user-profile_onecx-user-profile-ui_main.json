@@ -1,0 +1,15 @@
+{
+    "appVersion": "xxx",
+    "appName": "onecx-user-profile-ui",
+    "description": "onecx-user-profile-ui",
+    "remoteBaseUrl": "/mfe/user-profile/",
+    "remoteEntry": "/mfe/user-profile/remoteEntry.js",
+    "note": "Imported MFE",
+    "exposedModule": "./OneCXUserProfileModule",
+    "technology": "WEBCOMPONENTMODULE",
+    "remoteName": "onecx-user-profile",
+    "tagName": "ocx-user-profile-component",
+    "type": "MODULE",
+    "deprecated": false,
+    "undeployed": false
+}

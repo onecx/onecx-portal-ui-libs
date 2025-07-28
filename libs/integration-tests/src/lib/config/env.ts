@@ -1,6 +1,7 @@
 const DOCKER_REPO = 'ghcr.io/onecx'
 export const POSTGRES = 'docker.io/library/postgres:13.4'
 export const KEYCLOAK = 'quay.io/keycloak/keycloak:23.0.4'
+export const NODE_20 = 'docker.io/library/node:20'
 
 export const onecxSvcImages = {
   ONECX_IAM_KC_SVC: `${DOCKER_REPO}/onecx-iam-kc-svc:main-native`,
@@ -12,7 +13,7 @@ export const onecxSvcImages = {
   ONECX_USER_PROFILE_SVC: `${DOCKER_REPO}/onecx-user-profile-svc:main-native`,
 }
 
-export const onecxShellUiImages = {
+export const onecxShellImages = {
   ONECX_SHELL_BFF: `${DOCKER_REPO}/onecx-shell-bff:main-native`,
   ONECX_SHELL_UI: `${DOCKER_REPO}/onecx-shell-ui:1.x`,
 }

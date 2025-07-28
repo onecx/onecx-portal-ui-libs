@@ -4,19 +4,21 @@ import { OnecxKeycloakContainer, StartedOnecxKeycloakContainer } from '../../con
 import { OnecxPostgresContainer, StartedOnecxPostgresContainer } from '../../containers/core/onecx-postgres'
 import { ThemeSvcContainer, StartedThemeSvcContainer } from '../../containers/svc/onecx-theme-svc'
 import axios from 'axios'
+
 xdescribe('Default workspace-svc Testcontainer', () => {
   let pgContainer: StartedOnecxPostgresContainer
   let kcContainer: StartedOnecxKeycloakContainer
   let themeSvcContainer: StartedThemeSvcContainer
+  let network: StartedNetwork
 
   beforeAll(async () => {
-    const network: StartedNetwork = await new Network().start()
+    network = await new Network().start()
     pgContainer = await new OnecxPostgresContainer(POSTGRES).withNetwork(network).start()
     kcContainer = await new OnecxKeycloakContainer(KEYCLOAK, pgContainer).withNetwork(network).start()
     themeSvcContainer = await new ThemeSvcContainer(onecxSvcImages.ONECX_THEME_SVC, pgContainer, kcContainer)
       .withNetwork(network)
       .start()
-  })
+  }, 120_000)
 
   it('database should be created', async () => {
     await expect(pgContainer.doesDatabaseExist('onecx_theme')).resolves.not.toBeTruthy()
@@ -39,5 +41,6 @@ xdescribe('Default workspace-svc Testcontainer', () => {
     await themeSvcContainer.stop()
     await kcContainer.stop()
     await pgContainer.stop()
+    await network.stop()
   })
 })

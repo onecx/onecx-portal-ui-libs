@@ -1,0 +1,15 @@
+{
+    "appVersion": "xxx",
+    "appName": "onecx-theme-ui",
+    "description": "onecx-theme-ui",
+    "remoteBaseUrl": "/mfe/theme/",
+    "remoteEntry": "/mfe/theme/remoteEntry.js",
+    "note": "Imported MFE",
+    "exposedModule": "./OneCXThemeModule",
+    "technology": "WEBCOMPONENTMODULE",
+    "remoteName": "onecx-theme",
+    "tagName": "ocx-theme-component",
+    "type": "MODULE",
+    "deprecated": false,
+    "undeployed": false
+}

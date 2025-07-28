@@ -1,0 +1,8 @@
+{
+    "name": "onecx-iam-bff",
+    "permissions": [
+        {"resource": "role", "action": "read"},
+        {"resource": "user", "action": "read"},
+        {"resource": "user", "action": "write"}
+    ]
+}

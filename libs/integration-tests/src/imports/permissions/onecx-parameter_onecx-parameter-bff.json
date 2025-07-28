@@ -1,0 +1,9 @@
+{
+    "name": "onecx-parameter-bff",
+    "permissions": [
+        {"resource": "parameter", "action": "delete"},
+        {"resource": "parameter", "action": "read"},
+        {"resource": "parameter", "action": "write"},
+        {"resource": "product", "action": "read"}
+    ]
+}

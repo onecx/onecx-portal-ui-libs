@@ -54,7 +54,7 @@ export abstract class BffContainer extends GenericContainer {
 
     this.withEnvironment({
       ...this.environment,
-      ONECX_PERMISSIONS_PROCUCT_NAME: this.details.permissionsProductName,
+      ONECX_PERMISSIONS_PRODUCT_NAME: this.details.permissionsProductName,
       KC_REALM: `${this.keycloakContainer.getRealm()}`,
       QUARKUS_OIDC_AUTH_SERVER_URL: `http://${this.keycloakContainer.getNetworkAliases()[0]}:${this.keycloakContainer.getPort()}/realms/${this.keycloakContainer.getRealm()}`,
       QUARKUS_OIDC_TOKEN_ISSUER: `http://${this.keycloakContainer.getNetworkAliases()[0]}/realms/${this.keycloakContainer.getRealm()}`,

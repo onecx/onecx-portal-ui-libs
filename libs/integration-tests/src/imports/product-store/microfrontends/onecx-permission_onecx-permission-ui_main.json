@@ -1,0 +1,15 @@
+{
+    "appVersion": "xxx",
+    "appName": "onecx-permission-ui",
+    "description": "onecx-permission-ui",
+    "remoteBaseUrl": "/mfe/permission/",
+    "remoteEntry": "/mfe/permission/remoteEntry.js",
+    "note": "Imported MFE",
+    "exposedModule": "./OneCXPermissionModule",
+    "technology": "WEBCOMPONENTMODULE",
+    "remoteName": "onecx-permission",
+    "tagName": "ocx-permission-component",
+    "type": "MODULE",
+    "deprecated": false,
+    "undeployed": false
+}

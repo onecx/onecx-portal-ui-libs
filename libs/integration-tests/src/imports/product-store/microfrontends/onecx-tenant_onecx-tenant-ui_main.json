@@ -1,0 +1,15 @@
+{
+    "appVersion": "xxx",
+    "appName": "onecx-tenant-ui",
+    "description": "onecx-tenant-ui",
+    "remoteBaseUrl": "/mfe/tenant/",
+    "remoteEntry": "/mfe/tenant/remoteEntry.js",
+    "note": "Imported MFE",
+    "exposedModule": "./OneCXTenantModule",
+    "technology": "WEBCOMPONENTMODULE",
+    "remoteName": "onecx-tenant",
+    "tagName": "ocx-tenant-component",
+    "type": "MODULE",
+    "deprecated": false,
+    "undeployed": false
+}
