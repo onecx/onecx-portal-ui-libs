@@ -1,0 +1,8 @@
+:host ::ng-deep {
+  /* the 2nd child (the menu) should fill the rest of space */
+  .onecx-shell-footer {
+    div:nth-child(2) {
+      flex-grow: 1;
+    }
+  }
+}

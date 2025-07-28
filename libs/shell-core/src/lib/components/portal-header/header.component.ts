@@ -1,10 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core'
 import { animate, style, transition, trigger } from '@angular/animations'
 import { UntilDestroy } from '@ngneat/until-destroy'
-import { Observable } from 'rxjs'
-
-import { SlotService } from '@onecx/angular-remote-components'
-import { Theme, ThemeService } from '@onecx/angular-integration-interface'
 
 @Component({
   selector: 'ocx-shell-header',
@@ -27,22 +23,13 @@ export class HeaderComponent {
   @Input() homeNavUrl = '/'
   @Input() homeNavTitle = 'Home'
   @Input() isHorizontalMenu = false
+  @Input() isStaticMenuVisible = false
   @Output() menuButtonClick: EventEmitter<any> = new EventEmitter()
 
-  menuExpanded = false
-  // slot configuration: get theme logo
-  public slotName = 'onecx-theme-data'
-  public isComponentDefined$: Observable<boolean> // check a component was assigned
-  public currentTheme$: Observable<Theme>
   public logoLoadingEmitter = new EventEmitter<boolean>()
   public themeLogoLoadingFailed = false
 
-  constructor(
-    private readonly themeService: ThemeService,
-    private readonly slotService: SlotService
-  ) {
-    this.isComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.slotName)
-    this.currentTheme$ = this.themeService.currentTheme$.asObservable()
+  constructor() {
     this.logoLoadingEmitter.subscribe((data: boolean) => {
       this.themeLogoLoadingFailed = data
     })
