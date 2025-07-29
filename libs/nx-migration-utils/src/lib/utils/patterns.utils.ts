@@ -37,3 +37,13 @@ export function importNamespacePattern(importPath: string) {
 export function importNamedImportsPattern(importPath: string) {
   return `${importPattern(importPath)} NamedImports`
 }
+
+/**
+ * Creates a pattern to look for import specifier.
+ * @param importPath - import path to look for
+ * @param specifier - specifier to look for, e.g., "MyClass"
+ * @returns {string} ast query pattern
+ */
+export function importSpecifierPattern(importPath: string, specifier: string): string {
+  return `ImportDeclaration:has(StringLiteral[value=${importPath}]):has(ImportSpecifier:has(Identifier[name=${specifier}]))`
+}

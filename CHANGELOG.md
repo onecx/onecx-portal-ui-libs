@@ -1,3 +1,44 @@
+## [6.0.0-rc.20](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.19...v6.0.0-rc.20) (2025-07-17)
+
+### Features
+
+* add option to disable portal layout styles ([#771](https://github.com/onecx/onecx-portal-ui-libs/issues/771)) ([#824](https://github.com/onecx/onecx-portal-ui-libs/issues/824)) ([a9e8fca](https://github.com/onecx/onecx-portal-ui-libs/commit/a9e8fca67511ddcd1a0ddf57b74ae11194c9ba55))
+* add release-with-migrations executor ([#716](https://github.com/onecx/onecx-portal-ui-libs/issues/716)) ([#819](https://github.com/onecx/onecx-portal-ui-libs/issues/819)) ([87b91ff](https://github.com/onecx/onecx-portal-ui-libs/commit/87b91ff1c671da067058acf36197e2d1eaf5d42d))
+* add toast handling to standalone shell ([#766](https://github.com/onecx/onecx-portal-ui-libs/issues/766)) ([#822](https://github.com/onecx/onecx-portal-ui-libs/issues/822)) ([85eae59](https://github.com/onecx/onecx-portal-ui-libs/commit/85eae59f5ae3c90b32dd2b17631aac51f114e105))
+
+### Bug Fixes
+
+* compare row by id instead so that checkbox is visually checked too ([#785](https://github.com/onecx/onecx-portal-ui-libs/issues/785)) ([#827](https://github.com/onecx/onecx-portal-ui-libs/issues/827)) ([9f18f2e](https://github.com/onecx/onecx-portal-ui-libs/commit/9f18f2e19c12826ce2b257f39471a6f0915b6144))
+* configuratio service topic type ([#710](https://github.com/onecx/onecx-portal-ui-libs/issues/710)) ([#818](https://github.com/onecx/onecx-portal-ui-libs/issues/818)) ([4f6c818](https://github.com/onecx/onecx-portal-ui-libs/commit/4f6c81830d6eddbebc83cb230100e1b149fb7859))
+* increase interactive data view tests timeout ([#784](https://github.com/onecx/onecx-portal-ui-libs/issues/784)) ([#826](https://github.com/onecx/onecx-portal-ui-libs/issues/826)) ([63bf51e](https://github.com/onecx/onecx-portal-ui-libs/commit/63bf51e0af2f7c1821fead59597dc5bab0513e8d))
+* rename title and subtitle to header and subheader ([#775](https://github.com/onecx/onecx-portal-ui-libs/issues/775)) ([#825](https://github.com/onecx/onecx-portal-ui-libs/issues/825)) ([7962033](https://github.com/onecx/onecx-portal-ui-libs/commit/796203345767aa074eb52e0206ddd5a0ad72fe3b))
+* toast message word breaks ([#740](https://github.com/onecx/onecx-portal-ui-libs/issues/740)) ([#820](https://github.com/onecx/onecx-portal-ui-libs/issues/820)) ([8f40d95](https://github.com/onecx/onecx-portal-ui-libs/commit/8f40d95301675032ad3d3c4e61bfe31be082c166))
+* translation path providing for angular utils ([#765](https://github.com/onecx/onecx-portal-ui-libs/issues/765)) ([#823](https://github.com/onecx/onecx-portal-ui-libs/issues/823)) ([7892567](https://github.com/onecx/onecx-portal-ui-libs/commit/7892567be202503bf47ae0fd02bc2837b8a560e2))
+
+## [6.0.0-rc.19](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.18...v6.0.0-rc.19) (2025-07-15)
+
+### Features
+
+* migrations for removed angular-intergation-interface content ([#810](https://github.com/onecx/onecx-portal-ui-libs/issues/810)) ([72ef247](https://github.com/onecx/onecx-portal-ui-libs/commit/72ef2479a8a24d368a8c0d3ef814d33d07f6bcbc))
+* migrations for removed ngrx-accelerator functions ([#801](https://github.com/onecx/onecx-portal-ui-libs/issues/801)) ([96236fd](https://github.com/onecx/onecx-portal-ui-libs/commit/96236fd6474aec70be3127b80e62511abecf1ced))
+* normalize keys utils for themes ([#808](https://github.com/onecx/onecx-portal-ui-libs/issues/808)) ([445b4f0](https://github.com/onecx/onecx-portal-ui-libs/commit/445b4f0eb7e9c4b9fe0ee2f3c36efc0bcf7e17c2))
+
+### Bug Fixes
+
+* topic publish await v5 ([#815](https://github.com/onecx/onecx-portal-ui-libs/issues/815)) ([#816](https://github.com/onecx/onecx-portal-ui-libs/issues/816)) ([719d153](https://github.com/onecx/onecx-portal-ui-libs/commit/719d15355e590f59afe2f3eaf313fb6c767182dd))
+
+## [6.0.0-rc.18](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.17...v6.0.0-rc.18) (2025-07-09)
+
+### Features
+
+* deprecate unused data from the UserProfileTopic ([#783](https://github.com/onecx/onecx-portal-ui-libs/issues/783)) ([#806](https://github.com/onecx/onecx-portal-ui-libs/issues/806)) ([58f4470](https://github.com/onecx/onecx-portal-ui-libs/commit/58f447060096034f71e5eac85adeeb8b7fae82c6)), closes [#782](https://github.com/onecx/onecx-portal-ui-libs/issues/782) [#784](https://github.com/onecx/onecx-portal-ui-libs/issues/784) [#779](https://github.com/onecx/onecx-portal-ui-libs/issues/779)
+* remove deprecated code ([#795](https://github.com/onecx/onecx-portal-ui-libs/issues/795)) ([fc1ab7f](https://github.com/onecx/onecx-portal-ui-libs/commit/fc1ab7fe7f6885c242eca75c059264deef8eb5e8))
+* update primeflex version, fix storybook dark mode styles ([#800](https://github.com/onecx/onecx-portal-ui-libs/issues/800)) ([88c8860](https://github.com/onecx/onecx-portal-ui-libs/commit/88c88604fa610c84e3af60085e3e40eea929cab6))
+
+### Bug Fixes
+
+* provide message service in shell core ([#807](https://github.com/onecx/onecx-portal-ui-libs/issues/807)) ([c5dc56f](https://github.com/onecx/onecx-portal-ui-libs/commit/c5dc56f1237974a4b005abe6f5ad35f011321d8b))
+
 ## [6.0.0-rc.17](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0-rc.16...v6.0.0-rc.17) (2025-06-30)
 
 ### Bug Fixes

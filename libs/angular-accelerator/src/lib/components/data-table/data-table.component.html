@@ -109,6 +109,8 @@
   [rowsPerPageOptions]="this.pageSizes ?? []"
   id="dataTable_{{name}}"
   (selectionChange)="onSelectionChange($event)"
+  dataKey="id"
+  [rowTrackBy]="rowTrackByFunction"
   [selection]="(selectedRows$ | async) ?? []"
   [scrollable]="true"
   scrollHeight="flex"

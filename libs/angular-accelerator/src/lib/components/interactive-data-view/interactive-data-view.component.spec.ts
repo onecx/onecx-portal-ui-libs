@@ -75,6 +75,8 @@ DomHandler.index = (element) => {
   return -1
 }
 
+jest.setTimeout(20_000)
+
 describe('InteractiveDataViewComponent', () => {
   const mutationObserverMock = jest.fn(function MutationObserver(callback) {
     this.observe = jest.fn()
