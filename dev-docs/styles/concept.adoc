@@ -33,9 +33,11 @@ As already mentioned, each application has to take care of its own styles since 
 
 The `styles.css` file has to be exposed by the application on the remote URL level. As an example, if the remote URL of the Microfrontend is `localhost:4200/deploymentUrl`, the style sheet has to be exposed on the `localhost:4200/deploymentUrl/styles.css` URL.
 
-It's recommended to do the following modification to the `angular.json` or `project.json` file to ensure it's exposed correctly (where input is a path to the application styles):
+[#nx-application-styles]
+==== NX Application Styles
+It's recommended to do the following modification to the `project.json` file to ensure it's exposed correctly (where input is a path to the application styles):
 
-.angular.json/project.json modification
+.project.json modification
 [source,json]
 ----
 {
@@ -47,6 +49,22 @@ It's recommended to do the following modification to the `angular.json` or `proj
             "inject": true
         }
     ],
+    ...
+}
+----
+
+[#angular-cli-application-styles]
+==== Angular CLI Application Styles
+It's recommended to do the following modification to the `package.json` file to ensure it's exposed correctly (where *my-project-name* should be the name of the modified project):
+
+.angular.json modification
+[source,json]
+----
+{
+    ...
+    "scripts": {
+        "postbuild": "mv \"$(find dist/my-project-name -maxdepth 1 -type f -name 'styles.*.css' | head -n 1)\" dist/my-project-name/styles.css",
+    }
     ...
 }
 ----
