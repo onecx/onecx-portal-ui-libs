@@ -1,3 +1,9 @@
+## [5.47.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.46.1...v5.47.0) (2025-07-29)
+
+### Features
+
+* adapt translation loading ([#831](https://github.com/onecx/onecx-portal-ui-libs/issues/831)) ([021b199](https://github.com/onecx/onecx-portal-ui-libs/commit/021b19970684a3431ae80a2f85432a69277aa997))
+
 ## [5.46.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.46.0...v5.46.1) (2025-07-28)
 
 ### Bug Fixes
