@@ -63,7 +63,9 @@ export class GuardsGatherer {
     // Fake navigation to request guard check
     this.router.navigateByUrl(routeUrl, {
       state: { [GUARD_CHECK.ACTIVATE]: true },
-      // Force navigation
+      // Important, force navigation
+      // to ensure that we are checking guards
+      // even if the route is already active.
       onSameUrlNavigation: 'reload',
     })
 
@@ -83,7 +85,9 @@ export class GuardsGatherer {
     // Fake navigation to request guard check
     this.router.navigateByUrl(routeUrl, {
       state: { [GUARD_CHECK.DEACTIVATE]: true },
-      // Force navigation
+      // Important, force navigation
+      // to ensure that we are checking guards
+      // even if the route is already active.
       onSameUrlNavigation: 'reload',
     })
 

@@ -88,6 +88,10 @@ export class ActivateGuardsWrapper extends GuardsWrapper {
       return this.guardsGatherer
         .gatherActivate({ url: this.getUrlFromSnapshot(route) })
         .then((results) => Array.isArray(results) && this.combineToBoolean(results))
+        .then((result) => {
+          console.log('Scattered activate guard result:', result)
+          return result
+        })
     })
   }
 
