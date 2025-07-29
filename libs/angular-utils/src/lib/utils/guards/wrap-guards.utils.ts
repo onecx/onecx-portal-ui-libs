@@ -8,6 +8,8 @@ export function wrapGuards(route: Route) {
   wrapActivateGuards(route)
   wrapDeactivateGuards(route)
 
+  // Important, this will ensure that guards are always run
+  // even if the route is already active.
   forceGuardRun(route)
 }
 
@@ -47,6 +49,9 @@ function wrapDeactivateGuards(route: Route): void {
   route.canDeactivate = [createDeactivateWrapper(route.canDeactivate ?? [])]
 }
 
+/**
+ * Force the route to always run guards and resolvers.
+ */
 function forceGuardRun(route: Route) {
   route.runGuardsAndResolvers = 'always'
 }

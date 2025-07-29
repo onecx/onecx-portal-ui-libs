@@ -1,6 +1,7 @@
 import { createCustomElement } from '@angular/elements'
 import { createApplication, platformBrowser } from '@angular/platform-browser'
 import {
+  Component,
   EnvironmentProviders,
   Injector,
   NgModuleRef,
@@ -128,6 +129,12 @@ function createEntrypoint(
   customElements.define(elementName, myRemoteComponentAsWebComponent)
 }
 
+@Component({
+  selector: 'app-dummy',
+  template: '',
+})
+class DummyComponent {}
+
 function adaptRemoteComponentRoutes(injector: Injector) {
   const router = injector.get(Router)
 
@@ -142,6 +149,15 @@ function adaptRemoteComponentRoutes(injector: Injector) {
         children: [],
       })
     )
+  }
+
+  makeDummyRouteActivatable(router)
+}
+
+function makeDummyRouteActivatable(router: Router) {
+  const dummyRoute = router.config.find((val) => val.path === '**')
+  if (dummyRoute && dummyRoute.children?.length === 0) {
+    dummyRoute.children = [{ path: '', component: DummyComponent }]
   }
 }
 

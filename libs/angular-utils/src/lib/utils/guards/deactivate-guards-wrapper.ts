@@ -39,6 +39,7 @@ export class DeactivateGuardsWrapper extends GuardsWrapper {
     }
 
     if (GUARD_CHECK.DEACTIVATE in navigationState && navigationState[GUARD_CHECK.DEACTIVATE]) {
+      console.log('Deactivate check requested, will perform deactivate guards checks and resend the response.')
       const myGuardsResult = this.executeDeactivateGuards(
         component,
         currentRoute,
@@ -49,7 +50,8 @@ export class DeactivateGuardsWrapper extends GuardsWrapper {
       )
 
       return myGuardsResult.then((result) => {
-        const routeUrl = this.getUrlFromSnapshot(currentRoute)
+        console.log('Deactivate guards result:', result)
+        const routeUrl = currentState.url
         this.guardsGatherer.resolveRouteDeactivate(routeUrl, result)
 
         // Important to return false so navigation does not happen
@@ -118,8 +120,12 @@ export class DeactivateGuardsWrapper extends GuardsWrapper {
 
       console.log('Will gather deactivate from others for route', currentRoute)
       return this.guardsGatherer
-        .gatherDeactivate({ url: this.getUrlFromSnapshot(currentRoute) })
+        .gatherDeactivate({ url: currentState.url })
         .then((results) => Array.isArray(results) && this.combineToBoolean(results))
+        .then((result) => {
+          console.log('Scattered deactivate guard result:', result)
+          return result
+        })
     })
   }
 
