@@ -13,6 +13,7 @@ import { ShellSrcDirective } from './directives/src.directive'
 import { TranslateModule } from '@ngx-translate/core'
 import { TooltipModule } from 'primeng/tooltip'
 import { MessageService } from 'primeng/api'
+import { provideTranslationPathFromMeta } from '@onecx/angular-utils'
 
 @NgModule({
   imports: [
@@ -39,6 +40,10 @@ import { MessageService } from 'primeng/api'
     TooltipModule,
     TranslateModule,
   ],
-  providers: [providePrimeNG(), { provide: MessageService, useClass: MessageService }],
+  providers: [
+    providePrimeNG(), 
+    { provide: MessageService, useClass: MessageService }, 
+    provideTranslationPathFromMeta(import.meta.url, 'onecx-shell-core/assets/i18n/'),
+  ],
 })
 export class ShellCoreModule {}

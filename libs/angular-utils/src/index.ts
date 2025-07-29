@@ -26,6 +26,7 @@ export * from './lib/services/theme-config.service'
 export * from './lib/services/custom-use-style.service'
 export * from './lib/services/permission.service'
 export * from './lib/services/translation-connection.service'
+export * from './lib/providers/translation-path-from-meta.providers'
 
 // Theme
 export * from './lib/theme/application-config'
