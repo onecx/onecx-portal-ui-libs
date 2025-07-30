@@ -6,9 +6,8 @@ import { Location } from "@angular/common"
  * @deprecated Please use provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/') instead of
  *  {
       provide: TRANSLATION_PATH,
-      useFactory: (appStateService: AppStateService) => translationPathFactory('assets/i18n/')(appStateService),
-      multi: true,
-      deps: [AppStateService]
+      useFactory: ... => translationPathFactory('assets/i18n/')...,
+      ...
     }
     to provide the translation path.
  */
