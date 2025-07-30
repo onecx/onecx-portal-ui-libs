@@ -1,9 +1,11 @@
-import { POSTGRES, KEYCLOAK, onecxSvcImages } from '../../config/env'
+import { POSTGRES, KEYCLOAK, onecxSvcImages, OnecxServiceImage } from '../../config/env'
 import { Network, StartedNetwork } from 'testcontainers'
 import { OnecxKeycloakContainer, StartedOnecxKeycloakContainer } from '../../containers/core/onecx-keycloak'
 import { OnecxPostgresContainer, StartedOnecxPostgresContainer } from '../../containers/core/onecx-postgres'
 import { ThemeSvcContainer, StartedThemeSvcContainer } from '../../containers/svc/onecx-theme-svc'
 import axios from 'axios'
+
+jest.setTimeout(60_000)
 
 xdescribe('Default workspace-svc Testcontainer', () => {
   let pgContainer: StartedOnecxPostgresContainer
@@ -15,7 +17,11 @@ xdescribe('Default workspace-svc Testcontainer', () => {
     network = await new Network().start()
     pgContainer = await new OnecxPostgresContainer(POSTGRES).withNetwork(network).start()
     kcContainer = await new OnecxKeycloakContainer(KEYCLOAK, pgContainer).withNetwork(network).start()
-    themeSvcContainer = await new ThemeSvcContainer(onecxSvcImages.ONECX_THEME_SVC, pgContainer, kcContainer)
+    themeSvcContainer = await new ThemeSvcContainer(
+      onecxSvcImages[OnecxServiceImage.ONECX_THEME_SVC],
+      pgContainer,
+      kcContainer
+    )
       .withNetwork(network)
       .start()
   }, 120_000)

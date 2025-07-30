@@ -1,4 +1,4 @@
-import { PlatformManager } from './platform-manager'
+import { PlatformManager } from './platform/platform-manager'
 
 async function runAllContainers() {
   const manager = new PlatformManager()
@@ -25,12 +25,16 @@ async function runAllContainers() {
 
   try {
     console.log('Starting all Containers...')
-    const startPromise = manager.startAllServices()
+    const startTime = Date.now()
+
+    const startPromise = manager.startServices()
     const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Container startup timed out')))
+      setTimeout(() => reject(new Error('Container startup timed out after 3 minutes')), 300_000)
     )
     await Promise.race([startPromise, timeoutPromise])
-    console.log('All Containers were started.')
+
+    const duration = (Date.now() - startTime) / 1000
+    console.log(`All Containers were started successfully in ${duration.toFixed(1)} seconds.`)
 
     // Heartbeat
     setInterval(async () => {

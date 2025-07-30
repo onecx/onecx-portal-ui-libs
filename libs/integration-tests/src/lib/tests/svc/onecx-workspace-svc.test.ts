@@ -1,4 +1,4 @@
-import { POSTGRES, KEYCLOAK, onecxSvcImages } from '../../config/env'
+import { POSTGRES, KEYCLOAK, onecxSvcImages, OnecxServiceImage } from '../../config/env'
 import { Network, StartedNetwork } from 'testcontainers'
 import { OnecxKeycloakContainer, StartedOnecxKeycloakContainer } from '../../containers/core/onecx-keycloak'
 import { OnecxPostgresContainer, StartedOnecxPostgresContainer } from '../../containers/core/onecx-postgres'
@@ -16,7 +16,7 @@ xdescribe('Default workspace-svc Testcontainer', () => {
     pgContainer = await new OnecxPostgresContainer(POSTGRES).withNetwork(network).start()
     kcContainer = await new OnecxKeycloakContainer(KEYCLOAK, pgContainer).withNetwork(network).start()
     workspaceSvcContainer = await new WorkspaceSvcContainer(
-      onecxSvcImages.ONECX_WORKSPACE_SVC,
+      onecxSvcImages[OnecxServiceImage.ONECX_WORKSPACE_SVC],
       pgContainer,
       kcContainer
     )

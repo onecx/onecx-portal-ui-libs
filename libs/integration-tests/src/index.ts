@@ -1,0 +1,13 @@
+// Main API exports
+export { PlatformManager } from './lib/platform/platform-manager'
+
+// Configuration exports
+export { PlatformConfig } from './lib/model/platform-config.interface'
+export { DEFAULT_PLATFORM_CONFIG, MINIMAL_PLATFORM_CONFIG, BACKEND_ONLY_CONFIG } from './lib/config/platform-config'
+
+// Container types and enums
+export { CONTAINER } from './lib/model/container.enum'
+export type { AllowedContainerTypes } from './lib/model/allowed-container.types'
+
+// Utility exports
+export { HealthChecker, HealthCheckResult } from './lib/platform/health-checker'
