@@ -3,7 +3,14 @@ import { Location } from '@angular/common'
 import { RemoteComponentConfig } from '../model/remote-component-config.model'
 
 /**
- * @deprecated Use provideTranslationPathFromMeta instead for translation path providers.
+ * @deprecated Please use provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/') instead of
+ *  {
+      provide: TRANSLATION_PATH,
+      useFactory: ... =>
+        remoteComponentTranslationPathFactory('assets/i18n/')...,
+      ...
+    }
+    to provide the translation path.
  */
 export function remoteComponentTranslationPathFactory(path: string) {
   return function TranslationPathFactory(
