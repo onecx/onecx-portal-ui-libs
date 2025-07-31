@@ -1,6 +1,7 @@
 import { createCustomElement } from '@angular/elements'
 import { createApplication, platformBrowser } from '@angular/platform-browser'
 import {
+  Component,
   EnvironmentProviders,
   Injector,
   NgModuleRef,
@@ -19,7 +20,7 @@ import { EventsTopic, CurrentLocationTopicPayload, TopicEventType } from '@onecx
 import { Observable, Subscription, filter } from 'rxjs'
 import { ShellCapabilityService, Capability } from '@onecx/angular-integration-interface'
 import { AppStateService } from '@onecx/angular-integration-interface'
-import { dataNoPortalLayoutStylesKey } from '@onecx/angular-utils'
+import { dataNoPortalLayoutStylesKey, GuardsGatherer, wrapGuards } from '@onecx/angular-utils'
 
 /**
  * Implementation inspired by @angular-architects/module-federation-plugin https://github.com/angular-architects/module-federation-plugin/blob/main/libs/mf-tools/src/lib/web-components/bootstrap-utils.ts
@@ -90,6 +91,8 @@ function createEntrypoint(
   const currentLocationCapabilityAvailable = capabilityService.hasCapability(Capability.CURRENT_LOCATION_TOPIC)
   const eventsTopic = currentLocationCapabilityAvailable ? undefined : new EventsTopic()
   const originalNgInit = component.prototype.ngOnInit
+  const guardsGatherer = injector.get(GuardsGatherer)
+
   component.prototype.ngOnInit = function () {
     sub = connectMicroFrontendRouter(injector, entrypointType === 'microfrontend', eventsTopic)
     if (originalNgInit !== undefined) {
@@ -101,6 +104,9 @@ function createEntrypoint(
     sub?.unsubscribe()
     if (currentLocationCapabilityAvailable && eventsTopic) {
       eventsTopic.destroy()
+    }
+    if (guardsGatherer) {
+      guardsGatherer.destroy()
     }
     if (originalNgDestroy !== undefined) {
       originalNgDestroy.call(this)
@@ -123,6 +129,12 @@ function createEntrypoint(
   customElements.define(elementName, myRemoteComponentAsWebComponent)
 }
 
+@Component({
+  selector: 'app-dummy',
+  template: '',
+})
+class DummyComponent {}
+
 function adaptRemoteComponentRoutes(injector: Injector) {
   const router = injector.get(Router)
 
@@ -130,6 +142,8 @@ function adaptRemoteComponentRoutes(injector: Injector) {
     return
   }
 
+  // Fallback route is needed to make sure that router is activatable
+  // and to always respond for guards scattered requests
   if (!router.config.find((val) => val.path === '**')) {
     router.resetConfig(
       router.config.concat({
@@ -137,6 +151,20 @@ function adaptRemoteComponentRoutes(injector: Injector) {
         children: [],
       })
     )
+  }
+
+  makeDummyRouteActivatable(router)
+}
+
+/**
+ * Makes sure that the fallback route is activatable by adding a dummy component.
+ * This is necessary for the router to be able to activate the route and respond to guards.
+ * @param router The router instance to modify.
+ */
+function makeDummyRouteActivatable(router: Router) {
+  const dummyRoute = router.config.find((val) => val.path === '**')
+  if (dummyRoute && dummyRoute.children?.length === 0) {
+    dummyRoute.children = [{ path: '', component: DummyComponent }]
   }
 }
 
@@ -207,6 +235,8 @@ function connectRouter(
   eventsTopic: EventsTopic | undefined
 ): Subscription {
   const initialUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}${location.hash}`
+  // TODO: What if we are trying to sync url that is guarded?
+  ensureRouterGuardsWrapped(router)
   router.navigateByUrl(initialUrl, {
     replaceUrl: true,
     state: { isRouterSync: true },
@@ -220,11 +250,20 @@ function connectRouter(
   return observable.subscribe(() => {
     const routerUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}${location.hash}`
     if (routerUrl !== lastUrl) {
+      // Make sure that all routes (even lazy-loaded) are wrapped
+      // ensureRouterGuardsWrapped(router)
       lastUrl = routerUrl
       router.navigateByUrl(routerUrl, {
         replaceUrl: true,
         state: { isRouterSync: true },
       })
     }
+  })
+}
+
+function ensureRouterGuardsWrapped(router: Router): void {
+  const routes = router.config
+  routes.forEach((route) => {
+    wrapGuards(route)
   })
 }
