@@ -43,11 +43,13 @@ export class GuardsGatherer {
   resolveRouteActivate(routeUrl: string, response: CanActivateGuardResultResponse) {
     const resolve = this.activateGuardsChecks.get(routeUrl)
     resolve && resolve(response)
+    this.activateGuardsChecks.delete(routeUrl)
   }
 
   resolveRouteDeactivate(routeUrl: string, response: CanDeactivateGuardResultResponse) {
     const resolve = this.deactivateGuardsChecks.get(routeUrl)
     resolve && resolve(response)
+    this.deactivateGuardsChecks.delete(routeUrl)
   }
 
   destroy(): void {

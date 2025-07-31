@@ -144,6 +144,8 @@ function adaptRemoteComponentRoutes(injector: Injector) {
     return
   }
 
+  // Fallback route is needed to make sure that router is activatable
+  // and to always respond for guards scattered requests
   if (!router.config.find((val) => val.path === '**')) {
     router.resetConfig(
       router.config.concat({
@@ -156,6 +158,11 @@ function adaptRemoteComponentRoutes(injector: Injector) {
   makeDummyRouteActivatable(router)
 }
 
+/**
+ * Makes sure that the fallback route is activatable by adding a dummy component.
+ * This is necessary for the router to be able to activate the route and respond to guards.
+ * @param router The router instance to modify.
+ */
 function makeDummyRouteActivatable(router: Router) {
   const dummyRoute = router.config.find((val) => val.path === '**')
   if (dummyRoute && dummyRoute.children?.length === 0) {
@@ -230,12 +237,12 @@ function connectRouter(
   eventsTopic: EventsTopic | undefined
 ): Subscription {
   const initialUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}${location.hash}`
+  // TODO: What if we are trying to sync url that is guarded?
+  ensureRouterGuardsWrapped(router)
   router.navigateByUrl(initialUrl, {
     replaceUrl: true,
     state: { isRouterSync: true },
   })
-  // TODO: What if we are trying to sync url that is guarded?
-  ensureRouterGuardsWrapped(router)
   let lastUrl = initialUrl
   let observable: Observable<TopicEventType | CurrentLocationTopicPayload> =
     appStateService.currentLocation$.asObservable()
