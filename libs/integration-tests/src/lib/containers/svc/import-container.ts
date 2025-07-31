@@ -1,5 +1,6 @@
 import { AbstractStartedContainer, GenericContainer, StartedTestContainer } from 'testcontainers'
 import * as path from 'path'
+import { writeFile } from 'fs/promises'
 import { StartedOnecxKeycloakContainer } from '../core/onecx-keycloak'
 import { AllowedContainerTypes } from '../../model/allowed-container.types'
 import { CONTAINER } from '../../model/container.enum'
@@ -57,8 +58,7 @@ export class ImportManagerContainer extends GenericContainer {
     }
 
     const containerInfoPath = path.resolve('libs/integration-tests/src/imports/container-info.json')
-    const fs = await import('fs/promises')
-    await fs.writeFile(containerInfoPath, JSON.stringify(containerInfo, null, 2))
+    await writeFile(containerInfoPath, JSON.stringify(containerInfo, null, 2))
 
     this.withEnvironment({})
       .withCopyDirectoriesToContainer([
