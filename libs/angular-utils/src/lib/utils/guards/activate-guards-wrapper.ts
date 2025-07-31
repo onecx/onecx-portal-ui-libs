@@ -23,10 +23,15 @@ export class ActivateGuardsWrapper extends GuardsWrapper {
     guards: Array<CanActivateFn | Type<CanActivate>>
   ): MaybeAsync<GuardResult> {
     const navigationState = this.router.getCurrentNavigation()?.extras.state ?? {}
+    const currentUrl = state.url
+    const futureUrl = this.getUrlFromSnapshot(route)
     console.log('Performing canActivate for', route, navigationState)
 
     if ('isRouterSync' in navigationState && navigationState['isRouterSync']) {
-      return this.executeRouterSyncGuard()
+      // Important to make sure all guarded functionality is executed
+      return this.executeActivateGuards(route, state, guards, this.combineToBoolean).then(() =>
+        this.executeRouterSyncGuard()
+      )
     }
 
     if (GUARD_CHECK.ACTIVATE in navigationState && navigationState[GUARD_CHECK.ACTIVATE]) {
@@ -35,13 +40,24 @@ export class ActivateGuardsWrapper extends GuardsWrapper {
       )
       const myGuardsResult = this.executeActivateGuards(route, state, guards, this.combineToBoolean)
       return myGuardsResult.then((result) => {
-        const routeUrl = this.getUrlFromSnapshot(route)
-        // Resolve activate request to inform callee about this router decision
-        this.guardsGatherer.resolveRouteActivate(routeUrl, result)
+        this.guardsGatherer.resolveRouteActivate(futureUrl, result)
 
         // Important to return false so navigation does not happen
         return false
       })
+    }
+
+    // Special case when activation checks are running when deactivation were requested
+    // If deactivation check is processed in CanActivate, we should return true
+    // to allow the navigation to proceed, since we have nothing to deactivate
+    if (GUARD_CHECK.DEACTIVATE in navigationState && navigationState[GUARD_CHECK.DEACTIVATE]) {
+      console.log(
+        'Deactivate check requested while resolving canActivate, returning true since no active route exists.'
+      )
+
+      this.guardsGatherer.resolveRouteDeactivate(currentUrl, true)
+      // Important to return false so navigation does not happen
+      return false
     }
 
     return this.executeScatteredActivateGuard(route, state, guards)
