@@ -1,3 +1,4 @@
+import { Subscription } from 'rxjs'
 import { Topic } from '../topic/topic'
 
 window['@onecx/accelerator'] ??= {}
@@ -11,13 +12,14 @@ export class Gatherer<Request, Response> {
   private static id = 0
   private readonly topic: Topic<{ id: number; request: Request }>
   private readonly ownIds = new Set<number>()
+  private topicSub: Subscription | null = null
 
   constructor(name: string, version: number, callback: (request: Request) => Promise<Response>) {
     this.logIfDebug(name, `Gatherer ${name}: ${version} created`)
 
     this.topic = new Topic<{ id: number; request: Request }>(name, version, false)
     // Perform a callback every time a request is received in the topic.
-    this.topic.subscribe((m) => {
+    this.topicSub = this.topic.subscribe((m) => {
       if (!this.isOwnerOfRequest(m) && window['@onecx/accelerator']?.gatherer?.promises) {
         this.logReceivedIfDebug(name, version, m)
         if (!window['@onecx/accelerator'].gatherer.promises[m.id]) {
@@ -41,6 +43,7 @@ export class Gatherer<Request, Response> {
   destroy() {
     this.logIfDebug(this.topic.name, `Gatherer ${this.topic.name}: ${this.topic.version} destroyed`)
 
+    this.topicSub?.unsubscribe()
     this.topic.destroy()
     this.ownIds.forEach((id) => {
       if (window['@onecx/accelerator']?.gatherer?.promises?.[id]) {
