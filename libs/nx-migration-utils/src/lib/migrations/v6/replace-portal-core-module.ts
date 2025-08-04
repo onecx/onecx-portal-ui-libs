@@ -17,10 +17,6 @@ export default async function replacePortalCoreModule(tree: Tree, srcDirectoryPa
     }
   ]);
 
-  // TODO: fix for forRoot() and forMicroFrontend() usage
-  // Additionally replace all usages of PortalCoreModule with AngularAcceleratorModule in code
-  // Replace all usages of provideAppServiceMock with provideAppStateServiceMock in all files that import provideAppServiceMock from @onecx/angular-integration-interface/mocks
-  // const filterQuery = `ImportDeclaration:has(StringLiteral[value="${PROVIDER_IMPORT_PATH}"]) ImportSpecifier:has(Identifier[name="${PROVIDER_NAME}"])`;
   replaceInFiles(
     tree,
     srcDirectoryPath,

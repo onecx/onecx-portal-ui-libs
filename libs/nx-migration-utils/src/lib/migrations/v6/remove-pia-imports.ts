@@ -96,8 +96,6 @@ export default async function removePortalIntegrationAngularImports(tree: Tree, 
   });
 
   const remainingFiles = new Set<string>();
-
-  // Move require outside the loop for efficiency
   const { query, ast } = require('@phenomnomnominal/tsquery');
 
   visitNotIgnoredFiles(tree, srcDirectoryPath, (filePath) => {
