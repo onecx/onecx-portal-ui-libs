@@ -4,6 +4,7 @@ import { removeImportSpecifierFromImport } from '../../utils/modification/remove
 import { isImportSpecifierInContent } from '../../utils/validation/is-import-in-file-content.utils';
 import { removeImportsByModuleSpecifier } from '../../utils/import-statements.utils';
 import { importPattern } from '../../utils/patterns.utils';
+import { query, ast } from '@phenomnomnominal/tsquery';
 
 const IMPORT_PATH = '@onecx/portal-integration-angular';
 const COMPONENTS_TO_REMOVE = [
@@ -96,7 +97,6 @@ export default async function removePortalIntegrationAngularImports(tree: Tree, 
   });
 
   const remainingFiles = new Set<string>();
-  const { query, ast } = require('@phenomnomnominal/tsquery');
 
   visitNotIgnoredFiles(tree, srcDirectoryPath, (filePath) => {
     if (!filePath.endsWith('.ts')) return;
