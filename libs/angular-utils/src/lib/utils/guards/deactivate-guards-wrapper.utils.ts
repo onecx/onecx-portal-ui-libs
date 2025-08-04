@@ -6,16 +6,33 @@ import {
   GuardResult,
   MaybeAsync,
   RedirectCommand,
+  Router,
   RouterStateSnapshot,
   UrlTree,
 } from '@angular/router'
-import { GuardsWrapper } from './guards-wrapper'
-import { GUARD_CHECK, GuardsGatherer } from './guards-gatherer'
+import { GuardsWrapper } from './guards-wrapper.utils'
+import { GuardsGatherer } from '../../services/guards-gatherer.service'
+import { GuardsNavigationState } from '../../model/guard-check.model'
+import { GuardsNavigationStateController } from '../../services/guards-navigation-controller.utils'
 
+/**
+ * Wrapper for CanDeactivate guards that allows to gather deactivation results
+ * and handle special cases like router sync or scattered guards.
+ *
+ * It performs the deactivation checks in different scenarios based on the navigation state:
+ * - If the navigation state indicates a router sync, it immediately agrees for the navigation.
+ * - If the navigation state requests a deactivation check, it performs the deactivation guards checks
+ *   and resolves the promise with the results while not allowing the navigation to proceed.
+ * - If the navigation state requests an activation check, it checks if deactivation is allowed
+ *   and returns true to allow activation checks to proceed.
+ * - If no special cases are detected, it executes scattered deactivation guards and gathers results.
+ */
 @Injectable({ providedIn: 'root' })
 export class DeactivateGuardsWrapper extends GuardsWrapper {
   private injector = inject(Injector)
   private guardsGatherer = inject(GuardsGatherer)
+  protected router = inject(Router)
+  private guardsNavigationStateController = inject(GuardsNavigationStateController)
 
   canDeactivate(
     component: any,
@@ -24,12 +41,12 @@ export class DeactivateGuardsWrapper extends GuardsWrapper {
     nextState: RouterStateSnapshot,
     guards: Array<CanDeactivateFn<any> | Type<CanDeactivate<any>>>
   ): MaybeAsync<GuardResult> {
-    const navigationState = this.router.getCurrentNavigation()?.extras.state ?? {}
+    const guardsNavigationState = (this.router.getCurrentNavigation()?.extras.state ?? {}) as GuardsNavigationState
     const currentUrl = currentState.url
     const futureUrl = nextState.url
-    console.log('Performing canDeactivate for', component, currentRoute, currentState, nextState, navigationState)
+    console.log('Performing canDeactivate for', component, currentRoute, currentState, nextState, guardsNavigationState)
 
-    if ('isRouterSync' in navigationState && navigationState['isRouterSync']) {
+    if (this.guardsNavigationStateController.isRouterSyncState(guardsNavigationState)) {
       // Important to make sure all guarded functionality is executed
       return this.executeDeactivateGuards(
         component,
@@ -41,7 +58,7 @@ export class DeactivateGuardsWrapper extends GuardsWrapper {
       ).then(() => this.executeRouterSyncGuard())
     }
 
-    if (GUARD_CHECK.DEACTIVATE in navigationState && navigationState[GUARD_CHECK.DEACTIVATE]) {
+    if (this.guardsNavigationStateController.isDeactivateCheckState(guardsNavigationState)) {
       console.log('Deactivate check requested, will perform deactivate guards checks and resend the response.')
       const myGuardsResult = this.executeDeactivateGuards(
         component,
@@ -57,18 +74,18 @@ export class DeactivateGuardsWrapper extends GuardsWrapper {
         this.guardsGatherer.resolveRouteDeactivate(currentUrl, result)
 
         // Add information to navigation state to indicate that deactivate checks were completed
-        ;(navigationState as any).deactivateChecksCompleted = true
+        this.guardsNavigationStateController.setDeactivationChecksCompleted(guardsNavigationState)
         // Important to return false so navigation does not happen
         return false
       })
     }
 
-    if (GUARD_CHECK.ACTIVATE in navigationState && navigationState[GUARD_CHECK.ACTIVATE]) {
+    if (this.guardsNavigationStateController.isActivateCheckState(guardsNavigationState)) {
       // Special case when deactivate check was not requested by the navigation requester
       // If activation check is processed in CanDeactivate, we should check if deactivation is allowed
       // and if not, we should return false to prevent navigation
       // If deactivation is allowed, we return true to allow activation checks to proceed
-      if (!navigationState['deactivateChecksCompleted']) {
+      if (!this.guardsNavigationStateController.isDeactivationChecksCompleted(guardsNavigationState)) {
         console.log(
           'Activate check requested while resolving canDeactivate. Will run deactivate guards and reject navigation if cannot deactivate, else will let activate guards run.'
         )

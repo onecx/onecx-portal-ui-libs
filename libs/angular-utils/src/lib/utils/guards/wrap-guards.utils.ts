@@ -1,7 +1,7 @@
 import { CanActivate, CanActivateFn, CanDeactivate, CanDeactivateFn, Route } from '@angular/router'
 import { inject, Type } from '@angular/core'
-import { ActivateGuardsWrapper } from './activate-guards-wrapper'
-import { DeactivateGuardsWrapper } from './deactivate-guards-wrapper'
+import { ActivateGuardsWrapper } from './activate-guards-wrapper.utils'
+import { DeactivateGuardsWrapper } from './deactivate-guards-wrapper.utils'
 
 export function wrapGuards(route: Route) {
   console.log('wrapGuards', route)

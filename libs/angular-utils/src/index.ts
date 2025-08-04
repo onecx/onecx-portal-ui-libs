@@ -15,10 +15,12 @@ export * from './lib/utils/remote-component-translation-path-factory.utils'
 // Model
 export * from './lib/model/injection-tokens'
 export * from './lib/model/remote-component-config.model'
+export * from './lib/model/guard-check.model'
 
 // Services
 export * from './lib/services/translation-cache.service'
 export * from './lib/services/permission.service'
+export * from './lib/services/guards-gatherer.service'
 
 // Components
 export * from './lib/components/portal-page/portal-page.component'

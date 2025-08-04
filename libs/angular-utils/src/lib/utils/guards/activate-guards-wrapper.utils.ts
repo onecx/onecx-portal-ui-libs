@@ -6,35 +6,53 @@ import {
   GuardResult,
   MaybeAsync,
   RedirectCommand,
+  Router,
   RouterStateSnapshot,
   UrlTree,
 } from '@angular/router'
-import { GuardsWrapper } from './guards-wrapper'
-import { GUARD_CHECK, GuardsGatherer } from './guards-gatherer'
+import { GuardsWrapper } from './guards-wrapper.utils'
+import { GuardsGatherer } from '../../services/guards-gatherer.service'
+import { GuardsNavigationState } from '../../model/guard-check.model'
+import { GuardsNavigationStateController } from '../../services/guards-navigation-controller.utils'
 
+/**
+ * Wrapper for CanActivate guards that allows to gather activation results
+ * and handle special cases like router sync or scattered guards.
+ *
+ * It performs the activation checks in different scenarios based on the navigation state:
+ * - If the navigation state indicates a router sync, it immediately agrees for the navigation.
+ * - If the navigation state requests an activation check, it performs the activation guards checks
+ *   and resolves the promise with the results while not allowing the navigation to proceed.
+ * - If the navigation state requests a deactivation check, it resolves the promise with true
+ *   to allow activation checks to proceed, since no active route exists.
+ *   and returns true to allow activation checks to proceed.
+ * - If no special cases are detected, it executes scattered activation guards and gathers results.
+ */
 @Injectable({ providedIn: 'root' })
 export class ActivateGuardsWrapper extends GuardsWrapper {
   private injector = inject(Injector)
   private guardsGatherer = inject(GuardsGatherer)
+  protected router = inject(Router)
+  private guardsNavigationStateController = inject(GuardsNavigationStateController)
 
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot,
     guards: Array<CanActivateFn | Type<CanActivate>>
   ): MaybeAsync<GuardResult> {
-    const navigationState = this.router.getCurrentNavigation()?.extras.state ?? {}
+    const guardsNavigationState = this.router.getCurrentNavigation()?.extras.state ?? ({} as GuardsNavigationState)
     const currentUrl = state.url
     const futureUrl = this.getUrlFromSnapshot(route)
-    console.log('Performing canActivate for', route, navigationState)
+    console.log('Performing canActivate for', route, guardsNavigationState)
 
-    if ('isRouterSync' in navigationState && navigationState['isRouterSync']) {
+    if (this.guardsNavigationStateController.isRouterSyncState(guardsNavigationState)) {
       // Important to make sure all guarded functionality is executed
       return this.executeActivateGuards(route, state, guards, this.combineToBoolean).then(() =>
         this.executeRouterSyncGuard()
       )
     }
 
-    if (GUARD_CHECK.ACTIVATE in navigationState && navigationState[GUARD_CHECK.ACTIVATE]) {
+    if (this.guardsNavigationStateController.isActivateCheckState(guardsNavigationState)) {
       console.log(
         'Activate check requested, returning false for activate checks and resolving promise with guards results.'
       )
@@ -50,7 +68,7 @@ export class ActivateGuardsWrapper extends GuardsWrapper {
     // Special case when activation checks are running when deactivation were requested
     // If deactivation check is processed in CanActivate, we should return true
     // to allow the navigation to proceed, since we have nothing to deactivate
-    if (GUARD_CHECK.DEACTIVATE in navigationState && navigationState[GUARD_CHECK.DEACTIVATE]) {
+    if (this.guardsNavigationStateController.isDeactivateCheckState(guardsNavigationState)) {
       console.log(
         'Deactivate check requested while resolving canActivate, returning true since no active route exists.'
       )
