@@ -1,4 +1,3 @@
-import { version } from 'os'
 import { Topic } from '../topic/topic'
 
 window['@onecx/accelerator'] ??= {}
@@ -14,6 +13,8 @@ export class Gatherer<Request, Response> {
   private readonly ownIds = new Set<number>()
 
   constructor(name: string, version: number, callback: (request: Request) => Promise<Response>) {
+    this.logIfDebug(name, `Gatherer ${name}: ${version} created`)
+
     this.topic = new Topic<{ id: number; request: Request }>(name, version, false)
     // Perform a callback every time a request is received in the topic.
     this.topic.subscribe((m) => {
@@ -38,7 +39,9 @@ export class Gatherer<Request, Response> {
   }
 
   destroy() {
-    this.topic?.destroy()
+    this.logIfDebug(this.topic.name, `Gatherer ${this.topic.name}: ${this.topic.version} destroyed`)
+
+    this.topic.destroy()
     this.ownIds.forEach((id) => {
       if (window['@onecx/accelerator']?.gatherer?.promises?.[id]) {
         delete window['@onecx/accelerator'].gatherer.promises[id]
@@ -70,14 +73,20 @@ export class Gatherer<Request, Response> {
   }
 
   private logReceivedIfDebug(name: string, version: number, m: { id: number; request: Request }) {
-    if (window['@onecx/accelerator']?.gatherer?.debug?.includes(name)) {
-      console.log('Gatherer', name, ':', version, 'received request', m.request)
-    }
+    this.logIfDebug(name, 'Gatherer ' + name + ': ' + version + ' received request ' + m.request)
   }
 
   private logAnsweredIfDebug(name: string, version: number, m: { id: number; request: Request }, response: Response) {
+    this.logIfDebug(
+      name,
+      'Gatherer ' + name + ': ' + version + ' answered request ' + m.request + ' with response',
+      response
+    )
+  }
+
+  private logIfDebug(name: string, ...args: any[]) {
     if (window['@onecx/accelerator']?.gatherer?.debug?.includes(name)) {
-      console.log('Gatherer', name, ':', version, 'answered', m.request, 'with', response)
+      console.log(...args)
     }
   }
 

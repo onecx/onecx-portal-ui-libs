@@ -1,10 +1,11 @@
-import { inject } from '@angular/core'
 import { ActivatedRouteSnapshot, GuardResult, MaybeAsync, RedirectCommand, Router, UrlTree } from '@angular/router'
 import { isObservable, lastValueFrom } from 'rxjs'
 
 export class GuardsWrapper {
-  protected router = inject(Router)
-
+  /**
+   * Execute router sync operation.
+   * Immediately returns true to indicate that the operation was successful.
+   */
   protected executeRouterSyncGuard() {
     console.log('Was RouterSync, returning true.')
 
@@ -47,6 +48,11 @@ export class GuardsWrapper {
     return true
   }
 
+  /**
+   * Resolves MaybeAsync to Promise.
+   * @param maybeAsync - the value to resolve
+   * @returns Promise<GuardResult>
+   */
   protected resolveToPromise(maybeAsync: MaybeAsync<GuardResult>): Promise<GuardResult> {
     if (maybeAsync instanceof Promise) {
       return maybeAsync
@@ -57,6 +63,11 @@ export class GuardsWrapper {
     return Promise.resolve(maybeAsync)
   }
 
+  /**
+   * Gets the URL from the ActivatedRouteSnapshot.
+   * @param route - the route to get URL from
+   * @returns string - the URL of the route
+   */
   protected getUrlFromSnapshot(route: ActivatedRouteSnapshot): string {
     const segments: string[] = []
 

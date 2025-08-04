@@ -22,6 +22,7 @@ export * from './lib/utils/dynamic-locale-id.utils'
 // Model
 export * from './lib/model/injection-tokens'
 export * from './lib/model/remote-component-config.model'
+export * from './lib/model/guard-check.model'
 
 // Services
 export * from './lib/services/translation-cache.service'
@@ -30,6 +31,7 @@ export * from './lib/services/custom-use-style.service'
 export * from './lib/services/permission.service'
 export * from './lib/services/translation-connection.service'
 export * from './lib/providers/translation-path-from-meta.providers'
+export * from './lib/services/guards-gatherer.service'
 
 // Theme
 export * from './lib/theme/application-config'
