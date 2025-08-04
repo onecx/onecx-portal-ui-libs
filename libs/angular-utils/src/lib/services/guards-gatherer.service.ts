@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core'
+import { inject, Injectable, OnDestroy } from '@angular/core'
 import { Router } from '@angular/router'
 import { Gatherer } from '@onecx/accelerator'
 import { GuardsNavigationStateController } from './guards-navigation-controller.utils'
@@ -23,23 +23,20 @@ export type CanDeactivateGuardResultResponse = boolean
 @Injectable({
   providedIn: 'root',
 })
-export class GuardsGatherer {
-  private activateGuardsGatherer: Gatherer<CanActivateGuardResultRequest, CanActivateGuardResultResponse>
-  private deactivateGuardsGatherer: Gatherer<CanDeactivateGuardResultRequest, CanDeactivateGuardResultResponse>
-  private activateGuardsChecks: Map<string, (value: CanActivateGuardResultResponse) => void>
-  private deactivateGuardsChecks: Map<string, (value: CanDeactivateGuardResultResponse) => void>
+export class GuardsGatherer implements OnDestroy {
+  private activateGuardsGatherer: Gatherer<CanActivateGuardResultRequest, CanActivateGuardResultResponse> | undefined
+  private deactivateGuardsGatherer:
+    | Gatherer<CanDeactivateGuardResultRequest, CanDeactivateGuardResultResponse>
+    | undefined
+  private activateGuardsChecks: Map<string, (value: CanActivateGuardResultResponse) => void> | undefined
+  private deactivateGuardsChecks: Map<string, (value: CanDeactivateGuardResultResponse) => void> | undefined
   private guardsNavigationStateController = inject(GuardsNavigationStateController)
 
-  constructor(private router: Router) {
-    console.log('GuardsGatherer create')
-    this.activateGuardsGatherer = new Gatherer('CanActivateGuard', 1, (request) =>
-      this.executeActivateCallback(request)
-    )
-    this.deactivateGuardsGatherer = new Gatherer('CanDeactivateGuard', 1, (request) =>
-      this.executeDeactivateCallback(request)
-    )
-    this.activateGuardsChecks = new Map()
-    this.deactivateGuardsChecks = new Map()
+  constructor(private router: Router) {}
+
+  ngOnDestroy(): void {
+    this.activateGuardsGatherer?.destroy()
+    this.deactivateGuardsGatherer?.destroy()
   }
 
   /**
@@ -48,6 +45,9 @@ export class GuardsGatherer {
    * @returns Promise that resolves with the response of the CanActivate guard results.
    */
   gatherActivate(request: CanActivateGuardResultRequest) {
+    if (this.activateGuardsGatherer === undefined) {
+      this.throwNotActiveError()
+    }
     return this.activateGuardsGatherer.gather(request)
   }
 
@@ -57,6 +57,9 @@ export class GuardsGatherer {
    * @returns Promise that resolves with the response of the CanDeactivate guard results.
    */
   gatherDeactivate(request: CanDeactivateGuardResultRequest) {
+    if (this.deactivateGuardsGatherer === undefined) {
+      this.throwNotActiveError()
+    }
     return this.deactivateGuardsGatherer.gather(request)
   }
 
@@ -66,6 +69,9 @@ export class GuardsGatherer {
    * @param response - the response of the CanActivate guard result
    */
   resolveRouteActivate(routeUrl: string, response: CanActivateGuardResultResponse) {
+    if (this.activateGuardsChecks === undefined) {
+      this.throwNotActiveError()
+    }
     const resolve = this.activateGuardsChecks.get(routeUrl)
     resolve && resolve(response)
     this.activateGuardsChecks.delete(routeUrl)
@@ -77,15 +83,30 @@ export class GuardsGatherer {
    * @param response - the response of the CanDeactivate guard result
    */
   resolveRouteDeactivate(routeUrl: string, response: CanDeactivateGuardResultResponse) {
+    if (this.deactivateGuardsChecks === undefined) {
+      this.throwNotActiveError()
+    }
     const resolve = this.deactivateGuardsChecks.get(routeUrl)
     resolve && resolve(response)
     this.deactivateGuardsChecks.delete(routeUrl)
   }
 
-  destroy(): void {
-    console.log('GuardsGatherer destroy')
-    this.activateGuardsGatherer.destroy()
-    this.deactivateGuardsGatherer.destroy()
+  activate(): void {
+    console.log('GuardsGatherer activate')
+    this.activateGuardsGatherer = new Gatherer('CanActivateGuard', 1, (request) =>
+      this.executeActivateCallback(request)
+    )
+    this.deactivateGuardsGatherer = new Gatherer('CanDeactivateGuard', 1, (request) =>
+      this.executeDeactivateCallback(request)
+    )
+    this.activateGuardsChecks = new Map()
+    this.deactivateGuardsChecks = new Map()
+  }
+
+  deactivate(): void {
+    console.log('GuardsGatherer deactivate')
+    this.activateGuardsGatherer?.destroy()
+    this.deactivateGuardsGatherer?.destroy()
   }
 
   private executeActivateCallback(request: CanActivateGuardResultRequest): Promise<CanActivateGuardResultResponse> {
@@ -104,6 +125,9 @@ export class GuardsGatherer {
     let resolve: (value: CanActivateGuardResultResponse) => void
     return new Promise<CanActivateGuardResultResponse>((r) => {
       resolve = r
+      if (this.activateGuardsChecks === undefined) {
+        this.throwNotActiveError()
+      }
       this.activateGuardsChecks.set(routeUrl, resolve)
     })
   }
@@ -126,7 +150,14 @@ export class GuardsGatherer {
     let resolve: (value: CanDeactivateGuardResultResponse) => void
     return new Promise<CanDeactivateGuardResultResponse>((r) => {
       resolve = r
+      if (this.deactivateGuardsChecks === undefined) {
+        this.throwNotActiveError()
+      }
       this.deactivateGuardsChecks.set(routeUrl, resolve)
     })
+  }
+
+  private throwNotActiveError(): never {
+    throw new Error('Guards gatherer is not active')
   }
 }

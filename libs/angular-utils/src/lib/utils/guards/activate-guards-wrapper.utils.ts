@@ -10,10 +10,10 @@ import {
   RouterStateSnapshot,
   UrlTree,
 } from '@angular/router'
-import { GuardsWrapper } from './guards-wrapper.utils'
 import { GuardsGatherer } from '../../services/guards-gatherer.service'
-import { GuardsNavigationState } from '../../model/guard-check.model'
 import { GuardsNavigationStateController } from '../../services/guards-navigation-controller.utils'
+import { GuardsNavigationState } from '../../model/guard-navigation.model'
+import { GuardsWrapper } from './guards-wrapper.utils'
 
 /**
  * Wrapper for CanActivate guards that allows to gather activation results

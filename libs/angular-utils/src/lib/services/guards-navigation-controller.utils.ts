@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core'
-import { GUARD_CHECK, GuardsNavigationState, IS_ROUTER_SYNC } from '../model/guard-check.model'
+import { GUARD_CHECK } from '../model/guard-check.model'
+import { GuardsNavigationState, IS_ROUTER_SYNC } from '../model/guard-navigation.model'
 
 /**
  * GuardsNavigationController is a service that manages the navigation state for guards.

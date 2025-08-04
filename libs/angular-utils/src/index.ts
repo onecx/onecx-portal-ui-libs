@@ -16,6 +16,7 @@ export * from './lib/utils/remote-component-translation-path-factory.utils'
 export * from './lib/model/injection-tokens'
 export * from './lib/model/remote-component-config.model'
 export * from './lib/model/guard-check.model'
+export * from './lib/model/guard-navigation.model'
 
 // Services
 export * from './lib/services/translation-cache.service'

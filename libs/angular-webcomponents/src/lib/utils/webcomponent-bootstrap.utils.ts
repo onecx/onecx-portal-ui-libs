@@ -98,6 +98,9 @@ function createEntrypoint(
     if (originalNgInit !== undefined) {
       originalNgInit.call(this)
     }
+    if (guardsGatherer) {
+      guardsGatherer.activate()
+    }
   }
   const originalNgDestroy = component.prototype.ngOnDestroy
   component.prototype.ngOnDestroy = function () {
@@ -106,7 +109,7 @@ function createEntrypoint(
       eventsTopic.destroy()
     }
     if (guardsGatherer) {
-      guardsGatherer.destroy()
+      guardsGatherer.deactivate()
     }
     if (originalNgDestroy !== undefined) {
       originalNgDestroy.call(this)
@@ -151,20 +154,6 @@ function adaptRemoteComponentRoutes(injector: Injector) {
         children: [],
       })
     )
-  }
-
-  makeDummyRouteActivatable(router)
-}
-
-/**
- * Makes sure that the fallback route is activatable by adding a dummy component.
- * This is necessary for the router to be able to activate the route and respond to guards.
- * @param router The router instance to modify.
- */
-function makeDummyRouteActivatable(router: Router) {
-  const dummyRoute = router.config.find((val) => val.path === '**')
-  if (dummyRoute && dummyRoute.children?.length === 0) {
-    dummyRoute.children = [{ path: '', component: DummyComponent }]
   }
 }
 
