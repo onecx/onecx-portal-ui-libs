@@ -1,5 +1,5 @@
 $menuWrapperWidth: 17rem;
-$menuShadow: 2px 0 4px -1px rgba(0, 0, 0, 0.2), 4px 0 5px 0 rgba(0, 0, 0, 0.14), 1px 0 10px 0 rgba(0, 0, 0, 0.12);
+$menuShadow: 1px 0 0 rgba(0, 0, 0, 0.2);
 
 @mixin material-overlay-transform {
   transform-origin: top;
@@ -335,6 +335,15 @@ $menuShadow: 2px 0 4px -1px rgba(0, 0, 0, 0.2), 4px 0 5px 0 rgba(0, 0, 0, 0.14),
 
     .layout-mask {
       display: block;
+    }
+  }
+}
+
+:host ::ng-deep {
+  /* the 2nd child (the menu) should fill the rest of space */
+  .onecx-shell-footer {
+    div:nth-child(2) {
+      flex-grow: 1;
     }
   }
 }

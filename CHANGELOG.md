@@ -1,3 +1,20 @@
+## [6.2.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.1.0...v6.2.0) (2025-07-29)
+
+### Features
+
+* adapt translation loading ([#846](https://github.com/onecx/onecx-portal-ui-libs/issues/846)) ([412dfe3](https://github.com/onecx/onecx-portal-ui-libs/commit/412dfe3d00397276fba1cdd198cc61b18ae85f6c))
+
+### Bug Fixes
+
+* remove shadow of vertical menu ([#852](https://github.com/onecx/onecx-portal-ui-libs/issues/852)) ([1ef72d2](https://github.com/onecx/onecx-portal-ui-libs/commit/1ef72d2e49ce3bb2290bb3cb8c5941bb0a4cc1a9))
+* user footer tag for shell footer (a11y) ([#851](https://github.com/onecx/onecx-portal-ui-libs/issues/851)) ([a339e77](https://github.com/onecx/onecx-portal-ui-libs/commit/a339e778fb0bd45b180a54b4cac0ac2a71212a19))
+
+## [6.1.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0...v6.1.0) (2025-07-25)
+
+### Features
+
+* use shell-footer instead page-footer ([#848](https://github.com/onecx/onecx-portal-ui-libs/issues/848)) ([52eff52](https://github.com/onecx/onecx-portal-ui-libs/commit/52eff520ce625d924bcd0ae3580f87474dfd03c7))
+
 ## [6.0.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.999.0...v6.0.0) (2025-07-18)
 
 ### ⚠ BREAKING CHANGES
