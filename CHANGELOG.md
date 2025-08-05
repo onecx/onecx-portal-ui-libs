@@ -1,3 +1,10 @@
+## [6.2.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.2.0...v6.2.1) (2025-08-05)
+
+### Bug Fixes
+
+* adjust deprecation messages ([#856](https://github.com/onecx/onecx-portal-ui-libs/issues/856)) ([f596711](https://github.com/onecx/onecx-portal-ui-libs/commit/f5967114269152c405dbe104c1886eb1a41f8aa0))
+* change the shell-core style variable values to the theme variable values ([#860](https://github.com/onecx/onecx-portal-ui-libs/issues/860)) ([60c302d](https://github.com/onecx/onecx-portal-ui-libs/commit/60c302d05178961437bb80ba42038674e056818d))
+
 ## [6.2.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.1.0...v6.2.0) (2025-07-29)
 
 ### Features
