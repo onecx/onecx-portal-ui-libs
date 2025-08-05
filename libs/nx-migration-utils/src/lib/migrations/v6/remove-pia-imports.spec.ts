@@ -374,6 +374,78 @@ describe('remove-pia-imports', () => {
     );
   });
 
+  it('should remove PortalFooterComponent import from @onecx/portal-integration-angular and warn', async () => {
+    const filePath = 'src/app/portal-footer.component.ts';
+    tree.write(
+      filePath,
+      `
+        import { PortalFooterComponent } from "@onecx/portal-integration-angular";
+        export class TestService {
+            constructor(private portalFooterComponent: PortalFooterComponent) {}
+        }
+      `
+    );
+    await removePortalIntegrationAngularImports(tree, 'src');
+    const content = tree.read(filePath)?.toString();
+    expect(content).toEqualIgnoringWhitespace(`
+       export class TestService {
+            constructor(private portalFooterComponent: PortalFooterComponent) {}
+        }
+    `);
+    expect(spy).toHaveBeenCalledWith(
+      'PortalFooterComponent is no longer available. Please adapt the code accordingly.' +
+      ' Found in: src/app/portal-footer.component.ts'
+    );
+  });
+
+  it('should remove PortalHeaderComponent import from @onecx/portal-integration-angular and warn', async () => {
+    const filePath = 'src/app/portal-header.component.ts';
+    tree.write(
+      filePath,
+      `
+        import { PortalHeaderComponent } from "@onecx/portal-integration-angular";
+        export class TestService {
+            constructor(private portalHeaderComponent: PortalHeaderComponent) {}
+        }
+      `
+    );
+    await removePortalIntegrationAngularImports(tree, 'src');
+    const content = tree.read(filePath)?.toString();
+    expect(content).toEqualIgnoringWhitespace(`
+       export class TestService {
+            constructor(private portalHeaderComponent: PortalHeaderComponent) {}
+        }
+    `);
+    expect(spy).toHaveBeenCalledWith(
+      'PortalHeaderComponent is no longer available. Please adapt the code accordingly.' +
+      ' Found in: src/app/portal-header.component.ts'
+    );
+  });
+
+  it('should remove PortalViewportComponent import from @onecx/portal-integration-angular and warn', async () => {
+    const filePath = 'src/app/portal-viewport.component.ts';
+    tree.write(
+      filePath,
+      `
+        import { PortalViewportComponent } from "@onecx/portal-integration-angular";
+        export class TestService {
+            constructor(private portalViewportComponent: PortalViewportComponent) {}
+        }
+      `
+    );
+    await removePortalIntegrationAngularImports(tree, 'src');
+    const content = tree.read(filePath)?.toString();
+    expect(content).toEqualIgnoringWhitespace(`
+       export class TestService {
+            constructor(private portalViewportComponent: PortalViewportComponent) {}
+        }
+    `);
+    expect(spy).toHaveBeenCalledWith(
+      'PortalViewportComponent is no longer available. Please adapt the code accordingly.' +
+      ' Found in: src/app/portal-viewport.component.ts'
+    );
+  });
+
    it('should remove all other imports from @onecx/portal-integration-angular and warn', async () => {
     const filePath = 'src/app/other-file.service.ts';
     tree.write(

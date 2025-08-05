@@ -87,6 +87,21 @@ const COMPONENTS_TO_REMOVE = [
     importName: 'UserProfileAPIService',
     warning:
       'UserProfileAPIService is no longer available. This is now a remote component in onecx-user-profile-ui.'
+  },
+  {
+    importName: 'PortalFooterComponent',
+    warning:
+      'PortalFooterComponent is no longer available. Please adapt the code accordingly.'
+  },
+  {
+    importName: 'PortalHeaderComponent',
+    warning:
+      'PortalHeaderComponent is no longer available. Please adapt the code accordingly.'
+  },
+  {
+    importName: 'PortalViewportComponent',
+    warning:
+      'PortalViewportComponent is no longer available. Please adapt the code accordingly.'
   }
 ];
 

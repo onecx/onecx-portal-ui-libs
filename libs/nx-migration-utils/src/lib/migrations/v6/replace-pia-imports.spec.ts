@@ -38,35 +38,6 @@ describe('replace-pia-imports', () => {
       `);
   });
 
-  it('should replace PortalViewportComponent with PortalViewportComponent from @onecx/shell-core', async () => {
-    const filePath = 'src/app/viewport.component.ts';
-    tree.write(
-      filePath,
-      `
-        import { PortalViewportComponent } from "@onecx/portal-integration-angular";
-        @Component({
-            selector: 'app-viewport',
-            template: '<div></div>',
-            standalone: true,
-            imports: [PortalViewportComponent]
-        })
-        export class ViewportComponent {}
-      `
-    );
-    await replacePortalIntegrationAngularImports(tree, 'src');
-    const content = tree.read(filePath)?.toString();
-    expect(content).toEqualIgnoringWhitespace(`
-        import { PortalViewportComponent } from "@onecx/shell-core";
-        @Component({
-            selector: 'app-viewport',
-            template: '<div></div>',
-            standalone: true,
-            imports: [PortalViewportComponent]
-        })
-        export class ViewportComponent {}
-      `);
-  });
-
   it('should replace AppConfigService with AppConfigService from @onecx/angular-integration-interface', async () => {
     const filePath = 'src/app/app-config.service.ts';
     tree.write(

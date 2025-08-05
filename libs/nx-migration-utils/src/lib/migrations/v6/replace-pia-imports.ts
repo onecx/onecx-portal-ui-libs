@@ -180,27 +180,6 @@ export default async function replacePortalIntegrationAngularImports(tree: Tree,
   replaceImportValuesAndModule(tree, srcDirectoryPath, [
     {
       oldModuleSpecifier: '@onecx/portal-integration-angular',
-      newModuleSpecifier: '@onecx/shell-core',
-      valueReplacements: [
-        {
-          oldValue: 'PortalFooterComponent',
-          newValue: 'PortalFooterComponent',
-        },
-        {
-          oldValue: 'PortalHeaderComponent',
-          newValue: 'PortalHeaderComponent',
-        },
-        {
-          oldValue: 'PortalViewportComponent',
-          newValue: 'PortalViewportComponent',
-        },
-      ],
-    },
-  ]);
-
-  replaceImportValuesAndModule(tree, srcDirectoryPath, [
-    {
-      oldModuleSpecifier: '@onecx/portal-integration-angular',
       newModuleSpecifier: '@onecx/angular-integration-interface',
       valueReplacements: [
         {
