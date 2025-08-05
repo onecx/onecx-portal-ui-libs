@@ -15,7 +15,7 @@
 }
 
 .default-logo {
-  color: var(--p-onecx-logo-color, #12abdb);
+  color: var(--logo-color, #12abdb);
   fill: currentColor;
 }
 
@@ -140,12 +140,12 @@ $menuWrapperWidth: 17rem;
             cursor: pointer;
             margin: 0;
             padding: 0.5rem !important; // fix uneven button dimensions
-            color: var(--p-onecx-topbar-item-text-color);
-            background-color: var(--p-onecx-topbar-bg-color);
+            color: var(--topbar-item-text-color);
+            background-color: var(--topbar-bg-color);
             &:hover,
             &:focus {
-              color: var(--p-onecx-topbar-item-text-hover-color);
-              background-color: var(--p-onecx-topbar-item-text-hover-bg-color);
+              color: var(--topbar-item-text-hover-color);
+              background-color: var(--topbar-item-text-hover-bg-color);
               transition: background-color var(--p-transition-duration);
             }
           }
@@ -250,14 +250,14 @@ $menuWrapperWidth: 17rem;
 }
 
 .layout-topbar_flex {
-  color: var(--p-onecx-topbar-item-text-color);
-  background-color: var(--p-onecx-topbar-bg-color);
+  color: var(--topbar-item-text-color);
+  background-color: var(--topbar-bg-color);
 
   .layout-topbar-left {
-    background-color: var(--p-onecx-topbar-left-bg-color);
+    background-color: var(--topbar-left-bg-color);
 
     .layout-menu-button {
-      background-color: var(--p-onecx-topbar-menu-button-bg-color);
+      background-color: var(--topbar-menu-button-bg-color);
     }
   }
 
@@ -273,11 +273,11 @@ $menuWrapperWidth: 17rem;
               .p-menuitem-text,
               .p-menuitem-icon,
               .p-submenu-icon {
-                color: var(--p-onecx-topbar-item-text-color);
+                color: var(--topbar-item-text-color);
               }
 
               &:not(.p-disabled):hover {
-                background: var(--p-onecx-topbar-item-text-hover-bg-color);
+                background: var(--topbar-item-text-hover-bg-color);
                 transition: background-color var(--p-transition-duration);
               }
             }
@@ -293,7 +293,7 @@ $menuWrapperWidth: 17rem;
             }
 
             &:not(.p-disabled):hover {
-              background: var(--p-onecx-topbar-item-text-hover-bg-color);
+              background: var(--topbar-item-text-hover-bg-color);
               transition: background-color var(--p-transition-duration);
             }
           }
@@ -304,13 +304,13 @@ $menuWrapperWidth: 17rem;
     .layout-topbar-actions-right_flex {
       .layout-topbar-items {
         .layout-topbar-action-panel {
-          background-color: var(--p-onecx-overlay-content-bg-color);
-          color: var(--p-onecx-text-color);
+          background-color: var(--overlay-content-bg-color);
+          color: var(--text-color);
 
           .layout-topbar-action-item {
-            color: var(--p-onecx-menu-item-text-color);
+            color: var(--menu-item-text-color);
             &:hover {
-              background-color: var(--p-onecx-menu-item-hover-bg-color);
+              background-color: var(--menu-item-hover-bg-color);
               transition: background-color var(--p-transition-duration);
             }
           }
@@ -320,32 +320,32 @@ $menuWrapperWidth: 17rem;
           &.layout-search-item {
             .layout-search-panel {
               input {
-                background-color: var(--p-onecx-body-bg-color);
-                color: var(--p-onecx-text-color);
+                background-color: var(--body-bg-color);
+                color: var(--text-color);
 
                 &:hover {
-                  background-color: var(--p-onecx-body-bg-color);
-                  color: var(--p-onecx-text-color);
+                  background-color: var(--body-bg-color);
+                  color: var(--text-color);
                 }
               }
 
               .p-inputgroup-addon:first-child,
               .p-inputgroup button:first-child,
               .p-inputgroup input:first-child {
-                background-color: var(--p-onecx-body-bg-color);
-                color: var(--p-onecx-text-color);
+                background-color: var(--body-bg-color);
+                color: var(--text-color);
               }
 
               .p-inputgroup-addon:last-child,
               .p-inputgroup button:last-child,
               .p-inputgroup input:last-child {
-                background-color: var(--p-onecx-body-bg-color);
-                color: var(--p-onecx-text-color);
+                background-color: var(--body-bg-color);
+                color: var(--text-color);
               }
 
               .p-inputgroup-addon {
                 .p-button-text {
-                  color: var(--p-onecx-text-color);
+                  color: var(--text-color);
                 }
               }
             }
