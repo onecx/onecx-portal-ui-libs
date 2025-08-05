@@ -8,7 +8,12 @@ import { Location } from "@angular/common";
  */
 export function provideTranslationPathFromMeta(url: string, path = 'assets/i18n/'): Provider {
   if(url.includes('file://')) {
-    throw new Error('Can not construct translation path from local file path. Please check whether the webpack configuration for importMeta is correct: https://webpack.js.org/configuration/module/#moduleparserjavascriptimportmeta.');
+    console.warn('WARNING: Cannot construct translation path from local file path. Returning relative path. Please check whether the webpack configuration for importMeta is correct: https://webpack.js.org/configuration/module/#moduleparserjavascriptimportmeta.');
+    return {
+      provide: TRANSLATION_PATH,
+      useValue: path,
+      multi: true,
+    };
   }
   const urlWithoutFileName = url.replace(/\/[^/]*$/, '');
   const translationPath = Location.joinWithSlash(urlWithoutFileName, path) + (path.endsWith('/') ? '' : '/');
