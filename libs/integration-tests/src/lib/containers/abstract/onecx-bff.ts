@@ -10,6 +10,8 @@ export abstract class BffContainer extends GenericContainer {
 
   private port = 8080
 
+  protected shouldEnableLogging = false
+
   constructor(
     image: string,
     private readonly keycloakContainer: StartedOnecxKeycloakContainer
@@ -44,6 +46,11 @@ export abstract class BffContainer extends GenericContainer {
     return this.port
   }
 
+  enableLogging(shouldLog: boolean): this {
+    this.shouldEnableLogging = shouldLog
+    return this
+  }
+
   override async start(): Promise<StartedBffContainer> {
     // Apply the default health check explicitly if it has not been set.
     // This ensures the healthcheck is correctly registered before container startup
@@ -64,13 +71,15 @@ export abstract class BffContainer extends GenericContainer {
       TKIT_OIDC_HEALTH_ENABLED: 'false',
     })
 
-      .withLogConsumer((stream) => {
+    if (this.shouldEnableLogging) {
+      this.withLogConsumer((stream) => {
         stream.on('data', (line) => console.log(`${this.details.permissionsProductName}: `, line))
         stream.on('err', (line) => console.error(`${this.details.permissionsProductName}: `, line))
         stream.on('end', () => console.log(`${this.details.permissionsProductName}: Stream closed`))
       })
+    }
 
-      .withExposedPorts(this.port)
+    this.withExposedPorts(this.port)
 
       .withWaitStrategy(Wait.forAll([Wait.forHealthCheck(), Wait.forListeningPorts()]))
     return new StartedBffContainer(await super.start(), this.details, this.networkAliases, this.port)

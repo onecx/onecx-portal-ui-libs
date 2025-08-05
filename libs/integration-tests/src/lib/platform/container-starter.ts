@@ -21,7 +21,8 @@ export class ContainerStarter {
   constructor(
     private imageResolver: ImageResolver,
     private network: StartedNetwork,
-    private addContainer: (key: CONTAINER, container: AllowedContainerTypes) => void
+    private addContainer: (key: CONTAINER, container: AllowedContainerTypes) => void,
+    private readonly config: PlatformConfig
   ) {}
 
   /**
@@ -105,7 +106,10 @@ export class ContainerStarter {
 
   // Private methods for starting individual services
   private async startPostgresContainer(): Promise<StartedOnecxPostgresContainer> {
-    return await new OnecxPostgresContainer(this.imageResolver.getPostgresImage()).withNetwork(this.network).start()
+    return await new OnecxPostgresContainer(this.imageResolver.getPostgresImage())
+      .withNetwork(this.network)
+      .enableLogging(this.enableLogging(this.config))
+      .start()
   }
 
   private async startKeycloakContainer(
@@ -113,6 +117,7 @@ export class ContainerStarter {
   ): Promise<StartedOnecxKeycloakContainer> {
     return await new OnecxKeycloakContainer(this.imageResolver.getKeycloakImage(), postgres)
       .withNetwork(this.network)
+      .enableLogging(this.enableLogging(this.config))
       .start()
   }
 
@@ -122,6 +127,7 @@ export class ContainerStarter {
       keycloak
     )
       .withNetwork(this.network)
+      .enableLogging(this.enableLogging(this.config))
       .start()
     this.addContainer(CONTAINER.IAMKC_SVC, container)
   }
@@ -136,6 +142,7 @@ export class ContainerStarter {
       keycloak
     )
       .withNetwork(this.network)
+      .enableLogging(this.enableLogging(this.config))
       .start()
     this.addContainer(CONTAINER.WORKSPACE_SVC, container)
   }
@@ -150,6 +157,7 @@ export class ContainerStarter {
       keycloak
     )
       .withNetwork(this.network)
+      .enableLogging(this.enableLogging(this.config))
       .start()
     this.addContainer(CONTAINER.USER_PROFILE_SVC, container)
   }
@@ -164,6 +172,7 @@ export class ContainerStarter {
       keycloak
     )
       .withNetwork(this.network)
+      .enableLogging(this.enableLogging(this.config))
       .start()
     this.addContainer(CONTAINER.THEME_SVC, container)
   }
@@ -178,6 +187,7 @@ export class ContainerStarter {
       keycloak
     )
       .withNetwork(this.network)
+      .enableLogging(this.enableLogging(this.config))
       .start()
     this.addContainer(CONTAINER.TENANT_SVC, container)
   }
@@ -192,6 +202,7 @@ export class ContainerStarter {
       keycloak
     )
       .withNetwork(this.network)
+      .enableLogging(this.enableLogging(this.config))
       .start()
     this.addContainer(CONTAINER.PRODUCT_STORE_SVC, container)
   }
@@ -214,6 +225,7 @@ export class ContainerStarter {
       tenantSvcContainer as StartedSvcContainer
     )
       .withNetwork(this.network)
+      .enableLogging(this.enableLogging(this.config))
       .start()
     this.addContainer(CONTAINER.PERMISSION_SVC, container)
   }
@@ -224,6 +236,7 @@ export class ContainerStarter {
       keycloak
     )
       .withNetwork(this.network)
+      .enableLogging(this.enableLogging(this.config))
       .start()
     this.addContainer(CONTAINER.SHELL_BFF, container)
   }
@@ -243,7 +256,16 @@ export class ContainerStarter {
       keycloak
     )
       .withNetwork(this.network)
+      .enableLogging(this.enableLogging(this.config))
       .start()
     this.addContainer(CONTAINER.SHELL_UI, container)
+  }
+
+  private enableLogging(config: PlatformConfig): boolean {
+    if (typeof config.enableLogging === 'boolean') {
+      return config.enableLogging
+    } else {
+      return false
+    }
   }
 }

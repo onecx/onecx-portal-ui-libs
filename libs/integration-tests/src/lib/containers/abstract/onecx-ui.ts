@@ -10,6 +10,8 @@ export abstract class UiContainer extends GenericContainer {
 
   private port = 8080
 
+  protected shouldEnableLogging = false
+
   constructor(image: string) {
     super(image)
   }
@@ -34,6 +36,11 @@ export abstract class UiContainer extends GenericContainer {
     return this
   }
 
+  enableLogging(shouldLog: boolean): this {
+    this.shouldEnableLogging = shouldLog
+    return this
+  }
+
   override async start(): Promise<StartedUiContainer> {
     this.withEnvironment({
       ...this.environment,
@@ -42,13 +49,15 @@ export abstract class UiContainer extends GenericContainer {
       PRODUCT_NAME: `${this.details.productName}`,
     })
 
-      .withLogConsumer((stream) => {
+    if (this.shouldEnableLogging) {
+      this.withLogConsumer((stream) => {
         stream.on('data', (line) => console.log(`${this.details.appBaseHref}: `, line))
         stream.on('err', (line) => console.error(`${this.details.appBaseHref}: `, line))
         stream.on('end', () => console.log(`${this.details.appBaseHref}: Stream closed`))
       })
+    }
 
-      .withExposedPorts(this.port)
+    this.withExposedPorts(this.port)
 
     return new StartedUiContainer(await super.start(), this.details, this.networkAliases, this.port)
   }

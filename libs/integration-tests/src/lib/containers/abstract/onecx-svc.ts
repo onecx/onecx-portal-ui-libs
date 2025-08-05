@@ -11,6 +11,8 @@ export abstract class SvcContainer extends GenericContainer {
 
   protected shouldCreateDatabase = true
 
+  protected shouldEnableLogging = false
+
   private port = 8080
 
   private defaultHealthCheck: HealthCheck = {
@@ -57,6 +59,11 @@ export abstract class SvcContainer extends GenericContainer {
     this.shouldCreateDatabase = shouldStart
   }
 
+  enableLogging(shouldLog: boolean): this {
+    this.shouldEnableLogging = shouldLog
+    return this
+  }
+
   override async start(): Promise<StartedSvcContainer> {
     if (this.shouldCreateDatabase) {
       this.validateDatabaseCredentials()
@@ -79,15 +86,16 @@ export abstract class SvcContainer extends GenericContainer {
       QUARKUS_DATASOURCE_JDBC_URL: `jdbc:postgresql://${this.services.databaseContainer?.getNetworkAliases()[0]}:${this.services.databaseContainer?.getPort()}/${this.details.databaseUsername}?sslmode=disable`,
       TKIT_DATAIMPORT_ENABLED: 'true',
       ONECX_TENANT_CACHE_ENABLED: 'false',
-    })
-      .withEnvironment(getCommonEnvironmentVariables(this.services.keycloakContainer))
-
-      .withLogConsumer((stream) => {
+    }).withEnvironment(getCommonEnvironmentVariables(this.services.keycloakContainer))
+    if (this.shouldEnableLogging) {
+      this.withLogConsumer((stream) => {
         stream.on('data', (line) => console.log(`${this.details.databaseUsername}: `, line))
         stream.on('err', (line) => console.error(`${this.details.databaseUsername}: `, line))
         stream.on('end', () => console.log(`${this.details.databaseUsername}: Stream closed`))
       })
-      .withWaitStrategy(Wait.forAll([Wait.forHealthCheck(), Wait.forListeningPorts()]))
+    }
+
+    this.withWaitStrategy(Wait.forAll([Wait.forHealthCheck(), Wait.forListeningPorts()]))
     return new StartedSvcContainer(await super.start(), this.details, this.networkAliases, this.port)
   }
 }

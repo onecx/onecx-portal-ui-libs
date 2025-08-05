@@ -6,26 +6,34 @@ import { DEFAULT_PLATFORM_CONFIG } from '../config/platform-config'
 import { ImageResolver } from './image-resolver'
 import { HealthChecker, HealthCheckResult } from './health-checker'
 import { ContainerStarter } from './container-starter'
+import { ContainerFactory } from './container-factory'
 import { DataImporter } from './data-importer'
 import type { AllowedContainerTypes } from '../model/allowed-container.types'
 
 export class PlatformManager {
   private startedContainers: Map<CONTAINER, AllowedContainerTypes> = new Map()
+  private customContainers: Map<string, AllowedContainerTypes> = new Map()
+
   private network?: StartedNetwork
   private imageResolver?: ImageResolver
   private containerStarter?: ContainerStarter
+  private containerFactory?: ContainerFactory
   private dataImporter?: DataImporter
+
   private healthChecker: HealthChecker = new HealthChecker()
 
   async startServices(config: PlatformConfig = DEFAULT_PLATFORM_CONFIG) {
     this.imageResolver = new ImageResolver(config)
     this.dataImporter = new DataImporter(this.imageResolver)
     this.network = await new Network().start()
-    this.containerStarter = new ContainerStarter(this.imageResolver, this.network, this.addContainer.bind(this))
+    this.containerStarter = new ContainerStarter(this.imageResolver, this.network, this.addContainer.bind(this), config)
 
     // Always start core services first
     const postgres = await this.containerStarter.startCoreServices()
     const keycloak = this.startedContainers.get(CONTAINER.KEYCLOAK) as StartedOnecxKeycloakContainer
+
+    // Initialize container factory with core services
+    this.containerFactory = new ContainerFactory(this.network, postgres, keycloak)
 
     // Start backend services based on configuration
     await this.containerStarter.startBackendServices(config, postgres, keycloak, this.getContainer.bind(this))
@@ -36,10 +44,51 @@ export class PlatformManager {
     // Start UI services based on configuration
     await this.containerStarter.startUiServices(config, keycloak, this.getContainer.bind(this))
 
+    // Create custom containers if defined in configuration
+    if (config.container) {
+      await this.createCustomContainers(config)
+    }
+
     // Import data if configured
     if (config.importData && this.network && this.dataImporter) {
       await this.dataImporter.importDefaultData(this.network, this.startedContainers)
     }
+  }
+
+  /**
+   * Create custom containers using the ContainerFactory
+   */
+  private async createCustomContainers(config: PlatformConfig): Promise<void> {
+    if (!this.containerFactory) {
+      throw new Error('ContainerFactory not initialized. Core services must be started first.')
+    }
+
+    try {
+      const customContainers = await this.containerFactory.createContainers(config)
+
+      // Store custom containers in separate map
+      for (const [key, container] of customContainers) {
+        this.customContainers.set(key, container)
+        console.log(`Custom container '${key}' started successfully`)
+      }
+    } catch (error) {
+      console.error('Failed to create custom containers:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Get a custom container by key
+   */
+  getCustomContainer<T extends AllowedContainerTypes>(key: string): T | undefined {
+    return this.customContainers.get(key) as T | undefined
+  }
+
+  /**
+   * Get all custom containers
+   */
+  getCustomContainers(): Map<string, AllowedContainerTypes> {
+    return new Map(this.customContainers)
   }
 
   /**
@@ -81,6 +130,18 @@ export class PlatformManager {
    * Stop all running services and cleanup resources
    */
   async stopAllServices() {
+    // Stop custom containers first
+    const customContainers = Array.from(this.customContainers.values()).reverse()
+    for (const container of customContainers) {
+      try {
+        await container.stop()
+        console.log('Custom container stopped successfully')
+      } catch (e) {
+        console.error(`Error stopping custom container: ${e}`)
+      }
+    }
+    this.customContainers.clear()
+
     // Since all services depend on Postgres and Keycloak, it's best to stop these last.
     // The same applies to the Shell, as the UI depends on the BFF.
     // Since the startup order is important, the containers can be stopped in the reverse order.

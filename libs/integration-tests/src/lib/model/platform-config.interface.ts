@@ -1,4 +1,6 @@
-import { CONTAINER } from './container.enum'
+import { BffContainerInterface } from './bff.interface'
+import { SvcContainerInterface } from './svc.interface'
+import { UiContainerInterface } from './ui.interface'
 
 export interface PlatformConfig {
   /** Core services that are always required */
@@ -26,6 +28,8 @@ export interface PlatformConfig {
   }
   /** Whether to run data import after starting services */
   importData?: boolean
+  /** Whether to enable loggin or not */
+  enableLogging?: boolean
   /** Image version overrides - allows testing against different versions */
   imageVersions?: {
     /** Core service versions */
@@ -49,5 +53,10 @@ export interface PlatformConfig {
       bff?: string
       ui?: string
     }
+  }
+  container?: {
+    service?: SvcContainerInterface | SvcContainerInterface[]
+    bff?: BffContainerInterface | BffContainerInterface[]
+    ui?: UiContainerInterface | UiContainerInterface[]
   }
 }
