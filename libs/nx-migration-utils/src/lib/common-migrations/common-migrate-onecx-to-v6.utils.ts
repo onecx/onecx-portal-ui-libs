@@ -33,6 +33,9 @@ import { hasHtmlTag } from '../utils/validation/has-html-tag.utils'
 import { updateJsonFiles } from '../utils/modification/update-json-files.utils'
 import { removeReferences } from '../utils/modification/remove-json-references.utils'
 import { updateStyleSheets } from '../utils/modification/update-style-sheets.utils'
+import replacePortalIntegrationAngularImports from '../migrations/v6/replace-pia-imports'
+import replacePortalCoreModule from '../migrations/v6/replace-portal-core-module'
+import removePortalIntegrationAngularImports from '../migrations/v6/remove-pia-imports'
 
 const PORTAL_LAYOUT_STYLES = '@onecx/portal-layout-styles'
 
@@ -150,6 +153,8 @@ export async function commonMigrateOnecxToV6(tree: Tree) {
 
   warnUserServiceHasPermission(tree, srcDirectoryPath)
   warnOcxPortalViewport(tree, srcDirectoryPath)
+
+  removePortalIntegrationAngular(tree, srcDirectoryPath)
 
   await formatFiles(tree)
 
@@ -376,4 +381,10 @@ function provideStandaloneProvidersIfModuleUsed(tree: Tree, dirPath: string) {
     addProviderInModuleIfDoesNotExist(tree, moduleName, provider, variablesWithProvider)
     addProviderImportIfDoesNotExist(tree, moduleName.filePath, provider)
   })
+}
+
+function removePortalIntegrationAngular(tree: Tree, dirPath: string) {
+  replacePortalCoreModule(tree, dirPath)
+  replacePortalIntegrationAngularImports(tree, dirPath)
+  removePortalIntegrationAngularImports(tree, dirPath)
 }
