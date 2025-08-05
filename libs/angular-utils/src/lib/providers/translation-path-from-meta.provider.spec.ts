@@ -28,10 +28,20 @@ describe('provideTranslationPathFromMeta', () => {
     expect(provider).toEqual(expect.objectContaining({ useValue: 'https://dev.one-cx.org/mfe/workspace/assets/pathName/'}));
   });
 
-  it('should throw error for local file URLs', () => {
-    expect(() => provideTranslationPathFromMeta('file:///some/local/file.js')).toThrow(
-      'Can not construct translation path from local file path. Please check whether the webpack configuration for importMeta is correct: https://webpack.js.org/configuration/module/#moduleparserjavascriptimportmeta.'
+  it('should log warning and return relative path for local file URLs', () => {
+    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+    const provider = provideTranslationPathFromMeta('file:///some/local/file.js', 'assets/i18n/');
+    
+    expect(consoleSpy).toHaveBeenCalledWith(
+      'WARNING: Cannot construct translation path from local file path. Returning relative path. Please check whether the webpack configuration for importMeta is correct: https://webpack.js.org/configuration/module/#moduleparserjavascriptimportmeta.'
     );
+    expect(provider).toEqual({
+      provide: TRANSLATION_PATH,
+      useValue: 'assets/i18n/',
+      multi: true,
+    });
+    
+    consoleSpy.mockRestore();
   });
 
   it('should add trailing slash if path does not end with slash', () => {
