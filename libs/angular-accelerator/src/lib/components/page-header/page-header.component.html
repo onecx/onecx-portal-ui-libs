@@ -26,7 +26,9 @@
         @if (!!header) {
         <h1 id="page-header">{{ header }}</h1>
         } @if (!!subheader) {
-        <div id="page-subheader" role="note" aria-label="subheader">{{ subheader }}</div>
+        <div id="page-subheader" role="note" [attr.aria-label]="'OCX_PAGE_HEADER.SUBHEADER' | translate">
+          {{ subheader }}
+        </div>
         }
       </div>
       } @else {
