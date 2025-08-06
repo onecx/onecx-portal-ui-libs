@@ -1,3 +1,9 @@
+## [5.47.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.47.0...v5.47.1) (2025-08-05)
+
+### Bug Fixes
+
+* adjust deprecation message ([#857](https://github.com/onecx/onecx-portal-ui-libs/issues/857)) ([4125c15](https://github.com/onecx/onecx-portal-ui-libs/commit/4125c15e7c8b7263e2a310bce30f292d8e3e7f29))
+
 ## [5.47.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.46.1...v5.47.0) (2025-07-29)
 
 ### Features
