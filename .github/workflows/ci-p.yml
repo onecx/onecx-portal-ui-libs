@@ -8,11 +8,11 @@ on:
       - '**'
 
 jobs:
-  ci-common:
+  main:
     uses: ./.github/workflows/ci-common.yml
     secrets: inherit
 
   sonar:
-    needs: ci-common
+    needs: main
     uses: ./.github/workflows/sonar.yml
     secrets: inherit

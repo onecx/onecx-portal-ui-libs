@@ -15,6 +15,6 @@ jobs:
     with:
       failOnSeverity: 'high'
 
-  ci-common:
+  main:
     uses: ./.github/workflows/ci-common.yml
     secrets: inherit
