@@ -22,36 +22,47 @@ export class PlatformManager {
 
   private healthChecker: HealthChecker = new HealthChecker()
 
+  private startDefaultPlatform = true
+
   async startServices(config: PlatformConfig = DEFAULT_PLATFORM_CONFIG) {
-    this.imageResolver = new ImageResolver(config)
+    this.imageResolver = new ImageResolver()
     this.dataImporter = new DataImporter(this.imageResolver)
     this.network = await new Network().start()
-    this.containerStarter = new ContainerStarter(this.imageResolver, this.network, this.addContainer.bind(this), config)
+    this.containerStarter = new ContainerStarter(
+      this.imageResolver,
+      this.network,
+      this.addDefaultContainer.bind(this),
+      config
+    )
 
-    // Always start core services first
-    const postgres = await this.containerStarter.startCoreServices()
-    const keycloak = this.startedContainers.get(CONTAINER.KEYCLOAK) as StartedOnecxKeycloakContainer
+    if (config.startDefaultSetup) {
+      this.startDefaultPlatform = config.startDefaultSetup.valueOf()
+    }
 
-    // Initialize container factory with core services
-    this.containerFactory = new ContainerFactory(this.network, postgres, keycloak)
+    if (this.startDefaultPlatform) {
+      // Always start core services first
+      const postgres = await this.containerStarter.startCoreServices()
+      const keycloak = this.startedContainers.get(CONTAINER.KEYCLOAK) as StartedOnecxKeycloakContainer
 
-    // Start backend services based on configuration
-    await this.containerStarter.startBackendServices(config, postgres, keycloak, this.getContainer.bind(this))
+      await this.containerStarter.startBackendServices(config, postgres, keycloak, this.getDefaultContainer.bind(this))
 
-    // Start BFF services based on configuration
-    await this.containerStarter.startBffServices(config, keycloak)
+      // Start BFF services based on configuration
+      await this.containerStarter.startBffServices(config, keycloak)
 
-    // Start UI services based on configuration
-    await this.containerStarter.startUiServices(config, keycloak, this.getContainer.bind(this))
-
-    // Create custom containers if defined in configuration
-    if (config.container) {
-      await this.createCustomContainers(config)
+      // Start UI services based on configuration
+      await this.containerStarter.startUiServices(config, keycloak, this.getDefaultContainer.bind(this))
+      // Create custom containers if defined in configuration
+      if (config.container) {
+        // Initialize container factory with core services
+        this.containerFactory = new ContainerFactory(this.network, this.imageResolver, postgres, keycloak)
+        await this.createCustomContainers(config)
+      }
     }
 
     // Import data if configured
     if (config.importData && this.network && this.dataImporter) {
-      await this.dataImporter.importDefaultData(this.network, this.startedContainers)
+      this.dataImporter.createContainerInfo(this.startedContainers)
+      await this.dataImporter.importDefaultData(this.network, this.startedContainers, config)
     }
   }
 
@@ -87,7 +98,7 @@ export class PlatformManager {
   /**
    * Get all custom containers
    */
-  getCustomContainers(): Map<string, AllowedContainerTypes> {
+  getAllCustomContainers(): Map<string, AllowedContainerTypes> {
     return new Map(this.customContainers)
   }
 
@@ -108,14 +119,14 @@ export class PlatformManager {
   /**
    * Get a started container by type
    */
-  getContainer<T extends AllowedContainerTypes>(service: CONTAINER): T | undefined {
+  getDefaultContainer<T extends AllowedContainerTypes>(service: CONTAINER): T | undefined {
     return this.startedContainers.get(service) as T | undefined
   }
 
   /**
    * Add container to the Map
    */
-  private addContainer<T extends AllowedContainerTypes>(key: CONTAINER, container: T): void {
+  private addDefaultContainer<T extends AllowedContainerTypes>(key: CONTAINER, container: T): void {
     this.startedContainers.set(key, container)
   }
 

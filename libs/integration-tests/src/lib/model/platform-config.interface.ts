@@ -3,42 +3,21 @@ import { SvcContainerInterface } from './svc.interface'
 import { UiContainerInterface } from './ui.interface'
 
 export interface PlatformConfig {
-  /** Core services that are always required */
-  core: {
-    postgres: boolean
-    keycloak: boolean
-  }
-  /** Backend services */
-  services?: {
-    iamKc?: boolean
-    workspace?: boolean
-    userProfile?: boolean
-    theme?: boolean
-    tenant?: boolean
-    productStore?: boolean
-    permission?: boolean
-  }
-  /** Backend for frontend services */
-  bff?: {
-    shell?: boolean
-  }
-  /** UI services */
-  ui?: {
-    shell?: boolean
-  }
+  /** Whether to run the minimal setup of the onecx Platform */
+  startDefaultSetup?: boolean
   /** Whether to run data import after starting services */
   importData?: boolean
   /** Whether to enable loggin or not */
   enableLogging?: boolean
-  /** Image version overrides - allows testing against different versions */
-  imageVersions?: {
-    /** Core service versions */
+  /** Image overrides - allows testing against different images */
+  imageOverrides?: {
+    /** Core service images */
     core?: {
       postgres?: string
       keycloak?: string
       node?: string
     }
-    /** Backend service versions */
+    /** Backend service images */
     services?: {
       iamKc?: string
       workspace?: string
@@ -48,10 +27,13 @@ export interface PlatformConfig {
       productStore?: string
       permission?: string
     }
-    /** Shell service versions */
-    shell?: {
-      bff?: string
-      ui?: string
+    /** BFF shell service images */
+    bff?: {
+      shell?: string
+    }
+    /** UI shell service images */
+    ui?: {
+      shell?: string
     }
   }
   container?: {

@@ -13,8 +13,11 @@ export enum OnecxServiceImage {
   ONECX_USER_PROFILE_SVC = 'ONECX_USER_PROFILE_SVC',
 }
 
-export enum OnecxShellImage {
+export enum OnecxBffImage {
   ONECX_SHELL_BFF = 'ONECX_SHELL_BFF',
+}
+
+export enum OnecxUiImage {
   ONECX_SHELL_UI = 'ONECX_SHELL_UI',
 }
 
@@ -27,8 +30,10 @@ export const onecxSvcImages = {
   [OnecxServiceImage.ONECX_WORKSPACE_SVC]: `${DOCKER_REPO}/onecx-workspace-svc:main-native`,
   [OnecxServiceImage.ONECX_USER_PROFILE_SVC]: `${DOCKER_REPO}/onecx-user-profile-svc:main-native`,
 }
+export const onecxBffImages = {
+  [OnecxBffImage.ONECX_SHELL_BFF]: `${DOCKER_REPO}/onecx-shell-bff:main-native`,
+}
 
-export const onecxShellImages = {
-  [OnecxShellImage.ONECX_SHELL_BFF]: `${DOCKER_REPO}/onecx-shell-bff:main-native`,
-  [OnecxShellImage.ONECX_SHELL_UI]: `${DOCKER_REPO}/onecx-shell-ui:1.x`,
+export const onecxUiImages = {
+  [OnecxUiImage.ONECX_SHELL_UI]: `${DOCKER_REPO}/onecx-shell-ui:1.x`,
 }

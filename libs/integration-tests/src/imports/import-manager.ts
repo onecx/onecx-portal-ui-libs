@@ -13,27 +13,16 @@ import {
 } from './product-store/import-product-store'
 import { importPermissions } from './permissions/import-permissions'
 
-interface ContainerInfo {
-  keycloak: {
+export interface ContainerInfo {
+  tokenValues: {
+    username: string
+    password: string
     realm: string
     alias: string
     port: number
+    clientId: string
   }
   services: Record<string, { alias: string; port: number }>
-}
-enum CONTAINER {
-  POSTGRES = 'postgres',
-  KEYCLOAK = 'keycloak',
-  IAMKC_SVC = 'iamKcSvcContainer',
-  WORKSPACE_SVC = 'workspaceSvcContainer',
-  USER_PROFILE_SVC = 'userProfileSvcContainer',
-  THEME_SVC = 'themeSvcContainer',
-  TENANT_SVC = 'tenantSvcContainer',
-  PRODUCT_STORE_SVC = 'productStoreSvcContainer',
-  PERMISSION_SVC = 'permissionSvcContainer',
-  SHELL_BFF = 'shellBff',
-  SHELL_UI = 'shellUi',
-  IMPORT_MANAGER = 'importManager',
 }
 
 export class ImportManager {
@@ -50,19 +39,19 @@ export class ImportManager {
     this.containerInfo = JSON.parse(containerInfoData)
 
     console.log('Loaded container info:', {
-      keycloak: `${this.containerInfo.keycloak.alias}:${this.containerInfo.keycloak.port}`,
+      keycloak: `${this.containerInfo.tokenValues.alias}:${this.containerInfo.tokenValues.port}`,
       servicesCount: Object.keys(this.containerInfo.services).length,
     })
   }
 
   private async getToken(): Promise<string> {
-    const { keycloak } = this.containerInfo
-    const url = `http://${keycloak.alias}:${keycloak.port}/realms/${keycloak.realm}/protocol/openid-connect/token`
+    const { tokenValues } = this.containerInfo
+    const url = `http://${tokenValues.alias}:${tokenValues.port}/realms/${tokenValues.realm}/protocol/openid-connect/token`
     const params = new URLSearchParams({
-      username: keycloak.realm,
-      password: keycloak.realm,
+      username: tokenValues.username,
+      password: tokenValues.password,
       grant_type: 'password',
-      client_id: 'onecx-shell-ui-client',
+      client_id: tokenValues.clientId,
     })
 
     const response = await axios.post<{ access_token: string }>(url, params, {
@@ -77,62 +66,64 @@ export class ImportManager {
     const base = path.resolve(__dirname, '')
     const { services } = this.containerInfo
 
-    const getService = (serviceName: string) => {
+    // Helper function to get service URL
+    const getServiceUrl = (serviceName: string, path = '') => {
       const service = services[serviceName]
       if (!service) {
         throw new Error(`Service '${serviceName}' not found in container info`)
       }
-      return service
+      return `http://${service.alias}:${service.port}${path}`
     }
 
-    const workspaceSvc = getService(CONTAINER.WORKSPACE_SVC)
-    const themeSvc = getService(CONTAINER.THEME_SVC)
-    const tenantSvc = getService(CONTAINER.TENANT_SVC)
-    const productStoreSvc = getService(CONTAINER.PRODUCT_STORE_SVC)
-    const permissionSvc = getService(CONTAINER.PERMISSION_SVC)
+    // Get all available services
+    const serviceNames = Object.keys(services)
 
-    console.log('Available services:', Object.keys(services))
-    console.log('Using services:', {
-      workspace: `${workspaceSvc.alias}:${workspaceSvc.port}`,
-      theme: `${themeSvc.alias}:${themeSvc.port}`,
-      tenant: `${tenantSvc.alias}:${tenantSvc.port}`,
-      productStore: `${productStoreSvc.alias}:${productStoreSvc.port}`,
-      permission: `${permissionSvc.alias}:${permissionSvc.port}`,
-    })
+    console.log('Available services:', serviceNames)
+    console.log('Using all services:', Object.fromEntries(serviceNames.map((name) => [name, getServiceUrl(name)])))
 
-    const productStoreBase = `http://${productStoreSvc.alias}:${productStoreSvc.port}/`
+    // Tenant import - requires tenant service
+    if (services['tenantSvc']) {
+      await importTenants(path.join(base, 'tenant'), getServiceUrl('tenantSvc', '/exim/v1/tenants/operator'))
+    }
 
-    await importTenants(
-      path.join(base, 'tenant'),
-      `http://${tenantSvc.alias}:${tenantSvc.port}/exim/v1/tenants/operator`
-    )
+    // Theme import - requires theme service
+    if (services['themeSvc']) {
+      await importThemes(
+        path.join(base, 'theme'),
+        async () => token,
+        getServiceUrl('themeSvc', '/exim/v1/themes/operator')
+      )
+    }
 
-    await importThemes(
-      path.join(base, 'theme'),
-      async () => token,
-      `http://${themeSvc.alias}:${themeSvc.port}/exim/v1/themes/operator`
-    )
+    // Product store related imports - requires product store service
+    if (services['productStoreSvc']) {
+      const productStore = 'product-store'
+      const productStoreBase = getServiceUrl('productStoreSvc', '/')
 
-    await importProducts(path.join(base, 'product-store'), productStoreBase)
+      await importProducts(path.join(base, productStore), productStoreBase)
+      await importSlots(path.join(base, productStore), productStoreBase)
+      await importMicroservices(path.join(base, productStore), productStoreBase)
+      await importMicrofrontends(path.join(base, productStore), productStoreBase)
+    }
 
-    await importSlots(path.join(base, 'product-store'), productStoreBase)
+    // Permission imports - requires permission service
+    if (services['permissionSvc']) {
+      await importPermissions(path.join(base, 'permissions'), getServiceUrl('permissionSvc'))
 
-    await importMicroservices(path.join(base, 'product-store'), productStoreBase)
+      await importAssignments(
+        path.join(base, 'assignments'),
+        async () => token,
+        getServiceUrl('permissionSvc', '/exim/v1/assignments/operator')
+      )
+    }
 
-    await importMicrofrontends(path.join(base, 'product-store'), productStoreBase)
-
-    await importPermissions(path.join(base, 'permissions'), `http://${permissionSvc.alias}:${permissionSvc.port}`)
-
-    await importAssignments(
-      path.join(base, 'assignments'),
-      async () => token,
-      `http://${permissionSvc.alias}:${permissionSvc.port}/exim/v1/assignments/operator`
-    )
-
-    await importWorkspaces(
-      path.join(base, 'workspace'),
-      async () => token,
-      `http://${workspaceSvc.alias}:${workspaceSvc.port}/exim/v1/workspace/operator`
-    )
+    // Workspace import - requires workspace service
+    if (services['workspaceSvc']) {
+      await importWorkspaces(
+        path.join(base, 'workspace'),
+        async () => token,
+        getServiceUrl('workspaceSvc', '/exim/v1/workspace/operator')
+      )
+    }
   }
 }

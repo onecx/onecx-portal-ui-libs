@@ -1,5 +1,5 @@
 import { AbstractStartedContainer, GenericContainer, StartedTestContainer } from 'testcontainers'
-import { UiDetails } from '../../model/ui.model'
+import { UiDetails } from '../../model/ui.interface'
 
 export abstract class UiContainer extends GenericContainer {
   private details: UiDetails = {

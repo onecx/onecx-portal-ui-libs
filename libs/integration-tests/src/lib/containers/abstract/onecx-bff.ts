@@ -1,6 +1,6 @@
 import { AbstractStartedContainer, GenericContainer, StartedTestContainer, Wait } from 'testcontainers'
 import { HealthCheck } from 'testcontainers/build/types'
-import { BffDetails } from '../../model/bff.model'
+import { BffDetails } from '../../model/bff.interface'
 import { StartedOnecxKeycloakContainer } from '../core/onecx-keycloak'
 
 export abstract class BffContainer extends GenericContainer {

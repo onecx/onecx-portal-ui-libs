@@ -3,8 +3,13 @@ import { ImportManagerContainer, StartedImportManagerContainer } from '../contai
 import { ImageResolver } from './image-resolver'
 import { CONTAINER } from '../model/container.enum'
 import type { AllowedContainerTypes } from '../model/allowed-container.types'
+import { StartedOnecxKeycloakContainer } from '../containers/core/onecx-keycloak'
 import * as fs from 'fs'
 import * as path from 'path'
+import { StartedShellUiContainer } from '../containers/ui/onecx-shell-ui'
+import { ContainerInfo } from '../../imports/import-manager'
+import { PlatformConfig } from '../model/platform-config.interface'
+import { shouldEnableLogging } from '../utils/logging-config.util'
 
 export class DataImporter {
   constructor(private imageResolver: ImageResolver) {}
@@ -14,13 +19,19 @@ export class DataImporter {
    */
   async importDefaultData(
     network: StartedNetwork,
-    startedContainers: Map<CONTAINER, AllowedContainerTypes>
+    startedContainers: Map<CONTAINER, AllowedContainerTypes>,
+    config: PlatformConfig
   ): Promise<void> {
     console.log('Starting ImportManagerContainer with direct import execution')
 
     try {
-      const importer = await new ImportManagerContainer(this.imageResolver.getNodeImage(), startedContainers)
+      // Create container info file before starting the import container
+      const containerInfoPath = this.createContainerInfo(startedContainers)
+
+      const importImage = await this.imageResolver.getNodeImage(config)
+      const importer = await new ImportManagerContainer(importImage, containerInfoPath)
         .withNetwork(network)
+        .enableLogging(shouldEnableLogging(config))
         .start()
 
       console.log('Import container started, monitoring import process...')
@@ -55,7 +66,7 @@ export class DataImporter {
       })
 
       console.log('Import completed successfully')
-      this.cleanupContainerInfo()
+      this.cleanupContainerInfo(containerInfoPath)
     } catch (error) {
       console.error('Import failed:', error)
       throw error
@@ -79,11 +90,83 @@ export class DataImporter {
   /**
    * Clean up temporary container info file
    */
-  private cleanupContainerInfo(): void {
-    const containerInfoPath = path.resolve(__dirname, '../../imports/container-info.json')
+  private cleanupContainerInfo(containerInfoPath: string): void {
     if (fs.existsSync(containerInfoPath)) {
       fs.unlinkSync(containerInfoPath)
       console.log('Container info file cleaned up')
     }
+  }
+
+  /**
+   * Create container info JSON file with container details
+   * @param startedContainers Map of started containers
+   * @returns Path to the created container info file
+   */
+  createContainerInfo(startedContainers: Map<CONTAINER, AllowedContainerTypes>): string {
+    const keycloakContainer = startedContainers.get(CONTAINER.KEYCLOAK)
+    if (!keycloakContainer || !this.isKeycloakContainer(keycloakContainer)) {
+      throw new Error('Keycloak container not found or invalid type in started containers')
+    }
+
+    const shellUiContainer = startedContainers.get(CONTAINER.SHELL_UI)
+    if (!shellUiContainer || !this.isShellUiContainer(shellUiContainer)) {
+      throw new Error('Keycloak container not found or invalid type in started containers')
+    }
+
+    const containerInfo: ContainerInfo = {
+      tokenValues: {
+        username: keycloakContainer.getRealm(),
+        password: keycloakContainer.getRealm(),
+        realm: keycloakContainer.getRealm(),
+        alias: keycloakContainer.getNetworkAliases()[0],
+        port: keycloakContainer.getPort(),
+        clientId: shellUiContainer.getClientUserId(),
+      },
+      services: {} as Record<string, { alias: string; port: number }>,
+    }
+
+    const importServices = [
+      CONTAINER.WORKSPACE_SVC,
+      CONTAINER.THEME_SVC,
+      CONTAINER.TENANT_SVC,
+      CONTAINER.PRODUCT_STORE_SVC,
+      CONTAINER.PERMISSION_SVC,
+    ]
+
+    for (const [name, container] of startedContainers.entries()) {
+      if (importServices.includes(name)) {
+        containerInfo.services[name] = {
+          alias: container.getNetworkAliases()[0],
+          port: container.getPort(),
+        }
+      }
+    }
+
+    const containerInfoPath = path.resolve('libs/integration-tests/src/imports/container-info.json')
+
+    // Ensure the directory exists
+    const dir = path.dirname(containerInfoPath)
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true })
+    }
+
+    fs.writeFileSync(containerInfoPath, JSON.stringify(containerInfo, null, 2))
+    console.log('Container info file created at:', containerInfoPath)
+
+    return containerInfoPath
+  }
+
+  /**
+   * Type guard to check if container is a Keycloak container
+   */
+  private isKeycloakContainer(container: AllowedContainerTypes): container is StartedOnecxKeycloakContainer {
+    return container instanceof StartedOnecxKeycloakContainer
+  }
+
+  /**
+   * Type guard to check if container is a ShellUi container
+   */
+  private isShellUiContainer(container: AllowedContainerTypes): container is StartedShellUiContainer {
+    return container instanceof StartedShellUiContainer
   }
 }

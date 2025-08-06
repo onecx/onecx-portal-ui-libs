@@ -9,6 +9,8 @@ import { UiContainer, StartedUiContainer } from '../containers/abstract/onecx-ui
 import { StartedOnecxPostgresContainer } from '../containers/core/onecx-postgres'
 import { StartedOnecxKeycloakContainer } from '../containers/core/onecx-keycloak'
 import { AllowedContainerTypes } from '../model/allowed-container.types'
+import { shouldEnableLogging } from '../utils/logging-config.util'
+import { ImageResolver } from './image-resolver'
 
 /**
  * Factory class for creating different types of containers based on configuration
@@ -16,6 +18,7 @@ import { AllowedContainerTypes } from '../model/allowed-container.types'
 export class ContainerFactory {
   constructor(
     private network: StartedNetwork,
+    private imageResolver: ImageResolver,
     private postgres?: StartedOnecxPostgresContainer,
     private keycloak?: StartedOnecxKeycloakContainer
   ) {}
@@ -32,7 +35,7 @@ export class ContainerFactory {
       return containers
     }
 
-    const enableLogging = typeof config.enableLogging === 'boolean' ? config.enableLogging : false
+    const enableLogging = shouldEnableLogging(config)
 
     // Create service containers (single or multiple)
     if (config.container.service) {
@@ -80,6 +83,9 @@ export class ContainerFactory {
       throw new Error('Postgres and Keycloak containers are required for service containers')
     }
 
+    // Resolve the image through the ImageResolver
+    const resolvedImage = await this.imageResolver.getCustomImage(svcConfig.image)
+
     const factory = this
 
     // Create a custom service container class that extends SvcContainer
@@ -109,7 +115,7 @@ export class ContainerFactory {
       }
     }
 
-    const container = new CustomSvcContainer(svcConfig.image, this.postgres, this.keycloak, svcConfig)
+    const container = new CustomSvcContainer(resolvedImage, this.postgres, this.keycloak, svcConfig)
 
     return await container.withNetwork(this.network).start()
   }
@@ -124,6 +130,9 @@ export class ContainerFactory {
     if (!this.keycloak) {
       throw new Error('Keycloak container is required for BFF containers')
     }
+
+    // Resolve the image through the ImageResolver
+    const resolvedImage = await this.imageResolver.getCustomImage(bffConfig.image)
 
     const factory = this
 
@@ -151,7 +160,7 @@ export class ContainerFactory {
       }
     }
 
-    const container = new CustomBffContainer(bffConfig.image, this.keycloak, bffConfig)
+    const container = new CustomBffContainer(resolvedImage, this.keycloak, bffConfig)
 
     return await container.withNetwork(this.network).start()
   }
@@ -160,6 +169,9 @@ export class ContainerFactory {
    * Create a UI container from the configuration
    */
   private async createUiContainer(uiConfig: UiContainerInterface, enableLogging: boolean): Promise<StartedUiContainer> {
+    // Resolve the image through the ImageResolver
+    const resolvedImage = await this.imageResolver.getCustomImage(uiConfig.image)
+
     const factory = this
 
     // Create a custom UI container class that extends UiContainer
@@ -192,7 +204,7 @@ export class ContainerFactory {
       }
     }
 
-    const container = new CustomUiContainer(uiConfig.image, uiConfig)
+    const container = new CustomUiContainer(resolvedImage, uiConfig)
 
     return await container.withNetwork(this.network).start()
   }
