@@ -1,3 +1,22 @@
+## [5.47.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.47.0...v5.47.1) (2025-08-05)
+
+### Bug Fixes
+
+* adjust deprecation message ([#857](https://github.com/onecx/onecx-portal-ui-libs/issues/857)) ([4125c15](https://github.com/onecx/onecx-portal-ui-libs/commit/4125c15e7c8b7263e2a310bce30f292d8e3e7f29))
+
+## [5.47.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.46.1...v5.47.0) (2025-07-29)
+
+### Features
+
+* adapt translation loading ([#831](https://github.com/onecx/onecx-portal-ui-libs/issues/831)) ([021b199](https://github.com/onecx/onecx-portal-ui-libs/commit/021b19970684a3431ae80a2f85432a69277aa997))
+
+## [5.46.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.46.0...v5.46.1) (2025-07-28)
+
+### Bug Fixes
+
+* reduce x padding for page content ([#853](https://github.com/onecx/onecx-portal-ui-libs/issues/853)) ([7d82f05](https://github.com/onecx/onecx-portal-ui-libs/commit/7d82f058798eaf23ff0b25c951a7779f39580d9b))
+* user footer tag for shell footer (a11y) ([#850](https://github.com/onecx/onecx-portal-ui-libs/issues/850)) ([5d5f151](https://github.com/onecx/onecx-portal-ui-libs/commit/5d5f15181384e6c389154a8adb34ce78487d49c7))
+
 ## [5.46.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.45.1...v5.46.0) (2025-07-21)
 
 ### Features

@@ -4,7 +4,7 @@ import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/
 import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { registerLocaleData } from '@angular/common'
 import localeDE from '@angular/common/locales/de'
-import { createTranslateLoader, TRANSLATION_PATH } from '@onecx/angular-utils'
+import { createTranslateLoader, provideTranslationPathFromMeta } from '@onecx/angular-utils'
 /**
   A utility module adding i18N support for Storybook stories
  **/
@@ -23,11 +23,7 @@ import { createTranslateLoader, TRANSLATION_PATH } from '@onecx/angular-utils'
   providers: [
     provideAppStateServiceMock(),
     provideHttpClient(withInterceptorsFromDi()),
-    {
-      provide: TRANSLATION_PATH,
-      useValue: './assets/i18n/',
-      multi: true,
-    },
+    provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/')
   ],
 })
 export class StorybookTranslateModule {

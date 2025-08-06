@@ -20624,7 +20624,7 @@
   --topbar-menu-button-bg-color: rgb(255 0 68);
   --menu-button-text-color: #ffffff;
   --page-padding: 1rem;
-  --page-padding-lg: calc(var(--page-padding) * 2);
+  --page-padding-lg: calc(var(--page-padding) * 1.5);
   --body-bg-color: #f7f7f7;
   --text-color: rgb(0 0 0 / 87%);
   --text-secondary-color: #616161;
