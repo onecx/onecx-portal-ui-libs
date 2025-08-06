@@ -10,6 +10,7 @@ import { Location } from "@angular/common"
       ...
     }
     to provide the translation path.
+    Please make sure the webpack configuration for importMeta contains: https://webpack.js.org/configuration/module/#moduleparserjavascriptimportmeta.
  */
 export function translationPathFactory(path: string) {
   return function TranslationPathFactory(appStateService: AppStateService): Observable<string> {
