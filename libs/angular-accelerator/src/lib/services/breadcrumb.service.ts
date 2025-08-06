@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core'
 import { ActivatedRoute, ActivatedRouteSnapshot, Data, NavigationEnd, ParamMap, Router } from '@angular/router'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { TranslateService } from '@ngx-translate/core'
-import { SyncableTopic } from '@onecx/accelerator'
+import { Topic } from '@onecx/accelerator'
 import { MenuItem } from 'primeng/api'
 import { BehaviorSubject, filter, map } from 'rxjs'
 import { BreadCrumbMenuItem } from '../model/breadcrumb-menu-item.model'
@@ -14,7 +14,7 @@ interface ManualBreadcrumbs {
 // This topic is defined here and not in integration-interface, because
 // it is not used as framework independent integration but for improving
 // angular specific things
-class ManualBreadcrumbsTopic extends SyncableTopic<ManualBreadcrumbs> {
+class ManualBreadcrumbsTopic extends Topic<ManualBreadcrumbs> {
   constructor() {
     super('manualBreadcrumbs', 1)
   }
@@ -23,11 +23,11 @@ class ManualBreadcrumbsTopic extends SyncableTopic<ManualBreadcrumbs> {
 @Injectable({ providedIn: 'any' })
 @UntilDestroy()
 export class BreadcrumbService {
-  private router = inject(Router)
-  private activeRoute = inject(ActivatedRoute)
-  private translateService = inject(TranslateService)
+  private readonly router = inject(Router)
+  private readonly activeRoute = inject(ActivatedRoute)
+  private readonly translateService = inject(TranslateService)
 
-  private itemsSource$ = new ManualBreadcrumbsTopic()
+  private readonly itemsSource$ = new ManualBreadcrumbsTopic()
   generatedItemsSource = new BehaviorSubject<MenuItem[]>([])
 
   itemsHandler = this.itemsSource$.pipe(map((manualBreadcrumbs) => manualBreadcrumbs.menuItems))
@@ -71,7 +71,7 @@ export class BreadcrumbService {
   }
 
   private addBreadcrumb(route: ActivatedRouteSnapshot | null, parentUrl: string[], breadcrumbs: MenuItem[]) {
-    if (route && route.url) {
+    if (route?.url) {
       const routeUrl = parentUrl.concat(route.url.map((url) => url.path))
       if (route.routeConfig?.path) {
         this.createBreadcrumb(route, routeUrl, breadcrumbs)
