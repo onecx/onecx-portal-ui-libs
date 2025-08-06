@@ -5,7 +5,7 @@ import { NgModule, inject } from '@angular/core'
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
 import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
-import { TranslateCombinedLoader, createTranslateLoader, provideTranslationPathFromMeta } from '@onecx/angular-utils'
+import { TRANSLATION_PATH, TranslateCombinedLoader, createTranslateLoader, provideTranslationPathFromMeta } from '@onecx/angular-utils'
 
 export function translateLoader(http: HttpClient) {
   return new TranslateCombinedLoader(new TranslateHttpLoader(http, `./assets/i18n/`, '.json'))
@@ -28,7 +28,11 @@ export function translateLoader(http: HttpClient) {
   providers: [
     provideAppStateServiceMock(),
     provideHttpClient(withInterceptorsFromDi()),
-    provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/'),
+    {
+      provide: TRANSLATION_PATH,
+      useValue: './assets/i18n/',
+      multi: true,
+    }
   ],
 })
 export class StorybookTranslateModule {
