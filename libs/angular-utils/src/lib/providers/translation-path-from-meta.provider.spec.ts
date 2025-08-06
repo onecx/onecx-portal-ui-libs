@@ -6,9 +6,6 @@ import { isTest } from '@onecx/accelerator';
 jest.mock('@onecx/accelerator', () => ({
   isTest: jest.fn(),
   Topic: class MockTopic {
-    constructor(name: string, version: number) {
-      // Mock implementation
-    }
   },
 }));
 
