@@ -1,3 +1,14 @@
+## [6.3.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.2.1...v6.3.0) (2025-08-06)
+
+### Features
+
+* Make ManualBreadcrumbsTopic non-syncable ([#864](https://github.com/onecx/onecx-portal-ui-libs/issues/864)) ([7ca1a6f](https://github.com/onecx/onecx-portal-ui-libs/commit/7ca1a6fe09f4fa700b1aa5a4a792c2217fff8e51))
+* migrations for portal-integration-angular removal ([#859](https://github.com/onecx/onecx-portal-ui-libs/issues/859)) ([8bc16db](https://github.com/onecx/onecx-portal-ui-libs/commit/8bc16db663a8126a29ce1cf2f36f6150c5184fb6))
+
+### Bug Fixes
+
+*  adjust translation path provider for tests ([#862](https://github.com/onecx/onecx-portal-ui-libs/issues/862)) ([7711760](https://github.com/onecx/onecx-portal-ui-libs/commit/7711760b312cec728931ebbaa0ef8ceb72fbc143))
+
 ## [6.2.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.2.0...v6.2.1) (2025-08-05)
 
 ### Bug Fixes
