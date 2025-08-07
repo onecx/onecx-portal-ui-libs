@@ -3,37 +3,35 @@
     class="layout-topbar-left flex relative justify-content-center align-items-center"
     [ngClass]="{'vertical-menu': !isHorizontalMenu}"
   >
-    <!-- LOGO -->
-    @if (currentTheme$ | async; as theme) { @if (isComponentDefined$ | async) {
     <ocx-slot
-      [name]="slotName"
-      [inputs]="{
-            dataType: 'logo',
-            themeName: theme.name,
-            imageUrl: theme.logoUrl,
-            imageStyleClass: 'max-h-3rem max-w-8rem',
-            logEnabled: false,
-            logPrefix: 'header left logo'
-          }"
+      name="onecx-shell-header-left"
+      class="flex flex-row flex-wrap align-items-center column-gap-3 row-gap-1"
+      [inputs]="{ imageStyleClass: 'h-3rem vertical-align-middle' }"
       [outputs]="{ imageLoadingFailed: logoLoadingEmitter }"
-    ></ocx-slot>
-    } @if (themeLogoLoadingFailed) {
-    <div><!-- portal logo --></div>
-    } }
+    >
+      <ng-template #skeleton>
+        <div class="flex align-items-center h-full justify-content-center" style="width: 26px">
+          <p-skeleton shape="circle" size="2rem" class="h-full flex align-items-center"></p-skeleton>
+        </div>
+      </ng-template>
+    </ocx-slot>
+    <div *ngIf="themeLogoLoadingFailed"><!-- portal logo --></div>
     <a
       id="ocx_vertical_menu_action_toggle"
       class="layout-menu-button"
       (click)="onMenuButtonClick($event)"
       pRipple
+      [attr.aria-label]="'OCX_HEADER.MENU_TOGGLE' | translate"
       [pTooltip]="'OCX_HEADER.MENU_TOGGLE' | translate"
       tooltipPosition="top"
       tooltipEvent="hover"
     >
-      <i
+      <span
         id="ocx_vertical_menu_action_toggle_icon"
-        [ngClass]="{'toggle-button-direction': isStaticalMenu && (isComponentDefined$ | async) === true}"
         class="pi pi-chevron-right"
-      ></i>
+        [ngClass]="{'toggle-button-direction': isStaticalMenu && (isComponentDefined$ | async) === true}"
+        aria-hidden="true"
+      ></span>
     </a>
   </div>
 
