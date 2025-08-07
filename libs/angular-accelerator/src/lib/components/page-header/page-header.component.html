@@ -26,7 +26,9 @@
         @if (!!header) {
         <h1 id="page-header">{{ header }}</h1>
         } @if (!!subheader) {
-        <h2 id="page-subheader">{{ subheader }}</h2>
+        <div id="page-subheader" role="note" [attr.aria-label]="'OCX_PAGE_HEADER.SUBHEADER' | translate">
+          {{ subheader }}
+        </div>
         }
       </div>
       } @else {
@@ -49,15 +51,15 @@
           tooltipEvent="hover"
         >
           <p-button
-            id="{{ action.id }}"
+            [id]="action.id"
             [icon]="action.icon ?? ''"
             [iconPos]="action.iconPos ?? 'left'"
             type="button"
             class="action-button"
-            [label]="action.labelKey ? (action.labelKey | translate) : action.label"
             (onClick)="action.actionCallback()"
             [disabled]="action.disabled ? action.disabled : false"
             [attr.name]="action.icon ? 'ocx-page-header-inline-action-icon-button' : 'ocx-page-header-inline-action-button'"
+            [label]="action.labelKey ? (action.labelKey | translate) : action.label"
             [ariaLabel]=" (action.ariaLabelKey ? (action.ariaLabelKey | translate) : action.ariaLabel) || (action.titleKey ? (action.titleKey | translate) : action.title) || (action.labelKey ? (action.labelKey | translate) : action.label)"
           ></p-button>
         </span>
@@ -73,13 +75,13 @@
             type="button"
             pButton
             icon="pi pi-ellipsis-v"
-            pTooltip="{{ 'OCX_PAGE_HEADER.MORE_ACTIONS' | translate }}"
-            tooltipEvent="hover"
-            tooltipPosition="top"
             class="more-actions-menu-button action-button ml-2"
             (click)="menu.toggle($event)"
             name="ocx-page-header-overflow-action-button"
-            [attr.aria-label]="('OCX_PAGE_HEADER.MORE_ACTIONS' | translate)"
+            [attr.aria-label]="'OCX_PAGE_HEADER.MORE_ACTIONS' | translate"
+            [pTooltip]="'OCX_PAGE_HEADER.MORE_ACTIONS' | translate"
+            tooltipEvent="hover"
+            tooltipPosition="top"
           ></button>
           <p-menu #menu [popup]="true" [model]="overflowActions" appendTo="body"></p-menu>
         </div>
@@ -87,8 +89,8 @@
       </ng-container>
       } @else {
       <div class="flex">
-        <p-skeleton width="5rem" height="2rem" styleClass="mr-2"></p-skeleton>
-        <p-skeleton width="2rem" height="2rem" styleClass="mb-2"></p-skeleton>
+        <p-skeleton shape="circle" size="2rem" styleClass="mr-2"></p-skeleton>
+        <p-skeleton shape="circle" size="2rem" styleClass="mb-2"></p-skeleton>
       </div>
       } @if (additionalToolbarContent) {
       <ng-container [ngTemplateOutlet]="additionalToolbarContent"> </ng-container>
@@ -105,8 +107,9 @@
         [pTooltip]="item.labelTooltip || ''"
         tooltipEvent="hover"
         tooltipPosition="top"
-        >{{ item.label | dynamicPipe:item.labelPipe }}</span
       >
+        {{ item.label | dynamicPipe:item.labelPipe }}
+      </span>
       @if (item.icon || item.value) {
       <span class="object-info-grid-value">
         <span
@@ -121,17 +124,17 @@
             tooltipPosition="top"
           >
             @if (item.icon) {
-            <i class='{{item.icon + " " + (item.iconStyleClass || "")}}' name="object-detail-icon"></i>
+            <i [class]="item.icon + ' ' + (item.iconStyleClass ?? '')" name="object-detail-icon"></i>
             } {{ item.value | dynamicPipe:item.valuePipe:item.valuePipeArgs}}
           </span>
           @if (item.actionItemIcon && item.actionItemCallback) {
           <p-button
             [icon]="item.actionItemIcon"
             styleClass="p-button-text p-0 w-full"
+            [ariaLabel]="(item.actionItemAriaLabelKey ? (item.actionItemAriaLabelKey | translate) : item.actionItemAriaLabel) || item.actionItemTooltip || ''"
             [pTooltip]="item.actionItemTooltip || ''"
             tooltipPosition="top"
             tooltipEvent="hover"
-            [ariaLabel]="(item.actionItemAriaLabelKey ? (item.actionItemAriaLabelKey | translate) : item.actionItemAriaLabel) || item.actionItemTooltip || ''"
             (onClick)="item.actionItemCallback()"
           ></p-button>
           }
