@@ -1,3 +1,10 @@
+## [6.4.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.3.0...v6.4.0) (2025-08-07)
+
+### Features
+
+* add how to get debug logs of topics in browser console ([#865](https://github.com/onecx/onecx-portal-ui-libs/issues/865)) ([ad5c5b5](https://github.com/onecx/onecx-portal-ui-libs/commit/ad5c5b5b12d881547387d79fb09e9ea34e942171))
+* add slot shell header left ([#855](https://github.com/onecx/onecx-portal-ui-libs/issues/855)) ([ad30751](https://github.com/onecx/onecx-portal-ui-libs/commit/ad3075173b62959d8cc2c7457bb7b2a0c94622f9))
+
 ## [6.3.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.2.1...v6.3.0) (2025-08-06)
 
 ### Features
