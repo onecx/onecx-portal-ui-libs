@@ -5,7 +5,8 @@ import { API_PREFIX } from '../../../api/constants'
 import { UserProfile } from '../../../model/user-profile.model'
 
 /**
- * @deprecated Replace with onecx-avatar-image slot
+ * TODO: deprecate this before core apps are migrated to v6
+ * deprecated Replace with onecx-avatar-image slot
  */
 @Component({
   selector: 'ocx-user-avatar',
