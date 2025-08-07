@@ -7,7 +7,7 @@ on:
       - completed
 
 jobs:
-  set-matrix:
+  set-matrix-pr:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
@@ -29,8 +29,8 @@ jobs:
           coverage_reports=$(printf '%s\n' $paths | jq -R . | jq -s -c)
           echo "matrix=$coverage_reports" >> $GITHUB_OUTPUT
 
-  sonar-scan:
-    needs: set-matrix
+  sonar-scan-pr:
+    needs: set-matrix-pr
     runs-on: ubuntu-latest
 
     if: >
@@ -40,7 +40,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        path: ${{ fromJson(needs.set-matrix.outputs.matrix) }}
+        path: ${{ fromJson(needs.set-matrix-pr.outputs.matrix) }}
 
     steps:
       - uses: dawidd6/action-download-artifact@v11
