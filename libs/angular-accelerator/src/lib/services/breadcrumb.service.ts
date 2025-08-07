@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core'
+import { Injectable, inject } from '@angular/core'
 import { ActivatedRoute, ActivatedRouteSnapshot, Data, NavigationEnd, ParamMap, Router } from '@angular/router'
-import { TranslateService } from '@ngx-translate/core'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
-import { BehaviorSubject, filter, map } from 'rxjs'
+import { TranslateService } from '@ngx-translate/core'
+import { Topic } from '@onecx/accelerator'
 import { MenuItem } from 'primeng/api'
+import { BehaviorSubject, filter, map } from 'rxjs'
 import { BreadCrumbMenuItem } from '../model/breadcrumb-menu-item.model'
-import { SyncableTopic } from '@onecx/accelerator'
 
 interface ManualBreadcrumbs {
   menuItems: MenuItem[]
@@ -14,7 +14,7 @@ interface ManualBreadcrumbs {
 // This topic is defined here and not in integration-interface, because
 // it is not used as framework independent integration but for improving
 // angular specific things
-class ManualBreadcrumbsTopic extends SyncableTopic<ManualBreadcrumbs> {
+class ManualBreadcrumbsTopic extends Topic<ManualBreadcrumbs> {
   constructor() {
     super('manualBreadcrumbs', 1)
   }
@@ -23,16 +23,16 @@ class ManualBreadcrumbsTopic extends SyncableTopic<ManualBreadcrumbs> {
 @Injectable({ providedIn: 'any' })
 @UntilDestroy()
 export class BreadcrumbService {
-  private itemsSource$ = new ManualBreadcrumbsTopic()
+  private readonly router = inject(Router)
+  private readonly activeRoute = inject(ActivatedRoute)
+  private readonly translateService = inject(TranslateService)
+
+  private readonly itemsSource$ = new ManualBreadcrumbsTopic()
   generatedItemsSource = new BehaviorSubject<MenuItem[]>([])
 
   itemsHandler = this.itemsSource$.pipe(map((manualBreadcrumbs) => manualBreadcrumbs.menuItems))
 
-  constructor(
-    private router: Router,
-    private activeRoute: ActivatedRoute,
-    private translateService: TranslateService
-  ) {
+  constructor() {
     this.generateBreadcrumbs(this.activeRoute.snapshot)
     this.router.events
       .pipe(
@@ -71,7 +71,7 @@ export class BreadcrumbService {
   }
 
   private addBreadcrumb(route: ActivatedRouteSnapshot | null, parentUrl: string[], breadcrumbs: MenuItem[]) {
-    if (route && route.url) {
+    if (route?.url) {
       const routeUrl = parentUrl.concat(route.url.map((url) => url.path))
       if (route.routeConfig?.path) {
         this.createBreadcrumb(route, routeUrl, breadcrumbs)
@@ -106,16 +106,16 @@ export class BreadcrumbService {
 
   setItems(items: BreadCrumbMenuItem[]) {
     const translationKeys = [
-      ...items.map((i) => i.labelKey || '').filter((l) => !!l),
-      ...items.map((i) => i.titleKey || '').filter((l) => !!l),
+      ...items.map((i) => i.labelKey ?? '').filter((l) => !!l),
+      ...items.map((i) => i.titleKey ?? '').filter((l) => !!l),
     ]
     if (translationKeys.length) {
       this.translateService.get(translationKeys).subscribe((translations: any) => {
         this.itemsSource$.publish({
           menuItems: items.map((i) => ({
             ...i,
-            label: translations[i.labelKey || ''] || i.label,
-            title: translations[i.titleKey || ''] || i.title,
+            label: translations[i.labelKey ?? ''],
+            title: translations[i.titleKey ?? ''],
           })),
         })
       })

@@ -1,52 +1,81 @@
 <div
   *ngIf="!globalErrMsg; else globalError"
-  class="layout-wrapper"
   [ngClass]="{
+    'layout-wrapper layout-topbar-var': themeService.currentTheme$ | async,
     'p-input-filled': inputStyle === 'filled', 
     'p-ripple-disabled': !ripple,
-    'layout-menu-active': isStaticalMenuVisible(),
-    'layout-menu-button-hidden': isHorizontalMenuMode()
+    'layout-menu-active': isStaticalMenuVisible() && (isVerticalMenuComponentDefined$ | async),
   }"
-  [class]="'layout-menu-' + colorScheme + ' layout-topbar-' + topbarTheme"
+  [class]="'layout-menu-' + this.colorScheme"
 >
-  <ocx-shell-header [menuButtonTitle]="menuButtonTitle" (menuButtonClick)="onMenuButtonClick($event)">
-    <div *ngIf="isHorizontalMenuVisible()">
-      <ocx-slot name="onecx-shell-horizontal-menu">
-        <ng-template #skeleton>
-          <div class="ml-4 flex flex-row gap-4">
-            <p-skeleton class="w-full h-full inline-block" height="35px" width="120px"></p-skeleton>
-            <p-skeleton class="w-full h-full inline-block" height="35px" width="120px"></p-skeleton>
-          </div>
-        </ng-template>
-      </ocx-slot>
+  <ng-container *ngIf="themeService.currentTheme$ | async; else noTheme">
+    <ocx-shell-header
+      [menuButtonTitle]="menuButtonTitle"
+      (menuButtonClick)="onMenuButtonClick($event)"
+      [isStaticalMenu]="isStaticalMenuVisible()"
+      [isHorizontalMenu]="isHorizontalMenuMode()"
+    >
+      <div [hidden]="!isHorizontalMenuVisible()">
+        <ocx-slot name="onecx-shell-horizontal-menu">
+          <ng-template #skeleton>
+            <div class="ml-4 flex flex-row gap-4">
+              <p-skeleton class="w-full h-full inline-block" height="35px" width="120px"></p-skeleton>
+              <p-skeleton class="w-full h-full inline-block" height="35px" width="120px"></p-skeleton>
+            </div>
+          </ng-template>
+        </ocx-slot>
+      </div>
+    </ocx-shell-header>
+
+    <p-toast [style]="{'word-break': 'break-word'}"></p-toast>
+
+    <div [hidden]="!isStaticalMenuVisible()" class="menu-wrapper">
+      <div class="layout-menu-container overflow-auto">
+        <ocx-slot [name]="verticalMenuSlotName">
+          <ng-template #skeleton>
+            <p-skeleton class="w-full h-full inline-block p-2" height="35px"></p-skeleton>
+          </ng-template>
+        </ocx-slot>
+      </div>
     </div>
-  </ocx-shell-header>
 
-  <p-toast></p-toast>
+    <div class="layout-main">
+      <!-- custom page content -->
+      <div class="layout-content relative">
+        <ocx-slot name="onecx-shell-sub-header"></ocx-slot>
+        <ng-container *ngIf="!showContentProvider || (showContentProvider.showContent$ | async); else appLoading">
+          <ng-content></ng-content>
+          <router-outlet></router-outlet>
+        </ng-container>
+      </div>
 
-  <div class="menu-wrapper">
-    <div class="layout-menu-container overflow-auto" *ngIf="isStaticalMenuVisible()">
-      <ocx-slot name="onecx-shell-vertical-menu">
-        <ng-template #skeleton>
-          <p-skeleton class="w-full h-full inline-block p-2" height="35px"></p-skeleton>
-        </ng-template>
-      </ocx-slot>
+      <!-- page footer -->
+      <footer>
+        <ocx-slot
+          name="onecx-shell-footer"
+          class="onecx-shell-footer mx-3 py-2 flex flex-row flex-wrap align-items-center column-gap-3 row-gap-1 text-sm"
+          [inputs]="{ imageStyleClass: 'h-1rem vertical-align-middle' }"
+        >
+          <ng-template #skeleton>
+            <div class="flex align-items-center h-full justify-content-center" style="width: 26px">
+              <p-skeleton shape="circle" size="2rem" class="h-full flex align-items-center"></p-skeleton>
+            </div>
+          </ng-template>
+        </ocx-slot>
+      </footer>
     </div>
-  </div>
 
-  <div class="layout-main">
-    <div class="layout-content relative">
-      <ocx-slot name="onecx-shell-sub-header"></ocx-slot>
-      <ng-container *ngIf="!showContentProvider || (showContentProvider.showContent$ | async); else appLoading">
+    <div *ngIf="menuActive || !!activeTopbarItem" class="layout-mask modal-in"></div>
+  </ng-container>
+
+  <ng-template #noTheme>
+    <div class="layout-main">
+      <div class="layout-content relative">
         <ng-content></ng-content>
         <router-outlet></router-outlet>
-      </ng-container>
+      </div>
     </div>
-
-    <ocx-shell-footer></ocx-shell-footer>
-  </div>
-
-  <div *ngIf="menuActive || !!activeTopbarItem" class="layout-mask modal-in"></div>
+  </ng-template>
 </div>
 
 <ng-template #globalError>
@@ -54,5 +83,5 @@
 </ng-template>
 
 <ng-template #appLoading>
-  <div [ocxLoadingIndicator]="true" class="w-full h-full absolute top-0 left-0"></div>
+  <ocx-app-loading-spinner></ocx-app-loading-spinner>
 </ng-template>

@@ -3,8 +3,14 @@ module.exports = {
     'main',
     {
       name: 'develop',
+      channel: 'rc',
       prerelease: 'rc',
     },
+    { 
+      name: "v5",
+      range: "5.x.x",
+      channel: "5.x.x" 
+    }
   ],
   preset: 'conventionalcommits',
   presetConfig: {
@@ -32,7 +38,7 @@ module.exports = {
     [
       '@semantic-release/exec',
       {
-        prepareCmd: `./release-script.sh \${nextRelease.version}`,
+        prepareCmd: `./release-script.sh \${nextRelease.version} \${nextRelease.channel}`,
       },
     ],
     [

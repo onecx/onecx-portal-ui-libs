@@ -6,11 +6,16 @@
   "tags": [],
   "projectType": "library",
   "targets": {
+    "build-migrations": {
+      "dependsOn": ["build"],
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["tsc -p libs/angular-auth/migrations/tsconfig.migrations.json"]
+      }
+    },
     "build": {
       "executor": "@nx/angular:package",
-      "outputs": [
-        "{workspaceRoot}/dist/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
       "options": {
         "project": "libs/angular-auth/ng-package.json"
       },
@@ -26,9 +31,7 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "libs/angular-auth/jest.config.ts",
         "passWithNoTests": true
@@ -41,10 +44,8 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
           "libs/angular-auth/**/*.ts",
@@ -54,10 +55,7 @@
       }
     },
     "release": {
-      "executor": "nx-release:build-update-publish",
-      "options": {
-        "libName": "portal-integration-angular"
-      }
+      "executor": "@onecx/release:update-build-publish"
     }
   }
 }

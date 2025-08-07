@@ -1,0 +1,46 @@
+{
+  "generators": {
+    "warn-for-events-topic-navigated": {
+      "cli": "nx",
+      "version": "5.34.6",
+      "description": "Detects and warns for usage of the EventsTopic in the context of navigation",
+      "factory": "migrations/v5/warn-for-events-topic-navigated"
+    },
+    "warn-for-events-publisher-navigated": {
+      "cli": "nx",
+      "version": "5.34.6",
+      "description": "Detects and warns for usage of the EventsPublisher in the context of navigation",
+      "factory": "migrations/v5/warn-for-events-publisher-navigated"
+    },
+    "migrate-onecx-to-v6": {
+      "cli": "nx",
+      "version": "6.0.0",
+      "description": "Update package json to Angular 19, PrimeNG 19, OneCX versions to v6 and other dependencies to be compatible with Angular 19.",
+      "factory": "migrations/v6/migrate-onecx-to-v6"
+    }
+  },
+  "packageJsonUpdates": {
+    "6.0.0": {
+      "version": "6.0.0",
+      "packages": {
+        "@angular/cli": {
+          "version": "~19.0.0",
+          "alwaysAddToPackageJson": false
+        },
+        "@nx/angular": {
+          "version": "~20.3.0",
+          "alwaysAddToPackageJson": false
+        },
+        "@ngx-translate/core": {
+          "version": "~16.0.4",
+          "alwaysAddToPackageJson": false
+        },
+        "primeng": {
+          "version": "~19.0.0",
+          "alwaysAddToPackageJson": false
+        }
+      }
+    },
+    "version": "null"
+  }
+}

@@ -1,17 +1,15 @@
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { TranslateTestingModule } from 'ngx-translate-testing'
+import { provideUserServiceMock, UserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { PTableCheckboxHarness } from '@onecx/angular-testing'
-import { UserService } from '@onecx/angular-integration-interface'
-import { MockUserService } from '@onecx/angular-integration-interface/mocks'
+import { TranslateTestingModule } from 'ngx-translate-testing'
+import { DataTableHarness } from '../../../../testing'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
-import { DataTableComponent, Row } from './data-table.component'
 import { ColumnType } from '../../model/column-type.model'
-import { DataTableHarness } from '../../../../testing'
-import { MockAuthModule } from '../../mock-auth/mock-auth.module'
+import { DataTableComponent, Row } from './data-table.component'
 
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>
@@ -26,7 +24,6 @@ describe('DataTableComponent', () => {
     OCX_DATA_TABLE: {
       SHOWING: '{{first}} - {{last}} of {{totalRecords}}',
       SHOWING_WITH_TOTAL_ON_SERVER: '{{first}} - {{last}} of {{totalRecords}} ({{totalRecordsOnServer}})',
-      ALL: 'All',
     },
   }
 
@@ -35,7 +32,6 @@ describe('DataTableComponent', () => {
     OCX_DATA_TABLE: {
       SHOWING: '{{first}} - {{last}} von {{totalRecords}}',
       SHOWING_WITH_TOTAL_ON_SERVER: '{{first}} - {{last}} von {{totalRecords}} ({{totalRecordsOnServer}})',
-      ALL: 'Alle',
     },
   }
 
@@ -209,9 +205,8 @@ describe('DataTableComponent', () => {
         TranslateModule.forRoot(),
         TranslateTestingModule.withTranslations(TRANSLATIONS),
         AngularAcceleratorModule,
-        MockAuthModule,
       ],
-      providers: [{ provide: UserService, useClass: MockUserService }],
+      providers: [provideUserServiceMock()],
     }).compileComponents()
 
     fixture = TestBed.createComponent(DataTableComponent)
@@ -221,6 +216,8 @@ describe('DataTableComponent', () => {
     component.paginator = true
     translateService = TestBed.inject(TranslateService)
     translateService.use('en')
+    const userServiceMock = TestBed.inject(UserServiceMock)
+    userServiceMock.permissionsTopic$.publish(['VIEW', 'EDIT', 'DELETE'])
     fixture.detectChanges()
     dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
   })
@@ -272,40 +269,12 @@ describe('DataTableComponent', () => {
     })
   })
 
-  describe('should display the paginator rowsPerPageOptions -', () => {
-    it('de', async () => {
-      window.HTMLElement.prototype.scrollIntoView = jest.fn()
-      translateService.use('de')
-      fixture = TestBed.createComponent(DataTableComponent)
-      component = fixture.componentInstance
-      component.rows = mockData
-      component.columns = mockColumns
-      component.paginator = true
-      fixture.detectChanges()
-      const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
-      const paginator = await dataTable.getPaginator()
-      const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
-      let rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
-      expect(rowsPerPageOptionsText).toEqual('10')
-
-      component.showAllOption = true
-      rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
-      expect(rowsPerPageOptionsText).toEqual('Alle')
-    })
-
-    it('en', async () => {
-      window.HTMLElement.prototype.scrollIntoView = jest.fn()
-      translateService.use('en')
-      const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
-      const paginator = await dataTable.getPaginator()
-      const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
-      let rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
-      expect(rowsPerPageOptionsText).toEqual('10')
-
-      component.showAllOption = true
-      rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
-      expect(rowsPerPageOptionsText).toEqual('All')
-    })
+  it('should display the paginator rowsPerPageOptions', async () => {
+    const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
+    const paginator = await dataTable.getPaginator()
+    const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
+    const rowsPerPageOptionsText = await rowsPerPageOptions.selectedSelectItemText(0)
+    expect(rowsPerPageOptionsText).toEqual('10')
   })
 
   it('should display 10 rows by default for 1000 rows', async () => {
@@ -419,7 +388,7 @@ describe('DataTableComponent', () => {
       expect(await dataTable.columnIsFrozen(rightActionColumn)).toBe(false)
     })
 
-    it('should render an pinned action column on the specified side of the table', async () => {
+    it('should render a pinned action column on the specified side of the table', async () => {
       component.viewTableRow.subscribe((event) => console.log(event))
 
       component.frozenActionColumn = true
@@ -437,7 +406,7 @@ describe('DataTableComponent', () => {
     })
   })
 
-  const setUpActionButtonMockData = () => {
+  const setUpActionButtonMockData = async () => {
     component.columns = [
       ...mockColumns,
       {
@@ -472,6 +441,9 @@ describe('DataTableComponent', () => {
     component.viewPermission = 'VIEW'
     component.editPermission = 'EDIT'
     component.deletePermission = 'DELETE'
+
+    fixture.detectChanges()
+    await fixture.whenStable()
   }
 
   describe('Disable action buttons based on field path', () => {
@@ -480,7 +452,7 @@ describe('DataTableComponent', () => {
       expect(component.editTableRowObserved).toBe(false)
       expect(component.deleteTableRowObserved).toBe(false)
 
-      setUpActionButtonMockData()
+      await setUpActionButtonMockData()
 
       expect(component.viewTableRowObserved).toBe(true)
       expect(component.editTableRowObserved).toBe(true)
@@ -504,7 +476,7 @@ describe('DataTableComponent', () => {
     })
 
     it('should dynamically enable/disable an action button based on the contents of a specified column', async () => {
-      setUpActionButtonMockData()
+      await setUpActionButtonMockData()
       component.viewActionEnabledField = 'ready'
 
       let tableActions = await dataTable.getActionButtons()
@@ -540,7 +512,7 @@ describe('DataTableComponent', () => {
       expect(component.editTableRowObserved).toBe(false)
       expect(component.deleteTableRowObserved).toBe(false)
 
-      setUpActionButtonMockData()
+      await setUpActionButtonMockData()
 
       expect(component.viewTableRowObserved).toBe(true)
       expect(component.editTableRowObserved).toBe(true)
@@ -563,7 +535,7 @@ describe('DataTableComponent', () => {
     })
 
     it('should dynamically hide/show an action button based on the contents of a specified column', async () => {
-      setUpActionButtonMockData()
+      await setUpActionButtonMockData()
       component.viewActionVisibleField = 'ready'
 
       let tableActions = await dataTable.getActionButtons()
@@ -579,6 +551,9 @@ describe('DataTableComponent', () => {
       tempRows[0]['ready'] = true
 
       component.rows = [...tempRows]
+
+      fixture.detectChanges()
+      await fixture.whenStable()
 
       tableActions = await dataTable.getActionButtons()
       expect(tableActions.length).toBe(3)
@@ -623,6 +598,9 @@ describe('DataTableComponent', () => {
     it('should assign id to view button', async () => {
       component.viewTableRow.subscribe(() => console.log())
       component.viewPermission = 'VIEW'
+      fixture.detectChanges()
+      await fixture.whenStable()
+
       expect(component.viewTableRowObserved).toBe(true)
 
       const tableActions = await dataTable.getActionButtons()
@@ -634,6 +612,9 @@ describe('DataTableComponent', () => {
     it('should assign id to edit button', async () => {
       component.editTableRow.subscribe(() => console.log())
       component.editPermission = 'EDIT'
+      fixture.detectChanges()
+      await fixture.whenStable()
+
       expect(component.editTableRowObserved).toBe(true)
 
       const tableActions = await dataTable.getActionButtons()
@@ -645,6 +626,9 @@ describe('DataTableComponent', () => {
     it('should assign id to delete button', async () => {
       component.deleteTableRow.subscribe(() => console.log())
       component.deletePermission = 'DELETE'
+      fixture.detectChanges()
+      await fixture.whenStable()
+
       expect(component.deleteTableRowObserved).toBe(true)
 
       const tableActions = await dataTable.getActionButtons()
@@ -663,6 +647,8 @@ describe('DataTableComponent', () => {
           id: 'actionId',
         },
       ]
+      fixture.detectChanges()
+      await fixture.whenStable()
 
       const tableActions = await dataTable.getActionButtons()
       expect(tableActions.length).toBe(1)

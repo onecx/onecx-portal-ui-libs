@@ -1,14 +1,13 @@
 import { animate, style, transition, trigger } from '@angular/animations'
-import { Component, EventEmitter, Inject, Input, Optional, Output } from '@angular/core'
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core'
 import { UntilDestroy } from '@ngneat/until-destroy'
-import { AppStateService, ThemeService } from '@onecx/angular-integration-interface'
-import { Observable, combineLatest, filter, map, mergeMap, of } from 'rxjs'
-import {
-  WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER,
-  WorkspaceConfigBffService,
-} from '../../shell-interface/workspace-config-bff-service-provider'
+import { Observable } from 'rxjs'
+
+import { SlotService } from '@onecx/angular-remote-components'
+import { Theme, ThemeService } from '@onecx/angular-integration-interface'
 
 @Component({
+  standalone: false,
   selector: 'ocx-shell-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
@@ -24,53 +23,34 @@ import {
 })
 @UntilDestroy()
 export class HeaderComponent {
+  @Input() menuButtonTitle: string | undefined
+  @Input() fullPortalLayout = true
+  @Input() homeNavUrl = '/'
+  @Input() homeNavTitle = 'Home'
+  @Input() isStaticalMenu = false
+  @Input() isHorizontalMenu = false
+  @Output() menuButtonClick: EventEmitter<any> = new EventEmitter()
+
+  private themeService = inject(ThemeService)
+  private slotService = inject(SlotService)
+
   menuExpanded = false
-  fallbackImg = false
+  // slot configuration: get theme logo
+  public slotName = 'onecx-theme-data'
+  public isComponentDefined$: Observable<boolean> // check a component was assigned
+  public currentTheme$: Observable<Theme>
+  public logoLoadingEmitter = new EventEmitter<boolean>()
+  public themeLogoLoadingFailed = false
 
-  @Input()
-  menuButtonTitle: string | undefined
-  @Input()
-  fullPortalLayout = true
-  @Input()
-  homeNavUrl = '/'
-  @Input()
-  homeNavTitle = 'Home'
-
-  @Output()
-  menuButtonClick: EventEmitter<any> = new EventEmitter()
-
-  logoUrl$: Observable<string | undefined>
-
-  constructor(
-    private themeService: ThemeService,
-    private appStateService: AppStateService,
-    @Optional()
-    @Inject(WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER)
-    public workspaceConfigBffService: WorkspaceConfigBffService | undefined
-  ) {
-    this.logoUrl$ = combineLatest([
-      this.themeService.currentTheme$.asObservable(),
-      this.appStateService.currentWorkspace$.asObservable(),
-    ]).pipe(
-      mergeMap(([theme, portal]) => {
-        if (!theme.logoUrl && !portal.logoUrl) {
-          return (this.workspaceConfigBffService?.getThemeLogoByName(theme.name ?? '') ?? of()).pipe(
-            filter((blob) => !!blob),
-            map((blob) => URL.createObjectURL(blob))
-          )
-        }
-        return of(theme.logoUrl || portal.logoUrl)
-      })
-    )
+  constructor() {
+    this.isComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.slotName)
+    this.currentTheme$ = this.themeService.currentTheme$.asObservable()
+    this.logoLoadingEmitter.subscribe((data: boolean) => {
+      this.themeLogoLoadingFailed = data
+    })
   }
 
   onMenuButtonClick(e: Event) {
     this.menuButtonClick.emit(e)
-  }
-
-  onLoad(logoUrl: string) {
-    if (logoUrl.startsWith('blob: ')) {
-      URL.revokeObjectURL(logoUrl)
-    }
   }
 }

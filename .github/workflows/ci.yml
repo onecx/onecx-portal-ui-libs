@@ -10,6 +10,7 @@ on:
       - main
       - develop
       - v3
+      - v5
 jobs:
   main:
     runs-on: ubuntu-latest
@@ -26,6 +27,6 @@ jobs:
       - name: Lint affected
         run: npx nx affected -t lint
       - name: Test affected
-        run: npx nx affected -t test --configuration=ci
+        run: npx nx affected -t test test-migrations --configuration=ci
       - name: Build affected
         run: npx nx affected -t build

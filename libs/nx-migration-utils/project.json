@@ -1,0 +1,58 @@
+{
+  "name": "nx-migration-utils",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/nx-migration-utils/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/nx-migration-utils",
+        "main": "libs/nx-migration-utils/src/index.ts",
+        "tsConfig": "libs/nx-migration-utils/tsconfig.lib.json",
+        "assets": ["libs/nx-migration-utils/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/nx-migration-utils/**/*.ts", "libs/nx-migration-utils/package.json"]
+      }
+    },
+    "test-migrations": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/nx-migration-utils/src/lib/migrations/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/nx-migration-utils/jest.config.ts",
+        "passWithNoTests": true,
+        "testPathIgnorePatterns": ["libs/nx-migration-utils/migrations/"]
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "release": {
+      "executor": "@onecx/release:update-build-publish"
+    }
+  }
+}
