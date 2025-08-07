@@ -7,7 +7,7 @@ import { AppStateService } from '@onecx/angular-integration-interface'
 import { UserService } from '@onecx/angular-integration-interface'
 
 /**
- * @deprecated Will be replaced by ocx-search-header
+ * deprecated Will be replaced by ocx-search-header
  */
 @Component({
   selector: 'ocx-search-criteria',

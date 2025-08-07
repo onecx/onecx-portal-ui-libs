@@ -4,7 +4,7 @@ import { AppStateService } from '@onecx/angular-integration-interface'
 import { UserService } from '@onecx/angular-integration-interface'
 
 /**
- * @deprecated
+ * deprecated
  * Please import from `@onecx/angular-utils` instead.
  */
 @Component({
