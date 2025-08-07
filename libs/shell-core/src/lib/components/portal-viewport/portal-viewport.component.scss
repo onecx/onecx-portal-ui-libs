@@ -1,8 +1,5 @@
 $menuWrapperWidth: 17rem;
-$menuShadow:
-  2px 0 4px -1px rgba(0, 0, 0, 0.2),
-  4px 0 5px 0 rgba(0, 0, 0, 0.14),
-  1px 0 10px 0 rgba(0, 0, 0, 0.12);
+$menuShadow: 1px 0 0 rgba(0, 0, 0, 0.2);
 
 @mixin material-overlay-transform {
   transform-origin: top;
@@ -212,7 +209,7 @@ $menuShadow:
 }
 
 .menu-wrapper {
-  background-color: var(--p-onecx-menu-bg-color);
+  background-color: var(--menu-bg-color);
   box-shadow: $menuShadow;
 
   .layout-menu-container {
@@ -220,7 +217,7 @@ $menuShadow:
       > li {
         > div {
           .layout-menuitem-text {
-            color: var(--p-onecx-menu-text-color);
+            color: var(--menu-text-color);
           }
         }
         /*
@@ -234,11 +231,11 @@ $menuShadow:
         border-left: 0px;
         &.active-menu-parent.parent-menu {
           /* background: #ececec; */
-          border-left: 4px solid var(--p-onecx-primary-color);
+          border-left: 4px solid var(--primary-color);
         }
 
         a {
-          color: var(--p-onecx-menu-item-text-color);
+          color: var(--menu-item-text-color);
           border-left: 4px solid transparent;
           /*
           i {
@@ -246,21 +243,21 @@ $menuShadow:
           }
 */
           &:hover {
-            background-color: var(--p-onecx-menu-item-hover-bg-color);
+            background-color: var(--menu-item-hover-bg-color);
           }
         }
         a.active-menuitem-routerlink {
-          background-color: var(--p-onecx-menu-active-item-bg-color);
-          color: var(--p-onecx-menu-active-item-text-color);
+          background-color: var(--menu-active-item-bg-color);
+          color: var(--menu-active-item-text-color);
           font-weight: bold;
-          border-left: 4px solid var(--p-onecx-primary-color);
+          border-left: 4px solid var(--primary-color);
         }
         &.active-menuitem {
           > a {
-            background-color: var(--p-onecx-menu-active-item-bg-color);
-            color: var(--p-onecx-menu-active-item-text-color);
+            background-color: var(--menu-active-item-bg-color);
+            color: var(--menu-active-item-text-color);
             font-weight: bold;
-            border-left: 4px solid var(--p-onecx-primary-color);
+            border-left: 4px solid var(--primary-color);
             /*
             > i {
               color: $activeMenuItemTextColor;
@@ -272,27 +269,27 @@ $menuShadow:
     }
 
     .layout-inline-menu {
-      border-color: var(--p-onecx-menu-inline-border-color);
+      border-color: var(--menu-inline-border-color);
 
       a {
-        color: var(--p-onecx-menu-item-text-color);
+        color: var(--menu-item-text-color);
       }
 
       .layout-inline-menu-action,
       .layout-inline-menu-action-panel .layout-inline-menu-action-item {
-        color: var(--p-onecx-menu-item-text-color);
+        color: var(--menu-item-text-color);
         /*
         i {
           color: var(--p-onecx-menu-item-text-color);
         }
 */
         &:hover {
-          background-color: var(--p-onecx-menu-item-hover-bg-color);
+          background-color: var(--menu-item-hover-bg-color);
         }
       }
 
       .layout-inline-menu-action-panel {
-        background-color: var(--p-onecx-menu-bg-color);
+        background-color: var(--menu-bg-color);
       }
     }
   }
@@ -301,12 +298,12 @@ $menuShadow:
 .layout-wrapper {
   .menu-wrapper {
     transform: translate3d(-17rem, 0px, 0px);
-    transition: transform var(--p-onecx-animation-duration);
+    transition: transform var(--animation-duration);
     transition-timing-function: cubic-bezier(0.86, 0, 0.07, 1);
   }
 
   .layout-main {
-    transition: margin-left var(--p-onecx-animation-duration);
+    transition: margin-left var(--animation-duration);
   }
 
   &.layout-menu-active {

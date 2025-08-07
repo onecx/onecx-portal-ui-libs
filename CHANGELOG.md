@@ -1,3 +1,39 @@
+## [6.4.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.3.0...v6.4.0) (2025-08-07)
+
+### Features
+
+* add how to get debug logs of topics in browser console ([#865](https://github.com/onecx/onecx-portal-ui-libs/issues/865)) ([ad5c5b5](https://github.com/onecx/onecx-portal-ui-libs/commit/ad5c5b5b12d881547387d79fb09e9ea34e942171))
+* add slot shell header left ([#855](https://github.com/onecx/onecx-portal-ui-libs/issues/855)) ([ad30751](https://github.com/onecx/onecx-portal-ui-libs/commit/ad3075173b62959d8cc2c7457bb7b2a0c94622f9))
+
+## [6.3.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.2.1...v6.3.0) (2025-08-06)
+
+### Features
+
+* Make ManualBreadcrumbsTopic non-syncable ([#864](https://github.com/onecx/onecx-portal-ui-libs/issues/864)) ([7ca1a6f](https://github.com/onecx/onecx-portal-ui-libs/commit/7ca1a6fe09f4fa700b1aa5a4a792c2217fff8e51))
+* migrations for portal-integration-angular removal ([#859](https://github.com/onecx/onecx-portal-ui-libs/issues/859)) ([8bc16db](https://github.com/onecx/onecx-portal-ui-libs/commit/8bc16db663a8126a29ce1cf2f36f6150c5184fb6))
+
+### Bug Fixes
+
+*  adjust translation path provider for tests ([#862](https://github.com/onecx/onecx-portal-ui-libs/issues/862)) ([7711760](https://github.com/onecx/onecx-portal-ui-libs/commit/7711760b312cec728931ebbaa0ef8ceb72fbc143))
+
+## [6.2.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.2.0...v6.2.1) (2025-08-05)
+
+### Bug Fixes
+
+* adjust deprecation messages ([#856](https://github.com/onecx/onecx-portal-ui-libs/issues/856)) ([f596711](https://github.com/onecx/onecx-portal-ui-libs/commit/f5967114269152c405dbe104c1886eb1a41f8aa0))
+* change the shell-core style variable values to the theme variable values ([#860](https://github.com/onecx/onecx-portal-ui-libs/issues/860)) ([60c302d](https://github.com/onecx/onecx-portal-ui-libs/commit/60c302d05178961437bb80ba42038674e056818d))
+
+## [6.2.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.1.0...v6.2.0) (2025-07-29)
+
+### Features
+
+* adapt translation loading ([#846](https://github.com/onecx/onecx-portal-ui-libs/issues/846)) ([412dfe3](https://github.com/onecx/onecx-portal-ui-libs/commit/412dfe3d00397276fba1cdd198cc61b18ae85f6c))
+
+### Bug Fixes
+
+* remove shadow of vertical menu ([#852](https://github.com/onecx/onecx-portal-ui-libs/issues/852)) ([1ef72d2](https://github.com/onecx/onecx-portal-ui-libs/commit/1ef72d2e49ce3bb2290bb3cb8c5941bb0a4cc1a9))
+* user footer tag for shell footer (a11y) ([#851](https://github.com/onecx/onecx-portal-ui-libs/issues/851)) ([a339e77](https://github.com/onecx/onecx-portal-ui-libs/commit/a339e778fb0bd45b180a54b4cac0ac2a71212a19))
+
 ## [6.1.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.0.0...v6.1.0) (2025-07-25)
 
 ### Features
