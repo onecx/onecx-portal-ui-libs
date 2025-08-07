@@ -1,3 +1,21 @@
+## [6.3.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.2.1...v6.3.0) (2025-08-06)
+
+### Features
+
+* Make ManualBreadcrumbsTopic non-syncable ([#864](https://github.com/onecx/onecx-portal-ui-libs/issues/864)) ([7ca1a6f](https://github.com/onecx/onecx-portal-ui-libs/commit/7ca1a6fe09f4fa700b1aa5a4a792c2217fff8e51))
+* migrations for portal-integration-angular removal ([#859](https://github.com/onecx/onecx-portal-ui-libs/issues/859)) ([8bc16db](https://github.com/onecx/onecx-portal-ui-libs/commit/8bc16db663a8126a29ce1cf2f36f6150c5184fb6))
+
+### Bug Fixes
+
+*  adjust translation path provider for tests ([#862](https://github.com/onecx/onecx-portal-ui-libs/issues/862)) ([7711760](https://github.com/onecx/onecx-portal-ui-libs/commit/7711760b312cec728931ebbaa0ef8ceb72fbc143))
+
+## [6.2.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.2.0...v6.2.1) (2025-08-05)
+
+### Bug Fixes
+
+* adjust deprecation messages ([#856](https://github.com/onecx/onecx-portal-ui-libs/issues/856)) ([f596711](https://github.com/onecx/onecx-portal-ui-libs/commit/f5967114269152c405dbe104c1886eb1a41f8aa0))
+* change the shell-core style variable values to the theme variable values ([#860](https://github.com/onecx/onecx-portal-ui-libs/issues/860)) ([60c302d](https://github.com/onecx/onecx-portal-ui-libs/commit/60c302d05178961437bb80ba42038674e056818d))
+
 ## [6.2.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.1.0...v6.2.0) (2025-07-29)
 
 ### Features

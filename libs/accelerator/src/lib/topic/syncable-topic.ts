@@ -11,6 +11,8 @@ import { TopicDataMessage } from './topic-data-message'
  * Keep in mind that there can be multiple instances of the Topic
  * so you cannot rely on the fact that the shell has already checked
  * that it is initialized.
+ * 
+ * @deprecated Should not be used anymore because reading async data in a sync way is dangerous and leads to errors. Use `Topic` instead.
  */
 export class SyncableTopic<T> extends Topic<T> {
   constructor(name: string, version: number) {
