@@ -1,3 +1,9 @@
+## [5.47.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.47.2...v5.47.3) (2025-08-07)
+
+### Bug Fixes
+
+* temporarily remove deprecation warnings from PIA components to avoid usage conflicts ([#866](https://github.com/onecx/onecx-portal-ui-libs/issues/866)) ([55134b5](https://github.com/onecx/onecx-portal-ui-libs/commit/55134b506830fbe90d9614f734a950e4dfc3fa4c))
+
 ## [5.47.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.47.1...v5.47.2) (2025-08-06)
 
 ### Bug Fixes
