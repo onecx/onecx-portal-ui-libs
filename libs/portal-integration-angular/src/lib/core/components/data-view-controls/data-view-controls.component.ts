@@ -118,6 +118,7 @@ export interface DataViewControlTranslations {
 }
 
 /**
+ * TODO: deprecate this before core apps are migrated to v6
  * deprecated Will be split up in separate compoments for better abstraction layers
  */
 @Component({
@@ -138,6 +139,7 @@ export class DataViewControlsComponent implements OnInit, OnChanges {
   @Input() columnDefinitions: { field: string; header: string; active?: boolean; translationPrefix?: string }[] = []
   @Input() columnTemplates: ColumnViewTemplate[] = []
   /**
+   * TODO: deprecate this before core apps are migrated to v6
    * deprecated Instead, please use the `translations` input and specify the `templatePickerDropdownPlaceholder` property.
    *
    * Will be overwritten by `translations.templatePickerDropdownPlaceholder` if it is specified.

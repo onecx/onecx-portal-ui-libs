@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core'
 /**
+ * TODO: deprecate this before core apps are migrated to v6
  * deprecated This component will be removed in favor of ocx-content and ocx-content-container in a future release.
  */
 @Component({

@@ -4,6 +4,7 @@ import { AppStateService } from '@onecx/angular-integration-interface'
 import { UserService } from '@onecx/angular-integration-interface'
 
 /**
+ * TODO: deprecate this before core apps are migrated to v6
  * deprecated
  * Please import from `@onecx/angular-utils` instead.
  */
