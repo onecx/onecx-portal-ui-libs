@@ -1,3 +1,9 @@
+## [5.47.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.47.1...v5.47.2) (2025-08-06)
+
+### Bug Fixes
+
+* adjust translation path provider for tests ([#863](https://github.com/onecx/onecx-portal-ui-libs/issues/863)) ([159476a](https://github.com/onecx/onecx-portal-ui-libs/commit/159476ad65607c1cad60d34789f9366af06c71ff))
+
 ## [5.47.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.47.0...v5.47.1) (2025-08-05)
 
 ### Bug Fixes

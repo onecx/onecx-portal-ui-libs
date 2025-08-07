@@ -11,6 +11,7 @@ import { RemoteComponentConfig } from '../model/remote-component-config.model'
       ...
     }
     to provide the translation path.
+    Please make sure the webpack configuration for importMeta contains: https://webpack.js.org/configuration/module/#moduleparserjavascriptimportmeta.
  */
 export function remoteComponentTranslationPathFactory(path: string) {
   return function TranslationPathFactory(
