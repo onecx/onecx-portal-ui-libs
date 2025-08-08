@@ -12,7 +12,8 @@
     "rxjs": "^7.8.1",
     "@nx/devkit": "^20.3.0",
     "@onecx/nx-migration-utils": "^6.4.0",
-    "jest-extended": "^6.0.0"
+    "jest-extended": "^6.0.0",
+    "@jest/globals": "29.7.0"
   },
   "dependencies": {},
   "publishConfig": {
