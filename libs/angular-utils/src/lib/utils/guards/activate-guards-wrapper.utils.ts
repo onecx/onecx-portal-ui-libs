@@ -5,31 +5,30 @@ import {
   CanActivateFn,
   GuardResult,
   MaybeAsync,
-  RedirectCommand,
   Router,
   RouterStateSnapshot,
-  UrlTree,
 } from '@angular/router'
 import { GuardsGatherer } from '../../services/guards-gatherer.service'
 import { GuardsNavigationStateController } from '../../services/guards-navigation-controller.utils'
 import { GuardsNavigationState } from '../../model/guard-navigation.model'
-import { GuardsWrapper } from './guards-wrapper.utils'
+import {
+  combineToBoolean,
+  combineToGuardResult,
+  executeRouterSyncGuard,
+  getUrlFromSnapshot,
+  resolveToPromise,
+} from './guards-utils.utils'
 
 /**
- * Wrapper for CanActivate guards that allows to gather activation results
- * and handle special cases like router sync or scattered guards.
+ * Wrapper for canActivate guards that handles the navigation state and executes guards accordingly.
  *
  * It performs the activation checks in different scenarios based on the navigation state:
- * - If the navigation state indicates a router sync, it immediately agrees for the navigation.
- * - If the navigation state requests an activation check, it performs the activation guards checks
- *   and resolves the promise with the results while not allowing the navigation to proceed.
- * - If the navigation state requests a deactivation check, it resolves the promise with true
- *   to allow activation checks to proceed, since no active route exists.
- *   and returns true to allow activation checks to proceed.
- * - If no special cases are detected, it executes scattered activation guards and gathers results.
+ * - If the navigation state is a router sync state, it executes the guards and agrees for navigation.
+ * - If the navigation state is a guard check state, it executes the guards and returns false if any guard disagrees, otherwise continues with navigation.
+ * - If no information was provided in the navigation state, it waits for the guard check promise to resolve and then executes the guards.
  */
 @Injectable({ providedIn: 'root' })
-export class ActivateGuardsWrapper extends GuardsWrapper {
+export class ActivateGuardsWrapper {
   private injector = inject(Injector)
   private guardsGatherer = inject(GuardsGatherer)
   protected router = inject(Router)
@@ -41,44 +40,44 @@ export class ActivateGuardsWrapper extends GuardsWrapper {
     guards: Array<CanActivateFn | Type<CanActivate>>
   ): MaybeAsync<GuardResult> {
     const guardsNavigationState = this.router.getCurrentNavigation()?.extras.state ?? ({} as GuardsNavigationState)
-    const currentUrl = state.url
-    const futureUrl = this.getUrlFromSnapshot(route)
+    const futureUrl = getUrlFromSnapshot(route)
     console.log('Performing canActivate for', route, guardsNavigationState)
 
     if (this.guardsNavigationStateController.isRouterSyncState(guardsNavigationState)) {
       // Important to make sure all guarded functionality is executed
-      return this.executeActivateGuards(route, state, guards, this.combineToBoolean).then(() =>
-        this.executeRouterSyncGuard()
-      )
+      return this.executeActivateGuards(route, state, guards, combineToBoolean).then(() => executeRouterSyncGuard())
     }
 
-    if (this.guardsNavigationStateController.isActivateCheckState(guardsNavigationState)) {
+    if (this.guardsNavigationStateController.isGuardCheckState(guardsNavigationState)) {
       console.log(
-        'Activate check requested, returning false for activate checks and resolving promise with guards results.'
+        'Activate check requested, will perform activate guards checks and send false if I dont agree. Else will continue with navigation.'
       )
-      const myGuardsResult = this.executeActivateGuards(route, state, guards, this.combineToBoolean)
-      return myGuardsResult.then((result) => {
-        this.guardsGatherer.resolveRouteActivate(futureUrl, result)
+      return this.executeActivateGuards(route, state, guards, combineToBoolean).then((result) => {
+        console.log('Activate guards result:', result)
+        if (result === false) {
+          console.log('Route is guarded, returning false.')
+          this.guardsGatherer.resolveRoute(futureUrl, false)
+          return false
+        }
 
-        // Important to return false so navigation does not happen
-        return false
+        return true
       })
     }
 
-    // Special case when activation checks are running when deactivation were requested
-    // If deactivation check is processed in CanActivate, we should return true
-    // to allow the navigation to proceed, since we have nothing to deactivate
-    if (this.guardsNavigationStateController.isDeactivateCheckState(guardsNavigationState)) {
-      console.log(
-        'Deactivate check requested while resolving canActivate, returning true since no active route exists.'
-      )
-
-      this.guardsGatherer.resolveRouteDeactivate(currentUrl, true)
-      // Important to return false so navigation does not happen
-      return false
+    //Wait until we received info from others
+    let checkStartPromise = this.guardsNavigationStateController.getGuardCheckPromise(guardsNavigationState)
+    if (!checkStartPromise) {
+      console.warn('No guard check promise found in guards navigation state, returning true.')
+      checkStartPromise = Promise.resolve(true)
     }
-
-    return this.executeScatteredActivateGuard(route, state, guards)
+    return checkStartPromise.then((result) => {
+      if (result === false) {
+        console.log('Route is guarded by someone else, returning false.')
+        return false
+      }
+      console.log('No one guarded the route, running my own guards', route, state)
+      return this.executeActivateGuards(route, state, guards, combineToGuardResult)
+    })
   }
 
   private executeActivateGuards<T extends boolean | GuardResult>(
@@ -98,46 +97,15 @@ export class ActivateGuardsWrapper extends GuardsWrapper {
     return canActivateResults.then((results) => combineFn(results))
   }
 
-  private executeScatteredActivateGuard(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot,
-    guards: Array<CanActivateFn | Type<CanActivate>>
-  ) {
-    console.log('Performing scattered activate guard after running my own guards', route, state)
-    const myGuardsResult = this.executeActivateGuards(route, state, guards, this.combineToGuardResult)
-
-    return myGuardsResult.then((result) => {
-      // For redirect return immediately to perform redirect
-      if (myGuardsResult instanceof UrlTree || myGuardsResult instanceof RedirectCommand) {
-        console.log('Was UrlTree or RedirectCommand, returning it.')
-        return myGuardsResult
-      }
-      // For false don't ask others since we don't agree
-      if (result === false) {
-        console.log('Route is guarded.')
-        return result
-      }
-
-      console.log('Will gather activate from others for route', route)
-      return this.guardsGatherer
-        .gatherActivate({ url: this.getUrlFromSnapshot(route) })
-        .then((results) => Array.isArray(results) && this.combineToBoolean(results))
-        .then((result) => {
-          console.log('Scattered activate guard result:', result)
-          return result
-        })
-    })
-  }
-
   private mapActivateGuardToFunctionReturningPromise(
     guard: Type<CanActivate> | CanActivateFn
   ): (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => Promise<GuardResult> {
     if (this.isCanActivateClassBasedGuard(guard)) {
       // guard for CanActivate is not a guard instance but class definition
       const guardInstance = this.injector.get(guard)
-      return (route, state) => this.resolveToPromise(guardInstance.canActivate(route, state))
+      return (route, state) => resolveToPromise(guardInstance.canActivate(route, state))
     } else if (typeof guard === 'function') {
-      return (route, state) => this.resolveToPromise(guard(route, state))
+      return (route, state) => resolveToPromise(guard(route, state))
     }
 
     console.warn('Guard does not implement canActivate:', guard)

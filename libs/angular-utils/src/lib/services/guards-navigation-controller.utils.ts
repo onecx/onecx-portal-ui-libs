@@ -1,41 +1,58 @@
 import { Injectable } from '@angular/core'
-import { GUARD_CHECK } from '../model/guard-check.model'
-import { GuardsNavigationState, IS_ROUTER_SYNC } from '../model/guard-navigation.model'
+import {
+  GUARD_CHECK,
+  GUARD_CHECK_PROMISE,
+  GuardCheckPromise,
+  GuardsNavigationState,
+  IS_ROUTER_SYNC,
+} from '../model/guard-navigation.model'
 
 /**
  * GuardsNavigationController is a service that manages the navigation state for guards.
  */
 @Injectable({ providedIn: 'any' })
 export class GuardsNavigationStateController {
-  createActivationCheckState(): GuardsNavigationState {
-    return { [GUARD_CHECK.ACTIVATE]: true }
+  /**
+   * Adds a GuardCheckPromise to the provided GuardsNavigationState.
+   * @param state - the GuardsNavigationState to modify
+   * @param guardCheckPromise - the GuardCheckPromise to add
+   * */
+  createGuardCheckPromise(state: GuardsNavigationState, guardCheckPromise: GuardCheckPromise): void {
+    state[GUARD_CHECK_PROMISE] = guardCheckPromise
   }
 
-  createDeactivationCheckState(): GuardsNavigationState {
-    return { [GUARD_CHECK.DEACTIVATE]: true }
+  /**
+   * Creates a GuardsNavigationState that indicates a guard check is requested.
+   * @returns GuardsNavigationState with the guard check request
+   */
+  createGuardCheck(): GuardsNavigationState {
+    return { [GUARD_CHECK]: true }
   }
 
-  createRouterSyncState(): GuardsNavigationState {
-    return { [IS_ROUTER_SYNC]: true }
+  /**
+   * Retrieves the GuardCheckPromise from the provided GuardsNavigationState.
+   * @param state - the GuardsNavigationState to check
+   * @returns GuardCheckPromise if it exists, undefined otherwise
+   */
+  getGuardCheckPromise(state: GuardsNavigationState): GuardCheckPromise | undefined {
+    return state[GUARD_CHECK_PROMISE]
   }
 
+  /**
+   * Checks if the provided GuardsNavigationState indicates that the router is in sync mode.
+   * @param state - the GuardsNavigationState to check
+   * @returns true if the state indicates a router sync, false otherwise
+   */
   isRouterSyncState(state: GuardsNavigationState): boolean {
     return IS_ROUTER_SYNC in state && state[IS_ROUTER_SYNC] === true
   }
 
-  isActivateCheckState(state: GuardsNavigationState): boolean {
-    return GUARD_CHECK.ACTIVATE in state && state[GUARD_CHECK.ACTIVATE] === true
-  }
-
-  isDeactivateCheckState(state: GuardsNavigationState): boolean {
-    return GUARD_CHECK.DEACTIVATE in state && state[GUARD_CHECK.DEACTIVATE] === true
-  }
-
-  isDeactivationChecksCompleted(state: GuardsNavigationState): boolean {
-    return 'deactivateChecksCompleted' in state && state['deactivateChecksCompleted'] === true
-  }
-
-  setDeactivationChecksCompleted(state: GuardsNavigationState): void {
-    state['deactivateChecksCompleted'] = true
+  /**
+   * Checks if the provided GuardsNavigationState indicates that a guard check is requested.
+   * @param state - the GuardsNavigationState to check
+   * @returns true if the state indicates a guard check, false otherwise
+   */
+  isGuardCheckState(state: GuardsNavigationState): boolean {
+    return GUARD_CHECK in state && state[GUARD_CHECK] === true
   }
 }
