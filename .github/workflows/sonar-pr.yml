@@ -1,0 +1,121 @@
+name: SonarQube Pull Request
+
+on:
+  workflow_run:
+    workflows: ['On PR']
+    types:
+      - completed
+
+jobs:
+  set-matrix-pr:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download reports
+        uses: dawidd6/action-download-artifact@v11
+        with:
+          run_id: ${{ github.event.workflow_run.id }}
+          name: github-action-pr
+
+      - name: Find affected lib coverage directories
+        id: set-matrix
+        run: |
+          paths=$(find reports -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)
+          coverage_reports=$(printf '%s\n' $paths | jq -R . | jq -s -c)
+          echo "matrix=$coverage_reports" >> $GITHUB_OUTPUT
+
+  sonar-scan-pr:
+    needs: set-matrix-pr
+    runs-on: ubuntu-latest
+
+    if: >
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
+
+    strategy:
+      fail-fast: false
+      matrix:
+        path: ${{ fromJson(needs.set-matrix-pr.outputs.matrix) }}
+
+    steps:
+      - uses: dawidd6/action-download-artifact@v11
+        with:
+          run_id: ${{ github.event.workflow_run.id }}
+          name: github-action-pr
+
+      - uses: juliangruber/read-file-action@v1
+        id: pr_number
+        with:
+          path: ./github-action-pr.txt
+
+      - uses: octokit/request-action@v2.x
+        id: get_pr_data
+        with:
+          route: GET /repos/${{ github.event.repository.full_name }}/pulls/${{ steps.pr_number.outputs.content }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.workflow_run.head_repository.full_name }}
+          ref: ${{ github.event.workflow_run.head_branch }}
+          fetch-depth: 0
+
+      - name: Checkout base branch
+        env:
+          BRANCH_NAME: ${{ github.event.workflow_run.head_branch }}
+        run: |
+          git remote add upstream ${{ github.event.repository.clone_url }}
+          git fetch upstream
+          git checkout -B ${{ fromJson(steps.get_pr_data.outputs.data).base.ref }} upstream/${{ fromJson(steps.get_pr_data.outputs.data).base.ref }}
+          git checkout "$BRANCH_NAME"
+          git clean -ffdx && git reset --hard HEAD
+
+      - name: Download reports
+        uses: dawidd6/action-download-artifact@v11
+        with:
+          run_id: ${{ github.event.workflow_run.id }}
+          name: coverage-reports
+
+      - name: Normalize lcov.info for SonarCloud
+        run: |
+          lcov_path="reports/${{matrix.path}}/coverage/lcov.info"
+            echo "Normalizing $lcov_path" 
+
+            # Modify the lcov.info file in-place: prepend a slash to each 'SF:' line
+            # This ensures absolute paths for SonarCloud 
+            # "SF:home/..." -> "SF:/home/..." 
+            sed -i 's|^SF:|SF:/|' "$lcov_path"
+        shell: bash
+
+      - name: Run SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_URL: 'https://sonarcloud.io'
+        with:
+          projectBaseDir: libs/${{ matrix.path }}/
+          args: >
+            -Dsonar.projectKey=${{ github.repository_owner }}_${{ github.event.repository.name }}_${{ matrix.path }}
+            -Dsonar.host.url=$SONAR_URL
+            -Dsonar.organization=${{ github.repository_owner }}
+            -Dsonar.scm.disabled=true
+            -Dsonar.sourceEncoding=UTF-8
+            -Dsonar.javascript.coveragePlugin=lcov
+            -Dsonar.javascript.lcov.reportPaths=${{ github.workspace }}/reports/${{ matrix.path }}/coverage/lcov.info
+            -Dsonar.testExecutionReportPaths=${{ github.workspace }}/reports/${{ matrix.path }}/sonarqube_report.xml
+            -Dsonar.working.directory=${{ github.workspace }}/reports/${{ matrix.path }}/.scannerwork
+            -Dsonar.coverage.exclusions=**/*.ts,**/*.js,**/*.module.ts,**/*.main.ts,**/environments/**,**/assets/**,**/generated/**,**/*.stories.ts,**/*.harness
+            -Dsonar.test.inclusions=/**/*.spec.ts
+            -Dsonar.scm.revision=${{ github.event.workflow_run.head_sha }}
+            -Dsonar.pullrequest.key=${{ fromJson(steps.get_pr_data.outputs.data).number }}
+            -Dsonar.pullrequest.branch=${{ fromJson(steps.get_pr_data.outputs.data).head.ref }}
+            -Dsonar.pullrequest.base=${{ fromJson(steps.get_pr_data.outputs.data).base.ref }}
+            -Dsonar.pullrequest.provider=GitHub
+            -Dsonar.pullrequest.github.repository=${{ github.repository }}

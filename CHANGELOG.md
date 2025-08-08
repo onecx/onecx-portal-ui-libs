@@ -1,3 +1,21 @@
+## [5.47.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.47.2...v5.47.3) (2025-08-07)
+
+### Bug Fixes
+
+* temporarily remove deprecation warnings from PIA components to avoid usage conflicts ([#866](https://github.com/onecx/onecx-portal-ui-libs/issues/866)) ([55134b5](https://github.com/onecx/onecx-portal-ui-libs/commit/55134b506830fbe90d9614f734a950e4dfc3fa4c))
+
+## [5.47.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.47.1...v5.47.2) (2025-08-06)
+
+### Bug Fixes
+
+* adjust translation path provider for tests ([#863](https://github.com/onecx/onecx-portal-ui-libs/issues/863)) ([159476a](https://github.com/onecx/onecx-portal-ui-libs/commit/159476ad65607c1cad60d34789f9366af06c71ff))
+
+## [5.47.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.47.0...v5.47.1) (2025-08-05)
+
+### Bug Fixes
+
+* adjust deprecation message ([#857](https://github.com/onecx/onecx-portal-ui-libs/issues/857)) ([4125c15](https://github.com/onecx/onecx-portal-ui-libs/commit/4125c15e7c8b7263e2a310bce30f292d8e3e7f29))
+
 ## [5.47.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.46.1...v5.47.0) (2025-07-29)
 
 ### Features
