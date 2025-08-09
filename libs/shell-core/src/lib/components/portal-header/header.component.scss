@@ -53,7 +53,7 @@ $menuWrapperWidth: 17rem;
   }
 
   .layout-topbar-left {
-    width: 10rem;
+    width: 11rem;
 
     &.vertical-menu {
       flex: 0 0 $menuWrapperWidth;
@@ -94,7 +94,6 @@ $menuWrapperWidth: 17rem;
     align-items: center;
     justify-content: space-between;
     row-gap: 0;
-    padding-left: 1.25rem;
     height: 100%;
     min-width: 0;
 
@@ -257,6 +256,7 @@ $menuWrapperWidth: 17rem;
     background-color: var(--topbar-left-bg-color);
 
     .layout-menu-button {
+      color: var(--topbar-menu-button-text-color, #ffffff);
       background-color: var(--topbar-menu-button-bg-color);
     }
   }
