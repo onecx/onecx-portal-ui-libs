@@ -1,3 +1,13 @@
+## [6.5.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.4.0...v6.5.0) (2025-08-09)
+
+### Features
+
+* add docs for angular cli styles building ([#849](https://github.com/onecx/onecx-portal-ui-libs/issues/849)) ([becffd3](https://github.com/onecx/onecx-portal-ui-libs/commit/becffd38bdc3179fea9de9cf849da510255f406b))
+
+### Bug Fixes
+
+* add header left min width ([#871](https://github.com/onecx/onecx-portal-ui-libs/issues/871)) ([51a4956](https://github.com/onecx/onecx-portal-ui-libs/commit/51a49561c041753844d7594c8fbfaeb0ba5f7515))
+
 ## [6.4.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.3.0...v6.4.0) (2025-08-07)
 
 ### Features
