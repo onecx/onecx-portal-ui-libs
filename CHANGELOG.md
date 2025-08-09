@@ -1,3 +1,11 @@
+## [5.47.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.47.3...v5.47.4) (2025-08-09)
+
+### Bug Fixes
+
+* improve a11y in header ([#868](https://github.com/onecx/onecx-portal-ui-libs/issues/868)) ([3035741](https://github.com/onecx/onecx-portal-ui-libs/commit/3035741ed268ec6c84b49b73391cfe28f4dc9cb5))
+* provide static translation path in PIA SB ([#869](https://github.com/onecx/onecx-portal-ui-libs/issues/869)) ([5467fea](https://github.com/onecx/onecx-portal-ui-libs/commit/5467fea13c7ab901e43646dd8589951a31a82354))
+* remove SearchCriteriaComponent stories file ([#870](https://github.com/onecx/onecx-portal-ui-libs/issues/870)) ([3b78cfb](https://github.com/onecx/onecx-portal-ui-libs/commit/3b78cfbab55a5920d5ec7eb57defa9e2a011e84c))
+
 ## [5.47.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.47.2...v5.47.3) (2025-08-07)
 
 ### Bug Fixes
