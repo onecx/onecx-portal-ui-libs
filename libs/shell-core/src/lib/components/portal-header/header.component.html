@@ -21,6 +21,7 @@
     <button
       id="ocx_vertical_menu_action_toggle"
       class="layout-menu-button border-none"
+      [ngClass]="{ 'hidden': isHorizontalMenu }"
       pRipple
       (click)="onMenuButtonClick($event)"
       [attr.aria-label]="'OCX_HEADER.MENU_TOGGLE' | translate"
