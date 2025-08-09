@@ -12,6 +12,7 @@ These CSS variables will be used for the MFE Themes!
   --topbar-item-text-color: #{$topbarItemTextColor};
   --topbar-item-text-hover-bg-color: #{$topbarItemTextHoverBgColor};
   --topbar-menu-button-bg-color: #{$topbarMenuButtonBgColor};
+  --topbar-menu-button-text-color: #{$topbarMenuButtonTextColor};
   --menu-button-text-color: #{$topbarMenuButtonTextColor};
 
   // Body Variables
