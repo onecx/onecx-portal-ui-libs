@@ -1,0 +1,80 @@
+= Microfrontend URL Transformation for Integration Tests
+:toc:
+:toclevels: 3
+:sectnums:
+
+== Overview
+
+The OneCX Integration Tests library automatically transforms microfrontend URLs during the import process to handle the differences between production environments (using Traefik) and integration test environments (direct container communication).
+
+== The Traefik Routing Problem
+
+=== Production Environment (Docker Compose + Traefik)
+
+In production deployments, OneCX uses Docker Compose with Traefik as a reverse proxy. Traefik handles routing and provides unified URLs for all services:
+
+[source,typescript]
+----
+// Production microfrontend configuration (works with Traefik)
+{
+  "appName": "my-app",
+  "remoteBaseUrl": "mfe/my-app",
+  "remoteEntry": "mfe/my-app/remoteEntry.js"
+}
+----
+
+
+=== Integration Test Environment (Direct Container Communication)
+
+In integration tests, containers communicate directly without Traefik. This means the relative paths don't resolve correctly, as there's no reverse proxy to handle the routing.
+
+== The Automatic URL Transformation Solution
+
+The integration tests library automatically transforms Traefik-compatible relative URLs into direct container URLs during the microfrontend import process, bridging the gap between production routing and test environment networking.
+
+=== Transformation Logic
+
+[source,typescript]
+----
+// Original configuration (designed for Traefik routing)
+{
+  "appName": "my-app",
+  "remoteBaseUrl": "mfe/my-app",           // Traefik resolves this via host rules
+  "remoteEntry": "mfe/my-app/remoteEntry.js"
+}
+----
+
+This transformation mimics what Traefik would do automatically in production - routing requests to the correct container and port.
+
+=== Implementation Details
+
+The transformation occurs in the `importMicrofrontends` function and replicates Traefik's routing behavior:
+
+[source,typescript]
+----
+// Parse the original Traefik-compatible configuration
+const mfeData = JSON.parse(data)
+
+// Extract application name (matches container name and Traefik host rule)
+const appName = mfeData.appName
+const originalRemoteBaseUrl = mfeData.remoteBaseUrl
+const originalRemoteEntry = mfeData.remoteEntry
+
+// Transform relative paths to direct container URLs
+// This mimics: Traefik host rule -> container:port routing
+if (appName) {
+  mfeData.remoteBaseUrl = `http://${appName}:8080/${originalRemoteBaseUrl}`
+  mfeData.remoteEntry = `http://${appName}:8080/${originalRemoteEntry}`
+}
+----
+
+=== Common Issues
+
+**Microfrontend Not Found**::
+Verify that the container name matches the `appName` field and that the container is running on port 8080.
+
+**Path Resolution Errors**::
+Check that the original paths are correct for your Traefik setup in production, as the integration tests preserve these paths.
+
+**Network Connectivity Issues**::
+Ensure all containers are on the same Docker network and can communicate directly without Traefik.
