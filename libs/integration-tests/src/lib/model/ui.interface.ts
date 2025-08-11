@@ -1,4 +1,4 @@
-import { HealthCheck } from 'testcontainers/build/types'
+import { Environment, HealthCheck } from 'testcontainers/build/types'
 
 export interface UiDetails {
   appBaseHref: string
@@ -6,10 +6,9 @@ export interface UiDetails {
   productName: string
 }
 
-export interface UiContainerInterface {
+export interface CustomUiContainerInterface {
   image: string
-  environments?: string[]
+  environments?: Environment
   networkAlias: string
-  healtCheck?: HealthCheck
   uiDetails: UiDetails
 }

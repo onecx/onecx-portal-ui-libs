@@ -1,13 +1,13 @@
-import { HealthCheck } from 'testcontainers/build/types'
+import { Environment, HealthCheck } from 'testcontainers/build/types'
 
 export interface BffDetails {
   permissionsProductName: string
 }
 
-export interface BffContainerInterface {
+export interface CustomBffContainerInterface {
   image: string
-  environments?: string[]
+  environments?: Environment
   networkAlias: string
-  healtCheck?: HealthCheck
+  healthCheck?: HealthCheck
   bffDetails: BffDetails
 }

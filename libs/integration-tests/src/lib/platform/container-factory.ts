@@ -1,16 +1,19 @@
 import { StartedNetwork } from 'testcontainers'
 import { PlatformConfig } from '../model/platform-config.interface'
-import { SvcContainerInterface } from '../model/svc.interface'
-import { BffContainerInterface } from '../model/bff.interface'
-import { UiContainerInterface } from '../model/ui.interface'
-import { SvcContainer, StartedSvcContainer } from '../containers/abstract/onecx-svc'
-import { BffContainer, StartedBffContainer } from '../containers/abstract/onecx-bff'
-import { UiContainer, StartedUiContainer } from '../containers/abstract/onecx-ui'
+import { CustomSvcContainerInterface } from '../model/svc.interface'
+import { CustomBffContainerInterface } from '../model/bff.interface'
+import { CustomUiContainerInterface } from '../model/ui.interface'
+import { StartedSvcContainer } from '../containers/abstract/onecx-svc'
+import { StartedBffContainer } from '../containers/abstract/onecx-bff'
+import { StartedUiContainer } from '../containers/abstract/onecx-ui'
 import { StartedOnecxPostgresContainer } from '../containers/core/onecx-postgres'
 import { StartedOnecxKeycloakContainer } from '../containers/core/onecx-keycloak'
 import { AllowedContainerTypes } from '../model/allowed-container.types'
 import { shouldEnableLogging } from '../utils/logging-config.util'
 import { ImageResolver } from './image-resolver'
+import { CustomSvcContainer } from '../containers/svc/custom-svc'
+import { CustomBffContainer } from '../containers/bff/custom-bff'
+import { CustomUiContainer } from '../containers/ui/custom-ui'
 
 /**
  * Factory class for creating different types of containers based on configuration
@@ -29,10 +32,10 @@ export class ContainerFactory {
    * @returns Map of created and started containers
    */
   async createContainers(config: PlatformConfig): Promise<Map<string, AllowedContainerTypes>> {
-    const containers = new Map<string, AllowedContainerTypes>()
+    const customContainers = new Map<string, AllowedContainerTypes>()
 
     if (!config.container) {
-      return containers
+      return customContainers
     }
 
     const enableLogging = shouldEnableLogging(config)
@@ -45,7 +48,7 @@ export class ContainerFactory {
 
       for (const serviceConfig of serviceConfigs) {
         const svcContainer = await this.createSvcContainer(serviceConfig, enableLogging)
-        containers.set(serviceConfig.networkAlias, svcContainer)
+        customContainers.set(serviceConfig.networkAlias, svcContainer)
       }
     }
 
@@ -55,7 +58,7 @@ export class ContainerFactory {
 
       for (const bffConfig of bffConfigs) {
         const bffContainer = await this.createBffContainer(bffConfig, enableLogging)
-        containers.set(bffConfig.networkAlias, bffContainer)
+        customContainers.set(bffConfig.networkAlias, bffContainer)
       }
     }
 
@@ -65,18 +68,18 @@ export class ContainerFactory {
 
       for (const uiConfig of uiConfigs) {
         const uiContainer = await this.createUiContainer(uiConfig, enableLogging)
-        containers.set(uiConfig.networkAlias, uiContainer)
+        customContainers.set(uiConfig.networkAlias, uiContainer)
       }
     }
 
-    return containers
+    return customContainers
   }
 
   /**
    * Create a service container from the configuration
    */
   private async createSvcContainer(
-    svcConfig: SvcContainerInterface,
+    svcConfig: CustomSvcContainerInterface,
     enableLogging: boolean
   ): Promise<StartedSvcContainer> {
     if (!this.postgres || !this.keycloak) {
@@ -86,45 +89,29 @@ export class ContainerFactory {
     // Resolve the image through the ImageResolver
     const resolvedImage = await this.imageResolver.getCustomImage(svcConfig.image)
 
-    const factory = this
-
-    // Create a custom service container class that extends SvcContainer
-    class CustomSvcContainer extends SvcContainer {
-      constructor(
-        image: string,
-        databaseContainer: StartedOnecxPostgresContainer,
-        keycloakContainer: StartedOnecxKeycloakContainer,
-        private config: SvcContainerInterface
-      ) {
-        super(image, { databaseContainer, keycloakContainer })
-
-        // Configure the container based on the provided configuration
-        this.withNetworkAliases(config.networkAlias)
-
-        if (config.svcDetails.databaseUsername && config.svcDetails.databasePassword) {
-          this.withDatabaseUsername(config.svcDetails.databaseUsername).withDatabasePassword(
-            config.svcDetails.databasePassword
-          )
-        }
-
-        // Apply custom environment variables if provided
-        factory.applyEnvironmentVariables(this, config.environments)
-
-        // Enable logging if configured
-        this.enableLogging(enableLogging)
-      }
+    const customSvcContainer = new CustomSvcContainer(resolvedImage, this.postgres, this.keycloak).withNetworkAliases(
+      svcConfig.networkAlias
+    )
+    if (svcConfig.environments) {
+      customSvcContainer.withEnvironment(svcConfig.environments)
+    }
+    if (svcConfig.svcDetails.databaseUsername && svcConfig.svcDetails.databasePassword) {
+      customSvcContainer
+        .withDatabaseUsername(svcConfig.svcDetails.databaseUsername)
+        .withDatabasePassword(svcConfig.svcDetails.databasePassword)
+    }
+    if (svcConfig.healthCheck) {
+      customSvcContainer.withHealthCheck(svcConfig.healthCheck)
     }
 
-    const container = new CustomSvcContainer(resolvedImage, this.postgres, this.keycloak, svcConfig)
-
-    return await container.withNetwork(this.network).start()
+    return await customSvcContainer.enableLogging(enableLogging).withNetwork(this.network).start()
   }
 
   /**
    * Create a BFF container from the configuration
    */
   private async createBffContainer(
-    bffConfig: BffContainerInterface,
+    bffConfig: CustomBffContainerInterface,
     enableLogging: boolean
   ): Promise<StartedBffContainer> {
     if (!this.keycloak) {
@@ -134,97 +121,46 @@ export class ContainerFactory {
     // Resolve the image through the ImageResolver
     const resolvedImage = await this.imageResolver.getCustomImage(bffConfig.image)
 
-    const factory = this
-
-    // Create a custom BFF container class that extends BffContainer
-    class CustomBffContainer extends BffContainer {
-      constructor(
-        image: string,
-        keycloakContainer: StartedOnecxKeycloakContainer,
-        private config: BffContainerInterface
-      ) {
-        super(image, keycloakContainer)
-
-        // Configure the container based on the provided configuration
-        this.withNetworkAliases(config.networkAlias)
-
-        if (config.bffDetails.permissionsProductName) {
-          this.withPermissionsProductName(config.bffDetails.permissionsProductName)
-        }
-
-        // Apply custom environment variables if provided
-        factory.applyEnvironmentVariables(this, config.environments)
-
-        // Enable logging if configured
-        this.enableLogging(enableLogging)
-      }
+    const customBffContainer = new CustomBffContainer(resolvedImage, this.keycloak).withNetworkAliases(
+      bffConfig.networkAlias
+    )
+    if (bffConfig.bffDetails.permissionsProductName) {
+      customBffContainer.withPermissionsProductName(bffConfig.bffDetails.permissionsProductName)
+    }
+    if (bffConfig.healthCheck) {
+      customBffContainer.withHealthCheck(bffConfig.healthCheck)
+    }
+    if (bffConfig.environments) {
+      customBffContainer.withEnvironment(bffConfig.environments)
     }
 
-    const container = new CustomBffContainer(resolvedImage, this.keycloak, bffConfig)
-
-    return await container.withNetwork(this.network).start()
+    return await customBffContainer.enableLogging(enableLogging).withNetwork(this.network).start()
   }
 
   /**
    * Create a UI container from the configuration
    */
-  private async createUiContainer(uiConfig: UiContainerInterface, enableLogging: boolean): Promise<StartedUiContainer> {
+  private async createUiContainer(
+    uiConfig: CustomUiContainerInterface,
+    enableLogging: boolean
+  ): Promise<StartedUiContainer> {
     // Resolve the image through the ImageResolver
     const resolvedImage = await this.imageResolver.getCustomImage(uiConfig.image)
 
-    const factory = this
+    const customUiContainer = new CustomUiContainer(resolvedImage).withNetworkAliases(uiConfig.networkAlias)
 
-    // Create a custom UI container class that extends UiContainer
-    class CustomUiContainer extends UiContainer {
-      constructor(
-        image: string,
-        private config: UiContainerInterface
-      ) {
-        super(image)
-
-        // Configure the container based on the provided configuration
-        this.withNetworkAliases(config.networkAlias)
-
-        if (config.uiDetails.appBaseHref) {
-          this.withAppBaseHref(config.uiDetails.appBaseHref)
-        }
-
-        if (config.uiDetails.appId) {
-          this.withAppId(config.uiDetails.appId)
-        }
-
-        if (config.uiDetails.productName) {
-          this.withProductName(config.uiDetails.productName)
-        }
-
-        factory.applyEnvironmentVariables(this, config.environments)
-
-        // Enable logging if configured
-        this.enableLogging(enableLogging)
-      }
+    if (uiConfig.uiDetails.appBaseHref) {
+      customUiContainer.withAppBaseHref(uiConfig.uiDetails.appBaseHref)
     }
 
-    const container = new CustomUiContainer(resolvedImage, uiConfig)
-
-    return await container.withNetwork(this.network).start()
-  }
-
-  /**
-   * Apply environment variables to a container
-   */
-  private applyEnvironmentVariables(
-    target: { withEnvironment: (env: Record<string, string>) => void },
-    environments?: string[]
-  ): void {
-    if (environments && environments.length > 0) {
-      const environmentVariables: Record<string, string> = {}
-      environments.forEach((env) => {
-        const [key, value] = env.split('=')
-        if (key && value) {
-          environmentVariables[key] = value
-        }
-      })
-      target.withEnvironment(environmentVariables)
+    if (uiConfig.uiDetails.appId) {
+      customUiContainer.withAppId(uiConfig.uiDetails.appId)
     }
+
+    if (uiConfig.uiDetails.productName) {
+      customUiContainer.withProductName(uiConfig.uiDetails.productName)
+    }
+
+    return await customUiContainer.enableLogging(enableLogging).withNetwork(this.network).start()
   }
 }

@@ -1,7 +1,7 @@
 import {
   POSTGRES,
   KEYCLOAK,
-  NODE_20,
+  IMPORTMANAGER,
   OnecxBffImage,
   OnecxUiImage,
   OnecxServiceImage,
@@ -58,9 +58,9 @@ export class ImageResolver {
    * Get the Node.js image with optional image override
    */
   async getNodeImage(config: PlatformConfig): Promise<string> {
-    const overrideImage = config.imageOverrides?.core?.node
+    const overrideImage = config.imageOverrides?.core?.importmanager
     if (!overrideImage) {
-      return NODE_20
+      return IMPORTMANAGER
     }
 
     const imageIsVerified = await this.verifyImage(overrideImage)
@@ -69,8 +69,8 @@ export class ImageResolver {
     }
 
     // If verification fails, fall back to default image
-    console.warn(`Image verification failed for ${overrideImage}, falling back to default: ${NODE_20}`)
-    return NODE_20
+    console.warn(`Image verification failed for ${overrideImage}, falling back to default: ${IMPORTMANAGER}`)
+    return IMPORTMANAGER
   }
 
   /**
@@ -130,7 +130,6 @@ export class ImageResolver {
   /**
    * Resolve a custom image (used for container factory configurations)
    * This method returns the image as-is since custom images are already specified
-   * in the container configuration and don't need to be resolved from env.ts
    */
   async getCustomImage(imageName: string): Promise<string> {
     const imageIsVerified = await this.verifyImage(imageName)

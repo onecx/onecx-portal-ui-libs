@@ -1,7 +1,7 @@
 const DOCKER_REPO = 'ghcr.io/onecx'
 export const POSTGRES = 'docker.io/library/postgres:13.4'
 export const KEYCLOAK = 'quay.io/keycloak/keycloak:23.0.4'
-export const NODE_20 = 'docker.io/library/node:20'
+export const IMPORTMANAGER = 'docker.io/library/node:20'
 
 export enum OnecxServiceImage {
   ONECX_IAM_KC_SVC = 'ONECX_IAM_KC_SVC',

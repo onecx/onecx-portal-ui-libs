@@ -1,6 +1,6 @@
-import { BffContainerInterface } from './bff.interface'
-import { SvcContainerInterface } from './svc.interface'
-import { UiContainerInterface } from './ui.interface'
+import { CustomBffContainerInterface } from './bff.interface'
+import { CustomSvcContainerInterface } from './svc.interface'
+import { CustomUiContainerInterface } from './ui.interface'
 
 export interface PlatformConfig {
   /** Whether to run the minimal setup of the onecx Platform */
@@ -15,7 +15,7 @@ export interface PlatformConfig {
     core?: {
       postgres?: string
       keycloak?: string
-      node?: string
+      importmanager?: string
     }
     /** Backend service images */
     services?: {
@@ -37,8 +37,8 @@ export interface PlatformConfig {
     }
   }
   container?: {
-    service?: SvcContainerInterface | SvcContainerInterface[]
-    bff?: BffContainerInterface | BffContainerInterface[]
-    ui?: UiContainerInterface | UiContainerInterface[]
+    service?: CustomSvcContainerInterface | CustomSvcContainerInterface[]
+    bff?: CustomBffContainerInterface | CustomBffContainerInterface[]
+    ui?: CustomUiContainerInterface | CustomUiContainerInterface[]
   }
 }

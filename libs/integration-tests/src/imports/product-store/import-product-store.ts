@@ -96,9 +96,20 @@ export async function importMicrofrontends(baseDir: string, endpointBase: string
     const fileName = file.replace('.json', '')
     const [product, appid, mfe] = fileName.split('_')
     const data = await readFile(path.join(dir, file), 'utf-8')
+    const mfeData = JSON.parse(data)
+
+    // Dynamically update the remote paths
+    const appName = mfeData.appName
+    const originalRemoteBaseUrl = mfeData.remoteBaseUrl
+    const originalRemoteEntry = mfeData.remoteEntry
+    if (appName) {
+      mfeData.remoteBaseUrl = `http://${appName}:8080/${originalRemoteBaseUrl}`
+      mfeData.remoteEntry = `http://${appName}:8080/${originalRemoteEntry}`
+    }
+
     const endpoint = `${endpointBase}/operator/mfe/v1/${product}/${appid}`
     try {
-      const response = await axios.put(endpoint, JSON.parse(data), {
+      const response = await axios.put(endpoint, mfeData, {
         headers: { 'Content-Type': 'application/json' },
         validateStatus: () => true,
       })

@@ -11,9 +11,15 @@ import { DataImporter } from './data-importer'
 import type { AllowedContainerTypes } from '../model/allowed-container.types'
 
 export class PlatformManager {
+  /**
+   * Maps to enter the container setup
+   */
   private startedContainers: Map<CONTAINER, AllowedContainerTypes> = new Map()
   private customContainers: Map<string, AllowedContainerTypes> = new Map()
 
+  /**
+   * Needed classes for startService
+   */
   private network?: StartedNetwork
   private imageResolver?: ImageResolver
   private containerStarter?: ContainerStarter
@@ -22,8 +28,13 @@ export class PlatformManager {
 
   private healthChecker: HealthChecker = new HealthChecker()
 
+  // switch to decide if the defaultPlatform should start or not
   private startDefaultPlatform = true
 
+  /**
+   * Orchestrates the startup of the default services and the creation of custom containers.
+   * @param config
+   */
   async startServices(config: PlatformConfig = DEFAULT_PLATFORM_CONFIG) {
     this.imageResolver = new ImageResolver()
     this.dataImporter = new DataImporter(this.imageResolver)

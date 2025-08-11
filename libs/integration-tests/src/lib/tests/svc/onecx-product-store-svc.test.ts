@@ -1,4 +1,4 @@
-import { POSTGRES, KEYCLOAK, onecxSvcImages, OnecxShellImage, OnecxServiceImage } from '../../config/env'
+import { POSTGRES, KEYCLOAK, onecxSvcImages, OnecxServiceImage } from '../../config/env'
 import { Network, StartedNetwork } from 'testcontainers'
 import { OnecxKeycloakContainer, StartedOnecxKeycloakContainer } from '../../containers/core/onecx-keycloak'
 import { OnecxPostgresContainer, StartedOnecxPostgresContainer } from '../../containers/core/onecx-postgres'

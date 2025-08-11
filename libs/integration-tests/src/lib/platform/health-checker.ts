@@ -20,13 +20,11 @@ export class HealthChecker {
 
       if (name === CONTAINER.POSTGRES || name === CONTAINER.SHELL_UI) {
         console.log(`Container ${name}: No health check endpoint available, marking as healthy if running`)
-        healthy = true
       } else if (name === CONTAINER.KEYCLOAK) {
         healthy = await this.checkKeycloakHealth(container as StartedOnecxKeycloakContainer)
       } else {
         healthy = await this.checkServiceHealth(container, name)
       }
-
       results.push({ name, healthy })
     }
 

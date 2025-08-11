@@ -1,5 +1,5 @@
 import { StartedOnecxPostgresContainer } from '../containers/core/onecx-postgres'
-import { HealthCheck } from 'testcontainers/build/types'
+import { Environment, HealthCheck } from 'testcontainers/build/types'
 import { StartedOnecxKeycloakContainer } from '../containers/core/onecx-keycloak'
 
 export interface SvcDetails {
@@ -12,10 +12,10 @@ export interface SvcContainerServices {
   keycloakContainer: StartedOnecxKeycloakContainer
 }
 
-export interface SvcContainerInterface {
+export interface CustomSvcContainerInterface {
   image: string
-  environments?: string[]
+  environments?: Environment
   networkAlias: string
-  healtCheck?: HealthCheck
+  healthCheck?: HealthCheck
   svcDetails: SvcDetails
 }
