@@ -8,6 +8,7 @@ import {
   GuardsGatherer,
   GuardsNavigationState,
   GuardsNavigationStateController,
+  IS_INITIAL_ROUTER_SYNC,
   IS_ROUTER_SYNC,
   wrapGuards,
 } from '@onecx/angular-utils'
@@ -17,7 +18,7 @@ import { getLocation } from '@onecx/accelerator'
 export class WebcomponentConnnector {
   private connectionSubscriptions: Subscription[] = []
   private capabilityService: ShellCapabilityService
-  private eventsTopic: EventsTopic | undefined
+  private eventsTopic: EventsTopic
   private guardsGatherer: GuardsGatherer
   private guardsNavigationStateController: GuardsNavigationStateController
 
@@ -26,8 +27,7 @@ export class WebcomponentConnnector {
     private entrypointType: EntrypointType
   ) {
     this.capabilityService = new ShellCapabilityService()
-    const currentLocationCapabilityAvailable = this.capabilityService.hasCapability(Capability.CURRENT_LOCATION_TOPIC)
-    this.eventsTopic = currentLocationCapabilityAvailable ? undefined : new EventsTopic()
+    this.eventsTopic = new EventsTopic()
     this.guardsGatherer = this.injector.get(GuardsGatherer)
     this.guardsNavigationStateController = this.injector.get(GuardsNavigationStateController)
   }
@@ -39,11 +39,7 @@ export class WebcomponentConnnector {
 
   disconnect() {
     this.connectionSubscriptions.forEach((sub) => sub.unsubscribe())
-    const currentLocationCapabilityAvailable = this.capabilityService.hasCapability(Capability.CURRENT_LOCATION_TOPIC)
-
-    if (currentLocationCapabilityAvailable && this.eventsTopic) {
-      this.eventsTopic.destroy()
-    }
+    this.eventsTopic.destroy()
     this.guardsGatherer.deactivate()
   }
 
@@ -69,12 +65,13 @@ export class WebcomponentConnnector {
     const initialUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}${location.hash}`
     router.navigateByUrl(initialUrl, {
       replaceUrl: true,
-      state: { [IS_ROUTER_SYNC]: true },
+      state: { [IS_ROUTER_SYNC]: true, [IS_INITIAL_ROUTER_SYNC]: true },
     })
     let lastUrl = initialUrl
     let observable: Observable<TopicEventType | CurrentLocationTopicPayload> =
       appStateService.currentLocation$.asObservable()
-    if (this.eventsTopic !== undefined) {
+    const currentLocationCapabilityAvailable = this.capabilityService.hasCapability(Capability.CURRENT_LOCATION_TOPIC)
+    if (!currentLocationCapabilityAvailable) {
       observable = this.eventsTopic.pipe(filter((e) => e.type === 'navigated'))
     }
     return observable.subscribe(() => {
@@ -150,6 +147,21 @@ export class WebcomponentConnnector {
       console.log('GuardsCheckEnd Event', event)
       const guardsNavigationState = (router.getCurrentNavigation()?.extras.state ?? {}) as GuardsNavigationState
       console.log('GuardsCheckEnd GuardsNavigationState', guardsNavigationState)
+
+      if (
+        this.guardsNavigationStateController.isInitialRouterSyncState(guardsNavigationState) &&
+        !event.shouldActivate
+      ) {
+        console.log(
+          'GuardsCheckEnd Initial router sync failed. Sending a request to revert navigation.',
+          guardsNavigationState
+        )
+        this.eventsTopic.publish({
+          type: 'revertNavigation',
+        })
+        return
+      }
+
       if (this.guardsNavigationStateController.isRouterSyncState(guardsNavigationState)) {
         console.log('GuardsCheckEnd Skipping for router sync state', guardsNavigationState)
         return
