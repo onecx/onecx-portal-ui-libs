@@ -2,18 +2,29 @@ import { inject, Injectable, OnDestroy } from '@angular/core'
 import { Router } from '@angular/router'
 import { Gatherer } from '@onecx/accelerator'
 import { GuardsNavigationStateController } from './guards-navigation-controller.utils'
+import { logGuardsDebug } from '../utils/guards'
 
+/**
+ * Request for performing guard checks.
+ * It contains the URL of the route for which the guard checks are requested.
+ */
 export type GuardResultRequest = {
   url: string
 }
 
+/**
+ * Response for the guard checks.
+ * It indicates whether the guard checks were successful or not.
+ */
 export type GuardResultResponse = boolean
 
+const GUARDS_GATHERER_NAME = 'GuardGatherer'
+
 /**
- * GuardsGatherer is used to gather results of CanActivate and CanDeactivate guards.
- * It allows to perform guard checks of CanActivate and CanDeactivate of the application.
+ * GuardsGatherer is used to gather results of navigation guards.
+ * It allows to perform guard checks of the application.
  * GuardsGatherer adds information in the navigation state to request guard checks.
- * It is expected that guards wrappers will use this information to perform checks without navigating and reject navigation if checks are not successful. Otherwise, it will proceed with the navigation and navigation will be rejected on GuardsCheckEnd.
+ * It is expected that guards wrappers will use this information to perform checks and respond if checks are not successful. Otherwise, it will proceed with the navigation and navigation will be rejected on GuardsCheckEnd and results will be reported.
  * It uses a Gatherer to manage the requests and responses.
  */
 @Injectable({
@@ -61,8 +72,7 @@ export class GuardsGatherer implements OnDestroy {
    * It initializes the Gatherer and sets up the callback to execute guard checks.
    */
   activate(): void {
-    console.log('GuardsGatherer activate')
-    this.guardsGatherer = new Gatherer('GuardGatherer', 1, (request) => this.executeGuardsCallback(request))
+    this.guardsGatherer = new Gatherer(GUARDS_GATHERER_NAME, 1, (request) => this.executeGuardsCallback(request))
     this.guardsChecks = new Map()
   }
 
@@ -71,17 +81,17 @@ export class GuardsGatherer implements OnDestroy {
    * It destroys the Gatherer and clears the checks.
    */
   deactivate(): void {
-    console.log('GuardsGatherer deactivate')
     this.guardsGatherer?.destroy()
+    delete this.guardsChecks
   }
 
   private executeGuardsCallback(request: GuardResultRequest): Promise<GuardResultResponse> {
-    console.log('Executing callback for request:', request)
+    logGuardsDebug('Executing callback for request:', request)
     const routeUrl = request.url
 
     // Fake navigation to request guard check
     this.router.navigateByUrl(routeUrl, {
-      state: this.guardsNavigationStateController.createGuardCheck(),
+      state: this.guardsNavigationStateController.createGuardCheckState(),
       // Important, force navigation
       // to ensure that we are checking guards
       // even if the route is already active.

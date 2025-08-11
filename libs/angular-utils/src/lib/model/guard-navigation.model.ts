@@ -5,6 +5,7 @@
  */
 export interface GuardsNavigationState extends Record<string, any> {
   [IS_ROUTER_SYNC]?: boolean
+  [IS_INITIAL_ROUTER_SYNC]?: boolean
   [GUARD_CHECK]?: boolean
   [GUARD_CHECK_PROMISE]?: GuardCheckPromise
 }
@@ -31,3 +32,10 @@ export const GUARD_CHECK = 'guardCheck'
  * This is used to wait for the external guard checks to be completed before proceeding with the navigation.
  */
 export const GUARD_CHECK_PROMISE = 'guardCheckPromise'
+
+export enum GUARD_MODE {
+  INITIAL_ROUTER_SYNC = 'initialRouterSync',
+  ROUTER_SYNC = 'routerSync',
+  GUARD_CHECK = 'guardCheck',
+  NAVIGATION_REQUESTED = 'navigationRequested',
+}
