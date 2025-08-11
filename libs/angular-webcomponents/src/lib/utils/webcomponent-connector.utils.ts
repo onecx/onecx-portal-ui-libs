@@ -5,16 +5,22 @@ import { filter, Observable, Subscription } from 'rxjs'
 import { AppStateService, Capability, ShellCapabilityService } from '@onecx/angular-integration-interface'
 import {
   combineToBoolean,
+  GUARD_MODE,
   GuardsGatherer,
   GuardsNavigationState,
   GuardsNavigationStateController,
   IS_INITIAL_ROUTER_SYNC,
   IS_ROUTER_SYNC,
+  logGuardsDebug,
   wrapGuards,
 } from '@onecx/angular-utils'
 import { ActivatedRouteSnapshot, GuardsCheckEnd, GuardsCheckStart, Router, RoutesRecognized } from '@angular/router'
 import { getLocation } from '@onecx/accelerator'
 
+/**
+ * WebcomponentConnnector is a utility class that connects Angular web components.
+ * It manages the router connection with other web components and handles the navigation state.
+ */
 export class WebcomponentConnnector {
   private connectionSubscriptions: Subscription[] = []
   private capabilityService: ShellCapabilityService
@@ -43,6 +49,11 @@ export class WebcomponentConnnector {
     this.guardsGatherer.deactivate()
   }
 
+  /**
+   * Connects the router of the web component.
+   * It sets up the necessary subscriptions to handle navigation and guard checks.
+   * @returns Array of subscriptions for the router connection
+   */
   private connectRouter(): Subscription[] {
     const router = this.injector.get(Router, null)
     const appStateService = this.injector.get(AppStateService, null)
@@ -61,6 +72,13 @@ export class WebcomponentConnnector {
     return [...this.connectRouterGuards(router), this.connectLocationChange(router, appStateService)]
   }
 
+  /**
+   * Connects the location change of the web component's router.
+   * It sets up the initial URL and subscribes to location changes to update the router accordingly.
+   * @param router - The router to connect location change for
+   * @param appStateService - The app state service to use for current location topic
+   * @returns Subscription for the location change connection
+   */
   private connectLocationChange(router: Router, appStateService: AppStateService): Subscription {
     const initialUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}${location.hash}`
     router.navigateByUrl(initialUrl, {
@@ -86,6 +104,12 @@ export class WebcomponentConnnector {
     })
   }
 
+  /**
+   * Connects the router guards for the web component's router.
+   * It sets up the necessary subscriptions to handle guard checks and navigation states.
+   * @param router - The router to connect guards for
+   * @returns Array of subscriptions for the router guards connection
+   */
   private connectRouterGuards(router: Router): Subscription[] {
     return [
       this.wrapGuardsOnRouteRecognized(router),
@@ -103,7 +127,6 @@ export class WebcomponentConnnector {
     return router.events
       .pipe(filter((event) => event instanceof RoutesRecognized))
       .subscribe((event: RoutesRecognized) => {
-        console.log('RoutesRecognized Event', event)
         const rootSnapshot = event.state.root
         this.wrapGuardsForRoute(rootSnapshot)
       })
@@ -120,59 +143,52 @@ export class WebcomponentConnnector {
     return router.events
       .pipe(filter((event) => event instanceof GuardsCheckStart))
       .subscribe((event: GuardsCheckStart) => {
-        console.log('GuardsCheckStart Event', event)
         const currentNavigation = router.getCurrentNavigation()
         const guardsNavigationState = (router.getCurrentNavigation()?.extras.state ?? {}) as GuardsNavigationState
-        console.log('GuardsCheckStart GuardsNavigationState', guardsNavigationState)
-        if (
-          this.guardsNavigationStateController.isRouterSyncState(guardsNavigationState) ||
-          this.guardsNavigationStateController.isGuardCheckState(guardsNavigationState)
-        ) {
-          console.log('GuardsCheckStart Skipping for router sync and guards check state', guardsNavigationState)
-          return
+        const guardMode = this.guardsNavigationStateController.getMode(guardsNavigationState)
+
+        switch (guardMode) {
+          case GUARD_MODE.NAVIGATION_REQUESTED:
+            const guardsPromise = this.guardsGatherer
+              .gather({ url: event.urlAfterRedirects })
+              .then((results) => Array.isArray(results) && combineToBoolean(results))
+
+            this.guardsNavigationStateController.createNavigationRequestedState(guardsPromise, guardsNavigationState)
+            if (currentNavigation) currentNavigation.extras.state = guardsNavigationState
+            return
+          case GUARD_MODE.INITIAL_ROUTER_SYNC:
+          case GUARD_MODE.GUARD_CHECK:
+          case GUARD_MODE.ROUTER_SYNC:
+            return
         }
-
-        const guardsPromise = this.guardsGatherer
-          .gather({ url: event.urlAfterRedirects })
-          .then((results) => Array.isArray(results) && combineToBoolean(results))
-
-        this.guardsNavigationStateController.createGuardCheckPromise(guardsNavigationState, guardsPromise)
-        console.log('GuardsCheckStart Adding promise to navigation', guardsNavigationState)
-        if (currentNavigation) currentNavigation.extras.state = guardsNavigationState
       })
   }
 
   private resolveGuardsOnGuardsCheckEnd(router: Router): Subscription {
     return router.events.pipe(filter((event) => event instanceof GuardsCheckEnd)).subscribe((event: GuardsCheckEnd) => {
-      console.log('GuardsCheckEnd Event', event)
       const guardsNavigationState = (router.getCurrentNavigation()?.extras.state ?? {}) as GuardsNavigationState
-      console.log('GuardsCheckEnd GuardsNavigationState', guardsNavigationState)
+      const mode = this.guardsNavigationStateController.getMode(guardsNavigationState)
 
-      if (
-        this.guardsNavigationStateController.isInitialRouterSyncState(guardsNavigationState) &&
-        !event.shouldActivate
-      ) {
-        console.log(
-          'GuardsCheckEnd Initial router sync failed. Sending a request to revert navigation.',
-          guardsNavigationState
-        )
-        this.eventsTopic.publish({
-          type: 'revertNavigation',
-        })
-        return
-      }
-
-      if (this.guardsNavigationStateController.isRouterSyncState(guardsNavigationState)) {
-        console.log('GuardsCheckEnd Skipping for router sync state', guardsNavigationState)
-        return
-      }
-
-      // If event.shuldActivate is false, it means that the navigation was cancelled already and response has been sent
-      if (this.guardsNavigationStateController.isGuardCheckState(guardsNavigationState) && event.shouldActivate) {
-        console.log('Guard check state detected, sending positive result back and cancelling navigation.')
-        this.guardsGatherer.resolveRoute(event.urlAfterRedirects, true)
-        router.navigateByUrl(router.url, { skipLocationChange: true, state: { isRouterSync: true } })
-        return
+      switch (mode) {
+        case GUARD_MODE.INITIAL_ROUTER_SYNC:
+          if (!event.shouldActivate) {
+            logGuardsDebug('GuardsCheckEnd Initial router sync failed. Sending a request to revert navigation.')
+            this.eventsTopic.publish({
+              type: 'revertNavigation',
+            })
+          }
+          return
+        case GUARD_MODE.GUARD_CHECK:
+          // If event.shouldActivate is false, it means that the navigation was cancelled already and response has been sent
+          if (event.shouldActivate) {
+            logGuardsDebug('Guard check state detected, sending positive result back and cancelling navigation.')
+            this.guardsGatherer.resolveRoute(event.urlAfterRedirects, true)
+            router.navigateByUrl(router.url, { skipLocationChange: true, state: { isRouterSync: true } })
+          }
+          return
+        case GUARD_MODE.ROUTER_SYNC:
+        case GUARD_MODE.NAVIGATION_REQUESTED:
+          return
       }
     })
   }
@@ -183,7 +199,7 @@ export class WebcomponentConnnector {
    */
   private wrapGuardsForRoute(route: ActivatedRouteSnapshot): void {
     if (!route.routeConfig) {
-      console.warn('No routeConfig found for route', route)
+      logGuardsDebug('No routeConfig found for route', route)
     }
     route.routeConfig && wrapGuards(route.routeConfig)
     route.children.forEach((child) => this.wrapGuardsForRoute(child))

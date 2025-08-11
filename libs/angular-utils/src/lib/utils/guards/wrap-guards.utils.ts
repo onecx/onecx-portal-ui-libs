@@ -2,21 +2,22 @@ import { CanActivate, CanActivateFn, CanDeactivate, CanDeactivateFn, Route } fro
 import { inject, Type } from '@angular/core'
 import { ActivateGuardsWrapper } from './activate-guards-wrapper.utils'
 import { DeactivateGuardsWrapper } from './deactivate-guards-wrapper.utils'
+import { logGuardsDebug } from './guards-utils.utils'
+
+// Create a unique symbol to tag wrapped guards
+const WRAPPED_GUARD_TAG = Symbol('WrappedGuard')
 
 /**
  * Wraps the guards for a given route.
- * This function will wrap CanActivate and CanDeactivate guards and force the route to always run guards and resolvers.
+ * This function will wrap CanActivate, CanDeactivate and CanActivateChild guards and force the route to always run guards and resolvers.
  * It ensures that in a multi-router environment, the guards are properly executed.
  * @param route - The route to wrap guards for.
- *
- * This function is not going to work if:
- * - The route contains createActivateWrapper in canActivate
- * - The route contains createDeactivateWrapper in canDeactivate
  */
 export function wrapGuards(route: Route) {
-  console.log('wrapGuards', route)
+  logGuardsDebug('wrapGuards', route)
   wrapActivateGuards(route)
   wrapDeactivateGuards(route)
+  wrapActivateChildGuards(route)
 
   // Important, this will ensure that guards are always run
   // even if the route is already active.
@@ -27,24 +28,24 @@ export function wrapGuards(route: Route) {
   }
 }
 
-// Create a unique symbol to tag wrapped guards
-const WRAPPED_GUARD_TAG = Symbol('WrappedGuard')
-
 function wrapActivateGuards(route: Route): void {
   if (!isGuardWrapped(route.canActivate)) {
-    console.log('Wrapping activate guards for route', route)
+    logGuardsDebug('Wrapping activate guards for route', route)
     route.canActivate = [createActivateWrapper(route.canActivate ?? [])]
-  } else {
-    console.log('Activate guards are already wrapped for route', route)
   }
 }
 
 function wrapDeactivateGuards(route: Route): void {
   if (!isGuardWrapped(route.canDeactivate)) {
-    console.log('Wrapping deactivate guards for route', route)
+    logGuardsDebug('Wrapping deactivate guards for route', route)
     route.canDeactivate = [createDeactivateWrapper(route.canDeactivate ?? [])]
-  } else {
-    console.log('Deactivate guards are already wrapped for route', route)
+  }
+}
+
+function wrapActivateChildGuards(route: Route): void {
+  if (!isGuardWrapped(route.canActivateChild)) {
+    logGuardsDebug('Wrapping activate child guards for route', route)
+    route.canActivateChild = [createActivateWrapper(route.canActivateChild ?? [])]
   }
 }
 
