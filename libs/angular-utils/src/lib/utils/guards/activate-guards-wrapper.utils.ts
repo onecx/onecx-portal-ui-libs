@@ -45,7 +45,13 @@ export class ActivateGuardsWrapper {
 
     if (this.guardsNavigationStateController.isRouterSyncState(guardsNavigationState)) {
       // Important to make sure all guarded functionality is executed
-      return this.executeActivateGuards(route, state, guards, combineToBoolean).then(() => executeRouterSyncGuard())
+      return this.executeActivateGuards(route, state, guards, combineToBoolean).then((result) => {
+        if (this.guardsNavigationStateController.isInitialRouterSyncState(guardsNavigationState)) {
+          return result
+        }
+
+        return executeRouterSyncGuard()
+      })
     }
 
     if (this.guardsNavigationStateController.isGuardCheckState(guardsNavigationState)) {

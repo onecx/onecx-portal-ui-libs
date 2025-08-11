@@ -17,6 +17,11 @@ export type GuardCheckPromise = Promise<boolean>
 export const IS_ROUTER_SYNC = 'isRouterSync'
 
 /**
+ * Indicates that the router is in initial sync mode.
+ */
+export const IS_INITIAL_ROUTER_SYNC = 'isInitialRouterSync'
+
+/**
  * Indicates that the guard check is requested.
  */
 export const GUARD_CHECK = 'guardCheck'

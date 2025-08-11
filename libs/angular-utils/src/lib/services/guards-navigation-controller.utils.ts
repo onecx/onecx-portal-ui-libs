@@ -4,6 +4,7 @@ import {
   GUARD_CHECK_PROMISE,
   GuardCheckPromise,
   GuardsNavigationState,
+  IS_INITIAL_ROUTER_SYNC,
   IS_ROUTER_SYNC,
 } from '../model/guard-navigation.model'
 
@@ -45,6 +46,15 @@ export class GuardsNavigationStateController {
    */
   isRouterSyncState(state: GuardsNavigationState): boolean {
     return IS_ROUTER_SYNC in state && state[IS_ROUTER_SYNC] === true
+  }
+
+  /**
+   * Checks if the provided GuardsNavigationState indicates that the router is in initial sync mode.
+   * @param state - the GuardsNavigationState to check
+   * @returns true if the state indicates an initial router sync, false otherwise
+   */
+  isInitialRouterSyncState(state: GuardsNavigationState): boolean {
+    return IS_INITIAL_ROUTER_SYNC in state && state[IS_INITIAL_ROUTER_SYNC] === true
   }
 
   /**

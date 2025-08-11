@@ -15,7 +15,7 @@ import { combineToBoolean, combineToGuardResult, executeRouterSyncGuard, resolve
 
 /**
  * Wrapper for canDeactivate guards that handles the navigation state and executes guards accordingly.
- * 
+ *
  * It performs the deactivation checks in different scenarios based on the navigation state:
  * - If the navigation state is a router sync state, it executes the guards and agrees for navigation.
  * - If the navigation state is a guard check state, it executes the guards and returns false if any guard disagrees, otherwise continues with navigation.
@@ -48,7 +48,13 @@ export class DeactivateGuardsWrapper {
         nextState,
         guards,
         combineToBoolean
-      ).then(() => executeRouterSyncGuard())
+      ).then((result) => {
+        if (this.guardsNavigationStateController.isInitialRouterSyncState(guardsNavigationState)) {
+          return result
+        }
+
+        return executeRouterSyncGuard()
+      })
     }
 
     if (this.guardsNavigationStateController.isGuardCheckState(guardsNavigationState)) {
