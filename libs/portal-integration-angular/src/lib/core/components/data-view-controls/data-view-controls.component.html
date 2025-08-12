@@ -56,9 +56,9 @@
         tooltipPosition="top"
         (input)="searchFilterInput($event)"
       />
-      <label for="data-view-control-filter" aria-hidden="true"
-        >{{ translations?.filterInputPlaceholder || 'Filter' }}</label
-      >
+      <label for="data-view-control-filter" aria-hidden="true">
+        {{ translations?.filterInputPlaceholder || 'Filter' }}
+      </label>
     </span>
     <span
       tabindex="0"
@@ -68,7 +68,7 @@
       (keydown.enter)="onClearFilter()"
       (keydown.space)="onClearFilter()"
     >
-      <i class="pi pi-filter-slash"></i>
+      <i class="pi pi-filter-slash" aria-hidden="true"></i>
     </span>
   </div>
 
