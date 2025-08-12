@@ -1,3 +1,9 @@
+## [5.47.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.47.4...v5.47.5) (2025-08-12)
+
+### Bug Fixes
+
+* align with v6, improve a11y in search header ([#874](https://github.com/onecx/onecx-portal-ui-libs/issues/874)) ([c453fac](https://github.com/onecx/onecx-portal-ui-libs/commit/c453fac8aa71a1b6bc7176d33a7c963b20197b7d))
+
 ## [5.47.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.47.3...v5.47.4) (2025-08-09)
 
 ### Bug Fixes
