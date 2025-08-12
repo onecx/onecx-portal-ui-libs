@@ -23,7 +23,7 @@ export class HeaderComponent {
   @Input() homeNavUrl = '/'
   @Input() homeNavTitle = 'Home'
   @Input() isHorizontalMenu = false
-  @Input() isStaticMenuVisible = false
+  @Input() isStaticalMenu = false
   @Output() menuButtonClick: EventEmitter<any> = new EventEmitter()
 
   public logoLoadingEmitter = new EventEmitter<boolean>()

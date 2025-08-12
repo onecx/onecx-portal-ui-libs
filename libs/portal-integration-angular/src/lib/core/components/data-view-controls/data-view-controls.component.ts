@@ -217,8 +217,7 @@ export class DataViewControlsComponent implements OnInit, OnChanges {
         saveButtonLabel: this.translations?.columnDialogSaveButtonLabel,
       },
       header:
-        this.translations?.columnDialogHeaderText ||
-        this.translate.instant('OCX_DATA_VIEW_CONTROLS.DIALOG_TITLE'),
+        this.translations?.columnDialogHeaderText || this.translate.instant('OCX_DATA_VIEW_CONTROLS.DIALOG_TITLE'),
       width: '70%',
       contentStyle: { 'max-height': '500px', overflow: 'auto', padding: 0 },
     })

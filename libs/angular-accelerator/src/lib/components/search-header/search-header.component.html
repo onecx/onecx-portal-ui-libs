@@ -27,39 +27,40 @@
   <ng-template #additionalToolbarContent>
     <ng-container *ngIf="_additionalToolbarContent" [ngTemplateOutlet]="_additionalToolbarContent"></ng-container>
   </ng-template>
+
   <div class="flex row-gap-3 column-gap-6 flex-wrap align-items-center">
-    <div>
-      <div #searchParameterFields>
-        <ng-content></ng-content>
-      </div>
-    </div>
-    <div class="flex flex-wrap gap-2" [ngClass]="searchButtonsReversed ? 'flex-row-reverse' : 'flex-row'">
+    <section #searchParameterFields [attr.aria-label]="'Search Criteria'">
+      <ng-content></ng-content>
+    </section>
+    <section
+      class="flex flex-wrap gap-2"
+      [ngClass]="searchButtonsReversed ? 'flex-row-reverse' : 'flex-row'"
+      [attr.aria-label]="'Search Controls'"
+    >
       <p-button
         id="resetButton"
-        *ngIf="resetted.observed"
-        (onClick)="onResetClicked()"
-        label="{{ 'OCX_SEARCH_HEADER.RESET_BUTTON.TEXT' | translate }}"
         icon="pi pi-eraser"
-        pTooltip="{{ 'OCX_SEARCH_HEADER.RESET_BUTTON.DETAIL' | translate }}"
+        (onClick)="onResetClicked()"
+        [disabled]="resetButtonDisabled"
+        [label]="'OCX_SEARCH_HEADER.RESET_BUTTON.TEXT' | translate"
+        [ariaLabel]="'OCX_SEARCH_HEADER.RESET_BUTTON.ARIA_LABEL' | translate"
+        [pTooltip]="'OCX_SEARCH_HEADER.RESET_BUTTON.DETAIL' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-        [disabled]="resetButtonDisabled"
-        [ariaLabel]="'OCX_SEARCH_HEADER.RESET_BUTTON.ARIA_LABEL' | translate"
       >
       </p-button>
-
       <p-button
         id="searchButton"
-        (onClick)="onSearchClicked()"
-        label="{{ 'OCX_SEARCH_HEADER.SEARCH_BUTTON.TEXT' | translate }}"
         icon="pi pi-search"
-        pTooltip="{{ 'OCX_SEARCH_HEADER.SEARCH_BUTTON.DETAIL' | translate }}"
+        (onClick)="onSearchClicked()"
+        [disabled]="searchButtonDisabled || formGroup?.invalid"
+        [label]="'OCX_SEARCH_HEADER.SEARCH_BUTTON.TEXT' | translate"
+        [ariaLabel]="'OCX_SEARCH_HEADER.SEARCH_BUTTON.ARIA_LABEL' | translate"
+        [pTooltip]="'OCX_SEARCH_HEADER.SEARCH_BUTTON.DETAIL' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-        [disabled]="searchButtonDisabled || formGroup?.invalid"
-        [ariaLabel]="'OCX_SEARCH_HEADER.SEARCH_BUTTON.ARIA_LABEL' | translate"
       >
       </p-button>
-    </div>
+    </section>
   </div>
 </ocx-page-header>
