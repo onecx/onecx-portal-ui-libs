@@ -12,7 +12,7 @@
     >
       <ng-template #skeleton>
         <div class="flex align-items-center h-full justify-content-center" style="width: 26px">
-          <p-skeleton shape="circle" size="2rem" class="h-full flex align-items-center"></p-skeleton>
+          <p-skeleton size="2rem" class="h-full flex align-items-center"></p-skeleton>
         </div>
       </ng-template>
     </ocx-slot>
@@ -21,8 +21,8 @@
     <button
       id="ocx_vertical_menu_action_toggle"
       class="layout-menu-button border-none"
-      (click)="onMenuButtonClick($event)"
       pRipple
+      (click)="onMenuButtonClick($event)"
       [attr.aria-label]="'OCX_HEADER.MENU_TOGGLE' | translate"
       [pTooltip]="'OCX_HEADER.MENU_TOGGLE' | translate"
       tooltipPosition="top"
@@ -31,7 +31,7 @@
       <span
         id="ocx_vertical_menu_action_toggle_icon"
         class="pi"
-        [ngClass]="'pi-chevron-' + (isStaticMenuVisible ? 'left' : 'right')"
+        [ngClass]="'pi-chevron-' + (isStaticalMenu ? 'left' : 'right')"
         aria-hidden="true"
       ></span>
     </button>
