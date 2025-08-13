@@ -10,8 +10,8 @@ export class ProductStoreSvcContainer extends SvcContainer {
   ) {
     super(image, { databaseContainer, keycloakContainer })
     this.withNetworkAliases('onecx-product-store-svc')
-    this.withDatabaseUsername('onecx_product_store')
-    this.withDatabasePassword('onecx_product_store')
+      .withDatabaseUsername('onecx_product_store')
+      .withDatabasePassword('onecx_product_store')
   }
 }
 

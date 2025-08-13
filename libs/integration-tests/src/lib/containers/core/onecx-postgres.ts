@@ -22,7 +22,7 @@ export class OnecxPostgresContainer extends GenericContainer {
     retries: 3,
   }
 
-  protected shouldEnableLogging = false
+  protected loggingEnabled = false
 
   constructor(image: string) {
     super(image)
@@ -59,8 +59,8 @@ export class OnecxPostgresContainer extends GenericContainer {
     return this.onecxPostgresDetails.postgresPassword
   }
 
-  public enableLogging(shouldLog: boolean): this {
-    this.shouldEnableLogging = shouldLog
+  public enableLogging(log: boolean): this {
+    this.loggingEnabled = log
     return this
   }
 
@@ -78,7 +78,7 @@ export class OnecxPostgresContainer extends GenericContainer {
       POSTGRES_USER: this.onecxPostgresDetails.postgresUsername,
       POSTGRES_PASSWORD: this.onecxPostgresDetails.postgresPassword,
     })
-    if (this.shouldEnableLogging) {
+    if (this.loggingEnabled) {
       this.withLogConsumer((stream) => {
         stream.on('data', (line) => console.log(`${this.onecxPostgresDetails.postgresUsername}: `, line))
         stream.on('err', (line) => console.error(`${this.onecxPostgresDetails.postgresUsername}: `, line))

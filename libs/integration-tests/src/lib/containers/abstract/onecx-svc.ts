@@ -11,7 +11,7 @@ export abstract class SvcContainer extends GenericContainer {
 
   protected shouldCreateDatabase = true
 
-  protected shouldEnableLogging = false
+  protected loggingEnabled = false
 
   private port = 8080
 
@@ -59,8 +59,8 @@ export abstract class SvcContainer extends GenericContainer {
     this.shouldCreateDatabase = shouldStart
   }
 
-  enableLogging(shouldLog: boolean): this {
-    this.shouldEnableLogging = shouldLog
+  enableLogging(log: boolean): this {
+    this.loggingEnabled = log
     return this
   }
 
@@ -87,7 +87,7 @@ export abstract class SvcContainer extends GenericContainer {
       TKIT_DATAIMPORT_ENABLED: 'true',
       ONECX_TENANT_CACHE_ENABLED: 'false',
     }).withEnvironment(getCommonEnvironmentVariables(this.services.keycloakContainer))
-    if (this.shouldEnableLogging) {
+    if (this.loggingEnabled) {
       this.withLogConsumer((stream) => {
         stream.on('data', (line) => console.log(`${this.details.databaseUsername}: `, line))
         stream.on('err', (line) => console.error(`${this.details.databaseUsername}: `, line))

@@ -4,7 +4,7 @@ import * as path from 'path'
 export class ImportManagerContainer extends GenericContainer {
   private containerName = 'importManager'
   private importScript = 'import-runner.ts' // Default import script
-  protected shouldEnableLogging = false
+  protected loggingEnabled = false
 
   constructor(
     image: string,
@@ -24,8 +24,8 @@ export class ImportManagerContainer extends GenericContainer {
     return this
   }
 
-  enableLogging(shouldLog: boolean): this {
-    this.shouldEnableLogging = shouldLog
+  enableLogging(log: boolean): this {
+    this.loggingEnabled = log
     return this
   }
 
@@ -47,7 +47,7 @@ export class ImportManagerContainer extends GenericContainer {
         '-c',
         `cd app && npm install --no-audit --no-fund --prefer-offline ts-node typescript @types/node axios && npx ts-node ${this.importScript}`,
       ])
-    if (this.shouldEnableLogging) {
+    if (this.loggingEnabled) {
       this.withLogConsumer((stream) => {
         stream.on('data', (line) => console.log(`${this.containerName}: `, line))
         stream.on('err', (line) => console.error(`${this.containerName}: `, line))

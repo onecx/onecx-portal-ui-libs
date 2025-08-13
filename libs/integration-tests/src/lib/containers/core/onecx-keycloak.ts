@@ -32,7 +32,7 @@ export class OnecxKeycloakContainer extends GenericContainer {
 
   private initDefaultRealm = 'libs/integration-tests/src/init-data/keycloak/imports'
 
-  protected shouldEnableLogging = false
+  protected loggingEnabled = false
 
   constructor(
     image: string,
@@ -104,8 +104,8 @@ export class OnecxKeycloakContainer extends GenericContainer {
     return this
   }
 
-  enableLogging(shouldLog: boolean): this {
-    this.shouldEnableLogging = shouldLog
+  enableLogging(log: boolean): this {
+    this.loggingEnabled = log
     return this
   }
 
@@ -181,7 +181,7 @@ export class OnecxKeycloakContainer extends GenericContainer {
       KC_HTTP_PORT: `${this.onecxEnvironment.port}`,
       KC_HEALTH_ENABLED: 'true',
     })
-    if (this.shouldEnableLogging) {
+    if (this.loggingEnabled) {
       this.withLogConsumer((stream) => {
         stream.on('data', (line) => console.log(`${this.onecxEnvironment.keycloakDatabaseUsername}: `, line))
         stream.on('err', (line) => console.error(`${this.onecxEnvironment.keycloakDatabaseUsername}: `, line))

@@ -9,7 +9,7 @@ import * as path from 'path'
 import { StartedShellUiContainer } from '../containers/ui/onecx-shell-ui'
 import { ContainerInfo } from '../../imports/import-manager'
 import { PlatformConfig } from '../model/platform-config.interface'
-import { shouldEnableLogging } from '../utils/logging-config.util'
+import { loggingEnabled } from '../utils/logging-config.util'
 
 export class DataImporter {
   constructor(private imageResolver: ImageResolver) {}
@@ -19,7 +19,7 @@ export class DataImporter {
    */
   async importDefaultData(
     network: StartedNetwork,
-    startedContainers: Map<CONTAINER, AllowedContainerTypes>,
+    startedContainers: Map<string, AllowedContainerTypes>,
     config: PlatformConfig
   ): Promise<void> {
     console.log('Starting ImportManagerContainer with direct import execution')
@@ -31,7 +31,7 @@ export class DataImporter {
       const importImage = await this.imageResolver.getNodeImage(config)
       const importer = await new ImportManagerContainer(importImage, containerInfoPath)
         .withNetwork(network)
-        .enableLogging(shouldEnableLogging(config))
+        .enableLogging(loggingEnabled(config))
         .start()
 
       console.log('Import container started, monitoring import process...')
@@ -102,7 +102,7 @@ export class DataImporter {
    * @param startedContainers Map of started containers
    * @returns Path to the created container info file
    */
-  createContainerInfo(startedContainers: Map<CONTAINER, AllowedContainerTypes>): string {
+  createContainerInfo(startedContainers: Map<string, AllowedContainerTypes>): string {
     const keycloakContainer = startedContainers.get(CONTAINER.KEYCLOAK)
     if (!keycloakContainer || !this.isKeycloakContainer(keycloakContainer)) {
       throw new Error('Keycloak container not found or invalid type in started containers')
@@ -134,7 +134,7 @@ export class DataImporter {
     ]
 
     for (const [name, container] of startedContainers.entries()) {
-      if (importServices.includes(name)) {
+      if (importServices.includes(name as CONTAINER)) {
         containerInfo.services[name] = {
           alias: container.getNetworkAliases()[0],
           port: container.getPort(),

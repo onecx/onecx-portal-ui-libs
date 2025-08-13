@@ -12,10 +12,9 @@ import type { AllowedContainerTypes } from '../model/allowed-container.types'
 
 export class PlatformManager {
   /**
-   * Maps to enter the container setup
+   * Unified map for all containers (default and custom)
    */
-  private startedContainers: Map<CONTAINER, AllowedContainerTypes> = new Map()
-  private customContainers: Map<string, AllowedContainerTypes> = new Map()
+  private containers: Map<string, AllowedContainerTypes> = new Map()
 
   /**
    * Needed classes for startService
@@ -53,7 +52,7 @@ export class PlatformManager {
     if (this.startDefaultPlatform) {
       // Always start core services first
       const postgres = await this.containerStarter.startCoreServices()
-      const keycloak = this.startedContainers.get(CONTAINER.KEYCLOAK) as StartedOnecxKeycloakContainer
+      const keycloak = this.containers.get(CONTAINER.KEYCLOAK) as StartedOnecxKeycloakContainer
 
       await this.containerStarter.startBackendServices(config, postgres, keycloak, this.getDefaultContainer.bind(this))
 
@@ -72,8 +71,8 @@ export class PlatformManager {
 
     // Import data if configured
     if (config.importData && this.network && this.dataImporter) {
-      this.dataImporter.createContainerInfo(this.startedContainers)
-      await this.dataImporter.importDefaultData(this.network, this.startedContainers, config)
+      this.dataImporter.createContainerInfo(this.containers)
+      await this.dataImporter.importDefaultData(this.network, this.containers, config)
     }
   }
 
@@ -88,9 +87,9 @@ export class PlatformManager {
     try {
       const customContainers = await this.containerFactory.createContainers(config)
 
-      // Store custom containers in separate map
+      // Store custom containers in unified map
       for (const [key, container] of customContainers) {
-        this.customContainers.set(key, container)
+        this.containers.set(key, container)
         console.log(`Custom container '${key}' started successfully`)
       }
     } catch (error) {
@@ -103,49 +102,111 @@ export class PlatformManager {
    * Get a custom container by key
    */
   getCustomContainer<T extends AllowedContainerTypes>(key: string): T | undefined {
-    return this.customContainers.get(key) as T | undefined
+    return this.containers.get(key) as T | undefined
   }
 
   /**
    * Get all custom containers
    */
   getAllCustomContainers(): Map<string, AllowedContainerTypes> {
-    return new Map(this.customContainers)
+    const customContainers = new Map<string, AllowedContainerTypes>()
+
+    // Filter out standard containers (CONTAINER enum values)
+    this.containers.forEach((container, key) => {
+      if (!Object.values(CONTAINER).includes(key as CONTAINER)) {
+        customContainers.set(key, container)
+      }
+    })
+
+    return customContainers
   }
 
   /**
    * Get a list of currently running services
    */
   getRunningServices(): CONTAINER[] {
-    return Array.from(this.startedContainers.keys())
+    const standardContainers: CONTAINER[] = []
+
+    // Filter only standard container keys (CONTAINER enum values)
+    this.containers.forEach((_, key) => {
+      if (Object.values(CONTAINER).includes(key as CONTAINER)) {
+        standardContainers.push(key as CONTAINER)
+      }
+    })
+
+    return standardContainers
   }
 
   /**
    * Check if a specific service is running
    */
   isServiceRunning(service: CONTAINER): boolean {
-    return this.startedContainers.has(service)
+    return this.containers.has(service)
   }
 
   /**
    * Get a started container by type
    */
   getDefaultContainer<T extends AllowedContainerTypes>(service: CONTAINER): T | undefined {
-    return this.startedContainers.get(service) as T | undefined
+    return this.containers.get(service) as T | undefined
   }
 
   /**
    * Add container to the Map
    */
   private addDefaultContainer<T extends AllowedContainerTypes>(key: CONTAINER, container: T): void {
-    this.startedContainers.set(key, container)
+    this.containers.set(key, container)
   }
 
   /**
    * Check the health of all running containers
    */
   async checkAllHealthy(): Promise<HealthCheckResult[]> {
-    return await this.healthChecker.checkAllHealthy(this.startedContainers)
+    return await this.healthChecker.checkAllHealthy(this.containers)
+  }
+
+  /**
+   * Get all standard containers
+   */
+  getAllStandardContainers(): Map<CONTAINER, AllowedContainerTypes> {
+    const standardContainers = new Map<CONTAINER, AllowedContainerTypes>()
+
+    Object.values(CONTAINER).forEach((containerType) => {
+      const container = this.containers.get(containerType)
+      if (container) {
+        standardContainers.set(containerType, container)
+      }
+    })
+
+    return standardContainers
+  }
+
+  /**
+   * Get all containers (standard and custom)
+   */
+  getAllContainers(): Map<string, AllowedContainerTypes> {
+    return new Map(this.containers)
+  }
+
+  /**
+   * Get a container by key (works for both standard and custom)
+   */
+  getContainer<T extends AllowedContainerTypes>(key: string | CONTAINER): T | undefined {
+    return this.containers.get(key) as T | undefined
+  }
+
+  /**
+   * Check if a container exists
+   */
+  hasContainer(key: string | CONTAINER): boolean {
+    return this.containers.has(key)
+  }
+
+  /**
+   * Remove a container
+   */
+  removeContainer(key: string | CONTAINER): boolean {
+    return this.containers.delete(key)
   }
 
   /**
@@ -153,8 +214,10 @@ export class PlatformManager {
    */
   async stopAllServices() {
     // Stop custom containers first
-    const customContainers = Array.from(this.customContainers.values()).reverse()
-    for (const container of customContainers) {
+    const customContainers = this.getAllCustomContainers()
+    const customContainerValues = Array.from(customContainers.values()).reverse()
+
+    for (const container of customContainerValues) {
       try {
         await container.stop()
         console.log('Custom container stopped successfully')
@@ -162,12 +225,14 @@ export class PlatformManager {
         console.error(`Error stopping custom container: ${e}`)
       }
     }
-    this.customContainers.clear()
 
+    // Stop standard containers
     // Since all services depend on Postgres and Keycloak, it's best to stop these last.
     // The same applies to the Shell, as the UI depends on the BFF.
     // Since the startup order is important, the containers can be stopped in the reverse order.
-    const containers = Array.from(this.startedContainers.values()).reverse()
+    const standardContainers = this.getAllStandardContainers()
+    const containers = Array.from(standardContainers.values()).reverse()
+
     for (const container of containers) {
       try {
         await container.stop()
@@ -175,7 +240,8 @@ export class PlatformManager {
         console.error(`Error stopping container: ${e}`)
       }
     }
-    this.startedContainers.clear()
+
+    this.containers.clear()
 
     if (this.network) {
       await this.network.stop()

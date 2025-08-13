@@ -10,7 +10,7 @@ export abstract class UiContainer extends GenericContainer {
 
   private port = 8080
 
-  protected shouldEnableLogging = false
+  protected loggingEnabled = false
 
   constructor(image: string) {
     super(image)
@@ -36,8 +36,8 @@ export abstract class UiContainer extends GenericContainer {
     return this
   }
 
-  enableLogging(shouldLog: boolean): this {
-    this.shouldEnableLogging = shouldLog
+  enableLogging(log: boolean): this {
+    this.loggingEnabled = log
     return this
   }
 
@@ -49,7 +49,7 @@ export abstract class UiContainer extends GenericContainer {
       PRODUCT_NAME: `${this.details.productName}`,
     })
 
-    if (this.shouldEnableLogging) {
+    if (this.loggingEnabled) {
       this.withLogConsumer((stream) => {
         stream.on('data', (line) => console.log(`${this.details.appBaseHref}: `, line))
         stream.on('err', (line) => console.error(`${this.details.appBaseHref}: `, line))

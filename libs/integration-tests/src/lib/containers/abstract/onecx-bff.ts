@@ -10,7 +10,7 @@ export abstract class BffContainer extends GenericContainer {
 
   private port = 8080
 
-  protected shouldEnableLogging = false
+  protected loggingEnabled = false
 
   constructor(
     image: string,
@@ -46,8 +46,8 @@ export abstract class BffContainer extends GenericContainer {
     return this.port
   }
 
-  enableLogging(shouldLog: boolean): this {
-    this.shouldEnableLogging = shouldLog
+  enableLogging(log: boolean): this {
+    this.loggingEnabled = log
     return this
   }
 
@@ -71,7 +71,7 @@ export abstract class BffContainer extends GenericContainer {
       TKIT_OIDC_HEALTH_ENABLED: 'false',
     })
 
-    if (this.shouldEnableLogging) {
+    if (this.loggingEnabled) {
       this.withLogConsumer((stream) => {
         stream.on('data', (line) => console.log(`${this.details.permissionsProductName}: `, line))
         stream.on('err', (line) => console.error(`${this.details.permissionsProductName}: `, line))

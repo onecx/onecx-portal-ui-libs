@@ -12,7 +12,7 @@ export class HealthChecker {
   /**
    * Check the health of all containers
    */
-  async checkAllHealthy(startedContainers: Map<CONTAINER, AllowedContainerTypes>): Promise<HealthCheckResult[]> {
+  async checkAllHealthy(startedContainers: Map<string, AllowedContainerTypes>): Promise<HealthCheckResult[]> {
     const results: HealthCheckResult[] = []
 
     for (const [name, container] of startedContainers.entries()) {

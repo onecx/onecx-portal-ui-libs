@@ -5,7 +5,7 @@ import { PlatformConfig } from '../model/platform-config.interface'
  * @param config Platform configuration object
  * @returns boolean indicating whether logging should be enabled
  */
-export function shouldEnableLogging(config: PlatformConfig): boolean {
+export function loggingEnabled(config: PlatformConfig): boolean {
   if (typeof config.enableLogging === 'boolean') {
     return config.enableLogging
   } else {
