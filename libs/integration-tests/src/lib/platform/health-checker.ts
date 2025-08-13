@@ -2,6 +2,9 @@ import axios from 'axios'
 import { CONTAINER } from '../model/container.enum'
 import { StartedOnecxKeycloakContainer } from '../containers/core/onecx-keycloak'
 import type { AllowedContainerTypes } from '../model/allowed-container.types'
+import { Logger } from '../utils/logger'
+
+const logger = new Logger('HealthChecker')
 
 export interface HealthCheckResult {
   name: string
@@ -19,7 +22,7 @@ export class HealthChecker {
       let healthy = true
 
       if (name === CONTAINER.POSTGRES || name === CONTAINER.SHELL_UI) {
-        console.log(`Container ${name}: No health check endpoint available, marking as healthy if running`)
+        logger.info('HEALTH_CHECK_SKIP', name)
       } else if (name === CONTAINER.KEYCLOAK) {
         healthy = await this.checkKeycloakHealth(container as StartedOnecxKeycloakContainer)
       } else {
@@ -37,7 +40,7 @@ export class HealthChecker {
   private async checkKeycloakHealth(keycloakContainer: StartedOnecxKeycloakContainer): Promise<boolean> {
     const realm = keycloakContainer.getRealm()
     const url = this.buildHealthCheckUrl(keycloakContainer, `/realms/${realm}/.well-known/openid-configuration`)
-    console.log(`Checking Keycloak health: ${url}`)
+    logger.info('HEALTH_CHECK_KEYCLOAK', url)
     return await this.checkContainerHealth(url)
   }
 
@@ -46,7 +49,7 @@ export class HealthChecker {
    */
   private async checkServiceHealth(container: AllowedContainerTypes, name: string): Promise<boolean> {
     const url = this.buildHealthCheckUrl(container, '/q/health')
-    console.log(`Checking service health: ${name} at ${url}`)
+    logger.info('HEALTH_CHECK_SERVICE', `${name} at ${url}`)
     return await this.checkContainerHealth(url)
   }
 

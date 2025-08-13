@@ -9,7 +9,10 @@ import * as path from 'path'
 import { StartedShellUiContainer } from '../containers/ui/onecx-shell-ui'
 import { ContainerInfo } from '../../imports/import-manager'
 import { PlatformConfig } from '../model/platform-config.interface'
-import { loggingEnabled } from '../utils/logging-config.util'
+import { loggingEnabled } from '../utils/logging-enable'
+import { Logger } from '../utils/logger'
+
+const logger = new Logger('DataImporter')
 
 export class DataImporter {
   constructor(private imageResolver: ImageResolver) {}
@@ -22,7 +25,7 @@ export class DataImporter {
     startedContainers: Map<string, AllowedContainerTypes>,
     config: PlatformConfig
   ): Promise<void> {
-    console.log('Starting ImportManagerContainer with direct import execution')
+    logger.info('DATA_IMPORT_START')
 
     try {
       // Create container info file before starting the import container
@@ -34,7 +37,7 @@ export class DataImporter {
         .enableLogging(loggingEnabled(config))
         .start()
 
-      console.log('Import container started, monitoring import process...')
+      logger.info('CONTAINER_STARTED', 'Import container - monitoring import process')
 
       // Monitor the import process by executing commands in the container
       await new Promise<void>((resolve, reject) => {
@@ -44,14 +47,14 @@ export class DataImporter {
 
             if (!isStillRunning) {
               clearInterval(checkInterval)
-              console.log('Import process completed')
+              logger.info('DATA_IMPORT_PROCESS_COMPLETE')
               resolve()
             } else {
-              console.log('Import process still running...')
+              logger.info('DATA_IMPORT_PROCESS_RUNNING')
             }
           } catch (error) {
             clearInterval(checkInterval)
-            console.log('Import process completed (error checking status)')
+            logger.info('DATA_IMPORT_PROCESS_ERROR')
             resolve()
           }
         }, 2000)
@@ -65,10 +68,10 @@ export class DataImporter {
         )
       })
 
-      console.log('Import completed successfully')
+      logger.success('DATA_IMPORT_SUCCESS')
       this.cleanupContainerInfo(containerInfoPath)
     } catch (error) {
-      console.error('Import failed:', error)
+      logger.error('DATA_IMPORT_FAILED', undefined, error)
       throw error
     }
   }
@@ -93,7 +96,7 @@ export class DataImporter {
   private cleanupContainerInfo(containerInfoPath: string): void {
     if (fs.existsSync(containerInfoPath)) {
       fs.unlinkSync(containerInfoPath)
-      console.log('Container info file cleaned up')
+      logger.info('DATA_IMPORT_CLEANUP')
     }
   }
 
@@ -151,7 +154,7 @@ export class DataImporter {
     }
 
     fs.writeFileSync(containerInfoPath, JSON.stringify(containerInfo, null, 2))
-    console.log('Container info file created at:', containerInfoPath)
+    logger.info('DATA_IMPORT_FILE_CREATED', containerInfoPath)
 
     return containerInfoPath
   }

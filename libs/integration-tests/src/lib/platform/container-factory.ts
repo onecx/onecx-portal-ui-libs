@@ -9,7 +9,7 @@ import { StartedUiContainer } from '../containers/abstract/onecx-ui'
 import { StartedOnecxPostgresContainer } from '../containers/core/onecx-postgres'
 import { StartedOnecxKeycloakContainer } from '../containers/core/onecx-keycloak'
 import { AllowedContainerTypes } from '../model/allowed-container.types'
-import { loggingEnabled } from '../utils/logging-config.util'
+import { loggingEnabled } from '../utils/logging-enable'
 import { ImageResolver } from './image-resolver'
 import { CustomSvcContainer } from '../containers/svc/custom-svc'
 import { CustomBffContainer } from '../containers/bff/custom-bff'
@@ -115,7 +115,7 @@ export class ContainerFactory {
     enableLogging: boolean
   ): Promise<StartedBffContainer> {
     if (!this.keycloak) {
-      throw new Error('Keycloak container is required for BFF containers')
+      throw new Error('Keycloak container is required for BFF containers but was not provided.')
     }
 
     // Resolve the image through the ImageResolver

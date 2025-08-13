@@ -1,6 +1,9 @@
 import { POSTGRES, KEYCLOAK, IMPORTMANAGER, OnecxBff, OnecxUi, OnecxService, IMAGES } from '../config/env'
 import { PlatformConfig } from '../model/platform-config.interface'
 import { ImagePullChecker } from './image-pull-checker'
+import { Logger } from '../utils/logger'
+
+const logger = new Logger('ImageResolver')
 
 /**
  * Resolves the actual image name to use based on the configuration and any version overrides
@@ -20,7 +23,7 @@ export class ImageResolver {
     }
 
     // If verification fails, fall back to default image
-    console.warn(`Image verification failed for ${overrideImage}, falling back to default: ${defaultImage}`)
+    logger.warn('IMAGE_VERIFY_FAILED', `${overrideImage} → ${defaultImage}`)
     return defaultImage
   }
 

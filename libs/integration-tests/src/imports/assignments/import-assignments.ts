@@ -1,13 +1,42 @@
 import { readdir, readFile } from 'fs/promises'
 import path from 'path'
 import axios from 'axios'
+import { Logger } from '../utils/logger'
 
+const logger = new Logger('ImportAssignments')
+
+/**
+ * Imports assignment configurations from JSON files to the assignment service
+ *
+ * This function processes all JSON files in the specified directory and uploads them as assignment configurations.
+ * Each file can follow two naming conventions:
+ * - `{tenantName}_{productName}.json` - for tenant-specific product assignments
+ * - `{tenantName}.json` - for general tenant assignments (tenant name used as product name)
+ *
+ * @param assignmentsDir - Directory path containing the assignment JSON files
+ * @param getTokenForTenant - Function to retrieve authentication token for a specific tenant
+ * @param endpoint - API endpoint URL for assignment import operations
+ *
+ * @example
+ * ```typescript
+ * await importAssignments(
+ *   './data/assignments',
+ *   (tenant) => getAuthToken(tenant),
+ *   'http://localhost:8080/onecx-assignment-svc/internal/assignments'
+ * )
+ * ```
+ *
+ * @remarks
+ * - Supports flexible filename parsing with underscore separator
+ * - Uses POST method for assignment creation
+ * - Requires tenant-specific authentication tokens
+ */
 export async function importAssignments(
   assignmentsDir: string,
   getTokenForTenant: (tenant: string) => Promise<string>,
   endpoint: string
 ) {
-  console.log('##### Importing assignments')
+  logger.info('IMPORT_ASSIGNMENTS_START')
   const files = await readdir(assignmentsDir)
   for (const file of files) {
     if (!file.endsWith('.json')) continue
@@ -25,6 +54,7 @@ export async function importAssignments(
       product = fileNameWithoutExt
     }
 
+    logger.info('PROCESSING_FILE', `${file} - Tenant: ${tenant}, Product: ${product}`)
     const token = await getTokenForTenant(tenant)
     const data = await readFile(path.join(assignmentsDir, file), 'utf-8')
 
@@ -36,17 +66,9 @@ export async function importAssignments(
         },
         validateStatus: () => true, // accept all status codes
       })
-      if ([200, 201].includes(response.status)) {
-        console.log(
-          `\x1b[32mAssignments uploaded for product ${product} were uploaded with status code ${response.status}\x1b[0m`
-        )
-      } else {
-        console.log(
-          `\x1b[31mAssignments uploaded for product ${product} were uploaded with status code ${response.status}\x1b[0m`
-        )
-      }
+      logger.status('UPLOAD_SUCCESS', response.status, `Assignments for product ${product}`)
     } catch (err) {
-      console.error(`\x1b[31mError uploading assignments for product ${product}:`, err, '\x1b[0m')
+      logger.error('UPLOAD_ERROR', `Assignments for product ${product}`, err)
     }
   }
 }

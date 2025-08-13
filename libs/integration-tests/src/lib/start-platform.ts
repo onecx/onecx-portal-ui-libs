@@ -1,4 +1,21 @@
 import { PlatformManager } from './platform/platform-manager'
+import { Logger } from './utils/logger'
+
+const logger = new Logger('StartPlatform')
+
+/**
+ * Custom error for timeout scenarios
+ */
+class TimeoutError extends Error {
+  constructor(
+    message: string,
+    public readonly timeoutMs: number,
+    public readonly context?: string
+  ) {
+    super(message)
+    this.name = 'TimeoutError'
+  }
+}
 
 async function runAllContainers() {
   const manager = new PlatformManager()
@@ -7,12 +24,17 @@ async function runAllContainers() {
   const shutdown = async () => {
     if (!shuttingDown) {
       shuttingDown = true
-      console.log('\nClosing all Containers...')
+      logger.info('PLATFORM_STOP')
       try {
-        await manager.stopAllServices()
-        console.log('All Containers were stopped.')
+        await manager.stopAllContainers()
+        logger.success('PLATFORM_SHUTDOWN')
       } catch (error) {
-        console.error('Error during shutdown:', error)
+        // Log network cleanup errors as warnings, not errors
+        if (error instanceof Error && error.message.includes('no such network')) {
+          logger.warn('NETWORK_DESTROY', 'Network already destroyed')
+        } else {
+          logger.error('PLATFORM_SHUTDOWN', undefined, error)
+        }
       } finally {
         process.exit(0)
       }
@@ -24,33 +46,45 @@ async function runAllContainers() {
   process.on('SIGHUP', shutdown)
 
   try {
-    console.log('Starting all Containers...')
+    logger.info('PLATFORM_START')
     const startTime = Date.now()
 
-    const startPromise = manager.startServices()
+    const startPromise = manager.startContainers()
     const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Container startup timed out after 3 minutes')), 300_000)
+      setTimeout(
+        () => reject(new TimeoutError('Container startup timed out after 3 minutes', 300000, 'Platform startup')),
+        300_000
+      )
     )
     await Promise.race([startPromise, timeoutPromise])
 
-    const duration = (Date.now() - startTime) / 1000
-    console.log(`All Containers were started successfully in ${duration.toFixed(1)} seconds.`)
+    const duration = Date.now() - startTime
+    logger.logDuration('STARTUP_SUCCESS', duration, 'All containers')
 
     // Heartbeat
     setInterval(async () => {
       try {
+        logger.info('HEALTH_CHECK_START')
         const healthStatus = await manager.checkAllHealthy()
-        console.log('Container Health Status:', healthStatus)
+        logger.success('HEALTH_CHECK_SUCCESS', `Checked ${healthStatus.length} containers`)
+
         const unhealthyContainers = healthStatus.filter((c) => !c.healthy)
         if (unhealthyContainers.length > 0) {
-          console.error('Unhealthy Containers detected:', unhealthyContainers)
+          logger.error(
+            'CONTAINER_UNHEALTHY',
+            `${unhealthyContainers.length} containers unhealthy: ${unhealthyContainers.map((c) => c.name).join(', ')}`
+          )
         }
       } catch (error) {
-        console.error('Error during health check:', error)
+        logger.error('HEALTH_CHECK_FAILED', undefined, error)
       }
     }, 10_000)
   } catch (error) {
-    console.error('Error during startup:', error)
+    if (error instanceof TimeoutError) {
+      logger.error('STARTUP_TIMEOUT', error.context, error)
+    } else {
+      logger.error('STARTUP_FAILED', undefined, error)
+    }
     await shutdown()
     process.exit(1)
   }

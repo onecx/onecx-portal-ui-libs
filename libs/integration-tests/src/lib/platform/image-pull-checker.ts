@@ -1,4 +1,7 @@
 import { GenericContainer } from 'testcontainers'
+import { Logger } from '../utils/logger'
+
+const logger = new Logger('ImagePullChecker')
 
 /**
  * Utility class to verify that Docker images can be pulled successfully
@@ -13,7 +16,7 @@ export class ImagePullChecker {
    */
   static async verifyImagePull(imageName: string): Promise<boolean> {
     try {
-      console.log(`Verifying image pull for: ${imageName}`)
+      logger.info('IMAGE_PULL_START', imageName)
 
       // Create a minimal container just to verify the image can be pulled
       // We'll use a simple approach: try to create the container and immediately stop it
@@ -28,14 +31,14 @@ export class ImagePullChecker {
       ])
 
       // If we get here, the image was pulled successfully
-      console.log(`✓ Image ${imageName} pulled successfully`)
+      logger.success('IMAGE_PULL_SUCCESS', imageName)
 
       // Immediately stop and remove the container
       await startedContainer.stop()
 
       return true
     } catch (error) {
-      console.error(`✗ Failed to pull image ${imageName}:`, error instanceof Error ? error.message : error)
+      logger.error('IMAGE_PULL_FAILED', imageName, error)
       return false
     }
   }

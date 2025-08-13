@@ -9,6 +9,9 @@ import { ContainerStarter } from './container-starter'
 import { ContainerFactory } from './container-factory'
 import { DataImporter } from './data-importer'
 import type { AllowedContainerTypes } from '../model/allowed-container.types'
+import { Logger } from '../utils/logger'
+
+const logger = new Logger('PlatformManager')
 
 export class PlatformManager {
   /**
@@ -34,33 +37,34 @@ export class PlatformManager {
    * Orchestrates the startup of the default services and the creation of custom containers.
    * @param config
    */
-  async startServices(config: PlatformConfig = DEFAULT_PLATFORM_CONFIG) {
+  async startContainers(config: PlatformConfig = DEFAULT_PLATFORM_CONFIG) {
+    logger.info('PLATFORM_MANAGER_INIT')
     this.imageResolver = new ImageResolver()
     this.dataImporter = new DataImporter(this.imageResolver)
+
+    logger.info('NETWORK_CREATE')
     this.network = await new Network().start()
-    this.containerStarter = new ContainerStarter(
-      this.imageResolver,
-      this.network,
-      this.addDefaultContainer.bind(this),
-      config
-    )
+    logger.success('NETWORK_CREATED')
+
+    this.containerStarter = new ContainerStarter(this.imageResolver, this.network, this.addContainer.bind(this), config)
 
     if (config.startDefaultSetup) {
       this.startDefaultPlatform = config.startDefaultSetup.valueOf()
     }
 
     if (this.startDefaultPlatform) {
+      logger.info('PLATFORM_START')
       // Always start core services first
       const postgres = await this.containerStarter.startCoreServices()
       const keycloak = this.containers.get(CONTAINER.KEYCLOAK) as StartedOnecxKeycloakContainer
 
-      await this.containerStarter.startBackendServices(config, postgres, keycloak, this.getDefaultContainer.bind(this))
+      await this.containerStarter.startBackendServices(config, postgres, keycloak, this.getContainer.bind(this))
 
       // Start BFF services based on configuration
       await this.containerStarter.startBffServices(config, keycloak)
 
       // Start UI services based on configuration
-      await this.containerStarter.startUiServices(config, keycloak, this.getDefaultContainer.bind(this))
+      await this.containerStarter.startUiServices(config, keycloak, this.getContainer.bind(this))
       // Create custom containers if defined in configuration
       if (config.container) {
         // Initialize container factory with core services
@@ -71,9 +75,13 @@ export class PlatformManager {
 
     // Import data if configured
     if (config.importData && this.network && this.dataImporter) {
+      logger.info('DATA_IMPORT_START')
       this.dataImporter.createContainerInfo(this.containers)
       await this.dataImporter.importDefaultData(this.network, this.containers, config)
+      logger.success('DATA_IMPORT_SUCCESS')
     }
+
+    logger.success('PLATFORM_READY')
   }
 
   /**
@@ -90,72 +98,12 @@ export class PlatformManager {
       // Store custom containers in unified map
       for (const [key, container] of customContainers) {
         this.containers.set(key, container)
-        console.log(`Custom container '${key}' started successfully`)
+        logger.success('CONTAINER_STARTED', key)
       }
     } catch (error) {
-      console.error('Failed to create custom containers:', error)
+      logger.error('CONTAINER_FAILED', undefined, error)
       throw error
     }
-  }
-
-  /**
-   * Get a custom container by key
-   */
-  getCustomContainer<T extends AllowedContainerTypes>(key: string): T | undefined {
-    return this.containers.get(key) as T | undefined
-  }
-
-  /**
-   * Get all custom containers
-   */
-  getAllCustomContainers(): Map<string, AllowedContainerTypes> {
-    const customContainers = new Map<string, AllowedContainerTypes>()
-
-    // Filter out standard containers (CONTAINER enum values)
-    this.containers.forEach((container, key) => {
-      if (!Object.values(CONTAINER).includes(key as CONTAINER)) {
-        customContainers.set(key, container)
-      }
-    })
-
-    return customContainers
-  }
-
-  /**
-   * Get a list of currently running services
-   */
-  getRunningServices(): CONTAINER[] {
-    const standardContainers: CONTAINER[] = []
-
-    // Filter only standard container keys (CONTAINER enum values)
-    this.containers.forEach((_, key) => {
-      if (Object.values(CONTAINER).includes(key as CONTAINER)) {
-        standardContainers.push(key as CONTAINER)
-      }
-    })
-
-    return standardContainers
-  }
-
-  /**
-   * Check if a specific service is running
-   */
-  isServiceRunning(service: CONTAINER): boolean {
-    return this.containers.has(service)
-  }
-
-  /**
-   * Get a started container by type
-   */
-  getDefaultContainer<T extends AllowedContainerTypes>(service: CONTAINER): T | undefined {
-    return this.containers.get(service) as T | undefined
-  }
-
-  /**
-   * Add container to the Map
-   */
-  private addDefaultContainer<T extends AllowedContainerTypes>(key: CONTAINER, container: T): void {
-    this.containers.set(key, container)
   }
 
   /**
@@ -166,19 +114,10 @@ export class PlatformManager {
   }
 
   /**
-   * Get all standard containers
+   * Add container to the Map
    */
-  getAllStandardContainers(): Map<CONTAINER, AllowedContainerTypes> {
-    const standardContainers = new Map<CONTAINER, AllowedContainerTypes>()
-
-    Object.values(CONTAINER).forEach((containerType) => {
-      const container = this.containers.get(containerType)
-      if (container) {
-        standardContainers.set(containerType, container)
-      }
-    })
-
-    return standardContainers
+  private addContainer<T extends AllowedContainerTypes>(key: string | CONTAINER, container: T): void {
+    this.containers.set(key, container)
   }
 
   /**
@@ -206,46 +145,64 @@ export class PlatformManager {
    * Remove a container
    */
   removeContainer(key: string | CONTAINER): boolean {
+    this.stopContainer(key)
     return this.containers.delete(key)
+  }
+
+  /**
+   * Stop a container
+   * @param key
+   */
+  async stopContainer(key: string | CONTAINER) {
+    const container = this.getContainer(key)
+    const containerKey = typeof key === 'string' ? key : String(key)
+    logger.info('CONTAINER_STOPPING', containerKey)
+    try {
+      await container?.stop()
+      logger.success('CONTAINER_STOPPED', containerKey)
+    } catch (error) {
+      logger.error('CONTAINER_FAILED', containerKey, error)
+      throw error
+    }
   }
 
   /**
    * Stop all running services and cleanup resources
    */
-  async stopAllServices() {
-    // Stop custom containers first
-    const customContainers = this.getAllCustomContainers()
-    const customContainerValues = Array.from(customContainers.values()).reverse()
-
-    for (const container of customContainerValues) {
-      try {
-        await container.stop()
-        console.log('Custom container stopped successfully')
-      } catch (e) {
-        console.error(`Error stopping custom container: ${e}`)
-      }
-    }
-
+  async stopAllContainers() {
+    logger.info('PLATFORM_STOP')
     // Stop standard containers
     // Since all services depend on Postgres and Keycloak, it's best to stop these last.
     // The same applies to the Shell, as the UI depends on the BFF.
     // Since the startup order is important, the containers can be stopped in the reverse order.
-    const standardContainers = this.getAllStandardContainers()
+    const standardContainers = this.getAllContainers()
     const containers = Array.from(standardContainers.values()).reverse()
 
     for (const container of containers) {
       try {
         await container.stop()
-      } catch (e) {
-        console.error(`Error stopping container: ${e}`)
+      } catch (error) {
+        logger.error('CONTAINER_FAILED', container.constructor.name, error)
+        // Don't throw here, continue stopping other containers
       }
     }
 
-    this.containers.clear()
-
+    // Cleanup network
     if (this.network) {
-      await this.network.stop()
-      this.network = undefined
+      try {
+        logger.info('NETWORK_DESTROY')
+        await this.network.stop()
+        logger.success('NETWORK_DESTROYED')
+        this.network = undefined
+      } catch (error) {
+        logger.error('NETWORK_DESTROY', 'Network cleanup failed', error)
+        // Don't throw here, network might already be destroyed
+        this.network = undefined
+      }
     }
+
+    logger.success('PLATFORM_SHUTDOWN')
+
+    this.containers.clear()
   }
 }

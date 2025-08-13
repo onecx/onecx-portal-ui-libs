@@ -16,7 +16,10 @@ import { PlatformConfig } from '../model/platform-config.interface'
 import { ImageResolver } from './image-resolver'
 import { OnecxService, OnecxBff, OnecxUi } from '../config/env'
 import type { AllowedContainerTypes } from '../model/allowed-container.types'
-import { loggingEnabled } from '../utils/logging-config.util'
+import { loggingEnabled } from '../utils/logging-enable'
+import { Logger } from '../utils/logger'
+
+const logger = new Logger('ContainerStarter')
 
 export class ContainerStarter {
   constructor(
@@ -30,12 +33,15 @@ export class ContainerStarter {
    * Start core services (PostgreSQL and Keycloak)
    */
   async startCoreServices(): Promise<StartedOnecxPostgresContainer> {
+    logger.info('CONTAINER_STARTING', 'Core services (Postgres + Keycloak)')
+
     const postgres = await this.startPostgresContainer()
     this.addContainer(CONTAINER.POSTGRES, postgres)
 
     const keycloak = await this.startKeycloakContainer(postgres)
     this.addContainer(CONTAINER.KEYCLOAK, keycloak)
 
+    logger.success('CONTAINER_STARTED', 'Core services')
     return postgres
   }
 
