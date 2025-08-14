@@ -1,3 +1,9 @@
+## [6.5.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.5.1...v6.5.2) (2025-08-14)
+
+### Bug Fixes
+
+* adjust shell footer layout ([#879](https://github.com/onecx/onecx-portal-ui-libs/issues/879)) ([0f28acc](https://github.com/onecx/onecx-portal-ui-libs/commit/0f28acc1bb4bf9bea30f3882303f0c4ace330d89))
+
 ## [6.5.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.5.0...v6.5.1) (2025-08-14)
 
 ### Bug Fixes
