@@ -1,3 +1,9 @@
+## [5.47.6](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.47.5...v5.47.6) (2025-08-14)
+
+### Bug Fixes
+
+* translation fail should not block other applications ([#877](https://github.com/onecx/onecx-portal-ui-libs/issues/877)) ([2c88779](https://github.com/onecx/onecx-portal-ui-libs/commit/2c88779cd20321fd66b8db497a7410738f6c7b6d))
+
 ## [5.47.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.47.4...v5.47.5) (2025-08-12)
 
 ### Bug Fixes
