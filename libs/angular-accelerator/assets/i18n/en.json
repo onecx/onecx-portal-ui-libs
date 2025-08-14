@@ -150,6 +150,7 @@
     "EXPORT": "Export all events"
   },
   "OCX_PAGE_HEADER": {
+    "IMAGE": "Page title logo",
     "SUBHEADER": "Page Content",
     "MORE_ACTIONS": "More actions",
     "HOME_DEFAULT_ARIA_LABEL": "Go to home page",
