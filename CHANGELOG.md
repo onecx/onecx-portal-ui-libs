@@ -1,3 +1,10 @@
+## [6.5.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.5.0...v6.5.1) (2025-08-14)
+
+### Bug Fixes
+
+* improve a11y in search header ([#873](https://github.com/onecx/onecx-portal-ui-libs/issues/873)) ([3a62a21](https://github.com/onecx/onecx-portal-ui-libs/commit/3a62a2186aff89a23ea1fda40506e0ad55b605fc))
+* translation fail should not block other applications cherry pick ([#878](https://github.com/onecx/onecx-portal-ui-libs/issues/878)) ([5d00f12](https://github.com/onecx/onecx-portal-ui-libs/commit/5d00f12ef584be3e397a9b0a69d387d24f619272))
+
 ## [6.5.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.4.0...v6.5.0) (2025-08-09)
 
 ### Features
