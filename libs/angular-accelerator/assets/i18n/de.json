@@ -150,6 +150,7 @@
     "EXPORT": "Alle Ereignisse exportieren"
   },
   "OCX_PAGE_HEADER": {
+    "IMAGE": "Seitentitelbild",
     "SUBHEADER": "Seiteninhalt",
     "MORE_ACTIONS": "Weitere Aktionen",
     "HOME_DEFAULT_ARIA_LABEL": "Zur Startseite navigieren",
