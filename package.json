@@ -7,8 +7,8 @@
     "postinstall": "mkdir -p .nx",
     "build": "nx run-many -t build build-migrations",
     "build-copy": "npm run build && node copy-build.js",
-    "sonar": "node sonar.js",
-    "sonar:all": "node sonar.js"
+    "sonar": "node sonar-single.js",
+    "sonar:all": "node sonar-all.js"
   },
   "private": true,
   "dependencies": {
