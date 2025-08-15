@@ -52,16 +52,83 @@ In some cases, there might be a requirement to make a change directly on a main 
 - The `main` branch is merged into `develop` branch
 - Libs pre-release is released via the `develop` branch
 
+# SonarQube Code Analysis
+
+This repository provides npm scripts to run SonarQube analysis on the UI libraries. Two dedicated scripts are available for different use cases.
+
+## Available Scripts
+
+### `npm run sonar -- <library-name>`
+
+Runs SonarQube analysis for a specific library. **Requires a library name as argument.**
+
+**Usage:**
+
+```bash
+npm run sonar -- angular-auth
+npm run sonar -- accelerator
+npm run sonar -- portal-integration-angular
+```
+
+**What it does:**
+
+1. Validates that the specified library exists
+2. Runs tests for the specified library using `nx run-many -t test -p <library>`
+3. Normalizes the LCOV coverage reports
+4. Changes to the library directory and runs `sonarqube-scanner`
+
+**Error handling:**
+
+- Throws an error if no library name is provided
+- Throws an error if the specified library doesn't exist
+- Lists all available libraries when an error occurs
+
+### `npm run sonar:all`
+
+Runs SonarQube analysis for all libraries in the workspace. **No arguments required.**
+
+**Usage:**
+
+```bash
+npm run sonar:all
+```
+
+**What it does:**
+
+1. Runs tests for all libraries using `nx run-many -t test`
+2. Normalizes the LCOV coverage reports
+3. Automatically detects all libraries from the `reports` folder
+4. Runs `sonarqube-scanner` for each detected library
+5. Skips libraries that don't have corresponding directories
+
+**Error handling:**
+
+- Checks if the reports folder exists
+- Warns if no libraries are found to scan
+- Skips libraries that don't have corresponding directories
+
+## Implementation Details
+
+- **`sonar`** script uses `sonar-single.js` - dedicated for single library analysis
+- **`sonar:all`** script uses `sonar-all.js` - dedicated for all libraries analysis
+- Each script has its own validation and error handling logic
+- Both scripts provide clear feedback about what they're doing
+
+## Prerequisites
+
+- SonarQube Scanner must be installed (`npm install`)
+- Each library must have a `sonar-project.properties` file configured
+- SonarQube docker must be accessible and configured
+
 # Update to latest minor version of libs
 
 1. run the following command in your project's terminal to run onecx migrations:
 
 ```
-curl -sL https://raw.githubusercontent.com/onecx/onecx-portal-ui-libs/refs/heads/main/update_libs.sh | bash - 
+curl -sL https://raw.githubusercontent.com/onecx/onecx-portal-ui-libs/refs/heads/main/update_libs.sh | bash -
 ```
 
 2. run `npm run build` to check if it builds successfully after the migrations
-
 
 # Update from v3 to v4 guide
 
