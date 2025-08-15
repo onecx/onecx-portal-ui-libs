@@ -19,16 +19,30 @@ $emphasis-lower: rgba(0, 0, 0, 0.12);
 $overlayColor: #000000;
 
 /*  global */
-$fontFamily: Ubuntu, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
+$fontFamily:
+  Ubuntu,
+  Helvetica Neue Light,
+  Helvetica Neue,
+  Helvetica,
+  Arial,
+  Lucida Grande,
+  sans-serif;
 $fontSize: 1rem;
 $fontWeight: normal;
 $textColor: $emphasis-high;
 $textSecondaryColor: $emphasis-medium;
 $borderRadius: 4px;
 $transitionDuration: 0.2s;
-$formElementTransition: background-color $transitionDuration, border-color $transitionDuration,
-  color $transitionDuration, box-shadow $transitionDuration, background-size 0.2s cubic-bezier(0.64, 0.09, 0.08, 1);
-$actionIconTransition: background-color $transitionDuration, color $transitionDuration, box-shadow $transitionDuration;
+$formElementTransition:
+  background-color $transitionDuration,
+  border-color $transitionDuration,
+  color $transitionDuration,
+  box-shadow $transitionDuration,
+  background-size 0.2s cubic-bezier(0.64, 0.09, 0.08, 1);
+$actionIconTransition:
+  background-color $transitionDuration,
+  color $transitionDuration,
+  box-shadow $transitionDuration;
 $listItemTransition: none;
 $primeIconFontSize: 1rem;
 $divider: 1px solid rgba(0, 0, 0, 0.12);
@@ -114,7 +128,9 @@ $inputListItemFocusBg: #e2e8f0 !default;
 $inputOverlayBg: $inputListBg;
 $inputOverlayHeaderBg: $inputListHeaderBg;
 $inputOverlayBorder: 0 none;
-$inputOverlayShadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14),
+$inputOverlayShadow:
+  0 5px 5px -3px rgba(0, 0, 0, 0.2),
+  0 8px 10px 1px rgba(0, 0, 0, 0.14),
   0 3px 14px 2px rgba(0, 0, 0, 0.12);
 
 /* multiselect */
@@ -144,7 +160,10 @@ $buttonHoverBorderColor: transparent;
 $buttonActiveBg: rgba($primaryColor, 0.68);
 $buttonTextActiveColor: $primaryTextColor;
 $buttonActiveBorderColor: transparent;
-$raisedButtonShadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+$raisedButtonShadow:
+  0 3px 1px -2px rgba(0, 0, 0, 0.2),
+  0 2px 2px 0 rgba(0, 0, 0, 0.14),
+  0 1px 5px 0 rgba(0, 0, 0, 0.12);
 $roundedButtonBorderRadius: 2rem;
 $buttonFocusOutline: $focusOutlineCustom;
 $buttonFocusOutlineOffset: $focusOutlineOffsetCustom;
@@ -462,7 +481,10 @@ $cardSubTitleFontWeight: 400;
 $cardSubTitleColor: $textSecondaryColor;
 $cardContentPadding: 1rem 0;
 $cardFooterPadding: 1rem 0 0 0;
-$cardShadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+$cardShadow:
+  0 2px 1px -1px rgba(0, 0, 0, 0.2),
+  0 1px 1px 0 rgba(0, 0, 0, 0.14),
+  0 1px 3px 0 rgba(0, 0, 0, 0.12);
 
 /* editor */
 $editorToolbarBg: $panelHeaderBg;
@@ -606,7 +628,10 @@ $toastMessageTextMargin: 0 0 0 1rem;
 $toastMargin: 0 0 1rem 0;
 $toastPadding: 1.5rem;
 $toastBorderWidth: 0 0 0 0;
-$toastShadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+$toastShadow:
+  0 5px 5px -3px rgba(0, 0, 0, 0.2),
+  0 8px 10px 1px rgba(0, 0, 0, 0.14),
+  0 3px 14px 2px rgba(0, 0, 0, 0.12);
 $toastOpacity: 0.9;
 $toastTitleFontWeight: 700;
 $toastDetailMargin: $inlineSpacing 0 0 0;
@@ -632,7 +657,9 @@ $errorMessageIconColor: #b71c1c;
 /* overlays */
 $overlayContentBorder: 0 none;
 $overlayContentBg: $panelContentBg;
-$overlayContainerShadow: 0 11px 15px -7px rgba(0, 0, 0, 0.2), 0 24px 38px 3px rgba(0, 0, 0, 0.14),
+$overlayContainerShadow:
+  0 11px 15px -7px rgba(0, 0, 0, 0.2),
+  0 24px 38px 3px rgba(0, 0, 0, 0.14),
   0 9px 46px 8px rgba(0, 0, 0, 0.12);
 
 /* dialog */
@@ -676,7 +703,7 @@ $menuWidth: 12.5rem;
 $menuBg: #ffffff;
 $menuBorder: 1px solid #e5e5e5;
 $menuTextColor: $textColor;
-$menuitemPadding: 1rem 1rem;
+$menuitemPadding: 0.75rem 0.75rem;
 $menuitemBorderRadius: 0;
 $menuitemTextColor: $textColor;
 $menuitemIconColor: $textSecondaryColor;
@@ -697,7 +724,10 @@ $submenuHeaderBorderRadius: 0;
 $submenuHeaderFontWeight: 400;
 $overlayMenuBg: $menuBg;
 $overlayMenuBorder: 0 none;
-$overlayMenuShadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
+$overlayMenuShadow:
+  0 2px 4px -1px rgba(0, 0, 0, 0.2),
+  0 4px 5px 0 rgba(0, 0, 0, 0.14),
+  0 1px 10px 0 rgba(0, 0, 0, 0.12);
 $verticalMenuitemMargin: 0;
 $verticalMenuPadding: 0.5rem 1.25rem;
 $menuSeparatorMargin: 0.5rem 0;
