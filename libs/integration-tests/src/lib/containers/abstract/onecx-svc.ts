@@ -89,9 +89,9 @@ export abstract class SvcContainer extends GenericContainer {
     }).withEnvironment(getCommonEnvironmentVariables(this.services.keycloakContainer))
     if (this.loggingEnabled) {
       this.withLogConsumer((stream) => {
-        stream.on('data', (line) => console.log(`${this.details.databaseUsername}: `, line))
-        stream.on('err', (line) => console.error(`${this.details.databaseUsername}: `, line))
-        stream.on('end', () => console.log(`${this.details.databaseUsername}: Stream closed`))
+        stream.on('data', (line) => console.log(`${this.networkAliases[0]}: `, line))
+        stream.on('err', (line) => console.error(`${this.networkAliases[0]}: `, line))
+        stream.on('end', () => console.log(`${this.networkAliases[0]}: Stream closed`))
       })
     }
 

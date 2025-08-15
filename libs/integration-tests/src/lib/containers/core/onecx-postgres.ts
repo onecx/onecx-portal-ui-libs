@@ -80,9 +80,9 @@ export class OnecxPostgresContainer extends GenericContainer {
     })
     if (this.loggingEnabled) {
       this.withLogConsumer((stream) => {
-        stream.on('data', (line) => console.log(`${this.onecxPostgresDetails.postgresUsername}: `, line))
-        stream.on('err', (line) => console.error(`${this.onecxPostgresDetails.postgresUsername}: `, line))
-        stream.on('end', () => console.log(`${this.onecxPostgresDetails.postgresUsername}: Stream closed`))
+        stream.on('data', (line) => console.log(`${this.networkAliases[0]}: `, line))
+        stream.on('err', (line) => console.error(`${this.networkAliases[0]}: `, line))
+        stream.on('end', () => console.log(`${this.networkAliases[0]}: Stream closed`))
       })
     }
     this.withWaitStrategy(Wait.forAll([Wait.forHealthCheck(), Wait.forListeningPorts()]))

@@ -1,14 +1,12 @@
+import { loggingEnabled } from './logging-enable'
+import { PlatformConfig } from '../model/platform-config.interface'
+
 /**
  * Centralized logging messages
  */
 export const LogMessages = {
   // Container operations
-  STOPPED_CONTAINER: 'Error stopping container',
-  FAILED_CREATE_CONTAINER: 'Container failed to start',
-  SUCCESS_CREATE_CONTAINER: 'Container started successfully',
-  CONTAINER_STARTING: 'Starting container',
   CONTAINER_STARTED: 'Container started successfully',
-  CONTAINER_STOPPING: 'Stopping container',
   CONTAINER_STOPPED: 'Container stopped successfully',
   CONTAINER_FAILED: 'Container operation failed',
 
@@ -25,7 +23,7 @@ export const LogMessages = {
   HEALTH_CHECK_FAILED: 'Health check failed',
   HEALTH_CHECK_SKIP: 'Skipping health check - no endpoint available',
   HEALTH_CHECK_KEYCLOAK: 'Checking Keycloak health',
-  HEALTH_CHECK_SERVICE: 'Checking service health',
+  HEALTH_CHECK_CONTAINER: 'Checking service health',
   CONTAINER_HEALTHY: 'Container is healthy',
   CONTAINER_UNHEALTHY: 'Container is unhealthy',
 
@@ -56,23 +54,6 @@ export const LogMessages = {
   IMAGE_PULL_START: 'Starting image pull verification',
   IMAGE_PULL_SUCCESS: 'Image pulled successfully',
   IMAGE_PULL_FAILED: 'Image pull failed',
-
-  // Service discovery
-  SERVICE_DISCOVERED: 'Service discovered',
-  SERVICE_AVAILABLE: 'Service is available',
-  SERVICE_UNAVAILABLE: 'Service is unavailable',
-  SERVICES_FOUND: 'Services found',
-
-  // Import Manager
-  IMPORT_MANAGER_INIT: 'Initializing Import Manager',
-  IMPORT_MANAGER_START: 'Starting import process',
-  CONFIG_FILE_NOT_FOUND: 'Configuration file not found',
-  CONFIG_LOADED: 'Configuration loaded successfully',
-  CONTAINER_DISCOVERED: 'Container discovered',
-  REQUESTING_TOKEN: 'Requesting authentication token',
-  TOKEN_SUCCESS: 'Token retrieved successfully',
-  TOKEN_ERROR: 'Failed to retrieve token',
-  IMPORT_COMPLETE: 'Import process completed successfully',
 } as const
 
 export type LogMessageKey = keyof typeof LogMessages
@@ -81,10 +62,45 @@ export type LogMessageKey = keyof typeof LogMessages
  * Structured logger with timestamp, class and context information
  */
 export class Logger {
+  private static loggingEnabled: boolean = true
+  private static platformConfig: PlatformConfig | undefined = undefined
   private className: string
 
   constructor(className: string) {
     this.className = className
+  }
+
+  /**
+   * Set the platform configuration for logging decisions
+   */
+  setPlatformConfig(config: PlatformConfig): void {
+    Logger.platformConfig = config
+  }
+
+  /**
+   * Get the current platform configuration
+   */
+  static getPlatformConfig(): PlatformConfig | undefined {
+    return Logger.platformConfig
+  }
+
+  /**
+   * Check if logging should be enabled for this logger instance
+   * Uses the existing loggingEnabled function with className as networkAlias
+   */
+  private loggingEnabled(): boolean {
+    // If global logging is disabled, nothing logs
+    if (!Logger.loggingEnabled) {
+      return false
+    }
+
+    // If no platform config is set, use global default
+    if (!Logger.platformConfig) {
+      return Logger.loggingEnabled
+    }
+
+    // Use the existing loggingEnabled function, treating className as networkAlias
+    return loggingEnabled(Logger.platformConfig, [this.className])
   }
 
   private formatTimestamp(): string {
@@ -94,14 +110,15 @@ export class Logger {
   private formatMessage(level: string, messageKey: LogMessageKey, context?: string): string {
     const timestamp = this.formatTimestamp()
     const message = LogMessages[messageKey]
-    const contextPart = context ? `(${context})` : ''
-    return `${this.className}: ${timestamp} [${level}] ${this.className} ${message} - ${contextPart}`
+    const contextPart = context ? ` - (${context})` : ''
+    return `${this.className}: ${timestamp} [${level}] ${this.className} ${message}${contextPart}`
   }
 
   /**
    * Log info message
    */
   info(messageKey: LogMessageKey, context?: string): void {
+    if (!this.loggingEnabled()) return
     console.log(this.formatMessage('INFO', messageKey, context))
   }
 
@@ -109,6 +126,7 @@ export class Logger {
    * Log success message
    */
   success(messageKey: LogMessageKey, context?: string): void {
+    if (!this.loggingEnabled()) return
     console.log(`\x1b[32m${this.formatMessage('SUCCESS', messageKey, context)}\x1b[0m`)
   }
 
@@ -116,6 +134,7 @@ export class Logger {
    * Log error message
    */
   error(messageKey: LogMessageKey, context?: string, error?: any): void {
+    if (!this.loggingEnabled()) return
     const message = this.formatMessage('ERROR', messageKey, context)
     if (error) {
       console.error(`\x1b[31m${message}\x1b[0m`, error)
@@ -128,6 +147,7 @@ export class Logger {
    * Log based on HTTP status code
    */
   status(messageKey: LogMessageKey, statusCode: number, context?: string): void {
+    if (!this.loggingEnabled()) return
     if ([200, 201].includes(statusCode)) {
       this.success(messageKey, `${context} - Status: ${statusCode}`)
     } else {
@@ -139,6 +159,7 @@ export class Logger {
    * Log duration of an operation
    */
   logDuration(messageKey: LogMessageKey, durationMs: number, context?: string): void {
+    if (!this.loggingEnabled()) return
     const durationSec = (durationMs / 1000).toFixed(1)
     this.success(messageKey, `${context} - Duration: ${durationSec}s`)
   }
@@ -147,6 +168,7 @@ export class Logger {
    * Log warning message
    */
   warn(messageKey: LogMessageKey, context?: string): void {
+    if (!this.loggingEnabled()) return
     console.warn(`\x1b[33m${this.formatMessage('WARN', messageKey, context)}\x1b[0m`)
   }
 }

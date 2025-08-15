@@ -20,15 +20,14 @@ export class PlatformManager {
   private containers: Map<string, AllowedContainerTypes> = new Map()
 
   /**
-   * Needed classes for startService
+   * Needed classes for startContainers
    */
   private network?: StartedNetwork
   private imageResolver?: ImageResolver
   private containerStarter?: ContainerStarter
   private containerFactory?: ContainerFactory
   private dataImporter?: DataImporter
-
-  private healthChecker: HealthChecker = new HealthChecker()
+  private healthChecker?: HealthChecker
 
   // switch to decide if the defaultPlatform should start or not
   private startDefaultPlatform = true
@@ -38,8 +37,12 @@ export class PlatformManager {
    * @param config
    */
   async startContainers(config: PlatformConfig = DEFAULT_PLATFORM_CONFIG) {
+    // Configure logger based on platform config
+    logger.setPlatformConfig(config)
+
     logger.info('PLATFORM_MANAGER_INIT')
-    this.imageResolver = new ImageResolver()
+    this.healthChecker = new HealthChecker(config)
+    this.imageResolver = new ImageResolver(config)
     this.dataImporter = new DataImporter(this.imageResolver)
 
     logger.info('NETWORK_CREATE')
@@ -58,27 +61,25 @@ export class PlatformManager {
       const postgres = await this.containerStarter.startCoreServices()
       const keycloak = this.containers.get(CONTAINER.KEYCLOAK) as StartedOnecxKeycloakContainer
 
-      await this.containerStarter.startBackendServices(config, postgres, keycloak, this.getContainer.bind(this))
+      await this.containerStarter.startServiceContainers(postgres, keycloak, this.getContainer.bind(this))
 
-      // Start BFF services based on configuration
-      await this.containerStarter.startBffServices(config, keycloak)
+      // Start BFF containers based on configuration
+      await this.containerStarter.startBffContainers(keycloak)
 
-      // Start UI services based on configuration
-      await this.containerStarter.startUiServices(config, keycloak, this.getContainer.bind(this))
+      // Start UI containers based on configuration
+      await this.containerStarter.startUiContainers(keycloak, this.getContainer.bind(this))
       // Create custom containers if defined in configuration
       if (config.container) {
         // Initialize container factory with core services
-        this.containerFactory = new ContainerFactory(this.network, this.imageResolver, postgres, keycloak)
+        this.containerFactory = new ContainerFactory(this.network, this.imageResolver, config, postgres, keycloak)
         await this.createCustomContainers(config)
       }
     }
 
     // Import data if configured
     if (config.importData && this.network && this.dataImporter) {
-      logger.info('DATA_IMPORT_START')
       this.dataImporter.createContainerInfo(this.containers)
       await this.dataImporter.importDefaultData(this.network, this.containers, config)
-      logger.success('DATA_IMPORT_SUCCESS')
     }
 
     logger.success('PLATFORM_READY')
@@ -110,7 +111,22 @@ export class PlatformManager {
    * Check the health of all running containers
    */
   async checkAllHealthy(): Promise<HealthCheckResult[]> {
+    if (!this.healthChecker) {
+      throw new Error('HealthChecker not initialized. Call startContainers first.')
+    }
     return await this.healthChecker.checkAllHealthy(this.containers)
+  }
+
+  /**
+   * Check the health of one runnting contianer
+   * @param containerName
+   * @returns
+   */
+  async checkHealthy(containerName: string): Promise<HealthCheckResult[]> {
+    if (!this.healthChecker) {
+      throw new Error('HealthChecker not initialized. Call startContainers first.')
+    }
+    return await this.healthChecker.checkHealthy(this.containers, containerName)
   }
 
   /**
@@ -153,10 +169,9 @@ export class PlatformManager {
    * Stop a container
    * @param key
    */
-  async stopContainer(key: string | CONTAINER) {
+  private async stopContainer(key: string | CONTAINER) {
     const container = this.getContainer(key)
     const containerKey = typeof key === 'string' ? key : String(key)
-    logger.info('CONTAINER_STOPPING', containerKey)
     try {
       await container?.stop()
       logger.success('CONTAINER_STOPPED', containerKey)

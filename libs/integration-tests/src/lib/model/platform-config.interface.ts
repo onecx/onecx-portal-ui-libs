@@ -8,15 +8,7 @@ export interface PlatformConfig {
   /** Whether to run data import after starting services */
   importData?: boolean
   /** Whether to enable logging or not */
-  enableLogging?:
-    | boolean
-    | string[]
-    | {
-        core: boolean | string[]
-        svc: boolean | string[]
-        bff: boolean | string[]
-        ui: boolean | string[]
-      }
+  enableLogging?: boolean | string[]
   /** Image overrides - allows testing against different images */
   imageOverrides?: {
     /** Core service images */

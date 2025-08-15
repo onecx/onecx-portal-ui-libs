@@ -25,6 +25,8 @@ export class DataImporter {
     startedContainers: Map<string, AllowedContainerTypes>,
     config: PlatformConfig
   ): Promise<void> {
+    // Platform config is already set globally by PlatformManager
+
     logger.info('DATA_IMPORT_START')
 
     try {
@@ -34,7 +36,7 @@ export class DataImporter {
       const importImage = await this.imageResolver.getNodeImage(config)
       const importer = await new ImportManagerContainer(importImage, containerInfoPath)
         .withNetwork(network)
-        .enableLogging(loggingEnabled(config))
+        .enableLogging(loggingEnabled(config, [CONTAINER.IMPORT_MANAGER]))
         .start()
 
       logger.info('CONTAINER_STARTED', 'Import container - monitoring import process')
@@ -54,7 +56,7 @@ export class DataImporter {
             }
           } catch (error) {
             clearInterval(checkInterval)
-            logger.info('DATA_IMPORT_PROCESS_ERROR')
+            logger.error('DATA_IMPORT_PROCESS_ERROR', undefined, error)
             resolve()
           }
         }, 2000)
@@ -62,9 +64,9 @@ export class DataImporter {
         setTimeout(
           () => {
             clearInterval(checkInterval)
-            reject(new Error('Import timeout after 2 minutes'))
+            reject(new Error('Import timeout after 1 minutes'))
           },
-          2 * 60 * 1000
+          1 * 60 * 1000
         )
       })
 

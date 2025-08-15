@@ -27,14 +27,14 @@ export class ContainerStarter {
     private network: StartedNetwork,
     private addContainer: (key: CONTAINER, container: AllowedContainerTypes) => void,
     private readonly config: PlatformConfig
-  ) {}
+  ) {
+    // Platform config will be set globally by PlatformManager
+  }
 
   /**
-   * Start core services (PostgreSQL and Keycloak)
+   * Start core container (PostgreSQL and Keycloak)
    */
   async startCoreServices(): Promise<StartedOnecxPostgresContainer> {
-    logger.info('CONTAINER_STARTING', 'Core services (Postgres + Keycloak)')
-
     const postgres = await this.startPostgresContainer()
     this.addContainer(CONTAINER.POSTGRES, postgres)
 
@@ -46,10 +46,9 @@ export class ContainerStarter {
   }
 
   /**
-   * Start backend services based on configuration
+   * Start service container based on configuration
    */
-  async startBackendServices(
-    config: PlatformConfig,
+  async startServiceContainers(
     postgres: StartedOnecxPostgresContainer,
     keycloak: StartedOnecxKeycloakContainer,
     getContainer: (service: CONTAINER) => AllowedContainerTypes | undefined
@@ -72,15 +71,14 @@ export class ContainerStarter {
   /**
    * Start BFF services based on configuration
    */
-  async startBffServices(config: PlatformConfig, keycloak: StartedOnecxKeycloakContainer): Promise<void> {
+  async startBffContainers(keycloak: StartedOnecxKeycloakContainer): Promise<void> {
     await this.startShellBffService(keycloak)
   }
 
   /**
-   * Start UI services based on configuration
+   * Start UI container based on configuration
    */
-  async startUiServices(
-    config: PlatformConfig,
+  async startUiContainers(
     keycloak: StartedOnecxKeycloakContainer,
     getContainer: (service: CONTAINER) => AllowedContainerTypes | undefined
   ): Promise<void> {
@@ -92,7 +90,7 @@ export class ContainerStarter {
     const postgresImage = await this.imageResolver.getPostgresImage(this.config)
     return await new OnecxPostgresContainer(postgresImage)
       .withNetwork(this.network)
-      .enableLogging(loggingEnabled(this.config))
+      .enableLogging(loggingEnabled(this.config, [CONTAINER.POSTGRES]))
       .start()
   }
 
@@ -102,7 +100,7 @@ export class ContainerStarter {
     const keycloakImage = await this.imageResolver.getKeycloakImage(this.config)
     return await new OnecxKeycloakContainer(keycloakImage, postgres)
       .withNetwork(this.network)
-      .enableLogging(loggingEnabled(this.config))
+      .enableLogging(loggingEnabled(this.config, [CONTAINER.KEYCLOAK]))
       .start()
   }
 
@@ -110,7 +108,7 @@ export class ContainerStarter {
     const iamKcImage = await this.imageResolver.getServiceImage(OnecxService.IAM_KC_SVC, this.config)
     const container = await new IamKcContainer(iamKcImage, keycloak)
       .withNetwork(this.network)
-      .enableLogging(loggingEnabled(this.config))
+      .enableLogging(loggingEnabled(this.config, [CONTAINER.IAMKC_SVC]))
       .start()
     this.addContainer(CONTAINER.IAMKC_SVC, container)
   }
@@ -122,7 +120,7 @@ export class ContainerStarter {
     const workspaceImage = await this.imageResolver.getServiceImage(OnecxService.WORKSPACE_SVC, this.config)
     const container = await new WorkspaceSvcContainer(workspaceImage, postgres, keycloak)
       .withNetwork(this.network)
-      .enableLogging(loggingEnabled(this.config))
+      .enableLogging(loggingEnabled(this.config, [CONTAINER.WORKSPACE_SVC]))
       .start()
     this.addContainer(CONTAINER.WORKSPACE_SVC, container)
   }
@@ -134,7 +132,7 @@ export class ContainerStarter {
     const userProfileImage = await this.imageResolver.getServiceImage(OnecxService.USER_PROFILE_SVC, this.config)
     const container = await new UserProfileSvcContainer(userProfileImage, postgres, keycloak)
       .withNetwork(this.network)
-      .enableLogging(loggingEnabled(this.config))
+      .enableLogging(loggingEnabled(this.config, [CONTAINER.USER_PROFILE_SVC]))
       .start()
     this.addContainer(CONTAINER.USER_PROFILE_SVC, container)
   }
@@ -146,7 +144,7 @@ export class ContainerStarter {
     const themeImage = await this.imageResolver.getServiceImage(OnecxService.THEME_SVC, this.config)
     const container = await new ThemeSvcContainer(themeImage, postgres, keycloak)
       .withNetwork(this.network)
-      .enableLogging(loggingEnabled(this.config))
+      .enableLogging(loggingEnabled(this.config, [CONTAINER.THEME_SVC]))
       .start()
     this.addContainer(CONTAINER.THEME_SVC, container)
   }
@@ -158,7 +156,7 @@ export class ContainerStarter {
     const tenantImage = await this.imageResolver.getServiceImage(OnecxService.TENANT_SVC, this.config)
     const container = await new TenantSvcContainer(tenantImage, postgres, keycloak)
       .withNetwork(this.network)
-      .enableLogging(loggingEnabled(this.config))
+      .enableLogging(loggingEnabled(this.config, [CONTAINER.TENANT_SVC]))
       .start()
     this.addContainer(CONTAINER.TENANT_SVC, container)
   }
@@ -170,7 +168,7 @@ export class ContainerStarter {
     const productStoreImage = await this.imageResolver.getServiceImage(OnecxService.PRODUCT_STORE_SVC, this.config)
     const container = await new ProductStoreSvcContainer(productStoreImage, postgres, keycloak)
       .withNetwork(this.network)
-      .enableLogging(loggingEnabled(this.config))
+      .enableLogging(loggingEnabled(this.config, [CONTAINER.PRODUCT_STORE_SVC]))
       .start()
     this.addContainer(CONTAINER.PRODUCT_STORE_SVC, container)
   }
@@ -194,7 +192,7 @@ export class ContainerStarter {
       tenantSvcContainer as StartedSvcContainer
     )
       .withNetwork(this.network)
-      .enableLogging(loggingEnabled(this.config))
+      .enableLogging(loggingEnabled(this.config, [CONTAINER.PERMISSION_SVC]))
       .start()
     this.addContainer(CONTAINER.PERMISSION_SVC, container)
   }
@@ -203,7 +201,7 @@ export class ContainerStarter {
     const shellBffImage = await this.imageResolver.getBffImage(OnecxBff.SHELL_BFF, this.config)
     const container = await new ShellBffContainer(shellBffImage, keycloak)
       .withNetwork(this.network)
-      .enableLogging(loggingEnabled(this.config))
+      .enableLogging(loggingEnabled(this.config, [CONTAINER.SHELL_BFF]))
       .start()
     this.addContainer(CONTAINER.SHELL_BFF, container)
   }
@@ -221,7 +219,7 @@ export class ContainerStarter {
     const shellUiImage = await this.imageResolver.getUiImage(OnecxUi.SHELL_UI, this.config)
     const container = await new ShellUiContainer(shellUiImage, keycloak)
       .withNetwork(this.network)
-      .enableLogging(loggingEnabled(this.config))
+      .enableLogging(loggingEnabled(this.config, [CONTAINER.SHELL_UI]))
       .start()
     this.addContainer(CONTAINER.SHELL_UI, container)
   }

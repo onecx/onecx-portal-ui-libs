@@ -56,8 +56,8 @@ export class Logger {
   private formatMessage(level: string, messageKey: LogMessageKey, context?: string): string {
     const timestamp = this.formatTimestamp()
     const message = LogMessages[messageKey]
-    const contextPart = context ? `(${context})` : ''
-    return `${this.className}: ${timestamp} [${level}] ${this.className} ${message} - ${contextPart}`
+    const contextPart = context ? ` - (${context})` : ''
+    return `${this.className}: ${timestamp} [${level}] ${this.className} ${message}${contextPart}`
   }
 
   /**

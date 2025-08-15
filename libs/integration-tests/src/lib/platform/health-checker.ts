@@ -2,6 +2,7 @@ import axios from 'axios'
 import { CONTAINER } from '../model/container.enum'
 import { StartedOnecxKeycloakContainer } from '../containers/core/onecx-keycloak'
 import type { AllowedContainerTypes } from '../model/allowed-container.types'
+import { PlatformConfig } from '../model/platform-config.interface'
 import { Logger } from '../utils/logger'
 
 const logger = new Logger('HealthChecker')
@@ -12,6 +13,10 @@ export interface HealthCheckResult {
 }
 
 export class HealthChecker {
+  constructor(config?: PlatformConfig) {
+    // Platform config will be set globally by PlatformManager
+    // No need to set it here to avoid race conditions
+  }
   /**
    * Check the health of all containers
    */
@@ -21,17 +26,53 @@ export class HealthChecker {
     for (const [name, container] of startedContainers.entries()) {
       let healthy = true
 
-      if (name === CONTAINER.POSTGRES || name === CONTAINER.SHELL_UI) {
+      if (this.shouldSkipHealthCheck(name)) {
         logger.info('HEALTH_CHECK_SKIP', name)
       } else if (name === CONTAINER.KEYCLOAK) {
         healthy = await this.checkKeycloakHealth(container as StartedOnecxKeycloakContainer)
       } else {
-        healthy = await this.checkServiceHealth(container, name)
+        healthy = await this.checkContainerHealth(container, name)
       }
       results.push({ name, healthy })
     }
 
     return results
+  }
+
+  /**
+   * Check the health of one contianer
+   */
+  async checkHealthy(
+    startedContainers: Map<string, AllowedContainerTypes>,
+    name: string
+  ): Promise<HealthCheckResult[]> {
+    const results: HealthCheckResult[] = []
+
+    const container = startedContainers.get(name)
+    if (!container) {
+      results.push({ name, healthy: false })
+      return results
+    }
+
+    let healthy = true
+
+    if (this.shouldSkipHealthCheck(name)) {
+      logger.info('HEALTH_CHECK_SKIP', name)
+    } else if (name === CONTAINER.KEYCLOAK) {
+      healthy = await this.checkKeycloakHealth(container as StartedOnecxKeycloakContainer)
+    } else {
+      healthy = await this.checkContainerHealth(container, name)
+    }
+
+    results.push({ name, healthy })
+    return results
+  }
+
+  /**
+   * Check if health check should be skipped for a container
+   */
+  private shouldSkipHealthCheck(containerName: string): boolean {
+    return containerName === CONTAINER.POSTGRES || containerName === CONTAINER.SHELL_UI
   }
 
   /**
@@ -41,22 +82,22 @@ export class HealthChecker {
     const realm = keycloakContainer.getRealm()
     const url = this.buildHealthCheckUrl(keycloakContainer, `/realms/${realm}/.well-known/openid-configuration`)
     logger.info('HEALTH_CHECK_KEYCLOAK', url)
-    return await this.checkContainerHealth(url)
+    return await this.sendHttpRequest(url)
   }
 
   /**
    * Check health of a service container
    */
-  private async checkServiceHealth(container: AllowedContainerTypes, name: string): Promise<boolean> {
+  private async checkContainerHealth(container: AllowedContainerTypes, name: string): Promise<boolean> {
     const url = this.buildHealthCheckUrl(container, '/q/health')
-    logger.info('HEALTH_CHECK_SERVICE', `${name} at ${url}`)
-    return await this.checkContainerHealth(url)
+    logger.info('HEALTH_CHECK_CONTAINER', `${name} at ${url}`)
+    return await this.sendHttpRequest(url)
   }
 
   /**
    * Make HTTP request to check container health
    */
-  private async checkContainerHealth(url: string): Promise<boolean> {
+  private async sendHttpRequest(url: string): Promise<boolean> {
     try {
       const response = await axios.get(url)
       return response.status === 200

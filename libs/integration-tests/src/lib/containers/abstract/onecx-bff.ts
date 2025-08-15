@@ -73,9 +73,9 @@ export abstract class BffContainer extends GenericContainer {
 
     if (this.loggingEnabled) {
       this.withLogConsumer((stream) => {
-        stream.on('data', (line) => console.log(`${this.details.permissionsProductName}: `, line))
-        stream.on('err', (line) => console.error(`${this.details.permissionsProductName}: `, line))
-        stream.on('end', () => console.log(`${this.details.permissionsProductName}: Stream closed`))
+        stream.on('data', (line) => console.log(`${this.networkAliases[0]}: `, line))
+        stream.on('err', (line) => console.error(`${this.networkAliases[0]}: `, line))
+        stream.on('end', () => console.log(`${this.networkAliases[0]}: Stream closed`))
       })
     }
 

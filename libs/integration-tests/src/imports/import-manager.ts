@@ -12,7 +12,7 @@ import {
   importSlots,
 } from './product-store/import-product-store'
 import { importPermissions } from './permissions/import-permissions'
-import { Logger } from '../lib/utils/logger'
+import { Logger } from './utils/imports-logger'
 
 const logger = new Logger('ImportManager')
 
@@ -95,7 +95,7 @@ export class ImportManager {
   }
 
   /**
-   * Executes the complete data import process for all OneCX services
+   * Executes the complete data import process for all OneCX containers
    *
    * This method orchestrates the import of various data types including tenants, themes,
    * workspaces, product store data, permissions, and assignments. The imports are executed
@@ -150,63 +150,67 @@ export class ImportManager {
     logger.info('SERVICES_FOUND', `Available services: ${serviceNames.join(', ')}`)
 
     // Tenant import - requires tenant service
-    if (services['tenantSvc']) {
-      logger.info('SERVICE_AVAILABLE', 'tenantSvc')
-      await importTenants(path.join(base, 'tenant'), getServiceUrl('tenantSvc', '/exim/v1/tenants/operator'))
+    if (services['onecx-tenant-svc']) {
+      logger.info('SERVICE_AVAILABLE', 'onecx-tenant-svc')
+      await importTenants(path.join(base, 'tenant'), getServiceUrl('onecx-tenant-svc', '/exim/v1/tenants/operator'))
     } else {
-      logger.info('SERVICE_UNAVAILABLE', 'tenantSvc - skipping tenant import')
+      logger.info('SERVICE_UNAVAILABLE', 'onecx-tenant-svc - skipping tenant import')
     }
 
     // Theme import - requires theme service
-    if (services['themeSvc']) {
-      logger.info('SERVICE_AVAILABLE', 'themeSvc')
+    if (services['onecx-theme-svc']) {
+      logger.info('SERVICE_AVAILABLE', 'onecx-theme-svc')
       await importThemes(
         path.join(base, 'theme'),
         async () => token,
-        getServiceUrl('themeSvc', '/exim/v1/themes/operator')
+        getServiceUrl('onecx-theme-svc', '/exim/v1/themes/operator')
       )
     } else {
-      logger.info('SERVICE_UNAVAILABLE', 'themeSvc - skipping theme import')
+      logger.info('SERVICE_UNAVAILABLE', 'onecx-theme-svc - skipping theme import')
     }
 
     // Product store related imports - requires product store service
-    if (services['productStoreSvc']) {
-      logger.info('SERVICE_AVAILABLE', 'productStoreSvc')
+    if (services['onecx-product-store-svc']) {
       const productStore = 'product-store'
-      const productStoreBase = getServiceUrl('productStoreSvc', '/')
+      logger.info('SERVICE_AVAILABLE', 'onecx-product-store-svc')
+      const productStoreBase = getServiceUrl('onecx-product-store-svc', '/')
 
       await importProducts(path.join(base, productStore), productStoreBase)
       await importSlots(path.join(base, productStore), productStoreBase)
       await importMicroservices(path.join(base, productStore), productStoreBase)
-      await importMicrofrontends(path.join(base, productStore), productStoreBase, getServicePort(productStore))
+      await importMicrofrontends(
+        path.join(base, productStore),
+        productStoreBase,
+        getServicePort('onecx-product-store-svc')
+      )
     } else {
-      logger.info('SERVICE_UNAVAILABLE', 'productStoreSvc - skipping product store imports')
+      logger.info('SERVICE_UNAVAILABLE', 'onecx-product-store-svc - skipping product store imports')
     }
 
     // Permission imports - requires permission service
-    if (services['permissionSvc']) {
-      logger.info('SERVICE_AVAILABLE', 'permissionSvc')
-      await importPermissions(path.join(base, 'permissions'), getServiceUrl('permissionSvc'))
+    if (services['onecx-permission-svc']) {
+      logger.info('SERVICE_AVAILABLE', 'onecx-permission-svc')
+      await importPermissions(path.join(base, 'permissions'), getServiceUrl('onecx-permission-svc'))
 
       await importAssignments(
         path.join(base, 'assignments'),
         async () => token,
-        getServiceUrl('permissionSvc', '/exim/v1/assignments/operator')
+        getServiceUrl('onecx-permission-svc', '/exim/v1/assignments/operator')
       )
     } else {
-      logger.info('SERVICE_UNAVAILABLE', 'permissionSvc - skipping permission imports')
+      logger.info('SERVICE_UNAVAILABLE', 'onecx-permission-svc - skipping permission imports')
     }
 
     // Workspace import - requires workspace service
-    if (services['workspaceSvc']) {
-      logger.info('SERVICE_AVAILABLE', 'workspaceSvc')
+    if (services['onecx-workspace-svc']) {
+      logger.info('SERVICE_AVAILABLE', 'onecx-workspace-svc')
       await importWorkspaces(
         path.join(base, 'workspace'),
         async () => token,
-        getServiceUrl('workspaceSvc', '/exim/v1/workspace/operator')
+        getServiceUrl('onecx-workspace-svc', '/exim/v1/workspace/operator')
       )
     } else {
-      logger.info('SERVICE_UNAVAILABLE', 'workspaceSvc - skipping workspace import')
+      logger.info('SERVICE_UNAVAILABLE', 'onecx-workspace-svc - skipping workspace import')
     }
 
     logger.success('IMPORT_COMPLETE')

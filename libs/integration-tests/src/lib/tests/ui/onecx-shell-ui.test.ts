@@ -1,4 +1,4 @@
-import { POSTGRES, KEYCLOAK, onecxUiImages } from '../../config/env'
+import { POSTGRES, KEYCLOAK, IMAGES, OnecxUi } from '../../config/env'
 import { Network, StartedNetwork } from 'testcontainers'
 import { OnecxKeycloakContainer, StartedOnecxKeycloakContainer } from '../../containers/core/onecx-keycloak'
 import { OnecxPostgresContainer, StartedOnecxPostgresContainer } from '../../containers/core/onecx-postgres'
@@ -14,9 +14,7 @@ xdescribe('Default workspace-svc Testcontainer', () => {
     network = await new Network().start()
     pgContainer = await new OnecxPostgresContainer(POSTGRES).withNetwork(network).start()
     kcContainer = await new OnecxKeycloakContainer(KEYCLOAK, pgContainer).withNetwork(network).start()
-    shellUiContainer = await new ShellUiContainer(onecxUiImages.ONECX_SHELL_UI, kcContainer)
-      .withNetwork(network)
-      .start()
+    shellUiContainer = await new ShellUiContainer(IMAGES[OnecxUi.SHELL_UI], kcContainer).withNetwork(network).start()
   }, 120_000)
 
   it('should have expected environment variables in permission-svc container, KC_REALM', async () => {

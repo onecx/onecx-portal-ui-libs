@@ -51,9 +51,9 @@ export abstract class UiContainer extends GenericContainer {
 
     if (this.loggingEnabled) {
       this.withLogConsumer((stream) => {
-        stream.on('data', (line) => console.log(`${this.details.appBaseHref}: `, line))
-        stream.on('err', (line) => console.error(`${this.details.appBaseHref}: `, line))
-        stream.on('end', () => console.log(`${this.details.appBaseHref}: Stream closed`))
+        stream.on('data', (line) => console.log(`${this.networkAliases[0]}: `, line))
+        stream.on('err', (line) => console.error(`${this.networkAliases[0]}: `, line))
+        stream.on('end', () => console.log(`${this.networkAliases[0]}: Stream closed`))
       })
     }
 

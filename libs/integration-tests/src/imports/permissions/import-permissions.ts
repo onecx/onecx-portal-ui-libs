@@ -1,7 +1,7 @@
 import { readdir, readFile } from 'fs/promises'
 import path from 'path'
 import axios from 'axios'
-import { Logger } from '../utils/logger'
+import { Logger } from '../utils/imports-logger'
 
 const logger = new Logger('ImportPermissions')
 
