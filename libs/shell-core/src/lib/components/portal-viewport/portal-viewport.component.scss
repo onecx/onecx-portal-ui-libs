@@ -346,4 +346,12 @@ $menuShadow: 1px 0 0 rgba(0, 0, 0, 0.2);
       flex-grow: 1;
     }
   }
+
+  .p-toast {
+    &.p-toast-top-right,
+    &.p-toast-top-left,
+    &.p-toast-top-center {
+      top: 70px !important;
+    }
+  }
 }
