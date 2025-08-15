@@ -53,6 +53,8 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
   globalErrMsg: string | undefined
   verticalMenuSlotName = 'onecx-shell-vertical-menu'
   isVerticalMenuComponentDefined$: Observable<boolean>
+  footerSlotName = 'onecx-shell-footer'
+  isFooterComponentDefined$: Observable<boolean>
 
   constructor() {
     this.portalMessageService.message$.subscribe((message: Message) => this.messageService.add(message))
@@ -101,6 +103,7 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
       })
 
     this.isVerticalMenuComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.verticalMenuSlotName)
+    this.isFooterComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.footerSlotName)
   }
 
   ngOnInit() {
