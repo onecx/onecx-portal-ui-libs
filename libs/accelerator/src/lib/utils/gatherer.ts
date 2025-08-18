@@ -1,6 +1,8 @@
 import { Subscription } from 'rxjs'
 import { Topic } from '../topic/topic'
 
+import '../declarations'
+
 window['@onecx/accelerator'] ??= {}
 window['@onecx/accelerator'].gatherer ??= {}
 window['@onecx/accelerator'].gatherer.promises ??= {}
