@@ -41,8 +41,8 @@ export class PlatformManager {
     logger.setPlatformConfig(config)
 
     logger.info('PLATFORM_MANAGER_INIT')
-    this.healthChecker = new HealthChecker(config)
-    this.imageResolver = new ImageResolver(config)
+    this.healthChecker = new HealthChecker()
+    this.imageResolver = new ImageResolver()
     this.dataImporter = new DataImporter(this.imageResolver)
 
     logger.info('NETWORK_CREATE')

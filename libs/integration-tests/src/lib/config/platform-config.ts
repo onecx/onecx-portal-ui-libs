@@ -1,4 +1,3 @@
-import { CONTAINER } from '../model/container.enum'
 import { PlatformConfig } from '../model/platform-config.interface'
 
 /** Complete platform configuration with all services enabled */

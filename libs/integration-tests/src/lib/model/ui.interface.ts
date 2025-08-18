@@ -1,4 +1,4 @@
-import { Environment, HealthCheck } from 'testcontainers/build/types'
+import { Environment } from 'testcontainers/build/types'
 
 export interface UiDetails {
   appBaseHref: string

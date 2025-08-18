@@ -2,7 +2,6 @@ import axios from 'axios'
 import { CONTAINER } from '../model/container.enum'
 import { StartedOnecxKeycloakContainer } from '../containers/core/onecx-keycloak'
 import type { AllowedContainerTypes } from '../model/allowed-container.types'
-import { PlatformConfig } from '../model/platform-config.interface'
 import { Logger } from '../utils/logger'
 
 const logger = new Logger('HealthChecker')
@@ -13,7 +12,7 @@ export interface HealthCheckResult {
 }
 
 export class HealthChecker {
-  constructor(config?: PlatformConfig) {
+  constructor() {
     // Platform config will be set globally by PlatformManager
     // No need to set it here to avoid race conditions
   }

@@ -9,7 +9,7 @@ const logger = new Logger('ImageResolver')
  * Resolves the actual image name to use based on the configuration and any version overrides
  */
 export class ImageResolver {
-  constructor(config?: PlatformConfig) {
+  constructor() {
     // Platform config will be set globally by PlatformManager
   }
   /**

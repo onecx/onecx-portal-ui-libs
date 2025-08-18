@@ -62,7 +62,7 @@ export type LogMessageKey = keyof typeof LogMessages
  * Structured logger with timestamp, class and context information
  */
 export class Logger {
-  private static loggingEnabled: boolean = true
+  private static loggingEnabled = true
   private static platformConfig: PlatformConfig | undefined = undefined
   private className: string
 

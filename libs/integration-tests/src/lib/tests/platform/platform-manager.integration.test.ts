@@ -4,7 +4,6 @@ import { CONTAINER } from '../../model/container.enum'
 
 describe('PlatformManager - Integration Test', () => {
   let platformManager: PlatformManager
-  let logSpy: jest.SpyInstance
 
   beforeEach(() => {
     platformManager = new PlatformManager()
