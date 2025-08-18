@@ -27,7 +27,7 @@ import { createTranslateLoader, TRANSLATION_PATH } from '@onecx/angular-utils'
       provide: TRANSLATION_PATH,
       useValue: './assets/i18n/',
       multi: true,
-    },
+    }
   ],
 })
 export class StorybookTranslateModule {

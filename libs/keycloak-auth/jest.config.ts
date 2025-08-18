@@ -3,7 +3,6 @@ export default {
   displayName: 'keycloak-auth',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  coverageDirectory: '../../coverage/libs/keycloak-auth',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [
       'jest-preset-angular',
@@ -19,4 +18,5 @@ export default {
     'jest-preset-angular/build/serializers/ng-snapshot',
     'jest-preset-angular/build/serializers/html-comment',
   ],
+  coverageDirectory: '../../coverage/libs/keycloak-auth',
 }

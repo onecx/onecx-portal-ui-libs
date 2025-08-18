@@ -1,5 +1,6 @@
 {
   "OCX_HEADER": {
+    "USER_SETTINGS": "Profile & Settings",
     "MENU_TOGGLE": "Menu on/off"
   },
   "OCX_PORTAL_VIEWPORT": {
@@ -188,6 +189,7 @@
     "EXPORT": "Export all events"
   },
   "OCX_PAGE_HEADER": {
+    "IMAGE": "Page title logo",
     "MORE_ACTIONS": "More actions",
     "HOME_DEFAULT_ARIA_LABEL": "Go to home page",
     "HOME_ARIA_LABEL": "Go to {{page}} home page"

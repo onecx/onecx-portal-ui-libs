@@ -5,7 +5,7 @@
   .layout-topbar-left {
     background-color: var(--topbar-left-bg-color);
     .layout-menu-button {
-      color: var(--topbar-menu-button-text-color);
+      color: var(--topbar-menu-button-text-color, #ffffff);
       background-color: var(--topbar-menu-button-bg-color);
     }
   }

@@ -1,5 +1,6 @@
 {
   "OCX_HEADER": {
+    "USER_SETTINGS": "Profil und Einstellungen",
     "MENU_TOGGLE": "Menü ein/aus"
   },
   "OCX_PORTAL_VIEWPORT": {
@@ -188,6 +189,7 @@
     "EXPORT": "Alle Ereignisse exportieren"
   },
   "OCX_PAGE_HEADER": {
+    "IMAGE": "Seitentitelbild",
     "MORE_ACTIONS": "Weitere Aktionen",
     "HOME_DEFAULT_ARIA_LABEL": "Zur Startseite navigieren",
     "HOME_ARIA_LABEL": "Zu {{page}} navigieren"

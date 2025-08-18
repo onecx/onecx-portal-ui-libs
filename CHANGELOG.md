@@ -1,3 +1,90 @@
+## [5.47.7](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.47.6...v5.47.7) (2025-08-14)
+
+### Bug Fixes
+
+* adjust shell footer layout ([#880](https://github.com/onecx/onecx-portal-ui-libs/issues/880)) ([57acabf](https://github.com/onecx/onecx-portal-ui-libs/commit/57acabf8d5935bc91bfc980e04983e5c3ca6d37f))
+
+## [5.47.6](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.47.5...v5.47.6) (2025-08-14)
+
+### Bug Fixes
+
+* translation fail should not block other applications ([#877](https://github.com/onecx/onecx-portal-ui-libs/issues/877)) ([2c88779](https://github.com/onecx/onecx-portal-ui-libs/commit/2c88779cd20321fd66b8db497a7410738f6c7b6d))
+
+## [5.47.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.47.4...v5.47.5) (2025-08-12)
+
+### Bug Fixes
+
+* align with v6, improve a11y in search header ([#874](https://github.com/onecx/onecx-portal-ui-libs/issues/874)) ([c453fac](https://github.com/onecx/onecx-portal-ui-libs/commit/c453fac8aa71a1b6bc7176d33a7c963b20197b7d))
+
+## [5.47.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.47.3...v5.47.4) (2025-08-09)
+
+### Bug Fixes
+
+* improve a11y in header ([#868](https://github.com/onecx/onecx-portal-ui-libs/issues/868)) ([3035741](https://github.com/onecx/onecx-portal-ui-libs/commit/3035741ed268ec6c84b49b73391cfe28f4dc9cb5))
+* provide static translation path in PIA SB ([#869](https://github.com/onecx/onecx-portal-ui-libs/issues/869)) ([5467fea](https://github.com/onecx/onecx-portal-ui-libs/commit/5467fea13c7ab901e43646dd8589951a31a82354))
+* remove SearchCriteriaComponent stories file ([#870](https://github.com/onecx/onecx-portal-ui-libs/issues/870)) ([3b78cfb](https://github.com/onecx/onecx-portal-ui-libs/commit/3b78cfbab55a5920d5ec7eb57defa9e2a011e84c))
+
+## [5.47.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.47.2...v5.47.3) (2025-08-07)
+
+### Bug Fixes
+
+* temporarily remove deprecation warnings from PIA components to avoid usage conflicts ([#866](https://github.com/onecx/onecx-portal-ui-libs/issues/866)) ([55134b5](https://github.com/onecx/onecx-portal-ui-libs/commit/55134b506830fbe90d9614f734a950e4dfc3fa4c))
+
+## [5.47.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.47.1...v5.47.2) (2025-08-06)
+
+### Bug Fixes
+
+* adjust translation path provider for tests ([#863](https://github.com/onecx/onecx-portal-ui-libs/issues/863)) ([159476a](https://github.com/onecx/onecx-portal-ui-libs/commit/159476ad65607c1cad60d34789f9366af06c71ff))
+
+## [5.47.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.47.0...v5.47.1) (2025-08-05)
+
+### Bug Fixes
+
+* adjust deprecation message ([#857](https://github.com/onecx/onecx-portal-ui-libs/issues/857)) ([4125c15](https://github.com/onecx/onecx-portal-ui-libs/commit/4125c15e7c8b7263e2a310bce30f292d8e3e7f29))
+
+## [5.47.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.46.1...v5.47.0) (2025-07-29)
+
+### Features
+
+* adapt translation loading ([#831](https://github.com/onecx/onecx-portal-ui-libs/issues/831)) ([021b199](https://github.com/onecx/onecx-portal-ui-libs/commit/021b19970684a3431ae80a2f85432a69277aa997))
+
+## [5.46.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.46.0...v5.46.1) (2025-07-28)
+
+### Bug Fixes
+
+* reduce x padding for page content ([#853](https://github.com/onecx/onecx-portal-ui-libs/issues/853)) ([7d82f05](https://github.com/onecx/onecx-portal-ui-libs/commit/7d82f058798eaf23ff0b25c951a7779f39580d9b))
+* user footer tag for shell footer (a11y) ([#850](https://github.com/onecx/onecx-portal-ui-libs/issues/850)) ([5d5f151](https://github.com/onecx/onecx-portal-ui-libs/commit/5d5f15181384e6c389154a8adb34ce78487d49c7))
+
+## [5.46.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.45.1...v5.46.0) (2025-07-21)
+
+### Features
+
+* change channel of v5 branch ([#840](https://github.com/onecx/onecx-portal-ui-libs/issues/840)) ([552b50a](https://github.com/onecx/onecx-portal-ui-libs/commit/552b50a271ec6d783e239253e590a35077f64f26))
+* use slots: shell-footer and shell-header-left ([#839](https://github.com/onecx/onecx-portal-ui-libs/issues/839)) ([8d6d88a](https://github.com/onecx/onecx-portal-ui-libs/commit/8d6d88a5a20cf1d0b42a4a0d7919492f7ac79351))
+
+### Bug Fixes
+
+* Fix v5 release ([b544fde](https://github.com/onecx/onecx-portal-ui-libs/commit/b544fde9df0d89abe693ac93ba7b4e000195f2b7))
+* pass correct password to createUserAndDatabase ([#832](https://github.com/onecx/onecx-portal-ui-libs/issues/832)) ([015d3c0](https://github.com/onecx/onecx-portal-ui-libs/commit/015d3c0f66f48f7f04ade2bce7ba1cea862644e5))
+
+## [5.45.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.45.0...v5.45.1) (2025-07-17)
+
+### Bug Fixes
+
+* improve topbar layout and re-set mobile breakpoint ([#817](https://github.com/onecx/onecx-portal-ui-libs/issues/817)) ([e9e82d0](https://github.com/onecx/onecx-portal-ui-libs/commit/e9e82d03ec0723dc58f5cdc7e8289bd8780ccc6b))
+
+## [5.45.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.44.0...v5.45.0) (2025-07-15)
+
+### Features
+
+* cleaned bff testcontainer ([#804](https://github.com/onecx/onecx-portal-ui-libs/issues/804)) ([12716dc](https://github.com/onecx/onecx-portal-ui-libs/commit/12716dc6750f952ab062081749678950d28801b8))
+* cleaned UI testcontainer ([#803](https://github.com/onecx/onecx-portal-ui-libs/issues/803)) ([b6ecd5b](https://github.com/onecx/onecx-portal-ui-libs/commit/b6ecd5b85abf75da7e4f3bc7cb95928331dc7dd8))
+* deprecate unused data from the UserProfileTopic ([#783](https://github.com/onecx/onecx-portal-ui-libs/issues/783)) ([0488363](https://github.com/onecx/onecx-portal-ui-libs/commit/04883632ea6953b432bbef4107a0e4ee98bc387c)), closes [#782](https://github.com/onecx/onecx-portal-ui-libs/issues/782) [#784](https://github.com/onecx/onecx-portal-ui-libs/issues/784) [#779](https://github.com/onecx/onecx-portal-ui-libs/issues/779)
+
+### Bug Fixes
+
+* topic publish await v5 ([#815](https://github.com/onecx/onecx-portal-ui-libs/issues/815)) ([1739d93](https://github.com/onecx/onecx-portal-ui-libs/commit/1739d934f3081ee8f310240dea9823049702779b))
+
 ## [5.44.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.43.0...v5.44.0) (2025-07-03)
 
 ### Features
