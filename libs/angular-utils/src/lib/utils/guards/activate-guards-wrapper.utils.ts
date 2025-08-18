@@ -82,16 +82,25 @@ export class ActivateGuardsWrapper {
     combineFn: (results: GuardResult[]) => T
   ): Promise<T> {
     if (!route.routeConfig) {
+      console.warn('No route configuration found for canActivate guard.')
       logGuardsDebug('No route configuration found for canActivate guard.')
       return Promise.resolve(true as T)
     }
 
     const canActivateFunctions = guards.map((guard) => this.mapActivateGuardToFunctionReturningPromise(guard))
 
-    const canActivateResults = Promise.all(canActivateFunctions.map((fn) => fn(route, state)))
+    const canActivateResults = Promise.all(
+      canActivateFunctions.map((fn) => {
+        try {
+          return fn(route, state)
+        } catch (error) {
+          console.warn('Guard does not implement canActivate:', fn)
+          return Promise.resolve(true) // Default to true if guard does not implement canActivate
+        }
+      })
+    )
     return canActivateResults.then((results) => combineFn(results))
   }
-
   private mapActivateGuardToFunctionReturningPromise(
     guard: Type<CanActivate> | CanActivateFn
   ): (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => Promise<GuardResult> {
@@ -99,12 +108,9 @@ export class ActivateGuardsWrapper {
       // guard for CanActivate is not a guard instance but class definition
       const guardInstance = this.injector.get(guard)
       return (route, state) => resolveToPromise(guardInstance.canActivate(route, state))
-    } else if (typeof guard === 'function') {
-      return (route, state) => resolveToPromise(guard(route, state))
     }
 
-    console.warn('Guard does not implement canActivate:', guard)
-    return () => Promise.resolve(true)
+    return (route, state) => resolveToPromise(guard(route, state))
   }
 
   private isCanActivateClassBasedGuard(guard: Type<CanActivate> | CanActivateFn): guard is Type<CanActivate> {
