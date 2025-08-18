@@ -18,7 +18,7 @@ export type GuardResultRequest = {
  */
 export type GuardResultResponse = boolean
 
-const GUARDS_GATHERER_NAME = 'GuardGatherer'
+export const GUARDS_GATHERER_NAME = 'GuardGatherer'
 
 /**
  * GuardsGatherer is used to gather results of navigation guards.
