@@ -35,10 +35,10 @@
           <p-skeleton width="10rem"></p-skeleton>
         </div>
       </ng-template>
-      <div class="header" *ngIf="!loading; else skeletonBar">
+      <section class="header" *ngIf="!loading; else skeletonBar" [attr.aria-label]="'Page Header'">
         <h1 id="page-header" *ngIf="!!header">{{ header }}</h1>
-        <h2 id="page-subheader" *ngIf="!!subheader">{{ subheader }}</h2>
-      </div>
+        <div id="page-subheader" *ngIf="!!subheader" role="note">{{ subheader }}</div>
+      </section>
     </div>
 
     <div class="action-items-wrap mt-2 md:mt-0">

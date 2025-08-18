@@ -118,7 +118,8 @@ export interface DataViewControlTranslations {
 }
 
 /**
- * @deprecated Will be split up in separate compoments for better abstraction layers
+ * TODO: deprecate this before core apps are migrated to v6
+ * deprecated Will be split up in separate compoments for better abstraction layers
  */
 @Component({
   selector: 'ocx-data-view-controls',
@@ -138,7 +139,8 @@ export class DataViewControlsComponent implements OnInit, OnChanges {
   @Input() columnDefinitions: { field: string; header: string; active?: boolean; translationPrefix?: string }[] = []
   @Input() columnTemplates: ColumnViewTemplate[] = []
   /**
-   * @deprecated Instead, please use the `translations` input and specify the `templatePickerDropdownPlaceholder` property.
+   * TODO: deprecate this before core apps are migrated to v6
+   * deprecated Instead, please use the `translations` input and specify the `templatePickerDropdownPlaceholder` property.
    *
    * Will be overwritten by `translations.templatePickerDropdownPlaceholder` if it is specified.
    */
@@ -215,8 +217,7 @@ export class DataViewControlsComponent implements OnInit, OnChanges {
         saveButtonLabel: this.translations?.columnDialogSaveButtonLabel,
       },
       header:
-        this.translations?.columnDialogHeaderText ||
-        this.translate.instant('OCX_DATA_VIEW_CONTROLS.DIALOG_TITLE'),
+        this.translations?.columnDialogHeaderText || this.translate.instant('OCX_DATA_VIEW_CONTROLS.DIALOG_TITLE'),
       width: '70%',
       contentStyle: { 'max-height': '500px', overflow: 'auto', padding: 0 },
     })

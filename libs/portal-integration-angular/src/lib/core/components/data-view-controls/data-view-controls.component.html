@@ -7,10 +7,16 @@
     [(ngModel)]="selectedViewMode"
     optionLabel="id"
     (onChange)="viewModeChange($event.value)"
+    [ariaLabel]="'View Modes'"
   >
     <ng-template let-item pTemplate>
-      <i [class]="item.icon" [pTooltip]="item.tooltip || (item.tooltipKey | translate)" tooltipPosition="top"></i>
-      <label style="display: none" id="{{item.id}}">{{item.labelKey | translate}}</label>
+      <i
+        [class]="item.icon"
+        [attr.aria-label]="item.tooltip || (item.labelKey | translate)"
+        [pTooltip]="item.tooltip || (item.tooltipKey | translate)"
+        tooltipPosition="top"
+      ></i>
+      <label style="display: none" [id]="item.id" aria-hidden="true">{{ item.labelKey | translate }}</label>
     </ng-template>
   </p-selectButton>
 
@@ -50,7 +56,9 @@
         tooltipPosition="top"
         (input)="searchFilterInput($event)"
       />
-      <label for="data-view-control-filter">{{ translations?.filterInputPlaceholder || 'Filter' }}</label>
+      <label for="data-view-control-filter" aria-hidden="true">
+        {{ translations?.filterInputPlaceholder || 'Filter' }}
+      </label>
     </span>
     <span
       tabindex="0"
@@ -60,7 +68,7 @@
       (keydown.enter)="onClearFilter()"
       (keydown.space)="onClearFilter()"
     >
-      <i class="pi pi-filter-slash"></i>
+      <i class="pi pi-filter-slash" aria-hidden="true"></i>
     </span>
   </div>
 
@@ -75,18 +83,18 @@
         (onChange)="selectSorting($event)"
         [ariaLabel]="('OCX_DATA_VIEW_CONTROLS.DROPDOWN.ARIA_LABEL' | translate)"
       ></p-dropdown>
-      <label for="data-view-control-sortby" class="white-space-nowrap"
-        >{{ translations?.sortDropdownTooltip || 'Sort by' }}</label
-      >
+      <label for="data-view-control-sortby" class="white-space-nowrap" aria-hidden="true">
+        {{ translations?.sortDropdownTooltip || 'Sort by' }}
+      </label>
     </span>
     <p-toggleButton
       [(ngModel)]="selectedSortDirection"
-      onIcon="pi pi-sort-amount-up"
-      offIcon="pi pi-sort-amount-down"
+      [onIcon]="'pi pi-sort-amount-up'"
+      [offIcon]="'pi pi-sort-amount-down'"
       (onChange)="sortDirection($event)"
+      [ariaLabel]="!selectedSortDirection ? (translations?.sortOrderTooltips?.ascending || ('OCX_DATA_VIEW_CONTROLS.TOGGLE_BUTTON.ASCENDING_TOOLTIP' | translate)) : (translations?.sortOrderTooltips?.descending || ('OCX_DATA_VIEW_CONTROLS.TOGGLE_BUTTON.DESCENDING_TOOLTIP' | translate))"
       [pTooltip]="!selectedSortDirection ? (translations?.sortOrderTooltips?.ascending || ('OCX_DATA_VIEW_CONTROLS.TOGGLE_BUTTON.ASCENDING_TOOLTIP' | translate)) : (translations?.sortOrderTooltips?.descending || ('OCX_DATA_VIEW_CONTROLS.TOGGLE_BUTTON.DESCENDING_TOOLTIP' | translate))"
       tooltipPosition="top"
-      [ariaLabel]="!selectedSortDirection ? (translations?.sortOrderTooltips?.ascending || ('OCX_DATA_VIEW_CONTROLS.TOGGLE_BUTTON.ASCENDING_TOOLTIP' | translate)) : (translations?.sortOrderTooltips?.descending || ('OCX_DATA_VIEW_CONTROLS.TOGGLE_BUTTON.DESCENDING_TOOLTIP' | translate))"
     ></p-toggleButton>
   </div>
 </div>

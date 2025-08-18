@@ -16,7 +16,7 @@ runs:
         cache: 'npm'
 
     - name: Set SHAs for affected commands
-      uses: nrwl/nx-set-shas@v3
+      uses: nrwl/nx-set-shas@v4
 
     - name: Install deps
       run: npm ci
