@@ -110,7 +110,14 @@ export class DeactivateGuardsWrapper {
     const canDeactivateFunctions = guards.map((guard) => this.mapDeactivateGuardToFunctionReturningPromise(guard))
 
     const canDeactivateResults = Promise.all(
-      canDeactivateFunctions.map((fn) => fn(component, currentRoute, currentState, nextState))
+      canDeactivateFunctions.map((fn) => {
+        try {
+          return fn(component, currentRoute, currentState, nextState)
+        } catch (error) {
+          console.warn('Guard does not implement canDeactivate:', fn)
+          return Promise.resolve(true) // Default to true if guard does not implement canDeactivate
+        }
+      })
     )
     return canDeactivateResults.then((results) => combineFn(results))
   }
@@ -128,13 +135,10 @@ export class DeactivateGuardsWrapper {
       const guardInstance = this.injector.get(guard)
       return (component, currentRoute, currentState, nextState) =>
         resolveToPromise(guardInstance.canDeactivate(component, currentRoute, currentState, nextState))
-    } else if (typeof guard === 'function') {
-      return (component, currentRoute, currentState, nextState) =>
-        resolveToPromise(guard(component, currentRoute, currentState, nextState))
     }
 
-    console.warn('Guard does not implement canDeactivate:', guard)
-    return () => Promise.resolve(true)
+    return (component, currentRoute, currentState, nextState) =>
+      resolveToPromise(guard(component, currentRoute, currentState, nextState))
   }
 
   private isCanDeactivateClassBasedGuard(
