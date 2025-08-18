@@ -1,27 +1,28 @@
-<div class="layout-topbar_flex" id="ocx_header" role="banner">
-  <div
+<header class="layout-topbar_flex" id="ocx_header">
+  <section
     class="layout-topbar-left relative flex justify-content-center align-items-center"
     [ngClass]="{'vertical-menu': !isHorizontalMenu}"
+    [attr.aria-label]="'Left'"
   >
     <ocx-slot
       name="onecx-shell-header-left"
       class="flex flex-row flex-wrap align-items-center column-gap-3 row-gap-1"
-      [inputs]="{ imageStyleClass: 'h-3rem vertical-align-middle' }"
+      [inputs]="{ imageStyleClass: 'max-h-3rem max-w-9rem vertical-align-middle' }"
       [outputs]="{ imageLoadingFailed: logoLoadingEmitter }"
     >
       <ng-template #skeleton>
         <div class="flex align-items-center h-full justify-content-center" style="width: 26px">
-          <p-skeleton shape="circle" size="2rem" class="h-full flex align-items-center"></p-skeleton>
+          <p-skeleton size="2rem" class="h-full flex align-items-center"></p-skeleton>
         </div>
       </ng-template>
     </ocx-slot>
     <div *ngIf="themeLogoLoadingFailed"><!-- portal logo --></div>
 
-    <a
+    <button
       id="ocx_vertical_menu_action_toggle"
-      class="layout-menu-button"
-      (click)="onMenuButtonClick($event)"
+      class="layout-menu-button border-none"
       pRipple
+      (click)="onMenuButtonClick($event)"
       [attr.aria-label]="'OCX_HEADER.MENU_TOGGLE' | translate"
       [pTooltip]="'OCX_HEADER.MENU_TOGGLE' | translate"
       tooltipPosition="top"
@@ -30,13 +31,13 @@
       <span
         id="ocx_vertical_menu_action_toggle_icon"
         class="pi"
-        [ngClass]="'pi-chevron-' + (isStaticMenuVisible ? 'left' : 'right')"
+        [ngClass]="'pi-chevron-' + (isStaticalMenu ? 'left' : 'right')"
         aria-hidden="true"
       ></span>
-    </a>
-  </div>
+    </button>
+  </section>
 
-  <div class="layout-topbar-right">
+  <section class="layout-topbar-right" [attr.aria-label]="'Topbar'">
     <div class="layout-topbar-actions-left">
       <ng-content></ng-content>
     </div>
@@ -49,5 +50,5 @@
         </ng-template>
       </ocx-slot>
     </div>
-  </div>
-</div>
+  </section>
+</header>
