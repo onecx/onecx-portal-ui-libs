@@ -16,11 +16,6 @@ export class HealthChecker {
     failureThreshold: 3,
   }
 
-  constructor() {
-    // Platform config will be set globally by PlatformManager
-    // No need to set it here to avoid race conditions
-  }
-
   /**
    * Configure heartbeat settings from platform configuration
    */
