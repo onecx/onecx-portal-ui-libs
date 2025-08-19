@@ -5,7 +5,8 @@
   "peerDependencies": {
     "tslib": "^2.3.0",
     "testcontainers": "^10.28.0",
-    "axios": "^1.10.0"
+    "axios": "^1.10.0",
+    "ajv": "^8.17.1"
   },
   "type": "commonjs",
   "main": "./src/index.js",
