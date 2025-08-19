@@ -14,7 +14,7 @@ export interface ValidationResult {
 
 export class JsonValidator {
   private ajv: Ajv
-  private readonly CONFIG_FILE_PATTERN = /(?:^|.*\.)integration-tests\.json$/
+  private readonly CONFIG_FILE_PATTERN = /integration-tests\.json$/
   private readonly SEARCH_ROOT = path.join(__dirname, '../../../')
   private readonly SCHEMA = 'integration-tests.schema.json'
 
