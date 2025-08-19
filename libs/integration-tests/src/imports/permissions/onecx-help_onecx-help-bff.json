@@ -1,0 +1,21 @@
+{
+  "name": "onecx-help-bff",
+  "permissions": [
+    {
+      "resource": "help",
+      "action": "read"
+    },
+    {
+      "resource": "help",
+      "action": "write"
+    },
+    {
+      "resource": "help",
+      "action": "delete"
+    },
+    {
+      "resource": "product",
+      "action": "read"
+    }
+  ]
+}

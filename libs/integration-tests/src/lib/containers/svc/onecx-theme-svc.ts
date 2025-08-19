@@ -9,9 +9,7 @@ export class ThemeSvcContainer extends SvcContainer {
     keycloakContainer: StartedOnecxKeycloakContainer
   ) {
     super(image, { databaseContainer, keycloakContainer })
-    this.withNetworkAliases('onecx-theme-svc')
-    this.withDatabaseUsername('onecx_theme')
-    this.withDatabasePassword('onecx_theme')
+    this.withNetworkAliases('onecx-theme-svc').withDatabaseUsername('onecx_theme').withDatabasePassword('onecx_theme')
   }
 }
 

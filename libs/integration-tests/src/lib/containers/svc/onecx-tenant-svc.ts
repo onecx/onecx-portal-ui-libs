@@ -10,8 +10,8 @@ export class TenantSvcContainer extends SvcContainer {
   ) {
     super(image, { databaseContainer, keycloakContainer })
     this.withNetworkAliases('onecx-tenant-svc')
-    this.withDatabaseUsername('onecx_tenant')
-    this.withDatabasePassword('onecx_tenant')
+      .withDatabaseUsername('onecx_tenant')
+      .withDatabasePassword('onecx_tenant')
   }
 }
 

@@ -1,0 +1,411 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "OneCX Integration Tests Platform Configuration",
+  "description": "Configuration schema for OneCX platform integration tests",
+  "type": "object",
+  "properties": {
+    "platformConfig": {
+      "type": "object",
+      "description": "Platform configuration settings",
+      "properties": {
+        "startDefaultSetup": {
+          "type": "boolean",
+          "description": "Whether to run the minimal setup of the onecx Platform",
+          "default": true
+        },
+        "importData": {
+          "type": "boolean",
+          "description": "Whether to run data import after starting services",
+          "default": true
+        },
+        "enableLogging": {
+          "oneOf": [
+            {
+              "type": "boolean",
+              "description": "Enable or disable all logging"
+            },
+            {
+              "type": "array",
+              "description": "Array of service names to enable logging for",
+              "items": {
+                "type": "string"
+              }
+            }
+          ],
+          "default": true
+        },
+        "hearthbeat": {
+          "type": "object",
+          "description": "Heartbeat monitoring configuration",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Whether to enable heartbeat monitoring",
+              "default": false
+            },
+            "interval": {
+              "type": "number",
+              "description": "Heartbeat check interval in milliseconds",
+              "default": 10000,
+              "minimum": 1000
+            },
+            "failureThreshold": {
+              "type": "number",
+              "description": "Number of consecutive failures before logging error",
+              "default": 3,
+              "minimum": 1
+            }
+          },
+          "required": ["enabled"]
+        },
+        "platformOverrides": {
+          "type": "object",
+          "description": "Image overrides for testing against different images",
+          "properties": {
+            "core": {
+              "type": "object",
+              "description": "Core service image overrides",
+              "properties": {
+                "postgres": {
+                  "type": "object",
+                  "properties": {
+                    "image": {
+                      "type": "string",
+                      "description": "PostgreSQL Docker image"
+                    }
+                  }
+                },
+                "keycloak": {
+                  "type": "object",
+                  "properties": {
+                    "image": {
+                      "type": "string",
+                      "description": "Keycloak Docker image"
+                    }
+                  }
+                },
+                "importmanager": {
+                  "type": "object",
+                  "properties": {
+                    "image": {
+                      "type": "string",
+                      "description": "Import manager Docker image"
+                    }
+                  }
+                }
+              }
+            },
+            "services": {
+              "type": "object",
+              "description": "Backend service image overrides",
+              "properties": {
+                "iamKc": {
+                  "type": "object",
+                  "properties": {
+                    "image": {
+                      "type": "string",
+                      "description": "IAM Keycloak service Docker image"
+                    }
+                  }
+                },
+                "workspace": {
+                  "type": "object",
+                  "properties": {
+                    "image": {
+                      "type": "string",
+                      "description": "Workspace service Docker image"
+                    }
+                  }
+                },
+                "userProfile": {
+                  "type": "object",
+                  "properties": {
+                    "image": {
+                      "type": "string",
+                      "description": "User Profile service Docker image"
+                    }
+                  }
+                },
+                "theme": {
+                  "type": "object",
+                  "properties": {
+                    "image": {
+                      "type": "string",
+                      "description": "Theme service Docker image"
+                    }
+                  }
+                },
+                "tenant": {
+                  "type": "object",
+                  "properties": {
+                    "image": {
+                      "type": "string",
+                      "description": "Tenant service Docker image"
+                    }
+                  }
+                },
+                "productStore": {
+                  "type": "object",
+                  "properties": {
+                    "image": {
+                      "type": "string",
+                      "description": "Product Store service Docker image"
+                    }
+                  }
+                },
+                "permission": {
+                  "type": "object",
+                  "properties": {
+                    "image": {
+                      "type": "string",
+                      "description": "Permission service Docker image"
+                    }
+                  }
+                }
+              }
+            },
+            "bff": {
+              "type": "object",
+              "description": "BFF service image overrides",
+              "properties": {
+                "shell": {
+                  "type": "object",
+                  "properties": {
+                    "image": {
+                      "type": "string",
+                      "description": "Shell BFF Docker image"
+                    }
+                  }
+                }
+              }
+            },
+            "ui": {
+              "type": "object",
+              "description": "UI service image overrides",
+              "properties": {
+                "shell": {
+                  "type": "object",
+                  "properties": {
+                    "image": {
+                      "type": "string",
+                      "description": "Shell UI Docker image"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "container": {
+          "type": "object",
+          "description": "Custom container configurations",
+          "properties": {
+            "service": {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions/customSvcContainer"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/customSvcContainer"
+                  }
+                }
+              ]
+            },
+            "bff": {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions/customBffContainer"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/customBffContainer"
+                  }
+                }
+              ]
+            },
+            "ui": {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions/customUiContainer"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/customUiContainer"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "testSuite": {
+      "type": "object",
+      "description": "Test suite configuration",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the test suite"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the test suite"
+        },
+        "timeout": {
+          "type": "number",
+          "description": "Test timeout in milliseconds",
+          "default": 30000
+        },
+        "parallel": {
+          "type": "boolean",
+          "description": "Whether to run tests in parallel",
+          "default": false
+        }
+      }
+    },
+    "healthCheck": {
+      "type": "object",
+      "description": "Health check monitoring configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether to enable periodic health check monitoring",
+          "default": false
+        },
+        "interval": {
+          "type": "number",
+          "description": "Health check interval in milliseconds",
+          "default": 10000,
+          "minimum": 1000
+        },
+        "failureThreshold": {
+          "type": "number",
+          "description": "Number of consecutive failures before logging error",
+          "default": 3,
+          "minimum": 1
+        }
+      }
+    }
+  },
+  "definitions": {
+    "customSvcContainer": {
+      "type": "object",
+      "description": "Custom service container configuration",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Container name"
+        },
+        "image": {
+          "type": "string",
+          "description": "Docker image"
+        },
+        "ports": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "internal": {
+                "type": "number"
+              },
+              "external": {
+                "type": "number"
+              }
+            },
+            "required": ["internal", "external"]
+          }
+        },
+        "environment": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "volumes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["name", "image"]
+    },
+    "customBffContainer": {
+      "type": "object",
+      "description": "Custom BFF container configuration",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Container name"
+        },
+        "image": {
+          "type": "string",
+          "description": "Docker image"
+        },
+        "ports": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "internal": {
+                "type": "number"
+              },
+              "external": {
+                "type": "number"
+              }
+            },
+            "required": ["internal", "external"]
+          }
+        },
+        "environment": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["name", "image"]
+    },
+    "customUiContainer": {
+      "type": "object",
+      "description": "Custom UI container configuration",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Container name"
+        },
+        "image": {
+          "type": "string",
+          "description": "Docker image"
+        },
+        "ports": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "internal": {
+                "type": "number"
+              },
+              "external": {
+                "type": "number"
+              }
+            },
+            "required": ["internal", "external"]
+          }
+        },
+        "environment": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["name", "image"]
+    }
+  },
+  "required": ["platformConfig"]
+}

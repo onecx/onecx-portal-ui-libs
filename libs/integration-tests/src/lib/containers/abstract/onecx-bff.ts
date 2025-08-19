@@ -1,6 +1,6 @@
 import { AbstractStartedContainer, GenericContainer, StartedTestContainer, Wait } from 'testcontainers'
 import { HealthCheck } from 'testcontainers/build/types'
-import { BffDetails } from '../../model/bff.model'
+import { BffDetails } from '../../model/bff.interface'
 import { StartedOnecxKeycloakContainer } from '../core/onecx-keycloak'
 
 export abstract class BffContainer extends GenericContainer {
@@ -9,6 +9,8 @@ export abstract class BffContainer extends GenericContainer {
   }
 
   private port = 8080
+
+  protected loggingEnabled = false
 
   constructor(
     image: string,
@@ -44,6 +46,11 @@ export abstract class BffContainer extends GenericContainer {
     return this.port
   }
 
+  enableLogging(log: boolean): this {
+    this.loggingEnabled = log
+    return this
+  }
+
   override async start(): Promise<StartedBffContainer> {
     // Apply the default health check explicitly if it has not been set.
     // This ensures the healthcheck is correctly registered before container startup
@@ -54,7 +61,7 @@ export abstract class BffContainer extends GenericContainer {
 
     this.withEnvironment({
       ...this.environment,
-      ONECX_PERMISSIONS_PROCUCT_NAME: this.details.permissionsProductName,
+      ONECX_PERMISSIONS_PRODUCT_NAME: this.details.permissionsProductName,
       KC_REALM: `${this.keycloakContainer.getRealm()}`,
       QUARKUS_OIDC_AUTH_SERVER_URL: `http://${this.keycloakContainer.getNetworkAliases()[0]}:${this.keycloakContainer.getPort()}/realms/${this.keycloakContainer.getRealm()}`,
       QUARKUS_OIDC_TOKEN_ISSUER: `http://${this.keycloakContainer.getNetworkAliases()[0]}/realms/${this.keycloakContainer.getRealm()}`,
@@ -64,13 +71,15 @@ export abstract class BffContainer extends GenericContainer {
       TKIT_OIDC_HEALTH_ENABLED: 'false',
     })
 
-      .withLogConsumer((stream) => {
-        stream.on('data', (line) => console.log(`${this.details.permissionsProductName}: `, line))
-        stream.on('err', (line) => console.error(`${this.details.permissionsProductName}: `, line))
-        stream.on('end', () => console.log(`${this.details.permissionsProductName}: Stream closed`))
+    if (this.loggingEnabled) {
+      this.withLogConsumer((stream) => {
+        stream.on('data', (line) => console.log(`${this.networkAliases[0]}: `, line))
+        stream.on('err', (line) => console.error(`${this.networkAliases[0]}: `, line))
+        stream.on('end', () => console.log(`${this.networkAliases[0]}: Stream closed`))
       })
+    }
 
-      .withExposedPorts(this.port)
+    this.withExposedPorts(this.port)
 
       .withWaitStrategy(Wait.forAll([Wait.forHealthCheck(), Wait.forListeningPorts()]))
     return new StartedBffContainer(await super.start(), this.details, this.networkAliases, this.port)

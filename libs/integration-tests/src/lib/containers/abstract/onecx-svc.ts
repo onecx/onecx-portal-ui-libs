@@ -1,6 +1,6 @@
 import { AbstractStartedContainer, GenericContainer, StartedTestContainer, Wait } from 'testcontainers'
 import { HealthCheck } from 'testcontainers/build/types'
-import { SvcDetails, SvcContainerServices } from '../../model/service.model'
+import { SvcDetails, SvcContainerServices } from '../../model/svc.interface'
 import { getCommonEnvironmentVariables } from '../../utils/common-env'
 
 export abstract class SvcContainer extends GenericContainer {
@@ -10,6 +10,8 @@ export abstract class SvcContainer extends GenericContainer {
   }
 
   protected shouldCreateDatabase = true
+
+  protected loggingEnabled = false
 
   private port = 8080
 
@@ -57,6 +59,11 @@ export abstract class SvcContainer extends GenericContainer {
     this.shouldCreateDatabase = shouldStart
   }
 
+  enableLogging(log: boolean): this {
+    this.loggingEnabled = log
+    return this
+  }
+
   override async start(): Promise<StartedSvcContainer> {
     if (this.shouldCreateDatabase) {
       this.validateDatabaseCredentials()
@@ -79,15 +86,16 @@ export abstract class SvcContainer extends GenericContainer {
       QUARKUS_DATASOURCE_JDBC_URL: `jdbc:postgresql://${this.services.databaseContainer?.getNetworkAliases()[0]}:${this.services.databaseContainer?.getPort()}/${this.details.databaseUsername}?sslmode=disable`,
       TKIT_DATAIMPORT_ENABLED: 'true',
       ONECX_TENANT_CACHE_ENABLED: 'false',
-    })
-      .withEnvironment(getCommonEnvironmentVariables(this.services.keycloakContainer))
-
-      .withLogConsumer((stream) => {
-        stream.on('data', (line) => console.log(`${this.details.databaseUsername}: `, line))
-        stream.on('err', (line) => console.error(`${this.details.databaseUsername}: `, line))
-        stream.on('end', () => console.log(`${this.details.databaseUsername}: Stream closed`))
+    }).withEnvironment(getCommonEnvironmentVariables(this.services.keycloakContainer))
+    if (this.loggingEnabled) {
+      this.withLogConsumer((stream) => {
+        stream.on('data', (line) => console.log(`${this.networkAliases[0]}: `, line))
+        stream.on('err', (line) => console.error(`${this.networkAliases[0]}: `, line))
+        stream.on('end', () => console.log(`${this.networkAliases[0]}: Stream closed`))
       })
-      .withWaitStrategy(Wait.forAll([Wait.forHealthCheck(), Wait.forListeningPorts()]))
+    }
+
+    this.withWaitStrategy(Wait.forAll([Wait.forHealthCheck(), Wait.forListeningPorts()]))
     return new StartedSvcContainer(await super.start(), this.details, this.networkAliases, this.port)
   }
 }

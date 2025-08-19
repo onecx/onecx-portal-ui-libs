@@ -2,19 +2,18 @@ import { Network, StartedNetwork } from 'testcontainers'
 import { OnecxKeycloakContainer, StartedOnecxKeycloakContainer } from '../../containers/core/onecx-keycloak'
 import { OnecxPostgresContainer, StartedOnecxPostgresContainer } from '../../containers/core/onecx-postgres'
 import axios from 'axios'
-
-const imagePg = 'docker.io/library/postgres:13.4'
-const imageKc = 'quay.io/keycloak/keycloak:23.0.4'
+import { KEYCLOAK, POSTGRES } from '../../config/env'
 
 xdescribe('Default Keycloak Testcontainer', () => {
   let pgContainer: StartedOnecxPostgresContainer
   let kcContainer: StartedOnecxKeycloakContainer
+  let network: StartedNetwork
 
   beforeAll(async () => {
-    const network: StartedNetwork = await new Network().start()
-    pgContainer = await new OnecxPostgresContainer(imagePg).withNetwork(network).start()
-    kcContainer = await new OnecxKeycloakContainer(imageKc, pgContainer).withNetwork(network).start()
-  })
+    network = await new Network().start()
+    pgContainer = await new OnecxPostgresContainer(POSTGRES).withNetwork(network).start()
+    kcContainer = await new OnecxKeycloakContainer(KEYCLOAK, pgContainer).withNetwork(network).start()
+  }, 120_000)
 
   it('should set default environment values', () => {
     expect(kcContainer.getRealm()).toBe('onecx')
@@ -58,5 +57,6 @@ xdescribe('Default Keycloak Testcontainer', () => {
   afterAll(async () => {
     await kcContainer.stop()
     await pgContainer.stop()
+    await network.stop()
   })
 })

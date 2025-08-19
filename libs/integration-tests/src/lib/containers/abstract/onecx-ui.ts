@@ -1,5 +1,5 @@
 import { AbstractStartedContainer, GenericContainer, StartedTestContainer } from 'testcontainers'
-import { UiDetails } from '../../model/ui.model'
+import { UiDetails } from '../../model/ui.interface'
 
 export abstract class UiContainer extends GenericContainer {
   private details: UiDetails = {
@@ -9,6 +9,8 @@ export abstract class UiContainer extends GenericContainer {
   }
 
   private port = 8080
+
+  protected loggingEnabled = false
 
   constructor(image: string) {
     super(image)
@@ -34,6 +36,11 @@ export abstract class UiContainer extends GenericContainer {
     return this
   }
 
+  enableLogging(log: boolean): this {
+    this.loggingEnabled = log
+    return this
+  }
+
   override async start(): Promise<StartedUiContainer> {
     this.withEnvironment({
       ...this.environment,
@@ -42,13 +49,15 @@ export abstract class UiContainer extends GenericContainer {
       PRODUCT_NAME: `${this.details.productName}`,
     })
 
-      .withLogConsumer((stream) => {
-        stream.on('data', (line) => console.log(`${this.details.appBaseHref}: `, line))
-        stream.on('err', (line) => console.error(`${this.details.appBaseHref}: `, line))
-        stream.on('end', () => console.log(`${this.details.appBaseHref}: Stream closed`))
+    if (this.loggingEnabled) {
+      this.withLogConsumer((stream) => {
+        stream.on('data', (line) => console.log(`${this.networkAliases[0]}: `, line))
+        stream.on('err', (line) => console.error(`${this.networkAliases[0]}: `, line))
+        stream.on('end', () => console.log(`${this.networkAliases[0]}: Stream closed`))
       })
+    }
 
-      .withExposedPorts(this.port)
+    this.withExposedPorts(this.port)
 
     return new StartedUiContainer(await super.start(), this.details, this.networkAliases, this.port)
   }
