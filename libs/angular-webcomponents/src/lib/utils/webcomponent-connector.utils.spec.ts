@@ -16,7 +16,7 @@ import {
 import { AppStateService, ShellCapabilityService } from '@onecx/angular-integration-interface'
 import { FakeTopic, provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { WebcomponentConnnector } from './webcomponent-connector.utils'
-import { of, ReplaySubject, Subject } from 'rxjs'
+import { ReplaySubject, Subject } from 'rxjs'
 import { Location } from '@angular/common'
 import { Route } from '@onecx/integration-interface'
 
@@ -85,6 +85,7 @@ describe('WebcomponentConnnector', () => {
     connector['capabilityService'] = mockCapabilityService
     mockGuardsGatherer = TestBed.inject(GuardsGatherer)
     mockAppStateService = TestBed.inject(AppStateService)
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
 
     changeLocation(locationPathMock)
@@ -392,6 +393,4 @@ describe('WebcomponentConnnector', () => {
     expect(spy).not.toHaveBeenCalled()
     expect(mockRouter.navigateByUrl).not.toHaveBeenCalled()
   })
-
-  // it('should stop listening to events on disconnect', () => {})
 })
