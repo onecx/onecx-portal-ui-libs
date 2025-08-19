@@ -75,7 +75,8 @@ describe('Gatherer', () => {
 
     expect(consoleLogSpy).toHaveBeenCalledWith('Gatherer test: 1 received request request4')
     expect(consoleLogSpy).toHaveBeenCalledWith(
-      'Gatherer test: 1 answered request request4 with response", "responseGatherer2: request4'
+      'Gatherer test: 1 answered request request4 with response',
+      'responseGatherer2: request4'
     )
 
     consoleLogSpy.mockRestore()
