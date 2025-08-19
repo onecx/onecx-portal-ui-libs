@@ -18,7 +18,7 @@ function runSonarForLib(lib) {
     process.exit(1)
   }
 
-  execSync(`npx nx run-many -t test -p ${lib}`, { stdio: 'inherit' })
+  execSync(`npx nx run ${lib}:test`, { stdio: 'inherit' })
   execSync('bash normalize-lcov.sh', { stdio: 'inherit' })
   process.chdir(`libs/${lib}`)
   execSync('npx sonarqube-scanner', { stdio: 'inherit' })
