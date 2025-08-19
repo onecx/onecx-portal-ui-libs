@@ -153,7 +153,7 @@ export class WebcomponentConnnector {
         const guardMode = this.guardsNavigationStateController.getMode(guardsNavigationState)
 
         switch (guardMode) {
-          case GUARD_MODE.NAVIGATION_REQUESTED:
+          case GUARD_MODE.NAVIGATION_REQUESTED: {
             const guardsPromise = this.guardsGatherer
               .gather({ url: event.urlAfterRedirects })
               .then((results) => Array.isArray(results) && combineToBoolean(results))
@@ -161,6 +161,7 @@ export class WebcomponentConnnector {
             this.guardsNavigationStateController.createNavigationRequestedState(guardsPromise, guardsNavigationState)
             currentNavigation.extras.state = guardsNavigationState
             return
+          }
           case GUARD_MODE.INITIAL_ROUTER_SYNC:
           case GUARD_MODE.GUARD_CHECK:
           case GUARD_MODE.ROUTER_SYNC:

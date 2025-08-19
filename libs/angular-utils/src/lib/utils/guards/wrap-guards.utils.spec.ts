@@ -58,6 +58,7 @@ describe('wrapGuards', () => {
   })
 
   it('should wrap canActivate guards if not already wrapped', () => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
     const mockGuard = jest.fn()
     const secondGuard = jest.fn()
@@ -89,6 +90,7 @@ describe('wrapGuards', () => {
   })
 
   it('should wrap canDeactivate guards if not already wrapped', () => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
     const mockGuard = jest.fn()
     const secondGuard = jest.fn()
@@ -120,6 +122,7 @@ describe('wrapGuards', () => {
   })
 
   it('should wrap canActivateChild guards if not already wrapped', () => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
     const mockGuard = jest.fn()
     const secondGuard = jest.fn()
@@ -176,6 +179,7 @@ describe('wrapGuards', () => {
   })
 
   it('should handle empty route guards', () => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
     const injector = TestBed.inject(Injector)
 
@@ -217,6 +221,7 @@ describe('wrapGuards', () => {
   })
 
   it('should handle undefined route guards', () => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
     const injector = TestBed.inject(Injector)
 
@@ -298,6 +303,7 @@ describe('wrapGuards', () => {
   })
 
   it('should wrap guards based on saved state', () => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
     const mockGuard = jest.fn()
 

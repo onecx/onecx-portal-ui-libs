@@ -9,7 +9,7 @@ import { provideGuardsGathererMock } from '@onecx/angular-utils/mocks'
 
 @Injectable()
 class MockGuard {
-  canDeactivate(component: any, currentRoute: any, currentState: any, nextState: any) {
+  canDeactivate(_component: any, _currentRoute: any, _currentState: any, _nextState: any) {
     console.log('MockGuard canDeactivate called')
     return Promise.resolve(true)
   }
@@ -243,6 +243,7 @@ describe('DeactivateGuardsWrapper', () => {
   })
 
   it('should handle class based guards', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
     const guardsNavigationStateController = TestBed.inject(GuardsNavigationStateController)
     guardsNavigationStateController.getMode = jest.fn().mockReturnValue(GUARD_MODE.GUARD_CHECK)
@@ -263,6 +264,7 @@ describe('DeactivateGuardsWrapper', () => {
   })
 
   it('should handle function based guards', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
     const guardsNavigationStateController = TestBed.inject(GuardsNavigationStateController)
     guardsNavigationStateController.getMode = jest.fn().mockReturnValue(GUARD_MODE.GUARD_CHECK)
@@ -287,6 +289,7 @@ describe('DeactivateGuardsWrapper', () => {
   })
 
   it('should handle classes not implementing canDeactivate', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
     const guardsNavigationStateController = TestBed.inject(GuardsNavigationStateController)
     guardsNavigationStateController.getMode = jest.fn().mockReturnValue(GUARD_MODE.GUARD_CHECK)
@@ -307,6 +310,7 @@ describe('DeactivateGuardsWrapper', () => {
   })
 
   it('should handle no check promise in navigation state', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
     const guardsNavigationStateController = TestBed.inject(GuardsNavigationStateController)
     guardsNavigationStateController.getMode = jest.fn().mockReturnValue(GUARD_MODE.NAVIGATION_REQUESTED)

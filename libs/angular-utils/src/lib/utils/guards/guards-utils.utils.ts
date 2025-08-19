@@ -1,4 +1,4 @@
-import { ActivatedRouteSnapshot, GuardResult, MaybeAsync, RedirectCommand, Router, UrlTree } from '@angular/router'
+import { ActivatedRouteSnapshot, GuardResult, MaybeAsync, RedirectCommand, UrlTree } from '@angular/router'
 import { isObservable, lastValueFrom } from 'rxjs'
 import '../../declarations'
 

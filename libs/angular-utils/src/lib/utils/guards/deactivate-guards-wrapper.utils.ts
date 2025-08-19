@@ -69,7 +69,7 @@ export class DeactivateGuardsWrapper {
 
           return result
         })
-      case GUARD_MODE.NAVIGATION_REQUESTED:
+      case GUARD_MODE.NAVIGATION_REQUESTED: {
         //Wait until we received info from others
         let checkStartPromise = this.guardsNavigationStateController.getGuardCheckPromise(guardsNavigationState)
         if (!checkStartPromise) {
@@ -92,6 +92,7 @@ export class DeactivateGuardsWrapper {
             combineToGuardResult
           )
         })
+      }
     }
   }
 
