@@ -152,7 +152,7 @@ export async function importMicroservices(baseDir: string, endpointBase: string)
  *
  * This function processes all JSON files in the `microfrontends` subdirectory and uploads them as microfrontend configurations.
  * Each file should follow the naming convention: `{productName}_{appId}_{mfeName}.json`
- * The function automatically updates remote URLs to use container network aliases for proper service discovery.
+ * The function automatically transforms relative URLs to direct container URLs if needed.
  *
  * @param baseDir - Base directory path containing the `microfrontends` subdirectory with JSON files
  * @param endpointBase - Base URL for the product store service API
@@ -170,8 +170,8 @@ export async function importMicroservices(baseDir: string, endpointBase: string)
  * - Uses PUT method for microfrontend updates
  * - Endpoint format: `{endpointBase}/operator/mfe/v1/{product}/{appId}`
  * - Filename format: `{product}_{appId}_{mfeName}.json`
- * - Automatically updates `remoteBaseUrl` and `remoteEntry` to use container network format
- * - Remote URL format: `http://{appName}:8080/{originalPath}`
+ * - Automatically transforms relative URLs (e.g., `/mfe/help/`) to container URLs (e.g., `http://onecx-help-ui/`)
+ * - URLs already starting with `http` are used as-is
  */
 export async function importMicrofrontends(baseDir: string, endpointBase: string, port: number) {
   logger.info('IMPORT_MICROFRONTENDS_START')
@@ -186,13 +186,18 @@ export async function importMicrofrontends(baseDir: string, endpointBase: string
     const data = await readFile(path.join(dir, file), 'utf-8')
     const mfeData = JSON.parse(data)
 
-    // Dynamically update the remote paths
+    // Transform URLs if they don't start with http
     const appName = mfeData.appName
-    const originalRemoteBaseUrl = mfeData.remoteBaseUrl
-    const originalRemoteEntry = mfeData.remoteEntry
-    if (appName) {
-      mfeData.remoteBaseUrl = `http://${appName}:${port}/${originalRemoteBaseUrl}`
-      mfeData.remoteEntry = `http://${appName}:${port}/${originalRemoteEntry}`
+    if (appName && mfeData.remoteBaseUrl && !mfeData.remoteBaseUrl.startsWith('http')) {
+      const originalBaseUrl = mfeData.remoteBaseUrl
+      mfeData.remoteBaseUrl = `http://${appName}:${port}/`
+      logger.info('PROCESSING_FILE', `URL Transform - BaseURL: ${originalBaseUrl} -> ${mfeData.remoteBaseUrl}`)
+    }
+
+    if (appName && mfeData.remoteEntry && !mfeData.remoteEntry.startsWith('http')) {
+      const originalEntry = mfeData.remoteEntry
+      mfeData.remoteEntry = `http://${appName}:${port}/remoteEntry.js`
+      logger.info('PROCESSING_FILE', `URL Transform - Entry: ${originalEntry} -> ${mfeData.remoteEntry}`)
     }
 
     const endpoint = `${endpointBase}/operator/mfe/v1/${product}/${appid}`

@@ -54,6 +54,16 @@ export const LogMessages = {
   IMAGE_PULL_START: 'Starting image pull verification',
   IMAGE_PULL_SUCCESS: 'Image pulled successfully',
   IMAGE_PULL_FAILED: 'Image pull failed',
+
+  // Configuration operations
+  CONFIG_LOAD_START: 'Loading configuration file',
+  CONFIG_LOAD_SUCCESS: 'Configuration loaded successfully',
+  CONFIG_LOAD_ERROR: 'Failed to load configuration',
+  CONFIG_CREATE_SUCCESS: 'Default configuration created',
+  CONFIG_CREATE_ERROR: 'Failed to create configuration',
+  CONFIG_FOUND: 'Configuration file found',
+  CONFIG_NOT_FOUND: 'Configuration file not found in standard locations',
+  CONFIG_VALIDATION_WARN: 'Configuration validation warning',
 } as const
 
 export type LogMessageKey = keyof typeof LogMessages

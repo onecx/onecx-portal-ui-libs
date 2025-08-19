@@ -4,12 +4,14 @@ import { CONTAINER } from '../model/container.enum'
 import { PlatformConfig } from '../model/platform-config.interface'
 import { DEFAULT_PLATFORM_CONFIG } from '../config/platform-config'
 import { ImageResolver } from './image-resolver'
-import { HealthChecker, HealthCheckResult } from './health-checker'
+import { HealthChecker } from './health-checker'
 import { ContainerStarter } from './container-starter'
 import { ContainerFactory } from './container-factory'
 import { DataImporter } from './data-importer'
 import type { AllowedContainerTypes } from '../model/allowed-container.types'
+import { HealthCheckResult } from '../model/health-checker.interface'
 import { Logger } from '../utils/logger'
+import { JsonValidator } from './json-validator'
 
 const logger = new Logger('PlatformManager')
 
@@ -28,20 +30,43 @@ export class PlatformManager {
   private containerFactory?: ContainerFactory
   private dataImporter?: DataImporter
   private healthChecker?: HealthChecker
+  private jsonValidator: JsonValidator
+  private validatedConfig?: PlatformConfig
 
-  // switch to decide if the defaultPlatform should start or not
-  private startDefaultPlatform = true
+  constructor(configFilePath?: string) {
+    this.jsonValidator = new JsonValidator()
+
+    // Validate configuration file if it exists
+    const validationResult = this.jsonValidator.validateConfigFile(configFilePath)
+
+    if (validationResult.isValid && validationResult.config) {
+      this.validatedConfig = validationResult.config
+      logger.success('CONFIG_FOUND', 'Configuration loaded and validated successfully')
+    } else if (validationResult.errors && validationResult.errors.length > 0) {
+      logger.warn('CONFIG_VALIDATION_WARN', `Configuration validation failed: ${validationResult.errors.join(', ')}`)
+      logger.info('CONFIG_NOT_FOUND', 'Using default configuration')
+    } else {
+      logger.info('CONFIG_NOT_FOUND', 'No configuration file found, using default configuration')
+    }
+  }
 
   /**
    * Orchestrates the startup of the default services and the creation of custom containers.
-   * @param config
+   * @param config Optional config override. If not provided, uses validated config from constructor or default config
    */
-  async startContainers(config: PlatformConfig = DEFAULT_PLATFORM_CONFIG) {
+  async startContainers(config?: PlatformConfig) {
+    // Use validated config from constructor if available, otherwise use provided config or default
+    const finalConfig = config || this.validatedConfig || DEFAULT_PLATFORM_CONFIG
+
     // Configure logger based on platform config
-    logger.setPlatformConfig(config)
+    logger.setPlatformConfig(finalConfig)
 
     logger.info('PLATFORM_MANAGER_INIT')
     this.healthChecker = new HealthChecker()
+
+    // Configure heartbeat from platform config
+    this.healthChecker.configureHeartbeat(finalConfig.hearthbeat)
+
     this.imageResolver = new ImageResolver()
     this.dataImporter = new DataImporter(this.imageResolver)
 
@@ -49,40 +74,44 @@ export class PlatformManager {
     this.network = await new Network().start()
     logger.success('NETWORK_CREATED')
 
-    this.containerStarter = new ContainerStarter(this.imageResolver, this.network, this.addContainer.bind(this), config)
+    this.containerStarter = new ContainerStarter(
+      this.imageResolver,
+      this.network,
+      this.addContainer.bind(this),
+      finalConfig
+    )
 
-    if (config.startDefaultSetup) {
-      this.startDefaultPlatform = config.startDefaultSetup.valueOf()
-    }
+    logger.info('PLATFORM_START')
+    // Always start core services first
+    const postgres = await this.containerStarter.startCoreServices()
+    const keycloak = this.containers.get(CONTAINER.KEYCLOAK) as StartedOnecxKeycloakContainer
 
-    if (this.startDefaultPlatform) {
-      logger.info('PLATFORM_START')
-      // Always start core services first
-      const postgres = await this.containerStarter.startCoreServices()
-      const keycloak = this.containers.get(CONTAINER.KEYCLOAK) as StartedOnecxKeycloakContainer
+    await this.containerStarter.startServiceContainers(postgres, keycloak, this.getContainer.bind(this))
 
-      await this.containerStarter.startServiceContainers(postgres, keycloak, this.getContainer.bind(this))
+    // Start BFF containers based on configuration
+    await this.containerStarter.startBffContainers(keycloak)
 
-      // Start BFF containers based on configuration
-      await this.containerStarter.startBffContainers(keycloak)
-
-      // Start UI containers based on configuration
-      await this.containerStarter.startUiContainers(keycloak, this.getContainer.bind(this))
-      // Create custom containers if defined in configuration
-      if (config.container) {
-        // Initialize container factory with core services
-        this.containerFactory = new ContainerFactory(this.network, this.imageResolver, config, postgres, keycloak)
-        await this.createCustomContainers(config)
-      }
+    // Start UI containers based on configuration
+    await this.containerStarter.startUiContainers(keycloak, this.getContainer.bind(this))
+    // Create custom containers if defined in configuration
+    if (finalConfig.container) {
+      // Initialize container factory with core services
+      this.containerFactory = new ContainerFactory(this.network, this.imageResolver, postgres, keycloak)
+      await this.createCustomContainers(finalConfig)
     }
 
     // Import data if configured
-    if (config.importData && this.network && this.dataImporter) {
+    if (finalConfig.importData && this.network && this.dataImporter) {
       this.dataImporter.createContainerInfo(this.containers)
-      await this.dataImporter.importDefaultData(this.network, this.containers, config)
+      await this.dataImporter.importDefaultData(this.network, this.containers, finalConfig)
     }
 
     logger.success('PLATFORM_READY')
+
+    // Start heartbeat monitoring if configured
+    if (this.healthChecker) {
+      this.healthChecker.startHeartbeat(this.containers)
+    }
   }
 
   /**
@@ -108,6 +137,27 @@ export class PlatformManager {
   }
 
   /**
+   * Get the validated configuration
+   */
+  getValidatedConfig(): PlatformConfig | undefined {
+    return this.validatedConfig
+  }
+
+  /**
+   * Check if a valid configuration file was found and loaded
+   */
+  hasValidatedConfig(): boolean {
+    return this.validatedConfig !== undefined
+  }
+
+  /**
+   * Get the JSON validator instance
+   */
+  getJsonValidator(): JsonValidator {
+    return this.jsonValidator
+  }
+
+  /**
    * Check the health of all running containers
    */
   async checkAllHealthy(): Promise<HealthCheckResult[]> {
@@ -127,6 +177,39 @@ export class PlatformManager {
       throw new Error('HealthChecker not initialized. Call startContainers first.')
     }
     return await this.healthChecker.checkHealthy(this.containers, containerName)
+  }
+
+  /**
+   * Check if heartbeat monitoring is currently running
+   */
+  isHeartbeatRunning(): boolean {
+    return this.healthChecker?.isHeartbeatRunning() || false
+  }
+
+  /**
+   * Get the current heartbeat configuration
+   */
+  getHeartbeatConfig() {
+    return this.healthChecker?.getHeartbeatConfig()
+  }
+
+  /**
+   * Start heartbeat monitoring manually
+   */
+  startHeartbeat(): void {
+    if (!this.healthChecker) {
+      throw new Error('HealthChecker not initialized. Call startContainers first.')
+    }
+    this.healthChecker.startHeartbeat(this.containers)
+  }
+
+  /**
+   * Stop heartbeat monitoring manually
+   */
+  stopHeartbeat(): void {
+    if (this.healthChecker) {
+      this.healthChecker.stopHeartbeat()
+    }
   }
 
   /**
@@ -186,6 +269,12 @@ export class PlatformManager {
    */
   async stopAllContainers() {
     logger.info('PLATFORM_STOP')
+
+    // Stop heartbeat monitoring first
+    if (this.healthChecker) {
+      this.healthChecker.stopHeartbeat()
+    }
+
     // Stop standard containers
     // Since all services depend on Postgres and Keycloak, it's best to stop these last.
     // The same applies to the Shell, as the UI depends on the BFF.

@@ -34,21 +34,21 @@ export class ImageResolver {
    * Get the PostgreSQL image with optional image override
    */
   async getPostgresImage(config: PlatformConfig): Promise<string> {
-    return this.getImageWithOverride(POSTGRES, config.imageOverrides?.core?.postgres)
+    return this.getImageWithOverride(POSTGRES, config.platformOverrides?.core?.postgres?.image)
   }
 
   /**
    * Get the Keycloak image with optional image override
    */
   async getKeycloakImage(config: PlatformConfig): Promise<string> {
-    return this.getImageWithOverride(KEYCLOAK, config.imageOverrides?.core?.keycloak)
+    return this.getImageWithOverride(KEYCLOAK, config.platformOverrides?.core?.keycloak?.image)
   }
 
   /**
    * Get the Node.js image with optional image override
    */
   async getNodeImage(config: PlatformConfig): Promise<string> {
-    return this.getImageWithOverride(IMPORTMANAGER, config.imageOverrides?.core?.importmanager)
+    return this.getImageWithOverride(IMPORTMANAGER, config.platformOverrides?.core?.importmanager?.image)
   }
 
   /**
@@ -103,39 +103,39 @@ export class ImageResolver {
   }
 
   private getServiceImageOverride(serviceName: OnecxService, config: PlatformConfig): string | undefined {
-    const serviceImages = config.imageOverrides?.services
+    const serviceImages = config.platformOverrides?.services
     if (!serviceImages) return undefined
 
     const overrideMap = {
-      [OnecxService.IAM_KC_SVC]: serviceImages.iamKc,
-      [OnecxService.WORKSPACE_SVC]: serviceImages.workspace,
-      [OnecxService.USER_PROFILE_SVC]: serviceImages.userProfile,
-      [OnecxService.THEME_SVC]: serviceImages.theme,
-      [OnecxService.TENANT_SVC]: serviceImages.tenant,
-      [OnecxService.PRODUCT_STORE_SVC]: serviceImages.productStore,
-      [OnecxService.PERMISSION_SVC]: serviceImages.permission,
+      [OnecxService.IAM_KC_SVC]: serviceImages.iamKc?.image,
+      [OnecxService.WORKSPACE_SVC]: serviceImages.workspace?.image,
+      [OnecxService.USER_PROFILE_SVC]: serviceImages.userProfile?.image,
+      [OnecxService.THEME_SVC]: serviceImages.theme?.image,
+      [OnecxService.TENANT_SVC]: serviceImages.tenant?.image,
+      [OnecxService.PRODUCT_STORE_SVC]: serviceImages.productStore?.image,
+      [OnecxService.PERMISSION_SVC]: serviceImages.permission?.image,
     }
 
     return overrideMap[serviceName]
   }
 
   private getBffImageOverride(bffService: OnecxBff, config: PlatformConfig): string | undefined {
-    const overrides = config.imageOverrides?.bff
+    const overrides = config.platformOverrides?.bff
     if (!overrides) return undefined
 
     const overrideMap = {
-      [OnecxBff.SHELL_BFF]: overrides.shell,
+      [OnecxBff.SHELL_BFF]: overrides.shell?.image,
     }
 
     return overrideMap[bffService]
   }
 
   private getUiImageOverride(uiService: OnecxUi, config: PlatformConfig): string | undefined {
-    const overrides = config.imageOverrides?.ui
+    const overrides = config.platformOverrides?.ui
     if (!overrides) return undefined
 
     const overrideMap = {
-      [OnecxUi.SHELL_UI]: overrides.shell,
+      [OnecxUi.SHELL_UI]: overrides.shell?.image,
     }
 
     return overrideMap[uiService]

@@ -61,24 +61,9 @@ async function runAllContainers() {
     const duration = Date.now() - startTime
     logger.logDuration('STARTUP_SUCCESS', duration, 'All containers')
 
-    // Heartbeat
-    setInterval(async () => {
-      try {
-        logger.info('HEALTH_CHECK_START')
-        const healthStatus = await manager.checkAllHealthy()
-        logger.success('HEALTH_CHECK_SUCCESS', `Checked ${healthStatus.length} containers`)
-
-        const unhealthyContainers = healthStatus.filter((c) => !c.healthy)
-        if (unhealthyContainers.length > 0) {
-          logger.error(
-            'CONTAINER_UNHEALTHY',
-            `${unhealthyContainers.length} containers unhealthy: ${unhealthyContainers.map((c) => c.name).join(', ')}`
-          )
-        }
-      } catch (error) {
-        logger.error('HEALTH_CHECK_FAILED', undefined, error)
-      }
-    }, 10_000)
+    // Note: Heartbeat monitoring is now handled automatically by the PlatformManager
+    // based on the health check configuration. To enable it, use a JSON configuration
+    // file with healthCheck.enabled = true or use the new PlatformLauncher.
   } catch (error) {
     if (error instanceof TimeoutError) {
       logger.error('STARTUP_TIMEOUT', error.context, error)

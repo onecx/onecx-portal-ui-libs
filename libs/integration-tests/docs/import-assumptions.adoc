@@ -1,80 +1,102 @@
-= Microfrontend URL Transformation for Integration Tests
+= Microfrontend URL Configuration for Integration Tests
 :toc:
 :toclevels: 3
 :sectnums:
 
 == Overview
 
-The OneCX Integration Tests library automatically transforms microfrontend URLs during the import process to handle the differences between production environments (using Traefik) and integration test environments (direct container communication).
+The OneCX Integration Tests library processes microfrontend configurations during the import process. It supports flexible URL formats and automatically transforms them to ensure proper container-to-container communication in the integration test environment.
 
-== The Traefik Routing Problem
+== URL Format Requirements
 
-=== Production Environment (Docker Compose + Traefik)
+=== Supported URL Formats
 
-In production deployments, OneCX uses Docker Compose with Traefik as a reverse proxy. Traefik handles routing and provides unified URLs for all services:
+The import process supports both URL formats:
 
-[source,typescript]
+**Option 1: Direct Container URLs (Recommended)**
+[source,json]
 ----
-// Production microfrontend configuration (works with Traefik)
+// Direct container URLs - ready for container communication
 {
-  "appName": "my-app",
-  "remoteBaseUrl": "mfe/my-app",
-  "remoteEntry": "mfe/my-app/remoteEntry.js"
+  "appName": "onecx-help-ui",
+  "remoteBaseUrl": "http://onecx-help-ui/",
+  "remoteEntry": "http://onecx-help-ui/remoteEntry.js"
 }
 ----
 
-
-=== Integration Test Environment (Direct Container Communication)
-
-In integration tests, containers communicate directly without Traefik. This means the relative paths don't resolve correctly, as there's no reverse proxy to handle the routing.
-
-== The Automatic URL Transformation Solution
-
-The integration tests library automatically transforms Traefik-compatible relative URLs into direct container URLs during the microfrontend import process, bridging the gap between production routing and test environment networking.
-
-=== Transformation Logic
-
-[source,typescript]
+**Option 2: Relative URLs **
+[source,json]
 ----
-// Original configuration (designed for Traefik routing)
+// Relative URLs - automatically transformed during import
 {
-  "appName": "my-app",
-  "remoteBaseUrl": "mfe/my-app",           // Traefik resolves this via host rules
-  "remoteEntry": "mfe/my-app/remoteEntry.js"
+  "appName": "onecx-help-ui",
+  "remoteBaseUrl": "/mfe/help/",                      // Transformed to http://onecx-help-ui/
+  "remoteEntry": "/mfe/help/remoteEntry.js"           // Transformed to http://onecx-help-ui/remoteEntry.js
 }
 ----
 
-This transformation mimics what Traefik would do automatically in production - routing requests to the correct container and port.
+=== URL Transformation Logic
 
-=== Implementation Details
+The import process automatically detects and transforms URLs based on the following rules:
 
-The transformation occurs in the `importMicrofrontends` function and replicates Traefik's routing behavior:
+- **URLs starting with `http`**: Used as-is without modification
+- **Relative URLs**: Automatically converted to direct container URLs using the `appName` field
+
+== Implementation Details
+
+=== Automatic URL Detection and Transformation
+
+The transformation occurs automatically in the `importMicrofrontends` function during the import process:
 
 [source,typescript]
 ----
-// Parse the original Traefik-compatible configuration
-const mfeData = JSON.parse(data)
-
-// Extract application name (matches container name and Traefik host rule)
+// Check if URLs need transformation
 const appName = mfeData.appName
-const originalRemoteBaseUrl = mfeData.remoteBaseUrl
-const originalRemoteEntry = mfeData.remoteEntry
+if (appName && mfeData.remoteBaseUrl && !mfeData.remoteBaseUrl.startsWith('http')) {
+  // Transform relative URL to direct container URL
+  mfeData.remoteBaseUrl = `http://${appName}/`
+}
 
-// Transform relative paths to direct container URLs
-// This mimics: Traefik host rule -> container:port routing
-if (appName) {
-  mfeData.remoteBaseUrl = `http://${appName}:8080/${originalRemoteBaseUrl}`
-  mfeData.remoteEntry = `http://${appName}:8080/${originalRemoteEntry}`
+if (appName && mfeData.remoteEntry && !mfeData.remoteEntry.startsWith('http')) {
+  // Transform relative entry path to direct container URL
+  mfeData.remoteEntry = `http://${appName}/remoteEntry.js`
 }
 ----
 
-=== Common Issues
+=== Key Features
 
-**Microfrontend Not Found**::
-Verify that the container name matches the `appName` field and that the container is running on port 8080.
+- **Automatic Detection**: URLs starting with `http` are used as-is
+- **Smart Transformation**: Relative URLs are converted to container format using the `appName` field
+- **Backward Compatibility**: Supports configurations with `/mfe/` paths
+- **Logging**: Transformation actions are logged for debugging
 
-**Path Resolution Errors**::
-Check that the original paths are correct for your Traefik setup in production, as the integration tests preserve these paths.
+=== URL Mapping Rules
 
-**Network Connectivity Issues**::
-Ensure all containers are on the same Docker network and can communicate directly without Traefik.
+The transformation follows these patterns:
+
+[cols="2,2,3"]
+|===
+|Input Format |Output Format |Description
+
+|`http://onecx-help-ui/`
+|`http://onecx-help-ui/`
+|Direct URLs remain unchanged
+
+|`/mfe/help/`
+|`http://onecx-help-ui/`
+|Relative paths transformed to container URLs
+
+|`/mfe/help/remoteEntry.js`
+|`http://onecx-help-ui/remoteEntry.js`
+|Entry paths transformed to container URLs
+|===
+
+== Configuration Guidelines
+
+=== Required Fields
+
+Each microfrontend configuration must include:
+
+- **`appName`**: Container name used for URL transformation
+- **`remoteBaseUrl`**: Base URL for the microfrontend (absolute or relative)
+- **`remoteEntry`**: Entry point file URL (absolute or relative)

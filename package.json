@@ -6,7 +6,8 @@
     "sass": "npx sass libs/portal-integration-angular/assets/styles.scss libs/portal-integration-angular/assets/output.css",
     "postinstall": "mkdir -p .nx",
     "build": "nx run-many -t build build-migrations",
-    "build-copy": "npm run build && node copy-build.js"
+    "build-copy": "npm run build && node copy-build.js",
+    "integration-tests": "npx ts-node libs/integration-tests/src/lib/start.ts"
   },
   "private": true,
   "dependencies": {
@@ -33,6 +34,7 @@
     "@onecx/portal-layout-styles": "file:libs/portal-layout-styles",
     "@phenomnomnominal/tsquery": "^6",
     "@storybook/addon-interactions": "^8.3.2",
+    "ajv": "^8.17.1",
     "axios": "^1.10.0",
     "chart.js": "^4.4.3",
     "d3-scale-chromatic": "^3.1.0",
@@ -108,9 +110,9 @@
     "jest-environment-node": "^29.7.0",
     "jest-extended": "^6.0.0",
     "jest-preset-angular": "^14.2.2",
-    "jsonc-eslint-parser": "^2.4.0",
     "jest-sonar": "^0.2.16",
     "jest-sonar-reporter": "^2.0.0",
+    "jsonc-eslint-parser": "^2.4.0",
     "msw": "^2.4.9",
     "msw-storybook-addon": "^2.0.2",
     "ng-mocks": "^14.13.1",

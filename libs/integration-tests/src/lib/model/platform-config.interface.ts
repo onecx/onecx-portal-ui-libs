@@ -1,39 +1,40 @@
 import { CustomBffContainerInterface } from './bff.interface'
 import { CustomSvcContainerInterface } from './svc.interface'
 import { CustomUiContainerInterface } from './ui.interface'
+import { HeartbeatConfig } from './health-checker.interface'
 
 export interface PlatformConfig {
-  /** Whether to run the minimal setup of the onecx Platform */
-  startDefaultSetup?: boolean
   /** Whether to run data import after starting services */
   importData?: boolean
   /** Whether to enable logging or not */
   enableLogging?: boolean | string[]
+  /**  */
+  hearthbeat?: HeartbeatConfig
   /** Image overrides - allows testing against different images */
-  imageOverrides?: {
+  platformOverrides?: {
     /** Core service images */
     core?: {
-      postgres?: string
-      keycloak?: string
-      importmanager?: string
+      postgres?: { image?: string }
+      keycloak?: { image?: string }
+      importmanager?: { image?: string }
     }
     /** Backend service images */
     services?: {
-      iamKc?: string
-      workspace?: string
-      userProfile?: string
-      theme?: string
-      tenant?: string
-      productStore?: string
-      permission?: string
+      iamKc?: { image?: string }
+      workspace?: { image?: string }
+      userProfile?: { image?: string }
+      theme?: { image?: string }
+      tenant?: { image?: string }
+      productStore?: { image?: string }
+      permission?: { image?: string }
     }
     /** BFF shell service images */
     bff?: {
-      shell?: string
+      shell?: { image?: string }
     }
     /** UI shell service images */
     ui?: {
-      shell?: string
+      shell?: { image?: string }
     }
   }
   container?: {

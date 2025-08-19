@@ -25,7 +25,6 @@ export class ContainerFactory {
   constructor(
     private network: StartedNetwork,
     private imageResolver: ImageResolver,
-    private config: PlatformConfig,
     private postgres?: StartedOnecxPostgresContainer,
     private keycloak?: StartedOnecxKeycloakContainer
   ) {
@@ -56,7 +55,7 @@ export class ContainerFactory {
         logger.info('CONTAINER_STARTED', `Creating service container: ${serviceConfig.networkAlias}`)
         const svcContainer = await this.createSvcContainer(
           serviceConfig,
-          loggingEnabled(this.config, [serviceConfig.networkAlias])
+          loggingEnabled(config, [serviceConfig.networkAlias])
         )
         customContainers.set(serviceConfig.networkAlias, svcContainer)
         logger.success('CONTAINER_STARTED', `Service container created: ${serviceConfig.networkAlias}`)
@@ -69,10 +68,7 @@ export class ContainerFactory {
 
       for (const bffConfig of bffConfigs) {
         logger.info('CONTAINER_STARTED', `Creating BFF container: ${bffConfig.networkAlias}`)
-        const bffContainer = await this.createBffContainer(
-          bffConfig,
-          loggingEnabled(this.config, [bffConfig.networkAlias])
-        )
+        const bffContainer = await this.createBffContainer(bffConfig, loggingEnabled(config, [bffConfig.networkAlias]))
         customContainers.set(bffConfig.networkAlias, bffContainer)
         logger.success('CONTAINER_STARTED', `BFF container created: ${bffConfig.networkAlias}`)
       }
@@ -84,7 +80,7 @@ export class ContainerFactory {
 
       for (const uiConfig of uiConfigs) {
         logger.info('CONTAINER_STARTED', `Creating UI container: ${uiConfig.networkAlias}`)
-        const uiContainer = await this.createUiContainer(uiConfig, loggingEnabled(this.config, [uiConfig.networkAlias]))
+        const uiContainer = await this.createUiContainer(uiConfig, loggingEnabled(config, [uiConfig.networkAlias]))
         customContainers.set(uiConfig.networkAlias, uiContainer)
         logger.success('CONTAINER_STARTED', `UI container created: ${uiConfig.networkAlias}`)
       }
