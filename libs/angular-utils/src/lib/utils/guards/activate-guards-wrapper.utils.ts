@@ -67,7 +67,9 @@ export class ActivateGuardsWrapper {
         }
         return checkStartPromise.then((result) => {
           if (result === false) {
-            logGuardsDebug('NavigationRequested: Route is guarded by someone else, returning false.')
+            console.warn(
+              `Cannot route to ${futureUrl} because ${state.url} deactivation is guarded or ${futureUrl} activation its guarded.`
+            )
             return false
           }
           return this.executeActivateGuards(route, state, guards, combineToGuardResult)

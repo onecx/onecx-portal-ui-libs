@@ -15,8 +15,10 @@ export class Gatherer<Request, Response> {
   private readonly topic: Topic<{ id: number; request: Request }>
   private readonly ownIds = new Set<number>()
   private topicSub: Subscription | null = null
+  private topicName: string
 
   constructor(name: string, version: number, callback: (request: Request) => Promise<Response>) {
+    this.topicName = name
     this.logIfDebug(name, `Gatherer ${name}: ${version} created`)
 
     this.topic = new Topic<{ id: number; request: Request }>(name, version, false)
@@ -72,7 +74,7 @@ export class Gatherer<Request, Response> {
     delete window['@onecx/accelerator'].gatherer.promises[id]
     this.ownIds.delete(id)
     return Promise.all(promises).then((v) => {
-      console.log('Finished gathering responses', v)
+      this.logIfDebug(this.topicName, 'Finished gathering responses', v)
       return v
     })
   }

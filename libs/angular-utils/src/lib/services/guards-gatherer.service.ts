@@ -50,6 +50,7 @@ export class GuardsGatherer implements OnDestroy {
     if (this.guardsGatherer === undefined) {
       this.throwNotActiveError()
     }
+    request.url = this.normalizeUrl(request.url)
     return this.guardsGatherer.gather(request)
   }
 
@@ -62,9 +63,10 @@ export class GuardsGatherer implements OnDestroy {
     if (this.guardsChecks === undefined) {
       this.throwNotActiveError()
     }
-    const resolve = this.guardsChecks.get(routeUrl)
+    const url = this.normalizeUrl(routeUrl)
+    const resolve = this.guardsChecks.get(url)
     resolve && resolve(response)
-    this.guardsChecks.delete(routeUrl)
+    this.guardsChecks.delete(url)
   }
 
   /**
@@ -106,6 +108,13 @@ export class GuardsGatherer implements OnDestroy {
       }
       this.guardsChecks.set(routeUrl, resolve)
     })
+  }
+
+  private normalizeUrl(url: string): string {
+    let result = url
+    result = result.startsWith('/') ? result : `/${result}`
+    result = result.endsWith('/') ? result.slice(0, -1) : result
+    return result
   }
 
   private throwNotActiveError(): never {
