@@ -144,7 +144,12 @@ export class WebcomponentConnnector {
       .pipe(filter((event) => event instanceof GuardsCheckStart))
       .subscribe((event: GuardsCheckStart) => {
         const currentNavigation = router.getCurrentNavigation()
-        const guardsNavigationState = (router.getCurrentNavigation()?.extras.state ?? {}) as GuardsNavigationState
+        if (!currentNavigation) {
+          logGuardsDebug('No current navigation found, skipping guards gathering.')
+          return
+        }
+
+        const guardsNavigationState = (currentNavigation.extras.state ?? {}) as GuardsNavigationState
         const guardMode = this.guardsNavigationStateController.getMode(guardsNavigationState)
 
         switch (guardMode) {
@@ -154,7 +159,7 @@ export class WebcomponentConnnector {
               .then((results) => Array.isArray(results) && combineToBoolean(results))
 
             this.guardsNavigationStateController.createNavigationRequestedState(guardsPromise, guardsNavigationState)
-            if (currentNavigation) currentNavigation.extras.state = guardsNavigationState
+            currentNavigation.extras.state = guardsNavigationState
             return
           case GUARD_MODE.INITIAL_ROUTER_SYNC:
           case GUARD_MODE.GUARD_CHECK:
@@ -183,7 +188,7 @@ export class WebcomponentConnnector {
           if (event.shouldActivate) {
             logGuardsDebug('Guard check state detected, sending positive result back and cancelling navigation.')
             this.guardsGatherer.resolveRoute(event.urlAfterRedirects, true)
-            router.navigateByUrl(router.url, { skipLocationChange: true, state: { isRouterSync: true } })
+            router.navigateByUrl(router.url, { skipLocationChange: true, state: { [IS_ROUTER_SYNC]: true } })
           }
           return
         case GUARD_MODE.ROUTER_SYNC:

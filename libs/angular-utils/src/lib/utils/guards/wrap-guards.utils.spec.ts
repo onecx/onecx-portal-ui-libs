@@ -1,93 +1,335 @@
-// import { Route } from '@angular/router';
-// import { wrapGuards } from './wrap-guards.utils';
-// import { GuardWrapper } from './guard-wrapper';
+import { TestBed } from '@angular/core/testing'
+import { wrapGuards, WRAPPED_GUARD_TAG } from './wrap-guards.utils'
+import {
+  ActivatedRouteSnapshot,
+  CanActivate,
+  CanActivateFn,
+  CanDeactivateFn,
+  Route,
+  RouterStateSnapshot,
+} from '@angular/router'
+import { Injector, runInInjectionContext, Type } from '@angular/core'
+import { ActivateGuardsWrapper } from './activate-guards-wrapper.utils'
+import { DeactivateGuardsWrapper } from './deactivate-guards-wrapper.utils'
 
-// describe('wrapGuards', () => {
-//   it('should wrap a list of regular activate guards', () => {
-//     const route: Route = {
-//       path: 'test',
-//       canActivate: [jest.fn(), jest.fn()],
-//     };
-//     const guardWrapper = new GuardWrapper();
+class MockGuardsWrapper {
+  canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot,
+    guards: Array<CanActivateFn | Type<CanActivate>>
+  ) {
+    console.log('Wrapped amount:', guards.length)
+    return Promise.resolve(true)
+  }
 
-//     wrapGuards(route, guardWrapper);
+  canDeactivate(
+    component: any,
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot,
+    nextState: RouterStateSnapshot,
+    guards: Array<CanActivateFn | Type<CanActivate>>
+  ) {
+    console.log('Wrapped amount:', guards.length)
+    return Promise.resolve(true)
+  }
+}
 
-//     expect(route.canActivate).toHaveLength(1);
-//     expect(route.canActivate?.[0]).toBeInstanceOf(GuardWrapper);
-//   });
+describe('wrapGuards', () => {
+  let mockRoute: Route
 
-//   it('should not change activate guards if already wrapped and only wrapper exists', () => {
-//     const existingWrapper = new GuardWrapper();
-//     jest.spyOn(existingWrapper, 'setActivateGuards');
-//     const route: Route = {
-//       path: 'test',
-//       canActivate: [existingWrapper],
-//     };
+  beforeEach(() => {
+    mockRoute = {
+      path: 'test',
+      canActivate: [],
+      canDeactivate: [],
+      canActivateChild: [],
+      children: [],
+    }
 
-//     wrapGuards(route, existingWrapper);
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: ActivateGuardsWrapper, useClass: MockGuardsWrapper },
+        {
+          provide: DeactivateGuardsWrapper,
+          useClass: MockGuardsWrapper,
+        },
+      ],
+    })
+  })
 
-//     expect(route.canActivate).toHaveLength(1);
-//     expect(route.canActivate?.[0]).toBe(existingWrapper);
-//     expect(existingWrapper.setActivateGuards).not.toHaveBeenCalled();
-//   });
+  it('should wrap canActivate guards if not already wrapped', () => {
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
+    const mockGuard = jest.fn()
+    const secondGuard = jest.fn()
+    mockRoute.canActivate = [mockGuard, secondGuard]
 
-//   it('should add new activate guards to the existing wrapper', () => {
-//     const existingWrapper = new GuardWrapper();
-//     jest.spyOn(existingWrapper, 'setActivateGuards');
-//     const newGuard = jest.fn();
-//     const route: Route = {
-//       path: 'test',
-//       canActivate: [existingWrapper, newGuard],
-//     };
+    wrapGuards(mockRoute)
 
-//     wrapGuards(route, existingWrapper);
+    expect(mockRoute.canActivate).toHaveLength(1)
+    expect((mockRoute.canActivate![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
 
-//     expect(route.canActivate).toHaveLength(1);
-//     expect(route.canActivate?.[0]).toBe(existingWrapper);
-//     expect(existingWrapper.setActivateGuards).toHaveBeenCalledWith(route, expect.arrayContaining([newGuard]));
-//   });
+    const injector = TestBed.inject(Injector)
+    const wrapper = mockRoute.canActivate![0] as CanActivateFn
+    runInInjectionContext(injector, () => {
+      wrapper({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot)
+    })
 
-//   it('should wrap a list of regular deactivate guards', () => {
-//     const route: Route = {
-//       path: 'test',
-//       canDeactivate: [jest.fn(), jest.fn()],
-//     };
-//     const guardWrapper = new GuardWrapper();
+    expect(consoleSpy).toHaveBeenCalledWith('Wrapped amount:', 2)
+  })
 
-//     wrapGuards(route, guardWrapper);
+  it('should not wrap canActivate guards if already wrapped', () => {
+    const wrappedGuard = jest.fn()
+    ;(wrappedGuard as any)[WRAPPED_GUARD_TAG] = true
+    mockRoute.canActivate = [wrappedGuard]
 
-//     expect(route.canDeactivate).toHaveLength(1);
-//     expect(route.canDeactivate?.[0]).toBeInstanceOf(GuardWrapper);
-//   });
+    wrapGuards(mockRoute)
 
-//   it('should not change deactivate guards if already wrapped and only wrapper exists', () => {
-//     const existingWrapper = new GuardWrapper();
-//     jest.spyOn(existingWrapper, 'setDeactivateGuards');
-//     const route: Route = {
-//       path: 'test',
-//       canDeactivate: [existingWrapper],
-//     };
+    expect(mockRoute.canActivate).toHaveLength(1)
+    expect((mockRoute.canActivate![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+  })
 
-//     wrapGuards(route, existingWrapper);
+  it('should wrap canDeactivate guards if not already wrapped', () => {
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
+    const mockGuard = jest.fn()
+    const secondGuard = jest.fn()
+    mockRoute.canDeactivate = [mockGuard, secondGuard]
 
-//     expect(route.canDeactivate).toHaveLength(1);
-//     expect(route.canDeactivate?.[0]).toBe(existingWrapper);
-//     expect(existingWrapper.setDeactivateGuards).not.toHaveBeenCalled();
-//   });
+    wrapGuards(mockRoute)
 
-//   it('should add new deactivate guards to the existing wrapper', () => {
-//     const existingWrapper = new GuardWrapper();
-//     jest.spyOn(existingWrapper, 'setDeactivateGuards');
-//     const newGuard = jest.fn();
-//     const route: Route = {
-//       path: 'test',
-//       canDeactivate: [existingWrapper, newGuard],
-//     };
+    expect(mockRoute.canDeactivate).toHaveLength(1)
+    expect((mockRoute.canDeactivate![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
 
-//     wrapGuards(route, existingWrapper);
+    const injector = TestBed.inject(Injector)
+    const wrapper = mockRoute.canActivate![0] as CanActivateFn
+    runInInjectionContext(injector, () => {
+      wrapper({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot)
+    })
 
-//     expect(route.canDeactivate).toHaveLength(1);
-//     expect(route.canDeactivate?.[0]).toBe(existingWrapper);
-//     expect(existingWrapper.setDeactivateGuards).toHaveBeenCalledWith(route, expect.arrayContaining([newGuard]));
-//   });
-// });
+    expect(consoleSpy).toHaveBeenCalledWith('Wrapped amount:', 2)
+  })
+
+  it('should not wrap canDeactivate guards if already wrapped', () => {
+    const wrappedGuard = jest.fn()
+    ;(wrappedGuard as any)[WRAPPED_GUARD_TAG] = true
+    mockRoute.canDeactivate = [wrappedGuard]
+
+    wrapGuards(mockRoute)
+
+    expect(mockRoute.canDeactivate).toHaveLength(1)
+    expect((mockRoute.canDeactivate![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+  })
+
+  it('should wrap canActivateChild guards if not already wrapped', () => {
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
+    const mockGuard = jest.fn()
+    const secondGuard = jest.fn()
+    mockRoute.canActivateChild = [mockGuard, secondGuard]
+
+    wrapGuards(mockRoute)
+
+    expect(mockRoute.canActivateChild).toHaveLength(1)
+    expect((mockRoute.canActivateChild![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+
+    const injector = TestBed.inject(Injector)
+    const wrapper = mockRoute.canActivate![0] as CanActivateFn
+    runInInjectionContext(injector, () => {
+      wrapper({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot)
+    })
+
+    expect(consoleSpy).toHaveBeenCalledWith('Wrapped amount:', 2)
+  })
+
+  it('should not wrap canActivateChild guards if already wrapped', () => {
+    const wrappedGuard = jest.fn()
+    ;(wrappedGuard as any)[WRAPPED_GUARD_TAG] = true
+    mockRoute.canActivateChild = [wrappedGuard]
+
+    wrapGuards(mockRoute)
+
+    expect(mockRoute.canActivateChild).toHaveLength(1)
+    expect((mockRoute.canActivateChild![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+  })
+
+  it('should recursively wrap guards for child routes', () => {
+    const childRoute = {
+      path: 'child',
+      canActivate: [jest.fn()],
+      canDeactivate: [jest.fn()],
+      canActivateChild: [jest.fn()],
+      children: [],
+    }
+    mockRoute.children = [childRoute]
+
+    wrapGuards(mockRoute)
+
+    expect((childRoute.canActivate![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+    expect((childRoute.canDeactivate![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+    expect((childRoute.canActivateChild![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+  })
+
+  it('should force guard run for the route', () => {
+    mockRoute.runGuardsAndResolvers = 'paramsChange'
+
+    wrapGuards(mockRoute)
+
+    expect(mockRoute.runGuardsAndResolvers).toBe('always')
+  })
+
+  it('should handle empty route guards', () => {
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
+    const injector = TestBed.inject(Injector)
+
+    mockRoute.canActivate = []
+    mockRoute.canDeactivate = []
+    mockRoute.canActivateChild = []
+
+    wrapGuards(mockRoute)
+
+    expect(mockRoute.canActivate).toHaveLength(1)
+    expect((mockRoute.canActivate![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+    expect(mockRoute.canDeactivate).toHaveLength(1)
+    expect((mockRoute.canDeactivate![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+    expect(mockRoute.canActivateChild).toHaveLength(1)
+    expect((mockRoute.canActivateChild![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+
+    const activateWrapper = mockRoute.canActivate![0] as CanActivateFn
+    runInInjectionContext(injector, () => {
+      activateWrapper({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot)
+    })
+
+    expect(consoleSpy).toHaveBeenCalledWith('Wrapped amount:', 0)
+    consoleSpy.mockClear()
+
+    const deactivateWrapper = mockRoute.canDeactivate![0] as CanDeactivateFn<any>
+    runInInjectionContext(injector, () => {
+      deactivateWrapper({} as any, {} as ActivatedRouteSnapshot, {} as RouterStateSnapshot, {} as RouterStateSnapshot)
+    })
+
+    expect(consoleSpy).toHaveBeenCalledWith('Wrapped amount:', 0)
+    consoleSpy.mockClear()
+
+    const activateChildWrapper = mockRoute.canActivateChild![0] as CanActivateFn
+    runInInjectionContext(injector, () => {
+      activateChildWrapper({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot)
+    })
+
+    expect(consoleSpy).toHaveBeenCalledWith('Wrapped amount:', 0)
+  })
+
+  it('should handle undefined route guards', () => {
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
+    const injector = TestBed.inject(Injector)
+
+    mockRoute.canActivate = undefined
+    mockRoute.canDeactivate = undefined
+    mockRoute.canActivateChild = undefined
+
+    wrapGuards(mockRoute)
+
+    expect(mockRoute.canActivate).toHaveLength(1)
+    expect((mockRoute.canActivate![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+    expect(mockRoute.canDeactivate).toHaveLength(1)
+    expect((mockRoute.canDeactivate![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+    expect(mockRoute.canActivateChild).toHaveLength(1)
+    expect((mockRoute.canActivateChild![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+
+    const activateWrapper = mockRoute.canActivate![0] as CanActivateFn
+    runInInjectionContext(injector, () => {
+      activateWrapper({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot)
+    })
+
+    expect(consoleSpy).toHaveBeenCalledWith('Wrapped amount:', 0)
+    consoleSpy.mockClear()
+
+    const deactivateWrapper = mockRoute.canDeactivate![0] as CanDeactivateFn<any>
+    runInInjectionContext(injector, () => {
+      deactivateWrapper({} as any, {} as ActivatedRouteSnapshot, {} as RouterStateSnapshot, {} as RouterStateSnapshot)
+    })
+
+    expect(consoleSpy).toHaveBeenCalledWith('Wrapped amount:', 0)
+    consoleSpy.mockClear()
+
+    const activateChildWrapper = mockRoute.canActivateChild![0] as CanActivateFn
+    runInInjectionContext(injector, () => {
+      activateChildWrapper({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot)
+    })
+
+    expect(consoleSpy).toHaveBeenCalledWith('Wrapped amount:', 0)
+  })
+
+  it('should handle multiple child routes', () => {
+    const childRoute = {
+      path: 'child',
+      canActivate: [jest.fn()],
+      canDeactivate: [jest.fn()],
+      canActivateChild: [jest.fn()],
+      children: [],
+    }
+    const secondChildRoute = {
+      path: 'second-child',
+      canActivate: [jest.fn()],
+      canDeactivate: [jest.fn()],
+      canActivateChild: [jest.fn()],
+      children: [],
+    }
+    mockRoute.children = [childRoute, secondChildRoute]
+
+    wrapGuards(mockRoute)
+
+    expect((childRoute.canActivate![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+    expect((childRoute.canDeactivate![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+    expect((childRoute.canActivateChild![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+
+    expect((secondChildRoute.canActivate![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+    expect((secondChildRoute.canDeactivate![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+    expect((secondChildRoute.canActivateChild![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+  })
+
+  it('should react to dynamically added guards', () => {
+    const mockGuard = jest.fn()
+    const wrappedGuard = jest.fn()
+    ;(wrappedGuard as any)[WRAPPED_GUARD_TAG] = true
+    mockRoute.canActivate = [wrappedGuard, mockGuard]
+
+    wrapGuards(mockRoute)
+
+    expect(mockRoute.canActivate).toHaveLength(1)
+    expect((mockRoute.canActivate![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+  })
+
+  it('should wrap guards based on saved state', () => {
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
+    const mockGuard = jest.fn()
+
+    mockRoute.canActivate = [mockGuard]
+
+    wrapGuards(mockRoute)
+
+    expect(mockRoute.canActivate).toHaveLength(1)
+    expect((mockRoute.canActivate![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+
+    const injector = TestBed.inject(Injector)
+    const wrapper = mockRoute.canActivate![0] as CanActivateFn
+    runInInjectionContext(injector, () => {
+      wrapper({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot)
+    })
+
+    expect(consoleSpy).toHaveBeenCalledWith('Wrapped amount:', 1)
+    consoleSpy.mockClear()
+
+    const newMockGuard = jest.fn()
+    mockRoute.canActivate.push(newMockGuard)
+
+    wrapGuards(mockRoute)
+
+    expect(mockRoute.canActivate).toHaveLength(1)
+    expect((mockRoute.canActivate![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+
+    const wrapperAfterAddition = mockRoute.canActivate![0] as CanActivateFn
+    runInInjectionContext(injector, () => {
+      wrapperAfterAddition({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot)
+    })
+
+    expect(consoleSpy).toHaveBeenCalledWith('Wrapped amount:', 2)
+  })
+})

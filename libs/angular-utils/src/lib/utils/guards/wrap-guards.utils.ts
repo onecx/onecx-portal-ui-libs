@@ -4,8 +4,14 @@ import { ActivateGuardsWrapper } from './activate-guards-wrapper.utils'
 import { DeactivateGuardsWrapper } from './deactivate-guards-wrapper.utils'
 import { logGuardsDebug } from './guards-utils.utils'
 
+export interface OnecxRoute extends Route {
+  canActivateGuardList?: Array<CanActivateFn | Type<CanActivate>>
+  canDeactivateGuardList?: Array<CanDeactivateFn<any> | Type<CanDeactivate<any>>>
+  canActivateChildGuardList?: Array<CanActivateFn | Type<CanActivate>>
+}
+
 // Create a unique symbol to tag wrapped guards
-const WRAPPED_GUARD_TAG = Symbol('WrappedGuard')
+export const WRAPPED_GUARD_TAG = Symbol('WrappedGuard')
 
 /**
  * Wraps the guards for a given route.
@@ -15,6 +21,7 @@ const WRAPPED_GUARD_TAG = Symbol('WrappedGuard')
  */
 export function wrapGuards(route: Route) {
   logGuardsDebug('wrapGuards', route)
+  saveOriginalGuards(route as OnecxRoute)
   wrapActivateGuards(route)
   wrapDeactivateGuards(route)
   wrapActivateChildGuards(route)
@@ -29,23 +36,23 @@ export function wrapGuards(route: Route) {
 }
 
 function wrapActivateGuards(route: Route): void {
-  if (!isGuardWrapped(route.canActivate)) {
+  if (isWrappingRequired(route.canActivate)) {
     logGuardsDebug('Wrapping activate guards for route', route)
-    route.canActivate = [createActivateWrapper(route.canActivate ?? [])]
+    route.canActivate = [createActivateWrapper(route)]
   }
 }
 
 function wrapDeactivateGuards(route: Route): void {
-  if (!isGuardWrapped(route.canDeactivate)) {
+  if (isWrappingRequired(route.canDeactivate)) {
     logGuardsDebug('Wrapping deactivate guards for route', route)
-    route.canDeactivate = [createDeactivateWrapper(route.canDeactivate ?? [])]
+    route.canDeactivate = [createDeactivateWrapper(route)]
   }
 }
 
 function wrapActivateChildGuards(route: Route): void {
-  if (!isGuardWrapped(route.canActivateChild)) {
+  if (isWrappingRequired(route.canActivateChild)) {
     logGuardsDebug('Wrapping activate child guards for route', route)
-    route.canActivateChild = [createActivateWrapper(route.canActivateChild ?? [])]
+    route.canActivateChild = [createActivateChildWrapper(route)]
   }
 }
 
@@ -57,17 +64,48 @@ function forceGuardRun(route: Route) {
 }
 
 /**
+ * Saves the state of the guards for the route.
+ * This function saves the canActivate, canDeactivate, and canActivateChild guards to their respective lists.
+ * @param route - The route to save the guard state for.
+ */
+function saveOriginalGuards(route: OnecxRoute) {
+  saveCanActivateGuards(route)
+  saveCanDeactivateGuards(route)
+  saveCanActivateChildGuards(route)
+}
+
+/**
+ * Checks if wrapping is required for the guards.
+ * If the guards array has only one guard and it is already wrapped, no wrapping is needed.
+ * @param guards - The array of guards to check.
+ * @returns True if wrapping is required, false otherwise.
+ */
+function isWrappingRequired(guards: Array<any> | undefined): boolean {
+  if (guards && guards.length === 1 && isGuardsWrapped(guards)) {
+    return false
+  }
+
+  return true
+}
+
+/**
  * Helper function to check if guards are already wrapped.
  * Checks for a unique tag added to wrapped guards.
  * @param guards - The array of guards to check.
  * @returns True if the guards are wrapped, false otherwise.
  */
-function isGuardWrapped(guards: Array<CanActivateFn | Type<CanActivate>> | undefined): boolean {
-  if (!guards) {
-    return false
-  }
+function isGuardsWrapped(guards: Array<any>): boolean {
+  return guards.some((guard) => isWrapper(guard))
+}
 
-  return guards.some((guard) => (guard as any)?.[WRAPPED_GUARD_TAG])
+/**
+ * Checks if a guard is a wrapper.
+ * A guard is considered a wrapper if it has the unique WRAPPED_GUARD_TAG symbol.
+ * @param guard - The guard to check.
+ * @returns True if the guard is a wrapper, false otherwise.
+ */
+function isWrapper(guard: any): boolean {
+  return guard && (guard as any)[WRAPPED_GUARD_TAG] === true
 }
 
 /**
@@ -76,9 +114,9 @@ function isGuardWrapped(guards: Array<CanActivateFn | Type<CanActivate>> | undef
  * @param guards - The array of CanActivate guards to wrap.
  * @returns A CanActivateFn that wraps the provided guards.
  */
-function createActivateWrapper(guards: Array<CanActivateFn | Type<CanActivate>>): CanActivateFn {
+function createActivateWrapper(routeToWrap: OnecxRoute): CanActivateFn {
   const wrappedGuard: CanActivateFn = (route, state) => {
-    return inject(ActivateGuardsWrapper).canActivate(route, state, guards)
+    return inject(ActivateGuardsWrapper).canActivate(route, state, routeToWrap.canActivateGuardList || [])
   }
 
   // Tag the wrapped guard with the unique symbol
@@ -92,13 +130,78 @@ function createActivateWrapper(guards: Array<CanActivateFn | Type<CanActivate>>)
  * @param guards - The array of CanDeactivate guards to wrap.
  * @returns A CanDeactivateFn that wraps the provided guards.
  */
-function createDeactivateWrapper(guards: Array<CanDeactivateFn<any> | Type<CanDeactivate<any>>>): CanDeactivateFn<any> {
+function createDeactivateWrapper(routeToWrap: OnecxRoute): CanDeactivateFn<any> {
   const wrappedGuard: CanDeactivateFn<any> = (component, currentRoute, currentState, nextState) => {
-    return inject(DeactivateGuardsWrapper).canDeactivate(component, currentRoute, currentState, nextState, guards)
+    return inject(DeactivateGuardsWrapper).canDeactivate(
+      component,
+      currentRoute,
+      currentState,
+      nextState,
+      routeToWrap.canDeactivateGuardList || []
+    )
   }
 
   // Tag the wrapped guard with the unique symbol
   ;(wrappedGuard as any)[WRAPPED_GUARD_TAG] = true
 
   return wrappedGuard
+}
+
+/**
+ * Creates a wrapper for CanActivateChild guards.
+ * Adds a unique tag to the wrapped guard for identification.
+ * @param guards - The array of CanActivateChild guards to wrap.
+ * @returns A CanActivateFn that wraps the provided guards.
+ */
+function createActivateChildWrapper(routeToWrap: OnecxRoute): CanActivateFn {
+  const wrappedGuard: CanActivateFn = (route, state) => {
+    return inject(ActivateGuardsWrapper).canActivate(route, state, routeToWrap.canActivateChildGuardList || [])
+  }
+
+  // Tag the wrapped guard with the unique symbol
+  ;(wrappedGuard as any)[WRAPPED_GUARD_TAG] = true
+
+  return wrappedGuard
+}
+
+/**
+ * Saves the canActivate guards to the route's canActivateGuardList.
+ * @param route - The route to save the canActivate guards for.
+ */
+function saveCanActivateGuards(route: OnecxRoute): void {
+  if (!route.canActivateGuardList) route.canActivateGuardList = []
+
+  if (route.canActivate) {
+    route.canActivateGuardList = route.canActivateGuardList.concat(
+      route.canActivate.filter((guard) => !isWrapper(guard))
+    )
+  }
+}
+
+/**
+ * Saves the canActivateChild guards to the route's canActivateChildGuardList.
+ * @param route - The route to save the canActivateChild guards for.
+ */
+function saveCanDeactivateGuards(route: OnecxRoute): void {
+  if (!route.canDeactivateGuardList) route.canDeactivateGuardList = []
+
+  if (route.canDeactivate) {
+    route.canDeactivateGuardList = route.canDeactivateGuardList.concat(
+      route.canDeactivate.filter((guard) => !isWrapper(guard))
+    )
+  }
+}
+
+/**
+ * Saves the canActivateChild guards to the route's canActivateChildGuardList.
+ * @param route - The route to save the canActivateChild guards for.
+ */
+function saveCanActivateChildGuards(route: OnecxRoute): void {
+  if (!route.canActivateChildGuardList) route.canActivateChildGuardList = []
+
+  if (route.canActivateChild) {
+    route.canActivateChildGuardList = route.canActivateChildGuardList.concat(
+      route.canActivateChild.filter((guard) => !isWrapper(guard))
+    )
+  }
 }
