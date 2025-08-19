@@ -177,7 +177,9 @@ export class WebcomponentConnnector {
       switch (mode) {
         case GUARD_MODE.INITIAL_ROUTER_SYNC:
           if (!event.shouldActivate) {
-            logGuardsDebug('GuardsCheckEnd Initial router sync failed. Sending a request to revert navigation.')
+            console.warn(
+              'Initial router sync failed, reverting navigation. This is expected when the app was loaded and the initial navigation was made to a guarded route.'
+            )
             this.eventsTopic.publish({
               type: 'revertNavigation',
             })
