@@ -31,7 +31,7 @@
     "@nx/plugin": "^20.4.6",
     "@nx/devkit": "^20.4.6",
     "@phenomnomnominal/tsquery": "^6",
-    "@primeng/themes": "^19.0.0",
+    "@primeng/themes": "^20.0.1",
     "@storybook/addon-interactions": "^8.3.2",
     "axios": "^1.10.0",
     "chart.js": "^4.4.3",
