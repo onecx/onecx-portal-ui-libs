@@ -1,3 +1,10 @@
+## [6.5.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.5.2...v6.5.3) (2025-08-21)
+
+### Bug Fixes
+
+* add styles to fix toast positioning ([#881](https://github.com/onecx/onecx-portal-ui-libs/issues/881)) ([858cf69](https://github.com/onecx/onecx-portal-ui-libs/commit/858cf69321e029ace3f5f94ae1c76d69c1d0970d))
+* set height of header left area and footer ([#882](https://github.com/onecx/onecx-portal-ui-libs/issues/882)) ([3e292e6](https://github.com/onecx/onecx-portal-ui-libs/commit/3e292e6e1e2fc2268c1cfe21b96730cc29211490))
+
 ## [6.5.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.5.1...v6.5.2) (2025-08-14)
 
 ### Bug Fixes
