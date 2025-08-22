@@ -4,6 +4,7 @@ export interface UserProfile {
   organization?: string
   tenantId?: string
   issuer?: string
+  settings?: UserSettings
   accountSettings?: UserProfileAccountSettings
   /**
    * @deprecated
@@ -32,6 +33,10 @@ export interface UserProfile {
   memberships?: Array<Membership>
 }
 
+export interface UserSettings {
+  locales?: string[]
+}
+
 export interface UserProfileAccountSettings {
   localeAndTimeSettings?: UserProfileAccountSettingsLocaleAndTimeSettings
   layoutAndThemeSettings?: UserProfileAccountSettingsLayoutAndThemeSettings
@@ -47,7 +52,6 @@ export interface UserProfileAccountSettings {
 
 export interface UserProfileAccountSettingsLocaleAndTimeSettings {
   locale?: string
-  locales?: string[]
   timezone?: string
 }
 

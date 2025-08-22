@@ -11,8 +11,8 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
   handle(params: MissingTranslationHandlerParams): Observable<string> {
     const locales$ = this.userService.profile$.pipe(
       map((p) => {
-        if (p.accountSettings?.localeAndTimeSettings?.locales) {
-          return p.accountSettings?.localeAndTimeSettings?.locales
+        if (p.settings?.locales) {
+          return p.settings?.locales
         }
         return getNormalizedBrowserLocales()
       }),
@@ -24,7 +24,7 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
   }
 }
 
-function dummyLoad(lang: string, params: MissingTranslationHandlerParams): Observable<string> {
+function findTranslationForLang(lang: string, params: MissingTranslationHandlerParams): Observable<string> {
   return params.translateService.reloadLang(lang).pipe(
     map((interpolatableTranslationObject: Record<string, any>) => {
       const parser = params.translateService.parser
@@ -50,7 +50,7 @@ function loadTranslations(
       const chain = (o: Observable<string[]>): Observable<any> => {
         return o.pipe(
           mergeMap((lang) => {
-            return dummyLoad(lang[0], params)
+            return findTranslationForLang(lang[0], params)
           }),
           catchError(() => {
             langs.shift()
