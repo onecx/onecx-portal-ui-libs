@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core'
-import { getValue, MissingTranslationHandler, MissingTranslationHandlerParams, Translation } from '@ngx-translate/core'
+import { getValue, MissingTranslationHandler, MissingTranslationHandlerParams } from '@ngx-translate/core'
 import { getNormalizedBrowserLocales } from '@onecx/accelerator'
 import { UserService } from '@onecx/angular-integration-interface'
 import { Observable, of } from 'rxjs'
