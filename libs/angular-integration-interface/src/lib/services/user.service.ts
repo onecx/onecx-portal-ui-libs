@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core'
-import { PermissionsTopic, UserProfileTopic } from '@onecx/integration-interface'
+import { PermissionsTopic, UserProfile, UserProfileTopic } from '@onecx/integration-interface'
 import { BehaviorSubject, firstValueFrom, map } from 'rxjs'
 import { DEFAULT_LANG } from '../api/constants'
 import { getNormalizedBrowserLocales } from '@onecx/accelerator'

@@ -15,6 +15,14 @@ jest.mock('@onecx/accelerator', () => {
 
 import { getNormalizedBrowserLocales } from '@onecx/accelerator'
 
+jest.mock('@ngx-translate/core', () => {
+  const actual = jest.requireActual('@ngx-translate/core')
+  return {
+    ...actual,
+    getValue: jest.fn((obj, key) => obj[key]),
+  }
+})
+
 describe('MultiLanguageMissingTranslationHandler', () => {
   let handler: MultiLanguageMissingTranslationHandler
   let userServiceMock: UserServiceMock
