@@ -6,7 +6,7 @@
  * @jest-environment jsdom
  */
 
-import { fakeAsync, TestBed, tick } from '@angular/core/testing'
+import { TestBed } from '@angular/core/testing'
 import { UserService } from './user.service'
 import { UserProfile } from '@onecx/integration-interface'
 import { FakeTopic } from '@onecx/angular-integration-interface/mocks'
@@ -19,6 +19,8 @@ jest.mock('@onecx/accelerator', () => {
     getNormalizedBrowserLocales: jest.fn(),
   }
 })
+
+import { getNormalizedBrowserLocales } from '@onecx/accelerator'
 
 jest.mock('@onecx/integration-interface', () => {
   const actual = jest.requireActual('@onecx/integration-interface')
@@ -35,6 +37,7 @@ describe('UserService', () => {
 
   let userService: UserService
   let mockProfile$: FakeTopic<UserProfile>
+  let mockedGetNormalizedBrowserLocales: jest.Mock
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -43,6 +46,7 @@ describe('UserService', () => {
 
     userService = TestBed.inject(UserService)
     mockProfile$ = userService.profile$ as any as FakeTopic<UserProfile>
+    mockedGetNormalizedBrowserLocales = getNormalizedBrowserLocales as jest.Mock
   })
 
   afterEach(() => {
@@ -146,8 +150,7 @@ describe('UserService', () => {
     })
 
     it('should use first language from normalized browser languages if locales is an empty array', () => {
-      const { getNormalizedBrowserLocales } = require('@onecx/accelerator')
-      getNormalizedBrowserLocales.mockReturnValue(['en-US', 'en', 'fr-FR', 'fr'])
+      mockedGetNormalizedBrowserLocales.mockReturnValue(['en-US', 'en', 'fr-FR', 'fr'])
 
       mockProfile$.publish({
         accountSettings: {
