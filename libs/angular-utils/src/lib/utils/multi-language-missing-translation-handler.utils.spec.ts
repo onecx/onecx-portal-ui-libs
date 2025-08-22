@@ -1,0 +1,156 @@
+import { TestBed } from '@angular/core/testing'
+import { MultiLanguageMissingTranslationHandler } from './multi-language-missing-translation-handler.utils'
+import { UserServiceMock, provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
+import { MissingTranslationHandlerParams } from '@ngx-translate/core'
+import { of } from 'rxjs'
+import { UserProfile } from '@onecx/integration-interface'
+
+jest.mock('@onecx/accelerator', () => {
+  const actual = jest.requireActual('@onecx/accelerator')
+  return {
+    ...actual,
+    getNormalizedBrowserLocales: jest.fn(),
+  }
+})
+
+describe('MultiLanguageMissingTranslationHandler', () => {
+  let handler: MultiLanguageMissingTranslationHandler
+  let userServiceMock: UserServiceMock
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [provideUserServiceMock(), MultiLanguageMissingTranslationHandler],
+    })
+
+    userServiceMock = TestBed.inject(UserServiceMock)
+    handler = TestBed.inject(MultiLanguageMissingTranslationHandler)
+  })
+
+  it('should use locales from user profile if available', (done) => {
+    const { getNormalizedBrowserLocales } = require('@onecx/accelerator')
+    getNormalizedBrowserLocales.mockReturnValue(['de'])
+
+    userServiceMock.profile$.publish({
+      accountSettings: {
+        localeAndTimeSettings: {
+          locales: ['fr', 'en'],
+        },
+      },
+    } as UserProfile)
+
+    const params: MissingTranslationHandlerParams = {
+      key: 'test.key',
+      translateService: {
+        reloadLang: jest.fn().mockImplementation((lang) => {
+          if (lang === 'fr') {
+            return of({ 'test.key': 'Test French' })
+          }
+          return of({})
+        }),
+        parser: {
+          interpolate: jest.fn((value) => value),
+          getValue: jest.fn((obj, key) => obj[key]),
+        },
+      } as any,
+    }
+
+    handler.handle(params).subscribe((result) => {
+      expect(result).toBe('Test French')
+      done()
+    })
+  })
+
+  it('should use browser locales if locales from user profile are unavailable', (done) => {
+    const { getNormalizedBrowserLocales } = require('@onecx/accelerator')
+    getNormalizedBrowserLocales.mockReturnValue(['de'])
+
+    userServiceMock.profile$.publish({
+      accountSettings: {
+        localeAndTimeSettings: {
+          locales: undefined,
+        },
+      },
+    } as UserProfile)
+
+    const params: MissingTranslationHandlerParams = {
+      key: 'test.key',
+      translateService: {
+        reloadLang: jest.fn().mockImplementation((lang) => {
+          if (lang === 'de') {
+            return of({ 'test.key': 'Test German' })
+          }
+          return of({})
+        }),
+        parser: {
+          interpolate: jest.fn((value) => value),
+          getValue: jest.fn((obj, key) => obj[key]),
+        },
+      } as any,
+    }
+
+    handler.handle(params).subscribe((result) => {
+      expect(result).toBe('Test German')
+      done()
+    })
+  })
+
+  it('should try to load for every available language', (done) => {
+    userServiceMock.profile$.publish({
+      accountSettings: {
+        localeAndTimeSettings: {
+          locales: ['fr', 'en', 'pl'],
+        },
+      },
+    } as UserProfile)
+
+    const params: MissingTranslationHandlerParams = {
+      key: 'test.key',
+      translateService: {
+        reloadLang: jest.fn().mockImplementation((lang) => {
+          if (lang === 'pl') {
+            return of({ 'test.key': 'Test Polish' })
+          }
+          return of({})
+        }),
+        parser: {
+          interpolate: jest.fn((value) => value),
+          getValue: jest.fn((obj, key) => obj[key]),
+        },
+      } as any,
+    }
+
+    handler.handle(params).subscribe((result) => {
+      expect(result).toBe('Test Polish')
+      expect(params.translateService.reloadLang).toHaveBeenCalledTimes(3)
+      done()
+    })
+  })
+  it('should throw an error if no translation is found', (done) => {
+    userServiceMock.profile$.publish({
+      accountSettings: {
+        localeAndTimeSettings: {
+          locales: ['fr', 'en', 'pl'],
+        },
+      },
+    } as UserProfile)
+
+    const params: MissingTranslationHandlerParams = {
+      key: 'missing.key',
+      translateService: {
+        reloadLang: jest.fn().mockReturnValue(of({})),
+        parser: {
+          interpolate: jest.fn((value) => value),
+          getValue: jest.fn((obj, key) => obj[key]),
+        },
+      } as any,
+    }
+
+    handler.handle(params).subscribe({
+      error: (err) => {
+        expect(err.message).toBe('No translation found for key: missing.key')
+        expect(params.translateService.reloadLang).toHaveBeenCalledTimes(3)
+        done()
+      },
+    })
+  })
+})
