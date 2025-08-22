@@ -11,7 +11,6 @@ jest.mock('./normalize-locales.utils', () => ({
 }))
 
 import { normalizeLocales } from './normalize-locales.utils'
-
 import { getNormalizedBrowserLocales } from './get-normalized-browser-locales.utils'
 
 describe('getNormalizedBrowserLocales', () => {
