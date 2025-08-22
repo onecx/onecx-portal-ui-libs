@@ -6,15 +6,21 @@
  * @jest-environment jsdom
  */
 
-const mockNormalizeLocales = jest.fn()
 jest.mock('./normalize-locales.utils', () => ({
-  normalizeLocales: mockNormalizeLocales,
+  normalizeLocales: jest.fn(),
 }))
+
+import { normalizeLocales } from './normalize-locales.utils'
 
 import { getNormalizedBrowserLocales } from './get-normalized-browser-locales.utils'
 
 describe('getNormalizedBrowserLocales', () => {
   const originalNavigator = window.navigator
+  let mockNormalizeLocales: jest.Mock
+
+  beforeEach(() => {
+    mockNormalizeLocales = normalizeLocales as jest.Mock
+  })
 
   afterEach(() => {
     // Restore the original navigator object after each test
@@ -31,14 +37,6 @@ describe('getNormalizedBrowserLocales', () => {
     })
     expect(getNormalizedBrowserLocales()).toEqual(['en'])
   })
-
-  //   it('should return ["en"] if navigator.languages and navigator.language are undefined', () => {
-  //     Object.defineProperty(window, 'navigator', {
-  //       value: {},
-  //       configurable: true,
-  //     })
-  //     expect(getNormalizedBrowserLocales()).toEqual(['en'])
-  //   })
 
   it('should return normalized locales from navigator.languages', () => {
     Object.defineProperty(window, 'navigator', {
