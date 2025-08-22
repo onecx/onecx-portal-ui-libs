@@ -24,7 +24,7 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
   }
 }
 
-function dummyLoad(lang: string, params: MissingTranslationHandlerParams): Observable<string> {
+function findTranslationForLang(lang: string, params: MissingTranslationHandlerParams): Observable<string> {
   return params.translateService.reloadLang(lang).pipe(
     map((interpolatableTranslationObject: Record<string, any>) => {
       const translatedValue = params.translateService.parser.interpolate(
@@ -49,7 +49,7 @@ function loadTranslations(
       const chain = (o: Observable<string[]>): Observable<any> => {
         return o.pipe(
           mergeMap((lang) => {
-            return dummyLoad(lang[0], params)
+            return findTranslationForLang(lang[0], params)
           }),
           catchError(() => {
             langs.shift()
