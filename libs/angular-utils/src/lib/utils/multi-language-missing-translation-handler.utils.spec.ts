@@ -13,9 +13,12 @@ jest.mock('@onecx/accelerator', () => {
   }
 })
 
+import { getNormalizedBrowserLocales } from '@onecx/accelerator'
+
 describe('MultiLanguageMissingTranslationHandler', () => {
   let handler: MultiLanguageMissingTranslationHandler
   let userServiceMock: UserServiceMock
+  let mockedGetNormalizedBrowserLocales: jest.Mock
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -24,11 +27,11 @@ describe('MultiLanguageMissingTranslationHandler', () => {
 
     userServiceMock = TestBed.inject(UserServiceMock)
     handler = TestBed.inject(MultiLanguageMissingTranslationHandler)
+    mockedGetNormalizedBrowserLocales = getNormalizedBrowserLocales as jest.Mock
   })
 
   it('should use locales from user profile if available', (done) => {
-    const { getNormalizedBrowserLocales } = require('@onecx/accelerator')
-    getNormalizedBrowserLocales.mockReturnValue(['de'])
+    mockedGetNormalizedBrowserLocales.mockReturnValue(['de'])
 
     userServiceMock.profile$.publish({
       accountSettings: {
@@ -61,8 +64,8 @@ describe('MultiLanguageMissingTranslationHandler', () => {
   })
 
   it('should use browser locales if locales from user profile are unavailable', (done) => {
-    const { getNormalizedBrowserLocales } = require('@onecx/accelerator')
-    getNormalizedBrowserLocales.mockReturnValue(['de'])
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    mockedGetNormalizedBrowserLocales.mockReturnValue(['de'])
 
     userServiceMock.profile$.publish({
       accountSettings: {
