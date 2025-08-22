@@ -15,7 +15,7 @@ export class UserService implements OnDestroy {
     this.profile$
       .pipe(
         map((profile) => {
-          let locales = profile.accountSettings?.localeAndTimeSettings?.locales
+          let locales = profile.settings?.locales
 
           if (!locales) {
             return this.useOldLangSetting(profile)

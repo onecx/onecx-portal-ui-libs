@@ -129,10 +129,8 @@ describe('UserService', () => {
 
     it('should use first general language from locales if provided', () => {
       mockProfile$.publish({
-        accountSettings: {
-          localeAndTimeSettings: {
-            locales: ['fr-FR', 'fr'],
-          },
+        settings: {
+          locales: ['fr-FR', 'fr'],
         },
       } as UserProfile)
       expect(userService.lang$.getValue()).toBe('fr')
@@ -140,10 +138,8 @@ describe('UserService', () => {
 
     it('should use default language if no general language is in locales', () => {
       mockProfile$.publish({
-        accountSettings: {
-          localeAndTimeSettings: {
-            locales: ['fr-FR', 'de-DE'],
-          },
+        settings: {
+          locales: ['fr-FR', 'de-DE'],
         },
       } as UserProfile)
       expect(userService.lang$.getValue()).toBe(DEFAULT_LANG)
@@ -153,10 +149,8 @@ describe('UserService', () => {
       mockedGetNormalizedBrowserLocales.mockReturnValue(['en-US', 'en', 'fr-FR', 'fr'])
 
       mockProfile$.publish({
-        accountSettings: {
-          localeAndTimeSettings: {
-            locales: [] as string[],
-          },
+        settings: {
+          locales: [] as string[],
         },
       } as UserProfile)
       expect(userService.lang$.getValue()).toBe('en')

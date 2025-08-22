@@ -11,8 +11,8 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
   handle(params: MissingTranslationHandlerParams): Observable<string> {
     const locales$ = this.userService.profile$.pipe(
       map((p) => {
-        if (p.accountSettings?.localeAndTimeSettings?.locales) {
-          return p.accountSettings?.localeAndTimeSettings?.locales
+        if (p.settings?.locales) {
+          return p.settings?.locales
         }
         return getNormalizedBrowserLocales()
       }),

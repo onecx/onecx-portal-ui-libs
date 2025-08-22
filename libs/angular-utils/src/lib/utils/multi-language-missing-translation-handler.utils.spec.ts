@@ -42,10 +42,8 @@ describe('MultiLanguageMissingTranslationHandler', () => {
     mockedGetNormalizedBrowserLocales.mockReturnValue(['de'])
 
     userServiceMock.profile$.publish({
-      accountSettings: {
-        localeAndTimeSettings: {
-          locales: ['fr', 'en'],
-        },
+      settings: {
+        locales: ['fr', 'en'],
       },
     } as UserProfile)
 
@@ -76,10 +74,8 @@ describe('MultiLanguageMissingTranslationHandler', () => {
     mockedGetNormalizedBrowserLocales.mockReturnValue(['de'])
 
     userServiceMock.profile$.publish({
-      accountSettings: {
-        localeAndTimeSettings: {
-          locales: undefined,
-        },
+      settings: {
+        locales: undefined,
       },
     } as UserProfile)
 
@@ -107,10 +103,8 @@ describe('MultiLanguageMissingTranslationHandler', () => {
 
   it('should try to load for every available language', (done) => {
     userServiceMock.profile$.publish({
-      accountSettings: {
-        localeAndTimeSettings: {
-          locales: ['fr', 'en', 'pl'],
-        },
+      settings: {
+        locales: ['fr', 'en', 'pl'],
       },
     } as UserProfile)
 
@@ -138,10 +132,8 @@ describe('MultiLanguageMissingTranslationHandler', () => {
   })
   it('should throw an error if no translation is found', (done) => {
     userServiceMock.profile$.publish({
-      accountSettings: {
-        localeAndTimeSettings: {
-          locales: ['fr', 'en', 'pl'],
-        },
+      settings: {
+        locales: ['fr', 'en', 'pl'],
       },
     } as UserProfile)
 
