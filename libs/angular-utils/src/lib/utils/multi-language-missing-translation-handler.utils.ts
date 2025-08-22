@@ -8,7 +8,7 @@ import { catchError, map, mergeMap, shareReplay, take } from 'rxjs/operators'
 @Injectable()
 export class MultiLanguageMissingTranslationHandler implements MissingTranslationHandler {
   private readonly userService = inject(UserService)
-  handle(params: MissingTranslationHandlerParams): Observable<any> {
+  handle(params: MissingTranslationHandlerParams): Observable<string> {
     const locales$ = this.userService.profile$.pipe(
       map((p) => {
         if (p.accountSettings?.localeAndTimeSettings?.locales) {
@@ -24,7 +24,7 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
   }
 }
 
-function dummyLoad(lang: string, params: MissingTranslationHandlerParams): Observable<any> {
+function dummyLoad(lang: string, params: MissingTranslationHandlerParams): Observable<string> {
   return params.translateService.reloadLang(lang).pipe(
     map((interpolatableTranslationObject: Record<string, any>) => {
       const parser = params.translateService.parser
@@ -40,7 +40,10 @@ function dummyLoad(lang: string, params: MissingTranslationHandlerParams): Obser
   )
 }
 
-function loadTranslations(langConfig: Observable<string[]>, params: MissingTranslationHandlerParams): Observable<any> {
+function loadTranslations(
+  langConfig: Observable<string[]>,
+  params: MissingTranslationHandlerParams
+): Observable<string> {
   return langConfig.pipe(
     mergeMap((l) => {
       const langs = [...l]
