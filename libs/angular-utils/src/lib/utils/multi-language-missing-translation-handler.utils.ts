@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core'
 import { MissingTranslationHandler, MissingTranslationHandlerParams } from '@ngx-translate/core'
 import { getNormalizedBrowserLocales } from '@onecx/accelerator'
 import { UserService } from '@onecx/angular-integration-interface'
-import { Observable, of, throwError } from 'rxjs'
+import { Observable, of } from 'rxjs'
 import { catchError, map, mergeMap, shareReplay, take } from 'rxjs/operators'
 
 @Injectable()
@@ -40,10 +40,7 @@ function dummyLoad(lang: string, params: MissingTranslationHandlerParams): Obser
   )
 }
 
-export function loadTranslations(
-  langConfig: Observable<string[]>,
-  params: MissingTranslationHandlerParams
-): Observable<any> {
+function loadTranslations(langConfig: Observable<string[]>, params: MissingTranslationHandlerParams): Observable<any> {
   return langConfig.pipe(
     mergeMap((l) => {
       const langs = [...l]
