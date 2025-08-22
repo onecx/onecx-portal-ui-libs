@@ -47,6 +47,7 @@ export interface UserProfileAccountSettings {
 
 export interface UserProfileAccountSettingsLocaleAndTimeSettings {
   locale?: string
+  locales?: string[]
   timezone?: string
 }
 
