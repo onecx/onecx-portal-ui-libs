@@ -1,10 +1,7 @@
 import { UserService } from '@onecx/angular-integration-interface'
 
-/**
- * @deprecated Use DynamicLocaleId from @onecx/angular-utils instead
- */
 export class DynamicLocaleId {
-  constructor(private userService: UserService) {
+  constructor(private readonly userService: UserService) {
     Object.getOwnPropertyNames(String.prototype).forEach((k) => {
       if (k != 'valueOf' && k != 'length') {
         ;(this as any)[k] = function (...args: any[]) {
