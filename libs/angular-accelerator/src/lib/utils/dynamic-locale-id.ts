@@ -1,5 +1,8 @@
 import { UserService } from '@onecx/angular-integration-interface'
 
+/**
+ * @deprecated Use DynamicLocaleId from @onecx/angular-utils instead
+ */
 export class DynamicLocaleId {
   constructor(private userService: UserService) {
     Object.getOwnPropertyNames(String.prototype).forEach((k) => {
@@ -16,9 +19,7 @@ export class DynamicLocaleId {
     return this.userService.lang$.getValue()
   }
 
-  
-  public get length() : number {
+  public get length(): number {
     return this.valueOf().length
   }
-  
 }

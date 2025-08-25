@@ -67,25 +67,23 @@ describe('UserService', () => {
 
   describe('lang$', () => {
     describe('old style language setting', () => {
-      it('should set to DEFAULT_LANG if no locales are provided and window has no browser languages', fakeAsync(() => {
+      it('should set to DEFAULT_LANG if no locales are provided and window has no browser languages', () => {
         mockProfile$.publish({} as UserProfile)
 
-        tick(1000)
         expect(userService.lang$.getValue()).toBe(DEFAULT_LANG)
-      }))
+      })
 
-      it('should set to DEFAULT_LANG if no locales are provided and window navigator is not defined', fakeAsync(() => {
+      it('should set to DEFAULT_LANG if no locales are provided and window navigator is not defined', () => {
         Object.defineProperty(window, 'navigator', {
           value: undefined,
           configurable: true,
         })
         mockProfile$.publish({} as UserProfile)
 
-        tick(1000)
         expect(userService.lang$.getValue()).toBe(DEFAULT_LANG)
-      }))
+      })
 
-      it('should set to DEFAULT_LANG if no locales are provided and window navigator language and languages are not defined', fakeAsync(() => {
+      it('should set to DEFAULT_LANG if no locales are provided and window navigator language and languages are not defined', () => {
         Object.defineProperty(window, 'navigator', {
           value: {
             language: undefined,
@@ -95,11 +93,10 @@ describe('UserService', () => {
         })
         mockProfile$.publish({} as UserProfile)
 
-        tick(1000)
         expect(userService.lang$.getValue()).toBe(DEFAULT_LANG)
-      }))
+      })
 
-      it('should set to first browser language if no locales are provided and window has browser languages separated with -', fakeAsync(() => {
+      it('should set to first browser language if no locales are provided and window has browser languages separated with -', () => {
         Object.defineProperty(window, 'navigator', {
           value: { languages: ['de-DE', 'fr-FR'] },
           configurable: true,
@@ -107,11 +104,10 @@ describe('UserService', () => {
 
         mockProfile$.publish({} as UserProfile)
 
-        tick(1000)
         expect(userService.lang$.getValue()).toBe('de')
-      }))
+      })
 
-      it('should set to first browser language if no locales are provided and window has browser languages separated with _', fakeAsync(() => {
+      it('should set to first browser language if no locales are provided and window has browser languages separated with _', () => {
         Object.defineProperty(window, 'navigator', {
           value: { languages: ['de_DE', 'fr_FR'] },
           configurable: true,
@@ -119,11 +115,10 @@ describe('UserService', () => {
 
         mockProfile$.publish({} as UserProfile)
 
-        tick(1000)
         expect(userService.lang$.getValue()).toBe('de')
-      }))
+      })
 
-      it('should set to user locale if no locales are provided and preferred locale is defined', fakeAsync(() => {
+      it('should set to user locale if no locales are provided and preferred locale is defined', () => {
         mockProfile$.publish({
           accountSettings: {
             localeAndTimeSettings: {
@@ -132,34 +127,31 @@ describe('UserService', () => {
           },
         } as UserProfile)
 
-        tick(1000)
         expect(userService.lang$.getValue()).toBe('es')
-      }))
+      })
     })
 
-    it('should use first general language from locales if provided', fakeAsync(() => {
+    it('should use first general language from locales if provided', () => {
       mockProfile$.publish({
         settings: {
           locales: ['fr-FR', 'fr'],
         },
       } as UserProfile)
 
-      tick(1000)
       expect(userService.lang$.getValue()).toBe('fr')
-    }))
+    })
 
-    it('should use default language if no general language is in locales', fakeAsync(() => {
+    it('should use default language if no general language is in locales', () => {
       mockProfile$.publish({
         settings: {
           locales: ['fr-FR', 'de-DE'],
         },
       } as UserProfile)
 
-      tick(1000)
       expect(userService.lang$.getValue()).toBe(DEFAULT_LANG)
-    }))
+    })
 
-    it('should use first language from normalized browser languages if locales is an empty array', fakeAsync(() => {
+    it('should use first language from normalized browser languages if locales is an empty array', () => {
       mockedGetNormalizedBrowserLocales.mockReturnValue(['en-US', 'en', 'fr-FR', 'fr'])
 
       mockProfile$.publish({
@@ -168,8 +160,7 @@ describe('UserService', () => {
         },
       } as UserProfile)
 
-      tick(1000)
       expect(userService.lang$.getValue()).toBe('en')
-    }))
+    })
   })
 })

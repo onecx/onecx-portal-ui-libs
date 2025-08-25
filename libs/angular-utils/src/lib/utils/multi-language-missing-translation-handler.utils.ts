@@ -23,7 +23,15 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
     return loadTranslations(locales$, params)
   }
 }
-
+/**
+ * Tries to find a translation for the given language.
+ * If no translation is found, an error is thrown.
+ *
+ * Uses the translateService to reload the language and get the translation for the given key. Then parses the translation with provided parameters.
+ * @param lang - language to find the translation for
+ * @param params - parameters containing the key and translateService
+ * @returns Observable that emits the translation or throws an error if not found
+ */
 function findTranslationForLang(lang: string, params: MissingTranslationHandlerParams): Observable<string> {
   return params.translateService.reloadLang(lang).pipe(
     map((interpolatableTranslationObject: Record<string, any>) => {
