@@ -1,29 +1,22 @@
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing'
-import { Tree } from '@nx/devkit'
-import warnRemovePropertiesFromThemeService from './warn-removed-properties-from-theme-service'
-import { printWarnings, detectMethodCallsInFiles, detectPropertyAccessInFiles } from '../../../nx-migration-utils'
-
-// Mock the utilities from nx-migration-utils
-jest.mock('@onecx/nx-migration-utils', () => ({
-  printWarnings: jest.fn(),
-  detectMethodCallsInFiles: jest.fn(),
-  detectPropertyAccessInFiles: jest.fn(),
-}))
-
-const mockPrintWarnings = printWarnings as jest.MockedFunction<typeof printWarnings>
-const mockDetectMethodCallsInFiles = detectMethodCallsInFiles as jest.MockedFunction<typeof detectMethodCallsInFiles>
-const mockDetectPropertyAccessInFiles = detectPropertyAccessInFiles as jest.MockedFunction<
-  typeof detectPropertyAccessInFiles
->
+import { logger, Tree } from '@nx/devkit'
+import {
+  warnThemeServiceRemovedProperties,
+  warnThemeServiceRemovedMethods,
+} from './warn-removed-properties-from-theme-service'
 
 describe('warn-removed-properties-from-theme-service', () => {
   let tree: Tree
+  let spy: jest.SpyInstance
+  const rootDir = 'src/'
 
   beforeEach(() => {
     tree = createTreeWithEmptyWorkspace()
-    mockPrintWarnings.mockClear()
-    mockDetectMethodCallsInFiles.mockClear()
-    mockDetectPropertyAccessInFiles.mockClear()
+    spy = jest.spyOn(logger, 'warn').mockImplementation(jest.fn())
+  })
+
+  afterEach(() => {
+    spy.mockRestore()
   })
 
   describe('ThemeService property detection', () => {
@@ -47,119 +40,85 @@ describe('warn-removed-properties-from-theme-service', () => {
       `
       )
 
-      // Mock property access detected
-      const mockPropertyAccess = {} as any
-      mockDetectPropertyAccessInFiles.mockReturnValue(new Map([[filePath, [mockPropertyAccess]]]))
-      // Mock no method calls detected
-      mockDetectMethodCallsInFiles.mockReturnValue(new Map())
-
-      await warnRemovePropertiesFromThemeService(tree)
-
-      expect(mockDetectPropertyAccessInFiles).toHaveBeenCalledWith(tree, 'src', 'baseUrlV1', 'ThemeService')
-      expect(mockPrintWarnings).toHaveBeenCalledWith(
-        expect.stringContaining('ThemeService properties [baseUrlV1] have been removed'),
-        [filePath]
+      warnThemeServiceRemovedProperties(tree, rootDir)
+      expect(spy).toHaveBeenCalledWith(
+        `ThemeService property baseUrlV1 have been removed in v6. Please remove these usages and adapt your code accordingly. Found in: ${filePath}`
       )
-    })
-
-    it('should not warn when no property usage is detected', async () => {
-      const filePath = 'src/app/component.ts'
-      tree.write(
-        filePath,
-        `
-        export class AppComponent {
-          constructor() {}
-        }
-      `
-      )
-
-      // Mock no property access detected
-      mockDetectPropertyAccessInFiles.mockReturnValue(new Map())
-      // Mock no method calls detected
-      mockDetectMethodCallsInFiles.mockReturnValue(new Map())
-
-      await warnRemovePropertiesFromThemeService(tree)
-
-      expect(mockPrintWarnings).not.toHaveBeenCalled()
     })
   })
 
   describe('ThemeService method detection', () => {
     it('should detect getThemeRef method usage', async () => {
-      const filePath = 'src/app/theme.component.ts'
+      const filePath = 'src/app/component2.ts'
       tree.write(
         filePath,
         `
-        export class ThemeComponent {
-          constructor(private themeService: ThemeService) {}
-  
-          loadTheme() {
+        import { Component } from '@angular/core';
+        import { ThemeService } from '@onecx/angular-integration-interface';
+
+        @Component({
+          selector: 'app-component',
+          template: ''
+        })
+        export class AppComponent {
+          constructor(private themeService: ThemeService) {
             const themeRef = this.themeService.getThemeRef('dark');
-            return themeRef;
           }
         }
       `
       )
 
-      // Mock method calls detected for getThemeRef
-      const mockCallExpression = {} as any // Mock CallExpression
-      mockDetectMethodCallsInFiles
-        .mockReturnValueOnce(new Map([[filePath, [mockCallExpression]]])) // getThemeRef
-        .mockReturnValueOnce(new Map()) // loadAndApplyTheme
-        .mockReturnValueOnce(new Map()) // apply
-      // Mock no property access detected
-      mockDetectPropertyAccessInFiles.mockReturnValue(new Map())
+      warnThemeServiceRemovedMethods(tree, rootDir)
 
-      await warnRemovePropertiesFromThemeService(tree)
-
-      expect(mockDetectMethodCallsInFiles).toHaveBeenCalledWith(tree, 'src', 'getThemeRef', 'ThemeService')
-      expect(mockDetectMethodCallsInFiles).toHaveBeenCalledWith(tree, 'src', 'loadAndApplyTheme', 'ThemeService')
-      expect(mockDetectMethodCallsInFiles).toHaveBeenCalledWith(tree, 'src', 'apply', 'ThemeService')
-
-      expect(mockPrintWarnings).toHaveBeenCalledWith(
-        expect.stringContaining('ThemeService methods [getThemeRef, loadAndApplyTheme, apply] have been removed'),
-        [filePath]
+      expect(spy).toHaveBeenCalledWith(
+        `ThemeService methods [getThemeRef, loadAndApplyTheme, apply] have been removed in v6. Only currentTheme$ property is available. Please adapt your code accordingly. Found in: ${filePath}`
       )
     })
 
     it('should detect loadAndApplyTheme method usage', async () => {
-      const filePath = 'src/app/theme-loader.ts'
+      const filePath = 'src/app/component3.ts'
       tree.write(
         filePath,
         `
-        export class ThemeLoader {
+        import { Component } from '@angular/core';
+        import { ThemeService } from '@onecx/angular-integration-interface';
+
+        @Component({
+          selector: 'app-component',
+          template: ''
+        })
+        export class AppComponent {
           constructor(private themeService: ThemeService) {}
-  
-          async applyTheme(themeName: string) {
-            await this.themeService.loadAndApplyTheme(themeName);
+
+          async loadTheme() {
+            await this.themeService.loadAndApplyTheme('light');
           }
         }
       `
       )
 
-      const mockCallExpression = {} as any
-      mockDetectMethodCallsInFiles
-        .mockReturnValueOnce(new Map()) // getThemeRef
-        .mockReturnValueOnce(new Map([[filePath, [mockCallExpression]]])) // loadAndApplyTheme
-        .mockReturnValueOnce(new Map()) // apply
-      mockDetectPropertyAccessInFiles.mockReturnValue(new Map())
+      warnThemeServiceRemovedMethods(tree, rootDir)
 
-      await warnRemovePropertiesFromThemeService(tree)
-
-      expect(mockPrintWarnings).toHaveBeenCalledWith(
-        expect.stringContaining('ThemeService methods [getThemeRef, loadAndApplyTheme, apply] have been removed'),
-        [filePath]
+      expect(spy).toHaveBeenCalledWith(
+        `ThemeService methods [getThemeRef, loadAndApplyTheme, apply] have been removed in v6. Only currentTheme$ property is available. Please adapt your code accordingly. Found in: ${filePath}`
       )
     })
 
     it('should detect apply method usage', async () => {
-      const filePath = 'src/app/theme-applier.ts'
+      const filePath = 'src/app/component4.ts'
       tree.write(
         filePath,
         `
-        export class ThemeApplier {
+        import { Component } from '@angular/core';
+        import { ThemeService } from '@onecx/angular-integration-interface';
+
+        @Component({
+          selector: 'app-component',
+          template: ''
+        })
+        export class AppComponent {
           constructor(private themeService: ThemeService) {}
-  
+
           applyCustomTheme() {
             this.themeService.apply({ primaryColor: '#ff0000' });
           }
@@ -167,142 +126,135 @@ describe('warn-removed-properties-from-theme-service', () => {
       `
       )
 
-      const mockCallExpression = {} as any
-      mockDetectMethodCallsInFiles
-        .mockReturnValueOnce(new Map()) // getThemeRef
-        .mockReturnValueOnce(new Map()) // loadAndApplyTheme
-        .mockReturnValueOnce(new Map([[filePath, [mockCallExpression]]])) // apply
-      mockDetectPropertyAccessInFiles.mockReturnValue(new Map())
+      warnThemeServiceRemovedMethods(tree, rootDir)
 
-      await warnRemovePropertiesFromThemeService(tree)
-
-      expect(mockPrintWarnings).toHaveBeenCalledWith(
-        expect.stringContaining('ThemeService methods [getThemeRef, loadAndApplyTheme, apply] have been removed'),
-        [filePath]
+      expect(spy).toHaveBeenCalledWith(
+        `ThemeService methods [getThemeRef, loadAndApplyTheme, apply] have been removed in v6. Only currentTheme$ property is available. Please adapt your code accordingly. Found in: ${filePath}`
       )
     })
 
-    it('should detect multiple method usages across different files', async () => {
-      const file1 = 'src/app/file1.ts'
-      const file2 = 'src/app/file2.ts'
-
+    it('should detect multiple method usages in one file', async () => {
+      const filePath = 'src/app/component5.ts'
       tree.write(
-        file1,
+        filePath,
         `
-        export class File1 {
+        import { Component } from '@angular/core';
+        import { ThemeService } from '@onecx/angular-integration-interface';
+
+        @Component({
+          selector: 'app-component',
+          template: ''
+        })
+        export class AppComponent {
           constructor(private themeService: ThemeService) {}
-  
-          test() {
-            this.themeService.getThemeRef('test');
+
+          manageThemes() {
+            const ref = this.themeService.getThemeRef('light');
+            this.themeService.loadAndApplyTheme('dark');
+            this.themeService.apply({ theme: 'custom' });
           }
         }
       `
       )
 
-      tree.write(
-        file2,
-        `
-        export class File2 {
-          constructor(private themeService: ThemeService) {}
-  
-          test() {
-            this.themeService.apply({});
-          }
-        }
-      `
-      )
+      warnThemeServiceRemovedMethods(tree, rootDir)
 
-      const mockCallExpression = {} as any
-      mockDetectMethodCallsInFiles
-        .mockReturnValueOnce(new Map([[file1, [mockCallExpression]]])) // getThemeRef
-        .mockReturnValueOnce(new Map()) // loadAndApplyTheme
-        .mockReturnValueOnce(new Map([[file2, [mockCallExpression]]])) // apply
-      mockDetectPropertyAccessInFiles.mockReturnValue(new Map())
-
-      await warnRemovePropertiesFromThemeService(tree)
-
-      expect(mockPrintWarnings).toHaveBeenCalledWith(
-        expect.stringContaining('ThemeService methods [getThemeRef, loadAndApplyTheme, apply] have been removed'),
-        expect.arrayContaining([file1, file2])
+      expect(spy).toHaveBeenCalledWith(
+        `ThemeService methods [getThemeRef, loadAndApplyTheme, apply] have been removed in v6. Only currentTheme$ property is available. Please adapt your code accordingly. Found in: ${filePath}`
       )
     })
   })
 
   describe('Combined property and method detection', () => {
     it('should detect both property and method usages in same file', async () => {
-      const filePath = 'src/app/complex-theme.service.ts'
+      const filePath = 'src/app/component6.ts'
       tree.write(
         filePath,
         `
-        export class ComplexThemeService {
+        import { Component } from '@angular/core';
+        import { ThemeService } from '@onecx/angular-integration-interface';
+
+        @Component({
+          selector: 'app-component',
+          template: ''
+        })
+        export class AppComponent {
           constructor(private themeService: ThemeService) {}
-  
+
           manageThemes() {
             const ref = this.themeService.getThemeRef('light');
-            this.themeService.loadAndApplyTheme('dark');
-            this.themeService.apply({ theme: 'custom' });
             console.log(this.themeService.baseUrlV1);
           }
         }
       `
       )
 
-      const mockCallExpression = {} as any
-      const mockPropertyAccess = {} as any
+      warnThemeServiceRemovedProperties(tree, rootDir)
+      warnThemeServiceRemovedMethods(tree, rootDir)
 
-      // Mock both property and method detection
-      mockDetectPropertyAccessInFiles.mockReturnValue(new Map([[filePath, [mockPropertyAccess]]]))
-      mockDetectMethodCallsInFiles
-        .mockReturnValueOnce(new Map([[filePath, [mockCallExpression]]])) // getThemeRef
-        .mockReturnValueOnce(new Map()) // loadAndApplyTheme
-        .mockReturnValueOnce(new Map()) // apply
-
-      await warnRemovePropertiesFromThemeService(tree)
-
-      expect(mockPrintWarnings).toHaveBeenCalledTimes(2)
-      expect(mockPrintWarnings).toHaveBeenCalledWith(
-        expect.stringContaining('ThemeService properties [baseUrlV1] have been removed'),
-        [filePath]
+      expect(spy).toHaveBeenCalledTimes(2)
+      expect(spy).toHaveBeenCalledWith(
+        `ThemeService property baseUrlV1 have been removed in v6. Please remove these usages and adapt your code accordingly. Found in: ${filePath}`
       )
-      expect(mockPrintWarnings).toHaveBeenCalledWith(
-        expect.stringContaining('ThemeService methods [getThemeRef, loadAndApplyTheme, apply] have been removed'),
-        [filePath]
+      expect(spy).toHaveBeenCalledWith(
+        `ThemeService methods [getThemeRef, loadAndApplyTheme, apply] have been removed in v6. Only currentTheme$ property is available. Please adapt your code accordingly. Found in: ${filePath}`
       )
     })
   })
 
-  describe('Pattern consistency with warnUserServiceHasPermission', () => {
-    it('should follow the same pattern as warnUserServiceHasPermission', async () => {
-      const filePath = 'src/app/test.ts'
-      tree.write(filePath, 'export class Test {}')
+  describe('No warnings when no removed features are used', () => {
+    it('should not warn when ThemeService is used but no removed properties or methods are accessed', async () => {
+      const filePath = 'src/app/component7.ts'
+      tree.write(
+        filePath,
+        `
+        import { Component } from '@angular/core';
+        import { ThemeService } from '@onecx/angular-integration-interface';
 
-      // Mock some detection
-      const mockCallExpression = {} as any
-      mockDetectMethodCallsInFiles
-        .mockReturnValueOnce(new Map([[filePath, [mockCallExpression]]]))
-        .mockReturnValueOnce(new Map())
-        .mockReturnValueOnce(new Map())
-      mockDetectPropertyAccessInFiles.mockReturnValue(new Map())
+        @Component({
+          selector: 'app-component',
+          template: ''
+        })
+        export class AppComponent {
+          constructor(private themeService: ThemeService) {
+            // Only using the allowed currentTheme$ property
+            this.themeService.currentTheme$.subscribe(theme => {
+              console.log('Current theme:', theme);
+            });
+          }
+        }
+      `
+      )
 
-      await warnRemovePropertiesFromThemeService(tree)
+      warnThemeServiceRemovedProperties(tree, rootDir)
+      warnThemeServiceRemovedMethods(tree, rootDir)
 
-      // Verify the pattern: use detectMethodCallsInFiles/detectPropertyAccessInFiles, collect affected files, print warnings
-      expect(mockDetectMethodCallsInFiles).toHaveBeenCalledTimes(3) // Once for each method
-      expect(mockDetectPropertyAccessInFiles).toHaveBeenCalledTimes(1) // Once for each property
-      expect(mockPrintWarnings).toHaveBeenCalledTimes(1) // Once for methods (no properties detected)
+      expect(spy).not.toHaveBeenCalled()
     })
 
-    it('should use the same utilities as the common migration functions', async () => {
-      tree.write('src/app/test.ts', 'export class Test {}')
+    it('should not warn when no ThemeService is used at all', async () => {
+      const filePath = 'src/app/component8.ts'
+      tree.write(
+        filePath,
+        `
+        import { Component } from '@angular/core';
 
-      mockDetectMethodCallsInFiles.mockReturnValue(new Map())
-      mockDetectPropertyAccessInFiles.mockReturnValue(new Map())
+        @Component({
+          selector: 'app-component',
+          template: ''
+        })
+        export class AppComponent {
+          constructor() {
+            console.log('No ThemeService used here');
+          }
+        }
+      `
+      )
 
-      await warnRemovePropertiesFromThemeService(tree)
+      warnThemeServiceRemovedProperties(tree, rootDir)
+      warnThemeServiceRemovedMethods(tree, rootDir)
 
-      // Verify we're using the same utilities as warnUserServiceHasPermission
-      expect(mockDetectMethodCallsInFiles).toHaveBeenCalled()
-      expect(mockDetectPropertyAccessInFiles).toHaveBeenCalled()
+      expect(spy).not.toHaveBeenCalled()
     })
   })
 })

@@ -23,6 +23,12 @@
       "version": "6.0.0",
       "description": "Removes all imports of IAuthService and AUTH_SERVICE and warns for usage.",
       "factory": "migrations/v6/remove-auth-service"
+    },
+    "warn-removed-properties-from-theme-service": {
+      "cli": "nx",
+      "version": "6.0.0",
+      "description": "Warns about the properties which were removed from themeService",
+      "factory": "migrations/v6/warn-removed-properties-from-theme-service"
     }
   },
   "packageJsonUpdates": {
