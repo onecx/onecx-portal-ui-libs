@@ -10,6 +10,7 @@ jest.mock('./normalize-locales.utils', () => ({
   normalizeLocales: jest.fn(),
 }))
 
+import { normalizeLocales } from './normalize-locales.utils'
 import { getNormalizedBrowserLocales } from './get-normalized-browser-locales.utils'
 
 describe('getNormalizedBrowserLocales', () => {
@@ -17,8 +18,6 @@ describe('getNormalizedBrowserLocales', () => {
   let mockNormalizeLocales: jest.Mock
 
   beforeEach(() => {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const normalizeLocales = require('./normalize-locales.utils').normalizeLocales
     mockNormalizeLocales = normalizeLocales as jest.Mock
   })
 
