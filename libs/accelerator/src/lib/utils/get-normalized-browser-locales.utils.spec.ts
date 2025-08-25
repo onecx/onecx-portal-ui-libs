@@ -32,14 +32,6 @@ describe('getNormalizedBrowserLocales', () => {
     expect(getNormalizedBrowserLocales()).toEqual(['en'])
   })
 
-  //   it('should return ["en"] if navigator.languages and navigator.language are undefined', () => {
-  //     Object.defineProperty(window, 'navigator', {
-  //       value: {},
-  //       configurable: true,
-  //     })
-  //     expect(getNormalizedBrowserLocales()).toEqual(['en'])
-  //   })
-
   it('should return normalized locales from navigator.languages', () => {
     Object.defineProperty(window, 'navigator', {
       value: { languages: ['en-US', 'fr-FR'] },
