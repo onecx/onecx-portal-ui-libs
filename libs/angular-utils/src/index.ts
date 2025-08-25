@@ -15,6 +15,8 @@ export * from './lib/utils/portal-api-configuration.utils'
 export * from './lib/utils/provide-connection-service'
 export * from './lib/utils/normalize-preset-keys.utils'
 export * from './lib/utils/remote-component-translation-path-factory.utils'
+export * from './lib/utils/multi-language-missing-translation-handler.utils'
+export * from './lib/utils/dynamic-locale-id.utils'
 
 // Model
 export * from './lib/model/injection-tokens'
