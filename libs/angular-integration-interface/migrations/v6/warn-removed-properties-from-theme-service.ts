@@ -2,7 +2,7 @@ import { Tree } from '@nx/devkit'
 import { printWarnings, detectMethodCallsInFiles } from '@onecx/nx-migration-utils'
 
 const THEME_SERVICE_REMOVED_PROPERTY = 'baseUrlV1'
-const THEME_SERVICE_REMOVED_METHODS = ['getThemeRef', 'loadAndApplyTheme', 'apply'] as const
+const THEME_SERVICE_REMOVED_METHODS = ['getThemeRef', 'loadAndApplyTheme', 'apply']
 
 export function warnThemeServiceRemovedProperties(tree: Tree, srcDirectoryPath: string) {
   const detectedPropertyInFiles = detectMethodCallsInFiles(
