@@ -71,7 +71,7 @@ describe('warn-removed-properties-from-theme-service', () => {
       warnThemeServiceRemovedMethods(tree, rootDir)
 
       expect(spy).toHaveBeenCalledWith(
-        `ThemeService methods [getThemeRef, loadAndApplyTheme, apply] have been removed in v6. Only currentTheme$ property is available. Please adapt your code accordingly. Found in: ${filePath}`
+        `ThemeService method 'getThemeRef' has been removed in v6. Only currentTheme$ property is available. Please adapt your code accordingly. Found in: ${filePath}`
       )
     })
 
@@ -100,7 +100,7 @@ describe('warn-removed-properties-from-theme-service', () => {
       warnThemeServiceRemovedMethods(tree, rootDir)
 
       expect(spy).toHaveBeenCalledWith(
-        `ThemeService methods [getThemeRef, loadAndApplyTheme, apply] have been removed in v6. Only currentTheme$ property is available. Please adapt your code accordingly. Found in: ${filePath}`
+        `ThemeService method 'loadAndApplyTheme' has been removed in v6. Only currentTheme$ property is available. Please adapt your code accordingly. Found in: ${filePath}`
       )
     })
 
@@ -129,7 +129,7 @@ describe('warn-removed-properties-from-theme-service', () => {
       warnThemeServiceRemovedMethods(tree, rootDir)
 
       expect(spy).toHaveBeenCalledWith(
-        `ThemeService methods [getThemeRef, loadAndApplyTheme, apply] have been removed in v6. Only currentTheme$ property is available. Please adapt your code accordingly. Found in: ${filePath}`
+        `ThemeService method 'apply' has been removed in v6. Only currentTheme$ property is available. Please adapt your code accordingly. Found in: ${filePath}`
       )
     })
 
@@ -160,7 +160,13 @@ describe('warn-removed-properties-from-theme-service', () => {
       warnThemeServiceRemovedMethods(tree, rootDir)
 
       expect(spy).toHaveBeenCalledWith(
-        `ThemeService methods [getThemeRef, loadAndApplyTheme, apply] have been removed in v6. Only currentTheme$ property is available. Please adapt your code accordingly. Found in: ${filePath}`
+        `ThemeService method 'getThemeRef' has been removed in v6. Only currentTheme$ property is available. Please adapt your code accordingly. Found in: ${filePath}`
+      )
+      expect(spy).toHaveBeenCalledWith(
+        `ThemeService method 'loadAndApplyTheme' has been removed in v6. Only currentTheme$ property is available. Please adapt your code accordingly. Found in: ${filePath}`
+      )
+      expect(spy).toHaveBeenCalledWith(
+        `ThemeService method 'apply' has been removed in v6. Only currentTheme$ property is available. Please adapt your code accordingly. Found in: ${filePath}`
       )
     })
   })
@@ -197,7 +203,7 @@ describe('warn-removed-properties-from-theme-service', () => {
         `ThemeService property baseUrlV1 have been removed in v6. Please remove these usages and adapt your code accordingly. Found in: ${filePath}`
       )
       expect(spy).toHaveBeenCalledWith(
-        `ThemeService methods [getThemeRef, loadAndApplyTheme, apply] have been removed in v6. Only currentTheme$ property is available. Please adapt your code accordingly. Found in: ${filePath}`
+        `ThemeService method 'getThemeRef' has been removed in v6. Only currentTheme$ property is available. Please adapt your code accordingly. Found in: ${filePath}`
       )
     })
   })
