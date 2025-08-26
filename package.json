@@ -1,12 +1,15 @@
 {
   "name": "@onecx/onecx-portal-ui-libs",
-  "version": "5.47.7",
+  "version": "5.48.0",
   "license": "Apache-2.0",
   "scripts": {
     "sass": "npx sass libs/portal-integration-angular/assets/styles.scss libs/portal-integration-angular/assets/output.css",
     "postinstall": "mkdir -p .nx",
     "build": "nx run-many -t build build-migrations",
-    "build-copy": "npm run build && node copy-build.js"
+    "build-copy": "npm run build && node copy-build.js",
+    "clean": "npm cache clean --force && rm -rf *.log dist reports .angular .eslintcache ./node_modules/.cache/prettier/.prettier-cache .nx tmp",
+    "sonar": "node sonar-single.js",
+    "sonar:all": "node sonar-all.js"
   },
   "private": true,
   "dependencies": {
@@ -127,7 +130,8 @@
     "ts-jest": "^29.2.5",
     "ts-jest-mock-import-meta": "^1.3.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "sonarqube-scanner": "^4.3.0"
   },
   "overrides": {
     "jsdom": "25.0.1",
