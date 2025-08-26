@@ -1,3 +1,9 @@
+## [6.6.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.5.3...v6.6.0) (2025-08-26)
+
+### Features
+
+* v6 multi language support ([#885](https://github.com/onecx/onecx-portal-ui-libs/issues/885)) ([a765075](https://github.com/onecx/onecx-portal-ui-libs/commit/a76507579ce81e84f3af398d822ff51691ab8e75))
+
 ## [6.5.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.5.2...v6.5.3) (2025-08-21)
 
 ### Bug Fixes
