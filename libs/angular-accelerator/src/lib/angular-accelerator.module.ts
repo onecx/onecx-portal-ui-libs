@@ -1,12 +1,8 @@
 import { CommonModule } from '@angular/common'
-import {
-  APP_INITIALIZER,
-  LOCALE_ID,
-  NgModule,
-} from '@angular/core'
+import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
-import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateModule } from '@ngx-translate/core'
+import { TranslateModule } from '@ngx-translate/core'
 
 import { AppConfigService, UserService } from '@onecx/angular-integration-interface'
 import { AngularRemoteComponentsModule } from '@onecx/angular-remote-components'
@@ -29,7 +25,11 @@ import { SearchHeaderComponent } from './components/search-header/search-header.
 import { AdvancedDirective } from './directives/advanced.directive'
 import { IfBreakpointDirective } from './directives/if-breakpoint.directive'
 import { IfPermissionDirective } from './directives/if-permission.directive'
-import { providePermissionChecker, provideTranslationPathFromMeta } from '@onecx/angular-utils'
+import {
+  MultiLanguageMissingTranslationHandler,
+  providePermissionChecker,
+  provideTranslationPathFromMeta,
+} from '@onecx/angular-utils'
 import { SrcDirective } from './directives/src.directive'
 import { TooltipOnOverflowDirective } from './directives/tooltipOnOverflow.directive'
 import { DynamicPipe } from './pipes/dynamic.pipe'
@@ -37,12 +37,7 @@ import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
 import { DynamicLocaleId } from './utils/dynamic-locale-id'
 import { FilterViewComponent } from './components/filter-view/filter-view.component'
 
-export class AngularAcceleratorMissingTranslationHandler implements MissingTranslationHandler {
-  handle(params: MissingTranslationHandlerParams) {
-    console.log(`Missing translation for ${params.key}`, params)
-    return params.key
-  }
-}
+export class AngularAcceleratorMissingTranslationHandler extends MultiLanguageMissingTranslationHandler {}
 
 function appInitializer(userService: UserService) {
   return async () => {
