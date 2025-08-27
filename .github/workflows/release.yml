@@ -12,6 +12,8 @@ jobs:
         with:
           node-version: 20
       - uses: nrwl/nx-set-shas@v4
+      - name: Show npm registry
+        run: npm config get registry
       - name: Install deps
         run: npm ci
       - name: Lint
