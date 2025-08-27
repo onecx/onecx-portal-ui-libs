@@ -1,0 +1,9 @@
+= How to debug Gatherer
+
+After running the following command in your web browser's DevTools console:
+
+```
+window['@onecx/accelerator'].gatherer ??= {debug:['name_of_the_gatherer', ...]}
+```
+
+you will start seeing debug logs for the specified Gatherer in the console. You can add more Gatherer names to the array to monitor multiple Gatherers.

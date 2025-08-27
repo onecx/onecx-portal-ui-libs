@@ -12,4 +12,10 @@ declare global {
   }
 }
 
+window['@onecx/accelerator'] ??= {}
+window['@onecx/accelerator'].gatherer ??= {}
+window['@onecx/accelerator'].gatherer.promises ??= {}
+window['@onecx/accelerator'].gatherer.debug ??= []
+window['@onecx/accelerator'].topic ??= {}
+
 export default globalThis

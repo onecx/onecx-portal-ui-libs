@@ -3,10 +3,6 @@ import { Topic } from '../topic/topic'
 
 import '../declarations'
 
-window['@onecx/accelerator'] ??= {}
-window['@onecx/accelerator'].gatherer ??= {}
-window['@onecx/accelerator'].gatherer.promises ??= {}
-
 /**
  * Implementation of the Scatter-Gather pattern.
  */
