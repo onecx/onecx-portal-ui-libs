@@ -13,8 +13,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Show npm registry
-        run: npm config get registry
       - name: Install dependencies
         run: npm ci
       - name: Build PIA Storybook
