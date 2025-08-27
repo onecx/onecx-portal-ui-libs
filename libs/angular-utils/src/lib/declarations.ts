@@ -8,4 +8,7 @@ declare global {
   }
 }
 
+window['@onecx/angular-utils'] ??= {}
+window['@onecx/angular-utils'].guards ??= {}
+
 export default globalThis
