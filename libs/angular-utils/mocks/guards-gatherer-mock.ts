@@ -13,11 +13,17 @@ export function provideGuardsGathererMock() {
 
 @Injectable()
 export class GuardsGathererMock implements OnDestroy {
+  private result = true
+
   // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method, @typescript-eslint/no-empty-function
   ngOnDestroy(): void {}
 
+  setGatherResult(result: boolean): void {
+    this.result = result
+  }
+
   gather(): Promise<any> {
-    return Promise.resolve(true)
+    return Promise.resolve(this.result)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
