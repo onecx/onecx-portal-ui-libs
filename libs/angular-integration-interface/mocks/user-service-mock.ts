@@ -30,6 +30,10 @@ export class UserServiceMock {
     )
   }
 
+  getPermissions(): Observable<string[]> {
+    return this.permissions$.asObservable()
+  }
+
   determineLanguage(): string | undefined {
     return 'mocked-lang'
   }

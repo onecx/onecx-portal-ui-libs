@@ -2,18 +2,17 @@ import {
   Component,
   ContentChild,
   EventEmitter,
+  Inject,
   Input,
-  OnChanges,
   OnInit,
   Output,
-  SimpleChanges,
   TemplateRef,
   Type,
   ViewEncapsulation,
 } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { MenuItem, PrimeIcons } from 'primeng/api'
-import { concat, map, Observable, of } from 'rxjs'
+import { BehaviorSubject, concat, map, Observable, of, switchMap } from 'rxjs'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import { UserService } from '@onecx/angular-integration-interface'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
@@ -83,7 +82,7 @@ export type GridColumnOptions = 1 | 2 | 3 | 4 | 6 | 12
   styleUrls: ['./page-header.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class PageHeaderComponent implements OnInit, OnChanges {
+export class PageHeaderComponent implements OnInit {
   @Input()
   public header: string | undefined
 
@@ -106,15 +105,13 @@ export class PageHeaderComponent implements OnInit, OnChanges {
   @Input()
   subheader: string | undefined
 
-  _actions: Action[] | undefined
+  _actions = new BehaviorSubject<Action[]>([])
   @Input()
   get actions() {
-    return this._actions
+    return this._actions.getValue()
   }
   set actions(value) {
-    this._actions = value
-    this.generateInlineActions()
-    this.generateOverflowActions()
+    this._actions.next(value)
   }
 
   @Input()
@@ -141,8 +138,8 @@ export class PageHeaderComponent implements OnInit, OnChanges {
   @ContentChild('additionalToolbarContentLeft')
   additionalToolbarContentLeft: TemplateRef<any> | undefined
 
-  overflowActions: MenuItem[] = []
-  inlineActions: Action[] | undefined
+  overflowActions = new BehaviorSubject<MenuItem[]>([])
+  inlineActions = new BehaviorSubject<Action[]>([])
   dd = new Date()
   breadcrumbs$!: Observable<MenuItem[]>
 
@@ -163,9 +160,13 @@ export class PageHeaderComponent implements OnInit, OnChanges {
   protected breadcrumbs: BreadcrumbService
 
   constructor(
+    @Inject(BreadcrumbService)
     breadcrumbs: BreadcrumbService,
+    @Inject(TranslateService)
     private translateService: TranslateService,
+    @Inject(AppStateService)
     private appStateService: AppStateService,
+    @Inject(UserService)
     private userService: UserService
   ) {
     this.breadcrumbs = breadcrumbs
@@ -181,12 +182,28 @@ export class PageHeaderComponent implements OnInit, OnChanges {
         }))
       )
     )
-  }
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['actions']) {
-      this.generateInlineActions()
-      this.generateOverflowActions()
-    }
+
+    this._actions
+      .pipe(
+        map(this.filterInlineActions),
+        switchMap((actions) => this.filterActionsBasedOnPermissions(actions))
+      )
+      .subscribe(this.inlineActions)
+
+    this._actions
+      .pipe(
+        map(this.filterOverflowActions),
+        switchMap((actions) => {
+          return this.getActionTranslationKeys(actions).pipe(map((translations) => ({ actions, translations })))
+        }),
+        switchMap(({ actions, translations }) => {
+          return this.filterActionsBasedOnPermissions(actions).pipe(
+            map((filteredActions) => ({ filteredActions, translations }))
+          )
+        }),
+        map(({ filteredActions, translations }) => this.mapOverflowActionsToMenuItems(filteredActions, translations))
+      )
+      .subscribe(this.overflowActions)
   }
 
   ngOnInit(): void {
@@ -195,8 +212,6 @@ export class PageHeaderComponent implements OnInit, OnChanges {
     } else {
       this.breadcrumbs$ = this.breadcrumbs.itemsHandler
     }
-    this.generateInlineActions()
-    this.generateOverflowActions()
   }
 
   onAction(action: string) {
@@ -242,84 +257,61 @@ export class PageHeaderComponent implements OnInit, OnChanges {
     return this.objectInfoDefaultLayoutClasses
   }
 
-  /**
-   * Generates a list of actions that should be rendered in an overflow menu
-   */
-  private generateOverflowActions() {
-    if (this.actions) {
-      const translationKeys: string[] = [
-        ...this.actions.map((a) => a.labelKey || '').filter((a) => !!a),
-        ...this.actions.map((a) => a.titleKey || '').filter((a) => !!a),
-      ]
-      const translations$ = translationKeys.length ? this.translateService.get(translationKeys) : of([])
-      translations$.subscribe((translations) => {
-        const allowedActions: Action[] = []
-        if (this.actions) {
-          this.actions
-            .filter((a) => a.show === 'asOverflow')
-            .filter((a) => {
-              if (a.conditional) {
-                if (a.showCondition) return a
-                return null
-              } else return a
-            })
-            .forEach((action) => {
-              this.checkActionPermission(allowedActions, action)
-            })
-          this.overflowActions = [
-            ...allowedActions.map<MenuItem>((a) => ({
-              id: a.id,
-              label: a.labelKey ? translations[a.labelKey] : a.label,
-              icon: a.icon,
-              tooltipOptions: {
-                tooltipLabel: a.titleKey ? translations[a.titleKey] : a.title,
-                tooltipEvent: 'hover',
-                tooltipPosition: 'top',
-              },
-              command: a.actionCallback,
-              disabled: a.disabled,
-            })),
-          ]
+  private filterInlineActions(actions: Action[]): Action[] {
+    return actions
+      .filter((a) => a.show === 'always')
+      .filter((a) => {
+        if (a.conditional) {
+          return a.showCondition
         }
+        return true
       })
-    }
   }
 
-  /**
-   * Generates a list of actions that should be rendered as inline buttons
-   */
-  private generateInlineActions() {
-    if (this.actions) {
-      // Temp array to hold all inline actions that should be visible to the current user
-      const allowedActions: Action[] = []
-      // Check permissions for all actions that should be rendered 'always'
-      this.actions
-        .filter((a) => a.show === 'always')
-        .filter((a) => {
-          if (a.conditional) {
-            return a.showCondition ? a : null
-          } else return a
-        })
-        .forEach((action) => {
-          this.checkActionPermission(allowedActions, action)
-        })
-      this.inlineActions = [...allowedActions]
-    }
+  private filterOverflowActions(actions: Action[]): Action[] {
+    return actions
+      .filter((a) => a.show === 'asOverflow')
+      .filter((a) => {
+        if (a.conditional) {
+          return a.showCondition
+        }
+        return true
+      })
   }
-  /**
-   * Adds a given action to a given array if the current user is allowed to see it
-   * @param allowedActions Array that the action should be added to if the current user is allowed to see it
-   * @param action Action for which a permission check should be executed
-   */
-  private checkActionPermission(allowedActions: Action[], action: Action) {
-    if (action.permission) {
-      if (this.userService.hasPermission(action.permission)) {
-        // Push action to allowed array if user has sufficient permissions
-        allowedActions.push(action)
-      }
-    } else {
-      // Push action to allowed array if no permission was specified
-      allowedActions.push(action)
-    }
+
+  private filterActionsBasedOnPermissions(actions: Action[]): Observable<Action[]> {
+    return this.userService.getPermissions().pipe(
+      map((permissions) => {
+        return actions.filter((action) => {
+          if (action.permission) {
+            return permissions.includes(action.permission!)
+          }
+          return true
+        })
+      })
+    )
+  }
+
+  private getActionTranslationKeys(actions: Action[]): Observable<{ [key: string]: string }> {
+    const translationKeys = [
+      ...actions.map((a) => a.labelKey || '').filter((a) => !!a),
+      ...actions.map((a) => a.titleKey || '').filter((a) => !!a),
+    ]
+    return translationKeys.length ? this.translateService.get(translationKeys) : of({})
+  }
+
+  private mapOverflowActionsToMenuItems(actions: Action[], translations: { [key: string]: string }): MenuItem[] {
+    return actions.map<MenuItem>((a) => ({
+      id: a.id,
+      label: a.labelKey ? translations[a.labelKey] : a.label,
+      icon: a.icon,
+      tooltipOptions: {
+        tooltipLabel: a.titleKey ? translations[a.titleKey] : a.title,
+        tooltipEvent: 'hover',
+        tooltipPosition: 'top',
+      },
+      command: a.actionCallback,
+      disabled: a.disabled,
+    }))
   }
 }
