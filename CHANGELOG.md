@@ -1,3 +1,14 @@
+## [6.7.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.6.0...v6.7.0) (2025-08-28)
+
+### Features
+
+* theme service migrations ([#887](https://github.com/onecx/onecx-portal-ui-libs/issues/887)) ([24d7389](https://github.com/onecx/onecx-portal-ui-libs/commit/24d73892b823fe09a6af69a2f8af725463510b84))
+
+### Bug Fixes
+
+* add missing release option for build-migrations buildTarget ([#899](https://github.com/onecx/onecx-portal-ui-libs/issues/899)) ([bb008ce](https://github.com/onecx/onecx-portal-ui-libs/commit/bb008ce93b5a335102c1024c5ce44b0bb35ea732))
+* add sonar-pr to main branch to fix workflow_run trigger for sonar ([#884](https://github.com/onecx/onecx-portal-ui-libs/issues/884)) ([d96f19f](https://github.com/onecx/onecx-portal-ui-libs/commit/d96f19ffa88321b8bbd2b1175b18696ce66bb45b))
+
 ## [6.6.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.5.3...v6.6.0) (2025-08-26)
 
 ### Features
