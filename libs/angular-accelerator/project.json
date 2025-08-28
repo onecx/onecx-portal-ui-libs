@@ -69,7 +69,10 @@
       }
     },
     "release": {
-      "executor": "@onecx/release:update-build-publish"
+      "executor": "@onecx/release:update-build-publish",
+      "options": {
+        "buildTarget": "build-migrations"
+      }
     },
     "storybook": {
       "executor": "@storybook/angular:start-storybook",
