@@ -4,7 +4,7 @@ export interface BffDetails {
   permissionsProductName: string
 }
 
-export interface CustomBffContainerInterface {
+export interface BffContainerInterface {
   image: string
   environments?: Environment
   networkAlias: string

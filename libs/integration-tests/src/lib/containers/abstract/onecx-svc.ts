@@ -3,7 +3,7 @@ import { HealthCheck } from 'testcontainers/build/types'
 import { SvcDetails, SvcContainerServices } from '../../model/svc.interface'
 import { getCommonEnvironmentVariables } from '../../utils/common-env'
 
-export abstract class SvcContainer extends GenericContainer {
+export class SvcContainer extends GenericContainer {
   protected details: SvcDetails = {
     databaseUsername: '',
     databasePassword: '',

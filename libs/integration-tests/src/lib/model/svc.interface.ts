@@ -12,7 +12,7 @@ export interface SvcContainerServices {
   keycloakContainer: StartedOnecxKeycloakContainer
 }
 
-export interface CustomSvcContainerInterface {
+export interface SvcContainerInterface {
   image: string
   environments?: Environment
   networkAlias: string

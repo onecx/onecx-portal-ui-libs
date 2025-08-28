@@ -2,7 +2,7 @@ import { Network, StartedNetwork } from 'testcontainers'
 import { StartedOnecxKeycloakContainer } from '../containers/core/onecx-keycloak'
 import { CONTAINER } from '../model/container.enum'
 import { PlatformConfig } from '../model/platform-config.interface'
-import { DEFAULT_PLATFORM_CONFIG } from '../config/platform-config'
+import { DEFAULT_PLATFORM_CONFIG } from '../config/default-platform-config'
 import { ImageResolver } from './image-resolver'
 import { HealthChecker } from './health-checker'
 import { ContainerStarter } from './container-starter'
@@ -17,7 +17,7 @@ const logger = new Logger('PlatformManager')
 
 export class PlatformManager {
   /**
-   * Unified map for all containers (default and custom)
+   * Unified map for all containers (core and user-defined containers)
    */
   private containers: Map<string, AllowedContainerTypes> = new Map()
 
@@ -51,7 +51,7 @@ export class PlatformManager {
   }
 
   /**
-   * Orchestrates the startup of the default services and the creation of custom containers.
+   * Orchestrates the startup of the default services and the creation of user-defined containers.
    * @param config Optional config override. If not provided, uses validated config from constructor or default config
    */
   async startContainers(config?: PlatformConfig) {
@@ -93,11 +93,11 @@ export class PlatformManager {
 
     // Start UI containers based on configuration
     await this.containerStarter.startUiContainers(keycloak, this.getContainer.bind(this))
-    // Create custom containers if defined in configuration
+    // Create user-defined containers if defined in configuration
     if (finalConfig.container) {
       // Initialize container factory with core services
       this.containerFactory = new ContainerFactory(this.network, this.imageResolver, postgres, keycloak)
-      await this.createCustomContainers(finalConfig)
+      await this.createContainers(finalConfig)
     }
 
     // Import data if configured
@@ -115,15 +115,15 @@ export class PlatformManager {
   }
 
   /**
-   * Create custom containers using the ContainerFactory
+   * Create user-defined containers using the ContainerFactory
    */
-  private async createCustomContainers(config: PlatformConfig): Promise<void> {
+  private async createContainers(config: PlatformConfig): Promise<void> {
     if (!this.containerFactory) {
       throw new Error('ContainerFactory not initialized. Core services must be started first.')
     }
 
     try {
-      const customContainers = await this.containerFactory.createContainers(config)
+      const customContainers = await this.containerFactory.createAndStartContainers(config)
 
       // Store custom containers in unified map
       for (const [key, container] of customContainers) {

@@ -1,6 +1,6 @@
-import { CustomBffContainerInterface } from './bff.interface'
-import { CustomSvcContainerInterface } from './svc.interface'
-import { CustomUiContainerInterface } from './ui.interface'
+import { BffContainerInterface } from './bff.interface'
+import { SvcContainerInterface } from './svc.interface'
+import { UiContainerInterface } from './ui.interface'
 import { HeartbeatConfig } from './health-checker.interface'
 
 export interface PlatformConfig {
@@ -38,8 +38,8 @@ export interface PlatformConfig {
     }
   }
   container?: {
-    service?: CustomSvcContainerInterface | CustomSvcContainerInterface[]
-    bff?: CustomBffContainerInterface | CustomBffContainerInterface[]
-    ui?: CustomUiContainerInterface | CustomUiContainerInterface[]
+    service?: SvcContainerInterface[]
+    bff?: BffContainerInterface[]
+    ui?: UiContainerInterface[]
   }
 }

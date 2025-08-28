@@ -1,4 +1,4 @@
-import { POSTGRES, KEYCLOAK, IMPORTMANAGER, OnecxBff, OnecxUi, OnecxService, IMAGES } from '../config/env'
+import { POSTGRES, KEYCLOAK, IMPORT_MANAGER_BASE, OnecxBff, OnecxUi, OnecxService } from '../config/env'
 import { PlatformConfig } from '../model/platform-config.interface'
 import { ImagePullChecker } from './image-pull-checker'
 import { Logger } from '../utils/logger'
@@ -16,13 +16,11 @@ export class ImageResolver {
    * Get any image with optional override and fallback to default
    */
   private async getImageWithOverride(defaultImage: string, overrideImage: string | undefined): Promise<string> {
-    if (!overrideImage) {
-      return defaultImage
-    }
+    const finalImage = overrideImage || defaultImage
+    const imageIsVerified = await this.verifyImage(finalImage)
 
-    const imageIsVerified = await this.verifyImage(overrideImage)
     if (imageIsVerified) {
-      return overrideImage
+      return finalImage
     }
 
     // If verification fails, fall back to default image
@@ -47,15 +45,15 @@ export class ImageResolver {
   /**
    * Get the Node.js image with optional image override
    */
-  async getNodeImage(config: PlatformConfig): Promise<string> {
-    return this.getImageWithOverride(IMPORTMANAGER, config.platformOverrides?.core?.importmanager?.image)
+  async getImportManagerBaseImage(config: PlatformConfig): Promise<string> {
+    return this.getImageWithOverride(IMPORT_MANAGER_BASE, config.platformOverrides?.core?.importmanager?.image)
   }
 
   /**
    * Get a service image with optional image override
    */
   async getServiceImage(serviceName: OnecxService, config: PlatformConfig): Promise<string> {
-    const defaultImage = IMAGES[serviceName]
+    const defaultImage = serviceName
     const overrideImage = this.getServiceImageOverride(serviceName, config)
     return this.getImageWithOverride(defaultImage, overrideImage)
   }
@@ -64,7 +62,7 @@ export class ImageResolver {
    * Get a bff container image with optional image override
    */
   async getBffImage(bffService: OnecxBff, config: PlatformConfig): Promise<string> {
-    const defaultImage = IMAGES[bffService]
+    const defaultImage = bffService
     const overrideImage = this.getBffImageOverride(bffService, config)
     return this.getImageWithOverride(defaultImage, overrideImage)
   }
@@ -73,7 +71,7 @@ export class ImageResolver {
    * Get a ui container image with optional image override
    */
   async getUiImage(uiService: OnecxUi, config: PlatformConfig): Promise<string> {
-    const defaultImage = IMAGES[uiService]
+    const defaultImage = uiService
     const overrideImage = this.getUiImageOverride(uiService, config)
     return this.getImageWithOverride(defaultImage, overrideImage)
   }
@@ -82,7 +80,7 @@ export class ImageResolver {
    * Resolve a custom image (used for container factory configurations)
    * This method returns the image as-is since custom images are already specified
    */
-  async getCustomImage(imageName: string): Promise<string> {
+  async getImage(imageName: string): Promise<string> {
     // For integration tests, we'll be more lenient with custom images
     // In a real environment, you might want to enable strict verification
     const imageIsVerified = await this.verifyImage(imageName)
@@ -92,7 +90,7 @@ export class ImageResolver {
     }
 
     // Log warning but don't fail - let the container startup handle the failure
-    logger.warn('IMAGE_VERIFY_FAILED', `Custom image may not be available: ${imageName}`)
+    logger.warn('IMAGE_VERIFY_FAILED', `Image may not be available: ${imageName}`)
     logger.info('IMAGE_PULL_START', `Proceeding with unverified image: ${imageName}`)
 
     return imageName

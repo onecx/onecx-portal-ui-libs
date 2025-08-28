@@ -6,7 +6,7 @@ export interface UiDetails {
   productName: string
 }
 
-export interface CustomUiContainerInterface {
+export interface UiContainerInterface {
   image: string
   environments?: Environment
   networkAlias: string

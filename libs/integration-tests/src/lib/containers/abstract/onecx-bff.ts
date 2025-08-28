@@ -3,7 +3,7 @@ import { HealthCheck } from 'testcontainers/build/types'
 import { BffDetails } from '../../model/bff.interface'
 import { StartedOnecxKeycloakContainer } from '../core/onecx-keycloak'
 
-export abstract class BffContainer extends GenericContainer {
+export class BffContainer extends GenericContainer {
   private details: BffDetails = {
     permissionsProductName: '',
   }
