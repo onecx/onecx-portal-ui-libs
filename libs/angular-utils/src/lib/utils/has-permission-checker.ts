@@ -1,8 +1,10 @@
 import { InjectionToken, Injector, Optional, SkipSelf } from '@angular/core'
 import { hasPermissionCheckerFactory } from './has-permission-checker-factory'
+import { Observable, of } from 'rxjs'
 
 export interface HasPermissionChecker {
   hasPermission(permissionKey: string | string[]): boolean
+  hasPermissionAsync(permissionKey: string | string[]): Observable<boolean>
 }
 
 /**
@@ -11,6 +13,9 @@ export interface HasPermissionChecker {
 export class AlwaysGrantPermissionChecker implements HasPermissionChecker {
   hasPermission(_permissionKey: string | string[]): boolean {
     return true
+  }
+  hasPermissionAsync(permissionKey: string | string[]): Observable<boolean> {
+    return of(true)
   }
 }
 
@@ -30,7 +35,7 @@ export function provideAlwaysGrantPermissionChecker() {
   return [
     {
       provide: HAS_PERMISSION_CHECKER,
-      useClass: AlwaysGrantPermissionChecker
+      useClass: AlwaysGrantPermissionChecker,
     },
   ]
 }

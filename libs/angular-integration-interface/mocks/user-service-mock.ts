@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { BehaviorSubject } from 'rxjs'
+import { BehaviorSubject, map, Observable } from 'rxjs'
 import { UserProfile } from '@onecx/integration-interface'
 import { FakeTopic } from './fake-topic'
 import { UserService } from '@onecx/angular-integration-interface'
@@ -19,6 +19,15 @@ export class UserServiceMock {
       return permissionKey.every((key) => this.permissions$.getValue().includes(key))
     }
     return this.permissions$.getValue().includes(permissionKey)
+  }
+
+  hasPermissionAsync(permissionKey: string | string[]): Observable<boolean> {
+    return this.permissions$.pipe(
+      map((permissions) => {
+        const permissionsToCheck = Array.isArray(permissionKey) ? permissionKey : [permissionKey]
+        return permissionsToCheck.every((permission) => permissions.includes(permission))
+      })
+    )
   }
 
   determineLanguage(): string | undefined {
