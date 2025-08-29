@@ -1,0 +1,7 @@
+{
+    "version": "xxx",
+    "description": "OneCX tenant",
+    "basePath": "/tenant",
+    "displayName": "OneCX tenant",
+    "iconName": "lock"
+}

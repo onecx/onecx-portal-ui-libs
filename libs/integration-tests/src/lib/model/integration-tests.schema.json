@@ -1,0 +1,351 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "OneCX Integration Tests Platform Configuration",
+  "description": "Configuration schema for OneCX platform integration tests",
+  "type": "object",
+  "properties": {
+    "platformConfig": {
+      "$ref": "#/definitions/platformConfig"
+    }
+  },
+  "required": ["platformConfig"],
+  "definitions": {
+    "platformConfig": {
+      "type": "object",
+      "description": "Platform configuration settings",
+      "properties": {
+        "importData": {
+          "type": "boolean",
+          "description": "Whether to run data import after starting services",
+          "default": true
+        },
+        "enableLogging": {
+          "oneOf": [
+            {
+              "type": "boolean",
+              "description": "Enable or disable all logging"
+            },
+            {
+              "type": "array",
+              "description": "Array of service names to enable logging for",
+              "items": {
+                "type": "string"
+              }
+            }
+          ],
+          "default": true
+        },
+        "hearthbeat": {
+          "$ref": "#/definitions/heartbeatConfig"
+        },
+        "platformOverrides": {
+          "$ref": "#/definitions/platformOverrides"
+        },
+        "container": {
+          "$ref": "#/definitions/containerConfig"
+        }
+      }
+    },
+    "heartbeatConfig": {
+      "type": "object",
+      "description": "Heartbeat monitoring configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether to enable heartbeat monitoring"
+        },
+        "interval": {
+          "type": "number",
+          "description": "Heartbeat check interval in milliseconds",
+          "default": 10000,
+          "minimum": 1000
+        },
+        "failureThreshold": {
+          "type": "number",
+          "description": "Number of consecutive failures before logging error",
+          "default": 3,
+          "minimum": 1
+        }
+      },
+      "required": ["enabled"]
+    },
+    "platformOverrides": {
+      "type": "object",
+      "description": "Image overrides for testing against different images",
+      "properties": {
+        "core": {
+          "$ref": "#/definitions/coreOverrides"
+        },
+        "services": {
+          "$ref": "#/definitions/servicesOverrides"
+        },
+        "bff": {
+          "$ref": "#/definitions/bffOverrides"
+        },
+        "ui": {
+          "$ref": "#/definitions/uiOverrides"
+        }
+      }
+    },
+    "containerConfig": {
+      "type": "object",
+      "description": "User-defined container configurations",
+      "properties": {
+        "service": {
+          "type": "array",
+          "description": "Array of service containers",
+          "items": {
+            "$ref": "#/definitions/svcContainer"
+          }
+        },
+        "bff": {
+          "type": "array",
+          "description": "Array of BFF containers",
+          "items": {
+            "$ref": "#/definitions/bffContainer"
+          }
+        },
+        "ui": {
+          "type": "array",
+          "description": "Array of UI containers",
+          "items": {
+            "$ref": "#/definitions/uiContainer"
+          }
+        }
+      }
+    },
+    "imageOverride": {
+      "type": "object",
+      "properties": {
+        "image": {
+          "$ref": "#/definitions/dockerImage"
+        }
+      }
+    },
+    "coreOverrides": {
+      "type": "object",
+      "description": "Core service image overrides",
+      "properties": {
+        "postgres": {
+          "$ref": "#/definitions/imageOverride"
+        },
+        "keycloak": {
+          "$ref": "#/definitions/imageOverride"
+        },
+        "importmanager": {
+          "$ref": "#/definitions/imageOverride"
+        }
+      }
+    },
+    "servicesOverrides": {
+      "type": "object",
+      "description": "Backend service image overrides",
+      "properties": {
+        "iamKc": {
+          "$ref": "#/definitions/imageOverride"
+        },
+        "workspace": {
+          "$ref": "#/definitions/imageOverride"
+        },
+        "userProfile": {
+          "$ref": "#/definitions/imageOverride"
+        },
+        "theme": {
+          "$ref": "#/definitions/imageOverride"
+        },
+        "tenant": {
+          "$ref": "#/definitions/imageOverride"
+        },
+        "productStore": {
+          "$ref": "#/definitions/imageOverride"
+        },
+        "permission": {
+          "$ref": "#/definitions/imageOverride"
+        }
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/imageOverride"
+      }
+    },
+    "bffOverrides": {
+      "type": "object",
+      "description": "BFF service image overrides",
+      "properties": {
+        "shell": {
+          "$ref": "#/definitions/imageOverride"
+        }
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/imageOverride"
+      }
+    },
+    "uiOverrides": {
+      "type": "object",
+      "description": "UI service image overrides",
+      "properties": {
+        "shell": {
+          "$ref": "#/definitions/imageOverride"
+        }
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/imageOverride"
+      }
+    },
+    "dockerImage": {
+      "type": "string",
+      "description": "Docker image"
+    },
+    "environmentVariables": {
+      "type": "object",
+      "description": "Environment variables",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "networkAlias": {
+      "type": "string",
+      "description": "Network alias for the container"
+    },
+    "baseContainer": {
+      "type": "object",
+      "description": "Base container configuration with common properties",
+      "properties": {
+        "image": {
+          "$ref": "#/definitions/dockerImage"
+        },
+        "environments": {
+          "$ref": "#/definitions/environmentVariables"
+        },
+        "networkAlias": {
+          "$ref": "#/definitions/networkAlias"
+        },
+        "healthCheck": {
+          "$ref": "#/definitions/healthCheck"
+        }
+      },
+      "required": ["image", "networkAlias"]
+    },
+    "healthCheck": {
+      "type": "object",
+      "description": "Container health check configuration",
+      "properties": {
+        "test": {
+          "type": "array",
+          "description": "Health check command",
+          "items": {
+            "type": "string"
+          }
+        },
+        "interval": {
+          "type": "number",
+          "description": "Check interval in milliseconds"
+        },
+        "timeout": {
+          "type": "number",
+          "description": "Timeout in milliseconds"
+        },
+        "retries": {
+          "type": "number",
+          "description": "Number of retries"
+        }
+      },
+      "required": ["test"]
+    },
+    "svcDetails": {
+      "type": "object",
+      "description": "Service container specific details",
+      "properties": {
+        "databaseUsername": {
+          "type": "string",
+          "description": "Database username"
+        },
+        "databasePassword": {
+          "type": "string",
+          "description": "Database password"
+        }
+      },
+      "required": ["databaseUsername", "databasePassword"]
+    },
+    "bffDetails": {
+      "type": "object",
+      "description": "BFF container specific details",
+      "properties": {
+        "permissionsProductName": {
+          "type": "string",
+          "description": "Product name for permissions"
+        }
+      },
+      "required": ["permissionsProductName"]
+    },
+    "uiDetails": {
+      "type": "object",
+      "description": "UI container specific details",
+      "properties": {
+        "appBaseHref": {
+          "type": "string",
+          "description": "Application base href"
+        },
+        "appId": {
+          "type": "string",
+          "description": "Application ID"
+        },
+        "productName": {
+          "type": "string",
+          "description": "Product name"
+        }
+      },
+      "required": ["appBaseHref", "appId", "productName"]
+    },
+    "svcContainer": {
+      "description": "Service container configuration",
+      "allOf": [
+        {
+          "$ref": "#/definitions/baseContainer"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "svcDetails": {
+              "$ref": "#/definitions/svcDetails"
+            }
+          },
+          "required": ["svcDetails"]
+        }
+      ]
+    },
+    "bffContainer": {
+      "description": "BFF container configuration",
+      "allOf": [
+        {
+          "$ref": "#/definitions/baseContainer"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "bffDetails": {
+              "$ref": "#/definitions/bffDetails"
+            }
+          },
+          "required": ["bffDetails"]
+        }
+      ]
+    },
+    "uiContainer": {
+      "description": "UI container configuration",
+      "allOf": [
+        {
+          "$ref": "#/definitions/baseContainer"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "uiDetails": {
+              "$ref": "#/definitions/uiDetails"
+            }
+          },
+          "required": ["uiDetails"]
+        }
+      ]
+    }
+  }
+}

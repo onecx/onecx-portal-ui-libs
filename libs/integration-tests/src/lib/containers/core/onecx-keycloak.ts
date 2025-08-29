@@ -30,7 +30,9 @@ export class OnecxKeycloakContainer extends GenericContainer {
 
   private initDefaultRealms: string[] = []
 
-  private initDefaultRealm = 'libs/integration-tests/src/init-data/keycloak/imports'
+  private initDefaultRealm = 'libs/integration-tests/src/lib/config'
+
+  protected loggingEnabled = false
 
   constructor(
     image: string,
@@ -42,10 +44,7 @@ export class OnecxKeycloakContainer extends GenericContainer {
 
   private setDefaultHealthCheck(realm: string, port: number): HealthCheck {
     return {
-      test: [
-        'CMD-SHELL',
-        `{ printf >&3 'GET /realms/${realm}/.well-known/openid-configuration HTTP/1.0\\r\\nHost: localhost\\r\\n\\r\\n'; cat <&3; } 3<>/dev/tcp/localhost/${port} | head -1 | grep 200`,
-      ],
+      test: ['CMD-SHELL', `timeout 5 bash -c 'cat < /dev/null > /dev/tcp/localhost/${port}' || exit 1`],
       interval: 10_000,
       timeout: 5_000,
       retries: 10,
@@ -99,6 +98,11 @@ export class OnecxKeycloakContainer extends GenericContainer {
 
   withPort(port: number): this {
     this.onecxEnvironment.port = port
+    return this
+  }
+
+  enableLogging(log: boolean): this {
+    this.loggingEnabled = log
     return this
   }
 
@@ -174,12 +178,14 @@ export class OnecxKeycloakContainer extends GenericContainer {
       KC_HTTP_PORT: `${this.onecxEnvironment.port}`,
       KC_HEALTH_ENABLED: 'true',
     })
-      .withLogConsumer((stream) => {
-        stream.on('data', (line) => console.log(`${this.onecxEnvironment.keycloakDatabaseUsername}: `, line))
-        stream.on('err', (line) => console.error(`${this.onecxEnvironment.keycloakDatabaseUsername}: `, line))
-        stream.on('end', () => console.log(`${this.onecxEnvironment.keycloakDatabaseUsername}: Stream closed`))
+    if (this.loggingEnabled) {
+      this.withLogConsumer((stream) => {
+        stream.on('data', (line) => console.log(`${this.networkAliases[0]}: `, line))
+        stream.on('err', (line) => console.error(`${this.networkAliases[0]}: `, line))
+        stream.on('end', () => console.log(`${this.networkAliases[0]}: Stream closed`))
       })
-      .withInitPath(this.initDefaultRealm)
+    }
+    this.withInitPath(this.initDefaultRealm)
 
     for (const p of this.initDefaultRealms) {
       this.withCopyDirectoriesToContainer([

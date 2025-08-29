@@ -1,0 +1,8 @@
+{
+    "name": "onecx-shell-bff",
+    "permissions": [
+        {"resource": "workspaceConfig", "action": "read"},
+        {"resource": "userProfile", "action": "read"},
+        {"resource": "permission", "action": "read"}
+    ]
+}
