@@ -12,6 +12,7 @@ import {
   AppStateServiceMock,
   provideAppStateServiceMock,
   provideUserServiceMock,
+  UserServiceMock,
 } from '@onecx/angular-integration-interface/mocks'
 import { PageHeaderHarness, TestbedHarnessEnvironment } from '../../../../testing'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
@@ -51,7 +52,7 @@ describe('PageHeaderComponent', () => {
   let component: PageHeaderComponent
   let fixture: ComponentFixture<PageHeaderComponent>
   let pageHeaderHarness: PageHeaderHarness
-  let userServiceSpy: jest.SpyInstance<boolean, [permissionKey: string | string[]], any>
+  let userServiceMock: UserServiceMock
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -76,8 +77,8 @@ describe('PageHeaderComponent', () => {
     }).compileComponents()
 
     mockAppStateService = TestBed.inject(AppStateServiceMock)
-    const userService = TestBed.inject(UserService)
-    userService.permissions$.next(['TEST#TEST_PERMISSION'])
+    userServiceMock = TestBed.inject(UserService) as unknown as UserServiceMock
+    userServiceMock.permissions$.next(['TEST#TEST_PERMISSION'])
     mockAppStateService.currentPortal$.publish({
       id: 'i-am-test-portal',
       portalName: 'test',
@@ -92,9 +93,7 @@ describe('PageHeaderComponent', () => {
     component = fixture.componentInstance
     fixture.detectChanges()
     pageHeaderHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, PageHeaderHarness)
-    const userService = fixture.debugElement.injector.get(UserService)
     jest.restoreAllMocks()
-    userServiceSpy = jest.spyOn(userService, 'hasPermission')
   })
 
   it('should create', async () => {
@@ -114,13 +113,10 @@ describe('PageHeaderComponent', () => {
     await (await pageHeaderHarness.getOverflowActionMenuButton())?.click()
     expect(await pageHeaderHarness.getOverFlowMenuItems()).toHaveLength(2)
     expect(await pageHeaderHarness.getElementByAriaLabel('More actions')).toBeTruthy()
-    expect(userServiceSpy).toHaveBeenCalledTimes(3)
   })
 
   it("should check permissions and not render button that user isn't allowed to see", async () => {
-    userServiceSpy.mockClear()
-
-    userServiceSpy.mockReturnValue(false)
+    userServiceMock.permissions$.next([])
 
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(0)
     expect(await pageHeaderHarness.getOverflowActionMenuButton()).toBeNull()
@@ -131,7 +127,26 @@ describe('PageHeaderComponent', () => {
     expect(await pageHeaderHarness.getElementByAriaLabel('My Test Action')).toBeFalsy()
     expect(await pageHeaderHarness.getOverFlowMenuItems()).toHaveLength(0)
     expect(await pageHeaderHarness.getElementByAriaLabel('More actions')).toBeFalsy()
-    expect(userServiceSpy).toHaveBeenCalledTimes(3)
+  })
+
+  it('should react to permission changes', async () => {
+    expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(0)
+    expect(await pageHeaderHarness.getOverflowActionMenuButton()).toBeNull()
+
+    component.actions = mockActions
+
+    expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(1)
+    expect(await pageHeaderHarness.getElementByAriaLabel('My Test Action')).toBeTruthy()
+    await (await pageHeaderHarness.getOverflowActionMenuButton())?.click()
+    expect(await pageHeaderHarness.getOverFlowMenuItems()).toHaveLength(2)
+    expect(await pageHeaderHarness.getElementByAriaLabel('More actions')).toBeTruthy()
+
+    userServiceMock.permissions$.next([])
+
+    expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(0)
+    expect(await pageHeaderHarness.getElementByAriaLabel('My Test Action')).toBeFalsy()
+    expect(await pageHeaderHarness.getOverFlowMenuItems()).toHaveLength(0)
+    expect(await pageHeaderHarness.getElementByAriaLabel('More actions')).toBeFalsy()
   })
 
   it('should render inline actions buttons with icons', async () => {

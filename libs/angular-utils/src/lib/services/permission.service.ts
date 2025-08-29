@@ -42,7 +42,7 @@ export class PermissionService {
 
   private lookupPermission(permissionKey: string | string[]): Observable<boolean> {
     const permissionChecker = this.availableHasPermissionChecker
-    
+
     if (!permissionChecker) {
       return this.falseObservable
     }
@@ -50,7 +50,7 @@ export class PermissionService {
     const cacheKey = JSON.stringify(permissionKey)
 
     if (!this.cachedPermissions.has(cacheKey)) {
-      this.cachedPermissions.set(cacheKey, of(permissionChecker.hasPermission(permissionKey)))
+      this.cachedPermissions.set(cacheKey, permissionChecker.hasPermissionAsync(permissionKey))
     }
 
     return this.cachedPermissions.get(cacheKey) || this.falseObservable

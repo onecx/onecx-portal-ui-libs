@@ -1,6 +1,6 @@
 import {
   Directive,
-  ElementRef,
+  EmbeddedViewRef,
   Inject,
   Input,
   OnInit,
@@ -11,15 +11,24 @@ import {
 } from '@angular/core'
 import { UserService } from '@onecx/angular-integration-interface'
 import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
+import { Observable, of, BehaviorSubject } from 'rxjs'
+import { switchMap } from 'rxjs/operators'
 
 @Directive({ selector: '[ocxIfPermission], [ocxIfNotPermission]' })
 export class IfPermissionDirective implements OnInit {
-  @Input('ocxIfPermission') permission: string | string[] | undefined
+  @Input('ocxIfPermission') set permission(value: string | string[] | undefined) {
+    this.permissionSubject.next(value)
+  }
+
   @Input('ocxIfNotPermission') set notPermission(value: string | string[] | undefined) {
-    this.permission = value
+    this.permissionSubject.next(value)
     this.negate = true
   }
 
+  @Input() ocxIfPermissionOnMissingPermission: 'hide' | 'disable' = 'hide'
+  @Input() set ocxIfNotPermissionOnMissingPermission(value: 'hide' | 'disable') {
+    this.ocxIfPermissionOnMissingPermission = value
+  }
   @Input() onMissingPermission: 'hide' | 'disable' = 'hide'
 
   @Input() ocxIfPermissionPermissions: string[] | undefined
@@ -36,11 +45,13 @@ export class IfPermissionDirective implements OnInit {
   }
 
   private permissionChecker: HasPermissionChecker | undefined
+  private permissionSubject = new BehaviorSubject<string | string[] | undefined>(undefined)
+  private isDisabled = false
+  private directiveContentRef: EmbeddedViewRef<any> | undefined
   negate = false
 
   constructor(
     private renderer: Renderer2,
-    private el: ElementRef,
     private viewContainer: ViewContainerRef,
     @Optional()
     @Inject(HAS_PERMISSION_CHECKER)
@@ -56,35 +67,72 @@ export class IfPermissionDirective implements OnInit {
   }
 
   ngOnInit() {
-    if (
-      (this.permission &&
-        this.negate === this.hasPermission(Array.isArray(this.permission) ? this.permission : [this.permission])) ||
-      !this.permission
-    ) {
-      if (this.ocxIfPermissionElseTemplate) {
-        this.viewContainer.createEmbeddedView(this.ocxIfPermissionElseTemplate)
-      } else {
-        if (this.onMissingPermission === 'disable') {
-          this.renderer.setAttribute(this.el.nativeElement, 'disabled', 'disabled')
-        } else {
-          this.viewContainer.clear()
+    this.permissionSubject
+      .pipe(
+        switchMap((permission) => {
+          if (!permission) {
+            return of(false)
+          }
+          const permissionsArray = Array.isArray(permission) ? permission : [permission]
+          return this.hasPermission(permissionsArray)
+        })
+      )
+      .subscribe((hasPermission) => {
+        const shouldShowTemplate = this.negate ? !hasPermission : hasPermission
+        if (shouldShowTemplate) {
+          return this.showTemplateOrClear()
         }
-      }
-    } else {
-      if (this.templateRef) {
-        this.viewContainer.createEmbeddedView(this.templateRef)
-      }
-    }
+
+        return this.showElseTemplateOrDefaultView()
+      })
   }
 
-  hasPermission(permission: string[]) {
+  private hasPermission(permission: string[]): Observable<boolean> {
     if (this.ocxIfPermissionPermissions) {
       const result = permission.every((p) => this.ocxIfPermissionPermissions?.includes(p))
       if (!result) {
         console.log('👮‍♀️ No permission in overwrites for: `', permission)
       }
-      return result
+      return of(result)
     }
-    return permission.every((p) => this.permissionChecker?.hasPermission(p))
+
+    return this.permissionChecker?.hasPermissionAsync(permission) || of(false)
+  }
+
+  private showTemplateOrClear() {
+    this.resetView()
+
+    if (this.templateRef) {
+      this.directiveContentRef = this.viewContainer.createEmbeddedView(this.templateRef)
+    }
+  }
+
+  private showElseTemplateOrDefaultView() {
+    this.resetView()
+    if (this.ocxIfPermissionElseTemplate) {
+      this.viewContainer.createEmbeddedView(this.ocxIfPermissionElseTemplate)
+      return
+    }
+
+    if (this.ocxIfPermissionOnMissingPermission === 'disable' && this.templateRef) {
+      this.directiveContentRef = this.viewContainer.createEmbeddedView(this.templateRef)
+
+      const el = this.getElement()
+      el && this.renderer.setAttribute(el, 'disabled', 'disabled')
+      this.isDisabled = true
+    }
+  }
+
+  private resetView() {
+    this.viewContainer.clear()
+    if (this.isDisabled) {
+      this.isDisabled = false
+      const el = this.getElement()
+      el && this.renderer.removeAttribute(el, 'disabled')
+    }
+  }
+
+  private getElement(): Node | undefined {
+    return this.directiveContentRef?.rootNodes[0]
   }
 }

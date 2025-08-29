@@ -76,6 +76,19 @@ export class UserService implements OnDestroy {
     return !!result
   }
 
+  hasPermissionAsync(permissionKey: string | string[]): Observable<boolean> {
+    return this.permissionsTopic$.pipe(
+      map((permissions) => {
+        const permissionsToCheck = Array.isArray(permissionKey) ? permissionKey : [permissionKey]
+        if (!permissionsToCheck.every((permission) => permissions?.includes(permission))) {
+          console.log(`👮‍♀️ No permission for: ${permissionKey}`)
+          return false
+        }
+        return true
+      })
+    )
+  }
+
   private determineLanguage(): string | undefined {
     if (typeof window === 'undefined' || typeof window.navigator === 'undefined') {
       return undefined
