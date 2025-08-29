@@ -1,3 +1,14 @@
+## [5.48.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.48.0...v5.48.1) (2025-08-27)
+
+### Bug Fixes
+
+* trigger re-release ([#889](https://github.com/onecx/onecx-portal-ui-libs/issues/889)) ([9c787bb](https://github.com/onecx/onecx-portal-ui-libs/commit/9c787bbf1f70ea9bcf211df99e4a3e827544fe15))
+* update package lock json ([#891](https://github.com/onecx/onecx-portal-ui-libs/issues/891)) ([bc1c6a4](https://github.com/onecx/onecx-portal-ui-libs/commit/bc1c6a413d0ba96b59e86600a9671d674b5f3509))
+
+### Chores
+
+* trigger re-release ([#888](https://github.com/onecx/onecx-portal-ui-libs/issues/888)) ([29c978c](https://github.com/onecx/onecx-portal-ui-libs/commit/29c978c18ecf97602ce33e6a739f8868ea2a1c7a))
+
 ## [5.48.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.47.7...v5.48.0) (2025-08-26)
 
 ### Features
