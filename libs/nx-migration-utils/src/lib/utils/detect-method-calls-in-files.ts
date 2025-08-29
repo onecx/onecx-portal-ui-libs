@@ -1,17 +1,31 @@
+/**
+ * TODO: - Function and file appears twice
+ */
 import { Tree, visitNotIgnoredFiles } from '@nx/devkit'
 import { ast, query } from '@phenomnomnominal/tsquery'
-import { CallExpression, isBinaryExpression, isCallExpression, isExpressionStatement, isIdentifier, isPropertyAccessExpression, isPropertyDeclaration, isVariableDeclaration, SourceFile, SyntaxKind } from 'typescript'
+import {
+  CallExpression,
+  isBinaryExpression,
+  isCallExpression,
+  isExpressionStatement,
+  isIdentifier,
+  isPropertyAccessExpression,
+  isPropertyDeclaration,
+  isVariableDeclaration,
+  SourceFile,
+  SyntaxKind,
+} from 'typescript'
 
 type MatchingMethodCalls = Map<string, CallExpression[]>
 type DeclarationType = 'PropertyDeclaration' | 'VariableDeclaration'
 
 function getDeclarationNames(contentAst: SourceFile, className: string, type: DeclarationType): string[] {
-  const declarations = query(
-    contentAst,
-    `${type}:has(NewExpression > Identifier[name="${className}"])`
-  )
+  const declarations = query(contentAst, `${type}:has(NewExpression > Identifier[name="${className}"])`)
   const memberNames = declarations.map((node) => {
-    if ((type === 'VariableDeclaration' && isVariableDeclaration(node)) || (type === 'PropertyDeclaration' && isPropertyDeclaration(node))) {
+    if (
+      (type === 'VariableDeclaration' && isVariableDeclaration(node)) ||
+      (type === 'PropertyDeclaration' && isPropertyDeclaration(node))
+    ) {
       return node.name.getText()
     }
     throw new Error(`Node is not a ${type}`)
@@ -30,7 +44,7 @@ function getAssignmentNames(contentAst: SourceFile, className: string): string[]
       const binaryExpression = node.expression
       if (isBinaryExpression(binaryExpression)) {
         if (binaryExpression.operatorToken.kind == SyntaxKind.EqualsToken) {
-          if(isPropertyAccessExpression(binaryExpression.left)) {
+          if (isPropertyAccessExpression(binaryExpression.left)) {
             return binaryExpression.left.name.escapedText.toString()
           } else if (isIdentifier(binaryExpression.left)) {
             return binaryExpression.left.escapedText.toString()
@@ -51,7 +65,7 @@ function getIdentifierCallQueries(contentAst: SourceFile, className: string, met
 
   const memberNames = getDeclarationNames(contentAst, className, 'PropertyDeclaration')
 
-  const assignmentNames = getAssignmentNames(contentAst, className);
+  const assignmentNames = getAssignmentNames(contentAst, className)
 
   const allIdentifiers = [...variableNames, ...memberNames, ...assignmentNames]
 
