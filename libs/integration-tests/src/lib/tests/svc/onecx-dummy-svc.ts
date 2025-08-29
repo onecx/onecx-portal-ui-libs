@@ -1,4 +1,4 @@
-import { StartedSvcContainer, SvcContainer } from '../../containers/abstract/onecx-svc'
+import { StartedSvcContainer, SvcContainer } from '../../containers/basic/onecx-svc'
 import { StartedOnecxKeycloakContainer } from '../../containers/core/onecx-keycloak'
 import { StartedOnecxPostgresContainer } from '../../containers/core/onecx-postgres'
 

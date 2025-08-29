@@ -5,13 +5,15 @@ import { PlatformConfig } from '../model/platform-config.interface'
 import { DEFAULT_PLATFORM_CONFIG } from '../config/default-platform-config'
 import { ImageResolver } from './image-resolver'
 import { HealthChecker } from './health-checker'
-import { ContainerStarter } from './container-starter'
-import { ContainerFactory } from './container-factory'
+import { CoreContainerStarter } from './core-container-starter'
+import { UserDefinedContainerStarter } from './user-defined-container-starter'
 import { DataImporter } from './data-importer'
 import type { AllowedContainerTypes } from '../model/allowed-container.types'
 import { HealthCheckResult } from '../model/health-checker.interface'
 import { Logger } from '../utils/logger'
 import { JsonValidator } from './json-validator'
+import { StartedProductStoreSvcContainer } from '../containers/svc/onecx-product-store-svc'
+import { StartedOnecxPostgresContainer } from '../containers/core/onecx-postgres'
 
 const logger = new Logger('PlatformManager')
 
@@ -26,8 +28,8 @@ export class PlatformManager {
    */
   private network?: StartedNetwork
   private imageResolver?: ImageResolver
-  private containerStarter?: ContainerStarter
-  private containerFactory?: ContainerFactory
+  private CoreContainerStarter?: CoreContainerStarter
+  private UserDefinedContainerStarter?: UserDefinedContainerStarter
   private dataImporter?: DataImporter
   private healthChecker?: HealthChecker
   private jsonValidator: JsonValidator
@@ -74,7 +76,7 @@ export class PlatformManager {
     this.network = await new Network().start()
     logger.success('NETWORK_CREATED')
 
-    this.containerStarter = new ContainerStarter(
+    this.CoreContainerStarter = new CoreContainerStarter(
       this.imageResolver,
       this.network,
       this.addContainer.bind(this),
@@ -83,20 +85,26 @@ export class PlatformManager {
 
     logger.info('PLATFORM_START')
     // Always start core services first
-    const postgres = await this.containerStarter.startCoreServices()
+    await this.startContainers()
+    const postgres = this.containers.get(CONTAINER.POSTGRES) as StartedOnecxPostgresContainer
     const keycloak = this.containers.get(CONTAINER.KEYCLOAK) as StartedOnecxKeycloakContainer
 
-    await this.containerStarter.startServiceContainers(postgres, keycloak, this.getContainer.bind(this))
+    await this.CoreContainerStarter.startServiceContainers(postgres, keycloak, this.getContainer.bind(this))
 
     // Start BFF containers based on configuration
-    await this.containerStarter.startBffContainers(keycloak)
+    await this.CoreContainerStarter.startBffContainers(keycloak)
 
     // Start UI containers based on configuration
-    await this.containerStarter.startUiContainers(keycloak, this.getContainer.bind(this))
+    await this.CoreContainerStarter.startUiContainers(keycloak, this.getContainer.bind(this))
     // Create user-defined containers if defined in configuration
     if (finalConfig.container) {
       // Initialize container factory with core services
-      this.containerFactory = new ContainerFactory(this.network, this.imageResolver, postgres, keycloak)
+      this.UserDefinedContainerStarter = new UserDefinedContainerStarter(
+        this.network,
+        this.imageResolver,
+        postgres,
+        keycloak
+      )
       await this.createContainers(finalConfig)
     }
 
@@ -115,15 +123,15 @@ export class PlatformManager {
   }
 
   /**
-   * Create user-defined containers using the ContainerFactory
+   * Create user-defined containers using the UserDefinedContainerStarter
    */
   private async createContainers(config: PlatformConfig): Promise<void> {
-    if (!this.containerFactory) {
-      throw new Error('ContainerFactory not initialized. Core services must be started first.')
+    if (!this.UserDefinedContainerStarter) {
+      throw new Error('UserDefinedContainerStarter not initialized. Core services must be started first.')
     }
 
     try {
-      const customContainers = await this.containerFactory.createAndStartContainers(config)
+      const customContainers = await this.UserDefinedContainerStarter.createAndStartContainers(config)
 
       // Store custom containers in unified map
       for (const [key, container] of customContainers) {

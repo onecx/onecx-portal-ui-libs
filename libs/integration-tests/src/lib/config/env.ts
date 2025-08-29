@@ -6,7 +6,6 @@ export const POSTGRES = 'docker.io/library/postgres:13.4'
 export const KEYCLOAK = 'quay.io/keycloak/keycloak:23.0.4'
 export const IMPORT_MANAGER_BASE = 'docker.io/library/node:20'
 
-// Simplified Enums (string-based for unique keys)
 export enum OnecxService {
   IAM_KC_SVC = `${DOCKER_REPO}/onecx-iam-kc-svc:${DEFAULT_TAG}`,
   PERMISSION_SVC = `${DOCKER_REPO}/onecx-permission-svc:${DEFAULT_TAG}`,

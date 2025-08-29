@@ -10,7 +10,7 @@ import { IamKcContainer } from '../containers/svc/onecx-iam-kc-svc'
 import { PermissionSvcContainer } from '../containers/svc/onecx-permission-svc'
 import { ShellBffContainer } from '../containers/bff/onecx-shell-bff'
 import { ShellUiContainer } from '../containers/ui/onecx-shell-ui'
-import { StartedSvcContainer } from '../containers/abstract/onecx-svc'
+import { StartedSvcContainer } from '../containers/basic/onecx-svc'
 import { CONTAINER } from '../model/container.enum'
 import { PlatformConfig } from '../model/platform-config.interface'
 import { ImageResolver } from './image-resolver'
@@ -19,9 +19,9 @@ import type { AllowedContainerTypes } from '../model/allowed-container.types'
 import { loggingEnabled } from '../utils/logging-enable'
 import { Logger } from '../utils/logger'
 
-const logger = new Logger('ContainerStarter')
+const logger = new Logger('CoreContainerStarter')
 
-export class ContainerStarter {
+export class CoreContainerStarter {
   constructor(
     private imageResolver: ImageResolver,
     private network: StartedNetwork,
@@ -34,7 +34,7 @@ export class ContainerStarter {
   /**
    * Start core container (PostgreSQL and Keycloak)
    */
-  async startCoreServices(): Promise<StartedOnecxPostgresContainer> {
+  async startCoreServices(): Promise<void> {
     const postgres = await this.startPostgresContainer()
     this.addContainer(CONTAINER.POSTGRES, postgres)
 
@@ -42,7 +42,6 @@ export class ContainerStarter {
     this.addContainer(CONTAINER.KEYCLOAK, keycloak)
 
     logger.success('CONTAINER_STARTED', 'Core services')
-    return postgres
   }
 
   /**

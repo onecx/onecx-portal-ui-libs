@@ -1,5 +1,5 @@
 import { getCommonEnvironmentVariables } from '../../utils/common-env'
-import { StartedUiContainer, UiContainer } from '../abstract/onecx-ui'
+import { StartedUiContainer, UiContainer } from '../basic/onecx-ui'
 import { StartedOnecxKeycloakContainer } from '../core/onecx-keycloak'
 
 export class ShellUiContainer extends UiContainer {

@@ -18,7 +18,6 @@ export class ImageResolver {
   private async getImageWithOverride(defaultImage: string, overrideImage: string | undefined): Promise<string> {
     const finalImage = overrideImage || defaultImage
     const imageIsVerified = await this.verifyImage(finalImage)
-
     if (imageIsVerified) {
       return finalImage
     }
@@ -104,7 +103,8 @@ export class ImageResolver {
     const serviceImages = config.platformOverrides?.services
     if (!serviceImages) return undefined
 
-    const overrideMap = {
+    // Map enum values directly to overrides - will return undefined for unknown services
+    const overrideMap: Record<string, string | undefined> = {
       [OnecxService.IAM_KC_SVC]: serviceImages.iamKc?.image,
       [OnecxService.WORKSPACE_SVC]: serviceImages.workspace?.image,
       [OnecxService.USER_PROFILE_SVC]: serviceImages.userProfile?.image,
@@ -121,7 +121,8 @@ export class ImageResolver {
     const overrides = config.platformOverrides?.bff
     if (!overrides) return undefined
 
-    const overrideMap = {
+    // Map enum values directly to overrides - will return undefined for unknown BFFs
+    const overrideMap: Record<string, string | undefined> = {
       [OnecxBff.SHELL_BFF]: overrides.shell?.image,
     }
 
@@ -132,7 +133,8 @@ export class ImageResolver {
     const overrides = config.platformOverrides?.ui
     if (!overrides) return undefined
 
-    const overrideMap = {
+    // Map enum values directly to overrides - will return undefined for unknown UIs
+    const overrideMap: Record<string, string | undefined> = {
       [OnecxUi.SHELL_UI]: overrides.shell?.image,
     }
 

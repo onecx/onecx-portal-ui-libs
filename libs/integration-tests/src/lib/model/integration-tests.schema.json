@@ -5,14 +5,15 @@
   "type": "object",
   "properties": {
     "platformConfig": {
+      "$ref": "#/definitions/platformConfig"
+    }
+  },
+  "required": ["platformConfig"],
+  "definitions": {
+    "platformConfig": {
       "type": "object",
       "description": "Platform configuration settings",
       "properties": {
-        "startDefaultSetup": {
-          "type": "boolean",
-          "description": "Whether to run the minimal setup of the onecx Platform",
-          "default": true
-        },
         "importData": {
           "type": "boolean",
           "description": "Whether to run data import after starting services",
@@ -35,250 +36,27 @@
           "default": true
         },
         "hearthbeat": {
-          "type": "object",
-          "description": "Heartbeat monitoring configuration",
-          "properties": {
-            "enabled": {
-              "type": "boolean",
-              "description": "Whether to enable heartbeat monitoring",
-              "default": false
-            },
-            "interval": {
-              "type": "number",
-              "description": "Heartbeat check interval in milliseconds",
-              "default": 10000,
-              "minimum": 1000
-            },
-            "failureThreshold": {
-              "type": "number",
-              "description": "Number of consecutive failures before logging error",
-              "default": 3,
-              "minimum": 1
-            }
-          },
-          "required": ["enabled"]
+          "$ref": "#/definitions/heartbeatConfig"
         },
         "platformOverrides": {
-          "type": "object",
-          "description": "Image overrides for testing against different images",
-          "properties": {
-            "core": {
-              "type": "object",
-              "description": "Core service image overrides",
-              "properties": {
-                "postgres": {
-                  "type": "object",
-                  "properties": {
-                    "image": {
-                      "type": "string",
-                      "description": "PostgreSQL Docker image"
-                    }
-                  }
-                },
-                "keycloak": {
-                  "type": "object",
-                  "properties": {
-                    "image": {
-                      "type": "string",
-                      "description": "Keycloak Docker image"
-                    }
-                  }
-                },
-                "importmanager": {
-                  "type": "object",
-                  "properties": {
-                    "image": {
-                      "type": "string",
-                      "description": "Import manager Docker image"
-                    }
-                  }
-                }
-              }
-            },
-            "services": {
-              "type": "object",
-              "description": "Backend service image overrides",
-              "properties": {
-                "iamKc": {
-                  "type": "object",
-                  "properties": {
-                    "image": {
-                      "type": "string",
-                      "description": "IAM Keycloak service Docker image"
-                    }
-                  }
-                },
-                "workspace": {
-                  "type": "object",
-                  "properties": {
-                    "image": {
-                      "type": "string",
-                      "description": "Workspace service Docker image"
-                    }
-                  }
-                },
-                "userProfile": {
-                  "type": "object",
-                  "properties": {
-                    "image": {
-                      "type": "string",
-                      "description": "User Profile service Docker image"
-                    }
-                  }
-                },
-                "theme": {
-                  "type": "object",
-                  "properties": {
-                    "image": {
-                      "type": "string",
-                      "description": "Theme service Docker image"
-                    }
-                  }
-                },
-                "tenant": {
-                  "type": "object",
-                  "properties": {
-                    "image": {
-                      "type": "string",
-                      "description": "Tenant service Docker image"
-                    }
-                  }
-                },
-                "productStore": {
-                  "type": "object",
-                  "properties": {
-                    "image": {
-                      "type": "string",
-                      "description": "Product Store service Docker image"
-                    }
-                  }
-                },
-                "permission": {
-                  "type": "object",
-                  "properties": {
-                    "image": {
-                      "type": "string",
-                      "description": "Permission service Docker image"
-                    }
-                  }
-                }
-              }
-            },
-            "bff": {
-              "type": "object",
-              "description": "BFF service image overrides",
-              "properties": {
-                "shell": {
-                  "type": "object",
-                  "properties": {
-                    "image": {
-                      "type": "string",
-                      "description": "Shell BFF Docker image"
-                    }
-                  }
-                }
-              }
-            },
-            "ui": {
-              "type": "object",
-              "description": "UI service image overrides",
-              "properties": {
-                "shell": {
-                  "type": "object",
-                  "properties": {
-                    "image": {
-                      "type": "string",
-                      "description": "Shell UI Docker image"
-                    }
-                  }
-                }
-              }
-            }
-          }
+          "$ref": "#/definitions/platformOverrides"
         },
         "container": {
-          "type": "object",
-          "description": "Custom container configurations",
-          "properties": {
-            "service": {
-              "oneOf": [
-                {
-                  "$ref": "#/definitions/customSvcContainer"
-                },
-                {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/customSvcContainer"
-                  }
-                }
-              ]
-            },
-            "bff": {
-              "oneOf": [
-                {
-                  "$ref": "#/definitions/customBffContainer"
-                },
-                {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/customBffContainer"
-                  }
-                }
-              ]
-            },
-            "ui": {
-              "oneOf": [
-                {
-                  "$ref": "#/definitions/customUiContainer"
-                },
-                {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/customUiContainer"
-                  }
-                }
-              ]
-            }
-          }
+          "$ref": "#/definitions/containerConfig"
         }
       }
     },
-    "testSuite": {
+    "heartbeatConfig": {
       "type": "object",
-      "description": "Test suite configuration",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "Name of the test suite"
-        },
-        "description": {
-          "type": "string",
-          "description": "Description of the test suite"
-        },
-        "timeout": {
-          "type": "number",
-          "description": "Test timeout in milliseconds",
-          "default": 30000
-        },
-        "parallel": {
-          "type": "boolean",
-          "description": "Whether to run tests in parallel",
-          "default": false
-        }
-      }
-    },
-    "healthCheck": {
-      "type": "object",
-      "description": "Health check monitoring configuration",
+      "description": "Heartbeat monitoring configuration",
       "properties": {
         "enabled": {
           "type": "boolean",
-          "description": "Whether to enable periodic health check monitoring",
-          "default": false
+          "description": "Whether to enable heartbeat monitoring"
         },
         "interval": {
           "type": "number",
-          "description": "Health check interval in milliseconds",
+          "description": "Heartbeat check interval in milliseconds",
           "default": 10000,
           "minimum": 1000
         },
@@ -288,124 +66,286 @@
           "default": 3,
           "minimum": 1
         }
+      },
+      "required": ["enabled"]
+    },
+    "platformOverrides": {
+      "type": "object",
+      "description": "Image overrides for testing against different images",
+      "properties": {
+        "core": {
+          "$ref": "#/definitions/coreOverrides"
+        },
+        "services": {
+          "$ref": "#/definitions/servicesOverrides"
+        },
+        "bff": {
+          "$ref": "#/definitions/bffOverrides"
+        },
+        "ui": {
+          "$ref": "#/definitions/uiOverrides"
+        }
       }
-    }
-  },
-  "definitions": {
-    "customSvcContainer": {
-      "type": "object",
-      "description": "Custom service container configuration",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "Container name"
-        },
-        "image": {
-          "type": "string",
-          "description": "Docker image"
-        },
-        "ports": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "internal": {
-                "type": "number"
-              },
-              "external": {
-                "type": "number"
-              }
-            },
-            "required": ["internal", "external"]
-          }
-        },
-        "environment": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "volumes": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      },
-      "required": ["name", "image"]
     },
-    "customBffContainer": {
+    "containerConfig": {
       "type": "object",
-      "description": "Custom BFF container configuration",
+      "description": "User-defined container configurations",
       "properties": {
-        "name": {
-          "type": "string",
-          "description": "Container name"
-        },
-        "image": {
-          "type": "string",
-          "description": "Docker image"
-        },
-        "ports": {
+        "service": {
           "type": "array",
+          "description": "Array of service containers",
           "items": {
-            "type": "object",
-            "properties": {
-              "internal": {
-                "type": "number"
-              },
-              "external": {
-                "type": "number"
-              }
-            },
-            "required": ["internal", "external"]
+            "$ref": "#/definitions/svcContainer"
           }
         },
-        "environment": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
+        "bff": {
+          "type": "array",
+          "description": "Array of BFF containers",
+          "items": {
+            "$ref": "#/definitions/bffContainer"
+          }
+        },
+        "ui": {
+          "type": "array",
+          "description": "Array of UI containers",
+          "items": {
+            "$ref": "#/definitions/uiContainer"
           }
         }
-      },
-      "required": ["name", "image"]
+      }
     },
-    "customUiContainer": {
+    "imageOverride": {
       "type": "object",
-      "description": "Custom UI container configuration",
       "properties": {
-        "name": {
-          "type": "string",
-          "description": "Container name"
-        },
         "image": {
-          "type": "string",
-          "description": "Docker image"
+          "$ref": "#/definitions/dockerImage"
+        }
+      }
+    },
+    "coreOverrides": {
+      "type": "object",
+      "description": "Core service image overrides",
+      "properties": {
+        "postgres": {
+          "$ref": "#/definitions/imageOverride"
         },
-        "ports": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "internal": {
-                "type": "number"
-              },
-              "external": {
-                "type": "number"
-              }
-            },
-            "required": ["internal", "external"]
-          }
+        "keycloak": {
+          "$ref": "#/definitions/imageOverride"
         },
-        "environment": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
+        "importmanager": {
+          "$ref": "#/definitions/imageOverride"
+        }
+      }
+    },
+    "servicesOverrides": {
+      "type": "object",
+      "description": "Backend service image overrides",
+      "properties": {
+        "iamKc": {
+          "$ref": "#/definitions/imageOverride"
+        },
+        "workspace": {
+          "$ref": "#/definitions/imageOverride"
+        },
+        "userProfile": {
+          "$ref": "#/definitions/imageOverride"
+        },
+        "theme": {
+          "$ref": "#/definitions/imageOverride"
+        },
+        "tenant": {
+          "$ref": "#/definitions/imageOverride"
+        },
+        "productStore": {
+          "$ref": "#/definitions/imageOverride"
+        },
+        "permission": {
+          "$ref": "#/definitions/imageOverride"
         }
       },
-      "required": ["name", "image"]
+      "additionalProperties": {
+        "$ref": "#/definitions/imageOverride"
+      }
+    },
+    "bffOverrides": {
+      "type": "object",
+      "description": "BFF service image overrides",
+      "properties": {
+        "shell": {
+          "$ref": "#/definitions/imageOverride"
+        }
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/imageOverride"
+      }
+    },
+    "uiOverrides": {
+      "type": "object",
+      "description": "UI service image overrides",
+      "properties": {
+        "shell": {
+          "$ref": "#/definitions/imageOverride"
+        }
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/imageOverride"
+      }
+    },
+    "dockerImage": {
+      "type": "string",
+      "description": "Docker image"
+    },
+    "environmentVariables": {
+      "type": "object",
+      "description": "Environment variables",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "networkAlias": {
+      "type": "string",
+      "description": "Network alias for the container"
+    },
+    "baseContainer": {
+      "type": "object",
+      "description": "Base container configuration with common properties",
+      "properties": {
+        "image": {
+          "$ref": "#/definitions/dockerImage"
+        },
+        "environments": {
+          "$ref": "#/definitions/environmentVariables"
+        },
+        "networkAlias": {
+          "$ref": "#/definitions/networkAlias"
+        },
+        "healthCheck": {
+          "$ref": "#/definitions/healthCheck"
+        }
+      },
+      "required": ["image", "networkAlias"]
+    },
+    "healthCheck": {
+      "type": "object",
+      "description": "Container health check configuration",
+      "properties": {
+        "test": {
+          "type": "array",
+          "description": "Health check command",
+          "items": {
+            "type": "string"
+          }
+        },
+        "interval": {
+          "type": "number",
+          "description": "Check interval in milliseconds"
+        },
+        "timeout": {
+          "type": "number",
+          "description": "Timeout in milliseconds"
+        },
+        "retries": {
+          "type": "number",
+          "description": "Number of retries"
+        }
+      },
+      "required": ["test"]
+    },
+    "svcDetails": {
+      "type": "object",
+      "description": "Service container specific details",
+      "properties": {
+        "databaseUsername": {
+          "type": "string",
+          "description": "Database username"
+        },
+        "databasePassword": {
+          "type": "string",
+          "description": "Database password"
+        }
+      },
+      "required": ["databaseUsername", "databasePassword"]
+    },
+    "bffDetails": {
+      "type": "object",
+      "description": "BFF container specific details",
+      "properties": {
+        "permissionsProductName": {
+          "type": "string",
+          "description": "Product name for permissions"
+        }
+      },
+      "required": ["permissionsProductName"]
+    },
+    "uiDetails": {
+      "type": "object",
+      "description": "UI container specific details",
+      "properties": {
+        "appBaseHref": {
+          "type": "string",
+          "description": "Application base href"
+        },
+        "appId": {
+          "type": "string",
+          "description": "Application ID"
+        },
+        "productName": {
+          "type": "string",
+          "description": "Product name"
+        }
+      },
+      "required": ["appBaseHref", "appId", "productName"]
+    },
+    "svcContainer": {
+      "description": "Service container configuration",
+      "allOf": [
+        {
+          "$ref": "#/definitions/baseContainer"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "svcDetails": {
+              "$ref": "#/definitions/svcDetails"
+            }
+          },
+          "required": ["svcDetails"]
+        }
+      ]
+    },
+    "bffContainer": {
+      "description": "BFF container configuration",
+      "allOf": [
+        {
+          "$ref": "#/definitions/baseContainer"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "bffDetails": {
+              "$ref": "#/definitions/bffDetails"
+            }
+          },
+          "required": ["bffDetails"]
+        }
+      ]
+    },
+    "uiContainer": {
+      "description": "UI container configuration",
+      "allOf": [
+        {
+          "$ref": "#/definitions/baseContainer"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "uiDetails": {
+              "$ref": "#/definitions/uiDetails"
+            }
+          },
+          "required": ["uiDetails"]
+        }
+      ]
     }
-  },
-  "required": ["platformConfig"]
+  }
 }
