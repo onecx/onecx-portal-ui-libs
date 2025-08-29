@@ -1,3 +1,21 @@
+## [5.48.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.48.0...v5.48.1) (2025-08-27)
+
+### Bug Fixes
+
+* trigger re-release ([#889](https://github.com/onecx/onecx-portal-ui-libs/issues/889)) ([9c787bb](https://github.com/onecx/onecx-portal-ui-libs/commit/9c787bbf1f70ea9bcf211df99e4a3e827544fe15))
+* update package lock json ([#891](https://github.com/onecx/onecx-portal-ui-libs/issues/891)) ([bc1c6a4](https://github.com/onecx/onecx-portal-ui-libs/commit/bc1c6a413d0ba96b59e86600a9671d674b5f3509))
+
+### Chores
+
+* trigger re-release ([#888](https://github.com/onecx/onecx-portal-ui-libs/issues/888)) ([29c978c](https://github.com/onecx/onecx-portal-ui-libs/commit/29c978c18ecf97602ce33e6a739f8868ea2a1c7a))
+
+## [5.48.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.47.7...v5.48.0) (2025-08-26)
+
+### Features
+
+* add sonar project properties ([#875](https://github.com/onecx/onecx-portal-ui-libs/issues/875)) ([f071463](https://github.com/onecx/onecx-portal-ui-libs/commit/f0714630a64c3d9b760625195dbdf8f44efce271))
+* multi language support ([#883](https://github.com/onecx/onecx-portal-ui-libs/issues/883)) ([fd0b47a](https://github.com/onecx/onecx-portal-ui-libs/commit/fd0b47a657671ed511d4b812437a38e85bdeb888))
+
 ## [5.47.7](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.47.6...v5.47.7) (2025-08-14)
 
 ### Bug Fixes

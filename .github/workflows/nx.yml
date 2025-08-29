@@ -12,6 +12,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+    - name: Show npm registry
+      run: npm config get registry
     - run: npm ci
     - uses: timonmasberg/nx-migration-gh-action@v1.1.13
       with:
