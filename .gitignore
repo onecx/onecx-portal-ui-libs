@@ -141,3 +141,5 @@ dist
 libs/angular-accelerator/tmp/
 
 .copy-build-to
+.cursor/rules/nx-rules.mdc
+.github/instructions/nx.instructions.md
