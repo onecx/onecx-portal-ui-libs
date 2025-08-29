@@ -12,7 +12,6 @@ import type { AllowedContainerTypes } from '../model/allowed-container.types'
 import { HealthCheckResult } from '../model/health-checker.interface'
 import { Logger } from '../utils/logger'
 import { JsonValidator } from './json-validator'
-import { StartedProductStoreSvcContainer } from '../containers/svc/onecx-product-store-svc'
 import { StartedOnecxPostgresContainer } from '../containers/core/onecx-postgres'
 
 const logger = new Logger('PlatformManager')
