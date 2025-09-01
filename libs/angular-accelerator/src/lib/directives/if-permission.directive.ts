@@ -44,7 +44,7 @@ export class IfPermissionDirective implements OnInit {
     this.ocxIfPermissionElseTemplate = value
   }
 
-  private permissionChecker: HasPermissionChecker | undefined
+  private permissionChecker: HasPermissionChecker
   private permissionSubject = new BehaviorSubject<string | string[] | undefined>(undefined)
   private isDisabled = false
   private directiveContentRef: EmbeddedViewRef<any> | undefined
@@ -59,11 +59,12 @@ export class IfPermissionDirective implements OnInit {
     @Optional() private templateRef?: TemplateRef<any>,
     @Optional() private userService?: UserService
   ) {
-    if (!(hasPermissionChecker || userService)) {
+    const validChecker = hasPermissionChecker || userService
+    if (!validChecker) {
       throw 'IfPermission requires UserService or HasPermissionChecker to be provided!'
     }
 
-    this.permissionChecker = hasPermissionChecker ?? userService
+    this.permissionChecker = validChecker
   }
 
   ngOnInit() {
@@ -96,7 +97,19 @@ export class IfPermissionDirective implements OnInit {
       return of(result)
     }
 
-    return this.permissionChecker?.hasPermissionAsync(permission) || of(false)
+    if (this.permissionChecker.getPermissions) {
+      return this.permissionChecker.getPermissions().pipe(
+        switchMap((permissions) => {
+          const result = permission.every((p) => permissions.includes(p))
+          if (!result) {
+            console.log('👮‍♀️ No permission from permission checker for: `', permission)
+          }
+          return of(result)
+        })
+      )
+    }
+
+    return of(this.permissionChecker.hasPermission(permission))
   }
 
   private showTemplateOrClear() {

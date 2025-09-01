@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs'
 
 export interface HasPermissionChecker {
   hasPermission(permissionKey: string | string[]): boolean
-  hasPermissionAsync(permissionKey: string | string[]): Observable<boolean>
+  getPermissions?(): Observable<string[]>
 }
 
 /**

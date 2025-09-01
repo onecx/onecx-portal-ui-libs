@@ -6,6 +6,7 @@ import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-uti
 import { BehaviorSubject, of } from 'rxjs'
 import { provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { UserService } from '@onecx/angular-integration-interface'
+import { mock } from 'node:test'
 
 // Simple component to test the directive
 @Component({
@@ -115,10 +116,11 @@ class NegateWithUndefinedPermissionComponent {}
 describe('IfPermissionDirective', () => {
   let fixture: ComponentFixture<any>
   let mockPermissionChecker: jest.Mocked<HasPermissionChecker>
+  let getPermissionsMock: jest.Mock
 
   beforeEach(() => {
     mockPermissionChecker = {
-      hasPermissionAsync: jest.fn(),
+      getPermissions: jest.fn(),
       hasPermission: jest.fn(),
     }
 
@@ -149,6 +151,7 @@ describe('IfPermissionDirective', () => {
     })
 
     jest.resetAllMocks()
+    getPermissionsMock = mockPermissionChecker.getPermissions as jest.Mock
   })
 
   it('should throw error if neither UserService nor HasPermissionChecker is provided', () => {
@@ -177,7 +180,7 @@ describe('IfPermissionDirective', () => {
   })
 
   it('should be usable with array of permissions', () => {
-    mockPermissionChecker.hasPermissionAsync.mockReturnValue(of(true))
+    getPermissionsMock.mockReturnValue(of(['test-permission', 'second-permission']))
 
     fixture = TestBed.createComponent(MultiplePermissionComponent)
     fixture.detectChanges()
@@ -188,7 +191,7 @@ describe('IfPermissionDirective', () => {
 
   describe('ifPermission', () => {
     it('should display the element if user has permission', () => {
-      mockPermissionChecker.hasPermissionAsync.mockReturnValue(of(true))
+      getPermissionsMock.mockReturnValue(of(['test-permission']))
 
       fixture = TestBed.createComponent(SimpleComponent)
       fixture.detectChanges()
@@ -198,7 +201,7 @@ describe('IfPermissionDirective', () => {
     })
 
     it('should not display the element if user does not have permission', () => {
-      mockPermissionChecker.hasPermissionAsync.mockReturnValue(of(false))
+      getPermissionsMock.mockReturnValue(of([]))
 
       fixture = TestBed.createComponent(WithElseTemplateComponent)
       fixture.detectChanges()
@@ -208,7 +211,7 @@ describe('IfPermissionDirective', () => {
     })
 
     it('should display the else block if user does not have permission', () => {
-      mockPermissionChecker.hasPermissionAsync.mockReturnValue(of(false))
+      getPermissionsMock.mockReturnValue(of([]))
 
       fixture = TestBed.createComponent(WithElseTemplateComponent)
       fixture.detectChanges()
@@ -218,7 +221,7 @@ describe('IfPermissionDirective', () => {
     })
 
     it('should display disabled element if user does not have permission', () => {
-      mockPermissionChecker.hasPermissionAsync.mockReturnValue(of(false))
+      getPermissionsMock.mockReturnValue(of([]))
 
       fixture = TestBed.createComponent(OnMissingDisabledComponent)
       fixture.detectChanges()
@@ -231,7 +234,7 @@ describe('IfPermissionDirective', () => {
     })
 
     it('should use provided permissions array to check permissions', () => {
-      mockPermissionChecker.hasPermissionAsync.mockReturnValue(of(false))
+      getPermissionsMock.mockReturnValue(of([]))
 
       fixture = TestBed.createComponent(WithProvidedPermissionsComponent)
       fixture.detectChanges()
@@ -243,7 +246,7 @@ describe('IfPermissionDirective', () => {
 
     it('should log if provided permissions array does not contain permission', () => {
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
-      mockPermissionChecker.hasPermissionAsync.mockReturnValue(of(false))
+      getPermissionsMock.mockReturnValue(of([]))
 
       fixture = TestBed.createComponent(WithMissingProvidedPermissionsComponent)
       fixture.detectChanges()
@@ -254,7 +257,7 @@ describe('IfPermissionDirective', () => {
     })
 
     it('should not show if permission is undefined', () => {
-      mockPermissionChecker.hasPermissionAsync.mockReturnValue(of(false))
+      getPermissionsMock.mockReturnValue(of([]))
 
       fixture = TestBed.createComponent(WithUndefinedPermissionComponent)
       fixture.detectChanges()
@@ -264,9 +267,9 @@ describe('IfPermissionDirective', () => {
     })
 
     it('should react to permission changes', () => {
-      const permissionSubject = new BehaviorSubject(false)
+      const permissionSubject = new BehaviorSubject<string[]>([])
 
-      mockPermissionChecker.hasPermissionAsync.mockImplementation((_permissions: string[] | string) => {
+      getPermissionsMock.mockImplementation((_permissions: string[] | string) => {
         return permissionSubject.asObservable()
       })
 
@@ -276,7 +279,7 @@ describe('IfPermissionDirective', () => {
       const element = fixture.nativeElement.querySelector('div')
       expect(element).toBeNull()
 
-      permissionSubject.next(true)
+      permissionSubject.next(['test-permission'])
       fixture.detectChanges()
 
       const visibleElement = fixture.nativeElement.querySelector('div')
@@ -284,9 +287,9 @@ describe('IfPermissionDirective', () => {
     })
 
     it('should remove disabled attribute when permission is granted', () => {
-      const permissionSubject = new BehaviorSubject(false)
+      const permissionSubject = new BehaviorSubject<string[]>([])
 
-      mockPermissionChecker.hasPermissionAsync.mockImplementation((_permissions: string[] | string) => {
+      getPermissionsMock.mockImplementation((_permissions: string[] | string) => {
         return permissionSubject.asObservable()
       })
 
@@ -299,7 +302,7 @@ describe('IfPermissionDirective', () => {
       expect(disabledDiv.textContent).toContain('Disabled')
       expect(disabledDiv.hasAttribute('disabled')).toBeTruthy()
 
-      permissionSubject.next(true)
+      permissionSubject.next(['test-disabled'])
       fixture.detectChanges()
 
       disabledDiv = fixture.nativeElement.querySelector('div') as HTMLDivElement
@@ -311,7 +314,7 @@ describe('IfPermissionDirective', () => {
 
   describe('ifNotPermission', () => {
     it('should not display the element if user has permission', () => {
-      mockPermissionChecker.hasPermissionAsync.mockReturnValue(of(true))
+      getPermissionsMock.mockReturnValue(of(['test-permission']))
 
       fixture = TestBed.createComponent(NegateSimpleComponent)
       fixture.detectChanges()
@@ -321,7 +324,7 @@ describe('IfPermissionDirective', () => {
     })
 
     it('should display the element if user does not have permission', () => {
-      mockPermissionChecker.hasPermissionAsync.mockReturnValue(of(false))
+      getPermissionsMock.mockReturnValue(of([]))
 
       fixture = TestBed.createComponent(NegateWithElseTemplateComponent)
       fixture.detectChanges()
@@ -331,7 +334,7 @@ describe('IfPermissionDirective', () => {
     })
 
     it('should display the else block if user has permission', () => {
-      mockPermissionChecker.hasPermissionAsync.mockReturnValue(of(true))
+      getPermissionsMock.mockReturnValue(of(['missing-permission']))
 
       fixture = TestBed.createComponent(NegateWithElseTemplateComponent)
       fixture.detectChanges()
@@ -341,7 +344,7 @@ describe('IfPermissionDirective', () => {
     })
 
     it('should display disabled element if user has permission', () => {
-      mockPermissionChecker.hasPermissionAsync.mockReturnValue(of(true))
+      getPermissionsMock.mockReturnValue(of(['test-disabled']))
 
       fixture = TestBed.createComponent(NegateOnMissingDisabledComponent)
       fixture.detectChanges()
@@ -354,7 +357,7 @@ describe('IfPermissionDirective', () => {
     })
 
     it('should use provided permissions array to check permissions', () => {
-      mockPermissionChecker.hasPermissionAsync.mockReturnValue(of(false))
+      getPermissionsMock.mockReturnValue(of([]))
 
       fixture = TestBed.createComponent(NegateWithMissingProvidedPermissionsComponent)
       fixture.detectChanges()
@@ -366,7 +369,7 @@ describe('IfPermissionDirective', () => {
 
     it('should log if provided permissions array does not contain permission', () => {
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
-      mockPermissionChecker.hasPermissionAsync.mockReturnValue(of(false))
+      getPermissionsMock.mockReturnValue(of([]))
 
       fixture = TestBed.createComponent(NegateWithMissingProvidedPermissionsComponent)
       fixture.detectChanges()
@@ -375,7 +378,7 @@ describe('IfPermissionDirective', () => {
     })
 
     it('should not show if permission is undefined', () => {
-      mockPermissionChecker.hasPermissionAsync.mockReturnValue(of(false))
+      getPermissionsMock.mockReturnValue(of([]))
 
       fixture = TestBed.createComponent(NegateWithUndefinedPermissionComponent)
       fixture.detectChanges()
@@ -385,9 +388,9 @@ describe('IfPermissionDirective', () => {
     })
 
     it('should react to permission changes', () => {
-      const permissionSubject = new BehaviorSubject(true)
+      const permissionSubject = new BehaviorSubject<string[]>(['test-permission'])
 
-      mockPermissionChecker.hasPermissionAsync.mockImplementation((_permissions: string[] | string) => {
+      getPermissionsMock.mockImplementation((_permissions: string[] | string) => {
         return permissionSubject.asObservable()
       })
 
@@ -397,7 +400,7 @@ describe('IfPermissionDirective', () => {
       const element = fixture.nativeElement.querySelector('div')
       expect(element).toBeNull()
 
-      permissionSubject.next(false)
+      permissionSubject.next([])
       fixture.detectChanges()
 
       const visibleElement = fixture.nativeElement.querySelector('div')
@@ -405,9 +408,9 @@ describe('IfPermissionDirective', () => {
     })
 
     it('should remove disabled attribute when permission is granted', () => {
-      const permissionSubject = new BehaviorSubject(true)
+      const permissionSubject = new BehaviorSubject<string[]>(['test-disabled'])
 
-      mockPermissionChecker.hasPermissionAsync.mockImplementation((_permissions: string[] | string) => {
+      getPermissionsMock.mockImplementation((_permissions: string[] | string) => {
         return permissionSubject.asObservable()
       })
 
@@ -420,7 +423,7 @@ describe('IfPermissionDirective', () => {
       expect(disabledDiv.textContent).toContain('Disabled')
       expect(disabledDiv.hasAttribute('disabled')).toBeTruthy()
 
-      permissionSubject.next(false)
+      permissionSubject.next([])
       fixture.detectChanges()
 
       disabledDiv = fixture.nativeElement.querySelector('div') as HTMLDivElement
