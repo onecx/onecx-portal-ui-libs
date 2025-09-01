@@ -115,10 +115,8 @@ class NegateWithUndefinedPermissionComponent {}
 describe('IfPermissionDirective', () => {
   let fixture: ComponentFixture<any>
   let mockPermissionChecker: jest.Mocked<HasPermissionChecker>
-  let grantedPermissions: string[]
 
   beforeEach(() => {
-    grantedPermissions = []
     mockPermissionChecker = {
       hasPermissionAsync: jest.fn(),
       hasPermission: jest.fn(),
