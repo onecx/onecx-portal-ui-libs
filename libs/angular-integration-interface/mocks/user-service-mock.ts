@@ -21,15 +21,6 @@ export class UserServiceMock {
     return this.permissions$.getValue().includes(permissionKey)
   }
 
-  hasPermissionAsync(permissionKey: string | string[]): Observable<boolean> {
-    return this.permissions$.pipe(
-      map((permissions) => {
-        const permissionsToCheck = Array.isArray(permissionKey) ? permissionKey : [permissionKey]
-        return permissionsToCheck.every((permission) => permissions.includes(permission))
-      })
-    )
-  }
-
   getPermissions(): Observable<string[]> {
     return this.permissions$.asObservable()
   }
