@@ -18,6 +18,7 @@ import { PageHeaderHarness, TestbedHarnessEnvironment } from '../../../../testin
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 
 const mockActions: Action[] = [
   {
@@ -73,6 +74,10 @@ describe('PageHeaderComponent', () => {
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         provideAppStateServiceMock(),
+        {
+          provide: HAS_PERMISSION_CHECKER,
+          useExisting: UserService,
+        },
       ],
     }).compileComponents()
 

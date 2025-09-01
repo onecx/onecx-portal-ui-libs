@@ -17,6 +17,7 @@ import { AppStateService } from '@onecx/angular-integration-interface'
 import { UserService } from '@onecx/angular-integration-interface'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { PrimeIcon } from '../../utils/primeicon.utils'
+import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
 
 /**
  * Action definition.
@@ -160,14 +161,12 @@ export class PageHeaderComponent implements OnInit {
   protected breadcrumbs: BreadcrumbService
 
   constructor(
-    @Inject(BreadcrumbService)
     breadcrumbs: BreadcrumbService,
-    @Inject(TranslateService)
     private translateService: TranslateService,
-    @Inject(AppStateService)
     private appStateService: AppStateService,
-    @Inject(UserService)
-    private userService: UserService
+    private userService: UserService,
+    @Inject(HAS_PERMISSION_CHECKER)
+    private hasPermissionChecker?: HasPermissionChecker
   ) {
     this.breadcrumbs = breadcrumbs
     this.home$ = concat(
@@ -280,7 +279,10 @@ export class PageHeaderComponent implements OnInit {
   }
 
   private filterActionsBasedOnPermissions(actions: Action[]): Observable<Action[]> {
-    return this.userService.getPermissions().pipe(
+    const getPermissions =
+      this.hasPermissionChecker?.getPermissions?.bind(this.hasPermissionChecker) ||
+      this.userService.getPermissions.bind(this.userService)
+    return getPermissions().pipe(
       map((permissions) => {
         return actions.filter((action) => {
           if (action.permission) {
