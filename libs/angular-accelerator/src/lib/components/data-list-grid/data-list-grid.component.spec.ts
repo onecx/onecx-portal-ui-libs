@@ -810,7 +810,6 @@ describe('DataListGridComponent', () => {
 
         let listActions = await listGrid.getActionButtons('list')
         expect(listActions.length).toBe(1)
-        console.log(await listActions[0])
         expect(await listActions[0].getAttribute('id')).toEqual('id1-customActionActionButton')
         userService.permissions$.next([])
 
