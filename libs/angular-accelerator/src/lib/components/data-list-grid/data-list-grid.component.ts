@@ -645,7 +645,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
       deleteVisible = !this.deleteActionVisibleField || this.fieldIsTruthy(selectedItem, this.deleteActionVisibleField)
     }
 
-    let menuItems: MenuItem[] = []
+    const menuItems: MenuItem[] = []
     const automationId = 'data-grid-action-button'
     const automationIdHidden = 'data-grid-action-button-hidden'
     if (this.shouldDisplayAction(this.viewPermission, this.viewItem, permissions)) {

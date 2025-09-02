@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { TranslateModule, TranslateService } from '@ngx-translate/core'
+import { TranslateService } from '@ngx-translate/core'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { PTableCheckboxHarness } from '@onecx/angular-testing'
 import { provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'

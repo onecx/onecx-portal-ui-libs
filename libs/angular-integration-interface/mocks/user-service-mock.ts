@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { BehaviorSubject, map, Observable } from 'rxjs'
+import { BehaviorSubject, Observable } from 'rxjs'
 import { UserProfile } from '@onecx/integration-interface'
 import { FakeTopic } from './fake-topic'
 import { UserService } from '@onecx/angular-integration-interface'

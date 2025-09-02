@@ -14,7 +14,6 @@ import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { UserService } from '@onecx/angular-integration-interface'
 import { ensureIntersectionObserverMockExists, ensureOriginMockExists } from '@onecx/angular-testing'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
-import { permission } from 'process'
 
 ensureOriginMockExists()
 ensureIntersectionObserverMockExists()
@@ -797,7 +796,9 @@ describe('DataListGridComponent', () => {
         component.additionalActions = [
           {
             permission: 'CUSTOM#ACTION',
-            callback: () => {},
+            callback: () => {
+              console.log('custom action clicked')
+            },
             id: 'customAction',
             icon: 'pi pi-check',
             showAsOverflow: false,
@@ -823,7 +824,9 @@ describe('DataListGridComponent', () => {
         component.additionalActions = [
           {
             permission: 'OVERFLOW#ACTION',
-            callback: () => {},
+            callback: () => {
+              console.log('overflow action clicked')
+            },
             id: 'overflowAction',
             labelKey: 'OVERFLOW_ACTION_KEY',
             showAsOverflow: true,
@@ -850,14 +853,18 @@ describe('DataListGridComponent', () => {
         component.additionalActions = [
           {
             permission: ['CUSTOM#ACTION1', 'CUSTOM#ACTION2'],
-            callback: () => {},
+            callback: () => {
+              console.log('custom action clicked')
+            },
             id: 'customAction',
             icon: 'pi pi-check',
             showAsOverflow: false,
           },
           {
             permission: ['OVERFLOW#ACTION1', 'OVERFLOW#ACTION2'],
-            callback: () => {},
+            callback: () => {
+              console.log('overflow action clicked')
+            },
             id: 'overflowAction',
             labelKey: 'OVERFLOW_ACTION_KEY',
             showAsOverflow: true,
@@ -884,7 +891,7 @@ describe('DataListGridComponent', () => {
         fixture.detectChanges()
         await fixture.whenStable()
 
-        let listActions = await listGrid.getActionButtons('list')
+        const listActions = await listGrid.getActionButtons('list')
         expect(listActions.length).toBe(4)
         console.log(await listActions[0])
         expect(await listActions[0].getAttribute('icon')).toEqual('pi pi-eye')
@@ -940,7 +947,9 @@ describe('DataListGridComponent', () => {
         component.additionalActions = [
           {
             permission: 'CUSTOM#ACTION',
-            callback: () => {},
+            callback: () => {
+              console.log('custom action clicked')
+            },
             id: 'customAction',
             labelKey: 'CUSTOM_ACTION_KEY',
           },
@@ -964,7 +973,9 @@ describe('DataListGridComponent', () => {
         component.additionalActions = [
           {
             permission: ['CUSTOM#ACTION1', 'CUSTOM#ACTION2'],
-            callback: () => {},
+            callback: () => {
+              console.log('custom action clicked')
+            },
             id: 'customAction',
             labelKey: 'CUSTOM_ACTION_KEY',
           },
@@ -988,7 +999,7 @@ describe('DataListGridComponent', () => {
         const gridMenuButton = await listGrid.getMenuButton()
         await gridMenuButton.click()
 
-        let gridActions = await listGrid.getActionButtons('grid')
+        const gridActions = await listGrid.getActionButtons('grid')
         expect(gridActions.length).toBe(4)
         expect(await gridActions[0].text()).toEqual('GRID_VIEW_KEY')
         expect(await gridActions[1].text()).toEqual('GRID_EDIT_KEY')

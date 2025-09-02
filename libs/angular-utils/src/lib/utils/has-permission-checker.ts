@@ -14,8 +14,8 @@ export class AlwaysGrantPermissionChecker implements HasPermissionChecker {
   hasPermission(_permissionKey: string | string[]): boolean {
     return true
   }
-  hasPermissionAsync(permissionKey: string | string[]): Observable<boolean> {
-    return of(true)
+  getPermissions(): Observable<string[]> {
+    return of([])
   }
 }
 
