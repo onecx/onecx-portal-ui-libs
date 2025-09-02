@@ -2,7 +2,7 @@ import { GuardResultResponse, GuardsGatherer } from './guards-gatherer.service'
 import { Router } from '@angular/router'
 import { TestBed } from '@angular/core/testing'
 import { Gatherer } from '@onecx/accelerator'
-import { GuardsNavigationStateController } from './guards-navigation-controller.utils'
+import { GuardsNavigationStateController } from './guards-navigation-controller.service'
 import { GUARD_CHECK } from '../model/guard-navigation.model'
 
 jest.mock('@onecx/accelerator', () => ({

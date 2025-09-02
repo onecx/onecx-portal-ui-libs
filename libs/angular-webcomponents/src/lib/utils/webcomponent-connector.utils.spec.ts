@@ -12,7 +12,7 @@ import {
   IS_INITIAL_ROUTER_SYNC,
   IS_ROUTER_SYNC,
   wrapGuards,
-} from '@onecx/angular-utils'
+} from '@onecx/angular-utils/guards'
 import { AppStateService, ShellCapabilityService } from '@onecx/angular-integration-interface'
 import { FakeTopic, provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { WebcomponentConnnector } from './webcomponent-connector.utils'

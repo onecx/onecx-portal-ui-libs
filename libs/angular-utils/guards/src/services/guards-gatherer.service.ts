@@ -1,8 +1,8 @@
 import { inject, Injectable, OnDestroy } from '@angular/core'
 import { Router } from '@angular/router'
 import { Gatherer } from '@onecx/accelerator'
-import { GuardsNavigationStateController } from './guards-navigation-controller.utils'
-import { logGuardsDebug } from '../utils/guards'
+import { GuardsNavigationStateController } from './guards-navigation-controller.service'
+import { logGuardsDebug } from '../utils/guards-utils.utils'
 
 /**
  * Request for performing guard checks.

@@ -8,9 +8,9 @@ import {
   Router,
   RouterStateSnapshot,
 } from '@angular/router'
-import { GuardsGatherer } from '../../services/guards-gatherer.service'
-import { GuardsNavigationStateController } from '../../services/guards-navigation-controller.utils'
-import { GUARD_MODE, GuardsNavigationState } from '../../model/guard-navigation.model'
+import { GuardsGatherer } from '../services/guards-gatherer.service'
+import { GuardsNavigationStateController } from '../services/guards-navigation-controller.service'
+import { GUARD_MODE, GuardsNavigationState } from '../model/guard-navigation.model'
 import {
   combineToBoolean,
   combineToGuardResult,
