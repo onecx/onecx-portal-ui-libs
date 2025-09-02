@@ -1,12 +1,12 @@
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { LOCALE_ID, importProvidersFrom } from '@angular/core'
+import { APP_INITIALIZER, LOCALE_ID, importProvidersFrom } from '@angular/core'
 import { Meta, moduleMetadata, applicationConfig, StoryFn } from '@storybook/angular'
 import { TableModule } from 'primeng/table'
 import { ButtonModule } from 'primeng/button'
 import { MultiSelectModule } from 'primeng/multiselect'
 import { UserService } from '@onecx/angular-integration-interface'
-import { UserServiceMock, provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
+import { provideUserServiceMock, UserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { DataTableComponent } from './data-table.component'
 import { StorybookTranslateModule } from './../../storybook-translate.module'
 import { MockAuthModule } from '../../mock-auth/mock-auth.module'
@@ -29,10 +29,19 @@ const DataTableComponentSBConfig: Meta<DataTableComponent> = {
         importProvidersFrom(BrowserModule),
         importProvidersFrom(BrowserAnimationsModule),
         provideUserServiceMock(),
-        { provide: HAS_PERMISSION_CHECKER, useClass: UserServiceMock },
+        { provide: HAS_PERMISSION_CHECKER, useExisting: UserService },
         {
           provide: LOCALE_ID,
           useClass: DynamicLocaleId,
+          deps: [UserService],
+        },
+        {
+          provide: APP_INITIALIZER,
+          useFactory: (userService: UserService) => () => {
+            const userServiceMock = userService as unknown as UserServiceMock
+            userServiceMock.permissions$.next(['TEST_MGMT#TEST_DELETE', 'TEST_MGMT#TEST_EDIT', 'TEST_MGMT#TEST_VIEW'])
+          },
+          multi: true,
           deps: [UserService],
         },
       ],
