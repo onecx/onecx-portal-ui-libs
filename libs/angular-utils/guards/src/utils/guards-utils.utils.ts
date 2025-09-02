@@ -1,6 +1,6 @@
 import { ActivatedRouteSnapshot, GuardResult, MaybeAsync, RedirectCommand, UrlTree } from '@angular/router'
 import { isObservable, lastValueFrom } from 'rxjs'
-import '../../declarations'
+import '../declarations'
 
 window['@onecx/angular-utils'] = window['@onecx/angular-utils'] || {}
 

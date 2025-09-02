@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core'
-import { GuardsGatherer } from '@onecx/angular-utils'
+import { GuardsGatherer } from '@onecx/angular-utils/guards'
 
 export function provideGuardsGathererMock() {
   return [

@@ -13,7 +13,7 @@ import {
   IS_ROUTER_SYNC,
   logGuardsDebug,
   wrapGuards,
-} from '@onecx/angular-utils'
+} from '@onecx/angular-utils/guards'
 import { ActivatedRouteSnapshot, GuardsCheckEnd, GuardsCheckStart, Router, RoutesRecognized } from '@angular/router'
 import { getLocation } from '@onecx/accelerator'
 

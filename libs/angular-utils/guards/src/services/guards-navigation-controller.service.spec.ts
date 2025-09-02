@@ -1,4 +1,4 @@
-import { GuardsNavigationStateController } from './guards-navigation-controller.utils'
+import { GuardsNavigationStateController } from './guards-navigation-controller.service'
 import {
   GUARD_CHECK,
   GUARD_CHECK_PROMISE,

@@ -1,16 +1,16 @@
 import { TestBed } from '@angular/core/testing'
 import { Router } from '@angular/router'
-import { ActivateGuardsWrapper } from './activate-guards-wrapper.utils'
-import { GuardsNavigationStateController } from '../../services/guards-navigation-controller.utils'
-import { provideGuardsGathererMock } from '@onecx/angular-utils/mocks'
-import { GuardsGatherer } from '../../services/guards-gatherer.service'
-import { GUARD_MODE } from '../../model/guard-navigation.model'
+import { DeactivateGuardsWrapper } from './deactivate-guards-wrapper.utils'
+import { GuardsNavigationStateController } from '../services/guards-navigation-controller.service'
+import { GUARD_MODE } from '../model/guard-navigation.model'
 import { Injectable } from '@angular/core'
+import { GuardsGatherer } from '../services/guards-gatherer.service'
+import { provideGuardsGathererMock } from '@onecx/angular-utils/mocks'
 
 @Injectable()
 class MockGuard {
-  canActivate(_route: any, _state: any): Promise<boolean> {
-    console.log('MockGuard canActivate')
+  canDeactivate(_component: any, _currentRoute: any, _currentState: any, _nextState: any) {
+    console.log('MockGuard canDeactivate called')
     return Promise.resolve(true)
   }
 }
@@ -18,8 +18,8 @@ class MockGuard {
 @Injectable()
 class GenericClass {}
 
-describe('ActivateGuardsWrapper', () => {
-  let wrapper: ActivateGuardsWrapper
+describe('DeactivateGuardsWrapper', () => {
+  let wrapper: DeactivateGuardsWrapper
   let mockRouter: jest.Mocked<Router>
   let mockGuardsGatherer: GuardsGatherer
   let mockNavigationStateController: jest.Mocked<Partial<GuardsNavigationStateController>>
@@ -35,16 +35,16 @@ describe('ActivateGuardsWrapper', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        ActivateGuardsWrapper,
+        DeactivateGuardsWrapper,
         { provide: Router, useValue: mockRouter },
-        provideGuardsGathererMock(),
         { provide: GuardsNavigationStateController, useValue: mockNavigationStateController },
+        provideGuardsGathererMock(),
         MockGuard,
         GenericClass,
       ],
     })
 
-    wrapper = TestBed.inject(ActivateGuardsWrapper)
+    wrapper = TestBed.inject(DeactivateGuardsWrapper)
     mockGuardsGatherer = TestBed.inject(GuardsGatherer)
   })
 
@@ -62,15 +62,18 @@ describe('ActivateGuardsWrapper', () => {
       guardsNavigationStateController.getMode = jest.fn().mockReturnValue(GUARD_MODE.INITIAL_ROUTER_SYNC)
 
       const mockGuard = jest.fn().mockResolvedValue(true)
-      const route = {
+      const component = {}
+      const currentRoute = {
         routeConfig: {},
-        url: [{ path: 'test' }, { path: 'route' }],
       } as any
-      const state = {} as any
+      const currentState = {} as any
+      const nextState = {
+        url: 'test/url',
+      } as any
 
-      const result = await wrapper.canActivate(route, state, [mockGuard])
+      const result = await wrapper.canDeactivate(component, currentRoute, currentState, nextState, [mockGuard])
 
-      expect(mockGuard).toHaveBeenCalledWith(route, state)
+      expect(mockGuard).toHaveBeenCalledWith(component, currentRoute, currentState, nextState)
       expect(result).toBe(true)
     })
 
@@ -79,15 +82,18 @@ describe('ActivateGuardsWrapper', () => {
       guardsNavigationStateController.getMode = jest.fn().mockReturnValue(GUARD_MODE.INITIAL_ROUTER_SYNC)
 
       const mockGuard = jest.fn().mockResolvedValue(false)
-      const route = {
+      const component = {}
+      const currentRoute = {
         routeConfig: {},
-        url: [{ path: 'test' }, { path: 'route' }],
       } as any
-      const state = {} as any
+      const currentState = {} as any
+      const nextState = {
+        url: 'test/url',
+      } as any
 
-      const result = await wrapper.canActivate(route, state, [mockGuard])
+      const result = await wrapper.canDeactivate(component, currentRoute, currentState, nextState, [mockGuard])
 
-      expect(mockGuard).toHaveBeenCalledWith(route, state)
+      expect(mockGuard).toHaveBeenCalledWith(component, currentRoute, currentState, nextState)
       expect(result).toBe(false)
     })
   })
@@ -98,15 +104,16 @@ describe('ActivateGuardsWrapper', () => {
       guardsNavigationStateController.getMode = jest.fn().mockReturnValue(GUARD_MODE.ROUTER_SYNC)
 
       const mockGuard = jest.fn().mockResolvedValue(true)
-      const route = {
+      const component = {}
+      const currentRoute = {
         routeConfig: {},
-        url: [{ path: 'test' }, { path: 'route' }],
       } as any
-      const state = {} as any
+      const currentState = {} as any
+      const nextState = {} as any
 
-      const result = await wrapper.canActivate(route, state, [mockGuard])
+      const result = await wrapper.canDeactivate(component, currentRoute, currentState, nextState, [mockGuard])
 
-      expect(mockGuard).toHaveBeenCalledWith(route, state)
+      expect(mockGuard).toHaveBeenCalledWith(component, currentRoute, currentState, nextState)
       expect(result).toBe(true)
     })
   })
@@ -118,17 +125,20 @@ describe('ActivateGuardsWrapper', () => {
 
       const guardsGathererSpy = jest.spyOn(mockGuardsGatherer, 'resolveRoute')
       const mockGuard = jest.fn().mockResolvedValue(false)
-      const route = {
+      const component = {}
+      const currentRoute = {
         routeConfig: {},
-        url: [{ path: 'test' }, { path: 'route' }],
       } as any
-      const state = {} as any
+      const currentState = {} as any
+      const nextState = {
+        url: 'test/url',
+      } as any
 
-      const result = await wrapper.canActivate(route, state, [mockGuard])
+      const result = await wrapper.canDeactivate(component, currentRoute, currentState, nextState, [mockGuard])
 
-      expect(mockGuard).toHaveBeenCalledWith(route, state)
+      expect(mockGuard).toHaveBeenCalledWith(component, currentRoute, currentState, nextState)
       expect(result).toBe(false)
-      expect(guardsGathererSpy).toHaveBeenCalledWith('test/route', false)
+      expect(guardsGathererSpy).toHaveBeenCalledWith(nextState.url, false)
     })
 
     it('should run guards and return true for successful guard check', async () => {
@@ -137,15 +147,18 @@ describe('ActivateGuardsWrapper', () => {
 
       const guardsGathererSpy = jest.spyOn(mockGuardsGatherer, 'resolveRoute')
       const mockGuard = jest.fn().mockResolvedValue(true)
-      const route = {
+      const component = {}
+      const currentRoute = {
         routeConfig: {},
-        url: [{ path: 'test' }, { path: 'route' }],
       } as any
-      const state = {} as any
+      const currentState = {} as any
+      const nextState = {
+        url: 'test/url',
+      } as any
 
-      const result = await wrapper.canActivate(route, state, [mockGuard])
+      const result = await wrapper.canDeactivate(component, currentRoute, currentState, nextState, [mockGuard])
 
-      expect(mockGuard).toHaveBeenCalledWith(route, state)
+      expect(mockGuard).toHaveBeenCalledWith(component, currentRoute, currentState, nextState)
       expect(result).toBe(true)
       expect(guardsGathererSpy).not.toHaveBeenCalled()
     })
@@ -158,15 +171,17 @@ describe('ActivateGuardsWrapper', () => {
       guardsNavigationStateController.getGuardCheckPromise = jest.fn().mockReturnValue(Promise.resolve(false))
 
       const mockGuard = jest.fn().mockResolvedValue(true)
-      const route = {
+      const component = {}
+      const currentRoute = {
         routeConfig: {},
-        url: [{ path: 'test' }, { path: 'route' }],
       } as any
-      const state = {} as any
+      const currentState = {} as any
+      const nextState = {
+        url: 'test/url',
+      } as any
 
-      const result = await wrapper.canActivate(route, state, [mockGuard])
+      const result = await wrapper.canDeactivate(component, currentRoute, currentState, nextState, [mockGuard])
 
-      expect(mockGuard).not.toHaveBeenCalled()
       expect(result).toBe(false)
     })
 
@@ -176,15 +191,17 @@ describe('ActivateGuardsWrapper', () => {
       guardsNavigationStateController.getGuardCheckPromise = jest.fn().mockReturnValue(Promise.resolve(true))
 
       const mockGuard = jest.fn().mockResolvedValue(true)
-      const route = {
+      const component = {}
+      const currentRoute = {
         routeConfig: {},
-        url: [{ path: 'test' }, { path: 'route' }],
       } as any
-      const state = {} as any
+      const currentState = {} as any
+      const nextState = {
+        url: 'test/url',
+      } as any
 
-      const result = await wrapper.canActivate(route, state, [mockGuard])
+      const result = await wrapper.canDeactivate(component, currentRoute, currentState, nextState, [mockGuard])
 
-      expect(mockGuard).toHaveBeenCalledWith(route, state)
       expect(result).toBe(true)
     })
   })
@@ -193,34 +210,36 @@ describe('ActivateGuardsWrapper', () => {
     const guardsNavigationStateController = TestBed.inject(GuardsNavigationStateController)
     guardsNavigationStateController.getMode = jest.fn().mockReturnValue(GUARD_MODE.GUARD_CHECK)
 
-    const mockGuard = jest.fn().mockResolvedValue(false)
-    const route = {
-      routeConfig: null,
-      url: [{ path: 'test' }, { path: 'route' }],
+    const mockGuard = jest.fn().mockResolvedValue(true)
+    const component = {}
+    const currentRoute = {} as any // No routeConfig
+    const currentState = {} as any
+    const nextState = {
+      url: 'test/url',
     } as any
-    const state = {} as any
 
-    const result = await wrapper.canActivate(route, state, [mockGuard])
+    const result = await wrapper.canDeactivate(component, currentRoute, currentState, nextState, [mockGuard])
 
     expect(result).toBe(true)
     expect(mockGuard).not.toHaveBeenCalled()
   })
 
-  it('should handle no guards gracefully', async () => {
+  it('should handle empty guards array', async () => {
     const guardsNavigationStateController = TestBed.inject(GuardsNavigationStateController)
     guardsNavigationStateController.getMode = jest.fn().mockReturnValue(GUARD_MODE.GUARD_CHECK)
 
-    const mockGuard = jest.fn().mockResolvedValue(true)
-    const route = {
+    const component = {}
+    const currentRoute = {
       routeConfig: {},
-      url: [{ path: 'test' }, { path: 'route' }],
     } as any
-    const state = {} as any
+    const currentState = {} as any
+    const nextState = {
+      url: 'test/url',
+    } as any
 
-    const result = await wrapper.canActivate(route, state, [])
+    const result = await wrapper.canDeactivate(component, currentRoute, currentState, nextState, [])
 
     expect(result).toBe(true)
-    expect(mockGuard).not.toHaveBeenCalled()
   })
 
   it('should handle class based guards', async () => {
@@ -229,16 +248,19 @@ describe('ActivateGuardsWrapper', () => {
     const guardsNavigationStateController = TestBed.inject(GuardsNavigationStateController)
     guardsNavigationStateController.getMode = jest.fn().mockReturnValue(GUARD_MODE.GUARD_CHECK)
 
-    const route = {
+    const component = {}
+    const currentRoute = {
       routeConfig: {},
-      url: [{ path: 'test' }, { path: 'route' }],
     } as any
-    const state = {} as any
+    const currentState = {} as any
+    const nextState = {
+      url: 'test/url',
+    } as any
 
-    const result = await wrapper.canActivate(route, state, [MockGuard])
+    const result = await wrapper.canDeactivate(component, currentRoute, currentState, nextState, [MockGuard])
 
     expect(result).toBe(true)
-    expect(consoleSpy).toHaveBeenCalledWith('MockGuard canActivate')
+    expect(consoleSpy).toHaveBeenCalledWith('MockGuard canDeactivate called')
   })
 
   it('should handle function based guards', async () => {
@@ -248,37 +270,43 @@ describe('ActivateGuardsWrapper', () => {
     guardsNavigationStateController.getMode = jest.fn().mockReturnValue(GUARD_MODE.GUARD_CHECK)
 
     const mockGuard = jest.fn().mockImplementation(() => {
-      console.log('mockGuard function canActivate')
+      console.log('mockGuard function canDeactivate')
       return Promise.resolve(true)
     })
-    const route = {
+    const component = {}
+    const currentRoute = {
       routeConfig: {},
-      url: [{ path: 'test' }, { path: 'route' }],
     } as any
-    const state = {} as any
+    const currentState = {} as any
+    const nextState = {
+      url: 'test/url',
+    } as any
 
-    const result = await wrapper.canActivate(route, state, [mockGuard])
+    const result = await wrapper.canDeactivate(component, currentRoute, currentState, nextState, [mockGuard])
 
     expect(result).toBe(true)
-    expect(consoleSpy).toHaveBeenCalledWith('mockGuard function canActivate')
+    expect(consoleSpy).toHaveBeenCalledWith('mockGuard function canDeactivate')
   })
 
-  it('should handle classes not implementing CanActivate', async () => {
+  it('should handle classes not implementing canDeactivate', async () => {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
     const guardsNavigationStateController = TestBed.inject(GuardsNavigationStateController)
     guardsNavigationStateController.getMode = jest.fn().mockReturnValue(GUARD_MODE.GUARD_CHECK)
 
-    const route = {
+    const component = {}
+    const currentRoute = {
       routeConfig: {},
-      url: [{ path: 'test' }, { path: 'route' }],
     } as any
-    const state = {} as any
+    const currentState = {} as any
+    const nextState = {
+      url: 'test/url',
+    } as any
 
-    const result = await wrapper.canActivate(route, state, [GenericClass as any])
+    const result = await wrapper.canDeactivate(component, currentRoute, currentState, nextState, [GenericClass as any])
 
     expect(result).toBe(true)
-    expect(consoleSpy).toHaveBeenCalledWith('Guard does not implement canActivate:', expect.any(Function))
+    expect(consoleSpy).toHaveBeenCalledWith('Guard does not implement canDeactivate:', expect.any(Function))
   })
 
   it('should handle no check promise in navigation state', async () => {
@@ -288,13 +316,16 @@ describe('ActivateGuardsWrapper', () => {
     guardsNavigationStateController.getMode = jest.fn().mockReturnValue(GUARD_MODE.NAVIGATION_REQUESTED)
     guardsNavigationStateController.getGuardCheckPromise = jest.fn().mockReturnValue(null)
 
-    const route = {
+    const component = {}
+    const currentRoute = {
       routeConfig: {},
-      url: [{ path: 'test' }, { path: 'route' }],
     } as any
-    const state = {} as any
+    const currentState = {} as any
+    const nextState = {
+      url: 'test/url',
+    } as any
 
-    const result = await wrapper.canActivate(route, state, [])
+    const result = await wrapper.canDeactivate(component, currentRoute, currentState, nextState, [])
 
     expect(result).toBe(true)
     expect(consoleSpy).toHaveBeenCalledWith('No guard check promise found in guards navigation state, returning true.')
