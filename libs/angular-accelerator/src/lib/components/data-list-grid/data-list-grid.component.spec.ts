@@ -892,7 +892,6 @@ describe('DataListGridComponent', () => {
 
         const listActions = await listGrid.getActionButtons('list')
         expect(listActions.length).toBe(4)
-        console.log(await listActions[0])
         expect(await listActions[0].getAttribute('icon')).toEqual('pi pi-eye')
         expect(await listActions[1].getAttribute('icon')).toEqual('pi pi-pencil')
         expect(await listActions[2].getAttribute('icon')).toEqual('pi pi-trash')
