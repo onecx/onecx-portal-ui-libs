@@ -32,8 +32,8 @@ jest.mock('@onecx/accelerator', () => {
   }
 })
 
-jest.mock('@onecx/angular-utils', () => {
-  const actual = jest.requireActual('@onecx/angular-utils')
+jest.mock('@onecx/angular-utils/guards', () => {
+  const actual = jest.requireActual('@onecx/angular-utils/guards')
   return {
     ...actual,
     wrapGuards: jest.fn(),
