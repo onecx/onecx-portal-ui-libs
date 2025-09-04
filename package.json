@@ -110,7 +110,7 @@
     "jest-extended": "^6.0.0",
     "jest-preset-angular": "^14.2.2",
     "jsonc-eslint-parser": "^2.4.0",
-    "msw": "^2.4.9",
+    "msw": "^2.11.1",
     "msw-storybook-addon": "^2.0.2",
     "ng-mocks": "^14.13.1",
     "ng-packagr": "^19.0.0",
