@@ -14,9 +14,6 @@ export class AlwaysGrantPermissionChecker implements HasPermissionChecker {
   hasPermission(_permissionKey: string | string[]): boolean {
     return true
   }
-  getPermissions(): Observable<string[]> {
-    return of([])
-  }
 }
 
 export const HAS_PERMISSION_CHECKER = new InjectionToken<HasPermissionChecker>('hasPermission')

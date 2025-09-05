@@ -267,10 +267,10 @@ describe('IfPermissionDirective', () => {
     })
 
     it('should react to permission changes', () => {
-      const permissionSubject = new BehaviorSubject<string[]>([])
+      const permissionSubject$ = new BehaviorSubject<string[]>([])
 
       getPermissionsMock.mockImplementation((_permissions: string[] | string) => {
-        return permissionSubject.asObservable()
+        return permissionSubject$.asObservable()
       })
 
       fixture = TestBed.createComponent(SimpleComponent)
@@ -279,7 +279,7 @@ describe('IfPermissionDirective', () => {
       const element = fixture.nativeElement.querySelector('div')
       expect(element).toBeNull()
 
-      permissionSubject.next(['test-permission'])
+      permissionSubject$.next(['test-permission'])
       fixture.detectChanges()
 
       const visibleElement = fixture.nativeElement.querySelector('div')
@@ -287,10 +287,10 @@ describe('IfPermissionDirective', () => {
     })
 
     it('should remove disabled attribute when permission is granted', () => {
-      const permissionSubject = new BehaviorSubject<string[]>([])
+      const permissionSubject$ = new BehaviorSubject<string[]>([])
 
       getPermissionsMock.mockImplementation((_permissions: string[] | string) => {
-        return permissionSubject.asObservable()
+        return permissionSubject$.asObservable()
       })
 
       fixture = TestBed.createComponent(OnMissingDisabledComponent)
@@ -302,7 +302,7 @@ describe('IfPermissionDirective', () => {
       expect(disabledDiv.textContent).toContain('Disabled')
       expect(disabledDiv.hasAttribute('disabled')).toBeTruthy()
 
-      permissionSubject.next(['test-disabled'])
+      permissionSubject$.next(['test-disabled'])
       fixture.detectChanges()
 
       disabledDiv = fixture.nativeElement.querySelector('div') as HTMLDivElement
@@ -389,10 +389,10 @@ describe('IfPermissionDirective', () => {
     })
 
     it('should react to permission changes', () => {
-      const permissionSubject = new BehaviorSubject<string[]>(['test-permission'])
+      const permissionSubject$ = new BehaviorSubject<string[]>(['test-permission'])
 
       getPermissionsMock.mockImplementation((_permissions: string[] | string) => {
-        return permissionSubject.asObservable()
+        return permissionSubject$.asObservable()
       })
 
       fixture = TestBed.createComponent(NegateSimpleComponent)
@@ -401,7 +401,7 @@ describe('IfPermissionDirective', () => {
       const element = fixture.nativeElement.querySelector('div')
       expect(element).toBeNull()
 
-      permissionSubject.next([])
+      permissionSubject$.next([])
       fixture.detectChanges()
 
       const visibleElement = fixture.nativeElement.querySelector('div')
@@ -409,10 +409,10 @@ describe('IfPermissionDirective', () => {
     })
 
     it('should remove disabled attribute when permission is granted', () => {
-      const permissionSubject = new BehaviorSubject<string[]>(['test-disabled'])
+      const permissionSubject$ = new BehaviorSubject<string[]>(['test-disabled'])
 
       getPermissionsMock.mockImplementation((_permissions: string[] | string) => {
-        return permissionSubject.asObservable()
+        return permissionSubject$.asObservable()
       })
 
       fixture = TestBed.createComponent(NegateOnMissingDisabledComponent)
@@ -424,7 +424,7 @@ describe('IfPermissionDirective', () => {
       expect(disabledDiv.textContent).toContain('Disabled')
       expect(disabledDiv.hasAttribute('disabled')).toBeTruthy()
 
-      permissionSubject.next([])
+      permissionSubject$.next([])
       fixture.detectChanges()
 
       disabledDiv = fixture.nativeElement.querySelector('div') as HTMLDivElement

@@ -139,8 +139,8 @@ export class PageHeaderComponent implements OnInit {
   @ContentChild('additionalToolbarContentLeft')
   additionalToolbarContentLeft: TemplateRef<any> | undefined
 
-  overflowActions = new BehaviorSubject<MenuItem[]>([])
-  inlineActions = new BehaviorSubject<Action[]>([])
+  overflowActions$ = new BehaviorSubject<MenuItem[]>([])
+  inlineActions$ = new BehaviorSubject<Action[]>([])
   dd = new Date()
   breadcrumbs$!: Observable<MenuItem[]>
 
@@ -187,7 +187,7 @@ export class PageHeaderComponent implements OnInit {
         map(this.filterInlineActions),
         switchMap((actions) => this.filterActionsBasedOnPermissions(actions))
       )
-      .subscribe(this.inlineActions)
+      .subscribe(this.inlineActions$)
 
     this._actions
       .pipe(
@@ -202,7 +202,7 @@ export class PageHeaderComponent implements OnInit {
         }),
         map(({ filteredActions, translations }) => this.mapOverflowActionsToMenuItems(filteredActions, translations))
       )
-      .subscribe(this.overflowActions)
+      .subscribe(this.overflowActions$)
   }
 
   ngOnInit(): void {
