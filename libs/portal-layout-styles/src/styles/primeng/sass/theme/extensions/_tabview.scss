@@ -8,11 +8,11 @@
         border-radius: 0;
 
         > .p-ink {
-          background-color: rgba(var(--primary-color-rgb), 0.16);
+          background-color: rgb(from var(--primary-color, var(--primary-color-default)) r g b / 0.16);
         }
 
         &:focus {
-          background-color: rgba(var(--primary-color-rgb), 0.12);
+          background-color: rgb(from var(--primary-color, var(--primary-color-default)) r g b / 0.12);
         }
       }
     }

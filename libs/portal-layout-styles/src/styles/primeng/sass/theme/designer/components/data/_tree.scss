@@ -89,7 +89,8 @@
 
   .p-treenode-droppoint {
     &.p-treenode-droppoint-active {
-      background-color: scale-color($highlightBg, $lightness: -20%);
+      background-color: $highlightBg;
+      filter: brightness(80%); /* Reduce lightness by 20% */
     }
   }
 

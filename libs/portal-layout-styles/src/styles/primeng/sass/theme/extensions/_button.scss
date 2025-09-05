@@ -31,15 +31,15 @@
   &.p-button-text,
   &.p-button-outlined {
     &:enabled:focus {
-      background: rgba(var(--primary-color-rgb), 0.12);
+      background: rgb(from var(--primary-color, var(--primary-color-default)) r g b / 0.12);
     }
 
     &:enabled:active {
-      background: rgba(var(--primary-color-rgb), 0.16);
+      background: rgb(from var(--primary-color, var(--primary-color-default)) r g b / 0.16);
     }
 
     .p-ink {
-      background-color: rgba(var(--primary-color-rgb), 0.16);
+      background-color: rgb(from var(--primary-color, var(--primary-color-default)) r g b / 0.16);
     }
   }
 

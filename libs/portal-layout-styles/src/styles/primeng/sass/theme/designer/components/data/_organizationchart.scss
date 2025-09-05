@@ -11,7 +11,8 @@
 
       .p-node-toggler {
         i {
-          color: darken($highlightBg, 25%);
+          color: $highlightBg;
+          filter: brightness(75%); /* Darkens the color by 25% */
         }
       }
     }

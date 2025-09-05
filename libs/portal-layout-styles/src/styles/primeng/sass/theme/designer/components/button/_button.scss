@@ -25,13 +25,13 @@
     border: var(--outlined-button-border);
 
     &:enabled:hover {
-      background: rgba(var(--primary-color-rgb), $textButtonHoverBgOpacity);
+      background: rgb(from var(--primary-color, var(--primary-color-default)) r g b / $textButtonHoverBgOpacity);
       color: var(--primary-color, var(--primary-color-default));
       border: var(--outlined-button-border);
     }
 
     &:enabled:active {
-      background: rgba(var(--primary-color-rgb), $textButtonActiveBgOpacity);
+      background: rgb(from var(--primary-color, var(--primary-color-default)) r g b / $textButtonActiveBgOpacity);
       color: var(--primary-color, var(--primary-color-default));
       border: var(--outlined-button-border);
     }
@@ -58,13 +58,13 @@
     border-color: transparent;
 
     &:enabled:hover {
-      background: rgba(var(--primary-color-rgb), $textButtonHoverBgOpacity);
+      background: rgb(from var(--primary-color, var(--primary-color-default)) r g b / $textButtonHoverBgOpacity);
       color: var(--primary-color, var(--primary-color-default));
       border-color: transparent;
     }
 
     &:enabled:active {
-      background: rgba(var(--primary-color-rgb), $textButtonActiveBgOpacity);
+      background: rgb(from var(--primary-color, var(--primary-color-default)) r g b / $textButtonActiveBgOpacity);
       color: var(--primary-color, var(--primary-color-default));
       border-color: transparent;
     }
