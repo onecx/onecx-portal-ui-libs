@@ -3,7 +3,7 @@
 $primaryColor: var(--primary-color, var(--primary-color-default));
 $primaryLightestColor: #c2e9f5;
 $primaryMenuTextColor: var(--primary-color, var(--primary-color-default));
-$primaryTextColor: var(--text-color, var(--text-color-default));
+$primaryTextColor: #ffffff; // This is wrong assignment but breaks texts for things like buttons, so leaving it as is for now
 $accentColor: #ff0044;
 $accentTextColor: #ffffff;
 
