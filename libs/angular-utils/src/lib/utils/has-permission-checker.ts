@@ -1,6 +1,6 @@
 import { InjectionToken, Injector, Optional, SkipSelf } from '@angular/core'
 import { hasPermissionCheckerFactory } from './has-permission-checker-factory'
-import { Observable, of } from 'rxjs'
+import { Observable } from 'rxjs'
 
 export interface HasPermissionChecker {
   hasPermission(permissionKey: string | string[]): boolean
