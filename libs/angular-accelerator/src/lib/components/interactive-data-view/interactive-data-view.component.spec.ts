@@ -290,12 +290,7 @@ describe('InteractiveDataViewComponent', () => {
     fixture = TestBed.createComponent(InteractiveDataViewComponent)
     component = fixture.componentInstance
     const userService = TestBed.inject(UserService)
-    userService.permissions$.next([
-      'TEST_MGMT#TEST_View',
-      'TEST_MGMT#TEST_EDIT',
-      'TEST_MGMT#TEST_DELETE',
-      'PRODUCT#USE_SEARCHCONFIG',
-    ])
+    userService.permissions$.next(['TEST_MGMT#TEST_View', 'TEST_MGMT#TEST_EDIT', 'TEST_MGMT#TEST_DELETE'])
     component.viewPermission = 'TEST_MGMT#TEST_View'
     component.editPermission = 'TEST_MGMT#TEST_EDIT'
     component.deletePermission = 'TEST_MGMT#TEST_DELETE'
@@ -316,6 +311,7 @@ describe('InteractiveDataViewComponent', () => {
 
     dateUtils = TestBed.inject(DateUtils)
     slotService = TestBed.inject(SlotService) as any as SlotServiceMock
+    slotService.clearAssignments()
 
     viewItemEvent = undefined
     editItemEvent = undefined
@@ -339,9 +335,9 @@ describe('InteractiveDataViewComponent', () => {
   })
 
   it('should load column-group-selection slot', async () => {
-    slotService.assignComponentToSlot('column-group-selection', component.columnGroupSlotName)
     const userService = TestBed.inject(UserService)
-    jest.spyOn(userService, 'hasPermission').mockReturnValue(true)
+    userService.permissions$.next(['PRODUCT#USE_SEARCHCONFIG'])
+    slotService.assignComponentToSlot('column-group-selection', component.columnGroupSlotName)
     fixture.detectChanges()
 
     const slot = await loader.getHarness(SlotHarness)
@@ -349,13 +345,12 @@ describe('InteractiveDataViewComponent', () => {
   })
 
   it('should load ColumnGroupSelectionDropdown', async () => {
+    const userService = TestBed.inject(UserService)
+    userService.permissions$.next([])
     const columnGroupSelectionDropdown = await loader.getHarness(ColumnGroupSelectionHarness)
     expect(columnGroupSelectionDropdown).toBeTruthy()
 
     slotService.assignComponentToSlot('column-group-selection', component.columnGroupSlotName)
-    const userService = TestBed.inject(UserService)
-    jest.spyOn(userService, 'hasPermission').mockReturnValue(false)
-
     const columnGroupSelectionDropdownNoPermission = await loader.getHarness(ColumnGroupSelectionHarness)
     expect(columnGroupSelectionDropdownNoPermission).toBeTruthy()
   })

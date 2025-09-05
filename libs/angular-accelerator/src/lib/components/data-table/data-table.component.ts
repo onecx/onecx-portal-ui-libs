@@ -10,6 +10,7 @@ import {
   Input,
   LOCALE_ID,
   OnInit,
+  Optional,
   Output,
   QueryList,
   TemplateRef,
@@ -32,6 +33,7 @@ import {
   map,
   mergeMap,
   of,
+  switchMap,
   withLatestFrom,
 } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
@@ -42,6 +44,7 @@ import { Filter, FilterType } from '../../model/filter.model'
 import { ObjectUtils } from '../../utils/objectutils'
 import { findTemplate } from '../../utils/template.utils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
+import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
 
 export type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -400,7 +403,8 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     translateService: TranslateService,
     private router: Router,
     private injector: Injector,
-    private userService: UserService
+    private userService: UserService,
+    @Inject(HAS_PERMISSION_CHECKER) @Optional() private hasPermissionChecker?: HasPermissionChecker
   ) {
     super(locale, translateService)
     this.name = this.name || this.router.url.replace(/[^A-Za-z0-9]/, '_')
@@ -423,22 +427,29 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       map((actions) => actions.filter((action) => !action.showAsOverflow))
     )
     this.overflowMenuItems$ = combineLatest([this.overflowActions$, this.currentMenuRow$]).pipe(
-      mergeMap(([actions, row]) =>
-        this.translateService.get([...actions.map((a) => a.labelKey || '')]).pipe(
+      switchMap(([actions, row]) =>
+        this.filterActionsBasedOnPermissions(actions).pipe(
+          map((permittedActions) => ({ actions: permittedActions, row: row }))
+        )
+      ),
+      mergeMap(({ actions, row }) => {
+        if (actions.length === 0) {
+          return of([])
+        }
+
+        return this.translateService.get([...actions.map((a) => a.labelKey || '')]).pipe(
           map((translations) => {
-            return actions
-              .filter((a) => this.userService.hasPermission(a.permission))
-              .map((a) => ({
-                label: translations[a.labelKey || ''],
-                icon: a.icon,
-                styleClass: (a.classes || []).join(' '),
-                disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
-                visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
-                command: () => a.callback(row),
-              }))
+            return actions.map((a) => ({
+              label: translations[a.labelKey || ''],
+              icon: a.icon,
+              styleClass: (a.classes || []).join(' '),
+              disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
+              visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
+              command: () => a.callback(row),
+            }))
           })
         )
-      )
+      })
     )
     this.rowSelectable = this.rowSelectable.bind(this)
   }
@@ -786,13 +797,8 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
   hasVisibleOverflowMenuItems(row: any) {
     return this.overflowActions$.pipe(
-      map((actions) =>
-        actions.some(
-          (a) =>
-            !a.actionVisibleField ||
-            (this.fieldIsTruthy(row, a.actionVisibleField) && this.userService.hasPermission(a.permission))
-        )
-      )
+      switchMap((actions) => this.filterActionsBasedOnPermissions(actions)),
+      map((actions) => actions.some((a) => !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField)))
     )
   }
 
@@ -957,5 +963,20 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
   rowTrackByFunction = (item: any) => {
     return item.id
+  }
+
+  private filterActionsBasedOnPermissions(actions: DataAction[]): Observable<DataAction[]> {
+    const getPermissions =
+      this.hasPermissionChecker?.getPermissions?.bind(this.hasPermissionChecker) ||
+      this.userService.getPermissions.bind(this.userService)
+
+    return getPermissions().pipe(
+      map((permissions) => {
+        return actions.filter((action) => {
+          const actionPermissions = Array.isArray(action.permission) ? action.permission : [action.permission]
+          return actionPermissions.every((p) => permissions.includes(p))
+        })
+      })
+    )
   }
 }
