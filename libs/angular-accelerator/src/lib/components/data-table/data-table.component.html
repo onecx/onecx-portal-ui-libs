@@ -286,7 +286,10 @@
     </ng-template>
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td [colSpan]="columns.length + ((anyRowActionObserved || this.additionalActions.length > 0) ? 1 : 0)">
+        <td
+          [colSpan]="columns.length + ((anyRowActionObserved || this.additionalActions.length > 0) ? 1 : 0) +
+  (allowSelectAll ? 1 : 0)"
+        >
           {{ emptyResultsMessage || ("OCX_DATA_TABLE.EMPTY_RESULT" | translate) }}
         </td>
       </tr>
