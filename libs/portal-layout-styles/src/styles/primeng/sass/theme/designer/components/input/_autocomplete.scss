@@ -28,8 +28,8 @@
       padding: math.div(nth($inputPadding, 1), 2) 0;
 
       input {
-        font-family: var(--font-family);
-        font-size: var(--font-size);
+        font-family: var(--font-family, var(--font-family-default));
+        font-size: var(--font-size, var(--font-size-default));
         color: var(--emphasis-high);
         padding: 0;
         margin: 0;
@@ -40,7 +40,7 @@
       padding: math.div(nth($inputPadding, 1), 2) nth($inputPadding, 2);
       margin-right: var(--inline-spacing);
       background: var(--highlight-bg);
-      color: var(--primary-color);
+      color: var(--primary-color, var(--primary-color-default));
       border-radius: var(--border-radius);
 
       .p-autocomplete-token-icon {
@@ -61,7 +61,7 @@ p-autocomplete.ng-dirty.ng-invalid > .p-autocomplete > .p-inputtext {
 
 .p-autocomplete-panel {
   background: var(--input-list-bg);
-  color: var(--text-color);
+  color: var(--text-color, var(--text-color-default));
   border: var(--input-overlay-border);
   border-radius: var(--border-radius);
   box-shadow: var(--input-overlay-shadow);
@@ -79,18 +79,18 @@ p-autocomplete.ng-dirty.ng-invalid > .p-autocomplete > .p-inputtext {
       margin: var(--input-list-item-margin);
       padding: var(--input-list-item-padding);
       border: var(--input-list-item-border);
-      color: var(--text-color);
+      color: var(--text-color, var(--text-color-default));
       background: var(--input-list-item-bg);
       transition: var(--list-item-transition);
       border-radius: var(--input-list-item-border-radius);
 
       &:hover {
-        color: var(--text-color);
+        color: var(--text-color, var(--text-color-default));
         background: var(--input-list-item-hover-bg);
       }
 
       &.p-highlight {
-        color: var(--primary-color);
+        color: var(--primary-color, var(--primary-color-default));
         background: var(--highlight-bg);
 
         &.p-focus {
@@ -113,14 +113,14 @@ p-autocomplete.ng-dirty.ng-invalid > .p-autocomplete > .p-inputtext {
 
     .p-autocomplete-empty-message {
       padding: var(--input-list-item-padding);
-      color: var(--text-color);
+      color: var(--text-color, var(--text-color-default));
       background: var(--input-list-item-bg);
     }
 
     .p-autocomplete-item-group {
       margin: var(--submenu-header-margin);
       padding: var(--submenu-header-padding);
-      color: var(--text-secondary-color);
+      color: var(--text-secondary-color, var(--text-secondary-color-default));
       background: var(--submenu-header-bg);
       font-weight: var(--submenu-header-font-weight);
     }

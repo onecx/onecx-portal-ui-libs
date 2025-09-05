@@ -1,7 +1,7 @@
 @use 'sass:math';
 
 .p-tag {
-  background: var(--primary-color);
+  background: var(--primary-color, var(--primary-color-default));
   color: var(--primary-text-color);
   font-size: var(--badge-font-size);
   font-weight: var(--badge-font-weight);
@@ -24,7 +24,7 @@
   }
 
   &.p-tag-danger {
-    background-color: var(--danger-button-bg);
+    background-color: var(--danger-button-bg, var(--danger-button-bg-default));;
     color: var(--danger-button-text-color);
   }
 

@@ -11,7 +11,7 @@
 
   .p-dataview-header {
     background: var(--table-header-bg);
-    color: var(--text-color);
+    color: var(--text-color, var(--text-color-default));
     border: var(--table-header-border);
     border-width: var(--table-header-border-width);
     padding: var(--table-header-padding);
@@ -20,7 +20,7 @@
 
   .p-dataview-content {
     background: var(--table-body-row-bg);
-    color: var(--text-color);
+    color: var(--text-color, var(--text-color-default));
     border: var(--data-view-content-border);
     padding: var(--data-view-content-padding);
   }
@@ -36,7 +36,7 @@
 
   .p-dataview-footer {
     background: var(--table-footer-bg);
-    color: var(--text-color);
+    color: var(--text-color, var(--text-color-default));
     border: var(--table-footer-border);
     border-width: var(--table-footer-border-width);
     padding: var(--table-footer-padding);

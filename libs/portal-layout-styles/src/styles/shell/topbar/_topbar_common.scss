@@ -103,12 +103,12 @@
             cursor: pointer;
             margin: 0;
             padding: 0.5rem !important; // fix uneven button dimensions
-            color: var(--topbar-item-text-color);
-            background-color: var(--topbar-bg-color);
+            color: var(--topbar-item-text, var(--topbar-item-text-default));
+            background-color: var(--topbar-bg-color, var(--topbar-bg-color-default));
             &:hover,
             &:focus {
               color: var(--topbar-item-text-hover-color);
-              background-color: var(--topbar-item-text-hover-bg-color);
+              background-color: var(--topbar-item-text-hover-bg-color, var(--topbar-item-text-hover-bg-color-default));
               transition: background-color var(--transition-duration);
             }
           }

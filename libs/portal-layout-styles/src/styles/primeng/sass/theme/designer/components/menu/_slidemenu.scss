@@ -1,7 +1,7 @@
 .p-slidemenu {
   padding: var(--vertical-menu-padding);
   background: var(--menu-bg);
-  color: var(--text-color);
+  color: var(--text-color, var(--text-color-default));
   border: var(--menu-border);
   border-radius: var(--border-radius);
   width: var(--menu-width);
@@ -29,12 +29,12 @@
         background: var(--menuitem-active-bg);
 
         .p-slidemenu-text {
-          color: var(--text-color);
+          color: var(--text-color, var(--text-color-default));
         }
 
         .p-slidemenu-icon,
         .p-slidemenu-icon {
-          color: var(--text-secondary-color);
+          color: var(--text-secondary-color, var(--text-secondary-color-default));
         }
       }
     }
@@ -51,6 +51,6 @@
 
   .p-slidemenu-backward {
     padding: var(--menuitem-padding);
-    color: var(--text-color);
+    color: var(--text-color, var(--text-color-default));
   }
 }

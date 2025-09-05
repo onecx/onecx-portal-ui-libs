@@ -51,7 +51,7 @@ blockquote {
 }
 
 hr {
-  border-top: solid var(--divider-color);
+  border-top: solid var(--divider-color, var(--divider-color-default));
   border-width: 1px 0 0 0;
   margin: 1rem 0;
 }

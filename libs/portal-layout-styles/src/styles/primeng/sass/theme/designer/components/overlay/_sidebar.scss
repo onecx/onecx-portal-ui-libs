@@ -1,6 +1,6 @@
 .p-sidebar {
   background: var(--panel-content-bg);
-  color: var(--text-color);
+  color: var(--text-color, var(--text-color-default));
   border: var(--overlay-content-border);
   box-shadow: var(--overlay-container-shadow);
 

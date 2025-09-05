@@ -3,7 +3,7 @@
     border: var(--panel-header-border);
     padding: var(--panel-header-padding);
     background: var(--panel-header-bg);
-    color: var(--text-color);
+    color: var(--text-color, var(--text-color-default));
     border-top-right-radius: var(--border-radius);
     border-top-left-radius: var(--border-radius);
 
@@ -31,7 +31,7 @@
     padding: var(--panel-content-padding);
     border: var(--panel-content-border);
     background: var(--panel-content-bg);
-    color: var(--text-color);
+    color: var(--text-color, var(--text-color-default));
     border-bottom-right-radius: var(--border-radius);
     border-bottom-left-radius: var(--border-radius);
     border-top: 0 none;
@@ -41,7 +41,7 @@
     padding: var(--panel-footer-padding);
     border: var(--panel-footer-border);
     background: var(--panel-footer-bg);
-    color: var(--text-color);
+    color: var(--text-color, var(--text-color-default));
     border-top: 0 none;
   }
 }

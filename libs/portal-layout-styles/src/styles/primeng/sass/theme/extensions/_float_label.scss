@@ -17,7 +17,7 @@
 
 .p-float-label input:focus ~ label,
 .p-float-label .p-inputwrapper-focus ~ label {
-  color: var(--primary-color);
+  color: var(--primary-color, var(--primary-color-default));
 }
 
 .p-input-filled {

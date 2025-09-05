@@ -2,7 +2,7 @@
   .overview-status {
     font-weight: 500;
     border-radius: 2px;
-    color: var(--body-bg-color);
+    color: var(--body-bg-color, var(--body-bg-color-default));
   }
 }
 
@@ -10,7 +10,7 @@
   @include reset-list;
 
   > li {
-    border-bottom: 1px solid var(--divider-color);
+    border-bottom: 1px solid var(--divider-color, var(--divider-color-default));
 
     &:last-child {
       border-bottom: 0 none;
@@ -26,14 +26,14 @@
     .widget-list-item-radius,
     .person-tag {
       border-radius: 2px;
-      color: var(--body-bg-color);
+      color: var(--body-bg-color, var(--body-bg-color-default));
       font-weight: 500;
     }
 
     .p-progressbar {
       height: 6px;
       border-radius: 10px;
-      background: var(--content-alt-bg-color);
+      background: var(--content-alt-bg-color, var(--content-alt-bg-color-default));
     }
 
     .p-progressbar-value {
@@ -45,13 +45,13 @@
 .widget-expenses {
   .card-subheader {
     font-size: 0.9rem;
-    color: var(--text-secondary-color);
-    border-bottom: 1px solid var(--divider-color);
+    color: var(--text-secondary-color, var(--text-secondary-color-default));
+    border-bottom: 1px solid var(--divider-color, var(--divider-color-default));
   }
 
   .item {
     padding: 0.5rem;
-    border-bottom: 1px solidvar var(--divider-color);
+    border-bottom: 1px solidvar var(--divider-color, var(--divider-color-default));
 
     &:last-child {
       border: 0 none;
@@ -67,12 +67,12 @@
     }
 
     .subtext {
-      color: var(--text-secondary-color);
+      color: var(--text-secondary-color, var(--text-secondary-color-default));
     }
 
     .item-button {
       a {
-        color: var(--text-secondary-color);
+        color: var(--text-secondary-color, var(--text-secondary-color-default));
       }
     }
   }
@@ -84,7 +84,7 @@
 
     .total {
       .title {
-        color: var(--text-secondary-color);
+        color: var(--text-secondary-color, var(--text-secondary-color-default));
       }
 
       .value {
@@ -95,7 +95,7 @@
 
     .info {
       .title {
-        color: var(--text-secondary-color);
+        color: var(--text-secondary-color, var(--text-secondary-color-default));
       }
 
       .value {
@@ -126,8 +126,8 @@
 .widget-insights {
   .card-subheader {
     font-size: 0.9rem;
-    color: var(--text-secondary-color);
-    border-bottom: 1px solid var (--divider-color);
+    color: var(--text-secondary-color, var(--text-secondary-color-default));
+    border-bottom: 1px solid var(--divider-color, var(--divider-color-default));
   }
 }
 
@@ -140,7 +140,7 @@
     }
 
     .subtext {
-      color: var(--text-secondary-color);
+      color: var(--text-secondary-color, var(--text-secondary-color-default));
     }
   }
 
@@ -155,18 +155,18 @@
     }
 
     .value {
-      color: var(--text-secondary-color);
+      color: var(--text-secondary-color, var(--text-secondary-color-default));
     }
   }
 
   .left {
-    border-right: 1px solid var(--divider-color);
+    border-right: 1px solid var(--divider-color, var(--divider-color-default));
   }
 
   .p-progressbar {
     height: 6px;
     border-radius: 10px;
-    background: var(--content-alt-bg-color);
+    background: var(--content-alt-bg-color, var(--content-alt-bg-color-default));
   }
 
   .p-progressbar-value {
@@ -174,7 +174,7 @@
   }
 
   .stats {
-    border-top: 1px solid var(--divider-color);
+    border-top: 1px solid var(--divider-color, var(--divider-color-default));
   }
 }
 
@@ -185,7 +185,7 @@
     position: relative;
     height: 20rem;
     top: -3rem;
-    background-color: var(--content-bg-color);
+    background-color: var(--content-bg-color, var(--content-bg-color-default));
     border-radius: 4px;
     box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
   }
@@ -198,7 +198,7 @@
 .widget-topsearchs {
   .item {
     padding: 1rem;
-    border-bottom: 1px solid var(--divider-color);
+    border-bottom: 1px solid var(--divider-color, var(--divider-color-default));
 
     .value {
       font-weight: 500;
@@ -217,7 +217,7 @@
     }
 
     &:nth-child(even) {
-      background-color: var(--content-alt-bg-color);
+      background-color: var(--content-alt-bg-color, var(--content-alt-bg-color-default));
     }
 
     &:last-child {
@@ -248,7 +248,7 @@
 
   > li {
     padding: 1rem 0;
-    border-bottom: 1px solid var(--divider-color);
+    border-bottom: 1px solid var(--divider-color, var(--divider-color-default));
 
     &:last-child {
       border-bottom: 0 none;
@@ -297,12 +297,12 @@
 
       .activity-subtext {
         font-size: 0.85rem;
-        color: var(--text-secondary-color);
+        color: var(--text-secondary-color, var(--text-secondary-color-default));
       }
       .p-progressbar {
         height: 6px;
         border-radius: 10px;
-        background: var(--content-alt-bg-color);
+        background: var(--content-alt-bg-color, var(--content-alt-bg-color-default));
       }
     }
   }
@@ -319,7 +319,7 @@
     }
 
     .bestseller-item {
-      background-color: var(--content-alt-bg-color);
+      background-color: var(--content-alt-bg-color, var(--content-alt-bg-color-default));
       border-radius: 4px;
       height: 3.5rem;
       transition: box-shadow 0.2s;
@@ -331,7 +331,7 @@
       }
 
       a {
-        color: var(--text-secondary-color);
+        color: var(--text-secondary-color, var(--text-secondary-color-default));
       }
 
       .item-button {
@@ -340,7 +340,7 @@
 
       &:hover {
         cursor: pointer;
-        background-color: var(--hover-bg-color);
+        background-color: var(--hover-bg-color, var(--hover-bg-color-default));
         box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
       }
     }
@@ -369,7 +369,7 @@
       }
 
       .message {
-        color: var(--body-bg-color);
+        color: var(--body-bg-color, var(--body-bg-color-default));
       }
 
       &.from {

@@ -6,7 +6,7 @@
   .p-dialog-header {
     border-bottom: var(--dialog-header-border);
     background: var(--dialog-header-bg);
-    color: var(--text-color);
+    color: var(--text-color, var(--text-color-default));
     padding: var(--dialog-header-padding);
     border-top-right-radius: var(--border-radius);
     border-top-left-radius: var(--border-radius);
@@ -33,14 +33,14 @@
 
   .p-dialog-content {
     background: var(--panel-content-bg);
-    color: var(--text-color);
+    color: var(--text-color, var(--text-color-default));
     padding: var(--dialog-content-padding);
   }
 
   .p-dialog-footer {
     border-top: $dialogFooterBorder;
     background: var(--panel-content-bg);
-    color: var(--text-color);
+    color: var(--text-color, var(--text-color-default));
     padding: var(--dialog-footer-padding);
     text-align: right;
     border-bottom-right-radius: var(--border-radius);

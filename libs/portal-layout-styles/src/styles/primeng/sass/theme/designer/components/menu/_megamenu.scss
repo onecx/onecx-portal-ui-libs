@@ -1,7 +1,7 @@
 .p-megamenu {
   padding: var(--horizontal-menu-padding);
   background: var(--horizontal-menu-bg);
-  color: var(--text-color);
+  color: var(--text-color, var(--text-color-default));
   border: var(--horizontal-menu-border);
   border-radius: var(--border-radius);
 
@@ -17,15 +17,15 @@
           background: var(--horizontal-menu-root-menuitem-active-bg);
 
           .p-menuitem-text {
-            color: var(--text-color);
+            color: var(--text-color, var(--text-color-default));
           }
 
           .p-menuitem-icon {
-            color: var(--text-secondary-color);
+            color: var(--text-secondary-color, var(--text-secondary-color-default));
           }
 
           .p-submenu-icon {
-            color: var(--text-secondary-color);
+            color: var(--text-secondary-color, var(--text-secondary-color-default));
           }
         }
       }
@@ -38,7 +38,7 @@
 
   .p-megamenu-panel {
     background: var(--menu-bg);
-    color: var(--text-color);
+    color: var(--text-color, var(--text-color-default));
     border: var(--overlay-menu-border);
     box-shadow: var(--overlay-menu-shadow);
   }
@@ -46,7 +46,7 @@
   .p-megamenu-submenu-header {
     margin: var(--submenu-header-margin);
     padding: var(--submenu-header-padding);
-    color: var(--text-secondary-color);
+    color: var(--text-secondary-color, var(--text-secondary-color-default));
     background: var(--submenu-header-bg);
     font-weight: var(--submenu-header-font-weight);
     border-top-right-radius: var(--border-radius);
@@ -77,12 +77,12 @@
         background: var(--menuitem-active-bg);
 
         .p-menuitem-text {
-          color: var(--text-color);
+          color: var(--text-color, var(--text-color-default));
         }
 
         .p-menuitem-icon,
         .p-submenu-icon {
-          color: var(--text-secondary-color);
+          color: var(--text-secondary-color, var(--text-secondary-color-default));
         }
       }
     }

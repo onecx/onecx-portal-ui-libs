@@ -30,7 +30,7 @@
         width: 100%;
         height: 100%;
         border-radius: 4px;
-        border: 1px solid var(--divider-color);
+        border: 1px solid var(--divider-color, var(--divider-color-default));
       }
 
       .check {
@@ -53,7 +53,7 @@
     color: var(--surface-d);
 
     &.scale-active {
-      color: var(--primary-color);
+      color: var(--primary-color, var(--primary-color-default));
     }
   }
 }

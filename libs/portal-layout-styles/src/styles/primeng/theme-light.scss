@@ -1,7 +1,9 @@
-$primaryColor: rgb(18, 171, 219);
+@import '../shell/theme_defaults';
+
+$primaryColor: var(--primary-color, var(--primary-color-default, rgb(18, 171, 219)));
 $primaryLightestColor: #c2e9f5;
-$primaryMenuTextColor: var(--primary-color);
-$primaryTextColor: #ffffff;
+$primaryMenuTextColor: var(--primary-color, var(--primary-color-default));
+$primaryTextColor: var(--text-color, var(--text-color-default, #ffffff));
 $accentColor: #ff0044;
 $accentTextColor: #ffffff;
 

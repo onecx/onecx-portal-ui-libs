@@ -23,17 +23,17 @@
       width: var(--radiobutton-icon-size);
       height: var(--radiobutton-icon-size);
       transition-duration: var(--transition-duration);
-      background-color: var(--primary-color);
+      background-color: var(--primary-color, var(--primary-color-default));
     }
 
     &.p-highlight {
-      border-color: var(--primary-color);
+      border-color: var(--primary-color, var(--primary-color-default));
       background: var(--primary-text-color);
 
       &:not(.p-disabled):hover {
-        border-color: var(--primary-color);
+        border-color: var(--primary-color, var(--primary-color-default));
         background: var(--primary-text-color);
-        color: var(--primary-color);
+        color: var(--primary-color, var(--primary-color-default));
       }
     }
   }
@@ -71,7 +71,7 @@ p-radiobutton.ng-dirty.ng-invalid > .p-radiobutton > .p-radiobutton-box {
   .p-highlight {
     .p-radiobutton {
       .p-radiobutton-box {
-        border-color: var(--primary-color);
+        border-color: var(--primary-color, var(--primary-color-default));
       }
     }
   }

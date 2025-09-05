@@ -13,7 +13,7 @@
 
     &.p-highlight {
       &:not(.p-disabled).p-focus {
-        border-color: var(--primary-color);
+        border-color: var(--primary-color, var(--primary-color-default));
       }
     }
   }
