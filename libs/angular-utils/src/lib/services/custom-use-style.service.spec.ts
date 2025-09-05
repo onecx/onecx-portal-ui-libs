@@ -35,10 +35,9 @@ function removeSpacesAndNewlines(str?: string) {
 }
 
 jest.mock('@primeuix/utils', () => ({
-  setAttribute: (element: ElementMock, attribute: string, value: string) => {
-    element.setAttribute(attribute, value)
+  setAttributes: (element: ElementMock, attributes: Record<string, string>) => {
+    Object.entries(attributes).forEach(([key, value]) => element.setAttribute(key, value))
   },
-  setAttributes: jest.fn(),
 }))
 
 describe('CustomUseStyleService', () => {
