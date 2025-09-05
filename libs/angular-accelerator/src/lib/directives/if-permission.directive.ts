@@ -21,7 +21,7 @@ export class IfPermissionDirective implements OnInit {
   }
 
   @Input('ocxIfNotPermission') set notPermission(value: string | string[] | undefined) {
-    this.permissionSubject.next(value)
+    this.permissionSubject$.next(value)
     this.negate = true
   }
 
@@ -68,7 +68,7 @@ export class IfPermissionDirective implements OnInit {
   }
 
   ngOnInit() {
-    this.permissionSubject
+    this.permissionSubject$
       .pipe(
         switchMap((permission) => {
           if (!permission) {
