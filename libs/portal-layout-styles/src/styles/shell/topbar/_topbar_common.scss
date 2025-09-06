@@ -103,7 +103,7 @@
             cursor: pointer;
             margin: 0;
             padding: 0.5rem !important; // fix uneven button dimensions
-            color: var(--topbar-item-text, var(--topbar-item-text-default));
+            color: var(--topbar-item-text-color, var(--topbar-item-text-color-default));
             background-color: var(--topbar-bg-color, var(--topbar-bg-color-default));
             &:hover,
             &:focus {

@@ -20960,7 +20960,7 @@ body .p-overlay-badge .p-badge {
   cursor: pointer;
   margin: 0;
   padding: 0.5rem !important;
-  color: var(--topbar-item-text, var(--topbar-item-text-default));
+  color: var(--topbar-item-text-color, var(--topbar-item-text-color-default));
   background-color: var(--topbar-bg-color, var(--topbar-bg-color-default));
 }
 .layout-topbar_flex .layout-topbar-right .layout-topbar-actions-right_flex .layout-topbar-items .layout-topbar-item .layout-topbar-action:hover, .layout-topbar_flex .layout-topbar-right .layout-topbar-actions-right_flex .layout-topbar-items .layout-topbar-item .layout-topbar-action:focus {
@@ -21038,14 +21038,14 @@ body .p-overlay-badge .p-badge {
   }
 }
 .layout-topbar-var .layout-topbar_flex {
-  color: var(--topbar-item-text, var(--topbar-item-text-default));
+  color: var(--topbar-item-text-color, var(--topbar-item-text-color-default));
   background-color: var(--topbar-bg-color, var(topbar-bg-color-default));
 }
 .layout-topbar-var .layout-topbar_flex .layout-topbar-left {
   background-color: var(--topbar-left-bg-color, var(--topbar-left-bg-color-default));
 }
 .layout-topbar-var .layout-topbar_flex .layout-topbar-left .layout-menu-button {
-  color: var(--topbar-menu-button-text-color, var(--topbar-menu-button-text-color-default, #ffffff));
+  color: var(--topbar-menu-button-text-color, var(--topbar-menu-button-text-color-default));
   background-color: var(--topbar-menu-button-bg-color, var(--topbar-menu-button-bg-color-default));
 }
 .layout-topbar-var .layout-topbar_flex .layout-topbar-right .layout-topbar-actions-left .layout-menubar {
@@ -21055,7 +21055,7 @@ body .p-overlay-badge .p-badge {
 .layout-topbar-var .layout-topbar_flex .layout-topbar-right .layout-topbar-actions-left .layout-menubar.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-content .p-menuitem-link .p-menuitem-text,
 .layout-topbar-var .layout-topbar_flex .layout-topbar-right .layout-topbar-actions-left .layout-menubar.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-content .p-menuitem-link .p-menuitem-icon,
 .layout-topbar-var .layout-topbar_flex .layout-topbar-right .layout-topbar-actions-left .layout-menubar.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-content .p-menuitem-link .p-submenu-icon {
-  color: var(--topbar-item-text, var(--topbar-item-text-default));
+  color: var(--topbar-item-text-color, var(--topbar-item-text-color-default));
 }
 .layout-topbar-var .layout-topbar_flex .layout-topbar-right .layout-topbar-actions-left .layout-menubar.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-content .p-menuitem-link:not(.p-disabled):hover {
   background: var(--topbar-item-text-hover-bg-color, var(--topbar-item-text-hover-bg-color-default));
@@ -21064,7 +21064,7 @@ body .p-overlay-badge .p-badge {
 .layout-topbar-var .layout-topbar_flex .layout-topbar-right .layout-topbar-actions-left .layout-menubar.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-link .p-menuitem-text,
 .layout-topbar-var .layout-topbar_flex .layout-topbar-right .layout-topbar-actions-left .layout-menubar.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-link .p-menuitem-icon,
 .layout-topbar-var .layout-topbar_flex .layout-topbar-right .layout-topbar-actions-left .layout-menubar.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-link .p-submenu-icon {
-  color: var(--topbar-item-text, var(--topbar-item-text-default));
+  color: var(--topbar-item-text-color, var(--topbar-item-text-color-default));
 }
 .layout-topbar-var .layout-topbar_flex .layout-topbar-right .layout-topbar-actions-left .layout-menubar.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-link:not(.p-disabled):hover {
   background: var(--topbar-item-text-hover-bg-color, var(--topbar-item-text-hover-bg-color-default));
@@ -21601,7 +21601,7 @@ label.ocx-control-hint {
   --surface-e: #ffffff;
   --surface-f: #ffffff;
   --text-color-secondary: rgba(0, 0, 0, 0.6);
-  --primary-color-text: var(--text-color, var(--text-color-default));
+  --primary-color-text: #ffffff;
   --surface-0: #ffffff;
   --surface-50: #fafafa;
   --surface-100: #f5f5f5;
@@ -28985,7 +28985,7 @@ p-multiselect.ng-dirty.ng-invalid .p-multiselect:not(.p-disabled).p-focus {
   --warning-button-bg-rgb: 251, 192, 45;
   --help-button-bg-rgb: 156, 39, 176;
   --danger-button-bg-rgb: 211, 47, 47;
-  --primary-text-color: var(--text-color, var(--text-color-default));
+  --primary-text-color: #ffffff;
   --button-border: 0 none;
   --button-padding: 0.643rem 0.75rem;
   --form-element-transition: background-color 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s, background-size 0.2s cubic-bezier(0.64, 0.09, 0.08, 1);

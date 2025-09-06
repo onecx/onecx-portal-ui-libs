@@ -1,5 +1,5 @@
 .layout-topbar_flex {
-  color: var(--topbar-item-text, var(--topbar-item-text-default));
+  color: var(--topbar-item-text-color, var(--topbar-item-text-color-default));
   background-color: var(--topbar-bg-color, var(topbar-bg-color-default));
 
   .layout-topbar-left {
@@ -22,7 +22,7 @@
               .p-menuitem-text,
               .p-menuitem-icon,
               .p-submenu-icon {
-                color: var(--topbar-item-text, var(--topbar-item-text-default));
+                color: var(--topbar-item-text-color, var(--topbar-item-text-color-default));
               }
 
               &:not(.p-disabled):hover {
@@ -38,7 +38,7 @@
             .p-menuitem-text,
             .p-menuitem-icon,
             .p-submenu-icon {
-              color: var(--topbar-item-text, var(--topbar-item-text-default));
+              color: var(--topbar-item-text-color, var(--topbar-item-text-color-default));
             }
 
             &:not(.p-disabled):hover {
