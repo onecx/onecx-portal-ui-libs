@@ -3,8 +3,10 @@ import { Component, HostListener, OnDestroy, OnInit, inject } from '@angular/cor
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import {
   AppStateService,
+  Capability,
   Message,
   PortalMessageService,
+  ShellCapabilityService,
   ThemeService,
   UserService,
 } from '@onecx/angular-integration-interface'
@@ -61,6 +63,7 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
   isFooterComponentDefined$: Observable<boolean>
 
   constructor() {
+    ShellCapabilityService.addCapability(Capability.PUBLISH_STATIC_MENU_VISIBILITY)
     this.portalMessageService.message$.subscribe((message: Message) => this.messageService.add(message))
     this.userService.profile$.pipe(untilDestroyed(this)).subscribe((profile) => {
       this.menuMode =
