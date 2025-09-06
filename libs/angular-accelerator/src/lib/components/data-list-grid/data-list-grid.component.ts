@@ -21,20 +21,7 @@ import { AppStateService, UserService } from '@onecx/angular-integration-interfa
 import { MfeInfo } from '@onecx/integration-interface'
 import { MenuItem, PrimeIcons, PrimeTemplate } from 'primeng/api'
 import { Menu } from 'primeng/menu'
-import {
-  BehaviorSubject,
-  Observable,
-  combineLatest,
-  debounceTime,
-  first,
-  forkJoin,
-  from,
-  map,
-  mergeMap,
-  of,
-  shareReplay,
-  switchMap,
-} from 'rxjs'
+import { BehaviorSubject, Observable, combineLatest, debounceTime, first, map, mergeMap, of, switchMap } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'

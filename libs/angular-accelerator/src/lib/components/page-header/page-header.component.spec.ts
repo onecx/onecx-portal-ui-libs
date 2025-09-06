@@ -54,7 +54,6 @@ describe('PageHeaderComponent', () => {
   let component: PageHeaderComponent
   let fixture: ComponentFixture<PageHeaderComponent>
   let pageHeaderHarness: PageHeaderHarness
-  let userServiceSpy: jest.SpyInstance<Promise<boolean>, [permissionKey: string | string[]], any>
   let userServiceMock: UserServiceMock
 
   beforeEach(async () => {
