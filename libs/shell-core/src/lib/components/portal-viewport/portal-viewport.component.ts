@@ -10,13 +10,14 @@ import {
 } from '@onecx/angular-integration-interface'
 import { MessageService } from 'primeng/api'
 import { PrimeNG } from 'primeng/config'
-import { filter, first, from, mergeMap, Observable, of } from 'rxjs'
+import { filter, first, from, map, mergeMap, Observable, of, startWith } from 'rxjs'
 import { SHOW_CONTENT_PROVIDER, ShowContentProvider } from '../../shell-interface/show-content-provider'
 import {
   WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER,
   WorkspaceConfigBffService,
 } from '../../shell-interface/workspace-config-bff-service-provider'
 import { SlotService } from '@onecx/angular-remote-components'
+import { Topic } from '@onecx/accelerator'
 
 @Component({
   standalone: false,
@@ -38,6 +39,9 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
     optional: true,
   })
   private slotService = inject(SlotService)
+  private readonly staticMenuVisibleTopic$ = new Topic<{ isVisible: boolean }>('staticMenuVisible', 1)
+
+  readonly staticMenuVisible$: Observable<boolean>
 
   menuButtonTitle = ''
   menuActive = true
@@ -104,6 +108,12 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
 
     this.isVerticalMenuComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.verticalMenuSlotName)
     this.isFooterComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.footerSlotName)
+
+    this.staticMenuVisible$ = this.staticMenuVisibleTopic$.pipe(
+      map((state) => state.isVisible && !this.isHorizontalMenuMode()),
+      startWith(true),
+      untilDestroyed(this)
+    )
   }
 
   ngOnInit() {
@@ -127,6 +137,7 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
   onMenuButtonClick(event: MouseEvent) {
     this.activeTopbarItem = undefined
     this.menuActive = !this.menuActive
+    this.staticMenuVisibleTopic$.publish({ isVisible: this.menuActive })
     event.preventDefault()
     event.stopPropagation()
   }
@@ -136,16 +147,15 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
     const mobileBreakpointVar = getComputedStyle(document.documentElement).getPropertyValue('--mobile-break-point')
     const isMobile = window.matchMedia(`(max-width: ${mobileBreakpointVar})`).matches
     // auto show sidebar when changing to desktop, hide when changing to mobile
-    if (isMobile !== this.isMobile) this.menuActive = !isMobile
+    if (isMobile !== this.isMobile) {
+      this.menuActive = !isMobile
+      this.staticMenuVisibleTopic$.publish({ isVisible: !isMobile })
+    }
     this.isMobile = isMobile
   }
 
   isHorizontalMenuMode() {
     return this.menuMode === 'horizontal' && !this.isMobile
-  }
-
-  isStaticalMenuVisible() {
-    return this.menuActive && !this.isHorizontalMenuMode()
   }
 
   isHorizontalMenuVisible() {
