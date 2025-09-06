@@ -756,32 +756,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     menu.toggle(event)
   }
 
-  // // A new Observable is created with each ChangeDetection.
-  // // The async pipe subscribes to it, triggering another ChangeDetection when a new value is emitted, which creates a loop.
-  // // To prevent this, cache the Observable by using shareReplay to avoid recreating it with every ChangeDetection.
-  // hasVisibleOverflowMenuItems(item: any): Observable<boolean> {
-  //   if (this.cachedOverflowMenuItemsVisibility$) {
-  //     return this.cachedOverflowMenuItemsVisibility$
-  //   }
-
-  //   const overflowMenuItemsVisibility$ = this.overflowActions$.pipe(
-  //     mergeMap((actions) =>
-  //       forkJoin(
-  //         actions.map((a) =>
-  //           !a.actionVisibleField || this.fieldIsTruthy(item, a.actionVisibleField)
-  //             ? from(this.userService.hasPermission(a.permission))
-  //             : of(false)
-  //         )
-  //       )
-  //     ),
-  //     map((results) => results.some((isVisible) => isVisible))
-  //   )
-
-  //   this.cachedOverflowMenuItemsVisibility$ = overflowMenuItemsVisibility$.pipe(shareReplay(1))
-
-  //   return this.cachedOverflowMenuItemsVisibility$
-  // }
-
   hasVisibleOverflowMenuItems(row: any) {
     return this.overflowActions$.pipe(
       switchMap((actions) => this.filterActionsBasedOnPermissions(actions)),
