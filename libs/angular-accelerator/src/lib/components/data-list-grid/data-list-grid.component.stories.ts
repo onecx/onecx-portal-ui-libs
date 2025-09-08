@@ -1,19 +1,20 @@
 import { Meta, moduleMetadata, applicationConfig, StoryFn } from '@storybook/angular'
 import { RouterModule } from '@angular/router'
-import { importProvidersFrom } from '@angular/core'
+import { APP_INITIALIZER, importProvidersFrom } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { ButtonModule } from 'primeng/button'
 import { MultiSelectModule } from 'primeng/multiselect'
 import { DataViewModule } from 'primeng/dataview'
 import { MenuModule } from 'primeng/menu'
-import { UserServiceMock, provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
+import { provideUserServiceMock, UserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { StorybookTranslateModule } from './../../storybook-translate.module'
 import { DataListGridComponent } from './data-list-grid.component'
 import { IfPermissionDirective } from '../../directives/if-permission.directive'
 import { TooltipOnOverflowDirective } from '../../directives/tooltipOnOverflow.directive'
 import { MockAuthModule } from '../../mock-auth/mock-auth.module'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
+import { UserService } from '@onecx/angular-integration-interface'
 
 const DataListGridComponentSBConfig: Meta<DataListGridComponent> = {
   title: 'Components/DataListGridComponent',
@@ -24,8 +25,17 @@ const DataListGridComponentSBConfig: Meta<DataListGridComponent> = {
         importProvidersFrom(BrowserModule),
         importProvidersFrom(BrowserAnimationsModule),
         provideUserServiceMock(),
-        { provide: HAS_PERMISSION_CHECKER, useClass: UserServiceMock },
+        { provide: HAS_PERMISSION_CHECKER, useExisting: UserService },
         importProvidersFrom(RouterModule.forRoot([], { useHash: true })),
+        {
+          provide: APP_INITIALIZER,
+          useFactory: (userService: UserService) => () => {
+            const userServiceMock = userService as unknown as UserServiceMock
+            userServiceMock.permissions$.next(['TEST_MGMT#TEST_DELETE', 'TEST_MGMT#TEST_EDIT', 'TEST_MGMT#TEST_VIEW'])
+          },
+          multi: true,
+          deps: [UserService],
+        },
       ],
     }),
     moduleMetadata({
