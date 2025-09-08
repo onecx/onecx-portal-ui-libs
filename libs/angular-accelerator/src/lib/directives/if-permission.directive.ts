@@ -17,7 +17,7 @@ import { switchMap } from 'rxjs/operators'
 @Directive({ selector: '[ocxIfPermission], [ocxIfNotPermission]' })
 export class IfPermissionDirective implements OnInit {
   @Input('ocxIfPermission') set permission(value: string | string[] | undefined) {
-    this.permissionSubject.next(value)
+    this.permissionSubject$.next(value)
   }
 
   @Input('ocxIfNotPermission') set notPermission(value: string | string[] | undefined) {
