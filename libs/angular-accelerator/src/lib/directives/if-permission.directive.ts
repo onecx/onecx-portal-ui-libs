@@ -45,7 +45,7 @@ export class IfPermissionDirective implements OnInit {
   }
 
   private permissionChecker: HasPermissionChecker
-  private permissionSubject = new BehaviorSubject<string | string[] | undefined>(undefined)
+  private permissionSubject$ = new BehaviorSubject<string | string[] | undefined>(undefined)
   private isDisabled = false
   private directiveContentRef: EmbeddedViewRef<any> | undefined
   negate = false
