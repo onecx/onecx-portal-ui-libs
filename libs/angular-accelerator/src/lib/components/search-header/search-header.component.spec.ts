@@ -41,7 +41,7 @@ describe('SearchHeaderComponent', () => {
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         provideAppStateServiceMock(),
-        provideUserServiceMock()
+        provideUserServiceMock(),
       ],
     }).compileComponents()
 
@@ -72,11 +72,11 @@ describe('SearchHeaderComponent', () => {
 
   it('should display search config slot if search config change is observed, pageName is defined and permission is met', async () => {
     const userServiceMock = TestBed.inject(UserServiceMock)
-    jest.spyOn(userServiceMock, 'hasPermission').mockReturnValue(Promise.resolve(true))
+    userServiceMock.permissionsTopic$.publish(['PRODUCT#USE_SEARCHCONFIGS'])
     const sub = component.selectedSearchConfigChanged.subscribe()
     component.pageName = 'myPageName'
     component.searchConfigPermission = 'PRODUCT#USE_SEARCHCONFIGS'
-    
+
     fixture.detectChanges()
     await fixture.whenStable()
 
