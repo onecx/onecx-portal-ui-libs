@@ -31,7 +31,7 @@ const DataTableComponentSBConfig: Meta<DataTableComponent> = {
         importProvidersFrom(BrowserModule),
         importProvidersFrom(BrowserAnimationsModule),
         provideUserServiceMock(),
-        { provide: HAS_PERMISSION_CHECKER, useClass: UserServiceMock },
+        { provide: HAS_PERMISSION_CHECKER, useExisting: UserServiceMock },
         {
           provide: LOCALE_ID,
           useClass: DynamicLocaleId,
