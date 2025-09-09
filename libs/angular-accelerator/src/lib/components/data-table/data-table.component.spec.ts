@@ -10,6 +10,8 @@ import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-prime
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { ColumnType } from '../../model/column-type.model'
 import { DataTableComponent, Row } from './data-table.component'
+import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
+import { UserService } from '@onecx/angular-integration-interface'
 
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>
@@ -206,7 +208,13 @@ describe('DataTableComponent', () => {
         TranslateTestingModule.withTranslations(TRANSLATIONS),
         AngularAcceleratorModule,
       ],
-      providers: [provideUserServiceMock()],
+      providers: [
+        provideUserServiceMock(),
+        {
+          provide: HAS_PERMISSION_CHECKER,
+          useExisting: UserService,
+        },
+      ],
     }).compileComponents()
 
     fixture = TestBed.createComponent(DataTableComponent)
@@ -654,6 +662,148 @@ describe('DataTableComponent', () => {
       expect(tableActions.length).toBe(1)
 
       expect(await tableActions[0].getAttribute('id')).toEqual('rowId-actionIdActionButton')
+    })
+  })
+
+  describe('permissions for action buttons', () => {
+    let userService: UserServiceMock
+    beforeEach(() => {
+      component.rows = [
+        {
+          version: 0,
+          creationDate: '2023-09-12T09:34:27.184086Z',
+          creationUser: '',
+          modificationDate: '2023-09-12T09:34:27.184086Z',
+          modificationUser: '',
+          id: 'rowId',
+          name: 'name 3',
+          description: '',
+          status: 'status name 3',
+          responsible: '',
+          endDate: '2023-09-15T09:34:24Z',
+          startDate: '2023-09-14T09:34:22Z',
+          imagePath: '',
+          testNumber: '7.1',
+          ready: false,
+        },
+      ]
+
+      // Show actions
+      component.viewTableRow.subscribe(() => console.log())
+      component.editTableRow.subscribe(() => console.log())
+      component.deleteTableRow.subscribe(() => console.log())
+      component.viewPermission = 'TABLE#VIEW'
+      component.editPermission = 'TABLE#EDIT'
+      component.deletePermission = 'TABLE#DELETE'
+      component.additionalActions = []
+
+      userService = TestBed.inject(UserService) as unknown as UserServiceMock
+    })
+
+    it('should show view, delete and edit action buttons when user has VIEW, EDIT and DELETE permissions', async () => {
+      userService.permissionsTopic$.publish(['TABLE#VIEW', 'TABLE#EDIT', 'TABLE#DELETE'])
+
+      const tableActions = await dataTable.getActionButtons()
+      expect(tableActions.length).toBe(3)
+
+      expect(await tableActions[0].getAttribute('id')).toEqual('rowId-viewButton')
+      expect(await tableActions[1].getAttribute('id')).toEqual('rowId-editButton')
+      expect(await tableActions[2].getAttribute('id')).toEqual('rowId-deleteButton')
+
+      userService.permissionsTopic$.publish([])
+
+      const newTableActions = await dataTable.getActionButtons()
+      expect(newTableActions.length).toBe(0)
+    })
+
+    it('should show custom inline actions if user has permission', async () => {
+      userService.permissionsTopic$.publish(['ADDITIONAL#VIEW'])
+
+      component.additionalActions = [
+        {
+          permission: 'ADDITIONAL#VIEW',
+          callback: () => {
+            console.log('custom action clicked')
+          },
+          id: 'actionId',
+        },
+      ]
+
+      const tableActions = await dataTable.getActionButtons()
+      expect(tableActions.length).toBe(1)
+
+      expect(await tableActions[0].getAttribute('id')).toEqual('rowId-actionIdActionButton')
+
+      userService.permissionsTopic$.publish([])
+
+      const newTableActions = await dataTable.getActionButtons()
+      expect(newTableActions.length).toBe(0)
+    })
+
+    it('should show overflow menu when user has permission for at least one action', async () => {
+      userService.permissionsTopic$.publish(['OVERFLOW#VIEW'])
+
+      component.additionalActions = [
+        {
+          permission: 'OVERFLOW#VIEW',
+          callback: () => {
+            console.log('custom action clicked')
+          },
+          id: 'actionId',
+          labelKey: 'Label',
+          showAsOverflow: true,
+        },
+      ]
+
+      await (await dataTable.getOverflowActionMenuButton())?.click()
+      const overflowMenu = await dataTable.getOverflowMenu()
+      expect(overflowMenu).toBeTruthy()
+
+      const menuItems = await overflowMenu!.getAllMenuItems()
+      expect(menuItems!.length).toBe(1)
+      const menuItemText = await menuItems![0].getText()
+      expect(menuItemText).toBe('Label')
+
+      userService.permissionsTopic$.publish([])
+      const newMenuItems = await overflowMenu!.getAllMenuItems()
+      expect(newMenuItems!.length).toBe(0)
+    })
+
+    it('should display action buttons based on multiple permissions', async () => {
+      userService.permissionsTopic$.publish(['ADDITIONAL#VIEW1', 'ADDITIONAL#VIEW2', 'OVERFLOW#VIEW', 'OVERFLOW#VIEW2'])
+
+      component.additionalActions = [
+        {
+          permission: ['ADDITIONAL#VIEW1', 'ADDITIONAL#VIEW2'],
+          callback: () => {
+            console.log('custom action clicked')
+          },
+          id: 'actionId',
+        },
+        {
+          permission: ['OVERFLOW#VIEW', 'OVERFLOW#VIEW2'],
+          callback: () => {
+            console.log('custom action clicked')
+          },
+          id: 'actionId',
+          labelKey: 'Label',
+          showAsOverflow: true,
+        },
+      ]
+
+      const tableActions = await dataTable.getActionButtons()
+      expect(tableActions.length).toBe(1)
+
+      expect(await tableActions[0].getAttribute('id')).toEqual('rowId-actionIdActionButton')
+
+      await (await dataTable.getOverflowActionMenuButton())?.click()
+      const overflowMenu = await dataTable.getOverflowMenu()
+      expect(overflowMenu).toBeTruthy()
+
+      const menuItems = await overflowMenu!.getAllMenuItems()
+      expect(menuItems!.length).toBe(1)
+      const menuItemText = await menuItems![0].getText()
+      expect(menuItemText).toBe('Label')
     })
   })
 })

@@ -318,12 +318,7 @@ xdescribe('InteractiveDataViewComponent', () => {
     fixture = TestBed.createComponent(InteractiveDataViewComponent)
     component = fixture.componentInstance
     userServiceMock = TestBed.inject(UserServiceMock)
-    userServiceMock.permissionsTopic$.publish([
-      'TEST_MGMT#TEST_View',
-      'TEST_MGMT#TEST_EDIT',
-      'TEST_MGMT#TEST_DELETE',
-      'PRODUCT#USE_SEARCHCONFIG',
-    ])
+    userServiceMock.permissionsTopic$.publish(['TEST_MGMT#TEST_View', 'TEST_MGMT#TEST_EDIT', 'TEST_MGMT#TEST_DELETE'])
     component.viewPermission = 'TEST_MGMT#TEST_View'
     component.editPermission = 'TEST_MGMT#TEST_EDIT'
     component.deletePermission = 'TEST_MGMT#TEST_DELETE'
@@ -344,6 +339,7 @@ xdescribe('InteractiveDataViewComponent', () => {
 
     dateUtils = TestBed.inject(DateUtils)
     slotService = TestBed.inject(SlotService) as any as SlotServiceMock
+    slotService.clearAssignments()
 
     viewItemEvent = undefined
     editItemEvent = undefined
@@ -367,25 +363,20 @@ xdescribe('InteractiveDataViewComponent', () => {
   })
 
   it('should load column-group-selection slot', async () => {
+    userServiceMock.permissionsTopic$.publish(['PRODUCT#USE_SEARCHCONFIG'])
     slotService.assignComponentToSlot('column-group-selection', component.columnGroupSlotName)
-    jest.spyOn(userServiceMock, 'hasPermission').mockReturnValue(Promise.resolve(true))
-
     fixture.detectChanges()
-    await fixture.whenStable()
 
     const slot = await loader.getHarness(SlotHarness)
     expect(slot).toBeTruthy()
   })
 
   it('should load ColumnGroupSelectionDropdown', async () => {
+    userServiceMock.permissionsTopic$.publish([])
     const columnGroupSelectionDropdown = await loader.getHarness(ColumnGroupSelectionHarness)
     expect(columnGroupSelectionDropdown).toBeTruthy()
 
     slotService.assignComponentToSlot('column-group-selection', component.columnGroupSlotName)
-    jest.spyOn(userServiceMock, 'hasPermission').mockReturnValue(Promise.resolve(false))
-
-    fixture.detectChanges()
-    await fixture.whenStable()
 
     const columnGroupSelectionDropdownNoPermission = await loader.getHarness(ColumnGroupSelectionHarness)
     expect(columnGroupSelectionDropdownNoPermission).toBeTruthy()
