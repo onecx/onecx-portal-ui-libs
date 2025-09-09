@@ -1,8 +1,6 @@
 export function createReportsConfig(projectName: string) {
   const reportsRoot = `${process.cwd()}/reports/${projectName}`
-
-  // Explizit als Jest-Konfiguration deklarieren
-  const config = {
+  return {
     testMatch: ['<rootDir>/src/lib/**/*.spec.ts'],
     coverageDirectory: `${reportsRoot}/coverage`,
     collectCoverage: true,
@@ -10,7 +8,7 @@ export function createReportsConfig(projectName: string) {
     reporters: [
       'default',
       [
-        require.resolve('jest-sonar'),
+        'jest-sonar',
         {
           outputDirectory: reportsRoot,
           outputName: 'sonarqube_report.xml',
@@ -19,6 +17,4 @@ export function createReportsConfig(projectName: string) {
       ],
     ],
   }
-
-  return config
 }
