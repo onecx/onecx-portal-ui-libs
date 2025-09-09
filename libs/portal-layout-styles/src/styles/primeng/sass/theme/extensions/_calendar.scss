@@ -41,7 +41,7 @@
   }
 
   &:not(.p-disabled).p-focus {
-    border-color: var(--primary-color);
+    border-color: var(--primary-color, var(--primary-color-default));
     box-shadow: inset 0 0 0 1px $inputFocusBorderColor, inset 0 0 0 1px $inputFocusBorderColor,
       inset 0 0 0 1px $inputFocusBorderColor, inset 0 0 0 1px $inputFocusBorderColor;
   }

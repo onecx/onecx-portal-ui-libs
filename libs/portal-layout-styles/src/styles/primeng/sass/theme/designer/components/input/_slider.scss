@@ -26,7 +26,7 @@
   .p-slider-handle {
     height: var(--slider-handle-height);
     width: var(--slider-handle-width);
-    background: var(--primary-color);
+    background: var(--primary-color, var(--primary-color-default));
     border: var(--slider-handle-border);
     border-radius: var(--slider-handle-border-radius);
     transition: var(--form-element-transition);
@@ -37,12 +37,12 @@
   }
 
   .p-slider-range {
-    background: var(--primary-color);
+    background: var(--primary-color, var(--primary-color-default));
   }
 
   &:not(.p-disabled) {
     .p-slider-handle:hover {
-      background: var(--primary-color);
+      background: var(--primary-color, var(--primary-color-default));
       border-color: var(--slider-handle-hover-border-color);
     }
   }

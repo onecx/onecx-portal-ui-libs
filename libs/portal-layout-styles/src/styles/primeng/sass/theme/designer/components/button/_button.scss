@@ -1,9 +1,9 @@
 .p-button {
   color: var(--primary-text-color);
-  background: var(--primary-color);
+  background: var(--primary-color, var(--primary-color-default));
   border: var(--button-border);
   padding: var(--button-padding);
-  font-size: var(--font-size);
+  font-size: var(--font-size, var(--font-size-default));
   transition: var(--form-element-transition);
   border-radius: var(--border-radius);
 
@@ -21,65 +21,65 @@
 
   &.p-button-outlined {
     background-color: transparent;
-    color: var(--primary-color);
+    color: var(--primary-color, var(--primary-color-default));
     border: var(--outlined-button-border);
 
     &:enabled:hover {
-      background: rgba(var(--primary-color-rgb), $textButtonHoverBgOpacity);
-      color: var(--primary-color);
+      background: rgb(from var(--primary-color, var(--primary-color-default)) r g b / $textButtonHoverBgOpacity);
+      color: var(--primary-color, var(--primary-color-default));
       border: var(--outlined-button-border);
     }
 
     &:enabled:active {
-      background: rgba(var(--primary-color-rgb), $textButtonActiveBgOpacity);
-      color: var(--primary-color);
+      background: rgb(from var(--primary-color, var(--primary-color-default)) r g b / $textButtonActiveBgOpacity);
+      color: var(--primary-color, var(--primary-color-default));
       border: var(--outlined-button-border);
     }
 
     &.p-button-plain {
-      color: var(--text-secondary-color);
-      border-color: var(--text-secondary-color);
+      color: var(--text-secondary-color, var(--text-secondary-color-default));
+      border-color: var(--text-secondary-color, var(--text-secondary-color-default));
 
       &:enabled:hover {
         background: var(--plain-button-hover-bg-color);
-        color: var(--text-secondary-color);
+        color: var(--text-secondary-color, var(--text-secondary-color-default));
       }
 
       &:enabled:active {
         background: var(--plain-button-active-bg-color);
-        color: var(--text-secondary-color);
+        color: var(--text-secondary-color, var(--text-secondary-color-default));
       }
     }
   }
 
   &.p-button-text {
     background-color: transparent;
-    color: var(--primary-color);
+    color: var(--primary-color, var(--primary-color-default));
     border-color: transparent;
 
     &:enabled:hover {
-      background: rgba(var(--primary-color-rgb), $textButtonHoverBgOpacity);
-      color: var(--primary-color);
+      background: rgb(from var(--primary-color, var(--primary-color-default)) r g b / $textButtonHoverBgOpacity);
+      color: var(--primary-color, var(--primary-color-default));
       border-color: transparent;
     }
 
     &:enabled:active {
-      background: rgba(var(--primary-color-rgb), $textButtonActiveBgOpacity);
-      color: var(--primary-color);
+      background: rgb(from var(--primary-color, var(--primary-color-default)) r g b / $textButtonActiveBgOpacity);
+      color: var(--primary-color, var(--primary-color-default));
       border-color: transparent;
     }
 
     &.p-button-plain {
-      color: var(--text-secondary-color);
+      color: var(--text-secondary-color, var(--text-secondary-color-default));
 
       &:enabled:hover {
         background: var(--plain-button-hover-bg-color);
-        color: var(--text-secondary-color);
+        color: var(--text-secondary-color, var(--text-secondary-color-default));
       }
 
       &:enabled:active {
         background: var(--plain-button-active-bg-color);
-        color: var(--text-secondary-color);
+        color: var(--text-secondary-color, var(--text-secondary-color-default));
       }
     }
   }
@@ -106,10 +106,10 @@
 
   .p-badge {
     margin-left: var(--inline-spacing);
-    min-width: var(--font-size);
-    height: var(--font-size);
-    line-height: var(--font-size);
-    color: var(--primary-color);
+    min-width: var(--font-size, var(--font-size-default));
+    height: var(--font-size, var(--font-size-default));
+    line-height: var(--font-size, var(--font-size-default));
+    color: var(--primary-color, var(--primary-color-default));
     background-color: var(--primary-text-color);
   }
 
@@ -487,7 +487,7 @@
 .p-buttonset.p-button-danger > .p-button,
 .p-splitbutton.p-button-danger > .p-button {
   color: var(--danger-button-text-color);
-  background: var(--danger-button-bg);
+  background: var(--danger-button-bg, var(--danger-button-bg-default));;
   border: var(--danger-button-border);
 
   &:enabled:hover {
@@ -508,49 +508,49 @@
 
   &.p-button-outlined {
     background-color: transparent;
-    color: var(--danger-button-bg);
+    color: var(--danger-button-bg, var(--danger-button-bg-default));;
     border: var(--outlined-button-border);
 
     &:enabled:hover {
       background: rgba(var(--danger-button-bg-rgb), $textButtonHoverBgOpacity);
-      color: var(--danger-button-bg);
+      color: var(--danger-button-bg, var(--danger-button-bg-default));;
       border: var(--outlined-button-border);
     }
 
     &:enabled:active {
       background: rgba(var(--danger-button-bg-rgb), $textButtonActiveBgOpacity);
-      color: var(--danger-button-bg);
+      color: var(--danger-button-bg, var(--danger-button-bg-default));;
       border: var(--outlined-button-border);
     }
   }
 
   &.p-button-text {
     background-color: transparent;
-    color: var(--danger-button-bg);
+    color: var(--danger-button-bg, var(--danger-button-bg-default));;
     border-color: transparent;
 
     &:enabled:hover {
       background: rgba(var(--danger-button-bg-rgb), $textButtonHoverBgOpacity);
       border-color: transparent;
-      color: var(--danger-button-bg);
+      color: var(--danger-button-bg, var(--danger-button-bg-default));;
     }
 
     &:enabled:active {
       background: rgba(var(--danger-button-bg-rgb), $textButtonActiveBgOpacity);
       border-color: transparent;
-      color: var(--danger-button-bg);
+      color: var(--danger-button-bg, var(--danger-button-bg-default));;
     }
   }
 }
 
 .p-button.p-button-link {
-  color: var(--primary-color);
+  color: var(--primary-color, var(--primary-color-default));
   background: transparent;
   border: transparent;
 
   &:enabled:hover {
     background: transparent;
-    color: var(--primary-color);
+    color: var(--primary-color, var(--primary-color-default));
     border-color: transparent;
 
     .p-button-label {
@@ -566,7 +566,7 @@
 
   &:enabled:active {
     background: transparent;
-    color: var(--primary-color);
+    color: var(--primary-color, var(--primary-color-default));
     border-color: transparent;
   }
 }

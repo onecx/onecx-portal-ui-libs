@@ -5,7 +5,7 @@ p-calendar.ng-dirty.ng-invalid > .p-calendar > .p-inputtext {
 .p-datepicker {
   padding: var(--calendar-padding);
   background: var(--calendar-bg);
-  color: var(--text-color);
+  color: var(--text-color, var(--text-color-default));
   border: var(--input-list-border);
   border-radius: var(--border-radius);
 
@@ -21,7 +21,7 @@ p-calendar.ng-dirty.ng-invalid > .p-calendar > .p-inputtext {
 
   .p-datepicker-header {
     padding: var(--calendar-header-padding);
-    color: var(--text-color);
+    color: var(--text-color, var(--text-color-default));
     background: var(--calendar-bg);
     font-weight: var(--calendar-header-font-weight);
     margin: var(--input-list-header-margin);
@@ -39,13 +39,13 @@ p-calendar.ng-dirty.ng-invalid > .p-calendar > .p-inputtext {
 
       .p-datepicker-year,
       .p-datepicker-month {
-        color: var(--text-color);
+        color: var(--text-color, var(--text-color-default));
         transition: var(--action-icon-transition);
         font-weight: var(--calendar-header-font-weight);
         padding: var(--calendar-header-cell-padding);
 
         &:enabled:hover {
-          color: var(--primary-color);
+          color: var(--primary-color, var(--primary-color-default));
         }
       }
 
@@ -56,7 +56,7 @@ p-calendar.ng-dirty.ng-invalid > .p-calendar > .p-inputtext {
   }
 
   table {
-    font-size: var(--font-size);
+    font-size: var(--font-size, var(--font-size-default));
     margin: var(--calendar-table-margin);
 
     th {
@@ -79,7 +79,7 @@ p-calendar.ng-dirty.ng-invalid > .p-calendar > .p-inputtext {
         border: var(--calendar-cell-date-border);
 
         &.p-highlight {
-          color: var(--primary-color);
+          color: var(--primary-color, var(--primary-color-default));
           background: var(--highlight-bg);
         }
 
@@ -91,11 +91,11 @@ p-calendar.ng-dirty.ng-invalid > .p-calendar > .p-inputtext {
       &.p-datepicker-today {
         > span {
           background: var(--calendar-cell-date-today-bg);
-          color: var(--text-color);
+          color: var(--text-color, var(--text-color-default));
           border-color: var(--calendar-cell-date-today-border-color);
 
           &.p-highlight {
-            color: var(--primary-color);
+            color: var(--primary-color, var(--primary-color-default));
             background: var(--highlight-bg);
           }
         }
@@ -148,7 +148,7 @@ p-calendar.ng-dirty.ng-invalid > .p-calendar > .p-inputtext {
       border-radius: var(--border-radius);
 
       &.p-highlight {
-        color: var(--primary-color);
+        color: var(--primary-color, var(--primary-color-default));
         background: var(--highlight-bg);
       }
     }
@@ -163,7 +163,7 @@ p-calendar.ng-dirty.ng-invalid > .p-calendar > .p-inputtext {
       border-radius: var(--border-radius);
 
       &.p-highlight {
-        color: var(--primary-color);
+        color: var(--primary-color, var(--primary-color-default));
         background: var(--highlight-bg);
       }
     }

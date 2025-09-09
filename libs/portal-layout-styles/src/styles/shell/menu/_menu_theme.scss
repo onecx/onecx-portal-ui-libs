@@ -1,20 +1,20 @@
 .menu-wrapper {
-  background-color: var(--menu-bg-color);
+  background-color: var(--menu-bg-color, var(--menu-bg-color-default));
   border-right-style: solid;
   border-right-width: 2px;
-  border-right-color: var(--menu-inline-border-color);
+  border-right-color: var(--menu-inline-border-color, var(--menu-inline-border-color-default));
 
   .layout-menu-container {
     .layout-menu {
       > li {
         > div {
           .layout-menuitem-text {
-            color: var(--menu-text-color);
+            color: var(--menu-text-color, var(--menu-text-color-default));
           }
         }
         /*
         > ul {
-          background-color: var(--menu-bg-color);
+          background-color: var(--menu-bg-color, var(--menu-bg-color-default));
         }
 */
       }
@@ -23,33 +23,33 @@
         border-left: 0px;
         &.active-menu-parent.parent-menu {
           /* background: #ececec; */
-          border-left: 4px solid var(--primary-color);
+          border-left: 4px solid var(--primary-color, var(--primary-color-default));
         }
 
         a {
-          color: var(--menu-item-text-color);
+          color: var(--menu-item-text-color, var(--menu-text-color-default));
           border-left: 4px solid transparent;
           /*
           i {
-            color: var(--menu-item-text-color);
+            color: var(--menu-item-text-color, var(--menu-text-color-default));
           }
 */
           &:hover {
-            background-color: var(--menu-item-hover-bg-color);
+            background-color: var(--menu-item-hover-bg-color, var(--menu-bg-color-default));
           }
         }
         a.active-menuitem-routerlink {
-          background-color: var(--menu-active-item-bg-color);
-          color: var(--menu-active-item-text-color);
+          background-color: var(--menu-active-item-bg-color, var(--menu-active-item-bg-color-default));
+          color: var(--menu-active-item-text-color, var(--menu-active-item-text-color-default));
           font-weight: bold;
-          border-left: 4px solid var(--primary-color);
+          border-left: 4px solid var(--primary-color, var(--primary-color-default));
         }
         &.active-menuitem {
           > a {
-            background-color: var(--menu-active-item-bg-color);
-            color: var(--menu-active-item-text-color);
+            background-color: var(--menu-active-item-bg-color, var(--menu-active-item-bg-color-default));
+            color: var(--menu-active-item-text-color, var(--menu-active-item-text-color-default));
             font-weight: bold;
-            border-left: 4px solid var(--primary-color);
+            border-left: 4px solid var(--primary-color, var(--primary-color-default));
             /*
             > i {
               color: $activeMenuItemTextColor;
@@ -61,27 +61,27 @@
     }
 
     .layout-inline-menu {
-      border-color: var(--menu-inline-border-color);
+      border-color: var(--menu-inline-border-color, var(--menu-inline-border-color-default));
 
       a {
-        color: var(--menu-item-text-color);
+        color: var(--menu-item-text-color, var(--menu-text-color-default));
       }
 
       .layout-inline-menu-action,
       .layout-inline-menu-action-panel .layout-inline-menu-action-item {
-        color: var(--menu-item-text-color);
+        color: var(--menu-item-text-color, var(--menu-text-color-default));
         /*
         i {
-          color: var(--menu-item-text-color);
+          color: var(--menu-item-text-color, var(--menu-text-color-default));
         }
 */
         &:hover {
-          background-color: var(--menu-item-hover-bg-color);
+          background-color: var(--menu-item-hover-bg-color, var(--menu-bg-color-default));;
         }
       }
 
       .layout-inline-menu-action-panel {
-        background-color: var(--menu-bg-color);
+        background-color: var(--menu-bg-color, var(--menu-bg-color-default));
       }
     }
   }

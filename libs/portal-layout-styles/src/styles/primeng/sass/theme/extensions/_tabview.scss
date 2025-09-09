@@ -8,11 +8,11 @@
         border-radius: 0;
 
         > .p-ink {
-          background-color: rgba(var(--primary-color-rgb), 0.16);
+          background-color: rgb(from var(--primary-color, var(--primary-color-default)) r g b / 0.16);
         }
 
         &:focus {
-          background-color: rgba(var(--primary-color-rgb), 0.12);
+          background-color: rgb(from var(--primary-color, var(--primary-color-default)) r g b / 0.12);
         }
       }
     }
@@ -23,7 +23,7 @@
       position: absolute;
       bottom: 0;
       height: 2px;
-      background-color: var(--primary-color);
+      background-color: var(--primary-color, var(--primary-color-default));
       transition: 500ms cubic-bezier(0.35, 0, 0.25, 1);
     }
   }

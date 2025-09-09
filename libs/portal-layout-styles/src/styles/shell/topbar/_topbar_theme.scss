@@ -1,12 +1,12 @@
 .layout-topbar_flex {
-  color: var(--topbar-item-text-color);
-  background-color: var(--topbar-bg-color);
+  color: var(--topbar-item-text-color, var(--topbar-item-text-color-default));
+  background-color: var(--topbar-bg-color, var(topbar-bg-color-default));
 
   .layout-topbar-left {
-    background-color: var(--topbar-left-bg-color);
+    background-color: var(--topbar-left-bg-color, var(--topbar-left-bg-color-default));
     .layout-menu-button {
-      color: var(--topbar-menu-button-text-color, #ffffff);
-      background-color: var(--topbar-menu-button-bg-color);
+      color: var(--topbar-menu-button-text-color, var(--topbar-menu-button-text-color-default));
+      background-color: var(--topbar-menu-button-bg-color, var(--topbar-menu-button-bg-color-default));
     }
   }
 
@@ -22,11 +22,11 @@
               .p-menuitem-text,
               .p-menuitem-icon,
               .p-submenu-icon {
-                color: var(--topbar-item-text-color);
+                color: var(--topbar-item-text-color, var(--topbar-item-text-color-default));
               }
 
               &:not(.p-disabled):hover {
-                background: var(--topbar-item-text-hover-bg-color);
+                background: var(--topbar-item-text-hover-bg-color, var(--topbar-item-text-hover-bg-color-default));
                 transition: background-color var(--transition-duration);
               }
             }
@@ -38,11 +38,11 @@
             .p-menuitem-text,
             .p-menuitem-icon,
             .p-submenu-icon {
-              color: var(--topbar-item-text-color);
+              color: var(--topbar-item-text-color, var(--topbar-item-text-color-default));
             }
 
             &:not(.p-disabled):hover {
-              background: var(--topbar-item-text-hover-bg-color);
+              background: var(--topbar-item-text-hover-bg-color, var(--topbar-item-text-hover-bg-color-default));
               transition: background-color var(--transition-duration);
             }
           }
@@ -53,13 +53,13 @@
     .layout-topbar-actions-right_flex {
       .layout-topbar-items {
         .layout-topbar-action-panel {
-          background-color: var(--overlay-content-bg-color);
-          color: var(--text-color);
+          background-color: var(--overlay-content-bg-color, var(--overlay-content-bg-color-default));
+          color: var(--text-color, var(--text-color-default));
 
           .layout-topbar-action-item {
-            color: var(--menu-item-text-color);
+            color: var(--menu-item-text-color, var(--menu-text-color-default));
             &:hover {
-              background-color: var(--menu-item-hover-bg-color);
+              background-color: var(--menu-item-hover-bg-color, var(--menu-bg-color-default));;
               transition: background-color var(--transition-duration);
             }
           }
@@ -69,32 +69,32 @@
           &.layout-search-item {
             .layout-search-panel {
               input {
-                background-color: var(--body-bg-color);
-                color: var(--text-color);
+                background-color: var(--body-bg-color, var(--body-bg-color-default));
+                color: var(--text-color, var(--text-color-default));
 
                 &:hover {
-                  background-color: var(--body-bg-color);
-                  color: var(--text-color);
+                  background-color: var(--body-bg-color, var(--body-bg-color-default));
+                  color: var(--text-color, var(--text-color-default));
                 }
               }
 
               .p-inputgroup-addon:first-child,
               .p-inputgroup button:first-child,
               .p-inputgroup input:first-child {
-                background-color: var(--body-bg-color);
-                color: var(--text-color);
+                background-color: var(--body-bg-color, var(--body-bg-color-default));
+                color: var(--text-color, var(--text-color-default));
               }
 
               .p-inputgroup-addon:last-child,
               .p-inputgroup button:last-child,
               .p-inputgroup input:last-child {
-                background-color: var(--body-bg-color);
-                color: var(--text-color);
+                background-color: var(--body-bg-color, var(--body-bg-color-default));
+                color: var(--text-color, var(--text-color-default));
               }
 
               .p-inputgroup-addon {
                 .p-button-text {
-                  color: var(--text-color);
+                  color: var(--text-color, var(--text-color-default));
                 }
               }
             }

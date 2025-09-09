@@ -44,7 +44,7 @@
 
     &.p-highlight {
       .p-steps-number {
-        background-color: var(--primary-color);
+        background-color: var(--primary-color, var(--primary-color-default));
         color: var(--primary-text-color);
       }
 

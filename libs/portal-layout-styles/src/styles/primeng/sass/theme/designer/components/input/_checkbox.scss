@@ -24,8 +24,8 @@
   }
 
     &.p-highlight {
-      border-color: var(--primary-color);
-      background: var(--primary-color);
+      border-color: var(--primary-color, var(--primary-color-default));
+      background: var(--primary-color, var(--primary-color-default));
     }
   }
 
@@ -40,8 +40,8 @@
       }
 
       &.p-highlight:hover {
-        border-color: var(--primary-color);
-        background: var(--primary-color);
+        border-color: var(--primary-color, var(--primary-color-default));
+        background: var(--primary-color, var(--primary-color-default));
         color: var(--primary-text-color);
       }
     }
@@ -58,7 +58,7 @@ p-checkbox.ng-dirty.ng-invalid > .p-checkbox > .p-checkbox-box {
       background-color: var(--input-filled-bg);
 
       &.p-highlight {
-        background: var(--primary-color);
+        background: var(--primary-color, var(--primary-color-default));
       }
     }
 
@@ -69,7 +69,7 @@ p-checkbox.ng-dirty.ng-invalid > .p-checkbox > .p-checkbox-box {
         }
 
         &.p-highlight:hover {
-          background: var(--primary-color);
+          background: var(--primary-color, var(--primary-color-default));
         }
       }
     }

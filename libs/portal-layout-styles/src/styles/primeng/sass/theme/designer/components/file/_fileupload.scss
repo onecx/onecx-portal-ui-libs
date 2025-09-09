@@ -3,7 +3,7 @@
     background: var(--panel-header-bg);
     padding: var(--panel-header-padding);
     border: var(--panel-header-border);
-    color: var(--text-color);
+    color: var(--text-color, var(--text-color-default));
     border-bottom: 0 none;
     border-top-right-radius: var(--border-radius);
     border-top-left-radius: var(--border-radius);
@@ -21,7 +21,7 @@
     background: var(--panel-content-bg);
     padding: var(--file-upload-content-padding);
     border: var(--panel-content-border);
-    color: var(--text-color);
+    color: var(--text-color, var(--text-color-default));
     border-bottom-right-radius: var(--border-radius);
     border-bottom-left-radius: var(--border-radius);
   }
@@ -45,13 +45,13 @@
 
 .p-fileupload-choose {
   &:not(.p-disabled):hover {
-    background: var(--button-hover-bg);
+    background: var(--button-hover-bg, var(--button-hover-bg-default));
     color: var(--primary-text-color);
     border-color: var(--button-hover-border-color);
   }
 
   &:not(.p-disabled):active {
-    background: var(--button-active-bg);
+    background: var(--button-active-bg, --button-active-bg-default);;
     color: var(--primary-text-color);
     border-color: var(--button-active-border-color);
   }

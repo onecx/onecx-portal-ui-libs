@@ -16,26 +16,26 @@
         }
 
         .p-menuitem-text {
-          color: var(--text-color);
+          color: var(--text-color, var(--text-color-default));
         }
 
         .p-menuitem-icon {
-          color: var(--text-secondary-color);
+          color: var(--text-secondary-color, var(--text-secondary-color-default));
         }
       }
 
       &.p-menuitem-separator {
         margin: 0 $inlineSpacing 0 $inlineSpacing;
-        color: var(--text-secondary-color);
+        color: var(--text-secondary-color, var(--text-secondary-color-default));
       }
 
       &:last-child {
         .p-menuitem-text {
-          color: var(--text-color);
+          color: var(--text-color, var(--text-color-default));
         }
 
         .p-menuitem-icon {
-          color: var(--text-secondary-color);
+          color: var(--text-secondary-color, var(--text-secondary-color-default));
         }
       }
     }

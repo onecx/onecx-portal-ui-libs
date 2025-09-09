@@ -1,7 +1,7 @@
 .p-menubar {
   padding: var(--horizontal-menu-padding);
   background: var(--horizontal-menu-bg);
-  color: var(--text-color);
+  color: var(--text-color, var(--text-color-default));
   border: var(--horizontal-menu-border);
   border-radius: var(--border-radius);
 
@@ -21,15 +21,15 @@
           background: var(--horizontal-menu-root-menuitem-active-bg);
 
           .p-menuitem-text {
-            color: var(--text-color);
+            color: var(--text-color, var(--text-color-default));
           }
 
           .p-menuitem-icon {
-            color: var(--text-secondary-color);
+            color: var(--text-secondary-color, var(--text-secondary-color-default));
           }
 
           .p-submenu-icon {
-            color: var(--text-secondary-color);
+            color: var(--text-secondary-color, var(--text-secondary-color-default));
           }
         }
       }
@@ -67,12 +67,12 @@
         background: var(--menuitem-active-bg);
 
         .p-menuitem-text {
-          color: var(--text-color);
+          color: var(--text-color, var(--text-color-default));
         }
 
         .p-menuitem-icon,
         .p-submenu-icon {
-          color: var(--text-secondary-color);
+          color: var(--text-secondary-color, var(--text-secondary-color-default));
         }
       }
     }
@@ -81,12 +81,12 @@
       background: var(--menuitem-active-bg);
 
       .p-menuitem-text {
-        color: var(--text-color);
+        color: var(--text-color, var(--text-color-default));
       }
 
       .p-menuitem-icon,
       .p-submenu-icon {
-        color: var(--text-secondary-color);
+        color: var(--text-secondary-color, var(--text-secondary-color-default));
       }
     }
   }
@@ -100,12 +100,12 @@
       display: flex;
       width: var(--action-icon-width);
       height: var(--action-icon-height);
-      color: var(--text-secondary-color);
+      color: var(--text-secondary-color, var(--text-secondary-color-default));
       border-radius: var(--action-icon-border-radius);
       transition: var(--action-icon-transition);
 
       &:hover {
-        color: var(--text-secondary-color);
+        color: var(--text-secondary-color, var(--text-secondary-color-default));
         background: var(--horizontal-menu-root-menuitem-hover-bg);
       }
 

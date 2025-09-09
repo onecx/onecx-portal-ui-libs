@@ -1,5 +1,5 @@
 .p-inputtext {
-  font-family: var(--font-family);
+  font-family: var(--font-family, var(--font-family-default));
   font-size: var(--input-text-font-size);
   color: var(--emphasis-high);
   background: var(--input-bg);

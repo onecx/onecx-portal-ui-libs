@@ -1,6 +1,6 @@
 .p-rating {
   .p-rating-icon {
-    color: var(--primary-color);
+    color: var(--primary-color, var(--primary-color-default));
     margin-left: var(--inline-spacing);
     transition: var(--form-element-transition);
     font-size: var(--rating-icon-font-size);
@@ -18,14 +18,14 @@
     }
 
     &.pi-star-fill {
-      color: var(--primary-color);
+      color: var(--primary-color, var(--primary-color-default));
     }
   }
 
   &:not(.p-disabled):not(.p-readonly) {
     .p-rating-icon {
       &:hover {
-        color: var(--primary-color);
+        color: var(--primary-color, var(--primary-color-default));
       }
 
       &.p-rating-cancel {
@@ -41,7 +41,7 @@
   .p-highlight {
     .p-rating {
       .p-rating-icon {
-        color: var(--primary-color);
+        color: var(--primary-color, var(--primary-color-default));
       }
     }
   }
