@@ -33,7 +33,7 @@
     "@phenomnomnominal/tsquery": "^6",
     "@primeng/themes": "^19.0.0",
     "@storybook/addon-interactions": "^8.3.2",
-    "axios": "^1.10.0",
+    "axios": "^1.11.0",
     "chart.js": "^4.4.3",
     "d3-scale-chromatic": "^3.1.0",
     "fast-deep-equal": "^3.1.3",
