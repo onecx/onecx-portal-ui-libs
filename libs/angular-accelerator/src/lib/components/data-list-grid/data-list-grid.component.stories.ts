@@ -1,6 +1,6 @@
 import { Meta, moduleMetadata, applicationConfig, StoryFn } from '@storybook/angular'
 import { RouterModule } from '@angular/router'
-import { importProvidersFrom } from '@angular/core'
+import { APP_INITIALIZER, importProvidersFrom } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { ButtonModule } from 'primeng/button'
@@ -15,6 +15,7 @@ import { TooltipOnOverflowDirective } from '../../directives/tooltipOnOverflow.d
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { StorybookThemeModule } from '../../storybook-theme.module'
 import { TooltipModule } from 'primeng/tooltip'
+import { UserService } from '@onecx/angular-integration-interface'
 
 const DataListGridComponentSBConfig: Meta<DataListGridComponent> = {
   title: 'Components/DataListGridComponent',
@@ -25,9 +26,22 @@ const DataListGridComponentSBConfig: Meta<DataListGridComponent> = {
         importProvidersFrom(BrowserModule),
         importProvidersFrom(BrowserAnimationsModule),
         provideUserServiceMock(),
-        { provide: HAS_PERMISSION_CHECKER, useClass: UserServiceMock },
+        { provide: HAS_PERMISSION_CHECKER, useExisting: UserServiceMock },
         importProvidersFrom(RouterModule.forRoot([], { useHash: true })),
         importProvidersFrom(StorybookThemeModule),
+        {
+          provide: APP_INITIALIZER,
+          useFactory: (userService: UserService) => () => {
+            const userServiceMock = userService as unknown as UserServiceMock
+            userServiceMock.permissionsTopic$.publish([
+              'TEST_MGMT#TEST_DELETE',
+              'TEST_MGMT#TEST_EDIT',
+              'TEST_MGMT#TEST_VIEW',
+            ])
+          },
+          multi: true,
+          deps: [UserService],
+        },
       ],
     }),
     moduleMetadata({

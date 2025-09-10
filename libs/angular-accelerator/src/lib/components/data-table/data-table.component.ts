@@ -29,14 +29,11 @@ import {
   debounceTime,
   filter,
   first,
-  forkJoin,
-  from,
   map,
   mergeMap,
   of,
   shareReplay,
   switchMap,
-  toArray,
   withLatestFrom,
 } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
@@ -47,6 +44,7 @@ import { Filter, FilterType } from '../../model/filter.model'
 import { ObjectUtils } from '../../utils/objectutils'
 import { findTemplate } from '../../utils/template.utils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
+import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 
 export type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -85,6 +83,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   private readonly router = inject(Router)
   private readonly injector = inject(Injector)
   private readonly userService = inject(UserService)
+  private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
 
   FilterType = FilterType
   TemplateType = TemplateType
@@ -387,35 +386,29 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       map((actions) => actions.filter((action) => !action.showAsOverflow))
     )
     this.overflowMenuItems$ = combineLatest([this.overflowActions$, this.currentMenuRow$]).pipe(
-      mergeMap(([actions, row]) =>
-        this.translateService.get([...actions.map((a) => a.labelKey || '')]).pipe(
-          switchMap((translations) =>
-            from(actions).pipe(
-              mergeMap((a) =>
-                from(this.userService.hasPermission(a.permission)).pipe(
-                  map((hasPermission) => ({
-                    ...a,
-                    hasPermission,
-                  }))
-                )
-              ),
-              toArray(),
-              map((actionsWithPermissions) =>
-                actionsWithPermissions
-                  .filter((a) => a.hasPermission)
-                  .map((a) => ({
-                    label: translations[a.labelKey || ''],
-                    icon: a.icon,
-                    styleClass: (a.classes || []).join(' '),
-                    disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
-                    visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
-                    command: () => a.callback(row),
-                  }))
-              )
-            )
-          )
+      switchMap(([actions, row]) =>
+        this.filterActionsBasedOnPermissions(actions).pipe(
+          map((permittedActions) => ({ actions: permittedActions, row: row }))
         )
-      )
+      ),
+      mergeMap(({ actions, row }) => {
+        if (actions.length === 0) {
+          return of([])
+        }
+
+        return this.translateService.get([...actions.map((a) => a.labelKey || '')]).pipe(
+          map((translations) => {
+            return actions.map((a) => ({
+              label: translations[a.labelKey || ''],
+              icon: a.icon,
+              styleClass: (a.classes || []).join(' '),
+              disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
+              visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
+              command: () => a.callback(row),
+            }))
+          })
+        )
+      })
     )
 
     this.rowSelectable = this.rowSelectable.bind(this)
@@ -760,30 +753,11 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     menu.toggle(event)
   }
 
-  // A new Observable is created with each ChangeDetection.
-  // The async pipe subscribes to it, triggering another ChangeDetection when a new value is emitted, which creates a loop.
-  // To prevent this, cache the Observable by using shareReplay to avoid recreating it with every ChangeDetection.
-  hasVisibleOverflowMenuItems(item: any): Observable<boolean> {
-    if (this.cachedOverflowMenuItemsVisibility$) {
-      return this.cachedOverflowMenuItemsVisibility$
-    }
-
-    const overflowMenuItemsVisibility$ = this.overflowActions$.pipe(
-      mergeMap((actions) =>
-        forkJoin(
-          actions.map((a) =>
-            !a.actionVisibleField || this.fieldIsTruthy(item, a.actionVisibleField)
-              ? from(this.userService.hasPermission(a.permission))
-              : of(false)
-          )
-        )
-      ),
-      map((results) => results.some((isVisible) => isVisible))
+  hasVisibleOverflowMenuItems(row: any) {
+    return this.overflowActions$.pipe(
+      switchMap((actions) => this.filterActionsBasedOnPermissions(actions)),
+      map((actions) => actions.some((a) => !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField)))
     )
-
-    this.cachedOverflowMenuItemsVisibility$ = overflowMenuItemsVisibility$.pipe(shareReplay(1))
-
-    return this.cachedOverflowMenuItemsVisibility$
   }
 
   isDate(value: Date | string | number) {
@@ -933,5 +907,20 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
   rowTrackByFunction = (item: any) => {
     return item.id
+  }
+
+  private filterActionsBasedOnPermissions(actions: DataAction[]): Observable<DataAction[]> {
+    const getPermissions =
+      this.hasPermissionChecker?.getPermissions?.bind(this.hasPermissionChecker) ||
+      this.userService.getPermissions.bind(this.userService)
+
+    return getPermissions().pipe(
+      map((permissions) => {
+        return actions.filter((action) => {
+          const actionPermissions = Array.isArray(action.permission) ? action.permission : [action.permission]
+          return actionPermissions.every((p) => permissions.includes(p))
+        })
+      })
+    )
   }
 }
