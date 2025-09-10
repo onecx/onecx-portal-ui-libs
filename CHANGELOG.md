@@ -1,3 +1,15 @@
+## [5.48.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.48.2...v5.48.3) (2025-09-10)
+
+### Bug Fixes
+
+* add fonts to libraries using portal-layout-styles and update output ([#931](https://github.com/onecx/onecx-portal-ui-libs/issues/931)) ([07df82e](https://github.com/onecx/onecx-portal-ui-libs/commit/07df82e0ae3a9e8391dd8b54f5d902e43b64522c))
+
+### Chores
+
+* **deps-dev:** bump @swc-node/register from 1.10.10 to 1.11.1 ([#912](https://github.com/onecx/onecx-portal-ui-libs/issues/912)) ([ac2fc92](https://github.com/onecx/onecx-portal-ui-libs/commit/ac2fc92e32f13a5ee989a0e998c5fe45aeb7485a))
+* **deps-dev:** bump @swc/core from 1.7.42 to 1.13.5 ([#927](https://github.com/onecx/onecx-portal-ui-libs/issues/927)) ([0d02142](https://github.com/onecx/onecx-portal-ui-libs/commit/0d0214243728aa771801937e1bbf5288227424a0))
+* **deps-dev:** bump @typescript-eslint/eslint-plugin ([#913](https://github.com/onecx/onecx-portal-ui-libs/issues/913)) ([e372e41](https://github.com/onecx/onecx-portal-ui-libs/commit/e372e41742976729202b172aaff0cba0f9a5ed00))
+
 ## [5.48.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.48.1...v5.48.2) (2025-09-09)
 
 ### Bug Fixes
