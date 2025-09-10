@@ -1,6 +1,6 @@
 import { Tree } from '@nx/devkit'
 import postcss from 'postcss'
-
+import * as postcssScss from 'postcss-scss'
 /**
  * Updates a stylesheet file using a provided PostCSS-based updater function.
  * Only writes changes if the updated content differs from the original.
@@ -13,7 +13,7 @@ export function updateStyleSheet(tree: Tree, filePath: string, updater: (styleSh
   const content = tree.read(filePath, 'utf-8')
   if (!content) return
 
-  const root = postcss.parse(content)
+  const root = filePath.endsWith('.scss') ? postcssScss.parse(content) : postcss.parse(content)
 
   const updatedContent = updater(root)
 
