@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { LOCALE_ID, importProvidersFrom } from '@angular/core'
+import { LOCALE_ID, importProvidersFrom, inject, provideAppInitializer } from '@angular/core'
 import { Meta, moduleMetadata, applicationConfig, StoryFn } from '@storybook/angular'
 import { TableModule } from 'primeng/table'
 import { ButtonModule } from 'primeng/button'
@@ -31,13 +31,21 @@ const DataTableComponentSBConfig: Meta<DataTableComponent> = {
         importProvidersFrom(BrowserModule),
         importProvidersFrom(BrowserAnimationsModule),
         provideUserServiceMock(),
-        { provide: HAS_PERMISSION_CHECKER, useClass: UserServiceMock },
+        { provide: HAS_PERMISSION_CHECKER, useExisting: UserServiceMock },
         {
           provide: LOCALE_ID,
           useClass: DynamicLocaleId,
           deps: [UserService],
         },
         importProvidersFrom(StorybookThemeModule),
+        provideAppInitializer(() => {
+          const userServiceMock = inject(UserService) as unknown as UserServiceMock
+          userServiceMock.permissionsTopic$.publish([
+            'TEST_MGMT#TEST_DELETE',
+            'TEST_MGMT#TEST_EDIT',
+            'TEST_MGMT#TEST_VIEW',
+          ])
+        }),
       ],
     }),
     moduleMetadata({

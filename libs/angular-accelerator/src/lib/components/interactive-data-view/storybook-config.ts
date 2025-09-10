@@ -70,7 +70,7 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
           },
         },
         provideUserServiceMock(),
-        { provide: HAS_PERMISSION_CHECKER, useClass: UserServiceMock },
+        { provide: HAS_PERMISSION_CHECKER, useExisting: UserServiceMock },
         importProvidersFrom(StorybookThemeModule),
         TooltipStyle,
       ],
