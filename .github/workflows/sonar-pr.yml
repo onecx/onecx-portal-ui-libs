@@ -21,13 +21,27 @@ jobs:
         with:
           run_id: ${{ github.event.workflow_run.id }}
           name: coverage-reports
+        continue-on-error: true
 
       - name: Find affected lib coverage directories
         id: set-matrix
         run: |
-          paths=$(find reports -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)
-          coverage_reports=$(printf '%s\n' $paths | jq -R . | jq -s -c)
-          echo "matrix=$coverage_reports" >> $GITHUB_OUTPUT
+          if [ ! -d "reports" ]; then
+            echo "No reports directory found. Setting empty matrix."
+            echo "matrix=[]" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          paths=$(find reports -maxdepth 1 -mindepth 1 -type d -exec basename {} \; 2>/dev/null || true)
+
+          if [ -z "$paths" ]; then
+            echo "No coverage report directories found. Setting empty matrix."
+            echo "matrix=[]" >> $GITHUB_OUTPUT
+          else
+            coverage_reports=$(printf '%s\n' $paths | jq -R . | jq -s -c)
+            echo "Found coverage reports: $coverage_reports"
+            echo "matrix=$coverage_reports" >> $GITHUB_OUTPUT
+          fi
 
   sonar-scan-pr:
     needs: set-matrix-pr
@@ -35,7 +49,9 @@ jobs:
 
     if: >
       github.event.workflow_run.event == 'pull_request' &&
-      github.event.workflow_run.conclusion == 'success'
+      github.event.workflow_run.conclusion == 'success' &&
+      needs.set-matrix-pr.outputs.matrix != '[]' &&
+      needs.set-matrix-pr.outputs.matrix != ''
 
     strategy:
       fail-fast: false
@@ -98,12 +114,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_URL: 'https://sonarcloud.io'
         with:
           projectBaseDir: libs/${{ matrix.path }}/
           args: >
             -Dsonar.projectKey=${{ github.repository_owner }}_${{ github.event.repository.name }}_${{ matrix.path }}
-            -Dsonar.host.url=$SONAR_URL
+            -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.organization=${{ github.repository_owner }}
             -Dsonar.scm.disabled=true
             -Dsonar.sourceEncoding=UTF-8
