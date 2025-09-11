@@ -10,17 +10,18 @@ import { UserDefinedContainerStarter } from './user-defined-container-starter'
 import { DataImporter } from './data-importer'
 import type { AllowedContainerTypes } from '../model/allowed-container.types'
 import { HealthCheckResult } from '../model/health-checker.interface'
-import { Logger } from '../utils/logger'
-import { JsonValidator } from './json-validator'
+import { Logger, LogMessages } from '../utils/logger'
+import { PlatformConfigJsonValidator } from './json-validator'
 import { StartedOnecxPostgresContainer } from '../containers/core/onecx-postgres'
+import { ContainerRegistry } from './container-registry'
 
 const logger = new Logger('PlatformManager')
 
 export class PlatformManager {
   /**
-   * Unified map for all containers (core and user-defined containers)
+   * Container registry for managing all containers
    */
-  private containers: Map<string, AllowedContainerTypes> = new Map()
+  private containerRegistry: ContainerRegistry = new ContainerRegistry()
 
   /**
    * Needed classes for startContainers
@@ -31,24 +32,12 @@ export class PlatformManager {
   private UserDefinedContainerStarter?: UserDefinedContainerStarter
   private dataImporter?: DataImporter
   private healthChecker?: HealthChecker
-  private jsonValidator: JsonValidator
+  private jsonValidator: PlatformConfigJsonValidator
   private validatedConfig?: PlatformConfig
 
   constructor(configFilePath?: string) {
-    this.jsonValidator = new JsonValidator()
-
-    // Validate configuration file if it exists
-    const validationResult = this.jsonValidator.validateConfigFile(configFilePath)
-
-    if (validationResult.isValid && validationResult.config) {
-      this.validatedConfig = validationResult.config
-      logger.success('CONFIG_FOUND', 'Configuration loaded and validated successfully')
-    } else if (validationResult.errors && validationResult.errors.length > 0) {
-      logger.warn('CONFIG_VALIDATION_WARN', `Configuration validation failed: ${validationResult.errors.join(', ')}`)
-      logger.info('CONFIG_NOT_FOUND', 'Using default configuration')
-    } else {
-      logger.info('CONFIG_NOT_FOUND', 'No configuration file found, using default configuration')
-    }
+    this.jsonValidator = new PlatformConfigJsonValidator()
+    this.initializeConfiguration(configFilePath)
   }
 
   /**
@@ -62,7 +51,7 @@ export class PlatformManager {
     // Configure logger based on platform config
     logger.setPlatformConfig(finalConfig)
 
-    logger.info('PLATFORM_MANAGER_INIT')
+    logger.info(LogMessages.PLATFORM_MANAGER_INIT)
     this.healthChecker = new HealthChecker()
 
     // Configure heartbeat from platform config
@@ -71,36 +60,37 @@ export class PlatformManager {
     this.imageResolver = new ImageResolver()
     this.dataImporter = new DataImporter(this.imageResolver)
 
-    logger.info('NETWORK_CREATE')
+    logger.info(LogMessages.NETWORK_CREATE)
     this.network = await new Network().start()
-    logger.success('NETWORK_CREATED')
+    logger.success(LogMessages.NETWORK_CREATED)
 
     this.CoreContainerStarter = new CoreContainerStarter(
       this.imageResolver,
       this.network,
-      this.addContainer.bind(this),
+      this.containerRegistry,
       finalConfig
     )
 
-    logger.info('PLATFORM_START')
+    logger.info(LogMessages.PLATFORM_START)
     // Always start core services first
-    await this.startContainers()
-    const postgres = this.containers.get(CONTAINER.POSTGRES) as StartedOnecxPostgresContainer
-    const keycloak = this.containers.get(CONTAINER.KEYCLOAK) as StartedOnecxKeycloakContainer
+    await this.CoreContainerStarter.startCoreContainers()
+    const postgres = this.containerRegistry.getContainer(CONTAINER.POSTGRES) as StartedOnecxPostgresContainer
+    const keycloak = this.containerRegistry.getContainer(CONTAINER.KEYCLOAK) as StartedOnecxKeycloakContainer
 
-    await this.CoreContainerStarter.startServiceContainers(postgres, keycloak, this.getContainer.bind(this))
+    await this.CoreContainerStarter.startServiceContainers(postgres, keycloak)
 
     // Start BFF containers based on configuration
     await this.CoreContainerStarter.startBffContainers(keycloak)
 
     // Start UI containers based on configuration
-    await this.CoreContainerStarter.startUiContainers(keycloak, this.getContainer.bind(this))
+    await this.CoreContainerStarter.startUiContainers(keycloak)
     // Create user-defined containers if defined in configuration
     if (finalConfig.container) {
       // Initialize container factory with core services
       this.UserDefinedContainerStarter = new UserDefinedContainerStarter(
         this.network,
         this.imageResolver,
+        this.containerRegistry,
         postgres,
         keycloak
       )
@@ -109,38 +99,14 @@ export class PlatformManager {
 
     // Import data if configured
     if (finalConfig.importData && this.network && this.dataImporter) {
-      this.dataImporter.createContainerInfo(this.containers)
-      await this.dataImporter.importDefaultData(this.network, this.containers, finalConfig)
+      this.dataImporter.createContainerInfo(this.containerRegistry.getAllContainers())
+      await this.dataImporter.importDefaultData(this.network, this.containerRegistry.getAllContainers(), finalConfig)
     }
 
-    logger.success('PLATFORM_READY')
+    logger.success(LogMessages.PLATFORM_READY)
 
     // Start heartbeat monitoring if configured
-    if (this.healthChecker) {
-      this.healthChecker.startHeartbeat(this.containers)
-    }
-  }
-
-  /**
-   * Create user-defined containers using the UserDefinedContainerStarter
-   */
-  private async createContainers(config: PlatformConfig): Promise<void> {
-    if (!this.UserDefinedContainerStarter) {
-      throw new Error('UserDefinedContainerStarter not initialized. Core services must be started first.')
-    }
-
-    try {
-      const customContainers = await this.UserDefinedContainerStarter.createAndStartContainers(config)
-
-      // Store custom containers in unified map
-      for (const [key, container] of customContainers) {
-        this.containers.set(key, container)
-        logger.success('CONTAINER_STARTED', key)
-      }
-    } catch (error) {
-      logger.error('CONTAINER_FAILED', undefined, error)
-      throw error
-    }
+    this.healthChecker.startHeartbeat(this.containerRegistry.getAllContainers())
   }
 
   /**
@@ -160,7 +126,7 @@ export class PlatformManager {
   /**
    * Get the JSON validator instance
    */
-  getJsonValidator(): JsonValidator {
+  getJsonValidator(): PlatformConfigJsonValidator {
     return this.jsonValidator
   }
 
@@ -171,7 +137,7 @@ export class PlatformManager {
     if (!this.healthChecker) {
       throw new Error('HealthChecker not initialized. Call startContainers first.')
     }
-    return await this.healthChecker.checkAllHealthy(this.containers)
+    return await this.healthChecker.checkAllHealthy(this.containerRegistry.getAllContainers())
   }
 
   /**
@@ -183,7 +149,7 @@ export class PlatformManager {
     if (!this.healthChecker) {
       throw new Error('HealthChecker not initialized. Call startContainers first.')
     }
-    return await this.healthChecker.checkHealthy(this.containers, containerName)
+    return await this.healthChecker.checkHealthy(this.containerRegistry.getAllContainers(), containerName)
   }
 
   /**
@@ -207,7 +173,7 @@ export class PlatformManager {
     if (!this.healthChecker) {
       throw new Error('HealthChecker not initialized. Call startContainers first.')
     }
-    this.healthChecker.startHeartbeat(this.containers)
+    this.healthChecker.startHeartbeat(this.containerRegistry.getAllContainers())
   }
 
   /**
@@ -220,31 +186,24 @@ export class PlatformManager {
   }
 
   /**
-   * Add container to the Map
-   */
-  private addContainer<T extends AllowedContainerTypes>(key: string | CONTAINER, container: T): void {
-    this.containers.set(key, container)
-  }
-
-  /**
    * Get all containers (standard and custom)
    */
   getAllContainers(): Map<string, AllowedContainerTypes> {
-    return new Map(this.containers)
+    return this.containerRegistry.getAllContainers()
   }
 
   /**
    * Get a container by key (works for both standard and custom)
    */
   getContainer<T extends AllowedContainerTypes>(key: string | CONTAINER): T | undefined {
-    return this.containers.get(key) as T | undefined
+    return this.containerRegistry.getContainer<T>(key)
   }
 
   /**
    * Check if a container exists
    */
   hasContainer(key: string | CONTAINER): boolean {
-    return this.containers.has(key)
+    return this.containerRegistry.hasContainer(key)
   }
 
   /**
@@ -252,30 +211,14 @@ export class PlatformManager {
    */
   removeContainer(key: string | CONTAINER): boolean {
     this.stopContainer(key)
-    return this.containers.delete(key)
-  }
-
-  /**
-   * Stop a container
-   * @param key
-   */
-  private async stopContainer(key: string | CONTAINER) {
-    const container = this.getContainer(key)
-    const containerKey = typeof key === 'string' ? key : String(key)
-    try {
-      await container?.stop()
-      logger.success('CONTAINER_STOPPED', containerKey)
-    } catch (error) {
-      logger.error('CONTAINER_FAILED', containerKey, error)
-      throw error
-    }
+    return this.containerRegistry.removeContainer(key)
   }
 
   /**
    * Stop all running services and cleanup resources
    */
   async stopAllContainers() {
-    logger.info('PLATFORM_STOP')
+    logger.info(LogMessages.PLATFORM_STOP)
 
     // Stop heartbeat monitoring first
     if (this.healthChecker) {
@@ -293,7 +236,7 @@ export class PlatformManager {
       try {
         await container.stop()
       } catch (error) {
-        logger.error('CONTAINER_FAILED', container.constructor.name, error)
+        logger.error(LogMessages.CONTAINER_FAILED, container.constructor.name, error)
         // Don't throw here, continue stopping other containers
       }
     }
@@ -301,19 +244,80 @@ export class PlatformManager {
     // Cleanup network
     if (this.network) {
       try {
-        logger.info('NETWORK_DESTROY')
+        logger.info(LogMessages.NETWORK_DESTROY)
         await this.network.stop()
-        logger.success('NETWORK_DESTROYED')
+        logger.success(LogMessages.NETWORK_DESTROYED)
         this.network = undefined
       } catch (error) {
-        logger.error('NETWORK_DESTROY', 'Network cleanup failed', error)
+        logger.error(LogMessages.NETWORK_DESTROY, 'Network cleanup failed', error)
         // Don't throw here, network might already be destroyed
         this.network = undefined
       }
     }
 
-    logger.success('PLATFORM_SHUTDOWN')
+    logger.success(LogMessages.PLATFORM_SHUTDOWN)
 
-    this.containers.clear()
+    this.containerRegistry.clear()
+  }
+
+  /**
+   * Create user-defined containers using the UserDefinedContainerStarter
+   */
+  private async createContainers(config: PlatformConfig): Promise<void> {
+    if (!this.UserDefinedContainerStarter) {
+      throw new Error('UserDefinedContainerStarter not initialized. Core services must be started first.')
+    }
+
+    try {
+      await this.UserDefinedContainerStarter.createAndStartContainers(config)
+      logger.info(LogMessages.CONTAINER_STARTED, 'User-defined containers created successfully')
+    } catch (error) {
+      logger.error(LogMessages.CONTAINER_FAILED, undefined, error)
+      throw error
+    }
+  }
+
+  /**
+   * Initialize and validate the platform configuration
+   */
+  private initializeConfiguration(configFilePath?: string): void {
+    // Validate configuration file if it exists
+    const validationResult = this.jsonValidator.validateConfigFile(configFilePath)
+
+    if (validationResult.isValid && validationResult.config) {
+      this.validatedConfig = validationResult.config
+      logger.success(LogMessages.CONFIG_FOUND, 'Configuration loaded and validated successfully')
+    } else if (validationResult.errors && validationResult.errors.length > 0) {
+      logger.warn(
+        LogMessages.CONFIG_VALIDATION_WARN,
+        `Configuration validation failed: ${validationResult.errors.join(', ')}`
+      )
+      logger.info(LogMessages.CONFIG_NOT_FOUND, 'Using default configuration')
+    } else {
+      logger.info(LogMessages.CONFIG_NOT_FOUND, 'No configuration file found, using default configuration')
+    }
+  }
+
+  /**
+   * Add container to the registry
+   */
+  private addContainer<T extends AllowedContainerTypes>(key: string | CONTAINER, container: T): void {
+    this.containerRegistry.addContainer(key, container)
+  }
+
+  /**
+   * Stop a container
+   * @param key
+   */
+  private async stopContainer(key: string | CONTAINER) {
+    const container = this.getContainer(key)
+    const containerKey = typeof key === 'string' ? key : String(key)
+    try {
+      await container?.stop()
+      logger.success(LogMessages.CONTAINER_STOPPED, containerKey)
+    } catch (error) {
+      logger.error(LogMessages.CONTAINER_FAILED, containerKey, error)
+      throw error
+    }
   }
 }

@@ -31,12 +31,12 @@ export class ShellUiContainer extends UiContainer {
 
 export class StartedShellUiContainer extends StartedUiContainer {
   constructor(
-    private startedUiContainer: StartedUiContainer,
+    startedUiContainer: StartedUiContainer,
     private clientUserId: string
   ) {
     super(
-      startedUiContainer['startedTestContainer'], // Access protected property
-      startedUiContainer['details'], // Access private property via bracket notation
+      startedUiContainer.getStartedTestContainer(),
+      startedUiContainer.getDetails(),
       startedUiContainer.getNetworkAliases(),
       startedUiContainer.getPort()
     )
@@ -44,18 +44,5 @@ export class StartedShellUiContainer extends StartedUiContainer {
 
   getClientUserId(): string {
     return this.clientUserId
-  }
-
-  // Delegate all other methods to the wrapped container
-  override getAppBaseHref(): string {
-    return this.startedUiContainer.getAppBaseHref()
-  }
-
-  override getAppId(): string {
-    return this.startedUiContainer.getAppId()
-  }
-
-  override getProductName(): string {
-    return this.startedUiContainer.getProductName()
   }
 }

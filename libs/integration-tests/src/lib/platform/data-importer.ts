@@ -10,7 +10,7 @@ import { StartedShellUiContainer } from '../containers/ui/onecx-shell-ui'
 import { ContainerInfo } from '../../imports/import-manager'
 import { PlatformConfig } from '../model/platform-config.interface'
 import { loggingEnabled } from '../utils/logging-enable'
-import { Logger } from '../utils/logger'
+import { Logger, LogMessages } from '../utils/logger'
 
 const logger = new Logger('DataImporter')
 
@@ -27,7 +27,7 @@ export class DataImporter {
   ): Promise<void> {
     // Platform config is already set globally by PlatformManager
 
-    logger.info('DATA_IMPORT_START')
+    logger.info(LogMessages.DATA_IMPORT_START)
 
     try {
       // Create container info file before starting the import container
@@ -39,7 +39,7 @@ export class DataImporter {
         .enableLogging(loggingEnabled(config, [CONTAINER.IMPORT_MANAGER]))
         .start()
 
-      logger.info('CONTAINER_STARTED', 'Import container - monitoring import process')
+      logger.info(LogMessages.CONTAINER_STARTED, 'Import container - monitoring import process')
 
       // Monitor the import process by executing commands in the container
       await new Promise<void>((resolve, reject) => {
@@ -49,14 +49,14 @@ export class DataImporter {
 
             if (!isStillRunning) {
               clearInterval(checkInterval)
-              logger.info('DATA_IMPORT_PROCESS_COMPLETE')
+              logger.info(LogMessages.DATA_IMPORT_PROCESS_COMPLETE)
               resolve()
             } else {
-              logger.info('DATA_IMPORT_PROCESS_RUNNING')
+              logger.info(LogMessages.DATA_IMPORT_PROCESS_RUNNING)
             }
           } catch (error) {
             clearInterval(checkInterval)
-            logger.error('DATA_IMPORT_PROCESS_ERROR', undefined, error)
+            logger.error(LogMessages.DATA_IMPORT_PROCESS_ERROR, undefined, error)
             resolve()
           }
         }, 2000)
@@ -70,10 +70,10 @@ export class DataImporter {
         )
       })
 
-      logger.success('DATA_IMPORT_SUCCESS')
+      logger.success(LogMessages.DATA_IMPORT_SUCCESS)
       this.cleanupContainerInfo(containerInfoPath)
     } catch (error) {
-      logger.error('DATA_IMPORT_FAILED', undefined, error)
+      logger.error(LogMessages.DATA_IMPORT_FAILED, undefined, error)
       throw error
     }
   }
@@ -98,7 +98,7 @@ export class DataImporter {
   private cleanupContainerInfo(containerInfoPath: string): void {
     if (fs.existsSync(containerInfoPath)) {
       fs.unlinkSync(containerInfoPath)
-      logger.info('DATA_IMPORT_CLEANUP')
+      logger.info(LogMessages.DATA_IMPORT_CLEANUP)
     }
   }
 
@@ -156,7 +156,7 @@ export class DataImporter {
     }
 
     fs.writeFileSync(containerInfoPath, JSON.stringify(containerInfo, null, 2))
-    logger.info('DATA_IMPORT_FILE_CREATED', containerInfoPath)
+    logger.info(LogMessages.DATA_IMPORT_FILE_CREATED, containerInfoPath)
 
     return containerInfoPath
   }

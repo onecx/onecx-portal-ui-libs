@@ -1,5 +1,5 @@
 import { GenericContainer } from 'testcontainers'
-import { Logger } from '../utils/logger'
+import { Logger, LogMessages } from '../utils/logger'
 
 const logger = new Logger('ImagePullChecker')
 
@@ -16,7 +16,7 @@ export class ImagePullChecker {
    */
   static async verifyImagePull(imageName: string): Promise<boolean> {
     try {
-      logger.info('IMAGE_PULL_START', imageName)
+      logger.info(LogMessages.IMAGE_PULL_START, imageName)
 
       // Create a minimal container just to verify the image can be pulled
       // We'll use a simple approach: try to create the container and immediately stop it
@@ -31,14 +31,14 @@ export class ImagePullChecker {
       ])
 
       // If we get here, the image was pulled successfully
-      logger.success('IMAGE_PULL_SUCCESS', imageName)
+      logger.success(LogMessages.IMAGE_PULL_SUCCESS, imageName)
 
       // Immediately stop and remove the container
       await startedContainer.stop()
 
       return true
     } catch (error) {
-      logger.error('IMAGE_PULL_FAILED', imageName, error)
+      logger.error(LogMessages.IMAGE_PULL_FAILED, imageName, error)
       return false
     }
   }

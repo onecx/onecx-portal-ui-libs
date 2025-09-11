@@ -1,7 +1,8 @@
 import { POSTGRES, KEYCLOAK, IMPORT_MANAGER_BASE, OnecxBff, OnecxUi, OnecxService } from '../config/env'
 import { PlatformConfig } from '../model/platform-config.interface'
 import { ImagePullChecker } from './image-pull-checker'
-import { Logger } from '../utils/logger'
+import { ContainerImageOverrideMapper } from '../utils/container-image-override-mapper'
+import { Logger, LogMessages } from '../utils/logger'
 
 const logger = new Logger('ImageResolver')
 
@@ -11,20 +12,6 @@ const logger = new Logger('ImageResolver')
 export class ImageResolver {
   constructor() {
     // Platform config will be set globally by PlatformManager
-  }
-  /**
-   * Get any image with optional override and fallback to default
-   */
-  private async getImageWithOverride(defaultImage: string, overrideImage: string | undefined): Promise<string> {
-    const finalImage = overrideImage || defaultImage
-    const imageIsVerified = await this.verifyImage(finalImage)
-    if (imageIsVerified) {
-      return finalImage
-    }
-
-    // If verification fails, fall back to default image
-    logger.warn('IMAGE_VERIFY_FAILED', `${overrideImage} -> ${defaultImage}`)
-    return defaultImage
   }
 
   /**
@@ -53,7 +40,7 @@ export class ImageResolver {
    */
   async getServiceImage(serviceName: OnecxService, config: PlatformConfig): Promise<string> {
     const defaultImage = serviceName
-    const overrideImage = this.getServiceImageOverride(serviceName, config)
+    const overrideImage = ContainerImageOverrideMapper.getServiceImageOverride(serviceName, config)
     return this.getImageWithOverride(defaultImage, overrideImage)
   }
 
@@ -62,7 +49,7 @@ export class ImageResolver {
    */
   async getBffImage(bffService: OnecxBff, config: PlatformConfig): Promise<string> {
     const defaultImage = bffService
-    const overrideImage = this.getBffImageOverride(bffService, config)
+    const overrideImage = ContainerImageOverrideMapper.getBffImageOverride(bffService, config)
     return this.getImageWithOverride(defaultImage, overrideImage)
   }
 
@@ -71,7 +58,7 @@ export class ImageResolver {
    */
   async getUiImage(uiService: OnecxUi, config: PlatformConfig): Promise<string> {
     const defaultImage = uiService
-    const overrideImage = this.getUiImageOverride(uiService, config)
+    const overrideImage = ContainerImageOverrideMapper.getUiImageOverride(uiService, config)
     return this.getImageWithOverride(defaultImage, overrideImage)
   }
 
@@ -84,13 +71,13 @@ export class ImageResolver {
     // In a real environment, you might want to enable strict verification
     const imageIsVerified = await this.verifyImage(imageName)
     if (imageIsVerified) {
-      logger.success('IMAGE_VERIFY_SUCCESS', imageName)
+      logger.success(LogMessages.IMAGE_VERIFY_SUCCESS, imageName)
       return imageName
     }
 
     // Log warning but don't fail - let the container startup handle the failure
-    logger.warn('IMAGE_VERIFY_FAILED', `Image may not be available: ${imageName}`)
-    logger.info('IMAGE_PULL_START', `Proceeding with unverified image: ${imageName}`)
+    logger.warn(LogMessages.IMAGE_VERIFY_FAILED, `Image may not be available: ${imageName}`)
+    logger.info(LogMessages.IMAGE_PULL_START, `Proceeding with unverified image: ${imageName}`)
 
     return imageName
   }
@@ -99,45 +86,18 @@ export class ImageResolver {
     return await ImagePullChecker.verifyImagePull(image)
   }
 
-  private getServiceImageOverride(serviceName: OnecxService, config: PlatformConfig): string | undefined {
-    const serviceImages = config.platformOverrides?.services
-    if (!serviceImages) return undefined
-
-    // Map enum values directly to overrides - will return undefined for unknown services
-    const overrideMap: Record<string, string | undefined> = {
-      [OnecxService.IAM_KC_SVC]: serviceImages.iamKc?.image,
-      [OnecxService.WORKSPACE_SVC]: serviceImages.workspace?.image,
-      [OnecxService.USER_PROFILE_SVC]: serviceImages.userProfile?.image,
-      [OnecxService.THEME_SVC]: serviceImages.theme?.image,
-      [OnecxService.TENANT_SVC]: serviceImages.tenant?.image,
-      [OnecxService.PRODUCT_STORE_SVC]: serviceImages.productStore?.image,
-      [OnecxService.PERMISSION_SVC]: serviceImages.permission?.image,
+  /**
+   * Get any image with optional override and fallback to default
+   */
+  private async getImageWithOverride(defaultImage: string, overrideImage: string | undefined): Promise<string> {
+    const finalImage = overrideImage || defaultImage
+    const imageIsVerified = await this.verifyImage(finalImage)
+    if (imageIsVerified) {
+      return finalImage
     }
 
-    return overrideMap[serviceName]
-  }
-
-  private getBffImageOverride(bffService: OnecxBff, config: PlatformConfig): string | undefined {
-    const overrides = config.platformOverrides?.bff
-    if (!overrides) return undefined
-
-    // Map enum values directly to overrides - will return undefined for unknown BFFs
-    const overrideMap: Record<string, string | undefined> = {
-      [OnecxBff.SHELL_BFF]: overrides.shell?.image,
-    }
-
-    return overrideMap[bffService]
-  }
-
-  private getUiImageOverride(uiService: OnecxUi, config: PlatformConfig): string | undefined {
-    const overrides = config.platformOverrides?.ui
-    if (!overrides) return undefined
-
-    // Map enum values directly to overrides - will return undefined for unknown UIs
-    const overrideMap: Record<string, string | undefined> = {
-      [OnecxUi.SHELL_UI]: overrides.shell?.image,
-    }
-
-    return overrideMap[uiService]
+    // If verification fails, fall back to default image
+    logger.warn(LogMessages.IMAGE_VERIFY_FAILED, `${overrideImage} -> ${defaultImage}`)
+    return defaultImage
   }
 }

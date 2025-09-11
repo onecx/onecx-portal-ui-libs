@@ -2,9 +2,9 @@ import Ajv from 'ajv'
 import * as fs from 'fs'
 import * as path from 'path'
 import { PlatformConfig } from '../model/platform-config.interface'
-import { Logger } from '../utils/logger'
+import { Logger, LogMessages } from '../utils/logger'
 
-const logger = new Logger('JsonValidator')
+const logger = new Logger('PlatformConfigJsonValidator')
 
 export interface ValidationResult {
   isValid: boolean
@@ -12,7 +12,7 @@ export interface ValidationResult {
   errors?: string[]
 }
 
-export class JsonValidator {
+export class PlatformConfigJsonValidator {
   private ajv: Ajv
   private readonly CONFIG_FILE_PATTERN = /integration-tests\.json$/
   private readonly SEARCH_ROOT = path.join(__dirname, '../../../')
@@ -40,7 +40,7 @@ export class JsonValidator {
         }
       }
 
-      logger.info('CONFIG_LOAD_START', configPath)
+      logger.info(LogMessages.CONFIG_LOAD_START, configPath)
 
       // Read and parse config file
       const configContent = this.readConfigFile(configPath)
@@ -57,21 +57,21 @@ export class JsonValidator {
 
       if (!isValid) {
         const errors = this.formatValidationErrors(validate.errors || [])
-        logger.error('CONFIG_LOAD_ERROR', configPath, errors)
+        logger.error(LogMessages.CONFIG_LOAD_ERROR, configPath, errors)
         return {
           isValid: false,
           errors,
         }
       }
 
-      logger.success('CONFIG_LOAD_SUCCESS', configPath)
+      logger.success(LogMessages.CONFIG_LOAD_SUCCESS, configPath)
       return {
         isValid: true,
         config: (config as any).platformConfig,
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown validation error'
-      logger.error('CONFIG_LOAD_ERROR', undefined, error)
+      logger.error(LogMessages.CONFIG_LOAD_ERROR, undefined, error)
       return {
         isValid: false,
         errors: [errorMessage],
@@ -131,12 +131,12 @@ export class JsonValidator {
             configFiles.push(...this.findConfigFilesRecursively(fullPath))
           }
         } else if (item.isFile() && this.CONFIG_FILE_PATTERN.test(item.name)) {
-          logger.info('CONFIG_FOUND', `Found config file: ${fullPath}`)
+          logger.info(LogMessages.CONFIG_FOUND, `Found config file: ${fullPath}`)
           configFiles.push(fullPath)
         }
       }
     } catch (error) {
-      logger.info('CONFIG_LOAD_START', `Error reading directory ${dir}: ${error}`)
+      logger.info(LogMessages.CONFIG_LOAD_START, `Error reading directory ${dir}: ${error}`)
       // Skip directories that can't be read
     }
 

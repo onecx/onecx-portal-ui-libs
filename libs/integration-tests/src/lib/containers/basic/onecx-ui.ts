@@ -92,4 +92,12 @@ export class StartedUiContainer extends AbstractStartedContainer {
   getPort(): number {
     return this.port
   }
+
+  getStartedTestContainer(): StartedTestContainer {
+    return this.startedTestContainer
+  }
+
+  getDetails(): UiDetails {
+    return this.details
+  }
 }

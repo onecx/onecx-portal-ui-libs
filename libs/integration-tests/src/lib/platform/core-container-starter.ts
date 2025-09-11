@@ -17,7 +17,8 @@ import { ImageResolver } from './image-resolver'
 import { OnecxService, OnecxBff, OnecxUi } from '../config/env'
 import type { AllowedContainerTypes } from '../model/allowed-container.types'
 import { loggingEnabled } from '../utils/logging-enable'
-import { Logger } from '../utils/logger'
+import { Logger, LogMessages } from '../utils/logger'
+import { ContainerRegistry } from './container-registry'
 
 const logger = new Logger('CoreContainerStarter')
 
@@ -25,7 +26,7 @@ export class CoreContainerStarter {
   constructor(
     private imageResolver: ImageResolver,
     private network: StartedNetwork,
-    private addContainer: (key: CONTAINER, container: AllowedContainerTypes) => void,
+    private containerRegistry: ContainerRegistry,
     private readonly config: PlatformConfig
   ) {
     // Platform config will be set globally by PlatformManager
@@ -34,14 +35,14 @@ export class CoreContainerStarter {
   /**
    * Start core container (PostgreSQL and Keycloak)
    */
-  async startCoreServices(): Promise<void> {
+  async startCoreContainers(): Promise<void> {
     const postgres = await this.startPostgresContainer()
-    this.addContainer(CONTAINER.POSTGRES, postgres)
+    this.containerRegistry.addContainer(CONTAINER.POSTGRES, postgres)
 
     const keycloak = await this.startKeycloakContainer(postgres)
-    this.addContainer(CONTAINER.KEYCLOAK, keycloak)
+    this.containerRegistry.addContainer(CONTAINER.KEYCLOAK, keycloak)
 
-    logger.success('CONTAINER_STARTED', 'Core services')
+    logger.success(LogMessages.CONTAINER_STARTED, 'Core services')
   }
 
   /**
@@ -49,8 +50,7 @@ export class CoreContainerStarter {
    */
   async startServiceContainers(
     postgres: StartedOnecxPostgresContainer,
-    keycloak: StartedOnecxKeycloakContainer,
-    getContainer: (service: CONTAINER) => AllowedContainerTypes | undefined
+    keycloak: StartedOnecxKeycloakContainer
   ): Promise<void> {
     await this.startIamKcService(keycloak)
 
@@ -64,7 +64,7 @@ export class CoreContainerStarter {
 
     await this.startProductStoreService(postgres, keycloak)
 
-    await this.startPermissionService(postgres, keycloak, getContainer)
+    await this.startPermissionService(postgres, keycloak)
   }
 
   /**
@@ -77,11 +77,8 @@ export class CoreContainerStarter {
   /**
    * Start UI container based on configuration
    */
-  async startUiContainers(
-    keycloak: StartedOnecxKeycloakContainer,
-    getContainer: (service: CONTAINER) => AllowedContainerTypes | undefined
-  ): Promise<void> {
-    await this.startShellUiService(keycloak, getContainer)
+  async startUiContainers(keycloak: StartedOnecxKeycloakContainer): Promise<void> {
+    await this.startShellUiService(keycloak)
   }
 
   // Private methods for starting individual services
@@ -109,7 +106,7 @@ export class CoreContainerStarter {
       .withNetwork(this.network)
       .enableLogging(loggingEnabled(this.config, [CONTAINER.IAMKC_SVC]))
       .start()
-    this.addContainer(CONTAINER.IAMKC_SVC, container)
+    this.containerRegistry.addContainer(CONTAINER.IAMKC_SVC, container)
   }
 
   private async startWorkspaceService(
@@ -121,7 +118,7 @@ export class CoreContainerStarter {
       .withNetwork(this.network)
       .enableLogging(loggingEnabled(this.config, [CONTAINER.WORKSPACE_SVC]))
       .start()
-    this.addContainer(CONTAINER.WORKSPACE_SVC, container)
+    this.containerRegistry.addContainer(CONTAINER.WORKSPACE_SVC, container)
   }
 
   private async startUserProfileService(
@@ -133,7 +130,7 @@ export class CoreContainerStarter {
       .withNetwork(this.network)
       .enableLogging(loggingEnabled(this.config, [CONTAINER.USER_PROFILE_SVC]))
       .start()
-    this.addContainer(CONTAINER.USER_PROFILE_SVC, container)
+    this.containerRegistry.addContainer(CONTAINER.USER_PROFILE_SVC, container)
   }
 
   private async startThemeService(
@@ -145,7 +142,7 @@ export class CoreContainerStarter {
       .withNetwork(this.network)
       .enableLogging(loggingEnabled(this.config, [CONTAINER.THEME_SVC]))
       .start()
-    this.addContainer(CONTAINER.THEME_SVC, container)
+    this.containerRegistry.addContainer(CONTAINER.THEME_SVC, container)
   }
 
   private async startTenantService(
@@ -157,7 +154,7 @@ export class CoreContainerStarter {
       .withNetwork(this.network)
       .enableLogging(loggingEnabled(this.config, [CONTAINER.TENANT_SVC]))
       .start()
-    this.addContainer(CONTAINER.TENANT_SVC, container)
+    this.containerRegistry.addContainer(CONTAINER.TENANT_SVC, container)
   }
 
   private async startProductStoreService(
@@ -169,16 +166,15 @@ export class CoreContainerStarter {
       .withNetwork(this.network)
       .enableLogging(loggingEnabled(this.config, [CONTAINER.PRODUCT_STORE_SVC]))
       .start()
-    this.addContainer(CONTAINER.PRODUCT_STORE_SVC, container)
+    this.containerRegistry.addContainer(CONTAINER.PRODUCT_STORE_SVC, container)
   }
 
   private async startPermissionService(
     postgres: StartedOnecxPostgresContainer,
-    keycloak: StartedOnecxKeycloakContainer,
-    getContainer: (service: CONTAINER) => AllowedContainerTypes | undefined
+    keycloak: StartedOnecxKeycloakContainer
   ): Promise<void> {
     // Permission service depends on tenant service
-    const tenantSvcContainer = getContainer(CONTAINER.TENANT_SVC)
+    const tenantSvcContainer = this.containerRegistry.getContainer(CONTAINER.TENANT_SVC)
     if (!tenantSvcContainer) {
       throw new Error('Permission service requires Tenant service to be started first')
     }
@@ -193,7 +189,7 @@ export class CoreContainerStarter {
       .withNetwork(this.network)
       .enableLogging(loggingEnabled(this.config, [CONTAINER.PERMISSION_SVC]))
       .start()
-    this.addContainer(CONTAINER.PERMISSION_SVC, container)
+    this.containerRegistry.addContainer(CONTAINER.PERMISSION_SVC, container)
   }
 
   private async startShellBffService(keycloak: StartedOnecxKeycloakContainer): Promise<void> {
@@ -202,15 +198,12 @@ export class CoreContainerStarter {
       .withNetwork(this.network)
       .enableLogging(loggingEnabled(this.config, [CONTAINER.SHELL_BFF]))
       .start()
-    this.addContainer(CONTAINER.SHELL_BFF, container)
+    this.containerRegistry.addContainer(CONTAINER.SHELL_BFF, container)
   }
 
-  private async startShellUiService(
-    keycloak: StartedOnecxKeycloakContainer,
-    getContainer: (service: CONTAINER) => AllowedContainerTypes | undefined
-  ): Promise<void> {
+  private async startShellUiService(keycloak: StartedOnecxKeycloakContainer): Promise<void> {
     // Shell UI depends on Shell BFF
-    const shellBffContainer = getContainer(CONTAINER.SHELL_BFF)
+    const shellBffContainer = this.containerRegistry.getContainer(CONTAINER.SHELL_BFF)
     if (!shellBffContainer) {
       throw new Error('Shell UI requires Shell BFF to be started first')
     }
@@ -220,6 +213,6 @@ export class CoreContainerStarter {
       .withNetwork(this.network)
       .enableLogging(loggingEnabled(this.config, [CONTAINER.SHELL_UI]))
       .start()
-    this.addContainer(CONTAINER.SHELL_UI, container)
+    this.containerRegistry.addContainer(CONTAINER.SHELL_UI, container)
   }
 }

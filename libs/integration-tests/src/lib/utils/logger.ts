@@ -117,68 +117,67 @@ export class Logger {
     return new Date().toISOString()
   }
 
-  private formatMessage(level: string, messageKey: LogMessageKey, context?: string): string {
+  private formatMessage(level: string, message: string, context?: string): string {
     const timestamp = this.formatTimestamp()
-    const message = LogMessages[messageKey]
     const contextPart = context ? ` - (${context})` : ''
     return `${this.className}: ${timestamp} [${level}] ${this.className} ${message}${contextPart}`
   }
 
   /**
-   * Log info message
+   * Log info message - accepts LogMessages values only
    */
-  info(messageKey: LogMessageKey, context?: string): void {
+  info(message: string, context?: string): void {
     if (!this.loggingEnabled()) return
-    console.log(this.formatMessage('INFO', messageKey, context))
+    console.log(this.formatMessage('INFO', message, context))
   }
 
   /**
-   * Log success message
+   * Log success message - accepts LogMessages values only
    */
-  success(messageKey: LogMessageKey, context?: string): void {
+  success(message: string, context?: string): void {
     if (!this.loggingEnabled()) return
-    console.log(`\x1b[32m${this.formatMessage('SUCCESS', messageKey, context)}\x1b[0m`)
+    console.log(`\x1b[32m${this.formatMessage('SUCCESS', message, context)}\x1b[0m`)
   }
 
   /**
-   * Log error message
+   * Log error message - accepts LogMessages values only
    */
-  error(messageKey: LogMessageKey, context?: string, error?: any): void {
+  error(message: string, context?: string, error?: any): void {
     if (!this.loggingEnabled()) return
-    const message = this.formatMessage('ERROR', messageKey, context)
+    const formattedMessage = this.formatMessage('ERROR', message, context)
     if (error) {
-      console.error(`\x1b[31m${message}\x1b[0m`, error)
+      console.error(`\x1b[31m${formattedMessage}\x1b[0m`, error)
     } else {
-      console.error(`\x1b[31m${message}\x1b[0m`)
+      console.error(`\x1b[31m${formattedMessage}\x1b[0m`)
     }
+  }
+
+  /**
+   * Log warning message - accepts LogMessages values only
+   */
+  warn(message: string, context?: string): void {
+    if (!this.loggingEnabled()) return
+    console.warn(`\x1b[33m${this.formatMessage('WARN', message, context)}\x1b[0m`)
   }
 
   /**
    * Log based on HTTP status code
    */
-  status(messageKey: LogMessageKey, statusCode: number, context?: string): void {
+  status(message: string, statusCode: number, context?: string): void {
     if (!this.loggingEnabled()) return
     if ([200, 201].includes(statusCode)) {
-      this.success(messageKey, `${context} - Status: ${statusCode}`)
+      this.success(message, `${context} - Status: ${statusCode}`)
     } else {
-      this.error(messageKey, `${context} - Status: ${statusCode}`)
+      this.error(message, `${context} - Status: ${statusCode}`)
     }
   }
 
   /**
    * Log duration of an operation
    */
-  logDuration(messageKey: LogMessageKey, durationMs: number, context?: string): void {
+  logDuration(message: string, durationMs: number, context?: string): void {
     if (!this.loggingEnabled()) return
     const durationSec = (durationMs / 1000).toFixed(1)
-    this.success(messageKey, `${context} - Duration: ${durationSec}s`)
-  }
-
-  /**
-   * Log warning message
-   */
-  warn(messageKey: LogMessageKey, context?: string): void {
-    if (!this.loggingEnabled()) return
-    console.warn(`\x1b[33m${this.formatMessage('WARN', messageKey, context)}\x1b[0m`)
+    this.success(message, `${context} - Duration: ${durationSec}s`)
   }
 }
