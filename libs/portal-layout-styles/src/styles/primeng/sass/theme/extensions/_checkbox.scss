@@ -12,13 +12,13 @@
     }
 
     &:not(.p-disabled).p-focus {
-      border-color: var(--primary-color);
+      border-color: var(--primary-color, var(--primary-color-default));
       box-shadow: 0 0 0 0.2rem $highlightBg;
     }
 
     &.p-highlight {
       &:not(.p-disabled).p-focus {
-        border-color: var(--primary-color);
+        border-color: var(--primary-color, var(--primary-color-default));
       }
 
       .p-checkbox-icon.pi-check:before {

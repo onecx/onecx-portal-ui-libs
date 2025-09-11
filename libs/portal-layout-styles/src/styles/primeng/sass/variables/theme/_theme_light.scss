@@ -66,7 +66,7 @@ $focusOutlineColor: transparent;
 $focusOutline: 0 none;
 $focusOutlineOffset: 0;
 $focusShadow: none;
-$focusOutlineCustom: 1px solid var(--primary-color);
+$focusOutlineCustom: 1px solid var(--primary-color, var(--primary-color-default));
 $focusOutlineOffsetCustom: 2px;
 
 /* action icons */

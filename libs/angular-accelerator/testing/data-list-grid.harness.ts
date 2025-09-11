@@ -1,5 +1,5 @@
 import { ContentContainerComponentHarness, TestElement, parallel } from '@angular/cdk/testing'
-import { PPaginatorHarness } from '@onecx/angular-testing'
+import { PMenuHarness, PPaginatorHarness } from '@onecx/angular-testing'
 import { DefaultGridItemHarness } from './default-grid-item.harness'
 import { DefaultListItemHarness } from './default-list-item.harness'
 import { waitForDeferredViewsToBeRendered } from '@onecx/angular-testing'
@@ -10,6 +10,8 @@ export class DataListGridHarness extends ContentContainerComponentHarness {
   getDefaultGridItems = this.locatorForAll(DefaultGridItemHarness)
   getPaginator = this.locatorFor(PPaginatorHarness)
   getMenuButton = this.locatorFor(`[name="data-grid-item-menu-button"]`)
+  getListOverflowMenuButton = this.locatorFor(`[name="data-list-overflow-item-menu-button"]`)
+  getListOverflowMenu = this.locatorForOptional(PMenuHarness)
 
   async getDefaultListItems() {
     await waitForDeferredViewsToBeRendered(this)
@@ -26,6 +28,12 @@ export class DataListGridHarness extends ContentContainerComponentHarness {
     } else {
       return await this.documentRootLocatorFactory().locatorForAll(`[data-automationid="data-grid-action-button"]`)()
     }
+  }
+
+  async getListOverflowMenuItems() {
+    const menu = await this.getListOverflowMenu()
+    const menuItems = await menu?.getAllMenuItems()
+    return menuItems ?? []
   }
 
   async actionButtonIsDisabled(actionButton: TestElement, viewType: 'list' | 'grid'): Promise<boolean> {

@@ -23,7 +23,7 @@
   }
 
   &.p-message-info {
-    background: var(--info-message-bg);
+    background: var(--info-message-bg, var(--info-message-bg-default));
     border: var(--info-message-border);
     border-width: var(--message-border-width);
     color: var(--info-message-text-color);
@@ -38,7 +38,7 @@
   }
 
   &.p-message-success {
-    background: var(--success-message-bg);
+    background: var(--success-message-bg, var(--success-message-bg-default));
     border: var(--success-message-border);
     border-width: var(--message-border-width);
     color: var(--success-message-text-color);
@@ -53,7 +53,7 @@
   }
 
   &.p-message-warn {
-    background: var(--warning-message-bg);
+    background: var(--warning-message-bg, var(--warning-message-bg-default));
     border: var(--warning-message-border);
     border-width: var(--message-border-width);
     color: var(--warning-message-text-color);
@@ -68,7 +68,7 @@
   }
 
   &.p-message-error {
-    background: var(--error-message-bg);
+    background: var(--error-message-bg, var(--error-message-bg-default));
     border: var(--error-message-border);
     border-width: var(--message-border-width);
     color: var(--error-message-text-color);

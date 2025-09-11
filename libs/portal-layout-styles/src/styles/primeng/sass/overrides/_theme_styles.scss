@@ -32,7 +32,6 @@
   --action-icon-transition: #{$actionIconTransition};
   --action-icon-hover-border-color: #{$actionIconHoverBorderColor};
   --action-icon-hover-bg: #{$actionIconHoverBg};
-  --primary-color-rgb: #{toValues($primaryColor)};
   --accent-color-rgb: #{toValues($accentColor)};
   --info-button-bg-rgb: #{toValues($infoButtonBg)};
   --success-button-bg-rgb: #{toValues($successButtonBg)};

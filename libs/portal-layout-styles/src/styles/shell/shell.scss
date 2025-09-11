@@ -1,4 +1,5 @@
 @import './_variables';
+@import './theme_defaults.scss';
 
 :root {
   /* Top Bar Variables */
@@ -15,7 +16,7 @@
   --animation-timing: #{$animationTimingFunction};
 
   /* Menu Style Variables */
-  --inline-menu-border-color: var(--divider-color);
+  --inline-menu-border-color: var(--divider-color, var(--divider-color-default));
   --mobile-break-point: #{$mobileBreakpoint};
   --submenu-shadow: #{$submenuShadow};
   --menu-shadow: #{$menuShadow};

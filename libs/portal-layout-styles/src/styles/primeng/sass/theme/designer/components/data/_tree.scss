@@ -1,7 +1,7 @@
 .p-tree {
   border: var(--panel-content-border);
   background: var(--panel-content-bg);
-  color: var(--text-color);
+  color: var(--text-color, var(--text-color-default));
   padding: var(--panel-content-padding);
   border-radius: var(--border-radius);
 
@@ -21,7 +21,7 @@
 
         .p-treenode-icon {
           margin-right: var(--inline-spacing);
-          color: var(--text-secondary-color);
+          color: var(--text-secondary-color, var(--text-secondary-color-default));
         }
 
         .p-checkbox {
@@ -40,26 +40,26 @@
 
         &.p-highlight {
           background: var(--highlight-bg);
-          color: var(--primary-color);
+          color: var(--primary-color, var(--primary-color-default));
 
           .p-tree-toggler,
           .p-treenode-icon {
-            color: var(--primary-color);
+            color: var(--primary-color, var(--primary-color-default));
 
             &:hover {
-              color: var(--primary-color);
+              color: var(--primary-color, var(--primary-color-default));
             }
           }
         }
 
         &.p-treenode-selectable:not(.p-highlight):hover {
           background: var(--input-list-item-hover-bg);
-          color: var(--text-color);
+          color: var(--text-color, var(--text-color-default));
         }
 
         &.p-treenode-dragover {
           background: var(--input-list-item-hover-bg);
-          color: var(--text-color);
+          color: var(--text-color, var(--text-color-default));
         }
       }
     }
@@ -89,7 +89,8 @@
 
   .p-treenode-droppoint {
     &.p-treenode-droppoint-active {
-      background-color: scale-color($highlightBg, $lightness: -20%);
+      background-color: $highlightBg;
+      filter: brightness(80%); /* Reduce lightness by 20% */
     }
   }
 
@@ -99,16 +100,16 @@
         border-radius: var(--border-radius);
         border: var(--panel-content-border);
         background-color: var(--panel-content-bg);
-        color: var(--text-color);
+        color: var(--text-color, var(--text-color-default));
         padding: var(--tree-node-content-padding);
         transition: var(--list-item-transition);
 
         &.p-highlight {
           background-color: var(--highlight-bg);
-          color: var(--primary-color);
+          color: var(--primary-color, var(--primary-color-default));
 
           .p-treenode-icon {
-            color: var(--primary-color);
+            color: var(--primary-color, var(--primary-color-default));
           }
         }
 
@@ -117,7 +118,7 @@
         }
 
         .p-treenode-icon {
-          color: var(--text-secondary-color);
+          color: var(--text-secondary-color, var(--text-secondary-color-default));
           margin-right: var(--inline-spacing);
         }
 
@@ -132,7 +133,7 @@
 
         &.p-treenode-selectable:not(.p-highlight):hover {
           background: var(--input-list-item-hover-bg);
-          color: var(--text-color);
+          color: var(--text-color, var(--text-color-default));
         }
 
         &:focus {

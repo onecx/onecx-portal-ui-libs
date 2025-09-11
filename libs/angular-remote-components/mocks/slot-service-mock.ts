@@ -29,4 +29,8 @@ export class SlotServiceMock {
       [slotName]: slotName in currentAssignments ? currentAssignments[slotName].concat(componentName) : [componentName],
     })
   }
+
+  clearAssignments() {
+    this._componentsDefinedForSlot.next({})
+  }
 }

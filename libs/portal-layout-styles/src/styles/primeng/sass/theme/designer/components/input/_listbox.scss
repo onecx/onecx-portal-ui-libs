@@ -1,13 +1,13 @@
 .p-listbox {
   background: var(--input-list-bg);
-  color: var(--text-color);
+  color: var(--text-color, var(--text-color-default));
   border: var(--input-border);
   border-radius: var(--border-radius);
 
   .p-listbox-header {
     padding: var(--input-list-header-padding);
     border-bottom: var(--input-list-header-border);
-    color: var(--text-color);
+    color: var(--text-color, var(--text-color-default));
     background: var(--input-list-header-bg);
     margin: var(--input-list-header-margin);
     border-top-right-radius: var(--border-radius);
@@ -34,12 +34,12 @@
       margin: var(--input-list-item-margin);
       padding: var(--input-list-item-padding);
       border: var(--input-list-item-border);
-      color: var(--text-color);
+      color: var(--text-color, var(--text-color-default));
       transition: var(--list-item-transition);
       border-radius: var(--input-list-item-border-radius);
 
       &.p-highlight {
-        color: var(--primary-color);
+        color: var(--primary-color, var(--primary-color-default));
         background: var(--highlight-bg);
       }
 
@@ -55,14 +55,14 @@
     .p-listbox-item-group {
       margin: var(--submenu-header-margin);
       padding: var(--submenu-header-padding);
-      color: var(--text-secondary-color);
+      color: var(--text-secondary-color, var(--text-secondary-color-default));
       background: var(--submenu-header-bg);
       font-weight: var(--submenu-header-font-weight);
     }
 
     .p-listbox-empty-message {
       padding: var(--input-list-item-padding);
-      color: var(--text-color);
+      color: var(--text-color, var(--text-color-default));
       background: var(--input-list-item-bg);
     }
   }
@@ -70,7 +70,7 @@
   &:not(.p-disabled) {
     .p-listbox-item {
       &:not(.p-highlight):not(.p-disabled):hover {
-        color: var(--text-color);
+        color: var(--text-color, var(--text-color-default));
         background: var(--input-list-item-hover-bg);
       }
     }

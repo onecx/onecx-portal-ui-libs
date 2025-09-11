@@ -3,8 +3,8 @@
 }
 
 .p-component {
-  font-family: var(--font-family);
-  font-size: var(--font-size);
+  font-family: var(--font-family, var(--font-family-default));
+  font-size: var(--font-size, var(--font-size-default));
   font-weight: var(--font-weight);
 }
 
@@ -31,8 +31,8 @@
 }
 
 .p-link {
-  font-size: var(--font-size);
-  font-family: var(--font-family);
+  font-size: var(--font-size, var(--font-size-default));
+  font-family: var(--font-family, var(--font-family-default));
   border-radius: var(--border-radius);
 
   &:focus {
