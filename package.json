@@ -1,6 +1,6 @@
 {
   "name": "@onecx/onecx-portal-ui-libs",
-  "version": "6.7.0",
+  "version": "6.8.0",
   "license": "Apache-2.0",
   "scripts": {
     "postinstall": "mkdir -p .nx",
@@ -80,7 +80,7 @@
     "@semantic-release/commit-analyzer": "^13.0.0",
     "@semantic-release/exec": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
-    "@semantic-release/release-notes-generator": "^14.0.1",
+    "@semantic-release/release-notes-generator": "^14.1.0",
     "@storybook/addon-a11y": "^8.3.3",
     "@storybook/addon-essentials": "^8.3.3",
     "@storybook/angular": "^8.3.2",
