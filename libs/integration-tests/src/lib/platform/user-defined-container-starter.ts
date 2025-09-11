@@ -8,7 +8,6 @@ import { BffContainer, StartedBffContainer } from '../containers/basic/onecx-bff
 import { UiContainer, StartedUiContainer } from '../containers/basic/onecx-ui'
 import { StartedOnecxPostgresContainer } from '../containers/core/onecx-postgres'
 import { StartedOnecxKeycloakContainer } from '../containers/core/onecx-keycloak'
-import { AllowedContainerTypes } from '../model/allowed-container.types'
 import { loggingEnabled } from '../utils/logging-enable'
 import { ImageResolver } from './image-resolver'
 import { Logger, LogMessages } from '../utils/logger'
