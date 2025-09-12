@@ -4,7 +4,7 @@
     'layout-wrapper layout-topbar-var': themeService.currentTheme$ | async,
     'p-input-filled': inputStyle === 'filled', 
     'p-ripple-disabled': !ripple,
-    'layout-menu-active': isStaticalMenuVisible() && (isVerticalMenuComponentDefined$ | async),
+    'layout-menu-active': (staticMenuVisible$ | async) && (isVerticalMenuComponentDefined$ | async),
   }"
   [class]="'layout-menu-' + this.colorScheme"
 >
@@ -12,7 +12,7 @@
     <ocx-shell-header
       [menuButtonTitle]="menuButtonTitle"
       (menuButtonClick)="onMenuButtonClick($event)"
-      [isStaticalMenu]="isStaticalMenuVisible()"
+      [isStaticalMenu]="(staticMenuVisible$ | async) ?? true"
       [isHorizontalMenu]="isHorizontalMenuMode()"
     >
       <div [hidden]="!isHorizontalMenuVisible()">
@@ -29,7 +29,7 @@
 
     <p-toast [style]="{'word-break': 'break-word'}"></p-toast>
 
-    <div [hidden]="!isStaticalMenuVisible()" class="menu-wrapper">
+    <div [hidden]="!(staticMenuVisible$ | async)" class="menu-wrapper">
       <div class="layout-menu-container overflow-auto">
         <ocx-slot [name]="verticalMenuSlotName">
           <ng-template #skeleton>
