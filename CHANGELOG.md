@@ -1,3 +1,35 @@
+## [6.8.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.7.0...v6.8.0) (2025-09-10)
+
+### Features
+
+* dependabot should ignore major versions, should also check v5 branch ([#900](https://github.com/onecx/onecx-portal-ui-libs/issues/900)) ([5f368eb](https://github.com/onecx/onecx-portal-ui-libs/commit/5f368ebc7af3dbec521aec90259b5fb289a76df4))
+
+### Bug Fixes
+
+* parse scss file ([#906](https://github.com/onecx/onecx-portal-ui-libs/issues/906)) ([c2dbb09](https://github.com/onecx/onecx-portal-ui-libs/commit/c2dbb09692205dc9fefd5013957d85dcde79e2ef))
+* permission handling v6 ([#924](https://github.com/onecx/onecx-portal-ui-libs/issues/924)) ([e03184a](https://github.com/onecx/onecx-portal-ui-libs/commit/e03184a0aaa5fb7ea0e8b4deda13f868ece40240))
+* permissions in storybooks ([#925](https://github.com/onecx/onecx-portal-ui-libs/issues/925)) ([dd1ff37](https://github.com/onecx/onecx-portal-ui-libs/commit/dd1ff3782d1c57f8e062725103878fd4bee78f1d))
+* select all col no results row wrong colspan ([#920](https://github.com/onecx/onecx-portal-ui-libs/issues/920)) ([fa7cb44](https://github.com/onecx/onecx-portal-ui-libs/commit/fa7cb4492e06029e03a46379640de917458b46dd))
+* sonar settings, as well as sonar coverage reports ([#903](https://github.com/onecx/onecx-portal-ui-libs/issues/903)) ([b0525d2](https://github.com/onecx/onecx-portal-ui-libs/commit/b0525d24e216d9a880a48c4f7ba7fd300e7434ae))
+
+### Chores
+
+* **deps-dev:** bump @types/node from 24.0.14 to 24.3.1 ([#910](https://github.com/onecx/onecx-portal-ui-libs/issues/910)) ([94da13a](https://github.com/onecx/onecx-portal-ui-libs/commit/94da13a756043f955a1715b8d5d4101146474af0))
+* **deps-dev:** bump @typescript-eslint/eslint-plugin ([#915](https://github.com/onecx/onecx-portal-ui-libs/issues/915)) ([31b85ff](https://github.com/onecx/onecx-portal-ui-libs/commit/31b85ff6524a4cd7a9ba3506194f5bdc15ea2186))
+* **deps-dev:** bump msw from 2.10.2 to 2.11.1 ([#909](https://github.com/onecx/onecx-portal-ui-libs/issues/909)) ([814dda7](https://github.com/onecx/onecx-portal-ui-libs/commit/814dda749c214348222d693c91e55ca5baaddd6e))
+* **deps-dev:** bump ts-jest from 29.4.0 to 29.4.1 ([#917](https://github.com/onecx/onecx-portal-ui-libs/issues/917)) ([e68b0a8](https://github.com/onecx/onecx-portal-ui-libs/commit/e68b0a8bf6203b17ed6d064026031940d8c26122))
+
+## [6.7.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.6.0...v6.7.0) (2025-08-28)
+
+### Features
+
+* theme service migrations ([#887](https://github.com/onecx/onecx-portal-ui-libs/issues/887)) ([24d7389](https://github.com/onecx/onecx-portal-ui-libs/commit/24d73892b823fe09a6af69a2f8af725463510b84))
+
+### Bug Fixes
+
+* add missing release option for build-migrations buildTarget ([#899](https://github.com/onecx/onecx-portal-ui-libs/issues/899)) ([bb008ce](https://github.com/onecx/onecx-portal-ui-libs/commit/bb008ce93b5a335102c1024c5ce44b0bb35ea732))
+* add sonar-pr to main branch to fix workflow_run trigger for sonar ([#884](https://github.com/onecx/onecx-portal-ui-libs/issues/884)) ([d96f19f](https://github.com/onecx/onecx-portal-ui-libs/commit/d96f19ffa88321b8bbd2b1175b18696ce66bb45b))
+
 ## [6.6.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.5.3...v6.6.0) (2025-08-26)
 
 ### Features

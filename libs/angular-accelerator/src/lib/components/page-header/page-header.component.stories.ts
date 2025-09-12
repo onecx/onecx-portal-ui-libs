@@ -15,6 +15,9 @@ import { StorybookBreadcrumbModule } from './../../storybook-breadcrumb.module'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
 import { StorybookThemeModule } from '../../storybook-theme.module'
 import { TooltipModule } from 'primeng/tooltip'
+import { provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
+import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
+import { UserService } from '@onecx/angular-integration-interface'
 
 export default {
   title: 'Components/PageHeaderComponent',
@@ -26,6 +29,11 @@ export default {
         importProvidersFrom(BrowserAnimationsModule),
         importProvidersFrom(RouterModule.forRoot([], { useHash: true })),
         importProvidersFrom(StorybookThemeModule),
+        provideUserServiceMock(),
+        {
+          provide: HAS_PERMISSION_CHECKER,
+          useExisting: UserService,
+        },
       ],
     }),
     moduleMetadata({
