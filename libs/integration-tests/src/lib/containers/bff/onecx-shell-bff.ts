@@ -1,4 +1,4 @@
-import { BffContainer, StartedBffContainer } from '../abstract/onecx-bff'
+import { BffContainer, StartedBffContainer } from '../basic/onecx-bff'
 import { StartedOnecxKeycloakContainer } from '../core/onecx-keycloak'
 
 export class ShellBffContainer extends BffContainer {

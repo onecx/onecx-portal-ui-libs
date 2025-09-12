@@ -1,0 +1,23 @@
+{
+    "name": "onecx-workspace-bff",
+    "permissions": [
+        {"resource": "assignment", "action": "delete"},
+        {"resource": "assignment", "action": "read"},
+        {"resource": "assignment", "action": "write"},
+        {"resource": "menu", "action": "delete"},
+        {"resource": "menu", "action": "read"},
+        {"resource": "menu", "action": "write"},
+        {"resource": "role", "action": "delete"},
+        {"resource": "role", "action": "read"},
+        {"resource": "role", "action": "write"},
+        {"resource": "slot", "action": "delete"},
+        {"resource": "slot", "action": "read"},
+        {"resource": "slot", "action": "write"},
+        {"resource": "workspace", "action": "delete"},
+        {"resource": "workspace", "action": "read"},
+        {"resource": "workspace", "action": "write"},
+        {"resource": "product", "action": "delete"},
+        {"resource": "product", "action": "read"},
+        {"resource": "product", "action": "write"}
+    ]
+}

@@ -1,0 +1,7 @@
+{
+    "version": "dev",
+    "description": "OneCX parameter",
+    "basePath": "/parameter",
+    "displayName": "OneCX parameter",
+    "iconName": "lock"
+}

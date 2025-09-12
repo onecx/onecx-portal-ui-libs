@@ -1,0 +1,6 @@
+{
+    "description": "List active announcements",
+    "name": "onecx-welcome-list-active",
+    "deprecated": false,
+    "undeployed": false
+}
