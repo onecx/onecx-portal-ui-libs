@@ -1,9 +1,10 @@
 /* eslint-disable */
+import { createReportsConfig } from '../../jest-config-factory'
+
 export default {
   displayName: 'shell-core',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  coverageDirectory: '../../coverage/libs/shell-core',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [
       'jest-preset-angular',
@@ -19,4 +20,5 @@ export default {
     'jest-preset-angular/build/serializers/ng-snapshot',
     'jest-preset-angular/build/serializers/html-comment',
   ],
+  ...createReportsConfig('shell-core'),
 }

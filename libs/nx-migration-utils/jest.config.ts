@@ -1,3 +1,6 @@
+/* eslint-disable */
+import { createReportsConfig } from '../../jest-config-factory'
+
 export default {
   displayName: 'nx-migration-utils',
   preset: '../../jest.preset.js',
@@ -8,5 +11,5 @@ export default {
     '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../coverage/libs/nx-migration-utils',
+  ...createReportsConfig('nx-migration-utils'),
 }
