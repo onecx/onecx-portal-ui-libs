@@ -1,9 +1,10 @@
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing'
 import { Tree } from '@nx/devkit'
 import { updateJsonFiles } from './update-json-files.utils'
+import { printWarnings } from '../print-warnings.utils'
 
 // Mock printWarnings to avoid console output during tests
-jest.mock('../../utils/print-warnings.utils', () => ({
+jest.mock('../print-warnings.utils', () => ({
   printWarnings: jest.fn(),
 }))
 
@@ -95,8 +96,6 @@ describe('updateJsonFiles', () => {
   })
 
   it('handles warning options', () => {
-    const { printWarnings } = require('../../utils/print-warnings.utils')
-
     tree.write('src/special-file.json', JSON.stringify({ test: true }))
     tree.write('src/normal.json', JSON.stringify({ normal: true }))
 
