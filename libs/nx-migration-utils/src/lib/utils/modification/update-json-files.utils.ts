@@ -23,10 +23,14 @@ export function updateJsonFiles(
 
   visitNotIgnoredFiles(tree, dirPath, (file) => {
     if (file.endsWith('.json')) {
-      options && file.includes(options.contentCondition) && foundInFiles.push(file)
+      if (options && file.includes(options.contentCondition)) {
+        foundInFiles.push(file)
+      }
       updateJson(tree, file, updater)
     }
   })
 
-  options?.warn && printWarnings(options.warning, foundInFiles)
+  if (options?.warn) {
+    printWarnings(options.warning, foundInFiles)
+  }
 }

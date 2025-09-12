@@ -23,8 +23,14 @@ describe('updateJsonFiles', () => {
     const updater = (json: any) => ({ ...json, updated: true })
     updateJsonFiles(tree, dirPath, updater)
 
-    const config = JSON.parse(tree.read('src/config.json', 'utf-8')!)
-    const pkg = JSON.parse(tree.read('src/package.json', 'utf-8')!)
+    const configContent = tree.read('src/config.json', 'utf-8')
+    const pkgContent = tree.read('src/package.json', 'utf-8')
+
+    expect(configContent).not.toBeNull()
+    expect(pkgContent).not.toBeNull()
+
+    const config = JSON.parse(configContent as string)
+    const pkg = JSON.parse(pkgContent as string)
 
     expect(config.updated).toBe(true)
     expect(pkg.updated).toBe(true)
@@ -39,7 +45,10 @@ describe('updateJsonFiles', () => {
     updateJsonFiles(tree, dirPath, updater)
 
     const tsContent = tree.read('src/test.ts', 'utf-8')
-    const jsonContent = JSON.parse(tree.read('src/data.json', 'utf-8')!)
+    const jsonContentRaw = tree.read('src/data.json', 'utf-8')
+
+    expect(jsonContentRaw).not.toBeNull()
+    const jsonContent = JSON.parse(jsonContentRaw as string)
 
     expect(tsContent).toBe('export class Test {}')
     expect(jsonContent.modified).toBe(true)
@@ -56,7 +65,10 @@ describe('updateJsonFiles', () => {
 
     updateJsonFiles(tree, '.', updater)
 
-    const result = JSON.parse(tree.read('test.json', 'utf-8')!)
+    const resultContent = tree.read('test.json', 'utf-8')
+    expect(resultContent).not.toBeNull()
+
+    const result = JSON.parse(resultContent as string)
     expect(result.count).toBe(10)
     expect(result.name).toBe('test')
     expect(result.newField).toBe('added')
@@ -69,8 +81,14 @@ describe('updateJsonFiles', () => {
     const updater = (json: any) => ({ ...json, processed: true })
     updateJsonFiles(tree, 'level1', updater)
 
-    const deep = JSON.parse(tree.read('level1/level2/deep.json', 'utf-8')!)
-    const shallow = JSON.parse(tree.read('level1/shallow.json', 'utf-8')!)
+    const deepContent = tree.read('level1/level2/deep.json', 'utf-8')
+    const shallowContent = tree.read('level1/shallow.json', 'utf-8')
+
+    expect(deepContent).not.toBeNull()
+    expect(shallowContent).not.toBeNull()
+
+    const deep = JSON.parse(deepContent as string)
+    const shallow = JSON.parse(shallowContent as string)
 
     expect(deep.processed).toBe(true)
     expect(shallow.processed).toBe(true)

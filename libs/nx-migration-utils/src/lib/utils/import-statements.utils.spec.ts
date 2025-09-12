@@ -97,8 +97,11 @@ const lodash = require('lodash');`
       const importDecl = findImportDeclaration(sourceFile, '@angular/core')
 
       expect(importDecl).toBeDefined()
-      expect(isStringLiteral(importDecl!.moduleSpecifier)).toBe(true)
-      expect((importDecl!.moduleSpecifier as any).text).toBe('@angular/core')
+
+      if (importDecl) {
+        expect(isStringLiteral(importDecl.moduleSpecifier)).toBe(true)
+        expect((importDecl.moduleSpecifier as any).text).toBe('@angular/core')
+      }
     })
 
     it('should return undefined when module not found', () => {
@@ -118,9 +121,12 @@ const lodash = require('lodash');`
       const namedImports = getNamedImports(importDecl)
 
       expect(namedImports).toBeDefined()
-      expect(namedImports!.elements).toHaveLength(2)
-      expect(namedImports!.elements[0].name.text).toBe('Component')
-      expect(namedImports!.elements[1].name.text).toBe('Injectable')
+
+      if (namedImports) {
+        expect(namedImports.elements).toHaveLength(2)
+        expect(namedImports.elements[0].name.text).toBe('Component')
+        expect(namedImports.elements[1].name.text).toBe('Injectable')
+      }
     })
 
     it('should return undefined for namespace imports', () => {
@@ -140,8 +146,11 @@ const lodash = require('lodash');`
       const importDecl = buildImportDeclaration(specifiers, '@angular/core')
 
       expect(importDecl).toBeDefined()
-      expect(isStringLiteral(importDecl!.moduleSpecifier)).toBe(true)
-      expect((importDecl!.moduleSpecifier as any).text).toBe('@angular/core')
+
+      if (importDecl) {
+        expect(isStringLiteral(importDecl.moduleSpecifier)).toBe(true)
+        expect((importDecl.moduleSpecifier as any).text).toBe('@angular/core')
+      }
     })
 
     it('should return null for empty specifiers', () => {
