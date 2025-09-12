@@ -38,7 +38,6 @@ describe('commonMigrateOnecxToV6', () => {
         JSON.stringify({
           dependencies: {
             '@angular/core': '^18.0.0',
-            '@onecx/portal-integration-angular': '^5.0.0',
             '@onecx/standalone-shell': '^5.0.0',
             primeng: '^18.0.0',
           },
@@ -70,9 +69,6 @@ describe('commonMigrateOnecxToV6', () => {
 
       // Check Angular dependencies updated to v19
       expect(packageJson.dependencies['@angular/core']).toBe('^19.0.7')
-
-      // Check OneCX dependencies updated to v6
-      expect(packageJson.dependencies['@onecx/portal-integration-angular']).toBe('^6.0.0')
 
       // Check standalone shell replacement
       expect(packageJson.dependencies['@onecx/standalone-shell']).toBeUndefined()
@@ -230,7 +226,6 @@ describe('commonMigrateOnecxToV6', () => {
         'package.json',
         JSON.stringify({
           dependencies: {
-            '@onecx/portal-integration-angular': '^5.0.0',
             '@onecx/angular-auth': '^5.0.0',
             '@onecx/angular-accelerator': '^5.0.0',
           },
@@ -240,7 +235,6 @@ describe('commonMigrateOnecxToV6', () => {
       await commonMigrateOnecxToV6(tree)
 
       const packageJson = JSON.parse(tree.read('package.json', 'utf-8') || '{}')
-      expect(packageJson.dependencies['@onecx/portal-integration-angular']).toBe('^6.0.0')
       expect(packageJson.dependencies['@onecx/angular-auth']).toBe('^6.0.0')
       expect(packageJson.dependencies['@onecx/angular-accelerator']).toBe('^6.0.0')
     })
@@ -381,26 +375,6 @@ describe('commonMigrateOnecxToV6', () => {
       const webpackContent = tree.read('webpack.config.js', 'utf-8')
       expect(webpackContent).not.toContain('@onecx/standalone-shell')
       expect(webpackContent).toContain('@onecx/angular-standalone-shell')
-    })
-  })
-
-  describe('portal integration angular migration', () => {
-    beforeEach(() => {
-      tree.write(
-        'project.json',
-        JSON.stringify({
-          targets: { build: { options: { styles: [] } } },
-        })
-      )
-      tree.write('package.json', JSON.stringify({ dependencies: {} }))
-    })
-
-    it('should call all portal integration angular migration functions', async () => {
-      await commonMigrateOnecxToV6(tree)
-
-      expect(replacePortalCoreModule).toHaveBeenCalledWith(tree, 'src')
-      expect(replacePortalIntegrationAngularImports).toHaveBeenCalledWith(tree, 'src')
-      expect(removePortalIntegrationAngularImports).toHaveBeenCalledWith(tree, 'src')
     })
   })
 

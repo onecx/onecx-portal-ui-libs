@@ -25,7 +25,6 @@ describe('removeParameters', () => {
     expect(result).toBeDefined()
     expect(result).not.toContain('HttpClient')
     expect(result).not.toContain('private http')
-    // Should still have the constructor, but empty or with remaining params
     expect(result).toContain('constructor')
   })
 
