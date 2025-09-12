@@ -52,10 +52,12 @@ $maskBg: rgba(0, 0, 0, 0.32);
 $loadingIconFontSize: 2rem;
 $errorColor: #b00020;
 
+$primaryColorLegacyFallback: rgb(18, 171, 219);
+
 /* selected state */
-$highlightBg: rgba($primaryColor, 0.12);
+$highlightBg: rgba($primaryColorLegacyFallback, 0.12);
 $highlightTextColor: $primaryColor;
-$highlightFocusBg: rgba($primaryColor, 0.24) !default;
+$highlightFocusBg: rgba($primaryColorLegacyFallback, 0.24) !default;
 
 /* scale */
 $scaleSM: 0.875;
@@ -90,7 +92,7 @@ $inputTextColor: $emphasis-high;
 $inputIconColor: $emphasis-medium;
 $inputBorder: 1px solid $emphasis-low;
 $inputHoverBorderColor: $emphasis-high;
-$inputFocusBorderColor: $primaryColor;
+$inputFocusBorderColor: $primaryColorLegacyFallback;
 $inputErrorBorderColor: $errorColor;
 $inputPlaceholderTextColor: $emphasis-medium;
 $inputFilledBg: #f5f5f5;
@@ -142,7 +144,7 @@ $chipRemoveIconFocusOutline: $focusOutlineCustom;
 $chipRemoveIconFocusOutlineOffset: $focusOutlineOffset;
 
 /* password */
-$passwordMeterBg: rgba($primaryColor, 0.32);
+$passwordMeterBg: rgba($primaryColorLegacyFallback, 0.32);
 $passwordWeakBg: #d32f2f;
 $passwordMediumBg: #fbc02d;
 $passwordStrongBg: #689f38;
@@ -154,10 +156,10 @@ $buttonIconOnlyPadding: 0.714rem;
 $buttonBg: $primaryColor;
 $buttonTextColor: $primaryTextColor;
 $buttonBorder: 0 none;
-$buttonHoverBg: rgba($primaryColor, 0.92);
+$buttonHoverBg: rgba($primaryColorLegacyFallback, 0.92);
 $buttonTextHoverColor: $primaryTextColor;
 $buttonHoverBorderColor: transparent;
-$buttonActiveBg: rgba($primaryColor, 0.68);
+$buttonActiveBg: rgba($primaryColorLegacyFallback, 0.68);
 $buttonTextActiveColor: $primaryTextColor;
 $buttonActiveBorderColor: transparent;
 $raisedButtonShadow:
@@ -264,7 +266,7 @@ $checkboxHeight: 18px;
 $checkboxBorder: 2px solid #757575;
 $checkboxIconFontSize: 14px;
 $checkboxActiveBorderColor: $primaryColor;
-$checkboxActiveBg: $primaryColor;
+$checkboxActiveBg: $primaryColorLegacyFallback;
 $checkboxIconActiveColor: $primaryTextColor;
 $checkboxActiveHoverBg: $primaryColor;
 $checkboxIconActiveHoverColor: $primaryTextColor;
@@ -275,7 +277,7 @@ $radiobuttonWidth: 20px;
 $radiobuttonHeight: 20px;
 $radiobuttonBorder: 2px solid #757575;
 $radiobuttonIconSize: 10px;
-$radiobuttonActiveBorderColor: $primaryColor;
+$radiobuttonActiveBorderColor: $primaryColorLegacyFallback;
 $radiobuttonActiveBg: $primaryTextColor;
 $radiobuttonIconActiveColor: $primaryColor;
 $radiobuttonActiveHoverBg: $primaryTextColor;
@@ -384,9 +386,9 @@ $inputSwitchSliderPadding: -1px;
 $inputSwitchSliderOffBg: rgba(0, 0, 0, 0.38);
 $inputSwitchHandleOffBg: #ffffff;
 $inputSwitchSliderOffHoverBg: rgba(0, 0, 0, 0.38);
-$inputSwitchSliderOnBg: rgba($primaryColor, 0.5);
-$inputSwitchSliderOnHoverBg: rgba($primaryColor, 0.5);
-$inputSwitchHandleOnBg: $primaryColor;
+$inputSwitchSliderOnBg: rgba($primaryColorLegacyFallback, 0.5);
+$inputSwitchSliderOnHoverBg: rgba($primaryColorLegacyFallback, 0.5);
+$inputSwitchHandleOnBg: $primaryColorLegacyFallback;
 
 /* panel */
 $panelHeaderBorderColor: #e0e0e0 !default;
@@ -452,7 +454,7 @@ $tabviewHeaderFontWeight: 500;
 $tabviewHeaderPadding: 1rem 1.5rem;
 $tabviewHeaderMargin: 0 0 0 0;
 
-$tabviewHeaderHoverBg: rgba($primaryColor, 0.04);
+$tabviewHeaderHoverBg: rgba($primaryColorLegacyFallback, 0.04);
 $tabviewHeaderHoverBorderColor: transparent;
 $tabviewHeaderTextHoverColor: $textSecondaryColor;
 
@@ -694,7 +696,7 @@ $stepsItemActiveFontWeight: 500;
 /* progressbar */
 $progressBarHeight: 4px;
 $progressBarBorder: 0 none;
-$progressBarBg: rgba($primaryColor, 0.32);
+$progressBarBg: rgba($primaryColorLegacyFallback, 0.32);
 $progressBarValueBg: $primaryColor;
 $progressBarValueTextColor: $primaryTextColor !default;
 
