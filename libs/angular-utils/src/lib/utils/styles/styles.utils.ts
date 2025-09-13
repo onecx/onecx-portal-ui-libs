@@ -126,6 +126,15 @@ export function addStyleToHead(content: string, datasetAttributes?: { [key: stri
 }
 
 /**
+ * Adds original css to a style element for future reference.
+ * @param styleElement - style element to modify
+ * @param css - original css to add
+ */
+export function addOriginalCssToStyleElement(styleElement: HTMLStyleElement, css: string | undefined | null) {
+  ;(styleElement as any).onecxOriginalCss = css
+}
+
+/**
  * Replaces content of a given style element.
  * @param selectorOrElement - selector for a style element or exact element
  * @param content - content to be put in the style element
