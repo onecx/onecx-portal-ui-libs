@@ -15,9 +15,6 @@ import { execSync } from 'child_process'
 import { replaceImportValuesAndModule } from '../utils/import-statements.utils'
 import { replaceInFiles } from '../angular/replacement-in-files.utils'
 import { replaceTagInAngularTemplates } from '../angular/html-templates.utils'
-import replacePortalCoreModule from '../migrations/v6/replace-portal-core-module'
-import replacePortalIntegrationAngularImports from '../migrations/v6/replace-pia-imports'
-import removePortalIntegrationAngularImports from '../migrations/v6/remove-pia-imports'
 
 describe('commonMigrateOnecxToV6', () => {
   let tree: Tree
@@ -27,6 +24,7 @@ describe('commonMigrateOnecxToV6', () => {
     jest.clearAllMocks()
 
     // Mock execSync to avoid actual npm commands
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     ;(execSync as jest.Mock).mockImplementation(() => {})
   })
 

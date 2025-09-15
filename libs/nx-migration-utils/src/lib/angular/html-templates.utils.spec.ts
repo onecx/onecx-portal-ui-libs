@@ -1,5 +1,6 @@
 import { Tree } from '@nx/devkit'
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing'
+import { ast } from '@phenomnomnominal/tsquery'
 import {
   replaceTagInAngularTemplates,
   replaceTagInInlineAndExternalTemplate,
@@ -307,8 +308,8 @@ describe('html-templates.utils', () => {
 
       tree.write('/src/template.html', '<p-button>External Button</p-button>')
 
-      const tsContent = tree.read('/src/component.ts', 'utf-8')
-      const contentAst = require('@phenomnomnominal/tsquery').ast(tsContent)
+      const tsContent = tree.read('/src/component.ts', 'utf-8')!
+      const contentAst = ast(tsContent)
 
       replaceTagInExternalTemplates(tree, '/src/component.ts', contentAst, 'p-button', 'p-btn')
 
@@ -330,8 +331,8 @@ describe('html-templates.utils', () => {
 
       tree.write('/src/components/shared/template.html', '<p-button>Shared</p-button>')
 
-      const tsContent = tree.read('/src/components/feature/component.ts', 'utf-8')
-      const contentAst = require('@phenomnomnominal/tsquery').ast(tsContent)
+      const tsContent = tree.read('/src/components/feature/component.ts', 'utf-8')!
+      const contentAst = ast(tsContent)
 
       replaceTagInExternalTemplates(tree, '/src/components/feature/component.ts', contentAst, 'p-button', 'p-btn')
 
@@ -353,8 +354,8 @@ describe('html-templates.utils', () => {
       const originalHtml = '<div>No target tags</div>'
       tree.write('/src/template.html', originalHtml)
 
-      const tsContent = tree.read('/src/component.ts', 'utf-8')
-      const contentAst = require('@phenomnomnominal/tsquery').ast(tsContent)
+      const tsContent = tree.read('/src/component.ts', 'utf-8')!
+      const contentAst = ast(tsContent)
 
       replaceTagInExternalTemplates(tree, '/src/component.ts', contentAst, 'p-button', 'p-btn')
 
@@ -373,8 +374,8 @@ describe('html-templates.utils', () => {
       `
       )
 
-      const tsContent = tree.read('/src/component.ts', 'utf-8')
-      const contentAst = require('@phenomnomnominal/tsquery').ast(tsContent)
+      const tsContent = tree.read('/src/component.ts', 'utf-8')!
+      const contentAst = ast(tsContent)
 
       expect(() => {
         replaceTagInExternalTemplates(tree, '/src/component.ts', contentAst, 'p-button', 'p-btn')
@@ -391,7 +392,7 @@ describe('html-templates.utils', () => {
         export class TestComponent {}
       `
 
-      const contentAst = require('@phenomnomnominal/tsquery').ast(tsContent)
+      const contentAst = ast(tsContent)
       const nodes = getInlineTemplateNodes(contentAst)
 
       expect(nodes).toHaveLength(1)
@@ -406,7 +407,7 @@ describe('html-templates.utils', () => {
         export class TestComponent {}
       `
 
-      const contentAst = require('@phenomnomnominal/tsquery').ast(tsContent)
+      const contentAst = ast(tsContent)
       const nodes = getInlineTemplateNodes(contentAst)
 
       expect(nodes).toHaveLength(0)
@@ -425,7 +426,7 @@ describe('html-templates.utils', () => {
         export class TestComponent2 {}
       `
 
-      const contentAst = require('@phenomnomnominal/tsquery').ast(tsContent)
+      const contentAst = ast(tsContent)
       const nodes = getInlineTemplateNodes(contentAst)
 
       expect(nodes).toHaveLength(2)
@@ -439,7 +440,7 @@ describe('html-templates.utils', () => {
         export class TestComponent {}
       `
 
-      const contentAst = require('@phenomnomnominal/tsquery').ast(tsContent)
+      const contentAst = ast(tsContent)
       const nodes = getInlineTemplateNodes(contentAst)
 
       expect(nodes).toHaveLength(0)
@@ -455,7 +456,7 @@ describe('html-templates.utils', () => {
         export class TestComponent {}
       `
 
-      const contentAst = require('@phenomnomnominal/tsquery').ast(tsContent)
+      const contentAst = ast(tsContent)
       const paths = getExternalTemplatePaths(contentAst, '/src/component.ts')
 
       expect(paths).toEqual(['/src/template.html'])
@@ -469,7 +470,7 @@ describe('html-templates.utils', () => {
         export class TestComponent {}
       `
 
-      const contentAst = require('@phenomnomnominal/tsquery').ast(tsContent)
+      const contentAst = ast(tsContent)
       const paths = getExternalTemplatePaths(contentAst, '/src/components/component.ts')
 
       expect(paths).toEqual(['/src/shared/template.html'])
@@ -488,7 +489,7 @@ describe('html-templates.utils', () => {
         export class TestComponent2 {}
       `
 
-      const contentAst = require('@phenomnomnominal/tsquery').ast(tsContent)
+      const contentAst = ast(tsContent)
       const paths = getExternalTemplatePaths(contentAst, '/src/component.ts')
 
       expect(paths).toEqual(['/src/template1.html', '/src/template2.html'])
@@ -502,7 +503,7 @@ describe('html-templates.utils', () => {
         export class TestComponent {}
       `
 
-      const contentAst = require('@phenomnomnominal/tsquery').ast(tsContent)
+      const contentAst = ast(tsContent)
       const paths = getExternalTemplatePaths(contentAst, '/src/component.ts')
 
       expect(paths).toEqual([])
@@ -516,7 +517,7 @@ describe('html-templates.utils', () => {
         export class TestComponent {}
       `
 
-      const contentAst = require('@phenomnomnominal/tsquery').ast(tsContent)
+      const contentAst = ast(tsContent)
       const paths = getExternalTemplatePaths(contentAst, '/src/features/user/component.ts')
 
       expect(paths).toEqual(['/src/shared/components/template.html'])
