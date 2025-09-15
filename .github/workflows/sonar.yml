@@ -23,7 +23,7 @@ jobs:
 
       - name: Find affected lib coverage directories
         id: set-matrix
-        # This step creates a dynamic matrix of libraries that have coverage reports
+        # This step creates a matrix of libraries that have coverage reports
         # If no reports exist, creates an empty matrix to allow graceful workflow completion
         run: |
           # Check if reports directory exists
