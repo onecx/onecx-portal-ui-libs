@@ -4,13 +4,13 @@
 
     .p-panelmenu-header-content {
       border: var(--panelmenu-header-border);
-      color: var(--text-color);
+      color: var(--text-color, var(--text-color-default));
       background: var(--panelmenu-header-bg);
       border-radius: var(--border-radius);
       transition: var(--list-item-transition);
 
       .p-panelmenu-header-action {
-        color: var(--text-color);
+        color: var(--text-color, var(--text-color-default));
         padding: var(--panelmenu-header-padding);
         font-weight: var(--panelmenu-header-font-weight);
 
@@ -40,7 +40,7 @@
       .p-panelmenu-header-content {
         background: var(--panelmenu-header-hover-bg);
         border-color: var(--panelmenu-header-hover-border-color);
-        color: var(--text-color);
+        color: var(--text-color, var(--text-color-default));
       }
     }
 
@@ -48,7 +48,7 @@
       .p-panelmenu-header-content {
           background: var(--panelmenu-header-hover-bg);
           border-color: var(--panelmenu-header-hover-border-color);
-          color: var(--text-color);
+          color: var(--text-color, var(--text-color-default));
           border-bottom-right-radius: 0;
           border-bottom-left-radius: 0;
           margin-bottom: 0;
@@ -58,7 +58,7 @@
         .p-panelmenu-header-content {
             border-color: var(--panelmenu-header-hover-border-color);
             background: var(--panelmenu-header-active-hover-bg);
-            color: var(--text-color);
+            color: var(--text-color, var(--text-color-default));
         }
       }
     }
@@ -68,7 +68,7 @@
     padding: var(--vertical-menu-padding);
     border: var(--panelmenu-content-border);
     background: var(--panelmenu-content-bg);
-    color: var(--text-color);
+    color: var(--text-color, var(--text-color-default));
     border-top: 0;
     border-top-right-radius: 0;
     border-top-left-radius: 0;

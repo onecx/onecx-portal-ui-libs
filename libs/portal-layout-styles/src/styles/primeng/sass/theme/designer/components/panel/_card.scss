@@ -1,6 +1,6 @@
 .p-card {
   background: var(--panel-content-bg);
-  color: var(--text-color);
+  color: var(--text-color, var(--text-color-default));
   box-shadow: var(--card-shadow);
   border-radius: var(--border-radius);
 
@@ -17,7 +17,7 @@
   .p-card-subtitle {
     font-weight: var(--card-sub-title-font-weight);
     margin-bottom: var(--inline-spacing);
-    color: var(--text-secondary-color);
+    color: var(--text-secondary-color, var(--text-secondary-color-default));
   }
 
   .p-card-content {

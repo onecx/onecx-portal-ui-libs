@@ -19,7 +19,7 @@
 
 .p-dropdown-item {
   .p-ink {
-    background-color: rgba(var(--primary-color-rgb), 0.16);
+    background-color: rgb(from var(--primary-color, var(--primary-color-default)) r g b / 0.16);
   }
   &:not(.p-disabled).p-focus {
     background: var(--input-list-item-hover-bg) !important;

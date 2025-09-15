@@ -9,7 +9,7 @@
 
   .p-picklist-header {
     background: var(--panel-header-bg);
-    color: var(--text-color);
+    color: var(--text-color, var(--text-color-default));
     border: var(--panel-header-border);
     padding: var(--panel-header-padding);
     border-bottom: 0 none;
@@ -40,7 +40,7 @@
   .p-picklist-list {
     border: var(--panel-content-border);
     background: var(--panel-content-bg);
-    color: var(--text-color);
+    color: var(--text-color, var(--text-color-default));
     padding: var(--input-list-padding);
     border-bottom-right-radius: var(--border-radius);
     border-bottom-left-radius: var(--border-radius);
@@ -49,7 +49,7 @@
       padding: var(--input-list-item-padding);
       margin: var(--input-list-item-margin);
       border: var(--input-list-item-border);
-      color: var(--text-color);
+      color: var(--text-color, var(--text-color-default));
       background: var(--input-list-item-bg);
       transition: var(--list-item-transition);
 
@@ -59,7 +59,7 @@
       }
 
       &.p-highlight {
-        color: var(--primary-color);
+        color: var(--primary-color, var(--primary-color-default));
         background: var(--highlight-bg);
 
         &.p-focus {
@@ -70,14 +70,14 @@
 
     .p-picklist-empty-message {
       padding: var(--input-list-item-padding);
-      color: var(--text-color);
+      color: var(--text-color, var(--text-color-default));
     }
 
     &:not(.cdk-drop-list-dragging) {
       .p-picklist-item {
         &:not(.p-highlight):hover {
           background: var(--input-list-item-hover-bg);
-          color: var(--text-color);
+          color: var(--text-color, var(--text-color-default));
         }
       }
     }
@@ -89,7 +89,7 @@
     padding: var(--input-list-item-padding);
     box-shadow: var(--input-overlay-shadow);
     border: var(--input-list-item-border);
-    color: var(--text-color);
+    color: var(--text-color, var(--text-color-default));
     background: var(--panel-content-bg);
     margin: 0;
   }

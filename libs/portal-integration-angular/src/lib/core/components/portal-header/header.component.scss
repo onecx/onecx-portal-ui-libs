@@ -11,6 +11,6 @@
 }
 
 .default-logo {
-  color: var(--logo-color, #12abdb);
+  color: var(--logo-color, var(--logo-color-default, #12abdb));
   fill: currentColor;
 }

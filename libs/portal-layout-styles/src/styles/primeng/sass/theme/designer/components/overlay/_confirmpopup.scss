@@ -1,6 +1,6 @@
 .p-confirm-popup {
   background: var(--panel-content-bg);
-  color: var(--text-color);
+  color: var(--text-color, var(--text-color-default));
   border: var(--overlay-content-border);
   border-radius: var(--border-radius);
   box-shadow: var(--overlay-container-shadow);

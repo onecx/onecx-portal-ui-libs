@@ -1,3 +1,39 @@
+## [5.48.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.48.3...v5.48.4) (2025-09-15)
+
+### Bug Fixes
+
+* search header storybook ([#935](https://github.com/onecx/onecx-portal-ui-libs/issues/935)) ([00bdfba](https://github.com/onecx/onecx-portal-ui-libs/commit/00bdfba5eb1b11c6e59829a70eed012e6f45fbdf))
+* style defect in portal-layout-styles ([#944](https://github.com/onecx/onecx-portal-ui-libs/issues/944)) ([38e162e](https://github.com/onecx/onecx-portal-ui-libs/commit/38e162e8ea5c636873d165c832f76930aa67dc82))
+
+### Chores
+
+* **deps-dev:** bump @typescript-eslint/utils from 8.41.0 to 8.43.0 ([#930](https://github.com/onecx/onecx-portal-ui-libs/issues/930)) ([217fd8f](https://github.com/onecx/onecx-portal-ui-libs/commit/217fd8f75c892e2c57260634f00152d71c3b6a9a))
+
+## [5.48.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.48.2...v5.48.3) (2025-09-10)
+
+### Bug Fixes
+
+* add fonts to libraries using portal-layout-styles and update output ([#931](https://github.com/onecx/onecx-portal-ui-libs/issues/931)) ([07df82e](https://github.com/onecx/onecx-portal-ui-libs/commit/07df82e0ae3a9e8391dd8b54f5d902e43b64522c))
+
+### Chores
+
+* **deps-dev:** bump @swc-node/register from 1.10.10 to 1.11.1 ([#912](https://github.com/onecx/onecx-portal-ui-libs/issues/912)) ([ac2fc92](https://github.com/onecx/onecx-portal-ui-libs/commit/ac2fc92e32f13a5ee989a0e998c5fe45aeb7485a))
+* **deps-dev:** bump @swc/core from 1.7.42 to 1.13.5 ([#927](https://github.com/onecx/onecx-portal-ui-libs/issues/927)) ([0d02142](https://github.com/onecx/onecx-portal-ui-libs/commit/0d0214243728aa771801937e1bbf5288227424a0))
+* **deps-dev:** bump @typescript-eslint/eslint-plugin ([#913](https://github.com/onecx/onecx-portal-ui-libs/issues/913)) ([e372e41](https://github.com/onecx/onecx-portal-ui-libs/commit/e372e41742976729202b172aaff0cba0f9a5ed00))
+
+## [5.48.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.48.1...v5.48.2) (2025-09-09)
+
+### Bug Fixes
+
+* add permission async and use it in ifPermissionDirective ([#904](https://github.com/onecx/onecx-portal-ui-libs/issues/904)) ([b1fef26](https://github.com/onecx/onecx-portal-ui-libs/commit/b1fef26624bbf375fdcd74ca0f598a68162b1add))
+* download coverage-reports as well as report settings ([#902](https://github.com/onecx/onecx-portal-ui-libs/issues/902)) ([378b6e0](https://github.com/onecx/onecx-portal-ui-libs/commit/378b6e061a76c469e5a455a4953b16d1a08b8a05))
+* select all col no results row wrong colspan ([#919](https://github.com/onecx/onecx-portal-ui-libs/issues/919)) ([b7694e0](https://github.com/onecx/onecx-portal-ui-libs/commit/b7694e0b9a10481cb035a853df62d3ff37030871))
+* theme defaults portal layout styles ([#921](https://github.com/onecx/onecx-portal-ui-libs/issues/921)) ([b460918](https://github.com/onecx/onecx-portal-ui-libs/commit/b460918153591b3f8572dc8db3a034901992706b))
+
+### Chores
+
+* **deps-dev:** bump @types/axios from 0.9.36 to 0.14.4 ([#908](https://github.com/onecx/onecx-portal-ui-libs/issues/908)) ([a7b40f4](https://github.com/onecx/onecx-portal-ui-libs/commit/a7b40f4f7821719974a0f94d9a4dd695a4f58ab6))
+
 ## [5.48.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.48.0...v5.48.1) (2025-08-27)
 
 ### Bug Fixes

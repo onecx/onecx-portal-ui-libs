@@ -15,8 +15,10 @@ import { StorybookTranslateModule } from '../../storybook-translate.module'
 import { PageHeaderComponent } from '../page-header/page-header.component'
 import { StorybookBreadcrumbModule } from './../../storybook-breadcrumb.module'
 import { SearchHeaderComponent } from './search-header.component'
-import { ConfigurationService } from '@onecx/angular-integration-interface'
+import { ConfigurationService, UserService } from '@onecx/angular-integration-interface'
 import { provideHttpClient } from '@angular/common/http'
+import { provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
+import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 
 export default {
   title: 'Components/SearchHeaderComponent',
@@ -29,6 +31,11 @@ export default {
         importProvidersFrom(RouterModule.forRoot([], { useHash: true })),
         importProvidersFrom(ConfigurationService),
         provideHttpClient(),
+        provideUserServiceMock(),
+        {
+          provide: HAS_PERMISSION_CHECKER,
+          useExisting: UserService,
+        },
       ],
     }),
     moduleMetadata({

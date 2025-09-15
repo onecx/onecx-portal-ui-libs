@@ -18,7 +18,7 @@
 
 @mixin focused-input() {
   @include focused();
-  border-color: var(--primary-color);
+  border-color: var(--primary-color, var(--primary-color-default));
 }
 
 @mixin focused-listitem() {
@@ -33,43 +33,43 @@
 
 @mixin menuitem {
   > .p-menuitem-content {
-    color: var(--text-color);
+    color: var(--text-color, var(--text-color-default));
     transition: var(--list-item-transition);
     border-radius: var(--menuitem-border-radius);
 
     .p-menuitem-link {
-        color: var(--text-color);
+        color: var(--text-color, var(--text-color-default));
         padding: var(--menuitem-padding);
         user-select: none;
 
         .p-menuitem-text {
-            color: var(--text-color);
+            color: var(--text-color, var(--text-color-default));
         }
 
         .p-menuitem-icon {
-            color: var(--text-secondary-color);
+            color: var(--text-secondary-color, var(--text-secondary-color-default));
             margin-right: var(--inline-spacing);
         }
 
         .p-submenu-icon {
-            color: var(--text-secondary-color);
+            color: var(--text-secondary-color, var(--text-secondary-color-default));
         }
     }
   }
   
   &.p-highlight {
     > .p-menuitem-content {
-      color: var(--text-color);
+      color: var(--text-color, var(--text-color-default));
       background: var(--menuitem-active-bg);
 
         .p-menuitem-link {
             .p-menuitem-text {
-              color: var(--text-color);
+              color: var(--text-color, var(--text-color-default));
             }
 
             .p-menuitem-icon,
             .p-submenu-icon {
-              color: var(--text-secondary-color);
+              color: var(--text-secondary-color, var(--text-secondary-color-default));
             }
         }
     }
@@ -84,17 +84,17 @@
   &:not(.p-highlight):not(.p-disabled) {
     &.p-focus {
         > .p-menuitem-content {
-            color: var(--text-color);
+            color: var(--text-color, var(--text-color-default));
             background: var(--menuitem-focus-bg);
 
             .p-menuitem-link {
                 .p-menuitem-text {
-                    color: var(--text-color);
+                    color: var(--text-color, var(--text-color-default));
                 }
 
                 .p-menuitem-icon,
                 .p-submenu-icon {
-                  color: var(--text-secondary-color);
+                  color: var(--text-secondary-color, var(--text-secondary-color-default));
                 }
             }
         }
@@ -102,17 +102,17 @@
 
     > .p-menuitem-content {
         &:hover {
-          color: var(--text-color);
+          color: var(--text-color, var(--text-color-default));
             background: var(--menuitem-hover-bg);
 
             .p-menuitem-link {
                 .p-menuitem-text {
-                  color: var(--text-color);
+                  color: var(--text-color, var(--text-color-default));
                 }
 
                 .p-menuitem-icon,
                 .p-submenu-icon {
-                  color: var(--text-secondary-color);
+                  color: var(--text-secondary-color, var(--text-secondary-color-default));
                 }
             }
         }
@@ -122,22 +122,22 @@
 
 @mixin horizontal-rootmenuitem-link {
   padding: var(--horizontal-menu-root-menuitem-padding);
-  color: var(--text-color);
+  color: var(--text-color, var(--text-color-default));
   border-radius: var(--border-radius);
   transition: var(--list-item-transition);
   user-select: none;
 
   .p-menuitem-text {
-    color: var(--text-color);
+    color: var(--text-color, var(--text-color-default));
   }
 
   .p-menuitem-icon {
-    color: var(--text-secondary-color);
+    color: var(--text-secondary-color, var(--text-secondary-color-default));
     margin-right: var(--inline-spacing);
   }
 
   .p-submenu-icon {
-    color: var(--text-secondary-color);
+    color: var(--text-secondary-color, var(--text-secondary-color-default));
     margin-left: var(--inline-spacing);
   }
 
@@ -145,15 +145,15 @@
     background: var(--horizontal-menu-root-menuitem-hover-bg);
 
     .p-menuitem-text {
-      color: var(--text-color);
+      color: var(--text-color, var(--text-color-default));
     }
 
     .p-menuitem-icon {
-      color: var(--text-secondary-color);
+      color: var(--text-secondary-color, var(--text-secondary-color-default));
     }
 
     .p-submenu-icon {
-      color: var(--text-secondary-color);
+      color: var(--text-secondary-color, var(--text-secondary-color-default));
     }
   }
 
@@ -202,14 +202,14 @@
 @mixin action-icon($enabled: true) {
   width: var(--action-icon-width);
   height: var(--action-icon-height);
-  color: var(--text-secondary-color);
+  color: var(--text-secondary-color, var(--text-secondary-color-default));
   border: var(--action-icon-border);
   background: var(--action-icon-bg);
   border-radius: var(--action-icon-border-radius);
   transition: var(--action-icon-transition);
 
   &:enabled:hover {
-    color: var(--text-secondary-color);
+    color: var(--text-secondary-color, var(--text-secondary-color-default));
     border-color: var(--action-icon-hover-border-color);
     background: var(--action-icon-hover-bg);
   }

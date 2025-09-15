@@ -14,7 +14,7 @@
 }
 
 .card {
-  background-color: var(--content-bg-color);
+  background-color: var(--content-bg-color, var(--content-bg-color-default));
   padding: 1rem;
   margin-bottom: 2rem;
   box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
@@ -41,7 +41,7 @@
   }
 
   .card-subtitle {
-    color: var(--text-secondary-color);
+    color: var(--text-secondary-color, var(--text-secondary-color-default));
     font-weight: 600;
     margin: -1rem 0 1rem 0;
   }
@@ -148,31 +148,31 @@ body {
 }
 
 .divider-top {
-  border-top: 1px solid var(--divider-color) !important;
+  border-top: 1px solid var(--divider-color, var(--divider-color-default)) !important;
 }
 
 .divider-bottom {
-  border-bottom: 1px solid var(--divider-color) !important;
+  border-bottom: 1px solid var(--divider-color, var(--divider-color-default)) !important;
 }
 
 .divider-left {
-  border-left: 1px solid var(--divider-color) !important;
+  border-left: 1px solid var(--divider-color, var(--divider-color-default)) !important;
 }
 
 .divider-right {
-  border-right: 1px solid var(--divider-color) !important;
+  border-right: 1px solid var(--divider-color, var(--divider-color-default)) !important;
 }
 
 .muted-text {
-  color: var(--text-secondary-color) !important;
+  color: var(--text-secondary-color, var(--text-secondary-color-default)) !important;
 }
 
 .text-color {
-  color: var(--text-color) !important;
+  color: var(--text-color, var(--text-color-default)) !important;
 }
 
 .solid-surface-text-color {
-  color: var(--solid-surface-text-color) !important;
+  color: var(--solid-surface-text-color, var(--solid-surface-text-color-default)) !important;
 }
 
 .white-color {
@@ -248,11 +248,11 @@ body {
 }
 
 .content-bgcolor {
-  background-color: var(--content-bg-color) !important;
+  background-color: var(--content-bg-color, var(--content-bg-color-default)) !important;
 }
 
 .content-alt-bgcolor {
-  background-color: var(--content-alt-bg-color) !important;
+  background-color: var(--content-alt-bg-color, var(--content-alt-bg-color-default)) !important;
 }
 
 .pink-bgcolor {

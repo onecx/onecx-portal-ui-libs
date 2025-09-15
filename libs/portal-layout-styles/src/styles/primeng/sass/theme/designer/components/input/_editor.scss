@@ -8,41 +8,41 @@
       border: var(--panel-header-border);
 
       .ql-stroke {
-        stroke: var(--text-secondary-color);
+        stroke: var(--text-secondary-color, var(--text-secondary-color-default));
       }
 
       .ql-fill {
-        fill: var(--text-secondary-color);
+        fill: var(--text-secondary-color, var(--text-secondary-color-default));
       }
 
       .ql-picker {
         .ql-picker-label {
           border: 0 none;
-          color: var(--text-secondary-color);
+          color: var(--text-secondary-color, var(--text-secondary-color-default));
 
           &:hover {
-            color: var(--text-color);
+            color: var(--text-color, var(--text-color-default));
 
             .ql-stroke {
-              stroke: var(--text-color);
+              stroke: var(--text-color, var(--text-color-default));
             }
 
             .ql-fill {
-              fill: var(--text-color);
+              fill: var(--text-color, var(--text-color-default));
             }
           }
         }
 
         &.ql-expanded {
           .ql-picker-label {
-            color: var(--text-color);
+            color: var(--text-color, var(--text-color-default));
 
             .ql-stroke {
-              stroke: var(--text-color);
+              stroke: var(--text-color, var(--text-color-default));
             }
 
             .ql-fill {
-              fill: var(--text-color);
+              fill: var(--text-color, var(--text-color-default));
             }
           }
 
@@ -54,10 +54,10 @@
             padding: var(--input-list-padding);
 
             .ql-picker-item {
-              color: var(--text-color);
+              color: var(--text-color, var(--text-color-default));
 
               &:hover {
-                color: var(--text-color);
+                color: var(--text-color, var(--text-color-default));
                 background: var(--input-list-item-hover-bg);
               }
             }
@@ -91,32 +91,32 @@
 
   .ql-snow.ql-toolbar button:hover,
   .ql-snow.ql-toolbar button:focus {
-    color: var(--text-color);
+    color: var(--text-color, var(--text-color-default));
 
     .ql-stroke {
-      stroke: var(--text-color);
+      stroke: var(--text-color, var(--text-color-default));
     }
 
     .ql-fill {
-      fill: var(--text-color);
+      fill: var(--text-color, var(--text-color-default));
     }
   }
 
   .ql-snow.ql-toolbar button.ql-active,
   .ql-snow.ql-toolbar .ql-picker-label.ql-active,
   .ql-snow.ql-toolbar .ql-picker-item.ql-selected {
-    color: var(--primary-color);
+    color: var(--primary-color, var(--primary-color-default));
 
     .ql-stroke {
-      stroke: var(--primary-color);
+      stroke: var(--primary-color, var(--primary-color-default));
     }
 
     .ql-fill {
-      fill: var(--primary-color);
+      fill: var(--primary-color, var(--primary-color-default));
     }
 
     .ql-picker-label {
-      color: var(--primary-color);
+      color: var(--primary-color, var(--primary-color-default));
     }
   }
 }

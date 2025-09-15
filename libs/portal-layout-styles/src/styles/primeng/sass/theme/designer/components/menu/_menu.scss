@@ -1,7 +1,7 @@
 .p-menu {
   padding: var(--vertical-menu-padding);
   background: var(--menu-bg);
-  color: var(--text-color);
+  color: var(--text-color, var(--text-color-default));
   border: var(--menu-border);
   border-radius: var(--border-radius);
   width: var(--menu-width);
@@ -19,7 +19,7 @@
   .p-submenu-header {
     margin: var(--submenu-header-margin);
     padding: var(--submenu-header-padding);
-    color: var(--text-secondary-color);
+    color: var(--text-secondary-color, var(--text-secondary-color-default));
     background: var(--submenu-header-bg);
     font-weight: var(--submenu-header-font-weight);
     border-top-right-radius: var(--submenu-header-border-radius);
