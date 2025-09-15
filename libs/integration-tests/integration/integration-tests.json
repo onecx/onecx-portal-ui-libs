@@ -1,0 +1,10 @@
+{
+  "$schema": "../src/lib/model/integration-tests.schema.json",
+  "platformConfig": {
+    "importData": true,
+    "enableLogging": true,
+    "hearthbeat": {
+      "enabled": true
+    }
+  }
+}

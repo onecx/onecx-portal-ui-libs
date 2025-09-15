@@ -1,0 +1,9 @@
+{
+    "name": "onecx-parameter-ui",
+    "permissions": [
+        {"resource": "PARAMETER", "action": "DELETE"},
+        {"resource": "PARAMETER", "action": "EDIT"},
+        {"resource": "PARAMETER", "action": "SEARCH"},
+        {"resource": "PARAMETER", "action": "VIEW"}
+    ]
+}

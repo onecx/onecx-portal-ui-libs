@@ -1,0 +1,11 @@
+{
+    "name": "onecx-user-profile-bff",
+    "permissions": [
+        {"resource": "userProfile", "action": "delete"},
+        {"resource": "userProfile", "action": "read"},
+        {"resource": "userProfile", "action": "write"},
+        {"resource": "userProfile", "action": "adminRead"},
+        {"resource": "userProfile", "action": "adminWrite"},
+        {"resource": "userProfile", "action": "adminDelete"}
+    ]
+}

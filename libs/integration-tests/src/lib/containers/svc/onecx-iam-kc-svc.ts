@@ -1,5 +1,5 @@
 import { StartedOnecxKeycloakContainer } from '../core/onecx-keycloak'
-import { StartedSvcContainer, SvcContainer } from '../abstract/onecx-svc'
+import { StartedSvcContainer, SvcContainer } from '../basic/onecx-svc'
 
 export class IamKcContainer extends SvcContainer {
   constructor(image: string, keycloakContainer: StartedOnecxKeycloakContainer) {

@@ -1,0 +1,15 @@
+{
+  "appVersion": "xxx",
+  "appName": "onecx-product-store-ui",
+  "description": "onecx-product-store-ui",
+  "remoteBaseUrl": "http://onecx-product-store-ui/",
+  "remoteEntry": "http://onecx-product-store-ui/remoteEntry.js",
+  "note": "Imported MFE",
+  "exposedModule": "./OneCXProductStoreModule",
+  "technology": "WEBCOMPONENTMODULE",
+  "remoteName": "onecx-product-store",
+  "tagName": "ocx-product-store-component",
+  "type": "MODULE",
+  "deprecated": false,
+  "undeployed": false
+}
