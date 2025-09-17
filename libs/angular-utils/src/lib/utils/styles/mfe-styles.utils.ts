@@ -12,6 +12,7 @@ import {
   replaceStyleContent,
   createScopedCss,
   fetchAppCss,
+  addOriginalCssToStyleElement,
 } from './styles.utils'
 
 /**
@@ -46,6 +47,7 @@ export async function updateStylesForMfeChange(
   // Create new style element if none was found for the current MFE
   const styleElement = createStyleUsedByMfe(scopeId)
   const css = await fetchAppCss(httpClient, mfeUrl)
+  addOriginalCssToStyleElement(styleElement, css)
   if (!css) {
     removeMfeUsageFromStyle(styleElement)
     if (getStyleUsageCount(styleElement) === 0) {
