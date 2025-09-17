@@ -17,17 +17,43 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: coverage-reports
+        # Allow workflow to continue even if no coverage reports exist
+        # This prevents the entire workflow from failing due to missing artifacts
+        continue-on-error: true
 
       - name: Find affected lib coverage directories
         id: set-matrix
+        # This step creates a matrix of libraries that have coverage reports
+        # If no reports exist, creates an empty matrix to allow graceful workflow completion
         run: |
-          paths=$(find reports -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)
-          coverage_reports=$(printf '%s\n' $paths | jq -R . | jq -s -c)
-          echo "matrix=$coverage_reports" >> $GITHUB_OUTPUT
+          # Check if reports directory exists
+          if [ ! -d "reports" ]; then
+            echo "No reports directory found. Setting empty matrix."
+            echo "matrix=[]" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Find all coverage report directories
+          paths=$(find reports -maxdepth 1 -mindepth 1 -type d -exec basename {} \; 2>/dev/null || true)
+
+          if [ -z "$paths" ]; then
+            echo "No coverage report directories found. Setting empty matrix."
+            echo "matrix=[]" >> $GITHUB_OUTPUT
+          else
+            coverage_reports=$(printf '%s\n' $paths | jq -R . | jq -s -c)
+            echo "Found coverage reports: $coverage_reports"
+            echo "matrix=$coverage_reports" >> $GITHUB_OUTPUT
+          fi
 
   sonar-scan:
     needs: set-matrix
     runs-on: ubuntu-latest
+
+    # Only run this job if:
+    # - There are libraries to analyze (non-empty matrix)
+    if: >
+      needs.set-matrix.outputs.matrix != '[]' &&
+      needs.set-matrix.outputs.matrix != ''
 
     strategy:
       fail-fast: false
@@ -59,12 +85,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_URL: 'https://sonarcloud.io'
         with:
           projectBaseDir: libs/${{ matrix.path }}/
           args: >
             -Dsonar.projectKey=${{ github.repository_owner }}_${{ github.event.repository.name }}_${{ matrix.path }}
-            -Dsonar.host.url=$SONAR_URL
+            -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.organization=${{ github.repository_owner }}
             -Dsonar.scm.disabled=true
             -Dsonar.sourceEncoding=UTF-8
