@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http'
 import {
+  addOriginalCssToStyleElement,
   addStyleToHead,
   createScopedCss,
   dataAppStylesKey,
@@ -45,6 +46,7 @@ export async function updateStylesForRcCreation(
   // Create new style element if none was found for the component
   const styleElement = createStyleUsedByRc(scopeId, slotName)
   const css = await fetchAppCss(httpClient, rcUrl)
+  addOriginalCssToStyleElement(styleElement, css)
   if (!css) {
     removeRcUsageFromStyle(styleElement, slotName)
     if (getStyleUsageCount(styleElement) === 0) {
