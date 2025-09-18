@@ -3,16 +3,14 @@ import { Component, HostListener, OnDestroy, OnInit, inject } from '@angular/cor
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import {
   AppStateService,
-  Capability,
   Message,
   PortalMessageService,
-  ShellCapabilityService,
   ThemeService,
   UserService,
 } from '@onecx/angular-integration-interface'
 import { MessageService } from 'primeng/api'
 import { PrimeNG } from 'primeng/config'
-import { filter, first, from, map, mergeMap, Observable, of, startWith } from 'rxjs'
+import { filter, first, from, mergeMap, Observable, of } from 'rxjs'
 import { SHOW_CONTENT_PROVIDER, ShowContentProvider } from '../../shell-interface/show-content-provider'
 import {
   WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER,
