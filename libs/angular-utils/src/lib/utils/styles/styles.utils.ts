@@ -116,18 +116,24 @@ export function replaceRootAndHtmlWithScope(css: string): string {
  */
 export function createScopedCss(css: string, scopeId: string): string {
   const isScopeSupported = isCssScopeRuleSupported()
+  const cssWithoutThemeDefaults = removeThemeDefault(css)
   // Apply styles to all v6 elements and the MFE
   return isScopeSupported
     ? `
 @scope([${dataStyleIdAttribute}="${scopeId}"]:is([${dataNoPortalLayoutStylesAttribute}], [${dataMfeElementAttribute}])) to ([${dataStyleIsolationAttribute}]) {
-  ${replaceRootAndHtmlWithScope(css)}
+  ${replaceRootAndHtmlWithScope(cssWithoutThemeDefaults)}
     }
 `
     : `
 @supports (@scope([${dataStyleIdAttribute}="${scopeId}"]:is([${dataNoPortalLayoutStylesAttribute}], [${dataMfeElementAttribute}])) to ([${dataStyleIsolationAttribute}])) {
-  ${replaceRootAndHtmlWithScope(css)}
+  ${replaceRootAndHtmlWithScope(cssWithoutThemeDefaults)}
     }
 `
+}
+
+function removeThemeDefault(css: string): string {
+  const themeDefaultRegex = /:root\s*{[^}]*--primary-color\s*:[^;}]+;[^}]*}/g
+  return css.replace(themeDefaultRegex, '')
 }
 
 /**
