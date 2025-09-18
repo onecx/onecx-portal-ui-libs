@@ -18,15 +18,6 @@ export class ShellCapabilityService {
     window['onecx-shell-capabilities'] = capabilities
   }
 
-  static addCapability(capability: Capability): void {
-    if (!window['onecx-shell-capabilities']) {
-      window['onecx-shell-capabilities'] = []
-    }
-    if (!window['onecx-shell-capabilities'].includes(capability)) {
-      window['onecx-shell-capabilities'].push(capability)
-    }
-  }
-
   hasCapability(capability: Capability): boolean {
     return window['onecx-shell-capabilities']?.includes(capability) ?? false
   }

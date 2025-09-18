@@ -43,8 +43,6 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
   private slotService = inject(SlotService)
   private readonly staticMenuVisibleTopic$ = new Topic<{ isVisible: boolean }>('staticMenuVisible', 1)
 
-  readonly staticMenuVisible$: Observable<boolean>
-
   menuButtonTitle = ''
   menuActive = true
   activeTopbarItem: string | undefined
@@ -63,7 +61,6 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
   isFooterComponentDefined$: Observable<boolean>
 
   constructor() {
-    ShellCapabilityService.addCapability(Capability.PUBLISH_STATIC_MENU_VISIBILITY)
     this.portalMessageService.message$.subscribe((message: Message) => this.messageService.add(message))
     this.userService.profile$.pipe(untilDestroyed(this)).subscribe((profile) => {
       this.menuMode =
@@ -111,12 +108,6 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
 
     this.isVerticalMenuComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.verticalMenuSlotName)
     this.isFooterComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.footerSlotName)
-
-    this.staticMenuVisible$ = this.staticMenuVisibleTopic$.pipe(
-      map((state) => state.isVisible && !this.isHorizontalMenuMode()),
-      startWith(true),
-      untilDestroyed(this)
-    )
   }
 
   ngOnInit() {
@@ -150,15 +141,15 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
     const mobileBreakpointVar = getComputedStyle(document.documentElement).getPropertyValue('--mobile-break-point')
     const isMobile = window.matchMedia(`(max-width: ${mobileBreakpointVar})`).matches
     // auto show sidebar when changing to desktop, hide when changing to mobile
-    if (isMobile !== this.isMobile) {
-      this.menuActive = !isMobile
-      this.staticMenuVisibleTopic$.publish({ isVisible: !isMobile })
-    }
     this.isMobile = isMobile
   }
 
   isHorizontalMenuMode() {
     return this.menuMode === 'horizontal' && !this.isMobile
+  }
+
+  isStaticalMenuVisible() {
+    return this.menuActive && !this.isHorizontalMenuMode()
   }
 
   isHorizontalMenuVisible() {
