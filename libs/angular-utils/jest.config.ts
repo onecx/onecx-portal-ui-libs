@@ -2,8 +2,10 @@
 import { createReportsConfig } from '../../jest-config-factory'
 
 export default {
+  ...createReportsConfig('angular-utils'),
   displayName: 'angular-utils',
   preset: '../../jest.preset.js',
+  testMatch: ['<rootDir>/src/lib/**/*.spec.ts', '<rootDir>/guards/**/*.spec.ts'],
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   transform: {
     '^.+\\.(mjs|js|html)$': [
@@ -14,23 +16,23 @@ export default {
       },
     ],
     '^.+\\.tsx?$': [
-       'jest-preset-angular',
+      'jest-preset-angular',
       {
         tsconfig: '<rootDir>/tsconfig.spec.json',
-        stringifyContentPathRegex: '\\.(html|svg)$', 
+        stringifyContentPathRegex: '\\.(html|svg)$',
         diagnostics: {
-          ignoreCodes: [1343]
+          ignoreCodes: [1343],
         },
         astTransformers: {
           before: [
             {
               path: 'ts-jest-mock-import-meta',
-              options: { metaObjectReplacement: { url: 'https://www.url.com' } }
-            }
-          ]
-        }
-      }
-    ]
+              options: { metaObjectReplacement: { url: 'https://www.url.com' } },
+            },
+          ],
+        },
+      },
+    ],
   },
   transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$)'],
   snapshotSerializers: [
@@ -38,5 +40,4 @@ export default {
     'jest-preset-angular/build/serializers/ng-snapshot',
     'jest-preset-angular/build/serializers/html-comment',
   ],
-  ...createReportsConfig('angular-utils'),
 }
