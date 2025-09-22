@@ -17,7 +17,6 @@ import {
   WorkspaceConfigBffService,
 } from '../../shell-interface/workspace-config-bff-service-provider'
 import { SlotService } from '@onecx/angular-remote-components'
-import { Topic } from '@onecx/accelerator'
 import { StaticMenuVisibleTopic } from '@onecx/integration-interface'
 
 @Component({

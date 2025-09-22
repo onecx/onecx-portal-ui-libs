@@ -15,8 +15,8 @@
     "@ngx-translate/core": "^16.0.0",
     "primeng": "^19.0.0",
     "@nx/devkit": "^20.3.0",
-    "@onecx/accelerator": "6.8.1",
-    "@onecx/nx-migration-utils": "^6.8.1"
+    "@onecx/nx-migration-utils": "^6.8.1",
+    "@onecx/integration-interface": "6.8.1"
   },
   "dependencies": {},
   "type": "commonjs",
