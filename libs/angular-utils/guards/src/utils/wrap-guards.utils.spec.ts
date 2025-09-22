@@ -7,7 +7,7 @@ import {
   CanDeactivateFn,
   RouterStateSnapshot,
 } from '@angular/router'
-import { Injector, runInInjectionContext, Type } from '@angular/core'
+import { Component, Injector, runInInjectionContext, Type } from '@angular/core'
 import { ActivateGuardsWrapper } from './activate-guards-wrapper.utils'
 import { DeactivateGuardsWrapper } from './deactivate-guards-wrapper.utils'
 
@@ -294,27 +294,41 @@ describe('wrapGuards', () => {
     const wrappedGuard = jest.fn()
     ;(wrappedGuard as any)[WRAPPED_GUARD_TAG] = true
     mockRoute.canActivate = [wrappedGuard, mockGuard]
+    mockRoute.canDeactivate = [wrappedGuard, mockGuard]
+    mockRoute.canActivateChild = [wrappedGuard, mockGuard]
 
     wrapGuards(mockRoute)
 
     expect(mockRoute.canActivate).toHaveLength(1)
     expect((mockRoute.canActivate![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+    expect(mockRoute.canDeactivate).toHaveLength(1)
+    expect((mockRoute.canDeactivate![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+    expect(mockRoute.canActivateChild).toHaveLength(1)
+    expect((mockRoute.canActivateChild![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
   })
 
   it('should wrap guards based on saved state', () => {
+    // Setup
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
     const mockGuard = jest.fn()
 
+    // Setup 1 wrapped guard
     mockRoute.canActivate = [mockGuard]
+    mockRoute.canDeactivate = [mockGuard]
+    mockRoute.canActivateChild = [mockGuard]
 
     wrapGuards(mockRoute)
 
     expect(mockRoute.canActivate).toHaveLength(1)
     expect((mockRoute.canActivate![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+    expect(mockRoute.canDeactivate).toHaveLength(1)
+    expect((mockRoute.canDeactivate![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+    expect(mockRoute.canActivateChild).toHaveLength(1)
+    expect((mockRoute.canActivateChild![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
 
     const injector = TestBed.inject(Injector)
-    const wrapper = mockRoute.canActivate![0] as CanActivateFn
+    let wrapper: any = mockRoute.canActivate![0] as CanActivateFn
     runInInjectionContext(injector, () => {
       wrapper({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot)
     })
@@ -322,19 +336,153 @@ describe('wrapGuards', () => {
     expect(consoleSpy).toHaveBeenCalledWith('Wrapped amount:', 1)
     consoleSpy.mockClear()
 
+    wrapper = mockRoute.canDeactivate![0] as CanDeactivateFn<any>
+    runInInjectionContext(injector, () => {
+      wrapper({} as Component, {} as ActivatedRouteSnapshot, {} as ActivatedRouteSnapshot, {} as RouterStateSnapshot)
+    })
+
+    expect(consoleSpy).toHaveBeenCalledWith('Wrapped amount:', 1)
+    consoleSpy.mockClear()
+
+    wrapper = mockRoute.canActivateChild![0] as CanActivateFn
+    runInInjectionContext(injector, () => {
+      wrapper({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot)
+    })
+
+    expect(consoleSpy).toHaveBeenCalledWith('Wrapped amount:', 1)
+    consoleSpy.mockClear()
+
+    // Add 2nd guard dynamically
     const newMockGuard = jest.fn()
     mockRoute.canActivate.push(newMockGuard)
+    mockRoute.canDeactivate.push(newMockGuard)
+    mockRoute.canActivateChild.push(newMockGuard)
 
     wrapGuards(mockRoute)
 
     expect(mockRoute.canActivate).toHaveLength(1)
     expect((mockRoute.canActivate![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+    expect(mockRoute.canDeactivate).toHaveLength(1)
+    expect((mockRoute.canDeactivate![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+    expect(mockRoute.canActivateChild).toHaveLength(1)
+    expect((mockRoute.canActivateChild![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
 
-    const wrapperAfterAddition = mockRoute.canActivate![0] as CanActivateFn
+    let wrapperAfterAddition: any = mockRoute.canActivate![0] as CanActivateFn
     runInInjectionContext(injector, () => {
       wrapperAfterAddition({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot)
     })
 
     expect(consoleSpy).toHaveBeenCalledWith('Wrapped amount:', 2)
+    consoleSpy.mockClear()
+
+    wrapperAfterAddition = mockRoute.canDeactivate![0] as CanDeactivateFn<any>
+    runInInjectionContext(injector, () => {
+      wrapperAfterAddition(
+        {} as Component,
+        {} as ActivatedRouteSnapshot,
+        {} as ActivatedRouteSnapshot,
+        {} as RouterStateSnapshot
+      )
+    })
+
+    expect(consoleSpy).toHaveBeenCalledWith('Wrapped amount:', 2)
+    consoleSpy.mockClear()
+
+    wrapperAfterAddition = mockRoute.canActivateChild![0] as CanActivateFn
+    runInInjectionContext(injector, () => {
+      wrapperAfterAddition({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot)
+    })
+
+    expect(consoleSpy).toHaveBeenCalledWith('Wrapped amount:', 2)
+    consoleSpy.mockClear()
+  })
+
+  it('should not duplicate guards in saved state', () => {
+    // Setup
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
+    const mockGuard = jest.fn()
+
+    // Setup 1 wrapped guard
+    mockRoute.canActivate = [mockGuard]
+    mockRoute.canDeactivate = [mockGuard]
+    mockRoute.canActivateChild = [mockGuard]
+
+    wrapGuards(mockRoute)
+
+    expect(mockRoute.canActivate).toHaveLength(1)
+    expect((mockRoute.canActivate![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+    expect(mockRoute.canDeactivate).toHaveLength(1)
+    expect((mockRoute.canDeactivate![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+    expect(mockRoute.canActivateChild).toHaveLength(1)
+    expect((mockRoute.canActivateChild![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+
+    const injector = TestBed.inject(Injector)
+    let wrapper: any = mockRoute.canActivate![0] as CanActivateFn
+    runInInjectionContext(injector, () => {
+      wrapper({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot)
+    })
+
+    expect(consoleSpy).toHaveBeenCalledWith('Wrapped amount:', 1)
+    consoleSpy.mockClear()
+
+    wrapper = mockRoute.canDeactivate![0] as CanDeactivateFn<any>
+    runInInjectionContext(injector, () => {
+      wrapper({} as Component, {} as ActivatedRouteSnapshot, {} as ActivatedRouteSnapshot, {} as RouterStateSnapshot)
+    })
+
+    expect(consoleSpy).toHaveBeenCalledWith('Wrapped amount:', 1)
+    consoleSpy.mockClear()
+
+    wrapper = mockRoute.canActivateChild![0] as CanActivateFn
+    runInInjectionContext(injector, () => {
+      wrapper({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot)
+    })
+
+    expect(consoleSpy).toHaveBeenCalledWith('Wrapped amount:', 1)
+    consoleSpy.mockClear()
+
+    // Add the same guard again
+    mockRoute.canActivate.push(mockGuard)
+    mockRoute.canDeactivate.push(mockGuard)
+    mockRoute.canActivateChild.push(mockGuard)
+
+    wrapGuards(mockRoute)
+
+    expect(mockRoute.canActivate).toHaveLength(1)
+    expect((mockRoute.canActivate![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+    expect(mockRoute.canDeactivate).toHaveLength(1)
+    expect((mockRoute.canDeactivate![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+    expect(mockRoute.canActivateChild).toHaveLength(1)
+    expect((mockRoute.canActivateChild![0] as any)[WRAPPED_GUARD_TAG]).toBe(true)
+
+    let wrapperAfterAddition: any = mockRoute.canActivate![0] as CanActivateFn
+    runInInjectionContext(injector, () => {
+      wrapperAfterAddition({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot)
+    })
+
+    expect(consoleSpy).toHaveBeenCalledWith('Wrapped amount:', 1)
+    consoleSpy.mockClear()
+
+    wrapperAfterAddition = mockRoute.canDeactivate![0] as CanDeactivateFn<any>
+    runInInjectionContext(injector, () => {
+      wrapperAfterAddition(
+        {} as Component,
+        {} as ActivatedRouteSnapshot,
+        {} as ActivatedRouteSnapshot,
+        {} as RouterStateSnapshot
+      )
+    })
+
+    expect(consoleSpy).toHaveBeenCalledWith('Wrapped amount:', 1)
+    consoleSpy.mockClear()
+
+    wrapperAfterAddition = mockRoute.canActivateChild![0] as CanActivateFn
+    runInInjectionContext(injector, () => {
+      wrapperAfterAddition({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot)
+    })
+
+    expect(consoleSpy).toHaveBeenCalledWith('Wrapped amount:', 1)
+    consoleSpy.mockClear()
   })
 })

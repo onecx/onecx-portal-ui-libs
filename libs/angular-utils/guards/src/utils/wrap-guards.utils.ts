@@ -177,7 +177,9 @@ function saveCanActivateGuards(route: OnecxRoute): void {
 
   if (route.canActivate) {
     route.canActivateGuardList = route.canActivateGuardList.concat(
-      route.canActivate.filter((guard) => !isWrapper(guard))
+      route.canActivate.filter(
+        (guard) => !isWrapper(guard) && !isSaved<CanActivateFn | Type<CanActivate>>(route.canActivateGuardList!, guard)
+      )
     )
   }
 }
@@ -191,7 +193,11 @@ function saveCanDeactivateGuards(route: OnecxRoute): void {
 
   if (route.canDeactivate) {
     route.canDeactivateGuardList = route.canDeactivateGuardList.concat(
-      route.canDeactivate.filter((guard) => !isWrapper(guard))
+      route.canDeactivate.filter(
+        (guard) =>
+          !isWrapper(guard) &&
+          !isSaved<CanDeactivateFn<any> | Type<CanDeactivate<any>>>(route.canDeactivateGuardList!, guard)
+      )
     )
   }
 }
@@ -205,7 +211,14 @@ function saveCanActivateChildGuards(route: OnecxRoute): void {
 
   if (route.canActivateChild) {
     route.canActivateChildGuardList = route.canActivateChildGuardList.concat(
-      route.canActivateChild.filter((guard) => !isWrapper(guard))
+      route.canActivateChild.filter(
+        (guard) =>
+          !isWrapper(guard) && !isSaved<CanActivateFn | Type<CanActivate>>(route.canActivateChildGuardList!, guard)
+      )
     )
   }
+}
+
+function isSaved<T>(list: Array<T>, guard: T) {
+  return list.some((item) => item === guard)
 }
