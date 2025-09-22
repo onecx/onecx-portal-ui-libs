@@ -4,6 +4,10 @@ import { ActivateGuardsWrapper } from './activate-guards-wrapper.utils'
 import { DeactivateGuardsWrapper } from './deactivate-guards-wrapper.utils'
 import { logGuardsDebug } from './guards-utils.utils'
 
+/**
+ * Extended Route interface to hold original guards.
+ * This interface extends the Angular Route interface to include lists for original guards.
+ */
 export interface OnecxRoute extends Route {
   canActivateGuardList?: Array<CanActivateFn | Type<CanActivate>>
   canDeactivateGuardList?: Array<CanDeactivateFn<any> | Type<CanDeactivate<any>>>
