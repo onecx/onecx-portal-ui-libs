@@ -5,7 +5,6 @@ import {
   CanActivate,
   CanActivateFn,
   CanDeactivateFn,
-  Route,
   RouterStateSnapshot,
 } from '@angular/router'
 import { Injector, runInInjectionContext, Type } from '@angular/core'
