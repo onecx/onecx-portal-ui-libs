@@ -15,7 +15,7 @@ import {
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { dataNoPortalLayoutStylesKey } from '@onecx/angular-utils'
-import { WebcomponentConnnector } from './webcomponent-connector.utils'
+import { WebcomponentConnector } from './webcomponent-connector.utils'
 
 /**
  * Implementation inspired by @angular-architects/module-federation-plugin https://github.com/angular-architects/module-federation-plugin/blob/main/libs/mf-tools/src/lib/web-components/bootstrap-utils.ts
@@ -81,7 +81,7 @@ function createEntrypoint(
   entrypointType: EntrypointType,
   options?: AppOptions
 ) {
-  const webcomponentConnector = new WebcomponentConnnector(injector, entrypointType)
+  const webcomponentConnector = new WebcomponentConnector(injector, entrypointType)
   const originalNgInit = component.prototype.ngOnInit
 
   component.prototype.ngOnInit = function () {
