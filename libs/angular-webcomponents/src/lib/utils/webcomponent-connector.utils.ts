@@ -137,7 +137,6 @@ export class WebcomponentConnector {
    * This will ensure that guards are gathered when the resolve starts.
    * It checks the GuardsNavigationState to determine the state of the router.
    * @param router - The router to gather guards for.
-   * @param guardsNavigationStateController - The controller to manage the GuardsNavigationState.
    */
   private gatherGuardsOnGuardsCheckStart(router: Router): Subscription {
     return router.events
