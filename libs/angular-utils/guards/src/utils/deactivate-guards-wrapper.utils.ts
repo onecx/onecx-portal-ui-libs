@@ -104,7 +104,6 @@ export class DeactivateGuardsWrapper {
     guards: Array<CanDeactivateFn<any> | Type<CanDeactivate<any>>>,
     combineFn: (results: GuardResult[]) => T
   ) {
-    // TODO: Remove?
     if (!currentRoute.routeConfig) {
       logGuardsDebug('No route configuration found for canActivate guard.')
       return Promise.resolve(true as T)
