@@ -82,7 +82,7 @@ In GUARD_CHECK mode, the router simulates a navigation to trigger guard checks w
 But how is the fake navigation triggered?
 
 === Triggering Fake Navigation
-The fake navigation is triggered during the `GuardsCheckStart` event by the application that want to navigate. It is done by utilizing the concept of gatherer that based on the `Topic` system communicate with other applications to gather information.
+The fake navigation is triggered during the `GuardsCheckStart` event by the application that want to navigate. It is done by utilizing the concept of gatherer that based on the xref:../topics/overview.adoc[Topic system] communicate with other applications to gather information.
 
 Each active application on the page registers its own GuardsGatherer instance. When a navigation is requested, the gatherer for the requesting application initiates the flow by publishing a request to gather guards results for the requested route. This request is then picked up by the gatherers of other applications, which perform fake navigation to the requested route to evaluate their guards.
 
