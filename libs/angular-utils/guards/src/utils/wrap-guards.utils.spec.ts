@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing'
-import { wrapGuards, WRAPPED_GUARD_TAG } from './wrap-guards.utils'
+import { OnecxRoute, wrapGuards, WRAPPED_GUARD_TAG } from './wrap-guards.utils'
 import {
   ActivatedRouteSnapshot,
   CanActivate,
@@ -35,7 +35,7 @@ class MockGuardsWrapper {
 }
 
 describe('wrapGuards', () => {
-  let mockRoute: Route
+  let mockRoute: OnecxRoute
 
   beforeEach(() => {
     mockRoute = {

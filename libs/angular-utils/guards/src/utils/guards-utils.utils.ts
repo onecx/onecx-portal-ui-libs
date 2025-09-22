@@ -21,7 +21,7 @@ export function logGuardsDebug(...args: any[]): void {
  * Immediately returns true to indicate that the operation was successful.
  */
 export function executeRouterSyncGuard(): boolean {
-  console.log('Was RouterSync, returning true.')
+  logGuardsDebug('Was RouterSync, returning true.')
 
   // Important to return true because it was already agreed to perform navigation in the application
   return true
@@ -37,6 +37,9 @@ export function combineToGuardResult(results: GuardResult[]): GuardResult {
     return false
   }
 
+  // Check for UrlTree or RedirectCommand
+  // If any guard returned this, we need to return it to perform the redirection
+  // We return the first one found
   const redirectResult = results.find((result) => result instanceof UrlTree || result instanceof RedirectCommand)
   if (redirectResult) {
     return redirectResult

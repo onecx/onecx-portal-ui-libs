@@ -3,7 +3,7 @@
  * Used to check if the guard checks are requested in the navigation state by different application.
  * This is used to perform guard checks without navigating.
  */
-export interface GuardsNavigationState extends Record<string, any> {
+export interface GuardsNavigationState {
   [IS_ROUTER_SYNC]?: boolean
   [IS_INITIAL_ROUTER_SYNC]?: boolean
   [GUARD_CHECK]?: boolean
