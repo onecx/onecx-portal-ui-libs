@@ -1,3 +1,19 @@
+## [5.49.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.48.4...v5.49.0) (2025-09-23)
+
+### Features
+
+* add v5 neccessary changes ([#934](https://github.com/onecx/onecx-portal-ui-libs/issues/934)) ([4731084](https://github.com/onecx/onecx-portal-ui-libs/commit/4731084aea60489565612175a46f733eab26ab00))
+
+### Bug Fixes
+
+* add original css to loaded styles ([#947](https://github.com/onecx/onecx-portal-ui-libs/issues/947)) ([ab640fe](https://github.com/onecx/onecx-portal-ui-libs/commit/ab640fe334de33b0832363e68b072c0585475d6a))
+* **ci:** temporarily disable dependabot auto merge ([#954](https://github.com/onecx/onecx-portal-ui-libs/issues/954)) ([0808031](https://github.com/onecx/onecx-portal-ui-libs/commit/080803189a09db8d4b991bf77940f9f1a7467fa3))
+* remove SONAR_URL variable ([#922](https://github.com/onecx/onecx-portal-ui-libs/issues/922)) ([18cb247](https://github.com/onecx/onecx-portal-ui-libs/commit/18cb24752116f3dfe9efb9b939d59cfbaaa1144a))
+
+### Chores
+
+* **deps-dev:** bump msw from 2.10.5 to 2.11.2 ([#939](https://github.com/onecx/onecx-portal-ui-libs/issues/939)) ([8d7cade](https://github.com/onecx/onecx-portal-ui-libs/commit/8d7cade9b4b15981bbf3fa4182b09c464378240b))
+
 ## [5.48.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.48.3...v5.48.4) (2025-09-15)
 
 ### Bug Fixes
