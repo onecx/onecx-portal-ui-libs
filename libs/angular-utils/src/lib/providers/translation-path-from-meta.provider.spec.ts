@@ -48,7 +48,7 @@ describe('provideTranslationPathFromMeta', () => {
     mockIsTest.mockReturnValue(false);
     expect(() => {
       provideTranslationPathFromMeta('file:///some/local/file.js', 'assets/i18n/');
-    }).toThrow('Cannot construct translation path from local file path. Please check whether the webpack configuration for importMeta is correct: https://webpack.js.org/configuration/module/#moduleparserjavascriptimportmeta.');
+    }).toThrow('Cannot construct translation path from local file path. Please check whether the webpack configuration for importMeta is correct: https://webpack.js.org/configuration/module/#moduleparserjavascriptimportmeta');
   });
 
   it('should add trailing slash if path does not end with slash', () => {

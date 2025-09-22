@@ -25,7 +25,7 @@ function constructTranslationPathInTestEnv(path: string): Provider {
 
 function constructTranslationPath(url: string | undefined, path: string): Provider {
   if(!url || url.startsWith('file://')) {
-    throw new Error('Cannot construct translation path from local file path. Please check whether the webpack configuration for importMeta is correct: https://webpack.js.org/configuration/module/#moduleparserjavascriptimportmeta.');
+    throw new Error('Cannot construct translation path from local file path. Please check whether the webpack configuration for importMeta is correct: https://webpack.js.org/configuration/module/#moduleparserjavascriptimportmeta');
   }
   const urlWithoutFileName = url.replace(/\/[^/]*$/, '');
   const translationPath = Location.joinWithSlash(urlWithoutFileName, path) + (path.endsWith('/') ? '' : '/');
