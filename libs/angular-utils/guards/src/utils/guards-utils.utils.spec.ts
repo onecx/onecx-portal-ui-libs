@@ -46,16 +46,18 @@ describe('executeRouterSyncGuard', () => {
 
   beforeEach(() => {
     console.log = jest.fn()
+    window['@onecx/angular-utils']!.guards!.debug = true
   })
 
   afterEach(() => {
     console.log = originalConsoleLog
+    window['@onecx/angular-utils']!.guards!.debug = false
   })
 
   it('should log a message and return true', () => {
     const result = executeRouterSyncGuard()
 
-    expect(console.log).toHaveBeenCalledWith('Was RouterSync, returning true.')
+    expect(console.log).toHaveBeenCalledWith('Guards:', 'Was RouterSync, returning true.')
     expect(result).toBe(true)
   })
 })
