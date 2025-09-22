@@ -1,3 +1,16 @@
+## [6.8.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.8.0...v6.8.1) (2025-09-23)
+
+### Bug Fixes
+
+* add original css to created style tags ([#946](https://github.com/onecx/onecx-portal-ui-libs/issues/946)) ([5388958](https://github.com/onecx/onecx-portal-ui-libs/commit/53889586260a1f8c8cc45dc1451e1264228ff84e))
+* **ci:** temporarily disable dependabot auto merge ([#953](https://github.com/onecx/onecx-portal-ui-libs/issues/953)) ([5da891b](https://github.com/onecx/onecx-portal-ui-libs/commit/5da891b38439095cae692d1f6a522fc12c587cc7))
+* fix import-meta link in error message ([#952](https://github.com/onecx/onecx-portal-ui-libs/issues/952)) ([cf7d60d](https://github.com/onecx/onecx-portal-ui-libs/commit/cf7d60d0ac8a2ec586af02e1eea2bc0b9fa4c2cb))
+
+### Chores
+
+* **deps-dev:** bump @semantic-release/release-notes-generator ([#937](https://github.com/onecx/onecx-portal-ui-libs/issues/937)) ([ea454e3](https://github.com/onecx/onecx-portal-ui-libs/commit/ea454e3e7971871365c0e794eda13863605a03ac))
+* **deps-dev:** bump @swc/core from 1.12.14 to 1.13.5 ([#941](https://github.com/onecx/onecx-portal-ui-libs/issues/941)) ([8a4877c](https://github.com/onecx/onecx-portal-ui-libs/commit/8a4877c96fd7457036595b2ec5ec2ef172476473))
+
 ## [6.8.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.7.0...v6.8.0) (2025-09-10)
 
 ### Features
