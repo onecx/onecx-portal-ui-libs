@@ -64,6 +64,7 @@ export class Gatherer<Request, Response> {
     // Publish the request to the topic.
     // This will trigger the callback for all instances of gatherer.
     // Await is crucial here to ensure that promises are created before awaiting them.
+    // See Why Awaiting the Promise Works in dev-docs/topics/scheduling.adoc.
     const message = { id, request }
     await this.topic.publish(message)
     const promises = (window['@onecx/accelerator']?.gatherer?.promises?.[id] ?? []) as Promise<Response>[]
