@@ -18,6 +18,7 @@ import {
 } from '../../shell-interface/workspace-config-bff-service-provider'
 import { SlotService } from '@onecx/angular-remote-components'
 import { Topic } from '@onecx/accelerator'
+import { StaticMenuVisibleTopic } from '@onecx/integration-interface'
 
 @Component({
   standalone: false,
@@ -39,7 +40,7 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
     optional: true,
   })
   private slotService = inject(SlotService)
-  private readonly staticMenuVisibleTopic$ = new Topic<{ isVisible: boolean }>('staticMenuVisible', 1)
+  private readonly staticMenuVisibleTopic$ = new StaticMenuVisibleTopic()
 
   menuButtonTitle = ''
   menuActive = true
