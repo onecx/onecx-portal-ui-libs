@@ -1,8 +1,8 @@
-= Topic Scheduling Documentation
+= Topic Documentation
 
 == Overview
 
-The `Topic` system is a messaging framework designed to synchronize state across multiple instances using JavaScript's event-driven architecture. This document explains how the `Topic` system works, focusing on synchronization, message types, publishing, and JavaScript scheduling.
+The `Topic` system is a messaging framework designed to synchronize state across multiple instances using JavaScript's event-driven architecture. This document explains how the `Topic` system works, focusing on synchronization, message types, publishing, and JavaScript scheduling. The implementation of the `Topic` class can be found in the xref:../../libs/accelerator/src/lib/topic/topic.ts[Topic class source code].
 
 == How Topics Sync with Other Existing Topics
 
