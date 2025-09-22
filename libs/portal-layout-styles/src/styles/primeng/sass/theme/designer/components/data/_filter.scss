@@ -8,14 +8,14 @@
 .p-column-filter-menu-button {
   width: var(--action-icon-width);
   height: var(--action-icon-height);
-  color: var(--text-secondary-color);
+  color: var(--text-secondary-color, var(--text-secondary-color-default));
   border: var(--action-icon-border);
   background: var(--action-icon-bg);
   border-radius: var(--action-icon-border-radius);
   transition: var(--action-icon-transition);
 
   &:hover {
-    color: var(--text-secondary-color);
+    color: var(--text-secondary-color, var(--text-secondary-color-default));
     border-color: var(--action-icon-hover-border-color);
     background: var(--action-icon-hover-bg);
   }
@@ -23,13 +23,13 @@
   &.p-column-filter-menu-button-open,
   &.p-column-filter-menu-button-open:hover {
     background: var(--action-icon-hover-bg);
-    color: var(--text-secondary-color);
+    color: var(--text-secondary-color, var(--text-secondary-color-default));
   }
 
   &.p-column-filter-menu-button-active,
   &.p-column-filter-menu-button-active:hover {
     background: var(--highlight-bg);
-    color: var(--primary-color);
+    color: var(--primary-color, var(--primary-color-default));
   }
 
   &:focus {
@@ -40,14 +40,14 @@
 .p-column-filter-clear-button {
   width: var(--action-icon-width);
   height: var(--action-icon-height);
-  color: var(--text-secondary-color);
+  color: var(--text-secondary-color, var(--text-secondary-color-default));
   border: var(--action-icon-border);
   background: var(--action-icon-bg);
   border-radius: var(--action-icon-border-radius);
   transition: var(--action-icon-transition);
 
   &:hover {
-    color: var(--text-secondary-color);
+    color: var(--text-secondary-color, var(--text-secondary-color-default));
     border-color: var(--action-icon-hover-border-color);
     background: var(--action-icon-hover-bg);
   }
@@ -59,7 +59,7 @@
 
 .p-column-filter-overlay {
   background: var(--input-list-bg);
-  color: var(--text-color);
+  color: var(--text-color, var(--text-color-default));
   border: var(--input-overlay-border);
   border-radius: var(--border-radius);
   box-shadow: var(--input-overlay-shadow);
@@ -72,18 +72,18 @@
       margin: var(--input-list-item-margin);
       padding: var(--input-list-item-padding);
       border: var(--input-list-item-border);
-      color: var(--text-color);
+      color: var(--text-color, var(--text-color-default));
       background: var(--input-list-item-bg);
       transition: var(--list-item-transition);
       border-radius: var(--input-list-item-border-radius);
 
       &.p-highlight {
-        color: var(--primary-color);
+        color: var(--primary-color, var(--primary-color-default));
         background: var(--highlight-bg);
       }
 
       &:not(.p-highlight):not(.p-disabled):hover {
-        color: var(--text-color);
+        color: var(--text-color, var(--text-color-default));
         background: var(--input-list-item-hover-bg);
       }
 
@@ -103,7 +103,7 @@
   .p-column-filter-operator {
     padding: var(--input-list-header-padding);
     border-bottom: var(--input-list-header-border);
-    color: var(--text-color);
+    color: var(--text-color, var(--text-color-default));
     background: var(--input-list-header-bg);
     margin: var(--input-list-header-margin);
     border-top-right-radius: var(--border-radius);

@@ -4,19 +4,19 @@ html {
 }
 
 body {
-  font-family: var(--font-family);
-  font-size: var(--font-size);
-  color: var(--text-color);
+  font-family: var(--font-family, var(--font-family-default));
+  font-size: var(--font-size, var(--font-size-default));
+  color: var(--text-color, var(--text-color-default));
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   padding: 0;
   margin: 0;
-  background-color: var(--body-bg-color);
+  background-color: var(--body-bg-color, var(--body-bg-color-default));
   min-height: 100%;
 
   a {
     text-decoration: none;
-    color: var(--text-secondary-color);
+    color: var(--text-secondary-color, var(--text-secondary-color-default));
   }
 }
 
@@ -52,6 +52,6 @@ body {
   right: 2rem;
   bottom: 2rem;
   font-size: 2rem;
-  color: var(--text-secondary-color);
+  color: var(--text-secondary-color, var(--text-secondary-color-default));
   z-index: 999;
 }

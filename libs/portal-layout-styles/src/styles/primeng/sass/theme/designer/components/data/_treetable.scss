@@ -11,7 +11,7 @@
 
   .p-treetable-header {
     background: var(--table-header-bg);
-    color: var(--text-color);
+    color: var(--text-color, var(--text-color-default));
     border: var(--table-header-border);
     border-width: var(--table-header-border-width);
     padding: var(--table-header-padding);
@@ -20,7 +20,7 @@
 
   .p-treetable-footer {
     background: var(--table-footer-bg);
-    color: var(--text-color);
+    color: var(--text-color, var(--text-color-default));
     border: var(--table-footer-border);
     border-width: var(--table-footer-border-width);
     padding: var(--table-footer-padding);
@@ -33,7 +33,7 @@
     border: var(--table-header-cell-border);
     border-width: var(--table-header-cell-border-width);
     font-weight: var(--table-header-cell-font-weight);
-    color: var(--text-color);
+    color: var(--text-color, var(--text-color-default));
     background: var(--table-header-cell-bg);
     transition: var(--list-item-transition);
   }
@@ -44,7 +44,7 @@
     border: var(--table-footer-cell-border);
     border-width: var(--table-footer-cell-border-width);
     font-weight: var(--table-footer-cell-font-weight);
-    color: var(--text-color);
+    color: var(--text-color, var(--text-color-default));
     background: var(--table-footer-cell-bg);
   }
 
@@ -52,7 +52,7 @@
     outline-color: var(--focus-outline-color);
 
     .p-sortable-column-icon {
-      color: var(--text-secondary-color);
+      color: var(--text-secondary-color, var(--text-secondary-color-default));
       margin-left: var(--inline-spacing);
     }
 
@@ -61,26 +61,26 @@
       height: var(--table-sortable-column-badge-size);
       min-width: var(--table-sortable-column-badge-size);
       line-height: var(--table-sortable-column-badge-size);
-      color: var(--primary-color);
+      color: var(--primary-color, var(--primary-color-default));
       background: var(--highlight-bg);
       margin-left: var(--inline-spacing);
     }
 
     &:not(.p-highlight):hover {
       background: var(--table-header-cell-hover-bg);
-      color: var(--text-color);
+      color: var(--text-color, var(--text-color-default));
 
       .p-sortable-column-icon {
-        color: var(--text-secondary-color);
+        color: var(--text-secondary-color, var(--text-secondary-color-default));
       }
     }
 
     &.p-highlight {
       background: var(--table-header-cell-highlight-bg);
-      color: var(--text-color);
+      color: var(--text-color, var(--text-color-default));
 
       .p-sortable-column-icon {
-        color: var(--text-color);
+        color: var(--text-color, var(--text-color-default));
       }
     }
   }
@@ -88,7 +88,7 @@
   .p-treetable-tbody {
     > tr {
       background: var(--table-body-row-bg);
-      color: var(--text-color);
+      color: var(--text-color, var(--text-color-default));
       transition: var(--list-item-transition);
       outline-color: var(--focus-outline-color);
 
@@ -116,13 +116,13 @@
 
       &.p-highlight {
         background: var(--highlight-bg);
-        color: var(--primary-color);
+        color: var(--primary-color, var(--primary-color-default));
 
         .p-treetable-toggler {
-          color: var(--primary-color);
+          color: var(--primary-color, var(--primary-color-default));
 
           &:hover {
-            color: var(--primary-color);
+            color: var(--primary-color, var(--primary-color-default));
           }
         }
       }
@@ -132,16 +132,16 @@
   &.p-treetable-hoverable-rows {
     .p-treetable-tbody > tr:not(.p-highlight):hover {
       background: var(--table-body-row-hover-bg);
-      color: var(--text-color);
+      color: var(--text-color, var(--text-color-default));
 
       .p-treetable-toggler {
-        color: var(--text-color);
+        color: var(--text-color, var(--text-color-default));
       }
     }
   }
 
   .p-column-resizer-helper {
-    background: var(--primary-color);
+    background: var(--primary-color, var(--primary-color-default));
   }
 
   .p-treetable-scrollable-header,

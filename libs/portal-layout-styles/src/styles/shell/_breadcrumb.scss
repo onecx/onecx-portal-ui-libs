@@ -1,5 +1,5 @@
 .layout-breadcrumb-container {
-  background-color: var (--content-bg-color);
+  background-color: var(--content-bg-color, var(--content-bg-color-default));
 
   .layout-breadcrumb {
     background: transparent;

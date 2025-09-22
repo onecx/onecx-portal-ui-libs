@@ -29,7 +29,7 @@
       &.p-highlight {
         button {
           background: var(--highlight-bg);
-          color: var(--primary-color);
+          color: var(--primary-color, var(--primary-color-default));
         }
       }
     }

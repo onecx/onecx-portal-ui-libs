@@ -2,7 +2,7 @@
 
 .p-chip {
   background-color: var(--chip-bg);
-  color: var(--text-color);
+  color: var(--text-color, var(--text-color-default));
   border-radius: var(--chip-border-radius);
   padding: 0 nth($inputPadding, 2);
 

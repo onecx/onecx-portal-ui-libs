@@ -43,7 +43,7 @@
       background: var(--input-switch-slider-on-bg);
 
       &:before {
-        background: var(--primary-color);
+        background: var(--primary-color, var(--primary-color-default));
       }
     }
 

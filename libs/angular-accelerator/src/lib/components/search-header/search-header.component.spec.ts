@@ -14,6 +14,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { HarnessLoader } from '@angular/cdk/testing'
 import { SlotHarness } from '@onecx/angular-accelerator/testing'
 import { IfPermissionDirective } from '../../directives/if-permission.directive'
+import { of } from 'rxjs'
 
 describe('SearchHeaderComponent', () => {
   let mockAppStateService: AppStateServiceMock
@@ -66,7 +67,7 @@ describe('SearchHeaderComponent', () => {
 
   it('should display search config slot if search config change is observed, pageName is defined and permission is met', async () => {
     const userService = TestBed.inject(UserService)
-    jest.spyOn(userService, 'hasPermission').mockReturnValue(true)
+    jest.spyOn(userService, 'getPermissions').mockReturnValue(of(['PRODUCT#USE_SEARCHCONFIGS']))
     const sub = component.selectedSearchConfigChanged.subscribe()
     component.pageName = 'myPageName'
     component.searchConfigPermission = 'PRODUCT#USE_SEARCHCONFIGS'

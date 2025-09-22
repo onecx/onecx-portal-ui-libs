@@ -9,7 +9,7 @@
       background: var(--steps-item-bg);
 
       .p-steps-number {
-        color: var(--text-color);
+        color: var(--text-color, var(--text-color-default));
         border: var(--steps-item-border);
         background: var(--steps-item-bg);
         min-width: var(--steps-item-number-width);
@@ -22,7 +22,7 @@
 
       .p-steps-title {
         margin-top: var(--inline-spacing);
-        color: var(--text-color);
+        color: var(--text-color, var(--text-color-default));
       }
 
       &:not(.p-disabled):focus {
@@ -33,7 +33,7 @@
     &.p-highlight {
       .p-steps-number {
         background: var(--highlight-bg);
-        color: var(--primary-color);
+        color: var(--primary-color, var(--primary-color-default));
       }
 
       .p-steps-title {

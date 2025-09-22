@@ -28,7 +28,7 @@
       padding: math.div(nth($inputPadding, 1), 2) nth($inputPadding, 2);
       margin-right: var(--inline-spacing);
       background: var(--chip-bg);
-      color: var(--text-color);
+      color: var(--text-color, var(--text-color-default));
       border-radius: var(--chip-border-radius);
     }
   }
@@ -58,7 +58,7 @@ p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
 
 .p-treeselect-panel {
   background: var(--input-list-bg);
-  color: var(--text-color);
+  color: var(--text-color, var(--text-color-default));
   border: var(--input-overlay-border);
   border-radius: var(--border-radius);
   box-shadow: var(--input-overlay-shadow);
@@ -70,7 +70,7 @@ p-treeselect.ng-invalid.ng-dirty > .p-treeselect {
 
     .p-treeselect-empty-message {
       padding: var(--input-list-item-padding);
-      color: var(--text-color);
+      color: var(--text-color, var(--text-color-default));
       background: var(--input-list-item-bg);
     }
   }

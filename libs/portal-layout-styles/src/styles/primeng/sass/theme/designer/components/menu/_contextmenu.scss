@@ -1,7 +1,7 @@
 .p-contextmenu {
   padding: var(--vertical-menu-padding);
   background: var(--menu-bg);
-  color: var(--text-color);
+  color: var(--text-color, var(--text-color-default));
   border: var(--overlay-menu-border);
   box-shadow: var(--overlay-menu-shadow);
   border-radius: var(--border-radius);
@@ -31,12 +31,12 @@
         background: var(--menuitem-active-bg);
 
         .p-menuitem-text {
-          color: var(--text-color);
+          color: var(--text-color, var(--text-color-default));
         }
 
         .p-menuitem-icon,
         .p-submenu-icon {
-          color: var(--text-secondary-color);
+          color: var(--text-secondary-color, var(--text-secondary-color-default));
         }
       }
     }

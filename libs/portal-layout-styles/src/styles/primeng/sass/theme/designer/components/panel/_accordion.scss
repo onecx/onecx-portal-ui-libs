@@ -3,7 +3,7 @@
     .p-accordion-header-link {
       padding: var(--accordion-header-padding);
       border: var(--accordion-header-border);
-      color: var(--text-color);
+      color: var(--text-color, var(--text-color-default));
       background: var(--accordion-header-bg);
       font-weight: var(--accordion-header-font-weight);
       border-radius: var(--border-radius);
@@ -26,7 +26,7 @@
       .p-accordion-header-link {
         background: var(--accordion-header-hover-bg);
         border-color: var(--accordion-header-hover-border-color);
-        color: var(--text-color);
+        color: var(--text-color, var(--text-color-default));
       }
     }
 
@@ -34,7 +34,7 @@
       .p-accordion-header-link {
         background: var(--accordion-header-active-bg);
         border-color: var(--accordion-header-active-border-color);
-        color: var(--text-color);
+        color: var(--text-color, var(--text-color-default));
         border-bottom-right-radius: 0;
         border-bottom-left-radius: 0;
       }
@@ -43,7 +43,7 @@
         .p-accordion-header-link {
           border-color: var(--accordion-header-active-hover-border-color);
           background: var(--accordion-header-active-hover-bg);
-          color: var(--text-color);
+          color: var(--text-color, var(--text-color-default));
         }
       }
     }
@@ -53,7 +53,7 @@
     padding: var(--accordion-content-padding);
     border: var(--accordion-content-border);
     background: var(--accordion-content-bg);
-    color: var(--text-color);
+    color: var(--text-color, var(--text-color-default));
     border-top: 0;
     border-top-right-radius: 0;
     border-top-left-radius: 0;

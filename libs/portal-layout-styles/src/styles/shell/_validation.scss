@@ -4,6 +4,6 @@ label.control-error {
   font-size: smaller;
 }
 label.ocx-control-hint {
-  color: var(--text-secondary-color);
+  color: var(--text-secondary-color, var(--text-secondary-color-default));
   font-size: smaller;
 }

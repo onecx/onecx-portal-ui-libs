@@ -5,14 +5,14 @@
       th {
         background: var(--panel-header-bg);
         border: var(--panel-header-border);
-        color: var(--text-color);
+        color: var(--text-color, var(--text-color-default));
       }
 
       td {
         &.fc-widget-content {
           background: var(--panel-content-bg);
           border: var(--panel-content-border);
-          color: var(--text-color);
+          color: var(--text-color, var(--text-color-default));
         }
 
         &.fc-head-container {
@@ -39,22 +39,22 @@
     .fc-toolbar {
       .fc-button {
         color: var(--primary-text-color);
-        background: var(--primary-color);
+        background: var(--primary-color, var(--primary-color-default));
         border: var(--button-border);
-        font-size: var(--font-size);
+        font-size: var(--font-size, var(--font-size-default));
         transition: var(--form-element-transition);
         border-radius: var(--border-radius);
         display: flex;
         align-items: center;
 
         &:enabled:hover {
-          background: var(--button-hover-bg);
+          background: var(--button-hover-bg, var(--button-hover-bg-default));
           color: var(--primary-text-color);
           border-color: var(--button-hover-border-color);
         }
 
         &:enabled:active {
-          background: var(--button-active-bg);
+          background: var(--button-active-bg, --button-active-bg-default);;
           color: var(--primary-text-color);
           border-color: var(--button-active-border-color);
 
@@ -86,24 +86,24 @@
         &.fc-timeGridDay-button {
           background: var(--toggle-button-bg);
           border: var(--toggle-button-border);
-          color: var(--text-color);
+          color: var(--text-color, var(--text-color-default));
           transition: var(--form-element-transition);
 
           &:hover {
             background: var(--toggle-button-hover-bg);
             border-color: var(--toggle-button-hover-border-color);
-            color: var(--text-color);
+            color: var(--text-color, var(--text-color-default));
           }
 
           &.fc-button-active {
             background: var(--toggle-button-active-bg);
             border-color: var(--toggle-button-active-border-color);
-            color: var(--text-color);
+            color: var(--text-color, var(--text-color-default));
 
             &:hover {
               background: var(--toggle-button-active-hover-bg);
               border-color: var(--toggle-button-active-hover-border-color);
-              color: var(--text-color);
+              color: var(--text-color, var(--text-color-default));
             }
           }
 
@@ -142,11 +142,11 @@
       th {
         background: var(--panel-header-bg);
         border-color: var(--panel-header-border-color);
-        color: var(--text-color);
+        color: var(--text-color, var(--text-color-default));
       }
 
       td {
-        color: var(--text-color);
+        color: var(--text-color, var(--text-color-default));
         border-color: var(--panel-content-border-color);
       }
 
@@ -162,7 +162,7 @@
           border: var(--panel-header-border);
           padding: var(--panel-header-padding);
           background: var(--panel-header-bg);
-          color: var(--text-color);
+          color: var(--text-color, var(--text-color-default));
 
           .fc-popover-close {
             opacity: 1;
@@ -181,7 +181,7 @@
           padding: var(--panel-content-padding);
           border: var(--panel-content-border);
           background: var(--panel-content-bg);
-          color: var(--text-color);
+          color: var(--text-color, var(--text-color-default));
           border-top: 0 none;
         }
       }
@@ -205,7 +205,7 @@
 
           &:hover {
             background: var(--input-list-item-hover-bg);
-            color: var(--text-color);
+            color: var(--text-color, var(--text-color-default));
           }
         }
       }
@@ -218,20 +218,20 @@
     .fc-toolbar {
       .fc-button {
         color: var(--primary-text-color);
-        background: var(--primary-color);
+        background: var(--primary-color, var(--primary-color-default));
         border: var(--button-border);
-        font-size: var(--font-size);
+        font-size: var(--font-size, var(--font-size-default));
         transition: var(--form-element-transition);
         border-radius: var(--border-radius);
 
         &:enabled:hover {
-          background: var(--button-hover-bg);
+          background: var(--button-hover-bg, var(--button-hover-bg-default));
           color: var(--primary-text-color);
           border-color: var(--button-hover-border-color);
         }
 
         &:enabled:active {
-          background: var(--button-active-bg);
+          background: var(--button-active-bg, --button-active-bg-default);;
           color: var(--primary-text-color);
           border-color: var(--button-active-border-color);
 
@@ -243,7 +243,7 @@
         &:disabled {
           opacity: var(--disabled-opacity);
           color: var(--primary-text-color);
-          background: var(--primary-color);
+          background: var(--primary-color, var(--primary-color-default));
           border: var(--button-border);
         }
 
@@ -270,24 +270,24 @@
         &.fc-timeGridDay-button {
           background: var(--toggle-button-bg);
           border: var(--toggle-button-border);
-          color: var(--text-color);
+          color: var(--text-color, var(--text-color-default));
           transition: var(--form-element-transition);
 
           &:hover {
             background: var(--toggle-button-hover-bg);
             border-color: var(--toggle-button-hover-border-color);
-            color: var(--text-color);
+            color: var(--text-color, var(--text-color-default));
           }
 
           &.fc-button-active {
             background: var(--toggle-button-active-bg);
             border-color: var(--toggle-button-active-border-color);
-            color: var(--text-color);
+            color: var(--text-color, var(--text-color-default));
 
             &:hover {
               background: var(--toggle-button-active-hover-bg);
               border-color: var(--toggle-button-active-hover-border-color);
-              color: var(--text-color);
+              color: var(--text-color, var(--text-color-default));
             }
           }
 
@@ -322,7 +322,7 @@
     }
 
     .fc-highlight {
-      color: var(--primary-color);
+      color: var(--primary-color, var(--primary-color-default));
       background: var(--highlight-bg);
     }
   }
