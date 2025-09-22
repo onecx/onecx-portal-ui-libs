@@ -18,10 +18,10 @@ import { ActivatedRouteSnapshot, GuardsCheckEnd, GuardsCheckStart, Router, Route
 import { getLocation } from '@onecx/accelerator'
 
 /**
- * WebcomponentConnnector is a utility class that connects Angular web components.
+ * WebcomponentConnector is a utility class that connects Angular web components.
  * It manages the router connection with other web components and handles the navigation state.
  */
-export class WebcomponentConnnector {
+export class WebcomponentConnector {
   private connectionSubscriptions: Subscription[] = []
   private capabilityService: ShellCapabilityService
   private eventsTopic: EventsTopic

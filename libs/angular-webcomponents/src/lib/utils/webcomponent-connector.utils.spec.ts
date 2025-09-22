@@ -15,7 +15,7 @@ import {
 } from '@onecx/angular-utils/guards'
 import { AppStateService, ShellCapabilityService } from '@onecx/angular-integration-interface'
 import { FakeTopic, provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
-import { WebcomponentConnnector } from './webcomponent-connector.utils'
+import { WebcomponentConnector } from './webcomponent-connector.utils'
 import { ReplaySubject, Subject } from 'rxjs'
 import { Location } from '@angular/common'
 import { Route } from '@onecx/integration-interface'
@@ -44,8 +44,8 @@ const changeLocation = (pathName: string) => {
   window.history.pushState({}, '', pathName)
 }
 
-describe('WebcomponentConnnector', () => {
-  let connector: WebcomponentConnnector
+describe('WebcomponentConnector', () => {
+  let connector: WebcomponentConnector
   let mockGuardsNavigationStateController: jest.Mocked<GuardsNavigationStateController>
   let mockCapabilityService: jest.Mocked<ShellCapabilityService>
   let mockRouter: jest.Mocked<Router>
@@ -79,7 +79,7 @@ describe('WebcomponentConnnector', () => {
       ],
     })
 
-    connector = new WebcomponentConnnector(TestBed.inject(Injector), 'microfrontend')
+    connector = new WebcomponentConnector(TestBed.inject(Injector), 'microfrontend')
     eventsTopic = new FakeTopic<any>()
     connector['eventsTopic'] = eventsTopic as any
     connector['capabilityService'] = mockCapabilityService
