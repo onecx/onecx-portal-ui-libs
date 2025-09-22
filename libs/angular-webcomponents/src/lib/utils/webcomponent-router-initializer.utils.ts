@@ -17,7 +17,7 @@ export function initializeRouter(router: Router, appStateService: AppStateServic
               (route.redirectTo =
                 route.redirectTo && typeof route.redirectTo === 'string'
                   ? Location.joinWithSlash(mfeInfo.baseHref, route.redirectTo)
-                  : route.redirectTo)
+                  : route.redirectTo))
           })
           routes.push({
             path: '**',
