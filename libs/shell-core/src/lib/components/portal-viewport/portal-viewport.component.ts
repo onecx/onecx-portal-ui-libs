@@ -139,7 +139,10 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
     const mobileBreakpointVar = getComputedStyle(document.documentElement).getPropertyValue('--mobile-break-point')
     const isMobile = window.matchMedia(`(max-width: ${mobileBreakpointVar})`).matches
     // auto show sidebar when changing to desktop, hide when changing to mobile
-    if (isMobile !== this.isMobile) this.menuActive = !isMobile
+    if (isMobile !== this.isMobile) {
+      this.menuActive = !isMobile
+      this.staticMenuVisibleTopic$.publish({ isVisible: this.menuActive })
+    }
     this.isMobile = isMobile
   }
 
