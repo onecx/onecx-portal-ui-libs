@@ -1,26 +1,18 @@
-<header class="layout-topbar_flex" id="ocx_header">
-  <section
-    class="layout-topbar-left flex relative justify-content-center align-items-center"
-    [ngClass]="{'vertical-menu': !isHorizontalMenu}"
-    [attr.aria-label]="'Left'"
-  >
+<header class="onecx-header" id="ocx_header">
+  <!-- TODO: Translations for aria labels -->
+  <!-- Placeholder for onecx-shell-header slot group -->
+  <section class="onecx-header-start" [attr.aria-label]="'Header left'">
     <ocx-slot
       name="onecx-shell-header-left"
-      class="flex flex-row flex-wrap align-items-center column-gap-3 row-gap-1"
+      class="flex flex-row flex-wrap justify-content-center align-items-center column-gap-3 row-gap-1 flex-grow-1 flex-shrink-1"
       [inputs]="{ imageStyleClass: 'max-h-3rem max-w-9rem vertical-align-middle' }"
       [outputs]="{ imageLoadingFailed: logoLoadingEmitter }"
     >
-      <ng-template #skeleton>
-        <div class="flex align-items-center h-full justify-content-center" style="width: 26px">
-          <p-skeleton size="2rem" class="h-full flex align-items-center"></p-skeleton>
-        </div>
-      </ng-template>
     </ocx-slot>
-    <div *ngIf="themeLogoLoadingFailed"><!-- portal logo --></div>
-
+    <div *ngIf="themeLogoLoadingFailed"></div>
     <button
       id="ocx_vertical_menu_action_toggle"
-      class="layout-menu-button border-none"
+      class="onecx-menu-button border-none flex justify-content-center align-items-center flex-grow-0 flex-shrink-0"
       [ngClass]="{ 'hidden': isHorizontalMenu }"
       pRipple
       (click)="onMenuButtonClick($event)"
@@ -32,12 +24,16 @@
       <span
         id="ocx_vertical_menu_action_toggle_icon"
         class="pi pi-chevron-right"
-        [ngClass]="{'toggle-button-direction': isStaticalMenu && (isComponentDefined$ | async) === true}"
+        [ngClass]="{'toggle-button-direction': isStaticalMenu }"
         aria-hidden="true"
       ></span>
     </button>
   </section>
-
+  <!-- TODO: Translations for aria labels -->
+  <section class="onecx-header-center" [attr.aria-label]="'Header center'"></section>
+  <!-- TODO: Translations for aria labels -->
+  <section class="onecx-header-end" [attr.aria-label]="'Header right'"></section>
+  <!--
   <section class="layout-topbar-right" [attr.aria-label]="'Topbar'">
     <div class="layout-topbar-actions-left">
       <ng-content></ng-content>
@@ -51,5 +47,5 @@
         </ng-template>
       </ocx-slot>
     </div>
-  </section>
+  </section> -->
 </header>

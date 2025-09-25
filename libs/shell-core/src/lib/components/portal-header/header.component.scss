@@ -1,94 +1,69 @@
-.layout-topbar-items > * {
-  margin: auto;
-}
-
-.http-progress-loader {
-  margin-left: 8px;
-  padding-top: 5px;
-}
-
-@media screen and (max-width: 1024px) {
-  .http-progress-loader {
-    margin-left: 0;
-    margin-right: 8px;
-  }
-}
-
-.default-logo {
-  color: var(--logo-color, #12abdb);
-  fill: currentColor;
-}
-
-$menuWrapperWidth: 17rem;
-
-@mixin material-overlay-transform {
-  transform-origin: top;
-}
-
-@mixin reset-list {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  outline: 0;
-  text-decoration: none;
-  list-style-type: none;
-}
-
-.layout-topbar_flex {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 998;
+.onecx-header {
+  color: var(--topbar-item-text-color);
+  background-color: var(--topbar-bg-color);
   width: 100%;
   height: 4rem;
   transition: width var(--p-transition-duration);
-  // flex content:
   display: flex;
   justify-content: space-between;
   align-items: center;
   row-gap: 1rem;
-
-  ul {
-    @include reset-list;
-  }
-
-  .layout-topbar-left {
-    width: 11rem;
+  .onecx-header-start,
+  .onecx-header-center,
+  .onecx-header-end {
     height: 100%;
-
-    &.vertical-menu {
-      flex: 0 0 $menuWrapperWidth;
-    }
-
-    .layout-menu-button {
-      position: absolute;
-      top: 50%;
+    // Display flex and not grow/shrink to keep the size of the left section static
+    display: flex;
+    flex-grow: 0;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .onecx-header-start {
+    background-color: var(--topbar-left-bg-color);
+    // TODO: Width is set to be static 17rem.
+    // Remove width control when logo and button control their size and positions
+    flex-basis: 17rem;
+    .onecx-menu-button{
+      position: relative;
       right: -1.25rem;
       width: 2.5rem;
       height: 2.5rem;
-      margin-top: -1.25rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       cursor: pointer;
       border-radius: 50%;
-
+      color: var(--topbar-menu-button-text-color, #ffffff);
+      background-color: var(--topbar-menu-button-bg-color);
       i {
         transition: transform var(--p-transition-duration);
       }
-    }
 
-    .layout-topbar-mobile-button {
-      display: none;
-      align-items: center;
-      padding: 0 0.8rem;
-      margin: 0 0.5rem 0 auto;
-      border-radius: 50%;
-      height: 3.2rem;
-      cursor: pointer;
+      .toggle-button-direction {
+        transform: rotate(180deg);
+      }
     }
   }
+  // TODO: should be in center of the div?
+  .onecx-header-center {
+  }
+  .onecx-header-end {
+  }
+}
 
+// TODO: Remove
+.layout-topbar-items > * {
+  margin: auto;
+}
+
+// TODO: Remove
+$menuWrapperWidth: 17rem;
+
+// TODO: Remove
+@mixin material-overlay-transform {
+  transform-origin: top;
+}
+
+// TODO: Remove
+.layout-topbar_flex {
   .layout-topbar-right {
     display: flex;
     flex-grow: 1;
@@ -213,32 +188,9 @@ $menuWrapperWidth: 17rem;
   }
 }
 
-.layout-menu-button-hidden {
-  .layout-topbar_flex {
-    .layout-topbar-left {
-      padding-right: 0;
-
-      .layout-menu-button {
-        display: none;
-      }
-    }
-
-    .layout-topbar-right {
-      padding-left: 0;
-    }
-  }
-}
-
-.toggle-button-direction {
-  transform: rotate(180deg);
-}
-
+// TODO: Remove
 @media (max-width: var(--mobile-break-point)) {
   .layout-topbar_flex {
-    .layout-topbar-left {
-      flex-shrink: 1;
-    }
-
     .layout-topbar-right {
       min-width: auto;
 
@@ -249,19 +201,8 @@ $menuWrapperWidth: 17rem;
   }
 }
 
+// TODO: Remove
 .layout-topbar_flex {
-  color: var(--topbar-item-text-color);
-  background-color: var(--topbar-bg-color);
-
-  .layout-topbar-left {
-    background-color: var(--topbar-left-bg-color);
-
-    .layout-menu-button {
-      color: var(--topbar-menu-button-text-color, #ffffff);
-      background-color: var(--topbar-menu-button-bg-color);
-    }
-  }
-
   .layout-topbar-right {
     .layout-topbar-actions-left {
       .layout-menubar {

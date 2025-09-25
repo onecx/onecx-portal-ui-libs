@@ -10,7 +10,7 @@ import {
 } from '@onecx/angular-integration-interface'
 import { MessageService } from 'primeng/api'
 import { PrimeNG } from 'primeng/config'
-import { filter, first, from, mergeMap, Observable, of } from 'rxjs'
+import { BehaviorSubject, filter, first, from, mergeMap, Observable, of } from 'rxjs'
 import { SHOW_CONTENT_PROVIDER, ShowContentProvider } from '../../shell-interface/show-content-provider'
 import {
   WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER,
@@ -40,12 +40,10 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
   })
   private slotService = inject(SlotService)
   private readonly staticMenuVisibleTopic$ = new StaticMenuVisibleTopic()
+  private readonly staticMenuVisible$ = new BehaviorSubject<{ isVisible: boolean }>({ isVisible: true })
 
   menuButtonTitle = ''
-  menuActive = true
   activeTopbarItem: string | undefined
-
-  removeDocumentClickListener: (() => void) | undefined
 
   colorScheme: 'auto' | 'light' | 'dark' = 'light'
   menuMode: 'horizontal' | 'static' | 'overlay' | 'slim' | 'slimplus' = 'static'
@@ -106,6 +104,11 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
 
     this.isVerticalMenuComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.verticalMenuSlotName)
     this.isFooterComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.footerSlotName)
+
+    this.staticMenuVisibleTopic$.subscribe(this.staticMenuVisible$)
+  }
+  ngOnDestroy(): void {
+    this.staticMenuVisibleTopic$.destroy()
   }
 
   ngOnInit() {
@@ -118,42 +121,33 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
         console.error('global error')
         this.globalErrMsg = err
       })
-
-    this.onResize()
   }
 
-  ngOnDestroy() {
-    this.removeDocumentClickListener?.()
-  }
-
+  // TODO: Remove when switching to ToggleButton RC
   onMenuButtonClick(event: MouseEvent) {
     this.activeTopbarItem = undefined
-    this.menuActive = !this.menuActive
-    this.staticMenuVisibleTopic$.publish({ isVisible: this.menuActive })
+    this.staticMenuVisibleTopic$.publish({ isVisible: !this.staticMenuVisible$.getValue().isVisible })
     event.preventDefault()
     event.stopPropagation()
   }
 
+  // TODO: Remove when switching to ToggleButton RC
+  // its left here of isMobile
+  // no longer controls rendering or visibility of menu
   @HostListener('window:resize')
   onResize() {
     const mobileBreakpointVar = getComputedStyle(document.documentElement).getPropertyValue('--mobile-break-point')
     const isMobile = window.matchMedia(`(max-width: ${mobileBreakpointVar})`).matches
-    // auto show sidebar when changing to desktop, hide when changing to mobile
-    if (isMobile !== this.isMobile) {
-      this.menuActive = !isMobile
-    }
     this.isMobile = isMobile
   }
 
+  // TODO: Remove when switching to ToggleButton RC
   isHorizontalMenuMode() {
     return this.menuMode === 'horizontal' && !this.isMobile
   }
 
+  // TODO: Remove when switching to ToggleButton RC
   isStaticalMenuVisible() {
-    return this.menuActive && !this.isHorizontalMenuMode()
-  }
-
-  isHorizontalMenuVisible() {
-    return this.isHorizontalMenuMode()
+    return this.staticMenuVisible$.getValue().isVisible && !this.isHorizontalMenuMode()
   }
 }
