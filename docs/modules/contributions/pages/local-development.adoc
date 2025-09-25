@@ -1,0 +1,6 @@
+= OneCX Portal UI Libs - Contributions & Local Development - Local Development
+:idprefix:
+:idseparator: -
+:imagesdir: ../../general/images
+
+TBD
