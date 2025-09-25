@@ -12,14 +12,14 @@
   .onecx-header-center,
   .onecx-header-end {
     height: 100%;
-    // Display flex and not grow/shrink to keep the size of the left section static
     display: flex;
-    flex-grow: 0;
-    flex-shrink: 0;
     align-items: center;
     justify-content: space-between;
   }
   .onecx-header-start {
+    // Not grow/shrink to keep the size of the left section static
+    flex-grow: 0;
+    flex-shrink: 0;
     background-color: var(--topbar-left-bg-color);
     // TODO: Width is set to be static 17rem.
     // Remove width control when logo and button control their size and positions
@@ -44,54 +44,17 @@
   }
   // TODO: should be in center of the div?
   .onecx-header-center {
+    flex-grow: 1;
+    justify-content: left;
   }
   .onecx-header-end {
-  }
-}
-
-// TODO: Remove
-.layout-topbar-items > * {
-  margin: auto;
-}
-
-// TODO: Remove
-$menuWrapperWidth: 17rem;
-
-// TODO: Remove
-@mixin material-overlay-transform {
-  transform-origin: top;
-}
-
-// TODO: Remove
-.layout-topbar_flex {
-  .layout-topbar-right {
-    display: flex;
-    flex-grow: 1;
-    align-items: center;
-    justify-content: space-between;
-    row-gap: 0;
-    height: 100%;
-    min-width: 0;
-
-    .layout-topbar-actions-left {
-      display: flex;
-      flex-grow: 1;
-      align-items: center;
-      height: 100%;
-      min-width: 0;
-
-      .layout-menubar .p-menubar-root-list > .p-menuitem {
-        .p-menuitem-text {
-          white-space: nowrap;
-        }
-      }
-    }
-
-    .layout-topbar-actions-right_flex {
+    .onecx_header_end_actions_right {
       height: 100%;
       margin-right: 0.75rem;
-
-      .layout-topbar-items {
+      .onecx_header_end_actions_right_items {
+        > * {
+          margin: auto;
+        }
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
@@ -99,200 +62,6 @@ $menuWrapperWidth: 17rem;
         align-items: center;
         gap: 0.25rem;
         height: 100%;
-
-        .layout-topbar-item {
-          display: flex;
-          align-items: center;
-          position: relative;
-
-          .layout-topbar-action {
-            user-select: none;
-            justify-content: center;
-            height: 3.2rem;
-            width: 3.2rem;
-            min-width: 3.2rem; // fix button setting
-            border-radius: 50%;
-            cursor: pointer;
-            margin: 0;
-            padding: 0.5rem !important; // fix uneven button dimensions
-            color: var(--topbar-item-text-color);
-            background-color: var(--topbar-bg-color);
-            &:hover,
-            &:focus {
-              color: var(--topbar-item-text-hover-color);
-              background-color: var(--topbar-item-text-hover-bg-color);
-              transition: background-color var(--p-transition-duration);
-            }
-          }
-
-          .layout-topbar-action-panel {
-            position: absolute;
-            top: 4rem;
-            right: 0;
-            z-index: 1000;
-            min-width: 13rem;
-            padding: 0.5rem 0;
-            @include material-overlay-transform;
-
-            .layout-topbar-action-item {
-              cursor: pointer;
-            }
-          }
-
-          &.layout-search-item {
-            .layout-search-panel {
-              height: 4rem;
-              width: 100%;
-              position: fixed;
-              top: 0;
-              left: 0;
-              z-index: 1000;
-              @include material-overlay-transform;
-
-              input {
-                border-radius: 0;
-                border: 0 none;
-
-                &:focus {
-                  outline: 0 none;
-                  box-shadow: none;
-                }
-              }
-
-              i {
-                font-weight: bold;
-              }
-
-              .p-inputgroup-addon {
-                border: 0 none;
-              }
-
-              .p-inputgroup-addon:first-child,
-              .p-inputgroup button:first-child,
-              .p-inputgroup input:first-child {
-                border-top-left-radius: 0;
-                border-bottom-left-radius: 0;
-              }
-
-              .p-inputgroup-addon:last-child,
-              .p-inputgroup button:last-child,
-              .p-inputgroup input:last-child {
-                border-top-right-radius: 0;
-                border-bottom-right-radius: 0;
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-// TODO: Remove
-@media (max-width: var(--mobile-break-point)) {
-  .layout-topbar_flex {
-    .layout-topbar-right {
-      min-width: auto;
-
-      .layout-topbar-actions-right_flex {
-        padding-right: 0.25rem;
-      }
-    }
-  }
-}
-
-// TODO: Remove
-.layout-topbar_flex {
-  .layout-topbar-right {
-    .layout-topbar-actions-left {
-      .layout-menubar {
-        background: none;
-        border: none;
-
-        &.p-menubar .p-menubar-root-list > .p-menuitem {
-          > .p-menuitem-content {
-            .p-menuitem-link {
-              .p-menuitem-text,
-              .p-menuitem-icon,
-              .p-submenu-icon {
-                color: var(--topbar-item-text-color);
-              }
-
-              &:not(.p-disabled):hover {
-                background: var(--topbar-item-text-hover-bg-color);
-                transition: background-color var(--p-transition-duration);
-              }
-            }
-          }
-        }
-
-        &.p-menubar .p-menubar-root-list > .p-menuitem {
-          > .p-menuitem-link {
-            .p-menuitem-text,
-            .p-menuitem-icon,
-            .p-submenu-icon {
-              color: var(onecx-topbar-item-text-color);
-            }
-
-            &:not(.p-disabled):hover {
-              background: var(--topbar-item-text-hover-bg-color);
-              transition: background-color var(--p-transition-duration);
-            }
-          }
-        }
-      }
-    }
-
-    .layout-topbar-actions-right_flex {
-      .layout-topbar-items {
-        .layout-topbar-action-panel {
-          background-color: var(--overlay-content-bg-color);
-          color: var(--text-color);
-
-          .layout-topbar-action-item {
-            color: var(--menu-item-text-color);
-            &:hover {
-              background-color: var(--menu-item-hover-bg-color);
-              transition: background-color var(--p-transition-duration);
-            }
-          }
-        }
-
-        .layout-topbar-item {
-          &.layout-search-item {
-            .layout-search-panel {
-              input {
-                background-color: var(--body-bg-color);
-                color: var(--text-color);
-
-                &:hover {
-                  background-color: var(--body-bg-color);
-                  color: var(--text-color);
-                }
-              }
-
-              .p-inputgroup-addon:first-child,
-              .p-inputgroup button:first-child,
-              .p-inputgroup input:first-child {
-                background-color: var(--body-bg-color);
-                color: var(--text-color);
-              }
-
-              .p-inputgroup-addon:last-child,
-              .p-inputgroup button:last-child,
-              .p-inputgroup input:last-child {
-                background-color: var(--body-bg-color);
-                color: var(--text-color);
-              }
-
-              .p-inputgroup-addon {
-                .p-button-text {
-                  color: var(--text-color);
-                }
-              }
-            }
-          }
-        }
       }
     }
   }
