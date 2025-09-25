@@ -1,5 +1,8 @@
 {
   "OCX_HEADER": {
-    "MENU_TOGGLE": "Menü ein/aus"
+    "MENU_TOGGLE": "Menü ein/aus",
+    "HEADER_LEFT": "Header left",
+    "HEADER_CENTER": "Header center",
+    "HEADER_RIGHT": "Header right"
   }
 }

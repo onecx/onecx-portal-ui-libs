@@ -1,7 +1,6 @@
 <header class="onecx-header" id="ocx_header">
-  <!-- TODO: Translations for aria labels -->
   <!-- Placeholder for onecx-shell-header slot group -->
-  <section class="onecx-header-start" [attr.aria-label]="'Header left'">
+  <section class="onecx-header-start" [attr.aria-label]="'OCX_HEADER.HEADER_LEFT' | translate">
     <ocx-slot
       name="onecx-shell-header-left"
       class="flex flex-row flex-wrap justify-content-center align-items-center column-gap-3 row-gap-1 flex-grow-1 flex-shrink-1"
@@ -29,14 +28,12 @@
       ></span>
     </button>
   </section>
-  <!-- TODO: Translations for aria labels -->
-  <section class="onecx-header-center" [attr.aria-label]="'Header center'">
+  <section class="onecx-header-center" [attr.aria-label]="'OCX_HEADER.HEADER_CENTER' | translate">
     <div>
       <ocx-slot name="onecx-shell-horizontal-menu"></ocx-slot>
     </div>
   </section>
-  <!-- TODO: Translations for aria labels -->
-  <section class="onecx-header-end" [attr.aria-label]="'Header right'">
+  <section class="onecx-header-end" [attr.aria-label]="'OCX_HEADER.HEADER_RIGHT' | translate">
     <div class="onecx_header_end_actions_right">
       <ocx-slot name="onecx-shell-header-right" class="onecx_header_end_actions_right_items"> </ocx-slot>
     </div>
