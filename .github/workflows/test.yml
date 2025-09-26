@@ -1,0 +1,42 @@
+name: Test Affected Libs
+
+on:
+  workflow_call:
+
+jobs:
+  test-affected-libs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Environment
+        uses: ./.github/actions/setup-environment
+
+      - name: Run affected Tests
+        run: |
+          npx nx affected -t test test-migrations --watch=false --browsers=ChromeHeadless --coverage
+
+      # store github action pr number to file
+      - name: Create sonar json file
+        if: github.event_name == 'pull_request'
+        run: echo ${{ github.event.number }} > github-action-pr.txt
+
+      # upload github action pr number
+      - uses: actions/upload-artifact@v4
+        if: github.event_name == 'pull_request'
+        with:
+          name: github-action-pr
+          path: github-action-pr.txt
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: |
+            package.json      
+            reports/
+          retention-days: 1
+          if-no-files-found: ignore
