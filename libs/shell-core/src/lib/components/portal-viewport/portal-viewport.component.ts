@@ -171,8 +171,6 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
   }
 
   // TODO: Remove when switching to ToggleButton RC
-  // its left here of isMobile
-  // no longer controls rendering or visibility of menu
   @HostListener('window:resize')
   onResize() {
     const mobileBreakpointVar = getComputedStyle(document.documentElement).getPropertyValue('--mobile-break-point')
