@@ -166,6 +166,12 @@ Afterwards, build and copy the libraries by running:
 npm run build-copy
 ----
 
+[NOTE]
+.Checkpoint
+====
+At this point, you should see terminal output indicating that the libraries have been built and copied to the specified paths. If you encounter any errors, refer to any error messages and ensure that the paths in the `.copy-build-to` file are correct.
+====
+
 
 === 5. Prepare Apps and Shell for Local Testing
 
@@ -183,6 +189,12 @@ TIP: Ideally, you should use the version number your changes will be released in
 ----
 rm -rf dist .nx/cache .angular
 ----
+
+[NOTE]
+.Checkpoint
+====
+At this point, you should have updated the version numbers in the `package.json` files of the shell and app(s) where the libraries were copied to. Additionally, you should have deleted any build caches to ensure a clean build environment.
+====
 
 === 6. Run OneCX Shell and App(s)
 After completing the previous steps, you are now ready to run OneCX Shell and the app(s) with your local library changes.
