@@ -165,8 +165,7 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
   // TODO: Remove when switching to ToggleButton RC
   onMenuButtonClick(event: MouseEvent) {
     this.activeTopbarItem = undefined
-    this.staticMenuVisibleTopic$.publish({ isVisible: !this.staticMenuVisibleTopic$.getValue().isVisible })
-    // this.staticMenuVisibleTopic$.publish({ isVisible: !this.staticMenuVisible$.getValue().isVisible })
+    this.staticMenuVisibleTopic$.publish({ isVisible: !this.staticMenuVisible$.getValue().isVisible })
     event.preventDefault()
     event.stopPropagation()
   }
