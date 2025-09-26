@@ -183,11 +183,17 @@ Before running the shell and app(s) with the locally built libraries, you need t
 TIP: Ideally, you should use the version number your changes will be released in. Any version number higher than the current one should, however, work. Make sure to use the same version number for all OneCX packages within the project starting with `6.` for v6.x.x or `5.` for v5.x.x.
 
 . **Do not** run `npm install` after changing the version numbers.
-. Delete build caches:
+. Before running the app(s) (non-shell) delete any build caches to ensure a clean build environment. Delete build caches:
 +
 [source, bash]
 ----
 rm -rf dist .nx/cache .angular
+----
+. Before running the shell delete the build caches of both the respective pre-loader (18 or 19) and the shell itself to ensure a clean build environment. Example for v6.x.x (Angular 19):
++
+[source, bash]
+----
+rm -rf pre_loaders/angular-19/dist pre_loaders/angular-19/.nx/cache dist .nx/cache
 ----
 
 [NOTE]
