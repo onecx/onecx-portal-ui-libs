@@ -10,7 +10,20 @@ import {
 } from '@onecx/angular-integration-interface'
 import { MessageService } from 'primeng/api'
 import { PrimeNG } from 'primeng/config'
-import { BehaviorSubject, filter, first, from, mergeMap, Observable, of } from 'rxjs'
+import {
+  BehaviorSubject,
+  debounceTime,
+  filter,
+  first,
+  from,
+  fromEvent,
+  map,
+  mergeMap,
+  Observable,
+  of,
+  pairwise,
+  startWith,
+} from 'rxjs'
 import { SHOW_CONTENT_PROVIDER, ShowContentProvider } from '../../shell-interface/show-content-provider'
 import {
   WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER,
@@ -41,6 +54,8 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
   private slotService = inject(SlotService)
   private readonly staticMenuVisibleTopic$ = new StaticMenuVisibleTopic()
   private readonly staticMenuVisible$ = new BehaviorSubject<{ isVisible: boolean }>({ isVisible: true })
+  private readonly onResize$: Observable<Event>
+  private readonly isMobile$: Observable<boolean>
 
   menuButtonTitle = ''
   activeTopbarItem: string | undefined
@@ -106,9 +121,27 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
     this.isFooterComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.footerSlotName)
 
     this.staticMenuVisibleTopic$.subscribe(this.staticMenuVisible$)
-  }
-  ngOnDestroy(): void {
-    this.staticMenuVisibleTopic$.destroy()
+
+    this.onResize$ = fromEvent(window, 'resize').pipe(debounceTime(100), untilDestroyed(this))
+    const mobileBreakpointVar = getComputedStyle(document.documentElement).getPropertyValue('--mobile-break-point')
+    this.isMobile$ = this.onResize$.pipe(
+      map(() => window.matchMedia(`(max-width: ${mobileBreakpointVar})`).matches),
+      startWith(
+        !window.matchMedia(`(max-width: ${mobileBreakpointVar})`).matches,
+        window.matchMedia(`(max-width: ${mobileBreakpointVar})`).matches
+      )
+    )
+    this.isMobile$
+      .pipe(
+        pairwise(),
+        filter(([oldIsMobile, newIsMobile]) => {
+          return oldIsMobile !== newIsMobile
+        }),
+        map(([, isMobile]) => ({ isVisible: !isMobile }))
+      )
+      .subscribe((state) => {
+        this.staticMenuVisibleTopic$.publish(state)
+      })
   }
 
   ngOnInit() {
@@ -121,12 +154,19 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
         console.error('global error')
         this.globalErrMsg = err
       })
+
+    this.onResize()
+  }
+
+  ngOnDestroy(): void {
+    this.staticMenuVisibleTopic$.destroy()
   }
 
   // TODO: Remove when switching to ToggleButton RC
   onMenuButtonClick(event: MouseEvent) {
     this.activeTopbarItem = undefined
-    this.staticMenuVisibleTopic$.publish({ isVisible: !this.staticMenuVisible$.getValue().isVisible })
+    this.staticMenuVisibleTopic$.publish({ isVisible: !this.staticMenuVisibleTopic$.getValue().isVisible })
+    // this.staticMenuVisibleTopic$.publish({ isVisible: !this.staticMenuVisible$.getValue().isVisible })
     event.preventDefault()
     event.stopPropagation()
   }
