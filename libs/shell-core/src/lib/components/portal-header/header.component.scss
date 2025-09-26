@@ -25,6 +25,7 @@
     // Remove width control when logo and button control their size and positions
     flex-basis: 17rem;
     .onecx-menu-button{
+      display: flex;
       position: relative;
       right: -1.25rem;
       width: 2.5rem;
@@ -39,6 +40,10 @@
 
       .toggle-button-direction {
         transform: rotate(180deg);
+      }
+
+      & .hidden {
+        display: none;
       }
     }
   }
