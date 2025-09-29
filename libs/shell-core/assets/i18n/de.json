@@ -1,8 +1,8 @@
 {
   "OCX_HEADER": {
     "MENU_TOGGLE": "Menü ein/aus",
-    "HEADER_LEFT": "Header left",
-    "HEADER_CENTER": "Header center",
-    "HEADER_RIGHT": "Header right"
+    "HEADER_LEFT": "Kopfzeile links",
+    "HEADER_CENTER": "Kopfzeile mitte",
+    "HEADER_RIGHT": "Kopfzeile rechts"
   }
 }
