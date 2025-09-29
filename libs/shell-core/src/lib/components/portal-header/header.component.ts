@@ -3,7 +3,6 @@ import { Component, EventEmitter, Input, Output, inject } from '@angular/core'
 import { UntilDestroy } from '@ngneat/until-destroy'
 import { Observable } from 'rxjs'
 
-import { SlotService } from '@onecx/angular-remote-components'
 import { Theme, ThemeService } from '@onecx/angular-integration-interface'
 
 @Component({
@@ -27,10 +26,6 @@ export class HeaderComponent {
   @Input() fullPortalLayout = true
   @Input() homeNavUrl = '/'
   @Input() homeNavTitle = 'Home'
-  // TODO: Remove when switching to ToggleButton RC
-  @Input() isStaticalMenu = false
-  // TODO: Remove when switching to ToggleButton RC
-  @Input() isHorizontalMenu = false
   @Output() menuButtonClick: EventEmitter<any> = new EventEmitter()
 
   private themeService = inject(ThemeService)
@@ -47,9 +42,5 @@ export class HeaderComponent {
     this.logoLoadingEmitter.subscribe((data: boolean) => {
       this.themeLogoLoadingFailed = data
     })
-  }
-
-  onMenuButtonClick(e: Event) {
-    this.menuButtonClick.emit(e)
   }
 }

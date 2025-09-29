@@ -9,24 +9,6 @@
     >
     </ocx-slot>
     <div *ngIf="themeLogoLoadingFailed"></div>
-    <button
-      id="ocx_vertical_menu_action_toggle"
-      class="onecx-menu-button border-none justify-content-center align-items-center flex-grow-0 flex-shrink-0"
-      [ngClass]="{ 'hidden': isHorizontalMenu }"
-      pRipple
-      (click)="onMenuButtonClick($event)"
-      [attr.aria-label]="'OCX_HEADER.MENU_TOGGLE' | translate"
-      [pTooltip]="'OCX_HEADER.MENU_TOGGLE' | translate"
-      tooltipPosition="top"
-      tooltipEvent="hover"
-    >
-      <span
-        id="ocx_vertical_menu_action_toggle_icon"
-        class="pi pi-chevron-right"
-        [ngClass]="{'toggle-button-direction': isStaticalMenu }"
-        aria-hidden="true"
-      ></span>
-    </button>
   </div>
   <div class="onecx-header-center" [attr.aria-label]="'OCX_HEADER.HEADER_CENTER' | translate">
     <div>
