@@ -154,4 +154,24 @@ describe('detectVariablesWithIdentifier', () => {
     expect(result).not.toContain('wrongCase')
     expect(result).not.toContain('differentCase')
   })
+
+  it('handles null content gracefully', () => {
+    // Mock tree.read to return null for a specific file
+    const originalRead = tree.read
+    jest.spyOn(tree, 'read').mockImplementation((path, encoding) => {
+      if (path === 'src/null-content.ts') {
+        return null as any
+      }
+      return originalRead.call(tree, path, encoding)
+    })
+
+    tree.write('src/null-content.ts', 'const test = new MyClass();') // Content won't matter due to mock
+    tree.write('src/valid.ts', 'const valid = new MyClass();')
+
+    const result = detectVariablesWithIdentifier(tree, 'src', 'MyClass')
+
+    // Should only find the valid file, null content file should be skipped
+    expect(result).toContain('valid')
+    expect(result).not.toContain('test')
+  })
 })
