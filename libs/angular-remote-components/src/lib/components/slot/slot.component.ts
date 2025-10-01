@@ -2,6 +2,7 @@ import {
   Component,
   ComponentRef,
   ContentChild,
+  ElementRef,
   EventEmitter,
   Input,
   OnDestroy,
@@ -9,17 +10,19 @@ import {
   QueryList,
   TemplateRef,
   Type,
+  ViewChild,
   ViewChildren,
   ViewContainerRef,
   inject,
 } from '@angular/core'
 
-import { Technologies } from '@onecx/integration-interface'
-import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs'
+import { EventsPublisher, EventsTopic, SlotsResizedEvent, Technologies } from '@onecx/integration-interface'
+import { BehaviorSubject, Observable, Subscription, combineLatest, Subject } from 'rxjs'
 import { ocxRemoteComponent } from '../../model/remote-component'
 import { RemoteComponentInfo, SLOT_SERVICE, SlotComponentConfiguration, SlotService } from '../../services/slot.service'
 import { updateStylesForRcCreation, updateStylesForRcRemoval, RemoteComponentConfig } from '@onecx/angular-utils'
 import { HttpClient } from '@angular/common/http'
+import { debounceTime } from 'rxjs/operators'
 
 interface AssignedComponent {
   refOrElement: ComponentRef<any> | HTMLElement
@@ -33,6 +36,7 @@ interface AssignedComponent {
 })
 export class SlotComponent implements OnInit, OnDestroy {
   private http = inject(HttpClient)
+  private elementRef = inject(ElementRef)
 
   @Input()
   name!: string
@@ -146,6 +150,12 @@ export class SlotComponent implements OnInit, OnDestroy {
   subscription: Subscription | undefined
   components$: Observable<SlotComponentConfiguration[]> | undefined
 
+  private resizeObserver: ResizeObserver | undefined
+  private resizeSubject = new Subject<{ width: number; height: number }>()
+  private resizeDebounceTime = 100 // milliseconds
+
+  private eventsPublisher = new EventsPublisher()
+
   ngOnInit(): void {
     if (!this.slotService) {
       console.error(`SLOT_SERVICE token was not provided. ${this.name} slot will not be filled with data.`)
@@ -181,6 +191,31 @@ export class SlotComponent implements OnInit, OnDestroy {
         }
       }
     )
+    this.observeSlotSizeChanges()
+  }
+
+  private observeSlotSizeChanges() {
+    this.resizeObserver = new ResizeObserver((entries) => {
+      const entry = entries[0]
+      if (entry) {
+        const width = entry.contentRect.width
+        const height = entry.contentRect.height
+        this.resizeSubject.next({ width, height })
+      }
+    })
+
+    this.resizeSubject.pipe(debounceTime(this.resizeDebounceTime)).subscribe(({ width, height }) => {
+      const slotsResizedEvent: SlotsResizedEvent = {
+        type: 'slotsResized',
+        payload: {
+          slotName: this.name,
+          slotDetails: { width, height },
+        },
+      }
+      this.eventsPublisher.publish(slotsResizedEvent)
+    })
+
+    this.resizeObserver.observe(this.elementRef.nativeElement)
   }
 
   private createComponent(
@@ -274,6 +309,8 @@ export class SlotComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe()
+    this.resizeObserver?.disconnect()
+    this.resizeSubject.complete() // Complete the subject to avoid memory leaks
     // Removes RC styles on unmount to avoid ghost styles
     this._assignedComponents$.getValue().forEach((component) => {
       updateStylesForRcRemoval(component.remoteInfo.productName, component.remoteInfo.appId, this.name)
