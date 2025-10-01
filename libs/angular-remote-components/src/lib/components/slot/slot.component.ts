@@ -2,6 +2,7 @@ import {
   Component,
   ComponentRef,
   ContentChild,
+  ElementRef,
   EventEmitter,
   Inject,
   Input,
@@ -15,8 +16,8 @@ import {
   ViewContainerRef,
 } from '@angular/core'
 
-import { Technologies } from '@onecx/integration-interface'
-import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs'
+import { EventsPublisher, SlotsResizedEvent, Technologies } from '@onecx/integration-interface'
+import { BehaviorSubject, Observable, Subject, Subscription, combineLatest, debounceTime } from 'rxjs'
 import { ocxRemoteComponent } from '../../model/remote-component'
 import { RemoteComponentInfo, SLOT_SERVICE, SlotComponentConfiguration, SlotService } from '../../services/slot.service'
 import { updateStylesForRcCreation, updateStylesForRcRemoval, RemoteComponentConfig } from '@onecx/angular-utils'
@@ -137,8 +138,15 @@ export class SlotComponent implements OnInit, OnDestroy {
   subscription: Subscription | undefined
   components$: Observable<SlotComponentConfiguration[]> | undefined
 
+  private resizeObserver: ResizeObserver | undefined
+  private resizeSubject = new Subject<{ width: number; height: number }>()
+  private resizeDebounceTime = 100 // milliseconds
+
+  private eventsPublisher = new EventsPublisher()
+
   constructor(
     private http: HttpClient,
+    private elementRef: ElementRef,
     @Optional() @Inject(SLOT_SERVICE) private slotService?: SlotService
   ) {}
 
@@ -177,6 +185,32 @@ export class SlotComponent implements OnInit, OnDestroy {
         }
       }
     )
+
+    this.observeSlotSizeChanges()
+  }
+
+  private observeSlotSizeChanges() {
+    this.resizeObserver = new ResizeObserver((entries) => {
+      const entry = entries[0]
+      if (entry) {
+        const width = entry.contentRect.width
+        const height = entry.contentRect.height
+        this.resizeSubject.next({ width, height })
+      }
+    })
+
+    this.resizeSubject.pipe(debounceTime(this.resizeDebounceTime)).subscribe(({ width, height }) => {
+      const slotsResizedEvent: SlotsResizedEvent = {
+        type: 'slotsResized',
+        payload: {
+          slotName: this.name,
+          slotDetails: { width, height },
+        },
+      }
+      this.eventsPublisher.publish(slotsResizedEvent)
+    })
+
+    this.resizeObserver.observe(this.elementRef.nativeElement)
   }
 
   private createComponent(
@@ -270,6 +304,8 @@ export class SlotComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe()
+    this.resizeObserver?.disconnect()
+    this.resizeSubject.complete() // Complete the subject to avoid memory leaks
     // Removes RC styles on unmount to avoid ghost styles
     this._assignedComponents$.getValue().forEach((component) => {
       updateStylesForRcRemoval(component.remoteInfo.productName, component.remoteInfo.appId, this.name)
