@@ -6,13 +6,7 @@
 }"
 >
   <ng-container *ngIf="themeService.currentTheme$ | async; else noTheme">
-    <ocx-shell-header
-      [menuButtonTitle]="menuButtonTitle"
-      (menuButtonClick)="onMenuButtonClick($event)"
-      [isStaticalMenu]="isStaticalMenuVisible()"
-      [isHorizontalMenu]="isHorizontalMenuMode()"
-    >
-    </ocx-shell-header>
+    <ocx-shell-header [menuButtonTitle]="menuButtonTitle"></ocx-shell-header>
 
     <p-toast [style]="{'word-break': 'break-word'}"></p-toast>
 

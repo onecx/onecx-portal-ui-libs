@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http'
-import { Component, HostListener, OnDestroy, OnInit, inject } from '@angular/core'
+import { Component, OnDestroy, OnInit, inject } from '@angular/core'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import {
   AppStateService,
@@ -10,20 +10,7 @@ import {
 } from '@onecx/angular-integration-interface'
 import { MessageService } from 'primeng/api'
 import { PrimeNG } from 'primeng/config'
-import {
-  BehaviorSubject,
-  debounceTime,
-  filter,
-  first,
-  from,
-  fromEvent,
-  map,
-  mergeMap,
-  Observable,
-  of,
-  pairwise,
-  startWith,
-} from 'rxjs'
+import { debounceTime, filter, first, from, fromEvent, map, mergeMap, Observable, of, pairwise, startWith } from 'rxjs'
 import { SHOW_CONTENT_PROVIDER, ShowContentProvider } from '../../shell-interface/show-content-provider'
 import {
   WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER,
@@ -53,18 +40,15 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
   })
   private slotService = inject(SlotService)
   private readonly staticMenuVisibleTopic$ = new StaticMenuVisibleTopic()
-  private readonly staticMenuVisible$ = new BehaviorSubject<{ isVisible: boolean }>({ isVisible: true })
   private readonly onResize$: Observable<Event>
   private readonly isMobile$: Observable<boolean>
 
   menuButtonTitle = ''
-  activeTopbarItem: string | undefined
 
   colorScheme: 'auto' | 'light' | 'dark' = 'light'
   menuMode: 'horizontal' | 'static' | 'overlay' | 'slim' | 'slimplus' = 'static'
   inputStyle = 'outline'
   ripple = true
-  isMobile = false
   globalErrMsg: string | undefined
   verticalMenuSlotName = 'onecx-shell-vertical-menu'
   isVerticalMenuComponentDefined$: Observable<boolean>
@@ -120,8 +104,6 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
     this.isVerticalMenuComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.verticalMenuSlotName)
     this.isFooterComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.footerSlotName)
 
-    this.staticMenuVisibleTopic$.subscribe(this.staticMenuVisible$)
-
     this.onResize$ = fromEvent(window, 'resize').pipe(debounceTime(100), untilDestroyed(this))
     const mobileBreakpointVar = getComputedStyle(document.documentElement).getPropertyValue('--mobile-break-point')
     this.isMobile$ = this.onResize$.pipe(
@@ -154,37 +136,9 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
         console.error('global error')
         this.globalErrMsg = err
       })
-
-    this.onResize()
   }
 
   ngOnDestroy(): void {
     this.staticMenuVisibleTopic$.destroy()
-  }
-
-  // TODO: Remove when switching to ToggleButton RC
-  onMenuButtonClick(event: MouseEvent) {
-    this.activeTopbarItem = undefined
-    this.staticMenuVisibleTopic$.publish({ isVisible: !this.staticMenuVisible$.getValue().isVisible })
-    event.preventDefault()
-    event.stopPropagation()
-  }
-
-  // TODO: Remove when switching to ToggleButton RC
-  @HostListener('window:resize')
-  onResize() {
-    const mobileBreakpointVar = getComputedStyle(document.documentElement).getPropertyValue('--mobile-break-point')
-    const isMobile = window.matchMedia(`(max-width: ${mobileBreakpointVar})`).matches
-    this.isMobile = isMobile
-  }
-
-  // TODO: Remove when switching to ToggleButton RC
-  isHorizontalMenuMode() {
-    return this.menuMode === 'horizontal' && !this.isMobile
-  }
-
-  // TODO: Remove when switching to ToggleButton RC
-  isStaticalMenuVisible() {
-    return this.staticMenuVisible$.getValue().isVisible && !this.isHorizontalMenuMode()
   }
 }
