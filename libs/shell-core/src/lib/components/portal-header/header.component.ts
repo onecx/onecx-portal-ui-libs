@@ -3,7 +3,6 @@ import { Component, EventEmitter, Input, Output, inject } from '@angular/core'
 import { UntilDestroy } from '@ngneat/until-destroy'
 import { Observable } from 'rxjs'
 
-import { SlotService } from '@onecx/angular-remote-components'
 import { Theme, ThemeService } from '@onecx/angular-integration-interface'
 
 @Component({
@@ -27,30 +26,21 @@ export class HeaderComponent {
   @Input() fullPortalLayout = true
   @Input() homeNavUrl = '/'
   @Input() homeNavTitle = 'Home'
-  @Input() isStaticalMenu = false
-  @Input() isHorizontalMenu = false
   @Output() menuButtonClick: EventEmitter<any> = new EventEmitter()
 
   private themeService = inject(ThemeService)
-  private slotService = inject(SlotService)
 
   menuExpanded = false
   // slot configuration: get theme logo
   public slotName = 'onecx-theme-data'
-  public isComponentDefined$: Observable<boolean> // check a component was assigned
   public currentTheme$: Observable<Theme>
   public logoLoadingEmitter = new EventEmitter<boolean>()
   public themeLogoLoadingFailed = false
 
   constructor() {
-    this.isComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.slotName)
     this.currentTheme$ = this.themeService.currentTheme$.asObservable()
     this.logoLoadingEmitter.subscribe((data: boolean) => {
       this.themeLogoLoadingFailed = data
     })
-  }
-
-  onMenuButtonClick(e: Event) {
-    this.menuButtonClick.emit(e)
   }
 }
