@@ -1,14 +1,14 @@
-export type SlotsResizedDetails = {
+export type SlotResizedDetails = {
   width: number
   height: number
 }
 
-export type SlotsResizedEventPayload = {
+export type SlotResizedEventPayload = {
   slotName: string
-  slotDetails: SlotsResizedDetails
+  slotDetails: SlotResizedDetails
 }
 
-export type SlotsResizedEvent = {
-  type: 'slotsResized'
-  payload: SlotsResizedEventPayload
+export type SlotResizedEvent = {
+  type: 'slotResized'
+  payload: SlotResizedEventPayload
 }
