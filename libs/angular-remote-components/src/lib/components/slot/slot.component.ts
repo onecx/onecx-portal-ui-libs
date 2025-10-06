@@ -16,7 +16,7 @@ import {
   ViewContainerRef,
 } from '@angular/core'
 
-import { EventsPublisher, SlotsResizedEvent, Technologies } from '@onecx/integration-interface'
+import { EventsPublisher, SlotResizedEvent, Technologies } from '@onecx/integration-interface'
 import { BehaviorSubject, Observable, Subject, Subscription, combineLatest, debounceTime } from 'rxjs'
 import { ocxRemoteComponent } from '../../model/remote-component'
 import { RemoteComponentInfo, SLOT_SERVICE, SlotComponentConfiguration, SlotService } from '../../services/slot.service'
@@ -200,14 +200,14 @@ export class SlotComponent implements OnInit, OnDestroy {
     })
 
     this.resizeSubject.pipe(debounceTime(this.resizeDebounceTimeMs)).subscribe(({ width, height }) => {
-      const slotsResizedEvent: SlotsResizedEvent = {
-        type: 'slotsResized',
+      const slotResizedEvent: SlotResizedEvent = {
+        type: 'slotResized',
         payload: {
           slotName: this.name,
           slotDetails: { width, height },
         },
       }
-      this.eventsPublisher.publish(slotsResizedEvent)
+      this.eventsPublisher.publish(slotResizedEvent)
     })
 
     this.resizeObserver.observe(this.elementRef.nativeElement)
