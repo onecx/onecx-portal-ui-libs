@@ -107,7 +107,6 @@ export class ExportDataService {
   }
 
   private escapeDelimiterAndLineBreaks(delimiter: ';' | ',', data: unknown) {
-    console.log('escapeDelimiterAndLineBreaks v5')
     if (data === null || data === undefined) {
       return data
     }
