@@ -15,8 +15,7 @@ import {
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { getLocation } from '@onecx/accelerator'
-
-import { EventsTopic, CurrentLocationTopicPayload, TopicEventType } from '@onecx/integration-interface'
+import { EventsTopic, CurrentLocationTopicPayload, TopicEventType, EventType } from '@onecx/integration-interface'
 import { Observable, Subscription, filter } from 'rxjs'
 import { dataNoPortalLayoutStylesKey } from '@onecx/angular-utils'
 import { ShellCapabilityService, Capability } from '@onecx/angular-integration-interface'
@@ -217,7 +216,7 @@ function connectRouter(
   let observable: Observable<TopicEventType | CurrentLocationTopicPayload> =
     appStateService.currentLocation$.asObservable()
   if (eventsTopic !== undefined) {
-    observable = eventsTopic.pipe(filter((e) => e.type === 'navigated'))
+    observable = eventsTopic.pipe(filter((e) => e.type === EventType.NAVIGATED))
   }
   return observable.subscribe(() => {
     const routerUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}${location.hash}`
