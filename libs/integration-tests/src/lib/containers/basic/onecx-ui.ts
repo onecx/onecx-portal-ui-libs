@@ -1,5 +1,7 @@
 import { AbstractStartedContainer, GenericContainer, StartedTestContainer } from 'testcontainers'
 import { UiDetails } from '../../model/ui.interface'
+import { HealthCheckableContainer } from '../../model/health-checkable-container.interface'
+import { HealthCheckExecutor, SkipHealthCheckExecutor } from '../../model/health-check-executor.interface'
 
 export class UiContainer extends GenericContainer {
   private details: UiDetails = {
@@ -63,7 +65,7 @@ export class UiContainer extends GenericContainer {
   }
 }
 
-export class StartedUiContainer extends AbstractStartedContainer {
+export class StartedUiContainer extends AbstractStartedContainer implements HealthCheckableContainer {
   constructor(
     startedTestContainer: StartedTestContainer,
     private readonly details: UiDetails,
@@ -71,6 +73,13 @@ export class StartedUiContainer extends AbstractStartedContainer {
     private readonly port: number
   ) {
     super(startedTestContainer)
+  }
+
+  /**
+   * UI containers don't have health endpoints - skip health check
+   */
+  getHealthCheckExecutor(): HealthCheckExecutor {
+    return new SkipHealthCheckExecutor('UI Container')
   }
 
   getAppBaseHref(): string {

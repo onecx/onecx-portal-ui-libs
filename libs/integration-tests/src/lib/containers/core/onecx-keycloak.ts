@@ -2,6 +2,13 @@ import { AbstractStartedContainer, GenericContainer, StartedTestContainer, Wait 
 import * as path from 'path'
 import { StartedOnecxPostgresContainer } from './onecx-postgres'
 import { HealthCheck } from 'testcontainers/build/types'
+import { HealthCheckableContainer } from '../../model/health-checkable-container.interface'
+import {
+  HealthCheckExecutor,
+  HttpHealthCheckExecutor,
+  SkipHealthCheckExecutor,
+} from '../../model/health-check-executor.interface'
+import { buildHealthCheckUrl } from '../../utils/health-check-executer'
 
 interface OnecxEnvironment {
   realm: string
@@ -200,17 +207,44 @@ export class OnecxKeycloakContainer extends GenericContainer {
       Wait.forAll([Wait.forHealthCheck(), Wait.forListeningPorts()])
     )
 
-    return new StartedOnecxKeycloakContainer(await super.start(), this.onecxEnvironment, this.networkAliases)
+    return new StartedOnecxKeycloakContainer(
+      await super.start(),
+      this.onecxEnvironment,
+      this.networkAliases,
+      this.healthCheck || this.setDefaultHealthCheck(this.onecxEnvironment.realm, this.onecxEnvironment.port)
+    )
   }
 }
 
-export class StartedOnecxKeycloakContainer extends AbstractStartedContainer {
+export class StartedOnecxKeycloakContainer extends AbstractStartedContainer implements HealthCheckableContainer {
   constructor(
     startedTestContainer: StartedTestContainer,
     private readonly onecxKeycloakEnvironment: OnecxEnvironment,
-    private readonly networkAliases: string[]
+    private readonly networkAliases: string[],
+    private readonly healthCheck: HealthCheck
   ) {
     super(startedTestContainer)
+  }
+
+  /**
+   * Creates Quarkus-specific health check strategy
+   * Uses URL from health check or falls back to default
+   */
+  getHealthCheckExecutor(): HealthCheckExecutor {
+    const mappedPort = this.getMappedPort(this.getPort())
+    const keycloakUrl = `http://localhost:${mappedPort}/realms/${this.getRealm()}/.well-known/openid-configuration`
+    // Build URL from health check configuration
+    const endpoint = keycloakUrl
+
+    // If no valid URL can be extracted, skip health check
+    if (!endpoint) {
+      return new SkipHealthCheckExecutor('Keycloak Container - No valid health check URL could be extracted')
+    }
+
+    // Use timeout from health check if available, otherwise default
+    const timeout = this.healthCheck?.timeout || 8000
+
+    return new HttpHealthCheckExecutor(endpoint, timeout, [200, 503])
   }
 
   getRealm(): string {

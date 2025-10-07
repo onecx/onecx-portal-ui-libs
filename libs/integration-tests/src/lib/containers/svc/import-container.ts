@@ -1,5 +1,7 @@
 import { AbstractStartedContainer, GenericContainer, StartedTestContainer } from 'testcontainers'
 import * as path from 'path'
+import { HealthCheckableContainer } from '../../model/health-checkable-container.interface'
+import { HealthCheckExecutor, SkipHealthCheckExecutor } from '../../model/health-check-executor.interface'
 
 export class ImportManagerContainer extends GenericContainer {
   private containerName = 'importManager'
@@ -59,8 +61,15 @@ export class ImportManagerContainer extends GenericContainer {
   }
 }
 
-export class StartedImportManagerContainer extends AbstractStartedContainer {
+export class StartedImportManagerContainer extends AbstractStartedContainer implements HealthCheckableContainer {
   constructor(startedTestContainer: StartedTestContainer) {
     super(startedTestContainer)
+  }
+
+  /**
+   * Import manager container doesn't need health checks - it runs to completion
+   */
+  getHealthCheckExecutor(): HealthCheckExecutor {
+    return new SkipHealthCheckExecutor('Import Manager')
   }
 }

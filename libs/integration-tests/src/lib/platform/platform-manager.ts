@@ -145,7 +145,7 @@ export class PlatformManager {
    * @param containerName
    * @returns
    */
-  async checkHealthy(containerName: string): Promise<HealthCheckResult[]> {
+  async checkHealthy(containerName: string): Promise<HealthCheckResult> {
     if (!this.healthChecker) {
       throw new Error('HealthChecker not initialized. Call startContainers first.')
     }
@@ -296,13 +296,6 @@ export class PlatformManager {
     } else {
       logger.info(LogMessages.CONFIG_NOT_FOUND, 'No configuration file found, using default configuration')
     }
-  }
-
-  /**
-   * Add container to the registry
-   */
-  private addContainer<T extends AllowedContainerTypes>(key: string | CONTAINER, container: T): void {
-    this.containerRegistry.addContainer(key, container)
   }
 
   /**

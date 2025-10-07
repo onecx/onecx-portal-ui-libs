@@ -1,22 +1,20 @@
-import axios from 'axios'
-import { CONTAINER } from '../model/container.enum'
-import { StartedOnecxKeycloakContainer } from '../containers/core/onecx-keycloak'
-import { StartedOnecxPostgresContainer } from '../containers/core/onecx-postgres'
 import type { AllowedContainerTypes } from '../model/allowed-container.types'
 import { Logger, LogMessages } from '../utils/logger'
 import { HealthCheckResult, HeartbeatConfig } from '../model/health-checker.interface'
-import { StartedUiContainer } from '../containers/basic/onecx-ui'
+import { HealthCheckableContainer } from '../model/health-checkable-container.interface'
 
 const logger = new Logger('HealthChecker')
+
+const DEFAULT_HEARTBEAT_CONFIG: Required<HeartbeatConfig> = {
+  enabled: false,
+  interval: 10000, // 10 seconds default
+  failureThreshold: 3,
+}
 
 export class HealthChecker {
   private heartbeatInterval?: NodeJS.Timeout
   private failureCountMap = new Map<string, number>()
-  private heartbeatConfig: Required<HeartbeatConfig> = {
-    enabled: false,
-    interval: 10000, // 10 seconds default
-    failureThreshold: 3,
-  }
+  private heartbeatConfig: Required<HeartbeatConfig> = { ...DEFAULT_HEARTBEAT_CONFIG }
 
   /**
    * Configure heartbeat settings from platform configuration
@@ -24,7 +22,7 @@ export class HealthChecker {
   configureHeartbeat(config?: HeartbeatConfig): void {
     if (config) {
       this.heartbeatConfig = {
-        ...this.heartbeatConfig,
+        ...DEFAULT_HEARTBEAT_CONFIG,
         ...config,
       }
       logger.info(
@@ -32,11 +30,7 @@ export class HealthChecker {
         `Heartbeat configured: enabled=${config.enabled}, interval=${this.heartbeatConfig.interval}ms, threshold=${this.heartbeatConfig.failureThreshold}`
       )
     } else {
-      this.heartbeatConfig = {
-        enabled: false,
-        interval: 10000,
-        failureThreshold: 3,
-      }
+      this.heartbeatConfig = { ...DEFAULT_HEARTBEAT_CONFIG }
       logger.info(LogMessages.HEALTH_CHECK_START, 'Heartbeat disabled (no configuration provided)')
     }
   }
@@ -47,97 +41,49 @@ export class HealthChecker {
   async checkAllHealthy(startedContainers: Map<string, AllowedContainerTypes>): Promise<HealthCheckResult[]> {
     const healthCheckPromises = Array.from(startedContainers.keys()).map(async (name) => {
       const result = await this.checkHealthy(startedContainers, name)
-      return result[0]
+      return result
     })
 
     return Promise.all(healthCheckPromises)
   }
 
   /**
-   * Check the health of one contianer
+   * Check the health of one container using the new strategy pattern
    */
-  async checkHealthy(
-    startedContainers: Map<string, AllowedContainerTypes>,
-    name: string
-  ): Promise<HealthCheckResult[]> {
-    const results: HealthCheckResult[] = []
-
+  async checkHealthy(startedContainers: Map<string, AllowedContainerTypes>, name: string): Promise<HealthCheckResult> {
     const container = startedContainers.get(name)
     if (!container) {
-      results.push({ name, healthy: false })
-      return results
+      return { name, healthy: false }
     }
 
-    let healthy = true
-
-    if (this.shouldSkipHealthCheck(container)) {
-      logger.info(LogMessages.HEALTH_CHECK_SKIP, name)
-    } else if (name === CONTAINER.KEYCLOAK) {
-      healthy = await this.checkKeycloakHealth(container as StartedOnecxKeycloakContainer)
-    } else {
-      healthy = await this.checkContainerHealth(container, name)
+    // Check if container implements HealthCheckableContainer interface
+    if (!this.isHealthCheckableContainer(container)) {
+      logger.warn(LogMessages.HEALTH_CHECK_SKIP, `${name} - Container does not implement HealthCheckableContainer`)
+      return { name, healthy: true } // Assume healthy for non-compliant containers
     }
 
-    results.push({ name, healthy })
-    return results
-  }
+    const executor = container.getHealthCheckExecutor()
+    const metadata = executor.getExecutionMetadata()
 
-  /**
-   * Check if health check should be skipped for a container based on its type and capabilities
-   */
-  private shouldSkipHealthCheck(container: AllowedContainerTypes): boolean {
-    // Check container type instead of hardcoded names
+    logger.info(LogMessages.HEALTH_CHECK_CONTAINER, metadata.description)
 
-    // Postgres containers don't have HTTP health endpoints
-    if (container instanceof StartedOnecxPostgresContainer) {
-      return true
-    }
-
-    // Ui containers don't have HTTP health endpoints
-    if (container instanceof StartedUiContainer) {
-      return true
-    }
-
-    return false
-  }
-
-  /**
-   * Check health of a Keycloak container
-   */
-  private async checkKeycloakHealth(keycloakContainer: StartedOnecxKeycloakContainer): Promise<boolean> {
-    const realm = keycloakContainer.getRealm()
-    const url = this.buildHealthCheckUrl(keycloakContainer, `/realms/${realm}/.well-known/openid-configuration`)
-    logger.info(LogMessages.HEALTH_CHECK_KEYCLOAK, url)
-    return await this.sendHttpRequest(url)
-  }
-
-  /**
-   * Check health of a service container
-   */
-  private async checkContainerHealth(container: AllowedContainerTypes, name: string): Promise<boolean> {
-    const url = this.buildHealthCheckUrl(container, '/q/health')
-    logger.info(LogMessages.HEALTH_CHECK_CONTAINER, `${name} at ${url}`)
-    return await this.sendHttpRequest(url)
-  }
-
-  /**
-   * Make HTTP request to check container health
-   */
-  private async sendHttpRequest(url: string): Promise<boolean> {
     try {
-      const response = await axios.get(url)
-      return response.status === 200
-    } catch {
-      return false
-    }
-  }
+      const result = await executor.executeHealthCheck()
 
-  /**
-   * Build health check URL for a container
-   */
-  private buildHealthCheckUrl(container: AllowedContainerTypes, healthPath: string): string {
-    const port = container.getMappedPort(container.getPort())
-    return `http://localhost:${port}${healthPath}`
+      if (result.success) {
+        logger.success(
+          LogMessages.HEALTH_CHECK_SUCCESS,
+          `${name} healthy ${result.responseTime ? `(${result.responseTime}ms)` : ''}`
+        )
+      } else {
+        logger.error(LogMessages.HEALTH_CHECK_FAILED, `${name} unhealthy: ${result.error || 'Unknown error'}`)
+      }
+
+      return { name, healthy: result.success }
+    } catch (error) {
+      logger.error(LogMessages.HEALTH_CHECK_FAILED, `${name} health check threw exception`, error)
+      return { name, healthy: false }
+    }
   }
 
   /**
@@ -150,6 +96,7 @@ export class HealthChecker {
     }
 
     if (this.heartbeatInterval) {
+      // Stop any existing heartbeat to prevent multiple intervals running
       this.stopHeartbeat()
     }
 
@@ -160,38 +107,7 @@ export class HealthChecker {
 
     this.heartbeatInterval = setInterval(async () => {
       try {
-        const healthStatus = await this.checkAllHealthy(startedContainers)
-        logger.success(LogMessages.HEALTH_CHECK_SUCCESS, `Checked ${healthStatus.length} containers`)
-
-        // Process health results and track failures
-        const unhealthyContainers = healthStatus.filter((c) => !c.healthy)
-
-        for (const container of healthStatus) {
-          if (container.healthy) {
-            // Reset failure count for healthy containers
-            this.failureCountMap.delete(container.name)
-          } else {
-            // Increment failure count
-            const currentFailures = this.failureCountMap.get(container.name) || 0
-            this.failureCountMap.set(container.name, currentFailures + 1)
-
-            // Log error if threshold exceeded
-            const failures = this.failureCountMap.get(container.name) || 0
-            if (failures >= this.heartbeatConfig.failureThreshold) {
-              logger.error(
-                LogMessages.CONTAINER_UNHEALTHY,
-                `Container ${container.name} unhealthy (${failures} consecutive failures)`
-              )
-            } else if (failures === 1) {
-              logger.warn(LogMessages.CONTAINER_UNHEALTHY, `Container ${container.name} unhealthy (first failure)`)
-            }
-          }
-        }
-
-        if (unhealthyContainers.length > 0) {
-          const summary = `${unhealthyContainers.length} containers unhealthy: ${unhealthyContainers.map((c) => c.name).join(', ')}`
-          logger.error(LogMessages.CONTAINER_UNHEALTHY, summary)
-        }
+        await this.processHeartbeatCheck(startedContainers)
       } catch (error) {
         logger.error(LogMessages.HEALTH_CHECK_FAILED, undefined, error)
       }
@@ -222,5 +138,65 @@ export class HealthChecker {
    */
   getHeartbeatConfig(): HeartbeatConfig {
     return { ...this.heartbeatConfig }
+  }
+
+  /**
+   * Process a single heartbeat check cycle
+   */
+  private async processHeartbeatCheck(startedContainers: Map<string, AllowedContainerTypes>): Promise<void> {
+    const healthStatus = await this.checkAllHealthy(startedContainers)
+    logger.success(LogMessages.HEALTH_CHECK_SUCCESS, `Checked ${healthStatus.length} containers`)
+
+    this.processHealthResults(healthStatus)
+    this.logHealthSummary(healthStatus)
+  }
+
+  /**
+   * Process health check results and track failure counts
+   */
+  private processHealthResults(healthStatus: HealthCheckResult[]): void {
+    for (const container of healthStatus) {
+      if (container.healthy) {
+        // Reset failure count for healthy containers
+        this.failureCountMap.delete(container.name)
+      } else {
+        // Increment failure count
+        const currentFailures = this.failureCountMap.get(container.name) || 0
+        this.failureCountMap.set(container.name, currentFailures + 1)
+
+        // Log error if threshold exceeded
+        const failures = this.failureCountMap.get(container.name) || 0
+        if (failures >= this.heartbeatConfig.failureThreshold) {
+          logger.error(
+            LogMessages.CONTAINER_UNHEALTHY,
+            `Container ${container.name} unhealthy (${failures} consecutive failures)`
+          )
+        } else if (failures === 1) {
+          logger.warn(LogMessages.CONTAINER_UNHEALTHY, `Container ${container.name} unhealthy (first failure)`)
+        }
+      }
+    }
+  }
+
+  /**
+   * Log summary of unhealthy containers
+   */
+  private logHealthSummary(healthStatus: HealthCheckResult[]): void {
+    const unhealthyContainers = healthStatus.filter((c) => !c.healthy)
+
+    if (unhealthyContainers.length > 0) {
+      const summary = `${unhealthyContainers.length} containers unhealthy: ${unhealthyContainers.map((c) => c.name).join(', ')}`
+      logger.error(LogMessages.CONTAINER_UNHEALTHY, summary)
+    }
+  }
+
+  /**
+   * Type guard using duck typing
+   * More robust than instanceof checks
+   */
+  private isHealthCheckableContainer(
+    container: AllowedContainerTypes
+  ): container is AllowedContainerTypes & HealthCheckableContainer {
+    return typeof (container as any).getHealthCheckExecutor === 'function'
   }
 }

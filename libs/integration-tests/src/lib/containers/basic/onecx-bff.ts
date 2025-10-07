@@ -2,6 +2,13 @@ import { AbstractStartedContainer, GenericContainer, StartedTestContainer, Wait 
 import { HealthCheck } from 'testcontainers/build/types'
 import { BffDetails } from '../../model/bff.interface'
 import { StartedOnecxKeycloakContainer } from '../core/onecx-keycloak'
+import { HealthCheckableContainer } from '../../model/health-checkable-container.interface'
+import {
+  HealthCheckExecutor,
+  HttpHealthCheckExecutor,
+  SkipHealthCheckExecutor,
+} from '../../model/health-check-executor.interface'
+import { buildHealthCheckUrl } from '../../utils/health-check-executer'
 
 export class BffContainer extends GenericContainer {
   private details: BffDetails = {
@@ -82,18 +89,46 @@ export class BffContainer extends GenericContainer {
     this.withExposedPorts(this.port)
 
       .withWaitStrategy(Wait.forAll([Wait.forHealthCheck(), Wait.forListeningPorts()]))
-    return new StartedBffContainer(await super.start(), this.details, this.networkAliases, this.port)
+    return new StartedBffContainer(
+      await super.start(),
+      this.details,
+      this.networkAliases,
+      this.port,
+      this.healthCheck || this.setDefaultHealthCheck(this.port)
+    )
   }
 }
 
-export class StartedBffContainer extends AbstractStartedContainer {
+export class StartedBffContainer extends AbstractStartedContainer implements HealthCheckableContainer {
   constructor(
     startedTestContainer: StartedTestContainer,
     private readonly details: BffDetails,
     private readonly networkAliases: string[],
-    private readonly port: number
+    private readonly port: number,
+    private readonly healthCheck: HealthCheck
   ) {
     super(startedTestContainer)
+  }
+
+  /**
+   * Creates Quarkus-specific health check strategy
+   * Uses URL from health check or falls back to default
+   */
+  getHealthCheckExecutor(): HealthCheckExecutor {
+    const mappedPort = this.getMappedPort(this.port)
+
+    // Build URL from health check configuration
+    const endpoint = buildHealthCheckUrl(mappedPort, this.healthCheck)
+
+    // If no valid URL can be extracted, skip health check
+    if (!endpoint) {
+      return new SkipHealthCheckExecutor('No valid health check URL could be extracted')
+    }
+
+    // Use timeout from health check if available, otherwise default
+    const timeout = this.healthCheck?.timeout || 8000
+
+    return new HttpHealthCheckExecutor(endpoint, timeout, [200, 503])
   }
 
   getPermissionProductName() {

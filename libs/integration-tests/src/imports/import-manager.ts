@@ -65,36 +65,6 @@ export class ImportManager {
   }
 
   /**
-   * Retrieves an authentication token from the Keycloak service
-   *
-   * @returns Promise resolving to the access token
-   * @throws Error if token retrieval fails
-   * @private
-   */
-  private async getToken(): Promise<string> {
-    logger.info('REQUESTING_TOKEN')
-    const { tokenValues } = this.containerInfo
-    const url = `http://${tokenValues.alias}:${tokenValues.port}/realms/${tokenValues.realm}/protocol/openid-connect/token`
-    const params = new URLSearchParams({
-      username: tokenValues.username,
-      password: tokenValues.password,
-      grant_type: 'password',
-      client_id: tokenValues.clientId,
-    })
-
-    try {
-      const response = await axios.post<{ access_token: string }>(url, params, {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      })
-      logger.success('TOKEN_SUCCESS')
-      return response.data.access_token
-    } catch (error) {
-      logger.error('TOKEN_ERROR', undefined, error)
-      throw error
-    }
-  }
-
-  /**
    * Executes the complete data import process for all OneCX containers
    *
    * This method orchestrates the import of various data types including tenants, themes,
@@ -126,25 +96,6 @@ export class ImportManager {
     const base = path.resolve(__dirname, '')
     const { services } = this.containerInfo
 
-    // Helper function to get service URL
-    const getServiceUrl = (serviceName: string, path = '') => {
-      const service = services[serviceName]
-      if (!service) {
-        logger.error('SERVICE_UNAVAILABLE', serviceName)
-        throw new Error(`Service '${serviceName}' not found in container info`)
-      }
-      return `http://${service.alias}:${service.port}${path}`
-    }
-
-    const getServicePort = (serviceName: string) => {
-      const service = services[serviceName]
-      if (!service) {
-        logger.error('SERVICE_UNAVAILABLE', serviceName)
-        throw new Error(`Service '${serviceName}' not found in container info`)
-      }
-      return service.port
-    }
-
     // Get all available services
     const serviceNames = Object.keys(services)
     logger.info('SERVICES_FOUND', `Available services: ${serviceNames.join(', ')}`)
@@ -152,7 +103,10 @@ export class ImportManager {
     // Tenant import - requires tenant service
     if (services['onecx-tenant-svc']) {
       logger.info('SERVICE_AVAILABLE', 'onecx-tenant-svc')
-      await importTenants(path.join(base, 'tenant'), getServiceUrl('onecx-tenant-svc', '/exim/v1/tenants/operator'))
+      await importTenants(
+        path.join(base, 'tenant'),
+        this.getServiceUrl('onecx-tenant-svc', '/exim/v1/tenants/operator')
+      )
     } else {
       logger.info('SERVICE_UNAVAILABLE', 'onecx-tenant-svc - skipping tenant import')
     }
@@ -163,7 +117,7 @@ export class ImportManager {
       await importThemes(
         path.join(base, 'theme'),
         async () => token,
-        getServiceUrl('onecx-theme-svc', '/exim/v1/themes/operator')
+        this.getServiceUrl('onecx-theme-svc', '/exim/v1/themes/operator')
       )
     } else {
       logger.info('SERVICE_UNAVAILABLE', 'onecx-theme-svc - skipping theme import')
@@ -173,7 +127,7 @@ export class ImportManager {
     if (services['onecx-product-store-svc']) {
       const productStore = 'product-store'
       logger.info('SERVICE_AVAILABLE', 'onecx-product-store-svc')
-      const productStoreBase = getServiceUrl('onecx-product-store-svc', '/')
+      const productStoreBase = this.getServiceUrl('onecx-product-store-svc', '/')
 
       await importProducts(path.join(base, productStore), productStoreBase)
       await importSlots(path.join(base, productStore), productStoreBase)
@@ -181,7 +135,7 @@ export class ImportManager {
       await importMicrofrontends(
         path.join(base, productStore),
         productStoreBase,
-        getServicePort('onecx-product-store-svc')
+        this.getServicePort('onecx-product-store-svc')
       )
     } else {
       logger.info('SERVICE_UNAVAILABLE', 'onecx-product-store-svc - skipping product store imports')
@@ -190,12 +144,12 @@ export class ImportManager {
     // Permission imports - requires permission service
     if (services['onecx-permission-svc']) {
       logger.info('SERVICE_AVAILABLE', 'onecx-permission-svc')
-      await importPermissions(path.join(base, 'permissions'), getServiceUrl('onecx-permission-svc'))
+      await importPermissions(path.join(base, 'permissions'), this.getServiceUrl('onecx-permission-svc'))
 
       await importAssignments(
         path.join(base, 'assignments'),
         async () => token,
-        getServiceUrl('onecx-permission-svc', '/exim/v1/assignments/operator')
+        this.getServiceUrl('onecx-permission-svc', '/exim/v1/assignments/operator')
       )
     } else {
       logger.info('SERVICE_UNAVAILABLE', 'onecx-permission-svc - skipping permission imports')
@@ -207,12 +161,62 @@ export class ImportManager {
       await importWorkspaces(
         path.join(base, 'workspace'),
         async () => token,
-        getServiceUrl('onecx-workspace-svc', '/exim/v1/workspace/operator')
+        this.getServiceUrl('onecx-workspace-svc', '/exim/v1/workspace/operator')
       )
     } else {
       logger.info('SERVICE_UNAVAILABLE', 'onecx-workspace-svc - skipping workspace import')
     }
 
     logger.success('IMPORT_COMPLETE')
+  }
+
+  /**
+   * Retrieves an authentication token from the Keycloak service
+   *
+   * @returns Promise resolving to the access token
+   * @throws Error if token retrieval fails
+   * @private
+   */
+  private async getToken(): Promise<string> {
+    logger.info('REQUESTING_TOKEN')
+    const { tokenValues } = this.containerInfo
+    const url = `http://${tokenValues.alias}:${tokenValues.port}/realms/${tokenValues.realm}/protocol/openid-connect/token`
+    const params = new URLSearchParams({
+      username: tokenValues.username,
+      password: tokenValues.password,
+      grant_type: 'password',
+      client_id: tokenValues.clientId,
+    })
+
+    try {
+      const response = await axios.post<{ access_token: string }>(url, params, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      })
+      logger.success('TOKEN_SUCCESS')
+      return response.data.access_token
+    } catch (error) {
+      logger.error('TOKEN_ERROR', undefined, error)
+      throw error
+    }
+  }
+
+  private getServiceUrl = (serviceName: string, path = '') => {
+    const { services } = this.containerInfo
+    const service = services[serviceName]
+    if (!service) {
+      logger.error('SERVICE_UNAVAILABLE', serviceName)
+      throw new Error(`Service '${serviceName}' not found in container info`)
+    }
+    return `http://${service.alias}:${service.port}${path}`
+  }
+
+  private getServicePort = (serviceName: string) => {
+    const { services } = this.containerInfo
+    const service = services[serviceName]
+    if (!service) {
+      logger.error('SERVICE_UNAVAILABLE', serviceName)
+      throw new Error(`Service '${serviceName}' not found in container info`)
+    }
+    return service.port
   }
 }
