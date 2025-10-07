@@ -24,7 +24,7 @@ updates:
     directory: "/"
     schedule:
       interval: daily
-    target-branch: "v5"
+    target-branch: "v6"
     labels:
       - dependencies
     groups:
