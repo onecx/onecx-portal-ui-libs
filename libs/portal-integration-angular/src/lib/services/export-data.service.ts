@@ -31,13 +31,13 @@ export class ExportDataService {
       .map((d) =>
         columns
           .reduce((arr: unknown[], c) => [...arr, d[c.id]], [])
-          .map((d) => this.escapeDelimiter(delimiter, d))
+          .map((d) => this.escapeDelimiterAndLineBreaks(delimiter, d))
           .join(delimiter)
       )
       .join('\r\n')
     const headerString = (await firstValueFrom(this.translateColumnNames(columns)))
       .map((c) => c.name)
-      .map((c) => this.escapeDelimiter(delimiter, c))
+      .map((c) => this.escapeDelimiterAndLineBreaks(delimiter, c))
       .join(delimiter)
 
     const csvString = headerString + '\r\n' + dataString
@@ -106,7 +106,7 @@ export class ExportDataService {
     return of(data)
   }
 
-  private escapeDelimiter(delimiter: ';' | ',', data: unknown) {
+  private escapeDelimiterAndLineBreaks(delimiter: ';' | ',', data: unknown) {
     if (data === null || data === undefined) {
       return data
     }
@@ -117,7 +117,7 @@ export class ExportDataService {
       str = str.replaceAll('"', '""')
     }
 
-    if (str.includes(delimiter)) {
+    if (str.includes(delimiter) || str.includes('\n') || str.includes('\r')) {
       str = `"${str}"`
     }
     return str
