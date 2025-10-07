@@ -33,7 +33,7 @@ export function extractHealthCheckPath(healthCheck: HealthCheck | undefined): st
   }
 
   // Extract path from URL (everything after hostname:port)
-  const pathMatch = url.match(/https?:\/\/[^\/]+(.*)/)
+  const pathMatch = url.match(/https?:\/\/[^/]+(.*)/)
 
   if (!pathMatch || !pathMatch[1]) {
     return null
@@ -51,7 +51,7 @@ export function extractHealthCheckPath(healthCheck: HealthCheck | undefined): st
  * @returns Base URL (protocol://host) or null if extraction fails
  */
 export function extractBaseUrl(url: string): string | null {
-  const baseUrlMatch = url.match(/(https?:\/\/[^\/]+)/)
+  const baseUrlMatch = url.match(/(https?:\/\/[^/]+)/)
   return baseUrlMatch ? baseUrlMatch[1] : null
 }
 

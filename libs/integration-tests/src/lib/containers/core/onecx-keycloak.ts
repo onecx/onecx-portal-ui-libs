@@ -8,7 +8,6 @@ import {
   HttpHealthCheckExecutor,
   SkipHealthCheckExecutor,
 } from '../../model/health-check-executor.interface'
-import { buildHealthCheckUrl } from '../../utils/health-check-executer'
 
 interface OnecxEnvironment {
   realm: string
