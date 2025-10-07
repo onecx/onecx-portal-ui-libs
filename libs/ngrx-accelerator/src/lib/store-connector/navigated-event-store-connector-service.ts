@@ -1,4 +1,4 @@
-import { EventsTopic, CurrentLocationTopicPayload, TopicEventType } from '@onecx/integration-interface'
+import { EventsTopic, CurrentLocationTopicPayload, TopicEventType, EventType } from '@onecx/integration-interface'
 import { Capability, ShellCapabilityService } from '@onecx/angular-integration-interface'
 import { ENVIRONMENT_INITIALIZER, Injectable, OnDestroy, inject } from '@angular/core'
 import { Store } from '@ngrx/store'
@@ -30,7 +30,7 @@ export class NavigatedEventStoreConnectorService implements OnDestroy {
     let observable: Observable<TopicEventType | CurrentLocationTopicPayload> =
       this.appStateService.currentLocation$.asObservable()
     if (!this.capabilityService.hasCapability(Capability.CURRENT_LOCATION_TOPIC)) {
-      observable = this.eventsTopic$.pipe(filter((e) => e.type === 'navigated'))
+      observable = this.eventsTopic$.pipe(filter((e) => e.type === EventType.NAVIGATED))
     }
     observable.subscribe((navigatedEvent) => {
       let event: unknown = navigatedEvent as CurrentLocationTopicPayload

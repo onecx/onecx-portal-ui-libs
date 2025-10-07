@@ -9,7 +9,7 @@ import { PrimeIcon } from '@onecx/angular-accelerator'
 import { DialogFooterComponent } from '../core/components/dialog/dialog-footer/dialog-footer.component'
 import { DialogContentComponent } from '../core/components/dialog/dialog-content/dialog-content.component'
 import { NavigationStart, Router } from '@angular/router'
-import { CurrentLocationTopicPayload, EventsTopic, TopicEventType } from '@onecx/integration-interface'
+import { CurrentLocationTopicPayload, EventsTopic, EventType, TopicEventType } from '@onecx/integration-interface'
 import { Capability, ShellCapabilityService } from '@onecx/angular-integration-interface'
 import { AppStateService } from '@onecx/angular-integration-interface'
 
@@ -281,7 +281,7 @@ export class PortalDialogService implements OnDestroy {
     let observable: Observable<TopicEventType | CurrentLocationTopicPayload> =
       this.appStateService.currentLocation$.asObservable()
     if (!this.capabilityService.hasCapability(Capability.CURRENT_LOCATION_TOPIC)) {
-      observable = this.eventsTopic.pipe(filter((e) => e.type === 'navigated'))
+      observable = this.eventsTopic.pipe(filter((e) => e.type === EventType.NAVIGATED))
     }
     observable.subscribe(() => {
       this.cleanupAndCloseDialog()

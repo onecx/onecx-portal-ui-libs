@@ -1,3 +1,5 @@
+import { EventType } from './event-type'
+
 export type SlotResizedDetails = {
   width: number
   height: number
@@ -9,6 +11,6 @@ export type SlotResizedEventPayload = {
 }
 
 export type SlotResizedEvent = {
-  type: 'slotResized'
+  type: EventType.SLOT_RESIZED
   payload: SlotResizedEventPayload
 }

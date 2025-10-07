@@ -1,6 +1,6 @@
 import { filter } from 'rxjs/internal/operators/filter'
 import { AuthService, AuthServiceFactory, Injectables } from './auth.service'
-import { EventsTopic } from '@onecx/integration-interface'
+import { EventsTopic, EventType } from '@onecx/integration-interface'
 import { AppStateService, CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
 import { Injectable, Injector } from '@angular/core'
 import { KeycloakAuthService } from './auth_services/keycloak-auth.service'
@@ -20,7 +20,7 @@ export class AuthServiceWrapper {
     private injector: Injector
   ) {
     this.eventsTopic$
-      .pipe(filter((e) => e.type === 'authentication#logoutButtonClicked'))
+      .pipe(filter((e) => e.type === EventType.AUTH_LOGOUT_BUTTON_CLICKED))
       .subscribe(() => this.authService?.logout())
     window.onecxAngularAuth ??= {}
     window.onecxAngularAuth.authServiceProxy ??= {}
