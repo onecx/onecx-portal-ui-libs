@@ -5,6 +5,7 @@ on:
       - 'main'
       - 'develop'
       - 'v5'
+      - 'v6'
 jobs:
   build-storybooks:
     runs-on: ubuntu-latest
