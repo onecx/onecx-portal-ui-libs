@@ -1,3 +1,30 @@
+## [5.49.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.48.4...v5.49.0) (2025-09-23)
+
+### Features
+
+* add v5 neccessary changes ([#934](https://github.com/onecx/onecx-portal-ui-libs/issues/934)) ([4731084](https://github.com/onecx/onecx-portal-ui-libs/commit/4731084aea60489565612175a46f733eab26ab00))
+
+### Bug Fixes
+
+* add original css to loaded styles ([#947](https://github.com/onecx/onecx-portal-ui-libs/issues/947)) ([ab640fe](https://github.com/onecx/onecx-portal-ui-libs/commit/ab640fe334de33b0832363e68b072c0585475d6a))
+* **ci:** temporarily disable dependabot auto merge ([#954](https://github.com/onecx/onecx-portal-ui-libs/issues/954)) ([0808031](https://github.com/onecx/onecx-portal-ui-libs/commit/080803189a09db8d4b991bf77940f9f1a7467fa3))
+* remove SONAR_URL variable ([#922](https://github.com/onecx/onecx-portal-ui-libs/issues/922)) ([18cb247](https://github.com/onecx/onecx-portal-ui-libs/commit/18cb24752116f3dfe9efb9b939d59cfbaaa1144a))
+
+### Chores
+
+* **deps-dev:** bump msw from 2.10.5 to 2.11.2 ([#939](https://github.com/onecx/onecx-portal-ui-libs/issues/939)) ([8d7cade](https://github.com/onecx/onecx-portal-ui-libs/commit/8d7cade9b4b15981bbf3fa4182b09c464378240b))
+
+## [5.48.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.48.3...v5.48.4) (2025-09-15)
+
+### Bug Fixes
+
+* search header storybook ([#935](https://github.com/onecx/onecx-portal-ui-libs/issues/935)) ([00bdfba](https://github.com/onecx/onecx-portal-ui-libs/commit/00bdfba5eb1b11c6e59829a70eed012e6f45fbdf))
+* style defect in portal-layout-styles ([#944](https://github.com/onecx/onecx-portal-ui-libs/issues/944)) ([38e162e](https://github.com/onecx/onecx-portal-ui-libs/commit/38e162e8ea5c636873d165c832f76930aa67dc82))
+
+### Chores
+
+* **deps-dev:** bump @typescript-eslint/utils from 8.41.0 to 8.43.0 ([#930](https://github.com/onecx/onecx-portal-ui-libs/issues/930)) ([217fd8f](https://github.com/onecx/onecx-portal-ui-libs/commit/217fd8f75c892e2c57260634f00152d71c3b6a9a))
+
 ## [5.48.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.48.2...v5.48.3) (2025-09-10)
 
 ### Bug Fixes
