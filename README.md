@@ -10,16 +10,17 @@ OneCx portal UI libraries
 
 OneCX Portal UI Libs is using https://semantic-release.gitbook.io/semantic-release[semantic-release]for packages release. In this repository the following branches are important in context of making new releases:
 
-- **main** - contains source code for `latest` distribution tag.
-- **develop** - contains source code for `rc` distribution tag with features for future release of OneCX.
+- **v5** - contains source code for `v5` distribution tag compatible with Angular 18.
+- **v6** - contains source code for `v5` distribution tag compatible with Angular 19.
+- **main** - contains source code for `rc` distribution tag with features for future release of OneCX.
 
 # Releasing libs
 
-The `main` branch contains the source code for the `latest` distribution tag of OneCX libraries. In order to release new version of libs, use `create-release` action to run the release workflow for **main branch**.
+In order to release new version of libs, use `create-release` action to run the release workflow for **desired branch**.
 
 ## Release versioning
 
-Depending on the commits included for a release in the `main` branch, the version of the `latest` distribution tag varies. Below, a list of example version changes is presented:
+Depending on the commits included for a release in the `v5` or `v6` branch, the version of the `latest` distribution tag varies. Below, a list of example version changes is presented for `v5` releases:
 
 - Release fix commit - The patch version increments (e.g., `5.1.3` &#8594; `5.1.4`).
 - Release feat commit - The minor version increments (e.g., `5.1.3` &#8594; `5.2.0`).
@@ -28,13 +29,13 @@ Depending on the commits included for a release in the `main` branch, the versio
 
 # Pre-releases
 
-The https://semantic-release.gitbook.io/semantic-release[semantic-release] allows to create pre-releases. In this repository, `develop` branch should contain source code which could be released as a release candidate.
+The https://semantic-release.gitbook.io/semantic-release[semantic-release] allows to create pre-releases. In this repository, `main` branch should contain source code which could be released as a release candidate.
 
-In order to release new version of pre-release (`rc` distribution tag) of OneCX libraries, use `create-release` action to run the release workflow for **develop branch**.
+In order to release new version of pre-release (`rc` distribution tag) of OneCX libraries, use `create-release` action to run the release workflow for **main branch**.
 
 ## Pre-release versioning
 
-Depending on the commits included for a release in the `develop` branch, the version of the `rc` distribution tag varies. Below, a list of example version changes is presented:
+Depending on the commits included for a release in the `main` branch, the version of the `rc` distribution tag varies. Below, a list of example version changes is presented:
 
 - Release fix commit - The patch version increments (e.g., `6.0.0-rc.3` &#8594; `6.0.0-rc.4`).
 - Release feat commit - The minor version increments (e.g., `6.0.0-rc.3` &#8594; `6.0.0-rc.4`).
@@ -42,15 +43,6 @@ Depending on the commits included for a release in the `develop` branch, the ver
 - Release changes merged from pre-release branch - The major version increments (e.g., `6.0.0-rc.3` &#8594; `7.0.0-rc.1`).
 
 To find out more on pre-releases with semantic-release, please refer https://semantic-release.gitbook.io/semantic-release/recipes/release-workflow/pre-releases[here].
-
-# Porting changes from main to develop
-
-In some cases, there might be a requirement to make a change directly on a main branch (e.g., urgent fix for a client). In that scenario, the following should happen:
-
-- Change is prepared on the `main` branch
-- Libs are released via the `main` branch
-- The `main` branch is merged into `develop` branch
-- Libs pre-release is released via the `develop` branch
 
 # Migrating to Angular 19, PrimeNG 19 and OneCX v6
 
