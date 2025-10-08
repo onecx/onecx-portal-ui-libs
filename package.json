@@ -5,7 +5,10 @@
   "scripts": {
     "postinstall": "mkdir -p .nx",
     "build": "nx run-many -t build build-migrations",
-    "build-copy": "npm run build && node copy-build.js"
+    "build-copy": "npm run build && node copy-build.js",
+    "clean": "npm cache clean --force && rm -rf *.log dist reports .angular .eslintcache ./node_modules/.cache/prettier/.prettier-cache .nx tmp",
+    "sonar": "node sonar-single.js",
+    "sonar:all": "node sonar-all.js"
   },
   "private": true,
   "dependencies": {
@@ -130,7 +133,8 @@
     "ts-jest": "^29.4.1",
     "ts-jest-mock-import-meta": "^1.3.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "sonarqube-scanner": "^4.3.0"
   },
   "nx": {
     "includedScripts": []
