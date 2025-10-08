@@ -2,7 +2,7 @@ name: SonarQube Pull Request
 
 on:
   workflow_run:
-    workflows: ['On PR']
+    workflows: ["On PR"]
     types:
       - completed
 
@@ -25,13 +25,17 @@ jobs:
 
       - name: Find affected lib coverage directories
         id: set-matrix
+        # This step creates a matrix of libraries that have coverage reports
+        # If no reports exist, creates an empty matrix to allow graceful workflow completion
         run: |
+          # Check if reports directory exists
           if [ ! -d "reports" ]; then
-            echo "No reports directory found. Setting empty matrix."
+            echo "::notice::No reports directory found. No libraries will be analyzed."
             echo "matrix=[]" >> $GITHUB_OUTPUT
             exit 0
           fi
 
+          # Find all coverage report directories
           paths=$(find reports -maxdepth 1 -mindepth 1 -type d -exec basename {} \; 2>/dev/null || true)
 
           if [ -z "$paths" ]; then
@@ -47,6 +51,10 @@ jobs:
     needs: set-matrix-pr
     runs-on: ubuntu-latest
 
+    # Only run this job if:
+    # - The triggering workflow was for a pull request
+    # - The triggering workflow completed successfully
+    # - There are libraries to analyze (non-empty matrix)
     if: >
       github.event.workflow_run.event == 'pull_request' &&
       github.event.workflow_run.conclusion == 'success' &&

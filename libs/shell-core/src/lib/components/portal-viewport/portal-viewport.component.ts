@@ -10,13 +10,14 @@ import {
 } from '@onecx/angular-integration-interface'
 import { MessageService } from 'primeng/api'
 import { PrimeNG } from 'primeng/config'
-import { filter, first, from, mergeMap, Observable, of } from 'rxjs'
+import { debounceTime, filter, first, from, fromEvent, map, mergeMap, Observable, of, pairwise, startWith } from 'rxjs'
 import { SHOW_CONTENT_PROVIDER, ShowContentProvider } from '../../shell-interface/show-content-provider'
 import {
   WORKSPACE_CONFIG_BFF_SERVICE_PROVIDER,
   WorkspaceConfigBffService,
 } from '../../shell-interface/workspace-config-bff-service-provider'
 import { SlotService } from '@onecx/angular-remote-components'
+import { StaticMenuVisibleTopic } from '@onecx/integration-interface'
 
 @Component({
   standalone: false,
@@ -38,6 +39,9 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
     optional: true,
   })
   private slotService = inject(SlotService)
+  private readonly staticMenuVisibleTopic$ = new StaticMenuVisibleTopic()
+  private readonly onResize$: Observable<Event>
+  private readonly isMobile$: Observable<boolean>
 
   menuButtonTitle = ''
   menuActive = true
@@ -104,6 +108,27 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
 
     this.isVerticalMenuComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.verticalMenuSlotName)
     this.isFooterComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.footerSlotName)
+
+    this.onResize$ = fromEvent(window, 'resize').pipe(debounceTime(100), untilDestroyed(this))
+    const mobileBreakpointVar = getComputedStyle(document.documentElement).getPropertyValue('--mobile-break-point')
+    this.isMobile$ = this.onResize$.pipe(
+      map(() => window.matchMedia(`(max-width: ${mobileBreakpointVar})`).matches),
+      startWith(
+        !window.matchMedia(`(max-width: ${mobileBreakpointVar})`).matches,
+        window.matchMedia(`(max-width: ${mobileBreakpointVar})`).matches
+      )
+    )
+    this.isMobile$
+      .pipe(
+        pairwise(),
+        filter(([oldIsMobile, newIsMobile]) => {
+          return oldIsMobile !== newIsMobile
+        }),
+        map(([, isMobile]) => ({ isVisible: !isMobile }))
+      )
+      .subscribe((state) => {
+        this.staticMenuVisibleTopic$.publish(state)
+      })
   }
 
   ngOnInit() {
@@ -127,6 +152,7 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
   onMenuButtonClick(event: MouseEvent) {
     this.activeTopbarItem = undefined
     this.menuActive = !this.menuActive
+    this.staticMenuVisibleTopic$.publish({ isVisible: this.menuActive })
     event.preventDefault()
     event.stopPropagation()
   }
@@ -136,7 +162,9 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
     const mobileBreakpointVar = getComputedStyle(document.documentElement).getPropertyValue('--mobile-break-point')
     const isMobile = window.matchMedia(`(max-width: ${mobileBreakpointVar})`).matches
     // auto show sidebar when changing to desktop, hide when changing to mobile
-    if (isMobile !== this.isMobile) this.menuActive = !isMobile
+    if (isMobile !== this.isMobile) {
+      this.menuActive = !isMobile
+    }
     this.isMobile = isMobile
   }
 
