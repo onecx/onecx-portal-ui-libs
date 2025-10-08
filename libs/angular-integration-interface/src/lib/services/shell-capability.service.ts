@@ -9,7 +9,7 @@ declare global {
 export enum Capability {
   CURRENT_LOCATION_TOPIC = 'currentLocationTopic',
   PARAMETERS_TOPIC = 'parametersTopic',
-  SUPPORT_MENU_ACTIVENESS = 'supportMenuActiveness',
+  ACTIVENESS_AWARE_MENUS = 'activenessAwareMenus',
 }
 
 @Injectable({ providedIn: 'root' })
