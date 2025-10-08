@@ -1,9 +1,10 @@
 /* eslint-disable */
+import { createReportsConfig } from '../../jest-config-factory'
+
 export default {
   displayName: 'angular-accelerator',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  coverageDirectory: '../../coverage/libs/angular-accelerator',
   transform: {
     '^.+\\.(mjs|js|html)$': [
       'jest-preset-angular',
@@ -34,7 +35,6 @@ export default {
   transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$)'],
   moduleNameMapper: {
     '^d3-(.*)$': `d3-$1/dist/d3-$1`,
-    '@primeng/themes': '<rootDir>/../../node_modules/@primeng/themes/index.mjs',
   },
   snapshotSerializers: [
     'jest-preset-angular/build/serializers/no-ng-attributes',
@@ -42,4 +42,5 @@ export default {
     'jest-preset-angular/build/serializers/html-comment',
   ],
   testEnvironment: '@happy-dom/jest-environment',
+  ...createReportsConfig('angular-accelerator'),
 }

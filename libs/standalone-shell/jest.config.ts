@@ -2,7 +2,7 @@
 import { createReportsConfig } from '../../jest-config-factory'
 
 export default {
-  displayName: 'angular-webcomponents',
+  displayName: 'standalone-shell',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   transform: {
@@ -20,5 +20,5 @@ export default {
     'jest-preset-angular/build/serializers/ng-snapshot',
     'jest-preset-angular/build/serializers/html-comment',
   ],
-  ...createReportsConfig('angular-webcomponents'),
+  ...createReportsConfig('standalone-shell'),
 }
