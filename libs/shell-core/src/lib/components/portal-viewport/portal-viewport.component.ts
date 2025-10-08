@@ -17,7 +17,6 @@ import {
   WorkspaceConfigBffService,
 } from '../../shell-interface/workspace-config-bff-service-provider'
 import { SlotService } from '@onecx/angular-remote-components'
-import { Topic } from '@onecx/accelerator'
 
 @Component({
   standalone: false,
@@ -39,7 +38,6 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
     optional: true,
   })
   private slotService = inject(SlotService)
-  private readonly staticMenuVisibleTopic$ = new Topic('staticMenuVisible', 1)
 
   menuButtonTitle = ''
   menuActive = true
@@ -129,7 +127,6 @@ export class PortalViewportComponent implements OnInit, OnDestroy {
   onMenuButtonClick(event: MouseEvent) {
     this.activeTopbarItem = undefined
     this.menuActive = !this.menuActive
-    this.staticMenuVisibleTopic$.publish({ isVisible: this.menuActive })
     event.preventDefault()
     event.stopPropagation()
   }
