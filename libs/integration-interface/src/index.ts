@@ -30,7 +30,6 @@ export * from './lib/topics/remote-components/v1/remote-component.model'
 export * from './lib/topics/remote-components/v1/remote-components-info.model'
 export * from './lib/topics/remote-components/v1/slot.model'
 export * from './lib/topics/remote-components/v1/remote-components.topic'
-export * from './lib/topics/static-menu-visible/v1/static-menu-visible.topic'
 
 export * from './lib/topics/permissions/v1/permissions.topic'
 
@@ -39,6 +38,8 @@ export * from './lib/topics/permissions-rpc/v1/permissions-rpc.model'
 
 export * from './lib/topics/events/v1/events-topic'
 export * from './lib/topics/events/v1/topic-event-type'
+export * from './lib/topics/events/v1/event-type'
+export * from './lib/topics/events/v1/slots-resized-type'
 export * from './lib/topics/events/v1/navigated-event-type'
 export * from './lib/topics/events/v1/navigated-event-payload'
 
