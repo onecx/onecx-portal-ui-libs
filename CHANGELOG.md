@@ -1,3 +1,9 @@
+## [7.0.0-rc.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.1...v7.0.0-rc.2) (2025-10-09)
+
+### Features
+
+* menu improvements v7 ([#972](https://github.com/onecx/onecx-portal-ui-libs/issues/972)) ([b17d234](https://github.com/onecx/onecx-portal-ui-libs/commit/b17d234d8e987c847524450971701ccaa39386a9))
+
 ## [7.0.0-rc.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.999.0...v7.0.0-rc.1) (2025-10-07)
 
 ### ⚠ BREAKING CHANGES
