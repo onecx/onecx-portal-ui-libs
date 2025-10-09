@@ -12,7 +12,7 @@ import {
   getScopeIdentifier,
 } from '@onecx/angular-utils'
 import { REMOTE_COMPONENT_CONFIG } from '@onecx/angular-remote-components'
-import { CurrentLocationTopicPayload, EventsTopic, TopicEventType } from '@onecx/integration-interface'
+import { CurrentLocationTopicPayload, EventsTopic, EventType, TopicEventType } from '@onecx/integration-interface'
 import { Capability, ShellCapabilityService, AppStateService } from '@onecx/angular-integration-interface'
 import { PrimeIcon } from '../utils/primeicon.utils'
 import { DialogContentComponent } from '../components/dialog/dialog-content/dialog-content.component'
@@ -289,7 +289,7 @@ export class PortalDialogService implements OnDestroy {
     let observable: Observable<TopicEventType | CurrentLocationTopicPayload> =
       this.appStateService.currentLocation$.asObservable()
     if (!this.capabilityService.hasCapability(Capability.CURRENT_LOCATION_TOPIC)) {
-      observable = this.eventsTopic.pipe(filter((e) => e.type === 'navigated'))
+      observable = this.eventsTopic.pipe(filter((e) => e.type === EventType.NAVIGATED))
     }
     observable.subscribe(() => {
       this.cleanupAndCloseDialog()
