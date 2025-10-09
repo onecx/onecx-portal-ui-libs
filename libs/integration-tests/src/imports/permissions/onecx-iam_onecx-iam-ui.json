@@ -1,0 +1,8 @@
+{
+    "name": "onecx-iam-ui",
+    "permissions": [
+        {"resource": "ROLE", "action": "SEARCH"},
+        {"resource": "USER", "action": "EDIT"},
+        {"resource": "USER", "action": "SEARCH"}
+    ]
+}

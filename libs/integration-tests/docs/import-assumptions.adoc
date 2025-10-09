@@ -1,0 +1,102 @@
+= Microfrontend URL Configuration for Integration Tests
+:toc:
+:toclevels: 3
+:sectnums:
+
+== Overview
+
+The OneCX Integration Tests library processes microfrontend configurations during the import process. It supports flexible URL formats and automatically transforms them to ensure proper container-to-container communication in the integration test environment.
+
+== URL Format Requirements
+
+=== Supported URL Formats
+
+The import process supports both URL formats:
+
+**Option 1: Direct Container URLs (Recommended)**
+[source,json]
+----
+// Direct container URLs - ready for container communication
+{
+  "appName": "onecx-help-ui",
+  "remoteBaseUrl": "http://onecx-help-ui/",
+  "remoteEntry": "http://onecx-help-ui/remoteEntry.js"
+}
+----
+
+**Option 2: Relative URLs **
+[source,json]
+----
+// Relative URLs - automatically transformed during import
+{
+  "appName": "onecx-help-ui",
+  "remoteBaseUrl": "/mfe/help/",                      // Transformed to http://onecx-help-ui/
+  "remoteEntry": "/mfe/help/remoteEntry.js"           // Transformed to http://onecx-help-ui/remoteEntry.js
+}
+----
+
+=== URL Transformation Logic
+
+The import process automatically detects and transforms URLs based on the following rules:
+
+- **URLs starting with `http`**: Used as-is without modification
+- **Relative URLs**: Automatically converted to direct container URLs using the `appName` field
+
+== Implementation Details
+
+=== Automatic URL Detection and Transformation
+
+The transformation occurs automatically in the `importMicrofrontends` function during the import process:
+
+[source,typescript]
+----
+// Check if URLs need transformation
+const appName = mfeData.appName
+if (appName && mfeData.remoteBaseUrl && !mfeData.remoteBaseUrl.startsWith('http')) {
+  // Transform relative URL to direct container URL
+  mfeData.remoteBaseUrl = `http://${appName}/`
+}
+
+if (appName && mfeData.remoteEntry && !mfeData.remoteEntry.startsWith('http')) {
+  // Transform relative entry path to direct container URL
+  mfeData.remoteEntry = `http://${appName}/remoteEntry.js`
+}
+----
+
+=== Key Features
+
+- **Automatic Detection**: URLs starting with `http` are used as-is
+- **Smart Transformation**: Relative URLs are converted to container format using the `appName` field
+- **Backward Compatibility**: Supports configurations with `/mfe/` paths
+- **Logging**: Transformation actions are logged for debugging
+
+=== URL Mapping Rules
+
+The transformation follows these patterns:
+
+[cols="2,2,3"]
+|===
+|Input Format |Output Format |Description
+
+|`http://onecx-help-ui/`
+|`http://onecx-help-ui/`
+|Direct URLs remain unchanged
+
+|`/mfe/help/`
+|`http://onecx-help-ui/`
+|Relative paths transformed to container URLs
+
+|`/mfe/help/remoteEntry.js`
+|`http://onecx-help-ui/remoteEntry.js`
+|Entry paths transformed to container URLs
+|===
+
+== Configuration Guidelines
+
+=== Required Fields
+
+Each microfrontend configuration must include:
+
+- **`appName`**: Container name used for URL transformation
+- **`remoteBaseUrl`**: Base URL for the microfrontend (absolute or relative)
+- **`remoteEntry`**: Entry point file URL (absolute or relative)

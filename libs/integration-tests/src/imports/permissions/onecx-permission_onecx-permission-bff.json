@@ -1,0 +1,20 @@
+{
+    "name": "onecx-permission-bff",
+    "permissions": [
+        {"resource": "application", "action": "delete"},
+        {"resource": "application", "action": "read"},
+        {"resource": "application", "action": "write"},
+        {"resource": "assignment", "action": "delete"},
+        {"resource": "assignment", "action": "read"},
+        {"resource": "assignment", "action": "write"},
+        {"resource": "permission", "action": "delete"},
+        {"resource": "permission", "action": "read"},
+        {"resource": "permission", "action": "write"},
+        {"resource": "role", "action": "delete"},
+        {"resource": "role", "action": "read"},
+        {"resource": "role", "action": "write"},
+        {"resource": "workspace", "action": "delete"},
+        {"resource": "workspace", "action": "read"},
+        {"resource": "workspace", "action": "write"}
+    ]
+}
