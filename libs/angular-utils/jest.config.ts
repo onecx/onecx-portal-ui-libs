@@ -1,8 +1,10 @@
+/* eslint-disable */
+import { createReportsConfig } from '../../jest-config-factory'
+
 export default {
   displayName: 'angular-utils',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  coverageDirectory: '../../coverage/libs/angular-utils',
   moduleNameMapper: {
     '@primeng/themes': '<rootDir>/../../node_modules/@primeng/themes/index.mjs',
   },
@@ -15,23 +17,23 @@ export default {
       },
     ],
     '^.+\\.tsx?$': [
-       'jest-preset-angular',
+      'jest-preset-angular',
       {
         tsconfig: '<rootDir>/tsconfig.spec.json',
-        stringifyContentPathRegex: '\\.(html|svg)$', 
+        stringifyContentPathRegex: '\\.(html|svg)$',
         diagnostics: {
-          ignoreCodes: [1343]
+          ignoreCodes: [1343],
         },
         astTransformers: {
           before: [
             {
               path: 'ts-jest-mock-import-meta',
-              options: { metaObjectReplacement: { url: 'https://www.url.com' } }
-            }
-          ]
-        }
-      }
-    ]
+              options: { metaObjectReplacement: { url: 'https://www.url.com' } },
+            },
+          ],
+        },
+      },
+    ],
   },
   transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$)'],
   snapshotSerializers: [
@@ -39,4 +41,5 @@ export default {
     'jest-preset-angular/build/serializers/ng-snapshot',
     'jest-preset-angular/build/serializers/html-comment',
   ],
+  ...createReportsConfig('angular-accelerator'),
 }
