@@ -1,3 +1,23 @@
+## [7.0.0-rc.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.1...v7.0.0-rc.2) (2025-10-09)
+
+### Features
+
+* menu improvements v7 ([#972](https://github.com/onecx/onecx-portal-ui-libs/issues/972)) ([b17d234](https://github.com/onecx/onecx-portal-ui-libs/commit/b17d234d8e987c847524450971701ccaa39386a9))
+
+## [7.0.0-rc.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.999.0...v7.0.0-rc.1) (2025-10-07)
+
+### ⚠ BREAKING CHANGES
+
+* increase major version (#974)
+
+### Bug Fixes
+
+* release config with dummy channel ([#973](https://github.com/onecx/onecx-portal-ui-libs/issues/973)) ([e4c6834](https://github.com/onecx/onecx-portal-ui-libs/commit/e4c68349b905a240a9603e10f5edf917dfe6d756))
+
+### Chores
+
+* increase major version ([#974](https://github.com/onecx/onecx-portal-ui-libs/issues/974)) ([4af544a](https://github.com/onecx/onecx-portal-ui-libs/commit/4af544a443f43084a59c442755906f2dac0e089f))
+
 ## [6.8.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.8.0...v6.8.1) (2025-09-23)
 
 ### Bug Fixes
