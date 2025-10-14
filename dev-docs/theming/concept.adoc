@@ -1,0 +1,58 @@
+
+= Theming
+
+:idprefix:
+:idseparator: -
+:theme_variables_list: https://onecx.github.io/docs/guides/current/angular/cookbook/theming.html#theme-variables
+
+This document outlines the theming capabilities in **OneCX**, focusing on how themes are structured, applied, and managed. It provides both conceptual and technical insights to help developers and administrators understand how to implement and customize themes effectively. After reading, you should be able to:
+
+* Understand what a theme is in OneCX.
+* Use theme variables in your styles.
+* Know how themes are applied at runtime.
+
+[#themes-idea]
+== Themes Idea
+
+In OneCX, a **theme** is a suite of CSS variables (e.g., `--primary-color`). These variables can be used in CSS styles (e.g., `background-color: var(--primary-color)`). Each theme can assign different values to each variable, resulting in a unique look and feel for the page (e.g., `--primary-color: blue;`).
+
+Each **Workspace** can have one active theme (or none). Workspace administrators can change the active theme or edit the variables of the currently active theme.
+
+When used properly, theming in OneCX allows the same pages to be displayed differently depending on the accessed Workspace and its currently active theme.
+
+[#theme-variables]
+=== Theme Variables
+
+A complete list of available theme variables in OneCX is available {theme_variables_list}[here].
+
+[#utilizing-theme-variables]
+=== Utilizing Theme Variables
+
+When creating styles for UI components (both library and application components), it's important to consider whether a style should be theme-aware. Example of a stylesheet using a theme variable:
+
+[.source,css]
+----
+button {
+    background-color: var(--primary-color);
+}
+----
+
+[#technical-details]
+== Technical Details
+
+This section explains how theming is technically implemented in OneCX.
+
+[#where-are-theme-variables-defined]
+=== Where Are Theme Variables Defined
+
+On each page, the `<html>` element should contain all currently active theme variables and their values.
+
+[#how-are-theme-variables-defined]
+=== How Are Theme Variables Defined
+
+The **Shell** is responsible for managing theme variables. When a Workspace loads, the Shell reads its configuration and applies the selected theme by updating the styles on the `<html>` element.
+
+[#default-theme-variables]
+=== Default Theme Variables
+
+Before a Workspace is loaded, the Shell ensures that theme variables are available with default values. These default values are defined in the link:../../libs/portal-layout-styles/src/styles/shell/theme_defaults.scss[theme defaults stylesheet], which is imported by the Shell’s global stylesheet.

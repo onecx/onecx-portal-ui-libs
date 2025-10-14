@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { APP_INITIALIZER, LOCALE_ID, importProvidersFrom } from '@angular/core'
+import { LOCALE_ID, importProvidersFrom, inject, provideAppInitializer } from '@angular/core'
 import { Meta, moduleMetadata, applicationConfig, StoryFn } from '@storybook/angular'
 import { TableModule } from 'primeng/table'
 import { ButtonModule } from 'primeng/button'
@@ -9,7 +9,6 @@ import { UserService } from '@onecx/angular-integration-interface'
 import { provideUserServiceMock, UserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { DataTableComponent } from './data-table.component'
 import { StorybookTranslateModule } from './../../storybook-translate.module'
-import { MockAuthModule } from '../../mock-auth/mock-auth.module'
 import { IfPermissionDirective } from '../../directives/if-permission.directive'
 import { ColumnType } from '../../model/column-type.model'
 import { MenuModule } from 'primeng/menu'
@@ -17,6 +16,9 @@ import { DynamicLocaleId } from '../../utils/dynamic-locale-id'
 import { CheckboxModule } from 'primeng/checkbox'
 import { FormsModule } from '@angular/forms'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
+import { StorybookThemeModule } from '../../storybook-theme.module'
+import { TooltipModule } from 'primeng/tooltip'
+import { SkeletonModule } from 'primeng/skeleton'
 
 type DataTableInputTypes = Pick<DataTableComponent, 'rows' | 'columns' | 'emptyResultsMessage' | 'selectedRows'>
 
@@ -29,21 +31,21 @@ const DataTableComponentSBConfig: Meta<DataTableComponent> = {
         importProvidersFrom(BrowserModule),
         importProvidersFrom(BrowserAnimationsModule),
         provideUserServiceMock(),
-        { provide: HAS_PERMISSION_CHECKER, useExisting: UserService },
+        { provide: HAS_PERMISSION_CHECKER, useExisting: UserServiceMock },
         {
           provide: LOCALE_ID,
           useClass: DynamicLocaleId,
           deps: [UserService],
         },
-        {
-          provide: APP_INITIALIZER,
-          useFactory: (userService: UserService) => () => {
-            const userServiceMock = userService as unknown as UserServiceMock
-            userServiceMock.permissions$.next(['TEST_MGMT#TEST_DELETE', 'TEST_MGMT#TEST_EDIT', 'TEST_MGMT#TEST_VIEW'])
-          },
-          multi: true,
-          deps: [UserService],
-        },
+        importProvidersFrom(StorybookThemeModule),
+        provideAppInitializer(() => {
+          const userServiceMock = inject(UserService) as unknown as UserServiceMock
+          userServiceMock.permissionsTopic$.publish([
+            'TEST_MGMT#TEST_DELETE',
+            'TEST_MGMT#TEST_EDIT',
+            'TEST_MGMT#TEST_VIEW',
+          ])
+        }),
       ],
     }),
     moduleMetadata({
@@ -53,10 +55,11 @@ const DataTableComponentSBConfig: Meta<DataTableComponent> = {
         ButtonModule,
         MultiSelectModule,
         StorybookTranslateModule,
-        MockAuthModule,
         MenuModule,
         CheckboxModule,
         FormsModule,
+        TooltipModule,
+        SkeletonModule,
       ],
     }),
   ],

@@ -30,7 +30,7 @@ describe('PermissionService', () => {
   }
 
   it('uses HasPermissionChecker if provided', () => {
-    permissionCheckerMock.hasPermission.mockReturnValue(true)
+    permissionCheckerMock.hasPermission.mockReturnValue(Promise.resolve(true))
     const service = createServiceWithProviders({ checker: permissionCheckerMock })
     service.hasPermission('perm').subscribe((result) => {
       expect(userServiceMock.getPermissions).not.toHaveBeenCalled()
@@ -40,7 +40,7 @@ describe('PermissionService', () => {
   })
 
   it('uses UserService if HasPermissionChecker is not provided', () => {
-    userServiceMock.hasPermission.mockReturnValue(true)
+    userServiceMock.hasPermission.mockReturnValue(Promise.resolve(true))
     userServiceMock.getPermissions.mockReturnValue(of(['perm']))
     const service = createServiceWithProviders({ userService: userServiceMock })
     service.hasPermission('perm').subscribe((result) => {
@@ -51,7 +51,7 @@ describe('PermissionService', () => {
   })
 
   it('caches permission observables for single permissions', () => {
-    permissionCheckerMock.hasPermission.mockReturnValue(true)
+    permissionCheckerMock.hasPermission.mockReturnValue(Promise.resolve(true))
     const service = createServiceWithProviders({ checker: permissionCheckerMock })
     const obs1 = service.hasPermission('perm')
     const obs2 = service.hasPermission('perm')
@@ -79,7 +79,7 @@ describe('PermissionService', () => {
   })
 
   it('getPermissions returns undefined observable if UserService is not available', () => {
-    permissionCheckerMock.hasPermission.mockReturnValue(true)
+    permissionCheckerMock.hasPermission.mockReturnValue(Promise.resolve(true))
     const service = createServiceWithProviders({ checker: permissionCheckerMock })
     service.getPermissions().subscribe((perms) => {
       expect(perms).toBeUndefined()
@@ -87,7 +87,7 @@ describe('PermissionService', () => {
   })
 
   it('supports array of permissions', () => {
-    permissionCheckerMock.hasPermission.mockReturnValue(true)
+    permissionCheckerMock.hasPermission.mockReturnValue(Promise.resolve(true))
     const service = createServiceWithProviders({ checker: permissionCheckerMock })
     service.hasPermission(['perm1', 'perm2']).subscribe((result) => {
       expect(result).toBe(true)
@@ -95,7 +95,7 @@ describe('PermissionService', () => {
   })
 
   it('caches permission observables for arrays of permissions', () => {
-    permissionCheckerMock.hasPermission.mockReturnValue(true)
+    permissionCheckerMock.hasPermission.mockReturnValue(Promise.resolve(true))
     const service = createServiceWithProviders({ checker: permissionCheckerMock })
     const obs1 = service.hasPermission(['perm1', 'perm2'])
     const obs2 = service.hasPermission(['perm1', 'perm2'])

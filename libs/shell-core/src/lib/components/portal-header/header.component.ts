@@ -1,8 +1,12 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core'
 import { animate, style, transition, trigger } from '@angular/animations'
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core'
 import { UntilDestroy } from '@ngneat/until-destroy'
+import { Observable } from 'rxjs'
+
+import { Theme, ThemeService } from '@onecx/angular-integration-interface'
 
 @Component({
+  standalone: false,
   selector: 'ocx-shell-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
@@ -22,20 +26,21 @@ export class HeaderComponent {
   @Input() fullPortalLayout = true
   @Input() homeNavUrl = '/'
   @Input() homeNavTitle = 'Home'
-  @Input() isHorizontalMenu = false
-  @Input() isStaticalMenu = false
   @Output() menuButtonClick: EventEmitter<any> = new EventEmitter()
 
+  private themeService = inject(ThemeService)
+
+  menuExpanded = false
+  // slot configuration: get theme logo
+  public slotName = 'onecx-theme-data'
+  public currentTheme$: Observable<Theme>
   public logoLoadingEmitter = new EventEmitter<boolean>()
   public themeLogoLoadingFailed = false
 
   constructor() {
+    this.currentTheme$ = this.themeService.currentTheme$.asObservable()
     this.logoLoadingEmitter.subscribe((data: boolean) => {
       this.themeLogoLoadingFailed = data
     })
-  }
-
-  onMenuButtonClick(e: Event) {
-    this.menuButtonClick.emit(e)
   }
 }

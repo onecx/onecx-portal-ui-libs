@@ -1,23 +1,26 @@
-<ng-container *ngIf="this.data">
-  <div class="flex justify-content-center pb-2" *ngIf="shownDiagramTypes.length > 1">
-    <p-selectButton
-      [options]="shownDiagramTypes"
-      [(ngModel)]="selectedDiagramType"
-      optionLabel="id"
-      (onChange)="onDiagramTypeChanged($event)"
-      name="diagram-type-select-button"
-    >
-      <ng-template let-item pTemplate>
-        <i
-          [class]="item.icon"
-          [pTooltip]="item.tooltip || (item.tooltipKey | translate)"
-          tooltipPosition="top"
-          tooltipEvent="hover"
-        ></i>
-        <label style="display: none" id="{{item.id}}"> {{item.label ? item.label : item.labelKey | translate}} </label>
-      </ng-template>
-    </p-selectButton>
-  </div>
+@if (this.data) {
+  @if (shownDiagramTypes.length > 1) {
+    <div class="flex justify-content-center pb-2">
+      <p-selectbutton
+        [options]="shownDiagramTypes"
+        [(ngModel)]="selectedDiagramType"
+        optionLabel="id"
+        (onChange)="onDiagramTypeChanged($event)"
+        name="diagram-type-select-button"
+        [allowEmpty]="false"
+        >
+        <ng-template #item let-item>
+          <i
+            [class]="item.icon"
+            [pTooltip]="item.tooltipKey | translate"
+            tooltipPosition="top"
+            tooltipEvent="hover"
+          ></i>
+          <label style="display: none" id="{{item.id}}"> {{item.label ? item.label : item.labelKey | translate}} </label>
+        </ng-template>
+      </p-selectbutton>
+    </div>
+  }
   <div class="w-full flex justify-content-center">
     <p-chart
       id="diagram"
@@ -34,8 +37,10 @@
       <span name="sumLabel"> {{ sumKey | translate }}</span> : <span name="amountOfData">{{ amountOfData}}</span>
     </p>
   </div>
-</ng-container>
+}
 
-<div *ngIf="!this.data" class="w-full flex justify-content-center">
-  <p-message severity="info" text="{{ 'OCX_DIAGRAM.NO_DATA' | translate }}"></p-message>
-</div>
+@if (!this.data) {
+  <div class="w-full flex justify-content-center">
+    <p-message severity="info" text="{{ 'OCX_DIAGRAM.NO_DATA' | translate }}"></p-message>
+  </div>
+}

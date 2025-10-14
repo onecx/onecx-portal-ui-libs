@@ -13,4 +13,3 @@ export function provideAngularUtils(): Provider[] {
   providers.push(provideTranslationPaths())
   return providers
 }
-

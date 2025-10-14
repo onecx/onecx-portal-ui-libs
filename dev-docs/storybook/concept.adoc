@@ -71,4 +71,3 @@ Each version-specific Storybook should contain the following sections:
 * Depending on how overarching the topic is, it might also make sense to move it to the top-level Storybook of the respective library instead of keeping it in the version-specific Storybook
 
 One example for a well-structured Storybook containing most of the elements mentioned above is the documentation of the open source library https://circuit.sumup.com[Circuit UI by SumUp].
-

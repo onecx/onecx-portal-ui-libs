@@ -1,4 +1,4 @@
-import { SvcContainer, StartedSvcContainer } from '../basic/onecx-svc'
+import { SvcContainer, StartedSvcContainer } from '../abstract/onecx-svc'
 import { StartedOnecxKeycloakContainer } from '../core/onecx-keycloak'
 import { StartedOnecxPostgresContainer } from '../core/onecx-postgres'
 
@@ -13,8 +13,8 @@ export class WorkspaceSvcContainer extends SvcContainer {
       TKIT_RS_CONTEXT_TENANT_ID_ENABLED: 'false',
     })
     this.withNetworkAliases('onecx-workspace-svc')
-      .withDatabaseUsername('onecx_workspace')
-      .withDatabasePassword('onecx_workspace')
+    this.withDatabaseUsername('onecx_workspace')
+    this.withDatabasePassword('onecx_workspace')
   }
 }
 

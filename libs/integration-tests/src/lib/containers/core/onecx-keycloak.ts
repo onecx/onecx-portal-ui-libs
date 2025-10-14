@@ -42,16 +42,11 @@ export class OnecxKeycloakContainer extends GenericContainer {
     private readonly databaseContainer: StartedOnecxPostgresContainer
   ) {
     super(image)
-    this.withCommand(['start-dev', '--import-realm']).withNetworkAliases('keycloak-app').withStartupTimeout(120_000)
-  }
-
-  private setDefaultHealthCheck(realm: string, port: number): HealthCheck {
-    return {
-      test: ['CMD-SHELL', `timeout 5 bash -c 'cat < /dev/null > /dev/tcp/localhost/${port}' || exit 1`],
-      interval: 10_000,
-      timeout: 5_000,
-      retries: 10,
-    }
+    this.withCommand(['start-dev', '--import-realm'])
+    this.withHealthCheck(this.defaultHealthCheck)
+    this.withExposedPorts(this.onecxEnvironment.port)
+    this.withNetworkAliases('keycloak-app')
+    this.withStartupTimeout(120_000)
   }
 
   withRealm(realm: string): this {
@@ -96,16 +91,6 @@ export class OnecxKeycloakContainer extends GenericContainer {
 
   withAdminRealm(adminRealm: string): this {
     this.onecxEnvironment.adminRealm = adminRealm
-    return this
-  }
-
-  withPort(port: number): this {
-    this.onecxEnvironment.port = port
-    return this
-  }
-
-  enableLogging(log: boolean): this {
-    this.loggingEnabled = log
     return this
   }
 
@@ -198,6 +183,14 @@ export class OnecxKeycloakContainer extends GenericContainer {
         },
       ])
     }
+    this.withWaitStrategy(
+      Wait.forAll([
+        Wait.forHttp(
+          `/realms/${this.onecxEnvironment.realm}/.well-known/openid-configuration`,
+          this.onecxEnvironment.port
+        ).forStatusCode(200),
+      ])
+    )
 
     this.withExposedPorts(this.onecxEnvironment.port).withWaitStrategy(
       Wait.forAll([Wait.forHealthCheck(), Wait.forListeningPorts()])
@@ -220,27 +213,6 @@ export class StartedOnecxKeycloakContainer extends AbstractStartedContainer impl
     private readonly healthCheck: HealthCheck
   ) {
     super(startedTestContainer)
-  }
-
-  /**
-   * Creates Quarkus-specific health check strategy
-   * Uses URL from health check or falls back to default
-   */
-  getHealthCheckExecutor(): HealthCheckExecutor {
-    const mappedPort = this.getMappedPort(this.getPort())
-    const keycloakUrl = `http://localhost:${mappedPort}/realms/${this.getRealm()}/.well-known/openid-configuration`
-    // Build URL from health check configuration
-    const endpoint = keycloakUrl
-
-    // If no valid URL can be extracted, skip health check
-    if (!endpoint) {
-      return new SkipHealthCheckExecutor('Keycloak Container - No valid health check URL could be extracted')
-    }
-
-    // Use timeout from health check if available, otherwise default
-    const timeout = this.healthCheck?.timeout || 8000
-
-    return new HttpHealthCheckExecutor(endpoint, timeout, [200, 503])
   }
 
   getRealm(): string {

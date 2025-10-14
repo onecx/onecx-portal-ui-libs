@@ -1,25 +1,30 @@
 import {
   Directive,
+  ElementRef,
   EmbeddedViewRef,
-  Inject,
   Input,
   OnInit,
-  Optional,
   Renderer2,
   TemplateRef,
   ViewContainerRef,
+  inject,
 } from '@angular/core'
 import { UserService } from '@onecx/angular-integration-interface'
 import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
-import { Observable, of, BehaviorSubject } from 'rxjs'
-import { switchMap } from 'rxjs/operators'
+import { BehaviorSubject, from, Observable, of, switchMap } from 'rxjs'
 
-@Directive({ selector: '[ocxIfPermission], [ocxIfNotPermission]' })
+@Directive({ selector: '[ocxIfPermission], [ocxIfNotPermission]', standalone: false })
 export class IfPermissionDirective implements OnInit {
+  private renderer = inject(Renderer2)
+  private el = inject(ElementRef)
+  private viewContainer = inject(ViewContainerRef)
+  private hasPermissionChecker = inject<HasPermissionChecker>(HAS_PERMISSION_CHECKER, { optional: true })
+  private templateRef = inject<TemplateRef<any>>(TemplateRef, { optional: true })
+  private userService = inject(UserService, { optional: true })
+
   @Input('ocxIfPermission') set permission(value: string | string[] | undefined) {
     this.permissionSubject$.next(value)
   }
-
   @Input('ocxIfNotPermission') set notPermission(value: string | string[] | undefined) {
     this.permissionSubject$.next(value)
     this.negate = true
@@ -50,16 +55,8 @@ export class IfPermissionDirective implements OnInit {
   private directiveContentRef: EmbeddedViewRef<any> | undefined
   negate = false
 
-  constructor(
-    private renderer: Renderer2,
-    private viewContainer: ViewContainerRef,
-    @Optional()
-    @Inject(HAS_PERMISSION_CHECKER)
-    private hasPermissionChecker?: HasPermissionChecker,
-    @Optional() private templateRef?: TemplateRef<any>,
-    @Optional() private userService?: UserService
-  ) {
-    const validChecker = hasPermissionChecker || userService
+  constructor() {
+    const validChecker = this.hasPermissionChecker || this.userService
     if (!validChecker) {
       throw 'IfPermission requires UserService or HasPermissionChecker to be provided!'
     }
@@ -109,7 +106,7 @@ export class IfPermissionDirective implements OnInit {
       )
     }
 
-    return of(this.permissionChecker.hasPermission(permission))
+    return from(this.permissionChecker.hasPermission(permission))
   }
 
   private showTemplateOrClear() {

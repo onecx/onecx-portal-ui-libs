@@ -1,16 +1,97 @@
-.http-progress-loader {
-  margin-left: 8px;
-  padding-top: 5px;
-}
+.onecx-header {
+  color: var(--topbar-item-text-color);
+  background-color: var(--topbar-bg-color);
+  width: 100%;
+  height: 4rem;
+  transition: width var(--p-transition-duration);
+  // Use flexbox to layout the three sections
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  row-gap: 1rem;
 
-@media screen and (max-width: 1024px) {
-  .http-progress-loader {
-    margin-left: 0;
-    margin-right: 8px;
+  // Slots should take full height of the header
+  ocx-slot {
+    height: 100%;
   }
-}
 
-.default-logo {
-  color: var(--logo-color, var(--logo-color-default, #12abdb));
-  fill: currentColor;
+  // Each section (start, center, end) takes full height and uses flexbox for internal layout
+  .onecx-header-start,
+  .onecx-header-center,
+  .onecx-header-end {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .onecx-header-start {
+    // Not grow to keep the size of the left section static until not possible
+    flex-grow: 0;
+    // Shrink if necessary
+    flex-shrink: 1;
+    background-color: var(--topbar-left-bg-color);
+    // Shared max-width between header start and body start
+    max-width: 20rem;
+
+    .onecx-menu-button{
+      display: flex;
+      position: relative;
+      right: 1.25rem;
+      width: 2.5rem;
+      height: 2.5rem;
+      cursor: pointer;
+      border-radius: 50%;
+      color: var(--topbar-menu-button-text-color, #ffffff);
+      background-color: var(--topbar-menu-button-bg-color);
+
+      i {
+        transition: transform var(--p-transition-duration);
+      }
+
+      .toggle-button-direction {
+        transform: rotate(180deg);
+      }
+
+      & .hidden {
+        display: none;
+      }
+    }
+  }
+
+  .onecx-header-center {
+    // Allow to grow to take all remaining space
+    flex-grow: 1;
+    // Shrink if necessary
+    flex-shrink: 1;
+    justify-content: left;
+  }
+
+  .onecx-header-end {
+    // Not grow to keep the size of the left section static until not possible
+    flex-grow: 0;
+    // Shrink if necessary
+    flex-shrink: 1;
+    // Shared max-width between header end and body end
+    max-width: 25rem;
+
+    .onecx_header_end_actions_right {
+      height: 100%;
+      margin-right: 0.75rem;
+
+      .onecx_header_end_actions_right_items {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 0.25rem;
+        height: 100%;
+
+        > * {
+          margin: auto;
+        }
+      }
+    }
+  }
 }

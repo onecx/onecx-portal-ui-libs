@@ -1,7 +1,7 @@
 import { UserService } from '@onecx/angular-integration-interface'
 
 /**
- * @deprecated use DynamicLocaleId from @onecx/angular-utils
+ * @deprecated Use DynamicLocaleId from @onecx/angular-utils instead
  */
 export class DynamicLocaleId {
   constructor(private userService: UserService) {

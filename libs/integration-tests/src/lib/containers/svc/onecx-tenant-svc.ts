@@ -1,4 +1,4 @@
-import { SvcContainer, StartedSvcContainer } from '../basic/onecx-svc'
+import { SvcContainer, StartedSvcContainer } from '../abstract/onecx-svc'
 import { StartedOnecxKeycloakContainer } from '../core/onecx-keycloak'
 import { StartedOnecxPostgresContainer } from '../core/onecx-postgres'
 
@@ -10,8 +10,8 @@ export class TenantSvcContainer extends SvcContainer {
   ) {
     super(image, { databaseContainer, keycloakContainer })
     this.withNetworkAliases('onecx-tenant-svc')
-      .withDatabaseUsername('onecx_tenant')
-      .withDatabasePassword('onecx_tenant')
+    this.withDatabaseUsername('onecx_tenant')
+    this.withDatabasePassword('onecx_tenant')
   }
 }
 

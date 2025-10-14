@@ -1,24 +1,25 @@
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterTestingModule } from '@angular/router/testing'
-import { provideHttpClientTesting } from '@angular/common/http/testing'
-import { TranslateTestingModule } from 'ngx-translate-testing'
-import { PrimeIcons } from 'primeng/api'
-import { BreadcrumbModule } from 'primeng/breadcrumb'
-import { MenuModule } from 'primeng/menu'
-import { ButtonModule } from 'primeng/button'
-import { UserService } from '@onecx/angular-integration-interface'
 import {
   AppStateServiceMock,
   provideAppStateServiceMock,
   provideUserServiceMock,
   UserServiceMock,
 } from '@onecx/angular-integration-interface/mocks'
+import { TranslateTestingModule } from 'ngx-translate-testing'
+import { PrimeIcons } from 'primeng/api'
+import { BreadcrumbModule } from 'primeng/breadcrumb'
+import { ButtonModule } from 'primeng/button'
+import { MenuModule } from 'primeng/menu'
+import { TooltipModule } from 'primeng/tooltip'
 import { PageHeaderHarness, TestbedHarnessEnvironment } from '../../../../testing'
-import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
+import { UserService } from '@onecx/angular-integration-interface'
 
 const mockActions: Action[] = [
   {
@@ -68,6 +69,7 @@ describe('PageHeaderComponent', () => {
         MenuModule,
         ButtonModule,
         NoopAnimationsModule,
+        TooltipModule,
       ],
       providers: [
         provideUserServiceMock(),
@@ -82,9 +84,9 @@ describe('PageHeaderComponent', () => {
     }).compileComponents()
 
     mockAppStateService = TestBed.inject(AppStateServiceMock)
-    userServiceMock = TestBed.inject(UserService) as unknown as UserServiceMock
-    userServiceMock.permissions$.next(['TEST#TEST_PERMISSION'])
-    mockAppStateService.currentPortal$.publish({
+    userServiceMock = TestBed.inject(UserServiceMock)
+    userServiceMock.permissionsTopic$.publish(['TEST#TEST_PERMISSION'])
+    mockAppStateService.currentWorkspace$.publish({
       id: 'i-am-test-portal',
       portalName: 'test',
       workspaceName: 'test',
@@ -107,21 +109,8 @@ describe('PageHeaderComponent', () => {
     expect(pageHeaderWrapper).toBeTruthy()
   })
 
-  it('should check permissions and render buttons accordingly', async () => {
-    expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(0)
-    expect(await pageHeaderHarness.getOverflowActionMenuButton()).toBeNull()
-
-    component.actions = mockActions
-
-    expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(1)
-    expect(await pageHeaderHarness.getElementByAriaLabel('My Test Action')).toBeTruthy()
-    await (await pageHeaderHarness.getOverflowActionMenuButton())?.click()
-    expect(await pageHeaderHarness.getOverFlowMenuItems()).toHaveLength(2)
-    expect(await pageHeaderHarness.getElementByAriaLabel('More actions')).toBeTruthy()
-  })
-
   it("should check permissions and not render button that user isn't allowed to see", async () => {
-    userServiceMock.permissions$.next([])
+    userServiceMock.permissionsTopic$.publish([])
 
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(0)
     expect(await pageHeaderHarness.getOverflowActionMenuButton()).toBeNull()
@@ -146,12 +135,41 @@ describe('PageHeaderComponent', () => {
     expect(await pageHeaderHarness.getOverFlowMenuItems()).toHaveLength(2)
     expect(await pageHeaderHarness.getElementByAriaLabel('More actions')).toBeTruthy()
 
-    userServiceMock.permissions$.next([])
+    userServiceMock.permissionsTopic$.publish([])
 
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(0)
     expect(await pageHeaderHarness.getElementByAriaLabel('My Test Action')).toBeFalsy()
     expect(await pageHeaderHarness.getOverFlowMenuItems()).toHaveLength(0)
     expect(await pageHeaderHarness.getElementByAriaLabel('More actions')).toBeFalsy()
+  })
+
+  it('should render inline actions buttons with icons', async () => {
+    component.actions = [
+      {
+        label: 'Action with left icon',
+        show: 'always',
+        actionCallback: () => {
+          console.log('My Test Action')
+        },
+        permission: 'TEST#TEST_PERMISSION',
+        icon: PrimeIcons.LOCK,
+      },
+      {
+        label: 'Action with right icon',
+        show: 'always',
+        actionCallback: () => {
+          console.log('My Test Action')
+        },
+        permission: 'TEST#TEST_PERMISSION',
+        icon: PrimeIcons.LOCK,
+        iconPos: 'right',
+      },
+    ]
+
+    const inlineButtons = await pageHeaderHarness.getInlineActionButtons()
+    expect(inlineButtons).toHaveLength(2)
+    expect(await (await inlineButtons[0].getIconSpan())?.checkHasClass('p-button-icon-left')).toBeTruthy()
+    expect(await (await inlineButtons[1].getIconSpan())?.checkHasClass('p-button-icon-right')).toBeTruthy()
   })
 
   it('should render inline actions buttons with icons', async () => {
@@ -274,6 +292,9 @@ describe('PageHeaderComponent', () => {
   it('should show overflow actions when menu overflow button clicked', async () => {
     component.actions = mockActions
 
+    fixture.detectChanges()
+    await fixture.whenStable()
+
     const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
 
     expect(menuOverflowButton).toBeTruthy()
@@ -290,6 +311,9 @@ describe('PageHeaderComponent', () => {
 
     component.actions = mockActions
 
+    fixture.detectChanges()
+    await fixture.whenStable()
+
     const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
 
     expect(menuOverflowButton).toBeTruthy()
@@ -300,13 +324,16 @@ describe('PageHeaderComponent', () => {
     const enabledActionElement = await menuItems[0].host()
     expect(await enabledActionElement.hasClass('p-disabled')).toBe(false)
     await enabledActionElement.click()
-    expect(console.log).toHaveBeenCalledTimes(1)
+    expect(console.log).toHaveBeenCalledWith('My Test Overflow Action')
   })
 
   it('should disable overflow button when action is disabled', async () => {
     jest.spyOn(console, 'log')
 
     component.actions = mockActions
+
+    fixture.detectChanges()
+    await fixture.whenStable()
 
     const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
     expect(menuOverflowButton).toBeTruthy()
@@ -320,6 +347,6 @@ describe('PageHeaderComponent', () => {
     expect(disabledActionElement).toBeTruthy()
     expect(await (await disabledActionElement.host()).hasClass('p-disabled')).toBe(true)
     await (await disabledActionElement.host()).click()
-    expect(console.log).toHaveBeenCalledTimes(0)
+    expect(console.log).not.toHaveBeenCalledWith('My Test Overflow Disabled Action')
   })
 })

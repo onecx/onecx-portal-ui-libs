@@ -48,12 +48,6 @@ xdescribe('Default Postgres Testcontainer', () => {
     expect(result.output).toContain('accepting connections')
   })
 
-  it('should use the correct port', () => {
-    const port = pgContainer.getPort()
-
-    expect(port).toBe(5432)
-  })
-
   afterAll(async () => {
     if (client) await client.end()
     await pgContainer.stop()

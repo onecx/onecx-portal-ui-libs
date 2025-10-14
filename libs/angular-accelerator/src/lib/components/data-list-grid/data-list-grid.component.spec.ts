@@ -1,19 +1,24 @@
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ActivatedRoute, RouterModule } from '@angular/router'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
+import {
+  provideAppStateServiceMock,
+  provideUserServiceMock,
+  UserServiceMock,
+} from '@onecx/angular-integration-interface/mocks'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { provideUserServiceMock, provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
-import { DataListGridComponent } from './data-list-grid.component'
-import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
-import { ColumnType } from '../../model/column-type.model'
+import { TooltipStyle } from 'primeng/tooltip'
 import { DataListGridHarness } from '../../../../testing/data-list-grid.harness'
 import { DataTableHarness } from '../../../../testing/data-table.harness'
+import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
-import { UserService } from '@onecx/angular-integration-interface'
+import { ColumnType } from '../../model/column-type.model'
+import { DataListGridComponent } from './data-list-grid.component'
 import { ensureIntersectionObserverMockExists, ensureOriginMockExists } from '@onecx/angular-testing'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
+import { UserService } from '@onecx/angular-integration-interface'
 
 ensureOriginMockExists()
 ensureIntersectionObserverMockExists()
@@ -39,7 +44,6 @@ describe('DataListGridComponent', () => {
     OCX_DATA_TABLE: {
       SHOWING: '{{first}} - {{last}} of {{totalRecords}}',
       SHOWING_WITH_TOTAL_ON_SERVER: '{{first}} - {{last}} of {{totalRecords}} ({{totalRecordsOnServer}})',
-      ALL: 'All',
     },
   }
 
@@ -48,7 +52,6 @@ describe('DataListGridComponent', () => {
     OCX_DATA_TABLE: {
       SHOWING: '{{first}} - {{last}} von {{totalRecords}}',
       SHOWING_WITH_TOTAL_ON_SERVER: '{{first}} - {{last}} von {{totalRecords}} ({{totalRecordsOnServer}})',
-      ALL: 'Alle',
     },
   }
 
@@ -237,6 +240,7 @@ describe('DataListGridComponent', () => {
         },
         provideUserServiceMock(),
         provideAppStateServiceMock(),
+        TooltipStyle,
         {
           provide: HAS_PERMISSION_CHECKER,
           useExisting: UserService,
@@ -251,8 +255,8 @@ describe('DataListGridComponent', () => {
     component.paginator = true
     translateService = TestBed.inject(TranslateService)
     translateService.use('en')
-    const userService = TestBed.inject(UserService)
-    userService.permissions$.next(['VIEW', 'EDIT', 'DELETE'])
+    const userServiceMock = TestBed.inject(UserServiceMock)
+    userServiceMock.permissionsTopic$.publish(['VIEW', 'EDIT', 'DELETE'])
     fixture.detectChanges()
     listGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataListGridHarness)
   })
@@ -304,40 +308,12 @@ describe('DataListGridComponent', () => {
     })
   })
 
-  describe('should display the paginator rowsPerPageOptions -', () => {
-    it('de', async () => {
-      window.HTMLElement.prototype.scrollIntoView = jest.fn()
-      translateService.use('de')
-      fixture = TestBed.createComponent(DataListGridComponent)
-      component = fixture.componentInstance
-      component.data = mockData
-      component.columns = mockColumns
-      component.paginator = true
-      fixture.detectChanges()
-      const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
-      const paginator = await dataListGrid.getPaginator()
-      const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
-      let rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
-      expect(rowsPerPageOptionsText).toEqual('10')
-
-      component.showAllOption = true
-      rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
-      expect(rowsPerPageOptionsText).toEqual('Alle')
-    })
-
-    it('en', async () => {
-      window.HTMLElement.prototype.scrollIntoView = jest.fn()
-      translateService.use('en')
-      const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
-      const paginator = await dataListGrid.getPaginator()
-      const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
-      let rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
-      expect(rowsPerPageOptionsText).toEqual('10')
-
-      component.showAllOption = true
-      rowsPerPageOptionsText = await rowsPerPageOptions.selectedDropdownItemText(0)
-      expect(rowsPerPageOptionsText).toEqual('All')
-    })
+  it('should display the paginator rowsPerPageOptions', async () => {
+    const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
+    const paginator = await dataListGrid.getPaginator()
+    const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
+    const rowsPerPageOptionsText = await rowsPerPageOptions.selectedSelectItemText(0)
+    expect(rowsPerPageOptionsText).toEqual('10')
   })
 
   const setUpListActionButtonMockData = async () => {
@@ -376,7 +352,7 @@ describe('DataListGridComponent', () => {
     component.editPermission = 'EDIT'
     component.deletePermission = 'DELETE'
 
-    fixture.detectChanges()
+    fixture.autoDetectChanges()
     await fixture.whenStable()
   }
   describe('Disable list action buttons based on field path', () => {
@@ -524,7 +500,8 @@ describe('DataListGridComponent', () => {
     it('should assign id to view button', async () => {
       component.viewItem.subscribe(() => console.log())
       component.viewPermission = 'VIEW'
-      fixture.detectChanges()
+
+      fixture.autoDetectChanges()
       await fixture.whenStable()
 
       expect(component.viewItemObserved).toBe(true)
@@ -538,8 +515,10 @@ describe('DataListGridComponent', () => {
     it('should assign id to edit button', async () => {
       component.editItem.subscribe(() => console.log())
       component.editPermission = 'EDIT'
-      fixture.detectChanges()
+
+      fixture.autoDetectChanges()
       await fixture.whenStable()
+
       expect(component.editItemObserved).toBe(true)
 
       const tableActions = await listGrid.getActionButtons('list')
@@ -551,8 +530,10 @@ describe('DataListGridComponent', () => {
     it('should assign id to delete button', async () => {
       component.deleteItem.subscribe(() => console.log())
       component.deletePermission = 'DELETE'
-      fixture.detectChanges()
+
+      fixture.autoDetectChanges()
       await fixture.whenStable()
+
       expect(component.deleteItemObserved).toBe(true)
 
       const tableActions = await listGrid.getActionButtons('list')
@@ -572,7 +553,7 @@ describe('DataListGridComponent', () => {
         },
       ]
 
-      fixture.detectChanges()
+      fixture.autoDetectChanges()
       await fixture.whenStable()
 
       const tableActions = await listGrid.getActionButtons('list')
@@ -700,17 +681,19 @@ describe('DataListGridComponent', () => {
     it('should dynamically hide/show an action button based on the contents of a specified field', async () => {
       component.layout = 'grid'
       await setUpGridActionButtonMockData()
-      component.viewActionVisibleField = 'ready'
       const gridMenuButton = await listGrid.getMenuButton()
 
       await gridMenuButton.click()
 
       let gridActions = await listGrid.getActionButtons('grid')
-      expect(gridActions.length).toBe(2)
+      expect(gridActions.length).toBe(3)
+      await gridMenuButton.click()
 
-      let hiddenGridActions = await listGrid.getActionButtons('grid-hidden')
-      expect(hiddenGridActions.length).toBe(1)
-      expect(await hiddenGridActions[0].text()).toBe('OCX_DATA_LIST_GRID.MENU.VIEW')
+      component.viewActionVisibleField = 'ready'
+
+      await gridMenuButton.click()
+      gridActions = await listGrid.getActionButtons('grid')
+      expect(gridActions.length).toBe(2)
 
       for (const action of gridActions) {
         const text = await action.text()
@@ -727,8 +710,281 @@ describe('DataListGridComponent', () => {
       await gridMenuButton.click()
       gridActions = await listGrid.getActionButtons('grid')
       expect(gridActions.length).toBe(3)
-      hiddenGridActions = await listGrid.getActionButtons('grid-hidden')
-      expect(hiddenGridActions.length).toBe(0)
+    })
+  })
+
+  describe('permissions for action buttons', () => {
+    let userService: UserServiceMock
+
+    beforeEach(() => {
+      component.data = [
+        {
+          version: 0,
+          creationDate: '2023-09-12T09:34:11.997048Z',
+          creationUser: 'creation user',
+          modificationDate: '2023-09-12T09:34:11.997048Z',
+          modificationUser: '',
+          id: 'id1',
+          name: 'name1',
+          description: 'desc1',
+          status: 'status1',
+          responsible: 'responsible1',
+          endDate: '2023-09-14T09:34:09Z',
+          startDate: '2023-09-13T09:34:05Z',
+          imagePath: '/path/to/image1',
+          testNumber: '1',
+        },
+      ]
+
+      component.viewItem.subscribe(() => console.log('view item'))
+      component.editItem.subscribe(() => console.log('edit item'))
+      component.deleteItem.subscribe(() => console.log('delete item'))
+
+      userService = TestBed.inject(UserService) as unknown as UserServiceMock
+    })
+
+    describe('list layout', () => {
+      beforeEach(() => {
+        component.layout = 'list'
+        component.viewPermission = 'LIST#VIEW'
+        component.editPermission = 'LIST#EDIT'
+        component.deletePermission = 'LIST#DELETE'
+        component.additionalActions = []
+      })
+
+      it('should show view, delete and edit action buttons when user has VIEW, EDIT and DELETE permissions', async () => {
+        userService.permissionsTopic$.publish(['LIST#VIEW', 'LIST#EDIT', 'LIST#DELETE'])
+
+        fixture.detectChanges()
+        await fixture.whenStable()
+
+        let listActions = await listGrid.getActionButtons('list')
+        expect(listActions.length).toBe(3)
+
+        expect(await listActions[0].getAttribute('icon')).toEqual('pi pi-eye')
+        expect(await listActions[1].getAttribute('icon')).toEqual('pi pi-pencil')
+        expect(await listActions[2].getAttribute('icon')).toEqual('pi pi-trash')
+
+        userService.permissionsTopic$.publish([])
+
+        listActions = await listGrid.getActionButtons('list')
+        expect(listActions.length).toBe(0)
+      })
+
+      it('should show custom inline actions if user has the required permission', async () => {
+        userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
+
+        component.additionalActions = [
+          {
+            permission: 'CUSTOM#ACTION',
+            callback: () => {
+              console.log('custom action clicked')
+            },
+            id: 'customAction',
+            icon: 'pi pi-check',
+            showAsOverflow: false,
+          },
+        ]
+
+        fixture.detectChanges()
+        await fixture.whenStable()
+
+        let listActions = await listGrid.getActionButtons('list')
+        expect(listActions.length).toBe(1)
+        expect(await listActions[0].getAttribute('id')).toEqual('id1-customActionActionButton')
+        userService.permissionsTopic$.publish([])
+
+        listActions = await listGrid.getActionButtons('list')
+        expect(listActions.length).toBe(0)
+      })
+
+      it('should show overflow menu when user has permission for at least one action', async () => {
+        userService.permissionsTopic$.publish(['OVERFLOW#ACTION'])
+
+        component.additionalActions = [
+          {
+            permission: 'OVERFLOW#ACTION',
+            callback: () => {
+              console.log('overflow action clicked')
+            },
+            id: 'overflowAction',
+            labelKey: 'OVERFLOW_ACTION_KEY',
+            showAsOverflow: true,
+          },
+        ]
+
+        fixture.detectChanges()
+        await fixture.whenStable()
+
+        const button = await listGrid.getListOverflowMenuButton()
+        await button.click()
+
+        const overflowMenu = await listGrid.getListOverflowMenu()
+        expect(overflowMenu).toBeTruthy()
+        const menuItems = await overflowMenu?.getAllMenuItems()
+        expect(menuItems!.length).toBe(1)
+        expect(await menuItems![0].getText()).toEqual('OVERFLOW_ACTION_KEY')
+
+        userService.permissionsTopic$.publish([])
+        const newMenuItems = await overflowMenu?.getAllMenuItems()
+        expect(newMenuItems!.length).toBe(0)
+      })
+      it('should display action buttons based on multiple permissions', async () => {
+        component.additionalActions = [
+          {
+            permission: ['CUSTOM#ACTION1', 'CUSTOM#ACTION2'],
+            callback: () => {
+              console.log('custom action clicked')
+            },
+            id: 'customAction',
+            icon: 'pi pi-check',
+            showAsOverflow: false,
+          },
+          {
+            permission: ['OVERFLOW#ACTION1', 'OVERFLOW#ACTION2'],
+            callback: () => {
+              console.log('overflow action clicked')
+            },
+            id: 'overflowAction',
+            labelKey: 'OVERFLOW_ACTION_KEY',
+            showAsOverflow: true,
+          },
+        ]
+
+        component.viewPermission = ['LIST#VIEW1', 'LIST#VIEW2']
+        component.editPermission = ['LIST#EDIT1', 'LIST#EDIT2']
+        component.deletePermission = ['LIST#DELETE1', 'LIST#DELETE2']
+
+        userService.permissionsTopic$.publish([
+          'LIST#VIEW1',
+          'LIST#VIEW2',
+          'LIST#EDIT1',
+          'LIST#EDIT2',
+          'LIST#DELETE1',
+          'LIST#DELETE2',
+          'CUSTOM#ACTION1',
+          'CUSTOM#ACTION2',
+          'OVERFLOW#ACTION1',
+          'OVERFLOW#ACTION2',
+        ])
+
+        fixture.detectChanges()
+        await fixture.whenStable()
+
+        const listActions = await listGrid.getActionButtons('list')
+        expect(listActions.length).toBe(4)
+        expect(await listActions[0].getAttribute('icon')).toEqual('pi pi-eye')
+        expect(await listActions[1].getAttribute('icon')).toEqual('pi pi-pencil')
+        expect(await listActions[2].getAttribute('icon')).toEqual('pi pi-trash')
+        expect(await listActions[3].getAttribute('id')).toEqual('id1-customActionActionButton')
+
+        const button = await listGrid.getListOverflowMenuButton()
+        await button.click()
+
+        const overflowMenu = await listGrid.getListOverflowMenu()
+        expect(overflowMenu).toBeTruthy()
+        const menuItems = await overflowMenu?.getAllMenuItems()
+        expect(menuItems!.length).toBe(1)
+        expect(await menuItems![0].getText()).toEqual('OVERFLOW_ACTION_KEY')
+      })
+    })
+
+    describe('grid layout', () => {
+      beforeEach(() => {
+        component.layout = 'grid'
+        component.viewPermission = 'GRID#VIEW'
+        component.viewMenuItemKey = 'GRID_VIEW_KEY'
+        component.editPermission = 'GRID#EDIT'
+        component.editMenuItemKey = 'GRID_EDIT_KEY'
+        component.deletePermission = 'GRID#DELETE'
+        component.deleteMenuItemKey = 'GRID_DELETE_KEY'
+        component.additionalActions = []
+      })
+      it('should show view, delete and edit action buttons when user has VIEW, DELETE and EDIT permissions', async () => {
+        userService.permissionsTopic$.publish(['GRID#VIEW', 'GRID#EDIT', 'GRID#DELETE'])
+
+        const gridMenuButton = await listGrid.getMenuButton()
+        await gridMenuButton.click()
+
+        let gridActions = await listGrid.getActionButtons('grid')
+        expect(gridActions.length).toBe(3)
+
+        expect(await gridActions[0].text()).toEqual('GRID_VIEW_KEY')
+        expect(await gridActions[1].text()).toEqual('GRID_EDIT_KEY')
+        expect(await gridActions[2].text()).toEqual('GRID_DELETE_KEY')
+
+        userService.permissionsTopic$.publish([])
+
+        await gridMenuButton.click()
+        gridActions = await listGrid.getActionButtons('grid')
+        expect(gridActions.length).toBe(0)
+      })
+
+      it('should show custom additional action buttons when user has the required permission', async () => {
+        userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
+
+        component.additionalActions = [
+          {
+            permission: 'CUSTOM#ACTION',
+            callback: () => {
+              console.log('custom action clicked')
+            },
+            id: 'customAction',
+            labelKey: 'CUSTOM_ACTION_KEY',
+          },
+        ]
+
+        const gridMenuButton = await listGrid.getMenuButton()
+        await gridMenuButton.click()
+
+        let gridActions = await listGrid.getActionButtons('grid')
+        expect(gridActions.length).toBe(1)
+        expect(await gridActions[0].text()).toEqual('CUSTOM_ACTION_KEY')
+
+        userService.permissionsTopic$.publish([])
+
+        await gridMenuButton.click()
+        gridActions = await listGrid.getActionButtons('grid')
+        expect(gridActions.length).toBe(0)
+      })
+
+      it('should display action buttons based on multiple permissions', async () => {
+        component.additionalActions = [
+          {
+            permission: ['CUSTOM#ACTION1', 'CUSTOM#ACTION2'],
+            callback: () => {
+              console.log('custom action clicked')
+            },
+            id: 'customAction',
+            labelKey: 'CUSTOM_ACTION_KEY',
+          },
+        ]
+
+        component.viewPermission = ['GRID#VIEW1', 'GRID#VIEW2']
+        component.editPermission = ['GRID#EDIT1', 'GRID#EDIT2']
+        component.deletePermission = ['GRID#DELETE1', 'GRID#DELETE2']
+
+        userService.permissionsTopic$.publish([
+          'GRID#VIEW1',
+          'GRID#VIEW2',
+          'GRID#EDIT1',
+          'GRID#EDIT2',
+          'GRID#DELETE1',
+          'GRID#DELETE2',
+          'CUSTOM#ACTION1',
+          'CUSTOM#ACTION2',
+        ])
+
+        const gridMenuButton = await listGrid.getMenuButton()
+        await gridMenuButton.click()
+
+        const gridActions = await listGrid.getActionButtons('grid')
+        expect(gridActions.length).toBe(4)
+        expect(await gridActions[0].text()).toEqual('GRID_VIEW_KEY')
+        expect(await gridActions[1].text()).toEqual('GRID_EDIT_KEY')
+        expect(await gridActions[2].text()).toEqual('GRID_DELETE_KEY')
+        expect(await gridActions[3].text()).toEqual('CUSTOM_ACTION_KEY')
+      })
     })
   })
 

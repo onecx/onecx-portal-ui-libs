@@ -6,11 +6,20 @@
   "projectType": "library",
   "tags": [],
   "targets": {
+    "build-migrations": {
+      "dependsOn": [
+        "build"
+      ],
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "tsc -p libs/ngrx-accelerator/migrations/tsconfig.migrations.json"
+        ]
+      }
+    },
     "build": {
       "executor": "@nx/angular:package",
-      "outputs": [
-        "{workspaceRoot}/dist/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
       "options": {
         "project": "libs/ngrx-accelerator/ng-package.json"
       },
@@ -24,11 +33,11 @@
       },
       "defaultConfiguration": "production"
     },
-    "test": {
+    "test-migrations": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/ngrx-accelerator/jest.config.ts",
+        "jestConfig": "libs/ngrx-accelerator/migrations/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {
@@ -38,15 +47,33 @@
         }
       }
     },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/ngrx-accelerator/jest.config.ts",
+        "passWithNoTests": true,
+        "testPathIgnorePatterns": ["libs/ngrx-accelerator/migrations/"]
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/ngrx-accelerator/**/*.ts", "libs/ngrx-accelerator/package.json"]
       }
     },
     "release": {
-      "executor": "@onecx/release:update-build-publish"
+      "executor": "@onecx/release:update-build-publish",
+      "options": {
+        "buildTarget": "build-migrations"
+      }
     }
   }
 }

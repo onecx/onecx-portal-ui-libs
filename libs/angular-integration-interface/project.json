@@ -6,11 +6,20 @@
   "tags": [],
   "projectType": "library",
   "targets": {
+    "build-migrations": {
+      "dependsOn": [
+        "build"
+      ],
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "tsc -p libs/angular-integration-interface/migrations/tsconfig.migrations.json"
+        ]
+      }
+    },
     "build": {
       "executor": "@nx/angular:package",
-      "outputs": [
-        "{workspaceRoot}/dist/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
       "options": {
         "project": "libs/angular-integration-interface/ng-package.json"
       },
@@ -24,13 +33,11 @@
       },
       "defaultConfiguration": "production"
     },
-    "test": {
+    "test-migrations": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/angular-integration-interface/jest.config.ts",
+        "jestConfig": "libs/angular-integration-interface/migrations/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {
@@ -40,11 +47,24 @@
         }
       }
     },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/angular-integration-interface/jest.config.ts",
+        "passWithNoTests": true,
+        "testPathIgnorePatterns": ["libs/angular-integration-interface/migrations/"]
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
           "libs/angular-integration-interface/**/*.ts",
@@ -53,7 +73,10 @@
       }
     },
     "release": {
-      "executor": "@onecx/release:update-build-publish"
+      "executor": "@onecx/release:update-build-publish",
+      "options": {
+        "buildTarget": "build-migrations"
+      }
     }
   }
 }

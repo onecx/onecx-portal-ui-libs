@@ -1,4 +1,4 @@
-import { Inject, ModuleWithProviders, NgModule } from '@angular/core'
+import { ModuleWithProviders, NgModule, inject } from '@angular/core'
 import { BreadCrumbMenuItem } from './model/breadcrumb-menu-item.model'
 import { BreadcrumbService } from './services/breadcrumb.service'
 import { StorybookTranslateModule } from './storybook-translate.module'
@@ -7,7 +7,10 @@ import { StorybookTranslateModule } from './storybook-translate.module'
   imports: [StorybookTranslateModule],
 })
 export class StorybookBreadcrumbModule {
-  constructor(breadcrumbService: BreadcrumbService, @Inject('BREADCRUMBS') breadcrumbs: BreadCrumbMenuItem[]) {
+  constructor() {
+    const breadcrumbService = inject(BreadcrumbService)
+    const breadcrumbs = inject<BreadCrumbMenuItem[]>('BREADCRUMBS' as any)
+
     breadcrumbService.setItems(breadcrumbs)
   }
 

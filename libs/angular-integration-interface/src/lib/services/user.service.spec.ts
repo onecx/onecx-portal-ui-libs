@@ -69,6 +69,7 @@ describe('UserService', () => {
     describe('old style language setting', () => {
       it('should set to DEFAULT_LANG if no locales are provided and window has no browser languages', () => {
         mockProfile$.publish({} as UserProfile)
+
         expect(userService.lang$.getValue()).toBe(DEFAULT_LANG)
       })
 
@@ -78,6 +79,7 @@ describe('UserService', () => {
           configurable: true,
         })
         mockProfile$.publish({} as UserProfile)
+
         expect(userService.lang$.getValue()).toBe(DEFAULT_LANG)
       })
 
@@ -90,6 +92,7 @@ describe('UserService', () => {
           configurable: true,
         })
         mockProfile$.publish({} as UserProfile)
+
         expect(userService.lang$.getValue()).toBe(DEFAULT_LANG)
       })
 
@@ -123,6 +126,7 @@ describe('UserService', () => {
             },
           },
         } as UserProfile)
+
         expect(userService.lang$.getValue()).toBe('es')
       })
     })
@@ -133,6 +137,7 @@ describe('UserService', () => {
           locales: ['fr-FR', 'fr'],
         },
       } as UserProfile)
+
       expect(userService.lang$.getValue()).toBe('fr')
     })
 
@@ -142,6 +147,7 @@ describe('UserService', () => {
           locales: ['fr-FR', 'de-DE'],
         },
       } as UserProfile)
+
       expect(userService.lang$.getValue()).toBe(DEFAULT_LANG)
     })
 
@@ -153,6 +159,7 @@ describe('UserService', () => {
           locales: [] as string[],
         },
       } as UserProfile)
+
       expect(userService.lang$.getValue()).toBe('en')
     })
   })

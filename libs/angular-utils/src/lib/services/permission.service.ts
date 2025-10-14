@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { UserService } from '@onecx/angular-integration-interface'
 import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '../utils/has-permission-checker'
-import { map, Observable, of } from 'rxjs'
+import { from, map, Observable, of } from 'rxjs'
 
 /**
  * Service to check and list user permissions using an injected custom permission checker or the UserService.
@@ -62,7 +62,7 @@ export class PermissionService {
           })
         )
       } else {
-        hasPermission = of(permissionChecker.hasPermission(permissionKey))
+        hasPermission = from(permissionChecker.hasPermission(permissionKey))
       }
 
       this.cachedPermissions.set(cacheKey, hasPermission)

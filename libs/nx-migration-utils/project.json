@@ -16,15 +16,24 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": [
-          "libs/nx-migration-utils/**/*.ts",
-          "libs/nx-migration-utils/package.json"
-        ]
+        "lintFilePatterns": ["libs/nx-migration-utils/**/*.ts", "libs/nx-migration-utils/package.json"]
+      }
+    },
+    "test-migrations": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/nx-migration-utils/src/lib/migrations/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
       }
     },
     "test": {
@@ -32,7 +41,8 @@
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "libs/nx-migration-utils/jest.config.ts",
-        "passWithNoTests": true
+        "passWithNoTests": true,
+        "testPathIgnorePatterns": ["libs/nx-migration-utils/migrations/"]
       },
       "configurations": {
         "ci": {
@@ -43,6 +53,6 @@
     },
     "release": {
       "executor": "@onecx/release:update-build-publish"
-    }   
+    }
   }
 }

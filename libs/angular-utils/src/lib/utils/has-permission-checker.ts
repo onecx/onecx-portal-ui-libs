@@ -3,7 +3,7 @@ import { hasPermissionCheckerFactory } from './has-permission-checker-factory'
 import { Observable } from 'rxjs'
 
 export interface HasPermissionChecker {
-  hasPermission(permissionKey: string | string[]): boolean
+  hasPermission(permissionKey: string | string[]): Promise<boolean>
   getPermissions?(): Observable<string[]>
 }
 
@@ -11,7 +11,7 @@ export interface HasPermissionChecker {
  * This checker always returns true, basically disabling the permission system on the UI side
  */
 export class AlwaysGrantPermissionChecker implements HasPermissionChecker {
-  hasPermission(_permissionKey: string | string[]): boolean {
+  async hasPermission(_permissionKey: string | string[]): Promise<boolean> {
     return true
   }
 }

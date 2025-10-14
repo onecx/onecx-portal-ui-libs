@@ -12,8 +12,9 @@ import { StorybookTranslateModule } from './../../storybook-translate.module'
 import { DataListGridComponent } from './data-list-grid.component'
 import { IfPermissionDirective } from '../../directives/if-permission.directive'
 import { TooltipOnOverflowDirective } from '../../directives/tooltipOnOverflow.directive'
-import { MockAuthModule } from '../../mock-auth/mock-auth.module'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
+import { StorybookThemeModule } from '../../storybook-theme.module'
+import { TooltipModule } from 'primeng/tooltip'
 import { UserService } from '@onecx/angular-integration-interface'
 
 const DataListGridComponentSBConfig: Meta<DataListGridComponent> = {
@@ -25,13 +26,18 @@ const DataListGridComponentSBConfig: Meta<DataListGridComponent> = {
         importProvidersFrom(BrowserModule),
         importProvidersFrom(BrowserAnimationsModule),
         provideUserServiceMock(),
-        { provide: HAS_PERMISSION_CHECKER, useExisting: UserService },
+        { provide: HAS_PERMISSION_CHECKER, useExisting: UserServiceMock },
         importProvidersFrom(RouterModule.forRoot([], { useHash: true })),
+        importProvidersFrom(StorybookThemeModule),
         {
           provide: APP_INITIALIZER,
           useFactory: (userService: UserService) => () => {
             const userServiceMock = userService as unknown as UserServiceMock
-            userServiceMock.permissions$.next(['TEST_MGMT#TEST_DELETE', 'TEST_MGMT#TEST_EDIT', 'TEST_MGMT#TEST_VIEW'])
+            userServiceMock.permissionsTopic$.publish([
+              'TEST_MGMT#TEST_DELETE',
+              'TEST_MGMT#TEST_EDIT',
+              'TEST_MGMT#TEST_VIEW',
+            ])
           },
           multi: true,
           deps: [UserService],
@@ -40,7 +46,7 @@ const DataListGridComponentSBConfig: Meta<DataListGridComponent> = {
     }),
     moduleMetadata({
       declarations: [DataListGridComponent, IfPermissionDirective, TooltipOnOverflowDirective],
-      imports: [DataViewModule, MenuModule, ButtonModule, MultiSelectModule, StorybookTranslateModule, MockAuthModule],
+      imports: [DataViewModule, MenuModule, ButtonModule, MultiSelectModule, TooltipModule, StorybookTranslateModule],
     }),
   ],
 }

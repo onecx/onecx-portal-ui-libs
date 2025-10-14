@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core'
-import { MissingTranslationHandler, MissingTranslationHandlerParams } from '@ngx-translate/core'
+import { getValue, MissingTranslationHandler, MissingTranslationHandlerParams } from '@ngx-translate/core'
 import { getNormalizedBrowserLocales } from '@onecx/accelerator'
 import { UserService } from '@onecx/angular-integration-interface'
 import { Observable, of } from 'rxjs'
@@ -23,7 +23,6 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
     return loadTranslations(locales$, params)
   }
 }
-
 /**
  * Tries to find a translation for the given language.
  * If no translation is found, an error is thrown.
@@ -36,9 +35,8 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
 function findTranslationForLang(lang: string, params: MissingTranslationHandlerParams): Observable<string> {
   return params.translateService.reloadLang(lang).pipe(
     map((interpolatableTranslationObject: Record<string, any>) => {
-      const parser = params.translateService.parser
-      const translatedValue = parser.interpolate(
-        parser.getValue(interpolatableTranslationObject, params.key),
+      const translatedValue = params.translateService.parser.interpolate(
+        getValue(interpolatableTranslationObject, params.key),
         params.interpolateParams
       )
       if (!translatedValue) {

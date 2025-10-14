@@ -10,6 +10,7 @@ import { UserService } from '@onecx/angular-integration-interface'
 // Simple component to test the directive
 @Component({
   selector: 'ocx-simple',
+  standalone: false,
   template: ` <div *ocxIfPermission="'test-permission'">Visible</div> `,
 })
 class SimpleComponent {}
@@ -17,6 +18,7 @@ class SimpleComponent {}
 // Component with multiple permissions
 @Component({
   selector: 'ocx-simple',
+  standalone: false,
   template: ` <div *ocxIfPermission="['test-permission', 'second-permission']">Visible</div> `,
 })
 class MultiplePermissionComponent {}
@@ -24,6 +26,7 @@ class MultiplePermissionComponent {}
 // Component with else template
 @Component({
   selector: 'ocx-with-else',
+  standalone: false,
   template: `
     <div *ocxIfPermission="'missing-permission'; elseTemplate: elseBlock">Hidden</div>
     <ng-template #elseBlock><div>Else Block</div></ng-template>
@@ -34,6 +37,7 @@ class WithElseTemplateComponent {}
 // Component with onMissingPermission set to 'disable'
 @Component({
   selector: 'ocx-on-missing-disabled',
+  standalone: false,
   template: ` <div *ocxIfPermission="'test-disabled'; onMissingPermission: 'disable'">Disabled</div>`,
 })
 class OnMissingDisabledComponent {}
@@ -41,6 +45,7 @@ class OnMissingDisabledComponent {}
 // Component with provided permissions array including the required permission
 @Component({
   selector: 'ocx-with-provided',
+  standalone: false,
   template: ` <div *ocxIfPermission="'provided-permission'; permissions: ['provided-permission']">
     Show with provided-permission
   </div>`,
@@ -50,6 +55,7 @@ class WithProvidedPermissionsComponent {}
 // Component with provided permissions array not including the required permission
 @Component({
   selector: 'ocx-with-missing-provided',
+  standalone: false,
   template: ` <div *ocxIfPermission="'missing-permission'; permissions: ['provided-permission']">
     Show with provided-permission
   </div>`,
@@ -59,6 +65,7 @@ class WithMissingProvidedPermissionsComponent {}
 // Component with undefined permission
 @Component({
   selector: 'ocx-with-undefined',
+  standalone: false,
   template: ` <div *ocxIfPermission="">Show not show</div>`,
 })
 class WithUndefinedPermissionComponent {}
@@ -66,6 +73,7 @@ class WithUndefinedPermissionComponent {}
 // Simple component to test the negate functionality of the directive
 @Component({
   selector: 'ocx-negate-simple',
+  standalone: false,
   template: ` <div *ocxIfNotPermission="'test-permission'">Visible</div> `,
 })
 class NegateSimpleComponent {}
@@ -73,6 +81,7 @@ class NegateSimpleComponent {}
 // Component with else template for negate
 @Component({
   selector: 'ocx-negate-with-else',
+  standalone: false,
   template: `
     <div *ocxIfNotPermission="'missing-permission'; elseTemplate: elseBlock">Hidden</div>
     <ng-template #elseBlock><div>Else Block</div></ng-template>
@@ -83,6 +92,7 @@ class NegateWithElseTemplateComponent {}
 // Component with onMissingPermission set to 'disable' for negate
 @Component({
   selector: 'ocx-negate-on-missing-disabled',
+  standalone: false,
   template: ` <div *ocxIfNotPermission="'test-disabled'; onMissingPermission: 'disable'">Disabled</div>`,
 })
 class NegateOnMissingDisabledComponent {}
@@ -90,6 +100,7 @@ class NegateOnMissingDisabledComponent {}
 // Component with provided permissions array including the required permission for negate
 @Component({
   selector: 'ocx-negate-with-provided',
+  standalone: false,
   template: ` <div *ocxIfNotPermission="'provided-permission'; permissions: ['provided-permission']">
     Show with provided-permission
   </div>`,
@@ -99,6 +110,7 @@ class NegateWithProvidedPermissionsComponent {}
 // Component with provided permissions array not including the required permission for negate
 @Component({
   selector: 'ocx-negate-with-missing-provided',
+  standalone: false,
   template: ` <div *ocxIfNotPermission="'missing-permission'; permissions: ['provided-permission']">
     Show with provided-permission
   </div>`,
@@ -108,6 +120,7 @@ class NegateWithMissingProvidedPermissionsComponent {}
 // Component with undefined permission for negate
 @Component({
   selector: 'ocx-negate-with-undefined',
+  standalone: false,
   template: ` <div *ocxIfNotPermission="">Show not show</div>`,
 })
 class NegateWithUndefinedPermissionComponent {}

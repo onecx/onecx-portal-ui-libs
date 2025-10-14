@@ -85,6 +85,30 @@ export function replaceRootWithScope(css: string): string {
 }
 
 /**
+ * Replace "html" selector with ":scope" for a given css.
+ *
+ * :scope === :root if "@scope" is not used
+ * :scope === top level element of the scope if "@scope" is used
+ * @param css - css text to transform
+ * @returns {string} css with replaced selector
+ */
+export function replaceHtmlWithScope(css: string): string {
+  return css.replaceAll('html', ':scope')
+}
+
+/**
+ * Replace "html" and ":root" selector with ":scope" for a given css.
+ *
+ * :scope === :root if "@scope" is not used
+ * :scope === top level element of the scope if "@scope" is used
+ * @param css - css text to transform
+ * @returns {string} css with replaced selector
+ */
+export function replaceRootAndHtmlWithScope(css: string): string {
+  return replaceRootWithScope(replaceHtmlWithScope(css))
+}
+
+/**
  * Creates a string with application scoped css.
  * @param css - css for scoping
  * @param scopeId - scope id for scoping
@@ -96,12 +120,12 @@ export function createScopedCss(css: string, scopeId: string): string {
   return isScopeSupported
     ? `
 @scope([${dataStyleIdAttribute}="${scopeId}"]:is([${dataNoPortalLayoutStylesAttribute}], [${dataMfeElementAttribute}])) to ([${dataStyleIsolationAttribute}]) {
-  ${replaceRootWithScope(css)}
+  ${replaceRootAndHtmlWithScope(css)}
     }
 `
     : `
 @supports (@scope([${dataStyleIdAttribute}="${scopeId}"]:is([${dataNoPortalLayoutStylesAttribute}], [${dataMfeElementAttribute}])) to ([${dataStyleIsolationAttribute}])) {
-  ${replaceRootWithScope(css)}
+  ${replaceRootAndHtmlWithScope(css)}
     }
 `
 }
@@ -253,5 +277,5 @@ function createCssRequestHeaders() {
  * @returns {boolean} if response is valid css
  */
 function isResponseValidCss<T>(response: HttpResponse<T>) {
-  return response.headers.get('Content-Type') === 'text/css'
+  return response.headers.get('Content-Type')?.includes('text/css')
 }

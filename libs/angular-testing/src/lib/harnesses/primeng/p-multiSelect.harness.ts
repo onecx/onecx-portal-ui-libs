@@ -25,7 +25,7 @@ export class PMultiSelectHarness extends ComponentHarness {
 
   async getHarnessLoaderForPMultiSelectPanel(): Promise<HarnessLoader | null> {
     const rootLocator = this.documentRootLocatorFactory()
-    return rootLocator.harnessLoaderForOptional('.p-multiselect-panel')
+    return rootLocator.harnessLoaderForOptional('.p-multiselect-overlay')
   }
 
   async getAllOptions(): Promise<PMultiSelectListItemHarness[]> {

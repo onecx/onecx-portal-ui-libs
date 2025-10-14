@@ -1,0 +1,64 @@
+{
+  "name": "angular-standalone-shell",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/angular-standalone-shell/src",
+  "prefix": "onecx",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build-migrations": {
+      "dependsOn": ["build"],
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["tsc -p libs/angular-standalone-shell/migrations/tsconfig.migrations.json"]
+      }
+    },
+    "build": {
+      "executor": "@nx/angular:package",
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "options": {
+        "project": "libs/angular-standalone-shell/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/angular-standalone-shell/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/angular-standalone-shell/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/angular-standalone-shell/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/angular-standalone-shell/**/*.ts",
+          "libs/angular-standalone-shell/**/*.html",
+          "libs/angular-standalone-shell/package.json"
+        ]
+      }
+    },
+    "release": {
+      "executor": "@onecx/release:update-build-publish",
+      "options": {
+        "buildTarget": "build-migrations"
+      }
+    }
+  }
+}

@@ -37,8 +37,8 @@ describe('DiagramComponent', () => {
       declarations: [DiagramComponent],
       imports: [
         NoopAnimationsModule,
-        AngularAcceleratorPrimeNgModule,
         FormsModule,
+        AngularAcceleratorPrimeNgModule,
         TranslateTestingModule.withTranslations({
           en: require('./../../../../assets/i18n/en.json'),
           de: require('./../../../../assets/i18n/de.json'),
@@ -225,8 +225,8 @@ describe('DiagramComponent', () => {
     const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
     const diagramTypeSelectButtonOptions = await diagram.getAllSelectionButtons()
 
-    expect(await diagramTypeSelectButtonOptions[0].hasClass('p-highlight')).toBe(false)
-    expect(await diagramTypeSelectButtonOptions[1].hasClass('p-highlight')).toBe(true)
+    expect(await diagramTypeSelectButtonOptions[0].hasClass('p-togglebutton-checked')).toBe(false)
+    expect(await diagramTypeSelectButtonOptions[1].hasClass('p-togglebutton-checked')).toBe(true)
   })
 
   it('should interpolate colors by default', () => {

@@ -17,8 +17,6 @@ jobs:
         run: npm config get registry
       - name: Install dependencies
         run: npm ci
-      - name: Build PIA Storybook
-        run: npx nx run portal-integration-angular:build-storybook
       - name: Build AA Storybook
         run: npx nx run angular-accelerator:build-storybook
       - name: Upload build artifacts

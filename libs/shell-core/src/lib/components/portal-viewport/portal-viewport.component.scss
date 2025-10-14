@@ -1,8 +1,46 @@
-:host ::ng-deep {
-  /* the 2nd child (the menu) should fill the rest of space */
-  .onecx-shell-footer {
-    div:nth-child(2) {
-      flex-grow: 1;
-    }
+.onecx-body-wrapper {
+  display: flex;
+  flex-direction: row;
+  height: calc(100vh - 4rem);
+  
+  .onecx-body-start {
+    // Shared max-width between header start and body start
+    max-width: 20rem;
+    background-color: var(--menu-bg-color);
+    box-shadow: 1px 0 #0003;
+    overflow: auto;
+    flex-grow: 0;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  .onecx-body-center {
+    flex-grow: 1;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .onecx-body-end {
+    // Shared max-width between header end and body end
+    max-width: 25rem;
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+}
+
+// Styles for no theme template
+.onecx-no-theme-main {
+  padding-top: 4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100vh;
+  transition: margin-left var(--animation-duration);
+
+  .onecx-no-theme-content {
+    flex: 1 1 0;
   }
 }

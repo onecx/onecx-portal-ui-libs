@@ -1,20 +1,24 @@
+import { HarnessLoader } from '@angular/cdk/testing'
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { RouterTestingModule } from '@angular/router/testing'
-import { provideHttpClientTesting } from '@angular/common/http/testing'
-import { TranslateTestingModule } from 'ngx-translate-testing'
-import { ButtonModule } from 'primeng/button'
-import { BreadcrumbModule } from 'primeng/breadcrumb'
-import { AppStateService, UserService } from '@onecx/angular-integration-interface'
-import { AngularAcceleratorModule } from '../../angular-accelerator.module'
-import { SearchHeaderComponent } from './search-header.component'
-import { PageHeaderComponent } from '../page-header/page-header.component'
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
-import { AppStateServiceMock, provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { HarnessLoader } from '@angular/cdk/testing'
 import { SlotHarness } from '@onecx/angular-accelerator/testing'
+import { AppStateService } from '@onecx/angular-integration-interface'
+import {
+  AppStateServiceMock,
+  provideAppStateServiceMock,
+  provideUserServiceMock,
+  UserServiceMock,
+} from '@onecx/angular-integration-interface/mocks'
+import { TranslateTestingModule } from 'ngx-translate-testing'
+import { BreadcrumbModule } from 'primeng/breadcrumb'
+import { ButtonModule } from 'primeng/button'
+import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { IfPermissionDirective } from '../../directives/if-permission.directive'
-import { of } from 'rxjs'
+import { PageHeaderComponent } from '../page-header/page-header.component'
+import { SearchHeaderComponent } from './search-header.component'
 
 describe('SearchHeaderComponent', () => {
   let mockAppStateService: AppStateServiceMock
@@ -37,11 +41,12 @@ describe('SearchHeaderComponent', () => {
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         provideAppStateServiceMock(),
+        provideUserServiceMock(),
       ],
     }).compileComponents()
 
     mockAppStateService = TestBed.inject(AppStateServiceMock)
-    mockAppStateService.currentPortal$.publish({
+    mockAppStateService.currentWorkspace$.publish({
       id: 'i-am-test-portal',
       portalName: 'test',
       workspaceName: 'test',
@@ -66,12 +71,14 @@ describe('SearchHeaderComponent', () => {
   })
 
   it('should display search config slot if search config change is observed, pageName is defined and permission is met', async () => {
-    const userService = TestBed.inject(UserService)
-    jest.spyOn(userService, 'getPermissions').mockReturnValue(of(['PRODUCT#USE_SEARCHCONFIGS']))
+    const userServiceMock = TestBed.inject(UserServiceMock)
+    userServiceMock.permissionsTopic$.publish(['PRODUCT#USE_SEARCHCONFIGS'])
     const sub = component.selectedSearchConfigChanged.subscribe()
     component.pageName = 'myPageName'
     component.searchConfigPermission = 'PRODUCT#USE_SEARCHCONFIGS'
+
     fixture.detectChanges()
+    await fixture.whenStable()
 
     const slot = await loader.getHarness(SlotHarness)
     expect(slot).toBeTruthy()

@@ -5,7 +5,6 @@ import {
   ContentChild,
   ContentChildren,
   EventEmitter,
-  Inject,
   Injector,
   Input,
   LOCALE_ID,
@@ -15,6 +14,7 @@ import {
   QueryList,
   TemplateRef,
   ViewChildren,
+  inject,
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
@@ -33,6 +33,7 @@ import {
   map,
   mergeMap,
   of,
+  shareReplay,
   switchMap,
   withLatestFrom,
 } from 'rxjs'
@@ -44,7 +45,7 @@ import { Filter, FilterType } from '../../model/filter.model'
 import { ObjectUtils } from '../../utils/objectutils'
 import { findTemplate } from '../../utils/template.utils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
-import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
+import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 
 export type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -74,11 +75,17 @@ export interface DataTableComponentState {
 }
 
 @Component({
+  standalone: false,
   selector: 'ocx-data-table',
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
 })
 export class DataTableComponent extends DataSortBase implements OnInit, AfterContentInit {
+  private readonly router = inject(Router)
+  private readonly injector = inject(Injector)
+  private readonly userService = inject(UserService)
+  private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
+
   FilterType = FilterType
   TemplateType = TemplateType
   checked = true
@@ -88,7 +95,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this._rows$.getValue()
   }
   set rows(value: Row[]) {
-    !this._rows$.getValue().length ?? this.resetPage()
+    !this._rows$.getValue().length
     this._rows$.next(value)
   }
   _selectionIds$ = new BehaviorSubject<(string | number)[]>([])
@@ -110,7 +117,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this._filters$.getValue()
   }
   set filters(value: Filter[]) {
-    !this._filters$.getValue().length ?? this.resetPage()
+    !this._filters$.getValue().length
     this._filters$.next(value)
   }
   _sortDirection$ = new BehaviorSubject<DataSortDirection>(DataSortDirection.NONE)
@@ -152,13 +159,12 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   @Input() clientSideSorting = true
   @Input() sortStates: DataSortDirection[] = [DataSortDirection.ASCENDING, DataSortDirection.DESCENDING]
 
-  displayedPageSizes$: Observable<(number | { showAll: string })[]>
-  _pageSizes$ = new BehaviorSubject<(number | { showAll: string })[]>([10, 25, 50])
+  _pageSizes$ = new BehaviorSubject<number[]>([10, 25, 50])
   @Input()
-  get pageSizes(): (number | { showAll: string })[] {
+  get pageSizes(): number[] {
     return this._pageSizes$.getValue()
   }
-  set pageSizes(value: (number | { showAll: string })[]) {
+  set pageSizes(value: number[]) {
     this._pageSizes$.next(value)
   }
   displayedPageSize$: Observable<number>
@@ -169,11 +175,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
   set pageSize(value: number | undefined) {
     this._pageSize$.next(value)
-  }
-  _showAllOption$ = new BehaviorSubject<boolean>(false)
-  @Input()
-  set showAllOption(value: boolean) {
-    this._showAllOption$.next(value)
   }
 
   @Input() emptyResultsMessage: string | undefined
@@ -222,22 +223,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this.numberCellTemplate || this.numberCellChildTemplate
   }
 
-  /**
-   * @deprecated Will be removed and instead to change the template of a specific column
-   * use the new approach instead by following the naming convention column id + IdCell
-   * e.g. for a column with the id 'status' use pTemplate="statusIdCell"
-   */
-  @Input() customCellTemplate: TemplateRef<any> | undefined
-  /**
-   * @deprecated Will be removed and instead to change the template of a specific column
-   * use the new approach instead by following the naming convention column id + IdCell
-   * e.g. for a column with the id 'status' use pTemplate="statusIdCell"
-   */
-  @ContentChild('customCell') customCellChildTemplate: TemplateRef<any> | undefined
-  get _customCell(): TemplateRef<any> | undefined {
-    return this.customCellTemplate || this.customCellChildTemplate
-  }
-
   @Input() dateCellTemplate: TemplateRef<any> | undefined
   @ContentChild('dateCell') dateCellChildTemplate: TemplateRef<any> | undefined
   get _dateCell(): TemplateRef<any> | undefined {
@@ -269,21 +254,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   @ContentChild('numberFilterCell') numberFilterCellChildTemplate: TemplateRef<any> | undefined
   get _numberFilterCell(): TemplateRef<any> | undefined {
     return this.numberFilterCellTemplate || this.numberFilterCellChildTemplate
-  }
-  /**
-   * @deprecated Will be removed and instead to change the template of a specific column filter
-   * use the new approach instead by following the naming convention column id + IdFilterCell
-   * e.g. for a column with the id 'status' use pTemplate="statusIdFilterCell"
-   */
-  @Input() customFilterCellTemplate: TemplateRef<any> | undefined
-  /**
-   * @deprecated Will be removed and instead to change the template of a specific column filter
-   * use the new approach instead by following the naming convention column id + IdFilterCell
-   * e.g. for a column with the id 'status' use pTemplate="statusIdFilterCell"
-   */
-  @ContentChild('customFilterCell') customFilterCellChildTemplate: TemplateRef<any> | undefined
-  get _customFilterCell(): TemplateRef<any> | undefined {
-    return this.customFilterCellTemplate || this.customFilterCellChildTemplate
   }
   @Input() dateFilterCellTemplate: TemplateRef<any> | undefined
   @ContentChild('dateFilterCell') dateFilterCellChildTemplate: TemplateRef<any> | undefined
@@ -398,25 +368,15 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
   templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
 
-  constructor(
-    @Inject(LOCALE_ID) locale: string,
-    translateService: TranslateService,
-    private router: Router,
-    private injector: Injector,
-    private userService: UserService,
-    @Inject(HAS_PERMISSION_CHECKER) @Optional() private hasPermissionChecker?: HasPermissionChecker
-  ) {
+  private cachedOverflowActions$: Observable<DataAction[]>
+  private cachedOverflowMenuItemsVisibility$: Observable<boolean> | undefined
+
+  constructor() {
+    const locale = inject(LOCALE_ID)
+    const translateService = inject(TranslateService)
+
     super(locale, translateService)
     this.name = this.name || this.router.url.replace(/[^A-Za-z0-9]/, '_')
-    this.displayedPageSizes$ = combineLatest([
-      this._pageSizes$,
-      this.translateService.get('OCX_DATA_TABLE.ALL'),
-      this._showAllOption$,
-    ]).pipe(
-      map(([pageSizes, translation, showAllOption]) =>
-        showAllOption ? pageSizes.concat({ showAll: translation }) : pageSizes
-      )
-    )
     this.displayedPageSize$ = combineLatest([this._pageSize$, this._pageSizes$]).pipe(
       map(([pageSize, pageSizes]) => pageSize ?? pageSizes.find((val): val is number => typeof val === 'number') ?? 50)
     )
@@ -451,7 +411,12 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         )
       })
     )
+
     this.rowSelectable = this.rowSelectable.bind(this)
+
+    this.cachedOverflowActions$ = this.overflowActions$.pipe(
+      shareReplay(1) // Cache the last emitted value
+    )
   }
 
   ngOnInit(): void {
@@ -466,7 +431,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         return filters
           .filter(
             (filter) =>
-              filter.columnId === currentFilterColumn?.id && currentFilterColumn.filterType === FilterType.TRUTHY
+              filter.columnId === currentFilterColumn?.id && currentFilterColumn.filterType === FilterType.IS_NOT_EMPTY
           )
           .map((filter) => filter.value)
       })
@@ -477,7 +442,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
           .filter(
             (filter) =>
               filter.columnId === currentFilterColumn?.id &&
-              (!currentFilterColumn.filterType || currentFilterColumn.filterType === FilterType.EQUAL)
+              (!currentFilterColumn.filterType || currentFilterColumn.filterType === FilterType.EQUALS)
           )
           .map((filter) => filter.value)
       })
@@ -485,7 +450,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     this.currentEqualFilterOptions$ = combineLatest([this._rows$, this.currentFilterColumn$, this._filters$]).pipe(
       filter(
         ([_, currentFilterColumn, __]) =>
-          !currentFilterColumn?.filterType || currentFilterColumn.filterType === FilterType.EQUAL
+          !currentFilterColumn?.filterType || currentFilterColumn.filterType === FilterType.EQUALS
       ),
       mergeMap(([rows, currentFilterColumn, filters]) => {
         if (!currentFilterColumn?.id) {
@@ -496,7 +461,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
           .filter(
             (filter) =>
               filter.columnId === currentFilterColumn?.id &&
-              (!currentFilterColumn.filterType || currentFilterColumn.filterType === FilterType.EQUAL)
+              (!currentFilterColumn.filterType || currentFilterColumn.filterType === FilterType.EQUALS)
           )
           .map((filter) => filter.value)
 
@@ -588,9 +553,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         case 'numberCell':
           this.numberCellChildTemplate = item.template
           break
-        case 'customCell':
-          this.customCellChildTemplate = item.template
-          break
         case 'dateCell':
           this.dateCellChildTemplate = item.template
           break
@@ -608,9 +570,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
           break
         case 'numberFilterCell':
           this.numberFilterCellChildTemplate = item.template
-          break
-        case 'customFilterCell':
-          this.customFilterCellChildTemplate = item.template
           break
         case 'dateFilterCell':
           this.dateFilterCellChildTemplate = item.template
@@ -818,7 +777,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       [ColumnType.NUMBER]: ['numberCell', 'numberTableCell', 'defaultNumberCell'],
       [ColumnType.RELATIVE_DATE]: ['relativeDateCell', 'relativeDateTableCell', 'defaultRelativeDateCell'],
       [ColumnType.TRANSLATION_KEY]: ['translationKeyCell', 'translationKeyTableCell', 'defaultTranslationKeyCell'],
-      [ColumnType.CUSTOM]: ['customCell', 'customTableCell', 'defaultCustomCell'],
       [ColumnType.STRING]: ['stringCell', 'stringTableCell', 'defaultStringCell'],
     },
   }
@@ -848,13 +806,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         'defaultTranslationKeyCell',
         'translationKeyCell',
         'translationKeyTableCell',
-      ],
-      [ColumnType.CUSTOM]: [
-        'customFilterCell',
-        'customTableFilterCell',
-        'customCell',
-        'customTableCell',
-        'defaultCustomCell',
       ],
       [ColumnType.STRING]: [
         'stringFilterCell',
@@ -889,9 +840,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
           case ColumnType.TRANSLATION_KEY:
             template = this._translationKeyCell
             break
-          case ColumnType.CUSTOM:
-            template = this._customCell
-            break
           default:
             template = this._stringCell
         }
@@ -909,9 +857,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
             break
           case ColumnType.TRANSLATION_KEY:
             template = this._translationKeyFilterCell
-            break
-          case ColumnType.CUSTOM:
-            template = this._customFilterCell
             break
           default:
             template = this._stringFilterCell
@@ -955,7 +900,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return ObjectUtils.resolveFieldData(object, key)
   }
 
-  getRowObjectFromMultiselectItem(value: MultiSelectItem, column: DataTableColumn) {
+  getRowObjectFromMultiselectItem(value: MultiSelectItem, column: DataTableColumn): Record<string, string | undefined> {
     return {
       [column.id]: value.label,
     }

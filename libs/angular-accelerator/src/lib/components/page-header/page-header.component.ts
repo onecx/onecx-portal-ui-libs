@@ -9,15 +9,15 @@ import {
   TemplateRef,
   Type,
   ViewEncapsulation,
+  inject,
 } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
+import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 import { MenuItem, PrimeIcons } from 'primeng/api'
-import { BehaviorSubject, concat, map, Observable, of, switchMap } from 'rxjs'
-import { AppStateService } from '@onecx/angular-integration-interface'
-import { UserService } from '@onecx/angular-integration-interface'
+import { BehaviorSubject, Observable, concat, map, of, switchMap } from 'rxjs'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { PrimeIcon } from '../../utils/primeicon.utils'
-import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
+import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 
 /**
  * Action definition.
@@ -51,10 +51,6 @@ export interface Action {
 export interface ObjectDetailItem {
   label: string
   value?: string
-  /**
-   * @deprecated Use `valueTooltip` instead
-   */
-  tooltip?: string
   labelTooltip?: string
   valueTooltip?: string
   icon?: PrimeIcon
@@ -78,12 +74,18 @@ export interface HomeItem {
 export type GridColumnOptions = 1 | 2 | 3 | 4 | 6 | 12
 
 @Component({
+  standalone: false,
   selector: 'ocx-page-header',
   templateUrl: './page-header.component.html',
   styleUrls: ['./page-header.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
 export class PageHeaderComponent implements OnInit {
+  private translateService = inject(TranslateService)
+  private appStateService = inject(AppStateService)
+  private userService = inject(UserService)
+  private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
+
   @Input()
   public header: string | undefined
 
@@ -160,28 +162,22 @@ export class PageHeaderComponent implements OnInit {
 
   protected breadcrumbs: BreadcrumbService
 
-  constructor(
-    breadcrumbs: BreadcrumbService,
-    private translateService: TranslateService,
-    private appStateService: AppStateService,
-    private userService: UserService,
-    @Inject(HAS_PERMISSION_CHECKER)
-    private hasPermissionChecker?: HasPermissionChecker
-  ) {
+  constructor() {
+    const breadcrumbs = inject(BreadcrumbService)
+
     this.breadcrumbs = breadcrumbs
     this.home$ = concat(
       of({ menuItem: { icon: PrimeIcons.HOME, routerLink: '/' } }),
-      this.appStateService.currentPortal$.pipe(
-        map((portal) => ({
+      this.appStateService.currentWorkspace$.pipe(
+        map((workspace) => ({
           menuItem: {
             icon: PrimeIcons.HOME,
-            routerLink: portal.baseUrl,
+            routerLink: workspace.baseUrl,
           },
-          page: portal.portalName,
+          page: workspace.workspaceName,
         }))
       )
     )
-
     this._actions
       .pipe(
         map(this.filterInlineActions),
