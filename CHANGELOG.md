@@ -1,3 +1,16 @@
+## [5.50.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.49.0...v5.50.0) (2025-10-09)
+
+### Features
+
+* add new topic for menu visibility v5 ([#955](https://github.com/onecx/onecx-portal-ui-libs/issues/955)) ([654f864](https://github.com/onecx/onecx-portal-ui-libs/commit/654f8642124c4d8a158e1c4fa54c0212c22e104b))
+
+### Bug Fixes
+
+* bump sonar github action to version 6 ([#978](https://github.com/onecx/onecx-portal-ui-libs/issues/978)) ([9823527](https://github.com/onecx/onecx-portal-ui-libs/commit/98235275a65b80b6cf8e3a1f2c12338e46083b4f))
+* change capability name ([#977](https://github.com/onecx/onecx-portal-ui-libs/issues/977)) ([a43f61c](https://github.com/onecx/onecx-portal-ui-libs/commit/a43f61c5c29df310968ac43544a7d5e0ea60f7ec))
+* escape line breaks n and r ([#966](https://github.com/onecx/onecx-portal-ui-libs/issues/966)) ([0d96155](https://github.com/onecx/onecx-portal-ui-libs/commit/0d96155e783f1b001b84516aefb648a335e2c74e))
+* remove static visible topic ([#975](https://github.com/onecx/onecx-portal-ui-libs/issues/975)) ([2dafea6](https://github.com/onecx/onecx-portal-ui-libs/commit/2dafea635abb913189bb9c8946df0f503b30bc0b))
+
 ## [5.49.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.48.4...v5.49.0) (2025-09-23)
 
 ### Features
