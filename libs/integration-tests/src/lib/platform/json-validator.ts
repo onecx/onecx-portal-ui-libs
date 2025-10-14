@@ -47,7 +47,7 @@ export class PlatformConfigJsonValidator {
       const config = this.parseConfigFile(configContent, configPath)
 
       // Load schema
-      const schemaPath = path.join(__dirname, `../model/${this.SCHEMA}`)
+      const schemaPath = path.join(__dirname, `../models/${this.SCHEMA}`)
       const schemaContent = fs.readFileSync(schemaPath, 'utf8')
       const schema = JSON.parse(schemaContent)
 
