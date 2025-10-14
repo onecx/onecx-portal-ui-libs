@@ -1,102 +1,77 @@
-= Microfrontend URL Configuration for Integration Tests
+= Container Network Communication for Integration Tests
 :toc:
 :toclevels: 3
 :sectnums:
 
 == Overview
 
-The OneCX Integration Tests library processes microfrontend configurations during the import process. It supports flexible URL formats and automatically transforms them to ensure proper container-to-container communication in the integration test environment.
+The OneCX Integration Tests library uses Docker network aliases for container-to-container communication. All import data and microfrontend configurations are based on the network aliases that containers will have in the Docker network during integration tests.
 
-== URL Format Requirements
+== Network Alias Architecture
 
-=== Supported URL Formats
+=== Container Network Setup
 
-The import process supports both URL formats:
-
-**Option 1: Direct Container URLs (Recommended)**
-[source,json]
-----
-// Direct container URLs - ready for container communication
-{
-  "appName": "onecx-help-ui",
-  "remoteBaseUrl": "http://onecx-help-ui/",
-  "remoteEntry": "http://onecx-help-ui/remoteEntry.js"
-}
-----
-
-**Option 2: Relative URLs **
-[source,json]
-----
-// Relative URLs - automatically transformed during import
-{
-  "appName": "onecx-help-ui",
-  "remoteBaseUrl": "/mfe/help/",                      // Transformed to http://onecx-help-ui/
-  "remoteEntry": "/mfe/help/remoteEntry.js"           // Transformed to http://onecx-help-ui/remoteEntry.js
-}
-----
-
-=== URL Transformation Logic
-
-The import process automatically detects and transforms URLs based on the following rules:
-
-- **URLs starting with `http`**: Used as-is without modification
-- **Relative URLs**: Automatically converted to direct container URLs using the `appName` field
-
-== Implementation Details
-
-=== Automatic URL Detection and Transformation
-
-The transformation occurs automatically in the `importMicrofrontends` function during the import process:
+Each container in the integration test environment gets a network alias that serves as its hostname within the Docker network:
 
 [source,typescript]
 ----
-// Check if URLs need transformation
-const appName = mfeData.appName
-if (appName && mfeData.remoteBaseUrl && !mfeData.remoteBaseUrl.startsWith('http')) {
-  // Transform relative URL to direct container URL
-  mfeData.remoteBaseUrl = `http://${appName}/`
-}
-
-if (appName && mfeData.remoteEntry && !mfeData.remoteEntry.startsWith('http')) {
-  // Transform relative entry path to direct container URL
-  mfeData.remoteEntry = `http://${appName}/remoteEntry.js`
-}
+// Example: Container with network alias
+const container = new BffContainer(image, keycloakContainer)
+  .withNetworkAliases(['onecx-user-profile-bff'])  
+  .withPort(8080)
 ----
 
-=== Key Features
+=== Service Discovery
 
-- **Automatic Detection**: URLs starting with `http` are used as-is
-- **Smart Transformation**: Relative URLs are converted to container format using the `appName` field
-- **Backward Compatibility**: Supports configurations with `/mfe/` paths
-- **Logging**: Transformation actions are logged for debugging
-
-=== URL Mapping Rules
-
-The transformation follows these patterns:
+Services discover each other using these network aliases:
 
 [cols="2,2,3"]
 |===
-|Input Format |Output Format |Description
+|Container Type |Network Alias |Internal Communication
 
-|`http://onecx-help-ui/`
-|`http://onecx-help-ui/`
-|Direct URLs remain unchanged
+|BFF Services
+|`onecx-user-profile-bff`
+|`http://onecx-user-profile-bff:8080`
 
-|`/mfe/help/`
-|`http://onecx-help-ui/`
-|Relative paths transformed to container URLs
+|UI Services  
+|`onecx-help-ui`
+|`http://onecx-help-ui:80`
 
-|`/mfe/help/remoteEntry.js`
-|`http://onecx-help-ui/remoteEntry.js`
-|Entry paths transformed to container URLs
+|Core Services
+|`onecx-keycloak`
+|`http://onecx-keycloak:8080`
 |===
 
-== Configuration Guidelines
+== Import Data Configuration
 
-=== Required Fields
+=== Service Mapping
 
-Each microfrontend configuration must include:
+The `DataImporter` builds service configuration based on container network aliases:
 
-- **`appName`**: Container name used for URL transformation
-- **`remoteBaseUrl`**: Base URL for the microfrontend (absolute or relative)
-- **`remoteEntry`**: Entry point file URL (absolute or relative)
+[source,typescript]
+----
+// Automatic service mapping from containers
+const services = {
+  "onecx-user-profile-bff": {
+    "alias": "onecx-user-profile-bff",  // Container network alias
+    "port": 8080                        // Container port
+  },
+  "onecx-help-ui": {
+    "alias": "onecx-help-ui",
+    "port": 80
+  }
+}
+----
+
+=== Microfrontend URL Configuration
+
+Microfrontend configurations use direct container network aliases:
+
+[source,json]
+----
+{
+  "appName": "onecx-help-ui",
+  "remoteBaseUrl": "http://onecx-help-ui/",           // Direct network alias
+  "remoteEntry": "http://onecx-help-ui/remoteEntry.js" // Direct network alias
+}
+----

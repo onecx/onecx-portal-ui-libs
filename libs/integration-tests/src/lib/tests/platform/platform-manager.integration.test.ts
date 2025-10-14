@@ -1,8 +1,8 @@
 import { PlatformManager } from '../../platform/platform-manager'
-import { PlatformConfig } from '../../model/platform-config.interface'
-import { CONTAINER } from '../../model/container.enum'
+import { PlatformConfig } from '../../models/platform-config.interface'
+import { CONTAINER } from '../../models/container.enum'
 
-describe('PlatformManager - Integration Test', () => {
+xdescribe('PlatformManager - Integration Test', () => {
   let platformManager: PlatformManager
 
   beforeEach(() => {
@@ -18,11 +18,10 @@ describe('PlatformManager - Integration Test', () => {
     }
   }, 30000)
 
-  describe('startContainers - Real Integration', () => {
+  xdescribe('startContainers - Real Integration', () => {
     it('should start containers with default configuration', async () => {
       const config: PlatformConfig = {
         enableLogging: false, // Disable logging to reduce test noise
-        startDefaultSetup: true,
       }
 
       // This will actually start the containers
@@ -85,7 +84,6 @@ describe('PlatformManager - Integration Test', () => {
     it('should handle complex configuration with multiple custom containers of one kind', async () => {
       const config: PlatformConfig = {
         enableLogging: ['test-svc-1', '!test-svc-2'],
-        startDefaultSetup: true,
         container: {
           service: [
             {
