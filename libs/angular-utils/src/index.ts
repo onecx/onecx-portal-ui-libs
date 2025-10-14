@@ -32,7 +32,6 @@ export * from './lib/providers/translation-path-from-meta.providers'
 
 // Theme
 export * from './lib/theme/application-config'
-export * from './lib/theme/preset/custom-preset'
 
 // Components
 export * from './lib/components/portal-page/portal-page.component'
