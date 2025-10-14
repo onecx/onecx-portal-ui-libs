@@ -1,0 +1,19 @@
+{
+    "name": "onecx-product-store-ui",
+    "permissions": [
+        {"resource": "APP", "action": "CREATE"},
+        {"resource": "APP", "action": "DELETE"},
+        {"resource": "APP", "action": "EDIT"},
+        {"resource": "APP", "action": "SAVE"},
+        {"resource": "APP", "action": "SEARCH"},
+        {"resource": "APP", "action": "VIEW"},
+        {"resource": "PRODUCT", "action": "CREATE"},
+        {"resource": "PRODUCT", "action": "DELETE"},
+        {"resource": "PRODUCT", "action": "EDIT"},
+        {"resource": "PRODUCT", "action": "SAVE"},
+        {"resource": "PRODUCT", "action": "SEARCH"},
+        {"resource": "PRODUCT", "action": "VIEW"},
+        {"resource": "SLOT", "action": "SEARCH"},
+        {"resource": "SLOT", "action": "DELETE"}
+    ]
+}

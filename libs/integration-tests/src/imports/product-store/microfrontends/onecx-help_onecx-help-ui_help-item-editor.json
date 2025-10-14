@@ -1,0 +1,15 @@
+{
+  "appVersion": "xxx",
+  "appName": "onecx-help",
+  "description": "Edit help item",
+  "remoteBaseUrl": "http://onecx-help-ui/",
+  "remoteEntry": "http://onecx-help-ui/remoteEntry.js",
+  "note": "Imported MFE",
+  "exposedModule": "./OneCXHelpItemEditorComponent",
+  "technology": "WEBCOMPONENTMODULE",
+  "remoteName": "onecx-help",
+  "tagName": "ocx-help-item-editor-component",
+  "type": "COMPONENT",
+  "deprecated": false,
+  "undeployed": false
+}
