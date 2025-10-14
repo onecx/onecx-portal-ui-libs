@@ -1,5 +1,5 @@
 import { OnecxService, OnecxBff, OnecxUi } from '../config/env'
-import { PlatformConfig } from '../model/platform-config.interface'
+import { PlatformConfig } from '../models/platform-config.interface'
 
 /**
  * Maps container service names to their corresponding platform config image overrides

@@ -1,7 +1,7 @@
 import Ajv from 'ajv'
 import * as fs from 'fs'
 import * as path from 'path'
-import { PlatformConfig } from '../model/platform-config.interface'
+import { PlatformConfig } from '../models/platform-config.interface'
 import { Logger, LogMessages } from '../utils/logger'
 
 const logger = new Logger('PlatformConfigJsonValidator')

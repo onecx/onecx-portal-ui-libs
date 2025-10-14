@@ -1,14 +1,11 @@
 import { AbstractStartedContainer, GenericContainer, StartedTestContainer, Wait } from 'testcontainers'
 import { HealthCheck } from 'testcontainers/build/types'
-import { BffDetails } from '../../model/bff.interface'
+import { BffDetails } from '../../models/bff.interface'
 import { StartedOnecxKeycloakContainer } from '../core/onecx-keycloak'
-import { HealthCheckableContainer } from '../../model/health-checkable-container.interface'
-import {
-  HealthCheckExecutor,
-  HttpHealthCheckExecutor,
-  SkipHealthCheckExecutor,
-} from '../../model/health-check-executor.interface'
-import { buildHealthCheckUrl } from '../../utils/health-check-executer'
+import { HealthCheckableContainer } from '../../models/health-checkable-container.interface'
+import { HealthCheckExecutor } from '../../models/health-check-executor.interface'
+import { buildHealthCheckUrl } from '../../utils/health-check.utils'
+import { HttpHealthCheckExecutor, SkipHealthCheckExecutor } from '../../utils/health-check-executor'
 
 export class BffContainer extends GenericContainer {
   private details: BffDetails = {

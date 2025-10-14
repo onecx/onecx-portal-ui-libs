@@ -1,4 +1,4 @@
-import { PlatformConfig } from '../model/platform-config.interface'
+import { PlatformConfig } from '../models/platform-config.interface'
 
 /**
  * Utility function to determine if logging should be enabled based on platform configuration

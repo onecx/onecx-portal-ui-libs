@@ -1,5 +1,5 @@
 import { POSTGRES, KEYCLOAK, IMPORT_MANAGER_BASE, OnecxBff, OnecxUi, OnecxService } from '../config/env'
-import { PlatformConfig } from '../model/platform-config.interface'
+import { PlatformConfig } from '../models/platform-config.interface'
 import { ImagePullChecker } from './image-pull-checker'
 import { ContainerImageOverrideMapper } from '../utils/container-image-override-mapper'
 import { Logger, LogMessages } from '../utils/logger'

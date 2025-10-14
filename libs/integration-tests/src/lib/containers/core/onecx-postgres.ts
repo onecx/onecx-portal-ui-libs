@@ -1,7 +1,7 @@
 import { AbstractStartedContainer, GenericContainer, StartedTestContainer, Wait } from 'testcontainers'
 import { HealthCheck } from 'testcontainers/build/types'
-import { HealthCheckableContainer } from '../../model/health-checkable-container.interface'
-import { SkipHealthCheckExecutor } from '../../model/health-check-executor.interface'
+import { HealthCheckableContainer } from '../../models/health-checkable-container.interface'
+import { SkipHealthCheckExecutor } from '../../utils/health-check-executor'
 
 interface OnecxPostgresDetails {
   postgresDatabase: string
@@ -101,10 +101,6 @@ export class StartedOnecxPostgresContainer extends AbstractStartedContainer impl
     super(startedTestContainer)
   }
 
-  /**
-   * Creates TCP-based health check for PostgreSQL
-   * Validates database port connectivity
-   */
   getHealthCheckExecutor(): SkipHealthCheckExecutor {
     return new SkipHealthCheckExecutor('Postgres Container')
   }

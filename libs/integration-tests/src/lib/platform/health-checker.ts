@@ -1,7 +1,7 @@
-import type { AllowedContainerTypes } from '../model/allowed-container.types'
+import type { AllowedContainerTypes } from '../models/allowed-container.types'
 import { Logger, LogMessages } from '../utils/logger'
-import { HealthCheckResult, HeartbeatConfig } from '../model/health-checker.interface'
-import { HealthCheckableContainer } from '../model/health-checkable-container.interface'
+import { HealthCheckResult, HeartbeatConfig } from '../models/health-checker.interface'
+import { HealthCheckableContainer } from '../models/health-checkable-container.interface'
 
 const logger = new Logger('HealthChecker')
 
@@ -48,20 +48,15 @@ export class HealthChecker {
   }
 
   /**
-   * Check the health of one container using the new strategy pattern
+   * Check the health of one container using the strategy pattern
    */
   async checkHealthy(startedContainers: Map<string, AllowedContainerTypes>, name: string): Promise<HealthCheckResult> {
     const container = startedContainers.get(name)
     if (!container) {
-      return { name, healthy: false }
+      throw new Error(`No started container found with name "${name}"`)
     }
 
-    // Check if container implements HealthCheckableContainer interface
-    if (!this.isHealthCheckableContainer(container)) {
-      logger.warn(LogMessages.HEALTH_CHECK_SKIP, `${name} - Container does not implement HealthCheckableContainer`)
-      return { name, healthy: true } // Assume healthy for non-compliant containers
-    }
-
+    // All containers must implement HealthCheckableContainer interface
     const executor = container.getHealthCheckExecutor()
     const metadata = executor.getExecutionMetadata()
 
@@ -188,15 +183,5 @@ export class HealthChecker {
       const summary = `${unhealthyContainers.length} containers unhealthy: ${unhealthyContainers.map((c) => c.name).join(', ')}`
       logger.error(LogMessages.CONTAINER_UNHEALTHY, summary)
     }
-  }
-
-  /**
-   * Type guard using duck typing
-   * More robust than instanceof checks
-   */
-  private isHealthCheckableContainer(
-    container: AllowedContainerTypes
-  ): container is AllowedContainerTypes & HealthCheckableContainer {
-    return typeof (container as any).getHealthCheckExecutor === 'function'
   }
 }

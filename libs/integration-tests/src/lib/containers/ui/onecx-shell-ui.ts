@@ -1,4 +1,4 @@
-import { getCommonEnvironmentVariables } from '../../utils/common-env'
+import { getCommonEnvironmentVariables } from '../../utils/common-env.utils'
 import { StartedUiContainer, UiContainer } from '../basic/onecx-ui'
 import { StartedOnecxKeycloakContainer } from '../core/onecx-keycloak'
 

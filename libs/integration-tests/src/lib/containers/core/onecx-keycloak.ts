@@ -2,12 +2,9 @@ import { AbstractStartedContainer, GenericContainer, StartedTestContainer, Wait 
 import * as path from 'path'
 import { StartedOnecxPostgresContainer } from './onecx-postgres'
 import { HealthCheck } from 'testcontainers/build/types'
-import { HealthCheckableContainer } from '../../model/health-checkable-container.interface'
-import {
-  HealthCheckExecutor,
-  HttpHealthCheckExecutor,
-  SkipHealthCheckExecutor,
-} from '../../model/health-check-executor.interface'
+import { HealthCheckableContainer } from '../../models/health-checkable-container.interface'
+import { HealthCheckExecutor } from '../../models/health-check-executor.interface'
+import { HttpHealthCheckExecutor, SkipHealthCheckExecutor } from '../../utils/health-check-executor'
 
 interface OnecxEnvironment {
   realm: string

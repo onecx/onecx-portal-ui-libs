@@ -1,5 +1,5 @@
 import { loggingEnabled } from './logging-enable'
-import { PlatformConfig } from '../model/platform-config.interface'
+import { PlatformConfig } from '../models/platform-config.interface'
 
 /**
  * Centralized logging messages
