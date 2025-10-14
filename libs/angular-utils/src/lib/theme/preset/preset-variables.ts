@@ -13,7 +13,7 @@ import paginator from './component-presets/paginator'
 import fileupload from './component-presets/fileupload'
 
 // Structure of this object has to match https://github.com/primefaces/primeuix/tree/main/packages/themes/src/presets/aura
-export default {
+export const presetVariables = {
   components: {
     ...autocomplete,
     ...breadcrumb,
@@ -465,3 +465,5 @@ export default {
     },
   },
 }
+
+export default presetVariables

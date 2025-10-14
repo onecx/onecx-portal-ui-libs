@@ -1,7 +1,12 @@
 import { NgModule } from '@angular/core'
 import { providePrimeNG } from 'primeng/config'
+import Aura from '@primeng/themes/aura'
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async'
-import { CustomPreset } from '@onecx/angular-utils'
+import { normalizeKeys, presetVariables } from '@onecx/angular-utils'
+import { definePreset } from '@primeng/themes'
+
+const preset = definePreset(normalizeKeys(Aura), normalizeKeys(presetVariables))
+preset.semantic.colorScheme.dark = {}
 
 /**
   A utility module adding theme for Storybook stories
@@ -11,7 +16,7 @@ import { CustomPreset } from '@onecx/angular-utils'
     provideAnimationsAsync(),
     providePrimeNG({
       theme: {
-        preset: CustomPreset,
+        preset: preset,
         options: { darkModeSelector: false },
       },
     }),
