@@ -20,8 +20,7 @@ export function provideAppConfigStoreConnector() {
 @UntilDestroy()
 @Injectable()
 export class AppConfigStoreConnectorService {
-  constructor(private store: Store, private appConfigService: AppConfigService) {}
-  ngOnInit(): void {
+  constructor(private store: Store, private appConfigService: AppConfigService) {
     this.appConfigService.config$
       .pipe(untilDestroyed(this))
       .subscribe((appConfig) => {

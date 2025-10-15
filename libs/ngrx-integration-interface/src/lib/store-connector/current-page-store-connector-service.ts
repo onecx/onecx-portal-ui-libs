@@ -20,8 +20,7 @@ export function provideCurrentPageStoreConnector() {
 @UntilDestroy()
 @Injectable()
 export class CurrentPageStoreConnectorService implements OnDestroy {
-  constructor(private store: Store, private currentPageTopic$: CurrentPageTopic) {}
-  ngOnInit(): void {
+  constructor(private store: Store, private currentPageTopic$: CurrentPageTopic) {
     this.currentPageTopic$
       .pipe(untilDestroyed(this))
       .subscribe((currentPage: PageInfo | undefined) => {

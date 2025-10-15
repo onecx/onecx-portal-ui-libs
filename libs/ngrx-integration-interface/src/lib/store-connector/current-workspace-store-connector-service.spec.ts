@@ -2,13 +2,21 @@ import { TestBed } from '@angular/core/testing'
 import { Store } from '@ngrx/store'
 import { CurrentWorkspaceStoreConnectorService } from './current-workspace-store-connector-service'
 import { OneCxActions } from './onecx-actions'
-import { Workspace } from '../../../../integration-interface/src/lib/topics/current-workspace/v1/workspace.model'
-import { CurrentWorkspaceTopic } from '../../../../integration-interface/src/lib/topics/current-workspace/v1/current-workspace.topic'
+import { Workspace } from '@onecx/integration-interface';
+import { CurrentWorkspaceTopic } from '@onecx/integration-interface';
 
 describe('CurrentWorkspaceStoreConnectorService', () => {
   let service: CurrentWorkspaceStoreConnectorService
   let store: Store
   let mockTopic: any
+  const mockWorkspace = {
+    id: 'ws1',
+    name: 'Workspace 1',
+    baseUrl: 'http://localhost',
+    workspaceName: 'Workspace 1',
+    portalName: 'Portal',
+    microfrontendRegistrations: [],
+  } as Workspace
 
   beforeEach(() => {
     mockTopic = Object.assign(new CurrentWorkspaceTopic(), {
@@ -16,6 +24,10 @@ describe('CurrentWorkspaceStoreConnectorService', () => {
       destroy: jest.fn(),
     })
     mockTopic.subscribe = jest.fn() as jest.Mock;
+    mockTopic.subscribe.mockImplementation((cb: any) => {
+      cb(mockWorkspace)
+      return { unsubscribe: jest.fn() }
+    })
     TestBed.configureTestingModule({
       providers: [
         CurrentWorkspaceStoreConnectorService,
@@ -23,30 +35,19 @@ describe('CurrentWorkspaceStoreConnectorService', () => {
         { provide: CurrentWorkspaceTopic, useValue: mockTopic },
       ],
     })
-    service = TestBed.inject(CurrentWorkspaceStoreConnectorService)
     store = TestBed.inject(Store)
+    jest.spyOn(store, 'dispatch')
+    service = TestBed.inject(CurrentWorkspaceStoreConnectorService)
   })
 
   it('should subscribe and dispatch currentWorkspaceChanged', () => {
-    const currentWorkspace: Workspace = {
-      baseUrl: '',
-      workspaceName: '',
-      portalName: '',
-      microfrontendRegistrations: [],
-    }
-    mockTopic.subscribe.mockImplementation((cb: any) => {
-      cb(currentWorkspace)
-      return { unsubscribe: jest.fn() }
-    })
-    jest.spyOn(store, 'dispatch')
-    service.ngOnInit?.()
+    const expectedAction = OneCxActions.currentWorkspaceChanged({ currentWorkspace: mockWorkspace })
     expect(mockTopic.subscribe).toHaveBeenCalled()
-    expect(store.dispatch).toHaveBeenCalledWith(OneCxActions.currentWorkspaceChanged({ currentWorkspace }))
+    expect(store.dispatch).toHaveBeenCalledWith(expectedAction)
   })
 
-  it('should destroy on ngOnDestroy', () => {
+  it('should unsubscribe and destroy on ngOnDestroy', () => {
     mockTopic.subscribe.mockReturnValue({ unsubscribe: jest.fn() })
-    service.ngOnInit?.()
     service.ngOnDestroy()
     expect(mockTopic.destroy).toHaveBeenCalled()
   })

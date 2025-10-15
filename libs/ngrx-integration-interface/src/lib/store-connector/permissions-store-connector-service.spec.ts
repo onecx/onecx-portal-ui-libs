@@ -15,6 +15,10 @@ describe('PermissionsStoreConnectorService', () => {
       destroy: jest.fn(),
     })
     mockTopic.subscribe = jest.fn() as jest.Mock;
+    mockTopic.subscribe.mockImplementation((cb: any) => {
+      cb(['perm1', 'perm2'])
+      return { unsubscribe: jest.fn() }
+    })
     TestBed.configureTestingModule({
       providers: [
         PermissionsStoreConnectorService,
@@ -22,25 +26,19 @@ describe('PermissionsStoreConnectorService', () => {
         { provide: PermissionsTopic, useValue: mockTopic },
       ],
     })
-    service = TestBed.inject(PermissionsStoreConnectorService)
     store = TestBed.inject(Store)
+    jest.spyOn(store, 'dispatch')
+    service = TestBed.inject(PermissionsStoreConnectorService)
   })
 
   it('should subscribe and dispatch permissionsChanged', () => {
-    const permissions = ['read', 'write']
-    mockTopic.subscribe.mockImplementation((cb: any) => {
-      cb(permissions)
-      return { unsubscribe: jest.fn() }
-    })
-    jest.spyOn(store, 'dispatch')
-    service.ngOnInit?.()
+    const expectedAction = OneCxActions.permissionsChanged({ permissions: ['perm1', 'perm2'] })
     expect(mockTopic.subscribe).toHaveBeenCalled()
-    expect(store.dispatch).toHaveBeenCalledWith(OneCxActions.permissionsChanged({ permissions }))
+    expect(store.dispatch).toHaveBeenCalledWith(expectedAction)
   })
 
-  it('should destroy on ngOnDestroy', () => {
+  it('should unsubscribe and destroy on ngOnDestroy', () => {
     mockTopic.subscribe.mockReturnValue({ unsubscribe: jest.fn() })
-    service.ngOnInit?.()
     service.ngOnDestroy()
     expect(mockTopic.destroy).toHaveBeenCalled()
   })

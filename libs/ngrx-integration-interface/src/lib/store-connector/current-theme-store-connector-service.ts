@@ -20,8 +20,7 @@ export function provideCurrentThemeStoreConnector() {
 @UntilDestroy()
 @Injectable()
 export class CurrentThemeStoreConnectorService implements OnDestroy {
-  constructor(private store: Store, private currentThemeTopic$: CurrentThemeTopic) {}
-  ngOnInit(): void {
+  constructor(private store: Store, private currentThemeTopic$: CurrentThemeTopic) {
     this.currentThemeTopic$
       .pipe(untilDestroyed(this))
       .subscribe((currentTheme: Theme) => {

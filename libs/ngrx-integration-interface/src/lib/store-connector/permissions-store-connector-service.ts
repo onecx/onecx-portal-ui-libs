@@ -20,8 +20,7 @@ export function providePermissionsStoreConnector() {
 @UntilDestroy()
 @Injectable()
 export class PermissionsStoreConnectorService implements OnDestroy {
-  constructor(private store: Store, private permissionsTopic$: PermissionsTopic) {}
-  ngOnInit(): void {
+  constructor(private store: Store, private permissionsTopic$: PermissionsTopic) {
     this.permissionsTopic$
       .pipe(untilDestroyed(this))
       .subscribe((permissions) => {

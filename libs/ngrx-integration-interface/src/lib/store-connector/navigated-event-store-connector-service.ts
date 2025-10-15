@@ -28,9 +28,7 @@ export class NavigatedEventStoreConnectorService implements OnDestroy {
     private appStateService: AppStateService,
     private capabilityService: ShellCapabilityService,
     private eventsTopic$: EventsTopic
-  ) {}
-
-  ngOnInit(): void {
+  ) {
     let observable: Observable<TopicEventType | CurrentLocationTopicPayload> =
       this.appStateService.currentLocation$.asObservable()
     if (!this.capabilityService.hasCapability(Capability.CURRENT_LOCATION_TOPIC)) {
@@ -44,7 +42,6 @@ export class NavigatedEventStoreConnectorService implements OnDestroy {
       this.store.dispatch(OneCxActions.navigated({ event }))
     })
   }
-
   ngOnDestroy(): void {
     this.eventsTopic$.destroy()
   }

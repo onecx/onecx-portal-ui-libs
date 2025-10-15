@@ -2,13 +2,21 @@ import { TestBed } from '@angular/core/testing'
 import { Store } from '@ngrx/store'
 import { CurrentMfeStoreConnectorService } from './current-mfe-store-connector-service'
 import { OneCxActions } from './onecx-actions'
-import { MfeInfo } from '../../../../integration-interface/src/lib/topics/current-mfe/v1/mfe-info.model'
-import { CurrentMfeTopic } from '../../../../integration-interface/src/lib/topics/current-mfe/v1/current-mfe.topic'
+import { MfeInfo } from '@onecx/integration-interface';
+import { CurrentMfeTopic } from '@onecx/integration-interface';
 
 describe('CurrentMfeStoreConnectorService', () => {
   let service: CurrentMfeStoreConnectorService
   let store: Store
   let mockTopic: any
+  const mockMfe: MfeInfo = {
+    mountPath: '/mfe1',
+    remoteBaseUrl: 'http://localhost:4201',
+    baseHref: '/mfe1/',
+    shellName: 'shell',
+    appId: 'mfe1',
+    productName: 'MFE 1',
+  }
 
   beforeEach(() => {
     mockTopic = Object.assign(new CurrentMfeTopic(), {
@@ -16,6 +24,10 @@ describe('CurrentMfeStoreConnectorService', () => {
       destroy: jest.fn(),
     })
     mockTopic.subscribe = jest.fn() as jest.Mock;
+    mockTopic.subscribe.mockImplementation((cb: any) => {
+      cb(mockMfe)
+      return { unsubscribe: jest.fn() }
+    })
     TestBed.configureTestingModule({
       providers: [
         CurrentMfeStoreConnectorService,
@@ -23,25 +35,19 @@ describe('CurrentMfeStoreConnectorService', () => {
         { provide: CurrentMfeTopic, useValue: mockTopic },
       ],
     })
-    service = TestBed.inject(CurrentMfeStoreConnectorService)
     store = TestBed.inject(Store)
+    jest.spyOn(store, 'dispatch')
+    service = TestBed.inject(CurrentMfeStoreConnectorService)
   })
 
   it('should subscribe and dispatch currentMfeChanged', () => {
-    const currentMfe: MfeInfo = { mountPath: '/foo', remoteBaseUrl: '', baseHref: '', shellName: '', appId: '', productName: '' }
-    mockTopic.subscribe.mockImplementation((cb: any) => {
-      cb(currentMfe)
-      return { unsubscribe: jest.fn() }
-    })
-    jest.spyOn(store, 'dispatch')
-    service.ngOnInit?.()
+    const expectedAction = OneCxActions.currentMfeChanged({ currentMfe: mockMfe })
     expect(mockTopic.subscribe).toHaveBeenCalled()
-    expect(store.dispatch).toHaveBeenCalledWith(OneCxActions.currentMfeChanged({ currentMfe }))
+    expect(store.dispatch).toHaveBeenCalledWith(expectedAction)
   })
 
-  it('should destroy on ngOnDestroy', () => {
+  it('should unsubscribe and destroy on ngOnDestroy', () => {
     mockTopic.subscribe.mockReturnValue({ unsubscribe: jest.fn() })
-    service.ngOnInit?.()
     service.ngOnDestroy()
     expect(mockTopic.destroy).toHaveBeenCalled()
   })

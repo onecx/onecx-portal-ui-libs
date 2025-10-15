@@ -20,8 +20,7 @@ export function provideCurrentMfeStoreConnector() {
 @UntilDestroy()
 @Injectable()
 export class CurrentMfeStoreConnectorService implements OnDestroy {
-  constructor(private store: Store, private currentMfeTopic$: CurrentMfeTopic) {}
-  ngOnInit(): void {
+  constructor(private store: Store, private currentMfeTopic$: CurrentMfeTopic) {
     this.currentMfeTopic$
       .pipe(untilDestroyed(this))
       .subscribe((currentMfe: MfeInfo) => {

@@ -20,8 +20,7 @@ export function provideCurrentWorkspaceStoreConnector() {
 @UntilDestroy()
 @Injectable()
 export class CurrentWorkspaceStoreConnectorService implements OnDestroy {
-  constructor(private store: Store, private currentWorkspaceTopic$: CurrentWorkspaceTopic) {}
-  ngOnInit(): void {
+  constructor(private store: Store, private currentWorkspaceTopic$: CurrentWorkspaceTopic) {
     this.currentWorkspaceTopic$
       .pipe(untilDestroyed(this))
       .subscribe((currentWorkspace: Workspace) => {

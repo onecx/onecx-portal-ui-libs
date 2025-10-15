@@ -15,6 +15,10 @@ describe('ConfigurationStoreConnectorService', () => {
       destroy: jest.fn(),
     })
     mockTopic.subscribe = jest.fn() as jest.Mock;
+    mockTopic.subscribe.mockImplementation((cb: any) => {
+      cb({ foo: 'bar' })
+      return { unsubscribe: jest.fn() }
+    })
     TestBed.configureTestingModule({
       providers: [
         ConfigurationStoreConnectorService,
@@ -22,26 +26,19 @@ describe('ConfigurationStoreConnectorService', () => {
         { provide: ConfigurationTopic, useValue: mockTopic },
       ],
     })
-    service = TestBed.inject(ConfigurationStoreConnectorService)
     store = TestBed.inject(Store)
-    service.config$ = mockTopic
+    jest.spyOn(store, 'dispatch')
+    service = TestBed.inject(ConfigurationStoreConnectorService)
   })
 
-  it('should subscribe on ngOnInit and dispatch configChanged', () => {
-    const config = { foo: 'bar' }
-    mockTopic.subscribe.mockImplementation((cb: any) => {
-      cb(config)
-      return { unsubscribe: jest.fn() }
-    })
-    jest.spyOn(store, 'dispatch')
-    service.ngOnInit()
+  it('should subscribe and dispatch configChanged', () => {
+    const expectedAction = OneCxActions.configChanged({ config: { foo: 'bar' } })
     expect(mockTopic.subscribe).toHaveBeenCalled()
-    expect(store.dispatch).toHaveBeenCalledWith(OneCxActions.configChanged({ config }))
+    expect(store.dispatch).toHaveBeenCalledWith(expectedAction)
   })
 
   it('should unsubscribe and destroy on ngOnDestroy', () => {
     mockTopic.subscribe.mockReturnValue({ unsubscribe: jest.fn() })
-    service.ngOnInit()
     service.ngOnDestroy()
     expect(mockTopic.destroy).toHaveBeenCalled()
   })
