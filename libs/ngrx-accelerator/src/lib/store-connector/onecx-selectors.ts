@@ -1,6 +1,10 @@
 import { MemoizedSelector, createFeatureSelector, createSelector } from '@ngrx/store'
 import { OneCxState } from './onecx-state'
 import { LocationState } from './onecx-state'
+
+/**
+ * @deprecated moved to `@onecx/ngrx-integration-interface`
+ */
 export function createOneCxSelector<State extends Record<string, any>>(): MemoizedSelector<State, OneCxState> {
   return createFeatureSelector('onecx')
 }

@@ -2,10 +2,8 @@ import { ENVIRONMENT_INITIALIZER, Injectable, OnDestroy, inject } from '@angular
 import { Store } from '@ngrx/store'
 import { PermissionsTopic } from '@onecx/integration-interface'
 import { OneCxActions } from './onecx-actions'
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 
-/**
- * @deprecated Please import from `@onecx/ngrx-integration-interface` instead.
- */
 export function providePermissionsStoreConnector() {
   return [
     {
@@ -19,16 +17,16 @@ export function providePermissionsStoreConnector() {
   ]
 }
 
-/**
- * @deprecated moved to `@onecx/ngrx-integration-interface`
- */
+@UntilDestroy()
 @Injectable()
 export class PermissionsStoreConnectorService implements OnDestroy {
-  permissionsTopic$ = new PermissionsTopic()
-  constructor(store: Store) {
-    this.permissionsTopic$.subscribe((permissions) => {
-      store.dispatch(OneCxActions.permissionsChanged({ permissions }))
-    })
+  constructor(private store: Store, private permissionsTopic$: PermissionsTopic) {}
+  ngOnInit(): void {
+    this.permissionsTopic$
+      .pipe(untilDestroyed(this))
+      .subscribe((permissions) => {
+        this.store.dispatch(OneCxActions.permissionsChanged({ permissions }))
+      })
   }
   ngOnDestroy(): void {
     this.permissionsTopic$.destroy()

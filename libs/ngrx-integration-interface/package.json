@@ -1,0 +1,18 @@
+{
+  "name": "@onecx/ngrx-integration-interface",
+  "version": "7.0.0-rc.2",
+  "peerDependencies": {
+    "@angular/core": "^19.0.0",
+    "@angular/router": "^19.0.0",
+    "@jest/globals": "^29.0.0",
+    "@ngrx/effects": "^19.0.0",
+    "@ngrx/operators": "^19.0.0",
+    "@ngrx/router-store": "^19.0.0",
+    "@ngrx/store": "^19.0.0",
+    "@onecx/angular-integration-interface": "^7.0.0-rc.2",
+    "@onecx/integration-interface": "^7.0.0-rc.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
