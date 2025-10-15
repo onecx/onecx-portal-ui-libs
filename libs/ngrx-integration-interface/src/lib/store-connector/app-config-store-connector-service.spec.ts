@@ -14,6 +14,8 @@ describe('AppConfigStoreConnectorService', () => {
 
   beforeEach(() => {
     mockAppConfigService = new MockAppConfigService()
+    jest.spyOn(mockAppConfigService.config$, 'pipe')
+    jest.spyOn(mockAppConfigService.config$, 'subscribe')
     mockAppConfigService.config$.subscribe.mockImplementation((cb: any) => {
       cb({ foo: 'bar' })
       return { unsubscribe: jest.fn() }
@@ -27,6 +29,7 @@ describe('AppConfigStoreConnectorService', () => {
     })
     store = TestBed.inject(Store)
     jest.spyOn(store, 'dispatch')
+    TestBed.inject(AppConfigStoreConnectorService)
   })
 
   it('should subscribe and dispatch appConfigChanged', () => {
