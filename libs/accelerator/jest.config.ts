@@ -1,4 +1,6 @@
 /* eslint-disable */
+import { createReportsConfig } from '../../jest-config-factory'
+
 export default {
   displayName: 'accelerator',
   preset: '../../jest.preset.js',
@@ -7,5 +9,5 @@ export default {
     '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../coverage/libs/accelerator',
+  ...createReportsConfig('accelerator'),
 }

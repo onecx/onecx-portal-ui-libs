@@ -1,13 +1,10 @@
-name: SonarQube Pull Request
+name: SonarQube Scan
 
 on:
-  workflow_run:
-    workflows: ["On PR"]
-    types:
-      - completed
+  workflow_call:
 
 jobs:
-  set-matrix-pr:
+  set-matrix:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
@@ -16,10 +13,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Download coverage reports
-        uses: dawidd6/action-download-artifact@v11
+      - name: Download reports
+        uses: actions/download-artifact@v4
         with:
-          run_id: ${{ github.event.workflow_run.id }}
           name: coverage-reports
         # Allow workflow to continue even if no coverage reports exist
         # This prevents the entire workflow from failing due to missing artifacts
@@ -32,7 +28,7 @@ jobs:
         run: |
           # Check if reports directory exists
           if [ ! -d "reports" ]; then
-            echo "::notice::No reports directory found. No libraries will be analyzed."
+            echo "No reports directory found. Setting empty matrix."
             echo "matrix=[]" >> $GITHUB_OUTPUT
             exit 0
           fi
@@ -49,63 +45,28 @@ jobs:
             echo "matrix=$coverage_reports" >> $GITHUB_OUTPUT
           fi
 
-  sonar-scan-pr:
-    needs: set-matrix-pr
+  sonar-scan:
+    needs: set-matrix
     runs-on: ubuntu-latest
 
     # Only run this job if:
-    # - The triggering workflow was for a pull request
-    # - The triggering workflow completed successfully
     # - There are libraries to analyze (non-empty matrix)
     if: >
-      github.event.workflow_run.event == 'pull_request' &&
-      github.event.workflow_run.conclusion == 'success' &&
-      needs.set-matrix-pr.outputs.matrix != '[]' &&
-      needs.set-matrix-pr.outputs.matrix != ''
+      needs.set-matrix.outputs.matrix != '[]' &&
+      needs.set-matrix.outputs.matrix != ''
 
     strategy:
       fail-fast: false
       matrix:
-        path: ${{ fromJson(needs.set-matrix-pr.outputs.matrix) }}
+        path: ${{ fromJson(needs.set-matrix.outputs.matrix) }}
 
     steps:
-      - uses: dawidd6/action-download-artifact@v11
-        with:
-          run_id: ${{ github.event.workflow_run.id }}
-          name: github-action-pr
-
-      - uses: juliangruber/read-file-action@v1
-        id: pr_number
-        with:
-          path: ./github-action-pr.txt
-
-      - uses: octokit/request-action@v2.x
-        id: get_pr_data
-        with:
-          route: GET /repos/${{ github.event.repository.full_name }}/pulls/${{ steps.pr_number.outputs.content }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - uses: actions/checkout@v4
-        with:
-          repository: ${{ github.event.workflow_run.head_repository.full_name }}
-          ref: ${{ github.event.workflow_run.head_branch }}
-          fetch-depth: 0
-
-      - name: Checkout base branch
-        env:
-          BRANCH_NAME: ${{ github.event.workflow_run.head_branch }}
-        run: |
-          git remote add upstream ${{ github.event.repository.clone_url }}
-          git fetch upstream
-          git checkout -B ${{ fromJson(steps.get_pr_data.outputs.data).base.ref }} upstream/${{ fromJson(steps.get_pr_data.outputs.data).base.ref }}
-          git checkout "$BRANCH_NAME"
-          git clean -ffdx && git reset --hard HEAD
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Download reports
-        uses: dawidd6/action-download-artifact@v11
+        uses: actions/download-artifact@v4
         with:
-          run_id: ${{ github.event.workflow_run.id }}
           name: coverage-reports
 
       - name: Normalize lcov.info for SonarCloud
@@ -140,9 +101,3 @@ jobs:
             "-Dsonar.cpd.exclusions=src/**/*.ts,src/**/*.html"
             "-Dsonar.coverage.exclusions=*.ts,*.js,src/*.ts,**/*.spec.ts,**/*.test.ts,**/*.stories.ts,**/*.harness.ts,**/environments/**,**/assets/**,**/generated/**,**/*.module.ts,**/*.main.ts"
             "-Dsonar.test.inclusions=src/**/*.spec.ts,src/**/*.test.ts"
-            -Dsonar.scm.revision=${{ github.event.workflow_run.head_sha }}
-            -Dsonar.pullrequest.key=${{ fromJson(steps.get_pr_data.outputs.data).number }}
-            -Dsonar.pullrequest.branch=${{ fromJson(steps.get_pr_data.outputs.data).head.ref }}
-            -Dsonar.pullrequest.base=${{ fromJson(steps.get_pr_data.outputs.data).base.ref }}
-            -Dsonar.pullrequest.provider=GitHub
-            -Dsonar.pullrequest.github.repository=${{ github.repository }}
