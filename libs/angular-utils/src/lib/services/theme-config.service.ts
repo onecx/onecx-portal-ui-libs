@@ -8,7 +8,6 @@ import { CustomUseStyle } from './custom-use-style.service'
 import { UseStyle } from 'primeng/usestyle'
 import { Theme } from '@primeuix/styled'
 import { mergeDeep } from '../utils/deep-merge.utils'
-import CustomPreset from '../theme/preset/custom-preset'
 
 export function provideThemeConfigService() {
   Theme.clearLoadedStyleNames()
@@ -45,9 +44,10 @@ export class ThemeConfigService {
   async applyThemeVariables(oldTheme: OneCXTheme): Promise<void> {
     const oldThemeVariables = oldTheme.properties
     const themeConfig = new ThemeConfig(oldThemeVariables)
+    const preset = await (await import('../theme/preset/custom-preset')).CustomPreset
     this.primeNG.setThemeConfig({
       theme: {
-        preset: mergeDeep(CustomPreset, themeConfig.getConfig()),
+        preset: mergeDeep(preset, themeConfig.getConfig()),
         options: { darkModeSelector: false },
       },
     })
