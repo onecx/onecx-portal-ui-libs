@@ -1,3 +1,13 @@
+## [6.10.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.9.0...v6.10.0) (2025-10-16)
+
+### Features
+
+* introduce pipeline to lib version 6 ([#979](https://github.com/onecx/onecx-portal-ui-libs/issues/979)) ([f8d649e](https://github.com/onecx/onecx-portal-ui-libs/commit/f8d649e9e1fbbd6a4985e1f8a5f0f552260c6755))
+
+### Bug Fixes
+
+* lazy load primeng themes ([#984](https://github.com/onecx/onecx-portal-ui-libs/issues/984)) ([9ce22ee](https://github.com/onecx/onecx-portal-ui-libs/commit/9ce22eedd7a467b847adba00a4022aaf2feef3d3))
+
 ## [6.9.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.8.1...v6.9.0) (2025-10-09)
 
 ### Features
