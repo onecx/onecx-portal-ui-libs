@@ -1,22 +1,16 @@
-import { ENVIRONMENT_INITIALIZER, Injectable, OnDestroy, inject } from '@angular/core'
+import { Injectable, OnDestroy, inject, provideEnvironmentInitializer } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { EventsTopic, EventType } from '@onecx/integration-interface'
 import { filter } from 'rxjs'
 import { CurrentLocationTopicPayload, TopicEventType } from '@onecx/integration-interface'
 import { Capability, ShellCapabilityService } from '@onecx/angular-integration-interface'
 import { Observable } from 'rxjs'
-import { OneCxActions } from './onecx-actions'
+import { OneCxActions } from '../onecx-actions'
 import { AppStateService } from '@onecx/angular-integration-interface'
 
 export function provideNavigatedEventStoreConnector() {
   return [
-    {
-      provide: ENVIRONMENT_INITIALIZER,
-      multi: true,
-      useFactory() {
-        return () => inject(NavigatedEventStoreConnectorService)
-      },
-    },
+    provideEnvironmentInitializer(() => inject(NavigatedEventStoreConnectorService)),
     NavigatedEventStoreConnectorService,
   ]
 }

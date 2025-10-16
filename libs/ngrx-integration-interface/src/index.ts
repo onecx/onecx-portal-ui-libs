@@ -1,12 +1,6 @@
 // Store Connector
-export * from './lib/store-connector/navigated-event-store-connector-service'
-export * from './lib/store-connector/permissions-store-connector-service'
-export * from './lib/store-connector/configuration-store-connector-service'
-export * from './lib/store-connector/current-mfe-store-connector-service'
-export * from './lib/store-connector/current-page-store-connector-service'
-export * from './lib/store-connector/current-theme-store-connector-service'
-export * from './lib/store-connector/current-workspace-store-connector-service'
-export * from './lib/store-connector/app-config-store-connector-service'
+export * from './lib/store-connector/store-connectors'
+
 export * from './lib/store-connector/onecx-actions'
 export * from './lib/store-connector/onecx-reducer'
 export * from './lib/store-connector/onecx-selectors'

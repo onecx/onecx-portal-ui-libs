@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing'
 import { Store } from '@ngrx/store'
 import { CurrentThemeStoreConnectorService } from './current-theme-store-connector-service'
-import { OneCxActions } from './onecx-actions'
+import { OneCxActions } from '../onecx-actions'
 import { Theme } from '@onecx/integration-interface';
 import { CurrentThemeTopic } from '@onecx/integration-interface';
 

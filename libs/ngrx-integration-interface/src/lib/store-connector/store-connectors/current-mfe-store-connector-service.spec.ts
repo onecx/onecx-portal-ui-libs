@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing'
 import { Store } from '@ngrx/store'
 import { CurrentMfeStoreConnectorService } from './current-mfe-store-connector-service'
-import { OneCxActions } from './onecx-actions'
+import { OneCxActions } from '../onecx-actions'
 import { MfeInfo } from '@onecx/integration-interface';
 import { CurrentMfeTopic } from '@onecx/integration-interface';
 

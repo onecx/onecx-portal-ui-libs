@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing'
 import { Store } from '@ngrx/store'
 import { AppConfigStoreConnectorService } from './app-config-store-connector-service'
-import { OneCxActions } from './onecx-actions'
+import { OneCxActions } from '../onecx-actions'
 import { AppConfigService } from '@onecx/angular-integration-interface';
 
 class MockAppConfigService {

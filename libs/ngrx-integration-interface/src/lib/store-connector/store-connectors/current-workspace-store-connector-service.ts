@@ -1,18 +1,12 @@
-import { ENVIRONMENT_INITIALIZER, Injectable, OnDestroy, inject } from '@angular/core'
+import { Injectable, OnDestroy, inject, provideEnvironmentInitializer } from '@angular/core'
 import { Store } from '@ngrx/store'
-import { OneCxActions } from './onecx-actions'
+import { OneCxActions } from '../onecx-actions'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { CurrentWorkspaceTopic, Workspace } from '@onecx/integration-interface'
 
 export function provideCurrentWorkspaceStoreConnector() {
   return [
-    {
-      provide: ENVIRONMENT_INITIALIZER,
-      multi: true,
-      useFactory() {
-        return () => inject(CurrentWorkspaceStoreConnectorService)
-      },
-    },
+    provideEnvironmentInitializer(() => inject(CurrentWorkspaceStoreConnectorService)),
     CurrentWorkspaceStoreConnectorService,
   ]
 }

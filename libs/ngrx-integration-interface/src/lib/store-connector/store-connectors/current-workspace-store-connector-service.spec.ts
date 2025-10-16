@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing'
 import { Store } from '@ngrx/store'
 import { CurrentWorkspaceStoreConnectorService } from './current-workspace-store-connector-service'
-import { OneCxActions } from './onecx-actions'
+import { OneCxActions } from '../onecx-actions'
 import { Workspace } from '@onecx/integration-interface';
 import { CurrentWorkspaceTopic } from '@onecx/integration-interface';
 
