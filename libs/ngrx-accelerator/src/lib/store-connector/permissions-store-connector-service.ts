@@ -19,9 +19,6 @@ export function providePermissionsStoreConnector() {
   ]
 }
 
-/**
- * @deprecated moved to `@onecx/ngrx-integration-interface`
- */
 @Injectable()
 export class PermissionsStoreConnectorService implements OnDestroy {
   permissionsTopic$ = new PermissionsTopic()

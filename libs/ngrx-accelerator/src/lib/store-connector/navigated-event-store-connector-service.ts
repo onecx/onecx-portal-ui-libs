@@ -24,9 +24,6 @@ export function provideNavigatedEventStoreConnector() {
   ]
 }
 
-/**
- * @deprecated moved to `@onecx/ngrx-integration-interface`
- */
 @Injectable()
 export class NavigatedEventStoreConnectorService implements OnDestroy {
   eventsTopic$ = new EventsTopic()
