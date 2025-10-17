@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core'
 import { BehaviorSubject, Observable } from 'rxjs'
 import { UserProfile } from '@onecx/integration-interface'
 import { UserService } from '@onecx/angular-integration-interface'
-import { FakeTopic } from './fake-topic'
+import { FakeTopic } from '@onecx/accelerator'
 
 export function provideUserServiceMock() {
   return [UserServiceMock, { provide: UserService, useExisting: UserServiceMock }]
