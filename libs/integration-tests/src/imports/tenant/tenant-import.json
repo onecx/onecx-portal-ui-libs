@@ -1,0 +1,9 @@
+{
+    "id": "manual-import-onecx",
+    "tenants": {
+        "onecx": {
+            "orgId": "onecx",
+            "description": "onecx tenant"
+        }
+    }
+}
