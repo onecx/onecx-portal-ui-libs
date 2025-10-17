@@ -1,0 +1,77 @@
+= Container Network Communication for Integration Tests
+:toc:
+:toclevels: 3
+:sectnums:
+
+== Overview
+
+The OneCX Integration Tests library uses Docker network aliases for container-to-container communication. All import data and microfrontend configurations are based on the network aliases that containers will have in the Docker network during integration tests.
+
+== Network Alias Architecture
+
+=== Container Network Setup
+
+Each container in the integration test environment gets a network alias that serves as its hostname within the Docker network:
+
+[source,typescript]
+----
+// Example: Container with network alias
+const container = new BffContainer(image, keycloakContainer)
+  .withNetworkAliases(['onecx-user-profile-bff'])  
+  .withPort(8080)
+----
+
+=== Service Discovery
+
+Services discover each other using these network aliases:
+
+[cols="2,2,3"]
+|===
+|Container Type |Network Alias |Internal Communication
+
+|BFF Services
+|`onecx-user-profile-bff`
+|`http://onecx-user-profile-bff:8080`
+
+|UI Services  
+|`onecx-help-ui`
+|`http://onecx-help-ui:80`
+
+|Core Services
+|`onecx-keycloak`
+|`http://onecx-keycloak:8080`
+|===
+
+== Import Data Configuration
+
+=== Service Mapping
+
+The `DataImporter` builds service configuration based on container network aliases:
+
+[source,typescript]
+----
+// Automatic service mapping from containers
+const services = {
+  "onecx-user-profile-bff": {
+    "alias": "onecx-user-profile-bff",  // Container network alias
+    "port": 8080                        // Container port
+  },
+  "onecx-help-ui": {
+    "alias": "onecx-help-ui",
+    "port": 80
+  }
+}
+----
+
+=== Microfrontend URL Configuration
+
+Microfrontend configurations use direct container network aliases:
+
+[source,json]
+----
+{
+  "appName": "onecx-help-ui",
+  "remoteBaseUrl": "http://onecx-help-ui/",           // Direct network alias
+  "remoteEntry": "http://onecx-help-ui/remoteEntry.js" // Direct network alias
+}
+----

@@ -1,0 +1,37 @@
+{
+  "name": "onecx-help-ui",
+  "permissions": [
+    {
+      "resource": "HELP",
+      "action": "CREATE"
+    },
+    {
+      "resource": "HELP",
+      "action": "DELETE"
+    },
+    {
+      "resource": "HELP",
+      "action": "EDIT"
+    },
+    {
+      "resource": "HELP",
+      "action": "SAVE"
+    },
+    {
+      "resource": "HELP",
+      "action": "SEARCH"
+    },
+    {
+      "resource": "HELP",
+      "action": "VIEW"
+    },
+    {
+      "resource": "HELP",
+      "action": "EXPORT"
+    },
+    {
+      "resource": "HELP",
+      "action": "IMPORT"
+    }
+  ]
+}

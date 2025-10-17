@@ -1,0 +1,7 @@
+{
+    "version": "xxx",
+    "description": "OneCX permission",
+    "basePath": "/permission",
+    "displayName": "OneCX permission",
+    "iconName": "gear"
+}
