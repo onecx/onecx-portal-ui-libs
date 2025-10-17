@@ -1,0 +1,15 @@
+{
+  "appVersion": "xxx",
+  "appName": "onecx-workspace-ui",
+  "description": "onecx-workspace-ui",
+  "remoteBaseUrl": "http://onecx-workspace-ui/",
+  "remoteEntry": "http://onecx-workspace-ui/remoteEntry.js",
+  "note": "Footer menu component",
+  "exposedModule": "./OneCXFooterMenuComponent",
+  "technology": "WEBCOMPONENTMODULE",
+  "remoteName": "onecx-workspace",
+  "tagName": "ocx-footer-menu-component",
+  "type": "COMPONENT",
+  "deprecated": false,
+  "undeployed": false
+}

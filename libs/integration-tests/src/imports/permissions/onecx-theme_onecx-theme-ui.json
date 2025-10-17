@@ -1,0 +1,13 @@
+{
+    "name": "onecx-theme-ui",
+    "permissions": [
+        {"resource": "THEME", "action": "CREATE"},
+        {"resource": "THEME", "action": "DELETE"},
+        {"resource": "THEME", "action": "EDIT"},
+        {"resource": "THEME", "action": "SAVE"},
+        {"resource": "THEME", "action": "SEARCH"},
+        {"resource": "THEME", "action": "VIEW"},
+        {"resource": "THEME", "action": "EXPORT"},
+        {"resource": "THEME", "action": "IMPORT"}
+    ]
+}

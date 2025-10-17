@@ -1,0 +1,19 @@
+{
+    "name": "onecx-product-store-bff",
+    "permissions": [
+        {"resource": "image", "action": "read"},
+        {"resource": "image", "action": "write"},
+        {"resource": "microfrontend", "action": "delete"},
+        {"resource": "microfrontend", "action": "read"},
+        {"resource": "microfrontend", "action": "write"},
+        {"resource": "microservice", "action": "delete"},
+        {"resource": "microservice", "action": "read"},
+        {"resource": "microservice", "action": "write"},
+        {"resource": "product", "action": "delete"},
+        {"resource": "product", "action": "read"},
+        {"resource": "product", "action": "write"},
+        {"resource": "slot", "action": "delete"},
+        {"resource": "slot", "action": "read"},
+        {"resource": "slot", "action": "write"}
+    ]
+}

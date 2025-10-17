@@ -1,0 +1,15 @@
+{
+  "appVersion": "dev",
+  "appName": "onecx-parameter-ui",
+  "description": "onecx-parameter-ui",
+  "remoteBaseUrl": "http://onecx-parameter-ui/",
+  "remoteEntry": "http://onecx-parameter-ui/remoteEntry.js",
+  "note": "Imported MFE",
+  "exposedModule": "./OneCXParameterModule",
+  "technology": "WEBCOMPONENTMODULE",
+  "remoteName": "onecx-parameter",
+  "tagName": "ocx-parameter-component",
+  "type": "MODULE",
+  "deprecated": false,
+  "undeployed": false
+}

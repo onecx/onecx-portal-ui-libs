@@ -1,0 +1,6 @@
+{
+    "description": "User Profile show user roles and permissions",
+    "name": "onecx-user-profile-permissions",
+    "deprecated": false,
+    "undeployed": false
+}

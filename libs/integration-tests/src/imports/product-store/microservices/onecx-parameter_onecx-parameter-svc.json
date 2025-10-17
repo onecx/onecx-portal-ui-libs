@@ -1,0 +1,6 @@
+{
+    "version": "dev",
+    "description": "onecx-parameter-svc",
+    "name": "onecx-parameter-svc",
+    "type": "svc"
+}

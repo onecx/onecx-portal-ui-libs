@@ -1,14 +1,21 @@
 import { AbstractStartedContainer, GenericContainer, StartedTestContainer, Wait } from 'testcontainers'
 import { HealthCheck } from 'testcontainers/build/types'
-import { SvcDetails, SvcContainerServices } from '../../model/service.model'
+import { SvcDetails, SvcContainerServices } from '../../models/svc.interface'
+import { getCommonEnvironmentVariables } from '../../utils/common-env.utils'
+import { HealthCheckableContainer } from '../../models/health-checkable-container.interface'
+import { HealthCheckExecutor } from '../../models/health-check-executor.interface'
+import { buildHealthCheckUrl } from '../../utils/health-check.utils'
+import { HttpHealthCheckExecutor, SkipHealthCheckExecutor } from '../../utils/health-check-executor'
 
-export abstract class SvcContainer extends GenericContainer {
+export class SvcContainer extends GenericContainer {
   protected details: SvcDetails = {
     databaseUsername: '',
     databasePassword: '',
   }
 
   protected shouldCreateDatabase = true
+
+  protected loggingEnabled = false
 
   private port = 8080
 
@@ -56,12 +63,17 @@ export abstract class SvcContainer extends GenericContainer {
     this.shouldCreateDatabase = shouldStart
   }
 
+  enableLogging(log: boolean): this {
+    this.loggingEnabled = log
+    return this
+  }
+
   override async start(): Promise<StartedSvcContainer> {
     if (this.shouldCreateDatabase) {
       this.validateDatabaseCredentials()
       await this.services.databaseContainer?.createUserAndDatabase(
         this.details.databaseUsername,
-        this.details.databaseUsername
+        this.details.databasePassword
       )
     }
     // Re-apply the default health check explicitly if it has not been overridden.
@@ -76,34 +88,58 @@ export abstract class SvcContainer extends GenericContainer {
       QUARKUS_DATASOURCE_USERNAME: this.details.databaseUsername,
       QUARKUS_DATASOURCE_PASSWORD: this.details.databaseUsername,
       QUARKUS_DATASOURCE_JDBC_URL: `jdbc:postgresql://${this.services.databaseContainer?.getNetworkAliases()[0]}:${this.services.databaseContainer?.getPort()}/${this.details.databaseUsername}?sslmode=disable`,
-      KC_REALM: `${this.services.keycloakContainer.getRealm()}`,
-      QUARKUS_OIDC_AUTH_SERVER_URL: `http://${this.services.keycloakContainer.getNetworkAliases()[0]}:${this.services.keycloakContainer.getPort()}/realms/${this.services.keycloakContainer.getRealm()}`,
-      QUARKUS_OIDC_TOKEN_ISSUER: `http://${this.services.keycloakContainer.getNetworkAliases()[0]}/realms/${this.services.keycloakContainer.getRealm()}`,
-      TKIT_SECURITY_AUTH_ENABLED: 'false',
-      TKIT_RS_CONTEXT_TENANT_ID_MOCK_ENABLED: 'false',
-      TKIT_LOG_JSON_ENABLED: 'false',
-      TKIT_OIDC_HEALTH_ENABLED: 'false',
       TKIT_DATAIMPORT_ENABLED: 'true',
       ONECX_TENANT_CACHE_ENABLED: 'false',
-    })
-    this.withLogConsumer((stream) => {
-      stream.on('data', (line) => console.log(`${this.details.databaseUsername}: `, line))
-      stream.on('err', (line) => console.error(`${this.details.databaseUsername}: `, line))
-      stream.on('end', () => console.log(`${this.details.databaseUsername}: Stream closed`))
-    })
+    }).withEnvironment(getCommonEnvironmentVariables(this.services.keycloakContainer))
+    if (this.loggingEnabled) {
+      this.withLogConsumer((stream) => {
+        stream.on('data', (line) => console.log(`${this.networkAliases[0]}: `, line))
+        stream.on('err', (line) => console.error(`${this.networkAliases[0]}: `, line))
+        stream.on('end', () => console.log(`${this.networkAliases[0]}: Stream closed`))
+      })
+    }
+
     this.withWaitStrategy(Wait.forAll([Wait.forHealthCheck(), Wait.forListeningPorts()]))
-    return new StartedSvcContainer(await super.start(), this.details, this.networkAliases, this.port)
+    return new StartedSvcContainer(
+      await super.start(),
+      this.details,
+      this.networkAliases,
+      this.port,
+      this.healthCheck || this.defaultHealthCheck
+    )
   }
 }
 
-export class StartedSvcContainer extends AbstractStartedContainer {
+export class StartedSvcContainer extends AbstractStartedContainer implements HealthCheckableContainer {
   constructor(
     startedTestContainer: StartedTestContainer,
     private readonly details: SvcDetails,
     private readonly networkAliases: string[],
-    private readonly port: number
+    private readonly port: number,
+    private readonly healthCheck: HealthCheck
   ) {
     super(startedTestContainer)
+  }
+
+  /**
+   * Creates Quarkus-specific health check strategy
+   * Uses URL from health check or falls back to default
+   */
+  getHealthCheckExecutor(): HealthCheckExecutor {
+    const mappedPort = this.getMappedPort(this.port)
+
+    // Build URL from health check configuration
+    const endpoint = buildHealthCheckUrl(mappedPort, this.healthCheck)
+
+    // If no valid URL can be extracted, skip health check
+    if (!endpoint) {
+      return new SkipHealthCheckExecutor('No valid health check URL could be extracted')
+    }
+
+    // Use timeout from health check if available, otherwise default
+    const timeout = this.healthCheck?.timeout || 8000
+
+    return new HttpHealthCheckExecutor(endpoint, timeout, [200, 503])
   }
 
   getDatabaseUsername(): string {

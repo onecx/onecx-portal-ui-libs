@@ -1,0 +1,8 @@
+{
+    "name": "onecx-theme-bff",
+    "permissions": [
+        {"resource": "themes", "action": "delete"},
+        {"resource": "themes", "action": "read"},
+        {"resource": "themes", "action": "write"}
+    ]
+}

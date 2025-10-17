@@ -1,0 +1,11 @@
+{
+    "name": "onecx-tenant-ui",
+    "permissions": [
+        {"resource": "TENANT", "action": "CREATE"},
+        {"resource": "TENANT", "action": "DELETE"},
+        {"resource": "TENANT", "action": "EDIT"},
+        {"resource": "TENANT", "action": "SAVE"},
+        {"resource": "TENANT", "action": "SEARCH"},
+        {"resource": "TENANT", "action": "VIEW"}
+    ]
+}

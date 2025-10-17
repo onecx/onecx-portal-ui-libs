@@ -1,0 +1,7 @@
+{
+    "version": "xxx",
+    "description": "OneCX shell",
+    "basePath": "/onecx-shell",
+    "displayName": "OneCX shell",
+    "iconName": "palette"
+}

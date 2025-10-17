@@ -1,0 +1,60 @@
+{
+  "id": "onecx-1234",
+  "created": "2024-06-05T13:06:06.53925569Z",
+  "themes": {
+    "OneCX": {
+      "cssFile": null,
+      "displayName": "OneCX",
+      "description": "OneCX Theme",
+      "assetsUrl": null,
+      "logoUrl": "",
+      "faviconUrl": null,
+      "previewImageUrl": null,
+      "assetsUpdateDate": null,
+      "properties": {
+        "font": {
+          "font-family": null,
+          "font-size": null
+        },
+        "topbar": {
+          "topbar-bg-color": "#c8e6c9",
+          "topbar-item-text-color": " #ffffff",
+          "topbar-text-color": "#ffffff",
+          "topbar-left-bg-color": "#c8e6c9",
+          "topbar-item-text-hover-bg-color": "#262626",
+          "topbar-menu-button-bg-color": " rgb(255 0 68)",
+          "logo-color": " #ffffff"
+        },
+        "general": {
+          "primary-color": "#274B5F",
+          "secondary-color": "#1C4257",
+          "text-color": " rgba(0, 0, 0, 0.87)",
+          "text-secondary-color": "#262626",
+          "body-bg-color": " #f7f7f7",
+          "content-bg-color": " #ffffff",
+          "content-alt-bg-color": " #ffffff",
+          "overlay-content-bg-color": " #ffffff",
+          "hover-bg-color": "#ad1457",
+          "solid-surface-text-color": " #ffffff",
+          "divider-color": " #e4e4e4",
+          "button-hover-bg": "#ad1457",
+          "button-active-bg": null,
+          "danger-button-bg": "#D32F2F",
+          "info-message-bg": "#b3e5fc",
+          "success-message-bg": "#c8e6c9",
+          "warning-message-bg": "#ffecb3",
+          "error-message-bg": "#ffcdd2"
+        },
+        "sidebar": {
+          "menu-text-color": "#274B5F",
+          "menu-bg-color": " #fdfeff",
+          "menu-item-text-color": " #515c66",
+          "menu-item-hover-bg-color": " #e4e4e4",
+          "menu-active-item-text-color": " #515c66",
+          "menu-active-item-bg-color": " rgba(0, 0, 0, 0.04)",
+          "menu-inline-border-color": " #e4e4e4"
+        }
+      }
+    }
+  }
+}

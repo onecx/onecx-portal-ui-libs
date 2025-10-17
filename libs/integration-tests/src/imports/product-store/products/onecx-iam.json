@@ -1,0 +1,7 @@
+{
+    "version": "xxx",
+    "description": "OneCX iam",
+    "basePath": "/iam",
+    "displayName": "OneCX iam",
+    "iconName": "id-card"
+}

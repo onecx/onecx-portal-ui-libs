@@ -1,0 +1,18 @@
+{
+    "name": "onecx-permission-ui",
+    "permissions": [
+        {"resource": "APP", "action": "EDIT"},
+        {"resource": "APP", "action": "SAVE"},
+        {"resource": "APP", "action": "SEARCH"},
+        {"resource": "APP", "action": "VIEW"},
+        {"resource": "PERMISSION", "action": "CREATE"},
+        {"resource": "PERMISSION", "action": "DELETE"},
+        {"resource": "PERMISSION", "action": "EDIT"},
+        {"resource": "PERMISSION", "action": "SAVE"},
+        {"resource": "PERMISSION", "action": "GRANT"},
+        {"resource": "ROLE", "action": "CREATE"},
+        {"resource": "ROLE", "action": "DELETE"},
+        {"resource": "ROLE", "action": "EDIT"},
+        {"resource": "ROLE", "action": "SAVE"}
+    ]
+}
