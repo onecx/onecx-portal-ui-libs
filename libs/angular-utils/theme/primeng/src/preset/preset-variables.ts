@@ -1,4 +1,4 @@
-import { createPalette, standardColorAdjustment } from '../../utils/create-color-palette'
+import { createPalette, standardColorAdjustment } from '../utils/create-color-palette'
 
 import defaultVariables from './default-theme-variables'
 import breadcrumb from './component-presets/breadcrumb'

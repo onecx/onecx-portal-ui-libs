@@ -3,12 +3,11 @@ import { ThemeService } from '@onecx/angular-integration-interface'
 import { Theme as OneCXTheme } from '@onecx/integration-interface'
 import { Base } from 'primeng/base'
 import { PrimeNG } from 'primeng/config'
-import ThemeConfig from '../theme/theme-config'
+import ThemeConfig from '../utils/theme-config'
 import { CustomUseStyle } from './custom-use-style.service'
 import { UseStyle } from 'primeng/usestyle'
 import { Theme } from '@primeuix/styled'
-import { mergeDeep } from '../utils/deep-merge.utils'
-import CustomPreset from '../theme/preset/custom-preset'
+import { mergeDeep } from '@onecx/angular-utils'
 
 export function provideThemeConfigService() {
   Theme.clearLoadedStyleNames()
@@ -45,9 +44,10 @@ export class ThemeConfigService {
   async applyThemeVariables(oldTheme: OneCXTheme): Promise<void> {
     const oldThemeVariables = oldTheme.properties
     const themeConfig = new ThemeConfig(oldThemeVariables)
+    const preset = await (await import('../preset/custom-preset')).CustomPreset
     this.primeNG.setThemeConfig({
       theme: {
-        preset: mergeDeep(CustomPreset, themeConfig.getConfig()),
+        preset: mergeDeep(preset, themeConfig.getConfig()),
         options: { darkModeSelector: false },
       },
     })
