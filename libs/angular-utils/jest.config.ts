@@ -2,8 +2,10 @@
 import { createReportsConfig } from '../../jest-config-factory'
 
 export default {
+  ...createReportsConfig('angular-utils'),
   displayName: 'angular-utils',
   preset: '../../jest.preset.js',
+  testMatch: ['<rootDir>/src/lib/**/*.spec.ts', '<rootDir>/guards/**/*.spec.ts'],
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   moduleNameMapper: {
     '@primeng/themes': '<rootDir>/../../node_modules/@primeng/themes/index.mjs',
@@ -41,5 +43,4 @@ export default {
     'jest-preset-angular/build/serializers/ng-snapshot',
     'jest-preset-angular/build/serializers/html-comment',
   ],
-  ...createReportsConfig('angular-utils'),
 }

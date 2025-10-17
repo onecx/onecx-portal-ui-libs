@@ -28,7 +28,6 @@ export * from './lib/services/theme-config.service'
 export * from './lib/services/custom-use-style.service'
 export * from './lib/services/permission.service'
 export * from './lib/services/translation-connection.service'
-export * from './lib/providers/translation-path-from-meta.providers'
 
 // Theme
 export * from './lib/theme/application-config'
@@ -41,3 +40,4 @@ export * from './lib/components/portal-page/portal-page.component'
 export * from './lib/providers/angular-utils.providers'
 export * from './lib/providers/translation-path.providers'
 export * from './lib/providers/permission-service.providers'
+export * from './lib/providers/translation-path-from-meta.providers'
