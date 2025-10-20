@@ -9,6 +9,7 @@
   flex-direction: row;
   flex-grow: 1;
   flex-shrink: 0;
+  overflow: auto;
 
   .onecx-body-start {
     // Shared max-width between header start and body start
