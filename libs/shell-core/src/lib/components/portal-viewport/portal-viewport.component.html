@@ -1,5 +1,6 @@
 <div
   *ngIf="!globalErrMsg; else globalError"
+  class="onecx-viewport-wrapper"
   [ngClass]="{
   'p-input-filled': inputStyle === 'filled', 
   'p-ripple-disabled': !ripple,
