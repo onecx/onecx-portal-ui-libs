@@ -1,3 +1,9 @@
+## [7.0.0-rc.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.3...v7.0.0-rc.4) (2025-10-20)
+
+### Bug Fixes
+
+* onecx body overflow ([#992](https://github.com/onecx/onecx-portal-ui-libs/issues/992)) ([40750b3](https://github.com/onecx/onecx-portal-ui-libs/commit/40750b31ecd9783052436feae039d5d6ddcbae26))
+
 ## [7.0.0-rc.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.2...v7.0.0-rc.3) (2025-10-20)
 
 ### Features
