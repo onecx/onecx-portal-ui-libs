@@ -1,8 +1,10 @@
 .onecx-body-wrapper {
   display: flex;
   flex-direction: row;
-  height: calc(100vh - 4rem);
-  
+  flex-grow: 1;
+  flex-shrink: 0;
+  overflow: auto;
+
   .onecx-body-start {
     // Shared max-width between header start and body start
     max-width: 20rem;
