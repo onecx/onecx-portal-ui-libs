@@ -10,8 +10,8 @@ export class Gatherer<Request, Response> {
   private static id = 0
   private readonly topic: Topic<{ id: number; request: Request }>
   private readonly ownIds = new Set<number>()
-  private topicSub: Subscription | null = null
-  private topicName: string
+  private readonly topicSub: Subscription | null = null
+  private readonly topicName: string
 
   constructor(name: string, version: number, callback: (request: Request) => Promise<Response>) {
     this.topicName = name
@@ -45,11 +45,11 @@ export class Gatherer<Request, Response> {
 
     this.topicSub?.unsubscribe()
     this.topic.destroy()
-    this.ownIds.forEach((id) => {
+    for (const id of this.ownIds) {
       if (window['@onecx/accelerator']?.gatherer?.promises?.[id]) {
         delete window['@onecx/accelerator'].gatherer.promises[id]
       }
-    })
+    }
   }
 
   async gather(request: Request): Promise<Response[]> {
