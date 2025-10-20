@@ -1,3 +1,13 @@
+## [7.0.0-rc.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.2...v7.0.0-rc.3) (2025-10-20)
+
+### Features
+
+* core startup service to test shell with apps ([#982](https://github.com/onecx/onecx-portal-ui-libs/issues/982)) ([f50972e](https://github.com/onecx/onecx-portal-ui-libs/commit/f50972e407494b59e57a54113f8ce08fd6f951d6))
+
+### Bug Fixes
+
+* footer not visible ([#991](https://github.com/onecx/onecx-portal-ui-libs/issues/991)) ([e105249](https://github.com/onecx/onecx-portal-ui-libs/commit/e1052494cdffd6023856c9d1071b268f9c2cc39e))
+
 ## [7.0.0-rc.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.1...v7.0.0-rc.2) (2025-10-09)
 
 ### Features
