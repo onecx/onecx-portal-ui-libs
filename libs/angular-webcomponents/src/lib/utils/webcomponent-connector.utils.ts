@@ -23,8 +23,8 @@ import { getLocation } from '@onecx/accelerator'
  */
 export class WebcomponentConnector {
   private readonly connectionSubscriptions: Subscription[] = []
-  private readonly capabilityService: ShellCapabilityService
-  private readonly eventsTopic: EventsTopic
+  private capabilityService: ShellCapabilityService //NOSONAR
+  private eventsTopic: EventsTopic //NOSONAR
   private readonly guardsGatherer: GuardsGatherer
   private readonly guardsNavigationStateController: GuardsNavigationStateController
 
