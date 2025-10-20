@@ -22,15 +22,15 @@ import { getLocation } from '@onecx/accelerator'
  * It manages the router connection with other web components and handles the navigation state.
  */
 export class WebcomponentConnector {
-  private connectionSubscriptions: Subscription[] = []
-  private capabilityService: ShellCapabilityService
-  private eventsTopic: EventsTopic
-  private guardsGatherer: GuardsGatherer
-  private guardsNavigationStateController: GuardsNavigationStateController
+  private readonly connectionSubscriptions: Subscription[] = []
+  private readonly capabilityService: ShellCapabilityService
+  private readonly eventsTopic: EventsTopic
+  private readonly guardsGatherer: GuardsGatherer
+  private readonly guardsNavigationStateController: GuardsNavigationStateController
 
   constructor(
-    private injector: Injector,
-    private entrypointType: EntrypointType
+    private readonly injector: Injector,
+    private readonly entrypointType: EntrypointType
   ) {
     this.capabilityService = new ShellCapabilityService()
     this.eventsTopic = new EventsTopic()
@@ -44,7 +44,9 @@ export class WebcomponentConnector {
   }
 
   disconnect() {
-    this.connectionSubscriptions.forEach((sub) => sub.unsubscribe())
+    for (const sub of this.connectionSubscriptions) {
+      sub.unsubscribe()
+    }
     this.eventsTopic.destroy()
     this.guardsGatherer.deactivate()
   }
@@ -209,6 +211,8 @@ export class WebcomponentConnector {
       logGuardsDebug('No routeConfig found for route', route)
     }
     route.routeConfig && wrapGuards(route.routeConfig)
-    route.children.forEach((child) => this.wrapGuardsForRoute(child))
+    for (const child of route.children) {
+      this.wrapGuardsForRoute(child)
+    }
   }
 }
