@@ -3,6 +3,9 @@ import { Store } from '@ngrx/store'
 import { PermissionsTopic } from '@onecx/integration-interface'
 import { OneCxActions } from './onecx-actions'
 
+/**
+ * @deprecated Please import from `@onecx/ngrx-integration-interface` instead.
+ */
 export function providePermissionsStoreConnector() {
   return [
     {
