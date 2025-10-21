@@ -1,3 +1,9 @@
+## [7.0.0-rc.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.4...v7.0.0-rc.5) (2025-10-21)
+
+### Bug Fixes
+
+* shell footer container style ([#993](https://github.com/onecx/onecx-portal-ui-libs/issues/993)) ([78a0bdd](https://github.com/onecx/onecx-portal-ui-libs/commit/78a0bdd56e638d1fce11b67f1401dd339a9b0290))
+
 ## [7.0.0-rc.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.3...v7.0.0-rc.4) (2025-10-20)
 
 ### Bug Fixes
