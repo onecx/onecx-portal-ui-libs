@@ -1,13 +1,21 @@
+.onecx-viewport-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
 .onecx-body-wrapper {
   display: flex;
   flex-direction: row;
-  height: calc(100vh - 4rem);
-  
+  flex-grow: 1;
+  flex-shrink: 0;
+  overflow: auto;
+
   .onecx-body-start {
     // Shared max-width between header start and body start
     max-width: 20rem;
     background-color: var(--menu-bg-color);
-    box-shadow: 1px 0 #0003;
+    box-shadow: 1px 1px 0 0 #0003;
     overflow: auto;
     flex-grow: 0;
     flex-shrink: 0;
@@ -15,14 +23,14 @@
     flex-direction: column;
     height: 100%;
   }
-  
+
   .onecx-body-center {
     flex-grow: 1;
     overflow: auto;
     display: flex;
     flex-direction: column;
   }
-  
+
   .onecx-body-end {
     // Shared max-width between header end and body end
     max-width: 25rem;
