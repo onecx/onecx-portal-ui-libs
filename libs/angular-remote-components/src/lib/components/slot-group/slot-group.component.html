@@ -1,0 +1,23 @@
+<div style="display: flex; justify-content: space-between" [ngStyle]="containerStyles()" [ngClass]="groupClasses()">
+  <ocx-slot
+    [name]="name() + '-start'"
+    [slotStyles]="slotStyles()"
+    [slotClasses]="slotClasses()"
+    [inputs]="slotInputsStart()"
+    [outputs]="slotOutputs()"
+  ></ocx-slot>
+  <ocx-slot
+    [name]="name() + '-center'"
+    [slotStyles]="slotStyles()"
+    [slotClasses]="slotClasses()"
+    [inputs]="slotInputsCenter()"
+    [outputs]="slotOutputs()"
+  ></ocx-slot>
+  <ocx-slot
+    [name]="name() + '-end'"
+    [slotStyles]="slotStyles()"
+    [slotClasses]="slotClasses()"
+    [inputs]="slotInputsEnd()"
+    [outputs]="slotOutputs()"
+  ></ocx-slot>
+</div>
