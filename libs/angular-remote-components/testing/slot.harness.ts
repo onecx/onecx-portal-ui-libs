@@ -1,6 +1,5 @@
 import { BaseHarnessFilters, ContentContainerComponentHarness, HarnessPredicate } from '@angular/cdk/testing'
 import { DivHarness } from '@onecx/angular-testing'
-import { ClassInput, normalizeClasses } from './slot.utils'
 
 export interface SlotHarnessFilters extends BaseHarnessFilters {
   name?: string
@@ -84,22 +83,6 @@ export class SlotHarness extends ContentContainerComponentHarness {
   }
 
   /**
-   * Verifies that expected styles are applied to the first slot div container.
-   * @param expectedStyles Object mapping CSS property names to expected values.
-   * @returns Promise that resolves to true if all expected styles match, false otherwise.
-   */
-  async verifySlotStylesApplied(expectedStyles: Record<string, string>): Promise<boolean> {
-    for (const [property, expectedValue] of Object.entries(expectedStyles)) {
-      const actualValue = await this.getSlotCssProperty(property)
-
-      if (actualValue !== expectedValue) {
-        return false
-      }
-    }
-    return true
-  }
-
-  /**
    * Gets a specific CSS property value from all slot div containers.
    * Useful when multiple components are assigned to a slot.
    * @param property The CSS property name to retrieve.
@@ -137,21 +120,6 @@ export class SlotHarness extends ContentContainerComponentHarness {
   }
 
   /**
-   * Verifies that all slot div containers have the expected values for multiple CSS properties.
-   * @param expectedStyles Object mapping CSS property names to expected values.
-   * @returns Promise that resolves to true if all containers have the expected value for every property, false otherwise.
-   */
-  async verifyAllSlotDivsHaveSameStyles(expectedStyles: Record<string, string>): Promise<boolean> {
-    for (const [property, expectedValue] of Object.entries(expectedStyles)) {
-      const allStyleValues = await this.getAllSlotStyles(property)
-      if (!allStyleValues.every((value) => value === expectedValue)) {
-        return false
-      }
-    }
-    return true
-  }
-
-  /**
    * Gets the CSS classes from the first slot div container.
    * @returns Promise that resolves to an array of CSS class names, or empty array if no container exists.
    */
@@ -161,16 +129,6 @@ export class SlotHarness extends ContentContainerComponentHarness {
       return []
     }
     return await container.getClassList()
-  }
-
-  /**
-   * Verifies that expected CSS classes are applied to the first slot div container.
-   * @param expectedClasses Array of CSS class names that should be present.
-   * @returns Promise that resolves to true if all expected classes are present, false otherwise.
-   */
-  async verifySlotClassesApplied(expectedClasses: string[]): Promise<boolean> {
-    const classList = await this.getSlotClasses()
-    return expectedClasses.every((expectedClass) => classList.includes(expectedClass))
   }
 
   /**
@@ -185,34 +143,5 @@ export class SlotHarness extends ContentContainerComponentHarness {
       classLists.push(await container.getClassList())
     }
     return classLists
-  }
-
-  /**
-   * Verifies that expected CSS classes are applied to all slot div containers.
-   * Automatically handles different class input formats (string, array, Set, object).
-   * @param expectedClasses Classes in any supported format that should be present on all containers.
-   * @returns Promise that resolves to true if all containers have all expected classes, false otherwise.
-   */
-  async verifyAllSlotDivsHaveClasses(expectedClasses: ClassInput): Promise<boolean> {
-    const normalizedClasses = normalizeClasses(expectedClasses)
-    return this.verifyAllSlotDivsHaveSameClasses(normalizedClasses)
-  }
-
-  /**
-   * Verifies that all slot div containers have the expected CSS classes.
-   * @param expectedClasses Array of CSS class names that should be present on all containers.
-   * @returns Promise that resolves to true if all containers have all expected classes, false otherwise.
-   */
-  private async verifyAllSlotDivsHaveSameClasses(expectedClasses: string[]): Promise<boolean> {
-    const allClassLists = await this.getAllSlotClasses()
-
-    for (const classList of allClassLists) {
-      for (const expectedClass of expectedClasses) {
-        if (!classList.includes(expectedClass)) {
-          return false
-        }
-      }
-    }
-    return true
   }
 }

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common'
 import { Component, computed, ElementRef, EventEmitter, inject, input, OnDestroy, OnInit } from '@angular/core'
-import { EventsPublisher, EventType, SlotResizedEvent } from '@onecx/integration-interface'
+import { EventsPublisher, EventType, SlotGroupResizedEvent } from '@onecx/integration-interface'
 import { debounceTime, Subject } from 'rxjs'
 import { AngularRemoteComponentsModule } from '../../angular-remote-components.module'
 
@@ -8,6 +8,9 @@ import { AngularRemoteComponentsModule } from '../../angular-remote-components.m
   selector: 'ocx-slot-group[name]',
   templateUrl: './slot-group.component.html',
   imports: [AngularRemoteComponentsModule, CommonModule],
+  host: {
+    '[attr.name]': 'name()',
+  },
 })
 export class SlotGroupComponent implements OnInit, OnDestroy {
   name = input.required<string>()
@@ -56,7 +59,7 @@ export class SlotGroupComponent implements OnInit, OnDestroy {
   private readonly resizeSubject = new Subject<{ width: number; height: number }>()
   private readonly resizeDebounceTimeMs = 100
 
-  private readonly eventsPublisher = new EventsPublisher()
+  private readonly eventsPublisher = inject(EventsPublisher)
 
   private readonly elementRef = inject(ElementRef)
 
@@ -80,14 +83,14 @@ export class SlotGroupComponent implements OnInit, OnDestroy {
     })
 
     this.resizeSubject.pipe(debounceTime(this.resizeDebounceTimeMs)).subscribe(({ width, height }) => {
-      const slotResizedEvent: SlotResizedEvent = {
-        type: EventType.SLOT_RESIZED,
+      const slotGroupResizedEvent: SlotGroupResizedEvent = {
+        type: EventType.SLOT_GROUP_RESIZED,
         payload: {
           slotName: this.name(),
           slotDetails: { width, height },
         },
       }
-      this.eventsPublisher.publish(slotResizedEvent)
+      this.eventsPublisher.publish(slotGroupResizedEvent)
     })
 
     this.resizeObserver.observe(this.elementRef.nativeElement)

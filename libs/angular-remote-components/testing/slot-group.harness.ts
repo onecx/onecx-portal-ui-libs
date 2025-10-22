@@ -1,10 +1,9 @@
-import { BaseHarnessFilters, ContentContainerComponentHarness } from '@angular/cdk/testing'
+import { BaseHarnessFilters, ContentContainerComponentHarness, HarnessPredicate } from '@angular/cdk/testing'
 import { DivHarness } from '@onecx/angular-testing'
 import { SlotHarness } from './slot.harness'
-import { ClassInput, normalizeClasses } from './slot.utils'
 
 export interface SlotGroupHarnessFilters extends BaseHarnessFilters {
-  direction?: 'row' | 'row-reverse' | 'column' | 'column-reverse'
+  name?: string
 }
 
 /**
@@ -16,6 +15,33 @@ export interface SlotGroupHarnessFilters extends BaseHarnessFilters {
 export class SlotGroupHarness extends ContentContainerComponentHarness {
   static readonly hostSelector = 'ocx-slot-group'
 
+  static with(options: SlotGroupHarnessFilters = {}): HarnessPredicate<SlotGroupHarness> {
+    return new HarnessPredicate(SlotGroupHarness, options).addOption('name', options.name, (harness, name) =>
+      HarnessPredicate.stringMatches(harness.getName(), name)
+    )
+  }
+
+  /**
+   * Gets the name of the slot from either the 'name' attribute or 'ng-reflect-name' attribute.
+   * Checks both for robust detection during different Angular compilation modes.
+   * @returns Promise that resolves to the slot name or null if not found.
+   */
+  async getName(): Promise<string | null> {
+    const host = await this.host()
+
+    const nameAttr = await host.getAttribute('name')
+    if (nameAttr !== null) {
+      return nameAttr
+    }
+
+    const reflectName = await host.getAttribute('ng-reflect-name')
+    if (reflectName !== null) {
+      return reflectName
+    }
+
+    return null
+  }
+
   /**
    * Gets the main div container of the slot group.
    * @returns Promise that resolves to the main div container.
@@ -25,14 +51,19 @@ export class SlotGroupHarness extends ContentContainerComponentHarness {
   }
 
   /**
-   * Gets a specific CSS property value from the slot group's main container.
-   * @param property The CSS property name to retrieve.
-   * @returns Promise that resolves to the CSS property value.
+   * Gets specific CSS property values from the slot group's main container.
+   * @param properties Array of CSS property names to retrieve.
+   * @returns Promise that resolves to an object mapping property names to their CSS values.
    */
-  async getContainerStyle(property: string): Promise<string> {
+  async getContainerStyles(properties: string[]): Promise<Record<string, string>> {
     const container = await this.getDivContainer()
     const element = await container.host()
-    return await element.getCssValue(property)
+    const result: Record<string, string> = {}
+
+    for (const property of properties) {
+      result[property] = await element.getCssValue(property)
+    }
+    return result
   }
 
   /**
@@ -42,32 +73,6 @@ export class SlotGroupHarness extends ContentContainerComponentHarness {
   async getContainerGroupClasses(): Promise<string[]> {
     const container = await this.getDivContainer()
     return await container.getClassList()
-  }
-
-  /**
-   * Verifies that expected styles are applied to the slot group's main container.
-   * @param expectedStyles Object mapping CSS property names to expected values.
-   * @returns Promise that resolves to true if all expected styles match, false otherwise.
-   */
-  async verifyContainerStylesApplied(expectedStyles: Record<string, string>): Promise<boolean> {
-    for (const [property, expectedValue] of Object.entries(expectedStyles)) {
-      const actualValue = await this.getContainerStyle(property)
-
-      if (actualValue !== expectedValue) {
-        return false
-      }
-    }
-    return true
-  }
-
-  /**
-   * Verifies that expected CSS classes are applied to the slot group's main container.
-   * @param expectedClasses Array of CSS class names that should be present.
-   * @returns Promise that resolves to true if all expected classes are present, false otherwise.
-   */
-  async verifyContainerClassesApplied(expectedClasses: string[]): Promise<boolean> {
-    const classList = await this.getContainerGroupClasses()
-    return expectedClasses.every((expectedClass) => classList.includes(expectedClass))
   }
 
   /**
@@ -216,36 +221,6 @@ export class SlotGroupHarness extends ContentContainerComponentHarness {
   }
 
   /**
-   * Verifies that expected styles are applied to the first div container in the start slot.
-   * @param expectedStyles Object mapping CSS property names to expected values.
-   * @returns Promise that resolves to true if all expected styles match, false otherwise.
-   */
-  async verifyStartSlotStyles(expectedStyles: Record<string, string>): Promise<boolean> {
-    const slot = await this.getStartSlot()
-    return slot ? slot.verifySlotStylesApplied(expectedStyles) : false
-  }
-
-  /**
-   * Verifies that expected styles are applied to the first div container in the center slot.
-   * @param expectedStyles Object mapping CSS property names to expected values.
-   * @returns Promise that resolves to true if all expected styles match, false otherwise.
-   */
-  async verifyCenterSlotStyles(expectedStyles: Record<string, string>): Promise<boolean> {
-    const slot = await this.getCenterSlot()
-    return slot ? slot.verifySlotStylesApplied(expectedStyles) : false
-  }
-
-  /**
-   * Verifies that expected styles are applied to the first div container in the end slot.
-   * @param expectedStyles Object mapping CSS property names to expected values.
-   * @returns Promise that resolves to true if all expected styles match, false otherwise.
-   */
-  async verifyEndSlotStyles(expectedStyles: Record<string, string>): Promise<boolean> {
-    const slot = await this.getEndSlot()
-    return slot ? slot.verifySlotStylesApplied(expectedStyles) : false
-  }
-
-  /**
    * Gets CSS classes from all div containers in the start slot.
    * @returns Promise that resolves to a two-dimensional array where each inner array contains the CSS classes for one container.
    */
@@ -270,79 +245,5 @@ export class SlotGroupHarness extends ContentContainerComponentHarness {
   async getEndSlotClasses(): Promise<string[][]> {
     const slot = await this.getEndSlot()
     return slot ? slot.getAllSlotClasses() : []
-  }
-
-  /**
-   * Verifies that expected CSS classes are applied to the first div container in the start slot.
-   * @param expectedClasses Array of CSS class names that should be present.
-   * @returns Promise that resolves to true if all expected classes are present, false otherwise.
-   */
-  async verifyStartSlotClasses(expectedClasses: string[]): Promise<boolean> {
-    const slot = await this.getStartSlot()
-    return slot ? slot.verifySlotClassesApplied(expectedClasses) : false
-  }
-
-  /**
-   * Verifies that expected CSS classes are applied to the first div container in the center slot.
-   * @param expectedClasses Array of CSS class names that should be present.
-   * @returns Promise that resolves to true if all expected classes are present, false otherwise.
-   */
-  async verifyCenterSlotClasses(expectedClasses: string[]): Promise<boolean> {
-    const slot = await this.getCenterSlot()
-    return slot ? slot.verifySlotClassesApplied(expectedClasses) : false
-  }
-
-  /**
-   * Verifies that expected CSS classes are applied to the first div container in the end slot.
-   * @param expectedClasses Array of CSS class names that should be present.
-   * @returns Promise that resolves to true if all expected classes are present, false otherwise.
-   */
-  async verifyEndSlotClasses(expectedClasses: string[]): Promise<boolean> {
-    const slot = await this.getEndSlot()
-    return slot ? slot.verifySlotClassesApplied(expectedClasses) : false
-  }
-
-  /**
-   * Verifies that expected CSS classes are applied to the slot group's main container.
-   * Automatically handles different class input formats (string, array, Set, object).
-   * @param expectedClasses Classes in any supported format that should be present.
-   * @returns Promise that resolves to true if all expected classes are present, false otherwise.
-   */
-  async verifyContainerClasses(expectedClasses: ClassInput): Promise<boolean> {
-    const normalizedClasses = normalizeClasses(expectedClasses)
-    return this.verifyContainerClassesApplied(normalizedClasses)
-  }
-
-  /**
-   * Verifies that expected CSS classes are applied to all div containers in the start slot.
-   * Automatically handles different class input formats (string, array, Set, object).
-   * @param expectedClasses Classes in any supported format that should be present.
-   * @returns Promise that resolves to true if all expected classes are present, false otherwise.
-   */
-  async verifyStartSlotClassesForAllDivs(expectedClasses: ClassInput): Promise<boolean> {
-    const slot = await this.getStartSlot()
-    return slot ? slot.verifyAllSlotDivsHaveClasses(expectedClasses) : false
-  }
-
-  /**
-   * Verifies that expected CSS classes are applied to all div containers in the center slot.
-   * Automatically handles different class input formats (string, array, Set, object).
-   * @param expectedClasses Classes in any supported format that should be present.
-   * @returns Promise that resolves to true if all expected classes are present, false otherwise.
-   */
-  async verifyCenterSlotClassesForAllDivs(expectedClasses: ClassInput): Promise<boolean> {
-    const slot = await this.getCenterSlot()
-    return slot ? slot.verifyAllSlotDivsHaveClasses(expectedClasses) : false
-  }
-
-  /**
-   * Verifies that expected CSS classes are applied to all div containers in the end slot.
-   * Automatically handles different class input formats (string, array, Set, object).
-   * @param expectedClasses Classes in any supported format that should be present.
-   * @returns Promise that resolves to true if all expected classes are present, false otherwise.
-   */
-  async verifyEndSlotClassesForAllDivs(expectedClasses: ClassInput): Promise<boolean> {
-    const slot = await this.getEndSlot()
-    return slot ? slot.verifyAllSlotDivsHaveClasses(expectedClasses) : false
   }
 }
