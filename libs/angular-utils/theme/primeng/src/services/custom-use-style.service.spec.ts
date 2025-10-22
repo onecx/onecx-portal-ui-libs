@@ -1,18 +1,19 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing'
-import { CustomUseStyle, SKIP_STYLE_SCOPING } from './custom-use-style.service'
+import { CustomUseStyle } from './custom-use-style.service'
 import { DOCUMENT } from '@angular/common'
 import { ReplaySubject } from 'rxjs'
 import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { AppStateService, MfeInfo } from '@onecx/angular-integration-interface'
-import { THEME_OVERRIDES } from '../theme/application-config'
+import { THEME_OVERRIDES } from '../utils/application-config'
 import {
   dataNoPortalLayoutStylesAttribute,
   dataStyleIdAttribute,
   dataStyleIsolationAttribute,
   shellScopeId,
-} from '../utils/scope.utils'
-import { REMOTE_COMPONENT_CONFIG } from '../model/injection-tokens'
-import { RemoteComponentConfig } from '../model/remote-component-config.model'
+  SKIP_STYLE_SCOPING,
+} from '@onecx/angular-utils'
+import { REMOTE_COMPONENT_CONFIG } from '@onecx/angular-utils'
+import { RemoteComponentConfig } from '@onecx/angular-utils'
 
 class ElementMock {
   // extension

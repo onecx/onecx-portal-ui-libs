@@ -3,8 +3,8 @@ import { ThemeConfigService } from './theme-config.service'
 import { ThemeService } from '@onecx/angular-integration-interface'
 import { FakeTopic } from '@onecx/accelerator'
 import { PrimeNG } from 'primeng/config'
-import { SKIP_STYLE_SCOPING } from './custom-use-style.service'
-import defaultThemeVariables from '../theme/preset/default-theme-variables'
+import defaultThemeVariables from '../preset/default-theme-variables'
+import { SKIP_STYLE_SCOPING } from '@onecx/angular-utils'
 
 describe('ThemeConfigService', () => {
   let service: ThemeConfigService

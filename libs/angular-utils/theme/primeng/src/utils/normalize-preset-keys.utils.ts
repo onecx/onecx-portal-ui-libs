@@ -1,4 +1,4 @@
-import { isObject } from './deep-merge.utils'
+import { isObject } from '@onecx/angular-utils'
 
 // taken from primeng https://github.com/primefaces/primeuix/blob/main/packages/styled/src/config/index.ts#L9
 const excludedKeyRegex =

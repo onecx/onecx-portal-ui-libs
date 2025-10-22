@@ -1,15 +1,12 @@
 /* eslint-disable */
-import { createReportsConfig } from '../../jest-config-factory'
+import { createReportsConfig } from '../../../../jest-config-factory'
 
 export default {
-  ...createReportsConfig('angular-utils'),
-  displayName: 'angular-utils',
+  ...createReportsConfig('angular-utils/theme'),
+  displayName: 'angular-utils/theme',
   preset: '../../jest.preset.js',
+  testMatch: ['<rootDir>/src/lib/**/*.spec.ts', '<rootDir>/guards/**/*.spec.ts'],
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  testMatch: ['<rootDir>/src/lib/**/*.spec.ts', '<rootDir>/theme/**/*.spec.ts'],
-  moduleNameMapper: {
-    '@primeng/themes': '<rootDir>/../../node_modules/@primeng/themes/index.mjs',
-  },
   transform: {
     '^.+\\.(mjs|js|html)$': [
       'jest-preset-angular',
