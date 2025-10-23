@@ -7,7 +7,6 @@ export default {
   preset: '../../jest.preset.js',
   testMatch: ['<rootDir>/src/lib/**/*.spec.ts', '<rootDir>/guards/**/*.spec.ts'],
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  testMatch: ['<rootDir>/src/lib/**/*.spec.ts', '<rootDir>/theme/**/*.spec.ts'],
   moduleNameMapper: {
     '@primeng/themes': '<rootDir>/../../node_modules/@primeng/themes/index.mjs',
   },
