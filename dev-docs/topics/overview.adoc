@@ -6,9 +6,9 @@ The `Topic` system is a messaging framework designed to synchronize state across
 
 == How Topics Sync with Other Existing Topics
 
-- **Initialization and Message Listening**:
-  - Each `Topic` instance registers an event listener on the `window` object to listen for `message` events.
-  - When a `Topic` is created, it sends a `TopicGet` message to request the current state from other instances. This ensures that the new instance can synchronize with existing topics.
+* **Initialization and Message Listening**:
+** Each `Topic` instance registers an event listener on the `window` object to listen for `message` events.
+** When a `Topic` is created, it sends a `TopicGet` message to request the current state from other instances. This ensures that the new instance can synchronize with existing topics.
 
 - **Receiving Messages**:
   - The `onMessage` method processes incoming messages. It ensures that only relevant messages (matching the topic's `name` and `version`) are processed.
