@@ -56,7 +56,14 @@ The `publish` method is responsible for broadcasting a new value to all topic in
        this.publishPromiseResolver[message.id] = resolve;
      });
      window.postMessage(resolveMessage, '*');
-     ```
+[source,typescript]
+----
+     const resolveMessage = new TopicResolveMessage(TopicMessageType.TopicResolve, this.name, this.version, message.id);
+     const promise = new Promise<void>((resolve) => {
+       this.publishPromiseResolver[message.id] = resolve;
+     });
+     window.postMessage(resolveMessage, '*');
+----
 
 3. **Return the Promise**:
    - The promise is returned to the caller, allowing them to wait until the message is resolved.
