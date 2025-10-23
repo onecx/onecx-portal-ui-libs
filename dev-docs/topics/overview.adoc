@@ -41,10 +41,11 @@ The `publish` method is responsible for broadcasting a new value to all topic in
 1. **Create a `TopicDataMessage`**:
    - A `TopicDataMessage` is created with the new value and sent using `window.postMessage`:
    
-     ```typescript
+[source,typescript]
+----
      const message = new TopicDataMessage<T>(TopicMessageType.TopicNext, this.name, this.version, value);
      window.postMessage(message, '*');
-     ```
+----
 
 2. **Create a `TopicResolveMessage`**:
    - A `TopicResolveMessage` is created to track when the message is processed. A promise is created and stored in `publishPromiseResolver`:
