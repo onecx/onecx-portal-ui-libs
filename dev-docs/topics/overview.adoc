@@ -10,45 +10,47 @@ The `Topic` system is a messaging framework designed to synchronize state across
 ** Each `Topic` instance registers an event listener on the `window` object to listen for `message` events.
 ** When a `Topic` is created, it sends a `TopicGet` message to request the current state from other instances. This ensures that the new instance can synchronize with existing topics.
 
-- **Receiving Messages**:
-  - The `onMessage` method processes incoming messages. It ensures that only relevant messages (matching the topic's `name` and `version`) are processed.
-  - If a `TopicNext` message is received, the topic updates its internal state and marks itself as initialized.
-  - If a `TopicGet` message is received and the topic is already initialized, it responds by posting its current state back to the sender.
+* **Receiving Messages**:
+** The `onMessage` method processes incoming messages. It ensures that only relevant messages (matching the topic's `name` and `version`) are processed.
+** If a `TopicNext` message is received, the topic updates its internal state and marks itself as initialized.
+** If a `TopicGet` message is received and the topic is already initialized, it responds by posting its current state back to the sender.
 
-- **Synchronization**:
-  - Topics synchronize by broadcasting their state through `TopicNext` messages and responding to `TopicGet` requests. This ensures that all instances of a topic eventually converge to the same state.
+* **Synchronization**:
+** Topics synchronize by broadcasting their state through `TopicNext` messages and responding to `TopicGet` requests. This ensures that all instances of a topic eventually converge to the same state.
 
 == Types of Messages and Their Purpose
 
 The `Topic` system defines three types of messages, represented by the `TopicMessageType` enum:
 
-- **`TopicNext`**:
-  - Sent when a topic's state changes (e.g., when a new value is published).
-  - Other topics use this message to update their state to match the sender's.
+* **`TopicNext`**:
+** Sent when a topic's state changes (e.g., when a new value is published).
+** Other topics use this message to update their state to match the sender's.
 
-- **`TopicGet`**:
-  - Sent when a topic instance is created to request the current state from other instances.
-  - Other topics respond to this message by posting their current state if they are initialized.
+* **`TopicGet`**:
+** Sent when a topic instance is created to request the current state from other instances.
+** Other topics respond to this message by posting their current state if they are initialized.
 
-- **`TopicResolve`**:
-  - Sent to signal that a previously published message has been processed.
-  - Used to resolve the promise returned by the `publish` method, ensuring that the publisher knows when the message has been acknowledged.
+* **`TopicResolve`**:
+** Sent to signal that a previously published message has been processed.
+** Used to resolve the promise returned by the `publish` method, ensuring that the publisher knows when the message has been acknowledged.
 
 == How the `publish` Method Works
 
 The `publish` method is responsible for broadcasting a new value to all topic instances. Here's how it works:
 
-1. **Create a `TopicDataMessage`**:
-   - A `TopicDataMessage` is created with the new value and sent using `window.postMessage`:
-   
+. **Create a `TopicDataMessage`**:
++
+A `TopicDataMessage` is created with the new value and sent using `window.postMessage`:
++
 [source,typescript]
 ----
      const message = new TopicDataMessage<T>(TopicMessageType.TopicNext, this.name, this.version, value);
      window.postMessage(message, '*');
 ----
 
-2. **Create a `TopicResolveMessage`**:
-   - A `TopicResolveMessage` is created to track when the message is processed. A promise is created and stored in `publishPromiseResolver`:
+. **Create a `TopicResolveMessage`**:
++
+A `TopicResolveMessage` is created to track when the message is processed. A promise is created and stored in `publishPromiseResolver`:
    
      ```typescript
      const resolveMessage = new TopicResolveMessage(TopicMessageType.TopicResolve, this.name, this.version, message.id);
@@ -56,6 +58,7 @@ The `publish` method is responsible for broadcasting a new value to all topic in
        this.publishPromiseResolver[message.id] = resolve;
      });
      window.postMessage(resolveMessage, '*');
++
 [source,typescript]
 ----
      const resolveMessage = new TopicResolveMessage(TopicMessageType.TopicResolve, this.name, this.version, message.id);
@@ -65,11 +68,13 @@ The `publish` method is responsible for broadcasting a new value to all topic in
      window.postMessage(resolveMessage, '*');
 ----
 
-3. **Return the Promise**:
-   - The promise is returned to the caller, allowing them to wait until the message is resolved.
+. **Return the Promise**:
++
+The promise is returned to the caller, allowing them to wait until the message is resolved.
 
-4. **Resolve the Promise**:
-   - When a `TopicResolve` message is received, the corresponding promise is resolved, signaling that the message has been processed.
+. **Resolve the Promise**:
++
+When a `TopicResolve` message is received, the corresponding promise is resolved, signaling that the message has been processed.
 
 === Why Awaiting the Promise Works
 When publishing a message via the `publish` method of a topic, right after sending the `TopicNext` message, a `TopicResolve` message is also sent. The promise created in the `publish` will be resolved when the `TopicResolve` message is processed in the `onMessage` method by the topic instance that published the message.
@@ -82,11 +87,11 @@ This means, that before `TopicResolve` is processed, `TopicNext` will have alrea
 
 The `Topic` system leverages JavaScript's event-driven architecture and scheduling mechanisms to achieve its goals:
 
-- **Asynchronous Communication**:
-  - Messages are sent asynchronously using `window.postMessage`, which queues them in the browser's message queue. This ensures that message handling does not block the main thread.
+* **Asynchronous Communication**:
+** Messages are sent asynchronously using `window.postMessage`, which queues them in the browser's message queue. This ensures that message handling does not block the main thread.
 
-- **Promise-Based Initialization**:
-  - The `isInitializedPromise` ensures that the topic's state is not accessed until it is fully initialized. This is achieved by resolving the promise only after the topic has received its initial state.
+* **Promise-Based Initialization**:
+** The `isInitializedPromise` ensures that the topic's state is not accessed until it is fully initialized. This is achieved by resolving the promise only after the topic has received its initial state.
 
-- **Event Listener**:
-  - The `onMessage` method processes messages in the order they are received. This ensures that state updates are applied in the correct sequence.
+* **Event Listener**:
+** The `onMessage` method processes messages in the order they are received. This ensures that state updates are applied in the correct sequence.
