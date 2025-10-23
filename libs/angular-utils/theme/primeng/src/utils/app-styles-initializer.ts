@@ -1,9 +1,8 @@
 import { inject, provideEnvironmentInitializer } from '@angular/core'
-import { getAppStyleByScope, replaceStyleContent } from './styles.utils'
-import { getScopeIdentifier, replacePrimengPrefix } from '../scope.utils'
+import { getAppStyleByScope, replaceStyleContent, SKIP_STYLE_SCOPING } from '@onecx/angular-utils'
+import { getScopeIdentifier, replacePrimengPrefix } from '@onecx/angular-utils'
 import { AppStateService } from '@onecx/angular-integration-interface'
-import { SKIP_STYLE_SCOPING } from '../../services/custom-use-style.service'
-import { REMOTE_COMPONENT_CONFIG } from '../../model/injection-tokens'
+import { REMOTE_COMPONENT_CONFIG } from '@onecx/angular-utils'
 
 export function provideAppStylesInitializer() {
   return [provideEnvironmentInitializer(updateAppStyle)]

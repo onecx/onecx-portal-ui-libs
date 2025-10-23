@@ -1,6 +1,6 @@
 {
   "name": "@onecx/angular-webcomponents",
-  "version": "7.0.0-rc.4",
+  "version": "7.0.0-rc.6",
   "license": "Apache-2.0",
   "peerDependencies": {
     "@angular/common": "^19.0.0",
@@ -8,13 +8,13 @@
     "@angular/platform-browser": "^19.0.0",
     "@angular/elements": "^19.0.0",
     "@angular/router": "^19.0.0",
-    "@onecx/accelerator": "^7.0.0-rc.4",
-    "@onecx/angular-integration-interface": "^7.0.0-rc.4",
-    "@onecx/integration-interface": "^7.0.0-rc.4",
-    "@onecx/angular-utils": "^7.0.0-rc.4",
+    "@onecx/accelerator": "^7.0.0-rc.6",
+    "@onecx/angular-integration-interface": "^7.0.0-rc.6",
+    "@onecx/integration-interface": "^7.0.0-rc.6",
+    "@onecx/angular-utils": "^7.0.0-rc.6",
     "rxjs": "~7.8.1",
     "@nx/devkit": "^20.3.0",
-    "@onecx/nx-migration-utils": "^7.0.0-rc.4"
+    "@onecx/nx-migration-utils": "^7.0.0-rc.6"
   },
   "dependencies": {},
   "publishConfig": {

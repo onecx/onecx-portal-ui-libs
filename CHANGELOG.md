@@ -1,3 +1,16 @@
+## [7.0.0-rc.6](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.5...v7.0.0-rc.6) (2025-10-22)
+
+### Features
+
+* add primeng theme library ([#986](https://github.com/onecx/onecx-portal-ui-libs/issues/986)) ([5a3d8b1](https://github.com/onecx/onecx-portal-ui-libs/commit/5a3d8b12e597fe90a22bf3a0ef5b586ad4a03a87))
+* init slot group component ([#994](https://github.com/onecx/onecx-portal-ui-libs/issues/994)) ([167fb77](https://github.com/onecx/onecx-portal-ui-libs/commit/167fb778526e8d08ea0a633ba5a5b26ed1c08201))
+
+## [7.0.0-rc.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.4...v7.0.0-rc.5) (2025-10-21)
+
+### Bug Fixes
+
+* shell footer container style ([#993](https://github.com/onecx/onecx-portal-ui-libs/issues/993)) ([78a0bdd](https://github.com/onecx/onecx-portal-ui-libs/commit/78a0bdd56e638d1fce11b67f1401dd339a9b0290))
+
 ## [7.0.0-rc.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.3...v7.0.0-rc.4) (2025-10-20)
 
 ### Bug Fixes

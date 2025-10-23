@@ -1,10 +1,10 @@
-import { Inject, Injectable, InjectionToken, Optional } from '@angular/core'
+import { Inject, Injectable, Optional } from '@angular/core'
 import { UseStyle } from 'primeng/usestyle'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import { ReplaySubject } from 'rxjs'
-import { THEME_OVERRIDES, ThemeOverrides } from '../theme/application-config'
-import { REMOTE_COMPONENT_CONFIG } from '../model/injection-tokens'
-import { RemoteComponentConfig } from '../model/remote-component-config.model'
+import { THEME_OVERRIDES, ThemeOverrides } from '../utils/application-config'
+import { REMOTE_COMPONENT_CONFIG, SKIP_STYLE_SCOPING } from '@onecx/angular-utils'
+import { RemoteComponentConfig } from '@onecx/angular-utils'
 import { toVariables } from '@primeuix/styled'
 import {
   dataVariableOverrideIdAttribute,
@@ -12,10 +12,8 @@ import {
   replacePrimengPrefix,
   scopePrimengCss,
   shellScopeId,
-} from '../utils/scope.utils'
-import { replaceRootWithScope } from '../utils/styles'
-
-export const SKIP_STYLE_SCOPING = new InjectionToken<boolean>('SKIP_STYLE_SCOPING')
+} from '@onecx/angular-utils'
+import { replaceRootWithScope } from '@onecx/angular-utils'
 
 @Injectable({ providedIn: 'any' })
 export class CustomUseStyle extends UseStyle {
