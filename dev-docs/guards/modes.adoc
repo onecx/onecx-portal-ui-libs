@@ -75,6 +75,7 @@ The Angular navigation lifecycle involves the following steps:
 
 == How Does The Fake Navigation Work?
 In GUARD_CHECK mode, the router simulates a navigation to trigger guard checks without actually changing the current route. This is achieved by:
+
 - Wrapping guards to handle the simulated navigation.
 - Collecting guard results and emitting events based on their outcomes.
 - Preventing the actual navigation by not proceeding to the `NavigationEnd` event.
