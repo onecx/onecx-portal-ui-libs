@@ -52,12 +52,6 @@ A `TopicDataMessage` is created with the new value and sent using `window.postMe
 +
 A `TopicResolveMessage` is created to track when the message is processed. A promise is created and stored in `publishPromiseResolver`:
    
-     ```typescript
-     const resolveMessage = new TopicResolveMessage(TopicMessageType.TopicResolve, this.name, this.version, message.id);
-     const promise = new Promise<void>((resolve) => {
-       this.publishPromiseResolver[message.id] = resolve;
-     });
-     window.postMessage(resolveMessage, '*');
 +
 [source,typescript]
 ----
