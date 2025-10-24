@@ -38,7 +38,3 @@ This page gives an overview about onecx libs.
 
 |ngrx-accelerator
 |Contains things you need to standardise and industrialise development with ngrx
-
-|shell-core
-|Contains core building blocks for the shell
-|===
