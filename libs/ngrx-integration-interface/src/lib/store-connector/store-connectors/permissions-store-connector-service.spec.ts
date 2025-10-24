@@ -3,43 +3,37 @@ import { Store } from '@ngrx/store'
 import { PermissionsStoreConnectorService } from './permissions-store-connector-service'
 import { OneCxActions } from '../onecx-actions'
 import { PermissionsTopic } from '@onecx/integration-interface'
+import { FakeTopic } from '@onecx/accelerator'
 
 describe('PermissionsStoreConnectorService', () => {
-  let service: PermissionsStoreConnectorService
   let store: Store
-  let mockTopic: any
+  let fakeTopic: FakeTopic<string[]>
+  const mockPermissions = ['perm1', 'perm2']
 
   beforeEach(() => {
-    mockTopic = Object.assign(new PermissionsTopic(), {
-      pipe: jest.fn().mockReturnThis(),
-      destroy: jest.fn(),
-    })
-    mockTopic.subscribe = jest.fn() as jest.Mock;
-    mockTopic.subscribe.mockImplementation((cb: any) => {
-      cb(['perm1', 'perm2'])
-      return { unsubscribe: jest.fn() }
-    })
+    fakeTopic = new FakeTopic<string[]>()
     TestBed.configureTestingModule({
       providers: [
         PermissionsStoreConnectorService,
         { provide: Store, useValue: { dispatch: jest.fn() } },
-        { provide: PermissionsTopic, useValue: mockTopic },
+        { provide: PermissionsTopic, useValue: fakeTopic },
       ],
     })
     store = TestBed.inject(Store)
     jest.spyOn(store, 'dispatch')
-    service = TestBed.inject(PermissionsStoreConnectorService)
   })
 
   it('should subscribe and dispatch permissionsChanged', () => {
-    const expectedAction = OneCxActions.permissionsChanged({ permissions: ['perm1', 'perm2'] })
-    expect(mockTopic.subscribe).toHaveBeenCalled()
+    TestBed.inject(PermissionsStoreConnectorService)
+    fakeTopic.publish(mockPermissions)
+    const expectedAction = OneCxActions.permissionsChanged({ permissions: mockPermissions })
     expect(store.dispatch).toHaveBeenCalledWith(expectedAction)
   })
 
-  it('should unsubscribe and destroy on ngOnDestroy', () => {
-    mockTopic.subscribe.mockReturnValue({ unsubscribe: jest.fn() })
+  it('should destroy on ngOnDestroy', () => {
+    const service = TestBed.inject(PermissionsStoreConnectorService)
+    const destroySpy = jest.spyOn(fakeTopic, 'destroy')
     service.ngOnDestroy()
-    expect(mockTopic.destroy).toHaveBeenCalled()
+    expect(destroySpy).toHaveBeenCalled()
   })
 })

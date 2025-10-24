@@ -4,44 +4,37 @@ import { CurrentThemeStoreConnectorService } from './current-theme-store-connect
 import { OneCxActions } from '../onecx-actions'
 import { Theme } from '@onecx/integration-interface';
 import { CurrentThemeTopic } from '@onecx/integration-interface';
+import { FakeTopic } from '@onecx/accelerator'
 
 describe('CurrentThemeStoreConnectorService', () => {
-  let service: CurrentThemeStoreConnectorService
   let store: Store
-  let mockTopic: any
+  let fakeTopic: FakeTopic<Theme>
   const mockTheme: Theme = { id: 'theme1', name: 'Theme 1', properties: {} }
 
   beforeEach(() => {
-    mockTopic = Object.assign(new CurrentThemeTopic(), {
-      pipe: jest.fn().mockReturnThis(),
-      destroy: jest.fn(),
-    })
-    mockTopic.subscribe = jest.fn() as jest.Mock;
-    mockTopic.subscribe.mockImplementation((cb: any) => {
-      cb(mockTheme)
-      return { unsubscribe: jest.fn() }
-    })
+    fakeTopic = new FakeTopic<Theme>()
     TestBed.configureTestingModule({
       providers: [
         CurrentThemeStoreConnectorService,
         { provide: Store, useValue: { dispatch: jest.fn() } },
-        { provide: CurrentThemeTopic, useValue: mockTopic },
+        { provide: CurrentThemeTopic, useValue: fakeTopic },
       ],
     })
     store = TestBed.inject(Store)
     jest.spyOn(store, 'dispatch')
-    service = TestBed.inject(CurrentThemeStoreConnectorService)
   })
 
   it('should subscribe and dispatch currentThemeChanged', () => {
+    TestBed.inject(CurrentThemeStoreConnectorService)
+    fakeTopic.publish(mockTheme)
     const expectedAction = OneCxActions.currentThemeChanged({ currentTheme: mockTheme })
-    expect(mockTopic.subscribe).toHaveBeenCalled()
     expect(store.dispatch).toHaveBeenCalledWith(expectedAction)
   })
 
-  it('should unsubscribe and destroy on ngOnDestroy', () => {
-    mockTopic.subscribe.mockReturnValue({ unsubscribe: jest.fn() })
+  it('should destroy on ngOnDestroy', () => {
+    const service = TestBed.inject(CurrentThemeStoreConnectorService)
+    const destroySpy = jest.spyOn(fakeTopic, 'destroy')
     service.ngOnDestroy()
-    expect(mockTopic.destroy).toHaveBeenCalled()
+    expect(destroySpy).toHaveBeenCalled()
   })
 })

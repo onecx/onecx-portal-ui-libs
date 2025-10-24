@@ -4,51 +4,43 @@ import { CurrentWorkspaceStoreConnectorService } from './current-workspace-store
 import { OneCxActions } from '../onecx-actions'
 import { Workspace } from '@onecx/integration-interface';
 import { CurrentWorkspaceTopic } from '@onecx/integration-interface';
+import { FakeTopic } from '@onecx/accelerator'
 
 describe('CurrentWorkspaceStoreConnectorService', () => {
-  let service: CurrentWorkspaceStoreConnectorService
   let store: Store
-  let mockTopic: any
-  const mockWorkspace = {
+  let fakeTopic: FakeTopic<Workspace>
+  const mockWorkspace: Workspace = {
     id: 'ws1',
-    name: 'Workspace 1',
     baseUrl: 'http://localhost',
     workspaceName: 'Workspace 1',
     portalName: 'Portal',
     microfrontendRegistrations: [],
-  } as Workspace
+  }
 
   beforeEach(() => {
-    mockTopic = Object.assign(new CurrentWorkspaceTopic(), {
-      pipe: jest.fn().mockReturnThis(),
-      destroy: jest.fn(),
-    })
-    mockTopic.subscribe = jest.fn() as jest.Mock;
-    mockTopic.subscribe.mockImplementation((cb: any) => {
-      cb(mockWorkspace)
-      return { unsubscribe: jest.fn() }
-    })
+    fakeTopic = new FakeTopic<Workspace>()
     TestBed.configureTestingModule({
       providers: [
         CurrentWorkspaceStoreConnectorService,
         { provide: Store, useValue: { dispatch: jest.fn() } },
-        { provide: CurrentWorkspaceTopic, useValue: mockTopic },
+        { provide: CurrentWorkspaceTopic, useValue: fakeTopic },
       ],
     })
     store = TestBed.inject(Store)
     jest.spyOn(store, 'dispatch')
-    service = TestBed.inject(CurrentWorkspaceStoreConnectorService)
   })
 
   it('should subscribe and dispatch currentWorkspaceChanged', () => {
+    TestBed.inject(CurrentWorkspaceStoreConnectorService)
+    fakeTopic.publish(mockWorkspace)
     const expectedAction = OneCxActions.currentWorkspaceChanged({ currentWorkspace: mockWorkspace })
-    expect(mockTopic.subscribe).toHaveBeenCalled()
     expect(store.dispatch).toHaveBeenCalledWith(expectedAction)
   })
 
-  it('should unsubscribe and destroy on ngOnDestroy', () => {
-    mockTopic.subscribe.mockReturnValue({ unsubscribe: jest.fn() })
+  it('should destroy on ngOnDestroy', () => {
+    const service = TestBed.inject(CurrentWorkspaceStoreConnectorService)
+    const destroySpy = jest.spyOn(fakeTopic, 'destroy')
     service.ngOnDestroy()
-    expect(mockTopic.destroy).toHaveBeenCalled()
+    expect(destroySpy).toHaveBeenCalled()
   })
 })
