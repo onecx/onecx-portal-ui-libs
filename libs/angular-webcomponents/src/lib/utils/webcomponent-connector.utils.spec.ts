@@ -322,6 +322,31 @@ describe('WebcomponentConnector', () => {
     expect(spy).not.toHaveBeenCalled()
   })
 
+  it('should not schedule guards results gathering if no navigation state', async () => {
+    const spy = jest.spyOn(mockGuardsGatherer, 'gather').mockReturnValue(Promise.resolve([true, true]))
+    connector.connect()
+
+    const extrasObject = {} as any
+
+    mockRouter.getCurrentNavigation = jest.fn().mockReturnValue({ extras: extrasObject })
+    mockGuardsNavigationStateController.getMode.mockReturnValue(GUARD_MODE.NAVIGATION_REQUESTED)
+    mockGuardsNavigationStateController.createNavigationRequestedState.mockImplementation(
+      (promise: GuardCheckPromise, state?: GuardsNavigationState | undefined) => {
+        if (state) state[GUARD_CHECK_PROMISE] = promise
+        return state ?? {}
+      }
+    )
+
+    const guardsCheckStartMock = new GuardsCheckStart(1, '', '/test', {} as RouterStateSnapshot)
+
+    ;(mockRouter.events as ReplaySubject<any>).next(guardsCheckStartMock)
+
+    expect(spy).toHaveBeenCalledWith({ url: guardsCheckStartMock.urlAfterRedirects })
+    expect(extrasObject['state'][GUARD_CHECK_PROMISE]).toBeDefined()
+    const guardCheckResult = await extrasObject['state'][GUARD_CHECK_PROMISE]
+    expect(guardCheckResult).toBe(true)
+  })
+
   it('should request navigation revert on INITIAL_ROUTER_SYNC failure', async () => {
     const spy = jest.spyOn(eventsTopic, 'publish')
     connector.connect()
@@ -392,5 +417,21 @@ describe('WebcomponentConnector', () => {
 
     expect(spy).not.toHaveBeenCalled()
     expect(mockRouter.navigateByUrl).not.toHaveBeenCalled()
+  })
+
+  it('should not resolve guard check if no navigation state', () => {
+    const spy = jest.spyOn(mockGuardsGatherer, 'resolveRoute')
+    connector.connect()
+
+    mockRouter.getCurrentNavigation = jest.fn().mockReturnValue({ extras: {} })
+    mockGuardsNavigationStateController.getMode.mockReturnValue(GUARD_MODE.NAVIGATION_REQUESTED)
+    const guardsCheckEndMock = new GuardsCheckEnd(1, '', '/test', {} as RouterStateSnapshot, true)
+
+    mockRouter.navigateByUrl.mockClear()
+    ;(mockRouter.events as ReplaySubject<any>).next(guardsCheckEndMock)
+
+    expect(spy).not.toHaveBeenCalled()
+    expect(mockRouter.navigateByUrl).not.toHaveBeenCalled()
+    expect(mockGuardsNavigationStateController.getMode).toHaveBeenCalledWith({})
   })
 })
