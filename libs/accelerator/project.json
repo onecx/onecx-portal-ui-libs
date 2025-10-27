@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/accelerator/src",
   "projectType": "library",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
@@ -38,6 +39,5 @@
     "release": {
       "executor": "@onecx/release:update-build-publish"
     }
-  },
-  "tags": []
+  }
 }
