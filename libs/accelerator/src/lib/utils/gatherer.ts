@@ -67,7 +67,7 @@ export class Gatherer<Request, Response> {
     // See Why Awaiting the Promise Works in dev-docs/topics/scheduling.adoc.
     const message = { id, request }
     await this.topic.publish(message)
-    const promises = (window['@onecx/accelerator']?.gatherer?.promises?.[id] ?? []) as Promise<Response>[]
+    const promises = window['@onecx/accelerator'].gatherer.promises[id] as Promise<Response>[]
     delete window['@onecx/accelerator'].gatherer.promises[id]
     this.ownIds.delete(id)
     return Promise.all(promises).then((v) => {

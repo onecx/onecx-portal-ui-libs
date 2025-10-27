@@ -6,6 +6,7 @@
  * @jest-environment jsdom
  */
 
+import { TopicPublisher } from '../topic/topic-publisher'
 import { Gatherer } from './gatherer'
 
 describe('Gatherer', () => {
@@ -81,5 +82,27 @@ describe('Gatherer', () => {
     )
 
     consoleLogSpy.mockRestore()
+  })
+
+  it('should warn if array was not initialized', () => {
+    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+
+    gatherer2['isOwnerOfRequest'] = () => false
+    new TopicPublisher('test', 1).publish({ id: 999, request: 'test' })
+
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      'Expected an array of promises to gather for id ',
+      999,
+      ' but the id was not present'
+    )
+  })
+
+  it('should clean up promises on destroy', () => {
+    gatherer1['ownIds'].add(1)
+    ;(window as any)['@onecx/accelerator'].gatherer.promises[1] = []
+
+    gatherer1.destroy()
+
+    expect((window as any)['@onecx/accelerator'].gatherer.promises[1]).toBeUndefined()
   })
 })
