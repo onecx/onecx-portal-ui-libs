@@ -1,3 +1,42 @@
+## [7.0.0-rc.7](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.6...v7.0.0-rc.7) (2025-10-30)
+
+### Features
+
+* remove shell-core ([#996](https://github.com/onecx/onecx-portal-ui-libs/issues/996)) ([f3b149d](https://github.com/onecx/onecx-portal-ui-libs/commit/f3b149d0abd3e2948fba16d1339ea2ab80e585da))
+
+### Bug Fixes
+
+* add missing application-config to export ([#995](https://github.com/onecx/onecx-portal-ui-libs/issues/995)) ([2d250e5](https://github.com/onecx/onecx-portal-ui-libs/commit/2d250e53fabca2e85ddeabfdb9f8ae3317e3ea10))
+
+## [7.0.0-rc.6](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.5...v7.0.0-rc.6) (2025-10-22)
+
+### Features
+
+* add primeng theme library ([#986](https://github.com/onecx/onecx-portal-ui-libs/issues/986)) ([5a3d8b1](https://github.com/onecx/onecx-portal-ui-libs/commit/5a3d8b12e597fe90a22bf3a0ef5b586ad4a03a87))
+* init slot group component ([#994](https://github.com/onecx/onecx-portal-ui-libs/issues/994)) ([167fb77](https://github.com/onecx/onecx-portal-ui-libs/commit/167fb778526e8d08ea0a633ba5a5b26ed1c08201))
+
+## [7.0.0-rc.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.4...v7.0.0-rc.5) (2025-10-21)
+
+### Bug Fixes
+
+* shell footer container style ([#993](https://github.com/onecx/onecx-portal-ui-libs/issues/993)) ([78a0bdd](https://github.com/onecx/onecx-portal-ui-libs/commit/78a0bdd56e638d1fce11b67f1401dd339a9b0290))
+
+## [7.0.0-rc.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.3...v7.0.0-rc.4) (2025-10-20)
+
+### Bug Fixes
+
+* onecx body overflow ([#992](https://github.com/onecx/onecx-portal-ui-libs/issues/992)) ([40750b3](https://github.com/onecx/onecx-portal-ui-libs/commit/40750b31ecd9783052436feae039d5d6ddcbae26))
+
+## [7.0.0-rc.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.2...v7.0.0-rc.3) (2025-10-20)
+
+### Features
+
+* core startup service to test shell with apps ([#982](https://github.com/onecx/onecx-portal-ui-libs/issues/982)) ([f50972e](https://github.com/onecx/onecx-portal-ui-libs/commit/f50972e407494b59e57a54113f8ce08fd6f951d6))
+
+### Bug Fixes
+
+* footer not visible ([#991](https://github.com/onecx/onecx-portal-ui-libs/issues/991)) ([e105249](https://github.com/onecx/onecx-portal-ui-libs/commit/e1052494cdffd6023856c9d1071b268f9c2cc39e))
+
 ## [7.0.0-rc.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.1...v7.0.0-rc.2) (2025-10-09)
 
 ### Features

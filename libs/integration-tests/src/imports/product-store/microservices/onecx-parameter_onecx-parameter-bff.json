@@ -1,0 +1,6 @@
+{
+    "version": "dev",
+    "description": "onecx-parameter-bff",
+    "name": "onecx-parameter-bff",
+    "type": "bff"
+}

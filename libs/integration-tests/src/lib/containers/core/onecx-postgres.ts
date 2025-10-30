@@ -1,5 +1,7 @@
 import { AbstractStartedContainer, GenericContainer, StartedTestContainer, Wait } from 'testcontainers'
 import { HealthCheck } from 'testcontainers/build/types'
+import { HealthCheckableContainer } from '../../models/health-checkable-container.interface'
+import { SkipHealthCheckExecutor } from '../../utils/health-check-executor'
 
 interface OnecxPostgresDetails {
   postgresDatabase: string
@@ -21,6 +23,8 @@ export class OnecxPostgresContainer extends GenericContainer {
     timeout: 5_000,
     retries: 3,
   }
+
+  protected loggingEnabled = false
 
   constructor(image: string) {
     super(image)
@@ -57,6 +61,11 @@ export class OnecxPostgresContainer extends GenericContainer {
     return this.onecxPostgresDetails.postgresPassword
   }
 
+  public enableLogging(log: boolean): this {
+    this.loggingEnabled = log
+    return this
+  }
+
   override async start(): Promise<StartedOnecxPostgresContainer> {
     // Re-apply the default health check explicitly if it has not been overridden.
     // This ensures the healthcheck is correctly registered before container startup
@@ -71,24 +80,29 @@ export class OnecxPostgresContainer extends GenericContainer {
       POSTGRES_USER: this.onecxPostgresDetails.postgresUsername,
       POSTGRES_PASSWORD: this.onecxPostgresDetails.postgresPassword,
     })
-
-    this.withLogConsumer((stream) => {
-      stream.on('data', (line) => console.log(`${this.onecxPostgresDetails.postgresUsername}: `, line))
-      stream.on('err', (line) => console.error(`${this.onecxPostgresDetails.postgresUsername}: `, line))
-      stream.on('end', () => console.log(`${this.onecxPostgresDetails.postgresUsername}: Stream closed`))
-    })
+    if (this.loggingEnabled) {
+      this.withLogConsumer((stream) => {
+        stream.on('data', (line) => console.log(`${this.networkAliases[0]}: `, line))
+        stream.on('err', (line) => console.error(`${this.networkAliases[0]}: `, line))
+        stream.on('end', () => console.log(`${this.networkAliases[0]}: Stream closed`))
+      })
+    }
     this.withWaitStrategy(Wait.forAll([Wait.forHealthCheck(), Wait.forListeningPorts()]))
     return new StartedOnecxPostgresContainer(await super.start(), this.onecxPostgresDetails, this.networkAliases)
   }
 }
 
-export class StartedOnecxPostgresContainer extends AbstractStartedContainer {
+export class StartedOnecxPostgresContainer extends AbstractStartedContainer implements HealthCheckableContainer {
   constructor(
     startedTestContainer: StartedTestContainer,
     private readonly onecxPostgresDetails: OnecxPostgresDetails,
     private readonly networkAliases: string[]
   ) {
     super(startedTestContainer)
+  }
+
+  getHealthCheckExecutor(): SkipHealthCheckExecutor {
+    return new SkipHealthCheckExecutor('Postgres Container')
   }
 
   public getPostgresDatabase(): string {
