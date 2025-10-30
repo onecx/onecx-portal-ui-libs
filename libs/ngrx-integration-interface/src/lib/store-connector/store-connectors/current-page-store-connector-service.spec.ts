@@ -11,7 +11,6 @@ describe('CurrentPageStoreConnectorService', () => {
   const mockPage: PageInfo = { path: '/path' }
 
   beforeEach(() => {
-    // Arrange
     fakeTopic = new FakeTopic<PageInfo>()
     TestBed.configureTestingModule({
       providers: [
@@ -25,20 +24,18 @@ describe('CurrentPageStoreConnectorService', () => {
   })
 
   it('should subscribe and dispatch currentPageChanged', () => {
-    // Act
     TestBed.inject(CurrentPageStoreConnectorService)
     fakeTopic.publish(mockPage)
-    // Assert
+    
     const expectedAction = OneCxActions.currentPageChanged({ currentPage: mockPage })
     expect(store.dispatch).toHaveBeenCalledWith(expectedAction)
   })
 
   it('should destroy on ngOnDestroy', () => {
-    // Act
     const service = TestBed.inject(CurrentPageStoreConnectorService)
     const destroySpy = jest.spyOn(fakeTopic, 'destroy')
     service.ngOnDestroy()
-    // Assert
+   
     expect(destroySpy).toHaveBeenCalled()
   })
 })
