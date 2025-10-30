@@ -1,3 +1,13 @@
+## [7.0.0-rc.7](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.6...v7.0.0-rc.7) (2025-10-30)
+
+### Features
+
+* remove shell-core ([#996](https://github.com/onecx/onecx-portal-ui-libs/issues/996)) ([f3b149d](https://github.com/onecx/onecx-portal-ui-libs/commit/f3b149d0abd3e2948fba16d1339ea2ab80e585da))
+
+### Bug Fixes
+
+* add missing application-config to export ([#995](https://github.com/onecx/onecx-portal-ui-libs/issues/995)) ([2d250e5](https://github.com/onecx/onecx-portal-ui-libs/commit/2d250e53fabca2e85ddeabfdb9f8ae3317e3ea10))
+
 ## [7.0.0-rc.6](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.5...v7.0.0-rc.6) (2025-10-22)
 
 ### Features
