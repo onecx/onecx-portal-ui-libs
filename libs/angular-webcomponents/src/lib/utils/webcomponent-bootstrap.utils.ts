@@ -14,13 +14,8 @@ import {
   getPlatform,
 } from '@angular/core'
 import { Router } from '@angular/router'
-import { getLocation } from '@onecx/accelerator'
-
-import { EventsTopic, CurrentLocationTopicPayload, TopicEventType, EventType } from '@onecx/integration-interface'
-import { Observable, Subscription, filter } from 'rxjs'
 import { dataNoPortalLayoutStylesKey } from '@onecx/angular-utils'
-import { ShellCapabilityService, Capability } from '@onecx/angular-integration-interface'
-import { AppStateService } from '@onecx/angular-integration-interface'
+import { WebcomponentConnector } from './webcomponent-connector.utils'
 
 /**
  * Implementation inspired by @angular-architects/module-federation-plugin https://github.com/angular-architects/module-federation-plugin/blob/main/libs/mf-tools/src/lib/web-components/bootstrap-utils.ts
@@ -89,23 +84,18 @@ function createEntrypoint(
   entrypointType: EntrypointType,
   _?: AppOptions
 ) {
-  let sub: Subscription | null
-  const capabilityService = new ShellCapabilityService()
-  const currentLocationCapabilityAvailable = capabilityService.hasCapability(Capability.CURRENT_LOCATION_TOPIC)
-  const eventsTopic = currentLocationCapabilityAvailable ? undefined : new EventsTopic()
+  const webcomponentConnector = new WebcomponentConnector(injector, entrypointType)
   const originalNgInit = component.prototype.ngOnInit
+
   component.prototype.ngOnInit = function () {
-    sub = connectMicroFrontendRouter(injector, entrypointType === 'microfrontend', eventsTopic)
+    webcomponentConnector.connect()
     if (originalNgInit !== undefined) {
       originalNgInit.call(this)
     }
   }
   const originalNgDestroy = component.prototype.ngOnDestroy
   component.prototype.ngOnDestroy = function () {
-    sub?.unsubscribe()
-    if (currentLocationCapabilityAvailable && eventsTopic) {
-      eventsTopic.destroy()
-    }
+    webcomponentConnector.disconnect()
     if (originalNgDestroy !== undefined) {
       originalNgDestroy.call(this)
     }
@@ -123,23 +113,6 @@ function createEntrypoint(
   }
 
   customElements.define(elementName, myRemoteComponentAsWebComponent)
-}
-
-function adaptRemoteComponentRoutes(injector: Injector) {
-  const router = injector.get(Router)
-
-  if (!router) {
-    return
-  }
-
-  if (!router.config.find((val) => val.path === '**')) {
-    router.resetConfig(
-      router.config.concat({
-        path: '**',
-        children: [],
-      })
-    )
-  }
 }
 
 export function getWindowState(): any {
@@ -181,52 +154,21 @@ export function cachePlatform(production: boolean): PlatformRef {
   return platform
 }
 
-function connectMicroFrontendRouter(
-  injector: Injector,
-  warnOnMissingRouter: boolean,
-  eventsTopic: EventsTopic | undefined
-): Subscription | null {
-  const router = injector.get(Router, null)
-  const appStateService = injector.get(AppStateService, null)
+function adaptRemoteComponentRoutes(injector: Injector) {
+  const router = injector.get(Router)
+
   if (!router) {
-    if (warnOnMissingRouter) {
-      console.warn('No router to connect found')
-    }
-    return null
+    return
   }
 
-  if (!appStateService) {
-    console.warn('No appStateService found')
-    return null
-  }
-
-  return connectRouter(router, appStateService, eventsTopic)
-}
-
-function connectRouter(
-  router: Router,
-  appStateService: AppStateService,
-  eventsTopic: EventsTopic | undefined
-): Subscription {
-  const initialUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}${location.hash}`
-  router.navigateByUrl(initialUrl, {
-    replaceUrl: true,
-    state: { isRouterSync: true },
-  })
-  let lastUrl = initialUrl
-  let observable: Observable<TopicEventType | CurrentLocationTopicPayload> =
-    appStateService.currentLocation$.asObservable()
-  if (eventsTopic !== undefined) {
-    observable = eventsTopic.pipe(filter((e) => e.type === EventType.NAVIGATED))
-  }
-  return observable.subscribe(() => {
-    const routerUrl = `${location.pathname.substring(getLocation().deploymentPath.length)}${location.search}${location.hash}`
-    if (routerUrl !== lastUrl) {
-      lastUrl = routerUrl
-      router.navigateByUrl(routerUrl, {
-        replaceUrl: true,
-        state: { isRouterSync: true },
+  // Fallback route is needed to make sure that router is activatable
+  // and to always respond for guards scattered requests
+  if (!router.config.find((val) => val.path === '**')) {
+    router.resetConfig(
+      router.config.concat({
+        path: '**',
+        children: [],
       })
-    }
-  })
+    )
+  }
 }

@@ -1,0 +1,92 @@
+= Angular Guards and Router Modes
+
+== Overview
+
+Angular Guards are used to control navigation and access to routes in an Angular application. The `GUARD_MODE` enumeration defines different modes of operation for the router in the context of guard checks and navigation. This document explains each mode and its expected flow, including the Angular navigation lifecycle.
+
+== GUARD_MODE Enumeration
+
+The `GUARD_MODE` enumeration defines the following modes:
+
+* `INITIAL_ROUTER_SYNC`
+* `ROUTER_SYNC`
+* `GUARD_CHECK`
+* `NAVIGATION_REQUESTED`
+
+Each mode represents a specific state or behavior of the router during navigation.
+
+== Modes and Their Flows
+
+=== INITIAL_ROUTER_SYNC
+
+* **Description**: This mode is used during the initial synchronization of the router. It ensures that the application can handle the first navigation when it is loaded.
+* **Flow**:
+  1. The router initializes and attempts to navigate to the initial URL.
+  2. Guards such as `CanActivate` and `CanDeactivate` are checked.
+  3. If any guard returns `false`, the navigation is canceled, and the application may emit an event indicating the failure.
+  4. If all guards pass, the navigation completes successfully.
+* **Expected Outcome**: The application either navigates to the initial route or cancels the navigation based on guard results.
+
+=== ROUTER_SYNC
+
+* **Description**: This mode is used to synchronize the router state with other components or applications. It assumes that the synchronization has already been agreed upon.
+* **Flow**:
+  1. The router performs a navigation to the specified URL.
+  2. Guards are still executed, but their results do not affect the navigation outcome, as the synchronization is considered pre-approved.
+  3. The router emits an event indicating the success of the synchronization.
+* **Expected Outcome**: The navigation always succeeds, ensuring that the router state is synchronized.
+
+=== GUARD_CHECK
+
+* **Description**: This mode is used to verify guard conditions without performing an actual navigation. It is used for pre-checking access to a route.
+* **Flow**:
+  1. The router triggers guard checks for the specified route by simulating a navigation.
+  2. The results of the guards are collected and analyzed.
+  3. If any guard returns `false`, the application emits an event indicating the failure.
+  4. No navigation is performed, regardless of the guard results.
+* **Expected Outcome**: The application receives the results of the guard checks without changing the current route.
+
+=== NAVIGATION_REQUESTED
+
+* **Description**: This mode is used by the application where a navigation is requested. In this mode, the application waits for guard results from other components or applications before proceeding with the navigation.
+* **Flow**:
+  1. The router initiates the navigation and waits for external guard results.
+  2. If the external guards return `true`, the navigation proceeds.
+  3. If the external guards return `false`, the navigation is canceled.
+* **Expected Outcome**: The navigation depends on the results of the external guards.
+
+== Angular Navigation Lifecycle
+
+The Angular navigation lifecycle involves the following steps:
+
+1. **RoutesRecognized**:
+   * The router recognizes the route and triggers the `RoutesRecognized` event.
+   * Guards are wrapped for the recognized routes to use wrapper classes that can handle different modes.
+
+2. **GuardsCheckStart**:
+   * The router triggers the `GuardsCheckStart` event.
+   * Setup for NAVIGATION_REQUESTED mode is done here ensuring that wrappers will wait for external results before proceeding.
+   * No required setup is done for other modes since they do not need special handling at this point.
+ 
+3. **GuardsCheckEnd**:
+   * The router triggers the `GuardsCheckEnd` event.
+   * In INITIAL_ROUTER_SYNC mode, a revertNavigation event is published for the shell to revert the navigation since the initial navigation is not allowed to proceed if guards fail.
+   * In GUARD_CHECK mode, in case of a successful guards check, navigation is canceled to prevent actual navigation and the approval is emitted.
+
+== How Does The Fake Navigation Work?
+In GUARD_CHECK mode, the router simulates a navigation to trigger guard checks without actually changing the current route. This is achieved by:
+
+* Wrapping guards to handle the simulated navigation.
+* Collecting guard results and emitting events based on their outcomes.
+* Preventing the actual navigation by not proceeding to the `NavigationEnd` event.
+
+But how is the fake navigation triggered?
+
+=== Triggering Fake Navigation
+The fake navigation is triggered during the `GuardsCheckStart` event by the application that want to navigate. It is done by utilizing the concept of gatherer that based on the xref:../topics/overview.adoc[Topic system] communicate with other applications to gather information.
+
+Each active application on the page registers its own GuardsGatherer instance. When a navigation is requested, the gatherer for the requesting application initiates the flow by publishing a request to gather guards results for the requested route. This request is then picked up by the gatherers of other applications, which perform fake navigation to the requested route to evaluate their guards.
+
+== Conclusion
+In conclusion, the whole mechanism of guards synchronization is based on asynchronous communication between different applications using the `Topic` system and modifying the navigation state payload to indicate the current `GUARD_MODE`. Based on this state, guards wrappers and router events are handled differently to achieve the desired behavior for each mode.
+
