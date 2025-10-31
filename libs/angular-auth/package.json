@@ -8,7 +8,6 @@
     "@angular/core": "^19.0.0",
     "@onecx/angular-integration-interface": "^7.0.0-rc.6",
     "@onecx/integration-interface": "^7.0.0-rc.6",
-    "keycloak-js": "^26.2.1",
     "rxjs": "~7.8.0",
     "@nx/devkit": "^20.3.0",
     "@onecx/nx-migration-utils": "^7.0.0-rc.6"
