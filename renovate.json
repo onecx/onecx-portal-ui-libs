@@ -22,6 +22,16 @@
     },
     {
       "matchFileNames": ["package.json"],
+      "groupName": "Root PrimeNG",
+      "matchDepTypes": ["dependencies", "devDependencies"],
+      "groupSlug": "root-primeng",
+      "prPriority": 6,
+      "schedule": ["before 6am every weekday"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchPackageNames": ["/^@primeng\\//", "/^primeng$/"]
+    },
+    {
+      "matchFileNames": ["package.json"],
       "matchDepTypes": ["devDependencies"],
       "groupName": "Root DevDependencies",
       "groupSlug": "root-devdeps",
