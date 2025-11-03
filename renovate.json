@@ -8,15 +8,18 @@
   "separateMultipleMajor": true,
   "separateMinorPatch": false,
   "packageRules": [
-{
+    {
       "matchFileNames": ["package.json"],
       "groupName": "Root NX",
       "matchDepTypes": ["dependencies", "devDependencies"],
       "groupSlug": "root-nx",
       "prPriority": 8,
       "schedule": ["before 6am every weekday"],
-      "matchUpdateTypes": ["minor", "patch"],
       "addLabels": ["nx-migration-required"],
+      "matchPackageNames": ["/^@nx\\//", "/^nx$/"],
+      "matchUpdateTypes": ["minor", "patch"]
+    },
+    {
       "matchPackageNames": ["/^@nx\\//", "/^nx$/"],
       "rangeStrategy": "bump"
     },
@@ -27,8 +30,8 @@
       "groupSlug": "root-primeng",
       "prPriority": 6,
       "schedule": ["before 6am every weekday"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "matchPackageNames": ["/^@primeng\\//", "/^primeng$/"]
+      "matchPackageNames": ["/^@primeng\\//", "/^primeng$/"],
+      "matchUpdateTypes": ["minor", "patch"]
     },
     {
       "matchFileNames": ["package.json"],
@@ -40,15 +43,32 @@
       "automergeStrategy": "merge",
       "platformAutomerge": true,
       "labels": ["dependencies", "automerge"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "matchPackageNames": [
-        "!webpack",
-        "!modify-source-webpack-plugin",
-        "!/^@nx\\//",
-        "!/^nx$/",
-        "!/^@onecx\\//",
-        "!/^@angular\\//",
-        "!/^@angular-devkit\\//"
+      "excludePackageNames": [
+        "webpack",
+        "modify-source-webpack-plugin"
+      ],
+      "excludePackagePatterns": [
+        "^@nx/",
+        "^nx$",
+        "^@onecx/",
+        "^@angular/",
+        "^@angular-devkit/"
+      ],
+      "matchUpdateTypes": ["minor", "patch"]
+    },
+    {
+      "matchFileNames": ["package.json"],
+      "matchDepTypes": ["devDependencies"],
+      "excludePackageNames": [
+        "webpack",
+        "modify-source-webpack-plugin"
+      ],
+      "excludePackagePatterns": [
+        "^@nx/",
+        "^nx$",
+        "^@onecx/",
+        "^@angular/",
+        "^@angular-devkit/"
       ],
       "rangeStrategy": "bump"
     },
@@ -59,9 +79,14 @@
       "rangeStrategy": "update-lockfile"
     },
     {
-      "description": "Block all major updates globally - must be last rule",
+      "description": "Block all major updates globally",
       "matchUpdateTypes": ["major"],
       "enabled": false
+    },
+    {
+      "description": "Global minor/patch only",
+      "matchUpdateTypes": ["minor", "patch"],
+      "enabled": true
     }
   ],
   "vulnerabilityAlerts": {
