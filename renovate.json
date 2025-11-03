@@ -2,5 +2,77 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended"
-  ]
+  ],
+  "minimumReleaseAge": "30 days",
+  "includePaths": ["package.json", "pre_loaders/**/package.json"],
+  "separateMultipleMajor": true,
+  "separateMinorPatch": false,
+  "packageRules": [
+{
+      "matchFileNames": ["package.json"],
+      "groupName": "Root NX",
+      "matchDepTypes": ["dependencies", "devDependencies"],
+      "groupSlug": "root-nx",
+      "prPriority": 8,
+      "schedule": ["before 6am every weekday"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "addLabels": ["nx-migration-required"],
+      "matchPackageNames": ["/^@nx\\//", "/^nx$/"],
+      "rangeStrategy": "bump"
+    },
+    {
+      "matchFileNames": ["package.json"],
+      "matchDepTypes": ["devDependencies"],
+      "groupName": "Root DevDependencies",
+      "groupSlug": "root-devdeps",
+      "automerge": true,
+      "automergeType": "pr",
+      "automergeStrategy": "merge",
+      "platformAutomerge": true,
+      "labels": ["dependencies", "automerge"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchPackageNames": [
+        "!webpack",
+        "!modify-source-webpack-plugin",
+        "!/^@nx\\//",
+        "!/^nx$/",
+        "!/^@onecx\\//",
+        "!/^@angular\\//",
+        "!/^@angular-devkit\\//"
+      ],
+      "rangeStrategy": "bump"
+    },
+    {
+      "description": "Security updates - always allowed even major",
+      "matchCategories": ["security"],
+      "enabled": true,
+      "rangeStrategy": "update-lockfile"
+    },
+    {
+      "description": "Block all major updates globally - must be last rule",
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "minimumReleaseAge": null,
+    "automerge": false
+  },
+  "lockFileMaintenance": {
+    "enabled": true
+  },
+  "timezone": "Europe/Vienna",
+  "schedule": ["before 6am every weekday"],
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 8,
+  "semanticCommits": "enabled",
+  "commitMessagePrefix": "chore(deps):",
+  "labels": ["dependencies"],
+  "assigneesFromCodeOwners": true,
+  "enabledManagers": ["npm"],
+  "platformAutomerge": true,
+  "rangeStrategy": "update-lockfile",
+  "ignoreReviewers": [],
+  "rebaseWhen": "behind-base-branch"
 }
