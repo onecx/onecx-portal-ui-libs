@@ -8,6 +8,9 @@ import { Observable } from 'rxjs'
 import { OneCxActions } from './onecx-actions'
 import { AppStateService } from '@onecx/angular-integration-interface'
 
+/**
+ * @deprecated Please import from `@onecx/ngrx-integration-interface` instead.
+ */
 export function provideNavigatedEventStoreConnector() {
   return [
     {
