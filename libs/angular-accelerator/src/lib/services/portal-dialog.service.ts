@@ -1,7 +1,7 @@
 import { EventEmitter, Injectable, OnDestroy, Type, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
-import { DialogService, DynamicDialogComponent } from 'primeng/dynamicdialog'
-import { Observable, filter, mergeMap } from 'rxjs'
+import { DialogService, DynamicDialog } from 'primeng/dynamicdialog'
+import { Observable, filter, mergeMap, of } from 'rxjs'
 
 import { ButtonDialogButtonDetails, ButtonDialogCustomButtonDetails, ButtonDialogData } from '../model/button-dialog'
 import { NavigationStart, Router } from '@angular/router'
@@ -455,7 +455,7 @@ export class PortalDialogService implements OnDestroy {
     primaryButtonTranslationKeyOrDetails: TranslationKey | ButtonDialogButtonDetails,
     secondaryButtonTranslationKeyOrDetails?: TranslationKey | ButtonDialogButtonDetails,
     extrasOrShowXButton: PortalDialogConfig | boolean = {}
-  ): Observable<DialogState<T>> {
+  ): Observable<DialogState<T>|undefined> {
     const dialogOptions: PortalDialogConfig =
       typeof extrasOrShowXButton === 'object'
         ? extrasOrShowXButton
@@ -503,8 +503,10 @@ export class PortalDialogService implements OnDestroy {
             footer: DialogFooterComponent,
           },
         })
-        this.setScopeIdentifier(this.dialogService.getInstance(dialogRef))
-        return dialogRef.onClose
+        if(dialogRef){
+          this.setScopeIdentifier(this.dialogService.getInstance(dialogRef))
+        }
+        return dialogRef?.onClose ?? of(undefined)
       })
     )
   }
@@ -519,12 +521,12 @@ export class PortalDialogService implements OnDestroy {
     }
   }
 
-  private removeDialogFromHtml(dialogComponent: DynamicDialogComponent) {
+  private removeDialogFromHtml(dialogComponent: DynamicDialog | undefined) {
     const bodyChild = this.findDialogComponentBodyChild(dialogComponent)
     bodyChild && document.body.removeChild(bodyChild)
   }
 
-  private setScopeIdentifier(dialogComponent: DynamicDialogComponent) {
+  private setScopeIdentifier(dialogComponent: DynamicDialog | undefined) {
     getScopeIdentifier(
       this.appStateService,
       this.skipStyleScoping ?? undefined,
@@ -538,8 +540,8 @@ export class PortalDialogService implements OnDestroy {
     })
   }
 
-  private findDialogComponentBodyChild(dialogComponent: DynamicDialogComponent) {
-    const element = dialogComponent.el.nativeElement
+  private findDialogComponentBodyChild(dialogComponent: DynamicDialog | undefined) {
+    const element = dialogComponent?.el.nativeElement
     if (!element) return
     return this.findBodyChild(element)
   }
