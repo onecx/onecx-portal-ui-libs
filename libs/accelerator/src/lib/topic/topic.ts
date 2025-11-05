@@ -199,10 +199,13 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
         break
       }
       case TopicMessageType.TopicResolve: {
-        const publishPromiseResolver = this.publishPromiseResolver[(<TopicResolveMessage>m.data).resolveId]
-        if (publishPromiseResolver) {
-          publishPromiseResolver()
-          delete this.publishPromiseResolver[(<TopicResolveMessage>m.data).resolveId]
+        const resolveId = (<TopicResolveMessage>m.data).resolveId
+        if (Object.hasOwn(this.publishPromiseResolver, resolveId)) {
+          const publishPromiseResolver = this.publishPromiseResolver[resolveId]
+          if (typeof publishPromiseResolver === 'function') {
+            publishPromiseResolver()
+            delete this.publishPromiseResolver[resolveId]
+          }
         }
         break
       }
