@@ -1,8 +1,9 @@
-import { Injectable, OnDestroy, inject, provideEnvironmentInitializer } from '@angular/core'
+import { Injectable, inject, provideEnvironmentInitializer } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { OneCxActions } from '../onecx-actions'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
-import { CurrentWorkspaceTopic, Workspace } from '@onecx/integration-interface'
+import { Workspace } from '@onecx/integration-interface'
+import { AppStateService } from '@onecx/angular-integration-interface'
 
 export function provideCurrentWorkspaceStoreConnector() {
   return [
@@ -13,15 +14,13 @@ export function provideCurrentWorkspaceStoreConnector() {
 
 @UntilDestroy()
 @Injectable()
-export class CurrentWorkspaceStoreConnectorService implements OnDestroy {
-  constructor(private store: Store, private currentWorkspaceTopic$: CurrentWorkspaceTopic) {
-    this.currentWorkspaceTopic$
+export class CurrentWorkspaceStoreConnectorService {
+  private appStateService = inject(AppStateService)
+  constructor(private store: Store) {
+    this.appStateService.currentWorkspace$
       .pipe(untilDestroyed(this))
       .subscribe((currentWorkspace: Workspace) => {
         this.store.dispatch(OneCxActions.currentWorkspaceChanged({ currentWorkspace }))
       })
-  }
-  ngOnDestroy(): void {
-    this.currentWorkspaceTopic$.destroy()
   }
 }
