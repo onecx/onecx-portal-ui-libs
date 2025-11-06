@@ -2,51 +2,67 @@ import { TestBed } from '@angular/core/testing'
 import { Store } from '@ngrx/store'
 import { NavigatedEventStoreConnectorService } from './navigated-event-store-connector-service'
 import { OneCxActions } from '../onecx-actions'
-import { EventsTopic, EventType } from '@onecx/integration-interface'
+import { EventType, CurrentLocationTopicPayload } from '@onecx/integration-interface'
 import { Capability } from '@onecx/angular-integration-interface'
-import { of } from 'rxjs'
-import { provideAppStateServiceMock, provideShellCapabilityServiceMock, ShellCapabilityServiceMock } from '@onecx/angular-integration-interface/mocks'
+import { AppStateServiceMock, provideAppStateServiceMock, provideShellCapabilityServiceMock, ShellCapabilityServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { FakeTopic } from '@onecx/accelerator'
+
+jest.mock('@onecx/integration-interface', () => {
+  const actual = jest.requireActual('@onecx/integration-interface')
+  return {
+    ...actual,
+    EventsTopic: jest.fn().mockImplementation(() => {
+      return new FakeTopic<any>()
+    }),
+  }
+})
 
 describe('NavigatedEventStoreConnectorService', () => {
   let store: any
-  let eventsTopic: FakeTopic<any>
   let service: NavigatedEventStoreConnectorService
 
   beforeEach(() => {
-    eventsTopic = new FakeTopic<any>()
-    jest.spyOn(eventsTopic, 'pipe').mockReturnValue(of({ type: EventType.NAVIGATED, payload: { foo: 'bar' } }))
-    jest.spyOn(eventsTopic, 'subscribe')
-    jest.spyOn(eventsTopic, 'destroy')
-
     TestBed.configureTestingModule({
       providers: [
         NavigatedEventStoreConnectorService,
         { provide: Store, useValue: { dispatch: jest.fn() } },
-        { provide: EventsTopic, useValue: eventsTopic },
         provideShellCapabilityServiceMock(),
         provideAppStateServiceMock()
       ],
     })
     store = TestBed.inject(Store)
     jest.spyOn(store, 'dispatch')
-    service = TestBed.inject(NavigatedEventStoreConnectorService)
   })
 
   it('should subscribe to currentLocation$ and dispatch when capability is present', () => {
-    ShellCapabilityServiceMock.setCapabilities([Capability.PARAMETERS_TOPIC])
-    eventsTopic.publish({ foo: 'bar' })
-    expect(store.dispatch).toHaveBeenCalledWith(OneCxActions.navigated({ event: { foo: 'bar' } }))
+    ShellCapabilityServiceMock.setCapabilities([Capability.CURRENT_LOCATION_TOPIC])
+    const mockLocationPayload: CurrentLocationTopicPayload = { url: '/test-page', isFirst: false }
+    service = TestBed.inject(NavigatedEventStoreConnectorService)
+    const appStateServiceMock = TestBed.inject(AppStateServiceMock)
+    
+    appStateServiceMock.currentLocation$.publish(mockLocationPayload)
+    
+    expect(store.dispatch).toHaveBeenCalledWith(OneCxActions.navigated({ event: mockLocationPayload }))
   })
 
   it('should subscribe to eventsTopic$ and dispatch when capability is missing', () => {
     ShellCapabilityServiceMock.setCapabilities([Capability.PARAMETERS_TOPIC])
-    eventsTopic.publish({ type: EventType.NAVIGATED, payload: { foo: 'bar' } })
-    expect(store.dispatch).toHaveBeenCalledWith(OneCxActions.navigated({ event: { foo: 'bar' } }))
+    const mockEventPayload = { foo: 'bar' }
+    service = TestBed.inject(NavigatedEventStoreConnectorService)
+    const eventsTopic = (service as any).eventsTopic$ as FakeTopic<any>
+    
+    eventsTopic.publish({ type: EventType.NAVIGATED, payload: mockEventPayload })
+    
+    expect(store.dispatch).toHaveBeenCalledWith(OneCxActions.navigated({ event: mockEventPayload }))
   })
 
   it('should destroy eventsTopic$ on ngOnDestroy', () => {
+    service = TestBed.inject(NavigatedEventStoreConnectorService)
+    const eventsTopic = (service as any).eventsTopic$ as FakeTopic<any>
+    const destroySpy = jest.spyOn(eventsTopic, 'destroy')
+    
     service.ngOnDestroy()
-    expect(eventsTopic.destroy).toHaveBeenCalled()
+    
+    expect(destroySpy).toHaveBeenCalled()
   })
 })
