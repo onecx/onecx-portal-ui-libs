@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing'
 import { Store } from '@ngrx/store'
 import { NavigatedEventStoreConnectorService } from './navigated-event-store-connector-service'
 import { OneCxActions } from '../onecx-actions'
-import { EventType, CurrentLocationTopicPayload } from '@onecx/integration-interface'
+import { CurrentLocationTopicPayload } from '@onecx/integration-interface'
 import { Capability } from '@onecx/angular-integration-interface'
 import { AppStateServiceMock, provideAppStateServiceMock, provideShellCapabilityServiceMock, ShellCapabilityServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { FakeTopic } from '@onecx/accelerator'
@@ -51,7 +51,7 @@ describe('NavigatedEventStoreConnectorService', () => {
     service = TestBed.inject(NavigatedEventStoreConnectorService)
     const eventsTopic = (service as any).eventsTopic$ as FakeTopic<any>
     
-    eventsTopic.publish({ type: EventType.NAVIGATED, payload: mockEventPayload })
+    eventsTopic.publish({ type: 'navigated', payload: mockEventPayload })
     
     expect(store.dispatch).toHaveBeenCalledWith(OneCxActions.navigated({ event: mockEventPayload }))
   })
