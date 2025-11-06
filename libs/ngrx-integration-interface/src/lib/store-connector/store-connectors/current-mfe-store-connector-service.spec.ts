@@ -28,10 +28,13 @@ describe('CurrentMfeStoreConnectorService', () => {
     store = TestBed.inject(Store)
     appStateServiceMock = TestBed.inject(AppStateServiceMock)
     jest.spyOn(store, 'dispatch')
-    appStateServiceMock.currentMfe$.publish(mockMfe)
   })
 
   it('should subscribe and dispatch currentMfeChanged', () => {
+    TestBed.inject(CurrentMfeStoreConnectorService)
+    
+    appStateServiceMock.currentMfe$.publish(mockMfe)
+    
     const expectedAction = OneCxActions.currentMfeChanged({ currentMfe: mockMfe })
     expect(store.dispatch).toHaveBeenCalledWith(expectedAction)
   })
