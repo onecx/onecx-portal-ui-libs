@@ -26,7 +26,7 @@ describe('PermissionsStoreConnectorService', () => {
 
   it('should subscribe and dispatch permissionsChanged', () => {
     TestBed.inject(PermissionsStoreConnectorService)
-    userServiceMock.permissionsTopic$.publish(mockPermissions)
+    userServiceMock.permissions$.next(mockPermissions)
     const expectedAction = OneCxActions.permissionsChanged({ permissions: mockPermissions })
     expect(store.dispatch).toHaveBeenCalledWith(expectedAction)
   })

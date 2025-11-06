@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy, inject, provideEnvironmentInitializer } from '@angular/core'
+import { Injectable, OnDestroy, inject, ENVIRONMENT_INITIALIZER } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { OneCxActions } from '../onecx-actions'
 import { CurrentThemeTopic, Theme } from '@onecx/integration-interface'
@@ -6,7 +6,13 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 
 export function provideCurrentThemeStoreConnector() {
   return [
-    provideEnvironmentInitializer(() => inject(CurrentThemeStoreConnectorService)),
+    {
+      provide: ENVIRONMENT_INITIALIZER,
+      multi: true,
+      useFactory() {
+        return () => inject(CurrentThemeStoreConnectorService)
+      },
+    },
     CurrentThemeStoreConnectorService,
   ]
 }

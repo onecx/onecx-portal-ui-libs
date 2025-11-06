@@ -1,4 +1,4 @@
-import { Injectable, inject, provideEnvironmentInitializer } from '@angular/core'
+import { Injectable, inject, ENVIRONMENT_INITIALIZER } from '@angular/core'
 import { UntilDestroy } from '@ngneat/until-destroy'
 import { Store } from '@ngrx/store'
 import { ConfigurationService } from '@onecx/angular-integration-interface'
@@ -6,7 +6,13 @@ import { OneCxActions } from '../onecx-actions'
 
 export function provideConfigurationStoreConnector() {
   return [
-    provideEnvironmentInitializer(() => inject(ConfigurationStoreConnectorService)),
+    {
+      provide: ENVIRONMENT_INITIALIZER,
+      multi: true,
+      useFactory() {
+        return () => inject(ConfigurationStoreConnectorService)
+      },
+    },
     ConfigurationStoreConnectorService,
   ]
 }
@@ -17,7 +23,8 @@ export class ConfigurationStoreConnectorService {
   private configService = inject(ConfigurationService)
   private store = inject(Store)
   constructor() {
-    this.configService.getConfig().then((config: any) => {
+    this.configService.isInitialized.then(() => {
+      const config = this.configService.getConfig()
       if (config) {
         this.store.dispatch(OneCxActions.configChanged({ config }))
       }

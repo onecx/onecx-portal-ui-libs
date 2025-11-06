@@ -1,4 +1,4 @@
-import { Injectable, inject, provideEnvironmentInitializer } from '@angular/core'
+import { Injectable, inject, ENVIRONMENT_INITIALIZER } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { PageInfo } from '@onecx/integration-interface'
 import { OneCxActions } from '../onecx-actions'
@@ -7,7 +7,13 @@ import { AppStateService } from '@onecx/angular-integration-interface'
 
 export function provideCurrentPageStoreConnector() {
   return [
-    provideEnvironmentInitializer(() => inject(CurrentPageStoreConnectorService)),
+    {
+      provide: ENVIRONMENT_INITIALIZER,
+      multi: true,
+      useFactory() {
+        return () => inject(CurrentPageStoreConnectorService)
+      },
+    },
     CurrentPageStoreConnectorService,
   ]
 }

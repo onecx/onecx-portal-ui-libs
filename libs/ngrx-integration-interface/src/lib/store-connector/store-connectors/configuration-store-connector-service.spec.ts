@@ -9,7 +9,10 @@ describe('ConfigurationStoreConnectorService', () => {
   let mockConfigService: any
 
   beforeEach(() => {
-    mockConfigService = { getConfig: jest.fn().mockResolvedValue({ foo: 'bar' }) }
+    mockConfigService = { 
+      getConfig: jest.fn().mockReturnValue({ foo: 'bar' }),
+      isInitialized: Promise.resolve()
+    }
     TestBed.configureTestingModule({
       providers: [
         ConfigurationStoreConnectorService,
@@ -19,12 +22,14 @@ describe('ConfigurationStoreConnectorService', () => {
     })
     store = TestBed.inject(Store)
     jest.spyOn(store, 'dispatch')
-    TestBed.inject(ConfigurationStoreConnectorService)
   })
 
   it('should get config and dispatch configChanged', async () => {
-    const expectedAction = OneCxActions.configChanged({ config: { foo: 'bar' } })
+    TestBed.inject(ConfigurationStoreConnectorService)
+    
     await Promise.resolve()
+    
+    const expectedAction = OneCxActions.configChanged({ config: { foo: 'bar' } })
     expect(mockConfigService.getConfig).toHaveBeenCalled()
     expect(store.dispatch).toHaveBeenCalledWith(expectedAction)
   })

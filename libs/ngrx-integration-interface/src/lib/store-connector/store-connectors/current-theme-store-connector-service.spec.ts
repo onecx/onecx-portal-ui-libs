@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store'
 import { CurrentThemeStoreConnectorService } from './current-theme-store-connector-service'
 import { OneCxActions } from '../onecx-actions'
 import { Theme } from '@onecx/integration-interface'
-import { FakeTopic } from '@onecx/accelerator'
+import { FakeTopic } from '@onecx/angular-integration-interface/mocks'
 
 jest.mock('@onecx/integration-interface', () => {
   const actual = jest.requireActual('@onecx/integration-interface')
