@@ -15,7 +15,8 @@ export function provideConfigurationStoreConnector() {
 @Injectable()
 export class ConfigurationStoreConnectorService {
   private configService = inject(ConfigurationService)
-  constructor(private store: Store) {
+  private store = inject(Store)
+  constructor() {
     this.configService.getConfig().then((config: any) => {
       if (config) {
         this.store.dispatch(OneCxActions.configChanged({ config }))

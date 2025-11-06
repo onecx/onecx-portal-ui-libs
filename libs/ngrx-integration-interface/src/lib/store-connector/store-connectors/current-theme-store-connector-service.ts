@@ -14,8 +14,9 @@ export function provideCurrentThemeStoreConnector() {
 @UntilDestroy()
 @Injectable()
 export class CurrentThemeStoreConnectorService implements OnDestroy {
-  private currentThemeTopic$ = inject(CurrentThemeTopic)
-  constructor(private store: Store) {
+  private currentThemeTopic$ = new CurrentThemeTopic()
+  private store = inject(Store)
+  constructor() {
     this.currentThemeTopic$
       .pipe(untilDestroyed(this))
       .subscribe((currentTheme: Theme) => {

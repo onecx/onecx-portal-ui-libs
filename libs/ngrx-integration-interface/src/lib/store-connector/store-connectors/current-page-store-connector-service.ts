@@ -16,7 +16,8 @@ export function provideCurrentPageStoreConnector() {
 @Injectable()
 export class CurrentPageStoreConnectorService {
   private appStateService = inject(AppStateService)
-  constructor(private store: Store) {
+  private store = inject(Store)
+  constructor() {
     this.appStateService.currentPage$
       .pipe(untilDestroyed(this))
       .subscribe((currentPage: PageInfo | undefined) => {

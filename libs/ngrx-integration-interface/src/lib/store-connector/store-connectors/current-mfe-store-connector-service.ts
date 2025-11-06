@@ -16,7 +16,8 @@ export function provideCurrentMfeStoreConnector() {
 @Injectable()
 export class CurrentMfeStoreConnectorService {
   private appStateService = inject(AppStateService)
-  constructor(private store: Store) {
+  private store = inject(Store)
+  constructor() {
     this.appStateService.currentMfe$
       .pipe(untilDestroyed(this))
       .subscribe((currentMfe: MfeInfo) => {

@@ -15,7 +15,8 @@ export function providePermissionsStoreConnector() {
 @Injectable()
 export class PermissionsStoreConnectorService {
   private userService = inject(UserService)
-  constructor(private store: Store) {
+  private store = inject(Store)
+  constructor() {
     this.userService.getPermissions()
       .pipe(untilDestroyed(this))
       .subscribe((permissions) => {

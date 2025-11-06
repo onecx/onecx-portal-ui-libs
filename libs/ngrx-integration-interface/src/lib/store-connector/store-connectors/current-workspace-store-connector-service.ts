@@ -16,7 +16,8 @@ export function provideCurrentWorkspaceStoreConnector() {
 @Injectable()
 export class CurrentWorkspaceStoreConnectorService {
   private appStateService = inject(AppStateService)
-  constructor(private store: Store) {
+  private store = inject(Store)
+  constructor() {
     this.appStateService.currentWorkspace$
       .pipe(untilDestroyed(this))
       .subscribe((currentWorkspace: Workspace) => {
