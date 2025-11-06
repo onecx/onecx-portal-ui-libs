@@ -2,13 +2,12 @@ import { TestBed } from '@angular/core/testing'
 import { Store } from '@ngrx/store'
 import { CurrentMfeStoreConnectorService } from './current-mfe-store-connector-service'
 import { OneCxActions } from '../onecx-actions'
-import { CurrentMfeTopic, MfeInfo } from '@onecx/integration-interface'
-import { FakeTopic } from '@onecx/accelerator'
+import { MfeInfo } from '@onecx/integration-interface'
+import { AppStateServiceMock, provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 
 describe('CurrentMfeStoreConnectorService', () => {
-  let service: CurrentMfeStoreConnectorService
   let store: Store
-  let fakeTopic: FakeTopic<MfeInfo>
+  let appStateServiceMock: AppStateServiceMock
   const mockMfe: MfeInfo = {
     mountPath: '/mfe1',
     remoteBaseUrl: 'http://localhost:4201',
@@ -19,28 +18,24 @@ describe('CurrentMfeStoreConnectorService', () => {
   }
 
   beforeEach(() => {
-    fakeTopic = new FakeTopic<MfeInfo>()
     TestBed.configureTestingModule({
       providers: [
         CurrentMfeStoreConnectorService,
         { provide: Store, useValue: { dispatch: jest.fn() } },
-        { provide: CurrentMfeTopic, useValue: fakeTopic },
+        provideAppStateServiceMock(),
       ],
     })
     store = TestBed.inject(Store)
+    appStateServiceMock = TestBed.inject(AppStateServiceMock)
     jest.spyOn(store, 'dispatch')
-    service = TestBed.inject(CurrentMfeStoreConnectorService)
-    fakeTopic.publish(mockMfe)
   })
 
   it('should subscribe and dispatch currentMfeChanged', () => {
+    TestBed.inject(CurrentMfeStoreConnectorService)
+    
+    appStateServiceMock.currentMfe$.publish(mockMfe)
+    
     const expectedAction = OneCxActions.currentMfeChanged({ currentMfe: mockMfe })
     expect(store.dispatch).toHaveBeenCalledWith(expectedAction)
-  })
-
-  it('should destroy on ngOnDestroy', () => {
-    const destroySpy = jest.spyOn(fakeTopic, 'destroy')
-    service.ngOnDestroy()
-    expect(destroySpy).toHaveBeenCalled()
   })
 })

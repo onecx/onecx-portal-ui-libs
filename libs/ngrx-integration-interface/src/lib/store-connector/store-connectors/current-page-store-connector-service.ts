@@ -1,8 +1,9 @@
-import { Injectable, OnDestroy, inject, provideEnvironmentInitializer } from '@angular/core'
+import { Injectable, inject, provideEnvironmentInitializer } from '@angular/core'
 import { Store } from '@ngrx/store'
-import { CurrentPageTopic, PageInfo } from '@onecx/integration-interface'
+import { PageInfo } from '@onecx/integration-interface'
 import { OneCxActions } from '../onecx-actions'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
+import { AppStateService } from '@onecx/angular-integration-interface'
 
 export function provideCurrentPageStoreConnector() {
   return [
@@ -13,15 +14,14 @@ export function provideCurrentPageStoreConnector() {
 
 @UntilDestroy()
 @Injectable()
-export class CurrentPageStoreConnectorService implements OnDestroy {
-  constructor(private store: Store, private currentPageTopic$: CurrentPageTopic) {
-    this.currentPageTopic$
+export class CurrentPageStoreConnectorService {
+  private appStateService = inject(AppStateService)
+  private store = inject(Store)
+  constructor() {
+    this.appStateService.currentPage$
       .pipe(untilDestroyed(this))
       .subscribe((currentPage: PageInfo | undefined) => {
         this.store.dispatch(OneCxActions.currentPageChanged({ currentPage }))
       })
-  }
-  ngOnDestroy(): void {
-    this.currentPageTopic$.destroy()
   }
 }

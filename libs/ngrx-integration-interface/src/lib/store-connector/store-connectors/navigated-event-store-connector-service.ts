@@ -17,12 +17,11 @@ export function provideNavigatedEventStoreConnector() {
 
 @Injectable()
 export class NavigatedEventStoreConnectorService implements OnDestroy {
-  constructor(
-    private store: Store,
-    private appStateService: AppStateService,
-    private capabilityService: ShellCapabilityService,
-    private eventsTopic$: EventsTopic
-  ) {
+  private appStateService = inject(AppStateService)
+  private capabilityService = inject(ShellCapabilityService)
+  private eventsTopic$ = new EventsTopic()
+  private store = inject(Store)
+  constructor() {
     let observable: Observable<TopicEventType | CurrentLocationTopicPayload> =
       this.appStateService.currentLocation$.asObservable()
     if (!this.capabilityService.hasCapability(Capability.CURRENT_LOCATION_TOPIC)) {
