@@ -13,13 +13,14 @@ import {
   shellScopeId,
 } from '@onecx/angular-utils'
 import { replaceRootWithScope } from '@onecx/angular-utils'
+import { ReplaySubject } from 'rxjs'
 
 @Injectable({ providedIn: 'any' })
 export class CustomUseStyle extends UseStyle {
-  private appStateService: AppStateService = inject(AppStateService)
-  private skipStyleScoping: boolean = inject(SKIP_STYLE_SCOPING, { optional: true })
-  private remoteComponentConfig: RemoteComponentConfig = inject(REMOTE_COMPONENT_CONFIG, { optional: true })
-  private themeOverrides: ThemeOverrides = inject(THEME_OVERRIDES, { optional: true })
+  private readonly appStateService: AppStateService = inject(AppStateService)
+  private readonly skipStyleScoping: boolean | null = inject(SKIP_STYLE_SCOPING, { optional: true })
+  private readonly remoteComponentConfig: ReplaySubject<RemoteComponentConfig> | null = inject(REMOTE_COMPONENT_CONFIG, { optional: true })
+  private readonly themeOverrides: ThemeOverrides = inject(THEME_OVERRIDES, { optional: true })
 
   constructor() {
     super()

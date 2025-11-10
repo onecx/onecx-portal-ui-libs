@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http'
-import { inject, InjectionToken } from '@angular/core'
+import { inject, InjectionToken, Injector, runInInjectionContext } from '@angular/core'
 import { TranslateLoader } from '@ngx-translate/core'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import { from, isObservable, map, Observable, tap, zip } from 'rxjs'
@@ -22,14 +22,14 @@ function toObservable(path: string | Observable<string> | Promise<string>): Obse
 }
 
 export function createTranslateLoader(
-  http: HttpClient,
   _appStateService?: AppStateService,
   translationCacheService?: TranslationCacheService
 ): TranslateLoader {
   const ts = translationCacheService ?? inject(TranslationCacheService)
   const timerId = lastTranslateLoaderTimerId++
 
-  const translationPaths = inject(TRANSLATION_PATH, {optional: true}) ?? []
+  const translationPaths = inject(TRANSLATION_PATH, { optional: true }) ?? []
+  const injector = inject(Injector);
 
   console.time('createTranslateLoader_' + timerId)
   return new AsyncTranslateLoader(
@@ -38,7 +38,7 @@ export function createTranslateLoader(
         const uniqueTranslationPaths = [...new Set(translationPaths)]
         return new TranslateCombinedLoader(
           ...uniqueTranslationPaths.map((path) => {
-            return new CachingTranslateLoader(ts, http, path, '.json')
+            return runInInjectionContext(injector, () => new CachingTranslateLoader(ts, path, '.json'))
           })
         )
       }),

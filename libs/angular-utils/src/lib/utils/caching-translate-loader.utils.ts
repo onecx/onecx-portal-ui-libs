@@ -8,12 +8,11 @@ export class CachingTranslateLoader implements TranslateLoader {
   private translateLoader: TranslateHttpLoader
 
   constructor(
-    private translationCache: TranslationCacheService,
-    private http: HttpClient,
-    private prefix?: string,
-    private suffix?: string
+    private readonly translationCache: TranslationCacheService,
+    private readonly prefix?: string,
+    private readonly suffix?: string
   ) {
-    this.translateLoader = new TranslateHttpLoader(this.http, this.prefix, this.suffix)
+    this.translateLoader = new TranslateHttpLoader()
   }
 
   getTranslation(lang: string): Observable<any> {

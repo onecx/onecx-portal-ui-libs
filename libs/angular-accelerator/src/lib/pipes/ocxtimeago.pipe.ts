@@ -7,20 +7,17 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core'
 })
 // eslint-disable-next-line @angular-eslint/use-pipe-transform-interface
 export class OcxTimeAgoPipe extends TranslatePipe implements OnDestroy, PipeTransform {
-  private changeDetectorRef: ChangeDetectorRef
-  private ngZone = inject(NgZone)
-  private translateService: TranslateService
+  private readonly changeDetectorRef: ChangeDetectorRef
+  private readonly ngZone = inject(NgZone)
 
   private timer: number | undefined | null
 
   constructor() {
     const changeDetectorRef = inject(ChangeDetectorRef)
-    const translateService = inject(TranslateService)
 
-    super(translateService, changeDetectorRef)
+    super()
 
     this.changeDetectorRef = changeDetectorRef
-    this.translateService = translateService
   }
   override transform(value: string) {
     this.removeTimer()
