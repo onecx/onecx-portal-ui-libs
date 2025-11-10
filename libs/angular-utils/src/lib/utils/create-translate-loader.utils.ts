@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http'
 import { inject, InjectionToken, Injector, runInInjectionContext } from '@angular/core'
 import { TranslateLoader } from '@ngx-translate/core'
 import { AppStateService } from '@onecx/angular-integration-interface'

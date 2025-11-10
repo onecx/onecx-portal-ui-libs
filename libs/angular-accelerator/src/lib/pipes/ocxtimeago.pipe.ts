@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, NgZone, OnDestroy, Pipe, PipeTransform, inject } from '@angular/core'
-import { TranslatePipe, TranslateService } from '@ngx-translate/core'
+import { TranslatePipe } from '@ngx-translate/core'
 
 @Pipe({
   name: 'timeago',
