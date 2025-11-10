@@ -523,7 +523,9 @@ export class PortalDialogService implements OnDestroy {
 
   private removeDialogFromHtml(dialogComponent: DynamicDialog | undefined) {
     const bodyChild = this.findDialogComponentBodyChild(dialogComponent)
-    bodyChild && document.body.removeChild(bodyChild)
+    if (bodyChild) {
+      bodyChild.remove()
+    }
   }
 
   private setScopeIdentifier(dialogComponent: DynamicDialog | undefined) {

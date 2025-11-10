@@ -128,7 +128,9 @@ export class IfPermissionDirective implements OnInit {
       this.directiveContentRef = this.viewContainer.createEmbeddedView(this.templateRef)
 
       const el = this.getElement()
-      el && this.renderer.setAttribute(el, 'disabled', 'disabled')
+      if (el) {
+        this.renderer.setAttribute(el, 'disabled', 'disabled')
+      }
       this.isDisabled = true
     }
   }
@@ -138,7 +140,9 @@ export class IfPermissionDirective implements OnInit {
     if (this.isDisabled) {
       this.isDisabled = false
       const el = this.getElement()
-      el && this.renderer.removeAttribute(el, 'disabled')
+      if (el) {
+        this.renderer.removeAttribute(el, 'disabled')
+      }
     }
   }
 

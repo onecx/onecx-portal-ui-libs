@@ -5,8 +5,8 @@
   "peerDependencies": {
     "@angular/common": "^20.0.0",
     "@angular/core": "^20.0.0",
-    "@ngx-translate/core": "^16.0.0",
-    "@ngx-translate/http-loader": "^8.0.0",
+    "@ngx-translate/core": "^17.0.0",
+    "@ngx-translate/http-loader": "^17.0.0",
     "@onecx/accelerator": "^7.0.0-rc.7",
     "@onecx/angular-integration-interface": "^7.0.0-rc.7",
     "@primeng/themes": "^20.0.0",
@@ -17,11 +17,11 @@
     "@nx/devkit": "^22.0.0",
     "@onecx/nx-migration-utils": "^7.0.0-rc.7",
     "@onecx/integration-interface": "^7.0.0-rc.7",
-    "@jest/globals": "^29.0.0",
+    "@jest/globals": "^30.0.0",
     "jest-extended": "^6.0.0",
     "@phenomnomnominal/tsquery": "^6",
     "typescript": "^5.5.4",
-    "jest-preset-angular": "^14.2.2"
+    "jest-preset-angular": "^15.0.0"
   },
   "publishConfig": {
     "access": "public"
