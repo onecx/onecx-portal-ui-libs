@@ -15,6 +15,7 @@ xdescribe('PlatformManager - Integration Test', () => {
       await platformManager.stopAllContainers()
     } catch (error) {
       // Ignore cleanup errors in tests
+        console.log('Cleanup error:', error)
     }
   }, 30000)
 

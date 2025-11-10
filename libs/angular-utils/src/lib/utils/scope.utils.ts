@@ -155,8 +155,8 @@ export const dynamicPortalLayoutStylesSheetId = `body>:not([${dataNoPortalLayout
 // For MFE data from currentMfe topic is taken
 export async function getScopeIdentifier(
   appStateService: AppStateService,
-  skipStyleScoping?: boolean,
-  remoteComponentConfig?: ReplaySubject<RemoteComponentConfig>
+  skipStyleScoping?: boolean | null,
+  remoteComponentConfig?: ReplaySubject<RemoteComponentConfig> | null
 ) {
   let scopeId = ''
   if (!skipStyleScoping) {

@@ -33,8 +33,8 @@ export function filterOutQueryParamsHaveNotChanged<A extends RouterNavigatedActi
           const currentParams = currentResult.data
           if (
             allowEmptyQueryParamsList &&
-            Object.keys(actionParams).length === 0 &&
-            Object.keys(currentParams).length === 0
+            Object.keys(actionParams as Record<string, unknown>).length === 0 &&
+            Object.keys(currentParams as Record<string, unknown>).length === 0
           ) {
             return true
           }

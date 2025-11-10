@@ -259,6 +259,7 @@ export class DataImporter {
       return processResult.exitCode === 0 // true if process is still running
     } catch (error) {
       // If exec fails, assume import is completed
+      console.log('Error checking import status:', error)
       return false
     }
   }

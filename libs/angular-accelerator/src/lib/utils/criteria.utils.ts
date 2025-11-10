@@ -13,7 +13,7 @@ export interface BuildSearchCriteriaParameters {
 function _hasShowTime(datePickers: QueryList<DatePicker>, formKey: string): boolean {
   return (
     datePickers.find((d) => {
-      return d.name === formKey
+      return d.name() === formKey
     })?.showTime === true
   )
 }

@@ -21,7 +21,6 @@ export function translateLoader(http: HttpClient) {
       loader: {
         provide: TranslateLoader,
         useFactory: createTranslateLoader,
-        deps: [HttpClient],
       },
     }),
   ],

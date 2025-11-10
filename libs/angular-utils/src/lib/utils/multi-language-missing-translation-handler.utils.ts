@@ -35,7 +35,7 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
 function findTranslationForLang(lang: string, params: MissingTranslationHandlerParams): Observable<string> {
   return params.translateService.reloadLang(lang).pipe(
     map((interpolatableTranslationObject: Record<string, any>) => {
-      const translatedValue = params.translateService.parser.interpolate(
+      const translatedValue = (params.translateService as any).parser?.interpolate(
         getValue(interpolatableTranslationObject, params.key),
         params.interpolateParams
       )
