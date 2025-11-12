@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/portal-layout-styles/src",
   "projectType": "library",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
@@ -23,7 +24,7 @@
     },
     "release": {
       "executor": "@onecx/release:update-build-publish"
-    },    
+    },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
@@ -38,6 +39,5 @@
         }
       }
     }
-  },
-  "tags": []
+  }
 }

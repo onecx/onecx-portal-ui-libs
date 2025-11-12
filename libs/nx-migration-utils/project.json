@@ -17,14 +17,9 @@
     },
     "lint": {
       "executor": "@nx/linter:eslint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": [
-          "libs/nx-migration-utils/**/*.ts",
-          "libs/nx-migration-utils/package.json"
-        ]
+        "lintFilePatterns": ["libs/nx-migration-utils/**/*.ts", "libs/nx-migration-utils/package.json"]
       }
     },
     "test": {
@@ -43,6 +38,6 @@
     },
     "release": {
       "executor": "@onecx/release:update-build-publish"
-    }   
+    }
   }
 }
