@@ -12,6 +12,14 @@
     "keycloak-js": "^25.0.1",
     "rxjs": "~7.8.0"
   },
+  "peerDependenciesMeta": {
+    "keycloak-js": {
+      "optional": true
+    },
+    "keycloak-angular": {
+      "optional": true
+    }
+  },
   "publishConfig": {
     "access": "public"
   }

@@ -21,6 +21,7 @@ function appInitializer(configService: ConfigurationService, authService: Keyclo
 /**
  * Authentication module for keycloak. Requires @onecx/angular-integration-interfacer and keycloak-js to work.
  */
+// TODO: Should we do something here
 @NgModule({
   imports: [CommonModule, KeycloakAngularModule],
   providers: [

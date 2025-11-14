@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core'
 import { ConfigurationService, CONFIG_KEY } from '@onecx/angular-integration-interface'
-import { KeycloakEventType, KeycloakOptions, KeycloakService } from 'keycloak-angular'
+import type { KeycloakOptions, KeycloakService } from 'keycloak-angular'
 import { KeycloakConfig } from 'keycloak-js'
 import { AuthService } from '../auth.service'
+
+type KeycloakAngularModule = typeof import('keycloak-angular')
 
 const KC_REFRESH_TOKEN_LS = 'onecx_kc_refreshToken'
 const KC_ID_TOKEN_LS = 'onecx_kc_idToken'
@@ -13,7 +15,11 @@ export class KeycloakAuthService implements AuthService {
 
   kcConfig?: Record<string, unknown>
 
-  constructor(private keycloakService: KeycloakService, private configService: ConfigurationService) {}
+  private keycloakService?: KeycloakService
+  private keycloakAngularModule?: KeycloakAngularModule
+  private eventsAttached = false
+
+  constructor(private configService: ConfigurationService) {}
 
   public async init(config?: Record<string, unknown>): Promise<boolean> {
     console.time('KeycloakAuthService')
@@ -31,7 +37,10 @@ export class KeycloakAuthService implements AuthService {
       }
     }
 
-    this.setupEventListener()
+    const keycloakModule = await this.loadKeycloakAngularModule()
+    const keycloakService = await this.ensureKeycloakService()
+
+    this.setupEventListener(keycloakService, keycloakModule)
 
     let kcConfig: KeycloakConfig | string = { ...this.getValidKCConfig(), ...(config ?? {}) }
     if (!kcConfig.clientId || !kcConfig.realm || !kcConfig.url) {
@@ -55,17 +64,17 @@ export class KeycloakAuthService implements AuthService {
       bearerExcludedUrls: ['/assets'],
     }
 
-    return this.keycloakService
+    return keycloakService
       .init(kcOptions)
       .catch((err) => {
         console.log(`Keycloak err: ${err}, try force login`)
-        return this.keycloakService.login(config)
+        return keycloakService.login(config)
       })
       .then((loginOk) => {
         if (loginOk) {
-          return this.keycloakService.getToken()
+          return keycloakService.getToken()
         } else {
-          return this.keycloakService.login(config).then(() => 'login')
+          return keycloakService.login(config).then(() => 'login')
         }
       })
       .then(() => {
@@ -94,30 +103,34 @@ export class KeycloakAuthService implements AuthService {
     }
   }
 
-  private setupEventListener() {
-    this.keycloakService.keycloakEvents$.subscribe((ke) => {
-      if (this.keycloakService.getKeycloakInstance().token) {
+  private setupEventListener(keycloakService: KeycloakService, keycloakModule: KeycloakAngularModule) {
+    if (this.eventsAttached) {
+      return
+    }
+    this.eventsAttached = true
+    keycloakService.keycloakEvents$.subscribe((ke) => {
+      if (keycloakService.getKeycloakInstance().token) {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        localStorage.setItem(KC_TOKEN_LS, this.keycloakService.getKeycloakInstance().token!)
+        localStorage.setItem(KC_TOKEN_LS, keycloakService.getKeycloakInstance().token!)
       } else {
         localStorage.removeItem(KC_TOKEN_LS)
       }
-      if (this.keycloakService.getKeycloakInstance().idToken) {
+      if (keycloakService.getKeycloakInstance().idToken) {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        localStorage.setItem(KC_ID_TOKEN_LS, this.keycloakService.getKeycloakInstance().idToken!)
+        localStorage.setItem(KC_ID_TOKEN_LS, keycloakService.getKeycloakInstance().idToken!)
       } else {
         localStorage.removeItem(KC_ID_TOKEN_LS)
       }
-      if (this.keycloakService.getKeycloakInstance().refreshToken) {
+      if (keycloakService.getKeycloakInstance().refreshToken) {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        localStorage.setItem(KC_REFRESH_TOKEN_LS, this.keycloakService.getKeycloakInstance().refreshToken!)
+        localStorage.setItem(KC_REFRESH_TOKEN_LS, keycloakService.getKeycloakInstance().refreshToken!)
       } else {
         localStorage.removeItem(KC_REFRESH_TOKEN_LS)
       }
-      if (ke.type === KeycloakEventType.OnAuthLogout) {
+      if (ke.type === keycloakModule.KeycloakEventType.OnAuthLogout) {
         console.log('SSO logout nav to root')
         this.clearKCStateFromLocalstorage()
-        this.keycloakService.login(this.kcConfig)
+        keycloakService.login(this.kcConfig)
       }
     })
   }
@@ -137,21 +150,22 @@ export class KeycloakAuthService implements AuthService {
   }
 
   getIdToken(): string | null {
-    return this.keycloakService.getKeycloakInstance().idToken ?? null
+    return this.assertKeycloakService().getKeycloakInstance().idToken ?? null
   }
   getAccessToken(): string | null {
-    return this.keycloakService.getKeycloakInstance().token ?? null
+    return this.assertKeycloakService().getKeycloakInstance().token ?? null
   }
 
   logout(): void {
-    this.keycloakService.logout()
+    this.assertKeycloakService().logout()
   }
 
   async updateTokenIfNeeded(): Promise<boolean> {
-    if (!(await this.keycloakService.isLoggedIn())) {
-      return this.keycloakService.login(this.kcConfig).then(() => false)
+    const keycloakService = await this.ensureKeycloakService()
+    if (!(await keycloakService.isLoggedIn())) {
+      return keycloakService.login(this.kcConfig).then(() => false)
     } else {
-      return this.keycloakService.updateToken()
+      return keycloakService.updateToken()
     }
   }
 
@@ -169,5 +183,36 @@ export class KeycloakAuthService implements AuthService {
 
   getHeaderValues(): Record<string, string> {
     return { 'apm-principal-token': this.getIdToken() ?? '', Authorization: `Bearer ${this.getAccessToken()}` }
+  }
+
+  private async loadKeycloakAngularModule(): Promise<KeycloakAngularModule> {
+    if (this.keycloakAngularModule) {
+      return this.keycloakAngularModule
+    }
+    try {
+      const module = await import('keycloak-angular')
+      this.keycloakAngularModule = module
+      return module
+    } catch (error) {
+      throw new Error(
+        'Failed to import the optional peer dependency "keycloak-angular". Please ensure it is installed to enable Keycloak authentication.'
+      )
+    }
+  }
+
+  private async ensureKeycloakService(): Promise<KeycloakService> {
+    if (this.keycloakService) {
+      return this.keycloakService
+    }
+    const keycloakModule = await this.loadKeycloakAngularModule()
+    this.keycloakService = new keycloakModule.KeycloakService()
+    return this.keycloakService
+  }
+
+  private assertKeycloakService(): KeycloakService {
+    if (!this.keycloakService) {
+      throw new Error('KeycloakAuthService has not been initialized. Call init() before using Keycloak APIs.')
+    }
+    return this.keycloakService
   }
 }
