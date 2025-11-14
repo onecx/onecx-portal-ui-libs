@@ -13,6 +13,11 @@
     "@nx/devkit": "^20.3.0",
     "@onecx/nx-migration-utils": "^6.10.0"
   },
+  "peerDependenciesMeta": {
+    "keycloak-js": {
+      "optional": true
+    }
+  },
   "publishConfig": {
     "access": "public"
   },
