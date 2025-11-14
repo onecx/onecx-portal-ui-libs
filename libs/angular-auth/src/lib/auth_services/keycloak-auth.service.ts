@@ -40,7 +40,13 @@ export class KeycloakAuthService implements AuthService {
     const enableSilentSSOCheck =
       (await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_ENABLE_SILENT_SSO)) === 'true'
 
-    this.keycloak = new Keycloak(kcConfig)
+      await import('keycloak-js').then(({ default: Keycloak }) => {
+      this.keycloak = new Keycloak(kcConfig)
+    });
+
+    if (!this.keycloak) {
+      throw new Error('Keycloak initialization failed!')
+    }
 
     this.setupEventListener()
 
