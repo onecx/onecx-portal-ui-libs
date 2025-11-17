@@ -24,7 +24,6 @@ export * from './lib/model/remote-component-config.model'
 export * from './lib/services/translation-cache.service'
 export * from './lib/services/permission.service'
 export * from './lib/services/translation-connection.service'
-export * from './lib/providers/translation-path-from-meta.providers'
 
 // Components
 export * from './lib/components/portal-page/portal-page.component'
@@ -33,3 +32,4 @@ export * from './lib/components/portal-page/portal-page.component'
 export * from './lib/providers/angular-utils.providers'
 export * from './lib/providers/translation-path.providers'
 export * from './lib/providers/permission-service.providers'
+export * from './lib/providers/translation-path-from-meta.providers'

@@ -1,0 +1,9 @@
+= How to debug Guards
+
+After running the following command in your web browser's DevTools console:
+
+```
+window['@onecx/angular-utils'].guards ??= {debug: true}
+```
+
+you will start seeing debug logs for the cross-application router guards in the console.
