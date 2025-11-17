@@ -199,239 +199,257 @@ describe('WebcomponentConnector', () => {
     })
   })
 
-  it('should wrap guards on route recognized', () => {
-    connector.connect()
+  describe('RoutesRecognized', () => {
+    it('should wrap guards on route recognized', () => {
+      connector.connect()
 
-    const childRouteConfig = {
-      canActivate: [],
-      canActivateChild: [],
-    } as Route
+      const childRouteConfig = {
+        canActivate: [],
+        canActivateChild: [],
+      } as Route
 
-    const parentRouteConfig = {
-      canActivate: [],
-      canDeactivate: [],
-    } as Route
-    const routesRecognizedMock = new RoutesRecognized(1, '', '', {
-      root: {
-        routeConfig: parentRouteConfig,
-        children: [
-          {
-            routeConfig: childRouteConfig,
-          },
-        ],
-      },
-    } as RouterStateSnapshot)
+      const parentRouteConfig = {
+        canActivate: [],
+        canDeactivate: [],
+      } as Route
+      const routesRecognizedMock = new RoutesRecognized(1, '', '', {
+        root: {
+          routeConfig: parentRouteConfig,
+          children: [
+            {
+              routeConfig: childRouteConfig,
+            },
+          ],
+        },
+      } as RouterStateSnapshot)
 
-    ;(mockRouter.events as ReplaySubject<any>).next(routesRecognizedMock)
+      ;(mockRouter.events as ReplaySubject<any>).next(routesRecognizedMock)
 
-    expect(wrapGuards).toHaveBeenCalledWith(parentRouteConfig)
-    expect(wrapGuards).toHaveBeenCalledWith(childRouteConfig)
-  })
+      expect(wrapGuards).toHaveBeenCalledWith(parentRouteConfig)
+      expect(wrapGuards).toHaveBeenCalledWith(childRouteConfig)
+    })
 
-  it('should not wrap guards on route recognized if no route config', () => {
-    connector.connect()
+    it('should not wrap guards on route recognized if no route config', () => {
+      connector.connect()
 
-    const routesRecognizedMock = new RoutesRecognized(1, '', '', {
-      root: {
-        children: [],
-      },
-    } as any as RouterStateSnapshot)
+      const routesRecognizedMock = new RoutesRecognized(1, '', '', {
+        root: {
+          children: [],
+        },
+      } as any as RouterStateSnapshot)
 
-    ;(mockRouter.events as ReplaySubject<any>).next(routesRecognizedMock)
+      ;(mockRouter.events as ReplaySubject<any>).next(routesRecognizedMock)
 
-    expect(wrapGuards).not.toHaveBeenCalled()
-  })
-
-  it('should schedule guards results gathering on GuardsCheckStart', async () => {
-    const spy = jest.spyOn(mockGuardsGatherer, 'gather').mockReturnValue(Promise.resolve([true, true]))
-    connector.connect()
-
-    const navigationObject = {} as GuardsNavigationState
-
-    mockRouter.getCurrentNavigation = jest.fn().mockReturnValue({ extras: { state: navigationObject } })
-    mockGuardsNavigationStateController.getMode.mockReturnValue(GUARD_MODE.NAVIGATION_REQUESTED)
-    mockGuardsNavigationStateController.createNavigationRequestedState.mockImplementation(
-      (promise: GuardCheckPromise, state?: GuardsNavigationState | undefined) => {
-        if (state) state[GUARD_CHECK_PROMISE] = promise
-        return state ?? {}
-      }
-    )
-
-    const guardsCheckStartMock = new GuardsCheckStart(1, '', '/test', {} as RouterStateSnapshot)
-
-    ;(mockRouter.events as ReplaySubject<any>).next(guardsCheckStartMock)
-
-    expect(spy).toHaveBeenCalledWith({ url: guardsCheckStartMock.urlAfterRedirects })
-    expect(navigationObject[GUARD_CHECK_PROMISE]).toBeDefined()
-    const guardCheckResult = await navigationObject[GUARD_CHECK_PROMISE]
-    expect(guardCheckResult).toBe(true)
-  })
-
-  it('should not schedule guards results gathering if no current navigation', () => {
-    const spy = jest.spyOn(mockGuardsGatherer, 'gather')
-    connector.connect()
-
-    mockRouter.getCurrentNavigation = jest.fn().mockReturnValue(null)
-
-    const guardsCheckStartMock = new GuardsCheckStart(1, '', '/test', {} as RouterStateSnapshot)
-
-    ;(mockRouter.events as ReplaySubject<any>).next(guardsCheckStartMock)
-
-    expect(spy).not.toHaveBeenCalled()
-  })
-
-  it('should not schedule guards results gathering if guard mode is INITIAL_ROUTER_SYNC', () => {
-    const spy = jest.spyOn(mockGuardsGatherer, 'gather')
-    connector.connect()
-
-    mockRouter.getCurrentNavigation = jest.fn().mockReturnValue({ extras: { state: {} } })
-    mockGuardsNavigationStateController.getMode.mockReturnValue(GUARD_MODE.INITIAL_ROUTER_SYNC)
-
-    const guardsCheckStartMock = new GuardsCheckStart(1, '', '/test', {} as RouterStateSnapshot)
-
-    ;(mockRouter.events as ReplaySubject<any>).next(guardsCheckStartMock)
-
-    expect(spy).not.toHaveBeenCalled()
-  })
-
-  it('should not schedule guards results gathering if guard mode is GUARD_CHECK', () => {
-    const spy = jest.spyOn(mockGuardsGatherer, 'gather')
-    connector.connect()
-
-    mockRouter.getCurrentNavigation = jest.fn().mockReturnValue({ extras: { state: {} } })
-    mockGuardsNavigationStateController.getMode.mockReturnValue(GUARD_MODE.GUARD_CHECK)
-
-    const guardsCheckStartMock = new GuardsCheckStart(1, '', '/test', {} as RouterStateSnapshot)
-
-    ;(mockRouter.events as ReplaySubject<any>).next(guardsCheckStartMock)
-
-    expect(spy).not.toHaveBeenCalled()
-  })
-
-  it('should not schedule guards results gathering if guard mode is ROUTER_SYNC', () => {
-    const spy = jest.spyOn(mockGuardsGatherer, 'gather')
-    connector.connect()
-
-    mockRouter.getCurrentNavigation = jest.fn().mockReturnValue({ extras: { state: {} } })
-    mockGuardsNavigationStateController.getMode.mockReturnValue(GUARD_MODE.ROUTER_SYNC)
-
-    const guardsCheckStartMock = new GuardsCheckStart(1, '', '/test', {} as RouterStateSnapshot)
-
-    ;(mockRouter.events as ReplaySubject<any>).next(guardsCheckStartMock)
-
-    expect(spy).not.toHaveBeenCalled()
-  })
-
-  it('should not schedule guards results gathering if no navigation state', async () => {
-    const spy = jest.spyOn(mockGuardsGatherer, 'gather').mockReturnValue(Promise.resolve([true, true]))
-    connector.connect()
-
-    const extrasObject = {} as any
-
-    mockRouter.getCurrentNavigation = jest.fn().mockReturnValue({ extras: extrasObject })
-    mockGuardsNavigationStateController.getMode.mockReturnValue(GUARD_MODE.NAVIGATION_REQUESTED)
-    mockGuardsNavigationStateController.createNavigationRequestedState.mockImplementation(
-      (promise: GuardCheckPromise, state?: GuardsNavigationState | undefined) => {
-        if (state) state[GUARD_CHECK_PROMISE] = promise
-        return state ?? {}
-      }
-    )
-
-    const guardsCheckStartMock = new GuardsCheckStart(1, '', '/test', {} as RouterStateSnapshot)
-
-    ;(mockRouter.events as ReplaySubject<any>).next(guardsCheckStartMock)
-
-    expect(spy).toHaveBeenCalledWith({ url: guardsCheckStartMock.urlAfterRedirects })
-    expect(extrasObject['state'][GUARD_CHECK_PROMISE]).toBeDefined()
-    const guardCheckResult = await extrasObject['state'][GUARD_CHECK_PROMISE]
-    expect(guardCheckResult).toBe(true)
-  })
-
-  it('should request navigation revert on INITIAL_ROUTER_SYNC failure', async () => {
-    const spy = jest.spyOn(eventsTopic, 'publish')
-    connector.connect()
-
-    mockGuardsNavigationStateController.getMode.mockReturnValue(GUARD_MODE.INITIAL_ROUTER_SYNC)
-    const guardsCheckEndMock = new GuardsCheckEnd(1, '', '/test', {} as RouterStateSnapshot, false)
-
-    ;(mockRouter.events as ReplaySubject<any>).next(guardsCheckEndMock)
-
-    expect(spy).toHaveBeenCalledWith({
-      type: 'revertNavigation',
+      expect(wrapGuards).not.toHaveBeenCalled()
     })
   })
 
-  it('should resolve guard check on GUARD_CHECK if should activate the route', () => {
-    const spy = jest.spyOn(mockGuardsGatherer, 'resolveRoute')
-    connector.connect()
+  describe('GuardsCheckStart', () => {
+    it('should schedule guards results gathering on GuardsCheckStart', async () => {
+      const spy = jest.spyOn(mockGuardsGatherer, 'gather').mockReturnValue(Promise.resolve([true, true]))
+      connector.connect()
 
-    mockGuardsNavigationStateController.getMode.mockReturnValue(GUARD_MODE.GUARD_CHECK)
-    const guardsCheckEndMock = new GuardsCheckEnd(1, '', '/test', {} as RouterStateSnapshot, true)
+      const navigationObject = {} as GuardsNavigationState
 
-    ;(mockRouter.events as ReplaySubject<any>).next(guardsCheckEndMock)
+      mockRouter.getCurrentNavigation = jest.fn().mockReturnValue({ extras: { state: navigationObject } })
+      mockGuardsNavigationStateController.getMode.mockReturnValue(GUARD_MODE.NAVIGATION_REQUESTED)
+      mockGuardsNavigationStateController.createNavigationRequestedState.mockImplementation(
+        (promise: GuardCheckPromise, state?: GuardsNavigationState | undefined) => {
+          if (state) state[GUARD_CHECK_PROMISE] = promise
+          return state ?? {}
+        }
+      )
 
-    expect(spy).toHaveBeenCalledWith(guardsCheckEndMock.urlAfterRedirects, true)
-    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith(mockRouter.url, {
-      skipLocationChange: true,
-      state: { [IS_ROUTER_SYNC]: true },
+      const guardsCheckStartMock = new GuardsCheckStart(1, '', '/test', {} as RouterStateSnapshot)
+
+      ;(mockRouter.events as ReplaySubject<any>).next(guardsCheckStartMock)
+
+      expect(spy).toHaveBeenCalledWith({ url: guardsCheckStartMock.urlAfterRedirects })
+      expect(navigationObject[GUARD_CHECK_PROMISE]).toBeDefined()
+      const guardCheckResult = await navigationObject[GUARD_CHECK_PROMISE]
+      expect(guardCheckResult).toBe(true)
+    })
+
+    it('should not schedule guards results gathering if no current navigation', () => {
+      const spy = jest.spyOn(mockGuardsGatherer, 'gather')
+      connector.connect()
+
+      mockRouter.getCurrentNavigation = jest.fn().mockReturnValue(null)
+
+      const guardsCheckStartMock = new GuardsCheckStart(1, '', '/test', {} as RouterStateSnapshot)
+
+      ;(mockRouter.events as ReplaySubject<any>).next(guardsCheckStartMock)
+
+      expect(spy).not.toHaveBeenCalled()
+    })
+
+    it('should not schedule guards results gathering if guard mode is INITIAL_ROUTER_SYNC', () => {
+      const spy = jest.spyOn(mockGuardsGatherer, 'gather')
+      connector.connect()
+
+      mockRouter.getCurrentNavigation = jest.fn().mockReturnValue({ extras: { state: {} } })
+      mockGuardsNavigationStateController.getMode.mockReturnValue(GUARD_MODE.INITIAL_ROUTER_SYNC)
+
+      const guardsCheckStartMock = new GuardsCheckStart(1, '', '/test', {} as RouterStateSnapshot)
+
+      ;(mockRouter.events as ReplaySubject<any>).next(guardsCheckStartMock)
+
+      expect(spy).not.toHaveBeenCalled()
+    })
+
+    it('should not schedule guards results gathering if guard mode is GUARD_CHECK', () => {
+      const spy = jest.spyOn(mockGuardsGatherer, 'gather')
+      connector.connect()
+
+      mockRouter.getCurrentNavigation = jest.fn().mockReturnValue({ extras: { state: {} } })
+      mockGuardsNavigationStateController.getMode.mockReturnValue(GUARD_MODE.GUARD_CHECK)
+
+      const guardsCheckStartMock = new GuardsCheckStart(1, '', '/test', {} as RouterStateSnapshot)
+
+      ;(mockRouter.events as ReplaySubject<any>).next(guardsCheckStartMock)
+
+      expect(spy).not.toHaveBeenCalled()
+    })
+
+    it('should not schedule guards results gathering if guard mode is ROUTER_SYNC', () => {
+      const spy = jest.spyOn(mockGuardsGatherer, 'gather')
+      connector.connect()
+
+      mockRouter.getCurrentNavigation = jest.fn().mockReturnValue({ extras: { state: {} } })
+      mockGuardsNavigationStateController.getMode.mockReturnValue(GUARD_MODE.ROUTER_SYNC)
+
+      const guardsCheckStartMock = new GuardsCheckStart(1, '', '/test', {} as RouterStateSnapshot)
+
+      ;(mockRouter.events as ReplaySubject<any>).next(guardsCheckStartMock)
+
+      expect(spy).not.toHaveBeenCalled()
+    })
+
+    it('should not schedule guards results gathering if no navigation state', async () => {
+      const spy = jest.spyOn(mockGuardsGatherer, 'gather').mockReturnValue(Promise.resolve([true, true]))
+      connector.connect()
+
+      const extrasObject = {} as any
+
+      mockRouter.getCurrentNavigation = jest.fn().mockReturnValue({ extras: extrasObject })
+      mockGuardsNavigationStateController.getMode.mockReturnValue(GUARD_MODE.NAVIGATION_REQUESTED)
+      mockGuardsNavigationStateController.createNavigationRequestedState.mockImplementation(
+        (promise: GuardCheckPromise, state?: GuardsNavigationState | undefined) => {
+          if (state) state[GUARD_CHECK_PROMISE] = promise
+          return state ?? {}
+        }
+      )
+
+      const guardsCheckStartMock = new GuardsCheckStart(1, '', '/test', {} as RouterStateSnapshot)
+
+      ;(mockRouter.events as ReplaySubject<any>).next(guardsCheckStartMock)
+
+      expect(spy).toHaveBeenCalledWith({ url: guardsCheckStartMock.urlAfterRedirects })
+      expect(extrasObject['state'][GUARD_CHECK_PROMISE]).toBeDefined()
+      const guardCheckResult = await extrasObject['state'][GUARD_CHECK_PROMISE]
+      expect(guardCheckResult).toBe(true)
     })
   })
 
-  it('should not resolve guard check on GUARD_CHECK if should not activate the route', () => {
-    const spy = jest.spyOn(mockGuardsGatherer, 'resolveRoute')
-    connector.connect()
+  describe('GuardsCheckEnd', () => {
+    it('should request navigation revert on INITIAL_ROUTER_SYNC failure', async () => {
+      const spy = jest.spyOn(eventsTopic, 'publish')
+      connector.connect()
 
-    mockGuardsNavigationStateController.getMode.mockReturnValue(GUARD_MODE.GUARD_CHECK)
-    const guardsCheckEndMock = new GuardsCheckEnd(1, '', '/test', {} as RouterStateSnapshot, false)
+      mockGuardsNavigationStateController.getMode.mockReturnValue(GUARD_MODE.INITIAL_ROUTER_SYNC)
+      const guardsCheckEndMock = new GuardsCheckEnd(1, '', '/test', {} as RouterStateSnapshot, false)
 
-    mockRouter.navigateByUrl.mockClear()
-    ;(mockRouter.events as ReplaySubject<any>).next(guardsCheckEndMock)
+      ;(mockRouter.events as ReplaySubject<any>).next(guardsCheckEndMock)
 
-    expect(spy).not.toHaveBeenCalled()
-    expect(mockRouter.navigateByUrl).not.toHaveBeenCalled()
-  })
+      expect(spy).toHaveBeenCalledWith({
+        type: 'revertNavigation',
+      })
+    })
 
-  it('should not resolve guard check on ROUTER_SYNC', () => {
-    const spy = jest.spyOn(mockGuardsGatherer, 'resolveRoute')
-    connector.connect()
+    it('should resolve guard check on GUARD_CHECK if should activate the route', () => {
+      const spy = jest.spyOn(mockGuardsGatherer, 'resolveRoute')
+      connector.connect()
 
-    mockGuardsNavigationStateController.getMode.mockReturnValue(GUARD_MODE.ROUTER_SYNC)
-    const guardsCheckEndMock = new GuardsCheckEnd(1, '', '/test', {} as RouterStateSnapshot, true)
+      mockGuardsNavigationStateController.getMode.mockReturnValue(GUARD_MODE.GUARD_CHECK)
+      const guardsCheckEndMock = new GuardsCheckEnd(1, '', '/test', {} as RouterStateSnapshot, true)
 
-    mockRouter.navigateByUrl.mockClear()
-    ;(mockRouter.events as ReplaySubject<any>).next(guardsCheckEndMock)
+      ;(mockRouter.events as ReplaySubject<any>).next(guardsCheckEndMock)
 
-    expect(spy).not.toHaveBeenCalled()
-    expect(mockRouter.navigateByUrl).not.toHaveBeenCalled()
-  })
+      expect(spy).toHaveBeenCalledWith(guardsCheckEndMock.urlAfterRedirects, true)
+      expect(mockRouter.navigateByUrl).toHaveBeenCalledWith(mockRouter.url, {
+        skipLocationChange: true,
+        state: { [IS_ROUTER_SYNC]: true },
+      })
+    })
 
-  it('should not resolve guard check on NAVIGATION_REQUESTED', () => {
-    const spy = jest.spyOn(mockGuardsGatherer, 'resolveRoute')
-    connector.connect()
+    it('should not resolve guard check on GUARD_CHECK if should not activate the route', () => {
+      const spy = jest.spyOn(mockGuardsGatherer, 'resolveRoute')
+      connector.connect()
 
-    mockGuardsNavigationStateController.getMode.mockReturnValue(GUARD_MODE.NAVIGATION_REQUESTED)
-    const guardsCheckEndMock = new GuardsCheckEnd(1, '', '/test', {} as RouterStateSnapshot, true)
+      mockGuardsNavigationStateController.getMode.mockReturnValue(GUARD_MODE.GUARD_CHECK)
+      const guardsCheckEndMock = new GuardsCheckEnd(1, '', '/test', {} as RouterStateSnapshot, false)
 
-    mockRouter.navigateByUrl.mockClear()
-    ;(mockRouter.events as ReplaySubject<any>).next(guardsCheckEndMock)
+      mockRouter.navigateByUrl.mockClear()
+      ;(mockRouter.events as ReplaySubject<any>).next(guardsCheckEndMock)
 
-    expect(spy).not.toHaveBeenCalled()
-    expect(mockRouter.navigateByUrl).not.toHaveBeenCalled()
-  })
+      expect(spy).not.toHaveBeenCalled()
+      expect(mockRouter.navigateByUrl).not.toHaveBeenCalled()
+    })
 
-  it('should not resolve guard check if no navigation state', () => {
-    const spy = jest.spyOn(mockGuardsGatherer, 'resolveRoute')
-    connector.connect()
+    it('should not resolve guard check on ROUTER_SYNC', () => {
+      const spy = jest.spyOn(mockGuardsGatherer, 'resolveRoute')
+      connector.connect()
 
-    mockRouter.getCurrentNavigation = jest.fn().mockReturnValue({ extras: {} })
-    mockGuardsNavigationStateController.getMode.mockReturnValue(GUARD_MODE.NAVIGATION_REQUESTED)
-    const guardsCheckEndMock = new GuardsCheckEnd(1, '', '/test', {} as RouterStateSnapshot, true)
+      mockGuardsNavigationStateController.getMode.mockReturnValue(GUARD_MODE.ROUTER_SYNC)
+      const guardsCheckEndMock = new GuardsCheckEnd(1, '', '/test', {} as RouterStateSnapshot, true)
 
-    mockRouter.navigateByUrl.mockClear()
-    ;(mockRouter.events as ReplaySubject<any>).next(guardsCheckEndMock)
+      mockRouter.navigateByUrl.mockClear()
+      ;(mockRouter.events as ReplaySubject<any>).next(guardsCheckEndMock)
 
-    expect(spy).not.toHaveBeenCalled()
-    expect(mockRouter.navigateByUrl).not.toHaveBeenCalled()
-    expect(mockGuardsNavigationStateController.getMode).toHaveBeenCalledWith({})
+      expect(spy).not.toHaveBeenCalled()
+      expect(mockRouter.navigateByUrl).not.toHaveBeenCalled()
+    })
+
+    it('should not resolve guard check on NAVIGATION_REQUESTED', () => {
+      const spy = jest.spyOn(mockGuardsGatherer, 'resolveRoute')
+      connector.connect()
+
+      mockGuardsNavigationStateController.getMode.mockReturnValue(GUARD_MODE.NAVIGATION_REQUESTED)
+      const guardsCheckEndMock = new GuardsCheckEnd(1, '', '/test', {} as RouterStateSnapshot, true)
+
+      mockRouter.navigateByUrl.mockClear()
+      ;(mockRouter.events as ReplaySubject<any>).next(guardsCheckEndMock)
+
+      expect(spy).not.toHaveBeenCalled()
+      expect(mockRouter.navigateByUrl).not.toHaveBeenCalled()
+    })
+
+    it('should not resolve guard check if no navigation state', () => {
+      const spy = jest.spyOn(mockGuardsGatherer, 'resolveRoute')
+      connector.connect()
+
+      mockRouter.getCurrentNavigation = jest.fn().mockReturnValue({ extras: {} })
+      mockGuardsNavigationStateController.getMode.mockReturnValue(GUARD_MODE.NAVIGATION_REQUESTED)
+      const guardsCheckEndMock = new GuardsCheckEnd(1, '', '/test', {} as RouterStateSnapshot, true)
+
+      mockRouter.navigateByUrl.mockClear()
+      ;(mockRouter.events as ReplaySubject<any>).next(guardsCheckEndMock)
+
+      expect(spy).not.toHaveBeenCalled()
+      expect(mockRouter.navigateByUrl).not.toHaveBeenCalled()
+      expect(mockGuardsNavigationStateController.getMode).toHaveBeenCalledWith({})
+    })
+
+    it('should have empty navigation state if no current navigation', () => {
+      connector.connect()
+
+      mockRouter.getCurrentNavigation = jest.fn().mockReturnValue(null)
+      const guardsCheckEndMock = new GuardsCheckEnd(1, '', '/test', {} as RouterStateSnapshot, true)
+
+      mockRouter.navigateByUrl.mockClear()
+      ;(mockRouter.events as ReplaySubject<any>).next(guardsCheckEndMock)
+
+      expect(mockGuardsNavigationStateController.getMode).toHaveBeenCalledWith({})
+    })
   })
 })
