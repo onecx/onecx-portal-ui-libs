@@ -1,7 +1,7 @@
 export class DynamicAppId {
   public appElementName = ''
 
-  constructor(private value: string = 'ng') {
+  constructor(private value = 'ng') {
     Object.getOwnPropertyNames(String.prototype).forEach((k) => {
       if (k != 'valueOf' && k != 'length') {
         ;(this as any)[k] = function (...args: any[]) {
