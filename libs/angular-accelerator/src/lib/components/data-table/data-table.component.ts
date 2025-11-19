@@ -92,7 +92,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     this._rows$.next(value)
   }
   _selectionIds$ = new BehaviorSubject<(string | number)[]>([])
-  _pageChangeTrigger$ = new BehaviorSubject<void>(undefined)
   @Input()
   set selectedRows(value: Row[] | string[] | number[]) {
     this._selectionIds$.next(
@@ -191,7 +190,16 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   @Input() selectionEnabledField: string | undefined
   @Input() allowSelectAll = true
   @Input() paginator = true
-  @Input() page = 0
+
+  _page$ = new BehaviorSubject<number>(0)
+  @Input()
+  get page(): number {
+    return this._page$.getValue()
+  }
+  set page(value: number) {
+    this._page$.next(value)
+  }
+
   @Input() tableStyle: { [klass: string]: any } | undefined
   @Input()
   get totalRecordsOnServer(): number | undefined {
@@ -710,9 +718,9 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
 
   mapSelectionToRows() {
-    // Include page change trigger to force fresh array references on page navigation
+    // Include _page$ to force fresh array references on page navigation
     // to satisfy PrimeNG DataTable selection tracking, because it needs new object references to detect changes
-    this.selectedRows$ = combineLatest([this._selectionIds$, this._rows$, this._pageChangeTrigger$]).pipe(
+    this.selectedRows$ = combineLatest([this._selectionIds$, this._rows$, this._page$]).pipe(
       map(([selectedRowIds, rows, _]) => {
         return selectedRowIds
           .map((rowId) => rows.find((r) => r.id === rowId))
@@ -746,9 +754,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
 
   emitSelectionChanged() {
-    this._rows$.pipe(withLatestFrom(this._selectionIds$), first()).subscribe(([rows, selectedIds]) => {
-      this.selectionChanged.emit(rows.filter((row) => selectedIds.includes(row.id)))
-    })
+    this.selectionChanged.emit(this._rows$.getValue().filter((row) => this._selectionIds$.getValue().includes(row.id)))
   }
 
   mergeWithDisabledKeys(newSelectionIds: (string | number)[], disabledRowIds: (string | number)[]) {
@@ -787,16 +793,12 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       activePage: page,
       pageSize: event.rows,
     })
-    // Trigger selectedRows$ to emit fresh array reference for PrimeNG
-    this._pageChangeTrigger$.next(undefined)
   }
 
   resetPage() {
     this.page = 0
     this.pageChanged.emit(this.page)
     this.emitComponentStateChanged()
-    // Trigger selectedRows$ to emit fresh array reference for PrimeNG
-    this._pageChangeTrigger$.next(undefined)
   }
 
   fieldIsTruthy(object: any, key: any) {
