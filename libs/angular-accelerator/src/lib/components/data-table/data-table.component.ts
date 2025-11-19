@@ -92,6 +92,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     this._rows$.next(value)
   }
   _selectionIds$ = new BehaviorSubject<(string | number)[]>([])
+  _pageChangeTrigger$ = new BehaviorSubject<void>(undefined)
   @Input()
   set selectedRows(value: Row[] | string[] | number[]) {
     this._selectionIds$.next(
@@ -709,11 +710,13 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
 
   mapSelectionToRows() {
-    this.selectedRows$ = combineLatest([this._selectionIds$, this._rows$]).pipe(
-      map(([selectedRowIds, rows]) => {
-        return selectedRowIds.map((rowId) => {
-          return rows.find((r) => r.id === rowId)
-        })
+    // Include page change trigger to force fresh array references on page navigation
+    // to satisfy PrimeNG DataTable selection tracking, because it needs new object references to detect changes
+    this.selectedRows$ = combineLatest([this._selectionIds$, this._rows$, this._pageChangeTrigger$]).pipe(
+      map(([selectedRowIds, rows, _]) => {
+        return selectedRowIds
+          .map((rowId) => rows.find((r) => r.id === rowId))
+          .filter((row): row is Row => row !== undefined)
       })
     )
   }
@@ -738,8 +741,14 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     }
 
     this._selectionIds$.next(newSelectionIds)
-    this.selectionChanged.emit(this._rows$.getValue().filter((row) => newSelectionIds.includes(row.id)))
+    this.emitSelectionChanged()
     this.emitComponentStateChanged()
+  }
+
+  emitSelectionChanged() {
+    this._rows$.pipe(withLatestFrom(this._selectionIds$), first()).subscribe(([rows, selectedIds]) => {
+      this.selectionChanged.emit(rows.filter((row) => selectedIds.includes(row.id)))
+    })
   }
 
   mergeWithDisabledKeys(newSelectionIds: (string | number)[], disabledRowIds: (string | number)[]) {
@@ -778,12 +787,16 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       activePage: page,
       pageSize: event.rows,
     })
+    // Trigger selectedRows$ to emit fresh array reference for PrimeNG
+    this._pageChangeTrigger$.next(undefined)
   }
 
   resetPage() {
     this.page = 0
     this.pageChanged.emit(this.page)
     this.emitComponentStateChanged()
+    // Trigger selectedRows$ to emit fresh array reference for PrimeNG
+    this._pageChangeTrigger$.next(undefined)
   }
 
   fieldIsTruthy(object: any, key: any) {
