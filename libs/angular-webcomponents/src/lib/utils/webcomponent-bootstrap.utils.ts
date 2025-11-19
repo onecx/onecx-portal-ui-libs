@@ -99,22 +99,24 @@ function replaceOrAddAppId(providers: Array<any>) {
 
 function findAndReplaceAppId(providers: Array<any>): any {
   if (providers.length === 0) return null
-  for (let i = 0; i < providers.length; i++) {
-    if (providers[i].provide === APP_ID) {
+  for (const provider of providers) {
+    if (provider.provide === APP_ID) {
       let id = 'ng'
-      if (typeof providers[i].useValue !== 'string') {
+      if (typeof provider.useValue === 'string') {
+        id = provider.useValue
+      } else {
         console.warn(
           "APP_ID provider in the application was not done via useValue. Will fallback to 'ng' as the APP_ID"
         )
-      } else {
-        id = providers[i].useValue
       }
-      providers[i].useValue = new DynamicAppId(id)
-      return providers[i]
+      provider.useValue = new DynamicAppId(id)
+      return provider
     }
 
-    const subProviderResult = findAndReplaceAppId(providers[i].ɵproviders ?? [])
-    if (subProviderResult !== null) return subProviderResult
+    const subProviderResult = findAndReplaceAppId(provider.ɵproviders ?? [])
+    if (subProviderResult !== null) {
+      return subProviderResult
+    }
   }
 
   return null
