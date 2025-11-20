@@ -1,3 +1,28 @@
+## [6.10.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.9.0...v6.10.0) (2025-10-16)
+
+### Features
+
+* introduce pipeline to lib version 6 ([#979](https://github.com/onecx/onecx-portal-ui-libs/issues/979)) ([f8d649e](https://github.com/onecx/onecx-portal-ui-libs/commit/f8d649e9e1fbbd6a4985e1f8a5f0f552260c6755))
+
+### Bug Fixes
+
+* lazy load primeng themes ([#984](https://github.com/onecx/onecx-portal-ui-libs/issues/984)) ([9ce22ee](https://github.com/onecx/onecx-portal-ui-libs/commit/9ce22eedd7a467b847adba00a4022aaf2feef3d3))
+
+## [6.9.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.8.1...v6.9.0) (2025-10-09)
+
+### Features
+
+* add release config for v6 ([#970](https://github.com/onecx/onecx-portal-ui-libs/issues/970)) ([e21cd95](https://github.com/onecx/onecx-portal-ui-libs/commit/e21cd95c37612126c7f639f8be6bba2a94eab443))
+* portal-viweport controls the viewport change behavior ([#959](https://github.com/onecx/onecx-portal-ui-libs/issues/959)) ([caa6a9e](https://github.com/onecx/onecx-portal-ui-libs/commit/caa6a9e25038e7d4518fff3944c1179b8d9a4d10))
+* static menu activation ([#933](https://github.com/onecx/onecx-portal-ui-libs/issues/933)) ([0a744a9](https://github.com/onecx/onecx-portal-ui-libs/commit/0a744a9104cda362975c6f7e6d2345ebb9ae26e7))
+
+### Bug Fixes
+
+* do not publish on mobile change from shell ([#956](https://github.com/onecx/onecx-portal-ui-libs/issues/956)) ([f9d9323](https://github.com/onecx/onecx-portal-ui-libs/commit/f9d93236240887cf3e1025ccb27b7addf245330a))
+* escape line breaks ([#967](https://github.com/onecx/onecx-portal-ui-libs/issues/967)) ([37698ba](https://github.com/onecx/onecx-portal-ui-libs/commit/37698ba477391b4a088bef5db4a0270b4c396d93))
+* improve sonar scanner reliability and remove variable substitution issue ([#961](https://github.com/onecx/onecx-portal-ui-libs/issues/961)) ([788b064](https://github.com/onecx/onecx-portal-ui-libs/commit/788b064f3ef1ad875ed1ca2e130f3912761a4464))
+* v6 changes for shell width and activeness ([#976](https://github.com/onecx/onecx-portal-ui-libs/issues/976)) ([5239771](https://github.com/onecx/onecx-portal-ui-libs/commit/5239771248518c0fad06fdcb841068168fe11b63))
+
 ## [6.8.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.8.0...v6.8.1) (2025-09-23)
 
 ### Bug Fixes
