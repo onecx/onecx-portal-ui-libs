@@ -1,3 +1,4 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import { createReportsConfig } from '../../jest-config-factory'
 
 export default {
