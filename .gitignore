@@ -141,3 +141,5 @@ dist
 libs/angular-accelerator/tmp/
 
 .copy-build-to
+
+reports
