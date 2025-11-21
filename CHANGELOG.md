@@ -1,3 +1,15 @@
+## [6.11.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.10.0...v6.11.0) (2025-11-21)
+
+### Features
+
+* add elementName to appId injectable ([#1029](https://github.com/onecx/onecx-portal-ui-libs/issues/1029)) ([#1030](https://github.com/onecx/onecx-portal-ui-libs/issues/1030)) ([c805a19](https://github.com/onecx/onecx-portal-ui-libs/commit/c805a19858c4e788d1d67cb1b1eeb37e7babb87a))
+* create ngrx-integration-interface lib + add StoreConnectorServi… ([#1009](https://github.com/onecx/onecx-portal-ui-libs/issues/1009)) ([afc698d](https://github.com/onecx/onecx-portal-ui-libs/commit/afc698d5a325714e8e52a4108a396caf657d57ac)), closes [#985](https://github.com/onecx/onecx-portal-ui-libs/issues/985)
+
+### Bug Fixes
+
+* checkbox in table correctly visually highlighted across pagination ([#1028](https://github.com/onecx/onecx-portal-ui-libs/issues/1028)) ([#1032](https://github.com/onecx/onecx-portal-ui-libs/issues/1032)) ([f18d0f4](https://github.com/onecx/onecx-portal-ui-libs/commit/f18d0f4d91d74f4fca237ded44164930f8767c8f))
+* sonar-project typo ([#1026](https://github.com/onecx/onecx-portal-ui-libs/issues/1026)) ([9661736](https://github.com/onecx/onecx-portal-ui-libs/commit/966173684be98fa4e57e64d76db98f0dac6ad08a))
+
 ## [6.10.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.9.0...v6.10.0) (2025-10-16)
 
 ### Features
