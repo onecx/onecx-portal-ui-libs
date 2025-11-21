@@ -14,7 +14,6 @@ jobs:
       (github.event.action == 'labeled' && (contains(github.event.label.name, 'nx-migration-required') || contains(github.event.label.name, 'onecx-migration-required'))) ||
       (github.event.action == 'synchronize' && github.event.pull_request.user.login == 'renovate[bot]' && (contains(github.event.pull_request.labels.*.name, 'nx-migration-required') || contains(github.event.pull_request.labels.*.name, 'onecx-migration-required')))
     runs-on: ubuntu-latest
-    
     steps:
       - name: Checkout PR
         uses: actions/checkout@v4
@@ -28,7 +27,7 @@ jobs:
         run: |
           # Check if the last commit was from migration workflow
           last_commit_message=$(gh pr view ${{ github.event.pull_request.number }} --json commits --jq '.commits[-1].messageHeadline')
-          
+
           if [[ "$last_commit_message" == *"refactor: run package migrations per directory"* ]]; then
             echo "skip_migration=true" >> $GITHUB_OUTPUT
             echo "🚫 Last commit was migration, skipping to avoid infinite loop"
@@ -43,7 +42,7 @@ jobs:
         if: steps.check-migration.outputs.skip_migration == 'false'
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Extract changed packages per directory
@@ -51,18 +50,18 @@ jobs:
         id: extract-packages
         run: |
           set -e
-          
+
           # Ensure we have the base branch
           git fetch origin ${{ github.event.pull_request.base.ref }}:refs/remotes/origin/${{ github.event.pull_request.base.ref }}
-          
+
           # Get the merge base
           merge_base=$(git merge-base HEAD origin/${{ github.event.pull_request.base.ref }})
-          
+
           # Find all changed package.json files
           changed_files=$(git diff --name-only $merge_base...HEAD | grep package.json || true)
-          
+
           echo "Changed package.json files: $changed_files"
-          
+
           # Process each package.json file separately with its directory
           migration_commands=""
           if [[ -n "$changed_files" ]]; then
@@ -109,7 +108,7 @@ jobs:
               fi
             done
           fi
-          
+
           echo "migration_commands=$migration_commands" >> $GITHUB_OUTPUT
           echo "Final migration commands to run: '$migration_commands'"
 
@@ -117,16 +116,16 @@ jobs:
         if: steps.check-migration.outputs.skip_migration == 'false' && steps.extract-packages.outputs.migration_commands != ''
         run: |
           set -e
-          
+
           echo "=========================================="
           echo "🚀 STARTING PACKAGE MIGRATIONS PER DIRECTORY"
           echo "=========================================="
           echo "Migration commands: ${{ steps.extract-packages.outputs.migration_commands }}"
           echo "=========================================="
-          
+
           # Split migration commands by | and run each one in its directory
           IFS='|' read -ra MIGRATION_COMMANDS <<< "${{ steps.extract-packages.outputs.migration_commands }}"
-          
+
           for cmd in "${MIGRATION_COMMANDS[@]}"; do
             if [[ -n "$cmd" && "$cmd" != " " ]]; then
               # Extract directory and migration command
@@ -180,7 +179,7 @@ jobs:
               echo "─────────────────────────────────────────"
             fi
           done
-          
+
           echo ""
           echo "=========================================="
           echo "🎉 ALL DIRECTORY MIGRATIONS COMPLETED"
@@ -191,7 +190,7 @@ jobs:
         run: |
           git config --local user.email "29139614+renovate[bot]@users.noreply.github.com"
           git config --local user.name "renovate[bot]"
-          
+
           if [[ -n "$(git status --porcelain)" ]]; then
             echo ""
             echo "=========================================="
