@@ -15,16 +15,20 @@ import {
   inject,
 } from '@angular/core'
 
-import { ResizedEventsPublisher, ResizedEventsTopic, Technologies } from '@onecx/integration-interface'
-import { BehaviorSubject, Observable, Subscription, combineLatest, Subject } from 'rxjs'
+import {
+  ResizedEventsPublisher,
+  ResizedEventsTopic,
+  Technologies,
+  SlotResizedEvent,
+  ResizedEventType,
+  RequestedEventsChangedEvent,
+} from '@onecx/integration-interface'
+import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs'
 import { ocxRemoteComponent } from '../../model/remote-component'
 import { RemoteComponentInfo, SLOT_SERVICE, SlotComponentConfiguration, SlotService } from '../../services/slot.service'
 import { updateStylesForRcCreation, updateStylesForRcRemoval, RemoteComponentConfig } from '@onecx/angular-utils'
 import { HttpClient } from '@angular/common/http'
 import { debounceTime, filter } from 'rxjs/operators'
-import { SlotResizedEvent } from 'libs/integration-interface/src/lib/topics/resized-events/slots-resized-type'
-import { ResizedEventType } from 'libs/integration-interface/src/lib/topics/resized-events/resized-event-type'
-import { RequestedEventsChangedEvent } from 'libs/integration-interface/src/lib/topics/resized-events/resized-update-requested-type'
 
 interface AssignedComponent {
   refOrElement: ComponentRef<any> | HTMLElement
