@@ -193,6 +193,8 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
         const publishPromiseResolver = this.publishPromiseResolver[(<TopicResolveMessage>m.data).resolveId]
         if (publishPromiseResolver) {
           publishPromiseResolver()
+          m.stopImmediatePropagation()
+          m.stopPropagation()
           delete this.publishPromiseResolver[(<TopicResolveMessage>m.data).resolveId]
         }
         break

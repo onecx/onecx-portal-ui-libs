@@ -1,4 +1,4 @@
-import { EventType } from './event-type'
+import { ResizedEventType } from './resized-event-type'
 
 export type SlotGroupResizedDetails = {
   width: number
@@ -6,11 +6,11 @@ export type SlotGroupResizedDetails = {
 }
 
 export type SlotGroupResizedEventPayload = {
-  slotName: string
-  slotDetails: SlotGroupResizedDetails
+  slotGroupName: string
+  slotGroupDetails: SlotGroupResizedDetails
 }
 
 export type SlotGroupResizedEvent = {
-  type: EventType.SLOT_GROUP_RESIZED
+  type: ResizedEventType.SLOT_GROUP_RESIZED
   payload: SlotGroupResizedEventPayload
 }

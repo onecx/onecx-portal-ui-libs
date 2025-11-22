@@ -48,3 +48,5 @@ export * from './lib/topics/current-location/v1/current-location.model'
 export * from './lib/topics/current-location/v1/current-location.topic'
 
 export * from './lib/topics/parameters/v1/parameters.topic'
+
+export * from './lib/topics/resized-events/resized-events.topic'
