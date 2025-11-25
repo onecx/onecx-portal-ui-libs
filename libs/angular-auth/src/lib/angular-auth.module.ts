@@ -17,6 +17,7 @@ function appInitializer(configService: ConfigurationService, authService: AuthSe
   }
 }
 
+// TODO: How do we fix this?
 function provideAuthServices() {
   return [AuthServiceWrapper, KeycloakAuthService, KeycloakService, DisabledAuthService]
 }

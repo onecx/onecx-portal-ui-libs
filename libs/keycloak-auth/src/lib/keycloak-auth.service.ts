@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core'
 import { AppStateService, ConfigurationService, CONFIG_KEY } from '@onecx/angular-integration-interface'
 import { KeycloakEventType, KeycloakOptions, KeycloakService } from 'keycloak-angular'
+// TODO: Should we do something here
 import { KeycloakConfig } from 'keycloak-js'
 import { filter } from 'rxjs'
 import { EventsTopic } from '@onecx/integration-interface'
