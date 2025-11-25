@@ -6,8 +6,8 @@ export type SlotGroupResizedDetails = {
 }
 
 export type SlotGroupResizedEventPayload = {
-  slotName: string
-  slotDetails: SlotGroupResizedDetails
+  slotGroupName: string
+  slotGroupDetails: SlotGroupResizedDetails
 }
 
 export type SlotGroupResizedEvent = {

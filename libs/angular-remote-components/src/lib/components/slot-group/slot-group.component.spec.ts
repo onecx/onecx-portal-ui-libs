@@ -105,8 +105,8 @@ describe('SlotGroupComponent', () => {
     const arg = eventsPublisher.publish.mock.calls[0][0] as SlotGroupResizedEvent
 
     expect(arg.type).toBe(EventType.SLOT_GROUP_RESIZED)
-    expect(arg.payload.slotName).toBe('test-slot')
-    expect(arg.payload.slotDetails).toEqual({ width: 140, height: 70 })
+    expect(arg.payload.slotGroupName).toBe('test-slot')
+    expect(arg.payload.slotGroupDetails).toEqual({ width: 140, height: 70 })
   }))
 
   it('should disconnect ResizeObserver and complete subject on destroy', () => {
