@@ -1,3 +1,13 @@
+## [7.0.0-rc.9](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.8...v7.0.0-rc.9) (2025-11-26)
+
+### Features
+
+* add context for data-mfe-element attribute ([#1040](https://github.com/onecx/onecx-portal-ui-libs/issues/1040)) ([0765f00](https://github.com/onecx/onecx-portal-ui-libs/commit/0765f00812251b0fdb153e1ceed458a5ba7ea863))
+
+### Bug Fixes
+
+* rename properties of slotgroup event ([#1039](https://github.com/onecx/onecx-portal-ui-libs/issues/1039)) ([c8cb452](https://github.com/onecx/onecx-portal-ui-libs/commit/c8cb45236016baf55449149851cc1076818e0578))
+
 ## [7.0.0-rc.8](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.7...v7.0.0-rc.8) (2025-11-21)
 
 ### Features
