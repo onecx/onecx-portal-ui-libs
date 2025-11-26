@@ -32,7 +32,7 @@ To scope CSS rules with the `@scope` CSS rule, we defined a set of attributes th
 |Element containing this attribute should *always have data-style-id set as well*. With the combination of these 2 attributes, the style scoping section will not receive portal-layout-styles legacy CSS rules. *This usually marks the content as libs version 6 compatible*.
 
 |data-mfe-element
-|Element containing this attribute is the start of the microfrontend's content.
+|Element containing this attribute is the start of the microfrontend's content. This attribute is used to preserve the style of Angular 18 applications, where application styles (exposed via styles.css) are applied only to the microfrontend's content, but not to the remote components originating from the same application.
 |=== 
 
 [#expected-behavior]
@@ -49,6 +49,7 @@ is going to have:
 * data-style-isolation attribute to isolate itself from other applications
 * (optional) data-no-portal-layout-styles attribute if content does not require portal-layout-style legacy CSS rules
 * (optional) data-mfe-element attribute if content is the first element of microfrontend's content
+** it is not added for remote components for legacy reasons (Angular 18 applications)
 
 [#scoping-css-rules]
 == Scoping CSS Rules

@@ -117,3 +117,13 @@ The application style sheet is loaded only when a new microfrontend or remote co
 * If the style sheet load was initiated by remote component creation, it receives the data-slot-$SLOT_NAME-styles attribute.
 * In cases where the style sheet already exists, the respective attributes are appended to the appropriate sheet.
 * On microfrontend or remote component removal (technically slot removal), the attributes are deleted from the style sheet, and if there are no other usages (no other slot or microfrontend uses the style sheet), it is removed from the DOM.
+
+[#angular-19-plus-applications]
+=== Angular 19+ Applications
+Angular 19+ applications fully support the style isolation concept in OneCX. Therefore, application styles (exposed via styles.css) are applied to all content originating from the respective application, including microfrontend's content and remote components.
+
+[#apply-angular-18-remote-components]
+=== Apply Application Styles to Angular 18 Remote Components
+Because of the legacy assumptions in Angular 18 applications, where application styles (exposed via styles.css) are applied only to the microfrontend's content, but not to the remote components originating from the same application, by default, application styles are not active for remote components. There are 2 ways to change this behavior:
+* Disable portal layout styles for the remote component by utilizing 4th parameter of bootstrapRemoteComponent method.
+* Move required CSS rules from application styles to component styles.
