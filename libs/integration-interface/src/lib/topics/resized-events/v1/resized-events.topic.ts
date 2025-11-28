@@ -27,7 +27,7 @@ export class ResizedEventsPublisher extends TopicPublisher<TopicResizedEventType
     }
 
     const resizedEvent = event as SlotResizedEvent | SlotGroupResizedEvent
-    const entityName = eventToEntityName(event)
+    const entityName = eventToEntityName(resizedEvent)
 
     if (window['@onecx/integration-interface']['resizedEvents']?.[resizedEvent.type]?.includes(entityName)) {
       return super.publish(event)
@@ -75,7 +75,7 @@ export class ResizedEventsTopic extends Topic<TopicResizedEventType> {
     }
 
     const resizedEvent = event as SlotResizedEvent | SlotGroupResizedEvent
-    const entityName = eventToEntityName(event)
+    const entityName = eventToEntityName(resizedEvent)
 
     if (window['@onecx/integration-interface']['resizedEvents']?.[resizedEvent.type]?.includes(entityName)) {
       return super.publish(event)
@@ -85,13 +85,11 @@ export class ResizedEventsTopic extends Topic<TopicResizedEventType> {
   }
 }
 
-function eventToEntityName(event: TopicResizedEventType): string {
+function eventToEntityName(event: SlotResizedEvent | SlotGroupResizedEvent): string {
   switch (event.type) {
     case ResizedEventType.SLOT_RESIZED:
       return event.payload.slotName
     case ResizedEventType.SLOT_GROUP_RESIZED:
       return event.payload.slotGroupName
-    default:
-      return ''
   }
 }
