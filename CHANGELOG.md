@@ -1,3 +1,34 @@
+## [7.0.0-rc.9](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.8...v7.0.0-rc.9) (2025-11-26)
+
+### Features
+
+* add context for data-mfe-element attribute ([#1040](https://github.com/onecx/onecx-portal-ui-libs/issues/1040)) ([0765f00](https://github.com/onecx/onecx-portal-ui-libs/commit/0765f00812251b0fdb153e1ceed458a5ba7ea863))
+
+### Bug Fixes
+
+* rename properties of slotgroup event ([#1039](https://github.com/onecx/onecx-portal-ui-libs/issues/1039)) ([c8cb452](https://github.com/onecx/onecx-portal-ui-libs/commit/c8cb45236016baf55449149851cc1076818e0578))
+
+## [7.0.0-rc.8](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.7...v7.0.0-rc.8) (2025-11-21)
+
+### Features
+
+* add elementName to appId injectable ([#1029](https://github.com/onecx/onecx-portal-ui-libs/issues/1029)) ([#1031](https://github.com/onecx/onecx-portal-ui-libs/issues/1031)) ([147984b](https://github.com/onecx/onecx-portal-ui-libs/commit/147984bdc6b9b4a4a01141818d262f5bc025f860))
+* create ngrx-integration-interface lib + add StoreConnectorServices ([#985](https://github.com/onecx/onecx-portal-ui-libs/issues/985)) ([6efec78](https://github.com/onecx/onecx-portal-ui-libs/commit/6efec78964e87e66a8a4c42e21d05fc58935613e))
+* guards synchronization ([#990](https://github.com/onecx/onecx-portal-ui-libs/issues/990)) ([5d478b8](https://github.com/onecx/onecx-portal-ui-libs/commit/5d478b8fd7d20526c7bccc657e82fa707dc3c343))
+
+### Bug Fixes
+
+* checkbox in table correctly visually highlighted across pagination ([#1028](https://github.com/onecx/onecx-portal-ui-libs/issues/1028)) ([#1033](https://github.com/onecx/onecx-portal-ui-libs/issues/1033)) ([3d5e2cc](https://github.com/onecx/onecx-portal-ui-libs/commit/3d5e2cc503b341f26284061f5d1e5f4e0a37e2bd))
+* sonar-project typo ([#1027](https://github.com/onecx/onecx-portal-ui-libs/issues/1027)) ([0fcbc5f](https://github.com/onecx/onecx-portal-ui-libs/commit/0fcbc5fd5f6fc629c7d5bc9a9c5c0b957d5a75a5))
+* store connector services ([#1012](https://github.com/onecx/onecx-portal-ui-libs/issues/1012)) ([298919a](https://github.com/onecx/onecx-portal-ui-libs/commit/298919a53be2885d83065100ecaf5970a922d8bf))
+
+### Chores
+
+* Configure Renovate ([#1001](https://github.com/onecx/onecx-portal-ui-libs/issues/1001)) ([9cf8db4](https://github.com/onecx/onecx-portal-ui-libs/commit/9cf8db4c01f710aa2de649013f6228d96fa31b49))
+* **deps:** Update Root DevDependencies ([#1003](https://github.com/onecx/onecx-portal-ui-libs/issues/1003)) ([b6efdb9](https://github.com/onecx/onecx-portal-ui-libs/commit/b6efdb9e35fe0c2fc1f9eeb0b0fa8e58423fe2b5))
+* remove integration-tests library from portal-libs ([#1015](https://github.com/onecx/onecx-portal-ui-libs/issues/1015)) ([153639f](https://github.com/onecx/onecx-portal-ui-libs/commit/153639f9c8b60376852728b9741af893b9e0dcba))
+* upgrade node to 22 ([#1034](https://github.com/onecx/onecx-portal-ui-libs/issues/1034)) ([0318f4b](https://github.com/onecx/onecx-portal-ui-libs/commit/0318f4bdc22be7b675406a29c9e12a69d4faae81))
+
 ## [7.0.0-rc.7](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.6...v7.0.0-rc.7) (2025-10-30)
 
 ### Features

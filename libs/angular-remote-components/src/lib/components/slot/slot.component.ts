@@ -157,7 +157,7 @@ export class SlotComponent implements OnInit, OnDestroy {
   components$: Observable<SlotComponentConfiguration[]> | undefined
 
   private resizeObserver: ResizeObserver | undefined
-  private componentSize$ = new BehaviorSubject<{ width: number; height: number }>({ width: 0, height: 0 })
+  private componentSize$ = new BehaviorSubject<{ width: number; height: number }>({ width: -1, height: -1 })
   private resizeDebounceTimeMs = 100
 
   private resizedEventsPublisher = new ResizedEventsPublisher()

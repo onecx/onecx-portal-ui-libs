@@ -86,8 +86,8 @@ export class SlotGroupComponent implements OnInit, OnDestroy {
       const slotGroupResizedEvent: SlotGroupResizedEvent = {
         type: EventType.SLOT_GROUP_RESIZED,
         payload: {
-          slotName: this.name(),
-          slotDetails: { width, height },
+          slotGroupName: this.name(),
+          slotGroupDetails: { width, height },
         },
       }
       this.eventsPublisher.publish(slotGroupResizedEvent)
