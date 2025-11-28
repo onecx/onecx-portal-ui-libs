@@ -157,12 +157,12 @@ export class SlotComponent implements OnInit, OnDestroy {
   components$: Observable<SlotComponentConfiguration[]> | undefined
 
   private resizeObserver: ResizeObserver | undefined
-  private componentSize$ = new BehaviorSubject<{ width: number; height: number }>({ width: -1, height: -1 })
+  private readonly componentSize$ = new BehaviorSubject<{ width: number; height: number }>({ width: -1, height: -1 })
   private resizeDebounceTimeMs = 100
 
-  private resizedEventsPublisher = new ResizedEventsPublisher()
-  private resizedEventsTopic = new ResizedEventsTopic()
-  private requestedEventsChanged$ = this.resizedEventsTopic.pipe(
+  private readonly resizedEventsPublisher = new ResizedEventsPublisher()
+  private readonly resizedEventsTopic = new ResizedEventsTopic()
+  private readonly requestedEventsChanged$ = this.resizedEventsTopic.pipe(
     filter((event): event is RequestedEventsChangedEvent => event.type === ResizedEventType.REQUESTED_EVENTS_CHANGED)
   )
 
