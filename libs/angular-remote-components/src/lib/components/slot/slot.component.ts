@@ -333,6 +333,7 @@ export class SlotComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.resizedEventsTopic.destroy()
     this.subscriptions.forEach((sub) => sub.unsubscribe())
     this.resizeObserver?.disconnect()
     this.componentSize$.complete() // Complete the subject to avoid memory leaks
