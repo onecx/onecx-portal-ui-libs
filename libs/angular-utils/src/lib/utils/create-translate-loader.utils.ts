@@ -2,13 +2,11 @@ import { HttpClient } from '@angular/common/http'
 import { inject, InjectionToken } from '@angular/core'
 import { TranslateLoader } from '@ngx-translate/core'
 import { AppStateService } from '@onecx/angular-integration-interface'
-import { from, isObservable, map, Observable, tap, zip } from 'rxjs'
+import { from, isObservable, map, Observable, zip } from 'rxjs'
 import { TranslationCacheService } from '../services/translation-cache.service'
 import { AsyncTranslateLoader } from './async-translate-loader.utils'
 import { CachingTranslateLoader } from './caching-translate-loader.utils'
 import { TranslateCombinedLoader } from './translate.combined.loader'
-
-let lastTranslateLoaderTimerId = 0
 
 export const TRANSLATION_PATH = new InjectionToken<(string | Observable<string> | Promise<string>)[]>(
   'TRANSLATION_PATH'
@@ -27,11 +25,9 @@ export function createTranslateLoader(
   translationCacheService?: TranslationCacheService
 ): TranslateLoader {
   const ts = translationCacheService ?? inject(TranslationCacheService)
-  const timerId = lastTranslateLoaderTimerId++
 
   const translationPaths = inject(TRANSLATION_PATH, {optional: true}) ?? []
 
-  console.time('createTranslateLoader_' + timerId)
   return new AsyncTranslateLoader(
     zip(translationPaths.map((value) => toObservable(value))).pipe(
       map((translationPaths) => {
@@ -41,8 +37,7 @@ export function createTranslateLoader(
             return new CachingTranslateLoader(ts, http, path, '.json')
           })
         )
-      }),
-      tap(() => console.timeEnd('createTranslateLoader_' + timerId))
+      })
     )
   )
 }
