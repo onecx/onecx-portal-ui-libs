@@ -15,13 +15,20 @@ import {
   inject,
 } from '@angular/core'
 
-import { EventsPublisher, EventType, SlotResizedEvent, Technologies } from '@onecx/integration-interface'
-import { BehaviorSubject, Observable, Subscription, combineLatest, Subject } from 'rxjs'
+import {
+  ResizedEventsPublisher,
+  ResizedEventsTopic,
+  Technologies,
+  SlotResizedEvent,
+  ResizedEventType,
+  RequestedEventsChangedEvent,
+} from '@onecx/integration-interface'
+import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs'
 import { ocxRemoteComponent } from '../../model/remote-component'
 import { RemoteComponentInfo, SLOT_SERVICE, SlotComponentConfiguration, SlotService } from '../../services/slot.service'
 import { updateStylesForRcCreation, updateStylesForRcRemoval, RemoteComponentConfig } from '@onecx/angular-utils'
 import { HttpClient } from '@angular/common/http'
-import { debounceTime } from 'rxjs/operators'
+import { debounceTime, filter } from 'rxjs/operators'
 
 interface AssignedComponent {
   refOrElement: ComponentRef<any> | HTMLElement
@@ -146,14 +153,18 @@ export class SlotComponent implements OnInit, OnDestroy {
 
   @ContentChild('skeleton') skeleton: TemplateRef<any> | undefined
 
-  subscription: Subscription | undefined
+  subscriptions: Subscription[] = []
   components$: Observable<SlotComponentConfiguration[]> | undefined
 
   private resizeObserver: ResizeObserver | undefined
-  private resizeSubject = new Subject<{ width: number; height: number }>()
+  private readonly componentSize$ = new BehaviorSubject<{ width: number; height: number }>({ width: -1, height: -1 })
   private resizeDebounceTimeMs = 100
 
-  private eventsPublisher = new EventsPublisher()
+  private readonly resizedEventsPublisher = new ResizedEventsPublisher()
+  private readonly resizedEventsTopic = new ResizedEventsTopic()
+  private readonly requestedEventsChanged$ = this.resizedEventsTopic.pipe(
+    filter((event): event is RequestedEventsChangedEvent => event.type === ResizedEventType.REQUESTED_EVENTS_CHANGED)
+  )
 
   ngOnInit(): void {
     if (!this.slotService) {
@@ -169,27 +180,27 @@ export class SlotComponent implements OnInit, OnDestroy {
       }
     )
     // Components can be created only when component information is available and view containers are created for all remote components
-    this.subscription = combineLatest([this._viewContainers$, this.components$]).subscribe(
-      ([viewContainers, components]) => {
-        if (viewContainers && viewContainers.length === components.length) {
-          components.forEach((componentInfo, i) => {
-            if (componentInfo.componentType) {
-              Promise.all([
-                Promise.resolve(componentInfo.componentType),
-                Promise.resolve(componentInfo.permissions),
-              ]).then(([componentType, permissions]) => {
-                const component = this.createComponent(componentType, componentInfo, permissions, viewContainers, i)
-                if (component)
-                  this._assignedComponents$.next([
-                    ...this._assignedComponents$.getValue(),
-                    { refOrElement: component, remoteInfo: componentInfo.remoteComponent },
-                  ])
-              })
-            }
-          })
-        }
+    const sub = combineLatest([this._viewContainers$, this.components$]).subscribe(([viewContainers, components]) => {
+      if (viewContainers && viewContainers.length === components.length) {
+        components.forEach((componentInfo, i) => {
+          if (componentInfo.componentType) {
+            Promise.all([
+              Promise.resolve(componentInfo.componentType),
+              Promise.resolve(componentInfo.permissions),
+            ]).then(([componentType, permissions]) => {
+              const component = this.createComponent(componentType, componentInfo, permissions, viewContainers, i)
+              if (component)
+                this._assignedComponents$.next([
+                  ...this._assignedComponents$.getValue(),
+                  { refOrElement: component, remoteInfo: componentInfo.remoteComponent },
+                ])
+            })
+          }
+        })
       }
-    )
+    })
+    this.subscriptions.push(sub)
+
     this.observeSlotSizeChanges()
   }
 
@@ -199,22 +210,37 @@ export class SlotComponent implements OnInit, OnDestroy {
       if (entry) {
         const width = entry.contentRect.width
         const height = entry.contentRect.height
-        this.resizeSubject.next({ width, height })
+        this.componentSize$.next({ width, height })
       }
     })
 
-    this.resizeSubject.pipe(debounceTime(this.resizeDebounceTimeMs)).subscribe(({ width, height }) => {
+    this.componentSize$.pipe(debounceTime(this.resizeDebounceTimeMs)).subscribe(({ width, height }) => {
       const slotResizedEvent: SlotResizedEvent = {
-        type: EventType.SLOT_RESIZED,
+        type: ResizedEventType.SLOT_RESIZED,
         payload: {
           slotName: this.name,
           slotDetails: { width, height },
         },
       }
-      this.eventsPublisher.publish(slotResizedEvent)
+      this.resizedEventsPublisher.publish(slotResizedEvent)
     })
 
     this.resizeObserver.observe(this.elementRef.nativeElement)
+
+    const requestedEventsChangedSub = this.requestedEventsChanged$.subscribe((event) => {
+      if (event.payload.type === ResizedEventType.SLOT_RESIZED && event.payload.name === this.name) {
+        const { width, height } = this.componentSize$.getValue()
+        const slotResizedEvent: SlotResizedEvent = {
+          type: ResizedEventType.SLOT_RESIZED,
+          payload: {
+            slotName: this.name,
+            slotDetails: { width, height },
+          },
+        }
+        this.resizedEventsPublisher.publish(slotResizedEvent)
+      }
+    })
+    this.subscriptions.push(requestedEventsChangedSub)
   }
 
   private createComponent(
@@ -307,9 +333,10 @@ export class SlotComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscription?.unsubscribe()
+    this.resizedEventsTopic.destroy()
+    this.subscriptions.forEach((sub) => sub.unsubscribe())
     this.resizeObserver?.disconnect()
-    this.resizeSubject.complete() // Complete the subject to avoid memory leaks
+    this.componentSize$.complete() // Complete the subject to avoid memory leaks
     // Removes RC styles on unmount to avoid ghost styles
     this._assignedComponents$.getValue().forEach((component) => {
       updateStylesForRcRemoval(component.remoteInfo.productName, component.remoteInfo.appId, this.name)
