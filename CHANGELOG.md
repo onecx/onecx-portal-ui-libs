@@ -1,3 +1,9 @@
+## [7.0.0-rc.10](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.9...v7.0.0-rc.10) (2025-12-01)
+
+### Features
+
+* resized event topic with slot update capability ([#1042](https://github.com/onecx/onecx-portal-ui-libs/issues/1042)) ([6b71347](https://github.com/onecx/onecx-portal-ui-libs/commit/6b713470d410fbc1746f37c026e6f33c3b4a30af))
+
 ## [7.0.0-rc.9](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.8...v7.0.0-rc.9) (2025-11-26)
 
 ### Features
