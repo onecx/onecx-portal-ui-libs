@@ -17,6 +17,7 @@ import { BehaviorSubject, Observable, concat, map, of, switchMap } from 'rxjs'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { PrimeIcon } from '../../utils/primeicon.utils'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
+import { TranslationKey } from '../../model/translation.model'
 
 /**
  * Action definition.
@@ -50,8 +51,6 @@ export interface Action {
 export interface ObjectDetailItem {
   label: string
   value?: string
-  labelTooltip?: string
-  valueTooltip?: string
   icon?: PrimeIcon
   iconStyleClass?: string
   labelPipe?: Type<any>
@@ -60,9 +59,11 @@ export interface ObjectDetailItem {
   valueCssClass?: string
   actionItemIcon?: PrimeIcon
   actionItemCallback?: () => void
-  actionItemTooltip?: string
-  actionItemAriaLabelKey?: string
-  actionItemAriaLabel?: string
+  actionItemAriaLabel?: TranslationKey
+  actionItemAriaLabelKey?: TranslationKey
+  labelTooltip?: TranslationKey
+  valueTooltip?: TranslationKey
+  actionItemTooltip?: TranslationKey
 }
 
 export interface HomeItem {
@@ -249,6 +250,16 @@ export class PageHeaderComponent implements OnInit {
       return this.objectInfoColumnLayoutClasses
     }
     return this.objectInfoDefaultLayoutClasses
+  }
+
+  public getTranslationKey(translationKey?: TranslationKey): string {
+    if (!translationKey) return ''
+    return typeof translationKey === 'string' ? translationKey : translationKey.key
+  }
+
+  public getTranslationParams(translationKey?: TranslationKey): Record<string, unknown> | undefined {
+    if (!translationKey || typeof translationKey === 'string') return undefined
+    return translationKey.parameters
   }
 
   private filterInlineActions(actions: Action[]): Action[] {

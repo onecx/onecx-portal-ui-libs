@@ -18,35 +18,8 @@ import { PrimeIcon } from '../utils/primeicon.utils'
 import { DialogContentComponent } from '../components/dialog/dialog-content/dialog-content.component'
 import { DialogFooterComponent } from '../components/dialog/dialog-footer/dialog-footer.component'
 import { DialogMessageContentComponent } from '../components/dialog/dialog-message-content/dialog-message-content.component'
+import { TranslationKey, TranslationKeyWithParameters } from '../model/translation.model'
 
-/**
- * Object containing key for translation with parameters object for translation
- *
- * @example
- * ## Assume such translation is in the translation file
- * ```typescript
- * const translations = {
- *   MY_KEY = 'text with parameter value = {{value}}',
- * }
- * ```
- *
- * ## TranslationKeyWithParameters declaration
- * ```
- * // will be translated into
- * // text with parameter value = hello
- * const myKey: TranslationKeyWithParameters = {
- *   key: 'MY_KEY',
- *   parameters: {
- *     value: 'hello',
- *   },
- * }
- * ```
- */
-type TranslationKeyWithParameters = { key: string; parameters: Record<string, unknown> }
-/**
- * String with key to translation or {@link TranslationKeyWithParameters} object. If provided string cannot be translated it will be displayed as is.
- */
-type TranslationKey = string | TranslationKeyWithParameters
 /**
  * Object containing message of type {@link TranslationKey} and icon to be displayed along the message.
  *
