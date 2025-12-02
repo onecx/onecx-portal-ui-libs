@@ -88,6 +88,27 @@ class ObjectDetailItemHarness extends ComponentHarness {
   getValueElement = this.locatorForOptional('[name="object-detail-value"]')
   getIconElement = this.locatorForOptional('[name="object-detail-icon"]')
 
+  async getLabelTooltipContent(): Promise<string | null> {
+    const labelEl = await this.getLabelElement()
+    if (!labelEl) return null
+    const tooltipSpan = await this.locatorForOptional('[name="object-detail-label"] span[tooltipevent]')()
+    return labelEl.getAttribute('ng-reflect-content')
+  }
+
+  async getValueTooltipContent(): Promise<string | null> {
+    const valueEl = await this.getValueElement()
+    if (!valueEl) return null
+    const tooltipSpan = await this.locatorForOptional('[name="object-detail-value"] span[tooltipevent]')()
+    return tooltipSpan?.getAttribute('ng-reflect-content') ?? null
+  }
+
+  async getActionItemTooltipContent(): Promise<string | null> {
+    const valueEl = await this.getValueElement()
+    if (!valueEl) return null
+    const pButton = await this.locatorForOptional('[name="object-detail-value"] p-button')()
+    return pButton?.getAttribute('ng-reflect-content') ?? null
+  }
+
   static with(options: ObjectDetailItemHarnessFilters): HarnessPredicate<ObjectDetailItemHarness> {
     return new HarnessPredicate(ObjectDetailItemHarness, options).addOption('label', options.label, (harness, label) =>
       HarnessPredicate.stringMatches(harness.getLabel(), label)

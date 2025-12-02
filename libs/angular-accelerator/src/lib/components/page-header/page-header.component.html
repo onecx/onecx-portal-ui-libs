@@ -105,45 +105,44 @@
       <span
         class="flex font-medium text-600 object-info-grid-label"
         name="object-detail-label"
-        [pTooltip]="item.labelTooltip || ''"
+        [pTooltip]="item?.labelTooltip?.key ? (item.labelTooltip.key | translate : item.labelTooltip.parameters) : (item.labelTooltip | translate) || ''"
         tooltipEvent="hover"
-        tooltipPosition="top"
-      >
+        tooltipPosition="top">
         {{ item.label | dynamicPipe:item.labelPipe }}
       </span>
       @if (item.icon || item.value) {
       <span class="object-info-grid-value">
-        <span
-          class="flex text-900 align-items-center gap-2 w-max"
-          [ngClass]="generateItemStyle(item)"
-          name="object-detail-value"
-        >
-          <span
-            class="flex align-items-center gap-2"
-            [pTooltip]="item.valueTooltip || ''"
-            tooltipEvent="hover"
-            tooltipPosition="top"
-          >
+        <span class="flex text-900 align-items-center gap-2 w-max" [ngClass]="generateItemStyle(item)"
+          name="object-detail-value">
+          <span class="flex align-items-center gap-2"
+            [pTooltip]="item?.valueTooltip?.key ? (item.valueTooltip.key | translate : item.valueTooltip.parameters) : (item.valueTooltip | translate) || ''"
+            tooltipEvent="hover" tooltipPosition="top">
             @if (item.icon) {
             <i [class]="item.icon + ' ' + (item.iconStyleClass ?? '')" name="object-detail-icon"></i>
             } {{ item.value | dynamicPipe:item.valuePipe:item.valuePipeArgs}}
           </span>
           @if (item.actionItemIcon && item.actionItemCallback) {
-          <p-button
-            [icon]="item.actionItemIcon"
-            styleClass="p-button-text p-0 w-full"
-            [ariaLabel]="(item.actionItemAriaLabelKey ? (item.actionItemAriaLabelKey | translate) : item.actionItemAriaLabel) || item.actionItemTooltip || ''"
-            [pTooltip]="item.actionItemTooltip || ''"
-            tooltipPosition="top"
-            tooltipEvent="hover"
-            (onClick)="item.actionItemCallback()"
-          ></p-button>
+          <p-button [icon]="item.actionItemIcon" styleClass="p-button-text p-0 w-full" [ariaLabel]="
+                (item?.actionItemAriaLabelKey?.key
+                  ? (item.actionItemAriaLabelKey.key | translate : item.actionItemAriaLabelKey.parameters)
+                  : (item?.actionItemAriaLabelKey | translate)
+                )
+                || 
+                (item?.actionItemTooltip?.key
+                  ? (item.actionItemTooltip.key | translate : item.actionItemTooltip.parameters)
+                  : (item?.actionItemTooltip | translate)
+                )
+                || item?.label
+                || 'Action'
+                "
+            [pTooltip]="item?.actionItemTooltip?.key ? (item.actionItemTooltip.key | translate : item.actionItemTooltip.parameters) : (item.actionItemTooltip | translate) || ''"
+            tooltipPosition="top" tooltipEvent="hover" (onClick)="item.actionItemCallback()"></p-button>
           }
         </span>
       </span>
       }
-    </div>
-    } }
+      </div>
+      } }
     <ng-content></ng-content>
   </div>
-</div> 
+</div>

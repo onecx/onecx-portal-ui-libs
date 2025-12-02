@@ -447,3 +447,45 @@ export const ForcedGridLayoutWithColumnAmount = {
     gridLayoutDesktopColumns: 4,
   },
 }
+
+
+const demoFieldsWithTranslationKeys: ObjectDetailItem[] = [
+  {
+    label: 'Venue',
+    value: 'AIE Munich 11',
+    valueTooltip: { key: 'pageheader.valueTooltip' , parameters: { value: ':value param' } },
+    labelTooltip: { key: 'pageheader.labelTooltip' , parameters: { label: ':label param' } },
+    actionItemTooltip: { key: 'pageheader.actionItemTooltip' , parameters: { action: ':action param' } },
+    actionItemIcon: PrimeIcons.COPY,
+    actionItemCallback: () => {
+      console.log('Copy to clipboard')
+    },
+  },  
+  {
+    label: 'Start Date',
+    value: '14.3.2022',
+    icon: PrimeIcons.CALENDAR
+  },
+  {
+    label: 'End Date',
+    value: '19.06.2024',
+    icon: PrimeIcons.CALENDAR,
+  },
+  {
+    label: 'Status',
+    value: 'Confirmed',
+    icon: PrimeIcons.CHECK_CIRCLE,
+  }
+]
+
+export const TranslationKeysAndParams = {
+  render: Template,
+  args: {
+    header: 'My title',
+    subheader: 'My subtitle',
+    loading: false,
+    actions: demoActions,
+    objectDetails: demoFieldsWithTranslationKeys,
+    showBreadcrumbs: false,
+  }
+}

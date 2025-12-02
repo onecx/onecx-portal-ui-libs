@@ -36,10 +36,15 @@ export function translateLoader(http: HttpClient) {
   ],
 })
 export class StorybookTranslateModule {
-  constructor(...args: unknown[])
-
   constructor() {
     const translateService = inject(TranslateService)
+    translateService.setTranslation('en', {
+      pageheader: {
+        valueTooltip: 'Page Header Value Tooltip EN {{value}}',
+        labelTooltip: 'Page Header Label Tooltip EN {{label}}',
+        actionItemTooltip: 'Page Header Action Item Tooltip EN {{action}}',
+      }
+    }, true)
 
     registerLocaleData(localeDE)
     const lang = translateService.getBrowserLang()

@@ -20,6 +20,7 @@ import { DynamicPipe } from '../../pipes/dynamic.pipe'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { UserService } from '@onecx/angular-integration-interface'
+import { TranslateService } from '@ngx-translate/core'
 
 const mockActions: Action[] = [
   {
@@ -348,5 +349,56 @@ describe('PageHeaderComponent', () => {
     expect(await (await disabledActionElement.host()).hasClass('p-disabled')).toBe(true)
     await (await disabledActionElement.host()).click()
     expect(console.log).not.toHaveBeenCalledWith('My Test Overflow Disabled Action')
+  })
+
+  it('should render labelTooltip, valueTooltip, and actionItemTooltip as translated tooltips when language is changed', async () => {
+    const translate = TestBed.inject(TranslateService)
+
+    translate.setTranslation(
+      'en',
+      {
+        LABEL_TOOLTIP: 'Label Tooltip EN',
+        VALUE_TOOLTIP: 'Value Tooltip EN',
+        ACTION_TOOLTIP: 'Action Tooltip EN',
+      },
+      true
+    )
+    translate.setTranslation(
+      'de',
+      {
+        LABEL_TOOLTIP: 'Label Tooltip DE',
+        VALUE_TOOLTIP: 'Value Tooltip DE',
+        ACTION_TOOLTIP: 'Action Tooltip DE',
+      },
+      true
+    )
+    translate.use('en')
+
+    component.objectDetails = [
+      {
+        label: 'Venue',
+        value: 'AIE Munich',
+        labelTooltip: { key: 'LABEL_TOOLTIP' },
+        valueTooltip: { key: 'VALUE_TOOLTIP' },
+        actionItemTooltip: { key: 'ACTION_TOOLTIP' },
+        actionItemIcon: 'pi pi-copy',
+        actionItemCallback: () => { },
+      },
+    ]
+    fixture.detectChanges()
+
+    const objectInfo = (await pageHeaderHarness.getObjectInfos())[0]
+
+    expect(await objectInfo.getLabelTooltipContent()).toBe('Label Tooltip EN')
+    expect(await objectInfo.getValueTooltipContent()).toBe('Value Tooltip EN')
+    expect(await objectInfo.getActionItemTooltipContent()).toBe('Action Tooltip EN')
+
+    translate.use('de')
+    await fixture.whenStable()
+    fixture.detectChanges()
+
+    expect(await objectInfo.getLabelTooltipContent()).toBe('Label Tooltip DE')
+    expect(await objectInfo.getValueTooltipContent()).toBe('Value Tooltip DE')
+    expect(await objectInfo.getActionItemTooltipContent()).toBe('Action Tooltip DE')
   })
 })
