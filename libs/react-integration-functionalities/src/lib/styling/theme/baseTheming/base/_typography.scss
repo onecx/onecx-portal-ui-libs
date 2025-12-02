@@ -1,0 +1,7 @@
+/* Base typography */
+:root {
+  --test-example-font-family: Ubuntu, Helvetica, Arial, sans-serif;
+}
+body {
+  font-family: var(--test-example-font-family);
+}

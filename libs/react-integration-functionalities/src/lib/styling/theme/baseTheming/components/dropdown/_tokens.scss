@@ -1,0 +1,87 @@
+:root {
+  --test-example-dropdown-padding-x: var(
+    --test-example-form-field-padding-x,
+    0.75rem
+  );
+  --test-example-dropdown-padding-y: var(
+    --test-example-form-field-padding-y,
+    0.75rem
+  );
+  --test-example-dropdown-border-radius: var(
+    --test-example-form-field-border-radius,
+    6px
+  );
+  --test-example-dropdown-transition-duration: var(
+    --test-example-form-field-transition-duration,
+    0.2s
+  );
+
+  --test-example-dropdown-background: var(
+    --test-example-form-field-background,
+    #ffffff
+  );
+  --test-example-dropdown-disabled-background: var(
+    --test-example-form-field-disabled-background,
+    #dadee3
+  );
+  --test-example-dropdown-border-color: var(
+    --test-example-form-field-border-color,
+    #bcc3cd
+  );
+  --test-example-dropdown-hover-border-color: var(
+    --test-example-form-field-hover-border-color,
+    #818ea1
+  );
+  --test-example-dropdown-focus-border-color: var(
+    --test-example-form-field-focus-border-color,
+    #274b5f
+  );
+
+  --test-example-dropdown-color: var(--test-example-form-field-color, #465161);
+  --test-example-dropdown-disabled-color: var(
+    --test-example-form-field-disabled-color,
+    #818ea1
+  );
+  --test-example-dropdown-placeholder-color: var(
+    --test-example-form-field-placeholder-color,
+    #64748b
+  );
+
+  --test-example-dropdown-panel-background: var(
+    --test-example-overlay-popover-background,
+    #ffffff
+  );
+  --test-example-dropdown-panel-border-color: var(
+    --test-example-overlay-popover-border-color,
+    #bcc3cd
+  );
+  --test-example-dropdown-panel-color: var(
+    --test-example-overlay-popover-color,
+    rgba(0, 0, 0, 0.87)
+  );
+
+  --test-example-dropdown-option-padding: var(
+    --test-example-list-option-padding,
+    0.75rem 0.75rem
+  );
+  --test-example-dropdown-option-border-radius: var(
+    --test-example-list-option-border-radius,
+    0
+  );
+  --test-example-dropdown-option-color: var(
+    --test-example-list-option-color,
+    rgba(0, 0, 0, 0.87)
+  );
+  --test-example-dropdown-option-focus-background: var(
+    --test-example-list-option-focus-background,
+    #dadee3
+  );
+  --test-example-dropdown-option-selected-background: var(
+    --test-example-list-option-selected-background,
+    #bde1f5
+  );
+  --test-example-dropdown-option-selected-color: var(
+    --test-example-list-option-selected-color,
+    #274b5f
+  );
+}
