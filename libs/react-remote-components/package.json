@@ -1,0 +1,22 @@
+{
+  "name": "@onecx/react-remote-components",
+  "version": "7.0.0-rc.10",
+  "license": "Apache-2.0",
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./index.mjs",
+      "require": "./index.js"
+    }
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "@onecx/react-integration-interface": "^7.0.0-rc.10"
+  },
+  "dependencies": {},
+  "publishConfig": {
+    "access": "public"
+  }
+}
