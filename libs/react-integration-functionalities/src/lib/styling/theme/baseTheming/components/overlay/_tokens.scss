@@ -1,0 +1,38 @@
+:root {
+  --test-example-overlay-mask-background: var(
+    --test-example-mask-background,
+    rgba(0, 0, 0, 0.32)
+  );
+  --test-example-overlay-mask-color: var(--test-example-mask-color, #bcc3cd);
+  --test-example-overlay-mask-transition-duration: var(
+    --test-example-mask-transition-duration,
+    0.15s
+  );
+
+  --test-example-overlay-popover-background: var(
+    --test-example-overlay-popover-background,
+    #ffffff
+  );
+  --test-example-overlay-popover-border-color: var(
+    --test-example-overlay-popover-border-color,
+    #bcc3cd
+  );
+  --test-example-overlay-popover-color: var(
+    --test-example-overlay-popover-color,
+    rgba(0, 0, 0, 0.87)
+  );
+  --test-example-overlay-popover-radius: var(
+    --test-example-overlay-popover-border-radius,
+    4px
+  );
+  --test-example-overlay-popover-padding: var(
+    --test-example-overlay-popover-padding,
+    0.75rem
+  );
+  --test-example-overlay-popover-shadow: var(
+    --test-example-overlay-popover-shadow,
+    0 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0 8px 10px 1px rgba(0, 0, 0, 0.14),
+    0 3px 14px 2px rgba(0, 0, 0, 0.12)
+  );
+}
