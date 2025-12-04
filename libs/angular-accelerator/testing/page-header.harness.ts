@@ -113,20 +113,20 @@ class ObjectDetailItemHarness extends ComponentHarness {
   async getLabelTooltipContent(): Promise<string | null> {
     const labelEl = await this.getLabelElement()
     if (!labelEl) return null
-    return labelEl.getAttribute('ng-reflect-content')
+    return labelEl.getAttribute('data-label-tooltip')
   }
 
   async getValueTooltipContent(): Promise<string | null> {
     const valueEl = await this.getValueElement()
     if (!valueEl) return null
-    const tooltipSpan = await this.locatorForOptional('[name="object-detail-value"] span[tooltipevent]')()
-    return tooltipSpan?.getAttribute('ng-reflect-content') ?? null
+    const tooltipSpan = await this.locatorForOptional('[name="object-detail-value"] span[data-value-tooltip]')()
+    return tooltipSpan?.getAttribute('data-value-tooltip') ?? null
   }
 
   async getActionItemTooltipContent(): Promise<string | null> {
     const valueEl = await this.getValueElement()
     if (!valueEl) return null
     const pButton = await this.locatorForOptional('[name="object-detail-value"] p-button')()
-    return pButton?.getAttribute('ng-reflect-content') ?? null
+    return pButton?.getAttribute('data-action-tooltip') ?? null
   }
 }
