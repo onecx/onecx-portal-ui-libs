@@ -3,6 +3,7 @@
   display: block;
   padding: var(--page-padding, 1rem);
 }
+
 @media (min-width: $mobileBreakpoint) {
   :host {
     padding: var(--page-padding-lg, 1rem);
