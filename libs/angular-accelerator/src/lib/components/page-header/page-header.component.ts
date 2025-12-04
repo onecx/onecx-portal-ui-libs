@@ -233,23 +233,6 @@ export class PageHeaderComponent implements OnInit {
     return style
   }
 
-  public getTranslationKey(translationKey: TranslationKey | undefined): string {
-    if (!translationKey) return ''
-    return typeof translationKey === 'string' ? translationKey : translationKey.key
-  }
-
-  public getTranslationParams(translationKey: TranslationKey | undefined): Record<string, unknown> | undefined {
-    if (!translationKey || typeof translationKey === 'string') return undefined
-    return translationKey.parameters
-  }
-
-  public translateTooltipKey(translationKey: TranslationKey | undefined, fallback: string | undefined): string {
-    if (!translationKey) return fallback || ''
-    const key = typeof translationKey === 'string' ? translationKey : translationKey.key
-    const params = typeof translationKey === 'string' ? undefined : translationKey.parameters
-    return this.translateService.instant(key, params) || fallback || ''
-  }
-
   public getObjectPanelLayoutClasses() {
     if (this.enableGridView) {
       return this.objectPanelGridLayoutClasses

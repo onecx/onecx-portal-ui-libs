@@ -1,4 +1,4 @@
-import { BaseHarnessFilters, ComponentHarness, HarnessPredicate } from '@angular/cdk/testing'
+import { BaseHarnessFilters, ComponentHarness, ContentContainerComponentHarness, HarnessPredicate } from '@angular/cdk/testing'
 import {
   ListItemHarness,
   MenuItemHarness,
@@ -81,7 +81,7 @@ interface ObjectDetailItemHarnessFilters extends BaseHarnessFilters {
   label?: string
 }
 
-class ObjectDetailItemHarness extends ComponentHarness {
+class ObjectDetailItemHarness extends ContentContainerComponentHarness {
   static hostSelector = '.object-info'
 
   getLabelElement = this.locatorFor('[name="object-detail-label"]')
@@ -111,22 +111,36 @@ class ObjectDetailItemHarness extends ComponentHarness {
   }
 
   async getLabelTooltipContent(): Promise<string | null> {
-    const labelEl = await this.getLabelElement()
-    if (!labelEl) return null
-    return labelEl.getAttribute('data-label-tooltip')
+    return this.getTooltipFromElement(await this.getLabelElement())
   }
 
   async getValueTooltipContent(): Promise<string | null> {
-    const valueEl = await this.getValueElement()
-    if (!valueEl) return null
-    const tooltipSpan = await this.locatorForOptional('[name="object-detail-value"] span[data-value-tooltip]')()
-    return tooltipSpan?.getAttribute('data-value-tooltip') ?? null
+    return this.getTooltipFromElement(
+      await this.locatorForOptional('[name="object-detail-value"] > span:first-of-type')()
+    )
   }
 
   async getActionItemTooltipContent(): Promise<string | null> {
-    const valueEl = await this.getValueElement()
-    if (!valueEl) return null
-    const pButton = await this.locatorForOptional('[name="object-detail-value"] p-button')()
-    return pButton?.getAttribute('data-action-tooltip') ?? null
+    return this.getTooltipFromElement(
+      await this.locatorForOptional('[name="object-detail-value"] p-button')()
+    )
+  }
+
+  private async getTooltipFromElement(element: any): Promise<string | null> {
+    if (!element) return null
+    
+    await element.hover()
+    await this.forceStabilize()
+    
+    const rootLocator = this.documentRootLocatorFactory()
+    const tooltipEl = await rootLocator.locatorForOptional('.p-tooltip .p-tooltip-text')()
+    if (tooltipEl) {
+      const text = await tooltipEl.text()
+      await element.mouseAway()
+      await this.forceStabilize()
+      return text
+    }
+    
+    return null
   }
 }
