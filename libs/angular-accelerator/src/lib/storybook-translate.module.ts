@@ -42,9 +42,22 @@ export class StorybookTranslateModule {
     const translateService = inject(TranslateService)
     translateService.setTranslation('en', {
       pageheader: {
-        valueTooltip: 'Page Header Value Tooltip EN {{value}}',
-        labelTooltip: 'Page Header Label Tooltip EN {{label}}',
-        actionItemTooltip: 'Page Header Action Item Tooltip EN {{action}}',
+        valueTooltip: 'Page Header Value Tooltip EN',
+        labelTooltip: 'Page Header Label Tooltip EN',
+        actionItemTooltip: 'Page Header Action Item Tooltip EN',
+        actionItemAriaLabel: 'Page Header Action Item Aria Label EN',
+        statusLabelTooltip: 'Status Label Tooltip EN (status: {{status}})',
+        statusValueTooltip: 'Status Value Tooltip EN (value: {{value}})',
+      }
+    }, true)
+    translateService.setTranslation('de', {
+      pageheader: {
+        valueTooltip: 'Page Header Value Tooltip DE',
+        labelTooltip: 'Page Header Label Tooltip DE',
+        actionItemTooltip: 'Page Header Action Item Tooltip DE',
+        actionItemAriaLabel: 'Page Header Action Item Aria Label DE',
+        statusLabelTooltip: 'Status Label Tooltip DE (status: {{status}})',
+        statusValueTooltip: 'Status Value Tooltip DE (value: {{value}})',
       }
     }, true)
     registerLocaleData(localeDE)

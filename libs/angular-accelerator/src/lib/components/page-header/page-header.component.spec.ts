@@ -351,24 +351,24 @@ describe('PageHeaderComponent', () => {
     expect(console.log).not.toHaveBeenCalledWith('My Test Overflow Disabled Action')
   })
 
-  it('should render labelTooltip, valueTooltip, and actionItemTooltip as translated tooltips when language is changed', async () => {
+  it('should render labelTooltipKey, valueTooltipKey, and actionItemTooltipKey as translated tooltips when language is changed', async () => {
     const translate = TestBed.inject(TranslateService)
 
     translate.setTranslation(
       'en',
       {
-        LABEL_TOOLTIP: 'Label Tooltip EN',
-        VALUE_TOOLTIP: 'Value Tooltip EN',
-        ACTION_TOOLTIP: 'Action Tooltip EN',
+        LABEL_TOOLTIP_KEY: 'Label Tooltip Key EN',
+        VALUE_TOOLTIP_KEY: 'Value Tooltip Key EN',
+        ACTION_TOOLTIP_KEY: 'Action Tooltip Key EN',
       },
       true
     )
     translate.setTranslation(
       'de',
       {
-        LABEL_TOOLTIP: 'Label Tooltip DE',
-        VALUE_TOOLTIP: 'Value Tooltip DE',
-        ACTION_TOOLTIP: 'Action Tooltip DE',
+        LABEL_TOOLTIP_KEY: 'Label Tooltip Key DE',
+        VALUE_TOOLTIP_KEY: 'Value Tooltip Key DE',
+        ACTION_TOOLTIP_KEY: 'Action Tooltip Key DE',
       },
       true
     )
@@ -378,27 +378,91 @@ describe('PageHeaderComponent', () => {
       {
         label: 'Venue',
         value: 'AIE Munich',
-        labelTooltip: { key: 'LABEL_TOOLTIP' },
-        valueTooltip: { key: 'VALUE_TOOLTIP' },
-        actionItemTooltip: { key: 'ACTION_TOOLTIP' },
+        labelTooltipKey: 'LABEL_TOOLTIP_KEY',
+        valueTooltipKey: 'VALUE_TOOLTIP_KEY',
+        actionItemTooltipKey: 'ACTION_TOOLTIP_KEY',
         actionItemIcon: 'pi pi-copy',
-        actionItemCallback: () => { console.log('Action!') },
+        actionItemCallback: () => {
+          console.log('Action!')
+        },
       },
     ]
     fixture.detectChanges()
 
     const objectInfo = (await pageHeaderHarness.getObjectInfos())[0]
 
-    expect(await objectInfo.getLabelTooltipContent()).toBe('Label Tooltip EN')
-    expect(await objectInfo.getValueTooltipContent()).toBe('Value Tooltip EN')
-    expect(await objectInfo.getActionItemTooltipContent()).toBe('Action Tooltip EN')
+    expect(await objectInfo.getLabelTooltipContent()).toBe('Label Tooltip Key EN')
+    expect(await objectInfo.getValueTooltipContent()).toBe('Value Tooltip Key EN')
+    expect(await objectInfo.getActionItemTooltipContent()).toBe('Action Tooltip Key EN')
 
     translate.use('de')
     await fixture.whenStable()
     fixture.detectChanges()
 
-    expect(await objectInfo.getLabelTooltipContent()).toBe('Label Tooltip DE')
-    expect(await objectInfo.getValueTooltipContent()).toBe('Value Tooltip DE')
-    expect(await objectInfo.getActionItemTooltipContent()).toBe('Action Tooltip DE')
+    expect(await objectInfo.getLabelTooltipContent()).toBe('Label Tooltip Key DE')
+    expect(await objectInfo.getValueTooltipContent()).toBe('Value Tooltip Key DE')
+    expect(await objectInfo.getActionItemTooltipContent()).toBe('Action Tooltip Key DE')
+  })
+
+  it('should show translationKeys over plain tooltip properties', async () => {
+    const translate = TestBed.inject(TranslateService)
+
+    translate.setTranslation(
+      'en',
+      {
+        LABEL_KEY: 'From Key',
+        VALUE_KEY: 'From Key',
+        ACTION_KEY: 'From Key',
+      },
+      true
+    )
+    translate.use('en')
+
+    component.objectDetails = [
+      {
+        label: 'Venue',
+        value: 'AIE Munich',
+        labelTooltipKey: 'LABEL_KEY',
+        labelTooltip: 'Plain Label',
+        valueTooltipKey: 'VALUE_KEY',
+        valueTooltip: 'Plain Value',
+        actionItemTooltipKey: 'ACTION_KEY',
+        actionItemTooltip: 'Plain Action',
+        actionItemIcon: 'pi pi-copy',
+        actionItemCallback: () => {
+          console.log('Action!')
+        },
+      },
+    ]
+    fixture.detectChanges()
+
+    const objectInfo = (await pageHeaderHarness.getObjectInfos())[0]
+
+    expect(await objectInfo.getLabelTooltipContent()).toBe('From Key')
+    expect(await objectInfo.getValueTooltipContent()).toBe('From Key')
+    expect(await objectInfo.getActionItemTooltipContent()).toBe('From Key')
+  })
+
+  it('should fallback to plain tooltip properties when *Key properties are not provided', async () => {
+    component.objectDetails = [
+      {
+        label: 'Venue',
+        value: 'AIE Munich',
+        labelTooltip: 'Plain Label Tooltip',
+        valueTooltip: 'Plain Value Tooltip',
+        actionItemTooltip: 'Plain Action Tooltip',
+        actionItemIcon: 'pi pi-copy',
+        actionItemCallback: () => {
+          console.log('Action!')
+        },
+      },
+    ]
+    fixture.detectChanges()
+
+    const objectInfo = (await pageHeaderHarness.getObjectInfos())[0]
+
+    expect(await objectInfo.getLabelTooltipContent()).toBe('Plain Label Tooltip')
+    expect(await objectInfo.getValueTooltipContent()).toBe('Plain Value Tooltip')
+    expect(await objectInfo.getActionItemTooltipContent()).toBe('Plain Action Tooltip')
   })
 })

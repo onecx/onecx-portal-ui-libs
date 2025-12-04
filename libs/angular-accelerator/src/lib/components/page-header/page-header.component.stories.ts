@@ -452,29 +452,49 @@ const demoFieldsWithTranslationKeys: ObjectDetailItem[] = [
   {
     label: 'Venue',
     value: 'AIE Munich 11',
-    valueTooltip: { key: 'pageheader.valueTooltip' , parameters: { value: ':value param' } },
-    labelTooltip: { key: 'pageheader.labelTooltip' , parameters: { label: ':label param' } },
-    actionItemTooltip: { key: 'pageheader.actionItemTooltip' , parameters: { action: ':action param' } },
+    valueTooltipKey: 'pageheader.valueTooltip',
+    labelTooltipKey: 'pageheader.labelTooltip',
+    actionItemTooltipKey: 'pageheader.actionItemTooltip',
+    actionItemAriaLabelKey: 'pageheader.actionItemAriaLabel',
     actionItemIcon: PrimeIcons.COPY,
     actionItemCallback: () => {
       console.log('Copy to clipboard')
     },
-  },  
+  },
   {
     label: 'Start Date',
     value: '14.3.2022',
-    icon: PrimeIcons.CALENDAR
+    icon: PrimeIcons.CALENDAR,
+    labelTooltip: 'Simple string tooltip for label',
+    valueTooltip: 'Simple string tooltip for value',
   },
   {
     label: 'End Date',
     value: '19.06.2024',
     icon: PrimeIcons.CALENDAR,
+    actionItemIcon: PrimeIcons.COPY,
+    actionItemTooltip: 'Simple string tooltip for action',
+    actionItemAriaLabel: 'Simple string aria label for action',
+    actionItemCallback: () => {
+      console.log('Copy to clipboard')
+    },
   },
   {
     label: 'Status',
     value: 'Confirmed',
     icon: PrimeIcons.CHECK_CIRCLE,
-  }
+    labelTooltipKey: { key: 'pageheader.statusLabelTooltip', parameters: { status: 'confirmed' } },
+    valueTooltipKey: { key: 'pageheader.statusValueTooltip', parameters: { value: 'Confirmed' } },
+  },
+  {
+    label: 'Fallback Test',
+    value: 'No tooltips provided',
+    icon: PrimeIcons.INFO_CIRCLE,
+    actionItemIcon: PrimeIcons.COPY,
+    actionItemCallback: () => {
+      console.log('Copy to clipboard')
+    },
+  },
 ]
 
 export const TranslationKeysAndParams = {

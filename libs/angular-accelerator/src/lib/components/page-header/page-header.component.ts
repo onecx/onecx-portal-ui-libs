@@ -51,6 +51,8 @@ export interface Action {
 export interface ObjectDetailItem {
   label: string
   value?: string
+  labelTooltip?: string
+  valueTooltip?: string
   icon?: PrimeIcon
   iconStyleClass?: string
   labelPipe?: Type<any>
@@ -59,11 +61,12 @@ export interface ObjectDetailItem {
   valueCssClass?: string
   actionItemIcon?: PrimeIcon
   actionItemCallback?: () => void
-  actionItemAriaLabel?: TranslationKey
+  actionItemAriaLabel?: string
   actionItemAriaLabelKey?: TranslationKey
-  labelTooltip?: TranslationKey
-  valueTooltip?: TranslationKey
-  actionItemTooltip?: TranslationKey
+  actionItemTooltip?: string
+  actionItemTooltipKey?: TranslationKey
+  labelTooltipKey?: TranslationKey
+  valueTooltipKey?: TranslationKey
 }
 
 export interface HomeItem {
@@ -230,6 +233,23 @@ export class PageHeaderComponent implements OnInit {
     return style
   }
 
+  public getTranslationKey(translationKey: TranslationKey | undefined): string {
+    if (!translationKey) return ''
+    return typeof translationKey === 'string' ? translationKey : translationKey.key
+  }
+
+  public getTranslationParams(translationKey: TranslationKey | undefined): Record<string, unknown> | undefined {
+    if (!translationKey || typeof translationKey === 'string') return undefined
+    return translationKey.parameters
+  }
+
+  public translateTooltipKey(translationKey: TranslationKey | undefined, fallback: string | undefined): string {
+    if (!translationKey) return fallback || ''
+    const key = typeof translationKey === 'string' ? translationKey : translationKey.key
+    const params = typeof translationKey === 'string' ? undefined : translationKey.parameters
+    return this.translateService.instant(key, params) || fallback || ''
+  }
+
   public getObjectPanelLayoutClasses() {
     if (this.enableGridView) {
       return this.objectPanelGridLayoutClasses
@@ -250,16 +270,6 @@ export class PageHeaderComponent implements OnInit {
       return this.objectInfoColumnLayoutClasses
     }
     return this.objectInfoDefaultLayoutClasses
-  }
-
-  public getTranslationKey(translationKey?: TranslationKey): string {
-    if (!translationKey) return ''
-    return typeof translationKey === 'string' ? translationKey : translationKey.key
-  }
-
-  public getTranslationParams(translationKey?: TranslationKey): Record<string, unknown> | undefined {
-    if (!translationKey || typeof translationKey === 'string') return undefined
-    return translationKey.parameters
   }
 
   private filterInlineActions(actions: Action[]): Action[] {
