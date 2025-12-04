@@ -1,0 +1,20 @@
+:root {
+  /* Semantic tokens mapped from primitives */
+  --test-example-primary-color: var(--test-example-primary-500);
+  --test-example-primary-contrast-color: #ffffff;
+  --test-example-content-border-radius: var(--test-example-border-radius-md);
+
+  /* Focus ring semantics */
+  --test-example-focus-ring-width: 1px;
+  --test-example-focus-ring-style: solid;
+  --test-example-focus-ring-color: var(--test-example-primary-color, #274b5f);
+  --test-example-focus-ring-offset: 2px;
+  --test-example-focus-ring-shadow: none;
+
+  /* Text muted semantics */
+  --test-example-text-muted-color: var(--test-example-surface-500, #64748b);
+  --test-example-text-hover-muted-color: var(
+    --test-example-surface-600,
+    #556376
+  );
+}

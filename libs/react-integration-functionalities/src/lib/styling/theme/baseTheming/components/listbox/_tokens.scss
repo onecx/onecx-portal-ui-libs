@@ -1,0 +1,40 @@
+:root {
+  --test-example-listbox-padding: var(--test-example-list-padding, 0);
+  --test-example-listbox-gap: var(--test-example-list-gap, 2px);
+  --test-example-listbox-option-padding: var(
+    --test-example-list-option-padding,
+    0.75rem 0.75rem
+  );
+  --test-example-listbox-option-border-radius: var(
+    --test-example-list-option-border-radius,
+    0
+  );
+  --test-example-listbox-option-color: var(
+    --test-example-list-option-color,
+    rgba(0, 0, 0, 0.87)
+  );
+  --test-example-listbox-option-focus-background: var(
+    --test-example-list-option-focus-background,
+    #dadee3
+  );
+  --test-example-listbox-option-selected-background: var(
+    --test-example-list-option-selected-background,
+    #bde1f5
+  );
+  --test-example-listbox-option-selected-focus-background: var(
+    --test-example-list-option-selected-focus-background,
+    #89adc1
+  );
+  --test-example-listbox-option-selected-color: var(
+    --test-example-list-option-selected-color,
+    #274b5f
+  );
+  --test-example-listbox-option-icon-color: var(
+    --test-example-list-option-icon-color,
+    #818ea1
+  );
+  --test-example-listbox-option-icon-focus-color: var(
+    --test-example-list-option-icon-focus-color,
+    #64748b
+  );
+}

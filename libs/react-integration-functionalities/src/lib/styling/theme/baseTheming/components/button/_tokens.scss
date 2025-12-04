@@ -1,0 +1,587 @@
+:root {
+  --test-example-button-border-radius: var(
+    --test-example-form-field-border-radius,
+    6px
+  );
+  --test-example-button-rounded-border-radius: 2rem;
+  --test-example-button-gap: var(--test-example-button-gap, 0.5rem);
+  --test-example-button-padding-x: var(
+    --test-example-form-field-padding-x,
+    0.75rem
+  );
+  --test-example-button-padding-y: 0.643rem;
+  --test-example-button-icon-only-width: 2.5rem;
+  --test-example-button-raised-shadow:
+    0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  --test-example-button-badge-size: 1rem;
+  --test-example-button-transition-duration: var(
+    --test-example-form-field-transition-duration,
+    0.2s
+  );
+  --test-example-button-focus-ring-width: var(
+    --test-example-focus-ring-width,
+    1px
+  );
+  --test-example-button-focus-ring-style: var(
+    --test-example-focus-ring-style,
+    solid
+  );
+  --test-example-button-focus-ring-offset: var(
+    --test-example-focus-ring-offset,
+    2px
+  );
+  --test-example-button-label-font-weight: 500;
+  --test-example-button-lg-font-size: var(
+    --test-example-form-field-lg-font-size,
+    1.125rem
+  );
+  --test-example-button-lg-padding-x: var(
+    --test-example-form-field-lg-padding-x,
+    0.875rem
+  );
+  --test-example-button-lg-padding-y: var(
+    --test-example-form-field-lg-padding-y,
+    0.875rem
+  );
+  --test-example-button-lg-icon-only-width: 3rem;
+  --test-example-button-sm-font-size: var(
+    --test-example-form-field-sm-font-size,
+    0.875rem
+  );
+  --test-example-button-sm-padding-x: var(
+    --test-example-form-field-sm-padding-x,
+    0.625rem
+  );
+  --test-example-button-sm-padding-y: var(
+    --test-example-form-field-sm-padding-y,
+    0.625rem
+  );
+  --test-example-button-sm-icon-only-width: 2rem;
+  --test-example-button-link-color: var(--test-example-primary-color, #274b5f);
+  --test-example-button-link-hover-color: var(
+    --test-example-primary-color,
+    #274b5f
+  );
+  --test-example-button-link-active-color: var(
+    --test-example-primary-color,
+    #274b5f
+  );
+  --test-example-button-text-plain-hover-background: var(
+    --test-example-surface-50,
+    #f7f8f9
+  );
+  --test-example-button-text-plain-active-background: var(
+    --test-example-surface-100,
+    #dadee3
+  );
+  --test-example-button-text-plain-color: var(
+    --test-example-surface-700,
+    #465161
+  );
+  --test-example-button-text-contrast-hover-background: var(
+    --test-example-surface-50,
+    #f7f8f9
+  );
+  --test-example-button-text-contrast-active-background: var(
+    --test-example-surface-100,
+    #dadee3
+  );
+  --test-example-button-text-contrast-color: var(
+    --test-example-surface-950,
+    #191d23
+  );
+  --test-example-button-text-danger-hover-background: var(
+    --test-example-red-50,
+    #fef2f2
+  );
+  --test-example-button-text-danger-active-background: var(
+    --test-example-red-100,
+    #fee2e2
+  );
+  --test-example-button-text-danger-color: var(--test-example-red-500, #ef4444);
+  --test-example-button-text-help-hover-background: var(
+    --test-example-purple-50,
+    #faf5ff
+  );
+  --test-example-button-text-help-active-background: var(
+    --test-example-purple-100,
+    #f3e8ff
+  );
+  --test-example-button-text-help-color: var(
+    --test-example-purple-500,
+    #a855f7
+  );
+  --test-example-button-text-warn-hover-background: var(
+    --test-example-orange-50,
+    #fff7ed
+  );
+  --test-example-button-text-warn-active-background: var(
+    --test-example-orange-100,
+    #ffedd5
+  );
+  --test-example-button-text-warn-color: var(
+    --test-example-orange-500,
+    #f97316
+  );
+  --test-example-button-text-info-hover-background: var(
+    --test-example-sky-50,
+    #f0f9ff
+  );
+  --test-example-button-text-info-active-background: var(
+    --test-example-sky-100,
+    #e0f2fe
+  );
+  --test-example-button-text-info-color: var(--test-example-sky-500, #0ea5e9);
+  --test-example-button-text-success-hover-background: var(
+    --test-example-green-50,
+    #f0fdf4
+  );
+  --test-example-button-text-success-active-background: var(
+    --test-example-green-100,
+    #dcfce7
+  );
+  --test-example-button-text-success-color: var(
+    --test-example-green-500,
+    #22c55e
+  );
+  --test-example-button-text-secondary-hover-background: var(
+    --test-example-surface-50,
+    #f7f8f9
+  );
+  --test-example-button-text-secondary-active-background: var(
+    --test-example-surface-100,
+    #dadee3
+  );
+  --test-example-button-text-secondary-color: var(
+    --test-example-surface-500,
+    #64748b
+  );
+  --test-example-button-text-primary-hover-background: var(
+    --test-example-primary-50,
+    #f9ffff
+  );
+  --test-example-button-text-primary-active-background: var(
+    --test-example-primary-100,
+    #eaffff
+  );
+  --test-example-button-text-primary-color: var(
+    --test-example-primary-color,
+    #274b5f
+  );
+  --test-example-button-outlined-plain-hover-background: var(
+    --test-example-surface-50,
+    #f7f8f9
+  );
+  --test-example-button-outlined-plain-active-background: var(
+    --test-example-surface-100,
+    #dadee3
+  );
+  --test-example-button-outlined-plain-border-color: var(
+    --test-example-surface-200,
+    #bcc3cd
+  );
+  --test-example-button-outlined-plain-color: var(
+    --test-example-surface-700,
+    #465161
+  );
+  --test-example-button-outlined-contrast-hover-background: var(
+    --test-example-surface-50,
+    #f7f8f9
+  );
+  --test-example-button-outlined-contrast-active-background: var(
+    --test-example-surface-100,
+    #dadee3
+  );
+  --test-example-button-outlined-contrast-border-color: var(
+    --test-example-surface-700,
+    #465161
+  );
+  --test-example-button-outlined-contrast-color: var(
+    --test-example-surface-950,
+    #191d23
+  );
+  --test-example-button-outlined-danger-hover-background: var(
+    --test-example-red-50,
+    #fef2f2
+  );
+  --test-example-button-outlined-danger-active-background: var(
+    --test-example-red-100,
+    #fee2e2
+  );
+  --test-example-button-outlined-danger-border-color: var(
+    --test-example-red-200,
+    #fecaca
+  );
+  --test-example-button-outlined-danger-color: var(
+    --test-example-red-500,
+    #ef4444
+  );
+  --test-example-button-outlined-help-hover-background: var(
+    --test-example-purple-50,
+    #faf5ff
+  );
+  --test-example-button-outlined-help-active-background: var(
+    --test-example-purple-100,
+    #f3e8ff
+  );
+  --test-example-button-outlined-help-border-color: var(
+    --test-example-purple-200,
+    #e9d5ff
+  );
+  --test-example-button-outlined-help-color: var(
+    --test-example-purple-500,
+    #a855f7
+  );
+  --test-example-button-outlined-warn-hover-background: var(
+    --test-example-orange-50,
+    #fff7ed
+  );
+  --test-example-button-outlined-warn-active-background: var(
+    --test-example-orange-100,
+    #ffedd5
+  );
+  --test-example-button-outlined-warn-border-color: var(
+    --test-example-orange-200,
+    #fed7aa
+  );
+  --test-example-button-outlined-warn-color: var(
+    --test-example-orange-500,
+    #f97316
+  );
+  --test-example-button-outlined-info-hover-background: var(
+    --test-example-sky-50,
+    #f0f9ff
+  );
+  --test-example-button-outlined-info-active-background: var(
+    --test-example-sky-100,
+    #e0f2fe
+  );
+  --test-example-button-outlined-info-border-color: var(
+    --test-example-sky-200,
+    #bae6fd
+  );
+  --test-example-button-outlined-info-color: var(
+    --test-example-sky-500,
+    #0ea5e9
+  );
+  --test-example-button-outlined-success-hover-background: var(
+    --test-example-green-50,
+    #f0fdf4
+  );
+  --test-example-button-outlined-success-active-background: var(
+    --test-example-green-100,
+    #dcfce7
+  );
+  --test-example-button-outlined-success-border-color: var(
+    --test-example-green-200,
+    #bbf7d0
+  );
+  --test-example-button-outlined-success-color: var(
+    --test-example-green-500,
+    #22c55e
+  );
+  --test-example-button-outlined-secondary-hover-background: var(
+    --test-example-surface-50,
+    #f7f8f9
+  );
+  --test-example-button-outlined-secondary-active-background: var(
+    --test-example-surface-100,
+    #dadee3
+  );
+  --test-example-button-outlined-secondary-border-color: var(
+    --test-example-surface-200,
+    #bcc3cd
+  );
+  --test-example-button-outlined-secondary-color: var(
+    --test-example-surface-500,
+    #64748b
+  );
+  --test-example-button-outlined-primary-hover-background: var(
+    --test-example-primary-50,
+    #f9ffff
+  );
+  --test-example-button-outlined-primary-active-background: var(
+    --test-example-primary-100,
+    #eaffff
+  );
+  --test-example-button-outlined-primary-border-color: var(
+    --test-example-primary-200,
+    #bde1f5
+  );
+  --test-example-button-outlined-primary-color: var(
+    --test-example-primary-color,
+    #274b5f
+  );
+  --test-example-button-contrast-background: var(
+    --test-example-surface-950,
+    #191d23
+  );
+  --test-example-button-contrast-hover-background: var(
+    --test-example-surface-900,
+    #282e38
+  );
+  --test-example-button-contrast-active-background: var(
+    --test-example-surface-800,
+    #37404c
+  );
+  --test-example-button-contrast-border-color: var(
+    --test-example-surface-950,
+    #191d23
+  );
+  --test-example-button-contrast-hover-border-color: var(
+    --test-example-surface-900,
+    #282e38
+  );
+  --test-example-button-contrast-active-border-color: var(
+    --test-example-surface-800,
+    #37404c
+  );
+  --test-example-button-contrast-color: var(--test-example-surface-0, #ffffff);
+  --test-example-button-contrast-hover-color: var(
+    --test-example-surface-0,
+    #ffffff
+  );
+  --test-example-button-contrast-active-color: var(
+    --test-example-surface-0,
+    #ffffff
+  );
+  --test-example-button-contrast-focus-ring-color: var(
+    --test-example-surface-950,
+    #191d23
+  );
+  --test-example-button-contrast-focus-ring-shadow: none;
+  --test-example-button-danger-background: var(--test-example-red-500, #ef4444);
+  --test-example-button-danger-hover-background: var(
+    --test-example-red-600,
+    #dc2626
+  );
+  --test-example-button-danger-active-background: var(
+    --test-example-red-700,
+    #b91c1c
+  );
+  --test-example-button-danger-border-color: var(
+    --test-example-red-500,
+    #ef4444
+  );
+  --test-example-button-danger-hover-border-color: var(
+    --test-example-red-600,
+    #dc2626
+  );
+  --test-example-button-danger-active-border-color: var(
+    --test-example-red-700,
+    #b91c1c
+  );
+  --test-example-button-danger-color: #ffffff;
+  --test-example-button-danger-hover-color: #ffffff;
+  --test-example-button-danger-active-color: #ffffff;
+  --test-example-button-danger-focus-ring-color: var(
+    --test-example-red-500,
+    #ef4444
+  );
+  --test-example-button-danger-focus-ring-shadow: none;
+  --test-example-button-help-background: var(
+    --test-example-purple-500,
+    #a855f7
+  );
+  --test-example-button-help-hover-background: var(
+    --test-example-purple-600,
+    #9333ea
+  );
+  --test-example-button-help-active-background: var(
+    --test-example-purple-700,
+    #7e22ce
+  );
+  --test-example-button-help-border-color: var(
+    --test-example-purple-500,
+    #a855f7
+  );
+  --test-example-button-help-hover-border-color: var(
+    --test-example-purple-600,
+    #9333ea
+  );
+  --test-example-button-help-active-border-color: var(
+    --test-example-purple-700,
+    #7e22ce
+  );
+  --test-example-button-help-color: #ffffff;
+  --test-example-button-help-hover-color: #ffffff;
+  --test-example-button-help-active-color: #ffffff;
+  --test-example-button-help-focus-ring-color: var(
+    --test-example-purple-500,
+    #a855f7
+  );
+  --test-example-button-help-focus-ring-shadow: none;
+  --test-example-button-warn-background: var(
+    --test-example-orange-500,
+    #f97316
+  );
+  --test-example-button-warn-hover-background: var(
+    --test-example-orange-600,
+    #ea580c
+  );
+  --test-example-button-warn-active-background: var(
+    --test-example-orange-700,
+    #c2410c
+  );
+  --test-example-button-warn-border-color: var(
+    --test-example-orange-500,
+    #f97316
+  );
+  --test-example-button-warn-hover-border-color: var(
+    --test-example-orange-600,
+    #ea580c
+  );
+  --test-example-button-warn-active-border-color: var(
+    --test-example-orange-700,
+    #c2410c
+  );
+  --test-example-button-warn-color: #ffffff;
+  --test-example-button-warn-hover-color: #ffffff;
+  --test-example-button-warn-active-color: #ffffff;
+  --test-example-button-warn-focus-ring-color: var(
+    --test-example-orange-500,
+    #f97316
+  );
+  --test-example-button-warn-focus-ring-shadow: none;
+  --test-example-button-success-background: var(
+    --test-example-green-500,
+    #22c55e
+  );
+  --test-example-button-success-hover-background: var(
+    --test-example-green-600,
+    #16a34a
+  );
+  --test-example-button-success-active-background: var(
+    --test-example-green-700,
+    #15803d
+  );
+  --test-example-button-success-border-color: var(
+    --test-example-green-500,
+    #22c55e
+  );
+  --test-example-button-success-hover-border-color: var(
+    --test-example-green-600,
+    #16a34a
+  );
+  --test-example-button-success-active-border-color: var(
+    --test-example-green-700,
+    #15803d
+  );
+  --test-example-button-success-color: #ffffff;
+  --test-example-button-success-hover-color: #ffffff;
+  --test-example-button-success-active-color: #ffffff;
+  --test-example-button-success-focus-ring-color: var(
+    --test-example-green-500,
+    #22c55e
+  );
+  --test-example-button-success-focus-ring-shadow: none;
+  --test-example-button-info-background: var(--test-example-sky-500, #0ea5e9);
+  --test-example-button-info-hover-background: var(
+    --test-example-sky-600,
+    #0284c7
+  );
+  --test-example-button-info-active-background: var(
+    --test-example-sky-700,
+    #0369a1
+  );
+  --test-example-button-info-border-color: var(--test-example-sky-500, #0ea5e9);
+  --test-example-button-info-hover-border-color: var(
+    --test-example-sky-600,
+    #0284c7
+  );
+  --test-example-button-info-active-border-color: var(
+    --test-example-sky-700,
+    #0369a1
+  );
+  --test-example-button-info-color: #ffffff;
+  --test-example-button-info-hover-color: #ffffff;
+  --test-example-button-info-active-color: #ffffff;
+  --test-example-button-info-focus-ring-color: var(
+    --test-example-sky-500,
+    #0ea5e9
+  );
+  --test-example-button-info-focus-ring-shadow: none;
+  --test-example-button-secondary-background: var(
+    --test-example-surface-100,
+    #dadee3
+  );
+  --test-example-button-secondary-hover-background: var(
+    --test-example-surface-200,
+    #bcc3cd
+  );
+  --test-example-button-secondary-active-background: var(
+    --test-example-surface-300,
+    #9fa9b7
+  );
+  --test-example-button-secondary-border-color: var(
+    --test-example-surface-100,
+    #dadee3
+  );
+  --test-example-button-secondary-hover-border-color: var(
+    --test-example-surface-200,
+    #bcc3cd
+  );
+  --test-example-button-secondary-active-border-color: var(
+    --test-example-surface-300,
+    #9fa9b7
+  );
+  --test-example-button-secondary-color: var(
+    --test-example-surface-600,
+    #556376
+  );
+  --test-example-button-secondary-hover-color: var(
+    --test-example-surface-700,
+    #465161
+  );
+  --test-example-button-secondary-active-color: var(
+    --test-example-surface-800,
+    #37404c
+  );
+  --test-example-button-secondary-focus-ring-color: var(
+    --test-example-surface-600,
+    #556376
+  );
+  --test-example-button-secondary-focus-ring-shadow: none;
+  --test-example-button-primary-background: var(
+    --test-example-primary-color,
+    #f06d06
+  );
+  --test-example-button-primary-hover-background: var(
+    --test-example-primary-hover-color,
+    #ad1457
+  );
+  --test-example-button-primary-active-background: var(
+    --test-example-primary-active-color,
+    rgba(39, 75, 95, 0.68)
+  );
+  --test-example-button-primary-border-color: var(
+    --test-example-primary-color,
+    #274b5f
+  );
+  --test-example-button-primary-hover-border-color: var(
+    --test-example-primary-hover-color,
+    #ad1457
+  );
+  --test-example-button-primary-active-border-color: var(
+    --test-example-primary-active-color,
+    rgba(39, 75, 95, 0.68)
+  );
+  --test-example-button-primary-color: var(
+    --test-example-primary-contrast-color,
+    #ffffff
+  );
+  --test-example-button-primary-hover-color: var(
+    --test-example-primary-contrast-color,
+    #ffffff
+  );
+  --test-example-button-primary-active-color: var(
+    --test-example-primary-contrast-color,
+    #ffffff
+  );
+  --test-example-button-primary-focus-ring-color: var(
+    --test-example-primary-color,
+    #274b5f
+  );
+  --test-example-button-primary-focus-ring-shadow: none;
+}

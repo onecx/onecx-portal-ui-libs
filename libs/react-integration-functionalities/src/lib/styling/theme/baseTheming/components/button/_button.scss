@@ -1,0 +1,299 @@
+/* Extracted PrimeReact button styles */
+.p-button {
+  display: inline-flex;
+  cursor: pointer;
+  user-select: none;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  color: var(--test-example-button-primary-color);
+  background: var(--test-example-button-primary-background);
+  border: 1px solid var(--test-example-button-primary-border-color);
+  padding: var(--test-example-button-padding-y, 0.643rem)
+    var(--test-example-button-padding-x, 0.75rem);
+  font-size: 1rem;
+  font-family: inherit;
+  font-feature-settings: inherit;
+  transition:
+    background var(--test-example-button-transition-duration),
+    color var(--test-example-button-transition-duration),
+    border-color var(--test-example-button-transition-duration),
+    outline-color var(--test-example-button-transition-duration),
+    box-shadow var(--test-example-button-transition-duration, 0.2s);
+  border-radius: var(--test-example-button-border-radius, 6px);
+  outline-color: transparent;
+  gap: var(--test-example-button-gap, 0.5rem);
+}
+.p-button:disabled {
+  cursor: default;
+}
+.p-button-icon-right {
+  order: 1;
+}
+.p-button-icon-right:dir(rtl) {
+  order: -1;
+}
+.p-button:not(.p-button-vertical)
+  .p-button-icon:not(.p-button-icon-right):dir(rtl) {
+  order: 1;
+}
+.p-button-icon-bottom {
+  order: 2;
+}
+.p-button-icon-only {
+  width: var(--test-example-button-icon-only-width, 2.5rem);
+  padding-inline-start: 0;
+  padding-inline-end: 0;
+  gap: 0;
+}
+.p-button-icon-only.p-button-rounded {
+  border-radius: 50%;
+  height: var(--test-example-button-icon-only-width, 2.5rem);
+}
+.p-button-icon-only .p-button-label {
+  visibility: hidden;
+  width: 0;
+}
+.p-button-icon-only::after {
+  content: 'A0';
+  visibility: hidden;
+  width: 0;
+}
+.p-button-sm {
+  font-size: var(--test-example-button-sm-font-size, 0.875rem);
+  padding: var(--test-example-button-sm-padding-y, 0.625rem)
+    var(--test-example-button-sm-padding-x, 0.625rem);
+}
+.p-button-sm .p-button-icon {
+  font-size: var(--test-example-button-sm-font-size, 0.875rem);
+}
+.p-button-sm.p-button-icon-only {
+  width: var(--test-example-button-sm-icon-only-width, 2rem);
+}
+.p-button-sm.p-button-icon-only.p-button-rounded {
+  height: var(--test-example-button-sm-icon-only-width, 2rem);
+}
+.p-button-lg {
+  font-size: var(--test-example-button-lg-font-size, 1.125rem);
+  padding: var(--test-example-button-lg-padding-y, 0.875rem)
+    var(--test-example-button-lg-padding-x, 0.875rem);
+}
+.p-button-lg .p-button-icon {
+  font-size: var(--test-example-button-lg-font-size, 1.125rem);
+}
+.p-button-lg.p-button-icon-only {
+  width: var(--test-example-button-lg-icon-only-width, 3rem);
+}
+.p-button-lg.p-button-icon-only.p-button-rounded {
+  height: var(--test-example-button-lg-icon-only-width, 3rem);
+}
+.p-button-vertical {
+  flex-direction: column;
+}
+.p-button-label {
+  font-weight: var(--test-example-button-label-font-weight, 500);
+}
+.p-button-fluid {
+  width: 100%;
+}
+.p-button-fluid.p-button-icon-only {
+  width: var(--test-example-button-icon-only-width, 2.5rem);
+}
+.p-button:not(:disabled):hover {
+  background: var(--test-example-button-primary-hover-background, #ad1457);
+  border: 1px solid
+    var(--test-example-button-primary-hover-border-color, #ad1457);
+  color: var(--test-example-button-primary-hover-color, #ffffff);
+}
+.p-button:not(:disabled):active {
+  background: var(
+    --test-example-button-primary-active-background,
+    rgba(39, 75, 95, 0.68)
+  );
+  border: 1px solid
+    var(
+      --test-example-button-primary-active-border-color,
+      rgba(39, 75, 95, 0.68)
+    );
+  color: var(--test-example-button-primary-active-color, #ffffff);
+}
+.p-button:focus-visible {
+  box-shadow: var(--test-example-button-primary-focus-ring-shadow, none);
+  outline: var(--test-example-button-focus-ring-width, 1px)
+    var(--test-example-button-focus-ring-style, solid)
+    var(--test-example-button-primary-focus-ring-color, #274b5f);
+  outline-offset: var(--test-example-button-focus-ring-offset, 2px);
+}
+.p-button .p-badge {
+  min-width: var(--test-example-button-badge-size, 1rem);
+  height: var(--test-example-button-badge-size, 1rem);
+  line-height: var(--test-example-button-badge-size, 1rem);
+}
+.p-button-raised {
+  box-shadow: var(
+    --test-example-button-raised-shadow,
+    0 3px 1px -2px rgba(0, 0, 0, 0.2),
+    0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 1px 5px 0 rgba(0, 0, 0, 0.12)
+  );
+}
+.p-button-rounded {
+  border-radius: var(--test-example-button-rounded-border-radius, 2rem);
+}
+.p-button-secondary {
+  background: var(--test-example-button-secondary-background, #dadee3);
+  border: 1px solid var(--test-example-button-secondary-border-color, #dadee3);
+  color: var(--test-example-button-secondary-color, #556376);
+}
+.p-button-secondary:not(:disabled):hover {
+  background: var(--test-example-button-secondary-hover-background, #bcc3cd);
+  border: 1px solid
+    var(--test-example-button-secondary-hover-border-color, #bcc3cd);
+  color: var(--test-example-button-secondary-hover-color, #465161);
+}
+.p-button-secondary:not(:disabled):active {
+  background: var(--test-example-button-secondary-active-background, #9fa9b7);
+  border: 1px solid
+    var(--test-example-button-secondary-active-border-color, #9fa9b7);
+  color: var(--test-example-button-secondary-active-color, #37404c);
+}
+.p-button-secondary:focus-visible {
+  outline-color: var(--test-example-button-secondary-focus-ring-color, #556376);
+  box-shadow: var(--test-example-button-secondary-focus-ring-shadow, none);
+}
+.p-button-success {
+  background: var(--test-example-button-success-background, #22c55e);
+  border: 1px solid var(--test-example-button-success-border-color, #22c55e);
+  color: var(--test-example-button-success-color, #ffffff);
+}
+.p-button-success:not(:disabled):hover {
+  background: var(--test-example-button-success-hover-background, #16a34a);
+  border: 1px solid
+    var(--test-example-button-success-hover-border-color, #16a34a);
+  color: var(--test-example-button-success-hover-color, #ffffff);
+}
+.p-button-success:not(:disabled):active {
+  background: var(--test-example-button-success-active-background, #15803d);
+  border: 1px solid
+    var(--test-example-button-success-active-border-color, #15803d);
+  color: var(--test-example-button-success-active-color, #ffffff);
+}
+.p-button-success:focus-visible {
+  outline-color: var(--test-example-button-success-focus-ring-color, #22c55e);
+  box-shadow: var(--test-example-button-success-focus-ring-shadow, none);
+}
+.p-button-info {
+  background: var(--test-example-button-info-background, #0ea5e9);
+  border: 1px solid var(--test-example-button-info-border-color, #0ea5e9);
+  color: var(--test-example-button-info-color, #ffffff);
+}
+.p-button-info:not(:disabled):hover {
+  background: var(--test-example-button-info-hover-background, #0284c7);
+  border: 1px solid var(--test-example-button-info-hover-border-color, #0284c7);
+  color: var(--test-example-button-info-hover-color, #ffffff);
+}
+.p-button-info:not(:disabled):active {
+  background: var(--test-example-button-info-active-background, #0369a1);
+  border: 1px solid var(--test-example-button-info-active-border-color, #0369a1);
+  color: var(--test-example-button-info-active-color, #ffffff);
+}
+.p-button-info:focus-visible {
+  outline-color: var(--test-example-button-info-focus-ring-color, #0ea5e9);
+  box-shadow: var(--test-example-button-info-focus-ring-shadow, none);
+}
+.p-button-warn {
+  background: var(--test-example-button-warn-background, #f97316);
+  border: 1px solid var(--test-example-button-warn-border-color, #f97316);
+  color: var(--test-example-button-warn-color, #ffffff);
+}
+.p-button-warn:not(:disabled):hover {
+  background: var(--test-example-button-warn-hover-background, #ea580c);
+  border: 1px solid var(--test-example-button-warn-hover-border-color, #ea580c);
+  color: var(--test-example-button-warn-hover-color, #ffffff);
+}
+.p-button-warn:not(:disabled):active {
+  background: var(--test-example-button-warn-active-background, #c2410c);
+  border: 1px solid var(--test-example-button-warn-active-border-color, #c2410c);
+  color: var(--test-example-button-warn-active-color, #ffffff);
+}
+.p-button-warn:focus-visible {
+  outline-color: var(--test-example-button-warn-focus-ring-color, #f97316);
+  box-shadow: var(--test-example-button-warn-focus-ring-shadow, none);
+}
+.p-button-help {
+  background: var(--test-example-button-help-background, #a855f7);
+  border: 1px solid var(--test-example-button-help-border-color, #a855f7);
+  color: var(--test-example-button-help-color, #ffffff);
+}
+.p-button-help:not(:disabled):hover {
+  background: var(--test-example-button-help-hover-background, #9333ea);
+  border: 1px solid var(--test-example-button-help-hover-border-color, #9333ea);
+  color: var(--test-example-button-help-hover-color, #ffffff);
+}
+.p-button-help:not(:disabled):active {
+  background: var(--test-example-button-help-active-background, #7e22ce);
+  border: 1px solid var(--test-example-button-help-active-border-color, #7e22ce);
+  color: var(--test-example-button-help-active-color, #ffffff);
+}
+.p-button-help:focus-visible {
+  outline-color: var(--test-example-button-help-focus-ring-color, #a855f7);
+  box-shadow: var(--test-example-button-help-focus-ring-shadow, none);
+}
+.p-button-danger {
+  background: var(--test-example-button-danger-background, #ef4444);
+  border: 1px solid var(--test-example-button-danger-border-color, #ef4444);
+  color: var(--test-example-button-danger-color, #ffffff);
+}
+.p-button-danger:not(:disabled):hover {
+  background: var(--test-example-button-danger-hover-background, #dc2626);
+  border: 1px solid
+    var(--test-example-button-danger-hover-border-color, #dc2626);
+  color: var(--test-example-button-danger-hover-color, #ffffff);
+}
+.p-button-danger:not(:disabled):active {
+  background: var(--test-example-button-danger-active-background, #b91c1c);
+  border: 1px solid
+    var(--test-example-button-danger-active-border-color, #b91c1c);
+  color: var(--test-example-button-danger-active-color, #ffffff);
+}
+.p-button-danger:focus-visible {
+  outline-color: var(--test-example-button-danger-focus-ring-color, #ef4444);
+  box-shadow: var(--test-example-button-danger-focus-ring-shadow, none);
+}
+.p-button-contrast {
+  background: var(--test-example-button-contrast-background, #191d23);
+  border: 1px solid var(--test-example-button-contrast-border-color, #191d23);
+  color: var(--test-example-button-contrast-color, #ffffff);
+}
+.p-button-contrast:not(:disabled):hover {
+  background: var(--test-example-button-contrast-hover-background, #282e38);
+  border: 1px solid
+    var(--test-example-button-contrast-hover-border-color, #282e38);
+  color: var(--test-example-button-contrast-hover-color, #ffffff);
+}
+.p-button-contrast:not(:disabled):active {
+  background: var(--test-example-button-contrast-active-background, #37404c);
+  border: 1px solid
+    var(--test-example-button-contrast-active-border-color, #37404c);
+  color: var(--test-example-button-contrast-active-color, #ffffff);
+}
+.p-button-contrast:focus-visible {
+  outline-color: var(--test-example-button-contrast-focus-ring-color, #191d23);
+  box-shadow: var(--test-example-button-contrast-focus-ring-shadow, none);
+}
+.p-button-outlined {
+  background: transparent;
+  border-color: var(--test-example-button-outlined-primary-border-color);
+  color: var(--test-example-button-outlined-primary-color);
+}
+.p-button-outlined:not(:disabled):hover {
+  background: var(--test-example-button-outlined-primary-hover-background);
+  border-color: var(--test-example-button-outlined-primary-border-color);
+  color: var(--test-example-button-outlined-primary-color);
+}
+.p-button-outlined:not(:disabled):active {
+  background: var(--test-example-button-outlined-primary-active-background);
+  border-color: var(--test-example-button-outlined-primary-border-color);
+  color: var(--test-example-button-outlined-primary-color);
+}
