@@ -35,7 +35,7 @@
     <section
       class="flex flex-wrap gap-2"
       [ngClass]="'flex-row'"
-      aria-label="Search Controls"
+      [attr.aria-label]="'Search Controls'"
     >
       <ng-container *ngIf="(searchButtonsReversed$ | async); else normalOrder">
         <p-button
