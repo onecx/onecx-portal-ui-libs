@@ -17,6 +17,7 @@ import { BehaviorSubject, Observable, concat, map, of, switchMap } from 'rxjs'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { PrimeIcon } from '../../utils/primeicon.utils'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
+import { TranslationKey } from '../../model/translation.model'
 
 /**
  * Action definition.
@@ -60,9 +61,12 @@ export interface ObjectDetailItem {
   valueCssClass?: string
   actionItemIcon?: PrimeIcon
   actionItemCallback?: () => void
-  actionItemTooltip?: string
-  actionItemAriaLabelKey?: string
   actionItemAriaLabel?: string
+  actionItemAriaLabelKey?: TranslationKey
+  actionItemTooltip?: string
+  actionItemTooltipKey?: TranslationKey
+  labelTooltipKey?: TranslationKey
+  valueTooltipKey?: TranslationKey
 }
 
 export interface HomeItem {
