@@ -439,4 +439,19 @@ describe('PageHeaderComponent', () => {
     expect(await objectInfo.getValueTooltipContent()).toBe('Plain Value Tooltip')
     expect(await objectInfo.getActionItemTooltipContent()).toBe('Plain Action Tooltip')
   })
+
+  it('should extract key from objectDetails using ExtractTranslationKeyPipe', () => {
+    const pipe = new ExtractTranslationKeyPipe();
+    const objectDetails = [
+      { labelTooltipKey: { key: 'LABEL_KEY', parameters: { status: 'testStatus' } } },
+      { labelTooltipKey: 'LABEL_KEY_STRING' },
+      { labelTooltipKey: { parameters: { status: 'testStatus' } } as any },
+      { labelTooltipKey: null },
+    ];
+    expect(pipe.transform(objectDetails[0].labelTooltipKey, 'key')).toBe('LABEL_KEY');
+    expect(pipe.transform(objectDetails[1].labelTooltipKey, 'key')).toBe('LABEL_KEY_STRING');
+    expect(pipe.transform(objectDetails[2].labelTooltipKey, 'key', 'fallback')).toBe('fallback');
+    expect(pipe.transform(objectDetails[3].labelTooltipKey, 'key', 'fallback')).toBe('fallback');
+  });
+
 })
