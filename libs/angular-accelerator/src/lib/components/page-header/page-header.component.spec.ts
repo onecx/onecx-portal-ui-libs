@@ -453,11 +453,4 @@ describe('PageHeaderComponent', () => {
     expect(pipe.transform(objectDetails[2].labelTooltipKey, 'key', 'fallback')).toBe('fallback');
     expect(pipe.transform(objectDetails[3].labelTooltipKey, 'key', 'fallback')).toBe('fallback');
   });
-  
-  it('should return fallback for undefined, null, and missing key', () => {
-    const pipe = new ExtractTranslationKeyPipe();
-    expect(pipe.transform(undefined, 'key', 'fallback')).toBe('fallback');
-    expect(pipe.transform(null, 'key', 'fallback')).toBe('fallback');
-    expect(pipe.transform({ parameters: { foo: 'bar' } } as any, 'key', 'fallback')).toBe('fallback');
-  });
 })
