@@ -36,6 +36,7 @@ import { DynamicPipe } from './pipes/dynamic.pipe'
 import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
 import { DynamicLocaleId } from './utils/dynamic-locale-id'
 import { FilterViewComponent } from './components/filter-view/filter-view.component'
+import { ExtractTranslationKeyPipe } from './pipes/extract-translation-key.pipe'
 
 export class AngularAcceleratorMissingTranslationHandler extends MultiLanguageMissingTranslationHandler {}
 
@@ -77,6 +78,7 @@ function appInitializer(userService: UserService) {
     AdvancedDirective,
     TooltipOnOverflowDirective,
     FilterViewComponent,
+    ExtractTranslationKeyPipe,
   ],
   providers: [
     providePermissionChecker(),

@@ -81,7 +81,7 @@ interface ObjectDetailItemHarnessFilters extends BaseHarnessFilters {
   label?: string
 }
 
-class ObjectDetailItemHarness extends ComponentHarness {
+export class ObjectDetailItemHarness extends ComponentHarness {
   static hostSelector = '.object-info'
 
   getLabelElement = this.locatorFor('[name="object-detail-label"]')
@@ -108,5 +108,39 @@ class ObjectDetailItemHarness extends ComponentHarness {
 
   async getIcon() {
     return (await this.getIconElement())?.getAttribute('class')
+  }
+
+  async getLabelTooltipContent(): Promise<string | null> {
+    return this.getTooltipFromElement(await this.getLabelElement())
+  }
+
+  async getValueTooltipContent(): Promise<string | null> {
+    return this.getTooltipFromElement(
+      await this.locatorForOptional('[name="object-detail-value"] > span:first-of-type')()
+    )
+  }
+
+  async getActionItemTooltipContent(): Promise<string | null> {
+    return this.getTooltipFromElement(
+      await this.locatorForOptional('[name="object-detail-value"] p-button')()
+    )
+  }
+
+  private async getTooltipFromElement(element: any): Promise<string | null> {
+    if (!element) return null
+    
+    await element.hover()
+    await this.forceStabilize()
+    
+    const rootLocator = this.documentRootLocatorFactory()
+    const tooltipEl = await rootLocator.locatorForOptional('.p-tooltip .p-tooltip-text')()
+    if (tooltipEl) {
+      const text = await tooltipEl.text()
+      await element.mouseAway()
+      await this.forceStabilize()
+      return text
+    }
+    
+    return null
   }
 }

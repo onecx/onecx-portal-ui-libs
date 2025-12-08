@@ -32,6 +32,26 @@ import { createTranslateLoader, TRANSLATION_PATH } from '@onecx/angular-utils'
 })
 export class StorybookTranslateModule {
   constructor(translateService: TranslateService) {
+    translateService.setTranslation('en', {
+      pageheader: {
+        valueTooltip: 'Page Header Value Tooltip EN',
+        labelTooltip: 'Page Header Label Tooltip EN',
+        actionItemTooltip: 'Page Header Action Item Tooltip EN',
+        actionItemAriaLabel: 'Page Header Action Item Aria Label EN',
+        statusLabelTooltip: 'Status Label Tooltip EN (status: {{status}})',
+        statusValueTooltip: 'Status Value Tooltip EN (value: {{value}})',
+      }
+    }, true)
+    translateService.setTranslation('de', {
+      pageheader: {
+        valueTooltip: 'Page Header Value Tooltip DE',
+        labelTooltip: 'Page Header Label Tooltip DE',
+        actionItemTooltip: 'Page Header Action Item Tooltip DE',
+        actionItemAriaLabel: 'Page Header Action Item Aria Label DE',
+        statusLabelTooltip: 'Status Label Tooltip DE (status: {{status}})',
+        statusValueTooltip: 'Status Value Tooltip DE (value: {{value}})',
+      }
+    }, true)
     registerLocaleData(localeDE)
     const lang = translateService.getBrowserLang()
     const supportedLanguages = ['de', 'en']
