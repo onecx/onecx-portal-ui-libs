@@ -45,7 +45,7 @@
     "TOGGLE_BUTTON": {
       "ASCENDING_TOOLTIP": "Aufsteigend",
       "DESCENDING_TOOLTIP": "Absteigend",
-      "DEFAULT_TOOLTIP": "Standard"
+      "DEFAULT_TOOLTIP": "Sortieren"
     },
     "SORTING_BUTTON_ARIA_LABEL": "{{direction}} sortieren"
   },
@@ -69,7 +69,7 @@
     "TOGGLE_BUTTON": {
       "ASCENDING_TITLE": "Aufsteigend",
       "DESCENDING_TITLE": "Absteigend",
-      "DEFAULT_TITLE": "Standard",
+      "DEFAULT_TITLE": "Sortiere {{column}}",
       "ARIA_LABEL": "{{column}} {{direction}} sortieren"
     },
     "SELECT_ALL_ARIA_LABEL": "Selektiere alle Zeilen der Tabelle",
