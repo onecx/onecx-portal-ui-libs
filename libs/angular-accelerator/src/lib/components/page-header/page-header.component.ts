@@ -84,6 +84,20 @@ export type GridColumnOptions = 1 | 2 | 3 | 4 | 6 | 12
   encapsulation: ViewEncapsulation.None,
 })
 export class PageHeaderComponent implements OnInit {
+    /**
+     * Helper to extract translation key and parameters from a string or object.
+     * @param input - Can be a string or an object with 'key' and 'parameters'.
+     * @returns An object with { key, params } for use in translation pipes or services. The returned key is always a string (never undefined).
+     */
+    public extractKeyAndParams(input: any): { key: string, params: any } {
+      if (typeof input === 'string') {
+        return { key: input, params: undefined };
+      }
+      if (input && typeof input === 'object') {
+        return { key: input.key ?? '', params: input.parameters };
+      }
+      return { key: '', params: undefined };
+    }
   private translateService = inject(TranslateService)
   private appStateService = inject(AppStateService)
   private userService = inject(UserService)

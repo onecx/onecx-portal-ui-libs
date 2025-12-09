@@ -465,4 +465,8 @@ describe('PageHeaderComponent', () => {
     expect(await objectInfo.getValueTooltipContent()).toBe('Plain Value Tooltip')
     expect(await objectInfo.getActionItemTooltipContent()).toBe('Plain Action Tooltip')
   })
+
+  it('should fallback to empty string if input.key is missing in object', () => {
+      expect(component.extractKeyAndParams({ parameters: { foo: 'bar' } })).toEqual({ key: '', params: { foo: 'bar' } });
+  });
 })
