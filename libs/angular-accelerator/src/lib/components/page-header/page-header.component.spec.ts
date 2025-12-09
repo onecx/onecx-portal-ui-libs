@@ -469,4 +469,22 @@ describe('PageHeaderComponent', () => {
   it('should fallback to empty string if input.key is missing in object', () => {
       expect(component.extractKeyAndParams({ parameters: { foo: 'bar' } })).toEqual({ key: '', params: { foo: 'bar' } });
   });
+
+  it('should emit save event when onAction("save") is called', () => {
+    jest.spyOn(component.save, 'emit');
+    component.onAction('save');
+    expect(component.save.emit).toHaveBeenCalled();
+  });
+
+  it('should not emit save event when onAction is called with other action', () => {
+    jest.spyOn(component.save, 'emit');
+    component.onAction('other');
+    expect(component.save.emit).not.toHaveBeenCalled();
+  });
+
+  it('should set figureImageLoadError to true when handleImageError is called', () => {
+    component.figureImageLoadError = false;
+    component.handleImageError();
+    expect(component.figureImageLoadError).toBe(true);
+  });
 })
