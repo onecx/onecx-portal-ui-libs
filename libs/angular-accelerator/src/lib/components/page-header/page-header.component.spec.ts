@@ -18,7 +18,6 @@ import {
 import { PageHeaderHarness, TestbedHarnessEnvironment } from '../../../../testing'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
-import { ExtractTranslationKeyPipe } from '../../pipes/extract-translation-key.pipe'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 
@@ -59,7 +58,7 @@ describe('PageHeaderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [PageHeaderComponent, DynamicPipe, ExtractTranslationKeyPipe],
+      declarations: [PageHeaderComponent, DynamicPipe],
       imports: [
         RouterTestingModule,
         TranslateTestingModule.withTranslations({
@@ -439,4 +438,23 @@ describe('PageHeaderComponent', () => {
     expect(await objectInfo.getValueTooltipContent()).toBe('Plain Value Tooltip')
     expect(await objectInfo.getActionItemTooltipContent()).toBe('Plain Action Tooltip')
   })
+
+  it('should extract key from string', () => {
+    expect(component.extractKeyAndParams('KEY')).toEqual({ key: 'KEY', params: undefined });
+  });
+
+  it('should extract key and params from object', () => {
+    expect(component.extractKeyAndParams({ key: 'KEY', parameters: { foo: 'bar' } })).toEqual({ key: 'KEY', params: { foo: 'bar' } });
+  });
+
+  it('should return empty key and undefined params for invalid input', () => {
+    expect(component.extractKeyAndParams(null)).toEqual({ key: '', params: undefined });
+    expect(component.extractKeyAndParams(undefined)).toEqual({ key: '', params: undefined });
+    expect(component.extractKeyAndParams(123)).toEqual({ key: '', params: undefined });
+    expect(component.extractKeyAndParams(true)).toEqual({ key: '', params: undefined });
+  });
+
+  it('should fallback to empty string if input.key is missing in object', () => {
+     expect(component.extractKeyAndParams({ parameters: { foo: 'bar' } })).toEqual({ key: '', params: { foo: 'bar' } });
+  });
 })

@@ -12,7 +12,6 @@ import { SkeletonModule } from 'primeng/skeleton'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
 import { StorybookTranslateModule } from '../../storybook-translate.module'
 import { StorybookBreadcrumbModule } from './../../storybook-breadcrumb.module'
-import { ExtractTranslationKeyPipe } from '../../pipes/extract-translation-key.pipe'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { UserService } from '@onecx/angular-integration-interface'
@@ -35,7 +34,7 @@ export default {
       ],
     }),
     moduleMetadata({
-      declarations: [PageHeaderComponent, DynamicPipe, ExtractTranslationKeyPipe],
+      declarations: [PageHeaderComponent, DynamicPipe],
       imports: [
         MenuModule,
         BreadcrumbModule,
