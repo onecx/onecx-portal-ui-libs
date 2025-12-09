@@ -18,4 +18,9 @@ describe('ExtractTranslationKeyPipe', () => {
     expect(pipe.transform(null, 'params')).toBeUndefined();
     expect(pipe.transform(undefined, 'params')).toBeUndefined();
   });
+
+  it('should return fallback for unknown mode', () => {
+    expect(pipe.transform('LABEL_KEY_STRING', 'unknown' as any, 'myFallback')).toBe('myFallback');
+    expect(pipe.transform('LABEL_KEY_STRING', 'unknown' as any)).toBe('');
+  });
 });
