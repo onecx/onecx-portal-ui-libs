@@ -51,8 +51,6 @@ export interface Action {
 export interface ObjectDetailItem {
   label: string
   value?: string
-  labelTooltip?: string
-  valueTooltip?: string
   icon?: PrimeIcon
   iconStyleClass?: string
   labelPipe?: Type<any>
@@ -63,7 +61,6 @@ export interface ObjectDetailItem {
   actionItemCallback?: () => void
   actionItemAriaLabel?: string
   actionItemAriaLabelKey?: TranslationKey
-  actionItemTooltip?: string
   actionItemTooltipKey?: TranslationKey
   labelTooltipKey?: TranslationKey
   valueTooltipKey?: TranslationKey

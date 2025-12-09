@@ -125,10 +125,9 @@ const demoFields: ObjectDetailItem[] = [
   {
     label: 'Venue',
     value: 'AIE Munich ',
-    valueTooltip: 'AIE Munich',
-    labelTooltip: 'Label Tooltip',
+    labelTooltipKey: 'Label Tooltip',
     actionItemIcon: PrimeIcons.COPY,
-    actionItemTooltip: 'Copy to clipboard',
+    actionItemTooltipKey: 'Copy to clipboard',
     actionItemCallback: () => {
       console.log('Copy to clipboard')
     },
@@ -465,15 +464,15 @@ const demoFieldsWithTranslationKeys: ObjectDetailItem[] = [
     label: 'Start Date',
     value: '14.3.2022',
     icon: PrimeIcons.CALENDAR,
-    labelTooltip: 'Simple string tooltip for label',
-    valueTooltip: 'Simple string tooltip for value',
+    labelTooltipKey: 'Simple string tooltip for label',
+    valueTooltipKey: 'Simple string tooltip for value',
   },
   {
     label: 'End Date',
     value: '19.06.2024',
     icon: PrimeIcons.CALENDAR,
     actionItemIcon: PrimeIcons.COPY,
-    actionItemTooltip: 'Simple string tooltip for action',
+    actionItemTooltipKey: 'Simple string tooltip for action',
     actionItemAriaLabel: 'Simple string aria label for action',
     actionItemCallback: () => {
       console.log('Copy to clipboard')

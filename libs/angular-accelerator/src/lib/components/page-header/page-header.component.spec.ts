@@ -404,30 +404,11 @@ describe('PageHeaderComponent', () => {
     expect(await objectInfo.getActionItemTooltipContent()).toBe('Action Tooltip Key DE')
   })
 
-  it('should show translationKeys over plain tooltip properties', async () => {
-    const translate = TestBed.inject(TranslateService)
-
-    translate.setTranslation(
-      'en',
-      {
-        LABEL_KEY: 'From Key',
-        VALUE_KEY: 'From Key',
-        ACTION_KEY: 'From Key',
-      },
-      true
-    )
-    translate.use('en')
-
+  it('should fallback to empty string if *Key properties are not provided', async () => {
     component.objectDetails = [
       {
         label: 'Venue',
         value: 'AIE Munich',
-        labelTooltipKey: 'LABEL_KEY',
-        labelTooltip: 'Plain Label',
-        valueTooltipKey: 'VALUE_KEY',
-        valueTooltip: 'Plain Value',
-        actionItemTooltipKey: 'ACTION_KEY',
-        actionItemTooltip: 'Plain Action',
         actionItemIcon: 'pi pi-copy',
         actionItemCallback: () => {
           console.log('Action!')
@@ -438,31 +419,9 @@ describe('PageHeaderComponent', () => {
 
     const objectInfo = (await pageHeaderHarness.getObjectInfos())[0]
 
-    expect(await objectInfo.getLabelTooltipContent()).toBe('From Key')
-    expect(await objectInfo.getValueTooltipContent()).toBe('From Key')
-    expect(await objectInfo.getActionItemTooltipContent()).toBe('From Key')
-  })
-
-  it('should fallback to plain tooltip properties when *Key properties are not provided', async () => {
-    component.objectDetails = [
-      {
-        label: 'Venue',
-        value: 'AIE Munich',
-        labelTooltip: 'Plain Label Tooltip',
-        valueTooltip: 'Plain Value Tooltip',
-        actionItemTooltip: 'Plain Action Tooltip',
-        actionItemIcon: 'pi pi-copy',
-        actionItemCallback: () => {
-          console.log('Action!')
-        },
-      },
-    ]
-    fixture.detectChanges()
-
-    const objectInfo = (await pageHeaderHarness.getObjectInfos())[0]
-
-    expect(await objectInfo.getLabelTooltipContent()).toBe('Plain Label Tooltip')
-    expect(await objectInfo.getValueTooltipContent()).toBe('Plain Value Tooltip')
-    expect(await objectInfo.getActionItemTooltipContent()).toBe('Plain Action Tooltip')
+    //tooltips should not be initialise for undefined keys
+    expect(await objectInfo.getLabelTooltipContent()).toBeNull();
+    expect(await objectInfo.getValueTooltipContent()).toBeNull();
+    expect(await objectInfo.getActionItemTooltipContent()).toBeNull();
   })
 })
