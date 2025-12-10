@@ -72,6 +72,9 @@ export class SlotComponent implements OnInit, OnDestroy {
    */
   private _inputs$ = new BehaviorSubject<Record<string, unknown>>({})
   @Input()
+  get inputs(): Record<string, unknown> {
+    return this._inputs$.getValue()
+  }
   set inputs(value: Record<string, unknown>) {
     this._inputs$.next({
       ...this._inputs$.getValue(),
@@ -123,6 +126,9 @@ export class SlotComponent implements OnInit, OnDestroy {
    */
   private _outputs$ = new BehaviorSubject<Record<string, EventEmitter<any>>>({})
   @Input()
+  get outputs(): Record<string, EventEmitter<any>> {
+    return this._outputs$.getValue()
+  }
   set outputs(value: Record<string, EventEmitter<any>>) {
     this._outputs$.next({
       ...this._outputs$.getValue(),
