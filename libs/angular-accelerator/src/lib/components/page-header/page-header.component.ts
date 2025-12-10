@@ -17,6 +17,7 @@ import { BehaviorSubject, Observable, concat, map, of, switchMap } from 'rxjs'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { PrimeIcon } from '../../utils/primeicon.utils'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
+import { TranslationKey } from '../../model/translation.model'
 
 /**
  * Action definition.
@@ -60,9 +61,12 @@ export interface ObjectDetailItem {
   valueCssClass?: string
   actionItemIcon?: PrimeIcon
   actionItemCallback?: () => void
-  actionItemTooltip?: string
-  actionItemAriaLabelKey?: string
   actionItemAriaLabel?: string
+  actionItemAriaLabelKey?: TranslationKey
+  actionItemTooltip?: string
+  actionItemTooltipKey?: TranslationKey
+  labelTooltipKey?: TranslationKey
+  valueTooltipKey?: TranslationKey
 }
 
 export interface HomeItem {
@@ -79,7 +83,7 @@ export type GridColumnOptions = 1 | 2 | 3 | 4 | 6 | 12
   styleUrls: ['./page-header.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class PageHeaderComponent implements OnInit {
+export class PageHeaderComponent implements OnInit {    
   private translateService = inject(TranslateService)
   private appStateService = inject(AppStateService)
   private userService = inject(UserService)
@@ -310,5 +314,20 @@ export class PageHeaderComponent implements OnInit {
       command: a.actionCallback,
       disabled: a.disabled,
     }))
+  }
+
+  /**
+   * Helper to extract translation key and parameters from a string or object.
+   * @param input - Can be a string or an object with 'key' and 'parameters'.
+   * @returns An object with { key, params } for use in translation pipes or services. The returned key is always a string (never undefined).
+   */
+  public extractKeyAndParams(input: any): { key: string, params: any } {
+    if (typeof input === 'string') {
+      return { key: input, params: undefined };
+    }
+    if (input && typeof input === 'object') {
+      return { key: input.key ?? '', params: input.parameters };
+    }
+    return { key: '', params: undefined };
   }
 }

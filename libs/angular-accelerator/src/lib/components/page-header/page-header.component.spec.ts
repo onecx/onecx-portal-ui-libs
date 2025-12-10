@@ -20,6 +20,7 @@ import { DynamicPipe } from '../../pipes/dynamic.pipe'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { UserService } from '@onecx/angular-integration-interface'
+import { TranslateService } from '@ngx-translate/core'
 
 const mockActions: Action[] = [
   {
@@ -349,4 +350,150 @@ describe('PageHeaderComponent', () => {
     await (await disabledActionElement.host()).click()
     expect(console.log).not.toHaveBeenCalledWith('My Test Overflow Disabled Action')
   })
+
+  it('should render labelTooltipKey, valueTooltipKey, and actionItemTooltipKey as translated tooltips when language is changed', async () => {
+    const translate = TestBed.inject(TranslateService)
+
+    translate.setTranslation(
+      'en',
+      {
+        LABEL_TOOLTIP_KEY: 'Label Tooltip Key EN',
+        VALUE_TOOLTIP_KEY: 'Value Tooltip Key EN',
+        ACTION_TOOLTIP_KEY: 'Action Tooltip Key EN',
+      },
+      true
+    )
+    translate.setTranslation(
+      'de',
+      {
+        LABEL_TOOLTIP_KEY: 'Label Tooltip Key DE',
+        VALUE_TOOLTIP_KEY: 'Value Tooltip Key DE',
+        ACTION_TOOLTIP_KEY: 'Action Tooltip Key DE',
+      },
+      true
+    )
+    translate.use('en')
+
+    component.objectDetails = [
+      {
+        label: 'Venue',
+        value: 'AIE Munich',
+        labelTooltipKey: 'LABEL_TOOLTIP_KEY',
+        valueTooltipKey: 'VALUE_TOOLTIP_KEY',
+        actionItemTooltipKey: 'ACTION_TOOLTIP_KEY',
+        actionItemIcon: 'pi pi-copy',
+        actionItemCallback: () => {
+          console.log('Action!')
+        },
+      },
+    ]
+    fixture.detectChanges()
+
+    const objectInfo = (await pageHeaderHarness.getObjectInfos())[0]
+
+    expect(await objectInfo.getLabelTooltipContent()).toBe('Label Tooltip Key EN')
+    expect(await objectInfo.getValueTooltipContent()).toBe('Value Tooltip Key EN')
+    expect(await objectInfo.getActionItemTooltipContent()).toBe('Action Tooltip Key EN')
+
+    translate.use('de')
+    await fixture.whenStable()
+    fixture.detectChanges()
+
+    expect(await objectInfo.getLabelTooltipContent()).toBe('Label Tooltip Key DE')
+    expect(await objectInfo.getValueTooltipContent()).toBe('Value Tooltip Key DE')
+    expect(await objectInfo.getActionItemTooltipContent()).toBe('Action Tooltip Key DE')
+  })
+
+  it('should show translationKeys over plain tooltip properties', async () => {
+    const translate = TestBed.inject(TranslateService)
+
+    translate.setTranslation(
+      'en',
+      {
+        LABEL_KEY: 'From Key',
+        VALUE_KEY: 'From Key',
+        ACTION_KEY: 'From Key',
+      },
+      true
+    )
+    translate.use('en')
+
+    component.objectDetails = [
+      {
+        label: 'Venue',
+        value: 'AIE Munich',
+        labelTooltipKey: 'LABEL_KEY',
+        labelTooltip: 'Plain Label',
+        valueTooltipKey: 'VALUE_KEY',
+        valueTooltip: 'Plain Value',
+        actionItemTooltipKey: 'ACTION_KEY',
+        actionItemTooltip: 'Plain Action',
+        actionItemIcon: 'pi pi-copy',
+        actionItemCallback: () => {
+          console.log('Action!')
+        },
+      },
+    ]
+    fixture.detectChanges()
+
+    const objectInfo = (await pageHeaderHarness.getObjectInfos())[0]
+
+    expect(await objectInfo.getLabelTooltipContent()).toBe('From Key')
+    expect(await objectInfo.getValueTooltipContent()).toBe('From Key')
+    expect(await objectInfo.getActionItemTooltipContent()).toBe('From Key')
+  })
+
+  it('should fallback to plain tooltip properties when *Key properties are not provided', async () => {
+    component.objectDetails = [
+      {
+        label: 'Venue',
+        value: 'AIE Munich',
+        labelTooltip: 'Plain Label Tooltip',
+        valueTooltip: 'Plain Value Tooltip',
+        actionItemTooltip: 'Plain Action Tooltip',
+        actionItemIcon: 'pi pi-copy',
+        actionItemCallback: () => {
+          console.log('Action!')
+        },
+      },
+    ]
+    fixture.detectChanges()
+
+    const objectInfo = (await pageHeaderHarness.getObjectInfos())[0]
+
+    expect(await objectInfo.getLabelTooltipContent()).toBe('Plain Label Tooltip')
+    expect(await objectInfo.getValueTooltipContent()).toBe('Plain Value Tooltip')
+    expect(await objectInfo.getActionItemTooltipContent()).toBe('Plain Action Tooltip')
+  })
+
+  it('should fallback to empty string if input.key is missing in object', () => {
+      expect(component.extractKeyAndParams({ parameters: { foo: 'bar' } })).toEqual({ key: '', params: { foo: 'bar' } });
+  });
+
+  it('should set null key and params  when extractKeyAndParams is called with missing key', () => {
+      expect(component.extractKeyAndParams({parameters: undefined })).toEqual({ key: '', params: undefined });
+  });
+
+  it('should set empty key when extractKeyAndParams is called with missing key', () => {
+      expect(component.extractKeyAndParams(1234)).toEqual({ key: '', params: undefined });
+  });
+
+  it('should emit save event when onAction("save") is called', () => {
+    jest.spyOn(component.save, 'emit');
+    component.onAction('save');
+    expect(component.save.emit).toHaveBeenCalled();
+  });
+
+  it('should not emit save event when onAction is called with other action', () => {
+    jest.spyOn(component.save, 'emit');
+    component.onAction('other');
+    expect(component.save.emit).not.toHaveBeenCalled();
+  });
+
+  it('should set figureImageLoadError to true when handleImageError is called', () => {
+    component.figureImageLoadError = false;
+    component.handleImageError();
+    expect(component.figureImageLoadError).toBe(true);
+  });
+ 
 })
