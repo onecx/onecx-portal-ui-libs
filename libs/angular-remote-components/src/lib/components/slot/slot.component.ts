@@ -39,7 +39,7 @@ interface AssignedComponent {
 export class SlotComponent implements OnInit, OnDestroy {
   private http = inject(HttpClient)
   private elementRef = inject(ElementRef)
-  private viewContainerRef = inject(ViewContainerRef)
+  private readonly viewContainerRef = inject(ViewContainerRef)
 
   @Input()
   name!: string
