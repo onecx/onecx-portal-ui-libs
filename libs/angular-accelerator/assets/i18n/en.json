@@ -45,7 +45,7 @@
     "TOGGLE_BUTTON": {
       "ASCENDING_TOOLTIP": "Sort Ascending",
       "DESCENDING_TOOLTIP": "Sort Descending",
-      "DEFAULT_TOOLTIP": "Sort"
+      "DEFAULT_TOOLTIP": "Default Sort"
     },
     "SORTING_BUTTON_ARIA_LABEL": "Toggle sorting direction to {{direction}}"
   },
@@ -69,7 +69,7 @@
     "TOGGLE_BUTTON": {
       "ASCENDING_TITLE": "Sort Ascending",
       "DESCENDING_TITLE": "Sort Descending",
-      "DEFAULT_TITLE": "Sort",
+      "DEFAULT_TITLE": "Default Sort",
       "ARIA_LABEL": "Toggle {{column}} sorting direction to {{direction}}"
     },
     "SELECT_ALL_ARIA_LABEL": "Select all table rows",
