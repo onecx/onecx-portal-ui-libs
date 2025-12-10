@@ -470,6 +470,14 @@ describe('PageHeaderComponent', () => {
       expect(component.extractKeyAndParams({ parameters: { foo: 'bar' } })).toEqual({ key: '', params: { foo: 'bar' } });
   });
 
+  it('should set null key and params  when extractKeyAndParams is called with missing key', () => {
+      expect(component.extractKeyAndParams({parameters: undefined })).toEqual({ key: '', params: undefined });
+  });
+
+  it('should set empty key when extractKeyAndParams is called with missing key', () => {
+      expect(component.extractKeyAndParams(1234)).toEqual({ key: '', params: undefined });
+  });
+
   it('should emit save event when onAction("save") is called', () => {
     jest.spyOn(component.save, 'emit');
     component.onAction('save');
@@ -487,4 +495,5 @@ describe('PageHeaderComponent', () => {
     component.handleImageError();
     expect(component.figureImageLoadError).toBe(true);
   });
+ 
 })
