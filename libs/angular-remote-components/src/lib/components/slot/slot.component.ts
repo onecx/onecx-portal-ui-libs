@@ -1,16 +1,12 @@
 import {
   Component,
   ComponentRef,
-  ContentChild,
   ElementRef,
   EventEmitter,
   Input,
   OnDestroy,
   OnInit,
-  QueryList,
-  TemplateRef,
   Type,
-  ViewChildren,
   ViewContainerRef,
   inject,
 } from '@angular/core'
@@ -28,7 +24,7 @@ import { ocxRemoteComponent } from '../../model/remote-component'
 import { RemoteComponentInfo, SLOT_SERVICE, SlotComponentConfiguration, SlotService } from '../../services/slot.service'
 import { updateStylesForRcCreation, updateStylesForRcRemoval, RemoteComponentConfig } from '@onecx/angular-utils'
 import { HttpClient } from '@angular/common/http'
-import { debounceTime, filter, take } from 'rxjs/operators'
+import { debounceTime, filter } from 'rxjs/operators'
 
 interface AssignedComponent {
   refOrElement: ComponentRef<any> | HTMLElement
@@ -47,12 +43,6 @@ export class SlotComponent implements OnInit, OnDestroy {
 
   @Input()
   name!: string
-
-  @Input()
-  slotStyles: { [key: string]: any } = {}
-
-  @Input()
-  slotClasses: string | string[] | Set<string> | { [key: string]: any } = ''
 
   private slotService = inject<SlotService>(SLOT_SERVICE, { optional: true })
   private _assignedComponents$ = new BehaviorSubject<AssignedComponent[]>([])
@@ -82,9 +72,6 @@ export class SlotComponent implements OnInit, OnDestroy {
    */
   private _inputs$ = new BehaviorSubject<Record<string, unknown>>({})
   @Input()
-  get inputs(): Record<string, unknown> {
-    return this._inputs$.getValue()
-  }
   set inputs(value: Record<string, unknown>) {
     this._inputs$.next({
       ...this._inputs$.getValue(),
@@ -136,9 +123,6 @@ export class SlotComponent implements OnInit, OnDestroy {
    */
   private _outputs$ = new BehaviorSubject<Record<string, EventEmitter<any>>>({})
   @Input()
-  get outputs(): Record<string, EventEmitter<any>> {
-    return this._outputs$.getValue()
-  }
   set outputs(value: Record<string, EventEmitter<any>>) {
     this._outputs$.next({
       ...this._outputs$.getValue(),
@@ -168,6 +152,7 @@ export class SlotComponent implements OnInit, OnDestroy {
     this._assignedComponents$.getValue().forEach((component) => {
       updateStylesForRcRemoval(component.remoteInfo.productName, component.remoteInfo.appId, this.name)
     })
+    this.viewContainerRef.clear()
   }
 
   ngOnInit(): void {
@@ -186,7 +171,7 @@ export class SlotComponent implements OnInit, OnDestroy {
     this.subscriptions.push(updateSub)
 
     // Components can be created only when component information is available and view containers are created for all remote components
-    const createSub = this.components$.pipe(take(1)).subscribe((components) => {
+    const createSub = this.components$.subscribe((components) => {
       components.forEach((componentInfo) => {
         if (componentInfo.componentType) {
           Promise.all([Promise.resolve(componentInfo.componentType), Promise.resolve(componentInfo.permissions)]).then(
@@ -276,7 +261,7 @@ export class SlotComponent implements OnInit, OnDestroy {
     permissions: string[]
   ): ComponentRef<any> {
     const componentRef = this.viewContainerRef.createComponent<any>(componentType)
-    const componentHTML = componentRef?.location.nativeElement as HTMLElement
+    const componentHTML = componentRef.location.nativeElement as HTMLElement
     this.updateComponentStyles(componentInfo)
     this.addDataStyleId(componentHTML, componentInfo.remoteComponent)
     this.addDataStyleIsolation(componentHTML)
@@ -288,7 +273,7 @@ export class SlotComponent implements OnInit, OnDestroy {
         permissions: permissions,
       })
     }
-    componentRef?.changeDetectorRef.detectChanges()
+    componentRef.changeDetectorRef.detectChanges()
     return componentRef
   }
 
@@ -330,7 +315,7 @@ export class SlotComponent implements OnInit, OnDestroy {
   }
 
   private updateComponentData(
-    component: ComponentRef<any> | HTMLElement | undefined,
+    component: ComponentRef<any> | HTMLElement,
     inputs: Record<string, unknown>,
     outputs: Record<string, EventEmitter<unknown>>
   ) {
@@ -339,9 +324,7 @@ export class SlotComponent implements OnInit, OnDestroy {
   }
 
   // split props setting for HTMLElement and ComponentRef
-  private setProps(component: ComponentRef<any> | HTMLElement | undefined, props: Record<string, unknown>) {
-    if (!component) return
-
+  private setProps(component: ComponentRef<any> | HTMLElement, props: Record<string, unknown>) {
     Object.entries(props).map(([name, value]) => {
       if (component instanceof HTMLElement) {
         ;(component as any)[name] = value
