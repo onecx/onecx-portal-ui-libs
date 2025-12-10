@@ -78,12 +78,12 @@ class ResizeEventsPublisherMock {
 
 // Test component
 @Component({
-  selector: 'app-mock-angular-component',
+  selector: 'ocx-mock-angular-component',
   template: `<div>Mock Angular Component</div>`,
   standalone: false,
 })
 class MockAngularComponent implements ocxRemoteComponent {
-  ocxInitRemoteComponent(config: RemoteComponentConfig): void {
+  ocxInitRemoteComponent(_config: RemoteComponentConfig): void {
     console.log('MockAngularComponent initialized')
   }
 
@@ -91,7 +91,7 @@ class MockAngularComponent implements ocxRemoteComponent {
     console.log('MockAngularComponent initialInput', value)
     this._initialInput = value
   }
-  private _initialInput: string = ''
+  private _initialInput = ''
   @Input() set initialOutput(value: EventEmitter<any>) {
     console.log('MockAngularComponent initialOutput', value)
     this._initialOutput = value
@@ -232,7 +232,7 @@ describe('SlotComponent', () => {
 
         const slotHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, SlotHarness)
 
-        const element = await slotHarness.getElement('app-mock-angular-component')
+        const element = await slotHarness.getElement('ocx-mock-angular-component')
         expect(element).not.toBeNull()
 
         expect(updateStylesForRcCreation).toHaveBeenCalled()
@@ -348,7 +348,7 @@ describe('SlotComponent', () => {
 
       const slotHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, SlotHarness)
 
-      const angularElement = await slotHarness.getElement('app-mock-angular-component')
+      const angularElement = await slotHarness.getElement('ocx-mock-angular-component')
       expect(angularElement).not.toBeNull()
 
       const webcomponentElement = await slotHarness.getElement('mock-webcomponent-multiple')
@@ -419,9 +419,9 @@ describe('SlotComponent', () => {
       )
       fixture.detectChanges()
 
-      let slotHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, SlotHarness)
+      const slotHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, SlotHarness)
 
-      const angularElement = await slotHarness.getElement('app-mock-angular-component')
+      const angularElement = await slotHarness.getElement('ocx-mock-angular-component')
       expect(angularElement).not.toBeNull()
       expect(spy).toHaveBeenCalledWith('MockAngularComponent initialInput', 'initialValue')
       expect(spy).toHaveBeenCalledWith('MockAngularComponent initialOutput', eventEmitter)
