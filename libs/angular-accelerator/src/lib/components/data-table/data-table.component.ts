@@ -700,9 +700,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
   sortIconTitle(sortColumn: string) {
     return this.sortDirectionToTitle(
-      sortColumn !== this.sortDirection
-        ? DataSortDirection.NONE
-        : this.sortStates[this.sortStates.indexOf(this.sortDirection) % this.sortStates.length]
+      this.columnNextSortDirection(sortColumn)
     )
   }
 
