@@ -23,6 +23,7 @@
       "@onecx/angular-integration-interface/mocks": ["libs/angular-integration-interface/mocks/index.ts"],
       "@onecx/angular-remote-components": ["libs/angular-remote-components/src/index.ts"],
       "@onecx/angular-remote-components/mocks": ["libs/angular-remote-components/mocks/index.ts"],
+      "@onecx/angular-remote-components/testing": ["libs/angular-remote-components/testing/index.ts"],
       "@onecx/angular-standalone-shell": ["libs/angular-standalone-shell/src/index.ts"],
       "@onecx/angular-testing": ["libs/angular-testing/src/index.ts"],
       "@onecx/angular-utils": ["libs/angular-utils/src/index.ts"],
