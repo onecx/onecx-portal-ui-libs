@@ -44,9 +44,9 @@
       "LABEL": "Sort by"
     },
     "TOGGLE_BUTTON": {
-      "ASCENDING_TOOLTIP": "Ascending",
-      "DESCENDING_TOOLTIP": "Descending",
-      "DEFAULT_TOOLTIP": "Default"
+      "ASCENDING_TOOLTIP": "Sort Ascending",
+      "DESCENDING_TOOLTIP": "Sort Descending",
+      "DEFAULT_TOOLTIP": "Default Sort"
     },
     "SORTING_BUTTON_ARIA_LABEL": "Toggle sorting direction to {{direction}}"
   },
@@ -67,9 +67,9 @@
       "DELETE": "Delete"
     },
     "TOGGLE_BUTTON": {
-      "ASCENDING_TITLE": "Ascending",
-      "DESCENDING_TITLE": "Descending",
-      "DEFAULT_TITLE": "Default",
+      "ASCENDING_TITLE": "Sort Ascending",
+      "DESCENDING_TITLE": "Sort Descending",
+      "DEFAULT_TITLE": "Default Sort",
       "ARIA_LABEL": "Toggle {{column}} sorting direction to {{direction}}"
     },
     "SELECT_ALL_ARIA_LABEL": "Select all table rows",
