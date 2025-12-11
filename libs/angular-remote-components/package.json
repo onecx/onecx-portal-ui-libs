@@ -8,7 +8,6 @@
     "@angular/core": "^19.0.0",
     "@ngx-translate/core": "^16.0.0",
     "@onecx/integration-interface": "^7.0.0-rc.10",
-    "@onecx/angular-testing": "^7.0.0-rc.10",
     "@onecx/angular-utils": "^7.0.0-rc.10",
     "@angular-architects/module-federation": "^18.0.4",
     "rxjs": "^7.8.1",

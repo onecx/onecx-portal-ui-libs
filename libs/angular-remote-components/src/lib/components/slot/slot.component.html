@@ -1,7 +1,0 @@
-@for (component of (components$ | async); track component) {
-<div #slot [ngStyle]="slotStyles" [ngClass]="slotClasses">
-  @if (skeleton) {
-  <ng-container [ngTemplateOutlet]="skeleton"></ng-container>
-  }
-</div>
-}

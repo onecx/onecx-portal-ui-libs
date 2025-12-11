@@ -1,16 +1,12 @@
 import {
   Component,
   ComponentRef,
-  ContentChild,
   ElementRef,
   EventEmitter,
   Input,
   OnDestroy,
   OnInit,
-  QueryList,
-  TemplateRef,
   Type,
-  ViewChildren,
   ViewContainerRef,
   inject,
 } from '@angular/core'
@@ -38,20 +34,15 @@ interface AssignedComponent {
 @Component({
   standalone: false,
   selector: 'ocx-slot[name]',
-  templateUrl: './slot.component.html',
+  template: ``,
 })
 export class SlotComponent implements OnInit, OnDestroy {
   private http = inject(HttpClient)
   private elementRef = inject(ElementRef)
+  private readonly viewContainerRef = inject(ViewContainerRef)
 
   @Input()
   name!: string
-
-  @Input()
-  slotStyles: { [key: string]: any } = {}
-
-  @Input()
-  slotClasses: string | string[] | Set<string> | { [key: string]: any } = ''
 
   private slotService = inject<SlotService>(SLOT_SERVICE, { optional: true })
   private _assignedComponents$ = new BehaviorSubject<AssignedComponent[]>([])
@@ -145,14 +136,6 @@ export class SlotComponent implements OnInit, OnDestroy {
     })
   }
 
-  _viewContainers$ = new BehaviorSubject<QueryList<ViewContainerRef> | undefined>(undefined)
-  @ViewChildren('slot', { read: ViewContainerRef })
-  set viewContainers(value: QueryList<ViewContainerRef>) {
-    this._viewContainers$.next(value)
-  }
-
-  @ContentChild('skeleton') skeleton: TemplateRef<any> | undefined
-
   subscriptions: Subscription[] = []
   components$: Observable<SlotComponentConfiguration[]> | undefined
 
@@ -166,40 +149,52 @@ export class SlotComponent implements OnInit, OnDestroy {
     filter((event): event is RequestedEventsChangedEvent => event.type === ResizedEventType.REQUESTED_EVENTS_CHANGED)
   )
 
+  ngOnDestroy(): void {
+    this.resizedEventsTopic.destroy()
+    this.subscriptions.forEach((sub) => sub.unsubscribe())
+    this.resizeObserver?.disconnect()
+    this.componentSize$.complete() // Complete the subject to avoid memory leaks
+    // Removes RC styles on unmount to avoid ghost styles
+    this._assignedComponents$.getValue().forEach((component) => {
+      updateStylesForRcRemoval(component.remoteInfo.productName, component.remoteInfo.appId, this.name)
+    })
+    this.viewContainerRef.clear()
+  }
+
   ngOnInit(): void {
     if (!this.slotService) {
       console.error(`SLOT_SERVICE token was not provided. ${this.name} slot will not be filled with data.`)
       return
     }
     this.components$ = this.slotService.getComponentsForSlot(this.name)
-    combineLatest([this._assignedComponents$, this._inputs$, this._outputs$]).subscribe(
+    const updateSub = combineLatest([this._assignedComponents$, this._inputs$, this._outputs$]).subscribe(
       ([components, inputs, outputs]) => {
         components.forEach((component) => {
           this.updateComponentData(component.refOrElement, inputs, outputs)
         })
       }
     )
+    this.subscriptions.push(updateSub)
+
     // Components can be created only when component information is available and view containers are created for all remote components
-    const sub = combineLatest([this._viewContainers$, this.components$]).subscribe(([viewContainers, components]) => {
-      if (viewContainers && viewContainers.length === components.length) {
-        components.forEach((componentInfo, i) => {
-          if (componentInfo.componentType) {
-            Promise.all([
-              Promise.resolve(componentInfo.componentType),
-              Promise.resolve(componentInfo.permissions),
-            ]).then(([componentType, permissions]) => {
-              const component = this.createComponent(componentType, componentInfo, permissions, viewContainers, i)
-              if (component)
+    const createSub = this.components$.subscribe((components) => {
+      components.forEach((componentInfo) => {
+        if (componentInfo.componentType) {
+          Promise.all([Promise.resolve(componentInfo.componentType), Promise.resolve(componentInfo.permissions)]).then(
+            ([componentType, permissions]) => {
+              const component = this.createComponent(componentType, componentInfo, permissions)
+              if (component) {
                 this._assignedComponents$.next([
                   ...this._assignedComponents$.getValue(),
                   { refOrElement: component, remoteInfo: componentInfo.remoteComponent },
                 ])
-            })
-          }
-        })
-      }
+              }
+            }
+          )
+        }
+      })
     })
-    this.subscriptions.push(sub)
+    this.subscriptions.push(createSub)
 
     this.observeSlotSizeChanges()
   }
@@ -246,50 +241,64 @@ export class SlotComponent implements OnInit, OnDestroy {
   private createComponent(
     componentType: Type<unknown> | undefined,
     componentInfo: { remoteComponent: RemoteComponentInfo },
-    permissions: string[],
-    viewContainers: QueryList<ViewContainerRef>,
-    i: number
+    permissions: string[]
   ): ComponentRef<any> | HTMLElement | undefined {
-    const viewContainer = viewContainers.get(i)
-    viewContainer?.clear()
-    viewContainer?.element.nativeElement.replaceChildren()
     if (componentType) {
-      const componentRef = viewContainer?.createComponent<any>(componentType)
-      const componentHTML = componentRef?.location.nativeElement as HTMLElement
-      this.updateComponentStyles(componentInfo)
-      this.addDataStyleId(componentHTML, componentInfo.remoteComponent)
-      this.addDataStyleIsolation(componentHTML)
-      if (componentRef && 'ocxInitRemoteComponent' in componentRef.instance) {
-        ;(componentRef.instance as ocxRemoteComponent).ocxInitRemoteComponent({
-          appId: componentInfo.remoteComponent.appId,
-          productName: componentInfo.remoteComponent.productName,
-          baseUrl: componentInfo.remoteComponent.baseUrl,
-          permissions: permissions,
-        })
-      }
-      componentRef?.changeDetectorRef.detectChanges()
-      return componentRef
-    } else if (
-      componentInfo.remoteComponent.technology === Technologies.WebComponentModule ||
-      componentInfo.remoteComponent.technology === Technologies.WebComponentScript
+      return this.createAngularComponent(componentType, componentInfo, permissions)
+    }
+
+    if (
+      (componentInfo.remoteComponent.technology === Technologies.WebComponentModule ||
+        componentInfo.remoteComponent.technology === Technologies.WebComponentScript) &&
+      componentInfo.remoteComponent.elementName !== undefined
     ) {
-      if (componentInfo.remoteComponent.elementName) {
-        const element = document.createElement(componentInfo.remoteComponent.elementName)
-        this.updateComponentStyles(componentInfo)
-        this.addDataStyleId(element, componentInfo.remoteComponent)
-        this.addDataStyleIsolation(element)
-        ;(element as any)['ocxRemoteComponentConfig'] = {
-          appId: componentInfo.remoteComponent.appId,
-          productName: componentInfo.remoteComponent.productName,
-          baseUrl: componentInfo.remoteComponent.baseUrl,
-          permissions: permissions,
-        } satisfies RemoteComponentConfig
-        viewContainer?.element.nativeElement.appendChild(element)
-        return element
-      }
+      return this.createWebComponent(
+        componentInfo as { remoteComponent: RemoteComponentInfo & { elementName: string } },
+        permissions
+      )
     }
 
     return
+  }
+
+  private createAngularComponent(
+    componentType: Type<unknown>,
+    componentInfo: { remoteComponent: RemoteComponentInfo },
+    permissions: string[]
+  ): ComponentRef<any> {
+    const componentRef = this.viewContainerRef.createComponent<any>(componentType)
+    const componentHTML = componentRef.location.nativeElement as HTMLElement
+    this.updateComponentStyles(componentInfo)
+    this.addDataStyleId(componentHTML, componentInfo.remoteComponent)
+    this.addDataStyleIsolation(componentHTML)
+    if (componentRef && 'ocxInitRemoteComponent' in componentRef.instance) {
+      ;(componentRef.instance as ocxRemoteComponent).ocxInitRemoteComponent({
+        appId: componentInfo.remoteComponent.appId,
+        productName: componentInfo.remoteComponent.productName,
+        baseUrl: componentInfo.remoteComponent.baseUrl,
+        permissions: permissions,
+      })
+    }
+    componentRef.changeDetectorRef.detectChanges()
+    return componentRef
+  }
+
+  private createWebComponent(
+    componentInfo: { remoteComponent: RemoteComponentInfo & { elementName: string } },
+    permissions: string[]
+  ): HTMLElement {
+    const element = document.createElement(componentInfo.remoteComponent.elementName)
+    this.updateComponentStyles(componentInfo)
+    this.addDataStyleId(element, componentInfo.remoteComponent)
+    this.addDataStyleIsolation(element)
+    ;(element as any)['ocxRemoteComponentConfig'] = {
+      appId: componentInfo.remoteComponent.appId,
+      productName: componentInfo.remoteComponent.productName,
+      baseUrl: componentInfo.remoteComponent.baseUrl,
+      permissions: permissions,
+    } satisfies RemoteComponentConfig
+    this.viewContainerRef.element.nativeElement.appendChild(element)
+    return element
   }
 
   private addDataStyleId(element: HTMLElement, rcInfo: RemoteComponentInfo) {
@@ -312,7 +321,7 @@ export class SlotComponent implements OnInit, OnDestroy {
   }
 
   private updateComponentData(
-    component: ComponentRef<any> | HTMLElement | undefined,
+    component: ComponentRef<any> | HTMLElement,
     inputs: Record<string, unknown>,
     outputs: Record<string, EventEmitter<unknown>>
   ) {
@@ -320,26 +329,14 @@ export class SlotComponent implements OnInit, OnDestroy {
     this.setProps(component, outputs)
   }
 
-  private setProps(component: ComponentRef<any> | HTMLElement | undefined, props: Record<string, unknown>) {
-    if (!component) return
-
+  // split props setting for HTMLElement and ComponentRef
+  private setProps(component: ComponentRef<any> | HTMLElement, props: Record<string, unknown>) {
     Object.entries(props).map(([name, value]) => {
       if (component instanceof HTMLElement) {
         ;(component as any)[name] = value
       } else {
         component.setInput(name, value)
       }
-    })
-  }
-
-  ngOnDestroy(): void {
-    this.resizedEventsTopic.destroy()
-    this.subscriptions.forEach((sub) => sub.unsubscribe())
-    this.resizeObserver?.disconnect()
-    this.componentSize$.complete() // Complete the subject to avoid memory leaks
-    // Removes RC styles on unmount to avoid ghost styles
-    this._assignedComponents$.getValue().forEach((component) => {
-      updateStylesForRcRemoval(component.remoteInfo.productName, component.remoteInfo.appId, this.name)
     })
   }
 }

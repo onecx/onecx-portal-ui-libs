@@ -11,7 +11,7 @@ import {
   provideUserServiceMock,
   UserServiceMock,
 } from '@onecx/angular-integration-interface/mocks'
-import { SlotService } from '@onecx/angular-remote-components'
+import { SlotComponentConfiguration, SlotService } from '@onecx/angular-remote-components'
 import { SlotServiceMock } from '@onecx/angular-remote-components/mocks'
 import {
   ButtonHarness,
@@ -56,6 +56,7 @@ import { DataLayoutSelectionComponent } from '../data-layout-selection/data-layo
 import { DataViewComponent, RowListGridData } from '../data-view/data-view.component'
 import { FilterViewComponent } from '../filter-view/filter-view.component'
 import { InteractiveDataViewComponent } from './interactive-data-view.component'
+import { Technologies } from '@onecx/integration-interface'
 
 // primeng version 19.0.6 workaround for frozen column failing in tests
 DomHandler.siblings = (element) => {
@@ -278,6 +279,18 @@ xdescribe('InteractiveDataViewComponent', () => {
     },
   ]
 
+  const columnGroupSelectionComponent: SlotComponentConfiguration = {
+    componentType: Promise.resolve(undefined),
+    remoteComponent: {
+      appId: 'app-id',
+      productName: 'product-name',
+      baseUrl: 'https://base-url',
+      technology: Technologies.WebComponentModule,
+      elementName: 'column-group-selection',
+    },
+    permissions: [],
+  }
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [
@@ -364,7 +377,7 @@ xdescribe('InteractiveDataViewComponent', () => {
 
   it('should load column-group-selection slot', async () => {
     userServiceMock.permissionsTopic$.publish(['PRODUCT#USE_SEARCHCONFIG'])
-    slotService.assignComponentToSlot('column-group-selection', component.columnGroupSlotName)
+    slotService.assignComponentToSlot(columnGroupSelectionComponent, component.columnGroupSlotName)
     fixture.detectChanges()
 
     const slot = await loader.getHarness(SlotHarness)
@@ -376,7 +389,7 @@ xdescribe('InteractiveDataViewComponent', () => {
     const columnGroupSelectionDropdown = await loader.getHarness(ColumnGroupSelectionHarness)
     expect(columnGroupSelectionDropdown).toBeTruthy()
 
-    slotService.assignComponentToSlot('column-group-selection', component.columnGroupSlotName)
+    slotService.assignComponentToSlot(columnGroupSelectionComponent, component.columnGroupSlotName)
 
     const columnGroupSelectionDropdownNoPermission = await loader.getHarness(ColumnGroupSelectionHarness)
     expect(columnGroupSelectionDropdownNoPermission).toBeTruthy()
