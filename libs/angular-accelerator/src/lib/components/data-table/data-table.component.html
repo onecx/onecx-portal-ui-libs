@@ -148,7 +148,8 @@
               [class.pi-sort-amount-up]="column?.id === sortColumn && sortDirection === 'ASCENDING'"
               [class.pi-sort-amount-down]="column?.id === sortColumn && sortDirection === 'DESCENDING'"
               (click)="onSortColumnClick(column.id)"
-              [title]="(sortIconTitle(column.id) | translate)"
+              [pTooltip]="sortIconTitle(column.id) | translate "
+              tooltipPosition="bottom"
               [attr.aria-label]="('OCX_DATA_TABLE.TOGGLE_BUTTON.ARIA_LABEL' | translate: { column: (column.nameKey | translate), direction: (sortDirectionToTitle(columnNextSortDirection(column.id)) | translate)})"
             ></button>
             } @if (currentEqualFilterOptions$ | async; as equalFilterOptions) { @if (columnFilterTemplates$ | async; as
