@@ -90,7 +90,9 @@ export class DataListGridSortingComponent implements OnInit {
   }
 
   sortIconTitle() {
-    return this.sortDirectionToTitle(this.sortDirection)
+    return this.sortDirectionToTitle(
+      this.nextSortDirection()
+    )
   }
 
   sortDirectionToTitle(sortDirection: DataSortDirection) {
