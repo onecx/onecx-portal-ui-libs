@@ -3,7 +3,6 @@ import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/
 import localeDE from '@angular/common/locales/de'
 import { NgModule, inject } from '@angular/core'
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core'
-import { TranslateHttpLoader } from '@ngx-translate/http-loader'
 import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { TRANSLATION_PATH, createTranslateLoader } from '@onecx/angular-utils'
 
