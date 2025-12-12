@@ -29,7 +29,7 @@ const STORYBOOK_TRANSLATION_PROVIDERS = [
   },
   {
     provide: TRANSLATION_PATH,
-    useValue: '/assets/i18n/storybook-translations/page-header-',
+    useValue: '/assets/i18n/storybook-translations/page-header/',
     multi: true,
   }
 ]
