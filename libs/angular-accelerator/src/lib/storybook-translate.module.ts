@@ -11,8 +11,29 @@ export function translateLoader(http: HttpClient) {
   return new TranslateCombinedLoader(new TranslateHttpLoader(http, `./assets/i18n/`, '.json'))
 }
 /**
-  A utility module adding i18N support for Storybook stories
+ * StorybookTranslateModule
+ *
+ * Add feature-specific translation files (e.g., only pageheader keys) to libs/angular-accelerator/assets/i18n/.
+ *
+ * Reference each file in TRANSLATION_PATH using its base path (e.g., '/assets/i18n/page-header').
+ * The loader will append the language suffix and .json automatically.
+ *
+ * Example:
+ *   { provide: TRANSLATION_PATH, useValue: '/assets/i18n/page-header', multi: true }
  **/
+const STORYBOOK_TRANSLATION_PROVIDERS = [
+  {
+    provide: TRANSLATION_PATH,
+    useValue: '/assets/i18n/',
+    multi: true,
+  },
+  {
+    provide: TRANSLATION_PATH,
+    useValue: '/assets/i18n/storybook-translations/page-header-',
+    multi: true,
+  }
+]
+
 @NgModule({
   exports: [TranslateModule],
   imports: [
@@ -28,11 +49,7 @@ export function translateLoader(http: HttpClient) {
   providers: [
     provideAppStateServiceMock(),
     provideHttpClient(withInterceptorsFromDi()),
-    {
-      provide: TRANSLATION_PATH,
-      useValue: './assets/i18n/',
-      multi: true,
-    }
+    ...STORYBOOK_TRANSLATION_PROVIDERS
   ],
 })
 export class StorybookTranslateModule {
