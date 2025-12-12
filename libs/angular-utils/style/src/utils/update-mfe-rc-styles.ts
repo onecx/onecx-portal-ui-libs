@@ -1,10 +1,19 @@
 import { scopeIdFromProductNameAndAppId } from "@onecx/angular-utils";
-import { getAppStyleByScope, getStyleUsageCount } from "./app-style-helper";
 import { HttpClient } from "@angular/common/http";
-import { fetchAppCss } from "../services/fetch-app-css.service";
-import { addStyleToHead, createScopedCss, replaceStyleContent } from "./dom-style-config";
-import { removeMfeUsageFromStyle, removeRcUsageFromStyle, updateInactiveMfeStyles, useStyleForMfe, useStyleForRc } from "./manage-mfe-rc-styles";
-import { dataAppStylesKey } from "../preset/style-variables";
+import {
+  getAppStyleByScope, 
+  getStyleUsageCount, 
+  fetchAppCss,
+  dataAppStylesKey,
+  updateInactiveMfeStyles, 
+  useStyleForMfe, 
+  useStyleForRc, 
+  addStyleToHead, 
+  createScopedCss, 
+  replaceStyleContent, 
+  removeMfeUsageFromStyle,
+  removeRcUsageFromStyle
+} from "../index";
 
 /**
  * Creates new style element and register MFE or RC as the user of it

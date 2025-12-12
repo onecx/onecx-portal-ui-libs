@@ -1,6 +1,14 @@
 import { scopeIdFromProductNameAndAppId } from "@onecx/angular-utils";
-import { getAllStylesUsedByKey,getStyleUsageCount, slotNameToPropertyName } from "./app-style-helper";
-import { dataAppStylesKey, dataMfeStylesAttribute, dataMfeStylesKey, dataRcStylesAttribute, dataRcStylesKey } from "../preset/style-variables";
+import { 
+    dataAppStylesKey, 
+    dataMfeStylesAttribute, 
+    getAllStylesUsedByKey,
+    getStyleUsageCount, 
+    slotNameToPropertyName, 
+    dataMfeStylesKey, 
+    dataRcStylesAttribute, 
+    dataRcStylesKey 
+} from "../index";
 
 /**
  * Removes the MFE from list of users of the style element.
@@ -17,10 +25,6 @@ export function removeMfeUsageFromStyle(styleElement: HTMLStyleElement) {
  */
 export function removeRcUsageFromStyle(styleElement: HTMLStyleElement, slotName: string) {
     delete styleElement.dataset[slotNameToPropertyName(dataRcStylesKey(slotName))]
-}
-
-export function removeStyleUsageByAttribute(styleElement: HTMLStyleElement, key: string){
-    delete styleElement.dataset[key]
 }
 
 /**
@@ -69,7 +73,7 @@ export function updateStylesForRcRemoval(productName: string, appId: string, slo
   removeInactiveStyles(
     scopeId,
     getAllStylesUsedByKey(dataRcStylesAttribute(slotName)),
-    (style) => removeStyleUsageByAttribute(style,slotNameToPropertyName(dataRcStylesKey(slotName)))
+    (style) => removeRcUsageFromStyle(style,slotName)
   );
 }
 

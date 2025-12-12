@@ -1,4 +1,4 @@
-import { dataAppStylesAttribute, dataMfeStylesAttribute, dataMfeStylesKey, dataRcStylesAttribute, dataRcStylesStart } from '../preset/style-variables'
+import { dataAppStylesAttribute, dataMfeStylesKey, dataRcStylesStart } from '../index'
 
 
 /**
