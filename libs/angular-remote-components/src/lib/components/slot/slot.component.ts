@@ -22,9 +22,10 @@ import {
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs'
 import { ocxRemoteComponent } from '../../model/remote-component'
 import { RemoteComponentInfo, SLOT_SERVICE, SlotComponentConfiguration, SlotService } from '../../services/slot.service'
-import { updateStylesForRcCreation, updateStylesForRcRemoval, RemoteComponentConfig } from '@onecx/angular-utils'
+import { RemoteComponentConfig } from '@onecx/angular-utils'
 import { HttpClient } from '@angular/common/http'
 import { debounceTime, filter } from 'rxjs/operators'
+import { updateStylesForRcCreation, updateStylesForRcRemoval} from '@onecx/angular-utils/style'
 
 interface AssignedComponent {
   refOrElement: ComponentRef<any> | HTMLElement
