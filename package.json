@@ -89,7 +89,7 @@
     "@storybook/core-server": "^8.3.2",
     "@swc-node/register": "~1.11.1",
     "@swc/cli": "~0.3.12",
-    "@swc/core": "~1.13.5",
+    "@swc/core": "~1.15.5",
     "@swc/helpers": "~0.5.13",
     "@types/axios": "^0.14.4",
     "@types/d3": "^7.4.3",
