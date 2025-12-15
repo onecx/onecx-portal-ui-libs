@@ -2,6 +2,10 @@
   "name": "@onecx/angular-auth",
   "version": "6.11.0",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onecx/onecx-portal-ui-libs"
+  },
   "peerDependencies": {
     "@angular-architects/module-federation": "^18.0.4",
     "@angular/common": "^19.0.0",
