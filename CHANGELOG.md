@@ -1,3 +1,19 @@
+## [5.51.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.51.0...v5.51.1) (2025-12-15)
+
+### Bug Fixes
+
+* conditional statement added for SearchHeader buttons to be read left to right when order is reversed ([#1059](https://github.com/onecx/onecx-portal-ui-libs/issues/1059)) ([553e96b](https://github.com/onecx/onecx-portal-ui-libs/commit/553e96b1dc618127dc42012f63ff8d9d4119909d)), closes [#1054](https://github.com/onecx/onecx-portal-ui-libs/issues/1054)
+* DataListGridSorting dropdownOptions showing options where sortable is set to false ([#1052](https://github.com/onecx/onecx-portal-ui-libs/issues/1052)) ([e6af795](https://github.com/onecx/onecx-portal-ui-libs/commit/e6af7953cf25fc328361cef38e3dcc829577c7ff))
+* Fixed the default tooltip for sort action in interactive-data-view ([#1062](https://github.com/onecx/onecx-portal-ui-libs/issues/1062)) ([672111a](https://github.com/onecx/onecx-portal-ui-libs/commit/672111a1216158feba84dbf17b28acdb72c54ff2))
+* Portal Page Widget height fix ([#1044](https://github.com/onecx/onecx-portal-ui-libs/issues/1044)) ([a9df267](https://github.com/onecx/onecx-portal-ui-libs/commit/a9df267ed661637317a5bbaae6f061430a8a60c1))
+* v5- Fix Translation configuration to support multiple translation sets ([#1063](https://github.com/onecx/onecx-portal-ui-libs/issues/1063)) ([2f42b33](https://github.com/onecx/onecx-portal-ui-libs/commit/2f42b33ca2f4dc9ac78f37e2898eab1f0aecd059)), closes [#1059](https://github.com/onecx/onecx-portal-ui-libs/issues/1059) [#1054](https://github.com/onecx/onecx-portal-ui-libs/issues/1054) [#1052](https://github.com/onecx/onecx-portal-ui-libs/issues/1052)
+
+### Chores
+
+* remove integration-tests library from portal-libs ([#1015](https://github.com/onecx/onecx-portal-ui-libs/issues/1015)) ([#1023](https://github.com/onecx/onecx-portal-ui-libs/issues/1023)) ([c0dbb6d](https://github.com/onecx/onecx-portal-ui-libs/commit/c0dbb6d5f7eed050adbedd05d520cbfda2e15977))
+* update release pipeline ([#1076](https://github.com/onecx/onecx-portal-ui-libs/issues/1076)) ([#1077](https://github.com/onecx/onecx-portal-ui-libs/issues/1077)) ([64ada50](https://github.com/onecx/onecx-portal-ui-libs/commit/64ada5059e73b3af64cff66d2ab54433062bfa43))
+* use node 22 for release ([#1078](https://github.com/onecx/onecx-portal-ui-libs/issues/1078)) ([3a72bcf](https://github.com/onecx/onecx-portal-ui-libs/commit/3a72bcfe2cb718d05557587a96c76f40bfd5bff3))
+
 ## [5.51.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.50.0...v5.51.0) (2025-11-21)
 
 ### Features
