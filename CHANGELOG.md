@@ -1,3 +1,30 @@
+## [7.0.0-rc.11](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.10...v7.0.0-rc.11) (2025-12-15)
+
+### Features
+
+* remove rc div from slot ([#1055](https://github.com/onecx/onecx-portal-ui-libs/issues/1055)) ([eef41dd](https://github.com/onecx/onecx-portal-ui-libs/commit/eef41dd1a12039749131e1df32b2af68e650cd38))
+
+### Bug Fixes
+
+* conditional statement added for SearchHeader buttons to be read left to right when order is reversed ([#1054](https://github.com/onecx/onecx-portal-ui-libs/issues/1054)) ([be25868](https://github.com/onecx/onecx-portal-ui-libs/commit/be25868bcccbeab69ebbcf04279e9dc684aff008))
+* DataListGridSorting dropdownOptions showing options where sortable is set to false ([#1057](https://github.com/onecx/onecx-portal-ui-libs/issues/1057)) ([ee8c6f6](https://github.com/onecx/onecx-portal-ui-libs/commit/ee8c6f69038ca0eb8fc6ab7242a8713d7da314d6))
+* Fixed the default tooltip for sort action in interactive-data-view table header ([#1065](https://github.com/onecx/onecx-portal-ui-libs/issues/1065)) ([13e78fb](https://github.com/onecx/onecx-portal-ui-libs/commit/13e78fba827d363ab68cbd7a44884caa3acbde18))
+* P002271-11775 - Fix Translation configuration to support multiple translation sets ([#1067](https://github.com/onecx/onecx-portal-ui-libs/issues/1067)) ([67f9ac5](https://github.com/onecx/onecx-portal-ui-libs/commit/67f9ac5997a3139f3a869d19d033ac20a28f30ed))
+* Portal Page Widget height fix ([#1051](https://github.com/onecx/onecx-portal-ui-libs/issues/1051)) ([91f5760](https://github.com/onecx/onecx-portal-ui-libs/commit/91f5760a53d91d5f25cd80defc05907b62289957))
+* release pipeline for new npm requirements ([#1070](https://github.com/onecx/onecx-portal-ui-libs/issues/1070)) ([9927139](https://github.com/onecx/onecx-portal-ui-libs/commit/99271395b65132cb8a043109ce66962710adaace))
+* scope primeng overrides correctly ([#1068](https://github.com/onecx/onecx-portal-ui-libs/issues/1068)) ([#1069](https://github.com/onecx/onecx-portal-ui-libs/issues/1069)) ([104fb8a](https://github.com/onecx/onecx-portal-ui-libs/commit/104fb8a569c958adff909e7ec72be297c2324bcd))
+* update npm to latest on release pipeline ([#1071](https://github.com/onecx/onecx-portal-ui-libs/issues/1071)) ([aab446f](https://github.com/onecx/onecx-portal-ui-libs/commit/aab446f33de7c64ecbe84e6d7597143b6b6bf9ad))
+
+### Chores
+
+* add repository info to each library ([#1075](https://github.com/onecx/onecx-portal-ui-libs/issues/1075)) ([c427d6f](https://github.com/onecx/onecx-portal-ui-libs/commit/c427d6fc7375eb778d1f4784d85b578b79fddf52))
+* log npm version after install ([#1073](https://github.com/onecx/onecx-portal-ui-libs/issues/1073)) ([f71ac73](https://github.com/onecx/onecx-portal-ui-libs/commit/f71ac7306e726c6d0ca3331c0bd10b28b53ae2a3))
+* replace npm publish executor ([#1074](https://github.com/onecx/onecx-portal-ui-libs/issues/1074)) ([a22d6d2](https://github.com/onecx/onecx-portal-ui-libs/commit/a22d6d259f3ada0e043744985cda23a00a49bf09))
+
+### Refactoring
+
+* removed timers ([#1043](https://github.com/onecx/onecx-portal-ui-libs/issues/1043)) ([23833a2](https://github.com/onecx/onecx-portal-ui-libs/commit/23833a24bcaa8cfafca5e17444219d38377f083b))
+
 ## [7.0.0-rc.10](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.9...v7.0.0-rc.10) (2025-12-01)
 
 ### Features
