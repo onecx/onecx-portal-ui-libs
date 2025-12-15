@@ -3,6 +3,7 @@ on: [workflow_dispatch]
 
 permissions:
   id-token: write # Required for OIDC
+  contents: read
 
 jobs:
   main:
@@ -15,8 +16,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          registry-url: 'https://registry.npmjs.org'
       - name: Update npm
-        run: npm install -g npm@latest
+        run: |
+          npm install -g npm@latest
+          npm --version
       - uses: nrwl/nx-set-shas@v4
       - name: Install deps
         run: npm ci
