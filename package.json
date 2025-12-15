@@ -52,7 +52,7 @@
     "storybook": "^8.3.2",
     "tslib": "^2.7.0",
     "zod": "^3.23.8",
-    "zone.js": "^0.14.10"
+    "zone.js": "^0.16.0"
   },
   "devDependencies": {
     "@angular-devkit/architect": "^0.1802.12",
