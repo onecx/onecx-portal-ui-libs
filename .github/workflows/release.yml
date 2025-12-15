@@ -18,7 +18,9 @@ jobs:
           node-version: 22
           registry-url: 'https://registry.npmjs.org'
       - name: Update npm
-        run: npm install -g npm@latest
+        run: |
+          npm install -g npm@latest
+          npm --version
       - uses: nrwl/nx-set-shas@v4
       - name: Install deps
         run: npm ci
