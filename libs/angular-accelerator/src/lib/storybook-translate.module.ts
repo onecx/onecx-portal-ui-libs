@@ -11,8 +11,30 @@ export function translateLoader(http: HttpClient) {
   return new TranslateCombinedLoader(new TranslateHttpLoader(http, `./assets/i18n/`, '.json'))
 }
 /**
-  A utility module adding i18N support for Storybook stories
+ * StorybookTranslateModule
+ *
+ * Add feature-specific translation files (e.g., only pageheader keys) to libs/angular-accelerator/assets/i18n/.
+ *
+ * Reference each file in TRANSLATION_PATH using its base path (e.g., '/assets/i18n/page-header').
+ * The loader will append the language suffix and .json automatically.
+ *
+ * Example:
+ *   { provide: TRANSLATION_PATH, useValue: '/assets/i18n/page-header', multi: true }
  **/
+
+// Add translation providers for Storybook
+const STORYBOOK_TRANSLATION_PROVIDERS = [
+  {
+    provide: TRANSLATION_PATH,
+    useValue: '/assets/i18n/',
+    multi: true,
+  },
+  {
+    provide: TRANSLATION_PATH,
+    useValue: '/assets/i18n/storybook-translations/page-header/',
+    multi: true,
+  }
+]
 @NgModule({
   exports: [TranslateModule],
   imports: [
@@ -28,11 +50,7 @@ export function translateLoader(http: HttpClient) {
   providers: [
     provideAppStateServiceMock(),
     provideHttpClient(withInterceptorsFromDi()),
-    {
-      provide: TRANSLATION_PATH,
-      useValue: './assets/i18n/',
-      multi: true,
-    }
+    ...STORYBOOK_TRANSLATION_PROVIDERS
   ],
 })
 export class StorybookTranslateModule {
@@ -40,26 +58,6 @@ export class StorybookTranslateModule {
 
   constructor() {
     const translateService = inject(TranslateService)
-    translateService.setTranslation('en', {
-      pageheader: {
-        valueTooltip: 'Page Header Value Tooltip EN',
-        labelTooltip: 'Page Header Label Tooltip EN',
-        actionItemTooltip: 'Page Header Action Item Tooltip EN',
-        actionItemAriaLabel: 'Page Header Action Item Aria Label EN',
-        statusLabelTooltip: 'Status Label Tooltip EN (status: {{status}})',
-        statusValueTooltip: 'Status Value Tooltip EN (value: {{value}})',
-      }
-    }, true)
-    translateService.setTranslation('de', {
-      pageheader: {
-        valueTooltip: 'Page Header Value Tooltip DE',
-        labelTooltip: 'Page Header Label Tooltip DE',
-        actionItemTooltip: 'Page Header Action Item Tooltip DE',
-        actionItemAriaLabel: 'Page Header Action Item Aria Label DE',
-        statusLabelTooltip: 'Status Label Tooltip DE (status: {{status}})',
-        statusValueTooltip: 'Status Value Tooltip DE (value: {{value}})',
-      }
-    }, true)
     registerLocaleData(localeDE)
     const lang = translateService.getBrowserLang()
     const supportedLanguages = ['de', 'en']
