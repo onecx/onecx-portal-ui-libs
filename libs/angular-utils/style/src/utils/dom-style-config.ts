@@ -32,7 +32,7 @@ export function replaceRootAndHtmlWithScope(css: string): string {
 }
 
 /**
- * Creates a string with application scoped css.
+ * Creates a string with application scoped css. The scope will apply the css to the element with given scopeId that has dataNoPortalLayoutStylesAttribute or dataMfeElementAttribute and will be available until element with dataStyleIsolationAttribute.
  * @param css - css for scoping
  * @param scopeId - scope id for scoping
  * @returns {string} css scoped by the given id
