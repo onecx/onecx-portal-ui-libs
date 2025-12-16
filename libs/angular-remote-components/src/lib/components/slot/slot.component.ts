@@ -178,21 +178,35 @@ export class SlotComponent implements OnInit, OnDestroy {
 
     // Components can be created only when component information is available and view containers are created for all remote components
     const createSub = this.components$.subscribe((components) => {
-      components.forEach((componentInfo) => {
-        if (componentInfo.componentType) {
-          Promise.all([Promise.resolve(componentInfo.componentType), Promise.resolve(componentInfo.permissions)]).then(
-            ([componentType, permissions]) => {
-              const component = this.createComponent(componentType, componentInfo, permissions)
-              if (component) {
-                this._assignedComponents$.next([
-                  ...this._assignedComponents$.getValue(),
-                  { refOrElement: component, remoteInfo: componentInfo.remoteComponent },
-                ])
-              }
-            }
-          )
-        }
+      // Create array of promises to ensure the order of components in the slot is maintained
+      // For each component create a promise that will be resolved when component is created
+      const componentLoadPromise: { instance: Promise<void>; resolveCallback: () => void }[] = components.map(() => {
+        let resolveCallback!: () => void
+        const promise = new Promise<void>((resolve) => {
+          resolveCallback = resolve
+        })
+        return { instance: promise, resolveCallback }
       })
+
+      for (const [index, componentInfo] of components.entries()) {
+        const previous = index - 1
+        if (componentInfo.componentType) {
+          Promise.all([
+            Promise.resolve(componentInfo.componentType),
+            Promise.resolve(componentInfo.permissions),
+            previous >= 0 ? componentLoadPromise[previous].instance : Promise.resolve(),
+          ]).then(([componentType, permissions]) => {
+            const component = this.createComponent(componentType, componentInfo, permissions)
+            if (component) {
+              this._assignedComponents$.next([
+                ...this._assignedComponents$.getValue(),
+                { refOrElement: component, remoteInfo: componentInfo.remoteComponent },
+              ])
+              componentLoadPromise[index].resolveCallback()
+            }
+          })
+        }
+      }
     })
     this.subscriptions.push(createSub)
 
