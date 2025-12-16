@@ -1,0 +1,150 @@
+= OneCX SearchHeader
+
+// '--' has to be escaped in link
+:search_header_storybook: https://main\--65f7f64d4506c9f2dfe59383.chromatic.com/?path=/docs/components-searchheadercomponent\--docs
+:page_header_url: xref:cookbook/components/page-header/index.adoc
+
+:idprefix:
+:idseparator: -
+
+[#overview]
+== Overview
+This document aims to showcase how to manage SearchHeader component.
+
+This component displays the search result data as a diagram. Please, visit the storybook page for the {search_header_storybook}[SearchHeader component] and interact with the examples to find out if the component is suitable for the desired use-case.
+
+[#customization]
+== Customization
+
+The SearchHeader component allows for content customization:
+
+* define header title
+* add input fields
+* add header actions buttons
+* `*ocxAdvanced` directive
+** The `*ocxAdvanced` directive specifies whether a field is part of the `basic` or `advanced` mode. This mode can be toggled using the Basic\|Advanced button in the search header which is only displayed when this directive is used for defining advanced input fields. The directive will be added to the div element:
++
+[source, html]
+----
+ <form [formGroup]="criteriaGroup">
+      <div class="grid mt-0 p-fluid">
+        <div *ocxAdvanced class="col-12 md:col-3">
+          <span class="p-float-label">
+           // PLACE YOUR INPUT FIELD HERE
+          </span>
+        </div>
+        ...
+----
+
+To find out how to work with the SearchHeader component, please visit the {search_header_storybook}[storybook page] and interact with the examples to find out the required features. For more in-depth information on the SearchHeader component interface, please read the further documentation.
+
+[#ocx-basic-and-advanced-directives]
+=== ocxBasic and ocxAdvanced Directives
+
+The `*ocxBasic` and `*ocxAdvanced` directives are https://angular.dev/guide/directives/structural-directives[structural directives] that provide advanced search field visibility control within the SearchHeader component. These directives enable the creation of a two-tier search interface where fields can be categorized as either basic or advanced.
+
+Here's a simple example showing how to use the directives:
+
+[source, html]
+----
+<ocx-search-header
+  ...>
+  <form [formGroup]="criteriaForm" class="flex flex-wrap gap-3">
+    <span class="p-float-label">
+      <input
+        id="title"
+        ...>
+      <label for="title">Title</label>
+    </span>
+    
+    <span *ocxBasic class="p-float-label">
+      <p-multiSelect
+        id="status"
+        ...>
+      </p-multiSelect>
+      <label for="status">Status</label>
+    </span>
+
+    <span *ocxAdvanced class="p-float-label">
+      <p-multiSelect
+        id="priority"
+        ...>
+      </p-multiSelect>
+      <label for="priority">Priority</label>
+    </span>
+  </form>
+</ocx-search-header>
+----
+
+* **Basic Mode**: Fields marked with `*ocxAdvanced` are hidden by default and only basic fields and fields without directive are visible. (Here: only Title and Status visible)
+* **Advanced Mode**: All fields without an directive or with `*ocxAdvanced` are visible. (Here: Title and Priority visible)
+* **Toggle Button**: The Basic|Advanced toggle button appears automatically when at least one field uses either the `*ocxBasic` or `*ocxAdvanced` directive
+
+
+[#inputs]
+== Inputs
+
+[cols="1,1,1,2", options="header"]
+.SearchHeader inputs
+|===
+|Property name | Type | Default | Description
+
+| `header` | `string` | `''` | Translation key for header title.
+| `subheader` | `string \| undefined` | - | Translation key for sub-header title.
+| `viewMode` | `'basic' \| 'advanced'` | `'basic'` | Determines if `'basic'` or `'advanced'` search criterias are displayed.
+| `manualBreadcrumbs` |`boolean` | `false` | Determines to use custom or default rendered breadcrumbs.
+| `actions` | `<<column-type, ColumnType>>` | `[]` | Array of actions available in the header in form of a button or a menu item. Please refer to {page_header_url}[PageHeader component] for detailed information.
+| `searchButtonDisabled` | `boolean` | `false` | Determines if the search button should be rendered.
+| `resetButtonDisabled` | `boolean` | `false` | Determines if the reset button should be rendered.
+// TODO: Add reference to search config docs?
+| `searchConfigPermission` | `string \| string[] \| undefined` | - | Defines the permission key(s) for displaying the searchConfig.
+| `pageName` | `string \| undefined` | - | Defines page name for searchConfig.
+|===
+
+[#outputs]
+== Outputs
+
+.SearchHeader outputs
+|===
+| Property name | Type | Description
+
+| `searched` | `EventEmitter<any>` | Emits event when search button is clicked.
+| `resetted` | `EventEmitter<any>` | Emits event when reset button is clicked.
+// TODO: Add reference to search config docs?
+| `selectedSearchConfigChanged` | `EventEmitter<<<search-config-data, SearchConfigData>> \| undefined>` | Emits the  `<<search-config-data, SearchConfigData>>` upon change of selected searchConfig.
+| `viewModeChanged` | `EventEmitter<'basic' \| 'advanced'>` | Emits the viewMode `'basic'` or `'advanced'` when the Basic\|Advanced button is clicked.
+| `componentStateChanged` | `EventEmitter <<<search-header-component-state, SearchHeaderComponentState>>>` | Emits the `<<search-header-component-state, SearchHeaderComponentState>>` with updated `viewMode` or `searchConfig` if changed, to ensure consistent component state.
+|===
+
+[#types]
+== Types
+
+[#search-header-component-state]
+=== SearchHeaderComponentState
+
+SearchHeaderComponentState is used to maintain consistent ComponentState.
+
+.SearchHeaderComponentState interface
+|===
+| Property name | Type | Description
+
+| `activeViewMode` | `EventEmitter<any>` | Current active viewMode.
+// TODO: Add reference to search config docs?
+| `selectedSearchConfig` | `EventEmitter<any>` | Current selected searchConfig.
+|===
+
+[#search-config-data]
+=== SearchConfigData
+
+// TODO: Move this to search config docs and add reference to it
+SearchConfigData is used for the SearchConfig component.
+
+.SearchConfigData interface
+|===
+| Property name | Type | Description
+
+| `name` | `string \| undefined` | Name of the searchConfig.
+| `fieldValues` | `{ [key: string]: string }` | Data values to display.
+| `displayedColumnsIds` | `string[]` | List of columns to display.
+| `viewMode` | `'basic' \| 'advanced'` | The viewMode for displaying input fields as `'basic'` or `'advanced'`.
+|===
