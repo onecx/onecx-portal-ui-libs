@@ -2,7 +2,7 @@ import { dataAppStylesAttribute, dataMfeStylesKey, dataRcStylesStart } from '../
 
 
 /**
- * Get the style element for a scope.
+ * Get the style element with application styles based on a scope.
  * @param scopeId - scope id related to the app
  * @returns {HTMLStyleElement | null} the style element related for a given scope
  */
