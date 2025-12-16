@@ -1,0 +1,230 @@
+= OneCX PortalDialogService
+
+:dynamic_dialog_config_url: https://primeng.org/dynamicdialog#api.dynamicdialog-config
+
+[#overview]
+== Overview
+This document aims to showcase how to manage dialogs using OneCX libraries.
+
+[#importing-portal-dialog-service]
+== Importing PortalDialogService
+To properly use PortalDialogService, please import it via the `providePortalDialogService` in your **remote module definition**.
+
+.Provide PortalDialogService via the providers array
+[source,javascript]
+----
+import {
+  providePortalDialogService
+} from '@onecx/portal-integration-angular';
+
+...
+providers: [
+    providePortalDialogService(),
+]
+...
+----
+
+NOTE: Please, make sure that providePortalDialogService is used in in the *remote module's providers array* or in *remote component's providers array* (in case of standalone components usage). That way it will be accessible for all feature modules of the application.
+
+.Inject PortalDialogService via constructor
+[source,javascript]
+----
+import {
+  PortalDialogService
+} from '@onecx/portal-integration-angular';
+
+export class MyClass() {
+    constructor() {
+        private portalDialogService: PortalDialogService
+    }
+}
+----
+
+
+[#basic-usage]
+== Basic Usage
+To open the dialog use the `openDialog` method of the PortalDialogService. It returns an `Observable`, so make sure that the *call is subscribed to*.
+
+IMPORTANT: Please, make sure to unsubscribe in case of directly subscribing for an `openDialog` call.
+
+.openDialog method arguments
+[cols="3,2,5"]
+|===
+|Property name |Type | Description
+
+|`title` |`TranslationKey \| null` | Translation key for dialog title.
+|`componentOrMessage` |`Type<any> \| Type<DialogResult<T>> \| Component<T> \| TranslationKey \| DialogMessage` | Either a component or a translation key of a message with optional parameters and icon to be displayed next to the message.
+|`primaryButtonTranslationKeyOrDetails` |`TranslationKey \| ButtonDialogButtonDetails` | Translation key with optional parameters and icon to be displayed next to the text of the button.
+|`secondaryButtonTranslationKeyOrDetails?` |`TranslationKey \| ButtonDialogButtonDetails` | Translation key with optional parameters and icon to be displayed next to the text of the button.
+|`extras?` |`PortalDialogConfig` | Configuration object allowing for customization of the dialog behavior and visual aspects.
+|===
+
+.Display dialog with message
+[source,javascript]
+----
+this.portalDialogService.openDialog('TITLE_KEY', 'MESSAGE_KEY', 'PRIMARY_BUTTON_KEY', 'SECONDARY_BUTTON_KEY').subscribe((stateOnClose) => {
+  // operations when dialog has been closed
+})
+----
+
+.Display dialog with component
+[source,javascript]
+----
+@Component({template: `<div>MyComponentTemplate</div>`})
+class MyComponent {}
+
+this.portalDialogService.openDialog('TITLE_KEY', MyComponent, 'PRIMARY_BUTTON_KEY', 'SECONDARY_BUTTON_KEY').subscribe((stateOnClose) => {
+  // operations when dialog has been closed
+})
+----
+
+.Display dialog with component with inputs
+[source,javascript]
+----
+⁣@Component({template: `<div>{{content | translate}}</div>`})
+class MyComponent {
+    @Input() content: string = ''
+}
+
+this.portalDialogService.openDialog('TITLE_KEY', { type: MyComponent, inputs: { content: 'CONTENT_KEY'}}, 'PRIMARY_BUTTON_KEY', 'SECONDARY_BUTTON_KEY').subscribe((stateOnClose) => {
+  // operations when dialog has been closed
+})
+----
+
+[#advanced-usage]
+== Advanced Usage
+
+[#control-dialog-result]
+=== Control Dialog Result
+If its desired to extend the result of the dialog, implement the `DialogResult` interface on the component displayed inside the dialog.
+
+.DialogResult component example
+[source,javascript]
+----
+@Component({template: `<div>
+<input (change)="onInputChange($event)">
+</div>`})
+export class MyComponent implements DialogResult<string> {
+  dialogResult: string = ''
+  onInputChange(event: any) {
+    this.dialogResult = event.target.value
+  }
+}
+
+portalDialogService.openDialog<string>('TITLE_KEY', { type: MyComponent }, 'PRIMARY_KEY', 'SECONDARY_KEY').subscribe((result: DialogState<string>) => {
+// result.value === MyComponent.dialogResult (during button click)
+// behavior when dialog closes
+})
+----
+
+[#control-dialog-button-click-events]
+=== Control Dialog Button Click Events
+If its desired to validate the dialog state prior to closing the dialog, implement the `DialogButtonClicked` interface on the component displayed inside the dialog.
+
+The `ocxDialogButtonClicked` method is called every time a primary, secondary or custom button was clicked. The method should return a boolean value (boolean, Observable<boolean>, Promise<boolean>) that determines if the dialog should be closed.
+
+The `DialogState` argument of `ocxDialogButtonClicked` method will contain information about the clicked button. Additionally, for components implementing `DialogResult` interface, it will also contain the dialog state captured on the button click event.
+
+.Validate 
+[source,javascript]
+----
+@Component({template: `<div>
+<input (change)="onInputChange($event)">
+</div>`})
+class MyComponent implements DialogButtonClicked, DialogResult<string> {
+  dialogResult: string = ''
+  onInputChange(event: any) {
+    this.dialogResult = event.target.value
+  }
+
+  ocxDialogButtonClicked(state: DialogState<unknown>) {
+    if (state.button === 'primary') {
+      // behavior on primary button click returning boolean value
+      // close dialog if call was successful
+      return this.service.post(state.result).pipe(map(response) => {
+        return response !== undefined
+      })
+    } else if (state.button === 'secondary') return false // don't close dialog on secondary button click
+
+    return false
+  }
+}
+
+portalDialogService.openDialog<string>('TITLE_KEY', { type: MyComponent }, 'PRIMARY_KEY', 'SECONDARY_KEY').subscribe(() => {
+// behavior when dialog closes
+})
+----
+
+[#control-dialog-button-enablement]
+=== Control Dialog Button Enablement
+If its desired to enable the dialog buttons based on the component's state, implement the `DialogPrimaryButtonDisabled`, `DialogSecondaryButtonDisabled` or `DialogCustomButtonsDisabled` interface on the component displayed inside the dialog.
+
+When interface is implemented by the component, the *respective buttons are disabled by default*.
+
+.DialogPrimaryButtonDisabled component example
+[source,javascript]
+----
+@Component({template: `<div>content</div>`})
+export class MyComponent implements DialogPrimaryButtonDisabled {
+    // emit true/false to enable/disable primary button
+    @Output() primaryButtonEnabled: EventEmitter<boolean> = new EventEmitter()
+}
+
+portalDialogService.openDialog('TITLE_KEY', { type: MyComponent }, 'PRIMARY_KEY', 'SECONDARY_KEY').subscribe(() => {
+// behavior when dialog closes
+})
+----
+
+.DialogSecondaryButtonDisabled component example
+[source,javascript]
+----
+@Component({template: `<div>content</div>`})
+export class MyComponent implements DialogSecondaryButtonDisabled {
+    // emit true/false to enable/disable secondary button
+    @Output() secondaryButtonEnabled: EventEmitter<boolean> = new EventEmitter()
+}
+
+portalDialogService.openDialog('TITLE_KEY', { type: MyComponent }, 'PRIMARY_KEY', 'SECONDARY_KEY').subscribe(() => {
+// behavior when dialog closes
+})
+----
+
+.DialogCustomButtonsDisabled component example
+[source,javascript]
+----
+@Component({template: `<div>content</div>`})
+export class MyComponent implements DialogCustomButtonsDisabled {
+    // emit true/false to enable/disable secondary button
+    // id - id of the custom button to be enabled/disabled
+    @Output() customButtonEnabled: EventEmitter<{
+        id: string;
+        enabled: boolean;
+    }>;
+}
+
+portalDialogService.openDialog('TITLE_KEY', { type: MyComponent }, 'PRIMARY_KEY', 'SECONDARY_KEY').subscribe(() => {
+// behavior when dialog closes
+})
+----
+
+[#customize-dialog]
+=== Customize Dialog
+If it is desired to customize the dialog in other areas then the presented content, it is recommended to use the `openDialog` method call argument called `extras`. Most of the configuration properties are compatible with the {dynamic_dialog_config_url}[PrimeNg's DynamicDialog config object], however there are some extended ones.
+
+[#close-button]
+==== Control The Dialog Close Button
+To control the existence of the 'X' button (close button) for the dialog, use `showXButton` property.
+
+NOTE: The 'X' button will be always visible if only one button is used for the dialog. 
+
+[#custom-buttons]
+==== Add Custom Buttons to The Dialog
+To use buttons other than default ones, use `customButtons` property. It is an array of buttons to be added to the dialog. It is possible to control the alignment of the buttons.
+
+[#buttons-autofocus]
+==== Control Buttons Autofocus
+To control the autofocus of the dialog, use `autoFocusButton` and `autoFocusButtonCustomId` properties. When not provided, the autofocus will not be applied to any button.
+
+[#further-customizations]
+==== Further Customizations
+For the explanations of further properties, please refer to the {dynamic_dialog_config_url}[PrimeNg's DynamicDialog config object documentation].

@@ -1,3 +1,0 @@
-* xref:general:index.adoc[General]
-** Contributions & Local Development
-*** xref:contributions:local-development.adoc[Local Development]

@@ -1,0 +1,8 @@
+A Topic is a similar concept to an Observable. They operate on messages passed between UI Apps using browser memory. Each topic:
+
+* has unique name
+* has version
+* can publish new message
+* can be subscribed to and piped for handling new messages
+* can be destroyed to prevent listening to new messages
+With multiple UI Apps having the same Topic instantiated (with the same name), they can communicate with each other based on the publisher-subscriber model. Whenever any Topic instance publishes new message, subscribers for all instances will read the message eventually allowing them to react on new information.

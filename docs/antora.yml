@@ -1,6 +1,2 @@
-name: onecx-portal-ui-libs
-title: OneCX Portal UI Libs
+name: documentation
 version: latest
-start_page: general:index.adoc
-nav:
-- modules/general/nav.adoc
