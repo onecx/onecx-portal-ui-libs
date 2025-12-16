@@ -9,6 +9,8 @@ import {
   Injector,
   Input,
   LOCALE_ID,
+  OnChanges,
+  SimpleChanges,
   OnInit,
   Optional,
   Output,
@@ -78,7 +80,7 @@ export interface DataTableComponentState {
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
 })
-export class DataTableComponent extends DataSortBase implements OnInit, AfterContentInit {
+export class DataTableComponent extends DataSortBase implements OnInit, AfterContentInit, OnChanges {
   FilterType = FilterType
   TemplateType = TemplateType
   checked = true
@@ -407,6 +409,12 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
   templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
 
+  
+  currentResults: number | undefined;
+  private statusSubject = new BehaviorSubject<string>('');
+  status$: Observable<string> = this.statusSubject.asObservable();
+
+
   constructor(
     @Inject(LOCALE_ID) locale: string,
     translateService: TranslateService,
@@ -461,6 +469,17 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       })
     )
     this.rowSelectable = this.rowSelectable.bind(this)
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['rows']) {
+      this.currentResults = changes['rows'].currentValue?.length ?? 0;
+      const newStatus =
+        this.currentResults !== 0
+          ? 'DATAVIEW_RESULT_STATUS.SEARCH_RESULTS_FOUND'
+          : 'DATAVIEW_RESULT_STATUS.NO_SEARCH_RESULTS_FOUND';
+      this.statusSubject.next(newStatus);
+    }
   }
 
   ngOnInit(): void {

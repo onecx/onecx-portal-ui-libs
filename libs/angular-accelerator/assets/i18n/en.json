@@ -49,6 +49,10 @@
     },
     "SORTING_BUTTON_ARIA_LABEL": "Toggle sorting direction to {{direction}}"
   },
+  "DATAVIEW_RESULT_STATUS": {
+    "SEARCH_RESULTS_FOUND": "{{results}} Results Found",
+    "NO_SEARCH_RESULTS_FOUND": "No Results Found"
+  },
   "OCX_DATA_TABLE": {
     "EMPTY_RESULT": "No data found.",
     "EMPTY_FILTER_MESSAGE": "No filters found.",
