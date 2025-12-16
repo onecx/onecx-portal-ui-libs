@@ -1,0 +1,99 @@
+= OneCX GroupByCountDiagram
+
+// '--' has to be escaped in link
+:group_by_count_diagram_storybook: https://main\--65f7f64d4506c9f2dfe59383.chromatic.com/?path=/docs/components-groupbycountdiagramcomponent\--docs
+
+:idprefix:
+:idseparator: -
+
+[#overview]
+== Overview
+This document aims to showcase how to manage GroupByCountDiagram component.
+
+This component displays the search result data as a diagram. Please, visit the storybook page for the {group_by_count_diagram_storybook}[GroupByCountDiagram component] and interact with the examples to find out if the component is suitable for the desired use-case.
+
+[#customization]
+== Customization
+
+The GroupByCountDiagram component allows for content customization:
+
+* render different types of diagrams
+* enable switching between diagram types
+* set custom colors
+
+To find out how to work with the GroupByCountDiagram component, please visit the {group_by_count_diagram_storybook}[storybook page] and interact with the examples to find out the required features. For more in-depth information on the GroupByCountDiagram component interface, please read the further documentation.
+
+[#inputs]
+== Inputs
+
+[cols="1,1,1,2", options="header"]
+.GroupByCountDiagram inputs
+|===
+| Property name | Type | Default | Description
+
+| `sumKey` | `string` | `FEATURE_SEARCH.DIAGRAM.SUM` | Translation key for label below the chart.
+| `diagramType` | `<<diagram-type, DiagramType>>` | `DiagramType.PIE` | Type of the chart to be displayed as.
+| `supportedDiagramTypes` | `<<diagram-type, DiagramType[]>>` | `[]` | Add multiple Diagram types to be able to switch between them.
+| `data` | `unknown[]` | - | Data to be displayed as a diagram.
+| `columnType` | `<<column-type, ColumnType>>` | `ColumnType.STRING` | Defines the type of the column.
+| `columnField` | `string` | `''` | Defines which column data field to be displayed.
+| `column` | `<<diagram-column, DiagramColumn>>` | - | Defines which columns and its type to be displayed.
+| `fillMissingColors` | `boolean` | `true` | Determines if diagram should generate the colors for the data that does not have any set. Set to false will result in using the provided colors only if every data item has one. When at least one item does not have a color set, diagram will generate all colors.
+| `colors` | `Record<string, string>` | `{}` | Defines custom color for data items.
+|===
+
+[#outputs]
+== Outputs
+
+.GroupByCountDiagram outputs
+|===
+| Property name | Type | Description
+
+| `dataSelected` | `EventEmitter<any>` | Emits data object upon clicking a diagram element.
+| `diagramTypeChanged` | `EventEmitter<<<diagram-type, DiagramType>>>` | Emits the `<<diagram-type, DiagramType>>` when one of the supported diagram types is selected to switch the type.
+| `componentStateChanged` | `EventEmitter<<<group-by-count-diagram-component-state, GroupByCountDiagramComponentState>>>` | Emits the selected `<<diagram-type, DiagramType>>` to ensure consistent component state.
+|===
+
+[#types]
+== Types
+
+[#diagram-type]
+=== DiagramType
+
+.DiagramType enum
+
+[source, javascript]
+----
+    export const enum DiagramType {
+        PIE = 'PIE',
+        VERTICAL_BAR = 'VERTICAL_BAR',
+        HORIZONTAL_BAR = 'HORIZONTAL_BAR',
+    }
+----
+
+[#column-type]
+=== ColumnType
+
+include::partial$column-type.adoc[]
+
+[#diagram-column]
+=== DiagramColumn
+
+.DiagramColumn type
+
+[source, javascript]
+----
+    export type DiagramColumn = { columnType: ColumnType; id: string }
+----
+
+[#group-by-count-diagram-component-state]
+=== GroupByCountDiagramComponentState
+
+.GroupByCountDiagramComponentState interface
+
+[source, javascript]
+----
+    export interface GroupByCountDiagramComponentState {
+        activeDiagramType?: DiagramType
+    }
+----

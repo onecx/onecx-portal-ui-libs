@@ -1,0 +1,17 @@
+= OneCX InteractiveDataView
+
+:idprefix:
+:idseparator: -
+
+[#overview]
+== Overview
+This document aims to showcase how to manage InteractiveDataView Component.
+
+// TODO: How to import
+// TODO: How to use - storybook
+
+// TODO: Overview of properties
+// TODO: Overview of interfaces related
+
+== Related Interfaces
+* xref:onecx-portal-ui-libs:components/interactive-data-view/data-table-column.adoc[DataTableColumn]
