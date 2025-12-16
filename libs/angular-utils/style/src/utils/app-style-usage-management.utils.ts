@@ -1,15 +1,4 @@
-import { dataAppStylesAttribute, dataMfeStylesKey, dataRcStylesStart } from '../index'
-
-
-/**
- * Get the style element with application styles based on a scope.
- * @param scopeId - scope id related to the app
- * @returns {HTMLStyleElement | null} the style element related for a given scope
- */
-export function getAppStyleByScope(scopeId: string): HTMLStyleElement | null {
-  return document.head.querySelector<HTMLStyleElement>(`style[${dataAppStylesAttribute}="${scopeId}"]`)
-}
-
+import { dataMfeStylesKey, dataRcStylesKey, dataRcStylesStart } from '../index'
 /**
  * Returns the count of MFEs and RCs using the style element.
  * @param styleElement - style element
@@ -56,4 +45,38 @@ export function getStyleUsageCountForRc(styleElement: HTMLStyleElement): number 
  */
 export function getAllStylesUsedByKey(key: string): HTMLStyleElement[] {
   return Array.from(document.head.querySelectorAll<HTMLStyleElement>(`style[${key}]`))
+}
+
+/**
+ * Removes the MFE from list of users of the style element.
+ * @param styleElement - style element to modify
+ */
+export function removeMfeUsageFromStyle(styleElement: HTMLStyleElement) {
+    delete styleElement.dataset[dataMfeStylesKey]
+}
+
+/**
+ * Removes the RC from list of users of the style element.
+ * @param styleElement - style element to modify
+ * @param slotName - name of the slot hosting the RC
+ */
+export function removeRcUsageFromStyle(styleElement: HTMLStyleElement, slotName: string) {
+    delete styleElement.dataset[slotNameToPropertyName(dataRcStylesKey(slotName))]
+}
+
+/**
+ * Registers the RC as a user of the style element.
+ * @param styleElement - style element to register for
+ * @param slotName - name of the slot hosting the RC
+ */
+export function useStyleForRc(styleElement: HTMLStyleElement, slotName: string) {
+  styleElement.dataset[slotNameToPropertyName(dataRcStylesKey(slotName))] = ''
+}
+
+/**
+ * Registers the MFE as a user of the style element.
+ * @param styleElement - style element to modify
+ */
+export function useStyleForMfe(styleElement: HTMLStyleElement) {
+  styleElement.dataset[dataMfeStylesKey] = ''
 }

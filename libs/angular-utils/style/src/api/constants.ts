@@ -1,3 +1,7 @@
+/**
+ * @constant {string} dataRcStylesKey
+ * @description Marks style element as one used by the current RC.
+ */
 export const dataRcStylesStart = 'slot'
 
 /**
