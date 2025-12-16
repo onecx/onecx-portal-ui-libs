@@ -1,0 +1,439 @@
+= OneCX integration-interface Library
+
+:idprefix:
+:idseparator: -
+
+:angular_issues_url: xref:latest@docs:general:implementation-details/mfe-content-loading/webcomponents.adoc#angular-issues
+
+[#overview]
+== Overview
+`@onecx/integration-interface` library is a set of tools written in **Typescript** that enables communication between Microfrontends. The library can be used in any desired technology.
+
+NOTE: For Angular-based applications, the xref:onecx-portal-ui-libs:libraries/angular-integration-interface.adoc[@onecx/angular-integration-interface] library is available. It is a set of tools aiming to ease the development of Angular applications integrated with OneCX. For more information, please refer xref:onecx-portal-ui-libs:libraries/angular-integration-interface.adoc[here].
+
+[#topics]
+== Topics
+include::partial$topic.adoc[]
+
+[#configuration-topic]
+=== Configuration Topic
+Usage::
+Read information about the **platform configuration**.
+Shell actions::
+The Shell loads configuration variables and publishes them to the Topic as the first message.
+Data::
+[#config_object]**Config object** with string entries, where each entry represents a configuration variable:
++
+[source,typescript]
+interface Config { [key: string]: string }
+
+NOTE: For Angular-based applications, the xref:onecx-portal-ui-libs:libraries/angular-integration-interface.adoc#configuration-service[@onecx/angular-integration-interface offers an Injectable ConfigurationService service] exposing functions useful when dealing with configuration management. This service is used by the Shell Application.
+
+[#current-mfe-topic]
+=== Current Mfe Topic
+Usage::
+Read information about the **currently accessed Microfrontend**. The only publisher for this Topic should be the host Application (Shell).
+Shell actions::
+On Route activation publishes information about accessed MFE.
+Data::
+**MfeInfo object** describing currently accessed Microfrontend with the following structure:
++
+.MfeInfo structure
+[cols="1,1,2"]
+|===
+|Property name |Type | Description
+
+|appId |`string` | Unique identifier of the Microfrontend.
+|baseHref |`string` | Microfrontend's base path within the current Workspace, i.e. `'/workspace/mfe_base_path'`.
+|mountPath |`string` | Microfrontend's mount path containing Workspace and application base path, i.e. `'/workspace/mfe_base_path'`.
+|productName |`string` | Name of the Application currently accessed Microfrontend is part of.
+|remoteBaseUrl |`string` | Microfrontend's remote URL to be used when accessing its content (remote entry file, assets, etc.), e.g. `'/mfe/mfe_name'`.
+|shellName |`string` | Name of the currently used shell, always `'portal'`.
+|displayName? |`string` | Name for Microfrontend to display.
+|elementName? |`string` | Name of the HTML element, Microfrontend's module should be displayed in, e.g. `'mfe-component'`.
+|remoteName? |`string` | Name of the remote set up in Microfrontend's webpack (Used for WebComponents integration within platform).
+|version? |`string` | Version of the Microfrontend.
+|[.line-through]#remote?# |[.line-through]#`string`# | Deprecated.
+|===
+
+include::partial$app-state-service-note.adoc[]
+
+[#current-page-topic]
+=== Current Page Topic
+Usage::
+Read information about the **currently accessed Page**. The only publisher for this Topic should be **PortalPageComponent(ocx-portal-page)**.
+Shell actions::
+None
+Important actions::
+When creating Microfrontend's content, use **PortalPageComponent(ocx-portal-page)**. On its initialization, a new PageInfo message will be published based on data provided to the component via Inputs.
+Data::
+**PageInfo object** describing currently accessed Page with the following structure:
++
+.PageInfo structure
+[cols="1,1,2"]
+|===
+|Property name |Type | Description
+
+|path | `string`| Complete path of the current Page containing Shell deployment path, Workspace base path and Microfrontend's accessed path, e.g. `'/shell/workspace/mfe/details/id-1'`.
+|helpArticleId? | `string`| ID of help article associated with the Page.
+|pageName? | `string`| Unique name of the Page.
+|permission? | `string`| Permission required to access Page content.
+|[.line-through]#applicationId?# | [.line-through]#`string`#| Deprecated.
+
+|===
+
+include::partial$app-state-service-note.adoc[]
+
+[#current-theme-topic]
+=== Current Theme Topic
+Usage::
+Read information about the **currently applied Theme**. Writing new messages to this Topic will not change the current Theme applied to a page, which might cause inconsistency. If it is desired to change the current Theme, please consider using xref:onecx-portal-ui-libs:libraries/angular-integration-interface.adoc#theme-service[Theme Service]. For other technologies, make sure to apply the chosen Theme before publishing a new message to the Topic.
+Shell actions::
+During Workspace construction, Shell is going to load and apply Theme assigned to the Workspace. That Theme's information will also be published to the Topic.
+Data::
+[#theme_object]**Theme object** describing currently applied Theme with the following structure:
++
+.Theme structure
+[cols="1,1,2"]
+|===
+|Property name |Type | Description
+
+|description? | `string` | Description of the Theme.
+|faviconUrl? | `string` | ?
+|id? |`string` | Unique identifier of the Theme.
+|logoUrl? | `string` | URL to an external image to be used as Theme logo.
+|name? | `string` | Name of the Theme
+|properties? | `{ [key: string]: { [key: string]: string } }` | Object containing CSS variables used for currently applied theme. It contains an entry for each section in the Theme designer (Font, General, Topbar, Sidebar), where key is the section name and value is an object containing key value pairs representing a certain CSS variable value to be used for a given Theme.
+|[.line-through]#assetsUpdateDate?# | [.line-through]#`string`# | Deprecated.
+|[.line-through]#assetsUrl?# | [.line-through]#`string`# | Deprecated.
+|[.line-through]#cssFile?# | [.line-through]#`string`# | Deprecated.
+|[.line-through]#previewImageUrl?# | [.line-through]#`string`# | Deprecated.
+|===
+
+NOTE: For Angular-based applications, the xref:onecx-portal-ui-libs:libraries/angular-integration-interface.adoc#theme-service[@onecx/angular-integration-interface offers an Injectable ThemeService service] exposing functions useful when dealing with theme management.
+
+[#current-workspace-topic]
+=== Current Workspace Topic
+Usage::
+Read information about the **currently accessed Workspace**. The only publisher for this Topic should be host Application (Shell).
+Shell actions::
+During Workspace construction, Shell is going to publish its information to the Topic.
+Data::
+**Workspace object** describing currently accessed Workspace with the following structure:
++
+.Workspace structure
+[cols="1,1,2"]
+|===
+|Property name |Type | Description
+
+|baseUrl | `string`| Base URL of the Workspace, e.g. `'/admin'`.
+|workspaceName | `string`| Name of the Workspace used as reference.
+|displayName? | `string`| Name of the Workspace used for display.
+|homePage? | `string`| Home page URL relative to Workspace, e.g. `'/welcome'`.
+|routes? | `Array<<<Route-object, Route>>>`| List of routes to Microfrontends for a Workspace.
+|[.line-through]#companyName?# | [.line-through]#`string`#| Deprecated.
+|[.line-through]#footerLabel?# | [.line-through]#`string`#| Deprecated.
+|[.line-through]#id?# | [.line-through]#`string`#| Deprecated.
+|[.line-through]#logoUrl?# | [.line-through]#`string`#| Deprecated.
+|[.line-through]#logoSmallImageUrl?# | [.line-through]#`string`#|Deprecated.
+|[.line-through]#portalRoles?# | [.line-through]#`string[]`#| Deprecated.
+|[.line-through]#themeId?# | [.line-through]#`string`#| Deprecated.
+|[.line-through]#themeName?# | [.line-through]#`string`#| Deprecated.
+|[.line-through]#portalName# | [.line-through]#`string`# | Deprecated.
+|[.line-through]#description# | [.line-through]#`string`# | Deprecated.
+|[.line-through]#imageUrls# | [.line-through]#`string[]`# | Deprecated.
+|[.line-through]#address# | [.line-through]#`object`# | Deprecated.
+|[.line-through]#phoneNumber# | [.line-through]#`string`# | Deprecated.
+|[.line-through]#rssFeedUrl# | [.line-through]#`string`# | Deprecated.
+|[.line-through]#subjectLinks# | [.line-through]#`object[]`# | Deprecated.
+|[.line-through]#microfrontendRegistrations# | [.line-through]#`object[]`# | Deprecated.
+|[.line-through]#userUploaded# | [.line-through]#`boolean`# | Deprecated.
+|===
++
+[[Route-object]]
+**Workspace object** contains a list of routes for registered Microfrontends. Each **Route** has the following structure:
++
+.Route structure
+[cols="1,1,2"]
+|===
+|Property name |Type | Description
+
+| appId |`string` | Unique identifier of the Microfrontend.
+| baseUrl |`string` | Microfrontend's base path within the current workspace, i.e. `'/workspace/mfe_base_path'`.
+| displayName |`string` | Name for Microfrontend to display.
+| elementName |`string` | Name of the HTML element Microfrontend's module should be displayed in, e.g. `'mfe-component'`
+| endpoints |`Array<Endpoint>` | Array of endpoints to be used by a Microfrontend to navigate to other MFEs safely. Each endpoint contains a name (string) and a path (string) that can be used when deciding on the URL of the pages.
+| exposedModule |`string` | Name of the exposed module to be loaded for a Microfrontend, e.g. `'./MfeModule'`
+| pathMatch | `'full' \| 'prefix'` | Path matching strategy of a Route.
+| productName |`string` | Name of the Application currently accessed Microfrontend is part of.
+| remoteEntryUrl |`string` | URL of the Microfrontend's remote entry file, e.g. `'mfe/mfe_base_path/remoteEntry.js'`.
+| remoteName |`string` | Name of the remote set up in Microfrontend's webpack (Used for WebComponents integration within platform).
+| technology |`'Angular' \| 'WebComponentScript' \| 'WebComponentModule'`  | Technology used to expose Microfrontend's module.
+| url |`string` | Microfrontend's remote URL to be used when accessing its content (remote entry file, assets, etc.), e.g. `'/mfe/mfe_name'`.
+|===
+
+include::partial$app-state-service-note.adoc[]
+
+[#events-topic]
+=== Events Topic
+Usage::
+Write and read information about the **custom events within the platform**. Useful whenever it is desired to exchange information between Apps and no Topic has been created for that purpose.
+Shell actions::
+Shell is using EventsTopic to sync its router with navigation events happening in Microfrontend's routers ({angular_issues_url}[side effect of using webcomponent loading mechanism]). The following event is used to exchange all navigation events within the OneCX platform:
++
+[source,typescript]
+type NavigatedEvent = {
+    type: 'navigated';
+    payload: NavigatedEventPayload;
+};
+type NavigatedEventPayload = {
+    url: string | undefined;
+    isFirst: boolean;
+};
+
+Data::
+**Object** containing a type (to distinguish messages) and payload:
++
+[source,typescript]
+type TopicEvent Type = { type: string; payload?: unknown | undefined }
+
+[#global-error-topic]
+=== Global Error Topic
+Usage::
+Write and read information about the **global errors within the platform**.
+Shell actions::
+Shell will display the errors published to this Topic in a designated place, regardless of the Microfrontend loaded.
+Data::
+**String** containing information about the global error raised within the platform.
+
+include::partial$app-state-service-note.adoc[]
+
+[#global-loading-topic]
+=== Global Loading Topic
+Usage::
+Write and read information about the **global loading happening within the platform**.
+Shell actions::
+Shell sets the global loading indicator for the remote content loading period.
+Data::
+**Boolean** indicating whether global loading is happening or not.
+
+include::partial$app-state-service-note.adoc[]
+
+[#is-authenticated-topic]
+=== Is Authenticated Topic
+Usage::
+Wait for an **authentication indicator**, do certain actions. Whenever this topic is initialized, Microfrontend's content can assume that the user accessing the page is authenticated.
+Shell actions::
+// TODO: Link to angular-auth for more info about auth mechanism
+Shell uses AuthService from the `@onecx/angular-auth` library for authentication. During Shell initialization (via APP_INITIALIZER), AuthService is initialized. On successful initialization, the message is published to the Topic.
+Data::
+**Empty**
+
+include::partial$app-state-service-note.adoc[]
+
+[#message-topic]
+=== Message Topic
+Usage::
+Write **messages to be displayed in an overlay on the top of the page**. Useful when it is desired to inform about a certain event happening via a message displayed for a short period of time. Publish a new message to display it.
+Shell actions::
+Shell will listen to messages published via this Topic and will display the message in a designated place.
+Data::
+**Message object** describing message to be displayed with the following structure:
+
+NOTE: **Message object** structure is based on the https://primeng.org/toast[PrimeNG Toast API], which is used internally to display messages.
+
+NOTE: For Angular-based applications, the xref:onecx-portal-ui-libs:libraries/angular-integration-interface.adoc#portal-message-service[@onecx/angular-integration-interface offers an Injectable PortalMessageService service] exposing functions useful when dealing with displaying messages.
+
+[#permissions-topic]
+=== Permissions Topic
+Usage::
+Read **user's permissions related to current Microfrontend**. The only publisher for this Topic should be the host Application (Shell).
+Shell actions::
+On Route activation publishes information about permissions related to the accessed MFE.
+Data::
+**Array<string>**, each representing user's permission.
+
+NOTE: For Angular-based applications, the xref:onecx-portal-ui-libs:libraries/angular-integration-interface.adoc#user-service[@onecx/angular-integration-interface offers an Injectable UserService service] exposing functions useful when dealing with user related data.
+
+[#permissions-rpc-topic]
+=== Permissions Rpc Topic
+Usage::
+Read the **user's permissions related to any Application**. Useful when it is desired to check if permission not related to the the current Microfrontend is met for current User (e.g., used for Remote Components). This topic should be used in a request-response fashion. Request messages should have the `permissions` property undefined and should be made by the Microfrontend containing Applications. Response messages will have the `permissions` property defined (`Array<string>`) and should be made by the Shell Application.
+Shell actions::
+Shell is listening to new messages published in the Topic. Whenever a message with the `permissions` property set to `undefined` is read by the Shell, it fetches permissions for the current user related to the requested Application.
+Data::
+**PermissionsRpc object** includes requested Application information and permissions with the following structure:
++
+.PermissionsRpc structure
+[cols="1,1,2"]
+|===
+|Property name |Type | Description
+
+|appId |string | Unique identifier of the Microfrontend.
+|productName |string | Name of the Application (Microfrontend is part of).
+|permissions? |Array<string> | Permissions for the current user regarding provided Application Data. Data filled by the Shell Application.
+|===
+
+NOTE: For Angular-based applications, the `@onecx/angular-remote-components` offers an Injectable PermissionService service exposing functions useful when dealing with permission management for Remote Components.
+
+
+[#remote-components-topic]
+=== Remote Components Topic
+Usage::
+Read **currently accessed Workspace Remote Components data**. The only publisher for this Topic should be the host Application (Shell).
+Shell actions::
+During Workspace construction, Shell is going to publish information about available Slots and Components to the Topic in the context of the currently accessed Workspace.
+Data::
+**RemoteComponentsInfo object** describing available Remote Components and Slots with the following structure:
++
+.RemoteComponentsInfo structure
+[cols="1,1,2"]
+|===
+|Property name |Type | Description
+
+|components | `<<RemoteComponent-object, RemoteComponent>>[]`| Registered Remote Components for Workspace.
+|slots | `<<Slot-object, Slot>>[]`| Registered Slots for Workspace.
+|===
++
+[[RemoteComponent-object]]
+**RemoteComponent object** describing Remote Component with the following structure:
++
+.RemoteComponent structure
+[cols="1,1,2"]
+|===
+|Property name |Type | Description
+
+|name |`string` | Unique name of a Remote Component.
+|baseUrl |`string` | URL of the Remote Component's Microfrontend to be used when accessing its content (remote entry file, assets, etc.), e.g. `'/mfe/mfe_name'`.
+|remoteEntryUrl |`string` |  URL of the Remote Component's Microfrontend remote entry file, e.g. `'mfe/mfe_base_path/remoteEntry.js'`.
+|appId |`string` | Unique identifier of the Remote Component's Microfrontend.
+|productName |`string` | Name of the Application currently accessed Remote Component's Microfrontend is part of.
+|exposedModule |`string` | Name of the exposed Remote Component to be loaded, e.g. `'./MfeRemoteComponent'`.
+|remoteName |`string` | Name of the remote set up in Remote Component's Microfrontend webpack (Used for WebComponents integration within platform).
+|technology |`'Angular' \| 'WebComponentScript' \| 'WebComponentModule'` | Technology used to expose Remote Component.
+|===
++
+[[Slot-object]]
+**Slot** object describing Slot with the following structure:
++
+.Slot structure
+[cols="1,1,2"]
+|===
+|Property name |Type | Description
+
+|name | `string`| Name of the Slot.
+|components | `Array<string>`| List of Remote Component names registered for this Slot.
+|===
+
+NOTE: For Angular-basedAngular-based applications, it's best to utilize the `@onecx/angular-remote-components` library offering an Injectable SlotService service and SlotComponent useful for working with Remote Components. Those offerings are based on the Remote Components Topic.
+
+
+[#user-profile-topic]
+=== User Profile Topic
+Usage::
+Read **current User information**. The only publisher for this Topic should be the host Application (Shell).
+Shell actions::
+During Workspace construction, Shell is going to load and publish information about the current User to the Topic.
+Data::
+**UserProfile object** describing current User with the following structure:
++
+.UserProfile structure
+[cols="1,1,2"]
+|===
+|Property name |Type | Description
+
+|person |`<<UserPerson-object, UserPerson>>` | User personal information.
+|userId |`string` | User ID in OneCX platform.
+|accountSettings? |`<<UserProfileAccountSettings-object, UserProfileAccountSettings>>` | User's account settings.
+|organization? |`string` | Name of the User's organization.
+|tenantId? |`string` | Id of the User's tenant.
+|[.line-through]#avatar?# |[.line-through]#`AvatarInfo`# | Deprecated.
+|[.line-through]#id?# |[.line-through]#`string`# | Deprecated. Use `userId` instead.
+|[.line-through]#identityProvider?# |[.line-through]#`string`# | Deprecated.
+|[.line-through]#identityProviderId?# |[.line-through]#`string`# | Deprecated.
+|[.line-through]#memberships?# |[.line-through]#`Array<Membership>`# | Deprecated.
+|[.line-through]#tenantName?# |[.line-through]#`string`# | Deprecated. Use tenantId to determine user's tenant.
+|===
++
+[[UserPerson-object]]
+**UserPerson object** describing current User's personal info with the following structure:
++
+.UserPerson structure
+[cols="1,1,2"]
+|===
+|Property name |Type | Description
+
+|firstName? |`string` | User's first name.
+|lastName? |`string` | User's last name.
+|displayName? |`string` | User's display name.
+|email? |`string` | User's email.
+|address? |`<<UserPersonAddress-object, UserPersonAddress>>` | User's address.
+|phone? |`<<UserPersonPhone-object, UserPersonPhone>>` | User's phone.
+|===
++
+[[UserPersonAddress-object]]
+**UserPersonAddress object** describing current User's address info with the following structure:
++
+.UserPersonAddress structure
+[cols="1,1,2"]
+|===
+|Property name |Type | Description
+
+|street? |`string` | User's street name.
+|streetNo? |`string` | User's street number.
+|city? |`string` | User's city.
+|postalCode? |`string` | User's postal code.
+|country? |`string` | User's country.
+|===
++
+[[UserPersonPhone-object]]
+**UserPersonPhone object** describing current User's phone info with the following structure:
++
+.UserPersonPhone structure
+[cols="1,1,2"]
+|===
+|Property name |Type | Description
+
+|type? |`'MOBILE' \| 'LANDLINE'` | User's phone type.
+|number? |`string` | User's phone number.
+|===
++
+[[UserProfileAccountSettings-object]]
+**UserProfileAccountSettings object** describing current User's account settings with the following structure:
++
+.UserProfileAccountSettings structure
+[cols="1,1,2"]
+|===
+|Property name |Type | Description
+
+|layoutAndThemeSettings? | `<<UserProfileAccountSettingsLayoutAndThemeSettings-object, UserProfileAccountSettingsLayoutAndThemeSettings>>`| User's layout and theme settings
+|localeAndTimeSettings? | `<<UserProfileAccountSettingsLocaleAndTimeSettings-object, UserProfileAccountSettingsLocaleAndTimeSettings>>`| User's locale and time settings.
+|[.line-through]#notificationSettings?# | [.line-through]#`<<UserProfileAccountSettingsNotificationSettings-object, UserProfileAccountSettingsNotificationSettings>>`#| Deprecated.
+|[.line-through]#privacySettings?# | [.line-through]#`<<UserProfileAccountSettingsPrivacySettings-object, UserProfileAccountSettingsPrivacySettings>>`#| Deprecated.
+|===
++
+[[UserProfileAccountSettingsLayoutAndThemeSettings-object]]
+**UserProfileAccountSettingsLayoutAndThemeSettings object** describing current User's layout and theme settings with the following structure:
++
+.UserProfileAccountSettingsLayoutAndThemeSettings structure
+[cols="1,1,2"]
+|===
+|Property name |Type | Description
+
+|menuMode? | `'HORIZONTAL' \| 'STATIC' \| 'OVERLAY' \| 'SLIM' \| 'SLIMPLUS'` | Menu mode set for User.
+|colorScheme? | `'AUTO' \| 'LIGHT' \| 'DARK'` | Color scheme set for User.
+|===
++
+[[UserProfileAccountSettingsLocaleAndTimeSettings-object]]
+**UserProfileAccountSettingsLocaleAndTimeSettings object** describing current User's locale and time settings with the following structure:
++
+.UserProfileAccountSettingsLocaleAndTimeSettings structure
+[cols="1,1,2"]
+|===
+|Property name |Type | Description
+
+|locale? |`string` | User's locale.
+|timezone? |`string` | User's timezone.
+|===
+
+NOTE: For Angular-based applications, the xref:onecx-portal-ui-libs:libraries/angular-integration-interface.adoc#user-service[@onecx/angular-integration-interface offers an Injectable UserService service] exposing functions useful when dealing with user related data.
