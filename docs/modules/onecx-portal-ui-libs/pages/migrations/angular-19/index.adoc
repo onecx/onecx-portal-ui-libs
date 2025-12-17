@@ -24,6 +24,8 @@ Before starting this migration:
 To simplify the migration process, it is recommended to complete the following steps before upgrading to Angular 19:
 
 include::remove-keycloak-auth.adoc[]
+include::update-packages.adoc[]
+include::remove-portal-layout-styles.adoc[]
 
 [#migration-steps-after-angular-19]
 == Migration Steps after upgrading to Angular 19
