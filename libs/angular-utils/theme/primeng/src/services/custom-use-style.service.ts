@@ -13,7 +13,7 @@ import {
   scopePrimengCss,
   shellScopeId,
 } from '@onecx/angular-utils'
-import { replaceRootWithScope } from '@onecx/angular-utils'
+import { replaceRootWithScope } from '@onecx/angular-utils/style'
 
 @Injectable({ providedIn: 'any' })
 export class CustomUseStyle extends UseStyle {
