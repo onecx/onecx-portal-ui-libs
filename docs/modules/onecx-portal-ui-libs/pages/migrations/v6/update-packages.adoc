@@ -1,7 +1,7 @@
 [#required-package-updates]
 == Required Package Updates
 
-The following package updates are required as part of the Angular 18 → 19 migration process of the OneCX application to ensure compatibility with Angular 19 and OneCX v6:
+The following package updates are required for compatibility reasons:
 
 [cols="2,2,3"]
 |===
