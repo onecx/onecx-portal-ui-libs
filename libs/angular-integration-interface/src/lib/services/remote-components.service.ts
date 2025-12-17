@@ -3,9 +3,13 @@ import { RemoteComponentsTopic } from '@onecx/integration-interface'
 
 @Injectable({ providedIn: 'root' })
 export class RemoteComponentsService implements OnDestroy {
-  remoteComponents$ = new RemoteComponentsTopic()
+  _remoteComponents$: RemoteComponentsTopic | undefined
+  get remoteComponents$() {
+    this._remoteComponents$ ??= new RemoteComponentsTopic()
+    return this._remoteComponents$
+  }
 
   ngOnDestroy(): void {
-    this.remoteComponents$.destroy()
+    this._remoteComponents$?.destroy()
   }
 }

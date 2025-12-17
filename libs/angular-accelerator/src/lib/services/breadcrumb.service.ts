@@ -1,10 +1,10 @@
-import { Injectable, inject } from '@angular/core'
+import { Injectable, OnDestroy, inject } from '@angular/core'
 import { ActivatedRoute, ActivatedRouteSnapshot, Data, NavigationEnd, ParamMap, Router } from '@angular/router'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { TranslateService } from '@ngx-translate/core'
 import { Topic } from '@onecx/accelerator'
 import { MenuItem } from 'primeng/api'
-import { BehaviorSubject, filter, map } from 'rxjs'
+import { BehaviorSubject, filter, map, Observable } from 'rxjs'
 import { BreadCrumbMenuItem } from '../model/breadcrumb-menu-item.model'
 
 interface ManualBreadcrumbs {
@@ -22,15 +22,23 @@ class ManualBreadcrumbsTopic extends Topic<ManualBreadcrumbs> {
 
 @Injectable({ providedIn: 'any' })
 @UntilDestroy()
-export class BreadcrumbService {
+export class BreadcrumbService implements OnDestroy {
   private readonly router = inject(Router)
   private readonly activeRoute = inject(ActivatedRoute)
   private readonly translateService = inject(TranslateService)
 
-  private readonly itemsSource$ = new ManualBreadcrumbsTopic()
+  private _itemSource$: ManualBreadcrumbsTopic | undefined
+  private get itemsSource$() {
+    this._itemSource$ ??= new ManualBreadcrumbsTopic()
+    return this._itemSource$
+  }
   generatedItemsSource = new BehaviorSubject<MenuItem[]>([])
 
-  itemsHandler = this.itemsSource$.pipe(map((manualBreadcrumbs) => manualBreadcrumbs.menuItems))
+  _itemsHandler: Observable<MenuItem[]> | undefined
+  get itemsHandler() {
+    this._itemsHandler ??= this.itemsSource$.pipe(map((manualBreadcrumbs) => manualBreadcrumbs.menuItems))
+    return this._itemsHandler
+  }
 
   constructor() {
     this.generateBreadcrumbs(this.activeRoute.snapshot)
@@ -43,6 +51,10 @@ export class BreadcrumbService {
         const root = this.router.routerState.snapshot.root
         this.generateBreadcrumbs(root)
       })
+  }
+
+  ngOnDestroy(): void {
+    this._itemSource$?.destroy()
   }
 
   private generateBreadcrumbs(route: ActivatedRouteSnapshot | null) {

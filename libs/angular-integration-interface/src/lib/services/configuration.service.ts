@@ -13,11 +13,15 @@ export class ConfigurationService implements OnDestroy {
     [key: string]: string
   }>(APP_CONFIG, { optional: true })
 
-  private config$ = new ConfigurationTopic()
+  _config$: ConfigurationTopic | undefined
+  get config$() {
+    this._config$ ??= new ConfigurationTopic()
+    return this._config$
+  }
   private semaphore = new Semaphore(1)
 
   ngOnDestroy(): void {
-    this.config$.destroy()
+    this._config$?.destroy()
   }
 
   public init(): Promise<boolean> {

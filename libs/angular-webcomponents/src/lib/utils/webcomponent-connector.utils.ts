@@ -24,7 +24,11 @@ import { getLocation } from '@onecx/accelerator'
 export class WebcomponentConnector {
   private readonly connectionSubscriptions: Subscription[] = []
   private capabilityService: ShellCapabilityService //NOSONAR
-  private eventsTopic: EventsTopic //NOSONAR
+  private _eventsTopic$: EventsTopic | undefined
+  get eventsTopic() {
+    this._eventsTopic$ ??= new EventsTopic()
+    return this._eventsTopic$
+  }
   private readonly guardsGatherer: GuardsGatherer
   private readonly guardsNavigationStateController: GuardsNavigationStateController
 
@@ -33,7 +37,6 @@ export class WebcomponentConnector {
     private readonly entrypointType: EntrypointType
   ) {
     this.capabilityService = new ShellCapabilityService()
-    this.eventsTopic = new EventsTopic()
     this.guardsGatherer = this.injector.get(GuardsGatherer)
     this.guardsNavigationStateController = this.injector.get(GuardsNavigationStateController)
   }
@@ -47,7 +50,7 @@ export class WebcomponentConnector {
     for (const sub of this.connectionSubscriptions) {
       sub.unsubscribe()
     }
-    this.eventsTopic.destroy()
+    this._eventsTopic$?.destroy()
     this.guardsGatherer.deactivate()
   }
 

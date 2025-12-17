@@ -25,7 +25,7 @@ import { RemoteComponentInfo, SLOT_SERVICE, SlotComponentConfiguration, SlotServ
 import { RemoteComponentConfig, scopeIdFromProductNameAndAppId } from '@onecx/angular-utils'
 import { HttpClient } from '@angular/common/http'
 import { debounceTime, filter } from 'rxjs/operators'
-import { updateStylesForRcCreation, removeAllRcUsagesFromStyles} from '@onecx/angular-utils/style'
+import { updateStylesForRcCreation, removeAllRcUsagesFromStyles } from '@onecx/angular-utils/style'
 
 interface AssignedComponent {
   refOrElement: ComponentRef<any> | HTMLElement
@@ -145,19 +145,23 @@ export class SlotComponent implements OnInit, OnDestroy {
   private resizeDebounceTimeMs = 100
 
   private readonly resizedEventsPublisher = new ResizedEventsPublisher()
-  private readonly resizedEventsTopic = new ResizedEventsTopic()
+  private _resizedEventsTopic: ResizedEventsTopic | undefined
+  get resizedEventsTopic() {
+    this._resizedEventsTopic ??= new ResizedEventsTopic()
+    return this._resizedEventsTopic
+  }
   private readonly requestedEventsChanged$ = this.resizedEventsTopic.pipe(
     filter((event): event is RequestedEventsChangedEvent => event.type === ResizedEventType.REQUESTED_EVENTS_CHANGED)
   )
 
   ngOnDestroy(): void {
-    this.resizedEventsTopic.destroy()
+    this._resizedEventsTopic?.destroy()
     this.subscriptions.forEach((sub) => sub.unsubscribe())
     this.resizeObserver?.disconnect()
     this.componentSize$.complete() // Complete the subject to avoid memory leaks
     // Removes RC styles on unmount to avoid ghost styles
     this._assignedComponents$.getValue().forEach((component) => {
-      const scopeId = scopeIdFromProductNameAndAppId(component.remoteInfo.productName,component.remoteInfo.appId)
+      const scopeId = scopeIdFromProductNameAndAppId(component.remoteInfo.productName, component.remoteInfo.appId)
       removeAllRcUsagesFromStyles(scopeId, this.name)
     })
     this.viewContainerRef.clear()
