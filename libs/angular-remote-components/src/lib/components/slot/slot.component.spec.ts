@@ -34,8 +34,6 @@ jest.mock('@onecx/angular-utils', () => {
 import {
   dataStyleIdAttribute,
   RemoteComponentConfig,
-  updateStylesForRcRemoval,
-  updateStylesForRcCreation,
   dataStyleIsolationAttribute,
 } from '@onecx/angular-utils'
 
@@ -50,6 +48,7 @@ jest.mock('@onecx/integration-interface', () => {
 
 import { ResizedEventType, Technologies, TopicResizedEventType } from '@onecx/integration-interface'
 import { FakeTopic } from '@onecx/accelerator'
+import { removeAllRcUsagesFromStyles, updateStylesForRcCreation } from '@onecx/angular-utils/style'
 
 // Mock ResizeObserver
 class ResizeObserverMock {
@@ -185,7 +184,7 @@ describe('SlotComponent', () => {
     })
 
     it('should cleanup all components', fakeAsync(() => {
-      const spy = updateStylesForRcRemoval as jest.Mock
+      const spy = removeAllRcUsagesFromStyles as jest.Mock
       slotServiceMock.assignComponentToSlot(
         {
           componentType: Promise.resolve(MockAngularComponent),
