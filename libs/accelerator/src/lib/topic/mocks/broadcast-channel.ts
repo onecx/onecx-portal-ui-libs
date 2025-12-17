@@ -8,9 +8,11 @@ export class BroadcastChannel {
     postMessage(m: any) {
         if (BroadcastChannel.asyncCalls) {
             setTimeout(() => {
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
                 BroadcastChannel.listeners[this.name]?.forEach((l) => l({ data: m, stopImmediatePropagation: () => { }, stopPropagation: () => { } }))
             }, 0)
         } else {
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
             BroadcastChannel.listeners[this.name]?.forEach((l) => l({ data: m, stopImmediatePropagation: () => { }, stopPropagation: () => { } }))
         }
     }

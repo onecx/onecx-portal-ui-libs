@@ -1,4 +1,4 @@
-import { filter, map, tap } from 'rxjs/operators'
+import { filter, map } from 'rxjs/operators'
 import {
   BehaviorSubject,
   Observable,
@@ -270,10 +270,14 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
   private handleTopicResolveMessage(m: MessageEvent<TopicMessage>) {
     const publishPromiseResolver = this.publishPromiseResolver[(<TopicResolveMessage>m.data).resolveId]
     if (publishPromiseResolver) {
-      publishPromiseResolver()
-      m.stopImmediatePropagation()
-      m.stopPropagation()
-      delete this.publishPromiseResolver[(<TopicResolveMessage>m.data).resolveId]
+      try{
+        publishPromiseResolver()
+        m.stopImmediatePropagation()
+        m.stopPropagation()
+        delete this.publishPromiseResolver[(<TopicResolveMessage>m.data).resolveId]
+      } catch (error) {
+        console.error('Error handling TopicResolveMessage:', error);
+      }
     }
   }
 
