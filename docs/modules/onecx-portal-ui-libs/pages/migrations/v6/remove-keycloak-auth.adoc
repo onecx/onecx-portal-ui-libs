@@ -1,7 +1,7 @@
 [#remove-keycloak-auth]
 == Remove @onecx/keycloak-auth
 
-When upgrading your OneCX application from Angular 18 to Angular 19, you must update to OneCX UI libs v6. In this version, the `@onecx/keycloak-auth` package has been removed and replaced with `@onecx/angular-auth`.
+In v6 of libs, the `@onecx/keycloak-auth` package has been removed and replaced with `@onecx/angular-auth`.
 
 [#update-packages]
 === Update the packages
