@@ -178,39 +178,38 @@ export class SlotComponent implements OnInit, OnDestroy {
 
     // Components can be created only when component information is available and view containers are created for all remote components
     const createSub = this.components$.subscribe((components) => {
-      // Create array of promises to ensure the order of components in the slot is maintained
-      // For each component create a promise that will be resolved when component is created
-      const componentLoadPromise: { instance: Promise<void>; resolveCallback: () => void }[] = components.map(() => {
-        let resolveCallback!: () => void
-        const promise = new Promise<void>((resolve) => {
-          resolveCallback = resolve
-        })
-        return { instance: promise, resolveCallback }
-      })
+      this.createSpansForComponents(components)
+      this.createComponents(components)
+    })
+    this.subscriptions.push(createSub)
 
-      for (const [index, componentInfo] of components.entries()) {
-        const previous = index - 1
-        if (componentInfo.componentType) {
-          Promise.all([
-            Promise.resolve(componentInfo.componentType),
-            Promise.resolve(componentInfo.permissions),
-            previous >= 0 ? componentLoadPromise[previous].instance : Promise.resolve(),
-          ]).then(([componentType, permissions]) => {
-            const component = this.createComponent(componentType, componentInfo, permissions)
+    this.observeSlotSizeChanges()
+  }
+
+  private createSpansForComponents(components: SlotComponentConfiguration[]) {
+    for (let i = 0; i < components.length; i++) {
+      const span = document.createElement('span')
+      span.setAttribute('index', i.toString())
+      this.viewContainerRef.element.nativeElement.appendChild(span)
+    }
+  }
+
+  private createComponents(components: SlotComponentConfiguration[]) {
+    components.forEach((componentInfo, index) => {
+      if (componentInfo.componentType) {
+        Promise.all([Promise.resolve(componentInfo.componentType), Promise.resolve(componentInfo.permissions)]).then(
+          ([componentType, permissions]) => {
+            const component = this.createComponent(componentType, componentInfo, permissions, index)
             if (component) {
               this._assignedComponents$.next([
                 ...this._assignedComponents$.getValue(),
                 { refOrElement: component, remoteInfo: componentInfo.remoteComponent },
               ])
-              componentLoadPromise[index].resolveCallback()
             }
-          })
-        }
+          }
+        )
       }
     })
-    this.subscriptions.push(createSub)
-
-    this.observeSlotSizeChanges()
   }
 
   private observeSlotSizeChanges() {
@@ -255,10 +254,11 @@ export class SlotComponent implements OnInit, OnDestroy {
   private createComponent(
     componentType: Type<unknown> | undefined,
     componentInfo: { remoteComponent: RemoteComponentInfo },
-    permissions: string[]
+    permissions: string[],
+    index: number
   ): ComponentRef<any> | HTMLElement | undefined {
     if (componentType) {
-      return this.createAngularComponent(componentType, componentInfo, permissions)
+      return this.createAngularComponent(componentType, componentInfo, permissions, index)
     }
 
     if (
@@ -268,7 +268,8 @@ export class SlotComponent implements OnInit, OnDestroy {
     ) {
       return this.createWebComponent(
         componentInfo as { remoteComponent: RemoteComponentInfo & { elementName: string } },
-        permissions
+        permissions,
+        index
       )
     }
 
@@ -278,9 +279,10 @@ export class SlotComponent implements OnInit, OnDestroy {
   private createAngularComponent(
     componentType: Type<unknown>,
     componentInfo: { remoteComponent: RemoteComponentInfo },
-    permissions: string[]
+    permissions: string[],
+    index: number
   ): ComponentRef<any> {
-    const componentRef = this.viewContainerRef.createComponent<any>(componentType)
+    const componentRef = this.viewContainerRef.createComponent<any>(componentType, { index: index })
     const componentHTML = componentRef.location.nativeElement as HTMLElement
     this.updateComponentStyles(componentInfo)
     this.addDataStyleId(componentHTML, componentInfo.remoteComponent)
@@ -293,13 +295,26 @@ export class SlotComponent implements OnInit, OnDestroy {
         permissions: permissions,
       })
     }
+
+    const span: HTMLSpanElement | undefined = this.viewContainerRef.element.nativeElement.querySelector(
+      `span[index="${index}"]`
+    ) as HTMLSpanElement
+    if (span) {
+      this.viewContainerRef.element.nativeElement.removeChild(span)
+    } else {
+      console.error(
+        'Component span was not found for slot component creation. The order of the components may be incorrect.'
+      )
+    }
+
     componentRef.changeDetectorRef.detectChanges()
     return componentRef
   }
 
   private createWebComponent(
     componentInfo: { remoteComponent: RemoteComponentInfo & { elementName: string } },
-    permissions: string[]
+    permissions: string[],
+    index: number
   ): HTMLElement {
     const element = document.createElement(componentInfo.remoteComponent.elementName)
     this.updateComponentStyles(componentInfo)
@@ -311,7 +326,19 @@ export class SlotComponent implements OnInit, OnDestroy {
       baseUrl: componentInfo.remoteComponent.baseUrl,
       permissions: permissions,
     } satisfies RemoteComponentConfig
-    this.viewContainerRef.element.nativeElement.appendChild(element)
+
+    const span: HTMLSpanElement | undefined = this.viewContainerRef.element.nativeElement.querySelector(
+      `span[index="${index}"]`
+    ) as HTMLSpanElement
+    if (span) {
+      this.viewContainerRef.element.nativeElement.insertBefore(element, span)
+      this.viewContainerRef.element.nativeElement.removeChild(span)
+    } else {
+      console.error(
+        'Component span was not found for slot component creation. The order of the components may be incorrect.'
+      )
+      this.viewContainerRef.element.nativeElement.appendChild(element)
+    }
     return element
   }
 
