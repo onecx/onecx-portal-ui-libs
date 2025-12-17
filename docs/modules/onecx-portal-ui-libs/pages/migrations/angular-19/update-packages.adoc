@@ -1,0 +1,36 @@
+[#required-package-updates]
+=== Required Package Updates
+
+If the following packages are used in your project, update them to ensure compatibility with Angular 19:
+
+[cols="2,2,3"]
+|===
+| Package | Required Version | Notes
+
+| `@ngx-translate/core`
+| `^16.0.0`
+| Updated for Angular 19 compatibility
+
+| `@ngx-translate/http-loader`
+| `^8.0.0`
+| Compatible with @ngx-translate/core v16
+
+| `ngx-build-plus`
+| `^19.0.0`
+| Angular 19 compatible version
+|===
+
+[#installation-commands]
+==== Installation Commands
+
+Run these commands to update the supporting packages:
+
+[source, bash]
+----
+# Update translation packages
+npm install @ngx-translate/core@^16.0.0
+npm install @ngx-translate/http-loader@^8.0.0
+
+# Update build tools
+npm install ngx-build-plus@^19.0.0
+----
