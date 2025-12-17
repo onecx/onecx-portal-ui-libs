@@ -22,12 +22,16 @@ declare global {
  */
 @Injectable({ providedIn: 'root' })
 export class TranslationCacheService implements OnDestroy {
-  private translationTopic$ = new TranslationCacheTopic()
+  private _translationTopic$: TranslationCacheTopic | undefined
+  get translationTopic$(): TranslationCacheTopic {
+    this._translationTopic$ ??= new TranslationCacheTopic()
+    return this._translationTopic$
+  }
   constructor() {
     window['onecxTranslations'] ??= {}
   }
   ngOnDestroy(): void {
-    this.translationTopic$.destroy()
+    this._translationTopic$?.destroy()
   }
 
   getTranslationFile(url: string, cacheMissFunction: () => Observable<any>): Observable<any> {

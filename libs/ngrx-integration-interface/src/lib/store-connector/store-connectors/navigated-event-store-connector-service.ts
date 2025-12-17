@@ -25,7 +25,11 @@ export function provideNavigatedEventStoreConnector() {
 export class NavigatedEventStoreConnectorService implements OnDestroy {
   private appStateService = inject(AppStateService)
   private capabilityService = inject(ShellCapabilityService)
-  private eventsTopic$ = new EventsTopic()
+  private _eventsTopic$: EventsTopic | undefined
+  get eventsTopic$(): EventsTopic {
+    this._eventsTopic$ ??= this.eventsTopic$
+    return this._eventsTopic$
+  }
   private store = inject(Store)
   constructor() {
     let observable: Observable<TopicEventType | CurrentLocationTopicPayload> =
@@ -42,6 +46,6 @@ export class NavigatedEventStoreConnectorService implements OnDestroy {
     })
   }
   ngOnDestroy(): void {
-    this.eventsTopic$.destroy()
+    this._eventsTopic$?.destroy()
   }
 }

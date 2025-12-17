@@ -10,9 +10,16 @@ const defaultThemeServerUrl = 'http://portal-theme-management:8080'
 @Injectable({ providedIn: 'root' })
 export class ThemeService implements OnDestroy {
   baseUrlV1 = './portal-api'
-  currentTheme$ = new CurrentThemeTopic()
+  _currentTheme$: CurrentThemeTopic | undefined
+  get currentTheme$() {
+    this._currentTheme$ ??= new CurrentThemeTopic()
+    return this._currentTheme$
+  }
 
-  constructor(private configService: ConfigurationService, private http: HttpClient) {}
+  constructor(
+    private configService: ConfigurationService,
+    private http: HttpClient
+  ) {}
 
   getThemeHref(themeId: string): string {
     const themeServerUrl =
@@ -41,6 +48,6 @@ export class ThemeService implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.currentTheme$.destroy()
+    this._currentTheme$?.destroy()
   }
 }

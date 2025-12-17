@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core'
+import { Injectable, OnDestroy } from '@angular/core'
 import { ActivatedRoute, ActivatedRouteSnapshot, Data, NavigationEnd, ParamMap, Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
-import { BehaviorSubject, filter, map } from 'rxjs'
+import { BehaviorSubject, filter, map, Observable } from 'rxjs'
 import { MenuItem } from 'primeng/api'
 import { BreadCrumbMenuItem } from '../model/breadcrumb-menu-item.model'
 import { SyncableTopic } from '@onecx/accelerator'
@@ -22,11 +22,19 @@ class ManualBreadcrumbsTopic extends SyncableTopic<ManualBreadcrumbs> {
 
 @Injectable({ providedIn: 'any' })
 @UntilDestroy()
-export class BreadcrumbService {
-  private itemsSource$ = new ManualBreadcrumbsTopic()
+export class BreadcrumbService implements OnDestroy {
+  private _itemSource$: ManualBreadcrumbsTopic | undefined
+  private get itemsSource$() {
+    this._itemSource$ ??= new ManualBreadcrumbsTopic()
+    return this._itemSource$
+  }
   generatedItemsSource = new BehaviorSubject<MenuItem[]>([])
 
-  itemsHandler = this.itemsSource$.pipe(map((manualBreadcrumbs) => manualBreadcrumbs.menuItems))
+  _itemsHandler: Observable<MenuItem[]> | undefined
+  get itemsHandler() {
+    this._itemsHandler ??= this.itemsSource$.pipe(map((manualBreadcrumbs) => manualBreadcrumbs.menuItems))
+    return this._itemsHandler
+  }
 
   constructor(
     private router: Router,
@@ -43,6 +51,10 @@ export class BreadcrumbService {
         const root = this.router.routerState.snapshot.root
         this.generateBreadcrumbs(root)
       })
+  }
+
+  ngOnDestroy(): void {
+    this._itemSource$?.destroy()
   }
 
   private generateBreadcrumbs(route: ActivatedRouteSnapshot | null) {

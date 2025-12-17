@@ -11,7 +11,11 @@ export class UserService implements OnDestroy {
   lang$ = new BehaviorSubject(this.determineLanguage() ?? DEFAULT_LANG)
 
   private effectivePermissions$: Observable<string[]>
-  private permissionsTopic$ = new PermissionsTopic()
+  _permissionsTopic$: PermissionsTopic | undefined
+  get permissionsTopic$() {
+    this._permissionsTopic$ ??= new PermissionsTopic()
+    return this._permissionsTopic$
+  }
   private oldStylePermissionsInitialized: Promise<string[]>
 
   constructor() {
@@ -49,6 +53,7 @@ export class UserService implements OnDestroy {
 
   ngOnDestroy(): void {
     this.profile$.destroy()
+    this._permissionsTopic$?.destroy()
   }
 
   useOldLangSetting(profile: UserProfile): string {
