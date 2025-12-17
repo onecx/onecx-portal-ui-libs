@@ -10,6 +10,11 @@ import { map } from 'rxjs'
 import { Topic } from './topic'
 import { TopicMessageType } from './topic-message-type'
 import { TopicDataMessage } from './topic-data-message'
+import {
+  BroadcastChannel
+} from "./mocks/broadcast-channel"
+
+Reflect.set(globalThis, 'BroadcastChannel', BroadcastChannel)
 
 describe('Topic', () => {
   const origAddEventListener = window.addEventListener
@@ -41,6 +46,13 @@ describe('Topic', () => {
   let testTopic2: Topic<string>
 
   beforeEach(() => {
+    window['@onecx/accelerator'] ??= {}
+    window['@onecx/accelerator'].topic ??= {}
+    window['@onecx/accelerator'].topic.initDate = Date.now() - 1000000
+    window['@onecx/accelerator'].topic.useBroadcastChannel = true
+
+    BroadcastChannel.asyncCalls = false
+    
     listeners = []
 
     values1 = []
@@ -51,6 +63,13 @@ describe('Topic', () => {
 
     testTopic1.subscribe((v) => values1.push(v))
     testTopic2.subscribe((v) => values2.push(v))
+  })
+
+  afterEach(() => {
+    testTopic1.destroy()
+    testTopic2.destroy()
+    BroadcastChannel.listeners =  {}
+    BroadcastChannel.asyncCalls = false
   })
 
   it('should have correct value for 2 topics after first topic publishes', () => {
@@ -158,7 +177,7 @@ describe('Topic', () => {
     })
   })
 
-  it('should have no values if publish is not awaited', () => {
+  it('should have no values if publish is not awaited', async () => {
     const original = window.postMessage
     window.postMessage = (m: any) => {
       listeners.forEach((l) => {
@@ -167,6 +186,7 @@ describe('Topic', () => {
         setTimeout(() => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }), 0)
       })
     }
+    BroadcastChannel.asyncCalls = true
 
     const val1: number[] = []
     const val2: number[] = []
@@ -178,23 +198,18 @@ describe('Topic', () => {
     })
     testTopic2.subscribe((val) => val2.push(val))
 
-    testTopic1.publish(123)
+    const promise = testTopic1.publish(321)
 
     expect(val1).toEqual([])
     expect(val2).toEqual([])
+
+    await promise
 
     window.postMessage = original
   })
 
   it('should have values if publish is awaited', async () => {
-    const original = window.postMessage
-    window.postMessage = (m: any) => {
-      listeners.forEach((l) => {
-        // Set timeout to simulate async behavior
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        setTimeout(() => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }), 0)
-      })
-    }
+    BroadcastChannel.asyncCalls = true
 
     const val1: number[] = []
     const val2: number[] = []
@@ -204,25 +219,18 @@ describe('Topic', () => {
     testTopic1.subscribe((val) => {
       val1.push(val)
     })
-    testTopic2.subscribe((val) => val2.push(val))
-
+    testTopic2.subscribe((val) => {
+      val2.push(val)
+    })
+    
     await testTopic1.publish(123)
-
+    
     expect(val1).toEqual([123])
     expect(val2).toEqual([123])
-
-    window.postMessage = original
   })
 
   it('should have all values if publish is awaited on first created topic', async () => {
-    const original = window.postMessage
-    window.postMessage = (m: any) => {
-      listeners.forEach((l) => {
-        // Set timeout to simulate async behavior
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        setTimeout(() => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }), 0)
-      })
-    }
+    BroadcastChannel.asyncCalls = true
 
     const val1: number[] = []
     const val2: number[] = []
@@ -242,19 +250,10 @@ describe('Topic', () => {
     expect(val1).toEqual([123])
     expect(val2).toEqual([123])
     expect(val3).toEqual([123])
-
-    window.postMessage = original
   })
 
   it('should have values if publish is awaited for all topics', async () => {
-    const original = window.postMessage
-    window.postMessage = (m: any) => {
-      listeners.forEach((l) => {
-        // Set timeout to simulate async behavior
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        setTimeout(() => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }), 0)
-      })
-    }
+    BroadcastChannel.asyncCalls = true
 
     const val1: number[] = []
     const val2: number[] = []
@@ -286,8 +285,6 @@ describe('Topic', () => {
     expect(val1).toEqual([1, 2, 3])
     expect(val2).toEqual([1, 2, 3])
     expect(val3).toEqual([1, 2, 3])
-
-    window.postMessage = original
   })
 
   describe('integration with older versions of library', () => {
@@ -326,7 +323,7 @@ describe('Topic', () => {
       incomingMessage.data.data = 'msg2'
       incomingMessage.data.id = 1
       ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onMessage(incomingMessage)
+      ;(<any>testTopic1).onWindowMessage(incomingMessage)
 
       expect(values1).toEqual(['initMsg', 'msg1', 'msg2'])
     })
@@ -339,7 +336,7 @@ describe('Topic', () => {
       ;(<any>incomingMessage.data).id = undefined
       incomingMessage.data.timestamp = 3
       ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onMessage(incomingMessage)
+      ;(<any>testTopic1).onWindowMessage(incomingMessage)
 
       expect(values1).toEqual(['initMsg', 'msg1', 'msg2'])
     })
@@ -352,7 +349,7 @@ describe('Topic', () => {
       ;(<any>incomingMessage.data).id = undefined
       incomingMessage.data.timestamp = 3
       ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onMessage(incomingMessage)
+      ;(<any>testTopic1).onWindowMessage(incomingMessage)
 
       expect(values1).toEqual(['initMsg', 'msg1', 'msg2'])
     })
@@ -365,7 +362,7 @@ describe('Topic', () => {
       incomingMessage.data.id = 1
       incomingMessage.data.timestamp = 3
       ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onMessage(incomingMessage)
+      ;(<any>testTopic1).onWindowMessage(incomingMessage)
 
       expect(values1).toEqual(['initMsg', 'msg1', 'msg2'])
     })
@@ -378,7 +375,7 @@ describe('Topic', () => {
       ;(<any>incomingMessage.data).id = undefined
       incomingMessage.data.timestamp = 3
       ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onMessage(incomingMessage)
+      ;(<any>testTopic1).onWindowMessage(incomingMessage)
 
       expect(values1).toEqual(['initMsg', 'msg1'])
     })
@@ -392,7 +389,7 @@ describe('Topic', () => {
       ;(<any>incomingMessage.data).id = undefined
       incomingMessage.data.timestamp = 3
       ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onMessage(incomingMessage)
+      ;(<any>testTopic1).onWindowMessage(incomingMessage)
 
       expect(values1).toEqual(['initMsg', 'msg1'])
       expect(console.warn).toHaveBeenLastCalledWith(
@@ -409,7 +406,7 @@ describe('Topic', () => {
       incomingMessage.data.id = 1
       incomingMessage.data.timestamp = 3
       ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onMessage(incomingMessage)
+      ;(<any>testTopic1).onWindowMessage(incomingMessage)
 
       expect(values1).toEqual(['initMsg', 'msg1'])
       expect(console.warn).toHaveBeenLastCalledWith(
@@ -426,7 +423,7 @@ describe('Topic', () => {
       incomingMessage.data.id = 1
       incomingMessage.data.timestamp = 3
       ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onMessage(incomingMessage)
+      ;(<any>testTopic1).onWindowMessage(incomingMessage)
 
       expect(values1).toEqual(['initMsg', 'msg1'])
       expect(console.warn).toHaveBeenCalledTimes(0)

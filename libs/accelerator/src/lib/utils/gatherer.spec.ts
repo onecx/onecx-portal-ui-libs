@@ -9,6 +9,12 @@
 import { TopicPublisher } from '../topic/topic-publisher'
 import { Gatherer } from './gatherer'
 
+import {
+  BroadcastChannel
+} from "../topic/mocks/broadcast-channel"
+
+Reflect.set(globalThis, 'BroadcastChannel', BroadcastChannel)
+
 describe('Gatherer', () => {
   const origAddEventListener = window.addEventListener
   const origPostMessage = window.postMessage
