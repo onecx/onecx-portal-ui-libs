@@ -1,4 +1,4 @@
-import { dataMfeElementAttribute, dataNoPortalLayoutStylesAttribute, dataStyleIdAttribute, dataStyleIsolationAttribute, isCssScopeRuleSupported, scopeIdFromProductNameAndAppId } from "@onecx/angular-utils";
+import { dataMfeElementAttribute, dataNoPortalLayoutStylesAttribute, dataStyleIdAttribute, dataStyleIsolationAttribute, isCssScopeRuleSupported} from "@onecx/angular-utils";
 import { 
     dataAppStylesAttribute
 } from "../index";
