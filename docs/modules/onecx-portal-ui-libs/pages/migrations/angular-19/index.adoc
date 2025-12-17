@@ -18,4 +18,16 @@ Before starting this migration:
 * You have OneCX UI libraries v5.x installed  
 * You have a working development environment
 
+[#migration-steps-before-angular-19]
+== Migration Steps before upgrading to Angular 19
+
+To simplify the migration process, it is recommended to complete the following steps before upgrading to Angular 19:
+
 include::remove-keycloak-auth.adoc[]
+
+[#migration-steps-after-angular-19]
+== Migration Steps after upgrading to Angular 19
+
+Once you have completed the previous steps, you can continue with the Angular 19 upgrade and follow the remaining steps:
+
+//include remaining migration steps here
