@@ -1,5 +1,5 @@
 [#required-package-updates]
-=== 2. Required Package Updates
+=== Required Package Updates
 
 If the following packages are used in your project, update them to ensure compatibility with Angular 19:
 
