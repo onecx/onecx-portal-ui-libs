@@ -1,7 +1,7 @@
 [#required-package-updates]
 == Required Package Updates
 
-The following package updates are required for compatibility reasons:
+If the following packages are used in your project, update them to ensure compatibility with Angular 19:
 
 [cols="2,2,3"]
 |===
