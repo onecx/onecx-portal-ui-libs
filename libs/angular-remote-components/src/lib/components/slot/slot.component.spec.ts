@@ -213,7 +213,7 @@ describe('SlotComponent', () => {
 
   describe('component creation', () => {
     describe('angular component', () => {
-      ;(it('should create', async () => {
+      it('should create', async () => {
         const consoleSpy = jest.spyOn(console, 'log').mockImplementation()
         slotServiceMock.assignComponentToSlot(
           {
@@ -242,33 +242,34 @@ describe('SlotComponent', () => {
         expect(consoleSpy).toHaveBeenCalledWith('MockAngularComponent initialized')
 
         consoleSpy.mockRestore()
-      }),
-        it('should create if span was not found', async () => {
-          const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
-          jest.spyOn(component['viewContainerRef'].element.nativeElement, 'querySelector').mockReturnValue(null)
-          slotServiceMock.assignComponentToSlot(
-            {
-              componentType: MockAngularComponent,
-              permissions: ['mock-permission'],
-              remoteComponent: {
-                appId: 'app-angular-no-span',
-                productName: 'angular-product-no-span',
-                baseUrl: 'https://base.url',
-                technology: Technologies.Angular,
-              },
+      })
+
+      it('should create if span was not found', async () => {
+        const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
+        jest.spyOn(component['viewContainerRef'].element.nativeElement, 'querySelector').mockReturnValue(null)
+        slotServiceMock.assignComponentToSlot(
+          {
+            componentType: MockAngularComponent,
+            permissions: ['mock-permission'],
+            remoteComponent: {
+              appId: 'app-angular-no-span',
+              productName: 'angular-product-no-span',
+              baseUrl: 'https://base.url',
+              technology: Technologies.Angular,
             },
-            'test-slot'
-          )
-          fixture.detectChanges()
+          },
+          'test-slot'
+        )
+        fixture.detectChanges()
 
-          const slotHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, SlotHarness)
+        const slotHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, SlotHarness)
 
-          const element = await slotHarness.getElement('ocx-mock-angular-component')
-          expect(element).not.toBeNull()
-          expect(consoleSpy).toHaveBeenCalledWith(
-            'Component span was not found for slot component creation. The order of the components may be incorrect.'
-          )
-        }))
+        const element = await slotHarness.getElement('ocx-mock-angular-component')
+        expect(element).not.toBeNull()
+        expect(consoleSpy).toHaveBeenCalledWith(
+          'Component span was not found for slot component creation. The order of the components may be incorrect.'
+        )
+      })
     })
 
     describe('webcomponent', () => {
@@ -307,7 +308,7 @@ describe('SlotComponent', () => {
         })
       })
 
-      ;(it('should create webcomponent script component', async () => {
+      it('should create webcomponent script component', async () => {
         slotServiceMock.assignComponentToSlot(
           {
             componentType: Promise.resolve(undefined),
@@ -340,34 +341,35 @@ describe('SlotComponent', () => {
           baseUrl: 'https://base.url',
           permissions: ['mock-permission'],
         })
-      }),
-        it('should create webcomponent if span was not found', async () => {
-          const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
-          jest.spyOn(component['viewContainerRef'].element.nativeElement, 'querySelector').mockReturnValue(null)
-          slotServiceMock.assignComponentToSlot(
-            {
-              componentType: Promise.resolve(undefined),
-              permissions: ['mock-permission'],
-              remoteComponent: {
-                appId: 'app-webcomponent-no-span',
-                productName: 'webcomponent-no-span-product',
-                baseUrl: 'https://base.url',
-                technology: Technologies.WebComponentModule,
-                elementName: 'mock-webcomponent-no-span',
-              },
+      })
+
+      it('should create webcomponent if span was not found', async () => {
+        const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
+        jest.spyOn(component['viewContainerRef'].element.nativeElement, 'querySelector').mockReturnValue(null)
+        slotServiceMock.assignComponentToSlot(
+          {
+            componentType: Promise.resolve(undefined),
+            permissions: ['mock-permission'],
+            remoteComponent: {
+              appId: 'app-webcomponent-no-span',
+              productName: 'webcomponent-no-span-product',
+              baseUrl: 'https://base.url',
+              technology: Technologies.WebComponentModule,
+              elementName: 'mock-webcomponent-no-span',
             },
-            'test-slot'
-          )
-          fixture.detectChanges()
+          },
+          'test-slot'
+        )
+        fixture.detectChanges()
 
-          const slotHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, SlotHarness)
+        const slotHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, SlotHarness)
 
-          const element = await slotHarness.getElement('mock-webcomponent-no-span')
-          expect(element).not.toBeNull()
-          expect(consoleSpy).toHaveBeenCalledWith(
-            'Component span was not found for slot component creation. The order of the components may be incorrect.'
-          )
-        }))
+        const element = await slotHarness.getElement('mock-webcomponent-no-span')
+        expect(element).not.toBeNull()
+        expect(consoleSpy).toHaveBeenCalledWith(
+          'Component span was not found for slot component creation. The order of the components may be incorrect.'
+        )
+      })
     })
 
     it('should create multiple components', async () => {

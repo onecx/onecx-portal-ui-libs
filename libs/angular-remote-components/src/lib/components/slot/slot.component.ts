@@ -189,7 +189,7 @@ export class SlotComponent implements OnInit, OnDestroy {
   private createSpansForComponents(components: SlotComponentConfiguration[]) {
     for (let i = 0; i < components.length; i++) {
       const span = document.createElement('span')
-      span.setAttribute('index', i.toString())
+      span.setAttribute('data-index', i.toString())
       this.viewContainerRef.element.nativeElement.appendChild(span)
     }
   }
@@ -297,7 +297,7 @@ export class SlotComponent implements OnInit, OnDestroy {
     }
 
     const span: HTMLSpanElement | undefined = this.viewContainerRef.element.nativeElement.querySelector(
-      `span[index="${index}"]`
+      `span[data-index="${index}"]`
     ) as HTMLSpanElement
     if (span) {
       this.viewContainerRef.element.nativeElement.removeChild(span)
@@ -328,7 +328,7 @@ export class SlotComponent implements OnInit, OnDestroy {
     } satisfies RemoteComponentConfig
 
     const span: HTMLSpanElement | undefined = this.viewContainerRef.element.nativeElement.querySelector(
-      `span[index="${index}"]`
+      `span[data-index="${index}"]`
     ) as HTMLSpanElement
     if (span) {
       this.viewContainerRef.element.nativeElement.insertBefore(element, span)
