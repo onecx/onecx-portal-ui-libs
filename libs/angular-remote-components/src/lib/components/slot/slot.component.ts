@@ -25,7 +25,7 @@ import { RemoteComponentInfo, SLOT_SERVICE, SlotComponentConfiguration, SlotServ
 import { RemoteComponentConfig, scopeIdFromProductNameAndAppId } from '@onecx/angular-utils'
 import { HttpClient } from '@angular/common/http'
 import { debounceTime, filter } from 'rxjs/operators'
-import { updateStylesForRcCreation, removeAllRcUsagesFromStyles} from '@onecx/angular-utils/style'
+import { updateStylesForRcCreation, removeAllRcUsagesFromStyles } from '@onecx/angular-utils/style'
 
 interface AssignedComponent {
   refOrElement: ComponentRef<any> | HTMLElement
@@ -157,7 +157,7 @@ export class SlotComponent implements OnInit, OnDestroy {
     this.componentSize$.complete() // Complete the subject to avoid memory leaks
     // Removes RC styles on unmount to avoid ghost styles
     this._assignedComponents$.getValue().forEach((component) => {
-      const scopeId = scopeIdFromProductNameAndAppId(component.remoteInfo.productName,component.remoteInfo.appId)
+      const scopeId = scopeIdFromProductNameAndAppId(component.remoteInfo.productName, component.remoteInfo.appId)
       removeAllRcUsagesFromStyles(scopeId, this.name)
     })
     this.viewContainerRef.clear()
@@ -191,7 +191,7 @@ export class SlotComponent implements OnInit, OnDestroy {
   private createSpansForComponents(components: SlotComponentConfiguration[]) {
     for (let i = 0; i < components.length; i++) {
       const span = document.createElement('span')
-      span.setAttribute('data-index', i.toString())
+      span.dataset['index'] = i.toString()
       this.viewContainerRef.element.nativeElement.appendChild(span)
     }
   }
@@ -302,7 +302,7 @@ export class SlotComponent implements OnInit, OnDestroy {
       `span[data-index="${index}"]`
     ) as HTMLSpanElement
     if (span) {
-      this.viewContainerRef.element.nativeElement.removeChild(span)
+      span.remove()
     } else {
       console.error(
         'Component span was not found for slot component creation. The order of the components may be incorrect.'
@@ -334,7 +334,7 @@ export class SlotComponent implements OnInit, OnDestroy {
     ) as HTMLSpanElement
     if (span) {
       this.viewContainerRef.element.nativeElement.insertBefore(element, span)
-      this.viewContainerRef.element.nativeElement.removeChild(span)
+      span.remove()
     } else {
       console.error(
         'Component span was not found for slot component creation. The order of the components may be incorrect.'
