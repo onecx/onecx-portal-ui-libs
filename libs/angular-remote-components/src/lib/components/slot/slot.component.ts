@@ -22,9 +22,10 @@ import {
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs'
 import { ocxRemoteComponent } from '../../model/remote-component'
 import { RemoteComponentInfo, SLOT_SERVICE, SlotComponentConfiguration, SlotService } from '../../services/slot.service'
-import { updateStylesForRcCreation, updateStylesForRcRemoval, RemoteComponentConfig } from '@onecx/angular-utils'
+import { RemoteComponentConfig, scopeIdFromProductNameAndAppId } from '@onecx/angular-utils'
 import { HttpClient } from '@angular/common/http'
 import { debounceTime, filter } from 'rxjs/operators'
+import { updateStylesForRcCreation, removeAllRcUsagesFromStyles } from '@onecx/angular-utils/style'
 
 interface AssignedComponent {
   refOrElement: ComponentRef<any> | HTMLElement
@@ -156,7 +157,8 @@ export class SlotComponent implements OnInit, OnDestroy {
     this.componentSize$.complete() // Complete the subject to avoid memory leaks
     // Removes RC styles on unmount to avoid ghost styles
     this._assignedComponents$.getValue().forEach((component) => {
-      updateStylesForRcRemoval(component.remoteInfo.productName, component.remoteInfo.appId, this.name)
+      const scopeId = scopeIdFromProductNameAndAppId(component.remoteInfo.productName, component.remoteInfo.appId)
+      removeAllRcUsagesFromStyles(scopeId, this.name)
     })
     this.viewContainerRef.clear()
   }

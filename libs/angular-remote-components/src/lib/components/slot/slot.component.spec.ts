@@ -21,21 +21,9 @@ import { ocxRemoteComponent } from '../../model/remote-component'
 import * as rxjsOperators from 'rxjs/operators'
 import { interval } from 'rxjs'
 
-// Spy on style update functions
-jest.mock('@onecx/angular-utils', () => {
-  const actual = jest.requireActual('@onecx/angular-utils')
-  return {
-    ...actual,
-    updateStylesForRcRemoval: jest.fn(),
-    updateStylesForRcCreation: jest.fn(),
-  }
-})
-
 import {
   dataStyleIdAttribute,
   RemoteComponentConfig,
-  updateStylesForRcRemoval,
-  updateStylesForRcCreation,
   dataStyleIsolationAttribute,
 } from '@onecx/angular-utils'
 
@@ -50,6 +38,16 @@ jest.mock('@onecx/integration-interface', () => {
 
 import { ResizedEventType, Technologies, TopicResizedEventType } from '@onecx/integration-interface'
 import { FakeTopic } from '@onecx/accelerator'
+import { removeAllRcUsagesFromStyles, updateStylesForRcCreation } from '@onecx/angular-utils/style'
+
+jest.mock('@onecx/angular-utils/style', () => {
+  const actual = jest.requireActual('@onecx/angular-utils/style')
+  return {
+    ...actual,
+    removeAllRcUsagesFromStyles: jest.fn(),
+    updateStylesForRcCreation: jest.fn(),
+  }
+})
 
 // Mock ResizeObserver
 class ResizeObserverMock {
@@ -185,7 +183,7 @@ describe('SlotComponent', () => {
     })
 
     it('should cleanup all components', fakeAsync(() => {
-      const spy = updateStylesForRcRemoval as jest.Mock
+      const spy = removeAllRcUsagesFromStyles as jest.Mock
       slotServiceMock.assignComponentToSlot(
         {
           componentType: Promise.resolve(MockAngularComponent),
