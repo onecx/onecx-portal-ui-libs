@@ -1,5 +1,5 @@
 [#remove-keycloak-auth]
-=== 1. Remove @onecx/keycloak-auth
+=== Remove @onecx/keycloak-auth
 
 In v6 of libs, the `@onecx/keycloak-auth` package has been removed and replaced with `@onecx/angular-auth`.
 
