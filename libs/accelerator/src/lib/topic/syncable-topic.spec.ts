@@ -7,6 +7,11 @@
  */
 
 import { SyncableTopic } from './syncable-topic'
+import {
+  BroadcastChannelMock
+} from "./mocks/broadcast-channel.mock"
+
+Reflect.set(globalThis, 'BroadcastChannel', BroadcastChannelMock)
 
 describe('Syncable Topic', () => {
   const origAddEventListener = window.addEventListener
@@ -35,11 +40,25 @@ describe('Syncable Topic', () => {
   let testSyncableTopic2: SyncableTopic<string>
 
   beforeEach(() => {
+    window['@onecx/accelerator'] ??= {}
+    window['@onecx/accelerator'].topic ??= {}
+    window['@onecx/accelerator'].topic.initDate = Date.now() - 1000000
+    window['@onecx/accelerator'].topic.useBroadcastChannel = true
+
+    BroadcastChannelMock.asyncCalls = false
+
     listeners = []
 
     testSyncableTopic1 = new SyncableTopic<string>('test', 1)
     testSyncableTopic2 = new SyncableTopic<string>('test', 1)
 
+  })
+
+  afterEach(() => {
+    testSyncableTopic1.destroy()
+    testSyncableTopic2.destroy()
+    BroadcastChannelMock.listeners =  {}
+    BroadcastChannelMock.asyncCalls = false
   })
 
   it('should get correct value', async () => {
