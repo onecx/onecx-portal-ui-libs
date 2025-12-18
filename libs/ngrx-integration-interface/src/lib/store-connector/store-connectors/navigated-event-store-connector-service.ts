@@ -27,7 +27,7 @@ export class NavigatedEventStoreConnectorService implements OnDestroy {
   private capabilityService = inject(ShellCapabilityService)
   private _eventsTopic$: EventsTopic | undefined
   get eventsTopic$(): EventsTopic {
-    this._eventsTopic$ ??= this.eventsTopic$
+    this._eventsTopic$ ??= new EventsTopic()
     return this._eventsTopic$
   }
   private store = inject(Store)
