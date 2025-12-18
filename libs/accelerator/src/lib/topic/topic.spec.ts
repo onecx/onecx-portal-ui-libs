@@ -352,6 +352,7 @@ describe('Topic', () => {
         throw new Error('boom')
       }
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     const errSpy = jest.spyOn(console, 'error').mockImplementation(() => { })
 
     const resolveMsg = {
