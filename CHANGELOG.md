@@ -1,3 +1,9 @@
+## [5.52.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.52.0...v5.52.1) (2025-12-18)
+
+### Bug Fixes
+
+* broadcast channel for read and publish ([#1099](https://github.com/onecx/onecx-portal-ui-libs/issues/1099)) ([#1101](https://github.com/onecx/onecx-portal-ui-libs/issues/1101)) ([401f3ad](https://github.com/onecx/onecx-portal-ui-libs/commit/401f3ad80f60b84bbe199ff12b165af52ad5bce8))
+
 ## [5.52.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.51.1...v5.52.0) (2025-12-18)
 
 ### Features
