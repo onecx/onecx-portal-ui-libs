@@ -1,27 +1,16 @@
 import { TopicDataMessage } from './topic-data-message'
-import { TopicMessage } from './topic-message';
+import { TopicMessage } from './topic-message'
 import { TopicMessageType } from './topic-message-type'
 import { TopicResolveMessage } from './topic-resolve-message'
 
 export class TopicPublisher<T> {
   protected publishPromiseResolver: Record<number, () => void> = {}
-  protected readonly broadcastChannel: BroadcastChannel | undefined;
+  protected publishBroadcastChannel: BroadcastChannel | undefined
 
   constructor(
     public name: string,
     public version: number
-  ) {
-    if (window['@onecx/accelerator']?.topic?.useBroadcastChannel) {
-      if (typeof BroadcastChannel === 'undefined') {
-        console.log('BroadcastChannel not supported. Disabling BroadcastChannel for topic');
-        window['@onecx/accelerator'] ??= {}
-        window['@onecx/accelerator'].topic ??= {}
-        window['@onecx/accelerator'].topic.useBroadcastChannel = false
-      } else {
-        this.broadcastChannel = new BroadcastChannel(`Topic-${this.name}|${this.version}`);
-      }
-    }
-  }
+  ) {}
 
   public publish(value: T): Promise<void> {
     const message = new TopicDataMessage<T>(TopicMessageType.TopicNext, this.name, this.version, value)
@@ -34,9 +23,27 @@ export class TopicPublisher<T> {
     return promise
   }
 
-  protected sendMessage(message: TopicMessage): void {
+  protected createBroadcastChannel(): void {
+    if (this.publishBroadcastChannel) {
+      return
+    }
+
     if (window['@onecx/accelerator']?.topic?.useBroadcastChannel) {
-      this.broadcastChannel?.postMessage(message);
+      if (typeof BroadcastChannel === 'undefined') {
+        console.log('BroadcastChannel not supported. Disabling BroadcastChannel for topic publisher')
+        window['@onecx/accelerator'] ??= {}
+        window['@onecx/accelerator'].topic ??= {}
+        window['@onecx/accelerator'].topic.useBroadcastChannel = false
+      } else {
+        this.publishBroadcastChannel = new BroadcastChannel(`Topic-${this.name}|${this.version}`)
+      }
+    }
+  }
+
+  protected sendMessage(message: TopicMessage): void {
+    this.createBroadcastChannel()
+    if (window['@onecx/accelerator']?.topic?.useBroadcastChannel) {
+      this.publishBroadcastChannel?.postMessage(message)
     } else {
       window.postMessage(message, '*')
     }
