@@ -8,6 +8,9 @@ export class RemoteComponentsService implements OnDestroy {
     this._remoteComponents$ ??= new RemoteComponentsTopic()
     return this._remoteComponents$
   }
+  set remoteComponents$(source: RemoteComponentsTopic) {
+    this._remoteComponents$ = source
+  }
 
   ngOnDestroy(): void {
     this._remoteComponents$?.destroy()

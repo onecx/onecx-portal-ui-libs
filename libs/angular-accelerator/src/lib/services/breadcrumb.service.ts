@@ -32,6 +32,9 @@ export class BreadcrumbService implements OnDestroy {
     this._itemSource$ ??= new ManualBreadcrumbsTopic()
     return this._itemSource$
   }
+  private set itemsSource$(source: ManualBreadcrumbsTopic) {
+    this._itemSource$ = source
+  }
   generatedItemsSource = new BehaviorSubject<MenuItem[]>([])
 
   _itemsHandler: Observable<MenuItem[]> | undefined

@@ -31,6 +31,9 @@ export class NavigatedEventStoreConnectorService implements OnDestroy {
     this._eventsTopic$ ??= new EventsTopic()
     return this._eventsTopic$
   }
+  set eventsTopic$(source: EventsTopic) {
+    this._eventsTopic$ = source
+  }
 
   constructor() {
     const store = inject(Store)

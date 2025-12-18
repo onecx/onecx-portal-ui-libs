@@ -15,6 +15,9 @@ export class ParametersService implements OnDestroy {
     this._parameters$ ??= new ParametersTopic()
     return this._parameters$
   }
+  set parameters$(source: ParametersTopic) {
+    this._parameters$ = source
+  }
 
   ngOnDestroy(): void {
     this._parameters$?.destroy()

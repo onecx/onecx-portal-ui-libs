@@ -150,6 +150,9 @@ export class SlotComponent implements OnInit, OnDestroy {
     this._resizedEventsTopic ??= new ResizedEventsTopic()
     return this._resizedEventsTopic
   }
+  set resizedEventsTopic(source: ResizedEventsTopic) {
+    this._resizedEventsTopic = source
+  }
   private readonly requestedEventsChanged$ = this.resizedEventsTopic.pipe(
     filter((event): event is RequestedEventsChangedEvent => event.type === ResizedEventType.REQUESTED_EVENTS_CHANGED)
   )

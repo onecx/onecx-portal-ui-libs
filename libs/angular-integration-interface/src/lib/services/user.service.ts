@@ -14,6 +14,9 @@ export class UserService implements OnDestroy {
     this._permissionsTopic$ ??= new PermissionsTopic()
     return this._permissionsTopic$
   }
+  set permissionsTopic$(source: PermissionsTopic) {
+    this._permissionsTopic$ = source
+  }
 
   constructor() {
     this.profile$

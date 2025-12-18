@@ -24,6 +24,9 @@ export class TranslationCacheService implements OnDestroy {
     this._translationTopic$ ??= new TranslationCacheTopic()
     return this._translationTopic$
   }
+  set translationTopic$(source: TranslationCacheTopic) {
+    this._translationTopic$ = source
+  }
   constructor() {
     window['onecxTranslations'] ??= {}
   }

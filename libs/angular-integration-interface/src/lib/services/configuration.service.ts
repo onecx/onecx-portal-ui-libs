@@ -18,6 +18,9 @@ export class ConfigurationService implements OnDestroy {
     this._config$ ??= new ConfigurationTopic()
     return this._config$
   }
+  set config$(source: ConfigurationTopic) {
+    this._config$ = source
+  }
   private semaphore = new Semaphore(1)
 
   ngOnDestroy(): void {

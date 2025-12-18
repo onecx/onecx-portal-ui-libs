@@ -252,6 +252,9 @@ export class PortalDialogService implements OnDestroy {
     this._eventsTopic$ ??= new EventsTopic()
     return this._eventsTopic$
   }
+  set eventsTopic(source: EventsTopic) {
+    this._eventsTopic$ = source
+  }
   private skipStyleScoping = inject(SKIP_STYLE_SCOPING, { optional: true })
   private remoteComponentConfig = inject(REMOTE_COMPONENT_CONFIG, { optional: true })
   private appStateService = inject(AppStateService)

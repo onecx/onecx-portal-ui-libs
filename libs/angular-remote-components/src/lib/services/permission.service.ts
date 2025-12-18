@@ -9,6 +9,9 @@ export class PermissionService implements OnDestroy {
     this._permissionsTopic$ ??= new PermissionsRpcTopic()
     return this._permissionsTopic$
   }
+  set permissionsTopic$(source: PermissionsRpcTopic) {
+    this._permissionsTopic$ = source
+  }
   private readonly permissionCache = new Map<string, Promise<string[]>>()
 
   ngOnDestroy(): void {

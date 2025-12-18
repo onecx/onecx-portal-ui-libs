@@ -35,6 +35,9 @@ export class SlotService implements SlotServiceInterface, OnDestroy {
     this._remoteComponents$ ??= new RemoteComponentsTopic()
     return this._remoteComponents$
   }
+  set remoteComponents$(source: RemoteComponentsTopic) {
+    this._remoteComponents$ = source
+  }
 
   async init(): Promise<void> {
     return Promise.resolve()

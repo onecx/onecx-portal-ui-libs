@@ -29,6 +29,9 @@ export class WebcomponentConnector {
     this._eventsTopic$ ??= new EventsTopic()
     return this._eventsTopic$
   }
+  set eventsTopic(source: EventsTopic) {
+    this._eventsTopic$ = source
+  }
   private readonly guardsGatherer: GuardsGatherer
   private readonly guardsNavigationStateController: GuardsNavigationStateController
 
