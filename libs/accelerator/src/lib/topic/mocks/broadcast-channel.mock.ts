@@ -1,6 +1,6 @@
 export class BroadcastChannelMock {
-    public static listeners: Record<string, ((m: any) => any)[]> = {}
-    public static asyncCalls = false
+    public static listeners: Record<string, ((m: any) => any)[]> = {} // NOSONAR
+    public static asyncCalls = false // NOSONAR
     listener: ((m: any) => any) | undefined
 
     constructor(public name: string) { }
