@@ -1,6 +1,6 @@
 {
   "name": "@onecx/ngrx-integration-interface",
-  "version": "5.51.1",
+  "version": "5.52.0",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -9,8 +9,8 @@
   "peerDependencies": {
     "@angular/core": "^18.0.5",
     "@ngrx/store": "^18.0.1",
-    "@onecx/angular-integration-interface": "^5.51.1",
-    "@onecx/integration-interface": "^5.51.1",
+    "@onecx/angular-integration-interface": "^5.52.0",
+    "@onecx/integration-interface": "^5.52.0",
     "@ngneat/until-destroy": "^10.0.0",
     "rxjs": "^7.8.1"
   },

@@ -1,3 +1,14 @@
+## [5.52.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.51.1...v5.52.0) (2025-12-18)
+
+### Features
+
+* change communication of topic to BroadcastChannel ([#1091](https://github.com/onecx/onecx-portal-ui-libs/issues/1091)) ([#1094](https://github.com/onecx/onecx-portal-ui-libs/issues/1094)) ([90ee6f6](https://github.com/onecx/onecx-portal-ui-libs/commit/90ee6f66353af55eba0843037c000a326fac41e3))
+* instantiate topic only if needed ([#1088](https://github.com/onecx/onecx-portal-ui-libs/issues/1088)) ([255d1c6](https://github.com/onecx/onecx-portal-ui-libs/commit/255d1c699d9916b6f876d13e0358153df02d3514))
+
+### Bug Fixes
+
+* topic usage tests setup v5 ([#1096](https://github.com/onecx/onecx-portal-ui-libs/issues/1096)) ([e78e64f](https://github.com/onecx/onecx-portal-ui-libs/commit/e78e64f295238f59e98ce66c7ba2b2caa03496a1))
+
 ## [5.51.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.51.0...v5.51.1) (2025-12-15)
 
 ### Bug Fixes
