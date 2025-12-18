@@ -24,7 +24,14 @@ export function provideNavigatedEventStoreConnector() {
 
 @Injectable()
 export class NavigatedEventStoreConnectorService implements OnDestroy {
-  eventsTopic$ = new EventsTopic()
+  private _eventsTopic$: EventsTopic | undefined
+  get eventsTopic$() {
+    this._eventsTopic$ ??= new EventsTopic()
+    return this._eventsTopic$
+  }
+  set eventsTopic$(value: EventsTopic) {
+    this._eventsTopic$ = value
+  }
   constructor(
     store: Store,
     private readonly capabilityService: ShellCapabilityService,
@@ -44,6 +51,6 @@ export class NavigatedEventStoreConnectorService implements OnDestroy {
     })
   }
   ngOnDestroy(): void {
-    this.eventsTopic$.destroy()
+    this._eventsTopic$?.destroy()
   }
 }
