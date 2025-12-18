@@ -1,3 +1,15 @@
+## [7.0.0-rc.12](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.11...v7.0.0-rc.12) (2025-12-18)
+
+### Features
+
+* change communication of topic to BroadcastChannel ([#1091](https://github.com/onecx/onecx-portal-ui-libs/issues/1091)) ([27b9275](https://github.com/onecx/onecx-portal-ui-libs/commit/27b9275b0e8a28edf23adcce6bef2c94ad82978d))
+
+### Bug Fixes
+
+* ensure RCs are in order in slot component ([#1083](https://github.com/onecx/onecx-portal-ui-libs/issues/1083)) ([4062c0c](https://github.com/onecx/onecx-portal-ui-libs/commit/4062c0c55510b7b42df2c2123e24c6e938558eee))
+* slot code smells ([#1086](https://github.com/onecx/onecx-portal-ui-libs/issues/1086)) ([c84509e](https://github.com/onecx/onecx-portal-ui-libs/commit/c84509ef71b8a812af133c879afd326ffb3a1e4a))
+* topic usage tests setup ([#1095](https://github.com/onecx/onecx-portal-ui-libs/issues/1095)) ([0ba68ba](https://github.com/onecx/onecx-portal-ui-libs/commit/0ba68ba8c4f34230446f5a00c1a905e3ee482269))
+
 ## [7.0.0-rc.11](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.10...v7.0.0-rc.11) (2025-12-15)
 
 ### Features
