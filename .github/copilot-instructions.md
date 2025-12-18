@@ -1,0 +1,1 @@
+Make sure to change the directory to the repository root before running commands.
