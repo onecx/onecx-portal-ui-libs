@@ -145,13 +145,20 @@ export class SlotComponent implements OnInit, OnDestroy {
   private resizeDebounceTimeMs = 100
 
   private readonly resizedEventsPublisher = new ResizedEventsPublisher()
-  private readonly resizedEventsTopic = new ResizedEventsTopic()
+  private _resizedEventsTopic: ResizedEventsTopic | undefined
+  get resizedEventsTopic() {
+    this._resizedEventsTopic ??= new ResizedEventsTopic()
+    return this._resizedEventsTopic
+  }
+  set resizedEventsTopic(source: ResizedEventsTopic) {
+    this._resizedEventsTopic = source
+  }
   private readonly requestedEventsChanged$ = this.resizedEventsTopic.pipe(
     filter((event): event is RequestedEventsChangedEvent => event.type === ResizedEventType.REQUESTED_EVENTS_CHANGED)
   )
 
   ngOnDestroy(): void {
-    this.resizedEventsTopic.destroy()
+    this._resizedEventsTopic?.destroy()
     this.subscriptions.forEach((sub) => sub.unsubscribe())
     this.resizeObserver?.disconnect()
     this.componentSize$.complete() // Complete the subject to avoid memory leaks
