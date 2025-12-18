@@ -51,6 +51,10 @@ describe('ResizedEventsTopic', () => {
   let resizedEventsTopic: ResizedEventsTopic
 
   beforeEach(() => {
+    window['@onecx/accelerator'] ??= {}
+    window['@onecx/accelerator'].topic ??= {}
+    window['@onecx/accelerator'].topic.initDate = Date.now() - 1000000
+
     jest.restoreAllMocks()
     listeners = []
     topicValues = []
