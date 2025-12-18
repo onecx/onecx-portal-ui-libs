@@ -50,6 +50,7 @@ describe('Topic', () => {
     window['@onecx/accelerator'].topic ??= {}
     window['@onecx/accelerator'].topic.initDate = Date.now() - 1000000
     window['@onecx/accelerator'].topic.useBroadcastChannel = true
+    window['@onecx/accelerator'].topic.debug = ['SpecificTestTopic']
 
     BroadcastChannelMock.asyncCalls = false
     
@@ -70,6 +71,9 @@ describe('Topic', () => {
     testTopic2.destroy()
     BroadcastChannelMock.listeners =  {}
     BroadcastChannelMock.asyncCalls = false
+    if(window['@onecx/accelerator']?.topic?.debug){
+      window['@onecx/accelerator'].topic.debug = undefined
+    }
   })
 
   it('should have correct value for 2 topics after first topic publishes', () => {
