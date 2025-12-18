@@ -1,18 +1,22 @@
 {
   "name": "@onecx/angular-remote-components",
-  "version": "7.0.0-rc.10",
+  "version": "7.0.0-rc.12",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onecx/onecx-portal-ui-libs"
+  },
   "peerDependencies": {
     "@angular/cdk": "^19.0.0",
     "@angular/common": "^19.0.0",
     "@angular/core": "^19.0.0",
     "@ngx-translate/core": "^16.0.0",
-    "@onecx/integration-interface": "^7.0.0-rc.10",
-    "@onecx/angular-utils": "^7.0.0-rc.10",
+    "@onecx/integration-interface": "^7.0.0-rc.12",
+    "@onecx/angular-utils": "^7.0.0-rc.12",
     "@angular-architects/module-federation": "^18.0.4",
     "rxjs": "^7.8.1",
     "@nx/devkit": "^20.3.0",
-    "@onecx/nx-migration-utils": "^7.0.0-rc.10"
+    "@onecx/nx-migration-utils": "^7.0.0-rc.12"
   },
   "dependencies": {},
   "publishConfig": {

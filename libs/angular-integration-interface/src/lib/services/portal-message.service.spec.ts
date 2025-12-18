@@ -1,31 +1,10 @@
 import { TestBed, fakeAsync } from '@angular/core/testing'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { Message } from '@onecx/integration-interface'
+import { Message, MessageTopic } from '@onecx/integration-interface'
 import { PortalMessageService } from './portal-message.service'
+import { FakeTopic } from '@onecx/accelerator'
 
 describe('PortalMessageService', () => {
-  const origAddEventListener = window.addEventListener
-  const origPostMessage = window.postMessage
-
-  let listeners: any[] = []
-  window.addEventListener = (_type: any, listener: any) => {
-    listeners.push(listener)
-  }
-
-  window.removeEventListener = (_type: any, listener: any) => {
-    listeners = listeners.filter((l) => l !== listener)
-  }
-
-  window.postMessage = (m: any) => {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    listeners.forEach((l) => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }))
-  }
-
-  afterAll(() => {
-    window.addEventListener = origAddEventListener
-    window.postMessage = origPostMessage
-  })
-
   let portalMessageService: PortalMessageService
   let message: Message
 
@@ -44,6 +23,7 @@ describe('PortalMessageService', () => {
       providers: [PortalMessageService],
     }).compileComponents()
     portalMessageService = TestBed.inject(PortalMessageService)
+    portalMessageService.message$ = new FakeTopic<Message>() as unknown as MessageTopic
   })
 
   afterEach(() => {

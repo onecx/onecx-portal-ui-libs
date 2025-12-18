@@ -1,0 +1,33 @@
+= Migrate OneCX App from Angular 18 to Angular 19
+
+:idprefix:
+:idseparator: -
+
+[#overview]
+== Overview
+
+This guide provides comprehensive step-by-step instructions for migrating OneCX applications from Angular 18 to Angular 19.
+As part of upgrading to Angular 19, you must update your OneCX UI libraries to version 6. This library update is not a standalone migration but a required part of the Angular version upgrade process, as OneCX v6 libraries provide Angular 19 compatibility and include necessary breaking changes.
+
+[#prerequisites]
+== Prerequisites
+
+Before starting this migration:
+
+* Your OneCX application is currently running on Angular 18
+* You have OneCX UI libraries v5.x installed  
+* You have a working development environment
+
+[#migration-steps-before-angular-19]
+== Migration Steps before upgrading to Angular 19
+
+To simplify the migration process, it is recommended to complete the following steps before upgrading to Angular 19:
+
+include::remove-keycloak-auth.adoc[]
+
+[#migration-steps-after-angular-19]
+== Migration Steps after upgrading to Angular 19
+
+Once you have completed the previous steps, you can continue with the Angular 19 upgrade and follow the remaining steps:
+
+include::remove-portal-core-module.adoc[]
