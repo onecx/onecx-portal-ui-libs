@@ -198,7 +198,7 @@ export class SlotComponent implements OnInit, OnDestroy {
   private createSpansForComponents(components: SlotComponentConfiguration[]) {
     for (let i = 0; i < components.length; i++) {
       const span = document.createElement('span')
-      span.setAttribute('data-index', i.toString())
+      span.dataset['index'] = i.toString()
       this.viewContainerRef.element.nativeElement.appendChild(span)
     }
   }
@@ -309,7 +309,7 @@ export class SlotComponent implements OnInit, OnDestroy {
       `span[data-index="${index}"]`
     ) as HTMLSpanElement
     if (span) {
-      this.viewContainerRef.element.nativeElement.removeChild(span)
+      span.remove()
     } else {
       console.error(
         'Component span was not found for slot component creation. The order of the components may be incorrect.'
@@ -341,7 +341,7 @@ export class SlotComponent implements OnInit, OnDestroy {
     ) as HTMLSpanElement
     if (span) {
       this.viewContainerRef.element.nativeElement.insertBefore(element, span)
-      this.viewContainerRef.element.nativeElement.removeChild(span)
+      span.remove()
     } else {
       console.error(
         'Component span was not found for slot component creation. The order of the components may be incorrect.'

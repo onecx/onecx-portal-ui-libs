@@ -1,0 +1,55 @@
+[#remove-keycloak-auth]
+=== Remove @onecx/keycloak-auth
+
+In v6 of libs, the `@onecx/keycloak-auth` package has been removed and replaced with `@onecx/angular-auth`.
+
+[#update-packages]
+==== Update the packages
+
+1. **Uninstall the deprecated package**:
++
+[source, bash]
+----
+npm uninstall --save @onecx/keycloak-auth
+----
+
+2. **Install the `@onecx/angular-auth` package** (if not already installed):
++
+[source, bash]
+----
+ng add @onecx/angular-auth
+----
+
+[#update-module-imports]
+==== Update module imports
+
+* Replace all imports of `KeycloakAuthModule` from '@onecx/keycloak-auth' with `AngularAuthModule` from `@onecx/angular-auth`.
+* Replace `KeycloakAuthModule` with `AngularAuthModule`.
+
+**Example**:
+
+.Before
+[source, typescript]
+----
+import { KeycloakAuthModule } from '@onecx/keycloak-auth';
+
+@NgModule({
+  imports: [
+    KeycloakAuthModule
+  ]
+})
+export class AppModule {}
+----
+
+.After
+[source, typescript]
+----
+import { AngularAuthModule } from '@onecx/angular-auth';
+
+@NgModule({
+  imports: [
+    AngularAuthModule
+  ]
+})
+export class AppModule {}
+----
