@@ -1,6 +1,6 @@
 {
   "name": "@onecx/shell-core",
-  "version": "6.11.1",
+  "version": "6.12.0",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -13,13 +13,13 @@
     "@angular/core": "^19.0.0",
     "@angular/router": "^19.0.0",
     "@ngneat/until-destroy": "^10.0.0",
-    "@onecx/angular-integration-interface": "^6.11.1",
-    "@onecx/angular-utils": "^6.11.1",
-    "@onecx/angular-remote-components": "^6.11.1",
+    "@onecx/angular-integration-interface": "^6.12.0",
+    "@onecx/angular-utils": "^6.12.0",
+    "@onecx/angular-remote-components": "^6.12.0",
     "@ngx-translate/core": "^16.0.0",
     "primeng": "^19.0.0",
     "@nx/devkit": "^20.3.0",
-    "@onecx/nx-migration-utils": "^6.11.1"
+    "@onecx/nx-migration-utils": "^6.12.0"
   },
   "dependencies": {},
   "type": "commonjs",
