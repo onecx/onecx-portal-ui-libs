@@ -55,3 +55,7 @@ export * from './lib/topics/current-location/v1/current-location.topic'
 export * from './lib/topics/parameters/v1/parameters.topic'
 
 export * from './lib/topics/resized-events/v1/resized-events.topic'
+
+export * from './lib/topics/image/image.model'
+export * from './lib/topics/image/image.topic'
+export * from './lib/services/image.handler'
