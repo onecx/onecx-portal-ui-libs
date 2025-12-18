@@ -300,6 +300,7 @@ describe('Topic', () => {
 
     const spy = jest.spyOn(window, 'postMessage')
     const t = new Topic<string>('timeout-get', 1)
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     t.subscribe(() => { })
 
     // Advance timers to trigger scheduled get
@@ -318,6 +319,7 @@ describe('Topic', () => {
     window['@onecx/accelerator'].topic.useBroadcastChannel = false
 
     const t = new Topic<string>('win-topic', 1, false)
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     t.subscribe(() => { })
     // initialize with a value so TopicGet will respond
     t.publish('init')
@@ -327,7 +329,9 @@ describe('Topic', () => {
     // Send TopicGet via window to trigger handleTopicGetMessage through onWindowMessage
     const getMsg = {
       data: { type: TopicMessageType.TopicGet, name: 'win-topic', version: 1 },
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       stopImmediatePropagation: () => { },
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       stopPropagation: () => { },
     } as any
     listeners.forEach((l) => l(getMsg))
@@ -352,7 +356,9 @@ describe('Topic', () => {
 
     const resolveMsg = {
       data: { type: TopicMessageType.TopicResolve, name: 'resolve-error', version: 1, resolveId: 123 },
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       stopImmediatePropagation: () => { },
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       stopPropagation: () => { },
     } as any
 
@@ -532,6 +538,7 @@ describe('Topic', () => {
       const spy = jest.spyOn(window, 'postMessage')
 
       const t = new Topic<string>('window-path', 1, false)
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       t.subscribe(() => { })
       t.publish('x')
 
@@ -543,6 +550,7 @@ describe('Topic', () => {
 
     it('covers deprecated helpers: source, operator, lift, forEach, toPromise', async () => {
       const t = new Topic<number>('helpers', 1, false)
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       t.subscribe(() => { })
 
         // Access deprecated properties
@@ -556,6 +564,7 @@ describe('Topic', () => {
       expect(lifted).toBeTruthy()
 
       // forEach: invoke without awaiting completion (never completes)
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       t.forEach(() => { })
       t.publish(7)
 

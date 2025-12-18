@@ -38,6 +38,7 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
 
     if (sendGetMessage) {
       if (Date.now() - window['@onecx/accelerator'].topic.initDate < 2000) {
+        // Delay the get message a bit to give other topics time to initialize
         setTimeout(() => {
           if (!this.isInit) {
             const message = new TopicMessage(TopicMessageType.TopicGet, this.name, this.version)
@@ -209,21 +210,21 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
     }
     switch (m.data.type) {
       case TopicMessageType.TopicNext: {
-        this.disableBroadcastChannelLog();
+        this.disableBroadcastChannel();
         if (m.data.name === this.name && m.data.version === this.version) {
           this.handleTopicNextMessage(m)
         }
         break
       }
       case TopicMessageType.TopicGet: {
-        this.disableBroadcastChannelLog();
+        this.disableBroadcastChannel();
         if (m.data.name === this.name && m.data.version === this.version && this.isInit && this.data.value) {
           this.handleTopicGetMessage(m)
         }
         break
       }
       case TopicMessageType.TopicResolve: {
-        this.disableBroadcastChannelLog();
+        this.disableBroadcastChannel();
         this.handleTopicResolveMessage(m)
         break
       }
@@ -254,7 +255,7 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
     }
   }
 
-  private disableBroadcastChannelLog() {
+  private disableBroadcastChannel() {
     window['@onecx/accelerator'] ??= {}
     window['@onecx/accelerator'].topic ??= {}
     if (window['@onecx/accelerator'].topic.useBroadcastChannel === true) {
