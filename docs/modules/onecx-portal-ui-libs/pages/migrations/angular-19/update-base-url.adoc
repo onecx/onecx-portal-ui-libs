@@ -1,0 +1,54 @@
+[#remove-base-url]
+=== Replace BASE_URL injection token
+
+In OneCX v6, `BASE_URL` injection token has been removed and replaced by `REMOTE_COMPONENT_CONFIG`.
+
+**Update imports**:
+
+* For each remote component remove `BASE_URL` injection token import.
+* For each remote component remove `REMOTE_COMPONENT_CONFIG` token imported from `@onecx/angular-remote-components`
+* For each remote component add `REMOTE_COMPONENT_CONFIG` import from `@onecx/angular-utils`
+* Replace `BASE_URL` in component's providers array to `REMOTE_COMPONENT_CONFIG`
+* Replace `BASE_URL` in component's constructor injection to `REMOTE_COMPONENT_CONFIG`
+
+**Example**:
+
+.Before
+[source, typescript]
+----
+import { BASE_URL } from "@onecx/angular-remote-components";
+
+@Component({
+  providers: [
+    {
+      provide: BASE_URL,
+      useValue: new ReplaySubject<string>(1)
+    }
+  ]
+})
+export class Example {
+  constructor(
+    @Inject(BASE_URL) private readonly baseUrl: ReplaySubject<string>
+  )
+}
+----
+
+.After
+[source, typescript]
+----
+import { REMOTE_COMPONENT_CONFIG } from "@onecx/angular-utils";
+
+@Component({
+  providers: [
+    {
+      provide: REMOTE_COMPONENT_CONFIG,
+      useValue: new ReplaySubject<string>(1)
+    }
+  ]
+})
+export class Example {
+  constructor(
+    @Inject(REMOTE_COMPONENT_CONFIG) private readonly baseUrl: ReplaySubject<string>
+  )
+}
+----
