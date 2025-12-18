@@ -10,10 +10,10 @@ import { TopicPublisher } from '../topic/topic-publisher'
 import { Gatherer } from './gatherer'
 
 import {
-  BroadcastChannel
-} from "../topic/mocks/broadcast-channel"
+  BroadcastChannelMock
+} from "../topic/mocks/broadcast-channel.mock"
 
-Reflect.set(globalThis, 'BroadcastChannel', BroadcastChannel)
+Reflect.set(globalThis, 'BroadcastChannel', BroadcastChannelMock)
 
 describe('Gatherer', () => {
   const origAddEventListener = window.addEventListener

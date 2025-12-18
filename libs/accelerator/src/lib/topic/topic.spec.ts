@@ -11,10 +11,10 @@ import { Topic } from './topic'
 import { TopicMessageType } from './topic-message-type'
 import { TopicDataMessage } from './topic-data-message'
 import {
-  BroadcastChannel
-} from "./mocks/broadcast-channel"
+  BroadcastChannelMock
+} from "./mocks/broadcast-channel.mock"
 
-Reflect.set(globalThis, 'BroadcastChannel', BroadcastChannel)
+Reflect.set(globalThis, 'BroadcastChannel', BroadcastChannelMock)
 
 describe('Topic', () => {
   const origAddEventListener = window.addEventListener
@@ -51,7 +51,7 @@ describe('Topic', () => {
     window['@onecx/accelerator'].topic.initDate = Date.now() - 1000000
     window['@onecx/accelerator'].topic.useBroadcastChannel = true
 
-    BroadcastChannel.asyncCalls = false
+    BroadcastChannelMock.asyncCalls = false
     
     listeners = []
 
@@ -68,8 +68,8 @@ describe('Topic', () => {
   afterEach(() => {
     testTopic1.destroy()
     testTopic2.destroy()
-    BroadcastChannel.listeners =  {}
-    BroadcastChannel.asyncCalls = false
+    BroadcastChannelMock.listeners =  {}
+    BroadcastChannelMock.asyncCalls = false
   })
 
   it('should have correct value for 2 topics after first topic publishes', () => {
@@ -186,7 +186,7 @@ describe('Topic', () => {
         setTimeout(() => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }), 0)
       })
     }
-    BroadcastChannel.asyncCalls = true
+    BroadcastChannelMock.asyncCalls = true
 
     const val1: number[] = []
     const val2: number[] = []
@@ -209,7 +209,7 @@ describe('Topic', () => {
   })
 
   it('should have values if publish is awaited', async () => {
-    BroadcastChannel.asyncCalls = true
+    BroadcastChannelMock.asyncCalls = true
 
     const val1: number[] = []
     const val2: number[] = []
@@ -230,7 +230,7 @@ describe('Topic', () => {
   })
 
   it('should have all values if publish is awaited on first created topic', async () => {
-    BroadcastChannel.asyncCalls = true
+    BroadcastChannelMock.asyncCalls = true
 
     const val1: number[] = []
     const val2: number[] = []
@@ -253,7 +253,7 @@ describe('Topic', () => {
   })
 
   it('should have values if publish is awaited for all topics', async () => {
-    BroadcastChannel.asyncCalls = true
+    BroadcastChannelMock.asyncCalls = true
 
     const val1: number[] = []
     const val2: number[] = []

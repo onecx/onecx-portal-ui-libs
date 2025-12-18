@@ -5,13 +5,22 @@ import { TopicResolveMessage } from './topic-resolve-message'
 
 export class TopicPublisher<T> {
   protected publishPromiseResolver: Record<number, () => void> = {}
-  protected readonly broadcastChannel: BroadcastChannel;
+  protected readonly broadcastChannel: BroadcastChannel | undefined;
 
   constructor(
     public name: string,
     public version: number
   ) {
-    this.broadcastChannel = new BroadcastChannel(`${this.name}|${this.version}`);
+    if (window['@onecx/accelerator']?.topic?.useBroadcastChannel) {
+      if (typeof BroadcastChannel === 'undefined') {
+        console.log('BroadcastChannel not supported. Disabling BroadcastChannel for topic');
+        window['@onecx/accelerator'] ??= {}
+        window['@onecx/accelerator'].topic ??= {}
+        window['@onecx/accelerator'].topic.useBroadcastChannel = false
+      } else {
+        this.broadcastChannel = new BroadcastChannel(`Topic-${this.name}|${this.version}`);
+      }
+    }
   }
 
   public publish(value: T): Promise<void> {
@@ -26,8 +35,8 @@ export class TopicPublisher<T> {
   }
 
   protected sendMessage(message: TopicMessage): void {
-    if( window['@onecx/accelerator']?.topic?.useBroadcastChannel ) {
-      this.broadcastChannel.postMessage(message);
+    if (window['@onecx/accelerator']?.topic?.useBroadcastChannel) {
+      this.broadcastChannel?.postMessage(message);
     } else {
       window.postMessage(message, '*')
     }

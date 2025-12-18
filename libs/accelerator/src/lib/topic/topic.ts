@@ -34,7 +34,7 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
       this.resolveInitPromise = resolve
     })
     window.addEventListener('message', this.windowEventListener)
-    this.broadcastChannel.addEventListener('message', (m) =>this.onBroadcastChannelMessage(m))
+    this.broadcastChannel?.addEventListener('message', (m) =>this.onBroadcastChannelMessage(m))
 
     if (sendGetMessage) {
       if (Date.now() - window['@onecx/accelerator'].topic.initDate < 2000) {
@@ -196,7 +196,7 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
 
   destroy() {
     window.removeEventListener('message', this.windowEventListener, true)
-    this.broadcastChannel.close()
+    this.broadcastChannel?.close()
   }
 
   private onWindowMessage(m: MessageEvent<TopicMessage>): any {
