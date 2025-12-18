@@ -8,14 +8,14 @@ export class BroadcastChannelMock {
   postMessage(m: any) {
     if (BroadcastChannelMock.asyncCalls) {
       setTimeout(() => {
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         BroadcastChannelMock.listeners[this.name]?.forEach((l) =>
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
           l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} })
         )
       }, 0)
     } else {
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       BroadcastChannelMock.listeners[this.name]?.forEach((l) =>
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} })
       )
     }
