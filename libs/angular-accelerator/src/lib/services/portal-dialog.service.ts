@@ -246,7 +246,14 @@ export class PortalDialogService implements OnDestroy {
   private dialogService = inject(DialogService)
   private translateService = inject(TranslateService)
   private router = inject(Router)
-  private eventsTopic: EventsTopic = new EventsTopic()
+  private _eventsTopic$: EventsTopic | undefined
+  get eventsTopic() {
+    this._eventsTopic$ ??= new EventsTopic()
+    return this._eventsTopic$
+  }
+  set eventsTopic(source: EventsTopic) {
+    this._eventsTopic$ = source
+  }
   private skipStyleScoping = inject(SKIP_STYLE_SCOPING, { optional: true })
   private remoteComponentConfig = inject(REMOTE_COMPONENT_CONFIG, { optional: true })
   private appStateService = inject(AppStateService)
@@ -270,7 +277,7 @@ export class PortalDialogService implements OnDestroy {
 
   ngOnDestroy(): void {
     this.cleanupAndCloseDialog()
-    this.eventsTopic.destroy()
+    this._eventsTopic$?.destroy()
   }
 
   /**
