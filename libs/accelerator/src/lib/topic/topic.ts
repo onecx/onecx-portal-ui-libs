@@ -14,6 +14,7 @@ import { TopicMessageType } from './topic-message-type'
 import { TopicPublisher } from './topic-publisher'
 import { TopicResolveMessage } from './topic-resolve-message'
 import '../declarations'
+import { increaseInstanceCount, isStatsEnabled } from '../utils/logs.utils'
 
 export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
   protected isInitializedPromise: Promise<void>
@@ -29,6 +30,10 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
     window['@onecx/accelerator'] ??= {}
     window['@onecx/accelerator'].topic ??= {}
     window['@onecx/accelerator'].topic.initDate ??= Date.now()
+
+    if (isStatsEnabled()) {
+      increaseInstanceCount(this.name)
+    }
 
     this.isInitializedPromise = new Promise<void>((resolve) => {
       this.resolveInitPromise = resolve
