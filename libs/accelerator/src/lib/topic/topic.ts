@@ -14,6 +14,7 @@ import { TopicMessageType } from './topic-message-type'
 import { TopicPublisher } from './topic-publisher'
 import { TopicResolveMessage } from './topic-resolve-message'
 import '../declarations'
+import { increaseInstanceCount, isStatsEnabled } from '../utils/logs.utils'
 
 export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
   protected isInitializedPromise: Promise<void>
@@ -25,6 +26,10 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
 
   constructor(name: string, version: number, sendGetMessage = true) {
     super(name, version)
+
+    if (isStatsEnabled()) {
+      increaseInstanceCount(this.name)
+    }
 
     this.isInitializedPromise = new Promise<void>((resolve) => {
       this.resolveInitPromise = resolve
