@@ -12,6 +12,9 @@ export class ConfigurationService implements OnDestroy {
     this._config$ ??= new ConfigurationTopic()
     return this._config$
   }
+  set config$(value: ConfigurationTopic) {
+    this._config$ = value
+  }
 
   constructor(
     private http: HttpClient,

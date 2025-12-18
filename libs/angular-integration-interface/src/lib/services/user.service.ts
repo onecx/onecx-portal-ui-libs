@@ -16,6 +16,10 @@ export class UserService implements OnDestroy {
     this._permissionsTopic$ ??= new PermissionsTopic()
     return this._permissionsTopic$
   }
+  set permissionsTopic$(value: PermissionsTopic) {
+    this._permissionsTopic$ = value
+  }
+
   private oldStylePermissionsInitialized: Promise<string[]>
 
   constructor() {

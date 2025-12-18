@@ -241,6 +241,9 @@ export class PortalDialogService implements OnDestroy {
     this._eventsTopic$ ??= new EventsTopic()
     return this._eventsTopic$
   }
+  set eventsTopic(value: EventsTopic) {
+    this._eventsTopic$ = value
+  }
   constructor(
     private dialogService: DialogService,
     private translateService: TranslateService,

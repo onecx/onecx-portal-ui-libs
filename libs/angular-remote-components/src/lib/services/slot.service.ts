@@ -33,6 +33,9 @@ export class SlotService implements SlotServiceInterface, OnDestroy {
     this._remoteComponents$ ??= new RemoteComponentsTopic()
     return this._remoteComponents$
   }
+  set remoteComponents$(value: RemoteComponentsTopic) {
+    this._remoteComponents$ = value
+  }
 
   constructor(private permissionsService: PermissionService) {}
 

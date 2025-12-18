@@ -28,6 +28,9 @@ export class PortalMessageService implements OnDestroy {
     this._message$ ??= new MessageTopic()
     return this._message$
   }
+  set message$(value: MessageTopic) {
+    this._message$ = value
+  }
 
   success(msg: Message) {
     this.addTranslated('success', msg)

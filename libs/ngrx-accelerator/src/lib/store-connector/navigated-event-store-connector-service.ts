@@ -29,6 +29,9 @@ export class NavigatedEventStoreConnectorService implements OnDestroy {
     this._eventsTopic$ ??= new EventsTopic()
     return this._eventsTopic$
   }
+  set eventsTopic$(value: EventsTopic) {
+    this._eventsTopic$ = value
+  }
   constructor(
     store: Store,
     private readonly capabilityService: ShellCapabilityService,

@@ -16,20 +16,32 @@ export class AppStateService implements OnDestroy {
     this._globalError$ ??= new GlobalErrorTopic()
     return this._globalError$
   }
+  set globalError$(value: GlobalErrorTopic) {
+    this._globalError$ = value
+  }
   private _globalLoading$: GlobalLoadingTopic | undefined
   get globalLoading$(): GlobalLoadingTopic {
     this._globalLoading$ ??= new GlobalLoadingTopic()
     return this._globalLoading$
+  }
+  set globalLoading$(value: GlobalLoadingTopic) {
+    this._globalLoading$ = value
   }
   private _currentMfe$: CurrentMfeTopic | undefined
   get currentMfe$(): CurrentMfeTopic {
     this._currentMfe$ ??= new CurrentMfeTopic()
     return this._currentMfe$
   }
+  set currentMfe$(value: CurrentMfeTopic) {
+    this._currentMfe$ = value
+  }
   private _currentLocation$: CurrentLocationTopic | undefined
   get currentLocation$(): CurrentLocationTopic {
     this._currentLocation$ ??= new CurrentLocationTopic()
     return this._currentLocation$
+  }
+  set currentLocation$(value: CurrentLocationTopic) {
+    this._currentLocation$ = value
   }
 
   private _currentPage$: CurrentPageTopic | undefined
@@ -41,10 +53,16 @@ export class AppStateService implements OnDestroy {
     this._currentPage$ ??= new CurrentPageTopic()
     return this._currentPage$
   }
+  set currentPage$(value: CurrentPageTopic) {
+    this._currentPage$ = value
+  }
   _currentWorkspace$: CurrentWorkspaceTopic | undefined
   get currentWorkspace$(): CurrentWorkspaceTopic {
     this._currentWorkspace$ ??= new CurrentWorkspaceTopic()
     return this._currentWorkspace$
+  }
+  set currentWorkspace$(value: CurrentWorkspaceTopic) {
+    this._currentWorkspace$ = value
   }
   /**
    * @deprecated Will be replaced by currentWorkspace$
@@ -63,6 +81,9 @@ export class AppStateService implements OnDestroy {
   get isAuthenticated$(): IsAuthenticatedTopic {
     this._isAuthenticated$ ??= new IsAuthenticatedTopic()
     return this._isAuthenticated$
+  }
+  set isAuthenticated$(value: IsAuthenticatedTopic) {
+    this._isAuthenticated$ = value
   }
 
   ngOnDestroy(): void {

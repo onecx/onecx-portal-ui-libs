@@ -15,6 +15,9 @@ export class ThemeService implements OnDestroy {
     this._currentTheme$ ??= new CurrentThemeTopic()
     return this._currentTheme$
   }
+  set currentTheme$(value: CurrentThemeTopic) {
+    this._currentTheme$ = value
+  }
 
   constructor(
     private configService: ConfigurationService,
