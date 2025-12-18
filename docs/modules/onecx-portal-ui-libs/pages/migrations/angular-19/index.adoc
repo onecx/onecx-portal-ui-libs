@@ -32,4 +32,4 @@ include::remove-portal-layout-styles.adoc[]
 
 Once you have completed the previous steps, you can continue with the Angular 19 upgrade and follow the remaining steps:
 
-//include remaining migration steps here
+include::remove-portal-core-module.adoc[]
