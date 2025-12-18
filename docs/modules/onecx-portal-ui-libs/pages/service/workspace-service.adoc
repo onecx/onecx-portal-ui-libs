@@ -1,0 +1,88 @@
+= OneCX WorkspaceService
+
+:idprefix:
+:idseparator: -
+
+This service provides a convenient way to construct and validate application URLs based on the current workspace context. It is available via `@onecx/angular-integration-interface`.
+
+[#overview]
+== Overview
+This document aims to:
+
+* Explain how to use WorkspaceService to generate application and endpoint URLs.
+* Describe how to check if a URL exists for a given application and endpoint.
+* Provide examples and interface descriptions.
+
+[#usage]
+== Usage
+
+To use the WorkspaceService, inject it into your component or service:
+
+[source,typescript]
+----
+import { WorkspaceService } from '@onecx/angular-integration-interface';
+
+private workspaceService = inject(WorkspaceService)
+----
+
+Then, use one of the following methods:
+
+- `getUrl(productName: string, appId: string, endpointName?: string, endpointParameters?: Record<string, unknown>): Observable<string>` - Constructs a full URL for a given application and optional endpoint.
+- `doesUrlExistFor(productName: string, appId: string, endpointName?: string): Observable<boolean>` - Checks if a valid URL can be constructed for the given application and optional endpoint.
+
+Here is a summary of all arguments:
+
+- `productName` - name of the application (registered in the workspace).
+- `appId` - id of the UI component (part of the application).
+- `endpointName` - name of the endpoint exposed by the UI component.
+- `endpointParameters` - parameters for the endpoint.
+
+[#examples]
+=== Examples
+
+[#generate-url]
+==== Generate URL
+
+.basic-url
+[source,typescript]
+----
+this.workspaceService.getUrl('orders', 'orders-ui').subscribe((url) => {
+      console.log('Generated URL:', url) // Generated URL: https://dev.one-cx.org/shell/admin/orders
+    })
+----
+
+This example will return a URL string for the Orders UI (UI component) of Orders application where:
+
+* `https://dev.one-cx.org/shell` is shell's deployment path
+* `admin` is current workspace
+* `orders` is the orders UI path
+
+.url-with-endpoint
+[source,typescript]
+----
+this.workspaceService.getUrl('onecx-workspace', 'onecx-workspace-ui', 'workspace', { 'workspace-name': 'admin' }).subscribe((url) => {
+      console.log('Generated URL for Workspace UI (admin workspace details endpoint):', url) // Generated URL: https://dev.one-cx.org/shell/admin/workspace/admin
+    })
+----
+
+This example will return a URL string for the Workspace UI (UI component) of the Workspace application to a specific endpoint defined to access workspace details based on the `workspace-name` endpointParameter where:
+
+* `https://dev.one-cx.org/shell` is shell's deployment path
+* `admin` is current workspace
+* `workspace` is the workspace UI path.
+* `admin` (2nd occurrence) is the workspace details page for `admin` workspace.
+
+[#check-if-url-exists]
+==== Check If URL Exists
+[source,typescript]
+----
+this.workspaceService.doesUrlExistFor('orders', 'orders-ui', 'order').subscribe((exists) => {
+      if (exists) {
+        console.log('URL exists!')
+      } else {
+        console.log('URL does not exist.')
+      }
+    })
+----
+
+This example checks if a valid URL for Orders UI (UI component) of the Orders application to an order details endpoint can be constructed. If true, then Orders application is registered in the workspace and it has UI component with id `orders-ui` with configured endpoint called `order`.

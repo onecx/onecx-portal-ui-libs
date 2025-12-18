@@ -54,7 +54,10 @@ export class CustomUseStyle extends UseStyle {
       if (variablesData.value.length === 0) return
 
       const styleRef = this.createOrRetrieveOverrideElement(scopeId ? scopeId : shellScopeId)
-      const prefixedOverrides = replacePrimengPrefix(variablesData.css, scopeId)
+      const prefixedOverrides = scopePrimengCss(
+        replaceRootWithScope(replacePrimengPrefix(variablesData.css, scopeId)),
+        scopeId
+      )
       styleRef.textContent = prefixedOverrides
       // Always make sure it is the last child of the document head
       this.document.head.appendChild(styleRef)

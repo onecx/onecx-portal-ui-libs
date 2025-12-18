@@ -208,14 +208,16 @@ describe('CustomUseStyleService', () => {
       overrides['semantic'] = {
         primaryColor: 'red',
       }
-      const expectedOverrideCss = ':root{--p-primary-color:red;}'
+      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="shell-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--p-primary-color:red;}}`
       service.use(regularCss, {
         name: 'semantic-variables',
       })
 
       tick(100)
       expect(styleList.length).toBe(2)
-      expect(styleList.at(1)?.textContent).toEqual(expectedOverrideCss)
+      expect(removeSpacesAndNewlines(styleList.at(1)?.textContent)).toEqual(
+        removeSpacesAndNewlines(expectedOverrideCss)
+      )
     }))
   })
 
@@ -279,14 +281,16 @@ describe('CustomUseStyleService', () => {
       overrides['semantic'] = {
         primaryColor: 'red',
       }
-      const expectedOverrideCss = `:root{--${prefix}-primary-color:red;}`
+      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="${styleId}"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--${prefix}-primary-color:red;}}`
       service.use(regularCss, {
         name: 'semantic-variables',
       })
 
       tick(100)
       expect(styleList.length).toBe(2)
-      expect(styleList.at(1)?.textContent).toEqual(expectedOverrideCss)
+      expect(removeSpacesAndNewlines(styleList.at(1)?.textContent)).toEqual(
+        removeSpacesAndNewlines(expectedOverrideCss)
+      )
     }))
   })
 
@@ -350,14 +354,16 @@ describe('CustomUseStyleService', () => {
       overrides['semantic'] = {
         primaryColor: 'red',
       }
-      const expectedOverrideCss = `:root{--${prefix}-primary-color:red;}`
+      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--${prefix}-primary-color:red;}}`
       service.use(regularCss, {
         name: 'semantic-variables',
       })
 
       tick(100)
       expect(styleList.length).toBe(2)
-      expect(styleList.at(1)?.textContent).toEqual(expectedOverrideCss)
+      expect(removeSpacesAndNewlines(styleList.at(1)?.textContent)).toEqual(
+        removeSpacesAndNewlines(expectedOverrideCss)
+      )
     }))
   })
 
@@ -369,14 +375,16 @@ describe('CustomUseStyleService', () => {
       overrides['semantic'] = {
         primaryColor: 'red',
       }
-      const expectedOverrideCss = `:root{--${prefix}-primary-color:red;}`
+      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--${prefix}-primary-color:red;}}`
       service.use(regularCss, {
         name: 'semantic-variables',
       })
 
       tick(100)
       expect(styleList.length).toBe(2)
-      expect(styleList.at(1)?.textContent).toEqual(expectedOverrideCss)
+      expect(removeSpacesAndNewlines(styleList.at(1)?.textContent)).toEqual(
+        removeSpacesAndNewlines(expectedOverrideCss)
+      )
     }))
 
     it('should accept Promise with overrides', fakeAsync(() => {
@@ -406,7 +414,7 @@ describe('CustomUseStyleService', () => {
       } as MfeInfo)
 
       const regularCss = ":root{--p-primary-color: '#ababab';}"
-      const expectedOverrideCss = ':root{--test-test-ui-primary-color:red;}'
+      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--test-test-ui-primary-color:red;}}`
 
       service.use(regularCss, {
         name: 'semantic-variables',
@@ -414,7 +422,9 @@ describe('CustomUseStyleService', () => {
 
       tick(100)
       expect(styleList.length).toBe(2)
-      expect(styleList.at(1)?.textContent).toEqual(expectedOverrideCss)
+      expect(removeSpacesAndNewlines(styleList.at(1)?.textContent)).toEqual(
+        removeSpacesAndNewlines(expectedOverrideCss)
+      )
     }))
 
     it('should accept function returning object with overrides', fakeAsync(() => {
@@ -446,7 +456,7 @@ describe('CustomUseStyleService', () => {
       } as MfeInfo)
 
       const regularCss = ":root{--p-primary-color: '#ababab';}"
-      const expectedOverrideCss = ':root{--test-test-ui-primary-color:red;}'
+      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--test-test-ui-primary-color:red;}}`
 
       service.use(regularCss, {
         name: 'semantic-variables',
@@ -454,7 +464,9 @@ describe('CustomUseStyleService', () => {
 
       tick(100)
       expect(styleList.length).toBe(2)
-      expect(styleList.at(1)?.textContent).toEqual(expectedOverrideCss)
+      expect(removeSpacesAndNewlines(styleList.at(1)?.textContent)).toEqual(
+        removeSpacesAndNewlines(expectedOverrideCss)
+      )
     }))
 
     it('should accept function returning Promise with overrides', fakeAsync(() => {
@@ -485,7 +497,7 @@ describe('CustomUseStyleService', () => {
       } as MfeInfo)
 
       const regularCss = ":root{--p-primary-color: '#ababab';}"
-      const expectedOverrideCss = ':root{--test-test-ui-primary-color:red;}'
+      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--test-test-ui-primary-color:red;}}`
 
       service.use(regularCss, {
         name: 'semantic-variables',
@@ -493,7 +505,9 @@ describe('CustomUseStyleService', () => {
 
       tick(100)
       expect(styleList.length).toBe(2)
-      expect(styleList.at(1)?.textContent).toEqual(expectedOverrideCss)
+      expect(removeSpacesAndNewlines(styleList.at(1)?.textContent)).toEqual(
+        removeSpacesAndNewlines(expectedOverrideCss)
+      )
     }))
   })
 
