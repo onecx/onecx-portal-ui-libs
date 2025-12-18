@@ -1,0 +1,72 @@
+[#remove-portal-layout-styles]
+=== Remove @onecx/portal-layout-styles
+
+In libs version 6, the `@onecx/portal-layout-styles` package is no longer available and global portal styles are no longer provided.
+
+**1. Uninstall the deprecated package**:
+
+[source, bash]
+----
+npm uninstall --save @onecx/portal-layout-styles
+----
+
+**2. Update style imports and references**:
+
+* Remove all references to @onecx/portal-layout-styles from your application
+* Implement replacement styles in your component or global styles
+
+**Example**:
+
+.Removed References (in styles.scss)
+[source, scss]
+----
+@import '@onecx/portal-layout-styles/src/styles/shell/shell.scss';
+@import '@onecx/portal-layout-styles/src/styles/primeng/theme-light.scss';
+----
+
+**3. Expose styles.css if required**:
+
+If your application needs to share styles between components, update your build configuration to expose `styles.css` at the application root. The shell expects this file to be accessible as `styles.css` at the top level of your deployed application.
+
+**For NX Application Styles**:
+
+It is recommended to modify the project.json file to include the following styles configuration:
+
+.project.json
+[source, json]
+----
+"styles": [
+  {
+    "input": "./src/styles.scss",
+    "bundleName": "styles", 
+    "inject": true
+  }
+]
+----
+
+Setting the inject property to true may result in a hashed filename, such as styles.HASH.css, where HASH is generated during the build. If your application requires a predictable filename, ensure the exposed file does not include the hash.
+
+To avoid hashed filenames, you can update the package.json:
+
+.package.json
+[source, json]
+----
+"scripts": {
+  "build": "nx build && cp dist/name-of-your-ui/styles.*.css dist/name-of-your-ui/styles.css"
+}
+----
+Build the project and verify that styles.css is present in the dist folder without a hash in its name.
+
+**For Angular CLI Application Styles**:
+
+It is recommended to modify the package.json file to include the following styles configuration (my-project-name should be replaced with your modified project):
+
+.package.json
+[source, json]
+----
+{
+  "scripts": {
+      "postbuild": "mv \"$(find dist/my-project-name -maxdepth 1 -type f -name 'styles.*.css' | head -n 1)\" dist/my-project-name/styles.css",
+  }
+}
+----
