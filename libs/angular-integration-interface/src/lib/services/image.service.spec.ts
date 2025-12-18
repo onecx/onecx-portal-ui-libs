@@ -19,7 +19,7 @@ class SubscriberComponent {
 	}
 }
 
-describe('ImageService end-to-end', () => {
+describe('ImageService integration', () => {
 	let imageService: ImageService;
 	let publisher: PublisherComponent;
 	let subscriber: SubscriberComponent;
