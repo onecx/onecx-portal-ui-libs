@@ -1,3 +1,9 @@
+## [7.0.0-rc.13](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.12...v7.0.0-rc.13) (2025-12-18)
+
+### Bug Fixes
+
+* broadcast channel for read and publish ([#1099](https://github.com/onecx/onecx-portal-ui-libs/issues/1099)) ([9b5a6f8](https://github.com/onecx/onecx-portal-ui-libs/commit/9b5a6f879c1170f220da3d48710d6dccf8f36806))
+
 ## [7.0.0-rc.12](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.11...v7.0.0-rc.12) (2025-12-18)
 
 ### Features
