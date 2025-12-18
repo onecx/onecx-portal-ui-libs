@@ -9,9 +9,7 @@
 import { TopicPublisher } from '../topic/topic-publisher'
 import { Gatherer } from './gatherer'
 
-import {
-  BroadcastChannelMock
-} from "../topic/mocks/broadcast-channel.mock"
+import { BroadcastChannelMock } from '../topic/mocks/broadcast-channel.mock'
 
 Reflect.set(globalThis, 'BroadcastChannel', BroadcastChannelMock)
 
@@ -42,6 +40,10 @@ describe('Gatherer', () => {
   let gatherer2: Gatherer<string, string>
 
   beforeEach(() => {
+    window['@onecx/accelerator'] ??= {}
+    window['@onecx/accelerator'].topic ??= {}
+    window['@onecx/accelerator'].topic.initDate = Date.now() - 1000000
+
     listeners = []
 
     gatherer1 = new Gatherer<string, string>('test', 1, async (request) => `responseGatherer1: ${request}`)
