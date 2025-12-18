@@ -1,3 +1,13 @@
 export interface ImageInfo {
-    images: { [key: string]: string };
+    image: ImageDetail;
 }
+
+export interface ImageDetail {
+    urls: ImageUrls;
+}
+
+export interface ImageUrls {
+    [key: string]: string;
+}
+
+

@@ -1,20 +1,21 @@
 import { Injectable, OnDestroy } from "@angular/core";
-import { ImageHandler } from '@onecx/integration-interface'
+import { ImageService as ImageInterface } from '@onecx/integration-interface'
 
 @Injectable({providedIn: 'root'}) 
 export class ImageService implements OnDestroy {
-    private imageHandler = new ImageHandler();
+    private imageInterface = new ImageInterface();
     
-    async getUrl(names: string[]): Promise<string | undefined> {
-        return this.imageHandler.getUrl(names);
-    }
-
-    async getUrlWithFallback(names: string[], fallbackUrl: string): Promise<string | undefined> {
-        return this.imageHandler.getUrl(names, fallbackUrl);
-    }
+    async getUrl(names: string[]): Promise<string | undefined>;
+    async getUrl(names: string[], fallbackUrl: string): Promise<string>;
+    async getUrl(names: string[], fallbackUrl?: string): Promise<string | undefined> {
+        if (fallbackUrl) {
+            return this.imageInterface.getUrl(names, fallbackUrl);
+        }
+        return this.imageInterface.getUrl(names);
+    }   
 
     ngOnDestroy(): void {
-        this.imageHandler.destroy();
+        this.imageInterface.destroy();
     }
 
     destroy() {

@@ -58,4 +58,4 @@ export * from './lib/topics/resized-events/v1/resized-events.topic'
 
 export * from './lib/topics/image/image.model'
 export * from './lib/topics/image/image.topic'
-export * from './lib/services/image.handler'
+export * from './lib/services/image.service'

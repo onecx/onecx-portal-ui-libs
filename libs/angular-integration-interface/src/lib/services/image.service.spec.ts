@@ -1,71 +1,62 @@
 import { TestBed } from '@angular/core/testing';
 import { ImageService } from './image.service';
-import { of, delay, firstValueFrom, EMPTY} from 'rxjs';
+import { ImageInfo, ImageService as ImageInterface, ImageTopic } from '@onecx/integration-interface';
+import { FakeTopic } from '@onecx/accelerator';
 
-class PublisherComponent {
-	constructor(private imageService: ImageService) {}
-	publishImages(images: Record<string, string>) {
-		(this.imageService as any).imageHandler.imageTopic$.publish({ images });
-	}
-}
+const URL_NAME = 'logo1';
+const EXPECTED_URL = '/logo1-url';
+const FALLBACK_URL = '/fallback-url';
+const MOCK_URLS: ImageInfo = { image: { urls: { [URL_NAME]: EXPECTED_URL, 'logo2': '/logo2-url' } } };
 
-class SubscriberComponent {
-	constructor(private imageService: ImageService) {}
-	async getImageUrl(names: string[], fallback?: string) {
-		if (fallback) {
-			return this.imageService.getUrlWithFallback(names, fallback);
-		}
-		return this.imageService.getUrl(names);
-	}
-}
+describe('ImageService', () => {
+  let service: ImageService;
+  let imageInterface: ImageInterface;
 
-describe('ImageService integration', () => {
-	let imageService: ImageService;
-	let publisher: PublisherComponent;
-	let subscriber: SubscriberComponent;
-
-	beforeEach(() => {
-		TestBed.configureTestingModule({
-			providers: [ImageService],
-		}).compileComponents();
-		imageService = TestBed.inject(ImageService);
-		publisher = new PublisherComponent(imageService);
-		subscriber = new SubscriberComponent(imageService);
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+		providers: [ImageService, ImageInterface]
 	});
+	const mockTopic = new FakeTopic<ImageInfo>();
+    service = TestBed.inject(ImageService);
+    imageInterface = (service as any).imageInterface;
+	imageInterface.imageTopic = mockTopic as any as ImageTopic;
+	imageInterface.imageTopic?.publish(MOCK_URLS);
+  });
 
-	it('should provide image url when images are published', async () => {
-		publisher.publishImages({ logo1: '/logo1-url', icon: '/icon-url' });
-		await firstValueFrom(of(EMPTY).pipe(delay(0)));
-		const url = await subscriber.getImageUrl(['logo1', 'icon']);
-		expect(url).toBe('/logo1-url');
-	});
+  it('should call getUrl without fallback', async () => {
+	const expectedUrl = MOCK_URLS.image?.urls[URL_NAME];
+	const spyGetUrl = jest.spyOn(imageInterface, 'getUrl').mockResolvedValue(expectedUrl);
 
-	it('should return fallback when images not present', async () => {
-		publisher.publishImages({ logo: '/logo-url' });
-		await firstValueFrom(of(EMPTY).pipe(delay(0)));
-		const url = await subscriber.getImageUrl(['notfound'], '/fallback-url');
-		expect(url).toBe('/fallback-url');
-	});
+    const result = await service.getUrl([URL_NAME]);
 
-	it('should update image paths when publisher publishes new images', async () => {
-		publisher.publishImages({ logo: '/logo-url' });
-		await firstValueFrom(of(EMPTY).pipe(delay(0)));
-		expect(await subscriber.getImageUrl(['logo'])).toBe('/logo-url');
-		
-		publisher.publishImages({ icon: '/icon-url' });
-		await firstValueFrom(of(EMPTY).pipe(delay(0)));
-		expect(await subscriber.getImageUrl(['icon'])).toBe('/icon-url');
-		expect(await subscriber.getImageUrl(['logo'])).toBeUndefined();
-	});
+    expect(result).toBe(expectedUrl);
+	expect(spyGetUrl).toHaveBeenCalledWith([URL_NAME]);
+	expect(result).toEqual(EXPECTED_URL);
+  });
 
-	it('should not return image url after destroy is called', async () => {
-		publisher.publishImages({ logo: '/logo-url' });
-		await firstValueFrom(of(EMPTY).pipe(delay(0)));
-		expect(await subscriber.getImageUrl(['logo'])).toBe('/logo-url');
-		imageService.destroy();
-		
-		publisher.publishImages({ logo: '/new-url' });
-		await firstValueFrom(of(EMPTY).pipe(delay(0)));
-		expect(await subscriber.getImageUrl(['logo'])).toBe('/logo-url');
-	});
+  it('should call getUrl with fallback', async () => {
+	const NOT_FOUND_NAME = 'notfound';
+    const spyGetUrl = jest.spyOn(imageInterface, 'getUrl').mockResolvedValue(FALLBACK_URL);
+
+    const result = await service.getUrl([NOT_FOUND_NAME], FALLBACK_URL);
+
+    expect(spyGetUrl).toHaveBeenCalledWith([NOT_FOUND_NAME], FALLBACK_URL);
+    expect(result).toBe(FALLBACK_URL);
+  });
+
+  it('should call destroy on ngOnDestroy', () => {
+    const spyDestroy = jest.spyOn(imageInterface, 'destroy');
+
+    service.ngOnDestroy();
+
+    expect(spyDestroy).toHaveBeenCalled();
+  });
+
+  it('should call ngOnDestroy from destroy()', () => {
+    const spyDestroy = jest.spyOn(service, 'ngOnDestroy');
+
+    service.destroy();
+	
+    expect(spyDestroy).toHaveBeenCalled();
+  });
 });
