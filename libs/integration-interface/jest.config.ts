@@ -2,7 +2,7 @@
 import { createReportsConfig } from '../../jest-config-factory'
 
 export default {
-  displayName: 'angular-accelerator',
+  displayName: 'integration-interface',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   transform: {
