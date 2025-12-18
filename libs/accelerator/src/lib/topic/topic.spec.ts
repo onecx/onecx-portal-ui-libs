@@ -31,7 +31,7 @@ describe('Topic', () => {
 
   window.postMessage = (m: any) => {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    listeners.forEach((l) => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }))
+    listeners.forEach((l) => l({ data: m, stopImmediatePropagation: () => { }, stopPropagation: () => { } }))
   }
 
   afterAll(() => {
@@ -53,7 +53,7 @@ describe('Topic', () => {
     window['@onecx/accelerator'].topic.debug = ['SpecificTestTopic']
 
     BroadcastChannelMock.asyncCalls = false
-    
+
     listeners = []
 
     values1 = []
@@ -69,9 +69,9 @@ describe('Topic', () => {
   afterEach(() => {
     testTopic1.destroy()
     testTopic2.destroy()
-    BroadcastChannelMock.listeners =  {}
+    BroadcastChannelMock.listeners = {}
     BroadcastChannelMock.asyncCalls = false
-    if(window['@onecx/accelerator']?.topic?.debug){
+    if (window['@onecx/accelerator']?.topic?.debug) {
       window['@onecx/accelerator'].topic.debug = undefined
     }
   })
@@ -187,7 +187,7 @@ describe('Topic', () => {
       listeners.forEach((l) => {
         // Set timeout to simulate async behavior
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        setTimeout(() => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }), 0)
+        setTimeout(() => l({ data: m, stopImmediatePropagation: () => { }, stopPropagation: () => { } }), 0)
       })
     }
     BroadcastChannelMock.asyncCalls = true
@@ -226,9 +226,9 @@ describe('Topic', () => {
     testTopic2.subscribe((val) => {
       val2.push(val)
     })
-    
+
     await testTopic1.publish(123)
-    
+
     expect(val1).toEqual([123])
     expect(val2).toEqual([123])
   })
@@ -291,6 +291,78 @@ describe('Topic', () => {
     expect(val3).toEqual([1, 2, 3])
   })
 
+  it('schedules TopicGet via timeout when recently initialized', () => {
+    jest.useFakeTimers()
+    window['@onecx/accelerator'] ??= {}
+    window['@onecx/accelerator'].topic ??= {}
+    window['@onecx/accelerator'].topic.initDate = Date.now() // recent
+    window['@onecx/accelerator'].topic.useBroadcastChannel = false
+
+    const spy = jest.spyOn(window, 'postMessage')
+    const t = new Topic<string>('timeout-get', 1)
+    t.subscribe(() => { })
+
+    // Advance timers to trigger scheduled get
+    jest.advanceTimersByTime(150)
+
+    expect(spy).toHaveBeenCalled()
+    t.destroy()
+    spy.mockRestore()
+    jest.useRealTimers()
+  })
+
+  it('logs window message when debug enabled and handles TopicGet on window path', () => {
+    window['@onecx/accelerator'] ??= {}
+    window['@onecx/accelerator'].topic ??= {}
+    window['@onecx/accelerator'].topic.debug = ['win-topic']
+    window['@onecx/accelerator'].topic.useBroadcastChannel = false
+
+    const t = new Topic<string>('win-topic', 1, false)
+    t.subscribe(() => { })
+    // initialize with a value so TopicGet will respond
+    t.publish('init')
+
+    const sendSpy = jest.spyOn(t as any, 'sendMessage')
+
+    // Send TopicGet via window to trigger handleTopicGetMessage through onWindowMessage
+    const getMsg = {
+      data: { type: TopicMessageType.TopicGet, name: 'win-topic', version: 1 },
+      stopImmediatePropagation: () => { },
+      stopPropagation: () => { },
+    } as any
+    listeners.forEach((l) => l(getMsg))
+
+    expect(sendSpy).toHaveBeenCalled()
+    t.destroy()
+    sendSpy.mockRestore()
+  })
+
+  it('handles error in TopicResolve processing (catch branch)', () => {
+    window['@onecx/accelerator'] ??= {}
+    window['@onecx/accelerator'].topic ??= {}
+    window['@onecx/accelerator'].topic.useBroadcastChannel = false
+
+    const t = new Topic<string>('resolve-error', 1, false)
+      // inject a throwing resolver
+      ; (t as any).publishPromiseResolver[123] = () => {
+        throw new Error('boom')
+      }
+
+    const errSpy = jest.spyOn(console, 'error').mockImplementation(() => { })
+
+    const resolveMsg = {
+      data: { type: TopicMessageType.TopicResolve, name: 'resolve-error', version: 1, resolveId: 123 },
+      stopImmediatePropagation: () => { },
+      stopPropagation: () => { },
+    } as any
+
+    listeners.forEach((l) => l(resolveMsg))
+
+    expect(errSpy).toHaveBeenCalled()
+    t.destroy()
+    errSpy.mockRestore()
+  })
+
   describe('integration with older versions of library', () => {
     let previousMessage: TopicDataMessage<string>
     let incomingMessage: MessageEvent<TopicDataMessage<string>>
@@ -326,21 +398,21 @@ describe('Topic', () => {
       previousMessage.id = 0
       incomingMessage.data.data = 'msg2'
       incomingMessage.data.id = 1
-      ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onWindowMessage(incomingMessage)
+        ; (<any>testTopic1).data.next(previousMessage)
+        ; (<any>testTopic1).onWindowMessage(incomingMessage)
 
       expect(values1).toEqual(['initMsg', 'msg1', 'msg2'])
     })
 
     it('should have value if incoming timestamp is greater than previous timestamp with no ids provided', () => {
       previousMessage.data = 'msg1'
-      ;(<any>previousMessage).id = undefined
+        ; (<any>previousMessage).id = undefined
       previousMessage.timestamp = 1
       incomingMessage.data.data = 'msg2'
-      ;(<any>incomingMessage.data).id = undefined
+        ; (<any>incomingMessage.data).id = undefined
       incomingMessage.data.timestamp = 3
-      ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onWindowMessage(incomingMessage)
+        ; (<any>testTopic1).data.next(previousMessage)
+        ; (<any>testTopic1).onWindowMessage(incomingMessage)
 
       expect(values1).toEqual(['initMsg', 'msg1', 'msg2'])
     })
@@ -350,36 +422,36 @@ describe('Topic', () => {
       previousMessage.id = 1
       previousMessage.timestamp = 1
       incomingMessage.data.data = 'msg2'
-      ;(<any>incomingMessage.data).id = undefined
+        ; (<any>incomingMessage.data).id = undefined
       incomingMessage.data.timestamp = 3
-      ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onWindowMessage(incomingMessage)
+        ; (<any>testTopic1).data.next(previousMessage)
+        ; (<any>testTopic1).onWindowMessage(incomingMessage)
 
       expect(values1).toEqual(['initMsg', 'msg1', 'msg2'])
     })
 
     it('should have value if incoming timestamp is greater than previous timestamp when incoming message has id', () => {
       previousMessage.data = 'msg1'
-      ;(<any>previousMessage).id = undefined
+        ; (<any>previousMessage).id = undefined
       previousMessage.timestamp = 1
       incomingMessage.data.data = 'msg2'
       incomingMessage.data.id = 1
       incomingMessage.data.timestamp = 3
-      ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onWindowMessage(incomingMessage)
+        ; (<any>testTopic1).data.next(previousMessage)
+        ; (<any>testTopic1).onWindowMessage(incomingMessage)
 
       expect(values1).toEqual(['initMsg', 'msg1', 'msg2'])
     })
 
     it('should have no value if incoming timestamp is equal to the previous timestamp with no ids provided', () => {
       previousMessage.data = 'msg1'
-      ;(<any>previousMessage).id = undefined
+        ; (<any>previousMessage).id = undefined
       previousMessage.timestamp = 3
       incomingMessage.data.data = 'msg2'
-      ;(<any>incomingMessage.data).id = undefined
+        ; (<any>incomingMessage.data).id = undefined
       incomingMessage.data.timestamp = 3
-      ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onWindowMessage(incomingMessage)
+        ; (<any>testTopic1).data.next(previousMessage)
+        ; (<any>testTopic1).onWindowMessage(incomingMessage)
 
       expect(values1).toEqual(['initMsg', 'msg1'])
     })
@@ -390,10 +462,10 @@ describe('Topic', () => {
       previousMessage.id = 1
       previousMessage.timestamp = 3
       incomingMessage.data.data = 'msg2'
-      ;(<any>incomingMessage.data).id = undefined
+        ; (<any>incomingMessage.data).id = undefined
       incomingMessage.data.timestamp = 3
-      ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onWindowMessage(incomingMessage)
+        ; (<any>testTopic1).data.next(previousMessage)
+        ; (<any>testTopic1).onWindowMessage(incomingMessage)
 
       expect(values1).toEqual(['initMsg', 'msg1'])
       expect(console.warn).toHaveBeenLastCalledWith(
@@ -404,13 +476,13 @@ describe('Topic', () => {
     it('should have no value if incoming timestamp is equal to previous timestamp when incoming message has id', () => {
       jest.spyOn(console, 'warn')
       previousMessage.data = 'msg1'
-      ;(<any>previousMessage).id = undefined
+        ; (<any>previousMessage).id = undefined
       previousMessage.timestamp = 3
       incomingMessage.data.data = 'msg2'
       incomingMessage.data.id = 1
       incomingMessage.data.timestamp = 3
-      ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onWindowMessage(incomingMessage)
+        ; (<any>testTopic1).data.next(previousMessage)
+        ; (<any>testTopic1).onWindowMessage(incomingMessage)
 
       expect(values1).toEqual(['initMsg', 'msg1'])
       expect(console.warn).toHaveBeenLastCalledWith(
@@ -421,16 +493,79 @@ describe('Topic', () => {
     it('should have no value and no warning if incoming timestamp is equal to previous timestamp when incoming message has smaller id then current', () => {
       jest.spyOn(console, 'warn')
       previousMessage.data = 'msg1'
-      ;(<any>previousMessage).id = 2
+        ; (<any>previousMessage).id = 2
       previousMessage.timestamp = 3
       incomingMessage.data.data = 'msg2'
       incomingMessage.data.id = 1
       incomingMessage.data.timestamp = 3
-      ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onWindowMessage(incomingMessage)
+        ; (<any>testTopic1).data.next(previousMessage)
+        ; (<any>testTopic1).onWindowMessage(incomingMessage)
 
       expect(values1).toEqual(['initMsg', 'msg1'])
       expect(console.warn).toHaveBeenCalledTimes(0)
     })
   })
+
+  describe('for compatibility with older versions and browsers', () => {
+    it('disables BroadcastChannel when not supported (TopicPublisher constructor branch)', () => {
+      const originalBC = (globalThis as any).BroadcastChannel
+        ; (globalThis as any).BroadcastChannel = undefined
+
+      window['@onecx/accelerator'] ??= {}
+      window['@onecx/accelerator'].topic ??= {}
+      window['@onecx/accelerator'].topic.useBroadcastChannel = true
+
+      // Creating a topic triggers TopicPublisher constructor branch
+      const t = new Topic<string>('no-bc', 1, false)
+      t.destroy()
+
+      expect(window['@onecx/accelerator'].topic.useBroadcastChannel).toBe(false)
+
+        ; (globalThis as any).BroadcastChannel = originalBC
+    })
+
+    it('uses window.postMessage when BroadcastChannel is disabled (sendMessage else path)', () => {
+      window['@onecx/accelerator'] ??= {}
+      window['@onecx/accelerator'].topic ??= {}
+      window['@onecx/accelerator'].topic.useBroadcastChannel = false
+
+      const spy = jest.spyOn(window, 'postMessage')
+
+      const t = new Topic<string>('window-path', 1, false)
+      t.subscribe(() => { })
+      t.publish('x')
+
+      expect(spy).toHaveBeenCalled()
+      t.destroy()
+      spy.mockRestore()
+    })
+
+
+    it('covers deprecated helpers: source, operator, lift, forEach, toPromise', async () => {
+      const t = new Topic<number>('helpers', 1, false)
+      t.subscribe(() => { })
+
+        // Access deprecated properties
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        ; (t as any).source
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        ; (t as any).operator
+
+      // lift with identity map
+      const lifted = (t as any).lift((obs: any) => obs)
+      expect(lifted).toBeTruthy()
+
+      // forEach: invoke without awaiting completion (never completes)
+      t.forEach(() => { })
+      t.publish(7)
+
+      // toPromise: invoke to cover method without awaiting resolution
+      const p2 = (t as any).toPromise?.()
+      if (p2) {
+        t.publish(9)
+      }
+      t.destroy()
+    })
+  })
+
 })
