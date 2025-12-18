@@ -18,6 +18,8 @@ declare global {
           }
           instancesCreated?: { [topicName: string]: number }
         }
+        useBroadcastChannel?: boolean
+        initDate?: number
       }
     }
   }
@@ -28,5 +30,7 @@ window['@onecx/accelerator'].gatherer ??= {}
 window['@onecx/accelerator'].gatherer.promises ??= {}
 window['@onecx/accelerator'].gatherer.debug ??= []
 window['@onecx/accelerator'].topic ??= {}
+window['@onecx/accelerator'].topic.useBroadcastChannel ??= true
+window['@onecx/accelerator'].topic.initDate ??= Date.now()
 
 export default globalThis
