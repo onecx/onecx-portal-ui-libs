@@ -13,16 +13,7 @@ import { TopicMessage } from './topic-message'
 import { TopicMessageType } from './topic-message-type'
 import { TopicPublisher } from './topic-publisher'
 import { TopicResolveMessage } from './topic-resolve-message'
-
-declare global {
-  interface Window {
-    '@onecx/accelerator': {
-      topic: {
-        debug: string[]
-      }
-    }
-  }
-}
+import '../declarations'
 
 export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
   protected isInitializedPromise: Promise<void>
