@@ -23,12 +23,24 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
   protected isInit = false
   private resolveInitPromise!: (value: void | PromiseLike<void>) => void
   private readonly windowEventListener = (m: MessageEvent<TopicMessage>) => this.onWindowMessage(m)
+  protected readonly readBroadcastChannel: BroadcastChannel | undefined
 
   constructor(name: string, version: number, sendGetMessage = true) {
     super(name, version)
     window['@onecx/accelerator'] ??= {}
     window['@onecx/accelerator'].topic ??= {}
     window['@onecx/accelerator'].topic.initDate ??= Date.now()
+
+    if (window['@onecx/accelerator']?.topic?.useBroadcastChannel) {
+      if (typeof BroadcastChannel === 'undefined') {
+        console.log('BroadcastChannel not supported. Disabling BroadcastChannel for topic')
+        window['@onecx/accelerator'] ??= {}
+        window['@onecx/accelerator'].topic ??= {}
+        window['@onecx/accelerator'].topic.useBroadcastChannel = false
+      } else {
+        this.readBroadcastChannel = new BroadcastChannel(`Topic-${this.name}|${this.version}`)
+      }
+    }
 
     if (isStatsEnabled()) {
       increaseInstanceCount(this.name)
@@ -38,10 +50,13 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
       this.resolveInitPromise = resolve
     })
     window.addEventListener('message', this.windowEventListener)
-    this.broadcastChannel?.addEventListener('message', (m) => this.onBroadcastChannelMessage(m))
+    this.readBroadcastChannel?.addEventListener('message', (m) => this.onBroadcastChannelMessage(m))
 
     if (sendGetMessage) {
-      if (Date.now() - window['@onecx/accelerator'].topic.initDate < 2000) {
+      if (
+        window['@onecx/accelerator'].topic.initDate &&
+        Date.now() - window['@onecx/accelerator'].topic.initDate < 2000
+      ) {
         // Delay the get message a bit to give other topics time to initialize
         setTimeout(() => {
           if (!this.isInit) {
@@ -203,7 +218,8 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
 
   destroy() {
     window.removeEventListener('message', this.windowEventListener, true)
-    this.broadcastChannel?.close()
+    this.readBroadcastChannel?.close()
+    this.publishBroadcastChannel?.close()
   }
 
   private onWindowMessage(m: MessageEvent<TopicMessage>): any {
