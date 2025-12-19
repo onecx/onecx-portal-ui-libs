@@ -1,6 +1,6 @@
 {
   "name": "@onecx/ngrx-integration-interface",
-  "version": "7.0.0-rc.12",
+  "version": "7.0.0-rc.13",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -9,8 +9,8 @@
   "peerDependencies": {
     "@angular/core": "^19.0.0",
     "@ngrx/store": "^19.0.0",
-    "@onecx/angular-integration-interface": "^7.0.0-rc.12",
-    "@onecx/integration-interface": "^7.0.0-rc.12",
+    "@onecx/angular-integration-interface": "^7.0.0-rc.13",
+    "@onecx/integration-interface": "^7.0.0-rc.13",
     "@ngneat/until-destroy": "^10.0.0",
     "rxjs": "^7.8.1"
   },
