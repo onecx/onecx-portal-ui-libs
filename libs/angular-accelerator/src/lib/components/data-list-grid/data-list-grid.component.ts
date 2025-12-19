@@ -55,7 +55,7 @@ export interface DataListGridComponentState {
   templateUrl: './data-list-grid.component.html',
   styleUrls: ['./data-list-grid.component.scss'],
 })
-export class DataListGridComponent extends DataSortBase implements OnInit, DoCheck, AfterContentInit{
+export class DataListGridComponent extends DataSortBase implements OnInit, DoCheck, AfterContentInit {
   @Input() titleLineId: string | undefined
   @Input() subtitleLineIds: string[] = []
   @Input() clientSideSorting = true
@@ -165,7 +165,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
         ? 'OCX_DATA_LIST_GRID.SEARCH_RESULTS_FOUND'
         : 'OCX_DATA_LIST_GRID.NO_SEARCH_RESULTS_FOUND';
     this.statusSubject.next(newStatus); 
-    console.log('Data set called');
   }
 
   _filters$ = new BehaviorSubject<Filter[]>([])

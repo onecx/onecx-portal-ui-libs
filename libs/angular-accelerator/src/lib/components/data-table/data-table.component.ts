@@ -78,7 +78,7 @@ export interface DataTableComponentState {
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
 })
-export class DataTableComponent extends DataSortBase implements OnInit, AfterContentInit{
+export class DataTableComponent extends DataSortBase implements OnInit, AfterContentInit {
   FilterType = FilterType
   TemplateType = TemplateType
   checked = true
@@ -96,7 +96,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   set rows(value: Row[]) {
     !this._rows$.getValue().length ?? this.resetPage()
     this._rows$.next(value)
-    // this.currentResults = changes['rows'].currentValue?.length ?? 0;
 
     this.currentResults = this.rows.length ?? 0;
     const newStatus =
@@ -104,7 +103,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         ? 'OCX_DATA_TABLE.SEARCH_RESULTS_FOUND'
         : 'OCX_DATA_TABLE.NO_SEARCH_RESULTS_FOUND';
     this.statusSubject.next(newStatus);
-    console.log('Rows set called');
   }
 
   _selectionIds$ = new BehaviorSubject<(string | number)[]>([])
