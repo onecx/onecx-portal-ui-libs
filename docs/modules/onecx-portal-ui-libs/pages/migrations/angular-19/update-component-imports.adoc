@@ -1,0 +1,104 @@
+[#update-component-imports]
+=== Update Component Imports
+
+The following section covers component, service, and directive changes in OneCX v6. Components have been deleted, reorganized across libraries or converted to remote components.
+
+[#moved-to-libraries]
+==== Components Moved to Different Libraries
+
+**1. Update import from @onecx/portal-integration-angular to @onecx/angular-accelerator:**
+
+The imports of the following components, services and directives need to be changed from `@onecx/portal-integration-angular` to `@onecx/angular-accelerator`:
+
+* `ColumnGroupSelectionComponent`, `CustomGroupColumnSelectorComponent`
+* `DataLayoutSelectionComponent`, `DataListGridComponent`, `DataListGridSortingComponent`
+* `DataTableComponent`, `DataViewComponent`, `DiagramComponent`
+* `FilterViewComponent`, `GroupByCountDiagramComponent`, `InteractiveDataViewComponent`
+* `LifecycleComponent`, `PageHeaderComponent`, `SearchHeaderComponent`
+* `DialogMessageContentComponent`, `DialogInlineComponent`, `DialogFooterComponent`, `DialogContentComponent`
+* `GlobalErrorComponent`, `LoadingIndicatorComponent`, `LoadingIndicatorDirective`
+* `BasicDirective`, `RelativeDatePipe`, `AdvancedDirective`
+* `OcxContentContainerDirective`, `OcxContentDirective`, `IfBreakpointDirective`
+* `IfPermissionDirective`, `SrcDirective`, `TooltipOnOverflowDirective`
+* `ExportDataService`, `PortalDialogService`, `ImageLogoUrlUtils`
+* `DialogContentHarness`, `DialogFooterHarness`, `DialogInlineHarness`, `DialogMessageContentHarness`
+
+**2. Update import from @onecx/portal-integration-angular to @onecx/angular-utils:**
+
+The imports of the following components need to be changed from `@onecx/portal-integration-angular` to `@onecx/angular-utils`:
+
+* `PortalPageComponent`
+* `PortalApiConfiguration`
+
+**3. Update import from @onecx/portal-integration-angular to @onecx/shell-core:**
+
+The imports of the following components need to be changed from `@onecx/portal-integration-angular` to `@onecx/shell-core`:
+
+* `PortalFooterComponent`
+* `HeaderComponent`
+* `PortalViewportComponent`
+
+**4. Update import from @onecx/angular-accelerator to @onecx/angular-utils:**
+
+The following utils, services and directives were removed from `@onecx/angular-accelerator` and need to be imported from `@onecx/angular-utils` now:
+
+* HasPermissionChecker
+* HAS_PERMISSION_CHECKER (injection token)
+* AlwaysGrantPermissionChecker
+* TranslationCacheService
+* CachingTranslateLoader
+* TranslateCombinedLoader
+
+[#completely-removed]
+==== Components/Services Removed Without Replacement
+
+The following components and services have been completely removed from libs v6, meaning their imports should be deleted and any usage removed:
+
+**1. Remove from @onecx/angular-accelerator**
+
+* DataLoadingErrorComponent (ocx-data-loading-error)
+
+**2. Remove from @onecx/angular-integration-interface**
+
+* IAuthService
+* AUTH_SERVICE (injection token)
+
+[#replaced-components-same-library]
+==== Replaced Components and Functions in the Same Library
+
+Some components and functions have been replaced by new equivalents within the same library. Update your imports and usage as follows:
+
+**1. Update import from @onecx/angular-integration-interface**
+
+* Replace `provideAppServiceMock` with `provideAppStateServiceMock`
+
+**2. Update import from @onecx/ngrx-accelerator**
+
+* Replace `filterForOnlyQueryParamsChanged` with `filterOutOnlyQueryParamsChanged`
+* Replace `filterForQueryParamsChanged` with `filterOutQueryParamsHaveNotChanged`
+
+[#remote-components]
+==== Components now Available as Remote Components
+The following components and services have been converted to remote components and are now part of separate OneCX applications. You will need to remove their imports from `@onecx/portal-integration-angular` and include the relevant remote components from the respective applications.
+
+**onecx-help-ui:**
+
+* `HelpItemEditorComponent`
+* `NoHelpItemComponent`
+* `HelpPageAPIService`
+
+**onecx-workspace-ui:**
+
+* `PortalMenuComponent`
+* `PortalMenuHorizontalComponent`
+* `AppInlineProfileComponent`
+
+**onecx-announcement-ui:**
+
+* `AnnouncementBannerComponent`
+* `AnnouncementsApiService`
+
+**onecx-user-profile-ui:**
+
+* `UserAvatarComponent`
+* `UserProfileAPIService`
