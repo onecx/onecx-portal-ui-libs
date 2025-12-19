@@ -22,9 +22,10 @@ import {
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs'
 import { ocxRemoteComponent } from '../../model/remote-component'
 import { RemoteComponentInfo, SLOT_SERVICE, SlotComponentConfiguration, SlotService } from '../../services/slot.service'
-import { updateStylesForRcCreation, updateStylesForRcRemoval, RemoteComponentConfig } from '@onecx/angular-utils'
+import { RemoteComponentConfig, scopeIdFromProductNameAndAppId } from '@onecx/angular-utils'
 import { HttpClient } from '@angular/common/http'
 import { debounceTime, filter } from 'rxjs/operators'
+import { updateStylesForRcCreation, removeAllRcUsagesFromStyles } from '@onecx/angular-utils/style'
 
 interface AssignedComponent {
   refOrElement: ComponentRef<any> | HTMLElement
@@ -156,7 +157,8 @@ export class SlotComponent implements OnInit, OnDestroy {
     this.componentSize$.complete() // Complete the subject to avoid memory leaks
     // Removes RC styles on unmount to avoid ghost styles
     this._assignedComponents$.getValue().forEach((component) => {
-      updateStylesForRcRemoval(component.remoteInfo.productName, component.remoteInfo.appId, this.name)
+      const scopeId = scopeIdFromProductNameAndAppId(component.remoteInfo.productName, component.remoteInfo.appId)
+      removeAllRcUsagesFromStyles(scopeId, this.name)
     })
     this.viewContainerRef.clear()
   }
@@ -178,25 +180,38 @@ export class SlotComponent implements OnInit, OnDestroy {
 
     // Components can be created only when component information is available and view containers are created for all remote components
     const createSub = this.components$.subscribe((components) => {
-      components.forEach((componentInfo) => {
-        if (componentInfo.componentType) {
-          Promise.all([Promise.resolve(componentInfo.componentType), Promise.resolve(componentInfo.permissions)]).then(
-            ([componentType, permissions]) => {
-              const component = this.createComponent(componentType, componentInfo, permissions)
-              if (component) {
-                this._assignedComponents$.next([
-                  ...this._assignedComponents$.getValue(),
-                  { refOrElement: component, remoteInfo: componentInfo.remoteComponent },
-                ])
-              }
-            }
-          )
-        }
-      })
+      this.createSpansForComponents(components)
+      this.createComponents(components)
     })
     this.subscriptions.push(createSub)
 
     this.observeSlotSizeChanges()
+  }
+
+  private createSpansForComponents(components: SlotComponentConfiguration[]) {
+    for (let i = 0; i < components.length; i++) {
+      const span = document.createElement('span')
+      span.dataset['index'] = i.toString()
+      this.viewContainerRef.element.nativeElement.appendChild(span)
+    }
+  }
+
+  private createComponents(components: SlotComponentConfiguration[]) {
+    components.forEach((componentInfo, index) => {
+      if (componentInfo.componentType) {
+        Promise.all([Promise.resolve(componentInfo.componentType), Promise.resolve(componentInfo.permissions)]).then(
+          ([componentType, permissions]) => {
+            const component = this.createComponent(componentType, componentInfo, permissions, index)
+            if (component) {
+              this._assignedComponents$.next([
+                ...this._assignedComponents$.getValue(),
+                { refOrElement: component, remoteInfo: componentInfo.remoteComponent },
+              ])
+            }
+          }
+        )
+      }
+    })
   }
 
   private observeSlotSizeChanges() {
@@ -241,10 +256,11 @@ export class SlotComponent implements OnInit, OnDestroy {
   private createComponent(
     componentType: Type<unknown> | undefined,
     componentInfo: { remoteComponent: RemoteComponentInfo },
-    permissions: string[]
+    permissions: string[],
+    index: number
   ): ComponentRef<any> | HTMLElement | undefined {
     if (componentType) {
-      return this.createAngularComponent(componentType, componentInfo, permissions)
+      return this.createAngularComponent(componentType, componentInfo, permissions, index)
     }
 
     if (
@@ -254,7 +270,8 @@ export class SlotComponent implements OnInit, OnDestroy {
     ) {
       return this.createWebComponent(
         componentInfo as { remoteComponent: RemoteComponentInfo & { elementName: string } },
-        permissions
+        permissions,
+        index
       )
     }
 
@@ -264,9 +281,10 @@ export class SlotComponent implements OnInit, OnDestroy {
   private createAngularComponent(
     componentType: Type<unknown>,
     componentInfo: { remoteComponent: RemoteComponentInfo },
-    permissions: string[]
+    permissions: string[],
+    index: number
   ): ComponentRef<any> {
-    const componentRef = this.viewContainerRef.createComponent<any>(componentType)
+    const componentRef = this.viewContainerRef.createComponent<any>(componentType, { index: index })
     const componentHTML = componentRef.location.nativeElement as HTMLElement
     this.updateComponentStyles(componentInfo)
     this.addDataStyleId(componentHTML, componentInfo.remoteComponent)
@@ -279,13 +297,26 @@ export class SlotComponent implements OnInit, OnDestroy {
         permissions: permissions,
       })
     }
+
+    const span: HTMLSpanElement | undefined = this.viewContainerRef.element.nativeElement.querySelector(
+      `span[data-index="${index}"]`
+    ) as HTMLSpanElement
+    if (span) {
+      span.remove()
+    } else {
+      console.error(
+        'Component span was not found for slot component creation. The order of the components may be incorrect.'
+      )
+    }
+
     componentRef.changeDetectorRef.detectChanges()
     return componentRef
   }
 
   private createWebComponent(
     componentInfo: { remoteComponent: RemoteComponentInfo & { elementName: string } },
-    permissions: string[]
+    permissions: string[],
+    index: number
   ): HTMLElement {
     const element = document.createElement(componentInfo.remoteComponent.elementName)
     this.updateComponentStyles(componentInfo)
@@ -297,7 +328,19 @@ export class SlotComponent implements OnInit, OnDestroy {
       baseUrl: componentInfo.remoteComponent.baseUrl,
       permissions: permissions,
     } satisfies RemoteComponentConfig
-    this.viewContainerRef.element.nativeElement.appendChild(element)
+
+    const span: HTMLSpanElement | undefined = this.viewContainerRef.element.nativeElement.querySelector(
+      `span[data-index="${index}"]`
+    ) as HTMLSpanElement
+    if (span) {
+      this.viewContainerRef.element.nativeElement.insertBefore(element, span)
+      span.remove()
+    } else {
+      console.error(
+        'Component span was not found for slot component creation. The order of the components may be incorrect.'
+      )
+      this.viewContainerRef.element.nativeElement.appendChild(element)
+    }
     return element
   }
 
