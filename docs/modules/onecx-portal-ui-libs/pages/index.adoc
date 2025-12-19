@@ -1,4 +1,4 @@
-= OneCX Portal UI Libs
+= OneCX UI Libraries
 :idprefix:
 :idseparator: -
 :imagesdir: ../images
