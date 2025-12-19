@@ -1,7 +1,11 @@
 {
   "name": "@onecx/shell-core",
-  "version": "6.10.0",
+  "version": "6.12.1",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onecx/onecx-portal-ui-libs"
+  },
   "peerDependencies": {
     "rxjs": "^7.8.1",
     "@angular/animations": "^19.0.0",
@@ -9,13 +13,13 @@
     "@angular/core": "^19.0.0",
     "@angular/router": "^19.0.0",
     "@ngneat/until-destroy": "^10.0.0",
-    "@onecx/angular-integration-interface": "^6.10.0",
-    "@onecx/angular-utils": "^6.10.0",
-    "@onecx/angular-remote-components": "^6.10.0",
+    "@onecx/angular-integration-interface": "^6.12.1",
+    "@onecx/angular-utils": "^6.12.1",
+    "@onecx/angular-remote-components": "^6.12.1",
     "@ngx-translate/core": "^16.0.0",
     "primeng": "^19.0.0",
     "@nx/devkit": "^20.3.0",
-    "@onecx/nx-migration-utils": "^6.10.0"
+    "@onecx/nx-migration-utils": "^6.12.1"
   },
   "dependencies": {},
   "type": "commonjs",
