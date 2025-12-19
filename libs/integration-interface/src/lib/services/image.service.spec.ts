@@ -30,11 +30,13 @@ describe('ImageService interface', () => {
     expect((service as any)._imageTopic$).toBeDefined();
   });
 
-   it('should return undefined from isInitialized when _imageTopic$ is undefined', async () => {
+  it('should return the isInitialized promise when _imageTopic$ is defined', async () => {
     const service = new ImageService();
-    const result = await service.isInitialized;
-    expect(result).toBeUndefined();
-   });
+    const mockPromise = Promise.resolve('initialized');
+    (service as any)._imageTopic$ = { isInitialized: mockPromise };
+    const result = service.isInitialized;
+    expect(result).toBe(mockPromise);
+  });
 
   it('should return a correct url when image exists', async () => {
     const result = await imageService.getUrl([URL_NAME]);
@@ -66,8 +68,10 @@ describe('ImageService interface', () => {
     expect(result).toBe(FALLBACK_URL);
 
     imageService.imageTopic?.publish({ image: { urls: undefined as any} });
-    const resultWhenUndefined = await imageService.getUrl([URL_NAME], FALLBACK_URL);
-    expect(resultWhenUndefined).toBe(FALLBACK_URL);
+    expect(await imageService.getUrl([URL_NAME], FALLBACK_URL)).toBe(FALLBACK_URL);
+
+    imageService.imageTopic?.publish({ image: undefined as any });
+    expect(await imageService.getUrl([URL_NAME], FALLBACK_URL)).toBe(FALLBACK_URL);
   });
 });
 

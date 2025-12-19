@@ -11,8 +11,8 @@ export class ImageService {
     set imageTopic(source: ImageTopic) {
         this._imageTopic$ = source
     }
-    get isInitialized(): Promise<void | undefined> {
-        return this._imageTopic$?.isInitialized ?? Promise.resolve(undefined);
+    get isInitialized(): Promise<void> {
+        return this.imageTopic.isInitialized;
     }
 
     async getUrl(names: string[]): Promise<string | undefined>
@@ -22,7 +22,7 @@ export class ImageService {
             return fallbackUrl;
         }
         const imagePaths = await firstValueFrom(this.imageTopic.asObservable());
-        const urls = imagePaths?.image?.urls || {};
+        const urls = imagePaths.image?.urls || {};
         const isUrlListEmpty = Object.entries(urls).length === 0;
         if (isUrlListEmpty) {
             return fallbackUrl;
@@ -36,6 +36,6 @@ export class ImageService {
     }
 
     destroy() {
-        this.imageTopic?.destroy();
+        this.imageTopic.destroy();
     }
 }
