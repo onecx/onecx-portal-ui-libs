@@ -1,0 +1,228 @@
+:troubleshooting_shared_packages: xref:latest@documentation:onecx-docs-guides:troubleshooting.adoc#shell-related
+:troubleshooting_webpack_config: xref:latest@documentation:onecx-docs-guides:troubleshooting.adoc#webpack-configuration
+:troubleshooting_installed_packages: xref:latest@documentation:onecx-docs-guides:troubleshooting.adoc#installed-packages
+
+:idprefix:
+:idseparator: -
+
+= OneCX UI Compatibility
+
+This guide lists the minimal requirements for an UI App to be fully compatible with OneCX. Each requirement is classified as "must-have" or "should-have" and the impact of missing each requirement is described.
+
+[#must-have-requirements]
+== Must-have Requirements
+
+[#lower-angular-version]
+=== Have lower Angular package version than the Shell or respective preloader
+Impact: Broken environment
+
+* Check the Shell version and ensure your App uses an equal or lower Angular version.
+* Please refer to this {troubleshooting_shared_packages}[Troubleshooting Guide shell related section] on how to use DevTools to inspect shared packages.
+
+[#onecx-compatible-migration]
+=== Constructed using @onecx/angular-webcomponents
+Impact: Router out of sync, many potential issues
+
+* For step-by-step instructions on migrating a vanilla Angular App to a OneCX-compatible microfrontend using @onecx/angular-webcomponents among other packages, refer to the xref:documentation:angular:cookbook/migrations/vanilla-to-onecx/index.adoc#migration-steps[Migration Steps in Vanilla to OneCX Migration Guide].
+
+[#module-federation-any-technology]
+=== Module-federation with remoteEntry.js (any technology)
+Impact: Applications exposed with different technologies might not be compatible with the Shell
+
+* Ensure your App exposes remoteEntry.js and is configured for module federation.
+
+[#expose-library-assets]
+=== Expose assets of used libraries
+Impact: Translations missing
+
+* Confirm assets (e.g., i18n) from libraries are exposed and available in your build output.
+* Include the assets of the libraries they use in the angular.json or project.json file.
+
+.Example assets configuration
+----
+...
+  "build": {
+    ...
+    "assets": [
+      ...
+      // @onecx/portal-integration-angular
+      {
+        "glob": "**/*",
+        "input": "node_modules/@onecx/portal-integration-angular/assets/",
+        "output": "/onecx-portal-lib/assets/"
+      }
+      // @onecx/angular-accelerator
+      {
+        "glob": "**/*",
+        "input": "./node_modules/@onecx/angular-accelerator/assets/",
+        "output": "/onecx-angular-accelerator/assets/"
+      }
+      // @onecx/angular-utils
+      {
+        "glob": "**/*",
+        "input": "./node_modules/@onecx/angular-utils/assets/",
+        "output": "/onecx-angular-utils/assets/"
+      }
+      ...
+    ],
+    ...
+  }
+...
+----
+
+[#expose-library-styles]
+=== Expose styles.css of used libraries
+Impact: Styles of components from libraries might be incorrect
+
+* Expose library styles in project.json or angular.json.
+
+.Example styles configuration
+----
+...
+  "build": {
+    ...
+    "styles": [
+      ...
+      // @onecx/portal-integration-angular
+      "node_modules/@onecx/portal-integration-angular/assets/styles.scss",
+      
+      // @onecx/angular-accelerator
+      "node_modules/@onecx/angular-accelerator/assets/styles.scss",
+      ...
+    ],
+    ...
+  }
+...
+----
+
+[#sharing-range]
+=== Sharing is done with '^'
+Impact: We should share as much as possible
+
+* Use caret '^' for all shared package versions in package.json (except rxjs, which should use '~').
+* Refer to the {troubleshooting_installed_packages}[Troubleshooting Guide installed packages section] for correct range and examples.
+
+[#shared-packages]
+=== Angular, PrimeNG, NGRX and OneCX packages are shared
+Impact: Broken application
+
+* In webpack.config.js, share all required packages
+* Refer to the {troubleshooting_webpack_config}[Troubleshooting Guide webpack config section] for correct sharing syntax and examples.
+
+[#share-angular-utils]
+=== Share @onecx/angular-utils library
+Impact: Might lead to unwanted side effects for your App and also other Apps in the Shell.
+
+* Especially if @onecx/angular-accelerator or @onecx/portal-integration-interface is used and shared.
+* Please check your webpack configuration and make sure to include the @onecx/angular-utils in the shared modules.
+
+[#routing-relative-paths]
+=== Routing is done with relative paths
+Impact: Incorrect routing results
+
+* Use relative paths in Angular router configuration to avoid navigation issues.
+* Please refer to the xref:documentation:angular:cookbook/routing/index.adoc#general-routing-guidelines[OneCX General Routing Guide] for using relative paths and other information on routing in OneCX.
+
+[#webpack-importmeta]
+=== Webpack configuration for importMeta
+Impact: Translation issues
+
+* Ensure your webpack configuration includes the correct importMeta configuration.
+* For the correct configuration, please refer to the xref:documentation:angular:cookbook/multi-language/multi-language-setup.adoc#provide-translation-path[OneCX Multi-language Translations Guide] and other information on multi-language in OneCX.
+
+[#package-compatibility]
+=== Ensure package compatibility
+Impact: Broken application
+
+* Verify that all packages used in your App are compatible with OneCX.
+
+.Compatible package versions for Angular 18 (libs version 5.x)
+|===
+| Package                        | Compatible Versions
+| @ngx-translate/core   | ^15.0.0
+| ngx-build-plus        | ^18.0.0
+| primeng               | ^17.18.0
+|===
+
+.Compatible package versions for Angular 19 (libs version 6.x)
+|===
+| Package                        | Compatible Versions
+| @ngx-translate/core   | ^16.0.0
+| ngx-build-plus        | ^19.0.0
+| primeng               | ^19.0.0
+|===
+
+[#should-have-requirements]
+== Should-have Requirements
+
+[#module-federation-webpack]
+=== Module-federation via webpack for exposing remoteEntry.js
+Impact: We don't know if other technologies are working
+
+* Prefer webpack for module federation setup.
+* Verify your webpack configuration:
+
+.Example webpack.config.js
+----
+...
+const config = withModuleFederationPlugin({
+  name: 'YOUR_MFE_NAME',
+  filename: 'remoteEntry.js',
+  exposes: {
+    './RemoteModule': 'src/main.ts',
+  },
+  shared: share({...})
+});
+...
+----
+
+[#expose-app-styles]
+=== Expose App styles.css
+Impact: No styles for the application are loaded
+
+* Ensure your App exposes its styles.css.
+* How the styles.css is exposed depends on the package used for building the App (NX or Angular CLI).
+* NX:
+
+.project.json
+----
+{
+    ...
+    "styles": [
+        {
+            "input": "./src/styles.scss",
+            "bundleName": "styles",
+            "inject": true
+        }
+    ],
+    ...
+}
+----
+
+* Angular CLI:
+
+.package.json
+----
+{
+    ...
+    "scripts": {
+        "postbuild": "mv \"$(find dist/my-project-name -maxdepth 1 -type f -name 'styles.*.css' | head -n 1)\" dist/my-project-name/styles.css",
+    }
+    ...
+}
+----
+
+* Adjust the build command in package.json to rename the generated styles file to styles.css because of the hash in the filename by adding
+`cp dist/replace_path_to/styles.*.css dist/replace_path_to/styles.css"`
+* Ensure the styles.css including all your styles is present in the build output.
+
+.Example package.json
+----
+...
+"scripts": {
+  ...
+    "build": "nx build && cp dist/my-project-name/styles.*.css dist/my-project-name/styles.css",
+  ...
+}
+...
+----

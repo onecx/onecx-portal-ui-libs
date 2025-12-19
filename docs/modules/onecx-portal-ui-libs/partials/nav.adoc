@@ -1,4 +1,5 @@
-* xref:onecx-portal-ui-libs:index.adoc[Libs]
+* xref:onecx-portal-ui-libs:index.adoc[UI Libraries]
+** xref:onecx-portal-ui-libs:onecx-compatibility.adoc[UI Compatibility]
 ** Migrations
 *** xref:onecx-portal-ui-libs:migrations/migrate-to-v6.adoc[Migrate to OneCX version 6]
 *** xref:onecx-portal-ui-libs:migrations/angular-19/index.adoc[Migrate OneCX App to Angular 19]
