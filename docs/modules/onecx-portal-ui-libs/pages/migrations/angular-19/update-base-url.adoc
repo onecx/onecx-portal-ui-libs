@@ -13,14 +13,14 @@ In OneCX v6, `BASE_URL` injection token has been removed and replaced by `REMOTE
 
 * Replace `BASE_URL` in component's providers array to `REMOTE_COMPONENT_CONFIG`
 * Replace `BASE_URL` in component's constructor injection to `REMOTE_COMPONENT_CONFIG`
-* Change replaced `REMOTE_COMPONENT_CONFIG` type to `RemoteComponentConfig`
+* Replace `BASE_URL` type `ReplaySubject<string>` to `REMOTE_COMPONENT_CONFIG` type `ReplaySubject<RemoteComponentConfig>`
 
 **Example**:
 
 .Before
 [source, typescript]
 ----
-import { BASE_URL, RemoteComponentConfig } from "@onecx/angular-remote-components";
+import { BASE_URL } from "@onecx/angular-remote-components";
 
 @Component({
   providers: [
