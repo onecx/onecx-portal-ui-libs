@@ -9,8 +9,6 @@ import {
   Injector,
   Input,
   LOCALE_ID,
-  OnChanges,
-  SimpleChanges,
   OnInit,
   Optional,
   Output,
@@ -57,7 +55,7 @@ export interface DataListGridComponentState {
   templateUrl: './data-list-grid.component.html',
   styleUrls: ['./data-list-grid.component.scss'],
 })
-export class DataListGridComponent extends DataSortBase implements OnInit, DoCheck, AfterContentInit, OnChanges{
+export class DataListGridComponent extends DataSortBase implements OnInit, DoCheck, AfterContentInit{
   @Input() titleLineId: string | undefined
   @Input() subtitleLineIds: string[] = []
   @Input() clientSideSorting = true
@@ -146,6 +144,12 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     totalRecords: '{totalRecords}',
   }
 
+  
+  currentResults: number | undefined;
+  private statusSubject = new BehaviorSubject<string>('');
+  status$: Observable<string> = this.statusSubject.asObservable();
+
+
   _data$ = new BehaviorSubject<RowListGridData[]>([])
   @Input()
   get data(): RowListGridData[] {
@@ -155,7 +159,15 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     !this._data$.getValue().length ?? this.resetPage()
     this._originalData = [...value]
     this._data$.next([...value])
+
+    this.currentResults = this.data.length ?? 0;
+    const newStatus = this.currentResults !== 0
+        ? 'OCX_DATA_LIST_GRID.SEARCH_RESULTS_FOUND'
+        : 'OCX_DATA_LIST_GRID.NO_SEARCH_RESULTS_FOUND';
+    this.statusSubject.next(newStatus); 
+    console.log('Data set called');
   }
+
   _filters$ = new BehaviorSubject<Filter[]>([])
   @Input()
   get filters(): Filter[] {
@@ -335,11 +347,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
   hasViewPermission$: Observable<boolean>
 
-  currentResults: number | undefined;
-  private statusSubject = new BehaviorSubject<string>('');
-  status$: Observable<string> = this.statusSubject.asObservable();
-
-
   constructor(
     @Inject(LOCALE_ID) locale: string,
     translateService: TranslateService,
@@ -475,17 +482,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
           break
       }
     })
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['data']) {
-      this.currentResults = changes['data'].currentValue?.length ?? 0;
-      const newStatus =
-        this.currentResults !== 0
-          ? 'DATAVIEW_RESULT_STATUS.SEARCH_RESULTS_FOUND'
-          : 'DATAVIEW_RESULT_STATUS.NO_SEARCH_RESULTS_FOUND';
-      this.statusSubject.next(newStatus);
-    }
   }
 
   onDeleteRow(element: ListGridData) {

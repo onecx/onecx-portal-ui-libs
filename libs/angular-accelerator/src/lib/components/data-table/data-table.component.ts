@@ -9,8 +9,6 @@ import {
   Injector,
   Input,
   LOCALE_ID,
-  OnChanges,
-  SimpleChanges,
   OnInit,
   Optional,
   Output,
@@ -80,10 +78,16 @@ export interface DataTableComponentState {
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
 })
-export class DataTableComponent extends DataSortBase implements OnInit, AfterContentInit, OnChanges {
+export class DataTableComponent extends DataSortBase implements OnInit, AfterContentInit{
   FilterType = FilterType
   TemplateType = TemplateType
   checked = true
+
+  currentResults: number | undefined;
+  private statusSubject = new BehaviorSubject<string>('');
+  status$: Observable<string> = this.statusSubject.asObservable();
+
+
   _rows$ = new BehaviorSubject<Row[]>([])
   @Input()
   get rows(): Row[] {
@@ -92,7 +96,17 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   set rows(value: Row[]) {
     !this._rows$.getValue().length ?? this.resetPage()
     this._rows$.next(value)
+    // this.currentResults = changes['rows'].currentValue?.length ?? 0;
+
+    this.currentResults = this.rows.length ?? 0;
+    const newStatus =
+      this.currentResults !== 0
+        ? 'OCX_DATA_TABLE.SEARCH_RESULTS_FOUND'
+        : 'OCX_DATA_TABLE.NO_SEARCH_RESULTS_FOUND';
+    this.statusSubject.next(newStatus);
+    console.log('Rows set called');
   }
+
   _selectionIds$ = new BehaviorSubject<(string | number)[]>([])
   @Input()
   set selectedRows(value: Row[] | string[] | number[]) {
@@ -409,12 +423,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
   templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
 
-  
-  currentResults: number | undefined;
-  private statusSubject = new BehaviorSubject<string>('');
-  status$: Observable<string> = this.statusSubject.asObservable();
-
-
   constructor(
     @Inject(LOCALE_ID) locale: string,
     translateService: TranslateService,
@@ -469,17 +477,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       })
     )
     this.rowSelectable = this.rowSelectable.bind(this)
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['rows']) {
-      this.currentResults = changes['rows'].currentValue?.length ?? 0;
-      const newStatus =
-        this.currentResults !== 0
-          ? 'DATAVIEW_RESULT_STATUS.SEARCH_RESULTS_FOUND'
-          : 'DATAVIEW_RESULT_STATUS.NO_SEARCH_RESULTS_FOUND';
-      this.statusSubject.next(newStatus);
-    }
   }
 
   ngOnInit(): void {

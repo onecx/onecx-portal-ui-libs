@@ -49,11 +49,9 @@
     },
     "SORTING_BUTTON_ARIA_LABEL": "Toggle sorting direction to {{direction}}"
   },
-  "DATAVIEW_RESULT_STATUS": {
-    "SEARCH_RESULTS_FOUND": "{{results}} Results Found",
-    "NO_SEARCH_RESULTS_FOUND": "No Results Found"
-  },
   "OCX_DATA_TABLE": {
+    "SEARCH_RESULTS_FOUND": "{{results}} Results Found",
+    "NO_SEARCH_RESULTS_FOUND": "No Results Found",
     "EMPTY_RESULT": "No data found.",
     "EMPTY_FILTER_MESSAGE": "No filters found.",
     "ACTIONS_COLUMN_NAME": "Actions",
@@ -83,6 +81,8 @@
     "FILTER_NO": "No"
   },
   "OCX_DATA_LIST_GRID": {
+    "SEARCH_RESULTS_FOUND": "{{results}} Results Found",
+    "NO_SEARCH_RESULTS_FOUND": "No Results Found",
     "EMPTY_RESULT": "No data found.",
     "MENU": {
       "VIEW": "View",
