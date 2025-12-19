@@ -2,9 +2,6 @@
 ** Migrations
 *** xref:onecx-portal-ui-libs:migrations/migrate-to-v6.adoc[Migrate to OneCX version 6]
 *** xref:onecx-portal-ui-libs:migrations/angular-19/index.adoc[Migrate OneCX App to Angular 19]
-** Libraries
-*** xref:onecx-portal-ui-libs:libraries/integration-interface.adoc[@onecx/integration-interface]
-*** xref:onecx-portal-ui-libs:libraries/angular-integration-interface.adoc[@onecx/angular-integration-interface]
 ** Services
 *** xref:onecx-portal-ui-libs:service/portal-message-service.adoc[PortalMessageService]
 *** xref:onecx-portal-ui-libs:service/portal-dialog-service.adoc[PortalDialogService]
