@@ -42,10 +42,12 @@ export class KeycloakAuthService implements AuthService {
 
     try {
       await import('keycloak-js').then(({ default: Keycloak }) => {
-      this.keycloak = new Keycloak(kcConfig)
-    });
+        this.keycloak = new Keycloak(kcConfig)
+      })
     } catch (err) {
-      throw new Error('Keycloak initialization failed! Could not load keycloak-js library which is required in the current environment.')
+      throw new Error(
+        'Keycloak initialization failed! Could not load keycloak-js library which is required in the current environment.'
+      )
     }
 
     if (!this.keycloak) {
