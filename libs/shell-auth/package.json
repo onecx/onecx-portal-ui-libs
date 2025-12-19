@@ -12,10 +12,13 @@
     "@angular/core": "^19.0.0",
     "@onecx/angular-integration-interface": "^7.0.0-rc.13",
     "@onecx/integration-interface": "^7.0.0-rc.13",
-    "keycloak-js": "^25.0.1",
-    "rxjs": "~7.8.0",
-    "@nx/devkit": "^20.3.0",
-    "@onecx/nx-migration-utils": "^7.0.0-rc.13"
+    "keycloak-js": "26.2.0",
+    "rxjs": "~7.8.0"
+  },
+  "peerDependenciesMeta": {
+    "keycloak-js": {
+      "optional": true
+    }
   },
   "publishConfig": {
     "access": "public"

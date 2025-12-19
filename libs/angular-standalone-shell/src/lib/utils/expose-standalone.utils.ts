@@ -11,7 +11,8 @@ import { initializeRouter } from '@onecx/angular-webcomponents'
 import { Router } from '@angular/router'
 import { PermissionsTopic, Theme, UserProfile, Workspace } from '@onecx/integration-interface'
 import { provideAlwaysGrantPermissionChecker, provideTranslationPathFromMeta } from '@onecx/angular-utils'
-import { provideAuthService, provideTokenInterceptor } from '@onecx/angular-auth'
+import { provideTokenInterceptor } from '@onecx/angular-auth'
+import { provideAuthService } from '@onecx/shell-auth'
 import { MessageService } from 'primeng/api'
 
 async function apply(themeService: ThemeService, theme: Theme): Promise<void> {

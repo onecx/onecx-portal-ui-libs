@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { createReportsConfig } from '../../jest-config-factory'
 
 export default {
