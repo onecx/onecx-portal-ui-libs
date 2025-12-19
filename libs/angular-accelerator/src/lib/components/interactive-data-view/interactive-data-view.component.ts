@@ -361,7 +361,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
       this.displayedColumnKeys = this.columns
         .filter((column) => column.predefinedGroupKeys?.includes(this.defaultGroupKey))
         .map((column) => column.id)
-    } 
+    }
     // TODO: Clarify if we want this behavior or not.
     else {
       this.displayedColumnKeys = this.columns.map((column) => column.id)
