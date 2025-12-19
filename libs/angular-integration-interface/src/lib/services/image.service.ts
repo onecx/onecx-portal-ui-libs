@@ -3,7 +3,7 @@ import { ImageService as ImageInterface } from '@onecx/integration-interface'
 
 @Injectable({providedIn: 'root'}) 
 export class ImageService implements OnDestroy {
-    private imageInterface = new ImageInterface();
+    private readonly imageInterface = new ImageInterface();
     
     async getUrl(names: string[]): Promise<string | undefined>;
     async getUrl(names: string[], fallbackUrl: string): Promise<string>;
