@@ -22,10 +22,11 @@ export class ImageService {
             return fallbackUrl;
         }
         const imagePaths = await firstValueFrom(this.imageTopic.asObservable());
-        if (!imagePaths) {
+        const urls = imagePaths?.image?.urls || {};
+        const isUrlListEmpty = Object.entries(urls).length === 0;
+        if (isUrlListEmpty) {
             return fallbackUrl;
         }
-        const urls = imagePaths.image?.urls || {};
         for (const name of names) {
             if (name in urls) {
                 return urls[name];

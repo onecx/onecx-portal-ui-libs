@@ -56,5 +56,18 @@ describe('ImageService interface', () => {
     imageService.destroy();
     expect(topicDestroySpy).toHaveBeenCalled();
   });
+
+  it('should return fallbackurl when names or image paths are not provided', async () => {
+    const noNamesResult = await imageService.getUrl([], FALLBACK_URL);
+    expect(noNamesResult).toBe(FALLBACK_URL);
+
+    imageService.imageTopic?.publish({ image: { urls: {} } });
+    const result = await imageService.getUrl([URL_NAME], FALLBACK_URL);
+    expect(result).toBe(FALLBACK_URL);
+
+    imageService.imageTopic?.publish({ image: { urls: undefined as any} });
+    const resultWhenUndefined = await imageService.getUrl([URL_NAME], FALLBACK_URL);
+    expect(resultWhenUndefined).toBe(FALLBACK_URL);
+  });
 });
 
