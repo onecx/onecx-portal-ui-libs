@@ -1,0 +1,33 @@
+[#remove-portal-core-module]
+=== Remove PortalCoreModule
+
+In OneCX v6, `PortalCoreModule` has been replaced with `AngularAcceleratorModule`.
+
+**Update imports**:
+
+* Replace all imports of `PortalCoreModule` from '@onecx/portal-integration-angular' with `AngularAcceleratorModule` from `@onecx/angular-accelerator`.
+* Replace `PortalCoreModule` (also `PortalCoreModule.forRoot()`, `PortalCoreModule.forMicroFrontend()`) with `AngularAcceleratorModule`.
+
+**Example**:
+
+.Before
+[source, typescript]
+----
+import { PortalCoreModule } from "@onecx/portal-integration-angular";
+
+@Component({
+  standalone: true,
+  imports: [PortalCoreModule]
+})
+----
+
+.After
+[source, typescript]
+----
+import { AngularAcceleratorModule } from "@onecx/angular-accelerator";
+
+@Component({
+  standalone: true,
+  imports: [AngularAcceleratorModule]
+})
+----
