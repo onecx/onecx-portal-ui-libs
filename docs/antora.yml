@@ -1,2 +1,4 @@
+# Define the same name space as used for the parent documentation project https://github.com/onecx/docs
 name: documentation
 version: latest
+# Do not add any further properties here. This will affect the parent documentation project.
