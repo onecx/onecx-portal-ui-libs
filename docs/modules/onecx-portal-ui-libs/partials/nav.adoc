@@ -1,12 +1,19 @@
 * xref:onecx-portal-ui-libs:index.adoc[UI Libraries]
-** xref:onecx-portal-ui-libs:onecx-compatibility.adoc[UI Compatibility]
+** Libraries
+*** xref:onecx-portal-ui-libs:libraries/angular-integration-interface.adoc[angular-integration-interface]
+*** xref:onecx-portal-ui-libs:libraries/integration-interface.adoc[integration-interface]
+
+** xref:onecx-portal-ui-libs:onecx-compatibility.adoc[Compatibility]
+
 ** Migrations
 *** xref:onecx-portal-ui-libs:migrations/migrate-to-v6.adoc[Migrate to OneCX version 6]
 *** xref:onecx-portal-ui-libs:migrations/angular-19/index.adoc[Migrate OneCX App to Angular 19]
+
 ** Services
 *** xref:onecx-portal-ui-libs:service/portal-message-service.adoc[PortalMessageService]
 *** xref:onecx-portal-ui-libs:service/portal-dialog-service.adoc[PortalDialogService]
 *** xref:onecx-portal-ui-libs:service/workspace-service.adoc[WorkspaceService]
+
 ** Components
 *** xref:onecx-portal-ui-libs:components/page-header.adoc[PageHeader]
 *** xref:onecx-portal-ui-libs:components/group-by-count-diagram.adoc[GroupByCountDiagram]
