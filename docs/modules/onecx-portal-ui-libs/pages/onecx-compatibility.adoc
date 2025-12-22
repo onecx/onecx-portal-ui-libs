@@ -121,14 +121,14 @@ Impact: Might lead to unwanted side effects for your App and also other Apps in 
 Impact: Incorrect routing results
 
 * Use relative paths in Angular router configuration to avoid navigation issues.
-* Please refer to the xref:documentation:angular/cookbook/routing/index.adoc#general-routing-guidelines[OneCX General Routing Guide] for using relative paths and other information on routing in OneCX.
+* Please refer to the xref:documentation:docs-guides-ui:angular/cookbook/routing/index.adoc#general-routing-guidelines[OneCX Routing Guide] for using relative paths and other information on routing in OneCX.
 
 [#webpack-importmeta]
 === Webpack configuration for importMeta
 Impact: Translation issues
 
 * Ensure your webpack configuration includes the correct importMeta configuration.
-* For the correct configuration, please refer to the xref:documentation:angular/cookbook/multi-language/multi-language-setup.adoc#provide-translation-path[OneCX Multi-language Translations Guide] and other information on multi-language in OneCX.
+* For the correct configuration, please refer to the xref:documentation:docs-guides-ui:angular/cookbook/multi-language/multi-language-setup.adoc#provide-translation-path[OneCX Multi-language Translations Guide] and other information on multi-language in OneCX.
 
 [#package-compatibility]
 === Ensure package compatibility
