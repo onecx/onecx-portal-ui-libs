@@ -7,7 +7,7 @@ import { LoadingIndicatorComponent } from './loading-indicator.component'
 import { StorybookThemeModule } from '../../storybook-theme.module'
 
 export default {
-  title: 'Components/LoadaingIndicatorComponent',
+  title: 'Components/LoadingIndicatorComponent',
   component: LoadingIndicatorComponent,
   decorators: [
     applicationConfig({

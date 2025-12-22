@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { Meta, StoryFn, applicationConfig, moduleMetadata } from '@storybook/angular'
 import { StorybookTranslateModule } from '../../storybook-translate.module'
+import { StorybookThemeModule } from '../../storybook-theme.module'
 import { LifecycleComponent, LifecycleStep } from './lifecycle.component'
 import { TimelineModule } from 'primeng/timeline'
 import { CardModule } from 'primeng/card'
@@ -12,7 +13,11 @@ export default {
   component: LifecycleComponent,
   decorators: [
     applicationConfig({
-      providers: [importProvidersFrom(BrowserModule), importProvidersFrom(BrowserAnimationsModule)],
+      providers: [
+        importProvidersFrom(BrowserModule),
+        importProvidersFrom(BrowserAnimationsModule),
+        importProvidersFrom(StorybookThemeModule),
+      ],
     }),
     moduleMetadata({
       declarations: [LifecycleComponent],
