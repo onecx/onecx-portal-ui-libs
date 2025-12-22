@@ -1,6 +1,6 @@
-:troubleshooting_shared_packages: xref:latest@documentation:onecx-docs-guides:troubleshooting.adoc#shell-related
-:troubleshooting_webpack_config: xref:latest@documentation:onecx-docs-guides:troubleshooting.adoc#webpack-configuration
-:troubleshooting_installed_packages: xref:latest@documentation:onecx-docs-guides:troubleshooting.adoc#installed-packages
+:troubleshooting_shared_packages: xref:documentation:onecx-docs-guides:troubleshooting.adoc#shell-related
+:troubleshooting_webpack_config: xref:documentation:onecx-docs-guides:troubleshooting.adoc#webpack-configuration
+:troubleshooting_installed_packages: xref:documentation:onecx-docs-guides:troubleshooting.adoc#installed-packages
 
 :idprefix:
 :idseparator: -
@@ -23,7 +23,7 @@ Impact: Broken environment
 === Constructed using @onecx/angular-webcomponents
 Impact: Router out of sync, many potential issues
 
-* For step-by-step instructions on migrating a vanilla Angular App to a OneCX-compatible microfrontend using @onecx/angular-webcomponents among other packages, refer to the xref:documentation:angular:cookbook/migrations/vanilla-to-onecx/index.adoc#migration-steps[Migration Steps in Vanilla to OneCX Migration Guide].
+* For step-by-step instructions on migrating a vanilla Angular App to a OneCX-compatible microfrontend using @onecx/angular-webcomponents among other packages, refer to the xref:documentation:docs-guides-ui:angular:cookbook/migrations/vanilla-to-onecx/index.adoc#migration-steps[Migration Steps in Vanilla to OneCX Migration Guide].
 
 [#module-federation-any-technology]
 === Module-federation with remoteEntry.js (any technology)
