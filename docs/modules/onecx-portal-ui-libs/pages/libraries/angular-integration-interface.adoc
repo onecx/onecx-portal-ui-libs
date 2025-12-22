@@ -1,7 +1,7 @@
-= OneCX angular-integration-interface Library
-
 :idprefix:
 :idseparator: -
+
+= Library: @onecx/angular-integration-interface
 
 :integration-interface_url: xref:onecx-portal-ui-libs:libraries/integration-interface.adoc
 :global_error_topic_url: xref:onecx-portal-ui-libs:libraries/integration-interface.adoc#global-error-topic
