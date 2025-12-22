@@ -1,7 +1,7 @@
 :idprefix:
 :idseparator: -
 
-:angular_issues_url: xref:latest@docs:general:implementation-details/mfe-content-loading/webcomponents.adoc#angular-issues
+:angular_issues_url: xref:documentation:docs-guides-ui:implementation-details/mfe-content-loading/webcomponents.adoc#angular-issues
 
 = Library: @onecx/integration-interface
 
@@ -9,11 +9,11 @@
 == Overview
 `@onecx/integration-interface` library is a set of tools written in **Typescript** that enables communication between Microfrontends. The library can be used in any desired technology.
 
-NOTE: For Angular-based applications, the xref:onecx-portal-ui-libs:libraries/angular-integration-interface.adoc[@onecx/angular-integration-interface] library is available. It is a set of tools aiming to ease the development of Angular applications integrated with OneCX. For more information, please refer xref:onecx-portal-ui-libs:libraries/angular-integration-interface.adoc[here].
+NOTE: For Angular-based applications, the xref:./angular-integration-interface.adoc[@onecx/angular-integration-interface] library is available. It is a set of tools aiming to ease the development of Angular applications integrated with OneCX. For more information, please refer xref:./angular-integration-interface.adoc[here].
 
 [#topics]
 == Topics
-include::partial$topic.adoc[]
+include::documentation:onecx-portal-ui-libs:partial$topic.adoc[]
 
 [#configuration-topic]
 === Configuration Topic
@@ -27,7 +27,7 @@ Data::
 [source,typescript]
 interface Config { [key: string]: string }
 
-NOTE: For Angular-based applications, the xref:onecx-portal-ui-libs:libraries/angular-integration-interface.adoc#configuration-service[@onecx/angular-integration-interface offers an Injectable ConfigurationService service] exposing functions useful when dealing with configuration management. This service is used by the Shell Application.
+NOTE: For Angular-based applications, the xref:./angular-integration-interface.adoc#configuration-service[@onecx/angular-integration-interface offers an Injectable ConfigurationService service] exposing functions useful when dealing with configuration management. This service is used by the Shell Application.
 
 [#current-mfe-topic]
 === Current Mfe Topic
@@ -56,7 +56,7 @@ Data::
 |[.line-through]#remote?# |[.line-through]#`string`# | Deprecated.
 |===
 
-include::partial$app-state-service-note.adoc[]
+include::documentation:onecx-portal-ui-libs:partial$app-state-service-note.adoc[]
 
 [#current-page-topic]
 === Current Page Topic
@@ -82,12 +82,12 @@ Data::
 
 |===
 
-include::partial$app-state-service-note.adoc[]
+include::documentation:onecx-portal-ui-libs:partial$app-state-service-note.adoc[]
 
 [#current-theme-topic]
 === Current Theme Topic
 Usage::
-Read information about the **currently applied Theme**. Writing new messages to this Topic will not change the current Theme applied to a page, which might cause inconsistency. If it is desired to change the current Theme, please consider using xref:onecx-portal-ui-libs:libraries/angular-integration-interface.adoc#theme-service[Theme Service]. For other technologies, make sure to apply the chosen Theme before publishing a new message to the Topic.
+Read information about the **currently applied Theme**. Writing new messages to this Topic will not change the current Theme applied to a page, which might cause inconsistency. If it is desired to change the current Theme, please consider using xref:./angular-integration-interface.adoc#theme-service[Theme Service]. For other technologies, make sure to apply the chosen Theme before publishing a new message to the Topic.
 Shell actions::
 During Workspace construction, Shell is going to load and apply Theme assigned to the Workspace. That Theme's information will also be published to the Topic.
 Data::
@@ -110,7 +110,7 @@ Data::
 |[.line-through]#previewImageUrl?# | [.line-through]#`string`# | Deprecated.
 |===
 
-NOTE: For Angular-based applications, the xref:onecx-portal-ui-libs:libraries/angular-integration-interface.adoc#theme-service[@onecx/angular-integration-interface offers an Injectable ThemeService service] exposing functions useful when dealing with theme management.
+NOTE: For Angular-based applications, the xref:./angular-integration-interface.adoc#theme-service[@onecx/angular-integration-interface offers an Injectable ThemeService service] exposing functions useful when dealing with theme management.
 
 [#current-workspace-topic]
 === Current Workspace Topic
@@ -172,7 +172,7 @@ Data::
 | url |`string` | Microfrontend's remote URL to be used when accessing its content (remote entry file, assets, etc.), e.g. `'/mfe/mfe_name'`.
 |===
 
-include::partial$app-state-service-note.adoc[]
+include::documentation:onecx-portal-ui-libs:partial$app-state-service-note.adoc[]
 
 [#events-topic]
 === Events Topic
@@ -206,7 +206,7 @@ Shell will display the errors published to this Topic in a designated place, reg
 Data::
 **String** containing information about the global error raised within the platform.
 
-include::partial$app-state-service-note.adoc[]
+include::documentation:onecx-portal-ui-libs:partial$app-state-service-note.adoc[]
 
 [#global-loading-topic]
 === Global Loading Topic
@@ -217,7 +217,7 @@ Shell sets the global loading indicator for the remote content loading period.
 Data::
 **Boolean** indicating whether global loading is happening or not.
 
-include::partial$app-state-service-note.adoc[]
+include::documentation:onecx-portal-ui-libs:partial$app-state-service-note.adoc[]
 
 [#is-authenticated-topic]
 === Is Authenticated Topic
@@ -229,7 +229,7 @@ Shell uses AuthService from the `@onecx/angular-auth` library for authentication
 Data::
 **Empty**
 
-include::partial$app-state-service-note.adoc[]
+include::documentation:onecx-portal-ui-libs:partial$app-state-service-note.adoc[]
 
 [#message-topic]
 === Message Topic
@@ -242,7 +242,7 @@ Data::
 
 NOTE: **Message object** structure is based on the https://primeng.org/toast[PrimeNG Toast API], which is used internally to display messages.
 
-NOTE: For Angular-based applications, the xref:onecx-portal-ui-libs:libraries/angular-integration-interface.adoc#portal-message-service[@onecx/angular-integration-interface offers an Injectable PortalMessageService service] exposing functions useful when dealing with displaying messages.
+NOTE: For Angular-based applications, the xref:./angular-integration-interface.adoc#portal-message-service[@onecx/angular-integration-interface offers an Injectable PortalMessageService service] exposing functions useful when dealing with displaying messages.
 
 [#permissions-topic]
 === Permissions Topic
@@ -253,7 +253,7 @@ On Route activation publishes information about permissions related to the acces
 Data::
 **Array<string>**, each representing user's permission.
 
-NOTE: For Angular-based applications, the xref:onecx-portal-ui-libs:libraries/angular-integration-interface.adoc#user-service[@onecx/angular-integration-interface offers an Injectable UserService service] exposing functions useful when dealing with user related data.
+NOTE: For Angular-based applications, the xref:./angular-integration-interface.adoc#user-service[@onecx/angular-integration-interface offers an Injectable UserService service] exposing functions useful when dealing with user related data.
 
 [#permissions-rpc-topic]
 === Permissions Rpc Topic
@@ -436,4 +436,4 @@ Data::
 |timezone? |`string` | User's timezone.
 |===
 
-NOTE: For Angular-based applications, the xref:onecx-portal-ui-libs:libraries/angular-integration-interface.adoc#user-service[@onecx/angular-integration-interface offers an Injectable UserService service] exposing functions useful when dealing with user related data.
+NOTE: For Angular-based applications, the xref:./angular-integration-interface.adoc#user-service[@onecx/angular-integration-interface offers an Injectable UserService service] exposing functions useful when dealing with user related data.

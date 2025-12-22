@@ -23,7 +23,7 @@ Impact: Broken environment
 === Constructed using @onecx/angular-webcomponents
 Impact: Router out of sync, many potential issues
 
-* For step-by-step instructions on migrating a vanilla Angular App to a OneCX-compatible microfrontend using @onecx/angular-webcomponents among other packages, refer to the xref:documentation:docs-guides-ui:angular:cookbook/migrations/vanilla-to-onecx/index.adoc#migration-steps[Migration Steps in Vanilla to OneCX Migration Guide].
+* For step-by-step instructions on migrating a vanilla Angular App to a OneCX-compatible microfrontend using @onecx/angular-webcomponents among other packages, refer to the xref:documentation:docs-guides-ui:angular/cookbook/migrations/vanilla-to-onecx/index.adoc#migration-steps[Migration Steps in Vanilla to OneCX Migration Guide].
 
 [#module-federation-any-technology]
 === Module-federation with remoteEntry.js (any technology)
@@ -121,14 +121,14 @@ Impact: Might lead to unwanted side effects for your App and also other Apps in 
 Impact: Incorrect routing results
 
 * Use relative paths in Angular router configuration to avoid navigation issues.
-* Please refer to the xref:documentation:angular:cookbook/routing/index.adoc#general-routing-guidelines[OneCX General Routing Guide] for using relative paths and other information on routing in OneCX.
+* Please refer to the xref:documentation:angular/cookbook/routing/index.adoc#general-routing-guidelines[OneCX General Routing Guide] for using relative paths and other information on routing in OneCX.
 
 [#webpack-importmeta]
 === Webpack configuration for importMeta
 Impact: Translation issues
 
 * Ensure your webpack configuration includes the correct importMeta configuration.
-* For the correct configuration, please refer to the xref:documentation:angular:cookbook/multi-language/multi-language-setup.adoc#provide-translation-path[OneCX Multi-language Translations Guide] and other information on multi-language in OneCX.
+* For the correct configuration, please refer to the xref:documentation:angular/cookbook/multi-language/multi-language-setup.adoc#provide-translation-path[OneCX Multi-language Translations Guide] and other information on multi-language in OneCX.
 
 [#package-compatibility]
 === Ensure package compatibility
