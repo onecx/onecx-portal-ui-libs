@@ -45,6 +45,7 @@ import { ObjectUtils } from '../../utils/objectutils'
 import { findTemplate } from '../../utils/template.utils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
+import { LiveAnnouncer } from '@angular/cdk/a11y'
 
 export type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -82,6 +83,9 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   FilterType = FilterType
   TemplateType = TemplateType
   checked = true
+
+  currentResults: number | undefined;
+
   _rows$ = new BehaviorSubject<Row[]>([])
   @Input()
   get rows(): Row[] {
@@ -90,7 +94,18 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   set rows(value: Row[]) {
     !this._rows$.getValue().length ?? this.resetPage()
     this._rows$.next(value)
+
+    this.currentResults = this.rows.length ?? 0;
+    const newStatus =
+      this.currentResults !== 0
+        ? 'OCX_DATA_TABLE.SEARCH_RESULTS_FOUND'
+        : 'OCX_DATA_TABLE.NO_SEARCH_RESULTS_FOUND';
+
+    this.translateService.get(newStatus , { results: this.currentResults ?? 0 }).subscribe((translatedText: string) => {
+      this.liveAnnouncer.announce(translatedText);
+    });
   }
+
   _selectionIds$ = new BehaviorSubject<(string | number)[]>([])
   @Input()
   set selectedRows(value: Row[] | string[] | number[]) {
@@ -413,6 +428,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     private router: Router,
     private injector: Injector,
     private userService: UserService,
+    private liveAnnouncer: LiveAnnouncer,
     @Inject(HAS_PERMISSION_CHECKER) @Optional() private hasPermissionChecker?: HasPermissionChecker
   ) {
     super(locale, translateService)

@@ -17,6 +17,7 @@ import {
   ViewChildren,
 } from '@angular/core'
 import { Router } from '@angular/router'
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 import { MfeInfo } from '@onecx/integration-interface'
@@ -144,6 +145,9 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     totalRecords: '{totalRecords}',
   }
 
+  
+  currentResults: number | undefined;
+
   _data$ = new BehaviorSubject<RowListGridData[]>([])
   @Input()
   get data(): RowListGridData[] {
@@ -153,7 +157,17 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     !this._data$.getValue().length ?? this.resetPage()
     this._originalData = [...value]
     this._data$.next([...value])
+
+    this.currentResults = this.data.length ?? 0;
+    const newStatus = this.currentResults !== 0
+        ? 'OCX_DATA_LIST_GRID.SEARCH_RESULTS_FOUND'
+        : 'OCX_DATA_LIST_GRID.NO_SEARCH_RESULTS_FOUND';
+
+    this.translateService.get(newStatus , { results: this.currentResults ?? 0 }).subscribe((translatedText: string) => {
+      this.liveAnnouncer.announce(translatedText);
+    });
   }
+
   _filters$ = new BehaviorSubject<Filter[]>([])
   @Input()
   get filters(): Filter[] {
@@ -340,6 +354,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     private router: Router,
     private injector: Injector,
     private appStateService: AppStateService,
+    private liveAnnouncer: LiveAnnouncer,
     @Inject(HAS_PERMISSION_CHECKER) @Optional() private hasPermissionChecker?: HasPermissionChecker
   ) {
     super(locale, translateService)
