@@ -1,0 +1,62 @@
+[#update-filtertype-value]
+=== Update FilterType Value
+
+In OneCX v6, two `FilterType` enum values were renamed.
+
+**Update values**:
+
+* `FilterType.EQUAL` → `FilterType.EQUALS`
+* `FilterType.TRUTHY` → `FilterType.IS_NOT_EMPTY`
+
+**Example**:
+
+.Before
+[source, typescript]
+----
+columns: [
+  {
+    id: 'amount',
+    columnType: ColumnType.NUMBER,
+    nameKey: 'Amount',
+    sortable: true,
+    filterable: true,
+    filterType: FilterType.EQUAL,
+    predefinedGroupKeys: ['test', 'test1'],
+  },
+  {
+    id: 'available',
+    columnType: ColumnType.STRING,
+    nameKey: 'Available',
+    sortable: false,
+    filterable: true,
+    filterType: FilterType.TRUTHY,
+    predefinedGroupKeys: ['test2'],
+  },
+]
+----
+
+.After
+[source, typescript]
+----
+columns: [
+  {
+    id: 'amount',
+    columnType: ColumnType.NUMBER,
+    nameKey: 'Amount',
+    sortable: true,
+    filterable: true,
+    filterType: FilterType.EQUALS,
+    predefinedGroupKeys: ['test', 'test1'],
+  },
+  {
+    id: 'available',
+    columnType: ColumnType.STRING,
+    nameKey: 'Available',
+    sortable: false,
+    filterable: true,
+    filterType: FilterType.IS_NOT_EMPTY,
+    predefinedGroupKeys: ['test2'],
+  },
+]
+----
+
