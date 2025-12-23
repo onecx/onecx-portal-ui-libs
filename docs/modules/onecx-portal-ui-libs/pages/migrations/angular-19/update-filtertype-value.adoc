@@ -17,20 +17,16 @@ columns: [
   {
     id: 'amount',
     columnType: ColumnType.NUMBER,
-    nameKey: 'Amount',
-    sortable: true,
+    nameKey: 'FEATURE_SEARCH.RESULTS.AMOUNT',
     filterable: true,
     filterType: FilterType.EQUAL,
-    predefinedGroupKeys: ['test', 'test1'],
-  },
+  }
   {
     id: 'available',
     columnType: ColumnType.STRING,
-    nameKey: 'Available',
-    sortable: false,
+    nameKey: 'FEATURE_SEARCH.RESULTS.AVAILABLE',
     filterable: true,
     filterType: FilterType.TRUTHY,
-    predefinedGroupKeys: ['test2'],
   },
 ]
 ----
@@ -42,20 +38,16 @@ columns: [
   {
     id: 'amount',
     columnType: ColumnType.NUMBER,
-    nameKey: 'Amount',
-    sortable: true,
+    nameKey: 'FEATURE_SEARCH.RESULTS.AMOUNT',
     filterable: true,
     filterType: FilterType.EQUALS,
-    predefinedGroupKeys: ['test', 'test1'],
-  },
+  }
   {
     id: 'available',
     columnType: ColumnType.STRING,
-    nameKey: 'Available',
-    sortable: false,
+    nameKey: 'FEATURE_SEARCH.RESULTS.AVAILABLE',
     filterable: true,
     filterType: FilterType.IS_NOT_EMPTY,
-    predefinedGroupKeys: ['test2'],
   },
 ]
 ----
