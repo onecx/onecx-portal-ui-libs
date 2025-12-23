@@ -45,6 +45,7 @@ import { ObjectUtils } from '../../utils/objectutils'
 import { findTemplate } from '../../utils/template.utils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
+import { LiveAnnouncer } from '@angular/cdk/a11y'
 
 export type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -84,9 +85,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   checked = true
 
   currentResults: number | undefined;
-  private statusSubject = new BehaviorSubject<string>('');
-  status$: Observable<string> = this.statusSubject.asObservable();
-
 
   _rows$ = new BehaviorSubject<Row[]>([])
   @Input()
@@ -102,7 +100,10 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       this.currentResults !== 0
         ? 'OCX_DATA_TABLE.SEARCH_RESULTS_FOUND'
         : 'OCX_DATA_TABLE.NO_SEARCH_RESULTS_FOUND';
-    this.statusSubject.next(newStatus);
+
+    this.translateService.get(newStatus , { results: this.currentResults ?? 0 }).subscribe((translatedText: string) => {
+      this.liveAnnouncer.announce(translatedText);
+    });
   }
 
   _selectionIds$ = new BehaviorSubject<(string | number)[]>([])
@@ -427,6 +428,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     private router: Router,
     private injector: Injector,
     private userService: UserService,
+    private liveAnnouncer: LiveAnnouncer,
     @Inject(HAS_PERMISSION_CHECKER) @Optional() private hasPermissionChecker?: HasPermissionChecker
   ) {
     super(locale, translateService)

@@ -1,7 +1,3 @@
-<div class="at-search-status" role="status" aria-atomic="true">
-  {{ (status$ | async)! | translate : { results : currentResults ?? 0 } }}
-</div>
-
 <ng-template #actionColumn let-rowObject="localRowObject">
   <ng-container
     *ngIf="anyRowActionObserved || this.additionalActions.length > 0 || ((this.overflowActions$ | async) ?? []).length > 0"

@@ -1,7 +1,3 @@
-<div class="at-search-status" role="status" aria-atomic="true">
-  {{ (status$ | async)! | translate : { results : currentResults ?? 0 } }}
-</div>
-
 <ng-container *ngIf="(displayedPageSize$ | async) as displayedPageSize">
   <p-dataView
     *ngIf="(columnTemplates$ | async) ?? {} as columnTemplates"
