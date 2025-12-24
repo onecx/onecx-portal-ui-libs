@@ -62,11 +62,11 @@ describe('ImageService', () => {
 
   it('should test topic getter/setter and isInitialized getter', async () => {    
     const mockIsInitialized = Promise.resolve();
-    const mockTopic: any = { isInitialized: mockIsInitialized };
+    jest.spyOn(imageInterface, 'isInitialized', 'get').mockReturnValue(mockIsInitialized);
+    
+    service.imageTopic = imageInterface.imageTopic;
 
-    service.imageTopic = mockTopic;
-
-    expect(service.imageTopic).toBe(mockTopic);
+    expect(service.imageTopic).toBe(imageInterface.imageTopic);
     expect(service.isInitialized).toBe(mockIsInitialized);
   });
 });
