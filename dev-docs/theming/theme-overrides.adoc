@@ -3,7 +3,7 @@
 
 :idprefix:
 :idseparator: -
-:theme_overrides: https://onecx.github.io/docs/guides/current/angular/cookbook/theming.html#theme-overrides
+:theme_overrides: https://onecx.github.io/docs/guides/current/angular/theming.html#theme-overrides
 :custom_use_style_service: ../../libs/angular-utils/src/lib/services/custom-use-style.service.ts
 
 The goal of this document is to explain theme overrides for PrimeNG design tokens available in OneCX and technical details behind them. After reading this document it should be clear how theme overrides are achieved and how to use them.

@@ -289,7 +289,7 @@ function warnUserServiceHasPermission(tree: Tree, srcDirectoryPath: string) {
 function warnOcxPortalViewport(tree: Tree, directoryPath: string) {
   const foundInFiles: string[] = []
   const warning =
-    '⚠️ ocx-portal-viewport was removed. Please refer to the standalone guide for adaptations: https://onecx.github.io/docs/guides/current/angular/cookbook/migrations/enable-standalone/index.html'
+    '⚠️ ocx-portal-viewport was removed. Please refer to the standalone guide for adaptations: https://onecx.github.io/docs/guides/current/angular/migrations/enable-standalone/index.html'
 
   visitNotIgnoredFiles(tree, directoryPath, (filePath) => {
     if (hasHtmlTag(tree, filePath, 'ocx-portal-viewport')) {

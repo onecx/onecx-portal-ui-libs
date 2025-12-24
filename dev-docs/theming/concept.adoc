@@ -3,7 +3,7 @@
 
 :idprefix:
 :idseparator: -
-:theme_variables_list: https://onecx.github.io/docs/guides/current/angular/cookbook/theming.html#theme-variables
+:theme_variables_list: https://onecx.github.io/docs/guides/current/angular/theming.html#theme-variables
 
 This document outlines the theming capabilities in **OneCX**, focusing on how themes are structured, applied, and managed. It provides both conceptual and technical insights to help developers and administrators understand how to implement and customize themes effectively. After reading, you should be able to:
 
