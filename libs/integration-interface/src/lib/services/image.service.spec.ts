@@ -7,7 +7,7 @@ import { ImageInfo } from '../topics/image/image.model';
 const URL_NAME = 'logo1';
 const EXPECTED_URL = '/logo1-url';
 const FALLBACK_URL = '/fallback-url';
-const MOCK_URLS: ImageInfo = { image: { urls: { [URL_NAME]: EXPECTED_URL, 'logo2': '/logo2-url' } } };
+const MOCK_URLS: ImageInfo = { images: { [URL_NAME]: EXPECTED_URL, 'logo2': '/logo2-url' } };
 
 describe('ImageService interface', () => {
   let imageService: ImageService;
@@ -63,14 +63,14 @@ describe('ImageService interface', () => {
     const noNamesResult = await imageService.getUrl([], FALLBACK_URL);
     expect(noNamesResult).toBe(FALLBACK_URL);
 
-    imageService.imageTopic?.publish({ image: { urls: {} } });
+    imageService.imageTopic?.publish({ images: {} });
     const result = await imageService.getUrl([URL_NAME], FALLBACK_URL);
     expect(result).toBe(FALLBACK_URL);
 
-    imageService.imageTopic?.publish({ image: { urls: undefined as any} });
+    imageService.imageTopic?.publish({ images: undefined as any });
     expect(await imageService.getUrl([URL_NAME], FALLBACK_URL)).toBe(FALLBACK_URL);
 
-    imageService.imageTopic?.publish({ image: undefined as any });
+    imageService.imageTopic?.publish({ images: undefined as any });
     expect(await imageService.getUrl([URL_NAME], FALLBACK_URL)).toBe(FALLBACK_URL);
   });
 });

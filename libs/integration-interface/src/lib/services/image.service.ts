@@ -22,7 +22,7 @@ export class ImageService {
             return fallbackUrl;
         }
         const imagePaths = await firstValueFrom(this.imageTopic.asObservable());
-        const urls = imagePaths.image?.urls || {};
+        const urls = imagePaths.images || {};
         const isUrlListEmpty = Object.entries(urls).length === 0;
         if (isUrlListEmpty) {
             return fallbackUrl;

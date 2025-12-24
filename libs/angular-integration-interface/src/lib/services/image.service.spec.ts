@@ -6,7 +6,7 @@ import { FakeTopic } from '@onecx/accelerator';
 const URL_NAME = 'logo1';
 const EXPECTED_URL = '/logo1-url';
 const FALLBACK_URL = '/fallback-url';
-const MOCK_URLS: ImageInfo = { image: { urls: { [URL_NAME]: EXPECTED_URL, 'logo2': '/logo2-url' } } };
+const MOCK_URLS: ImageInfo = { images: { [URL_NAME]: EXPECTED_URL, 'logo2': '/logo2-url' } };
 
 describe('ImageService', () => {
   let service: ImageService;
@@ -24,7 +24,7 @@ describe('ImageService', () => {
   });
 
   it('should call getUrl without fallback', async () => {
-	const expectedUrl = MOCK_URLS.image?.urls[URL_NAME];
+	const expectedUrl = MOCK_URLS.images[URL_NAME];
 	const spyGetUrl = jest.spyOn(imageInterface, 'getUrl').mockResolvedValue(expectedUrl);
 
     const result = await service.getUrl([URL_NAME]);
@@ -58,5 +58,15 @@ describe('ImageService', () => {
     service.destroy();
 	
     expect(spyDestroy).toHaveBeenCalled();
+  });  
+
+  it('should test topic getter/setter and isInitialized getter', async () => {    
+    const mockIsInitialized = Promise.resolve();
+    const mockTopic: any = { isInitialized: mockIsInitialized };
+
+    service.imageTopic = mockTopic;
+
+    expect(service.imageTopic).toBe(mockTopic);
+    expect(service.isInitialized).toBe(mockIsInitialized);
   });
 });
