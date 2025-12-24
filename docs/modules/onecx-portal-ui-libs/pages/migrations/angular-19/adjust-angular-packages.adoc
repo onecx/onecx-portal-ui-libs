@@ -1,0 +1,38 @@
+[#adjust-angular-packages]
+=== Adjust Angular Packages in Webpack Config
+
+In OneCX v6, Angular packages in the webpack configuration should **not** be set with `singleton: true`.
+
+**Update configuration**:
+
+* In `'webpack.config.js'`, inside `'withModuleFederationPlugin( ... )'`
+  remove the `'singleton'` property from every entry whose key starts with `'@angular/'`.
+* Do not change non‑Angular packages. For example, keep entries like +
+  `'@onecx/angular-auth': { singleton: true, ... }'` unchanged.
+
+**Example**:
+
+.Before
+[source, javascript]
+----
+const config = withModuleFederationPlugin({
+  shared: share({
+    "@angular/core": { singleton: true, requiredVersion: "auto", includeSecondaries: true },
+    "@angular/common": { singleton: true, requiredVersion: "auto", includeSecondaries: true },
+    "@onecx/angular-auth": { singleton: true, requiredVersion: "auto", includeSecondaries: true },
+  })
+});
+----
+
+.After
+[source, javascript]
+----
+const config = withModuleFederationPlugin({
+  shared: share({
+    "@angular/core": { requiredVersion: "auto", includeSecondaries: true },
+    "@angular/common": { requiredVersion: "auto", includeSecondaries: true },
+    "@onecx/angular-auth": { singleton: true, requiredVersion: "auto", includeSecondaries: true },
+  })
+});
+----
+
