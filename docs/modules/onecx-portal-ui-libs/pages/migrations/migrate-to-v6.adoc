@@ -219,7 +219,7 @@ Some components will be removed. Please check if you are using following compone
 => *Consider using the SearchHeaderComponent (ocx-search-header) from @onecx/angular-accelerator*
 
 * standaloneInitializer + 
-=>  *Use standalone mode instead xref:documentation:docs-guides-ui:angular/migrations/enable-standalone/index.adoc[Documentation]*
+=>  *Use standalone mode xref:documentation:docs-guides-ui:angular/standalone.adoc[Documentation]*
 
 * ButtonDialogComponent(ocx-button-dialog) +
 => *This component should be replaced by ocx-dialog-inline in @onecx/angular-accelerator*

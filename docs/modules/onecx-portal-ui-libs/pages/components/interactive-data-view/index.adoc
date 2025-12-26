@@ -14,4 +14,4 @@ This document aims to showcase how to manage InteractiveDataView Component.
 // TODO: Overview of interfaces related
 
 == Related Interfaces
-* xref:onecx-portal-ui-libs:components/interactive-data-view/data-table-column.adoc[DataTableColumn]
+* xref:./data-table-column.adoc[DataTableColumn]
