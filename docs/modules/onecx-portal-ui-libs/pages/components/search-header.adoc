@@ -2,7 +2,7 @@
 
 // '--' has to be escaped in link
 :search_header_storybook: https://main\--65f7f64d4506c9f2dfe59383.chromatic.com/?path=/docs/components-searchheadercomponent\--docs
-:page_header_url: xref:cookbook/components/page-header/index.adoc
+:page_header_url: xref:./page-header.adoc
 
 :idprefix:
 :idseparator: -

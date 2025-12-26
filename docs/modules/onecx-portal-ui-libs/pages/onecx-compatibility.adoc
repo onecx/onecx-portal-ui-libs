@@ -1,6 +1,6 @@
-:troubleshooting_shared_packages: xref:documentation:onecx-docs-guides:troubleshooting.adoc#shell-related
-:troubleshooting_webpack_config: xref:documentation:onecx-docs-guides:troubleshooting.adoc#webpack-configuration
-:troubleshooting_installed_packages: xref:documentation:onecx-docs-guides:troubleshooting.adoc#installed-packages
+:troubleshooting_shared_packages: xref:documentation:onecx-docs-dev:guides/troubleshooting.adoc#shell-related
+:troubleshooting_webpack_config: xref:documentation:onecx-docs-dev:guides/troubleshooting.adoc#webpack-configuration
+:troubleshooting_installed_packages: xref:documentation:onecx-docs-dev:guides/troubleshooting.adoc#installed-packages
 
 :idprefix:
 :idseparator: -
