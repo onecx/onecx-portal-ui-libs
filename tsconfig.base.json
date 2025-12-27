@@ -36,6 +36,12 @@
       "@onecx/ngrx-accelerator": ["libs/ngrx-accelerator/src/index.ts"],
       "@onecx/nx-migration-utils": ["libs/nx-migration-utils/src/index.ts"],
       "@onecx/nx-migration-utils/angular": ["libs/nx-migration-utils/src/lib/angular/index.ts"],
+      "@onecx/react-auth": ["libs/react-auth/src/index.ts"],
+      "@onecx/react-integration-interface": ["libs/react-integration-interface/src/index.ts"],
+      "@onecx/react-integration-interface/mocks": ["libs/react-integration-interface/src/lib/mocks/index.ts"],
+      "@onecx/react-remote-components": ["libs/react-remote-components/src/index.ts"],
+      "@onecx/react-webcomponents": ["libs/react-webcomponents/src/index.ts"],
+      "@onecx/react-integration-functionalities": ["libs/react-integration-functionalities/src/lib/index.ts"],
       "@onecx/release": ["tools/release/src/index.ts"]
     },
     "allowSyntheticDefaultImports": true
