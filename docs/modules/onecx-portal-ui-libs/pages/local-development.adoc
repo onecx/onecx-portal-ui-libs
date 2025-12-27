@@ -3,13 +3,12 @@
 :idseparator: -
 :imagesdir: ../../general/images
 
-This guide explains how to set up a local development environment for testing changes to the libraries, located in the `onecx-portal-ui-libs` repository and integrating them in local applications and a local link:https://onecx.github.io/docs/onecx-shell/current/general/index.html[OneCX Shell].
+This guide explains how to set up a local development environment for testing changes to the libraries, located in the `onecx-portal-ui-libs` repository and integrating them in local applications and a local xref:documentation:onecx-shell:index.adoc[OneCX Shell].
 
 
 Before proceeding, make sure you have read the following documentation:
 
-* link:https://onecx.github.io/docs/onecx-local-env/current/general/getting-started.html[Running OneCX locally]
-* link:https://onecx.github.io/docs/guides/current/general/getting-started/running_custom_apps_overview.html[Running custom applications locally]
+* xref:documentation:onecx-local-env:index.adoc[Running OneCX locally]
 
 These resources provide essential background on setting up a local OneCX environment and running custom applications. _This guide assumes you already know how to start OneCX locally and how to replace application images with local versions._
 
@@ -205,6 +204,6 @@ At this point, you should have updated the version numbers in the `package.json`
 === 6. Run OneCX Shell and App(s)
 After completing the previous steps, you are now ready to run OneCX Shell and the app(s) with your local library changes.
 
-To do so, follow the documentation on link:https://onecx.github.io/docs/guides/current/general/getting-started/running_custom_apps_overview.html[running custom applications locally].
+To do so, follow the documentation on xref:documentation:onecx-docs-start:first-app/running_custom_apps_overview.html[running custom applications locally].
 
 TIP: The steps for running the shell should match the steps for running existing OneCX core apps.
