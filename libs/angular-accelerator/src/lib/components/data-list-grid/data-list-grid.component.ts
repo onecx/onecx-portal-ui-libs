@@ -23,7 +23,7 @@ import { AppStateService, UserService } from '@onecx/angular-integration-interfa
 import { MfeInfo } from '@onecx/integration-interface'
 import { MenuItem, PrimeIcons, PrimeTemplate } from 'primeng/api'
 import { Menu } from 'primeng/menu'
-import { BehaviorSubject, Observable, combineLatest, debounceTime, first, map, mergeMap, of, switchMap } from 'rxjs'
+import { BehaviorSubject, Observable, combineLatest, debounceTime, first, firstValueFrom, map, mergeMap, of, switchMap } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
@@ -163,9 +163,11 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
         ? 'OCX_DATA_LIST_GRID.SEARCH_RESULTS_FOUND'
         : 'OCX_DATA_LIST_GRID.NO_SEARCH_RESULTS_FOUND';
 
-    this.translateService.get(newStatus , { results: this.currentResults ?? 0 }).subscribe((translatedText: string) => {
-      this.liveAnnouncer.announce(translatedText);
-    });
+    firstValueFrom(
+      this.translateService.get(newStatus, { results: this.currentResults ?? 0 }) ).then((translatedText: string) => {
+        this.liveAnnouncer.announce(translatedText);
+      }
+    );
   }
 
   _filters$ = new BehaviorSubject<Filter[]>([])

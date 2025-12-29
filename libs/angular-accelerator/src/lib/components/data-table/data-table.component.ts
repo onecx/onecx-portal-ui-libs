@@ -30,6 +30,7 @@ import {
   debounceTime,
   filter,
   first,
+  firstValueFrom,
   map,
   mergeMap,
   of,
@@ -100,10 +101,12 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       this.currentResults !== 0
         ? 'OCX_DATA_TABLE.SEARCH_RESULTS_FOUND'
         : 'OCX_DATA_TABLE.NO_SEARCH_RESULTS_FOUND';
-
-    this.translateService.get(newStatus , { results: this.currentResults ?? 0 }).subscribe((translatedText: string) => {
-      this.liveAnnouncer.announce(translatedText);
-    });
+    
+    firstValueFrom(
+      this.translateService.get(newStatus, { results: this.currentResults ?? 0 }) ).then((translatedText: string) => {
+        this.liveAnnouncer.announce(translatedText);
+      }
+    );
   }
 
   _selectionIds$ = new BehaviorSubject<(string | number)[]>([])
