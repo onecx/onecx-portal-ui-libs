@@ -1,0 +1,13 @@
+{
+  "pageheader": {
+    "header": "Feature Title",
+    "subheader": "Feature Subtitle",
+    "extra": "Feature Extra",
+    "valueTooltip": "Feature Value Tooltip",
+    "labelTooltip": "Feature Label Tooltip",
+    "actionItemTooltip": "Feature Action Item Tooltip",
+    "actionItemAriaLabel": "Feature Action Item Aria Label",
+    "statusLabelTooltip": "Feature Status Label Tooltip (status: {{status}})",
+    "statusValueTooltip": "Feature Status Value Tooltip (value: {{value}})"
+  }
+}

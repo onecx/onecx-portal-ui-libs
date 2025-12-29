@@ -1,0 +1,13 @@
+{
+  "pageheader": {
+    "header": "Funktions-Titel",
+    "subheader": "Funktions-Untertitel",
+    "extra": "Funktions-Extra",
+    "valueTooltip": "Funktions-Wert-Tooltip",
+    "labelTooltip": "Funktions-Label-Tooltip",
+    "actionItemTooltip": "Funktions-Aktions-Tooltip",
+    "actionItemAriaLabel": "Funktions-Aktions-Aria-Label",
+    "statusLabelTooltip": "Funktions-Status-Label-Tooltip (status: {{status}})",
+    "statusValueTooltip": "Funktions-Status-Wert-Tooltip (value: {{value}})"
+  }
+}
