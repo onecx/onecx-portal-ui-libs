@@ -5,7 +5,8 @@ In OneCX v6, onecx-shell is responsible for loading and applying the theme globa
 
 The `ThemeService` now only exposes the `currentTheme$` property of type CurrentThemeTopic from the `@onecx/integration-interface` library. All previous theme-loading logic has been removed from the service. 
 
-In order to load and apply themes overrides with PrimeNG, `provideThemeConfigService()` function can be used. (see (xref:documentation:docs-guides-ui:angular/index.adoc)[Provide Theme Overrides])
+In order to load and apply themes overrides with PrimeNG, `provideThemeConfigService()` function can be used. (see <<migration-steps-after-angular-19, Provide Theme Overrides>>)
+//url will later be changed
 
 **Remove deprecated ThemeService members:**
 
