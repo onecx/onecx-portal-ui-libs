@@ -1,0 +1,48 @@
+[#update-configuration-service]
+=== Update ConfigurationService Usage
+
+In OneCX v6, the `ConfigurationService` API has changed to be asynchronous.  
+Methods that previously returned values synchronously now return `Promise` results.
+
+**Update methods**:
+
+* `getProperty(key)` → `await getProperty(key)`
+* `getConfig()` → `await getConfig()`
+* `setProperty(key, val)` → `await setProperty(key, val)`
+
+**Guidelines**:
+
+* If the call is outside an observable: add `await` and mark the containing function `async`.
+* If inside an observable: wrap call with `from(...)` and use `switchMap` or `mergeMap`.
+* Add `try/catch` for error handling where synchronous code previously assumed success.
+* Do not change `AppConfigService` method calls.
+* Update mocks to resolve promises + 
+  Jest -> `jest.spyOn(service, 'getProperty').mockResolvedValue('val');` +
+  Jasmine : `spyOn(service, 'getConfig').and.returnValue(Promise.resolve(cfg));`
+
+
+**Example**:
+
+.Before
+[source, typescript]
+----
+
+const theme = this.configService.getProperty(CONFIG_KEY.TKIT_PORTAL_DEFAULT_THEME);
+
+const config = this.configService.getConfig();
+
+this.configService.setProperty(CONFIG_KEY.APP_VERSION, '5.9.0');
+
+----
+.After
+[source, typescript]
+----
+
+const theme = await this.configService.getProperty(CONFIG_KEY.TKIT_PORTAL_DEFAULT_THEME);
+
+const config = await this.configService.getConfig();
+
+await this.configService.setProperty(CONFIG_KEY.APP_VERSION, '6.0.0');
+
+----
+
