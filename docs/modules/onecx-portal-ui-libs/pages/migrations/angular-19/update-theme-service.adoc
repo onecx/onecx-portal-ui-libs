@@ -1,0 +1,19 @@
+[#update-theme-service]
+=== Update Theme Service usage
+
+In OneCX v6, onecx-shell is responsible for loading and applying the theme for the chosen `workspace`. When a workspace is loaded, the shell applies styles from the workspace configuration (see `shell-ui/src/app/app.module.ts`).
+
+The `ThemeService` should now only expose the `currentTheme$` property of type CurrentThemeTopic from the `@onecx/integration-interface` library. All previous theme-loading logic has been removed from the service.
+
+**Remove deprecated ThemeService members:**
+
+* Remove `baseUrlV1` property usages
+* Remove `getThemeRef` function calls
+* Remove `loadAndApplyTheme` function calls
+* Remove `apply` function calls
+
+
+[NOTE]
+==== 
+These members no longer exist in `ThemeService`. You need to remove calls or references to them in your application code.
+====
