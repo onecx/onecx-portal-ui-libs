@@ -1,19 +1,37 @@
 [#update-theme-service]
 === Update Theme Service usage
 
-In OneCX v6, onecx-shell is responsible for loading and applying the theme for the chosen `workspace`. When a workspace is loaded, the shell applies styles from the workspace configuration (see `shell-ui/src/app/app.module.ts`).
+In OneCX v6, onecx-shell is responsible for loading and applying the theme globally for the chosen `workspace`. When a workspace is loaded, the shell applies styles from the workspace configuration.
 
-The `ThemeService` should now only expose the `currentTheme$` property of type CurrentThemeTopic from the `@onecx/integration-interface` library. All previous theme-loading logic has been removed from the service.
+The `ThemeService` now only exposes the `currentTheme$` property of type CurrentThemeTopic from the `@onecx/integration-interface` library. All previous theme-loading logic has been removed from the service. 
+
+In order to load and apply themes overrides with PrimeNG, `provideThemeConfigService()` function can be used. (see (xref:documentation:docs-guides-ui:angular/index.adoc)[Provide Theme Overrides])
 
 **Remove deprecated ThemeService members:**
 
 * Remove `baseUrlV1` property usages
-* Remove `getThemeRef` function calls
-* Remove `loadAndApplyTheme` function calls
-* Remove `apply` function calls
-
+* Remove `getThemeRef()` function calls
+* Remove `loadAndApplyTheme()` function calls
+* Remove `apply()` function calls
 
 [NOTE]
 ==== 
-These members no longer exist in `ThemeService`. You need to remove calls or references to them in your application code.
+These members no longer exist in ThemeService. You only need to remove calls or references to them in your application code.
 ====
+
+In case your app needs to reflect the theme changes locally, use the `apply()` function implementation provided below:
+
+.Apply
+[source, typescript]
+----
+async function apply(themeService: ThemeService, theme: Theme): Promise<void> {
+  await themeService.currentTheme$.publish(theme)
+  if (theme.properties) {
+    for (const group of Object.values(theme.properties)) {
+      for (const [key, value] of Object.entries(group)) {
+        document.documentElement.style.setProperty(`--${key}`, value)
+      }
+    }
+  }
+}
+----
