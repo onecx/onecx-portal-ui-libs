@@ -1,5 +1,5 @@
 [#adjust-angular-packages]
-=== Adjust Angular Packages in Webpack Config
+=== Adjust Packages in Webpack Config
 
 In OneCX v6, packages  in the webpack configuration that depend on a specific Angular version should not have `singleton: true`.
 
