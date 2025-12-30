@@ -57,9 +57,9 @@ API::
 .App Config Service methods
 [cols="1,1,2"]
 |===
-|Method signature |Return type | Description
+| Method signature | Return type | Description
 
-|`init(baseUrl: string)` | `Promise<void>` | Initializes App Config Service by loading configuration variables. The configuration will be loaded from the `{baseUrl}/assets/env.json` file.
+|`init(baseUrl: string)` | `Promise<void>` | Initializes App Config Service by loading configuration variables. The configuration will be loaded from the `\{baseUrl}/assets/env.json` file.
 |`getProperty(key: string)` | `string \| undefined`| Gets the value for a key from *config$*.
 |`async setProperty(key: string, val:string)` | `void` | Updates the value for a key in *config$*.
 |`getConfig()` |`{ [key: string]: string }` |Gets all configuration variables defined for the Microfrontend.
