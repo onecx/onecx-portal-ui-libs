@@ -11,12 +11,12 @@ In OneCX v6, three `ConfigurationService` methods have been updated to be asynch
 
 **Guidelines**:
 
-* If inside an observable: wrap call with `from(...)` and use `switchMap` or `mergeMap`.
-* Outside observables: use `await` in an `async` fn; if `async` not allowed (e.g. `constructor`, `ngOnInit`), resolve the Promise with `.then(...)`.
+* If inside an observable: wrap the call with `from(...)` and use `switchMap` or `mergeMap`.
+* Outside observables: use `await` in an `async` function; if `async` not allowed (e.g. `constructor`, `ngOnInit`), resolve the Promise with `.then(...)`.
 * Add `try/catch` for error handling where synchronous code previously assumed success.
-* Update mocks to resolve promises + 
+* Update mocks to resolve promises: + 
   Jest -> `jest.spyOn(service, 'getProperty').mockResolvedValue('val');` +
-  Jasmine : `spyOn(service, 'getConfig').and.returnValue(Promise.resolve(cfg));`
+  Jasmine -> `spyOn(service, 'getConfig').and.returnValue(Promise.resolve(cfg));`
 
 
 **Example**:
