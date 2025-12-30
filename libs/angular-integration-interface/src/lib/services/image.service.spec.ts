@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { ImageService } from './image.service';
-import { ImageInfo, ImageService as ImageInterface, ImageTopic } from '@onecx/integration-interface';
+import { ImageInfo, ImageService as ImageInterface, ImageRepositoryTopic } from '@onecx/integration-interface';
 import { FakeTopic } from '@onecx/accelerator';
 
 const URL_NAME = 'logo1';
@@ -19,8 +19,8 @@ describe('ImageService', () => {
 	const mockTopic = new FakeTopic<ImageInfo>();
     service = TestBed.inject(ImageService);
     imageInterface = (service as any).imageInterface;
-    imageInterface.imageTopic = mockTopic as any as ImageTopic;
-    imageInterface.imageTopic?.publish(MOCK_URLS);
+    imageInterface.imageRepositoryTopic = mockTopic as any as ImageRepositoryTopic;
+    imageInterface.imageRepositoryTopic?.publish(MOCK_URLS);
   });
 
   it('should call getUrl without fallback', async () => {
@@ -60,13 +60,9 @@ describe('ImageService', () => {
     expect(spyDestroy).toHaveBeenCalled();
   });  
 
-  it('should test topic getter/setter and isInitialized getter', async () => {    
-    const mockIsInitialized = Promise.resolve();
-    jest.spyOn(imageInterface, 'isInitialized', 'get').mockReturnValue(mockIsInitialized);
+  it('should test topic getter/setter', async () => {   
+    service.imageRepositoryTopic = imageInterface.imageRepositoryTopic;
 
-    service.imageTopic = imageInterface.imageTopic;
-
-    expect(service.imageTopic).toBe(imageInterface.imageTopic);
-    expect(service.isInitialized).toBe(mockIsInitialized);
+    expect(service.imageRepositoryTopic).toBe(imageInterface.imageRepositoryTopic);
   });
 });

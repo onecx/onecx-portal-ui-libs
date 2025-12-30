@@ -1,18 +1,15 @@
-import { ImageTopic } from "../topics/image/image.topic";
 import { firstValueFrom } from "rxjs";
+import { ImageRepositoryTopic } from "../topics/image-repository/image-repository.topic";
 
 export class ImageService {
-    private _imageTopic$: ImageTopic | undefined;
+    private _imageRepositoryTopic$: ImageRepositoryTopic | undefined;
 
-    get imageTopic() {
-        this._imageTopic$ ??= new ImageTopic()
-        return this._imageTopic$
+    get imageRepositoryTopic() {
+        this._imageRepositoryTopic$ ??= new ImageRepositoryTopic()
+        return this._imageRepositoryTopic$
     }
-    set imageTopic(source: ImageTopic) {
-        this._imageTopic$ = source
-    }
-    get isInitialized(): Promise<void> {
-        return this.imageTopic.isInitialized;
+    set imageRepositoryTopic(source: ImageRepositoryTopic) {
+        this._imageRepositoryTopic$ = source
     }
 
     async getUrl(names: string[]): Promise<string | undefined>
@@ -21,7 +18,7 @@ export class ImageService {
         if (!names || names.length === 0) {
             return fallbackUrl;
         }
-        const imagePaths = await firstValueFrom(this.imageTopic.asObservable());
+        const imagePaths = await firstValueFrom(this.imageRepositoryTopic.asObservable());
         const urls = imagePaths.images || {};
         const isUrlListEmpty = Object.entries(urls).length === 0;
         if (isUrlListEmpty) {
@@ -36,6 +33,6 @@ export class ImageService {
     }
 
     destroy() {
-        this.imageTopic.destroy();
+        this.imageRepositoryTopic.destroy();
     }
 }

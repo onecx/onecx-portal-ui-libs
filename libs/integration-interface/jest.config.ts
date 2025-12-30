@@ -4,34 +4,10 @@ import { createReportsConfig } from '../../jest-config-factory'
 export default {
   displayName: 'integration-interface',
   preset: '../../jest.preset.js',
-  setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
+  testEnvironment: 'jsdom',
   transform: {
-    '^.+\\.(mjs|js|html)$': [
-      'jest-preset-angular',
-      {
-        tsconfig: '<rootDir>/tsconfig.spec.json',
-        stringifyContentPathRegex: '\\.(html|svg)$',
-      },
-    ],
-    '^.+\\.tsx?$': [
-      'jest-preset-angular',
-      {
-        tsconfig: '<rootDir>/tsconfig.spec.json',
-        diagnostics: {
-          ignoreCodes: [1343],
-        },
-        astTransformers: {
-          before: [
-            {
-              path: 'ts-jest-mock-import-meta',
-              options: { metaObjectReplacement: { url: 'https://www.url.com' } },
-            },
-          ],
-        },
-      },
-    ],
+    '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
   },
-  transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$)'],
-  testEnvironment: '@happy-dom/jest-environment',
+  moduleFileExtensions: ['ts', 'js', 'html'],
   ...createReportsConfig('integration-interface'),
 }

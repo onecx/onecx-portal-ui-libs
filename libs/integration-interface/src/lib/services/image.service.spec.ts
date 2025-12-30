@@ -1,8 +1,7 @@
- import { TestBed } from '@angular/core/testing';
-import { ImageService } from './image.service';
-import { ImageTopic } from '../topics/image/image.topic';
 import { FakeTopic } from '@onecx/accelerator';
-import { ImageInfo } from '../topics/image/image.model';
+import { ImageInfo } from '../topics/image-repository/image-repository.model';
+import { ImageService } from './image.service';
+import { ImageRepositoryTopic } from '../topics/image-repository/image-repository.topic';
 
 const URL_NAME = 'logo1';
 const EXPECTED_URL = '/logo1-url';
@@ -12,30 +11,18 @@ const MOCK_URLS: ImageInfo = { images: { [URL_NAME]: EXPECTED_URL, 'logo2': '/lo
 describe('ImageService interface', () => {
   let imageService: ImageService;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [],
-      imports: [],
-    }).compileComponents();
+  beforeEach(() => {
     const mockTopic = new FakeTopic<ImageInfo>();
     imageService = new ImageService();
-    imageService.imageTopic = mockTopic as unknown as ImageTopic;
-    imageService.imageTopic?.publish(MOCK_URLS);
+    imageService.imageRepositoryTopic = mockTopic as unknown as ImageRepositoryTopic;
+    imageService.imageRepositoryTopic?.publish(MOCK_URLS);
   })
 
-  it('should instantiate _imageTopic$ when it is undefined', () => {
+  it('should instantiate _imageRepositoryTopic$ when it is undefined', () => {
     const service = new ImageService();
-    const topic = service.imageTopic;
+    const topic = service.imageRepositoryTopic;
     expect(topic).toBeDefined();
-    expect((service as any)._imageTopic$).toBeDefined();
-  });
-
-  it('should return the isInitialized promise when _imageTopic$ is defined', async () => {
-    const service = new ImageService();
-    const mockPromise = Promise.resolve('initialized');
-    (service as any)._imageTopic$ = { isInitialized: mockPromise };
-    const result = service.isInitialized;
-    expect(result).toBe(mockPromise);
+    expect((service as any)._imageRepositoryTopic$).toBeDefined();
   });
 
   it('should return a correct url when image exists', async () => {
@@ -54,7 +41,7 @@ describe('ImageService interface', () => {
   });
 
   it('should destroy the topic', () => {
-    const topicDestroySpy = jest.spyOn((imageService as any).imageTopic, 'destroy');
+    const topicDestroySpy = jest.spyOn(imageService.imageRepositoryTopic, 'destroy');
     imageService.destroy();
     expect(topicDestroySpy).toHaveBeenCalled();
   });
@@ -63,14 +50,14 @@ describe('ImageService interface', () => {
     const noNamesResult = await imageService.getUrl([], FALLBACK_URL);
     expect(noNamesResult).toBe(FALLBACK_URL);
 
-    imageService.imageTopic?.publish({ images: {} });
+    imageService.imageRepositoryTopic?.publish({ images: {} });
     const result = await imageService.getUrl([URL_NAME], FALLBACK_URL);
     expect(result).toBe(FALLBACK_URL);
 
-    imageService.imageTopic?.publish({ images: undefined as any });
+    imageService.imageRepositoryTopic?.publish({ images: undefined as any });
     expect(await imageService.getUrl([URL_NAME], FALLBACK_URL)).toBe(FALLBACK_URL);
 
-    imageService.imageTopic?.publish({ images: undefined as any });
+    imageService.imageRepositoryTopic?.publish({ images: undefined as any });
     expect(await imageService.getUrl([URL_NAME], FALLBACK_URL)).toBe(FALLBACK_URL);
   });
 });
