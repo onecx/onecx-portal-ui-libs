@@ -1,10 +1,9 @@
 [#update-configuration-service]
 === Update ConfigurationService Usage
 
-In OneCX v6, the `ConfigurationService` API has changed to be asynchronous.  
-Methods that previously returned values synchronously now return `Promise` results.
+In OneCX v6, three `ConfigurationService` methods have been updated to be asynchronous, returning `Promise` results instead of synchronous values.
 
-**Update methods**:
+**Update following methods only when ConfigurationService is imported from `@onecx/angular-integration-interface`**:
 
 * `getProperty(key)` → `await getProperty(key)`
 * `getConfig()` → `await getConfig()`
@@ -12,10 +11,9 @@ Methods that previously returned values synchronously now return `Promise` resul
 
 **Guidelines**:
 
-* If the call is outside an observable: add `await` and mark the containing function `async`.
 * If inside an observable: wrap call with `from(...)` and use `switchMap` or `mergeMap`.
+* Outside observables: use `await` in an `async` fn; if `async` not allowed (e.g. `constructor`, `ngOnInit`), resolve the Promise with `.then(...)`.
 * Add `try/catch` for error handling where synchronous code previously assumed success.
-* Do not change `AppConfigService` method calls.
 * Update mocks to resolve promises + 
   Jest -> `jest.spyOn(service, 'getProperty').mockResolvedValue('val');` +
   Jasmine : `spyOn(service, 'getConfig').and.returnValue(Promise.resolve(cfg));`
@@ -31,7 +29,7 @@ const theme = this.configService.getProperty(CONFIG_KEY.TKIT_PORTAL_DEFAULT_THEM
 
 const config = this.configService.getConfig();
 
-this.configService.setProperty(CONFIG_KEY.APP_VERSION, '5.9.0');
+this.configService.setProperty(CONFIG_KEY.APP_VERSION, '6.0.0');
 
 ----
 .After
