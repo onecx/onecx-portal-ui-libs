@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { createReportsConfig } from '../../jest-config-factory'
+const { createReportsConfig } = require('../../jest-config-factory')
 
 export default {
   displayName: 'angular-testing',
