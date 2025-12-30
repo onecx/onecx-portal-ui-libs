@@ -1,9 +1,9 @@
 [#update-configuration-service]
 === Update ConfigurationService Usage
 
-In OneCX v6, three `ConfigurationService` methods have been updated to be asynchronous, returning `Promise` results instead of synchronous values.
+In OneCX v6, three methods of `ConfigurationService` have been updated to be asynchronous, returning `Promise` results instead of synchronous values.
 
-**Update following methods only when ConfigurationService is imported from `@onecx/angular-integration-interface`**:
+**Update the following methods only when ConfigurationService is imported from `@onecx/angular-integration-interface`**:
 
 * `getProperty(key)` → `await getProperty(key)`
 * `getConfig()` → `await getConfig()`
