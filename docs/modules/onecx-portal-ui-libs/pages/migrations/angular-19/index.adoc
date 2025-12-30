@@ -36,3 +36,4 @@ Once you have completed the previous steps, you can continue with the Angular 19
 include::update-packages.adoc[]
 include::remove-portal-core-module.adoc[]
 include::update-base-url.adoc[]
+include::update-theme-service.adoc[]
