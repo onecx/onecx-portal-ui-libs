@@ -1,4 +1,4 @@
-export function createReportsConfig(projectName: string) {
+function createReportsConfig(projectName) {
   const reportsRoot = `${process.cwd()}/reports/${projectName}`
   return {
     testMatch: ['<rootDir>/src/lib/**/*.spec.ts'],
@@ -18,3 +18,5 @@ export function createReportsConfig(projectName: string) {
     ],
   }
 }
+
+module.exports = { createReportsConfig }
