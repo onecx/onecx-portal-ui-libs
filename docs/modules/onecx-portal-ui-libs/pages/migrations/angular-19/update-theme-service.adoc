@@ -1,12 +1,11 @@
+:onecx_theming: xref:docs-guides-ui:angular:theming.adoc
+
 [#update-theme-service]
 === Update Theme Service usage
 
-In OneCX v6, onecx-shell is responsible for loading and applying the theme globally for the chosen `workspace`. When a workspace is loaded, the shell applies styles from the workspace configuration.
+In OneCX v6, onecx-shell is responsible for loading and applying the theme globally for the chosen `workspace`. See {onecx_theming}[OneCX Theming Guide] for more information.
 
 The `ThemeService` now only exposes the `currentTheme$` property of type CurrentThemeTopic from the `@onecx/integration-interface` library. All previous theme-loading logic has been removed from the service. 
-
-In order to load and apply themes overrides with PrimeNG, `provideThemeConfigService()` function can be used. (see <<migration-steps-after-angular-19, Provide Theme Overrides>>)
-//url will later be changed
 
 **Remove deprecated ThemeService members:**
 
@@ -20,7 +19,7 @@ In order to load and apply themes overrides with PrimeNG, `provideThemeConfigSer
 These members no longer exist in ThemeService. You only need to remove calls or references to them in your application code.
 ====
 
-In case your app needs to reflect the theme changes locally, use the `apply()` function implementation provided below:
+In case your App applies the theme temporarily for preview purposes only, use the `apply()` function implementation provided below:
 
 .Apply
 [source, typescript]
