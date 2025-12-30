@@ -26,7 +26,7 @@ To simplify the migration process, it is recommended to complete the following s
 include::remove-keycloak-auth.adoc[]
 include::remove-portal-layout-styles.adoc[]
 include::update-filtertype-value.adoc[]
-
+include::adjust-packages-in-webpack-config.adoc[]
 
 [#migration-steps-after-angular-19]
 == Migration Steps after upgrading to Angular 19
@@ -36,3 +36,4 @@ Once you have completed the previous steps, you can continue with the Angular 19
 include::update-packages.adoc[]
 include::remove-portal-core-module.adoc[]
 include::update-base-url.adoc[]
+include::update-theme-service.adoc[]
