@@ -1,16 +1,18 @@
-= Local Development
 :idprefix:
 :idseparator: -
-:imagesdir: ../../general/images
+:imagesdir: ../images
 
-This guide explains how to set up a local development environment for testing changes to the libraries, located in the `onecx-portal-ui-libs` repository and integrating them in local applications and a local xref:documentation:onecx-shell:index.adoc[OneCX Shell].
+= OneCX UI Libraries: Local Development
+
+This guide explains how to set up a local development environment for testing changes to the libraries, located in the *onecx-portal-ui-libs* repository and integrating them in local applications and a local xref:documentation:onecx-shell:index.adoc[OneCX Shell].
 
 
 Before proceeding, make sure you have read the following documentation:
 
-* xref:documentation:onecx-local-env:index.adoc[Running OneCX locally]
+* xref:documentation:onecx-local-env:index.adoc[OneCX Local Environment]
 
-These resources provide essential background on setting up a local OneCX environment and running custom applications. _This guide assumes you already know how to start OneCX locally and how to replace application images with local versions._
+These resources provide essential background on setting up a local OneCX environment and running custom applications.
+_This guide assumes you already know how to start OneCX locally and how to replace application images with local versions._
 
 == Making changes to the libraries
 To begin making changes and contributing to the libraries:
@@ -78,12 +80,10 @@ Before copying the built libraries, you first need to decide which application(s
 
 === 2. Create `.copy-build-to` File
 
-Create an empty file named `.copy-build-to` in the root of `onecx-portal-ui-libs`.
+Create an empty file named `.copy-build-to` in the root of *onecx-portal-ui-libs*. +
+This file will contain the paths to the *node_modules* folders that the build output should be copied to.
 
-This file will contain the paths to the `node_modules` folders that the build output should be copied to.
-
-The file can contain multiple paths, one per line. Each path must be relative to the root of `onecx-portal-ui-libs` and must point to the `@onecx` folder inside the `node_modules` folder of the target project.
-
+The file can contain multiple paths, one per line. Each path must be relative to the root of *onecx-portal-ui-libs* and must point to the *@onecx* folder inside the *node_modules* folder of the target project. +
 For now, leave the file empty. You will add the paths in the next step.
 
 
@@ -114,7 +114,7 @@ Identify the library version you're testing:
 
 Copy only to the Angular 18 pre-loader by appending `/pre_loaders/angular-18/node_modules/@onecx` to the shell path.
 
-Example:
+.Example
 [source]
 ----
 ../onecx-shell-ui/pre_loaders/angular-18/node_modules/@onecx
@@ -124,7 +124,7 @@ Example:
 
 Copy to both Angular 19 pre-loader and shell's root `node_modules` by appending `/pre_loaders/angular-19/node_modules/@onecx` and `/node_modules/@onecx` to the shell path.
 
-Example:
+.Example
 [source]
 ----
 ../onecx-shell-ui/pre_loaders/angular-19/node_modules/@onecx
