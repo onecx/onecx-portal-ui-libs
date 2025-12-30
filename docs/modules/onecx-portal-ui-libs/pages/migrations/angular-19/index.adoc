@@ -26,7 +26,7 @@ To simplify the migration process, it is recommended to complete the following s
 include::remove-keycloak-auth.adoc[]
 include::remove-portal-layout-styles.adoc[]
 include::update-filtertype-value.adoc[]
-
+include::adjust-packages-in-webpack-config.adoc[]
 
 [#migration-steps-after-angular-19]
 == Migration Steps after upgrading to Angular 19
