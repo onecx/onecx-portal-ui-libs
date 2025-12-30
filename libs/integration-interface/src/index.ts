@@ -39,12 +39,19 @@ export * from './lib/topics/permissions-rpc/v1/permissions-rpc.model'
 export * from './lib/topics/events/v1/events-topic'
 export * from './lib/topics/events/v1/topic-event-type'
 export * from './lib/topics/events/v1/event-type'
-export * from './lib/topics/events/v1/slots-resized-type'
-export * from './lib/topics/events/v1/slot-groups-resized-type'
 export * from './lib/topics/events/v1/navigated-event-type'
 export * from './lib/topics/events/v1/navigated-event-payload'
+
+export * from './lib/topics/resized-events/v1/resized-event-type'
+export * from './lib/topics/resized-events/v1/resized-events.topic'
+export * from './lib/topics/resized-events/v1/resized-update-requested-type'
+export * from './lib/topics/resized-events/v1/slot-groups-resized-type'
+export * from './lib/topics/resized-events/v1/slots-resized-type'
+export * from './lib/topics/resized-events/v1/topic-resized-event-type'
 
 export * from './lib/topics/current-location/v1/current-location.model'
 export * from './lib/topics/current-location/v1/current-location.topic'
 
 export * from './lib/topics/parameters/v1/parameters.topic'
+
+export * from './lib/topics/resized-events/v1/resized-events.topic'

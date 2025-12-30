@@ -351,4 +351,78 @@ describe('PageHeaderComponent', () => {
     await disabledMenuItem.selectItem()
     expect(console.log).not.toHaveBeenCalledWith('My Test Overflow Disabled Action')
   })
+
+  it('should render labelTooltipKey, valueTooltipKey, and actionItemTooltipKey as translated tooltips when language is changed', async () => {
+    const translate = TestBed.inject(TranslateService)
+
+    translate.setTranslation(
+      'en',
+      {
+        LABEL_TOOLTIP_KEY: 'Label Tooltip Key EN',
+        VALUE_TOOLTIP_KEY: 'Value Tooltip Key EN',
+        ACTION_TOOLTIP_KEY: 'Action Tooltip Key EN',
+      },
+      true
+    )
+    translate.setTranslation(
+      'de',
+      {
+        LABEL_TOOLTIP_KEY: 'Label Tooltip Key DE',
+        VALUE_TOOLTIP_KEY: 'Value Tooltip Key DE',
+        ACTION_TOOLTIP_KEY: 'Action Tooltip Key DE',
+      },
+      true
+    )
+    translate.use('en')
+
+    component.objectDetails = [
+      {
+        label: 'Venue',
+        value: 'AIE Munich',
+        labelTooltipKey: 'LABEL_TOOLTIP_KEY',
+        valueTooltipKey: 'VALUE_TOOLTIP_KEY',
+        actionItemTooltipKey: 'ACTION_TOOLTIP_KEY',
+        actionItemIcon: 'pi pi-copy',
+        actionItemCallback: () => {
+          console.log('Action!')
+        },
+      },
+    ]
+    fixture.detectChanges()
+
+    const objectInfo = (await pageHeaderHarness.getObjectInfos())[0]
+
+    expect(await objectInfo.getLabelTooltipContent()).toBe('Label Tooltip Key EN')
+    expect(await objectInfo.getValueTooltipContent()).toBe('Value Tooltip Key EN')
+    expect(await objectInfo.getActionItemTooltipContent()).toBe('Action Tooltip Key EN')
+
+    translate.use('de')
+    await fixture.whenStable()
+    fixture.detectChanges()
+
+    expect(await objectInfo.getLabelTooltipContent()).toBe('Label Tooltip Key DE')
+    expect(await objectInfo.getValueTooltipContent()).toBe('Value Tooltip Key DE')
+    expect(await objectInfo.getActionItemTooltipContent()).toBe('Action Tooltip Key DE')
+  })
+
+  it('should fallback to empty string if *Key properties are not provided', async () => {
+    component.objectDetails = [
+      {
+        label: 'Venue',
+        value: 'AIE Munich',
+        actionItemIcon: 'pi pi-copy',
+        actionItemCallback: () => {
+          console.log('Action!')
+        },
+      },
+    ]
+    fixture.detectChanges()
+
+    const objectInfo = (await pageHeaderHarness.getObjectInfos())[0]
+
+    //tooltips should not be initialise for undefined keys
+    expect(await objectInfo.getLabelTooltipContent()).toBeNull();
+    expect(await objectInfo.getValueTooltipContent()).toBeNull();
+    expect(await objectInfo.getActionItemTooltipContent()).toBeNull();
+  })
 })

@@ -1,17 +1,21 @@
 {
   "name": "@onecx/angular-standalone-shell",
-  "version": "7.0.0-rc.7",
+  "version": "7.0.0-rc.13",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onecx/onecx-portal-ui-libs"
+  },
   "peerDependencies": {
     "@angular/common": "^20.0.0",
     "@angular/core": "^20.0.0",
     "@angular/router": "^20.0.0",
-    "@onecx/angular-integration-interface": "^7.0.0-rc.7",
-    "@onecx/angular-webcomponents": "^7.0.0-rc.7",
-    "@onecx/angular-utils": "^7.0.0-rc.7",
-    "@onecx/integration-interface": "^7.0.0-rc.7",
-    "@onecx/angular-auth": "^7.0.0-rc.7",
-    "@onecx/nx-migration-utils": "^7.0.0-rc.7",
+    "@onecx/angular-integration-interface": "^7.0.0-rc.13",
+    "@onecx/angular-webcomponents": "^7.0.0-rc.13",
+    "@onecx/angular-utils": "^7.0.0-rc.13",
+    "@onecx/integration-interface": "^7.0.0-rc.13",
+    "@onecx/angular-auth": "^7.0.0-rc.13",
+    "@onecx/nx-migration-utils": "^7.0.0-rc.13",
     "@nx/devkit": "^22.0.0",
     "primeng": "^20.0.0",
     "@ngx-translate/core": "^17.0.0"

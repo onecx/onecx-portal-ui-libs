@@ -1,12 +1,16 @@
 {
   "name": "@onecx/angular-testing",
-  "version": "7.0.0-rc.7",
+  "version": "7.0.0-rc.13",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onecx/onecx-portal-ui-libs"
+  },
   "peerDependencies": {
     "@angular/cdk": "^20.0.0",
     "primeng": "^20.0.0",
     "@nx/devkit": "^22.0.0",
-    "@onecx/nx-migration-utils": "^7.0.0-rc.7"
+    "@onecx/nx-migration-utils": "^7.0.0-rc.13"
   },
   "dependencies": {},
   "publishConfig": {

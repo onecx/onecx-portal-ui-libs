@@ -1,8 +1,0 @@
-{
-    "name": "onecx-welcome-ui",
-    "permissions": [
-        {"resource": "IMAGE", "action": "DELETE"},
-        {"resource": "IMAGE", "action": "EDIT"},
-        {"resource": "IMAGE", "action": "VIEW"}
-    ]
-}

@@ -1,6 +1,4 @@
-name: onecx-portal-ui-libs
-title: OneCX Portal UI Libs
+# Define the same name space as used for the parent documentation project https://github.com/onecx/docs
+name: documentation
 version: latest
-start_page: general:index.adoc
-nav:
-- modules/general/nav.adoc
+# Do not add any further properties here. This will affect the parent documentation project.

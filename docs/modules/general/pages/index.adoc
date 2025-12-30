@@ -1,8 +1,0 @@
-= OneCX Portal UI Libs
-:idprefix:
-:idseparator: -
-:imagesdir: ../images
-
-`onecx-portal-ui-libs` is the umbrella term for all libraries in the OneCX ecosystem. The libraries are open source and can be found on link:https://github.com/onecx/onecx-portal-ui-libs[GitHub].
-
-This documentation contains information about the libraries, how to install/use them, and how to contribute to the development. Additionally it contains instructions on how to set up a local development environment and testing the libraries in local projects.
