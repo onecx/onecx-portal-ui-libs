@@ -1,28 +1,18 @@
-import { Injectable, inject } from '@angular/core'
+import { Injectable } from '@angular/core'
 import './declarations'
-import { AuthServiceWrapper } from './auth-service-wrapper'
 
 @Injectable()
 export class AuthProxyService {
-  authServiceWrapper?: AuthServiceWrapper | null
-
   getHeaderValues(): Record<string, string> {
-    return (
-      window.onecxAngularAuth?.authServiceProxy?.v1?.getHeaderValues() ??
-      this.authServiceWrapper?.getHeaderValues() ??
-      {}
-    )
+    return window.onecxAngularAuth?.authServiceProxy?.v1?.getHeaderValues() ?? {}
   }
 
   async updateTokenIfNeeded(): Promise<boolean> {
-    if (!window.onecxAngularAuth?.authServiceProxy?.v1?.updateTokenIfNeeded) {
-      console.info('AuthProxyService uses injected fallback.')
-      this.authServiceWrapper = inject(AuthServiceWrapper, { optional: true })
-      await this.authServiceWrapper?.init()
+    if (!(window.onecxAuth ?? window.onecxAngularAuth)?.authServiceProxy?.v1?.updateTokenIfNeeded) {
+      throw new Error('Please update to the latest shell version to use the new auth mechanism.')
     }
     return (
-      window.onecxAngularAuth?.authServiceProxy?.v1?.updateTokenIfNeeded() ??
-      this.authServiceWrapper?.updateTokenIfNeeded() ??
+      (window.onecxAuth ?? window.onecxAngularAuth)?.authServiceProxy?.v1?.updateTokenIfNeeded() ??
       Promise.reject('No authServiceWrapper provided.')
     )
   }
