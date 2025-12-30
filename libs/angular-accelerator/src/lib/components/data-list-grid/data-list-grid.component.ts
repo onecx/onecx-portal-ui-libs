@@ -159,9 +159,9 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     this._data$.next([...value])
 
     this.currentResults = this.data.length ?? 0;
-    const newStatus = this.currentResults !== 0
-        ? 'OCX_DATA_LIST_GRID.SEARCH_RESULTS_FOUND'
-        : 'OCX_DATA_LIST_GRID.NO_SEARCH_RESULTS_FOUND';
+    const newStatus = this.currentResults === 0
+      ? 'OCX_DATA_LIST_GRID.NO_SEARCH_RESULTS_FOUND'
+      : 'OCX_DATA_LIST_GRID.SEARCH_RESULTS_FOUND';
 
     firstValueFrom(
       this.translateService.get(newStatus, { results: this.currentResults ?? 0 }) ).then((translatedText: string) => {
@@ -356,7 +356,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     private router: Router,
     private injector: Injector,
     private appStateService: AppStateService,
-    private liveAnnouncer: LiveAnnouncer,
+    private readonly liveAnnouncer: LiveAnnouncer,
     @Inject(HAS_PERMISSION_CHECKER) @Optional() private hasPermissionChecker?: HasPermissionChecker
   ) {
     super(locale, translateService)

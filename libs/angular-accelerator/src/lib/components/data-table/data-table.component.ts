@@ -98,9 +98,10 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
     this.currentResults = this.rows.length ?? 0;
     const newStatus =
-      this.currentResults !== 0
-        ? 'OCX_DATA_TABLE.SEARCH_RESULTS_FOUND'
-        : 'OCX_DATA_TABLE.NO_SEARCH_RESULTS_FOUND';
+      this.currentResults === 0
+        ? 'OCX_DATA_TABLE.NO_SEARCH_RESULTS_FOUND'
+        : 'OCX_DATA_TABLE.SEARCH_RESULTS_FOUND';
+
     
     firstValueFrom(
       this.translateService.get(newStatus, { results: this.currentResults ?? 0 }) ).then((translatedText: string) => {
@@ -431,7 +432,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     private router: Router,
     private injector: Injector,
     private userService: UserService,
-    private liveAnnouncer: LiveAnnouncer,
+    private readonly liveAnnouncer: LiveAnnouncer,
     @Inject(HAS_PERMISSION_CHECKER) @Optional() private hasPermissionChecker?: HasPermissionChecker
   ) {
     super(locale, translateService)
