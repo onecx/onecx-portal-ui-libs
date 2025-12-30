@@ -4,7 +4,8 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { RouterTestingModule } from '@angular/router/testing'
-import { provideTranslateTestingService, SlotHarness } from '@onecx/angular-accelerator/testing'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
+import { SlotHarness } from '../../../../testing/slot.harness'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import {
   AppStateServiceMock,

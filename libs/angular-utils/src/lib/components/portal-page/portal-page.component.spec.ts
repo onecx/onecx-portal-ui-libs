@@ -1,6 +1,6 @@
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
-import { provideTranslateTestingService } from '@onecx/angular-accelerator/testing'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { provideAngularUtils } from '../../providers/angular-utils.providers'
 import { PortalPageComponent } from './portal-page.component'

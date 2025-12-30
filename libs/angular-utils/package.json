@@ -9,7 +9,7 @@
   "peerDependencies": {
     "@angular/common": "^20.0.0",
     "@angular/core": "^20.0.0",
-    "@angular/router": "^19.0.0",
+    "@angular/router": "^20.0.0",
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
     "@onecx/accelerator": "^7.0.0-rc.13",

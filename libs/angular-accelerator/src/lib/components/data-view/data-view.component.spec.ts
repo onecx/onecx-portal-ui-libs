@@ -6,12 +6,8 @@ import { ActivatedRoute, RouterModule } from '@angular/router'
 import { DataViewModule } from 'primeng/dataview'
 
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
-import {
-  DataListGridHarness,
-  DataTableHarness,
-  DataViewHarness,
-  provideTranslateTestingService,
-} from '@onecx/angular-accelerator/testing'
+import { DataListGridHarness, DataTableHarness, DataViewHarness } from '../../../../testing'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
 import {
   provideAppStateServiceMock,
   provideUserServiceMock,

@@ -3,6 +3,7 @@ import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterTestingModule } from '@angular/router/testing'
+import { TranslateService } from '@ngx-translate/core'
 import { UserService } from '@onecx/angular-integration-interface'
 import {
   AppStateServiceMock,
@@ -421,8 +422,8 @@ describe('PageHeaderComponent', () => {
     const objectInfo = (await pageHeaderHarness.getObjectInfos())[0]
 
     //tooltips should not be initialise for undefined keys
-    expect(await objectInfo.getLabelTooltipContent()).toBeNull();
-    expect(await objectInfo.getValueTooltipContent()).toBeNull();
-    expect(await objectInfo.getActionItemTooltipContent()).toBeNull();
+    expect(await objectInfo.getLabelTooltipContent()).toBeNull()
+    expect(await objectInfo.getValueTooltipContent()).toBeNull()
+    expect(await objectInfo.getActionItemTooltipContent()).toBeNull()
   })
 })

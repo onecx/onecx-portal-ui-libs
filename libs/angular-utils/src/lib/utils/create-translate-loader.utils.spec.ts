@@ -2,14 +2,12 @@ import { TestBed } from '@angular/core/testing'
 import { MockService } from 'ng-mocks'
 import { createTranslateLoader, TRANSLATION_PATH } from './create-translate-loader.utils'
 import { Injector, runInInjectionContext } from '@angular/core'
-import { TranslationCacheService } from '../services/translation-cache.service'
 import { HttpClient } from '@angular/common/http'
 import { of } from 'rxjs'
 
 describe('CreateTranslateLoader', () => {
   const httpClientMock = MockService(HttpClient)
   httpClientMock.get = jest.fn(() => of({}, {}, {})) as any
-  let translationCacheService: TranslationCacheService
   let injector: Injector
 
   describe('with injected TRANSLATION_PATH', () => {
@@ -39,7 +37,6 @@ describe('CreateTranslateLoader', () => {
       }).compileComponents()
   
       injector = TestBed.inject(Injector)
-      translationCacheService = TestBed.inject(TranslationCacheService)
       window['onecxTranslations'] = {}
       jest.clearAllMocks()
     })
@@ -75,7 +72,6 @@ describe('CreateTranslateLoader', () => {
     beforeEach(async () => {
       await TestBed.configureTestingModule({}).compileComponents()
       injector = TestBed.inject(Injector)
-      translationCacheService = TestBed.inject(TranslationCacheService)
       window['onecxTranslations'] = {}
       jest.clearAllMocks()
     })

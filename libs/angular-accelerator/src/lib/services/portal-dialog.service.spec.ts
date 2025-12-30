@@ -11,9 +11,9 @@ import {
   provideAppStateServiceMock,
   provideShellCapabilityServiceMock,
 } from '@onecx/angular-integration-interface/mocks'
-import { DivHarness, InputHarness } from '@onecx/angular-testing'
+import { DivHarness, InputHarness, provideTranslateTestingService } from '@onecx/angular-testing'
 import { PrimeIcons } from 'primeng/api'
-import { DialogContentHarness, DialogFooterHarness, provideTranslateTestingService } from '../../../testing'
+import { DialogContentHarness, DialogFooterHarness } from '../../../testing'
 import { AngularAcceleratorModule } from '../angular-accelerator.module'
 import { DialogContentComponent } from '../components/dialog/dialog-content/dialog-content.component'
 import { DialogFooterComponent } from '../components/dialog/dialog-footer/dialog-footer.component'

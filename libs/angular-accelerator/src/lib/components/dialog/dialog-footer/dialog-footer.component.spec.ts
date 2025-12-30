@@ -1,10 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { DialogFooterComponent } from './dialog-footer.component'
-import { ButtonModule } from 'primeng/button'
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { PrimeIcons } from 'primeng/api'
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { DialogFooterHarness, provideTranslateTestingService, TestbedHarnessEnvironment } from '../../../../../testing'
 import { AngularAcceleratorModule } from '../../../angular-accelerator.module'
+import { DialogFooterComponent } from './dialog-footer.component'
 
 describe('DialogFooterComponent', () => {
   let component: DialogFooterComponent

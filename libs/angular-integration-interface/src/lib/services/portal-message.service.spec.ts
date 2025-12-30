@@ -1,9 +1,9 @@
 import { TestBed, fakeAsync } from '@angular/core/testing'
-import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
-import { provideTranslateTestingService } from '@onecx/angular-accelerator/testing'
-import { Message } from '@onecx/integration-interface'
-import { PortalMessageService } from './portal-message.service'
 import { FakeTopic } from '@onecx/accelerator'
+import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
+import { Message, MessageTopic } from '@onecx/integration-interface'
+import { PortalMessageService } from './portal-message.service'
 
 describe('PortalMessageService', () => {
   let portalMessageService: PortalMessageService

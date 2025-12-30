@@ -1,7 +1,6 @@
 import { Component, Input } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { PrimeIcons } from 'primeng/api'
-import { ButtonModule } from 'primeng/button'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import {
   DialogContentHarness,
