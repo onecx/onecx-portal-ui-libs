@@ -85,7 +85,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   TemplateType = TemplateType
   checked = true
 
-  currentResults: number | undefined;
 
   _rows$ = new BehaviorSubject<Row[]>([])
   @Input()
@@ -96,15 +95,13 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     !this._rows$.getValue().length ?? this.resetPage()
     this._rows$.next(value)
 
-    this.currentResults = this.rows.length ?? 0;
-    const newStatus =
-      this.currentResults === 0
+    const currentResults = value.length;
+    const newStatus = currentResults === 0
         ? 'OCX_DATA_TABLE.NO_SEARCH_RESULTS_FOUND'
         : 'OCX_DATA_TABLE.SEARCH_RESULTS_FOUND';
-
     
     firstValueFrom(
-      this.translateService.get(newStatus, { results: this.currentResults ?? 0 }) ).then((translatedText: string) => {
+      this.translateService.get(newStatus, { results: currentResults }) ).then((translatedText: string) => {
         this.liveAnnouncer.announce(translatedText);
       }
     );

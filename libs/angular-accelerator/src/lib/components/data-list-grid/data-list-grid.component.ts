@@ -145,8 +145,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     totalRecords: '{totalRecords}',
   }
 
-  
-  currentResults: number | undefined;
 
   _data$ = new BehaviorSubject<RowListGridData[]>([])
   @Input()
@@ -158,13 +156,13 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     this._originalData = [...value]
     this._data$.next([...value])
 
-    this.currentResults = this.data.length ?? 0;
-    const newStatus = this.currentResults === 0
+    const currentResults = value.length;
+    const newStatus = currentResults === 0
       ? 'OCX_DATA_LIST_GRID.NO_SEARCH_RESULTS_FOUND'
       : 'OCX_DATA_LIST_GRID.SEARCH_RESULTS_FOUND';
 
     firstValueFrom(
-      this.translateService.get(newStatus, { results: this.currentResults ?? 0 }) ).then((translatedText: string) => {
+      this.translateService.get(newStatus, { results: currentResults }) ).then((translatedText: string) => {
         this.liveAnnouncer.announce(translatedText);
       }
     );
