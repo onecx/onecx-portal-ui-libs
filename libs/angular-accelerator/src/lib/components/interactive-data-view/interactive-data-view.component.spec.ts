@@ -1990,7 +1990,7 @@ xdescribe('InteractiveDataViewComponent', () => {
       it('should not disable any buttons initially', async () => {
         await setUpMockData('grid')
         const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
-        await (await dataView?.getMenuButton())?.click()
+        await (await dataView?.getGridMenuButton())?.click()
         expect(await dataView?.hasAmountOfActionButtons('grid', 3)).toBe(true)
         expect(await dataView?.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
       })
@@ -1999,7 +1999,7 @@ xdescribe('InteractiveDataViewComponent', () => {
         await setUpMockData('grid')
         component.viewActionEnabledField = 'ready'
         const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
-        await (await dataView?.getMenuButton())?.click()
+        await (await dataView?.getGridMenuButton())?.click()
         expect(await dataView?.hasAmountOfActionButtons('grid', 3)).toBe(true)
         expect(await dataView?.hasAmountOfDisabledActionButtons('grid', 1)).toBe(true)
       })
@@ -2043,7 +2043,7 @@ xdescribe('InteractiveDataViewComponent', () => {
       it('should not hide any buttons initially', async () => {
         await setUpMockData('grid')
         const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
-        await (await dataView?.getMenuButton())?.click()
+        await (await dataView?.getGridMenuButton())?.click()
         expect(await dataView?.hasAmountOfActionButtons('grid', 3)).toBe(true)
         expect(await dataView?.hasAmountOfActionButtons('grid-hidden', 0)).toBe(true)
         expect(await dataView?.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
@@ -2052,12 +2052,12 @@ xdescribe('InteractiveDataViewComponent', () => {
       it('should hide a button based on a given field path', async () => {
         await setUpMockData('grid')
         const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
-        await (await dataView?.getMenuButton())?.click()
+        await (await dataView?.getGridMenuButton())?.click()
         expect(await dataView?.hasAmountOfActionButtons('grid', 3)).toBe(true)
-        await (await dataView?.getMenuButton())?.click()
+        await (await dataView?.getGridMenuButton())?.click()
 
         component.viewActionVisibleField = 'ready'
-        await (await dataView?.getMenuButton())?.click()
+        await (await dataView?.getGridMenuButton())?.click()
 
         expect(await dataView?.hasAmountOfActionButtons('grid', 2)).toBe(true)
         expect(await dataView?.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)

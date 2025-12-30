@@ -1,9 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 
 import { FormsModule } from '@angular/forms'
-import { TranslateTestingModule } from 'ngx-translate-testing'
-import { DataListGridSortingComponent } from './data-list-grid-sorting.component'
+import { TranslateModule } from '@ngx-translate/core'
+import { provideTranslateTestingService } from '@onecx/angular-accelerator/testing'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
+import { DataListGridSortingComponent } from './data-list-grid-sorting.component'
 
 describe('DataListGridSortingComponent', () => {
   let component: DataListGridSortingComponent
@@ -12,7 +13,8 @@ describe('DataListGridSortingComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DataListGridSortingComponent],
-      imports: [TranslateTestingModule.withTranslations({}), AngularAcceleratorPrimeNgModule, FormsModule],
+      imports: [AngularAcceleratorPrimeNgModule, FormsModule, TranslateModule.forRoot()],
+      providers: [provideTranslateTestingService({})],
     }).compileComponents()
 
     fixture = TestBed.createComponent(DataListGridSortingComponent)

@@ -94,9 +94,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this._rows$.getValue()
   }
   set rows(value: Row[]) {
-    if(!this._rows$.getValue().length) {
-      this.resetPage()
-    }
+    if (this._rows$.getValue().length) this.resetPage()
     this._rows$.next(value)
   }
   _selectionIds$ = new BehaviorSubject<(string | number)[]>([])
@@ -118,9 +116,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this._filters$.getValue()
   }
   set filters(value: Filter[]) {
-    if(!this._filters$.getValue().length) {
-      this.resetPage()
-    }
+    if (this._filters$.getValue().length) this.resetPage()
     this._filters$.next(value)
   }
   _sortDirection$ = new BehaviorSubject<DataSortDirection>(DataSortDirection.NONE)

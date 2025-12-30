@@ -1,19 +1,20 @@
 import { Component, Input } from '@angular/core'
-import { ButtonDialogConfig } from '../../../model/button-dialog'
-import { PrimeIcons } from 'primeng/api'
-import { DialogInlineComponent } from './dialog-inline.component'
 import { TestBed } from '@angular/core/testing'
+import { PrimeIcons } from 'primeng/api'
+import { ButtonModule } from 'primeng/button'
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import {
   DialogContentHarness,
   DialogFooterHarness,
   DivHarness,
+  provideTranslateTestingService,
   TestbedHarnessEnvironment,
 } from '../../../../../testing'
-import { DialogFooterComponent } from '../dialog-footer/dialog-footer.component'
+import { AngularAcceleratorModule } from '../../../angular-accelerator.module'
+import { ButtonDialogConfig } from '../../../model/button-dialog'
 import { DialogContentComponent } from '../dialog-content/dialog-content.component'
-import { ButtonModule } from 'primeng/button'
-import { TranslateTestingModule } from 'ngx-translate-testing'
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { DialogFooterComponent } from '../dialog-footer/dialog-footer.component'
+import { DialogInlineComponent } from './dialog-inline.component'
 
 @Component({
   standalone: false,
@@ -83,13 +84,14 @@ describe('DialogInlineComponent', () => {
         TestBaseHostComponent,
         TestHostWithResultSubComponent,
       ],
-      imports: [
-        ButtonModule,
-        TranslateTestingModule.withTranslations({
+      imports: [AngularAcceleratorModule],
+      providers: [
+        DynamicDialogConfig,
+        DynamicDialogRef,
+        provideTranslateTestingService({
           en: translations,
         }),
       ],
-      providers: [DynamicDialogConfig, DynamicDialogRef],
     }).compileComponents()
   })
 

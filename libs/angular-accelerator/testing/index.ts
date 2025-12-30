@@ -23,6 +23,7 @@ export * from '../testing/dialog-content.harness'
 export * from '../testing/dialog-footer.harness'
 export * from '../testing/dialog-inline.harness'
 export * from '../testing/dialog-message-content.harness'
+export * from './fake-translate-loader'
 
 export * from '@angular/cdk/testing'
 export * from '@angular/cdk/testing/testbed'

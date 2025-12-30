@@ -1,5 +1,6 @@
 import { TestBed, fakeAsync } from '@angular/core/testing'
-import { TranslateTestingModule } from 'ngx-translate-testing'
+import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
+import { provideTranslateTestingService } from '@onecx/angular-accelerator/testing'
 import { Message } from '@onecx/integration-interface'
 import { PortalMessageService } from './portal-message.service'
 
@@ -40,8 +41,13 @@ describe('PortalMessageService', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [],
-      imports: [TranslateTestingModule.withTranslations('en', translations)],
-      providers: [PortalMessageService],
+      imports: [AngularAcceleratorModule],
+      providers: [
+        PortalMessageService,
+        provideTranslateTestingService({
+          en: translations,
+        }),
+      ],
     }).compileComponents()
     portalMessageService = TestBed.inject(PortalMessageService)
   })

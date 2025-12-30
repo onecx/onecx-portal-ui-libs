@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing'
-import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { TranslateTestingModule } from 'ngx-translate-testing'
-import { ExportDataService } from './export-data.service'
-import { DateUtils } from '../utils/dateutils'
+import { TranslateService } from '@ngx-translate/core'
+import { provideTranslateTestingService } from '@onecx/angular-accelerator/testing'
 import { ColumnType } from '../model/column-type.model'
+import { DateUtils } from '../utils/dateutils'
+import { ExportDataService } from './export-data.service'
 
 describe('ExportDataService', () => {
   class ElementMock {
@@ -312,9 +312,7 @@ describe('ExportDataService', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [],
-      imports: [TranslateModule.forRoot(), TranslateTestingModule.withTranslations(TRANSLATIONS)],
-      providers: [ExportDataService, DateUtils],
+      providers: [ExportDataService, DateUtils, provideTranslateTestingService(TRANSLATIONS)],
     }).compileComponents()
 
     translateService = TestBed.inject(TranslateService)

@@ -2,23 +2,23 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { ActivatedRoute, RouterModule } from '@angular/router'
-import { TranslateModule, TranslateService } from '@ngx-translate/core'
+import { TranslateService } from '@ngx-translate/core'
+import { UserService } from '@onecx/angular-integration-interface'
 import {
   provideAppStateServiceMock,
   provideUserServiceMock,
   UserServiceMock,
 } from '@onecx/angular-integration-interface/mocks'
-import { TranslateTestingModule } from 'ngx-translate-testing'
+import { ensureIntersectionObserverMockExists, ensureOriginMockExists } from '@onecx/angular-testing'
+import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { TooltipStyle } from 'primeng/tooltip'
 import { DataListGridHarness } from '../../../../testing/data-list-grid.harness'
 import { DataTableHarness } from '../../../../testing/data-table.harness'
+import { provideTranslateTestingService } from '../../../../testing/fake-translate-loader'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { ColumnType } from '../../model/column-type.model'
 import { DataListGridComponent } from './data-list-grid.component'
-import { ensureIntersectionObserverMockExists, ensureOriginMockExists } from '@onecx/angular-testing'
-import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
-import { UserService } from '@onecx/angular-integration-interface'
 
 ensureOriginMockExists()
 ensureIntersectionObserverMockExists()
@@ -32,7 +32,7 @@ describe('DataListGridComponent', () => {
     }
     return this
   })
-  global.MutationObserver = mutationObserverMock
+  globalThis.MutationObserver = mutationObserverMock
 
   let fixture: ComponentFixture<DataListGridComponent>
   let component: DataListGridComponent
@@ -219,15 +219,9 @@ describe('DataListGridComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DataListGridComponent],
-      imports: [
-        AngularAcceleratorPrimeNgModule,
-        TranslateModule.forRoot(),
-        TranslateTestingModule.withTranslations(TRANSLATIONS),
-        AngularAcceleratorModule,
-        RouterModule,
-        NoopAnimationsModule,
-      ],
+      imports: [AngularAcceleratorPrimeNgModule, AngularAcceleratorModule, RouterModule, NoopAnimationsModule],
       providers: [
+        provideTranslateTestingService(TRANSLATIONS),
         {
           provide: ActivatedRoute,
           useValue: {
@@ -605,7 +599,7 @@ describe('DataListGridComponent', () => {
       expect(component.editItemObserved).toBe(true)
       expect(component.deleteItemObserved).toBe(true)
 
-      const gridMenuButton = await listGrid.getMenuButton()
+      const gridMenuButton = await listGrid.getGridMenuButton()
 
       await gridMenuButton.click()
 
@@ -621,7 +615,7 @@ describe('DataListGridComponent', () => {
       component.layout = 'grid'
       await setUpGridActionButtonMockData()
       component.viewActionEnabledField = 'ready'
-      const gridMenuButton = await listGrid.getMenuButton()
+      const gridMenuButton = await listGrid.getGridMenuButton()
 
       await gridMenuButton.click()
 
@@ -670,7 +664,7 @@ describe('DataListGridComponent', () => {
       expect(component.editItemObserved).toBe(true)
       expect(component.deleteItemObserved).toBe(true)
 
-      const gridMenuButton = await listGrid.getMenuButton()
+      const gridMenuButton = await listGrid.getGridMenuButton()
 
       await gridMenuButton.click()
 
@@ -681,7 +675,7 @@ describe('DataListGridComponent', () => {
     it('should dynamically hide/show an action button based on the contents of a specified field', async () => {
       component.layout = 'grid'
       await setUpGridActionButtonMockData()
-      const gridMenuButton = await listGrid.getMenuButton()
+      const gridMenuButton = await listGrid.getGridMenuButton()
 
       await gridMenuButton.click()
 
@@ -903,7 +897,7 @@ describe('DataListGridComponent', () => {
       it('should show view, delete and edit action buttons when user has VIEW, DELETE and EDIT permissions', async () => {
         userService.permissionsTopic$.publish(['GRID#VIEW', 'GRID#EDIT', 'GRID#DELETE'])
 
-        const gridMenuButton = await listGrid.getMenuButton()
+        const gridMenuButton = await listGrid.getGridMenuButton()
         await gridMenuButton.click()
 
         let gridActions = await listGrid.getActionButtons('grid')
@@ -934,7 +928,7 @@ describe('DataListGridComponent', () => {
           },
         ]
 
-        const gridMenuButton = await listGrid.getMenuButton()
+        const gridMenuButton = await listGrid.getGridMenuButton()
         await gridMenuButton.click()
 
         let gridActions = await listGrid.getActionButtons('grid')
@@ -975,7 +969,7 @@ describe('DataListGridComponent', () => {
           'CUSTOM#ACTION2',
         ])
 
-        const gridMenuButton = await listGrid.getMenuButton()
+        const gridMenuButton = await listGrid.getGridMenuButton()
         await gridMenuButton.click()
 
         const gridActions = await listGrid.getActionButtons('grid')

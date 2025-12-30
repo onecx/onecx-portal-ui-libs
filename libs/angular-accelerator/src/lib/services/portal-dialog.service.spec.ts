@@ -3,17 +3,21 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { CommonModule } from '@angular/common'
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { TranslateTestingModule } from 'ngx-translate-testing'
-import { ButtonModule } from 'primeng/button'
 import { DialogService, DynamicDialogModule, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { Observable, of } from 'rxjs'
 
+import { NoopAnimationsModule } from '@angular/platform-browser/animations'
+import {
+  provideAppStateServiceMock,
+  provideShellCapabilityServiceMock,
+} from '@onecx/angular-integration-interface/mocks'
 import { DivHarness, InputHarness } from '@onecx/angular-testing'
 import { PrimeIcons } from 'primeng/api'
-import { DialogContentHarness, DialogFooterHarness } from '../../../testing/index'
-import { DialogMessageContentComponent } from '../components/dialog/dialog-message-content/dialog-message-content.component'
+import { DialogContentHarness, DialogFooterHarness, provideTranslateTestingService } from '../../../testing'
+import { AngularAcceleratorModule } from '../angular-accelerator.module'
 import { DialogContentComponent } from '../components/dialog/dialog-content/dialog-content.component'
 import { DialogFooterComponent } from '../components/dialog/dialog-footer/dialog-footer.component'
+import { DialogMessageContentComponent } from '../components/dialog/dialog-message-content/dialog-message-content.component'
 import {
   DialogButtonClicked,
   DialogPrimaryButtonDisabled,
@@ -22,9 +26,6 @@ import {
   DialogState,
   PortalDialogService,
 } from './portal-dialog.service'
-import { provideShellCapabilityServiceMock } from '@onecx/angular-integration-interface/mocks'
-import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
-import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 
 // This component is in charge of dialog display
 @Component({
@@ -272,18 +273,15 @@ describe('PortalDialogService', () => {
         TestWithInputsComponent,
         DialogResultTestComponent,
       ],
-      imports: [
-        TranslateTestingModule.withTranslations('en', translations),
-        DynamicDialogModule,
-        CommonModule,
-        NoopAnimationsModule,
-        ButtonModule,
-      ],
+      imports: [DynamicDialogModule, CommonModule, NoopAnimationsModule, AngularAcceleratorModule],
       providers: [
         PortalDialogService,
         DialogService,
         provideShellCapabilityServiceMock(),
         provideAppStateServiceMock(),
+        provideTranslateTestingService({
+          en: translations,
+        }),
       ],
     }).compileComponents()
     fixture = TestBed.createComponent(BaseTestComponent)
@@ -317,7 +315,7 @@ describe('PortalDialogService', () => {
       'button2'
     )
 
-    expect(pDialogService.open).lastCalledWith(
+    expect(pDialogService.open).toHaveBeenLastCalledWith(
       DialogContentComponent,
       expect.objectContaining({
         header: 'translatedTitle myParam',
@@ -909,7 +907,7 @@ describe('PortalDialogService', () => {
     expect(dialogRef).toBeDefined()
     const dialogRefSpy = jest.spyOn(dialogRef, 'close')
 
-    const dialogElement = dialogService.getInstance(dialogRef).el.nativeElement
+    const dialogElement = dialogService.getInstance(dialogRef)?.el.nativeElement
 
     fixture.detectChanges()
 

@@ -1,5 +1,5 @@
 // Utils
-export * from './lib/utils/async-translate-loader.utils'
+export * from './lib/utils/onecx-translate-loader.utils'
 export * from './lib/utils/caching-translate-loader.utils'
 export * from './lib/utils/create-translate-loader.utils'
 export * from './lib/utils/has-permission-checker'

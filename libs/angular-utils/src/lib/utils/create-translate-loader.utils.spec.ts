@@ -17,6 +17,10 @@ describe('CreateTranslateLoader', () => {
       await TestBed.configureTestingModule({
         providers: [
           {
+            provide: HttpClient,
+            useValue: httpClientMock,
+          },
+          {
             provide: TRANSLATION_PATH,
             useValue: 'path_1',
             multi: true,
@@ -43,7 +47,7 @@ describe('CreateTranslateLoader', () => {
     describe('without TranslationCache parameter', () => {
       it('should call httpClient for each TRANSLATION_PATH', (done) => {
         const translateLoader = runInInjectionContext(injector, () =>
-          createTranslateLoader(httpClientMock, undefined)
+          createTranslateLoader()
         )
   
         translateLoader.getTranslation('en').subscribe(() => {
@@ -56,7 +60,7 @@ describe('CreateTranslateLoader', () => {
     describe('with TranslationCache parameter', () => {
       it('should call httpClient for each TRANSLATION_PATH', (done) => {
         const translateLoader = runInInjectionContext(injector, () =>
-          createTranslateLoader(httpClientMock, undefined, translationCacheService)
+          createTranslateLoader()
         )
   
         translateLoader.getTranslation('en').subscribe(() => {
@@ -79,7 +83,7 @@ describe('CreateTranslateLoader', () => {
     describe('without TranslationCache parameter', () => {
       it('should call httpClient for each TRANSLATION_PATH', (done) => {
         const translateLoader = runInInjectionContext(injector, () =>
-          createTranslateLoader(httpClientMock, undefined)
+          createTranslateLoader()
         )
   
         translateLoader.getTranslation('en').subscribe(() => {
@@ -92,7 +96,7 @@ describe('CreateTranslateLoader', () => {
     describe('with TranslationCache parameter', () => {
       it('should call httpClient for each TRANSLATION_PATH', (done) => {
         const translateLoader = runInInjectionContext(injector, () =>
-          createTranslateLoader(httpClientMock, undefined, translationCacheService)
+          createTranslateLoader()
         )
   
         translateLoader.getTranslation('en').subscribe(() => {

@@ -3,11 +3,15 @@ import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { ActivatedRoute, RouterModule } from '@angular/router'
-import { TranslateTestingModule } from 'ngx-translate-testing'
 import { DataViewModule } from 'primeng/dataview'
 
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
-import { DataListGridHarness, DataTableHarness, DataViewHarness } from '@onecx/angular-accelerator/testing'
+import {
+  DataListGridHarness,
+  DataTableHarness,
+  DataViewHarness,
+  provideTranslateTestingService,
+} from '@onecx/angular-accelerator/testing'
 import {
   provideAppStateServiceMock,
   provideUserServiceMock,
@@ -29,7 +33,7 @@ describe('DataViewComponent', () => {
     }
     return this
   })
-  global.MutationObserver = mutationObserverMock
+  globalThis.MutationObserver = mutationObserverMock
 
   let component: DataViewComponent
   let fixture: ComponentFixture<DataViewComponent>
@@ -207,14 +211,9 @@ describe('DataViewComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DataViewComponent, DataListGridComponent, DataTableComponent],
-      imports: [
-        DataViewModule,
-        TranslateTestingModule.withTranslations(TRANSLATIONS),
-        AngularAcceleratorModule,
-        RouterModule,
-        NoopAnimationsModule,
-      ],
+      imports: [DataViewModule, AngularAcceleratorModule, RouterModule, NoopAnimationsModule],
       providers: [
+        provideTranslateTestingService(TRANSLATIONS),
         provideUserServiceMock(),
         {
           provide: ActivatedRoute,
@@ -409,7 +408,7 @@ describe('DataViewComponent', () => {
       it('should not disable any buttons initially', async () => {
         await setUpMockData('grid')
         const dataView = await dataViewHarness.getDataListGrid()
-        await (await dataView?.getMenuButton())?.click()
+        await (await dataView?.getGridMenuButton())?.click()
         expect(await dataView?.hasAmountOfActionButtons('grid', 3)).toBe(true)
         expect(await dataView?.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
       })
@@ -418,7 +417,7 @@ describe('DataViewComponent', () => {
         await setUpMockData('grid')
         component.viewActionEnabledField = 'ready'
         const dataView = await dataViewHarness.getDataListGrid()
-        await (await dataView?.getMenuButton())?.click()
+        await (await dataView?.getGridMenuButton())?.click()
         expect(await dataView?.hasAmountOfActionButtons('grid', 3)).toBe(true)
         expect(await dataView?.hasAmountOfDisabledActionButtons('grid', 1)).toBe(true)
       })
@@ -462,7 +461,7 @@ describe('DataViewComponent', () => {
       it('should not hide any buttons initially', async () => {
         await setUpMockData('grid')
         const dataView = await dataViewHarness.getDataListGrid()
-        await (await dataView?.getMenuButton())?.click()
+        await (await dataView?.getGridMenuButton())?.click()
         expect(await dataView?.hasAmountOfActionButtons('grid', 3)).toBe(true)
         expect(await dataView?.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
       })
@@ -470,12 +469,12 @@ describe('DataViewComponent', () => {
       it('should hide a button based on a given field path', async () => {
         await setUpMockData('grid')
         const dataView = await dataViewHarness.getDataListGrid()
-        await (await dataView?.getMenuButton())?.click()
+        await (await dataView?.getGridMenuButton())?.click()
         expect(await dataView?.hasAmountOfActionButtons('grid', 3)).toBe(true)
-        await (await dataView?.getMenuButton())?.click()
+        await (await dataView?.getGridMenuButton())?.click()
 
         component.viewActionVisibleField = 'ready'
-        await (await dataView?.getMenuButton())?.click()
+        await (await dataView?.getGridMenuButton())?.click()
         expect(await dataView?.hasAmountOfActionButtons('grid', 2)).toBe(true)
         expect(await dataView?.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
       })

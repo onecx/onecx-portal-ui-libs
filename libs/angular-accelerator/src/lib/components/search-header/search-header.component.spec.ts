@@ -4,7 +4,7 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { RouterTestingModule } from '@angular/router/testing'
-import { SlotHarness } from '@onecx/angular-accelerator/testing'
+import { provideTranslateTestingService, SlotHarness } from '@onecx/angular-accelerator/testing'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import {
   AppStateServiceMock,
@@ -12,7 +12,6 @@ import {
   provideUserServiceMock,
   UserServiceMock,
 } from '@onecx/angular-integration-interface/mocks'
-import { TranslateTestingModule } from 'ngx-translate-testing'
 import { BreadcrumbModule } from 'primeng/breadcrumb'
 import { ButtonModule } from 'primeng/button'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
@@ -29,19 +28,14 @@ describe('SearchHeaderComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [SearchHeaderComponent, PageHeaderComponent, IfPermissionDirective],
-      imports: [
-        TranslateTestingModule.withTranslations({}),
-        RouterTestingModule,
-        ButtonModule,
-        BreadcrumbModule,
-        AngularAcceleratorModule,
-      ],
+      imports: [RouterTestingModule, ButtonModule, BreadcrumbModule, AngularAcceleratorModule],
       providers: [
         AppStateService,
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         provideAppStateServiceMock(),
         provideUserServiceMock(),
+        provideTranslateTestingService({}),
       ],
     }).compileComponents()
 
