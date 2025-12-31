@@ -1,6 +1,7 @@
 /* eslint-disable */
-// Use require for .cjs file - works in both CommonJS and ES module contexts when using ts-node
-const { createReportsConfig } = require('../../jest-config-factory.cjs')
+/** @jest-config-loader ts-node */
+/** @jest-config-loader-options {"transpileOnly": true} */
+import { createReportsConfig } from '../../jest-config-factory'
 
 export default {
   displayName: 'angular-integration-interface',
