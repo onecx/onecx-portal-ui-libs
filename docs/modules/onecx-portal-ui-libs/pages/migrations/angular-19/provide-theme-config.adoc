@@ -1,0 +1,73 @@
+:onecx_theming: xref:documentation:docs-guides-ui:angular:theming.adoc
+
+[#theme-config]
+=== Provide ThemeConfig
+Since version 6 of OneCX to apply PrimeNG theming it is required to add an additional provider to the Microfrontends and Remote Components.
+
+**Microfrontend theme configuration**
+
+* import `provideThemeConfig` provider from `@onecx/angular-utils` in `module.ts` file
+* export `provideThemeConfig` provider in `NgModule` `providers` array
+
+.mfe.remote.module.ts
+[source,typescript]
+----
+import { provideThemeConfig } from '@onecx/angular-utils'
+...
+@NgModule({
+    providers: [
+        provideThemeConfig()
+    ]
+}) export class MyMfe {}
+----
+
+**Remote components theme configuration**
+
+* import `provideThemeConfig` provider from `@onecx/angular-utils` in `bootstrap.ts` file
+* export `provideThemeConfig` in `bootstrapRemoteComponent` function `providers` array from `@onecx/angular-webcomponents`
+
+.remote-component.bootstrap.ts
+[source,typescript]
+----
+import { provideThemeConfig } from '@onecx/angular-utils'
+
+bootstrapRemoteComponent(RemoteComponent, 'my-remote-component', environment.production, [
+  provideThemeConfig()
+])
+----
+
+[#theme-overrides]
+==== Provide theme overrides
+The new theming system introduced in version 6 of OneCX is based on PrimeNG's theming mechanism. In OneCX it is possible to style the content differently per Application. The mechanism that allows that is called theme overrides. To use this feature, it`s required to add the options object as an argument to the `provideThemeConfig` call.
+
+Each Microfrontend or Remote Component can specify their overrides that will guarantee that certain styles are applied differently than in other applications on the page.
+
+.Example
+[source,typescript]
+----
+provideThemeConfig({
+  overrides: {
+    semantic: {
+      extend: {
+        onecx: {
+          secondaryColor: 'red'
+        },
+      },
+      focusRing: {
+        width: '2px',
+        style: 'solid',
+        color: '{primary.color}',
+        offset: '0px',
+        shadow: 'none',
+      },
+    }
+  }
+})
+----
+
+In this example:
+
+* the *secondary color* theme variable is changed
+* the *default focus highlight* is changed
+
+More about what and how to override can be found in {onecx_theming}[theming documentation].
