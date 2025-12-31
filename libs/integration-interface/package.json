@@ -1,14 +1,18 @@
 {
   "name": "@onecx/integration-interface",
-  "version": "5.51.0",
+  "version": "5.52.1",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onecx/onecx-portal-ui-libs"
+  },
   "peerDependencies": {
     "tslib": "^2.6.3",
     "rxjs": "^7.8.1",
     "@phenomnomnominal/tsquery": "^6",
     "@nx/devkit": "^19.8.0",
-    "@onecx/accelerator": "^5.51.0",
-    "@onecx/nx-migration-utils": "^5.51.0",
+    "@onecx/accelerator": "^5.52.1",
+    "@onecx/nx-migration-utils": "^5.52.1",
     "typescript": "^5.5.4"
   },
   "type": "commonjs",

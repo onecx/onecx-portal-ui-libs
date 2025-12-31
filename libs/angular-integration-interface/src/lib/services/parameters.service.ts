@@ -10,26 +10,30 @@ type Parameter = boolean | number | string | object
 export class ParametersService implements OnDestroy {
   private shellCapabilityService = inject(ShellCapabilityService)
   private appStateService = inject(AppStateService)
-  private parameters$ = new ParametersTopic()
+  _parameters$: ParametersTopic | undefined
+  get parameters$() {
+    this._parameters$ ??= new ParametersTopic()
+    return this._parameters$
+  }
+  set parameters$(value: ParametersTopic) {
+    this._parameters$ = value
+  }
 
   ngOnDestroy(): void {
-    this.parameters$.destroy()
+    this._parameters$?.destroy()
   }
 
   /**
    * Use this method to get a parameter value in applications.
-   * 
+   *
    * @param key The key of the parameter to get. This is defined when the parameter is configured in parameter management.
    * @param defaultValue The default value that will be returned if the parameter is not found or if the shell is not yet providing the parameters because it is too old.
    */
-  public async get<T extends Parameter>(
-    key: string,
-    defaultValue: T | Promise<T>
-  ): Promise<T>
-  
+  public async get<T extends Parameter>(key: string, defaultValue: T | Promise<T>): Promise<T>
+
   /**
    * Use this method to get a parameter value in remote components.
-   * 
+   *
    * @param key The key of the parameter to get. This is defined when the parameter is configured in parameter management.
    * @param defaultValue The default value that will be returned if the parameter is not found or if the shell is not yet providing the parameters because it is too old.
    * @param productName The name of the product in which the parameter is defined.
