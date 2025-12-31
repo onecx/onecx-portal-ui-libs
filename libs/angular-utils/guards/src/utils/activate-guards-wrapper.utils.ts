@@ -27,10 +27,10 @@ import {
  */
 @Injectable({ providedIn: 'root' })
 export class ActivateGuardsWrapper {
-  private injector = inject(Injector)
-  private guardsGatherer = inject(GuardsGatherer)
+  private readonly injector = inject(Injector)
+  private readonly guardsGatherer = inject(GuardsGatherer)
   protected router = inject(Router)
-  private guardsNavigationStateController = inject(GuardsNavigationStateController)
+  private readonly guardsNavigationStateController = inject(GuardsNavigationStateController)
 
   canActivate(
     route: ActivatedRouteSnapshot,
@@ -96,7 +96,7 @@ export class ActivateGuardsWrapper {
       canActivateFunctions.map((fn) => {
         try {
           return fn(route, state)
-        } catch (error) {
+        } catch {
           console.warn('Guard does not implement canActivate:', fn)
           return Promise.resolve(true) // Default to true if guard does not implement canActivate
         }

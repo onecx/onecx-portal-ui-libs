@@ -142,6 +142,6 @@ describe('CurrentPageTopic', () => {
     const mock = jest.spyOn(document, 'querySelector')
     mock.mockReturnValue(null)
 
-    expect(() => new CurrentPageTopic()).toThrowError('could not listen to location changes')
+    expect(() => new CurrentPageTopic()).toThrow('could not listen to location changes')
   })
 })

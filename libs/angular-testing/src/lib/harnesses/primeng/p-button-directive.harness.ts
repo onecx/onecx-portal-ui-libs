@@ -26,7 +26,21 @@ export class PButtonDirectiveHarness extends ComponentHarness {
   }
 
   async getIcon(): Promise<string | null> {
-    return await (await this.host()).getAttribute('ng-reflect-icon')
+    const iconElement = await this.locatorForOptional('.p-button-icon')()
+    if (!iconElement) {
+      return null
+    }
+
+    const classList = await iconElement.getProperty('classList')
+    if (!classList) {
+      return null
+    }
+
+    const iconClass = Array.from(classList as DOMTokenList).find((c: string) => 
+      (c.startsWith('pi-'))
+    )
+    
+    return iconClass ? `pi ${iconClass}` : null
   }
 
   async getDisabled(): Promise<boolean> {

@@ -1,7 +1,6 @@
-import { Inject, Injectable, Optional } from '@angular/core'
+import { inject, Injectable } from '@angular/core'
 import { UseStyle } from 'primeng/usestyle'
 import { AppStateService } from '@onecx/angular-integration-interface'
-import { ReplaySubject } from 'rxjs'
 import { THEME_OVERRIDES, ThemeOverrides } from '../utils/application-config'
 import { REMOTE_COMPONENT_CONFIG, SKIP_STYLE_SCOPING } from '@onecx/angular-utils'
 import { RemoteComponentConfig } from '@onecx/angular-utils'
@@ -14,15 +13,16 @@ import {
   shellScopeId,
 } from '@onecx/angular-utils'
 import { replaceRootWithScope } from '@onecx/angular-utils/style'
+import { ReplaySubject } from 'rxjs'
 
 @Injectable({ providedIn: 'any' })
 export class CustomUseStyle extends UseStyle {
-  constructor(
-    private appStateService: AppStateService,
-    @Optional() @Inject(SKIP_STYLE_SCOPING) private skipStyleScoping?: boolean,
-    @Optional() @Inject(REMOTE_COMPONENT_CONFIG) private remoteComponentConfig?: ReplaySubject<RemoteComponentConfig>,
-    @Optional() @Inject(THEME_OVERRIDES) private themeOverrides?: ThemeOverrides
-  ) {
+  private readonly appStateService: AppStateService = inject(AppStateService)
+  private readonly skipStyleScoping: boolean | null = inject(SKIP_STYLE_SCOPING, { optional: true })
+  private readonly remoteComponentConfig: ReplaySubject<RemoteComponentConfig> | null = inject(REMOTE_COMPONENT_CONFIG, { optional: true })
+  private readonly themeOverrides: ThemeOverrides = inject(THEME_OVERRIDES, { optional: true })
+
+  constructor() {
     super()
   }
   // PrimeNg defines CSS variables and styles globally in <style> elements

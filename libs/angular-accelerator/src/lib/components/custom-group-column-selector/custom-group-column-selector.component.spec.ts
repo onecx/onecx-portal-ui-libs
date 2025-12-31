@@ -1,9 +1,10 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { TranslateTestingModule } from 'ngx-translate-testing'
-import { CustomGroupColumnSelectorComponent } from './custom-group-column-selector.component'
 import { CommonModule } from '@angular/common'
-import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
+import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { FormsModule } from '@angular/forms'
+import { TranslateModule } from '@ngx-translate/core'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
+import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
+import { CustomGroupColumnSelectorComponent } from './custom-group-column-selector.component'
 
 describe('CustomGroupColumnSelectorComponent', () => {
   let component: CustomGroupColumnSelectorComponent
@@ -12,12 +13,8 @@ describe('CustomGroupColumnSelectorComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [CustomGroupColumnSelectorComponent],
-      imports: [
-        CommonModule,
-        TranslateTestingModule.withTranslations({}),
-        AngularAcceleratorPrimeNgModule,
-        FormsModule,
-      ],
+      imports: [CommonModule, AngularAcceleratorPrimeNgModule, FormsModule, TranslateModule.forRoot()],
+      providers: [provideTranslateTestingService({})],
     }).compileComponents()
 
     fixture = TestBed.createComponent(CustomGroupColumnSelectorComponent)

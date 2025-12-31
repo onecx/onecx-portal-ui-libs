@@ -42,7 +42,6 @@ const STORYBOOK_TRANSLATION_PROVIDERS = [
       loader: {
         provide: TranslateLoader,
         useFactory: createTranslateLoader,
-        deps: [HttpClient],
       },
     }),
   ],

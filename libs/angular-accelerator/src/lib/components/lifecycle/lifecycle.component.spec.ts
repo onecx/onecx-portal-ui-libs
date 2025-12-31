@@ -1,10 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { LifecycleComponent, LifecycleStep } from './lifecycle.component'
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { TimelineModule } from 'primeng/timeline'
 import { LifecycleHarness, TestbedHarnessEnvironment } from '../../../../testing'
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { TranslateTestingModule } from 'ngx-translate-testing'
-import { AngularAcceleratorModule } from '../../angular-accelerator.module'
+import { LifecycleComponent, LifecycleStep } from './lifecycle.component'
 
 const mockSteps: LifecycleStep[] = [
   {
@@ -30,12 +28,7 @@ describe('LifecycleComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [LifecycleComponent],
-      imports: [
-        TimelineModule,
-        AngularAcceleratorModule,
-        BrowserAnimationsModule,
-        TranslateTestingModule.withTranslations('en', {}),
-      ],
+      imports: [TimelineModule, BrowserAnimationsModule],
     }).compileComponents()
 
     fixture = TestBed.createComponent(LifecycleComponent)
