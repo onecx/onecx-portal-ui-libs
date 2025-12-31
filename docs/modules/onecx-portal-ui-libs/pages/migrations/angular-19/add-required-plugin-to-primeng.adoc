@@ -7,8 +7,8 @@ OneCX version 6 uses PrimeNG 19 and requires Apps to add the following configura
 * Export modified PrimeNG plugin in module exports plugins array
 
 .webpack.config.js
-[source,js]
-....
+[source,javascript]
+----
 const { ModifySourcePlugin, ReplaceOperation } = require('modify-source-webpack-plugin')
 ...
 const modifyPrimeNgPlugin = new ModifySourcePlugin({
@@ -32,4 +32,4 @@ module.exports = {
   ...webpackConfig,
   plugins: [...plugins, modifyPrimeNgPlugin]
 }
-....
+----
