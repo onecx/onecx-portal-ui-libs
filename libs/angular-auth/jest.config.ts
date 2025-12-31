@@ -1,6 +1,5 @@
 /* eslint-disable */
-// Use require for .cjs file - works in both CommonJS and ES module contexts when using ts-node
-const { createReportsConfig } = require('../../jest-config-factory.cjs')
+import { createReportsConfig } from '../../jest-config-factory'
 
 export default {
   displayName: 'angular-auth',
