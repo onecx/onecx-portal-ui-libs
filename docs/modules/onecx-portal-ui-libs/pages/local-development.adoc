@@ -204,6 +204,6 @@ At this point, you should have updated the version numbers in the `package.json`
 === 6. Run OneCX Shell and App(s)
 After completing the previous steps, you are now ready to run OneCX Shell and the app(s) with your local library changes.
 
-To do so, follow the documentation on xref:documentation:onecx-docs-start:first-app/running_custom_apps_overview.html[running custom applications locally].
+To do so, follow the documentation on xref:documentation:onecx-docs-start:first-app/running_custom_apps_overview.adoc[running custom applications locally].
 
 TIP: The steps for running the shell should match the steps for running existing OneCX core apps.
