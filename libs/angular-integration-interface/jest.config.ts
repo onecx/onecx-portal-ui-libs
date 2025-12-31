@@ -1,6 +1,4 @@
 /* eslint-disable */
-/** @jest-config-loader ts-node */
-/** @jest-config-loader-options {"transpileOnly": true} */
 import { createReportsConfig } from '../../jest-config-factory'
 
 export default {
