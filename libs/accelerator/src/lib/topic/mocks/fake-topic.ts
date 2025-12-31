@@ -26,6 +26,15 @@ interface MockSubscribable<T> {
 }
 
 export class FakeTopic<T> extends MockTopicPublisher<T> implements MockSubscribable<T> {
+    /**
+     * Returns the current value if the state is a BehaviorSubject, else throws an error.
+     */
+    getValue(): T {
+      if (this.state instanceof BehaviorSubject) {
+        return (this.state as BehaviorSubject<T>).getValue();
+      }
+      throw new Error('Only possible for FakeTopic with initial value');
+    }
   private state: Subject<T>
   private resolveInitPromise!: (value: void | PromiseLike<void>) => void
   private readonly windowEventListener = (m: MessageEvent<TopicMessage>) => this.onWindowMessage(m)
@@ -35,12 +44,27 @@ export class FakeTopic<T> extends MockTopicPublisher<T> implements MockSubscriba
   protected isInitializedPromise: Promise<void>
   protected readonly readBroadcastChannel: BroadcastChannel | undefined = new BroadcastChannel(`Topic-${this.name}|${this.version}`)
   
-  constructor()
-  constructor(name: string, version: number)
-  constructor(name: string, version: number, ...args: any[])
-  constructor(name?: string, version?: number, ...args: any[]) {
-    const initialValue: T | undefined = args.length > 0 ? args[0] : undefined;
-    super(name ?? 'mock', version ?? 0);
+  constructor();
+  constructor(initialValue: T);
+  constructor(name: string, version: number);
+  constructor(name: string, version: number, ...args: any[]);
+  constructor(arg1?: string | T, arg2?: number, ...args: any[]) {
+    let name: string = 'mock';
+    let version: number = 0;
+    let initialValue: T | undefined = undefined;
+
+    if (typeof arg1 === 'string' && typeof arg2 === 'number') {
+      name = arg1;
+      version = arg2;
+      if (args.length > 0) {
+        initialValue = args[0];
+      }
+    } else if (typeof arg1 === 'string') {
+      name = arg1;
+    } else if (typeof arg2 === 'undefined' && arg1 !== undefined) {
+      initialValue = arg1 as T;
+    }
+    super(name, version);
     if (initialValue !== undefined) {
       this.state = new BehaviorSubject<T>(initialValue);
       this.data = new BehaviorSubject<T | undefined>(initialValue);
