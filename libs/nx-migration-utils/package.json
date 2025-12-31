@@ -1,14 +1,18 @@
 {
   "name": "@onecx/nx-migration-utils",
-  "version": "6.11.0",
+  "version": "6.12.2",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onecx/onecx-portal-ui-libs"
+  },
   "peerDependencies": {
     "node-html-parser": "^7.0.1",
     "tslib": "^2.3.0",
     "@phenomnomnominal/tsquery": "^6",
     "@nx/devkit": "^20.3.0",
     "typescript": "^5.5.4",
-    "postcss": "^8.5.3",
+    "postcss": "^8.5.0",
     "postcss-scss": "^4.0.9"
   },
   "type": "commonjs",

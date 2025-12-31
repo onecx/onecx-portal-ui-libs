@@ -1,3 +1,42 @@
+## [6.12.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.12.1...v6.12.2) (2025-12-29)
+
+### Bug Fixes
+
+* downgrade postcss minor version in nx-migration-utils ([#1112](https://github.com/onecx/onecx-portal-ui-libs/issues/1112)) ([3cb6b84](https://github.com/onecx/onecx-portal-ui-libs/commit/3cb6b842e3681f90b8652f2474ecf02c2446bc10))
+
+## [6.12.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.12.0...v6.12.1) (2025-12-18)
+
+### Bug Fixes
+
+* broadcast channel for read and publish ([#1099](https://github.com/onecx/onecx-portal-ui-libs/issues/1099)) ([#1100](https://github.com/onecx/onecx-portal-ui-libs/issues/1100)) ([78819b7](https://github.com/onecx/onecx-portal-ui-libs/commit/78819b76315ced0c3e634db430bb85f9c60deb22))
+
+## [6.12.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.11.1...v6.12.0) (2025-12-18)
+
+### Features
+
+* change communication of topic to BroadcastChannel ([#1091](https://github.com/onecx/onecx-portal-ui-libs/issues/1091)) ([#1093](https://github.com/onecx/onecx-portal-ui-libs/issues/1093)) ([4a0cc83](https://github.com/onecx/onecx-portal-ui-libs/commit/4a0cc83ac86068c8e287eaf34bbb42850c954c2c))
+
+### Bug Fixes
+
+* topic usage test setup v6 ([#1098](https://github.com/onecx/onecx-portal-ui-libs/issues/1098)) ([408c33f](https://github.com/onecx/onecx-portal-ui-libs/commit/408c33f99a7ff2bb40870b6c24c942c99c476058))
+
+## [6.11.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.11.0...v6.11.1) (2025-12-15)
+
+### Bug Fixes
+
+* conditional statement added for SearchHeader buttons to be read left to right when order is reversed ([#1054](https://github.com/onecx/onecx-portal-ui-libs/issues/1054)) ([#1058](https://github.com/onecx/onecx-portal-ui-libs/issues/1058)) ([20529d8](https://github.com/onecx/onecx-portal-ui-libs/commit/20529d805760b98d180c40e7c2e6c52088c606e0))
+* DataListGridSorting dropdownOptions showing options where sortable is set to false ([#1056](https://github.com/onecx/onecx-portal-ui-libs/issues/1056)) ([0a6fed3](https://github.com/onecx/onecx-portal-ui-libs/commit/0a6fed3bc72ac2e4e23a7a40614297bd95ca55a9))
+* Fixed the default tooltip for sort action in interactive-data-view table header ([#1064](https://github.com/onecx/onecx-portal-ui-libs/issues/1064)) ([c8a5897](https://github.com/onecx/onecx-portal-ui-libs/commit/c8a5897d44c1f13e5a0b112676b2e41fcd92eea6))
+* Portal Page Widget height fix ([#1050](https://github.com/onecx/onecx-portal-ui-libs/issues/1050)) ([d2e423e](https://github.com/onecx/onecx-portal-ui-libs/commit/d2e423ea8be7f1be2a121eac9363e000018788ea))
+* scope primeng overrides correctly ([#1068](https://github.com/onecx/onecx-portal-ui-libs/issues/1068)) ([392d1d3](https://github.com/onecx/onecx-portal-ui-libs/commit/392d1d3be0c94d8e4cf7c28ec432746f8458acb4))
+* V6 -  Fix Translation configuration to support multiple translation sets ([#1066](https://github.com/onecx/onecx-portal-ui-libs/issues/1066)) ([a9e98a7](https://github.com/onecx/onecx-portal-ui-libs/commit/a9e98a7f02010e7843ff274967a435421db211a0))
+
+### Chores
+
+* remove integration-tests library from portal-libs ([#1022](https://github.com/onecx/onecx-portal-ui-libs/issues/1022)) ([244cb61](https://github.com/onecx/onecx-portal-ui-libs/commit/244cb617ad47841cb053c52e30d523863c174d6c)), closes [#1015](https://github.com/onecx/onecx-portal-ui-libs/issues/1015)
+* update release pipeline ([#1076](https://github.com/onecx/onecx-portal-ui-libs/issues/1076)) ([bc87fe2](https://github.com/onecx/onecx-portal-ui-libs/commit/bc87fe27ee48cfd5f3e6003b65d444abb57c8af2))
+* use node 22 for release ([#1079](https://github.com/onecx/onecx-portal-ui-libs/issues/1079)) ([551b40d](https://github.com/onecx/onecx-portal-ui-libs/commit/551b40d330d5b2124d286d9166774e9a2dfef25c))
+
 ## [6.11.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.10.0...v6.11.0) (2025-11-21)
 
 ### Features
