@@ -1,7 +1,7 @@
 import { firstValueFrom } from "rxjs";
 import { ImageRepositoryTopic } from "../topics/image-repository/image-repository.topic";
 
-export class ImageService {
+export class ImageRepositoryService {
     private _imageRepositoryTopic$: ImageRepositoryTopic | undefined;
 
     get imageRepositoryTopic() {

@@ -1,4 +1,4 @@
-export interface ImageInfo {
+export interface ImageRepositoryInfo {
     images: {
         [key: string]: string;
     };

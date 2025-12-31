@@ -8,7 +8,7 @@ export * from './lib/services/theme.service'
 export * from './lib/services/remote-components.service'
 export * from './lib/services/workspace.service'
 export * from './lib/services/shell-capability.service'
-export * from './lib/services/image.service'
+export * from './lib/services/image-repository.service'
 
 // models
 export * from './lib/model/config-key.model'

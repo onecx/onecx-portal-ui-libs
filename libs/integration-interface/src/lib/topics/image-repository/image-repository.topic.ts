@@ -1,7 +1,7 @@
 import { Topic } from "@onecx/accelerator";
-import { ImageInfo } from "./image-repository.model";
+import { ImageRepositoryInfo } from "./image-repository.model";
 
-export class ImageRepositoryTopic extends Topic<ImageInfo> {
+export class ImageRepositoryTopic extends Topic<ImageRepositoryInfo> {
   constructor() {
     super('imageRepository', 1)
   }
