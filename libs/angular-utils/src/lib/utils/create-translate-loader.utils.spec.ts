@@ -30,36 +30,21 @@ describe('CreateTranslateLoader', () => {
           },
           {
             provide: TRANSLATION_PATH,
-            useValue: of("path_3"),
+            useValue: of('path_3'),
             multi: true,
           },
         ],
       }).compileComponents()
-  
+
       injector = TestBed.inject(Injector)
       window['onecxTranslations'] = {}
       jest.clearAllMocks()
     })
-  
+
     describe('without TranslationCache parameter', () => {
       it('should call httpClient for each TRANSLATION_PATH', (done) => {
-        const translateLoader = runInInjectionContext(injector, () =>
-          createTranslateLoader()
-        )
-  
-        translateLoader.getTranslation('en').subscribe(() => {
-          expect(httpClientMock.get).toHaveBeenCalledTimes(3)
-          done()
-        })
-      })
-    })
-  
-    describe('with TranslationCache parameter', () => {
-      it('should call httpClient for each TRANSLATION_PATH', (done) => {
-        const translateLoader = runInInjectionContext(injector, () =>
-          createTranslateLoader()
-        )
-  
+        const translateLoader = runInInjectionContext(injector, () => createTranslateLoader())
+
         translateLoader.getTranslation('en').subscribe(() => {
           expect(httpClientMock.get).toHaveBeenCalledTimes(3)
           done()
@@ -75,26 +60,11 @@ describe('CreateTranslateLoader', () => {
       window['onecxTranslations'] = {}
       jest.clearAllMocks()
     })
-  
+
     describe('without TranslationCache parameter', () => {
       it('should call httpClient for each TRANSLATION_PATH', (done) => {
-        const translateLoader = runInInjectionContext(injector, () =>
-          createTranslateLoader()
-        )
-  
-        translateLoader.getTranslation('en').subscribe(() => {
-          expect(httpClientMock.get).toHaveBeenCalledTimes(0)
-          done()
-        })
-      })
-    })
-  
-    describe('with TranslationCache parameter', () => {
-      it('should call httpClient for each TRANSLATION_PATH', (done) => {
-        const translateLoader = runInInjectionContext(injector, () =>
-          createTranslateLoader()
-        )
-  
+        const translateLoader = runInInjectionContext(injector, () => createTranslateLoader())
+
         translateLoader.getTranslation('en').subscribe(() => {
           expect(httpClientMock.get).toHaveBeenCalledTimes(0)
           done()
