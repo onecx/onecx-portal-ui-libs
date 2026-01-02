@@ -1,0 +1,126 @@
+:root {
+  --test-example-inputtext-padding-x: var(
+    --test-example-form-field-padding-x,
+    0.75rem
+  );
+  --test-example-inputtext-padding-y: var(
+    --test-example-form-field-padding-y,
+    0.75rem
+  );
+  --test-example-inputtext-border-radius: var(
+    --test-example-form-field-border-radius,
+    6px
+  );
+  --test-example-inputtext-transition-duration: var(
+    --test-example-form-field-transition-duration,
+    0.2s
+  );
+  --test-example-inputtext-focus-ring-width: var(
+    --test-example-form-field-focus-ring-width,
+    0
+  );
+  --test-example-inputtext-focus-ring-style: var(
+    --test-example-form-field-focus-ring-style,
+    none
+  );
+  --test-example-inputtext-focus-ring-color: var(
+    --test-example-form-field-focus-ring-color,
+    transparent
+  );
+  --test-example-inputtext-focus-ring-offset: var(
+    --test-example-form-field-focus-ring-offset,
+    0
+  );
+  --test-example-inputtext-focus-ring-shadow: var(
+    --test-example-form-field-focus-ring-shadow,
+    none
+  );
+
+  --test-example-inputtext-lg-font-size: var(
+    --test-example-form-field-lg-font-size,
+    1.125rem
+  );
+  --test-example-inputtext-lg-padding-x: var(
+    --test-example-form-field-lg-padding-x,
+    0.875rem
+  );
+  --test-example-inputtext-lg-padding-y: var(
+    --test-example-form-field-lg-padding-y,
+    0.875rem
+  );
+  --test-example-inputtext-sm-font-size: var(
+    --test-example-form-field-sm-font-size,
+    0.875rem
+  );
+  --test-example-inputtext-sm-padding-x: var(
+    --test-example-form-field-sm-padding-x,
+    0.625rem
+  );
+  --test-example-inputtext-sm-padding-y: var(
+    --test-example-form-field-sm-padding-y,
+    0.625rem
+  );
+
+  --test-example-inputtext-background: var(
+    --test-example-form-field-background,
+    #ffffff
+  );
+  --test-example-inputtext-disabled-background: var(
+    --test-example-form-field-disabled-background,
+    #dadee3
+  );
+  --test-example-inputtext-filled-background: var(
+    --test-example-form-field-filled-background,
+    #f7f8f9
+  );
+  --test-example-inputtext-filled-hover-background: var(
+    --test-example-form-field-filled-hover-background,
+    #f7f8f9
+  );
+  --test-example-inputtext-filled-focus-background: var(
+    --test-example-form-field-filled-focus-background,
+    #f7f8f9
+  );
+
+  --test-example-inputtext-border-color: var(
+    --test-example-form-field-border-color,
+    #bcc3cd
+  );
+  --test-example-inputtext-hover-border-color: var(
+    --test-example-form-field-hover-border-color,
+    #818ea1
+  );
+  --test-example-inputtext-focus-border-color: var(
+    --test-example-form-field-focus-border-color,
+    #274b5f
+  );
+  --test-example-inputtext-invalid-border-color: var(
+    --test-example-form-field-invalid-border-color,
+    #b00020
+  );
+
+  --test-example-inputtext-color: var(--test-example-form-field-color, #465161);
+  --test-example-inputtext-disabled-color: var(
+    --test-example-form-field-disabled-color,
+    #818ea1
+  );
+  --test-example-inputtext-placeholder-color: var(
+    --test-example-form-field-placeholder-color,
+    #64748b
+  );
+  --test-example-inputtext-invalid-placeholder-color: var(
+    --test-example-form-field-invalid-placeholder-color,
+    #b00020
+  );
+
+  --test-example-inputtext-icon-color: var(
+    --test-example-form-field-icon-color,
+    #818ea1
+  );
+  --test-example-inputtext-shadow: var(
+    --test-example-form-field-shadow,
+    0 0 #0000,
+    0 0 #0000,
+    0 1px 2px 0 rgba(18, 18, 23, 0.05)
+  );
+}
