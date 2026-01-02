@@ -1,3 +1,9 @@
+## [6.13.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.12.2...v6.13.0) (2026-01-02)
+
+### Features
+
+* initial changes of image service ([#1115](https://github.com/onecx/onecx-portal-ui-libs/issues/1115)) ([a739253](https://github.com/onecx/onecx-portal-ui-libs/commit/a739253a758251b7e825f9cd5909a6c28618b06b))
+
 ## [6.12.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.12.1...v6.12.2) (2025-12-29)
 
 ### Bug Fixes
