@@ -18,7 +18,6 @@ export * from './lib/utils/modification/add-to-first-import.utils'
 export * from './lib/utils/modification/replace-tag-in-html.utils'
 export * from './lib/utils/modification/remove-import-specifier.utils'
 
-
 export * from './lib/utils/validation/is-file-style-sheet.utils'
 export * from './lib/utils/validation/has-html-tag.utils'
 export * from './lib/utils/validation/is-import-in-content.utils'
