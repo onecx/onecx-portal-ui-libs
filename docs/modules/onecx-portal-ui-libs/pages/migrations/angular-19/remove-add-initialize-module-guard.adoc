@@ -1,0 +1,2 @@
+[#remove-add-initialize-module-guard]
+=== Remove addInitializeModuleGuard()
