@@ -81,26 +81,26 @@ describe('DiagramComponent', () => {
   })
 
   it('should display pie chart by default', async () => {
-    fixture.detectChanges()
-    await fixture.whenStable()
-    
-    expect(component.chartType).toEqual('pie')
+    const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
+    const chartHarness = await diagram.getChart()
+    const chartType = await chartHarness.getType()
+    expect(chartType).toEqual('pie')
   })
 
   it('should display horizontal bar chart', async () => {
     component.diagramType = DiagramType.HORIZONTAL_BAR
-    fixture.detectChanges()
-    await fixture.whenStable()
-    
-    expect(component.chartType).toEqual('bar')
+    const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
+    const chartHarness = await diagram.getChart()
+    const chartType = await chartHarness.getType()
+    expect(chartType).toEqual('bar')
   })
 
   it('should display vertical bar chart', async () => {
     component.diagramType = DiagramType.VERTICAL_BAR
-    fixture.detectChanges()
-    await fixture.whenStable()
-
-    expect(component.chartType).toEqual('bar')
+    const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
+    const chartHarness = await diagram.getChart()
+    const chartType = await chartHarness.getType()
+    expect(chartType).toEqual('bar')
   })
 
   it('should not display a diagramType select button by default', async () => {
@@ -153,16 +153,22 @@ describe('DiagramComponent', () => {
 
     expect(diagramTypeSelectButton).toBeTruthy()
     expect(component.diagramType).toBe(DiagramType.PIE)
-    expect(component.chartType).toEqual('pie')
+    let chartHarness = await diagram.getChart()
+    let chartType = await chartHarness.getType()
+    expect(chartType).toEqual('pie')
 
     await diagramTypeSelectButtonOptions[1].click()
     expect(component.diagramType).toBe(DiagramType.HORIZONTAL_BAR)
-    expect(component.chartType).toEqual('bar')
+    chartHarness = await diagram.getChart()
+    chartType = await chartHarness.getType()
+    expect(chartType).toEqual('bar')
     expect(diagramTypeChangedEvent).toBe(DiagramType.HORIZONTAL_BAR)
 
     await diagramTypeSelectButtonOptions[0].click()
     expect(component.diagramType).toBe(DiagramType.PIE)
-    expect(component.chartType).toEqual('pie')
+    chartHarness = await diagram.getChart()
+    chartType = await chartHarness.getType()
+    expect(chartType).toEqual('pie')
     expect(diagramTypeChangedEvent).toBe(DiagramType.PIE)
   })
 
