@@ -41,14 +41,12 @@ describe('CreateTranslateLoader', () => {
       jest.clearAllMocks()
     })
 
-    describe('without TranslationCache parameter', () => {
-      it('should call httpClient for each TRANSLATION_PATH', (done) => {
-        const translateLoader = runInInjectionContext(injector, () => createTranslateLoader())
+    it('should call httpClient for each TRANSLATION_PATH', (done) => {
+      const translateLoader = runInInjectionContext(injector, () => createTranslateLoader())
 
-        translateLoader.getTranslation('en').subscribe(() => {
-          expect(httpClientMock.get).toHaveBeenCalledTimes(3)
-          done()
-        })
+      translateLoader.getTranslation('en').subscribe(() => {
+        expect(httpClientMock.get).toHaveBeenCalledTimes(3)
+        done()
       })
     })
   })
