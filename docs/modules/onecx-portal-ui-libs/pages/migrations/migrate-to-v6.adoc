@@ -329,7 +329,7 @@ bootstrapRemoteComponent(RemoteComponent, 'ocx-my-remote-component', environment
 ```
 [NOTE]
 ====
-To support multiple locales for missing translations, Please use MultiLanguageMissingTranslationHandler from @onecx/angular-utils.
+To support multiple locales for missing translations, Please use AngularAcceleratorMissingTranslationHandler from @onecx/angular-accelerator.
 ====
 
 [NOTE]
