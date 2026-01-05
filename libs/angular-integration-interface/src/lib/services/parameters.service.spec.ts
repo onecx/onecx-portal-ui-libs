@@ -19,8 +19,7 @@ describe('ParametersService', () => {
       providers: [provideShellCapabilityServiceMock(), provideAppStateServiceMock()],
     })
     parametersService = TestBed.inject(ParametersService)
-    parametersService.parameters$ = FakeTopic.create<ParametersTopicPayload>()
-    parametersTopic = parametersService.parameters$
+    parametersTopic = FakeTopic.create<ParametersTopicPayload>()
   })
 
   it('should be created', () => {

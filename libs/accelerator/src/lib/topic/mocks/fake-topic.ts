@@ -13,10 +13,7 @@ export class FakeTopic<T> {
   get isInitialized(): Promise<void> {
     return Promise.resolve()
   }
-
-  /**
-   * @deprecated is deprecated in rxjs. This is only here to be compatible with the interface.
-   */
+  
   subscribe(observerOrNext?: Partial<Observer<T>> | ((value: T) => void)): Subscription
   /** @deprecated is deprecated in rxjs. This is only here to be compatible with the interface. */
   subscribe(

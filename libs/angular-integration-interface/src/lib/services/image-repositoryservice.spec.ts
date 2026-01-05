@@ -16,10 +16,9 @@ describe('ImageRepositoryService', () => {
     TestBed.configureTestingModule({
 		providers: [ImageRepositoryService]
 	});
-	  const mockTopic = FakeTopic.create<ImageRepositoryInfo>();
     service = TestBed.inject(ImageRepositoryService);
     imageRepositoryInterface = (service as any).imageRepositoryInterface;
-    imageRepositoryInterface.imageRepositoryTopic = mockTopic;
+    imageRepositoryInterface.imageRepositoryTopic = FakeTopic.create<ImageRepositoryInfo>();
     imageRepositoryInterface.imageRepositoryTopic?.publish(MOCK_URLS);
   });
 
