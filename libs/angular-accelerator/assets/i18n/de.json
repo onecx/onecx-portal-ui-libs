@@ -51,6 +51,8 @@
     "SORTING_BUTTON_ARIA_LABEL": "{{direction}} sortieren"
   },
   "OCX_DATA_TABLE": {
+    "SEARCH_RESULTS_FOUND": "{{results}} Ergebnisse gefunden",
+    "NO_SEARCH_RESULTS_FOUND": "Keine Ergebnisse gefunden",
     "EMPTY_RESULT": "Keine Daten gefunden.",
     "EMPTY_FILTER_MESSAGE": "Keine Filter gefunden.",
     "ACTIONS_COLUMN_NAME": "Aktionen",
@@ -79,6 +81,8 @@
     "FILTER_NO": "Nein"
   },
   "OCX_DATA_LIST_GRID": {
+    "SEARCH_RESULTS_FOUND": "{{results}} Ergebnisse gefunden",
+    "NO_SEARCH_RESULTS_FOUND": "Keine Ergebnisse gefunden",
     "EMPTY_RESULT": "Keine Daten gefunden.",
     "MENU": {
       "VIEW": "Anzeigen",
