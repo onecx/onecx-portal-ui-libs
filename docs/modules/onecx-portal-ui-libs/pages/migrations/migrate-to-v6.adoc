@@ -105,10 +105,10 @@ Some components will be removed. Please check if you are using following compone
 
 * createRemoteComponentTranslateLoader
 * createRemoteComponentAndMfeTranslateLoader +
-=> *Use createTranslateLoader with remoteComponentTranslationPathFactory from @onecx/angular-utils*
+=> *Use createTranslateLoader with provideTranslationPathFromMeta from @onecx/angular-utils*
 
 * createTranslateLoader +
-=> *Use createTranslateLoader with translationPathFactory from @onecx/angular-utils*
+=> *Use createTranslateLoader with provideTranslationPathFromMeta from @onecx/angular-utils*
 
 * HasPermissionChecker
 * AlwaysGrantPermissionChecker
@@ -305,7 +305,9 @@ import {
 } from '@onecx/angular-remote-components'
 import { TranslateLoader } from '@ngx-translate/core'
 import { ReplaySubject } from 'rxjs'
-import { createTranslateLoader, remoteComponentTranslationPathFactory, provideTranslationPathFromMeta } from '@onecx/angular-utils'
+import { createTranslateLoader, provideTranslationPathFromMeta } from '@onecx/angular-utils'
+import { MissingTranslationHandler } from '@ngx-translate/core';
+import { AngularAcceleratorMissingTranslationHandler } from '@onecx/angular-accelerator';
 
 bootstrapRemoteComponent(RemoteComponent, 'ocx-my-remote-component', environment.production, [
   ...
@@ -316,11 +318,20 @@ bootstrapRemoteComponent(RemoteComponent, 'ocx-my-remote-component', environment
       provide: TranslateLoader,
       useFactory: createTranslateLoader,
       deps: [HttpClient]
+    },
+    missingTranslationHandler: {
+      provide: MissingTranslationHandler,
+      useClass: AngularAcceleratorMissingTranslationHandler
     }
   }),
   provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/')
 ])
 ```
+[NOTE]
+====
+To support multiple locales for missing translations, Please use MultiLanguageMissingTranslationHandler from @onecx/angular-utils.
+====
+
 [NOTE]
 ====
 If the error 
