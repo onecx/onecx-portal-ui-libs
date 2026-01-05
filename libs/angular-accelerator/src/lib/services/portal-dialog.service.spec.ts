@@ -306,6 +306,7 @@ describe('PortalDialogService', () => {
   })
 
   it('should log error and return null if dialog could not be opened', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
     jest.spyOn(pDialogService, 'open').mockReturnValue(null)
 
@@ -319,6 +320,7 @@ describe('PortalDialogService', () => {
   })
 
   it('should warn if dialog component instance could not be found after creation', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
     jest.spyOn(pDialogService, 'open')
     jest.spyOn(pDialogService, 'getInstance').mockReturnValue(undefined)
@@ -956,6 +958,7 @@ describe('PortalDialogService', () => {
 
       fixture.detectChanges()
       jest.spyOn(pDialogService, 'getInstance').mockReturnValue(undefined)
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
 
       fixture.componentInstance.portalDialogService.ngOnDestroy()
