@@ -1,5 +1,10 @@
 import { inject, Injectable } from '@angular/core'
-import { getValue, MissingTranslationHandler, MissingTranslationHandlerParams } from '@ngx-translate/core'
+import {
+  getValue,
+  MissingTranslationHandler,
+  MissingTranslationHandlerParams,
+  TranslateParser,
+} from '@ngx-translate/core'
 import { getNormalizedBrowserLocales } from '@onecx/accelerator'
 import { UserService } from '@onecx/angular-integration-interface'
 import { Observable, of } from 'rxjs'
@@ -8,6 +13,7 @@ import { catchError, map, mergeMap, shareReplay, take } from 'rxjs/operators'
 @Injectable()
 export class MultiLanguageMissingTranslationHandler implements MissingTranslationHandler {
   private readonly userService = inject(UserService)
+  private readonly parser = inject(TranslateParser)
   handle(params: MissingTranslationHandlerParams): Observable<string> {
     const locales$ = this.userService.profile$.pipe(
       map((p) => {
@@ -20,7 +26,7 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
       shareReplay(1)
     )
 
-    return loadTranslations(locales$, params)
+    return loadTranslations(locales$, params, this.parser)
   }
 }
 /**
@@ -32,11 +38,15 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
  * @param params - parameters containing the key and translateService
  * @returns Observable that emits the translation or throws an error if not found
  */
-function findTranslationForLang(lang: string, params: MissingTranslationHandlerParams): Observable<string> {
+function findTranslationForLang(
+  lang: string,
+  params: MissingTranslationHandlerParams,
+  parser: TranslateParser
+): Observable<string> {
   return params.translateService.reloadLang(lang).pipe(
     map((interpolatableTranslationObject: Record<string, any>) => {
-      const translatedValue = (params.translateService as any).parser?.interpolate(
-        getValue(interpolatableTranslationObject, params.key),
+      const translatedValue = parser.interpolate(
+        getValue(interpolatableTranslationObject, params.key) as string,
         params.interpolateParams
       )
       if (!translatedValue) {
@@ -49,7 +59,8 @@ function findTranslationForLang(lang: string, params: MissingTranslationHandlerP
 
 function loadTranslations(
   langConfig: Observable<string[]>,
-  params: MissingTranslationHandlerParams
+  params: MissingTranslationHandlerParams,
+  parser: TranslateParser
 ): Observable<string> {
   return langConfig.pipe(
     mergeMap((l) => {
@@ -57,7 +68,7 @@ function loadTranslations(
       const chain = (o: Observable<string[]>): Observable<any> => {
         return o.pipe(
           mergeMap((lang) => {
-            return findTranslationForLang(lang[0], params)
+            return findTranslationForLang(lang[0], params, parser)
           }),
           catchError(() => {
             langs.shift()
