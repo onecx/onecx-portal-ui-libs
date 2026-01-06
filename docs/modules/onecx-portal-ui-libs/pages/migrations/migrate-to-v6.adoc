@@ -181,8 +181,7 @@ Some components will be removed. Please check if you are using following compone
 * DialogMessageContentHarness +
 => *These components are now in @onecx/angular-accelerator*
 
-* PortalPageComponent (ocx-portal-page) + 
-
+* PortalPageComponent (ocx-portal-page) +
 => *These components are now in @onecx/angular-utils*
 
 * PortalFooterComponent (portal-footer )
@@ -223,9 +222,6 @@ Some components will be removed. Please check if you are using following compone
 
 * ButtonDialogComponent(ocx-button-dialog) +
 => *This component should be replaced by ocx-dialog-inline in @onecx/angular-accelerator*
-
-* MenuService +
-=> *If someone wants to load menu item they should create an endpoint in the BFF of the own app and create their own function.*
 
 Every other feature that is not mentioned was removed and is no longer supported.
 
