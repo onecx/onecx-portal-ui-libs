@@ -20,6 +20,7 @@ describe('ParametersService', () => {
     })
     parametersService = TestBed.inject(ParametersService)
     parametersTopic = FakeTopic.create<ParametersTopicPayload>()
+    parametersService.parameters$ = parametersTopic
   })
 
   it('should be created', () => {
