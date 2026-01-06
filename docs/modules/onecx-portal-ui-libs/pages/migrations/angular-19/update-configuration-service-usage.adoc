@@ -3,23 +3,26 @@
 
 In OneCX v6, three methods of `ConfigurationService` have been updated to be asynchronous, returning `Promise` results instead of synchronous values.
 
-**Update the following methods only when ConfigurationService is imported from `@onecx/angular-integration-interface`**:
+==== Update the following methods
 
 * `getProperty(key)` → `await getProperty(key)`
 * `getConfig()` → `await getConfig()`
 * `setProperty(key, val)` → `await setProperty(key, val)`
 
-**Guidelines**:
+// End of the list
 
+Guidelines::
++
+* Update only methods of `ConfigurationService` imported from `@onecx/angular-integration-interface`.
 * If inside an observable: wrap the call with `from(...)` and use `switchMap` or `mergeMap`.
 * Outside observables: use `await` in an `async` function; if `async` not allowed (e.g. `constructor`, `ngOnInit`), resolve the Promise with `.then(...)`.
 * Add `try/catch` for error handling where synchronous code previously assumed success.
-* Update mocks to resolve promises: + 
-  Jest -> `jest.spyOn(service, 'getProperty').mockResolvedValue('val');` +
-  Jasmine -> `spyOn(service, 'getConfig').and.returnValue(Promise.resolve(cfg));`
+* Update mocks to resolve promises:
+** Jest -> `jest.spyOn(service, 'getProperty').mockResolvedValue('val');` 
+** Jasmine -> `spyOn(service, 'getConfig').and.returnValue(Promise.resolve(cfg));`
 
 
-**Example**:
+==== Example
 
 .Before
 [source, typescript]
