@@ -4,7 +4,7 @@ on:
     branches:
       - '**'
 jobs:
-  deploy-storybooks:
+  build-storybooks:
     runs-on: ubuntu-latest
     environment: Storybook
     env:
