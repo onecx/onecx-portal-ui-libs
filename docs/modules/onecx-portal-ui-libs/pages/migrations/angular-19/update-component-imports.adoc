@@ -103,8 +103,9 @@ The following components and services have been converted to remote components a
 * `PortalMenuHorizontalComponent` (name in onecx-workspace-ui: `OneCXHorizontalMainMenuComponent`)
 * `UserAvatarComponent` (name in onecx-workspace-ui: `OneCXUserAvatarMenuComponent`)
 
-**Example for including OneCXAnnouncementBannerComponent:**
-
+.Example for including OneCXAnnouncementBannerComponent remote component
+[%collapsible]
+====
 To include the remote components in the application, deployment configuration and code changes are required.
 
 * Application Code Changes:
@@ -196,3 +197,4 @@ export class YourComponent {
   ]
 }
 ----
+====
