@@ -1,4 +1,4 @@
-name: Build and deploy Storybook
+name: Build Storybook
 on: 
   push:
     branches:
@@ -18,10 +18,8 @@ jobs:
         run: npm ci
       - name: Build AA Storybook
         run: npx nx run angular-accelerator:build-storybook
-      - name: Publish to AA Chromatic
-        uses: chromaui/action@latest
-        if: ${{ (env.AA_TOKEN != null) && (env.AA_TOKEN != '') }}
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
         with:
-          projectToken: ${{ env.AA_TOKEN }}
-          storybookBuildDir: dist/storybook/angular-accelerator
-          skip: 'dependabot/**'
+          name: storybook-dist
+          path: dist/storybook/
