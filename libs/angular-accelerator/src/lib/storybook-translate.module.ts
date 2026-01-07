@@ -2,15 +2,9 @@ import { registerLocaleData } from '@angular/common'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import localeDE from '@angular/common/locales/de'
 import { NgModule, inject } from '@angular/core'
-import {
-  provideTranslateLoader,
-  provideTranslateService,
-  TranslateLoader,
-  TranslateModule,
-  TranslateService,
-} from '@ngx-translate/core'
+import { provideTranslateLoader, provideTranslateService, TranslateModule, TranslateService } from '@ngx-translate/core'
 import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
-import { OnecxTranslateLoader, TRANSLATION_PATH, createTranslateLoader } from '@onecx/angular-utils'
+import { OnecxTranslateLoader, TRANSLATION_PATH } from '@onecx/angular-utils'
 
 /**
  * StorybookTranslateModule

@@ -16,8 +16,8 @@
     "@onecx/integration-interface": "^7.0.0-rc.13",
     "@onecx/angular-auth": "^7.0.0-rc.13",
     "@onecx/nx-migration-utils": "^7.0.0-rc.13",
-    "@nx/devkit": "^22.0.0",
-    "primeng": "^20.0.0",
+    "@nx/devkit": "^22.0.2",
+    "primeng": "^20.3.0",
     "@ngx-translate/core": "^17.0.0"
   },
   "dependencies": {},
