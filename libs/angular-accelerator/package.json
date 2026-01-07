@@ -26,8 +26,7 @@
     "rxjs": "~7.8.1",
     "primeng": "^20.3.0",
     "@nx/devkit": "^22.0.2",
-    "@onecx/nx-migration-utils": "^7.0.0-rc.13",
-    "@storybook/angular": "^8.6.14"
+    "@onecx/nx-migration-utils": "^7.0.0-rc.13"
   },
   "dependencies": {},
   "exports": {

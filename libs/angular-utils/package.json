@@ -22,11 +22,8 @@
     "@nx/devkit": "^22.0.2",
     "@onecx/nx-migration-utils": "^7.0.0-rc.13",
     "@onecx/integration-interface": "^7.0.0-rc.13",
-    "@jest/globals": "^30.0.0",
-    "jest-extended": "^6.0.0",
     "@phenomnomnominal/tsquery": "^6",
-    "typescript": "^5.5.4",
-    "jest-preset-angular": "^15.0.0"
+    "typescript": "^5.5.4"
   },
   "publishConfig": {
     "access": "public"

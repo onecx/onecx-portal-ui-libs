@@ -15,8 +15,6 @@
     "@nx/devkit": "^22.0.2",
     "@phenomnomnominal/tsquery": "^6",
     "ts-semaphore": "^1.0.0",
-    "@jest/globals": "^30.0.0",
-    "jest-extended": "^6.0.0",
     "typescript": "^5.5.4"
   },
   "dependencies": {},
