@@ -3,22 +3,22 @@
 
 = Library: @onecx/angular-integration-interface
 
-:integration-interface_url: xref:onecx-portal-ui-libs:libraries/integration-interface.adoc
-:global_error_topic_url: xref:onecx-portal-ui-libs:libraries/integration-interface.adoc#global-error-topic
-:global_loading_topic_url: xref:onecx-portal-ui-libs:libraries/integration-interface.adoc#global-loading-topic
-:current_mfe_topic_url: xref:onecx-portal-ui-libs:libraries/integration-interface.adoc#current-mfe-topic
-:current_page_topic_url: xref:onecx-portal-ui-libs:libraries/integration-interface.adoc#current-page-topic
-:current_workspace_topic_url: xref:onecx-portal-ui-libs:libraries/integration-interface.adoc#current-workspace-topic
-:is_authenticated_topic_url: xref:onecx-portal-ui-libs:libraries/integration-interface.adoc#is-authenticated-topic
-:configuration_topic_url: xref:onecx-portal-ui-libs:libraries/integration-interface.adoc#configuration-topic
-:message_topic_url: xref:onecx-portal-ui-libs:libraries/integration-interface.adoc#message-topic
-:remote_components_topic_url: xref:onecx-portal-ui-libs:libraries/integration-interface.adoc#remote-components-topic
-:current_theme_topic_url: xref:onecx-portal-ui-libs:libraries/integration-interface.adoc#current-theme-topic
-:user_profile_topic_url: xref:onecx-portal-ui-libs:libraries/integration-interface.adoc#user-profile-topic
-:permissions_topic_url: xref:onecx-portal-ui-libs:libraries/integration-interface.adoc#permissions-topic
-:config_object_url: xref:onecx-portal-ui-libs:libraries/integration-interface.adoc#config-object
-:theme_object_url: xref:onecx-portal-ui-libs:libraries/integration-interface.adoc#theme-object
-:route_object_url: xref:onecx-portal-ui-libs:libraries/integration-interface.adoc#Route-object
+:integration-interface_url: xref:./integration-interface.adoc
+:global_error_topic_url: xref:./integration-interface.adoc#global-error-topic
+:global_loading_topic_url: xref:./integration-interface.adoc#global-loading-topic
+:current_mfe_topic_url: xref:./integration-interface.adoc#current-mfe-topic
+:current_page_topic_url: xref:./integration-interface.adoc#current-page-topic
+:current_workspace_topic_url: xref:./integration-interface.adoc#current-workspace-topic
+:is_authenticated_topic_url: xref:./integration-interface.adoc#is-authenticated-topic
+:configuration_topic_url: xref:./integration-interface.adoc#configuration-topic
+:message_topic_url: xref:./integration-interface.adoc#message-topic
+:remote_components_topic_url: xref:./integration-interface.adoc#remote-components-topic
+:current_theme_topic_url: xref:./integration-interface.adoc#current-theme-topic
+:user_profile_topic_url: xref:./integration-interface.adoc#user-profile-topic
+:permissions_topic_url: xref:./integration-interface.adoc#permissions-topic
+:config_object_url: xref:./integration-interface.adoc#config-object
+:theme_object_url: xref:./integration-interface.adoc#theme-object
+:route_object_url: xref:./integration-interface.adoc#Route-object
 
 
 [#overview]
@@ -33,7 +33,7 @@
 Usage::
 *Initialize and access configuration variables for a specific Microfrontend*. 
 +
-It is similar to xref:libraries/angular-integration-interface.adoc#configuration-service[ConfigurationService], however *App Config Service* should be used for a Microfrontend configuration management. If sharing the configuration variable with multiple Microfrontends is desired, please use xref:libraries/angular-integration-interface.adoc#configuration-service[ConfigurationService] and provide variables via Shell Application.
+It is similar to xref:./angular-integration-interface.adoc#configuration-service[ConfigurationService], however *App Config Service* should be used for a Microfrontend configuration management. If sharing the configuration variable with multiple Microfrontends is desired, please use xref:./angular-integration-interface.adoc#configuration-service[ConfigurationService] and provide variables via Shell Application.
 
 Topics used::
 None
@@ -57,9 +57,9 @@ API::
 .App Config Service methods
 [cols="1,1,2"]
 |===
-|Method signature |Return type | Description
+| Method signature | Return type | Description
 
-|`init(baseUrl: string)` | `Promise<void>` | Initializes App Config Service by loading configuration variables. The configuration will be loaded from the `{baseUrl}/assets/env.json` file.
+|`init(baseUrl: string)` | `Promise<void>` | Initializes App Config Service by loading configuration variables. The configuration will be loaded from the `\{baseUrl}/assets/env.json` file.
 |`getProperty(key: string)` | `string \| undefined`| Gets the value for a key from *config$*.
 |`async setProperty(key: string, val:string)` | `void` | Updates the value for a key in *config$*.
 |`getConfig()` |`{ [key: string]: string }` |Gets all configuration variables defined for the Microfrontend.
@@ -108,7 +108,7 @@ Usage::
 +
 This service is initialized by, and contains configuration variables, for the Shell Application that could be used in any place on the platform.
 +
-xref:libraries/angular-integration-interface.adoc#configuration-service[ConfigurationService] *should not be initialized by Microfrontends*. They can utilize specific functionality of this service to access and update configuration data.
+xref:./angular-integration-interface.adoc#configuration-service[ConfigurationService] *should not be initialized by Microfrontends*. They can utilize specific functionality of this service to access and update configuration data.
 
 Topics used::
 
@@ -232,7 +232,7 @@ Topics used::
 Dependencies::
 
 * HttpClient
-* xref:libraries/angular-integration-interface.adoc#configuration-service[ConfigurationService]
+* xref:./angular-integration-interface.adoc#configuration-service[ConfigurationService]
 
 API::
 *Theme Service* properties enable access to topic instances:
@@ -309,7 +309,7 @@ None.
 Dependencies::
 
 * HttpClient
-* xref:libraries/angular-integration-interface.adoc#app-state-service[AppStateService]
+* xref:#app-state-service[AppStateService]
 
 API::
 *Workspace Service* methods can be used for constructing routes to Applications:
