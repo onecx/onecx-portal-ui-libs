@@ -1,21 +1,29 @@
 [#add-angular-material-plugin]
-=== Add Angular Material Webpack Plugin
+=== Add Webpack Plugin for Angular Material
 
-In OneCX v6, applications using Angular Material must add an additional Webpack plugin.
-This change is required after upgrading to Angular 19.
+In OneCX v6, applications using Angular Material or Angular CDK must add a Webpack plugin. This change is required after upgrading to Angular 19.
 
 [NOTE]
+====
 This setup will be replaced by a OneCX-provided Webpack plugin in a future version.
+====
 
-==== Required Changes
+==== Install and Configure Webpack Plugin
 
-. Import `ModifySourcePlugin` and `ReplaceOperation` from `modify-source-webpack-plugin`.
+. Install `modify-source-webpack-plugin`
++
+[source,bash]
+----
+npm install modify-source-webpack-plugin --save-dev
+----
+. Import `ModifySourcePlugin` and `ReplaceOperation` from `modify-source-webpack-plugin`in `webpack.config.js`
 . Create a `modifyMaterialPlugin` instance with a rules array containing one rule object:
   * The rule must define a `test` function that returns `true` when `module.resource` exists and the resource path includes `@angular/material` or `@angular/cdk`.
   * The rule must include an `operations` array with a `ReplaceOperation` configured with:
     - scope: `all`
     - match pattern: `document\.createElement\(`
     - replacement: `document.createElementFromMaterial({"this": this, "arguments": Array.from(arguments)},`
+  
 . Add the `modifyMaterialPlugin` instance to the Webpack `plugins` array.
 
 
