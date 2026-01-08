@@ -1,0 +1,48 @@
+:onecx_theming: xref:documentation:docs-guides-ui:angular:theming.adoc
+
+[#theme-config]
+=== Provide ThemeConfig
+[NOTE]
+==== 
+These changes are required for apps using PrimeNG only.
+====
+
+Since version 6 of OneCX to apply PrimeNG theming it is required to add an additional provider to the Microfrontends and Remote Components.
+
+**Microfrontend theme configuration**
+
+* import `provideThemeConfig` provider from `@onecx/angular-utils` in `module.ts` file
+* define `provideThemeConfig` provider in `NgModule` `providers` array
+
+.micro-frontend-remote.module.ts
+[source,typescript]
+----
+import { provideThemeConfig } from '@onecx/angular-utils'
+...
+@NgModule({
+    providers: [
+        provideThemeConfig()
+    ]
+}) export class MyMfe {}
+----
+
+**Remote components theme configuration**
+
+* import `provideThemeConfig` provider from `@onecx/angular-utils` in `bootstrap.ts` file
+* define `provideThemeConfig` in `bootstrapRemoteComponent` function `providers` array from `@onecx/angular-webcomponents`
+
+.remote-component.bootstrap.ts
+[source,typescript]
+----
+import { provideThemeConfig } from '@onecx/angular-utils'
+
+bootstrapRemoteComponent(RemoteComponent, 'my-remote-component', environment.production, [
+  provideThemeConfig()
+])
+----
+
+[#theme-overrides]
+==== Provide theme overrides
+In angular 19+ OneCX is creating its own theme presets per App that utilize PrimeNG theming. If the look and feel of some PrimeNG components is not matching the expectations, developers should use theme overrides to change them.
+
+More about how to override the theme elements can be found in {onecx_theming}[theming documentation].
