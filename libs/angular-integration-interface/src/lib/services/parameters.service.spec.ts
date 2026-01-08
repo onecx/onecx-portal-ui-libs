@@ -3,6 +3,7 @@ import {
   provideAppStateServiceMock,
   provideShellCapabilityServiceMock,
   ShellCapabilityServiceMock,
+  Topic,
 } from '@onecx/angular-integration-interface/mocks'
 import { ParametersService } from './parameters.service'
 import { Capability } from './shell-capability.service'
@@ -11,15 +12,15 @@ import { TestBed } from '@angular/core/testing'
 
 describe('ParametersService', () => {
   let parametersService: ParametersService
-  let parametersTopic: FakeTopic<ParametersTopicPayload>
+  let parametersTopic: Topic<ParametersTopicPayload>
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [provideShellCapabilityServiceMock(), provideAppStateServiceMock()],
     })
     parametersService = TestBed.inject(ParametersService)
-    parametersTopic = new FakeTopic<ParametersTopicPayload>()
-    parametersService['parameters$'] = parametersTopic as any
+    parametersTopic = FakeTopic.create<ParametersTopicPayload>()
+    parametersService.parameters$ = parametersTopic
   })
 
   it('should be created', () => {

@@ -1,6 +1,6 @@
 {
   "name": "@onecx/angular-integration-interface",
-  "version": "7.0.0-rc.13",
+  "version": "7.0.0-rc.14",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -8,9 +8,9 @@
   },
   "peerDependencies": {
     "@angular/core": "^19.0.0",
-    "@onecx/accelerator": "^7.0.0-rc.13",
-    "@onecx/nx-migration-utils": "^7.0.0-rc.13",
-    "@onecx/integration-interface": "^7.0.0-rc.13",
+    "@onecx/accelerator": "^7.0.0-rc.14",
+    "@onecx/nx-migration-utils": "^7.0.0-rc.14",
+    "@onecx/integration-interface": "^7.0.0-rc.14",
     "rxjs": "~7.8.1",
     "@nx/devkit": "^20.3.0",
     "@phenomnomnominal/tsquery": "^6",
