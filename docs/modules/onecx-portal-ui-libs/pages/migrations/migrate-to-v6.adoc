@@ -297,23 +297,18 @@ For each Remote Component translation related providers are required to be defin
 
 .remote-component.bootstrap.ts
 ```
-import { bootstrapRemoteComponent } from '@onecx/angular-webcomponents';
+import { bootstrapRemoteComponent } from '@onecx/angular-webcomponents'
 import {
   REMOTE_COMPONENT_CONFIG,
   RemoteComponentConfig,
   provideTranslateServiceForRoot
-} from '@onecx/angular-remote-components';
-import { TranslateLoader, MissingTranslationHandler } from '@ngx-translate/core';
-import { ReplaySubject } from 'rxjs';
-import {
-  createTranslateLoader,
-  remoteComponentTranslationPathFactory,
-  provideTranslationPathFromMeta,
-  MultiLanguageMissingTranslationHandler
-} from '@onecx/angular-utils';
-import { HttpClient } from '@angular/common/http';
+} from '@onecx/angular-remote-components'
+import { TranslateLoader } from '@ngx-translate/core'
+import { ReplaySubject } from 'rxjs'
+import { createTranslateLoader, remoteComponentTranslationPathFactory, provideTranslationPathFromMeta } from '@onecx/angular-utils'
 
 bootstrapRemoteComponent(RemoteComponent, 'ocx-my-remote-component', environment.production, [
+  ...
   { provide: REMOTE_COMPONENT_CONFIG, useValue: new ReplaySubject<RemoteComponentConfig>(1) },
   provideTranslateServiceForRoot({
     isolate: true,
@@ -321,18 +316,10 @@ bootstrapRemoteComponent(RemoteComponent, 'ocx-my-remote-component', environment
       provide: TranslateLoader,
       useFactory: createTranslateLoader,
       deps: [HttpClient]
-    },
-    missingTranslationHandler: {
-      provide: MissingTranslationHandler,
-      useClass: MultiLanguageMissingTranslationHandler
     }
   }),
-  // App-level translations
-  provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/'),
-  
-  // Feature-specific translations
-  provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/feature/')
-]);
+  provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/')
+])
 ```
 [NOTE]
 ====
@@ -353,12 +340,6 @@ module.exports = {
   module: { parser: { javascript: { importMeta: false } } },
 }
 ----
-====
-
-
-[TIP]
-====
-Please use `createTranslateLoader` from `@onecx/angular-utils` in your `bootstrap.ts` instead of a custom `TranslateLoader`, as this supports multiple translation paths. Please consider using `MultiLanguageMissingTranslationHandler` to handle missing translation keys in your remote components, as it provides logging, fallback, and easy diagnostics for missing keys.
 ====
 
 [#removed-add-initialize-guard]

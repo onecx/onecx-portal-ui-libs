@@ -1,0 +1,122 @@
+[#update-createTranslateLoader-usage.adoc]
+[#update-translations]
+=== Update Translation Path Factories
+In OneCX v6, Use `provideTranslationPathFromMeta` and `createTranslateLoader` from `@onecx/angular-utils` for translation setup.`translationPathFactory` and `remoteComponentTranslationPathFactory` are deprecated. To support multiple locales and provide fallback for missing translations, use `AngularAcceleratorMissingTranslationHandler`.
+
+
+**Update imports:**
+
+* Replace providers using `translationPathFactory` with `provideTranslationPathFromMeta` from `@onecx-angular-utils`.
+* Replace providers using `remoteComponentTranslationPathFactory` with `provideTranslationPathFromMeta` from `@onecx-angular-utils`.
+* If needed, import `createTranslateLoader`, `AngularAcceleratorMissingTranslationHandler` from `@onecx-angular-utils`.
+* If needed, import `MissingTranslationHandler` from `@ngx-translate/core`.
+
+
+**Example - in NgModule:**
+
+Before:
+[source,typescript]
+----
+@NgModule({
+    providers: [
+        {
+            provide: TRANSLATION_PATH,
+            useFactory: (appStateService: AppStateService) => translationPathFactory('assets/i18n/')(appStateService),
+            multi: true,
+            deps: [AppStateService]
+        },
+        provideHttpClient(withInterceptorsFromDi())
+    ]
+})
+----
+
+After:
+[source,typescript]
+----
+@NgModule({
+    providers: [
+        provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/'),
+        provideHttpClient(withInterceptorsFromDi())
+    ]
+})
+----
+
+
+**Example - replace translationPathFactory with provideTranslationPathFromMeta in providers:**
+
+Before:
+[source,typescript]
+----
+@NgModule({
+    providers: [
+        // ... other providers,
+        {
+            provide: TRANSLATION_PATH,
+            useFactory: (appStateService: AppStateService) => translationPathFactory('assets/i18n/')(appStateService),
+            multi: true,
+            deps: [AppStateService]
+        }
+    ]
+})
+----
+
+After:
+[source,typescript]
+----
+@NgModule({
+    providers: [
+        // ... other providers,
+        provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/')
+    ]
+})
+----
+
+
+**Example - replace remoteComponentTranslationPathFactory with provideTranslationPathFromMeta in providers:**
+
+Before:
+[source,typescript]
+----
+bootstrapRemoteComponent(RemoteComponent, 'ocx-my-remote-component', environment.production, [
+    // ... other providers
+    {
+        provide: TRANSLATION_PATH,
+        useFactory: (remoteComponentConfig: ReplaySubject<RemoteComponentConfig>) =>
+            remoteComponentTranslationPathFactory('assets/i18n/')(remoteComponentConfig),
+        multi: true,
+        deps: [REMOTE_COMPONENT_CONFIG]
+    },
+]);
+----
+
+After:
+[source,typescript]
+----
+bootstrapRemoteComponent(RemoteComponent, 'ocx-my-remote-component', environment.production, [
+    // ... other providers
+    provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/')
+]);
+----
+
+
+[TIP]
+====
+If you need to support multiple locales and fallback for missing translations, use `AngularAcceleratorMissingTranslationHandler` from `@onecx-angular-utils` as the `MissingTranslationHandler`.
+====
+
+
+**Example - configure support for multiple locales and fallback for missing translations:**
+[source,typescript]
+----
+bootstrapRemoteComponent(RemoteComponent, 'ocx-my-remote-component', environment.production, [
+    // ... other providers
+    provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/'),
+    provideTranslateServiceForRoot({
+        // .. other TranslateService configurations,
+        missingTranslationHandler: {
+            provide: MissingTranslationHandler,
+            useClass: AngularAcceleratorMissingTranslationHandler
+        }
+    })
+]);
+----
