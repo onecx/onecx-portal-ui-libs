@@ -6,7 +6,6 @@
  * @jest-environment jsdom
  */
 import { FakeTopic } from '@onecx/accelerator';
-import { ImageRepositoryTopic } from '../topics/image-repository/image-repository.topic';
 import { ImageRepositoryInfo } from '../topics/image-repository/image-repository.model';
 import { ImageRepositoryService } from './image-repository.service';
 
@@ -19,9 +18,8 @@ describe('ImageRepositoryService interface', () => {
   let imageRepositoryService: ImageRepositoryService;
 
   beforeEach(() => {
-    const mockTopic = new FakeTopic<ImageRepositoryInfo>();
     imageRepositoryService = new ImageRepositoryService();
-    imageRepositoryService.imageRepositoryTopic = mockTopic as unknown as ImageRepositoryTopic;
+    imageRepositoryService.imageRepositoryTopic = FakeTopic.create<ImageRepositoryInfo>();
     imageRepositoryService.imageRepositoryTopic?.publish(MOCK_URLS);
   })
 

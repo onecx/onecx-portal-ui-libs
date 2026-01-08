@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { ImageRepositoryService as ImageRepositryInterface, ImageRepositoryInfo, ImageRepositoryTopic } from '@onecx/integration-interface';
+import { ImageRepositoryService as ImageRepositryInterface, ImageRepositoryInfo } from '@onecx/integration-interface';
 import { FakeTopic } from '@onecx/accelerator';
 import { ImageRepositoryService } from './image-repository.service';
 
@@ -16,10 +16,9 @@ describe('ImageRepositoryService', () => {
     TestBed.configureTestingModule({
 		providers: [ImageRepositoryService]
 	});
-	const mockTopic = new FakeTopic<ImageRepositoryInfo>();
     service = TestBed.inject(ImageRepositoryService);
     imageRepositoryInterface = (service as any).imageRepositoryInterface;
-    imageRepositoryInterface.imageRepositoryTopic = mockTopic as any as ImageRepositoryTopic;
+    imageRepositoryInterface.imageRepositoryTopic = FakeTopic.create<ImageRepositoryInfo>();
     imageRepositoryInterface.imageRepositoryTopic?.publish(MOCK_URLS);
   });
 
