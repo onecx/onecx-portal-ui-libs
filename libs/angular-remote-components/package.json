@@ -1,6 +1,6 @@
 {
   "name": "@onecx/angular-remote-components",
-  "version": "7.0.0-rc.13",
+  "version": "7.0.0-rc.14",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -11,12 +11,12 @@
     "@angular/common": "^19.0.0",
     "@angular/core": "^19.0.0",
     "@ngx-translate/core": "^16.0.0",
-    "@onecx/integration-interface": "^7.0.0-rc.13",
-    "@onecx/angular-utils": "^7.0.0-rc.13",
+    "@onecx/integration-interface": "^7.0.0-rc.14",
+    "@onecx/angular-utils": "^7.0.0-rc.14",
     "@angular-architects/module-federation": "^18.0.4",
     "rxjs": "^7.8.1",
     "@nx/devkit": "^20.3.0",
-    "@onecx/nx-migration-utils": "^7.0.0-rc.13"
+    "@onecx/nx-migration-utils": "^7.0.0-rc.14"
   },
   "dependencies": {},
   "publishConfig": {

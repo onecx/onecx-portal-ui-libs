@@ -1,44 +1,44 @@
-:troubleshooting_shared_packages: xref:documentation:onecx-docs-guides:troubleshooting.adoc#shell-related
-:troubleshooting_webpack_config: xref:documentation:onecx-docs-guides:troubleshooting.adoc#webpack-configuration
-:troubleshooting_installed_packages: xref:documentation:onecx-docs-guides:troubleshooting.adoc#installed-packages
-
 :idprefix:
 :idseparator: -
 
-= OneCX UI Compatibility
+:troubleshooting_shared_packages: xref:documentation:onecx-docs-dev:guides/troubleshooting.adoc#shell-related
+:troubleshooting_webpack_config: xref:documentation:onecx-docs-dev:guides/troubleshooting.adoc#webpack-configuration
+:troubleshooting_installed_packages: xref:documentation:onecx-docs-dev:guides/troubleshooting.adoc#installed-packages
+
+= OneCX UI Libraries: Compatibility
 
 This guide lists the minimal requirements for an UI App to be fully compatible with OneCX. Each requirement is classified as "must-have" or "should-have" and the impact of missing each requirement is described.
 
 [#must-have-requirements]
 == Must-have Requirements
 
-[#lower-angular-version]
-=== Have lower Angular package version than the Shell or respective preloader
+Have lower Angular package version than the Shell or respective preloader::
 Impact: Broken environment
-
++
 * Check the Shell version and ensure your App uses an equal or lower Angular version.
 * Please refer to this {troubleshooting_shared_packages}[Troubleshooting Guide shell related section] on how to use DevTools to inspect shared packages.
 
-[#onecx-compatible-migration]
-=== Constructed using @onecx/angular-webcomponents
+
+Constructed using @onecx/angular-webcomponents::
 Impact: Router out of sync, many potential issues
++
+* For step-by-step instructions on migrating a vanilla Angular App to a OneCX-compatible microfrontend using @onecx/angular-webcomponents among other packages, refer to the xref:documentation:docs-guides-ui:angular/app-to-onecx.adoc#migration-steps[Migration Steps in Vanilla to OneCX Migration Guide].
 
-* For step-by-step instructions on migrating a vanilla Angular App to a OneCX-compatible microfrontend using @onecx/angular-webcomponents among other packages, refer to the xref:documentation:docs-guides-ui:angular/cookbook/migrations/vanilla-to-onecx/index.adoc#migration-steps[Migration Steps in Vanilla to OneCX Migration Guide].
 
-[#module-federation-any-technology]
-=== Module-federation with remoteEntry.js (any technology)
+Module-federation with remoteEntry.js (any technology)::
 Impact: Applications exposed with different technologies might not be compatible with the Shell
-
++
 * Ensure your App exposes remoteEntry.js and is configured for module federation.
 
-[#expose-library-assets]
-=== Expose assets of used libraries
-Impact: Translations missing
 
+Expose assets of used libraries::
+Impact: Translations missing
++
 * Confirm assets (e.g., i18n) from libraries are exposed and available in your build output.
 * Include the assets of the libraries they use in the angular.json or project.json file.
 
 .Example assets configuration
+[source,json]
 ----
 ...
   "build": {
@@ -70,13 +70,14 @@ Impact: Translations missing
 ...
 ----
 
-[#expose-library-styles]
-=== Expose styles.css of used libraries
-Impact: Styles of components from libraries might be incorrect
 
+Expose styles.css of used libraries::
+Impact: Styles of components from libraries might be incorrect
++
 * Expose library styles in project.json or angular.json.
 
 .Example styles configuration
+[source,json]
 ----
 ...
   "build": {
@@ -95,50 +96,50 @@ Impact: Styles of components from libraries might be incorrect
 ...
 ----
 
-[#sharing-range]
-=== Sharing is done with '^'
+Sharing is done with '^'::
 Impact: We should share as much as possible
-
++
 * Use caret '^' for all shared package versions in package.json (except rxjs, which should use '~').
 * Refer to the {troubleshooting_installed_packages}[Troubleshooting Guide installed packages section] for correct range and examples.
 
-[#shared-packages]
-=== Angular, PrimeNG, NGRX and OneCX packages are shared
-Impact: Broken application
 
+Angular, PrimeNG, NGRX and OneCX packages are shared::
+Impact: Broken application
++
 * In webpack.config.js, share all required packages
 * Refer to the {troubleshooting_webpack_config}[Troubleshooting Guide webpack config section] for correct sharing syntax and examples.
 
-[#share-angular-utils]
-=== Share @onecx/angular-utils library
-Impact: Might lead to unwanted side effects for your App and also other Apps in the Shell.
 
+Share @onecx/angular-utils library::
+Impact: Might lead to unwanted side effects for your App and also other Apps in the Shell.
++
 * Especially if @onecx/angular-accelerator or @onecx/portal-integration-interface is used and shared.
 * Please check your webpack configuration and make sure to include the @onecx/angular-utils in the shared modules.
 
-[#routing-relative-paths]
-=== Routing is done with relative paths
+
+Routing is done with relative paths::
 Impact: Incorrect routing results
-
++
 * Use relative paths in Angular router configuration to avoid navigation issues.
-* Please refer to the xref:documentation:docs-guides-ui:angular/cookbook/routing/index.adoc#general-routing-guidelines[OneCX Routing Guide] for using relative paths and other information on routing in OneCX.
+* Please refer to the xref:documentation:docs-guides-ui:angular/routing/index.adoc#general-routing-guidelines[OneCX Routing Guide] for using relative paths and other information on routing in OneCX.
 
-[#webpack-importmeta]
-=== Webpack configuration for importMeta
+
+Webpack configuration for importMeta::
 Impact: Translation issues
-
++
 * Ensure your webpack configuration includes the correct importMeta configuration.
-* For the correct configuration, please refer to the xref:documentation:docs-guides-ui:angular/cookbook/multi-language/multi-language-setup.adoc#provide-translation-path[OneCX Multi-language Translations Guide] and other information on multi-language in OneCX.
+* For the correct configuration, please refer to the xref:documentation:docs-guides-ui:angular/translation/multi-language-setup.adoc#provide-translation-path[OneCX Multi-language Translations Guide] and other information on multi-language in OneCX.
 
-[#package-compatibility]
-=== Ensure package compatibility
+
+Ensure package compatibility::
 Impact: Broken application
-
++
 * Verify that all packages used in your App are compatible with OneCX.
+
 
 .Compatible package versions for Angular 18 (libs version 5.x)
 |===
-| Package                        | Compatible Versions
+| Package               | Compatible Versions
 | @ngx-translate/core   | ^15.0.0
 | ngx-build-plus        | ^18.0.0
 | primeng               | ^17.18.0
@@ -152,17 +153,18 @@ Impact: Broken application
 | primeng               | ^19.0.0
 |===
 
+
 [#should-have-requirements]
 == Should-have Requirements
 
-[#module-federation-webpack]
-=== Module-federation via webpack for exposing remoteEntry.js
+Module-federation via webpack for exposing remoteEntry.js::
 Impact: We don't know if other technologies are working
-
++
 * Prefer webpack for module federation setup.
 * Verify your webpack configuration:
 
 .Example webpack.config.js
+[source,js]
 ----
 ...
 const config = withModuleFederationPlugin({
@@ -176,15 +178,15 @@ const config = withModuleFederationPlugin({
 ...
 ----
 
-[#expose-app-styles]
-=== Expose App styles.css
+Expose App styles.css::
 Impact: No styles for the application are loaded
-
++
 * Ensure your App exposes its styles.css.
 * How the styles.css is exposed depends on the package used for building the App (NX or Angular CLI).
 * NX:
 
 .project.json
+[source,json]
 ----
 {
     ...
@@ -202,13 +204,14 @@ Impact: No styles for the application are loaded
 * Angular CLI:
 
 .package.json
+[source,json]
 ----
 {
-    ...
-    "scripts": {
-        "postbuild": "mv \"$(find dist/my-project-name -maxdepth 1 -type f -name 'styles.*.css' | head -n 1)\" dist/my-project-name/styles.css",
-    }
-    ...
+  ...
+  "scripts": {
+    "postbuild": "mv \"$(find dist/my-project-name -maxdepth 1 -type f -name 'styles.*.css' | head -n 1)\" dist/my-project-name/styles.css",
+  }
+  ...
 }
 ----
 
@@ -217,12 +220,15 @@ Impact: No styles for the application are loaded
 * Ensure the styles.css including all your styles is present in the build output.
 
 .Example package.json
+[source,json]
 ----
-...
-"scripts": {
+{
   ...
+  "scripts": {
+    ...
     "build": "nx build && cp dist/my-project-name/styles.*.css dist/my-project-name/styles.css",
+    ...
+  }
   ...
 }
-...
 ----

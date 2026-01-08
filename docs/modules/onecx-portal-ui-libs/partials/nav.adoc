@@ -3,6 +3,7 @@
 *** xref:onecx-portal-ui-libs:libraries/angular-integration-interface.adoc[angular-integration-interface]
 *** xref:onecx-portal-ui-libs:libraries/integration-interface.adoc[integration-interface]
 
+** xref:onecx-portal-ui-libs:local-development.adoc[Local Development]
 ** xref:onecx-portal-ui-libs:onecx-compatibility.adoc[Compatibility]
 
 ** Migrations
@@ -18,5 +19,5 @@
 *** xref:onecx-portal-ui-libs:components/page-header.adoc[PageHeader]
 *** xref:onecx-portal-ui-libs:components/group-by-count-diagram.adoc[GroupByCountDiagram]
 *** xref:onecx-portal-ui-libs:components/search-header.adoc[SearchHeader]
-*** xref:onecx-portal-ui-libs:components/interactive-data-view/index.adoc[InteractiveDataView]
-*** xref:onecx-portal-ui-libs:components/interactive-data-view/data-table-column.adoc[DataTableColumn]
+*** xref:documentation:onecx-portal-ui-libs:components/interactive-data-view/index.adoc[InteractiveDataView]
+*** xref:documentation:onecx-portal-ui-libs:components/interactive-data-view/data-table-column.adoc[DataTableColumn]
