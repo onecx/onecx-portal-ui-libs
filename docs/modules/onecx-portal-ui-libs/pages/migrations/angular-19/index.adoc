@@ -27,6 +27,8 @@ include::remove-keycloak-auth.adoc[]
 include::update-component-imports.adoc[]
 include::remove-portal-layout-styles.adoc[]
 include::update-filtertype-value.adoc[]
+include::update-configuration-service-usage.adoc[]
+
 include::adjust-packages-in-webpack-config.adoc[]
 
 [#migration-steps-after-angular-19]
