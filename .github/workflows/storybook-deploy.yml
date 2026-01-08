@@ -1,7 +1,7 @@
-name: Deploy Storybook (Fork)
-on: workflow_dispatch    
+name: Deploy Storybook
+on: workflow_dispatch
     # workflow_run:
-    #   workflows: ["Build Storybook (Fork)"]
+    #   workflows: ["Build Storybook"]
     #   types:
     #     - completed
 jobs:
