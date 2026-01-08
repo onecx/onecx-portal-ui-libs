@@ -91,7 +91,7 @@ The following components and services have been converted to remote components a
 **onecx-help-ui:**
 
 * `HelpItemEditorComponent`
-* `NoHelpItemComponent`
+* `NoHelpItemComponent` (part of `OneCXShowHelpComponent`)
 
 **onecx-announcement-ui:**
 
@@ -106,6 +106,8 @@ The following components and services have been converted to remote components a
 .Example for including OneCXAnnouncementBannerComponent remote component
 [%collapsible]
 ====
+This example shows how to display an announcement banner from announcement management in your application by creating a slot and configuring the remote component to be placed inside.
+
 To include the remote components in the application, deployment configuration and code changes are required.
 
 * Application Code Changes:
