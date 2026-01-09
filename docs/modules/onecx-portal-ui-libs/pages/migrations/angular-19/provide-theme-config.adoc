@@ -1,4 +1,4 @@
-:onecx_theming: xref:documentation:docs-guides-ui:angular:theming.adoc
+:onecx_theming: xref:documentation:docs-guides-ui:angular/theming.adoc
 
 [#theme-config]
 === Provide ThemeConfig
