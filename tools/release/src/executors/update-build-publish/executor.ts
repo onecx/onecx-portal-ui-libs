@@ -1,10 +1,7 @@
 import { exec } from 'child_process'
 import { promisify } from 'util'
-import updateVersion from 'nx-release/src/executors/update-version/executor'
 import npmPublish from '../npm-publish/executor'
-// nx-release uses an older version of @nx/devkit
-// --> Type has to be imported from modules of nx-release to avoid version conflicts and type errors
-import { ExecutorContext } from 'nx-release/node_modules/@nx/devkit'
+import { ExecutorContext } from '@nx/devkit'
 import { UpdateBuildPublishExecutorOptions } from './schema'
 
 /**
@@ -23,10 +20,7 @@ export default async function updateBuildPublishExecutor(
   console.info(`Releasing library ${context.projectName}. Building with command:`)
   console.info(`  ${buildCommand}`)
   console.info()
-
-  // Updates version in package.json based on the VERSION environment variable --> default behavior of nx-release
-  await updateVersion({}, context)
-
+  
   // Builds the project using the specified build target (defaults to build) --> this was not supported in nx-release
   // The specified target must be defined in the project.json file of the respective library
   const { stdout: buildOutput, stderr } = await promisify(exec)(buildCommand)
