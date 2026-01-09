@@ -1,0 +1,6 @@
+[#remove-menuservice]
+=== Remove MenuService
+In OneCX v6, `MenuService` has been removed. Please load menu items by creating endpoints in the BFF of your application.
+
+**Update Code:**:
+* Remove `MenuService` from `@onecx/portal-integration-angular` and occurrences.
