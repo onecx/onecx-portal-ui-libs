@@ -4,12 +4,8 @@ In OneCX v6, `createTranslateLoader`, `createRemoteComponentAndMfeTranslateLoade
 
 **Update Imports:**
 
-* Remove createTranslateLoader, createRemoteComponentAndMfeTranslateLoader, createRemoteComponentTranslateLoader, translationPathFactory and remoteComponentTranslationPathFactory imports from `@onecx/angular-accelerator`.
-* Add `provideTranslationPathFromMeta` from `@onecx/angular-utils`
-* Add `provideTranslateServiceForRoot` from `@onecx/angular-utils` and update providers with `TranslateModuleConfig` from '@onecx/angular-utils'.
-* Add `TRANSLATION_PATH` from `@onecx/angular-utils`
-* Add `AngularAcceleratorMissingTranslationHandler` from `@onecx/angular-utils`.
-* Add `MissingTranslationHandler` from `@ngx-translate/core`.
+* Remove `createTranslateLoader`, `createRemoteComponentAndMfeTranslateLoader`, `createRemoteComponentTranslateLoader`, `translationPathFactory`, `remoteComponentTranslationPathFactory` and `TRANSLATION_PATH` imports from `@onecx/angular-accelerator`.
+* Add `provideTranslationPathFromMeta`, `createTranslateLoader` and `TRANSLATION_PATH` from `@onecx/angular-utils`.'
 
 [NOTE]
 ====
@@ -31,6 +27,8 @@ module.exports = {
 .Before:
 [source, typescript]
 ----
+import { TRANSLATION_PATH, translationPathFactory } from '@onecx/angular-accelerator';
+
 @NgModule({
     providers: [
         // ... other providers,
@@ -43,10 +41,11 @@ module.exports = {
     ]
 })
 ----
-
 .After:
 [source, typescript]
 ----
+imports { provideTranslationPathFromMeta } from '@onecx/angular-utils';
+
 @NgModule({
     providers: [
         // ... other providers,
@@ -61,6 +60,8 @@ module.exports = {
 .Before:
 [source, typescript]
 ----
+import { TRANSLATION_PATH, remoteComponentTranslationPathFactory } from '@onecx/angular-accelerator';
+
 bootstrapRemoteComponent(RemoteComponent, 'ocx-my-remote-component', environment.production, [
     // ... other providers
     {
@@ -76,6 +77,8 @@ bootstrapRemoteComponent(RemoteComponent, 'ocx-my-remote-component', environment
 .After:
 [source, typescript]
 ----
+import { provideTranslationPathFromMeta } from '@onecx/angular-utils';
+
 bootstrapRemoteComponent(RemoteComponent, 'ocx-my-remote-component', environment.production, [
     // ... other providers
     provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/')
@@ -88,14 +91,11 @@ In OneCX v6, For each Remote Component translation related providers are require
 
 **Update Imports:**
 
-* Remove `translationPathFactory` and related imports from `component.ts`.
-* Add `provideTranslationPathFromMeta` from `@onecx/angular-utils`
-* Add `TRANSLATION_PATH` from `@onecx/angular-utils`
-* Add `bootstrapRemoteComponent` from `@onecx/angular-webcomponents`
+* Remove `translationPathFactory` and `TRANSLATION_PATH` from `@onecx/angular-accelerator`.
 * Add `provideTranslationPathFromMeta`, `createTranslateLoader` from `@onecx/angular-utils`
 * Add `provideTranslateServiceForRoot` from `@onecx/angular-utils`
-* Add `MissingTranslationHandler` from `@ngx-translate/core`
-* Add `AngularAcceleratorMissingTranslationHandler` from `@onecx/angular-utils`
+* If needed, add `MissingTranslationHandler` from `@ngx-translate/core`
+* If needed, add `AngularAcceleratorMissingTranslationHandler` from `@onecx/angular-utils`
 
 [NOTE]
 ====
@@ -105,8 +105,7 @@ Use provideTranslationPathFromMeta with `import.meta.url` as the first argument 
 .Before:
 [source, typescript]
 ----
-import { TRANSLATION_PATH, translationPathFactory } from '@onecx/angular-utils'
-import { AppStateService } from '@onecx-angular-integration-interface'
+import { TRANSLATION_PATH, translationPathFactory } from '@onecx/angular-accelerator';
 
 @Component({
   selector: 'ocx-my-remote',
@@ -127,6 +126,10 @@ export class MyRemoteComponent {}
 .After:
 [source, typescript]
 ----
+import { provideTranslationPathFromMeta, provideTranslateServiceForRoot, createTranslateLoader } from '@onecx/angular-utils';
+import { MissingTranslationHandler } from '@ngx-translate/core';
+import { AngularAcceleratorMissingTranslationHandler } from '@onecx/angular-utils';
+
 bootstrapRemoteComponent(
   MyRemoteComponent,
   'ocx-my-remote',
