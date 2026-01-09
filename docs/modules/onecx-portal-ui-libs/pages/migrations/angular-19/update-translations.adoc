@@ -1,47 +1,35 @@
 [#update-translations]
 === Update Translation Path Factories
-In OneCX v6, Use `provideTranslationPathFromMeta` and `createTranslateLoader` from `@onecx/angular-utils` for translation setup.`translationPathFactory` and `remoteComponentTranslationPathFactory` are deprecated.
+In OneCX v6, `createTranslateLoader`, `createRemoteComponentAndMfeTranslateLoader`, and `createRemoteComponentTranslateLoader` were removed from @onecx/angular-accelerator. `createTranslateLoader` and `provideTranslationPathFromMeta` can be imported from @onecx/angular-utils.
 
 **Update Imports:**
 
-* Remove `translationPathFactory` and related imports from `component.ts`.
-* Add `provideTranslationPathFromMeta` from `@onecx-angular-utils` and update providers with translation paths.
-* Add `provideTranslateServiceForRoot` from `@onecx-angular-utils` and update providers with `TranslateModuleConfig`.
-* If needed, import `createTranslateLoader`, `AngularAcceleratorMissingTranslationHandler` from `@onecx-angular-utils`.
-* If needed, import `MissingTranslationHandler` from `@ngx-translate/core`.
+* Remove createTranslateLoader, createRemoteComponentAndMfeTranslateLoader, createRemoteComponentTranslateLoader, translationPathFactory and remoteComponentTranslationPathFactory imports from `@onecx/angular-accelerator`.
+* Add `provideTranslationPathFromMeta` from `@onecx/angular-utils`
+* Add `provideTranslateServiceForRoot` from `@onecx/angular-utils` and update providers with `TranslateModuleConfig` from '@onecx/angular-utils'.
+* Add `TRANSLATION_PATH` from `@onecx/angular-utils`
+* Add `AngularAcceleratorMissingTranslationHandler` from `@onecx/angular-utils`.
+* Add `MissingTranslationHandler` from `@ngx-translate/core`.
 
-Before:
-[source,typescript]
-----
-@NgModule({
-    providers: [
-        {
-            provide: TRANSLATION_PATH,
-            useFactory: (appStateService: AppStateService) => translationPathFactory('assets/i18n/')(appStateService),
-            multi: true,
-            deps: [AppStateService]
-        },
-        provideHttpClient(withInterceptorsFromDi())
-    ]
-})
-----
+[NOTE]
+====
+* Use provideTranslationPathFromMeta with `import.meta.url` as the first argument and the location of your application's i18n files as the second argument.
 
-After:
-[source,typescript]
-----
-@NgModule({
-    providers: [
-        provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/'),
-        provideHttpClient(withInterceptorsFromDi())
-    ]
-})
-----
+*Hint:* To ensure the correct file path is used for import.meta.url, add the following to your application's webpack.config.js:
 
+[source, typescript]
+----
+module.exports = {
+ ...
+  module: { parser: { javascript: { importMeta: false } } }
+}
+----
+====
 
 **Example - replace translationPathFactory with provideTranslationPathFromMeta in providers:**
 
-Before:
-[source,typescript]
+.Before:
+[source, typescript]
 ----
 @NgModule({
     providers: [
@@ -56,8 +44,8 @@ Before:
 })
 ----
 
-After:
-[source,typescript]
+.After:
+[source, typescript]
 ----
 @NgModule({
     providers: [
@@ -70,8 +58,8 @@ After:
 
 **Example - replace remoteComponentTranslationPathFactory with provideTranslationPathFromMeta in providers:**
 
-Before:
-[source,typescript]
+.Before:
+[source, typescript]
 ----
 bootstrapRemoteComponent(RemoteComponent, 'ocx-my-remote-component', environment.production, [
     // ... other providers
@@ -85,8 +73,8 @@ bootstrapRemoteComponent(RemoteComponent, 'ocx-my-remote-component', environment
 ]);
 ----
 
-After:
-[source,typescript]
+.After:
+[source, typescript]
 ----
 bootstrapRemoteComponent(RemoteComponent, 'ocx-my-remote-component', environment.production, [
     // ... other providers
@@ -101,13 +89,21 @@ In OneCX v6, For each Remote Component translation related providers are require
 **Update Imports:**
 
 * Remove `translationPathFactory` and related imports from `component.ts`.
-* Add `provideTranslationPathFromMeta` from `@onecx-angular-utils` and update providers with translation paths.
-* Add `provideTranslateServiceForRoot` from `@onecx-angular-utils` and update providers with `TranslateModuleConfig`.
-* If needed, import `createTranslateLoader`, `AngularAcceleratorMissingTranslationHandler` from `@onecx-angular-utils`.
-* If needed, import `MissingTranslationHandler` from `@ngx-translate/core`.
+* Add `provideTranslationPathFromMeta` from `@onecx/angular-utils`
+* Add `TRANSLATION_PATH` from `@onecx/angular-utils`
+* Add `bootstrapRemoteComponent` from `@onecx/angular-webcomponents`
+* Add `provideTranslationPathFromMeta`, `createTranslateLoader` from `@onecx/angular-utils`
+* Add `provideTranslateServiceForRoot` from `@onecx/angular-utils`
+* Add `MissingTranslationHandler` from `@ngx-translate/core`
+* Add `AngularAcceleratorMissingTranslationHandler` from `@onecx/angular-utils`
 
-Before:
-[source,typescript]
+[NOTE]
+====
+Use provideTranslationPathFromMeta with `import.meta.url` as the first argument and the location of your application's i18n files as the second argument.
+====
+
+.Before:
+[source, typescript]
 ----
 import { TRANSLATION_PATH, translationPathFactory } from '@onecx/angular-utils'
 import { AppStateService } from '@onecx-angular-integration-interface'
@@ -128,18 +124,9 @@ import { AppStateService } from '@onecx-angular-integration-interface'
 export class MyRemoteComponent {}
 ----
 
-After:
-[source,typescript]
+.After:
+[source, typescript]
 ----
-import { bootstrapRemoteComponent } from '@onecx/angular-webcomponents'
-import { provideTranslationPathFromMeta, createTranslateLoader } from '@onecx/angular-utils'
-import { MyRemoteComponent } from './lib/my-remote.component'
-import { TranslateLoader } from '@ngx-translate/core'
-import { provideTranslateServiceForRoot } from '@onecx/angular-utils'
-import { MissingTranslationHandler } from '@ngx-translate/core'
-import { AngularAcceleratorMissingTranslationHandler } from '@onecx/angular-utils'
-import { HttpClient } from '@angular/common/http'
-
 bootstrapRemoteComponent(
   MyRemoteComponent,
   'ocx-my-remote',
