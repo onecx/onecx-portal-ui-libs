@@ -3,7 +3,7 @@ import { TranslateLoader } from '@ngx-translate/core'
 import { Observable, of } from 'rxjs'
 import { OnecxTranslateLoader } from './onecx-translate-loader.utils'
 import { TranslationCacheService } from '../services/translation-cache.service'
-import { TRANSLATION_PATH } from './create-translate-loader.utils'
+import { TRANSLATION_PATH } from '../injection-tokens/translation-path'
 
 describe('OnecxTranslateLoader', () => {
   class FakeTranslateLoader implements TranslateLoader {
@@ -24,14 +24,14 @@ describe('OnecxTranslateLoader', () => {
           provide: TranslationCacheService,
           useValue: {
             get: jest.fn(),
-            set: jest.fn()
-          }
+            set: jest.fn(),
+          },
         },
         {
           provide: TRANSLATION_PATH,
-          useValue: []
-        }
-      ]
+          useValue: [],
+        },
+      ],
     })
   })
 
