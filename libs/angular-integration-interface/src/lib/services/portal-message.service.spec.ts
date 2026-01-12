@@ -2,7 +2,7 @@ import { TestBed, fakeAsync } from '@angular/core/testing'
 import { TranslateService } from '@ngx-translate/core'
 import { FakeTopic } from '@onecx/accelerator'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
-import { Message, MessageTopic } from '@onecx/integration-interface'
+import { Message } from '@onecx/integration-interface'
 import { PortalMessageService } from './portal-message.service'
 
 describe('PortalMessageService', () => {
