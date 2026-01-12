@@ -38,8 +38,8 @@ export interface Action {
   ariaLabelKey?: string
   btnClass?: string
   actionCallback(): void
-  disabled?: boolean
   loading?: boolean
+  disabled?: boolean
   disabledTooltip?: string
   disabledTooltipKey?: string
   show?: 'always' | 'asOverflow'
