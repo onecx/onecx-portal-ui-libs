@@ -1,0 +1,32 @@
+@import './_tokens.scss';
+
+/* Listbox component styles */
+.p-listbox {
+  padding: var(--test-example-listbox-padding);
+}
+.p-listbox .p-listbox-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--test-example-listbox-gap);
+}
+.p-listbox .p-listbox-item {
+  padding: var(--test-example-listbox-option-padding);
+  border-radius: var(--test-example-listbox-option-border-radius);
+  color: var(--test-example-listbox-option-color);
+}
+.p-listbox .p-listbox-item.p-highlight {
+  background: var(--test-example-listbox-option-selected-background);
+  color: var(--test-example-listbox-option-selected-color);
+}
+.p-listbox .p-listbox-item.p-highlight:focus {
+  background: var(--test-example-listbox-option-selected-focus-background);
+}
+.p-listbox .p-listbox-item:not(.p-highlight):hover {
+  background: var(--test-example-listbox-option-focus-background);
+}
+.p-listbox .p-listbox-item .p-list-item-icon {
+  color: var(--test-example-listbox-option-icon-color);
+}
+.p-listbox .p-listbox-item .p-list-item-icon:focus {
+  color: var(--test-example-listbox-option-icon-focus-color);
+}
