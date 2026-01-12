@@ -1,9 +1,9 @@
 name: Deploy Storybook
-on: workflow_dispatch
-    # workflow_run:
-    #   workflows: ["Build Storybook"]
-    #   types:
-    #     - completed
+on: 
+    workflow_run:
+      workflows: ["Build Storybook"]
+      types:
+        - completed
 jobs:
     deploy-storybook:        
         environment: Storybook
