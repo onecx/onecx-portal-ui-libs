@@ -1,40 +1,42 @@
-import { TranslateLoader, TranslationObject } from '@ngx-translate/core'
+import { TranslateLoader } from '@ngx-translate/core'
+import {
+  TRANSLATE_HTTP_LOADER_CONFIG,
+  TranslateHttpLoader,
+  TranslateHttpLoaderConfig,
+} from '@ngx-translate/http-loader'
 import { Observable, retry } from 'rxjs'
 import { TranslationCacheService } from '../services/translation-cache.service'
-import { HttpClient } from '@angular/common/http'
+import { Injector, runInInjectionContext } from '@angular/core'
 
 export class CachingTranslateLoader implements TranslateLoader {
   private readonly translateLoader: TranslateHttpLoader
 
   constructor(
-    private translationCache: TranslationCacheService,
-    private http: HttpClient,
-    private prefix?: string,
-    private suffix?: string
+    private readonly translationCache: TranslationCacheService,
+    private readonly injector: Injector,
+    private readonly prefix?: string,
+    private readonly suffix?: string
   ) {
-    this.translateLoader = new TranslateHttpLoader(this.http, this.prefix, this.suffix)
+    this.translateLoader = runInInjectionContext(
+      Injector.create({
+        providers: [
+          {
+            provide: TRANSLATE_HTTP_LOADER_CONFIG,
+            useValue: { prefix, suffix } satisfies Partial<TranslateHttpLoaderConfig>,
+          },
+        ],
+
+        parent: this.injector,
+      }),
+      () => new TranslateHttpLoader()
+    )
   }
 
-  getTranslation(lang: string): Observable<TranslationObject> {
+  getTranslation(lang: string): Observable<any> {
     const url = `${this.prefix}${lang}${this.suffix}`
 
     return this.translationCache.getTranslationFile(url, () =>
       this.translateLoader.getTranslation(lang).pipe(retry({ delay: 50, count: 2 }))
     )
-  }
-}
-
-class TranslateHttpLoader {
-  constructor(
-    private http: HttpClient,
-    private prefix = '/assets/i18n/',
-    private suffix = '.json'
-  ) {}
-
-  /**
-   * Gets the translations from the server
-   */
-  public getTranslation(lang: string): Observable<TranslationObject> {
-    return this.http.get(`${this.prefix}${lang}${this.suffix}`) as Observable<TranslationObject>
   }
 }

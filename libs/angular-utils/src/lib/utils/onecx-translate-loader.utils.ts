@@ -1,11 +1,10 @@
-import { inject, Injectable } from '@angular/core'
-import { TranslateLoader } from '@ngx-translate/core'
-import { defaultIfEmpty, first, from, isObservable, map, mergeMap, Observable, of, tap, zip } from 'rxjs'
+import { inject, Injectable, Injector } from '@angular/core'
+import { TranslateLoader, TranslationObject } from '@ngx-translate/core'
+import { first, from, isObservable, map, mergeMap, Observable, of, shareReplay, zip } from 'rxjs'
 import { TranslationCacheService } from '../services/translation-cache.service'
-import { TRANSLATION_PATH } from './create-translate-loader.utils'
+import { TRANSLATION_PATH } from '../injection-tokens/translation-path'
 import { TranslateCombinedLoader } from './translate.combined.loader'
 import { CachingTranslateLoader } from './caching-translate-loader.utils'
-import { HttpClient } from '@angular/common/http'
 
 @Injectable()
 export class OnecxTranslateLoader implements TranslateLoader {
@@ -13,29 +12,26 @@ export class OnecxTranslateLoader implements TranslateLoader {
   timerId = OnecxTranslateLoader.lastTimerId++
 
   private readonly translationCacheService = inject(TranslationCacheService)
-  private readonly http = inject(HttpClient)
+  private readonly injector = inject(Injector)
   private readonly translationPaths = inject(TRANSLATION_PATH, { optional: true }) ?? []
-  private readonly translateLoader$: Observable<TranslateLoader | undefined> = zip(
+  private readonly translateLoader$: Observable<TranslateLoader> = zip(
     this.translationPaths.map((value) => this.toObservable(value))
   ).pipe(
     map((translationPaths) => {
       const uniqueTranslationPaths = [...new Set(translationPaths)]
       return new TranslateCombinedLoader(
         ...uniqueTranslationPaths.map((path) => {
-          return new CachingTranslateLoader(this.translationCacheService, this.http, path, '.json')
+          return new CachingTranslateLoader(this.translationCacheService, this.injector, path, '.json')
         })
       )
     }),
-    tap(() => console.timeEnd('createTranslateLoader_' + this.timerId))
+    shareReplay(1)
   )
 
-  getTranslation(lang: string): Observable<any> {
+  getTranslation(lang: string): Observable<TranslationObject> {
     return this.translateLoader$.pipe(
-      tap(() => console.time('OnecxTranslateLoader_' + this.timerId)),
-      defaultIfEmpty(undefined),
       first(),
-      mergeMap((translateLoader) => translateLoader?.getTranslation(lang) ?? of({})),
-      tap(() => console.timeEnd('OnecxTranslateLoader_' + this.timerId))
+      mergeMap((translateLoader) => translateLoader?.getTranslation(lang) ?? of({}))
     )
   }
 
