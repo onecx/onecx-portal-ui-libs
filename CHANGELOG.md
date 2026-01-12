@@ -1,3 +1,15 @@
+## [6.13.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.12.2...v6.13.0) (2026-01-02)
+
+### Features
+
+* initial changes of image service ([#1115](https://github.com/onecx/onecx-portal-ui-libs/issues/1115)) ([a739253](https://github.com/onecx/onecx-portal-ui-libs/commit/a739253a758251b7e825f9cd5909a6c28618b06b))
+
+## [6.12.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.12.1...v6.12.2) (2025-12-29)
+
+### Bug Fixes
+
+* downgrade postcss minor version in nx-migration-utils ([#1112](https://github.com/onecx/onecx-portal-ui-libs/issues/1112)) ([3cb6b84](https://github.com/onecx/onecx-portal-ui-libs/commit/3cb6b842e3681f90b8652f2474ecf02c2446bc10))
+
 ## [6.12.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.12.0...v6.12.1) (2025-12-18)
 
 ### Bug Fixes

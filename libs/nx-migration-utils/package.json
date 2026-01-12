@@ -1,6 +1,6 @@
 {
   "name": "@onecx/nx-migration-utils",
-  "version": "6.12.1",
+  "version": "6.13.0",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -12,7 +12,7 @@
     "@phenomnomnominal/tsquery": "^6",
     "@nx/devkit": "^20.3.0",
     "typescript": "^5.5.4",
-    "postcss": "^8.5.3",
+    "postcss": "^8.5.0",
     "postcss-scss": "^4.0.9"
   },
   "type": "commonjs",
