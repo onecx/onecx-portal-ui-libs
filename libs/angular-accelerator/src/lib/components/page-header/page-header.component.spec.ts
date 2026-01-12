@@ -202,6 +202,28 @@ describe('PageHeaderComponent', () => {
     expect(await (await inlineButtons[1].getIconSpan())?.checkHasClass('p-button-icon-right')).toBeTruthy()
   })
 
+  it('should show a loading spinner when action is loading', async () => {
+    jest.spyOn(console, 'log')
+
+    component.actions = [
+      {
+        label: 'My Test Loading Action',
+        show: 'always',
+        actionCallback: () => {
+          console.log('My Test Loading Action')
+        },
+        permission: 'TEST#TEST_PERMISSION',
+        loading: true,
+      },
+    ]
+
+    const loadingActionElement = await pageHeaderHarness.getInlineActionButtonByLabel('My Test Loading Action')
+    expect(loadingActionElement).toBeTruthy()
+    expect(await loadingActionElement?.getLoadingIcon()).toBeTruthy()
+    await loadingActionElement?.click()
+    expect(console.log).not.toHaveBeenCalled()
+  })
+
   it('should render objectDetails as object info in the page header', async () => {
     const objectDetailsWithoutIcons = [
       {
@@ -420,8 +442,8 @@ describe('PageHeaderComponent', () => {
     const objectInfo = (await pageHeaderHarness.getObjectInfos())[0]
 
     //tooltips should not be initialise for undefined keys
-    expect(await objectInfo.getLabelTooltipContent()).toBeNull();
-    expect(await objectInfo.getValueTooltipContent()).toBeNull();
-    expect(await objectInfo.getActionItemTooltipContent()).toBeNull();
+    expect(await objectInfo.getLabelTooltipContent()).toBeNull()
+    expect(await objectInfo.getValueTooltipContent()).toBeNull()
+    expect(await objectInfo.getActionItemTooltipContent()).toBeNull()
   })
 })

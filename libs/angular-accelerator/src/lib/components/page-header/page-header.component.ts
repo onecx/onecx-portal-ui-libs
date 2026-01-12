@@ -39,6 +39,7 @@ export interface Action {
   btnClass?: string
   actionCallback(): void
   disabled?: boolean
+  loading?: boolean
   disabledTooltip?: string
   disabledTooltipKey?: string
   show?: 'always' | 'asOverflow'
