@@ -1,17 +1,19 @@
-import { inject, Injector } from '@angular/core'
+import { inject, Injectable } from '@angular/core'
 import { TranslateLoader } from '@ngx-translate/core'
 import { defaultIfEmpty, first, from, isObservable, map, mergeMap, Observable, of, tap, zip } from 'rxjs'
 import { TranslationCacheService } from '../services/translation-cache.service'
 import { TRANSLATION_PATH } from './create-translate-loader.utils'
 import { TranslateCombinedLoader } from './translate.combined.loader'
 import { CachingTranslateLoader } from './caching-translate-loader.utils'
+import { HttpClient } from '@angular/common/http'
 
+@Injectable()
 export class OnecxTranslateLoader implements TranslateLoader {
   static lastTimerId = 0
   timerId = OnecxTranslateLoader.lastTimerId++
 
-  private readonly injector = inject(Injector)
   private readonly translationCacheService = inject(TranslationCacheService)
+  private readonly http = inject(HttpClient)
   private readonly translationPaths = inject(TRANSLATION_PATH, { optional: true }) ?? []
   private readonly translateLoader$: Observable<TranslateLoader | undefined> = zip(
     this.translationPaths.map((value) => this.toObservable(value))
@@ -20,7 +22,7 @@ export class OnecxTranslateLoader implements TranslateLoader {
       const uniqueTranslationPaths = [...new Set(translationPaths)]
       return new TranslateCombinedLoader(
         ...uniqueTranslationPaths.map((path) => {
-          return new CachingTranslateLoader(this.translationCacheService, this.injector, path, '.json')
+          return new CachingTranslateLoader(this.translationCacheService, this.http, path, '.json')
         })
       )
     }),

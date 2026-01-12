@@ -36,6 +36,9 @@ interface AssignedComponent {
   standalone: false,
   selector: 'ocx-slot[name]',
   template: ``,
+  host: {
+    '[attr.name]': 'name',
+  },
 })
 export class SlotComponent implements OnInit, OnDestroy {
   private http = inject(HttpClient)
