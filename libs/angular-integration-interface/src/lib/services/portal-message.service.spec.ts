@@ -1,6 +1,6 @@
 import { TestBed, fakeAsync } from '@angular/core/testing'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { Message, MessageTopic } from '@onecx/integration-interface'
+import { Message } from '@onecx/integration-interface'
 import { PortalMessageService } from './portal-message.service'
 import { FakeTopic } from '@onecx/accelerator'
 
@@ -23,7 +23,7 @@ describe('PortalMessageService', () => {
       providers: [PortalMessageService],
     }).compileComponents()
     portalMessageService = TestBed.inject(PortalMessageService)
-    portalMessageService.message$ = new FakeTopic<Message>() as unknown as MessageTopic
+    portalMessageService.message$ = FakeTopic.create<Message>()
   })
 
   afterEach(() => {

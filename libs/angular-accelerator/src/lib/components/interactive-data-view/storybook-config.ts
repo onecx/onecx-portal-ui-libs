@@ -184,6 +184,7 @@ export const defaultInteractiveDataViewArgs = {
   deletePermission: 'TEST_MGMT#TEST_DELETE',
   editPermission: 'TEST_MGMT#TEST_EDIT',
   viewPermission: 'TEST_MGMT#TEST_VIEW',
+  defaultGroupKey: 'test',
 }
 
 export const defaultInteractiveDataViewArgTypes = {
