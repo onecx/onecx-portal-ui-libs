@@ -1,6 +1,6 @@
 {
   "name": "@onecx/onecx-portal-ui-libs",
-  "version": "7.0.0-rc.13",
+  "version": "7.0.0-rc.14",
   "license": "Apache-2.0",
   "scripts": {
     "postinstall": "mkdir -p .nx",
@@ -120,7 +120,6 @@
     "ng-packagr": "^19.2.2",
     "ngx-translate-testing": "^7.0.0",
     "nx": "20.4.0",
-    "nx-release": "^3.4.0",
     "pg": "^8.16.3",
     "postcss": "^8.5.6",
     "postcss-import": "~16.1.1",

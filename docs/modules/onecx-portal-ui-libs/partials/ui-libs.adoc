@@ -1,0 +1,3 @@
+* xref:onecx-portal-ui-libs:index.adoc[UI Libraries]
+** xref:onecx-portal-ui-libs:libraries/angular-integration-interface.adoc[angular-integration-interface]
+** xref:onecx-portal-ui-libs:libraries/integration-interface.adoc[integration-interface]
