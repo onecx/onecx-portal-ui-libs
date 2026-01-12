@@ -9,7 +9,7 @@ const WHITELIST = ['assets']
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
   private authService = inject(AuthProxyService)
-  private appStateService = inject(AppStateService)
+  private readonly appStateService = inject(AppStateService)
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const skip = WHITELIST.some((str) => request.url.includes(str))
