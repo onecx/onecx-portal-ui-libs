@@ -3,9 +3,7 @@ on:
   pull_request:
     branches:
       - 'main'
-      - 'v7'
-      - 'v6'
-      - 'v5'
+      - 'v*'
 jobs:
   build-storybooks:
     runs-on: ubuntu-latest
