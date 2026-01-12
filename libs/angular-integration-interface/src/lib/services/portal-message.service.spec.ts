@@ -27,9 +27,9 @@ describe('PortalMessageService', () => {
       ],
     }).compileComponents()
     portalMessageService = TestBed.inject(PortalMessageService)
-    portalMessageService.message$ = new FakeTopic<Message>() as unknown as MessageTopic
     const translateService = TestBed.inject(TranslateService)
     translateService.use('en')
+    portalMessageService.message$ = FakeTopic.create<Message>()
   })
 
   afterEach(() => {

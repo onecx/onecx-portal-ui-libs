@@ -1,6 +1,6 @@
 {
   "name": "@onecx/angular-utils",
-  "version": "7.0.0-rc.13",
+  "version": "7.0.0-rc.14",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -12,18 +12,16 @@
     "@angular/router": "^20.0.0",
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
-    "@onecx/accelerator": "^7.0.0-rc.13",
-    "@onecx/angular-integration-interface": "^7.0.0-rc.13",
     "@primeng/themes": "^20.0.0",
     "rxjs": "^7.8.1",
     "primeng": "^20.3.0",
     "@primeuix/styled": "^0.7.4",
     "@angular/platform-browser": "^20.0.0",
     "@nx/devkit": "^22.0.2",
-    "@onecx/nx-migration-utils": "^7.0.0-rc.13",
-    "@onecx/integration-interface": "^7.0.0-rc.13",
-    "@phenomnomnominal/tsquery": "^6",
-    "typescript": "^5.5.4"
+    "@onecx/accelerator": "^7.0.0-rc.14",
+    "@onecx/angular-integration-interface": "^7.0.0-rc.14",
+    "@onecx/nx-migration-utils": "^7.0.0-rc.14",
+    "@onecx/integration-interface": "^7.0.0-rc.14"
   },
   "publishConfig": {
     "access": "public"

@@ -29,6 +29,7 @@ import {
   debounceTime,
   filter,
   first,
+  firstValueFrom,
   map,
   mergeMap,
   of,
@@ -45,6 +46,8 @@ import { ObjectUtils } from '../../utils/objectutils'
 import { findTemplate } from '../../utils/template.utils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
+import { LiveAnnouncer } from '@angular/cdk/a11y'
+
 
 export type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -84,10 +87,12 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   private readonly injector = inject(Injector)
   private readonly userService = inject(UserService)
   private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
+  private readonly liveAnnouncer = inject(LiveAnnouncer)
 
   FilterType = FilterType
   TemplateType = TemplateType
   checked = true
+
   _rows$ = new BehaviorSubject<Row[]>([])
   @Input()
   get rows(): Row[] {
@@ -96,7 +101,19 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   set rows(value: Row[]) {
     if (this._rows$.getValue().length) this.resetPage()
     this._rows$.next(value)
+
+    const currentResults = value.length;
+    const newStatus = currentResults === 0
+        ? 'OCX_DATA_TABLE.NO_SEARCH_RESULTS_FOUND'
+        : 'OCX_DATA_TABLE.SEARCH_RESULTS_FOUND';
+    
+    firstValueFrom(
+      this.translateService.get(newStatus, { results: currentResults }) ).then((translatedText: string) => {
+        this.liveAnnouncer.announce(translatedText);
+      }
+    );
   }
+
   _selectionIds$ = new BehaviorSubject<(string | number)[]>([])
   @Input()
   set selectedRows(value: Row[] | string[] | number[]) {
