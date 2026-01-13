@@ -1,7 +1,11 @@
 module.exports = {
   branches: [
     'dummy',
-    'main',
+    {
+      name: 'main',
+      channel: 'rc',
+      prerelease: 'rc',
+    },
     {
       name: 'v5',
       range: '5.x.x',
