@@ -8,9 +8,6 @@ import { CachingTranslateLoader } from './caching-translate-loader.utils'
 
 @Injectable()
 export class OnecxTranslateLoader implements TranslateLoader {
-  static lastTimerId = 0
-  timerId = OnecxTranslateLoader.lastTimerId++
-
   private readonly translationCacheService = inject(TranslationCacheService)
   private readonly injector = inject(Injector)
   private readonly translationPaths = inject(TRANSLATION_PATH, { optional: true }) ?? []

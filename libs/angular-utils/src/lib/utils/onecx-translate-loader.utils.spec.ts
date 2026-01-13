@@ -6,9 +6,7 @@ import { TRANSLATION_PATH } from '../injection-tokens/translation-path'
 
 jest.mock('./caching-translate-loader.utils', () => {
   class FakeCachingTranslateLoader {
-    constructor(public path: string) {
-      console.log('FakeCachingTranslateLoader created with path:', path)
-    }
+    constructor(public path: string) {}
   }
 
   return {
@@ -27,7 +25,6 @@ jest.mock('./translate.combined.loader', () => {
       ...loaders: TranslateLoader[]
     ) {
       this.loaders = loaders
-      console.log('FakeTranslateCombinedLoader created with loaders:', loaders)
     }
 
     getTranslation(lang: string): Observable<any> {
@@ -98,6 +95,20 @@ describe('OnecxTranslateLoader', () => {
         },
         error: done,
       })
+    })
+  })
+
+  describe('without TRANSLATION_PATH', () => {
+    beforeEach(() => {
+      TestBed.resetTestingModule()
+      TestBed.configureTestingModule({
+        providers: [OnecxTranslateLoader],
+      })
+    })
+
+    it('should handle missing TRANSLATION_PATH', () => {
+      const onecxTranslateLoader = TestBed.inject(OnecxTranslateLoader)
+      expect((onecxTranslateLoader as any).translationPaths).toEqual([])
     })
   })
 })
