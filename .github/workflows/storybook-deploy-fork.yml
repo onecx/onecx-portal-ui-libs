@@ -1,40 +1,32 @@
-name: Deploy Storybook (Fork)
-on:
-    workflow_run:
-      workflows: ["Build Storybook (Fork)"]
-      types:
-        - completed
-jobs:
-    deploy-storybook:
-        if: ${{ github.event.workflow_run.conclusion == 'success' }}
-        environment: Storybook
-        env:
-          PIA_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN_PIA }}
-          AA_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN_AA }}
-        runs-on: ubuntu-latest
-        steps:
-          - name: Checkout code
-            uses: actions/checkout@v4
-            with:
-              fetch-depth: 0
-          - name: Download build artifacts
-            uses: dawidd6/action-download-artifact@v3
-            with:
-              run_id: ${{ github.event.workflow_run.id }}
-              name: storybook-dist
-              path: './storybook-dist'
-          - name: Publish to PIA Chromatic
-            uses: chromaui/action@latest
-            if: ${{ (env.PIA_TOKEN != null) && (env.PIA_TOKEN != '') }}
-            with:
-              projectToken: ${{ env.PIA_TOKEN }}
-              storybookBuildDir: storybook-dist/portal-integration-angular
-              skip: 'dependabot/**'
-          - name: Publish to AA Chromatic
-            uses: chromaui/action@latest
-            if: ${{ (env.AA_TOKEN != null) && (env.AA_TOKEN != '') }}
-            with:
-              projectToken: ${{ env.AA_TOKEN }}
-              storybookBuildDir: storybook-dist/angular-accelerator
-              skip: 'dependabot/**'
-            
+# Re-add the following code if you wish to deploy Storybooks for PRs (also see necessary changes in storybook-build-fork.yml)
+# name: Deploy Storybook (Fork)
+# on:
+#     workflow_run:
+#       workflows: ["Build Storybook (Fork)"]
+#       types:
+#         - completed
+# jobs:
+#     deploy-storybook:
+#         if: ${{ github.event.workflow_run.conclusion == 'success' }}
+#         environment: Storybook
+#         env:
+#           AA_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN_AA }}
+#         runs-on: ubuntu-latest
+#         steps:
+#           - name: Checkout code
+#             uses: actions/checkout@v4
+#             with:
+#               fetch-depth: 0
+#           - name: Download build artifacts
+#             uses: dawidd6/action-download-artifact@v3
+#             with:
+#               run_id: ${{ github.event.workflow_run.id }}
+#               name: storybook-dist
+#               path: './storybook-dist'
+#           - name: Publish to AA Chromatic
+#             uses: chromaui/action@latest
+#             if: ${{ (env.AA_TOKEN != null) && (env.AA_TOKEN != '') }}
+#             with:
+#               projectToken: ${{ env.AA_TOKEN }}
+#               storybookBuildDir: storybook-dist/angular-accelerator
+#               skip: 'dependabot/**'

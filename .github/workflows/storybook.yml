@@ -2,13 +2,13 @@ name: Build and deploy Storybook
 on: 
   push:
     branches:
-      - '**'
+      - 'main'
+      - 'v*'
 jobs:
   deploy-storybooks:
     runs-on: ubuntu-latest
     environment: Storybook
     env:
-      PIA_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN_PIA }}
       AA_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN_AA }}
     steps:
       - name: Checkout code
@@ -19,15 +19,6 @@ jobs:
         run: npm config get registry
       - name: Install dependencies
         run: npm ci
-      - name: Build PIA Storybook
-        run: npx nx run portal-integration-angular:build-storybook
-      - name: Publish to PIA Chromatic
-        uses: chromaui/action@latest
-        if: ${{ (env.PIA_TOKEN != null) && (env.PIA_TOKEN != '') }}
-        with:
-          projectToken: ${{ env.PIA_TOKEN }}
-          storybookBuildDir: dist/storybook/portal-integration-angular
-          skip: 'dependabot/**'
       - name: Build AA Storybook
         run: npx nx run angular-accelerator:build-storybook
       - name: Publish to AA Chromatic
