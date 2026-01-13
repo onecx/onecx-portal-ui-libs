@@ -1,3 +1,14 @@
+## [8.0.0-rc.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.9999.0...v8.0.0-rc.1) (2026-01-13)
+
+### ⚠ BREAKING CHANGES
+
+* release v8 rc (#1144)
+
+### Chores
+
+* release v8 rc ([#1144](https://github.com/onecx/onecx-portal-ui-libs/issues/1144)) ([46d4b11](https://github.com/onecx/onecx-portal-ui-libs/commit/46d4b1187bca46ff635076167ef24363971c83b9))
+* **release:** -v7.0.0 [skip ci] ([03980ce](https://github.com/onecx/onecx-portal-ui-libs/commit/03980ce23909daf67117fd3b4e72035fb8a60c74)), closes [#1143](https://github.com/onecx/onecx-portal-ui-libs/issues/1143) [#974](https://github.com/onecx/onecx-portal-ui-libs/issues/974)
+
 ## [7.0.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.999.0...v7.0.0) (2026-01-13)
 
 ### ⚠ BREAKING CHANGES
