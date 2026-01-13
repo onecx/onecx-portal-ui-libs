@@ -7,9 +7,9 @@
     "url": "https://github.com/onecx/onecx-portal-ui-libs"
   },
   "peerDependencies": {
-    "@angular-architects/module-federation": "^18.0.4",
-    "@angular/common": "^19.0.0",
-    "@angular/core": "^19.0.0",
+    "@angular-architects/module-federation": "^20.0.0",
+    "@angular/common": "^20.3.16",
+    "@angular/core": "^20.3.16",
     "@onecx/angular-integration-interface": "^7.0.0-rc.13",
     "@onecx/integration-interface": "^7.0.0-rc.13",
     "keycloak-js": "26.2.0",
