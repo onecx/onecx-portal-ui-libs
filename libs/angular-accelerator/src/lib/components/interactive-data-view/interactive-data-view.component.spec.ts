@@ -12,7 +12,7 @@ import {
   UserServiceMock,
 } from '@onecx/angular-integration-interface/mocks'
 import { SlotComponentConfiguration, SlotService } from '@onecx/angular-remote-components'
-import { SlotServiceMock } from '@onecx/angular-remote-components/mocks'
+import { provideSlotServiceMock, SlotServiceMock } from '@onecx/angular-remote-components/mocks'
 import {
   ButtonHarness,
   ListItemHarness,
@@ -317,10 +317,7 @@ xdescribe('InteractiveDataViewComponent', () => {
       ],
       providers: [
         provideUserServiceMock(),
-        {
-          provide: SlotService,
-          useClass: SlotServiceMock,
-        },
+        provideSlotServiceMock(),
         provideHttpClient(withInterceptorsFromDi()),
         provideRouter([]),
         provideAppStateServiceMock(),
@@ -352,7 +349,6 @@ xdescribe('InteractiveDataViewComponent', () => {
 
     dateUtils = TestBed.inject(DateUtils)
     slotService = TestBed.inject(SlotService) as any as SlotServiceMock
-    slotService.clearAssignments()
 
     viewItemEvent = undefined
     editItemEvent = undefined
@@ -377,7 +373,9 @@ xdescribe('InteractiveDataViewComponent', () => {
 
   it('should load column-group-selection slot', async () => {
     userServiceMock.permissionsTopic$.publish(['PRODUCT#USE_SEARCHCONFIG'])
-    slotService.assignComponentToSlot(columnGroupSelectionComponent, component.columnGroupSlotName)
+    slotService.assignComponents({
+      [component.columnGroupSlotName]: [columnGroupSelectionComponent],
+    })
     fixture.detectChanges()
 
     const slot = await loader.getHarness(SlotHarness)
@@ -389,7 +387,7 @@ xdescribe('InteractiveDataViewComponent', () => {
     const columnGroupSelectionDropdown = await loader.getHarness(ColumnGroupSelectionHarness)
     expect(columnGroupSelectionDropdown).toBeTruthy()
 
-    slotService.assignComponentToSlot(columnGroupSelectionComponent, component.columnGroupSlotName)
+    slotService.assignComponents({ [component.columnGroupSlotName]: [columnGroupSelectionComponent] })
 
     const columnGroupSelectionDropdownNoPermission = await loader.getHarness(ColumnGroupSelectionHarness)
     expect(columnGroupSelectionDropdownNoPermission).toBeTruthy()
