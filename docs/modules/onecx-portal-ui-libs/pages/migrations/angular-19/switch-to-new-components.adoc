@@ -1,0 +1,10 @@
+[#replace-removed-components]
+=== Replace Removed Components
+
+When updating to the latest OneCX UI libraries, simply replace any imports of **PortalCoreModule** from **@onecx/portal-integration-angular** with **AngularAcceleratorModule** from **@onecx/angular-accelerator** to ensure all components and directives work correctly.
+
+Below is the guide for migrating from deprecated components to their new components.
+include::switch-to-interactive-date-view.adoc[]
+include::switch-to-ocx-content-or-container.adoc[]
+include::switch-to-search-header.adoc[]
+include::switch-to-ocx-dialog-inline.adoc[]

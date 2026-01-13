@@ -1,0 +1,140 @@
+==== Replace PageContentComponent with OcxContentComponent
+Replace *PageContentComponent* with *OcxContentComponent* which displays content in a styled card format and provide styling options.
+
+**Code changes**
+
+* Remove `PortalCoreModule` from '@onecx/portal-integration-angular'
+* Remove `PageContentComponent` from `@onecx/portal-integration-angular`.
+* Replace with `OcxContentComponent` from `@onecx/angular-accelerator`.
+* For grouping, replace with `OcxContentContainerComponent` from `@onecx/angular-accelerator`.
+* Migrate input properties as per the mapping tables below.
+
+**Example - Replace page-content with ocx-content in HTML**
+
+.Before
+[source, html]
+----
+<page-content
+  [styleClass]="'my-custom-class'"
+>
+  <!-- content here -->
+</page-content>
+----
+
+.After
+[source, html]
+----
+<ocx-content
+  [styleClass]="'my-custom-class'"
+  [title]="'My Page Title'"
+>
+  <!-- content here -->
+</ocx-content>
+----
+
+
+**Migration Notes**
+
+[cols="1,1,2", options="header"]
+|===
+| PageContentComponent 
+| OcxContentComponent
+| Notes
+
+| styleClass
+| styleClass
+|  Used to append custom CSS classes to the main wrapper div.
+
+| -
+| title
+| New in OcxContentComponent. Optionally specify a title for the content card.
+|===
+
+==== Replace PageContentComponent with OcxContentContainerComponent
+Replace *PageContentComponent* with *OcxContentContainerComponent* which is designed as high-level wrapper for grouping multiple content sections together and provides layout and styling options.
+
+**Code changes**
+- Remove use of `PageContentComponent` from `@onecx/portal-integration-angular`.
+- Replace with `OcxContentContainerComponent` from `@onecx/angular-accelerator`.
+- Migrate input properties as per the mapping table below.
+
+**Example - Replace page-content with ocx-content-container in HTML**
+.Before
+[source,html]
+----
+<page-content
+  [styleClass]="'my-custom-class'"
+>
+  <!-- content here -->
+</page-content>
+----
+
+.After
+[source,html]
+----
+<ocx-content-container
+  [styleClass]="'my-custom-class'"
+  [title]="'My Page Title'"
+>
+  <!-- content here -->
+</ocx-content-container>
+----
+
+
+**Migration Notes**
+**Input Properties**
+[cols="1,1,2", options="header"]
+|===
+| PageContentComponent
+| OcxContentContainerComponent
+| Notes
+
+| styleClass
+| styleClass
+|  Used to append custom CSS classes to the main wrapper div.
+
+| -
+| title
+| New in OcxContentContainerComponent. Optionally specify a title for the content container.
+|===
+
+
+[NOTE]
+====
+* Use **OcxContentComponent** for single content blocks with a title.
+* Use **OcxContentContainerComponent** to group multiple sections, placing each section inside its own `<ocx-content>` with a `title`.
+
+Both components support `styleClass` and `title` inputs. Choose the one that fits your layout needs.
+====
+
+**Mapping Content Structure: Handling Multiple Sections**
+
+When migrating multiple sections, wrap them in an `<ocx-content-container>` and place each section inside its own `<ocx-content>` with a `title`.
+
+.Example: Migrating multiple sections into a container
+
+.Before
+[source, html]
+----
+<page-content>
+  <h1>Profile</h1>
+  <app-profile-details></app-profile-details>
+</page-content>
+<page-content>
+  <h2>Settings</h2>
+  <app-settings-form></app-settings-form>
+</page-content>
+----
+
+.After
+[source, html]
+----
+<ocx-content-container [title]="'User Area'">
+  <ocx-content [title]="'Profile'">
+    <app-profile-details></app-profile-details>
+  </ocx-content>
+  <ocx-content [title]="'Settings'">
+    <app-settings-form></app-settings-form>
+  </ocx-content>
+</ocx-content-container>
+----

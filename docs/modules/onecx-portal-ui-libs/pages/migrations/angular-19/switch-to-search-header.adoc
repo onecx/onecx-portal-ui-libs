@@ -1,0 +1,127 @@
+==== Replace SearchCriteriaComponent with SearchHeaderComponent
+
+Replace *SearchCriteriaComponent* with *SearchHeaderComponent* for enhanced functionality and flexibility. SearchHeaderComponent supports advanced layouts, custom actions and flexible toolbar content.
+
+**Code changes**
+
+* Remove `PortalCoreModule` from `@onecx/portal-integration-angular`.
+* Remove use of `SearchCriteriaComponent` from `@onecx/portal-integration-angular`.
+* Replace with `SearchHeaderComponent` from `@onecx/angular-accelerator`.
+* Migrate input and output properties as per the mapping tables below.
+
+.Before
+[source,html]
+----
+<ocx-search-criteria
+  [disableAdvancedToggle]="true"
+  [searchId]="'user-search'"
+  [criteriaTemplate]="true"
+  (search)="onSearch($event)"
+  (reset)="onReset($event)"
+  (advancedViewToggle)="onAdvancedToggle($event)"
+>
+  <!-- search fields here -->
+</ocx-search-criteria>
+----
+
+.After
+[source,html]
+----
+<ocx-search-header
+  [viewMode]="'simple'"
+  [pageName]="'user-search'"
+  [actions]="actions"
+  (searched)="onSearch($event)"
+  (resetted)="onReset($event)"
+  (viewModeChanged)="onAdvancedToggle($event)"
+>
+  <!-- search fields here -->
+</ocx-search-header>
+----
+
+**Migration Notes**
+
+[NOTE]
+====
+- Use `viewMode`, `pageName`, and `actions` to map the main features of the old component.
+- Place your search fields and custom toolbar content directly inside `<ocx-search-header>`, using the appropriate slots if needed.
+- For additional input and output properties, refer to the tables below.
+- Adapt event payloads as needed, since they may differ from the old component.
+====
+
+**Input Properties**
+[cols="1,1,2", options="header"]
+|===
+| SearchCriteriaComponent
+| SearchHeaderComponent
+| Notes
+
+| disableAdvancedToggle
+| viewMode
+| If `disableAdvancedToggle` is true, set `[viewMode]="'simple'"` to only show simple search.
+
+| searchId
+| pageName
+| Use `pageName` for search config and slots.
+
+| criteriaTemplate
+| actions, toolbar slots
+| Migrate criteria template logic to actions or toolbar content.
+
+| [toolbarItems], [simpleCriteria], [advancedCriteria] (ng-content slots)
+| ng-content, additionalToolbarContent, additionalToolbarContentLeft
+| Place your search fields directly inside `<ocx-search-header>`. Use toolbar slots for custom content.
+
+| -
+| header
+| New: Set a custom header/title.
+
+| -
+| subheader
+| New: Set a custom subheader.
+
+| -
+| manualBreadcrumbs
+| New: Provide custom breadcrumbs.
+
+| -
+| searchButtonDisabled
+| New: Disable the search button.
+
+| -
+| resetButtonDisabled
+| New: Disable the reset button.
+
+| -
+| actions
+| New: Provide custom actions for the header.
+|===
+
+**Output Events**
+
+[cols="1,1,2", options="header"]
+|===
+| SearchCriteriaComponent
+| SearchHeaderComponent
+| Notes
+
+| search
+| searched
+| Emitted when the search button is pressed or Enter is hit. Adapt payload as needed.
+
+| reset
+| resetted
+| Emitted when the reset button is pressed. Adapt payload as needed.
+
+| advancedViewToggle
+| viewModeChanged
+| Emitted when the view mode is toggled.
+
+| -
+| selectedSearchConfigChanged
+| New: Emitted when the selected search config changes.
+
+| -
+| componentStateChanged
+| New: Emitted when the component state changes.
+|===

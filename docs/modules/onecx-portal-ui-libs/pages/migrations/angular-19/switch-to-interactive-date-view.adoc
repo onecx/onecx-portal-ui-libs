@@ -1,0 +1,230 @@
+
+==== Replace DataViewControlComponent with InteractiveDateViewComponent
+
+Replace *DataViewControlComponent* with *InteractiveDateViewComponent* for enhanced data viewing capabilities including sorting, filtering, and layout options.
+
+**Code changes**
+
+* Remove `PortalCoreModule` from `@onecx/portal-integration-angular`.
+* Remove all usages of `DataViewControlComponent` from `@onecx/portal-integration-angular`.
+* Replace with `InteractiveDateViewComponent` from `@onecx/angular-accelerator`.
+* Migrate input and output properties as per the mapping tables below.
+
+**Example - Replace ocx-data-view-controls with ocx-interactive-data-view in HTML**
+
+.Before
+[source, html]
+----
+<ocx-data-view-controls
+  [supportedViews]="['list', 'grid', 'table']"
+  [initialViewMode]="'list'"
+  [filterValue]="filter"
+  [enableFiltering]="true"
+  [enableSorting]="true"
+  [sortingOptions]="sortingOptions"
+  [defaultSortOption]="'name'"
+  [defaultSortDirection]="true"
+  [columnDefinitions]="columns"
+  [columnTemplates]="columnTemplates"
+  [dropdownPlaceholderText]="'Select template...'"
+  [filterColumns]="['name', 'status']"
+  [translations]="translations"
+  (sortChange)="onSortChange($event)"
+  (filterChange)="onFilterChange($event)"
+  (dataViewChange)="onDataViewChange($event)"
+  (sortDirectionChange)="onSortDirectionChange($event)"
+  (columnsChange)="onColumnsChange($event)">
+</ocx-data-view-controls>
+----
+
+.After
+[source, html]
+----
+<ocx-interactive-data-view
+  [supportedViewLayouts]="['list', 'grid', 'table']"
+  [layout]="'list'"
+  [filter]="filter"
+  [clientSideFiltering]="true"
+  [clientSideSorting]="true"
+  [columns]="columns"
+  [sortField]="'name'"
+  [sortDirection]="DataSortDirection.ASCENDING"
+  [columnTemplates]="columnTemplates"
+  [filters]="[
+    { columnId: 'name', filterType: 'text' },
+    { columnId: 'status', filterType: 'text' }
+  ]"
+  (sorted)="onSortChange($event)"
+  (filtered)="onFilterChange($event)"
+  (dataViewLayoutChange)="onDataViewChange($event)"
+  (displayedColumnKeysChange)="onColumnsChange($event)">
+</ocx-interactive-data-view>
+----
+
+**Input Properties**
+
+[cols="1,1,2", options="header"]
+|===
+| DataViewControlComponent
+| InteractiveDateViewComponent
+| Notes
+
+| supportedViews
+| supportedViewLayouts
+|  Example: `[supportedViewLayouts]="['list', 'grid', 'table']"`
+
+| initialViewMode
+| layout
+| Use `'list'`, `'grid'`, or `'table'`. Example: `[layout]="'list'"`
+
+| filterValue
+| filter
+|  Example: `[filter]="filter"`
+
+| enableFiltering
+| clientSideFiltering
+| Boolean. Example: `[clientSideFiltering]="true"`
+
+| enableSorting
+| clientSideSorting
+| Boolean. Example: `[clientSideSorting]="true"`
+
+| sortingOptions
+| columns
+| Define columns with `id` and `nameKey`.
+
+| defaultSortOption
+| sortField
+| Use the column id. Example: `[sortField]="'name'"`
+
+| defaultSortDirection
+| sortDirection
+| Use enum: `DataSortDirection.ASCENDING` or `DataSortDirection.DESCENDING`. Example: `[sortDirection]=DataSortDirection.ASCENDING`
+
+| columnDefinitions
+| columns
+| Use `id` and `nameKey` for columns.
+
+| columnTemplates
+| columnTemplates
+| Use `ng-template` with appropriate selectors and Angular content projection.
+
+| dropdownPlaceholderText
+| -
+| Deprecated. Use translations/i18n. No direct input in new component.
+
+| filterColumns
+| filters
+| Use filters and `clientSideFiltering`. In filter object, pass columnId and filterType.
+
+| translations
+| -
+| Please use i18n or translation keys.
+|===
+
+**Output events**
+
+[cols="1,1,2", options="header"]
+|===
+| DataViewControlComponent
+| InteractiveDateViewComponent
+| Notes
+
+| sortChange, sortDirectionChange
+| sorted
+| Emits `{ sortColumn, sortDirection }` object.
+
+| filterChange
+| filtered
+| Emits array of filter objects.
+
+| dataViewChange
+| dataViewLayoutChange
+| Emits `'list'`, `'grid'`, or `'table'`.
+
+| columnsChange
+| displayedColumnKeysChange
+| Emits string[] (array of column ids).
+|===
+
+**Example - Replace ocx-data-view-controls with ocx-interactive-data-view in Typescript**
+.Before
+[source, typescript]
+----
+filter = '';
+sortingOptions = [
+  { label: 'Name', value: 'name' },
+  { label: 'Date', value: 'date' }
+];
+columns = [
+  { field: 'name', header: 'Name', active: true },
+  { field: 'status', header: 'Status', active: true }
+];
+columnTemplates = []; // column templates here
+translations = {
+  filterInputPlaceholder: 'Filter...',
+  sortDropdownPlaceholder: 'Sort by...',
+  // ...other translation keys
+};
+
+onSortChange(sort: string) { /* handle sort */ }
+onFilterChange(filter: string) { /* handle filter */ }
+onDataViewChange(view: 'list' | 'grid') { /* handle view change */ }
+onSortDirectionChange(direction: boolean) { /* handle direction */ }
+onColumnsChange(activeColumns: string[]) { /* handle columns */ }
+----
+
+.After
+[source, typescript]
+----
+import { DataSortDirection } from '@onecx/portal-ui-libs/interactive-date-view';
+
+filter = '';
+columns = [
+  { id: 'name', nameKey: 'Name', active: true },
+  { id: 'status', nameKey: 'Status', active: true }
+];
+columnTemplates = []; // column template here
+
+onSortChange(event: { sortColumn: string, sortDirection: DataSortDirection }) {
+  // handle sort
+}
+onFilterChange(filters: any[]) {
+  // handle filter
+}
+onDataViewChange(layout: 'list' | 'grid' | 'table') {
+  // handle view change
+}
+onColumnsChange(activeColumnIds: string[]) {
+  // handle columns
+}
+----
+
+**Event Payloads**
+
+[cols="1,2", options="header"]
+|===
+| Event
+| Payload
+
+| sorted
+| { sortColumn: string, sortDirection: DataSortDirection }
+
+| filtered
+| Array of filter objects
+
+| dataViewLayoutChange
+| 'list' | 'grid' | 'table'
+
+| displayedColumnKeysChange
+| string[] (array of column ids)
+|===
+
+[NOTE]
+====
+*InteractiveDateViewComponent* supports advanced data viewing with sorting, filtering, and flexible layouts.  
+
+- `dropdownPlaceholderText` and `translations` are deprecated. Please use Angular i18n for placeholders and labels.
+- If you use `columnTemplates`, ensure they are compatible with the new component and use `ng-template` as needed.
+- The `filters` input now expects an array of filter objects, not just column names.
+====
