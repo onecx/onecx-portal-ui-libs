@@ -1,17 +1,17 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { TranslateModule, TranslateService } from '@ngx-translate/core'
+import { TranslateService } from '@ngx-translate/core'
 import { provideUserServiceMock, UserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { PTableCheckboxHarness } from '@onecx/angular-testing'
-import { TranslateTestingModule } from 'ngx-translate-testing'
-import { DataTableHarness } from '../../../../testing'
+import { DataTableHarness, provideTranslateTestingService } from '../../../../testing'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { ColumnType } from '../../model/column-type.model'
 import { DataTableComponent, Row } from './data-table.component'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { UserService } from '@onecx/angular-integration-interface'
+import { LiveAnnouncer } from '@angular/cdk/a11y'
 
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>
@@ -26,6 +26,9 @@ describe('DataTableComponent', () => {
     OCX_DATA_TABLE: {
       SHOWING: '{{first}} - {{last}} of {{totalRecords}}',
       SHOWING_WITH_TOTAL_ON_SERVER: '{{first}} - {{last}} of {{totalRecords}} ({{totalRecordsOnServer}})',
+      ALL: 'All',
+      SEARCH_RESULTS_FOUND: '{{results}} Results Found',
+      NO_SEARCH_RESULTS_FOUND: 'No Results Found',
     },
   }
 
@@ -34,6 +37,9 @@ describe('DataTableComponent', () => {
     OCX_DATA_TABLE: {
       SHOWING: '{{first}} - {{last}} von {{totalRecords}}',
       SHOWING_WITH_TOTAL_ON_SERVER: '{{first}} - {{last}} von {{totalRecords}} ({{totalRecordsOnServer}})',
+      ALL: 'Alle',
+      SEARCH_RESULTS_FOUND: '{{results}} Ergebnisse gefunden',
+      NO_SEARCH_RESULTS_FOUND: 'Keine Ergebnisse gefunden',
     },
   }
 
@@ -201,14 +207,9 @@ describe('DataTableComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DataTableComponent],
-      imports: [
-        AngularAcceleratorPrimeNgModule,
-        BrowserAnimationsModule,
-        TranslateModule.forRoot(),
-        TranslateTestingModule.withTranslations(TRANSLATIONS),
-        AngularAcceleratorModule,
-      ],
+      imports: [AngularAcceleratorPrimeNgModule, BrowserAnimationsModule, AngularAcceleratorModule],
       providers: [
+        provideTranslateTestingService(TRANSLATIONS),
         provideUserServiceMock(),
         {
           provide: HAS_PERMISSION_CHECKER,
@@ -806,4 +807,105 @@ describe('DataTableComponent', () => {
       expect(menuItemText).toBe('Label')
     })
   })
+
+  describe('LiveAnnouncer announcements', () => {
+    let liveAnnouncer: LiveAnnouncer;
+    let announceSpy: jest.SpyInstance;
+
+    beforeEach(() => {
+      liveAnnouncer = TestBed.inject(LiveAnnouncer);
+      announceSpy = jest.spyOn(liveAnnouncer, 'announce').mockResolvedValue();
+    });
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    describe('should announce "results found" when data has entries', () => {
+      it('de', async () => {
+        translateService.use('de');
+
+        component.rows = mockData;
+        fixture.detectChanges();
+
+        await fixture.whenStable();
+
+        expect(announceSpy).toHaveBeenCalledTimes(1);
+        expect(announceSpy).toHaveBeenCalledWith('5 Ergebnisse gefunden');
+      });
+
+      it('en', async () => {
+        translateService.use('en');
+
+        component.rows = mockData;
+        fixture.detectChanges();
+
+        await fixture.whenStable();
+
+        expect(announceSpy).toHaveBeenCalledTimes(1);
+        expect(announceSpy).toHaveBeenCalledWith('5 Results Found');
+      });
+    });
+
+    describe('should announce "no results found" when data is empty', () => {
+      it('de', async () => {
+        translateService.use('de');
+
+        component.rows = [];
+        fixture.detectChanges();
+
+        await fixture.whenStable();
+
+        expect(announceSpy).toHaveBeenCalledTimes(1);
+        expect(announceSpy).toHaveBeenCalledWith('Keine Ergebnisse gefunden');
+      });
+
+      it('en', async () => {
+        translateService.use('en');
+
+        component.rows = [];
+        fixture.detectChanges();
+
+        await fixture.whenStable();
+
+        expect(announceSpy).toHaveBeenCalledTimes(1);
+        expect(announceSpy).toHaveBeenCalledWith('No Results Found');
+      });
+    });
+
+    describe('should announce "results found" when data changes', () => {
+      it('de', async () => {
+        translateService.use('de');
+
+        component.rows = mockData;
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        component.rows = mockData.slice(0, 2);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(announceSpy).toHaveBeenCalledTimes(2);
+        expect(announceSpy).toHaveBeenNthCalledWith(1, '5 Ergebnisse gefunden');
+        expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Ergebnisse gefunden');
+      });
+
+      it('en', async () => {
+        translateService.use('en');
+
+        component.rows = mockData;
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        component.rows = mockData.slice(0, 2);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(announceSpy).toHaveBeenCalledTimes(2);
+        expect(announceSpy).toHaveBeenNthCalledWith(1, '5 Results Found');
+        expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Results Found');
+      });
+    });
+  });
+
 })

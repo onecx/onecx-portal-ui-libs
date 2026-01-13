@@ -1,3 +1,13 @@
+## [7.0.0-rc.14](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.13...v7.0.0-rc.14) (2026-01-02)
+
+### Features
+
+* image service in libs ([#1092](https://github.com/onecx/onecx-portal-ui-libs/issues/1092)) ([2475594](https://github.com/onecx/onecx-portal-ui-libs/commit/2475594d9be54ad7bc764e73f488276b4fccfa2e))
+
+### Bug Fixes
+
+* renaming implementation-details to module-federation ([9a9d958](https://github.com/onecx/onecx-portal-ui-libs/commit/9a9d95870f134138a6c79b6bc256b6a7fd84654c))
+
 ## [7.0.0-rc.13](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.12...v7.0.0-rc.13) (2025-12-18)
 
 ### Bug Fixes

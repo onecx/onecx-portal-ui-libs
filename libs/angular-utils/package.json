@@ -1,32 +1,29 @@
 {
   "name": "@onecx/angular-utils",
-  "version": "7.0.0-rc.13",
+  "version": "7.0.0-rc.14",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/onecx/onecx-portal-ui-libs"
   },
   "peerDependencies": {
-    "@angular/common": "^19.0.0",
-    "@angular/core": "^19.0.0",
-    "@angular/router": "^19.0.0",
-    "@ngx-translate/core": "^16.0.0",
-    "@ngx-translate/http-loader": "^8.0.0",
-    "@onecx/accelerator": "^7.0.0-rc.13",
-    "@onecx/angular-integration-interface": "^7.0.0-rc.13",
-    "@primeng/themes": "^19.0.5",
+    "@angular/common": "^20.0.0",
+    "@angular/core": "^20.0.0",
+    "@angular/router": "^20.0.0",
+    "@ngx-translate/core": "^17.0.0",
+    "@primeng/themes": "^20.0.0",
     "rxjs": "^7.8.1",
-    "primeng": "^19.0.6",
-    "@primeuix/styled": "^0.3.2",
-    "@angular/platform-browser": "^19.0.0",
-    "@nx/devkit": "^20.3.0",
-    "@onecx/nx-migration-utils": "^7.0.0-rc.13",
-    "@onecx/integration-interface": "^7.0.0-rc.13",
-    "@jest/globals": "29.7.0",
-    "jest-extended": "^6.0.0",
+    "primeng": "^20.3.0",
+    "@primeuix/styled": "^0.7.4",
+    "@angular/platform-browser": "^20.0.0",
+    "@nx/devkit": "^22.0.2",
+    "@onecx/accelerator": "^7.0.0-rc.14",
+    "@onecx/angular-integration-interface": "^7.0.0-rc.14",
+    "@onecx/nx-migration-utils": "^7.0.0-rc.14",
+    "@onecx/integration-interface": "^7.0.0-rc.14",
     "@phenomnomnominal/tsquery": "^6",
-    "typescript": "^5.5.4",
-    "jest-preset-angular": "^14.2.2"
+    "typescript": "5.9.3",
+    "@ngx-translate/http-loader": "^17.0.0"
   },
   "publishConfig": {
     "access": "public"

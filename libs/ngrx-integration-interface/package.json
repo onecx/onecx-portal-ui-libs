@@ -1,16 +1,16 @@
 {
   "name": "@onecx/ngrx-integration-interface",
-  "version": "7.0.0-rc.13",
+  "version": "7.0.0-rc.14",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/onecx/onecx-portal-ui-libs"
   },
   "peerDependencies": {
-    "@angular/core": "^19.0.0",
-    "@ngrx/store": "^19.0.0",
-    "@onecx/angular-integration-interface": "^7.0.0-rc.13",
-    "@onecx/integration-interface": "^7.0.0-rc.13",
+    "@angular/core": "^20.0.0",
+    "@ngrx/store": "^20.0.0",
+    "@onecx/angular-integration-interface": "^7.0.0-rc.14",
+    "@onecx/integration-interface": "^7.0.0-rc.14",
     "@ngneat/until-destroy": "^10.0.0",
     "rxjs": "^7.8.1"
   },

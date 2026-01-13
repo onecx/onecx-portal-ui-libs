@@ -4,7 +4,7 @@
 :idprefix:
 :idseparator: -
 :primeng_theming: https://primeng.org/theming
-:theme_overrides: https://onecx.github.io/docs/guides/current/angular/cookbook/theming.html#theme-overrides
+:theme_overrides: https://onecx.github.io/docs/guides/current/angular/theming.html#theme-overrides
 :custom_use_style: ../../libs/angular-utils/src/lib/services/custom-use-style.service.ts
 :style_isolation: ../styles/concept.adoc#style-isolation-idea
 :provide_theme_config: ../../libs/angular-utils/src/lib/theme/application-config.ts
