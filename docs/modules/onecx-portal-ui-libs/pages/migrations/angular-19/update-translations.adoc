@@ -10,22 +10,6 @@ In OneCX v6, `createTranslateLoader`, `createRemoteComponentAndMfeTranslateLoade
 * If needed, add `MissingTranslationHandler` from `@ngx-translate/core`
 * If needed, add `AngularAcceleratorMissingTranslationHandler` from `@onecx/angular-utils`
 
-[NOTE]
-====
-* Use `provideTranslationPathFromMeta` with `import.meta.url` as the first argument and the location of your application's i18n files as the second argument.
-* Use `provideTranslateServiceForRoot`, which takes a `TranslateModuleConfig` object for a custom translation loader, custom translation compiler, and custom missing translation handler. It also supports the `isolate` option to create an isolated `TranslateService` instance, extending the root `TranslateService`, and allows you to set options related to the default language.
-
-*Hint:* To ensure the correct file path is used for import.meta.url, add the following to your application's webpack.config.js:
-
-[source, typescript]
-----
-module.exports = {
- ...
-  module: { parser: { javascript: { importMeta: false } } }
-}
-----
-====
-
 **Example - replace translationPathFactory with provideTranslationPathFromMeta in providers:**
 
 .Before:
@@ -88,6 +72,22 @@ bootstrapRemoteComponent(RemoteComponent, 'ocx-my-remote-component', environment
     provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/')
 ]);
 ----
+
+[NOTE]
+====
+* Use `provideTranslationPathFromMeta` with `import.meta.url` as the first argument and the location of your application's i18n files as the second argument.
+* Use `provideTranslateServiceForRoot`, which takes a `TranslateModuleConfig` object for a custom translation loader, custom translation compiler, and custom missing translation handler. It also supports the `isolate` option to create an isolated `TranslateService` instance, extending the root `TranslateService`, and allows you to set options related to the default language.
+
+*Hint:* To ensure the correct file path is used for import.meta.url, add the following to your application's webpack.config.js:
+
+[source, typescript]
+----
+module.exports = {
+ ...
+  module: { parser: { javascript: { importMeta: false } } }
+}
+----
+====
 
 === Configure Translation Providers for Remote Components
 
