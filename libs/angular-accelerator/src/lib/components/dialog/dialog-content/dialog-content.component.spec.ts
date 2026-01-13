@@ -1,7 +1,10 @@
-import { ComponentFixture, TestBed, fakeAsync, flush } from '@angular/core/testing'
-import { DialogContentComponent } from './dialog-content.component'
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { Component, EventEmitter } from '@angular/core'
+import { ComponentFixture, TestBed, fakeAsync, flush } from '@angular/core/testing'
+import { DivHarness, TestbedHarnessEnvironment } from '@onecx/angular-testing'
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { Observable } from 'rxjs'
+import { DialogContentHarness, provideTranslateTestingService } from '../../../../../testing'
+import { AngularAcceleratorModule } from '../../../angular-accelerator.module'
 import {
   DialogButtonClicked,
   DialogCustomButtonsDisabled,
@@ -10,11 +13,8 @@ import {
   DialogSecondaryButtonDisabled,
   DialogState,
 } from '../../../services/portal-dialog.service'
-import { Observable } from 'rxjs'
-import { TranslateTestingModule } from 'ngx-translate-testing'
 import { DialogMessageContentComponent } from '../dialog-message-content/dialog-message-content.component'
-import { DivHarness, TestbedHarnessEnvironment } from '@onecx/angular-testing'
-import { DialogContentHarness } from '../../../../../testing'
+import { DialogContentComponent } from './dialog-content.component'
 
 @Component({
   standalone: false,
@@ -115,8 +115,8 @@ describe('DialogContentComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DialogContentComponent, DialogMessageContentComponent],
-      imports: [TranslateTestingModule.withTranslations({})],
-      providers: [DynamicDialogConfig, DynamicDialogRef],
+      imports: [AngularAcceleratorModule],
+      providers: [DynamicDialogConfig, DynamicDialogRef, provideTranslateTestingService({})],
     }).compileComponents()
 
     jest.resetAllMocks()

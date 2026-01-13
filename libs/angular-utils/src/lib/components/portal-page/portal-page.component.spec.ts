@@ -1,9 +1,9 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
-import { PortalPageComponent } from './portal-page.component'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
-import { TranslateTestingModule } from 'ngx-translate-testing'
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { provideAngularUtils } from '../../providers/angular-utils.providers'
+import { PortalPageComponent } from './portal-page.component'
 
 describe('PortalPageComponent', () => {
   let component: PortalPageComponent
@@ -11,17 +11,15 @@ describe('PortalPageComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [
-        PortalPageComponent,
-        TranslateTestingModule.withTranslations({
-          en: require('./../../../../assets/i18n/en.json'),
-          de: require('./../../../../assets/i18n/de.json'),
-        }),
-      ],
+      imports: [PortalPageComponent],
       providers: [
         provideAngularUtils(),
         provideHttpClient(withInterceptorsFromDi()),
         provideAppStateServiceMock(),
+        provideTranslateTestingService({
+          en: require('./../../../../assets/i18n/en.json'),
+          de: require('./../../../../assets/i18n/de.json'),
+        }),
       ],
     }).compileComponents()
   }))

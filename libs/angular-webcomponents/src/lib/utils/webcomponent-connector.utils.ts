@@ -213,10 +213,11 @@ export class WebcomponentConnector {
    * @param route - The route to wrap guards for.
    */
   private wrapGuardsForRoute(route: ActivatedRouteSnapshot): void {
-    if (!route.routeConfig) {
+    if (route.routeConfig) {
+      wrapGuards(route.routeConfig)
+    } else {
       logGuardsDebug('No routeConfig found for route', route)
     }
-    route.routeConfig && wrapGuards(route.routeConfig)
     for (const child of route.children) {
       this.wrapGuardsForRoute(child)
     }

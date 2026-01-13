@@ -1,5 +1,5 @@
+import { AbstractType, inject, Type } from '@angular/core'
 import { CanActivate, CanActivateFn, CanDeactivate, CanDeactivateFn, Route } from '@angular/router'
-import { inject, Type } from '@angular/core'
 import { ActivateGuardsWrapper } from './activate-guards-wrapper.utils'
 import { DeactivateGuardsWrapper } from './deactivate-guards-wrapper.utils'
 import { logGuardsDebug } from './guards-utils.utils'
@@ -173,12 +173,16 @@ function createActivateChildWrapper(routeToWrap: OnecxRoute): CanActivateFn {
  * @param route - The route to save the canActivate guards for.
  */
 function saveCanActivateGuards(route: OnecxRoute): void {
-  if (!route.canActivateGuardList) route.canActivateGuardList = []
+  route.canActivateGuardList ??= []
 
   if (route.canActivate) {
     route.canActivateGuardList = route.canActivateGuardList.concat(
       route.canActivate.filter(
-        (guard) => !isWrapper(guard) && !isSaved<CanActivateFn | Type<CanActivate>>(route.canActivateGuardList!, guard)
+        (guard): guard is CanActivateFn | Type<CanActivate> =>
+          // Filter out deprecated string guards and non-function types
+          typeof guard === 'function' &&
+          !isWrapper(guard) &&
+          !isSaved<CanActivateFn | Type<CanActivate> | AbstractType<any>>(route.canActivateGuardList!, guard)
       )
     )
   }
@@ -189,14 +193,19 @@ function saveCanActivateGuards(route: OnecxRoute): void {
  * @param route - The route to save the canActivateChild guards for.
  */
 function saveCanDeactivateGuards(route: OnecxRoute): void {
-  if (!route.canDeactivateGuardList) route.canDeactivateGuardList = []
+  route.canDeactivateGuardList ??= []
 
   if (route.canDeactivate) {
     route.canDeactivateGuardList = route.canDeactivateGuardList.concat(
       route.canDeactivate.filter(
-        (guard) =>
+        (guard): guard is CanDeactivateFn<any> | Type<CanDeactivate<any>> =>
+          // Filter out deprecated string guards and non-function types
+          typeof guard === 'function' &&
           !isWrapper(guard) &&
-          !isSaved<CanDeactivateFn<any> | Type<CanDeactivate<any>>>(route.canDeactivateGuardList!, guard)
+          !isSaved<CanDeactivateFn<any> | Type<CanDeactivate<any>> | AbstractType<any>>(
+            route.canDeactivateGuardList!,
+            guard
+          )
       )
     )
   }
@@ -207,13 +216,16 @@ function saveCanDeactivateGuards(route: OnecxRoute): void {
  * @param route - The route to save the canActivateChild guards for.
  */
 function saveCanActivateChildGuards(route: OnecxRoute): void {
-  if (!route.canActivateChildGuardList) route.canActivateChildGuardList = []
+  route.canActivateChildGuardList ??= []
 
   if (route.canActivateChild) {
     route.canActivateChildGuardList = route.canActivateChildGuardList.concat(
       route.canActivateChild.filter(
-        (guard) =>
-          !isWrapper(guard) && !isSaved<CanActivateFn | Type<CanActivate>>(route.canActivateChildGuardList!, guard)
+        (guard): guard is CanActivateFn | Type<CanActivate> =>
+          // Filter out deprecated string guards and non-function types
+          typeof guard === 'function' &&
+          !isWrapper(guard) &&
+          !isSaved<CanActivateFn | Type<CanActivate> | AbstractType<any>>(route.canActivateChildGuardList!, guard)
       )
     )
   }

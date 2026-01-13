@@ -2,23 +2,23 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { ActivatedRoute, RouterModule } from '@angular/router'
-import { TranslateModule, TranslateService } from '@ngx-translate/core'
+import { TranslateService } from '@ngx-translate/core'
+import { UserService } from '@onecx/angular-integration-interface'
 import {
   provideAppStateServiceMock,
   provideUserServiceMock,
   UserServiceMock,
 } from '@onecx/angular-integration-interface/mocks'
-import { TranslateTestingModule } from 'ngx-translate-testing'
+import { ensureIntersectionObserverMockExists, ensureOriginMockExists } from '@onecx/angular-testing'
+import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { TooltipStyle } from 'primeng/tooltip'
 import { DataListGridHarness } from '../../../../testing/data-list-grid.harness'
 import { DataTableHarness } from '../../../../testing/data-table.harness'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { ColumnType } from '../../model/column-type.model'
 import { DataListGridComponent } from './data-list-grid.component'
-import { ensureIntersectionObserverMockExists, ensureOriginMockExists } from '@onecx/angular-testing'
-import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
-import { UserService } from '@onecx/angular-integration-interface'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
 
 ensureOriginMockExists()
@@ -33,7 +33,7 @@ describe('DataListGridComponent', () => {
     }
     return this
   })
-  global.MutationObserver = mutationObserverMock
+  globalThis.MutationObserver = mutationObserverMock
 
   let fixture: ComponentFixture<DataListGridComponent>
   let component: DataListGridComponent
@@ -49,7 +49,7 @@ describe('DataListGridComponent', () => {
     OCX_DATA_LIST_GRID: {
       SEARCH_RESULTS_FOUND: '{{results}} Results Found',
       NO_SEARCH_RESULTS_FOUND: 'No Results Found',
-    }
+    },
   }
 
   const GERMAN_LANGUAGE = 'de'
@@ -61,7 +61,7 @@ describe('DataListGridComponent', () => {
     OCX_DATA_LIST_GRID: {
       SEARCH_RESULTS_FOUND: '{{results}} Ergebnisse gefunden',
       NO_SEARCH_RESULTS_FOUND: 'Keine Ergebnisse gefunden',
-    }
+    },
   }
 
   const TRANSLATIONS = {
@@ -228,15 +228,9 @@ describe('DataListGridComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DataListGridComponent],
-      imports: [
-        AngularAcceleratorPrimeNgModule,
-        TranslateModule.forRoot(),
-        TranslateTestingModule.withTranslations(TRANSLATIONS),
-        AngularAcceleratorModule,
-        RouterModule,
-        NoopAnimationsModule,
-      ],
+      imports: [AngularAcceleratorPrimeNgModule, AngularAcceleratorModule, RouterModule, NoopAnimationsModule],
       providers: [
+        provideTranslateTestingService(TRANSLATIONS),
         {
           provide: ActivatedRoute,
           useValue: {
@@ -614,7 +608,7 @@ describe('DataListGridComponent', () => {
       expect(component.editItemObserved).toBe(true)
       expect(component.deleteItemObserved).toBe(true)
 
-      const gridMenuButton = await listGrid.getMenuButton()
+      const gridMenuButton = await listGrid.getGridMenuButton()
 
       await gridMenuButton.click()
 
@@ -630,7 +624,7 @@ describe('DataListGridComponent', () => {
       component.layout = 'grid'
       await setUpGridActionButtonMockData()
       component.viewActionEnabledField = 'ready'
-      const gridMenuButton = await listGrid.getMenuButton()
+      const gridMenuButton = await listGrid.getGridMenuButton()
 
       await gridMenuButton.click()
 
@@ -679,7 +673,7 @@ describe('DataListGridComponent', () => {
       expect(component.editItemObserved).toBe(true)
       expect(component.deleteItemObserved).toBe(true)
 
-      const gridMenuButton = await listGrid.getMenuButton()
+      const gridMenuButton = await listGrid.getGridMenuButton()
 
       await gridMenuButton.click()
 
@@ -690,7 +684,7 @@ describe('DataListGridComponent', () => {
     it('should dynamically hide/show an action button based on the contents of a specified field', async () => {
       component.layout = 'grid'
       await setUpGridActionButtonMockData()
-      const gridMenuButton = await listGrid.getMenuButton()
+      const gridMenuButton = await listGrid.getGridMenuButton()
 
       await gridMenuButton.click()
 
@@ -912,7 +906,7 @@ describe('DataListGridComponent', () => {
       it('should show view, delete and edit action buttons when user has VIEW, DELETE and EDIT permissions', async () => {
         userService.permissionsTopic$.publish(['GRID#VIEW', 'GRID#EDIT', 'GRID#DELETE'])
 
-        const gridMenuButton = await listGrid.getMenuButton()
+        const gridMenuButton = await listGrid.getGridMenuButton()
         await gridMenuButton.click()
 
         let gridActions = await listGrid.getActionButtons('grid')
@@ -943,7 +937,7 @@ describe('DataListGridComponent', () => {
           },
         ]
 
-        const gridMenuButton = await listGrid.getMenuButton()
+        const gridMenuButton = await listGrid.getGridMenuButton()
         await gridMenuButton.click()
 
         let gridActions = await listGrid.getActionButtons('grid')
@@ -984,7 +978,7 @@ describe('DataListGridComponent', () => {
           'CUSTOM#ACTION2',
         ])
 
-        const gridMenuButton = await listGrid.getMenuButton()
+        const gridMenuButton = await listGrid.getGridMenuButton()
         await gridMenuButton.click()
 
         const gridActions = await listGrid.getActionButtons('grid')
@@ -998,103 +992,102 @@ describe('DataListGridComponent', () => {
   })
 
   describe('LiveAnnouncer announcements', () => {
-    let liveAnnouncer: LiveAnnouncer;
-    let announceSpy: jest.SpyInstance;
+    let liveAnnouncer: LiveAnnouncer
+    let announceSpy: jest.SpyInstance
 
     beforeEach(() => {
-      liveAnnouncer = TestBed.inject(LiveAnnouncer);
-      announceSpy = jest.spyOn(liveAnnouncer, 'announce').mockResolvedValue();
-    });
+      liveAnnouncer = TestBed.inject(LiveAnnouncer)
+      announceSpy = jest.spyOn(liveAnnouncer, 'announce').mockResolvedValue()
+    })
 
     afterEach(() => {
-      jest.clearAllMocks();
-    });
+      jest.clearAllMocks()
+    })
 
     describe('should announce "results found" when data has entries', () => {
       it('de', async () => {
-        translateService.use('de');
+        translateService.use('de')
 
-        component.data = mockData;
-        fixture.detectChanges();
+        component.data = mockData
+        fixture.detectChanges()
 
-        await fixture.whenStable();
+        await fixture.whenStable()
 
-        expect(announceSpy).toHaveBeenCalledTimes(1);
-        expect(announceSpy).toHaveBeenCalledWith('5 Ergebnisse gefunden');
-      });
+        expect(announceSpy).toHaveBeenCalledTimes(1)
+        expect(announceSpy).toHaveBeenCalledWith('5 Ergebnisse gefunden')
+      })
 
       it('en', async () => {
-        translateService.use('en');
+        translateService.use('en')
 
-        component.data = mockData;
-        fixture.detectChanges();
+        component.data = mockData
+        fixture.detectChanges()
 
-        await fixture.whenStable();
+        await fixture.whenStable()
 
-        expect(announceSpy).toHaveBeenCalledTimes(1);
-        expect(announceSpy).toHaveBeenCalledWith('5 Results Found');
-      });
-    });
+        expect(announceSpy).toHaveBeenCalledTimes(1)
+        expect(announceSpy).toHaveBeenCalledWith('5 Results Found')
+      })
+    })
 
     describe('should announce "no results found" when data is empty', () => {
       it('de', async () => {
-        translateService.use('de');
+        translateService.use('de')
 
-        component.data = [];
-        fixture.detectChanges();
+        component.data = []
+        fixture.detectChanges()
 
-        await fixture.whenStable();
+        await fixture.whenStable()
 
-        expect(announceSpy).toHaveBeenCalledTimes(1);
-        expect(announceSpy).toHaveBeenCalledWith('Keine Ergebnisse gefunden');
-      });
+        expect(announceSpy).toHaveBeenCalledTimes(1)
+        expect(announceSpy).toHaveBeenCalledWith('Keine Ergebnisse gefunden')
+      })
 
       it('en', async () => {
-        translateService.use('en');
+        translateService.use('en')
 
-        component.data = [];
-        fixture.detectChanges();
+        component.data = []
+        fixture.detectChanges()
 
-        await fixture.whenStable();
+        await fixture.whenStable()
 
-        expect(announceSpy).toHaveBeenCalledTimes(1);
-        expect(announceSpy).toHaveBeenCalledWith('No Results Found');
-      });
-    });
+        expect(announceSpy).toHaveBeenCalledTimes(1)
+        expect(announceSpy).toHaveBeenCalledWith('No Results Found')
+      })
+    })
 
     describe('should announce "results found" when data changes', () => {
       it('de', async () => {
-        translateService.use('de');
+        translateService.use('de')
 
-        component.data = mockData;
-        fixture.detectChanges();
-        await fixture.whenStable();
+        component.data = mockData
+        fixture.detectChanges()
+        await fixture.whenStable()
 
-        component.data = mockData.slice(0, 2);
-        fixture.detectChanges();
-        await fixture.whenStable();
+        component.data = mockData.slice(0, 2)
+        fixture.detectChanges()
+        await fixture.whenStable()
 
-        expect(announceSpy).toHaveBeenCalledTimes(2);
-        expect(announceSpy).toHaveBeenNthCalledWith(1, '5 Ergebnisse gefunden');
-        expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Ergebnisse gefunden');
-      });
+        expect(announceSpy).toHaveBeenCalledTimes(2)
+        expect(announceSpy).toHaveBeenNthCalledWith(1, '5 Ergebnisse gefunden')
+        expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Ergebnisse gefunden')
+      })
 
       it('en', async () => {
-        translateService.use('en');
+        translateService.use('en')
 
-        component.data = mockData;
-        fixture.detectChanges();
-        await fixture.whenStable();
+        component.data = mockData
+        fixture.detectChanges()
+        await fixture.whenStable()
 
-        component.data = mockData.slice(0, 2);
-        fixture.detectChanges();
-        await fixture.whenStable();
+        component.data = mockData.slice(0, 2)
+        fixture.detectChanges()
+        await fixture.whenStable()
 
-        expect(announceSpy).toHaveBeenCalledTimes(2);
-        expect(announceSpy).toHaveBeenNthCalledWith(1, '5 Results Found');
-        expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Results Found');
-      });
-    });
-  });
-
+        expect(announceSpy).toHaveBeenCalledTimes(2)
+        expect(announceSpy).toHaveBeenNthCalledWith(1, '5 Results Found')
+        expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Results Found')
+      })
+    })
+  })
 })

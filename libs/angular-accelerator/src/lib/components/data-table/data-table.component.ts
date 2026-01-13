@@ -99,7 +99,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this._rows$.getValue()
   }
   set rows(value: Row[]) {
-    !this._rows$.getValue().length
+    if (this._rows$.getValue().length) this.resetPage()
     this._rows$.next(value)
 
     const currentResults = value.length;
@@ -133,7 +133,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this._filters$.getValue()
   }
   set filters(value: Filter[]) {
-    !this._filters$.getValue().length
+    if (this._filters$.getValue().length) this.resetPage()
     this._filters$.next(value)
   }
   _sortDirection$ = new BehaviorSubject<DataSortDirection>(DataSortDirection.NONE)

@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing'
 import { MultiLanguageMissingTranslationHandler } from './multi-language-missing-translation-handler.utils'
 import { UserServiceMock, provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
-import { MissingTranslationHandlerParams } from '@ngx-translate/core'
+import { MissingTranslationHandlerParams, TranslateParser } from '@ngx-translate/core'
 import { of } from 'rxjs'
 import { UserProfile } from '@onecx/integration-interface'
 
@@ -28,9 +28,18 @@ describe('MultiLanguageMissingTranslationHandler', () => {
   let userServiceMock: UserServiceMock
   let mockedGetNormalizedBrowserLocales: jest.Mock
 
+  const parserMock = {
+    interpolate: jest.fn((value) => value),
+    getValue: jest.fn((obj, key) => obj[key]),
+  }
+
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideUserServiceMock(), MultiLanguageMissingTranslationHandler],
+      providers: [
+        provideUserServiceMock(),
+        MultiLanguageMissingTranslationHandler,
+        { provide: TranslateParser, useValue: parserMock },
+      ],
     })
 
     userServiceMock = TestBed.inject(UserServiceMock)
@@ -56,10 +65,6 @@ describe('MultiLanguageMissingTranslationHandler', () => {
           }
           return of({})
         }),
-        parser: {
-          interpolate: jest.fn((value) => value),
-          getValue: jest.fn((obj, key) => obj[key]),
-        },
       } as any,
     }
 

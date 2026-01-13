@@ -196,8 +196,12 @@ export function cachePlatform(production: boolean): PlatformRef {
   let platform: any = platformCache.get(version)
   if (!platform) {
     platform = getPlatform() ?? platformBrowser()
-    platform && platformCache.set(version, platform)
-    production ?? enableProdMode()
+    if (platform) {
+      platformCache.set(version, platform)
+    }
+    if (production) {
+      enableProdMode()
+    }
   }
   return platform
 }

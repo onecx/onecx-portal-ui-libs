@@ -1,11 +1,10 @@
-import { Component, TemplateRef, ViewContainerRef } from '@angular/core'
+import { Component } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { Renderer2 } from '@angular/core'
-import { IfPermissionDirective } from './if-permission.directive'
+import { UserService } from '@onecx/angular-integration-interface'
+import { provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
 import { BehaviorSubject, of } from 'rxjs'
-import { provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
-import { UserService } from '@onecx/angular-integration-interface'
+import { IfPermissionDirective } from './if-permission.directive'
 
 // Simple component to test the directive
 @Component({
@@ -153,13 +152,7 @@ describe('IfPermissionDirective', () => {
         NegateWithMissingProvidedPermissionsComponent,
         IfPermissionDirective,
       ],
-      providers: [
-        Renderer2,
-        ViewContainerRef,
-        TemplateRef,
-        { provide: HAS_PERMISSION_CHECKER, useValue: mockPermissionChecker },
-        provideUserServiceMock(),
-      ],
+      providers: [{ provide: HAS_PERMISSION_CHECKER, useValue: mockPermissionChecker }, provideUserServiceMock()],
     })
 
     jest.resetAllMocks()
@@ -171,9 +164,6 @@ describe('IfPermissionDirective', () => {
     TestBed.configureTestingModule({
       declarations: [SimpleComponent, IfPermissionDirective],
       providers: [
-        Renderer2,
-        ViewContainerRef,
-        TemplateRef,
         {
           provide: HAS_PERMISSION_CHECKER,
           useValue: null,

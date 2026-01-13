@@ -1,15 +1,14 @@
 import { ContentContainerComponentHarness, TestElement, parallel } from '@angular/cdk/testing'
-import { PMenuHarness, PPaginatorHarness } from '@onecx/angular-testing'
+import { PMenuHarness, PPaginatorHarness, waitForDeferredViewsToBeRendered } from '@onecx/angular-testing'
 import { DefaultGridItemHarness } from './default-grid-item.harness'
 import { DefaultListItemHarness } from './default-list-item.harness'
-import { waitForDeferredViewsToBeRendered } from '@onecx/angular-testing'
 
 export class DataListGridHarness extends ContentContainerComponentHarness {
   static hostSelector = 'ocx-data-list-grid'
 
   getDefaultGridItems = this.locatorForAll(DefaultGridItemHarness)
   getPaginator = this.locatorFor(PPaginatorHarness)
-  getMenuButton = this.locatorFor(`[name="data-grid-item-menu-button"]`)
+  getGridMenuButton = this.locatorFor(`[name="data-grid-item-menu-button"]`)
   getListOverflowMenuButton = this.locatorFor(`[name="data-list-overflow-item-menu-button"]`)
   getListOverflowMenu = this.locatorForOptional(PMenuHarness)
 
@@ -23,10 +22,12 @@ export class DataListGridHarness extends ContentContainerComponentHarness {
       return await this.locatorForAll(`[name="data-list-action-button"]`)()
     } else if (actionButtonType === 'grid-hidden') {
       return await this.documentRootLocatorFactory().locatorForAll(
-        `[data-automationid="data-grid-action-button-hidden"]`
+        `li:has([data-automationid="data-grid-action-button-hidden"])`
       )()
     } else {
-      return await this.documentRootLocatorFactory().locatorForAll(`[data-automationid="data-grid-action-button"]`)()
+      return await this.documentRootLocatorFactory().locatorForAll(
+        `li:has([data-automationid="data-grid-action-button"])`
+      )()
     }
   }
 
@@ -40,7 +41,13 @@ export class DataListGridHarness extends ContentContainerComponentHarness {
     if (viewType === 'list') {
       return await actionButton.getProperty('disabled')
     } else {
-      return await actionButton.hasClass('p-disabled')
+      const ariaDisabled = await actionButton.getAttribute('aria-disabled')
+
+      if (ariaDisabled === 'true') {
+        return true
+      }
+
+      return false
     }
   }
 

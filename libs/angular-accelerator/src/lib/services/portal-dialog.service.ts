@@ -1,7 +1,7 @@
 import { EventEmitter, Injectable, OnDestroy, Type, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
-import { DialogService, DynamicDialogComponent } from 'primeng/dynamicdialog'
-import { Observable, filter, mergeMap } from 'rxjs'
+import { DialogService, DynamicDialog } from 'primeng/dynamicdialog'
+import { Observable, filter, mergeMap, of } from 'rxjs'
 
 import { ButtonDialogButtonDetails, ButtonDialogCustomButtonDetails, ButtonDialogData } from '../model/button-dialog'
 import { NavigationStart, Router } from '@angular/router'
@@ -428,14 +428,14 @@ export class PortalDialogService implements OnDestroy {
     primaryButtonTranslationKeyOrDetails: TranslationKey | ButtonDialogButtonDetails,
     secondaryButtonTranslationKeyOrDetails?: TranslationKey | ButtonDialogButtonDetails,
     extras?: PortalDialogConfig
-  ): Observable<DialogState<T>>
+  ): Observable<DialogState<T> | null>
   openDialog<T>(
     title: TranslationKey | null,
     componentOrMessage: Type<any> | Type<DialogResult<T>> | Component<T> | TranslationKey | DialogMessage,
     primaryButtonTranslationKeyOrDetails: TranslationKey | ButtonDialogButtonDetails,
     secondaryButtonTranslationKeyOrDetails?: TranslationKey | ButtonDialogButtonDetails,
     extrasOrShowXButton: PortalDialogConfig | boolean = {}
-  ): Observable<DialogState<T>> {
+  ): Observable<DialogState<T> | null> {
     const dialogOptions: PortalDialogConfig =
       typeof extrasOrShowXButton === 'object'
         ? extrasOrShowXButton
@@ -483,7 +483,18 @@ export class PortalDialogService implements OnDestroy {
             footer: DialogFooterComponent,
           },
         })
-        this.setScopeIdentifier(this.dialogService.getInstance(dialogRef))
+        if (!dialogRef) {
+          console.error('Dialog could not be opened, dialog creation failed.')
+          return of(null)
+        }
+        const dialogComponent = this.dialogService.getInstance(dialogRef)
+        if (dialogComponent) {
+          this.setScopeIdentifier(dialogComponent)
+        } else {
+          console.warn(
+            'Dialog component instance could not be found after creation. The displayed dialog may not function as expected.'
+          )
+        }
         return dialogRef.onClose
       })
     )
@@ -493,18 +504,26 @@ export class PortalDialogService implements OnDestroy {
     if (this.dialogService.dialogComponentRefMap.size > 0) {
       this.dialogService.dialogComponentRefMap.forEach((_, dialogRef) => {
         const dialogComponent = this.dialogService.getInstance(dialogRef)
+        if (!dialogComponent) {
+          console.warn(
+            'Dialog component instance could not be found during cleanup. The displayed dialog may not function as expected.'
+          )
+          return
+        }
         dialogRef.close()
         this.removeDialogFromHtml(dialogComponent)
       })
     }
   }
 
-  private removeDialogFromHtml(dialogComponent: DynamicDialogComponent) {
+  private removeDialogFromHtml(dialogComponent: DynamicDialog) {
     const bodyChild = this.findDialogComponentBodyChild(dialogComponent)
-    bodyChild && document.body.removeChild(bodyChild)
+    if (bodyChild) {
+      document.body.removeChild(bodyChild)
+    }
   }
 
-  private setScopeIdentifier(dialogComponent: DynamicDialogComponent) {
+  private setScopeIdentifier(dialogComponent: DynamicDialog) {
     getScopeIdentifier(
       this.appStateService,
       this.skipStyleScoping ?? undefined,
@@ -518,7 +537,7 @@ export class PortalDialogService implements OnDestroy {
     })
   }
 
-  private findDialogComponentBodyChild(dialogComponent: DynamicDialogComponent) {
+  private findDialogComponentBodyChild(dialogComponent: DynamicDialog) {
     const element = dialogComponent.el.nativeElement
     if (!element) return
     return this.findBodyChild(element)

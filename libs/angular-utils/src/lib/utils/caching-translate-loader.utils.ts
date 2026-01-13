@@ -1,19 +1,35 @@
-import { HttpClient } from '@angular/common/http'
 import { TranslateLoader } from '@ngx-translate/core'
-import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+import {
+  TRANSLATE_HTTP_LOADER_CONFIG,
+  TranslateHttpLoader,
+  TranslateHttpLoaderConfig,
+} from '@ngx-translate/http-loader'
 import { Observable, retry } from 'rxjs'
 import { TranslationCacheService } from '../services/translation-cache.service'
+import { Injector, runInInjectionContext } from '@angular/core'
 
 export class CachingTranslateLoader implements TranslateLoader {
-  private translateLoader: TranslateHttpLoader
+  private readonly translateLoader: TranslateHttpLoader
 
   constructor(
-    private translationCache: TranslationCacheService,
-    private http: HttpClient,
-    private prefix?: string,
-    private suffix?: string
+    private readonly translationCache: TranslationCacheService,
+    private readonly injector: Injector,
+    private readonly prefix?: string,
+    private readonly suffix?: string
   ) {
-    this.translateLoader = new TranslateHttpLoader(this.http, this.prefix, this.suffix)
+    this.translateLoader = runInInjectionContext(
+      Injector.create({
+        providers: [
+          {
+            provide: TRANSLATE_HTTP_LOADER_CONFIG,
+            useValue: { prefix, suffix } satisfies Partial<TranslateHttpLoaderConfig>,
+          },
+        ],
+
+        parent: this.injector,
+      }),
+      () => new TranslateHttpLoader()
+    )
   }
 
   getTranslation(lang: string): Observable<any> {

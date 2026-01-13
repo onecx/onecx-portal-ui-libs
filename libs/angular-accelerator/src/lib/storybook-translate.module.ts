@@ -1,15 +1,11 @@
 import { registerLocaleData } from '@angular/common'
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import localeDE from '@angular/common/locales/de'
 import { NgModule, inject } from '@angular/core'
-import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core'
-import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+import { provideTranslateLoader, provideTranslateService, TranslateModule, TranslateService } from '@ngx-translate/core'
 import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
-import { TRANSLATION_PATH, TranslateCombinedLoader, createTranslateLoader } from '@onecx/angular-utils'
+import { OnecxTranslateLoader, TRANSLATION_PATH } from '@onecx/angular-utils'
 
-export function translateLoader(http: HttpClient) {
-  return new TranslateCombinedLoader(new TranslateHttpLoader(http, `./assets/i18n/`, '.json'))
-}
 /**
  * StorybookTranslateModule
  *
@@ -31,25 +27,19 @@ const STORYBOOK_TRANSLATION_PROVIDERS = [
     provide: TRANSLATION_PATH,
     useValue: '/assets/i18n/storybook-translations/page-header/',
     multi: true,
-  }
+  },
 ]
 
 @NgModule({
   exports: [TranslateModule],
-  imports: [
-    TranslateModule.forRoot({
-      isolate: true,
-      loader: {
-        provide: TranslateLoader,
-        useFactory: createTranslateLoader,
-        deps: [HttpClient],
-      },
-    }),
-  ],
+  imports: [],
   providers: [
     provideAppStateServiceMock(),
     provideHttpClient(withInterceptorsFromDi()),
-    ...STORYBOOK_TRANSLATION_PROVIDERS
+    provideTranslateService({
+      loader: provideTranslateLoader(OnecxTranslateLoader),
+    }),
+    ...STORYBOOK_TRANSLATION_PROVIDERS,
   ],
 })
 export class StorybookTranslateModule {

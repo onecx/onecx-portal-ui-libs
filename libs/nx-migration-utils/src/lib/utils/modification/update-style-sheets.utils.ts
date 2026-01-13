@@ -27,10 +27,14 @@ export function updateStyleSheets(
 
   visitNotIgnoredFiles(tree, dirPath, (file) => {
     if (isStyleSheet(file)) {
-      options && file.includes(options.contentCondition) && foundInFiles.push(file)
+      if (options && file.includes(options.contentCondition)) {
+        foundInFiles.push(file)
+      }
       updateStyleSheet(tree, file, updater)
     }
   })
 
-  options?.warn && printWarnings(options.warning, foundInFiles)
+  if (options?.warn) {
+    printWarnings(options.warning, foundInFiles)
+  }
 }

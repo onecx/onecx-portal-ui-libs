@@ -1,3 +1,6 @@
+/** @jest-config-loader ts-node */
+// Without jest-config-loader, jest cannot load other ts files
+
 /* eslint-disable */
 import { createReportsConfig } from '../../jest-config-factory'
 
