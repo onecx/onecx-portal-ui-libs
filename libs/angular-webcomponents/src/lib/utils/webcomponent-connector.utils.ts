@@ -150,7 +150,7 @@ export class WebcomponentConnector {
     return router.events
       .pipe(filter((event) => event instanceof GuardsCheckStart))
       .subscribe((event: GuardsCheckStart) => {
-        const currentNavigation = router.getCurrentNavigation()
+        const currentNavigation = router.currentNavigation()
         if (!currentNavigation) {
           logGuardsDebug('No current navigation found, skipping guards gathering.')
           return
@@ -179,7 +179,7 @@ export class WebcomponentConnector {
 
   private resolveGuardsOnGuardsCheckEnd(router: Router): Subscription {
     return router.events.pipe(filter((event) => event instanceof GuardsCheckEnd)).subscribe((event: GuardsCheckEnd) => {
-      const guardsNavigationState = (router.getCurrentNavigation()?.extras.state ?? {}) as GuardsNavigationState
+      const guardsNavigationState = (router.currentNavigation()?.extras.state ?? {}) as GuardsNavigationState
       const mode = this.guardsNavigationStateController.getMode(guardsNavigationState)
 
       switch (mode) {

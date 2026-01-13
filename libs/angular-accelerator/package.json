@@ -28,7 +28,6 @@
     "@nx/devkit": "^22.0.2",
     "@onecx/nx-migration-utils": "^7.0.0-rc.14"
   },
-  "dependencies": {},
   "exports": {
     ".": {
       "style": "./assets/styles.scss"

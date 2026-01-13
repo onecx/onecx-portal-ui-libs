@@ -9,6 +9,7 @@
     "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
     "types": ["jest", "node"],
+    "moduleResolution": "bundler"
   },
   "files": [],
   "include": [],

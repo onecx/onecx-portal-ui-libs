@@ -37,7 +37,7 @@ export class ActivateGuardsWrapper {
     state: RouterStateSnapshot,
     guards: Array<CanActivateFn | Type<CanActivate>>
   ): MaybeAsync<GuardResult> {
-    const guardsNavigationState = this.router.getCurrentNavigation()?.extras.state ?? ({} as GuardsNavigationState)
+    const guardsNavigationState = this.router.currentNavigation()?.extras.state ?? ({} as GuardsNavigationState)
     const futureUrl = getUrlFromSnapshot(route)
 
     switch (this.guardsNavigationStateController.getMode(guardsNavigationState)) {
