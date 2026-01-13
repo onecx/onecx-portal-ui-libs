@@ -2,7 +2,8 @@ name: Build Storybook
 on: 
   push:
     branches:
-      - '**'
+      - 'main'
+      - 'v*'
 jobs:
   build-storybooks:
     runs-on: ubuntu-latest
