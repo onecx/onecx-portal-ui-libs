@@ -1,6 +1,50 @@
 [#remove-menuservice]
 === Remove MenuService
-In OneCX v6, `MenuService` has been removed. Please load menu items by creating endpoints in the BFF of your application.
+In OneCX v6, `MenuService` has been removed. Please manage menu state locally or with parent-child communication, and load menu items directly from your backend (BFF) using Angular's HttpClient. You no longer need a shared service for menu events or state.
 
-**Update Code:**:
-* Remove `MenuService` from `@onecx/portal-integration-angular` and occurrences.
+**Code changes**
+
+* Remove all imports and usages of `MenuService` from ``@onecx/portal-integration-angular``.
+* Refactor menu components to load menu data from your BFF endpoint using Angular’s `HttpClient`.
+* Replace cross-component menu state communication via `MenuService` with your logic.
+* Remove all `menuState$` subscriptions and calls to `onMenuStateChange` or `reset`.
+* Test menu interactions to ensure open/close and data loading logic works as expected.
+
+==== Before and After Example
+
+*Before (using MenuService):*
+----
+import { MenuService } from '@onecx/portal-integration-angular';
+constructor(private menuService: MenuService) {}
+ngOnInit() {
+	this.menuService.menuState$.subscribe(key => {
+		if (key === 'reset') {
+			this.active = false;
+		}
+	});
+}
+itemClick() {
+	this.menuService.onMenuStateChange(this.key);
+}
+ngOnDestroy() {
+	// Unsubscribe if not using async pipe or takeUntil
+}
+----
+
+*After (local state/parent-child):*
+----
+@Input() openKey: string;
+@Output() menuOpened = new EventEmitter<string>();
+itemClick() {
+	this.menuOpened.emit(this.key);
+}
+----
+
+[TIP]
+====
+- If you previously subscribed to observables from MenuService, be sure to unsubscribe if not using the async pipe or takeUntil pattern to avoid memory leaks.
+- If you used MenuService for accessibility or keyboard navigation, ensure these features are still supported after migration. Use Angular’s built-in accessibility features or manage focus/keyboard events in your components as needed.
+- If menus do not open/close as expected, check that state is managed by the correct parent or local variable.
+- If menu data does not load, verify your BFF endpoint and HttpClient usage.
+- Test keyboard and accessibility features after migration.
+====
