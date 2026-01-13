@@ -1,6 +1,6 @@
 {
   "name": "@onecx/ngrx-accelerator",
-  "version": "6.12.1",
+  "version": "6.13.0",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -17,12 +17,12 @@
     "@ngrx/operators": "^19.0.0",
     "@ngrx/router-store": "^19.0.0",
     "@ngrx/store": "^19.0.0",
-    "@onecx/angular-integration-interface": "^6.12.1",
-    "@onecx/integration-interface": "^6.12.1",
+    "@onecx/angular-integration-interface": "^6.13.0",
+    "@onecx/integration-interface": "^6.13.0",
     "rxjs": "^7.8.1",
     "zod": "^3.23.8",
     "@nx/devkit": "^20.3.0",
-    "@onecx/nx-migration-utils": "^6.12.1"
+    "@onecx/nx-migration-utils": "^6.13.0"
   },
   "publishConfig": {
     "access": "public"
