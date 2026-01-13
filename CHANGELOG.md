@@ -1,3 +1,90 @@
+## [7.0.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.999.0...v7.0.0) (2026-01-13)
+
+### ⚠ BREAKING CHANGES
+
+* increase major version (#1143)
+* increase major version (#974)
+
+### Features
+
+* add context for data-mfe-element attribute ([#1040](https://github.com/onecx/onecx-portal-ui-libs/issues/1040)) ([0765f00](https://github.com/onecx/onecx-portal-ui-libs/commit/0765f00812251b0fdb153e1ceed458a5ba7ea863))
+* add elementName to appId injectable ([#1029](https://github.com/onecx/onecx-portal-ui-libs/issues/1029)) ([#1031](https://github.com/onecx/onecx-portal-ui-libs/issues/1031)) ([147984b](https://github.com/onecx/onecx-portal-ui-libs/commit/147984bdc6b9b4a4a01141818d262f5bc025f860))
+* add primeng theme library ([#986](https://github.com/onecx/onecx-portal-ui-libs/issues/986)) ([5a3d8b1](https://github.com/onecx/onecx-portal-ui-libs/commit/5a3d8b12e597fe90a22bf3a0ef5b586ad4a03a87))
+* change communication of topic to BroadcastChannel ([#1091](https://github.com/onecx/onecx-portal-ui-libs/issues/1091)) ([27b9275](https://github.com/onecx/onecx-portal-ui-libs/commit/27b9275b0e8a28edf23adcce6bef2c94ad82978d))
+* core startup service to test shell with apps ([#982](https://github.com/onecx/onecx-portal-ui-libs/issues/982)) ([f50972e](https://github.com/onecx/onecx-portal-ui-libs/commit/f50972e407494b59e57a54113f8ce08fd6f951d6))
+* create ngrx-integration-interface lib + add StoreConnectorServices ([#985](https://github.com/onecx/onecx-portal-ui-libs/issues/985)) ([6efec78](https://github.com/onecx/onecx-portal-ui-libs/commit/6efec78964e87e66a8a4c42e21d05fc58935613e))
+* guards synchronization ([#990](https://github.com/onecx/onecx-portal-ui-libs/issues/990)) ([5d478b8](https://github.com/onecx/onecx-portal-ui-libs/commit/5d478b8fd7d20526c7bccc657e82fa707dc3c343))
+* image service in libs ([#1092](https://github.com/onecx/onecx-portal-ui-libs/issues/1092)) ([2475594](https://github.com/onecx/onecx-portal-ui-libs/commit/2475594d9be54ad7bc764e73f488276b4fccfa2e))
+* init slot group component ([#994](https://github.com/onecx/onecx-portal-ui-libs/issues/994)) ([167fb77](https://github.com/onecx/onecx-portal-ui-libs/commit/167fb778526e8d08ea0a633ba5a5b26ed1c08201))
+* menu improvements v7 ([#972](https://github.com/onecx/onecx-portal-ui-libs/issues/972)) ([b17d234](https://github.com/onecx/onecx-portal-ui-libs/commit/b17d234d8e987c847524450971701ccaa39386a9))
+* remove rc div from slot ([#1055](https://github.com/onecx/onecx-portal-ui-libs/issues/1055)) ([eef41dd](https://github.com/onecx/onecx-portal-ui-libs/commit/eef41dd1a12039749131e1df32b2af68e650cd38))
+* remove shell-core ([#996](https://github.com/onecx/onecx-portal-ui-libs/issues/996)) ([f3b149d](https://github.com/onecx/onecx-portal-ui-libs/commit/f3b149d0abd3e2948fba16d1339ea2ab80e585da))
+* resized event topic with slot update capability ([#1042](https://github.com/onecx/onecx-portal-ui-libs/issues/1042)) ([6b71347](https://github.com/onecx/onecx-portal-ui-libs/commit/6b713470d410fbc1746f37c026e6f33c3b4a30af))
+
+### Bug Fixes
+
+* add missing application-config to export ([#995](https://github.com/onecx/onecx-portal-ui-libs/issues/995)) ([2d250e5](https://github.com/onecx/onecx-portal-ui-libs/commit/2d250e53fabca2e85ddeabfdb9f8ae3317e3ea10))
+* broadcast channel for read and publish ([#1099](https://github.com/onecx/onecx-portal-ui-libs/issues/1099)) ([9b5a6f8](https://github.com/onecx/onecx-portal-ui-libs/commit/9b5a6f879c1170f220da3d48710d6dccf8f36806))
+* checkbox in table correctly visually highlighted across pagination ([#1028](https://github.com/onecx/onecx-portal-ui-libs/issues/1028)) ([#1033](https://github.com/onecx/onecx-portal-ui-libs/issues/1033)) ([3d5e2cc](https://github.com/onecx/onecx-portal-ui-libs/commit/3d5e2cc503b341f26284061f5d1e5f4e0a37e2bd))
+* conditional statement added for SearchHeader buttons to be read left to right when order is reversed ([#1054](https://github.com/onecx/onecx-portal-ui-libs/issues/1054)) ([be25868](https://github.com/onecx/onecx-portal-ui-libs/commit/be25868bcccbeab69ebbcf04279e9dc684aff008))
+* DataListGridSorting dropdownOptions showing options where sortable is set to false ([#1057](https://github.com/onecx/onecx-portal-ui-libs/issues/1057)) ([ee8c6f6](https://github.com/onecx/onecx-portal-ui-libs/commit/ee8c6f69038ca0eb8fc6ab7242a8713d7da314d6))
+* ensure RCs are in order in slot component ([#1083](https://github.com/onecx/onecx-portal-ui-libs/issues/1083)) ([4062c0c](https://github.com/onecx/onecx-portal-ui-libs/commit/4062c0c55510b7b42df2c2123e24c6e938558eee))
+* Fixed the default tooltip for sort action in interactive-data-view table header ([#1065](https://github.com/onecx/onecx-portal-ui-libs/issues/1065)) ([13e78fb](https://github.com/onecx/onecx-portal-ui-libs/commit/13e78fba827d363ab68cbd7a44884caa3acbde18))
+* footer not visible ([#991](https://github.com/onecx/onecx-portal-ui-libs/issues/991)) ([e105249](https://github.com/onecx/onecx-portal-ui-libs/commit/e1052494cdffd6023856c9d1071b268f9c2cc39e))
+* onecx body overflow ([#992](https://github.com/onecx/onecx-portal-ui-libs/issues/992)) ([40750b3](https://github.com/onecx/onecx-portal-ui-libs/commit/40750b31ecd9783052436feae039d5d6ddcbae26))
+* P002271-11775 - Fix Translation configuration to support multiple translation sets ([#1067](https://github.com/onecx/onecx-portal-ui-libs/issues/1067)) ([67f9ac5](https://github.com/onecx/onecx-portal-ui-libs/commit/67f9ac5997a3139f3a869d19d033ac20a28f30ed))
+* Portal Page Widget height fix ([#1051](https://github.com/onecx/onecx-portal-ui-libs/issues/1051)) ([91f5760](https://github.com/onecx/onecx-portal-ui-libs/commit/91f5760a53d91d5f25cd80defc05907b62289957))
+* release config with dummy channel ([#973](https://github.com/onecx/onecx-portal-ui-libs/issues/973)) ([e4c6834](https://github.com/onecx/onecx-portal-ui-libs/commit/e4c68349b905a240a9603e10f5edf917dfe6d756))
+* release pipeline for new npm requirements ([#1070](https://github.com/onecx/onecx-portal-ui-libs/issues/1070)) ([9927139](https://github.com/onecx/onecx-portal-ui-libs/commit/99271395b65132cb8a043109ce66962710adaace))
+* remove nx-release ([#1129](https://github.com/onecx/onecx-portal-ui-libs/issues/1129)) ([eeb356b](https://github.com/onecx/onecx-portal-ui-libs/commit/eeb356b5a7aab831aa86ea14a1fbfd08804dc084))
+* rename properties of slotgroup event ([#1039](https://github.com/onecx/onecx-portal-ui-libs/issues/1039)) ([c8cb452](https://github.com/onecx/onecx-portal-ui-libs/commit/c8cb45236016baf55449149851cc1076818e0578))
+* renaming implementation-details to module-federation ([9a9d958](https://github.com/onecx/onecx-portal-ui-libs/commit/9a9d95870f134138a6c79b6bc256b6a7fd84654c))
+* resolve storybook issues in v7 ([#1107](https://github.com/onecx/onecx-portal-ui-libs/issues/1107)) ([1d832cd](https://github.com/onecx/onecx-portal-ui-libs/commit/1d832cd5306fe51e7b08869d8c09ddaa8ed735e6))
+* scope primeng overrides correctly ([#1068](https://github.com/onecx/onecx-portal-ui-libs/issues/1068)) ([#1069](https://github.com/onecx/onecx-portal-ui-libs/issues/1069)) ([104fb8a](https://github.com/onecx/onecx-portal-ui-libs/commit/104fb8a569c958adff909e7ec72be297c2324bcd))
+* Search results are now communicated to AT. ([#1118](https://github.com/onecx/onecx-portal-ui-libs/issues/1118)) ([1b45b69](https://github.com/onecx/onecx-portal-ui-libs/commit/1b45b69b65c9fbe32a39432fd65574deb38d5829))
+* shell footer container style ([#993](https://github.com/onecx/onecx-portal-ui-libs/issues/993)) ([78a0bdd](https://github.com/onecx/onecx-portal-ui-libs/commit/78a0bdd56e638d1fce11b67f1401dd339a9b0290))
+* simplify and fix sb deployment and related warnings ([#1139](https://github.com/onecx/onecx-portal-ui-libs/issues/1139)) ([66706a8](https://github.com/onecx/onecx-portal-ui-libs/commit/66706a86cce9451aca65f730aef24d73a711b347))
+* slot code smells ([#1086](https://github.com/onecx/onecx-portal-ui-libs/issues/1086)) ([c84509e](https://github.com/onecx/onecx-portal-ui-libs/commit/c84509ef71b8a812af133c879afd326ffb3a1e4a))
+* slot component creates RCs once ([#1142](https://github.com/onecx/onecx-portal-ui-libs/issues/1142)) ([1882abc](https://github.com/onecx/onecx-portal-ui-libs/commit/1882abc12be0f133484f6dc8c8f82d1644826dcb))
+* sonar-project typo ([#1027](https://github.com/onecx/onecx-portal-ui-libs/issues/1027)) ([0fcbc5f](https://github.com/onecx/onecx-portal-ui-libs/commit/0fcbc5fd5f6fc629c7d5bc9a9c5c0b957d5a75a5))
+* store connector services ([#1012](https://github.com/onecx/onecx-portal-ui-libs/issues/1012)) ([298919a](https://github.com/onecx/onecx-portal-ui-libs/commit/298919a53be2885d83065100ecaf5970a922d8bf))
+* topic usage tests setup ([#1095](https://github.com/onecx/onecx-portal-ui-libs/issues/1095)) ([0ba68ba](https://github.com/onecx/onecx-portal-ui-libs/commit/0ba68ba8c4f34230446f5a00c1a905e3ee482269))
+* update npm to latest on release pipeline ([#1071](https://github.com/onecx/onecx-portal-ui-libs/issues/1071)) ([aab446f](https://github.com/onecx/onecx-portal-ui-libs/commit/aab446f33de7c64ecbe84e6d7597143b6b6bf9ad))
+
+### Chores
+
+* add repository info to each library ([#1075](https://github.com/onecx/onecx-portal-ui-libs/issues/1075)) ([c427d6f](https://github.com/onecx/onecx-portal-ui-libs/commit/c427d6fc7375eb778d1f4784d85b578b79fddf52))
+* angular 20 update ([#1010](https://github.com/onecx/onecx-portal-ui-libs/issues/1010)) ([65c2a08](https://github.com/onecx/onecx-portal-ui-libs/commit/65c2a084a4ab415dec4b2a9308047204dc245450))
+* Configure Renovate ([#1001](https://github.com/onecx/onecx-portal-ui-libs/issues/1001)) ([9cf8db4](https://github.com/onecx/onecx-portal-ui-libs/commit/9cf8db4c01f710aa2de649013f6228d96fa31b49))
+* **deps:** Update Root DevDependencies ([#1003](https://github.com/onecx/onecx-portal-ui-libs/issues/1003)) ([b6efdb9](https://github.com/onecx/onecx-portal-ui-libs/commit/b6efdb9e35fe0c2fc1f9eeb0b0fa8e58423fe2b5))
+* Improve FakeTopic to not cast it in tests ([#1121](https://github.com/onecx/onecx-portal-ui-libs/issues/1121)) ([0bdb9e2](https://github.com/onecx/onecx-portal-ui-libs/commit/0bdb9e2e3c88d804d6ecaa2a17cf3366f1d6990b))
+* increase major version ([#1143](https://github.com/onecx/onecx-portal-ui-libs/issues/1143)) ([893b8c3](https://github.com/onecx/onecx-portal-ui-libs/commit/893b8c35a5e4f2ac1165b5840f31b7a2b02253bd))
+* increase major version ([#974](https://github.com/onecx/onecx-portal-ui-libs/issues/974)) ([4af544a](https://github.com/onecx/onecx-portal-ui-libs/commit/4af544a443f43084a59c442755906f2dac0e089f))
+* log npm version after install ([#1073](https://github.com/onecx/onecx-portal-ui-libs/issues/1073)) ([f71ac73](https://github.com/onecx/onecx-portal-ui-libs/commit/f71ac7306e726c6d0ca3331c0bd10b28b53ae2a3))
+* **release:** -v7.0.0-rc.1 [skip ci] ([50ad8c3](https://github.com/onecx/onecx-portal-ui-libs/commit/50ad8c35fc7865a36f19f5c687cb8923e39b5aa8)), closes [#974](https://github.com/onecx/onecx-portal-ui-libs/issues/974)
+* **release:** -v7.0.0-rc.10 [skip ci] ([9c41a59](https://github.com/onecx/onecx-portal-ui-libs/commit/9c41a59509c05e18219c27ce356867b7a84d9181))
+* **release:** -v7.0.0-rc.11 [skip ci] ([be8bc45](https://github.com/onecx/onecx-portal-ui-libs/commit/be8bc45daf091c0f6d034e97bb07bfbbf4cd1dc8))
+* **release:** -v7.0.0-rc.12 [skip ci] ([bad51cb](https://github.com/onecx/onecx-portal-ui-libs/commit/bad51cbbaf1957a4823f522efc84a0f5d1ba23ee))
+* **release:** -v7.0.0-rc.13 [skip ci] ([d0895e6](https://github.com/onecx/onecx-portal-ui-libs/commit/d0895e6b95ff6f1543454378078b9e866838e17a))
+* **release:** -v7.0.0-rc.14 [skip ci] ([275722c](https://github.com/onecx/onecx-portal-ui-libs/commit/275722c914f18e6a42484a85094767c807c2d490))
+* **release:** -v7.0.0-rc.2 [skip ci] ([8c23f64](https://github.com/onecx/onecx-portal-ui-libs/commit/8c23f64b3749609fb0b7bc95471d142bbf82f147))
+* **release:** -v7.0.0-rc.3 [skip ci] ([aa3995b](https://github.com/onecx/onecx-portal-ui-libs/commit/aa3995b10e56a79bc508866a5f784ef8865c505e))
+* **release:** -v7.0.0-rc.4 [skip ci] ([8eb62f8](https://github.com/onecx/onecx-portal-ui-libs/commit/8eb62f8772d850c7dbf78267f4b5c28893033e93))
+* **release:** -v7.0.0-rc.5 [skip ci] ([ab86404](https://github.com/onecx/onecx-portal-ui-libs/commit/ab8640472a95ccdc0e101f6dd1e8676b03b5122d))
+* **release:** -v7.0.0-rc.6 [skip ci] ([6e67c5d](https://github.com/onecx/onecx-portal-ui-libs/commit/6e67c5d2ef63089b0df8362dfbc5f6fef75c5a54))
+* **release:** -v7.0.0-rc.7 [skip ci] ([e4d616e](https://github.com/onecx/onecx-portal-ui-libs/commit/e4d616e3593f78c92fccf24816b517c190fe63e2))
+* **release:** -v7.0.0-rc.8 [skip ci] ([31a5c22](https://github.com/onecx/onecx-portal-ui-libs/commit/31a5c2261fab5e680842ea878d20c4505be19eac))
+* **release:** -v7.0.0-rc.9 [skip ci] ([f6be8dd](https://github.com/onecx/onecx-portal-ui-libs/commit/f6be8ddc0b7f743a9fc8610acb693d3fb4266b4b))
+* remove integration-tests library from portal-libs ([#1015](https://github.com/onecx/onecx-portal-ui-libs/issues/1015)) ([153639f](https://github.com/onecx/onecx-portal-ui-libs/commit/153639f9c8b60376852728b9741af893b9e0dcba))
+* replace npm publish executor ([#1074](https://github.com/onecx/onecx-portal-ui-libs/issues/1074)) ([a22d6d2](https://github.com/onecx/onecx-portal-ui-libs/commit/a22d6d259f3ada0e043744985cda23a00a49bf09))
+* upgrade node to 22 ([#1034](https://github.com/onecx/onecx-portal-ui-libs/issues/1034)) ([0318f4b](https://github.com/onecx/onecx-portal-ui-libs/commit/0318f4bdc22be7b675406a29c9e12a69d4faae81))
+
+### Refactoring
+
+* only deploy storybook on push to main and v* ([#1130](https://github.com/onecx/onecx-portal-ui-libs/issues/1130)) ([89ec57f](https://github.com/onecx/onecx-portal-ui-libs/commit/89ec57f5b91d984c5271b0b00c76f5729901f99a))
+* removed timers ([#1043](https://github.com/onecx/onecx-portal-ui-libs/issues/1043)) ([23833a2](https://github.com/onecx/onecx-portal-ui-libs/commit/23833a24bcaa8cfafca5e17444219d38377f083b))
+* upgrade storybook dependencies ([#1133](https://github.com/onecx/onecx-portal-ui-libs/issues/1133)) ([65b428f](https://github.com/onecx/onecx-portal-ui-libs/commit/65b428f019f42c2e01250dcc821a184be7580073))
+
 ## [7.0.0-rc.14](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0-rc.13...v7.0.0-rc.14) (2026-01-02)
 
 ### Features
