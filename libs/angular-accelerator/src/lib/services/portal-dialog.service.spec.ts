@@ -1,10 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { CommonModule } from '@angular/common'
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core'
+import { Component, EventEmitter, Input, OnDestroy, Output, inject } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { DialogService, DynamicDialogModule, DynamicDialogRef } from 'primeng/dynamicdialog'
-import { Observable, of } from 'rxjs'
+import { Observable, of, Subscription } from 'rxjs'
 
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import {
@@ -25,6 +25,7 @@ import {
   DialogSecondaryButtonDisabled,
   DialogState,
   PortalDialogService,
+  providePortalDialogService,
 } from './portal-dialog.service'
 
 // This component is in charge of dialog display
@@ -32,23 +33,34 @@ import {
   standalone: false,
   template: `<h1>BaseTestComponent</h1>`,
 })
-class BaseTestComponent {
+class BaseTestComponent implements OnDestroy {
   portalDialogService = inject(PortalDialogService)
 
   resultFromShow: DialogState<any> | null = null
   nameResult: string | undefined
   surnameResult: string | undefined
+  subscription: Subscription | undefined
 
   show(title: any, message: any, button1: any, button2?: any, showXButton: any = true) {
-    this.portalDialogService.openDialog(title, message, button1, button2, showXButton).subscribe({
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
+    this.subscription = this.portalDialogService.openDialog(title, message, button1, button2, showXButton).subscribe({
       next: (result) => {
         this.resultFromShow = result
       },
     })
   }
 
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe()
+  }
+
   showWithType() {
-    this.portalDialogService
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
+    this.subscription = this.portalDialogService
       .openDialog(
         'Enter credentials',
         {
@@ -257,9 +269,9 @@ describe('PortalDialogService', () => {
   }
 
   const removeChildSpy = jest.fn()
-  Object.defineProperty(global.document.body, 'removeChild', { value: removeChildSpy })
 
   beforeEach(async () => {
+    Object.defineProperty(global.document.body, 'removeChild', { value: removeChildSpy })
     await TestBed.configureTestingModule({
       declarations: [
         BaseTestComponent,
@@ -275,8 +287,7 @@ describe('PortalDialogService', () => {
       ],
       imports: [DynamicDialogModule, CommonModule, NoopAnimationsModule, AngularAcceleratorModule],
       providers: [
-        PortalDialogService,
-        DialogService,
+        providePortalDialogService(),
         provideShellCapabilityServiceMock(),
         provideAppStateServiceMock(),
         provideTranslateTestingService({
@@ -290,6 +301,12 @@ describe('PortalDialogService', () => {
     jest.clearAllMocks()
   })
 
+  // Clean up the DOM after each test
+  // This is required because DynamicDialog appends dialogs to the document body and they persist between tests
+  afterEach(() => {
+    document.getElementsByTagName('html')[0].innerHTML = ''
+  })
+
   it('should display dialog with translated title', async () => {
     jest.spyOn(pDialogService, 'open')
 
@@ -301,8 +318,6 @@ describe('PortalDialogService', () => {
         header: translations['TITLE_TRANSLATE'],
       })
     )
-
-    closeBasicDialog('primary')
   })
 
   it('should log error and return null if dialog could not be opened', async () => {
@@ -315,8 +330,6 @@ describe('PortalDialogService', () => {
     expect(consoleErrorSpy).toHaveBeenCalledWith('Dialog could not be opened, dialog creation failed.')
     const result = fixture.componentInstance.resultFromShow
     expect(result).toBeNull()
-
-    closeBasicDialog('primary')
   })
 
   it('should warn if dialog component instance could not be found after creation', async () => {
@@ -330,8 +343,6 @@ describe('PortalDialogService', () => {
     expect(consoleWarnSpy).toHaveBeenCalledWith(
       'Dialog component instance could not be found after creation. The displayed dialog may not function as expected.'
     )
-
-    closeBasicDialog('primary')
   })
 
   it('should display dialog with translated title with parameters', async () => {
@@ -350,8 +361,6 @@ describe('PortalDialogService', () => {
         header: 'translatedTitle myParam',
       })
     )
-
-    closeBasicDialog('primary')
   })
 
   it('should display dialog with translated message', async () => {
@@ -362,8 +371,6 @@ describe('PortalDialogService', () => {
     const contentHarness = await rootLoader.getHarness(DialogContentHarness)
     const dialogMessageContentHarness = await contentHarness.getDialogMessageContent()
     expect(await dialogMessageContentHarness?.getMessageContent()).toEqual(translations['MESSAGE'])
-
-    closeBasicDialog('primary')
   })
 
   it('should display dialog with translated message with parameters', async () => {
@@ -377,11 +384,11 @@ describe('PortalDialogService', () => {
     )
 
     const contentHarness = await rootLoader.getHarness(DialogContentHarness)
+    const test = await rootLoader.getAllHarnesses(DialogContentHarness)
+    expect(test.length).toBe(1)
     const dialogMessageContentHarness = await contentHarness.getDialogMessageContent()
     const message = await dialogMessageContentHarness?.getMessageContent()
     expect(message).toEqual('myMessage myMsgParam')
-
-    closeBasicDialog('primary')
   })
 
   it('should display dialog with translated buttons', async () => {
@@ -390,12 +397,13 @@ describe('PortalDialogService', () => {
     fixture.componentInstance.show('title', 'message', 'BUTTON', 'BUTTON')
 
     const footerHarness = await rootLoader.getHarness(DialogFooterHarness)
+    const test = await rootLoader.getAllHarnesses(DialogFooterHarness)
+    expect(test.length).toBe(1)
     const primaryButtonLabel = await footerHarness.getPrimaryButtonLabel()
     expect(primaryButtonLabel).toBe(translations['BUTTON'])
     const secondaryButtonLabel = await footerHarness.getSecondaryButtonLabel()
     expect(secondaryButtonLabel).toBe(translations['BUTTON'])
-
-    closeBasicDialog('primary')
+    fixture.componentInstance.ngOnDestroy()
   })
 
   it('should display dialog with translated buttons with parameters', async () => {
@@ -413,8 +421,6 @@ describe('PortalDialogService', () => {
     expect(primaryButtonLabel).toBe('myButton myButtonParam1')
     const secondaryButtonLabel = await footerHarness.getSecondaryButtonLabel()
     expect(secondaryButtonLabel).toBe('myButton myButtonParam2')
-
-    closeBasicDialog('primary')
   })
 
   it('should display dialog with translated buttons with icons', async () => {
@@ -437,8 +443,6 @@ describe('PortalDialogService', () => {
     const secondaryButtonIcon = await footerHarness.getSecondaryButtonIcon()
     expect(secondaryButtonLabel).toBe(translations['BUTTON'])
     expect(secondaryButtonIcon).toBe(PrimeIcons.TRASH)
-
-    closeBasicDialog('primary')
   })
 
   it('should display dialog with message and icon if DialogMessage provided as string and icon', async () => {
@@ -452,8 +456,6 @@ describe('PortalDialogService', () => {
     expect(message).toEqual(translations['MESSAGE'])
     const icon = await dialogMessageContentHarness?.getIconValue()
     expect(icon).toContain(PrimeIcons.TIMES)
-
-    closeBasicDialog('primary')
   })
 
   it('should display dialog with message and icon if DialogMessage provided as TranslationKey and icon', async () => {
@@ -472,8 +474,6 @@ describe('PortalDialogService', () => {
     expect(message).toEqual('myMessage dialogMessageParam')
     const icon = await dialogMessageContentHarness?.getIconValue()
     expect(icon).toContain(PrimeIcons.TIMES)
-
-    closeBasicDialog('primary')
   })
 
   it('should display dialog with custom component if provided', async () => {
@@ -485,8 +485,6 @@ describe('PortalDialogService', () => {
     const headerDiv = await contentHarness.getHarness(DivHarness.with({ class: 'testHeader' }))
     const headerValue = await headerDiv.getText()
     expect(headerValue).toEqual('header')
-
-    closeBasicDialog('primary')
   })
 
   it('should display dialog with custom component and inputs if provided', async () => {
@@ -508,8 +506,6 @@ describe('PortalDialogService', () => {
     const headerDiv = await contentHarness.getHarness(DivHarness.with({ class: 'testHeader' }))
     const headerValue = await headerDiv.getText()
     expect(headerValue).toEqual('myCustomHeader')
-
-    closeBasicDialog('primary')
   })
 
   it('should display dialog with single button if secondary not provided', async () => {
@@ -522,8 +518,6 @@ describe('PortalDialogService', () => {
     expect(primaryButtonLabel).toBe('button1')
     const secondaryButtonLabel = await footerHarness.getSecondaryButtonLabel()
     expect(secondaryButtonLabel).toBeUndefined()
-
-    closeBasicDialog('primary')
   })
 
   it('should display dialog without top close button when one button defined', async () => {
@@ -537,8 +531,6 @@ describe('PortalDialogService', () => {
         closable: false,
       })
     )
-
-    closeBasicDialog('primary')
   })
 
   it('should display dialog without top close button when both buttons defined but specified to remove the button', async () => {
@@ -552,8 +544,6 @@ describe('PortalDialogService', () => {
         closable: false,
       })
     )
-
-    closeBasicDialog('primary')
   })
 
   it('should display dialog with top close button when both buttons defined and enabled', async () => {
@@ -567,8 +557,6 @@ describe('PortalDialogService', () => {
         closable: true,
       })
     )
-
-    closeBasicDialog('primary')
   })
 
   it('should return dialogState with primary on primaryButton click', async () => {
@@ -815,7 +803,7 @@ describe('PortalDialogService', () => {
     const isPrimaryButtonDisabled = await footerHarness.getPrimaryButtonDisabled()
     expect(isPrimaryButtonDisabled).toBeTruthy()
 
-    closeBasicDialog('secondary')
+    await closeBasicDialog('secondary')
   })
 
   it('should disable secondary button when component implements DialogSecondaryButtonDisabled interface', async () => {
@@ -833,8 +821,6 @@ describe('PortalDialogService', () => {
     const footerHarness = await rootLoader.getHarness(DialogFooterHarness)
     const isSecondaryButtonDisabled = await footerHarness.getSecondaryButtonDisabled()
     expect(isSecondaryButtonDisabled).toBeTruthy()
-
-    closeBasicDialog('primary')
   })
 
   it('should react to complex component behavior and return when it decides', async () => {
