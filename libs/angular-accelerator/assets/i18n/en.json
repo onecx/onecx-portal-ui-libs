@@ -1,4 +1,8 @@
 {
+  "OCX_BUTTON_DIALOG": {
+    "CONFIRM": "Confirm",
+    "CANCEL": "Cancel"
+  },
   "OCX_CUSTOM_GROUP_COLUMN_SELECTOR": {
     "ARIA_LABEL": "Column group selector",
     "DROPDOWN_LABEL": "Column group",
