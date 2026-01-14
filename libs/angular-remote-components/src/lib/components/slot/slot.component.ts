@@ -24,7 +24,7 @@ import { ocxRemoteComponent } from '../../model/remote-component'
 import { RemoteComponentInfo, SLOT_SERVICE, SlotComponentConfiguration, SlotService } from '../../services/slot.service'
 import { RemoteComponentConfig, scopeIdFromProductNameAndAppId } from '@onecx/angular-utils'
 import { HttpClient } from '@angular/common/http'
-import { debounceTime, filter } from 'rxjs/operators'
+import { debounceTime, filter, take } from 'rxjs/operators'
 import { updateStylesForRcCreation, removeAllRcUsagesFromStyles } from '@onecx/angular-utils/style'
 
 interface AssignedComponent {
@@ -188,8 +188,7 @@ export class SlotComponent implements OnInit, OnDestroy {
     )
     this.subscriptions.push(updateSub)
 
-    // Components can be created only when component information is available and view containers are created for all remote components
-    const createSub = this.components$.subscribe((components) => {
+    const createSub = this.components$.pipe(take(1)).subscribe((components) => {
       this.createSpansForComponents(components)
       this.createComponents(components)
     })
