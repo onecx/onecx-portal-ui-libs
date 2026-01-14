@@ -40,7 +40,23 @@ export class KeycloakAuthService implements AuthService {
     const enableSilentSSOCheck =
       (await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_ENABLE_SILENT_SSO)) === 'true'
 
-    this.keycloak = new Keycloak(kcConfig)
+    try {
+      await import('keycloak-js').then(({ default: Keycloak }) => {
+        this.keycloak = new Keycloak(kcConfig)
+      })
+    } catch (err) {
+      console.error(
+        'Keycloak initialization failed! Could not load keycloak-js library which is required in the current environment.',
+        err
+      )
+      throw new Error(
+        'Keycloak initialization failed! Could not load keycloak-js library which is required in the current environment.'
+      )
+    }
+
+    if (!this.keycloak) {
+      throw new Error('Keycloak initialization failed!')
+    }
 
     this.setupEventListener()
 
@@ -82,7 +98,7 @@ export class KeycloakAuthService implements AuthService {
     if (!realm) {
       throw new Error('Invalid KC config, missing realm')
     }
-    const url = await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_URL)
+    const url = (await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_URL)) ?? ''
     return {
       url,
       clientId,
