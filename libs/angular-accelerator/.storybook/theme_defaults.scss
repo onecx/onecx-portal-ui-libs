@@ -1,0 +1,48 @@
+$primaryColorRGB: 39, 75, 95; //rgb for #274b5f
+
+:root {
+  /* Top Bar Variables */
+  --topbar-bg-color: #0d3650;
+  --topbar-text-color: #ffffff;
+  --topbar-left-bg-color: #0d3650;
+  --topbar-item-text-color: #ffffff;
+  --topbar-item-text-hover-bg-color: #262626;
+  --topbar-menu-button-bg-color: rgb(255 0 68);
+  --topbar-menu-button-text-color: #ffffff;
+  --body-bg-color: #f7f7f7;
+  --text-color: rgb(0 0 0 / 87%);
+  --text-secondary-color: #262626;
+  --logo-color: #ffffff;
+  --font-size: 14px;
+  --font-family: Ubuntu, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
+
+  /* Contents Variables */
+  --content-bg-color: #ffffff;
+  --content-alt-bg-color: #ffffff;
+  --overlay-content-bg-color: #ffffff;
+  --hover-bg-color: #ad1457;
+  --solid-surface-text-color: #ffffff;
+  --divider-color: #e4e4e4;
+  --button-hover-bg: rgba(#{$primaryColorRGB}, 0.92);
+  --button-active-bg: rgba(#{$primaryColorRGB}, 0.68);
+  --danger-button-bg: #d32f2f;
+  --info-message-bg: #b3e5fc;
+  --success-message-bg: #c8e6c9;
+  --warning-message-bg: #ffecb3;
+  --error-message-bg: #ffcdd2;
+
+  /* Menu Style Variables */
+  --menu-text-color: #274b5f;
+  --menu-bg-color: #fdfeff;
+  --menu-item-text-color: #515c66;
+  --menu-item-bg-color: #fdfeff;
+  --menu-item-hover-bg-color: #e4e4e4;
+  --menu-active-item-bg-color: rgba(0, 0, 0, 0.04);
+  --menu-active-item-text-color: var(--menu-item-text-color);
+  --menu-active-item-bg-color: var(--menu-item-hover-bg-color);
+  --menu-inline-border-color: #c4c4c4;
+
+  /* General Colors Variables */
+  --primary-color: rgb(#{$primaryColorRGB});
+  --secondary-color: #1c4257;
+}
