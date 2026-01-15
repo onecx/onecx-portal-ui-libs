@@ -67,7 +67,7 @@ describe('WebcomponentConnector', () => {
     mockRouter = {
       events: new Subject<any>(),
       navigateByUrl: jest.fn(),
-      getCurrentNavigation: jest.fn().mockReturnValue({ extras: { state: {} } }),
+      currentNavigation: jest.fn().mockReturnValue({ extras: { state: {} } }),
     } as unknown as jest.Mocked<Router>
 
     TestBed.configureTestingModule({
@@ -250,8 +250,8 @@ describe('WebcomponentConnector', () => {
       connector.connect()
 
       const navigationObject = {} as GuardsNavigationState
+      jest.spyOn(mockRouter, 'currentNavigation').mockReturnValue({ extras: { state: navigationObject } } as any)
 
-      mockRouter.getCurrentNavigation = jest.fn().mockReturnValue({ extras: { state: navigationObject } })
       mockGuardsNavigationStateController.getMode.mockReturnValue(GUARD_MODE.NAVIGATION_REQUESTED)
       mockGuardsNavigationStateController.createNavigationRequestedState.mockImplementation(
         (promise: GuardCheckPromise, state?: GuardsNavigationState | undefined) => {
@@ -274,7 +274,7 @@ describe('WebcomponentConnector', () => {
       const spy = jest.spyOn(mockGuardsGatherer, 'gather')
       connector.connect()
 
-      mockRouter.getCurrentNavigation = jest.fn().mockReturnValue(null)
+      jest.spyOn(mockRouter, 'currentNavigation').mockReturnValue(null)
 
       const guardsCheckStartMock = new GuardsCheckStart(1, '', '/test', {} as RouterStateSnapshot)
 
@@ -287,7 +287,7 @@ describe('WebcomponentConnector', () => {
       const spy = jest.spyOn(mockGuardsGatherer, 'gather')
       connector.connect()
 
-      mockRouter.getCurrentNavigation = jest.fn().mockReturnValue({ extras: { state: {} } })
+      jest.spyOn(mockRouter, 'currentNavigation').mockReturnValue({ extras: { state: {} } } as any)
       mockGuardsNavigationStateController.getMode.mockReturnValue(GUARD_MODE.INITIAL_ROUTER_SYNC)
 
       const guardsCheckStartMock = new GuardsCheckStart(1, '', '/test', {} as RouterStateSnapshot)
@@ -301,7 +301,7 @@ describe('WebcomponentConnector', () => {
       const spy = jest.spyOn(mockGuardsGatherer, 'gather')
       connector.connect()
 
-      mockRouter.getCurrentNavigation = jest.fn().mockReturnValue({ extras: { state: {} } })
+      jest.spyOn(mockRouter, 'currentNavigation').mockReturnValue({ extras: { state: {} } } as any)
       mockGuardsNavigationStateController.getMode.mockReturnValue(GUARD_MODE.GUARD_CHECK)
 
       const guardsCheckStartMock = new GuardsCheckStart(1, '', '/test', {} as RouterStateSnapshot)
@@ -315,7 +315,7 @@ describe('WebcomponentConnector', () => {
       const spy = jest.spyOn(mockGuardsGatherer, 'gather')
       connector.connect()
 
-      mockRouter.getCurrentNavigation = jest.fn().mockReturnValue({ extras: { state: {} } })
+      jest.spyOn(mockRouter, 'currentNavigation').mockReturnValue({ extras: { state: {} } } as any)
       mockGuardsNavigationStateController.getMode.mockReturnValue(GUARD_MODE.ROUTER_SYNC)
 
       const guardsCheckStartMock = new GuardsCheckStart(1, '', '/test', {} as RouterStateSnapshot)
@@ -331,7 +331,7 @@ describe('WebcomponentConnector', () => {
 
       const extrasObject = {} as any
 
-      mockRouter.getCurrentNavigation = jest.fn().mockReturnValue({ extras: extrasObject })
+      jest.spyOn(mockRouter, 'currentNavigation').mockReturnValue({ extras: extrasObject } as any)
       mockGuardsNavigationStateController.getMode.mockReturnValue(GUARD_MODE.NAVIGATION_REQUESTED)
       mockGuardsNavigationStateController.createNavigationRequestedState.mockImplementation(
         (promise: GuardCheckPromise, state?: GuardsNavigationState | undefined) => {
@@ -428,7 +428,7 @@ describe('WebcomponentConnector', () => {
       const spy = jest.spyOn(mockGuardsGatherer, 'resolveRoute')
       connector.connect()
 
-      mockRouter.getCurrentNavigation = jest.fn().mockReturnValue({ extras: {} })
+      jest.spyOn(mockRouter, 'currentNavigation').mockReturnValue({ extras: {} } as any)
       mockGuardsNavigationStateController.getMode.mockReturnValue(GUARD_MODE.NAVIGATION_REQUESTED)
       const guardsCheckEndMock = new GuardsCheckEnd(1, '', '/test', {} as RouterStateSnapshot, true)
 
@@ -443,7 +443,7 @@ describe('WebcomponentConnector', () => {
     it('should have empty navigation state if no current navigation', () => {
       connector.connect()
 
-      mockRouter.getCurrentNavigation = jest.fn().mockReturnValue(null)
+      jest.spyOn(mockRouter, 'currentNavigation').mockReturnValue(null)
       const guardsCheckEndMock = new GuardsCheckEnd(1, '', '/test', {} as RouterStateSnapshot, true)
 
       mockRouter.navigateByUrl.mockClear()
