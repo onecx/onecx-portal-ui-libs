@@ -13,7 +13,7 @@
     "@onecx/accelerator": "^7.0.1",
     "@onecx/nx-migration-utils": "^7.0.1",
     "@phenomnomnominal/tsquery": "^6",
-    "typescript": "^5.5.4"
+    "typescript": "^5.9.3"
   },
   "type": "commonjs",
   "main": "./src/index.js",
