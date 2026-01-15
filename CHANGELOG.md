@@ -1,3 +1,16 @@
+## [6.13.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.13.0...v6.13.1) (2026-01-15)
+
+### Bug Fixes
+
+* delete deploy-fork.yml to avoid warnings during ci runs ([#1140](https://github.com/onecx/onecx-portal-ui-libs/issues/1140)) ([7da3a0d](https://github.com/onecx/onecx-portal-ui-libs/commit/7da3a0d621b49b994973be4fbaa30c81e25bc498))
+* resolve storybook issues in v6 ([#1108](https://github.com/onecx/onecx-portal-ui-libs/issues/1108)) ([c4aa51c](https://github.com/onecx/onecx-portal-ui-libs/commit/c4aa51cfed6ed77e0230d3f0a5757621d4724792))
+* Search results are now communicated to AT. ([#1117](https://github.com/onecx/onecx-portal-ui-libs/issues/1117)) ([bce2289](https://github.com/onecx/onecx-portal-ui-libs/commit/bce22896e597221a2c31d5c738961915cd4d8a36))
+
+### Refactoring
+
+* only deploy storybook on push to main and v* ([#1131](https://github.com/onecx/onecx-portal-ui-libs/issues/1131)) ([16c6b56](https://github.com/onecx/onecx-portal-ui-libs/commit/16c6b564de0db47bca3373b6bc49456613284aac))
+* upgrade storybook dependencies ([#1134](https://github.com/onecx/onecx-portal-ui-libs/issues/1134)) ([e6d8775](https://github.com/onecx/onecx-portal-ui-libs/commit/e6d87757e4ad6ffda4cb3074c2ed61a3daa14917))
+
 ## [6.13.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.12.2...v6.13.0) (2026-01-02)
 
 ### Features
