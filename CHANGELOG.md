@@ -1,3 +1,9 @@
+## [7.0.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.1...v7.0.2) (2026-01-15)
+
+### Bug Fixes
+
+* allow higher typescript ([#1153](https://github.com/onecx/onecx-portal-ui-libs/issues/1153)) ([bb37b5e](https://github.com/onecx/onecx-portal-ui-libs/commit/bb37b5ed048e2cc79f015b7ebfd918d5e21241f2))
+
 ## [7.0.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0...v7.0.1) (2026-01-15)
 
 ### Bug Fixes
