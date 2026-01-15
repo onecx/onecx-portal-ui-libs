@@ -1,3 +1,19 @@
+## [7.0.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.0...v7.0.1) (2026-01-15)
+
+### Bug Fixes
+
+* ngrx-integration-interface release ([#1152](https://github.com/onecx/onecx-portal-ui-libs/issues/1152)) ([defd5a5](https://github.com/onecx/onecx-portal-ui-libs/commit/defd5a52744a102a5e585eaee1afbd09c0764b8b))
+
+### Chores
+
+* add v7 release config ([#1146](https://github.com/onecx/onecx-portal-ui-libs/issues/1146)) ([45e5953](https://github.com/onecx/onecx-portal-ui-libs/commit/45e5953dc7a4211bd11d62c97e79fa4bfe640191))
+* fix release config to release from v7 branch ([#1147](https://github.com/onecx/onecx-portal-ui-libs/issues/1147)) ([08953b0](https://github.com/onecx/onecx-portal-ui-libs/commit/08953b0e8dec9aec0bfc430e1257934e78126074))
+* release v7 as latest ([#1150](https://github.com/onecx/onecx-portal-ui-libs/issues/1150)) ([a7ac64e](https://github.com/onecx/onecx-portal-ui-libs/commit/a7ac64e96814e1bb0215ccc9119e685c843e6aa0))
+
+### Refactoring
+
+* mark keycloak-js as optional and handle potential import errors ([#1151](https://github.com/onecx/onecx-portal-ui-libs/issues/1151)) ([abc6cb1](https://github.com/onecx/onecx-portal-ui-libs/commit/abc6cb149809bd6e2af766427b99a0fbecd8e8b0))
+
 ## [7.0.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.999.0...v7.0.0) (2026-01-13)
 
 ### ⚠ BREAKING CHANGES
