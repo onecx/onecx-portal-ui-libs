@@ -5,8 +5,7 @@
     "declaration": true,
     "declarationMap": true,
     "inlineSources": true,
-    "types": ["node"],
-    "moduleResolution": "bundler"
+    "types": ["node"]
   },
   "exclude": ["src/**/*.spec.ts", "src/test-setup.ts", "jest.config.ts", "src/**/*.test.ts"],
   "include": ["src/**/*.ts"]
