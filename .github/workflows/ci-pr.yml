@@ -5,9 +5,7 @@ on:
     branches:
       - main
       - develop
-      - v3
-      - v5
-      - v6
+      - v*
 
 jobs:
   dependency-review-pr:
