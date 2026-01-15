@@ -33,7 +33,6 @@
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
     "@nx/devkit": "^22.3.3",
-    "@nx/plugin": "^22.0.2",
     "@phenomnomnominal/tsquery": "^6",
     "@primeng/themes": "^21.0.2",
     "axios": "^1.13.2",
