@@ -11,7 +11,7 @@
     "tslib": "^2.3.0",
     "@phenomnomnominal/tsquery": "^6",
     "@nx/devkit": "^22.0.2",
-    "typescript": "^5.5.4",
+    "typescript": "^5.9.3",
     "postcss": "^8.5.3",
     "postcss-scss": "^4.0.9"
   },

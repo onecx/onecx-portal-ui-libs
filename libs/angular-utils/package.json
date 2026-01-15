@@ -22,8 +22,8 @@
     "@onecx/nx-migration-utils": "^7.0.1",
     "@onecx/integration-interface": "^7.0.1",
     "@phenomnomnominal/tsquery": "^6",
-    "typescript": "5.9.3",
-    "@ngx-translate/http-loader": "^17.0.0"
+    "@ngx-translate/http-loader": "^17.0.0",
+    "typescript": "^5.9.3"
   },
   "publishConfig": {
     "access": "public"
