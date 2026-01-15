@@ -1,3 +1,15 @@
+## [5.52.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.52.1...v5.52.2) (2026-01-15)
+
+### Bug Fixes
+
+* delete deploy-fork.yml to avoid warnings during ci runs ([#1141](https://github.com/onecx/onecx-portal-ui-libs/issues/1141)) ([c51a024](https://github.com/onecx/onecx-portal-ui-libs/commit/c51a02469553568a24594eb62f6fc15e40f15d85))
+* v5 search results are now communicated to AT. ([#1082](https://github.com/onecx/onecx-portal-ui-libs/issues/1082)) ([a3e8def](https://github.com/onecx/onecx-portal-ui-libs/commit/a3e8def1c1133702a5cf2123f256cb5ddece61e0))
+
+### Refactoring
+
+* only deploy storybook on push to main and v* ([#1132](https://github.com/onecx/onecx-portal-ui-libs/issues/1132)) ([d0a0046](https://github.com/onecx/onecx-portal-ui-libs/commit/d0a0046b68614aa4ccd5c65ce1785b633e3df7c0))
+* upgrade storybook dependencies ([#1135](https://github.com/onecx/onecx-portal-ui-libs/issues/1135)) ([ddd8a49](https://github.com/onecx/onecx-portal-ui-libs/commit/ddd8a496482007a13768eb8dcb2c534c19ee73e9))
+
 ## [5.52.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.52.0...v5.52.1) (2025-12-18)
 
 ### Bug Fixes
