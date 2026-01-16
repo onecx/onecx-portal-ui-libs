@@ -1,9 +1,9 @@
+[#switch-to-ocx-dialog-inline]
 ==== Replace ButtonDialogComponent with DialogInlineComponent
 Replace *ButtonDialogComponent* with *DialogInlineComponent* for inline dialogs with configurable buttons and dynamic content.
 
 **Code changes**
 
-* Remove `PortalCoreModule` from '@onecx/portal-integration-angular'
 * Remove ButtonDialogComponent from `@onecx/portal-integration-angular`.
 * Replace with DialogInlineComponent from `@onecx/angular-accelerator`.
 * Migrate input properties as per the mapping table below.
@@ -30,8 +30,6 @@ Replace *ButtonDialogComponent* with *DialogInlineComponent* for inline dialogs 
   <!-- dynamic dialog content here -->
 </ocx-dialog-inline>
 ----
-
-**Migration Notes**
 
 **Input Properties**
 

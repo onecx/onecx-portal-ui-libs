@@ -1,13 +1,12 @@
+[#switch-to-interactive-data-view]
+==== Replace DataViewControlsComponent with InteractiveDataViewComponent
 
-==== Replace DataViewControlComponent with InteractiveDateViewComponent
-
-Replace *DataViewControlComponent* with *InteractiveDateViewComponent* for enhanced data viewing capabilities including sorting, filtering, and layout options.
+Replace *DataViewControlsComponent* with *InteractiveDataViewComponent* for enhanced data viewing capabilities including sorting, filtering, and layout options.
 
 **Code changes**
 
-* Remove `PortalCoreModule` from `@onecx/portal-integration-angular`.
-* Remove all usages of `DataViewControlComponent` from `@onecx/portal-integration-angular`.
-* Replace with `InteractiveDateViewComponent` from `@onecx/angular-accelerator`.
+* Remove all usages of `DataViewControlsComponent` from `@onecx/portal-integration-angular`.
+* Replace with `InteractiveDataViewComponent` from `@onecx/angular-accelerator`.
 * Migrate input and output properties as per the mapping tables below.
 
 **Example - Replace ocx-data-view-controls with ocx-interactive-data-view in HTML**
@@ -65,8 +64,8 @@ Replace *DataViewControlComponent* with *InteractiveDateViewComponent* for enhan
 
 [cols="1,1,2", options="header"]
 |===
-| DataViewControlComponent
-| InteractiveDateViewComponent
+| DataViewControlsComponent
+| InteractiveDataViewComponent
 | Notes
 
 | supportedViews
@@ -126,8 +125,8 @@ Replace *DataViewControlComponent* with *InteractiveDateViewComponent* for enhan
 
 [cols="1,1,2", options="header"]
 |===
-| DataViewControlComponent
-| InteractiveDateViewComponent
+| DataViewControlsComponent
+| InteractiveDataViewComponent
 | Notes
 
 | sortChange, sortDirectionChange
@@ -222,7 +221,7 @@ onColumnsChange(activeColumnIds: string[]) {
 
 [NOTE]
 ====
-*InteractiveDateViewComponent* supports advanced data viewing with sorting, filtering, and flexible layouts.  
+*InteractiveDataViewComponent* supports advanced data viewing with sorting, filtering, and flexible layouts.  
 
 - `dropdownPlaceholderText` and `translations` are deprecated. Please use Angular i18n for placeholders and labels.
 - If you use `columnTemplates`, ensure they are compatible with the new component and use `ng-template` as needed.

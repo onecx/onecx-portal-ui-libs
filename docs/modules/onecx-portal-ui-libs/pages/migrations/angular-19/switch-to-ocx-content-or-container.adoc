@@ -1,9 +1,9 @@
+[#switch-to-ocx-content-or-container]
 ==== Replace PageContentComponent with OcxContentComponent
 Replace *PageContentComponent* with *OcxContentComponent* which displays content in a styled card format and provide styling options.
 
 **Code changes**
 
-* Remove `PortalCoreModule` from '@onecx/portal-integration-angular'
 * Remove `PageContentComponent` from `@onecx/portal-integration-angular`.
 * Replace with `OcxContentComponent` from `@onecx/angular-accelerator`.
 * For grouping, replace with `OcxContentContainerComponent` from `@onecx/angular-accelerator`.
@@ -33,7 +33,7 @@ Replace *PageContentComponent* with *OcxContentComponent* which displays content
 ----
 
 
-**Migration Notes**
+**Input Properties**
 
 [cols="1,1,2", options="header"]
 |===
@@ -54,9 +54,10 @@ Replace *PageContentComponent* with *OcxContentComponent* which displays content
 Replace *PageContentComponent* with *OcxContentContainerComponent* which is designed as high-level wrapper for grouping multiple content sections together and provides layout and styling options.
 
 **Code changes**
-- Remove use of `PageContentComponent` from `@onecx/portal-integration-angular`.
-- Replace with `OcxContentContainerComponent` from `@onecx/angular-accelerator`.
-- Migrate input properties as per the mapping table below.
+
+* Remove use of `PageContentComponent` from `@onecx/portal-integration-angular`.
+* Replace with `OcxContentContainerComponent` from `@onecx/angular-accelerator`.
+* Migrate input properties as per the mapping table below.
 
 **Example - Replace page-content with ocx-content-container in HTML**
 .Before
@@ -80,8 +81,6 @@ Replace *PageContentComponent* with *OcxContentContainerComponent* which is desi
 </ocx-content-container>
 ----
 
-
-**Migration Notes**
 **Input Properties**
 [cols="1,1,2", options="header"]
 |===

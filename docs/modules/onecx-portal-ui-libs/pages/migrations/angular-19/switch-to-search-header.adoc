@@ -1,10 +1,10 @@
+[#switch-to-search-header]
 ==== Replace SearchCriteriaComponent with SearchHeaderComponent
 
 Replace *SearchCriteriaComponent* with *SearchHeaderComponent* for enhanced functionality and flexibility. SearchHeaderComponent supports advanced layouts, custom actions and flexible toolbar content.
 
 **Code changes**
 
-* Remove `PortalCoreModule` from `@onecx/portal-integration-angular`.
 * Remove use of `SearchCriteriaComponent` from `@onecx/portal-integration-angular`.
 * Replace with `SearchHeaderComponent` from `@onecx/angular-accelerator`.
 * Migrate input and output properties as per the mapping tables below.
@@ -38,8 +38,6 @@ Replace *SearchCriteriaComponent* with *SearchHeaderComponent* for enhanced func
   <!-- search fields here -->
 </ocx-search-header>
 ----
-
-**Migration Notes**
 
 [NOTE]
 ====
