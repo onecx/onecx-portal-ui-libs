@@ -28,10 +28,10 @@ include::update-component-imports.adoc[]
 include::remove-portal-layout-styles.adoc[]
 include::update-filtertype-value.adoc[]
 include::update-configuration-service-usage.adoc[]
-
 include::adjust-packages-in-webpack-config.adoc[]
 include::adjust-standalone-mode.adoc[]
 include::remove-add-initialize-module-guard.adoc[]
+include::remove-menuservice.adoc[]
 
 [#migration-steps-after-angular-19]
 == Migration Steps after upgrading to Angular 19
