@@ -6,6 +6,7 @@ import { HarnessLoader } from '@angular/cdk/testing'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
+// eslint-disable-next-line deprecation/deprecation
 import { RouterTestingModule } from '@angular/router/testing'
 
 import { AdvancedDirective } from './advanced.directive'
@@ -15,6 +16,7 @@ import { AngularAcceleratorModule } from '../angular-accelerator.module'
 import { SearchHeaderHarness } from '../../../testing/search-header.harness'
 
 @Component({
+  // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
   template: `
     <ocx-search-header>
@@ -33,6 +35,7 @@ class HostInsideSearchHeaderComponent {
 }
 
 @Component({
+  // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
   template: `
     <ng-template ocxAdvanced>
@@ -68,6 +71,7 @@ describe('AdvancedDirective', () => {
     beforeEach(async () => {
       await TestBed.configureTestingModule({
         declarations: [HostInsideSearchHeaderComponent, SearchHeaderComponent, PageHeaderComponent, AdvancedDirective],
+        // eslint-disable-next-line deprecation/deprecation
         imports: [RouterTestingModule, AngularAcceleratorModule],
         providers: [
           provideHttpClient(withInterceptorsFromDi()),
@@ -88,17 +92,19 @@ describe('AdvancedDirective', () => {
     })
 
     it('should not render advanced template when viewMode is basic', async () => {
-      component.searchHeader.viewMode = 'basic'
+      const searchHeaderHarness = await loader.getHarness(SearchHeaderHarness)
+      await searchHeaderHarness.setViewMode('basic')
       fixture.detectChanges()
 
       const advancedEl = fixture.debugElement.query(By.css('#advanced-content'))
       expect(advancedEl).toBeNull()
 
       // Harness smoke: search header exists.
-      expect(await loader.getHarness(SearchHeaderHarness)).toBeTruthy()
+      expect(searchHeaderHarness).toBeTruthy()
     })
 
     it('should render advanced template when viewMode is advanced', () => {
+      // uses component state for sync test setup
       component.searchHeader.viewMode = 'advanced'
       fixture.detectChanges()
 

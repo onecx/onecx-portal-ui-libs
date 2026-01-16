@@ -13,6 +13,7 @@ import { SearchHeaderComponent } from '../components/search-header/search-header
 import { PageHeaderComponent } from '../components/page-header/page-header.component'
 import { AngularAcceleratorModule } from '../angular-accelerator.module'
 import { SearchHeaderHarness } from '../../../testing/search-header.harness'
+import { AdvancedDirective } from './advanced.directive'
 
 class BasicContentHarness extends ComponentHarness {
   static readonly hostSelector = '#basic-content'
@@ -48,6 +49,10 @@ class HostInsideSearchHeaderHarness extends ComponentHarness {
     <ocx-search-header>
       <ng-template ocxBasic>
         <div id="basic-content">Basic Content</div>
+      </ng-template>
+
+      <ng-template ocxAdvanced>
+        <div id="advanced-content">Advanced Content</div>
       </ng-template>
     </ocx-search-header>
   `,
@@ -92,11 +97,16 @@ describe('BasicDirective', () => {
 
   describe('when used inside SearchHeaderComponent', () => {
     let fixture: ComponentFixture<HostInsideSearchHeaderComponent>
-    let component: HostInsideSearchHeaderComponent
 
     beforeEach(async () => {
       await TestBed.configureTestingModule({
-        declarations: [HostInsideSearchHeaderComponent, SearchHeaderComponent, PageHeaderComponent, BasicDirective],
+        declarations: [
+          HostInsideSearchHeaderComponent,
+          SearchHeaderComponent,
+          PageHeaderComponent,
+          BasicDirective,
+          AdvancedDirective,
+        ],
         // eslint-disable-next-line deprecation/deprecation
         imports: [RouterTestingModule, AngularAcceleratorModule],
         providers: [
@@ -107,14 +117,14 @@ describe('BasicDirective', () => {
       }).compileComponents()
 
       fixture = TestBed.createComponent(HostInsideSearchHeaderComponent)
-      component = fixture.componentInstance
       fixture.detectChanges()
 
       loader = TestbedHarnessEnvironment.loader(fixture)
     })
 
     it('should render basic template when viewMode is basic', async () => {
-      component.searchHeader.viewMode = 'basic'
+      const searchHeaderHarness = await loader.getHarness(SearchHeaderHarness)
+      fixture.componentInstance.searchHeader.viewMode = 'basic'
       fixture.detectChanges()
 
       const hostHarness = await loader.getHarness(HostInsideSearchHeaderHarness)
@@ -124,11 +134,11 @@ describe('BasicDirective', () => {
       expect(await contentHarness!.text()).toContain('Basic Content')
 
       // Harness smoke: search header exists.
-      expect(await loader.getHarness(SearchHeaderHarness)).toBeTruthy()
+      expect(searchHeaderHarness).toBeTruthy()
     })
 
     it('should not render basic template when viewMode is advanced', async () => {
-      component.searchHeader.viewMode = 'advanced'
+      fixture.componentInstance.searchHeader.viewMode = 'advanced'
       fixture.detectChanges()
 
       const hostHarness = await loader.getHarness(HostInsideSearchHeaderHarness)
@@ -136,18 +146,18 @@ describe('BasicDirective', () => {
     })
 
     it('should clear basic template when toggling from basic to advanced', async () => {
-      component.searchHeader.viewMode = 'basic'
+      fixture.componentInstance.searchHeader.viewMode = 'basic'
       fixture.detectChanges()
       const hostHarness = await loader.getHarness(HostInsideSearchHeaderHarness)
       expect(await hostHarness.getBasicContentCount()).toBe(1)
 
-      component.searchHeader.viewMode = 'advanced'
+      fixture.componentInstance.searchHeader.viewMode = 'advanced'
       fixture.detectChanges()
       expect(await hostHarness.getBasicContentCount()).toBe(0)
     })
 
     it('should not create a second embedded view when change detection runs again in basic mode', async () => {
-      component.searchHeader.viewMode = 'basic'
+      fixture.componentInstance.searchHeader.viewMode = 'basic'
       fixture.detectChanges()
 
       fixture.detectChanges()
