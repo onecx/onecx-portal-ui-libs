@@ -43,7 +43,11 @@ export class DataListGridSortingComponent implements OnInit {
   dropdownOptions: DataColumnNameId[] = []
 
   ngOnInit(): void {
-    this.columns.forEach((element) => this.dropdownOptions.push({ columnId: element.id, columnName: element.nameKey }))
+    this.columns.forEach((element) => {
+      if (element.sortable) {
+        this.dropdownOptions.push({ columnId: element.id, columnName: element.nameKey });
+      }
+    })
     this.selectedSortingOption = this.dropdownOptions.find((e) => e.columnId === this?.sortField)
     this.emitComponentStateChange()
   }
@@ -85,7 +89,9 @@ export class DataListGridSortingComponent implements OnInit {
   }
 
   sortIconTitle() {
-    return this.sortDirectionToTitle(this.sortDirection)
+    return this.sortDirectionToTitle(
+      this.nextSortDirection()
+    )
   }
 
   sortDirectionToTitle(sortDirection: DataSortDirection) {

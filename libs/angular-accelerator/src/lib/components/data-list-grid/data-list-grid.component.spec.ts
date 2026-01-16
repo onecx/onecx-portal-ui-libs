@@ -14,6 +14,7 @@ import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { UserService } from '@onecx/angular-integration-interface'
 import { ensureIntersectionObserverMockExists, ensureOriginMockExists } from '@onecx/angular-testing'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
+import { LiveAnnouncer } from '@angular/cdk/a11y'
 
 ensureOriginMockExists()
 ensureIntersectionObserverMockExists()
@@ -41,6 +42,10 @@ describe('DataListGridComponent', () => {
       SHOWING_WITH_TOTAL_ON_SERVER: '{{first}} - {{last}} of {{totalRecords}} ({{totalRecordsOnServer}})',
       ALL: 'All',
     },
+    OCX_DATA_LIST_GRID: {
+      SEARCH_RESULTS_FOUND: '{{results}} Results Found',
+      NO_SEARCH_RESULTS_FOUND: 'No Results Found',
+    }
   }
 
   const GERMAN_LANGUAGE = 'de'
@@ -50,6 +55,10 @@ describe('DataListGridComponent', () => {
       SHOWING_WITH_TOTAL_ON_SERVER: '{{first}} - {{last}} von {{totalRecords}} ({{totalRecordsOnServer}})',
       ALL: 'Alle',
     },
+    OCX_DATA_LIST_GRID: {
+      SEARCH_RESULTS_FOUND: '{{results}} Ergebnisse gefunden',
+      NO_SEARCH_RESULTS_FOUND: 'Keine Ergebnisse gefunden',
+    }
   }
 
   const TRANSLATIONS = {
@@ -1006,4 +1015,105 @@ describe('DataListGridComponent', () => {
       })
     })
   })
+
+  describe('LiveAnnouncer announcements', () => {
+    let liveAnnouncer: LiveAnnouncer;
+    let announceSpy: jest.SpyInstance;
+
+    beforeEach(() => {
+      liveAnnouncer = TestBed.inject(LiveAnnouncer);
+      announceSpy = jest.spyOn(liveAnnouncer, 'announce').mockResolvedValue();
+    });
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    describe('should announce "results found" when data has entries', () => {
+      it('de', async () => {
+        translateService.use('de');
+
+        component.data = mockData;
+        fixture.detectChanges();
+
+        await fixture.whenStable();
+
+        expect(announceSpy).toHaveBeenCalledTimes(1);
+        expect(announceSpy).toHaveBeenCalledWith('5 Ergebnisse gefunden');
+      });
+
+      it('en', async () => {
+        translateService.use('en');
+
+        component.data = mockData;
+        fixture.detectChanges();
+
+        await fixture.whenStable();
+
+        expect(announceSpy).toHaveBeenCalledTimes(1);
+        expect(announceSpy).toHaveBeenCalledWith('5 Results Found');
+      });
+    });
+
+    describe('should announce "no results found" when data is empty', () => {
+      it('de', async () => {
+        translateService.use('de');
+
+        component.data = [];
+        fixture.detectChanges();
+
+        await fixture.whenStable();
+
+        expect(announceSpy).toHaveBeenCalledTimes(1);
+        expect(announceSpy).toHaveBeenCalledWith('Keine Ergebnisse gefunden');
+      });
+
+      it('en', async () => {
+        translateService.use('en');
+
+        component.data = [];
+        fixture.detectChanges();
+
+        await fixture.whenStable();
+
+        expect(announceSpy).toHaveBeenCalledTimes(1);
+        expect(announceSpy).toHaveBeenCalledWith('No Results Found');
+      });
+    });
+
+    describe('should announce "results found" when data changes', () => {
+      it('de', async () => {
+        translateService.use('de');
+
+        component.data = mockData;
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        component.data = mockData.slice(0, 2);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(announceSpy).toHaveBeenCalledTimes(2);
+        expect(announceSpy).toHaveBeenNthCalledWith(1, '5 Ergebnisse gefunden');
+        expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Ergebnisse gefunden');
+      });
+
+      it('en', async () => {
+        translateService.use('en');
+
+        component.data = mockData;
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        component.data = mockData.slice(0, 2);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(announceSpy).toHaveBeenCalledTimes(2);
+        expect(announceSpy).toHaveBeenNthCalledWith(1, '5 Results Found');
+        expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Results Found');
+      });
+    });
+  });
+
 })

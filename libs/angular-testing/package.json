@@ -1,7 +1,11 @@
 {
   "name": "@onecx/angular-testing",
-  "version": "5.50.0",
+  "version": "5.52.2",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onecx/onecx-portal-ui-libs"
+  },
   "peerDependencies": {
     "@angular/cdk": "^18.0.5",
     "primeng": "^17.18.6"

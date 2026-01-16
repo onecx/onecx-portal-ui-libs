@@ -5,42 +5,13 @@ import { DialogService, DynamicDialogComponent, DynamicDialogConfig, DynamicDial
 
 import { ButtonDialogButtonDetails, ButtonDialogCustomButtonDetails, ButtonDialogData } from '../model/button-dialog'
 import { DialogMessageContentComponent } from '../core/components/button-dialog/dialog-message-content/dialog-message-content.component'
-import { PrimeIcon } from '@onecx/angular-accelerator'
+import { PrimeIcon, TranslationKey, TranslationKeyWithParameters } from '@onecx/angular-accelerator'
 import { DialogFooterComponent } from '../core/components/dialog/dialog-footer/dialog-footer.component'
 import { DialogContentComponent } from '../core/components/dialog/dialog-content/dialog-content.component'
 import { NavigationStart, Router } from '@angular/router'
 import { CurrentLocationTopicPayload, EventsTopic, TopicEventType } from '@onecx/integration-interface'
 import { Capability, ShellCapabilityService } from '@onecx/angular-integration-interface'
 import { AppStateService } from '@onecx/angular-integration-interface'
-
-/**
- * Object containing key for translation with parameters object for translation
- *
- * @example
- * ## Assume such translation is in the translation file
- * ```typescript
- * const translations = {
- *   MY_KEY = 'text with parameter value = {{value}}',
- * }
- * ```
- *
- * ## TranslationKeyWithParameters declaration
- * ```
- * // will be translated into
- * // text with parameter value = hello
- * const myKey: TranslationKeyWithParameters = {
- *   key: 'MY_KEY',
- *   parameters: {
- *     value: 'hello',
- *   },
- * }
- * ```
- */
-type TranslationKeyWithParameters = { key: string; parameters: Record<string, unknown> }
-/**
- * String with key to translation or {@link TranslationKeyWithParameters} object. If provided string cannot be translated it will be displayed as is.
- */
-type TranslationKey = string | TranslationKeyWithParameters
 /**
  * Object containing message of type {@link TranslationKey} and icon to be displayed along the message.
  *
@@ -265,7 +236,14 @@ export interface PortalDialogServiceData {
 
 @Injectable({ providedIn: 'any' })
 export class PortalDialogService implements OnDestroy {
-  private eventsTopic: EventsTopic = new EventsTopic()
+  private _eventsTopic$: EventsTopic | undefined
+  get eventsTopic() {
+    this._eventsTopic$ ??= new EventsTopic()
+    return this._eventsTopic$
+  }
+  set eventsTopic(value: EventsTopic) {
+    this._eventsTopic$ = value
+  }
   constructor(
     private dialogService: DialogService,
     private translateService: TranslateService,
@@ -290,7 +268,7 @@ export class PortalDialogService implements OnDestroy {
 
   ngOnDestroy(): void {
     this.cleanupAndCloseDialog()
-    this.eventsTopic.destroy()
+    this._eventsTopic$?.destroy()
   }
 
   /**

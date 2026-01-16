@@ -23,7 +23,14 @@ export type Message = {
 export class PortalMessageService implements OnDestroy {
   constructor(private translateService: TranslateService) {}
 
-  message$ = new MessageTopic()
+  _message$: MessageTopic | undefined
+  get message$() {
+    this._message$ ??= new MessageTopic()
+    return this._message$
+  }
+  set message$(value: MessageTopic) {
+    this._message$ = value
+  }
 
   success(msg: Message) {
     this.addTranslated('success', msg)
@@ -58,6 +65,6 @@ export class PortalMessageService implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.message$.destroy()
+    this._message$?.destroy()
   }
 }

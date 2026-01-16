@@ -43,6 +43,7 @@ export * from './lib/model/diagram-column'
 // export * from './lib/model/diagram-data'
 export * from './lib/model/diagram-type'
 export * from './lib/model/filter.model'
+export * from './lib/model/translation.model'
 
 // core
 export * from './lib/angular-accelerator.module'

@@ -76,7 +76,7 @@ function appInitializer(userService: UserService) {
     OcxTimeAgoPipe,
     AdvancedDirective,
     TooltipOnOverflowDirective,
-    FilterViewComponent,
+    FilterViewComponent
   ],
   providers: [
     providePermissionChecker(),

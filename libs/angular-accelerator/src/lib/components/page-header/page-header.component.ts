@@ -18,6 +18,7 @@ import { UserService } from '@onecx/angular-integration-interface'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { PrimeIcon } from '../../utils/primeicon.utils'
 import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
+import { TranslationKey } from '../../model/translation.model'
 
 /**
  * Action definition.
@@ -65,9 +66,12 @@ export interface ObjectDetailItem {
   valueCssClass?: string
   actionItemIcon?: PrimeIcon
   actionItemCallback?: () => void
-  actionItemTooltip?: string
-  actionItemAriaLabelKey?: string
   actionItemAriaLabel?: string
+  actionItemAriaLabelKey?: TranslationKey
+  actionItemTooltip?: string
+  actionItemTooltipKey?: TranslationKey
+  labelTooltipKey?: TranslationKey
+  valueTooltipKey?: TranslationKey
 }
 
 export interface HomeItem {
@@ -315,5 +319,26 @@ export class PageHeaderComponent implements OnInit {
       command: a.actionCallback,
       disabled: a.disabled,
     }))
+  }
+
+  /**
+   * Helper to extract translation key and parameters from a string or object.
+   * @param input - Can be a string or an object with 'key' and 'parameters'.
+   * @returns An object with { key, params } for use in translation pipes or services. The returned key is always a string (never undefined).
+   *
+   * Example usage in template:
+   *   let result = extractKeyAndParams(item.labelTooltipKey);
+   *   result.key | translate : result.params
+   *
+   * .key will always be a string, so you do not need to use `?? ''` in the template.
+   */
+  public extractKeyAndParams(input: any): { key: string, params: any } {
+    if (typeof input === 'string') {
+      return { key: input, params: undefined };
+    }
+    if (input && typeof input === 'object') {
+      return { key: input.key ?? '', params: input.parameters };
+    }
+    return { key: '', params: undefined };
   }
 }

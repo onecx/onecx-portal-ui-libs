@@ -1,7 +1,11 @@
 {
   "name": "@onecx/portal-layout-styles",
-  "version": "5.50.0",
+  "version": "5.52.2",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onecx/onecx-portal-ui-libs"
+  },
   "peerDependencies": {
     "tslib": "^2.6.3"
   },

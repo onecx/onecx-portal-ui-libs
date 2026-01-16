@@ -30,6 +30,7 @@ import {
   debounceTime,
   filter,
   first,
+  firstValueFrom,
   map,
   mergeMap,
   of,
@@ -45,6 +46,7 @@ import { ObjectUtils } from '../../utils/objectutils'
 import { findTemplate } from '../../utils/template.utils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
+import { LiveAnnouncer } from '@angular/cdk/a11y'
 
 export type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -82,6 +84,8 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   FilterType = FilterType
   TemplateType = TemplateType
   checked = true
+
+
   _rows$ = new BehaviorSubject<Row[]>([])
   @Input()
   get rows(): Row[] {
@@ -90,7 +94,19 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   set rows(value: Row[]) {
     !this._rows$.getValue().length ?? this.resetPage()
     this._rows$.next(value)
+
+    const currentResults = value.length;
+    const newStatus = currentResults === 0
+        ? 'OCX_DATA_TABLE.NO_SEARCH_RESULTS_FOUND'
+        : 'OCX_DATA_TABLE.SEARCH_RESULTS_FOUND';
+    
+    firstValueFrom(
+      this.translateService.get(newStatus, { results: currentResults }) ).then((translatedText: string) => {
+        this.liveAnnouncer.announce(translatedText);
+      }
+    );
   }
+
   _selectionIds$ = new BehaviorSubject<(string | number)[]>([])
   @Input()
   set selectedRows(value: Row[] | string[] | number[]) {
@@ -190,7 +206,16 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   @Input() selectionEnabledField: string | undefined
   @Input() allowSelectAll = true
   @Input() paginator = true
-  @Input() page = 0
+
+  _page$ = new BehaviorSubject<number>(0)
+  @Input()
+  get page(): number {
+    return this._page$.getValue()
+  }
+  set page(value: number) {
+    this._page$.next(value)
+  }
+
   @Input() tableStyle: { [klass: string]: any } | undefined
   @Input()
   get totalRecordsOnServer(): number | undefined {
@@ -404,6 +429,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     private router: Router,
     private injector: Injector,
     private userService: UserService,
+    private readonly liveAnnouncer: LiveAnnouncer,
     @Inject(HAS_PERMISSION_CHECKER) @Optional() private hasPermissionChecker?: HasPermissionChecker
   ) {
     super(locale, translateService)
@@ -691,9 +717,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
   sortIconTitle(sortColumn: string) {
     return this.sortDirectionToTitle(
-      sortColumn !== this.sortDirection
-        ? DataSortDirection.NONE
-        : this.sortStates[this.sortStates.indexOf(this.sortDirection) % this.sortStates.length]
+      this.columnNextSortDirection(sortColumn)
     )
   }
 
@@ -709,11 +733,13 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
 
   mapSelectionToRows() {
-    this.selectedRows$ = combineLatest([this._selectionIds$, this._rows$]).pipe(
-      map(([selectedRowIds, rows]) => {
-        return selectedRowIds.map((rowId) => {
-          return rows.find((r) => r.id === rowId)
-        })
+    // Include _page$ to force fresh array references on page navigation
+    // to satisfy PrimeNG DataTable selection tracking, because it needs new object references to detect changes
+    this.selectedRows$ = combineLatest([this._selectionIds$, this._rows$, this._page$]).pipe(
+      map(([selectedRowIds, rows, _]) => {
+        return selectedRowIds
+          .map((rowId) => rows.find((r) => r.id === rowId))
+          .filter((row): row is Row => row !== undefined)
       })
     )
   }
@@ -738,8 +764,12 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     }
 
     this._selectionIds$.next(newSelectionIds)
-    this.selectionChanged.emit(this._rows$.getValue().filter((row) => newSelectionIds.includes(row.id)))
+    this.emitSelectionChanged()
     this.emitComponentStateChanged()
+  }
+
+  emitSelectionChanged() {
+    this.selectionChanged.emit(this._rows$.getValue().filter((row) => this._selectionIds$.getValue().includes(row.id)))
   }
 
   mergeWithDisabledKeys(newSelectionIds: (string | number)[], disabledRowIds: (string | number)[]) {

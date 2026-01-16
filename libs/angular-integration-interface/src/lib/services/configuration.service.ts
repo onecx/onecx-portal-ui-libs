@@ -7,7 +7,14 @@ import { CONFIG_KEY } from '../model/config-key.model'
 
 @Injectable({ providedIn: 'root' })
 export class ConfigurationService implements OnDestroy {
-  config$ = new ConfigurationTopic()
+  _config$: ConfigurationTopic | undefined
+  get config$() {
+    this._config$ ??= new ConfigurationTopic()
+    return this._config$
+  }
+  set config$(value: ConfigurationTopic) {
+    this._config$ = value
+  }
 
   constructor(
     private http: HttpClient,
@@ -15,7 +22,7 @@ export class ConfigurationService implements OnDestroy {
   ) {}
 
   ngOnDestroy(): void {
-    this.config$.destroy()
+    this._config$?.destroy()
   }
 
   public init(): Promise<boolean> {

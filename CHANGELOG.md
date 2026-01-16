@@ -1,3 +1,60 @@
+## [5.52.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.52.1...v5.52.2) (2026-01-15)
+
+### Bug Fixes
+
+* delete deploy-fork.yml to avoid warnings during ci runs ([#1141](https://github.com/onecx/onecx-portal-ui-libs/issues/1141)) ([c51a024](https://github.com/onecx/onecx-portal-ui-libs/commit/c51a02469553568a24594eb62f6fc15e40f15d85))
+* v5 search results are now communicated to AT. ([#1082](https://github.com/onecx/onecx-portal-ui-libs/issues/1082)) ([a3e8def](https://github.com/onecx/onecx-portal-ui-libs/commit/a3e8def1c1133702a5cf2123f256cb5ddece61e0))
+
+### Refactoring
+
+* only deploy storybook on push to main and v* ([#1132](https://github.com/onecx/onecx-portal-ui-libs/issues/1132)) ([d0a0046](https://github.com/onecx/onecx-portal-ui-libs/commit/d0a0046b68614aa4ccd5c65ce1785b633e3df7c0))
+* upgrade storybook dependencies ([#1135](https://github.com/onecx/onecx-portal-ui-libs/issues/1135)) ([ddd8a49](https://github.com/onecx/onecx-portal-ui-libs/commit/ddd8a496482007a13768eb8dcb2c534c19ee73e9))
+
+## [5.52.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.52.0...v5.52.1) (2025-12-18)
+
+### Bug Fixes
+
+* broadcast channel for read and publish ([#1099](https://github.com/onecx/onecx-portal-ui-libs/issues/1099)) ([#1101](https://github.com/onecx/onecx-portal-ui-libs/issues/1101)) ([401f3ad](https://github.com/onecx/onecx-portal-ui-libs/commit/401f3ad80f60b84bbe199ff12b165af52ad5bce8))
+
+## [5.52.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.51.1...v5.52.0) (2025-12-18)
+
+### Features
+
+* change communication of topic to BroadcastChannel ([#1091](https://github.com/onecx/onecx-portal-ui-libs/issues/1091)) ([#1094](https://github.com/onecx/onecx-portal-ui-libs/issues/1094)) ([90ee6f6](https://github.com/onecx/onecx-portal-ui-libs/commit/90ee6f66353af55eba0843037c000a326fac41e3))
+* instantiate topic only if needed ([#1088](https://github.com/onecx/onecx-portal-ui-libs/issues/1088)) ([255d1c6](https://github.com/onecx/onecx-portal-ui-libs/commit/255d1c699d9916b6f876d13e0358153df02d3514))
+
+### Bug Fixes
+
+* topic usage tests setup v5 ([#1096](https://github.com/onecx/onecx-portal-ui-libs/issues/1096)) ([e78e64f](https://github.com/onecx/onecx-portal-ui-libs/commit/e78e64f295238f59e98ce66c7ba2b2caa03496a1))
+
+## [5.51.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.51.0...v5.51.1) (2025-12-15)
+
+### Bug Fixes
+
+* conditional statement added for SearchHeader buttons to be read left to right when order is reversed ([#1059](https://github.com/onecx/onecx-portal-ui-libs/issues/1059)) ([553e96b](https://github.com/onecx/onecx-portal-ui-libs/commit/553e96b1dc618127dc42012f63ff8d9d4119909d)), closes [#1054](https://github.com/onecx/onecx-portal-ui-libs/issues/1054)
+* DataListGridSorting dropdownOptions showing options where sortable is set to false ([#1052](https://github.com/onecx/onecx-portal-ui-libs/issues/1052)) ([e6af795](https://github.com/onecx/onecx-portal-ui-libs/commit/e6af7953cf25fc328361cef38e3dcc829577c7ff))
+* Fixed the default tooltip for sort action in interactive-data-view ([#1062](https://github.com/onecx/onecx-portal-ui-libs/issues/1062)) ([672111a](https://github.com/onecx/onecx-portal-ui-libs/commit/672111a1216158feba84dbf17b28acdb72c54ff2))
+* Portal Page Widget height fix ([#1044](https://github.com/onecx/onecx-portal-ui-libs/issues/1044)) ([a9df267](https://github.com/onecx/onecx-portal-ui-libs/commit/a9df267ed661637317a5bbaae6f061430a8a60c1))
+* v5- Fix Translation configuration to support multiple translation sets ([#1063](https://github.com/onecx/onecx-portal-ui-libs/issues/1063)) ([2f42b33](https://github.com/onecx/onecx-portal-ui-libs/commit/2f42b33ca2f4dc9ac78f37e2898eab1f0aecd059)), closes [#1059](https://github.com/onecx/onecx-portal-ui-libs/issues/1059) [#1054](https://github.com/onecx/onecx-portal-ui-libs/issues/1054) [#1052](https://github.com/onecx/onecx-portal-ui-libs/issues/1052)
+
+### Chores
+
+* remove integration-tests library from portal-libs ([#1015](https://github.com/onecx/onecx-portal-ui-libs/issues/1015)) ([#1023](https://github.com/onecx/onecx-portal-ui-libs/issues/1023)) ([c0dbb6d](https://github.com/onecx/onecx-portal-ui-libs/commit/c0dbb6d5f7eed050adbedd05d520cbfda2e15977))
+* update release pipeline ([#1076](https://github.com/onecx/onecx-portal-ui-libs/issues/1076)) ([#1077](https://github.com/onecx/onecx-portal-ui-libs/issues/1077)) ([64ada50](https://github.com/onecx/onecx-portal-ui-libs/commit/64ada5059e73b3af64cff66d2ab54433062bfa43))
+* use node 22 for release ([#1078](https://github.com/onecx/onecx-portal-ui-libs/issues/1078)) ([3a72bcf](https://github.com/onecx/onecx-portal-ui-libs/commit/3a72bcfe2cb718d05557587a96c76f40bfd5bff3))
+
+## [5.51.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.50.0...v5.51.0) (2025-11-21)
+
+### Features
+
+* add elementName to appId injectable ([#1029](https://github.com/onecx/onecx-portal-ui-libs/issues/1029)) ([566a118](https://github.com/onecx/onecx-portal-ui-libs/commit/566a1181c01d2f06cdd0e4fa189f2c52121120dd))
+* add store connector services to new ngrx-integration-interface lib v5 ([#1013](https://github.com/onecx/onecx-portal-ui-libs/issues/1013)) ([6d211c7](https://github.com/onecx/onecx-portal-ui-libs/commit/6d211c7d1605f1dba0de5ffbaafd7012b2fc2617)), closes [#985](https://github.com/onecx/onecx-portal-ui-libs/issues/985)
+
+### Bug Fixes
+
+* checkbox in table correctly visually highlighted across pagination ([#1028](https://github.com/onecx/onecx-portal-ui-libs/issues/1028)) ([2bd0446](https://github.com/onecx/onecx-portal-ui-libs/commit/2bd044600c856d9db0c16ea0928fd63a21452910))
+* sonar project typo ([#1025](https://github.com/onecx/onecx-portal-ui-libs/issues/1025)) ([90a1d78](https://github.com/onecx/onecx-portal-ui-libs/commit/90a1d7894ab47295ac6b751fef80fc1f842fd416))
+
 ## [5.50.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.49.0...v5.50.0) (2025-10-09)
 
 ### Features

@@ -1,16 +1,20 @@
 {
   "name": "@onecx/standalone-shell",
-  "version": "5.50.0",
+  "version": "5.52.2",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onecx/onecx-portal-ui-libs"
+  },
   "peerDependencies": {
     "@angular/common": "^18.0.5",
     "@angular/core": "^18.0.5",
     "@angular/router": "^18.0.5",
-    "@onecx/angular-auth": "^5.50.0",
-    "@onecx/angular-integration-interface": "^5.50.0",
-    "@onecx/angular-webcomponents": "^5.50.0",
-    "@onecx/angular-utils": "^5.50.0",
-    "@onecx/integration-interface": "^5.50.0",
+    "@onecx/angular-auth": "^5.52.2",
+    "@onecx/angular-integration-interface": "^5.52.2",
+    "@onecx/angular-webcomponents": "^5.52.2",
+    "@onecx/angular-utils": "^5.52.2",
+    "@onecx/integration-interface": "^5.52.2",
     "@ngx-translate/core": "^15.0.0",
     "primeng": "^17.18.6"
   },

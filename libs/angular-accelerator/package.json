@@ -1,7 +1,11 @@
 {
   "name": "@onecx/angular-accelerator",
-  "version": "5.50.0",
+  "version": "5.52.2",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onecx/onecx-portal-ui-libs"
+  },
   "peerDependencies": {
     "@angular/common": "^18.0.5",
     "@angular/core": "^18.0.5",
@@ -12,12 +16,12 @@
     "@ngx-translate/core": "^15.0.0",
     "@ngx-translate/http-loader": "^8.0.0",
     "@ngneat/until-destroy": "^10.0.0",
-    "@onecx/integration-interface": "^5.50.0",
-    "@onecx/accelerator": "^5.50.0",
-    "@onecx/angular-integration-interface": "^5.50.0",
-    "@onecx/angular-remote-components": "^5.50.0",
-    "@onecx/angular-testing": "^5.50.0",
-    "@onecx/angular-utils": "^5.50.0",
+    "@onecx/integration-interface": "^5.52.2",
+    "@onecx/accelerator": "^5.52.2",
+    "@onecx/angular-integration-interface": "^5.52.2",
+    "@onecx/angular-remote-components": "^5.52.2",
+    "@onecx/angular-testing": "^5.52.2",
+    "@onecx/angular-utils": "^5.52.2",
     "chart.js": "^4.4.3",
     "d3-scale-chromatic": "^3.1.0",
     "rxjs": "~7.8.1",

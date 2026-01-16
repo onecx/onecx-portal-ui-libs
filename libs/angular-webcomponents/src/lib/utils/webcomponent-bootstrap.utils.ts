@@ -1,6 +1,7 @@
 import { createCustomElement } from '@angular/elements'
 import { createApplication, platformBrowser } from '@angular/platform-browser'
 import {
+  APP_ID,
   EnvironmentProviders,
   Injector,
   NgModuleRef,
@@ -20,6 +21,7 @@ import { Observable, Subscription, filter } from 'rxjs'
 import { ShellCapabilityService, Capability } from '@onecx/angular-integration-interface'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import { dataNoPortalLayoutStylesKey } from '@onecx/angular-utils'
+import { DynamicAppId } from './dynamic-app-id.utils'
 
 /**
  * Implementation inspired by @angular-architects/module-federation-plugin https://github.com/angular-architects/module-federation-plugin/blob/main/libs/mf-tools/src/lib/web-components/bootstrap-utils.ts
@@ -33,6 +35,8 @@ export interface AppOptions {
 }
 
 export function bootstrapModule<M>(module: Type<M>, appType: AppType, production: boolean): Promise<NgModuleRef<M>> {
+  replaceOrAddAppId((module as any)['ɵinj'].providers)
+
   return cachePlatform(production)
     .bootstrapModule(module, {
       ngZone: getNgZone(),
@@ -52,6 +56,8 @@ export async function bootstrapRemoteComponent(
   providers: (Provider | EnvironmentProviders)[],
   options?: AppOptions
 ): Promise<void> {
+  replaceOrAddAppId(providers)
+
   const app = await createApplication({
     providers: [
       getNgZone()
@@ -78,6 +84,44 @@ export function createAppEntrypoint(
   createEntrypoint(component, elementName, injector, 'microfrontend', options)
 }
 
+/**
+ * Adds or replaces APP_ID provider with DynamicAppId. DynamicAppId is a wrapper around the APP_ID that adds application context.
+ */
+function replaceOrAddAppId(providers: Array<any>) {
+  const existingProvider = findAndReplaceAppId(providers)
+  if (existingProvider === null) {
+    providers.push({
+      provide: APP_ID,
+      useValue: new DynamicAppId(),
+    })
+  }
+}
+
+function findAndReplaceAppId(providers: Array<any>): any {
+  if (providers.length === 0) return null
+  for (const provider of providers) {
+    if (provider.provide === APP_ID) {
+      let id = 'ng'
+      if (typeof provider.useValue === 'string') {
+        id = provider.useValue
+      } else {
+        console.warn(
+          "APP_ID provider in the application was not done via useValue. Will fallback to 'ng' as the APP_ID"
+        )
+      }
+      provider.useValue = new DynamicAppId(id)
+      return provider
+    }
+
+    const subProviderResult = findAndReplaceAppId(provider.ɵproviders ?? [])
+    if (subProviderResult !== null) {
+      return subProviderResult
+    }
+  }
+
+  return null
+}
+
 function createEntrypoint(
   component: Type<any>,
   elementName: string,
@@ -85,6 +129,8 @@ function createEntrypoint(
   entrypointType: EntrypointType,
   options?: AppOptions
 ) {
+  const appId = injector.get(APP_ID) as any as DynamicAppId
+  appId.appElementName = elementName
   let sub: Subscription | null
   const capabilityService = new ShellCapabilityService()
   const currentLocationCapabilityAvailable = capabilityService.hasCapability(Capability.CURRENT_LOCATION_TOPIC)
