@@ -38,6 +38,7 @@
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "libs/angular-remote-components/jest.config.ts",
+        "codeCoverage": true,
         "passWithNoTests": true
       },
       "configurations": {
