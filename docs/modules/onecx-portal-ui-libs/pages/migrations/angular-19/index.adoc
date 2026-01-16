@@ -25,10 +25,10 @@ To simplify the migration process, it is recommended to complete the following s
 
 include::remove-keycloak-auth.adoc[]
 include::update-component-imports.adoc[]
+include::switch-to-new-components.adoc[]
 include::remove-portal-layout-styles.adoc[]
 include::update-filtertype-value.adoc[]
 include::update-configuration-service-usage.adoc[]
-
 include::adjust-packages-in-webpack-config.adoc[]
 include::adjust-standalone-mode.adoc[]
 include::remove-add-initialize-module-guard.adoc[]
