@@ -10,6 +10,11 @@ In OneCX v6, `createTranslateLoader`, `createRemoteComponentAndMfeTranslateLoade
 * If needed, add `MissingTranslationHandler` from `@ngx-translate/core`
 * If needed, add `AngularAcceleratorMissingTranslationHandler` from `@onecx/angular-utils`
 
+[TIP]
+====
+If you need to support multiple locales and fallback for missing translations, use `AngularAcceleratorMissingTranslationHandler` from `@onecx/angular-utils` as the `MissingTranslationHandler`. This handler logs missing translation keys and provides a fallback mechanism.
+====
+
 **Example - replace translationPathFactory with provideTranslationPathFromMeta in providers:**
 
 .Before:
@@ -149,8 +154,3 @@ bootstrapRemoteComponent(
   ]
 )
 ----
-
-[TIP]
-====
-If you need to support multiple locales and fallback for missing translations, use `AngularAcceleratorMissingTranslationHandler` from `@onecx/angular-utils` as the `MissingTranslationHandler`. This handler logs missing translation keys and provides a fallback mechanism.
-====
