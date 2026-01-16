@@ -1,64 +1,9 @@
-import { HarnessLoader, parallel, TestElement } from '@angular/cdk/testing'
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { DatePipe } from '@angular/common'
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
-import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { NoopAnimationsModule } from '@angular/platform-browser/animations'
-import { provideRouter } from '@angular/router'
-import { TranslateModule } from '@ngx-translate/core'
-import {
-  provideAppStateServiceMock,
-  provideUserServiceMock,
-  UserServiceMock,
-} from '@onecx/angular-integration-interface/mocks'
-import { SlotComponentConfiguration, SlotService } from '@onecx/angular-remote-components'
-import { provideSlotServiceMock, SlotServiceMock } from '@onecx/angular-remote-components/mocks'
-import {
-  ButtonHarness,
-  ListItemHarness,
-  PButtonHarness,
-  PMultiSelectListItemHarness,
-  PPicklistHarness,
-  PSelectHarness,
-  TableHeaderColumnHarness,
-  TableRowHarness,
-} from '@onecx/angular-testing'
-import { TranslateTestingModule } from 'ngx-translate-testing'
-import { PrimeIcons } from 'primeng/api'
-import { ButtonModule } from 'primeng/button'
-import { DialogModule } from 'primeng/dialog'
-import { DomHandler } from 'primeng/dom'
-import { PickListModule } from 'primeng/picklist'
-import { TooltipStyle } from 'primeng/tooltip'
-import {
-  ColumnGroupSelectionHarness,
-  CustomGroupColumnSelectorHarness,
-  DataLayoutSelectionHarness,
-  DataListGridHarness,
-  DataTableHarness,
-  DataViewHarness,
-  DefaultGridItemHarness,
-  DefaultListItemHarness,
-  FilterViewHarness,
-  InteractiveDataViewHarness,
-  SlotHarness,
-} from '../../../../testing'
-import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
-import { AngularAcceleratorModule } from '../../angular-accelerator.module'
-import { IfPermissionDirective } from '../../directives/if-permission.directive'
-import { ColumnType } from '../../model/column-type.model'
-import { FilterType } from '../../model/filter.model'
-import { DateUtils } from '../../utils/dateutils'
-import { limit } from '../../utils/filter.utils'
-import { ColumnGroupSelectionComponent } from '../column-group-selection/column-group-selection.component'
-import { CustomGroupColumnSelectorComponent } from '../custom-group-column-selector/custom-group-column-selector.component'
-import { DataLayoutSelectionComponent } from '../data-layout-selection/data-layout-selection.component'
-import { DataViewComponent, RowListGridData } from '../data-view/data-view.component'
-import { FilterViewComponent } from '../filter-view/filter-view.component'
-import { InteractiveDataViewComponent } from './interactive-data-view.component'
-import { Technologies } from '@onecx/integration-interface'
+import { SlotService } from '@onecx/angular-remote-components'
 import { EventEmitter } from '@angular/core'
+import { TestBed } from '@angular/core/testing'
 import { BehaviorSubject } from 'rxjs'
+import { DataViewComponent, RowListGridData } from '../data-view/data-view.component'
+import { InteractiveDataViewComponent } from './interactive-data-view.component'
 
 describe('InteractiveDataViewComponent (class logic)', () => {
   const createComponent = (slotDefined = true) => {
@@ -389,10 +334,10 @@ describe('InteractiveDataViewComponent (class logic)', () => {
   it('should not subscribe to DataView outputs when DataView already has observers', () => {
     const { component } = createComponent(true)
 
-    component.deleteItem.subscribe(() => {})
-    component.viewItem.subscribe(() => {})
-    component.editItem.subscribe(() => {})
-    component.selectionChanged.subscribe(() => {})
+    component.deleteItem.subscribe(jest.fn())
+    component.viewItem.subscribe(jest.fn())
+    component.editItem.subscribe(jest.fn())
+    component.selectionChanged.subscribe(jest.fn())
 
     const dvDelete = new EventEmitter<RowListGridData>()
     const dvView = new EventEmitter<RowListGridData>()
@@ -400,10 +345,10 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     const dvSelection = new EventEmitter<any[]>()
 
     // make them "observed" before wiring
-    dvDelete.subscribe(() => {})
-    dvView.subscribe(() => {})
-    dvEdit.subscribe(() => {})
-    dvSelection.subscribe(() => {})
+    dvDelete.subscribe(jest.fn())
+    dvView.subscribe(jest.fn())
+    dvEdit.subscribe(jest.fn())
+    dvSelection.subscribe(jest.fn())
 
     const deleteSubscribeSpy = jest.spyOn(dvDelete, 'subscribe')
     const viewSubscribeSpy = jest.spyOn(dvView, 'subscribe')
@@ -497,10 +442,10 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     const editSpy = jest.spyOn(component.editItem, 'emit')
     const selectionSpy = jest.spyOn(component.selectionChanged, 'emit')
 
-    component.deleteItem.subscribe(() => {})
-    component.viewItem.subscribe(() => {})
-    component.editItem.subscribe(() => {})
-    component.selectionChanged.subscribe(() => {})
+    component.deleteItem.subscribe(jest.fn())
+    component.viewItem.subscribe(jest.fn())
+    component.editItem.subscribe(jest.fn())
+    component.selectionChanged.subscribe(jest.fn())
 
     const dataViewMock = {
       deleteItem: new EventEmitter<RowListGridData>(),
@@ -680,7 +625,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     component.onRowSelectionChange(rows as any)
     expect(emitSpy).not.toHaveBeenCalled()
 
-    component.selectionChanged.subscribe(() => {})
+    component.selectionChanged.subscribe(jest.fn())
     component.onRowSelectionChange(rows as any)
     expect(emitSpy).toHaveBeenCalledWith(rows)
   })

@@ -5,7 +5,7 @@ import { ComponentHarness, HarnessLoader } from '@angular/cdk/testing'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
-// eslint-disable-next-line deprecation/deprecation
+// eslint-disable-next-line @typescript-eslint/no-deprecated
 import { RouterTestingModule } from '@angular/router/testing'
 
 import { BasicDirective } from './basic.directive'
@@ -107,7 +107,7 @@ describe('BasicDirective', () => {
           BasicDirective,
           AdvancedDirective,
         ],
-        // eslint-disable-next-line deprecation/deprecation
+        // eslint-disable-next-line @typescript-eslint/no-deprecated
         imports: [RouterTestingModule, AngularAcceleratorModule],
         providers: [
           provideHttpClient(withInterceptorsFromDi()),
