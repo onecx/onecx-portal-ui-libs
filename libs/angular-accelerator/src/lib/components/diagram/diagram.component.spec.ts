@@ -1,17 +1,16 @@
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { FormsModule } from '@angular/forms'
-import { TranslateService } from '@ngx-translate/core'
+import { NoopAnimationsModule } from '@angular/platform-browser/animations'
+import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import 'jest-canvas-mock'
 import { PrimeIcons } from 'primeng/api'
-import { TranslateTestingModule } from 'ngx-translate-testing'
-import { DiagramHarness, TestbedHarnessEnvironment } from '../../../../testing'
-import { DiagramType } from '../../model/diagram-type'
-import { DiagramComponent, DiagramLayouts } from './diagram.component'
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
-import { ColorUtils } from '../../utils/colorutils'
+import { DiagramHarness, provideTranslateTestingService, TestbedHarnessEnvironment } from '../../../../testing'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
+import { DiagramType } from '../../model/diagram-type'
+import { ColorUtils } from '../../utils/colorutils'
+import { DiagramComponent, DiagramLayouts } from './diagram.component'
 
 describe('DiagramComponent', () => {
   let translateService: TranslateService
@@ -35,16 +34,15 @@ describe('DiagramComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DiagramComponent],
-      imports: [
-        NoopAnimationsModule,
-        FormsModule,
-        AngularAcceleratorPrimeNgModule,
-        TranslateTestingModule.withTranslations({
+      imports: [NoopAnimationsModule, FormsModule, AngularAcceleratorPrimeNgModule, TranslateModule.forRoot()],
+      providers: [
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+        provideTranslateTestingService({
           en: require('./../../../../assets/i18n/en.json'),
           de: require('./../../../../assets/i18n/de.json'),
         }),
       ],
-      providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()],
     }).compileComponents()
 
     fixture = TestBed.createComponent(DiagramComponent)
@@ -52,7 +50,7 @@ describe('DiagramComponent', () => {
     component.data = diagramData
     component.sumKey = definedSumKey
     translateService = TestBed.inject(TranslateService)
-    translateService.setDefaultLang('en')
+    translateService.setFallbackLang('en')
     translateService.use('en')
   })
 

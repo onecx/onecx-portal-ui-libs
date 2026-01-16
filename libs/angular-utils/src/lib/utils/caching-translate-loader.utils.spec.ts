@@ -1,5 +1,6 @@
 import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
+import { Injector } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { of } from 'rxjs'
 import { TranslationCacheService } from '../services/translation-cache.service'
@@ -8,6 +9,7 @@ import { CachingTranslateLoader } from './caching-translate-loader.utils'
 describe('CachingTranslateLoader', () => {
   let http: HttpClient
   let translationCache: TranslationCacheService
+  let injector: Injector
   beforeEach(async () => {
     await TestBed.configureTestingModule({
     declarations: [],
@@ -16,11 +18,12 @@ describe('CachingTranslateLoader', () => {
 }).compileComponents()
     http = TestBed.inject(HttpClient)
     translationCache = TestBed.inject(TranslationCacheService)
+    injector = TestBed.inject(Injector)
     window['onecxTranslations'] = {}
   })
 
   it('should get translations', (done) => {
-    const translateLoader = new CachingTranslateLoader(translationCache, http, `./assets/i18n/`, '.json')
+    const translateLoader = new CachingTranslateLoader(translationCache, injector, `./assets/i18n/`, '.json')
     const translation = { testKey: 'my translation' }
     http.get = jest.fn().mockReturnValue(of(translation))
     translateLoader.getTranslation('en').subscribe((t) => {
@@ -38,7 +41,7 @@ describe('CachingTranslateLoader', () => {
       return of(translation)
     })
 
-    const translateLoader = new CachingTranslateLoader(translationCache, http, `./assets/i18n/`, '.json')
+    const translateLoader = new CachingTranslateLoader(translationCache, injector, `./assets/i18n/`, '.json')
     translateLoader.getTranslation('en').subscribe((t) => {
       responses.push(t)
       expect(t).toEqual(translation)
@@ -47,7 +50,7 @@ describe('CachingTranslateLoader', () => {
         done()
       }
     })
-    const translateLoader2 = new CachingTranslateLoader(translationCache, http, `./assets/i18n/`, '.json')
+    const translateLoader2 = new CachingTranslateLoader(translationCache, injector, `./assets/i18n/`, '.json')
     translateLoader2.getTranslation('en').subscribe((t) => {
       responses.push(t)
       expect(t).toEqual(translation)

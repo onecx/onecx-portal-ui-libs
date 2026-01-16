@@ -3,8 +3,7 @@ on:
   pull_request:
     branches:
       - 'main'
-      - 'develop'
-      - 'v5'
+      - 'v*'
 jobs:
   build-storybooks:
     runs-on: ubuntu-latest
@@ -17,8 +16,9 @@ jobs:
         run: npm ci
       - name: Build AA Storybook
         run: npx nx run angular-accelerator:build-storybook
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: storybook-dist
-          path: dist/storybook/
+      # Re-add the following code if you wish to deploy Storybooks for PRs (also see necessary changes in storybook-deploy-fork.yml)
+      # - name: Upload build artifacts
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: storybook-dist
+      #     path: dist/storybook/
