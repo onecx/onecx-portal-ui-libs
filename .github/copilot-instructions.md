@@ -8,3 +8,4 @@ When writing tests use the following guidelines:
 - Create use case driven tests
 - Test coverage should be 100% for new code.
 - Group the tests logically with describe blocks (e.g. by tested method) and use descriptive test names.
+- Run the tests first for the file you are working on only. Once they pass, run the full test suite to ensure nothing else is broken.
