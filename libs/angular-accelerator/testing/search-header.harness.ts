@@ -4,7 +4,7 @@ import { PageHeaderHarness } from './page-header.harness'
 import { MoreActionsMenuButtonHarness } from './more-actions-menu-button.harness'
 
 export class SearchHeaderHarness extends ComponentHarness {
-  static hostSelector = 'ocx-search-header'
+  static readonly hostSelector = 'ocx-search-header'
 
   getPageHeader = this.locatorFor(PageHeaderHarness)
   getSearchButton = this.locatorFor(
@@ -27,6 +27,9 @@ export class SearchHeaderHarness extends ComponentHarness {
 
   getMoreActionsMenuButton = this.locatorForOptional(MoreActionsMenuButtonHarness)
 
+  private readonly getBasicContent = this.locatorForOptional('#basic-content')
+  private readonly getAdvancedContent = this.locatorForOptional('#advanced-content')
+
   async clickResetButton() {
     await (await this.getResetButton()).click()
   }
@@ -39,7 +42,33 @@ export class SearchHeaderHarness extends ComponentHarness {
     if (await this.getSimpleAdvancedButton()) {
       await (await this.getSimpleAdvancedButton())?.click()
     } else {
-      console.warn('No SimpleAdvancedButton is being displayed to toggle, because no advanced form field is defined.')
+      // In some tests the toggle button is not rendered (no advanced field defined).
+      // Consumers can fall back to directly setting `viewMode` via `setViewMode`.
+    }
+  }
+
+  async isBasicContentVisible(): Promise<boolean> {
+    return !!(await this.getBasicContent())
+  }
+
+  async isAdvancedContentVisible(): Promise<boolean> {
+    return !!(await this.getAdvancedContent())
+  }
+
+  async setViewMode(mode: 'basic' | 'advanced'): Promise<void> {
+    const toggleButton = await this.getSimpleAdvancedButton()
+
+    if (!toggleButton) {
+      return
+    }
+
+    const desiredAdvancedVisible = mode === 'advanced'
+    for (let i = 0; i < 2; i++) {
+      const isAdvancedVisible = await this.isAdvancedContentVisible()
+      if (isAdvancedVisible === desiredAdvancedVisible) {
+        return
+      }
+      await this.toggleSimpleAdvanced()
     }
   }
 }

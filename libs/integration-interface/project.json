@@ -53,6 +53,7 @@
       ],
       "options": {
         "jestConfig": "libs/integration-interface/jest.config.ts",
+        "codeCoverage": true,
         "passWithNoTests": true
       },
       "configurations": {

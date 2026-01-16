@@ -27,6 +27,7 @@
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "libs/nx-migration-utils/src/lib/migrations/jest.config.ts",
+        "codeCoverage": true,
         "passWithNoTests": true
       },
       "configurations": {
@@ -41,6 +42,7 @@
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "libs/nx-migration-utils/jest.config.ts",
+        "codeCoverage": true,
         "passWithNoTests": true,
         "testPathIgnorePatterns": ["libs/nx-migration-utils/migrations/"]
       },
