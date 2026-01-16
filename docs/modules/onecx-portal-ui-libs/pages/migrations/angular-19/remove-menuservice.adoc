@@ -10,9 +10,9 @@ In OneCX v6, `MenuService` has been removed. Please manage menu state locally or
 * Remove all `menuState$` subscriptions and calls to `onMenuStateChange` or `reset`.
 * Test menu interactions to ensure open/close and data loading logic works as expected.
 
-==== Before and After Example
-
-*Before (using MenuService):*
+**Example**:
+[source, typescript]
+.Before (using MenuService):
 ----
 import { MenuService } from '@onecx/portal-integration-angular';
 constructor(private menuService: MenuService) {}
@@ -31,7 +31,8 @@ ngOnDestroy() {
 }
 ----
 
-*After (local state/parent-child):*
+.After (local state/parent-child):
+[source,typescript]
 ----
 @Input() openKey: string;
 @Output() menuOpened = new EventEmitter<string>();
