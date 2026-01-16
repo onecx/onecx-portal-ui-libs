@@ -458,7 +458,7 @@ $tabviewHeaderHoverBg: rgba($primaryColorLegacyFallback, 0.04);
 $tabviewHeaderHoverBorderColor: transparent;
 $tabviewHeaderTextHoverColor: $textSecondaryColor;
 
-$tabviewHeaderActiveBg: #ffffff;
+$tabviewHeaderActiveBg: rgba($primaryColor, 0.12);
 $tabviewHeaderActiveBorderColor: transparent;
 $tabviewHeaderTextActiveColor: $primaryColor;
 
@@ -671,7 +671,7 @@ $dialogHeaderTextColor: $textColor;
 $dialogHeaderFontWeight: 500;
 $dialogHeaderFontSize: 1.25rem;
 $dialogHeaderPadding: 1.5rem;
-$dialogContentPadding: 0 1.5rem 1.5rem 1.5rem;
+$dialogContentPadding: 0 1.25rem;
 $dialogFooterBorder: 0 none;
 $dialogFooterPadding: 1rem 1.5rem;
 $dialogHeaderIconFocusOutline: $focusOutlineCustom;
@@ -919,6 +919,7 @@ $imagePreviewActionIconBorderRadius: 50% !default;
   --surface-f: #ffffff;
   --text-color-secondary: #{$textSecondaryColor};
   --primary-color-text: #{$primaryTextColor};
+  --primary-color-rgb: 39 75 95;
   --surface-0: #ffffff;
   --surface-50: #fafafa;
   --surface-100: #f5f5f5;
