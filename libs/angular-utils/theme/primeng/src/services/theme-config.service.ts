@@ -32,10 +32,10 @@ export function provideThemeConfigService() {
   providedIn: 'root',
 })
 export class ThemeConfigService {
-  constructor(
-    private themeService: ThemeService,
-    private primeNG: PrimeNG
-  ) {
+  private themeService = inject(ThemeService);
+  private primeNG = inject(PrimeNG);
+
+  constructor() {
     this.themeService.currentTheme$.subscribe((theme) => {
       this.applyThemeVariables(theme)
     })

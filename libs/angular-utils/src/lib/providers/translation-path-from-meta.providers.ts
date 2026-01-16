@@ -1,7 +1,7 @@
-import { Provider } from "@angular/core";
-import { TRANSLATION_PATH } from "../utils/create-translate-loader.utils";
-import { Location } from "@angular/common";
-import { isTest } from "@onecx/accelerator";
+import { Provider } from '@angular/core'
+import { TRANSLATION_PATH } from '../injection-tokens/translation-path'
+import { Location } from '@angular/common'
+import { isTest } from '@onecx/accelerator'
 
 /**
  * Returns a provider for TRANSLATION_PATH based on import.meta.url and a given path.
@@ -10,9 +10,9 @@ import { isTest } from "@onecx/accelerator";
  */
 export function provideTranslationPathFromMeta(url: string | undefined, path = 'assets/i18n/'): Provider {
   if (isTest() && (!url || url.startsWith('file://'))) {
-    return constructTranslationPathInTestEnv(path);
+    return constructTranslationPathInTestEnv(path)
   }
-  return constructTranslationPath(url, path);
+  return constructTranslationPath(url, path)
 }
 
 function constructTranslationPathInTestEnv(path: string): Provider {
@@ -20,18 +20,20 @@ function constructTranslationPathInTestEnv(path: string): Provider {
     provide: TRANSLATION_PATH,
     useValue: path,
     multi: true,
-  };
+  }
 }
 
 function constructTranslationPath(url: string | undefined, path: string): Provider {
-  if(!url || url.startsWith('file://')) {
-    throw new Error('Cannot construct translation path from local file path. Please check whether the webpack configuration for importMeta is correct: https://webpack.js.org/configuration/module/#moduleparserjavascriptimportmeta');
+  if (!url || url.startsWith('file://')) {
+    throw new Error(
+      'Cannot construct translation path from local file path. Please check whether the webpack configuration for importMeta is correct: https://webpack.js.org/configuration/module/#moduleparserjavascriptimportmeta'
+    )
   }
-  const urlWithoutFileName = url.replace(/\/[^/]*$/, '');
-  const translationPath = Location.joinWithSlash(urlWithoutFileName, path) + (path.endsWith('/') ? '' : '/');
+  const urlWithoutFileName = url.replace(/\/[^/]*$/, '')
+  const translationPath = Location.joinWithSlash(urlWithoutFileName, path) + (path.endsWith('/') ? '' : '/')
   return {
     provide: TRANSLATION_PATH,
     useValue: translationPath,
     multi: true,
-  };
+  }
 }

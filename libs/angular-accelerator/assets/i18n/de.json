@@ -1,4 +1,8 @@
 {
+  "OCX_BUTTON_DIALOG": {
+    "CONFIRM": "Bestätigen",
+    "CANCEL": "Abbrechen"
+  },
   "OCX_CUSTOM_GROUP_COLUMN_SELECTOR": {
     "ARIA_LABEL": "Spaltengruppe-Selektor",
     "DROPDOWN_LABEL": "Spaltengruppe",
