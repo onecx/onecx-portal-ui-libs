@@ -1,0 +1,129 @@
+import { Component, ViewChild } from '@angular/core'
+import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { By } from '@angular/platform-browser'
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
+import { HarnessLoader } from '@angular/cdk/testing'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
+import { RouterTestingModule } from '@angular/router/testing'
+
+import { AdvancedDirective } from './advanced.directive'
+import { SearchHeaderComponent } from '../components/search-header/search-header.component'
+import { PageHeaderComponent } from '../components/page-header/page-header.component'
+import { AngularAcceleratorModule } from '../angular-accelerator.module'
+import { SearchHeaderHarness } from '../../../testing/search-header.harness'
+
+@Component({
+  standalone: false,
+  template: `
+    <ocx-search-header>
+      <ng-template ocxAdvanced>
+        <div id="advanced-content">Advanced Content</div>
+      </ng-template>
+    </ocx-search-header>
+  `,
+})
+class HostInsideSearchHeaderComponent {
+  @ViewChild(SearchHeaderComponent)
+  searchHeader!: SearchHeaderComponent
+
+  @ViewChild(AdvancedDirective)
+  directive!: AdvancedDirective
+}
+
+@Component({
+  standalone: false,
+  template: `
+    <ng-template ocxAdvanced>
+      <div id="advanced-content">Advanced Content</div>
+    </ng-template>
+  `,
+})
+class HostOutsideSearchHeaderComponent {
+  @ViewChild(AdvancedDirective)
+  directive!: AdvancedDirective
+}
+
+describe('AdvancedDirective', () => {
+  let loader: HarnessLoader
+
+  describe('when used outside SearchHeaderComponent', () => {
+    it('should throw an error during component creation', async () => {
+      await TestBed.configureTestingModule({
+        declarations: [HostOutsideSearchHeaderComponent, AdvancedDirective],
+      }).compileComponents()
+
+      expect(() => {
+        const fixture = TestBed.createComponent(HostOutsideSearchHeaderComponent)
+        fixture.detectChanges()
+      }).toThrow('Advanced directive can only be used inside search header component')
+    })
+  })
+
+  describe('when used inside SearchHeaderComponent', () => {
+    let fixture: ComponentFixture<HostInsideSearchHeaderComponent>
+    let component: HostInsideSearchHeaderComponent
+
+    beforeEach(async () => {
+      await TestBed.configureTestingModule({
+        declarations: [HostInsideSearchHeaderComponent, SearchHeaderComponent, PageHeaderComponent, AdvancedDirective],
+        imports: [RouterTestingModule, AngularAcceleratorModule],
+        providers: [
+          provideHttpClient(withInterceptorsFromDi()),
+          provideHttpClientTesting(),
+          provideTranslateTestingService({}),
+        ],
+      }).compileComponents()
+
+      fixture = TestBed.createComponent(HostInsideSearchHeaderComponent)
+      component = fixture.componentInstance
+      fixture.detectChanges()
+
+      loader = TestbedHarnessEnvironment.loader(fixture)
+    })
+
+    it('should mark search header as having advanced fields', () => {
+      expect(component.searchHeader.hasAdvanced).toBe(true)
+    })
+
+    it('should not render advanced template when viewMode is basic', async () => {
+      component.searchHeader.viewMode = 'basic'
+      fixture.detectChanges()
+
+      const advancedEl = fixture.debugElement.query(By.css('#advanced-content'))
+      expect(advancedEl).toBeNull()
+
+      // Harness smoke: search header exists.
+      expect(await loader.getHarness(SearchHeaderHarness)).toBeTruthy()
+    })
+
+    it('should render advanced template when viewMode is advanced', () => {
+      component.searchHeader.viewMode = 'advanced'
+      fixture.detectChanges()
+
+      const advancedEl = fixture.debugElement.query(By.css('#advanced-content'))
+      expect(advancedEl).not.toBeNull()
+    })
+
+    it('should clear advanced template when toggling from advanced to basic', () => {
+      component.searchHeader.viewMode = 'advanced'
+      fixture.detectChanges()
+      expect(fixture.debugElement.query(By.css('#advanced-content'))).not.toBeNull()
+
+      component.searchHeader.viewMode = 'basic'
+      fixture.detectChanges()
+      expect(fixture.debugElement.query(By.css('#advanced-content'))).toBeNull()
+    })
+
+    it('should not create a second embedded view when change detection runs again in advanced mode', () => {
+      component.searchHeader.viewMode = 'advanced'
+      fixture.detectChanges()
+
+      fixture.detectChanges()
+      fixture.detectChanges()
+
+      expect(fixture.debugElement.queryAll(By.css('#advanced-content'))).toHaveLength(1)
+    })
+  })
+})
