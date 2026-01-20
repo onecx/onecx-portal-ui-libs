@@ -12,7 +12,7 @@
     "@ngx-translate/core": "^16.0.0",
     "@onecx/integration-interface": "^6.13.1",
     "@onecx/angular-utils": "^6.13.1",
-    "@angular-architects/module-federation": "^18.0.4",
+    "@angular-architects/module-federation": "^18.0.4 || ^19.0.0",
     "rxjs": "^7.8.1",
     "@nx/devkit": "^20.3.0",
     "@onecx/nx-migration-utils": "^6.13.1"
