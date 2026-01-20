@@ -1,12 +1,37 @@
 [#primeng-new-plugin]
-=== Add required plugin to webpack config for PrimeNG
-OneCX version 6 uses PrimeNG 19 and requires Apps to add the following configuration to the `webpack.config.js` file:
+=== Add Webpack Plugin for PrimeNG
 
-* Add `ModifySourcePlugin` and `ReplaceOperation` classes from `modify-source-webpack-plugin`
-* Create a modified PrimeNG plugin with `ModifySourcePlugin` class
-* Export modified PrimeNG plugin in module exports plugins array
+In OneCX version 6 uses PrimeNG 19 and  requires applications to add a Webpack plugin. This change is required after upgrading to Angular 19.
 
-.webpack.config.js
+[NOTE]
+====
+This setup will be replaced by a OneCX-provided Webpack plugin in a future version.
+====
+
+==== Install and Configure the Webpack Plugin
+
+. Install `modify-source-webpack-plugin`
++
+[source,bash]
+----
+npm install modify-source-webpack-plugin --save-dev
+----
+. Import `ModifySourcePlugin` and `ReplaceOperation` from `modify-source-webpack-plugin` in `webpack.config.js`
+. Create a `modifyPrimeNgPlugin` instance with a rules array containing one rule object:
+  * The rule must define a `test` function that returns `true` when `module.resource` exists and the resource path includes `primeng`.
+  * The rule must include an `operations` array with a `ReplaceOperation` configured with:
+    - scope: `all`
+    - match pattern: `document\.createElement\(([^)]+)\)`
+    - replacement: `document.createElementFromPrimeNg({"this": this, "arguments": Array.from(arguments), element: $1})`
+  * The rule must also include a `ReplaceOperation` configured with:
+    - scope: `all`
+    - match pattern: `Theme.setLoadedStyleName`
+    - replacement: `(function(_){})`
+
+. Add the `modifyPrimeNgPlugin` instance to the Webpack `plugins` array.
+
+
+.Example webpack.config.js
 [source,javascript]
 ----
 const { ModifySourcePlugin, ReplaceOperation } = require('modify-source-webpack-plugin')

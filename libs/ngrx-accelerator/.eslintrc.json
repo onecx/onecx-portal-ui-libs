@@ -33,7 +33,9 @@
       "files": ["*.json"],
       "parser": "jsonc-eslint-parser",
       "rules": {
-        "@nx/dependency-checks": "error"
+        "@nx/dependency-checks": ["error", {
+          "ignoredFiles": ["libs/ngrx-accelerator/**/test-setup.ts", "libs/ngrx-accelerator/**/jest.config.ts"]
+        }]
       }
     }
   ]
