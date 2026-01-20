@@ -7,7 +7,7 @@
     "url": "https://github.com/onecx/onecx-portal-ui-libs"
   },
   "peerDependencies": {
-    "@angular-architects/module-federation": "^18.0.4",
+    "@angular-architects/module-federation": "^18.0.4 || ^19.0.0",
     "@angular/common": "^19.0.0",
     "@angular/core": "^19.0.0",
     "@onecx/angular-integration-interface": "^6.13.1",
