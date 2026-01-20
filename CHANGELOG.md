@@ -1,3 +1,13 @@
+## [6.13.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.13.1...v6.13.2) (2026-01-20)
+
+### Bug Fixes
+
+* angular architects dependency ([#1156](https://github.com/onecx/onecx-portal-ui-libs/issues/1156)) ([3874de5](https://github.com/onecx/onecx-portal-ui-libs/commit/3874de54909475e20d31475a48707b113a9254bd))
+
+### Refactoring
+
+* mark keycloak-js as optional and handle potential import errors ([#1019](https://github.com/onecx/onecx-portal-ui-libs/issues/1019)) ([e04731a](https://github.com/onecx/onecx-portal-ui-libs/commit/e04731abeaa43e2c8b23b9b43e2fcf3083c60da7))
+
 ## [6.13.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.13.0...v6.13.1) (2026-01-15)
 
 ### Bug Fixes

@@ -1,6 +1,6 @@
 {
   "name": "@onecx/angular-standalone-shell",
-  "version": "6.13.1",
+  "version": "6.13.2",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -10,12 +10,12 @@
     "@angular/common": "^19.0.0",
     "@angular/core": "^19.0.0",
     "@angular/router": "^19.0.0",
-    "@onecx/angular-integration-interface": "^6.13.1",
-    "@onecx/angular-webcomponents": "^6.13.1",
-    "@onecx/angular-utils": "^6.13.1",
-    "@onecx/integration-interface": "^6.13.1",
-    "@onecx/angular-auth": "^6.13.1",
-    "@onecx/nx-migration-utils": "^6.13.1",
+    "@onecx/angular-integration-interface": "^6.13.2",
+    "@onecx/angular-webcomponents": "^6.13.2",
+    "@onecx/angular-utils": "^6.13.2",
+    "@onecx/integration-interface": "^6.13.2",
+    "@onecx/angular-auth": "^6.13.2",
+    "@onecx/nx-migration-utils": "^6.13.2",
     "@nx/devkit": "^20.3.0",
     "primeng": "^19.0.0",
     "@ngx-translate/core": "^16.0.0"
