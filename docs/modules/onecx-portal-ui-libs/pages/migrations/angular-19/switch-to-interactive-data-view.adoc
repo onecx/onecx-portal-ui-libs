@@ -1,62 +1,62 @@
 [#switch-to-interactive-data-view]
-==== Replace DataViewControlsComponent with InteractiveDataViewComponent
+=== Replace p-dataView and DataViewControls with InteractiveDataViewComponent
 
-Replace *DataViewControlsComponent* with *InteractiveDataViewComponent* for enhanced data viewing capabilities including sorting, filtering, and layout options.
+Replace **p-dataView** and **ocx-data-view-controls** template with **ocx-interactive-data-view** for enhanced data viewing capabilities including sorting, filtering, and layout options.
 
-**Code changes**
+**Code Changes**
 
-* Remove all usages of `DataViewControlsComponent` from `@onecx/portal-integration-angular`.
-* Replace with `InteractiveDataViewComponent` from `@onecx/angular-accelerator`.
-* Migrate input and output properties as per the mapping tables below.
+* Remove `<p-dataView>` and PrimeNG `DataViewModule` from `primeng/dataview`
+* Remove `<ocx-data-view-controls>` and `DataViewControlsComponent` from `@onecx/portal-integration-angular`.
+* Add `InteractiveDataViewComponent` from `@onecx/angular-accelerator`.
+* Replace the entire `<p-dataView>` block with `<ocx-interactive-data-view>`.
+* Add `<ocx-interactive-data-view>` and update input properties and output events as per tables below.
 
 **Example - Replace ocx-data-view-controls with ocx-interactive-data-view in HTML**
 
 .Before
 [source, html]
 ----
-<ocx-data-view-controls
-  [supportedViews]="['list', 'grid', 'table']"
-  [initialViewMode]="'list'"
-  [filterValue]="filter"
-  [enableFiltering]="true"
-  [enableSorting]="true"
-  [sortingOptions]="sortingOptions"
-  [defaultSortOption]="'name'"
-  [defaultSortDirection]="true"
-  [columnDefinitions]="columns"
-  [columnTemplates]="columnTemplates"
-  [dropdownPlaceholderText]="'Select template...'"
-  [filterColumns]="['name', 'status']"
-  [translations]="translations"
-  (sortChange)="onSortChange($event)"
-  (filterChange)="onFilterChange($event)"
-  (dataViewChange)="onDataViewChange($event)"
-  (sortDirectionChange)="onSortDirectionChange($event)"
-  (columnsChange)="onColumnsChange($event)">
-</ocx-data-view-controls>
+<p-dataView [value]="items" [layout]="'grid'" [paginator]="true" [rows]="20">
+  <ng-template pTemplate="header">
+    <ocx-data-view-controls
+      [supportedViews]="['grid']"
+      [initialViewMode]="'grid'"
+      [filterValue]="filterValue"
+      [enableFiltering]="true"
+      (filterChange)="onFilterChange($event, dataView)"
+      [enableSorting]="false"
+    ></ocx-data-view-controls>
+  </ng-template>
+
+  <ng-template pTemplate="gridItem" let-item>
+    <div class="card">
+      <div>{{ item.name }}</div>
+    </div>
+  </ng-template>
+</p-dataView>
 ----
 
 .After
 [source, html]
 ----
 <ocx-interactive-data-view
-  [supportedViewLayouts]="['list', 'grid', 'table']"
-  [layout]="'list'"
-  [filter]="filter"
-  [clientSideFiltering]="true"
-  [clientSideSorting]="true"
+  [data]="items"
+  [supportedViewLayouts]="['grid']"
+  [layout]="'grid'"
   [columns]="columns"
-  [sortField]="'name'"
-  [sortDirection]="DataSortDirection.ASCENDING"
-  [columnTemplates]="columnTemplates"
-  [filters]="[
-    { columnId: 'name', filterType: 'text' },
-    { columnId: 'status', filterType: 'text' }
-  ]"
-  (sorted)="onSortChange($event)"
+  [filters]="filters"
+  [filter]="filterValue"
+  [clientSideFiltering]="true"
+  [emptyResultsMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
   (filtered)="onFilterChange($event)"
+  (sorted)="onSortChange($event)"
   (dataViewLayoutChange)="onDataViewChange($event)"
-  (displayedColumnKeysChange)="onColumnsChange($event)">
+>
+  <ng-template pTemplate="item" let-item>
+    <div class="card">
+      <div>{{ item.name }}</div>
+    </div>
+  </ng-template>
 </ocx-interactive-data-view>
 ----
 
@@ -64,13 +64,17 @@ Replace *DataViewControlsComponent* with *InteractiveDataViewComponent* for enha
 
 [cols="1,1,2", options="header"]
 |===
-| DataViewControlsComponent
+| DataViewControlsComponent / p-dataView
 | InteractiveDataViewComponent
 | Notes
 
+| [value] (p-dataView)
+| data
+| Example: `[data]="items"`
+
 | supportedViews
 | supportedViewLayouts
-|  Example: `[supportedViewLayouts]="['list', 'grid', 'table']"`
+| Example: `[supportedViewLayouts]="['list', 'grid', 'table']"`
 
 | initialViewMode
 | layout
@@ -78,7 +82,7 @@ Replace *DataViewControlsComponent* with *InteractiveDataViewComponent* for enha
 
 | filterValue
 | filter
-|  Example: `[filter]="filter"`
+| Example: `[filter]="filter"`
 
 | enableFiltering
 | clientSideFiltering
@@ -119,34 +123,42 @@ Replace *DataViewControlsComponent* with *InteractiveDataViewComponent* for enha
 | translations
 | -
 | Please use i18n or translation keys.
+
+| [paginator] (p-dataView)
+| listGridPaginator, tablePaginator
+| Boolean. Set both or use `[paginator]="true"` to enable for all layouts.
+
+| [rows] (p-dataView)
+| pageSize
+| Number of items per page. Example: `[pageSize]="20"`
+
+| [rowsPerPageOptions] (p-dataView)
+| pageSizes
+| Array of page size options. Example: `[pageSizes]="[20, 60, 100]"`
+
+| [alwaysShowPaginator] (p-dataView)
+| -
+| Paginator is always shown when enabled. No direct equivalent.
+
+| [showCurrentPageReport] (p-dataView)
+| -
+| Built-in. Automatically shown when pagination enabled.
+
+| currentPageReportTemplate (p-dataView)
+| currentPageShowingKey
+| Use translation key for page info. Default: `'OCX_DATA_TABLE.SHOWING'`
+
+| [filterBy] (p-dataView)
+| -
+| Use `[clientSideFiltering]="true"` and `[filter]` instead.
+
+| [emptyMessage] (p-dataView)
+| emptyResultsMessage
+| Message displayed when no data is available.
 |===
 
-**Output events**
+**Example - Replace ocx-data-view-controls with ocx-interactive-data-view in TypeScript**
 
-[cols="1,1,2", options="header"]
-|===
-| DataViewControlsComponent
-| InteractiveDataViewComponent
-| Notes
-
-| sortChange, sortDirectionChange
-| sorted
-| Emits `{ sortColumn, sortDirection }` object.
-
-| filterChange
-| filtered
-| Emits array of filter objects.
-
-| dataViewChange
-| dataViewLayoutChange
-| Emits `'list'`, `'grid'`, or `'table'`.
-
-| columnsChange
-| displayedColumnKeysChange
-| Emits string[] (array of column ids).
-|===
-
-**Example - Replace ocx-data-view-controls with ocx-interactive-data-view in Typescript**
 .Before
 [source, typescript]
 ----
@@ -176,7 +188,7 @@ onColumnsChange(activeColumns: string[]) { /* handle columns */ }
 .After
 [source, typescript]
 ----
-import { DataSortDirection } from '@onecx/portal-ui-libs/interactive-date-view';
+import { DataSortDirection } from '@onecx/angular-accelerator';
 
 filter = '';
 columns = [
@@ -199,31 +211,55 @@ onColumnsChange(activeColumnIds: string[]) {
 }
 ----
 
-**Event Payloads**
+**Output events**
 
-[cols="1,2", options="header"]
+[cols="1,1,2", options="header"]
 |===
-| Event
-| Payload
+| DataViewControlsComponent
+| InteractiveDataViewComponent
+| Notes
 
+| sortChange, sortDirectionChange
 | sorted
-| { sortColumn: string, sortDirection: DataSortDirection }
+| Emits `{ sortColumn, sortDirection }` object.
 
+| filterChange
 | filtered
-| Array of filter objects
+| Emits array of filter objects.
 
+| dataViewChange
 | dataViewLayoutChange
-| 'list' | 'grid' | 'table'
+| Emits `'list'`, `'grid'`, or `'table'`.
 
+| columnsChange
 | displayedColumnKeysChange
-| string[] (array of column ids)
+| Emits string[] (array of column ids).
 |===
 
-[NOTE]
-====
-*InteractiveDataViewComponent* supports advanced data viewing with sorting, filtering, and flexible layouts.  
+**Template Transformation**
 
-- `dropdownPlaceholderText` and `translations` are deprecated. Please use Angular i18n for placeholders and labels.
-- If you use `columnTemplates`, ensure they are compatible with the new component and use `ng-template` as needed.
-- The `filters` input now expects an array of filter objects, not just column names.
-====
+[cols="1,1,2", options="header"]
+|===
+| p-dataView
+| InteractiveDataViewComponent
+| Notes
+
+| `pTemplate="header"`
+| `pTemplate="topCenter"`
+| Keep header template for custom content. Remove only `ocx-data-view-controls` from inside it.
+
+| `pTemplate="gridItem"`
+| `pTemplate="item"`
+| Use `let-item let-i="index"`
+
+| `pTemplate="listItem"`
+| `pTemplate="item"`
+| Style by layout class if needed.
+|===
+
+**Additional Points**
+
+* **Pagination**: Built-in with automatic current page display. Configure via `[pageSize]` and `[pageSizes]`.
+* **Event Handling**: Use `$event.stopPropagation()` on nested action buttons to prevent unintended row selection.
+* **Filtering**: Client-side filtering via `[clientSideFiltering]="true"` with `[filter]` binding replaces p-dataView's `[filterBy]`.
+* **Translations**: Use i18n or translation keys instead of `translations` input.
