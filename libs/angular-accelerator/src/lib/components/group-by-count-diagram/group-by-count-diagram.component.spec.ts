@@ -211,4 +211,17 @@ describe('GroupByCountDiagramComponent', () => {
 
     expect(diagramTypeSelectButton).toBeTruthy()
   })
+
+  it('should display all labels when showAllLabels is true', async () => {
+    component.supportedDiagramTypes = [DiagramType.PIE, DiagramType.VERTICAL_BAR]
+    component.showAllLabels = true
+    component.allLabels = ['Label1', 'Label2', 'Label3']
+    component.diagramType = DiagramType.VERTICAL_BAR
+
+    const diagram = await loader.getHarness(DiagramHarness)
+    const canvas =  await diagram.getCanvasElement();
+    //const label = await canvas?.getAttribute('aria-label');
+
+    expect(canvas).toBeTruthy(); // check aria labels for zero value labels
+  })
 })

@@ -79,7 +79,7 @@ const mockData = [
     id: 5,
     fruitType: 'Banana',
     name: 'Banana2',
-  },
+  }
 ]
 
 export const PieChart = {
@@ -171,5 +171,21 @@ export const WithForcedCustomColors = {
       ['Apple']: 'green',
     },
     fillMissingColors: true,
+  },
+}
+
+export const withDisplayLabels = {
+  render: Template,
+  args: {
+    diagramType: DiagramType.VERTICAL_BAR,
+    data: mockData,
+    sumKey: 'With Display Labels',
+    column: {
+      id: 'fruitType',
+      type: ColumnType.STRING,
+    },
+    fillMissingColors: false,
+    showAllLabels: true,
+    allLabels: ['Apple', 'Banana', 'Orange']
   },
 }

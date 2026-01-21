@@ -18,6 +18,10 @@ export class DiagramHarness extends ComponentHarness {
     return await this.locatorForOptional('p-selectbutton[name="diagram-type-select-button"]')()
   }
 
+  async getCanvasElement() {
+    return await this.locatorForOptional('p-chart canvas')()
+  }
+
   async getAllSelectionButtons() {
     return await (await this.locatorFor(PSelectButtonHarness)()).getAllButtons()
   }

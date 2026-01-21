@@ -18,7 +18,8 @@ export interface GroupByCountDiagramComponentState {
 })
 export class GroupByCountDiagramComponent implements OnInit {
   private translateService = inject(TranslateService)
-
+  @Input() allLabels?: string[] = []
+  @Input() showAllLabels = false;
   @Input() sumKey = 'SEARCH.SUMMARY_TITLE'
   @Input() diagramType = DiagramType.PIE
   /**
@@ -79,27 +80,49 @@ export class GroupByCountDiagramComponent implements OnInit {
   @Output() componentStateChanged: EventEmitter<GroupByCountDiagramComponentState> = new EventEmitter()
 
   ngOnInit(): void {
-    this.diagramData$ = combineLatest([this._data$, this._columnField$, this._columnType$, this._colors$]).pipe(
+    this.diagramData$ = combineLatest([
+      this._data$,
+      this._columnField$,
+      this._columnType$,
+      this._colors$,
+    ]).pipe(
       mergeMap(([data, columnField, columnType, colors]) => {
-        const columnData = data.map((d) => ObjectUtils.resolveFieldData(d, columnField))
-        const occurrences = columnData.reduce((acc, current) => {
-          return acc.some((e: { label: any }) => e.label === current)
-            ? (acc.find((e: { label: any }) => e.label === current).value++, acc)
-            : [...acc, { label: current, value: 1, backgroundColor: colors[current.toString()] }]
-        }, [])
+        const columnData = data.map((d) => ObjectUtils.resolveFieldData(d, columnField));
+        let occurrences: DiagramData[] = [];
+
+        if (this.allLabels && this.allLabels.length > 0 && this.showAllLabels) {
+          occurrences = this.allLabels.map((label) => ({
+            label: label,
+            value: 0,
+            backgroundColor: colors[label],
+          }))
+
+          columnData.forEach((current) => {
+          const foundColumn = occurrences.find((e) => e.label === current)
+            if (foundColumn) {
+              foundColumn.value++
+            }
+          })
+        } else {
+          occurrences = columnData.reduce((acc, current) => {
+            return acc.some((e: { label: string }) => e.label === current)
+              ? (acc.find((e: { label: string }) => e.label === current).value++, acc)
+              : [...acc, { label: current, value: 1, backgroundColor: colors[current.toString()] }]
+          }, [])
+        }
+
         if (columnType === ColumnType.TRANSLATION_KEY && occurrences.length > 0) {
-          return this.translateService.get(occurrences.map((o: { label: any }) => o.label)).pipe(
-            map((translations: { [x: string]: any }) =>
-              occurrences.map((o: { label: string; value: any; backgroundColor: string | undefined }) => ({
+          return this.translateService.get(occurrences.map((o) => o.label)).pipe(
+            map((translations) =>
+              occurrences.map((o) => ({
                 label: translations[o.label],
                 value: o.value,
                 backgroundColor: o.backgroundColor,
               }))
             )
           )
-        } else {
-          return of(occurrences)
         }
+        return of(occurrences)
       })
     )
   }
