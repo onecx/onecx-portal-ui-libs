@@ -26,8 +26,9 @@
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "libs/ngrx-integration-interface/jest.config.ts",
-        "passWithNoTests": true,
-        "tsConfig": "libs/ngrx-integration-interface/tsconfig.spec.json"
+        "tsConfig": "libs/ngrx-integration-interface/tsconfig.spec.json",
+        "codeCoverage": true,
+        "passWithNoTests": true
       },
       "configurations": {
         "ci": {

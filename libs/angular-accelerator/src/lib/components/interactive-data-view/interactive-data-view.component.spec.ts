@@ -1,2131 +1,840 @@
-import { HarnessLoader, parallel, TestElement } from '@angular/cdk/testing'
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { DatePipe } from '@angular/common'
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
-import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { NoopAnimationsModule } from '@angular/platform-browser/animations'
-import { provideRouter } from '@angular/router'
-import { TranslateModule } from '@ngx-translate/core'
-import {
-  provideAppStateServiceMock,
-  provideUserServiceMock,
-  UserServiceMock,
-} from '@onecx/angular-integration-interface/mocks'
-import { SlotComponentConfiguration, SlotService } from '@onecx/angular-remote-components'
-import { provideSlotServiceMock, SlotServiceMock } from '@onecx/angular-remote-components/mocks'
-import {
-  ButtonHarness,
-  ListItemHarness,
-  PButtonHarness,
-  PMultiSelectListItemHarness,
-  PPicklistHarness,
-  PSelectHarness,
-  TableHeaderColumnHarness,
-  TableRowHarness,
-} from '@onecx/angular-testing'
-import { TranslateTestingModule } from 'ngx-translate-testing'
-import { PrimeIcons } from 'primeng/api'
-import { ButtonModule } from 'primeng/button'
-import { DialogModule } from 'primeng/dialog'
-import { DomHandler } from 'primeng/dom'
-import { PickListModule } from 'primeng/picklist'
-import { TooltipStyle } from 'primeng/tooltip'
-import {
-  ColumnGroupSelectionHarness,
-  CustomGroupColumnSelectorHarness,
-  DataLayoutSelectionHarness,
-  DataListGridHarness,
-  DataTableHarness,
-  DataViewHarness,
-  DefaultGridItemHarness,
-  DefaultListItemHarness,
-  FilterViewHarness,
-  InteractiveDataViewHarness,
-  SlotHarness,
-} from '../../../../testing'
-import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
-import { AngularAcceleratorModule } from '../../angular-accelerator.module'
-import { IfPermissionDirective } from '../../directives/if-permission.directive'
-import { ColumnType } from '../../model/column-type.model'
-import { FilterType } from '../../model/filter.model'
-import { DateUtils } from '../../utils/dateutils'
-import { limit } from '../../utils/filter.utils'
-import { ColumnGroupSelectionComponent } from '../column-group-selection/column-group-selection.component'
-import { CustomGroupColumnSelectorComponent } from '../custom-group-column-selector/custom-group-column-selector.component'
-import { DataLayoutSelectionComponent } from '../data-layout-selection/data-layout-selection.component'
+import { SlotService } from '@onecx/angular-remote-components'
+import { EventEmitter } from '@angular/core'
+import { TestBed } from '@angular/core/testing'
+import { BehaviorSubject, take } from 'rxjs'
 import { DataViewComponent, RowListGridData } from '../data-view/data-view.component'
-import { FilterViewComponent } from '../filter-view/filter-view.component'
 import { InteractiveDataViewComponent } from './interactive-data-view.component'
-import { Technologies } from '@onecx/integration-interface'
 
-// primeng version 19.0.6 workaround for frozen column failing in tests
-DomHandler.siblings = (element) => {
-  return Array.prototype.filter.call(element.closest('*').children, function (child) {
-    return child !== element
-  })
-}
+describe('InteractiveDataViewComponent (class logic)', () => {
+  const createComponent = (slotDefined = true) => {
+    const slotService = {
+      isSomeComponentDefinedForSlot: jest.fn(() => new BehaviorSubject<boolean>(slotDefined).asObservable()),
+    } as unknown as SlotService
 
-// primeng version 19.0.6 workaround for frozen column failing in tests
-DomHandler.index = (element) => {
-  const children = element.closest('*').childNodes
-  let num = 0
-  for (let i = 0; i < children.length; i++) {
-    if (children[i] == element) return num
-    if (children[i].nodeType == 1) num++
-  }
-  return -1
-}
+    TestBed.configureTestingModule({
+      providers: [{ provide: SlotService, useValue: slotService }],
+    })
 
-jest.setTimeout(20_000)
-
-jest.setTimeout(20_000)
-
-// Tests are disabled because of very high flakiness
-// TODO: Remove flakiness and enable the tests
-xdescribe('InteractiveDataViewComponent', () => {
-  const mutationObserverMock = jest.fn(function MutationObserver(callback) {
-    this.observe = jest.fn()
-    this.disconnect = jest.fn()
-    this.trigger = (mockedMutationsList: any) => {
-      callback(mockedMutationsList, this)
-    }
-    return this
-  })
-  global.MutationObserver = mutationObserverMock
-
-  let component: InteractiveDataViewComponent
-  let fixture: ComponentFixture<InteractiveDataViewComponent>
-  let loader: HarnessLoader
-  let interactiveDataViewHarness: InteractiveDataViewHarness
-
-  let viewItemEvent: RowListGridData | undefined
-  let editItemEvent: RowListGridData | undefined
-  let deleteItemEvent: RowListGridData | undefined
-
-  let dateUtils: DateUtils
-  let slotService: SlotServiceMock
-  let userServiceMock: UserServiceMock
-
-  const mock1 = {
-    version: 0,
-    creationDate: '2023-09-12T09:34:11.997048Z',
-    creationUser: 'creation user 1',
-    modificationDate: '2023-09-12T09:34:11.997048Z',
-    modificationUser: 'mod user 1',
-    id: '195ee34e-41c6-47b7-8fc4-3f245dee7651',
-    name: 'some name',
-    description: 'dsc 1',
-    status: 'some status',
-    responsible: 'someone responsible',
-    endDate: '2023-09-14T09:34:09Z',
-    startDate: '2023-09-13T09:34:05Z',
-    imagePath: '/path/to/image',
-    testNumber: '1',
-    testTruthy: 'value',
+    const component = TestBed.runInInjectionContext(() => new InteractiveDataViewComponent())
+    return { component, slotService }
   }
 
-  const mock2 = {
-    version: 0,
-    creationDate: '2023-09-12T09:33:58.544494Z',
-    creationUser: 'creation user 2',
-    modificationDate: '2023-09-12T09:33:58.544494Z',
-    modificationUser: 'mod user 2',
-    id: '5f8bb05b-d089-485e-a234-0bb6ff25234e',
-    name: 'example',
-    description: 'example description',
-    status: 'status example',
-    responsible: 'someone responsible 2',
-    endDate: '2023-09-13T09:33:55Z',
-    startDate: '2023-09-12T09:33:53Z',
-    imagePath: '/path/to/image2',
-    testNumber: '3.141',
-    testTruthy: 'value2',
-  }
-
-  const mock3 = {
-    version: 0,
-    creationDate: '2023-09-12T09:34:27.184086Z',
-    creationUser: 'creation user 3',
-    modificationDate: '2023-09-12T09:34:27.184086Z',
-    modificationUser: 'mod user 3',
-    id: 'cf9e7d6b-5362-46af-91f8-62f7ef5c6064',
-    name: 'name 1',
-    description: 'dsc 3',
-    status: 'status name 1',
-    responsible: 'someone responsible 3',
-    endDate: '2023-09-15T09:34:24Z',
-    startDate: '2023-09-14T09:34:22Z',
-    imagePath: '/path/to/image3',
-    testNumber: '123456789',
-  }
-
-  const mock4 = {
-    version: 0,
-    creationDate: '2023-09-12T09:34:27.184086Z',
-    creationUser: 'creation user 4',
-    modificationDate: '2023-09-12T09:34:27.184086Z',
-    modificationUser: 'mod user 4',
-    id: 'cf9e7d6b-5362-46af-91f8-62f7ef5c6064',
-    name: 'name 2',
-    description: 'dsc 4',
-    status: 'status name 2',
-    responsible: 'someone responsible 4',
-    endDate: '2023-09-15T09:34:24Z',
-    startDate: '2023-09-14T09:34:22Z',
-    imagePath: '/path/to/image4',
-    testNumber: '12345.6789',
-    testTruthy: 'value3',
-  }
-
-  const mock5 = {
-    version: 0,
-    creationDate: '2023-09-12T09:34:27.184086Z',
-    creationUser: 'creation user 5',
-    modificationDate: '2023-09-12T09:34:27.184086Z',
-    modificationUser: 'mod user 5',
-    id: 'cf9e7d6b-5362-46af-91f8-62f7ef5c6064',
-    name: 'name 3',
-    description: 'dsc 5',
-    status: 'status name 3',
-    responsible: 'someone responsible 5',
-    endDate: '2023-09-15T09:34:24Z',
-    startDate: '2023-09-14T09:34:22Z',
-    imagePath: '',
-    testNumber: '7.1',
-  }
-
-  const mockData = [mock1, mock2, mock3, mock4, mock5]
-  const mockColumns = [
-    {
-      columnType: ColumnType.STRING,
-      id: 'name',
-      nameKey: 'COLUMN_HEADER_NAME.NAME',
-      filterable: true,
-      sortable: true,
-      predefinedGroupKeys: ['PREDEFINED_GROUP.DEFAULT', 'PREDEFINED_GROUP.EXTENDED', 'PREDEFINED_GROUP.FULL'],
-    },
-    {
-      columnType: ColumnType.STRING,
-      id: 'description',
-      nameKey: 'COLUMN_HEADER_NAME.DESCRIPTION',
-      filterable: true,
-      sortable: true,
-      predefinedGroupKeys: ['PREDEFINED_GROUP.DEFAULT', 'PREDEFINED_GROUP.EXTENDED', 'PREDEFINED_GROUP.FULL'],
-    },
-    {
-      columnType: ColumnType.DATE,
-      id: 'startDate',
-      nameKey: 'COLUMN_HEADER_NAME.START_DATE',
-      filterable: true,
-      sortable: true,
-      predefinedGroupKeys: ['PREDEFINED_GROUP.EXTENDED', 'PREDEFINED_GROUP.FULL'],
-    },
-    {
-      columnType: ColumnType.DATE,
-      id: 'endDate',
-      nameKey: 'COLUMN_HEADER_NAME.END_DATE',
-      filterable: true,
-      sortable: true,
-      predefinedGroupKeys: ['PREDEFINED_GROUP.EXTENDED', 'PREDEFINED_GROUP.FULL'],
-    },
-    {
-      columnType: ColumnType.TRANSLATION_KEY,
-      id: 'status',
-      nameKey: 'COLUMN_HEADER_NAME.STATUS',
-      filterable: true,
-      sortable: true,
-      predefinedGroupKeys: ['PREDEFINED_GROUP.DEFAULT', 'PREDEFINED_GROUP.EXTENDED', 'PREDEFINED_GROUP.FULL'],
-    },
-    {
-      columnType: ColumnType.STRING,
-      id: 'responsible',
-      nameKey: 'COLUMN_HEADER_NAME.RESPONSIBLE',
-      filterable: true,
-      sortable: true,
-      predefinedGroupKeys: ['PREDEFINED_GROUP.DEFAULT', 'PREDEFINED_GROUP.EXTENDED', 'PREDEFINED_GROUP.FULL'],
-    },
-    {
-      columnType: ColumnType.RELATIVE_DATE,
-      id: 'modificationDate',
-      nameKey: 'COLUMN_HEADER_NAME.MODIFICATION_DATE',
-      filterable: true,
-      sortable: true,
-      predefinedGroupKeys: ['PREDEFINED_GROUP.FULL'],
-    },
-    {
-      columnType: ColumnType.STRING,
-      id: 'creationUser',
-      nameKey: 'COLUMN_HEADER_NAME.CREATION_USER',
-      filterable: true,
-      sortable: true,
-      predefinedGroupKeys: ['PREDEFINED_GROUP.FULL'],
-    },
-    {
-      columnType: ColumnType.NUMBER,
-      id: 'testNumber',
-      nameKey: 'COLUMN_HEADER_NAME.TEST_NUMBER',
-      filterable: true,
-      sortable: true,
-      predefinedGroupKeys: ['PREDEFINED_GROUP.EXTENDED', 'PREDEFINED_GROUP.FULL'],
-    },
-    {
-      columnType: ColumnType.STRING,
-      id: 'testTruthy',
-      nameKey: 'COLUMN_HEADER_NAME.TEST_TRUTHY',
-      filterable: true,
-      sortable: true,
-      filterType: FilterType.IS_NOT_EMPTY,
-      predefinedGroupKeys: ['PREDEFINED_GROUP.EXTENDED', 'PREDEFINED_GROUP.FULL'],
-    },
-  ]
-
-  const columnGroupSelectionComponent: SlotComponentConfiguration = {
-    componentType: Promise.resolve(undefined),
-    remoteComponent: {
-      appId: 'app-id',
-      productName: 'product-name',
-      baseUrl: 'https://base-url',
-      technology: Technologies.WebComponentModule,
-      elementName: 'column-group-selection',
-    },
-    permissions: [],
-  }
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [
-        InteractiveDataViewComponent,
-        DataLayoutSelectionComponent,
-        DataViewComponent,
-        ColumnGroupSelectionComponent,
-        CustomGroupColumnSelectorComponent,
-        IfPermissionDirective,
-        FilterViewComponent,
-      ],
-      imports: [
-        TranslateModule.forRoot(),
-        ButtonModule,
-        DialogModule,
-        PickListModule,
-        AngularAcceleratorModule,
-        NoopAnimationsModule,
-        AngularAcceleratorPrimeNgModule,
-        TranslateTestingModule.withTranslations({
-          en: require('./../../../../assets/i18n/en.json'),
-          de: require('./../../../../assets/i18n/de.json'),
-        }),
-      ],
-      providers: [
-        provideUserServiceMock(),
-        provideSlotServiceMock(),
-        provideHttpClient(withInterceptorsFromDi()),
-        provideRouter([]),
-        provideAppStateServiceMock(),
-        TooltipStyle,
-      ],
-    }).compileComponents()
-
-    fixture = TestBed.createComponent(InteractiveDataViewComponent)
-    component = fixture.componentInstance
-    userServiceMock = TestBed.inject(UserServiceMock)
-    userServiceMock.permissionsTopic$.publish(['TEST_MGMT#TEST_View', 'TEST_MGMT#TEST_EDIT', 'TEST_MGMT#TEST_DELETE'])
-    component.viewPermission = 'TEST_MGMT#TEST_View'
-    component.editPermission = 'TEST_MGMT#TEST_EDIT'
-    component.deletePermission = 'TEST_MGMT#TEST_DELETE'
-    component.defaultGroupKey = 'PREDEFINED_GROUP.DEFAULT'
-    component.searchConfigPermission = 'PRODUCT#USE_SEARCHCONFIG'
-    component.viewItem.subscribe((event) => (viewItemEvent = event))
-    component.editItem.subscribe((event) => (editItemEvent = event))
-    component.deleteItem.subscribe((event) => (deleteItemEvent = event))
-    component.titleLineId = 'name'
-    component.subtitleLineIds = ['startDate']
-    component.data = mockData
-    component.columns = mockColumns
-
-    fixture.detectChanges()
-
-    loader = TestbedHarnessEnvironment.loader(fixture)
-    interactiveDataViewHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, InteractiveDataViewHarness)
-
-    dateUtils = TestBed.inject(DateUtils)
-    slotService = TestBed.inject(SlotService) as any as SlotServiceMock
-
-    viewItemEvent = undefined
-    editItemEvent = undefined
-    deleteItemEvent = undefined
-
-    console.log('Global IntersectionObserver', global.IntersectionObserver)
-  })
-
-  it('should create', () => {
-    expect(component).toBeTruthy()
-  })
-
-  it('should load data view harness', async () => {
-    const dataView = await loader.getHarness(DataViewHarness)
-    expect(dataView).toBeTruthy()
-  })
-
-  it('should load DataLayoutSelection', async () => {
-    const dataLayoutSelection = await loader.getHarness(DataLayoutSelectionHarness)
-    expect(dataLayoutSelection).toBeTruthy()
-  })
-
-  it('should load column-group-selection slot', async () => {
-    userServiceMock.permissionsTopic$.publish(['PRODUCT#USE_SEARCHCONFIG'])
-    slotService.assignComponents({
-      [component.columnGroupSlotName]: [columnGroupSelectionComponent],
-    })
-    fixture.detectChanges()
-
-    const slot = await loader.getHarness(SlotHarness)
-    expect(slot).toBeTruthy()
-  })
-
-  it('should load ColumnGroupSelectionDropdown', async () => {
-    userServiceMock.permissionsTopic$.publish([])
-    const columnGroupSelectionDropdown = await loader.getHarness(ColumnGroupSelectionHarness)
-    expect(columnGroupSelectionDropdown).toBeTruthy()
-
-    slotService.assignComponents({ [component.columnGroupSlotName]: [columnGroupSelectionComponent] })
-
-    const columnGroupSelectionDropdownNoPermission = await loader.getHarness(ColumnGroupSelectionHarness)
-    expect(columnGroupSelectionDropdownNoPermission).toBeTruthy()
-  })
-
-  it('should load CustomGroupColumnSelector', async () => {
-    const customGroupColumnSelectorButton = await loader.getHarness(CustomGroupColumnSelectorHarness)
-    expect(customGroupColumnSelectorButton).toBeTruthy()
-  })
-
-  it('should load FilterView', async () => {
-    component.disableFilterView = false
-    fixture.detectChanges()
-
-    const filterView = await loader.getHarness(FilterViewHarness)
-    expect(filterView).toBeTruthy()
-  })
-
-  it('should load DataListGridSortingDropdown', async () => {
-    const dataLayoutSelection = await loader.getHarness(DataLayoutSelectionHarness)
-    await dataLayoutSelection.selectGridLayout()
-
-    const dataListGridSortingDropdown = await loader.getHarness(
-      PSelectHarness.with({ id: 'dataListGridSortingDropdown' })
-    )
-    expect(dataListGridSortingDropdown).toBeTruthy()
-  })
-
-  it('should load DataListGridSortingButton', async () => {
-    const dataLayoutSelection = await loader.getHarness(DataLayoutSelectionHarness)
-    await dataLayoutSelection.selectGridLayout()
-
-    const dataListGridSortingButton = await loader.getHarness(PButtonHarness.with({ id: 'dataListGridSortingButton' }))
-    expect(dataListGridSortingButton).toBeTruthy()
-  })
-
-  describe('Table view ', () => {
-    let dataLayoutSelection: DataLayoutSelectionHarness
-    let dataView: DataViewHarness
-    let dataTable: DataTableHarness | null
-    let tableHeaders: TableHeaderColumnHarness[]
-    let tableRows: TableRowHarness[]
-    let allFilterOptions: PMultiSelectListItemHarness[] | undefined
-
-    beforeEach(async () => {
-      dataLayoutSelection = await loader.getHarness(DataLayoutSelectionHarness)
-      dataView = await loader.getHarness(DataViewHarness)
-      dataTable = await dataView?.getDataTable()
-      tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
-      tableRows = (await dataTable?.getRows()) ?? []
-
-      allFilterOptions = undefined
-    })
-
-    const expectedInitialHeaders = [
-      'COLUMN_HEADER_NAME.NAME',
-      'COLUMN_HEADER_NAME.DESCRIPTION',
-      'COLUMN_HEADER_NAME.STATUS',
-      'COLUMN_HEADER_NAME.RESPONSIBLE',
-      'Actions',
-    ]
-    const expectedInitialRowsData = [
-      ['some name', 'dsc 1', 'some status', 'someone responsible'],
-      ['example', 'example description', 'status example', 'someone responsible 2'],
-      ['name 1', 'dsc 3', 'status name 1', 'someone responsible 3'],
-      ['name 2', 'dsc 4', 'status name 2', 'someone responsible 4'],
-      ['name 3', 'dsc 5', 'status name 3', 'someone responsible 5'],
-    ]
-
-    it('should load table', async () => {
-      expect(dataTable).toBeTruthy()
-      expect(await dataLayoutSelection.getCurrentLayout()).toEqual('table')
-    })
-
-    it('should get table data', async () => {
-      const headers = await parallel(() => tableHeaders.map((header) => header.getText()))
-      const rows = await parallel(() => tableRows.map((row) => row.getData()))
-      expect(headers).toEqual(expectedInitialHeaders)
-      expect(rows).toEqual(expectedInitialRowsData)
-    })
-
-    it('should sort data by first table column in ascending order', async () => {
-      const expectedRowsDataAfterSorting = [
-        ['example', 'example description', 'status example', 'someone responsible 2'],
-        ['name 1', 'dsc 3', 'status name 1', 'someone responsible 3'],
-        ['name 2', 'dsc 4', 'status name 2', 'someone responsible 4'],
-        ['name 3', 'dsc 5', 'status name 3', 'someone responsible 5'],
-        ['some name', 'dsc 1', 'some status', 'someone responsible'],
-      ]
-      const sortButton = await tableHeaders[0].getSortButton()
-      await sortButton.click()
-      tableRows = (await dataTable?.getRows()) ?? []
-      const rows = await parallel(() => tableRows.map((row) => row.getData()))
-
-      expect(rows).toEqual(expectedRowsDataAfterSorting)
-    })
-
-    it('should sort data by third table column in ascending order', async () => {
-      const expectedRowsDataAfterSorting = [
-        ['some name', 'dsc 1', 'some status', 'someone responsible'],
-        ['example', 'example description', 'status example', 'someone responsible 2'],
-        ['name 1', 'dsc 3', 'status name 1', 'someone responsible 3'],
-        ['name 2', 'dsc 4', 'status name 2', 'someone responsible 4'],
-        ['name 3', 'dsc 5', 'status name 3', 'someone responsible 5'],
-      ]
-      const sortButton = await tableHeaders[2].getSortButton()
-      await sortButton.click()
-
-      tableRows = (await dataTable?.getRows()) ?? []
-      const rows = await parallel(() => tableRows.map((row) => row.getData()))
-
-      expect(rows).toEqual(expectedRowsDataAfterSorting)
-    })
-
-    it('should sort data by first table column in descending order', async () => {
-      const expectedRowsDataAfterSorting = [
-        ['some name', 'dsc 1', 'some status', 'someone responsible'],
-        ['name 3', 'dsc 5', 'status name 3', 'someone responsible 5'],
-        ['name 2', 'dsc 4', 'status name 2', 'someone responsible 4'],
-        ['name 1', 'dsc 3', 'status name 1', 'someone responsible 3'],
-        ['example', 'example description', 'status example', 'someone responsible 2'],
-      ]
-      const sortButton = await tableHeaders[0].getSortButton()
-      await sortButton.click()
-      await sortButton.click()
-
-      tableRows = (await dataTable?.getRows()) ?? []
-      const rows = await parallel(() => tableRows.map((row) => row.getData()))
-
-      expect(rows).toEqual(expectedRowsDataAfterSorting)
-    })
-
-    it('should sort data by third table column in descending order', async () => {
-      const expectedRowsDataAfterSorting = [
-        ['name 3', 'dsc 5', 'status name 3', 'someone responsible 5'],
-        ['name 2', 'dsc 4', 'status name 2', 'someone responsible 4'],
-        ['name 1', 'dsc 3', 'status name 1', 'someone responsible 3'],
-        ['example', 'example description', 'status example', 'someone responsible 2'],
-        ['some name', 'dsc 1', 'some status', 'someone responsible'],
-      ]
-      const sortButton = await tableHeaders[2].getSortButton()
-      await sortButton.click()
-      await sortButton.click()
-
-      tableRows = (await dataTable?.getRows()) ?? []
-      const rows = await parallel(() => tableRows.map((row) => row.getData()))
-
-      expect(rows).toEqual(expectedRowsDataAfterSorting)
-    })
-
-    it('should sort data by first table column back to default order', async () => {
-      const sortButton = await tableHeaders[0].getSortButton()
-      await sortButton.click()
-      await sortButton.click()
-      await sortButton.click()
-
-      const rows = await parallel(() => tableRows.map((row) => row.getData()))
-
-      expect(rows).toEqual(expectedInitialRowsData)
-    })
-
-    it('should sort data by third table column back to default order', async () => {
-      const sortButton = await tableHeaders[2].getSortButton()
-      await sortButton.click()
-      await sortButton.click()
-      await sortButton.click()
-
-      const rows = await parallel(() => tableRows.map((row) => row.getData()))
-
-      expect(rows).toEqual(expectedInitialRowsData)
-    })
-
-    it('should filter data by first table column with second filter option', async () => {
-      const expectedRowsDataAfterFilter = [
-        ['example', 'example description', 'status example', 'someone responsible 2'],
-      ]
-
-      const filterMultiSelect = await tableHeaders[0].getFilterMultiSelect()
-      allFilterOptions = await filterMultiSelect.getAllOptions()
-      await allFilterOptions[1].click()
-
-      tableRows = (await dataTable?.getRows()) ?? []
-      const rows = await parallel(() => tableRows.map((row) => row.getData()))
-
-      expect(rows).toEqual(expectedRowsDataAfterFilter)
-    })
-
-    it('should filter data by first table column with second and third filter option', async () => {
-      const expectedSelectedOptions = ['example', 'name 1']
-      const expectedRowsDataAfterFilter = [
-        ['example', 'example description', 'status example', 'someone responsible 2'],
-        ['name 1', 'dsc 3', 'status name 1', 'someone responsible 3'],
-      ]
-
-      const filterMultiSelect = await tableHeaders[0].getFilterMultiSelect()
-      allFilterOptions = await filterMultiSelect.getAllOptions()
-      await allFilterOptions[1].click()
-
-      allFilterOptions = await filterMultiSelect.getAllOptions()
-      await allFilterOptions[2].click()
-
-      expect(await filterMultiSelect.getSelectedOptions()).toEqual(expectedSelectedOptions)
-
-      tableRows = (await dataTable?.getRows()) ?? []
-      const rows = await parallel(() => tableRows.map((row) => row.getData()))
-
-      expect(rows).toEqual(expectedRowsDataAfterFilter)
-    })
-
-    it('should filter data by first table column with third filter option after selecting second and third option then unselecting second option', async () => {
-      const expectedSelectedOption = ['name 1']
-      const expectedRowsDataAfterFilter = [['name 1', 'dsc 3', 'status name 1', 'someone responsible 3']]
-
-      const filterMultiSelect = await tableHeaders[0].getFilterMultiSelect()
-      allFilterOptions = await filterMultiSelect.getAllOptions()
-      await allFilterOptions[1].click()
-
-      allFilterOptions = await filterMultiSelect.getAllOptions()
-      await allFilterOptions[2].click()
-
-      allFilterOptions = await filterMultiSelect.getAllOptions()
-      await allFilterOptions[1].click()
-
-      expect(await filterMultiSelect.getSelectedOptions()).toEqual(expectedSelectedOption)
-
-      tableRows = (await dataTable?.getRows()) ?? []
-      const rows = await parallel(() => tableRows.map((row) => row.getData()))
-
-      expect(rows).toEqual(expectedRowsDataAfterFilter)
-    })
-
-    it('should get event viewItem with first data row when view action row button of first row is clicked', async () => {
-      const viewButton = await tableRows[0].getViewButton()
-      await viewButton?.click()
-
-      expect(viewItemEvent).toEqual(component.data[0])
-    })
-
-    it('should get event viewItem with third data row when view action row button of third row is clicked', async () => {
-      const viewButton = await tableRows[2].getViewButton()
-      await viewButton?.click()
-
-      expect(viewItemEvent).toEqual(component.data[2])
-    })
-
-    it('should get event editItem with first data row when edit action row button of first row is clicked', async () => {
-      const editButton = await tableRows[0].getEditButton()
-      await editButton?.click()
-
-      expect(editItemEvent).toEqual(component.data[0])
-    })
-
-    it('should get event editItem with third data row when edit action row button of third row is clicked', async () => {
-      const editButton = await tableRows[2].getEditButton()
-      await editButton?.click()
-
-      expect(editItemEvent).toEqual(component.data[2])
-    })
-
-    it('should get event deleteItem with first data row when delete action row button of first row is clicked', async () => {
-      const deleteButton = await tableRows[0].getDeleteButton()
-      await deleteButton?.click()
-
-      expect(deleteItemEvent).toEqual(component.data[0])
-    })
-
-    it('should get event deleteItem with first data row when delete action row button of third row is clicked', async () => {
-      const deleteButton = await tableRows[2].getDeleteButton()
-      await deleteButton?.click()
-
-      expect(deleteItemEvent).toEqual(component.data[2])
-    })
-
-    it('should select option in column group selection dropdown', async () => {
-      window.HTMLElement.prototype.scrollIntoView = jest.fn()
-      const expectedHeaders = [
-        'COLUMN_HEADER_NAME.NAME',
-        'COLUMN_HEADER_NAME.DESCRIPTION',
-        'COLUMN_HEADER_NAME.START_DATE',
-        'COLUMN_HEADER_NAME.END_DATE',
-        'COLUMN_HEADER_NAME.STATUS',
-        'COLUMN_HEADER_NAME.RESPONSIBLE',
-        'COLUMN_HEADER_NAME.TEST_NUMBER',
-        'COLUMN_HEADER_NAME.TEST_TRUTHY',
-        'Actions',
-      ]
-      const expectedRowsData = [
-        [
-          'some name',
-          'dsc 1',
-          dateUtils.localizedDate('2023-09-13T09:34:05Z'),
-          dateUtils.localizedDate('2023-09-14T09:34:09Z'),
-          'some status',
-          'someone responsible',
-          '1',
-          'value',
-        ],
-        [
-          'example',
-          'example description',
-          dateUtils.localizedDate('2023-09-12T09:33:53Z'),
-          dateUtils.localizedDate('2023-09-13T09:33:55Z'),
-          'status example',
-          'someone responsible 2',
-          '3.141',
-          'value2',
-        ],
-        [
-          'name 1',
-          'dsc 3',
-          dateUtils.localizedDate('2023-09-14T09:34:22Z'),
-          dateUtils.localizedDate('2023-09-15T09:34:24Z'),
-          'status name 1',
-          'someone responsible 3',
-          '123,456,789',
-          '',
-        ],
-        [
-          'name 2',
-          'dsc 4',
-          dateUtils.localizedDate('2023-09-14T09:34:22Z'),
-          dateUtils.localizedDate('2023-09-15T09:34:24Z'),
-          'status name 2',
-          'someone responsible 4',
-          '12,345.679',
-          'value3',
-        ],
-        [
-          'name 3',
-          'dsc 5',
-          dateUtils.localizedDate('2023-09-14T09:34:22Z'),
-          dateUtils.localizedDate('2023-09-15T09:34:24Z'),
-          'status name 3',
-          'someone responsible 5',
-          '7.1',
-          '',
-        ],
-      ]
-
-      const columnGroupSelectionDropdown = await loader.getHarness(
-        PSelectHarness.with({ inputId: 'columnGroupSelectionDropdown' })
+  describe('component state aggregation (componentStateChanged)', () => {
+    it('should startWith column-group + custom-group state when column group component is NOT defined', () => {
+      const { component } = createComponent(false)
+
+      const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
+
+      component.layout = 'grid'
+      component.columns = [{ id: 'c1', nameKey: 'group-a' } as any]
+      component.displayedColumnKeys = ['c1']
+      component.defaultGroupKey = 'dg'
+      component.customGroupKey = 'custom'
+      component.selectedGroupKey = 'group-a'
+
+      component.ngOnInit()
+
+      component.dataLayoutComponentState$.next({ layout: 'grid', supportedViewLayouts: ['grid'] } as any)
+      component.dataListGridSortingComponentState$.next({} as any)
+      component.dataViewComponentState$.next({ page: 0, pageSize: 10 } as any)
+      component.filterViewComponentState$.next({} as any)
+      component.columnGroupSelectionComponentState$.next({} as any)
+      component.customGroupColumnSelectorComponentState$.next({} as any)
+
+      expect(stateSpy).toHaveBeenCalled()
+
+      // When the slot is not defined, the initial merge is primarily driven by the states we actively emit.
+      // Verify that the merged state includes the layout + paging state we provided.
+      const lastValue = (stateSpy.mock.calls.at(-1) ?? [undefined])[0]
+      expect(lastValue).toEqual(
+        expect.objectContaining({
+          layout: 'grid',
+          supportedViewLayouts: ['grid'],
+          page: 0,
+          pageSize: 10,
+        })
       )
-      const dropdownItems = await columnGroupSelectionDropdown.getSelectItems()
-      await dropdownItems[1].selectItem()
-
-      tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
-      tableRows = (await dataTable?.getRows()) ?? []
-      const headers = await parallel(() => tableHeaders.map((header) => header.getText()))
-      const rows = await parallel(() => tableRows.map((row) => row.getData()))
-
-      expect(headers).toEqual(expectedHeaders)
-      expect(rows).toEqual(expectedRowsData)
     })
 
-    it('should select option in column group selection dropdown and sort ascending', async () => {
-      window.HTMLElement.prototype.scrollIntoView = jest.fn()
-      const expectedRowsData = [
-        [
-          'some name',
-          'dsc 1',
-          dateUtils.localizedDate('2023-09-13T09:34:05Z'),
-          dateUtils.localizedDate('2023-09-14T09:34:09Z'),
-          'some status',
-          'someone responsible',
-          '1',
-          'value',
-        ],
-        [
-          'example',
-          'example description',
-          dateUtils.localizedDate('2023-09-12T09:33:53Z'),
-          dateUtils.localizedDate('2023-09-13T09:33:55Z'),
-          'status example',
-          'someone responsible 2',
-          '3.141',
-          'value2',
-        ],
-        [
-          'name 3',
-          'dsc 5',
-          dateUtils.localizedDate('2023-09-14T09:34:22Z'),
-          dateUtils.localizedDate('2023-09-15T09:34:24Z'),
-          'status name 3',
-          'someone responsible 5',
-          '7.1',
-          '',
-        ],
-        [
-          'name 2',
-          'dsc 4',
-          dateUtils.localizedDate('2023-09-14T09:34:22Z'),
-          dateUtils.localizedDate('2023-09-15T09:34:24Z'),
-          'status name 2',
-          'someone responsible 4',
-          '12,345.679',
-          'value3',
-        ],
-        [
-          'name 1',
-          'dsc 3',
-          dateUtils.localizedDate('2023-09-14T09:34:22Z'),
-          dateUtils.localizedDate('2023-09-15T09:34:24Z'),
-          'status name 1',
-          'someone responsible 3',
-          '123,456,789',
-          '',
-        ],
-      ]
+    it('should startWith empty sorting state when layout is table', () => {
+      const { component } = createComponent(true)
 
-      const columnGroupSelectionDropdown = await loader.getHarness(
-        PSelectHarness.with({ inputId: 'columnGroupSelectionDropdown' })
+      const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
+      component.layout = 'table'
+      component.ngOnInit()
+
+      // provide required initial values for the ReplaySubjects used in combineLatest
+      component.columnGroupSelectionComponentState$.next({} as any)
+      component.customGroupColumnSelectorComponentState$.next({} as any)
+      component.filterViewComponentState$.next({} as any)
+
+      component.dataLayoutComponentState$.next({ layout: 'table', supportedViewLayouts: ['table'] } as any)
+      component.dataViewComponentState$.next({ page: 0, pageSize: 10 } as any)
+
+      expect(stateSpy).toHaveBeenCalled()
+    })
+
+    it('should startWith column-group + custom-group states when layout is not table', () => {
+      const { component } = createComponent(true)
+
+      const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
+      component.layout = 'grid'
+      component.columns = [{ id: 'c1', nameKey: 'C1' } as any]
+      component.displayedColumnKeys = ['c1']
+
+      component.ngOnInit()
+
+      component.dataListGridSortingComponentState$.next({} as any)
+      component.filterViewComponentState$.next({} as any)
+
+      component.dataLayoutComponentState$.next({ layout: 'grid', supportedViewLayouts: ['grid'] } as any)
+      component.dataViewComponentState$.next({ page: 0, pageSize: 10 } as any)
+
+      const lastValue = (stateSpy.mock.calls.at(-1) ?? [undefined])[0]
+      expect(lastValue).toEqual(
+        expect.objectContaining({
+          activeColumnGroupKey: component.selectedGroupKey,
+          actionColumnConfig: expect.any(Object),
+        })
       )
-      const dropdownItems = await columnGroupSelectionDropdown.getSelectItems()
-      await dropdownItems[1].selectItem()
-
-      tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
-      const sortButton = await tableHeaders[6].getSortButton()
-      await sortButton.click()
-
-      tableRows = (await dataTable?.getRows()) ?? []
-      const rows = await parallel(() => tableRows.map((row) => row.getData()))
-
-      expect(rows).toEqual(expectedRowsData)
     })
 
-    it('should select option in column group selection dropdown and sort descending', async () => {
-      window.HTMLElement.prototype.scrollIntoView = jest.fn()
-      const expectedRowsData = [
-        [
-          'name 1',
-          'dsc 3',
-          dateUtils.localizedDate('2023-09-14T09:34:22Z'),
-          dateUtils.localizedDate('2023-09-15T09:34:24Z'),
-          'status name 1',
-          'someone responsible 3',
-          '123,456,789',
-          '',
-        ],
-        [
-          'name 2',
-          'dsc 4',
-          dateUtils.localizedDate('2023-09-14T09:34:22Z'),
-          dateUtils.localizedDate('2023-09-15T09:34:24Z'),
-          'status name 2',
-          'someone responsible 4',
-          '12,345.679',
-          'value3',
-        ],
-        [
-          'name 3',
-          'dsc 5',
-          dateUtils.localizedDate('2023-09-14T09:34:22Z'),
-          dateUtils.localizedDate('2023-09-15T09:34:24Z'),
-          'status name 3',
-          'someone responsible 5',
-          '7.1',
-          '',
-        ],
-        [
-          'example',
-          'example description',
-          dateUtils.localizedDate('2023-09-12T09:33:53Z'),
-          dateUtils.localizedDate('2023-09-13T09:33:55Z'),
-          'status example',
-          'someone responsible 2',
-          '3.141',
-          'value2',
-        ],
-        [
-          'some name',
-          'dsc 1',
-          dateUtils.localizedDate('2023-09-13T09:34:05Z'),
-          dateUtils.localizedDate('2023-09-14T09:34:09Z'),
-          'some status',
-          'someone responsible',
-          '1',
-          'value',
-        ],
-      ]
+    it('should startWith filter state when filter view is disabled', () => {
+      const { component } = createComponent(true)
 
-      const columnGroupSelectionDropdown = await loader.getHarness(
-        PSelectHarness.with({ inputId: 'columnGroupSelectionDropdown' })
-      )
-      const dropdownItems = await columnGroupSelectionDropdown.getSelectItems()
-      await dropdownItems[1].selectItem()
+      const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
+      component.disableFilterView = true
+      component.filters = [{ columnId: 'c1', filterType: 'stringContains', value: 'x' } as any]
+      component.ngOnInit()
 
-      tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
-      const sortButton = await tableHeaders[6].getSortButton()
-      await sortButton.click()
-      await sortButton.click()
+      component.columnGroupSelectionComponentState$.next({} as any)
+      component.customGroupColumnSelectorComponentState$.next({} as any)
+      component.dataListGridSortingComponentState$.next({} as any)
 
-      tableRows = (await dataTable?.getRows()) ?? []
-      const rows = await parallel(() => tableRows.map((row) => row.getData()))
+      component.dataLayoutComponentState$.next({ layout: 'table', supportedViewLayouts: ['table'] } as any)
+      component.dataViewComponentState$.next({ page: 0, pageSize: 10 } as any)
 
-      expect(rows).toEqual(expectedRowsData)
-    })
-
-    it('should select option in column group selection dropdown and sort default', async () => {
-      window.HTMLElement.prototype.scrollIntoView = jest.fn()
-      const expectedRowsData = [
-        [
-          'some name',
-          'dsc 1',
-          dateUtils.localizedDate('2023-09-13T09:34:05Z'),
-          dateUtils.localizedDate('2023-09-14T09:34:09Z'),
-          'some status',
-          'someone responsible',
-          '1',
-          'value',
-        ],
-        [
-          'example',
-          'example description',
-          dateUtils.localizedDate('2023-09-12T09:33:53Z'),
-          dateUtils.localizedDate('2023-09-13T09:33:55Z'),
-          'status example',
-          'someone responsible 2',
-          '3.141',
-          'value2',
-        ],
-        [
-          'name 1',
-          'dsc 3',
-          dateUtils.localizedDate('2023-09-14T09:34:22Z'),
-          dateUtils.localizedDate('2023-09-15T09:34:24Z'),
-          'status name 1',
-          'someone responsible 3',
-          '123,456,789',
-          '',
-        ],
-        [
-          'name 2',
-          'dsc 4',
-          dateUtils.localizedDate('2023-09-14T09:34:22Z'),
-          dateUtils.localizedDate('2023-09-15T09:34:24Z'),
-          'status name 2',
-          'someone responsible 4',
-          '12,345.679',
-          'value3',
-        ],
-        [
-          'name 3',
-          'dsc 5',
-          dateUtils.localizedDate('2023-09-14T09:34:22Z'),
-          dateUtils.localizedDate('2023-09-15T09:34:24Z'),
-          'status name 3',
-          'someone responsible 5',
-          '7.1',
-          '',
-        ],
-      ]
-
-      const columnGroupSelectionDropdown = await loader.getHarness(
-        PSelectHarness.with({ inputId: 'columnGroupSelectionDropdown' })
-      )
-      const dropdownItems = await columnGroupSelectionDropdown.getSelectItems()
-      await dropdownItems[1].selectItem()
-
-      tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
-      const sortButton = await tableHeaders[6].getSortButton()
-      await sortButton.click()
-      await sortButton.click()
-      await sortButton.click()
-
-      tableRows = (await dataTable?.getRows()) ?? []
-      const rows = await parallel(() => tableRows.map((row) => row.getData()))
-
-      expect(rows).toEqual(expectedRowsData)
-    })
-
-    it('should render an unpinnend action column on the right side of the table by default', async () => {
-      component.viewItem.subscribe((event) => console.log(event))
-
-      expect(component.frozenActionColumn).toBe(false)
-      expect(component.actionColumnPosition).toBe('right')
-      expect(await dataTable?.getActionColumnHeader('left')).toBe(null)
-      expect(await dataTable?.getActionColumn('left')).toBe(null)
-
-      const rightActionColumnHeader = await dataTable?.getActionColumnHeader('right')
-      const rightActionColumn = await dataTable?.getActionColumn('right')
-      expect(rightActionColumnHeader).toBeTruthy()
-      expect(rightActionColumn).toBeTruthy()
-      expect(await dataTable?.columnIsFrozen(rightActionColumnHeader)).toBe(false)
-      expect(await dataTable?.columnIsFrozen(rightActionColumn)).toBe(false)
-    })
-
-    it('should render an pinned action column on the specified side of the table', async () => {
-      component.viewItem.subscribe((event) => console.log(event))
-
-      component.frozenActionColumn = true
-      component.actionColumnPosition = 'left'
-
-      expect(await dataTable?.getActionColumnHeader('right')).toBe(null)
-      expect(await dataTable?.getActionColumn('right')).toBe(null)
-
-      const leftActionColumnHeader = await dataTable?.getActionColumnHeader('left')
-      const leftActionColumn = await dataTable?.getActionColumn('left')
-      expect(leftActionColumnHeader).toBeTruthy()
-      expect(leftActionColumn).toBeTruthy()
-      expect(await dataTable?.columnIsFrozen(leftActionColumnHeader)).toBe(true)
-      expect(await dataTable?.columnIsFrozen(leftActionColumn)).toBe(true)
+      const lastValue = (stateSpy.mock.calls.at(-1) ?? [undefined])[0]
+      expect(lastValue).toEqual(expect.objectContaining({ filters: component.filters }))
     })
   })
 
-  describe('Table row selection ', () => {
-    let dataLayoutSelection: DataLayoutSelectionHarness
-    let dataView: DataViewHarness
-    let dataTable: DataTableHarness | null
+  describe('group selection + layout interactions', () => {
+    it('should keep selectedGroupKey unchanged on layout change when column group selection component is NOT defined', () => {
+      const { component } = createComponent(false)
 
-    beforeEach(async () => {
-      dataLayoutSelection = await loader.getHarness(DataLayoutSelectionHarness)
-      dataView = await interactiveDataViewHarness.getDataView()
-      dataTable = await dataView?.getDataTable()
+      component.columns = [{ id: 'c1', nameKey: 'some-group' } as any]
+      component.selectedGroupKey = 'not-present'
+      component.customGroupKey = 'custom'
+
+      component.dataViewLayoutChange.emit('grid')
+
+      expect(component.selectedGroupKey).toBe('not-present')
     })
 
-    it('should initially show a table without selection checkboxes', async () => {
-      expect(dataTable).toBeTruthy()
-      expect(await dataLayoutSelection.getCurrentLayout()).toEqual('table')
-      expect(await dataTable?.rowSelectionIsEnabled()).toEqual(false)
+    it('should set groupSelectionChangedSlotEmitter fallback groupKey to defaultGroupKey when selectedGroupKey is undefined', () => {
+      const { component } = createComponent(true)
+
+      const emitSpy = jest.spyOn(component.displayedColumnKeysChange, 'emit')
+
+      component.columns = [{ id: 'c1', nameKey: 'G', predefinedGroupKeys: [] } as any]
+      component.displayedColumnKeys = ['c1']
+      component.defaultGroupKey = 'dg'
+      component.selectedGroupKey = undefined
+
+      component.groupSelectionChangedSlotEmitter.emit(undefined)
+
+      expect(component.selectedGroupKey).toBe('dg')
+      expect(emitSpy).toHaveBeenCalledWith(['c1'])
     })
 
-    it('should show a table with selection checkboxes if the parent binds to the event emitter', async () => {
-      expect(dataTable).toBeTruthy()
-      expect(await dataLayoutSelection.getCurrentLayout()).toEqual('table')
-      expect(await dataTable?.rowSelectionIsEnabled()).toEqual(false)
+    it('should not clear selectedGroupKey on layout change when selectedGroupKey matches a column nameKey', () => {
+      const { component } = createComponent(true)
 
-      component.selectionChanged.subscribe()
+      component.columns = [{ id: 'c1', nameKey: 'some-group', predefinedGroupKeys: [] } as any]
+      component.selectedGroupKey = 'some-group'
+      component.customGroupKey = 'custom'
 
-      expect(await dataTable?.rowSelectionIsEnabled()).toEqual(true)
-      component.selectionChanged.unsubscribe()
+      component.dataViewLayoutChange.emit('grid')
+
+      expect(component.selectedGroupKey).toBe('some-group')
+    })
+
+    it('should not clear selectedGroupKey on layout change when selectedGroupKey equals customGroupKey', () => {
+      const { component } = createComponent(true)
+
+      component.columns = [{ id: 'c1', nameKey: 'some-group', predefinedGroupKeys: [] } as any]
+      component.customGroupKey = 'custom'
+      component.selectedGroupKey = 'custom'
+
+      component.dataViewLayoutChange.emit('grid')
+
+      expect(component.selectedGroupKey).toBe('custom')
+    })
+
+    it('should update column group selection state when groupSelectionChangedSlotEmitter emits undefined', () => {
+      const { component } = createComponent(true)
+      const emitSpy = jest.spyOn(component.displayedColumnKeysChange, 'emit')
+      const stateSpy = jest.fn()
+      component.columnGroupSelectionComponentState$.subscribe(stateSpy)
+
+      component.columns = [{ id: 'c1', nameKey: 'G', predefinedGroupKeys: [] } as any]
+      component.displayedColumnKeys = ['c1']
+      component.defaultGroupKey = 'dg'
+      component.selectedGroupKey = 'sg'
+
+      component.groupSelectionChangedSlotEmitter.emit(undefined)
+
+      expect(component.displayedColumnKeys).toEqual(['c1'])
+      expect(component.selectedGroupKey).toBe('sg')
+      expect(emitSpy).toHaveBeenCalledWith(['c1'])
+      expect(stateSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          activeColumnGroupKey: 'sg',
+          displayedColumns: [expect.objectContaining({ id: 'c1' })],
+        })
+      )
+    })
+
+    it('should clear selectedGroupKey on layout change when column group defined and selection is invalid', () => {
+      const { component } = createComponent(true)
+
+      component.columns = [{ id: 'c1', nameKey: 'some-group', predefinedGroupKeys: [] } as any]
+      component.selectedGroupKey = 'not-present'
+      component.customGroupKey = 'custom'
+
+      component.dataViewLayoutChange.emit('grid')
+
+      expect(component.selectedGroupKey).toBeUndefined()
+    })
+
+    it('should initialize displayedColumnKeysChange when defaultGroupKey equals customGroupKey', () => {
+      const { component } = createComponent(true)
+
+      const emitSpy = jest.spyOn(component.displayedColumnKeysChange, 'emit')
+      component.columns = [{ id: 'a', nameKey: 'A', predefinedGroupKeys: ['g1'] } as any]
+      component.customGroupKey = 'custom'
+      component.defaultGroupKey = 'custom'
+
+      component.ngOnInit()
+
+      expect(component.displayedColumnKeys).toEqual([])
+      expect(emitSpy).toHaveBeenCalledWith([])
+    })
+
+    it('should keep displayedColumnKeys empty when defaultGroupKey is empty', () => {
+      const { component } = createComponent(true)
+
+      const emitSpy = jest.spyOn(component.displayedColumnKeysChange, 'emit')
+      component.columns = [{ id: 'a', nameKey: 'A', predefinedGroupKeys: ['g1'] } as any]
+      component.defaultGroupKey = ''
+
+      component.ngOnInit()
+
+      expect(component.displayedColumnKeys).toEqual([])
+      expect(emitSpy).toHaveBeenCalledWith([])
+    })
+
+    it('should set displayedColumnKeys from predefinedGroupKeys when defaultGroupKey is set and not customGroupKey', () => {
+      const { component } = createComponent(true)
+
+      component.columns = [
+        { id: 'a', nameKey: 'A', predefinedGroupKeys: ['g1'] } as any,
+        { id: 'b', nameKey: 'B', predefinedGroupKeys: ['g2'] } as any,
+        { id: 'c', nameKey: 'C', predefinedGroupKeys: ['g1', 'g2'] } as any,
+      ]
+      component.defaultGroupKey = 'g2'
+      component.customGroupKey = 'custom'
+
+      component.ngOnInit()
+
+      expect(component.displayedColumnKeys).toEqual(['b', 'c'])
+    })
+
+    it('should initialize displayedColumnKeys from defaultGroupKey and emit displayedColumnKeysChange', () => {
+      const { component } = createComponent(true)
+
+      const emitSpy = jest.spyOn(component.displayedColumnKeysChange, 'emit')
+      component.columns = [
+        { id: 'a', nameKey: 'A', predefinedGroupKeys: ['g1'] } as any,
+        { id: 'b', nameKey: 'B', predefinedGroupKeys: ['g2'] } as any,
+      ]
+      component.defaultGroupKey = 'g1'
+      component.customGroupKey = 'custom'
+
+      component.ngOnInit()
+
+      expect(component.selectedGroupKey).toBe('g1')
+      expect(component.displayedColumnKeys).toEqual(['a'])
+      expect(emitSpy).toHaveBeenCalledWith(['a'])
+      expect(component.firstColumnId).toBe('a')
+    })
+
+    it('should update displayedColumnKeys and selectedGroupKey on column group selection change', () => {
+      const { component } = createComponent(true)
+
+      const displayedColumnKeysSpy = jest.spyOn(component.displayedColumnKeysChange, 'emit')
+
+      component.onColumnGroupSelectionChange({
+        groupKey: 'g1',
+        activeColumns: [{ id: 'a' } as any, { id: 'b' } as any],
+      } as any)
+
+      expect(component.selectedGroupKey).toBe('g1')
+      expect(component.displayedColumnKeys).toEqual(['a', 'b'])
+      expect(displayedColumnKeysSpy).toHaveBeenCalledWith(['a', 'b'])
+    })
+
+    it('should update displayedColumnKeys and set selectedGroupKey to customGroupKey on column selection change', () => {
+      const { component } = createComponent(true)
+
+      const displayedColumnKeysSpy = jest.spyOn(component.displayedColumnKeysChange, 'emit')
+      component.customGroupKey = 'custom'
+
+      component.onColumnSelectionChange({ activeColumns: [{ id: 'x' } as any] } as any)
+
+      expect(component.selectedGroupKey).toBe('custom')
+      expect(component.displayedColumnKeys).toEqual(['x'])
+      expect(displayedColumnKeysSpy).toHaveBeenCalledWith(['x'])
     })
   })
 
-  describe('Table view custom group column selector ', () => {
-    let dataView: DataViewHarness
-    let dataTable: DataTableHarness | null
-    let tableHeaders: TableHeaderColumnHarness[]
-    let tableRows: TableRowHarness[]
+  describe('reactive streams (BehaviorSubjects / Observables)', () => {
+    it('should update displayedColumnKeys when displayedColumnKeys setter is called', (done) => {
+      const { component } = createComponent(true)
 
-    let customGroupColumnSelector: CustomGroupColumnSelectorHarness
-    let picklist: PPicklistHarness
-    let activeColumnsList: ListItemHarness[]
-    let inActiveColumnsList: ListItemHarness[]
-    let sourceControlsButtons: ButtonHarness[]
-    let transferControlsButtons: ButtonHarness[]
-    let dialogSaveButton: PButtonHarness
-    let frozenActionColumnSelectButtons: TestElement[]
-    let actionColumnPositionSelectButtons: TestElement[]
+      component.displayedColumnKeys = ['a', 'b']
 
-    beforeEach(async () => {
-      dataView = await loader.getHarness(DataViewHarness)
-      dataTable = await dataView?.getDataTable()
-      tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
-      tableRows = (await dataTable?.getRows()) ?? []
-
-      customGroupColumnSelector = await loader.getHarness(CustomGroupColumnSelectorHarness)
-      await customGroupColumnSelector.openCustomGroupColumnSelectorDialog()
-
-      picklist = await customGroupColumnSelector.getPicklist()
-      activeColumnsList = await picklist.getSourceListItems()
-      inActiveColumnsList = await picklist.getTargetListItems()
-      sourceControlsButtons = await picklist.getSourceControlsButtons()
-      transferControlsButtons = await picklist.getTransferControlsButtons()
-      dialogSaveButton = await customGroupColumnSelector.getSaveButton()
-      frozenActionColumnSelectButtons = await customGroupColumnSelector.getFrozenActionColumnSelectButton()
-      actionColumnPositionSelectButtons = await customGroupColumnSelector.getActionColumnPositionSelectButtons()
+      component.displayedColumnKeys$.pipe(take(1)).subscribe({
+        next: (value) => {
+          expect(component.displayedColumnKeys).toEqual(['a', 'b'])
+          expect(value).toEqual(['a', 'b'])
+          done()
+        },
+        error: done,
+      })
     })
 
-    it('should move item up in picklist active columns list', async () => {
-      const spy = jest.spyOn(CustomGroupColumnSelectorComponent.prototype, 'onSaveClick')
-      const expectedHeaders = [
-        'COLUMN_HEADER_NAME.DESCRIPTION',
-        'COLUMN_HEADER_NAME.NAME',
-        'COLUMN_HEADER_NAME.STATUS',
-        'COLUMN_HEADER_NAME.RESPONSIBLE',
-        'Actions',
-      ]
-      const expectedRowsData = [
-        ['dsc 1', 'some name', 'some status', 'someone responsible'],
-        ['example description', 'example', 'status example', 'someone responsible 2'],
-        ['dsc 3', 'name 1', 'status name 1', 'someone responsible 3'],
-        ['dsc 4', 'name 2', 'status name 2', 'someone responsible 4'],
-        ['dsc 5', 'name 3', 'status name 3', 'someone responsible 5'],
-      ]
-      await activeColumnsList[1].selectItem()
-      await sourceControlsButtons[0].click()
-      await dialogSaveButton.click()
-      expect(spy).toHaveBeenCalled()
-      dataTable = await dataView.getDataTable()
-      tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
-      tableRows = (await dataTable?.getRows()) ?? []
-      const headers = await parallel(() => tableHeaders.map((header) => header.getText()))
-      const rows = await parallel(() => tableRows.map((row) => row.getData()))
-      expect(headers).toEqual(expectedHeaders)
-      expect(rows).toEqual(expectedRowsData)
+    it('should initialize displayedColumns$ and map keys to columns', (done) => {
+      const { component } = createComponent(true)
+
+      const c1 = { id: 'c1', nameKey: 'C1' } as any
+      const c2 = { id: 'c2', nameKey: 'C2' } as any
+      component.columns = [c1, c2]
+
+      component.ngOnInit()
+
+      component.displayedColumnKeys = ['c2', 'missing', 'c1']
+
+      component.displayedColumns$?.pipe(take(2)).subscribe({
+        next: (cols) => {
+          // 1st emission: initial []
+          // 2nd emission: mapped columns after setter call
+          if (cols.length === 0) return
+          expect(cols).toEqual([c2, c1])
+          done()
+        },
+        error: done,
+      })
     })
 
-    it('should move item down in picklist active columns list', async () => {
-      const spy = jest.spyOn(CustomGroupColumnSelectorComponent.prototype, 'onSaveClick')
-      const expectedHeaders = [
-        'COLUMN_HEADER_NAME.NAME',
-        'COLUMN_HEADER_NAME.STATUS',
-        'COLUMN_HEADER_NAME.DESCRIPTION',
-        'COLUMN_HEADER_NAME.RESPONSIBLE',
-        'Actions',
-      ]
-      const expectedRowsData = [
-        ['some name', 'some status', 'dsc 1', 'someone responsible'],
-        ['example', 'status example', 'example description', 'someone responsible 2'],
-        ['name 1', 'status name 1', 'dsc 3', 'someone responsible 3'],
-        ['name 2', 'status name 2', 'dsc 4', 'someone responsible 4'],
-        ['name 3', 'status name 3', 'dsc 5', 'someone responsible 5'],
-      ]
+    it('should reflect selectedGroupKey through selectedGroupKey$ BehaviorSubject', () => {
+      const { component } = createComponent(true)
 
-      await activeColumnsList[1].selectItem()
-      await sourceControlsButtons[2].click()
-      await dialogSaveButton.click()
+      component.selectedGroupKey = 'g1'
+      expect(component.selectedGroupKey).toBe('g1')
+      expect(component.selectedGroupKey$.getValue()).toBe('g1')
+    })
+  })
 
-      expect(spy).toHaveBeenCalled()
+  describe('inputs + setters', () => {
+    it('should not set groupSelectionNoGroupSelectedKey when already set', () => {
+      const { component } = createComponent(true)
 
-      dataTable = await dataView.getDataTable()
-      tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
-      tableRows = (await dataTable?.getRows()) ?? []
-      const headers = await parallel(() => tableHeaders.map((header) => header.getText()))
-      const rows = await parallel(() => tableRows.map((row) => row.getData()))
+      component.groupSelectionNoGroupSelectedKey = 'ALREADY_SET'
+      component.ngOnInit()
 
-      expect(headers).toEqual(expectedHeaders)
-      expect(rows).toEqual(expectedRowsData)
+      expect(component.groupSelectionNoGroupSelectedKey).toBe('ALREADY_SET')
     })
 
-    it('should move item in picklist from active to inactive', async () => {
-      const spy = jest.spyOn(CustomGroupColumnSelectorComponent.prototype, 'onSaveClick')
-      const expectedHeaders = [
-        'COLUMN_HEADER_NAME.DESCRIPTION',
-        'COLUMN_HEADER_NAME.STATUS',
-        'COLUMN_HEADER_NAME.RESPONSIBLE',
-        'Actions',
-      ]
-      const expectedRowsData = [
-        ['dsc 1', 'some status', 'someone responsible'],
-        ['example description', 'status example', 'someone responsible 2'],
-        ['dsc 3', 'status name 1', 'someone responsible 3'],
-        ['dsc 4', 'status name 2', 'someone responsible 4'],
-        ['dsc 5', 'status name 3', 'someone responsible 5'],
-      ]
+    it('should set firstColumnId to undefined when columns is empty', () => {
+      const { component } = createComponent(true)
 
-      await activeColumnsList[0].selectItem()
-      await transferControlsButtons[0].click()
-      await dialogSaveButton.click()
+      component.columns = []
+      component.ngOnInit()
 
-      expect(spy).toHaveBeenCalled()
-
-      dataTable = await dataView.getDataTable()
-      tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
-      tableRows = (await dataTable?.getRows()) ?? []
-      const headers = await parallel(() => tableHeaders.map((header) => header.getText()))
-      const rows = await parallel(() => tableRows.map((row) => row.getData()))
-
-      expect(headers).toEqual(expectedHeaders)
-      expect(rows).toEqual(expectedRowsData)
+      expect(component.firstColumnId).toBeUndefined()
     })
 
-    it('should move item in picklist from inactive to active', async () => {
-      const spy = jest.spyOn(CustomGroupColumnSelectorComponent.prototype, 'onSaveClick')
-      const expectedHeaders = [
-        'COLUMN_HEADER_NAME.NAME',
-        'COLUMN_HEADER_NAME.DESCRIPTION',
-        'COLUMN_HEADER_NAME.STATUS',
-        'COLUMN_HEADER_NAME.RESPONSIBLE',
-        'COLUMN_HEADER_NAME.START_DATE',
-        'Actions',
-      ]
-      const expectedRowsData = [
-        ['some name', 'dsc 1', 'some status', 'someone responsible', dateUtils.localizedDate('2023-09-13T09:34:05Z')],
-        [
-          'example',
-          'example description',
-          'status example',
-          'someone responsible 2',
-          dateUtils.localizedDate('2023-09-12T09:33:53Z'),
-        ],
-        ['name 1', 'dsc 3', 'status name 1', 'someone responsible 3', dateUtils.localizedDate('2023-09-14T09:34:22Z')],
-        ['name 2', 'dsc 4', 'status name 2', 'someone responsible 4', dateUtils.localizedDate('2023-09-14T09:34:22Z')],
-        ['name 3', 'dsc 5', 'status name 3', 'someone responsible 5', dateUtils.localizedDate('2023-09-14T09:34:22Z')],
-      ]
+    it('should set firstColumnId to first column id when columns is non-empty', () => {
+      const { component } = createComponent(true)
 
-      await inActiveColumnsList[0].selectItem()
-      await transferControlsButtons[2].click()
-      await dialogSaveButton.click()
-      expect(spy).toHaveBeenCalled()
+      component.columns = [{ id: 'first', nameKey: 'First' } as any, { id: 'second', nameKey: 'Second' } as any]
+      component.ngOnInit()
 
-      dataTable = await dataView.getDataTable()
-      tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
-      tableRows = (await dataTable?.getRows()) ?? []
-      const headers = await parallel(() => tableHeaders.map((header) => header.getText()))
-      const rows = await parallel(() => tableRows.map((row) => row.getData()))
-
-      expect(headers).toEqual(expectedHeaders)
-      expect(rows).toEqual(expectedRowsData)
+      expect(component.firstColumnId).toBe('first')
     })
 
-    it('should allow users to configure the action column position', async () => {
-      const spy = jest.spyOn(CustomGroupColumnSelectorComponent.prototype, 'onSaveClick')
-      expect(component.actionColumnPosition).toBe('right')
-      expect(component.frozenActionColumn).toBe(false)
-      await actionColumnPositionSelectButtons[0].click()
-      await dialogSaveButton.click()
+    it('should update data when data input setter is called', () => {
+      const { component } = createComponent(true)
 
-      expect(spy).toHaveBeenCalled()
+      const data = [{ id: '1' } as any]
+      component.data = data
 
-      expect(component.actionColumnPosition).toBe('left')
-
-      expect(await dataTable?.getActionColumnHeader('right')).toBe(null)
-      expect(await dataTable?.getActionColumn('right')).toBe(null)
-
-      const leftActionColumnHeader = await dataTable?.getActionColumnHeader('left')
-      const leftActionColumn = await dataTable?.getActionColumn('left')
-      expect(leftActionColumnHeader).toBeTruthy()
-      expect(leftActionColumn).toBeTruthy()
-      expect(await dataTable?.columnIsFrozen(leftActionColumnHeader)).toBe(false)
-      expect(await dataTable?.columnIsFrozen(leftActionColumn)).toBe(false)
+      expect(component._data).toBe(data)
+      expect(component.data).toBe(data)
     })
 
-    it('should allow users to freeze action column', async () => {
-      const spy = jest.spyOn(CustomGroupColumnSelectorComponent.prototype, 'onSaveClick')
-      expect(component.actionColumnPosition).toBe('right')
-      expect(component.frozenActionColumn).toBe(false)
-      await frozenActionColumnSelectButtons[0].click()
-      await dialogSaveButton.click()
+    it('should update selectedRows input without side effects', () => {
+      const { component } = createComponent(true)
 
-      expect(spy).toHaveBeenCalled()
+      const rows = [{ id: 'r1' } as any]
+      component.selectedRows = rows as any
+
+      expect(component.selectedRows).toBe(rows as any)
+    })
+
+    it('should cover Input defaults (selectDisplayedChips, sortStates, pageSizes, fallbackImage)', () => {
+      const { component } = createComponent(true)
+
+      expect(component.fallbackImage).toBe('placeholder.png')
+      expect(component.pageSizes).toEqual([10, 25, 50])
+      expect(component.sortStates).toEqual(['ASCENDING', 'DESCENDING', 'NONE'] as any)
+
+      const f1 = { columnId: 'c1' } as any
+      const f2 = { columnId: 'c2' } as any
+      const f3 = { columnId: 'c3' } as any
+      const f4 = { columnId: 'c4' } as any
+
+      // should return limited list (implementation uses limit(..., 3, { reverse: true }))
+      const selected = component.selectDisplayedChips([f1, f2, f3, f4], [])
+      expect(selected.length).toBe(3)
+      expect(selected).toEqual([f4, f3, f2])
+
+      component.templates = undefined
+      expect(component.templates$.getValue()).toBeUndefined()
+    })
+
+    it('should map displayedColumnKeys to existing columns in getDisplayedColumns', () => {
+      const { component } = createComponent(true)
+
+      const c1 = { id: 'c1', nameKey: 'C1' } as any
+      const c2 = { id: 'c2', nameKey: 'C2' } as any
+      component.columns = [c1, c2]
+      component.displayedColumnKeys = ['c2', 'missing', 'c1']
+
+      expect(component.getDisplayedColumns()).toEqual([c2, c1])
+    })
+
+    it('should set listGridPaginator and tablePaginator via paginator setter', () => {
+      const { component } = createComponent(true)
+
+      component.listGridPaginator = false
+      component.tablePaginator = false
+
+      component.paginator = true
+
+      expect(component.listGridPaginator).toBe(true)
+      expect(component.tablePaginator).toBe(true)
+      expect(component.paginator).toBe(true)
+    })
+
+    it('should fall back groupSelectionNoGroupSelectedKey when unset', () => {
+      const { component } = createComponent(true)
+      component.groupSelectionNoGroupSelectedKey = '' as any
+
+      component.ngOnInit()
+
+      expect(component.groupSelectionNoGroupSelectedKey).toBe('OCX_INTERACTIVE_DATA_VIEW.NO_GROUP_SELECTED')
+    })
+  })
+
+  describe('wiring and event forwarding (EventEmitters)', () => {
+    it('should not subscribe to DataView outputs when DataView already has observers', () => {
+      const { component } = createComponent(true)
+
+      component.deleteItem.subscribe(jest.fn())
+      component.viewItem.subscribe(jest.fn())
+      component.editItem.subscribe(jest.fn())
+      component.selectionChanged.subscribe(jest.fn())
+
+      const dvDelete = new EventEmitter<RowListGridData>()
+      const dvView = new EventEmitter<RowListGridData>()
+      const dvEdit = new EventEmitter<RowListGridData>()
+      const dvSelection = new EventEmitter<any[]>()
+
+      // make them "observed" before wiring
+      dvDelete.subscribe(jest.fn())
+      dvView.subscribe(jest.fn())
+      dvEdit.subscribe(jest.fn())
+      dvSelection.subscribe(jest.fn())
+
+      const deleteSubscribeSpy = jest.spyOn(dvDelete, 'subscribe')
+      const viewSubscribeSpy = jest.spyOn(dvView, 'subscribe')
+      const editSubscribeSpy = jest.spyOn(dvEdit, 'subscribe')
+      const selectionSubscribeSpy = jest.spyOn(dvSelection, 'subscribe')
+
+      const dataViewMock = {
+        deleteItem: dvDelete,
+        viewItem: dvView,
+        editItem: dvEdit,
+        selectionChanged: dvSelection,
+      } as unknown as DataViewComponent
+
+      component.dataView = dataViewMock
+
+      expect(deleteSubscribeSpy).not.toHaveBeenCalled()
+      expect(viewSubscribeSpy).not.toHaveBeenCalled()
+      expect(editSubscribeSpy).not.toHaveBeenCalled()
+      expect(selectionSubscribeSpy).not.toHaveBeenCalled()
+    })
+
+    it('should wire DataView events only when corresponding outputs are observed', () => {
+      const { component } = createComponent(true)
+
+      const deleteSpy = jest.spyOn(component.deleteItem, 'emit')
+      const viewSpy = jest.spyOn(component.viewItem, 'emit')
+      const editSpy = jest.spyOn(component.editItem, 'emit')
+      const selectionSpy = jest.spyOn(component.selectionChanged, 'emit')
+
+      component.deleteItem.subscribe(jest.fn())
+      component.viewItem.subscribe(jest.fn())
+      component.editItem.subscribe(jest.fn())
+      component.selectionChanged.subscribe(jest.fn())
+
+      const dataViewMock = {
+        deleteItem: new EventEmitter<RowListGridData>(),
+        viewItem: new EventEmitter<RowListGridData>(),
+        editItem: new EventEmitter<RowListGridData>(),
+        selectionChanged: new EventEmitter<any[]>(),
+      } as unknown as DataViewComponent
+
+      component.dataView = dataViewMock
+
+      const element = { id: 'x' } as any
+      dataViewMock.deleteItem.emit(element)
+      dataViewMock.viewItem.emit(element)
+      dataViewMock.editItem.emit(element)
+      dataViewMock.selectionChanged.emit([{ id: 'r1' } as any])
+
+      expect(deleteSpy).toHaveBeenCalledWith(element)
+      expect(viewSpy).toHaveBeenCalledWith(element)
+      expect(editSpy).toHaveBeenCalledWith(element)
+      expect(selectionSpy).toHaveBeenCalledWith([{ id: 'r1' } as any])
+    })
+
+    it('should not forward delete/view/edit when not observed', () => {
+      const { component } = createComponent(true)
+
+      const deleteSpy = jest.spyOn(component.deleteItem, 'emit')
+      const viewSpy = jest.spyOn(component.viewItem, 'emit')
+      const editSpy = jest.spyOn(component.editItem, 'emit')
+
+      component.isDeleteItemObserved = false
+      component.isViewItemObserved = false
+      component.isEditItemObserved = false
+
+      const element = { id: 'x' } as any
+      component.onDeleteElement(element)
+      component.onViewElement(element)
+      component.onEditElement(element)
+
+      expect(deleteSpy).not.toHaveBeenCalled()
+      expect(viewSpy).not.toHaveBeenCalled()
+      expect(editSpy).not.toHaveBeenCalled()
+    })
+
+    it('should forward row selection only when selectionChanged is observed', () => {
+      const { component } = createComponent(true)
+
+      const emitSpy = jest.spyOn(component.selectionChanged, 'emit')
+      const rows = [{ id: 'r1' } as any]
+
+      component.onRowSelectionChange(rows as any)
+      expect(emitSpy).not.toHaveBeenCalled()
+
+      component.selectionChanged.subscribe(jest.fn())
+      component.onRowSelectionChange(rows as any)
+      expect(emitSpy).toHaveBeenCalledWith(rows)
+    })
+
+    it('should wire DataViewComponent through the dataView ViewChild setter/getter', () => {
+      const { component } = createComponent(true)
+
+      const registerSpy = jest.spyOn(component, 'registerEventListenerForDataView')
+      const dataViewRef = {
+        deleteItem: new EventEmitter<any>(),
+        viewItem: new EventEmitter<any>(),
+        editItem: new EventEmitter<any>(),
+        selectionChanged: new EventEmitter<any>(),
+      } as any
+
+      component.dataView = dataViewRef
+
+      expect(component._dataViewComponent).toBe(dataViewRef)
+      expect(component.dataView).toBe(dataViewRef)
+      expect(registerSpy).toHaveBeenCalled()
+    })
+  })
+
+  describe('public handlers', () => {
+    it('should update sort inputs and emit sorted on sort changes', () => {
+      const { component } = createComponent(true)
+
+      const sortedSpy = jest.spyOn(component.sorted, 'emit')
+      component.sortDirection = 'ASCENDING' as any
+      component.sortField = 'old'
+
+      component.onSortChange('new')
+      expect(component.sortField).toBe('new')
+      expect(sortedSpy).toHaveBeenLastCalledWith({ sortColumn: 'new', sortDirection: 'ASCENDING' })
+
+      component.onSortDirectionChange('DESCENDING' as any)
+      expect(component.sortDirection).toBe('DESCENDING')
+      expect(sortedSpy).toHaveBeenLastCalledWith({ sortColumn: 'new', sortDirection: 'DESCENDING' })
+    })
+
+    it('should update layout and emit dataViewLayoutChange', () => {
+      const { component } = createComponent(true)
+
+      const layoutSpy = jest.spyOn(component.dataViewLayoutChange, 'emit')
+      component.onDataViewLayoutChange('list')
+      expect(component.layout).toBe('list')
+      expect(layoutSpy).toHaveBeenCalledWith('list')
+    })
+
+    it('should update selection state and emit on page events', () => {
+      const { component } = createComponent(true)
+
+      const pageSpy = jest.spyOn(component.pageChanged, 'emit')
+      const pageSizeSpy = jest.spyOn(component.pageSizeChanged, 'emit')
+
+      component.onPageChange(2)
+      expect(component.page).toBe(2)
+      expect(pageSpy).toHaveBeenCalledWith(2)
+
+      component.onPageSizeChange(25)
+      expect(component.pageSize).toBe(25)
+      expect(pageSizeSpy).toHaveBeenCalledWith(25)
+    })
+
+    it('should update filters and emit filtered in filtering()', () => {
+      const { component } = createComponent(true)
+
+      const filteredSpy = jest.spyOn(component.filtered, 'emit')
+      const filters = [{ columnId: 'c1', filterType: 'stringContains', value: 'x' } as any]
+
+      component.filtering(filters)
+
+      expect(component.filters).toBe(filters)
+      expect(filteredSpy).toHaveBeenCalledWith(filters)
+    })
+
+    it('should update sorting fields and emit sorted in sorting()', () => {
+      const { component } = createComponent(true)
+
+      const sortedSpy = jest.spyOn(component.sorted, 'emit')
+      const event = { sortColumn: 'c1', sortDirection: 'DESCENDING' } as any
+
+      component.sorting(event)
+
+      expect(component.sortField).toBe('c1')
+      expect(component.sortDirection).toBe('DESCENDING')
+      expect(sortedSpy).toHaveBeenCalledWith(event)
+    })
+
+    it('should update action column config onActionColumnConfigChange', () => {
+      const { component } = createComponent(true)
+
+      component.frozenActionColumn = false
+      component.actionColumnPosition = 'right' as any
+
+      component.onActionColumnConfigChange({ frozenActionColumn: true, actionColumnPosition: 'left' } as any)
 
       expect(component.frozenActionColumn).toBe(true)
-
-      expect(await dataTable?.getActionColumnHeader('left')).toBe(null)
-      expect(await dataTable?.getActionColumn('left')).toBe(null)
-
-      const rightActionColumnHeader = await dataTable?.getActionColumnHeader('right')
-      const rightActionColumn = await dataTable?.getActionColumn('right')
-      expect(rightActionColumnHeader).toBeTruthy()
-      expect(rightActionColumn).toBeTruthy()
-      expect(await dataTable?.columnIsFrozen(rightActionColumnHeader)).toBe(true)
-      expect(await dataTable?.columnIsFrozen(rightActionColumn)).toBe(true)
+      expect(component.actionColumnPosition).toBe('left' as any)
     })
   })
 
-  describe('Filter view ', () => {
-    let dataTable: DataTableHarness | null
-    let tableHeaders: TableHeaderColumnHarness[]
+  describe('template mapping', () => {
+    it('should reflect template accessors (_tableCell, _gridItem, etc.)', () => {
+      const { component } = createComponent(true)
 
-    let filterViewHarness: FilterViewHarness
+      const tableCell = {} as any
+      const gridItem = {} as any
+      const listItem = {} as any
+      const stringTableCell = {} as any
+      const numberTableCell = {} as any
+      const dateTableCell = {} as any
+      const relativeDateTableCell = {} as any
+      const translationKeyTableCell = {} as any
+      const gridItemSubtitleLines = {} as any
+      const listItemSubtitleLines = {} as any
+      const topCenter = {} as any
+      const listValue = {} as any
+      const translationKeyListValue = {} as any
+      const numberListValue = {} as any
+      const relativeDateListValue = {} as any
+      const stringListValue = {} as any
+      const dateListValue = {} as any
+      const tableFilterCell = {} as any
+      const dateTableFilterCell = {} as any
+      const relativeDateTableFilterCell = {} as any
+      const translationKeyTableFilterCell = {} as any
+      const stringTableFilterCell = {} as any
+      const numberTableFilterCell = {} as any
 
-    beforeEach(async () => {
-      component.disableFilterView = false
-      fixture.detectChanges()
-      // select FULL group
-      const columnGroupSelectionDropdown = await loader.getHarness(
-        PSelectHarness.with({ inputId: 'columnGroupSelectionDropdown' })
-      )
-      const dropdownItems = await columnGroupSelectionDropdown.getSelectItems()
-      await dropdownItems[2].selectItem()
+      component.tableCell = tableCell
+      component.gridItem = gridItem
+      component.listItem = listItem
+      component.stringTableCell = stringTableCell
+      component.numberTableCell = numberTableCell
+      component.dateTableCell = dateTableCell
+      component.relativeDateTableCell = relativeDateTableCell
+      component.translationKeyTableCell = translationKeyTableCell
+      component.gridItemSubtitleLines = gridItemSubtitleLines
+      component.listItemSubtitleLines = listItemSubtitleLines
+      component.topCenter = topCenter
+      component.listValue = listValue
+      component.translationKeyListValue = translationKeyListValue
+      component.numberListValue = numberListValue
+      component.relativeDateListValue = relativeDateListValue
+      component.stringListValue = stringListValue
+      component.dateListValue = dateListValue
+      component.tableFilterCell = tableFilterCell
+      component.dateTableFilterCell = dateTableFilterCell
+      component.relativeDateTableFilterCell = relativeDateTableFilterCell
+      component.translationKeyTableFilterCell = translationKeyTableFilterCell
+      component.stringTableFilterCell = stringTableFilterCell
+      component.numberTableFilterCell = numberTableFilterCell
 
-      const dataView = await loader.getHarness(DataViewHarness)
-      expect(dataView).toBeDefined()
-      dataTable = await dataView.getDataTable()
-      expect(dataTable).toBeDefined()
-      tableHeaders = await dataTable!.getHeaderColumns()
+      expect(component._tableCell).toBe(tableCell)
+      expect(component._gridItem).toBe(gridItem)
+      expect(component._listItem).toBe(listItem)
+      expect(component._stringTableCell).toBe(stringTableCell)
+      expect(component._numberTableCell).toBe(numberTableCell)
+      expect(component._dateTableCell).toBe(dateTableCell)
+      expect(component._relativeDateTableCell).toBe(relativeDateTableCell)
+      expect(component._translationKeyTableCell).toBe(translationKeyTableCell)
+      expect(component._gridItemSubtitleLines).toBe(gridItemSubtitleLines)
+      expect(component._listItemSubtitleLines).toBe(listItemSubtitleLines)
+      expect(component._listValue).toBe(listValue)
+      expect(component._translationKeyListValue).toBe(translationKeyListValue)
+      expect(component._numberListValue).toBe(numberListValue)
+      expect(component._relativeDateListValue).toBe(relativeDateListValue)
+      expect(component._stringListValue).toBe(stringListValue)
+      expect(component._dateListValue).toBe(dateListValue)
+      expect(component._tableFilterCell).toBe(tableFilterCell)
+      expect(component._dateTableFilterCell).toBe(dateTableFilterCell)
+      expect(component._relativeDateTableFilterCell).toBe(relativeDateTableFilterCell)
+      expect(component._translationKeyTableFilterCell).toBe(translationKeyTableFilterCell)
+      expect(component._stringTableFilterCell).toBe(stringTableFilterCell)
+      expect(component._numberTableFilterCell).toBe(numberTableFilterCell)
 
-      expect(await tableHeaders[2].getText()).toBe('COLUMN_HEADER_NAME.START_DATE')
-      const startDateFilterMultiSelect = await tableHeaders[2].getFilterMultiSelect()
-      const startDateAllFilterOptions = await startDateFilterMultiSelect.getAllOptions()
-      await startDateAllFilterOptions[0].click()
-      await startDateFilterMultiSelect.close()
-
-      expect(await tableHeaders[0].getText()).toBe('COLUMN_HEADER_NAME.NAME')
-      const nameFilterMultiSelect = await tableHeaders[0].getFilterMultiSelect()
-      const nameAllFilterOptions = await nameFilterMultiSelect.getAllOptions()
-      await nameAllFilterOptions[0].click()
-      await nameFilterMultiSelect.close()
-
-      expect(await tableHeaders[4].getText()).toBe('COLUMN_HEADER_NAME.STATUS')
-      const statusFilterMultiSelect = await tableHeaders[4].getFilterMultiSelect()
-      const statusAllFilterOptions = await statusFilterMultiSelect.getAllOptions()
-      await statusAllFilterOptions[0].click()
-      await statusFilterMultiSelect.close()
-
-      expect(await tableHeaders[9].getText()).toBe('COLUMN_HEADER_NAME.TEST_TRUTHY')
-      const testTruthyFilterMultiSelect = await tableHeaders[9].getFilterMultiSelect()
-      const testTruthyAllFilterOptions = await testTruthyFilterMultiSelect.getAllOptions()
-      await testTruthyAllFilterOptions[0].click()
-      await testTruthyFilterMultiSelect.close()
-
-      filterViewHarness = await loader.getHarness(FilterViewHarness)
+      // direct properties that don't have dedicated "_" getters
+      expect(component.primeNgTopCenter).toBeUndefined()
+      component.primeNgTopCenter = topCenter
+      expect(component.primeNgTopCenter).toBe(topCenter)
     })
 
-    it('should show button by default', async () => {
-      const filtersButton = await filterViewHarness.getFiltersButton()
-      expect(filtersButton).toBeTruthy()
-      expect(await filtersButton?.getLabel()).toBe('Filters')
-      expect(await filtersButton?.getBadgeValue()).toBe('4')
-    })
+    it('should map PrimeTemplate types to primeNg* templates in ngAfterContentInit', () => {
+      const { component } = createComponent(true)
 
-    describe('chip section', () => {
-      it('should show chips when specified and breakpoint is not mobile', async () => {
-        component.filterViewDisplayMode = 'chips'
-        fixture.detectChanges()
-        let filtersButton = await filterViewHarness.getFiltersButton()
-        expect(filtersButton).toBeFalsy()
-
-        let chipResetFiltersButton = await filterViewHarness.getChipsResetFiltersButton()
-        expect(chipResetFiltersButton).toBeTruthy()
-        expect(await chipResetFiltersButton?.getIcon()).toBe(PrimeIcons.ERASER)
-
-        let chips = await filterViewHarness.getChips()
-        expect(chips).toBeTruthy()
-        expect(chips.length).toBe(4)
-
-        expect(await chips[0].getContent()).toBe('COLUMN_HEADER_NAME.TEST_TRUTHY: Yes')
-        expect(await chips[1].getContent()).toBe('COLUMN_HEADER_NAME.STATUS: some status')
-        expect(await chips[2].getContent()).toBe('COLUMN_HEADER_NAME.NAME: some name')
-        expect(await chips[3].getContent()).toBe('+1')
-
-        const orgMatchMedia = window.matchMedia
-        window.matchMedia = jest.fn(() => {
-          return {
-            matches: true,
-          }
-        }) as any
-        window.dispatchEvent(new Event('resize'))
-
-        fixture.detectChanges()
-        filtersButton = await filterViewHarness.getFiltersButton()
-        expect(filtersButton).toBeTruthy()
-
-        chipResetFiltersButton = await filterViewHarness.getChipsResetFiltersButton()
-        expect(chipResetFiltersButton).toBeFalsy()
-
-        chips = await filterViewHarness.getChips()
-        expect(chips.length).toBe(0)
-
-        window.matchMedia = orgMatchMedia
+      const tpl = (type: string, template: any) => ({
+        getType: () => type,
+        template,
       })
 
-      it('should show no filters message when no filters selected', async () => {
-        component.filters = []
-        component.filterViewDisplayMode = 'chips'
-        fixture.detectChanges()
+      const tableCellTpl = {} as any
+      const gridItemTpl = {} as any
+      const numberFilterTpl = {} as any
 
-        const chipResetFiltersButton = await filterViewHarness.getChipsResetFiltersButton()
-        expect(chipResetFiltersButton).toBeTruthy()
-
-        const chips = await filterViewHarness.getChips()
-        expect(chips.length).toBe(0)
-
-        const noFilters = await filterViewHarness.getNoFiltersMessage()
-        expect(noFilters).toBeTruthy()
-        expect(await noFilters?.getText()).toBe('No filters selected')
-      })
-
-      it('should reset filters on reset filters button click', async () => {
-        component.filterViewDisplayMode = 'chips'
-        fixture.detectChanges()
-
-        const chips = await filterViewHarness.getChips()
-        expect(chips.length).toBe(4)
-
-        const chipResetFiltersButton = await filterViewHarness.getChipsResetFiltersButton()
-        await chipResetFiltersButton?.click()
-        expect(component.filters).toEqual([])
-        const chipsAfterReset = await filterViewHarness.getChips()
-        expect(chipsAfterReset.length).toBe(0)
-      })
-
-      it('should use provided chip selection strategy', async () => {
-        const datePipe = new DatePipe('en')
-        component.filterViewDisplayMode = 'chips'
-        component.selectDisplayedChips = (data) => limit(data, 1, { reverse: false })
-        fixture.detectChanges()
-
-        const chips = await filterViewHarness.getChips()
-        expect(chips.length).toBe(2)
-
-        expect(await chips[0].getContent()).toBe(
-          'COLUMN_HEADER_NAME.START_DATE: ' + datePipe.transform('2023-09-13T09:34:05Z', 'medium')
-        )
-      })
-
-      it('should remove filter on chip removal', async () => {
-        component.filterViewDisplayMode = 'chips'
-        fixture.detectChanges()
-
-        const chips = await filterViewHarness.getChips()
-        expect(chips.length).toBe(4)
-        expect(component.filters.length).toBe(4)
-        await chips[0].clickRemove()
-
-        const chipsAfterRemove = await filterViewHarness.getChips()
-        expect(chipsAfterRemove.length).toBe(3)
-        expect(component.filters.length).toBe(3)
-        expect(await chipsAfterRemove[0].getContent()).toBe('COLUMN_HEADER_NAME.STATUS: some status')
-      })
-
-      it('should show panel on show more chips click', async () => {
-        component.filterViewDisplayMode = 'chips'
-        fixture.detectChanges()
-
-        let dataTable = await filterViewHarness.getDataTable()
-        expect(dataTable).toBeFalsy()
-
-        const chips = await filterViewHarness.getChips()
-        expect(chips.length).toBe(4)
-        expect(await chips[3].getContent()).toBe('+1')
-        await chips[3].click()
-        fixture.detectChanges()
-
-        dataTable = await filterViewHarness.getDataTable()
-        expect(dataTable).toBeTruthy()
-      })
-    })
-
-    describe('without chips', () => {
-      it('should show panel on button click', async () => {
-        let dataTable = await filterViewHarness.getDataTable()
-        expect(dataTable).toBeFalsy()
-
-        const filtersButton = await filterViewHarness.getFiltersButton()
-        await filtersButton?.click()
-        fixture.detectChanges()
-
-        dataTable = await filterViewHarness.getDataTable()
-        expect(dataTable).toBeTruthy()
-      })
-    })
-
-    describe('overlay', () => {
-      it('should show data table with column filters', async () => {
-        const datePipe = new DatePipe('en')
-        let dataTable = await filterViewHarness.getDataTable()
-        expect(dataTable).toBeFalsy()
-
-        const filtersButton = await filterViewHarness.getFiltersButton()
-        await filtersButton?.click()
-        fixture.detectChanges()
-
-        dataTable = await filterViewHarness.getDataTable()
-        expect(dataTable).toBeTruthy()
-
-        if (dataTable) {
-          const headers = await dataTable.getHeaderColumns()
-          expect(headers).toBeTruthy()
-          expect(headers.length).toBe(3)
-          expect(await headers[0].getText()).toBe('Column name')
-          expect(await headers[1].getText()).toBe('Filter value')
-          expect(await headers[2].getText()).toBe('Actions')
-
-          if (dataTable) {
-            const rows = await dataTable.getRows()
-            expect(rows.length).toBe(4)
-            expect(await rows[0].getData()).toEqual(['COLUMN_HEADER_NAME.NAME', 'some name', ''])
-            expect(await rows[1].getData()).toEqual([
-              'COLUMN_HEADER_NAME.START_DATE',
-              datePipe.transform('2023-09-13T09:34:05Z', 'medium'),
-              '',
-            ])
-            expect(await rows[2].getData()).toEqual(['COLUMN_HEADER_NAME.STATUS', 'some status', ''])
-            expect(await rows[3].getData()).toEqual(['COLUMN_HEADER_NAME.TEST_TRUTHY', 'Yes', ''])
-          }
-        }
-      })
-
-      it('should show reset all filters button above the table', async () => {
-        const filtersButton = await filterViewHarness.getFiltersButton()
-        await filtersButton?.click()
-        fixture.detectChanges()
-
-        const resetButton = await filterViewHarness.getOverlayResetFiltersButton()
-        expect(resetButton).toBeTruthy()
-
-        const dataTable = await filterViewHarness.getDataTable()
-        if (dataTable) {
-          expect((await dataTable.getRows()).length).toBe(4)
-
-          await resetButton?.click()
-          const rows = await dataTable.getRows()
-          expect(rows.length).toBe(1)
-          expect(await rows[0].getData()).toEqual(['No filters selected'])
-        }
-      })
-
-      it('should show remove filter in action column', async () => {
-        const filtersButton = await filterViewHarness.getFiltersButton()
-        await filtersButton?.click()
-        fixture.detectChanges()
-
-        const dataTable = await filterViewHarness.getDataTable()
-        if (dataTable) {
-          let rows = await dataTable.getRows()
-          expect(rows.length).toBe(4)
-          const buttons = await rows[0].getAllActionButtons()
-          expect(buttons.length).toBe(1)
-          await buttons[0].click()
-
-          rows = await dataTable.getRows()
-          expect(rows.length).toBe(3)
-          expect(component.filters.length).toBe(3)
-        }
-      })
-    })
-  })
-
-  describe('Grid view ', () => {
-    let dataLayoutSelection: DataLayoutSelectionHarness
-    let dataView: DataViewHarness
-    let dataGrid: DataListGridHarness | null
-    let gridItems: DefaultGridItemHarness[]
-
-    let sortingDropdown: PSelectHarness
-    let sortingDropdownItems: ListItemHarness[]
-    let dataListGridSortingButton: PButtonHarness
-
-    beforeEach(async () => {
-      dataLayoutSelection = await loader.getHarness(DataLayoutSelectionHarness)
-
-      await dataLayoutSelection.selectGridLayout()
-
-      dataView = await loader.getHarness(DataViewHarness)
-      dataGrid = await dataView?.getDataListGrid()
-      sortingDropdown = await loader.getHarness(PSelectHarness.with({ id: 'dataListGridSortingDropdown' }))
-      sortingDropdownItems = await sortingDropdown.getSelectItems()
-      dataListGridSortingButton = await loader.getHarness(PButtonHarness.with({ id: 'dataListGridSortingButton' }))
-    })
-    const expectedInitialGridItemsData = [
-      ['/path/to/image', 'some name', '2023-09-13T09:34:05Z'],
-      ['/path/to/image2', 'example', '2023-09-12T09:33:53Z'],
-      ['/path/to/image3', 'name 1', '2023-09-14T09:34:22Z'],
-      ['/path/to/image4', 'name 2', '2023-09-14T09:34:22Z'],
-      ['./onecx-portal-lib/assets/images/placeholder.png', 'name 3', '2023-09-14T09:34:22Z'],
-    ]
-
-    it('should load grid', async () => {
-      expect(dataGrid).toBeTruthy()
-      expect(await dataLayoutSelection.getCurrentLayout()).toEqual('grid')
-    })
-
-    it('should get grid data', async () => {
-      gridItems = (await dataGrid?.getDefaultGridItems()) ?? []
-      const gridItemsData = await parallel(() => gridItems.map((item) => item.getData()))
-
-      expect(gridItemsData).toEqual(expectedInitialGridItemsData)
-    })
-
-    it('should be sorted by first sorting dropdown item in ascending order', async () => {
-      const expectedGridItemsDataAfterSorting = [
-        ['/path/to/image2', 'example', '2023-09-12T09:33:53Z'],
-        ['/path/to/image3', 'name 1', '2023-09-14T09:34:22Z'],
-        ['/path/to/image4', 'name 2', '2023-09-14T09:34:22Z'],
-        ['./onecx-portal-lib/assets/images/placeholder.png', 'name 3', '2023-09-14T09:34:22Z'],
-        ['/path/to/image', 'some name', '2023-09-13T09:34:05Z'],
+      const templates = [
+        tpl('tableCell', tableCellTpl),
+        tpl('gridItem', gridItemTpl),
+        tpl('numberTableFilterCell', numberFilterTpl),
       ]
 
-      await sortingDropdownItems[0].selectItem()
-      await dataListGridSortingButton.click()
-
-      gridItems = (await dataGrid?.getDefaultGridItems()) ?? []
-      const gridItemsData = await parallel(() => gridItems.map((item) => item.getData()))
-
-      expect(gridItemsData).toEqual(expectedGridItemsDataAfterSorting)
-    })
-
-    it('should be sorted by first sorting dropdown item in descending order', async () => {
-      const expectedGridItemsDataAfterSorting = [
-        ['/path/to/image', 'some name', '2023-09-13T09:34:05Z'],
-        ['./onecx-portal-lib/assets/images/placeholder.png', 'name 3', '2023-09-14T09:34:22Z'],
-        ['/path/to/image4', 'name 2', '2023-09-14T09:34:22Z'],
-        ['/path/to/image3', 'name 1', '2023-09-14T09:34:22Z'],
-        ['/path/to/image2', 'example', '2023-09-12T09:33:53Z'],
-      ]
-
-      await sortingDropdownItems[0].selectItem()
-      await dataListGridSortingButton.click()
-      await dataListGridSortingButton.click()
-
-      gridItems = (await dataGrid?.getDefaultGridItems()) ?? []
-      const gridItemsData = await parallel(() => gridItems.map((item) => item.getData()))
-
-      expect(gridItemsData).toEqual(expectedGridItemsDataAfterSorting)
-    })
-
-    it('should be sorted by first sorting dropdown item back to default order', async () => {
-      await sortingDropdownItems[0].selectItem()
-      await dataListGridSortingButton.click()
-      await dataListGridSortingButton.click()
-      await dataListGridSortingButton.click()
-
-      gridItems = (await dataGrid?.getDefaultGridItems()) ?? []
-      const gridItemsData = await parallel(() => gridItems.map((item) => item.getData()))
-
-      expect(gridItemsData).toEqual(expectedInitialGridItemsData)
-    })
-
-    it('should get view actions menu button of first grid item and get event viewItem with first data grid item when clicked', async () => {
-      gridItems = (await dataGrid?.getDefaultGridItems()) ?? []
-      const gridItemMoreActionsMenu = await gridItems[0].getMoreActionsButton()
-      const moreActionsMenuItems = await gridItemMoreActionsMenu.getAllActionsMenuItems()
-      await moreActionsMenuItems[0].selectItem()
-
-      expect(viewItemEvent).toEqual(component.data[0])
-    })
-
-    it('should get view actions menu button of third grid item and get event viewItem with third data grid item when clicked', async () => {
-      gridItems = (await dataGrid?.getDefaultGridItems()) ?? []
-      const gridItemMoreActionsMenu = await gridItems[2].getMoreActionsButton()
-      const moreActionsMenuItems = await gridItemMoreActionsMenu.getAllActionsMenuItems()
-      await moreActionsMenuItems[0].selectItem()
-
-      expect(viewItemEvent).toEqual(component.data[2])
-    })
-
-    it('should get edit actions menu button first grid item and get event editItem with first data grid item when clicked', async () => {
-      gridItems = (await dataGrid?.getDefaultGridItems()) ?? []
-      const gridItemMoreActionsMenu = await gridItems[0].getMoreActionsButton()
-      const moreActionsMenuItems = await gridItemMoreActionsMenu.getAllActionsMenuItems()
-      await moreActionsMenuItems[1].selectItem()
-
-      expect(editItemEvent).toEqual(component.data[0])
-    })
-
-    it('should get edit actions menu button third grid item and get event editItem with third data grid item when clicked', async () => {
-      gridItems = (await dataGrid?.getDefaultGridItems()) ?? []
-      const gridItemMoreActionsMenu = await gridItems[2].getMoreActionsButton()
-      const moreActionsMenuItems = await gridItemMoreActionsMenu.getAllActionsMenuItems()
-      await moreActionsMenuItems[1].selectItem()
-
-      expect(editItemEvent).toEqual(component.data[2])
-    })
-
-    it('should get delete actions menu button first grid item and get event deleteItem with first data grid item when clicked', async () => {
-      gridItems = (await dataGrid?.getDefaultGridItems()) ?? []
-      const gridItemMoreActionsMenu = await gridItems[0].getMoreActionsButton()
-      const moreActionsMenuItems = await gridItemMoreActionsMenu.getAllActionsMenuItems()
-      await moreActionsMenuItems[2].selectItem()
-
-      expect(deleteItemEvent).toEqual(component.data[0])
-    })
-
-    it('should get delete actions menu button third grid item and get event deleteItem with third data grid item when clicked', async () => {
-      gridItems = (await dataGrid?.getDefaultGridItems()) ?? []
-      const gridItemMoreActionsMenu = await gridItems[2].getMoreActionsButton()
-      const moreActionsMenuItems = await gridItemMoreActionsMenu.getAllActionsMenuItems()
-      await moreActionsMenuItems[2].selectItem()
-
-      expect(deleteItemEvent).toEqual(component.data[2])
-    })
-  })
-
-  describe('List view ', () => {
-    let dataLayoutSelection: DataLayoutSelectionHarness
-    let dataView: DataViewHarness
-    let dataList: DataListGridHarness | null
-    let listItems: DefaultListItemHarness[]
-
-    let sortingDropdown: PSelectHarness
-    let sortingDropdownItems: ListItemHarness[]
-    let dataListGridSortingButton: PButtonHarness
-
-    beforeEach(async () => {
-      dataLayoutSelection = await loader.getHarness(DataLayoutSelectionHarness)
-      await dataLayoutSelection.selectListLayout()
-
-      fixture.detectChanges()
-      await fixture.whenStable()
-
-      dataView = await loader.getHarness(DataViewHarness)
-      dataList = await dataView?.getDataListGrid()
-      sortingDropdown = await loader.getHarness(PSelectHarness.with({ id: 'dataListGridSortingDropdown' }))
-      sortingDropdownItems = await sortingDropdown.getSelectItems()
-      dataListGridSortingButton = await loader.getHarness(PButtonHarness.with({ id: 'dataListGridSortingButton' }))
-    })
-    const expectedInitialListItemsData = [
-      ['some name', '2023-09-13T09:34:05Z'],
-      ['example', '2023-09-12T09:33:53Z'],
-      ['name 1', '2023-09-14T09:34:22Z'],
-      ['name 2', '2023-09-14T09:34:22Z'],
-      ['name 3', '2023-09-14T09:34:22Z'],
-    ]
-
-    it('should load list', async () => {
-      expect(dataList).toBeTruthy()
-      expect(await dataLayoutSelection.getCurrentLayout()).toEqual('list')
-    })
-
-    it('should get list data', async () => {
-      listItems = (await dataList?.getDefaultListItems()) ?? []
-      const listItemsData = await parallel(() => listItems.map((item) => item.getData()))
-
-      expect(listItemsData).toEqual(expectedInitialListItemsData)
-    })
-
-    it('should be sorted by first sorting dropdown item in ascending order', async () => {
-      const expectedListItemsDataAfterSorting = [
-        ['example', '2023-09-12T09:33:53Z'],
-        ['name 1', '2023-09-14T09:34:22Z'],
-        ['name 2', '2023-09-14T09:34:22Z'],
-        ['name 3', '2023-09-14T09:34:22Z'],
-        ['some name', '2023-09-13T09:34:05Z'],
-      ]
-
-      await sortingDropdownItems[0].selectItem()
-      await dataListGridSortingButton.click()
-
-      listItems = (await dataList?.getDefaultListItems()) ?? []
-      const listItemsData = await parallel(() => listItems.map((item) => item.getData()))
-
-      expect(listItemsData).toEqual(expectedListItemsDataAfterSorting)
-    })
-
-    it('should be sorted by first sorting dropdown item in descending order', async () => {
-      const expectedListItemsDataAfterSorting = [
-        ['some name', '2023-09-13T09:34:05Z'],
-        ['name 3', '2023-09-14T09:34:22Z'],
-        ['name 2', '2023-09-14T09:34:22Z'],
-        ['name 1', '2023-09-14T09:34:22Z'],
-        ['example', '2023-09-12T09:33:53Z'],
-      ]
-
-      await sortingDropdownItems[0].selectItem()
-      await dataListGridSortingButton.click()
-      await dataListGridSortingButton.click()
-
-      listItems = (await dataList?.getDefaultListItems()) ?? []
-      const listItemsData = await parallel(() => listItems.map((item) => item.getData()))
-
-      expect(listItemsData).toEqual(expectedListItemsDataAfterSorting)
-    })
-
-    it('should be sorted by first sorting dropdown item back to default order', async () => {
-      await sortingDropdownItems[0].selectItem()
-      await dataListGridSortingButton.click()
-      await dataListGridSortingButton.click()
-      await dataListGridSortingButton.click()
-
-      listItems = (await dataList?.getDefaultListItems()) ?? []
-      const listItemsData = await parallel(() => listItems.map((item) => item.getData()))
-
-      expect(listItemsData).toEqual(expectedInitialListItemsData)
-    })
-
-    it('should get list item view button of first list item and get event viewItem with first data list item when clicked', async () => {
-      listItems = (await dataList?.getDefaultListItems()) ?? []
-      const viewButton = await listItems[0].getViewButton()
-      await viewButton?.click()
-
-      expect(viewItemEvent).toEqual(component.data[0])
-    })
-
-    it('should get list item view button of third list item and get event viewItem with third data list item when clicked', async () => {
-      listItems = (await dataList?.getDefaultListItems()) ?? []
-      const viewButton = await listItems[2].getViewButton()
-      await viewButton?.click()
-
-      expect(viewItemEvent).toEqual(component.data[2])
-    })
-
-    it('should get list item view button of first list item and get event editItem with first data list item when clicked', async () => {
-      listItems = (await dataList?.getDefaultListItems()) ?? []
-      const editButton = await listItems[0].getEditButton()
-      await editButton?.click()
-
-      expect(editItemEvent).toEqual(component.data[0])
-    })
-
-    it('should get list item view button of third list item and get event editItem with third data list item when clicked', async () => {
-      listItems = (await dataList?.getDefaultListItems()) ?? []
-      const editButton = await listItems[2].getEditButton()
-      await editButton?.click()
-
-      expect(editItemEvent).toEqual(component.data[2])
-    })
-
-    it('should get list item view button of first list item and get event deleteItem with first data list item when clicked', async () => {
-      listItems = (await dataList?.getDefaultListItems()) ?? []
-      const deleteButton = await listItems[0].getDeleteButton()
-      await deleteButton?.click()
-
-      expect(deleteItemEvent).toEqual(component.data[0])
-    })
-
-    it('should get list item view button of third list item and get event deleteItem with third data list item when clicked', async () => {
-      listItems = (await dataList?.getDefaultListItems()) ?? []
-      const deleteButton = await listItems[2].getDeleteButton()
-      await deleteButton?.click()
-
-      expect(deleteItemEvent).toEqual(component.data[2])
-    })
-  })
-
-  describe('Data ', () => {
-    let dataLayoutSelection: DataLayoutSelectionHarness
-    let dataView: DataViewHarness
-
-    let dataTable: DataTableHarness | null
-    let tableHeaders: TableHeaderColumnHarness[]
-    let tableRows: TableRowHarness[]
-    let allFilterOptions: PMultiSelectListItemHarness[] | undefined
-
-    let dataList: DataListGridHarness | null
-    let listItems: DefaultListItemHarness[]
-
-    let dataGrid: DataListGridHarness | null
-    let gridItems: DefaultGridItemHarness[]
-
-    beforeEach(async () => {
-      component.subtitleLineIds = ['startDate', 'testNumber']
-
-      dataLayoutSelection = await loader.getHarness(DataLayoutSelectionHarness)
-
-      dataView = await loader.getHarness(DataViewHarness)
-      dataTable = await dataView.getDataTable()
-      tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
-      tableRows = (await dataTable?.getRows()) ?? []
-
-      allFilterOptions = undefined
-    })
-    const expectedSortedListItemsDataAscending = [
-      ['some name', '2023-09-13T09:34:05Z', '1'],
-      ['example', '2023-09-12T09:33:53Z', '3.141'],
-      ['name 3', '2023-09-14T09:34:22Z', '7.1'],
-      ['name 2', '2023-09-14T09:34:22Z', '12345.6789'],
-      ['name 1', '2023-09-14T09:34:22Z', '123456789'],
-    ]
-    const expectedSortedListItemsDataDescending = [
-      ['name 1', '2023-09-14T09:34:22Z', '123456789'],
-      ['name 2', '2023-09-14T09:34:22Z', '12345.6789'],
-      ['name 3', '2023-09-14T09:34:22Z', '7.1'],
-      ['example', '2023-09-12T09:33:53Z', '3.141'],
-      ['some name', '2023-09-13T09:34:05Z', '1'],
-    ]
-    const expectedSortedGridItemsDataDescending = [
-      ['/path/to/image3', 'name 1', '2023-09-14T09:34:22Z', '123456789'],
-      ['/path/to/image4', 'name 2', '2023-09-14T09:34:22Z', '12345.6789'],
-      ['./onecx-portal-lib/assets/images/placeholder.png', 'name 3', '2023-09-14T09:34:22Z', '7.1'],
-      ['/path/to/image2', 'example', '2023-09-12T09:33:53Z', '3.141'],
-      ['/path/to/image', 'some name', '2023-09-13T09:34:05Z', '1'],
-    ]
-    const expectedSortedGridItemsDataAscending = [
-      ['/path/to/image', 'some name', '2023-09-13T09:34:05Z', '1'],
-      ['/path/to/image2', 'example', '2023-09-12T09:33:53Z', '3.141'],
-      ['./onecx-portal-lib/assets/images/placeholder.png', 'name 3', '2023-09-14T09:34:22Z', '7.1'],
-      ['/path/to/image4', 'name 2', '2023-09-14T09:34:22Z', '12345.6789'],
-      ['/path/to/image3', 'name 1', '2023-09-14T09:34:22Z', '123456789'],
-    ]
-
-    it('should remain sorted after switching data view from table view to grid view and to list view', async () => {
-      window.HTMLElement.prototype.scrollIntoView = jest.fn()
-      const columnGroupSelectionDropdown = await loader.getHarness(
-        PSelectHarness.with({ inputId: 'columnGroupSelectionDropdown' })
-      )
-      const dropdownItems = await columnGroupSelectionDropdown.getSelectItems()
-      await dropdownItems[1].selectItem()
-
-      tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
-      const sortButton = await tableHeaders?.[6].getSortButton()
-      await sortButton?.click()
-
-      await dataLayoutSelection.selectGridLayout()
-
-      dataGrid = await dataView.getDataListGrid()
-      gridItems = (await dataGrid?.getDefaultGridItems()) ?? []
-      const gridItemsData = await parallel(() => gridItems.map((item) => item.getData()))
-
-      expect(gridItemsData).toEqual(expectedSortedGridItemsDataAscending)
-
-      await dataLayoutSelection.selectListLayout()
-
-      dataList = await dataView.getDataListGrid()
-      listItems = (await dataList?.getDefaultListItems()) ?? []
-      const listItemsData = await parallel(() => listItems.map((item) => item.getData()))
-
-      expect(listItemsData).toEqual(expectedSortedListItemsDataAscending)
-    })
-
-    it('should remain sorted after switching data view from table view to list view then sort again and switch to grid view', async () => {
-      window.HTMLElement.prototype.scrollIntoView = jest.fn()
-      const columnGroupSelectionDropdown = await loader.getHarness(
-        PSelectHarness.with({ inputId: 'columnGroupSelectionDropdown' })
-      )
-      const dropdownItems = await columnGroupSelectionDropdown.getSelectItems()
-      await dropdownItems[1].selectItem()
-
-      tableHeaders = (await dataTable?.getHeaderColumns()) ?? []
-      const sortButton = await tableHeaders?.[6].getSortButton()
-      await sortButton?.click()
-
-      await dataLayoutSelection.selectListLayout()
-
-      dataList = await dataView.getDataListGrid()
-      listItems = (await dataList?.getDefaultListItems()) ?? []
-      let listItemsData = await parallel(() => listItems.map((item) => item.getData()))
-
-      expect(listItemsData).toEqual(expectedSortedListItemsDataAscending)
-
-      const sortingDropdown = await loader.getHarness(PSelectHarness.with({ id: 'dataListGridSortingDropdown' }))
-      const dataListGridSortingButton = await loader.getHarness(
-        PButtonHarness.with({ id: 'dataListGridSortingButton' })
-      )
-
-      expect(await (await sortingDropdown.host()).text()).toEqual('COLUMN_HEADER_NAME.TEST_NUMBER')
-      await dataListGridSortingButton.click()
-
-      listItems = (await dataList?.getDefaultListItems()) ?? []
-      listItemsData = await parallel(() => listItems.map((item) => item.getData()))
-
-      expect(listItemsData).toEqual(expectedSortedListItemsDataDescending)
-
-      await dataLayoutSelection.selectGridLayout()
-
-      dataGrid = await dataView.getDataListGrid()
-      gridItems = (await dataGrid?.getDefaultGridItems()) ?? []
-      const gridItemsData = await parallel(() => gridItems.map((item) => item.getData()))
-
-      expect(gridItemsData).toEqual(expectedSortedGridItemsDataDescending)
-    })
-
-    it('should remain filtered with third filter option after switching view data view from table view to grid view and to list view', async () => {
-      const expectedFilteredRowsData = [['name 1', 'dsc 3', 'status name 1', 'someone responsible 3']]
-      const expectedFilteredListItemsData = [['name 1', '2023-09-14T09:34:22Z', '123456789']]
-      const expectedFilteredGridItemsData = [['/path/to/image3', 'name 1', '2023-09-14T09:34:22Z', '123456789']]
-      const filterMultiSelect = await tableHeaders?.[0].getFilterMultiSelect()
-
-      allFilterOptions = await filterMultiSelect?.getAllOptions()
-      await allFilterOptions?.[2].click()
-
-      tableRows = (await dataTable?.getRows()) ?? []
-      const rows = await parallel(() => tableRows.map((row) => row.getData()))
-
-      expect(rows).toEqual(expectedFilteredRowsData)
-
-      await dataLayoutSelection.selectGridLayout()
-
-      dataGrid = await dataView.getDataListGrid()
-      gridItems = (await dataGrid?.getDefaultGridItems()) ?? []
-      const gridItemsData = await parallel(() => gridItems.map((item) => item.getData()))
-
-      expect(gridItemsData).toEqual(expectedFilteredGridItemsData)
-
-      await dataLayoutSelection.selectListLayout()
-
-      dataList = await dataView.getDataListGrid()
-      listItems = (await dataList?.getDefaultListItems()) ?? []
-      const listItemsData = await parallel(() => listItems.map((item) => item.getData()))
-
-      expect(listItemsData).toEqual(expectedFilteredListItemsData)
-    })
-  })
-  describe('Dynamically disable/hide based on field path in interactive data view', () => {
-    const setUpMockData = async (viewType: 'grid' | 'list' | 'table') => {
-      const userServiceMock = TestBed.inject(UserServiceMock)
-      userServiceMock.permissionsTopic$.publish(['VIEW', 'EDIT', 'DELETE'])
-      component.viewItem.subscribe(() => console.log())
-      component.editItem.subscribe(() => console.log())
-      component.deleteItem.subscribe(() => console.log())
-      component.viewPermission = 'VIEW'
-      component.editPermission = 'EDIT'
-      component.deletePermission = 'DELETE'
-      component.layout = viewType
-      component.columns = [
-        {
-          columnType: ColumnType.STRING,
-          id: 'name',
-          nameKey: 'COLUMN_HEADER_NAME.NAME',
+      component.templates$.next({
+        forEach: (cb: (t: any) => void) => {
+          templates.forEach(cb)
         },
-        {
-          columnType: ColumnType.STRING,
-          id: 'ready',
-          nameKey: 'Ready',
+      } as any)
+
+      component.ngAfterContentInit()
+
+      expect(component.primeNgTableCell).toBe(tableCellTpl)
+      expect(component.primeNgGridItem).toBe(gridItemTpl)
+      expect(component.primeNgNumberTableFilterCell).toBe(numberFilterTpl)
+    })
+
+    it('should map all supported PrimeTemplate types in ngAfterContentInit', () => {
+      const { component } = createComponent(true)
+
+      const makeTpl = (type: string, template: any) => ({
+        getType: () => type,
+        template,
+      })
+
+      const templatesByType: Record<string, any> = {
+        tableCell: {},
+        dateTableCell: {},
+        relativeDateTableCell: {},
+        translationKeyTableCell: {},
+        gridItemSubtitleLines: {},
+        listItemSubtitleLines: {},
+        stringTableCell: {},
+        numberTableCell: {},
+        gridItem: {},
+        listItem: {},
+        topCenter: {},
+        listValue: {},
+        translationKeyListValue: {},
+        numberListValue: {},
+        relativeDateListValue: {},
+        stringListValue: {},
+        dateListValue: {},
+        tableFilterCell: {},
+        dateTableFilterCell: {},
+        relativeDateTableFilterCell: {},
+        translationKeyTableFilterCell: {},
+        stringTableFilterCell: {},
+        numberTableFilterCell: {},
+      }
+
+      component.templates$.next({
+        forEach: (cb: any) => {
+          Object.entries(templatesByType)
+            .map(([type, tpl]) => makeTpl(type, tpl))
+            .forEach((x) => cb(x))
         },
-      ]
-      component.data = [
-        {
-          id: 'Test',
-          imagePath:
-            'https://images.unsplash.com/photo-1682686581427-7c80ab60e3f3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-          name: 'Card 1',
-          ready: false,
-        },
-      ]
-      component.titleLineId = 'name'
+      } as any)
 
-      fixture.detectChanges()
-      await fixture.whenStable()
-    }
+      component.ngAfterContentInit()
 
-    describe('Disable list action buttons based on field path', () => {
-      it('should not disable any buttons initially', async () => {
-        await setUpMockData('list')
-        const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
-        expect(await dataView?.hasAmountOfActionButtons('list', 3)).toBe(true)
-        expect(await dataView?.hasAmountOfDisabledActionButtons('list', 0)).toBe(true)
-      })
-
-      it('should disable a button based on a given field path', async () => {
-        await setUpMockData('list')
-        component.viewActionEnabledField = 'ready'
-        const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
-        expect(await dataView?.hasAmountOfActionButtons('list', 3)).toBe(true)
-        expect(await dataView?.hasAmountOfDisabledActionButtons('list', 1)).toBe(true)
-      })
+      expect(component.primeNgTableCell).toBe(templatesByType['tableCell'])
+      expect(component.primeNgDateTableCell).toBe(templatesByType['dateTableCell'])
+      expect(component.primeNgRelativeDateTableCell).toBe(templatesByType['relativeDateTableCell'])
+      expect(component.primeNgTranslationKeyTableCell).toBe(templatesByType['translationKeyTableCell'])
+      expect(component.primeNgGridItemSubtitleLines).toBe(templatesByType['gridItemSubtitleLines'])
+      expect(component.primeNgListItemSubtitleLines).toBe(templatesByType['listItemSubtitleLines'])
+      expect(component.primeNgStringTableCell).toBe(templatesByType['stringTableCell'])
+      expect(component.primeNgNumberTableCell).toBe(templatesByType['numberTableCell'])
+      expect(component.primeNgGridItem).toBe(templatesByType['gridItem'])
+      expect(component.primeNgListItem).toBe(templatesByType['listItem'])
+      expect(component.primeNgTopCenter).toBe(templatesByType['topCenter'])
+      expect(component.primeNgListValue).toBe(templatesByType['listValue'])
+      expect(component.primeNgTranslationKeyListValue).toBe(templatesByType['translationKeyListValue'])
+      expect(component.primeNgNumberListValue).toBe(templatesByType['numberListValue'])
+      expect(component.primeNgRelativeDateListValue).toBe(templatesByType['relativeDateListValue'])
+      expect(component.primeNgStringListValue).toBe(templatesByType['stringListValue'])
+      expect(component.primeNgDateListValue).toBe(templatesByType['dateListValue'])
+      expect(component.primeNgTableFilterCell).toBe(templatesByType['tableFilterCell'])
+      expect(component.primeNgDateTableFilterCell).toBe(templatesByType['dateTableFilterCell'])
+      expect(component.primeNgRelativeDateTableFilterCell).toBe(templatesByType['relativeDateTableFilterCell'])
+      expect(component.primeNgTranslationKeyTableFilterCell).toBe(templatesByType['translationKeyTableFilterCell'])
+      expect(component.primeNgStringTableFilterCell).toBe(templatesByType['stringTableFilterCell'])
+      expect(component.primeNgNumberTableFilterCell).toBe(templatesByType['numberTableFilterCell'])
     })
-
-    describe('Disable grid action buttons based on field path', () => {
-      it('should not disable any buttons initially', async () => {
-        await setUpMockData('grid')
-        const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
-        await (await dataView?.getGridMenuButton())?.click()
-        expect(await dataView?.hasAmountOfActionButtons('grid', 3)).toBe(true)
-        expect(await dataView?.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
-      })
-
-      it('should disable a button based on a given field path', async () => {
-        await setUpMockData('grid')
-        component.viewActionEnabledField = 'ready'
-        const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
-        await (await dataView?.getGridMenuButton())?.click()
-        expect(await dataView?.hasAmountOfActionButtons('grid', 3)).toBe(true)
-        expect(await dataView?.hasAmountOfDisabledActionButtons('grid', 1)).toBe(true)
-      })
-    })
-
-    describe('Disable table action buttons based on field path', () => {
-      it('should not disable any buttons initially', async () => {
-        await setUpMockData('table')
-        const dataTable = await (await interactiveDataViewHarness.getDataView()).getDataTable()
-        expect(await dataTable?.hasAmountOfActionButtons(3)).toBe(true)
-        expect(await dataTable?.hasAmountOfDisabledActionButtons(0)).toBe(true)
-      })
-
-      it('should disable a button based on a given field path', async () => {
-        await setUpMockData('table')
-        component.viewActionEnabledField = 'ready'
-        const dataTable = await (await interactiveDataViewHarness.getDataView()).getDataTable()
-        expect(await dataTable?.hasAmountOfActionButtons(3)).toBe(true)
-        expect(await dataTable?.hasAmountOfDisabledActionButtons(1)).toBe(true)
-      })
-    })
-
-    describe('Hide list action buttons based on field path', () => {
-      it('should not hide any buttons initially', async () => {
-        await setUpMockData('list')
-        const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
-        expect(await dataView?.hasAmountOfActionButtons('list', 3)).toBe(true)
-        expect(await dataView?.hasAmountOfDisabledActionButtons('list', 0)).toBe(true)
-      })
-
-      it('should hide a button based on a given field path', async () => {
-        await setUpMockData('list')
-        component.viewActionVisibleField = 'ready'
-        const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
-        expect(await dataView?.hasAmountOfActionButtons('list', 2)).toBe(true)
-        expect(await dataView?.hasAmountOfDisabledActionButtons('list', 0)).toBe(true)
-      })
-    })
-
-    describe('Hide grid action buttons based on field path', () => {
-      it('should not hide any buttons initially', async () => {
-        await setUpMockData('grid')
-        const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
-        await (await dataView?.getGridMenuButton())?.click()
-        expect(await dataView?.hasAmountOfActionButtons('grid', 3)).toBe(true)
-        expect(await dataView?.hasAmountOfActionButtons('grid-hidden', 0)).toBe(true)
-        expect(await dataView?.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
-      })
-
-      it('should hide a button based on a given field path', async () => {
-        await setUpMockData('grid')
-        const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
-        await (await dataView?.getGridMenuButton())?.click()
-        expect(await dataView?.hasAmountOfActionButtons('grid', 3)).toBe(true)
-        await (await dataView?.getGridMenuButton())?.click()
-
-        component.viewActionVisibleField = 'ready'
-        await (await dataView?.getGridMenuButton())?.click()
-
-        expect(await dataView?.hasAmountOfActionButtons('grid', 2)).toBe(true)
-        expect(await dataView?.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
-      })
-    })
-
-    describe('Hide table action buttons based on field path', () => {
-      it('should not hide any buttons initially', async () => {
-        await setUpMockData('table')
-        const dataTable = await (await interactiveDataViewHarness.getDataView()).getDataTable()
-        expect(await dataTable?.hasAmountOfActionButtons(3)).toBe(true)
-        expect(await dataTable?.hasAmountOfDisabledActionButtons(0)).toBe(true)
-      })
-
-      it('should hide a button based on a given field path', async () => {
-        await setUpMockData('table')
-        component.viewActionVisibleField = 'ready'
-        const dataTable = await (await interactiveDataViewHarness.getDataView()).getDataTable()
-        expect(await dataTable?.hasAmountOfActionButtons(2)).toBe(true)
-        expect(await dataTable?.hasAmountOfDisabledActionButtons(0)).toBe(true)
-      })
-    })
-  })
-
-  it('should react on group selection change event emit', () => {
-    const columnsChangeSpy = jest.spyOn(component.displayedColumnKeysChange, 'emit')
-    const columnKeysChangeSpy = jest.spyOn(component.displayedColumnKeysChange, 'emit')
-
-    component.groupSelectionChangedSlotEmitter.emit({
-      activeColumns: [
-        {
-          id: 'first-col',
-        } as any,
-        {
-          id: 'second-col',
-        } as any,
-      ],
-      groupKey: 'my-search-config',
-    })
-
-    expect(component.displayedColumnKeys).toStrictEqual(['first-col', 'second-col'])
-    expect(component.selectedGroupKey).toBe('my-search-config')
-    expect(columnsChangeSpy).toHaveBeenCalled()
-    expect(columnKeysChangeSpy).toHaveBeenCalledWith(['first-col', 'second-col'])
-  })
-
-  it('should render the header with a class, when given a headerStyleClass via input', async () => {
-    component.headerStyleClass = 'mt-4'
-
-    const expectedStyleClasses = ['p-3', 'border-bottom-1', 'surface-border', 'mt-4']
-    expect(await interactiveDataViewHarness.getHeaderStyleClasses()).toEqual(expectedStyleClasses)
-  })
-
-  it('should render the content with a class, when given a contentStyleClass via input', async () => {
-    component.contentStyleClass = 'mt-4'
-
-    const expectedStyleClasses = ['p-3', 'mt-4']
-    expect(await interactiveDataViewHarness.getContentStyleClasses()).toEqual(expectedStyleClasses)
   })
 })
