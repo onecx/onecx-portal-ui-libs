@@ -110,7 +110,7 @@ Replace **p-dataView** and **ocx-data-view-controls** template with **ocx-intera
 
 | columnTemplates
 | columnTemplates
-| Use `ng-template` with appropriate selectors and Angular content projection.
+| Use `p-template` with appropriate selectors and Angular content projection.
 
 | dropdownPlaceholderText
 | -
