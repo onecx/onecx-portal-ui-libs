@@ -17,9 +17,9 @@ import { LoadingIndicatorComponent } from '../components/loading-indicator/loadi
   standalone: false,
 })
 export class LoadingIndicatorDirective implements OnChanges {
-  private viewContainerRef = inject(ViewContainerRef)
-  private el = inject(ElementRef)
-  private renderer = inject(Renderer2)
+  private readonly viewContainerRef = inject(ViewContainerRef)
+  private readonly el = inject(ElementRef)
+  private readonly renderer = inject(Renderer2)
 
   @Input() ocxLoadingIndicator = false
   @Input() overlayFullPage = false
@@ -45,10 +45,10 @@ export class LoadingIndicatorDirective implements OnChanges {
 
   private toggleLoadingIndicator() {
     if (this.ocxLoadingIndicator) {
-      if (this.overlayFullPage == false) {
-        this.elementLoader()
-      } else {
+      if (this.overlayFullPage) {
         this.componentRef = this.viewContainerRef.createComponent(LoadingIndicatorComponent)
+      } else {
+        this.elementLoader()
       }
     } else {
       this.viewContainerRef.clear()

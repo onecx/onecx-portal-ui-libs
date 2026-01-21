@@ -4,13 +4,15 @@ import { UserService } from '@onecx/angular-integration-interface'
 import { provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
 import { BehaviorSubject, of } from 'rxjs'
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
+import { DivHarness } from '@onecx/angular-testing'
 import { IfPermissionDirective } from './if-permission.directive'
 
 // Simple component to test the directive
 @Component({
   selector: 'ocx-simple',
   standalone: false,
-  template: ` <div *ocxIfPermission="'test-permission'">Visible</div> `,
+  template: ` <div id="visibleDiv" *ocxIfPermission="'test-permission'">Visible</div> `,
 })
 class SimpleComponent {}
 
@@ -27,8 +29,10 @@ class MultiplePermissionComponent {}
   selector: 'ocx-with-else',
   standalone: false,
   template: `
-    <div *ocxIfPermission="'missing-permission'; elseTemplate: elseBlock">Hidden</div>
-    <ng-template #elseBlock><div>Else Block</div></ng-template>
+    <div id="visibleDiv" *ocxIfPermission="'test-permission'; elseTemplate: elseBlock">Visible with Else</div>
+    <ng-template #elseBlock>
+      <div id="elseDiv">Else Block</div>
+    </ng-template>
   `,
 })
 class WithElseTemplateComponent {}
@@ -129,6 +133,24 @@ describe('IfPermissionDirective', () => {
   let mockPermissionChecker: jest.Mocked<HasPermissionChecker>
   let getPermissionsMock: jest.Mock
 
+  const getDivOrNull = async () => {
+    if (!fixture) return null
+    const loader = TestbedHarnessEnvironment.loader(fixture)
+    return loader.getHarnessOrNull(DivHarness)
+  }
+
+  const getVisibleDivOrNull = async () => {
+    if (!fixture) return null
+    const loader = TestbedHarnessEnvironment.loader(fixture)
+    return loader.getHarnessOrNull(DivHarness.with({ id: 'visibleDiv' }))
+  }
+
+  const getElseDivOrNull = async () => {
+    if (!fixture) return null
+    const loader = TestbedHarnessEnvironment.loader(fixture)
+    return loader.getHarnessOrNull(DivHarness.with({ id: 'elseDiv' }))
+  }
+
   beforeEach(() => {
     mockPermissionChecker = {
       getPermissions: jest.fn(),
@@ -181,72 +203,72 @@ describe('IfPermissionDirective', () => {
     }).toThrow('IfPermission requires UserService or HasPermissionChecker to be provided!')
   })
 
-  it('should be usable with array of permissions', () => {
+  it('should be usable with array of permissions', async () => {
     getPermissionsMock.mockReturnValue(of(['test-permission', 'second-permission']))
 
     fixture = TestBed.createComponent(MultiplePermissionComponent)
     fixture.detectChanges()
 
-    const visibleElement = fixture.nativeElement.querySelector('div')
-    expect(visibleElement.textContent).toContain('Visible')
+    const visibleElement = await getDivOrNull()
+    expect(await visibleElement?.getText()).toContain('Visible')
   })
 
   describe('ifPermission', () => {
-    it('should display the element if user has permission', () => {
+    it('should display the element if user has permission', async () => {
       getPermissionsMock.mockReturnValue(of(['test-permission']))
 
       fixture = TestBed.createComponent(SimpleComponent)
       fixture.detectChanges()
 
-      const visibleElement = fixture.nativeElement.querySelector('div')
-      expect(visibleElement.textContent).toContain('Visible')
+      const visibleElement = await getDivOrNull()
+      expect(await visibleElement?.getText()).toContain('Visible')
     })
 
-    it('should not display the element if user does not have permission', () => {
+    it('should not display the element if user does not have permission', async () => {
       getPermissionsMock.mockReturnValue(of([]))
 
       fixture = TestBed.createComponent(WithElseTemplateComponent)
       fixture.detectChanges()
 
-      const hiddenElement = fixture.nativeElement.querySelector('div:contains("Hidden")')
+      const hiddenElement = await getVisibleDivOrNull()
       expect(hiddenElement).toBeNull()
     })
 
-    it('should display the else block if user does not have permission', () => {
+    it('should display the else block if user does not have permission', async () => {
       getPermissionsMock.mockReturnValue(of([]))
 
       fixture = TestBed.createComponent(WithElseTemplateComponent)
       fixture.detectChanges()
 
-      const elseBlock = fixture.nativeElement.querySelector('div')
-      expect(elseBlock.textContent).toContain('Else Block')
+      const elseBlock = await getElseDivOrNull()
+      expect(elseBlock).toBeTruthy()
+      expect(await elseBlock!.getText()).toContain('Else Block')
     })
 
-    it('should display disabled element if user does not have permission', () => {
+    it('should display disabled element if user does not have permission', async () => {
       getPermissionsMock.mockReturnValue(of([]))
 
       fixture = TestBed.createComponent(OnMissingDisabledComponent)
       fixture.detectChanges()
 
-      // Get the disabled attribute from fixture element
-      const disabledDiv = fixture.nativeElement.querySelector('div') as HTMLDivElement
+      const disabledDiv = await getDivOrNull()
       expect(disabledDiv).toBeTruthy()
-      expect(disabledDiv.textContent).toContain('Disabled')
-      expect(disabledDiv.hasAttribute('disabled')).toBeTruthy()
+      expect(await disabledDiv?.getText()).toContain('Disabled')
+      expect(await disabledDiv?.host().then((h) => h.getAttribute('disabled'))).not.toBeNull()
     })
 
-    it('should use provided permissions array to check permissions', () => {
+    it('should use provided permissions array to check permissions', async () => {
       getPermissionsMock.mockReturnValue(of([]))
 
       fixture = TestBed.createComponent(WithProvidedPermissionsComponent)
       fixture.detectChanges()
 
-      const visibleDiv = fixture.nativeElement.querySelector('div') as HTMLDivElement
+      const visibleDiv = await getDivOrNull()
       expect(visibleDiv).toBeTruthy()
-      expect(visibleDiv.textContent).toContain('Show with provided-permission')
+      expect(await visibleDiv?.getText()).toContain('Show with provided-permission')
     })
 
-    it('should log if provided permissions array does not contain permission', () => {
+    it('should log if provided permissions array does not contain permission', async () => {
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
       getPermissionsMock.mockReturnValue(of([]))
@@ -254,22 +276,22 @@ describe('IfPermissionDirective', () => {
       fixture = TestBed.createComponent(WithMissingProvidedPermissionsComponent)
       fixture.detectChanges()
 
-      const element = fixture.nativeElement.querySelector('div')
+      const element = await getDivOrNull()
       expect(element).toBeNull()
       expect(consoleSpy).toHaveBeenCalledWith('👮‍♀️ No permission in overwrites for: `', ['missing-permission'])
     })
 
-    it('should not show if permission is undefined', () => {
+    it('should not show if permission is undefined', async () => {
       getPermissionsMock.mockReturnValue(of([]))
 
       fixture = TestBed.createComponent(WithUndefinedPermissionComponent)
       fixture.detectChanges()
 
-      const element = fixture.nativeElement.querySelector('div')
+      const element = await getDivOrNull()
       expect(element).toBeNull()
     })
 
-    it('should react to permission changes', () => {
+    it('should react to permission changes', async () => {
       const permissionSubject$ = new BehaviorSubject<string[]>([])
 
       getPermissionsMock.mockImplementation((_permissions: string[] | string) => {
@@ -279,17 +301,17 @@ describe('IfPermissionDirective', () => {
       fixture = TestBed.createComponent(SimpleComponent)
       fixture.detectChanges()
 
-      const element = fixture.nativeElement.querySelector('div')
+      let element = await getDivOrNull()
       expect(element).toBeNull()
 
       permissionSubject$.next(['test-permission'])
       fixture.detectChanges()
 
-      const visibleElement = fixture.nativeElement.querySelector('div')
-      expect(visibleElement.textContent).toContain('Visible')
+      element = await getDivOrNull()
+      expect(await element?.getText()).toContain('Visible')
     })
 
-    it('should remove disabled attribute when permission is granted', () => {
+    it('should remove disabled attribute when permission is granted', async () => {
       const permissionSubject$ = new BehaviorSubject<string[]>([])
 
       getPermissionsMock.mockImplementation((_permissions: string[] | string) => {
@@ -299,75 +321,73 @@ describe('IfPermissionDirective', () => {
       fixture = TestBed.createComponent(OnMissingDisabledComponent)
       fixture.detectChanges()
 
-      // Get the disabled attribute from fixture element
-      let disabledDiv = fixture.nativeElement.querySelector('div') as HTMLDivElement
+      let disabledDiv = await getDivOrNull()
       expect(disabledDiv).toBeTruthy()
-      expect(disabledDiv.textContent).toContain('Disabled')
-      expect(disabledDiv.hasAttribute('disabled')).toBeTruthy()
+      expect(await disabledDiv?.getText()).toContain('Disabled')
+      expect(await disabledDiv?.host().then((h) => h.getAttribute('disabled'))).not.toBeNull()
 
       permissionSubject$.next(['test-disabled'])
       fixture.detectChanges()
 
-      disabledDiv = fixture.nativeElement.querySelector('div') as HTMLDivElement
+      disabledDiv = await getDivOrNull()
       expect(disabledDiv).toBeTruthy()
-      expect(disabledDiv.textContent).toContain('Disabled')
-      expect(disabledDiv.hasAttribute('disabled')).toBeFalsy()
+      expect(await disabledDiv?.getText()).toContain('Disabled')
+      expect(await disabledDiv?.host().then((h) => h.getAttribute('disabled'))).toBeNull()
     })
   })
 
   describe('ifNotPermission', () => {
-    it('should not display the element if user has permission', () => {
+    it('should not display the element if user has permission', async () => {
       getPermissionsMock.mockReturnValue(of(['test-permission']))
 
       fixture = TestBed.createComponent(NegateSimpleComponent)
       fixture.detectChanges()
 
-      const visibleElement = fixture.nativeElement.querySelector('div')
+      const visibleElement = await getDivOrNull()
       expect(visibleElement).toBeNull()
     })
 
-    it('should display the element if user does not have permission', () => {
+    it('should display the element if user does not have permission', async () => {
       getPermissionsMock.mockReturnValue(of([]))
 
       fixture = TestBed.createComponent(NegateWithElseTemplateComponent)
       fixture.detectChanges()
 
-      const hiddenElement = fixture.nativeElement.querySelector('div')
-      expect(hiddenElement.textContent).toContain('Hidden')
+      const hiddenElement = await getDivOrNull()
+      expect(await hiddenElement?.getText()).toContain('Hidden')
     })
 
-    it('should display the else block if user has permission', () => {
+    it('should display the else block if user has permission', async () => {
       getPermissionsMock.mockReturnValue(of(['missing-permission']))
 
       fixture = TestBed.createComponent(NegateWithElseTemplateComponent)
       fixture.detectChanges()
 
-      const elseBlock = fixture.nativeElement.querySelector('div')
-      expect(elseBlock.textContent).toContain('Else Block')
+      const elseBlock = await getDivOrNull()
+      expect(await elseBlock?.getText()).toContain('Else Block')
     })
 
-    it('should display disabled element if user has permission', () => {
+    it('should display disabled element if user has permission', async () => {
       getPermissionsMock.mockReturnValue(of(['test-disabled']))
 
       fixture = TestBed.createComponent(NegateOnMissingDisabledComponent)
       fixture.detectChanges()
 
-      // Get the disabled attribute from fixture element
-      const disabledDiv = fixture.nativeElement.querySelector('div') as HTMLDivElement
+      const disabledDiv = await getDivOrNull()
       expect(disabledDiv).toBeTruthy()
-      expect(disabledDiv.textContent).toContain('Disabled')
-      expect(disabledDiv.hasAttribute('disabled')).toBeTruthy()
+      expect(await disabledDiv?.getText()).toContain('Disabled')
+      expect(await disabledDiv?.host().then((h) => h.getAttribute('disabled'))).not.toBeNull()
     })
 
-    it('should use provided permissions array to check permissions', () => {
+    it('should use provided permissions array to check permissions', async () => {
       getPermissionsMock.mockReturnValue(of([]))
 
       fixture = TestBed.createComponent(NegateWithMissingProvidedPermissionsComponent)
       fixture.detectChanges()
 
-      const visibleDiv = fixture.nativeElement.querySelector('div') as HTMLDivElement
+      const visibleDiv = await getDivOrNull()
       expect(visibleDiv).toBeTruthy()
-      expect(visibleDiv.textContent).toContain('Show with provided-permission')
+      expect(await visibleDiv?.getText()).toContain('Show with provided-permission')
     })
 
     it('should log if provided permissions array does not contain permission', () => {
@@ -381,17 +401,17 @@ describe('IfPermissionDirective', () => {
       expect(consoleSpy).toHaveBeenCalledWith('👮‍♀️ No permission in overwrites for: `', ['missing-permission'])
     })
 
-    it('should not show if permission is undefined', () => {
+    it('should not show if permission is undefined', async () => {
       getPermissionsMock.mockReturnValue(of([]))
 
       fixture = TestBed.createComponent(NegateWithUndefinedPermissionComponent)
       fixture.detectChanges()
 
-      const element = fixture.nativeElement.querySelector('div')
+      const element = await getDivOrNull()
       expect(element).toBeNull()
     })
 
-    it('should react to permission changes', () => {
+    it('should react to permission changes', async () => {
       const permissionSubject$ = new BehaviorSubject<string[]>(['test-permission'])
 
       getPermissionsMock.mockImplementation((_permissions: string[] | string) => {
@@ -401,17 +421,17 @@ describe('IfPermissionDirective', () => {
       fixture = TestBed.createComponent(NegateSimpleComponent)
       fixture.detectChanges()
 
-      const element = fixture.nativeElement.querySelector('div')
+      let element = await getDivOrNull()
       expect(element).toBeNull()
 
       permissionSubject$.next([])
       fixture.detectChanges()
 
-      const visibleElement = fixture.nativeElement.querySelector('div')
-      expect(visibleElement.textContent).toContain('Visible')
+      element = await getDivOrNull()
+      expect(await element?.getText()).toContain('Visible')
     })
 
-    it('should remove disabled attribute when permission is granted', () => {
+    it('should remove disabled attribute when permission is granted', async () => {
       const permissionSubject$ = new BehaviorSubject<string[]>(['test-disabled'])
 
       getPermissionsMock.mockImplementation((_permissions: string[] | string) => {
@@ -421,19 +441,18 @@ describe('IfPermissionDirective', () => {
       fixture = TestBed.createComponent(NegateOnMissingDisabledComponent)
       fixture.detectChanges()
 
-      // Get the disabled attribute from fixture element
-      let disabledDiv = fixture.nativeElement.querySelector('div') as HTMLDivElement
+      let disabledDiv = await getDivOrNull()
       expect(disabledDiv).toBeTruthy()
-      expect(disabledDiv.textContent).toContain('Disabled')
-      expect(disabledDiv.hasAttribute('disabled')).toBeTruthy()
+      expect(await disabledDiv?.getText()).toContain('Disabled')
+      expect(await disabledDiv?.host().then((h) => h.getAttribute('disabled'))).not.toBeNull()
 
       permissionSubject$.next([])
       fixture.detectChanges()
 
-      disabledDiv = fixture.nativeElement.querySelector('div') as HTMLDivElement
+      disabledDiv = await getDivOrNull()
       expect(disabledDiv).toBeTruthy()
-      expect(disabledDiv.textContent).toContain('Disabled')
-      expect(disabledDiv.hasAttribute('disabled')).toBeFalsy()
+      expect(await disabledDiv?.getText()).toContain('Disabled')
+      expect(await disabledDiv?.host().then((h) => h.getAttribute('disabled'))).toBeNull()
     })
   })
 })

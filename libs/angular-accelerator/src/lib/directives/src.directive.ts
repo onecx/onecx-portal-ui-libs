@@ -1,10 +1,11 @@
 import { HttpClient, HttpResponse } from '@angular/common/http'
 import { Directive, ElementRef, EventEmitter, Input, Output, inject } from '@angular/core'
+import { take } from 'rxjs'
 
 @Directive({ selector: '[ocxSrc]', standalone: false })
 export class SrcDirective {
-  private el = inject(ElementRef)
-  private httpClient = inject(HttpClient)
+  private readonly el = inject(ElementRef)
+  private readonly httpClient = inject(HttpClient)
 
   private _src: string | undefined
 
@@ -16,33 +17,38 @@ export class SrcDirective {
     return this._src
   }
   set ocxSrc(value: string | undefined) {
-    if (value && this._src !== value && window.location.hostname) {
+    if (value && this._src !== value && globalThis.location.hostname) {
       try {
-        if (new URL(value, window.location.origin).hostname === window.location.hostname) {
-          this.httpClient.get(value, { observe: 'response', responseType: 'blob' }).subscribe(
-            (response: HttpResponse<Blob>) => {
-              // ok with content
-              if (response?.status === 200) {
-                const url = URL.createObjectURL(response.body as Blob)
-                this.el.nativeElement.addEventListener('load', () => {
-                  URL.revokeObjectURL(url)
-                })
-                this.el.nativeElement.src = url
-              }
-              // no content
-              if (response?.status === 204) {
+        if (new URL(value, globalThis.location.origin).hostname === globalThis.location.hostname) {
+          this.httpClient
+            .get(value, { observe: 'response', responseType: 'blob' })
+            .pipe(take(1))
+            .subscribe({
+              next: (response: HttpResponse<Blob>) => {
+                // ok with content
+                if (response?.status === 200) {
+                  const url = URL.createObjectURL(response.body as Blob)
+                  const onLoad = () => {
+                    URL.revokeObjectURL(url)
+                    this.el.nativeElement.removeEventListener('load', onLoad)
+                  }
+                  this.el.nativeElement.addEventListener('load', onLoad)
+                  this.el.nativeElement.src = url
+                }
+                // no content
+                if (response?.status === 204) {
+                  this.error.emit()
+                }
+              },
+              error: () => {
+                // on error
                 this.error.emit()
-              }
-            },
-            () => {
-              // on error
-              this.error.emit()
-            },
-            () => {
-              // on complete
-              this.el.nativeElement.style.visibility = 'initial'
-            }
-          )
+              },
+              complete: () => {
+                // on complete
+                this.el.nativeElement.style.visibility = 'initial'
+              },
+            })
         } else {
           this.el.nativeElement.src = value
           this.el.nativeElement.style.visibility = 'initial'
