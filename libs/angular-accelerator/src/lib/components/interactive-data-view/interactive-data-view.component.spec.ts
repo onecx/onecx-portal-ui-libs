@@ -1,7 +1,7 @@
 import { SlotService } from '@onecx/angular-remote-components'
 import { EventEmitter } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
-import { BehaviorSubject } from 'rxjs'
+import { BehaviorSubject, take } from 'rxjs'
 import { DataViewComponent, RowListGridData } from '../data-view/data-view.component'
 import { InteractiveDataViewComponent } from './interactive-data-view.component'
 
@@ -121,16 +121,19 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     expect(emitSpy).toHaveBeenCalledWith([])
   })
 
-  it('should update displayedColumnKeys when displayedColumnKeys setter is called', () => {
+  it('should update displayedColumnKeys when displayedColumnKeys setter is called', (done) => {
     const { component } = createComponent(true)
 
-    const values: string[][] = []
-    const sub = component.displayedColumnKeys$.subscribe((v) => values.push(v))
     component.displayedColumnKeys = ['a', 'b']
-    sub.unsubscribe()
 
-    expect(component.displayedColumnKeys).toEqual(['a', 'b'])
-    expect(values.at(-1)).toEqual(['a', 'b'])
+    component.displayedColumnKeys$.pipe(take(1)).subscribe({
+      next: (value) => {
+        expect(component.displayedColumnKeys).toEqual(['a', 'b'])
+        expect(value).toEqual(['a', 'b'])
+        done()
+      },
+      error: done,
+    })
   })
 
   it('should reflect template accessors (_tableCell, _gridItem, etc.)', () => {
@@ -222,17 +225,18 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
     component.ngOnInit()
 
-    // initial emission should be []
-    const values: any[] = []
-    const sub = component.displayedColumns$?.subscribe((v) => values.push(v))
-
     component.displayedColumnKeys = ['c2', 'missing', 'c1']
 
-    setTimeout(() => {
-      sub?.unsubscribe()
-      expect(values.at(-1)).toEqual([c2, c1])
-      done()
-    }, 0)
+    component.displayedColumns$?.pipe(take(2)).subscribe({
+      next: (cols) => {
+        // 1st emission: initial []
+        // 2nd emission: mapped columns after setter call
+        if (cols.length === 0) return
+        expect(cols).toEqual([c2, c1])
+        done()
+      },
+      error: done,
+    })
   })
 
   it('should not set groupSelectionNoGroupSelectedKey when already set', () => {
@@ -731,7 +735,12 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     const { component } = createComponent(true)
 
     const registerSpy = jest.spyOn(component, 'registerEventListenerForDataView')
-    const dataViewRef = { deleteItem: new EventEmitter<any>(), viewItem: new EventEmitter<any>(), editItem: new EventEmitter<any>(), selectionChanged: new EventEmitter<any>() } as any
+    const dataViewRef = {
+      deleteItem: new EventEmitter<any>(),
+      viewItem: new EventEmitter<any>(),
+      editItem: new EventEmitter<any>(),
+      selectionChanged: new EventEmitter<any>(),
+    } as any
 
     component.dataView = dataViewRef
 
@@ -809,4 +818,3 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     expect(component.primeNgNumberTableFilterCell).toBe(templatesByType['numberTableFilterCell'])
   })
 })
-
