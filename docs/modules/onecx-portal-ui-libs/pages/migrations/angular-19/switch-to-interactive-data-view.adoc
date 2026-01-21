@@ -236,6 +236,26 @@ onColumnsChange(activeColumnIds: string[]) {
 | Emits string[] (array of column ids).
 |===
 
+**Event Payloads**
+
+[cols="1,2", options="header"]
+|===
+| Event
+| Payload
+
+| sorted
+| { sortColumn: string, sortDirection: DataSortDirection }
+
+| filtered
+| Array of filter objects
+
+| dataViewLayoutChange
+| 'list' | 'grid' | 'table'
+
+| displayedColumnKeysChange
+| string[] (array of column ids)
+|===
+
 **Template Transformation**
 
 [cols="1,1,2", options="header"]
