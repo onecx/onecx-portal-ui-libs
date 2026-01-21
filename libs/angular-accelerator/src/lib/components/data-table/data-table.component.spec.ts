@@ -285,10 +285,7 @@ describe('DataTableComponent', () => {
 
     it('should trigger onMultiselectFilterChange when selecting a filter option via multiselect', async () => {
       // Ensure there are filter options available for "status"
-      component.rows = [
-        { id: '1', status: 'A' } as any,
-        { id: '2', status: 'B' } as any,
-      ]
+      component.rows = [{ id: '1', status: 'A' } as any, { id: '2', status: 'B' } as any]
       fixture.detectChanges()
 
       const headerColumns = await dataTable.getHeaderColumns()
@@ -863,104 +860,104 @@ describe('DataTableComponent', () => {
   })
 
   describe('LiveAnnouncer announcements', () => {
-    let liveAnnouncer: LiveAnnouncer;
-    let announceSpy: jest.SpyInstance;
+    let liveAnnouncer: LiveAnnouncer
+    let announceSpy: jest.SpyInstance
 
     beforeEach(() => {
-      liveAnnouncer = TestBed.inject(LiveAnnouncer);
-      announceSpy = jest.spyOn(liveAnnouncer, 'announce').mockResolvedValue();
-    });
+      liveAnnouncer = TestBed.inject(LiveAnnouncer)
+      announceSpy = jest.spyOn(liveAnnouncer, 'announce').mockResolvedValue()
+    })
 
     afterEach(() => {
-      jest.clearAllMocks();
-    });
+      jest.clearAllMocks()
+    })
 
     describe('should announce "results found" when data has entries', () => {
       it('de', async () => {
-        translateService.use('de');
+        translateService.use('de')
 
-        component.rows = mockData;
-        fixture.detectChanges();
+        component.rows = mockData
+        fixture.detectChanges()
 
-        await fixture.whenStable();
+        await fixture.whenStable()
 
-        expect(announceSpy).toHaveBeenCalledTimes(1);
-        expect(announceSpy).toHaveBeenCalledWith('5 Ergebnisse gefunden');
-      });
+        expect(announceSpy).toHaveBeenCalledTimes(1)
+        expect(announceSpy).toHaveBeenCalledWith('5 Ergebnisse gefunden')
+      })
 
       it('en', async () => {
-        translateService.use('en');
+        translateService.use('en')
 
-        component.rows = mockData;
-        fixture.detectChanges();
+        component.rows = mockData
+        fixture.detectChanges()
 
-        await fixture.whenStable();
+        await fixture.whenStable()
 
-        expect(announceSpy).toHaveBeenCalledTimes(1);
-        expect(announceSpy).toHaveBeenCalledWith('5 Results Found');
-      });
-    });
+        expect(announceSpy).toHaveBeenCalledTimes(1)
+        expect(announceSpy).toHaveBeenCalledWith('5 Results Found')
+      })
+    })
 
     describe('should announce "no results found" when data is empty', () => {
       it('de', async () => {
-        translateService.use('de');
+        translateService.use('de')
 
-        component.rows = [];
-        fixture.detectChanges();
+        component.rows = []
+        fixture.detectChanges()
 
-        await fixture.whenStable();
+        await fixture.whenStable()
 
-        expect(announceSpy).toHaveBeenCalledTimes(1);
-        expect(announceSpy).toHaveBeenCalledWith('Keine Ergebnisse gefunden');
-      });
+        expect(announceSpy).toHaveBeenCalledTimes(1)
+        expect(announceSpy).toHaveBeenCalledWith('Keine Ergebnisse gefunden')
+      })
 
       it('en', async () => {
-        translateService.use('en');
+        translateService.use('en')
 
-        component.rows = [];
-        fixture.detectChanges();
+        component.rows = []
+        fixture.detectChanges()
 
-        await fixture.whenStable();
+        await fixture.whenStable()
 
-        expect(announceSpy).toHaveBeenCalledTimes(1);
-        expect(announceSpy).toHaveBeenCalledWith('No Results Found');
-      });
-    });
+        expect(announceSpy).toHaveBeenCalledTimes(1)
+        expect(announceSpy).toHaveBeenCalledWith('No Results Found')
+      })
+    })
 
     describe('should announce "results found" when data changes', () => {
       it('de', async () => {
-        translateService.use('de');
+        translateService.use('de')
 
-        component.rows = mockData;
-        fixture.detectChanges();
-        await fixture.whenStable();
+        component.rows = mockData
+        fixture.detectChanges()
+        await fixture.whenStable()
 
-        component.rows = mockData.slice(0, 2);
-        fixture.detectChanges();
-        await fixture.whenStable();
+        component.rows = mockData.slice(0, 2)
+        fixture.detectChanges()
+        await fixture.whenStable()
 
-        expect(announceSpy).toHaveBeenCalledTimes(2);
-        expect(announceSpy).toHaveBeenNthCalledWith(1, '5 Ergebnisse gefunden');
-        expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Ergebnisse gefunden');
-      });
+        expect(announceSpy).toHaveBeenCalledTimes(2)
+        expect(announceSpy).toHaveBeenNthCalledWith(1, '5 Ergebnisse gefunden')
+        expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Ergebnisse gefunden')
+      })
 
       it('en', async () => {
-        translateService.use('en');
+        translateService.use('en')
 
-        component.rows = mockData;
-        fixture.detectChanges();
-        await fixture.whenStable();
+        component.rows = mockData
+        fixture.detectChanges()
+        await fixture.whenStable()
 
-        component.rows = mockData.slice(0, 2);
-        fixture.detectChanges();
-        await fixture.whenStable();
+        component.rows = mockData.slice(0, 2)
+        fixture.detectChanges()
+        await fixture.whenStable()
 
-        expect(announceSpy).toHaveBeenCalledTimes(2);
-        expect(announceSpy).toHaveBeenNthCalledWith(1, '5 Results Found');
-        expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Results Found');
-      });
-    });
-  });
+        expect(announceSpy).toHaveBeenCalledTimes(2)
+        expect(announceSpy).toHaveBeenNthCalledWith(1, '5 Results Found')
+        expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Results Found')
+      })
+    })
+  })
 
   describe('selection + paging helpers (class logic)', () => {
     it('should keep previously selected disabled rows selected onSelectionChange', () => {
@@ -980,7 +977,11 @@ describe('DataTableComponent', () => {
       component.onSelectionChange([rows[0], rows[2]])
 
       expect(component['_selectionIds$'].getValue()).toEqual(['a', 'c', 'b'])
-      expect(selectionChangedSpy).toHaveBeenCalledWith([{ id: 'a', enabled: true }, { id: 'b', enabled: false }, { id: 'c', enabled: true }])
+      expect(selectionChangedSpy).toHaveBeenCalledWith([
+        { id: 'a', enabled: true },
+        { id: 'b', enabled: false },
+        { id: 'c', enabled: true },
+      ])
     })
 
     it('mergeWithDisabledKeys should remove disabled ids that were previously deselected', () => {
@@ -1046,6 +1047,7 @@ describe('DataTableComponent', () => {
 
       component.rows = []
 
+      // wait for async announcements
       await Promise.resolve()
 
       expect(translateService.get).toHaveBeenCalledWith('OCX_DATA_TABLE.NO_SEARCH_RESULTS_FOUND', { results: 0 })
@@ -1061,6 +1063,7 @@ describe('DataTableComponent', () => {
 
       component.rows = [{ id: 123 }]
 
+      // wait for async announcements
       await Promise.resolve()
 
       expect(translateService.get).toHaveBeenCalledWith('OCX_DATA_TABLE.SEARCH_RESULTS_FOUND', { results: 1 })
@@ -1326,7 +1329,7 @@ describe('DataTableComponent', () => {
     })
 
     it('ngAfterContentInit should map PrimeTemplate types when templates$.value is an array', () => {
-      const t = (type: string) => ({ getType: () => type, template: { type } } as any)
+      const t = (type: string) => ({ getType: () => type, template: { type } }) as any
       ;(component as any).templates$.next([
         t('stringCell'),
         t('numberCell'),
@@ -1436,10 +1439,10 @@ describe('DataTableComponent', () => {
       component.pageSizes = [10]
       component.pageSize = 10
       component.rows = [{ id: 'a' } as any, { id: 'b' } as any]
-
       ;(component as any)._selectionIds$.next(['b'])
 
       component.emitComponentStateChanged({ activePage: 7 })
+      // wait for async announcements
       await Promise.resolve()
 
       // there might be an initial emitComponentStateChanged from component init; validate the last emission
@@ -1457,7 +1460,6 @@ describe('DataTableComponent', () => {
     it('emitSelectionChanged should emit rows matching selection ids', () => {
       const emitted: any[] = []
       component.selectionChanged.subscribe((rows) => emitted.push(rows))
-
       ;(component as any)._rows$.next([{ id: 'a' } as any, { id: 'b' } as any])
       ;(component as any)._selectionIds$.next(['b'])
 
@@ -1602,5 +1604,4 @@ describe('DataTableComponent', () => {
     // triggers reactive template resolution via `combineLatest` in the component
     // template (AsyncPipe), which expects iterable QueryLists.
   })
-
 })
