@@ -160,9 +160,6 @@ describe('BasicDirective', () => {
       fixture.componentInstance.searchHeader.viewMode = 'basic'
       fixture.detectChanges()
 
-      fixture.detectChanges()
-      fixture.detectChanges()
-
       const hostHarness = await loader.getHarness(HostInsideSearchHeaderHarness)
       expect(await hostHarness.getBasicContentCount()).toBe(1)
     })

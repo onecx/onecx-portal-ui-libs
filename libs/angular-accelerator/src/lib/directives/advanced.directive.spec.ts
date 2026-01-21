@@ -126,9 +126,6 @@ describe('AdvancedDirective', () => {
       component.searchHeader.viewMode = 'advanced'
       fixture.detectChanges()
 
-      fixture.detectChanges()
-      fixture.detectChanges()
-
       expect(fixture.debugElement.queryAll(By.css('#advanced-content'))).toHaveLength(1)
     })
   })
