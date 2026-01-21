@@ -1,15 +1,15 @@
 [#switch-to-interactive-data-view]
-=== Replace p-dataView and DataViewControls with InteractiveDataViewComponent
+=== Replace p-dataView and DataViewControlsComponent with InteractiveDataViewComponent
 
 Replace **p-dataView** and **ocx-data-view-controls** template with **ocx-interactive-data-view** for enhanced data viewing capabilities including sorting, filtering, and layout options.
 
 **Code Changes**
 
-* Remove `<p-dataView>` and PrimeNG `DataViewModule` from `primeng/dataview`
-* Remove `<ocx-data-view-controls>` and `DataViewControlsComponent` from `@onecx/portal-integration-angular`.
+* Remove `<ocx-data-view-controls>` and `DataViewControlsComponent` from `@onecx/portal-integration-angular`
 * Add `InteractiveDataViewComponent` from `@onecx/angular-accelerator`.
-* Replace the entire `<p-dataView>` block with `<ocx-interactive-data-view>`.
-* Add `<ocx-interactive-data-view>` and update input properties and output events as per tables below.
+* Replace the entire `<p-dataView>` with `<ocx-interactive-data-view>`
+* Remove `DataViewModule` from `primeng/dataview` if not used elsewhere
+* Add `<ocx-interactive-data-view>` and update input properties and output events as per tables below
 
 **Example - Replace ocx-data-view-controls with ocx-interactive-data-view in HTML**
 
