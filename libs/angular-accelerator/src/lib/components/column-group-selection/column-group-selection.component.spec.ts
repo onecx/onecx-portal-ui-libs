@@ -8,6 +8,7 @@ import { provideTranslateTestingService } from '@onecx/angular-testing'
 
 import { ColumnGroupSelectionComponent } from './column-group-selection.component'
 import type { DataTableColumn } from '../../model/data-table-column.model'
+import { take } from 'rxjs'
 
 describe('ColumnGroupSelectionComponent', () => {
   let fixture: ComponentFixture<ColumnGroupSelectionComponent>
@@ -73,15 +74,13 @@ describe('ColumnGroupSelectionComponent', () => {
         return
       }
 
-      const sub = allGroupKeys$.subscribe({
+      allGroupKeys$.pipe(take(1)).subscribe({
         next: (keys) => {
           try {
             expect(keys).toEqual(['g1', 'g2', 'g3', 'def'])
             done()
           } catch (e) {
             done(e as any)
-          } finally {
-            sub.unsubscribe()
           }
         },
         error: done,
