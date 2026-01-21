@@ -4,6 +4,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { DivHarness } from '@onecx/angular-testing'
 import { LoadingIndicatorComponent } from '../components/loading-indicator/loading-indicator.component'
 import { LoadingIndicatorDirective } from './loading-indicator.directive'
+import { ComponentHarness } from '@angular/cdk/testing'
 
 @Component({
   standalone: false,
@@ -25,10 +26,17 @@ class HostComponent {
   directive!: LoadingIndicatorDirective
 }
 
+class LoaderHarness extends ComponentHarness {
+  static hostSelector = '.loader'
+}
+
 describe('LoadingIndicatorDirective', () => {
   let fixture: ComponentFixture<HostComponent>
   let component: HostComponent
   let divHarness: DivHarness
+
+  // loader for the whole fixture DOM
+  let rootLoader: ReturnType<typeof TestbedHarnessEnvironment.loader>
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -39,24 +47,47 @@ describe('LoadingIndicatorDirective', () => {
     component = fixture.componentInstance
     fixture.detectChanges()
 
-    const rootLoader = TestbedHarnessEnvironment.loader(fixture)
+    rootLoader = TestbedHarnessEnvironment.loader(fixture)
     divHarness = await rootLoader.getHarness(DivHarness.with({ id: 'host' }))
   })
 
-  const expectHasLoader = async (selector: string) => {
-    const hostEl = fixture.nativeElement.querySelector('#host') as HTMLElement
-    expect(hostEl.querySelector(selector)).not.toBeNull()
+  // Scopes a LoaderHarness lookup to the host <div id="host"> only.
+  class HostHarness extends ComponentHarness {
+    static hostSelector = '#host'
+    getLoader = this.locatorForOptional(LoaderHarness)
   }
 
-  const expectNoLoader = async (selector: string) => {
-    const hostEl = fixture.nativeElement.querySelector('#host') as HTMLElement
-    expect(hostEl.querySelector(selector)).toBeNull()
+  const getHostHarness = () => rootLoader.getHarness(HostHarness)
+
+  const expectHasLoader = async (cssClassSelector: string) => {
+    const host = await getHostHarness()
+    const loader = await host.getLoader()
+    expect(loader).not.toBeNull()
+
+    if (cssClassSelector && cssClassSelector !== '.loader') {
+      // validate additional class selectors like ".loader-small"
+      const classes = cssClassSelector
+        .split('.')
+        .map((s) => s.trim())
+        .filter(Boolean)
+        .filter((s) => s !== 'loader')
+
+      for (const clazz of classes) {
+        expect(await (await loader!.host()).hasClass(clazz)).toBe(true)
+      }
+    }
+  }
+
+  const expectNoLoader = async () => {
+    const host = await getHostHarness()
+    const loader = await host.getLoader()
+    expect(loader).toBeNull()
   }
 
   it('should not render loader and not create component initially', async () => {
     // Initial state should not have overlay/loader.
     expect(await divHarness.checkHasClass('element-overlay')).toBe(false)
-    await expectNoLoader('.loader')
+    await expectNoLoader()
 
     const dir: any = component.directive
     expect(dir.componentRef).toBeUndefined()
@@ -113,7 +144,7 @@ describe('LoadingIndicatorDirective', () => {
       expect(dir.viewContainerRef.length).toBe(1)
 
       // No element overlay artifacts expected.
-      await expectNoLoader('.loader')
+      await expectNoLoader()
     })
 
     it('should clear container and destroy componentRef when toggling loading from true to false', () => {
