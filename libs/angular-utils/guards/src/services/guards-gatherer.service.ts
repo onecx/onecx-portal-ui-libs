@@ -33,9 +33,8 @@ export const GUARDS_GATHERER_NAME = 'GuardGatherer'
 export class GuardsGatherer implements OnDestroy {
   private guardsGatherer: Gatherer<GuardResultRequest, GuardResultResponse> | undefined
   private guardsChecks: Map<string, (value: GuardResultResponse) => void> | undefined
-  private guardsNavigationStateController = inject(GuardsNavigationStateController)
-
-  constructor(private router: Router) {}
+  private readonly guardsNavigationStateController = inject(GuardsNavigationStateController)
+  private readonly router: Router = inject(Router)
 
   ngOnDestroy(): void {
     this.guardsGatherer?.destroy()
@@ -65,7 +64,9 @@ export class GuardsGatherer implements OnDestroy {
     }
     const url = this.normalizeUrl(routeUrl)
     const resolve = this.guardsChecks.get(url)
-    resolve && resolve(response)
+    if (resolve) {
+      resolve(response)
+    }
     this.guardsChecks.delete(url)
   }
 

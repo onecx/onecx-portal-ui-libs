@@ -12,7 +12,7 @@ import {
   UserServiceMock,
 } from '@onecx/angular-integration-interface/mocks'
 import { SlotComponentConfiguration, SlotService } from '@onecx/angular-remote-components'
-import { SlotServiceMock } from '@onecx/angular-remote-components/mocks'
+import { provideSlotServiceMock, SlotServiceMock } from '@onecx/angular-remote-components/mocks'
 import {
   ButtonHarness,
   ListItemHarness,
@@ -317,10 +317,7 @@ xdescribe('InteractiveDataViewComponent', () => {
       ],
       providers: [
         provideUserServiceMock(),
-        {
-          provide: SlotService,
-          useClass: SlotServiceMock,
-        },
+        provideSlotServiceMock(),
         provideHttpClient(withInterceptorsFromDi()),
         provideRouter([]),
         provideAppStateServiceMock(),
@@ -352,7 +349,6 @@ xdescribe('InteractiveDataViewComponent', () => {
 
     dateUtils = TestBed.inject(DateUtils)
     slotService = TestBed.inject(SlotService) as any as SlotServiceMock
-    slotService.clearAssignments()
 
     viewItemEvent = undefined
     editItemEvent = undefined
@@ -377,7 +373,9 @@ xdescribe('InteractiveDataViewComponent', () => {
 
   it('should load column-group-selection slot', async () => {
     userServiceMock.permissionsTopic$.publish(['PRODUCT#USE_SEARCHCONFIG'])
-    slotService.assignComponentToSlot(columnGroupSelectionComponent, component.columnGroupSlotName)
+    slotService.assignComponents({
+      [component.columnGroupSlotName]: [columnGroupSelectionComponent],
+    })
     fixture.detectChanges()
 
     const slot = await loader.getHarness(SlotHarness)
@@ -389,7 +387,7 @@ xdescribe('InteractiveDataViewComponent', () => {
     const columnGroupSelectionDropdown = await loader.getHarness(ColumnGroupSelectionHarness)
     expect(columnGroupSelectionDropdown).toBeTruthy()
 
-    slotService.assignComponentToSlot(columnGroupSelectionComponent, component.columnGroupSlotName)
+    slotService.assignComponents({ [component.columnGroupSlotName]: [columnGroupSelectionComponent] })
 
     const columnGroupSelectionDropdownNoPermission = await loader.getHarness(ColumnGroupSelectionHarness)
     expect(columnGroupSelectionDropdownNoPermission).toBeTruthy()
@@ -2003,7 +2001,7 @@ xdescribe('InteractiveDataViewComponent', () => {
       it('should not disable any buttons initially', async () => {
         await setUpMockData('grid')
         const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
-        await (await dataView?.getMenuButton())?.click()
+        await (await dataView?.getGridMenuButton())?.click()
         expect(await dataView?.hasAmountOfActionButtons('grid', 3)).toBe(true)
         expect(await dataView?.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
       })
@@ -2012,7 +2010,7 @@ xdescribe('InteractiveDataViewComponent', () => {
         await setUpMockData('grid')
         component.viewActionEnabledField = 'ready'
         const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
-        await (await dataView?.getMenuButton())?.click()
+        await (await dataView?.getGridMenuButton())?.click()
         expect(await dataView?.hasAmountOfActionButtons('grid', 3)).toBe(true)
         expect(await dataView?.hasAmountOfDisabledActionButtons('grid', 1)).toBe(true)
       })
@@ -2056,7 +2054,7 @@ xdescribe('InteractiveDataViewComponent', () => {
       it('should not hide any buttons initially', async () => {
         await setUpMockData('grid')
         const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
-        await (await dataView?.getMenuButton())?.click()
+        await (await dataView?.getGridMenuButton())?.click()
         expect(await dataView?.hasAmountOfActionButtons('grid', 3)).toBe(true)
         expect(await dataView?.hasAmountOfActionButtons('grid-hidden', 0)).toBe(true)
         expect(await dataView?.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
@@ -2065,12 +2063,12 @@ xdescribe('InteractiveDataViewComponent', () => {
       it('should hide a button based on a given field path', async () => {
         await setUpMockData('grid')
         const dataView = await (await interactiveDataViewHarness.getDataView()).getDataListGrid()
-        await (await dataView?.getMenuButton())?.click()
+        await (await dataView?.getGridMenuButton())?.click()
         expect(await dataView?.hasAmountOfActionButtons('grid', 3)).toBe(true)
-        await (await dataView?.getMenuButton())?.click()
+        await (await dataView?.getGridMenuButton())?.click()
 
         component.viewActionVisibleField = 'ready'
-        await (await dataView?.getMenuButton())?.click()
+        await (await dataView?.getGridMenuButton())?.click()
 
         expect(await dataView?.hasAmountOfActionButtons('grid', 2)).toBe(true)
         expect(await dataView?.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)

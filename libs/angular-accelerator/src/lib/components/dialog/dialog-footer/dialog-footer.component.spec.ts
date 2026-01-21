@@ -1,10 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { DialogFooterComponent } from './dialog-footer.component'
-import { ButtonModule } from 'primeng/button'
-import { TranslateTestingModule } from 'ngx-translate-testing'
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { PrimeIcons } from 'primeng/api'
-import { DialogFooterHarness, TestbedHarnessEnvironment } from '../../../../../testing'
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { DialogFooterHarness, provideTranslateTestingService, TestbedHarnessEnvironment } from '../../../../../testing'
+import { AngularAcceleratorModule } from '../../../angular-accelerator.module'
+import { DialogFooterComponent } from './dialog-footer.component'
 
 describe('DialogFooterComponent', () => {
   let component: DialogFooterComponent
@@ -25,13 +24,14 @@ describe('DialogFooterComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DialogFooterComponent],
-      imports: [
-        ButtonModule,
-        TranslateTestingModule.withTranslations({
+      imports: [AngularAcceleratorModule],
+      providers: [
+        DynamicDialogConfig,
+        DynamicDialogRef,
+        provideTranslateTestingService({
           en: translations,
         }),
       ],
-      providers: [DynamicDialogConfig, DynamicDialogRef],
     }).compileComponents()
     fixture = TestBed.createComponent(DialogFooterComponent)
     component = fixture.componentInstance
@@ -75,8 +75,8 @@ describe('DialogFooterComponent', () => {
     expect(await dialogFooterHarness.getPrimaryButtonLabel()).toBe('Confirm')
     expect(await dialogFooterHarness.getSecondaryButtonLabel()).toBe('Cancel')
     // expect no icon
-    expect(await dialogFooterHarness.getPrimaryButtonIcon()).toBe('')
-    expect(await dialogFooterHarness.getSecondaryButtonIcon()).toBe('')
+    expect(await dialogFooterHarness.getPrimaryButtonIcon()).toBe(null)
+    expect(await dialogFooterHarness.getSecondaryButtonIcon()).toBe(null)
   })
 
   it('should create customized button-dialog with passing config', async () => {

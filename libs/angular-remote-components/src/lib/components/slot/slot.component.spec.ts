@@ -11,7 +11,7 @@ import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { Component, EventEmitter, Input } from '@angular/core'
-import { SlotServiceMock } from '@onecx/angular-remote-components/mocks'
+import { provideSlotServiceMock, SlotServiceMock } from '@onecx/angular-remote-components/mocks'
 import { SlotHarness } from '@onecx/angular-remote-components/testing'
 import { SlotComponent } from './slot.component'
 import { SLOT_SERVICE } from '../../services/slot.service'
@@ -21,11 +21,7 @@ import { ocxRemoteComponent } from '../../model/remote-component'
 import * as rxjsOperators from 'rxjs/operators'
 import { interval } from 'rxjs'
 
-import {
-  dataStyleIdAttribute,
-  RemoteComponentConfig,
-  dataStyleIsolationAttribute,
-} from '@onecx/angular-utils'
+import { dataStyleIdAttribute, RemoteComponentConfig, dataStyleIsolationAttribute } from '@onecx/angular-utils'
 
 jest.mock('@onecx/integration-interface', () => {
   const actual = jest.requireActual('@onecx/integration-interface')
@@ -113,14 +109,7 @@ describe('SlotComponent', () => {
       .mockImplementation((timeout) => rxjsOperators.debounce(() => interval(timeout)))
     await TestBed.configureTestingModule({
       declarations: [SlotComponent, MockAngularComponent],
-      providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        {
-          provide: SLOT_SERVICE,
-          useClass: SlotServiceMock,
-        },
-      ],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideSlotServiceMock()],
     }).compileComponents()
 
     fixture = TestBed.createComponent(SlotComponent)
@@ -184,19 +173,20 @@ describe('SlotComponent', () => {
 
     it('should cleanup all components', fakeAsync(() => {
       const spy = removeAllRcUsagesFromStyles as jest.Mock
-      slotServiceMock.assignComponentToSlot(
-        {
-          componentType: Promise.resolve(MockAngularComponent),
-          permissions: [],
-          remoteComponent: {
-            appId: 'app-id',
-            productName: 'product-name',
-            baseUrl: 'https://base.url',
-            technology: Technologies.Angular,
+      slotServiceMock.assignComponents({
+        'test-slot': [
+          {
+            componentType: Promise.resolve(MockAngularComponent),
+            permissions: [],
+            remoteComponent: {
+              appId: 'app-id',
+              productName: 'product-name',
+              baseUrl: 'https://base.url',
+              technology: Technologies.Angular,
+            },
           },
-        },
-        'test-slot'
-      )
+        ],
+      })
       tick(100)
       component.ngOnDestroy()
       expect(spy).toHaveBeenCalledTimes(1)
@@ -213,19 +203,20 @@ describe('SlotComponent', () => {
     describe('angular component', () => {
       it('should create', async () => {
         const consoleSpy = jest.spyOn(console, 'log').mockImplementation()
-        slotServiceMock.assignComponentToSlot(
-          {
-            componentType: MockAngularComponent,
-            permissions: ['mock-permission'],
-            remoteComponent: {
-              appId: 'app-angular',
-              productName: 'angular-product',
-              baseUrl: 'https://base.url',
-              technology: Technologies.Angular,
+        slotServiceMock.assignComponents({
+          'test-slot': [
+            {
+              componentType: MockAngularComponent,
+              permissions: ['mock-permission'],
+              remoteComponent: {
+                appId: 'app-angular',
+                productName: 'angular-product',
+                baseUrl: 'https://base.url',
+                technology: Technologies.Angular,
+              },
             },
-          },
-          'test-slot'
-        )
+          ],
+        })
         fixture.detectChanges()
 
         const slotHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, SlotHarness)
@@ -245,19 +236,20 @@ describe('SlotComponent', () => {
       it('should create if span was not found', async () => {
         const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
         jest.spyOn(component['viewContainerRef'].element.nativeElement, 'querySelector').mockReturnValue(null)
-        slotServiceMock.assignComponentToSlot(
-          {
-            componentType: MockAngularComponent,
-            permissions: ['mock-permission'],
-            remoteComponent: {
-              appId: 'app-angular-no-span',
-              productName: 'angular-product-no-span',
-              baseUrl: 'https://base.url',
-              technology: Technologies.Angular,
+        slotServiceMock.assignComponents({
+          'test-slot': [
+            {
+              componentType: MockAngularComponent,
+              permissions: ['mock-permission'],
+              remoteComponent: {
+                appId: 'app-angular-no-span',
+                productName: 'angular-product-no-span',
+                baseUrl: 'https://base.url',
+                technology: Technologies.Angular,
+              },
             },
-          },
-          'test-slot'
-        )
+          ],
+        })
         fixture.detectChanges()
 
         const slotHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, SlotHarness)
@@ -272,20 +264,21 @@ describe('SlotComponent', () => {
 
     describe('webcomponent', () => {
       it('should create webcomponent module component', async () => {
-        slotServiceMock.assignComponentToSlot(
-          {
-            componentType: Promise.resolve(undefined),
-            permissions: ['mock-permission'],
-            remoteComponent: {
-              appId: 'app-webcomponent-module',
-              productName: 'webcomponent-module-product',
-              baseUrl: 'https://base.url',
-              technology: Technologies.WebComponentModule,
-              elementName: 'mock-webcomponent-module',
+        slotServiceMock.assignComponents({
+          'test-slot': [
+            {
+              componentType: Promise.resolve(undefined),
+              permissions: ['mock-permission'],
+              remoteComponent: {
+                appId: 'app-webcomponent-module',
+                productName: 'webcomponent-module-product',
+                baseUrl: 'https://base.url',
+                technology: Technologies.WebComponentModule,
+                elementName: 'mock-webcomponent-module',
+              },
             },
-          },
-          'test-slot'
-        )
+          ],
+        })
         fixture.detectChanges()
 
         const slotHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, SlotHarness)
@@ -307,20 +300,21 @@ describe('SlotComponent', () => {
       })
 
       it('should create webcomponent script component', async () => {
-        slotServiceMock.assignComponentToSlot(
-          {
-            componentType: Promise.resolve(undefined),
-            permissions: ['mock-permission'],
-            remoteComponent: {
-              appId: 'app-webcomponent-script',
-              productName: 'webcomponent-script-product',
-              baseUrl: 'https://base.url',
-              technology: Technologies.WebComponentScript,
-              elementName: 'mock-webcomponent-script',
+        slotServiceMock.assignComponents({
+          'test-slot': [
+            {
+              componentType: Promise.resolve(undefined),
+              permissions: ['mock-permission'],
+              remoteComponent: {
+                appId: 'app-webcomponent-script',
+                productName: 'webcomponent-script-product',
+                baseUrl: 'https://base.url',
+                technology: Technologies.WebComponentScript,
+                elementName: 'mock-webcomponent-script',
+              },
             },
-          },
-          'test-slot'
-        )
+          ],
+        })
         fixture.detectChanges()
 
         const slotHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, SlotHarness)
@@ -344,20 +338,21 @@ describe('SlotComponent', () => {
       it('should create webcomponent if span was not found', async () => {
         const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
         jest.spyOn(component['viewContainerRef'].element.nativeElement, 'querySelector').mockReturnValue(null)
-        slotServiceMock.assignComponentToSlot(
-          {
-            componentType: Promise.resolve(undefined),
-            permissions: ['mock-permission'],
-            remoteComponent: {
-              appId: 'app-webcomponent-no-span',
-              productName: 'webcomponent-no-span-product',
-              baseUrl: 'https://base.url',
-              technology: Technologies.WebComponentModule,
-              elementName: 'mock-webcomponent-no-span',
+        slotServiceMock.assignComponents({
+          'test-slot': [
+            {
+              componentType: Promise.resolve(undefined),
+              permissions: ['mock-permission'],
+              remoteComponent: {
+                appId: 'app-webcomponent-no-span',
+                productName: 'webcomponent-no-span-product',
+                baseUrl: 'https://base.url',
+                technology: Technologies.WebComponentModule,
+                elementName: 'mock-webcomponent-no-span',
+              },
             },
-          },
-          'test-slot'
-        )
+          ],
+        })
         fixture.detectChanges()
 
         const slotHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, SlotHarness)
@@ -371,8 +366,8 @@ describe('SlotComponent', () => {
     })
 
     it('should create multiple components', async () => {
-      slotServiceMock.assignComponentsToSlot(
-        [
+      slotServiceMock.assignComponents({
+        'test-slot': [
           {
             componentType: MockAngularComponent,
             permissions: ['mock-permission'],
@@ -395,8 +390,7 @@ describe('SlotComponent', () => {
             },
           },
         ],
-        'test-slot'
-      )
+      })
       fixture.detectChanges()
 
       const slotHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, SlotHarness)
@@ -417,19 +411,20 @@ describe('SlotComponent', () => {
 
     it('should not create component if type is undefined', async () => {
       const spy = jest.spyOn(component['viewContainerRef'], 'createComponent')
-      slotServiceMock.assignComponentToSlot(
-        {
-          componentType: Promise.resolve(undefined),
-          permissions: ['mock-permission'],
-          remoteComponent: {
-            appId: 'app-undefined',
-            productName: 'undefined-product',
-            baseUrl: 'https://base.url',
-            technology: Technologies.Angular,
+      slotServiceMock.assignComponents({
+        'test-slot': [
+          {
+            componentType: Promise.resolve(undefined),
+            permissions: ['mock-permission'],
+            remoteComponent: {
+              appId: 'app-undefined',
+              productName: 'undefined-product',
+              baseUrl: 'https://base.url',
+              technology: Technologies.Angular,
+            },
           },
-        },
-        'test-slot'
-      )
+        ],
+      })
       fixture.detectChanges()
 
       expect(spy).not.toHaveBeenCalled()
@@ -444,8 +439,8 @@ describe('SlotComponent', () => {
       component.outputs = {
         initialOutput: eventEmitter,
       }
-      slotServiceMock.assignComponentsToSlot(
-        [
+      slotServiceMock.assignComponents({
+        'test-slot': [
           {
             componentType: MockAngularComponent,
             permissions: ['mock-permission'],
@@ -468,8 +463,7 @@ describe('SlotComponent', () => {
             },
           },
         ],
-        'test-slot'
-      )
+      })
       fixture.detectChanges()
 
       const slotHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, SlotHarness)
