@@ -242,7 +242,7 @@ describe('FilterViewComponent (class logic)', () => {
       }
     }
 
-    const chipSub = chip$.pipe(take(1)).subscribe({
+    chip$.pipe(take(1)).subscribe({
       next: (value) => {
         chipTemplates = value
         maybeFinish()
@@ -250,7 +250,7 @@ describe('FilterViewComponent (class logic)', () => {
       error: done,
     })
 
-    const tableSub = table$.pipe(take(1)).subscribe({
+    table$.pipe(take(1)).subscribe({
       next: (value) => {
         tableTemplates = value
         maybeFinish()
