@@ -48,7 +48,7 @@ describe('ColumnGroupSelectionComponent', () => {
   })
 
   describe('ngOnInit', () => {
-    it('should build allGroupKeys$ with unique, truthy values (columns, defaultGroupKey, selectedGroupKey)', async () => {
+    it('should build allGroupKeys$ with unique, truthy values (columns, defaultGroupKey, selectedGroupKey)', (done) => {
       component.defaultGroupKey = 'def'
       component.customGroupKey = 'custom'
 
@@ -61,19 +61,25 @@ describe('ColumnGroupSelectionComponent', () => {
 
       component.ngOnInit()
 
-      const keys = await new Promise<string[]>((resolve) => {
-        const allGroupKeys$ = component.allGroupKeys$
-        if (!allGroupKeys$) {
-          throw new Error('Expected allGroupKeys$ to be defined after ngOnInit')
-        }
+      const allGroupKeys$ = component.allGroupKeys$
+      if (!allGroupKeys$) {
+        done(new Error('Expected allGroupKeys$ to be defined after ngOnInit'))
+        return
+      }
 
-        const sub = allGroupKeys$.subscribe((value) => {
-          resolve(value)
-          sub.unsubscribe()
-        })
+      const sub = allGroupKeys$.subscribe({
+        next: (keys) => {
+          try {
+            expect(keys).toEqual(['g1', 'g2', 'g3', 'def'])
+            done()
+          } catch (e) {
+            done(e as any)
+          } finally {
+            sub.unsubscribe()
+          }
+        },
+        error: done,
       })
-
-      expect(keys).toEqual(['g1', 'g2', 'g3', 'def'])
     })
 
     it('should emit custom-group state when selectedGroupKey equals customGroupKey', () => {

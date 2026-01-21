@@ -44,11 +44,8 @@ describe('FilterViewComponent (class logic)', () => {
     } as any
   })
 
-  it('should initialize columnFilterDataRows$ and emit initial componentStateChanged in ngOnInit', async () => {
-    component.columns = [
-      makeColumn({ id: 'c1', nameKey: 'C1' }),
-      makeColumn({ id: 'c2', nameKey: 'C2' }),
-    ]
+  it('should initialize columnFilterDataRows$ and emit initial componentStateChanged in ngOnInit', (done) => {
+    component.columns = [makeColumn({ id: 'c1', nameKey: 'C1' }), makeColumn({ id: 'c2', nameKey: 'C2' })]
     component.filters = [
       { columnId: 'c2', value: 'v2' } as Filter,
       { columnId: 'c1', value: 'v1' } as Filter,
@@ -61,17 +58,33 @@ describe('FilterViewComponent (class logic)', () => {
 
     expect(stateSpy).toHaveBeenCalledWith({ filters: component.filters })
 
-    const rows = await new Promise<any[]>((resolve) => {
-      const rows$ = component.columnFilterDataRows$
-      if (!rows$) {
-        throw new Error('Expected columnFilterDataRows$ to be defined after ngOnInit')
-      }
-      rows$.pipe(take(1)).subscribe(resolve)
-    })
+    const rows$ = component.columnFilterDataRows$
+    if (!rows$) {
+      done(new Error('Expected columnFilterDataRows$ to be defined after ngOnInit'))
+      return
+    }
 
-    // Sorted by the order of columns (c1 then c2)
-    expect(rows.map((r) => r.valueColumnId)).toEqual(['c1', 'c2'])
-    expect(rows.map((r) => r.column)).toEqual(['C1', 'C2'])
+    let finished = false
+    const finishOnce = (err?: any) => {
+      if (finished) return
+      finished = true
+      if (err) done(err)
+      else done()
+    }
+
+    rows$.pipe(take(1)).subscribe({
+      next: (rows) => {
+        try {
+          // Sorted by the order of columns (c1 then c2)
+          expect((rows as any[]).map((r) => (r as any).valueColumnId)).toEqual(['c1', 'c2'])
+          expect(rows.map((r) => r.column)).toEqual(['C1', 'C2'])
+          finishOnce()
+        } catch (e) {
+          finishOnce(e as any)
+        }
+      },
+      error: finishOnce,
+    })
   })
 
   it('should set and expose defaultTemplates via the setter', () => {
@@ -122,10 +135,7 @@ describe('FilterViewComponent (class logic)', () => {
   })
 
   it('should remove a chip by value and emit events onChipRemove', () => {
-    component.filters = [
-      { columnId: 'c1', value: 'keep' } as Filter,
-      { columnId: 'c2', value: 'remove' } as Filter,
-    ]
+    component.filters = [{ columnId: 'c1', value: 'keep' } as Filter, { columnId: 'c2', value: 'remove' } as Filter]
 
     const filteredSpy = jest.spyOn(component.filtered, 'emit')
     const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
@@ -138,10 +148,7 @@ describe('FilterViewComponent (class logic)', () => {
   })
 
   it('should delete filter by row valueColumnId/value and emit events onFilterDelete', () => {
-    component.filters = [
-      { columnId: 'c1', value: 'keep' } as Filter,
-      { columnId: 'c2', value: 'remove' } as Filter,
-    ]
+    component.filters = [{ columnId: 'c1', value: 'keep' } as Filter, { columnId: 'c2', value: 'remove' } as Filter]
 
     const filteredSpy = jest.spyOn(component.filtered, 'emit')
     const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
@@ -198,32 +205,57 @@ describe('FilterViewComponent (class logic)', () => {
     })
   })
 
-  it('should compute templates in columns setter (chipTemplates$ and tableTemplates$) with default nulls', async () => {
+  it('should compute templates in columns setter (chipTemplates$ and tableTemplates$) with default nulls', (done) => {
     component.columns = [makeColumn({ id: 'c1', columnType: ColumnType.STRING })]
 
     component.defaultTemplates = undefined
     component.templates = undefined
 
-    const chipTemplates = await new Promise<Record<string, any>>((resolve) => {
-      const chip$ = component.chipTemplates$
-      if (!chip$) {
-        throw new Error('Expected chipTemplates$ to be defined after setting columns')
+    const chip$ = component.chipTemplates$
+    const table$ = component.tableTemplates$
+
+    if (!chip$) {
+      done(new Error('Expected chipTemplates$ to be defined after setting columns'))
+      return
+    }
+
+    if (!table$) {
+      done(new Error('Expected tableTemplates$ to be defined after setting columns'))
+      return
+    }
+
+    let chipTemplates: Record<string, any> | undefined
+    let tableTemplates: Record<string, any> | undefined
+
+    const maybeFinish = () => {
+      if (!chipTemplates || !tableTemplates) return
+
+      try {
+        expect(chipTemplates).toEqual({ c1: null })
+
+        // tableTemplates includes columns + columnFilterTableColumns
+        expect(Object.keys(tableTemplates).sort()).toEqual(['actions', 'c1', 'column', 'value'].sort())
+        expect(tableTemplates['c1']).toBeNull()
+        done()
+      } catch (e) {
+        done(e as any)
       }
-      chip$.pipe(take(1)).subscribe(resolve)
+    }
+
+    const chipSub = chip$.pipe(take(1)).subscribe({
+      next: (value) => {
+        chipTemplates = value
+        maybeFinish()
+      },
+      error: done,
     })
 
-    const tableTemplates = await new Promise<Record<string, any>>((resolve) => {
-      const table$ = component.tableTemplates$
-      if (!table$) {
-        throw new Error('Expected tableTemplates$ to be defined after setting columns')
-      }
-      table$.pipe(take(1)).subscribe(resolve)
+    const tableSub = table$.pipe(take(1)).subscribe({
+      next: (value) => {
+        tableTemplates = value
+        maybeFinish()
+      },
+      error: done,
     })
-
-    expect(chipTemplates).toEqual({ c1: null })
-
-    // tableTemplates includes columns + columnFilterTableColumns
-    expect(Object.keys(tableTemplates).sort()).toEqual(['actions', 'c1', 'column', 'value'].sort())
-    expect(tableTemplates['c1']).toBeNull()
   })
 })
