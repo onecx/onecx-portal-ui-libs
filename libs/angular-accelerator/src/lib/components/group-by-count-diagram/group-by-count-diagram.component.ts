@@ -18,8 +18,6 @@ export interface GroupByCountDiagramComponentState {
 })
 export class GroupByCountDiagramComponent implements OnInit {
   private translateService = inject(TranslateService)
-  @Input() allLabels?: string[] = []
-  @Input() showAllLabels = false;
   @Input() sumKey = 'SEARCH.SUMMARY_TITLE'
   @Input() diagramType = DiagramType.PIE
   /**
@@ -27,6 +25,25 @@ export class GroupByCountDiagramComponent implements OnInit {
    *
    * Setting this property to false will result in using the provided colors only if every data item has one. In the scenario where at least one item does not have a color set, diagram will generate all colors.
    */
+
+  private _allLabels$ = new BehaviorSubject<string[]>([])
+  @Input()
+  get allLabels(): string[] {
+    return this._allLabels$.getValue()
+  }
+  set allLabels(value: string[]) {
+    this._allLabels$.next(value)
+  }
+
+  private _showAllLabels$ = new BehaviorSubject<boolean>(false)
+  @Input()
+  get showAllLabels(): boolean {
+    return this._showAllLabels$.getValue()
+  }
+  set showAllLabels(value: boolean) {
+    this._showAllLabels$.next(value)
+  }
+
   @Input() fillMissingColors = true
   @Input() supportedDiagramTypes: DiagramType[] = []
   private _data$ = new BehaviorSubject<unknown[]>([])
@@ -85,13 +102,15 @@ export class GroupByCountDiagramComponent implements OnInit {
       this._columnField$,
       this._columnType$,
       this._colors$,
+      this._allLabels$,
+      this._showAllLabels$,
     ]).pipe(
-      mergeMap(([data, columnField, columnType, colors]) => {
+      mergeMap(([data, columnField, columnType, colors, allLabels, showAllLabels]) => {
         const columnData = data.map((d) => ObjectUtils.resolveFieldData(d, columnField));
         let occurrences: DiagramData[] = [];
 
-        if (this.allLabels && this.allLabels.length > 0 && this.showAllLabels) {
-          occurrences = this.allLabels.map((label) => ({
+        if (showAllLabels && allLabels.length > 0) {
+          occurrences = allLabels.map((label) => ({
             label: label,
             value: 0,
             backgroundColor: colors[label],

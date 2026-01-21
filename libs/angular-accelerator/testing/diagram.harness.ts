@@ -25,4 +25,9 @@ export class DiagramHarness extends ComponentHarness {
   async getAllSelectionButtons() {
     return await (await this.locatorFor(PSelectButtonHarness)()).getAllButtons()
   }
+
+  async getCanvasAriaLabel(): Promise<string | null> {
+    const canvas = await this.getCanvasElement()
+    return canvas ? canvas.getAttribute('aria-label') : null
+  }
 }

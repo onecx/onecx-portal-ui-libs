@@ -144,6 +144,8 @@ describe('GroupByCountDiagramComponent', () => {
 
   const inputColumn = { columnType: ColumnType.STRING, id: 'testNumber' }
 
+  const labelsMock = ['test0', 'test1', 'test2', 'testNone'];
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [GroupByCountDiagramComponent, DiagramComponent],
@@ -212,16 +214,31 @@ describe('GroupByCountDiagramComponent', () => {
     expect(diagramTypeSelectButton).toBeTruthy()
   })
 
-  it('should display all labels when showAllLabels is true', async () => {
-    component.supportedDiagramTypes = [DiagramType.PIE, DiagramType.VERTICAL_BAR]
+  it('should verify if all labels appear when allLabels and showAllLabels flag is present', async () => {
+    component.allLabels = labelsMock
     component.showAllLabels = true
-    component.allLabels = ['Label1', 'Label2', 'Label3']
-    component.diagramType = DiagramType.VERTICAL_BAR
 
-    const diagram = await loader.getHarness(DiagramHarness)
-    const canvas =  await diagram.getCanvasElement();
-    //const label = await canvas?.getAttribute('aria-label');
+    fixture.detectChanges()
+    const harness = await loader.getHarness(DiagramHarness)    
+    const canvas = await harness.getCanvasElement()
+    const ariaLabel = await canvas?.getAttribute('aria-label')
 
-    expect(canvas).toBeTruthy(); // check aria labels for zero value labels
+    expect(ariaLabel).toContain('test0:1')
+    expect(ariaLabel).toContain('test1:2')
+    expect(ariaLabel).toContain('test2:4')
+    expect(ariaLabel).toContain('testNone:0')
+    expect(ariaLabel).toContain('Total amount: 7')
+  })
+
+  it('should verify if label with zero count will not appear when allLabels is present but showAllLabels flag is missing', async () => {
+    component.allLabels = labelsMock
+
+    fixture.detectChanges()
+    const harness = await loader.getHarness(DiagramHarness)    
+    const canvas = await harness.getCanvasElement()
+    const ariaLabel = await canvas?.getAttribute('aria-label')
+
+    expect(ariaLabel).not.toContain('testNone:0')
+    expect(ariaLabel).toContain('Total amount: 7')
   })
 })
