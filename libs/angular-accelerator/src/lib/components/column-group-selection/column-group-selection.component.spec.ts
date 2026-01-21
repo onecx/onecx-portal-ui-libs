@@ -1,5 +1,10 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { CommonModule } from '@angular/common'
+import { FormsModule } from '@angular/forms'
+import { SelectModule } from 'primeng/select'
+import { FloatLabelModule } from 'primeng/floatlabel'
+import { TranslateModule } from '@ngx-translate/core'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
 
 import { ColumnGroupSelectionComponent } from './column-group-selection.component'
 import type { DataTableColumn } from '../../model/data-table-column.model'
@@ -18,7 +23,8 @@ describe('ColumnGroupSelectionComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ColumnGroupSelectionComponent],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      imports: [CommonModule, FormsModule, SelectModule, FloatLabelModule, TranslateModule.forRoot()],
+      providers: [provideTranslateTestingService({})],
     }).compileComponents()
 
     fixture = TestBed.createComponent(ColumnGroupSelectionComponent)

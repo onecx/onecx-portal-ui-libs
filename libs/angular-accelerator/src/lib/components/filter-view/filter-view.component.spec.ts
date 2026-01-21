@@ -1,5 +1,8 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { CommonModule } from '@angular/common'
+import { FormsModule } from '@angular/forms'
+import { TranslateModule } from '@ngx-translate/core'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
 
 import { FilterViewComponent } from './filter-view.component'
 import type { DataTableColumn } from '../../model/data-table-column.model'
@@ -22,7 +25,8 @@ describe('FilterViewComponent (class logic)', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [FilterViewComponent],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      imports: [CommonModule, FormsModule, TranslateModule.forRoot()],
+      providers: [provideTranslateTestingService({})],
     }).compileComponents()
 
     fixture = TestBed.createComponent(FilterViewComponent)
