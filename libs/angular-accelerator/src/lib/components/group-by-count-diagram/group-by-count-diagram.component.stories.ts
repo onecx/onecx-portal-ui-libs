@@ -82,6 +82,34 @@ const mockData = [
   }
 ]
 
+
+const mockDataWithTranslationKeys = [
+  {
+    id: 1,
+    fruitType: 'chart.fruit1',
+    name: 'Apple1',
+  },
+  {
+    id: 2,
+    fruitType: 'chart.fruit1',
+    name: 'Apple2',
+  },
+  {
+    id: 3,
+    fruitType: 'chart.fruit1',
+    name: 'Apple3',
+  },
+  {
+    id: 4,
+    fruitType: 'chart.fruit2',
+    name: 'Banana1',
+  },
+  {
+    id: 5,
+    fruitType: 'chart.fruit2',
+    name: 'Banana2',
+  }
+]
 export const PieChart = {
   render: Template,
 
@@ -174,18 +202,35 @@ export const WithForcedCustomColors = {
   },
 }
 
-export const withDisplayLabels = {
+export const withAllLabels= {
   render: Template,
   args: {
     diagramType: DiagramType.VERTICAL_BAR,
     data: mockData,
-    sumKey: 'With Display Labels',
+    sumKey: 'With all Labels',
     column: {
       id: 'fruitType',
       type: ColumnType.STRING,
     },
     fillMissingColors: false,
-    showAllLabels: true,
+    showAllLabels: false,
+    columnType: ColumnType.TRANSLATION_KEY,
     allLabels: ['Apple', 'Banana', 'Orange']
+  },
+}
+
+export const withAllLabelAndTranslationKeys = {
+  render: Template,
+  args: {
+    diagramType: DiagramType.VERTICAL_BAR,
+    data: mockDataWithTranslationKeys,
+    sumKey: 'With all labels and translation keys',
+    column: {
+      id: 'fruitType',
+      columnType: ColumnType.TRANSLATION_KEY,
+    },
+    fillMissingColors: false,
+    showAllLabels: true,
+    allLabelKeys: ['chart.fruit1', 'chart.fruit2', 'chart.fruit3']
   },
 }

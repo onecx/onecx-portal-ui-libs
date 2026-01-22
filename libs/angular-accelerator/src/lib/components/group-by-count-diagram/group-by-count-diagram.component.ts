@@ -18,21 +18,25 @@ export interface GroupByCountDiagramComponentState {
 })
 export class GroupByCountDiagramComponent implements OnInit {
   private translateService = inject(TranslateService)
+  private _data$ = new BehaviorSubject<unknown[]>([])
   @Input() sumKey = 'SEARCH.SUMMARY_TITLE'
   @Input() diagramType = DiagramType.PIE
   /**
    * This property determines if diagram should generate the colors for the data that does not have any set.
    *
-   * Setting this property to false will result in using the provided colors only if every data item has one. In the scenario where at least one item does not have a color set, diagram will generate all colors.
+   * Setting this property to false will result in using the provided colors only if every data item has one.
+   *  In the scenario where at least one item does not have a color set, diagram will generate all colors.
    */
+  @Input() fillMissingColors = true
+  @Input() supportedDiagramTypes: DiagramType[] = [] 
 
-  private readonly _allLabels$ = new BehaviorSubject<string[]>([])
+  private readonly _allLabelKeys$ = new BehaviorSubject<string[]>([])
   @Input()
-  get allLabels(): string[] {
-    return this._allLabels$.getValue()
+  get allLabelKeys(): string[] {
+    return this._allLabelKeys$.getValue()
   }
-  set allLabels(value: string[]) {
-    this._allLabels$.next(value)
+  set allLabelKeys(value: string[]) {  
+    this._allLabelKeys$.next(value)
   }
 
   private readonly _showAllLabels$ = new BehaviorSubject<boolean>(false)
@@ -44,9 +48,6 @@ export class GroupByCountDiagramComponent implements OnInit {
     this._showAllLabels$.next(value)
   }
 
-  @Input() fillMissingColors = true
-  @Input() supportedDiagramTypes: DiagramType[] = []
-  private _data$ = new BehaviorSubject<unknown[]>([])
   @Input()
   get data(): unknown[] {
     return this._data$.getValue()
@@ -57,6 +58,7 @@ export class GroupByCountDiagramComponent implements OnInit {
   diagramData$: Observable<DiagramData[]> | undefined
 
   private _columnType$ = new BehaviorSubject<ColumnType>(ColumnType.STRING)
+
   @Input()
   get columnType(): ColumnType {
     return this._columnType$.getValue()
@@ -102,15 +104,15 @@ export class GroupByCountDiagramComponent implements OnInit {
       this._columnField$,
       this._columnType$,
       this._colors$,
-      this._allLabels$,
+      this._allLabelKeys$,
       this._showAllLabels$,
     ]).pipe(
-      mergeMap(([data, columnField, columnType, colors, allLabels, showAllLabels]) => {
+      mergeMap(([data, columnField, columnType, colors, allLabelKeys, showAllLabels]) => {
         const columnData = data.map((d) => ObjectUtils.resolveFieldData(d, columnField));
         let occurrences: DiagramData[] = [];
 
-        if (showAllLabels && allLabels.length > 0) {
-          occurrences = allLabels.map((label) => ({
+        if (showAllLabels && allLabelKeys.length > 0) {
+          occurrences = allLabelKeys.map((label) => ({
             label: label,
             value: 0,
             backgroundColor: colors[label],
