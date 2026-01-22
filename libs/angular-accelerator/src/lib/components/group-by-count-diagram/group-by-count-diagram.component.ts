@@ -119,9 +119,11 @@ export class GroupByCountDiagramComponent implements OnInit {
           }))
 
           columnData.forEach((current) => {
-          const foundColumn = occurrences.find((e) => e.label === current)
+            const foundColumn = occurrences.find((e) => e.label === current);
             if (foundColumn) {
-              foundColumn.value++
+              foundColumn.value++;
+            } else {
+              occurrences.push({ label: current, value: 1, backgroundColor: colors[current.toString()] });
             }
           })
         } else {

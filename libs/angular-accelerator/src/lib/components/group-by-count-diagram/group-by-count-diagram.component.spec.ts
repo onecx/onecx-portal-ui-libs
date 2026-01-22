@@ -303,4 +303,19 @@ describe('GroupByCountDiagramComponent', () => {
     expect(result[0].label).toBe('test0_en')
     expect(result[0].value).toBe(1)
   })
+
+  it('should include missing labels with configured color when all labels are shown', async () => {
+    component.colors = { ...component.colors, test3: 'blue' }
+    component.data = [...originalData, { ...originalData[0], testNumber: 'test3' }]
+    component.allLabelKeys = labelsMock
+    component.showAllLabels = true
+    fixture.detectChanges()
+
+    const result = await firstValueFrom(component.diagramData$ ?? of([]))
+    const extraLabel = result.find((entry) => entry.label === 'test3')
+
+    expect(result.length).toBe(5)
+    expect(extraLabel?.value).toBe(1)
+    expect(extraLabel?.backgroundColor).toBe('blue')
+  })
 })
