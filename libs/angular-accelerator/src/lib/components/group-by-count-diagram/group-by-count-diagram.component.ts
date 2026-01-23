@@ -18,17 +18,36 @@ export interface GroupByCountDiagramComponentState {
 })
 export class GroupByCountDiagramComponent implements OnInit {
   private translateService = inject(TranslateService)
-
+  private _data$ = new BehaviorSubject<unknown[]>([])
   @Input() sumKey = 'SEARCH.SUMMARY_TITLE'
   @Input() diagramType = DiagramType.PIE
   /**
    * This property determines if diagram should generate the colors for the data that does not have any set.
    *
-   * Setting this property to false will result in using the provided colors only if every data item has one. In the scenario where at least one item does not have a color set, diagram will generate all colors.
+   * Setting this property to false will result in using the provided colors only if every data item has one.
+   *  In the scenario where at least one item does not have a color set, diagram will generate all colors.
    */
   @Input() fillMissingColors = true
-  @Input() supportedDiagramTypes: DiagramType[] = []
-  private _data$ = new BehaviorSubject<unknown[]>([])
+  @Input() supportedDiagramTypes: DiagramType[] = [] 
+
+  private readonly _allLabelKeys$ = new BehaviorSubject<string[]>([])
+  @Input()
+  get allLabelKeys(): string[] {
+    return this._allLabelKeys$.getValue()
+  }
+  set allLabelKeys(value: string[]) {  
+    this._allLabelKeys$.next(value)
+  }
+
+  private readonly _showAllLabels$ = new BehaviorSubject<boolean>(false)
+  @Input()
+  get showAllLabels(): boolean {
+    return this._showAllLabels$.getValue()
+  }
+  set showAllLabels(value: boolean) {
+    this._showAllLabels$.next(value)
+  }
+  
   @Input()
   get data(): unknown[] {
     return this._data$.getValue()
@@ -79,27 +98,53 @@ export class GroupByCountDiagramComponent implements OnInit {
   @Output() componentStateChanged: EventEmitter<GroupByCountDiagramComponentState> = new EventEmitter()
 
   ngOnInit(): void {
-    this.diagramData$ = combineLatest([this._data$, this._columnField$, this._columnType$, this._colors$]).pipe(
-      mergeMap(([data, columnField, columnType, colors]) => {
-        const columnData = data.map((d) => ObjectUtils.resolveFieldData(d, columnField))
-        const occurrences = columnData.reduce((acc, current) => {
-          return acc.some((e: { label: any }) => e.label === current)
-            ? (acc.find((e: { label: any }) => e.label === current).value++, acc)
-            : [...acc, { label: current, value: 1, backgroundColor: colors[current.toString()] }]
-        }, [])
+    this.diagramData$ = combineLatest([
+      this._data$,
+      this._columnField$,
+      this._columnType$,
+      this._colors$,
+      this._allLabelKeys$,
+      this._showAllLabels$,
+    ]).pipe(
+      mergeMap(([data, columnField, columnType, colors, allLabelKeys, showAllLabels]) => {
+        const columnData = data.map((d) => ObjectUtils.resolveFieldData(d, columnField));
+        let occurrences: DiagramData[] = [];
+
+        if (showAllLabels && allLabelKeys.length > 0) {
+          occurrences = allLabelKeys.map((label) => ({
+            label: label,
+            value: 0,
+            backgroundColor: colors[label],
+          }))
+
+          columnData.forEach((current) => {
+            const foundColumn = occurrences.find((e) => e.label === current);
+            if (foundColumn) {
+              foundColumn.value++;
+            } else {
+              occurrences.push({ label: current, value: 1, backgroundColor: colors[current.toString()] });
+            }
+          })
+        } else {
+          occurrences = columnData.reduce((acc, current) => {
+            return acc.some((e: { label: string }) => e.label === current)
+              ? (acc.find((e: { label: string }) => e.label === current).value++, acc)
+              : [...acc, { label: current, value: 1, backgroundColor: colors[current.toString()] }]
+          }, [])
+        }
+
         if (columnType === ColumnType.TRANSLATION_KEY && occurrences.length > 0) {
-          return this.translateService.get(occurrences.map((o: { label: any }) => o.label)).pipe(
-            map((translations: { [x: string]: any }) =>
-              occurrences.map((o: { label: string; value: any; backgroundColor: string | undefined }) => ({
+          return this.translateService.get(occurrences.map((o) => o.label)).pipe(
+            map((translations) =>
+              occurrences.map((o) => ({
                 label: translations[o.label],
                 value: o.value,
                 backgroundColor: o.backgroundColor,
               }))
             )
           )
-        } else {
-          return of(occurrences)
         }
+        return of(occurrences)
       })
     )
   }
