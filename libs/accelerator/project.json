@@ -53,6 +53,7 @@
       ],
       "options": {
         "jestConfig": "libs/accelerator/jest.config.ts",
+        "codeCoverage": true,
         "passWithNoTests": true
       },
       "configurations": {
