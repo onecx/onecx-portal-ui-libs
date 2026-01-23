@@ -9,5 +9,10 @@
     "actionItemAriaLabel": "Feature Action Item Aria Label",
     "statusLabelTooltip": "Feature Status Label Tooltip (status: {{status}})",
     "statusValueTooltip": "Feature Status Value Tooltip (value: {{value}})"
+  },
+  "chart": {
+    "fruit1": "Apple",
+    "fruit2": "Banana",
+    "fruit3": "Orange"
   }
 }

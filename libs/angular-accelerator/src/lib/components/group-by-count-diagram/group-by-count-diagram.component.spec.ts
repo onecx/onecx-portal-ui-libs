@@ -21,10 +21,10 @@ describe('GroupByCountDiagramComponent', () => {
 
   const definedSumKey = 'Total'
 
-  const diagramData: { label: string; value: number }[] = [
-    { label: 'test0', value: 1 },
-    { label: 'test1', value: 2 },
-    { label: 'test2', value: 4 },
+  const diagramData: { label: string; value: number; backgroundColor?: string }[] = [
+    { label: 'test0', value: 1, backgroundColor: 'green' },
+    { label: 'test1', value: 2, backgroundColor: 'darkgreen' },
+    { label: 'test2', value: 4, backgroundColor: undefined },
   ]
 
   const originalData = [
@@ -144,6 +144,18 @@ describe('GroupByCountDiagramComponent', () => {
 
   const inputColumn = { columnType: ColumnType.STRING, id: 'testNumber' }
 
+  const labelsMock = ['test0', 'test1', 'test2', 'testNone'];
+
+  async function getHarness() {
+    return loader.getHarness(DiagramHarness)
+  }
+
+  async function getCanvasAriaLabel() {
+    const harness = await getHarness()
+    const canvas = await harness.getCanvasElement()
+    return canvas?.getAttribute('aria-label')
+  }
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [GroupByCountDiagramComponent, DiagramComponent],
@@ -164,6 +176,7 @@ describe('GroupByCountDiagramComponent', () => {
     component.data = originalData
     component.column = inputColumn
     component.sumKey = definedSumKey
+    component.colors = { test0: 'green', test1: 'darkgreen' }
 
     translateService = TestBed.inject(TranslateService)
     translateService.setFallbackLang('en')
@@ -175,20 +188,24 @@ describe('GroupByCountDiagramComponent', () => {
 
   it('should create the group-by-count-diagram component', () => {
     expect(component).toBeTruthy()
+    expect(component.data).toEqual(originalData)
+    expect(component.column).toEqual(inputColumn)
+    expect(component.columnType).toBe(ColumnType.STRING)
+    expect(component.columnField).toBe('testNumber')
   })
 
   it('should convert the data properly to diagramData', async () => {
     const result = await firstValueFrom(component.diagramData$ ?? of())
-    expect(result).toEqual(diagramData)
+    expect(result).toEqual(diagramData)    
   })
 
   it('should load diagram harness', async () => {
-    const diagram = await loader.getHarness(DiagramHarness)
+    const diagram = await getHarness()
     expect(diagram).toBeTruthy()
   })
 
   it('should display the sumKey on the diagram component', async () => {
-    const diagram = await loader.getHarness(DiagramHarness)
+    const diagram = await getHarness()
     const displayedText = await diagram.getSumLabel()
     const definedSumKeyTranslation = translateService.instant(definedSumKey)
     expect(displayedText).toEqual(definedSumKeyTranslation)
@@ -197,8 +214,7 @@ describe('GroupByCountDiagramComponent', () => {
   it('should not display a selectButton on the diagram by default', async () => {
     expect(component.supportedDiagramTypes).toEqual([])
 
-    const diagram = await loader.getHarness(DiagramHarness)
-    const diagramTypeSelectButton = await diagram.getDiagramTypeSelectButton()
+    const diagramTypeSelectButton = await (await getHarness()).getDiagramTypeSelectButton()
 
     expect(diagramTypeSelectButton).toBe(null)
   })
@@ -206,9 +222,100 @@ describe('GroupByCountDiagramComponent', () => {
   it('should display a selectButton on the diagram if supportedDiagramTypes is specified', async () => {
     component.supportedDiagramTypes = [DiagramType.PIE, DiagramType.HORIZONTAL_BAR]
 
-    const diagram = await loader.getHarness(DiagramHarness)
-    const diagramTypeSelectButton = await diagram.getDiagramTypeSelectButton()
+    const diagramTypeSelectButton = await (await getHarness()).getDiagramTypeSelectButton()
 
     expect(diagramTypeSelectButton).toBeTruthy()
+  })
+
+  it('should verify if all labels appear', async () => {
+    component.allLabelKeys = labelsMock
+    component.showAllLabels = true
+
+    fixture.detectChanges()
+    const ariaLabel = await getCanvasAriaLabel()
+
+    expect(ariaLabel).toContain('test0:1')
+    expect(ariaLabel).toContain('test1:2')
+    expect(ariaLabel).toContain('test2:4')
+    expect(ariaLabel).toContain('testNone:0')
+    expect(ariaLabel).toContain('Total amount: 7')
+    expect(component.allLabelKeys).toEqual(labelsMock)
+    expect(component.showAllLabels).toBe(true)
+    expect(component.colors).toEqual({ test0: 'green', test1: 'darkgreen' })
+  })
+
+  it('should verify if label with zero count will not appear', async () => {
+    component.allLabelKeys = labelsMock
+
+    fixture.detectChanges()
+    const ariaLabel = await getCanvasAriaLabel()
+
+    expect(ariaLabel).not.toContain('testNone:0')
+    expect(ariaLabel).toContain('Total amount: 7')
+    expect(component.allLabelKeys).toEqual(labelsMock)
+    expect(component.showAllLabels).toBe(false)
+  })
+
+  it('should emit dataSelected event when dataClicked is called', () => {
+    const emitSpy = jest.spyOn(component.dataSelected, 'emit')
+    const clickEvent = { label: 'test0', value: 1 }
+
+    component.dataClicked(clickEvent)
+
+    expect(emitSpy).toHaveBeenCalledWith(clickEvent)
+    expect(emitSpy).toHaveBeenCalledTimes(1)
+  })
+
+  it('should emit diagramTypeChanged event when diagram type is changed', async () => {
+    component.supportedDiagramTypes = [DiagramType.PIE, DiagramType.HORIZONTAL_BAR]
+    const emitDiagramTypeChangedSpy = jest.spyOn(component.diagramTypeChanged, 'emit')
+    const emitComponentStateChangedSpy = jest.spyOn(component.componentStateChanged, 'emit')
+    fixture.detectChanges()
+
+    const harness = await getHarness()
+    const buttons = await harness.getAllSelectionButtons()
+
+    await buttons[1]?.click()
+    fixture.detectChanges()
+
+    expect(emitDiagramTypeChangedSpy).toHaveBeenCalledWith(DiagramType.HORIZONTAL_BAR)
+    expect(component.diagramType).toBe(DiagramType.HORIZONTAL_BAR)
+    expect(emitComponentStateChangedSpy).toHaveBeenCalledWith({
+      activeDiagramType: DiagramType.HORIZONTAL_BAR,
+    })
+  })
+
+  it('should return translated keys when columnType is TranslationKey', async () => {
+    const translationsMock = {
+      'test0': 'test0_en',
+      'test1': 'test1_en',
+      'test2': 'test2_en'
+    }
+    jest.spyOn(translateService, 'get').mockReturnValue(of(translationsMock))
+    component.columnType = ColumnType.TRANSLATION_KEY
+    component.columnField = 'testNumber'
+    fixture.detectChanges()
+
+    const result = await firstValueFrom(component.diagramData$ ?? of([]))
+
+    expect(result).toBeDefined()
+    expect(result.length).toBe(3)
+    expect(result[0].label).toBe('test0_en')
+    expect(result[0].value).toBe(1)
+  })
+
+  it('should include missing labels with configured color when all labels are shown', async () => {
+    component.colors = { ...component.colors, test3: 'blue' }
+    component.data = [...originalData, { ...originalData[0], testNumber: 'test3' }]
+    component.allLabelKeys = labelsMock
+    component.showAllLabels = true
+    fixture.detectChanges()
+
+    const result = await firstValueFrom(component.diagramData$ ?? of([]))
+    const extraLabel = result.find((entry) => entry.label === 'test3')
+
+    expect(result.length).toBe(5)
+    expect(extraLabel?.value).toBe(1)
+    expect(extraLabel?.backgroundColor).toBe('blue')
   })
 })

@@ -28,6 +28,11 @@ const STORYBOOK_TRANSLATION_PROVIDERS = [
     useValue: '/assets/i18n/storybook-translations/page-header/',
     multi: true,
   },
+  {
+    provide: TRANSLATION_PATH,
+    useValue: '/assets/i18n/storybook-translations/diagram/',
+    multi: true,
+  },
 ]
 
 @NgModule({
