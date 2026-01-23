@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core'
 import { CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
-import Keycloak, { KeycloakConfig } from 'keycloak-js'
+import Keycloak, { KeycloakServerConfig } from 'keycloak-js'
 import { AuthService } from '../auth.service'
 
 const KC_REFRESH_TOKEN_LS = 'onecx_kc_refreshToken'
@@ -29,10 +29,10 @@ export class KeycloakAuthService implements AuthService {
       }
     }
 
-    let kcConfig: KeycloakConfig | string
+    let kcConfig: KeycloakServerConfig | string
     const validKCConfig = await this.getValidKCConfig()
     kcConfig = { ...validKCConfig, ...(config ?? {}) }
-
+    
     if (!kcConfig.clientId || !kcConfig.realm || !kcConfig.url) {
       kcConfig = './assets/keycloak.json'
     }
@@ -89,7 +89,7 @@ export class KeycloakAuthService implements AuthService {
       })
   }
 
-  protected async getValidKCConfig(): Promise<KeycloakConfig> {
+  protected async getValidKCConfig(): Promise<KeycloakServerConfig> {
     const clientId = await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_CLIENT_ID)
     if (!clientId) {
       throw new Error('Invalid KC config, missing clientId')
