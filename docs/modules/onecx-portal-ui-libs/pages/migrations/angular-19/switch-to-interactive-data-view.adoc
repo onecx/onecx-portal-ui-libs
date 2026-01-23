@@ -1,9 +1,9 @@
 [#switch-to-interactive-data-view]
-=== Replace p-dataView and DataViewControlsComponent with InteractiveDataViewComponent
+==== Replace DataViewControlsComponent
 
 Replace **p-dataView** and **ocx-data-view-controls** template with **ocx-interactive-data-view** for enhanced data viewing capabilities including sorting, filtering, and layout options.
 
-**Code Changes**
+===== Code Changes
 
 * Remove `<ocx-data-view-controls>` and `DataViewControlsComponent` from `@onecx/portal-integration-angular`
 * Add `InteractiveDataViewComponent` from `@onecx/angular-accelerator`.
@@ -11,7 +11,7 @@ Replace **p-dataView** and **ocx-data-view-controls** template with **ocx-intera
 * Remove `DataViewModule` from `primeng/dataview` if not used elsewhere
 * Add `<ocx-interactive-data-view>` and update input properties and output events as per tables below
 
-**Example - Replace ocx-data-view-controls with ocx-interactive-data-view in HTML**
+===== Example - Replace ocx-data-view-controls with ocx-interactive-data-view in HTML
 
 .Before
 [source, html]
@@ -60,13 +60,14 @@ Replace **p-dataView** and **ocx-data-view-controls** template with **ocx-intera
 </ocx-interactive-data-view>
 ----
 
-**Input Properties**
-
-[cols="1,1,2", options="header"]
-|===
-| DataViewControlsComponent / p-dataView
-| InteractiveDataViewComponent
-| Notes
+.Input Properties
+[%collapsible]
+=====
+[.stripes-even,cols="1,1,2"]
+|====
+h| DataViewControlsComponent / p-dataView
+h| InteractiveDataViewComponent
+h| Notes
 
 | [value] (p-dataView)
 | data
@@ -155,9 +156,10 @@ Replace **p-dataView** and **ocx-data-view-controls** template with **ocx-intera
 | [emptyMessage] (p-dataView)
 | emptyResultsMessage
 | Message displayed when no data is available.
-|===
+|====
+=====
 
-**Example - Replace ocx-data-view-controls with ocx-interactive-data-view in TypeScript**
+===== Example - Replace ocx-data-view-controls with ocx-interactive-data-view in TypeScript
 
 .Before
 [source, typescript]
@@ -211,13 +213,14 @@ onColumnsChange(activeColumnIds: string[]) {
 }
 ----
 
-**Output events**
-
-[cols="1,1,2", options="header"]
-|===
-| DataViewControlsComponent
-| InteractiveDataViewComponent
-| Notes
+.Output Events
+[%collapsible]
+=====
+[.stripes-even,cols="1,1,2"]
+|====
+h| DataViewControlsComponent
+h| InteractiveDataViewComponent
+h| Notes
 
 | sortChange, sortDirectionChange
 | sorted
@@ -234,14 +237,16 @@ onColumnsChange(activeColumnIds: string[]) {
 | columnsChange
 | displayedColumnKeysChange
 | Emits string[] (array of column ids).
-|===
+|====
+=====
 
-**Event Payloads**
-
-[cols="1,2", options="header"]
-|===
-| Event
-| Payload
+.Event Payloads
+[%collapsible]
+=====
+[.stripes-even,cols="1,2"]
+|====
+h| Event
+h| Payload
 
 | sorted
 | { sortColumn: string, sortDirection: DataSortDirection }
@@ -254,15 +259,17 @@ onColumnsChange(activeColumnIds: string[]) {
 
 | displayedColumnKeysChange
 | string[] (array of column ids)
-|===
+|====
+=====
 
-**Template Transformation**
-
-[cols="1,1,2", options="header"]
-|===
-| p-dataView
-| InteractiveDataViewComponent
-| Notes
+.Template Transformation
+[%collapsible]
+=====
+[.stripes-even,cols="1,1,2"]
+|====
+h| p-dataView
+h| InteractiveDataViewComponent
+h| Notes
 
 | `pTemplate="header"`
 | `pTemplate="topCenter"`
@@ -275,9 +282,10 @@ onColumnsChange(activeColumnIds: string[]) {
 | `pTemplate="listItem"`
 | `pTemplate="item"`
 | Style by layout class if needed.
-|===
+|====
+=====
 
-**Additional Points**
+===== Additional Points
 
 * **Pagination**: Built-in with automatic current page display. Configure via `[pageSize]` and `[pageSizes]`.
 * **Event Handling**: Use `$event.stopPropagation()` on nested action buttons to prevent unintended row selection.
