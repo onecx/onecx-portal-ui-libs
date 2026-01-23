@@ -1,4 +1,4 @@
-/* eslint-disable */
+/** @jest-config-loader ts-node */
 import { createReportsConfig } from '../../jest-config-factory'
 
 export default {
