@@ -1,3 +1,9 @@
+## [6.14.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.13.2...v6.14.0) (2026-01-23)
+
+### Features
+
+* added change related to all labels and flag to control display ([#1158](https://github.com/onecx/onecx-portal-ui-libs/issues/1158)) ([934b154](https://github.com/onecx/onecx-portal-ui-libs/commit/934b154e2a9976a7b86a2e1e94403fae6b4778f3))
+
 ## [6.13.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.13.1...v6.13.2) (2026-01-20)
 
 ### Bug Fixes
