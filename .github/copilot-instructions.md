@@ -6,7 +6,9 @@ Make sure to avoid linter errors.
 
 Only use comments if it is not directly obvious why something is done a certain way but never to explain what the code is doing.
 
-Always prefer running lint, test and build via the workspace tasks defined in .vscode/tasks.json. Some of the tasks are taking much time, so please wait for them to finish before making further changes (up to 15min).
+This is very important: ALWAYS prefer running lint, test, build and all other tasks defined in .vscode/tasks.json via the workspace tasks! Some of the tasks are taking much time, so please wait for them to finish before making further changes (up to 15min).
+
+When reading information about packages from npm, always prefer using the npm MCP server instead of reading directly from the npm registry.
 
 When writing tests use the following guidelines:
 
