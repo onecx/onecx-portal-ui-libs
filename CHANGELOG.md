@@ -1,3 +1,9 @@
+## [5.52.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.52.2...v5.52.3) (2026-01-26)
+
+### Bug Fixes
+
+* export parameters service ([#1159](https://github.com/onecx/onecx-portal-ui-libs/issues/1159)) ([#1162](https://github.com/onecx/onecx-portal-ui-libs/issues/1162)) ([39ff0a3](https://github.com/onecx/onecx-portal-ui-libs/commit/39ff0a33c9dfd4fba968b4f2fb052e5ddef156b4))
+
 ## [5.52.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.52.1...v5.52.2) (2026-01-15)
 
 ### Bug Fixes
