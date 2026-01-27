@@ -3,6 +3,9 @@ import { BehaviorSubject, Observable } from 'rxjs'
 import { UserProfile } from '@onecx/integration-interface'
 import { UserService } from '@onecx/angular-integration-interface'
 import { FakeTopic } from '@onecx/accelerator'
+import { createLogger } from '../src/lib/utils/logger.utils'
+
+const logger = createLogger('UserServiceMock')
 
 export function provideUserServiceMock() {
   return [UserServiceMock, { provide: UserService, useExisting: UserServiceMock }]
@@ -21,7 +24,7 @@ export class UserServiceMock {
 
     const result = this.permissionsTopic$.getValue()?.includes(permissionKey)
     if (!result) {
-      console.log(`👮‍♀️ No permission for: ${permissionKey}`)
+      logger.debug(`No permission for: ${permissionKey}`)
     }
     return !!result
   }

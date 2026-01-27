@@ -16,6 +16,7 @@ import { SlotHarness } from '@onecx/angular-remote-components/testing'
 import { SlotComponent } from './slot.component'
 import { SLOT_SERVICE } from '../../services/slot.service'
 import { ocxRemoteComponent } from '../../model/remote-component'
+import * as loggerUtils from '../../utils/logger.utils'
 
 // Rxjs operators mock
 import * as rxjsOperators from 'rxjs/operators'
@@ -102,7 +103,15 @@ describe('SlotComponent', () => {
   let resizedEventsPublisherMock: ResizeEventsPublisherMock
   let resizedEventsTopic: FakeTopic<TopicResizedEventType>
 
+  const loggerErrorFn = jest.fn()
+
   beforeEach(async () => {
+    jest.spyOn(loggerUtils, 'createLogger').mockReturnValue({
+      debug: jest.fn() as any,
+      info: jest.fn() as any,
+      warn: jest.fn() as any,
+      error: loggerErrorFn as any,
+    })
     // Without this debounceTime is not working in tests with fakeAsync/tick
     jest
       .spyOn(rxjsOperators, 'debounceTime')
@@ -125,18 +134,21 @@ describe('SlotComponent', () => {
     resizedEventsTopic = component['resizedEventsTopic'] as any as FakeTopic<TopicResizedEventType>
   })
 
+  afterEach(() => {
+    jest.restoreAllMocks()
+    loggerErrorFn.mockClear()
+  })
+
   it('should create', () => {
     expect(component).toBeTruthy()
   })
 
   it('should log error if slot service is not defined', () => {
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
     component['slotService'] = undefined as any
     component.ngOnInit()
-    expect(consoleSpy).toHaveBeenCalledWith(
+    expect(loggerErrorFn).toHaveBeenCalledWith(
       'SLOT_SERVICE token was not provided. test-slot slot will not be filled with data.'
     )
-    consoleSpy.mockRestore()
   })
 
   describe('on destroy', () => {
@@ -234,7 +246,6 @@ describe('SlotComponent', () => {
       })
 
       it('should create if span was not found', async () => {
-        const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
         jest.spyOn(component['viewContainerRef'].element.nativeElement, 'querySelector').mockReturnValue(null)
         slotServiceMock.assignComponents({
           'test-slot': [
@@ -256,7 +267,7 @@ describe('SlotComponent', () => {
 
         const element = await slotHarness.getElement('ocx-mock-angular-component')
         expect(element).not.toBeNull()
-        expect(consoleSpy).toHaveBeenCalledWith(
+        expect(loggerErrorFn).toHaveBeenCalledWith(
           'Component span was not found for slot component creation. The order of the components may be incorrect.'
         )
       })
@@ -336,7 +347,6 @@ describe('SlotComponent', () => {
       })
 
       it('should create webcomponent if span was not found', async () => {
-        const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
         jest.spyOn(component['viewContainerRef'].element.nativeElement, 'querySelector').mockReturnValue(null)
         slotServiceMock.assignComponents({
           'test-slot': [
@@ -359,7 +369,7 @@ describe('SlotComponent', () => {
 
         const element = await slotHarness.getElement('mock-webcomponent-no-span')
         expect(element).not.toBeNull()
-        expect(consoleSpy).toHaveBeenCalledWith(
+        expect(loggerErrorFn).toHaveBeenCalledWith(
           'Component span was not found for slot component creation. The order of the components may be incorrect.'
         )
       })

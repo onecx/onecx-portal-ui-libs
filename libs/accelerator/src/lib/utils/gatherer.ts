@@ -1,12 +1,15 @@
 import { Subscription } from 'rxjs'
 import { Topic } from '../topic/topic'
 
+import { createLogger } from './logger.utils'
+
 import '../declarations'
 
 /**
  * Implementation of the Scatter-Gather pattern.
  */
 export class Gatherer<Request, Response> {
+  private readonly logger: ReturnType<typeof createLogger>
   private static id = 0
   private readonly topic: Topic<{ id: number; request: Request }>
   private readonly ownIds = new Set<number>()
@@ -15,7 +18,8 @@ export class Gatherer<Request, Response> {
 
   constructor(name: string, version: number, callback: (request: Request) => Promise<Response>) {
     this.topicName = name
-    this.logIfDebug(name, `Gatherer ${name}: ${version} created`)
+    this.logger = createLogger(`Gatherer:${name}`)
+    this.logger.debug(`Gatherer ${name}: ${version} created`)
 
     this.topic = new Topic<{ id: number; request: Request }>(name, version, false)
     // Perform a callback every time a request is received in the topic.
@@ -23,7 +27,7 @@ export class Gatherer<Request, Response> {
       if (!this.isOwnerOfRequest(m) && window['@onecx/accelerator']?.gatherer?.promises) {
         this.logReceivedIfDebug(name, version, m)
         if (!window['@onecx/accelerator'].gatherer.promises[m.id]) {
-          console.warn('Expected an array of promises to gather for id ', m.id, ' but the id was not present')
+          this.logger.warn('Expected an array of promises to gather for id ', m.id, ' but the id was not present')
           return
         }
         let resolve: (value: Response) => void
@@ -41,7 +45,7 @@ export class Gatherer<Request, Response> {
   }
 
   destroy() {
-    this.logIfDebug(this.topic.name, `Gatherer ${this.topic.name}: ${this.topic.version} destroyed`)
+    this.logger.debug(`Gatherer ${this.topic.name}: ${this.topic.version} destroyed`)
 
     this.topicSub?.unsubscribe()
     this.topic.destroy()
@@ -71,27 +75,20 @@ export class Gatherer<Request, Response> {
     delete window['@onecx/accelerator'].gatherer.promises[id]
     this.ownIds.delete(id)
     return Promise.all(promises).then((v) => {
-      this.logIfDebug(this.topicName, 'Finished gathering responses', v)
+      this.logger.debug('Finished gathering responses', v)
       return v
     })
   }
 
   private logReceivedIfDebug(name: string, version: number, m: { id: number; request: Request }) {
-    this.logIfDebug(name, 'Gatherer ' + name + ': ' + version + ' received request ' + m.request)
+    this.logger.debug('Gatherer ' + name + ': ' + version + ' received request ' + m.request)
   }
 
   private logAnsweredIfDebug(name: string, version: number, m: { id: number; request: Request }, response: Response) {
-    this.logIfDebug(
-      name,
+    this.logger.debug(
       'Gatherer ' + name + ': ' + version + ' answered request ' + m.request + ' with response',
       response
     )
-  }
-
-  private logIfDebug(name: string, ...args: any[]) {
-    if (window['@onecx/accelerator']?.gatherer?.debug?.includes(name)) {
-      console.log(...args)
-    }
   }
 
   private isOwnerOfRequest(m: { id: number; request: Request }): boolean {

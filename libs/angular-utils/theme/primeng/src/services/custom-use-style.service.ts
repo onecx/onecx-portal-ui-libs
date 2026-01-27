@@ -14,9 +14,11 @@ import {
 } from '@onecx/angular-utils'
 import { replaceRootWithScope } from '@onecx/angular-utils/style'
 import { ReplaySubject } from 'rxjs'
+import { createLogger } from '../../logger.utils'
 
 @Injectable({ providedIn: 'any' })
 export class CustomUseStyle extends UseStyle {
+  private readonly logger = createLogger('CustomUseStyle')
   private readonly appStateService: AppStateService = inject(AppStateService)
   private readonly skipStyleScoping: boolean | null = inject(SKIP_STYLE_SCOPING, { optional: true })
   private readonly remoteComponentConfig: ReplaySubject<RemoteComponentConfig> | null = inject(REMOTE_COMPONENT_CONFIG, { optional: true })
@@ -90,13 +92,13 @@ export class CustomUseStyle extends UseStyle {
     Object.defineProperties(returnObject, {
       name: {
         get() {
-          console.error('Unexpected read of CustomUseStyle.use return value name')
+          logger.error('Unexpected read of CustomUseStyle.use return value name')
           return undefined
         },
       },
       el: {
         get() {
-          console.error('Unexpected read of CustomUseStyle.use return value el')
+          logger.error('Unexpected read of CustomUseStyle.use return value el')
           return undefined
         },
       },
