@@ -1,4 +1,4 @@
-import { Topic, TopicPublisher } from '@onecx/accelerator'
+import { Topic } from '@onecx/accelerator'
 
 type ParameterValue = boolean | number | string | object
 
