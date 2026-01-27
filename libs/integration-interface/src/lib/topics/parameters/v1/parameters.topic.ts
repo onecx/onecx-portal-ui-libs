@@ -7,19 +7,13 @@ export interface Parameters {
 }
 
 export interface ApplicationParameters {
-  productName: string,
-  appId: string,
+  productName: string
+  appId: string
   parameters: Parameters
 }
 
 export interface ParametersTopicPayload {
   parameters: ApplicationParameters[]
-}
-
-export class ParametersPublisher extends TopicPublisher<ParametersTopicPayload> {
-  constructor() {
-    super('parameters', 1)
-  }
 }
 
 export class ParametersTopic extends Topic<ParametersTopicPayload> {

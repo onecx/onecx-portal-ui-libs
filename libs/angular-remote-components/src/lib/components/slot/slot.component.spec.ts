@@ -65,11 +65,6 @@ class ResizeObserverMock {
 
 ;(global as any).ResizeObserver = ResizeObserverMock
 
-// Mock ResizeEventsPublisher
-class ResizeEventsPublisherMock {
-  publish = jest.fn()
-}
-
 // Test component
 @Component({
   selector: 'ocx-mock-angular-component',
@@ -99,7 +94,6 @@ describe('SlotComponent', () => {
   let slotServiceMock: SlotServiceMock
 
   let resizeObserverMock: ResizeObserverMock
-  let resizedEventsPublisherMock: ResizeEventsPublisherMock
   let resizedEventsTopic: FakeTopic<TopicResizedEventType>
 
   beforeEach(async () => {
@@ -116,8 +110,6 @@ describe('SlotComponent', () => {
     component = fixture.componentInstance
     // These must be set before detectChanges which triggers ngOnInit
     component.name = 'test-slot'
-    resizedEventsPublisherMock = new ResizeEventsPublisherMock()
-    ;(component as any)['resizedEventsPublisher'] = resizedEventsPublisherMock
     fixture.detectChanges()
 
     slotServiceMock = TestBed.inject(SLOT_SERVICE) as unknown as SlotServiceMock
@@ -484,12 +476,12 @@ describe('SlotComponent', () => {
 
   describe('size changes', () => {
     it('should publish initial size', fakeAsync(() => {
-      resizedEventsPublisherMock.publish.mockClear()
+      jest.spyOn(resizedEventsTopic, 'publish')
       resizeObserverMock.trigger(200, 100)
 
       tick(200) // debounceTime
 
-      expect(resizedEventsPublisherMock.publish).toHaveBeenCalledWith({
+      expect(resizedEventsTopic.publish).toHaveBeenCalledWith({
         type: ResizedEventType.SLOT_RESIZED,
         payload: {
           slotName: 'test-slot',
@@ -498,7 +490,7 @@ describe('SlotComponent', () => {
       })
     }))
     it('should debounce size changes', fakeAsync(() => {
-      resizedEventsPublisherMock.publish.mockClear()
+      jest.spyOn(resizedEventsTopic, 'publish')
       resizeObserverMock.trigger(200, 100)
       resizeObserverMock.trigger(300, 400)
 
@@ -506,7 +498,7 @@ describe('SlotComponent', () => {
 
       resizeObserverMock.trigger(400, 700)
 
-      expect(resizedEventsPublisherMock.publish).toHaveBeenCalledWith({
+      expect(resizedEventsTopic.publish).toHaveBeenCalledWith({
         type: ResizedEventType.SLOT_RESIZED,
         payload: {
           slotName: 'test-slot',
@@ -516,7 +508,7 @@ describe('SlotComponent', () => {
 
       tick(100)
 
-      expect(resizedEventsPublisherMock.publish).toHaveBeenCalledWith({
+      expect(resizedEventsTopic.publish).toHaveBeenCalledWith({
         type: ResizedEventType.SLOT_RESIZED,
         payload: {
           slotName: 'test-slot',
@@ -526,11 +518,10 @@ describe('SlotComponent', () => {
     }))
 
     it('should publish when requestedEventsChanged emits for this slot', fakeAsync(() => {
+      jest.spyOn(resizedEventsTopic, 'publish')
       resizeObserverMock.trigger(200, 100)
 
       tick(200) // debounceTime
-
-      resizedEventsPublisherMock.publish.mockClear()
 
       resizedEventsTopic.publish({
         type: ResizedEventType.REQUESTED_EVENTS_CHANGED,
@@ -540,7 +531,7 @@ describe('SlotComponent', () => {
         },
       })
 
-      expect(resizedEventsPublisherMock.publish).toHaveBeenCalledWith({
+      expect(resizedEventsTopic.publish).toHaveBeenCalledWith({
         type: ResizedEventType.SLOT_RESIZED,
         payload: {
           slotName: 'test-slot',
