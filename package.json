@@ -25,6 +25,7 @@
     "@angular/router": "^20.3.16",
     "@ngneat/until-destroy": "^10.0.0",
       "@types/debug": "^4.1.12",
+    "@ngrx/effects": "^20.1.0",
     "@ngrx/operators": "^20.1.0",
     "@ngrx/router-store": "^20.1.0",
     "@ngrx/store": "^20.1.0",

@@ -2,19 +2,20 @@ import { inject, Injectable } from '@angular/core'
 import { UseStyle } from 'primeng/usestyle'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import { THEME_OVERRIDES, ThemeOverrides } from '../utils/application-config'
-import { REMOTE_COMPONENT_CONFIG, SKIP_STYLE_SCOPING } from '@onecx/angular-utils'
-import { RemoteComponentConfig } from '@onecx/angular-utils'
-import { toVariables } from '@primeuix/styled'
 import {
   dataVariableOverrideIdAttribute,
   getScopeIdentifier,
+  REMOTE_COMPONENT_CONFIG,
+  RemoteComponentConfig,
   replacePrimengPrefix,
   scopePrimengCss,
   shellScopeId,
+  SKIP_STYLE_SCOPING,
 } from '@onecx/angular-utils'
+import { toVariables } from '@primeuix/styled'
 import { replaceRootWithScope } from '@onecx/angular-utils/style'
 import { ReplaySubject } from 'rxjs'
-import { createLogger } from '../../logger.utils'
+import { createLogger } from '../utils/logger.utils'
 
 @Injectable({ providedIn: 'any' })
 export class CustomUseStyle extends UseStyle {
@@ -55,7 +56,7 @@ export class CustomUseStyle extends UseStyle {
       const variablesData = toVariables(resolvedOverrides)
       if (variablesData.value.length === 0) return
 
-      const styleRef = this.createOrRetrieveOverrideElement(scopeId ? scopeId : shellScopeId)
+      const styleRef = this.createOrRetrieveOverrideElement(scopeId || shellScopeId)
       const prefixedOverrides = scopePrimengCss(
         replaceRootWithScope(replacePrimengPrefix(variablesData.css, scopeId)),
         scopeId
@@ -77,6 +78,7 @@ export class CustomUseStyle extends UseStyle {
   }
 
   private createFakeUseResponse(css: any, options: any) {
+    const logger = this.logger
     const returnObject: {
       id: any
       css: any
