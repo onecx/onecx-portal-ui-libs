@@ -16,7 +16,7 @@ import * as loggerUtils from '../utils/logger.utils'
 Reflect.set(globalThis, 'BroadcastChannel', BroadcastChannelMock)
 
 describe('Topic', () => {
-  const originalDebugEnv = process.env['DEBUG']
+  const originalLocalStorageDebug = localStorage.getItem('debug')
   const origAddEventListener = window.addEventListener
   const origPostMessage = window.postMessage
 
@@ -37,7 +37,11 @@ describe('Topic', () => {
   afterAll(() => {
     window.addEventListener = origAddEventListener
     window.postMessage = origPostMessage
-    process.env['DEBUG'] = originalDebugEnv
+    if (originalLocalStorageDebug === null) {
+      localStorage.removeItem('debug')
+    } else {
+      localStorage.setItem('debug', originalLocalStorageDebug)
+    }
   })
 
   let values1: any[]
