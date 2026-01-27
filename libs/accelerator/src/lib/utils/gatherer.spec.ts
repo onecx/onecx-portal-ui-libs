@@ -15,7 +15,7 @@ import { BroadcastChannelMock } from '../topic/mocks/broadcast-channel.mock'
 Reflect.set(globalThis, 'BroadcastChannel', BroadcastChannelMock)
 
 describe('Gatherer', () => {
-  const originalDebugEnv = process.env['DEBUG']
+  const originalLocalStorageDebug = localStorage.getItem('debug')
   const origAddEventListener = window.addEventListener
   const origPostMessage = window.postMessage
 
@@ -36,7 +36,11 @@ describe('Gatherer', () => {
   afterAll(() => {
     window.addEventListener = origAddEventListener
     window.postMessage = origPostMessage
-    process.env['DEBUG'] = originalDebugEnv
+    if (originalLocalStorageDebug === null) {
+      localStorage.removeItem('debug')
+    } else {
+      localStorage.setItem('debug', originalLocalStorageDebug)
+    }
   })
 
   let gatherer1: Gatherer<string, string>

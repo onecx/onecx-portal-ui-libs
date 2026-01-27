@@ -14,7 +14,8 @@ import {
   wrapGuards,
 } from '@onecx/angular-utils/guards'
 import { AppStateService, ShellCapabilityService } from '@onecx/angular-integration-interface'
-import { FakeTopic, provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
+import { FakeTopic } from '@onecx/accelerator'
+import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { ReplaySubject, Subject } from 'rxjs'
 import { Location } from '@angular/common'
 import { Route } from '@onecx/integration-interface'
