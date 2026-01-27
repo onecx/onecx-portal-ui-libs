@@ -7,8 +7,8 @@ export interface Parameters {
 }
 
 export interface ApplicationParameters {
-  productName: string,
-  appId: string,
+  productName: string
+  appId: string
   parameters: Parameters
 }
 
@@ -16,6 +16,9 @@ export interface ParametersTopicPayload {
   parameters: ApplicationParameters[]
 }
 
+/**
+ * @deprecated TopicPublisher is deprecated and will be removed in future versions. Use Topic instead.
+ */
 export class ParametersPublisher extends TopicPublisher<ParametersTopicPayload> {
   constructor() {
     super('parameters', 1)

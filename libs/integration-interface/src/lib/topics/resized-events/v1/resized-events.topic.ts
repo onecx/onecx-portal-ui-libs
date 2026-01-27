@@ -16,6 +16,9 @@ declare global {
   }
 }
 
+/**
+ * @deprecated TopicPublisher is deprecated and will be removed in future versions. Use Topic instead.
+ */
 export class ResizedEventsPublisher extends TopicPublisher<TopicResizedEventType> {
   constructor() {
     super('resizedEvents', 1)
