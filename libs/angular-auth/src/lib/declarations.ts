@@ -8,14 +8,6 @@ declare global {
         }
       }
     }
-    onecxAngularAuth?: {
-      authServiceProxy?: {
-        v1?: {
-          getHeaderValues: () => Record<string, string>
-          updateTokenIfNeeded: () => Promise<boolean>
-        }
-      }
-    }
   }
 }
 

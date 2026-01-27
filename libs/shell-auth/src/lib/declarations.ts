@@ -8,6 +8,7 @@ declare global {
         }
       }
     }
+    // Shell defines these properties to support older library versions
     onecxAngularAuth?: {
       authServiceProxy?: {
         v1?: {
