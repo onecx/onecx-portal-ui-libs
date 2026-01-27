@@ -13,7 +13,8 @@
     "@nx/devkit": "^22.0.2",
     "typescript": "^5.5.4",
     "postcss": "^8.5.3",
-    "postcss-scss": "^4.0.9"
+    "postcss-scss": "^4.0.9",
+    "@onecx/accelerator": "^8.0.0-rc.1"
   },
   "type": "commonjs",
   "main": "./src/index.js",
