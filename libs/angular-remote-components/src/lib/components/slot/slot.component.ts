@@ -12,7 +12,6 @@ import {
 } from '@angular/core'
 
 import {
-  ResizedEventsPublisher,
   ResizedEventsTopic,
   Technologies,
   SlotResizedEvent,
@@ -149,7 +148,6 @@ export class SlotComponent implements OnInit, OnDestroy {
   private readonly componentSize$ = new BehaviorSubject<{ width: number; height: number }>({ width: -1, height: -1 })
   private resizeDebounceTimeMs = 100
 
-  private readonly resizedEventsPublisher = new ResizedEventsPublisher()
   private _resizedEventsTopic: ResizedEventsTopic | undefined
   get resizedEventsTopic() {
     this._resizedEventsTopic ??= new ResizedEventsTopic()
@@ -243,7 +241,7 @@ export class SlotComponent implements OnInit, OnDestroy {
           slotDetails: { width, height },
         },
       }
-      this.resizedEventsPublisher.publish(slotResizedEvent)
+      this.resizedEventsTopic.publish(slotResizedEvent)
     })
 
     this.resizeObserver.observe(this.elementRef.nativeElement)
@@ -258,7 +256,7 @@ export class SlotComponent implements OnInit, OnDestroy {
             slotDetails: { width, height },
           },
         }
-        this.resizedEventsPublisher.publish(slotResizedEvent)
+        this.resizedEventsTopic.publish(slotResizedEvent)
       }
     })
     this.subscriptions.push(requestedEventsChangedSub)
