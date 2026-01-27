@@ -16,7 +16,7 @@ declare global {
   }
 }
 
-export class ResizedEventsPublisher extends TopicPublisher<TopicResizedEventType> {
+class ResizedEventsPublisher extends TopicPublisher<TopicResizedEventType> {
   constructor() {
     super('resizedEvents', 1)
   }
