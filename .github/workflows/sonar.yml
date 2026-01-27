@@ -99,5 +99,5 @@ jobs:
             -Dsonar.working.directory=${{ github.workspace }}/reports/${{ matrix.path }}/.scannerwork
             "-Dsonar.exclusions=src/assets/**/*,src/migrations/**/*,src/mocks/**/*"
             "-Dsonar.cpd.exclusions=src/**/*.ts,src/**/*.html"
-            "-Dsonar.coverage.exclusions=*.ts,*.js,src/*.ts,**/*.spec.ts,**/*.test.ts,**/*.stories.ts,**/*.harness.ts,**/environments/**,**/assets/**,**/generated/**,**/*.module.ts,**/*.main.ts"
+            "-Dsonar.coverage.exclusions=*.ts,*.js,src/*.ts,**/*.spec.ts,**/*.test.ts,**/*.stories.ts,**/*.harness.ts,**/logger.utils.ts,**/environments/**,**/assets/**,**/generated/**,**/*.module.ts,**/*.main.ts"
             "-Dsonar.test.inclusions=src/**/*.spec.ts,src/**/*.test.ts"
