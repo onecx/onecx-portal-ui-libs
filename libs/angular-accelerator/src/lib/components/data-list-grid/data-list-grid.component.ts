@@ -21,7 +21,18 @@ import { AppStateService, UserService } from '@onecx/angular-integration-interfa
 import { MfeInfo } from '@onecx/integration-interface'
 import { MenuItem, PrimeIcons, PrimeTemplate } from 'primeng/api'
 import { Menu } from 'primeng/menu'
-import { BehaviorSubject, Observable, combineLatest, debounceTime, first, firstValueFrom, map, mergeMap, of, switchMap } from 'rxjs'
+import {
+  BehaviorSubject,
+  Observable,
+  combineLatest,
+  debounceTime,
+  first,
+  firstValueFrom,
+  map,
+  mergeMap,
+  of,
+  switchMap,
+} from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
@@ -156,16 +167,13 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     this._originalData = [...value]
     this._data$.next([...value])
 
-    const currentResults = value.length;
-    const newStatus = currentResults === 0
-      ? 'OCX_DATA_LIST_GRID.NO_SEARCH_RESULTS_FOUND'
-      : 'OCX_DATA_LIST_GRID.SEARCH_RESULTS_FOUND';
+    const currentResults = value.length
+    const newStatus =
+      currentResults === 0 ? 'OCX_DATA_LIST_GRID.NO_SEARCH_RESULTS_FOUND' : 'OCX_DATA_LIST_GRID.SEARCH_RESULTS_FOUND'
 
-    firstValueFrom(
-      this.translateService.get(newStatus, { results: currentResults }) ).then((translatedText: string) => {
-        this.liveAnnouncer.announce(translatedText);
-      }
-    );
+    firstValueFrom(this.translateService.get(newStatus, { results: currentResults })).then((translatedText: string) => {
+      this.liveAnnouncer.announce(translatedText)
+    })
   }
 
   _filters$ = new BehaviorSubject<Filter[]>([])
@@ -370,7 +378,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
               styleClass: (a.classes || []).join(' '),
               disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
               visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
-              command: () => a.callback(row),
+              command: () => (a.routerLink ? this.router.navigate([a.routerLink!]) : a.callback(row)),
             }))
           })
         )
@@ -664,7 +672,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
           styleClass: (a.classes || []).join(' '),
           disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(selectedItem, a.actionEnabledField)),
           visible: isVisible,
-          command: () => a.callback(selectedItem),
+          command: () => (a.routerLink ? this.router.navigate([a.routerLink!]) : a.callback(selectedItem)),
           automationId: isVisible ? automationId : automationIdHidden,
         }
       })

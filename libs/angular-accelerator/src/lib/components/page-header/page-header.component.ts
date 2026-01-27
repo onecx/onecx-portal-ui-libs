@@ -18,6 +18,7 @@ import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { PrimeIcon } from '../../utils/primeicon.utils'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { TranslationKey } from '../../model/translation.model'
+import { Router } from '@angular/router'
 
 /**
  * Action definition.
@@ -38,6 +39,7 @@ export interface Action {
   ariaLabelKey?: string
   btnClass?: string
   actionCallback(): void
+  routerLink?: string
   disabled?: boolean
   disabledTooltip?: string
   disabledTooltipKey?: string
@@ -83,10 +85,11 @@ export type GridColumnOptions = 1 | 2 | 3 | 4 | 6 | 12
   styleUrls: ['./page-header.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class PageHeaderComponent implements OnInit {    
+export class PageHeaderComponent implements OnInit {
   private translateService = inject(TranslateService)
   private appStateService = inject(AppStateService)
   private userService = inject(UserService)
+  private router = inject(Router)
   private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
 
   @Input()
@@ -311,7 +314,7 @@ export class PageHeaderComponent implements OnInit {
         tooltipEvent: 'hover',
         tooltipPosition: 'top',
       },
-      command: a.actionCallback,
+      command: a.routerLink ? () => this.router.navigate([a.routerLink!]) : a.actionCallback,
       disabled: a.disabled,
     }))
   }
@@ -321,13 +324,13 @@ export class PageHeaderComponent implements OnInit {
    * @param input - Can be a string or an object with 'key' and 'parameters'.
    * @returns An object with { key, params } for use in translation pipes or services. The returned key is always a string (never undefined).
    */
-  public extractKeyAndParams(input: any): { key: string, params: any } {
+  public extractKeyAndParams(input: any): { key: string; params: any } {
     if (typeof input === 'string') {
-      return { key: input, params: undefined };
+      return { key: input, params: undefined }
     }
     if (input && typeof input === 'object') {
-      return { key: input.key ?? '', params: input.parameters };
+      return { key: input.key ?? '', params: input.parameters }
     }
-    return { key: '', params: undefined };
+    return { key: '', params: undefined }
   }
 }

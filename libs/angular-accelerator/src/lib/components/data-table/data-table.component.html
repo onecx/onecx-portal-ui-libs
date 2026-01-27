@@ -59,7 +59,7 @@
         class="p-button-rounded p-button-text"
         [ngClass]="action.classes"
         [icon]="action.icon || ''"
-        (click)="action.callback(rowObject)"
+        (click)="action.routerLink ? this.router.navigate([action.routerLink]) : action.callback(rowObject)"
         [title]="action.labelKey ? (action.labelKey | translate) : ''"
         [attr.aria-label]="action.labelKey ? (action.labelKey | translate) : ''"
         [disabled]="action.disabled || (!!action.actionEnabledField && !fieldIsTruthy(rowObject, action.actionEnabledField))"
@@ -149,7 +149,7 @@
               [class.pi-sort-amount-down]="column?.id === sortColumn && sortDirection === 'DESCENDING'"
               (click)="onSortColumnClick(column.id)"
               [pTooltip]="sortIconTitle(column.id) | translate "
-              tooltipPosition="bottom"              
+              tooltipPosition="bottom"
               [attr.aria-label]="('OCX_DATA_TABLE.TOGGLE_BUTTON.ARIA_LABEL' | translate: { column: (column.nameKey | translate), direction: (sortDirectionToTitle(columnNextSortDirection(column.id)) | translate)})"
             ></button>
             } @if (currentEqualFilterOptions$ | async; as equalFilterOptions) { @if (columnFilterTemplates$ | async; as

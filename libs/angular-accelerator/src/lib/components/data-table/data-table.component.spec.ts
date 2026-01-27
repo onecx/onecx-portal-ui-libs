@@ -13,6 +13,7 @@ import { DataTableComponent, Row } from './data-table.component'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { UserService } from '@onecx/angular-integration-interface'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
+import { Router } from '@angular/router'
 
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>
@@ -21,6 +22,7 @@ describe('DataTableComponent', () => {
   let dataTable: DataTableHarness
   let unselectedCheckBoxes: PTableCheckboxHarness[]
   let selectedCheckBoxes: PTableCheckboxHarness[]
+  let router: Router
 
   const ENGLISH_LANGUAGE = 'en'
   const ENGLISH_TRANSLATIONS = {
@@ -235,6 +237,7 @@ describe('DataTableComponent', () => {
     userServiceMock.permissionsTopic$.publish(['VIEW', 'EDIT', 'DELETE'])
     fixture.detectChanges()
     dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
+    router = TestBed.inject(Router)
   })
 
   it('should create the data table component', () => {
@@ -814,104 +817,183 @@ describe('DataTableComponent', () => {
     })
   })
 
+  describe('should render action buttons with routerLink', () => {
+    beforeEach(() => {
+      component.rows = [
+        {
+          version: 0,
+          creationDate: '2023-09-12T09:34:27.184086Z',
+          creationUser: '',
+          modificationDate: '2023-09-12T09:34:27.184086Z',
+          modificationUser: '',
+          id: 'rowId',
+          name: 'name 3',
+          description: '',
+          status: 'status name 3',
+          responsible: '',
+          endDate: '2023-09-15T09:34:24Z',
+          startDate: '2023-09-14T09:34:22Z',
+          imagePath: '',
+          testNumber: '7.1',
+          ready: false,
+        },
+      ]
+      component.additionalActions = []
+    })
+    it('should render inline action button with routerLink', async () => {
+      const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+      jest.spyOn(console, 'log')
+      component.additionalActions = [
+        {
+          id: 'routerLinkAction',
+          callback: () => {
+            console.log('My routing Action')
+          },
+          routerLink: '/inline',
+          permission: 'VIEW',
+        },
+      ]
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      const tableActions = await dataTable.getActionButtons()
+      expect(tableActions.length).toBe(1)
+
+      await tableActions[0].click()
+      expect(spy).toHaveBeenCalledTimes(1)
+      expect(spy).toHaveBeenCalledWith(['/inline'])
+      expect(console.log).not.toHaveBeenCalledWith('My routing Action')
+    })
+
+    it('should render overflow action button with routerLink', async () => {
+      const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+
+      jest.spyOn(console, 'log')
+
+      component.additionalActions = [
+        {
+          id: 'routerLinkAction',
+          callback: () => {
+            console.log('My overflow routing Action')
+          },
+          routerLink: '/overflow',
+          permission: 'VIEW',
+          showAsOverflow: true,
+        },
+      ]
+
+      const overflowButton = await dataTable.getOverflowActionMenuButton()
+      await overflowButton?.click()
+
+      const overflowMenu = await dataTable.getOverflowMenu()
+      expect(overflowMenu).toBeTruthy()
+      const tableActions = await overflowMenu?.getAllMenuItems()
+      expect(tableActions!.length).toBe(1)
+
+      await tableActions![0].selectItem()
+      expect(spy).toHaveBeenCalledTimes(1)
+      expect(spy).toHaveBeenCalledWith(['/overflow'])
+      expect(console.log).not.toHaveBeenCalledWith('My overflow routing Action')
+    })
+  })
+
   describe('LiveAnnouncer announcements', () => {
-    let liveAnnouncer: LiveAnnouncer;
-    let announceSpy: jest.SpyInstance;
+    let liveAnnouncer: LiveAnnouncer
+    let announceSpy: jest.SpyInstance
 
     beforeEach(() => {
-      liveAnnouncer = TestBed.inject(LiveAnnouncer);
-      announceSpy = jest.spyOn(liveAnnouncer, 'announce').mockResolvedValue();
-    });
+      liveAnnouncer = TestBed.inject(LiveAnnouncer)
+      announceSpy = jest.spyOn(liveAnnouncer, 'announce').mockResolvedValue()
+    })
 
     afterEach(() => {
-      jest.clearAllMocks();
-    });
+      jest.clearAllMocks()
+    })
 
     describe('should announce "results found" when data has entries', () => {
       it('de', async () => {
-        translateService.use('de');
+        translateService.use('de')
 
-        component.rows = mockData;
-        fixture.detectChanges();
+        component.rows = mockData
+        fixture.detectChanges()
 
-        await fixture.whenStable();
+        await fixture.whenStable()
 
-        expect(announceSpy).toHaveBeenCalledTimes(1);
-        expect(announceSpy).toHaveBeenCalledWith('5 Ergebnisse gefunden');
-      });
+        expect(announceSpy).toHaveBeenCalledTimes(1)
+        expect(announceSpy).toHaveBeenCalledWith('5 Ergebnisse gefunden')
+      })
 
       it('en', async () => {
-        translateService.use('en');
+        translateService.use('en')
 
-        component.rows = mockData;
-        fixture.detectChanges();
+        component.rows = mockData
+        fixture.detectChanges()
 
-        await fixture.whenStable();
+        await fixture.whenStable()
 
-        expect(announceSpy).toHaveBeenCalledTimes(1);
-        expect(announceSpy).toHaveBeenCalledWith('5 Results Found');
-      });
-    });
+        expect(announceSpy).toHaveBeenCalledTimes(1)
+        expect(announceSpy).toHaveBeenCalledWith('5 Results Found')
+      })
+    })
 
     describe('should announce "no results found" when data is empty', () => {
       it('de', async () => {
-        translateService.use('de');
+        translateService.use('de')
 
-        component.rows = [];
-        fixture.detectChanges();
+        component.rows = []
+        fixture.detectChanges()
 
-        await fixture.whenStable();
+        await fixture.whenStable()
 
-        expect(announceSpy).toHaveBeenCalledTimes(1);
-        expect(announceSpy).toHaveBeenCalledWith('Keine Ergebnisse gefunden');
-      });
+        expect(announceSpy).toHaveBeenCalledTimes(1)
+        expect(announceSpy).toHaveBeenCalledWith('Keine Ergebnisse gefunden')
+      })
 
       it('en', async () => {
-        translateService.use('en');
+        translateService.use('en')
 
-        component.rows = [];
-        fixture.detectChanges();
+        component.rows = []
+        fixture.detectChanges()
 
-        await fixture.whenStable();
+        await fixture.whenStable()
 
-        expect(announceSpy).toHaveBeenCalledTimes(1);
-        expect(announceSpy).toHaveBeenCalledWith('No Results Found');
-      });
-    });
+        expect(announceSpy).toHaveBeenCalledTimes(1)
+        expect(announceSpy).toHaveBeenCalledWith('No Results Found')
+      })
+    })
 
     describe('should announce "results found" when data changes', () => {
       it('de', async () => {
-        translateService.use('de');
+        translateService.use('de')
 
-        component.rows = mockData;
-        fixture.detectChanges();
-        await fixture.whenStable();
+        component.rows = mockData
+        fixture.detectChanges()
+        await fixture.whenStable()
 
-        component.rows = mockData.slice(0, 2);
-        fixture.detectChanges();
-        await fixture.whenStable();
+        component.rows = mockData.slice(0, 2)
+        fixture.detectChanges()
+        await fixture.whenStable()
 
-        expect(announceSpy).toHaveBeenCalledTimes(2);
-        expect(announceSpy).toHaveBeenNthCalledWith(1, '5 Ergebnisse gefunden');
-        expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Ergebnisse gefunden');
-      });
+        expect(announceSpy).toHaveBeenCalledTimes(2)
+        expect(announceSpy).toHaveBeenNthCalledWith(1, '5 Ergebnisse gefunden')
+        expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Ergebnisse gefunden')
+      })
 
       it('en', async () => {
-        translateService.use('en');
+        translateService.use('en')
 
-        component.rows = mockData;
-        fixture.detectChanges();
-        await fixture.whenStable();
+        component.rows = mockData
+        fixture.detectChanges()
+        await fixture.whenStable()
 
-        component.rows = mockData.slice(0, 2);
-        fixture.detectChanges();
-        await fixture.whenStable();
+        component.rows = mockData.slice(0, 2)
+        fixture.detectChanges()
+        await fixture.whenStable()
 
-        expect(announceSpy).toHaveBeenCalledTimes(2);
-        expect(announceSpy).toHaveBeenNthCalledWith(1, '5 Results Found');
-        expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Results Found');
-      });
-    });
-  });
-
+        expect(announceSpy).toHaveBeenCalledTimes(2)
+        expect(announceSpy).toHaveBeenNthCalledWith(1, '5 Results Found')
+        expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Results Found')
+      })
+    })
+  })
 })

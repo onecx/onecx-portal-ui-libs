@@ -48,7 +48,6 @@ import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
 
-
 export type Primitive = number | string | boolean | bigint | Date
 export type Row = {
   id: string | number
@@ -102,16 +101,13 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     !this._rows$.getValue().length
     this._rows$.next(value)
 
-    const currentResults = value.length;
-    const newStatus = currentResults === 0
-        ? 'OCX_DATA_TABLE.NO_SEARCH_RESULTS_FOUND'
-        : 'OCX_DATA_TABLE.SEARCH_RESULTS_FOUND';
-    
-    firstValueFrom(
-      this.translateService.get(newStatus, { results: currentResults }) ).then((translatedText: string) => {
-        this.liveAnnouncer.announce(translatedText);
-      }
-    );
+    const currentResults = value.length
+    const newStatus =
+      currentResults === 0 ? 'OCX_DATA_TABLE.NO_SEARCH_RESULTS_FOUND' : 'OCX_DATA_TABLE.SEARCH_RESULTS_FOUND'
+
+    firstValueFrom(this.translateService.get(newStatus, { results: currentResults })).then((translatedText: string) => {
+      this.liveAnnouncer.announce(translatedText)
+    })
   }
 
   _selectionIds$ = new BehaviorSubject<(string | number)[]>([])
@@ -430,7 +426,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
               styleClass: (a.classes || []).join(' '),
               disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
               visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
-              command: () => a.callback(row),
+              command: () => (a.routerLink ? this.router.navigate([a.routerLink!]) : a.callback(row)),
             }))
           })
         )
@@ -674,9 +670,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
 
   sortIconTitle(sortColumn: string) {
-    return this.sortDirectionToTitle(
-      this.columnNextSortDirection(sortColumn)
-    )
+    return this.sortDirectionToTitle(this.columnNextSortDirection(sortColumn))
   }
 
   sortDirectionToTitle(sortDirection: DataSortDirection) {
