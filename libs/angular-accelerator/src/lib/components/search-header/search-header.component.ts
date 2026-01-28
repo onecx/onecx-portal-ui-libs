@@ -1,20 +1,20 @@
 import {
-  AfterContentInit,
-  AfterViewInit,
   Component,
-  ContentChild,
-  ContentChildren,
   ElementRef,
   EventEmitter,
-  Input,
-  Output,
-  QueryList,
   TemplateRef,
-  ViewChild,
+  contentChild,
+  contentChildren,
+  effect,
   inject,
+  input,
+  output,
+  signal,
+  viewChild,
 } from '@angular/core'
-import { FormControlName, FormGroup, FormGroupDirective } from '@angular/forms'
-import { Observable, combineLatest, debounceTime, from, map, of, startWith } from 'rxjs'
+import { outputFromObservable, toObservable } from '@angular/core/rxjs-interop'
+import { FormControlName, FormGroup } from '@angular/forms'
+import { Observable, Subject, combineLatest, debounceTime, from, map, of, startWith } from 'rxjs'
 import { getLocation } from '@onecx/accelerator'
 import { CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
 import { Action } from '../page-header/page-header.component'
@@ -43,123 +43,119 @@ export interface SearchConfigData {
   templateUrl: './search-header.component.html',
   providers: [],
 })
-export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
-  @Input() header = ''
-  @Input() subheader: string | undefined
-  _viewMode: 'basic' | 'advanced' = 'basic'
-  @Input()
-  get viewMode(): 'basic' | 'advanced' {
-    return this._viewMode
-  }
-  set viewMode(viewMode: 'basic' | 'advanced') {
-    if (this.viewMode !== viewMode) {
-      this._viewMode = viewMode
-      this.viewModeChanged?.emit(this.viewMode)
-      this.componentStateChanged.emit({
-        activeViewMode: this.viewMode,
-      })
-      this.updateHeaderActions()
-      setTimeout(() => this.addKeyUpEventListener())
-    }
-  }
-  @Input() manualBreadcrumbs = false
-  _actions: Action[] = []
-  @Input()
-  get actions() {
-    return this._actions
-  }
-  set actions(value) {
-    this._actions = value
-    this.updateHeaderActions()
-  }
-  @Input() searchConfigPermission: string | string[] | undefined
-  @Input() searchButtonDisabled = false
-  @Input() resetButtonDisabled = false
-  @Input() pageName: string | undefined = getLocation().applicationPath
+export class SearchHeaderComponent {
+  header = input<string>('')
+  subheader = input<string | undefined>(undefined)
 
-  @Output() searched: EventEmitter<any> = new EventEmitter()
-  @Output() resetted: EventEmitter<any> = new EventEmitter()
-  @Output() selectedSearchConfigChanged: EventEmitter<SearchConfigData | undefined> = new EventEmitter()
-  @Output() viewModeChanged: EventEmitter<'basic' | 'advanced'> = new EventEmitter()
-  @Output() componentStateChanged: EventEmitter<SearchHeaderComponentState> = new EventEmitter()
-  @ContentChild('additionalToolbarContent')
-  additionalToolbarContent: TemplateRef<any> | undefined
+  effectiveViewMode = signal<'basic' | 'advanced'>('basic')
+  viewMode = input<'basic' | 'advanced'>('basic')
 
-  get _additionalToolbarContent(): TemplateRef<any> | undefined {
-    return this.additionalToolbarContent
-  }
-  @ContentChild('additionalToolbarContentLeft')
-  additionalToolbarContentLeft: TemplateRef<any> | undefined
+  manualBreadcrumbs = input<boolean>(false)
 
-  get _additionalToolbarContentLeft(): TemplateRef<any> | undefined {
-    return this.additionalToolbarContentLeft
-  }
+  effectiveActions = signal<Action[]>([])
+  actions = input<Action[]>([])
+
+  searchConfigPermission = input<string | string[] | undefined>(undefined)
+  searchButtonDisabled = input<boolean>(false)
+  resetButtonDisabled = input<boolean>(false)
+  pageName = input<string | undefined>(getLocation().applicationPath)
+
+  searched = output<void>()
+  resetted$ = new Subject<void>()
+  resetted = outputFromObservable(this.resetted$)
+  // selectedSearchConfigChanged emits whenever selectedSearchConfigChanged$ changes
+  // this is a workaround to check if selectedSearchConfigChanged is being observed
+  // https://github.com/angular/angular/issues/54837
+  selectedSearchConfigChanged$ = new Subject<SearchConfigData | undefined>()
+  selectedSearchConfigChanged = outputFromObservable(this.selectedSearchConfigChanged$)
+  viewModeChanged = output<'basic' | 'advanced'>()
+  componentStateChanged = output<SearchHeaderComponentState>()
+  _additionalToolbarContent = contentChild<TemplateRef<any>>('additionalToolbarContent')
+
+  _additionalToolbarContentLeft = contentChild<TemplateRef<any>>('additionalToolbarContentLeft')
 
   get searchConfigChangeObserved(): boolean {
-    return this.selectedSearchConfigChanged.observed
+    return this.selectedSearchConfigChanged$.observed
   }
 
-  @ContentChild(FormGroupDirective) formGroup: FormGroup | undefined
-  @ContentChildren(FormControlName, { descendants: true }) visibleFormControls!: QueryList<FormControlName>
+  formGroup = contentChild<FormGroup | undefined>(FormGroup)
+  visibleFormControls = contentChildren<FormControlName>(FormControlName, { descendants: true })
 
-  @ViewChild('searchParameterFields') searchParameterFields: ElementRef | undefined
+  searchParameterFields = viewChild<ElementRef | undefined>('searchParameterFields')
 
-  hasAdvanced = false
+  hasAdvanced = signal<boolean>(false)
 
-  simpleAdvancedAction: Action = {
+  simpleAdvancedAction = signal<Action>({
     id: 'simpleAdvancedButton',
     actionCallback: () => this.toggleViewMode(),
     show: 'always',
-  }
-  headerActions: Action[] = []
+  })
+
+  headerActions = signal<Action[]>([])
+
   searchButtonsReversed$ = of(false)
   fieldValues$: Observable<{ [key: string]: unknown }> | undefined = of({})
   searchConfigChangedSlotEmitter: EventEmitter<SearchConfigData | undefined> = new EventEmitter()
 
   constructor() {
+    effect(() => {
+      const viewMode = this.viewMode()
+      if (this.effectiveViewMode() !== viewMode) {
+        this.effectiveViewMode.set(viewMode)
+        this.viewModeChanged?.emit(viewMode)
+        this.componentStateChanged.emit({
+          activeViewMode: viewMode,
+        })
+        this.updateHeaderActions()
+        setTimeout(() => this.addKeyUpEventListener())
+      }
+    })
+
+    effect(() => {
+      const actions = this.actions()
+      this.effectiveActions.set(actions)
+      this.updateHeaderActions()
+    })
+
+    effect(() => {
+      const formGroup = this.formGroup()
+      if (formGroup) {
+        this.fieldValues$ = combineLatest([
+          formGroup.valueChanges.pipe(startWith({})),
+          toObservable(this.visibleFormControls).pipe(startWith(null)),
+        ]).pipe(
+          debounceTime(100),
+          map(([values, _]) =>
+            Object.entries(values ?? {}).reduce(
+              (acc, [key, value]) => ({
+                ...acc,
+                [key]: this.isVisible(key) ? value || undefined : undefined,
+              }),
+              {}
+            )
+          )
+        )
+      }
+    })
     const configurationService = inject(ConfigurationService)
 
     this.searchConfigChangedSlotEmitter.subscribe((config) => {
       this.componentStateChanged.emit({
         selectedSearchConfig: config?.name ?? null,
       })
-      this.selectedSearchConfigChanged.emit(config)
+      this.selectedSearchConfigChanged$.next(config)
     })
     this.searchButtonsReversed$ = from(
       configurationService.getProperty(CONFIG_KEY.ONECX_PORTAL_SEARCH_BUTTONS_REVERSED)
     ).pipe(map((config) => config === 'true'))
   }
 
-  ngAfterContentInit(): void {
-    if (this.formGroup) {
-      this.fieldValues$ = combineLatest([
-        this.formGroup.valueChanges.pipe(startWith({})),
-        this.visibleFormControls.changes.pipe(startWith(null)),
-      ]).pipe(
-        debounceTime(100),
-        map(([values, _]) =>
-          Object.entries(values ?? {}).reduce(
-            (acc, [key, value]) => ({
-              ...acc,
-              [key]: this.isVisible(key) ? value || undefined : undefined,
-            }),
-            {}
-          )
-        )
-      )
-    }
-  }
-
-  ngAfterViewInit(): void {
-    this.addKeyUpEventListener()
-  }
-
   toggleViewMode() {
-    this.viewMode = this.viewMode === 'basic' ? 'advanced' : 'basic'
+    this.effectiveViewMode.set(this.effectiveViewMode() === 'basic' ? 'advanced' : 'basic')
   }
 
   onResetClicked() {
-    this.resetted.emit()
+    this.resetted$.next()
   }
 
   onSearchClicked() {
@@ -168,22 +164,26 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
 
   updateHeaderActions() {
     const headerActions: Action[] = []
-    if (this.hasAdvanced) {
-      this.simpleAdvancedAction.labelKey =
-        this.viewMode === 'basic'
+
+    if (this.hasAdvanced()) {
+      const simpleAdvancedAction = this.simpleAdvancedAction()
+      simpleAdvancedAction.labelKey =
+        this.effectiveViewMode() === 'basic'
           ? 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.ADVANCED.TEXT'
-          : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.SIMPLE.TEXT';
-        this.simpleAdvancedAction.titleKey =
-          this.viewMode === 'basic'
-            ? 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.ADVANCED.DETAIL'
-            : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.SIMPLE.DETAIL';
-        headerActions.push(this.simpleAdvancedAction)
+          : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.SIMPLE.TEXT'
+      simpleAdvancedAction.titleKey =
+        this.effectiveViewMode() === 'basic'
+          ? 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.ADVANCED.DETAIL'
+          : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.SIMPLE.DETAIL'
+
+      headerActions.push(simpleAdvancedAction)
     }
-    this.headerActions = headerActions.concat(this.actions)
+
+    this.headerActions.set(headerActions.concat(this.effectiveActions()))
   }
 
   addKeyUpEventListener() {
-    const inputElements = this.searchParameterFields?.nativeElement.querySelectorAll('input')
+    const inputElements = this.searchParameterFields()?.nativeElement.querySelectorAll('input')
     inputElements.forEach((inputElement: any) => {
       if (!inputElement.listenerAdded) {
         inputElement.addEventListener('keyup', (event: any) => this.onSearchKeyup(event))
@@ -199,7 +199,7 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
   }
 
   private isVisible(control: string) {
-    return this.visibleFormControls.some(
+    return this.visibleFormControls().some(
       (formControl) => formControl.name !== null && String(formControl.name) === control
     )
   }
