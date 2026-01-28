@@ -5,6 +5,6 @@ export enum OverrideType {
 
 export interface ThemeOverride {
     type?: OverrideType;
-    value?: { [key: string]: { [key: string]: string } };
+    value?: string;
 }
 

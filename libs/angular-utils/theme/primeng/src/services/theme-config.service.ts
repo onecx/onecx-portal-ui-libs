@@ -1,4 +1,4 @@
-import { ENVIRONMENT_INITIALIZER, Injectable, InjectionToken, inject } from '@angular/core'
+import { ENVIRONMENT_INITIALIZER, Inject, Injectable, InjectionToken, inject } from '@angular/core'
 import { ThemeService } from '@onecx/angular-integration-interface'
 import { Theme as OneCXTheme, OverrideType, ThemeOverride } from '@onecx/integration-interface'
 import { Base } from 'primeng/base'
@@ -38,31 +38,42 @@ export class ThemeConfigService {
   private themeService = inject(ThemeService);
   private primeNG = inject(PrimeNG);
 
-  constructor() {
+  constructor(@Inject(IS_ADVANCED_THEMING) private readonly isAdvancedTheming: boolean) {
     this.themeService.currentTheme$.subscribe((theme) => {
       this.applyThemeVariables(theme)
     })
   }
  
-  private foldOverrides(overrides?: ThemeOverride[]): Record<string, Record<string, string>> {
+  private foldOverrides(overrides?: ThemeOverride[]){
     if (!overrides?.length) return {};
 
     return overrides.reduce((result, override) => {
-      if (override?.type !== OverrideType.PRIMENG || !override.value) return result;
+      if (!override.value) return result;
       return mergeDeep(result, override.value);
-    }, {} as Record<string, Record<string, string>>);
+    }, {} );
+  }
+
+  private parsePrimeNGOverridesValue(overrides?: ThemeOverride[]){
+    if (!overrides?.length) return {};
+    const parsedOverrides: any = []
+    overrides.filter(el => el.type === OverrideType.PRIMENG).forEach((element: ThemeOverride) => {
+      if (element.value) {
+        const override = { ...element, value: JSON.parse(element.value) }
+        parsedOverrides.push(override)
+      }
+    })
+    return parsedOverrides
   }
 
   async applyThemeVariables(oldTheme: OneCXTheme): Promise<void> {
     const oldThemeVariables = oldTheme.properties
-    const overridesFolded = IS_ADVANCED_THEMING ? this.foldOverrides(oldTheme.overrides) : {}
-    const mergedRaw = mergeDeep(oldThemeVariables, overridesFolded)
+    const overridesFolded = this.isAdvancedTheming ? this.foldOverrides(this.parsePrimeNGOverridesValue(oldTheme.overrides)) : {}
 
-    const themeConfig = new ThemeConfig(mergedRaw)
+    const themeConfig = new ThemeConfig(oldThemeVariables)
     const preset = await (await import('../preset/custom-preset')).CustomPreset
     this.primeNG.setThemeConfig({
       theme: {
-        preset: mergeDeep(preset, themeConfig.getConfig()),
+        preset: mergeDeep(preset, mergeDeep(themeConfig.getConfig(),overridesFolded)),
         options: { darkModeSelector: false },
       },
     })

@@ -5,7 +5,7 @@ export default {
   ...createReportsConfig('angular-utils/theme'),
   displayName: 'angular-utils/theme',
   preset: '../../jest.preset.js',
-  testMatch: ['<rootDir>/src/lib/**/*.spec.ts', '<rootDir>/guards/**/*.spec.ts'],
+  testMatch: ['<rootDir>/src/lib/**/*.spec.ts', '<rootDir>/guards/**/*.spec.ts', '<rootDir>/theme/**/*.spec.ts'],
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   transform: {
     '^.+\\.(mjs|js|html)$': [

@@ -12,38 +12,11 @@ describe('ThemeConfigService', () => {
   const overrides: Array<ThemeOverride> = [
     {
       type: OverrideType.PRIMENG,
-      value: {
-        general: {
-          'primary-color': '#3b82f6',
-        },
-        topbar: {
-          'topbar-bg-color': '#3b82f6',
-        },
-      },
+      value: '{"semantic":{ "primary": {"500": "#3b82f6"},"extend":{"onecx":{"topbar": {"bg":{"color":"#3b82f6"}}}}}}',
     },
     {
       type: OverrideType.PRIMENG,
-      value: {
-        sidebar: {
-          'menu-text-color': '#3b82f6'
-        }
-      },
-    },
-    {
-      type: OverrideType.PRIMENG,
-      value: {
-        general: {
-          'primary-color': '#6b6b8e',
-        },
-      },
-    },
-    {
-      type: OverrideType.CSS,
-      value: {},
-    },
-    {
-      type: OverrideType.CSS,
-      value: {},
+      value: '{"semantic":{ "primary": {"500": "#b23bff"}, "extend":{"onecx":{"menu": {"text":{"color":"#3b82f6"}}}}}}',
     },
   ]
 
@@ -110,7 +83,7 @@ describe('ThemeConfigService', () => {
   }))
 
   
-  it('should merge PRIMENG overrides and ignore CSS overrides (last one wins)', fakeAsync(() => {
+  it('should merge PRIMENG overrides', fakeAsync(() => {
       const themeService = TestBed.inject(ThemeService);
       const primeng = TestBed.inject(PrimeNG);
       const spy = jest.spyOn(primeng, 'setThemeConfig');
@@ -123,9 +96,10 @@ describe('ThemeConfigService', () => {
       expect(callArg).toBeTruthy();
 
       const preset = callArg.theme.preset;
-      console.log("preset: ",preset.semantic.extend.onecx)
+      console.log("onecx extend preset: ",preset.semantic.extend.onecx)
+      console.log("primeng preset: ", preset.semantic)
 
-      expect(preset.semantic.primary['500']).toEqual('#6b6b8e');
+      expect(preset.semantic.primary['500']).toEqual('#b23bff');
 
       expect(preset.semantic.extend.onecx.topbar.bg.color).toEqual('#3b82f6');
 
