@@ -35,9 +35,7 @@ export interface ComponentLogger {
  * log.warn("token missing");
  * ```
  */
-export interface CreateLogger {
-  (location: string): ComponentLogger;
-}
+export type CreateLogger = (location: string) => ComponentLogger;
 
 // Bind debug.log to console.log for proper output
 debug.log = console.log.bind(console);
@@ -59,7 +57,7 @@ export function createLoggerFactory(libOrAppName: string): CreateLogger {
    * Creates a logger for a specific location.
    *
    * Note: This function is produced by {@link createLoggerFactory}. Its TS-Doc is
-   * provided via the {@link CreateLogger} interface so editors can show it in IntelliSense.
+   * provided via the {@link CreateLogger} type so editors can show it in IntelliSense.
    */
   const createLogger: CreateLogger = (location: string) => {
     const trimmedLocation = location.trim();
