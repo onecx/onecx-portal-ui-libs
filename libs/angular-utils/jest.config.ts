@@ -8,6 +8,7 @@ export default {
   ...createReportsConfig('angular-utils'),
   displayName: 'angular-utils',
   preset: '../../jest.preset.js',
+  testEnvironment: 'jsdom',
   testMatch: ['<rootDir>/src/lib/**/*.spec.ts', '<rootDir>/guards/**/*.spec.ts','<rootDir>/theme/**/*.spec.ts'],
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   moduleNameMapper: {
@@ -40,7 +41,7 @@ export default {
       },
     ],
   },
-  transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$)'],
+  transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$)','node_modules/(?!(@?primeng|@?primeuix)/)'],
   snapshotSerializers: [
     'jest-preset-angular/build/serializers/no-ng-attributes',
     'jest-preset-angular/build/serializers/ng-snapshot',

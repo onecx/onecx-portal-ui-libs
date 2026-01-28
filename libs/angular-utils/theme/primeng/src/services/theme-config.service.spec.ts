@@ -5,7 +5,7 @@ import { FakeTopic } from '@onecx/accelerator'
 import { PrimeNG } from 'primeng/config'
 import defaultThemeVariables from '../preset/default-theme-variables'
 import { SKIP_STYLE_SCOPING } from '@onecx/angular-utils'
-import { OverrideType, ThemeOverride } from 'libs/integration-interface/src/lib/topics/current-theme/v1/theme-override.model'
+import { OverrideType, ThemeOverride } from '@onecx/integration-interface'
 
 describe('ThemeConfigService', () => {
   let service: ThemeConfigService

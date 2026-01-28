@@ -37,8 +37,9 @@ export function provideThemeConfigService(isAdvanced?: boolean) {
 export class ThemeConfigService {
   private themeService = inject(ThemeService);
   private primeNG = inject(PrimeNG);
+  private readonly isAdvancedTheming = inject(IS_ADVANCED_THEMING);
 
-  constructor(@Inject(IS_ADVANCED_THEMING) private readonly isAdvancedTheming: boolean) {
+  constructor() {
     this.themeService.currentTheme$.subscribe((theme) => {
       this.applyThemeVariables(theme)
     })
