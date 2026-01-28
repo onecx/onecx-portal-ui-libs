@@ -14,7 +14,7 @@ import {
 } from '@angular/core'
 import { outputFromObservable, toObservable } from '@angular/core/rxjs-interop'
 import { FormControlName, FormGroup } from '@angular/forms'
-import { Observable, Subject, combineLatest, debounceTime, from, map, of, startWith } from 'rxjs'
+import { Observable, Subject, combineLatest, debounceTime, filter, from, map, mergeMap, of, startWith } from 'rxjs'
 import { getLocation } from '@onecx/accelerator'
 import { CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
 import { Action } from '../page-header/page-header.component'
@@ -52,7 +52,6 @@ export class SearchHeaderComponent {
 
   manualBreadcrumbs = input<boolean>(false)
 
-  effectiveActions = signal<Action[]>([])
   actions = input<Action[]>([])
 
   searchConfigPermission = input<string | string[] | undefined>(undefined)
@@ -94,49 +93,41 @@ export class SearchHeaderComponent {
   headerActions = signal<Action[]>([])
 
   searchButtonsReversed$ = of(false)
-  fieldValues$: Observable<{ [key: string]: unknown }> | undefined = of({})
+  fieldValues$: Observable<{ [key: string]: unknown }> | undefined = combineLatest([
+    toObservable(this.formGroup).pipe(
+      filter((fg) => !!fg),
+      mergeMap((fg) => fg.valueChanges.pipe(startWith({})))
+    ),
+    toObservable(this.visibleFormControls).pipe(startWith(null)),
+  ]).pipe(
+    debounceTime(100),
+    map(([values, _]) =>
+      Object.entries(values ?? {}).reduce(
+        (acc, [key, value]) => ({
+          ...acc,
+          [key]: this.isVisible(key) ? value || undefined : undefined,
+        }),
+        {}
+      )
+    )
+  )
   searchConfigChangedSlotEmitter: EventEmitter<SearchConfigData | undefined> = new EventEmitter()
 
   constructor() {
     effect(() => {
       const viewMode = this.viewMode()
-      if (this.effectiveViewMode() !== viewMode) {
-        this.effectiveViewMode.set(viewMode)
-        this.viewModeChanged?.emit(viewMode)
-        this.componentStateChanged.emit({
-          activeViewMode: viewMode,
-        })
-        this.updateHeaderActions()
-        setTimeout(() => this.addKeyUpEventListener())
-      }
+      this.effectiveViewMode.set(viewMode)
     })
-
     effect(() => {
-      const actions = this.actions()
-      this.effectiveActions.set(actions)
+      const viewMode = this.effectiveViewMode()
+      this.viewModeChanged?.emit(viewMode)
+      this.componentStateChanged.emit({
+        activeViewMode: viewMode,
+      })
       this.updateHeaderActions()
+      setTimeout(() => this.addKeyUpEventListener())
     })
 
-    effect(() => {
-      const formGroup = this.formGroup()
-      if (formGroup) {
-        this.fieldValues$ = combineLatest([
-          formGroup.valueChanges.pipe(startWith({})),
-          toObservable(this.visibleFormControls).pipe(startWith(null)),
-        ]).pipe(
-          debounceTime(100),
-          map(([values, _]) =>
-            Object.entries(values ?? {}).reduce(
-              (acc, [key, value]) => ({
-                ...acc,
-                [key]: this.isVisible(key) ? value || undefined : undefined,
-              }),
-              {}
-            )
-          )
-        )
-      }
-    })
     const configurationService = inject(ConfigurationService)
 
     this.searchConfigChangedSlotEmitter.subscribe((config) => {
@@ -151,7 +142,7 @@ export class SearchHeaderComponent {
   }
 
   toggleViewMode() {
-    this.effectiveViewMode.set(this.effectiveViewMode() === 'basic' ? 'advanced' : 'basic')
+    this.effectiveViewMode.update((current) => (current === 'basic' ? 'advanced' : 'basic'))
   }
 
   onResetClicked() {
@@ -179,7 +170,7 @@ export class SearchHeaderComponent {
       headerActions.push(simpleAdvancedAction)
     }
 
-    this.headerActions.set(headerActions.concat(this.effectiveActions()))
+    this.headerActions.set(headerActions.concat(this.actions()))
   }
 
   addKeyUpEventListener() {

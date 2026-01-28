@@ -15,7 +15,7 @@ export class BasicDirective implements DoCheck {
     }
   }
   ngDoCheck(): void {
-    if (this.searchHeader?.viewMode === 'basic') {
+    if (this.searchHeader?.effectiveViewMode() === 'basic') {
       if (this.templateRef && !this.viewContainer.length) {
         this.viewContainer.createEmbeddedView(this.templateRef)
       }
