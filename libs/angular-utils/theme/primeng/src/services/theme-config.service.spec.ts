@@ -96,8 +96,6 @@ describe('ThemeConfigService', () => {
       expect(callArg).toBeTruthy();
 
       const preset = callArg.theme.preset;
-      console.log("onecx extend preset: ",preset.semantic.extend.onecx)
-      console.log("primeng preset: ", preset.semantic)
 
       expect(preset.semantic.primary['500']).toEqual('#b23bff');
 
