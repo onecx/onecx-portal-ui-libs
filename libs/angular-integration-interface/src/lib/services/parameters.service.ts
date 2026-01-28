@@ -40,6 +40,8 @@ export class ParametersService implements OnDestroy {
    * @param appId The id of the application in which the parameter is defined.
    * @returns The value of the parameter or the default value.
    */
+  public async get<T extends Parameter>(key: string, defaultValue: T | Promise<T>, productName?: string, appId?: string): Promise<T>
+
   public async get<T extends Parameter>(
     key: string,
     defaultValue: T | Promise<T>,
