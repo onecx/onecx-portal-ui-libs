@@ -9,5 +9,10 @@
     "actionItemAriaLabel": "Funktions-Aktions-Aria-Label",
     "statusLabelTooltip": "Funktions-Status-Label-Tooltip (status: {{status}})",
     "statusValueTooltip": "Funktions-Status-Wert-Tooltip (value: {{value}})"
+  },
+  "chart": {
+    "fruit1": "Apfel",
+    "fruit2": "Banane",
+    "fruit3": "Orange"
   }
 }

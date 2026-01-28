@@ -24,6 +24,8 @@ describe('ConfigurationStoreConnectorService', () => {
 
   it('should get config and dispatch configChanged', async () => {
     const expectedAction = OneCxActions.configChanged({ config: { foo: 'bar' } })
+
+    // wait for async announcements
     await Promise.resolve()
     expect(mockConfigService.getConfig).toHaveBeenCalled()
     expect(store.dispatch).toHaveBeenCalledWith(expectedAction)
