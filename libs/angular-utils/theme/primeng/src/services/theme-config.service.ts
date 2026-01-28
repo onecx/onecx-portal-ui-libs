@@ -1,4 +1,4 @@
-import { ENVIRONMENT_INITIALIZER, Inject, Injectable, InjectionToken, inject } from '@angular/core'
+import { ENVIRONMENT_INITIALIZER, Injectable, InjectionToken, inject } from '@angular/core'
 import { ThemeService } from '@onecx/angular-integration-interface'
 import { Theme as OneCXTheme, OverrideType, ThemeOverride } from '@onecx/integration-interface'
 import { Base } from 'primeng/base'
