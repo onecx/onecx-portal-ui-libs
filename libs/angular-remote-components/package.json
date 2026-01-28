@@ -7,9 +7,9 @@
     "url": "https://github.com/onecx/onecx-portal-ui-libs"
   },
   "peerDependencies": {
-    "@angular/cdk": "^20.0.0",
-    "@angular/common": "^20.0.0",
-    "@angular/core": "^20.0.0",
+    "@angular/cdk": "^21.0.0",
+    "@angular/common": "^21.0.0",
+    "@angular/core": "^21.0.0",
     "@ngx-translate/core": "^17.0.0",
     "@angular-architects/module-federation": "^20.0.0",
     "rxjs": "^7.8.1",
