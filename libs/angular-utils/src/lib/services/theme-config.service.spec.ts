@@ -1,13 +1,24 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing'
-import { ThemeConfigService } from './theme-config.service'
+import { IS_ADVANCED_THEMING, ThemeConfigService } from './theme-config.service'
 import { ThemeService } from '@onecx/angular-integration-interface'
 import { FakeTopic } from '@onecx/accelerator'
 import { PrimeNG } from 'primeng/config'
 import { SKIP_STYLE_SCOPING } from './custom-use-style.service'
 import defaultThemeVariables from '../theme/preset/default-theme-variables'
+import { OverrideType, ThemeOverride } from '@onecx/integration-interface'
 
 describe('ThemeConfigService', () => {
   let service: ThemeConfigService
+  const overrides: Array<ThemeOverride> = [
+    {
+      type: OverrideType.PRIMENG,
+      value: '{"semantic":{ "primary": {"500": "#3b82f6"},"extend":{"onecx":{"topbar": {"bg":{"color":"#3b82f6"}}}}}}',
+    },
+    {
+      type: OverrideType.PRIMENG,
+      value: '{"semantic":{ "primary": {"500": "#b23bff"}, "extend":{"onecx":{"menu": {"text":{"color":"#3b82f6"}}}}}}',
+    },
+  ]
   const theme = {
     id: 'my-test-theme',
     properties: {
@@ -19,7 +30,10 @@ describe('ThemeConfigService', () => {
       sidebar: {},
     },
   }
-
+  const themeWithOverrides = {
+    ...theme,
+    overrides: overrides,
+  }
   beforeEach(() => {
     const themeServiceMock = {
       currentTheme$: new FakeTopic(),
@@ -28,6 +42,7 @@ describe('ThemeConfigService', () => {
     TestBed.configureTestingModule({
       providers: [
         ThemeConfigService,
+        { provide: IS_ADVANCED_THEMING, useValue: true },
         { provide: ThemeService, useValue: themeServiceMock },
         { provide: SKIP_STYLE_SCOPING, useValue: true },
       ],
@@ -62,5 +77,25 @@ describe('ThemeConfigService', () => {
     expect((args?.[0] as any).theme.preset.semantic.extend.onecx.topbar.bg.color).toEqual(
       defaultThemeVariables.topbar.topbarBgColor
     )
+  }))
+   it('should merge PRIMENG overrides', fakeAsync(() => {
+      const themeService = TestBed.inject(ThemeService);
+      const primeng = TestBed.inject(PrimeNG);
+      const spy = jest.spyOn(primeng, 'setThemeConfig');
+
+      themeService.currentTheme$.publish(themeWithOverrides);
+      tick(100);
+
+      expect(spy).toHaveBeenCalled();
+      const callArg = spy.mock.calls.at(-1)?.[0] as any;
+      expect(callArg).toBeTruthy();
+
+      const preset = callArg.theme.preset;
+
+      expect(preset.semantic.primary['500']).toEqual('#b23bff');
+
+      expect(preset.semantic.extend.onecx.topbar.bg.color).toEqual('#3b82f6');
+
+      expect(preset.semantic.extend.onecx.menu.text.color).toEqual('#3b82f6');
   }))
 })
