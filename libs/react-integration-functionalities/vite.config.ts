@@ -34,7 +34,7 @@ export default defineConfig({
         'react-dom',
         'react/jsx-runtime',
         'primereact',
-        'react-router-dom',
+        'react-router',
         '@onecx/integration-interface',
         '@onecx/react-integration-interface',
       ],

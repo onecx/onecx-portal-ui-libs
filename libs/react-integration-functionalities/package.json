@@ -1,6 +1,6 @@
 {
   "name": "@onecx/react-integration-functionalities",
-  "version": "7.0.0-rc.10",
+  "version": "8.0.0-rc.1",
   "license": "Apache-2.0",
   "main": "./index.js",
   "types": "./index.d.ts",
@@ -11,10 +11,10 @@
     }
   },
   "peerDependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
     "primereact": "10.9.7",
-    "react-router-dom": "^6.0.0"
+    "react-router": "^7.13.0"
   },
   "dependencies": {},
   "publishConfig": {
