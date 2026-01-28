@@ -2,7 +2,8 @@
  * @jest-environment jsdom
  */
 
-import { CurrentThemeTopic, Theme } from '@onecx/integration-interface';
+import { CurrentThemeTopic } from './current-theme.topic';
+import { Theme } from './theme.model'
 
 describe('CurrentThemeTopic', () => {
   beforeEach(() => {
