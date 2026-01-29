@@ -11,10 +11,12 @@ import { Topic } from './topic'
 import { TopicMessageType } from './topic-message-type'
 import { TopicDataMessage } from './topic-data-message'
 import { BroadcastChannelMock } from './mocks/broadcast-channel.mock'
+import * as loggerUtils from '../utils/logger.utils'
 
 Reflect.set(globalThis, 'BroadcastChannel', BroadcastChannelMock)
 
 describe('Topic', () => {
+  const originalLocalStorageDebug = localStorage.getItem('debug')
   const origAddEventListener = window.addEventListener
   const origPostMessage = window.postMessage
 
@@ -35,6 +37,11 @@ describe('Topic', () => {
   afterAll(() => {
     window.addEventListener = origAddEventListener
     window.postMessage = origPostMessage
+    if (originalLocalStorageDebug === null) {
+      localStorage.removeItem('debug')
+    } else {
+      localStorage.setItem('debug', originalLocalStorageDebug)
+    }
   })
 
   let values1: any[]
@@ -43,13 +50,24 @@ describe('Topic', () => {
   let testTopic1: Topic<string>
   let testTopic2: Topic<string>
 
+  const loggerDebugFn = jest.fn()
+  const loggerInfoFn = jest.fn()
+  const loggerWarnFn = jest.fn()
+  const loggerErrorFn = jest.fn()
+
   beforeEach(() => {
+    jest.spyOn(loggerUtils, 'createLogger').mockReturnValue({
+      debug: loggerDebugFn as any,
+      info: loggerInfoFn as any,
+      warn: loggerWarnFn as any,
+      error: loggerErrorFn as any,
+    })
+
     window['@onecx/accelerator'] ??= {}
     window['@onecx/accelerator'].topic ??= {}
     window['@onecx/accelerator'].topic.statsEnabled = true
     window['@onecx/accelerator'].topic.initDate = Date.now() - 1000000
     window['@onecx/accelerator'].topic.useBroadcastChannel = true
-    window['@onecx/accelerator'].topic.debug = ['SpecificTestTopic']
 
     BroadcastChannelMock.asyncCalls = false
 
@@ -70,9 +88,11 @@ describe('Topic', () => {
     testTopic2.destroy()
     BroadcastChannelMock.listeners = {}
     BroadcastChannelMock.asyncCalls = false
-    if (window['@onecx/accelerator']?.topic?.debug) {
-      window['@onecx/accelerator'].topic.debug = undefined
-    }
+    jest.restoreAllMocks()
+    loggerDebugFn.mockClear()
+    loggerInfoFn.mockClear()
+    loggerWarnFn.mockClear()
+    loggerErrorFn.mockClear()
   })
 
   it('should have correct value for 2 topics after first topic publishes', () => {
@@ -314,7 +334,6 @@ describe('Topic', () => {
   it('logs window message when debug enabled and handles TopicGet on window path', () => {
     window['@onecx/accelerator'] ??= {}
     window['@onecx/accelerator'].topic ??= {}
-    window['@onecx/accelerator'].topic.debug = ['win-topic']
     window['@onecx/accelerator'].topic.useBroadcastChannel = false
 
     const t = new Topic<string>('win-topic', 1, false)
@@ -351,8 +370,6 @@ describe('Topic', () => {
       throw new Error('boom')
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    const errSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
 
     const resolveMsg = {
       data: { type: TopicMessageType.TopicResolve, name: 'resolve-error', version: 1, resolveId: 123 },
@@ -364,9 +381,8 @@ describe('Topic', () => {
 
     listeners.forEach((l) => l(resolveMsg))
 
-    expect(errSpy).toHaveBeenCalled()
+    expect(loggerErrorFn).toHaveBeenCalled()
     t.destroy()
-    errSpy.mockRestore()
   })
 
   describe('integration with older versions of library', () => {
@@ -463,7 +479,6 @@ describe('Topic', () => {
     })
 
     it('should have no value if incoming timestamp is equal to the previous timestamp when current message has id', () => {
-      jest.spyOn(console, 'warn')
       previousMessage.data = 'msg1'
       previousMessage.id = 1
       previousMessage.timestamp = 3
@@ -474,13 +489,12 @@ describe('Topic', () => {
       ;(<any>testTopic1).onWindowMessage(incomingMessage)
 
       expect(values1).toEqual(['initMsg', 'msg1'])
-      expect(console.warn).toHaveBeenLastCalledWith(
+      expect(loggerWarnFn).toHaveBeenLastCalledWith(
         'Message was dropped because of equal timestamps, because there was an old style message in the system. Please upgrade all libraries to the latest version.'
       )
     })
 
     it('should have no value if incoming timestamp is equal to previous timestamp when incoming message has id', () => {
-      jest.spyOn(console, 'warn')
       previousMessage.data = 'msg1'
       ;(<any>previousMessage).id = undefined
       previousMessage.timestamp = 3
@@ -491,13 +505,12 @@ describe('Topic', () => {
       ;(<any>testTopic1).onWindowMessage(incomingMessage)
 
       expect(values1).toEqual(['initMsg', 'msg1'])
-      expect(console.warn).toHaveBeenLastCalledWith(
+      expect(loggerWarnFn).toHaveBeenLastCalledWith(
         'Message was dropped because of equal timestamps, because there was an old style message in the system. Please upgrade all libraries to the latest version.'
       )
     })
 
     it('should have no value and no warning if incoming timestamp is equal to previous timestamp when incoming message has smaller id then current', () => {
-      jest.spyOn(console, 'warn')
       previousMessage.data = 'msg1'
       ;(<any>previousMessage).id = 2
       previousMessage.timestamp = 3
@@ -508,7 +521,7 @@ describe('Topic', () => {
       ;(<any>testTopic1).onWindowMessage(incomingMessage)
 
       expect(values1).toEqual(['initMsg', 'msg1'])
-      expect(console.warn).toHaveBeenCalledTimes(0)
+      expect(loggerWarnFn).toHaveBeenCalledTimes(0)
     })
   })
 

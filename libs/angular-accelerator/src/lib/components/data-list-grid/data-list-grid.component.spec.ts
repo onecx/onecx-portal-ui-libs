@@ -355,7 +355,7 @@ describe('DataListGridComponent', () => {
     component.editPermission = 'EDIT'
     component.deletePermission = 'DELETE'
 
-    fixture.autoDetectChanges()
+    fixture.detectChanges()
     await fixture.whenStable()
   }
   describe('Disable list action buttons based on field path', () => {
