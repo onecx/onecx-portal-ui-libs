@@ -115,7 +115,7 @@ describe('SlotComponent', () => {
     fixture = TestBed.createComponent(SlotComponent)
     component = fixture.componentInstance
     // These must be set before detectChanges which triggers ngOnInit
-    component.name = 'test-slot'
+    fixture.componentRef.setInput('name', 'test-slot')
     resizedEventsPublisherMock = new ResizeEventsPublisherMock()
     ;(component as any)['resizedEventsPublisher'] = resizedEventsPublisherMock
     fixture.detectChanges()
@@ -147,8 +147,10 @@ describe('SlotComponent', () => {
     })
 
     it('should clear all subscriptions', () => {
-      component['subscriptions'].push({ unsubscribe: jest.fn() } as any)
-      const spy = jest.spyOn(component['subscriptions'][0], 'unsubscribe')
+      component['subscriptions'].update((subs) => [...subs, { unsubscribe: jest.fn() } as any])
+      fixture.detectChanges()
+
+      const spy = jest.spyOn(component['subscriptions']()[0], 'unsubscribe')
       component.ngOnDestroy()
       expect(spy).toHaveBeenCalled()
     })
@@ -163,12 +165,6 @@ describe('SlotComponent', () => {
       component['resizeObserver'] = undefined
       component.ngOnDestroy()
       expect(resizeObserverMock.disconnect).not.toHaveBeenCalled()
-    })
-
-    it('should complete componentSize$', () => {
-      const spy = jest.spyOn(component['componentSize$'], 'complete')
-      component.ngOnDestroy()
-      expect(spy).toHaveBeenCalled()
     })
 
     it('should cleanup all components', fakeAsync(() => {
@@ -434,11 +430,11 @@ describe('SlotComponent', () => {
   describe('component update', () => {
     it('should update components after creation', async () => {
       const spy = jest.spyOn(console, 'log').mockImplementation()
-      component.inputs = { initialInput: 'initialValue' }
+      fixture.componentRef.setInput('inputs', { initialInput: 'initialValue' })
       const eventEmitter = new EventEmitter()
-      component.outputs = {
+      fixture.componentRef.setInput('outputs', {
         initialOutput: eventEmitter,
-      }
+      })
       slotServiceMock.assignComponents({
         'test-slot': [
           {
@@ -468,8 +464,8 @@ describe('SlotComponent', () => {
 
       const slotHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, SlotHarness)
 
-      expect(component.inputs).toEqual({ initialInput: 'initialValue' })
-      expect(component.outputs).toEqual({ initialOutput: eventEmitter })
+      expect(component.inputs()).toEqual({ initialInput: 'initialValue' })
+      expect(component.outputs()).toEqual({ initialOutput: eventEmitter })
       const angularElement = await slotHarness.getElement('ocx-mock-angular-component')
       expect(angularElement).not.toBeNull()
       expect(spy).toHaveBeenCalledWith('MockAngularComponent initialInput', 'initialValue')
