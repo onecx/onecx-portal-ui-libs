@@ -8,6 +8,7 @@
   },
   "peerDependencies": {
     "@angular/cdk": "^20.0.0",
+    "@onecx/accelerator": "^8.0.0-rc.1",
     "primeng": "^20.3.0",
     "@nx/devkit": "^22.0.2",
     "@ngx-translate/core": "^17.0.0",

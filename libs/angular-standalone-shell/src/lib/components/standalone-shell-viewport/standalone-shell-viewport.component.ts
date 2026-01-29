@@ -1,6 +1,7 @@
 import { AfterContentInit, Component, ElementRef, Input, inject } from '@angular/core'
 import { Message, PortalMessageService } from '@onecx/angular-integration-interface'
 import { MessageService } from 'primeng/api'
+import { createLogger } from '../../utils/logger.utils'
 
 @Component({
   standalone: false,
@@ -14,6 +15,7 @@ import { MessageService } from 'primeng/api'
   styleUrls: ['./standalone-shell-viewport.component.scss'],
 })
 export class StandaloneShellViewportComponent implements AfterContentInit {
+  private readonly logger = createLogger('StandaloneShellViewportComponent')
   private el = inject(ElementRef)
   private messageService = inject(MessageService)
   private portalMessageService = inject(PortalMessageService)
@@ -24,7 +26,7 @@ export class StandaloneShellViewportComponent implements AfterContentInit {
 
   ngAfterContentInit(): void {
     if (!this.isRouterDefined()) {
-      console.warn(
+      this.logger.warn(
         'RouterOutlet component was not found in the content. If you are using content projection, please make sure that RouterOutlet is in your template.'
       )
     }
@@ -32,7 +34,7 @@ export class StandaloneShellViewportComponent implements AfterContentInit {
   // TODO: Enable by default once we know how to move forward with standalone styling
   @Input()
   set displayOneCXShellLayout(value: boolean) {
-    console.warn('The displayOneCXShellLayout input is not implemented yet.')
+    this.logger.warn('The displayOneCXShellLayout input is not implemented yet.')
   }
 
   private isRouterDefined() {

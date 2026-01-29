@@ -16,7 +16,8 @@
     "@nx/devkit": "^22.0.2",
     "@onecx/integration-interface": "^8.0.0-rc.1",
     "@onecx/angular-utils": "^8.0.0-rc.1",
-    "@onecx/nx-migration-utils": "^8.0.0-rc.1"
+    "@onecx/nx-migration-utils": "^8.0.0-rc.1",
+    "@onecx/accelerator": "^8.0.0-rc.1"
   },
   "dependencies": {},
   "publishConfig": {

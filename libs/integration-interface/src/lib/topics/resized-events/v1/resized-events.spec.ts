@@ -7,7 +7,7 @@
  */
 
 import { ResizedEventType } from './resized-event-type'
-import { ResizedEventsPublisher, ResizedEventsTopic } from './resized-events.topic'
+import { ResizedEventsTopic } from './resized-events.topic'
 import { RequestedEventsChangedEvent } from './resized-update-requested-type'
 import { SlotGroupResizedEvent } from './slot-groups-resized-type'
 import { SlotResizedEvent } from './slots-resized-type'
@@ -181,48 +181,6 @@ describe('ResizedEventsTopic', () => {
       }
 
       await resizedEventsTopic.publish(event)
-
-      expect(topicValues.length).toBe(0)
-    })
-  })
-
-  describe('ResizedEventsPublisher', () => {
-    it('should publish if someone requested resized event for the entity', async () => {
-      ResizedEventsTopic.requestEvent(ResizedEventType.SLOT_RESIZED, 'test-slot')
-
-      expect(topicValues.length).toBe(1) // from the requestEvent call
-      topicValues = [] // reset for easier testing
-
-      const event: SlotResizedEvent = {
-        type: ResizedEventType.SLOT_RESIZED,
-        payload: {
-          slotName: 'test-slot',
-          slotDetails: {
-            width: 100,
-            height: 200,
-          },
-        },
-      }
-
-      new ResizedEventsPublisher().publish(event)
-
-      expect(topicValues.length).toBe(1)
-      expect(topicValues[0]).toBe(event)
-    })
-
-    it('should not publish if no one requested resized event for the entity', async () => {
-      const event: SlotResizedEvent = {
-        type: ResizedEventType.SLOT_RESIZED,
-        payload: {
-          slotName: 'unrequested-slot',
-          slotDetails: {
-            width: 100,
-            height: 200,
-          },
-        },
-      }
-
-      new ResizedEventsPublisher().publish(event)
 
       expect(topicValues.length).toBe(0)
     })
