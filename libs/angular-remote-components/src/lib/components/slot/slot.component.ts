@@ -41,7 +41,7 @@ export type RemoteComponentOutput = OutputEmitterRef<any> | EventEmitter<any>
 
 @Component({
   standalone: false,
-  selector: 'ocx-slot[name]',
+  selector: 'ocx-slot',
   template: ``,
   host: {
     '[attr.name]': 'name',
@@ -114,7 +114,7 @@ export class SlotComponent implements OnInit, OnDestroy {
    * ## Remote component definition
    * ```
    * export class MyRemoteComponent: {
-   *  ⁣@Input() buttonClicked = OutputEmitterRef<string>()
+   *  buttonClicked = input(output<string>())
    *  onButtonClick() {
    *    buttonClicked.emit('payload')
    *  }
@@ -167,7 +167,7 @@ export class SlotComponent implements OnInit, OnDestroy {
    */
   outputs = input<Record<string, RemoteComponentOutput>>({})
 
-  subscriptions = signal<Subscription[]>([])
+  subscriptions: Subscription[] = []
   components$: Observable<SlotComponentConfiguration[]> | undefined
 
   private resizeObserver: ResizeObserver | undefined
@@ -209,14 +209,14 @@ export class SlotComponent implements OnInit, OnDestroy {
       })
     })
 
-    this.subscriptions.update((subs) => [...subs, updateSub])
+    this.subscriptions.push(updateSub)
 
     this.observeSlotSizeChanges()
   }
 
   ngOnDestroy(): void {
     this._resizedEventsTopic?.destroy()
-    this.subscriptions().forEach((sub) => sub.unsubscribe())
+    this.subscriptions.forEach((sub) => sub.unsubscribe())
     this.resizeObserver?.disconnect()
     // Removes RC styles on unmount to avoid ghost styles
     this.assignedComponents().forEach((component) => {
@@ -237,7 +237,7 @@ export class SlotComponent implements OnInit, OnDestroy {
       this.createComponents(components)
     })
 
-    this.subscriptions.update((subs) => [...subs, createSub])
+    this.subscriptions.push(createSub)
   }
 
   private createSpansForComponents(components: SlotComponentConfiguration[]) {
@@ -302,7 +302,7 @@ export class SlotComponent implements OnInit, OnDestroy {
         this.resizedEventsPublisher.publish(slotResizedEvent)
       }
     })
-    this.subscriptions.update((subs) => [...subs, requestedEventsChangedSub])
+    this.subscriptions.push(requestedEventsChangedSub)
   }
 
   private createComponent(

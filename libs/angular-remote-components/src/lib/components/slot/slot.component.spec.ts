@@ -147,10 +147,10 @@ describe('SlotComponent', () => {
     })
 
     it('should clear all subscriptions', () => {
-      component['subscriptions'].update((subs) => [...subs, { unsubscribe: jest.fn() } as any])
+      component['subscriptions'].push({ unsubscribe: jest.fn() } as any)
       fixture.detectChanges()
 
-      const spy = jest.spyOn(component['subscriptions']()[0], 'unsubscribe')
+      const spy = jest.spyOn(component['subscriptions'][0], 'unsubscribe')
       component.ngOnDestroy()
       expect(spy).toHaveBeenCalled()
     })
