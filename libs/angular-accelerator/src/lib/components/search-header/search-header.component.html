@@ -58,12 +58,16 @@
     <section #searchParameterFields [attr.aria-label]="'Search Criteria'">
       <ng-content></ng-content>
     </section>
-    <section class="flex flex-wrap gap-2" [ngClass]="'flex-row'" [attr.aria-label]="'Search Controls'">
+    <section
+      class="flex flex-wrap gap-2"
+      [ngClass]="'flex-row'"
+      [attr.aria-label]="'OCX_SEARCH_HEADER.CONTROLS.ARIA_LABEL' | translate"
+    >
       @if ((searchButtonsReversed$ | async)) {
       <ng-container [ngTemplateOutlet]="searchBtn"></ng-container>
-      @if (resetted$.observed) {
+      @if (resetted.observed()) {
       <ng-container [ngTemplateOutlet]="resetBtn"></ng-container>
-      } } @else { @if (resetted$.observed) {
+      } } @else { @if (resetted.observed()) {
       <ng-container [ngTemplateOutlet]="resetBtn"></ng-container>
       }
       <ng-container [ngTemplateOutlet]="searchBtn"></ng-container>

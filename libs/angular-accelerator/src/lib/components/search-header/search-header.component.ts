@@ -62,8 +62,7 @@ export class SearchHeaderComponent {
   pageName = input<string | undefined>(getLocation().applicationPath)
 
   searched = output<void>()
-  resetted$ = new Subject<void>()
-  resetted = outputFromObservable(this.resetted$)
+  resetted = observableOutput<void>()
 
   selectedSearchConfigChanged = observableOutput<SearchConfigData | undefined>()
   viewModeChanged = output<'basic' | 'advanced'>()
@@ -145,7 +144,7 @@ export class SearchHeaderComponent {
   }
 
   onResetClicked() {
-    this.resetted$.next()
+    this.resetted.emit()
   }
 
   onSearchClicked() {

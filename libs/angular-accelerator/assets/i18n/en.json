@@ -155,7 +155,10 @@
       "ARIA_LABEL": "Start search",
       "DETAIL": "Start search"
     },
-    "EXPORT": "Export all events"
+    "EXPORT": "Export all events",
+    "CONTROLS": {
+      "ARIA_LABEL": "Search controls"
+    }
   },
   "OCX_PAGE_HEADER": {
     "IMAGE": "Page title logo",

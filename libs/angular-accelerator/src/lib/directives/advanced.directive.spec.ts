@@ -11,6 +11,7 @@ import { SearchHeaderComponent } from '../components/search-header/search-header
 import { PageHeaderComponent } from '../components/page-header/page-header.component'
 import { AngularAcceleratorModule } from '../angular-accelerator.module'
 import { SearchHeaderHarness } from '../../../testing/search-header.harness'
+import { provideRouter } from '@angular/router'
 
 @Component({
   // eslint-disable-next-line @angular-eslint/prefer-standalone
@@ -73,6 +74,7 @@ describe('AdvancedDirective', () => {
           provideHttpClient(withInterceptorsFromDi()),
           provideHttpClientTesting(),
           provideTranslateTestingService({}),
+          provideRouter([]),
         ],
       }).compileComponents()
 
