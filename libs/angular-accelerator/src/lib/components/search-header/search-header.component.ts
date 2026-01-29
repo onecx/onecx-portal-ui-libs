@@ -2,6 +2,7 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  Signal,
   TemplateRef,
   contentChild,
   contentChildren,
@@ -18,6 +19,7 @@ import { Observable, Subject, combineLatest, debounceTime, filter, from, map, me
 import { getLocation } from '@onecx/accelerator'
 import { CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
 import { Action } from '../page-header/page-header.component'
+import { observableOutput } from '../../utils/observable-output.utils'
 
 export interface SearchHeaderComponentState {
   activeViewMode?: 'basic' | 'advanced'
@@ -62,19 +64,16 @@ export class SearchHeaderComponent {
   searched = output<void>()
   resetted$ = new Subject<void>()
   resetted = outputFromObservable(this.resetted$)
-  // selectedSearchConfigChanged emits whenever selectedSearchConfigChanged$ changes
-  // this is a workaround to check if selectedSearchConfigChanged is being observed
-  // https://github.com/angular/angular/issues/54837
-  selectedSearchConfigChanged$ = new Subject<SearchConfigData | undefined>()
-  selectedSearchConfigChanged = outputFromObservable(this.selectedSearchConfigChanged$)
+
+  selectedSearchConfigChanged = observableOutput<SearchConfigData | undefined>()
   viewModeChanged = output<'basic' | 'advanced'>()
   componentStateChanged = output<SearchHeaderComponentState>()
   _additionalToolbarContent = contentChild<TemplateRef<any>>('additionalToolbarContent')
 
   _additionalToolbarContentLeft = contentChild<TemplateRef<any>>('additionalToolbarContentLeft')
 
-  get searchConfigChangeObserved(): boolean {
-    return this.selectedSearchConfigChanged$.observed
+  get searchConfigChangeObserved(): Signal<boolean> {
+    return this.selectedSearchConfigChanged.observed
   }
 
   formGroup = contentChild<FormGroup | undefined>(FormGroup)
@@ -134,7 +133,7 @@ export class SearchHeaderComponent {
       this.componentStateChanged.emit({
         selectedSearchConfig: config?.name ?? null,
       })
-      this.selectedSearchConfigChanged$.next(config)
+      this.selectedSearchConfigChanged.emit(config)
     })
     this.searchButtonsReversed$ = from(
       configurationService.getProperty(CONFIG_KEY.ONECX_PORTAL_SEARCH_BUTTONS_REVERSED)

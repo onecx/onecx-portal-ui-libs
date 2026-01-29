@@ -32,7 +32,7 @@
   [actions]="headerActions()"
 >
   <ng-template #additionalToolbarContentLeft>
-    @if (searchConfigChangeObserved && pageName()) {
+    @if (searchConfigChangeObserved() && pageName()) {
     <ocx-slot
       *ocxIfPermission="searchConfigPermission()"
       name="onecx-search-config"
