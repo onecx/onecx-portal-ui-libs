@@ -70,3 +70,16 @@ It is recommended to modify the package.json file to include the following style
   }
 }
 ----
+
+**Import @Onecx Library styles**:
+
+Please include related OneCX library styles in your global styles when using OneCX components.
+
+If you are using `@onecx/angular-accelerator` components, add the following import to your `styles.scss` file:
+
+**Example:**
+[source, scss]
+----
+// ...Other style imports
+@import 'node_modules/@onecx/angular-accelerator/assets/styles.css';
+----
