@@ -30,18 +30,18 @@ export class GroupByCountDiagramComponent {
   fillMissingColors = input<boolean>(true)
   supportedDiagramTypes = input<DiagramType[]>([])
 
-  effectiveData = signal<unknown[]>([])
+  _effectiveData = signal<unknown[]>([])
   data = input<unknown[]>([])
 
-  effectiveColumnType = signal<ColumnType>(ColumnType.STRING)
+  _effectiveColumnType = signal<ColumnType>(ColumnType.STRING)
   columnType = input<ColumnType>(ColumnType.STRING)
 
-  effectiveColumnField = signal<string>('')
+  _effectiveColumnField = signal<string>('')
   columnField = input<string>('')
 
   column = input<DiagramColumn>()
 
-  effectiveColors = signal<Record<string, string>>({})
+  _effectiveColors = signal<Record<string, string>>({})
   colors = input<Record<string, string>>({})
 
   dataSelected = output<any>()
@@ -49,10 +49,10 @@ export class GroupByCountDiagramComponent {
   componentStateChanged = output<GroupByCountDiagramComponentState>()
 
   diagramData$ = combineLatest([
-    toObservable(this.effectiveData),
-    toObservable(this.effectiveColumnField),
-    toObservable(this.effectiveColumnType),
-    toObservable(this.effectiveColors),
+    toObservable(this._effectiveData),
+    toObservable(this._effectiveColumnField),
+    toObservable(this._effectiveColumnType),
+    toObservable(this._effectiveColors),
   ]).pipe(
     mergeMap(([data, columnField, columnType, colors]) => {
       const columnData = data.map((d) => ObjectUtils.resolveFieldData(d, columnField))
@@ -79,23 +79,23 @@ export class GroupByCountDiagramComponent {
 
   constructor() {
     effect(() => {
-      this.effectiveData.set(this.data())
+      this._effectiveData.set(this.data())
     })
     effect(() => {
-      this.effectiveColumnType.set(this.columnType())
+      this._effectiveColumnType.set(this.columnType())
     })
     effect(() => {
-      this.effectiveColumnField.set(this.columnField())
+      this._effectiveColumnField.set(this.columnField())
     })
     effect(() => {
       const column = this.column()
       if (column) {
-        this.effectiveColumnType.set(column.columnType)
-        this.effectiveColumnField.set(column.id)
+        this._effectiveColumnType.set(column.columnType)
+        this._effectiveColumnField.set(column.id)
       }
     })
     effect(() => {
-      this.effectiveColors.set(this.colors())
+      this._effectiveColors.set(this.colors())
     })
   }
 

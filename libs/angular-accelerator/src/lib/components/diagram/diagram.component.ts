@@ -64,7 +64,7 @@ export class DiagramComponent implements OnInit {
   selectedDiagramType = signal<DiagramLayouts | undefined>(undefined)
   public chartType = signal<'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'polarArea' | 'radar'>('pie')
 
-  effectiveDiagramType = signal<DiagramType>(DiagramType.PIE)
+  _effectiveDiagramType = signal<DiagramType>(DiagramType.PIE)
   diagramType = input<DiagramType>(DiagramType.PIE)
 
   supportedDiagramTypes = input<DiagramType[]>([])
@@ -88,11 +88,11 @@ export class DiagramComponent implements OnInit {
   constructor() {
     effect(() => {
       const value = this.diagramType()
-      this.effectiveDiagramType.set(value)
+      this._effectiveDiagramType.set(value)
     })
 
     effect(() => {
-      const value = this.effectiveDiagramType()
+      const value = this._effectiveDiagramType()
       this.selectedDiagramType.set(allDiagramTypes.find((v) => v.layout === value))
       this.chartType.set(this.diagramTypeToChartType(value))
     })
@@ -136,11 +136,11 @@ export class DiagramComponent implements OnInit {
         },
       },
       maintainAspectRatio: false,
-      ...(this.effectiveDiagramType() === DiagramType.VERTICAL_BAR && {
+      ...(this._effectiveDiagramType() === DiagramType.VERTICAL_BAR && {
         plugins: { legend: { display: false } },
         scales: { y: { ticks: { precision: 0 } } },
       }),
-      ...(this.effectiveDiagramType() === DiagramType.HORIZONTAL_BAR && {
+      ...(this._effectiveDiagramType() === DiagramType.HORIZONTAL_BAR && {
         indexAxis: 'y',
         plugins: { legend: { display: false } },
         scales: { x: { ticks: { precision: 0 } } },
@@ -183,7 +183,7 @@ export class DiagramComponent implements OnInit {
   }
 
   onDiagramTypeChanged(event: any) {
-    this.effectiveDiagramType.set(event.value.layout)
+    this._effectiveDiagramType.set(event.value.layout)
     this.generateChart(this.colorScale, this.colorRangeInfo)
     this.diagramTypeChanged.emit(event.value.layout)
     this.componentStateChanged.emit({

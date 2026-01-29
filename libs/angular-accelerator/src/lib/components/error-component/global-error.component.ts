@@ -11,7 +11,7 @@ export class GlobalErrorComponent {
   private router = inject(Router)
   private route = inject(ActivatedRoute)
 
-  effectiveErrCode = signal<string | undefined>(undefined)
+  _effectiveErrCode = signal<string | undefined>(undefined)
   errCode = input<string | undefined>(undefined)
   backUrl = signal<string | undefined>(undefined)
 
@@ -19,10 +19,10 @@ export class GlobalErrorComponent {
     effect(() => {
       const errCode = this.errCode()
       if (errCode) {
-        this.effectiveErrCode.set(errCode)
+        this._effectiveErrCode.set(errCode)
       }
     })
-    this.effectiveErrCode.set(this.route.snapshot.queryParamMap.get('err') || 'E1001_FAILED_START')
+    this._effectiveErrCode.set(this.route.snapshot.queryParamMap.get('err') || 'E1001_FAILED_START')
     this.backUrl.set(this.route.snapshot.queryParamMap.get('return') || '/')
   }
 
