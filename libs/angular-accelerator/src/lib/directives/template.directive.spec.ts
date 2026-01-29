@@ -49,9 +49,9 @@ describe('TemplateDirective', () => {
   })
 
   it('should take the correct data and type', () => {
-    expect(component.templates.get(0)?.name).toBe('header')
+    expect(component.templates.get(0)?.name()).toBe('header')
     expect(component.templates.get(0)?.getType()).toBe('header')
-    expect(component.templates.get(1)?.name).toBe('content')
+    expect(component.templates.get(1)?.name()).toBe('content')
     expect(component.templates.get(1)?.getType()).toBe('content')
   })
 

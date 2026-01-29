@@ -1,16 +1,14 @@
-import { Directive, Input, TemplateRef, inject } from '@angular/core'
+import { Directive, TemplateRef, inject, input } from '@angular/core'
 
 @Directive({ selector: '[ocxTemplate]', standalone: false })
 export class TemplateDirective {
   template = inject<TemplateRef<any>>(TemplateRef)
 
-  @Input({
-    required: true,
+  name = input.required<string>({
     alias: 'ocxTemplate',
   })
-  name = ''
 
   getType(): string {
-    return this.name
+    return this.name()
   }
 }

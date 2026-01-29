@@ -1,48 +1,40 @@
-@if (this.data) {
-  @if (shownDiagramTypes.length > 1) {
-    <div class="flex justify-content-center pb-2">
-      <p-selectbutton
-        [options]="shownDiagramTypes"
-        [(ngModel)]="selectedDiagramType"
-        optionLabel="id"
-        (onChange)="onDiagramTypeChanged($event)"
-        name="diagram-type-select-button"
-        [allowEmpty]="false"
-        >
-        <ng-template #item let-item>
-          <i
-            [class]="item.icon"
-            [pTooltip]="item.tooltipKey | translate"
-            tooltipPosition="top"
-            tooltipEvent="hover"
-          ></i>
-          <label style="display: none" id="{{item.id}}"> {{item.label ? item.label : item.labelKey | translate}} </label>
-        </ng-template>
-      </p-selectbutton>
-    </div>
-  }
-  <div class="w-full flex justify-content-center">
-    <p-chart
-      id="diagram"
-      [attr.data-automation-type]="chartType"
-      [type]="chartType"
-      [data]="chartData"
-      [responsive]="false"
-      [attr.data-automation-options]="chartOptions"
-      [options]="chartOptions"
-      (onDataSelect)="dataClicked($event)"
-      [ariaLabel]="(data ? 'OCX_DIAGRAM.ARIA_LABEL' : 'OCX_DIAGRAM.EMPTY_ARIA_LABEL') | translate: {total: generateTotal(data), valueString: generateDiagramValueString(data)}"
-    ></p-chart>
-  </div>
-  <div class="w-full flex justify-content-center mt-2 sumKey">
-    <p class="text-md font-medium text-700">
-      <span name="sumLabel"> {{ sumKey | translate }}</span> : <span name="amountOfData">{{ amountOfData}}</span>
-    </p>
-  </div>
+@if (data()) { @if (shownDiagramTypes().length > 1) {
+<div class="flex justify-content-center pb-2">
+  <p-selectbutton
+    [options]="shownDiagramTypes()"
+    [(ngModel)]="selectedDiagramType"
+    optionLabel="id"
+    (onChange)="onDiagramTypeChanged($event)"
+    name="diagram-type-select-button"
+    [allowEmpty]="false"
+  >
+    <ng-template #item let-item>
+      <i [class]="item.icon" [pTooltip]="item.tooltipKey | translate" tooltipPosition="top" tooltipEvent="hover"></i>
+      <label style="display: none" id="{{item.id}}"> {{item.label ? item.label : item.labelKey | translate}} </label>
+    </ng-template>
+  </p-selectbutton>
+</div>
 }
-
-@if (!this.data) {
-  <div class="w-full flex justify-content-center">
-    <p-message severity="info" text="{{ 'OCX_DIAGRAM.NO_DATA' | translate }}"></p-message>
-  </div>
+<div class="w-full flex justify-content-center">
+  <p-chart
+    id="diagram"
+    [attr.data-automation-type]="chartType()"
+    [type]="chartType()"
+    [data]="chartData()"
+    [responsive]="false"
+    [attr.data-automation-options]="chartOptions()"
+    [options]="chartOptions()"
+    (onDataSelect)="dataClicked($event)"
+    [ariaLabel]="(data() ? 'OCX_DIAGRAM.ARIA_LABEL' : 'OCX_DIAGRAM.EMPTY_ARIA_LABEL') | translate: {total: generateTotal(data()!), valueString: generateDiagramValueString(data()!)}"
+  ></p-chart>
+</div>
+<div class="w-full flex justify-content-center mt-2 sumKey">
+  <p class="text-md font-medium text-700">
+    <span name="sumLabel"> {{ sumKey() | translate }}</span> : <span name="amountOfData">{{ amountOfData() }}</span>
+  </p>
+</div>
+} @if (!data()) {
+<div class="w-full flex justify-content-center">
+  <p-message severity="info" text="{{ 'OCX_DIAGRAM.NO_DATA' | translate }}"></p-message>
+</div>
 }

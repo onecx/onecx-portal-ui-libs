@@ -1,4 +1,4 @@
-import { Component, Input, inject } from '@angular/core'
+import { Component, effect, inject, Input, input, signal } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 
 @Component({
@@ -11,17 +11,26 @@ export class GlobalErrorComponent {
   private router = inject(Router)
   private route = inject(ActivatedRoute)
 
-  @Input()
-  errCode: string | undefined
-  backUrl: string
+  effectiveErrCode = signal<string | undefined>(undefined)
+  errCode = input<string | undefined>(undefined)
+  backUrl = signal<string | undefined>(undefined)
 
   constructor() {
-    this.errCode = this.route.snapshot.queryParamMap.get('err') || 'E1001_FAILED_START'
-    this.backUrl = this.route.snapshot.queryParamMap.get('return') || '/'
+    effect(() => {
+      const errCode = this.errCode()
+      if (errCode) {
+        this.effectiveErrCode.set(errCode)
+      }
+    })
+    this.effectiveErrCode.set(this.route.snapshot.queryParamMap.get('err') || 'E1001_FAILED_START')
+    this.backUrl.set(this.route.snapshot.queryParamMap.get('return') || '/')
   }
 
   onGoBack() {
-    this.router.navigateByUrl(this.backUrl)
+    const backUrl = this.backUrl()
+    if (backUrl) {
+      this.router.navigateByUrl(backUrl)
+    }
   }
 
   reload() {
