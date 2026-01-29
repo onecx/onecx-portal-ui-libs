@@ -1,9 +1,10 @@
-import { Component, Input, OnInit, inject } from '@angular/core'
+import { Component, Input, OnInit, computed, inject, input } from '@angular/core'
 import { AppStateService } from '@onecx/angular-integration-interface'
-import { Observable, of } from 'rxjs'
+import { Observable, of, switchMap, tap } from 'rxjs'
 import { CommonModule } from '@angular/common'
 import { TranslateModule } from '@ngx-translate/core'
 import { PermissionService } from '../../services/permission.service'
+import { toObservable } from '@angular/core/rxjs-interop'
 
 @Component({
   selector: 'ocx-portal-page',
@@ -17,27 +18,30 @@ export class PortalPageComponent implements OnInit {
   private permissionService = inject(PermissionService)
   private trueObservable = of(true)
 
-  @Input() permission = ''
-  @Input() helpArticleId = ''
-  @Input() pageName = ''
-  @Input() applicationId = ''
+  permission = input<string>('')
+  helpArticleId = input<string>('')
+  pageName = input<string>('')
+  applicationId = input<string>('')
 
-  hasAccess(): Observable<boolean> {
-    return this.permission ? this.permissionService.hasPermission(this.permission) : this.trueObservable
-  }
+  hasAccess = toObservable(this.permission).pipe(
+    tap((permission) => console.log('Checking access for permission:', permission)),
+    switchMap((permission) => (permission ? this.permissionService.hasPermission(permission) : this.trueObservable)),
+    tap((hasAccess) => console.log('Access result:', hasAccess))
+  )
 
   ngOnInit(): void {
-    if (!this.helpArticleId) {
+    if (!this.helpArticleId()) {
       console.warn(
         `ocx-portal-page on url ${location.pathname} does not have 'helpArticleId' set. Set to some unique string in order to support help management feature.`
       )
     }
+
     this.appState.currentPage$.publish({
       path: document.location.pathname,
-      helpArticleId: this.helpArticleId,
-      permission: this.permission,
-      pageName: this.pageName,
-      applicationId: this.applicationId,
+      helpArticleId: this.helpArticleId(),
+      permission: this.permission(),
+      pageName: this.pageName(),
+      applicationId: this.applicationId(),
     })
   }
 }
