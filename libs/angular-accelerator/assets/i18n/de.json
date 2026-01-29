@@ -3,6 +3,12 @@
     "CONFIRM": "Bestätigen",
     "CANCEL": "Abbrechen"
   },
+  "OCX_CONSENT": {
+    "TITLE": "Zustimmung erforderlich",
+    "MESSAGE": "Um diesen Inhalt anzuzeigen, können Anfragen an {{url}} gesendet werden. Dadurch können Ihre Daten (z. B. IP-Adresse) an diesen externen Dienst übermittelt werden. Stimmen Sie zu?",
+    "AGREE": "Ich stimme zu",
+    "WITHDRAW": "Zustimmung widerrufen"
+  },
   "OCX_CUSTOM_GROUP_COLUMN_SELECTOR": {
     "ARIA_LABEL": "Spaltengruppe-Selektor",
     "DROPDOWN_LABEL": "Spaltengruppe",

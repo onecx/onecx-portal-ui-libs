@@ -3,6 +3,12 @@
     "CONFIRM": "Confirm",
     "CANCEL": "Cancel"
   },
+  "OCX_CONSENT": {
+    "TITLE": "Consent required",
+    "MESSAGE": "To display this content, requests to {{url}} may be sent. This can expose your data (e.g. IP address) to this external service. Do you agree?",
+    "AGREE": "I agree",
+    "WITHDRAW": "Withdraw consent"
+  },
   "OCX_CUSTOM_GROUP_COLUMN_SELECTOR": {
     "ARIA_LABEL": "Column group selector",
     "DROPDOWN_LABEL": "Column group",

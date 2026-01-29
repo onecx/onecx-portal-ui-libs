@@ -1,0 +1,24 @@
+@if (hasConsent()) {
+  <ng-content />
+} @else {
+  <div class="ocx-consent">
+    <div class="ocx-consent__content">
+      <p class="ocx-consent__title">{{ titleKey() | translate }}</p>
+      <p class="ocx-consent__message">
+        {{ messageKey() | translate : { url: normalizedUrl() } }}
+      </p>
+
+      <ng-content select="[ocx-consent-info]" />
+
+      <button type="button" class="p-button" (click)="giveConsent()">
+        {{ agreeKey() | translate }}
+      </button>
+
+      @if (showWithdraw()) {
+        <button type="button" class="p-button p-button-secondary" (click)="resetConsent()">
+          {{ withdrawKey() | translate }}
+        </button>
+      }
+    </div>
+  </div>
+}
