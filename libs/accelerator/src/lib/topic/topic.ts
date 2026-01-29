@@ -15,8 +15,10 @@ import { TopicPublisher } from './topic-publisher'
 import { TopicResolveMessage } from './topic-resolve-message'
 import '../declarations'
 import { increaseInstanceCount, isStatsEnabled } from '../utils/logs.utils'
+import { createLogger } from '../utils/logger.utils'
 
 export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
+  private readonly logger = createLogger(`Topic:${this.name}`)
   protected isInitializedPromise: Promise<void>
   protected data = new BehaviorSubject<TopicDataMessage<T> | undefined>(undefined)
 
@@ -33,7 +35,7 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
 
     if (window['@onecx/accelerator']?.topic?.useBroadcastChannel) {
       if (typeof BroadcastChannel === 'undefined') {
-        console.log('BroadcastChannel not supported. Disabling BroadcastChannel for topic')
+        this.logger.info('BroadcastChannel not supported. Disabling BroadcastChannel for topic')
         window['@onecx/accelerator'] ??= {}
         window['@onecx/accelerator'].topic ??= {}
         window['@onecx/accelerator'].topic.useBroadcastChannel = false
@@ -223,8 +225,8 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
   }
 
   private onWindowMessage(m: MessageEvent<TopicMessage>): any {
-    if (this.isLogEnabled() && m.data?.name === this.name && m.data?.version === this.version) {
-      console.log('Topic', this.name, ':', this.version, 'received message via window', m.data)
+    if (m.data?.name === this.name && m.data?.version === this.version) {
+      this.logger.debug('received message via window', m.data)
     }
     switch (m.data.type) {
       case TopicMessageType.TopicNext: {
@@ -250,9 +252,7 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
   }
 
   private onBroadcastChannelMessage(m: MessageEvent<TopicMessage>): any {
-    if (this.isLogEnabled()) {
-      console.log('Topic', this.name, ':', this.version, 'received message', m.data)
-    }
+    this.logger.debug('received message', m.data)
     switch (m.data.type) {
       case TopicMessageType.TopicNext: {
         this.handleTopicNextMessage(m)
@@ -275,13 +275,9 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
     window['@onecx/accelerator'] ??= {}
     window['@onecx/accelerator'].topic ??= {}
     if (window['@onecx/accelerator'].topic.useBroadcastChannel === true) {
-      console.log('Disabling BroadcastChannel for topic')
+      this.logger.info('Disabling BroadcastChannel for topic')
     }
     window['@onecx/accelerator'].topic.useBroadcastChannel = false
-  }
-
-  private isLogEnabled() {
-    return window['@onecx/accelerator']?.topic?.debug?.includes(this.name)
   }
 
   private handleTopicResolveMessage(m: MessageEvent<TopicMessage>) {
@@ -293,7 +289,7 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
         m.stopPropagation()
         delete this.publishPromiseResolver[(<TopicResolveMessage>m.data).resolveId]
       } catch (error) {
-        console.error('Error handling TopicResolveMessage:', error)
+        this.logger.error('Error handling TopicResolveMessage:', error)
       }
     }
   }
@@ -321,7 +317,7 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
       m.data.timestamp === this.data.value.timestamp &&
       ((m.data.id && !this.data.value.id) || (!m.data.id && this.data.value.id))
     ) {
-      console.warn(
+      this.logger.warn(
         'Message was dropped because of equal timestamps, because there was an old style message in the system. Please upgrade all libraries to the latest version.'
       )
     }
