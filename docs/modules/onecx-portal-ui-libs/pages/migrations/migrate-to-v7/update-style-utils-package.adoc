@@ -4,7 +4,7 @@
 In version 7, the style utilities have been moved to a separate subpackage:  
 `@onecx/angular-utils/style` within the `@onecx/angular-utils` library.
 
-Please update all imports related to micro-frontend and remote component utilities to use the new package.
+Please update all imports related to micro-frontend and remote component style utilities to use the new package.
 
 **Update import path**
 
