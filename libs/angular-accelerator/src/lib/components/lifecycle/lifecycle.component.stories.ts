@@ -21,6 +21,10 @@ export default {
   ],
 } as Meta<LifecycleComponent>
 
+const Template: StoryFn<LifecycleComponent> = (args) => ({
+  props: args,
+})
+
 const mockData: LifecycleStep[] = [
   {
     id: 'todo',
@@ -38,28 +42,14 @@ const mockData: LifecycleStep[] = [
 ]
 
 export const WithoutHighlightedStep = {
-  render: (args: LifecycleComponent) => ({
-    props: {
-      ...args,
-    },
-    template: `
-        <ocx-lifecycle steps="${args.steps}"></ocx-lifecycle>
-    `,
-  }),
+  render: Template,
   args: {
     steps: mockData,
   },
 }
 
 export const WithHighlightedStep = {
-  render: (args: LifecycleComponent) => ({
-    props: {
-      ...args,
-    },
-    template: `
-        <ocx-lifecycle steps="${args.steps}" activeStepId="${args.activeStepId}"></ocx-lifecycle>
-    `,
-  }),
+  render: Template,
   args: {
     steps: mockData,
     activeStepId: 'in_progress',
