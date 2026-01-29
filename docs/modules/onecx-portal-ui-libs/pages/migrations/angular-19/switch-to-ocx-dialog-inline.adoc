@@ -1,120 +1,92 @@
-[#switch-to-ocx-dialog-inline]
-==== Replace ButtonDialogComponent with DialogInlineComponent
-Replace *ButtonDialogComponent* with *DialogInlineComponent* for inline dialogs with configurable buttons and dynamic content.
+[#switch-to-ocx-dialog-inline-v2]
+= Replace ButtonDialogComponent
 
-**Code changes**
+In OneCX v6, replace `ButtonDialogComponent` with `DialogInlineComponent` for inline dialogs with configurable buttons and dynamic content.
 
-* Remove ButtonDialogComponent from `@onecx/portal-integration-angular`.
-* Replace with DialogInlineComponent from `@onecx/angular-accelerator`.
-* Migrate input properties as per the mapping table below.
+== Code Changes
 
-**Example - Replace ocx-button-dialog with ocx-dialog-inline in HTML**
+* Remove `ButtonDialogComponent` from `@onecx/portal-integration-angular`.
+* Add `DialogInlineComponent` from `@onecx/angular-accelerator`.
+* Replace tag `<ocx-button-dialog>` with `<ocx-dialog-inline>`.
+* Migrate input properties and output events as per the mapping table below.
+
+== Example
 .Before
 [source,html]
 ----
 <ocx-button-dialog
   [config]="dialogConfig"
-  (resultEmitter)="handleDialogResult($event)"
->
-  <!-- dynamic dialog content here -->
+  (resultEmitter)="onDialogResult($event)">
+  <p>Dialog Content to display</p>
 </ocx-button-dialog>
 ----
 
+[source, typescript]
+----
+export class ExampleComponent {
+  dialogConfig = {
+    primaryButtonDetails: { key: 'OCX_BUTTON_DIALOG.CONFIRM' },
+    secondaryButtonIncluded: true,
+    secondaryButtonDetails: { key: 'OCX_BUTTON_DIALOG.CANCEL' },
+    customButtons: [{ id: 'help', label: 'Help', alignment: 'left' }],
+    autoFocusButton: 'primary'
+  }
+
+  onDialogResult(result: any) {
+    console.log('Dialog result (inline):', result);
+  }
+}
+----
+
 .After
-[source,html]
+[source, html]
 ----
 <ocx-dialog-inline
   [config]="dialogConfig"
-  (dialogResult)="handleDialogResult($event)"
->
-  <!-- dynamic dialog content here -->
+  (resultEmitter)="onDialogResult($event)">
+  <p>Dialog Content to display</p>
 </ocx-dialog-inline>
 ----
 
-**Input Properties**
+[source, typescript]
+----
+export class ExampleComponent {
+  dialogConfig = {
+    primaryButtonDetails: { key: 'OCX_BUTTON_DIALOG.CONFIRM' },
+    secondaryButtonIncluded: true,
+    secondaryButtonDetails: { key: 'OCX_BUTTON_DIALOG.CANCEL' },
+    customButtons: [{ id: 'help', label: 'Help', alignment: 'left' }],
+    autoFocusButton: 'primary'
+  }
 
-[cols="1,1,2", options="header"]
+  onDialogResult(result: any) {
+    console.log('Dialog result (inline):', result);
+  }
+}
+----
+
+== Properties Mapping
+
+.Input Properties
+[.stripes-even,cols="1,1,2"]
 |===
-| ButtonDialogComponent
-| DialogInlineComponent
-| Notes
+h| ButtonDialogComponent
+h| DialogInlineComponent
+h| Notes
 
 | config
 | config
-| Pass dialog configuration object for buttons, labels, etc.
-
-| primaryButtonDetails, secondaryButtonDetails, customButtons
-| config.buttons
-| **Migrate all button details into a single `buttons` array in the config.**  
-  Example:  
-  ```
-  buttons: [
-    { key: 'CONFIRM', label: 'Confirm', type: 'primary' },
-    { key: 'CANCEL', label: 'Cancel', type: 'secondary' },
-    { key: 'help', label: 'Help', type: 'custom', alignment: 'right' }
-  ]
-  ```
-  - `type` should be `'primary'`, `'secondary'`, or `'custom'` as appropriate.
-  - `alignment` is optional and can be used for custom buttons.
-  - Remove `primaryButtonDetails`, `secondaryButtonDetails`, and `customButtons` from the root config.
-
-| dialogHost, primaryButton, secondaryButton, customButtons
-| -
-| DialogInlineComponent manages button containers internally.
-
-| dialogData, componentRef, primaryButtonDisabled$, secondaryButtonDisabled$, customButtonsDisabled$, leftCustomButtons, rightCustomButtons
-| -
-| See migration details below.
-
-| dynamicDialogConfig, dynamicDialogRef
-| -
-| PrimeNG dialog references are not needed in DialogInlineComponent.
-
-| custom dialog content
-| ng-content
-| Place your dynamic dialog content inside `<ocx-dialog-inline>`.
+| `ButtonDialogConfig`. Indicates the dialog configuration object for buttons, labels etc. No change in config structure.
 |===
 
-==== Migration Details for Internal State and Buttons
-
-To migrate from internal state and button observables to DialogInlineComponent:
-
-- Remove all direct usage of `dialogData`, `componentRef`, and button state observables.
-- To control buttons, use the `buttons` array in your config. For dynamic state, bind `disabled` to a boolean or use the async pipe in the template:
-
-  [source,typescript]
-  ----
-  config = {
-    buttons: [
-      { key: 'CONFIRM', label: 'Confirm', type: 'primary', disabled: false },
-      { key: 'CANCEL', label: 'Cancel', type: 'secondary', disabled: isDisabled$ | async },
-      { key: 'help', label: 'Help', type: 'custom', alignment: 'right' }
-    ]
-  };
-  ----
-
-- Update your result handler to use `dialogResult` and handle `{ button, key, result }`.
-- For dynamic content, project it inside `<ocx-dialog-inline>`. For dynamic components, use Angular's standard dynamic component loader inside the dialog content.
-- No need to manage button containers or state manually.
-
-**Output Events **
-
-[cols="1,1,2", options="header"]
+.Output Events
+[.stripes-even,cols="1,1,2"]
 |===
-| ButtonDialogComponent
-| DialogInlineComponent
-| Notes
+h| ButtonDialogComponent
+h| DialogInlineComponent
+h| Notes
 
 | resultEmitter
-| dialogResult
-| Emits dialog result when a button is clicked.
+| resultEmitter
+| Emits the type of button clicked (e.g. `primary`, `secondary`, `custom`).
 |===
-
-[NOTE]
-====
-- Please combine all button definitions into the `buttons` array for `DialogInlineComponent`.
-- The event `dialogResult` provides a result object with `button`, `key`, and `result` fields. Update your handler logic accordingly.
-- Place all dialog content (forms, text, etc.) directly inside `<ocx-dialog-inline>`.
-- Internal state, button containers, and dialog references are now managed by the component and do not need to be handled manually.
-- Please review your dialog config for any custom logic or unsupported features and adapt as needed.
-====

@@ -1,9 +1,9 @@
-[#switch-to-interactive-data-view]
-==== Replace DataViewControlsComponent
+[#interactive-data-view-component]
+= Replace DataViewControlsComponent
 
-Replace **p-dataView** and **ocx-data-view-controls** template with **ocx-interactive-data-view** for enhanced data viewing capabilities including sorting, filtering, and layout options.
+In OneCX v6, Replace **p-dataView** and **DataViewControlsComponent** template with **InteractiveDataViewComponent**.
 
-===== Code Changes
+== Code Changes
 
 * Remove `<ocx-data-view-controls>` and `DataViewControlsComponent` from `@onecx/portal-integration-angular`
 * Add `InteractiveDataViewComponent` from `@onecx/angular-accelerator`.
@@ -11,8 +11,7 @@ Replace **p-dataView** and **ocx-data-view-controls** template with **ocx-intera
 * Remove `DataViewModule` from `primeng/dataview` if not used elsewhere
 * Add `<ocx-interactive-data-view>` and update input properties and output events as per tables below
 
-===== Example - Replace ocx-data-view-controls with ocx-interactive-data-view in HTML
-
+== Example
 .Before
 [source, html]
 ----
@@ -60,213 +59,164 @@ Replace **p-dataView** and **ocx-data-view-controls** template with **ocx-intera
 </ocx-interactive-data-view>
 ----
 
-.Input Properties
+== Properties Mapping
+
+.Input Properties (DataViewControlsComponent)
 [%collapsible]
-=====
+====
 [.stripes-even,cols="1,1,2"]
-|====
-h| DataViewControlsComponent / p-dataView
+|===
+h| DataViewControlsComponent
 h| InteractiveDataViewComponent
 h| Notes
 
-| [value] (p-dataView)
-| data
-| Example: `[data]="items"`
-
 | supportedViews
 | supportedViewLayouts
-| Example: `[supportedViewLayouts]="['list', 'grid', 'table']"`
+| Indicates available layouts. Example: `[supportedViewLayouts]="['list', 'grid', 'table']"`.
 
 | initialViewMode
 | layout
-| Use `'list'`, `'grid'`, or `'table'`. Example: `[layout]="'list'"`
+| Sets initial layout. Example: `[layout]="'list'"`.
 
 | filterValue
 | filter
-| Example: `[filter]="filter"`
+| Filters to apply. Use the `value` key in each Filter object. Example: const filters: Filter[] = [
+  { columnId: 'category', filterType: FilterType.EQUALS, value: ['books', 'electronics'] }
+]
 
 | enableFiltering
 | clientSideFiltering
-| Boolean. Example: `[clientSideFiltering]="true"`
+| Enable client-side filtering. Example: `[clientSideFiltering]="true"`
 
 | enableSorting
 | clientSideSorting
-| Boolean. Example: `[clientSideSorting]="true"`
+| Enable client-side sorting. Example: `[clientSideSorting]="true"`
 
 | sortingOptions
 | columns
-| Define columns with `id` and `nameKey`.
+| Configure sorting per column by setting `sortable` on each `DataTableColumn`. Example:
+  const columns: DataTableColumn[] = [
+    { id: 'name', nameKey: 'OCX_DATA_TABLE.COLUMN.NAME', columnType: ColumnType.STRING, sortable: true }
+  ];
 
 | defaultSortOption
 | sortField
-| Use the column id. Example: `[sortField]="'name'"`
+| Use the column id for the default sort field. Example: `[sortField]="'name'"`
 
 | defaultSortDirection
 | sortDirection
-| Use enum: `DataSortDirection.ASCENDING` or `DataSortDirection.DESCENDING`. Example: `[sortDirection]=DataSortDirection.ASCENDING`
+| Use the `DataSortDirection` enum to specify the sort direction. Example: `[sortDirection]=DataSortDirection.ASCENDING`
 
 | columnDefinitions
 | columns
-| Use `id` and `nameKey` for columns.
+| Use `id` (instead of `field`) and `nameKey` for translated column names. Control visible columns with `displayedColumnKeys`. Example:
+  const columns: DataTableColumn[] = [
+    { id: 'name', nameKey: 'OCX_DATA_TABLE.COLUMN.NAME', columnType: ColumnType.STRING }
+  ];
+  displayedColumnKeys = ['name'];
 
 | columnTemplates
-| columnTemplates
-| Use `p-template` with appropriate selectors and Angular content projection.
+| pTemplate with selectors
+| Use `p-template` with a selector. For more information, see the Template Transformation section.
 
 | dropdownPlaceholderText
 | -
-| Deprecated. Use translations/i18n. No direct input in new component.
+| Deprecated. Use translations (i18n); there is no direct input in the new component.
 
 | filterColumns
 | filters
-| Use filters and `clientSideFiltering`. In filter object, pass columnId and filterType.
+| Use `filters` with `clientSideFiltering`. In each filter object, provide `columnId` and `filterType`.
 
 | translations
 | -
-| Please use i18n or translation keys.
+| Use i18n / translation keys.
 
-| [paginator] (p-dataView)
+|===
+====
+
+.Input Properties (p-dataView)
+[%collapsible]
+====
+[.stripes-even,cols="1,1,2"]
+|===
+h| p-dataView
+h| InteractiveDataViewComponent
+h| Notes
+
+| value
+| data
+| Defines the component's data source. Example: `[data]="items"`
+
+| paginator
 | listGridPaginator, tablePaginator
-| Boolean. Set both or use `[paginator]="true"` to enable for all layouts.
+| listGridPaginator and tablePaginator are enabled by default
 
-| [rows] (p-dataView)
+| rows
 | pageSize
-| Number of items per page. Example: `[pageSize]="20"`
+| Number of items per page. Example: `[pageSize]="20"`.
 
-| [rowsPerPageOptions] (p-dataView)
+| rowsPerPageOptions
 | pageSizes
 | Array of page size options. Example: `[pageSizes]="[20, 60, 100]"`
 
-| [alwaysShowPaginator] (p-dataView)
+| alwaysShowPaginator
 | -
-| Paginator is always shown when enabled. No direct equivalent.
+| The paginator is shown listGridPaginator
 
-| [showCurrentPageReport] (p-dataView)
+| showCurrentPageReport
 | -
-| Built-in. Automatically shown when pagination enabled.
+| The paginator shows the current page report by default when enabled.
 
-| currentPageReportTemplate (p-dataView)
-| currentPageShowingKey
-| Use translation key for page info. Default: `'OCX_DATA_TABLE.SHOWING'`
-
-| [filterBy] (p-dataView)
+| currentPageReportTemplate
 | -
-| Use `[clientSideFiltering]="true"` and `[filter]` instead.
+| Use the `currentPageShowingKey` translation key to render content. The `currentPageReportTemplate` is shown when pagination is enabled. Default: `'OCX_DATA_TABLE.SHOWING'`.
 
-| [emptyMessage] (p-dataView)
+| filterBy
+| -
+| Use `clientSideFiltering` and specify `filterType` in the Filter object.
+
+| emptyMessage
 | emptyResultsMessage
 | Message displayed when no data is available.
-|====
-=====
-
-===== Example - Replace ocx-data-view-controls with ocx-interactive-data-view in TypeScript
-
-.Before
-[source, typescript]
-----
-filter = '';
-sortingOptions = [
-  { label: 'Name', value: 'name' },
-  { label: 'Date', value: 'date' }
-];
-columns = [
-  { field: 'name', header: 'Name', active: true },
-  { field: 'status', header: 'Status', active: true }
-];
-columnTemplates = []; // column templates here
-translations = {
-  filterInputPlaceholder: 'Filter...',
-  sortDropdownPlaceholder: 'Sort by...',
-  // ...other translation keys
-};
-
-onSortChange(sort: string) { /* handle sort */ }
-onFilterChange(filter: string) { /* handle filter */ }
-onDataViewChange(view: 'list' | 'grid') { /* handle view change */ }
-onSortDirectionChange(direction: boolean) { /* handle direction */ }
-onColumnsChange(activeColumns: string[]) { /* handle columns */ }
-----
-
-.After
-[source, typescript]
-----
-import { DataSortDirection } from '@onecx/angular-accelerator';
-
-filter = '';
-columns = [
-  { id: 'name', nameKey: 'Name', active: true },
-  { id: 'status', nameKey: 'Status', active: true }
-];
-columnTemplates = []; // column template here
-
-onSortChange(event: { sortColumn: string, sortDirection: DataSortDirection }) {
-  // handle sort
-}
-onFilterChange(filters: any[]) {
-  // handle filter
-}
-onDataViewChange(layout: 'list' | 'grid' | 'table') {
-  // handle view change
-}
-onColumnsChange(activeColumnIds: string[]) {
-  // handle columns
-}
-----
+|===
+====
 
 .Output Events
 [%collapsible]
-=====
+====
 [.stripes-even,cols="1,1,2"]
-|====
+|===
 h| DataViewControlsComponent
 h| InteractiveDataViewComponent
 h| Notes
 
 | sortChange, sortDirectionChange
 | sorted
-| Emits `{ sortColumn, sortDirection }` object.
+| Emits `{ sortColumn, sortDirection }`
 
 | filterChange
 | filtered
-| Emits array of filter objects.
+| Emits Filter[]
 
 | dataViewChange
 | dataViewLayoutChange
-| Emits `'list'`, `'grid'`, or `'table'`.
+| Emits `'list'`, `'grid'`, or `'table'`
 
 | columnsChange
 | displayedColumnKeysChange
-| Emits string[] (array of column ids).
-|====
-=====
+| Emits string[] which contains the ids of the displayed columns
+|===
+====
 
-.Event Payloads
+== Additional Notes
+
+=== Template Transformation
+
 [%collapsible]
-=====
-[.stripes-even,cols="1,2"]
-|====
-h| Event
-h| Payload
+====
 
-| sorted
-| { sortColumn: string, sortDirection: DataSortDirection }
-
-| filtered
-| Array of filter objects
-
-| dataViewLayoutChange
-| 'list' | 'grid' | 'table'
-
-| displayedColumnKeysChange
-| string[] (array of column ids)
-|====
-=====
-
-.Template Transformation
-[%collapsible]
-=====
 [.stripes-even,cols="1,1,2"]
-|====
+|===
 h| p-dataView
 h| InteractiveDataViewComponent
 h| Notes
@@ -277,17 +227,30 @@ h| Notes
 
 | `pTemplate="gridItem"`
 | `pTemplate="item"`
-| Use `let-item let-i="index"`
+| Use `let-item let-i="index"` same applies for listItem
+|===
 
-| `pTemplate="listItem"`
-| `pTemplate="item"`
-| Style by layout class if needed.
-|====
-=====
+.Before:
 
-===== Additional Points
+[source, html]
+<ng-template let-roles pTemplate="gridItem">
+  <section>
+    <article *ngFor="let role of roles; index as i">
+      <a (click)="onEditRole($event, role)" [id]="'ws_roles_grid_data_row_' + i"> ... </a>
+    </article>
+  </section>
+</ng-template>
 
-* **Pagination**: Built-in with automatic current page display. Configure via `[pageSize]` and `[pageSizes]`.
-* **Event Handling**: Use `$event.stopPropagation()` on nested action buttons to prevent unintended row selection.
-* **Filtering**: Client-side filtering via `[clientSideFiltering]="true"` with `[filter]` binding replaces p-dataView's `[filterBy]`.
-* **Translations**: Use i18n or translation keys instead of `translations` input.
+.After:
+
+[source, html]
+<ng-template pTemplate="item" let-item let-i="index">
+  <section>
+    <article class="col-...">
+      <a (click)="onEditRole($event, item)" [id]="'ws_roles_grid_data_row_' + i"> ... </a>
+    </article>
+  </section>
+</ng-template>
+====
+
+

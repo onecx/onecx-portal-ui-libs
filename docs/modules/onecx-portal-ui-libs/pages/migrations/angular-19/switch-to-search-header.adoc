@@ -1,125 +1,140 @@
-[#switch-to-search-header]
-==== Replace SearchCriteriaComponent with SearchHeaderComponent
+[#switch-to-ocx-dialog-inline-v2]
+= Replace SearchCriteriaComponent
 
-Replace *SearchCriteriaComponent* with *SearchHeaderComponent* for enhanced functionality and flexibility. SearchHeaderComponent supports advanced layouts, custom actions and flexible toolbar content.
+In OneCX v6, Replace *SearchCriteriaComponent* with *SearchHeaderComponent*. SearcghHeaderComponent can accept search templates and provides options to add toolbar content with alignment.
 
-**Code changes**
+== Code Changes
+* Remove SearchCriteriaComponent from `@onecx/portal-integration-angular`
+* Replace with SearchHeaderComponent from `@onecx/angular-accelerator`
+* Replace <ocx-search-criteria> tag with <ocx-search-header>
+* Migrate input properties and output events as per the mapping tables below.
 
-* Remove use of `SearchCriteriaComponent` from `@onecx/portal-integration-angular`.
-* Replace with `SearchHeaderComponent` from `@onecx/angular-accelerator`.
-* Migrate input and output properties as per the mapping tables below.
-
+== Example
 .Before
 [source,html]
 ----
 <ocx-search-criteria
-  [disableAdvancedToggle]="true"
-  [searchId]="'user-search'"
-  [criteriaTemplate]="true"
-  (search)="onSearch($event)"
-  (reset)="onReset($event)"
-  (advancedViewToggle)="onAdvancedToggle($event)"
->
-  <!-- search fields here -->
+[searchId]="searchId"
+[disableAdvancedToggle]="disableAdvancedToggle"
+[criteriaTemplate]="true"
+(search)="onSearch($event)"
+(reset)="onReset($event)"
+(advancedViewToggle)="onAdvancedViewToggle()">
+    <div toolbarItems>
+        <button pButton label="Extra"></button>
+    </div>
+    <div simpleCriteria>
+        <input pInputText placeholder="Search term" />
+    </div>
 </ocx-search-criteria>
 ----
 
-.After
-[source,html]
+[source, typescript]
 ----
-<ocx-search-header
-  [viewMode]="'simple'"
-  [pageName]="'user-search'"
-  [actions]="actions"
-  (searched)="onSearch($event)"
-  (resetted)="onReset($event)"
-  (viewModeChanged)="onAdvancedToggle($event)"
->
-  <!-- search fields here -->
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-search-page',
+  templateUrl: './search-page.component.html'
+})
+export class SearchPageComponent {
+  onSearch(mode: 'basic' | 'advanced') {
+    console.log('Search triggered:', mode);
+  }
+
+  onReset(mode: 'basic' | 'advanced') {
+    console.log('Reset triggered:', mode);
+  }
+
+  onViewToggle() {
+    console.log('Advanced view toggled');
+  }
+}
+----
+
+.After
+[source, html]
+----
+<ocx-search-header [header]="header" (resetted)="onReset($event)" (searched)="onSearch($event)" (viewModeChanged)="onViewToggle()">
+  <div additionalToolbarContent>
+    <button pButton label="Extra"></button>
+  </div>
+  <form>
+    <div class="flex flex-wrap gap-3">
+    <p-floatlabel variant="on">
+      <input
+        id="SearchTerm"
+        pInputText
+        type="text"
+        class="w-18rem"
+        [pTooltip]="'Search term'"
+        tooltipPosition="top"
+        tooltipEvent="hover"
+      />
+      <label for="name" style="white-space: nowrap">
+        Name
+      </label>
+    </p-floatlabel>
+    </div>
+  </form>
 </ocx-search-header>
 ----
 
-[NOTE]
-====
-- Use `viewMode`, `pageName`, and `actions` to map the main features of the old component.
-- Place your search fields and custom toolbar content directly inside `<ocx-search-header>`, using the appropriate slots if needed.
-- For additional input and output properties, refer to the tables below.
-- Adapt event payloads as needed, since they may differ from the old component.
-====
+[source, typescript]
+----
+export class SearchPageComponent {
+  onSearch(mode: 'basic' | 'advanced') {
+    console.log('Search triggered:', mode);
+  }
 
-**Input Properties**
-[cols="1,1,2", options="header"]
+  onReset(mode: 'basic' | 'advanced') {
+    console.log('Reset triggered:', mode);
+  }
+
+  onViewToggle() {
+    console.log('Advanced view toggled');
+  }
+}
+----
+
+== Properties Mapping
+
+.Input Properties
+[.stripes-even,cols="1,1,2"]
 |===
-| SearchCriteriaComponent
-| SearchHeaderComponent
-| Notes
-
-| disableAdvancedToggle
-| viewMode
-| If `disableAdvancedToggle` is true, set `[viewMode]="'simple'"` to only show simple search.
+h| SearchCriteriaComponent
+h| SearchHeaderComponent
+h| Notes
 
 | searchId
 | pageName
-| Use `pageName` for search config and slots.
+| Sets the unique identifier for the search context. Example: `app_object_search`
+
+| disableAdvancedToggle
+| -
+| Deprecated. Use `viewMode` input instead. Example: viewMode = !disableAdvancedToggle ? 'advanced' : 'basic'
 
 | criteriaTemplate
-| actions, toolbar slots
-| Migrate criteria template logic to actions or toolbar content.
-
-| [toolbarItems], [simpleCriteria], [advancedCriteria] (ng-content slots)
-| ng-content, additionalToolbarContent, additionalToolbarContentLeft
-| Place your search fields directly inside `<ocx-search-header>`. Use toolbar slots for custom content.
-
 | -
-| header
-| New: Set a custom header/title.
-
-| -
-| subheader
-| New: Set a custom subheader.
-
-| -
-| manualBreadcrumbs
-| New: Provide custom breadcrumbs.
-
-| -
-| searchButtonDisabled
-| New: Disable the search button.
-
-| -
-| resetButtonDisabled
-| New: Disable the reset button.
-
-| -
-| actions
-| New: Provide custom actions for the header.
+| Removed criteriaTemplate and create and pass search template inside <ocx-search-header> tag
 |===
 
-**Output Events**
-
-[cols="1,1,2", options="header"]
+.Output Events
+[.stripes-even,cols="1,1,2"]
 |===
-| SearchCriteriaComponent
-| SearchHeaderComponent
-| Notes
+h| SearchCriteriaComponent
+h| SearchHeaderComponent
+h| Notes
 
 | search
 | searched
-| Emitted when the search button is pressed or Enter is hit. Adapt payload as needed.
+| Emits on search action. Provides nothing
 
 | reset
 | resetted
-| Emitted when the reset button is pressed. Adapt payload as needed.
+| Emits on reset action. Provides nothing
 
 | advancedViewToggle
 | viewModeChanged
-| Emitted when the view mode is toggled.
-
-| -
-| selectedSearchConfigChanged
-| New: Emitted when the selected search config changes.
-
-| -
-| componentStateChanged
-| New: Emitted when the component state changes.
+| Emits on view mode change action. Provides the new view mode Example: 'basic' | 'advanced'
 |===
