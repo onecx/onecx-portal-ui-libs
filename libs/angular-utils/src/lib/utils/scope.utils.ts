@@ -1,6 +1,9 @@
 import { AppStateService } from '@onecx/angular-integration-interface'
 import { ReplaySubject, firstValueFrom, map } from 'rxjs'
 import { RemoteComponentConfig } from '../model/remote-component-config.model'
+import { createLogger } from './logger.utils'
+
+const logger = createLogger('scope.utils')
 
 export const shellScopeId = 'shell-ui'
 
@@ -219,12 +222,12 @@ export function scopeIdentifierToVariablePrefix(scopeId: string) {
 
 export function scopeIdFromProductNameAndAppId(productName: string, appId: string) {
   if (productName.length === 0) {
-    console.error(
+    logger.error(
       `Error while creating scope id for: productName = ${productName}, appId = ${appId}. Name of the product is empty. Please validate the microfrontend and remote components configuration.`
     )
   }
   if (appId.length === 0) {
-    console.error(
+    logger.error(
       `Error while creating scope id for: productName = ${productName}, appId = ${appId}. Id of the application is empty. Please validate the microfrontend and remote components configuration.`
     )
   }

@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs'
 import { CommonModule } from '@angular/common'
 import { TranslateModule } from '@ngx-translate/core'
 import { PermissionService } from '../../services/permission.service'
+import { createLogger } from '../../utils/logger.utils'
 
 @Component({
   selector: 'ocx-portal-page',
@@ -13,6 +14,7 @@ import { PermissionService } from '../../services/permission.service'
   imports: [CommonModule, TranslateModule],
 })
 export class PortalPageComponent implements OnInit {
+  private readonly logger = createLogger('PortalPageComponent')
   private appState = inject(AppStateService)
   private permissionService = inject(PermissionService)
   private trueObservable = of(true)
@@ -28,7 +30,7 @@ export class PortalPageComponent implements OnInit {
 
   ngOnInit(): void {
     if (!this.helpArticleId) {
-      console.warn(
+      this.logger.warn(
         `ocx-portal-page on url ${location.pathname} does not have 'helpArticleId' set. Set to some unique string in order to support help management feature.`
       )
     }

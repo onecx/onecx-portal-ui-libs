@@ -25,6 +25,7 @@ import { RemoteComponentConfig, scopeIdFromProductNameAndAppId } from '@onecx/an
 import { HttpClient } from '@angular/common/http'
 import { debounceTime, filter, take } from 'rxjs/operators'
 import { updateStylesForRcCreation, removeAllRcUsagesFromStyles } from '@onecx/angular-utils/style'
+import { createLogger } from '../../utils/logger.utils'
 
 interface AssignedComponent {
   refOrElement: ComponentRef<any> | HTMLElement
@@ -43,6 +44,7 @@ export class SlotComponent implements OnInit, OnDestroy {
   private http = inject(HttpClient)
   private elementRef = inject(ElementRef)
   private readonly viewContainerRef = inject(ViewContainerRef)
+  private readonly logger = createLogger('SlotComponent')
 
   @Input()
   name!: string
@@ -173,7 +175,7 @@ export class SlotComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (!this.slotService) {
-      console.error(`SLOT_SERVICE token was not provided. ${this.name} slot will not be filled with data.`)
+      this.logger.error(`SLOT_SERVICE token was not provided. ${this.name} slot will not be filled with data.`)
       return
     }
     this.components$ = this.slotService.getComponentsForSlot(this.name)
@@ -311,7 +313,7 @@ export class SlotComponent implements OnInit, OnDestroy {
     if (span) {
       span.remove()
     } else {
-      console.error(
+      this.logger.error(
         'Component span was not found for slot component creation. The order of the components may be incorrect.'
       )
     }
@@ -343,7 +345,7 @@ export class SlotComponent implements OnInit, OnDestroy {
       this.viewContainerRef.element.nativeElement.insertBefore(element, span)
       span.remove()
     } else {
-      console.error(
+      this.logger.error(
         'Component span was not found for slot component creation. The order of the components may be incorrect.'
       )
       this.viewContainerRef.element.nativeElement.appendChild(element)

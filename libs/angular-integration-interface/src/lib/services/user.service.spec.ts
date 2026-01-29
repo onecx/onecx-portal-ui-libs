@@ -9,7 +9,7 @@
 import { TestBed } from '@angular/core/testing'
 import { UserService } from './user.service'
 import { UserProfile } from '@onecx/integration-interface'
-import { FakeTopic } from '@onecx/angular-integration-interface/mocks'
+import { FakeTopic } from '@onecx/accelerator'
 import { DEFAULT_LANG } from '../api/constants'
 
 jest.mock('@onecx/accelerator', () => {

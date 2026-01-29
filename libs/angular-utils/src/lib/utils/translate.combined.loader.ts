@@ -1,6 +1,10 @@
 import { TranslateLoader, TranslationObject } from '@ngx-translate/core'
 import { Observable, catchError, forkJoin, map, of } from 'rxjs'
 import { mergeDeep } from './deep-merge.utils'
+
+import { createLogger } from './logger.utils'
+
+const logger = createLogger('TranslateCombinedLoader')
 export class TranslateCombinedLoader implements TranslateLoader {
   private readonly _loaders: TranslateLoader[]
   constructor(...loaders: TranslateLoader[]) {
@@ -11,7 +15,7 @@ export class TranslateCombinedLoader implements TranslateLoader {
       this._loaders.map((l) =>
         l.getTranslation(lang).pipe(
           catchError((err) => {
-            console.error('Failed to load translation file', l, err)
+            logger.error('Failed to load translation file', l, err)
             return of({})
           })
         )

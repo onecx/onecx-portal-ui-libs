@@ -7,6 +7,12 @@ import { GuardsGatherer } from '../services/guards-gatherer.service'
 import { GUARD_MODE } from '../model/guard-navigation.model'
 import { Injectable } from '@angular/core'
 
+jest.mock('./logger.utils', () => ({
+  createLogger: jest.fn(),
+}))
+
+import { createLogger } from './logger.utils'
+
 @Injectable()
 class MockGuard {
   canActivate(_route: any, _state: any): Promise<boolean> {
@@ -23,8 +29,16 @@ describe('ActivateGuardsWrapper', () => {
   let mockRouter: jest.Mocked<Router>
   let mockGuardsGatherer: GuardsGatherer
   let mockNavigationStateController: jest.Mocked<Partial<GuardsNavigationStateController>>
+  const loggerWarn = jest.fn()
 
   beforeEach(() => {
+    jest.mocked(createLogger).mockReturnValue({
+      debug: jest.fn(),
+      info: jest.fn(),
+      warn: loggerWarn,
+      error: jest.fn(),
+    } as any)
+
     mockRouter = {
       getCurrentNavigation: jest.fn(),
     } as unknown as jest.Mocked<Router>
@@ -264,8 +278,6 @@ describe('ActivateGuardsWrapper', () => {
   })
 
   it('should handle classes not implementing CanActivate', async () => {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
     const guardsNavigationStateController = TestBed.inject(GuardsNavigationStateController)
     guardsNavigationStateController.getMode = jest.fn().mockReturnValue(GUARD_MODE.GUARD_CHECK)
 
@@ -278,12 +290,10 @@ describe('ActivateGuardsWrapper', () => {
     const result = await wrapper.canActivate(route, state, [GenericClass as any])
 
     expect(result).toBe(true)
-    expect(consoleSpy).toHaveBeenCalledWith('Guard does not implement canActivate:', expect.any(Function))
+    expect(loggerWarn).toHaveBeenCalledWith('Guard does not implement canActivate:', expect.any(Function))
   })
 
   it('should handle no check promise in navigation state', async () => {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
     const guardsNavigationStateController = TestBed.inject(GuardsNavigationStateController)
     guardsNavigationStateController.getMode = jest.fn().mockReturnValue(GUARD_MODE.NAVIGATION_REQUESTED)
     guardsNavigationStateController.getGuardCheckPromise = jest.fn().mockReturnValue(null)
@@ -297,6 +307,6 @@ describe('ActivateGuardsWrapper', () => {
     const result = await wrapper.canActivate(route, state, [])
 
     expect(result).toBe(true)
-    expect(consoleSpy).toHaveBeenCalledWith('No guard check promise found in guards navigation state, returning true.')
+    expect(loggerWarn).toHaveBeenCalledWith('No guard check promise found in guards navigation state, returning true.')
   })
 })

@@ -14,11 +14,27 @@ import {
   wrapGuards,
 } from '@onecx/angular-utils/guards'
 import { AppStateService, ShellCapabilityService } from '@onecx/angular-integration-interface'
-import { FakeTopic, provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
-import { WebcomponentConnector } from './webcomponent-connector.utils'
+import { FakeTopic } from '@onecx/accelerator'
+import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { ReplaySubject, Subject } from 'rxjs'
 import { Location } from '@angular/common'
 import { Route } from '@onecx/integration-interface'
+
+let loggerWarnSpy: jest.Mock
+
+jest.mock('./logger.utils', () => {
+  loggerWarnSpy = jest.fn()
+  return {
+    createLogger: () => ({
+      debug: jest.fn(),
+      info: jest.fn(),
+      warn: loggerWarnSpy,
+      error: jest.fn(),
+    }),
+  }
+})
+
+import { WebcomponentConnector } from './webcomponent-connector.utils'
 
 const deploymentPathMock = '/mock-path/'
 const applicationPathMock = 'admin/ui'
@@ -52,8 +68,6 @@ describe('WebcomponentConnector', () => {
   let mockAppStateService: AppStateService
   let eventsTopic: FakeTopic<any>
   let mockGuardsGatherer: GuardsGatherer
-  let consoleWarnSpy: jest.SpyInstance
-
   beforeEach(() => {
     mockGuardsNavigationStateController = {
       getMode: jest.fn(),
@@ -85,8 +99,6 @@ describe('WebcomponentConnector', () => {
     connector['capabilityService'] = mockCapabilityService
     mockGuardsGatherer = TestBed.inject(GuardsGatherer)
     mockAppStateService = TestBed.inject(AppStateService)
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
 
     changeLocation(locationPathMock)
   })
@@ -121,7 +133,7 @@ describe('WebcomponentConnector', () => {
 
     connector.connect()
 
-    expect(consoleWarnSpy).toHaveBeenCalledWith('No router to connect found')
+    expect(loggerWarnSpy).toHaveBeenCalledWith('No router to connect found')
   })
 
   it('should warn if no AppStateService is found', () => {
@@ -130,7 +142,7 @@ describe('WebcomponentConnector', () => {
 
     connector.connect()
 
-    expect(consoleWarnSpy).toHaveBeenCalledWith('No appStateService found')
+    expect(loggerWarnSpy).toHaveBeenCalledWith('No appStateService found')
   })
 
   it('should perform initial navigation on connect', () => {

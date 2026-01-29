@@ -1,6 +1,9 @@
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http'
 import { catchError, firstValueFrom, mergeMap, of, throwError } from 'rxjs'
 import { Location } from '@angular/common'
+import { createLogger } from './logger.utils'
+
+const logger = createLogger('fetch-app-css')
 
 /**
  * Fetches the css for an application.
@@ -30,7 +33,7 @@ export async function fetchAppCss(http: HttpClient, appUrl: string): Promise<str
           return of(response.body)
         }),
         catchError((error: Error) => {
-          console.error(
+          logger.error(
             `Error while loading app css for ${appUrl}: ${error.message}.  Please, make sure that the application exposes the styles.css file in your application.`
           )
           return of(undefined)

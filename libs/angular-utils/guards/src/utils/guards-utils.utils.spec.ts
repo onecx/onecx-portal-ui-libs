@@ -1,63 +1,58 @@
-import {
+import { RedirectCommand, UrlTree, ActivatedRouteSnapshot } from '@angular/router'
+import { of } from 'rxjs'
+
+jest.mock('./logger.utils', () => ({
+  createLogger: jest.fn(),
+}))
+
+import { createLogger } from './logger.utils'
+
+const guardsUtils = require('./guards-utils.utils') as typeof import('./guards-utils.utils')
+
+const {
   logGuardsDebug,
   executeRouterSyncGuard,
   combineToGuardResult,
   combineToBoolean,
   resolveToPromise,
   getUrlFromSnapshot,
-} from './guards-utils.utils'
-import { RedirectCommand, UrlTree, ActivatedRouteSnapshot } from '@angular/router'
-import { of } from 'rxjs'
+} = guardsUtils
 
 describe('logGuardsDebug', () => {
-  const originalConsoleLog = console.log
-  const originalDebugState = window['@onecx/angular-utils']?.guards?.debug
+  const loggerDebug = jest.fn()
 
   beforeEach(() => {
-    console.log = jest.fn()
-    window['@onecx/angular-utils'] = window['@onecx/angular-utils'] || {}
-    window['@onecx/angular-utils'].guards = window['@onecx/angular-utils'].guards || {}
+    jest.mocked(createLogger).mockReturnValue({
+      debug: loggerDebug,
+      info: jest.fn(),
+      warn: jest.fn(),
+      error: jest.fn(),
+    } as any)
   })
 
-  afterEach(() => {
-    console.log = originalConsoleLog
-    window['@onecx/angular-utils']!.guards!.debug = originalDebugState
-  })
-
-  it('should log debug information when debug mode is enabled', () => {
-    window['@onecx/angular-utils']!.guards!.debug = true
-
+  it('should log debug information', () => {
     logGuardsDebug('Test message', { key: 'value' })
 
-    expect(console.log).toHaveBeenCalledWith('Guards:', 'Test message', { key: 'value' })
-  })
-
-  it('should not log debug information when debug mode is disabled', () => {
-    window['@onecx/angular-utils']!.guards!.debug = false
-
-    logGuardsDebug('Test message', { key: 'value' })
-
-    expect(console.log).not.toHaveBeenCalled()
+    expect(loggerDebug).toHaveBeenCalledWith('Guards:', 'Test message', { key: 'value' })
   })
 })
 
 describe('executeRouterSyncGuard', () => {
-  const originalConsoleLog = console.log
+  const loggerDebug = jest.fn()
 
   beforeEach(() => {
-    console.log = jest.fn()
-    window['@onecx/angular-utils']!.guards!.debug = true
-  })
-
-  afterEach(() => {
-    console.log = originalConsoleLog
-    window['@onecx/angular-utils']!.guards!.debug = false
+    jest.mocked(createLogger).mockReturnValue({
+      debug: loggerDebug,
+      info: jest.fn(),
+      warn: jest.fn(),
+      error: jest.fn(),
+    } as any)
   })
 
   it('should log a message and return true', () => {
     const result = executeRouterSyncGuard()
 
-    expect(console.log).toHaveBeenCalledWith('Guards:', 'Was RouterSync, returning true.')
+    expect(loggerDebug).toHaveBeenCalledWith('Guards:', 'Was RouterSync, returning true.')
     expect(result).toBe(true)
   })
 })

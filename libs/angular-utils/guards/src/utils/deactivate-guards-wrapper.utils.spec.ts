@@ -7,6 +7,12 @@ import { Injectable } from '@angular/core'
 import { GuardsGatherer } from '../services/guards-gatherer.service'
 import { provideGuardsGathererMock } from '@onecx/angular-utils/mocks'
 
+jest.mock('./logger.utils', () => ({
+  createLogger: jest.fn(),
+}))
+
+import { createLogger } from './logger.utils'
+
 @Injectable()
 class MockGuard {
   canDeactivate(_component: any, _currentRoute: any, _currentState: any, _nextState: any) {
@@ -23,8 +29,16 @@ describe('DeactivateGuardsWrapper', () => {
   let mockRouter: jest.Mocked<Router>
   let mockGuardsGatherer: GuardsGatherer
   let mockNavigationStateController: jest.Mocked<Partial<GuardsNavigationStateController>>
+  const loggerWarn = jest.fn()
 
   beforeEach(() => {
+    jest.mocked(createLogger).mockReturnValue({
+      debug: jest.fn(),
+      info: jest.fn(),
+      warn: loggerWarn,
+      error: jest.fn(),
+    } as any)
+
     mockRouter = {
       getCurrentNavigation: jest.fn(),
     } as unknown as jest.Mocked<Router>
@@ -289,8 +303,6 @@ describe('DeactivateGuardsWrapper', () => {
   })
 
   it('should handle classes not implementing canDeactivate', async () => {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
     const guardsNavigationStateController = TestBed.inject(GuardsNavigationStateController)
     guardsNavigationStateController.getMode = jest.fn().mockReturnValue(GUARD_MODE.GUARD_CHECK)
 
@@ -306,12 +318,10 @@ describe('DeactivateGuardsWrapper', () => {
     const result = await wrapper.canDeactivate(component, currentRoute, currentState, nextState, [GenericClass as any])
 
     expect(result).toBe(true)
-    expect(consoleSpy).toHaveBeenCalledWith('Guard does not implement canDeactivate:', expect.any(Function))
+    expect(loggerWarn).toHaveBeenCalledWith('Guard does not implement canDeactivate:', expect.any(Function))
   })
 
   it('should handle no check promise in navigation state', async () => {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
     const guardsNavigationStateController = TestBed.inject(GuardsNavigationStateController)
     guardsNavigationStateController.getMode = jest.fn().mockReturnValue(GUARD_MODE.NAVIGATION_REQUESTED)
     guardsNavigationStateController.getGuardCheckPromise = jest.fn().mockReturnValue(null)
@@ -328,6 +338,6 @@ describe('DeactivateGuardsWrapper', () => {
     const result = await wrapper.canDeactivate(component, currentRoute, currentState, nextState, [])
 
     expect(result).toBe(true)
-    expect(consoleSpy).toHaveBeenCalledWith('No guard check promise found in guards navigation state, returning true.')
+    expect(loggerWarn).toHaveBeenCalledWith('No guard check promise found in guards navigation state, returning true.')
   })
 })

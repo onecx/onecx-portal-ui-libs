@@ -1,4 +1,7 @@
 import { Route, UrlMatcher, UrlSegment, UrlSegmentGroup } from '@angular/router'
+import { createLogger } from './logger.utils'
+
+const logger = createLogger('webcomponent-router')
 
 export function startsWith(prefix: string): UrlMatcher {
   return (url: UrlSegment[], _urlSegmentGroup: UrlSegmentGroup, route: Route) => {
@@ -19,7 +22,7 @@ export function startsWith(prefix: string): UrlMatcher {
 export function getBaseHrefOfRoute(route: Route): string {
   const mfeBaseHref: string = route?.data?.['mfeInfo']?.baseHref
   if (!mfeBaseHref) {
-    console.warn(
+    logger.warn(
       'mfeInfo was not provided for route. initializeRouter function is required to be registered as app initializer.'
     )
   }

@@ -1,6 +1,7 @@
 import { ActivatedRouteSnapshot, GuardResult, MaybeAsync, RedirectCommand, UrlTree } from '@angular/router'
 import { isObservable, lastValueFrom } from 'rxjs'
 import '../declarations'
+import { createLogger } from './logger.utils'
 
 window['@onecx/angular-utils'] = window['@onecx/angular-utils'] || {}
 
@@ -11,9 +12,7 @@ window['@onecx/angular-utils'] = window['@onecx/angular-utils'] || {}
  * @param args - the arguments to log
  */
 export function logGuardsDebug(...args: any[]): void {
-  if (window['@onecx/angular-utils'].guards?.debug) {
-    console.log(`Guards:`, ...args)
-  }
+  createLogger('guards-utils').debug('Guards:', ...args)
 }
 
 /**

@@ -1,9 +1,8 @@
+import { FakeTopic, Topic } from '@onecx/accelerator'
 import {
-  FakeTopic,
   provideAppStateServiceMock,
   provideShellCapabilityServiceMock,
   ShellCapabilityServiceMock,
-  Topic,
 } from '@onecx/angular-integration-interface/mocks'
 import { ParametersService } from './parameters.service'
 import { Capability } from './shell-capability.service'

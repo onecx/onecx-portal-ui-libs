@@ -8,12 +8,14 @@
 
 import { TopicPublisher } from '../topic/topic-publisher'
 import { Gatherer } from './gatherer'
+import * as loggerUtils from './logger.utils'
 
 import { BroadcastChannelMock } from '../topic/mocks/broadcast-channel.mock'
 
 Reflect.set(globalThis, 'BroadcastChannel', BroadcastChannelMock)
 
 describe('Gatherer', () => {
+  const originalLocalStorageDebug = localStorage.getItem('debug')
   const origAddEventListener = window.addEventListener
   const origPostMessage = window.postMessage
 
@@ -34,12 +36,27 @@ describe('Gatherer', () => {
   afterAll(() => {
     window.addEventListener = origAddEventListener
     window.postMessage = origPostMessage
+    if (originalLocalStorageDebug === null) {
+      localStorage.removeItem('debug')
+    } else {
+      localStorage.setItem('debug', originalLocalStorageDebug)
+    }
   })
 
   let gatherer1: Gatherer<string, string>
   let gatherer2: Gatherer<string, string>
 
+  const loggerDebugFn = jest.fn()
+  const loggerWarnFn = jest.fn()
+
   beforeEach(() => {
+    jest.spyOn(loggerUtils, 'createLogger').mockReturnValue({
+      debug: loggerDebugFn as any,
+      info: jest.fn() as any,
+      warn: loggerWarnFn as any,
+      error: jest.fn() as any,
+    })
+
     window['@onecx/accelerator'] ??= {}
     window['@onecx/accelerator'].topic ??= {}
     window['@onecx/accelerator'].topic.initDate = Date.now() - 1000000
@@ -53,6 +70,9 @@ describe('Gatherer', () => {
   afterEach(() => {
     gatherer1.destroy()
     gatherer2.destroy()
+    jest.restoreAllMocks()
+    loggerDebugFn.mockClear()
+    loggerWarnFn.mockClear()
   })
 
   it('should gather responses from all instances', async () => {
@@ -78,28 +98,20 @@ describe('Gatherer', () => {
   })
 
   it('should log received and answered requests if debug is enabled', async () => {
-    ;(window as any)['@onecx/accelerator'].gatherer.debug = ['test']
-    const consoleLogSpy = jest.spyOn(console, 'log')
-
     await gatherer1.gather('request4')
 
-    expect(consoleLogSpy).toHaveBeenCalledWith('Gatherer test: 1 received request request4')
-    expect(consoleLogSpy).toHaveBeenCalledWith(
+    expect(loggerDebugFn).toHaveBeenCalledWith('Gatherer test: 1 received request request4')
+    expect(loggerDebugFn).toHaveBeenCalledWith(
       'Gatherer test: 1 answered request request4 with response',
       'responseGatherer2: request4'
     )
-
-    consoleLogSpy.mockRestore()
   })
 
   it('should warn if array was not initialized', () => {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
-
     gatherer2['isOwnerOfRequest'] = () => false
     new TopicPublisher('test', 1).publish({ id: 999, request: 'test' })
 
-    expect(consoleWarnSpy).toHaveBeenCalledWith(
+    expect(loggerWarnFn).toHaveBeenCalledWith(
       'Expected an array of promises to gather for id ',
       999,
       ' but the id was not present'

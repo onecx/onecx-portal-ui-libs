@@ -5,6 +5,7 @@ export function createReportsConfig(projectName: string) {
     coverageDirectory: `${reportsRoot}/coverage`,
     collectCoverageFrom: [
       '<rootDir>/src/lib/**/*.{ts,js}',
+      '!<rootDir>/src/lib/**/logger.utils.ts',
       '!<rootDir>/src/lib/**/*.stories.ts',
       '!<rootDir>/src/lib/**/storybook-config.ts',
       '!<rootDir>/src/lib/**/*.module.ts',
@@ -18,6 +19,7 @@ export function createReportsConfig(projectName: string) {
     coveragePathIgnorePatterns: [
       '/node_modules/',
       '\\.harness\\.ts$',
+      'logger\\.utils\\.ts$',
       '/testing/',
       '/src/testing/',
     ],

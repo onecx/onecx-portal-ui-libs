@@ -19,6 +19,7 @@ import { DialogContentComponent } from '../components/dialog/dialog-content/dial
 import { DialogFooterComponent } from '../components/dialog/dialog-footer/dialog-footer.component'
 import { DialogMessageContentComponent } from '../components/dialog/dialog-message-content/dialog-message-content.component'
 import { TranslationKey, TranslationKeyWithParameters } from '../model/translation.model'
+import { createLogger } from '../utils/logger.utils'
 
 /**
  * Object containing message of type {@link TranslationKey} and icon to be displayed along the message.
@@ -247,6 +248,7 @@ export class PortalDialogService implements OnDestroy {
   private dialogService = inject(DialogService)
   private translateService = inject(TranslateService)
   private router = inject(Router)
+  private readonly logger = createLogger('PortalDialogService')
   private _eventsTopic$: EventsTopic | undefined
   get eventsTopic() {
     this._eventsTopic$ ??= new EventsTopic()
@@ -484,14 +486,14 @@ export class PortalDialogService implements OnDestroy {
           },
         })
         if (!dialogRef) {
-          console.error('Dialog could not be opened, dialog creation failed.')
+          this.logger.error('Dialog could not be opened, dialog creation failed.')
           return of(null)
         }
         const dialogComponent = this.dialogService.getInstance(dialogRef)
         if (dialogComponent) {
           this.setScopeIdentifier(dialogComponent)
         } else {
-          console.warn(
+          this.logger.warn(
             'Dialog component instance could not be found after creation. The displayed dialog may not function as expected.'
           )
         }
@@ -499,13 +501,12 @@ export class PortalDialogService implements OnDestroy {
       })
     )
   }
-
   private cleanupAndCloseDialog() {
     if (this.dialogService.dialogComponentRefMap.size > 0) {
       this.dialogService.dialogComponentRefMap.forEach((_, dialogRef) => {
         const dialogComponent = this.dialogService.getInstance(dialogRef)
         if (!dialogComponent) {
-          console.warn(
+          this.logger.warn(
             'Dialog component instance could not be found during cleanup. The displayed dialog may not function as expected.'
           )
           return

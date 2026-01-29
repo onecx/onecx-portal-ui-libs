@@ -16,6 +16,9 @@ import {
 } from '@onecx/angular-utils/guards'
 import { ActivatedRouteSnapshot, GuardsCheckEnd, GuardsCheckStart, Router, RoutesRecognized } from '@angular/router'
 import { getLocation } from '@onecx/accelerator'
+import { createLogger } from './logger.utils'
+
+const logger = createLogger('WebcomponentConnector')
 
 /**
  * WebcomponentConnector is a utility class that connects Angular web components.
@@ -67,13 +70,13 @@ export class WebcomponentConnector {
     const appStateService = this.injector.get(AppStateService, null)
     if (!router) {
       if (this.entrypointType === 'microfrontend') {
-        console.warn('No router to connect found')
+        logger.warn('No router to connect found')
       }
       return []
     }
 
     if (!appStateService) {
-      console.warn('No appStateService found')
+      logger.warn('No appStateService found')
       return []
     }
 
@@ -185,7 +188,7 @@ export class WebcomponentConnector {
       switch (mode) {
         case GUARD_MODE.INITIAL_ROUTER_SYNC:
           if (!event.shouldActivate) {
-            console.warn(
+            logger.warn(
               'Initial router sync failed, reverting navigation. This is expected when the app was loaded and the initial navigation was made to a guarded route.'
             )
             this.eventsTopic.publish({

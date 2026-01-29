@@ -18,6 +18,7 @@ import {
   logGuardsDebug,
   resolveToPromise,
 } from './guards-utils.utils'
+import { createLogger } from './logger.utils'
 
 /**
  * Wrapper for canDeactivate guards that handles the navigation state and executes guards accordingly.
@@ -38,14 +39,24 @@ export class DeactivateGuardsWrapper {
     nextState: RouterStateSnapshot,
     guards: Array<CanDeactivateFn<any> | Type<CanDeactivate<any>>>
   ): MaybeAsync<GuardResult> {
+    const logger = createLogger('DeactivateGuardsWrapper')
     const guardsNavigationState = (this.router.getCurrentNavigation()?.extras.state ?? {}) as GuardsNavigationState
     const futureUrl = nextState.url
 
     switch (this.guardsNavigationStateController.getMode(guardsNavigationState)) {
       case GUARD_MODE.INITIAL_ROUTER_SYNC:
-        return this.executeDeactivateGuards(component, currentRoute, currentState, nextState, guards, combineToBoolean)
+        return this.executeDeactivateGuards(
+          logger,
+          component,
+          currentRoute,
+          currentState,
+          nextState,
+          guards,
+          combineToBoolean
+        )
       case GUARD_MODE.ROUTER_SYNC:
         return this.executeDeactivateGuards(
+          logger,
           component,
           currentRoute,
           currentState,
@@ -55,6 +66,7 @@ export class DeactivateGuardsWrapper {
         ).then(() => executeRouterSyncGuard())
       case GUARD_MODE.GUARD_CHECK:
         return this.executeDeactivateGuards(
+          logger,
           component,
           currentRoute,
           currentState,
@@ -73,17 +85,18 @@ export class DeactivateGuardsWrapper {
         //Wait until we received info from others
         let checkStartPromise = this.guardsNavigationStateController.getGuardCheckPromise(guardsNavigationState)
         if (!checkStartPromise) {
-          console.warn('No guard check promise found in guards navigation state, returning true.')
+          logger.warn('No guard check promise found in guards navigation state, returning true.')
           checkStartPromise = Promise.resolve(true)
         }
         return checkStartPromise.then((result) => {
           if (result === false) {
-            console.warn(
+            logger.warn(
               `Cannot route to ${futureUrl} because ${currentState.url} deactivation is guarded or ${futureUrl} activation its guarded.`
             )
             return false
           }
           return this.executeDeactivateGuards(
+            logger,
             component,
             currentRoute,
             currentState,
@@ -97,6 +110,7 @@ export class DeactivateGuardsWrapper {
   }
 
   private executeDeactivateGuards<T extends boolean | GuardResult>(
+    logger: ReturnType<typeof createLogger>,
     component: any,
     currentRoute: ActivatedRouteSnapshot,
     currentState: RouterStateSnapshot,
@@ -116,7 +130,7 @@ export class DeactivateGuardsWrapper {
         try {
           return fn(component, currentRoute, currentState, nextState)
         } catch {
-          console.warn('Guard does not implement canDeactivate:', fn)
+          logger.warn('Guard does not implement canDeactivate:', fn)
           return Promise.resolve(true) // Default to true if guard does not implement canDeactivate
         }
       })

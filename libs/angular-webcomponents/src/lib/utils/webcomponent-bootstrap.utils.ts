@@ -17,6 +17,9 @@ import {
 import { Router } from '@angular/router'
 import { dataNoPortalLayoutStylesKey } from '@onecx/angular-utils'
 import { WebcomponentConnector } from './webcomponent-connector.utils'
+import { createLogger } from './logger.utils'
+
+const logger = createLogger('webcomponent-bootstrap')
 import { DynamicAppId } from './dynamic-app-id.utils'
 
 /**
@@ -104,7 +107,7 @@ function findAndReplaceAppId(providers: Array<any>): any {
       if (typeof provider.useValue === 'string') {
         id = provider.useValue
       } else {
-        console.warn(
+        logger.warn(
           "APP_ID provider in the application was not done via useValue. Will fallback to 'ng' as the APP_ID"
         )
       }
@@ -172,7 +175,7 @@ export function getWindowState(): any {
 function setShellZone(injector: Injector) {
   const ngZone = injector.get(NgZone, null)
   if (!ngZone) {
-    console.warn('No NgZone to share found')
+    logger.warn('No NgZone to share found')
     return
   }
   setNgZone(ngZone)

@@ -2,6 +2,9 @@ import { Topic } from '@onecx/accelerator'
 import { combineLatest, distinctUntilChanged, map } from 'rxjs'
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject'
 import { PageInfo } from './page-info.model'
+import { createLogger } from '../../../utils/logger.utils'
+
+const logger = createLogger('CurrentPageTopic')
 
 /**
  * This topic will only fire when pageInfo.path matches document.location.pathname,
@@ -24,7 +27,7 @@ export class CurrentPageTopic extends Topic<PageInfo | undefined> {
   private watchForPathChanges() {
     const body = document.querySelector('body')
     if (body === null) {
-      console.error('could not listen to location changes')
+      logger.error('could not listen to location changes')
       throw new Error('could not listen to location changes')
     }
     const observer = new MutationObserver(() => {
