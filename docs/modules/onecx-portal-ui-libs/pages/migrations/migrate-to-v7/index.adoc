@@ -1,0 +1,13 @@
+= Migrate to OneCX version 7
+
+:idprefix:
+:idseparator: -
+
+:theming_url: xref:documentation:docs-guides-ui:angular/theming.adoc
+
+include::checklist.adoc[]
+
+include::remove-shell-core.adoc[]
+
+include::remove-ng-rx-accelerator.adoc[]
+include::update-primeng-package.adoc[]

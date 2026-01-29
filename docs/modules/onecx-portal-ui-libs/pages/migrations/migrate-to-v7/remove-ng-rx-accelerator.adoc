@@ -1,0 +1,27 @@
+[#removed-ngrx-accelerator]
+== Adjust ngrx-accelerator library utilities
+
+Several store connector utilities have been moved from the `ngrx-accelerator` library to `ngrx-integration-interface`. The following utilities were moved:
+
+* `onecx-actions`
+* `onecx-reducer`
+* `onecx-selectors`
+* `onecx-state`
+* `navigated-event-store-connector-service`
+* `permissions-store-connector-service`
+
+Update the imports for the utilities listed above to reference `ngrx‑integration‑interface` instead of `ngrx‑accelerator`.
+
+**Example**:
+
+.Before
+[source, typescript]
+----
+import { OneCxActions } from 'ngrx-accelerator';
+----
+
+.After
+[source, typescript]
+----
+import { OneCxActions } from 'ngrx-integration-interface';
+----

@@ -1,0 +1,21 @@
+[#update-primeNG]
+== Update package imports for PrimeNG theming
+
+In version 7, the PrimeNG theming utilities have been moved to a separate subpackage:  
+`@onecx/angular-utils/theme/primeng` within the `@onecx/angular-utils` library.
+
+Please update all imports related to PrimeNG theming utilities to use the new package.
+
+**Update import path**
+
+.Before
+[source,typescript]
+----
+import { provideThemeConfig } from '@onecx/angular-utils'
+----
+
+.After
+[source,typescript]
+----
+import { provideThemeConfig } from '@onecx/angular-utils/theme/primeng'
+----

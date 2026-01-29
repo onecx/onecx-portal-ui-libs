@@ -1,0 +1,11 @@
+[#migration-checklist]
+== Migration checklist
+[%interactive]
+** [ ] <<removed-shell-core, Remove @onecx/shell-core library>>
+** [ ] <<removed-ngrx-accelerator, Adjust ngrx-accelerator library utilities>>
+** [ ] <<update-primeNG, Update package imports for PrimeNG theming>>
+** [ ] <<update-style, Update package imports for style utilities>>
+** [ ] <<updates-ngx-translate, Updates in ngx-translate>>
+** [ ] <<page-header-updates, Page header component properties changes>>
+** [ ] <<portal-dialog-service-signature, Be aware of the PortalDialogService signature changes>>
+** [ ] <<guards-usage, Guards usage>>
