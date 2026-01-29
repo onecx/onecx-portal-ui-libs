@@ -1,5 +1,5 @@
 <div class="content-wrapper">
-  @if (hasAccess | async) {
+  @if (hasAccess$ | async) {
   <ng-content></ng-content>
   } @else {
   <h3>{{'OCX_PORTAL_PAGE.UNAUTHORIZED_TITLE' | translate}}</h3>
