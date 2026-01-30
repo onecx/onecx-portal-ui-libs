@@ -3,23 +3,24 @@ import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterTestingModule } from '@angular/router/testing'
+import { TranslateService } from '@ngx-translate/core'
+import { UserService } from '@onecx/angular-integration-interface'
 import {
   AppStateServiceMock,
   provideAppStateServiceMock,
   provideUserServiceMock,
   UserServiceMock,
 } from '@onecx/angular-integration-interface/mocks'
-import { TranslateTestingModule } from 'ngx-translate-testing'
+import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { PrimeIcons } from 'primeng/api'
 import { BreadcrumbModule } from 'primeng/breadcrumb'
 import { ButtonModule } from 'primeng/button'
 import { MenuModule } from 'primeng/menu'
 import { TooltipModule } from 'primeng/tooltip'
-import { PageHeaderHarness, TestbedHarnessEnvironment } from '../../../../testing'
+import { PageHeaderHarness, provideTranslateTestingService, TestbedHarnessEnvironment } from '../../../../testing'
+import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
-import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
-import { UserService } from '@onecx/angular-integration-interface'
 
 const mockActions: Action[] = [
   {
@@ -61,17 +62,18 @@ describe('PageHeaderComponent', () => {
       declarations: [PageHeaderComponent, PageHeaderComponent, DynamicPipe],
       imports: [
         RouterTestingModule,
-        TranslateTestingModule.withTranslations({
-          en: require('./../../../../assets/i18n/en.json'),
-          de: require('./../../../../assets/i18n/de.json'),
-        }),
         BreadcrumbModule,
         MenuModule,
         ButtonModule,
         NoopAnimationsModule,
         TooltipModule,
+        AngularAcceleratorModule,
       ],
       providers: [
+        provideTranslateTestingService({
+          en: require('./../../../../assets/i18n/en.json'),
+          de: require('./../../../../assets/i18n/de.json'),
+        }),
         provideUserServiceMock(),
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
@@ -340,13 +342,88 @@ describe('PageHeaderComponent', () => {
     await menuOverflowButton?.click()
 
     const overFlowMenuItems = await pageHeaderHarness.getOverFlowMenuItems()
-    const disabledActionElement = overFlowMenuItems[1]
 
     expect(overFlowMenuItems).toBeTruthy()
     expect(overFlowMenuItems?.length).toBe(2)
-    expect(disabledActionElement).toBeTruthy()
-    expect(await (await disabledActionElement.host()).hasClass('p-disabled')).toBe(true)
-    await (await disabledActionElement.host()).click()
+
+    const disabledMenuItem = overFlowMenuItems[1]
+    expect(disabledMenuItem).toBeTruthy()
+
+    await disabledMenuItem.selectItem()
     expect(console.log).not.toHaveBeenCalledWith('My Test Overflow Disabled Action')
+  })
+
+  it('should render labelTooltipKey, valueTooltipKey, and actionItemTooltipKey as translated tooltips when language is changed', async () => {
+    const translate = TestBed.inject(TranslateService)
+
+    translate.setTranslation(
+      'en',
+      {
+        LABEL_TOOLTIP_KEY: 'Label Tooltip Key EN',
+        VALUE_TOOLTIP_KEY: 'Value Tooltip Key EN',
+        ACTION_TOOLTIP_KEY: 'Action Tooltip Key EN',
+      },
+      true
+    )
+    translate.setTranslation(
+      'de',
+      {
+        LABEL_TOOLTIP_KEY: 'Label Tooltip Key DE',
+        VALUE_TOOLTIP_KEY: 'Value Tooltip Key DE',
+        ACTION_TOOLTIP_KEY: 'Action Tooltip Key DE',
+      },
+      true
+    )
+    translate.use('en')
+
+    component.objectDetails = [
+      {
+        label: 'Venue',
+        value: 'AIE Munich',
+        labelTooltipKey: 'LABEL_TOOLTIP_KEY',
+        valueTooltipKey: 'VALUE_TOOLTIP_KEY',
+        actionItemTooltipKey: 'ACTION_TOOLTIP_KEY',
+        actionItemIcon: 'pi pi-copy',
+        actionItemCallback: () => {
+          console.log('Action!')
+        },
+      },
+    ]
+    fixture.detectChanges()
+
+    const objectInfo = (await pageHeaderHarness.getObjectInfos())[0]
+
+    expect(await objectInfo.getLabelTooltipContent()).toBe('Label Tooltip Key EN')
+    expect(await objectInfo.getValueTooltipContent()).toBe('Value Tooltip Key EN')
+    expect(await objectInfo.getActionItemTooltipContent()).toBe('Action Tooltip Key EN')
+
+    translate.use('de')
+    await fixture.whenStable()
+    fixture.detectChanges()
+
+    expect(await objectInfo.getLabelTooltipContent()).toBe('Label Tooltip Key DE')
+    expect(await objectInfo.getValueTooltipContent()).toBe('Value Tooltip Key DE')
+    expect(await objectInfo.getActionItemTooltipContent()).toBe('Action Tooltip Key DE')
+  })
+
+  it('should fallback to empty string if *Key properties are not provided', async () => {
+    component.objectDetails = [
+      {
+        label: 'Venue',
+        value: 'AIE Munich',
+        actionItemIcon: 'pi pi-copy',
+        actionItemCallback: () => {
+          console.log('Action!')
+        },
+      },
+    ]
+    fixture.detectChanges()
+
+    const objectInfo = (await pageHeaderHarness.getObjectInfos())[0]
+
+    //tooltips should not be initialise for undefined keys
+    expect(await objectInfo.getLabelTooltipContent()).toBeNull()
+    expect(await objectInfo.getValueTooltipContent()).toBeNull()
+    expect(await objectInfo.getActionItemTooltipContent()).toBeNull()
   })
 })

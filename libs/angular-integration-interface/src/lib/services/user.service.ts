@@ -3,13 +3,23 @@ import { PermissionsTopic, UserProfile, UserProfileTopic } from '@onecx/integrat
 import { BehaviorSubject, firstValueFrom, map } from 'rxjs'
 import { DEFAULT_LANG } from '../api/constants'
 import { getNormalizedBrowserLocales } from '@onecx/accelerator'
+import { createLogger } from '../utils/logger.utils'
+
+const logger = createLogger('UserService')
 
 @Injectable({ providedIn: 'root' })
 export class UserService implements OnDestroy {
   profile$ = new UserProfileTopic()
   lang$ = new BehaviorSubject(this.determineLanguage() ?? DEFAULT_LANG)
 
-  private permissionsTopic$ = new PermissionsTopic()
+  _permissionsTopic$: PermissionsTopic | undefined
+  get permissionsTopic$() {
+    this._permissionsTopic$ ??= new PermissionsTopic()
+    return this._permissionsTopic$
+  }
+  set permissionsTopic$(source: PermissionsTopic) {
+    this._permissionsTopic$ = source
+  }
 
   constructor() {
     this.profile$
@@ -37,6 +47,7 @@ export class UserService implements OnDestroy {
 
   ngOnDestroy(): void {
     this.profile$.destroy()
+    this._permissionsTopic$?.destroy()
   }
 
   useOldLangSetting(profile: UserProfile): string {
@@ -60,7 +71,7 @@ export class UserService implements OnDestroy {
         map((permissions) => {
           const result = permissions.includes(permissionKey)
           if (!result) {
-            console.log(`👮‍♀️ No permission for: ${permissionKey}`)
+            logger.debug(`No permission for: ${permissionKey}`)
           }
           return !!result
         })

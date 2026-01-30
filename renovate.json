@@ -1,0 +1,113 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "minimumReleaseAge": "30 days",
+  "includePaths": ["package.json", "pre_loaders/**/package.json"],
+  "separateMultipleMajor": true,
+  "separateMinorPatch": false,
+  "packageRules": [
+    {
+      "matchFileNames": ["package.json"],
+      "groupName": "Root NX",
+      "matchDepTypes": ["dependencies", "devDependencies"],
+      "groupSlug": "root-nx",
+      "prPriority": 8,
+      "schedule": ["before 6am every weekday"],
+      "addLabels": ["nx-migration-required"],
+      "matchPackageNames": ["/^@nx\\//", "/^nx$/"],
+      "matchUpdateTypes": ["minor", "patch"]
+    },
+    {
+      "matchPackageNames": ["/^@nx\\//", "/^nx$/"],
+      "rangeStrategy": "bump"
+    },
+    {
+      "matchFileNames": ["package.json"],
+      "groupName": "Root PrimeNG",
+      "matchDepTypes": ["dependencies", "devDependencies"],
+      "groupSlug": "root-primeng",
+      "prPriority": 6,
+      "schedule": ["before 6am every weekday"],
+      "matchPackageNames": ["/^@primeng\\//", "/^primeng$/"],
+      "matchUpdateTypes": ["minor", "patch"]
+    },
+    {
+      "matchFileNames": ["package.json"],
+      "matchDepTypes": ["devDependencies"],
+      "groupName": "Root DevDependencies",
+      "groupSlug": "root-devdeps",
+      "automerge": true,
+      "automergeType": "pr",
+      "automergeStrategy": "merge",
+      "platformAutomerge": true,
+      "labels": ["dependencies", "automerge"],
+      "excludePackageNames": [
+        "webpack",
+        "modify-source-webpack-plugin"
+      ],
+      "excludePackagePatterns": [
+        "^@nx/",
+        "^nx$",
+        "^@onecx/",
+        "^@angular/",
+        "^@angular-devkit/"
+      ],
+      "matchUpdateTypes": ["minor", "patch"]
+    },
+    {
+      "matchFileNames": ["package.json"],
+      "matchDepTypes": ["devDependencies"],
+      "excludePackageNames": [
+        "webpack",
+        "modify-source-webpack-plugin"
+      ],
+      "excludePackagePatterns": [
+        "^@nx/",
+        "^nx$",
+        "^@onecx/",
+        "^@angular/",
+        "^@angular-devkit/"
+      ],
+      "rangeStrategy": "bump"
+    },
+    {
+      "description": "Security updates - always allowed even major",
+      "matchCategories": ["security"],
+      "enabled": true,
+      "rangeStrategy": "update-lockfile"
+    },
+    {
+      "description": "Block all major updates globally",
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    {
+      "description": "Global minor/patch only",
+      "matchUpdateTypes": ["minor", "patch"],
+      "enabled": true
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "minimumReleaseAge": null,
+    "automerge": false
+  },
+  "lockFileMaintenance": {
+    "enabled": true
+  },
+  "timezone": "Europe/Vienna",
+  "schedule": ["before 6am every weekday"],
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 8,
+  "semanticCommits": "enabled",
+  "commitMessagePrefix": "chore(deps):",
+  "labels": ["dependencies"],
+  "assigneesFromCodeOwners": true,
+  "enabledManagers": ["npm"],
+  "platformAutomerge": true,
+  "rangeStrategy": "update-lockfile",
+  "ignoreReviewers": [],
+  "rebaseWhen": "behind-base-branch"
+}

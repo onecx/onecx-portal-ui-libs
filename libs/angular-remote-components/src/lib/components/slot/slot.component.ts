@@ -1,25 +1,31 @@
 import {
   Component,
   ComponentRef,
-  ContentChild,
+  ElementRef,
   EventEmitter,
   Input,
   OnDestroy,
   OnInit,
-  QueryList,
-  TemplateRef,
   Type,
-  ViewChildren,
   ViewContainerRef,
   inject,
 } from '@angular/core'
 
-import { Technologies } from '@onecx/integration-interface'
+import {
+  ResizedEventsTopic,
+  Technologies,
+  SlotResizedEvent,
+  ResizedEventType,
+  RequestedEventsChangedEvent,
+} from '@onecx/integration-interface'
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs'
 import { ocxRemoteComponent } from '../../model/remote-component'
 import { RemoteComponentInfo, SLOT_SERVICE, SlotComponentConfiguration, SlotService } from '../../services/slot.service'
-import { updateStylesForRcCreation, updateStylesForRcRemoval, RemoteComponentConfig } from '@onecx/angular-utils'
+import { RemoteComponentConfig, scopeIdFromProductNameAndAppId } from '@onecx/angular-utils'
 import { HttpClient } from '@angular/common/http'
+import { debounceTime, filter, take } from 'rxjs/operators'
+import { updateStylesForRcCreation, removeAllRcUsagesFromStyles } from '@onecx/angular-utils/style'
+import { createLogger } from '../../utils/logger.utils'
 
 interface AssignedComponent {
   refOrElement: ComponentRef<any> | HTMLElement
@@ -29,19 +35,19 @@ interface AssignedComponent {
 @Component({
   standalone: false,
   selector: 'ocx-slot[name]',
-  templateUrl: './slot.component.html',
+  template: ``,
+  host: {
+    '[attr.name]': 'name',
+  },
 })
 export class SlotComponent implements OnInit, OnDestroy {
   private http = inject(HttpClient)
+  private elementRef = inject(ElementRef)
+  private readonly viewContainerRef = inject(ViewContainerRef)
+  private readonly logger = createLogger('SlotComponent')
 
   @Input()
   name!: string
-
-  @Input()
-  slotStyles: { [key: string]: any } = {}
-
-  @Input()
-  slotClasses: string | string[] | Set<string> | { [key: string]: any } = ''
 
   private slotService = inject<SlotService>(SLOT_SERVICE, { optional: true })
   private _assignedComponents$ = new BehaviorSubject<AssignedComponent[]>([])
@@ -135,101 +141,216 @@ export class SlotComponent implements OnInit, OnDestroy {
     })
   }
 
-  _viewContainers$ = new BehaviorSubject<QueryList<ViewContainerRef> | undefined>(undefined)
-  @ViewChildren('slot', { read: ViewContainerRef })
-  set viewContainers(value: QueryList<ViewContainerRef>) {
-    this._viewContainers$.next(value)
-  }
-
-  @ContentChild('skeleton') skeleton: TemplateRef<any> | undefined
-
-  subscription: Subscription | undefined
+  subscriptions: Subscription[] = []
   components$: Observable<SlotComponentConfiguration[]> | undefined
+
+  private resizeObserver: ResizeObserver | undefined
+  private readonly componentSize$ = new BehaviorSubject<{ width: number; height: number }>({ width: -1, height: -1 })
+  private resizeDebounceTimeMs = 100
+
+  private _resizedEventsTopic: ResizedEventsTopic | undefined
+  get resizedEventsTopic() {
+    this._resizedEventsTopic ??= new ResizedEventsTopic()
+    return this._resizedEventsTopic
+  }
+  set resizedEventsTopic(source: ResizedEventsTopic) {
+    this._resizedEventsTopic = source
+  }
+  private readonly requestedEventsChanged$ = this.resizedEventsTopic.pipe(
+    filter((event): event is RequestedEventsChangedEvent => event.type === ResizedEventType.REQUESTED_EVENTS_CHANGED)
+  )
+
+  ngOnDestroy(): void {
+    this._resizedEventsTopic?.destroy()
+    this.subscriptions.forEach((sub) => sub.unsubscribe())
+    this.resizeObserver?.disconnect()
+    this.componentSize$.complete() // Complete the subject to avoid memory leaks
+    // Removes RC styles on unmount to avoid ghost styles
+    this._assignedComponents$.getValue().forEach((component) => {
+      const scopeId = scopeIdFromProductNameAndAppId(component.remoteInfo.productName, component.remoteInfo.appId)
+      removeAllRcUsagesFromStyles(scopeId, this.name)
+    })
+    this.viewContainerRef.clear()
+  }
 
   ngOnInit(): void {
     if (!this.slotService) {
-      console.error(`SLOT_SERVICE token was not provided. ${this.name} slot will not be filled with data.`)
+      this.logger.error(`SLOT_SERVICE token was not provided. ${this.name} slot will not be filled with data.`)
       return
     }
     this.components$ = this.slotService.getComponentsForSlot(this.name)
-    combineLatest([this._assignedComponents$, this._inputs$, this._outputs$]).subscribe(
+    const updateSub = combineLatest([this._assignedComponents$, this._inputs$, this._outputs$]).subscribe(
       ([components, inputs, outputs]) => {
         components.forEach((component) => {
           this.updateComponentData(component.refOrElement, inputs, outputs)
         })
       }
     )
-    // Components can be created only when component information is available and view containers are created for all remote components
-    this.subscription = combineLatest([this._viewContainers$, this.components$]).subscribe(
-      ([viewContainers, components]) => {
-        if (viewContainers && viewContainers.length === components.length) {
-          components.forEach((componentInfo, i) => {
-            if (componentInfo.componentType) {
-              Promise.all([
-                Promise.resolve(componentInfo.componentType),
-                Promise.resolve(componentInfo.permissions),
-              ]).then(([componentType, permissions]) => {
-                const component = this.createComponent(componentType, componentInfo, permissions, viewContainers, i)
-                if (component)
-                  this._assignedComponents$.next([
-                    ...this._assignedComponents$.getValue(),
-                    { refOrElement: component, remoteInfo: componentInfo.remoteComponent },
-                  ])
-              })
+    this.subscriptions.push(updateSub)
+
+    const createSub = this.components$.pipe(take(1)).subscribe((components) => {
+      this.createSpansForComponents(components)
+      this.createComponents(components)
+    })
+    this.subscriptions.push(createSub)
+
+    this.observeSlotSizeChanges()
+  }
+
+  private createSpansForComponents(components: SlotComponentConfiguration[]) {
+    for (let i = 0; i < components.length; i++) {
+      const span = document.createElement('span')
+      span.dataset['index'] = i.toString()
+      this.viewContainerRef.element.nativeElement.appendChild(span)
+    }
+  }
+
+  private createComponents(components: SlotComponentConfiguration[]) {
+    components.forEach((componentInfo, index) => {
+      if (componentInfo.componentType) {
+        Promise.all([Promise.resolve(componentInfo.componentType), Promise.resolve(componentInfo.permissions)]).then(
+          ([componentType, permissions]) => {
+            const component = this.createComponent(componentType, componentInfo, permissions, index)
+            if (component) {
+              this._assignedComponents$.next([
+                ...this._assignedComponents$.getValue(),
+                { refOrElement: component, remoteInfo: componentInfo.remoteComponent },
+              ])
             }
-          })
-        }
+          }
+        )
       }
-    )
+    })
+  }
+
+  private observeSlotSizeChanges() {
+    this.resizeObserver = new ResizeObserver((entries) => {
+      const entry = entries[0]
+      if (entry) {
+        const width = entry.contentRect.width
+        const height = entry.contentRect.height
+        this.componentSize$.next({ width, height })
+      }
+    })
+
+    this.componentSize$.pipe(debounceTime(this.resizeDebounceTimeMs)).subscribe(({ width, height }) => {
+      const slotResizedEvent: SlotResizedEvent = {
+        type: ResizedEventType.SLOT_RESIZED,
+        payload: {
+          slotName: this.name,
+          slotDetails: { width, height },
+        },
+      }
+      this.resizedEventsTopic.publish(slotResizedEvent)
+    })
+
+    this.resizeObserver.observe(this.elementRef.nativeElement)
+
+    const requestedEventsChangedSub = this.requestedEventsChanged$.subscribe((event) => {
+      if (event.payload.type === ResizedEventType.SLOT_RESIZED && event.payload.name === this.name) {
+        const { width, height } = this.componentSize$.getValue()
+        const slotResizedEvent: SlotResizedEvent = {
+          type: ResizedEventType.SLOT_RESIZED,
+          payload: {
+            slotName: this.name,
+            slotDetails: { width, height },
+          },
+        }
+        this.resizedEventsTopic.publish(slotResizedEvent)
+      }
+    })
+    this.subscriptions.push(requestedEventsChangedSub)
   }
 
   private createComponent(
     componentType: Type<unknown> | undefined,
     componentInfo: { remoteComponent: RemoteComponentInfo },
     permissions: string[],
-    viewContainers: QueryList<ViewContainerRef>,
-    i: number
+    index: number
   ): ComponentRef<any> | HTMLElement | undefined {
-    const viewContainer = viewContainers.get(i)
-    viewContainer?.clear()
-    viewContainer?.element.nativeElement.replaceChildren()
     if (componentType) {
-      const componentRef = viewContainer?.createComponent<any>(componentType)
-      const componentHTML = componentRef?.location.nativeElement as HTMLElement
-      this.updateComponentStyles(componentInfo)
-      this.addDataStyleId(componentHTML, componentInfo.remoteComponent)
-      this.addDataStyleIsolation(componentHTML)
-      if (componentRef && 'ocxInitRemoteComponent' in componentRef.instance) {
-        ;(componentRef.instance as ocxRemoteComponent).ocxInitRemoteComponent({
-          appId: componentInfo.remoteComponent.appId,
-          productName: componentInfo.remoteComponent.productName,
-          baseUrl: componentInfo.remoteComponent.baseUrl,
-          permissions: permissions,
-        })
-      }
-      componentRef?.changeDetectorRef.detectChanges()
-      return componentRef
-    } else if (
-      componentInfo.remoteComponent.technology === Technologies.WebComponentModule ||
-      componentInfo.remoteComponent.technology === Technologies.WebComponentScript
+      return this.createAngularComponent(componentType, componentInfo, permissions, index)
+    }
+
+    if (
+      (componentInfo.remoteComponent.technology === Technologies.WebComponentModule ||
+        componentInfo.remoteComponent.technology === Technologies.WebComponentScript) &&
+      componentInfo.remoteComponent.elementName !== undefined
     ) {
-      if (componentInfo.remoteComponent.elementName) {
-        const element = document.createElement(componentInfo.remoteComponent.elementName)
-        this.updateComponentStyles(componentInfo)
-        this.addDataStyleId(element, componentInfo.remoteComponent)
-        this.addDataStyleIsolation(element)
-        ;(element as any)['ocxRemoteComponentConfig'] = {
-          appId: componentInfo.remoteComponent.appId,
-          productName: componentInfo.remoteComponent.productName,
-          baseUrl: componentInfo.remoteComponent.baseUrl,
-          permissions: permissions,
-        } satisfies RemoteComponentConfig
-        viewContainer?.element.nativeElement.appendChild(element)
-        return element
-      }
+      return this.createWebComponent(
+        componentInfo as { remoteComponent: RemoteComponentInfo & { elementName: string } },
+        permissions,
+        index
+      )
     }
 
     return
+  }
+
+  private createAngularComponent(
+    componentType: Type<unknown>,
+    componentInfo: { remoteComponent: RemoteComponentInfo },
+    permissions: string[],
+    index: number
+  ): ComponentRef<any> {
+    const componentRef = this.viewContainerRef.createComponent<any>(componentType, { index: index })
+    const componentHTML = componentRef.location.nativeElement as HTMLElement
+    this.updateComponentStyles(componentInfo)
+    this.addDataStyleId(componentHTML, componentInfo.remoteComponent)
+    this.addDataStyleIsolation(componentHTML)
+    if (componentRef && 'ocxInitRemoteComponent' in componentRef.instance) {
+      ;(componentRef.instance as ocxRemoteComponent).ocxInitRemoteComponent({
+        appId: componentInfo.remoteComponent.appId,
+        productName: componentInfo.remoteComponent.productName,
+        baseUrl: componentInfo.remoteComponent.baseUrl,
+        permissions: permissions,
+      })
+    }
+
+    const span: HTMLSpanElement | undefined = this.viewContainerRef.element.nativeElement.querySelector(
+      `span[data-index="${index}"]`
+    ) as HTMLSpanElement
+    if (span) {
+      span.remove()
+    } else {
+      this.logger.error(
+        'Component span was not found for slot component creation. The order of the components may be incorrect.'
+      )
+    }
+
+    componentRef.changeDetectorRef.detectChanges()
+    return componentRef
+  }
+
+  private createWebComponent(
+    componentInfo: { remoteComponent: RemoteComponentInfo & { elementName: string } },
+    permissions: string[],
+    index: number
+  ): HTMLElement {
+    const element = document.createElement(componentInfo.remoteComponent.elementName)
+    this.updateComponentStyles(componentInfo)
+    this.addDataStyleId(element, componentInfo.remoteComponent)
+    this.addDataStyleIsolation(element)
+    ;(element as any)['ocxRemoteComponentConfig'] = {
+      appId: componentInfo.remoteComponent.appId,
+      productName: componentInfo.remoteComponent.productName,
+      baseUrl: componentInfo.remoteComponent.baseUrl,
+      permissions: permissions,
+    } satisfies RemoteComponentConfig
+
+    const span: HTMLSpanElement | undefined = this.viewContainerRef.element.nativeElement.querySelector(
+      `span[data-index="${index}"]`
+    ) as HTMLSpanElement
+    if (span) {
+      this.viewContainerRef.element.nativeElement.insertBefore(element, span)
+      span.remove()
+    } else {
+      this.logger.error(
+        'Component span was not found for slot component creation. The order of the components may be incorrect.'
+      )
+      this.viewContainerRef.element.nativeElement.appendChild(element)
+    }
+    return element
   }
 
   private addDataStyleId(element: HTMLElement, rcInfo: RemoteComponentInfo) {
@@ -252,7 +373,7 @@ export class SlotComponent implements OnInit, OnDestroy {
   }
 
   private updateComponentData(
-    component: ComponentRef<any> | HTMLElement | undefined,
+    component: ComponentRef<any> | HTMLElement,
     inputs: Record<string, unknown>,
     outputs: Record<string, EventEmitter<unknown>>
   ) {
@@ -260,23 +381,14 @@ export class SlotComponent implements OnInit, OnDestroy {
     this.setProps(component, outputs)
   }
 
-  private setProps(component: ComponentRef<any> | HTMLElement | undefined, props: Record<string, unknown>) {
-    if (!component) return
-
+  // split props setting for HTMLElement and ComponentRef
+  private setProps(component: ComponentRef<any> | HTMLElement, props: Record<string, unknown>) {
     Object.entries(props).map(([name, value]) => {
       if (component instanceof HTMLElement) {
         ;(component as any)[name] = value
       } else {
         component.setInput(name, value)
       }
-    })
-  }
-
-  ngOnDestroy(): void {
-    this.subscription?.unsubscribe()
-    // Removes RC styles on unmount to avoid ghost styles
-    this._assignedComponents$.getValue().forEach((component) => {
-      updateStylesForRcRemoval(component.remoteInfo.productName, component.remoteInfo.appId, this.name)
     })
   }
 }

@@ -1,9 +1,13 @@
+/** @jest-config-loader ts-node */
+// Without jest-config-loader, jest cannot load other ts files
+
 /* eslint-disable */
+import { createReportsConfig } from '../../jest-config-factory'
+
 export default {
   displayName: 'angular-integration-interface',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  coverageDirectory: '../../coverage/libs/angular-integration-interface',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [
       'jest-preset-angular',
@@ -19,4 +23,5 @@ export default {
     'jest-preset-angular/build/serializers/ng-snapshot',
     'jest-preset-angular/build/serializers/html-comment',
   ],
+  ...createReportsConfig('angular-integration-interface'),
 }

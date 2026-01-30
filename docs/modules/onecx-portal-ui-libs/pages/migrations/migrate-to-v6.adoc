@@ -1,0 +1,488 @@
+= Migrate to OneCX version 6
+
+:idprefix:
+:idseparator: -
+
+:theming_url: xref:documentation:docs-guides-ui:angular/theming.adoc
+
+[#migration-checklist]
+== Migration checklist
+* General changes
+[%interactive]
+** [ ] <<removed-packages, Remove @onecx/keycloak-auth>>
+** [ ] <<removed-packages, Remove @onecx/portal-layout-styles>>
+** [ ] <<removed-packages, Remove @onecx/portal-integration-interface>>
+** [ ] <<update-packages, Update required packages>>
+** [ ] <<styles-update, Update application styles>>
+** [ ] <<replace-portal-core-module, Replace PortalCoreModule>>
+** [ ] <<deleted-components, Check deleted components>>
+** [ ] <<standalone-mode, Adjust standalone mode usage>>
+** [ ] <<filter-type, Update FilterType usage>>
+** [ ] <<theme-service, Update ThemeService usage>>
+** [ ] <<configuration-service, Update ConfigurationService usage>>
+** [ ] <<base-url, Replace BASE_URL injection token>>
+** [ ] <<angular-in-webpack, Remove `singleton:true` from angular packages in webpack>>
+** [ ] <<translation-bootstrap, Move translation related providers to bootstrap.ts for Remote Components>>
+** [ ] <<removed-add-initialize-guard, Remove addInitializeModuleGuard()>>
+* PrimeNg related changes
+[%interactive]
+** [ ] <<primeng-new-plugin, Add new plugin to webpack config>>
+** [ ] <<theme-config, Provide theme configuration for Microfrontends and Remote Components>>
+* Angular material related changes
+[%interactive]
+** [ ] <<material-new-plugin, Add new plugin to webpack config>>
+
+[#general-changes]
+== General changes
+
+[#removed-packages]
+=== Removed packages
+In the version 6 of OneCX the following packages are no longer available:
+
+* *@onecx/keycloak-auth*
+* *@onecx/portal-layout-styles*
+* *@onecx/portal-integration-interface*
+
+[#portal-layout-styles-removal]
+==== Portal Layout Styles Removal
+Since version 6 of OneCX `@onecx/portal-layout-styles` library is no longer available. The library should not be used anymore and every application should make sure to <<styles-update, update application styles>>.
+
+[#portal-integration-angular]
+==== Portal Integration Angular Removal
+Since version 6 of OneCX, the `@onecx/portal-integration-angular` library is no longer available. The list of features that are still supported in other libraries and alternative solutions can be found in the <<removed-from-integration-angular, removed from @onecx/portal-integration-interface>> section. It is important to <<replace-portal-core-module, replace PortalCoreModule>> if used in the application to preserve existing functionality.
+
+[#update-packages]
+=== Update required packages
+Please, alongside @angular and @onecx package upgrades, make sure to update the following packages to avoid potential issues:
+|===
+| Package | Required version
+| @ngx-translate/core | ^16.0.0
+| @ngx-translate/http-loader | ^8.0.0
+| ngx-build-plus | ^19.0.0
+|===
+
+[#styles-update]
+=== Update application styles
+Please, make sure to *remove @onecx/portal-layout-styles and @onecx/portal-integration-interface references from application styles*.
+
+Since version 6 styles from @onecx/portal-layout-styles will no longer be available globally on a page. *Please, make sure that your application does not use any styles (css classes, animations, etc.) defined by portal-layout-styles*. In case it does, you will need to implement those in your application.
+
+The only css styles available for each application since version 6:
+
+- styles exposed via app_url/styles.css file (where app_url is a url to the deployed application)
+- component styles defined in the application (styles defined for each component inside the application)
+- PrimeNG component styles (only if the application uses primeNG)
+
+[#expose-styles-on-top-level]
+==== Expose styles.css on top level
+In case if  your application needs to share styles between components you should make sure to *expose styles.css file. Shell will assume that this file is called styles.css and is exposed on the top level of your deployed application*. In order to make sure this is done properly, we are recommending to update the project configuration with the following config:
+
+.project.json or angular.json
+```
+...
+"styles": [
+  {
+    "input": "./src/styles.scss",
+    "bundleName": "styles",
+    "inject": true
+  }
+]
+...
+```
+
+The snippet above assumes that the exposed style sheet is in *src/styles.scss*. Setting the *inject* property to *true* might lead to hashing, meaning the exposed file would be called *styles.HASH.css*, where *HASH* is a generated hash value during the project building. If this applies to your application, make sure to adjust the exposal so the hash is not included.
+
+[#replace-portal-core-module]
+=== Replace PortalCoreModule
+If your application was using *PortalCoreModule* from *@onecx/portal-integration-angular*, you should replace all occurrences with *AngularAcceleratorModule* from *@onecx/angular-accelerator*. This will make sure that all components and directives are working.
+
+[#deleted-components]
+=== Check deleted components
+Some components will be removed. Please check if you are using following components:
+
+[#removed-from-angular-accelerator]
+==== Removed from @onecx/angular-accelerator
+
+* createRemoteComponentTranslateLoader
+* createRemoteComponentAndMfeTranslateLoader +
+=> *Use createTranslateLoader with remoteComponentTranslationPathFactory from @onecx/angular-utils*
+
+* createTranslateLoader +
+=> *Use createTranslateLoader with translationPathFactory from @onecx/angular-utils*
+
+* HasPermissionChecker
+* AlwaysGrantPermissionChecker
+* TranslationCacheService
+* AsyncTranslateLoader
+* CachingTranslateLoader
+* TranslateCombinedLoader
+* HAS_PERMISSION_CHECKER (injection token) + 
+=> *Import from @onecx/angular-utils* 
+
+* DataLoadingErrorComponent (ocx-data-loading-error)
+* isValidDate +
+=> *Removed from the library*
+
+[#removed-from-angular-integration-interface]
+==== Removed from @onecx/angular-integration-interface
+* provideAppServiceMock +
+=> *Use provideAppStateServiceMock*
+
+* IAuthService
+* AUTH_SERVICE (injection token) +
+=> *Removed from the library*
+
+[#removed-from-angular-remote-components]
+==== Removed from @onecx/angular-remote-components
+* BASE_URL (injection token) +
+=> *Use REMOTE_COMPONENT_CONFIG from @onecx/angular-utils*
+
+[#removed-from-integration-angular]
+==== Removed from @onecx/portal-integration-angular
+* PortalCoreModule +
+=> *This module has to be <<replace-portal-core-module, replaced by AngularAcceleratorModule>>*
+
+* ColumnGroupSelectionComponent (ocx-column-group-selection)
+* CustomGroupColumnSelectorComponent (ocx-custom-group-column-selector)
+* DataLayoutSelectionComponent (ocx-data-layout-selection)
+* DataListGridComponent (ocx-data-list-grid)
+* DataListGridSortingComponent (ocx-data-list-grid-sorting)
+* DataTableComponent (ocx-data-table)
+* DataViewComponent (ocx-data-view)
+* DiagramComponent (ocx-diagram)
+* FilterViewComponent (ocx-filter-view)
+* GroupByCountDiagramComponent (ocx-group-by-count-diagram)
+* InteractiveDataViewComponent (ocx-interactive-data-view)
+* LifecycleComponent (ocx-lifecycle)
+* PageHeaderComponent (ocx-page-header)
+* SearchHeaderComponent (ocx-search-header)
+* DialogMessageContentComponent
+* DialogInlineComponent (ocx-dialog-inline)
+* DialogFooterComponent (ocx-dialog-footer)
+* DialogContentComponent (ocx-dialog-content )
+* GlobalErrorComponent (ocx-error)
+* LoadingIndicatorComponent (ocx-loading-indicator)
+* LoadingIndicatorDirective (ocxLoadingIndicator)
+* BasicDirective (ocxBasic)
+* RelativeDatePipe (relativeDate)
+* AdvancedDirective (ocxAdvanced)
+* OcxContentContainerDirective (ocxContentContainer)
+* OcxContentDirective (ocxContent)
+* IfBreakpointDirective (ocxIfBreakpoint)
+* IfPermissionDirective (ocxIfPermission, ocxIfNotPermission)
+* SrcDirective (ocxSrc)
+* TooltipOnOverflowDirective (ocxTooltipOnOverflow)
+* ExportDataService 
+* PortalDialogService
+* ImageLogoUrlUtils
+* DialogContentHarness
+* DialogFooterHarness
+* DialogInlineHarness
+* DialogMessageContentHarness +
+=> *These components are now in @onecx/angular-accelerator*
+
+* PortalPageComponent (ocx-portal-page) + 
+
+=> *These components are now in @onecx/angular-utils*
+
+* PortalFooterComponent (portal-footer )
+* PortalHeaderComponent (portal-header)
+* PortalViewportComponent (portal-viewport) + 
+=> *These components are now in @onecx/shell-core* 
+
+* PortalMenuComponent (portal-menu)
+* PortalMenuHorizontalComponent (portal-menu-horizontal)
+* AppInlineProfileComponent (inline-profile) +
+=> *They are now remote components in onecx-workspace-ui*
+
+* AnnouncementBannerComponent (ocx-announcement-banner)
+* AnnouncementsApiService +
+=> *Now remote components in onecx-announcement-ui*
+
+* HelpItemEditorComponent (ocx-help-item-editor)
+* NoHelpItemComponent (ocx-no-help-item)
+* HelpPageAPIService +
+=> *Now remote components in onecx-help-ui*
+
+* UserAvatarComponent (ocx-user-avatar)
+* UserProfileAPIService +
+=> *Now remote components in onecx-user-profile-ui*
+
+* DataViewControlsComponent (ocx-data-view-controls) +
+=> *Consider using the InteractiveDataViewComponent (ocx-interactive-data-view) from @onecx/angular-accelerator*
+
+* PageContentComponent (ocx-page-content) +
+=> *Consider using the OcxContentComponent (ocx-content) or OcxContentContainerComponent (ocx-content-container) from @onecx/angular-accelerator*
+
+* SearchCriteriaComponent (ocx-search-criteria)
+* CriteriaTemplateComponent (ocx-criteria-template) +
+=> *Consider using the SearchHeaderComponent (ocx-search-header) from @onecx/angular-accelerator*
+
+* standaloneInitializer + 
+=>  *Use standalone mode xref:documentation:docs-guides-ui:angular/standalone.adoc[Documentation]*
+
+* ButtonDialogComponent(ocx-button-dialog) +
+=> *This component should be replaced by ocx-dialog-inline in @onecx/angular-accelerator*
+
+* MenuService +
+=> *If someone wants to load menu item they should create an endpoint in the BFF of the own app and create their own function.*
+
+Every other feature that is not mentioned was removed and is no longer supported.
+
+[#removed-from-ngrx-accelerator]
+==== Removed from @onecx/ngrx-accelerator
+
+* filterForOnlyQueryParamsChanged +
+=> *Use filterOutOnlyQueryParamsChanged*
+* filterForQueryParamsChanged +
+=> *Use filterOutQueryParamsHaveNotChanged*
+
+[#removed-from-shell-core]
+==== Removed from @onecx/shell-core
+
+* PortalFooterComponent (ocx-shell-footer) +
+=> *Now remote component in onecx-workspace-ui*
+
+[#standalone-mode]
+== Adjust Standalone Mode
+In version 6 of OneCX *@onecx/standalone-shell* library has been renamed to *@onecx/angular-standalone-shell*. Please, make sure that all imports, package.json and webpack config are adjusted accordingly.
+
+Additionally, since version 6, apart from *StandaloneShellModule* import it is required to add *provideStandaloneProviders* in the standalone module providers array. Please, make sure to adjust the standalone module.
+
+.updated-app-standalone.module.ts example
+```
+import { StandaloneShellModule, provideStandaloneProviders } from '@onecx/angular-standalone-shell'
+...
+@NgModule({
+    imports: [StandaloneShellModule]
+    providers: [
+        provideStandaloneProviders()
+    ]
+}) export class AppModule {}
+```
+
+[#filter-type]
+=== FilterType values changes
+Please, make sure to update `FilterType` usage:
+
+* `FilterType.EQUAL` &#8594; `FilterType.EQUALS`
+* `FilterType.TRUTHY` &#8594; `FilterType.IS_NOT_EMPTY`
+
+[#configuration-service]
+=== Check usage of ConfigurationService 
+ConfigurationService (@onecx/angular-integration-interface) is now asynchronous. Please check if usage needs to be adapted.
+
+[#theme-service]
+=== ThemeService removed functionality
+ThemeService in version 6 should *only be used to access the currentTheme* via `currentTheme$` property. The following have been removed:
+
+* `baseUrlV1` property
+* `getThemeRef` function
+* `loadAndApplyTheme` function 
+* `apply` function 
+
+Please, make sure that those methods are no longer used.
+
+[#base-url]
+=== BASE_URL injection token
+`BASE_URL` injection token should no longer be used, instead please use `REMOTE_COMPONENT_CONFIG`
+
+[#angular-in-webpack]
+=== Adjust angular packages in webpack
+Make sure that all angular packages *do not have `singleton: true` set in webpack.config.js*. 
+
+[#translation-bootstrap]
+=== Move translation providers to bootstrap.ts for Remote Components
+For each Remote Component translation related providers are required to be defined in the bootstrap.ts instead of the component.ts file.
+
+.remote-component.bootstrap.ts
+```
+import { bootstrapRemoteComponent } from '@onecx/angular-webcomponents'
+import {
+  REMOTE_COMPONENT_CONFIG,
+  RemoteComponentConfig,
+  provideTranslateServiceForRoot
+} from '@onecx/angular-remote-components'
+import { TranslateLoader } from '@ngx-translate/core'
+import { ReplaySubject } from 'rxjs'
+import { createTranslateLoader, remoteComponentTranslationPathFactory, provideTranslationPathFromMeta } from '@onecx/angular-utils'
+
+bootstrapRemoteComponent(RemoteComponent, 'ocx-my-remote-component', environment.production, [
+  ...
+  { provide: REMOTE_COMPONENT_CONFIG, useValue: new ReplaySubject<RemoteComponentConfig>(1) },
+  provideTranslateServiceForRoot({
+    isolate: true,
+    loader: {
+      provide: TranslateLoader,
+      useFactory: createTranslateLoader,
+      deps: [HttpClient]
+    }
+  }),
+  provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/')
+])
+```
+[NOTE]
+====
+If the error 
+"Cannot construct translation path from local file path. Please check whether the webpack configuration for importMeta is correct: https://webpack.js.org/configuration/module/#moduleparserjavascriptimportmeta" 
+appears, it means either
+
+* the provider is used in the application and import.meta.url incorrectly resolves to a local file:// path.
+* or the application does not use provideTranslationPathFromMeta, but is likely using a newer Angular version than the shell or preloader. In this case, modules are loaded from the app's context, which also leads to a local file:// prefix. 
+
+To fix this, this line has to be added to module.exports in the webpack.config.js:
+
+.webpack.config.ts
+[source,typescript]
+----
+module.exports = {
+ ...
+  module: { parser: { javascript: { importMeta: false } } },
+}
+----
+====
+
+[#removed-add-initialize-guard]
+=== Remove addInitializeModuleGuard()
+With the removal of addInitializeModuleGuard(), the translations will be provided by the TranslationConnectionService. Please add the provideTranslationConnectionService() in the provider of your .module.ts.
+
+If you already import AngularAcceleratorModule, then it is not necessary, because it is already added there.
+
+[#primeng-related-changes]
+== PrimeNG related changes
+
+[#primeng-new-plugin]
+=== Add required plugin to webpack config (will be changed to OneCX plugin)
+Since version 6 it's required to add the following plugin to the webpack configuration of the application.
+
+.Webpack plugin snippet
+```
+const { ModifySourcePlugin, ReplaceOperation } = require('modify-source-webpack-plugin')
+...
+const modifyPrimeNgPlugin = new ModifySourcePlugin({
+  rules: [
+    {
+      test: (module) => {
+        return module.resource && module.resource.includes('primeng')
+      },
+      operations: [
+        new ReplaceOperation(
+          'all',
+          'document\\.createElement\\(([^)]+)\\)',
+          'document.createElementFromPrimeNg({"this": this, "arguments": Array.from(arguments), element: $1})'
+        ),
+        new ReplaceOperation('all', 'Theme.setLoadedStyleName', '(function(_){})')
+      ]
+    }
+  ]
+})
+module.exports = {
+  ...webpackConfig,
+  plugins: [...plugins, modifyPrimeNgPlugin]
+}
+```
+
+[#theme-config]
+=== Provide ThemeConfig
+Since version 6 of OneCX it is required to add an additional provider to the Microfrontends and Remote Components.
+
+.mfe.remote.module.ts
+```
+import { provideThemeConfig } from '@onecx/angular-utils'
+...
+@NgModule({
+    providers: [
+        provideThemeConfig()
+    ]
+}) export class MyMfe {}
+```
+
+.remote-component.bootstrap.ts
+```
+import { provideThemeConfig } from '@onecx/angular-utils'
+
+bootstrapRemoteComponent(RemoteComponent, 'my-remote-component', environment.production, [
+  provideThemeConfig()
+])
+```
+
+[#theme-overrides]
+==== Provide theme overrides
+The new theming system introduced in version 6 of OneCX is based on PrimeNG's theming mechanism. However, in OneCX it is possible to style the content differently per Application. The mechanism that allows that is called theme overrides.
+
+Each Mfe or Remote Component can specify their overrides that will guarantee that certain styles are applied differently than in other applications on the page. Here is an example of how to provide overrides.
+
+```
+provideThemeConfig({
+  overrides: {
+    semantic: {
+      extend: {
+        onecx: {
+          secondaryColor: 'red'
+        },
+      },
+      focusRing: {
+        width: '2px',
+        style: 'solid',
+        color: '{primary.color}',
+        offset: '0px',
+        shadow: 'none',
+      },
+    }
+  }
+})
+```
+
+In this example:
+
+* the *secondary color* theme variable is changed
+* the *default focus highlight* is changed
+
+More about what and how to override can be found in {theming_url}[theming documentation].
+
+[#material-related-changes]
+== Angular Material related changes
+
+[#material-new-plugin]
+=== Add required plugin to webpack config (will be changed to OneCX plugin)
+Since version 6 it's required to add the following plugin to the webpack configuration of the application.
+
+.Webpack plugin snippet
+```
+const { ModifySourcePlugin, ReplaceOperation } = require('modify-source-webpack-plugin')
+...
+const modifyMaterialPlugin = new ModifySourcePlugin({
+  rules: [
+    {
+      test: (module) => {
+        return (
+          module.resource &&
+          (module.resource.includes("@angular/material") ||
+            module.resource.includes("@angular/cdk"))
+        );
+      },
+      operations: [
+        new ReplaceOperation(
+          "all",
+          "document\\.createElement\\(",
+          'document.createElementFromMaterial({"this": this, "arguments": Array.from(arguments)},',
+        ),
+      ],
+    }
+  ]
+})
+module.exports = {
+  ...webpackConfig,
+  plugins: [...plugins, modifyMaterialPlugin]
+}
+```
+
+[#further-considerations]
+== Further considerations
+[#angular-19-further-changes]
+=== Angular 19 changes
+Make sure to adjust the Application to the Angular 19 requirements. Based on the implementation there could be changes required to be made to ensure compatibility.
+
+[#primeng-19-further-changes]
+=== PrimeNG 19 changes
+If the migrated Application uses PrimeNG components, please make sure to adjust the implementation according to the PrimeNG 19 requirements and API changes.

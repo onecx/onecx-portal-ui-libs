@@ -5,19 +5,28 @@ import { Config, ConfigurationTopic } from '@onecx/integration-interface'
 import { APP_CONFIG } from '../api/injection-tokens'
 import { CONFIG_KEY } from '../model/config-key.model'
 import Semaphore from 'ts-semaphore'
+import { createLogger } from '../utils/logger.utils'
 
 @Injectable({ providedIn: 'root' })
 export class ConfigurationService implements OnDestroy {
   private http = inject(HttpClient)
+  private readonly logger = createLogger('ConfigurationService')
   private defaultConfig = inject<{
     [key: string]: string
   }>(APP_CONFIG, { optional: true })
 
-  private config$ = new ConfigurationTopic()
+  _config$: ConfigurationTopic | undefined
+  get config$() {
+    this._config$ ??= new ConfigurationTopic()
+    return this._config$
+  }
+  set config$(source: ConfigurationTopic) {
+    this._config$ = source
+  }
   private semaphore = new Semaphore(1)
 
   ngOnDestroy(): void {
-    this.config$.destroy()
+    this._config$?.destroy()
   }
 
   public init(): Promise<boolean> {
@@ -27,11 +36,11 @@ export class ConfigurationService implements OnDestroy {
 
       const inlinedConfig = (window as typeof window & { APP_CONFIG: Config })['APP_CONFIG']
       if (inlinedConfig) {
-        console.log(`ENV resolved from injected config`)
+        this.logger.info('ENV resolved from injected config')
         loadConfigPromise = Promise.resolve(inlinedConfig)
       } else {
         if (skipRemoteConfigLoad) {
-          console.log(
+          this.logger.info(
             '📢 TKA001: Remote config load is disabled. To enable it, remove the "skipRemoteConfigLoad" key in your environment.json'
           )
           loadConfigPromise = Promise.resolve(this.defaultConfig || {})
@@ -49,7 +58,7 @@ export class ConfigurationService implements OnDestroy {
           })
         })
         .catch((e) => {
-          console.log(`Failed to load env configuration`)
+          this.logger.error('Failed to load env configuration', e)
           reject(e)
         })
     })
@@ -61,7 +70,7 @@ export class ConfigurationService implements OnDestroy {
 
   public async getProperty(key: CONFIG_KEY): Promise<string | undefined> {
     if (!Object.values(CONFIG_KEY).includes(key)) {
-      console.error('Invalid config key ', key)
+      this.logger.error('Invalid config key ', key)
     }
     return firstValueFrom(this.config$.pipe(map((config) => config[key])))
   }

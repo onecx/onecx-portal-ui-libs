@@ -1,0 +1,103 @@
+name: SonarQube Scan
+
+on:
+  workflow_call:
+
+jobs:
+  set-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download reports
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-reports
+        # Allow workflow to continue even if no coverage reports exist
+        # This prevents the entire workflow from failing due to missing artifacts
+        continue-on-error: true
+
+      - name: Find affected lib coverage directories
+        id: set-matrix
+        # This step creates a matrix of libraries that have coverage reports
+        # If no reports exist, creates an empty matrix to allow graceful workflow completion
+        run: |
+          # Check if reports directory exists
+          if [ ! -d "reports" ]; then
+            echo "No reports directory found. Setting empty matrix."
+            echo "matrix=[]" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Find all coverage report directories
+          paths=$(find reports -maxdepth 1 -mindepth 1 -type d -exec basename {} \; 2>/dev/null || true)
+
+          if [ -z "$paths" ]; then
+            echo "No coverage report directories found. Setting empty matrix."
+            echo "matrix=[]" >> $GITHUB_OUTPUT
+          else
+            coverage_reports=$(printf '%s\n' $paths | jq -R . | jq -s -c)
+            echo "Found coverage reports: $coverage_reports"
+            echo "matrix=$coverage_reports" >> $GITHUB_OUTPUT
+          fi
+
+  sonar-scan:
+    needs: set-matrix
+    runs-on: ubuntu-latest
+
+    # Only run this job if:
+    # - There are libraries to analyze (non-empty matrix)
+    if: >
+      needs.set-matrix.outputs.matrix != '[]' &&
+      needs.set-matrix.outputs.matrix != ''
+
+    strategy:
+      fail-fast: false
+      matrix:
+        path: ${{ fromJson(needs.set-matrix.outputs.matrix) }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download reports
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-reports
+
+      - name: Normalize lcov.info for SonarCloud
+        run: |
+          lcov_path="reports/${{matrix.path}}/coverage/lcov.info"
+            echo "Normalizing $lcov_path" 
+
+            # Modify the lcov.info file in-place: prepend a slash to each 'SF:' line
+            # This ensures absolute paths for SonarCloud 
+            # "SF:home/..." -> "SF:/home/..." 
+            sed -i 's|^SF:|SF:/|' "$lcov_path"
+        shell: bash
+
+      - name: Run SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: libs/${{ matrix.path }}/
+          args: >
+            -Dsonar.projectKey=${{ github.repository_owner }}_${{ github.event.repository.name }}_${{ matrix.path }}
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.organization=${{ github.repository_owner }}
+            -Dsonar.scm.disabled=true
+            -Dsonar.sourceEncoding=UTF-8
+            -Dsonar.javascript.coveragePlugin=lcov
+            -Dsonar.javascript.lcov.reportPaths=${{ github.workspace }}/reports/${{ matrix.path }}/coverage/lcov.info
+            -Dsonar.testExecutionReportPaths=${{ github.workspace }}/reports/${{ matrix.path }}/sonarqube_report.xml
+            -Dsonar.working.directory=${{ github.workspace }}/reports/${{ matrix.path }}/.scannerwork
+            "-Dsonar.exclusions=src/assets/**/*,src/migrations/**/*,src/mocks/**/*,**/logger.utils.ts,**/*logger.utils.ts,**/logger*.utils.ts"
+            "-Dsonar.cpd.exclusions=src/**/*.ts,src/**/*.html"
+            "-Dsonar.coverage.exclusions=*.ts,*.js,src/*.ts,**/*.spec.ts,**/*.test.ts,**/*.stories.ts,**/*.harness.ts,**/logger.utils.ts,**/*logger.utils.ts,**/logger*.utils.ts,**/environments/**,**/assets/**,**/generated/**,**/*.module.ts,**/*.main.ts"
+            "-Dsonar.test.inclusions=src/**/*.spec.ts,src/**/*.test.ts"

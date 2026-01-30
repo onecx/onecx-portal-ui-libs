@@ -2,7 +2,7 @@ import { importProvidersFrom } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterModule } from '@angular/router'
-import { action } from '@storybook/addon-actions'
+import { action } from 'storybook/actions'
 import { Meta, StoryFn, applicationConfig, moduleMetadata } from '@storybook/angular'
 import { PrimeIcons } from 'primeng/api'
 import { BreadcrumbModule } from 'primeng/breadcrumb'
@@ -125,10 +125,9 @@ const demoFields: ObjectDetailItem[] = [
   {
     label: 'Venue',
     value: 'AIE Munich ',
-    valueTooltip: 'AIE Munich',
-    labelTooltip: 'Label Tooltip',
+    labelTooltipKey: 'Label Tooltip',
     actionItemIcon: PrimeIcons.COPY,
-    actionItemTooltip: 'Copy to clipboard',
+    actionItemTooltipKey: 'Copy to clipboard',
     actionItemCallback: () => {
       console.log('Copy to clipboard')
     },
@@ -446,4 +445,65 @@ export const ForcedGridLayoutWithColumnAmount = {
     enableGridView: true,
     gridLayoutDesktopColumns: 4,
   },
+}
+
+const demoFieldsWithTranslationKeys: ObjectDetailItem[] = [
+  {
+    label: 'Venue',
+    value: 'AIE Munich 11',
+    valueTooltipKey: 'pageheader.valueTooltip',
+    labelTooltipKey: 'pageheader.labelTooltip',
+    actionItemTooltipKey: 'pageheader.actionItemTooltip',
+    actionItemAriaLabelKey: 'pageheader.actionItemAriaLabel',
+    actionItemIcon: PrimeIcons.COPY,
+    actionItemCallback: () => {
+      console.log('Copy to clipboard')
+    },
+  },
+  {
+    label: 'Start Date',
+    value: '14.3.2022',
+    icon: PrimeIcons.CALENDAR,
+    labelTooltipKey: 'Simple string tooltip for label',
+    valueTooltipKey: 'Simple string tooltip for value',
+  },
+  {
+    label: 'End Date',
+    value: '19.06.2024',
+    icon: PrimeIcons.CALENDAR,
+    actionItemIcon: PrimeIcons.COPY,
+    actionItemTooltipKey: 'Simple string tooltip for action',
+    actionItemAriaLabel: 'Simple string aria label for action',
+    actionItemCallback: () => {
+      console.log('Copy to clipboard')
+    },
+  },
+  {
+    label: 'Status',
+    value: 'Confirmed',
+    icon: PrimeIcons.CHECK_CIRCLE,
+    labelTooltipKey: { key: 'pageheader.statusLabelTooltip', parameters: { status: 'confirmed' } },
+    valueTooltipKey: { key: 'pageheader.statusValueTooltip', parameters: { value: 'Confirmed' } },
+  },
+  {
+    label: 'Fallback Test',
+    value: 'No tooltips provided',
+    icon: PrimeIcons.INFO_CIRCLE,
+    actionItemIcon: PrimeIcons.COPY,
+    actionItemCallback: () => {
+      console.log('Copy to clipboard')
+    },
+  },
+]
+
+export const TranslationKeysAndParams = {
+  render: Template,
+  args: {
+    header: 'My title',
+    subheader: 'My subtitle',
+    loading: false,
+    actions: demoActions,
+    objectDetails: demoFieldsWithTranslationKeys,
+    showBreadcrumbs: false,
+  }
 }

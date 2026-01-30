@@ -1,7 +1,7 @@
 import { EventEmitter, Injectable, OnDestroy, Type, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
-import { DialogService, DynamicDialogComponent } from 'primeng/dynamicdialog'
-import { Observable, filter, mergeMap } from 'rxjs'
+import { DialogService, DynamicDialog } from 'primeng/dynamicdialog'
+import { Observable, filter, mergeMap, of } from 'rxjs'
 
 import { ButtonDialogButtonDetails, ButtonDialogCustomButtonDetails, ButtonDialogData } from '../model/button-dialog'
 import { NavigationStart, Router } from '@angular/router'
@@ -12,41 +12,15 @@ import {
   getScopeIdentifier,
 } from '@onecx/angular-utils'
 import { REMOTE_COMPONENT_CONFIG } from '@onecx/angular-remote-components'
-import { CurrentLocationTopicPayload, EventsTopic, TopicEventType } from '@onecx/integration-interface'
+import { CurrentLocationTopicPayload, EventsTopic, EventType, TopicEventType } from '@onecx/integration-interface'
 import { Capability, ShellCapabilityService, AppStateService } from '@onecx/angular-integration-interface'
 import { PrimeIcon } from '../utils/primeicon.utils'
 import { DialogContentComponent } from '../components/dialog/dialog-content/dialog-content.component'
 import { DialogFooterComponent } from '../components/dialog/dialog-footer/dialog-footer.component'
 import { DialogMessageContentComponent } from '../components/dialog/dialog-message-content/dialog-message-content.component'
+import { TranslationKey, TranslationKeyWithParameters } from '../model/translation.model'
+import { createLogger } from '../utils/logger.utils'
 
-/**
- * Object containing key for translation with parameters object for translation
- *
- * @example
- * ## Assume such translation is in the translation file
- * ```typescript
- * const translations = {
- *   MY_KEY = 'text with parameter value = {{value}}',
- * }
- * ```
- *
- * ## TranslationKeyWithParameters declaration
- * ```
- * // will be translated into
- * // text with parameter value = hello
- * const myKey: TranslationKeyWithParameters = {
- *   key: 'MY_KEY',
- *   parameters: {
- *     value: 'hello',
- *   },
- * }
- * ```
- */
-type TranslationKeyWithParameters = { key: string; parameters: Record<string, unknown> }
-/**
- * String with key to translation or {@link TranslationKeyWithParameters} object. If provided string cannot be translated it will be displayed as is.
- */
-type TranslationKey = string | TranslationKeyWithParameters
 /**
  * Object containing message of type {@link TranslationKey} and icon to be displayed along the message.
  *
@@ -274,7 +248,15 @@ export class PortalDialogService implements OnDestroy {
   private dialogService = inject(DialogService)
   private translateService = inject(TranslateService)
   private router = inject(Router)
-  private eventsTopic: EventsTopic = new EventsTopic()
+  private readonly logger = createLogger('PortalDialogService')
+  private _eventsTopic$: EventsTopic | undefined
+  get eventsTopic() {
+    this._eventsTopic$ ??= new EventsTopic()
+    return this._eventsTopic$
+  }
+  set eventsTopic(source: EventsTopic) {
+    this._eventsTopic$ = source
+  }
   private skipStyleScoping = inject(SKIP_STYLE_SCOPING, { optional: true })
   private remoteComponentConfig = inject(REMOTE_COMPONENT_CONFIG, { optional: true })
   private appStateService = inject(AppStateService)
@@ -289,7 +271,7 @@ export class PortalDialogService implements OnDestroy {
     let observable: Observable<TopicEventType | CurrentLocationTopicPayload> =
       this.appStateService.currentLocation$.asObservable()
     if (!this.capabilityService.hasCapability(Capability.CURRENT_LOCATION_TOPIC)) {
-      observable = this.eventsTopic.pipe(filter((e) => e.type === 'navigated'))
+      observable = this.eventsTopic.pipe(filter((e) => e.type === EventType.NAVIGATED))
     }
     observable.subscribe(() => {
       this.cleanupAndCloseDialog()
@@ -298,7 +280,7 @@ export class PortalDialogService implements OnDestroy {
 
   ngOnDestroy(): void {
     this.cleanupAndCloseDialog()
-    this.eventsTopic.destroy()
+    this._eventsTopic$?.destroy()
   }
 
   /**
@@ -448,14 +430,14 @@ export class PortalDialogService implements OnDestroy {
     primaryButtonTranslationKeyOrDetails: TranslationKey | ButtonDialogButtonDetails,
     secondaryButtonTranslationKeyOrDetails?: TranslationKey | ButtonDialogButtonDetails,
     extras?: PortalDialogConfig
-  ): Observable<DialogState<T>>
+  ): Observable<DialogState<T> | null>
   openDialog<T>(
     title: TranslationKey | null,
     componentOrMessage: Type<any> | Type<DialogResult<T>> | Component<T> | TranslationKey | DialogMessage,
     primaryButtonTranslationKeyOrDetails: TranslationKey | ButtonDialogButtonDetails,
     secondaryButtonTranslationKeyOrDetails?: TranslationKey | ButtonDialogButtonDetails,
     extrasOrShowXButton: PortalDialogConfig | boolean = {}
-  ): Observable<DialogState<T>> {
+  ): Observable<DialogState<T> | null> {
     const dialogOptions: PortalDialogConfig =
       typeof extrasOrShowXButton === 'object'
         ? extrasOrShowXButton
@@ -503,28 +485,46 @@ export class PortalDialogService implements OnDestroy {
             footer: DialogFooterComponent,
           },
         })
-        this.setScopeIdentifier(this.dialogService.getInstance(dialogRef))
+        if (!dialogRef) {
+          this.logger.error('Dialog could not be opened, dialog creation failed.')
+          return of(null)
+        }
+        const dialogComponent = this.dialogService.getInstance(dialogRef)
+        if (dialogComponent) {
+          this.setScopeIdentifier(dialogComponent)
+        } else {
+          this.logger.warn(
+            'Dialog component instance could not be found after creation. The displayed dialog may not function as expected.'
+          )
+        }
         return dialogRef.onClose
       })
     )
   }
-
   private cleanupAndCloseDialog() {
     if (this.dialogService.dialogComponentRefMap.size > 0) {
       this.dialogService.dialogComponentRefMap.forEach((_, dialogRef) => {
         const dialogComponent = this.dialogService.getInstance(dialogRef)
+        if (!dialogComponent) {
+          this.logger.warn(
+            'Dialog component instance could not be found during cleanup. The displayed dialog may not function as expected.'
+          )
+          return
+        }
         dialogRef.close()
         this.removeDialogFromHtml(dialogComponent)
       })
     }
   }
 
-  private removeDialogFromHtml(dialogComponent: DynamicDialogComponent) {
+  private removeDialogFromHtml(dialogComponent: DynamicDialog) {
     const bodyChild = this.findDialogComponentBodyChild(dialogComponent)
-    bodyChild && document.body.removeChild(bodyChild)
+    if (bodyChild) {
+      document.body.removeChild(bodyChild)
+    }
   }
 
-  private setScopeIdentifier(dialogComponent: DynamicDialogComponent) {
+  private setScopeIdentifier(dialogComponent: DynamicDialog) {
     getScopeIdentifier(
       this.appStateService,
       this.skipStyleScoping ?? undefined,
@@ -538,7 +538,7 @@ export class PortalDialogService implements OnDestroy {
     })
   }
 
-  private findDialogComponentBodyChild(dialogComponent: DynamicDialogComponent) {
+  private findDialogComponentBodyChild(dialogComponent: DynamicDialog) {
     const element = dialogComponent.el.nativeElement
     if (!element) return
     return this.findBodyChild(element)

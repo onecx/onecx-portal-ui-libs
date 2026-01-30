@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing'
-import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { TranslateTestingModule } from 'ngx-translate-testing'
-import { ExportDataService } from './export-data.service'
-import { DateUtils } from '../utils/dateutils'
+import { TranslateService } from '@ngx-translate/core'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { ColumnType } from '../model/column-type.model'
+import { DateUtils } from '../utils/dateutils'
+import { ExportDataService } from './export-data.service'
 
 describe('ExportDataService', () => {
   class ElementMock {
@@ -312,9 +312,7 @@ describe('ExportDataService', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [],
-      imports: [TranslateModule.forRoot(), TranslateTestingModule.withTranslations(TRANSLATIONS)],
-      providers: [ExportDataService, DateUtils],
+      providers: [ExportDataService, DateUtils, provideTranslateTestingService(TRANSLATIONS)],
     }).compileComponents()
 
     translateService = TestBed.inject(TranslateService)
@@ -643,7 +641,74 @@ describe('ExportDataService', () => {
     )
     expect(expectedFilename).toEqual(mock.attributes['download'])
   })
+
+  it('should replace one double quotes with two double quotes', async () => {
+    const data = [{ name: 'Name A"Name B' }]
+    const mock = new ElementMock()
+    jest.spyOn(document, 'createElement').mockReturnValue(<any>mock)
+    URL.createObjectURL = jest.fn().mockImplementation((b: Blob) => {
+      blobs.push(b)
+      return (blobs.length - 1).toString()
+    })
+    await exportDataService.exportCsv(mockColumns, data, 'test.csv')
+    const csv = await blobs[Number(mock.attributes['href'])].text()
+    expect(csv).toContain('Name A""Name B')
+  })
+
+  it('should wrap in quotes if delimiter is present', async () => {
+    const data = [{ name: 'Name A,Name B' }]
+    const mock = new ElementMock()
+    jest.spyOn(document, 'createElement').mockReturnValue(<any>mock)
+    URL.createObjectURL = jest.fn().mockImplementation((b: Blob) => {
+      blobs.push(b)
+      return (blobs.length - 1).toString()
+    })
+    await exportDataService.exportCsv(mockColumns, data, 'test.csv')
+    const csv = await blobs[Number(mock.attributes['href'])].text()
+    expect(csv).toContain('"Name A,Name B"')
+  })
+
+  it('should wrap in quotes if line break (`\n`) is present', async () => {
+    const data = [{ name: 'Name A\nName B' }]
+    const mock = new ElementMock()
+    jest.spyOn(document, 'createElement').mockReturnValue(<any>mock)
+    URL.createObjectURL = jest.fn().mockImplementation((b: Blob) => {
+      blobs.push(b)
+      return (blobs.length - 1).toString()
+    })
+    await exportDataService.exportCsv(mockColumns, data, 'test.csv')
+    const csv = await blobs[Number(mock.attributes['href'])].text()
+    expect(csv).toContain('"Name A\nName B"')
+  })
+
+  it('should wrap in quotes if line break (`\r`) is present', async () => {
+    const data = [{ name: 'Name A\rName B' }]
+    const mock = new ElementMock()
+    jest.spyOn(document, 'createElement').mockReturnValue(<any>mock)
+    URL.createObjectURL = jest.fn().mockImplementation((b: Blob) => {
+      blobs.push(b)
+      return (blobs.length - 1).toString()
+    })
+    await exportDataService.exportCsv(mockColumns, data, 'test.csv')
+    const csv = await blobs[Number(mock.attributes['href'])].text()
+    expect(csv).toContain('"Name A\rName B"')
+  })
+
+  it('should not wrap in quotes if not needed', async () => {
+    const data = [{ name: 'Name A' }]
+    const mock = new ElementMock()
+    jest.spyOn(document, 'createElement').mockReturnValue(<any>mock)
+    URL.createObjectURL = jest.fn().mockImplementation((b: Blob) => {
+      blobs.push(b)
+      return (blobs.length - 1).toString()
+    })
+    await exportDataService.exportCsv(mockColumns, data, 'test.csv')
+    const csv = await blobs[Number(mock.attributes['href'])].text()
+    expect(csv).toContain('Name A')
+    expect(csv).not.toContain('"Name A"')
+  })
 })
+
 function generateCsvContentForDate(value: string | undefined, dateUtils: DateUtils): string {
   if (value) {
     return '"' + dateUtils.localizedDate(value) + '"'

@@ -1,6 +1,9 @@
 import { Injectable, OnDestroy } from '@angular/core'
 import { Observable, catchError, filter, first, map, of, tap } from 'rxjs'
 import { Topic } from '@onecx/accelerator'
+import { createLogger } from '../utils/logger.utils'
+
+const logger = createLogger('TranslationCacheService')
 
 // This topic is defined here and not in integration-interface, because
 // it is not used as framework independent integration but for improving
@@ -19,12 +22,19 @@ declare global {
 
 @Injectable({ providedIn: 'root' })
 export class TranslationCacheService implements OnDestroy {
-  private translationTopic$ = new TranslationCacheTopic()
+  private _translationTopic$: TranslationCacheTopic | undefined
+  get translationTopic$() {
+    this._translationTopic$ ??= new TranslationCacheTopic()
+    return this._translationTopic$
+  }
+  set translationTopic$(source: TranslationCacheTopic) {
+    this._translationTopic$ = source
+  }
   constructor() {
     window['onecxTranslations'] ??= {}
   }
   ngOnDestroy(): void {
-    this.translationTopic$.destroy()
+    this._translationTopic$?.destroy()
   }
 
   /**
@@ -62,7 +72,7 @@ export class TranslationCacheService implements OnDestroy {
       }),
       map(() => window['onecxTranslations'][url]),
       catchError(() => {
-        console.error(`Failed to load translation file: ${url}`)
+        logger.error(`Failed to load translation file: ${url}`)
         delete window['onecxTranslations'][url]
         this.translationTopic$.publish(url)
         return of({})

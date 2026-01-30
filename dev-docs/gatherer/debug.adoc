@@ -1,0 +1,38 @@
+= How to debug Gatherer
+
+NOTE: The configuration shown below is only valid for older OneCX UI libraries prior to version 8.
+For current versions, logging is configured via `localStorage` (see xref:onecx-portal-ui-libs:browser-logging.adoc[Browser Logging]).
+
+After running the following command in your web browser's DevTools console:
+
+```
+window['@onecx/accelerator'].gatherer ??= {debug:['name_of_the_gatherer', ...]}
+```
+
+you will start seeing debug logs for the specified Gatherer in the console. You can add more Gatherer names to the array to monitor multiple Gatherers.
+
+== v8+ (current)
+
+Enable gatherer logs via `localStorage.debug` patterns.
+
+Log output uses the same loglevels as the rest of the UI libraries:
+
+- `debug`: high-volume gatherer diagnostics
+- `info`: lifecycle milestones
+- `warn`: recoverable anomalies
+- `error`: failures
+
+[source,js]
+----
+// Enable all gatherer logs
+localStorage.debug = '@onecx/accelerator:Gatherer:*'
+location.reload()
+
+// Enable one concrete gatherer
+localStorage.debug = '@onecx/accelerator:Gatherer:my-gatherer-name'
+location.reload()
+
+// Only errors for all gatherers
+localStorage.debug = '@onecx/accelerator:Gatherer:*:error'
+location.reload()
+----

@@ -3,13 +3,14 @@ on:
   pull_request_target:
 jobs:
   auto-merge-dependabot-pr:
-    if: >- 
-      github.event.pull_request.user.login == 'dependabot[bot]' &&
-      (
-        startsWith(github.head_ref, 'dependabot/npm_and_yarn/angular-') ||
-        startsWith(github.head_ref, 'dependabot/npm_and_yarn/onecx-') ||
-        startsWith(github.event.pull_request.title, 'chore(deps-dev)')
-      )
+    # if: >- 
+    #  github.event.pull_request.user.login == 'dependabot[bot]' &&
+    #  (
+    #    startsWith(github.head_ref, 'dependabot/npm_and_yarn/angular-') ||
+    #    startsWith(github.head_ref, 'dependabot/npm_and_yarn/onecx-') ||
+    #    startsWith(github.event.pull_request.title, 'chore(deps-dev)')
+    #  )
+    if: false
     runs-on: ubuntu-latest
     steps:
       - name: Auto Approve
@@ -31,7 +32,8 @@ jobs:
   rebase-merge-nx-pr:
     name: Rebase and merge
     runs-on: ubuntu-latest
-    if: github.event.pull_request.user.login == 'tkit-dev' && startsWith(github.head_ref, 'migrate-nx-to-')
+    # if: github.event.pull_request.user.login == 'tkit-dev' && startsWith(github.head_ref, 'migrate-nx-to-')
+    if: false
     steps:
       - name: Checkout the latest code
         uses: actions/checkout@v4
