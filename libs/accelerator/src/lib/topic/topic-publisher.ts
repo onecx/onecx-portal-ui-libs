@@ -41,7 +41,7 @@ export class TopicPublisher<T> {
         window['@onecx/accelerator'].topic ??= {}
         window['@onecx/accelerator'].topic.useBroadcastChannel = false
       } else {
-        this.publishBroadcastChannel = new BroadcastChannel(`Topic-${this.name}|${this.version}`)
+        this.publishBroadcastChannel = new BroadcastChannel(`Topic-${this.name}|${this.version}-${window['@onecx/accelerator'].topic.tabId}`)
       }
     }
   }
