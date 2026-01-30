@@ -30,6 +30,6 @@ window['@onecx/accelerator'].gatherer.promises ??= {}
 window['@onecx/accelerator'].topic ??= {}
 window['@onecx/accelerator'].topic.useBroadcastChannel ??= true
 window['@onecx/accelerator'].topic.initDate ??= Date.now()
-window['@onecx/accelerator'].topic.tabId = Math.ceil(window.performance.now())
+window['@onecx/accelerator'].topic.tabId = Math.ceil(globalThis.performance.now())
 
 export default globalThis
