@@ -1,3 +1,9 @@
+## [6.14.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.14.1...v6.14.2) (2026-01-30)
+
+### Bug Fixes
+
+* isolate topics + fallback v6 ([#1181](https://github.com/onecx/onecx-portal-ui-libs/issues/1181)) ([1c1a061](https://github.com/onecx/onecx-portal-ui-libs/commit/1c1a06126c3341154a9dc833759d4124a80c06cb))
+
 ## [6.14.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.14.0...v6.14.1) (2026-01-30)
 
 ### Bug Fixes
