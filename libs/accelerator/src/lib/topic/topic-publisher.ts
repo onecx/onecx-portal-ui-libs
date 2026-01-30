@@ -9,6 +9,7 @@ import { ComponentLogger } from '../utils/create-logger.utils'
 export class TopicPublisher<T> {
   protected publishPromiseResolver: Record<number, () => void> = {}
   protected publishBroadcastChannel: BroadcastChannel | undefined
+  protected publishBroadcastChannelV2: BroadcastChannel | undefined
   protected readonly baseLogger: ComponentLogger
 
   constructor(
@@ -41,14 +42,17 @@ export class TopicPublisher<T> {
         window['@onecx/accelerator'].topic ??= {}
         window['@onecx/accelerator'].topic.useBroadcastChannel = false
       } else {
-        this.publishBroadcastChannel = new BroadcastChannel(`Topic-${this.name}|${this.version}-${window['@onecx/accelerator'].topic.tabId}`)
+        this.publishBroadcastChannel = new BroadcastChannel(`Topic-${this.name}|${this.version}`)
+        this.publishBroadcastChannelV2 = new BroadcastChannel(`TopicV2-${this.name}|${this.version}-${window['@onecx/accelerator'].topic.tabId}`)
       }
     }
   }
 
   protected sendMessage(message: TopicMessage): void {
     this.createBroadcastChannel()
-    if (window['@onecx/accelerator']?.topic?.useBroadcastChannel) {
+    if (window['@onecx/accelerator']?.topic?.useBroadcastChannel === "V2") {
+      this.publishBroadcastChannelV2?.postMessage(message)
+    } else if (window['@onecx/accelerator']?.topic?.useBroadcastChannel) {
       this.publishBroadcastChannel?.postMessage(message)
     } else {
       window.postMessage(message, '*')
