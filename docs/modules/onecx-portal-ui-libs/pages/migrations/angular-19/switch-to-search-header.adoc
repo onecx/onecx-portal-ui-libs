@@ -1,0 +1,140 @@
+[#switch-to-ocx-dialog-inline-v2]
+= Replace SearchCriteriaComponent
+
+In OneCX v6, Replace *SearchCriteriaComponent* with *SearchHeaderComponent*. SearcghHeaderComponent can accept search templates and provides options to add toolbar content with alignment.
+
+== Code Changes
+* Remove SearchCriteriaComponent from `@onecx/portal-integration-angular`
+* Replace with SearchHeaderComponent from `@onecx/angular-accelerator`
+* Replace <ocx-search-criteria> tag with <ocx-search-header>
+* Migrate input properties and output events as per the mapping tables below.
+
+== Example
+.Before
+[source,html]
+----
+<ocx-search-criteria
+[searchId]="searchId"
+[disableAdvancedToggle]="disableAdvancedToggle"
+[criteriaTemplate]="true"
+(search)="onSearch($event)"
+(reset)="onReset($event)"
+(advancedViewToggle)="onAdvancedViewToggle()">
+    <div toolbarItems>
+        <button pButton label="Extra"></button>
+    </div>
+    <div simpleCriteria>
+        <input pInputText placeholder="Search term" />
+    </div>
+</ocx-search-criteria>
+----
+
+[source, typescript]
+----
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-search-page',
+  templateUrl: './search-page.component.html'
+})
+export class SearchPageComponent {
+  onSearch(mode: 'basic' | 'advanced') {
+    console.log('Search triggered:', mode);
+  }
+
+  onReset(mode: 'basic' | 'advanced') {
+    console.log('Reset triggered:', mode);
+  }
+
+  onViewToggle() {
+    console.log('Advanced view toggled');
+  }
+}
+----
+
+.After
+[source, html]
+----
+<ocx-search-header [header]="header" (resetted)="onReset($event)" (searched)="onSearch($event)" (viewModeChanged)="onViewToggle()">
+  <div additionalToolbarContent>
+    <button pButton label="Extra"></button>
+  </div>
+  <form>
+    <div class="flex flex-wrap gap-3">
+    <p-floatlabel variant="on">
+      <input
+        id="SearchTerm"
+        pInputText
+        type="text"
+        class="w-18rem"
+        [pTooltip]="'Search term'"
+        tooltipPosition="top"
+        tooltipEvent="hover"
+      />
+      <label for="name" style="white-space: nowrap">
+        Name
+      </label>
+    </p-floatlabel>
+    </div>
+  </form>
+</ocx-search-header>
+----
+
+[source, typescript]
+----
+export class SearchPageComponent {
+  onSearch(mode: 'basic' | 'advanced') {
+    console.log('Search triggered:', mode);
+  }
+
+  onReset(mode: 'basic' | 'advanced') {
+    console.log('Reset triggered:', mode);
+  }
+
+  onViewToggle() {
+    console.log('Advanced view toggled');
+  }
+}
+----
+
+== Properties Mapping
+
+.Input Properties
+[.stripes-even,cols="1,1,2"]
+|===
+h| SearchCriteriaComponent
+h| SearchHeaderComponent
+h| Notes
+
+| searchId
+| pageName
+| Sets the unique identifier for the search context. Example: `app_object_search`
+
+| disableAdvancedToggle
+| -
+| Deprecated. Use `viewMode` input instead. Example: viewMode = !disableAdvancedToggle ? 'advanced' : 'basic'
+
+| criteriaTemplate
+| -
+| Removed criteriaTemplate and create and pass search template inside <ocx-search-header> tag
+|===
+
+.Output Events
+[.stripes-even,cols="1,1,2"]
+|===
+h| SearchCriteriaComponent
+h| SearchHeaderComponent
+h| Notes
+
+| search
+| searched
+| Emits on search action. Provides nothing
+
+| reset
+| resetted
+| Emits on reset action. Provides nothing
+
+| advancedViewToggle
+| viewModeChanged
+| Emits on view mode change action. Provides the new view mode Example: 'basic' | 'advanced'
+|===

@@ -1,0 +1,92 @@
+[#switch-to-ocx-dialog-inline-v2]
+= Replace ButtonDialogComponent
+
+In OneCX v6, replace `ButtonDialogComponent` with `DialogInlineComponent` for inline dialogs with configurable buttons and dynamic content.
+
+== Code Changes
+
+* Remove `ButtonDialogComponent` from `@onecx/portal-integration-angular`.
+* Add `DialogInlineComponent` from `@onecx/angular-accelerator`.
+* Replace tag `<ocx-button-dialog>` with `<ocx-dialog-inline>`.
+* Migrate input properties and output events as per the mapping table below.
+
+== Example
+.Before
+[source,html]
+----
+<ocx-button-dialog
+  [config]="dialogConfig"
+  (resultEmitter)="onDialogResult($event)">
+  <p>Dialog Content to display</p>
+</ocx-button-dialog>
+----
+
+[source, typescript]
+----
+export class ExampleComponent {
+  dialogConfig = {
+    primaryButtonDetails: { key: 'OCX_BUTTON_DIALOG.CONFIRM' },
+    secondaryButtonIncluded: true,
+    secondaryButtonDetails: { key: 'OCX_BUTTON_DIALOG.CANCEL' },
+    customButtons: [{ id: 'help', label: 'Help', alignment: 'left' }],
+    autoFocusButton: 'primary'
+  }
+
+  onDialogResult(result: any) {
+    console.log('Dialog result (inline):', result);
+  }
+}
+----
+
+.After
+[source, html]
+----
+<ocx-dialog-inline
+  [config]="dialogConfig"
+  (resultEmitter)="onDialogResult($event)">
+  <p>Dialog Content to display</p>
+</ocx-dialog-inline>
+----
+
+[source, typescript]
+----
+export class ExampleComponent {
+  dialogConfig = {
+    primaryButtonDetails: { key: 'OCX_BUTTON_DIALOG.CONFIRM' },
+    secondaryButtonIncluded: true,
+    secondaryButtonDetails: { key: 'OCX_BUTTON_DIALOG.CANCEL' },
+    customButtons: [{ id: 'help', label: 'Help', alignment: 'left' }],
+    autoFocusButton: 'primary'
+  }
+
+  onDialogResult(result: any) {
+    console.log('Dialog result (inline):', result);
+  }
+}
+----
+
+== Properties Mapping
+
+.Input Properties
+[.stripes-even,cols="1,1,2"]
+|===
+h| ButtonDialogComponent
+h| DialogInlineComponent
+h| Notes
+
+| config
+| config
+| `ButtonDialogConfig`. Indicates the dialog configuration object for buttons, labels etc. No change in config structure.
+|===
+
+.Output Events
+[.stripes-even,cols="1,1,2"]
+|===
+h| ButtonDialogComponent
+h| DialogInlineComponent
+h| Notes
+
+| resultEmitter
+| resultEmitter
+| Emits the type of button clicked (e.g. `primary`, `secondary`, `custom`).
+|===
