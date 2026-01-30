@@ -1,0 +1,115 @@
+[#switch-to-ocx-content-or-container-v2]
+= Replace PageContentComponent
+
+In OneCX v6,
+
+    - Replace *PageContentComponent* with *OcxContentComponent* when *PageContentComponent* has title and styleClass
+    - Replace *PageContentComponent* with *OcxContentContainerComponent* when *PageContentComponent* is used for grouping multiple content sections together and support layout options.
+
+== Code Changes
+
+* Remove `PageContentComponent` from `@onecx/portal-integration-angular`
+* Add with `OcxContentComponent` from `@onecx/angular-accelerator`
+* For grouping, Add with `OcxContentContainerComponent` from `@onecx/angular-accelerator`
+* For single content sections, Replace tag `<ocx-page-content>` with `<ocx-content>`
+* For grouping multiple content sections, Replace tag `<ocx-page-content>` with `<ocx-content-container>`
+* Migrate input properties as per the mapping tables below
+
+== Example (OcxContentComponent)
+.Before
+[source, html]
+----
+<ocx-page-content
+  [styleClass]="'my-custom-class'"
+>
+  <!-- content here -->
+</ocx-page-content>
+----
+
+.After
+[source, html]
+----
+<ocx-content
+  [styleClass]="'my-custom-class'"
+  [title]="'My Page Title'"
+>
+  <!-- content here -->
+</ocx-content>
+----
+
+== Example (OcxContentContainerComponent)
+.Before
+[source,html]
+----
+<h1>User Area</h1>
+<page-content>
+  <h1>Profile</h1>
+  <app-profile-details></app-profile-details>
+</page-content>
+<page-content>
+  <h2>Settings</h2>
+  <app-settings-form></app-settings-form>
+</page-content>
+----
+
+.After
+[source,html]
+----
+<ocx-content-container [title]="'User Area'">
+  <ocx-content [title]="'Profile'">
+    <app-profile-details></app-profile-details>
+  </ocx-content>
+  <ocx-content [title]="'Settings'">
+    <app-settings-form></app-settings-form>
+  </ocx-content>
+</ocx-content-container>
+----
+
+== Properties Mapping
+
+.Input Properties
+[.stripes-even,cols="1,1,2"]
+|===
+h| PageContentComponent 
+h| OcxContentComponent
+h| Notes
+
+| styleClass
+| styleClass
+| Indicates css class, applied to container div
+
+| -
+| title
+| (optional) Indicates the title of the content
+|===
+
+.Input Properties
+[.stripes-even,cols="1,1,2"]
+|===
+h| PageContentComponent 
+h| OcxContentContainerComponent
+h| Notes
+
+| styleClass
+| styleClass
+| Indicates css class, applied to container div
+
+| -
+| layout 
+a| Sets layout direction of container
+
+Values: `vertical`, `horizontal`
+
+Default value: `vertical`
+
+| -
+| breakpoint 
+a| Sets breakpoint when horizontal layout switches to vertical layout
+
+Values: `sm`, `md`, `lg`, `xl`
+
+Default value: `md`
+|===
+
+
+
