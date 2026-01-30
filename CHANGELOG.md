@@ -1,3 +1,10 @@
+## [7.0.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.2...v7.0.3) (2026-01-30)
+
+### Bug Fixes
+
+* export parameters service ([#1159](https://github.com/onecx/onecx-portal-ui-libs/issues/1159)) ([#1160](https://github.com/onecx/onecx-portal-ui-libs/issues/1160)) ([00fe022](https://github.com/onecx/onecx-portal-ui-libs/commit/00fe0228dda9080f749dbfffc2c9003e4d2a544f))
+* isolate topics to tab ([#1176](https://github.com/onecx/onecx-portal-ui-libs/issues/1176)) ([e6742d9](https://github.com/onecx/onecx-portal-ui-libs/commit/e6742d9f109ccda427e2f0ad55240bdfe1390f6a))
+
 ## [7.0.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.1...v7.0.2) (2026-01-15)
 
 ### Bug Fixes

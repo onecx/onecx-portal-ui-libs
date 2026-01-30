@@ -1,6 +1,6 @@
 {
   "name": "@onecx/angular-webcomponents",
-  "version": "7.0.2",
+  "version": "7.0.3",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -14,11 +14,11 @@
     "@angular/router": "^20.0.0",
     "rxjs": "~7.8.1",
     "@nx/devkit": "^22.0.2",
-    "@onecx/accelerator": "^7.0.2",
-    "@onecx/angular-integration-interface": "^7.0.2",
-    "@onecx/integration-interface": "^7.0.2",
-    "@onecx/angular-utils": "^7.0.2",
-    "@onecx/nx-migration-utils": "^7.0.2"
+    "@onecx/accelerator": "^7.0.3",
+    "@onecx/angular-integration-interface": "^7.0.3",
+    "@onecx/integration-interface": "^7.0.3",
+    "@onecx/angular-utils": "^7.0.3",
+    "@onecx/nx-migration-utils": "^7.0.3"
   },
   "dependencies": {},
   "publishConfig": {
