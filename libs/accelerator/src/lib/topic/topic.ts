@@ -42,7 +42,7 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
         window['@onecx/accelerator'].topic.useBroadcastChannel = false
       } else {
         this.readBroadcastChannel = new BroadcastChannel(`Topic-${this.name}|${this.version}`)
-        this.readBroadcastChannelV2 = new BroadcastChannel(`Topic-${this.name}|${this.version}-${window['@onecx/accelerator'].topic.tabId}`)
+        this.readBroadcastChannelV2 = new BroadcastChannel(`TopicV2-${this.name}|${this.version}-${window['@onecx/accelerator'].topic.tabId}`)
       }
     }
 
@@ -225,6 +225,8 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
     window.removeEventListener('message', this.windowEventListener, true)
     this.readBroadcastChannel?.close()
     this.publishBroadcastChannel?.close()
+    this.readBroadcastChannelV2?.close()
+    this.publishBroadcastChannelV2?.close()
   }
 
   private onWindowMessage(m: MessageEvent<TopicMessage>): any {
