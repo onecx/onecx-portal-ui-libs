@@ -38,7 +38,7 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
         window['@onecx/accelerator'].topic ??= {}
         window['@onecx/accelerator'].topic.useBroadcastChannel = false
       } else {
-        this.readBroadcastChannel = new BroadcastChannel(`Topic-${this.name}|${this.version}`)
+        this.readBroadcastChannel = new BroadcastChannel(`Topic-${this.name}|${this.version}-${window['@onecx/accelerator'].topic.tabId}`)
       }
     }
 
