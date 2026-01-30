@@ -574,4 +574,75 @@ describe('Topic', () => {
       t.destroy()
     })
   })
+  describe('broadcastChannelV2', () => {
+    it('sends messages via BroadcastChannel V2 when enabled', () => {
+      window['@onecx/accelerator'] ??= {}
+      window['@onecx/accelerator'].topic ??= {}
+      window['@onecx/accelerator'].topic.useBroadcastChannel = 'V2'
+      window['@onecx/accelerator'].topic.tabId = 1
+
+      const postSpy = jest.spyOn(window, 'postMessage')
+      const t = new Topic<string>('v2-send', 1, false)
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      t.subscribe(() => {})
+
+      const v2Channel = `TopicV2-v2-send|1-1`
+      const received: any[] = []
+      BroadcastChannelMock.listeners[v2Channel] ??= []
+      BroadcastChannelMock.listeners[v2Channel].push((m: any) => received.push(m.data))
+
+      t.publish('hello')
+
+      expect(postSpy).not.toHaveBeenCalled()
+      expect(received.some((m) => m?.type === TopicMessageType.TopicNext)).toBe(true)
+      t.destroy()
+      postSpy.mockRestore()
+    })
+
+    it('falls back from V2 when message arrives on legacy BroadcastChannel', () => {
+      window['@onecx/accelerator'] ??= {}
+      window['@onecx/accelerator'].topic ??= {}
+      window['@onecx/accelerator'].topic.useBroadcastChannel = 'V2'
+
+      const t = new Topic<string>('v2-fallback', 1, false)
+
+      const msg = {
+        data: { type: TopicMessageType.TopicNext, name: 'v2-fallback', version: 1, data: 'x', timestamp: 1, id: 1 },
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        stopImmediatePropagation: () => {},
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        stopPropagation: () => {},
+      } as any
+
+      ;(t as any).onBroadcastChannelMessage(msg)
+
+      expect(window['@onecx/accelerator'].topic.useBroadcastChannel).toBe(true)
+      t.destroy()
+    })
+
+    it('isolates messages per tab in V2 channels', async () => {
+      window['@onecx/accelerator'] ??= {}
+      window['@onecx/accelerator'].topic ??= {}
+      window['@onecx/accelerator'].topic.useBroadcastChannel = 'V2'
+
+      window['@onecx/accelerator'].topic.tabId = 1
+      const val1: string[] = []
+      const t1 = new Topic<string>('v2-tab', 1, false)
+      t1.subscribe((v) => val1.push(v))
+
+      window['@onecx/accelerator'].topic.tabId = 2
+      const val2: string[] = []
+      const t2 = new Topic<string>('v2-tab', 1, false)
+      t2.subscribe((v) => val2.push(v))
+
+      window['@onecx/accelerator'].topic.tabId = 1
+      await t1.publish('only-tab-1')
+
+      expect(val1).toEqual(['only-tab-1'])
+      expect(val2).toEqual([])
+
+      t1.destroy()
+      t2.destroy()
+    })
+  })
 })
