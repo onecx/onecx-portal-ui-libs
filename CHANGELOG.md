@@ -1,3 +1,9 @@
+## [7.0.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.3...v7.0.4) (2026-01-30)
+
+### Bug Fixes
+
+* isolate topics + fallback v7 ([#1180](https://github.com/onecx/onecx-portal-ui-libs/issues/1180)) ([c6ee82f](https://github.com/onecx/onecx-portal-ui-libs/commit/c6ee82fa9c839b19f265c53aa8e4895e792877be))
+
 ## [7.0.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.2...v7.0.3) (2026-01-30)
 
 ### Bug Fixes
