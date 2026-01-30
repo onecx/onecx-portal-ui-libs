@@ -1,0 +1,324 @@
+:idprefix:
+:idseparator: -
+
+= Library: @onecx/angular-integration-interface
+
+:integration-interface_url: xref:./integration-interface.adoc
+:global_error_topic_url: xref:./integration-interface.adoc#global-error-topic
+:global_loading_topic_url: xref:./integration-interface.adoc#global-loading-topic
+:current_mfe_topic_url: xref:./integration-interface.adoc#current-mfe-topic
+:current_page_topic_url: xref:./integration-interface.adoc#current-page-topic
+:current_workspace_topic_url: xref:./integration-interface.adoc#current-workspace-topic
+:is_authenticated_topic_url: xref:./integration-interface.adoc#is-authenticated-topic
+:configuration_topic_url: xref:./integration-interface.adoc#configuration-topic
+:message_topic_url: xref:./integration-interface.adoc#message-topic
+:remote_components_topic_url: xref:./integration-interface.adoc#remote-components-topic
+:current_theme_topic_url: xref:./integration-interface.adoc#current-theme-topic
+:user_profile_topic_url: xref:./integration-interface.adoc#user-profile-topic
+:permissions_topic_url: xref:./integration-interface.adoc#permissions-topic
+:config_object_url: xref:./integration-interface.adoc#config-object
+:theme_object_url: xref:./integration-interface.adoc#theme-object
+:route_object_url: xref:./integration-interface.adoc#Route-object
+
+
+[#overview]
+== Overview
+`@onecx/angular-integration-interface` library is a set of tools aiming to ease the development of Angular applications integrated with OneCX by utilizing and extending functionalities of {integration-interface_url}[@onecx/integration-interface]. This library offers Injectable services exposing a set of functionalities useful for integrating Microfrontends with OneCX without directly utilizing Topics.
+
+[#services]
+== Services
+
+[#app-config-service]
+=== App Config Service
+Usage::
+*Initialize and access configuration variables for a specific Microfrontend*. 
++
+It is similar to xref:./angular-integration-interface.adoc#configuration-service[ConfigurationService], however *App Config Service* should be used for a Microfrontend configuration management. If sharing the configuration variable with multiple Microfrontends is desired, please use xref:./angular-integration-interface.adoc#configuration-service[ConfigurationService] and provide variables via Shell Application.
+
+Topics used::
+None
+
+Dependencies::
+* HttpClient
+
+API::
+*App Config Service* properties enable access to the config data directly:
++
+.App Config Service properties
+[cols="1,1,2"]
+|===
+|Property name |Type | Description
+
+|`config$` | `BehaviorSubject<{ [key: string]: string }>` | BehaviorSubject for Application configuration data.
+|===
++
+*App Config Service* methods can be used for Microfrontend configuration variable management:
++
+.App Config Service methods
+[cols="1,1,2"]
+|===
+| Method signature | Return type | Description
+
+|`init(baseUrl: string)` | `Promise<void>` | Initializes App Config Service by loading configuration variables. The configuration will be loaded from the `\{baseUrl}/assets/env.json` file.
+|`getProperty(key: string)` | `string \| undefined`| Gets the value for a key from *config$*.
+|`async setProperty(key: string, val:string)` | `void` | Updates the value for a key in *config$*.
+|`getConfig()` |`{ [key: string]: string }` |Gets all configuration variables defined for the Microfrontend.
+|===
+
+[#app-state-service]
+=== App State Service
+Usage::
+*Access information about the platform state*.
++
+This service creates new instances of several Topics that contain information about the current state of the platform and makes sure they are cleaned up correctly on destruction.
+
+Topics used::
+
+* {global_error_topic_url}[GlobalErrorTopic]
+* {global_loading_topic_url}[GlobalLoadingTopic]
+* {current_mfe_topic_url}[CurrentMfeTopic]
+* {current_page_topic_url}[CurrentPageTopic]
+* {current_workspace_topic_url}[CurrentWorkspaceTopic]
+* {is_authenticated_topic_url}[IsAuthenticatedTopic]
+
+Dependencies::
+None
+
+API::
+*App State Service* properties enable access to topic instances:
++
+.App State Service properties
+[cols="1,1,2"]
+|===
+|Property name |Type | Description
+
+|`globalError$` | `{global_error_topic_url}[GlobalErrorTopic]` | {global_error_topic_url}[GlobalErrorTopic] instance.
+|`globalLoading$` | `{global_loading_topic_url}[GlobalLoadingTopic]` | {global_loading_topic_url}[GlobalLoadingTopic] instance.
+|`currentMfe$` | `{current_mfe_topic_url}[CurrentMfeTopic]` | {current_mfe_topic_url}[CurrentMfeTopic] instance.
+|`currentPage$` | `{current_page_topic_url}[CurrentPageTopic]` | {current_page_topic_url}[CurrentPageTopic] instance.
+|`currentWorkspace$` | `{current_workspace_topic_url}[CurrentWorkspaceTopic]` | {current_workspace_topic_url}[CurrentWorkspaceTopic] instance.
+|`isAuthenticated$` | `{is_authenticated_topic_url}[IsAuthenticatedTopic]` | {is_authenticated_topic_url}[IsAuthenticatedTopic] instance.
+|`[.line-through]#currentPortal$#` | [.line-through]`{current_workspace_topic_url}[CurrentWorkspaceTopic]` | Deprecated. Use currentWorkspace$ instead.
+|===
+
+[#configuration-service]
+=== Configuration Service
+Usage::
+*Initialize and access configuration variables for a platform*. 
++
+This service is initialized by, and contains configuration variables, for the Shell Application that could be used in any place on the platform.
++
+xref:./angular-integration-interface.adoc#configuration-service[ConfigurationService] *should not be initialized by Microfrontends*. They can utilize specific functionality of this service to access and update configuration data.
+
+Topics used::
+
+* {configuration_topic_url}[ConfigurationTopic]
+
+Dependencies::
+
+* HttpClient
+
+API::
+*Configuration Service* properties:
++
+.Configuration Service properties
+[cols="1,1,2"]
+|===
+|Property name |Type | Description
+
+|`config$` | `{configuration_topic_url}[ConfigurationTopic]` | {configuration_topic_url}[ConfigurationTopic] instance.
+|`isInitialized` | `Promise<void>` | Promise resolved when Configuration Service is initialized.
+|===
++
+*Configuration Service* methods can be used for platform configuration variable management:
++
+.Configuration Service methods 
+[cols="1,1,2"]
+|===
+|Method signature |Return type | Description
+
+|`init()` | `Promise<boolean>` | Initializes Configuration Service by loading Shell configuration variables and publishes them via ConfigurationTopic. Should not be used in Microfrontends.
+|`getProperty(key: CONFIG_KEY)` | `string`| Gets value set for a key from topic.
+|`async setProperty(key: string, val:string)` | `void` | Updates the value for a key in the configuration. Publishes new message via ConfigurationTopic.
+|`getConfig()` |`{config_object_url}[Config]` |Gets all configuration variables defined for the app from the topic.
+|===
+
+[#portal-message-service]
+=== Portal Message Service
+Usage::
+*Display messages for a short period in an overlay on the top of the page*.
++
+This service is a wrapper for {message_topic_url}[MessageTopic] that should be used to display messages using translation keys.
+
+Topics used::
+
+* {message_topic_url}[MessageTopic]
+
+Dependencies::
+
+* TranslateService
+
+API::
+*Portal Message Service* properties enable access to the topic instances:
++
+.Portal Message Service properties
+[cols="1,1,2"]
+|===
+|Property name |Type | Description
+
+|`message$` | {message_topic_url}[MessageTopic] | {message_topic_url}[MessageTopic] instance.
+|===
++
+*Portal Message Service* methods can be used for displaying various messages:
++
+.Portal Message Service methods
+[cols="1,1,2"]
+|===
+|Method signature |Return type | Description
+
+|`success(msg: <<Message-object, Message>>)` |void | Display message with 'success' severity. Publishes new message via {message_topic_url}[MessageTopic].
+|`info(msg: <<Message-object, Message>>)` |void | Display message with 'info' severity. Publishes new message via {message_topic_url}[MessageTopic].
+|`error(msg: <<Message-object, Message>>)` |void | Display message with 'error' severity. Publishes new message via {message_topic_url}[MessageTopic].
+|`warning(msg: <<Message-object, Message>>)` |void | Display message with 'warning' severity. Publishes new message via {message_topic_url}[MessageTopic].
+|===
++
+[[Message-object]]
+*Message object* accepted by the *Portal Message Service* methods extends the *Message object* used by the {message_topic_url}[MessageTopic] with the following properties:
++
+.Message object extensions
+[cols="1,1,2"]
+|===
+|Property name |Type | Description
+
+|summaryKey? |`string` | Translation key of the Message summary text.
+|summaryParameters? |`object` | Translation parameters of the Message summary text.
+|detailKey? |`string` | Translation key of the Message detail text.
+|detailParameters? |`object` | Translation parameters of the Message detail text.
+|===
+
+[#remote-components-service]
+=== Remote Components Service
+Usage::
+*Access Remote Components' information*.
++
+This service creates a new instance of {remote_components_topic_url}[RemoteComponentsTopic] which contains information about the Remote Components and makes sure it is cleaned up correctly on destroy.
+
+Topics used::
+
+* {remote_components_topic_url}[RemoteComponentsTopic]
+
+API::
+*Remote Components Service* properties enable access to topic instances:
++
+.Remote Components Service properties
+[cols="1,1,2"]
+|===
+|Property name |Type | Description
+
+|`remoteComponents$` | `{remote_components_topic_url}[RemoteComponentsTopic]` | {remote_components_topic_url}[RemoteComponentsTopic] instance.
+|===
+
+[#theme-service]
+=== Theme Service
+Usage::
+*Change the page display style by applying Themes*.
++
+This service allows changing the currently used Theme by applying it to the document and informs about it via a new message in the {current_theme_topic_url}[CurrentThemeTopic].
+
+Topics used::
+
+* {current_theme_topic_url}[CurrentThemeTopic]
+
+Dependencies::
+
+* HttpClient
+* xref:./angular-integration-interface.adoc#configuration-service[ConfigurationService]
+
+API::
+*Theme Service* properties enable access to topic instances:
++
+.Theme Service properties
+[cols="1,1,2"]
+|===
+|Property name |Type | Description
+
+|`currentTheme$` | `{current_theme_topic_url}[CurrentThemeTopic]` | {current_theme_topic_url}[CurrentThemeTopic] instance.
+|[.line-through]`baseUrlV1` | [.line-through]`string` | Deprecated.
+|===
++
+*Theme Service* methods:
++
+.Theme Service methods
+[cols="1,1,2"]
+|===
+|Method signature |Return type | Description
+
+|`apply(theme: {theme_object_url}[Theme])` | `Promise<void>` | Applies {theme_object_url}[Theme] via document style manipulation (styles will be lost on page exit). Publishes a new message via {current_theme_topic_url}[CurrentThemeTopic].
+|[.line-through]`getThemeHref(themeId: string)` | [.line-through]`string` | Deprecated.
+|[.line-through]`loadAndApplyTheme(themeName: string)` | [.line-through]`void` | Deprecated.
+
+|===
+
+[#user-service]
+=== User Service
+Usage::
+*Access the user's data, settings and permissions*.
++
+This service contains user-related information and allows checking user permissions by utilizing Topics.
+
+Topics used::
+
+* {user_profile_topic_url}[UserProfileTopic]
+* {permissions_topic_url}[PermissionsTopic]
+
+API::
+*User Service* properties enable access to the user's information:
++
+.User Service properties
+[cols="1,1,2"]
+|===
+|Property name |Type | Description
+
+|`profile$` | `{user_profile_topic_url}[UserProfileTopic]` | {user_profile_topic_url}[UserProfileTopic] instance.
+|`lang$` | `BehaviorSubject<string>` | User's language. For every new message in the {user_profile_topic_url}[UserProfileTopic], the language will be updated based on the user's locale information.
+|`isInitialized` | `Promise<void>` | Promise resolved when User Service is initialized.
+|`getPermissions()` | `Observable<string[]>` | Observable with list of permissions for the current user.
+|[.line-through]`permissions$` | [.line-through]`BehaviorSubject<string[]>` | Deprecated.
+|===
++
+*User Service* methods:
++
+.User Service methods
+[cols="1,1,2"]
+|===
+|Method signature |Return type | Description
+
+|`hasPermission(permissionKey: string | string[])` | `boolean` | Checks if user has specified permission/permissions using PermissionTopic's latest value.
+|===
+
+[#workspace-service]
+=== Workspace Service
+Usage::
+*Manage Workspace resources*.
++
+This service offers set of methods useful when developing Microfrontends referencing other Applications via routing.
+
+Topics used::
+None.
+
+Dependencies::
+
+* HttpClient
+* xref:#app-state-service[AppStateService]
+
+API::
+*Workspace Service* methods can be used for constructing routes to Applications:
++
+.Workspace Service methods
+[cols="1,1,2"]
+|===
+|Method signature |Return type | Description
+
+|`getUrl(productName: string, appId: string, endpointName?: string, endpointParameters?:Record<string, unknown>)` | `Observable<string>` | Constructs a valid url for a desired Application in context of the current Workspace. It is possible to use {route_object_url}[Route] endpoints to further customize an accessed resource.
+|`doesUrlExistFor(productName: string, appId: string, endpointName?: string)` | `Observable<boolean>` | Checks if a valid url exists for a desired Application in context of the current Workspace. It is possible to use {route_object_url}[Route] endpoints to further customize an accessed resource.
+|===

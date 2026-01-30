@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { UserService } from '@onecx/angular-integration-interface'
 import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '../utils/has-permission-checker'
-import { from, Observable, of } from 'rxjs'
+import { from, map, Observable, of } from 'rxjs'
 
 /**
  * Service to check and list user permissions using an injected custom permission checker or the UserService.
@@ -50,7 +50,22 @@ export class PermissionService {
     const cacheKey = JSON.stringify(permissionKey)
 
     if (!this.cachedPermissions.has(cacheKey)) {
-      this.cachedPermissions.set(cacheKey, from(permissionChecker.hasPermission(permissionKey)))
+      let hasPermission: Observable<boolean>
+      if (this.hasPermissionChecker?.getPermissions) {
+        hasPermission = this.hasPermissionChecker.getPermissions().pipe(
+          map((permissions) => {
+            if (Array.isArray(permissionKey)) {
+              return permissionKey.every((key) => permissions?.includes(key))
+            }
+
+            return permissions.includes(permissionKey)
+          })
+        )
+      } else {
+        hasPermission = from(permissionChecker.hasPermission(permissionKey))
+      }
+
+      this.cachedPermissions.set(cacheKey, hasPermission)
     }
 
     return this.cachedPermissions.get(cacheKey) || this.falseObservable

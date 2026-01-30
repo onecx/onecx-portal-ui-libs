@@ -2,7 +2,7 @@
  * The test environment that will be used for testing.
  * The default environment in Jest is a Node.js environment.
  * If you are building a web app, you can use a browser-like environment through jsdom instead.
- * 
+ *
  * @jest-environment jsdom
  */
 
@@ -51,6 +51,10 @@ describe('CurrentPageTopic', () => {
   }
 
   beforeEach(() => {
+    window['@onecx/accelerator'] ??= {}
+    window['@onecx/accelerator'].topic ??= {}
+    window['@onecx/accelerator'].topic.initDate = Date.now() - 1000000
+
     jest.restoreAllMocks()
     listeners = []
 
@@ -65,7 +69,7 @@ describe('CurrentPageTopic', () => {
     jest.restoreAllMocks()
   })
 
-  it('should have `/` if location is not changed initially', () => {    
+  it('should have `/` if location is not changed initially', () => {
     const expected = [
       {
         path: '/',
@@ -133,11 +137,11 @@ describe('CurrentPageTopic', () => {
 
     expect(values1).toEqual(expected)
   })
-  
+
   it('should throw error if document.body is null  ', () => {
     const mock = jest.spyOn(document, 'querySelector')
     mock.mockReturnValue(null)
 
-    expect(() => new CurrentPageTopic()).toThrowError('could not listen to location changes')
+    expect(() => new CurrentPageTopic()).toThrow('could not listen to location changes')
   })
 })

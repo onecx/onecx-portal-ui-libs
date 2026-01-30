@@ -59,18 +59,23 @@
       <div class="flex flex-row justify-content-between align-items-center">
         <div class="data-grid-items flex-row">
           <div class="item-name font-medium mr-3 text-2xl">
-            <a [routerLink]="" (click)="onViewRow(item)">{{ resolveFieldData(item, titleLineId) || '' }}</a>
+            <ng-container *ngIf="hasViewPermission$ | async as hasViewPermission; else noViewPermission">
+              <a [routerLink]="" (click)="onViewRow(item)">{{ resolveFieldData(item, titleLineId) || '' }}</a>
+            </ng-container>
+            <ng-template #noViewPermission>
+              <a [routerLink]="">{{ resolveFieldData(item, titleLineId) || '' }}</a>
+            </ng-template>
           </div>
           <ng-container
             [ngTemplateOutlet]="_gridItemSubtitleLines ? _gridItemSubtitleLines : defaultGridItemSubtitleLines"
             [ngTemplateOutletContext]="{$implicit:item}"
           ></ng-container>
         </div>
-        <div>
+        <div *ngIf="(gridMenuItems$ | async) as gridMenuItems">
           <p-menu #menu [model]="gridMenuItems" [popup]="true" appendTo="body"></p-menu>
           <button
             pButton
-            (click)="setSelectedItem(item); updateGridMenuItems(true); menu.toggle($event)"
+            (click)="setSelectedItem(item); menu.toggle($event)"
             icon="pi pi-ellipsis-v"
             [attr.aria-label]="'OCX_DATA_LIST_GRID.MORE_ACTIONS_ARIA_LABEL' | translate"
             class="more-actions-menu-button menu-btn"
@@ -173,7 +178,7 @@
             [attr.name]="'data-list-action-button'"
           ></button>
           } } @if (hasVisibleOverflowMenuItems(item) | async) {
-          <p-menu #menu [model]="(overflowMenuItems$ | async) || []" [popup]="true" appendTo="body"></p-menu>
+          <p-menu #menu [model]="(overflowListMenuItems$ | async) || []" [popup]="true" appendTo="body"></p-menu>
           <button
             pButton
             class="p-button-rounded p-button-text"
@@ -182,6 +187,7 @@
             [attr.aria-label]="'OCX_DATA_LIST_GRID.MORE_ACTIONS_ARIA_LABEL' | translate"
             [pTooltip]="'OCX_DATA_LIST_GRID.MORE_ACTIONS_TOOLTIP' | translate"
             tooltipPosition="top"
+            [attr.name]="'data-list-overflow-item-menu-button'"
           ></button>
           }
         </div>

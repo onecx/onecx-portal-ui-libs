@@ -2,21 +2,24 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { ActivatedRoute, RouterModule } from '@angular/router'
-import { TranslateModule, TranslateService } from '@ngx-translate/core'
+import { TranslateService } from '@ngx-translate/core'
+import { UserService } from '@onecx/angular-integration-interface'
 import {
   provideAppStateServiceMock,
   provideUserServiceMock,
   UserServiceMock,
 } from '@onecx/angular-integration-interface/mocks'
-import { TranslateTestingModule } from 'ngx-translate-testing'
+import { ensureIntersectionObserverMockExists, ensureOriginMockExists } from '@onecx/angular-testing'
+import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { TooltipStyle } from 'primeng/tooltip'
 import { DataListGridHarness } from '../../../../testing/data-list-grid.harness'
 import { DataTableHarness } from '../../../../testing/data-table.harness'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { ColumnType } from '../../model/column-type.model'
 import { DataListGridComponent } from './data-list-grid.component'
-import { ensureIntersectionObserverMockExists, ensureOriginMockExists } from '@onecx/angular-testing'
+import { LiveAnnouncer } from '@angular/cdk/a11y'
 
 ensureOriginMockExists()
 ensureIntersectionObserverMockExists()
@@ -30,7 +33,7 @@ describe('DataListGridComponent', () => {
     }
     return this
   })
-  global.MutationObserver = mutationObserverMock
+  globalThis.MutationObserver = mutationObserverMock
 
   let fixture: ComponentFixture<DataListGridComponent>
   let component: DataListGridComponent
@@ -43,6 +46,10 @@ describe('DataListGridComponent', () => {
       SHOWING: '{{first}} - {{last}} of {{totalRecords}}',
       SHOWING_WITH_TOTAL_ON_SERVER: '{{first}} - {{last}} of {{totalRecords}} ({{totalRecordsOnServer}})',
     },
+    OCX_DATA_LIST_GRID: {
+      SEARCH_RESULTS_FOUND: '{{results}} Results Found',
+      NO_SEARCH_RESULTS_FOUND: 'No Results Found',
+    },
   }
 
   const GERMAN_LANGUAGE = 'de'
@@ -50,6 +57,10 @@ describe('DataListGridComponent', () => {
     OCX_DATA_TABLE: {
       SHOWING: '{{first}} - {{last}} von {{totalRecords}}',
       SHOWING_WITH_TOTAL_ON_SERVER: '{{first}} - {{last}} von {{totalRecords}} ({{totalRecordsOnServer}})',
+    },
+    OCX_DATA_LIST_GRID: {
+      SEARCH_RESULTS_FOUND: '{{results}} Ergebnisse gefunden',
+      NO_SEARCH_RESULTS_FOUND: 'Keine Ergebnisse gefunden',
     },
   }
 
@@ -217,15 +228,9 @@ describe('DataListGridComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DataListGridComponent],
-      imports: [
-        AngularAcceleratorPrimeNgModule,
-        TranslateModule.forRoot(),
-        TranslateTestingModule.withTranslations(TRANSLATIONS),
-        AngularAcceleratorModule,
-        RouterModule,
-        NoopAnimationsModule,
-      ],
+      imports: [AngularAcceleratorPrimeNgModule, AngularAcceleratorModule, RouterModule, NoopAnimationsModule],
       providers: [
+        provideTranslateTestingService(TRANSLATIONS),
         {
           provide: ActivatedRoute,
           useValue: {
@@ -239,6 +244,10 @@ describe('DataListGridComponent', () => {
         provideUserServiceMock(),
         provideAppStateServiceMock(),
         TooltipStyle,
+        {
+          provide: HAS_PERMISSION_CHECKER,
+          useExisting: UserService,
+        },
       ],
     }).compileComponents()
 
@@ -346,7 +355,7 @@ describe('DataListGridComponent', () => {
     component.editPermission = 'EDIT'
     component.deletePermission = 'DELETE'
 
-    fixture.autoDetectChanges()
+    fixture.detectChanges()
     await fixture.whenStable()
   }
   describe('Disable list action buttons based on field path', () => {
@@ -599,7 +608,7 @@ describe('DataListGridComponent', () => {
       expect(component.editItemObserved).toBe(true)
       expect(component.deleteItemObserved).toBe(true)
 
-      const gridMenuButton = await listGrid.getMenuButton()
+      const gridMenuButton = await listGrid.getGridMenuButton()
 
       await gridMenuButton.click()
 
@@ -615,7 +624,7 @@ describe('DataListGridComponent', () => {
       component.layout = 'grid'
       await setUpGridActionButtonMockData()
       component.viewActionEnabledField = 'ready'
-      const gridMenuButton = await listGrid.getMenuButton()
+      const gridMenuButton = await listGrid.getGridMenuButton()
 
       await gridMenuButton.click()
 
@@ -664,7 +673,7 @@ describe('DataListGridComponent', () => {
       expect(component.editItemObserved).toBe(true)
       expect(component.deleteItemObserved).toBe(true)
 
-      const gridMenuButton = await listGrid.getMenuButton()
+      const gridMenuButton = await listGrid.getGridMenuButton()
 
       await gridMenuButton.click()
 
@@ -675,7 +684,7 @@ describe('DataListGridComponent', () => {
     it('should dynamically hide/show an action button based on the contents of a specified field', async () => {
       component.layout = 'grid'
       await setUpGridActionButtonMockData()
-      const gridMenuButton = await listGrid.getMenuButton()
+      const gridMenuButton = await listGrid.getGridMenuButton()
 
       await gridMenuButton.click()
 
@@ -704,6 +713,381 @@ describe('DataListGridComponent', () => {
       await gridMenuButton.click()
       gridActions = await listGrid.getActionButtons('grid')
       expect(gridActions.length).toBe(3)
+    })
+  })
+
+  describe('permissions for action buttons', () => {
+    let userService: UserServiceMock
+
+    beforeEach(() => {
+      component.data = [
+        {
+          version: 0,
+          creationDate: '2023-09-12T09:34:11.997048Z',
+          creationUser: 'creation user',
+          modificationDate: '2023-09-12T09:34:11.997048Z',
+          modificationUser: '',
+          id: 'id1',
+          name: 'name1',
+          description: 'desc1',
+          status: 'status1',
+          responsible: 'responsible1',
+          endDate: '2023-09-14T09:34:09Z',
+          startDate: '2023-09-13T09:34:05Z',
+          imagePath: '/path/to/image1',
+          testNumber: '1',
+        },
+      ]
+
+      component.viewItem.subscribe(() => console.log('view item'))
+      component.editItem.subscribe(() => console.log('edit item'))
+      component.deleteItem.subscribe(() => console.log('delete item'))
+
+      userService = TestBed.inject(UserService) as unknown as UserServiceMock
+    })
+
+    describe('list layout', () => {
+      beforeEach(() => {
+        component.layout = 'list'
+        component.viewPermission = 'LIST#VIEW'
+        component.editPermission = 'LIST#EDIT'
+        component.deletePermission = 'LIST#DELETE'
+        component.additionalActions = []
+      })
+
+      it('should show view, delete and edit action buttons when user has VIEW, EDIT and DELETE permissions', async () => {
+        userService.permissionsTopic$.publish(['LIST#VIEW', 'LIST#EDIT', 'LIST#DELETE'])
+
+        fixture.detectChanges()
+        await fixture.whenStable()
+
+        let listActions = await listGrid.getActionButtons('list')
+        expect(listActions.length).toBe(3)
+
+        expect(await listActions[0].getAttribute('icon')).toEqual('pi pi-eye')
+        expect(await listActions[1].getAttribute('icon')).toEqual('pi pi-pencil')
+        expect(await listActions[2].getAttribute('icon')).toEqual('pi pi-trash')
+
+        userService.permissionsTopic$.publish([])
+
+        listActions = await listGrid.getActionButtons('list')
+        expect(listActions.length).toBe(0)
+      })
+
+      it('should show custom inline actions if user has the required permission', async () => {
+        userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
+
+        component.additionalActions = [
+          {
+            permission: 'CUSTOM#ACTION',
+            callback: () => {
+              console.log('custom action clicked')
+            },
+            id: 'customAction',
+            icon: 'pi pi-check',
+            showAsOverflow: false,
+          },
+        ]
+
+        fixture.detectChanges()
+        await fixture.whenStable()
+
+        let listActions = await listGrid.getActionButtons('list')
+        expect(listActions.length).toBe(1)
+        expect(await listActions[0].getAttribute('id')).toEqual('id1-customActionActionButton')
+        userService.permissionsTopic$.publish([])
+
+        listActions = await listGrid.getActionButtons('list')
+        expect(listActions.length).toBe(0)
+      })
+
+      it('should show overflow menu when user has permission for at least one action', async () => {
+        userService.permissionsTopic$.publish(['OVERFLOW#ACTION'])
+
+        component.additionalActions = [
+          {
+            permission: 'OVERFLOW#ACTION',
+            callback: () => {
+              console.log('overflow action clicked')
+            },
+            id: 'overflowAction',
+            labelKey: 'OVERFLOW_ACTION_KEY',
+            showAsOverflow: true,
+          },
+        ]
+
+        fixture.detectChanges()
+        await fixture.whenStable()
+
+        const button = await listGrid.getListOverflowMenuButton()
+        await button.click()
+
+        const overflowMenu = await listGrid.getListOverflowMenu()
+        expect(overflowMenu).toBeTruthy()
+        const menuItems = await overflowMenu?.getAllMenuItems()
+        expect(menuItems!.length).toBe(1)
+        expect(await menuItems![0].getText()).toEqual('OVERFLOW_ACTION_KEY')
+
+        userService.permissionsTopic$.publish([])
+        const newMenuItems = await overflowMenu?.getAllMenuItems()
+        expect(newMenuItems!.length).toBe(0)
+      })
+      it('should display action buttons based on multiple permissions', async () => {
+        component.additionalActions = [
+          {
+            permission: ['CUSTOM#ACTION1', 'CUSTOM#ACTION2'],
+            callback: () => {
+              console.log('custom action clicked')
+            },
+            id: 'customAction',
+            icon: 'pi pi-check',
+            showAsOverflow: false,
+          },
+          {
+            permission: ['OVERFLOW#ACTION1', 'OVERFLOW#ACTION2'],
+            callback: () => {
+              console.log('overflow action clicked')
+            },
+            id: 'overflowAction',
+            labelKey: 'OVERFLOW_ACTION_KEY',
+            showAsOverflow: true,
+          },
+        ]
+
+        component.viewPermission = ['LIST#VIEW1', 'LIST#VIEW2']
+        component.editPermission = ['LIST#EDIT1', 'LIST#EDIT2']
+        component.deletePermission = ['LIST#DELETE1', 'LIST#DELETE2']
+
+        userService.permissionsTopic$.publish([
+          'LIST#VIEW1',
+          'LIST#VIEW2',
+          'LIST#EDIT1',
+          'LIST#EDIT2',
+          'LIST#DELETE1',
+          'LIST#DELETE2',
+          'CUSTOM#ACTION1',
+          'CUSTOM#ACTION2',
+          'OVERFLOW#ACTION1',
+          'OVERFLOW#ACTION2',
+        ])
+
+        fixture.detectChanges()
+        await fixture.whenStable()
+
+        const listActions = await listGrid.getActionButtons('list')
+        expect(listActions.length).toBe(4)
+        expect(await listActions[0].getAttribute('icon')).toEqual('pi pi-eye')
+        expect(await listActions[1].getAttribute('icon')).toEqual('pi pi-pencil')
+        expect(await listActions[2].getAttribute('icon')).toEqual('pi pi-trash')
+        expect(await listActions[3].getAttribute('id')).toEqual('id1-customActionActionButton')
+
+        const button = await listGrid.getListOverflowMenuButton()
+        await button.click()
+
+        const overflowMenu = await listGrid.getListOverflowMenu()
+        expect(overflowMenu).toBeTruthy()
+        const menuItems = await overflowMenu?.getAllMenuItems()
+        expect(menuItems!.length).toBe(1)
+        expect(await menuItems![0].getText()).toEqual('OVERFLOW_ACTION_KEY')
+      })
+    })
+
+    describe('grid layout', () => {
+      beforeEach(() => {
+        component.layout = 'grid'
+        component.viewPermission = 'GRID#VIEW'
+        component.viewMenuItemKey = 'GRID_VIEW_KEY'
+        component.editPermission = 'GRID#EDIT'
+        component.editMenuItemKey = 'GRID_EDIT_KEY'
+        component.deletePermission = 'GRID#DELETE'
+        component.deleteMenuItemKey = 'GRID_DELETE_KEY'
+        component.additionalActions = []
+      })
+      it('should show view, delete and edit action buttons when user has VIEW, DELETE and EDIT permissions', async () => {
+        userService.permissionsTopic$.publish(['GRID#VIEW', 'GRID#EDIT', 'GRID#DELETE'])
+
+        const gridMenuButton = await listGrid.getGridMenuButton()
+        await gridMenuButton.click()
+
+        let gridActions = await listGrid.getActionButtons('grid')
+        expect(gridActions.length).toBe(3)
+
+        expect(await gridActions[0].text()).toEqual('GRID_VIEW_KEY')
+        expect(await gridActions[1].text()).toEqual('GRID_EDIT_KEY')
+        expect(await gridActions[2].text()).toEqual('GRID_DELETE_KEY')
+
+        userService.permissionsTopic$.publish([])
+
+        await gridMenuButton.click()
+        gridActions = await listGrid.getActionButtons('grid')
+        expect(gridActions.length).toBe(0)
+      })
+
+      it('should show custom additional action buttons when user has the required permission', async () => {
+        userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
+
+        component.additionalActions = [
+          {
+            permission: 'CUSTOM#ACTION',
+            callback: () => {
+              console.log('custom action clicked')
+            },
+            id: 'customAction',
+            labelKey: 'CUSTOM_ACTION_KEY',
+          },
+        ]
+
+        const gridMenuButton = await listGrid.getGridMenuButton()
+        await gridMenuButton.click()
+
+        let gridActions = await listGrid.getActionButtons('grid')
+        expect(gridActions.length).toBe(1)
+        expect(await gridActions[0].text()).toEqual('CUSTOM_ACTION_KEY')
+
+        userService.permissionsTopic$.publish([])
+
+        await gridMenuButton.click()
+        gridActions = await listGrid.getActionButtons('grid')
+        expect(gridActions.length).toBe(0)
+      })
+
+      it('should display action buttons based on multiple permissions', async () => {
+        component.additionalActions = [
+          {
+            permission: ['CUSTOM#ACTION1', 'CUSTOM#ACTION2'],
+            callback: () => {
+              console.log('custom action clicked')
+            },
+            id: 'customAction',
+            labelKey: 'CUSTOM_ACTION_KEY',
+          },
+        ]
+
+        component.viewPermission = ['GRID#VIEW1', 'GRID#VIEW2']
+        component.editPermission = ['GRID#EDIT1', 'GRID#EDIT2']
+        component.deletePermission = ['GRID#DELETE1', 'GRID#DELETE2']
+
+        userService.permissionsTopic$.publish([
+          'GRID#VIEW1',
+          'GRID#VIEW2',
+          'GRID#EDIT1',
+          'GRID#EDIT2',
+          'GRID#DELETE1',
+          'GRID#DELETE2',
+          'CUSTOM#ACTION1',
+          'CUSTOM#ACTION2',
+        ])
+
+        const gridMenuButton = await listGrid.getGridMenuButton()
+        await gridMenuButton.click()
+
+        const gridActions = await listGrid.getActionButtons('grid')
+        expect(gridActions.length).toBe(4)
+        expect(await gridActions[0].text()).toEqual('GRID_VIEW_KEY')
+        expect(await gridActions[1].text()).toEqual('GRID_EDIT_KEY')
+        expect(await gridActions[2].text()).toEqual('GRID_DELETE_KEY')
+        expect(await gridActions[3].text()).toEqual('CUSTOM_ACTION_KEY')
+      })
+    })
+  })
+
+  describe('LiveAnnouncer announcements', () => {
+    let liveAnnouncer: LiveAnnouncer
+    let announceSpy: jest.SpyInstance
+
+    beforeEach(() => {
+      liveAnnouncer = TestBed.inject(LiveAnnouncer)
+      announceSpy = jest.spyOn(liveAnnouncer, 'announce').mockResolvedValue()
+    })
+
+    afterEach(() => {
+      jest.clearAllMocks()
+    })
+
+    describe('should announce "results found" when data has entries', () => {
+      it('de', async () => {
+        translateService.use('de')
+
+        component.data = mockData
+        fixture.detectChanges()
+
+        await fixture.whenStable()
+
+        expect(announceSpy).toHaveBeenCalledTimes(1)
+        expect(announceSpy).toHaveBeenCalledWith('5 Ergebnisse gefunden')
+      })
+
+      it('en', async () => {
+        translateService.use('en')
+
+        component.data = mockData
+        fixture.detectChanges()
+
+        await fixture.whenStable()
+
+        expect(announceSpy).toHaveBeenCalledTimes(1)
+        expect(announceSpy).toHaveBeenCalledWith('5 Results Found')
+      })
+    })
+
+    describe('should announce "no results found" when data is empty', () => {
+      it('de', async () => {
+        translateService.use('de')
+
+        component.data = []
+        fixture.detectChanges()
+
+        await fixture.whenStable()
+
+        expect(announceSpy).toHaveBeenCalledTimes(1)
+        expect(announceSpy).toHaveBeenCalledWith('Keine Ergebnisse gefunden')
+      })
+
+      it('en', async () => {
+        translateService.use('en')
+
+        component.data = []
+        fixture.detectChanges()
+
+        await fixture.whenStable()
+
+        expect(announceSpy).toHaveBeenCalledTimes(1)
+        expect(announceSpy).toHaveBeenCalledWith('No Results Found')
+      })
+    })
+
+    describe('should announce "results found" when data changes', () => {
+      it('de', async () => {
+        translateService.use('de')
+
+        component.data = mockData
+        fixture.detectChanges()
+        await fixture.whenStable()
+
+        component.data = mockData.slice(0, 2)
+        fixture.detectChanges()
+        await fixture.whenStable()
+
+        expect(announceSpy).toHaveBeenCalledTimes(2)
+        expect(announceSpy).toHaveBeenNthCalledWith(1, '5 Ergebnisse gefunden')
+        expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Ergebnisse gefunden')
+      })
+
+      it('en', async () => {
+        translateService.use('en')
+
+        component.data = mockData
+        fixture.detectChanges()
+        await fixture.whenStable()
+
+        component.data = mockData.slice(0, 2)
+        fixture.detectChanges()
+        await fixture.whenStable()
+
+        expect(announceSpy).toHaveBeenCalledTimes(2)
+        expect(announceSpy).toHaveBeenNthCalledWith(1, '5 Results Found')
+        expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Results Found')
+      })
     })
   })
 })

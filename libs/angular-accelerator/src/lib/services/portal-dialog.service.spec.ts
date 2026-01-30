@@ -3,17 +3,21 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { CommonModule } from '@angular/common'
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { TranslateTestingModule } from 'ngx-translate-testing'
-import { ButtonModule } from 'primeng/button'
 import { DialogService, DynamicDialogModule, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { Observable, of } from 'rxjs'
 
-import { DivHarness, InputHarness } from '@onecx/angular-testing'
+import { NoopAnimationsModule } from '@angular/platform-browser/animations'
+import {
+  provideAppStateServiceMock,
+  provideShellCapabilityServiceMock,
+} from '@onecx/angular-integration-interface/mocks'
+import { DivHarness, InputHarness, provideTranslateTestingService } from '@onecx/angular-testing'
 import { PrimeIcons } from 'primeng/api'
-import { DialogContentHarness, DialogFooterHarness } from '../../../testing/index'
-import { DialogMessageContentComponent } from '../components/dialog/dialog-message-content/dialog-message-content.component'
+import { DialogContentHarness, DialogFooterHarness } from '../../../testing'
+import { AngularAcceleratorModule } from '../angular-accelerator.module'
 import { DialogContentComponent } from '../components/dialog/dialog-content/dialog-content.component'
 import { DialogFooterComponent } from '../components/dialog/dialog-footer/dialog-footer.component'
+import { DialogMessageContentComponent } from '../components/dialog/dialog-message-content/dialog-message-content.component'
 import {
   DialogButtonClicked,
   DialogPrimaryButtonDisabled,
@@ -22,9 +26,8 @@ import {
   DialogState,
   PortalDialogService,
 } from './portal-dialog.service'
-import { provideShellCapabilityServiceMock } from '@onecx/angular-integration-interface/mocks'
-import { provideAppStateServiceMock } from '@onecx/angular-integration-interface/mocks'
-import { NoopAnimationsModule } from '@angular/platform-browser/animations'
+
+import * as loggerUtils from '../utils/logger.utils'
 
 // This component is in charge of dialog display
 @Component({
@@ -34,7 +37,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 class BaseTestComponent {
   portalDialogService = inject(PortalDialogService)
 
-  resultFromShow: DialogState<any> | undefined = undefined
+  resultFromShow: DialogState<any> | null = null
   nameResult: string | undefined
   surnameResult: string | undefined
 
@@ -57,8 +60,8 @@ class BaseTestComponent {
         'Hint: Doe'
       )
       .subscribe((result) => {
-        this.nameResult = result.result?.name
-        this.surnameResult = result.result?.surname
+        this.nameResult = result?.result?.name
+        this.surnameResult = result?.result?.surname
         this.resultFromShow = result
       })
   }
@@ -236,6 +239,8 @@ describe('PortalDialogService', () => {
   let pDialogService: DialogService
   let rootLoader: HarnessLoader
   let fixture: ComponentFixture<BaseTestComponent>
+  let loggerWarnSpy: jest.Mock
+  let loggerErrorSpy: jest.Mock
 
   const translations = {
     TITLE_TRANSLATE: 'simpleTitle',
@@ -259,6 +264,15 @@ describe('PortalDialogService', () => {
   Object.defineProperty(global.document.body, 'removeChild', { value: removeChildSpy })
 
   beforeEach(async () => {
+    loggerWarnSpy = jest.fn()
+    loggerErrorSpy = jest.fn()
+    jest.spyOn(loggerUtils, 'createLogger').mockReturnValue({
+      debug: jest.fn() as any,
+      info: jest.fn() as any,
+      warn: loggerWarnSpy as any,
+      error: loggerErrorSpy as any,
+    })
+
     await TestBed.configureTestingModule({
       declarations: [
         BaseTestComponent,
@@ -272,23 +286,24 @@ describe('PortalDialogService', () => {
         TestWithInputsComponent,
         DialogResultTestComponent,
       ],
-      imports: [
-        TranslateTestingModule.withTranslations('en', translations),
-        DynamicDialogModule,
-        CommonModule,
-        NoopAnimationsModule,
-        ButtonModule,
-      ],
+      imports: [DynamicDialogModule, CommonModule, NoopAnimationsModule, AngularAcceleratorModule],
       providers: [
         PortalDialogService,
         DialogService,
         provideShellCapabilityServiceMock(),
         provideAppStateServiceMock(),
+        provideTranslateTestingService({
+          en: translations,
+        }),
       ],
     }).compileComponents()
     fixture = TestBed.createComponent(BaseTestComponent)
     pDialogService = TestBed.inject(DialogService)
     rootLoader = TestbedHarnessEnvironment.documentRootLoader(fixture)
+  })
+
+  afterEach(() => {
+    jest.restoreAllMocks()
     jest.clearAllMocks()
   })
 
@@ -307,6 +322,31 @@ describe('PortalDialogService', () => {
     closeBasicDialog('primary')
   })
 
+  it('should log error and return null if dialog could not be opened', async () => {
+    jest.spyOn(pDialogService, 'open').mockReturnValue(null)
+
+    fixture.componentInstance.show('TITLE_TRANSLATE', 'message', 'button1', 'button2')
+
+    expect(loggerErrorSpy).toHaveBeenCalledWith('Dialog could not be opened, dialog creation failed.')
+    const result = fixture.componentInstance.resultFromShow
+    expect(result).toBeNull()
+
+    closeBasicDialog('primary')
+  })
+
+  it('should warn if dialog component instance could not be found after creation', async () => {
+    jest.spyOn(pDialogService, 'open')
+    jest.spyOn(pDialogService, 'getInstance').mockReturnValue(undefined)
+
+    fixture.componentInstance.show('TITLE_TRANSLATE', 'message', 'button1', 'button2')
+
+    expect(loggerWarnSpy).toHaveBeenCalledWith(
+      'Dialog component instance could not be found after creation. The displayed dialog may not function as expected.'
+    )
+
+    closeBasicDialog('primary')
+  })
+
   it('should display dialog with translated title with parameters', async () => {
     jest.spyOn(pDialogService, 'open')
 
@@ -317,7 +357,7 @@ describe('PortalDialogService', () => {
       'button2'
     )
 
-    expect(pDialogService.open).lastCalledWith(
+    expect(pDialogService.open).toHaveBeenLastCalledWith(
       DialogContentComponent,
       expect.objectContaining({
         header: 'translatedTitle myParam',
@@ -608,7 +648,7 @@ describe('PortalDialogService', () => {
     const footerHarness = await rootLoader.getHarness(DialogFooterHarness)
     await footerHarness.clickPrimaryButton()
     const result = fixture.componentInstance.resultFromShow
-    expect(result).toBeUndefined()
+    expect(result).toBeNull()
 
     // Close dialog
     await footerHarness.clickPrimaryButton()
@@ -661,7 +701,7 @@ describe('PortalDialogService', () => {
     const footerHarness = await rootLoader.getHarness(DialogFooterHarness)
     await footerHarness.clickPrimaryButton()
     const result = fixture.componentInstance.resultFromShow
-    expect(result).toBeUndefined()
+    expect(result).toBeNull()
 
     // Close dialog
     await footerHarness.clickPrimaryButton()
@@ -714,7 +754,7 @@ describe('PortalDialogService', () => {
     const footerHarness = await rootLoader.getHarness(DialogFooterHarness)
     await footerHarness.clickPrimaryButton()
     const result = fixture.componentInstance.resultFromShow
-    expect(result).toBeUndefined()
+    expect(result).toBeNull()
 
     // Close dialog
     await footerHarness.clickPrimaryButton()
@@ -893,28 +933,49 @@ describe('PortalDialogService', () => {
     expect(fixture.componentInstance.surnameResult).toBe('Submitted Doe')
   })
 
-  it('should close dialog and remove it from html on destroy', async () => {
-    jest.spyOn(pDialogService, 'open')
+  describe('cleanup', () => {
+    it('should close dialog and remove it from html on destroy', async () => {
+      jest.spyOn(pDialogService, 'open')
 
-    fixture.componentInstance.show(
-      'title',
-      { key: 'MESSAGE_PARAM', parameters: { val: 'myMsgParam' } },
-      'button1',
-      'button2'
-    )
+      fixture.componentInstance.show(
+        'title',
+        { key: 'MESSAGE_PARAM', parameters: { val: 'myMsgParam' } },
+        'button1',
+        'button2'
+      )
 
-    const dialogService = TestBed.inject(DialogService)
-    expect(dialogService.dialogComponentRefMap.size).toBe(1)
-    const dialogRef = dialogService.dialogComponentRefMap.keys().next().value as DynamicDialogRef
-    expect(dialogRef).toBeDefined()
-    const dialogRefSpy = jest.spyOn(dialogRef, 'close')
+      const dialogService = TestBed.inject(DialogService)
+      expect(dialogService.dialogComponentRefMap.size).toBe(1)
+      const dialogRef = dialogService.dialogComponentRefMap.keys().next().value as DynamicDialogRef
+      expect(dialogRef).toBeDefined()
+      const dialogRefSpy = jest.spyOn(dialogRef, 'close')
 
-    const dialogElement = dialogService.getInstance(dialogRef).el.nativeElement
+      const dialogElement = dialogService.getInstance(dialogRef)?.el.nativeElement
 
-    fixture.detectChanges()
+      fixture.detectChanges()
 
-    fixture.componentInstance.portalDialogService.ngOnDestroy()
-    expect(dialogRefSpy).toHaveBeenCalledTimes(1)
-    expect(removeChildSpy).toHaveBeenCalledWith(dialogElement)
+      fixture.componentInstance.portalDialogService.ngOnDestroy()
+      expect(dialogRefSpy).toHaveBeenCalledTimes(1)
+      expect(removeChildSpy).toHaveBeenCalledWith(dialogElement)
+    })
+
+    it('should warn of incorrect cleanup if component reference is not found during removal', async () => {
+      jest.spyOn(pDialogService, 'open')
+
+      fixture.componentInstance.show(
+        'title',
+        { key: 'MESSAGE_PARAM', parameters: { val: 'myMsgParam' } },
+        'button1',
+        'button2'
+      )
+
+      fixture.detectChanges()
+      jest.spyOn(pDialogService, 'getInstance').mockReturnValue(undefined)
+
+      fixture.componentInstance.portalDialogService.ngOnDestroy()
+      expect(loggerWarnSpy).toHaveBeenCalledWith(
+        'Dialog component instance could not be found during cleanup. The displayed dialog may not function as expected.'
+      )
+    })
   })
 })

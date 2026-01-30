@@ -4,6 +4,7 @@ export interface UserProfile {
   organization?: string
   tenantId?: string
   issuer?: string
+  settings?: UserSettings
   accountSettings?: UserProfileAccountSettings
   /**
    * @deprecated
@@ -30,6 +31,10 @@ export interface UserProfile {
    * @deprecated
    */
   memberships?: Array<Membership>
+}
+
+export interface UserSettings {
+  locales?: string[]
 }
 
 export interface UserProfileAccountSettings {

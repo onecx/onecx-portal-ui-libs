@@ -1,0 +1,38 @@
+= How to debug Topics
+
+NOTE: The configuration shown below is only valid for older OneCX UI libraries prior to version 8.
+For current versions, logging is configured via `localStorage` (see xref:onecx-portal-ui-libs:browser-logging.adoc[Browser Logging]).
+
+After running the following command in your web browser's DevTools console:
+
+```
+window['@onecx/accelerator'].topic ??= {debug:['name_of_the_topic', ...]}
+```
+
+you will start seeing debug logs such as timestamps and data for the specified Topic in the console. You can add more Topic names to the array to monitor multiple Topics.
+
+== v8+ (current)
+
+Enable topic logs via `localStorage.debug` patterns.
+
+Log output uses the same loglevels as the rest of the UI libraries:
+
+- `debug`: high-volume topic diagnostics (messages, timings)
+- `info`: lifecycle milestones
+- `warn`: recoverable anomalies
+- `error`: failures
+
+[source,js]
+----
+// Enable all topic logs
+localStorage.debug = '@onecx/accelerator:Topic:*'
+location.reload()
+
+// Enable one concrete topic
+localStorage.debug = '@onecx/accelerator:Topic:my-topic-name'
+location.reload()
+
+// Only errors for all topics
+localStorage.debug = '@onecx/accelerator:Topic:*:error'
+location.reload()
+----

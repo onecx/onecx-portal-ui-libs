@@ -74,6 +74,7 @@
         (click)="toggleOverflowMenu($event, menu, rowObject)"
         [attr.aria-label]="'OCX_DATA_TABLE.MORE_ACTIONS' | translate"
         [title]="'OCX_DATA_TABLE.MORE_ACTIONS' | translate"
+        [name]="'data-table-overflow-action-button'"
       ></button>
       }
     </div>
@@ -147,7 +148,8 @@
               [class.pi-sort-amount-up]="column?.id === sortColumn && sortDirection === 'ASCENDING'"
               [class.pi-sort-amount-down]="column?.id === sortColumn && sortDirection === 'DESCENDING'"
               (click)="onSortColumnClick(column.id)"
-              [title]="(sortIconTitle(column.id) | translate)"
+              [pTooltip]="sortIconTitle(column.id) | translate "
+              tooltipPosition="bottom"
               [attr.aria-label]="('OCX_DATA_TABLE.TOGGLE_BUTTON.ARIA_LABEL' | translate: { column: (column.nameKey | translate), direction: (sortDirectionToTitle(columnNextSortDirection(column.id)) | translate)})"
             ></button>
             } @if (currentEqualFilterOptions$ | async; as equalFilterOptions) { @if (columnFilterTemplates$ | async; as
@@ -274,7 +276,12 @@
   </ng-template>
   <ng-template #emptymessage>
     <tr>
-      <td [colSpan]="columns.length + ((anyRowActionObserved || this.additionalActions.length > 0) ? 1 : 0)">
+      <!-- If allowSelectAll is set to true, an additional column for checkbox selection is added and
+       the colSpan needs to be increased by one so that the row is rendered the whole width of the table. -->
+      <td
+        [colSpan]="columns.length + ((anyRowActionObserved || this.additionalActions.length > 0) ? 1 : 0) +
+  (allowSelectAll ? 1 : 0)"
+      >
         {{ emptyResultsMessage || ("OCX_DATA_TABLE.EMPTY_RESULT" | translate) }}
       </td>
     </tr>

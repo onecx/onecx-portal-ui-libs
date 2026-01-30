@@ -42,7 +42,8 @@
     <div class="action-items-wrap mt-2 md:mt-0">
       @if (additionalToolbarContentLeft) {
       <ng-container [ngTemplateOutlet]="additionalToolbarContentLeft"> </ng-container>
-      } @if (!loading) { @if (inlineActions && inlineActions.length > 0) {
+      } @if (!loading) { @if( inlineActions$ | async; as inlineActions) { @if (inlineActions && inlineActions.length >
+      0) {
       <div class="toolbar flex flex-wrap gap-1 sm:gap-2">
         @for (action of inlineActions; track action) {
         <span
@@ -65,10 +66,10 @@
         </span>
         }
       </div>
-      }
+      } }
       <ng-content select="[toolbarItems]"></ng-content>
       <ng-container>
-        @if (overflowActions.length !== 0) {
+        @if(overflowActions$ | async; as overflowActions) {@if (overflowActions.length !== 0) {
         <div>
           <button
             id="pageHeaderMenuButton"
@@ -85,7 +86,7 @@
           ></button>
           <p-menu #menu [popup]="true" [model]="overflowActions" appendTo="body"></p-menu>
         </div>
-        }
+        } }
       </ng-container>
       } @else {
       <div class="flex">
@@ -104,7 +105,7 @@
       <span
         class="flex font-medium text-600 object-info-grid-label"
         name="object-detail-label"
-        [pTooltip]="item.labelTooltip || ''"
+        [pTooltip]="item.labelTooltipKey ? ((typeof item.labelTooltipKey === 'string' ? item.labelTooltipKey : item.labelTooltipKey.key) | translate : (typeof item.labelTooltipKey === 'object' ? item.labelTooltipKey.parameters : undefined)) : ''"
         tooltipEvent="hover"
         tooltipPosition="top"
       >
@@ -119,7 +120,7 @@
         >
           <span
             class="flex align-items-center gap-2"
-            [pTooltip]="item.valueTooltip || ''"
+            [pTooltip]="item.valueTooltipKey ? ((typeof item.valueTooltipKey === 'string' ? item.valueTooltipKey : item.valueTooltipKey.key) | translate : (typeof item.valueTooltipKey === 'object' ? item.valueTooltipKey.parameters : undefined)) : ''"
             tooltipEvent="hover"
             tooltipPosition="top"
           >
@@ -131,8 +132,8 @@
           <p-button
             [icon]="item.actionItemIcon"
             styleClass="p-button-text p-0 w-full"
-            [ariaLabel]="(item.actionItemAriaLabelKey ? (item.actionItemAriaLabelKey | translate) : item.actionItemAriaLabel) || item.actionItemTooltip || ''"
-            [pTooltip]="item.actionItemTooltip || ''"
+            [ariaLabel]="item.actionItemAriaLabelKey ? ((typeof item.actionItemAriaLabelKey === 'string' ? item.actionItemAriaLabelKey : item.actionItemAriaLabelKey.key) | translate : (typeof item.actionItemAriaLabelKey === 'object' ? item.actionItemAriaLabelKey.parameters : undefined)) : 'button for ' + item.actionItemIcon"
+            [pTooltip]="item.actionItemTooltipKey ? ((typeof item.actionItemTooltipKey === 'string' ? item.actionItemTooltipKey : item.actionItemTooltipKey.key) | translate : (typeof item.actionItemTooltipKey === 'object' ? item.actionItemTooltipKey.parameters : undefined)) : ''"
             tooltipPosition="top"
             tooltipEvent="hover"
             (onClick)="item.actionItemCallback()"

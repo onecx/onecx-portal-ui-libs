@@ -1,0 +1,18 @@
+name: On Push
+
+on:
+  push:
+    branches:
+      - '*'
+      - '*/*'
+      - '**'
+
+jobs:
+  ci:
+    uses: ./.github/workflows/ci-common.yml
+    secrets: inherit
+
+  sonar:
+    needs: ci
+    uses: ./.github/workflows/sonar.yml
+    secrets: inherit

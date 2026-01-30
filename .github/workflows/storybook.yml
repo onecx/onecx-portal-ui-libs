@@ -2,9 +2,10 @@ name: Build and deploy Storybook
 on: 
   push:
     branches:
-      - '**'
+      - 'main'
+      - 'v*'
 jobs:
-  deploy-storybooks:
+  build-and-deploy-storybook:
     runs-on: ubuntu-latest
     environment: Storybook
     env:

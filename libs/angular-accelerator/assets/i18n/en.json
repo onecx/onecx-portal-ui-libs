@@ -1,4 +1,8 @@
 {
+  "OCX_BUTTON_DIALOG": {
+    "CONFIRM": "Confirm",
+    "CANCEL": "Cancel"
+  },
   "OCX_CUSTOM_GROUP_COLUMN_SELECTOR": {
     "ARIA_LABEL": "Column group selector",
     "DROPDOWN_LABEL": "Column group",
@@ -44,13 +48,15 @@
       "LABEL": "Sort by"
     },
     "TOGGLE_BUTTON": {
-      "ASCENDING_TOOLTIP": "Ascending",
-      "DESCENDING_TOOLTIP": "Descending",
-      "DEFAULT_TOOLTIP": "Default"
+      "ASCENDING_TOOLTIP": "Sort Ascending",
+      "DESCENDING_TOOLTIP": "Sort Descending",
+      "DEFAULT_TOOLTIP": "Default Sort"
     },
     "SORTING_BUTTON_ARIA_LABEL": "Toggle sorting direction to {{direction}}"
   },
   "OCX_DATA_TABLE": {
+    "SEARCH_RESULTS_FOUND": "{{results}} Results Found",
+    "NO_SEARCH_RESULTS_FOUND": "No Results Found",
     "EMPTY_RESULT": "No data found.",
     "EMPTY_FILTER_MESSAGE": "No filters found.",
     "ACTIONS_COLUMN_NAME": "Actions",
@@ -67,9 +73,9 @@
       "DELETE": "Delete"
     },
     "TOGGLE_BUTTON": {
-      "ASCENDING_TITLE": "Ascending",
-      "DESCENDING_TITLE": "Descending",
-      "DEFAULT_TITLE": "Default",
+      "ASCENDING_TITLE": "Sort Ascending",
+      "DESCENDING_TITLE": "Sort Descending",
+      "DEFAULT_TITLE": "Default Sort",
       "ARIA_LABEL": "Toggle {{column}} sorting direction to {{direction}}"
     },
     "SELECT_ALL_ARIA_LABEL": "Select all table rows",
@@ -79,6 +85,8 @@
     "FILTER_NO": "No"
   },
   "OCX_DATA_LIST_GRID": {
+    "SEARCH_RESULTS_FOUND": "{{results}} Results Found",
+    "NO_SEARCH_RESULTS_FOUND": "No Results Found",
     "EMPTY_RESULT": "No data found.",
     "MENU": {
       "VIEW": "View",
@@ -150,6 +158,7 @@
     "EXPORT": "Export all events"
   },
   "OCX_PAGE_HEADER": {
+    "IMAGE": "Page title logo",
     "SUBHEADER": "Page Content",
     "MORE_ACTIONS": "More actions",
     "HOME_DEFAULT_ARIA_LABEL": "Go to home page",

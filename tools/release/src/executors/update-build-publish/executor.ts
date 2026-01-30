@@ -1,10 +1,7 @@
 import { exec } from 'child_process'
 import { promisify } from 'util'
-import updateVersion from 'nx-release/src/executors/update-version/executor'
-import npmPublish from 'nx-release/src/executors/npm-publish/executor'
-// nx-release uses an older version of @nx/devkit
-// --> Type has to be imported from modules of nx-release to avoid version conflicts and type errors
-import { ExecutorContext } from 'nx-release/node_modules/@nx/devkit'
+import npmPublish from '../npm-publish/executor'
+import { ExecutorContext } from '@nx/devkit'
 import { UpdateBuildPublishExecutorOptions } from './schema'
 
 /**
@@ -18,35 +15,28 @@ export default async function updateBuildPublishExecutor(
   options: UpdateBuildPublishExecutorOptions,
   context: ExecutorContext
 ): Promise<{ success: boolean }> {
-
-  const buildCommand = `nx ${options.buildTarget} --project ${context.projectName}`;
-
+  const buildCommand = `nx ${options.buildTarget} --project ${context.projectName}`
 
   console.info(`Releasing library ${context.projectName}. Building with command:`)
   console.info(`  ${buildCommand}`)
   console.info()
-
-  // Updates version in package.json based on the VERSION environment variable --> default behavior of nx-release
-  await updateVersion({}, context)
-
+  
   // Builds the project using the specified build target (defaults to build) --> this was not supported in nx-release
   // The specified target must be defined in the project.json file of the respective library
-  const { stdout: buildOutput, stderr } = await promisify(exec)(
-    buildCommand
-  )
+  const { stdout: buildOutput, stderr } = await promisify(exec)(buildCommand)
 
   if (buildOutput) {
     console.log(buildOutput)
   }
 
-  if(stderr) {
+  if (stderr) {
     // stderr does not result in a script interruption here because @nx/angular:package seems to wrongfully output normal logs as stderr in some cases
     // --> led to the wrongful early termination of our script
     // Instead we rely on exceptions that are being thrown by subprocesses to interrupt the script execution
-    console.log("stderr", stderr)
+    console.log('stderr', stderr)
   }
 
-  // Publish the package to npm using additional configuration values from environment variables --> default behavior of nx-release
+  // Publish the package to npm using additional configuration values from environment variables
   await npmPublish({}, context)
 
   // We can always return success from executor, because exceptions in commands leads to script interruption

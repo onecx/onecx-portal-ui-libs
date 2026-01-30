@@ -1,28 +1,57 @@
 import { Injectable, OnDestroy } from '@angular/core'
-import { PermissionsTopic, UserProfileTopic } from '@onecx/integration-interface'
+import { PermissionsTopic, UserProfile, UserProfileTopic } from '@onecx/integration-interface'
 import { BehaviorSubject, firstValueFrom, map } from 'rxjs'
 import { DEFAULT_LANG } from '../api/constants'
+import { getNormalizedBrowserLocales } from '@onecx/accelerator'
+import { createLogger } from '../utils/logger.utils'
+
+const logger = createLogger('UserService')
 
 @Injectable({ providedIn: 'root' })
 export class UserService implements OnDestroy {
   profile$ = new UserProfileTopic()
   lang$ = new BehaviorSubject(this.determineLanguage() ?? DEFAULT_LANG)
 
-  private permissionsTopic$ = new PermissionsTopic()
+  _permissionsTopic$: PermissionsTopic | undefined
+  get permissionsTopic$() {
+    this._permissionsTopic$ ??= new PermissionsTopic()
+    return this._permissionsTopic$
+  }
+  set permissionsTopic$(source: PermissionsTopic) {
+    this._permissionsTopic$ = source
+  }
 
   constructor() {
     this.profile$
       .pipe(
-        map(
-          (profile) =>
-            profile.accountSettings?.localeAndTimeSettings?.locale ?? this.determineLanguage() ?? DEFAULT_LANG
-        )
+        map((profile) => {
+          let locales = profile.settings?.locales
+
+          if (!locales) {
+            return this.useOldLangSetting(profile)
+          }
+
+          if (locales.length === 0) {
+            locales = getNormalizedBrowserLocales()
+          }
+
+          // the lang$ should contain the first language, because locales is an ordered list
+          // length of 2 is checked because we need the general language
+          // never choose 'en-US', but choose 'en'
+          const firstLang = locales.find((l) => l.length === 2) ?? DEFAULT_LANG
+          return firstLang
+        })
       )
       .subscribe(this.lang$)
   }
 
   ngOnDestroy(): void {
     this.profile$.destroy()
+    this._permissionsTopic$?.destroy()
+  }
+
+  useOldLangSetting(profile: UserProfile): string {
+    return profile.accountSettings?.localeAndTimeSettings?.locale ?? this.determineLanguage() ?? DEFAULT_LANG
   }
 
   getPermissions() {
@@ -42,7 +71,7 @@ export class UserService implements OnDestroy {
         map((permissions) => {
           const result = permissions.includes(permissionKey)
           if (!result) {
-            console.log(`👮‍♀️ No permission for: ${permissionKey}`)
+            logger.debug(`No permission for: ${permissionKey}`)
           }
           return !!result
         })

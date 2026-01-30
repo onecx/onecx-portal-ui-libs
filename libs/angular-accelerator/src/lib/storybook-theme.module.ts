@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core'
 import { providePrimeNG } from 'primeng/config'
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async'
-import { CustomPreset } from '@onecx/angular-utils'
+import { CustomPreset } from '@onecx/angular-utils/theme/primeng'
 
 /**
   A utility module adding theme for Storybook stories

@@ -29,14 +29,12 @@ import {
   debounceTime,
   filter,
   first,
-  forkJoin,
-  from,
+  firstValueFrom,
   map,
   mergeMap,
   of,
   shareReplay,
   switchMap,
-  toArray,
   withLatestFrom,
 } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
@@ -47,6 +45,9 @@ import { Filter, FilterType } from '../../model/filter.model'
 import { ObjectUtils } from '../../utils/objectutils'
 import { findTemplate } from '../../utils/template.utils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
+import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
+import { LiveAnnouncer } from '@angular/cdk/a11y'
+
 
 export type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -85,19 +86,34 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   private readonly router = inject(Router)
   private readonly injector = inject(Injector)
   private readonly userService = inject(UserService)
+  private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
+  private readonly liveAnnouncer = inject(LiveAnnouncer)
 
   FilterType = FilterType
   TemplateType = TemplateType
   checked = true
+
   _rows$ = new BehaviorSubject<Row[]>([])
   @Input()
   get rows(): Row[] {
     return this._rows$.getValue()
   }
   set rows(value: Row[]) {
-    !this._rows$.getValue().length
+    if (this._rows$.getValue().length) this.resetPage()
     this._rows$.next(value)
+
+    const currentResults = value.length;
+    const newStatus = currentResults === 0
+        ? 'OCX_DATA_TABLE.NO_SEARCH_RESULTS_FOUND'
+        : 'OCX_DATA_TABLE.SEARCH_RESULTS_FOUND';
+    
+    firstValueFrom(
+      this.translateService.get(newStatus, { results: currentResults }) ).then((translatedText: string) => {
+        this.liveAnnouncer.announce(translatedText);
+      }
+    );
   }
+
   _selectionIds$ = new BehaviorSubject<(string | number)[]>([])
   @Input()
   set selectedRows(value: Row[] | string[] | number[]) {
@@ -117,7 +133,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this._filters$.getValue()
   }
   set filters(value: Filter[]) {
-    !this._filters$.getValue().length
+    if (this._filters$.getValue().length) this.resetPage()
     this._filters$.next(value)
   }
   _sortDirection$ = new BehaviorSubject<DataSortDirection>(DataSortDirection.NONE)
@@ -191,7 +207,16 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   @Input() selectionEnabledField: string | undefined
   @Input() allowSelectAll = true
   @Input() paginator = true
-  @Input() page = 0
+
+  _page$ = new BehaviorSubject<number>(0)
+  @Input()
+  get page(): number {
+    return this._page$.getValue()
+  }
+  set page(value: number) {
+    this._page$.next(value)
+  }
+
   @Input() tableStyle: { [klass: string]: any } | undefined
   @Input()
   get totalRecordsOnServer(): number | undefined {
@@ -387,35 +412,29 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       map((actions) => actions.filter((action) => !action.showAsOverflow))
     )
     this.overflowMenuItems$ = combineLatest([this.overflowActions$, this.currentMenuRow$]).pipe(
-      mergeMap(([actions, row]) =>
-        this.translateService.get([...actions.map((a) => a.labelKey || '')]).pipe(
-          switchMap((translations) =>
-            from(actions).pipe(
-              mergeMap((a) =>
-                from(this.userService.hasPermission(a.permission)).pipe(
-                  map((hasPermission) => ({
-                    ...a,
-                    hasPermission,
-                  }))
-                )
-              ),
-              toArray(),
-              map((actionsWithPermissions) =>
-                actionsWithPermissions
-                  .filter((a) => a.hasPermission)
-                  .map((a) => ({
-                    label: translations[a.labelKey || ''],
-                    icon: a.icon,
-                    styleClass: (a.classes || []).join(' '),
-                    disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
-                    visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
-                    command: () => a.callback(row),
-                  }))
-              )
-            )
-          )
+      switchMap(([actions, row]) =>
+        this.filterActionsBasedOnPermissions(actions).pipe(
+          map((permittedActions) => ({ actions: permittedActions, row: row }))
         )
-      )
+      ),
+      mergeMap(({ actions, row }) => {
+        if (actions.length === 0) {
+          return of([])
+        }
+
+        return this.translateService.get([...actions.map((a) => a.labelKey || '')]).pipe(
+          map((translations) => {
+            return actions.map((a) => ({
+              label: translations[a.labelKey || ''],
+              icon: a.icon,
+              styleClass: (a.classes || []).join(' '),
+              disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
+              visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
+              command: () => a.callback(row),
+            }))
+          })
+        )
+      })
     )
 
     this.rowSelectable = this.rowSelectable.bind(this)
@@ -656,9 +675,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
   sortIconTitle(sortColumn: string) {
     return this.sortDirectionToTitle(
-      sortColumn !== this.sortDirection
-        ? DataSortDirection.NONE
-        : this.sortStates[this.sortStates.indexOf(this.sortDirection) % this.sortStates.length]
+      this.columnNextSortDirection(sortColumn)
     )
   }
 
@@ -674,11 +691,13 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
 
   mapSelectionToRows() {
-    this.selectedRows$ = combineLatest([this._selectionIds$, this._rows$]).pipe(
-      map(([selectedRowIds, rows]) => {
-        return selectedRowIds.map((rowId) => {
-          return rows.find((r) => r.id === rowId)
-        })
+    // Include _page$ to force fresh array references on page navigation
+    // to satisfy PrimeNG DataTable selection tracking, because it needs new object references to detect changes
+    this.selectedRows$ = combineLatest([this._selectionIds$, this._rows$, this._page$]).pipe(
+      map(([selectedRowIds, rows, _]) => {
+        return selectedRowIds
+          .map((rowId) => rows.find((r) => r.id === rowId))
+          .filter((row): row is Row => row !== undefined)
       })
     )
   }
@@ -703,8 +722,12 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     }
 
     this._selectionIds$.next(newSelectionIds)
-    this.selectionChanged.emit(this._rows$.getValue().filter((row) => newSelectionIds.includes(row.id)))
+    this.emitSelectionChanged()
     this.emitComponentStateChanged()
+  }
+
+  emitSelectionChanged() {
+    this.selectionChanged.emit(this._rows$.getValue().filter((row) => this._selectionIds$.getValue().includes(row.id)))
   }
 
   mergeWithDisabledKeys(newSelectionIds: (string | number)[], disabledRowIds: (string | number)[]) {
@@ -760,30 +783,11 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     menu.toggle(event)
   }
 
-  // A new Observable is created with each ChangeDetection.
-  // The async pipe subscribes to it, triggering another ChangeDetection when a new value is emitted, which creates a loop.
-  // To prevent this, cache the Observable by using shareReplay to avoid recreating it with every ChangeDetection.
-  hasVisibleOverflowMenuItems(item: any): Observable<boolean> {
-    if (this.cachedOverflowMenuItemsVisibility$) {
-      return this.cachedOverflowMenuItemsVisibility$
-    }
-
-    const overflowMenuItemsVisibility$ = this.overflowActions$.pipe(
-      mergeMap((actions) =>
-        forkJoin(
-          actions.map((a) =>
-            !a.actionVisibleField || this.fieldIsTruthy(item, a.actionVisibleField)
-              ? from(this.userService.hasPermission(a.permission))
-              : of(false)
-          )
-        )
-      ),
-      map((results) => results.some((isVisible) => isVisible))
+  hasVisibleOverflowMenuItems(row: any) {
+    return this.overflowActions$.pipe(
+      switchMap((actions) => this.filterActionsBasedOnPermissions(actions)),
+      map((actions) => actions.some((a) => !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField)))
     )
-
-    this.cachedOverflowMenuItemsVisibility$ = overflowMenuItemsVisibility$.pipe(shareReplay(1))
-
-    return this.cachedOverflowMenuItemsVisibility$
   }
 
   isDate(value: Date | string | number) {
@@ -933,5 +937,20 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
   rowTrackByFunction = (item: any) => {
     return item.id
+  }
+
+  private filterActionsBasedOnPermissions(actions: DataAction[]): Observable<DataAction[]> {
+    const getPermissions =
+      this.hasPermissionChecker?.getPermissions?.bind(this.hasPermissionChecker) ||
+      this.userService.getPermissions.bind(this.userService)
+
+    return getPermissions().pipe(
+      map((permissions) => {
+        return actions.filter((action) => {
+          const actionPermissions = Array.isArray(action.permission) ? action.permission : [action.permission]
+          return actionPermissions.every((p) => permissions.includes(p))
+        })
+      })
+    )
   }
 }

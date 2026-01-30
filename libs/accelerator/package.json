@@ -1,12 +1,17 @@
 {
   "name": "@onecx/accelerator",
-  "version": "6.3.0",
+  "version": "8.0.0-rc.1",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onecx/onecx-portal-ui-libs"
+  },
   "peerDependencies": {
     "tslib": "^2.6.3",
     "rxjs": "^7.8.1",
-    "@nx/devkit": "^20.3.0",
-    "@onecx/nx-migration-utils": "^6.3.0"
+    "@nx/devkit": "^22.0.2",
+    "@onecx/nx-migration-utils": "^8.0.0-rc.1",
+    "debug": "^4.4.3"
   },
   "type": "commonjs",
   "main": "./src/index.js",

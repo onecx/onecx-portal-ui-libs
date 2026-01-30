@@ -1,4 +1,8 @@
 {
+  "OCX_BUTTON_DIALOG": {
+    "CONFIRM": "Bestätigen",
+    "CANCEL": "Abbrechen"
+  },
   "OCX_CUSTOM_GROUP_COLUMN_SELECTOR": {
     "ARIA_LABEL": "Spaltengruppe-Selektor",
     "DROPDOWN_LABEL": "Spaltengruppe",
@@ -44,13 +48,15 @@
       "LABEL": "Sortieren nach"
     },
     "TOGGLE_BUTTON": {
-      "ASCENDING_TOOLTIP": "Aufsteigend",
-      "DESCENDING_TOOLTIP": "Absteigend",
-      "DEFAULT_TOOLTIP": "Standard"
+      "ASCENDING_TOOLTIP": "Aufsteigend sortieren",
+      "DESCENDING_TOOLTIP": "Absteigend sortieren",
+      "DEFAULT_TOOLTIP": "Standardsortierung"
     },
     "SORTING_BUTTON_ARIA_LABEL": "{{direction}} sortieren"
   },
   "OCX_DATA_TABLE": {
+    "SEARCH_RESULTS_FOUND": "{{results}} Ergebnisse gefunden",
+    "NO_SEARCH_RESULTS_FOUND": "Keine Ergebnisse gefunden",
     "EMPTY_RESULT": "Keine Daten gefunden.",
     "EMPTY_FILTER_MESSAGE": "Keine Filter gefunden.",
     "ACTIONS_COLUMN_NAME": "Aktionen",
@@ -67,9 +73,9 @@
       "DELETE": "Löschen"
     },
     "TOGGLE_BUTTON": {
-      "ASCENDING_TITLE": "Aufsteigend",
-      "DESCENDING_TITLE": "Absteigend",
-      "DEFAULT_TITLE": "Standard",
+      "ASCENDING_TITLE": "Aufsteigend sortieren",
+      "DESCENDING_TITLE": "Absteigend sortieren",
+      "DEFAULT_TITLE": "Standardsortierung",
       "ARIA_LABEL": "{{column}} {{direction}} sortieren"
     },
     "SELECT_ALL_ARIA_LABEL": "Selektiere alle Zeilen der Tabelle",
@@ -79,6 +85,8 @@
     "FILTER_NO": "Nein"
   },
   "OCX_DATA_LIST_GRID": {
+    "SEARCH_RESULTS_FOUND": "{{results}} Ergebnisse gefunden",
+    "NO_SEARCH_RESULTS_FOUND": "Keine Ergebnisse gefunden",
     "EMPTY_RESULT": "Keine Daten gefunden.",
     "MENU": {
       "VIEW": "Anzeigen",
@@ -150,6 +158,7 @@
     "EXPORT": "Alle Ereignisse exportieren"
   },
   "OCX_PAGE_HEADER": {
+    "IMAGE": "Seitentitelbild",
     "SUBHEADER": "Seiteninhalt",
     "MORE_ACTIONS": "Weitere Aktionen",
     "HOME_DEFAULT_ARIA_LABEL": "Zur Startseite navigieren",

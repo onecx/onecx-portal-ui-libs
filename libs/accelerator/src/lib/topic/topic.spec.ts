@@ -10,8 +10,13 @@ import { map } from 'rxjs'
 import { Topic } from './topic'
 import { TopicMessageType } from './topic-message-type'
 import { TopicDataMessage } from './topic-data-message'
+import { BroadcastChannelMock } from './mocks/broadcast-channel.mock'
+import * as loggerUtils from '../utils/logger.utils'
+
+Reflect.set(globalThis, 'BroadcastChannel', BroadcastChannelMock)
 
 describe('Topic', () => {
+  const originalLocalStorageDebug = localStorage.getItem('debug')
   const origAddEventListener = window.addEventListener
   const origPostMessage = window.postMessage
 
@@ -32,6 +37,11 @@ describe('Topic', () => {
   afterAll(() => {
     window.addEventListener = origAddEventListener
     window.postMessage = origPostMessage
+    if (originalLocalStorageDebug === null) {
+      localStorage.removeItem('debug')
+    } else {
+      localStorage.setItem('debug', originalLocalStorageDebug)
+    }
   })
 
   let values1: any[]
@@ -40,7 +50,27 @@ describe('Topic', () => {
   let testTopic1: Topic<string>
   let testTopic2: Topic<string>
 
+  const loggerDebugFn = jest.fn()
+  const loggerInfoFn = jest.fn()
+  const loggerWarnFn = jest.fn()
+  const loggerErrorFn = jest.fn()
+
   beforeEach(() => {
+    jest.spyOn(loggerUtils, 'createLogger').mockReturnValue({
+      debug: loggerDebugFn as any,
+      info: loggerInfoFn as any,
+      warn: loggerWarnFn as any,
+      error: loggerErrorFn as any,
+    })
+
+    window['@onecx/accelerator'] ??= {}
+    window['@onecx/accelerator'].topic ??= {}
+    window['@onecx/accelerator'].topic.statsEnabled = true
+    window['@onecx/accelerator'].topic.initDate = Date.now() - 1000000
+    window['@onecx/accelerator'].topic.useBroadcastChannel = true
+
+    BroadcastChannelMock.asyncCalls = false
+
     listeners = []
 
     values1 = []
@@ -51,6 +81,18 @@ describe('Topic', () => {
 
     testTopic1.subscribe((v) => values1.push(v))
     testTopic2.subscribe((v) => values2.push(v))
+  })
+
+  afterEach(() => {
+    testTopic1.destroy()
+    testTopic2.destroy()
+    BroadcastChannelMock.listeners = {}
+    BroadcastChannelMock.asyncCalls = false
+    jest.restoreAllMocks()
+    loggerDebugFn.mockClear()
+    loggerInfoFn.mockClear()
+    loggerWarnFn.mockClear()
+    loggerErrorFn.mockClear()
   })
 
   it('should have correct value for 2 topics after first topic publishes', () => {
@@ -158,7 +200,7 @@ describe('Topic', () => {
     })
   })
 
-  it('should have no values if publish is not awaited', () => {
+  it('should have no values if publish is not awaited', async () => {
     const original = window.postMessage
     window.postMessage = (m: any) => {
       listeners.forEach((l) => {
@@ -167,6 +209,7 @@ describe('Topic', () => {
         setTimeout(() => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }), 0)
       })
     }
+    BroadcastChannelMock.asyncCalls = true
 
     const val1: number[] = []
     const val2: number[] = []
@@ -178,23 +221,18 @@ describe('Topic', () => {
     })
     testTopic2.subscribe((val) => val2.push(val))
 
-    testTopic1.publish(123)
+    const promise = testTopic1.publish(321)
 
     expect(val1).toEqual([])
     expect(val2).toEqual([])
+
+    await promise
 
     window.postMessage = original
   })
 
   it('should have values if publish is awaited', async () => {
-    const original = window.postMessage
-    window.postMessage = (m: any) => {
-      listeners.forEach((l) => {
-        // Set timeout to simulate async behavior
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        setTimeout(() => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }), 0)
-      })
-    }
+    BroadcastChannelMock.asyncCalls = true
 
     const val1: number[] = []
     const val2: number[] = []
@@ -204,25 +242,18 @@ describe('Topic', () => {
     testTopic1.subscribe((val) => {
       val1.push(val)
     })
-    testTopic2.subscribe((val) => val2.push(val))
+    testTopic2.subscribe((val) => {
+      val2.push(val)
+    })
 
     await testTopic1.publish(123)
 
     expect(val1).toEqual([123])
     expect(val2).toEqual([123])
-
-    window.postMessage = original
   })
 
   it('should have all values if publish is awaited on first created topic', async () => {
-    const original = window.postMessage
-    window.postMessage = (m: any) => {
-      listeners.forEach((l) => {
-        // Set timeout to simulate async behavior
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        setTimeout(() => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }), 0)
-      })
-    }
+    BroadcastChannelMock.asyncCalls = true
 
     const val1: number[] = []
     const val2: number[] = []
@@ -242,19 +273,10 @@ describe('Topic', () => {
     expect(val1).toEqual([123])
     expect(val2).toEqual([123])
     expect(val3).toEqual([123])
-
-    window.postMessage = original
   })
 
   it('should have values if publish is awaited for all topics', async () => {
-    const original = window.postMessage
-    window.postMessage = (m: any) => {
-      listeners.forEach((l) => {
-        // Set timeout to simulate async behavior
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        setTimeout(() => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }), 0)
-      })
-    }
+    BroadcastChannelMock.asyncCalls = true
 
     const val1: number[] = []
     const val2: number[] = []
@@ -286,8 +308,81 @@ describe('Topic', () => {
     expect(val1).toEqual([1, 2, 3])
     expect(val2).toEqual([1, 2, 3])
     expect(val3).toEqual([1, 2, 3])
+  })
 
-    window.postMessage = original
+  it('schedules TopicGet via timeout when recently initialized', () => {
+    jest.useFakeTimers()
+    window['@onecx/accelerator'] ??= {}
+    window['@onecx/accelerator'].topic ??= {}
+    window['@onecx/accelerator'].topic.initDate = Date.now() // recent
+    window['@onecx/accelerator'].topic.useBroadcastChannel = false
+
+    const spy = jest.spyOn(window, 'postMessage')
+    const t = new Topic<string>('timeout-get', 1)
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    t.subscribe(() => {})
+
+    // Advance timers to trigger scheduled get
+    jest.advanceTimersByTime(150)
+
+    expect(spy).toHaveBeenCalled()
+    t.destroy()
+    spy.mockRestore()
+    jest.useRealTimers()
+  })
+
+  it('logs window message when debug enabled and handles TopicGet on window path', () => {
+    window['@onecx/accelerator'] ??= {}
+    window['@onecx/accelerator'].topic ??= {}
+    window['@onecx/accelerator'].topic.useBroadcastChannel = false
+
+    const t = new Topic<string>('win-topic', 1, false)
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    t.subscribe(() => {})
+    // initialize with a value so TopicGet will respond
+    t.publish('init')
+
+    const sendSpy = jest.spyOn(t as any, 'sendMessage')
+
+    // Send TopicGet via window to trigger handleTopicGetMessage through onWindowMessage
+    const getMsg = {
+      data: { type: TopicMessageType.TopicGet, name: 'win-topic', version: 1 },
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      stopImmediatePropagation: () => {},
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      stopPropagation: () => {},
+    } as any
+    listeners.forEach((l) => l(getMsg))
+
+    expect(sendSpy).toHaveBeenCalled()
+    t.destroy()
+    sendSpy.mockRestore()
+  })
+
+  it('handles error in TopicResolve processing (catch branch)', () => {
+    window['@onecx/accelerator'] ??= {}
+    window['@onecx/accelerator'].topic ??= {}
+    window['@onecx/accelerator'].topic.useBroadcastChannel = false
+
+    const t = new Topic<string>('resolve-error', 1, false)
+    // inject a throwing resolver
+    ;(t as any).publishPromiseResolver[123] = () => {
+      throw new Error('boom')
+    }
+
+
+    const resolveMsg = {
+      data: { type: TopicMessageType.TopicResolve, name: 'resolve-error', version: 1, resolveId: 123 },
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      stopImmediatePropagation: () => {},
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      stopPropagation: () => {},
+    } as any
+
+    listeners.forEach((l) => l(resolveMsg))
+
+    expect(loggerErrorFn).toHaveBeenCalled()
+    t.destroy()
   })
 
   describe('integration with older versions of library', () => {
@@ -326,7 +421,7 @@ describe('Topic', () => {
       incomingMessage.data.data = 'msg2'
       incomingMessage.data.id = 1
       ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onMessage(incomingMessage)
+      ;(<any>testTopic1).onWindowMessage(incomingMessage)
 
       expect(values1).toEqual(['initMsg', 'msg1', 'msg2'])
     })
@@ -339,7 +434,7 @@ describe('Topic', () => {
       ;(<any>incomingMessage.data).id = undefined
       incomingMessage.data.timestamp = 3
       ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onMessage(incomingMessage)
+      ;(<any>testTopic1).onWindowMessage(incomingMessage)
 
       expect(values1).toEqual(['initMsg', 'msg1', 'msg2'])
     })
@@ -352,7 +447,7 @@ describe('Topic', () => {
       ;(<any>incomingMessage.data).id = undefined
       incomingMessage.data.timestamp = 3
       ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onMessage(incomingMessage)
+      ;(<any>testTopic1).onWindowMessage(incomingMessage)
 
       expect(values1).toEqual(['initMsg', 'msg1', 'msg2'])
     })
@@ -365,7 +460,7 @@ describe('Topic', () => {
       incomingMessage.data.id = 1
       incomingMessage.data.timestamp = 3
       ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onMessage(incomingMessage)
+      ;(<any>testTopic1).onWindowMessage(incomingMessage)
 
       expect(values1).toEqual(['initMsg', 'msg1', 'msg2'])
     })
@@ -378,13 +473,12 @@ describe('Topic', () => {
       ;(<any>incomingMessage.data).id = undefined
       incomingMessage.data.timestamp = 3
       ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onMessage(incomingMessage)
+      ;(<any>testTopic1).onWindowMessage(incomingMessage)
 
       expect(values1).toEqual(['initMsg', 'msg1'])
     })
 
     it('should have no value if incoming timestamp is equal to the previous timestamp when current message has id', () => {
-      jest.spyOn(console, 'warn')
       previousMessage.data = 'msg1'
       previousMessage.id = 1
       previousMessage.timestamp = 3
@@ -392,16 +486,15 @@ describe('Topic', () => {
       ;(<any>incomingMessage.data).id = undefined
       incomingMessage.data.timestamp = 3
       ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onMessage(incomingMessage)
+      ;(<any>testTopic1).onWindowMessage(incomingMessage)
 
       expect(values1).toEqual(['initMsg', 'msg1'])
-      expect(console.warn).toHaveBeenLastCalledWith(
+      expect(loggerWarnFn).toHaveBeenLastCalledWith(
         'Message was dropped because of equal timestamps, because there was an old style message in the system. Please upgrade all libraries to the latest version.'
       )
     })
 
     it('should have no value if incoming timestamp is equal to previous timestamp when incoming message has id', () => {
-      jest.spyOn(console, 'warn')
       previousMessage.data = 'msg1'
       ;(<any>previousMessage).id = undefined
       previousMessage.timestamp = 3
@@ -409,16 +502,15 @@ describe('Topic', () => {
       incomingMessage.data.id = 1
       incomingMessage.data.timestamp = 3
       ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onMessage(incomingMessage)
+      ;(<any>testTopic1).onWindowMessage(incomingMessage)
 
       expect(values1).toEqual(['initMsg', 'msg1'])
-      expect(console.warn).toHaveBeenLastCalledWith(
+      expect(loggerWarnFn).toHaveBeenLastCalledWith(
         'Message was dropped because of equal timestamps, because there was an old style message in the system. Please upgrade all libraries to the latest version.'
       )
     })
 
     it('should have no value and no warning if incoming timestamp is equal to previous timestamp when incoming message has smaller id then current', () => {
-      jest.spyOn(console, 'warn')
       previousMessage.data = 'msg1'
       ;(<any>previousMessage).id = 2
       previousMessage.timestamp = 3
@@ -426,10 +518,73 @@ describe('Topic', () => {
       incomingMessage.data.id = 1
       incomingMessage.data.timestamp = 3
       ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onMessage(incomingMessage)
+      ;(<any>testTopic1).onWindowMessage(incomingMessage)
 
       expect(values1).toEqual(['initMsg', 'msg1'])
-      expect(console.warn).toHaveBeenCalledTimes(0)
+      expect(loggerWarnFn).toHaveBeenCalledTimes(0)
+    })
+  })
+
+  describe('for compatibility with older versions and browsers', () => {
+    it('disables BroadcastChannel when not supported (TopicPublisher constructor branch)', () => {
+      const originalBC = (globalThis as any).BroadcastChannel
+      ;(globalThis as any).BroadcastChannel = undefined
+
+      window['@onecx/accelerator'] ??= {}
+      window['@onecx/accelerator'].topic ??= {}
+      window['@onecx/accelerator'].topic.useBroadcastChannel = true
+
+      // Creating a topic triggers TopicPublisher constructor branch
+      const t = new Topic<string>('no-bc', 1, false)
+      t.destroy()
+
+      expect(window['@onecx/accelerator'].topic.useBroadcastChannel).toBe(false)
+      ;(globalThis as any).BroadcastChannel = originalBC
+    })
+
+    it('uses window.postMessage when BroadcastChannel is disabled (sendMessage else path)', () => {
+      window['@onecx/accelerator'] ??= {}
+      window['@onecx/accelerator'].topic ??= {}
+      window['@onecx/accelerator'].topic.useBroadcastChannel = false
+
+      const spy = jest.spyOn(window, 'postMessage')
+
+      const t = new Topic<string>('window-path', 1, false)
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      t.subscribe(() => {})
+      t.publish('x')
+
+      expect(spy).toHaveBeenCalled()
+      t.destroy()
+      spy.mockRestore()
+    })
+
+    it('covers deprecated helpers: source, operator, lift, forEach, toPromise', async () => {
+      const t = new Topic<number>('helpers', 1, false)
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      t.subscribe(() => {})
+
+      // Access deprecated properties
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      ;(t as any).source
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      ;(t as any).operator
+
+      // lift with identity map
+      const lifted = (t as any).lift((obs: any) => obs)
+      expect(lifted).toBeTruthy()
+
+      // forEach: invoke without awaiting completion (never completes)
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      t.forEach(() => {})
+      t.publish(7)
+
+      // toPromise: invoke to cover method without awaiting resolution
+      const p2 = (t as any).toPromise?.()
+      if (p2) {
+        t.publish(9)
+      }
+      t.destroy()
     })
   })
 })

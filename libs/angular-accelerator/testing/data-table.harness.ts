@@ -10,6 +10,8 @@ import {
   TableRowHarness,
   PPaginatorHarness,
   PTableCheckboxHarness,
+  PMenuHarness,
+  MenuItemHarness,
 } from '@onecx/angular-testing'
 
 export interface DataTableHarnessFilters extends BaseHarnessFilters {
@@ -28,6 +30,7 @@ export class DataTableHarness extends ContentContainerComponentHarness {
   getHeaderColumns = this.locatorForAll(TableHeaderColumnHarness)
   getRows = this.locatorForAll(TableRowHarness)
   getPaginator = this.locatorFor(PPaginatorHarness)
+  getOverflowMenu = this.locatorForOptional(PMenuHarness)
 
   async getId(): Promise<string | null> {
     return await (await this.host()).getAttribute('id')
@@ -63,6 +66,21 @@ export class DataTableHarness extends ContentContainerComponentHarness {
 
   async getActionButtons() {
     return await this.locatorForAll(`[name="data-table-action-button"]`)()
+  }
+
+  async getOverflowActionMenuButton() {
+    return await this.locatorForOptional('[name="data-table-overflow-action-button"]')()
+  }
+
+  async getOverFlowMenuItems() {
+    const menu = await this.getOverflowMenu()
+    const menuItems = await menu?.getAllMenuItems()
+    return menuItems ?? []
+  }
+
+  async getOverFlowMenuItem(itemText: string): Promise<MenuItemHarness | undefined | null> {
+    const menu = await this.getOverflowMenu()
+    return await menu?.getMenuItem(itemText)
   }
 
   async actionButtonIsDisabled(actionButton: TestElement) {

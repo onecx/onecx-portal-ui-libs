@@ -1,25 +1,25 @@
+import { FakeTopic, Topic } from '@onecx/accelerator'
 import {
-  FakeTopic,
   provideAppStateServiceMock,
   provideShellCapabilityServiceMock,
   ShellCapabilityServiceMock,
 } from '@onecx/angular-integration-interface/mocks'
 import { ParametersService } from './parameters.service'
 import { Capability } from './shell-capability.service'
-import {  ParametersTopicPayload } from '@onecx/integration-interface'
+import { ParametersTopicPayload } from '@onecx/integration-interface'
 import { TestBed } from '@angular/core/testing'
 
 describe('ParametersService', () => {
   let parametersService: ParametersService
-  let parametersTopic: FakeTopic<ParametersTopicPayload>
+  let parametersTopic: Topic<ParametersTopicPayload>
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [provideShellCapabilityServiceMock(), provideAppStateServiceMock()],
     })
     parametersService = TestBed.inject(ParametersService)
-    parametersTopic = new FakeTopic<ParametersTopicPayload>()
-    parametersService['parameters$'] = parametersTopic as any
+    parametersTopic = FakeTopic.create<ParametersTopicPayload>()
+    parametersService.parameters$ = parametersTopic
   })
 
   it('should be created', () => {
@@ -53,7 +53,7 @@ describe('ParametersService', () => {
     ShellCapabilityServiceMock.setCapabilities([Capability.PARAMETERS_TOPIC])
 
     const key = 'key'
-    await parametersTopic.publish({parameters:[{ productName: 'test', appId: 'test', parameters: { } }]})
+    await parametersTopic.publish({ parameters: [{ productName: 'test', appId: 'test', parameters: {} }] })
 
     const defaultValue = 'default'
     const result = await parametersService.get(key, defaultValue)
@@ -65,7 +65,9 @@ describe('ParametersService', () => {
     ShellCapabilityServiceMock.setCapabilities([Capability.PARAMETERS_TOPIC])
 
     const key = 'key'
-    await parametersTopic.publish({parameters:[{ productName: 'test', appId: 'test2', parameters: { [key]: 'test'  } }]})
+    await parametersTopic.publish({
+      parameters: [{ productName: 'test', appId: 'test2', parameters: { [key]: 'test' } }],
+    })
 
     const defaultValue = 'default'
     const result = await parametersService.get(key, defaultValue)
@@ -77,7 +79,7 @@ describe('ParametersService', () => {
     ShellCapabilityServiceMock.setCapabilities([Capability.PARAMETERS_TOPIC])
 
     const key = 'key'
-    await parametersTopic.publish({parameters:[]})
+    await parametersTopic.publish({ parameters: [] })
 
     const defaultValue = 'default'
     const result = await parametersService.get(key, Promise.resolve(defaultValue))
