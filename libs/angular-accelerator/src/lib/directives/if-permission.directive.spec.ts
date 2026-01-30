@@ -8,6 +8,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { DivHarness } from '@onecx/angular-testing'
 import { IfPermissionDirective } from './if-permission.directive'
 
+import * as loggerUtils from '../utils/logger.utils'
+
 // Simple component to test the directive
 @Component({
   selector: 'ocx-simple',
@@ -132,6 +134,8 @@ describe('IfPermissionDirective', () => {
   let fixture: ComponentFixture<any>
   let mockPermissionChecker: jest.Mocked<HasPermissionChecker>
   let getPermissionsMock: jest.Mock
+  let loggerWarnSpy: jest.Mock
+  let loggerDebugSpy: jest.Mock
 
   const getDivOrNull = async () => {
     if (!fixture) return null
@@ -177,7 +181,15 @@ describe('IfPermissionDirective', () => {
       providers: [{ provide: HAS_PERMISSION_CHECKER, useValue: mockPermissionChecker }, provideUserServiceMock()],
     })
 
-    jest.resetAllMocks()
+    loggerWarnSpy = jest.fn()
+    loggerDebugSpy = jest.fn()
+    jest.spyOn(loggerUtils, 'createLogger').mockReturnValue({
+      debug: loggerDebugSpy as any,
+      info: jest.fn() as any,
+      warn: loggerWarnSpy as any,
+      error: jest.fn() as any,
+    })
+
     getPermissionsMock = mockPermissionChecker.getPermissions as jest.Mock
   })
 
@@ -269,8 +281,6 @@ describe('IfPermissionDirective', () => {
     })
 
     it('should log if provided permissions array does not contain permission', async () => {
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
       getPermissionsMock.mockReturnValue(of([]))
 
       fixture = TestBed.createComponent(WithMissingProvidedPermissionsComponent)
@@ -278,7 +288,7 @@ describe('IfPermissionDirective', () => {
 
       const element = await getDivOrNull()
       expect(element).toBeNull()
-      expect(consoleSpy).toHaveBeenCalledWith('👮‍♀️ No permission in overwrites for: `', ['missing-permission'])
+      expect(loggerDebugSpy).toHaveBeenCalledWith('No permission in overwrites for:', ['missing-permission'])
     })
 
     it('should not show if permission is undefined', async () => {
@@ -391,14 +401,12 @@ describe('IfPermissionDirective', () => {
     })
 
     it('should log if provided permissions array does not contain permission', () => {
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
       getPermissionsMock.mockReturnValue(of([]))
 
       fixture = TestBed.createComponent(NegateWithMissingProvidedPermissionsComponent)
       fixture.detectChanges()
 
-      expect(consoleSpy).toHaveBeenCalledWith('👮‍♀️ No permission in overwrites for: `', ['missing-permission'])
+      expect(loggerDebugSpy).toHaveBeenCalledWith('No permission in overwrites for:', ['missing-permission'])
     })
 
     it('should not show if permission is undefined', async () => {

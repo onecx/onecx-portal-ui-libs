@@ -3,12 +3,15 @@ import { Injectable, inject } from '@angular/core'
 import { Endpoint, Route } from '@onecx/integration-interface'
 import { Observable, map } from 'rxjs'
 import { AppStateService } from './app-state.service'
+import { createLogger } from '../utils/logger.utils'
 
 @Injectable({
   providedIn: 'root',
 })
 export class WorkspaceService {
   protected appStateService = inject(AppStateService)
+
+  private readonly logger = createLogger('WorkspaceService')
 
   private aliasStart = '[['
   private aliasEnd = ']]'
@@ -55,7 +58,7 @@ export class WorkspaceService {
 
   private constructBaseUrlFromWorkspace(workspace: any): string {
     if (workspace.baseUrl === undefined) {
-      console.log('WARNING: There was no baseUrl for received workspace.')
+      this.logger.warn('There was no baseUrl for received workspace.')
       return ''
     }
     return workspace.baseUrl
@@ -71,8 +74,8 @@ export class WorkspaceService {
     const route = this.filterRouteFromList(workspace.routes, appId, productName)
     let url = this.constructBaseUrlFromWorkspace(workspace)
     if (!route) {
-      console.log(
-        `WARNING: No route.baseUrl could be found for given appId "${appId}" and productName "${productName}"`
+      this.logger.warn(
+        `No route.baseUrl could be found for given appId "${appId}" and productName "${productName}"`
       )
 
       return url
@@ -99,13 +102,13 @@ export class WorkspaceService {
     }
     const finalEndpoint = this.dissolveEndpoint(endpointName, route.endpoints)
     if (!finalEndpoint || finalEndpoint.path === undefined) {
-      console.log('WARNING: No endpoint or endpoint.path could be found')
+      this.logger.warn('No endpoint or endpoint.path could be found')
       return ''
     }
 
     const paramsFilled = this.fillParamsForPath(finalEndpoint.path, endpointParameters)
     if (paramsFilled === undefined) {
-      console.log('WARNING: Params could not be filled correctly')
+      this.logger.warn('Params could not be filled correctly')
       return ''
     }
 
@@ -124,7 +127,7 @@ export class WorkspaceService {
     }
 
     if (productRoutes.length > 1) {
-      console.log('WARNING: There were more than one route. First route has been used.')
+      this.logger.warn('There were more than one route. First route has been used.')
     }
 
     return productRoutes[0]
@@ -165,7 +168,7 @@ export class WorkspaceService {
       if (paramValue != undefined && paramValue.length > 0) {
         path = path.replace(this.paramStart.concat(paramName).concat(this.paramEnd), paramValue)
       } else {
-        console.log(`WARNING: Searched param "${paramName}" was not found in given param list `)
+        this.logger.warn(`Searched param "${paramName}" was not found in given param list `)
         return ''
       }
     }
