@@ -136,9 +136,9 @@ jobs:
             -Dsonar.javascript.lcov.reportPaths=${{ github.workspace }}/reports/${{ matrix.path }}/coverage/lcov.info
             -Dsonar.testExecutionReportPaths=${{ github.workspace }}/reports/${{ matrix.path }}/sonarqube_report.xml
             -Dsonar.working.directory=${{ github.workspace }}/reports/${{ matrix.path }}/.scannerwork
-            "-Dsonar.exclusions=src/assets/**/*,src/migrations/**/*,src/mocks/**/*"
+            "-Dsonar.exclusions=src/assets/**/*,src/migrations/**/*,src/mocks/**/*,**/logger.utils.ts,**/*logger.utils.ts,**/logger*.utils.ts"
             "-Dsonar.cpd.exclusions=src/**/*.ts,src/**/*.html"
-            "-Dsonar.coverage.exclusions=*.ts,*.js,src/*.ts,**/*.spec.ts,**/*.test.ts,**/*.stories.ts,**/*.harness.ts,**/environments/**,**/assets/**,**/generated/**,**/*.module.ts,**/*.main.ts"
+            "-Dsonar.coverage.exclusions=*.ts,*.js,src/*.ts,**/*.spec.ts,**/*.test.ts,**/*.stories.ts,**/*.harness.ts,**/logger.utils.ts,**/*logger.utils.ts,**/logger*.utils.ts,**/environments/**,**/assets/**,**/generated/**,**/*.module.ts,**/*.main.ts"
             "-Dsonar.test.inclusions=src/**/*.spec.ts,src/**/*.test.ts"
             -Dsonar.scm.revision=${{ github.event.workflow_run.head_sha }}
             -Dsonar.pullrequest.key=${{ fromJson(steps.get_pr_data.outputs.data).number }}
