@@ -9,4 +9,4 @@ export function printWarnings(warning: string, affectedFiles: string[]) {
   if (affectedFiles.length > 0) {
     logger.warn(`${warning} Found in: ${affectedFiles.join(',')}`)
   }
-} 
+}
