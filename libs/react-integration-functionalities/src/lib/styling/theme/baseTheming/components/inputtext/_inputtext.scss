@@ -1,0 +1,57 @@
+@import './_tokens.scss';
+
+/* InputText component styles */
+.p-inputtext {
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  padding: var(--test-example-inputtext-padding-y)
+    var(--test-example-inputtext-padding-x);
+  border-radius: var(--test-example-inputtext-border-radius);
+  background: var(--test-example-inputtext-background);
+  color: var(--test-example-inputtext-color);
+  border: 1px solid var(--test-example-inputtext-border-color);
+  transition:
+    background var(--test-example-inputtext-transition-duration),
+    color var(--test-example-inputtext-transition-duration),
+    border-color var(--test-example-inputtext-transition-duration),
+    outline-color var(--test-example-inputtext-transition-duration),
+    box-shadow var(--test-example-inputtext-transition-duration);
+  outline-color: transparent;
+  box-shadow: var(--test-example-inputtext-shadow);
+}
+.p-inputtext:disabled,
+.p-inputtext[disabled] {
+  background: var(--test-example-inputtext-disabled-background);
+  color: var(--test-example-inputtext-disabled-color);
+}
+.p-inputtext:focus-visible {
+  outline: var(--test-example-inputtext-focus-ring-width)
+    var(--test-example-inputtext-focus-ring-style)
+    var(--test-example-inputtext-focus-ring-color);
+  outline-offset: var(--test-example-inputtext-focus-ring-offset);
+  box-shadow: var(--test-example-inputtext-focus-ring-shadow);
+  border-color: var(--test-example-inputtext-focus-border-color);
+}
+.p-inputtext::placeholder {
+  color: var(--test-example-inputtext-placeholder-color);
+}
+.p-inputtext.p-filled {
+  background: var(--test-example-inputtext-filled-background);
+}
+.p-inputtext.p-filled:hover {
+  background: var(--test-example-inputtext-filled-hover-background);
+}
+.p-inputtext.p-filled:focus {
+  background: var(--test-example-inputtext-filled-focus-background);
+}
+.p-inputtext.p-inputtext-sm {
+  font-size: var(--test-example-inputtext-sm-font-size);
+  padding: var(--test-example-inputtext-sm-padding-y)
+    var(--test-example-inputtext-sm-padding-x);
+}
+.p-inputtext.p-inputtext-lg {
+  font-size: var(--test-example-inputtext-lg-font-size);
+  padding: var(--test-example-inputtext-lg-padding-y)
+    var(--test-example-inputtext-lg-padding-x);
+}
