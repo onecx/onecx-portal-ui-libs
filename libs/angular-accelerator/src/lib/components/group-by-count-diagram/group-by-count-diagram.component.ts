@@ -1,4 +1,16 @@
-import { Component, EventEmitter, Input, OnInit, Output, effect, inject, input, output, signal } from '@angular/core'
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  effect,
+  inject,
+  input,
+  model,
+  output,
+  signal,
+} from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { BehaviorSubject, Observable, combineLatest, map, mergeMap, of } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
@@ -30,29 +42,25 @@ export class GroupByCountDiagramComponent {
   fillMissingColors = input<boolean>(true)
   supportedDiagramTypes = input<DiagramType[]>([])
 
-  _effectiveData = signal<unknown[]>([])
-  data = input<unknown[]>([])
+  data = model<unknown[]>([])
 
-  _effectiveColumnType = signal<ColumnType>(ColumnType.STRING)
-  columnType = input<ColumnType>(ColumnType.STRING)
+  columnType = model<ColumnType>(ColumnType.STRING)
 
-  _effectiveColumnField = signal<string>('')
-  columnField = input<string>('')
+  columnField = model<string>('')
 
   column = input<DiagramColumn>()
 
-  _effectiveColors = signal<Record<string, string>>({})
-  colors = input<Record<string, string>>({})
+  colors = model<Record<string, string>>({})
 
   dataSelected = output<any>()
   diagramTypeChanged = output<DiagramType>()
   componentStateChanged = output<GroupByCountDiagramComponentState>()
 
   diagramData$ = combineLatest([
-    toObservable(this._effectiveData),
-    toObservable(this._effectiveColumnField),
-    toObservable(this._effectiveColumnType),
-    toObservable(this._effectiveColors),
+    toObservable(this.data),
+    toObservable(this.columnField),
+    toObservable(this.columnType),
+    toObservable(this.colors),
   ]).pipe(
     mergeMap(([data, columnField, columnType, colors]) => {
       const columnData = data.map((d) => ObjectUtils.resolveFieldData(d, columnField))
@@ -79,23 +87,14 @@ export class GroupByCountDiagramComponent {
 
   constructor() {
     effect(() => {
-      this._effectiveData.set(this.data())
-    })
-    effect(() => {
-      this._effectiveColumnType.set(this.columnType())
-    })
-    effect(() => {
-      this._effectiveColumnField.set(this.columnField())
-    })
-    effect(() => {
       const column = this.column()
       if (column) {
-        this._effectiveColumnType.set(column.columnType)
-        this._effectiveColumnField.set(column.id)
+        this.columnType.set(column.columnType)
+        this.columnField.set(column.id)
       }
     })
     effect(() => {
-      this._effectiveColors.set(this.colors())
+      this.colors.set(this.colors())
     })
   }
 

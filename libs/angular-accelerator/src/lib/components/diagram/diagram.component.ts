@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output, effect, input, output, signal } from '@angular/core'
+import { Component, EventEmitter, OnInit, Output, effect, input, model, output, signal } from '@angular/core'
 import { ChartData, ChartOptions } from 'chart.js'
 import * as d3 from 'd3-scale-chromatic'
 import { PrimeIcons } from 'primeng/api'
@@ -64,8 +64,7 @@ export class DiagramComponent implements OnInit {
   selectedDiagramType = signal<DiagramLayouts | undefined>(undefined)
   public chartType = signal<'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'polarArea' | 'radar'>('pie')
 
-  _effectiveDiagramType = signal<DiagramType>(DiagramType.PIE)
-  diagramType = input<DiagramType>(DiagramType.PIE)
+  diagramType = model<DiagramType>(DiagramType.PIE)
 
   supportedDiagramTypes = input<DiagramType[]>([])
 
@@ -88,11 +87,6 @@ export class DiagramComponent implements OnInit {
   constructor() {
     effect(() => {
       const value = this.diagramType()
-      this._effectiveDiagramType.set(value)
-    })
-
-    effect(() => {
-      const value = this._effectiveDiagramType()
       this.selectedDiagramType.set(allDiagramTypes.find((v) => v.layout === value))
       this.chartType.set(this.diagramTypeToChartType(value))
     })
@@ -136,11 +130,11 @@ export class DiagramComponent implements OnInit {
         },
       },
       maintainAspectRatio: false,
-      ...(this._effectiveDiagramType() === DiagramType.VERTICAL_BAR && {
+      ...(this.diagramType() === DiagramType.VERTICAL_BAR && {
         plugins: { legend: { display: false } },
         scales: { y: { ticks: { precision: 0 } } },
       }),
-      ...(this._effectiveDiagramType() === DiagramType.HORIZONTAL_BAR && {
+      ...(this.diagramType() === DiagramType.HORIZONTAL_BAR && {
         indexAxis: 'y',
         plugins: { legend: { display: false } },
         scales: { x: { ticks: { precision: 0 } } },
@@ -183,7 +177,7 @@ export class DiagramComponent implements OnInit {
   }
 
   onDiagramTypeChanged(event: any) {
-    this._effectiveDiagramType.set(event.value.layout)
+    this.diagramType.set(event.value.layout)
     this.generateChart(this.colorScale, this.colorRangeInfo)
     this.diagramTypeChanged.emit(event.value.layout)
     this.componentStateChanged.emit({
