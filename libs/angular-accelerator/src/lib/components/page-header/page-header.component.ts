@@ -18,6 +18,7 @@ import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { PrimeIcon } from '../../utils/primeicon.utils'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { TranslationKey } from '../../model/translation.model'
+import { Router } from '@angular/router'
 
 /**
  * Action definition.
@@ -38,6 +39,7 @@ export interface Action {
   ariaLabelKey?: string
   btnClass?: string
   actionCallback(): void
+  routerLink?: string
   disabled?: boolean
   disabledTooltip?: string
   disabledTooltipKey?: string
@@ -84,6 +86,7 @@ export class PageHeaderComponent implements OnInit {
   private translateService = inject(TranslateService)
   private appStateService = inject(AppStateService)
   private userService = inject(UserService)
+  router = inject(Router)
   private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
 
   @Input()
@@ -308,7 +311,7 @@ export class PageHeaderComponent implements OnInit {
         tooltipEvent: 'hover',
         tooltipPosition: 'top',
       },
-      command: a.actionCallback,
+      command: a.routerLink ? () => this.router.navigate([a.routerLink!]) : a.actionCallback,
       disabled: a.disabled,
     }))
   }
