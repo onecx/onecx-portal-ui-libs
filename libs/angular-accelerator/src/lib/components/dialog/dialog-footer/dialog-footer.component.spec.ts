@@ -3,7 +3,12 @@ import { PrimeIcons } from 'primeng/api'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { DialogFooterHarness, provideTranslateTestingService, TestbedHarnessEnvironment } from '../../../../../testing'
 import { AngularAcceleratorModule } from '../../../angular-accelerator.module'
-import { DialogFooterComponent } from './dialog-footer.component'
+import {
+  defaultDialogData,
+  defaultPrimaryButtonDetails,
+  defaultSecondaryButtonDetails,
+  DialogFooterComponent,
+} from './dialog-footer.component'
 
 describe('DialogFooterComponent', () => {
   let component: DialogFooterComponent
@@ -45,11 +50,11 @@ describe('DialogFooterComponent', () => {
 
   it('should create default dialog-footer without passing config', async () => {
     // expect correct default initialization
-    expect(component.dialogData.component).toEqual(undefined)
-    expect(component.dialogData.componentData).toEqual({})
-    expect(component.dialogData.config.primaryButtonDetails).toEqual(component.defaultPrimaryButtonDetails)
-    expect(component.dialogData.config.secondaryButtonIncluded).toEqual(true)
-    expect(component.dialogData.config.secondaryButtonDetails).toEqual(component.defaultSecondaryButtonDetails)
+    expect(component.dialogData().component).toEqual(undefined)
+    expect(component.dialogData().componentData).toEqual({})
+    expect(component.dialogData().config.primaryButtonDetails).toEqual(defaultPrimaryButtonDetails)
+    expect(component.dialogData().config.secondaryButtonIncluded).toEqual(true)
+    expect(component.dialogData().config.secondaryButtonDetails).toEqual(defaultSecondaryButtonDetails)
 
     // expect default emitted value to be label
     jest.spyOn(component.buttonClickedEmitter, 'emit')
@@ -80,17 +85,20 @@ describe('DialogFooterComponent', () => {
   })
 
   it('should create customized button-dialog with passing config', async () => {
-    component.dialogData.config = {
-      primaryButtonDetails: {
-        key: 'CustomMain',
-        icon: PrimeIcons.CHECK,
+    component.dialogData.set({
+      config: {
+        primaryButtonDetails: {
+          key: 'CustomMain',
+          icon: PrimeIcons.CHECK,
+        },
+        secondaryButtonIncluded: true,
+        secondaryButtonDetails: {
+          key: 'CustomSide',
+          icon: PrimeIcons.TIMES,
+        },
       },
-      secondaryButtonIncluded: true,
-      secondaryButtonDetails: {
-        key: 'CustomSide',
-        icon: PrimeIcons.TIMES,
-      },
-    }
+      componentData: {},
+    })
 
     // expect correct label
     expect(await dialogFooterHarness.getPrimaryButtonLabel()).toBe('CustomMain')
@@ -101,15 +109,18 @@ describe('DialogFooterComponent', () => {
   })
 
   it('should translate button keys', async () => {
-    component.dialogData.config = {
-      primaryButtonDetails: {
-        key: 'CUSTOM_PRI',
+    component.dialogData.set({
+      config: {
+        primaryButtonDetails: {
+          key: 'CUSTOM_PRI',
+        },
+        secondaryButtonIncluded: true,
+        secondaryButtonDetails: {
+          key: 'CUSTOM_SEC',
+        },
       },
-      secondaryButtonIncluded: true,
-      secondaryButtonDetails: {
-        key: 'CUSTOM_SEC',
-      },
-    }
+      componentData: {},
+    })
 
     // expect correct label
     expect(await dialogFooterHarness.getPrimaryButtonLabel()).toBe(translations['CUSTOM_PRI'])
@@ -117,21 +128,24 @@ describe('DialogFooterComponent', () => {
   })
 
   it('should translate button keys with parameters', async () => {
-    component.dialogData.config = {
-      primaryButtonDetails: {
-        key: 'CUSTOM_PRI_PARAM',
-        parameters: {
-          val: 'firstParam',
+    component.dialogData.set({
+      config: {
+        primaryButtonDetails: {
+          key: 'CUSTOM_PRI_PARAM',
+          parameters: {
+            val: 'firstParam',
+          },
+        },
+        secondaryButtonIncluded: true,
+        secondaryButtonDetails: {
+          key: 'CUSTOM_SEC_PARAM',
+          parameters: {
+            val: 'secondParam',
+          },
         },
       },
-      secondaryButtonIncluded: true,
-      secondaryButtonDetails: {
-        key: 'CUSTOM_SEC_PARAM',
-        parameters: {
-          val: 'secondParam',
-        },
-      },
-    }
+      componentData: {},
+    })
 
     // expect correct label
     expect(await dialogFooterHarness.getPrimaryButtonLabel()).toBe('primary-firstParam')
@@ -139,99 +153,157 @@ describe('DialogFooterComponent', () => {
   })
 
   it('should create Confirm/Cancel button-dialog when sideButton is enabled', async () => {
-    component.dialogData.config.secondaryButtonIncluded = true
+    component.dialogData.set({
+      ...defaultDialogData,
+      config: {
+        ...defaultDialogData.config,
+        secondaryButtonIncluded: true,
+      },
+    })
 
     expect(await dialogFooterHarness.getPrimaryButtonLabel()).toBe('Confirm')
     expect(await dialogFooterHarness.getSecondaryButtonLabel()).toBe('Cancel')
   })
 
   it('should create Confirm only button-dialog when sideButton is disabled', async () => {
-    component.dialogData.config.secondaryButtonIncluded = false
+    component.dialogData.set({
+      ...defaultDialogData,
+      config: {
+        ...defaultDialogData.config,
+        secondaryButtonIncluded: false,
+      },
+    })
 
     expect(await dialogFooterHarness.getPrimaryButtonLabel()).toBe('Confirm')
     expect(await dialogFooterHarness.getSecondaryButton()).toBeNull()
   })
 
   it('should create CustmMain/Cancel button-dialog when mainButton is defined', async () => {
-    component.dialogData.config.primaryButtonDetails = {
-      key: 'CustomMain',
-    }
+    component.dialogData.set({
+      ...defaultDialogData,
+      config: {
+        ...defaultDialogData.config,
+        primaryButtonDetails: {
+          key: 'CustomMain',
+        },
+      },
+    })
 
     expect(await dialogFooterHarness.getPrimaryButtonLabel()).toBe('CustomMain')
     expect(await dialogFooterHarness.getSecondaryButtonLabel()).toBe('Cancel')
   })
 
   it('should create Confirm/CustomSide button-dialog when sideButton is defined', async () => {
-    component.dialogData.config.secondaryButtonDetails = {
-      key: 'CustomSide',
-    }
+    component.dialogData.set({
+      ...defaultDialogData,
+      config: {
+        ...defaultDialogData.config,
+        secondaryButtonDetails: {
+          key: 'CustomSide',
+        },
+      },
+    })
 
     expect(await dialogFooterHarness.getPrimaryButtonLabel()).toBe('Confirm')
     expect(await dialogFooterHarness.getSecondaryButtonLabel()).toBe('CustomSide')
   })
 
   it('should create CustomMain/CustomSide button-dialog when both buttons are defined', async () => {
-    component.dialogData.config.primaryButtonDetails = {
-      key: 'CustomMain',
-    }
-    component.dialogData.config.secondaryButtonDetails = {
-      key: 'CustomSide',
-    }
+    component.dialogData.set({
+      ...defaultDialogData,
+      config: {
+        ...defaultDialogData.config,
+        primaryButtonDetails: {
+          key: 'CustomMain',
+        },
+        secondaryButtonDetails: {
+          key: 'CustomSide',
+        },
+      },
+    })
 
     expect(await dialogFooterHarness.getPrimaryButtonLabel()).toBe('CustomMain')
     expect(await dialogFooterHarness.getSecondaryButtonLabel()).toBe('CustomSide')
   })
 
   it('should create CustomMain only button-dialog when sideButton is disabled', async () => {
-    component.dialogData.config.primaryButtonDetails = {
-      key: 'CustomMain',
-    }
-    component.dialogData.config.secondaryButtonIncluded = false
+    component.dialogData.set({
+      ...defaultDialogData,
+      config: {
+        ...defaultDialogData.config,
+        primaryButtonDetails: {
+          key: 'CustomMain',
+        },
+        secondaryButtonIncluded: false,
+      },
+    })
 
     expect(await dialogFooterHarness.getPrimaryButtonLabel()).toBe('CustomMain')
     expect(await dialogFooterHarness.getSecondaryButton()).toBeNull()
   })
 
   it('should create CustomMain/Cancel button-dialog when sideButton is enabled', async () => {
-    component.dialogData.config.primaryButtonDetails = {
-      key: 'CustomMain',
-    }
-    component.dialogData.config.secondaryButtonIncluded = true
+    component.dialogData.set({
+      ...defaultDialogData,
+      config: {
+        ...defaultDialogData.config,
+        primaryButtonDetails: {
+          key: 'CustomMain',
+        },
+        secondaryButtonIncluded: true,
+      },
+    })
 
     expect(await dialogFooterHarness.getPrimaryButtonLabel()).toBe('CustomMain')
     expect(await dialogFooterHarness.getSecondaryButtonLabel()).toBe('Cancel')
   })
 
   it('should create Confirm only button-dialog when sideButton is defined but is disabled', async () => {
-    component.dialogData.config.secondaryButtonDetails = {
-      key: 'CustomSide',
-    }
-    component.dialogData.config.secondaryButtonIncluded = false
+    component.dialogData.set({
+      ...defaultDialogData,
+      config: {
+        ...defaultDialogData.config,
+        secondaryButtonDetails: {
+          key: 'CustomSide',
+        },
+        secondaryButtonIncluded: false,
+      },
+    })
 
     expect(await dialogFooterHarness.getPrimaryButtonLabel()).toBe('Confirm')
     expect(await dialogFooterHarness.getSecondaryButton()).toBeNull()
   })
 
   it('should create Confirm/CustomSide button-dialog when sideButton is defined and enabled', async () => {
-    component.dialogData.config.secondaryButtonDetails = {
-      key: 'CustomSide',
-    }
-    component.dialogData.config.secondaryButtonIncluded = true
+    component.dialogData.set({
+      ...defaultDialogData,
+      config: {
+        ...defaultDialogData.config,
+        secondaryButtonDetails: {
+          key: 'CustomSide',
+        },
+      },
+    })
+    component.dialogData().config.secondaryButtonIncluded = true
 
     expect(await dialogFooterHarness.getPrimaryButtonLabel()).toBe('Confirm')
     expect(await dialogFooterHarness.getSecondaryButtonLabel()).toBe('CustomSide')
   })
 
   it('should create CustomMain only button-dialog when sideButton is defined but is disabled', async () => {
-    component.dialogData.config = {
-      primaryButtonDetails: {
-        key: 'CustomMain',
+    component.dialogData.set({
+      ...defaultDialogData,
+      config: {
+        ...defaultDialogData.config,
+        primaryButtonDetails: {
+          key: 'CustomMain',
+        },
+        secondaryButtonDetails: {
+          key: 'CustomSide',
+        },
+        secondaryButtonIncluded: false,
       },
-      secondaryButtonDetails: {
-        key: 'CustomSide',
-      },
-      secondaryButtonIncluded: false,
-    }
+    })
 
     expect(await dialogFooterHarness.getPrimaryButtonLabel()).toBe('CustomMain')
     expect(await dialogFooterHarness.getSecondaryButton()).toBeNull()
