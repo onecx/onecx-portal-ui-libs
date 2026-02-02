@@ -1,3 +1,9 @@
+## [7.0.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.4...v7.0.5) (2026-02-02)
+
+### Bug Fixes
+
+* fix topic publish v7 ([#1196](https://github.com/onecx/onecx-portal-ui-libs/issues/1196)) ([bec3357](https://github.com/onecx/onecx-portal-ui-libs/commit/bec3357541121d75f5092fcc6d7567a859188d86))
+
 ## [7.0.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.3...v7.0.4) (2026-01-30)
 
 ### Bug Fixes
