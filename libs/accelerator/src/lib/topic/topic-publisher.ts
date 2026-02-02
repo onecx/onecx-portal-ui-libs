@@ -31,7 +31,7 @@ export class TopicPublisher<T> {
   }
 
   protected createBroadcastChannel(): void {
-    if (this.publishBroadcastChannel) {
+    if (this.publishBroadcastChannel && this.publishBroadcastChannelV2) {
       return
     }
 
