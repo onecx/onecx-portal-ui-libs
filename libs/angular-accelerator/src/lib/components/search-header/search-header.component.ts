@@ -49,7 +49,7 @@ export class SearchHeaderComponent {
   header = input<string>('')
   subheader = input<string | undefined>(undefined)
 
-  effectiveViewMode = signal<'basic' | 'advanced'>('basic')
+  _effectiveViewMode = signal<'basic' | 'advanced'>('basic')
   viewMode = input<'basic' | 'advanced'>('basic')
 
   manualBreadcrumbs = input<boolean>(false)
@@ -114,10 +114,10 @@ export class SearchHeaderComponent {
   constructor() {
     effect(() => {
       const viewMode = this.viewMode()
-      this.effectiveViewMode.set(viewMode)
+      this._effectiveViewMode.set(viewMode)
     })
     effect(() => {
-      const viewMode = this.effectiveViewMode()
+      const viewMode = this._effectiveViewMode()
       this.viewModeChanged?.emit(viewMode)
       this.componentStateChanged.emit({
         activeViewMode: viewMode,
@@ -140,7 +140,7 @@ export class SearchHeaderComponent {
   }
 
   toggleViewMode() {
-    this.effectiveViewMode.update((current) => (current === 'basic' ? 'advanced' : 'basic'))
+    this._effectiveViewMode.update((current) => (current === 'basic' ? 'advanced' : 'basic'))
   }
 
   onResetClicked() {
@@ -157,11 +157,11 @@ export class SearchHeaderComponent {
     if (this.hasAdvanced()) {
       const simpleAdvancedAction = this.simpleAdvancedAction()
       simpleAdvancedAction.labelKey =
-        this.effectiveViewMode() === 'basic'
+        this._effectiveViewMode() === 'basic'
           ? 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.ADVANCED.TEXT'
           : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.SIMPLE.TEXT'
       simpleAdvancedAction.titleKey =
-        this.effectiveViewMode() === 'basic'
+        this._effectiveViewMode() === 'basic'
           ? 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.ADVANCED.DETAIL'
           : 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.SIMPLE.DETAIL'
 

@@ -122,7 +122,7 @@ describe('BasicDirective', () => {
 
     it('should render basic template when viewMode is basic', async () => {
       const searchHeaderHarness = await loader.getHarness(SearchHeaderHarness)
-      fixture.componentInstance.searchHeader.effectiveViewMode.set('basic')
+      fixture.componentInstance.searchHeader._effectiveViewMode.set('basic')
       fixture.detectChanges()
 
       const hostHarness = await loader.getHarness(HostInsideSearchHeaderHarness)
@@ -135,8 +135,8 @@ describe('BasicDirective', () => {
       expect(searchHeaderHarness).toBeTruthy()
     })
 
-    it('should not render basic template when effectiveViewMode is advanced', async () => {
-      fixture.componentInstance.searchHeader.effectiveViewMode.set('advanced')
+    it('should not render basic template when _effectiveViewMode is advanced', async () => {
+      fixture.componentInstance.searchHeader._effectiveViewMode.set('advanced')
       fixture.detectChanges()
 
       const hostHarness = await loader.getHarness(HostInsideSearchHeaderHarness)
@@ -144,18 +144,18 @@ describe('BasicDirective', () => {
     })
 
     it('should clear basic template when toggling from basic to advanced', async () => {
-      fixture.componentInstance.searchHeader.effectiveViewMode.set('basic')
+      fixture.componentInstance.searchHeader._effectiveViewMode.set('basic')
       fixture.detectChanges()
       const hostHarness = await loader.getHarness(HostInsideSearchHeaderHarness)
       expect(await hostHarness.getBasicContentCount()).toBe(1)
 
-      fixture.componentInstance.searchHeader.effectiveViewMode.set('advanced')
+      fixture.componentInstance.searchHeader._effectiveViewMode.set('advanced')
       fixture.detectChanges()
       expect(await hostHarness.getBasicContentCount()).toBe(0)
     })
 
     it('should not create a second embedded view when change detection runs again in basic mode', async () => {
-      fixture.componentInstance.searchHeader.effectiveViewMode.set('basic')
+      fixture.componentInstance.searchHeader._effectiveViewMode.set('basic')
       fixture.detectChanges()
 
       const hostHarness = await loader.getHarness(HostInsideSearchHeaderHarness)
