@@ -8,7 +8,14 @@ import {
   TemplateRef,
   Type,
   ViewEncapsulation,
+  computed,
+  contentChild,
+  effect,
   inject,
+  input,
+  model,
+  output,
+  signal,
 } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
@@ -18,6 +25,7 @@ import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { PrimeIcon } from '../../utils/primeicon.utils'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { TranslationKey } from '../../model/translation.model'
+import { toObservable } from '@angular/core/rxjs-interop'
 
 /**
  * Action definition.
@@ -85,87 +93,94 @@ export class PageHeaderComponent implements OnInit {
   private appStateService = inject(AppStateService)
   private userService = inject(UserService)
   private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
+  protected breadcrumbs = inject(BreadcrumbService)
 
-  @Input()
-  public header: string | undefined
+  header = input<string | undefined>(undefined)
 
-  @Input()
-  loading = false
+  loading = input<boolean>(false)
 
-  @Input()
-  figureBackground = true
+  figureBackground = input<boolean>(true)
 
-  @Input()
-  showFigure = true
+  showFigure = input<boolean>(true)
 
-  //image fot preview in top-header left side
-  @Input()
-  figureImage: string | undefined
+  // image for preview in top-header left side
+  figureImage = input<string | undefined>(undefined)
 
-  @Input()
-  disableDefaultActions = false
+  disableDefaultActions = input<boolean>(false)
 
-  @Input()
-  subheader: string | undefined
+  subheader = input<string | undefined>(undefined)
 
-  _actions = new BehaviorSubject<Action[]>([])
-  @Input()
-  get actions() {
-    return this._actions.getValue()
-  }
-  set actions(value) {
-    this._actions.next(value)
-  }
+  actions = model<Action[]>([])
 
-  @Input()
-  objectDetails: ObjectDetailItem[] | undefined
+  objectDetails = input<ObjectDetailItem[] | undefined>(undefined)
 
-  @Input()
-  showBreadcrumbs = true
+  showBreadcrumbs = input<boolean>(true)
 
-  @Input()
-  manualBreadcrumbs = false
+  manualBreadcrumbs = input<boolean>(false)
 
-  @Input()
-  enableGridView: undefined | boolean
+  enableGridView = input<boolean | undefined>(undefined)
 
-  @Input()
-  gridLayoutDesktopColumns: undefined | GridColumnOptions
+  gridLayoutDesktopColumns = input<GridColumnOptions | undefined>(undefined)
 
-  @Output()
-  save = new EventEmitter()
+  save = output<void>()
 
-  @ContentChild('additionalToolbarContent')
-  additionalToolbarContent: TemplateRef<any> | undefined
+  _additionalToolbarContent = contentChild<TemplateRef<any> | undefined>('additionalToolbarContent')
 
-  @ContentChild('additionalToolbarContentLeft')
-  additionalToolbarContentLeft: TemplateRef<any> | undefined
+  _additionalToolbarContentLeft = contentChild<TemplateRef<any> | undefined>('additionalToolbarContentLeft')
 
-  overflowActions$ = new BehaviorSubject<MenuItem[]>([])
-  inlineActions$ = new BehaviorSubject<Action[]>([])
-  dd = new Date()
+  overflowActions$: Observable<MenuItem[]> = toObservable(this.actions).pipe(
+    map(this.filterOverflowActions),
+    switchMap((actions) => {
+      return this.getActionTranslationKeys(actions).pipe(map((translations) => ({ actions, translations })))
+    }),
+    switchMap(({ actions, translations }) => {
+      return this.filterActionsBasedOnPermissions(actions).pipe(
+        map((filteredActions) => ({ filteredActions, translations }))
+      )
+    }),
+    map(({ filteredActions, translations }) => this.mapOverflowActionsToMenuItems(filteredActions, translations))
+  )
+  inlineActions$: Observable<Action[]> = toObservable(this.actions).pipe(
+    map(this.filterInlineActions),
+    switchMap((actions) => this.filterActionsBasedOnPermissions(actions))
+  )
   breadcrumbs$!: Observable<MenuItem[]>
 
   home$!: Observable<HomeItem>
 
-  figureImageLoadError = false
+  figureImageLoadError = signal<boolean>(false)
 
-  objectPanelGridLayoutClasses = 'grid row-gap-2 m-0'
-  objectPanelColumnLayoutClasses = 'flex flex-row justify-content-between overflow-x-auto'
+  objectPanelGridLayoutClasses = signal<string>('grid row-gap-2 m-0')
+  objectPanelColumnLayoutClasses = signal<string>('flex flex-row justify-content-between overflow-x-auto')
+  objectPanelDefaultLayoutClasses = signal<string>('flex flex-column row-gap-2 md:flex-row md:justify-content-between')
+  objectPanelLayoutClasses = computed(() => {
+    const enableGrid = this.enableGridView()
+    if (enableGrid) {
+      return this.objectPanelGridLayoutClasses()
+    }
+    if (enableGrid === false) {
+      return this.objectPanelColumnLayoutClasses()
+    }
+    return this.objectPanelDefaultLayoutClasses()
+  })
 
-  objectPanelDefaultLayoutClasses = 'flex flex-column row-gap-2 md:flex-row md:justify-content-between'
-
-  objectInfoGridLayoutClasses = 'col-12 flex gap-4 md:col-6 align-items-center p-0'
-  objectInfoColumnLayoutClasses = 'flex flex-column align-items-center gap-2 min-w-120'
-
-  objectInfoDefaultLayoutClasses = 'flex flex-row md:flex-column md:align-items-center md:gap-2'
-
-  protected breadcrumbs: BreadcrumbService
+  objectInfoGridLayoutClasses = signal<string>('col-12 flex gap-4 md:col-6 align-items-center p-0')
+  objectInfoColumnLayoutClasses = signal<string>('flex flex-column align-items-center gap-2 min-w-120')
+  objectInfoDefaultLayoutClasses = signal<string>('flex flex-row md:flex-column md:align-items-center md:gap-2')
+  objectInfoLayoutClasses = computed(() => {
+    const enableGridView = this.enableGridView()
+    if (enableGridView) {
+      return `${this.objectInfoGridLayoutClasses()} lg:col-${
+        this.gridLayoutDesktopColumns() ? 12 / this.gridLayoutDesktopColumns()! : 4
+      }`
+    }
+    if (enableGridView === false) {
+      return this.objectInfoColumnLayoutClasses()
+    }
+    return this.objectInfoDefaultLayoutClasses()
+  })
 
   constructor() {
-    const breadcrumbs = inject(BreadcrumbService)
-
-    this.breadcrumbs = breadcrumbs
     this.home$ = concat(
       of({ menuItem: { icon: PrimeIcons.HOME, routerLink: '/' } }),
       this.appStateService.currentWorkspace$.pipe(
@@ -178,31 +193,10 @@ export class PageHeaderComponent implements OnInit {
         }))
       )
     )
-    this._actions
-      .pipe(
-        map(this.filterInlineActions),
-        switchMap((actions) => this.filterActionsBasedOnPermissions(actions))
-      )
-      .subscribe(this.inlineActions$)
-
-    this._actions
-      .pipe(
-        map(this.filterOverflowActions),
-        switchMap((actions) => {
-          return this.getActionTranslationKeys(actions).pipe(map((translations) => ({ actions, translations })))
-        }),
-        switchMap(({ actions, translations }) => {
-          return this.filterActionsBasedOnPermissions(actions).pipe(
-            map((filteredActions) => ({ filteredActions, translations }))
-          )
-        }),
-        map(({ filteredActions, translations }) => this.mapOverflowActionsToMenuItems(filteredActions, translations))
-      )
-      .subscribe(this.overflowActions$)
   }
 
   ngOnInit(): void {
-    if (!this.manualBreadcrumbs) {
+    if (!this.manualBreadcrumbs()) {
       this.breadcrumbs$ = this.breadcrumbs.generatedItemsSource
     } else {
       this.breadcrumbs$ = this.breadcrumbs.itemsHandler
@@ -220,7 +214,7 @@ export class PageHeaderComponent implements OnInit {
   }
 
   handleImageError() {
-    this.figureImageLoadError = true
+    this.figureImageLoadError.set(true)
   }
 
   public generateItemStyle(item: ObjectDetailItem): string {
@@ -228,28 +222,6 @@ export class PageHeaderComponent implements OnInit {
     if (item.icon) style = style.concat(style, ' ', 'gap-1 align-items-center')
     if (item.valueCssClass) style = style.concat(style, ' ', item.valueCssClass)
     return style
-  }
-
-  public getObjectPanelLayoutClasses() {
-    if (this.enableGridView) {
-      return this.objectPanelGridLayoutClasses
-    }
-    if (this.enableGridView === false) {
-      return this.objectPanelColumnLayoutClasses
-    }
-    return this.objectPanelDefaultLayoutClasses
-  }
-
-  public getObjectInfoLayoutClasses() {
-    if (this.enableGridView) {
-      return `${this.objectInfoGridLayoutClasses} lg:col-${
-        this.gridLayoutDesktopColumns ? 12 / this.gridLayoutDesktopColumns : 4
-      }`
-    }
-    if (this.enableGridView === false) {
-      return this.objectInfoColumnLayoutClasses
-    }
-    return this.objectInfoDefaultLayoutClasses
   }
 
   private filterInlineActions(actions: Action[]): Action[] {

@@ -1,33 +1,38 @@
 <div class="onecx-page-header mb-4" name="ocx-page-header-wrapper">
-  @if (showBreadcrumbs) { @if (breadcrumbs$ | async ; as items) {
+  @if (showBreadcrumbs()) { @if (breadcrumbs$ | async ; as items) {
   <p-breadcrumb
     [model]="items"
     [home]="(home$ | async)?.menuItem ?? {}"
     [homeAriaLabel]="(home$ | async)?.page ? ('OCX_PAGE_HEADER.HOME_ARIA_LABEL' | translate: { page: (home$ | async)?.page}) : ('OCX_PAGE_HEADER.HOME_DEFAULT_ARIA_LABEL' | translate)"
-    [attr.manual]="manualBreadcrumbs"
+    [attr.manual]="manualBreadcrumbs()"
   ></p-breadcrumb>
   } }
   <div class="title-bar flex flex-row md:justify-content-between align-items-center p-3">
     <div class="title-wrap">
-      @if (showFigure) {
+      @if (showFigure()) {
       <div class="mr-2 figure relative flex h-2rem w-2rem md:h-3rem md:w-3rem">
         <div #previewImage class="figure-image absolute top-0 left-0 right-0 bottom-0">
           <ng-content select="[figureImage]"></ng-content>
-          @if (figureImage && !figureImageLoadError) {
-          <img [ocxSrc]="figureImage" alt="Figure Image" class="w-full border-round-sm" (error)="handleImageError()" />
+          @if (figureImage() && !figureImageLoadError()) {
+          <img
+            [ocxSrc]="figureImage()"
+            alt="Figure Image"
+            class="w-full border-round-sm"
+            (error)="handleImageError()"
+          />
           }
         </div>
-        @if (previewImage.children.length === 0 || figureImageLoadError) {
+        @if (previewImage.children.length === 0 || figureImageLoadError()) {
         <div class="colorblob flex-1 border-round"></div>
         }
       </div>
-      } @if (!loading) {
+      } @if (!loading()) {
       <div class="header">
-        @if (!!header) {
-        <h1 id="page-header">{{ header }}</h1>
-        } @if (!!subheader) {
+        @if (!!header()) {
+        <h1 id="page-header">{{ header() }}</h1>
+        } @if (!!subheader()) {
         <div id="page-subheader" role="note" [attr.aria-label]="'OCX_PAGE_HEADER.SUBHEADER' | translate">
-          {{ subheader }}
+          {{ subheader() }}
         </div>
         }
       </div>
@@ -40,9 +45,9 @@
     </div>
 
     <div class="action-items-wrap mt-2 md:mt-0">
-      @if (additionalToolbarContentLeft) {
-      <ng-container [ngTemplateOutlet]="additionalToolbarContentLeft"> </ng-container>
-      } @if (!loading) { @if( inlineActions$ | async; as inlineActions) { @if (inlineActions && inlineActions.length >
+      @if (_additionalToolbarContentLeft()) {
+      <ng-container [ngTemplateOutlet]="_additionalToolbarContentLeft()"> </ng-container>
+      } @if (!loading()) { @if( inlineActions$ | async; as inlineActions) { @if (inlineActions && inlineActions.length >
       0) {
       <div class="toolbar flex flex-wrap gap-1 sm:gap-2">
         @for (action of inlineActions; track action) {
@@ -90,18 +95,18 @@
       </ng-container>
       } @else {
       <div class="flex">
-        <p-skeleton shape="circle" size="2rem" styleClass="mr-2"></p-skeleton>
-        <p-skeleton shape="circle" size="2rem" styleClass="mb-2"></p-skeleton>
+        <p-skeleton shape="circle" size="2rem" class="mr-2"></p-skeleton>
+        <p-skeleton shape="circle" size="2rem" class="mb-2"></p-skeleton>
       </div>
-      } @if (additionalToolbarContent) {
-      <ng-container [ngTemplateOutlet]="additionalToolbarContent"> </ng-container>
+      } @if (_additionalToolbarContent()) {
+      <ng-container [ngTemplateOutlet]="_additionalToolbarContent()"> </ng-container>
       }
     </div>
   </div>
 
-  <div class="object-panel" [ngClass]="getObjectPanelLayoutClasses()">
-    @if (objectDetails) { @for (item of objectDetails; track item) {
-    <div class="object-info" [ngClass]="getObjectInfoLayoutClasses()">
+  <div class="object-panel" [ngClass]="objectPanelLayoutClasses()">
+    @if (objectDetails()) { @for (item of objectDetails(); track item) {
+    <div class="object-info" [ngClass]="objectInfoLayoutClasses()">
       <span
         class="flex font-medium text-600 object-info-grid-label"
         name="object-detail-label"

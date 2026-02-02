@@ -68,9 +68,9 @@ describe('SearchHeaderComponent', () => {
   it('should display search config slot if search config change is observed, pageName is defined and permission is met', async () => {
     const userServiceMock = TestBed.inject(UserServiceMock)
     userServiceMock.permissionsTopic$.publish(['PRODUCT#USE_SEARCHCONFIGS'])
-    const sub = component.selectedSearchConfigChanged.subscribe()
-    component.pageName = 'myPageName'
-    component.searchConfigPermission = 'PRODUCT#USE_SEARCHCONFIGS'
+    const sub = component.selectedSearchConfigChanged.subscribe(() => {})
+    fixture.componentRef.setInput('pageName', 'myPageName')
+    fixture.componentRef.setInput('searchConfigPermission', 'PRODUCT#USE_SEARCHCONFIGS')
 
     fixture.detectChanges()
     await fixture.whenStable()

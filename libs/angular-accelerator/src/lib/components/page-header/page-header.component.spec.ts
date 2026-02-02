@@ -1,8 +1,6 @@
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { NoopAnimationsModule } from '@angular/platform-browser/animations'
-import { RouterTestingModule } from '@angular/router/testing'
 import { TranslateService } from '@ngx-translate/core'
 import { UserService } from '@onecx/angular-integration-interface'
 import {
@@ -21,6 +19,7 @@ import { PageHeaderHarness, provideTranslateTestingService, TestbedHarnessEnviro
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
+import { provideRouter } from '@angular/router'
 
 const mockActions: Action[] = [
   {
@@ -60,15 +59,7 @@ describe('PageHeaderComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [PageHeaderComponent, PageHeaderComponent, DynamicPipe],
-      imports: [
-        RouterTestingModule,
-        BreadcrumbModule,
-        MenuModule,
-        ButtonModule,
-        NoopAnimationsModule,
-        TooltipModule,
-        AngularAcceleratorModule,
-      ],
+      imports: [BreadcrumbModule, MenuModule, ButtonModule, TooltipModule, AngularAcceleratorModule],
       providers: [
         provideTranslateTestingService({
           en: require('./../../../../assets/i18n/en.json'),
@@ -82,6 +73,7 @@ describe('PageHeaderComponent', () => {
           provide: HAS_PERMISSION_CHECKER,
           useExisting: UserService,
         },
+        provideRouter([]),
       ],
     }).compileComponents()
 
@@ -117,7 +109,7 @@ describe('PageHeaderComponent', () => {
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(0)
     expect(await pageHeaderHarness.getOverflowActionMenuButton()).toBeNull()
 
-    component.actions = mockActions
+    fixture.componentRef.setInput('actions', mockActions)
 
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(0)
     expect(await pageHeaderHarness.getElementByAriaLabel('My Test Action')).toBeFalsy()
@@ -129,7 +121,7 @@ describe('PageHeaderComponent', () => {
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(0)
     expect(await pageHeaderHarness.getOverflowActionMenuButton()).toBeNull()
 
-    component.actions = mockActions
+    fixture.componentRef.setInput('actions', mockActions)
 
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(1)
     expect(await pageHeaderHarness.getElementByAriaLabel('My Test Action')).toBeTruthy()
@@ -146,7 +138,7 @@ describe('PageHeaderComponent', () => {
   })
 
   it('should render inline actions buttons with icons', async () => {
-    component.actions = [
+    fixture.componentRef.setInput('actions', [
       {
         label: 'Action with left icon',
         show: 'always',
@@ -166,7 +158,7 @@ describe('PageHeaderComponent', () => {
         icon: PrimeIcons.LOCK,
         iconPos: 'right',
       },
-    ]
+    ])
 
     const inlineButtons = await pageHeaderHarness.getInlineActionButtons()
     expect(inlineButtons).toHaveLength(2)
@@ -175,7 +167,7 @@ describe('PageHeaderComponent', () => {
   })
 
   it('should render inline actions buttons with icons', async () => {
-    component.actions = [
+    fixture.componentRef.setInput('actions', [
       {
         label: 'Action with left icon',
         show: 'always',
@@ -195,7 +187,7 @@ describe('PageHeaderComponent', () => {
         icon: PrimeIcons.LOCK,
         iconPos: 'right',
       },
-    ]
+    ])
 
     const inlineButtons = await pageHeaderHarness.getInlineActionButtons()
     expect(inlineButtons).toHaveLength(2)
@@ -216,7 +208,7 @@ describe('PageHeaderComponent', () => {
     ]
     expect((await pageHeaderHarness.getObjectInfos()).length).toEqual(0)
 
-    component.objectDetails = objectDetailsWithoutIcons
+    fixture.componentRef.setInput('objectDetails', objectDetailsWithoutIcons)
 
     expect((await pageHeaderHarness.getObjectInfos()).length).toEqual(2)
 
@@ -251,7 +243,7 @@ describe('PageHeaderComponent', () => {
     ]
     expect((await pageHeaderHarness.getObjectInfos()).length).toEqual(0)
 
-    component.objectDetails = objectDetailsWithIcons
+    fixture.componentRef.setInput('objectDetails', objectDetailsWithIcons)
 
     expect((await pageHeaderHarness.getObjectInfos()).length).toEqual(4)
     const firstDetail = await pageHeaderHarness.getObjectInfoByLabel('Venue')
@@ -282,7 +274,7 @@ describe('PageHeaderComponent', () => {
     ]
     expect((await pageHeaderHarness.getObjectInfos()).length).toEqual(0)
 
-    component.objectDetails = objectDetailsWithIcons
+    fixture.componentRef.setInput('objectDetails', objectDetailsWithIcons)
 
     expect((await pageHeaderHarness.getObjectInfos()).length).toEqual(1)
     const firstDetail = await pageHeaderHarness.getObjectInfoByLabel('Venue')
@@ -292,7 +284,7 @@ describe('PageHeaderComponent', () => {
   })
 
   it('should show overflow actions when menu overflow button clicked', async () => {
-    component.actions = mockActions
+    fixture.componentRef.setInput('actions', mockActions)
 
     fixture.detectChanges()
     await fixture.whenStable()
@@ -311,7 +303,7 @@ describe('PageHeaderComponent', () => {
   it('should use provided action callback on overflow button click', async () => {
     jest.spyOn(console, 'log')
 
-    component.actions = mockActions
+    fixture.componentRef.setInput('actions', mockActions)
 
     fixture.detectChanges()
     await fixture.whenStable()
@@ -332,7 +324,7 @@ describe('PageHeaderComponent', () => {
   it('should disable overflow button when action is disabled', async () => {
     jest.spyOn(console, 'log')
 
-    component.actions = mockActions
+    fixture.componentRef.setInput('actions', mockActions)
 
     fixture.detectChanges()
     await fixture.whenStable()
@@ -376,7 +368,7 @@ describe('PageHeaderComponent', () => {
     )
     translate.use('en')
 
-    component.objectDetails = [
+    fixture.componentRef.setInput('objectDetails', [
       {
         label: 'Venue',
         value: 'AIE Munich',
@@ -388,7 +380,7 @@ describe('PageHeaderComponent', () => {
           console.log('Action!')
         },
       },
-    ]
+    ])
     fixture.detectChanges()
 
     const objectInfo = (await pageHeaderHarness.getObjectInfos())[0]
@@ -407,7 +399,7 @@ describe('PageHeaderComponent', () => {
   })
 
   it('should fallback to empty string if *Key properties are not provided', async () => {
-    component.objectDetails = [
+    fixture.componentRef.setInput('objectDetails', [
       {
         label: 'Venue',
         value: 'AIE Munich',
@@ -416,7 +408,7 @@ describe('PageHeaderComponent', () => {
           console.log('Action!')
         },
       },
-    ]
+    ])
     fixture.detectChanges()
 
     const objectInfo = (await pageHeaderHarness.getObjectInfos())[0]

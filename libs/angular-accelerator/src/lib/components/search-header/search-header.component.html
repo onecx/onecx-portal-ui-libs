@@ -3,7 +3,7 @@
     id="searchButton"
     icon="pi pi-search"
     (onClick)="onSearchClicked()"
-    [disabled]="searchButtonDisabled || formGroup?.invalid"
+    [disabled]="searchButtonDisabled() || formGroup()?.invalid"
     [label]="'OCX_SEARCH_HEADER.SEARCH_BUTTON.TEXT' | translate"
     [ariaLabel]="'OCX_SEARCH_HEADER.SEARCH_BUTTON.ARIA_LABEL' | translate"
     [pTooltip]="'OCX_SEARCH_HEADER.SEARCH_BUTTON.DETAIL' | translate"
@@ -16,7 +16,7 @@
     id="resetButton"
     icon="pi pi-eraser"
     (onClick)="onResetClicked()"
-    [disabled]="resetButtonDisabled"
+    [disabled]="resetButtonDisabled()"
     [label]="'OCX_SEARCH_HEADER.RESET_BUTTON.TEXT' | translate"
     [ariaLabel]="'OCX_SEARCH_HEADER.RESET_BUTTON.ARIA_LABEL' | translate"
     [pTooltip]="'OCX_SEARCH_HEADER.RESET_BUTTON.DETAIL' | translate"
@@ -26,32 +26,32 @@
 </ng-template>
 
 <ocx-page-header
-  [header]="header || ('OCX_SEARCH_HEADER.HEADER' | translate)"
-  [subheader]="subheader"
-  [manualBreadcrumbs]="manualBreadcrumbs"
-  [actions]="headerActions"
-  >
+  [header]="header() || ('OCX_SEARCH_HEADER.HEADER' | translate)"
+  [subheader]="subheader()"
+  [manualBreadcrumbs]="manualBreadcrumbs()"
+  [actions]="headerActions()"
+>
   <ng-template #additionalToolbarContentLeft>
-    @if (searchConfigChangeObserved && pageName) {
-      <ocx-slot
-        *ocxIfPermission="searchConfigPermission"
-        name="onecx-search-config"
-        [inputs]="{ pageName: pageName, currentFieldValues: fieldValues$ | async, viewMode: viewMode }"
-        [outputs]="{ searchConfigSelected: searchConfigChangedSlotEmitter }"
-        >
-        <ng-template #skeleton>
-          <div class="flex">
-            <p-skeleton width="18rem" height="3rem"></p-skeleton>
-          </div>
-        </ng-template>
-      </ocx-slot>
-      } @if (_additionalToolbarContentLeft) {
-      <ng-container [ngTemplateOutlet]="_additionalToolbarContentLeft"></ng-container>
+    @if (searchConfigChangeObserved() && pageName()) {
+    <ocx-slot
+      *ocxIfPermission="searchConfigPermission()"
+      name="onecx-search-config"
+      [inputs]="{ pageName: pageName(), currentFieldValues: fieldValues$ | async, viewMode: viewMode() }"
+      [outputs]="{ searchConfigSelected: searchConfigChangedSlotEmitter }"
+    >
+      <ng-template #skeleton>
+        <div class="flex">
+          <p-skeleton width="18rem" height="3rem"></p-skeleton>
+        </div>
+      </ng-template>
+    </ocx-slot>
+    } @if (_additionalToolbarContentLeft()) {
+    <ng-container [ngTemplateOutlet]="_additionalToolbarContentLeft()"></ng-container>
     }
   </ng-template>
   <ng-template #additionalToolbarContent>
-    @if (_additionalToolbarContent) {
-      <ng-container [ngTemplateOutlet]="_additionalToolbarContent"></ng-container>
+    @if (_additionalToolbarContent()) {
+    <ng-container [ngTemplateOutlet]="_additionalToolbarContent()"></ng-container>
     }
   </ng-template>
   <div class="flex row-gap-3 column-gap-6 flex-wrap align-items-center">
@@ -61,20 +61,17 @@
     <section
       class="flex flex-wrap gap-2"
       [ngClass]="'flex-row'"
-      [attr.aria-label]="'Search Controls'"
-      >
+      [attr.aria-label]="'OCX_SEARCH_HEADER.CONTROLS.ARIA_LABEL' | translate"
+    >
       @if ((searchButtonsReversed$ | async)) {
-        <ng-container [ngTemplateOutlet]="searchBtn"></ng-container>
-        @if (resetted.observed) {
-          <ng-container [ngTemplateOutlet]="resetBtn"></ng-container>
-        }
-      } @else {
-        @if (resetted.observed) {
-          <ng-container [ngTemplateOutlet]="resetBtn"></ng-container>
-        }
-        <ng-container [ngTemplateOutlet]="searchBtn"></ng-container>
+      <ng-container [ngTemplateOutlet]="searchBtn"></ng-container>
+      @if (resetted.observed()) {
+      <ng-container [ngTemplateOutlet]="resetBtn"></ng-container>
+      } } @else { @if (resetted.observed()) {
+      <ng-container [ngTemplateOutlet]="resetBtn"></ng-container>
       }
-
+      <ng-container [ngTemplateOutlet]="searchBtn"></ng-container>
+      }
     </section>
   </div>
 </ocx-page-header>
