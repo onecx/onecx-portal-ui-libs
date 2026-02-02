@@ -24,9 +24,9 @@ export class PortalPageComponent implements OnInit {
   applicationId = input<string>('')
 
   hasAccess$ = toObservable(this.permission).pipe(
-    tap((permission) => console.log('Checking access for permission:', permission)),
+    tap((permission) => console.debug('Checking access for permission:', permission)),
     switchMap((permission) => (permission ? this.permissionService.hasPermission(permission) : this.trueObservable)),
-    tap((hasAccess) => console.log('Access result:', hasAccess))
+    tap((hasAccess) => console.debug('Access result:', hasAccess))
   )
 
   ngOnInit(): void {
