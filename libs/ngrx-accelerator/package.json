@@ -1,6 +1,6 @@
 {
   "name": "@onecx/ngrx-accelerator",
-  "version": "5.52.4",
+  "version": "5.52.5",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -15,8 +15,8 @@
     "@ngrx/operators": "^18.0.1",
     "@ngrx/router-store": "^18.0.1",
     "@ngrx/store": "^18.0.1",
-    "@onecx/angular-integration-interface": "^5.52.4",
-    "@onecx/integration-interface": "^5.52.4",
+    "@onecx/angular-integration-interface": "^5.52.5",
+    "@onecx/integration-interface": "^5.52.5",
     "rxjs": "^7.8.1",
     "zod": "^3.23.8"
   },
