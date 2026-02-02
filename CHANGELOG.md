@@ -1,3 +1,9 @@
+## [6.14.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.14.2...v6.14.3) (2026-02-02)
+
+### Bug Fixes
+
+* fix topic publish v6 ([#1198](https://github.com/onecx/onecx-portal-ui-libs/issues/1198)) ([05fd5b6](https://github.com/onecx/onecx-portal-ui-libs/commit/05fd5b697272abd56ad47c133ac539bb153d7491))
+
 ## [6.14.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.14.1...v6.14.2) (2026-01-30)
 
 ### Bug Fixes
