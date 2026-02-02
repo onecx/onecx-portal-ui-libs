@@ -69,7 +69,7 @@ export interface DataListGridComponentState {
 })
 export class DataListGridComponent extends DataSortBase implements OnInit, DoCheck, AfterContentInit {
   private userService = inject(UserService)
-  private router = inject(Router)
+  router = inject(Router)
   private injector = inject(Injector)
   private appStateService = inject(AppStateService)
   private hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })

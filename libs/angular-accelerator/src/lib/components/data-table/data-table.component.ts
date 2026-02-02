@@ -82,7 +82,7 @@ export interface DataTableComponentState {
   styleUrls: ['./data-table.component.scss'],
 })
 export class DataTableComponent extends DataSortBase implements OnInit, AfterContentInit {
-  private readonly router = inject(Router)
+  router = inject(Router)
   private readonly injector = inject(Injector)
   private readonly userService = inject(UserService)
   private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })

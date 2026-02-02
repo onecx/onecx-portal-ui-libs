@@ -89,7 +89,7 @@ export class PageHeaderComponent implements OnInit {
   private translateService = inject(TranslateService)
   private appStateService = inject(AppStateService)
   private userService = inject(UserService)
-  private router = inject(Router)
+  router = inject(Router)
   private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
 
   @Input()
