@@ -36,7 +36,7 @@
     <ocx-slot
       *ocxIfPermission="searchConfigPermission()"
       name="onecx-search-config"
-      [inputs]="{ pageName: pageName(), currentFieldValues: fieldValues$ | async, viewMode: _effectiveViewMode() }"
+      [inputs]="{ pageName: pageName(), currentFieldValues: fieldValues$ | async, viewMode: viewMode() }"
       [outputs]="{ searchConfigSelected: searchConfigChangedSlotEmitter }"
     >
       <ng-template #skeleton>

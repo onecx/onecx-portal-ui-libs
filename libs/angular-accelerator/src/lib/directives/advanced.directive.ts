@@ -16,7 +16,7 @@ export class AdvancedDirective implements DoCheck {
     searchHeader.hasAdvanced.set(true)
   }
   ngDoCheck(): void {
-    if (this.searchHeader?._effectiveViewMode() === 'advanced') {
+    if (this.searchHeader?.viewMode() === 'advanced') {
       if (this.templateRef && !this.viewContainer.length) {
         this.viewContainer.createEmbeddedView(this.templateRef)
       }

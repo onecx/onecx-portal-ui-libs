@@ -13,6 +13,7 @@ import {
   effect,
   inject,
   input,
+  model,
   output,
   signal,
 } from '@angular/core'
@@ -109,8 +110,7 @@ export class PageHeaderComponent implements OnInit {
 
   subheader = input<string | undefined>(undefined)
 
-  _effectiveActions = signal<Action[]>([])
-  actions = input<Action[]>([])
+  actions = model<Action[]>([])
 
   objectDetails = input<ObjectDetailItem[] | undefined>(undefined)
 
@@ -128,7 +128,7 @@ export class PageHeaderComponent implements OnInit {
 
   _additionalToolbarContentLeft = contentChild<TemplateRef<any> | undefined>('additionalToolbarContentLeft')
 
-  overflowActions$: Observable<MenuItem[]> = toObservable(this._effectiveActions).pipe(
+  overflowActions$: Observable<MenuItem[]> = toObservable(this.actions).pipe(
     map(this.filterOverflowActions),
     switchMap((actions) => {
       return this.getActionTranslationKeys(actions).pipe(map((translations) => ({ actions, translations })))
@@ -140,7 +140,7 @@ export class PageHeaderComponent implements OnInit {
     }),
     map(({ filteredActions, translations }) => this.mapOverflowActionsToMenuItems(filteredActions, translations))
   )
-  inlineActions$: Observable<Action[]> = toObservable(this._effectiveActions).pipe(
+  inlineActions$: Observable<Action[]> = toObservable(this.actions).pipe(
     map(this.filterInlineActions),
     switchMap((actions) => this.filterActionsBasedOnPermissions(actions))
   )
@@ -181,11 +181,6 @@ export class PageHeaderComponent implements OnInit {
   })
 
   constructor() {
-    effect(() => {
-      const actions = this.actions()
-      this._effectiveActions.set(actions)
-    })
-
     this.home$ = concat(
       of({ menuItem: { icon: PrimeIcons.HOME, routerLink: '/' } }),
       this.appStateService.currentWorkspace$.pipe(

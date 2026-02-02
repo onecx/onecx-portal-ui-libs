@@ -103,7 +103,7 @@ describe('AdvancedDirective', () => {
 
     it('should render advanced template when viewMode is advanced', () => {
       // uses component state for sync test setup
-      component.searchHeader._effectiveViewMode.set('advanced')
+      component.searchHeader.viewMode.set('advanced')
       fixture.detectChanges()
 
       const advancedEl = fixture.debugElement.query(By.css('#advanced-content'))
@@ -111,17 +111,17 @@ describe('AdvancedDirective', () => {
     })
 
     it('should clear advanced template when toggling from advanced to basic', () => {
-      component.searchHeader._effectiveViewMode.set('advanced')
+      component.searchHeader.viewMode.set('advanced')
       fixture.detectChanges()
       expect(fixture.debugElement.query(By.css('#advanced-content'))).not.toBeNull()
 
-      component.searchHeader._effectiveViewMode.set('basic')
+      component.searchHeader.viewMode.set('basic')
       fixture.detectChanges()
       expect(fixture.debugElement.query(By.css('#advanced-content'))).toBeNull()
     })
 
     it('should not create a second embedded view when change detection runs again in advanced mode', () => {
-      component.searchHeader._effectiveViewMode.set('advanced')
+      component.searchHeader.viewMode.set('advanced')
       fixture.detectChanges()
 
       expect(fixture.debugElement.queryAll(By.css('#advanced-content'))).toHaveLength(1)
