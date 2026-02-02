@@ -4,11 +4,9 @@ import { Directive, TemplateRef, inject, input } from '@angular/core'
 export class TemplateDirective {
   template = inject<TemplateRef<any>>(TemplateRef)
 
-  name = input.required<string>({
-    alias: 'ocxTemplate',
-  })
+  ocxTemplate = input.required<string>()
 
   getType(): string {
-    return this.name()
+    return this.ocxTemplate()
   }
 }

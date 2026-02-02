@@ -9,7 +9,7 @@ export class SrcDirective {
   // eslint-disable-next-line @angular-eslint/no-output-native
   @Output() error = new EventEmitter<void>()
 
-  ocxSrc = input<string | undefined>(undefined, { alias: 'ocxSrc' })
+  ocxSrc = input<string | undefined>(undefined)
 
   constructor() {
     effect(() => {
