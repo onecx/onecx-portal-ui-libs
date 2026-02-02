@@ -1,3 +1,9 @@
+## [5.52.6](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.52.5...v5.52.6) (2026-02-02)
+
+### Bug Fixes
+
+* parameters service signature ([#1200](https://github.com/onecx/onecx-portal-ui-libs/issues/1200)) ([ee1f6ef](https://github.com/onecx/onecx-portal-ui-libs/commit/ee1f6ef97e68ced772cb5751fe6dfa81477ef5d2))
+
 ## [5.52.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.52.4...v5.52.5) (2026-02-02)
 
 ### Bug Fixes
