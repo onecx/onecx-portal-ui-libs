@@ -1,3 +1,9 @@
+## [8.0.0-rc.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.0.0-rc.3...v8.0.0-rc.4) (2026-02-02)
+
+### Bug Fixes
+
+* fix topic publish ([#1197](https://github.com/onecx/onecx-portal-ui-libs/issues/1197)) ([717b61d](https://github.com/onecx/onecx-portal-ui-libs/commit/717b61df50f02895bbaaa34e734bcaa000f537cd))
+
 ## [8.0.0-rc.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.0.0-rc.2...v8.0.0-rc.3) (2026-01-30)
 
 ### Bug Fixes
