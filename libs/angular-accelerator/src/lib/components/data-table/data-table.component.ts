@@ -94,6 +94,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   set rows(value: Row[]) {
     !this._rows$.getValue().length ?? this.resetPage()
     this._rows$.next(value)
+    if(value.length < (this.page * (this.pageSize ?? 0))) this.resetPage();
 
     const currentResults = value.length;
     const newStatus = currentResults === 0
