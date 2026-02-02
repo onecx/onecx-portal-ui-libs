@@ -79,6 +79,7 @@ Action type is used to create:
 | `ariaLabel?` | `string` | Text for the aria label of the action button. Used for actions with `show: 'always'` property.
 | `ariaLabelKey?` | `string` | Translation key for the aria label of the action button. Used for actions with `show: 'always'` property. Has higher priority than `ariaLabel`.
 | `actionCallback?` | `(): void` | Callback to be used when the button is clicked or the menu item is chosen.
+| `loading?` | `boolean` | If action button should be in a loading state.
 | `disabled?` | `boolean` | If action button or menu item should be disabled.
 | `disabledTooltip?` | `string` | Tooltip for the disabled action button.
 | `disabledTooltipKey?` | `string` | Translation key for the tooltip of the disabled action button. Has higher priority than `disabledTooltipKey`.

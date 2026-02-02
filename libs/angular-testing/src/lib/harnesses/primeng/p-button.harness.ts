@@ -13,6 +13,7 @@ export class PButtonHarness extends ComponentHarness {
 
   getLabelSpan = this.locatorForOptional(SpanHarness.without({ classes: ['p-badge', 'p-button-icon'] }))
   getIconSpan = this.locatorForOptional(SpanHarness.with({ class: 'p-button-icon' }))
+  getLoadingIcon = this.locatorFor('spinnericon')
 
   static with(options: PButtonHarnessFilters): HarnessPredicate<PButtonHarness> {
     return new HarnessPredicate(PButtonHarness, options)

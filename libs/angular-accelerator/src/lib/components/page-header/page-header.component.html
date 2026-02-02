@@ -59,6 +59,7 @@
             class="action-button"
             (onClick)="action.actionCallback()"
             [disabled]="action.disabled ? action.disabled : false"
+            [loading]="action.loading ? action.loading : false"
             [attr.name]="action.icon ? 'ocx-page-header-inline-action-icon-button' : 'ocx-page-header-inline-action-button'"
             [label]="action.labelKey ? (action.labelKey | translate) : action.label"
             [ariaLabel]=" (action.ariaLabelKey ? (action.ariaLabelKey | translate) : action.ariaLabel) || (action.titleKey ? (action.titleKey | translate) : action.title) || (action.labelKey ? (action.labelKey | translate) : action.label)"
