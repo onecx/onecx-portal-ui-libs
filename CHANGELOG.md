@@ -1,3 +1,32 @@
+## [8.0.0-rc.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.0.0-rc.2...v8.0.0-rc.3) (2026-01-30)
+
+### Bug Fixes
+
+* isolate topics + fallback ([#1179](https://github.com/onecx/onecx-portal-ui-libs/issues/1179)) ([c2f703c](https://github.com/onecx/onecx-portal-ui-libs/commit/c2f703ce96b8bbe65692f38d7e65b91a470abb12))
+
+## [8.0.0-rc.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.0.0-rc.1...v8.0.0-rc.2) (2026-01-30)
+
+### Features
+
+* Add property in group-by-count-diagram to display all labels ([#1157](https://github.com/onecx/onecx-portal-ui-libs/issues/1157)) ([b4220c4](https://github.com/onecx/onecx-portal-ui-libs/commit/b4220c454d2d2b7789c92b1d1bc7ba61e7f7084e))
+* adding logger ([#1168](https://github.com/onecx/onecx-portal-ui-libs/issues/1168)) ([16281fe](https://github.com/onecx/onecx-portal-ui-libs/commit/16281fe3a250cb6ed56ab1b1e2213ea9a7d807c2))
+* remove topic publishers ([#1167](https://github.com/onecx/onecx-portal-ui-libs/issues/1167)) ([e809621](https://github.com/onecx/onecx-portal-ui-libs/commit/e809621bd5cd0b73b01429ba7cd8dda383a47d26))
+
+### Bug Fixes
+
+* export parameters service ([#1159](https://github.com/onecx/onecx-portal-ui-libs/issues/1159)) ([66f90cc](https://github.com/onecx/onecx-portal-ui-libs/commit/66f90cca168b4c0783dbb45e6e514ab951ed73d5))
+* Improved Token Interceptor Timing. ([#1136](https://github.com/onecx/onecx-portal-ui-libs/issues/1136)) ([2e856d6](https://github.com/onecx/onecx-portal-ui-libs/commit/2e856d6ce3cae65c785cfa37d15d794dda7f8ed3))
+* isolate topics to tab ([#1173](https://github.com/onecx/onecx-portal-ui-libs/issues/1173)) ([86284ef](https://github.com/onecx/onecx-portal-ui-libs/commit/86284ef1b4198ecc44936554abb992cb0d3ed622))
+
+### Chores
+
+* add v7 release config ([#1145](https://github.com/onecx/onecx-portal-ui-libs/issues/1145)) ([46c11d3](https://github.com/onecx/onecx-portal-ui-libs/commit/46c11d3390d4ec28f54c28621034d711601f2e80))
+* increase test coverage ([#1155](https://github.com/onecx/onecx-portal-ui-libs/issues/1155)) ([5f5aa37](https://github.com/onecx/onecx-portal-ui-libs/commit/5f5aa37ae0a634adec1929d90802d49b7e52912d))
+
+### Refactoring
+
+* migrate storybook to v10 ([#1148](https://github.com/onecx/onecx-portal-ui-libs/issues/1148)) ([cf5d605](https://github.com/onecx/onecx-portal-ui-libs/commit/cf5d605112138639714456d6c5147d8f820b5f3f))
+
 ## [8.0.0-rc.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.9999.0...v8.0.0-rc.1) (2026-01-13)
 
 ### ⚠ BREAKING CHANGES
