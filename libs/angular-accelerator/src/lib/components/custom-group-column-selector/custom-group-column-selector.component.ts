@@ -1,5 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core'
-import { TranslateService } from '@ngx-translate/core'
+import { Component, OnInit, computed, effect, inject, input, model, output, signal } from '@angular/core'
 import { DataTableColumn } from '../../model/data-table-column.model'
 
 export type ColumnSelectionChangedEvent = { activeColumns: DataTableColumn[] }
@@ -24,56 +23,42 @@ export interface CustomGroupColumnSelectorComponentState {
   styleUrls: ['./custom-group-column-selector.component.scss'],
 })
 export class CustomGroupColumnSelectorComponent implements OnInit {
-  private translate = inject(TranslateService)
+  readonly columns = input<DataTableColumn[]>([])
+  readonly displayedColumns = model<DataTableColumn[]>([])
+  readonly customGroupKey = input<string>('')
+  readonly dialogTitle = input<string>('')
+  readonly dialogTitleKey = input<string>('')
+  readonly openButtonTitle = input<string>('')
+  readonly openButtonTitleKey = input<string>('')
+  readonly openButtonAriaLabel = input<string>('')
+  readonly openButtonAriaLabelKey = input<string>('')
+  readonly saveButtonLabel = input<string>('')
+  readonly saveButtonLabelKey = input<string>('')
+  readonly saveButtonAriaLabel = input<string>('')
+  readonly saveButtonAriaLabelKey = input<string>('')
+  readonly cancelButtonLabel = input<string>('')
+  readonly cancelButtonLabelKey = input<string>('')
+  readonly cancelButtonAriaLabel = input<string>('')
+  readonly cancelButtonAriaLabelKey = input<string>('')
+  readonly activeColumnsLabel = input<string>('')
+  readonly activeColumnsLabelKey = input<string>('')
+  readonly inactiveColumnsLabel = input<string>('')
+  readonly inactiveColumnsLabelKey = input<string>('')
 
-  @Input() columns: DataTableColumn[] = []
-  private _displayedColumns: DataTableColumn[] = []
-  @Input()
-  get displayedColumns() {
-    return this._displayedColumns
-  }
-  set displayedColumns(value: DataTableColumn[]) {
-    this._displayedColumns = value
-    this.componentStateChanged.emit({
-      actionColumnConfig: {
-        frozen: this.frozenActionColumn,
-        position: this.actionColumnPosition,
-      },
-      displayedColumns: this._displayedColumns,
-    })
-  }
-  @Input() customGroupKey = ''
-  @Input() dialogTitle = ''
-  @Input() dialogTitleKey = ''
-  @Input() openButtonTitle = ''
-  @Input() openButtonTitleKey = ''
-  @Input() openButtonAriaLabel = ''
-  @Input() openButtonAriaLabelKey = ''
-  @Input() saveButtonLabel = ''
-  @Input() saveButtonLabelKey = ''
-  @Input() saveButtonAriaLabel = ''
-  @Input() saveButtonAriaLabelKey = ''
-  @Input() cancelButtonLabel = ''
-  @Input() cancelButtonLabelKey = ''
-  @Input() cancelButtonAriaLabel = ''
-  @Input() cancelButtonAriaLabelKey = ''
-  @Input() activeColumnsLabel = ''
-  @Input() activeColumnsLabelKey = ''
-  @Input() inactiveColumnsLabel = ''
-  @Input() inactiveColumnsLabelKey = ''
-  @Input() frozenActionColumn = false
-  @Input() actionColumnPosition: 'left' | 'right' = 'right'
+  readonly frozenActionColumn = input<boolean>(false)
+  readonly actionColumnPosition = input<'left' | 'right'>('right')
 
-  @Output() columnSelectionChanged: EventEmitter<ColumnSelectionChangedEvent> = new EventEmitter()
-  @Output() actionColumnConfigChanged: EventEmitter<ActionColumnChangedEvent> = new EventEmitter()
-  @Output() componentStateChanged: EventEmitter<CustomGroupColumnSelectorComponentState> = new EventEmitter()
+  readonly columnSelectionChanged = output<ColumnSelectionChangedEvent>()
+  readonly actionColumnConfigChanged = output<ActionColumnChangedEvent>()
+  readonly componentStateChanged = output<CustomGroupColumnSelectorComponentState>()
 
-  hiddenColumnsModel: DataTableColumn[] = []
-  displayedColumnsModel: DataTableColumn[] = []
-  frozenActionColumnModel = false
-  actionColumnPositionModel: 'left' | 'right' = 'right'
-  visible = false
-  alignmentOptions = [
+  readonly hiddenColumnsModel = signal<DataTableColumn[]>([])
+  readonly displayedColumnsModel = signal<DataTableColumn[]>([])
+  readonly frozenActionColumnModel = signal<boolean>(false)
+  readonly actionColumnPositionModel = signal<'left' | 'right'>('right')
+  readonly visible = signal<boolean>(false)
+
+  readonly alignmentOptions = signal<{ label: string; value: 'left' | 'right' }[]>([
     {
       label: 'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CONFIGURE_ACTION_COLUMN.LEFT',
       value: 'left',
@@ -82,9 +67,9 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
       label: 'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CONFIGURE_ACTION_COLUMN.RIGHT',
       value: 'right',
     },
-  ]
+  ])
 
-  frozenOptions = [
+  readonly frozenOptions = signal<{ label: string; value: boolean }[]>([
     {
       label: 'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CONFIGURE_ACTION_COLUMN.YES',
       value: true,
@@ -93,60 +78,74 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
       label: 'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CONFIGURE_ACTION_COLUMN.NO',
       value: false,
     },
-  ]
+  ])
+
+  private readonly _actionColumnState = computed(() => ({
+    frozen: this.frozenActionColumn(),
+    position: this.actionColumnPosition(),
+  }))
+
+  constructor() {
+    effect(() => {
+      this.componentStateChanged.emit({
+        actionColumnConfig: this._actionColumnState(),
+        displayedColumns: this.displayedColumns(),
+      })
+    })
+  }
 
   ngOnInit(): void {
     this.componentStateChanged.emit({
-      actionColumnConfig: {
-        frozen: this.frozenActionColumn,
-        position: this.actionColumnPosition,
-      },
-      displayedColumns: this.displayedColumns,
+      actionColumnConfig: this._actionColumnState(),
+      displayedColumns: this.displayedColumns(),
     })
   }
 
   onOpenCustomGroupColumnSelectionDialogClick() {
-    this.displayedColumnsModel = [...this.displayedColumns]
-    this.hiddenColumnsModel = this.columns.filter(
-      (column) => !this.displayedColumnsModel.map((c) => c.id).includes(column.id)
-    )
-    this.frozenActionColumnModel = this.frozenActionColumn
-    this.actionColumnPositionModel = this.actionColumnPosition
-    this.visible = true
+    this.displayedColumnsModel.set([...this.displayedColumns()])
+
+    const displayedIds = new Set(this.displayedColumnsModel().map((c) => c.id))
+    this.hiddenColumnsModel.set(this.columns().filter((column) => !displayedIds.has(column.id)))
+
+    this.frozenActionColumnModel.set(this.frozenActionColumn())
+    this.actionColumnPositionModel.set(this.actionColumnPosition())
+    this.visible.set(true)
   }
 
   onSaveClick() {
-    this.visible = false
-    const colIdsBefore = this.displayedColumns.map((column) => column.id)
-    const colIdsAfter = this.displayedColumnsModel.map((column) => column.id)
+    this.visible.set(false)
 
-    if (!colIdsAfter.every((colId, i) => colId === colIdsBefore[i]) || colIdsAfter.length != colIdsBefore.length) {
-      this.columnSelectionChanged.emit({ activeColumns: [...this.displayedColumnsModel] })
+    const before = this.displayedColumns().map((column) => column.id)
+    const after = this.displayedColumnsModel().map((column) => column.id)
+
+    if (!after.every((colId, i) => colId === before[i]) || after.length !== before.length) {
+      this.columnSelectionChanged.emit({ activeColumns: [...this.displayedColumnsModel()] })
       this.componentStateChanged.emit({
-        displayedColumns: [...this.displayedColumnsModel],
+        displayedColumns: [...this.displayedColumnsModel()],
       })
     }
 
     if (
-      this.frozenActionColumn != this.frozenActionColumnModel ||
-      this.actionColumnPosition != this.actionColumnPositionModel
+      this.frozenActionColumn() !== this.frozenActionColumnModel() ||
+      this.actionColumnPosition() !== this.actionColumnPositionModel()
     ) {
       this.actionColumnConfigChanged.emit({
-        frozenActionColumn: this.frozenActionColumnModel,
-        actionColumnPosition: this.actionColumnPositionModel,
+        frozenActionColumn: this.frozenActionColumnModel(),
+        actionColumnPosition: this.actionColumnPositionModel(),
       })
+
       this.componentStateChanged.emit({
-        displayedColumns: [...this.displayedColumnsModel],
+        displayedColumns: [...this.displayedColumnsModel()],
         actionColumnConfig: {
-          frozen: this.frozenActionColumnModel,
-          position: this.actionColumnPositionModel,
+          frozen: this.frozenActionColumnModel(),
+          position: this.actionColumnPositionModel(),
         },
-        activeColumnGroupKey: this.customGroupKey,
+        activeColumnGroupKey: this.customGroupKey(),
       })
     }
   }
 
   onCancelClick() {
-    this.visible = false
+    this.visible.set(false)
   }
 }
