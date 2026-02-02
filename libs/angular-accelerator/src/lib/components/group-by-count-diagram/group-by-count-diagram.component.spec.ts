@@ -161,9 +161,9 @@ describe('GroupByCountDiagramComponent', () => {
     fixture = TestBed.createComponent(GroupByCountDiagramComponent)
     component = fixture.componentInstance
 
-    component.data = originalData
-    component.column = inputColumn
-    component.sumKey = definedSumKey
+    fixture.componentRef.setInput('data', originalData)
+    fixture.componentRef.setInput('column', inputColumn)
+    fixture.componentRef.setInput('sumKey', definedSumKey)
 
     translateService = TestBed.inject(TranslateService)
     translateService.setFallbackLang('en')
@@ -195,7 +195,7 @@ describe('GroupByCountDiagramComponent', () => {
   })
 
   it('should not display a selectButton on the diagram by default', async () => {
-    expect(component.supportedDiagramTypes).toEqual([])
+    expect(component.supportedDiagramTypes()).toEqual([])
 
     const diagram = await loader.getHarness(DiagramHarness)
     const diagramTypeSelectButton = await diagram.getDiagramTypeSelectButton()
@@ -204,7 +204,7 @@ describe('GroupByCountDiagramComponent', () => {
   })
 
   it('should display a selectButton on the diagram if supportedDiagramTypes is specified', async () => {
-    component.supportedDiagramTypes = [DiagramType.PIE, DiagramType.HORIZONTAL_BAR]
+    fixture.componentRef.setInput('supportedDiagramTypes', [DiagramType.PIE, DiagramType.HORIZONTAL_BAR])
 
     const diagram = await loader.getHarness(DiagramHarness)
     const diagramTypeSelectButton = await diagram.getDiagramTypeSelectButton()

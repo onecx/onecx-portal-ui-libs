@@ -178,6 +178,9 @@ describe('LoadingIndicatorDirective', () => {
     it('should call toggleLoadingIndicator when overlayFullPage changes', () => {
       const dir: any = component.directive
       const toggleSpy = jest.spyOn(dir, 'toggleLoadingIndicator')
+      component.loading = true
+      fixture.detectChanges()
+      toggleSpy.mockClear()
 
       component.overlayFullPage = true
       fixture.detectChanges()
