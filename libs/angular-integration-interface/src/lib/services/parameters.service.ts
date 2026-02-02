@@ -43,6 +43,12 @@ export class ParametersService implements OnDestroy {
   public async get<T extends Parameter>(
     key: string,
     defaultValue: T | Promise<T>,
+    productName: string,
+    appId: string
+  ): Promise<T>
+  public async get<T extends Parameter>(
+    key: string,
+    defaultValue: T | Promise<T>,
     productName: string | undefined = undefined,
     appId: string | undefined = undefined
   ): Promise<T> {
