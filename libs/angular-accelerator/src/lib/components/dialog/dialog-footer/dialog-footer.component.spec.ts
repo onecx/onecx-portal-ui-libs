@@ -282,9 +282,9 @@ describe('DialogFooterComponent', () => {
         secondaryButtonDetails: {
           key: 'CustomSide',
         },
+        secondaryButtonIncluded: true,
       },
     })
-    component.dialogData().config.secondaryButtonIncluded = true
 
     expect(await dialogFooterHarness.getPrimaryButtonLabel()).toBe('Confirm')
     expect(await dialogFooterHarness.getSecondaryButtonLabel()).toBe('CustomSide')

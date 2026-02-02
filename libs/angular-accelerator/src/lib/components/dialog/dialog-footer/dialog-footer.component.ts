@@ -63,7 +63,7 @@ export class DialogFooterComponent implements OnInit {
   customButtons = viewChildren<ElementRef>('customButton')
 
   constructor() {
-    // Auto focus button effect dor dynamic dialog
+    // Auto focus button effect for dynamic dialog
     effect(() => {
       const config = this.dynamicDialogConfig.data.config
 
