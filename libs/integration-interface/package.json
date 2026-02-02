@@ -1,6 +1,6 @@
 {
   "name": "@onecx/integration-interface",
-  "version": "5.52.2",
+  "version": "5.52.5",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -11,8 +11,8 @@
     "rxjs": "^7.8.1",
     "@phenomnomnominal/tsquery": "^6",
     "@nx/devkit": "^19.8.0",
-    "@onecx/accelerator": "^5.52.2",
-    "@onecx/nx-migration-utils": "^5.52.2",
+    "@onecx/accelerator": "^5.52.5",
+    "@onecx/nx-migration-utils": "^5.52.5",
     "typescript": "^5.5.4"
   },
   "type": "commonjs",

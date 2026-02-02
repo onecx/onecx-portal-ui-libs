@@ -1,3 +1,22 @@
+## [5.52.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.52.4...v5.52.5) (2026-02-02)
+
+### Bug Fixes
+
+* fix topic publish v5 ([#1199](https://github.com/onecx/onecx-portal-ui-libs/issues/1199)) ([97db7b9](https://github.com/onecx/onecx-portal-ui-libs/commit/97db7b99f242ebc23c1dedd7dafe1387c5b470b4))
+
+## [5.52.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.52.3...v5.52.4) (2026-01-30)
+
+### Bug Fixes
+
+* isolate topics + fallback v5 ([#1182](https://github.com/onecx/onecx-portal-ui-libs/issues/1182)) ([ba1bcff](https://github.com/onecx/onecx-portal-ui-libs/commit/ba1bcff589869a2f06a4eb33212631100fd30d4c))
+* isolate topics to tab ([#1178](https://github.com/onecx/onecx-portal-ui-libs/issues/1178)) ([d6355c0](https://github.com/onecx/onecx-portal-ui-libs/commit/d6355c00d8a2aa512a783637cdab25769ec24787))
+
+## [5.52.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.52.2...v5.52.3) (2026-01-26)
+
+### Bug Fixes
+
+* export parameters service ([#1159](https://github.com/onecx/onecx-portal-ui-libs/issues/1159)) ([#1162](https://github.com/onecx/onecx-portal-ui-libs/issues/1162)) ([39ff0a3](https://github.com/onecx/onecx-portal-ui-libs/commit/39ff0a33c9dfd4fba968b4f2fb052e5ddef156b4))
+
 ## [5.52.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.52.1...v5.52.2) (2026-01-15)
 
 ### Bug Fixes

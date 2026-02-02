@@ -1,6 +1,6 @@
 {
   "name": "@onecx/angular-auth",
-  "version": "5.52.2",
+  "version": "5.52.5",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -10,8 +10,8 @@
     "@angular-architects/module-federation": "^18.0.4",
     "@angular/common": "^18.0.5",
     "@angular/core": "^18.0.5",
-    "@onecx/angular-integration-interface": "^5.52.2",
-    "@onecx/integration-interface": "^5.52.2",
+    "@onecx/angular-integration-interface": "^5.52.5",
+    "@onecx/integration-interface": "^5.52.5",
     "keycloak-angular": "^16.0.1",
     "keycloak-js": "^25.0.1",
     "rxjs": "~7.8.0"
