@@ -12,6 +12,7 @@ import {
   inject,
   input,
   signal,
+  model,
 } from '@angular/core'
 
 import { toObservable } from '@angular/core/rxjs-interop'
@@ -57,7 +58,6 @@ export class SlotComponent implements OnInit, OnDestroy {
   private slotService = inject<SlotService>(SLOT_SERVICE, { optional: true })
   assignedComponents = signal<AssignedComponent[]>([])
 
-  _effectiveInputs = signal<Record<string, unknown>>({})
   /**
    * Inputs to be passed to components inside a slot.
    *
@@ -81,11 +81,10 @@ export class SlotComponent implements OnInit, OnDestroy {
    * <p>myInput = {{header()}}</p>
    * ```
    */
-  inputs = input<Record<string, unknown>>({})
+  inputs = model<Record<string, unknown>>({})
 
-  _effectiveOutputs = signal<Record<string, RemoteComponentOutput>>({})
   /**
-   * Outputs to be passed to components inside a slot as EventEmitters or OutputEmitterRefs. It is important that the output property is annotated with ⁣@Input() or input signal.
+   * Outputs to be passed to components inside a slot as EventEmitters or OutputEmitterRefs. It is important that the output property is annotated with ⁣@Input() or is an input signal.
    *
    * @example with OutputEmitterRef
    *
@@ -165,7 +164,7 @@ export class SlotComponent implements OnInit, OnDestroy {
    * <button (click)="onButtonClick()">Emit message</button>
    * ```
    */
-  outputs = input<Record<string, RemoteComponentOutput>>({})
+  outputs = model<Record<string, RemoteComponentOutput>>({})
 
   subscriptions: Subscription[] = []
   components$: Observable<SlotComponentConfiguration[]> | undefined
@@ -188,21 +187,10 @@ export class SlotComponent implements OnInit, OnDestroy {
   )
 
   constructor() {
-    effect(() => {
-      const inputs = this.inputs()
-      this._effectiveInputs.update((current) => ({ ...current, ...inputs }))
-    })
-
-    effect(() => {
-      const outputs = this.outputs()
-      this._effectiveOutputs.update((current) => ({ ...current, ...outputs }))
-    })
-    effect(() => {})
-
     const updateSub = combineLatest([
       toObservable(this.assignedComponents),
-      toObservable(this._effectiveInputs),
-      toObservable(this._effectiveOutputs),
+      toObservable(this.inputs),
+      toObservable(this.outputs),
     ]).subscribe(([components, inputs, outputs]) => {
       components.forEach((component) => {
         this.updateComponentData(component.refOrElement, inputs, outputs)
