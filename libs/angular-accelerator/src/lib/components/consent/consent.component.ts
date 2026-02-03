@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core'
 
 const STORAGE_KEY = 'onecx-consent'
+let nextConsentComponentId = 0
 
 type ConsentStorage = string[]
 
@@ -68,6 +69,9 @@ export type ConsentChangedEvent = {
  * - Entries are either `<normalizedUrl>` (no purpose) or `<normalizedUrl>::<purpose>`.
  */
 export class ConsentComponent {
+  protected readonly titleId = `ocx-consent-title-${++nextConsentComponentId}`
+  protected readonly messageId = `ocx-consent-message-${nextConsentComponentId}`
+
   /**
    * Target URL that the gated content will contact (e.g. the tile server URL).
    * Used for display and for consent matching.

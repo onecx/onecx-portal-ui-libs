@@ -1,12 +1,11 @@
 import { ComponentHarness } from '@angular/cdk/testing'
-import { ButtonHarness, DivHarness } from '@onecx/angular-testing'
+import { ButtonHarness } from '@onecx/angular-testing'
 
 export class OcxConsentHarness extends ComponentHarness {
   static hostSelector = 'ocx-consent'
 
   async isConsentMessageVisible(): Promise<boolean> {
-    const message = await this.locatorForOptional(DivHarness.with({ class: 'ocx-consent' }))()
-    return !!message
+    return !!(await this.locatorForOptional('.ocx-consent')())
   }
 
   async isContentVisible(selector: string): Promise<boolean> {

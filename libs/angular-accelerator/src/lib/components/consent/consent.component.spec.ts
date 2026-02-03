@@ -6,6 +6,8 @@ import { OcxConsentHarness } from '../../../../testing/consent.harness'
 import { ConsentComponent } from './consent.component'
 import { of } from 'rxjs'
 import type { Observable } from 'rxjs'
+import { ButtonModule } from 'primeng/button'
+import { RippleModule } from 'primeng/ripple'
 
 class FakeTranslateLoader implements TranslateLoader {
   getTranslation(_lang: string): Observable<TranslationObject> {
@@ -74,6 +76,8 @@ describe('OcxConsentComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [HostComponent, ConsentComponent],
       imports: [
+        ButtonModule,
+        RippleModule,
         TranslateModule.forRoot({
           loader: { provide: TranslateLoader, useClass: FakeTranslateLoader },
           fallbackLang: 'en',
