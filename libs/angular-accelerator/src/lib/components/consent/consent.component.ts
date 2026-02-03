@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core'
+import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core'
 
 const STORAGE_KEY = 'onecx-consent'
 let nextConsentComponentId = 0
@@ -97,7 +97,7 @@ export class ConsentComponent {
    * When enabled, shows a withdraw button that removes the stored consent.
    * This helps meeting the requirement that withdrawal should be as easy as opt-in.
    */
-  showWithdraw = input<boolean>(false)
+  showWithdraw = input<boolean>(true)
 
   /**
    * Emits whenever consent is granted or withdrawn.
@@ -105,9 +105,13 @@ export class ConsentComponent {
    */
   consentChanged = output<ConsentChangedEvent>()
 
+  localStorageUpdatedTimestamp = signal<number>(0)
+
   protected normalizedUrl = computed(() => this.normalizeUrl(this.url()))
 
   protected hasConsent = computed(() => {
+    // Manually call localStorageUpdatedTimestamp signal so that computation re-runs on each localStorage change
+    this.localStorageUpdatedTimestamp()
     const normalized = this.normalizedUrl()
     if (!normalized) return false
 
@@ -124,9 +128,8 @@ export class ConsentComponent {
       const entry = this.toStorageEntry(normalized, this.purpose())
       const updated = entry ? [...current, entry] : [...current]
       this.writeConsents(updated)
+      this.consentChanged.emit({ url: normalized, hasConsent: true, purpose: this.purpose() })
     }
-
-    this.consentChanged.emit({ url: normalized, hasConsent: true, purpose: this.purpose() })
   }
 
   protected resetConsent(): void {
@@ -163,6 +166,8 @@ export class ConsentComponent {
 
   private writeConsents(value: ConsentStorage): void {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(value))
+    // Trigger re-computation of hasConsent
+    this.localStorageUpdatedTimestamp.set(Date.now())
   }
 
   private hasStoredConsent(normalizedUrl: string, storage: ConsentStorage = this.readConsents()): boolean {
