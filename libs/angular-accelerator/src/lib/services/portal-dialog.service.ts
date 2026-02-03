@@ -1,7 +1,7 @@
-import { EventEmitter, Injectable, OnDestroy, Type, inject } from '@angular/core'
+import { Injectable, OnDestroy, Type, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { DialogService, DynamicDialog } from 'primeng/dynamicdialog'
-import { Observable, filter, mergeMap, of } from 'rxjs'
+import { Observable, Subject, filter, mergeMap, of } from 'rxjs'
 
 import { ButtonDialogButtonDetails, ButtonDialogCustomButtonDetails, ButtonDialogData } from '../model/button-dialog'
 import { NavigationStart, Router } from '@angular/router'
@@ -90,7 +90,7 @@ export interface DialogResult<T> {
  * If you implement this interface then primary button will be disabled until the emitter emits true
  */
 export interface DialogPrimaryButtonDisabled {
-  primaryButtonEnabled: EventEmitter<boolean>
+  primaryButtonEnabled: Subject<boolean>
 }
 /**
  * Implement via component class to be displayed by {@link PortalDialogService.openDialog}
@@ -100,7 +100,7 @@ export interface DialogPrimaryButtonDisabled {
  * If you implement this interface then secondary button will be disabled until the emitter emits true
  */
 export interface DialogSecondaryButtonDisabled {
-  secondaryButtonEnabled: EventEmitter<boolean>
+  secondaryButtonEnabled: Subject<boolean>
 }
 
 /**
@@ -111,7 +111,7 @@ export interface DialogSecondaryButtonDisabled {
  * If you implement this interface then all custom buttons will be disabled until the emitter emits true
  */
 export interface DialogCustomButtonsDisabled {
-  customButtonEnabled: EventEmitter<{ id: string; enabled: boolean }>
+  customButtonEnabled: Subject<{ id: string; enabled: boolean }>
 }
 /**
  * Implement via component class to be displayed by {@link PortalDialogService.openDialog}
@@ -236,10 +236,10 @@ export type PortalDialogConfig = {
 }
 
 export interface PortalDialogServiceData {
-  primaryButtonEnabled$: EventEmitter<boolean>
-  secondaryButtonEnabled$: EventEmitter<boolean>
-  customButtonEnabled$: EventEmitter<{ id: string; enabled: boolean }>
-  buttonClicked$: EventEmitter<DialogState<unknown>>
+  primaryButtonEnabled$: Subject<boolean>
+  secondaryButtonEnabled$: Subject<boolean>
+  customButtonEnabled$: Subject<{ id: string; enabled: boolean }>
+  buttonClicked$: Subject<DialogState<unknown>>
 }
 
 @Injectable({ providedIn: 'any' })
@@ -289,11 +289,11 @@ export class PortalDialogService implements OnDestroy {
    *
    * - {@link DialogButtonClicked} - on button click ocxDialogButtonClicked function will be called with dialog state as a parameter. You should return true if you want dialog to be close or false if not and add any operations on your component.
    *
-   * - {@link DialogPrimaryButtonDisabled} - dialog will use the EventEmitter to determine if the primary button should be disabled
+   * - {@link DialogPrimaryButtonDisabled} - dialog will use the Subject to determine if the primary button should be disabled
    *
-   * - {@link DialogSecondaryButtonDisabled} - dialog will use the EventEmitter to determine if the secondary button should be disabled
+   * - {@link DialogSecondaryButtonDisabled} - dialog will use the Subject to determine if the secondary button should be disabled
    *
-   * - {@link DialogCustomButtonsDisabled} - dialog will use the EventEmitter to determine if the custom buttons should be disabled
+   * - {@link DialogCustomButtonsDisabled} - dialog will use the Subject to determine if the custom buttons should be disabled
    *
    * @param title Translation key for dialog title
    * @param componentOrMessage Either a component or a translation key of a message with optional parameters and icon to be displayed next to the message
@@ -384,9 +384,9 @@ export class PortalDialogService implements OnDestroy {
    *   // change value to manipulate component state visible by dialog
    *   dialogResult: string = ''
    *   // emit true/false to disable primary button
-   *   ⁣@Output() primaryButtonEnabled: EventEmitter<boolean> = new EventEmitter()
+   *   ⁣@Output() primaryButtonEnabled: Subject<boolean> = new Subject()
    *   // emit true/false to disable secondary button
-   *   ⁣@Output() secondaryButtonEnabled: EventEmitter<boolean> = new EventEmitter()
+   *   ⁣@Output() secondaryButtonEnabled: Subject<boolean> = new Subject()
    *
    *   // implement operations to be done on button clicks and return if the dialog should be closed
    *   ocxDialogButtonClicked(state: DialogState<string>) {
@@ -467,10 +467,10 @@ export class PortalDialogService implements OnDestroy {
           data: {
             ...dynamicDialogDataConfig,
             portalDialogServiceData: {
-              primaryButtonEnabled$: new EventEmitter(),
-              secondaryButtonEnabled$: new EventEmitter(),
-              customButtonEnabled$: new EventEmitter(),
-              buttonClicked$: new EventEmitter(),
+              primaryButtonEnabled$: new Subject<boolean>(),
+              secondaryButtonEnabled$: new Subject<boolean>(),
+              customButtonEnabled$: new Subject<{ id: string; enabled: boolean }>(),
+              buttonClicked$: new Subject<DialogState<unknown>>(),
             } satisfies PortalDialogServiceData,
           },
           closable: dialogOptions.showXButton && secondaryButtonTranslationKeyOrDetails !== undefined,
