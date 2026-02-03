@@ -1,11 +1,11 @@
-# libs
+# angular-linter-rules
 
 This library was generated with [Nx](https://nx.dev).
 
 ## Building
 
-Run `nx build libs` to build the library.
+Run `nx build angular-linter-rules` to build the library.
 
 ## Running unit tests
 
-Run `nx test libs` to execute the unit tests via [Jest](https://jestjs.io).
+Run `nx test angular-linter-rules` to execute the unit tests via [Jest](https://jestjs.io).
