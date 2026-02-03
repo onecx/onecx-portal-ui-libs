@@ -1,8 +1,8 @@
-@if (columns$ | async; as columns) { @if (filters$ | async; as filters) {
+@if (columns(); as columns) { @if (filters(); as filters) {
 <div class="flex flex-wrap align-items-center gap-2">
-  @if (displayMode === 'chips') {
+  @if (displayMode() === 'chips') {
   <ng-container *ocxIfBreakpoint="'desktop'; elseTemplate: noChipsContent">
-    @if (selectDisplayedChips(filters, columns); as selectedFilters) {
+    @if (selectDisplayedChips()(filters, columns); as selectedFilters) {
     <p-button
       #chipFilterResetButton
       id="ocxFilterViewReset"
@@ -13,16 +13,16 @@
       tooltipEvent="hover"
       [ariaLabel]="'OCX_FILTER_VIEW.RESET_FILTERS_BUTTON.ARIA_LABEL' | translate"
     ></p-button>
-    @if (filters.length <= 0) { @if (_fitlerViewNoSelection) {
-    <ng-container [ngTemplateOutlet]="_fitlerViewNoSelection"> </ng-container>
+    @if (filters.length <= 0) { @if (fitlerViewNoSelection()) {
+    <ng-container [ngTemplateOutlet]="fitlerViewNoSelection()"> </ng-container>
     } @else {
     <span id="ocxFilterViewNoFilters">{{ 'OCX_FILTER_VIEW.NO_FILTERS' | translate }}</span>
     } } @if ((chipTemplates$ | async) ?? {}; as templates) { @for (filter of selectedFilters; track filter) { @if
     (getColumnForFilter(filter, columns); as column) {
-    <p-chip [removable]="true" (onRemove)="onChipRemove(filter)" [styleClass]="chipStyleClass">
-      @if (_filterViewChipContent) {
+    <p-chip [removable]="true" (onRemove)="onChipRemove(filter)" [styleClass]="chipStyleClass()">
+      @if (filterViewChipContent()) {
       <ng-container
-        [ngTemplateOutlet]="_filterViewChipContent"
+        [ngTemplateOutlet]="filterViewChipContent()"
         [ngTemplateOutletContext]="{
                 filter: filter,
                 column: column,
@@ -32,7 +32,7 @@
               }"
       >
       </ng-container>
-      } @else { @if (columns$ | async; as columns) {
+      } @else {
       <span style="white-space: nowrap" class="p-chip-text flex flex-nowrap"
         >{{column?.nameKey ?? '' | translate }}:@if (filter.filterType === FilterType.EQUALS || !filter.filterType) {
         <ng-container
@@ -52,7 +52,7 @@
         ></ng-container>
         }
       </span>
-      } }
+      }
     </p-chip>
     } } @if (selectedFilters.length < filters.length) {
     <p-chip
@@ -65,9 +65,9 @@
       (keydown.enter)="showPanel($event)"
       (keydown.space)="showPanel($event)"
     >
-      @if (_filterViewShowMoreChip) {
+      @if (filterViewShowMoreChip()) {
       <ng-container
-        [ngTemplateOutlet]="_filterViewShowMoreChip"
+        [ngTemplateOutlet]="filterViewShowMoreChip()"
         [ngTemplateOutletContext]="{
             $implicit: filters.length - selectedFilters.length
           }"
@@ -100,7 +100,7 @@
   </ng-template>
   <ng-template #filterTablePanel>
     @if (tableTemplates$ | async; as templates) {
-    <p-popover #op [style]="panelStyle" (onHide)="focusTrigger()">
+    <p-popover #op [style]="panelStyle()" (onHide)="focusTrigger()">
       <ng-template pTemplate="content">
         <div pFocusTrap>
           <div class="flex justify-content-between align-items-center mb-2">
@@ -121,11 +121,11 @@
           </div>
           <ocx-data-table
             id="ocxFilterViewDataTable"
-            [rows]="(columnFilterDataRows$ | async) ?? []"
-            [columns]="columnFilterTableColumns"
+            [rows]="columnFilterDataRows()"
+            [columns]="columnFilterTableColumns()"
             [emptyResultsMessage]="'OCX_FILTER_VIEW.NO_FILTERS' | translate"
             [paginator]="false"
-            [tableStyle]="tableStyle"
+            [tableStyle]="tableStyle()"
           >
             <ng-template pTemplate="columnIdCell" let-rowObject="rowObject" let-column="column">
               <ng-container
