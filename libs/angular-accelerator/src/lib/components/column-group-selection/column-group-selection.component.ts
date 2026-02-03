@@ -27,11 +27,12 @@ export class ColumnGroupSelectionComponent implements OnInit {
   readonly allGroupKeys = computed<string[]>(() => {
     const columns = this.columns()
     const selectedGroupKey = this.selectedGroupKey()
+    const defaultGroupKey = this.defaultGroupKey()
 
     return columns
       .map((c) => c.predefinedGroupKeys || [])
       .flat()
-      .concat([this.defaultGroupKey()])
+      .concat([defaultGroupKey])
       .concat([selectedGroupKey])
       .filter((value) => !!value)
       .filter((value, index, self) => self.indexOf(value) === index && value != null)
