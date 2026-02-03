@@ -19,6 +19,7 @@ When writing tests use the following guidelines:
 For components consider the following guidelines:
 
 - For buttons add pButton pRipple
+- Prefer using primeflex/tailwind (depending on the project) for styling over custom css classes
 - Consider the knowledge in the PrimeNg MCP Server
 - Always make sure the component is responsive
 - Always make sure the component is accessible (a11y)
