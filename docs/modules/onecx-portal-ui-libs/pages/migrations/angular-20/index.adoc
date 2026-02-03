@@ -1,0 +1,37 @@
+= Migrate OneCX App from Angular 19 to Angular 20
+
+:idprefix:
+:idseparator: -
+
+[#overview]
+== Overview
+
+This guide provides comprehensive step-by-step instructions for migrating OneCX applications from Angular 19 to Angular 20.
+As part of upgrading to Angular 20, you must update your OneCX UI libraries to version 7. This library update is not a standalone migration but a required part of the Angular version upgrade process, as OneCX v7 libraries provide Angular 20 compatibility and include necessary breaking changes.
+
+[#prerequisites]
+== Prerequisites
+
+Before starting this migration:
+
+* Your OneCX application is currently running on Angular 19
+* You have OneCX UI libraries v6.x installed  
+* You have a working development environment
+
+[#migration-checklist]
+== OneCx v7 Libs migration checklist
+
+This checklist summarizes all breaking changes introduced in OneCx v7 libraries.  
+Each item represents a required migration step that must be completed before your application can run with the new version.  
+You can click the name of any change to open a detailed migration guide with instructions, code examples, and explanations.
+
+[%interactive]
+** [ ] xref:./remove-shell-core.adoc[Remove @onecx/shell-core]
+** [ ] xref:./remove-ngrx-accelerator.adoc[Adjust ngrx-accelerator library utilities]
+** [ ] xref:./update-primeng-package.adoc[Update package imports for PrimeNG theming]
+** [ ] xref:./update-style-package.adoc[Update package imports for style utilities]
+** [ ] xref:./remove-keycloak-js.adoc[Remove keycloak-js from your application]
+** [ ] xref:./migrate-to-onecx-translate-loader.adoc[Migrate to OnecxTranslateLoader translation mechanism]
+** [ ] xref:./use-new-object-detail-item-interface.adoc[Use updated ObjectDetailItem interface for PageHeaderComponent]
+** [ ] xref:./portal-dialog-service-signature-changes.adoc[Be aware of the PortalDialogService signature changes]
+** [ ] xref:./updated-guards-usage.adoc[Leverage Angular guards]

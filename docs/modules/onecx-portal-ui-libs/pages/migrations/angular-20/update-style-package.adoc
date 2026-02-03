@@ -1,5 +1,5 @@
 [#update-style]
-== Update package imports for style utilities
+= Update package imports for style utilities
 
 In version 7, the style utilities have been moved to a separate subpackage:  
 `@onecx/angular-utils/style` within the `@onecx/angular-utils` library.

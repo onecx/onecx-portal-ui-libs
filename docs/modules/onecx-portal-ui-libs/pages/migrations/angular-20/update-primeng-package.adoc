@@ -1,5 +1,5 @@
 [#update-primeNG]
-== Update package imports for PrimeNG theming
+= Update package imports for PrimeNG theming
 
 In version 7, the PrimeNG theming utilities have been moved to a separate subpackage:  
 `@onecx/angular-utils/theme/primeng` within the `@onecx/angular-utils` library.

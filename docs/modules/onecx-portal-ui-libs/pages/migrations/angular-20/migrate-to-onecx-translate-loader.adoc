@@ -1,0 +1,140 @@
+[#translate-loader-migration]
+= Migrate to `OnecxTranslateLoader`
+
+In v7, the translation loading mechanism in `@onecx/angular-utils` has been refactored.
+
+The following items have been **removed**:
+
+* `AsyncTranslateLoader` class
+* `createTranslateLoader` function
+
+The following item has been **added** and must now be used for translation:
+
+* `OnecxTranslateLoader` class
+
+All applications need to migrate to this new loader and the new way of providing `TranslateService`. Please follow the steps below to update your application.
+
+---
+
+== Required migration steps
+
+* Remove all imports and usages of:
+** `AsyncTranslateLoader`
+** `createTranslateLoader`
+* Update `module.ts` and `app.component.ts` to provide translation using the new mechanism
+* Replace existing loader configuration with `OnecxTranslateLoader`
+* Update `TranslateService` usage to the new DI pattern (`inject()`)
+
+---
+
+== Provide translation using `OnecxTranslateLoader`
+
+With the removal of `createTranslateLoader` and `AsyncTranslateLoader`, translation loading is handled through `provideTranslateService()` from `@ngx-translate/core`, combined with the `OnecxTranslateLoader`. Please change the way your application is providing translation loader in `module.ts` file.
+
+=== Before
+
+Previously, translation was provided using factory-based loader:
+
+[source,ts]
+----
+@NgModule({
+  declarations: [AppEntrypointComponent],
+  imports: [
+    ...
+    TranslateModule.forRoot({
+      isolate: true,
+      loader: { provide: TranslateLoader, useFactory: createTranslateLoader, deps: [HttpClient] },
+      missingTranslationHandler: {
+        provide: MissingTranslationHandler,
+        useClass: AngularAcceleratorMissingTranslationHandler
+      }
+    })
+    ...
+  ],
+  providers: [
+    ...
+  ]
+})
+----
+
+=== After
+
+Now you must use `provideTranslateService()` and configure `OnecxTranslateLoader` via `provideTranslateLoader()`:
+
+[source,ts]
+----
+@NgModule({
+  declarations: [AppEntrypointComponent],
+  imports: [
+    ...
+  ],
+  providers: [
+    ...
+    provideTranslateService({
+      defaultLanguage: 'en',
+      loader: provideTranslateLoader(OnecxTranslateLoader),
+      missingTranslationHandler: provideMissingTranslationHandler(MultiLanguageMissingTranslationHandler)
+    }),
+    ...
+  ]
+})
+----
+
+== Update `app.component.ts` to DI pattern
+
+Because the translation mechanism changed, `TranslateService` should no longer be injected via constructor. The recommended way is using Angular’s `inject()` function.
+
+---
+
+=== Before
+
+[source,ts]
+----
+import { Component} from '@angular/core'
+import { TranslateService } from '@ngx-translate/core'
+import { PrimeNG } from 'primeng/config'
+import { UserService } from '@onecx/angular-integration-interface'
+
+@Component({
+  standalone: false,
+  selector: 'ocx-shell-root',
+  templateUrl: './app.component.html'
+})
+export class AppComponent implements OnInit {
+  title = 'shell'
+
+  constructor(
+    private readonly translateService: TranslateService,
+    private readonly config: PrimeNG,
+    private readonly userService: UserService
+  ) {}
+
+  ...
+}
+----
+
+
+=== After
+
+[source,ts]
+----
+import { Component, inject } from '@angular/core'
+import { TranslateService } from '@ngx-translate/core'
+import { PrimeNG } from 'primeng/config'
+import { UserService } from '@onecx/angular-integration-interface'
+
+@Component({
+  standalone: false,
+  selector: 'ocx-shell-root',
+  templateUrl: './app.component.html'
+})
+export class AppComponent implements OnInit {
+  title = 'shell'
+
+  private readonly translateService: TranslateService = inject(TranslateService)
+  private readonly config: PrimeNG = inject(PrimeNG)
+  private readonly userService: UserService = inject(UserService)
+
+  ...
+}
+----
