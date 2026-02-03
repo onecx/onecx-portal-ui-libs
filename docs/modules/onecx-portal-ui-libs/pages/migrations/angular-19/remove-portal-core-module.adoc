@@ -31,3 +31,21 @@ import { AngularAcceleratorModule } from "@onecx/angular-accelerator";
   imports: [AngularAcceleratorModule]
 })
 ----
+
+[#remove-portal-integration-angular]
+=== Remove '@onecx/portal-integration-angular'
+
+`@onecx/portal-integration-angular` is no longer available in OneCX v6 and must be completely removed from the application at this point.
+
+==== Verify All Imports Are Migrated
+
+Before removing the package, ensure that all imports from `@onecx/portal-integration-angular` have been removed or properly migrated to their new locations as outlined in the xref:./update-component-imports.adoc#update-component-imports[Update Component Imports] section.
+
+==== Uninstall the Package
+
+Once all imports have been migrated, remove the deprecated package:
+
+[source,bash]
+----
+npm uninstall @onecx/portal-integration-angular
+----
