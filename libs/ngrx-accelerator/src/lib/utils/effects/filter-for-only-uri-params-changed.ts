@@ -2,10 +2,7 @@ import { Router, RoutesRecognized } from '@angular/router'
 import { RouterNavigatedAction } from '@ngrx/router-store'
 import { filter, map, MonoTypeOperatorFunction, withLatestFrom } from 'rxjs'
 
-/**
- * @deprecated This helper is deprecated. Please use `filterOutOnlyUriParamsChanged` for filtering URI parameters.
- */
-export function filterOutOnlyQueryParamsChanged<A extends RouterNavigatedAction>(
+export function filterOutOnlyUriParamsChanged<A extends RouterNavigatedAction>(
   router: Router
 ): MonoTypeOperatorFunction<A> {
   return (source) => {
@@ -17,9 +14,8 @@ export function filterOutOnlyQueryParamsChanged<A extends RouterNavigatedAction>
         )
       ),
       filter(([action, previousRouterState]) => {
-        const previousPath = previousRouterState.snapshot.url.split('?')[0]
-        const currentPath = action.payload.event.urlAfterRedirects.split('?')[0]
-
+        const previousPath = previousRouterState.snapshot.url.split('#')[0]
+        const currentPath = action.payload.event.urlAfterRedirects.split('#')[0]
         return previousPath !== currentPath
       }),
       map(([action]) => action)
