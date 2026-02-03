@@ -1,21 +1,20 @@
 <p-floatlabel variant="on">
-  @if ((allGroupKeys$ | async)?.length) {
-    <p-select
-      inputId="columnGroupSelectionDropdown"
-      id="columnGroupSelectionDropdownElement"
-      (onChange)="changeGroupSelection($event)"
-      [options]="(allGroupKeys$ | async) || []"
-      [placeholder]="placeholderKey | translate"
-      [(ngModel)]="selectedGroupKey"
-      [ariaLabel]="'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABEL' | translate"
-      >
-      <ng-template let-item #item> {{ item ? (item | translate) : ''}} </ng-template>
-      <ng-template let-item #selectedItem> {{ item ? (item | translate) : ''}} </ng-template>
-    </p-select>
+  @if (allGroupKeys().length) {
+  <p-select
+    inputId="columnGroupSelectionDropdown"
+    id="columnGroupSelectionDropdownElement"
+    (onChange)="changeGroupSelection($event)"
+    [options]="allGroupKeys()"
+    [placeholder]="placeholderKey() | translate"
+    [(ngModel)]="selectedGroupKey"
+    [ariaLabel]="'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABEL' | translate"
+  >
+    <ng-template let-item #item> {{ item ? (item | translate) : ''}} </ng-template>
+    <ng-template let-item #selectedItem> {{ item ? (item | translate) : ''}} </ng-template>
+  </p-select>
+  } @if (allGroupKeys().length) {
+  <label for="columnGroupSelectionDropdown"
+    >{{ ("OCX_CUSTOM_GROUP_COLUMN_SELECTOR.DROPDOWN_LABEL" | translate) }}</label
+  >
   }
-  @if ((allGroupKeys$ | async)?.length) {
-    <label for="columnGroupSelectionDropdown"
-      >{{ ("OCX_CUSTOM_GROUP_COLUMN_SELECTOR.DROPDOWN_LABEL" | translate) }}</label
-      >
-    }
-  </p-floatlabel>
+</p-floatlabel>
