@@ -3,21 +3,29 @@
 
 @if (showWithdraw()) {
 <div class="w-full flex justify-content-center mt-1">
-  <a (click)="resetConsent()" class="cursor-pointer text-primary underline">
+  <a
+    (click)="resetConsent()"
+    class="cursor-pointer text-primary underline"
+    [attr.aria-label]="withdrawKey() | translate"
+  >
     {{ withdrawKey() | translate }}
   </a>
 </div>
 } } @else {
-<section class="flex w-full h-full align-items-center justify-content-center p-3 ocx-consent" [attr.aria-labelledby]="titleId" [attr.aria-describedby]="messageId">
+<section
+  class="flex w-full h-full align-items-center justify-content-center p-3 ocx-consent"
+  [attr.aria-labelledby]="titleId"
+  [attr.aria-describedby]="messageId"
+>
   <div class="flex flex-column gap-4 align-items-center justify-content-center text-center ocx-consent__content">
     <p class="m-0 text-xl font-semibold" [id]="titleId">{{ titleKey() | translate }}</p>
-    <p class="m-0" [id]="messageId" aria-live="polite">
-      {{ messageKey() | translate : { url: normalizedUrl() } }}
-    </p>
+    <p class="m-0" [id]="messageId" aria-live="polite">{{ messageKey() | translate : { url: normalizedUrl() } }}</p>
 
     <ng-content select="[ocx-consent-info]" />
 
-    <button pButton pRipple type="button" (click)="giveConsent()">{{ agreeKey() | translate }}</button>
+    <button pButton pRipple type="button" (click)="giveConsent()" [attr.aria-label]="agreeKey() | translate">
+      {{ agreeKey() | translate }}
+    </button>
   </div>
 </section>
 }
