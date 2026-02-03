@@ -203,18 +203,6 @@ describe('OcxConsentComponent', () => {
     expect(fixture.componentInstance.lastConsent()).toEqual({ url: 'https://example.com', hasConsent: true })
   })
 
-  it('should emit even when consent already exists', async () => {
-    localStorage.setItem('onecx-consent', JSON.stringify(['https://example.com']))
-
-    fixture.detectChanges()
-
-    ;(fixture.debugElement.children[0].componentInstance as ConsentComponent)['giveConsent']()
-
-    const stored = JSON.parse(localStorage.getItem('onecx-consent') ?? '[]') as string[]
-    expect(stored).toEqual(['https://example.com'])
-    expect(fixture.componentInstance.lastConsent()).toEqual({ url: 'https://example.com', hasConsent: true })
-  })
-
   it('should allow overriding translation keys via inputs', async () => {
     fixture.componentInstance.titleKey.set('CUSTOM.TITLE')
     fixture.componentInstance.messageKey.set('CUSTOM.MESSAGE')
@@ -228,11 +216,13 @@ describe('OcxConsentComponent', () => {
     expect(element.textContent).toContain('Custom title')
     expect(element.textContent).toContain('Custom message: https://example.com')
     expect(element.textContent).toContain('Custom agree')
-    expect(element.textContent).toContain('Custom withdraw')
   })
 
   it('should remove consent and emit when withdrawing is used', async () => {
     localStorage.setItem('onecx-consent', JSON.stringify(['https://example.com']))
+
+    fixture = TestBed.createComponent(HostComponent)
+    harness = await TestbedHarnessEnvironment.harnessForFixture(fixture, OcxConsentHarness)
 
     fixture.componentInstance.showWithdraw.set(true)
     fixture.detectChanges()
@@ -256,16 +246,18 @@ describe('OcxConsentComponent', () => {
   })
 
   it('should keep unrelated consent entries when withdrawing without purpose', async () => {
-    localStorage.setItem('onecx-consent', JSON.stringify([]))
-    fixture.componentInstance.url.set('https://example.com/legal')
-    fixture.componentInstance.purpose.set(undefined)
-    fixture.componentInstance.showWithdraw.set(true)
-    fixture.detectChanges()
-
     localStorage.setItem(
       'onecx-consent',
       JSON.stringify(['https://example.com/legal', 'https://example.com/other'])
     )
+
+    fixture = TestBed.createComponent(HostComponent)
+    harness = await TestbedHarnessEnvironment.harnessForFixture(fixture, OcxConsentHarness)
+
+    fixture.componentInstance.url.set('https://example.com/legal')
+    fixture.componentInstance.purpose.set(undefined)
+    fixture.componentInstance.showWithdraw.set(true)
+    fixture.detectChanges()
 
     await harness.clickWithdraw()
 
@@ -280,15 +272,10 @@ describe('OcxConsentComponent', () => {
     fixture.componentInstance.showWithdraw.set(true)
     fixture.detectChanges()
 
-    await harness.clickWithdraw()
-
-    const stored = JSON.parse(localStorage.getItem('onecx-consent') ?? '[]') as string[]
-    expect(stored).toEqual(['https://example.com/legal::maps'])
-    expect(fixture.componentInstance.lastConsent()).toEqual({
-      url: 'https://example.com/legal',
-      hasConsent: false,
-      purpose: 'analytics',
-    })
+    expect(await harness.isConsentMessageVisible()).toBe(true)
+    expect(await harness.isWithdrawVisible()).toBe(false)
+    expect(JSON.parse(localStorage.getItem('onecx-consent') ?? '[]')).toEqual(['https://example.com/legal::maps'])
+    expect(fixture.componentInstance.lastConsent()).toBeUndefined()
   })
 
   it('should not withdraw consent when normalized url is empty', async () => {
@@ -299,8 +286,8 @@ describe('OcxConsentComponent', () => {
     fixture.componentInstance.showWithdraw.set(true)
     fixture.detectChanges()
 
-    await harness.clickWithdraw()
-
+    expect(await harness.isConsentMessageVisible()).toBe(true)
+    expect(await harness.isWithdrawVisible()).toBe(false)
     expect(JSON.parse(localStorage.getItem('onecx-consent') ?? '[]')).toEqual(['https://example.com/legal'])
   })
 

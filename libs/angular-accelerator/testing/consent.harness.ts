@@ -21,10 +21,13 @@ export class OcxConsentHarness extends ComponentHarness {
   }
 
   async clickWithdraw(): Promise<void> {
-    const button = await this.locatorFor(
-      ButtonHarness.with({ ancestor: '.ocx-consent', selector: 'button.p-button-secondary' })
-    )()
+    const button = await this.locatorFor('a.cursor-pointer.text-primary.underline')()
     await button.click()
+  }
+
+  async isWithdrawVisible(): Promise<boolean> {
+    const withdraw = await this.locatorForOptional('a.cursor-pointer.text-primary.underline')()
+    return !!withdraw
   }
 
   async isInfoVisible(): Promise<boolean> {
