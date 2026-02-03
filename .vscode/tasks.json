@@ -407,6 +407,36 @@
       }
     },
     {
+      "label": "nx run angular-accelerator:build-storybook",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "run", "angular-accelerator:build-storybook"],
+      "detail": "Builds the Storybook for the library \"angular-accelerator\" using Nx.",
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "nx run angular-accelerator:storybook",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "run", "angular-accelerator:storybook"],
+      "detail": "Runs the Storybook for the library \"angular-accelerator\" using Nx.",
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      }
+    },
+    {
       "label": "nx test angular-accelerator",
       "type": "process",
       "command": "npx",
