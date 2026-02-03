@@ -39,7 +39,7 @@ After these steps are completed, it is recommended to build the application to e
 
 [source,bash]
 ----
-ng build
+npm run build
 ----
 
 
