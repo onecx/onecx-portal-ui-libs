@@ -92,10 +92,14 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this._rows$.getValue()
   }
   set rows(value: Row[]) {
-    !this._rows$.getValue().length ?? this.resetPage()
+    if (!this._rows$.getValue().length) {
+      this.resetPage();
+    }
     this._rows$.next(value)
-    if(value.length < (this.page * (this.pageSize ?? 0))) this.resetPage();
-
+    if(value.length < (this.page * (this.pageSize ?? 0))) {
+      this.resetPage();
+    }
+    
     const currentResults = value.length;
     const newStatus = currentResults === 0
         ? 'OCX_DATA_TABLE.NO_SEARCH_RESULTS_FOUND'
@@ -127,7 +131,9 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this._filters$.getValue()
   }
   set filters(value: Filter[]) {
-    !this._filters$.getValue().length ?? this.resetPage()
+    if (!this._filters$.getValue().length) {
+      this.resetPage();
+    }
     this._filters$.next(value)
   }
   _sortDirection$ = new BehaviorSubject<DataSortDirection>(DataSortDirection.NONE)
