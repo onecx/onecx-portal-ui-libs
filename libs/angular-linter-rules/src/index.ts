@@ -4,7 +4,6 @@ import { configs } from './lib/configs'
 export { rules, configs }
 
 export const plugin = {
-
   rules,
   configs,
 }
