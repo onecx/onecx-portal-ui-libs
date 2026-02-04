@@ -132,7 +132,7 @@ describe('ThemeConfigService', () => {
     const overrides: Array<ThemeOverride> = [
       {
         type: OverrideType.PRIMENG,
-        value: '{"semantic": { "primary": {"500": "#ff1e00" },"extend": {"onecx": {"topbar": {"bg": {"color": "#ff1e00" }},"menu": {"text": {"color": "#ff1e00" }}}}}', //first override round sets colors red
+        value: '{"semantic": { "primary": {"500": "#ff1e00" },"extend": {"onecx": {"topbar": {"bg": {"color": "#ff1e00" }},"menu": {"text": {"color": "#ff1e00" }}}}}}', //first override round sets colors red
       },
       {
         type: OverrideType.PRIMENG,
