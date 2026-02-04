@@ -1,5 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
-import { BehaviorSubject } from 'rxjs'
+import { Component, computed, effect, input, model, OnInit, output } from '@angular/core'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataColumnNameId } from '../../model/data-column-name-id.model'
 import { DataTableColumn } from '../../model/data-table-column.model'
@@ -16,70 +15,57 @@ export interface DataListGridSortingComponentState {
   templateUrl: './data-list-grid-sorting.component.html',
   styleUrls: ['./data-list-grid-sorting.component.scss'],
 })
-export class DataListGridSortingComponent implements OnInit {
-  @Input() columns: DataTableColumn[] = []
-  @Input() sortStates: DataSortDirection[] = [DataSortDirection.ASCENDING, DataSortDirection.DESCENDING]
-  _sortDirection$ = new BehaviorSubject<DataSortDirection>(DataSortDirection.NONE)
-  @Input()
-  get sortDirection(): DataSortDirection {
-    return this._sortDirection$.getValue()
-  }
-  set sortDirection(value: DataSortDirection) {
-    this._sortDirection$.next(value)
-  }
-  _sortField$ = new BehaviorSubject<string>('')
-  @Input()
-  get sortField(): string {
-    return this?._sortField$.getValue()
-  }
-  set sortField(value: string) {
-    this._sortField$.next(value)
-  }
+export class DataListGridSortingComponent {
+  readonly columns = input<DataTableColumn[]>([])
+  readonly sortStates = input<DataSortDirection[]>([DataSortDirection.ASCENDING, DataSortDirection.DESCENDING])
 
-  @Output() sortChange: EventEmitter<string> = new EventEmitter()
-  @Output() sortDirectionChange: EventEmitter<DataSortDirection> = new EventEmitter()
-  @Output() componentStateChanged: EventEmitter<DataListGridSortingComponentState> = new EventEmitter()
-  @Output() columnsChange: EventEmitter<string[]> = new EventEmitter()
-  selectedSortingOption: DataColumnNameId | undefined
-  dropdownOptions: DataColumnNameId[] = []
+  readonly sortDirection = model<DataSortDirection>(DataSortDirection.NONE)
+  readonly sortField = model<string>('')
 
-  ngOnInit(): void {
-    this.columns.forEach((element) => {
-      if (element.sortable) {
-        this.dropdownOptions.push({ columnId: element.id, columnName: element.nameKey });
-      }
+  readonly sortChange = output<string>()
+  readonly sortDirectionChange = output<DataSortDirection>()
+  readonly componentStateChanged = output<DataListGridSortingComponentState>()
+  readonly columnsChange = output<string[]>()
+
+  readonly dropdownOptions = computed<DataColumnNameId[]>(() =>
+    this.columns()
+      .filter((c) => !!c.sortable)
+      .map((c) => ({ columnId: c.id, columnName: c.nameKey }))
+  )
+
+  readonly selectedSortingOption = computed<DataColumnNameId | undefined>(() =>
+    this.dropdownOptions().find((e) => e.columnId === this.sortField())
+  )
+
+  constructor() {
+    effect(() => {
+      this.componentStateChanged.emit({
+        sorting: {
+          sortColumn: this.sortField(),
+          sortDirection: this.sortDirection(),
+        },
+      })
     })
-    this.selectedSortingOption = this.dropdownOptions.find((e) => e.columnId === this?.sortField)
-    this.emitComponentStateChange()
   }
 
   selectSorting(event: SelectChangeEvent): void {
-    this._sortField$.next(event.value.columnId)
+    this.sortField.set(event.value.columnId)
     this.sortChange.emit(event.value.columnId)
-    this.emitComponentStateChange()
   }
+
   sortDirectionChanged(): void {
     const newSortDirection = this.nextSortDirection()
-    this._sortDirection$.next(newSortDirection)
+    this.sortDirection.set(newSortDirection)
     this.sortDirectionChange.emit(newSortDirection)
-    this.emitComponentStateChange()
   }
 
-  nextSortDirection() {
-    return this.sortStates[(this.sortStates.indexOf(this.sortDirection) + 1) % this.sortStates.length]
+  nextSortDirection(): DataSortDirection {
+    const states = this.sortStates()
+    return states[(states.indexOf(this.sortDirection()) + 1) % states.length]
   }
 
-  emitComponentStateChange() {
-    this.componentStateChanged.emit({
-      sorting: {
-        sortColumn: this.sortField,
-        sortDirection: this.sortDirection,
-      },
-    })
-  }
-
-  sortIcon() {
-    switch (this.sortDirection) {
+  sortIcon(): string {
+    switch (this.sortDirection()) {
       case DataSortDirection.ASCENDING:
         return 'pi-sort-amount-up'
       case DataSortDirection.DESCENDING:
@@ -89,13 +75,11 @@ export class DataListGridSortingComponent implements OnInit {
     }
   }
 
-  sortIconTitle() {
-    return this.sortDirectionToTitle(
-      this.nextSortDirection()
-    )
+  sortIconTitle(): string {
+    return this.sortDirectionToTitle(this.nextSortDirection())
   }
 
-  sortDirectionToTitle(sortDirection: DataSortDirection) {
+  sortDirectionToTitle(sortDirection: DataSortDirection): string {
     switch (sortDirection) {
       case DataSortDirection.ASCENDING:
         return 'OCX_LIST_GRID_SORT.TOGGLE_BUTTON.ASCENDING_TOOLTIP'
