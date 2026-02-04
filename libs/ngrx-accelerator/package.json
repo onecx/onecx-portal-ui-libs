@@ -1,6 +1,6 @@
 {
   "name": "@onecx/ngrx-accelerator",
-  "version": "8.0.0-rc.3",
+  "version": "8.0.0-rc.4",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -18,8 +18,8 @@
     "rxjs": "^7.8.1",
     "zod": "^4.0.0",
     "@nx/devkit": "^22.0.2",
-    "@onecx/nx-migration-utils": "^8.0.0-rc.3",
-    "@onecx/accelerator": "^8.0.0-rc.3"
+    "@onecx/nx-migration-utils": "^8.0.0-rc.4",
+    "@onecx/accelerator": "^8.0.0-rc.4"
   },
   "publishConfig": {
     "access": "public"
