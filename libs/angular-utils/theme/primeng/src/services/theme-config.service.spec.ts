@@ -126,4 +126,48 @@ describe('ThemeConfigService', () => {
 
     expect(preset.semantic.extend.onecx.topbar.bg.color).not.toEqual('#3b82f6');
   }))
+
+  it('next override value should override previous', fakeAsync(() => {
+
+    const overrides: Array<ThemeOverride> = [
+      {
+        type: OverrideType.PRIMENG,
+        value: '{"semantic": { "primary": {"500": "#ff1e00" },"extend": {"onecx": {"topbar": {"bg": {"color": "#ff1e00" }},"menu": {"text": {"color": "#ff1e00" }}}}}', //first override round sets colors red
+      },
+      {
+        type: OverrideType.PRIMENG,
+        value: '{"semantic": { "primary": {"500": "#ffea00" },"extend": {"onecx": {"topbar": {"bg": {"color": "#ffea00" }}}}}}',  //second round sets colors yellow, should override 1st and 2nd variable
+      },
+      {
+        type: OverrideType.PRIMENG,
+        value: '{"semantic":{ "primary": {"500": "#04ff00" }}}', //sets colors green, should overwrite 1st variable
+      }
+    ]
+
+    TestBed.inject(ThemeConfigService)
+    const themeService = TestBed.inject(ThemeService);
+    const primeng = TestBed.inject(PrimeNG);
+    const spy = jest.spyOn(primeng, 'setThemeConfig');
+
+    themeService.currentTheme$.publish(
+      {
+        ...theme,
+        overrides: overrides,
+      }
+    );
+
+    tick(100);
+
+    expect(spy).toHaveBeenCalled();
+    const callArg = spy.mock.calls.at(-1)?.[0] as any;
+    expect(callArg).toBeTruthy();
+
+    const preset = callArg.theme.preset;
+
+    expect(preset.semantic.extend.onecx.menu.text.color).toEqual('#ff1e00');
+
+    expect(preset.semantic.extend.onecx.topbar.bg.color).toEqual('#ffea00');
+
+    expect(preset.semantic.primary['500']).toEqual('#04ff00');
+  }))
 })
