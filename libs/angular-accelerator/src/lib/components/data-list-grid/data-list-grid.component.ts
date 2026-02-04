@@ -1,6 +1,5 @@
 import {
   AfterContentInit,
-  ChangeDetectorRef,
   Component,
   computed,
   ContentChild,
@@ -362,7 +361,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     private injector: Injector,
     private appStateService: AppStateService,
     private readonly liveAnnouncer: LiveAnnouncer,
-    private readonly changeDetectorRef: ChangeDetectorRef,
     @Inject(HAS_PERMISSION_CHECKER) @Optional() private hasPermissionChecker?: HasPermissionChecker
   ) {
     super(locale, translateService)

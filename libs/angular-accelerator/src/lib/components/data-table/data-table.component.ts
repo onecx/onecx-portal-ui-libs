@@ -1,7 +1,6 @@
 import { formatDate } from '@angular/common'
 import {
   AfterContentInit,
-  ChangeDetectorRef,
   Component,
   computed,
   ContentChild,
@@ -430,7 +429,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     private injector: Injector,
     private userService: UserService,
     private readonly liveAnnouncer: LiveAnnouncer,
-    private readonly changeDetectorRef: ChangeDetectorRef,
     @Inject(HAS_PERMISSION_CHECKER) @Optional() private hasPermissionChecker?: HasPermissionChecker
   ) {
     super(locale, translateService)
