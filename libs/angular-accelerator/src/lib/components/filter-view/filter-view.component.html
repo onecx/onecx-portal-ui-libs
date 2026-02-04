@@ -13,8 +13,8 @@
       tooltipEvent="hover"
       [ariaLabel]="'OCX_FILTER_VIEW.RESET_FILTERS_BUTTON.ARIA_LABEL' | translate"
     ></p-button>
-    @if (filters.length <= 0) { @if (fitlerViewNoSelection()) {
-    <ng-container [ngTemplateOutlet]="fitlerViewNoSelection()"> </ng-container>
+    @if (filters.length <= 0) { @if (filterViewNoSelection()) {
+    <ng-container [ngTemplateOutlet]="filterViewNoSelection()"> </ng-container>
     } @else {
     <span id="ocxFilterViewNoFilters">{{ 'OCX_FILTER_VIEW.NO_FILTERS' | translate }}</span>
     } } @if ((chipTemplates$ | async) ?? {}; as templates) { @for (filter of selectedFilters; track filter) { @if

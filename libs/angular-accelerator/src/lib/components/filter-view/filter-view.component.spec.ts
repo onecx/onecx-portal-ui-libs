@@ -75,12 +75,12 @@ describe('FilterViewComponent (class logic)', () => {
     expect(rows().map((r) => r.column)).toEqual(['C1', 'C2'])
   })
 
-  it('should map template accessors (_filterViewChipContent, _filterViewShowMoreChip, _fitlerViewNoSelection)', () => {
-    component.fitlerViewNoSelection.set(undefined)
+  it('should map template accessors (_filterViewChipContent, _filterViewShowMoreChip, _filterViewNoSelection)', () => {
+    component.filterViewNoSelection.set(undefined)
     component.filterViewChipContent.set(undefined)
     component.filterViewShowMoreChip.set(undefined)
 
-    expect(component.fitlerViewNoSelection()).toBeUndefined()
+    expect(component.filterViewNoSelection()).toBeUndefined()
     expect(component.filterViewChipContent()).toBeUndefined()
     expect(component.filterViewShowMoreChip()).toBeUndefined()
   })
@@ -91,7 +91,7 @@ describe('FilterViewComponent (class logic)', () => {
     const showMoreTemplate = {} as any
 
     const templates = [
-      { getType: () => 'fitlerViewNoSelection', template: noSelectionTemplate },
+      { getType: () => 'filterViewNoSelection', template: noSelectionTemplate },
       { getType: () => 'filterViewChipContent', template: chipContentTemplate },
       { getType: () => 'filterViewShowMoreChip', template: showMoreTemplate },
       { getType: () => 'ignored', template: {} },
@@ -100,7 +100,7 @@ describe('FilterViewComponent (class logic)', () => {
     fixture.componentRef.setInput('templates', templates)
     fixture.detectChanges()
 
-    expect(component.fitlerViewNoSelection()).toBe(noSelectionTemplate)
+    expect(component.filterViewNoSelection()).toBe(noSelectionTemplate)
     expect(component.filterViewChipContent()).toBe(chipContentTemplate)
     expect(component.filterViewShowMoreChip()).toBe(showMoreTemplate)
   })

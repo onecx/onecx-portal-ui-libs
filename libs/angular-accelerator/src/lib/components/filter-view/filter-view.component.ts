@@ -84,7 +84,7 @@ export class FilterViewComponent {
 
   readonly trigger = signal<HTMLElement | undefined>(undefined)
 
-  readonly fitlerViewNoSelection = signal<TemplateRef<any> | undefined>(undefined)
+  readonly filterViewNoSelection = signal<TemplateRef<any> | undefined>(undefined)
   readonly filterViewChipContent = signal<TemplateRef<any> | undefined>(undefined)
   readonly filterViewShowMoreChip = signal<TemplateRef<any> | undefined>(undefined)
 
@@ -164,8 +164,8 @@ export class FilterViewComponent {
 
       t?.forEach((item) => {
         switch (item.getType()) {
-          case 'fitlerViewNoSelection':
-            this.fitlerViewNoSelection.set(item.template)
+          case 'filterViewNoSelection':
+            this.filterViewNoSelection.set(item.template)
             break
           case 'filterViewChipContent':
             this.filterViewChipContent.set(item.template)
