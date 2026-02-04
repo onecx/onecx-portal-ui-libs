@@ -130,7 +130,7 @@ const defaultComponentArgs: DataTableInputTypes = {
   ],
   emptyResultsMessage: 'No results',
   selectedRows: [],
-  totalRecordsOnServer: 2 as any as InputSignal<number | undefined>,
+  totalRecordsOnServer: 3 as any as InputSignal<number | undefined>,
 }
 
 export const WithMockData = {
@@ -259,6 +259,7 @@ const extendedComponentArgs: DataTableInputTypes = {
   ],
   emptyResultsMessage: 'No results',
   selectedRows: [],
+  totalRecordsOnServer: 12 as any as InputSignal<number | undefined>,
 }
 
 export const ResponsiveWithScroll = {
