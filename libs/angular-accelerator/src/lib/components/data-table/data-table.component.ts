@@ -1,19 +1,21 @@
 import { formatDate } from '@angular/common'
 import {
-  AfterContentInit,
   Component,
-  ContentChild,
-  ContentChildren,
-  EventEmitter,
   Injector,
-  Input,
   LOCALE_ID,
   OnInit,
-  Output,
   QueryList,
   TemplateRef,
-  ViewChildren,
+  computed,
+  contentChild,
+  contentChildren,
+  effect,
   inject,
+  input,
+  model,
+  output,
+  signal,
+  viewChildren,
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
@@ -47,7 +49,8 @@ import { findTemplate } from '../../utils/template.utils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
-
+import { observableOutput } from '../../utils/observable-output.utils'
+import { toObservable } from '@angular/core/rxjs-interop'
 
 export type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -82,468 +85,466 @@ export interface DataTableComponentState {
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
 })
-export class DataTableComponent extends DataSortBase implements OnInit, AfterContentInit {
+export class DataTableComponent extends DataSortBase implements OnInit {
   private readonly router = inject(Router)
   private readonly injector = inject(Injector)
   private readonly userService = inject(UserService)
   private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
   private readonly liveAnnouncer = inject(LiveAnnouncer)
 
-  FilterType = FilterType
-  TemplateType = TemplateType
-  checked = true
+  FilterType = signal(FilterType)
+  TemplateType = signal(TemplateType)
+  checked = signal(true)
 
-  _rows$ = new BehaviorSubject<Row[]>([])
-  @Input()
-  get rows(): Row[] {
-    return this._rows$.getValue()
-  }
-  set rows(value: Row[]) {
-    if (this._rows$.getValue().length) this.resetPage()
-    this._rows$.next(value)
+  rows = model<Row[]>([])
+  rows$ = toObservable(this.rows)
+  selectedRows = model<Row[]>([])
+  selectedIds = signal<Array<string | number>>([])
 
-    const currentResults = value.length;
-    const newStatus = currentResults === 0
-        ? 'OCX_DATA_TABLE.NO_SEARCH_RESULTS_FOUND'
-        : 'OCX_DATA_TABLE.SEARCH_RESULTS_FOUND';
-    
-    firstValueFrom(
-      this.translateService.get(newStatus, { results: currentResults }) ).then((translatedText: string) => {
-        this.liveAnnouncer.announce(translatedText);
-      }
-    );
-  }
-
-  _selectionIds$ = new BehaviorSubject<(string | number)[]>([])
-  @Input()
-  set selectedRows(value: Row[] | string[] | number[]) {
-    this._selectionIds$.next(
-      value.map((row) => {
-        if (typeof row === 'object') {
-          return row.id
-        }
-        return row
-      })
-    )
-  }
-
-  _filters$ = new BehaviorSubject<Filter[]>([])
-  @Input()
-  get filters(): Filter[] {
-    return this._filters$.getValue()
-  }
-  set filters(value: Filter[]) {
-    if (this._filters$.getValue().length) this.resetPage()
-    this._filters$.next(value)
-  }
-  _sortDirection$ = new BehaviorSubject<DataSortDirection>(DataSortDirection.NONE)
-  @Input()
-  get sortDirection(): DataSortDirection {
-    return this._sortDirection$.getValue()
-  }
-  set sortDirection(value: DataSortDirection) {
-    this._sortDirection$.next(value)
-  }
-  _sortColumn$ = new BehaviorSubject<string>('')
-  @Input()
-  get sortColumn(): string {
-    return this?._sortColumn$.getValue()
-  }
-  set sortColumn(value: string) {
-    this?._sortColumn$.next(value)
-  }
+  filters = model<Filter[]>([])
+  filters$ = toObservable(this.filters)
+  sortDirection = signal<DataSortDirection>(DataSortDirection.NONE)
+  sortDirection$ = toObservable(this.sortDirection)
+  sortColumn = signal<string>('')
+  sortColumn$ = toObservable(this.sortColumn)
   columnTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
   columnFilterTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
-  _columns$ = new BehaviorSubject<DataTableColumn[]>([])
-  @Input()
-  get columns(): DataTableColumn[] {
-    return this._columns$.getValue()
-  }
-  set columns(value: DataTableColumn[]) {
-    this._columns$.next(value)
-    const obs = value.map((c) => this.getTemplate(c, TemplateType.CELL))
-    const filterObs = value.map((c) => this.getTemplate(c, TemplateType.FILTERCELL))
-    this.columnTemplates$ = combineLatest(obs).pipe(
-      map((values) => Object.fromEntries(value.map((c, i) => [c.id, values[i]]))),
-      debounceTime(50)
-    )
-    this.columnFilterTemplates$ = combineLatest(filterObs).pipe(
-      map((values) => Object.fromEntries(value.map((c, i) => [c.id, values[i]])))
-    )
-  }
-  @Input() clientSideFiltering = true
-  @Input() clientSideSorting = true
-  @Input() sortStates: DataSortDirection[] = [DataSortDirection.ASCENDING, DataSortDirection.DESCENDING]
+  columns = model<DataTableColumn[]>([])
+  columns$ = toObservable(this.columns)
+  clientSideFiltering = input(true)
+  clientSideFiltering$ = toObservable(this.clientSideFiltering)
+  clientSideSorting = input(true)
+  clientSideSorting$ = toObservable(this.clientSideSorting)
+  sortStates = model<DataSortDirection[]>([DataSortDirection.ASCENDING, DataSortDirection.DESCENDING])
 
-  _pageSizes$ = new BehaviorSubject<number[]>([10, 25, 50])
-  @Input()
-  get pageSizes(): number[] {
-    return this._pageSizes$.getValue()
-  }
-  set pageSizes(value: number[]) {
-    this._pageSizes$.next(value)
-  }
-  displayedPageSize$: Observable<number>
-  _pageSize$ = new BehaviorSubject<number | undefined>(undefined)
-  @Input()
-  get pageSize(): number | undefined {
-    return this._pageSize$.getValue()
-  }
-  set pageSize(value: number | undefined) {
-    this._pageSize$.next(value)
-  }
+  pageSizes = model<number[]>([10, 25, 50])
+  displayedPageSize = computed(() => {
+    const pageSize = this.pageSize()
+    const pageSizes = this.pageSizes()
 
-  @Input() emptyResultsMessage: string | undefined
-  @Input() name = ''
-  @Input() deletePermission: string | string[] | undefined
-  @Input() viewPermission: string | string[] | undefined
-  @Input() editPermission: string | string[] | undefined
-  @Input() deleteActionVisibleField: string | undefined
-  @Input() deleteActionEnabledField: string | undefined
-  @Input() viewActionVisibleField: string | undefined
-  @Input() viewActionEnabledField: string | undefined
-  @Input() editActionVisibleField: string | undefined
-  @Input() editActionEnabledField: string | undefined
-  @Input() selectionEnabledField: string | undefined
-  @Input() allowSelectAll = true
-  @Input() paginator = true
+    return pageSize ?? pageSizes.find((val): val is number => typeof val === 'number') ?? 50
+  })
+  pageSize = model<number | undefined>(undefined)
 
-  _page$ = new BehaviorSubject<number>(0)
-  @Input()
-  get page(): number {
-    return this._page$.getValue()
-  }
-  set page(value: number) {
-    this._page$.next(value)
-  }
+  emptyResultsMessage = input<string | undefined>(undefined)
+  name = model<string>('')
+  deletePermission = input<string | string[] | undefined>(undefined)
+  viewPermission = input<string | string[] | undefined>(undefined)
+  editPermission = input<string | string[] | undefined>(undefined)
+  deleteActionVisibleField = input<string | undefined>(undefined)
+  deleteActionEnabledField = input<string | undefined>(undefined)
+  viewActionVisibleField = input<string | undefined>(undefined)
+  viewActionEnabledField = input<string | undefined>(undefined)
+  editActionVisibleField = input<string | undefined>(undefined)
+  editActionEnabledField = input<string | undefined>(undefined)
+  selectionEnabledField = input<string | undefined>(undefined)
+  allowSelectAll = input<boolean>(true)
+  paginator = input<boolean>(true)
 
-  @Input() tableStyle: { [klass: string]: any } | undefined
-  @Input()
-  get totalRecordsOnServer(): number | undefined {
-    return this.params['totalRecordsOnServer'] ? Number(this.params['totalRecordsOnServer']) : undefined
-  }
-  set totalRecordsOnServer(value: number | undefined) {
-    this.params['totalRecordsOnServer'] = value?.toString() ?? '0'
-  }
-  @Input() currentPageShowingKey = 'OCX_DATA_TABLE.SHOWING'
-  @Input() currentPageShowingWithTotalOnServerKey = 'OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER'
-  params: { [key: string]: string } = {
-    currentPage: '{currentPage}',
-    totalPages: '{totalPages}',
-    rows: '{rows}',
-    first: '{first}',
-    last: '{last}',
-    totalRecords: '{totalRecords}',
-  }
+  page = model<number>(0)
+  tableStyle = input<{ [klass: string]: any } | undefined>(undefined)
+  totalRecordOnServer = input<number | undefined>(undefined)
+  currentPageShowingKey = input<string>('OCX_DATA_TABLE.SHOWING')
+  currentPageShowingWithTotalOnServerKey = input<string>('OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER')
+  params = computed(() => {
+    const totalRecordOnServer = this.totalRecordOnServer()
+    return {
+      currentPage: '{currentPage}',
+      totalPages: '{totalPages}',
+      rows: '{rows}',
+      first: '{first}',
+      last: '{last}',
+      totalRecords: '{totalRecords}',
+      ...(totalRecordOnServer !== undefined && { totalRecordsOnServer: totalRecordOnServer }),
+    }
+  })
 
-  @Input() stringCellTemplate: TemplateRef<any> | undefined
-  @ContentChild('stringCell') stringCellChildTemplate: TemplateRef<any> | undefined
-  get _stringCell(): TemplateRef<any> | undefined {
-    return this.stringCellTemplate || this.stringCellChildTemplate
-  }
+  stringCellTemplate = input<TemplateRef<any> | undefined>(undefined)
+  stringCellChildTemplate = contentChild<TemplateRef<any>>('stringCell')
+  stringCell = computed(() => {
+    return this.stringCellTemplate() || this.stringCellChildTemplate()
+  })
 
-  @Input() numberCellTemplate: TemplateRef<any> | undefined
-  @ContentChild('numberCell') numberCellChildTemplate: TemplateRef<any> | undefined
-  get _numberCell(): TemplateRef<any> | undefined {
-    return this.numberCellTemplate || this.numberCellChildTemplate
-  }
+  numberCellTemplate = input<TemplateRef<any> | undefined>(undefined)
+  numberCellChildTemplate = contentChild<TemplateRef<any>>('numberCell')
+  numberCell = computed(() => {
+    return this.numberCellTemplate() || this.numberCellChildTemplate()
+  })
 
-  @Input() dateCellTemplate: TemplateRef<any> | undefined
-  @ContentChild('dateCell') dateCellChildTemplate: TemplateRef<any> | undefined
-  get _dateCell(): TemplateRef<any> | undefined {
-    return this.dateCellTemplate || this.dateCellChildTemplate
-  }
+  dateCellTemplate = input<TemplateRef<any> | undefined>(undefined)
+  dateCellChildTemplate = contentChild<TemplateRef<any>>('dateCell')
+  dateCell = computed(() => {
+    return this.dateCellTemplate() || this.dateCellChildTemplate()
+  })
 
-  @Input() relativeDateCellTemplate: TemplateRef<any> | undefined
-  @ContentChild('relativeDateCell') relativeDateCellChildTemplate: TemplateRef<any> | undefined
-  get _relativeDateCell(): TemplateRef<any> | undefined {
-    return this.relativeDateCellTemplate || this.relativeDateCellChildTemplate
-  }
+  relativeDateCellTemplate = input<TemplateRef<any> | undefined>(undefined)
+  relativeDateCellChildTemplate = contentChild<TemplateRef<any>>('relativeDateCell')
+  relativeDateCell = computed(() => {
+    return this.relativeDateCellTemplate() || this.relativeDateCellChildTemplate()
+  })
 
-  @Input() cellTemplate: TemplateRef<any> | undefined
-  @ContentChild('cell') cellChildTemplate: TemplateRef<any> | undefined
-  get _cell(): TemplateRef<any> | undefined {
-    return this.cellTemplate || this.cellChildTemplate
-  }
-  @Input() translationKeyCellTemplate: TemplateRef<any> | undefined
-  @ContentChild('translationKeyCell') translationKeyCellChildTemplate: TemplateRef<any> | undefined
-  get _translationKeyCell(): TemplateRef<any> | undefined {
-    return this.translationKeyCellTemplate || this.translationKeyCellChildTemplate
-  }
-  @Input() stringFilterCellTemplate: TemplateRef<any> | undefined
-  @ContentChild('stringFilterCell') stringFilterCellChildTemplate: TemplateRef<any> | undefined
-  get _stringFilterCell(): TemplateRef<any> | undefined {
-    return this.stringFilterCellTemplate || this.stringFilterCellChildTemplate
-  }
-  @Input() numberFilterCellTemplate: TemplateRef<any> | undefined
-  @ContentChild('numberFilterCell') numberFilterCellChildTemplate: TemplateRef<any> | undefined
-  get _numberFilterCell(): TemplateRef<any> | undefined {
-    return this.numberFilterCellTemplate || this.numberFilterCellChildTemplate
-  }
-  @Input() dateFilterCellTemplate: TemplateRef<any> | undefined
-  @ContentChild('dateFilterCell') dateFilterCellChildTemplate: TemplateRef<any> | undefined
-  get _dateFilterCell(): TemplateRef<any> | undefined {
-    return this.dateFilterCellTemplate || this.dateFilterCellChildTemplate
-  }
-  @Input() relativeDateFilterCellTemplate: TemplateRef<any> | undefined
-  @ContentChild('relativeDateFilterCell') relativeDateFilterCellChildTemplate: TemplateRef<any> | undefined
-  get _relativeDateFilterCell(): TemplateRef<any> | undefined {
-    return this.relativeDateFilterCellTemplate || this.relativeDateFilterCellChildTemplate
-  }
-  @Input() filterCellTemplate: TemplateRef<any> | undefined
-  @ContentChild('filterCell') filterCellChildTemplate: TemplateRef<any> | undefined
-  get _filterCell(): TemplateRef<any> | undefined {
-    return this.filterCellTemplate || this.filterCellChildTemplate
-  }
-  @Input() translationKeyFilterCellTemplate: TemplateRef<any> | undefined
-  @ContentChild('translationKeyFilterCell') translationKeyFilterCellChildTemplate: TemplateRef<any> | undefined
-  get _translationKeyFilterCell(): TemplateRef<any> | undefined {
-    return this.translationKeyFilterCellTemplate || this.translationKeyFilterCellChildTemplate
-  }
+  cellTemplate = input<TemplateRef<any> | undefined>(undefined)
+  cellChildTemplate = contentChild<TemplateRef<any>>('cell')
+  cell = computed(() => {
+    return this.cellTemplate() || this.cellChildTemplate()
+  })
 
-  _additionalActions$ = new BehaviorSubject<DataAction[]>([])
-  @Input()
-  get additionalActions(): DataAction[] {
-    return this._additionalActions$.getValue()
-  }
-  set additionalActions(value: DataAction[]) {
-    this._additionalActions$.next(value)
-  }
-  @Input() frozenActionColumn = false
-  @Input() actionColumnPosition: 'left' | 'right' = 'right'
+  translationKeyCellTemplate = input<TemplateRef<any> | undefined>(undefined)
+  translationKeyCellChildTemplate = contentChild<TemplateRef<any>>('translationKeyCell')
+  translationKeyCell = computed(() => {
+    return this.translationKeyCellTemplate() || this.translationKeyCellChildTemplate()
+  })
 
-  @Output() filtered = new EventEmitter<Filter[]>()
-  @Output() sorted = new EventEmitter<Sort>()
-  @Output() viewTableRow = new EventEmitter<Row>()
-  @Output() editTableRow = new EventEmitter<Row>()
-  @Output() deleteTableRow = new EventEmitter<Row>()
-  @Output() selectionChanged = new EventEmitter<Row[]>()
-  @Output() pageChanged = new EventEmitter<number>()
-  @Output() pageSizeChanged = new EventEmitter<number>()
-  @Output() componentStateChanged = new EventEmitter<DataTableComponentState>()
+  stringFilterCellTemplate = input<TemplateRef<any> | undefined>(undefined)
+  stringFilterCellChildTemplate = contentChild<TemplateRef<any>>('stringFilterCell')
+  stringFilterCell = computed(() => {
+    return this.stringFilterCellTemplate() || this.stringFilterCellChildTemplate()
+  })
 
-  displayedRows$: Observable<unknown[]> | undefined
-  selectedRows$: Observable<unknown[]> | undefined
+  numberFilterCellTemplate = input<TemplateRef<any> | undefined>(undefined)
+  numberFilterCellChildTemplate = contentChild<TemplateRef<any>>('numberFilterCell')
+  numberFilterCell = computed(() => {
+    return this.numberFilterCellTemplate() || this.numberFilterCellChildTemplate()
+  })
 
-  currentFilterColumn$ = new BehaviorSubject<DataTableColumn | null>(null)
-  currentEqualFilterOptions$: Observable<{ options: SelectItem[]; column: DataTableColumn | undefined }> | undefined
-  currentEqualSelectedFilters$: Observable<unknown[]> | undefined
-  truthyFilterOptions = [
-    {
-      key: 'OCX_DATA_TABLE.FILTER_YES',
-      value: true,
-    },
-    {
-      key: 'OCX_DATA_TABLE.FILTER_NO',
-      value: false,
-    },
-  ]
-  currentTruthySelectedFilters$: Observable<unknown[]> | undefined
-  filterAmounts$: Observable<Record<string, number>> | undefined
+  dateFilterCellTemplate = input<TemplateRef<any> | undefined>(undefined)
+  dateFilterCellChildTemplate = contentChild<TemplateRef<any>>('dateFilterCell')
+  dateFilterCell = computed(() => {
+    return this.dateFilterCellTemplate() || this.dateFilterCellChildTemplate()
+  })
 
-  overflowActions$: Observable<DataAction[]>
-  inlineActions$: Observable<DataAction[]>
-  overflowMenuItems$: Observable<MenuItem[]>
-  currentMenuRow$ = new BehaviorSubject<Row | null>(null)
+  relativeDateFilterCellTemplate = input<TemplateRef<any> | undefined>(undefined)
+  relativeDateFilterCellChildTemplate = contentChild<TemplateRef<any>>('relativeDateFilterCell')
+  relativeDateFilterCell = computed(() => {
+    return this.relativeDateFilterCellTemplate() || this.relativeDateFilterCellChildTemplate()
+  })
 
-  templates$: BehaviorSubject<QueryList<PrimeTemplate> | undefined> = new BehaviorSubject<
-    QueryList<PrimeTemplate> | undefined
-  >(undefined)
-  @ContentChildren(PrimeTemplate)
-  set templates(value: QueryList<PrimeTemplate> | undefined) {
-    this.templates$.next(value)
-  }
+  filterCellTemplate = input<TemplateRef<any> | undefined>(undefined)
+  filterCellChildTemplate = contentChild<TemplateRef<any>>('filterCell')
+  filterCell = computed(() => {
+    return this.filterCellTemplate() || this.filterCellChildTemplate()
+  })
 
-  viewTemplates$: BehaviorSubject<QueryList<PrimeTemplate> | undefined> = new BehaviorSubject<
-    QueryList<PrimeTemplate> | undefined
-  >(undefined)
-  @ViewChildren(PrimeTemplate)
-  set viewTemplates(value: QueryList<PrimeTemplate> | undefined) {
-    this.viewTemplates$.next(value)
-  }
+  translationKeyFilterCellTemplate = input<TemplateRef<any> | undefined>(undefined)
+  translationKeyFilterCellChildTemplate = contentChild<TemplateRef<any>>('translationKeyFilterCell')
+  translationKeyFilterCell = computed(() => {
+    return this.translationKeyFilterCellTemplate() || this.translationKeyFilterCellChildTemplate()
+  })
 
-  parentTemplates$: BehaviorSubject<QueryList<PrimeTemplate> | null | undefined> = new BehaviorSubject<
-    QueryList<PrimeTemplate> | null | undefined
-  >(undefined)
-  @Input()
-  set parentTemplates(value: QueryList<PrimeTemplate> | null | undefined) {
-    this.parentTemplates$.next(value)
-  }
+  additionalActions = model<DataAction[]>([])
+  frozenActionColumn = input<boolean>(false)
+  actionColumnPosition = input<'left' | 'right'>('right')
 
+  filtered = output<Filter[]>()
+  sorted = output<Sort>()
+  viewTableRow = observableOutput<Row>()
+  editTableRow = observableOutput<Row>()
+  deleteTableRow = observableOutput<Row>()
+  selectionChanged = observableOutput<Row[]>()
+  pageChanged = output<number>()
+  pageSizeChanged = output<number>()
+  componentStateChanged = output<DataTableComponentState>()
+
+  displayedRows$ = combineLatest([
+    this.rows$,
+    this.filters$,
+    this.sortColumn$,
+    this.sortDirection$,
+    this.columns$,
+    this.clientSideFiltering$,
+    this.clientSideSorting$,
+  ]).pipe(
+    map(([rows, filters, sortColumn, sortDirection, columns, clientSideFiltering, clientSideSorting]) => {
+      return { rows, filters, sortColumn, sortDirection, columns, clientSideFiltering, clientSideSorting }
+    }),
+    mergeMap((params) =>
+      this.translateItems(params.rows, params.columns, params.clientSideFiltering, params.clientSideSorting).pipe(
+        map((translations) => ({ ...params, translations }))
+      )
+    ),
+    map((params) => ({
+      ...params,
+      rows: this.filterItems([params.rows, params.filters, params.translations], params.clientSideFiltering),
+    })),
+    map((params) => ({
+      ...params,
+      rows: this.sortItems(
+        [params.rows, params.sortColumn, params.sortDirection, params.translations],
+        params.columns,
+        params.clientSideSorting
+      ),
+    })),
+    map(({ rows }) => this.flattenItems(rows))
+  )
+
+  selectedFilteredRows = computed(() => {
+    const selectionIds = this.selectedIds()
+    const rows = this.rows()
+    this.page()
+    return selectionIds.map((rowId) => rows.find((r) => r.id === rowId)).filter((row): row is Row => row !== undefined)
+  })
+
+  currentFilterColumn = signal<DataTableColumn | null>(null)
+  currentFilterColumn$ = toObservable(this.currentFilterColumn)
+  currentEqualFilterOptions$ = combineLatest([
+    this.rows$,
+    this.currentFilterColumn$,
+    this.filters$,
+    this.columns$,
+  ]).pipe(
+    filter(
+      ([_, currentFilterColumn, __, ___]) =>
+        !currentFilterColumn?.filterType || currentFilterColumn.filterType === FilterType.EQUALS
+    ),
+    mergeMap(([rows, currentFilterColumn, filters, columns]) => {
+      if (!currentFilterColumn?.id) {
+        return of({ options: [], column: undefined })
+      }
+
+      const currentFilters = filters
+        .filter(
+          (filter) =>
+            filter.columnId === currentFilterColumn?.id &&
+            (!currentFilterColumn.filterType || currentFilterColumn.filterType === FilterType.EQUALS)
+        )
+        .map((filter) => filter.value)
+
+      const columnValues = rows
+        .map((row) => row[currentFilterColumn?.id])
+        .filter((value) => value !== null && value !== undefined && value !== '')
+
+      if (currentFilterColumn.columnType === ColumnType.DATE) {
+        return of({
+          options: columnValues.map(
+            (c) =>
+              ({
+                label: c,
+                value: c,
+                toFilterBy: formatDate(`${c}`, currentFilterColumn.dateFormat ?? 'medium', this.locale),
+              }) as SelectItem
+          ),
+          column: currentFilterColumn,
+        })
+      }
+
+      const translateObservable =
+        columns.find((c) => c.id === currentFilterColumn?.id)?.columnType === ColumnType.TRANSLATION_KEY
+          ? this.translateColumnValues(columnValues as string[])
+          : of(Object.fromEntries(columnValues.map((cv) => [cv, cv])))
+      return translateObservable.pipe(
+        map((translatedValues) => {
+          return Object.values(translatedValues)
+            .concat(currentFilters)
+            .filter((value, index, self) => self.indexOf(value) === index && value !== null && value !== '')
+            .map(
+              (filterOption) =>
+                ({
+                  label: filterOption,
+                  value: filterOption,
+                  toFilterBy: filterOption,
+                }) as SelectItem
+            )
+        }),
+        map((options) => {
+          return {
+            options: options,
+            column: currentFilterColumn,
+          }
+        })
+      )
+    })
+  )
+
+  currentEqualSelectedFilters = computed(() => {
+    const filters = this.filters()
+    const currentFilterColumn = this.currentFilterColumn()
+    return filters
+      .filter(
+        (filter) =>
+          filter.columnId === currentFilterColumn?.id &&
+          (!currentFilterColumn.filterType || currentFilterColumn.filterType === FilterType.EQUALS)
+      )
+      .map((filter) => filter.value)
+  })
+
+  currentTruthySelectedFilters = computed(() => {
+    const filters = this.filters()
+    const currentFilterColumn = this.currentFilterColumn()
+    return filters
+      .filter(
+        (filter) =>
+          filter.columnId === currentFilterColumn?.id && currentFilterColumn.filterType === FilterType.IS_NOT_EMPTY
+      )
+      .map((filter) => filter.value)
+  })
+
+  filterAmounts = computed<Record<string, number>>(() => {
+    const filters = this.filters()
+    return filters
+      .map((filter) => filter.columnId)
+      .map((columnId) => ({ [columnId]: filters.filter((filter) => filter.columnId === columnId).length }))
+      .reduce((acc, curr) => ({ ...acc, ...curr }), {})
+  })
+
+  overflowActions = computed(() => {
+    return this.additionalActions().filter((action) => action.showAsOverflow)
+  })
+  overflowActions$ = toObservable(this.overflowActions)
+  inlineActions = computed(() => {
+    return this.additionalActions().filter((action) => !action.showAsOverflow)
+  })
+  currentMenuRow = signal<Row | null>(null)
+
+  overflowMenuItems$ = combineLatest([toObservable(this.overflowActions), toObservable(this.currentMenuRow)]).pipe(
+    switchMap(([actions, row]) =>
+      this.filterActionsBasedOnPermissions(actions).pipe(
+        map((permittedActions) => ({ actions: permittedActions, row: row }))
+      )
+    ),
+    mergeMap(({ actions, row }) => {
+      if (actions.length === 0) {
+        return of([])
+      }
+
+      return this.translateService.get([...actions.map((a) => a.labelKey || '')]).pipe(
+        map((translations) => {
+          return actions.map((a) => ({
+            label: translations[a.labelKey || ''],
+            icon: a.icon,
+            styleClass: (a.classes || []).join(' '),
+            disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
+            visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
+            command: () => a.callback(row),
+          }))
+        })
+      )
+    })
+  )
+
+  templates = contentChildren<PrimeTemplate>(PrimeTemplate)
+  templates$ = toObservable(this.templates)
+
+  viewTemplates = viewChildren<PrimeTemplate>(PrimeTemplate)
+  viewTemplates$ = toObservable(this.viewTemplates)
+
+  parentTemplates = model<PrimeTemplate[] | null | undefined>(undefined)
+  parentTemplates$ = toObservable(this.parentTemplates)
+
+  // TODO: Change while migrating dataView
   get viewTableRowObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
-    return dv?.viewItemObserved || dv?.viewItem.observed || this.viewTableRow.observed
+    return dv?.viewItemObserved || dv?.viewItem.observed || this.viewTableRow.observed()
   }
+  // TODO: Change while migrating dataView
   get editTableRowObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
-    return dv?.editItemObserved || dv?.editItem.observed || this.editTableRow.observed
+    return dv?.editItemObserved || dv?.editItem.observed || this.editTableRow.observed()
   }
+  // TODO: Change while migrating dataView
   get deleteTableRowObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
-    return dv?.deleteItemObserved || dv?.deleteItem.observed || this.deleteTableRow.observed
+    return dv?.deleteItemObserved || dv?.deleteItem.observed || this.deleteTableRow.observed()
   }
+  // TODO: Change while migrating dataView
   get anyRowActionObserved(): boolean {
     return this.viewTableRowObserved || this.editTableRowObserved || this.deleteTableRowObserved
   }
 
+  // TODO: Change while migrating dataView
   get selectionChangedObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
-    return dv?.selectionChangedObserved || dv?.selectionChanged.observed || this.selectionChanged.observed
+    return dv?.selectionChangedObserved || dv?.selectionChanged.observed || this.selectionChanged.observed()
   }
-
-  templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
-
-  private cachedOverflowActions$: Observable<DataAction[]>
-  private cachedOverflowMenuItemsVisibility$: Observable<boolean> | undefined
 
   constructor() {
     const locale = inject(LOCALE_ID)
     const translateService = inject(TranslateService)
 
     super(locale, translateService)
-    this.name = this.name || this.router.url.replace(/[^A-Za-z0-9]/, '_')
-    this.displayedPageSize$ = combineLatest([this._pageSize$, this._pageSizes$]).pipe(
-      map(([pageSize, pageSizes]) => pageSize ?? pageSizes.find((val): val is number => typeof val === 'number') ?? 50)
-    )
-    this.overflowActions$ = this._additionalActions$.pipe(
-      map((actions) => actions.filter((action) => action.showAsOverflow))
-    )
-    this.inlineActions$ = this._additionalActions$.pipe(
-      map((actions) => actions.filter((action) => !action.showAsOverflow))
-    )
-    this.overflowMenuItems$ = combineLatest([this.overflowActions$, this.currentMenuRow$]).pipe(
-      switchMap(([actions, row]) =>
-        this.filterActionsBasedOnPermissions(actions).pipe(
-          map((permittedActions) => ({ actions: permittedActions, row: row }))
-        )
-      ),
-      mergeMap(({ actions, row }) => {
-        if (actions.length === 0) {
-          return of([])
-        }
 
-        return this.translateService.get([...actions.map((a) => a.labelKey || '')]).pipe(
-          map((translations) => {
-            return actions.map((a) => ({
-              label: translations[a.labelKey || ''],
-              icon: a.icon,
-              styleClass: (a.classes || []).join(' '),
-              disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
-              visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
-              command: () => a.callback(row),
-            }))
-          })
-        )
+    effect(() => {
+      const rows = this.rows()
+      if (rows.length) {
+        this.resetPage()
+      }
+
+      const currentResults = rows.length
+      const newStatus =
+        currentResults === 0 ? 'OCX_DATA_TABLE.NO_SEARCH_RESULTS_FOUND' : 'OCX_DATA_TABLE.SEARCH_RESULTS_FOUND'
+
+      firstValueFrom(this.translateService.get(newStatus, { results: currentResults })).then(
+        (translatedText: string) => {
+          this.liveAnnouncer.announce(translatedText)
+        }
+      )
+    })
+
+    effect(() => {
+      const filters = this.filters()
+      if (filters.length) {
+        this.resetPage()
+      }
+    })
+
+    effect(() => {
+      const columns = this.columns()
+      const obs = columns.map((c) => this.getTemplate(c, TemplateType.CELL))
+      const filterObs = columns.map((c) => this.getTemplate(c, TemplateType.FILTERCELL))
+      this.columnTemplates$ = combineLatest(obs).pipe(
+        map((values) => Object.fromEntries(columns.map((c, i) => [c.id, values[i]]))),
+        debounceTime(50)
+      )
+      this.columnFilterTemplates$ = combineLatest(filterObs).pipe(
+        map((values) => Object.fromEntries(columns.map((c, i) => [c.id, values[i]])))
+      )
+    })
+
+    effect(() => {
+      const selectedRows = this.selectedRows()
+      const selectedIds = selectedRows.map((row) => {
+        if (typeof row === 'object') {
+          return row.id
+        }
+        return row
       })
-    )
+      this.selectedIds.set(selectedIds)
+    })
+
+    effect(() => {
+      this.emitComponentStateChanged()
+    })
+
+    effect(() => {
+      this.sorted.emit({ sortColumn: this.sortColumn(), sortDirection: this.sortDirection() })
+    })
+
+    effect(() => {
+      this.emitSelectionChanged()
+    })
+
+    effect(() => {
+      const filters = this.filters()
+      this.filtered.emit(filters)
+    })
+
+    effect(() => {
+      this.pageChanged.emit(this.page())
+    })
+
+    effect(() => {
+      const pageSize = this.pageSize()
+      if (pageSize === undefined) {
+        return
+      }
+      this.pageSizeChanged.emit(pageSize)
+    })
 
     this.rowSelectable = this.rowSelectable.bind(this)
-
-    this.cachedOverflowActions$ = this.overflowActions$.pipe(
-      shareReplay(1) // Cache the last emitted value
-    )
   }
 
   ngOnInit(): void {
-    this.displayedRows$ = combineLatest([this._rows$, this._filters$, this._sortColumn$, this._sortDirection$]).pipe(
-      mergeMap((params) => this.translateItems(params, this.columns, this.clientSideFiltering, this.clientSideSorting)),
-      map((params) => this.filterItems(params, this.clientSideFiltering)),
-      map((params) => this.sortItems(params, this.columns, this.clientSideSorting)),
-      map(([rows]) => this.flattenItems(rows))
-    )
-    this.currentTruthySelectedFilters$ = combineLatest([this._filters$, this.currentFilterColumn$]).pipe(
-      map(([filters, currentFilterColumn]) => {
-        return filters
-          .filter(
-            (filter) =>
-              filter.columnId === currentFilterColumn?.id && currentFilterColumn.filterType === FilterType.IS_NOT_EMPTY
-          )
-          .map((filter) => filter.value)
-      })
-    )
-    this.currentEqualSelectedFilters$ = combineLatest([this._filters$, this.currentFilterColumn$]).pipe(
-      map(([filters, currentFilterColumn]) => {
-        return filters
-          .filter(
-            (filter) =>
-              filter.columnId === currentFilterColumn?.id &&
-              (!currentFilterColumn.filterType || currentFilterColumn.filterType === FilterType.EQUALS)
-          )
-          .map((filter) => filter.value)
-      })
-    )
-    this.currentEqualFilterOptions$ = combineLatest([this._rows$, this.currentFilterColumn$, this._filters$]).pipe(
-      filter(
-        ([_, currentFilterColumn, __]) =>
-          !currentFilterColumn?.filterType || currentFilterColumn.filterType === FilterType.EQUALS
-      ),
-      mergeMap(([rows, currentFilterColumn, filters]) => {
-        if (!currentFilterColumn?.id) {
-          return of({ options: [], column: undefined })
-        }
+    this.name.set(this.name() || this.router.url.replace(/[^A-Za-z0-9]/, '_'))
 
-        const currentFilters = filters
-          .filter(
-            (filter) =>
-              filter.columnId === currentFilterColumn?.id &&
-              (!currentFilterColumn.filterType || currentFilterColumn.filterType === FilterType.EQUALS)
-          )
-          .map((filter) => filter.value)
-
-        const columnValues = rows
-          .map((row) => row[currentFilterColumn?.id])
-          .filter((value) => value !== null && value !== undefined && value !== '')
-
-        if (currentFilterColumn.columnType === ColumnType.DATE) {
-          return of({
-            options: columnValues.map(
-              (c) =>
-                ({
-                  label: c,
-                  value: c,
-                  toFilterBy: formatDate(`${c}`, currentFilterColumn.dateFormat ?? 'medium', this.locale),
-                }) as SelectItem
-            ),
-            column: currentFilterColumn,
-          })
-        }
-
-        const translateObservable =
-          this.columns.find((c) => c.id === currentFilterColumn?.id)?.columnType === ColumnType.TRANSLATION_KEY
-            ? this.translateColumnValues(columnValues as string[])
-            : of(Object.fromEntries(columnValues.map((cv) => [cv, cv])))
-        return translateObservable.pipe(
-          map((translatedValues) => {
-            return Object.values(translatedValues)
-              .concat(currentFilters)
-              .filter((value, index, self) => self.indexOf(value) === index && value !== null && value !== '')
-              .map(
-                (filterOption) =>
-                  ({
-                    label: filterOption,
-                    value: filterOption,
-                    toFilterBy: filterOption,
-                  }) as SelectItem
-              )
-          }),
-          map((options) => {
-            return {
-              options: options,
-              column: currentFilterColumn,
-            }
-          })
-        )
-      })
-    )
-    this.filterAmounts$ = this._filters$.pipe(
-      map((filters) =>
-        filters
-          .map((filter) => filter.columnId)
-          .map((columnId) => [columnId, filters.filter((filter) => filter.columnId === columnId).length])
-      ),
-      map((amounts) => Object.fromEntries(amounts))
-    )
-    this.mapSelectionToRows()
     this.emitComponentStateChanged()
   }
 
@@ -551,86 +552,35 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return columnValues.length ? this.translateService.get(columnValues as string[]) : of({})
   }
 
-  emitComponentStateChanged(state: DataTableComponentState = {}) {
-    this.displayedPageSize$
-      .pipe(withLatestFrom(this._selectionIds$, this._rows$), first())
-      .subscribe(([pageSize, selectedIds, rows]) => {
-        this.componentStateChanged.emit({
-          filters: this.filters,
-          sorting: {
-            sortColumn: this.sortColumn,
-            sortDirection: this.sortDirection,
-          },
-          pageSize,
-          activePage: this.page,
-          selectedRows: rows.filter((row) => selectedIds.includes(row.id)),
-          ...state,
-        })
-      })
+  emitComponentStateChanged() {
+    this.componentStateChanged.emit({
+      filters: this.filters(),
+      sorting: {
+        sortColumn: this.sortColumn(),
+        sortDirection: this.sortDirection(),
+      },
+      pageSize: this.displayedPageSize(),
+      activePage: this.page(),
+      selectedRows: this.rows().filter((row) => this.selectedIds().includes(row.id)),
+    })
   }
 
-  ngAfterContentInit() {
-    this.templates$.value?.forEach((item) => {
-      switch (item.getType()) {
-        case 'stringCell':
-          this.stringCellChildTemplate = item.template
-          break
-        case 'numberCell':
-          this.numberCellChildTemplate = item.template
-          break
-        case 'dateCell':
-          this.dateCellChildTemplate = item.template
-          break
-        case 'relativeDateCell':
-          this.relativeDateCellChildTemplate = item.template
-          break
-        case 'cellTemplate':
-          this.cellChildTemplate = item.template
-          break
-        case 'translationKeyCell':
-          this.translationKeyCellChildTemplate = item.template
-          break
-        case 'stringFilterCell':
-          this.stringFilterCellChildTemplate = item.template
-          break
-        case 'numberFilterCell':
-          this.numberFilterCellChildTemplate = item.template
-          break
-        case 'dateFilterCell':
-          this.dateFilterCellChildTemplate = item.template
-          break
-        case 'relativeDateFilterCell':
-          this.relativeDateFilterCellChildTemplate = item.template
-          break
-        case 'filterCellTemplate':
-          this.filterCellChildTemplate = item.template
-          break
-        case 'translationKeyFilterCell':
-          this.translationKeyFilterCellChildTemplate = item.template
-          break
-      }
-    })
+  emitSelectionChanged() {
+    this.selectionChanged.emit(this.rows().filter((row) => this.selectedIds().includes(row.id)))
   }
 
   onSortColumnClick(sortColumn: string) {
     const newSortDirection = this.columnNextSortDirection(sortColumn)
 
-    this._sortColumn$.next(sortColumn)
-    this._sortDirection$.next(newSortDirection)
-
-    this.sorted.emit({ sortColumn: sortColumn, sortDirection: newSortDirection })
-    this.emitComponentStateChanged({
-      sorting: {
-        sortColumn: sortColumn,
-        sortDirection: newSortDirection,
-      },
-    })
+    this.sortColumn.set(sortColumn)
+    this.sortDirection.set(newSortDirection)
   }
 
   columnNextSortDirection(sortColumn: string) {
-    return sortColumn !== this.sortColumn
-      ? this.sortStates[0]
-      : this.sortStates[(this.sortStates.indexOf(this.sortDirection) + 1) % this.sortStates.length]
+    const sortStates = this.sortStates()
+    return sortColumn !== this.sortColumn()
+      ? sortStates[0]
+      : sortStates[(sortStates.indexOf(this.sortDirection()) + 1) % sortStates.length]
   }
 
   onDeleteRow(selectedTableRow: Row) {
@@ -646,11 +596,11 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
 
   onFilterChosen(column: DataTableColumn) {
-    this.currentFilterColumn$.next(column)
+    this.currentFilterColumn.set(column)
   }
 
   onMultiselectFilterChange(column: DataTableColumn, event: any) {
-    const filters = this.filters
+    const filters = this.filters()
       .filter((filter) => filter.columnId !== column.id)
       .concat(
         event.value.map((value: Primitive) => ({
@@ -659,24 +609,13 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
           filterType: column.filterType,
         }))
       )
-    if (this.clientSideFiltering) {
-      this.filters = filters
+    if (this.clientSideFiltering()) {
+      this.filters.set(filters)
     }
-    this.filtered.emit(filters)
-    this.emitComponentStateChanged({
-      filters,
-    })
-    this.resetPage()
-  }
-
-  getSelectedFilters(columnId: string): unknown[] | undefined {
-    return this.filters.filter((filter) => filter.columnId === columnId).map((filter) => filter.value)
   }
 
   sortIconTitle(sortColumn: string) {
-    return this.sortDirectionToTitle(
-      this.columnNextSortDirection(sortColumn)
-    )
+    return this.sortDirectionToTitle(this.columnNextSortDirection(sortColumn))
   }
 
   sortDirectionToTitle(sortDirection: DataSortDirection) {
@@ -690,20 +629,8 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     }
   }
 
-  mapSelectionToRows() {
-    // Include _page$ to force fresh array references on page navigation
-    // to satisfy PrimeNG DataTable selection tracking, because it needs new object references to detect changes
-    this.selectedRows$ = combineLatest([this._selectionIds$, this._rows$, this._page$]).pipe(
-      map(([selectedRowIds, rows, _]) => {
-        return selectedRowIds
-          .map((rowId) => rows.find((r) => r.id === rowId))
-          .filter((row): row is Row => row !== undefined)
-      })
-    )
-  }
-
   isRowSelectionDisabled(rowObject: Row) {
-    return !!this.selectionEnabledField && !this.fieldIsTruthy(rowObject, this.selectionEnabledField)
+    return !!this.selectionEnabledField() && !this.fieldIsTruthy(rowObject, this.selectionEnabledField())
   }
 
   rowSelectable(event: any) {
@@ -712,26 +639,22 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
   onSelectionChange(selection: Row[]) {
     let newSelectionIds = selection.map((row) => row.id)
-    const rows = this._rows$.getValue()
+    const rows = this.rows()
 
-    if (this.selectionEnabledField) {
-      const disabledRowIds = rows.filter((r) => !this.fieldIsTruthy(r, this.selectionEnabledField)).map((row) => row.id)
+    if (this.selectionEnabledField()) {
+      const disabledRowIds = rows
+        .filter((r) => !this.fieldIsTruthy(r, this.selectionEnabledField()))
+        .map((row) => row.id)
       if (disabledRowIds.length > 0) {
         newSelectionIds = this.mergeWithDisabledKeys(newSelectionIds, disabledRowIds)
       }
     }
 
-    this._selectionIds$.next(newSelectionIds)
-    this.emitSelectionChanged()
-    this.emitComponentStateChanged()
-  }
-
-  emitSelectionChanged() {
-    this.selectionChanged.emit(this._rows$.getValue().filter((row) => this._selectionIds$.getValue().includes(row.id)))
+    this.selectedIds.set(newSelectionIds)
   }
 
   mergeWithDisabledKeys(newSelectionIds: (string | number)[], disabledRowIds: (string | number)[]) {
-    const previousSelectionIds = this._selectionIds$.getValue()
+    const previousSelectionIds = this.selectedIds()
     const previouslySelectedAndDisabled = previousSelectionIds.filter((id) => disabledRowIds.includes(id))
     const disabledAndPreviouslyDeselected = disabledRowIds.filter((id) => !previousSelectionIds.includes(id))
     const updatedSelection = [...newSelectionIds]
@@ -753,25 +676,17 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
 
   isSelected(row: Row) {
-    return this._selectionIds$.getValue().includes(row.id)
+    return this.selectedIds().includes(row.id)
   }
 
   onPageChange(event: any) {
     const page = event.first / event.rows
-    this.page = page
-    this.pageSize = event.rows
-    this.pageChanged.emit(page)
-    this.pageSizeChanged.emit(event.rows)
-    this.emitComponentStateChanged({
-      activePage: page,
-      pageSize: event.rows,
-    })
+    this.page.set(page)
+    this.pageSize.set(event.rows)
   }
 
   resetPage() {
-    this.page = 0
-    this.pageChanged.emit(this.page)
-    this.emitComponentStateChanged()
+    this.page.set(0)
   }
 
   fieldIsTruthy(object: any, key: any) {
@@ -779,7 +694,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
 
   toggleOverflowMenu(event: MouseEvent, menu: Menu, row: Row) {
-    this.currentMenuRow$.next(row)
+    this.currentMenuRow.set(row)
     menu.toggle(event)
   }
 
@@ -798,7 +713,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return isValidDate(d)
   }
 
-  cellTemplatesData: TemplatesData = {
+  private cellTemplatesData: TemplatesData = {
     templatesObservables: {},
     idSuffix: ['IdTableCell', 'IdCell'],
     templateNames: {
@@ -810,7 +725,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     },
   }
 
-  filterTemplatesData: TemplatesData = {
+  private filterTemplatesData: TemplatesData = {
     templatesObservables: {},
     idSuffix: ['IdTableFilterCell', 'IdFilterCell', 'IdTableCell', 'IdCell'],
     templateNames: {
@@ -846,7 +761,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     },
   }
 
-  templatesDataMap: Record<TemplateType, TemplatesData> = {
+  private templatesDataMap: Record<TemplateType, TemplatesData> = {
     [TemplateType.CELL]: this.cellTemplatesData,
     [TemplateType.FILTERCELL]: this.filterTemplatesData,
   }
@@ -858,37 +773,37 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       case TemplateType.CELL:
         switch (columnType) {
           case ColumnType.DATE:
-            template = this._dateCell
+            template = this.dateCell()
             break
           case ColumnType.NUMBER:
-            template = this._numberCell
+            template = this.numberCell()
             break
           case ColumnType.RELATIVE_DATE:
-            template = this._relativeDateCell
+            template = this.relativeDateCell()
             break
           case ColumnType.TRANSLATION_KEY:
-            template = this._translationKeyCell
+            template = this.translationKeyCell()
             break
           default:
-            template = this._stringCell
+            template = this.stringCell()
         }
         break
       case TemplateType.FILTERCELL:
         switch (columnType) {
           case ColumnType.DATE:
-            template = this._dateFilterCell
+            template = this.dateFilterCell()
             break
           case ColumnType.NUMBER:
-            template = this._numberFilterCell
+            template = this.numberFilterCell()
             break
           case ColumnType.RELATIVE_DATE:
-            template = this._relativeDateFilterCell
+            template = this.relativeDateFilterCell()
             break
           case ColumnType.TRANSLATION_KEY:
-            template = this._translationKeyFilterCell
+            template = this.translationKeyFilterCell()
             break
           default:
-            template = this._stringFilterCell
+            template = this.stringFilterCell()
         }
         break
     }

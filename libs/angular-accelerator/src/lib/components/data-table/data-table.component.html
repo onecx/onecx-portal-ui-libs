@@ -1,59 +1,59 @@
 <ng-template #actionColumn let-rowObject="localRowObject">
-  @if (anyRowActionObserved || this.additionalActions.length > 0 || ((this.overflowActions$ | async) ?? []).length > 0)
-  {
+  @if ( anyRowActionObserved || additionalActions().length > 0 || overflowActions().length > 0 ) {
   <td
     class="actions"
     pFrozenColumn
-    [frozen]="frozenActionColumn"
-    [alignFrozen]="actionColumnPosition"
-    [attr.name]="actionColumnPosition === 'left' ? 'action-column-left' : 'action-column-right'"
-    [ngClass]="(frozenActionColumn && actionColumnPosition === 'left') ? 'border-right-1' : (frozenActionColumn && actionColumnPosition === 'right') ? 'border-left-1' : ''"
+    [frozen]="frozenActionColumn()"
+    [alignFrozen]="actionColumnPosition()"
+    [attr.name]="actionColumnPosition() === 'left' ? 'action-column-left' : 'action-column-right'"
+    [ngClass]="(frozenActionColumn() && actionColumnPosition() === 'left') ? 'border-right-1' : (frozenActionColumn() && actionColumnPosition() === 'right') ? 'border-left-1' : ''"
   >
     <div class="icon-button-row-wrapper">
-      @if (viewTableRowObserved && (!viewActionVisibleField || fieldIsTruthy(rowObject, viewActionVisibleField))) {
+      @if (viewTableRowObserved && (!viewActionVisibleField() || fieldIsTruthy(rowObject, viewActionVisibleField()))) {
       <button
-        id="{{resolveFieldData(rowObject, 'id')}}-viewButton"
-        *ocxIfPermission="viewPermission"
-        [disabled]="!!viewActionEnabledField && !fieldIsTruthy(rowObject, viewActionEnabledField)"
+        id="{{ resolveFieldData(rowObject, 'id') }}-viewButton"
+        *ocxIfPermission="viewPermission()"
+        [disabled]="!!viewActionEnabledField() && !fieldIsTruthy(rowObject, viewActionEnabledField())"
         pButton
         class="p-button-rounded p-button-text viewTableRowButton"
-        title="{{ 'OCX_DATA_TABLE.ACTIONS.VIEW' | translate }}"
+        [title]="'OCX_DATA_TABLE.ACTIONS.VIEW' | translate"
         [attr.aria-label]="'OCX_DATA_TABLE.ACTIONS.VIEW' | translate"
         icon="pi pi-eye"
         (click)="onViewRow(rowObject)"
         [attr.name]="'data-table-action-button'"
       ></button>
-      } @if (editTableRowObserved && (!editActionVisibleField || fieldIsTruthy(rowObject, editActionVisibleField))) {
+      } @if (editTableRowObserved && (!editActionVisibleField() || fieldIsTruthy(rowObject, editActionVisibleField())))
+      {
       <button
-        id="{{resolveFieldData(rowObject, 'id')}}-editButton"
-        *ocxIfPermission="editPermission"
-        [disabled]="!!editActionEnabledField && !fieldIsTruthy(rowObject, editActionEnabledField)"
+        [id]="resolveFieldData(rowObject, 'id')+'-editButton'"
+        *ocxIfPermission="editPermission()"
+        [disabled]="!!editActionEnabledField() && !fieldIsTruthy(rowObject, editActionEnabledField())"
         pButton
         class="p-button-rounded p-button-text editTableRowButton"
-        title="{{ 'OCX_DATA_TABLE.ACTIONS.EDIT' | translate }}"
+        [title]="'OCX_DATA_TABLE.ACTIONS.EDIT' | translate"
         [attr.aria-label]="'OCX_DATA_TABLE.ACTIONS.EDIT' | translate"
         icon="pi pi-pencil"
         (click)="onEditRow(rowObject)"
         [attr.name]="'data-table-action-button'"
       ></button>
-      } @if (deleteTableRowObserved && (!deleteActionVisibleField || fieldIsTruthy(rowObject,
-      deleteActionVisibleField))) {
+      } @if ( deleteTableRowObserved && (!deleteActionVisibleField() || fieldIsTruthy(rowObject,
+      deleteActionVisibleField())) ) {
       <button
-        id="{{resolveFieldData(rowObject, 'id')}}-deleteButton"
-        *ocxIfPermission="deletePermission"
-        [disabled]="!!deleteActionEnabledField && !fieldIsTruthy(rowObject, deleteActionEnabledField)"
+        [id]="resolveFieldData(rowObject, 'id')+'-deleteButton'"
+        *ocxIfPermission="deletePermission()"
+        [disabled]="!!deleteActionEnabledField() && !fieldIsTruthy(rowObject, deleteActionEnabledField())"
         pButton
         class="p-button-rounded p-button-text p-button-danger deleteTableRowButton"
-        title="{{ 'OCX_DATA_TABLE.ACTIONS.DELETE' | translate }}"
+        [title]="'OCX_DATA_TABLE.ACTIONS.DELETE' | translate"
         [attr.aria-label]="'OCX_DATA_TABLE.ACTIONS.DELETE' | translate"
         icon="pi pi-trash"
         (click)="onDeleteRow(rowObject)"
         [attr.name]="'data-table-action-button'"
       ></button>
-      } @for (action of inlineActions$ | async; track action) { @if ((!action.actionVisibleField ||
-      fieldIsTruthy(rowObject, action.actionVisibleField))) {
+      } @for (action of inlineActions(); track action) { @if (!action.actionVisibleField || fieldIsTruthy(rowObject,
+      action.actionVisibleField)) {
       <button
-        id="{{resolveFieldData(rowObject, 'id')}}-{{action.id ? action.id.concat('ActionButton') : 'inlineActionButton'}}"
+        [id]="resolveFieldData(rowObject, 'id')+'-'+(action.id ? action.id.concat('ActionButton') : 'inlineActionButton')"
         *ocxIfPermission="action.permission"
         pButton
         class="p-button-rounded p-button-text"
@@ -62,7 +62,10 @@
         (click)="action.callback(rowObject)"
         [title]="action.labelKey ? (action.labelKey | translate) : ''"
         [attr.aria-label]="action.labelKey ? (action.labelKey | translate) : ''"
-        [disabled]="action.disabled || (!!action.actionEnabledField && !fieldIsTruthy(rowObject, action.actionEnabledField))"
+        [disabled]="
+            action.disabled ||
+            (!!action.actionEnabledField && !fieldIsTruthy(rowObject, action.actionEnabledField))
+          "
         [attr.name]="'data-table-action-button'"
       ></button>
       } } @if (hasVisibleOverflowMenuItems(rowObject) | async) {
@@ -83,39 +86,40 @@
 </ng-template>
 
 <ng-template #actionColumnHeader>
-  @if (anyRowActionObserved || this.additionalActions.length > 0 || ((this.overflowActions$ | async) ?? []).length > 0)
-  {
+  @if ( anyRowActionObserved || additionalActions().length > 0 || overflowActions().length > 0 ) {
   <th
     pFrozenColumn
-    [frozen]="frozenActionColumn"
-    [alignFrozen]="actionColumnPosition"
-    [ngClass]="(frozenActionColumn && actionColumnPosition === 'left') ? 'border-right-1' : (frozenActionColumn && actionColumnPosition === 'right') ? 'border-left-1' : ''"
-    [attr.name]="actionColumnPosition === 'left' ? 'action-column-header-left' : 'action-column-header-right'"
+    [frozen]="frozenActionColumn()"
+    [alignFrozen]="actionColumnPosition()"
+    [ngClass]="(frozenActionColumn() && actionColumnPosition() === 'left') ? 'border-right-1' : (frozenActionColumn() && actionColumnPosition() === 'right') ? 'border-left-1' : ''"
+    [attr.name]="actionColumnPosition() === 'left' ? 'action-column-header-left' : 'action-column-header-right'"
   >
     {{ 'OCX_DATA_TABLE.ACTIONS_COLUMN_NAME' | translate }}
   </th>
   }
 </ng-template>
 
-@if ((displayedPageSize$ | async); as displayedPageSize) { @if ((columnTemplates$ | async) ?? {}; as columnTemplates) {
+@if (displayedPageSize(); as displayedPageSize) { @if ((columnTemplates$ | async) ?? {}; as columnTemplates) {
 <p-table
   [value]="(displayedRows$ | async) ?? []"
-  responsiveLayout="scroll"
-  [paginator]="paginator"
-  [first]="page * displayedPageSize"
+  [paginator]="paginator()"
+  [first]="page() * displayedPageSize"
   (onPage)="onPageChange($event)"
   [rows]="displayedPageSize"
   [showCurrentPageReport]="true"
-  currentPageReportTemplate="{{ (totalRecordsOnServer ? currentPageShowingWithTotalOnServerKey : currentPageShowingKey) | translate:params }}"
-  [rowsPerPageOptions]="this.pageSizes ?? []"
-  id="dataTable_{{name}}"
+  [currentPageReportTemplate]="
+      (totalRecordOnServer() ? currentPageShowingWithTotalOnServerKey() : currentPageShowingKey())
+        | translate : params()
+    "
+  [rowsPerPageOptions]="pageSizes()"
+  [id]="'dataTable_' + name()"
   (selectionChange)="onSelectionChange($event)"
   dataKey="id"
   [rowTrackBy]="rowTrackByFunction"
-  [selection]="(selectedRows$ | async) ?? []"
+  [selection]="selectedFilteredRows()"
   [scrollable]="true"
   scrollHeight="flex"
-  [style]="tableStyle"
+  [style]="tableStyle()"
   paginatorDropdownAppendTo="body"
   [rowSelectable]="rowSelectable"
   tableStyleClass="h-full"
@@ -124,43 +128,49 @@
     <tr style="vertical-align: top">
       @if (selectionChangedObserved) {
       <th style="width: 4rem" scope="col">
-        @if (allowSelectAll) {
+        @if (allowSelectAll()) {
         <p-tableHeaderCheckbox
-          pTooltip="{{'OCX_DATA_TABLE.SELECT_ALL_TOOLTIP' | translate}}"
-          ariaLabel="{{'OCX_DATA_TABLE.SELECT_ALL_ARIA_LABEL' | translate}}"
+          [pTooltip]="'OCX_DATA_TABLE.SELECT_ALL_TOOLTIP' | translate"
+          [ariaLabel]="'OCX_DATA_TABLE.SELECT_ALL_ARIA_LABEL' | translate"
         ></p-tableHeaderCheckbox>
         }
       </th>
-      } @if (actionColumnPosition === 'left';) {
+      } @if (actionColumnPosition() === 'left') {
       <ng-container *ngTemplateOutlet="actionColumnHeader"></ng-container>
-      } @for (column of columns; track column) { @if (column.sortable || column.filterable) {
+      } @for (column of columns(); track column) { @if (column.sortable || column.filterable) {
       <th scope="col">
         <div
           class="table-header-wrapper flex flex-column justify-content-between align-items-start"
           style="height: 100%"
         >
-          <span class="flex" id="{{column.id}}-header-name">{{ column.nameKey | translate }}</span>
+          <span class="flex" [id]="column.id + '-header-name'">{{ column.nameKey | translate }}</span>
           <span class="flex icon-button-header-wrapper">
             @if (column.sortable) {
             <button
               class="pi sortButton pl-0"
-              [class.pi-sort-alt]="(column?.id === sortColumn && sortDirection === 'NONE') || column?.id !== sortColumn"
-              [class.pi-sort-amount-up]="column?.id === sortColumn && sortDirection === 'ASCENDING'"
-              [class.pi-sort-amount-down]="column?.id === sortColumn && sortDirection === 'DESCENDING'"
+              [class.pi-sort-alt]="(column?.id === sortColumn() && sortDirection() === 'NONE') || column?.id !== sortColumn()"
+              [class.pi-sort-amount-up]="column?.id === sortColumn() && sortDirection() === 'ASCENDING'"
+              [class.pi-sort-amount-down]="column?.id === sortColumn() && sortDirection() === 'DESCENDING'"
               (click)="onSortColumnClick(column.id)"
-              [pTooltip]="sortIconTitle(column.id) | translate "
+              [pTooltip]="sortIconTitle(column.id) | translate"
               tooltipPosition="bottom"
-              [attr.aria-label]="('OCX_DATA_TABLE.TOGGLE_BUTTON.ARIA_LABEL' | translate: { column: (column.nameKey | translate), direction: (sortDirectionToTitle(columnNextSortDirection(column.id)) | translate)})"
+              [attr.aria-label]="
+                    'OCX_DATA_TABLE.TOGGLE_BUTTON.ARIA_LABEL'
+                      | translate : {
+                          column: (column.nameKey | translate),
+                          direction: (sortDirectionToTitle(columnNextSortDirection(column.id)) | translate)
+                        }
+                  "
             ></button>
             } @if (currentEqualFilterOptions$ | async; as equalFilterOptions) { @if (columnFilterTemplates$ | async; as
             columnFilterTemplates) { @if (column.filterable && (!column.filterType || column.filterType ===
-            FilterType.EQUALS)) {
+            FilterType().EQUALS)) {
             <p-multiselect
               class="filterMultiSelect"
               [options]="equalFilterOptions.column?.id === column.id ? equalFilterOptions.options : []"
-              [ngModel]="(currentEqualSelectedFilters$ | async) || []"
+              [ngModel]="currentEqualSelectedFilters() || []"
               [showToggleAll]="true"
-              emptyFilterMessage="{{ 'OCX_DATA_TABLE.EMPTY_FILTER_MESSAGE' | translate }}"
+              [emptyFilterMessage]="'OCX_DATA_TABLE.EMPTY_FILTER_MESSAGE' | translate"
               [displaySelectedLabel]="false"
               [resetFilterOnHide]="true"
               (onChange)="onMultiselectFilterChange(column, $event)"
@@ -170,13 +180,15 @@
               (onFocus)="onFilterChosen(column)"
               [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
               [ariaLabel]="'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL' | translate"
-              [ariaFilterLabel]="('OCX_DATA_TABLE.FILTER_ARIA_LABEL' | translate: { column: column.nameKey | translate})"
+              [ariaFilterLabel]="
+                        'OCX_DATA_TABLE.FILTER_ARIA_LABEL' | translate : { column: column.nameKey | translate }
+                      "
             >
               <ng-template #selecteditems let-value>
                 <div
                   class="pi"
-                  [class.pi-filter]="!((filterAmounts$ | async) || {})[column.id]"
-                  [class.pi-filter-fill]="((filterAmounts$ | async) || {})[column.id] > 0"
+                  [class.pi-filter]="!filterAmounts()[column.id]"
+                  [class.pi-filter-fill]="filterAmounts()[column.id] > 0"
                 ></div>
               </ng-template>
               <ng-template #item let-value>
@@ -184,21 +196,24 @@
                 <ng-container
                   [ngTemplateOutlet]="template"
                   [ngTemplateOutletContext]="{
-                      rowObject: getRowObjectFromMultiselectItem(value, column),
-                      column: column
-                  }"
+                            rowObject: getRowObjectFromMultiselectItem(value, column),
+                            column: column
+                          }"
                 >
                 </ng-container>
                 }
               </ng-template>
             </p-multiselect>
-            } } } @if (column.filterable && column.filterType === FilterType.IS_NOT_EMPTY) {
+            } } } @if (column.filterable && column.filterType === FilterType().IS_NOT_EMPTY) {
             <p-multiselect
               class="filterMultiSelect"
-              [options]="truthyFilterOptions"
-              [ngModel]="(currentTruthySelectedFilters$ | async) || []"
+              [options]="[
+                    { key: 'OCX_DATA_TABLE.FILTER_YES', value: true },
+                    { key: 'OCX_DATA_TABLE.FILTER_NO', value: false }
+                  ]"
+              [ngModel]="currentTruthySelectedFilters() || []"
               [showToggleAll]="true"
-              emptyFilterMessage="{{ 'OCX_DATA_TABLE.EMPTY_FILTER_MESSAGE' | translate }}"
+              [emptyFilterMessage]="'OCX_DATA_TABLE.EMPTY_FILTER_MESSAGE' | translate"
               [displaySelectedLabel]="false"
               [resetFilterOnHide]="true"
               (onChange)="onMultiselectFilterChange(column, $event)"
@@ -207,16 +222,18 @@
               (onFocus)="onFilterChosen(column)"
               [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
               [ariaLabel]="'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL' | translate"
-              [ariaFilterLabel]="('OCX_DATA_TABLE.FILTER_ARIA_LABEL' | translate: { column: column.nameKey | translate})"
+              [ariaFilterLabel]="
+                    'OCX_DATA_TABLE.FILTER_ARIA_LABEL' | translate : { column: column.nameKey | translate }
+                  "
             >
               <ng-template #selecteditems let-value>
                 <div
                   class="pi"
-                  [class.pi-filter]="!((filterAmounts$ | async) || {})[column.id]"
-                  [class.pi-filter-fill]="((filterAmounts$ | async) || {})[column.id] > 0"
+                  [class.pi-filter]="!filterAmounts()[column.id]"
+                  [class.pi-filter-fill]="filterAmounts()[column.id] > 0"
                 ></div>
               </ng-template>
-              <ng-template #item let-value> {{value.key | translate}} </ng-template>
+              <ng-template #item let-value> {{ value.key | translate }} </ng-template>
             </p-multiselect>
             }
           </span>
@@ -224,11 +241,12 @@
       </th>
       } @else {
       <th scope="col">{{ column.nameKey | translate }}</th>
-      } } @if (actionColumnPosition === 'right';) {
+      } } @if (actionColumnPosition() === 'right') {
       <ng-container *ngTemplateOutlet="actionColumnHeader"></ng-container>
       }
     </tr>
   </ng-template>
+
   <ng-template #body let-rowObject>
     @if (columnTemplates) {
     <tr>
@@ -239,50 +257,47 @@
           [(ngModel)]="checked"
           [binary]="true"
           [disabled]="true"
-          [ariaLabel]="'OCX_DATA_TABLE.SELECT_ARIA_LABEL' | translate: { key: rowObject.id}"
+          [ariaLabel]="'OCX_DATA_TABLE.SELECT_ARIA_LABEL' | translate : { key: rowObject.id }"
         ></p-checkbox>
         } @else {
         <p-tableCheckbox
           [value]="rowObject"
           [disabled]="isRowSelectionDisabled(rowObject)"
-          [ariaLabel]="'OCX_DATA_TABLE.SELECT_ARIA_LABEL' | translate: { key: rowObject.id}"
+          [ariaLabel]="'OCX_DATA_TABLE.SELECT_ARIA_LABEL' | translate : { key: rowObject.id }"
         ></p-tableCheckbox>
         }
       </td>
-      } @if (actionColumnPosition === 'left';) {
-      <ng-container *ngTemplateOutlet="actionColumn; context: {localRowObject: rowObject}"></ng-container>
-      } @for (column of columns; track column) {
+      } @if (actionColumnPosition() === 'left') {
+      <ng-container *ngTemplateOutlet="actionColumn; context: { localRowObject: rowObject }"></ng-container>
+      } @for (column of columns(); track column) {
       <td>
-        @defer(on viewport){ @if (columnTemplates[column.id]) {
+        @defer (on viewport) { @if (columnTemplates[column.id]) {
         <ng-container
-          [ngTemplateOutlet]="
-                _cell ? _cell: columnTemplates[column.id]
-              "
-          [ngTemplateOutletContext]="{
-                  rowObject: rowObject,
-                  column: column,
-              }"
+          [ngTemplateOutlet]="cell() ? cell() : columnTemplates[column.id]"
+          [ngTemplateOutletContext]="{ rowObject: rowObject, column: column }"
         >
         </ng-container>
         } } @placeholder {
         <p-skeleton width="3rem" />
         }
       </td>
-      } @if (actionColumnPosition === 'right';) {
-      <ng-container *ngTemplateOutlet="actionColumn; context: {localRowObject: rowObject}"></ng-container>
+      } @if (actionColumnPosition() === 'right') {
+      <ng-container *ngTemplateOutlet="actionColumn; context: { localRowObject: rowObject }"></ng-container>
       }
     </tr>
     }
   </ng-template>
+
   <ng-template #emptymessage>
     <tr>
-      <!-- If allowSelectAll is set to true, an additional column for checkbox selection is added and
-       the colSpan needs to be increased by one so that the row is rendered the whole width of the table. -->
       <td
-        [colSpan]="columns.length + ((anyRowActionObserved || this.additionalActions.length > 0) ? 1 : 0) +
-  (allowSelectAll ? 1 : 0)"
+        [colSpan]="
+            columns().length +
+            ((anyRowActionObserved || additionalActions().length > 0) ? 1 : 0) +
+            (allowSelectAll() ? 1 : 0)
+          "
       >
-        {{ emptyResultsMessage || ("OCX_DATA_TABLE.EMPTY_RESULT" | translate) }}
+        {{ emptyResultsMessage() || ('OCX_DATA_TABLE.EMPTY_RESULT' | translate) }}
       </td>
     </tr>
   </ng-template>
@@ -290,7 +305,7 @@
 } }
 
 <ng-template pTemplate="defaultStringCell" let-rowObject="rowObject" let-column="column">
-  <ng-container> {{ resolveFieldData(rowObject, column.id)}} </ng-container>
+  <ng-container> {{ resolveFieldData(rowObject, column.id) }} </ng-container>
 </ng-template>
 
 <ng-template pTemplate="defaultNumberCell" let-rowObject="rowObject" let-column="column">
