@@ -3,10 +3,12 @@ import { HttpClient } from '@angular/common/http'
 import { Injectable, inject } from '@angular/core'
 import { Config } from '@onecx/integration-interface'
 import { BehaviorSubject, firstValueFrom } from 'rxjs'
+import { createLogger } from '../utils/logger.utils'
 
 @Injectable()
 export class AppConfigService {
   private http = inject(HttpClient)
+  private readonly logger = createLogger('AppConfigService')
 
   config$ = new BehaviorSubject<{ [key: string]: string }>({})
 
@@ -24,7 +26,7 @@ export class AppConfigService {
           }
         })
         .catch((e) => {
-          console.log(`Failed to load env configuration`)
+          this.logger.error('Failed to load env configuration', e)
           reject(e)
         })
     })

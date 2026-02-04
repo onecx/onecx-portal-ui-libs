@@ -3,6 +3,7 @@ import { Injectable, InjectionToken, OnDestroy, Type, inject } from '@angular/co
 import { RemoteComponent, RemoteComponentsTopic, Technologies } from '@onecx/integration-interface'
 import { Observable, map, shareReplay } from 'rxjs'
 import { PermissionService } from './permission.service'
+import { createLogger } from '../utils/logger.utils'
 
 export const SLOT_SERVICE: InjectionToken<SlotService> = new InjectionToken('SLOT_SERVICE')
 
@@ -29,6 +30,7 @@ export interface SlotServiceInterface {
 @Injectable({ providedIn: 'root' })
 export class SlotService implements SlotServiceInterface, OnDestroy {
   private permissionsService = inject(PermissionService)
+  private readonly logger = createLogger('SlotService')
 
   private _remoteComponents$: RemoteComponentsTopic | undefined
   get remoteComponents$() {
@@ -108,7 +110,7 @@ export class SlotService implements SlotServiceInterface, OnDestroy {
       })
       return undefined
     } catch (e) {
-      console.log('Failed to load remote module ', component.exposedModule, component.remoteEntryUrl, e)
+      this.logger.error('Failed to load remote module ', component.exposedModule, component.remoteEntryUrl, e)
       return undefined
     }
   }
