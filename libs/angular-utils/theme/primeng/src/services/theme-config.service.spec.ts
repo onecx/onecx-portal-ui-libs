@@ -9,16 +9,6 @@ import { OverrideType, ThemeOverride } from '@onecx/integration-interface'
 
 describe('ThemeConfigService', () => {
   let service: ThemeConfigService
-  const overrides: Array<ThemeOverride> = [
-    {
-      type: OverrideType.PRIMENG,
-      value: '{"semantic":{ "primary": {"500": "#3b82f6"},"extend":{"onecx":{"topbar": {"bg":{"color":"#3b82f6"}}}}}}',
-    },
-    {
-      type: OverrideType.PRIMENG,
-      value: '{"semantic":{ "primary": {"500": "#b23bff"}, "extend":{"onecx":{"menu": {"text":{"color":"#3b82f6"}}}}}}',
-    },
-  ]
 
   const theme = {
     id: 'my-test-theme',
@@ -30,11 +20,6 @@ describe('ThemeConfigService', () => {
       topbar: {},
       sidebar: {},
     },
-  }
-
-  const themeWithOverrides = {
-    ...theme,
-    overrides: overrides,
   }
 
   beforeEach(() => {
@@ -50,17 +35,15 @@ describe('ThemeConfigService', () => {
         { provide: SKIP_STYLE_SCOPING, useValue: true },
       ],
     })
-
-    service = TestBed.inject(ThemeConfigService)
   })
 
   it('should be created', () => {
-    expect(service).toBeTruthy()
+    expect(TestBed.inject(ThemeConfigService)).toBeTruthy()
   })
 
   it('should subscribe to currentThemeTopic$', fakeAsync(() => {
     const themeService = TestBed.inject(ThemeService)
-    const spy = jest.spyOn(service, 'applyThemeVariables')
+    const spy = jest.spyOn(TestBed.inject(ThemeConfigService), 'applyThemeVariables')
 
     themeService.currentTheme$.publish(theme)
     tick(100)
@@ -68,6 +51,7 @@ describe('ThemeConfigService', () => {
   }))
 
   it('should represent old values in the new theme configuration', fakeAsync(() => {
+    TestBed.inject(ThemeConfigService)
     const themeService = TestBed.inject(ThemeService)
     const primeng = TestBed.inject(PrimeNG)
     const spy = jest.spyOn(primeng, 'setThemeConfig')
@@ -82,25 +66,64 @@ describe('ThemeConfigService', () => {
     )
   }))
 
-  
-  it('should merge PRIMENG overrides', fakeAsync(() => {
-      const themeService = TestBed.inject(ThemeService);
-      const primeng = TestBed.inject(PrimeNG);
-      const spy = jest.spyOn(primeng, 'setThemeConfig');
+  const override: Array<ThemeOverride> = [
+    {
+      type: OverrideType.PRIMENG,
+      value: '{"semantic":{ "primary": {"500": "#3b82f6"},"extend":{"onecx":{"topbar": {"bg":{"color":"#3b82f6"}}}}}}',
+    }
+  ]
 
-      themeService.currentTheme$.publish(themeWithOverrides);
-      tick(100);
+  it('should merge PRIMENG override when IS_ADVANCED_THEMING is true', fakeAsync(() => {
+    TestBed.inject(ThemeConfigService)
+    const themeService = TestBed.inject(ThemeService);
+    const primeng = TestBed.inject(PrimeNG);
+    const spy = jest.spyOn(primeng, 'setThemeConfig');
 
-      expect(spy).toHaveBeenCalled();
-      const callArg = spy.mock.calls.at(-1)?.[0] as any;
-      expect(callArg).toBeTruthy();
+    themeService.currentTheme$.publish(
+      {
+        ...theme,
+        overrides: override,
+      }
+    );
 
-      const preset = callArg.theme.preset;
+    tick(100);
 
-      expect(preset.semantic.primary['500']).toEqual('#b23bff');
+    expect(spy).toHaveBeenCalled();
+    const callArg = spy.mock.calls.at(-1)?.[0] as any;
+    expect(callArg).toBeTruthy();
 
-      expect(preset.semantic.extend.onecx.topbar.bg.color).toEqual('#3b82f6');
+    const preset = callArg.theme.preset;
 
-      expect(preset.semantic.extend.onecx.menu.text.color).toEqual('#3b82f6');
+    expect(preset.semantic.primary['500']).toEqual('#3b82f6');
+
+    expect(preset.semantic.extend.onecx.topbar.bg.color).toEqual('#3b82f6');
+  }))
+
+  it('should not merge override when IS_ADVANCED_THEMING is false', fakeAsync(() => {
+    TestBed.overrideProvider(IS_ADVANCED_THEMING, { useValue: false });
+    TestBed.inject(ThemeConfigService)
+
+    const themeService = TestBed.inject(ThemeService);
+    const primeng = TestBed.inject(PrimeNG);
+    const spy = jest.spyOn(primeng, 'setThemeConfig');
+
+    themeService.currentTheme$.publish(
+      {
+        ...theme,
+        overrides: override,
+      }
+    );
+
+    tick(100);
+
+    expect(spy).toHaveBeenCalled();
+    const callArg = spy.mock.calls.at(-1)?.[0] as any;
+    expect(callArg).toBeTruthy();
+
+    const preset = callArg.theme.preset;
+
+    expect(preset.semantic.primary['500']).toEqual(theme.properties.general['primary-color']);
+
+    expect(preset.semantic.extend.onecx.topbar.bg.color).not.toEqual('#3b82f6');
   }))
 })
