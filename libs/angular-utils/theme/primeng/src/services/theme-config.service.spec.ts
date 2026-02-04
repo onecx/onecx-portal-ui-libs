@@ -8,7 +8,6 @@ import { SKIP_STYLE_SCOPING } from '@onecx/angular-utils'
 import { OverrideType, ThemeOverride } from '@onecx/integration-interface'
 
 describe('ThemeConfigService', () => {
-  let service: ThemeConfigService
 
   const theme = {
     id: 'my-test-theme',
