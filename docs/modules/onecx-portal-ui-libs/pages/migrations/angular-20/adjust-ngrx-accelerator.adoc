@@ -1,4 +1,4 @@
-[#removed-ngrx-accelerator]
+[#adjust-ngrx-accelerator]
 = Adjust ngrx-accelerator library utilities
 
 Several store connector utilities have been moved from the `ngrx-accelerator` library to `ngrx-integration-interface`. The following utilities were moved:

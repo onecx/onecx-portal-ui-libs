@@ -14,18 +14,14 @@ The following item has been **added** and must now be used for translation:
 
 All applications need to migrate to this new loader and the new way of providing `TranslateService`. Please follow the steps below to update your application.
 
----
-
 == Required migration steps
 
 * Remove all imports and usages of:
 ** `AsyncTranslateLoader`
 ** `createTranslateLoader`
-* Update `module.ts` and `app.component.ts` to provide translation using the new mechanism
+* Update `module.ts` to provide translation using the new mechanism
 * Replace existing loader configuration with `OnecxTranslateLoader`
-* Update `TranslateService` usage to the new DI pattern (`inject()`)
 
----
 
 == Provide translation using `OnecxTranslateLoader`
 
@@ -80,14 +76,15 @@ Now you must use `provideTranslateService()` and configure `OnecxTranslateLoader
 })
 ----
 
-== Update `app.component.ts` to DI pattern
+== Update `app.component.ts` injection to DI pattern (Recommended)
 
-Because the translation mechanism changed, `TranslateService` should no longer be injected via constructor. The recommended way is using Angular’s `inject()` function.
+`TranslateService` should no longer be injected via constructor. The recommended way is using Angular’s `inject()` function.
 
----
+.Injection Example
+[%collapsible]
+====
 
-=== Before
-
+.Before
 [source,ts]
 ----
 import { Component} from '@angular/core'
@@ -113,9 +110,7 @@ export class AppComponent implements OnInit {
 }
 ----
 
-
-=== After
-
+.After
 [source,ts]
 ----
 import { Component, inject } from '@angular/core'
@@ -138,3 +133,5 @@ export class AppComponent implements OnInit {
   ...
 }
 ----
+
+====

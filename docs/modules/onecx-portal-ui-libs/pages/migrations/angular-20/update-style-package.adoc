@@ -4,9 +4,9 @@
 In version 7, the style utilities have been moved to a separate subpackage:  
 `@onecx/angular-utils/style` within the `@onecx/angular-utils` library.
 
-Please update all imports related to micro-frontend and remote component style utilities to use the new package.
+== Update import path
 
-**Update import path**
+Please update all imports related to micro-frontend and remote component style utilities to use the new package.
 
 .Before
 [source,typescript]
@@ -19,3 +19,43 @@ import { updateStylesForMfeChange } from '@onecx/angular-utils'
 ----
 import { updateStylesForMfeChange } from '@onecx/angular-utils/style'
 ----
+
+== Style subpackage public API contents
+
+=== Functions
+
+* `addStyleToHead`
+* `createApplicationScopedCss`
+* `createCssRequestHeaders`
+* `createStyleUsedByMfeRc`
+* `fetchAppCss`
+* `getAllStylesUsedByKey`
+* `getAppStyleByScope`
+* `getStyleUsageCount`
+* `getStyleUsageCountForRc`
+* `isResponseValidCss`
+* `isStyleUsedByMfe`
+* `removeAllMfeUsagesFromStyles`
+* `removeAllRcUsagesFromStyles`
+* `removeMfeUsageFromStyle`
+* `removeRcUsageFromStyle`
+* `replaceRootAndHtmlWithScope`
+* `replaceRootWithScope`
+* `replaceStyleContent`
+* `slotNameToPropertyName`
+* `updateStylesForMfeChange`
+* `updateStylesForRcCreation`
+* `useStyleForMfe`
+* `useStyleForRc`
+
+=== Constants
+
+* `dataAppStylesAttribute`
+* `dataAppStylesKey`
+* `dataMfeStylesAttribute`
+* `dataMfeStylesKey`
+* `dataRcStylesAttribute`
+* `dataRcStylesKey`
+* `dataRcStylesStart`
+* `dataShellStylesAttribute`
+* `dataShellStylesKey`

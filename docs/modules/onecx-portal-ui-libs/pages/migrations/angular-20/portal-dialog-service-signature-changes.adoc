@@ -5,19 +5,9 @@ In version 7, updates in the PrimeNG Dynamic Dialog API (introduced in PrimeNG 2
 
 == Summary of Changes
 
-* The return type of `openDialog<T>` changed from:
-** `Observable<DialogState<T>>`
-** to `Observable<DialogState<T> | null>`
-
-* The following methods now require the `dialogComponent` parameter to be of type **DynamicDialog** instead of the deprecated **DynamicDialogComponent**:
-
-** `removeDialogFromHtml`
-** `setScopeIdentifier`
-** `findDialogComponentBodyChild`
+* The return type of `openDialog<T>` changed from: `Observable<DialogState<T>>` to `Observable<DialogState<T> | null>`
 
 == Update Your Application
-
-* Replace all usage of **DynamicDialogComponent** with **DynamicDialog** from `primeng/dynamicdialog` in method calls listed above.
 
 * Adjust your handling of `openDialog()` results.  Since the method may now return `Observable<null>`, your code must handle the case where a dialog cannot be created.
 

@@ -27,7 +27,7 @@ You can click the name of any change to open a detailed migration guide with ins
 
 [%interactive]
 ** [ ] xref:./remove-shell-core.adoc[Remove @onecx/shell-core]
-** [ ] xref:./remove-ngrx-accelerator.adoc[Adjust ngrx-accelerator library utilities]
+** [ ] xref:./adjust-ngrx-accelerator.adoc[Adjust ngrx-accelerator library utilities]
 ** [ ] xref:./update-primeng-package.adoc[Update package imports for PrimeNG theming]
 ** [ ] xref:./update-style-package.adoc[Update package imports for style utilities]
 ** [ ] xref:./remove-keycloak-js.adoc[Remove keycloak-js from your application]
