@@ -1,0 +1,27 @@
+[#removed-keycloak]
+= Remove `keycloak-js` from your application
+
+Starting with version 7 of the libraries, the `keycloak-js` dependency in `@onecx/angular-auth` has been marked as *optional*.  
+This means:
+
+* The Onecx Shell application *still requires* `keycloak-js`.
+* Other applications *should remove it* unless they directly use Keycloak inside the app.
+
+== Uninstall `keycloak-js`
+Run the following command in your application project:
+
+[source,bash]
+----
+npm uninstall keycloak-js
+----
+
+== Verify That Your App Works Without `keycloak-js`
+
+After uninstalling, check whether your app throws the following error in the browser console:
+
+[source,console]
+----
+Keycloak initialization failed! Could not load keycloak-js library which is required in the current environment.
+----
+
+If you see this error, your application **still needs `keycloak-js`**, and you must reinstall it.

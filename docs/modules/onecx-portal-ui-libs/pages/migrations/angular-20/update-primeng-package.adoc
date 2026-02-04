@@ -1,0 +1,56 @@
+[#update-primeNG]
+= Update package imports for PrimeNG theming
+
+In version 7, the PrimeNG theming utilities have been moved to a separate subpackage:  
+`@onecx/angular-utils/theme/primeng` within the `@onecx/angular-utils` library.
+
+== Update import path
+
+Please update all imports related to PrimeNG theming utilities to use the new package.
+
+.Before
+[source,typescript]
+----
+import { provideThemeConfig } from '@onecx/angular-utils'
+----
+
+.After
+[source,typescript]
+----
+import { provideThemeConfig } from '@onecx/angular-utils/theme/primeng'
+----
+
+== PrimeNG subpackage public API contents
+
+=== Classes
+
+* `CustomUseStyle`
+* `ThemeConfigService`
+
+=== Functions
+
+* `adjustColor`
+* `colorDelta`
+* `createPalette`
+* `normalizeKeys`
+* `provideThemeConfig`
+* `provideThemeConfigService`
+
+=== Constants
+
+* `CustomPreset`
+* `standardColorAdjustment`
+
+=== Injection Tokens
+
+* `IS_ADVANCED_THEMING`
+* `THEME_OVERRIDES`
+
+=== Interfaces
+
+* `ColorAdjustment`
+* `ThemeConfigProviderOptions`
+
+=== Types
+
+* `ThemeOverrides`
