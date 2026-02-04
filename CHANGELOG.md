@@ -1,3 +1,9 @@
+## [5.52.7](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.52.6...v5.52.7) (2026-02-04)
+
+### Refactoring
+
+* use signals to force data rerender v5 ([#1209](https://github.com/onecx/onecx-portal-ui-libs/issues/1209)) ([733e1a9](https://github.com/onecx/onecx-portal-ui-libs/commit/733e1a987da75dbd18fcc82abbad92bbaa2d1f1a))
+
 ## [5.52.6](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.52.5...v5.52.6) (2026-02-02)
 
 ### Bug Fixes
