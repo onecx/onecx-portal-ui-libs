@@ -57,7 +57,7 @@
             [iconPos]="action.iconPos ?? 'left'"
             type="button"
             class="action-button"
-            (onClick)="action.actionCallback()"
+            (onClick)="action.routerLink ? this.router.navigate([action.routerLink]) : action.actionCallback()"
             [disabled]="action.disabled ? action.disabled : false"
             [attr.name]="action.icon ? 'ocx-page-header-inline-action-icon-button' : 'ocx-page-header-inline-action-button'"
             [label]="action.labelKey ? (action.labelKey | translate) : action.label"

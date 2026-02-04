@@ -9,4 +9,5 @@ export interface DataAction {
   actionEnabledField?: string
   showAsOverflow?: boolean
   callback: (data: any) => void
+  routerLink?: string
 }
