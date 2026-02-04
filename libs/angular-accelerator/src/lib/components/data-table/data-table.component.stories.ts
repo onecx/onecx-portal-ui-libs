@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { LOCALE_ID, importProvidersFrom, inject, provideAppInitializer } from '@angular/core'
+import { InputSignal, LOCALE_ID, importProvidersFrom, inject, provideAppInitializer } from '@angular/core'
 import { Meta, moduleMetadata, applicationConfig, StoryFn } from '@storybook/angular'
 import { TableModule } from 'primeng/table'
 import { ButtonModule } from 'primeng/button'
@@ -20,7 +20,7 @@ import { StorybookThemeModule } from '../../storybook-theme.module'
 import { TooltipModule } from 'primeng/tooltip'
 import { SkeletonModule } from 'primeng/skeleton'
 
-type DataTableInputTypes = Pick<DataTableComponent, 'rows' | 'columns' | 'emptyResultsMessage' | 'selectedRows'>
+type DataTableInputTypes = Pick<DataTableComponent, 'rows' | 'columns' | 'emptyResultsMessage' | 'selectedRows' | 'totalRecordsOnServer'>
 
 const DataTableComponentSBConfig: Meta<DataTableComponent> = {
   title: 'Components/DataTableComponent',
@@ -133,6 +133,7 @@ const defaultComponentArgs: DataTableInputTypes = {
   ],
   emptyResultsMessage: 'No results',
   selectedRows: [],
+  totalRecordsOnServer: 3 as any as InputSignal<number | undefined>,
 }
 
 export const WithMockData = {
@@ -261,6 +262,7 @@ const extendedComponentArgs: DataTableInputTypes = {
   ],
   emptyResultsMessage: 'No results',
   selectedRows: [],
+  totalRecordsOnServer: 12 as any as InputSignal<number | undefined>,
 }
 
 export const ResponsiveWithScroll = {
