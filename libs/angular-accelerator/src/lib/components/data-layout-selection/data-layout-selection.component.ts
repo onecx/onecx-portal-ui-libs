@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
+import { Component, computed, effect, input, model, OnInit, output, signal } from '@angular/core'
 import { PrimeIcons } from 'primeng/api'
 import { PrimeIcon } from '../../utils/primeicon.utils'
 
@@ -46,29 +46,25 @@ export interface DataLayoutSelectionComponentState {
   styleUrls: ['./data-layout-selection.component.scss'],
 })
 export class DataLayoutSelectionComponent implements OnInit {
-  @Input() supportedViewLayouts: Array<string> = []
-  @Input()
-  set layout(value: 'grid' | 'list' | 'table') {
-    this.selectedViewLayout = ALL_VIEW_LAYOUTS.find((v) => v.layout === value)
-  }
-  get layout(): 'grid' | 'list' | 'table' {
-    return this.selectedViewLayout?.layout || 'table'
-  }
+  supportedViewLayouts = input<Array<string>>([])
 
-  @Output() dataViewLayoutChange: EventEmitter<'grid' | 'list' | 'table'> = new EventEmitter()
-  @Output() componentStateChanged: EventEmitter<DataLayoutSelectionComponentState> = new EventEmitter()
+  layout = model<'grid' | 'list' | 'table'>('table')
 
-  viewingLayouts: ViewingLayouts[] = []
-  selectedViewLayout: ViewingLayouts | undefined
+  dataViewLayoutChange = output<'grid' | 'list' | 'table'>()
+  componentStateChanged = output<DataLayoutSelectionComponentState>()
+
+  viewingLayouts = computed(() => ALL_VIEW_LAYOUTS.filter((vl) => this.supportedViewLayouts().includes(vl.layout)))
+
+  readonly selectedViewLayout = computed(() => ALL_VIEW_LAYOUTS.find((v) => v.layout === this.layout()))
 
   ngOnInit(): void {
-    this.viewingLayouts = ALL_VIEW_LAYOUTS.filter((vl) => this.supportedViewLayouts.includes(vl.layout))
     this.componentStateChanged.emit({
-      layout: this.layout,
+      layout: this.layout(),
     })
   }
 
   onDataViewLayoutChange(event: { icon: PrimeIcon; layout: 'grid' | 'list' | 'table' }): void {
+    this.layout.set(event.layout)
     this.dataViewLayoutChange.emit(event.layout)
     this.componentStateChanged.emit({
       layout: event.layout,
