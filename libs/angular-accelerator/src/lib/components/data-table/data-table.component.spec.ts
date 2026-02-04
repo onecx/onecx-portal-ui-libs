@@ -1409,7 +1409,7 @@ describe('DataTableComponent', () => {
     })
 
     it('overflowMenuItems$ should return [] when there are no permitted actions', async () => {
-      ;(component as any).overflowActions$ = of([{ showAsOverflow: true, permission: 'P1' } as any])
+      component.additionalActions.set([{ showAsOverflow: true, permission: 'P1' } as any])
       component.currentMenuRow.set({ id: 'r1' } as any)
 
       fixture.detectChanges()
@@ -1646,7 +1646,7 @@ describe('DataTableComponent', () => {
     })
 
     it('hasVisibleOverflowMenuItems should be false when there are no actions', async () => {
-      ;(component as any).overflowActions$ = of([])
+      component.additionalActions.set([])
 
       const result = await firstValueFrom(component.hasVisibleOverflowMenuItems({}))
       expect(result).toBe(false)

@@ -97,24 +97,17 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   checked = signal(true)
 
   rows = model<Row[]>([])
-  rows$ = toObservable(this.rows)
   selectedRows = model<Row[]>([])
   selectedIds = signal<Array<string | number>>([])
 
   filters = model<Filter[]>([])
-  filters$ = toObservable(this.filters)
   sortDirection = signal<DataSortDirection>(DataSortDirection.NONE)
-  sortDirection$ = toObservable(this.sortDirection)
   sortColumn = signal<string>('')
-  sortColumn$ = toObservable(this.sortColumn)
   columnTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
   columnFilterTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
   columns = model<DataTableColumn[]>([])
-  columns$ = toObservable(this.columns)
   clientSideFiltering = input(true)
-  clientSideFiltering$ = toObservable(this.clientSideFiltering)
   clientSideSorting = input(true)
-  clientSideSorting$ = toObservable(this.clientSideSorting)
   sortStates = model<DataSortDirection[]>([DataSortDirection.ASCENDING, DataSortDirection.DESCENDING])
 
   pageSizes = model<number[]>([10, 25, 50])
@@ -246,13 +239,13 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   componentStateChanged = output<DataTableComponentState>()
 
   displayedRows$ = combineLatest([
-    this.rows$,
-    this.filters$,
-    this.sortColumn$,
-    this.sortDirection$,
-    this.columns$,
-    this.clientSideFiltering$,
-    this.clientSideSorting$,
+    toObservable(this.rows),
+    toObservable(this.filters),
+    toObservable(this.sortColumn),
+    toObservable(this.sortDirection),
+    toObservable(this.columns),
+    toObservable(this.clientSideFiltering),
+    toObservable(this.clientSideSorting),
   ]).pipe(
     map(([rows, filters, sortColumn, sortDirection, columns, clientSideFiltering, clientSideSorting]) => {
       return { rows, filters, sortColumn, sortDirection, columns, clientSideFiltering, clientSideSorting }
@@ -285,12 +278,11 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   })
 
   currentFilterColumn = signal<DataTableColumn | null>(null)
-  currentFilterColumn$ = toObservable(this.currentFilterColumn)
   currentEqualFilterOptions$ = combineLatest([
-    this.rows$,
-    this.currentFilterColumn$,
-    this.filters$,
-    this.columns$,
+    toObservable(this.rows),
+    toObservable(this.currentFilterColumn),
+    toObservable(this.filters),
+    toObservable(this.columns),
   ]).pipe(
     filter(
       ([_, currentFilterColumn, __, ___]) =>
