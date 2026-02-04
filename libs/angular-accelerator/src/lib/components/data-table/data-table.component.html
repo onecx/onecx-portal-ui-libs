@@ -106,7 +106,7 @@
   (onPage)="onPageChange($event)"
   [rows]="displayedPageSize"
   [showCurrentPageReport]="true"
-  currentPageReportTemplate="{{ (totalRecordsOnServer ? currentPageShowingWithTotalOnServerKey : currentPageShowingKey) | translate:params }}"
+  currentPageReportTemplate="{{ (totalRecordsOnServer() ? currentPageShowingWithTotalOnServerKey : currentPageShowingKey) | translate:params() }}"
   [rowsPerPageOptions]="this.pageSizes ?? []"
   id="dataTable_{{name}}"
   (selectionChange)="onSelectionChange($event)"

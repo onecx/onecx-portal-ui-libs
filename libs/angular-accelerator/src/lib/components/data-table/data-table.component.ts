@@ -1,7 +1,6 @@
 import { formatDate } from '@angular/common'
 import {
   AfterContentInit,
-  ChangeDetectorRef,
   Component,
   ContentChild,
   ContentChildren,
@@ -14,7 +13,9 @@ import {
   QueryList,
   TemplateRef,
   ViewChildren,
+  computed,
   inject,
+  input,
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
@@ -89,7 +90,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   private readonly userService = inject(UserService)
   private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
   private readonly liveAnnouncer = inject(LiveAnnouncer)
-  private readonly changeDetectorRef = inject(ChangeDetectorRef)
 
   FilterType = FilterType
   TemplateType = TemplateType
@@ -220,24 +220,20 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
 
   @Input() tableStyle: { [klass: string]: any } | undefined
-  @Input()
-  get totalRecordsOnServer(): number | undefined {
-    return this.params['totalRecordsOnServer'] ? Number(this.params['totalRecordsOnServer']) : undefined
-  }
-  set totalRecordsOnServer(value: number | undefined) {
-    this.params['totalRecordsOnServer'] = value?.toString() ?? '0'
-    this.changeDetectorRef.detectChanges()
-  }
+  totalRecordsOnServer = input<number | undefined>(undefined)
   @Input() currentPageShowingKey = 'OCX_DATA_TABLE.SHOWING'
   @Input() currentPageShowingWithTotalOnServerKey = 'OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER'
-  params: { [key: string]: string } = {
-    currentPage: '{currentPage}',
-    totalPages: '{totalPages}',
-    rows: '{rows}',
-    first: '{first}',
-    last: '{last}',
-    totalRecords: '{totalRecords}',
-  }
+  params= computed(() => {    
+    return {
+      currentPage: '{currentPage}',
+      totalPages: '{totalPages}',
+      rows: '{rows}',
+      first: '{first}',
+      last: '{last}',
+      totalRecords: '{totalRecords}',
+      totalRecordsOnServer: this.totalRecordsOnServer()
+    }
+  })
 
   @Input() stringCellTemplate: TemplateRef<any> | undefined
   @ContentChild('stringCell') stringCellChildTemplate: TemplateRef<any> | undefined
