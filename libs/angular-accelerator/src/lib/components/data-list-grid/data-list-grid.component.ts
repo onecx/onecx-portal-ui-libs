@@ -1,5 +1,6 @@
 import {
   AfterContentInit,
+  ChangeDetectorRef,
   Component,
   ContentChild,
   ContentChildren,
@@ -63,6 +64,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   private appStateService = inject(AppStateService)
   private hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
   private readonly liveAnnouncer = inject(LiveAnnouncer)
+  private readonly changeDetectorRef = inject(ChangeDetectorRef)
 
   @Input() titleLineId: string | undefined
   @Input() subtitleLineIds: string[] = []
@@ -134,6 +136,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   }
   set totalRecordsOnServer(value: number | undefined) {
     this.params['totalRecordsOnServer'] = value?.toString() ?? '0'
+    this.changeDetectorRef.detectChanges()
   }
   @Input() currentPageShowingKey = 'OCX_DATA_TABLE.SHOWING'
   @Input() currentPageShowingWithTotalOnServerKey = 'OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER'

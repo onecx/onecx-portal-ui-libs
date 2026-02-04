@@ -1,6 +1,7 @@
 import { formatDate } from '@angular/common'
 import {
   AfterContentInit,
+  ChangeDetectorRef,
   Component,
   ContentChild,
   ContentChildren,
@@ -88,6 +89,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   private readonly userService = inject(UserService)
   private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
   private readonly liveAnnouncer = inject(LiveAnnouncer)
+  private readonly changeDetectorRef = inject(ChangeDetectorRef)
 
   FilterType = FilterType
   TemplateType = TemplateType
@@ -224,6 +226,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
   set totalRecordsOnServer(value: number | undefined) {
     this.params['totalRecordsOnServer'] = value?.toString() ?? '0'
+    this.changeDetectorRef.detectChanges()
   }
   @Input() currentPageShowingKey = 'OCX_DATA_TABLE.SHOWING'
   @Input() currentPageShowingWithTotalOnServerKey = 'OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER'
