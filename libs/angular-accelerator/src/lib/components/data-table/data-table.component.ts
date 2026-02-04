@@ -2,11 +2,13 @@ import { formatDate } from '@angular/common'
 import {
   AfterContentInit,
   Component,
+  computed,
   ContentChild,
   ContentChildren,
   EventEmitter,
   Inject,
   Injector,
+  input,
   Input,
   LOCALE_ID,
   OnInit,
@@ -217,23 +219,20 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
 
   @Input() tableStyle: { [klass: string]: any } | undefined
-  @Input()
-  get totalRecordsOnServer(): number | undefined {
-    return this.params['totalRecordsOnServer'] ? Number(this.params['totalRecordsOnServer']) : undefined
-  }
-  set totalRecordsOnServer(value: number | undefined) {
-    this.params['totalRecordsOnServer'] = value?.toString() ?? '0'
-  }
+  totalRecordsOnServer = input<number | undefined>(undefined)
   @Input() currentPageShowingKey = 'OCX_DATA_TABLE.SHOWING'
   @Input() currentPageShowingWithTotalOnServerKey = 'OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER'
-  params: { [key: string]: string } = {
-    currentPage: '{currentPage}',
-    totalPages: '{totalPages}',
-    rows: '{rows}',
-    first: '{first}',
-    last: '{last}',
-    totalRecords: '{totalRecords}',
-  }
+  params= computed(() => {    
+    return {
+      currentPage: '{currentPage}',
+      totalPages: '{totalPages}',
+      rows: '{rows}',
+      first: '{first}',
+      last: '{last}',
+      totalRecords: '{totalRecords}',
+      totalRecordsOnServer: this.totalRecordsOnServer()
+    }
+  })
 
   @Input() stringCellTemplate: TemplateRef<any> | undefined
   @ContentChild('stringCell') stringCellChildTemplate: TemplateRef<any> | undefined
