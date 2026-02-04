@@ -77,6 +77,7 @@ const defaultComponentArgs = {
   deletePermission: 'TEST_MGMT#TEST_DELETE',
   editPermission: 'TEST_MGMT#TEST_EDIT',
   viewPermission: 'TEST_MGMT#TEST_VIEW',
+  totalRecordsOnServer: 2,
 }
 const defaultArgTypes = {
   deleteItem: { action: 'deleteItem' },
