@@ -1,3 +1,13 @@
+## [7.0.6](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.5...v7.0.6) (2026-02-04)
+
+### Bug Fixes
+
+* parameters service signature ([#1200](https://github.com/onecx/onecx-portal-ui-libs/issues/1200)) ([#1203](https://github.com/onecx/onecx-portal-ui-libs/issues/1203)) ([a97c7a7](https://github.com/onecx/onecx-portal-ui-libs/commit/a97c7a7fbe2c2eccd7bc0d5ca368feb59b728976))
+
+### Refactoring
+
+* use signals to force data rerender v7 ([#1207](https://github.com/onecx/onecx-portal-ui-libs/issues/1207)) ([b50daef](https://github.com/onecx/onecx-portal-ui-libs/commit/b50daef544e8263b369728eb7847da061a1260d4))
+
 ## [7.0.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.4...v7.0.5) (2026-02-02)
 
 ### Bug Fixes
