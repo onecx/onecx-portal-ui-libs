@@ -14,9 +14,12 @@ import { provideAlwaysGrantPermissionChecker, provideTranslationPathFromMeta } f
 import { provideTokenInterceptor } from '@onecx/angular-auth'
 import { provideAuthService } from '@onecx/shell-auth'
 import { MessageService } from 'primeng/api'
+import { createLogger } from './logger.utils'
+
+const logger = createLogger('expose-standalone')
 
 async function apply(themeService: ThemeService, theme: Theme): Promise<void> {
-  console.log(`🎨 Applying theme: ${theme.name}`)
+  logger.info(`Applying theme: ${theme.name}`)
   await themeService.currentTheme$.publish(theme)
   if (theme.properties) {
     Object.values(theme.properties).forEach((group) => {

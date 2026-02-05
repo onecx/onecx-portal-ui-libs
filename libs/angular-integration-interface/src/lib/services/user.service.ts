@@ -3,6 +3,9 @@ import { PermissionsTopic, UserProfile, UserProfileTopic } from '@onecx/integrat
 import { BehaviorSubject, firstValueFrom, map } from 'rxjs'
 import { DEFAULT_LANG } from '../api/constants'
 import { getNormalizedBrowserLocales } from '@onecx/accelerator'
+import { createLogger } from '../utils/logger.utils'
+
+const logger = createLogger('UserService')
 
 @Injectable({ providedIn: 'root' })
 export class UserService implements OnDestroy {
@@ -68,7 +71,7 @@ export class UserService implements OnDestroy {
         map((permissions) => {
           const result = permissions.includes(permissionKey)
           if (!result) {
-            console.log(`👮‍♀️ No permission for: ${permissionKey}`)
+            logger.debug(`No permission for: ${permissionKey}`)
           }
           return !!result
         })

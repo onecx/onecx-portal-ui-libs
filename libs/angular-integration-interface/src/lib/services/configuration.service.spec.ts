@@ -5,11 +5,21 @@ import { ConfigurationService } from './configuration.service'
 import { FakeTopic } from '@onecx/accelerator'
 import { CONFIG_KEY } from '../model/config-key.model'
 import { Config } from '@onecx/integration-interface'
+import * as loggerUtils from '../utils/logger.utils'
 
 describe('ConfigurationService', () => {
   let configuration: ConfigurationService
 
+  const loggerErrorFn = jest.fn()
+
   beforeEach(async () => {
+    jest.spyOn(loggerUtils, 'createLogger').mockReturnValue({
+      debug: jest.fn() as any,
+      info: jest.fn() as any,
+      warn: jest.fn() as any,
+      error: loggerErrorFn as any,
+    })
+
     await TestBed.configureTestingModule({
       declarations: [],
       imports: [],
@@ -18,6 +28,11 @@ describe('ConfigurationService', () => {
     configuration = TestBed.inject(ConfigurationService)
     ;(configuration as any).config$ = new FakeTopic<Config>()
     ;(configuration as any).config$.publish({ [CONFIG_KEY.IS_SHELL]: 'true' })
+  })
+
+  afterEach(() => {
+    jest.restoreAllMocks()
+    loggerErrorFn.mockClear()
   })
 
   it('should be created', () => {
@@ -34,9 +49,8 @@ describe('ConfigurationService', () => {
     })
 
     it('should log an error for an invalid key', async () => {
-      console.error = jest.fn()
       await configuration.getProperty('invalidKey' as unknown as CONFIG_KEY)
-      expect(console.error).toHaveBeenCalledWith('Invalid config key ', 'invalidKey')
+      expect(loggerErrorFn).toHaveBeenCalledWith('Invalid config key ', 'invalidKey')
     })
   })
 })

@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core'
 import { CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
 import Keycloak, { KeycloakServerConfig } from 'keycloak-js'
 import { AuthService } from '../auth.service'
+import { createLogger } from '../utils/logger.utils'
 
 const KC_REFRESH_TOKEN_LS = 'onecx_kc_refreshToken'
 const KC_ID_TOKEN_LS = 'onecx_kc_idToken'
@@ -9,6 +10,7 @@ const KC_TOKEN_LS = 'onecx_kc_token'
 
 @Injectable()
 export class KeycloakAuthService implements AuthService {
+  private readonly logger = createLogger('KeycloakAuthService')
   private configService = inject(ConfigurationService)
   private keycloak: Keycloak | undefined
 
@@ -70,7 +72,7 @@ export class KeycloakAuthService implements AuthService {
         token: token || undefined,
       })
       .catch((err) => {
-        console.log(`Keycloak err: ${err}, try force login`)
+        this.logger.warn(`Keycloak err: ${err}, try force login`)
         return this.keycloak?.login(this.config)
       })
       .then((loginOk) => {
@@ -84,7 +86,7 @@ export class KeycloakAuthService implements AuthService {
         return true
       })
       .catch((err) => {
-        console.log(`KC ERROR ${err} as json ${JSON.stringify(err)}`)
+        this.logger.error(`KC ERROR ${err} as json ${JSON.stringify(err)}`)
         throw err
       })
   }
@@ -112,7 +114,7 @@ export class KeycloakAuthService implements AuthService {
         this.updateLocalStorage()
       }
       this.keycloak.onAuthLogout = () => {
-        console.log('SSO logout nav to root')
+        this.logger.info('SSO logout nav to root')
         this.clearKCStateFromLocalstorage()
         this.keycloak?.login(this.config)
       }

@@ -7,12 +7,10 @@ In OneCX v6, `createTranslateLoader`, `createRemoteComponentAndMfeTranslateLoade
 * Remove `createTranslateLoader`, `createRemoteComponentAndMfeTranslateLoader`, `createRemoteComponentTranslateLoader`, `translationPathFactory`, `remoteComponentTranslationPathFactory` and `TRANSLATION_PATH` imports from `@onecx/angular-accelerator`.
 * Add `provideTranslationPathFromMeta`, `createTranslateLoader` and `TRANSLATION_PATH` from `@onecx/angular-utils`.'
 * Add `provideTranslateServiceForRoot` from `@onecx/angular-utils`
-* If needed, add `MissingTranslationHandler` from `@ngx-translate/core`
-* If needed, add `AngularAcceleratorMissingTranslationHandler` from `@onecx/angular-utils`
 
 [TIP]
 ====
-If you need to support multiple locales and fallback for missing translations, use `AngularAcceleratorMissingTranslationHandler` from `@onecx/angular-utils` as the `MissingTranslationHandler`. This handler logs missing translation keys and provides a fallback mechanism.
+If you need to support multiple locales and fallback for missing translations, use `AngularAcceleratorMissingTranslationHandler` from `@onecx/angular-utils` as the `MissingTranslationHandler`. This handler logs missing translation keys and provides a fallback mechanism. For a reference see the example in the <<configure-remote-component-translation-providers>> section.
 ====
 
 **Example - replace translationPathFactory with provideTranslationPathFromMeta in providers:**
@@ -94,6 +92,7 @@ module.exports = {
 ----
 ====
 
+[#configure-remote-component-translation-providers]
 === Configure Translation Providers for Remote Components
 
 In OneCX v6, For each Remote Component translation related providers are required to be defined in the bootstrap.ts instead of the component.ts file. For multiple locales and fallback translations, use `AngularAcceleratorMissingTranslationHandler`.

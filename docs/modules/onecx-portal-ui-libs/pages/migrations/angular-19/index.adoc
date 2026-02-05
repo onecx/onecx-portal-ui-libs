@@ -25,6 +25,7 @@ To simplify the migration process, it is recommended to complete the following s
 
 include::remove-keycloak-auth.adoc[]
 include::update-component-imports.adoc[]
+include::switch-to-new-components.adoc[]
 include::remove-portal-layout-styles.adoc[]
 include::update-filtertype-value.adoc[]
 include::update-configuration-service-usage.adoc[]
@@ -34,10 +35,18 @@ include::remove-add-initialize-module-guard.adoc[]
 include::remove-menuservice.adoc[]
 include::update-translations.adoc[]
 
+After these steps are completed, it is recommended to build the application to ensure that there are no remaining issues before proceeding with the Angular 19 upgrade:
+
+[source,bash]
+----
+npm run build
+----
+
+
 [#migration-steps-after-angular-19]
 == Migration Steps after upgrading to Angular 19
 
-Once you have completed the previous steps, you can continue with the Angular 19 upgrade and follow the remaining steps:
+Once the previous steps are completed, **the application should be upgraded to Angular 19 and libs v6 should be installed**. After the version updates are completed, the remaining steps of the migration can be followed:
 
 include::update-packages.adoc[]
 include::remove-portal-core-module.adoc[]

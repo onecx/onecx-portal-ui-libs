@@ -37,7 +37,9 @@
       "@onecx/nx-migration-utils": ["libs/nx-migration-utils/src/index.ts"],
       "@onecx/nx-migration-utils/angular": ["libs/nx-migration-utils/src/lib/angular/index.ts"],
       "@onecx/release": ["tools/release/src/index.ts"],
-      "@onecx/shell-auth": ["libs/shell-auth/src/index.ts"]
+      "@onecx/shell-auth": ["libs/shell-auth/src/index.ts"],
+      "@onecx/angular-linter-rules": ["libs/angular-linter-rules/src/index.ts"],
+      "@onecx/ngrx-linter-rules": ["libs/ngrx-linter-rules/src/index.ts"]
     },
     "allowSyntheticDefaultImports": true
   },
