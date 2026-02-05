@@ -299,7 +299,7 @@ describe('DataListGridComponent', () => {
 
   describe('should display the paginator currentPageReport  with totalRecordsOnServer -', () => {
     it('de', async () => {
-      component.totalRecordsOnServer = 10
+      fixture.componentRef.setInput('totalRecordsOnServer', 10)
       translateService.use('de')
       const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataListGridHarness)
       const paginator = await dataListGrid.getPaginator()
@@ -308,7 +308,7 @@ describe('DataListGridComponent', () => {
     })
 
     it('en', async () => {
-      component.totalRecordsOnServer = 10
+      fixture.componentRef.setInput('totalRecordsOnServer', 10)
       translateService.use('en')
       const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataListGridHarness)
       const paginator = await dataListGrid.getPaginator()

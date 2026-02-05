@@ -14,8 +14,9 @@ declare global {
           }
           instancesCreated?: { [topicName: string]: number }
         }
-        useBroadcastChannel?: boolean
-        initDate?: number
+        useBroadcastChannel?: boolean | "V2",
+        initDate?: number,
+        tabId?: number
       }
     }
   }
@@ -23,7 +24,8 @@ declare global {
 
 window['@onecx/accelerator'] ??= {}
 window['@onecx/accelerator'].topic ??= {}
-window['@onecx/accelerator'].topic.useBroadcastChannel ??= true
+window['@onecx/accelerator'].topic.useBroadcastChannel ??= "V2"
 window['@onecx/accelerator'].topic.initDate ??= Date.now()
+window['@onecx/accelerator'].topic.tabId ??= Math.ceil(globalThis.performance.now())
 
 export default globalThis

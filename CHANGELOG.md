@@ -1,3 +1,32 @@
+## [6.14.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.14.3...v6.14.4) (2026-02-04)
+
+### Bug Fixes
+
+* parameters service signature ([#1200](https://github.com/onecx/onecx-portal-ui-libs/issues/1200)) ([#1202](https://github.com/onecx/onecx-portal-ui-libs/issues/1202)) ([2057ea6](https://github.com/onecx/onecx-portal-ui-libs/commit/2057ea6982dc7a868aa968442a7b94e05465635e))
+
+### Refactoring
+
+* use signals to force data rerender v6 ([#1208](https://github.com/onecx/onecx-portal-ui-libs/issues/1208)) ([6661f4c](https://github.com/onecx/onecx-portal-ui-libs/commit/6661f4ce9f0c0eb1eeed13c755dd57aaa468f52a))
+
+## [6.14.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.14.2...v6.14.3) (2026-02-02)
+
+### Bug Fixes
+
+* fix topic publish v6 ([#1198](https://github.com/onecx/onecx-portal-ui-libs/issues/1198)) ([05fd5b6](https://github.com/onecx/onecx-portal-ui-libs/commit/05fd5b697272abd56ad47c133ac539bb153d7491))
+
+## [6.14.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.14.1...v6.14.2) (2026-01-30)
+
+### Bug Fixes
+
+* isolate topics + fallback v6 ([#1181](https://github.com/onecx/onecx-portal-ui-libs/issues/1181)) ([1c1a061](https://github.com/onecx/onecx-portal-ui-libs/commit/1c1a06126c3341154a9dc833759d4124a80c06cb))
+
+## [6.14.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.14.0...v6.14.1) (2026-01-30)
+
+### Bug Fixes
+
+* export parameters service ([#1159](https://github.com/onecx/onecx-portal-ui-libs/issues/1159)) ([#1161](https://github.com/onecx/onecx-portal-ui-libs/issues/1161)) ([94b7691](https://github.com/onecx/onecx-portal-ui-libs/commit/94b769169fdb9bfee9e285af770e64bf835176e8))
+* isolate topics to tab ([#1177](https://github.com/onecx/onecx-portal-ui-libs/issues/1177)) ([b6462b3](https://github.com/onecx/onecx-portal-ui-libs/commit/b6462b38ae36eb4d2731ee9ec7ec292c05d69b47))
+
 ## [6.14.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.13.2...v6.14.0) (2026-01-23)
 
 ### Features

@@ -24,6 +24,7 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
   private resolveInitPromise!: (value: void | PromiseLike<void>) => void
   private readonly windowEventListener = (m: MessageEvent<TopicMessage>) => this.onWindowMessage(m)
   protected readonly readBroadcastChannel: BroadcastChannel | undefined
+  protected readonly readBroadcastChannelV2: BroadcastChannel | undefined
 
   constructor(name: string, version: number, sendGetMessage = true) {
     super(name, version)
@@ -39,6 +40,7 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
         window['@onecx/accelerator'].topic.useBroadcastChannel = false
       } else {
         this.readBroadcastChannel = new BroadcastChannel(`Topic-${this.name}|${this.version}`)
+        this.readBroadcastChannelV2 = new BroadcastChannel(`TopicV2-${this.name}|${this.version}-${window['@onecx/accelerator'].topic.tabId}`)
       }
     }
 
@@ -51,6 +53,7 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
     })
     window.addEventListener('message', this.windowEventListener)
     this.readBroadcastChannel?.addEventListener('message', (m) => this.onBroadcastChannelMessage(m))
+    this.readBroadcastChannelV2?.addEventListener('message', (m) => this.onBroadcastChannelMessageV2(m))
 
     if (sendGetMessage) {
       if (
@@ -220,6 +223,8 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
     window.removeEventListener('message', this.windowEventListener, true)
     this.readBroadcastChannel?.close()
     this.publishBroadcastChannel?.close()
+    this.readBroadcastChannelV2?.close()
+    this.publishBroadcastChannelV2?.close()
   }
 
   private onWindowMessage(m: MessageEvent<TopicMessage>): any {
@@ -250,6 +255,11 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
   }
 
   private onBroadcastChannelMessage(m: MessageEvent<TopicMessage>): any {
+    this.disableBroadcastChannelV2()
+    this.onBroadcastChannelMessageV2(m)
+  }
+
+  private onBroadcastChannelMessageV2(m: MessageEvent<TopicMessage>): any {
     if (this.isLogEnabled()) {
       console.log('Topic', this.name, ':', this.version, 'received message', m.data)
     }
@@ -278,6 +288,15 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
       console.log('Disabling BroadcastChannel for topic')
     }
     window['@onecx/accelerator'].topic.useBroadcastChannel = false
+  }
+
+  private disableBroadcastChannelV2() {
+    window['@onecx/accelerator'] ??= {}
+    window['@onecx/accelerator'].topic ??= {}
+    if (window['@onecx/accelerator'].topic.useBroadcastChannel === "V2") {
+      console.log('Disabling BroadcastChannel V2 for topic')
+    }
+    window['@onecx/accelerator'].topic.useBroadcastChannel = true
   }
 
   private isLogEnabled() {

@@ -13,7 +13,9 @@ import {
   QueryList,
   TemplateRef,
   ViewChildren,
+  computed,
   inject,
+  input,
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
@@ -128,23 +130,20 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     )
   }
   @Input() name = ''
-  @Input()
-  get totalRecordsOnServer(): number | undefined {
-    return this.params['totalRecordsOnServer'] ? Number(this.params['totalRecordsOnServer']) : undefined
-  }
-  set totalRecordsOnServer(value: number | undefined) {
-    this.params['totalRecordsOnServer'] = value?.toString() ?? '0'
-  }
+  totalRecordsOnServer = input<number | undefined>(undefined)
   @Input() currentPageShowingKey = 'OCX_DATA_TABLE.SHOWING'
   @Input() currentPageShowingWithTotalOnServerKey = 'OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER'
-  params: { [key: string]: string } = {
-    currentPage: '{currentPage}',
-    totalPages: '{totalPages}',
-    rows: '{rows}',
-    first: '{first}',
-    last: '{last}',
-    totalRecords: '{totalRecords}',
-  }
+  params= computed(() => {    
+    return {
+      currentPage: '{currentPage}',
+      totalPages: '{totalPages}',
+      rows: '{rows}',
+      first: '{first}',
+      last: '{last}',
+      totalRecords: '{totalRecords}',
+      totalRecordsOnServer: this.totalRecordsOnServer()
+    }
+  })
 
   _data$ = new BehaviorSubject<RowListGridData[]>([])
   @Input()
