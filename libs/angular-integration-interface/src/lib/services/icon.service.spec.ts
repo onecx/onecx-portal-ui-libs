@@ -7,7 +7,7 @@
  */
 import { TestBed } from '@angular/core/testing'
 import { IconService } from './icon.service'
-import { FakeTopic } from '@onecx/angular-integration-interface/mocks'
+import { FakeTopic } from '@onecx/accelerator';
 
 describe('IconService', () => {
   let service: IconService

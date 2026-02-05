@@ -8,7 +8,6 @@
 import {
   ensureIconCache,
   generateClassName,
-  normalizeIconName
 } from './icon-cache.service'
 import { OnecxIcon } from '../topics/icons/v1/icons.model'
 
