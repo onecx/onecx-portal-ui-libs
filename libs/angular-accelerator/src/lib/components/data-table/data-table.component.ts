@@ -464,7 +464,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     effect(() => {
       const rows = this.rows()
 
-      // Not track previousFilters change to avoid the trigger
+      // Not track previousRows change to avoid the trigger
       untracked(() => {
         const previousRows = this.previousRows()
         if (previousRows.length) {
