@@ -59,3 +59,10 @@ export * from './lib/topics/resized-events/v1/resized-events.topic'
 export * from './lib/topics/image-repository/image-repository.model'
 export * from './lib/topics/image-repository/image-repository.topic'
 export * from './lib/services/image-repository.service'
+
+
+export * from './lib/topics/icons/v1/icons.model'
+export * from './lib/topics/icons/v1/icons.topic'
+export * from './lib/topics/icons/v1/icon-type'
+export * from './lib/services/icon-cache.service'
+export * from './lib/services/icon-loader.service'
