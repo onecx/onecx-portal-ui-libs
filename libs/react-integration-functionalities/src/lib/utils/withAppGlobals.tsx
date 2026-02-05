@@ -1,41 +1,30 @@
-import { ComponentType, createContext, ReactNode, useContext } from 'react';
+import { type ComponentType, createContext, type ReactNode, useContext } from 'react'
 
 interface AppGlobals {
-  PRODUCT_NAME: string;
-  [key: string]: string | number | boolean;
+  PRODUCT_NAME: string
+  [key: string]: string | number | boolean
 }
 
-const AppGlobalsContext = createContext<AppGlobals | null>(null);
+const AppGlobalsContext = createContext<AppGlobals | null>(null)
 
-const AppGlobalsProvider = ({
-  children,
-  globals,
-}: {
-  children: ReactNode;
-  globals: AppGlobals;
-}) => (
-  <AppGlobalsContext.Provider value={globals}>
-    {children}
-  </AppGlobalsContext.Provider>
-);
+const AppGlobalsProvider = ({ children, globals }: { children: ReactNode; globals: AppGlobals }) => (
+  <AppGlobalsContext.Provider value={globals}>{children}</AppGlobalsContext.Provider>
+)
 
-export const withAppGlobals = <P extends object>(
-  Component: ComponentType<P>,
-  appGlobals: AppGlobals,
-) => {
+export const withAppGlobals = <P extends object>(Component: ComponentType<P>, appGlobals: AppGlobals) => {
   const WrappedComponent = (props: P) => (
     <AppGlobalsProvider globals={appGlobals}>
       <Component {...props} />
     </AppGlobalsProvider>
-  );
+  )
 
-  return WrappedComponent;
-};
+  return WrappedComponent
+}
 
 export const useAppGlobals = () => {
-  const context = useContext(AppGlobalsContext);
+  const context = useContext(AppGlobalsContext)
   if (context === null) {
-    throw new Error('useAppGlobals must be used within an AppGlobalsProvider');
+    throw new Error('useAppGlobals must be used within an AppGlobalsProvider')
   }
-  return context;
-};
+  return context
+}

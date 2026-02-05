@@ -136,15 +136,6 @@ export const SlotComponent: FC<SlotProps> = ({ name, inputs = {}, outputs = {}, 
   const addDataStyleIsolation = (element: HTMLElement) => {
     element.dataset['styleIsolation'] = ''
   }
-
-  const updateComponentData = useCallback(
-    (component: ReactElement | HTMLElement, inputs: Record<string, unknown>, outputs: Record<string, any>) => {
-      setProps(component, inputs)
-      setProps(component, outputs)
-    },
-    []
-  )
-
   const setProps = (component: ReactElement | HTMLElement, props: Record<string, unknown>) => {
     if (!component) return
 
@@ -159,6 +150,13 @@ export const SlotComponent: FC<SlotProps> = ({ name, inputs = {}, outputs = {}, 
       }
     })
   }
+  const updateComponentData = useCallback(
+    (component: ReactElement | HTMLElement, inputs: Record<string, unknown>, outputs: Record<string, any>) => {
+      setProps(component, inputs)
+      setProps(component, outputs)
+    },
+    []
+  )
 
   useEffect(() => {
     const subscription = components$?.subscribe({
@@ -169,8 +167,6 @@ export const SlotComponent: FC<SlotProps> = ({ name, inputs = {}, outputs = {}, 
     })
 
     return () => subscription?.unsubscribe()
-
-    // @ts-ignore
   }, [components$])
 
   return (

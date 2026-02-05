@@ -1,4 +1,4 @@
-import { type FC, createContext, useContext, useState, useEffect, PropsWithChildren } from 'react'
+import { type FC, createContext, useContext, useState, useEffect, type PropsWithChildren } from 'react'
 import { filter, firstValueFrom, map } from 'rxjs'
 import { type PermissionsRpc, PermissionsRpcTopic } from '@onecx/integration-interface'
 

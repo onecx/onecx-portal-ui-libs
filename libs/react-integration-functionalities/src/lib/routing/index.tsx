@@ -1,6 +1,6 @@
-import { createContext, FC, PropsWithChildren, ReactNode, useEffect, useState } from 'react'
+import { createContext, type FC, type PropsWithChildren, type ReactNode, useEffect, useState } from 'react'
 import { BrowserRouter, useLocation, useNavigate } from 'react-router'
-import { CurrentLocationTopic, CurrentLocationTopicPayload } from '@onecx/integration-interface'
+import { CurrentLocationTopic, type CurrentLocationTopicPayload } from '@onecx/integration-interface'
 
 const initValue = {
   url: '',

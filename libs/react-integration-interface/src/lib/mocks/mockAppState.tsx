@@ -1,4 +1,5 @@
-import {
+import type {
+  CurrentLocationTopic,
   CurrentMfeTopic,
   CurrentPageTopic,
   CurrentWorkspaceTopic,
@@ -6,76 +7,59 @@ import {
   GlobalLoadingTopic,
   IsAuthenticatedTopic,
   Workspace,
-} from '@onecx/integration-interface';
-import { AppStateProvider } from '../contexts/appStateContext';
-import { FakeTopic } from './fake-topic';
-import { FC, ReactNode } from 'react';
+} from '@onecx/integration-interface'
+import { AppStateProvider } from '../contexts/appStateContext'
+import type { FC, ReactNode } from 'react'
+import { FakeTopic } from '@onecx/accelerator'
+
+const mockPortalWorkspace: Workspace = {
+  baseUrl: '/',
+  microfrontendRegistrations: [],
+  portalName: 'Test portal',
+  workspaceName: 'Test portal',
+}
 
 const mockWorkspace: Workspace = {
-  id: 'workspace-123',
-  displayName: 'Mock Workspace',
-  portalName: 'mock-portal',
-  workspaceName: 'mock-workspace',
-  description: 'A mock workspace for testing',
-  themeId: 'theme-1',
-  themeName: 'Light Theme',
-  footerLabel: 'Footer Mock',
-  homePage: '/home',
-  baseUrl: 'http://example.com',
-  companyName: 'Mock Company',
-  portalRoles: ['admin', 'user'],
+  baseUrl: '/',
   microfrontendRegistrations: [],
-  logoUrl: 'http://example.com/logo.png',
-  logoSmallImageUrl: 'http://example.com/logo-small.png',
-  routes: [
-    {
-      appId: 'onecx-workspace-ui',
-      productName: 'onecx-workspace',
-      baseUrl: 'http://example.com/workspace/baseurl',
-      endpoints: [
-        { name: 'details', path: '/details/{id}' },
-        { name: 'edit', path: '[[details]]' },
-        { name: 'change', path: '[[edit]]' },
-      ],
-    },
-  ],
-};
+  portalName: 'Test workspace',
+  workspaceName: 'Test workspace',
+}
 
-export const mockCurrentWorkspace$ = new FakeTopic(mockWorkspace);
+export const mockCurrentWorkspace$ = new FakeTopic(mockWorkspace) as unknown as CurrentWorkspaceTopic
 
 export interface AppStateContextProps {
-  globalError$: GlobalErrorTopic;
-  globalLoading$: GlobalLoadingTopic;
-  currentMfe$: CurrentMfeTopic;
-  currentPage$: CurrentPageTopic;
-  currentWorkspace$: CurrentWorkspaceTopic;
-  currentPortal$: CurrentWorkspaceTopic;
-  isAuthenticated$: IsAuthenticatedTopic;
+  globalError$: GlobalErrorTopic
+  globalLoading$: GlobalLoadingTopic
+  currentMfe$: CurrentMfeTopic
+  currentPage$: CurrentPageTopic
+  currentWorkspace$: CurrentWorkspaceTopic
+  currentPortal$: CurrentWorkspaceTopic
+  currentLocation$: CurrentLocationTopic
+  isAuthenticated$: IsAuthenticatedTopic
 }
 
 export const mockAppStateContext: Partial<AppStateContextProps> = {
-  globalError$: new FakeTopic(''),
-  globalLoading$: new FakeTopic(false),
+  globalError$: new FakeTopic() as unknown as GlobalErrorTopic,
+  globalLoading$: new FakeTopic(false) as unknown as GlobalLoadingTopic,
   currentMfe$: new FakeTopic({
-    appId: '',
-    baseHref: '',
-    mountPath: '',
-    productName: '',
-    remoteBaseUrl: '',
-    shellName: '',
-  }),
-  // can't mock because of the private props
-  currentPage$: new FakeTopic({ path: '' }) as unknown as CurrentPageTopic,
+    mountPath: '/',
+    remoteBaseUrl: '.',
+    baseHref: '/',
+    shellName: 'test',
+    appId: 'test',
+    productName: 'test',
+  }) as unknown as CurrentMfeTopic,
+  currentPage$: new FakeTopic(undefined) as unknown as CurrentPageTopic,
+  currentPortal$: new FakeTopic(mockPortalWorkspace) as unknown as CurrentWorkspaceTopic,
   currentWorkspace$: mockCurrentWorkspace$,
-  currentPortal$: mockCurrentWorkspace$,
-  isAuthenticated$: new FakeTopic(),
-};
+  currentLocation$: new FakeTopic({ url: '/', isFirst: true }) as unknown as CurrentLocationTopic,
+  isAuthenticated$: new FakeTopic(null) as unknown as IsAuthenticatedTopic,
+}
 
 export const MockAppStateProvider: FC<{
-  children: ReactNode;
-  mockAppState?: Partial<AppStateContextProps> | undefined;
+  children: ReactNode
+  mockAppState?: Partial<AppStateContextProps> | undefined
 }> = ({ children, mockAppState }) => (
-  <AppStateProvider value={mockAppState || mockAppStateContext}>
-    {children}
-  </AppStateProvider>
-);
+  <AppStateProvider value={mockAppState || mockAppStateContext}>{children}</AppStateProvider>
+)

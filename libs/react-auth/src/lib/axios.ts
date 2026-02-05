@@ -8,7 +8,7 @@ export interface AuthenticatedAxiosInstance extends AxiosInstance {
  * This is the axios instance for client-side requests only to BFF
  */
 export const axiosFactory: (baseURL?: string) => AuthenticatedAxiosInstance = (baseURL) => {
-  let ai = baseURL ? axios.create({ baseURL }) : axios.create()
+  const ai = baseURL ? axios.create({ baseURL }) : axios.create()
 
   const aai: AuthenticatedAxiosInstance = Object.assign(ai, {
     tokens: { sessionExpired: false },

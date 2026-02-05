@@ -1,5 +1,5 @@
-import { ComponentType } from 'react';
-import { PrimeReactStyleProvider } from '../../contexts/app';
+import type { ComponentType } from 'react'
+import { PrimeReactStyleProvider } from '../../contexts/app'
 
 export function withAppPrimereactStylesIsolation<P extends object>(
   RemoteComponent: ComponentType<P>
@@ -8,5 +8,5 @@ export function withAppPrimereactStylesIsolation<P extends object>(
     <PrimeReactStyleProvider>
       <RemoteComponent {...props} />
     </PrimeReactStyleProvider>
-  );
+  )
 }

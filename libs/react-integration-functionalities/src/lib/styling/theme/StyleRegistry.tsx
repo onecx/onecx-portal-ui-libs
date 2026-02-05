@@ -1,4 +1,4 @@
-import { ReactNode, useState, useEffect } from 'react'
+import { type ReactNode, useState, useEffect } from 'react'
 import { PrimeReactProvider } from 'primereact/api'
 import { CurrentThemeTopic } from '@onecx/integration-interface'
 import applyThemeVariables from './applyThemeVariables'
@@ -23,7 +23,7 @@ export default function StyleRegistry({ children }: Props) {
     return () => {
       themeSubscription.unsubscribe()
     }
-  }, [themeStyleId ])
+  }, [themeStyleId])
 
   if (!isThemed) {
     return null // Can be spinner or skeleton here

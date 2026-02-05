@@ -1,21 +1,17 @@
-import { createContext, useEffect, RefObject, useRef, ReactNode } from 'react';
-import { attachPrimeReactScoper } from '../../scopingFunctionality';
-import { useAppGlobals } from '../../../utils/withAppGlobals';
+import { createContext, useEffect, type RefObject, useRef, type ReactNode, useMemo } from 'react'
+import { attachPrimeReactScoper } from '../../scopingFunctionality'
+import { useAppGlobals } from '../../../utils/withAppGlobals'
 
 interface PrimeReactStyleProviderProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
-const PrimeReactStyleContext = createContext<
-  { rootRef: RefObject<HTMLDivElement> } | undefined
->(undefined);
+const PrimeReactStyleContext = createContext<{ rootRef: RefObject<HTMLDivElement | null> } | undefined>(undefined)
 
-export const PrimeReactStyleProvider = ({
-  children,
-}: PrimeReactStyleProviderProps) => {
-  const rootRef = useRef<HTMLDivElement>(null);
-  const { PRODUCT_NAME } = useAppGlobals();
-  const appId = `${PRODUCT_NAME}|main`;
+export const PrimeReactStyleProvider = ({ children }: PrimeReactStyleProviderProps) => {
+  const rootRef = useRef<HTMLDivElement>(null)
+  const { PRODUCT_NAME } = useAppGlobals()
+  const appId = `${PRODUCT_NAME}|main`
 
   useEffect(() => {
     const detach = attachPrimeReactScoper({
@@ -24,13 +20,15 @@ export const PrimeReactStyleProvider = ({
       scopeRootSelector: `[data-style-id="${appId}"]`,
       bootstrapExisting: true,
       blockFurtherUpdatesForCapturedIds: false,
-    });
+    })
 
-    return () => detach();
-  }, [appId]);
+    return () => detach()
+  }, [appId])
+
+  const contextValue = useMemo(() => ({ rootRef }), [rootRef])
 
   return (
-    <PrimeReactStyleContext.Provider value={{ rootRef }}>
+    <PrimeReactStyleContext.Provider value={contextValue}>
       <div
         ref={rootRef}
         data-style-id={appId}
@@ -41,5 +39,5 @@ export const PrimeReactStyleProvider = ({
         {children}
       </div>
     </PrimeReactStyleContext.Provider>
-  );
-};
+  )
+}

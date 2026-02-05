@@ -1,4 +1,5 @@
 import type { APIOptions } from 'primereact/api'
+import type { ReactNode } from 'react'
 
 export interface AppConfig {
   preset?: string
@@ -16,7 +17,7 @@ export interface AppConfig {
 }
 
 export interface AppContextProps extends Omit<AppConfig, 'metadata' | 'viewport' | 'font'> {
-  children?: React.ReactNode
+  children?: ReactNode
 }
 
 export interface AppProviderProps {
@@ -43,7 +44,7 @@ export interface AppProviderProps {
 
 export interface AppTopbarProps {
   showMenuButton?: boolean
-  children?: React.ReactNode
+  children?: ReactNode
 }
 
 export interface AppMenuItemData {

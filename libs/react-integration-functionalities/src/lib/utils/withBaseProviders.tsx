@@ -1,14 +1,9 @@
-import { ComponentType } from 'react';
-import {
-  AppStateProvider,
-  ConfigurationProvider,
-} from '@onecx/react-integration-interface';
-import { SyncedRouterProvider } from '../routing';
-import '../styling/dynamicScoping/index';
+import type { ComponentType } from 'react'
+import { AppStateProvider, ConfigurationProvider } from '@onecx/react-integration-interface'
+import { SyncedRouterProvider } from '../routing'
+import '../styling/dynamicScoping/index'
 
-export function withBaseProviders<P extends object>(
-  RemoteComponent: ComponentType<P>
-): ComponentType<P> {
+export function withBaseProviders<P extends object>(RemoteComponent: ComponentType<P>): ComponentType<P> {
   return (props: P) => (
     <SyncedRouterProvider>
       <AppStateProvider>
@@ -17,5 +12,5 @@ export function withBaseProviders<P extends object>(
         </ConfigurationProvider>
       </AppStateProvider>
     </SyncedRouterProvider>
-  );
+  )
 }
