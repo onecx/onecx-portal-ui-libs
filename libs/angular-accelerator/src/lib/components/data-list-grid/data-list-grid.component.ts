@@ -1,12 +1,14 @@
 import {
   AfterContentInit,
   Component,
+  computed,
   ContentChild,
   ContentChildren,
   DoCheck,
   EventEmitter,
   Inject,
   Injector,
+  input,
   Input,
   LOCALE_ID,
   OnInit,
@@ -17,13 +19,24 @@ import {
   ViewChildren,
 } from '@angular/core'
 import { Router } from '@angular/router'
-import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { LiveAnnouncer } from '@angular/cdk/a11y'
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 import { MfeInfo } from '@onecx/integration-interface'
 import { MenuItem, PrimeIcons, PrimeTemplate } from 'primeng/api'
 import { Menu } from 'primeng/menu'
-import { BehaviorSubject, Observable, combineLatest, debounceTime, first, firstValueFrom, map, mergeMap, of, switchMap } from 'rxjs'
+import {
+  BehaviorSubject,
+  Observable,
+  combineLatest,
+  debounceTime,
+  first,
+  firstValueFrom,
+  map,
+  mergeMap,
+  of,
+  switchMap,
+} from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
@@ -127,24 +140,20 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     )
   }
   @Input() name = ''
-  @Input()
-  get totalRecordsOnServer(): number | undefined {
-    return this.params['totalRecordsOnServer'] ? Number(this.params['totalRecordsOnServer']) : undefined
-  }
-  set totalRecordsOnServer(value: number | undefined) {
-    this.params['totalRecordsOnServer'] = value?.toString() ?? '0'
-  }
+  totalRecordsOnServer = input<number | undefined>(undefined)
   @Input() currentPageShowingKey = 'OCX_DATA_TABLE.SHOWING'
   @Input() currentPageShowingWithTotalOnServerKey = 'OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER'
-  params: { [key: string]: string } = {
-    currentPage: '{currentPage}',
-    totalPages: '{totalPages}',
-    rows: '{rows}',
-    first: '{first}',
-    last: '{last}',
-    totalRecords: '{totalRecords}',
-  }
-
+  params= computed(() => {    
+    return {
+      currentPage: '{currentPage}',
+      totalPages: '{totalPages}',
+      rows: '{rows}',
+      first: '{first}',
+      last: '{last}',
+      totalRecords: '{totalRecords}',
+      totalRecordsOnServer: this.totalRecordsOnServer()
+    }
+  })
 
   _data$ = new BehaviorSubject<RowListGridData[]>([])
   @Input()
@@ -156,16 +165,13 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     this._originalData = [...value]
     this._data$.next([...value])
 
-    const currentResults = value.length;
-    const newStatus = currentResults === 0
-      ? 'OCX_DATA_LIST_GRID.NO_SEARCH_RESULTS_FOUND'
-      : 'OCX_DATA_LIST_GRID.SEARCH_RESULTS_FOUND';
+    const currentResults = value.length
+    const newStatus =
+      currentResults === 0 ? 'OCX_DATA_LIST_GRID.NO_SEARCH_RESULTS_FOUND' : 'OCX_DATA_LIST_GRID.SEARCH_RESULTS_FOUND'
 
-    firstValueFrom(
-      this.translateService.get(newStatus, { results: currentResults }) ).then((translatedText: string) => {
-        this.liveAnnouncer.announce(translatedText);
-      }
-    );
+    firstValueFrom(this.translateService.get(newStatus, { results: currentResults })).then((translatedText: string) => {
+      this.liveAnnouncer.announce(translatedText)
+    })
   }
 
   _filters$ = new BehaviorSubject<Filter[]>([])

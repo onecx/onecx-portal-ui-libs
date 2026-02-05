@@ -265,7 +265,7 @@ describe('DataTableComponent', () => {
 
   describe('should display the paginator currentPageReport  with totalRecordsOnServer -', () => {
     it('de', async () => {
-      component.totalRecordsOnServer = 10
+      fixture.componentRef.setInput('totalRecordsOnServer', 10)
       translateService.use('de')
       const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
       const paginator = await dataTable.getPaginator()
@@ -274,7 +274,7 @@ describe('DataTableComponent', () => {
     })
 
     it('en', async () => {
-      component.totalRecordsOnServer = 10
+      fixture.componentRef.setInput('totalRecordsOnServer', 10)
       translateService.use('en')
       const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
       const paginator = await dataTable.getPaginator()

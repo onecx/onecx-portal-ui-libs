@@ -1,3 +1,28 @@
+## [5.52.7](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.52.6...v5.52.7) (2026-02-04)
+
+### Refactoring
+
+* use signals to force data rerender v5 ([#1209](https://github.com/onecx/onecx-portal-ui-libs/issues/1209)) ([733e1a9](https://github.com/onecx/onecx-portal-ui-libs/commit/733e1a987da75dbd18fcc82abbad92bbaa2d1f1a))
+
+## [5.52.6](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.52.5...v5.52.6) (2026-02-02)
+
+### Bug Fixes
+
+* parameters service signature ([#1200](https://github.com/onecx/onecx-portal-ui-libs/issues/1200)) ([ee1f6ef](https://github.com/onecx/onecx-portal-ui-libs/commit/ee1f6ef97e68ced772cb5751fe6dfa81477ef5d2))
+
+## [5.52.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.52.4...v5.52.5) (2026-02-02)
+
+### Bug Fixes
+
+* fix topic publish v5 ([#1199](https://github.com/onecx/onecx-portal-ui-libs/issues/1199)) ([97db7b9](https://github.com/onecx/onecx-portal-ui-libs/commit/97db7b99f242ebc23c1dedd7dafe1387c5b470b4))
+
+## [5.52.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.52.3...v5.52.4) (2026-01-30)
+
+### Bug Fixes
+
+* isolate topics + fallback v5 ([#1182](https://github.com/onecx/onecx-portal-ui-libs/issues/1182)) ([ba1bcff](https://github.com/onecx/onecx-portal-ui-libs/commit/ba1bcff589869a2f06a4eb33212631100fd30d4c))
+* isolate topics to tab ([#1178](https://github.com/onecx/onecx-portal-ui-libs/issues/1178)) ([d6355c0](https://github.com/onecx/onecx-portal-ui-libs/commit/d6355c00d8a2aa512a783637cdab25769ec24787))
+
 ## [5.52.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.52.2...v5.52.3) (2026-01-26)
 
 ### Bug Fixes
