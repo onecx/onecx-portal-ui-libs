@@ -12,7 +12,7 @@ function getUrlParams(searchParam: Record<string, any>): string {
     ).toString();
 }
 
-export function createUriParamsEffect<AC extends ActionCreator<string, Creator>>(
+export function createFragmentParamsEffect<AC extends ActionCreator<string, Creator>>(
     actions$: Actions,
     actionType: AC,
     router: Router,

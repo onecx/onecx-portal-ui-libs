@@ -5,7 +5,7 @@ import { ActionCreator, Creator } from '@ngrx/store'
 import { tap } from 'rxjs'
 
 /**
- * @deprecated This effect helper is deprecated. Please use `createUriParamsEffect` instead for handling URI parameters.
+ * @deprecated This effect helper is deprecated. Please use `createFragmentParamsEffect` instead for handling URI parameters.
  */
 export function createQueryParamsEffect<AC extends ActionCreator<string, Creator>>(
   actions$: Actions,

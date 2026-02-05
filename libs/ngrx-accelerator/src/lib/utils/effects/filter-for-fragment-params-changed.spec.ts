@@ -1,7 +1,7 @@
 import { firstValueFrom, of } from 'rxjs';
 import { RoutesRecognized } from '@angular/router';
 import { z } from 'zod';
-import { filterOutUriParamsHaveNotChanged } from './filter-for-uri-params-changed';
+import { filterOutFragmentParamsHaveNotChanged } from './filter-for-fragment-params-changed';
 
 const MOCK_ROUTER_NAVIGATED = 'MOCK_ROUTER_NAVIGATED';
 const MOCK_ROUTE: any = {
@@ -14,7 +14,7 @@ const MOCK_ROUTE2: any = {
     routerState: { snapshot: { root: { fragment: 'page?param1=2' } } },
 };
 
-const MOCK_ACTION: any = {
+const MOCK_ACTION2: any = {
     type: MOCK_ROUTER_NAVIGATED,
     payload: { routerState: { root: { fragment: 'page?param1=2' } } },
 };
@@ -29,67 +29,67 @@ const MOCK_EMPTY_ROUTE: any = {
     routerState: { snapshot: { root: { fragment: '' } } },
 };
 
-describe('filterOutUriParamsHaveNotChanged', () => {
+describe('filterOutFragmentParamsHaveNotChanged', () => {
     const schema = z.object({ param1: z.string().optional() });
     const router = MOCK_ROUTE;
-    const action = MOCK_ACTION;
+    const action = MOCK_ACTION2;
 
-    it('filter when params changed', async () => {
-        const results = await firstValueFrom(of(action).pipe(filterOutUriParamsHaveNotChanged(router, schema)));
+    it('should not filter when params changed', async () => {
+        const results = await firstValueFrom(of(action).pipe(filterOutFragmentParamsHaveNotChanged(router, schema)));
 
         expect(results).toEqual(action);
     });
 
-    it('should not filter when params unchanged', async () => {
-        const action = MOCK_ACTION;
+    it('should filter when params unchanged', async () => {
+        const action = MOCK_ACTION2;
         const router = MOCK_ROUTE2;
         const emitted: any[] = [];
 
         await of(action)
-            .pipe(filterOutUriParamsHaveNotChanged(router, schema))
+            .pipe(filterOutFragmentParamsHaveNotChanged(router, schema))
             .forEach((a) => emitted.push(a));
 
         expect(emitted).toHaveLength(0);
     });
 
-    it('filter when both empty and allowEmptyUriParamsList is true', async () => {
+    it('should not filter when both empty and allowEmptyFragmentParamsList is true', async () => {
         const router = MOCK_EMPTY_ROUTE;
         const schema = z.object({});
         const action = MOCK_EMPTY_ACTION;
         const emitted: any[] = [];
 
         await of(action)
-            .pipe(filterOutUriParamsHaveNotChanged(router, schema, true))
+            .pipe(filterOutFragmentParamsHaveNotChanged(router, schema, true))
             .forEach((a) => emitted.push(a));
 
         expect(emitted).toHaveLength(1);
     });
 
-    it('should not filter when both empty and allowEmptyUriParamsList is false', async () => {
+    it('should filter when both empty and allowEmptyFragmentParamsList is false', async () => {
         const router = MOCK_EMPTY_ROUTE;
         const schema = z.object({});
         const action = MOCK_EMPTY_ACTION;
         const emitted: any[] = [];
 
         await of(action)
-            .pipe(filterOutUriParamsHaveNotChanged(router, schema, false))
+            .pipe(filterOutFragmentParamsHaveNotChanged(router, schema, false))
             .forEach((a) => emitted.push(a));
 
         expect(emitted).toHaveLength(0);
     });
 
-    it('should not filter when validation fails', async () => {
+    it('should filter when validation fails', async () => {
         const schema = z.object({ param: z.number() });
         const emitted: any[] = [];
 
         await of(action)
-            .pipe(filterOutUriParamsHaveNotChanged(router, schema))
+            .pipe(filterOutFragmentParamsHaveNotChanged(router, schema))
             .forEach((a) => emitted.push(a));
 
         expect(emitted).toHaveLength(0);
     });
 
-    it('should not filter when empty params', async () => {
+    it('should filter when empty params', async () => {
         const schema = z.object({ param: z.number() });
         const emitted: any[] = [];
         const action: any = {
@@ -97,7 +97,7 @@ describe('filterOutUriParamsHaveNotChanged', () => {
             payload: { routerState: { root: { fragment: 'page?' } } },
         };
         await of(action)
-            .pipe(filterOutUriParamsHaveNotChanged(router, schema))
+            .pipe(filterOutFragmentParamsHaveNotChanged(router, schema))
             .forEach((a) => emitted.push(a));
 
         expect(emitted).toHaveLength(0);

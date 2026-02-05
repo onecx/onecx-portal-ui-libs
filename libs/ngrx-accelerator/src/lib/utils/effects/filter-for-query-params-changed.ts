@@ -5,7 +5,7 @@ import equal from 'fast-deep-equal'
 import { Router, RoutesRecognized } from '@angular/router'
 
 /**
- * @deprecated This helper is deprecated. Please use `filterOutQueryParamsHaveNotChanged` instead for filtering URI parameters.
+ * @deprecated This helper is deprecated. Please use `filterOutFragmentParamsHaveNotChanged` instead for filtering URI parameters.
  */
 export function filterOutQueryParamsHaveNotChanged<A extends RouterNavigatedAction>(
   router: Router,

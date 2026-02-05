@@ -1,8 +1,8 @@
 import { Subject, of, firstValueFrom } from 'rxjs';
 import { Actions } from '@ngrx/effects';
-import { createUriParamsEffect } from './create-uri-params-effect';
+import { createFragmentParamsEffect } from './create-fragment-params-effect';
 
-describe('createUriParamsEffect', () => {
+describe('createFragmentParamsEffect', () => {
     const router = { navigate: jest.fn() } as any;
     const actionsSubject = new Subject<any>();
     const actions$ = new Actions(actionsSubject.asObservable());
@@ -14,7 +14,7 @@ describe('createUriParamsEffect', () => {
         const activatedRoute = { fragment: of(undefined) } as any;
         const reducer = jest.fn();
 
-        const effect$ = createUriParamsEffect(actions$, actionType as any, router, activatedRoute, reducer);
+        const effect$ = createFragmentParamsEffect(actions$, actionType as any, router, activatedRoute, reducer);
         const result = firstValueFrom(effect$);
         actionsSubject.next({ type: actionType });
         await result;
@@ -27,7 +27,7 @@ describe('createUriParamsEffect', () => {
         const activatedRoute = { fragment: of('hash?param=1&test=key') } as any;
         const reducer = jest.fn().mockImplementation((_state, _action) => ({ new: 'value', test: ['key'], another: null }));
 
-        const effect$ = createUriParamsEffect(actions$, actionType as any, router, activatedRoute, reducer);
+        const effect$ = createFragmentParamsEffect(actions$, actionType as any, router, activatedRoute, reducer);
         const result = firstValueFrom(effect$);
         actionsSubject.next({ type: actionType });
         await result;

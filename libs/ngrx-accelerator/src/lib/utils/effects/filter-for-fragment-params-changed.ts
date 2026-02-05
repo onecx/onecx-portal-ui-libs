@@ -4,10 +4,10 @@ import { ZodType } from 'zod'
 import { MonoTypeOperatorFunction, filter, withLatestFrom, map } from 'rxjs'
 import equal from 'fast-deep-equal'
 
-export function filterOutUriParamsHaveNotChanged<A extends RouterNavigatedAction>(
+export function filterOutFragmentParamsHaveNotChanged<A extends RouterNavigatedAction>(
   router: Router,
-  uriParamsTypeDef: ZodType,
-  allowEmptyUriParamsList = false
+  fragmentParamsTypeDef: ZodType,
+  allowEmptyFragmentParamsList = false
 ): MonoTypeOperatorFunction<A> {
   return (source) => {
     return source.pipe(
@@ -18,18 +18,18 @@ export function filterOutUriParamsHaveNotChanged<A extends RouterNavigatedAction
         )
       ),
       filter(([action, previousRouterState]) => {
-        const currentUriParams = getUriParams(previousRouterState.snapshot.root.fragment || '');
-        const actionUriParams = getUriParams(action.payload.routerState.root.fragment || '');
-        if (!allowEmptyUriParamsList && Object.keys(actionUriParams).length === 0) {
+        const currentFragmentParams = getFragmentParams(previousRouterState.snapshot.root.fragment || '');
+        const actionFragmentParams = getFragmentParams(action.payload.routerState.root.fragment || '');
+        if (!allowEmptyFragmentParamsList && Object.keys(actionFragmentParams).length === 0) {
           return false
         }
-        const currentResult = uriParamsTypeDef.safeParse(currentUriParams)
-        const actionResult = uriParamsTypeDef.safeParse(actionUriParams)
+        const currentResult = fragmentParamsTypeDef.safeParse(currentFragmentParams)
+        const actionResult = fragmentParamsTypeDef.safeParse(actionFragmentParams)
         if (actionResult.success && currentResult.success) {
           const actionParams = actionResult.data
           const currentParams = currentResult.data
           if (
-            allowEmptyUriParamsList &&
+            allowEmptyFragmentParamsList &&
             Object.keys(actionParams as Record<string, unknown>).length === 0 &&
             Object.keys(currentParams as Record<string, unknown>).length === 0
           ) {
@@ -44,7 +44,7 @@ export function filterOutUriParamsHaveNotChanged<A extends RouterNavigatedAction
   }
 }
 
-function getUriParams(fragment: string): Record<string, string> {
+function getFragmentParams(fragment: string): Record<string, string> {
   if (!fragment) return {};
   const queryString = fragment.split('?')[1];
   if (!queryString) return {};

@@ -2,7 +2,7 @@ import { Router, RoutesRecognized } from '@angular/router'
 import { RouterNavigatedAction } from '@ngrx/router-store'
 import { filter, map, MonoTypeOperatorFunction, withLatestFrom } from 'rxjs'
 
-export function filterOutOnlyUriParamsChanged<A extends RouterNavigatedAction>(
+export function filterOutOnlyFragmentParamsChanged<A extends RouterNavigatedAction>(
   router: Router
 ): MonoTypeOperatorFunction<A> {
   return (source) => {
