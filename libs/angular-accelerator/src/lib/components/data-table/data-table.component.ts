@@ -92,13 +92,10 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this._rows$.getValue()
   }
   set rows(value: Row[]) {
-    if (!this._rows$.getValue().length) {
+    if (this._rows$.getValue().length > value.length ) {
       this.resetPage();
     }
     this._rows$.next(value)
-    if(value.length < (this.page * (this.pageSize ?? 0))) {
-      this.resetPage();
-    }
     
     const currentResults = value.length;
     const newStatus = currentResults === 0
@@ -131,7 +128,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this._filters$.getValue()
   }
   set filters(value: Filter[]) {
-    if (!this._filters$.getValue().length) {
+    if (this._filters$.getValue().length > value.length ) {
       this.resetPage();
     }
     this._filters$.next(value)
