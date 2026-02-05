@@ -1,16 +1,13 @@
 import { RouterNavigatedAction } from '@ngrx/router-store'
+import { Router, RoutesRecognized } from '@angular/router'
 import { ZodType } from 'zod'
 import { MonoTypeOperatorFunction, filter, withLatestFrom, map } from 'rxjs'
 import equal from 'fast-deep-equal'
-import { Router, RoutesRecognized } from '@angular/router'
 
-/**
- * @deprecated This helper is deprecated. Please use `filterOutFragmentParamsHaveNotChanged` instead for filtering URI parameters.
- */
-export function filterOutQueryParamsHaveNotChanged<A extends RouterNavigatedAction>(
+export function filterOutFragmentParamsHaveNotChanged<A extends RouterNavigatedAction>(
   router: Router,
-  queryParamsTypeDef: ZodType,
-  allowEmptyQueryParamsList = false
+  fragmentParamsTypeDef: ZodType,
+  allowEmptyFragmentParamsList = false
 ): MonoTypeOperatorFunction<A> {
   return (source) => {
     return source.pipe(
@@ -21,21 +18,18 @@ export function filterOutQueryParamsHaveNotChanged<A extends RouterNavigatedActi
         )
       ),
       filter(([action, previousRouterState]) => {
-        if (
-          !allowEmptyQueryParamsList &&
-          Object.keys(action?.payload?.routerState?.root?.queryParams || {}).length === 0
-        ) {
+        const currentFragmentParams = getFragmentParams(previousRouterState.snapshot.root.fragment || '');
+        const actionFragmentParams = getFragmentParams(action.payload.routerState.root.fragment || '');
+        if (!allowEmptyFragmentParamsList && Object.keys(actionFragmentParams).length === 0) {
           return false
         }
-        const currentQueryParams = previousRouterState.snapshot.root.queryParams
-        const actionResult = queryParamsTypeDef.safeParse(action?.payload?.routerState?.root?.queryParams)
-        const currentResult = queryParamsTypeDef.safeParse(currentQueryParams)
-
+        const currentResult = fragmentParamsTypeDef.safeParse(currentFragmentParams)
+        const actionResult = fragmentParamsTypeDef.safeParse(actionFragmentParams)
         if (actionResult.success && currentResult.success) {
           const actionParams = actionResult.data
           const currentParams = currentResult.data
           if (
-            allowEmptyQueryParamsList &&
+            allowEmptyFragmentParamsList &&
             Object.keys(actionParams as Record<string, unknown>).length === 0 &&
             Object.keys(currentParams as Record<string, unknown>).length === 0
           ) {
@@ -48,4 +42,15 @@ export function filterOutQueryParamsHaveNotChanged<A extends RouterNavigatedActi
       map(([action]) => action)
     )
   }
+}
+
+function getFragmentParams(fragment: string): Record<string, string> {
+  if (!fragment) return {};
+  const queryString = fragment.split('?')[1];
+  if (!queryString) return {};
+  const params = Object.fromEntries(
+    new URLSearchParams(queryString)
+  );
+
+  return params;
 }
