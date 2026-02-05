@@ -1,0 +1,14 @@
+[#object-detail-item-interface-change]
+= Updated ObjectDetailItem interface for PageHeaderComponent
+
+In version 7, the `PageHeaderComponent` input `objectDetails` uses an updated `ObjectDetailItem` interface.
+
+The following fields in `ObjectDetailItem` have changed:
+
+* `labelTooltip` (string) → `labelTooltipKey` (TranslationKey)
+* `valueTooltip` (string) → `valueTooltipKey` (TranslationKey)
+* `actionItemTooltip` (string) → `actionItemTooltipKey` (TranslationKey)
+* `actionItemAriaLabelKey` (string) → now of type `TranslationKey`
+
+If your application passes data to `objectDetails`, update these fields accordingly to match the new interface.
+
