@@ -1,6 +1,7 @@
 import { ensureIntersectionObserverMockExists, ensureOriginMockExists } from '@onecx/angular-testing'
 
 export * from './column-group-selection.harness'
+export * from './consent.harness'
 export * from './content-container.harness'
 export * from './content.harness'
 export * from './custom-group-column-selector.harness'

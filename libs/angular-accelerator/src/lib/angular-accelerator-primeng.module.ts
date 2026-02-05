@@ -19,6 +19,7 @@ import { ChipModule } from 'primeng/chip'
 import { PopoverModule } from 'primeng/popover'
 import { FocusTrapModule } from 'primeng/focustrap'
 import { TooltipModule } from 'primeng/tooltip'
+import { RippleModule } from 'primeng/ripple'
 import { providePrimeNG } from 'primeng/config'
 import { TimelineModule } from 'primeng/timeline'
 
@@ -44,6 +45,7 @@ import { TimelineModule } from 'primeng/timeline'
     FocusTrapModule,
     TooltipModule,
     TimelineModule,
+    RippleModule,
     SelectButtonModule,
     SharedModule,
   ],
@@ -68,6 +70,7 @@ import { TimelineModule } from 'primeng/timeline'
     FocusTrapModule,
     TooltipModule,
     TimelineModule,
+    RippleModule,
     SelectButtonModule,
     SharedModule,
   ],

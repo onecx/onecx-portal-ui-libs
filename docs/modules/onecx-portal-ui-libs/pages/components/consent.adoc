@@ -1,0 +1,109 @@
+= OneCX Consent
+
+:idprefix:
+:idseparator: -
+
+[#overview]
+== Overview
+The Consent component (`<ocx-consent>`) gates projected content behind explicit user consent.
+
+Typical GDPR/ePrivacy use cases include embedding third-party resources (maps, analytics, videos) where no network requests should happen before opt-in.
+
+[#usage]
+== Usage
+Import the `AngularAcceleratorModule` and use the component in your template.
+
+[source, html]
+----
+<ocx-consent
+  [url]="tileServerUrl"
+  purpose="maps"
+  [showWithdraw]="true"
+>
+  <a ocx-consent-info href="/privacy">Privacy policy</a>
+
+  <!-- Rendered only when consent exists. -->
+  <app-leaflet-map [tileUrl]="tileServerUrl" />
+</ocx-consent>
+----
+
+NOTE: Angular projected content is created in the host component's view. If your projected content is an Angular component that performs side effects on creation (e.g. network requests in constructors/effects), you should still guard its *instantiation*.
+
+One simple pattern is to toggle an `*ngIf` (or `@if`) based on the `consentChanged` output:
+
+[source, html]
+----
+<ocx-consent
+  [url]="tileServerUrl"
+  purpose="maps"
+  (consentChanged)="mapConsentGranted = $event.hasConsent"
+>
+  <app-leaflet-map *ngIf="mapConsentGranted" [tileUrl]="tileServerUrl" />
+</ocx-consent>
+----
+
+[#projection]
+== Content projection
+The component supports two projection areas:
+
+- Default projection: the gated content that is only rendered after consent is present.
+- `[ocx-consent-info]`: optional informational content shown in the consent prompt (e.g. provider name, privacy policy link).
+
+[#inputs]
+== Inputs
+
+.Consent inputs
+[cols="1,1,1,2", options="header"]
+|===
+| Input name | Type | Default | Description
+
+| `url` | `string` | - | *Required.* Target URL that the gated content will contact (used for display and consent matching).
+| `purpose` | `string \| undefined` | - | Optional scope for consent (e.g. `maps`, `analytics`). When set, consent is stored/matched as `<url>::<purpose>`.
+| `titleKey` | `string` | `OCX_CONSENT.TITLE` | Translation key for the consent title.
+| `messageKey` | `string` | `OCX_CONSENT.MESSAGE` | Translation key for the consent message (receives `{ url }`).
+| `agreeKey` | `string` | `OCX_CONSENT.AGREE` | Translation key for the agree button.
+| `withdrawKey` | `string` | `OCX_CONSENT.WITHDRAW` | Translation key for the withdraw button.
+| `showWithdraw` | `boolean` | `false` | When enabled, shows a withdraw button that removes the stored consent.
+|===
+
+[#outputs]
+== Outputs
+
+.Consent outputs
+|===
+| Output name | Type | Description
+
+| `consentChanged` | `<<consent-changed-event, ConsentChangedEvent>>` | Emits whenever consent is granted or withdrawn.
+|===
+
+[#types]
+== Types
+
+[#consent-changed-event]
+=== ConsentChangedEvent
+
+.ConsentChangedEvent
+|===
+| Property | Type | Description
+
+| `url` | `string` | Normalized URL that consent was evaluated for.
+| `hasConsent` | `boolean` | `true` when granted, `false` when withdrawn.
+| `purpose?` | `string` | Optional purpose scope echoed back to the consumer.
+|===
+
+[#storage]
+== Storage and matching
+Consent is stored in the browser using `localStorage`:
+
+- Key: `onecx-consent`
+- Format: JSON string array
+- Entries: either `<normalizedUrl>` or `<normalizedUrl>::<purpose>`
+
+URL normalization aims to avoid accidental mismatches:
+
+- Trims whitespace
+- Removes `#hash` and `?query`
+- Lowercases the hostname
+- Removes a trailing slash
+
+If `url` is not parseable as a URL, a trimmed string with a trailing slash removed is used.

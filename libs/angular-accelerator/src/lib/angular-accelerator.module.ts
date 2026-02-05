@@ -51,6 +51,7 @@ import { LoadingIndicatorComponent } from './components/loading-indicator/loadin
 import { BasicDirective } from './directives/basic.directive'
 import { LoadingIndicatorDirective } from './directives/loading-indicator.directive'
 import { MessageService } from 'primeng/api'
+import { ConsentComponent } from './components/consent/consent.component'
 
 export class AngularAcceleratorMissingTranslationHandler extends MultiLanguageMissingTranslationHandler {}
 
@@ -105,6 +106,7 @@ function appInitializer(userService: UserService) {
     DialogContentComponent,
     DialogInlineComponent,
     DialogMessageContentComponent,
+    ConsentComponent,
   ],
   providers: [
     providePermissionChecker(),
@@ -162,6 +164,7 @@ function appInitializer(userService: UserService) {
     DialogContentComponent,
     DialogInlineComponent,
     DialogMessageContentComponent,
+    ConsentComponent,
   ],
 })
 export class AngularAcceleratorModule {}
