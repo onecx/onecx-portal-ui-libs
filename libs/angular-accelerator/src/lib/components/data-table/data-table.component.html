@@ -273,7 +273,7 @@
       <td>
         @defer (on viewport) { @if (columnTemplates[column.id]) {
         <ng-container
-          [ngTemplateOutlet]="cell() ? cell() : columnTemplates[column.id]"
+          [ngTemplateOutlet]="cell() ?? columnTemplates[column.id]"
           [ngTemplateOutletContext]="{ rowObject: rowObject, column: column }"
         >
         </ng-container>

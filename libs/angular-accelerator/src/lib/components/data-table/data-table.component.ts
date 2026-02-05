@@ -12,11 +12,14 @@ import {
   effect,
   inject,
   input,
+  linkedSignal,
   model,
   output,
   signal,
+  untracked,
   viewChildren,
 } from '@angular/core'
+import { computedPrevious } from 'ngxtension/computed-previous'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { isValidDate } from '@onecx/accelerator'
@@ -97,10 +100,12 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   checked = signal(true)
 
   rows = model<Row[]>([])
+  previousRows = computedPrevious(this.rows)
   selectedRows = model<Row[]>([])
   selectedIds = signal<Array<string | number>>([])
 
   filters = model<Filter[]>([])
+  previousFilters = computedPrevious(this.filters)
   sortDirection = signal<DataSortDirection>(DataSortDirection.NONE)
   sortColumn = signal<string>('')
   columnTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
@@ -273,6 +278,8 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   selectedFilteredRows = computed(() => {
     const selectionIds = this.selectedIds()
     const rows = this.rows()
+    // Include page to force fresh array references on page navigation
+    // to satisfy PrimeNG DataTable selection tracking, because it needs new object references to detect changes
     this.page()
     return selectionIds.map((rowId) => rows.find((r) => r.id === rowId)).filter((row): row is Row => row !== undefined)
   })
@@ -456,9 +463,13 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
     effect(() => {
       const rows = this.rows()
-      if (rows.length) {
-        this.resetPage()
-      }
+
+      untracked(() => {
+        const previousRows = this.previousRows()
+        if (previousRows.length) {
+          this.page.set(0)
+        }
+      })
 
       const currentResults = rows.length
       const newStatus =
@@ -473,9 +484,14 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
     effect(() => {
       const filters = this.filters()
-      if (filters.length) {
-        this.resetPage()
-      }
+      // Not track previousFilters change to avoid the trigger
+      untracked(() => {
+        const previousFilters = this.previousFilters()
+        if (previousFilters.length) {
+          this.page.set(0)
+        }
+      })
+      this.filtered.emit(filters)
     })
 
     effect(() => {
@@ -512,11 +528,6 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
     effect(() => {
       this.emitSelectionChanged()
-    })
-
-    effect(() => {
-      const filters = this.filters()
-      this.filtered.emit(filters)
     })
 
     effect(() => {
@@ -675,10 +686,6 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     const page = event.first / event.rows
     this.page.set(page)
     this.pageSize.set(event.rows)
-  }
-
-  resetPage() {
-    this.page.set(0)
   }
 
   fieldIsTruthy(object: any, key: any) {
