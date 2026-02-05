@@ -10,8 +10,8 @@
 ** xref:onecx-portal-ui-libs:browser-logging.adoc[Browser Logging]
 
 ** Migrations
-*** xref:onecx-portal-ui-libs:migrations/migrate-to-v6.adoc[Migrate to Lib v6]
 *** xref:onecx-portal-ui-libs:migrations/angular-19/index.adoc[Migrate App to Angular 19]
+*** xref:onecx-portal-ui-libs:migrations/angular-20/index.adoc[Migrate App to Angular 20]
 
 ** Services
 *** xref:onecx-portal-ui-libs:service/portal-message-service.adoc[PortalMessageService]
