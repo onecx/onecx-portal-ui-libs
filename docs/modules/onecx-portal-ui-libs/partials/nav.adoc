@@ -1,7 +1,9 @@
 * xref:onecx-portal-ui-libs:index.adoc[UI Libraries]
 ** Libraries
 *** xref:onecx-portal-ui-libs:libraries/angular-integration-interface.adoc[angular-integration-interface]
+*** xref:onecx-portal-ui-libs:libraries/angular-linter-rules.adoc[angular-linter-rules]
 *** xref:onecx-portal-ui-libs:libraries/integration-interface.adoc[integration-interface]
+*** xref:onecx-portal-ui-libs:libraries/ngrx-linter-rules.adoc[ngrx-linter-rules]
 
 ** xref:onecx-portal-ui-libs:local-development.adoc[Local Development]
 ** xref:onecx-portal-ui-libs:onecx-compatibility.adoc[Compatibility]
