@@ -95,8 +95,8 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
   private readonly liveAnnouncer = inject(LiveAnnouncer)
 
-  FilterType = signal(FilterType)
-  TemplateType = signal(TemplateType)
+  FilterType = FilterType
+  TemplateType = TemplateType
   checked = signal(true)
 
   rows = model<Row[]>([])
@@ -464,6 +464,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     effect(() => {
       const rows = this.rows()
 
+      // Not track previousFilters change to avoid the trigger
       untracked(() => {
         const previousRows = this.previousRows()
         if (previousRows.length) {

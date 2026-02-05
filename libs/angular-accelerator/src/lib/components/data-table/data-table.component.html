@@ -164,7 +164,7 @@
             ></button>
             } @if (currentEqualFilterOptions$ | async; as equalFilterOptions) { @if (columnFilterTemplates$ | async; as
             columnFilterTemplates) { @if (column.filterable && (!column.filterType || column.filterType ===
-            FilterType().EQUALS)) {
+            FilterType.EQUALS)) {
             <p-multiselect
               class="filterMultiSelect"
               [options]="equalFilterOptions.column?.id === column.id ? equalFilterOptions.options : []"
@@ -204,7 +204,7 @@
                 }
               </ng-template>
             </p-multiselect>
-            } } } @if (column.filterable && column.filterType === FilterType().IS_NOT_EMPTY) {
+            } } } @if (column.filterable && column.filterType === FilterType.IS_NOT_EMPTY) {
             <p-multiselect
               class="filterMultiSelect"
               [options]="[
