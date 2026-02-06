@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core'
 import { CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
-import Keycloak, { KeycloakConfig } from 'keycloak-js'
+import Keycloak, { KeycloakServerConfig } from 'keycloak-js'
 import { AuthService } from '../auth.service'
 import { createLogger } from '../utils/logger.utils'
 
@@ -31,10 +31,10 @@ export class KeycloakAuthService implements AuthService {
       }
     }
 
-    let kcConfig: KeycloakConfig | string
+    let kcConfig: KeycloakServerConfig | string
     const validKCConfig = await this.getValidKCConfig()
     kcConfig = { ...validKCConfig, ...(config ?? {}) }
-
+    
     if (!kcConfig.clientId || !kcConfig.realm || !kcConfig.url) {
       kcConfig = './assets/keycloak.json'
     }
@@ -42,7 +42,23 @@ export class KeycloakAuthService implements AuthService {
     const enableSilentSSOCheck =
       (await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_ENABLE_SILENT_SSO)) === 'true'
 
-    this.keycloak = new Keycloak(kcConfig)
+    try {
+      await import('keycloak-js').then(({ default: Keycloak }) => {
+        this.keycloak = new Keycloak(kcConfig)
+      })
+    } catch (err) {
+      this.logger.error(
+        'Keycloak initialization failed! Could not load keycloak-js library which is required in the current environment.',
+        err
+      )
+      throw new Error(
+        'Keycloak initialization failed! Could not load keycloak-js library which is required in the current environment.'
+      )
+    }
+
+    if (!this.keycloak) {
+      throw new Error('Keycloak initialization failed!')
+    }
 
     this.setupEventListener()
 
@@ -75,7 +91,7 @@ export class KeycloakAuthService implements AuthService {
       })
   }
 
-  protected async getValidKCConfig(): Promise<KeycloakConfig> {
+  protected async getValidKCConfig(): Promise<KeycloakServerConfig> {
     const clientId = await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_CLIENT_ID)
     if (!clientId) {
       throw new Error('Invalid KC config, missing clientId')
@@ -84,7 +100,7 @@ export class KeycloakAuthService implements AuthService {
     if (!realm) {
       throw new Error('Invalid KC config, missing realm')
     }
-    const url = await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_URL)
+    const url = (await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_URL)) ?? ''
     return {
       url,
       clientId,
