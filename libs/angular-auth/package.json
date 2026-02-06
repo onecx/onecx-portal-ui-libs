@@ -11,8 +11,6 @@
     "@angular/core": "^20.0.0",
     "rxjs": "~7.8.0",
     "@onecx/angular-integration-interface": "^8.0.0-rc.4",
-    "@onecx/integration-interface": "^8.0.0-rc.4",
-    "keycloak-js": "^25.0.1",
     "@nx/devkit": "^22.0.2",
     "@onecx/nx-migration-utils": "^8.0.0-rc.4",
     "@onecx/accelerator": "^8.0.0-rc.4"
