@@ -6,6 +6,10 @@ Make sure to avoid linter errors.
 
 Only use comments if it is not directly obvious why something is done a certain way but never to explain what the code is doing. TS-docs are excluded from this rule.  
 
+This is very important: ALWAYS prefer running lint, test, build and all other tasks defined in .vscode/tasks.json via the workspace tasks! Some of the tasks are taking much time, so please wait for them to finish before making further changes (up to 15min).
+
+When reading information about packages from npm, always prefer using the npm MCP server instead of reading directly from the npm registry.
+
 When writing tests use the following guidelines:
 
 - Use Jest as the testing framework.
@@ -13,8 +17,7 @@ When writing tests use the following guidelines:
 - Create use case driven tests
 - Test statement coverage should be 100% for new code.
 - Group the tests logically with describe blocks (e.g. by tested method) and use descriptive test names.
-- Run the tests first for the file you are working on only. Once they pass, run the full test suite to ensure nothing else is broken.
-
+- Run the tests first for the file you are working on only (task: "nx affected test (current work)"). Once they pass, run the full test suite to ensure nothing else is broken.
 
 For components consider the following guidelines:
 
