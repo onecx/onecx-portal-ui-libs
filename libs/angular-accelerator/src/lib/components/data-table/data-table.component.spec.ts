@@ -1071,6 +1071,30 @@ describe('DataTableComponent', () => {
     })
   })
 
+  describe('rows setter (resetPage)', () => {
+    it('should call resetPage when rows length decreases', () => {
+      const resetSpy = jest.spyOn(component, 'resetPage')
+      const pageSpy = jest.spyOn(component.pageChanged, 'emit')
+      const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
+      component.page = 2
+      component.rows = mockData.slice(0, 3)
+      expect(resetSpy).toHaveBeenCalled()
+      expect(component.page).toBe(0)
+      expect(pageSpy).toHaveBeenCalledWith(0)
+      expect(stateSpy).toHaveBeenCalled()
+    })
+
+    it('should not call resetPage when rows length increases', () => {
+      const resetSpy = jest.spyOn(component, 'resetPage')
+      const pageSpy = jest.spyOn(component.pageChanged, 'emit')
+      component.page = 2
+      component.rows = Array.from({ length: 10 }).map((_, i) => ({ id: i, name: i } as any))
+      expect(resetSpy).not.toHaveBeenCalled()
+      expect(component.page).toBe(2)
+      expect(pageSpy).not.toHaveBeenCalled()
+    })
+  })
+
   describe('filtering + sorting helpers (class logic)', () => {
     it('translateColumnValues should return {} for empty input and use translateService.get for non-empty', async () => {
       const translateService = TestBed.inject(TranslateService)
