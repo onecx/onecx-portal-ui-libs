@@ -4,7 +4,7 @@
       id="dataListGridSortingDropdown"
       inputId="dataListGridSortingDropdownInput"
       [(ngModel)]="selectedSortingOption"
-      [options]="dropdownOptions"
+      [options]="dropdownOptions()"
       (onChange)="selectSorting($event)"
       [ariaLabel]="('OCX_LIST_GRID_SORT.DROPDOWN.ARIA_LABEL' | translate)"
     >

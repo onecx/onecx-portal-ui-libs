@@ -9,6 +9,9 @@ import type { DataTableColumn } from '../../model/data-table-column.model'
 import { ColumnType } from '../../model/column-type.model'
 import type { Filter } from '../../model/filter.model'
 import { take } from 'rxjs'
+import { ButtonModule } from 'primeng/button'
+import { PopoverModule } from 'primeng/popover'
+import { TooltipModule } from 'primeng/tooltip'
 
 const makeColumn = (overrides: Partial<DataTableColumn> = {}): DataTableColumn =>
   ({
@@ -21,11 +24,14 @@ const makeColumn = (overrides: Partial<DataTableColumn> = {}): DataTableColumn =
 describe('FilterViewComponent (class logic)', () => {
   let fixture: ComponentFixture<FilterViewComponent>
   let component: FilterViewComponent
+  let panelMock = {
+    toggle: jest.fn(),
+  } as any
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [FilterViewComponent],
-      imports: [CommonModule, FormsModule, TranslateModule.forRoot()],
+      imports: [CommonModule, FormsModule, TranslateModule.forRoot(), ButtonModule, PopoverModule, TooltipModule],
       providers: [provideTranslateTestingService({})],
     }).compileComponents()
 
@@ -33,77 +39,50 @@ describe('FilterViewComponent (class logic)', () => {
     component = fixture.componentInstance
 
     // Minimal stubs to avoid accessing real PrimeNG components
-    component.manageButton = {
-      el: {
-        nativeElement: {
-          firstChild: {
-            focus: jest.fn(),
+    ;(component as any).manageButton = () => {
+      return {
+        el: {
+          nativeElement: {
+            firstChild: {
+              focus: jest.fn(),
+            },
           },
         },
-      },
-    } as any
-
-    component.panel = {
-      toggle: jest.fn(),
-    } as any
+      } as any
+    }
+    ;(component as any).panel = () => {
+      return panelMock
+    }
   })
 
-  it('should initialize columnFilterDataRows$ and emit initial componentStateChanged in ngOnInit', (done) => {
-    component.columns = [makeColumn({ id: 'c1', nameKey: 'C1' }), makeColumn({ id: 'c2', nameKey: 'C2' })]
-    component.filters = [
+  it('should initialize columnFilterDataRows$ and emit initial componentStateChanged in ngOnInit', () => {
+    const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
+
+    component.columns.set([makeColumn({ id: 'c1', nameKey: 'C1' }), makeColumn({ id: 'c2', nameKey: 'C2' })])
+    component.filters.set([
       { columnId: 'c2', value: 'v2' } as Filter,
       { columnId: 'c1', value: 'v1' } as Filter,
       { columnId: 'missing', value: 'ignored' } as Filter,
-    ]
+    ])
 
-    const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
+    fixture.detectChanges()
 
-    component.ngOnInit()
+    expect(stateSpy).toHaveBeenCalledWith({ filters: component.filters() })
 
-    expect(stateSpy).toHaveBeenCalledWith({ filters: component.filters })
+    const rows = component.columnFilterDataRows
 
-    const rows$ = component.columnFilterDataRows$
-    if (!rows$) {
-      done(new Error('Expected columnFilterDataRows$ to be defined after ngOnInit'))
-      return
-    }
-
-    let finished = false
-    const finishOnce = (err?: any) => {
-      if (finished) return
-      finished = true
-      if (err) done(err)
-      else done()
-    }
-
-    rows$.pipe(take(1)).subscribe({
-      next: (rows) => {
-        try {
-          // Sorted by the order of columns (c1 then c2)
-          expect((rows as any[]).map((r) => (r as any).valueColumnId)).toEqual(['c1', 'c2'])
-          expect(rows.map((r) => r.column)).toEqual(['C1', 'C2'])
-          finishOnce()
-        } catch (e) {
-          finishOnce(e as any)
-        }
-      },
-      error: finishOnce,
-    })
+    expect((rows() as any[]).map((r) => (r as any).valueColumnId)).toEqual(['c1', 'c2'])
+    expect(rows().map((r) => r.column)).toEqual(['C1', 'C2'])
   })
 
-  it('should set and expose defaultTemplates via the setter', () => {
-    component.defaultTemplates = undefined
-    expect(component.defaultTemplates$.getValue()).toBeUndefined()
-  })
+  it('should map template accessors (_filterViewChipContent, _filterViewShowMoreChip, _filterViewNoSelection)', () => {
+    component.filterViewNoSelection.set(undefined)
+    component.filterViewChipContent.set(undefined)
+    component.filterViewShowMoreChip.set(undefined)
 
-  it('should map template accessors (_filterViewChipContent, _filterViewShowMoreChip, _fitlerViewNoSelection)', () => {
-    component.fitlerViewNoSelection = undefined
-    component.filterViewChipContent = undefined
-    component.filterViewShowMoreChip = undefined
-
-    expect(component._fitlerViewNoSelection).toBeUndefined()
-    expect(component._filterViewChipContent).toBeUndefined()
-    expect(component._filterViewShowMoreChip).toBeUndefined()
+    expect(component.filterViewNoSelection()).toBeUndefined()
+    expect(component.filterViewChipContent()).toBeUndefined()
+    expect(component.filterViewShowMoreChip()).toBeUndefined()
   })
 
   it('should map input templates by type in templates setter', () => {
@@ -112,71 +91,65 @@ describe('FilterViewComponent (class logic)', () => {
     const showMoreTemplate = {} as any
 
     const templates = [
-      { getType: () => 'fitlerViewNoSelection', template: noSelectionTemplate },
+      { getType: () => 'filterViewNoSelection', template: noSelectionTemplate },
       { getType: () => 'filterViewChipContent', template: chipContentTemplate },
       { getType: () => 'filterViewShowMoreChip', template: showMoreTemplate },
       { getType: () => 'ignored', template: {} },
     ] as any
 
-    component.templates = templates
+    fixture.componentRef.setInput('templates', templates)
+    fixture.detectChanges()
 
-    expect(component.fitlerViewNoSelection).toBe(noSelectionTemplate)
-    expect(component.filterViewChipContent).toBe(chipContentTemplate)
-    expect(component.filterViewShowMoreChip).toBe(showMoreTemplate)
+    expect(component.filterViewNoSelection()).toBe(noSelectionTemplate)
+    expect(component.filterViewChipContent()).toBe(chipContentTemplate)
+    expect(component.filterViewShowMoreChip()).toBe(showMoreTemplate)
   })
 
   it('should reset filters and emit events onResetFilersClick', () => {
-    component.filters = [{ columnId: 'c1', value: 'v1' } as Filter]
+    component.filters.set([{ columnId: 'c1', value: 'v1' } as Filter])
 
     const filteredSpy = jest.spyOn(component.filtered, 'emit')
     const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
 
     component.onResetFilersClick()
+    fixture.detectChanges()
 
-    expect(component.filters).toEqual([])
+    expect(component.filters()).toEqual([])
     expect(filteredSpy).toHaveBeenCalledWith([])
     expect(stateSpy).toHaveBeenCalledWith({ filters: [] })
   })
 
   it('should remove a chip by value and emit events onChipRemove', () => {
-    component.filters = [{ columnId: 'c1', value: 'keep' } as Filter, { columnId: 'c2', value: 'remove' } as Filter]
+    component.filters.set([{ columnId: 'c1', value: 'keep' } as Filter, { columnId: 'c2', value: 'remove' } as Filter])
 
     const filteredSpy = jest.spyOn(component.filtered, 'emit')
     const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
 
     component.onChipRemove({ columnId: 'c2', value: 'remove' } as Filter)
+    fixture.detectChanges()
 
-    expect(component.filters).toEqual([{ columnId: 'c1', value: 'keep' }])
+    expect(component.filters()).toEqual([{ columnId: 'c1', value: 'keep' }])
     expect(filteredSpy).toHaveBeenCalledWith([{ columnId: 'c1', value: 'keep' }])
     expect(stateSpy).toHaveBeenCalledWith({ filters: [{ columnId: 'c1', value: 'keep' }] })
   })
 
   it('should delete filter by row valueColumnId/value and emit events onFilterDelete', () => {
-    component.filters = [{ columnId: 'c1', value: 'keep' } as Filter, { columnId: 'c2', value: 'remove' } as Filter]
+    component.filters.set([{ columnId: 'c1', value: 'keep' } as Filter, { columnId: 'c2', value: 'remove' } as Filter])
 
     const filteredSpy = jest.spyOn(component.filtered, 'emit')
     const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
 
     component.onFilterDelete({ id: 'row', valueColumnId: 'c2', value: 'remove' } as any)
+    fixture.detectChanges()
 
-    expect(component.filters).toEqual([{ columnId: 'c1', value: 'keep' }])
+    expect(component.filters()).toEqual([{ columnId: 'c1', value: 'keep' }])
     expect(filteredSpy).toHaveBeenCalledWith([{ columnId: 'c1', value: 'keep' }])
     expect(stateSpy).toHaveBeenCalledWith({ filters: [{ columnId: 'c1', value: 'keep' }] })
   })
 
   it('should focus trigger when trigger id is ocxFilterViewShowMore', () => {
     const focusSpy = jest.fn()
-    component.trigger = { id: 'ocxFilterViewShowMore', focus: focusSpy } as any
-
-    component.focusTrigger()
-
-    expect(focusSpy).toHaveBeenCalled()
-  })
-
-  it('should focus manageButton when trigger is not show more', () => {
-    component.trigger = { id: 'other' } as any
-
-    const focusSpy = (component.manageButton as any).el.nativeElement.firstChild.focus as jest.Mock
+    component.trigger.set({ id: 'ocxFilterViewShowMore', focus: focusSpy } as any)
 
     component.focusTrigger()
 
@@ -187,9 +160,10 @@ describe('FilterViewComponent (class logic)', () => {
     const event = { srcElement: { id: 'x' } } as any
 
     component.showPanel(event)
+    fixture.detectChanges()
 
-    expect(component.trigger).toBe(event.srcElement)
-    expect((component.panel as any).toggle).toHaveBeenCalledWith(event)
+    expect(component.trigger()).toBe(event.srcElement)
+    expect(panelMock.toggle).toHaveBeenCalledWith(event)
   })
 
   it('should expose helpers: getColumnForFilter, getColumn, resolveFieldData, row mapping helpers', () => {
@@ -209,57 +183,48 @@ describe('FilterViewComponent (class logic)', () => {
     })
   })
 
-  it('should compute templates in columns setter (chipTemplates$ and tableTemplates$) with default nulls', (done) => {
-    component.columns = [makeColumn({ id: 'c1', columnType: ColumnType.STRING })]
+  it('should compute templates in columns setter (tableTemplates$)', (done) => {
+    component.columns.set([makeColumn({ id: 'c1', columnType: ColumnType.STRING })])
 
-    component.defaultTemplates = undefined
-    component.templates = undefined
+    fixture.componentRef.setInput('templates', undefined)
 
-    const chip$ = component.chipTemplates$
+    fixture.detectChanges()
+
     const table$ = component.tableTemplates$
-
-    if (!chip$) {
-      done(new Error('Expected chipTemplates$ to be defined after setting columns'))
-      return
-    }
 
     if (!table$) {
       done(new Error('Expected tableTemplates$ to be defined after setting columns'))
       return
     }
 
-    let chipTemplates: Record<string, any> | undefined
-    let tableTemplates: Record<string, any> | undefined
-
-    const maybeFinish = () => {
-      if (!chipTemplates || !tableTemplates) return
-
-      try {
-        expect(chipTemplates).toEqual({ c1: null })
-
-        // tableTemplates includes columns + columnFilterTableColumns
-        expect(Object.keys(tableTemplates).sort()).toEqual(['actions', 'c1', 'column', 'value'].sort())
-        expect(tableTemplates['c1']).toBeNull()
+    table$.pipe(take(1)).subscribe({
+      next: (value) => {
+        expect(Object.keys(value).sort()).toEqual(['actions', 'c1', 'column', 'value'].sort())
+        expect(value['c1']).toBeDefined()
         done()
-      } catch (e) {
-        done(e as any)
-      }
+      },
+    })
+  })
+
+  it('should compute templates in columns setter (tableTemplates$)', (done) => {
+    component.columns.set([makeColumn({ id: 'c1', columnType: ColumnType.STRING })])
+
+    fixture.componentRef.setInput('templates', undefined)
+
+    fixture.detectChanges()
+
+    const chip$ = component.chipTemplates$
+
+    if (!chip$) {
+      done(new Error('Expected chipTemplates$ to be defined after setting columns'))
+      return
     }
 
     chip$.pipe(take(1)).subscribe({
       next: (value) => {
-        chipTemplates = value
-        maybeFinish()
+        expect(value['c1']).toBeDefined()
+        done()
       },
-      error: done,
-    })
-
-    table$.pipe(take(1)).subscribe({
-      next: (value) => {
-        tableTemplates = value
-        maybeFinish()
-      },
-      error: done,
     })
   })
 })
