@@ -1077,7 +1077,9 @@ describe('DataTableComponent', () => {
       const pageSpy = jest.spyOn(component.pageChanged, 'emit')
       const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
       component.page = 2
+
       component.rows = mockData.slice(0, 3)
+
       expect(resetSpy).toHaveBeenCalled()
       expect(component.page).toBe(0)
       expect(pageSpy).toHaveBeenCalledWith(0)
@@ -1088,7 +1090,9 @@ describe('DataTableComponent', () => {
       const resetSpy = jest.spyOn(component, 'resetPage')
       const pageSpy = jest.spyOn(component.pageChanged, 'emit')
       component.page = 2
+
       component.rows = Array.from({ length: 10 }).map((_, i) => ({ id: i, name: i } as any))
+
       expect(resetSpy).not.toHaveBeenCalled()
       expect(component.page).toBe(2)
       expect(pageSpy).not.toHaveBeenCalled()
@@ -1096,7 +1100,6 @@ describe('DataTableComponent', () => {
 
     it('should resetPage when filters length decreases', () => {
       const resetSpy = jest.spyOn(component, 'resetPage')
-
       component.page = 4
       component.filters = [
         { columnId: 'a', value: 1 },
@@ -1113,7 +1116,6 @@ describe('DataTableComponent', () => {
 
     it('should not resetPage when filters length increases', () => {
       const resetSpy = jest.spyOn(component, 'resetPage')
-
       component.page = 2
       component.filters = [{ columnId: 'a', value: 1 }] as any
       resetSpy.mockClear()
