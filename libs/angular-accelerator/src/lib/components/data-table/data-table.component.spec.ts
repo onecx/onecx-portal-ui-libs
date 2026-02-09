@@ -1071,7 +1071,7 @@ describe('DataTableComponent', () => {
     })
   })
 
-  describe('rows setter (resetPage)', () => {
+  describe('rows & filters setter (resetPage)', () => {
     it('should call resetPage when rows length decreases', () => {
       const resetSpy = jest.spyOn(component, 'resetPage')
       const pageSpy = jest.spyOn(component.pageChanged, 'emit')
@@ -1093,7 +1093,42 @@ describe('DataTableComponent', () => {
       expect(component.page).toBe(2)
       expect(pageSpy).not.toHaveBeenCalled()
     })
+
+    it('should resetPage when filters length decreases', () => {
+      const resetSpy = jest.spyOn(component, 'resetPage')
+
+      component.page = 4
+      component.filters = [
+        { columnId: 'a', value: 1 },
+        { columnId: 'b', value: 2 },
+      ] as any
+      resetSpy.mockClear()
+
+      component.filters = [{ columnId: 'a', value: 1 }] as any
+
+      expect(resetSpy).toHaveBeenCalledTimes(1)
+      expect(component.page).toBe(0)
+    })
+
+
+    it('should not resetPage when filters length increases', () => {
+      const resetSpy = jest.spyOn(component, 'resetPage')
+
+      component.page = 2
+      component.filters = [{ columnId: 'a', value: 1 }] as any
+      resetSpy.mockClear()
+
+      component.filters = [
+        { columnId: 'a', value: 1 },
+        { columnId: 'b', value: 2 },
+      ] as any
+
+      expect(resetSpy).not.toHaveBeenCalled()
+      expect(component.page).toBe(2)
+    })
   })
+
+
 
   describe('filtering + sorting helpers (class logic)', () => {
     it('translateColumnValues should return {} for empty input and use translateService.get for non-empty', async () => {
