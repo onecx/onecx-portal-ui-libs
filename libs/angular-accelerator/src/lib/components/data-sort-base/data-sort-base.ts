@@ -18,11 +18,11 @@ export class DataSortBase {
   ) {}
 
   translateItems(
-    [items, filters, sortColumn, sortDirection]: [RowListGridData[], Filter[], string, DataSortDirection],
+    items: RowListGridData[],
     columns: DataTableColumn[],
     clientSideFiltering: boolean,
     clientSideSorting: boolean
-  ): Observable<[RowListGridData[], Filter[], string, DataSortDirection, Record<string, Record<string, string>>]> {
+  ): Observable<Record<string, Record<string, string>>> {
     if (clientSideFiltering || clientSideSorting) {
       let translationKeys: string[] = []
       const translatedColumns = columns.filter((c) => c.columnType === ColumnType.TRANSLATION_KEY)
@@ -44,73 +44,60 @@ export class DataSortBase {
                 ])
               )
             })
-            return [items, filters, sortColumn, sortDirection, translations]
+            return translations
           })
         )
       }
     }
-    return of([items, filters, sortColumn, sortDirection, {}])
+    return of({})
   }
 
   filterItems(
-    [items, filters, sortColumn, sortDirection, translations]: [
-      RowListGridData[],
-      Filter[],
-      string,
-      DataSortDirection,
-      Record<string, Record<string, string>>,
-    ],
+    [items, filters, translations]: [RowListGridData[], Filter[], Record<string, Record<string, string>>],
     clientSideFiltering: boolean
-  ): [RowListGridData[], Filter[], string, DataSortDirection, Record<string, Record<string, string>>] {
+  ): RowListGridData[] {
     if (!clientSideFiltering) {
-      return [items, filters, sortColumn, sortDirection, translations]
+      return items
     }
-    return [
-      items.filter((item) =>
-        filters
-          .map((filter) => filter.columnId)
-          .filter((value, index, self) => self.indexOf(value) === index && value != null)
-          .every((filterColumnId) =>
-            filters
-              .filter((filter) => filter.columnId === filterColumnId)
-              .some((filter) => {
-                const value = (
-                  translations[filter.columnId]?.[ObjectUtils.resolveFieldData(item, filter.columnId)?.toString()] ||
-                  ObjectUtils.resolveFieldData(item, filter.columnId)
-                )?.toString()
-                switch (filter.filterType) {
-                  case undefined:
-                  case FilterType.EQUALS:
-                    return value === String(filter.value)
-                  case FilterType.IS_NOT_EMPTY: {
-                    return filter.value ? !!value : !value
-                  }
-                  default:
-                    return true
+    return items.filter((item) =>
+      filters
+        .map((filter) => filter.columnId)
+        .filter((value, index, self) => self.indexOf(value) === index && value != null)
+        .every((filterColumnId) =>
+          filters
+            .filter((filter) => filter.columnId === filterColumnId)
+            .some((filter) => {
+              const value = (
+                translations[filter.columnId]?.[ObjectUtils.resolveFieldData(item, filter.columnId)?.toString()] ||
+                ObjectUtils.resolveFieldData(item, filter.columnId)
+              )?.toString()
+              switch (filter.filterType) {
+                case undefined:
+                case FilterType.EQUALS:
+                  return value === String(filter.value)
+                case FilterType.IS_NOT_EMPTY: {
+                  return filter.value ? !!value : !value
                 }
-              })
-          )
-      ),
-      filters,
-      sortColumn,
-      sortDirection,
-      translations,
-    ]
+                default:
+                  return true
+              }
+            })
+        )
+    )
   }
 
   sortItems(
-    [items, filters, sortColumn, sortDirection, translations]: [
+    [items, sortColumn, sortDirection, translations]: [
       RowListGridData[],
-      Filter[],
       string,
       DataSortDirection,
       Record<string, Record<string, string>>,
     ],
     columns: DataTableColumn[],
     clientSideSorting: boolean
-  ): [RowListGridData[], Filter[], string, DataSortDirection, Record<string, Record<string, string>>] {
+  ): RowListGridData[] {
     if (!clientSideSorting || sortColumn === '') {
-      return [items, filters, sortColumn, sortDirection, translations]
+      return items
     }
     const column = columns.find((h) => h.id === sortColumn)
     let colValues: Record<string, string>
@@ -132,13 +119,7 @@ export class DataSortBase {
     if (column?.columnType === ColumnType.TRANSLATION_KEY) {
       colValues = translations[sortColumn]
     }
-    return [
-      [...items].sort(this.createCompareFunction(colValues, sortColumn, sortDirection)),
-      filters,
-      sortColumn,
-      sortDirection,
-      translations,
-    ]
+    return [...items].sort(this.createCompareFunction(colValues, sortColumn, sortDirection))
   }
 
   flattenItems(items: RowListGridData[]) {
