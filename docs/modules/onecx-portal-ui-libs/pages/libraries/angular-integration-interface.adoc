@@ -19,6 +19,9 @@
 :config_object_url: xref:./integration-interface.adoc#config-object
 :theme_object_url: xref:./integration-interface.adoc#theme-object
 :route_object_url: xref:./integration-interface.adoc#Route-object
+:icon_topic_url: xref:./integration-interface.adoc#icon-topic 
+:icon_service_url: xref:onecx-portal-ui-libs:service/icon-service.adoc
+
 
 
 [#overview]
@@ -27,6 +30,36 @@
 
 [#services]
 == Services
+
+[#icon-service]
+=== Icon Service
+Usage::
+Request icons by name and receive a CSS class to apply in templates. Offers a Promise-based API to await icon availability.
+
+Topics used::
+
+* {icon_topic_url}[IconTopic]
+
+Dependencies::
+None
+
+API::
+*Icon Service* methods:
++
+.Icon Service methods
+[cols="1,1,2"]
+|===
+|Method signature |Return type | Description
+
+|`requestIcon(name: string, type?: 'svg' \| 'background' \| 'background-before')` | `string` | Requests an icon and returns the CSS class immediately; triggers loading if needed.
+|`requestIconAsync(name: string, type?: 'svg' \| 'background' \| 'background-before')` | `Promise<string \| null>` | Resolves with the CSS class when available, or `null` when the icon cannot be found.
+|===
++
+[TIP]
+====
+See {icon_service_url}[IconService] for examples, rendering styles, and cache semantics.
+====
+
 
 [#app-config-service]
 === App Config Service
