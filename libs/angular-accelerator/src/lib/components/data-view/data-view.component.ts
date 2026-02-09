@@ -1,6 +1,8 @@
 import {
   Component,
   Injector,
+  Input,
+  Output,
   TemplateRef,
   ViewChild,
   computed,
@@ -74,8 +76,16 @@ export class DataViewComponent {
   filters = model<Filter[]>([])
   sortField = model<any>()
   sortDirection = model<DataSortDirection>(DataSortDirection.NONE)
-  listGridPaginator = input<boolean>(true)
-  tablePaginator = input<boolean>(true)
+  listGridPaginator = model<boolean>(true)
+  tablePaginator = model<boolean>(true)
+  @Input()
+  get paginator(): boolean {
+    return this.listGridPaginator() && this.tablePaginator()
+  }
+  set paginator(value: boolean) {
+    this.listGridPaginator.set(value)
+    this.tablePaginator.set(value)
+  }
   page = model<number>(0)
   totalRecordsOnServer = input<number | undefined>()
   currentPageShowingKey = input<string>('OCX_DATA_TABLE.SHOWING')
@@ -212,10 +222,10 @@ export class DataViewComponent {
 
   filtered = output<Filter[]>()
   sorted = output<Sort>()
-  deleteItem = observableOutput<RowListGridData>()
-  viewItem = observableOutput<RowListGridData>()
-  editItem = observableOutput<RowListGridData>()
-  selectionChanged = observableOutput<Row[]>()
+  @Output() deleteItem = observableOutput<RowListGridData>()
+  @Output() viewItem = observableOutput<RowListGridData>()
+  @Output() editItem = observableOutput<RowListGridData>()
+  @Output() selectionChanged = observableOutput<Row[]>()
   pageChanged = output<number>()
   pageSizeChanged = output<number>()
   componentStateChanged = output<DataViewComponentState>()
