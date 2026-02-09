@@ -154,7 +154,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
       first: '{first}',
       last: '{last}',
       totalRecords: '{totalRecords}',
-      ...(totalRecordOnServer !== undefined && { totalRecordsOnServer: totalRecordOnServer }),
+      totalRecordOnServer,
     }
   })
 
@@ -549,8 +549,6 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
   ngOnInit(): void {
     this.name.set(this.name() || this.router.url.replace(/[^A-Za-z0-9]/, '_'))
-
-    this.emitComponentStateChanged()
   }
 
   translateColumnValues(columnValues: string[]): Observable<any> {

@@ -16,7 +16,7 @@
     <div class="grid grid-cols-12 gap-4">
       @for (item of rows; track item) {
       <ng-container
-        [ngTemplateOutlet]="gridItem ? gridItem : defaultGridItem"
+        [ngTemplateOutlet]="gridItem ?? defaultGridItem"
         [ngTemplateOutletContext]="{$implicit:item}"
       ></ng-container>
       }
@@ -26,7 +26,7 @@
     <div class="p-grid p-nogutter grid grid-nogutter">
       @for (item of rows; track item; let first = $first) { @defer (on viewport; on idle){
       <ng-container
-        [ngTemplateOutlet]="listItem ? listItem : defaultListItem"
+        [ngTemplateOutlet]="listItem ?? defaultListItem"
         [ngTemplateOutletContext]="{
               $implicit: item,
               item:item,
@@ -66,7 +66,7 @@
             }
           </div>
           <ng-container
-            [ngTemplateOutlet]="gridItemSubtitleLines ? gridItemSubtitleLines : defaultGridItemSubtitleLines"
+            [ngTemplateOutlet]="gridItemSubtitleLines ?? defaultGridItemSubtitleLines"
             [ngTemplateOutletContext]="{$implicit:item}"
           ></ng-container>
         </div>
@@ -196,7 +196,7 @@
       </div>
       <div class="text-base font-light my-1">
         <ng-container
-          [ngTemplateOutlet]="listItemSubtitleLines ? listItemSubtitleLines : defaultListItemSubtitleLines"
+          [ngTemplateOutlet]="listItemSubtitleLines ?? defaultListItemSubtitleLines"
           [ngTemplateOutletContext]="{$implicit:item}"
         ></ng-container>
       </div>
@@ -212,7 +212,7 @@
           >
             @defer(on viewport;){
             <ng-container
-              [ngTemplateOutlet]="listValue ? listValue: defaultListValue"
+              [ngTemplateOutlet]="listValue ?? defaultListValue"
               [ngTemplateOutletContext]="{
                 rowObject: item,
                 column: col,
