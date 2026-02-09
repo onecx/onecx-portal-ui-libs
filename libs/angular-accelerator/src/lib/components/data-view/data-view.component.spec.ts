@@ -1,7 +1,6 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { ActivatedRoute, RouterModule } from '@angular/router'
 import { DataViewModule } from 'primeng/dataview'
 
@@ -207,7 +206,7 @@ describe('DataViewComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DataViewComponent, DataListGridComponent, DataTableComponent],
-      imports: [DataViewModule, AngularAcceleratorModule, RouterModule, NoopAnimationsModule],
+      imports: [DataViewModule, AngularAcceleratorModule, RouterModule],
       providers: [
         provideTranslateTestingService(TRANSLATIONS),
         provideUserServiceMock(),
@@ -230,8 +229,8 @@ describe('DataViewComponent', () => {
 
     fixture = TestBed.createComponent(DataViewComponent)
     component = fixture.componentInstance
-    component.data = mockData
-    component.columns = mockColumns
+    fixture.componentRef.setInput('data', mockData)
+    fixture.componentRef.setInput('columns', mockColumns)
     const userServiceMock = TestBed.inject(UserServiceMock)
     userServiceMock.permissionsTopic$.publish(['VIEW', 'EDIT', 'DELETE'])
     fixture.detectChanges()
@@ -246,7 +245,7 @@ describe('DataViewComponent', () => {
     let dataTable: DataTableHarness | null
 
     beforeEach(async () => {
-      component.layout = 'table'
+      fixture.componentRef.setInput('layout', 'table')
       dataTable = await dataViewHarness?.getDataTable()
     })
 
@@ -258,15 +257,15 @@ describe('DataViewComponent', () => {
     it('should show a table with selection checkboxes if the parent binds to the event emitter', async () => {
       expect(dataTable).toBeTruthy()
       expect(await dataTable?.rowSelectionIsEnabled()).toEqual(false)
-      component.selectionChanged.subscribe()
+      component.selectionChanged.subscribe(() => {})
       expect(await dataTable?.rowSelectionIsEnabled()).toEqual(true)
     })
 
     it('should render an unpinnend action column on the right side of the table by default', async () => {
       component.viewItem.subscribe((event) => console.log(event))
 
-      expect(component.frozenActionColumn).toBe(false)
-      expect(component.actionColumnPosition).toBe('right')
+      expect(component.frozenActionColumn()).toBe(false)
+      expect(component.actionColumnPosition()).toBe('right')
       expect(await dataTable?.getActionColumnHeader('left')).toBe(null)
       expect(await dataTable?.getActionColumn('left')).toBe(null)
 
@@ -281,8 +280,8 @@ describe('DataViewComponent', () => {
     it('should render an pinned action column on the specified side of the table', async () => {
       component.viewItem.subscribe((event) => console.log(event))
 
-      component.frozenActionColumn = true
-      component.actionColumnPosition = 'left'
+      fixture.componentRef.setInput('frozenActionColumn', true)
+      fixture.componentRef.setInput('actionColumnPosition', 'left')
 
       expect(await dataTable?.getActionColumnHeader('right')).toBe(null)
       expect(await dataTable?.getActionColumn('right')).toBe(null)
@@ -297,8 +296,8 @@ describe('DataViewComponent', () => {
   })
 
   it('should stay on the same page after layout change', async () => {
-    component.data = [
-      ...component.data,
+    fixture.componentRef.setInput('data', [
+      ...component.data(),
       {
         id: 'mock1',
         imagePath: '/path/to/image',
@@ -329,7 +328,7 @@ describe('DataViewComponent', () => {
         imagePath: '/path/to/image',
         modificationDate: '2023-09-12T09:34:27.184086Z',
       },
-    ]
+    ])
 
     dataViewHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataViewHarness)
     const dataList = await dataViewHarness.getHarness(DataListGridHarness)
@@ -340,7 +339,8 @@ describe('DataViewComponent', () => {
     dataListRaport = await dataListPaginator.getCurrentPageReportText()
     expect(dataListRaport).toEqual('11 - 11 of 11')
 
-    component.layout = 'table'
+    fixture.componentRef.setInput('layout', 'table')
+    fixture.detectChanges()
     const dataTable = await dataViewHarness.getHarness(DataTableHarness)
     const dataTablePaginator = await dataTable.getPaginator()
     const dataTableRaport = await dataTablePaginator.getCurrentPageReportText()
@@ -352,11 +352,11 @@ describe('DataViewComponent', () => {
       component.viewItem.subscribe(() => console.log())
       component.editItem.subscribe(() => console.log())
       component.deleteItem.subscribe(() => console.log())
-      component.viewPermission = 'VIEW'
-      component.editPermission = 'EDIT'
-      component.deletePermission = 'DELETE'
-      component.layout = viewType
-      component.columns = [
+      fixture.componentRef.setInput('viewPermission', 'VIEW')
+      fixture.componentRef.setInput('editPermission', 'EDIT')
+      fixture.componentRef.setInput('deletePermission', 'DELETE')
+      fixture.componentRef.setInput('layout', viewType)
+      fixture.componentRef.setInput('columns', [
         {
           columnType: ColumnType.STRING,
           id: 'name',
@@ -367,8 +367,8 @@ describe('DataViewComponent', () => {
           id: 'ready',
           nameKey: 'Ready',
         },
-      ]
-      component.data = [
+      ])
+      fixture.componentRef.setInput('data', [
         {
           id: 'Test',
           imagePath:
@@ -376,8 +376,8 @@ describe('DataViewComponent', () => {
           name: 'Card 1',
           ready: false,
         },
-      ]
-      component.titleLineId = 'name'
+      ])
+      fixture.componentRef.setInput('titleLineId', 'name')
 
       fixture.detectChanges()
       await fixture.whenStable()
@@ -393,7 +393,7 @@ describe('DataViewComponent', () => {
 
       it('should disable a button based on a given field path', async () => {
         await setUpMockData('list')
-        component.viewActionEnabledField = 'ready'
+        fixture.componentRef.setInput('viewActionEnabledField', 'ready')
         const dataView = await dataViewHarness.getDataListGrid()
         expect(await dataView?.hasAmountOfActionButtons('list', 3)).toBe(true)
         expect(await dataView?.hasAmountOfDisabledActionButtons('list', 1)).toBe(true)
@@ -411,7 +411,7 @@ describe('DataViewComponent', () => {
 
       it('should disable a button based on a given field path', async () => {
         await setUpMockData('grid')
-        component.viewActionEnabledField = 'ready'
+        fixture.componentRef.setInput('viewActionEnabledField', 'ready')
         const dataView = await dataViewHarness.getDataListGrid()
         await (await dataView?.getGridMenuButton())?.click()
         expect(await dataView?.hasAmountOfActionButtons('grid', 3)).toBe(true)
@@ -429,7 +429,7 @@ describe('DataViewComponent', () => {
 
       it('should disable a button based on a given field path', async () => {
         await setUpMockData('table')
-        component.viewActionEnabledField = 'ready'
+        fixture.componentRef.setInput('viewActionEnabledField', 'ready')
         const dataTable = await dataViewHarness.getDataTable()
         expect(await dataTable?.hasAmountOfActionButtons(3)).toBe(true)
         expect(await dataTable?.hasAmountOfDisabledActionButtons(1)).toBe(true)
@@ -446,7 +446,7 @@ describe('DataViewComponent', () => {
 
       it('should hide a button based on a given field path', async () => {
         await setUpMockData('list')
-        component.viewActionVisibleField = 'ready'
+        fixture.componentRef.setInput('viewActionVisibleField', 'ready')
         const dataView = await dataViewHarness.getDataListGrid()
         expect(await dataView?.hasAmountOfActionButtons('list', 2)).toBe(true)
         expect(await dataView?.hasAmountOfDisabledActionButtons('list', 0)).toBe(true)
@@ -469,7 +469,7 @@ describe('DataViewComponent', () => {
         expect(await dataView?.hasAmountOfActionButtons('grid', 3)).toBe(true)
         await (await dataView?.getGridMenuButton())?.click()
 
-        component.viewActionVisibleField = 'ready'
+        fixture.componentRef.setInput('viewActionVisibleField', 'ready')
         await (await dataView?.getGridMenuButton())?.click()
         expect(await dataView?.hasAmountOfActionButtons('grid', 2)).toBe(true)
         expect(await dataView?.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
@@ -486,7 +486,7 @@ describe('DataViewComponent', () => {
 
       it('should hide a button based on a given field path', async () => {
         await setUpMockData('table')
-        component.viewActionVisibleField = 'ready'
+        fixture.componentRef.setInput('viewActionVisibleField', 'ready')
         const dataTable = await dataViewHarness.getDataTable()
         expect(await dataTable?.hasAmountOfActionButtons(2)).toBe(true)
         expect(await dataTable?.hasAmountOfDisabledActionButtons(0)).toBe(true)

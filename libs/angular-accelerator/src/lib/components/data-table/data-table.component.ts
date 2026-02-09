@@ -106,8 +106,8 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
   filters = model<Filter[]>([])
   previousFilters = computedPrevious(this.filters)
-  sortDirection = signal<DataSortDirection>(DataSortDirection.NONE)
-  sortColumn = signal<string>('')
+  sortDirection = model<DataSortDirection>(DataSortDirection.NONE)
+  sortColumn = model<string>('')
   columnTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
   columnFilterTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
   columns = model<DataTableColumn[]>([])
@@ -429,30 +429,25 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   parentTemplates = model<PrimeTemplate[] | null | undefined>(undefined)
   parentTemplates$ = toObservable(this.parentTemplates)
 
-  // TODO: Change while migrating dataView
   get viewTableRowObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
-    return dv?.viewItemObserved || dv?.viewItem.observed || this.viewTableRow.observed()
+    return dv?.viewItem.observed() || this.viewTableRow.observed()
   }
-  // TODO: Change while migrating dataView
   get editTableRowObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
-    return dv?.editItemObserved || dv?.editItem.observed || this.editTableRow.observed()
+    return dv?.editItem.observed() || this.editTableRow.observed()
   }
-  // TODO: Change while migrating dataView
   get deleteTableRowObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
-    return dv?.deleteItemObserved || dv?.deleteItem.observed || this.deleteTableRow.observed()
+    return dv?.deleteItem.observed() || this.deleteTableRow.observed()
   }
-  // TODO: Change while migrating dataView
   get anyRowActionObserved(): boolean {
     return this.viewTableRowObserved || this.editTableRowObserved || this.deleteTableRowObserved
   }
 
-  // TODO: Change while migrating dataView
   get selectionChangedObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
-    return dv?.selectionChangedObserved || dv?.selectionChanged.observed || this.selectionChanged.observed()
+    return dv?.selectionChanged.observed() || this.selectionChanged.observed()
   }
 
   constructor() {
@@ -467,7 +462,8 @@ export class DataTableComponent extends DataSortBase implements OnInit {
       // Not track previousRows change to avoid the trigger
       untracked(() => {
         const previousRows = this.previousRows()
-        if (previousRows.length) {
+        // computedPrevious is initialized with the current value on the first run, so we need to check if previousRows is different from rows and not empty to avoid resetting the page on the first run
+        if (previousRows.length && previousRows !== rows) {
           this.page.set(0)
         }
       })
@@ -488,8 +484,10 @@ export class DataTableComponent extends DataSortBase implements OnInit {
       // Not track previousFilters change to avoid the trigger
       untracked(() => {
         const previousFilters = this.previousFilters()
-        if (previousFilters.length) {
+        // computedPrevious is initialized with the current value on the first run, so we need to check if previousFilters is different from filters and not empty to avoid resetting the page on the first run
+        if (previousFilters.length && previousFilters !== filters) {
           this.page.set(0)
+          console.log('Page reset to 0 due to filters change')
         }
       })
       this.filtered.emit(filters)
