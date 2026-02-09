@@ -3,6 +3,7 @@ import {
   Injector,
   LOCALE_ID,
   OnInit,
+  Output,
   TemplateRef,
   computed,
   contentChild,
@@ -249,9 +250,9 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     })
   )
 
-  viewItem = observableOutput<ListGridData | undefined>()
-  editItem = observableOutput<ListGridData | undefined>()
-  deleteItem = observableOutput<ListGridData | undefined>()
+  @Output() viewItem = observableOutput<ListGridData | undefined>()
+  @Output() editItem = observableOutput<ListGridData | undefined>()
+  @Output() deleteItem = observableOutput<ListGridData | undefined>()
   pageChanged = output<number>()
   pageSizeChanged = output<number>()
   componentStateChanged = output<DataListGridComponentState>()
