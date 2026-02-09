@@ -4,6 +4,7 @@ import {
   Injector,
   LOCALE_ID,
   OnInit,
+  Output,
   QueryList,
   TemplateRef,
   computed,
@@ -235,10 +236,10 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
   filtered = output<Filter[]>()
   sorted = output<Sort>()
-  viewTableRow = observableOutput<Row>()
-  editTableRow = observableOutput<Row>()
-  deleteTableRow = observableOutput<Row>()
-  selectionChanged = observableOutput<Row[]>()
+  @Output() viewTableRow = observableOutput<Row>()
+  @Output() editTableRow = observableOutput<Row>()
+  @Output() deleteTableRow = observableOutput<Row>()
+  @Output() selectionChanged = observableOutput<Row[]>()
   pageChanged = output<number>()
   pageSizeChanged = output<number>()
   componentStateChanged = output<DataTableComponentState>()
