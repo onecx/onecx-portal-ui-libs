@@ -1,28 +1,27 @@
 import { Injectable, OnDestroy } from '@angular/core'
-import { IconLoader, IconClassType, IconLoaderTopic } from '@onecx/integration-interface'
-
+import { IconService as IconServiceInterface, IconClassType, IconTopic } from '@onecx/integration-interface'
 
 @Injectable({ providedIn: 'root' })
 export class IconService implements OnDestroy {
-  private readonly iconLoaderService = new IconLoader()
+  private readonly iconServiceInterface = new IconServiceInterface()
 
-  get iconLoaderTopic() {
-    return this.iconLoaderService.iconLoaderTopic;
+  get iconTopic() {
+    return this.iconServiceInterface.iconTopic;
   }
-  set iconLoaderTopic(source: IconLoaderTopic) {
-    this.iconLoaderService.iconLoaderTopic = source;
-  }
-
-  getIcon(name: string, type?: IconClassType): string {
-    return this.iconLoaderService.getIconClass(name, type)
+  set iconTopic(source: IconTopic) {
+    this.iconServiceInterface.iconTopic = source;
   }
 
-  getIconAsync(name: string, type?: IconClassType): Promise<string | null> {
-    return this.iconLoaderService.getIconClassAsync(name, type)
+  requestIcon(name: string, type?: IconClassType): string {
+    return this.iconServiceInterface.requestIcon(name, type)
+  }
+
+  requestIconAsync(name: string, type?: IconClassType): Promise<string | null> {
+    return this.iconServiceInterface.requestIconAsync(name, type)
   }
 
   ngOnDestroy(): void {
-    this.iconLoaderService.destroy();
+    this.iconServiceInterface.destroy();
   }
 
   destroy() {
