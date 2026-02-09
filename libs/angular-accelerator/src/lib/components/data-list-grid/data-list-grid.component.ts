@@ -23,18 +23,7 @@ import { AppStateService, UserService } from '@onecx/angular-integration-interfa
 import { MfeInfo } from '@onecx/integration-interface'
 import { MenuItem, PrimeIcons, PrimeTemplate } from 'primeng/api'
 import { Menu } from 'primeng/menu'
-import {
-  Observable,
-  combineLatest,
-  debounceTime,
-  firstValueFrom,
-  map,
-  mergeMap,
-  of,
-  shareReplay,
-  switchMap,
-  tap,
-} from 'rxjs'
+import { Observable, combineLatest, debounceTime, firstValueFrom, map, mergeMap, of, switchMap } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
@@ -138,7 +127,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
       first: '{first}',
       last: '{last}',
       totalRecords: '{totalRecords}',
-      ...(totalRecordsOnServer !== undefined && { totalRecordsOnServer: totalRecordsOnServer }),
+      totalRecordsOnServer,
     }
   })
 
@@ -517,8 +506,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
 
   ngOnInit(): void {
     this.name.set(this.name() || this.router.url.replace(/[^A-Za-z0-9]/, '_'))
-
-    this.emitComponentStateChanged()
   }
 
   onDeleteRow(element: ListGridData) {
