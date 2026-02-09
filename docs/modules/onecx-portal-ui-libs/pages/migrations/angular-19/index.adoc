@@ -21,19 +21,21 @@ Before starting this migration:
 [#migration-steps-before-angular-19]
 == Migration Steps before upgrading to Angular 19
 
-To simplify the migration process, it is recommended to complete the following steps before upgrading to Angular 19:
+To simplify the migration process, it is recommended to complete the following steps before upgrading to Angular 19.
+You can click the name of any change to open a detailed migration guide with instructions, code examples, and explanations.
 
-include::remove-keycloak-auth.adoc[]
-include::update-component-imports.adoc[]
-include::switch-to-new-components.adoc[]
-include::remove-portal-layout-styles.adoc[]
-include::update-filtertype-value.adoc[]
-include::update-configuration-service-usage.adoc[]
-include::adjust-packages-in-webpack-config.adoc[]
-include::adjust-standalone-mode.adoc[]
-include::remove-add-initialize-module-guard.adoc[]
-include::remove-menuservice.adoc[]
-include::update-translations.adoc[]
+[%interactive]
+** [ ] xref:./remove-keycloak-auth.adoc[Remove @onecx/keycloak-auth]
+** [ ] xref:./update-component-imports.adoc[Update Component Imports]
+** [ ] xref:./switch-to-new-components.adoc[Replace Removed Components]
+** [ ] xref:./remove-portal-layout-styles.adoc[Remove @onecx/portal-layout-styles]
+** [ ] xref:./update-filtertype-value.adoc[Update FilterType Value]
+** [ ] xref:./update-configuration-service-usage.adoc[Update ConfigurationService Usage]
+** [ ] xref:./adjust-packages-in-webpack-config.adoc[Adjust Packages in Webpack Config]
+** [ ] xref:./adjust-standalone-mode.adoc[Adjust Standalone Mode]
+** [ ] xref:./remove-add-initialize-module-guard.adoc[Remove addInitializeModuleGuard()]
+** [ ] xref:./remove-menuservice.adoc[Remove MenuService]
+** [ ] xref:./update-translations.adoc[Update Translations]
 
 After these steps are completed, it is recommended to build the application to ensure that there are no remaining issues before proceeding with the Angular 19 upgrade:
 
@@ -48,10 +50,11 @@ npm run build
 
 Once the previous steps are completed, **the application should be upgraded to Angular 19 and libs v6 should be installed**. After the version updates are completed, the remaining steps of the migration can be followed:
 
-include::update-packages.adoc[]
-include::remove-portal-core-module.adoc[]
-include::update-base-url.adoc[]
-include::update-theme-service.adoc[]
-include::add-required-plugin-to-primeng.adoc[]
-include::add-angular-material-plugin.adoc[]
-include::provide-theme-config.adoc[]
+[%interactive]
+** [ ] xref:./update-packages.adoc[Required Package Updates]
+** [ ] xref:./remove-portal-core-module.adoc[Remove PortalCoreModule]
+** [ ] xref:./update-base-url.adoc[Replace BASE_URL injection token]
+** [ ] xref:./update-theme-service.adoc[Update Theme Service usage]
+** [ ] xref:./add-required-plugin-to-primeng.adoc[Add Webpack Plugin for PrimeNG]
+** [ ] xref:./add-angular-material-plugin.adoc[Add Webpack Plugin for Angular Material]
+** [ ] xref:./provide-theme-config.adoc[Provide ThemeConfig]

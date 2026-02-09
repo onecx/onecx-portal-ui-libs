@@ -1,4 +1,4 @@
 [#remove-menuservice]
-=== Remove MenuService
+= Remove MenuService
 
 In OneCX v6, `MenuService` has been removed. Please remove all references to `MenuService` and imports from `@onecx/portal-integration-angular`. To create menu items in your app, create an endpoint in the BFF and implement your own function to load the data.
