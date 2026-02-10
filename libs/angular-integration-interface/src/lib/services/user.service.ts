@@ -1,5 +1,12 @@
 import { Injectable, OnDestroy } from '@angular/core'
-import { PermissionsTopic, UserProfile, UserProfileTopic } from '@onecx/integration-interface'
+import {
+  PermissionsTopic,
+  type UserProfile,
+  UserProfileTopic,
+  determineBrowserLanguage,
+  resolveLegacyLanguage,
+  resolveProfileLanguage,
+} from '@onecx/integration-interface'
 import { BehaviorSubject, firstValueFrom, map } from 'rxjs'
 import { DEFAULT_LANG } from '../api/constants'
 import { getNormalizedBrowserLocales } from '@onecx/accelerator'
@@ -7,7 +14,7 @@ import { getNormalizedBrowserLocales } from '@onecx/accelerator'
 @Injectable({ providedIn: 'root' })
 export class UserService implements OnDestroy {
   profile$ = new UserProfileTopic()
-  lang$ = new BehaviorSubject(this.determineLanguage() ?? DEFAULT_LANG)
+  lang$ = new BehaviorSubject(determineBrowserLanguage() ?? DEFAULT_LANG)
 
   _permissionsTopic$: PermissionsTopic | undefined
   get permissionsTopic$() {
@@ -22,21 +29,7 @@ export class UserService implements OnDestroy {
     this.profile$
       .pipe(
         map((profile) => {
-          let locales = profile.settings?.locales
-
-          if (!locales) {
-            return this.useOldLangSetting(profile)
-          }
-
-          if (locales.length === 0) {
-            locales = getNormalizedBrowserLocales()
-          }
-
-          // the lang$ should contain the first language, because locales is an ordered list
-          // length of 2 is checked because we need the general language
-          // never choose 'en-US', but choose 'en'
-          const firstLang = locales.find((l) => l.length === 2) ?? DEFAULT_LANG
-          return firstLang
+          return resolveProfileLanguage(profile, DEFAULT_LANG, getNormalizedBrowserLocales)
         })
       )
       .subscribe(this.lang$)
@@ -48,7 +41,7 @@ export class UserService implements OnDestroy {
   }
 
   useOldLangSetting(profile: UserProfile): string {
-    return profile.accountSettings?.localeAndTimeSettings?.locale ?? this.determineLanguage() ?? DEFAULT_LANG
+    return resolveLegacyLanguage(profile, DEFAULT_LANG, determineBrowserLanguage)
   }
 
   getPermissions() {
@@ -74,29 +67,6 @@ export class UserService implements OnDestroy {
         })
       )
     )
-  }
-
-  private determineLanguage(): string | undefined {
-    if (typeof window === 'undefined' || typeof window.navigator === 'undefined') {
-      return undefined
-    }
-
-    let browserLang: any = window.navigator.languages ? window.navigator.languages[0] : null
-    browserLang = browserLang || window.navigator.language
-
-    if (typeof browserLang === 'undefined') {
-      return undefined
-    }
-
-    if (browserLang.indexOf('-') !== -1) {
-      browserLang = browserLang.split('-')[0]
-    }
-
-    if (browserLang.indexOf('_') !== -1) {
-      browserLang = browserLang.split('_')[0]
-    }
-
-    return browserLang
   }
 
   get isInitialized(): Promise<void> {

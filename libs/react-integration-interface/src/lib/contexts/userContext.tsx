@@ -1,6 +1,13 @@
 import { createContext, useContext, useMemo, useEffect, useState, type ReactNode, useRef, useCallback } from 'react'
 import { BehaviorSubject, firstValueFrom, map, Observable, Subscription } from 'rxjs'
-import { PermissionsTopic, type UserProfile, UserProfileTopic } from '@onecx/integration-interface'
+import {
+  PermissionsTopic,
+  type UserProfile,
+  UserProfileTopic,
+  determineBrowserLanguage,
+  resolveLegacyLanguage,
+  resolveProfileLanguage,
+} from '@onecx/integration-interface'
 import { DEFAULT_LANG } from '../api/constants'
 import { getNormalizedBrowserLocales } from '@onecx/accelerator'
 
@@ -47,7 +54,7 @@ const UserProvider: React.FC<UserProviderProps> = ({ children, value }) => {
   const profile$ = useMemo(() => value?.profile$ ?? new UserProfileTopic(), [value?.profile$])
 
   const [lang$] = useState(() => {
-    const initialLang = determineLanguage() ?? DEFAULT_LANG
+    const initialLang = determineBrowserLanguage() ?? DEFAULT_LANG
     return value?.lang$ ?? new BehaviorSubject(initialLang)
   })
 
@@ -63,22 +70,7 @@ const UserProvider: React.FC<UserProviderProps> = ({ children, value }) => {
   // Subscribe to profile changes and update language
   useEffect(() => {
     const subscription = profile$
-      .pipe(
-        map((profile) => {
-          let locales = profile.settings?.locales
-
-          if (!locales) {
-            return getOldLangSetting(profile)
-          }
-
-          if (locales.length === 0) {
-            locales = getNormalizedBrowserLocales()
-          }
-
-          const firstLang = locales.find((lang) => lang.length === 2)
-          return firstLang ?? DEFAULT_LANG
-        })
-      )
+      .pipe(map((profile) => resolveProfileLanguage(profile, DEFAULT_LANG, getNormalizedBrowserLocales)))
       .subscribe(lang$)
 
     subscriptionsRef.current.push(subscription)
@@ -132,7 +124,7 @@ const UserProvider: React.FC<UserProviderProps> = ({ children, value }) => {
 
       if (Array.isArray(permissionKey)) {
         const permissions = await Promise.all(permissionKey.map((key) => checkSinglePermission(key)))
-        return permissions.every((hasPermission) => hasPermission)
+        return permissions.every(Boolean)
       }
 
       return checkSinglePermission(permissionKey)
@@ -165,31 +157,8 @@ const UserProvider: React.FC<UserProviderProps> = ({ children, value }) => {
 /**
  * Determine browser language
  */
-function determineLanguage(): string | undefined {
-  if (typeof window === 'undefined' || typeof window.navigator === 'undefined') {
-    return undefined
-  }
-
-  let browserLang: any = window.navigator.languages ? window.navigator.languages[0] : null
-  browserLang = browserLang || window.navigator.language
-
-  if (typeof browserLang === 'undefined') {
-    return undefined
-  }
-
-  if (browserLang.indexOf('-') !== -1) {
-    browserLang = browserLang.split('-')[0]
-  }
-
-  if (browserLang.indexOf('_') !== -1) {
-    browserLang = browserLang.split('_')[0]
-  }
-
-  return browserLang
-}
-
 function getOldLangSetting(profile: UserProfile): string {
-  return profile.accountSettings?.localeAndTimeSettings?.locale ?? determineLanguage() ?? DEFAULT_LANG
+  return resolveLegacyLanguage(profile, DEFAULT_LANG, determineBrowserLanguage)
 }
 
 export { UserProvider, useUserService, UserContext }
