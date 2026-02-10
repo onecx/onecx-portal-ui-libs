@@ -8,6 +8,8 @@ type EndpointParameters = Record<string, unknown>
 /**
  * Hook to resolve workspace URLs and endpoints from current workspace state.
  * Must be used within AppStateContext.
+ *
+ * @returns Workspace URL helpers.
  */
 const useWorkspace = () => {
   const aliasStart = '[['
@@ -18,6 +20,12 @@ const useWorkspace = () => {
   const { currentWorkspace$ } = useAppState()
   /**
    * Resolves a URL for the specified app/endpoint using the current workspace.
+   *
+   * @param productName - Product name identifier.
+   * @param appId - Application identifier.
+   * @param endpointName - Optional endpoint name to resolve.
+   * @param endpointParameters - Optional parameters for endpoint path placeholders.
+   * @returns Observable of the resolved URL.
    */
   const getUrl = (
     productName: string,
@@ -32,6 +40,11 @@ const useWorkspace = () => {
 
   /**
    * Checks whether a route or endpoint URL exists for the given identifiers.
+   *
+   * @param productName - Product name identifier.
+   * @param appId - Application identifier.
+   * @param endpointName - Optional endpoint name to validate.
+   * @returns Observable indicating whether the URL exists.
    */
   const doesUrlExistFor = (productName: string, appId: string, endpointName?: string): Observable<boolean> => {
     return currentWorkspace$.pipe(
@@ -60,6 +73,9 @@ const useWorkspace = () => {
 
   /**
    * Builds the base URL from the workspace, with warnings on missing values.
+   *
+   * @param workspace - Workspace definition.
+   * @returns Base URL string or empty string if missing.
    */
   const constructBaseUrlFromWorkspace = (workspace: Workspace): string => {
     if (!workspace.baseUrl) {
@@ -71,6 +87,10 @@ const useWorkspace = () => {
 
   /**
    * Joins base and path segments with a single slash.
+   *
+   * @param base - Base URL segment.
+   * @param path - Path segment to append.
+   * @returns Joined URL string.
    */
   const joinWithSlash = (base: string, path: string) => {
     if (!base.endsWith('/')) {
@@ -84,6 +104,13 @@ const useWorkspace = () => {
 
   /**
    * Constructs a full route URL for a workspace, app, and optional endpoint.
+   *
+   * @param workspace - Workspace definition.
+   * @param appId - Application identifier.
+   * @param productName - Product name identifier.
+   * @param endpointName - Optional endpoint name.
+   * @param endpointParameters - Optional endpoint parameters.
+   * @returns Resolved route URL string.
    */
   const constructRouteUrl = (
     workspace: Workspace,
@@ -117,6 +144,11 @@ const useWorkspace = () => {
 
   /**
    * Constructs a URL path for a concrete endpoint, resolving aliases and params.
+   *
+   * @param route - Route definition.
+   * @param endpointName - Endpoint name or alias.
+   * @param endpointParameters - Endpoint parameters for interpolation.
+   * @returns Endpoint URL path string.
    */
   const constructEndpointUrl = (
     route: Route,
@@ -145,6 +177,11 @@ const useWorkspace = () => {
 
   /**
    * Finds a route entry for a product/app pair.
+   *
+   * @param routes - Available route definitions.
+   * @param appId - Application identifier.
+   * @param productName - Product name identifier.
+   * @returns Matched route or undefined.
    */
   const filterRouteFromList = (routes: Array<Route>, appId: string, productName: string): Route | undefined => {
     if (!routes) {
@@ -166,6 +203,10 @@ const useWorkspace = () => {
 
   /**
    * Resolves endpoint aliases to the final endpoint definition.
+   *
+   * @param endpointName - Endpoint name or alias.
+   * @param endpoints - Available endpoint definitions.
+   * @returns Resolved endpoint or undefined.
    */
   const dissolveEndpoint = (endpointName: string, endpoints: Endpoint[]): Endpoint | undefined => {
     let endpoint = endpoints.find((ep) => ep.name === endpointName)
@@ -197,6 +238,10 @@ const useWorkspace = () => {
 
   /**
    * Replaces path parameters with the provided endpoint parameter values.
+   *
+   * @param path - Endpoint path template.
+   * @param endpointParameters - Parameters to inject.
+   * @returns Path with parameters resolved, or empty string on failure.
    */
   const fillParamsForPath = (path: string, endpointParameters: EndpointParameters): string => {
     while (path.includes(paramStart)) {
@@ -216,6 +261,9 @@ const useWorkspace = () => {
 
   /**
    * Normalizes parameter values into strings for URL interpolation.
+   *
+   * @param value - Parameter value to normalize.
+   * @returns Normalized string value.
    */
   const getStringFromUnknown = (value: unknown): string => {
     if (value === null || value === undefined) {

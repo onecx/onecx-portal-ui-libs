@@ -12,6 +12,10 @@ const AppGlobalsContext = createContext<AppGlobals | null>(null)
 
 /**
  * Provides app globals for the subtree.
+ *
+ * @param children - React subtree consuming app globals.
+ * @param globals - App globals object.
+ * @returns Provider wrapping the given children.
  */
 const AppGlobalsProvider = ({ children, globals }: { children: ReactNode; globals: AppGlobals }) => (
   <AppGlobalsContext value={globals}>{children}</AppGlobalsContext>
@@ -19,6 +23,10 @@ const AppGlobalsProvider = ({ children, globals }: { children: ReactNode; global
 
 /**
  * Wraps a component with the AppGlobalsProvider.
+ *
+ * @param Component - Component to wrap.
+ * @param appGlobals - App globals to provide.
+ * @returns Wrapped component with globals provider.
  */
 export const withAppGlobals = <P extends object>(Component: ComponentType<P>, appGlobals: AppGlobals) => {
   const WrappedComponent = (props: P) => (
@@ -35,6 +43,9 @@ export const withAppGlobals = <P extends object>(Component: ComponentType<P>, ap
 /**
  * Hook to access app globals.
  * Must be used within AppGlobalsProvider.
+ *
+ * @returns App globals object.
+ * @throws Error when used outside AppGlobalsProvider.
  */
 export const useAppGlobals = () => {
   const context = useContext(AppGlobalsContext)

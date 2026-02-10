@@ -5,6 +5,14 @@ import { useTranslation } from 'react-i18next'
 
 /**
  * Props for PortalPage wrapper.
+ *
+ * @param children - Page content to render.
+ * @param permission - Permission or list of permissions required for access.
+ * @param helpArticleId - Help article identifier for help integration.
+ * @param pageName - Display name for the page.
+ * @param applicationId - Application identifier for analytics/telemetry.
+ * @param className - Optional CSS class name for the wrapper.
+ * @param style - Optional inline styles for the wrapper.
  */
 export interface PortalPageProps {
   children: ReactNode
@@ -24,6 +32,15 @@ const DEFAULT_CONTAINER_STYLE: CSSProperties = {
 
 /**
  * React PortalPage implementation mirroring the Angular portal-page component.
+ *
+ * @param children - Page content to render.
+ * @param permission - Permission or list of permissions required for access.
+ * @param helpArticleId - Help article identifier for help integration.
+ * @param pageName - Display name for the page.
+ * @param applicationId - Application identifier for analytics/telemetry.
+ * @param className - Optional CSS class name for the wrapper.
+ * @param style - Optional inline styles for the wrapper.
+ * @returns Portal page wrapper element.
  */
 export const PortalPage = ({
   children,

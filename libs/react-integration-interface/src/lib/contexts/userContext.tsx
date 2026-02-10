@@ -23,6 +23,9 @@ const UserContext = createContext<UserContextValue | null>(null)
 /**
  * Hook to access user context.
  * Must be used within UserProvider.
+ *
+ * @returns User context utilities.
+ * @throws Error when used outside UserProvider.
  */
 const useUserService = (): UserContextValue => {
   const context = useContext(UserContext)
@@ -34,6 +37,10 @@ const useUserService = (): UserContextValue => {
 
 /**
  * Provides user profile, permissions, and language topics.
+ *
+ * @param children - React subtree consuming user context.
+ * @param value - Optional overrides for user topics and helpers.
+ * @returns Provider wrapping the given children.
  */
 const UserProvider: React.FC<UserProviderProps> = ({ children, value }) => {
   // Create stable instances using refs to prevent unnecessary re-renders

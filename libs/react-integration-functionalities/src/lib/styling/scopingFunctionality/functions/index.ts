@@ -1,5 +1,9 @@
 /**
  * Normalizes CSS for hashing by removing comments and extra whitespace.
+ *
+ * @param css - Raw CSS string.
+ * @param normalize - Whether to normalize before hashing.
+ * @returns Normalized CSS string.
  */
 export function normalizeForHash(css: string, normalize: boolean): string {
   if (!normalize) return css
@@ -11,6 +15,9 @@ export function normalizeForHash(css: string, normalize: boolean): string {
 
 /**
  * Computes a stable hash for a string.
+ *
+ * @param s - Input string.
+ * @returns Hash string.
  */
 export function hash(s: string): string {
   let h = 5381
@@ -20,6 +27,9 @@ export function hash(s: string): string {
 
 /**
  * Checks if an element is a PrimeReact style tag.
+ *
+ * @param el - Element to inspect.
+ * @returns True if the element is a PrimeReact style tag.
  */
 export function isPrimeReactStyle(el: Element): boolean {
   return (
@@ -31,6 +41,9 @@ export function isPrimeReactStyle(el: Element): boolean {
 
 /**
  * Extracts a PrimeReact style element from a node.
+ *
+ * @param n - Node to inspect.
+ * @returns PrimeReact style element or null.
  */
 export function getStyleFromNode(n: Node): HTMLStyleElement | null {
   if (n.nodeType === Node.ELEMENT_NODE && isPrimeReactStyle(n as Element)) return n as HTMLStyleElement
@@ -43,6 +56,12 @@ export function getStyleFromNode(n: Node): HTMLStyleElement | null {
 
 /**
  * Determines if a style block should be included based on prefixes/allowlist.
+ *
+ * @param styleId - Style identifier.
+ * @param css - Raw CSS string.
+ * @param alwaysIncludeStyleIds - Style ids to always include.
+ * @param prefixFilter - Optional CSS variable prefix filter.
+ * @returns True if the style should be included.
  */
 export function shouldInclude(
   styleId: string,
@@ -57,6 +76,11 @@ export function shouldInclude(
 
 /**
  * Wraps CSS in an @scope block for the given root/limit selectors.
+ *
+ * @param css - Raw CSS string.
+ * @param scopeRootSelector - Root selector for scoping.
+ * @param scopeLimitSelector - Optional limit selector for scoping.
+ * @returns Scoped CSS string.
  */
 export function scopeCss(css: string, scopeRootSelector: string, scopeLimitSelector?: string): string {
   const prelude = scopeLimitSelector

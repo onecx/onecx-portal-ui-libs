@@ -15,6 +15,9 @@ const RemoteComponentsContext = createContext<RemoteComponentsContextValue | nul
 /**
  * Hook to access remote components topic.
  * Must be used within RemoteComponentsProvider.
+ *
+ * @returns Remote components topic container.
+ * @throws Error when used outside RemoteComponentsProvider.
  */
 const useRemoteComponents = (): RemoteComponentsContextValue => {
   const context = useContext(RemoteComponentsContext)
@@ -26,6 +29,10 @@ const useRemoteComponents = (): RemoteComponentsContextValue => {
 
 /**
  * Provides remote components topic for slot resolution.
+ *
+ * @param children - React subtree consuming remote components context.
+ * @param value - Optional overrides for the remote components topic.
+ * @returns Provider wrapping the given children.
  */
 const RemoteComponentsProvider: React.FC<RemoteComponentsProviderProps> = ({ children, value }) => {
   const remoteComponents$ = useMemo(

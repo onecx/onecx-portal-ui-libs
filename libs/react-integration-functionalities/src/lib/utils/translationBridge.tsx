@@ -4,6 +4,8 @@ import { useUserService } from '@onecx/react-integration-interface'
 
 /**
  * Syncs the user language stream with i18next.
+ *
+ * @returns Null (side-effects only).
  */
 export const TranslationBridge = () => {
   const { i18n } = useTranslation()

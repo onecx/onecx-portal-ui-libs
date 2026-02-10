@@ -4,6 +4,9 @@ import { SyncedLocationContext } from '.'
 /**
  * Hook to access the synced location payload.
  * Must be used within SyncedRouterProvider.
+ *
+ * @returns Current location payload from the synced router.
+ * @throws Error when used outside SyncedRouterProvider.
  */
 export const useSyncedLocation = () => {
   const context = useContext(SyncedLocationContext)

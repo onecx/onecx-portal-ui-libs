@@ -9,11 +9,16 @@ const initValue = {
 
 /**
  * Context holding the current synced location payload.
+ *
+ * @returns CurrentLocationTopicPayload via context.
  */
 export const SyncedLocationContext = createContext<CurrentLocationTopicPayload>(initValue)
 
 /**
  * Internal component syncing router state with the current location topic.
+ *
+ * @param children - React subtree rendered within the sync layer.
+ * @returns Synced router context provider.
  */
 const RouterSync: FC<PropsWithChildren> = ({ children }) => {
   const navigate = useNavigate()
@@ -48,6 +53,9 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
 
 /**
  * Provides a browser router that stays in sync with portal location events.
+ *
+ * @param children - React subtree rendered inside the router.
+ * @returns Browser router provider with location sync.
  */
 export const SyncedRouterProvider: FC<{ children: ReactNode }> = ({ children }) => {
   return (

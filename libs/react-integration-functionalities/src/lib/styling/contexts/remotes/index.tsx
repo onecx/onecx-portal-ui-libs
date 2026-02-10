@@ -10,6 +10,9 @@ const PrimeReactStyleContext = createContext<{ rootRef: RefObject<HTMLDivElement
 
 /**
  * Provides PrimeReact style scoping for remote components.
+ *
+ * @param children - React subtree rendered within the scoped container.
+ * @returns Provider wrapping the scoped subtree.
  */
 export const PrimeReactStyleProvider = ({ children }: PrimeReactStyleProviderProps) => {
   const rootRef = useRef<HTMLDivElement>(null)

@@ -30,6 +30,10 @@ const AppStateContext = createContext<AppStateContextProps>({} as any)
 
 /**
  * Provides application state topics for portal integration.
+ *
+ * @param children - React subtree consuming the app state topics.
+ * @param value - Optional overrides for topic instances.
+ * @returns Provider wrapping the given children.
  */
 const AppStateProvider = ({ children, value }: { children: ReactNode; value?: Partial<AppStateContextProps> }) => {
   // Track which topics are created internally for proper cleanup
@@ -112,6 +116,9 @@ const AppStateProvider = ({ children, value }: { children: ReactNode; value?: Pa
 /**
  * Hook to access application state topics.
  * Must be used within AppStateProvider.
+ *
+ * @returns The app state topics instance.
+ * @throws Error when used outside AppStateProvider.
  */
 const useAppState = (): AppStateContextProps => {
   const context = useContext(AppStateContext)

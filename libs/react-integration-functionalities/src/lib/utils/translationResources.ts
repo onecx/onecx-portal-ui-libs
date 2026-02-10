@@ -2,6 +2,11 @@ import type { i18n } from 'i18next'
 
 /**
  * Builds a translation base path from an import.meta.url value.
+ *
+ * @param metaUrl - import.meta.url value for the calling module.
+ * @param path - Base path segment for translation files.
+ * @returns Resolved translation base path.
+ * @throws Error when metaUrl points to a local file URL.
  */
 export const getTranslationPathFromMeta = (metaUrl: string | undefined, path = 'assets/i18n/') => {
   if (!metaUrl || metaUrl.startsWith('file://')) {
@@ -18,6 +23,10 @@ export const getTranslationPathFromMeta = (metaUrl: string | undefined, path = '
 
 /**
  * Registers portal page translation loadPath on an i18next instance.
+ *
+ * @param instance - i18next instance to configure.
+ * @param metaUrl - import.meta.url value for the calling module.
+ * @param path - Base path segment for portal translations.
  */
 export const registerPortalPageTranslations = (
   instance: i18n,

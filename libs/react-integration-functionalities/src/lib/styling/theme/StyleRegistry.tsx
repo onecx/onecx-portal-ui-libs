@@ -10,6 +10,9 @@ type Props = Readonly<{
 
 /**
  * Registers theme variables and provides PrimeReact configuration for the subtree.
+ *
+ * @param children - React subtree rendered after theme initialization.
+ * @returns PrimeReact provider wrapping themed children.
  */
 export default function StyleRegistry({ children }: Props) {
   const [isThemed, setIsThemed] = useState(false)

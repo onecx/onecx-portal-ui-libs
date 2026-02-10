@@ -30,6 +30,9 @@ const ConfigurationContext = createContext<ConfigurationContextProps | null>(nul
 /**
  * Hook to access configuration context.
  * Must be used within ConfigurationProvider.
+ *
+ * @returns Configuration context utilities.
+ * @throws Error when used outside ConfigurationProvider.
  */
 const useConfiguration = (): ConfigurationContextProps => {
   const context = useContext(ConfigurationContext)
@@ -41,6 +44,10 @@ const useConfiguration = (): ConfigurationContextProps => {
 
 /**
  * Provides configuration loading and access utilities.
+ *
+ * @param children - React subtree that consumes configuration context.
+ * @param defaultConfig - Default configuration options used when none provided.
+ * @returns Provider wrapping the given children.
  */
 const ConfigurationProvider = ({
   children,

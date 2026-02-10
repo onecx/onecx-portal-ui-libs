@@ -1,5 +1,8 @@
 /**
  * Flattens a nested theme properties object into key-value pairs.
+ *
+ * @param properties - Theme properties grouped by category.
+ * @returns Flattened key-value theme properties.
  */
 function flattenThemeProperties(properties: any): Record<string, string> {
   const flattened: Record<string, string> = {}
@@ -17,6 +20,9 @@ function flattenThemeProperties(properties: any): Record<string, string> {
 
 /**
  * Maps theme properties to CSS custom property names.
+ *
+ * @param themeProperties - Flattened theme properties.
+ * @returns CSS variable name/value pairs.
  */
 function mapThemeToCSSVariables(themeProperties: Record<string, any>): Record<string, string> {
   const flattenedProperties = flattenThemeProperties(themeProperties)
@@ -32,6 +38,9 @@ function mapThemeToCSSVariables(themeProperties: Record<string, any>): Record<st
 
 /**
  * Applies theme variables to the scoped style element for a given style id.
+ *
+ * @param theme - Theme payload containing properties.
+ * @param styleId - Style identifier used to locate the scoped style tag.
  */
 export default function applyThemeVariables(theme: any, styleId: string) {
   if (!theme?.properties) {

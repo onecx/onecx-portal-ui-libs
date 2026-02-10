@@ -38,6 +38,9 @@ const PortalMessageContext = createContext<PortalMessageContextValue | null>(nul
 /**
  * Hook to access portal messaging utilities.
  * Must be used within PortalMessageProvider.
+ *
+ * @returns Portal message helpers and topic.
+ * @throws Error when used outside PortalMessageProvider.
  */
 const usePortalMessage = (): PortalMessageContextValue => {
   const context = useContext(PortalMessageContext)
@@ -49,6 +52,11 @@ const usePortalMessage = (): PortalMessageContextValue => {
 
 /**
  * Provides messaging topic helpers with optional translation support.
+ *
+ * @param children - React subtree consuming portal messaging context.
+ * @param value - Optional overrides for message topic or helper functions.
+ * @param translate - Optional translation function for message keys.
+ * @returns Provider wrapping the given children.
  */
 const PortalMessageProvider: React.FC<PortalMessageProviderProps> = ({ children, value, translate }) => {
   const message$ = useMemo(() => value?.message$ ?? new MessageTopic(), [value?.message$])

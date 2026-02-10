@@ -13,6 +13,10 @@ interface AppGlobals {
 
 /**
  * Wraps an app component with base providers and app-level style isolation.
+ *
+ * @param Component - App component to wrap.
+ * @param appGlobals - App globals required for scoping.
+ * @returns Wrapped component with providers applied.
  */
 export const withApp = (Component: ComponentType, appGlobals: AppGlobals) =>
   composeProviders(

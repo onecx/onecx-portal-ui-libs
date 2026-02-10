@@ -15,6 +15,9 @@ const ThemeContext = createContext<ThemeContextValue | null>(null)
 /**
  * Hook to access theme topic.
  * Must be used within ThemeProvider.
+ *
+ * @returns Theme topic container.
+ * @throws Error when used outside ThemeProvider.
  */
 const useTheme = () => {
   const context = useContext(ThemeContext)
@@ -26,6 +29,10 @@ const useTheme = () => {
 
 /**
  * Provides current theme topic.
+ *
+ * @param children - React subtree consuming theme context.
+ * @param value - Optional overrides for current theme topic.
+ * @returns Provider wrapping the given children.
  */
 const ThemeProvider = ({ children, value }: ThemeProviderProps) => {
   const currentTheme$ = useMemo(() => value?.currentTheme$ ?? new CurrentThemeTopic(), [value?.currentTheme$])

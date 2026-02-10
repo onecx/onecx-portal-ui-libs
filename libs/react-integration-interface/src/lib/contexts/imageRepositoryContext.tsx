@@ -15,6 +15,9 @@ const ImageRepositoryContext = createContext<ImageRepositoryContextValue | null>
 /**
  * Hook to access image repository service.
  * Must be used within ImageRepositoryProvider.
+ *
+ * @returns Image repository service context.
+ * @throws Error when used outside ImageRepositoryProvider.
  */
 const useImageRepositoryService = (): ImageRepositoryContextValue => {
   const context = useContext(ImageRepositoryContext)
@@ -26,6 +29,10 @@ const useImageRepositoryService = (): ImageRepositoryContextValue => {
 
 /**
  * Provides image repository service access.
+ *
+ * @param children - React subtree consuming image repository context.
+ * @param value - Optional overrides for the image repository service instance.
+ * @returns Provider wrapping the given children.
  */
 const ImageRepositoryProvider: React.FC<ImageRepositoryProviderProps> = ({ children, value }) => {
   const imageRepositoryService = useMemo(

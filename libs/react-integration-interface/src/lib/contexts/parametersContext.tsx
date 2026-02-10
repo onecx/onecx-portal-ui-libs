@@ -27,6 +27,9 @@ const ParametersContext = createContext<ParametersContextValue | null>(null)
 /**
  * Hook to access parameters topic utilities.
  * Must be used within ParametersProvider.
+ *
+ * @returns Parameters topic utilities.
+ * @throws Error when used outside ParametersProvider.
  */
 const useParameters = (): ParametersContextValue => {
   const context = useContext(ParametersContext)
@@ -38,6 +41,10 @@ const useParameters = (): ParametersContextValue => {
 
 /**
  * Provides parameters topic and lookup utilities.
+ *
+ * @param children - React subtree consuming parameters context.
+ * @param value - Optional overrides for parameters topic instance.
+ * @returns Provider wrapping the given children.
  */
 const ParametersProvider: React.FC<ParametersProviderProps> = ({ children, value }) => {
   const { hasCapability } = useShellCapability()
