@@ -1,0 +1,41 @@
+[#update-portal-api-configuration]
+=== Update Portal API Configuration object parameters
+
+In v6 the `PortalApiConfiguration` constructor signature was simplified. Two service parameters were removed from the constructor and must no longer be passed when creating a `PortalApiConfiguration` instance.
+
+Before (old constructor signature):
+
+[source,typescript]
+----
+// OLD: positional parameters included service instances
+constructor(
+  private configurationClassOfGenerator: unknown,
+  private apiPrefix: string,
+  configService: ConfigurationService,
+  appStateService: AppStateService
+)
+----
+
+After (new constructor signature):
+
+[source,typescript]
+----
+// NEW: only the configuration class and API prefix are required
+constructor(
+  private configurationClassOfGenerator: unknown,
+  private apiPrefix: string
+)
+----
+
+Migration example
+
+When you previously created a `PortalApiConfiguration` by passing the service instances, update the call to remove those parameters. Map the old positional arguments to the new form as shown below.
+
+[source,typescript]
+----
+// OLD: code to update
+const config = new PortalApiConfiguration(SomeConfigClass, '/api', configService, appStateService);
+
+// NEW: updated code
+const config = new PortalApiConfiguration(SomeConfigClass, '/api');
+----
