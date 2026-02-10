@@ -1,12 +1,12 @@
 [#update-component-imports]
-=== Update Component Imports
+= Update Component Imports
 
 The following section covers component, service, and directive changes in OneCX v6. Components have been deleted, reorganized across libraries or converted to remote components.
 
 [#moved-to-libraries]
-==== Components Moved to Different Libraries
+== Components Moved to Different Libraries
 
-**1. Update import from @onecx/portal-integration-angular to @onecx/angular-accelerator:**
+=== 1. Update import from @onecx/portal-integration-angular to @onecx/angular-accelerator
 
 The imports of the following components, services and directives need to be changed from `@onecx/portal-integration-angular` to `@onecx/angular-accelerator`:
 
@@ -23,14 +23,14 @@ The imports of the following components, services and directives need to be chan
 * `ExportDataService`, `PortalDialogService`, `ImageLogoUrlUtils`
 * `DialogContentHarness`, `DialogFooterHarness`, `DialogInlineHarness`, `DialogMessageContentHarness`
 
-**2. Update import from @onecx/portal-integration-angular to @onecx/angular-utils:**
+=== 2. Update import from @onecx/portal-integration-angular to @onecx/angular-utils
 
 The imports of the following components need to be changed from `@onecx/portal-integration-angular` to `@onecx/angular-utils`:
 
 * `PortalPageComponent`
 * `PortalApiConfiguration`
 
-**3. Update import from @onecx/portal-integration-angular to @onecx/shell-core:**
+=== 3. Update import from @onecx/portal-integration-angular to @onecx/shell-core
 
 The imports of the following components need to be changed from `@onecx/portal-integration-angular` to `@onecx/shell-core`:
 
@@ -38,7 +38,7 @@ The imports of the following components need to be changed from `@onecx/portal-i
 * `HeaderComponent`
 * `PortalViewportComponent`
 
-**4. Update import from @onecx/angular-accelerator to @onecx/angular-utils:**
+=== 4. Update import from @onecx/angular-accelerator to @onecx/angular-utils
 
 The following utils, services and directives were removed from `@onecx/angular-accelerator` and need to be imported from `@onecx/angular-utils` now:
 
@@ -50,20 +50,20 @@ The following utils, services and directives were removed from `@onecx/angular-a
 * `TranslateCombinedLoader`
 
 [#completely-removed]
-==== Components/Services Removed Without Replacement
+== Components/Services Removed Without Replacement
 
 The following components and services have been completely removed from libs v6, meaning their imports should be deleted and any usage removed:
 
-**1. Remove from @onecx/angular-accelerator**
+=== 1. Remove from @onecx/angular-accelerator
 
 * `DataLoadingErrorComponent` (ocx-data-loading-error)
 
-**2. Remove from @onecx/angular-integration-interface**
+=== 2. Remove from @onecx/angular-integration-interface
 
 * `IAuthService`
 * `AUTH_SERVICE` (injection token)
 
-**3. Remove from @onecx/portal-integration-angular**
+=== 3. Remove from @onecx/portal-integration-angular
 
 * `HelpPageAPIService`
 * `UserProfileAPIService`
@@ -71,33 +71,33 @@ The following components and services have been completely removed from libs v6,
 * `AnnouncementsApiService`
 
 [#replaced-components-same-library]
-==== Replaced Components and Functions in the Same Library
+== Replaced Components and Functions in the Same Library
 
 Some components and functions have been replaced by new equivalents within the same library. Update your imports and usage as follows:
 
-**1. Update import from @onecx/angular-integration-interface**
+=== 1. Update import from @onecx/angular-integration-interface
 
 * Replace `provideAppServiceMock` with `provideAppStateServiceMock`
 
-**2. Update imports from @onecx/ngrx-accelerator and replace usages**
+=== 2. Update imports from @onecx/ngrx-accelerator and replace usages
 
 * Replace all imports and usages of `filterForOnlyQueryParamsChanged` with `filterOutOnlyQueryParamsChanged`
 * Replace all imports and usages of `filterForQueryParamsChanged` with `filterOutQueryParamsHaveNotChanged`
 
 [#remote-components]
-==== Components now Available as Remote Components
+== Components now Available as Remote Components
 The following components and services have been converted to remote components and are now part of separate OneCX applications. Their imports from `@onecx/portal-integration-angular` need to be removed and the remote components configured as shown below.
 
-**onecx-help-ui:**
+=== onecx-help-ui
 
 * `HelpItemEditorComponent`
 * `NoHelpItemComponent` (part of `OneCXShowHelpComponent`)
 
-**onecx-announcement-ui:**
+=== onecx-announcement-ui
 
 * `AnnouncementBannerComponent` (name in onecx-announcement-ui: `OneCXAnnouncementBannerComponent`) 
 
-**onecx-workspace-ui:**
+=== onecx-workspace-ui
 
 * `PortalMenuComponent` (name in onecx-workspace-ui: `OneCXVerticalMainMenuComponent`)
 * `PortalMenuHorizontalComponent` (name in onecx-workspace-ui: `OneCXHorizontalMainMenuComponent`)
