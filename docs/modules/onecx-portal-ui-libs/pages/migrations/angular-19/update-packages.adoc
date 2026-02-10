@@ -1,5 +1,5 @@
 [#required-package-updates]
-=== Required Package Updates
+= Required Package Updates
 
 If the following packages are used in your project, update them to ensure compatibility with Angular 19:
 
@@ -21,7 +21,7 @@ If the following packages are used in your project, update them to ensure compat
 |===
 
 [#installation-commands]
-==== Installation Commands
+== Installation Commands
 
 Run these commands to update the supporting packages:
 

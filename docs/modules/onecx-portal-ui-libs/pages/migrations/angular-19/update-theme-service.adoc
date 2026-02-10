@@ -1,13 +1,13 @@
-:onecx_theming: xref:documentation:docs-guides-ui:angular/theming.adoc
+:onecx_theming: https://onecx.github.io/docs/documentation/current/docs-guides-ui/angular/theming.html
 
 [#update-theme-service]
-=== Update Theme Service usage
+= Update Theme Service usage
 
 In OneCX v6, onecx-shell is responsible for loading and applying the theme globally for the chosen `workspace`. See {onecx_theming}[OneCX Theming Guide] for more information.
 
 The `ThemeService` now only exposes the `currentTheme$` property of type CurrentThemeTopic from the `@onecx/integration-interface` library. All previous theme-loading logic has been removed from the service. 
 
-**Remove deprecated ThemeService members:**
+== Remove deprecated ThemeService members
 
 * Remove `baseUrlV1` property usages
 * Remove `getThemeRef()` function calls
