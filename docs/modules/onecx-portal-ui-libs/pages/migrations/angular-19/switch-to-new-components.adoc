@@ -1,5 +1,6 @@
 [#switch-to-new-components]
-=== Replace Removed Components
+= Replace Removed Components
+
 Below is the guide for migrating from deprecated components to their new components.
 
 * xref:./switch-to-interactive-data-view.adoc[Replace DataViewControlsComponent with InteractiveDataViewComponent]
