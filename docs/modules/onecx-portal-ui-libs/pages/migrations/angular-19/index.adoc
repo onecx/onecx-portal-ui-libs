@@ -28,6 +28,7 @@ You can click the name of any change to open a detailed migration guide with ins
 ** [ ] xref:./remove-keycloak-auth.adoc[Remove @onecx/keycloak-auth]
 ** [ ] xref:./update-component-imports.adoc[Update Component Imports]
 ** [ ] xref:./switch-to-new-components.adoc[Replace Removed Components]
+** [ ] xref:./update-portal-api-configuration.adoc[Update Portal API Configuration object parameters]
 ** [ ] xref:./remove-portal-layout-styles.adoc[Remove @onecx/portal-layout-styles]
 ** [ ] xref:./update-filtertype-value.adoc[Update FilterType Value]
 ** [ ] xref:./update-configuration-service-usage.adoc[Update ConfigurationService Usage]

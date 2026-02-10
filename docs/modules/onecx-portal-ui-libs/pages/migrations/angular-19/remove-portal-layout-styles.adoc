@@ -81,5 +81,5 @@ If you are using `@onecx/angular-accelerator` components, add the following impo
 [source, scss]
 ----
 // ...Other style imports
-@import 'node_modules/@onecx/angular-accelerator/assets/styles.css';
+@import 'node_modules/@onecx/angular-accelerator/assets/styles.scss';
 ----
