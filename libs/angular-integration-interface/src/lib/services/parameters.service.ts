@@ -1,15 +1,13 @@
 import { Injectable, OnDestroy, inject } from '@angular/core'
-import { ParametersTopic } from '@onecx/integration-interface'
+import { ParametersTopic, findParameterValue, type ParameterValue, Capability } from '@onecx/integration-interface'
 import { firstValueFrom, map } from 'rxjs'
 import { AppStateService } from './app-state.service'
-import { Capability, ShellCapabilityService } from './shell-capability.service'
-
-type Parameter = boolean | number | string | object
+import { ShellCapabilityService } from './shell-capability.service'
 
 @Injectable({ providedIn: 'root' })
 export class ParametersService implements OnDestroy {
-  private shellCapabilityService = inject(ShellCapabilityService)
-  private appStateService = inject(AppStateService)
+  private readonly shellCapabilityService = inject(ShellCapabilityService)
+  private readonly appStateService = inject(AppStateService)
   _parameters$: ParametersTopic | undefined
   get parameters$() {
     this._parameters$ ??= new ParametersTopic()
@@ -29,7 +27,7 @@ export class ParametersService implements OnDestroy {
    * @param key The key of the parameter to get. This is defined when the parameter is configured in parameter management.
    * @param defaultValue The default value that will be returned if the parameter is not found or if the shell is not yet providing the parameters because it is too old.
    */
-  public async get<T extends Parameter>(key: string, defaultValue: T | Promise<T>): Promise<T>
+  public async get<T extends ParameterValue>(key: string, defaultValue: T | Promise<T>): Promise<T>
 
   /**
    * Use this method to get a parameter value in remote components.
@@ -40,14 +38,14 @@ export class ParametersService implements OnDestroy {
    * @param appId The id of the application in which the parameter is defined.
    * @returns The value of the parameter or the default value.
    */
-  public async get<T extends Parameter>(
+  public async get<T extends ParameterValue>(
     key: string,
     defaultValue: T | Promise<T>,
     productName: string | undefined = undefined,
     appId: string | undefined = undefined
   ): Promise<T> {
     if (!this.shellCapabilityService.hasCapability(Capability.PARAMETERS_TOPIC)) {
-      return Promise.resolve(defaultValue)
+      return defaultValue
     }
 
     if (!productName) {
@@ -58,18 +56,7 @@ export class ParametersService implements OnDestroy {
     }
 
     return firstValueFrom(
-      this.parameters$.pipe(
-        map(
-          (payload) =>
-            payload.parameters.find((p) => p.productName === productName && p.appId === appId)?.parameters[key] as T
-        )
-      )
-    ).then((value): Promise<T> => {
-      if (value === undefined) {
-        return Promise.resolve(defaultValue)
-      } else {
-        return Promise.resolve(value)
-      }
-    })
+      this.parameters$.pipe(map((payload) => findParameterValue(payload, key, productName, appId) as T))
+    ).then((value): T => value ?? defaultValue)
   }
 }

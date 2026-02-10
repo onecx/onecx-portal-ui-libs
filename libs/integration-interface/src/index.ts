@@ -62,3 +62,7 @@ export * from './lib/services/image-repository.service'
 
 export * from './lib/utils/workspace-url'
 export * from './lib/utils/user-language'
+export * from './lib/utils/shell-capability'
+export * from './lib/utils/parameters'
+export * from './lib/utils/configuration'
+export * from './lib/utils/portal-message'

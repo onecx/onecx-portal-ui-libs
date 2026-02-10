@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useMemo, type ReactNode, useRef, useCallback } from 'react'
-import { ConfigurationTopic } from '@onecx/integration-interface'
+import { ConfigurationTopic, resolveConfig } from '@onecx/integration-interface'
 import { firstValueFrom, map, Subscription } from 'rxjs'
 import Semaphore from 'ts-semaphore'
 import { CONFIG_KEY } from '@onecx/angular-integration-interface'
@@ -88,39 +88,37 @@ const ConfigurationProvider = ({
       remoteConfigURL: defaultConfig.remoteConfigURL,
     }
 
-    let loadConfigPromise: Promise<Config>
+    try {
+      const { config, source } = await resolveConfig({
+        defaultConfig: defaultConfigValues,
+        skipRemoteConfigLoad,
+        remoteConfigURL,
+        loadRemoteConfig: async (url) => {
+          try {
+            return await fetch(url)
+              .then((res) => res.json())
+              .catch((e) => {
+                console.log('Failed to load remote config', e)
+                return {}
+              })
+          } catch (e) {
+            console.log('Error while fetching remote config:', e)
+            return {}
+          }
+        },
+      })
 
-    const inlinedConfig = (window as typeof window & { APP_CONFIG: Config })['APP_CONFIG']
-    if (inlinedConfig) {
-      console.log(`ENV resolved from injected config`)
-      loadConfigPromise = Promise.resolve(inlinedConfig)
-    } else {
-      if (skipRemoteConfigLoad) {
+      if (source === 'inlined') {
+        console.log('ENV resolved from injected config')
+      }
+
+      if (source === 'default' && skipRemoteConfigLoad) {
         console.log(
           '📢 TKA001: Remote config load is disabled. To enable it, remove the "skipRemoteConfigLoad" key in your environment.json'
         )
-        loadConfigPromise = Promise.resolve({
-          ...defaultConfigValues,
-          skipRemoteConfigLoad: String(defaultConfig.skipRemoteConfigLoad),
-        })
-      } else {
-        try {
-          loadConfigPromise = fetch(remoteConfigURL || 'assets/env.json')
-            .then((res) => res.json())
-            .catch((e) => {
-              console.log('Failed to load remote config', e)
-              return {}
-            })
-        } catch (e) {
-          console.log('Error while fetching remote config:', e)
-          loadConfigPromise = Promise.resolve({})
-        }
       }
-    }
 
-    try {
-      const loadedConfig = await loadConfigPromise
-      await configRef.current.publish({ ...defaultConfigValues, ...(loadedConfig ?? {}) })
+      await configRef.current.publish({ ...defaultConfigValues, ...(config ?? {}) })
       return true
     } catch (e) {
       console.log('Failed to load env configuration')

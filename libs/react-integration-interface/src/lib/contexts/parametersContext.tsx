@@ -1,15 +1,13 @@
 import { createContext, useContext, useEffect, useMemo, type ReactNode } from 'react'
-import { ParametersTopic } from '@onecx/integration-interface'
+import { ParametersTopic, findParameterValue, type ParameterValue } from '@onecx/integration-interface'
 import { firstValueFrom, map } from 'rxjs'
 import { useAppState } from './appStateContext'
 import { useShellCapability } from './shellCapability'
-import { Capability } from '@onecx/angular-integration-interface'
-
-type Parameter = boolean | number | string | object
+import { Capability } from '@onecx/integration-interface'
 
 interface ParametersContextValue {
   parameters$: ParametersTopic
-  get: <T extends Parameter>(
+  get: <T extends ParameterValue>(
     key: string,
     defaultValue: T | Promise<T>,
     productName?: string,
@@ -82,14 +80,7 @@ const ParametersProvider: React.FC<ParametersProviderProps> = ({ children, value
     }
 
     const valueResult = await firstValueFrom(
-      parameters$.pipe(
-        map(
-          (payload) =>
-            payload.parameters.find(
-              (parameter) => parameter.productName === resolvedProductName && parameter.appId === resolvedAppId
-            )?.parameters[key] as Parameter | undefined
-        )
-      )
+      parameters$.pipe(map((payload) => findParameterValue(payload, key, resolvedProductName, resolvedAppId)))
     )
 
     if (valueResult === undefined) {

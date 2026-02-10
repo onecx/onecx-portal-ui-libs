@@ -1,4 +1,4 @@
-import { Capability } from '@onecx/angular-integration-interface'
+import { Capability, hasShellCapability, setShellCapabilities } from '@onecx/integration-interface'
 
 /**
  * Registers shell capabilities globally for the host application.
@@ -6,7 +6,7 @@ import { Capability } from '@onecx/angular-integration-interface'
  * @param capabilities - List of capabilities provided by the host shell.
  */
 const setCapabilities = (capabilities: Capability[]): void => {
-  ;(globalThis as any)['onecx-shell-capabilities'] = capabilities
+  setShellCapabilities(capabilities)
 }
 
 /**
@@ -16,7 +16,7 @@ const setCapabilities = (capabilities: Capability[]): void => {
  */
 const useShellCapability = () => {
   const hasCapability = (capability: Capability): boolean => {
-    return (globalThis as any)['onecx-shell-capabilities']?.includes(capability) ?? false
+    return hasShellCapability(capability)
   }
 
   return {

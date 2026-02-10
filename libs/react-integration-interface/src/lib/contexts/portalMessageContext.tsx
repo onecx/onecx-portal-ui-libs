@@ -1,23 +1,12 @@
 import { createContext, useContext, useEffect, useMemo, type ReactNode } from 'react'
-import { MessageTopic } from '@onecx/integration-interface'
+import {
+  MessageTopic,
+  buildTranslatedMessage,
+  type PortalMessage,
+  type TranslateFn,
+} from '@onecx/integration-interface'
 
-type Message = {
-  summaryKey?: string
-  summaryParameters?: object
-  detailKey?: string
-  detailParameters?: object
-  id?: any
-  key?: string
-  life?: number
-  sticky?: boolean
-  closable?: boolean
-  data?: any
-  icon?: string
-  contentStyleClass?: string
-  styleClass?: string
-}
-
-type TranslateFn = (key: string, params?: object) => Promise<string> | string
+type Message = PortalMessage
 
 interface PortalMessageContextValue {
   message$: MessageTopic
@@ -70,24 +59,9 @@ const PortalMessageProvider: React.FC<PortalMessageProviderProps> = ({ children,
     }
   }, [isInternalMessageTopic, message$])
 
-  const resolveTranslation = async (key?: string, params?: object) => {
-    if (!key) return undefined
-    if (!translate) return key
-    return await translate(key, params)
-  }
-
   const addTranslated = async (severity: string, msg: Message) => {
-    const [summaryTranslation, detailTranslation] = await Promise.all([
-      resolveTranslation(msg.summaryKey, msg.summaryParameters),
-      resolveTranslation(msg.detailKey, msg.detailParameters),
-    ])
-
-    await message$.publish({
-      ...msg,
-      severity,
-      summary: summaryTranslation,
-      detail: detailTranslation,
-    })
+    const message = await buildTranslatedMessage(severity, msg, translate)
+    await message$.publish(message)
   }
 
   const success = (msg: Message) => addTranslated('success', msg)

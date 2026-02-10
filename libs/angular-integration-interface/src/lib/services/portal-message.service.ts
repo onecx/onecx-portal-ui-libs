@@ -1,23 +1,9 @@
 import { Injectable, OnDestroy, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
-import { MessageTopic } from '@onecx/integration-interface'
+import { MessageTopic, buildTranslatedMessage, type PortalMessage } from '@onecx/integration-interface'
 import { combineLatest, first, of } from 'rxjs'
 
-export type Message = {
-  summaryKey?: string
-  summaryParameters?: object
-  detailKey?: string
-  detailParameters?: object
-  id?: any
-  key?: string
-  life?: number
-  sticky?: boolean
-  closable?: boolean
-  data?: any
-  icon?: string
-  contentStyleClass?: string
-  styleClass?: string
-}
+export type Message = PortalMessage
 
 @Injectable({ providedIn: 'any' })
 export class PortalMessageService implements OnDestroy {
@@ -55,12 +41,9 @@ export class PortalMessageService implements OnDestroy {
     ])
       .pipe(first())
       .subscribe(([summaryTranslation, detailTranslation]: string[]) => {
-        this.message$.publish({
-          ...msg,
-          severity: severity,
-          summary: summaryTranslation,
-          detail: detailTranslation,
-        })
+        buildTranslatedMessage(severity, msg, async (key, params) =>
+          key ? this.translateService.get(key, params).toPromise() : undefined
+        ).then((message) => this.message$.publish(message))
       })
   }
 
