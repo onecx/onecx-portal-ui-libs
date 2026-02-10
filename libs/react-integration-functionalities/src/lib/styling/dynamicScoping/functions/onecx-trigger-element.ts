@@ -1,9 +1,12 @@
 declare global {
   interface Window {
-    onecxTriggerElement: EventTarget | null;
+    onecxTriggerElement: EventTarget | null
   }
 }
 
+/**
+ * Returns the global trigger element used for dynamic scoping.
+ */
 export function getOnecxTriggerElement() {
-  return window.onecxTriggerElement;
+  return window.onecxTriggerElement
 }

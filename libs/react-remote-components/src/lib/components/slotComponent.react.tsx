@@ -9,9 +9,9 @@ import {
   type ComponentType,
   ComponentPropsWithRef,
 } from 'react'
-import { type RemoteComponentConfig } from '@onecx/angular-utils'
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs'
 import { type RemoteComponentInfo, type SlotComponentConfiguration, useSlot } from '../contexts/slotContext'
+import { RemoteComponentConfig } from '../models/remoteComponentConfig'
 
 type SlotProps = {
   name: string
@@ -34,6 +34,9 @@ const viewContainers$ = new BehaviorSubject<ViewContainersRef[]>([])
 
 const _assignedComponents$ = new BehaviorSubject<(ComponentPropsWithRef<any> | HTMLElement)[]>([])
 
+/**
+ * Renders remote components registered for a slot and manages their inputs/outputs.
+ */
 export const SlotComponent: FC<SlotProps> = ({ name, inputs = {}, outputs = {}, skeleton }) => {
   const slotService = useSlot()
   const [components, setComponents] = useState<any[]>([])

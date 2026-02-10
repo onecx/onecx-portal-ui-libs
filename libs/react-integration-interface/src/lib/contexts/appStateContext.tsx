@@ -28,6 +28,9 @@ interface AppStateContextProps {
 
 const AppStateContext = createContext<AppStateContextProps>({} as any)
 
+/**
+ * Provides application state topics for portal integration.
+ */
 const AppStateProvider = ({ children, value }: { children: ReactNode; value?: Partial<AppStateContextProps> }) => {
   // Track which topics are created internally for proper cleanup
   const internalTopics = useMemo(
@@ -92,14 +95,23 @@ const AppStateProvider = ({ children, value }: { children: ReactNode; value?: Pa
       if (internalTopics.currentWorkspace$) currentWorkspace$.destroy()
       if (internalTopics.isAuthenticated$) isAuthenticated$.destroy()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [globalError$, globalLoading$, currentMfe$, currentLocation$, currentPage$, currentWorkspace$, isAuthenticated$])
+  }, [
+    globalError$,
+    globalLoading$,
+    currentMfe$,
+    currentLocation$,
+    currentPage$,
+    currentWorkspace$,
+    isAuthenticated$,
+    internalTopics,
+  ])
 
-  return <AppStateContext.Provider value={contextValue}>{children}</AppStateContext.Provider>
+  return <AppStateContext value={contextValue}>{children}</AppStateContext>
 }
 
 /**
- * Needs to be used within AppStateContext
+ * Hook to access application state topics.
+ * Must be used within AppStateProvider.
  */
 const useAppState = (): AppStateContextProps => {
   const context = useContext(AppStateContext)

@@ -12,6 +12,10 @@ type ThemeProviderProps = {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null)
 
+/**
+ * Hook to access theme topic.
+ * Must be used within ThemeProvider.
+ */
 const useTheme = () => {
   const context = useContext(ThemeContext)
   if (!context) {
@@ -20,6 +24,9 @@ const useTheme = () => {
   return context
 }
 
+/**
+ * Provides current theme topic.
+ */
 const ThemeProvider = ({ children, value }: ThemeProviderProps) => {
   const currentTheme$ = useMemo(() => value?.currentTheme$ ?? new CurrentThemeTopic(), [value?.currentTheme$])
   const isInternalTopic = !value?.currentTheme$
@@ -38,7 +45,7 @@ const ThemeProvider = ({ children, value }: ThemeProviderProps) => {
       }
     }
   }, [currentTheme$, isInternalTopic])
-  return <ThemeContext.Provider value={contextValue}>{children}</ThemeContext.Provider>
+  return <ThemeContext value={contextValue}>{children}</ThemeContext>
 }
 
 export { ThemeProvider, useTheme, ThemeContext }

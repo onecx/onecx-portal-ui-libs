@@ -28,7 +28,8 @@ interface ConfigurationContextProps {
 const ConfigurationContext = createContext<ConfigurationContextProps | null>(null)
 
 /**
- * Needs to be used within ConfigurationContext
+ * Hook to access configuration context.
+ * Must be used within ConfigurationProvider.
  */
 const useConfiguration = (): ConfigurationContextProps => {
   const context = useContext(ConfigurationContext)
@@ -38,6 +39,9 @@ const useConfiguration = (): ConfigurationContextProps => {
   return context
 }
 
+/**
+ * Provides configuration loading and access utilities.
+ */
 const ConfigurationProvider = ({
   children,
   defaultConfig = {
@@ -155,7 +159,7 @@ const ConfigurationProvider = ({
     [config, init, getConfig, getProperty, setProperty]
   )
 
-  return <ConfigurationContext.Provider value={contextValue}>{children}</ConfigurationContext.Provider>
+  return <ConfigurationContext value={contextValue}>{children}</ConfigurationContext>
 }
 
 export { ConfigurationProvider, useConfiguration, ConfigurationContext }

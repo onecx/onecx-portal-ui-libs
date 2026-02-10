@@ -1,3 +1,6 @@
+/**
+ * Normalizes CSS for hashing by removing comments and extra whitespace.
+ */
 export function normalizeForHash(css: string, normalize: boolean): string {
   if (!normalize) return css
   return css
@@ -6,12 +9,18 @@ export function normalizeForHash(css: string, normalize: boolean): string {
     .trim()
 }
 
+/**
+ * Computes a stable hash for a string.
+ */
 export function hash(s: string): string {
   let h = 5381
   for (let i = 0; i < s.length; i++) h = (h * 33) ^ s.charCodeAt(i)
   return (h >>> 0).toString(36)
 }
 
+/**
+ * Checks if an element is a PrimeReact style tag.
+ */
 export function isPrimeReactStyle(el: Element): boolean {
   return (
     el.tagName === 'STYLE' &&
@@ -20,6 +29,9 @@ export function isPrimeReactStyle(el: Element): boolean {
   )
 }
 
+/**
+ * Extracts a PrimeReact style element from a node.
+ */
 export function getStyleFromNode(n: Node): HTMLStyleElement | null {
   if (n.nodeType === Node.ELEMENT_NODE && isPrimeReactStyle(n as Element)) return n as HTMLStyleElement
   if (n.nodeType === Node.TEXT_NODE) {
@@ -29,6 +41,9 @@ export function getStyleFromNode(n: Node): HTMLStyleElement | null {
   return null
 }
 
+/**
+ * Determines if a style block should be included based on prefixes/allowlist.
+ */
 export function shouldInclude(
   styleId: string,
   css: string,
@@ -40,6 +55,9 @@ export function shouldInclude(
   return css.includes(`--${prefixFilter}-`)
 }
 
+/**
+ * Wraps CSS in an @scope block for the given root/limit selectors.
+ */
 export function scopeCss(css: string, scopeRootSelector: string, scopeLimitSelector?: string): string {
   const prelude = scopeLimitSelector
     ? `@scope(${scopeRootSelector}) to (${scopeLimitSelector})`

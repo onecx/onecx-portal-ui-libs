@@ -13,8 +13,8 @@ interface ImageRepositoryProviderProps {
 const ImageRepositoryContext = createContext<ImageRepositoryContextValue | null>(null)
 
 /**
- * Hook to access image repository service
- * Must be used within ImageRepositoryProvider
+ * Hook to access image repository service.
+ * Must be used within ImageRepositoryProvider.
  */
 const useImageRepositoryService = (): ImageRepositoryContextValue => {
   const context = useContext(ImageRepositoryContext)
@@ -24,6 +24,9 @@ const useImageRepositoryService = (): ImageRepositoryContextValue => {
   return context
 }
 
+/**
+ * Provides image repository service access.
+ */
 const ImageRepositoryProvider: React.FC<ImageRepositoryProviderProps> = ({ children, value }) => {
   const imageRepositoryService = useMemo(
     () => value?.imageRepositoryService ?? new ImageRepositoryService(),
@@ -46,7 +49,7 @@ const ImageRepositoryProvider: React.FC<ImageRepositoryProviderProps> = ({ child
     [imageRepositoryService]
   )
 
-  return <ImageRepositoryContext.Provider value={contextValue}>{children}</ImageRepositoryContext.Provider>
+  return <ImageRepositoryContext value={contextValue}>{children}</ImageRepositoryContext>
 }
 
 export { ImageRepositoryProvider, useImageRepositoryService, ImageRepositoryContext }

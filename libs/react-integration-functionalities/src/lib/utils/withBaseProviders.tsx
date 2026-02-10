@@ -4,6 +4,9 @@ import { SyncedRouterProvider } from '../routing'
 import '../styling/dynamicScoping/index'
 import { TranslationBridge } from './translationBridge'
 
+/**
+ * Wraps a component with the base providers used by remote components.
+ */
 export function withBaseProviders<P extends object>(RemoteComponent: ComponentType<P>): ComponentType<P> {
   return (props: P) => (
     <AppStateProvider>

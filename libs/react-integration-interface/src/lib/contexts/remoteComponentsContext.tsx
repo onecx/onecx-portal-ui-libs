@@ -12,6 +12,10 @@ interface RemoteComponentsProviderProps {
 
 const RemoteComponentsContext = createContext<RemoteComponentsContextValue | null>(null)
 
+/**
+ * Hook to access remote components topic.
+ * Must be used within RemoteComponentsProvider.
+ */
 const useRemoteComponents = (): RemoteComponentsContextValue => {
   const context = useContext(RemoteComponentsContext)
   if (!context) {
@@ -20,6 +24,9 @@ const useRemoteComponents = (): RemoteComponentsContextValue => {
   return context
 }
 
+/**
+ * Provides remote components topic for slot resolution.
+ */
 const RemoteComponentsProvider: React.FC<RemoteComponentsProviderProps> = ({ children, value }) => {
   const remoteComponents$ = useMemo(
     () => value?.remoteComponents$ ?? new RemoteComponentsTopic(),
@@ -42,7 +49,7 @@ const RemoteComponentsProvider: React.FC<RemoteComponentsProviderProps> = ({ chi
     [remoteComponents$]
   )
 
-  return <RemoteComponentsContext.Provider value={contextValue}>{children}</RemoteComponentsContext.Provider>
+  return <RemoteComponentsContext value={contextValue}>{children}</RemoteComponentsContext>
 }
 
 export { RemoteComponentsProvider, useRemoteComponents, RemoteComponentsContext }

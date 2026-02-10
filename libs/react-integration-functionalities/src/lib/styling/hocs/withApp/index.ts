@@ -11,6 +11,9 @@ interface AppGlobals {
   [key: string]: string | number | boolean
 }
 
+/**
+ * Wraps an app component with base providers and app-level style isolation.
+ */
 export const withApp = (Component: ComponentType, appGlobals: AppGlobals) =>
   composeProviders(
     (Component: ComponentType) => withAppGlobals(Component, appGlobals),

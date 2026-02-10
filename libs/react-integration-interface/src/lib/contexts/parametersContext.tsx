@@ -24,6 +24,10 @@ interface ParametersProviderProps {
 
 const ParametersContext = createContext<ParametersContextValue | null>(null)
 
+/**
+ * Hook to access parameters topic utilities.
+ * Must be used within ParametersProvider.
+ */
 const useParameters = (): ParametersContextValue => {
   const context = useContext(ParametersContext)
   if (!context) {
@@ -32,6 +36,9 @@ const useParameters = (): ParametersContextValue => {
   return context
 }
 
+/**
+ * Provides parameters topic and lookup utilities.
+ */
 const ParametersProvider: React.FC<ParametersProviderProps> = ({ children, value }) => {
   const { hasCapability } = useShellCapability()
   const { currentMfe$ } = useAppState()
@@ -93,7 +100,7 @@ const ParametersProvider: React.FC<ParametersProviderProps> = ({ children, value
     [parameters$, get]
   )
 
-  return <ParametersContext.Provider value={contextValue}>{children}</ParametersContext.Provider>
+  return <ParametersContext value={contextValue}>{children}</ParametersContext>
 }
 
 export { ParametersProvider, useParameters, ParametersContext }

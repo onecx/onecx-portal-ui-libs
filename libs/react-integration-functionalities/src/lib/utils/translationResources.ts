@@ -1,5 +1,8 @@
 import type { i18n } from 'i18next'
 
+/**
+ * Builds a translation base path from an import.meta.url value.
+ */
 export const getTranslationPathFromMeta = (metaUrl: string | undefined, path = 'assets/i18n/') => {
   if (!metaUrl || metaUrl.startsWith('file://')) {
     throw new Error(
@@ -13,6 +16,9 @@ export const getTranslationPathFromMeta = (metaUrl: string | undefined, path = '
   return `${urlWithoutFileName}/${normalizedPath}`
 }
 
+/**
+ * Registers portal page translation loadPath on an i18next instance.
+ */
 export const registerPortalPageTranslations = (
   instance: i18n,
   metaUrl: string | undefined,

@@ -3,6 +3,9 @@ import { useEffect, useMemo, useState } from 'react'
 import { useAppState, useUserService } from '@onecx/react-integration-interface'
 import { useTranslation } from 'react-i18next'
 
+/**
+ * Props for PortalPage wrapper.
+ */
 export interface PortalPageProps {
   children: ReactNode
   permission?: string | string[]
@@ -19,6 +22,9 @@ const DEFAULT_CONTAINER_STYLE: CSSProperties = {
   height: '100%',
 }
 
+/**
+ * React PortalPage implementation mirroring the Angular portal-page component.
+ */
 export const PortalPage = ({
   children,
   permission,

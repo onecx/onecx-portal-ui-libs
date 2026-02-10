@@ -1,4 +1,4 @@
-import { type FC, createContext, useContext, useState, useEffect, type PropsWithChildren } from 'react'
+import { type FC, createContext, useContext, useState, useEffect, useMemo, type PropsWithChildren } from 'react'
 import { filter, firstValueFrom, map } from 'rxjs'
 import { type PermissionsRpc, PermissionsRpcTopic } from '@onecx/integration-interface'
 
@@ -11,6 +11,9 @@ const PermissionContext = createContext<PermissionContextType | undefined>(undef
 
 const permissionsTopic$ = new PermissionsRpcTopic()
 
+/**
+ * Provides permissions fetched from the portal permissions topic.
+ */
 export const PermissionProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
   const [permissions, setPermissions] = useState<PermissionsRpc[]>([])
 
@@ -38,9 +41,14 @@ export const PermissionProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
     }
   }, [])
 
-  return <PermissionContext.Provider value={{ permissions, getPermissions }}>{children}</PermissionContext.Provider>
+  const contextValue = useMemo(() => ({ permissions, getPermissions }), [permissions])
+
+  return <PermissionContext value={contextValue}>{children}</PermissionContext>
 }
 
+/**
+ * Hook to access permission context.
+ */
 export const usePermission = (): PermissionContextType => {
   const context = useContext(PermissionContext)
   if (!context) {

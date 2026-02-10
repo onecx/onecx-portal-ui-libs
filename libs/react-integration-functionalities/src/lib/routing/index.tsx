@@ -7,8 +7,14 @@ const initValue = {
   isFirst: true,
 }
 
+/**
+ * Context holding the current synced location payload.
+ */
 export const SyncedLocationContext = createContext<CurrentLocationTopicPayload>(initValue)
 
+/**
+ * Internal component syncing router state with the current location topic.
+ */
 const RouterSync: FC<PropsWithChildren> = ({ children }) => {
   const navigate = useNavigate()
   const locationHook = useLocation()
@@ -37,9 +43,12 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
     }
   }, [])
 
-  return <SyncedLocationContext.Provider value={currentLocation}>{children}</SyncedLocationContext.Provider>
+  return <SyncedLocationContext value={currentLocation}>{children}</SyncedLocationContext>
 }
 
+/**
+ * Provides a browser router that stays in sync with portal location events.
+ */
 export const SyncedRouterProvider: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <BrowserRouter>

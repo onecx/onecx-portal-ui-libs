@@ -21,8 +21,8 @@ interface UserProviderProps {
 const UserContext = createContext<UserContextValue | null>(null)
 
 /**
- * Hook to access user context
- * Must be used within UserProvider
+ * Hook to access user context.
+ * Must be used within UserProvider.
  */
 const useUserService = (): UserContextValue => {
   const context = useContext(UserContext)
@@ -32,6 +32,9 @@ const useUserService = (): UserContextValue => {
   return context
 }
 
+/**
+ * Provides user profile, permissions, and language topics.
+ */
 const UserProvider: React.FC<UserProviderProps> = ({ children, value }) => {
   // Create stable instances using refs to prevent unnecessary re-renders
   const profile$ = useMemo(() => value?.profile$ ?? new UserProfileTopic(), [value?.profile$])
@@ -149,7 +152,7 @@ const UserProvider: React.FC<UserProviderProps> = ({ children, value }) => {
     [profile$, lang$, permissionsTopic$, getPermissions, hasPermission, isInitialized]
   )
 
-  return <UserContext.Provider value={contextValue}>{children}</UserContext.Provider>
+  return <UserContext value={contextValue}>{children}</UserContext>
 }
 
 /**

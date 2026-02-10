@@ -35,6 +35,10 @@ interface PortalMessageProviderProps {
 
 const PortalMessageContext = createContext<PortalMessageContextValue | null>(null)
 
+/**
+ * Hook to access portal messaging utilities.
+ * Must be used within PortalMessageProvider.
+ */
 const usePortalMessage = (): PortalMessageContextValue => {
   const context = useContext(PortalMessageContext)
   if (!context) {
@@ -43,6 +47,9 @@ const usePortalMessage = (): PortalMessageContextValue => {
   return context
 }
 
+/**
+ * Provides messaging topic helpers with optional translation support.
+ */
 const PortalMessageProvider: React.FC<PortalMessageProviderProps> = ({ children, value, translate }) => {
   const message$ = useMemo(() => value?.message$ ?? new MessageTopic(), [value?.message$])
   const isInternalMessageTopic = !value?.message$
@@ -91,7 +98,7 @@ const PortalMessageProvider: React.FC<PortalMessageProviderProps> = ({ children,
     [message$, translate]
   )
 
-  return <PortalMessageContext.Provider value={contextValue}>{children}</PortalMessageContext.Provider>
+  return <PortalMessageContext value={contextValue}>{children}</PortalMessageContext>
 }
 
 export { PortalMessageProvider, usePortalMessage, PortalMessageContext }

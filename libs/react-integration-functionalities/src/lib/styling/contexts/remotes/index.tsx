@@ -8,6 +8,9 @@ interface PrimeReactStyleProviderProps {
 
 const PrimeReactStyleContext = createContext<{ rootRef: RefObject<HTMLDivElement | null> } | undefined>(undefined)
 
+/**
+ * Provides PrimeReact style scoping for remote components.
+ */
 export const PrimeReactStyleProvider = ({ children }: PrimeReactStyleProviderProps) => {
   const rootRef = useRef<HTMLDivElement>(null)
   const [isScoped, setIsScoped] = useState(false)
@@ -34,7 +37,7 @@ export const PrimeReactStyleProvider = ({ children }: PrimeReactStyleProviderPro
   if (!isScoped) return null // spinner or smthing
 
   return (
-    <PrimeReactStyleContext.Provider value={contextValue}>
+    <PrimeReactStyleContext value={contextValue}>
       <div
         ref={rootRef}
         data-style-id={remoteId}
@@ -44,6 +47,6 @@ export const PrimeReactStyleProvider = ({ children }: PrimeReactStyleProviderPro
       >
         {children}
       </div>
-    </PrimeReactStyleContext.Provider>
+    </PrimeReactStyleContext>
   )
 }

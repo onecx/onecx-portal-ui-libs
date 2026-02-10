@@ -11,6 +11,9 @@ interface AppGlobals {
   [key: string]: string | number | boolean
 }
 
+/**
+ * Wraps a remote component with base providers and remote style isolation.
+ */
 export const withRemote = <P extends object>(Component: ComponentType<P>, appGlobals: AppGlobals) =>
   composeProviders<P>(
     (Component: ComponentType) => withAppGlobals(Component, appGlobals),

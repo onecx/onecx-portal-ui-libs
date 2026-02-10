@@ -1,5 +1,5 @@
-import { type RemoteComponentConfig } from '@onecx/angular-utils';
+import { RemoteComponentConfig } from './remoteComponentConfig'
 
 export interface ocxRemoteWebcomponent {
-  ocxRemoteComponentConfig: RemoteComponentConfig;
+  ocxRemoteComponentConfig: RemoteComponentConfig
 }

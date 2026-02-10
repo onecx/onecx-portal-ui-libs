@@ -8,6 +8,9 @@ type Props = Readonly<{
   children?: ReactNode
 }>
 
+/**
+ * Registers theme variables and provides PrimeReact configuration for the subtree.
+ */
 export default function StyleRegistry({ children }: Props) {
   const [isThemed, setIsThemed] = useState(false)
   const { PRODUCT_NAME } = useAppGlobals()

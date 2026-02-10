@@ -1,6 +1,9 @@
 import type { ComponentType } from 'react'
 import { PrimeReactStyleProvider } from '../../contexts/app'
 
+/**
+ * Wraps a component with PrimeReact style isolation for the main app.
+ */
 export function withAppPrimereactStylesIsolation<P extends object>(
   RemoteComponent: ComponentType<P>
 ): ComponentType<P> {

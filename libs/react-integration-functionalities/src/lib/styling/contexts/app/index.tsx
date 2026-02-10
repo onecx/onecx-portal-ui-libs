@@ -8,6 +8,9 @@ interface PrimeReactStyleProviderProps {
 
 const PrimeReactStyleContext = createContext<{ rootRef: RefObject<HTMLDivElement | null> } | undefined>(undefined)
 
+/**
+ * Provides PrimeReact style scoping for the main application.
+ */
 export const PrimeReactStyleProvider = ({ children }: PrimeReactStyleProviderProps) => {
   const rootRef = useRef<HTMLDivElement>(null)
   const { PRODUCT_NAME } = useAppGlobals()
@@ -28,7 +31,7 @@ export const PrimeReactStyleProvider = ({ children }: PrimeReactStyleProviderPro
   const contextValue = useMemo(() => ({ rootRef }), [rootRef])
 
   return (
-    <PrimeReactStyleContext.Provider value={contextValue}>
+    <PrimeReactStyleContext value={contextValue}>
       <div
         ref={rootRef}
         data-style-id={appId}
@@ -38,6 +41,6 @@ export const PrimeReactStyleProvider = ({ children }: PrimeReactStyleProviderPro
       >
         {children}
       </div>
-    </PrimeReactStyleContext.Provider>
+    </PrimeReactStyleContext>
   )
 }

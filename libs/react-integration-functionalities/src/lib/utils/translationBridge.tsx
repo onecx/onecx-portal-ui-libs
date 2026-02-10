@@ -2,6 +2,9 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useUserService } from '@onecx/react-integration-interface'
 
+/**
+ * Syncs the user language stream with i18next.
+ */
 export const TranslationBridge = () => {
   const { i18n } = useTranslation()
   const { lang$ } = useUserService()
