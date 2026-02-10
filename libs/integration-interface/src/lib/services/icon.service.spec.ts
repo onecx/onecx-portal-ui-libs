@@ -6,7 +6,7 @@
  * @jest-environment jsdom
  */
 import { ensureIconCache, generateClassName, IconService } from './icon.service'
-import { Icon, IconCache, IconClassType } from '../topics/icons/v1/icon.model'
+import { IconCache, IconClassType } from '../topics/icons/v1/icon.model'
 import { FakeTopic } from '@onecx/accelerator'
 
 jest.mock('../topics/icons/v1/icon.topic', () => {
