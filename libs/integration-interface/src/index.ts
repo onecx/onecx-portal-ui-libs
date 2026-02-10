@@ -59,3 +59,5 @@ export * from './lib/topics/resized-events/v1/resized-events.topic'
 export * from './lib/topics/image-repository/image-repository.model'
 export * from './lib/topics/image-repository/image-repository.topic'
 export * from './lib/services/image-repository.service'
+
+export * from './lib/utils/workspace-url'
