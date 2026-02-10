@@ -18,12 +18,7 @@ This document explains how to:
 * Await icon availability with an async API
 * Choose the desired rendering style (`IconClassType`)
 * Understand the icon loading flow and cache semantics
-
-Usage::
-Request icons by name and receive a CSS class to apply in templates. Offers a Promise-based API to await icon availability.
-
-Topics used::
-* {icon_topic_url}[IconTopic]
+* Topics Used {icon_topic_url}[IconTopic]
 
 [#usage]
 == Usage
@@ -43,17 +38,30 @@ class MyComponent {
 ----
 
 . Request an icon:
-  * *Synchronous*: Returns a CSS class immediately; the icon assets are loaded asynchronously in the background.
+  * *Synchronous*: Returns a CSS class immediately while the icon assets are loaded asynchronously in the background. +
+  Ideal when:
+  - The icon is not critical for initial layout
+  - It can pop in shortly after rendering
+  - You want fast template binding with no await
 +
 [source,typescript]
 ----
-homeIcon = this.iconService.requestIcon('mdi:home')
+homeIcon: string = '';
+
+async ngOnInit() {
+  homeIcon = this.iconService.requestIcon('mdi:home', 'svg')
+}
 ----
-  * *Asynchronous*: Await the icon; resolves to a class string when available or `null` if missing.
+
+  * *Asynchronous*: Await the icon; resolves to a class string when available or `null` if missing. The method returns a  Promise and resolves only when the icon asset is available (or `null` if missing). +
+  Ideal when:
+  - The icon must render immediately with no flicker
+  - Rendering or layout logic depends on the icon
+  - You need to know whether the icon actually exists
 +
 [source,typescript]
 ----
-accountIcon : string = "";
+accountIcon: string = '';
 
 async ngOnInit() {
   const icon = await this.iconService.requestIconAsync('mdi:account', 'svg')
