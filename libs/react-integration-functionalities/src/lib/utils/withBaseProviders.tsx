@@ -1,16 +1,20 @@
 import type { ComponentType } from 'react'
-import { AppStateProvider, ConfigurationProvider } from '@onecx/react-integration-interface'
+import { AppStateProvider, ConfigurationProvider, UserProvider } from '@onecx/react-integration-interface'
 import { SyncedRouterProvider } from '../routing'
 import '../styling/dynamicScoping/index'
+import { TranslationBridge } from './translationBridge'
 
 export function withBaseProviders<P extends object>(RemoteComponent: ComponentType<P>): ComponentType<P> {
   return (props: P) => (
-    <SyncedRouterProvider>
-      <AppStateProvider>
-        <ConfigurationProvider>
-          <RemoteComponent {...props} />
-        </ConfigurationProvider>
-      </AppStateProvider>
-    </SyncedRouterProvider>
+    <AppStateProvider>
+      <ConfigurationProvider>
+        <SyncedRouterProvider>
+          <UserProvider>
+            <TranslationBridge />
+            <RemoteComponent {...props} />
+          </UserProvider>
+        </SyncedRouterProvider>
+      </ConfigurationProvider>
+    </AppStateProvider>
   )
 }

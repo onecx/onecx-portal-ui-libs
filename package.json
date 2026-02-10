@@ -47,6 +47,7 @@
     "primelocale": "^2.2.2",
     "primeng": "^20.3.0",
     "primereact": "^10.9.7",
+    "react-i18next": "^16.5.4",
     "react-router": "^7.13.0",
     "rxjs": "^7.8.2",
     "ts-semaphore": "^1.0.0",
