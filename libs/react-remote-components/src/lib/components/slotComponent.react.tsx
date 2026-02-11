@@ -3,6 +3,7 @@ import {
   useState,
   useRef,
   useCallback,
+  useMemo,
   type FC,
   type ReactElement,
   type ReactNode,
@@ -41,14 +42,10 @@ export const SlotComponent: FC<SlotProps> = ({ name, inputs = {}, outputs = {}, 
   const slotService = useSlot()
   const [components, setComponents] = useState<any[]>([])
 
-  let components$: Observable<SlotComponentConfiguration[]>
+  const components$ = useMemo(() => slotService?.getComponentsForSlot(name), [slotService, name])
 
   const inputs$ = useRef(new BehaviorSubject(inputs))
   const outputs$ = useRef(new BehaviorSubject(outputs))
-
-  const setComponentsObservable = () => {
-    components$ = slotService.getComponentsForSlot(name)
-  }
 
   const setViewContainerRef = (element: HTMLDivElement | null) => {
     if (element) {
@@ -61,7 +58,9 @@ export const SlotComponent: FC<SlotProps> = ({ name, inputs = {}, outputs = {}, 
       console.error(`SLOT_SERVICE token was not provided. ${name} slot will not be filled with data.`)
       return
     }
-    setComponentsObservable()
+    if (!components$) {
+      return
+    }
 
     const assignedCompsSub = combineLatest([_assignedComponents$, inputs$.current, outputs$.current]).subscribe(
       ([components, inputs, outputs]) => {
@@ -100,7 +99,7 @@ export const SlotComponent: FC<SlotProps> = ({ name, inputs = {}, outputs = {}, 
       subscription.unsubscribe()
       assignedCompsSub.unsubscribe()
     }
-  }, [])
+  }, [components$, name, slotService])
 
   const createComponent = ({
     componentType,
@@ -162,7 +161,11 @@ export const SlotComponent: FC<SlotProps> = ({ name, inputs = {}, outputs = {}, 
   )
 
   useEffect(() => {
-    const subscription = components$?.subscribe({
+    if (!components$) {
+      return
+    }
+
+    const subscription = components$.subscribe({
       next: (newComponents) => {
         setComponents(newComponents)
       },
