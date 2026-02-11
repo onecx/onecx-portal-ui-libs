@@ -63,7 +63,7 @@ describe('IconService', () => {
       const topic = FakeTopic.create<any>()
       iconService.iconTopic = topic as any
       const publishSpy = jest.spyOn(topic, 'publish')
-      globalThis.onecxIcons['mdi:cached'] = { name: 'mdi:cached', type: 'svg', body: '' }
+      globalThis.onecxIcons!['mdi:cached'] = { name: 'mdi:cached', type: 'svg', body: '' }
 
       const result = iconService.requestIcon('mdi:cached')
 
@@ -78,7 +78,7 @@ describe('IconService', () => {
       iconService.iconTopic = topic as any
 
       const name = 'mdi:ghost'
-      globalThis.onecxIcons[name] = null
+      globalThis.onecxIcons![name] = null
       const res = await iconService.requestIconAsync(name)
 
       expect(res).toBeNull()
@@ -89,7 +89,7 @@ describe('IconService', () => {
       iconService.iconTopic = topic as any
       const name = 'mdi:car'
 
-      globalThis.onecxIcons[name] = { name, type: 'svg', body: '' }
+      globalThis.onecxIcons![name] = { name, type: 'svg', body: '' }
       const res = await iconService.requestIconAsync(name, 'svg')
 
       expect(res).toBe('onecx-theme-icon-svg-mdi-car')
@@ -101,7 +101,7 @@ describe('IconService', () => {
       const name = 'mdi:star'
 
       const promise = iconService.requestIconAsync(name) // default background-before
-      globalThis.onecxIcons[name] = { name, type: 'svg', body: '' }
+      globalThis.onecxIcons![name] = { name, type: 'svg', body: '' }
       await topic.publish({ type: 'IconsReceived' })
       const res = await promise
 
@@ -114,7 +114,7 @@ describe('IconService', () => {
       const name = 'mdi:unknown'
 
       const promise = iconService.requestIconAsync(name, 'svg')
-      globalThis.onecxIcons[name] = null
+      globalThis.onecxIcons![name] = null
       await topic.publish({ type: 'IconsReceived' })
       const res = await promise
 
