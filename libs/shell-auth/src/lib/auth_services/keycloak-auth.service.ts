@@ -47,12 +47,13 @@ export class KeycloakAuthService implements AuthService {
         this.keycloak = new Keycloak(kcConfig)
       })
     } catch (err) {
+      const errorMessage = 'Keycloak initialization failed! Could not load keycloak-js library which is required in the current environment.'
       this.logger.error(
-        'Keycloak initialization failed! Could not load keycloak-js library which is required in the current environment.',
+        errorMessage,
         err
       )
       throw new Error(
-        'Keycloak initialization failed! Could not load keycloak-js library which is required in the current environment.'
+        errorMessage
       )
     }
 

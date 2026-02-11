@@ -12,7 +12,7 @@ export class AuthProxyService {
 
   async updateTokenIfNeeded(): Promise<boolean> {
     if (!window.onecxAuth?.authServiceProxy?.v1?.updateTokenIfNeeded) {
-      this.logger.info('Please update to the latest shell version to use the new auth mechanism.')
+      this.logger.error('Please update to the latest shell version to use the new auth mechanism.')
     }
     return (
       window.onecxAuth?.authServiceProxy?.v1?.updateTokenIfNeeded() ??
