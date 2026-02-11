@@ -5,13 +5,12 @@ import { IconTopic } from '../topics/icons/v1/icon.topic'
 const DEFAULT_CLASS_TYPE: IconClassType = 'background-before'
 
 declare global {
-    interface Window {
-        onecxIcons: Record<string, IconCache | null | undefined>
-    }
+  var onecxIcons: Record<string, IconCache | null | undefined>;
 }
 
+
 export function ensureIconCache(): void {
-    window.onecxIcons ??= {} 
+  globalThis.onecxIcons ??= {} 
 }
 
 export function generateClassName(name: string, classType: IconClassType): string {
@@ -42,8 +41,8 @@ export class IconService {
   requestIcon(name: string, classType: IconClassType = DEFAULT_CLASS_TYPE): string {
     const className =  generateClassName(name, classType)
 
-    if (!(name in window.onecxIcons)) {
-      window.onecxIcons[name] = undefined
+    if (!(name in globalThis.onecxIcons)) {
+      globalThis.onecxIcons[name] = undefined
       this.iconTopic.publish({ type: 'IconRequested', name})
     }
 
@@ -56,19 +55,19 @@ export class IconService {
   ): Promise<string | null> {
     const className = this.requestIcon(name, classType)
 
-    const cached = window.onecxIcons[name]
+    const cached = globalThis.onecxIcons[name]
     if (cached === null) return null
     if (cached) return className
 
     await firstValueFrom(
       this.iconTopic.pipe(
         filter(e => e.type === 'IconsReceived'),
-        map(() => window.onecxIcons[name]),
+        map(() => globalThis.onecxIcons[name]),
         filter(v => v !== undefined),
       )
     )
 
-    return window.onecxIcons[name] ? className : null
+    return globalThis.onecxIcons[name] ? className : null
   }
 
   destroy(): void {

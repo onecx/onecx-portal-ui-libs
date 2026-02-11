@@ -22,19 +22,40 @@ describe('IconService', () => {
   let iconService: IconService
 
   beforeEach(() => {
-    ; (window as any).onecxIcons = {}
+    ; (globalThis as any).onecxIcons = {}
     iconService = new IconService()
   })
 
   afterEach(() => {
-    ; (window as any).onecxIcons = {}
+    ; (globalThis as any).onecxIcons = {}
     jest.clearAllMocks()
   })
 
   it('initializes global icon cache', () => {
-    expect((window as any).onecxIcons).toBeDefined()
-    expect(typeof (window as any).onecxIcons).toBe('object')
+    expect((globalThis as any).onecxIcons).toBeDefined()
+    expect(typeof (globalThis as any).onecxIcons).toBe('object')
   })
+
+
+
+  describe('iconTopic getter & setter', () => {
+    it('should set the iconTopic via setter', () => {
+      const { IconTopic: MockIconTopic } = jest.requireActual('../topics/icons/v1/icon.topic');
+      const mockTopic = new MockIconTopic()
+
+      iconService.iconTopic = mockTopic;
+
+      expect(iconService.iconTopic).toBe(mockTopic);
+    });
+
+
+    it('should create IconTopic once and return the same instance', () => {
+      const t1 = iconService.iconTopic;
+      const t2 = iconService.iconTopic;
+
+      expect(t1).toBe(t2);
+    });
+  });
 
   describe('requestIcon', () => {
     it('should return normalized class and publish IconRequested on first request', () => {
@@ -45,7 +66,7 @@ describe('IconService', () => {
 
       const cls = iconService.requestIcon(name, classType)
 
-      expect((window as any).onecxIcons[name]).toBeUndefined()
+      expect((globalThis as any).onecxIcons[name]).toBeUndefined()
       expect(publishSpy).toHaveBeenCalledWith({ type: 'IconRequested', name })
       expect(cls).toBe('onecx-theme-icon-background-before-mdi-home-battery')
     })
@@ -54,20 +75,24 @@ describe('IconService', () => {
       const topic = (iconService.iconTopic as unknown) as FakeTopic<any>
       const publishSpy = jest.spyOn(topic, 'publish')
 
-        ; (window as any).onecxIcons['prime:user'] = { name: 'prime:user' } as IconCache
+      ;(globalThis as any).onecxIcons['prime:user'] = { name: 'prime:user' } as IconCache
       iconService.requestIcon('prime:user', 'background')
+
       expect(publishSpy).not.toHaveBeenCalled()
 
       publishSpy.mockClear()
-        ; (window as any).onecxIcons['mdi:missing'] = null
+      ;(globalThis as any).onecxIcons['mdi:missing'] = null
       iconService.requestIcon('mdi:missing')
+
       expect(publishSpy).not.toHaveBeenCalled()
     })
 
     it('should use default classType when none provided', () => {
       const topic = (iconService.iconTopic as unknown) as FakeTopic<any>
       const publishSpy = jest.spyOn(topic, 'publish')
+      
       iconService.requestIcon('mdi:settings')
+
       expect(publishSpy).toHaveBeenCalledWith({ type: 'IconRequested', name: 'mdi:settings' })
     })
   })
@@ -75,35 +100,43 @@ describe('IconService', () => {
   describe('requestIconAsync', () => {
     it('should return null immediately when cached null', async () => {
       const name = 'mdi:ghost'
-        ; (window as any).onecxIcons[name] = null
+      ;(globalThis as any).onecxIcons[name] = null
+      
       const res = await iconService.requestIconAsync(name)
+
       expect(res).toBeNull()
     })
 
     it('should return class immediately when cached icon exists', async () => {
       const name = 'mdi:car'
-        ; (window as any).onecxIcons[name] = { name, type: 'svg', body: '' }
+      ;(globalThis as any).onecxIcons[name] = { name, type: 'svg', body: '' }
+
       const res = await iconService.requestIconAsync(name, 'svg')
+
       expect(res).toBe('onecx-theme-icon-svg-mdi-car')
     })
 
     it('should resolve with class after IconsReceived when icon becomes available', async () => {
       const name = 'prime:check'
       const promise = iconService.requestIconAsync(name, 'background')
-        ; (window as any).onecxIcons[name] = { name, type: 'svg', body: '' }
+      ;(globalThis as any).onecxIcons[name] = { name, type: 'svg', body: '' }
       const topic = (iconService.iconTopic as unknown) as FakeTopic<any>
+      
       await topic.publish({ type: 'IconsReceived' })
       const res = await promise
+
       expect(res).toBe('onecx-theme-icon-background-prime-check')
     })
 
     it('should resolve null after IconsReceived when icon resolved to null', async () => {
       const name = 'mdi:unknown'
       const promise = iconService.requestIconAsync(name)
-        ; (window as any).onecxIcons[name] = null
+      ;(globalThis as any).onecxIcons[name] = null
       const topic = (iconService.iconTopic as unknown) as FakeTopic<any>
+
       await topic.publish({ type: 'IconsReceived' })
       const res = await promise
+
       expect(res).toBeNull()
     })
   })
@@ -111,23 +144,27 @@ describe('IconService', () => {
   it('should call topic.destroy when destroy is called', () => {
     const topic = (iconService.iconTopic as unknown) as FakeTopic<any>
     const spy = jest.spyOn(topic, 'destroy')
+    
     iconService.destroy()
+
     expect(spy).toHaveBeenCalled()
   })
 
-  describe('icon-cache utilities', () => {
+
+
+  describe('icon-service utilities', () => {
     beforeEach(() => {
-      delete (window as any).onecxIcons
+      delete (globalThis as any).onecxIcons
     })
 
     describe('ensureIconCache', () => {
-      it('should initialize window.onecxIcons if not present', () => {
-        expect(window.onecxIcons).toBeUndefined()
+      it('should initialize globalThis.onecxIcons if not present', () => {
+        expect(globalThis.onecxIcons).toBeUndefined()
 
         ensureIconCache()
 
-        expect(window.onecxIcons).toBeDefined()
-        expect(window.onecxIcons).toEqual({})
+        expect(globalThis.onecxIcons).toBeDefined()
+        expect(globalThis.onecxIcons).toEqual({})
       })
 
       it('should not overwrite existing icon cache', () => {
@@ -136,13 +173,13 @@ describe('IconService', () => {
           'prime:user': null
         }
 
-        window.onecxIcons = existing
+        globalThis.onecxIcons = existing
 
         ensureIconCache()
 
-        expect(window.onecxIcons).toBe(existing)
-        expect(window.onecxIcons['mdi:home']).toBeUndefined()
-        expect(window.onecxIcons['prime:user']).toBeNull()
+        expect(globalThis.onecxIcons).toBe(existing)
+        expect(globalThis.onecxIcons['mdi:home']).toBeUndefined()
+        expect(globalThis.onecxIcons['prime:user']).toBeNull()
       })
     })
 

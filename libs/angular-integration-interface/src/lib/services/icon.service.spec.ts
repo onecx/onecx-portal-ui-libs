@@ -14,24 +14,32 @@ describe('IconService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({ providers: [IconService] })
-    ;(window as any).onecxIcons = {}
+      ; (globalThis as any).onecxIcons = {}
     iconService = TestBed.inject(IconService)
   })
 
   afterEach(() => {
-    ;(window as any).onecxIcons = {}
+    ; (globalThis as any).onecxIcons = {}
     jest.clearAllMocks()
   })
 
   it('should create', () => {
-    expect(iconService ).toBeTruthy()
+    expect(iconService).toBeTruthy()
   })
+
+
+  it('should return the underlying iconTopic', () => {
+    const topic = FakeTopic.create<any>();
+    iconService.iconTopic = topic as any;
+
+    expect(iconService.iconTopic).toBe(topic);
+  });
+
 
   describe('requestIcon', () => {
     it('should return normalized class and publish IconRequested on first request', () => {
       const topic = FakeTopic.create<any>()
-      iconService .iconTopic = topic as any
-
+      iconService.iconTopic = topic as any
       const name = 'mdi:home-battery'
       const publishSpy = jest.spyOn(topic, 'publish')
 
@@ -43,9 +51,10 @@ describe('IconService', () => {
 
     it('should honor explicit IconClassType', () => {
       const topic = FakeTopic.create<any>()
-      iconService .iconTopic = topic as any
+      iconService.iconTopic = topic as any
 
-      const result = iconService .requestIcon('prime:check-circle', 'svg')
+      const result = iconService.requestIcon('prime:check-circle', 'svg')
+
       expect(result).toBe('onecx-theme-icon-svg-prime-check-circle')
     })
 
@@ -53,8 +62,8 @@ describe('IconService', () => {
       const topic = FakeTopic.create<any>()
       iconService.iconTopic = topic as any
       const publishSpy = jest.spyOn(topic, 'publish')
+        ; (globalThis as any).onecxIcons['mdi:cached'] = { name: 'mdi:cached', type: 'svg', body: '' }
 
-      ;(window as any).onecxIcons['mdi:cached'] = { name: 'mdi:cached', type: 'svg', body: '' }
       const result = iconService.requestIcon('mdi:cached')
 
       expect(result).toBe('onecx-theme-icon-background-before-mdi-cached')
@@ -68,42 +77,46 @@ describe('IconService', () => {
       iconService.iconTopic = topic as any
 
       const name = 'mdi:ghost'
-      ;(window as any).onecxIcons[name] = null
+        ; (globalThis as any).onecxIcons[name] = null
       const res = await iconService.requestIconAsync(name)
+
       expect(res).toBeNull()
     })
 
     it('should return class immediately when cached icon exists', async () => {
       const topic = FakeTopic.create<any>()
       iconService.iconTopic = topic as any
-
       const name = 'mdi:car'
-      ;(window as any).onecxIcons[name] = { name, type: 'svg', body: '' }
+
+        ; (globalThis as any).onecxIcons[name] = { name, type: 'svg', body: '' }
       const res = await iconService.requestIconAsync(name, 'svg')
+
       expect(res).toBe('onecx-theme-icon-svg-mdi-car')
     })
 
     it('should resolve with class after IconsReceived when icon becomes available', async () => {
       const topic = FakeTopic.create<any>()
       iconService.iconTopic = topic as any
-
       const name = 'mdi:star'
+
       const promise = iconService.requestIconAsync(name) // default background-before
-      ;(window as any).onecxIcons[name] = { name, type: 'svg', body: '' }
+        ; (globalThis as any).onecxIcons[name] = { name, type: 'svg', body: '' }
       await topic.publish({ type: 'IconsReceived' })
       const res = await promise
+
       expect(res).toBe('onecx-theme-icon-background-before-mdi-star')
     })
 
     it('should resolve null after IconsReceived when icon resolved to null', async () => {
       const topic = FakeTopic.create<any>()
       iconService.iconTopic = topic as any
-
       const name = 'mdi:unknown'
+
       const promise = iconService.requestIconAsync(name, 'svg')
-      ;(window as any).onecxIcons[name] = null
+        ; (globalThis as any).onecxIcons[name] = null
       await topic.publish({ type: 'IconsReceived' })
       const res = await promise
+
       expect(res).toBeNull()
     })
   })
@@ -113,8 +126,20 @@ describe('IconService', () => {
       const topic = FakeTopic.create<any>()
       iconService.iconTopic = topic as any
       const spy = jest.spyOn(topic, 'destroy')
+
       iconService.ngOnDestroy()
+
       expect(spy).toHaveBeenCalled()
     })
   })
+
+
+  it('should call ngOnDestroy when destroy() is invoked', () => {
+    const spy = jest.spyOn(iconService, 'ngOnDestroy');
+
+    iconService.destroy();
+
+    expect(spy).toHaveBeenCalled();
+  });
+
 })
