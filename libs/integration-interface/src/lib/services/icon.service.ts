@@ -10,16 +10,16 @@ declare global {
 
 
 export function ensureIconCache(): void {
-  globalThis.onecxIcons ??= {} 
+  globalThis.onecxIcons ??= {}
 }
 
 export function generateClassName(name: string, classType: IconClassType): string {
-    const safeName = normalizeIconName(name)
-    return `onecx-theme-icon-${classType}-${safeName}`
+  const safeName = normalizeIconName(name)
+  return `onecx-theme-icon-${classType}-${safeName}`
 }
 
 export function normalizeIconName(name: string): string {
-    return name.replaceAll(/[^a-zA-Z0-9_-]+/g, '-')
+  return name.replaceAll(/[^a-zA-Z0-9_-]+/g, '-')
 }
 
 
@@ -39,11 +39,11 @@ export class IconService {
   }
 
   requestIcon(name: string, classType: IconClassType = DEFAULT_CLASS_TYPE): string {
-    const className =  generateClassName(name, classType)
+    const className = generateClassName(name, classType)
 
     if (!(name in globalThis.onecxIcons)) {
       globalThis.onecxIcons[name] = undefined
-      this.iconTopic.publish({ type: 'IconRequested', name})
+      this.iconTopic.publish({ type: 'IconRequested', name })
     }
 
     return className;
@@ -71,6 +71,6 @@ export class IconService {
   }
 
   destroy(): void {
-    this.iconTopic.destroy() 
+    this.iconTopic.destroy()
   }
 }

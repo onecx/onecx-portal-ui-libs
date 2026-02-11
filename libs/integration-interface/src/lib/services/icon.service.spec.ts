@@ -75,13 +75,13 @@ describe('IconService', () => {
       const topic = (iconService.iconTopic as unknown) as FakeTopic<any>
       const publishSpy = jest.spyOn(topic, 'publish')
 
-      ;(globalThis as any).onecxIcons['prime:user'] = { name: 'prime:user' } as IconCache
+        ; (globalThis as any).onecxIcons['prime:user'] = { name: 'prime:user' } as IconCache
       iconService.requestIcon('prime:user', 'background')
 
       expect(publishSpy).not.toHaveBeenCalled()
 
       publishSpy.mockClear()
-      ;(globalThis as any).onecxIcons['mdi:missing'] = null
+        ; (globalThis as any).onecxIcons['mdi:missing'] = null
       iconService.requestIcon('mdi:missing')
 
       expect(publishSpy).not.toHaveBeenCalled()
@@ -90,7 +90,7 @@ describe('IconService', () => {
     it('should use default classType when none provided', () => {
       const topic = (iconService.iconTopic as unknown) as FakeTopic<any>
       const publishSpy = jest.spyOn(topic, 'publish')
-      
+
       iconService.requestIcon('mdi:settings')
 
       expect(publishSpy).toHaveBeenCalledWith({ type: 'IconRequested', name: 'mdi:settings' })
@@ -100,8 +100,8 @@ describe('IconService', () => {
   describe('requestIconAsync', () => {
     it('should return null immediately when cached null', async () => {
       const name = 'mdi:ghost'
-      ;(globalThis as any).onecxIcons[name] = null
-      
+        ; (globalThis as any).onecxIcons[name] = null
+
       const res = await iconService.requestIconAsync(name)
 
       expect(res).toBeNull()
@@ -109,7 +109,7 @@ describe('IconService', () => {
 
     it('should return class immediately when cached icon exists', async () => {
       const name = 'mdi:car'
-      ;(globalThis as any).onecxIcons[name] = { name, type: 'svg', body: '' }
+        ; (globalThis as any).onecxIcons[name] = { name, type: 'svg', body: '' }
 
       const res = await iconService.requestIconAsync(name, 'svg')
 
@@ -119,9 +119,9 @@ describe('IconService', () => {
     it('should resolve with class after IconsReceived when icon becomes available', async () => {
       const name = 'prime:check'
       const promise = iconService.requestIconAsync(name, 'background')
-      ;(globalThis as any).onecxIcons[name] = { name, type: 'svg', body: '' }
+        ; (globalThis as any).onecxIcons[name] = { name, type: 'svg', body: '' }
       const topic = (iconService.iconTopic as unknown) as FakeTopic<any>
-      
+
       await topic.publish({ type: 'IconsReceived' })
       const res = await promise
 
@@ -131,7 +131,7 @@ describe('IconService', () => {
     it('should resolve null after IconsReceived when icon resolved to null', async () => {
       const name = 'mdi:unknown'
       const promise = iconService.requestIconAsync(name)
-      ;(globalThis as any).onecxIcons[name] = null
+        ; (globalThis as any).onecxIcons[name] = null
       const topic = (iconService.iconTopic as unknown) as FakeTopic<any>
 
       await topic.publish({ type: 'IconsReceived' })
@@ -144,7 +144,7 @@ describe('IconService', () => {
   it('should call topic.destroy when destroy is called', () => {
     const topic = (iconService.iconTopic as unknown) as FakeTopic<any>
     const spy = jest.spyOn(topic, 'destroy')
-    
+
     iconService.destroy()
 
     expect(spy).toHaveBeenCalled()
