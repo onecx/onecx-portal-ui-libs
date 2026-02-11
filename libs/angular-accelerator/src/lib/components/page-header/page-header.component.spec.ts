@@ -203,6 +203,26 @@ describe('PageHeaderComponent', () => {
     expect(await (await inlineButtons[1].getIconSpan())?.checkHasClass('p-button-icon-right')).toBeTruthy()
   })
 
+  it('should show a loading spinner when action is loading', async () => {
+    const mockFn = jest.fn()
+
+    component.actions = [
+      {
+        label: 'My Test Loading Action',
+        show: 'always',
+        actionCallback: mockFn,
+        permission: 'TEST#TEST_PERMISSION',
+        loading: true,
+      },
+    ]
+
+    const loadingActionElement = await pageHeaderHarness.getInlineActionButtonByLabel('My Test Loading Action')
+    expect(loadingActionElement).toBeTruthy()
+    expect(await loadingActionElement?.getLoadingIcon()).toBeTruthy()
+    await loadingActionElement?.click()
+    expect(mockFn).not.toHaveBeenCalled()
+  })
+
   it('should render objectDetails as object info in the page header', async () => {
     const objectDetailsWithoutIcons = [
       {
