@@ -1,6 +1,7 @@
 import { filter, firstValueFrom, map } from 'rxjs';
 import { IconClassType } from '../topics/icons/v1/icon.model';
 import { IconTopic } from '../topics/icons/v1/icon.topic';
+import '../declarations';
 
 const DEFAULT_CLASS_TYPE: IconClassType = 'background-before'
 
@@ -37,7 +38,7 @@ export class IconService {
   requestIcon(name: string, classType: IconClassType = DEFAULT_CLASS_TYPE): string {
     const className = generateClassName(name, classType)
 
-    if (!(name in globalThis.onecxIcons)) {
+    if (globalThis.onecxIcons && !(name in globalThis.onecxIcons)) {
       globalThis.onecxIcons[name] = undefined
       this.iconTopic.publish({ type: 'IconRequested', name })
     }
@@ -51,19 +52,19 @@ export class IconService {
   ): Promise<string | null> {
     const className = this.requestIcon(name, classType)
 
-    const cached = globalThis.onecxIcons[name]
+    const cached = globalThis.onecxIcons?.[name]
     if (cached === null) return null
     if (cached) return className
 
     await firstValueFrom(
       this.iconTopic.pipe(
         filter(e => e.type === 'IconsReceived'),
-        map(() => globalThis.onecxIcons[name]),
+        map(() => globalThis.onecxIcons?.[name]),
         filter(v => v !== undefined),
       )
     )
 
-    return globalThis.onecxIcons[name] ? className : null
+    return globalThis.onecxIcons?.[name] ? className : null
   }
 
   destroy(): void {
