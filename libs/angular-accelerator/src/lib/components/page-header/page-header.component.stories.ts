@@ -114,7 +114,7 @@ const demoActions: Action[] = [
   {
     label: 'Loading',
     actionCallback: () => {
-      console.log('This should NOT appear in console - loading button clicked!')
+      console.log(`you clicked 'Loading'`)
     },
     title: 'This action is currently loading',
     loading: true,
