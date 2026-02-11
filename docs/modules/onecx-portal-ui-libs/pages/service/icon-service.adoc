@@ -136,7 +136,7 @@ See {icon_topic_url}[Icon Topic] for platform-level details and message flow.
 [cols="2,~"]
 |===
 | `IconTopic` | Publishes `IconRequested` and `IconsReceived` messages.
-| `IconRequested` | `{ type: 'IconRequested', name: string, classType: IconClassType }` → emitted when an icon is requested.
+| `IconRequested` | `{ type: 'IconRequested', name: string }` → emitted when an icon is requested and not present in the cache.
 | `IconsReceived` | `{ type: 'IconsReceived' }` → emitted when the Shell completes icon injection.
 | `IconCache` | `{ name, type, body, parent? }` → holds the SVG body and metadata for a resolved icon.
 |===

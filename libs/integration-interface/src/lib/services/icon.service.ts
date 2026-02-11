@@ -44,9 +44,9 @@ export class IconService {
 
     if (!(name in window.onecxIcons)) {
       window.onecxIcons[name] = undefined
+      this.iconTopic.publish({ type: 'IconRequested', name})
     }
-    
-    this.iconTopic.publish({ type: 'IconRequested', name, classType })
+
     return className;
   }
 
@@ -68,11 +68,10 @@ export class IconService {
       )
     )
 
-    const resolved = window.onecxIcons[name]
-    return resolved ? className : null
+    return window.onecxIcons[name] ? className : null
   }
 
   destroy(): void {
-    this.iconTopic.destroy()
+    this.iconTopic.destroy() 
   }
 }

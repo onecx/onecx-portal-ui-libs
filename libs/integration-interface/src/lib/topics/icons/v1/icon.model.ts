@@ -11,7 +11,6 @@ export type IconClassType = 'svg' | 'background' | 'background-before'
 export interface IconRequested {
   type: 'IconRequested'
   name: string              // REAL icon name (mdi:xxx)
-  classType: IconClassType
 }
 
 export interface IconsReceived {

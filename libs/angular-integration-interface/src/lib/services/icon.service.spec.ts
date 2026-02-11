@@ -28,7 +28,7 @@ describe('IconService', () => {
   })
 
   describe('requestIcon', () => {
-    it('should return normalized class and publish IconRequested', () => {
+    it('should return normalized class and publish IconRequested on first request', () => {
       const topic = FakeTopic.create<any>()
       iconService .iconTopic = topic as any
 
@@ -38,7 +38,7 @@ describe('IconService', () => {
       const result = iconService.requestIcon(name)
 
       expect(result).toBe('onecx-theme-icon-background-before-mdi-home-battery')
-      expect(publishSpy).toHaveBeenCalledWith({ type: 'IconRequested', name, classType: 'background-before' })
+      expect(publishSpy).toHaveBeenCalledWith({ type: 'IconRequested', name })
     })
 
     it('should honor explicit IconClassType', () => {
@@ -47,6 +47,18 @@ describe('IconService', () => {
 
       const result = iconService .requestIcon('prime:check-circle', 'svg')
       expect(result).toBe('onecx-theme-icon-svg-prime-check-circle')
+    })
+
+    it('should not publish when icon already present in cache', () => {
+      const topic = FakeTopic.create<any>()
+      iconService.iconTopic = topic as any
+      const publishSpy = jest.spyOn(topic, 'publish')
+
+      ;(window as any).onecxIcons['mdi:cached'] = { name: 'mdi:cached', type: 'svg', body: '' }
+      const result = iconService.requestIcon('mdi:cached')
+
+      expect(result).toBe('onecx-theme-icon-background-before-mdi-cached')
+      expect(publishSpy).not.toHaveBeenCalled()
     })
   })
 

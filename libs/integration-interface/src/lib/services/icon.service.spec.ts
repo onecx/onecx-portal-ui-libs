@@ -37,7 +37,7 @@ describe('IconService', () => {
   })
 
   describe('requestIcon', () => {
-    it('should return normalized class and publish IconRequested', () => {
+    it('should return normalized class and publish IconRequested on first request', () => {
       const name = 'mdi:home-battery'
       const classType: IconClassType = 'background-before'
       const topic = (iconService.iconTopic as unknown) as FakeTopic<any>
@@ -46,29 +46,29 @@ describe('IconService', () => {
       const cls = iconService.requestIcon(name, classType)
 
       expect((window as any).onecxIcons[name]).toBeUndefined()
-      expect(publishSpy).toHaveBeenCalledWith({ type: 'IconRequested', name, classType })
+      expect(publishSpy).toHaveBeenCalledWith({ type: 'IconRequested', name })
       expect(cls).toBe('onecx-theme-icon-background-before-mdi-home-battery')
     })
 
-    it('should publish IconRequested even if icon is already cached or null', () => {
+    it('should not publish IconRequested when icon already present in cache (object or null)', () => {
       const topic = (iconService.iconTopic as unknown) as FakeTopic<any>
       const publishSpy = jest.spyOn(topic, 'publish')
 
         ; (window as any).onecxIcons['prime:user'] = { name: 'prime:user' } as IconCache
       iconService.requestIcon('prime:user', 'background')
-      expect(publishSpy).toHaveBeenCalledWith({ type: 'IconRequested', name: 'prime:user', classType: 'background' })
+      expect(publishSpy).not.toHaveBeenCalled()
 
       publishSpy.mockClear()
         ; (window as any).onecxIcons['mdi:missing'] = null
       iconService.requestIcon('mdi:missing')
-      expect(publishSpy).toHaveBeenCalledWith({ type: 'IconRequested', name: 'mdi:missing', classType: 'background-before' })
+      expect(publishSpy).not.toHaveBeenCalled()
     })
 
     it('should use default classType when none provided', () => {
       const topic = (iconService.iconTopic as unknown) as FakeTopic<any>
       const publishSpy = jest.spyOn(topic, 'publish')
       iconService.requestIcon('mdi:settings')
-      expect(publishSpy).toHaveBeenCalledWith({ type: 'IconRequested', name: 'mdi:settings', classType: 'background-before' })
+      expect(publishSpy).toHaveBeenCalledWith({ type: 'IconRequested', name: 'mdi:settings' })
     })
   })
 
