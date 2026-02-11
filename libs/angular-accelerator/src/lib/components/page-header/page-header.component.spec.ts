@@ -204,15 +204,13 @@ describe('PageHeaderComponent', () => {
   })
 
   it('should show a loading spinner when action is loading', async () => {
-    jest.spyOn(console, 'log')
+    const mockFn = jest.fn()
 
     component.actions = [
       {
         label: 'My Test Loading Action',
         show: 'always',
-        actionCallback: () => {
-          console.log('My Test Loading Action')
-        },
+        actionCallback: mockFn,
         permission: 'TEST#TEST_PERMISSION',
         loading: true,
       },
@@ -222,7 +220,7 @@ describe('PageHeaderComponent', () => {
     expect(loadingActionElement).toBeTruthy()
     expect(await loadingActionElement?.getLoadingIcon()).toBeTruthy()
     await loadingActionElement?.click()
-    expect(console.log).not.toHaveBeenCalled()
+    expect(mockFn).not.toHaveBeenCalled()
   })
 
   it('should render objectDetails as object info in the page header', async () => {
