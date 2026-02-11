@@ -1,12 +1,8 @@
 import { filter, firstValueFrom, map } from 'rxjs';
-import { IconCache, IconClassType } from '../topics/icons/v1/icon.model';
-import { IconTopic } from '../topics/icons/v1/icon.topic'
+import { IconClassType } from '../topics/icons/v1/icon.model';
+import { IconTopic } from '../topics/icons/v1/icon.topic';
 
 const DEFAULT_CLASS_TYPE: IconClassType = 'background-before'
-
-declare global {
-  var onecxIcons: Record<string, IconCache | null | undefined>;
-}
 
 
 export function ensureIconCache(): void {
