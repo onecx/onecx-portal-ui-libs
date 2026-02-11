@@ -112,6 +112,16 @@ const demoActions: Action[] = [
     disabled: true,
   },
   {
+    label: 'Loading',
+    actionCallback: () => {
+      console.log(`you clicked 'Loading'`)
+    },
+    title: 'This action is currently loading',
+    loading: true,
+    icon: PrimeIcons.SPINNER,
+    show: 'always',
+  },
+  {
     icon: PrimeIcons.BOOK,
     actionCallback: () => {
       console.log(`you clicked 'BOOK'`)
