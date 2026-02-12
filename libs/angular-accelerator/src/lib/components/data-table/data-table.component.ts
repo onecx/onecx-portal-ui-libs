@@ -135,7 +135,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this._filters$.getValue()
   }
   set filters(value: Filter[]) {
-    if (this._filters$.getValue().length > value.length ) {
+    if (this._filters$.getValue().length) {
       this.resetPage();
     }
     this._filters$.next(value)
