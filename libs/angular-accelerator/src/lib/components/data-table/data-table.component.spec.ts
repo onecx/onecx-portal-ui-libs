@@ -947,7 +947,7 @@ describe('DataTableComponent', () => {
         component.additionalActions = [
           {
             id: 'functionRouterLink',
-            callback: () => {},
+            callback: jest.fn(),
             routerLink: routerLinkFunction,
             permission: 'VIEW',
           },
@@ -967,7 +967,7 @@ describe('DataTableComponent', () => {
         component.additionalActions = [
           {
             id: 'promiseFunctionRouterLink',
-            callback: () => {},
+            callback: jest.fn(),
             routerLink: routerLinkPromiseFunction,
             permission: 'VIEW',
           },
@@ -986,7 +986,7 @@ describe('DataTableComponent', () => {
         component.additionalActions = [
           {
             id: 'promiseRouterLink',
-            callback: () => {},
+            callback: jest.fn(),
             routerLink: Promise.resolve('/promise-link'),
             permission: 'VIEW',
           },
@@ -1005,7 +1005,7 @@ describe('DataTableComponent', () => {
         component.additionalActions = [
           {
             id: 'overflowFunctionRouterLink',
-            callback: () => {},
+            callback: jest.fn(),
             routerLink: routerLinkFunction,
             permission: 'VIEW',
             showAsOverflow: true,

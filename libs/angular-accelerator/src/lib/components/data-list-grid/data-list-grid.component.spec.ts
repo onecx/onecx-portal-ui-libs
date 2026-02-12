@@ -964,7 +964,7 @@ describe('DataListGridComponent', () => {
         component.additionalActions = [
           {
             id: 'functionRouterLink',
-            callback: () => {},
+            callback: jest.fn(),
             routerLink: routerLinkFunction,
             permission: 'CUSTOM#ACTION',
           },
@@ -988,7 +988,7 @@ describe('DataListGridComponent', () => {
         component.additionalActions = [
           {
             id: 'promiseFunctionRouterLink',
-            callback: () => {},
+            callback: jest.fn(),
             routerLink: routerLinkPromiseFunction,
             permission: 'CUSTOM#ACTION',
           },
@@ -1011,7 +1011,7 @@ describe('DataListGridComponent', () => {
         component.additionalActions = [
           {
             id: 'promiseRouterLink',
-            callback: () => {},
+            callback: jest.fn(),
             routerLink: Promise.resolve('/promise-link'),
             permission: 'CUSTOM#ACTION',
           },

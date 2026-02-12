@@ -289,7 +289,7 @@ describe('PageHeaderComponent', () => {
       {
         label: 'Action with function routerLink',
         show: 'always',
-        actionCallback: () => {},
+        actionCallback: jest.fn(),
         routerLink: routerLinkFunction,
         permission: 'TEST#TEST_PERMISSION',
       },
@@ -310,7 +310,7 @@ describe('PageHeaderComponent', () => {
       {
         label: 'Action with promise function routerLink',
         show: 'always',
-        actionCallback: () => {},
+        actionCallback: jest.fn(),
         routerLink: routerLinkPromiseFunction,
         permission: 'TEST#TEST_PERMISSION',
       },
@@ -330,7 +330,7 @@ describe('PageHeaderComponent', () => {
       {
         label: 'Action with promise routerLink',
         show: 'always',
-        actionCallback: () => {},
+        actionCallback: jest.fn(),
         routerLink: Promise.resolve('/promise-link'),
         permission: 'TEST#TEST_PERMISSION',
       },
@@ -350,7 +350,7 @@ describe('PageHeaderComponent', () => {
       {
         label: 'Overflow function routerLink',
         show: 'asOverflow',
-        actionCallback: () => {},
+        actionCallback: jest.fn(),
         routerLink: routerLinkFunction,
         permission: 'TEST#TEST_PERMISSION',
       },
