@@ -33,7 +33,7 @@ type SetPathTuple<T, Path extends ReadonlyArray<string | number>, Value> =
         [K in keyof T | Key]-?: K extends Key
         ? K extends keyof T
         ? SetPathTuple<NonNullable<T[K]>, Rest, Value>
-        : SetPathTuple<{}, Rest, Value>
+        : SetPathTuple<object, Rest, Value>
         : K extends keyof T
         ? T[K]
         : never
