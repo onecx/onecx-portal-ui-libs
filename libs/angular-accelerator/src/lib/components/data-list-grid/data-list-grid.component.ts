@@ -378,7 +378,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
               styleClass: (a.classes || []).join(' '),
               disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
               visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
-              command: () => this.onActionClick(a, row),
+              command: this.createMenuItemCommand(a, row),
             }))
           })
         )
@@ -746,5 +746,9 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     } else {
       action.callback(item)
     }
+  }
+
+  private createMenuItemCommand(action: DataAction, row: any): () => void {
+    return () => this.onActionClick(action, row)
   }
 }

@@ -426,7 +426,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
               styleClass: (a.classes || []).join(' '),
               disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
               visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
-              command: () => this.onActionClick(a, row),
+              command: this.createMenuItemCommand(a, row),
             }))
           })
         )
@@ -968,5 +968,9 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     } else {
       action.callback(rowObject)
     }
+  }
+  
+  private createMenuItemCommand(action: DataAction, row: any): () => void {
+    return () => this.onActionClick(action, row)
   }
 }
