@@ -5,12 +5,17 @@ import { Gatherer } from '@onecx/accelerator'
 import { GuardsNavigationStateController } from './guards-navigation-controller.service'
 import { GUARD_CHECK } from '../model/guard-navigation.model'
 
-jest.mock('@onecx/accelerator', () => ({
-  Gatherer: jest.fn().mockImplementation(() => ({
-    gather: jest.fn(),
-    destroy: jest.fn(),
-  })),
-}))
+jest.mock('@onecx/accelerator', () => {
+  const actual = jest.requireActual('@onecx/accelerator')
+
+  return {
+    ...actual,
+    Gatherer: jest.fn().mockImplementation(() => ({
+      gather: jest.fn(),
+      destroy: jest.fn(),
+    })),
+  }
+})
 
 describe('GuardsGatherer', () => {
   let service: GuardsGatherer

@@ -11,7 +11,13 @@ export default {
   globals: {},
   testEnvironment: 'node',
   transform: {
-    '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
+    '^.+\\.[tj]s$': [
+      'ts-jest',
+      {
+        tsconfig: '<rootDir>/tsconfig.spec.json',
+        useESM: false,
+      },
+    ],
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
   ...createReportsConfig('nx-migration-utils'),

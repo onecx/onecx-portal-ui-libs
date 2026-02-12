@@ -1,0 +1,152 @@
+= Browser Logging (debug-js)
+
+OneCX UI libraries use https://www.npmjs.com/package/debug[`debug`] (aka *debug-js*) for runtime logging.
+
+This means:
+
+- Logging is *disabled by default*.
+- You enable logging in the browser by setting a value for `localStorage.debug` (or via a helper in DevTools).
+- Log output is written to the browser console when enabled.
+
+== Enable logging
+
+You can enable logging by setting `localStorage.debug` and reloading the page.
+
+[source,js]
+----
+// Enable all OneCX UI library logs
+localStorage.debug = '@onecx*'
+location.reload()
+----
+
+== Common patterns
+
+`debug` uses namespace patterns. The following wildcards are commonly used:
+
+- `*` matches anything
+- comma-separated patterns are allowed
+- prefixing a pattern with `-` excludes it
+
+See the upstream documentation for the full syntax:
+
+- https://github.com/debug-js/debug#browser-support[debug-js: Browser support]
+
+== Examples
+
+=== Enable everything except Topic and Gatherer
+
+This is useful when you want general diagnostics but do not want event/data stream logs.
+
+[source,js]
+----
+// Enable all OneCX logs, but exclude Topic and Gatherer namespaces
+localStorage.debug = '@onecx*,-@onecx*:Topic:*,-@onecx*:Gatherer:*'
+location.reload()
+----
+
+=== Enable only a single library
+
+[source,js]
+----
+// Only angular-utils
+localStorage.debug = '@onecx/angular-utils*'
+location.reload()
+----
+
+=== Enable a library + a concrete location
+
+[source,js]
+----
+// Example: focus on a single component/service
+localStorage.debug = '@onecx/angular-auth:AuthProxyService'
+location.reload()
+----
+
+== Valid OneCX namespaces
+
+Namespaces are composed as:
+
+[source,text]
+----
+@onecx/<libOrAppName>:<location>:<level>
+----
+
+Where `<libOrAppName>` is the value passed to `createLoggerFactory(...)`.
+
+Where `<level>` is one of:
+
+- `debug`
+- `info`
+- `warn`
+- `error`
+
+== Loglevels (when to use what)
+
+The `debug` namespace includes the loglevel as the last segment. This allows you to filter by severity in the browser.
+
+- `debug`: High-volume diagnostics for local development and deep troubleshooting (state transitions, inputs/outputs, timing).
+- `info`: Important lifecycle milestones that are useful in normal troubleshooting (initialization, successful operations, configuration decisions).
+- `warn`: Unexpected situations that the app can recover from (fallback paths, invalid user input that is handled, missing optional dependencies).
+- `error`: Failures that prevent a feature from working or indicate a bug (exceptions, failed network calls that break functionality, invalid critical configuration).
+
+As a rule of thumb:
+
+- Prefer `debug` for details you don't want enabled in normal troubleshooting.
+- Prefer `info` for "what happened" breadcrumbs.
+- Use `warn` when something is off but you can still proceed.
+- Use `error` when you cannot proceed or you need attention.
+
+== Examples by loglevel
+
+[source,js]
+----
+// Everything (all libraries, all locations, all levels)
+localStorage.debug = '@onecx*'
+location.reload()
+
+// Only errors across all OneCX libraries
+localStorage.debug = '@onecx*:*:error'
+location.reload()
+
+// Only warnings + errors (by combining patterns)
+localStorage.debug = '@onecx*:*:warn,@onecx*:*:error'
+location.reload()
+
+// Only debug logs for a single location
+localStorage.debug = '@onecx/angular-auth:AuthProxyService:debug'
+location.reload()
+----
+
+=== Library namespaces
+
+These namespaces exist in the current repo:
+
+- `@onecx/accelerator`
+- `@onecx/angular-accelerator`
+- `@onecx/angular-accelerator:testing`
+- `@onecx/angular-auth`
+- `@onecx/angular-integration-interface`
+- `@onecx/angular-integration-interface:mocks`
+- `@onecx/angular-remote-components`
+- `@onecx/angular-remote-components:mocks`
+- `@onecx/angular-remote-components:testing`
+- `@onecx/angular-standalone-shell`
+- `@onecx/angular-testing`
+- `@onecx/angular-utils`
+- `@onecx/angular-utils:guards`
+- `@onecx/angular-utils:mocks`
+- `@onecx/angular-utils:style`
+- `@onecx/angular-utils:theme/primeng`
+- `@onecx/angular-webcomponents`
+- `@onecx/integration-interface`
+- `@onecx/ngrx-accelerator`
+- `@onecx/ngrx-integration-interface`
+
+=== Special runtime namespaces
+
+Some logs are intentionally high-volume and are separated into dedicated namespaces:
+
+- `@onecx/accelerator:Topic:<name>` and `@onecx/accelerator:TopicPublisher:<name>`
+- `@onecx/accelerator:Gatherer:<name>`
+
+These are excluded in the example above.
