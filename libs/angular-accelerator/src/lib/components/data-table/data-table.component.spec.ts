@@ -939,6 +939,159 @@ describe('DataTableComponent', () => {
         expect(spy).toHaveBeenCalledWith(['/overflow'])
         expect(console.log).not.toHaveBeenCalledWith('My overflow routing Action')
       })
+
+      it('should handle routerLink as function returning string', async () => {
+        const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+        const routerLinkFunction = jest.fn(() => '/function-link')
+
+        component.additionalActions = [
+          {
+            id: 'functionRouterLink',
+            callback: () => {},
+            routerLink: routerLinkFunction,
+            permission: 'VIEW',
+          },
+        ]
+
+        const tableActions = await dataTable.getActionButtons()
+        await tableActions[0].click()
+
+        expect(routerLinkFunction).toHaveBeenCalledTimes(1)
+        expect(spy).toHaveBeenCalledWith(['/function-link'])
+      })
+
+      it('should handle routerLink as function returning Promise<string>', async () => {
+        const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+        const routerLinkPromiseFunction = jest.fn(() => Promise.resolve('/promise-function-link'))
+
+        component.additionalActions = [
+          {
+            id: 'promiseFunctionRouterLink',
+            callback: () => {},
+            routerLink: routerLinkPromiseFunction,
+            permission: 'VIEW',
+          },
+        ]
+
+        const tableActions = await dataTable.getActionButtons()
+        await tableActions[0].click()
+
+        expect(routerLinkPromiseFunction).toHaveBeenCalledTimes(1)
+        expect(spy).toHaveBeenCalledWith(['/promise-function-link'])
+      })
+
+      it('should handle routerLink as Promise<string>', async () => {
+        const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+
+        component.additionalActions = [
+          {
+            id: 'promiseRouterLink',
+            callback: () => {},
+            routerLink: Promise.resolve('/promise-link'),
+            permission: 'VIEW',
+          },
+        ]
+
+        const tableActions = await dataTable.getActionButtons()
+        await tableActions[0].click()
+
+        expect(spy).toHaveBeenCalledWith(['/promise-link'])
+      })
+
+      it('should handle overflow action with function routerLink', async () => {
+        const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+        const routerLinkFunction = jest.fn(() => '/overflow-function')
+
+        component.additionalActions = [
+          {
+            id: 'overflowFunctionRouterLink',
+            callback: () => {},
+            routerLink: routerLinkFunction,
+            permission: 'VIEW',
+            showAsOverflow: true,
+          },
+        ]
+
+        const overflowButton = await dataTable.getOverflowActionMenuButton()
+        await overflowButton?.click()
+
+        const overflowMenu = await dataTable.getOverflowMenu()
+        const menuItems = await overflowMenu?.getAllMenuItems()
+        await menuItems![0].selectItem()
+
+        expect(routerLinkFunction).toHaveBeenCalledTimes(1)
+        expect(spy).toHaveBeenCalledWith(['/overflow-function'])
+      })
+
+      it('should prioritize routerLink over actionCallback when both are provided', async () => {
+        const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+        const callbackSpy = jest.fn()
+
+        component.additionalActions = [
+          {
+            id: 'routerLinkWithCallback',
+            callback: callbackSpy,
+            routerLink: '/prioritized-link',
+            permission: 'VIEW',
+          },
+        ]
+
+        const tableActions = await dataTable.getActionButtons()
+        await tableActions[0].click()
+
+        expect(spy).toHaveBeenCalledTimes(1)
+        expect(spy).toHaveBeenCalledWith(['/prioritized-link'])
+        expect(callbackSpy).not.toHaveBeenCalled()
+      })
+
+      it('should prioritize routerLink over actionCallback in overflow menu when both are provided', async () => {
+        const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+        const callbackSpy = jest.fn()
+
+        component.additionalActions = [
+          {
+            id: 'overflowRouterLinkWithCallback',
+            callback: callbackSpy,
+            routerLink: '/overflow-prioritized',
+            permission: 'VIEW',
+            showAsOverflow: true,
+          },
+        ]
+
+        const overflowButton = await dataTable.getOverflowActionMenuButton()
+        await overflowButton?.click()
+
+        const overflowMenu = await dataTable.getOverflowMenu()
+        expect(overflowMenu).toBeTruthy()
+        const tableActions = await overflowMenu?.getAllMenuItems()
+        expect(tableActions!.length).toBe(1)
+
+        await tableActions![0].selectItem()
+        expect(spy).toHaveBeenCalledTimes(1)
+        expect(spy).toHaveBeenCalledWith(['/overflow-prioritized'])
+        expect(callbackSpy).not.toHaveBeenCalled()
+      })
+
+
+
+      it('should execute actionCallback when no routerLink is provided', async () => {
+        const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+        const callbackSpy = jest.fn()
+
+        component.additionalActions = [
+          {
+            id: 'callbackOnlyAction',
+            callback: callbackSpy,
+            permission: 'VIEW',
+          },
+        ]
+
+        const tableActions = await dataTable.getActionButtons()
+        await tableActions[0].click()
+
+        expect(spy).not.toHaveBeenCalled()
+        expect(callbackSpy).toHaveBeenCalledWith(component.rows[0])
+      })
     })
   })
 

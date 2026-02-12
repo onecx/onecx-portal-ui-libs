@@ -955,6 +955,156 @@ describe('DataListGridComponent', () => {
         expect(spy).toHaveBeenCalledWith(['/overflow'])
         expect(console.log).not.toHaveBeenCalledWith('My overflow routing Action')
       })
+
+      it('should handle routerLink as function returning string', async () => {
+        userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
+        const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+        const routerLinkFunction = jest.fn(() => '/function-link')
+
+        component.additionalActions = [
+          {
+            id: 'functionRouterLink',
+            callback: () => {},
+            routerLink: routerLinkFunction,
+            permission: 'CUSTOM#ACTION',
+          },
+        ]
+
+        fixture.detectChanges()
+        await fixture.whenStable()
+
+        const tableActions = await listGrid.getActionButtons('list')
+        await tableActions[0].click()
+
+        expect(routerLinkFunction).toHaveBeenCalledTimes(1)
+        expect(spy).toHaveBeenCalledWith(['/function-link'])
+      })
+
+      it('should handle routerLink as function returning Promise<string>', async () => {
+        userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
+        const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+        const routerLinkPromiseFunction = jest.fn(() => Promise.resolve('/promise-function-link'))
+
+        component.additionalActions = [
+          {
+            id: 'promiseFunctionRouterLink',
+            callback: () => {},
+            routerLink: routerLinkPromiseFunction,
+            permission: 'CUSTOM#ACTION',
+          },
+        ]
+
+        fixture.detectChanges()
+        await fixture.whenStable()
+
+        const tableActions = await listGrid.getActionButtons('list')
+        await tableActions[0].click()
+
+        expect(routerLinkPromiseFunction).toHaveBeenCalledTimes(1)
+        expect(spy).toHaveBeenCalledWith(['/promise-function-link'])
+      })
+
+      it('should handle routerLink as Promise<string>', async () => {
+        userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
+        const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+
+        component.additionalActions = [
+          {
+            id: 'promiseRouterLink',
+            callback: () => {},
+            routerLink: Promise.resolve('/promise-link'),
+            permission: 'CUSTOM#ACTION',
+          },
+        ]
+
+        fixture.detectChanges()
+        await fixture.whenStable()
+
+        const tableActions = await listGrid.getActionButtons('list')
+        await tableActions[0].click()
+
+        expect(spy).toHaveBeenCalledWith(['/promise-link'])
+      })
+
+      it('should prioritize routerLink over actionCallback when both are provided', async () => {
+        userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
+        const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+        const callbackSpy = jest.fn()
+
+        component.additionalActions = [
+          {
+            id: 'routerLinkWithCallback',
+            callback: callbackSpy,
+            routerLink: '/prioritized-link',
+            permission: 'CUSTOM#ACTION',
+          },
+        ]
+
+        fixture.detectChanges()
+        await fixture.whenStable()
+
+        const tableActions = await listGrid.getActionButtons('list')
+        await tableActions[0].click()
+
+        expect(spy).toHaveBeenCalledTimes(1)
+        expect(spy).toHaveBeenCalledWith(['/prioritized-link'])
+        expect(callbackSpy).not.toHaveBeenCalled()
+      })
+
+      it('should prioritize routerLink over actionCallback in overflow menu when both are provided', async () => {
+        userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
+        const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+        const callbackSpy = jest.fn()
+
+        component.additionalActions = [
+          {
+            id: 'overflowRouterLinkWithCallback',
+            callback: callbackSpy,
+            routerLink: '/overflow-prioritized',
+            permission: 'CUSTOM#ACTION',
+            showAsOverflow: true,
+          },
+        ]
+
+        fixture.detectChanges()
+        await fixture.whenStable()
+
+        const overflowButton = await listGrid.getListOverflowMenuButton()
+        await overflowButton.click()
+
+        const overflowMenu = await listGrid.getListOverflowMenu()
+        expect(overflowMenu).toBeTruthy()
+        const tableActions = await overflowMenu?.getAllMenuItems()
+        expect(tableActions!.length).toBe(1)
+
+        await tableActions![0].selectItem()
+        expect(spy).toHaveBeenCalledTimes(1)
+        expect(spy).toHaveBeenCalledWith(['/overflow-prioritized'])
+        expect(callbackSpy).not.toHaveBeenCalled()
+      })
+      
+      it('should execute actionCallback when no routerLink is provided', async () => {
+        userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
+        const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+        const callbackSpy = jest.fn()
+
+        component.additionalActions = [
+          {
+            id: 'callbackOnlyAction',
+            callback: callbackSpy,
+            permission: 'CUSTOM#ACTION',
+          },
+        ]
+
+        fixture.detectChanges()
+        await fixture.whenStable()
+
+        const tableActions = await listGrid.getActionButtons('list')
+        await tableActions[0].click()
+
+        expect(spy).not.toHaveBeenCalled()
+        expect(callbackSpy).toHaveBeenCalledTimes(1)
+      })
     })
 
     describe('grid layout', () => {

@@ -19,6 +19,7 @@ import { PrimeIcon } from '../../utils/primeicon.utils'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { TranslationKey } from '../../model/translation.model'
 import { Router } from '@angular/router'
+import { RouterLink } from '../../model/data-action'
 
 /**
  * Action definition.
@@ -39,7 +40,7 @@ export interface Action {
   ariaLabelKey?: string
   btnClass?: string
   actionCallback(): void
-  routerLink?: string
+  routerLink?: RouterLink
   disabled?: boolean
   disabledTooltip?: string
   disabledTooltipKey?: string
@@ -311,8 +312,30 @@ export class PageHeaderComponent implements OnInit {
         tooltipEvent: 'hover',
         tooltipPosition: 'top',
       },
-      command: a.routerLink ? () => this.router.navigate([a.routerLink!]) : a.actionCallback,
+      command: () => this.onActionClick(a),
       disabled: a.disabled,
     }))
+  }
+
+  private async resolveRouterLink(
+    routerLink: RouterLink
+  ): Promise<string> {
+    if (typeof routerLink === 'string') {
+      return routerLink
+    } else if (typeof routerLink === 'function') {
+      const result = routerLink()
+      return typeof result === 'string' ? result : await result
+    } else {
+      return await routerLink
+    }
+  }
+
+  async onActionClick(action: Action): Promise<void> {
+    if (action.routerLink) {
+      const resolvedLink = await this.resolveRouterLink(action.routerLink)
+      await this.router.navigate([resolvedLink])
+    } else {
+      action.actionCallback()
+    }
   }
 }

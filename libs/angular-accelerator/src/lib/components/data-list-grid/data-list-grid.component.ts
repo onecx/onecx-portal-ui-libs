@@ -34,7 +34,7 @@ import {
   switchMap,
 } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
-import { DataAction } from '../../model/data-action'
+import { DataAction, RouterLink } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { Filter } from '../../model/filter.model'
@@ -69,7 +69,7 @@ export interface DataListGridComponentState {
 })
 export class DataListGridComponent extends DataSortBase implements OnInit, DoCheck, AfterContentInit {
   private userService = inject(UserService)
-  router = inject(Router)
+  private router = inject(Router)
   private injector = inject(Injector)
   private appStateService = inject(AppStateService)
   private hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
@@ -378,7 +378,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
               styleClass: (a.classes || []).join(' '),
               disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
               visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
-              command: () => (a.routerLink ? this.router.navigate([a.routerLink!]) : a.callback(row)),
+              command: () => this.onActionClick(a, row),
             }))
           })
         )
@@ -672,7 +672,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
           styleClass: (a.classes || []).join(' '),
           disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(selectedItem, a.actionEnabledField)),
           visible: isVisible,
-          command: () => (a.routerLink ? this.router.navigate([a.routerLink!]) : a.callback(selectedItem)),
+          command: () => this.onActionClick(a, selectedItem),
           automationId: isVisible ? automationId : automationIdHidden,
         }
       })
@@ -724,5 +724,27 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     }
 
     return this.userService.getPermissions()
+  }
+
+  private async resolveRouterLink(
+    routerLink: RouterLink
+  ): Promise<string> {
+    if (typeof routerLink === 'string') {
+      return routerLink
+    } else if (typeof routerLink === 'function') {
+      const result = routerLink()
+      return typeof result === 'string' ? result : await result
+    } else {
+      return await routerLink
+    }
+  }
+
+  async onActionClick(action: DataAction, item: any): Promise<void> {
+    if (action.routerLink) {
+      const resolvedLink = await this.resolveRouterLink(action.routerLink)
+      await this.router.navigate([resolvedLink])
+    } else {
+      action.callback(item)
+    }
   }
 }
