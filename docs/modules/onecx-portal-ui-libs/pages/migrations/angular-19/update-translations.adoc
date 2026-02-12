@@ -1,21 +1,19 @@
 [#update-translations]
-=== Update Translation Path Factories
+= Update Translation Path Factories
 In OneCX v6, `createTranslateLoader`, `createRemoteComponentAndMfeTranslateLoader`, and `createRemoteComponentTranslateLoader` were removed from @onecx/angular-accelerator. `createTranslateLoader` and `provideTranslationPathFromMeta` can be imported from @onecx/angular-utils.
 
-**Update Imports:**
+== Update Imports
 
 * Remove `createTranslateLoader`, `createRemoteComponentAndMfeTranslateLoader`, `createRemoteComponentTranslateLoader`, `translationPathFactory`, `remoteComponentTranslationPathFactory` and `TRANSLATION_PATH` imports from `@onecx/angular-accelerator`.
 * Add `provideTranslationPathFromMeta`, `createTranslateLoader` and `TRANSLATION_PATH` from `@onecx/angular-utils`.'
 * Add `provideTranslateServiceForRoot` from `@onecx/angular-utils`
-* If needed, add `MissingTranslationHandler` from `@ngx-translate/core`
-* If needed, add `AngularAcceleratorMissingTranslationHandler` from `@onecx/angular-utils`
 
 [TIP]
 ====
-If you need to support multiple locales and fallback for missing translations, use `AngularAcceleratorMissingTranslationHandler` from `@onecx/angular-utils` as the `MissingTranslationHandler`. This handler logs missing translation keys and provides a fallback mechanism.
+If you need to support multiple locales and fallback for missing translations, use `AngularAcceleratorMissingTranslationHandler` from `@onecx/angular-utils` as the `MissingTranslationHandler`. This handler logs missing translation keys and provides a fallback mechanism. For a reference see the example in the <<configure-remote-component-translation-providers>> section.
 ====
 
-**Example - replace translationPathFactory with provideTranslationPathFromMeta in providers:**
+=== Example - Replace translationPathFactory with provideTranslationPathFromMeta
 
 .Before:
 [source, typescript]
@@ -34,6 +32,7 @@ import { TRANSLATION_PATH, translationPathFactory } from '@onecx/angular-acceler
     ]
 })
 ----
+
 .After:
 [source, typescript]
 ----
@@ -48,7 +47,7 @@ imports { provideTranslationPathFromMeta } from '@onecx/angular-utils';
 ----
 
 
-**Example - replace remoteComponentTranslationPathFactory with provideTranslationPathFromMeta in providers:**
+=== Example - Replace remoteComponentTranslationPathFactory with provideTranslationPathFromMeta
 
 .Before:
 [source, typescript]
@@ -94,7 +93,8 @@ module.exports = {
 ----
 ====
 
-=== Configure Translation Providers for Remote Components
+[#configure-remote-component-translation-providers]
+== Configure Translation Providers for Remote Components
 
 In OneCX v6, For each Remote Component translation related providers are required to be defined in the bootstrap.ts instead of the component.ts file. For multiple locales and fallback translations, use `AngularAcceleratorMissingTranslationHandler`.
 
@@ -102,6 +102,8 @@ In OneCX v6, For each Remote Component translation related providers are require
 ====
 Use provideTranslationPathFromMeta with `import.meta.url` as the first argument and the location of your application's i18n files as the second argument.
 ====
+
+=== Example
 
 .Before:
 [source, typescript]

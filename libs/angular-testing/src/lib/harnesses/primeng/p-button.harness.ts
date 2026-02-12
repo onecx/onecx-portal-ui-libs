@@ -44,4 +44,8 @@ export class PButtonHarness extends ComponentHarness {
   async getBadgeValue() {
     return await (await this.host()).getAttribute('ng-reflect-badge')
   }
+
+  async getLoadingIcon() {
+    return await this.locatorForOptional('.p-button-loading-icon')()
+  }
 }

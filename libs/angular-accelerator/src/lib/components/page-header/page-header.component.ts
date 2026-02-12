@@ -41,6 +41,7 @@ export interface Action {
   btnClass?: string
   actionCallback(): void
   routerLink?: RouterLink
+  loading?: boolean
   disabled?: boolean
   disabledTooltip?: string
   disabledTooltipKey?: string
