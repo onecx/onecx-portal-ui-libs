@@ -94,8 +94,8 @@ const HugeMockDataTemplate: StoryFn<InteractiveDataViewComponent> = (args) => ({
     selectionChanged: selectionChangedAction,
   },
   template: `
-  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data" (componentStateChanged)="componentStateChanged($event)" (selectionChanged)="selectionChanged.emit($event)" (deleteItem)="deleteItem($event)" (editItem)="editItem($event)" (viewItem)="viewItem($event)">
-    ${generateColumnTemplates(Math.ceil(columnCount / 3))}
+  <ocx-interactive-data-view ${argsToTemplate(args)} (componentStateChanged)="componentStateChanged($event)" (selectionChanged)="selectionChanged.emit($event)" (deleteItem)="deleteItem($event)" (editItem)="editItem($event)" (viewItem)="viewItem($event)">
+  ${generateColumnTemplates(Math.ceil(columnCount / 3))}
   </ocx-interactive-data-view>`,
 })
 
@@ -126,7 +126,6 @@ export const WithPageSizes = {
   args: {
     ...defaultComponentArgs,
     pageSizes: [2, 15, 25],
-    showAllOption: false,
   },
 }
 
@@ -149,7 +148,7 @@ export const WithCustomStyleClasses = {
 const CustomContentInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
   props: args,
   template: `
-  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
+  <ocx-interactive-data-view ${argsToTemplate(args)}>
     <ng-template #list let-item>
       <div class="w-full px-4 py-2 card mb-4">
         <p>{{item.product}}</p>
@@ -174,9 +173,13 @@ export const WithCustomContentTemplates = {
 }
 
 const CustomTableCellsInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
-  props: args,
+  props: {
+    ...args,
+    defaultComponentActionsArgs,
+    componentStateChanged: componentStageChangedAction,
+  },
   template: `
-  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
+  <ocx-interactive-data-view ${argsToTemplate(args)}>
     <ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
       <ng-container>STRING: {{ rowObject[column.id] }} </ng-container>
     </ng-template>
@@ -197,9 +200,13 @@ export const WithCustomTableCellTemplates = {
 }
 
 const CustomTableFilterCellsInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
-  props: args,
+  props: {
+    ...args,
+    defaultComponentActionsArgs,
+    componentStateChanged: componentStageChangedAction,
+  },
   template: `
-  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
+  <ocx-interactive-data-view ${argsToTemplate(args)}>
     <ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
       <ng-container>STRING: {{ rowObject[column.id] }} </ng-container>
     </ng-template>
@@ -226,9 +233,13 @@ export const WithCustomTableFilterCellTemplates = {
 }
 
 const CustomTableColumnCellsInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
-  props: args,
+  props: {
+    ...args,
+    defaultComponentActionsArgs,
+    componentStateChanged: componentStageChangedAction,
+  },
   template: `
-  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
+  <ocx-interactive-data-view ${argsToTemplate(args)}>
     <ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
       <ng-container>STRING: {{ rowObject[column.id] }} </ng-container>
     </ng-template>
@@ -267,9 +278,13 @@ export const WithCustomTableColumnTemplates = {
 }
 
 const ExampleTemplate: StoryFn<InteractiveDataViewComponent & { content: any }> = (args) => ({
-  props: args,
+  props: {
+    ...args,
+    defaultComponentActionsArgs,
+    componentStateChanged: componentStageChangedAction,
+  },
   template: `
-  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
+  <ocx-interactive-data-view ${argsToTemplate(args)}>
     ${args.content}
   </ocx-interactive-data-view>`,
 })

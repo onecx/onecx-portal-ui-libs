@@ -37,6 +37,7 @@ import { LiveAnnouncer } from '@angular/cdk/a11y'
 import { observableOutput, ObservableOutputEmitterRef } from '../../utils/observable-output.utils'
 import { toObservable } from '@angular/core/rxjs-interop'
 import { computedPrevious } from 'ngxtension/computed-previous'
+import equal from 'fast-deep-equal'
 
 export type ListGridData = {
   id: string | number
@@ -444,7 +445,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
       // Not track previousData change to avoid the trigger
       untracked(() => {
         const previousData = this.previousData()
-        if (previousData.length) {
+        if (previousData.length && !equal(data, previousData)) {
           this.page.set(0)
         }
       })
@@ -474,7 +475,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
       // Not track previousFilters change to avoid the trigger
       untracked(() => {
         const previousFilters = this.previousFilters()
-        if (previousFilters.length) {
+        if (previousFilters.length && !equal(this.filters(), previousFilters)) {
           this.page.set(0)
         }
       })

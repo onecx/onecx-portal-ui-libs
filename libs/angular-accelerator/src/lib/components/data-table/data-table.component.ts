@@ -55,6 +55,7 @@ import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
 import { observableOutput } from '../../utils/observable-output.utils'
 import { toObservable } from '@angular/core/rxjs-interop'
+import equal from 'fast-deep-equal'
 
 export type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -462,7 +463,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
       // Not track previousRows change to avoid the trigger
       untracked(() => {
         const previousRows = this.previousRows()
-        if (previousRows.length) {
+        if (previousRows.length && !equal(rows, previousRows)) {
           this.page.set(0)
         }
       })
@@ -483,7 +484,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
       // Not track previousFilters change to avoid the trigger
       untracked(() => {
         const previousFilters = this.previousFilters()
-        if (previousFilters.length) {
+        if (previousFilters.length && !equal(filters, previousFilters)) {
           this.page.set(0)
         }
       })
