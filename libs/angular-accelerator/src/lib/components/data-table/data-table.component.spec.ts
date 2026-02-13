@@ -959,6 +959,42 @@ describe('DataTableComponent', () => {
     })
   })
 
+  describe('DataTableComponent rowTrackByFunction & selection behaviour', () => {
+    it('should return item id', () => {
+      const item = { id: 'abc-123' } as Row
+      const callRowTrackBy = (c: DataTableComponent, i: any) =>
+        (c.rowTrackByFunction as any).length >= 2 ? (c.rowTrackByFunction as any)(0, i) : (c.rowTrackByFunction as any)(i)
+
+      const result = callRowTrackBy(component, item)
+
+      expect(result).toBe(item.id)
+    })
+
+    it('should render preselected rows correctly across pages ', async () => {
+      component.selectionChanged.subscribe()
+
+      component.pageSizes = [2]
+      component.pageSize = 2
+      fixture.detectChanges()
+
+      const page2Rows = mockData.slice(2, 4)
+      component.selectedRows = page2Rows
+
+      let unchecked = await dataTable.getHarnessesForCheckboxes('unchecked')
+      let checked = await dataTable.getHarnessesForCheckboxes('checked')
+      expect(unchecked.length).toBe(2)
+      expect(checked.length).toBe(0)
+
+      component.onPageChange({ first: 2, rows: 2 })
+      fixture.detectChanges()
+
+      unchecked = await dataTable.getHarnessesForCheckboxes('unchecked')
+      checked = await dataTable.getHarnessesForCheckboxes('checked')
+      expect(unchecked.length).toBe(0)
+      expect(checked.length).toBe(2)
+    })
+  })
+
   describe('selection + paging helpers (class logic)', () => {
     it('should keep previously selected disabled rows selected onSelectionChange', () => {
       component.selectionEnabledField = 'enabled'
