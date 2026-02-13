@@ -231,7 +231,7 @@ export class DataViewComponent {
   componentStateChanged = output<DataViewComponentState>()
   firstColumnId = signal<string | undefined>(undefined)
 
-  parentTemplates = input<PrimeTemplate[] | null | undefined>()
+  parentTemplates = input<readonly PrimeTemplate[] | null | undefined>()
 
   templates = contentChildren(PrimeTemplate)
 
@@ -242,22 +242,18 @@ export class DataViewComponent {
     return [...t, ...(pt ?? [])]
   })
 
-  // TODO: Fix when migrating InteractiveDataViewComponent
   get viewItemObserved(): boolean {
-    return this.injector.get('InteractiveDataViewComponent', null)?.viewItem.observed || this.viewItem.observed()
+    return this.injector.get('InteractiveDataViewComponent', null)?.viewItem.observed() || this.viewItem.observed()
   }
-  // TODO: Fix when migrating InteractiveDataViewComponent
   get editItemObserved(): boolean {
-    return this.injector.get('InteractiveDataViewComponent', null)?.editItem.observed || this.editItem.observed()
+    return this.injector.get('InteractiveDataViewComponent', null)?.editItem.observed() || this.editItem.observed()
   }
-  // TODO: Fix when migrating InteractiveDataViewComponent
   get deleteItemObserved(): boolean {
-    return this.injector.get('InteractiveDataViewComponent', null)?.deleteItem.observed || this.deleteItem.observed()
+    return this.injector.get('InteractiveDataViewComponent', null)?.deleteItem.observed() || this.deleteItem.observed()
   }
-  // TODO: Fix when migrating InteractiveDataViewComponent
   get selectionChangedObserved(): boolean {
     return (
-      this.injector.get('InteractiveDataViewComponent', null)?.selectionChanged.observed ||
+      this.injector.get('InteractiveDataViewComponent', null)?.selectionChanged.observed() ||
       this.selectionChanged.observed()
     )
   }

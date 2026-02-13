@@ -2,7 +2,6 @@ import { Meta, moduleMetadata, applicationConfig, StoryFn } from '@storybook/ang
 import { TranslateModule } from '@ngx-translate/core'
 import { importProvidersFrom } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { FormsModule } from '@angular/forms'
 import { ButtonModule } from 'primeng/button'
 import { SelectModule } from 'primeng/select'
@@ -35,7 +34,6 @@ const CustomGroupColumnSelectorComponentSBConfig: Meta<CustomGroupColumnSelector
     applicationConfig({
       providers: [
         importProvidersFrom(BrowserModule),
-        importProvidersFrom(BrowserAnimationsModule),
         importProvidersFrom(TranslateModule.forRoot({})),
         importProvidersFrom(StorybookThemeModule),
       ],
@@ -60,7 +58,7 @@ const Template: StoryFn = (args) => ({
   props: args,
 })
 
-const defaultComponentArgs: CustomGroupColumnSelectorInputs = {
+const defaultComponentArgs = {
   columns: [
     {
       id: 'product',
