@@ -936,7 +936,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
 
   rowTrackByFunction = (index: number, item: any) => {
-    return item?.id
+    return item.id
   }
 
   private filterActionsBasedOnPermissions(actions: DataAction[]): Observable<DataAction[]> {

@@ -266,8 +266,8 @@ describe('DataTableComponent', () => {
     it('should trigger onViewRow when clicking the view button', async () => {
       const spy = jest.spyOn(component, 'onViewRow')
 
-        // This component usually runs behind permission checks; make it deterministic.
-        ; (component as any).actions = [{ id: 'TABLE#VIEW', icon: 'pi pi-eye', show: true } as any]
+      // This component usually runs behind permission checks; make it deterministic.
+      ;(component as any).actions = [{ id: 'TABLE#VIEW', icon: 'pi pi-eye', show: true } as any]
       const hasPermissionChecker = TestBed.inject(HAS_PERMISSION_CHECKER) as any
       jest.spyOn(hasPermissionChecker, 'getPermissions').mockReturnValue(of(['TABLE#VIEW'] as any))
       fixture.detectChanges()
@@ -1366,20 +1366,20 @@ describe('DataTableComponent', () => {
 
     it('ngAfterContentInit should map PrimeTemplate types when templates$.value is an array', () => {
       const t = (type: string) => ({ getType: () => type, template: { type } }) as any
-        ; (component as any).templates$.next([
-          t('stringCell'),
-          t('numberCell'),
-          t('dateCell'),
-          t('relativeDateCell'),
-          t('cellTemplate'),
-          t('translationKeyCell'),
-          t('stringFilterCell'),
-          t('numberFilterCell'),
-          t('dateFilterCell'),
-          t('relativeDateFilterCell'),
-          t('filterCellTemplate'),
-          t('translationKeyFilterCell'),
-        ])
+      ;(component as any).templates$.next([
+        t('stringCell'),
+        t('numberCell'),
+        t('dateCell'),
+        t('relativeDateCell'),
+        t('cellTemplate'),
+        t('translationKeyCell'),
+        t('stringFilterCell'),
+        t('numberFilterCell'),
+        t('dateFilterCell'),
+        t('relativeDateFilterCell'),
+        t('filterCellTemplate'),
+        t('translationKeyFilterCell'),
+      ])
 
       component.ngAfterContentInit()
 
@@ -1419,7 +1419,7 @@ describe('DataTableComponent', () => {
     })
 
     it('overflowMenuItems$ should return [] when there are no permitted actions', async () => {
-      ; (component as any).overflowActions$ = of([{ showAsOverflow: true, permission: 'P1' } as any])
+      ;(component as any).overflowActions$ = of([{ showAsOverflow: true, permission: 'P1' } as any])
       component.currentMenuRow$.next({ id: 'r1' } as any)
 
       const userService = TestBed.inject(UserService) as unknown as UserServiceMock
@@ -1475,7 +1475,7 @@ describe('DataTableComponent', () => {
       component.pageSizes = [10]
       component.pageSize = 10
       component.rows = [{ id: 'a' } as any, { id: 'b' } as any]
-        ; (component as any)._selectionIds$.next(['b'])
+      ;(component as any)._selectionIds$.next(['b'])
 
       component.emitComponentStateChanged({ activePage: 7 })
       // wait for async announcements
@@ -1496,8 +1496,8 @@ describe('DataTableComponent', () => {
     it('emitSelectionChanged should emit rows matching selection ids', () => {
       const emitted: any[] = []
       component.selectionChanged.subscribe((rows) => emitted.push(rows))
-        ; (component as any)._rows$.next([{ id: 'a' } as any, { id: 'b' } as any])
-        ; (component as any)._selectionIds$.next(['b'])
+      ;(component as any)._rows$.next([{ id: 'a' } as any, { id: 'b' } as any])
+      ;(component as any)._selectionIds$.next(['b'])
 
       component.emitSelectionChanged()
       expect(emitted).toEqual([[{ id: 'b' }]])
@@ -1508,7 +1508,7 @@ describe('DataTableComponent', () => {
       const childTemplate = {} as any
 
       component.stringFilterCellTemplate = inputTemplate
-        ; (component as any).stringFilterCellChildTemplate = childTemplate
+      ;(component as any).stringFilterCellChildTemplate = childTemplate
       expect((component as any)._stringFilterCell).toBe(inputTemplate)
 
       component.stringFilterCellTemplate = undefined
@@ -1519,7 +1519,7 @@ describe('DataTableComponent', () => {
       const inputFilter = {} as any
       const childFilter = {} as any
       component.filterCellTemplate = inputFilter
-        ; (component as any).filterCellChildTemplate = childFilter
+      ;(component as any).filterCellChildTemplate = childFilter
       expect((component as any)._filterCell).toBe(inputFilter)
 
       component.filterCellTemplate = undefined
@@ -1528,7 +1528,7 @@ describe('DataTableComponent', () => {
       const inputTranslation = {} as any
       const childTranslation = {} as any
       component.translationKeyFilterCellTemplate = inputTranslation
-        ; (component as any).translationKeyFilterCellChildTemplate = childTranslation
+      ;(component as any).translationKeyFilterCellChildTemplate = childTranslation
       expect((component as any)._translationKeyFilterCell).toBe(inputTranslation)
 
       component.translationKeyFilterCellTemplate = undefined
@@ -1612,7 +1612,7 @@ describe('DataTableComponent', () => {
     it('isSelected / isRowSelectionDisabled / rowSelectable should reflect selectionEnabledField truthiness', () => {
       component.rows = [{ id: 'a', enabled: true } as any, { id: 'b', enabled: false } as any]
       component.selectionEnabledField = 'enabled'
-        ; (component as any)._selectionIds$.next(['a'])
+      ;(component as any)._selectionIds$.next(['a'])
 
       expect(component.isSelected({ id: 'a' } as any)).toBe(true)
       expect(component.isSelected({ id: 'b' } as any)).toBe(false)
@@ -1630,7 +1630,7 @@ describe('DataTableComponent', () => {
     })
 
     it('hasVisibleOverflowMenuItems should be false when there are no actions', async () => {
-      ; (component as any).overflowActions$ = of([])
+      ;(component as any).overflowActions$ = of([])
 
       const result = await firstValueFrom(component.hasVisibleOverflowMenuItems({}))
       expect(result).toBe(false)
