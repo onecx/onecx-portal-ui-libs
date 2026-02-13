@@ -912,7 +912,7 @@ describe('DataTableComponent', () => {
         expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Results Found');
       });
     });
-  });
+  })
 
   describe('rows & filters setter (resetPage)', () => {
     it('should call resetPage when rows length decreases', () => {
@@ -962,6 +962,8 @@ describe('DataTableComponent', () => {
 
       expect(resetSpy).toHaveBeenCalledTimes(2)
       expect(component.page).toBe(0)
+    })
+  })
 
   describe('DataTableComponent rowTrackByFunction & selection behaviour', () => {
     it('should return item id', () => {
@@ -970,7 +972,7 @@ describe('DataTableComponent', () => {
         (c.rowTrackByFunction as any).length >= 2 ? (c.rowTrackByFunction as any)(0, i) : (c.rowTrackByFunction as any)(i)
 
       const result = callRowTrackBy(component, item)
-      
+
       expect(result).toBe(item.id)
     })
 
@@ -999,3 +1001,4 @@ describe('DataTableComponent', () => {
     })
   })
 })
+
