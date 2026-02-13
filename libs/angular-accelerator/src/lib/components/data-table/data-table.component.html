@@ -108,7 +108,7 @@
   [rows]="displayedPageSize"
   [showCurrentPageReport]="true"
   [currentPageReportTemplate]="
-      (totalRecordOnServer() ? currentPageShowingWithTotalOnServerKey() : currentPageShowingKey())
+      (totalRecordsOnServer() ? currentPageShowingWithTotalOnServerKey() : currentPageShowingKey())
         | translate : params()
     "
   [rowsPerPageOptions]="pageSizes()"
@@ -254,7 +254,7 @@
       <td>
         @if (isRowSelectionDisabled(rowObject) && isSelected(rowObject)) {
         <p-checkbox
-          [(ngModel)]="checked"
+          [value]="true"
           [binary]="true"
           [disabled]="true"
           [ariaLabel]="'OCX_DATA_TABLE.SELECT_ARIA_LABEL' | translate : { key: rowObject.id }"
