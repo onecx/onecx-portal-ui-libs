@@ -4,6 +4,7 @@ import {
   Injector,
   LOCALE_ID,
   OnInit,
+  Output,
   QueryList,
   TemplateRef,
   computed,
@@ -97,7 +98,6 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
   FilterType = FilterType
   TemplateType = TemplateType
-  checked = signal(true)
 
   rows = model<Row[]>([])
   previousRows = computedPrevious(this.rows)
@@ -141,11 +141,11 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
   page = model<number>(0)
   tableStyle = input<{ [klass: string]: any } | undefined>(undefined)
-  totalRecordOnServer = input<number | undefined>(undefined)
+  totalRecordsOnServer = input<number | undefined>(undefined)
   currentPageShowingKey = input<string>('OCX_DATA_TABLE.SHOWING')
   currentPageShowingWithTotalOnServerKey = input<string>('OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER')
   params = computed(() => {
-    const totalRecordOnServer = this.totalRecordOnServer()
+    const totalRecordsOnServer = this.totalRecordsOnServer()
     return {
       currentPage: '{currentPage}',
       totalPages: '{totalPages}',
@@ -153,7 +153,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
       first: '{first}',
       last: '{last}',
       totalRecords: '{totalRecords}',
-      ...(totalRecordOnServer !== undefined && { totalRecordsOnServer: totalRecordOnServer }),
+      totalRecordsOnServer,
     }
   })
 
@@ -235,10 +235,10 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
   filtered = output<Filter[]>()
   sorted = output<Sort>()
-  viewTableRow = observableOutput<Row>()
-  editTableRow = observableOutput<Row>()
-  deleteTableRow = observableOutput<Row>()
-  selectionChanged = observableOutput<Row[]>()
+  @Output() viewTableRow = observableOutput<Row>()
+  @Output() editTableRow = observableOutput<Row>()
+  @Output() deleteTableRow = observableOutput<Row>()
+  @Output() selectionChanged = observableOutput<Row[]>()
   pageChanged = output<number>()
   pageSizeChanged = output<number>()
   componentStateChanged = output<DataTableComponentState>()
@@ -548,8 +548,6 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
   ngOnInit(): void {
     this.name.set(this.name() || this.router.url.replace(/[^A-Za-z0-9]/, '_'))
-
-    this.emitComponentStateChanged()
   }
 
   translateColumnValues(columnValues: string[]): Observable<any> {

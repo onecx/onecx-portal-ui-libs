@@ -13,7 +13,7 @@ import { DataTableComponent, Row } from './data-table.component'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { UserService } from '@onecx/angular-integration-interface'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
-import { BehaviorSubject, firstValueFrom, of } from 'rxjs'
+import { firstValueFrom, of } from 'rxjs'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataAction } from '../../model/data-action'
 
@@ -1075,7 +1075,7 @@ describe('DataTableComponent', () => {
       ;(component as any).viewTemplates$ = of([])
       ;(component as any).parentTemplates$ = of([])
 
-      const result = await firstValueFrom(component.getTemplate(column, component.TemplateType().CELL))
+      const result = await firstValueFrom(component.getTemplate(column, component.TemplateType.CELL))
       expect(result).toBe(templateRef)
     })
 
@@ -1551,21 +1551,26 @@ describe('DataTableComponent', () => {
     it('onMultiselectFilterChange should not emit filters and resetPage (clientSideFiltering=false)', () => {
       fixture.componentRef.setInput('clientSideFiltering', false)
       component.filters.set([{ columnId: 'other', value: 'x' } as any])
+      fixture.componentRef.setInput('clientSideFiltering', true)
       const column = { id: 'status', filterType: FilterType.EQUALS } as any
-      const resetSpy = jest.spyOn(component, 'resetPage')
+      const resetSpy = jest.spyOn(component.page, 'set')
 
       fixture.detectChanges()
 
       const emitted: any[] = []
-      component.filtered.subscribe((f) => emitted.push(f))
+      component.filtered.subscribe((f) => emitted.push(...f))
 
       component.onMultiselectFilterChange(column, { value: ['A', 'B'] })
 
       fixture.detectChanges()
 
-      expect(component.filters()).toEqual([{ columnId: 'other', value: 'x' } as any])
-      expect(emitted).toHaveLength(0)
-      expect(resetSpy).toHaveBeenCalled()
+      expect(component.filters()).toEqual([
+        { columnId: 'other', value: 'x' } as any,
+        { columnId: 'status', value: 'A', filterType: FilterType.EQUALS },
+        { columnId: 'status', value: 'B', filterType: FilterType.EQUALS },
+      ])
+      expect(emitted).toHaveLength(3)
+      expect(resetSpy).toHaveBeenCalledWith(0)
     })
 
     it('onMultiselectFilterChange should also update component.filters when clientSideFiltering=true', () => {

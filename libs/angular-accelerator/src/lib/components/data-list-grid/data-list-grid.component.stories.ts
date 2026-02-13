@@ -1,8 +1,7 @@
-import { Meta, moduleMetadata, applicationConfig, StoryFn } from '@storybook/angular'
+import { Meta, moduleMetadata, applicationConfig, argsToTemplate } from '@storybook/angular'
 import { RouterModule } from '@angular/router'
-import { APP_INITIALIZER, importProvidersFrom } from '@angular/core'
+import { importProvidersFrom, inject, provideAppInitializer } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { ButtonModule } from 'primeng/button'
 import { MultiSelectModule } from 'primeng/multiselect'
 import { DataViewModule } from 'primeng/dataview'
@@ -16,6 +15,7 @@ import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { StorybookThemeModule } from '../../storybook-theme.module'
 import { TooltipModule } from 'primeng/tooltip'
 import { UserService } from '@onecx/angular-integration-interface'
+import { action } from 'storybook/actions'
 
 const DataListGridComponentSBConfig: Meta<DataListGridComponent> = {
   title: 'Components/DataListGridComponent',
@@ -24,24 +24,18 @@ const DataListGridComponentSBConfig: Meta<DataListGridComponent> = {
     applicationConfig({
       providers: [
         importProvidersFrom(BrowserModule),
-        importProvidersFrom(BrowserAnimationsModule),
         provideUserServiceMock(),
         { provide: HAS_PERMISSION_CHECKER, useExisting: UserServiceMock },
         importProvidersFrom(RouterModule.forRoot([], { useHash: true })),
         importProvidersFrom(StorybookThemeModule),
-        {
-          provide: APP_INITIALIZER,
-          useFactory: (userService: UserService) => () => {
-            const userServiceMock = userService as unknown as UserServiceMock
-            userServiceMock.permissionsTopic$.publish([
-              'TEST_MGMT#TEST_DELETE',
-              'TEST_MGMT#TEST_EDIT',
-              'TEST_MGMT#TEST_VIEW',
-            ])
-          },
-          multi: true,
-          deps: [UserService],
-        },
+        provideAppInitializer(() => {
+          const userServiceMock = inject(UserService) as unknown as UserServiceMock
+          userServiceMock.permissionsTopic$.publish([
+            'TEST_MGMT#TEST_DELETE',
+            'TEST_MGMT#TEST_EDIT',
+            'TEST_MGMT#TEST_VIEW',
+          ])
+        }),
       ],
     }),
     moduleMetadata({
@@ -50,9 +44,6 @@ const DataListGridComponentSBConfig: Meta<DataListGridComponent> = {
     }),
   ],
 }
-const Template: StoryFn = (args) => ({
-  props: args,
-})
 
 const defaultComponentArgs = {
   data: [
@@ -78,11 +69,37 @@ const defaultComponentArgs = {
   editPermission: 'TEST_MGMT#TEST_EDIT',
   viewPermission: 'TEST_MGMT#TEST_VIEW',
 }
-const defaultArgTypes = {
-  deleteItem: { action: 'deleteItem' },
-  editItem: { action: 'editItem' },
-  viewItem: { action: 'viewItem' },
+
+const defaultActionsArgs = {
+  editItem: {
+    observed: () => true,
+    emit: action('Edit action clicked'),
+  },
+  deleteItem: {
+    observed: () => true,
+    emit: action('Delete action clicked'),
+  },
+  viewItem: {
+    observed: () => true,
+    emit: action('View action clicked'),
+  },
 }
+
+const notObservedEditAction = {
+  observed: () => false,
+  emit: action('Edit action clicked'),
+}
+
+const notObservedDeleteAction = {
+  observed: () => false,
+  emit: action('Delete action clicked'),
+}
+
+const notObservedViewAction = {
+  observed: () => false,
+  emit: action('View action clicked'),
+}
+
 const extendedMockData = [
   {
     id: 'Test',
@@ -157,14 +174,18 @@ const extendedMockData = [
 ]
 
 export const ListWithMockData = {
-  render: Template,
-  argTypes: defaultArgTypes,
+  render: (args: any) => ({
+    props: { ...args, ...defaultActionsArgs },
+    template: `<ocx-data-list-grid ${argsToTemplate(args)} (deleteItem)="deleteItem($event)" (editItem)="editItem($event)" (viewItem)="viewItem($event)"></ocx-data-list-grid>`,
+  }),
   args: defaultComponentArgs,
 }
 
 export const ListWithNoData = {
-  render: Template,
-  argTypes: defaultArgTypes,
+  render: (args: any) => ({
+    props: { ...args, ...defaultActionsArgs },
+    template: `<ocx-data-list-grid ${argsToTemplate(args)} (deleteItem)="deleteItem($event)" (editItem)="editItem($event)" (viewItem)="viewItem($event)"></ocx-data-list-grid>`,
+  }),
   args: {
     ...defaultComponentArgs,
     data: [],
@@ -172,8 +193,10 @@ export const ListWithNoData = {
 }
 
 export const ListWithConditionallyDisabledActionButtons = {
-  argTypes: defaultArgTypes,
-  render: Template,
+  render: (args: any) => ({
+    props: { ...args, ...defaultActionsArgs },
+    template: `<ocx-data-list-grid ${argsToTemplate(args)} (deleteItem)="deleteItem($event)" (editItem)="editItem($event)" (viewItem)="viewItem($event)"></ocx-data-list-grid>`,
+  }),
   args: {
     ...defaultComponentArgs,
     deleteActionEnabledField: 'available',
@@ -182,8 +205,10 @@ export const ListWithConditionallyDisabledActionButtons = {
 }
 
 export const ListWithConditionallyHiddenActionButtons = {
-  argTypes: defaultArgTypes,
-  render: Template,
+  render: (args: any) => ({
+    props: { ...args, ...defaultActionsArgs },
+    template: `<ocx-data-list-grid ${argsToTemplate(args)} (deleteItem)="deleteItem($event)" (editItem)="editItem($event)" (viewItem)="viewItem($event)"></ocx-data-list-grid>`,
+  }),
   args: {
     ...defaultComponentArgs,
     deleteActionVisibleField: 'available',
@@ -192,8 +217,10 @@ export const ListWithConditionallyHiddenActionButtons = {
 }
 
 export const ListWithAdditionalActions = {
-  argTypes: defaultArgTypes,
-  render: Template,
+  render: (args: any) => ({
+    props: { ...args, ...defaultActionsArgs },
+    template: `<ocx-data-list-grid ${argsToTemplate(args)} (deleteItem)="deleteItem($event)" (editItem)="editItem($event)" (viewItem)="viewItem($event)"></ocx-data-list-grid>`,
+  }),
   args: {
     ...defaultComponentArgs,
     additionalActions: [
@@ -202,14 +229,17 @@ export const ListWithAdditionalActions = {
         labelKey: 'Additional 1',
         icon: 'pi pi-plus',
         permission: 'TEST_MGMT#TEST_VIEW',
+        callback: () => console.log('Additional action clicked'),
       },
     ],
   },
 }
 
 export const ListWithConditionallyEnabledAdditionalActions = {
-  argTypes: defaultArgTypes,
-  render: Template,
+  render: (args: any) => ({
+    props: { ...args, ...defaultActionsArgs },
+    template: `<ocx-data-list-grid ${argsToTemplate(args)} (deleteItem)="deleteItem($event)" (editItem)="editItem($event)" (viewItem)="viewItem($event)"></ocx-data-list-grid>`,
+  }),
   args: {
     ...defaultComponentArgs,
     additionalActions: [
@@ -219,14 +249,17 @@ export const ListWithConditionallyEnabledAdditionalActions = {
         icon: 'pi pi-plus',
         permission: 'TEST_MGMT#TEST_VIEW',
         actionEnabledField: 'available',
+        callback: () => console.log('Additional action clicked'),
       },
     ],
   },
 }
 
 export const ListWithConditionallyVisibleAdditionalActions = {
-  argTypes: defaultArgTypes,
-  render: Template,
+  render: (args: any) => ({
+    props: { ...args, ...defaultActionsArgs },
+    template: `<ocx-data-list-grid ${argsToTemplate(args)} (deleteItem)="deleteItem($event)" (editItem)="editItem($event)" (viewItem)="viewItem($event)"></ocx-data-list-grid>`,
+  }),
   args: {
     ...defaultComponentArgs,
     additionalActions: [
@@ -236,14 +269,17 @@ export const ListWithConditionallyVisibleAdditionalActions = {
         icon: 'pi pi-plus',
         permission: 'TEST_MGMT#TEST_VIEW',
         actionVisibleField: 'available',
+        callback: () => console.log('Additional action clicked'),
       },
     ],
   },
 }
 
 export const ListWithAdditionalOverflowActions = {
-  argTypes: defaultArgTypes,
-  render: Template,
+  render: (args: any) => ({
+    props: { ...args, ...defaultActionsArgs },
+    template: `<ocx-data-list-grid ${argsToTemplate(args)} (deleteItem)="deleteItem($event)" (editItem)="editItem($event)" (viewItem)="viewItem($event)"></ocx-data-list-grid>`,
+  }),
   args: {
     ...defaultComponentArgs,
     additionalActions: [
@@ -253,6 +289,7 @@ export const ListWithAdditionalOverflowActions = {
         icon: 'pi pi-plus',
         permission: 'TEST_MGMT#TEST_VIEW',
         showAsOverflow: true,
+        callback: () => console.log('Additional action clicked'),
       },
       {
         id: '2',
@@ -261,6 +298,7 @@ export const ListWithAdditionalOverflowActions = {
         permission: 'TEST_MGMT#TEST_VIEW',
         showAsOverflow: true,
         actionVisibleField: 'available',
+        callback: () => console.log('Conditionally Hidden action clicked'),
       },
       {
         id: '3',
@@ -269,19 +307,24 @@ export const ListWithAdditionalOverflowActions = {
         permission: 'TEST_MGMT#TEST_VIEW',
         showAsOverflow: true,
         actionEnabledField: 'available',
+        callback: () => console.log('Conditionally Enabled action clicked'),
       },
     ],
   },
 }
 
 export const ListWithOnlyAdditionalOverflowActions = {
-  argTypes: defaultArgTypes,
-  render: Template,
+  render: (args: any) => ({
+    props: {
+      ...args,
+      deleteItem: notObservedDeleteAction,
+      editItem: notObservedEditAction,
+      viewItem: notObservedViewAction,
+    },
+    template: `<ocx-data-list-grid ${argsToTemplate(args)} (deleteItem)="deleteItem($event)" (editItem)="editItem($event)" (viewItem)="viewItem($event)"></ocx-data-list-grid>`,
+  }),
   args: {
     ...defaultComponentArgs,
-    deleteItem: null,
-    editItem: null,
-    viewItem: null,
     deletePermission: null,
     editPermission: null,
     viewPermission: null,
@@ -292,6 +335,7 @@ export const ListWithOnlyAdditionalOverflowActions = {
         icon: 'pi pi-plus',
         permission: 'TEST_MGMT#TEST_VIEW',
         showAsOverflow: true,
+        callback: () => console.log('Additional action clicked'),
       },
       {
         id: '2',
@@ -300,6 +344,7 @@ export const ListWithOnlyAdditionalOverflowActions = {
         permission: 'TEST_MGMT#TEST_VIEW',
         showAsOverflow: true,
         actionVisibleField: 'available',
+        callback: () => console.log('Conditionally Hidden action clicked'),
       },
       {
         id: '3',
@@ -308,25 +353,29 @@ export const ListWithOnlyAdditionalOverflowActions = {
         permission: 'TEST_MGMT#TEST_VIEW',
         showAsOverflow: true,
         actionEnabledField: 'available',
+        callback: () => console.log('Conditionally Enabled action clicked'),
       },
     ],
   },
 }
 
 export const ListWithPageSizes = {
-  argTypes: defaultArgTypes,
-  render: Template,
+  render: (args: any) => ({
+    props: { ...args, ...defaultActionsArgs },
+    template: `<ocx-data-list-grid ${argsToTemplate(args)} (deleteItem)="deleteItem($event)" (editItem)="editItem($event)" (viewItem)="viewItem($event)"></ocx-data-list-grid>`,
+  }),
   args: {
     ...defaultComponentArgs,
     pageSizes: [2, 15, 25],
     data: extendedMockData,
-    showAllOption: false,
   },
 }
 
 export const GridWithMockData = {
-  render: Template,
-  argTypes: defaultArgTypes,
+  render: (args: any) => ({
+    props: { ...args, ...defaultActionsArgs },
+    template: `<ocx-data-list-grid ${argsToTemplate(args)}></ocx-data-list-grid>`,
+  }),
   args: {
     ...defaultComponentArgs,
     layout: 'grid',
@@ -334,8 +383,10 @@ export const GridWithMockData = {
 }
 
 export const GridWithNoData = {
-  render: Template,
-  argTypes: defaultArgTypes,
+  render: (args: any) => ({
+    props: { ...args, ...defaultActionsArgs },
+    template: `<ocx-data-list-grid ${argsToTemplate(args)}></ocx-data-list-grid>`,
+  }),
   args: {
     ...defaultComponentArgs,
     data: [],
@@ -344,8 +395,10 @@ export const GridWithNoData = {
 }
 
 export const GridWithConditionallyDisabledActionButtons = {
-  argTypes: defaultArgTypes,
-  render: Template,
+  render: (args: any) => ({
+    props: { ...args, ...defaultActionsArgs },
+    template: `<ocx-data-list-grid ${argsToTemplate(args)}></ocx-data-list-grid>`,
+  }),
   args: {
     ...defaultComponentArgs,
     deleteActionEnabledField: 'available',
@@ -355,8 +408,10 @@ export const GridWithConditionallyDisabledActionButtons = {
 }
 
 export const GridWithConditionallyHiddenActionButtons = {
-  argTypes: defaultArgTypes,
-  render: Template,
+  render: (args: any) => ({
+    props: { ...args, ...defaultActionsArgs },
+    template: `<ocx-data-list-grid ${argsToTemplate(args)}></ocx-data-list-grid>`,
+  }),
   args: {
     ...defaultComponentArgs,
     deleteActionVisibleField: 'available',
@@ -366,8 +421,10 @@ export const GridWithConditionallyHiddenActionButtons = {
 }
 
 export const GridWithAdditionalActions = {
-  argTypes: defaultArgTypes,
-  render: Template,
+  render: (args: any) => ({
+    props: { ...args, ...defaultActionsArgs },
+    template: `<ocx-data-list-grid ${argsToTemplate(args)}></ocx-data-list-grid>`,
+  }),
   args: {
     ...defaultComponentArgs,
     layout: 'grid',
@@ -377,14 +434,17 @@ export const GridWithAdditionalActions = {
         labelKey: 'Additional 1',
         icon: 'pi pi-plus',
         permission: 'TEST_MGMT#TEST_VIEW',
+        callback: () => console.log('Additional action clicked'),
       },
     ],
   },
 }
 
 export const GridWithConditionallyEnabledAdditionalActions = {
-  argTypes: defaultArgTypes,
-  render: Template,
+  render: (args: any) => ({
+    props: { ...args, ...defaultActionsArgs },
+    template: `<ocx-data-list-grid ${argsToTemplate(args)}></ocx-data-list-grid>`,
+  }),
   args: {
     ...defaultComponentArgs,
     layout: 'grid',
@@ -395,14 +455,17 @@ export const GridWithConditionallyEnabledAdditionalActions = {
         icon: 'pi pi-plus',
         permission: 'TEST_MGMT#TEST_VIEW',
         actionEnabledField: 'available',
+        callback: () => console.log('Additional action clicked'),
       },
     ],
   },
 }
 
 export const GridWithConditionallyVisibleAdditionalActions = {
-  argTypes: defaultArgTypes,
-  render: Template,
+  render: (args: any) => ({
+    props: { ...args, ...defaultActionsArgs },
+    template: `<ocx-data-list-grid ${argsToTemplate(args)}></ocx-data-list-grid>`,
+  }),
   args: {
     ...defaultComponentArgs,
     layout: 'grid',
@@ -413,20 +476,22 @@ export const GridWithConditionallyVisibleAdditionalActions = {
         icon: 'pi pi-plus',
         permission: 'TEST_MGMT#TEST_VIEW',
         actionVisibleField: 'available',
+        callback: () => console.log('Additional action clicked'),
       },
     ],
   },
 }
 
 export const GridWithPageSizes = {
-  argTypes: defaultArgTypes,
-  render: Template,
+  render: (args: any) => ({
+    props: { ...args, ...defaultActionsArgs },
+    template: `<ocx-data-list-grid ${argsToTemplate(args)}></ocx-data-list-grid>`,
+  }),
   args: {
     ...defaultComponentArgs,
     layout: 'grid',
     pageSizes: [2, 15, 25],
     data: extendedMockData,
-    showAllOption: false,
   },
 }
 

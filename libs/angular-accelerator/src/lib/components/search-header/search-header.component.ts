@@ -2,6 +2,7 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  Output,
   Signal,
   TemplateRef,
   contentChild,
@@ -62,9 +63,9 @@ export class SearchHeaderComponent {
   pageName = input<string | undefined>(getLocation().applicationPath)
 
   searched = output<void>()
-  resetted = observableOutput<void>()
+  @Output() resetted = observableOutput<void>()
 
-  selectedSearchConfigChanged = observableOutput<SearchConfigData | undefined>()
+  @Output() selectedSearchConfigChanged = observableOutput<SearchConfigData | undefined>()
   viewModeChanged = output<'basic' | 'advanced'>()
   componentStateChanged = output<SearchHeaderComponentState>()
   _additionalToolbarContent = contentChild<TemplateRef<any>>('additionalToolbarContent')
