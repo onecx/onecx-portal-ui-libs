@@ -98,7 +98,6 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
   FilterType = FilterType
   TemplateType = TemplateType
-  checked = signal(true)
 
   rows = model<Row[]>([])
   previousRows = computedPrevious(this.rows)
@@ -107,8 +106,8 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
   filters = model<Filter[]>([])
   previousFilters = computedPrevious(this.filters)
-  sortDirection = signal<DataSortDirection>(DataSortDirection.NONE)
-  sortColumn = signal<string>('')
+  sortDirection = model<DataSortDirection>(DataSortDirection.NONE)
+  sortColumn = model<string>('')
   columnTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
   columnFilterTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
   columns = model<DataTableColumn[]>([])
@@ -142,11 +141,11 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
   page = model<number>(0)
   tableStyle = input<{ [klass: string]: any } | undefined>(undefined)
-  totalRecordOnServer = input<number | undefined>(undefined)
+  totalRecordsOnServer = input<number | undefined>(undefined)
   currentPageShowingKey = input<string>('OCX_DATA_TABLE.SHOWING')
   currentPageShowingWithTotalOnServerKey = input<string>('OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER')
   params = computed(() => {
-    const totalRecordOnServer = this.totalRecordOnServer()
+    const totalRecordsOnServer = this.totalRecordsOnServer()
     return {
       currentPage: '{currentPage}',
       totalPages: '{totalPages}',
@@ -154,7 +153,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
       first: '{first}',
       last: '{last}',
       totalRecords: '{totalRecords}',
-      totalRecordOnServer,
+      totalRecordsOnServer,
     }
   })
 
