@@ -106,8 +106,8 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
   filters = model<Filter[]>([])
   previousFilters = computedPrevious(this.filters)
-  sortDirection = signal<DataSortDirection>(DataSortDirection.NONE)
-  sortColumn = signal<string>('')
+  sortDirection = model<DataSortDirection>(DataSortDirection.NONE)
+  sortColumn = model<string>('')
   columnTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
   columnFilterTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
   columns = model<DataTableColumn[]>([])
