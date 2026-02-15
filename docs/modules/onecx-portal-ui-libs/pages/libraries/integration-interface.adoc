@@ -1,7 +1,7 @@
 :idprefix:
 :idseparator: -
 
-:angular_issues_url: xref:documentation:docs-guides-ui:module-federation/webcomponents.adoc#angular_issues
+:angular_issues_url: xref:documentation:onecx-docs-overview:module-federation/webcomponents.adoc#angular_issues
 
 = Library: @onecx/integration-interface
 
