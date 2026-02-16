@@ -106,8 +106,8 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
   filters = model<Filter[]>([])
   previousFilters = computedPrevious(this.filters)
-  sortDirection = signal<DataSortDirection>(DataSortDirection.NONE)
-  sortColumn = signal<string>('')
+  sortDirection = model<DataSortDirection>(DataSortDirection.NONE)
+  sortColumn = model<string>('')
   columnTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
   columnFilterTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
   columns = model<DataTableColumn[]>([])
@@ -429,30 +429,25 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   parentTemplates = model<PrimeTemplate[] | null | undefined>(undefined)
   parentTemplates$ = toObservable(this.parentTemplates)
 
-  // TODO: Change while migrating dataView
   get viewTableRowObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
-    return dv?.viewItemObserved || dv?.viewItem.observed || this.viewTableRow.observed()
+    return dv?.viewItemObserved || dv?.viewItem.observed() || this.viewTableRow.observed()
   }
-  // TODO: Change while migrating dataView
   get editTableRowObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
-    return dv?.editItemObserved || dv?.editItem.observed || this.editTableRow.observed()
+    return dv?.editItemObserved || dv?.editItem.observed() || this.editTableRow.observed()
   }
-  // TODO: Change while migrating dataView
   get deleteTableRowObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
-    return dv?.deleteItemObserved || dv?.deleteItem.observed || this.deleteTableRow.observed()
+    return dv?.deleteItemObserved || dv?.deleteItem.observed() || this.deleteTableRow.observed()
   }
-  // TODO: Change while migrating dataView
   get anyRowActionObserved(): boolean {
     return this.viewTableRowObserved || this.editTableRowObserved || this.deleteTableRowObserved
   }
 
-  // TODO: Change while migrating dataView
   get selectionChangedObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
-    return dv?.selectionChangedObserved || dv?.selectionChanged.observed || this.selectionChanged.observed()
+    return dv?.selectionChangedObserved || dv?.selectionChanged.observed() || this.selectionChanged.observed()
   }
 
   constructor() {

@@ -246,20 +246,17 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
   pageSizeChanged = output<number>()
   componentStateChanged = output<DataListGridComponentState>()
 
-  // TODO: Fix while migrating DataViewComponent
   get viewItemObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
-    return dv?.viewItemObserved || dv?.viewItem.observed || this.viewItem.observed()
+    return dv?.viewItemObserved || dv?.viewItem.observed() || this.viewItem.observed()
   }
-  // TODO: Fix while migrating DataViewComponent
   get editItemObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
-    return dv?.editItemObserved || dv?.editItem.observed || this.editItem.observed()
+    return dv?.editItemObserved || dv?.editItem.observed() || this.editItem.observed()
   }
-  // TODO: Fix while migrating DataViewComponent
   get deleteItemObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
-    return dv?.deleteItemObserved || dv?.deleteItem.observed || this.deleteItem.observed()
+    return dv?.deleteItemObserved || dv?.deleteItem.observed() || this.deleteItem.observed()
   }
 
   observedOutputs = computed(() => {

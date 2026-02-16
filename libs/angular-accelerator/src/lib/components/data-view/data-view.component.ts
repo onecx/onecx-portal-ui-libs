@@ -1,18 +1,18 @@
 import {
-  AfterContentInit,
   Component,
-  ContentChild,
-  ContentChildren,
-  DoCheck,
-  EventEmitter,
   Injector,
-  Input,
-  OnInit,
-  Output,
-  QueryList,
   TemplateRef,
   ViewChild,
+  computed,
+  contentChild,
+  contentChildren,
+  effect,
   inject,
+  input,
+  model,
+  output,
+  signal,
+  viewChild,
 } from '@angular/core'
 import { PrimeTemplate } from 'primeng/api'
 import { BehaviorSubject, Observable, ReplaySubject, combineLatest, map, startWith, timestamp } from 'rxjs'
@@ -27,6 +27,7 @@ import {
   ListGridData,
 } from '../data-list-grid/data-list-grid.component'
 import { DataTableComponent, DataTableComponentState, Row, Sort } from '../data-table/data-table.component'
+import { observableOutput } from '../../utils/observable-output.utils'
 
 export type RowListGridData = ListGridData & Row
 
@@ -39,266 +40,268 @@ export type DataViewComponentState = DataListGridComponentState & DataTableCompo
   styleUrls: ['./data-view.component.css'],
   providers: [{ provide: 'DataViewComponent', useExisting: DataViewComponent }],
 })
-export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
+export class DataViewComponent {
   private readonly injector = inject(Injector)
 
-  _dataListGridComponent: DataListGridComponent | undefined
-  @ViewChild(DataListGridComponent) set listGrid(ref: DataListGridComponent | undefined) {
-    this._dataListGridComponent = ref
-    this.registerEventListenerForListGrid()
-  }
-  get listGrid(): DataListGridComponent | undefined {
-    return this._dataListGridComponent
-  }
+  dataListGridComponent = viewChild(DataListGridComponent)
 
-  _dataTableComponent: DataTableComponent | undefined
-  @ViewChild(DataTableComponent) set dataTable(ref: DataTableComponent | undefined) {
-    this._dataTableComponent = ref
-    this.registerEventListenerForDataTable()
-  }
-  get dataTable(): DataTableComponent | undefined {
-    return this._dataTableComponent
-  }
+  dataTableComponent = viewChild(DataTableComponent)
 
   dataTableComponentState$ = new ReplaySubject<DataTableComponentState>(1)
   dataListGridComponentState$ = new ReplaySubject<DataListGridComponentState>(1)
 
-  @Input() deletePermission: string | string[] | undefined
-  @Input() editPermission: string | string[] | undefined
-  @Input() viewPermission: string | string[] | undefined
-  @Input() deleteActionVisibleField: string | undefined
-  @Input() deleteActionEnabledField: string | undefined
-  @Input() viewActionVisibleField: string | undefined
-  @Input() viewActionEnabledField: string | undefined
-  @Input() editActionVisibleField: string | undefined
-  @Input() editActionEnabledField: string | undefined
-  @Input() tableSelectionEnabledField: string | undefined
-  @Input() tableAllowSelectAll = true
-  @Input() data: RowListGridData[] = []
-  @Input() name = 'Data table'
-  @Input() titleLineId: string | undefined
-  @Input() subtitleLineIds: string[] = []
-  @Input() layout: any = ['grid', 'list', 'table']
-  @Input() columns: DataTableColumn[] = []
-  @Input() emptyResultsMessage: string | undefined
-  @Input() clientSideSorting = true
-  @Input() clientSideFiltering = true
-  @Input() fallbackImage = 'placeholder.png'
-  @Input() filters: Filter[] = []
-  @Input() sortField: any = ''
-  @Input() sortDirection: DataSortDirection = DataSortDirection.NONE
-  @Input() listGridPaginator = true
-  @Input() tablePaginator = true
-  @Input() page = 0
-  @Input() totalRecordsOnServer: number | undefined
-  @Input() currentPageShowingKey = 'OCX_DATA_TABLE.SHOWING'
-  @Input() currentPageShowingWithTotalOnServerKey = 'OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER'
-  @Input() selectedRows: Row[] = []
-  @Input() frozenActionColumn = false
-  @Input() actionColumnPosition: 'left' | 'right' = 'right'
+  deletePermission = input<string | string[]>()
+  editPermission = input<string | string[]>()
+  viewPermission = input<string | string[]>()
+  deleteActionVisibleField = input<string | undefined>()
+  deleteActionEnabledField = input<string | undefined>()
+  viewActionVisibleField = input<string | undefined>()
+  viewActionEnabledField = input<string | undefined>()
+  editActionVisibleField = input<string | undefined>()
+  editActionEnabledField = input<string | undefined>()
+  tableSelectionEnabledField = input<string | undefined>()
+  tableAllowSelectAll = input<boolean>(true)
+  data = input<RowListGridData[]>([])
+  name = input<string>('')
+  titleLineId = input<string | undefined>()
+  subtitleLineIds = input<string[]>()
+  layout = input<any>()
+  columns = input<DataTableColumn[]>([])
+  emptyResultsMessage = input<string | undefined>()
+  clientSideSorting = input<boolean>(true)
+  clientSideFiltering = input<boolean>(true)
+  fallbackImage = input<string>()
+  filters = model<Filter[]>([])
+  sortField = model<any>()
+  sortDirection = model<DataSortDirection>(DataSortDirection.NONE)
+  listGridPaginator = input<boolean>(true)
+  tablePaginator = input<boolean>(true)
+  page = model<number>(0)
+  totalRecordsOnServer = input<number | undefined>()
+  currentPageShowingKey = input<string>('OCX_DATA_TABLE.SHOWING')
+  currentPageShowingWithTotalOnServerKey = input<string>('OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER')
+  selectedRows = input<Row[]>([])
+  frozenActionColumn = input<boolean>(false)
+  actionColumnPosition = input<'left' | 'right'>('right')
 
-  @Input()
-  get paginator(): boolean {
-    return this.listGridPaginator && this.tablePaginator
-  }
-  set paginator(value: boolean) {
-    this.listGridPaginator = value
-    this.tablePaginator = value
-  }
+  sortStates = input<DataSortDirection[]>([])
+  pageSizes = input<number[]>([10, 25, 50])
+  pageSize = model<number | undefined>()
 
-  @Input() sortStates: DataSortDirection[] = [DataSortDirection.ASCENDING, DataSortDirection.DESCENDING]
-  @Input() pageSizes: number[] = [10, 25, 50]
-  @Input() pageSize: number | undefined
-
-  @Input() stringTableCellTemplate: TemplateRef<any> | undefined
-  @ContentChild('stringTableCell') stringTableCellChildTemplate: TemplateRef<any> | undefined
-  get _stringTableCell(): TemplateRef<any> | undefined {
-    return this.stringTableCellTemplate || this.stringTableCellChildTemplate
+  stringTableCellTemplate = input<TemplateRef<any> | undefined>()
+  stringTableCellChildTemplate = contentChild<TemplateRef<any>>('stringTableCellTemplate')
+  get stringTableCell(): TemplateRef<any> | undefined {
+    return this.stringTableCellTemplate() || this.stringTableCellChildTemplate()
   }
 
-  @Input() numberTableCellTemplate: TemplateRef<any> | undefined
-  @ContentChild('numberTableCell') numberTableCellChildTemplate: TemplateRef<any> | undefined
-  get _numberTableCell(): TemplateRef<any> | undefined {
-    return this.numberTableCellTemplate || this.numberTableCellChildTemplate
+  numberTableCellTemplate = input<TemplateRef<any> | undefined>()
+  numberTableCellChildTemplate = contentChild<TemplateRef<any>>('numberTableCellTemplate')
+  get numberTableCell(): TemplateRef<any> | undefined {
+    return this.numberTableCellTemplate() || this.numberTableCellChildTemplate()
   }
 
-  @Input() dateTableCellTemplate: TemplateRef<any> | undefined
-  @ContentChild('dateTableCell') dateTableCellChildTemplate: TemplateRef<any> | undefined
-  get _dateTableCell(): TemplateRef<any> | undefined {
-    return this.dateTableCellTemplate || this.dateTableCellChildTemplate
+  dateTableCellTemplate = input<TemplateRef<any> | undefined>()
+  dateTableCellChildTemplate = contentChild<TemplateRef<any>>('dateTableCellTemplate')
+  get dateTableCell(): TemplateRef<any> | undefined {
+    return this.dateTableCellTemplate() || this.dateTableCellChildTemplate()
   }
 
-  @Input() tableCellTemplate: TemplateRef<any> | undefined
-  @ContentChild('tableCell') tableCellChildTemplate: TemplateRef<any> | undefined
-  get _tableCell(): TemplateRef<any> | undefined {
-    return this.tableCellTemplate || this.tableCellChildTemplate
+  tableCellTemplate = input<TemplateRef<any> | undefined>()
+  tableCellChildTemplate = contentChild<TemplateRef<any>>('tableCellTemplate')
+  get tableCell(): TemplateRef<any> | undefined {
+    return this.tableCellTemplate() || this.tableCellChildTemplate()
   }
 
-  @Input() translationKeyTableCellTemplate: TemplateRef<any> | undefined
-  @ContentChild('translationKeyTableCell') translationKeyTableCellChildTemplate: TemplateRef<any> | undefined
-  get _translationKeyTableCell(): TemplateRef<any> | undefined {
-    return this.translationKeyTableCellTemplate || this.translationKeyTableCellChildTemplate
+  translationKeyTableCellTemplate = input<TemplateRef<any> | undefined>()
+  translationKeyTableCellChildTemplate = contentChild<TemplateRef<any>>('translationKeyTableCellTemplate')
+  get translationKeyTableCell(): TemplateRef<any> | undefined {
+    return this.translationKeyTableCellTemplate() || this.translationKeyTableCellChildTemplate()
   }
 
-  @Input() gridItemSubtitleLinesTemplate: TemplateRef<any> | undefined
-  @ContentChild('gridItemSubtitleLines') gridItemSubtitleLinesChildTemplate: TemplateRef<any> | undefined
-  get _gridItemSubtitleLines(): TemplateRef<any> | undefined {
-    return this.gridItemSubtitleLinesTemplate || this.gridItemSubtitleLinesChildTemplate
+  gridItemSubtitleLinesTemplate = input<TemplateRef<any> | undefined>()
+  gridItemSubtitleLinesChildTemplate = contentChild<TemplateRef<any>>('gridItemSubtitleLinesTemplate')
+  get gridItemSubtitleLines(): TemplateRef<any> | undefined {
+    return this.gridItemSubtitleLinesTemplate() || this.gridItemSubtitleLinesChildTemplate()
   }
 
-  @Input() listItemSubtitleLinesTemplate: TemplateRef<any> | undefined
-  @ContentChild('listItemSubtitleLines') listItemSubtitleLinesChildTemplate: TemplateRef<any> | undefined
-  get _listItemSubtitleLines(): TemplateRef<any> | undefined {
-    return this.listItemSubtitleLinesTemplate || this.listItemSubtitleLinesChildTemplate
+  listItemSubtitleLinesTemplate = input<TemplateRef<any> | undefined>()
+  listItemSubtitleLinesChildTemplate = contentChild<TemplateRef<any>>('listItemSubtitleLinesTemplate')
+  get listItemSubtitleLines(): TemplateRef<any> | undefined {
+    return this.listItemSubtitleLinesTemplate() || this.listItemSubtitleLinesChildTemplate()
   }
-  @Input() gridItemTemplate: TemplateRef<any> | undefined
-  @ContentChild('gridItem') gridItemChildTemplate: TemplateRef<any> | undefined
-  get _gridItem(): TemplateRef<any> | undefined {
-    return this.gridItemTemplate || this.gridItemChildTemplate
-  }
-
-  @Input() listItemTemplate: TemplateRef<any> | undefined
-  @ContentChild('listItem') listItemChildTemplate: TemplateRef<any> | undefined
-  get _listItem(): TemplateRef<any> | undefined {
-    return this.listItemTemplate || this.listItemChildTemplate
+  gridItemTemplate = input<TemplateRef<any> | undefined>()
+  gridItemChildTemplate = contentChild<TemplateRef<any>>('gridItemTemplate')
+  get gridItem(): TemplateRef<any> | undefined {
+    return this.gridItemTemplate() || this.gridItemChildTemplate()
   }
 
-  @Input() relativeDateTableCellTemplate: TemplateRef<any> | undefined
-  @ContentChild('relativeDateTableCell') relativeDateTableCellChildTemplate: TemplateRef<any> | undefined
-  get _relativeDateTableCell(): TemplateRef<any> | undefined {
-    return this.relativeDateTableCellTemplate || this.relativeDateTableCellChildTemplate
+  listItemTemplate = input<TemplateRef<any> | undefined>()
+  listItemChildTemplate = contentChild<TemplateRef<any>>('listItemTemplate')
+  get listItem(): TemplateRef<any> | undefined {
+    return this.listItemTemplate() || this.listItemChildTemplate()
   }
 
-  @Input() listValueTemplate: TemplateRef<any> | undefined
-  @ContentChild('listValue') listValueChildTemplate: TemplateRef<any> | undefined
-  get _listValue(): TemplateRef<any> | undefined {
-    return this.listValueTemplate || this.listValueChildTemplate
-  }
-  @Input() translationKeyListValueTemplate: TemplateRef<any> | undefined
-  @ContentChild('translationKeyListValue') translationKeyListValueChildTemplate: TemplateRef<any> | undefined
-  get _translationKeyListValue(): TemplateRef<any> | undefined {
-    return this.translationKeyListValueTemplate || this.translationKeyListValueChildTemplate
-  }
-  @Input() numberListValueTemplate: TemplateRef<any> | undefined
-  @ContentChild('numberListValue') numberListValueChildTemplate: TemplateRef<any> | undefined
-  get _numberListValue(): TemplateRef<any> | undefined {
-    return this.numberListValueTemplate || this.numberListValueChildTemplate
-  }
-  @Input() relativeDateListValueTemplate: TemplateRef<any> | undefined
-  @ContentChild('relativeDateListValue') relativeDateListValueChildTemplate: TemplateRef<any> | undefined
-  get _relativeDateListValue(): TemplateRef<any> | undefined {
-    return this.relativeDateListValueTemplate || this.relativeDateListValueChildTemplate
-  }
-  @Input() stringListValueTemplate: TemplateRef<any> | undefined
-  @ContentChild('stringListValue') stringListValueChildTemplate: TemplateRef<any> | undefined
-  get _stringListValue(): TemplateRef<any> | undefined {
-    return this.stringListValueTemplate || this.stringListValueChildTemplate
-  }
-  @Input() dateListValueTemplate: TemplateRef<any> | undefined
-  @ContentChild('dateListValue') dateListValueChildTemplate: TemplateRef<any> | undefined
-  get _dateListValue(): TemplateRef<any> | undefined {
-    return this.dateListValueTemplate || this.dateListValueChildTemplate
-  }
-  @Input() tableFilterCellTemplate: TemplateRef<any> | undefined
-  @ContentChild('tableFilterCell') tableFilterCellChildTemplate: TemplateRef<any> | undefined
-  get _tableFilterCell(): TemplateRef<any> | undefined {
-    return this.tableFilterCellTemplate || this.tableFilterCellChildTemplate
-  }
-  @Input() dateTableFilterCellTemplate: TemplateRef<any> | undefined
-  @ContentChild('dateFilterCell') dateTableFilterCellChildTemplate: TemplateRef<any> | undefined
-  get _dateTableFilterCell(): TemplateRef<any> | undefined {
-    return this.dateTableFilterCellTemplate || this.dateTableFilterCellChildTemplate
-  }
-  @Input() relativeDateTableFilterCellTemplate: TemplateRef<any> | undefined
-  @ContentChild('relativeDateTableFilterCell') relativeDateTableFilterCellChildTemplate: TemplateRef<any> | undefined
-  get _relativeDateTableFilterCell(): TemplateRef<any> | undefined {
-    return this.relativeDateTableFilterCellTemplate || this.relativeDateTableFilterCellChildTemplate
-  }
-  @Input() translationKeyTableFilterCellTemplate: TemplateRef<any> | undefined
-  @ContentChild('translationKeyTableFilterCell') translationKeyTableFilterCellChildTemplate:
-    | TemplateRef<any>
-    | undefined
-  get _translationKeyTableFilterCell(): TemplateRef<any> | undefined {
-    return this.translationKeyTableFilterCellTemplate || this.translationKeyTableFilterCellChildTemplate
-  }
-  @Input() stringTableFilterCellTemplate: TemplateRef<any> | undefined
-  @ContentChild('stringTableFilterCell') stringTableFilterCellChildTemplate: TemplateRef<any> | undefined
-  get _stringTableFilterCell(): TemplateRef<any> | undefined {
-    return this.stringTableFilterCellTemplate || this.stringTableFilterCellChildTemplate
-  }
-  @Input() numberTableFilterCellTemplate: TemplateRef<any> | undefined
-  @ContentChild('numberTableFilterCell') numberTableFilterCellChildTemplate: TemplateRef<any> | undefined
-  get _numberTableFilterCell(): TemplateRef<any> | undefined {
-    return this.numberTableFilterCellTemplate || this.numberTableFilterCellChildTemplate
+  relativeDateTableCellTemplate = input<TemplateRef<any> | undefined>()
+  relativeDateTableCellChildTemplate = contentChild<TemplateRef<any>>('relativeDateTableCellTemplate')
+  get relativeDateTableCell(): TemplateRef<any> | undefined {
+    return this.relativeDateTableCellTemplate() || this.relativeDateTableCellChildTemplate()
   }
 
-  @Input() additionalActions: DataAction[] = []
-
-  @Output() filtered = new EventEmitter<Filter[]>()
-  @Output() sorted = new EventEmitter<Sort>()
-  @Output() deleteItem = new EventEmitter<RowListGridData>()
-  @Output() viewItem = new EventEmitter<RowListGridData>()
-  @Output() editItem = new EventEmitter<RowListGridData>()
-  @Output() selectionChanged = new EventEmitter<Row[]>()
-  @Output() pageChanged = new EventEmitter<number>()
-  @Output() pageSizeChanged = new EventEmitter<number>()
-  @Output() componentStateChanged = new EventEmitter<DataViewComponentState>()
-  isDeleteItemObserved: boolean | undefined
-  isViewItemObserved: boolean | undefined
-  IsEditItemObserved: boolean | undefined
-  firstColumnId: string | undefined
-
-  parentTemplates$: BehaviorSubject<QueryList<PrimeTemplate> | null | undefined> = new BehaviorSubject<
-    QueryList<PrimeTemplate> | null | undefined
-  >(undefined)
-  @Input()
-  set parentTemplates(value: QueryList<PrimeTemplate> | null | undefined) {
-    this.parentTemplates$.next(value)
+  listValueTemplate = input<TemplateRef<any> | undefined>()
+  listValueChildTemplate = contentChild<TemplateRef<any>>('listValueTemplate')
+  get listValue(): TemplateRef<any> | undefined {
+    return this.listValueTemplate() || this.listValueChildTemplate()
+  }
+  translationKeyListValueTemplate = input<TemplateRef<any> | undefined>()
+  translationKeyListValueChildTemplate = contentChild<TemplateRef<any>>('translationKeyListValueTemplate')
+  get translationKeyListValue(): TemplateRef<any> | undefined {
+    return this.translationKeyListValueTemplate() || this.translationKeyListValueChildTemplate()
+  }
+  numberListValueTemplate = input<TemplateRef<any> | undefined>()
+  numberListValueChildTemplate = contentChild<TemplateRef<any>>('numberListValueTemplate')
+  get numberListValue(): TemplateRef<any> | undefined {
+    return this.numberListValueTemplate() || this.numberListValueChildTemplate()
+  }
+  relativeDateListValueTemplate = input<TemplateRef<any> | undefined>()
+  relativeDateListValueChildTemplate = contentChild<TemplateRef<any>>('relativeDateListValueTemplate')
+  get relativeDateListValue(): TemplateRef<any> | undefined {
+    return this.relativeDateListValueTemplate() || this.relativeDateListValueChildTemplate()
+  }
+  stringListValueTemplate = input<TemplateRef<any> | undefined>()
+  stringListValueChildTemplate = contentChild<TemplateRef<any>>('stringListValueTemplate')
+  get stringListValue(): TemplateRef<any> | undefined {
+    return this.stringListValueTemplate() || this.stringListValueChildTemplate()
+  }
+  dateListValueTemplate = input<TemplateRef<any> | undefined>()
+  dateListValueChildTemplate = contentChild<TemplateRef<any>>('dateListValueTemplate')
+  get dateListValue(): TemplateRef<any> | undefined {
+    return this.dateListValueTemplate() || this.dateListValueChildTemplate()
+  }
+  tableFilterCellTemplate = input<TemplateRef<any> | undefined>()
+  tableFilterCellChildTemplate = contentChild<TemplateRef<any>>('tableFilterCellTemplate')
+  get tableFilterCell(): TemplateRef<any> | undefined {
+    return this.tableFilterCellTemplate() || this.tableFilterCellChildTemplate()
+  }
+  dateTableFilterCellTemplate = input<TemplateRef<any> | undefined>()
+  dateTableFilterCellChildTemplate = contentChild<TemplateRef<any>>('dateTableFilterCellTemplate')
+  get dateTableFilterCell(): TemplateRef<any> | undefined {
+    return this.dateTableFilterCellTemplate() || this.dateTableFilterCellChildTemplate()
+  }
+  relativeDateTableFilterCellTemplate = input<TemplateRef<any> | undefined>()
+  relativeDateTableFilterCellChildTemplate = contentChild<TemplateRef<any>>('relativeDateTableFilterCellTemplate')
+  get relativeDateTableFilterCell(): TemplateRef<any> | undefined {
+    return this.relativeDateTableFilterCellTemplate() || this.relativeDateTableFilterCellChildTemplate()
+  }
+  translationKeyTableFilterCellTemplate = input<TemplateRef<any> | undefined>()
+  translationKeyTableFilterCellChildTemplate = contentChild<TemplateRef<any>>('translationKeyTableFilterCellTemplate')
+  get translationKeyTableFilterCell(): TemplateRef<any> | undefined {
+    return this.translationKeyTableFilterCellTemplate() || this.translationKeyTableFilterCellChildTemplate()
+  }
+  stringTableFilterCellTemplate = input<TemplateRef<any> | undefined>()
+  stringTableFilterCellChildTemplate = contentChild<TemplateRef<any>>('stringTableFilterCellTemplate')
+  get stringTableFilterCell(): TemplateRef<any> | undefined {
+    return this.stringTableFilterCellTemplate() || this.stringTableFilterCellChildTemplate()
+  }
+  numberTableFilterCellTemplate = input<TemplateRef<any> | undefined>()
+  numberTableFilterCellChildTemplate = contentChild<TemplateRef<any>>('numberTableFilterCellTemplate')
+  get numberTableFilterCell(): TemplateRef<any> | undefined {
+    return this.numberTableFilterCellTemplate() || this.numberTableFilterCellChildTemplate()
   }
 
-  templates$: BehaviorSubject<QueryList<PrimeTemplate> | undefined> = new BehaviorSubject<
-    QueryList<PrimeTemplate> | undefined
-  >(undefined)
-  @ContentChildren(PrimeTemplate)
-  set templates(value: QueryList<PrimeTemplate> | undefined) {
-    this.templates$.next(value)
-  }
+  additionalActions = input<DataAction[]>([])
 
-  templatesForChildren$: Observable<QueryList<PrimeTemplate> | undefined> = combineLatest([
-    this.templates$,
-    this.parentTemplates$,
-  ]).pipe(
-    map(([t, pt]) => {
-      const ql = new QueryList<PrimeTemplate>()
-      ql.reset([...(t?.toArray() ?? []), ...(pt?.toArray() ?? [])])
-      return ql
-    })
-  )
+  filtered = output<Filter[]>()
+  sorted = output<Sort>()
+  deleteItem = observableOutput<RowListGridData>()
+  viewItem = observableOutput<RowListGridData>()
+  editItem = observableOutput<RowListGridData>()
+  selectionChanged = observableOutput<Row[]>()
+  pageChanged = output<number>()
+  pageSizeChanged = output<number>()
+  componentStateChanged = output<DataViewComponentState>()
+  firstColumnId = signal<string | undefined>(undefined)
 
+  parentTemplates = input<PrimeTemplate[] | null | undefined>()
+
+  templates = contentChildren(PrimeTemplate)
+
+  templatesForChildren = computed(() => {
+    const t = this.templates()
+    const pt = this.parentTemplates()
+
+    return [...t, ...(pt ?? [])]
+  })
+
+  // TODO: Fix when migrating InteractiveDataViewComponent
   get viewItemObserved(): boolean {
-    return this.injector.get('InteractiveDataViewComponent', null)?.viewItem.observed || this.viewItem.observed
+    return this.injector.get('InteractiveDataViewComponent', null)?.viewItem.observed || this.viewItem.observed()
   }
+  // TODO: Fix when migrating InteractiveDataViewComponent
   get editItemObserved(): boolean {
-    return this.injector.get('InteractiveDataViewComponent', null)?.editItem.observed || this.editItem.observed
+    return this.injector.get('InteractiveDataViewComponent', null)?.editItem.observed || this.editItem.observed()
   }
+  // TODO: Fix when migrating InteractiveDataViewComponent
   get deleteItemObserved(): boolean {
-    return this.injector.get('InteractiveDataViewComponent', null)?.deleteItem.observed || this.deleteItem.observed
+    return this.injector.get('InteractiveDataViewComponent', null)?.deleteItem.observed || this.deleteItem.observed()
   }
+  // TODO: Fix when migrating InteractiveDataViewComponent
   get selectionChangedObserved(): boolean {
     return (
       this.injector.get('InteractiveDataViewComponent', null)?.selectionChanged.observed ||
-      this.selectionChanged.observed
+      this.selectionChanged.observed()
     )
   }
 
+  constructor() {
+    effect(() => {
+      this.registerEventListenerForListGrid()
+    })
+
+    effect(() => {
+      this.registerEventListenerForDataTable()
+    })
+
+    effect(() => {
+      const filters = this.filters()
+      if (filters) {
+        this.filtered.emit(filters)
+      }
+    })
+
+    effect(() => {
+      const sortField = this.sortField()
+      const sortDirection = this.sortDirection()
+      if (sortField && sortDirection) {
+        this.sorted.emit({ sortColumn: sortField, sortDirection: sortDirection })
+      }
+    })
+
+    effect(() => {
+      const page = this.page()
+      if (page !== undefined) {
+        this.pageChanged.emit(page)
+      }
+    })
+
+    effect(() => {
+      const pageSize = this.pageSize()
+      if (pageSize !== undefined) {
+        this.pageSizeChanged.emit(pageSize)
+      }
+    })
+  }
+
   ngOnInit(): void {
-    this.firstColumnId = this.columns[0]?.id
+    const columns = this.columns()
+    if (columns && columns.length > 0) {
+      this.firstColumnId.set(columns[0]?.id)
+    }
 
     let dataTableComponentState$: Observable<DataTableComponentState | Record<string, never>> =
       this.dataTableComponentState$
     let dataListGridComponentState$: Observable<DataListGridComponentState | Record<string, never>> =
       this.dataListGridComponentState$
-    if (this.layout === 'table') {
+    if (this.layout() === 'table') {
       dataListGridComponentState$ = dataListGridComponentState$.pipe(startWith({}))
     } else {
       dataTableComponentState$ = dataTableComponentState$.pipe(startWith({}))
@@ -315,106 +318,25 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
       })
   }
 
-  ngAfterContentInit() {
-    this.templates$.value?.forEach((item) => {
-      switch (item.getType()) {
-        case 'stringTableCell':
-          this.stringTableCellChildTemplate = item.template
-          break
-        case 'numberTableCell':
-          this.numberTableCellChildTemplate = item.template
-          break
-        case 'dateTableCell':
-          this.dateTableCellChildTemplate = item.template
-          break
-        case 'tableCell':
-          this.tableCellChildTemplate = item.template
-          break
-        case 'translationKeyTableCell':
-          this.translationKeyTableCellChildTemplate = item.template
-          break
-        case 'gridItemSubtitleLines':
-          this.gridItemSubtitleLinesChildTemplate = item.template
-          break
-        case 'listItemSubtitleLines':
-          this.listItemSubtitleLinesChildTemplate = item.template
-          break
-        case 'gridItem':
-          this.gridItemChildTemplate = item.template
-          break
-        case 'listItem':
-          this.listItemChildTemplate = item.template
-          break
-        case 'relativeDateTableCell':
-          this.relativeDateTableCellChildTemplate = item.template
-          break
-        case 'listValue':
-          this.listValueChildTemplate = item.template
-          break
-        case 'translationKeyListValue':
-          this.translationKeyListValueChildTemplate = item.template
-          break
-        case 'numberListValue':
-          this.numberListValueChildTemplate = item.template
-          break
-        case 'relativeDateListValue':
-          this.relativeDateListValueChildTemplate = item.template
-          break
-        case 'stringListValue':
-          this.stringListValueChildTemplate = item.template
-          break
-        case 'dateListValue':
-          this.dateListValueChildTemplate = item.template
-          break
-        case 'tableFilterCell':
-          this.tableFilterCellChildTemplate = item.template
-          break
-        case 'dateTableFilterCell':
-          this.dateTableFilterCellChildTemplate = item.template
-          break
-        case 'relativeDateTableFilterCell':
-          this.relativeDateTableFilterCellChildTemplate = item.template
-          break
-        case 'translationKeyTableFilterCell':
-          this.translationKeyTableFilterCellChildTemplate = item.template
-          break
-        case 'stringTableFilterCell':
-          this.stringTableFilterCellChildTemplate = item.template
-          break
-        case 'numberTableFilterCell':
-          this.numberTableFilterCellChildTemplate = item.template
-          break
-      }
-    })
-  }
-
-  ngDoCheck(): void {
-    this.registerEventListenerForDataTable()
-    this.registerEventListenerForListGrid()
-  }
-
   registerEventListenerForListGrid() {
-    if (this.layout !== 'table') {
-      if (this.deleteItem.observed) {
-        this.isDeleteItemObserved = true
-        if (!this._dataListGridComponent?.deleteItem.observed) {
-          this._dataListGridComponent?.deleteItem.subscribe((event) => {
+    if (this.layout() !== 'table') {
+      if (this.deleteItem.observed()) {
+        if (!this.dataListGridComponent()?.deleteItem.observed()) {
+          this.dataListGridComponent()?.deleteItem.subscribe((event) => {
             this.deletingElement(event)
           })
         }
       }
-      if (this.viewItem.observed) {
-        this.isViewItemObserved = true
-        if (!this._dataListGridComponent?.viewItem.observed) {
-          this._dataListGridComponent?.viewItem.subscribe((event) => {
+      if (this.viewItem.observed()) {
+        if (!this.dataListGridComponent()?.viewItem.observed()) {
+          this.dataListGridComponent()?.viewItem.subscribe((event) => {
             this.viewingElement(event)
           })
         }
       }
-      if (this.editItem.observed) {
-        this.IsEditItemObserved = true
-        if (!this._dataListGridComponent?.editItem.observed) {
-          this._dataListGridComponent?.editItem.subscribe((event) => {
+      if (this.editItem.observed()) {
+        if (!this.dataListGridComponent()?.editItem.observed()) {
+          this.dataListGridComponent()?.editItem.subscribe((event) => {
             this.editingElement(event)
           })
         }
@@ -423,34 +345,31 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   }
 
   registerEventListenerForDataTable() {
-    if (this.layout === 'table') {
-      if (this.deleteItem.observed) {
-        this.isDeleteItemObserved = true
-        if (!this._dataTableComponent?.deleteTableRow.observed) {
-          this._dataTableComponent?.deleteTableRow.subscribe((event) => {
+    if (this.layout() === 'table') {
+      if (this.deleteItem.observed()) {
+        if (!this.dataTableComponent()?.deleteTableRow.observed()) {
+          this.dataTableComponent()?.deleteTableRow.subscribe((event) => {
             this.deletingElement(event)
           })
         }
       }
-      if (this.viewItem.observed) {
-        this.isViewItemObserved = true
-        if (!this._dataTableComponent?.viewTableRow.observed) {
-          this._dataTableComponent?.viewTableRow.subscribe((event) => {
+      if (this.viewItem.observed()) {
+        if (!this.dataTableComponent()?.viewTableRow.observed()) {
+          this.dataTableComponent()?.viewTableRow.subscribe((event) => {
             this.viewingElement(event)
           })
         }
       }
-      if (this.editItem.observed) {
-        this.IsEditItemObserved = true
-        if (!this._dataTableComponent?.editTableRow.observed) {
-          this._dataTableComponent?.editTableRow.subscribe((event) => {
+      if (this.editItem.observed()) {
+        if (!this.dataTableComponent()?.editTableRow.observed()) {
+          this.dataTableComponent()?.editTableRow.subscribe((event) => {
             this.editingElement(event)
           })
         }
       }
       if (this.selectionChangedObserved) {
-        if (!this._dataTableComponent?.selectionChanged.observed) {
-          this._dataTableComponent?.selectionChanged.subscribe((event) => {
+        if (!this.dataTableComponent()?.selectionChanged.observed()) {
+          this.dataTableComponent()?.selectionChanged.subscribe((event) => {
             this.onRowSelectionChange(event)
           })
         }
@@ -459,29 +378,27 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   }
 
   filtering(event: any) {
-    this.filters = event
-    this.filtered.emit(event)
+    this.filters.set(event)
   }
 
   sorting(event: any) {
-    this.sortDirection = event.sortDirection
-    this.sortField = event.sortColumn
-    this.sorted.emit(event)
+    this.sortDirection.set(event.sortDirection)
+    this.sortField.set(event.sortColumn)
   }
 
   deletingElement(event: any) {
-    if (this.isDeleteItemObserved) {
+    if (this.deleteItemObserved) {
       this.deleteItem.emit(event)
     }
   }
 
   viewingElement(event: any) {
-    if (this.isViewItemObserved) {
+    if (this.viewItemObserved) {
       this.viewItem.emit(event)
     }
   }
   editingElement(event: any) {
-    if (this.IsEditItemObserved) {
+    if (this.editItemObserved) {
       this.editItem.emit(event)
     }
   }
@@ -493,12 +410,10 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   }
 
   onPageChange(event: number) {
-    this.page = event
-    this.pageChanged.emit(event)
+    this.page.set(event)
   }
 
   onPageSizeChange(event: number) {
-    this.pageSize = event
-    this.pageSizeChanged.emit(event)
+    this.pageSize.set(event)
   }
 }
