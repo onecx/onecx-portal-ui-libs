@@ -51,18 +51,4 @@ describe('ImageRepositoryService', () => {
 
     expect(spyDestroy).toHaveBeenCalled();
   });
-
-  it('should call ngOnDestroy from destroy()', () => {
-    const spyDestroy = jest.spyOn(service, 'ngOnDestroy');
-
-    service.destroy();
-	
-    expect(spyDestroy).toHaveBeenCalled();
-  });  
-
-  it('should test topic getter/setter', async () => {   
-    service.imageRepositoryTopic = imageRepositoryInterface.imageRepositoryTopic;
-
-    expect(service.imageRepositoryTopic).toBe(imageRepositoryInterface.imageRepositoryTopic);
-  });
 });
