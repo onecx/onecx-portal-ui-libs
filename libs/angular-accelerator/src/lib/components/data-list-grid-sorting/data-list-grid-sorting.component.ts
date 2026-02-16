@@ -27,15 +27,16 @@ export class DataListGridSortingComponent {
   readonly componentStateChanged = output<DataListGridSortingComponentState>()
   readonly columnsChange = output<string[]>()
 
-  readonly dropdownOptions = computed<DataColumnNameId[]>(() =>
-    this.columns()
+  readonly dropdownOptions = computed<DataColumnNameId[]>(() => {
+    return this.columns()
       .filter((c) => !!c.sortable)
       .map((c) => ({ columnId: c.id, columnName: c.nameKey }))
-  )
+  })
 
-  readonly selectedSortingOption = computed<DataColumnNameId | undefined>(() =>
-    this.dropdownOptions().find((e) => e.columnId === this.sortField())
-  )
+  readonly selectedSortingOption = computed<DataColumnNameId | undefined>(() => {
+    const sortField = this.sortField()
+    return this.dropdownOptions().find((e) => e.columnId === sortField)
+  })
 
   constructor() {
     effect(() => {

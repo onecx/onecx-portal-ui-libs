@@ -1,30 +1,25 @@
 import {
-  AfterContentInit,
   Component,
-  ContentChild,
-  ContentChildren,
-  EventEmitter,
   Input,
   OnInit,
   Output,
-  QueryList,
+  Signal,
   TemplateRef,
-  ViewChild,
+  computed,
+  contentChild,
+  contentChildren,
+  effect,
   inject,
+  input,
+  model,
+  output,
+  signal,
+  untracked,
+  viewChild,
 } from '@angular/core'
 import { SlotService } from '@onecx/angular-remote-components'
 import { PrimeTemplate } from 'primeng/api'
-import {
-  BehaviorSubject,
-  Observable,
-  ReplaySubject,
-  combineLatest,
-  distinctUntilChanged,
-  map,
-  startWith,
-  timestamp,
-  withLatestFrom,
-} from 'rxjs'
+import { Observable, ReplaySubject, combineLatest, map, startWith, timestamp, withLatestFrom } from 'rxjs'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
@@ -45,6 +40,9 @@ import { DataListGridSortingComponentState } from '../data-list-grid-sorting/dat
 import { Row, Sort } from '../data-table/data-table.component'
 import { DataViewComponent, DataViewComponentState, RowListGridData } from '../data-view/data-view.component'
 import { FilterViewComponentState, FilterViewDisplayMode } from '../filter-view/filter-view.component'
+import { observableOutput } from '../../utils/observable-output.utils'
+import { toSignal } from '@angular/core/rxjs-interop'
+import { UntypedFormArray } from '@angular/forms'
 
 export type InteractiveDataViewComponentState = ColumnGroupSelectionComponentState &
   CustomGroupColumnSelectorComponentState &
@@ -64,17 +62,10 @@ export interface ColumnGroupData {
   styleUrls: ['./interactive-data-view.component.css'],
   providers: [{ provide: 'InteractiveDataViewComponent', useExisting: InteractiveDataViewComponent }],
 })
-export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
+export class InteractiveDataViewComponent implements OnInit {
   private readonly slotService = inject(SlotService)
 
-  _dataViewComponent: DataViewComponent | undefined
-  @ViewChild(DataViewComponent) set dataView(ref: DataViewComponent | undefined) {
-    this._dataViewComponent = ref
-    this.registerEventListenerForDataView()
-  }
-  get dataView(): DataViewComponent | undefined {
-    return this._dataViewComponent
-  }
+  dataViewComponent = viewChild(DataViewComponent)
 
   columnGroupSelectionComponentState$ = new ReplaySubject<ColumnGroupSelectionComponentState>(1)
   customGroupColumnSelectorComponentState$ = new ReplaySubject<CustomGroupColumnSelectorComponentState>(1)
@@ -83,298 +74,466 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   dataViewComponentState$ = new ReplaySubject<DataViewComponentState>(1)
   filterViewComponentState$ = new ReplaySubject<FilterViewComponentState>(1)
 
-  @Input() searchConfigPermission: string | string[] | undefined
-  @Input() deletePermission: string | string[] | undefined
-  @Input() editPermission: string | string[] | undefined
-  @Input() viewPermission: string | string[] | undefined
-  @Input() deleteActionVisibleField: string | undefined
-  @Input() deleteActionEnabledField: string | undefined
-  @Input() viewActionVisibleField: string | undefined
-  @Input() viewActionEnabledField: string | undefined
-  @Input() editActionVisibleField: string | undefined
-  @Input() editActionEnabledField: string | undefined
-  @Input() tableSelectionEnabledField: string | undefined
-  @Input() tableAllowSelectAll = true
-  @Input() name = 'Data'
-  @Input() titleLineId: string | undefined
-  @Input() subtitleLineIds: string[] = []
-  @Input() supportedViewLayouts: ('grid' | 'list' | 'table')[] = ['grid', 'list', 'table']
-  @Input() columns: DataTableColumn[] = []
-  @Input() emptyResultsMessage: string | undefined
-  @Input() clientSideSorting = true
-  @Input() clientSideFiltering = true
-  @Input() fallbackImage = 'placeholder.png'
-  @Input() filters: Filter[] = []
-  @Input() sortDirection: DataSortDirection = DataSortDirection.NONE
-  @Input() sortField: any = ''
-  @Input() sortStates: DataSortDirection[] = [
+  searchConfigPermission = input<string | string[] | undefined>(undefined)
+  deletePermission = input<string | string[] | undefined>(undefined)
+  editPermission = input<string | string[] | undefined>(undefined)
+  viewPermission = input<string | string[] | undefined>(undefined)
+  deleteActionVisibleField = input<string | undefined>(undefined)
+  deleteActionEnabledField = input<string | undefined>(undefined)
+  viewActionVisibleField = input<string | undefined>(undefined)
+  viewActionEnabledField = input<string | undefined>(undefined)
+  editActionVisibleField = input<string | undefined>(undefined)
+  editActionEnabledField = input<string | undefined>(undefined)
+  tableSelectionEnabledField = input<string | undefined>(undefined)
+  tableAllowSelectAll = input<boolean>(true)
+  name = input<string>('Data')
+  titleLineId = input<string | undefined>(undefined)
+  subtitleLineIds = input<string[] | undefined>(undefined)
+  supportedViewLayouts = input<('grid' | 'list' | 'table')[]>(['grid', 'list', 'table'])
+  columns = input<DataTableColumn[]>([])
+  emptyResultsMessage = input<string | undefined>(undefined)
+  clientSideSorting = input<boolean>(true)
+  clientSideFiltering = input<boolean>(true)
+  fallbackImage = input<string>('placeholder.png')
+  filters = model<Filter[]>([])
+  sortDirection = model<DataSortDirection>(DataSortDirection.NONE)
+  sortField = model<any>('')
+  sortStates = input<DataSortDirection[]>([
     DataSortDirection.ASCENDING,
     DataSortDirection.DESCENDING,
     DataSortDirection.NONE,
-  ]
-  @Input() pageSizes: number[] = [10, 25, 50]
-  @Input() pageSize: number | undefined
-  @Input() totalRecordsOnServer: number | undefined
-  @Input() layout: 'grid' | 'list' | 'table' = 'table'
-  @Input() defaultGroupKey = ''
-  @Input() customGroupKey = 'OCX_INTERACTIVE_DATA_VIEW.CUSTOM_GROUP'
-  @Input() groupSelectionNoGroupSelectedKey = 'OCX_INTERACTIVE_DATA_VIEW.NO_GROUP_SELECTED'
-  @Input() currentPageShowingKey = 'OCX_DATA_TABLE.SHOWING'
-  @Input() currentPageShowingWithTotalOnServerKey = 'OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER'
-  @Input() additionalActions: DataAction[] = []
-  @Input() listGridPaginator = true
-  @Input() tablePaginator = true
-  @Input() disableFilterView = true
-  @Input() filterViewDisplayMode: FilterViewDisplayMode = 'button'
-  @Input() filterViewChipStyleClass = ''
-  @Input() filterViewTableStyle: { [klass: string]: any } = { 'max-height': '50vh' }
-  @Input() filterViewPanelStyle: { [klass: string]: any } = { 'max-width': '90%' }
-  @Input() selectDisplayedChips: (filters: Filter[], columns: DataTableColumn[]) => Filter[] = (filters) =>
-    limit(filters, 3, { reverse: true })
-  @Input() page = 0
-  @Input() selectedRows: Row[] = []
-  displayedColumnKeys$ = new BehaviorSubject<string[]>([])
-  displayedColumns$: Observable<DataTableColumn[]> | undefined
-  @Input()
-  get displayedColumnKeys(): string[] {
-    return this.displayedColumnKeys$.getValue()
-  }
-  set displayedColumnKeys(value: string[]) {
-    this.displayedColumnKeys$.next(value)
-  }
-  @Input() frozenActionColumn = false
-  @Input() actionColumnPosition: 'left' | 'right' = 'right'
-  @Input() headerStyleClass: string | undefined
-  @Input() contentStyleClass: string | undefined
-  @ContentChild('tableCell') tableCell: TemplateRef<any> | undefined
-  primeNgTableCell: TemplateRef<any> | undefined
-  @ContentChild('dateTableCell') dateTableCell: TemplateRef<any> | undefined
-  primeNgDateTableCell: TemplateRef<any> | undefined
-
-  @ContentChild('relativeDateTableCell') relativeDateTableCell: TemplateRef<any> | undefined
-  primeNgRelativeDateTableCell: TemplateRef<any> | undefined
-
-  @ContentChild('translationKeyTableCell') translationKeyTableCell: TemplateRef<any> | undefined
-  primeNgTranslationKeyTableCell: TemplateRef<any> | undefined
-
-  @ContentChild('gridItemSubtitleLines') gridItemSubtitleLines: TemplateRef<any> | undefined
-  primeNgGridItemSubtitleLines: TemplateRef<any> | undefined
-  @ContentChild('listItemSubtitleLines') listItemSubtitleLines: TemplateRef<any> | undefined
-  primeNgListItemSubtitleLines: TemplateRef<any> | undefined
-  // TODO: Implement same fix for other templates and child components
-  @ContentChild('stringTableCell') stringTableCell: TemplateRef<any> | undefined
-  primeNgStringTableCell: TemplateRef<any> | undefined
-  @ContentChild('numberTableCell') numberTableCell: TemplateRef<any> | undefined
-  primeNgNumberTableCell: TemplateRef<any> | undefined
-  @ContentChild('gridItem') gridItem: TemplateRef<any> | undefined
-  primeNgGridItem: TemplateRef<any> | undefined
-  @ContentChild('listItem') listItem: TemplateRef<any> | undefined
-  primeNgListItem: TemplateRef<any> | undefined
-  @ContentChild('topCenter') topCenter: TemplateRef<any> | undefined
-  primeNgTopCenter: TemplateRef<any> | undefined
-  @ContentChild('listValue') listValue: TemplateRef<any> | undefined
-  primeNgListValue: TemplateRef<any> | undefined
-  @ContentChild('translationKeyListValue') translationKeyListValue: TemplateRef<any> | undefined
-  primeNgTranslationKeyListValue: TemplateRef<any> | undefined
-  @ContentChild('numberListValue') numberListValue: TemplateRef<any> | undefined
-  primeNgNumberListValue: TemplateRef<any> | undefined
-  @ContentChild('relativeDateListValue') relativeDateListValue: TemplateRef<any> | undefined
-  primeNgRelativeDateListValue: TemplateRef<any> | undefined
-  @ContentChild('stringListValue') stringListValue: TemplateRef<any> | undefined
-  primeNgStringListValue: TemplateRef<any> | undefined
-  @ContentChild('dateListValue') dateListValue: TemplateRef<any> | undefined
-  primeNgDateListValue: TemplateRef<any> | undefined
-  @ContentChild('tableFilterCell') tableFilterCell: TemplateRef<any> | undefined
-  primeNgTableFilterCell: TemplateRef<any> | undefined
-  @ContentChild('dateTableFilterCell') dateTableFilterCell: TemplateRef<any> | undefined
-  primeNgDateTableFilterCell: TemplateRef<any> | undefined
-  @ContentChild('relativeDateTableFilterCell') relativeDateTableFilterCell: TemplateRef<any> | undefined
-  primeNgRelativeDateTableFilterCell: TemplateRef<any> | undefined
-  @ContentChild('translationKeyTableFilterCell') translationKeyTableFilterCell: TemplateRef<any> | undefined
-  primeNgTranslationKeyTableFilterCell: TemplateRef<any> | undefined
-  @ContentChild('stringTableFilterCell') stringTableFilterCell: TemplateRef<any> | undefined
-  primeNgStringTableFilterCell: TemplateRef<any> | undefined
-  @ContentChild('numberTableFilterCell') numberTableFilterCell: TemplateRef<any> | undefined
-  primeNgNumberTableFilterCell: TemplateRef<any> | undefined
-
-  templates$: BehaviorSubject<QueryList<PrimeTemplate> | undefined> = new BehaviorSubject<
-    QueryList<PrimeTemplate> | undefined
-  >(undefined)
-  @ContentChildren(PrimeTemplate)
-  set templates(value: QueryList<PrimeTemplate> | undefined) {
-    this.templates$.next(value)
-  }
-
-  @Output() filtered = new EventEmitter<Filter[]>()
-  @Output() sorted = new EventEmitter<Sort>()
-  @Output() deleteItem = new EventEmitter<RowListGridData>()
-  @Output() viewItem = new EventEmitter<RowListGridData>()
-  @Output() editItem = new EventEmitter<RowListGridData>()
-  @Output() dataViewLayoutChange = new EventEmitter<'grid' | 'list' | 'table'>()
-  @Output() displayedColumnKeysChange = new EventEmitter<string[]>()
-  @Output() selectionChanged: EventEmitter<Row[]> = new EventEmitter()
-
-  @Output() pageChanged: EventEmitter<number> = new EventEmitter()
-  @Output() pageSizeChanged = new EventEmitter<number>()
-
-  @Output() componentStateChanged = new EventEmitter<InteractiveDataViewComponentState>()
-
-  selectedGroupKey$ = new BehaviorSubject<string | undefined>('')
-  get selectedGroupKey(): string | undefined {
-    return this.selectedGroupKey$.getValue()
-  }
-  set selectedGroupKey(value: string | undefined) {
-    this.selectedGroupKey$.next(value)
-  }
-  isDeleteItemObserved: boolean | undefined
-  isViewItemObserved: boolean | undefined
-  isEditItemObserved: boolean | undefined
-  firstColumnId: string | undefined
-
+  ])
+  pageSizes = input<number[]>([10, 25, 50])
+  pageSize = model<number | undefined>(undefined)
+  totalRecordsOnServer = input<number | undefined>(undefined)
+  layout = model<'grid' | 'list' | 'table'>('table')
+  defaultGroupKey = input<string>('')
+  customGroupKey = input<string>('OCX_INTERACTIVE_DATA_VIEW.CUSTOM_GROUP')
+  groupSelectionNoGroupSelectedKey = input<string>('OCX_INTERACTIVE_DATA_VIEW.NO_GROUP_SELECTED')
+  currentPageShowingKey = input<string>('OCX_DATA_TABLE.SHOWING')
+  currentPageShowingWithTotalOnServerKey = input<string>('OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER')
+  additionalActions = input<DataAction[]>([])
+  listGridPaginator = model<boolean>(true)
+  tablePaginator = model<boolean>(true)
   @Input()
   get paginator(): boolean {
-    return this.listGridPaginator && this.tablePaginator
+    return this.listGridPaginator() && this.tablePaginator()
   }
   set paginator(value: boolean) {
-    this.listGridPaginator = value
-    this.tablePaginator = value
+    this.listGridPaginator.set(value)
+    this.tablePaginator.set(value)
   }
+  disableFilterView = input<boolean>(true)
+  filterViewDisplayMode = input<FilterViewDisplayMode>('button')
+  filterViewChipStyleClass = input<string>('')
+  filterViewTableStyle = input<{ [klass: string]: any }>({ 'max-height': '50vh' })
+  filterViewPanelStyle = input<{ [klass: string]: any }>({ 'max-width': '90%' })
+  selectDisplayedChips = input<(filters: Filter[], columns: DataTableColumn[]) => Filter[]>((filters) =>
+    limit(filters, 3, { reverse: true })
+  )
+  page = model<number>(0)
+  selectedRows = input<Row[]>([])
+  displayedColumnKeys = model<string[]>([])
+  displayedColumns = computed(() => {
+    const columnKeys = this.displayedColumnKeys()
+    return (
+      (columnKeys.map((key) => this.columns().find((col) => col.id === key)).filter((d) => d) as DataTableColumn[]) ??
+      []
+    )
+  })
+  frozenActionColumn = model<boolean>(false)
+  actionColumnPosition = model<'left' | 'right'>('right')
+  headerStyleClass = input<string | undefined>(undefined)
+  contentStyleClass = input<string | undefined>(undefined)
 
-  get _gridItemSubtitleLines(): TemplateRef<any> | undefined {
-    return this.gridItemSubtitleLines
-  }
-  get _listItemSubtitleLines(): TemplateRef<any> | undefined {
-    return this.listItemSubtitleLines
-  }
-  get _tableCell(): TemplateRef<any> | undefined {
-    return this.tableCell
-  }
-  get _stringTableCell(): TemplateRef<any> | undefined {
-    return this.stringTableCell
-  }
-  get _numberTableCell(): TemplateRef<any> | undefined {
-    return this.numberTableCell
-  }
-  get _dateTableCell(): TemplateRef<any> | undefined {
-    return this.dateTableCell
-  }
-  get _relativeDateTableCell(): TemplateRef<any> | undefined {
-    return this.relativeDateTableCell
-  }
-  get _translationKeyTableCell(): TemplateRef<any> | undefined {
-    return this.translationKeyTableCell
-  }
-  get _gridItem(): TemplateRef<any> | undefined {
-    return this.gridItem
-  }
-  get _listItem(): TemplateRef<any> | undefined {
-    return this.listItem
-  }
-  get _listValue(): TemplateRef<any> | undefined {
-    return this.listValue
-  }
-  get _translationKeyListValue(): TemplateRef<any> | undefined {
-    return this.translationKeyListValue
-  }
-  get _numberListValue(): TemplateRef<any> | undefined {
-    return this.numberListValue
-  }
-  get _relativeDateListValue(): TemplateRef<any> | undefined {
-    return this.relativeDateListValue
-  }
-  get _stringListValue(): TemplateRef<any> | undefined {
-    return this.stringListValue
-  }
-  get _dateListValue(): TemplateRef<any> | undefined {
-    return this.dateListValue
-  }
-  get _tableFilterCell(): TemplateRef<any> | undefined {
-    return this.tableFilterCell
-  }
-  get _dateTableFilterCell(): TemplateRef<any> | undefined {
-    return this.dateTableFilterCell
-  }
-  get _relativeDateTableFilterCell(): TemplateRef<any> | undefined {
-    return this.relativeDateTableFilterCell
-  }
-  get _translationKeyTableFilterCell(): TemplateRef<any> | undefined {
-    return this.translationKeyTableFilterCell
-  }
-  get _stringTableFilterCell(): TemplateRef<any> | undefined {
-    return this.stringTableFilterCell
-  }
-  get _numberTableFilterCell(): TemplateRef<any> | undefined {
-    return this.numberTableFilterCell
-  }
+  childTableCell = contentChild<TemplateRef<any> | undefined>('tableCell')
+  primeNgTableCell = computed(() => {
+    const templates = this.templates()
+    const tableCellTemplate = templates.find((t) => t.getType() === 'tableCell')
+    return tableCellTemplate?.template ?? undefined
+  })
+  _tableCell = computed(() => {
+    const primeNgTableCell = this.primeNgTableCell()
+    const childTableCell = this.childTableCell()
+    return primeNgTableCell ?? childTableCell ?? undefined
+  })
 
-  _data: RowListGridData[] = []
-  @Input()
-  get data(): RowListGridData[] {
-    return this._data
-  }
-  set data(value: RowListGridData[]) {
-    this._data = value
-  }
+  childDateTableCell = contentChild<TemplateRef<any> | undefined>('dateTableCell')
+  primeNgDateTableCell = computed(() => {
+    const templates = this.templates()
+    const dateTableCellTemplate = templates.find((t) => t.getType() === 'dateTableCell')
+    return dateTableCellTemplate?.template ?? undefined
+  })
+  _dateTableCell = computed(() => {
+    const primeNgDateTableCell = this.primeNgDateTableCell()
+    const childDateTableCell = this.childDateTableCell()
+    return primeNgDateTableCell ?? childDateTableCell ?? undefined
+  })
 
-  columnGroupSlotName = 'onecx-column-group-selection'
+  childRelativeDateTableCell = contentChild<TemplateRef<any> | undefined>('relativeDateTableCell')
+  primeNgRelativeDateTableCell = computed(() => {
+    const templates = this.templates()
+    const relativeDateTableCellTemplate = templates.find((t) => t.getType() === 'relativeDateTableCell')
+    return relativeDateTableCellTemplate?.template ?? undefined
+  })
+  _relativeDateTableCell = computed(() => {
+    const primeNgRelativeDateTableCell = this.primeNgRelativeDateTableCell()
+    const childRelativeDateTableCell = this.childRelativeDateTableCell()
+    return primeNgRelativeDateTableCell ?? childRelativeDateTableCell ?? undefined
+  })
+
+  childTranslationKeyTableCell = contentChild<TemplateRef<any> | undefined>('translationKeyTableCell')
+  primeNgTranslationKeyTableCell = computed(() => {
+    const templates = this.templates()
+    const translationKeyTableCellTemplate = templates.find((t) => t.getType() === 'translationKeyTableCell')
+    return translationKeyTableCellTemplate?.template ?? undefined
+  })
+  _translationKeyTableCell = computed(() => {
+    const primeNgTranslationKeyTableCell = this.primeNgTranslationKeyTableCell()
+    const childTranslationKeyTableCell = this.childTranslationKeyTableCell()
+    return primeNgTranslationKeyTableCell ?? childTranslationKeyTableCell ?? undefined
+  })
+
+  childGridItemSubtitleLines = contentChild<TemplateRef<any> | undefined>('gridItemSubtitleLines')
+  primeNgGridItemSubtitleLines = computed(() => {
+    const templates = this.templates()
+    const gridItemSubtitleLinesTemplate = templates.find((t) => t.getType() === 'gridItemSubtitleLines')
+    return gridItemSubtitleLinesTemplate?.template ?? undefined
+  })
+  _gridItemSubtitleLines = computed(() => {
+    const primeNgGridItemSubtitleLines = this.primeNgGridItemSubtitleLines()
+    const childGridItemSubtitleLines = this.childGridItemSubtitleLines()
+    return primeNgGridItemSubtitleLines ?? childGridItemSubtitleLines ?? undefined
+  })
+
+  childListItemSubtitleLines = contentChild<TemplateRef<any> | undefined>('listItemSubtitleLines')
+  primeNgListItemSubtitleLines = computed(() => {
+    const templates = this.templates()
+    const listItemSubtitleLinesTemplate = templates.find((t) => t.getType() === 'listItemSubtitleLines')
+    return listItemSubtitleLinesTemplate?.template ?? undefined
+  })
+  _listItemSubtitleLines = computed(() => {
+    const primeNgListItemSubtitleLines = this.primeNgListItemSubtitleLines()
+    const childListItemSubtitleLines = this.childListItemSubtitleLines()
+    return primeNgListItemSubtitleLines ?? childListItemSubtitleLines ?? undefined
+  })
+
+  childStringTableCell = contentChild<TemplateRef<any> | undefined>('stringTableCell')
+  primeNgStringTableCell = computed(() => {
+    const templates = this.templates()
+    const stringTableCellTemplate = templates.find((t) => t.getType() === 'stringTableCell')
+    return stringTableCellTemplate?.template ?? undefined
+  })
+  _stringTableCell = computed(() => {
+    const primeNgStringTableCell = this.primeNgStringTableCell()
+    const childStringTableCell = this.childStringTableCell()
+    return primeNgStringTableCell ?? childStringTableCell ?? undefined
+  })
+
+  childNumberTableCell = contentChild<TemplateRef<any> | undefined>('numberTableCell')
+  primeNgNumberTableCell = computed(() => {
+    const templates = this.templates()
+    const numberTableCellTemplate = templates.find((t) => t.getType() === 'numberTableCell')
+    return numberTableCellTemplate?.template ?? undefined
+  })
+  _numberTableCell = computed(() => {
+    const primeNgNumberTableCell = this.primeNgNumberTableCell()
+    const childNumberTableCell = this.childNumberTableCell()
+    return primeNgNumberTableCell ?? childNumberTableCell ?? undefined
+  })
+
+  childGridItem = contentChild<TemplateRef<any> | undefined>('gridItem')
+  primeNgGridItem = computed(() => {
+    const templates = this.templates()
+    const gridItemTemplate = templates.find((t) => t.getType() === 'gridItem')
+    return gridItemTemplate?.template ?? undefined
+  })
+  _gridItem = computed(() => {
+    const primeNgGridItem = this.primeNgGridItem()
+    const childGridItem = this.childGridItem()
+    return primeNgGridItem ?? childGridItem ?? undefined
+  })
+
+  childListItem = contentChild<TemplateRef<any> | undefined>('listItem')
+  primeNgListItem = computed(() => {
+    const templates = this.templates()
+    const listItemTemplate = templates.find((t) => t.getType() === 'listItem')
+    return listItemTemplate?.template ?? undefined
+  })
+  _listItem = computed(() => {
+    const primeNgListItem = this.primeNgListItem()
+    const childListItem = this.childListItem()
+    return primeNgListItem ?? childListItem ?? undefined
+  })
+
+  childTopCenter = contentChild<TemplateRef<any> | undefined>('topCenter')
+  primeNgTopCenter = computed(() => {
+    const templates = this.templates()
+    const topCenterTemplate = templates.find((t) => t.getType() === 'topCenter')
+    return topCenterTemplate?.template ?? undefined
+  })
+  _topCenter = computed(() => {
+    const primeNgTopCenter = this.primeNgTopCenter()
+    const childTopCenter = this.childTopCenter()
+    return primeNgTopCenter ?? childTopCenter ?? undefined
+  })
+
+  childListValue = contentChild<TemplateRef<any> | undefined>('listValue')
+  primeNgListValue = computed(() => {
+    const templates = this.templates()
+    const listValueTemplate = templates.find((t) => t.getType() === 'listValue')
+    return listValueTemplate?.template ?? undefined
+  })
+  _listValue = computed(() => {
+    const primeNgListValue = this.primeNgListValue()
+    const childListValue = this.childListValue()
+    return primeNgListValue ?? childListValue ?? undefined
+  })
+
+  childTranslationKeyListValue = contentChild<TemplateRef<any> | undefined>('translationKeyListValue')
+  primeNgTranslationKeyListValue = computed(() => {
+    const templates = this.templates()
+    const translationKeyListValueTemplate = templates.find((t) => t.getType() === 'translationKeyListValue')
+    return translationKeyListValueTemplate?.template ?? undefined
+  })
+  _translationKeyListValue = computed(() => {
+    const primeNgTranslationKeyListValue = this.primeNgTranslationKeyListValue()
+    const childTranslationKeyListValue = this.childTranslationKeyListValue()
+    return primeNgTranslationKeyListValue ?? childTranslationKeyListValue ?? undefined
+  })
+
+  childNumberListValue = contentChild<TemplateRef<any> | undefined>('numberListValue')
+  primeNgNumberListValue = computed(() => {
+    const templates = this.templates()
+    const numberListValueTemplate = templates.find((t) => t.getType() === 'numberListValue')
+    return numberListValueTemplate?.template ?? undefined
+  })
+  _numberListValue = computed(() => {
+    const primeNgNumberListValue = this.primeNgNumberListValue()
+    const childNumberListValue = this.childNumberListValue()
+    return primeNgNumberListValue ?? childNumberListValue ?? undefined
+  })
+
+  childRelativeDateListValue = contentChild<TemplateRef<any> | undefined>('relativeDateListValue')
+  primeNgRelativeDateListValue = computed(() => {
+    const templates = this.templates()
+    const relativeDateListValueTemplate = templates.find((t) => t.getType() === 'relativeDateListValue')
+    return relativeDateListValueTemplate?.template ?? undefined
+  })
+  _relativeDateListValue = computed(() => {
+    const primeNgRelativeDateListValue = this.primeNgRelativeDateListValue()
+    const childRelativeDateListValue = this.childRelativeDateListValue()
+    return primeNgRelativeDateListValue ?? childRelativeDateListValue ?? undefined
+  })
+
+  childStringListValue = contentChild<TemplateRef<any> | undefined>('stringListValue')
+  primeNgStringListValue = computed(() => {
+    const templates = this.templates()
+    const stringListValueTemplate = templates.find((t) => t.getType() === 'stringListValue')
+    return stringListValueTemplate?.template ?? undefined
+  })
+  _stringListValue = computed(() => {
+    const primeNgStringListValue = this.primeNgStringListValue()
+    const childStringListValue = this.childStringListValue()
+    return primeNgStringListValue ?? childStringListValue ?? undefined
+  })
+
+  childDateListValue = contentChild<TemplateRef<any> | undefined>('dateListValue')
+  primeNgDateListValue = computed(() => {
+    const templates = this.templates()
+    const dateListValueTemplate = templates.find((t) => t.getType() === 'dateListValue')
+    return dateListValueTemplate?.template ?? undefined
+  })
+  _dateListValue = computed(() => {
+    const primeNgDateListValue = this.primeNgDateListValue()
+    const childDateListValue = this.childDateListValue()
+    return primeNgDateListValue ?? childDateListValue ?? undefined
+  })
+
+  childTableFilterCell = contentChild<TemplateRef<any> | undefined>('tableFilterCell')
+  primeNgTableFilterCell = computed(() => {
+    const templates = this.templates()
+    const tableFilterCellTemplate = templates.find((t) => t.getType() === 'tableFilterCell')
+    return tableFilterCellTemplate?.template ?? undefined
+  })
+  _tableFilterCell = computed(() => {
+    const primeNgTableFilterCell = this.primeNgTableFilterCell()
+    const childTableFilterCell = this.childTableFilterCell()
+    return primeNgTableFilterCell ?? childTableFilterCell ?? undefined
+  })
+
+  childDateTableFilterCell = contentChild<TemplateRef<any> | undefined>('dateTableFilterCell')
+  primeNgDateTableFilterCell = computed(() => {
+    const templates = this.templates()
+    const dateTableFilterCellTemplate = templates.find((t) => t.getType() === 'dateTableFilterCell')
+    return dateTableFilterCellTemplate?.template ?? undefined
+  })
+  _dateTableFilterCell = computed(() => {
+    const primeNgDateTableFilterCell = this.primeNgDateTableFilterCell()
+    const childDateTableFilterCell = this.childDateTableFilterCell()
+    return primeNgDateTableFilterCell ?? childDateTableFilterCell ?? undefined
+  })
+
+  childRelativeDateTableFilterCell = contentChild<TemplateRef<any> | undefined>('relativeDateTableFilterCell')
+  primeNgRelativeDateTableFilterCell = computed(() => {
+    const templates = this.templates()
+    const relativeDateTableFilterCellTemplate = templates.find((t) => t.getType() === 'relativeDateTableFilterCell')
+    return relativeDateTableFilterCellTemplate?.template ?? undefined
+  })
+  _relativeDateTableFilterCell = computed(() => {
+    const primeNgRelativeDateTableFilterCell = this.primeNgRelativeDateTableFilterCell()
+    const childRelativeDateTableFilterCell = this.childRelativeDateTableFilterCell()
+    return primeNgRelativeDateTableFilterCell ?? childRelativeDateTableFilterCell ?? undefined
+  })
+
+  childTranslationKeyTableFilterCell = contentChild<TemplateRef<any> | undefined>('translationKeyTableFilterCell')
+  primeNgTranslationKeyTableFilterCell = computed(() => {
+    const templates = this.templates()
+    const translationKeyTableFilterCellTemplate = templates.find((t) => t.getType() === 'translationKeyTableFilterCell')
+    return translationKeyTableFilterCellTemplate?.template ?? undefined
+  })
+  _translationKeyTableFilterCell = computed(() => {
+    const primeNgTranslationKeyTableFilterCell = this.primeNgTranslationKeyTableFilterCell()
+    const childTranslationKeyTableFilterCell = this.childTranslationKeyTableFilterCell()
+    return primeNgTranslationKeyTableFilterCell ?? childTranslationKeyTableFilterCell ?? undefined
+  })
+
+  childStringTableFilterCell = contentChild<TemplateRef<any> | undefined>('stringTableFilterCell')
+  primeNgStringTableFilterCell = computed(() => {
+    const templates = this.templates()
+    const stringTableFilterCellTemplate = templates.find((t) => t.getType() === 'stringTableFilterCell')
+    return stringTableFilterCellTemplate?.template ?? undefined
+  })
+  _stringTableFilterCell = computed(() => {
+    const primeNgStringTableFilterCell = this.primeNgStringTableFilterCell()
+    const childStringTableFilterCell = this.childStringTableFilterCell()
+    return primeNgStringTableFilterCell ?? childStringTableFilterCell ?? undefined
+  })
+
+  childNumberTableFilterCell = contentChild<TemplateRef<any> | undefined>('numberTableFilterCell')
+  primeNgNumberTableFilterCell = computed(() => {
+    const templates = this.templates()
+    const numberTableFilterCellTemplate = templates.find((t) => t.getType() === 'numberTableFilterCell')
+    return numberTableFilterCellTemplate?.template ?? undefined
+  })
+  _numberTableFilterCell = computed(() => {
+    const primeNgNumberTableFilterCell = this.primeNgNumberTableFilterCell()
+    const childNumberTableFilterCell = this.childNumberTableFilterCell()
+    return primeNgNumberTableFilterCell ?? childNumberTableFilterCell ?? undefined
+  })
+
+  templates = contentChildren<PrimeTemplate>(PrimeTemplate)
+
+  filtered = output<Filter[]>()
+  sorted = output<Sort>()
+  @Output() deleteItem = observableOutput<RowListGridData>()
+  @Output() viewItem = observableOutput<RowListGridData>()
+  @Output() editItem = observableOutput<RowListGridData>()
+  @Output() selectionChanged = observableOutput<Row[]>()
+  dataViewLayoutChange = output<'grid' | 'list' | 'table'>()
+  displayedColumnKeysChange = output<string[]>()
+
+  pageChanged = output<number>()
+  pageSizeChanged = output<number>()
+
+  componentStateChanged = output<InteractiveDataViewComponentState>()
+
+  selectedGroupKey = signal<string | undefined>(undefined)
+
+  data = input<RowListGridData[]>([])
+
+  readonly columnGroupSlotName = 'onecx-column-group-selection'
   isColumnGroupSelectionComponentDefined$: Observable<boolean>
-  groupSelectionChangedSlotEmitter = new EventEmitter<ColumnGroupData | undefined>()
+  isColumnGroupSelectionComponentDefined: Signal<boolean | undefined>
+  groupSelectionChangedSlotEmitter = output<ColumnGroupData | undefined>()
 
   constructor() {
     this.isColumnGroupSelectionComponentDefined$ = this.slotService
       .isSomeComponentDefinedForSlot(this.columnGroupSlotName)
       .pipe(startWith(true))
 
+    this.isColumnGroupSelectionComponentDefined = toSignal(this.isColumnGroupSelectionComponentDefined$)
+
+    effect(() => {
+      this.registerEventListenerForDataView()
+    })
+
+    effect(() => {
+      const filters = this.filters()
+      this.filtered.emit(filters)
+    })
+
+    effect(() => {
+      const sortField = this.sortField()
+      const sortDirection = this.sortDirection()
+      this.sorted.emit({ sortColumn: sortField, sortDirection })
+    })
+
+    effect(() => {
+      const layout = this.layout()
+      this.dataViewLayoutChange.emit(layout)
+    })
+
+    effect(() => {
+      const page = this.page()
+      this.pageChanged.emit(page)
+    })
+
+    effect(() => {
+      const pageSize = this.pageSize()
+      if (!pageSize) {
+        return
+      }
+      this.pageSizeChanged.emit(pageSize)
+    })
+
+    effect(() => {
+      const displayedColumnKeys = this.displayedColumnKeys()
+      this.displayedColumnKeysChange.emit(displayedColumnKeys)
+    })
+
+    effect(() => {
+      this.layout()
+      untracked(() => {
+        const columnGroupComponentDefined = this.isColumnGroupSelectionComponentDefined()
+        if (columnGroupComponentDefined) {
+          if (
+            !(
+              this.columns().find((c) => c.nameKey === this.selectedGroupKey()) ||
+              this.selectedGroupKey() === this.customGroupKey()
+            )
+          ) {
+            this.selectedGroupKey.set(undefined)
+          }
+        }
+      })
+    })
+
     this.groupSelectionChangedSlotEmitter.subscribe((event: ColumnGroupData | undefined) => {
       event ??= {
-        activeColumns: this.getDisplayedColumns(),
-        groupKey: this.selectedGroupKey ?? this.defaultGroupKey,
+        activeColumns: this.displayedColumns(),
+        groupKey: this.selectedGroupKey() ?? this.defaultGroupKey(),
       }
-      this.displayedColumnKeys$.next(event.activeColumns.map((col) => col.id))
-      this.selectedGroupKey$.next(event.groupKey)
-      this.displayedColumnKeysChange.emit(this.displayedColumnKeys)
+      const displayedColumnKeys = event.activeColumns.map((col) => col.id)
+      this.displayedColumnKeys.set(displayedColumnKeys)
+      this.selectedGroupKey.set(event.groupKey)
       this.columnGroupSelectionComponentState$.next({
         activeColumnGroupKey: event.groupKey,
         displayedColumns: event.activeColumns,
       })
     })
-
-    this.dataViewLayoutChange
-      .pipe(withLatestFrom(this.isColumnGroupSelectionComponentDefined$))
-      .subscribe(([_, columnGroupComponentDefined]) => {
-        if (columnGroupComponentDefined) {
-          if (
-            !(
-              this.columns.find((c) => c.nameKey === this.selectedGroupKey) ||
-              this.selectedGroupKey === this.customGroupKey
-            )
-          ) {
-            this.selectedGroupKey$.next(undefined)
-          }
-        }
-      })
   }
 
   ngOnInit(): void {
-    this.selectedGroupKey = this.defaultGroupKey
-    if (this.defaultGroupKey && this.defaultGroupKey !== this.customGroupKey) {
-      this.displayedColumnKeys = this.columns
-        .filter((column) => column.predefinedGroupKeys?.includes(this.defaultGroupKey))
-        .map((column) => column.id)
-    }
-    this.displayedColumns$ = this.displayedColumnKeys$.pipe(
-      distinctUntilChanged((prev, curr) => prev.length === curr.length && prev.every((v, i) => curr[i] === v)),
-      map(
-        (columnKeys) =>
-          (columnKeys.map((key) => this.columns.find((col) => col.id === key)).filter((d) => d) as DataTableColumn[]) ??
-          []
+    this.selectedGroupKey.set(this.defaultGroupKey())
+
+    if (this.defaultGroupKey() && this.defaultGroupKey() !== this.customGroupKey()) {
+      this.displayedColumnKeys.set(
+        this.columns()
+          .filter((column) => column.predefinedGroupKeys?.includes(this.defaultGroupKey()))
+          .map((column) => column.id)
       )
-    )
-    this.displayedColumnKeysChange.emit(this.displayedColumnKeys)
-    if (!this.groupSelectionNoGroupSelectedKey) {
-      this.groupSelectionNoGroupSelectedKey = 'OCX_INTERACTIVE_DATA_VIEW.NO_GROUP_SELECTED'
     }
-    this.firstColumnId = this.columns[0]?.id
 
     let dataListGridSortingComponentState$: Observable<DataListGridSortingComponentState | Record<string, never>> =
       this.dataListGridSortingComponentState$
@@ -384,33 +543,33 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
       CustomGroupColumnSelectorComponentState | Record<string, never>
     > = this.customGroupColumnSelectorComponentState$
 
-    if (this.layout === 'table') {
+    if (this.layout() === 'table') {
       dataListGridSortingComponentState$ = dataListGridSortingComponentState$.pipe(startWith({}))
     } else {
       columnGroupSelectionComponentState$ = columnGroupSelectionComponentState$.pipe(
         startWith({
-          activeColumnGroupKey: this.selectedGroupKey,
-          displayedColumns: this.getDisplayedColumns(),
+          activeColumnGroupKey: this.selectedGroupKey(),
+          displayedColumns: this.displayedColumns(),
         })
       )
       customGroupColumnSelectorComponentState$ = customGroupColumnSelectorComponentState$.pipe(
         startWith({
           actionColumnConfig: {
-            frozen: this.frozenActionColumn,
-            position: this.actionColumnPosition,
+            frozen: this.frozenActionColumn(),
+            position: this.actionColumnPosition(),
           },
-          displayedColumns: this.getDisplayedColumns(),
-          activeColumnGroupKey: this.selectedGroupKey,
+          displayedColumns: this.displayedColumns(),
+          activeColumnGroupKey: this.selectedGroupKey(),
         })
       )
     }
 
     let filterViewComponentState$: Observable<FilterViewComponentState | Record<string, never>> =
       this.filterViewComponentState$
-    if (this.disableFilterView) {
+    if (this.disableFilterView()) {
       filterViewComponentState$ = filterViewComponentState$.pipe(
         startWith({
-          filters: this.filters,
+          filters: this.filters(),
         })
       )
     }
@@ -433,160 +592,76 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
       })
   }
 
-  ngAfterContentInit() {
-    this.templates$.value?.forEach((item) => {
-      switch (item.getType()) {
-        case 'tableCell':
-          this.primeNgTableCell = item.template
-          break
-        case 'dateTableCell':
-          this.primeNgDateTableCell = item.template
-          break
-        case 'relativeDateTableCell':
-          this.primeNgRelativeDateTableCell = item.template
-          break
-        case 'translationKeyTableCell':
-          this.primeNgTranslationKeyTableCell = item.template
-          break
-        case 'gridItemSubtitleLines':
-          this.primeNgGridItemSubtitleLines = item.template
-          break
-        case 'listItemSubtitleLines':
-          this.primeNgListItemSubtitleLines = item.template
-          break
-        case 'stringTableCell':
-          this.primeNgStringTableCell = item.template
-          break
-        case 'numberTableCell':
-          this.primeNgNumberTableCell = item.template
-          break
-        case 'gridItem':
-          this.primeNgGridItem = item.template
-          break
-        case 'listItem':
-          this.primeNgListItem = item.template
-          break
-        case 'topCenter':
-          this.primeNgTopCenter = item.template
-          break
-        case 'listValue':
-          this.primeNgListValue = item.template
-          break
-        case 'translationKeyListValue':
-          this.primeNgTranslationKeyListValue = item.template
-          break
-        case 'numberListValue':
-          this.primeNgNumberListValue = item.template
-          break
-        case 'relativeDateListValue':
-          this.primeNgRelativeDateListValue = item.template
-          break
-        case 'stringListValue':
-          this.primeNgStringListValue = item.template
-          break
-        case 'dateListValue':
-          this.primeNgDateListValue = item.template
-          break
-        case 'tableFilterCell':
-          this.primeNgTableFilterCell = item.template
-          break
-        case 'dateTableFilterCell':
-          this.primeNgDateTableFilterCell = item.template
-          break
-        case 'relativeDateTableFilterCell':
-          this.primeNgRelativeDateTableFilterCell = item.template
-          break
-        case 'translationKeyTableFilterCell':
-          this.primeNgTranslationKeyTableFilterCell = item.template
-          break
-        case 'stringTableFilterCell':
-          this.primeNgStringTableFilterCell = item.template
-          break
-        case 'numberTableFilterCell':
-          this.primeNgNumberTableFilterCell = item.template
-          break
-      }
-    })
-  }
-
   filtering(event: any) {
-    this.filters = event
-    this.filtered.emit(event)
+    this.filters.set(event)
   }
 
   sorting(event: any) {
-    this.sortDirection = event.sortDirection
-    this.sortField = event.sortColumn
-    this.sorted.emit(event)
+    this.sortDirection.set(event.sortDirection)
+    this.sortField.set(event.sortColumn)
   }
 
   onDeleteElement(element: RowListGridData) {
-    if (this.isDeleteItemObserved) {
+    if (this.deleteItem.observed()) {
       this.deleteItem.emit(element)
     }
   }
 
   onViewElement(element: RowListGridData) {
-    if (this.isViewItemObserved) {
+    if (this.viewItem.observed()) {
       this.viewItem.emit(element)
     }
   }
 
   onEditElement(element: RowListGridData) {
-    if (this.isEditItemObserved) {
+    if (this.editItem.observed()) {
       this.editItem.emit(element)
     }
   }
 
   onDataViewLayoutChange(layout: 'grid' | 'list' | 'table') {
-    this.layout = layout
-    this.dataViewLayoutChange.emit(layout)
+    this.layout.set(layout)
   }
 
   onSortChange($event: any) {
-    this.sortField = $event
-    this.sorted.emit({ sortColumn: this.sortField, sortDirection: this.sortDirection })
+    this.sortField.set($event)
   }
 
   onSortDirectionChange($event: any) {
-    this.sortDirection = $event
-    this.sorted.emit({ sortColumn: this.sortField, sortDirection: this.sortDirection })
+    this.sortDirection.set($event)
   }
 
   onColumnGroupSelectionChange(event: GroupSelectionChangedEvent) {
-    this.displayedColumnKeys = event.activeColumns.map((col) => col.id)
-    this.selectedGroupKey = event.groupKey
-    this.displayedColumnKeysChange.emit(this.displayedColumnKeys)
+    const displayedColumnKeys = event.activeColumns.map((col) => col.id)
+    this.displayedColumnKeys.set(displayedColumnKeys)
+    this.selectedGroupKey.set(event.groupKey)
   }
 
   registerEventListenerForDataView() {
-    if (this.deleteItem.observed) {
-      this.isDeleteItemObserved = true
-      if (!this._dataViewComponent?.deleteItem.observed) {
-        this._dataViewComponent?.deleteItem.subscribe((event) => {
+    if (this.deleteItem.observed()) {
+      if (!this.dataViewComponent()?.deleteItem.observed()) {
+        this.dataViewComponent()?.deleteItem.subscribe((event) => {
           this.onDeleteElement(event)
         })
       }
     }
-    if (this.viewItem.observed) {
-      this.isViewItemObserved = true
-      if (!this._dataViewComponent?.viewItem.observed) {
-        this._dataViewComponent?.viewItem.subscribe((event) => {
+    if (this.viewItem.observed()) {
+      if (!this.dataViewComponent()?.viewItem.observed()) {
+        this.dataViewComponent()?.viewItem.subscribe((event) => {
           this.onViewElement(event)
         })
       }
     }
-    if (this.editItem.observed) {
-      this.isEditItemObserved = true
-      if (!this._dataViewComponent?.editItem.observed) {
-        this._dataViewComponent?.editItem.subscribe((event) => {
+    if (this.editItem.observed()) {
+      if (!this.dataViewComponent()?.editItem.observed()) {
+        this.dataViewComponent()?.editItem.subscribe((event) => {
           this.onEditElement(event)
         })
       }
     }
-    if (this.selectionChanged.observed) {
-      if (!this._dataViewComponent?.selectionChanged.observed) {
-        this._dataViewComponent?.selectionChanged.subscribe((event) => {
+    if (this.selectionChanged.observed()) {
+      if (!this.dataViewComponent()?.selectionChanged.observed()) {
+        this.dataViewComponent()?.selectionChanged.subscribe((event) => {
           this.onRowSelectionChange(event)
         })
       }
@@ -594,37 +669,27 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   }
 
   onColumnSelectionChange(event: ColumnSelectionChangedEvent) {
-    this.displayedColumnKeys = event.activeColumns.map((col) => col.id)
-    this.selectedGroupKey = this.customGroupKey
-    this.displayedColumnKeysChange.emit(this.displayedColumnKeys)
+    const displayedColumnKeys = event.activeColumns.map((col) => col.id)
+    this.displayedColumnKeys.set(displayedColumnKeys)
+    this.selectedGroupKey.set(this.customGroupKey())
   }
 
   onActionColumnConfigChange(event: ActionColumnChangedEvent) {
-    this.frozenActionColumn = event.frozenActionColumn
-    this.actionColumnPosition = event.actionColumnPosition
+    this.frozenActionColumn.set(event.frozenActionColumn)
+    this.actionColumnPosition.set(event.actionColumnPosition)
   }
 
   onRowSelectionChange(event: Row[]) {
-    if (this.selectionChanged.observed) {
+    if (this.selectionChanged.observed()) {
       this.selectionChanged.emit(event)
     }
   }
 
   onPageChange(event: number) {
-    this.page = event
-    this.pageChanged.emit(event)
+    this.page.set(event)
   }
 
   onPageSizeChange(event: number) {
-    this.pageSize = event
-    this.pageSizeChanged.emit(event)
-  }
-
-  getDisplayedColumns(): DataTableColumn[] {
-    return (
-      (this.displayedColumnKeys
-        .map((key) => this.columns.find((c) => c.id === key))
-        .filter((d) => d) as DataTableColumn[]) ?? []
-    )
+    this.pageSize.set(event)
   }
 }

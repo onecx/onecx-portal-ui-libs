@@ -3,7 +3,7 @@
     <p-select
       id="dataListGridSortingDropdown"
       inputId="dataListGridSortingDropdownInput"
-      [(ngModel)]="selectedSortingOption"
+      [ngModel]="selectedSortingOption()"
       [options]="dropdownOptions()"
       (onChange)="selectSorting($event)"
       [ariaLabel]="('OCX_LIST_GRID_SORT.DROPDOWN.ARIA_LABEL' | translate)"

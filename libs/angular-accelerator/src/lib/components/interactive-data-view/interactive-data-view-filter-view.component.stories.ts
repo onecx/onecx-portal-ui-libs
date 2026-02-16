@@ -1,11 +1,10 @@
-import { Meta, StoryFn } from '@storybook/angular'
+import { argsToTemplate, Meta, StoryFn } from '@storybook/angular'
 import { InteractiveDataViewComponent } from './interactive-data-view.component'
 import { Filter } from '../../model/filter.model'
 import {
+  defaultInteractiveDataViewActionsArgs,
   defaultInteractiveDataViewArgs,
-  defaultInteractiveDataViewArgTypes,
   InteractiveDataViewComponentSBConfig,
-  InteractiveDataViewTemplate,
 } from './storybook-config'
 
 const InteractiveDataViewComponentFilterViewSBConfig: Meta<InteractiveDataViewComponent> = {
@@ -13,24 +12,23 @@ const InteractiveDataViewComponentFilterViewSBConfig: Meta<InteractiveDataViewCo
   title: 'Components/InteractiveDataViewComponent/Filtering',
 }
 
-type InteractiveDataViewFilterViewInputTypes = Pick<
-  InteractiveDataViewComponent,
-  'data' | 'columns' | 'emptyResultsMessage' | 'disableFilterView' | 'filterViewDisplayMode'
->
-const defaultArgs: InteractiveDataViewFilterViewInputTypes = {
+const defaultArgs = {
   ...defaultInteractiveDataViewArgs,
   disableFilterView: true,
   filterViewDisplayMode: 'button',
 }
 
-const defaultComponentArgTypes = {
-  ...defaultInteractiveDataViewArgTypes,
+const defaultComponentActionsArgs = {
+  ...defaultInteractiveDataViewActionsArgs,
 }
 
 const CustomContentInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
-  props: args,
+  props: {
+    ...args,
+    defaultComponentActionsArgs,
+  },
   template: `
-    <ocx-interactive-data-view [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
+    <ocx-interactive-data-view (deleteItem)="deleteItem($event)" (editItem)="editItem($event)" (viewItem)="viewItem($event)" [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
       <ng-template #list let-item>
         <div class="w-full px-4 py-2 card mb-4">
           <p>{{item.product}}</p>
@@ -50,9 +48,6 @@ const CustomContentInteractiveDataView: StoryFn<InteractiveDataViewComponent> = 
 })
 
 export const WithFilterViewChips = {
-  argTypes: {
-    ...defaultComponentArgTypes,
-  },
   render: CustomContentInteractiveDataView,
   args: {
     ...defaultArgs,
@@ -62,9 +57,6 @@ export const WithFilterViewChips = {
 }
 
 export const WithFilterViewButton = {
-  argTypes: {
-    ...defaultComponentArgTypes,
-  },
   render: CustomContentInteractiveDataView,
   args: {
     ...defaultArgs,
@@ -74,9 +66,12 @@ export const WithFilterViewButton = {
 }
 
 const CustomFilterViewChipsInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
-  props: args,
+  props: {
+    ...args,
+    defaultComponentActionsArgs,
+  },
   template: `
-    <ocx-interactive-data-view [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
+    <ocx-interactive-data-view (deleteItem)="deleteItem($event)" (editItem)="editItem($event)" (viewItem)="viewItem($event)" [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
       <ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
         <ng-container>STRING: {{ rowObject[column.id] }} </ng-container>
       </ng-template>
@@ -90,9 +85,6 @@ const CustomFilterViewChipsInteractiveDataView: StoryFn<InteractiveDataViewCompo
 })
 
 export const WithFilterViewCustomChipsTemplates = {
-  argTypes: {
-    ...defaultComponentArgTypes,
-  },
   render: CustomFilterViewChipsInteractiveDataView,
   args: {
     ...defaultArgs,
@@ -102,9 +94,12 @@ export const WithFilterViewCustomChipsTemplates = {
 }
 
 const CustomFilterViewChipsByColumnInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
-  props: args,
+  props: {
+    ...args,
+    defaultComponentActionsArgs,
+  },
   template: `
-    <ocx-interactive-data-view [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
+    <ocx-interactive-data-view (deleteItem)="deleteItem($event)" (editItem)="editItem($event)" (viewItem)="viewItem($event)" [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
       <ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
         <ng-container>STRING: {{ rowObject[column.id] }} </ng-container>
       </ng-template>
@@ -127,9 +122,6 @@ const CustomFilterViewChipsByColumnInteractiveDataView: StoryFn<InteractiveDataV
 })
 
 export const WithFilterViewCustomChipsByColumnTemplates = {
-  argTypes: {
-    ...defaultComponentArgTypes,
-  },
   render: CustomFilterViewChipsByColumnInteractiveDataView,
   args: {
     ...defaultArgs,
@@ -139,9 +131,12 @@ export const WithFilterViewCustomChipsByColumnTemplates = {
 }
 
 const CustomFilterViewCellsInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
-  props: args,
+  props: {
+    ...args,
+    defaultComponentActionsArgs,
+  },
   template: `
-    <ocx-interactive-data-view [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
+    <ocx-interactive-data-view (deleteItem)="deleteItem($event)" (editItem)="editItem($event)" (viewItem)="viewItem($event)" [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
       <ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
         <ng-container>STRING: {{ rowObject[column.id] }} </ng-container>
       </ng-template>
@@ -155,9 +150,6 @@ const CustomFilterViewCellsInteractiveDataView: StoryFn<InteractiveDataViewCompo
 })
 
 export const WithFilterViewCustomCellTemplates = {
-  argTypes: {
-    ...defaultComponentArgTypes,
-  },
   render: CustomFilterViewCellsInteractiveDataView,
   args: {
     ...defaultArgs,
@@ -167,9 +159,12 @@ export const WithFilterViewCustomCellTemplates = {
 }
 
 const CustomFilterViewCellsByColumnInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
-  props: args,
+  props: {
+    ...args,
+    defaultComponentActionsArgs,
+  },
   template: `
-    <ocx-interactive-data-view [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
+    <ocx-interactive-data-view (deleteItem)="deleteItem($event)" (editItem)="editItem($event)" (viewItem)="viewItem($event)" [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
       <ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
         <ng-container>STRING: {{ rowObject[column.id] }} </ng-container>
       </ng-template>
@@ -192,9 +187,6 @@ const CustomFilterViewCellsByColumnInteractiveDataView: StoryFn<InteractiveDataV
 })
 
 export const WithFilterViewCustomCellByColumnTemplates = {
-  argTypes: {
-    ...defaultComponentArgTypes,
-  },
   render: CustomFilterViewCellsByColumnInteractiveDataView,
   args: {
     ...defaultArgs,
@@ -204,9 +196,12 @@ export const WithFilterViewCustomCellByColumnTemplates = {
 }
 
 const CustomFilterViewNoFiltersInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
-  props: args,
+  props: {
+    ...args,
+    defaultComponentActionsArgs,
+  },
   template: `
-    <ocx-interactive-data-view [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
+    <ocx-interactive-data-view (deleteItem)="deleteItem($event)" (editItem)="editItem($event)" (viewItem)="viewItem($event)" [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
       <ng-template pTemplate="fitlerViewNoSelection">
         <span>Filter data to display chips</span>
       </ng-template>
@@ -214,9 +209,6 @@ const CustomFilterViewNoFiltersInteractiveDataView: StoryFn<InteractiveDataViewC
 })
 
 export const WithFilterViewCustomNoFiltersTemplate = {
-  argTypes: {
-    ...defaultComponentArgTypes,
-  },
   render: CustomFilterViewNoFiltersInteractiveDataView,
   args: {
     ...defaultArgs,
@@ -226,9 +218,12 @@ export const WithFilterViewCustomNoFiltersTemplate = {
 }
 
 const CustomFilterViewChipContentInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
-  props: args,
+  props: {
+    ...args,
+    defaultComponentActionsArgs,
+  },
   template: `
-    <ocx-interactive-data-view [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data" filterViewChipStyleClass="pl-0 pr-3">
+    <ocx-interactive-data-view (deleteItem)="deleteItem($event)" (editItem)="editItem($event)" (viewItem)="viewItem($event)" [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data" filterViewChipStyleClass="pl-0 pr-3">
       <ng-template pTemplate="filterViewChipContent" let-filter="filter" let-column="column" let-filterValueTemplates="filterValueTemplates" let-truthyTemplate="truthyTemplate" let-filterValueTemplate="filterValueTemplate">
         <span class="bg-primary border-circle w-2rem h-2rem flex align-items-center justify-content-center">{{(column.nameKey | translate).at(0)}}</span>
         <span class="p-chip-text">
@@ -258,9 +253,6 @@ const CustomFilterViewChipContentInteractiveDataView: StoryFn<InteractiveDataVie
 })
 
 export const WithFilterViewCustomChipContentTemplate = {
-  argTypes: {
-    ...defaultComponentArgTypes,
-  },
   render: CustomFilterViewChipContentInteractiveDataView,
   args: {
     ...defaultArgs,
@@ -270,9 +262,12 @@ export const WithFilterViewCustomChipContentTemplate = {
 }
 
 const CustomFilterViewShowMoreChipInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
-  props: args,
+  props: {
+    ...args,
+    defaultComponentActionsArgs,
+  },
   template: `
-    <ocx-interactive-data-view [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
+    <ocx-interactive-data-view (deleteItem)="deleteItem($event)" (editItem)="editItem($event)" (viewItem)="viewItem($event)" [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
       <ng-template pTemplate="filterViewShowMoreChip" let-value>
       <span class="p-chip-text flex flex-nowrap align-items-center">
         <i class="pi pi-plus"></i> {{value}}
@@ -282,9 +277,6 @@ const CustomFilterViewShowMoreChipInteractiveDataView: StoryFn<InteractiveDataVi
 })
 
 export const WithFilterViewCustomShowMoreChipTemplate = {
-  argTypes: {
-    ...defaultComponentArgTypes,
-  },
   render: CustomFilterViewShowMoreChipInteractiveDataView,
   args: {
     ...defaultArgs,
@@ -294,10 +286,13 @@ export const WithFilterViewCustomShowMoreChipTemplate = {
 }
 
 export const WithFilterViewCustomChipSelection = {
-  argTypes: {
-    ...defaultComponentArgTypes,
-  },
-  render: InteractiveDataViewTemplate,
+  render: (args: any) => ({
+    props: {
+      ...args,
+      defaultComponentActionsArgs,
+    },
+    template: `<ocx-interactive-data-view ${argsToTemplate(args)} (deleteItem)="deleteItem($event)" (editItem)="editItem($event)" (viewItem)="viewItem($event)" (componentStateChanged)="componentStateChanged($event)" (selectionChanged)="selectionChanged($event)"></ocx-interactive-data-view>`,
+  }),
   args: {
     ...defaultArgs,
     disableFilterView: false,
@@ -309,10 +304,13 @@ export const WithFilterViewCustomChipSelection = {
 }
 
 export const WithFilterViewCustomStyles = {
-  argTypes: {
-    ...defaultComponentArgTypes,
-  },
-  render: InteractiveDataViewTemplate,
+  render: (args: any) => ({
+    props: {
+      ...args,
+      defaultComponentActionsArgs,
+    },
+    template: `<ocx-interactive-data-view ${argsToTemplate(args)} (deleteItem)="deleteItem($event)" (editItem)="editItem($event)" (viewItem)="viewItem($event)" (componentStateChanged)="componentStateChanged($event)" (selectionChanged)="selectionChanged($event)"></ocx-interactive-data-view>`,
+  }),
   args: {
     ...defaultArgs,
     disableFilterView: false,

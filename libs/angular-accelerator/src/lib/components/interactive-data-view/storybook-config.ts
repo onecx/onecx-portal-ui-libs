@@ -42,6 +42,7 @@ import { StorybookThemeModule } from '../../storybook-theme.module'
 import { TooltipModule } from 'primeng/tooltip'
 import { TooltipStyle } from 'primeng/tooltip'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
+import { action } from 'storybook/actions'
 
 export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewComponent> = {
   title: 'Components/InteractiveDataViewComponent',
@@ -50,7 +51,6 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
     applicationConfig({
       providers: [
         importProvidersFrom(BrowserModule),
-        importProvidersFrom(BrowserAnimationsModule),
         {
           provide: ActivatedRoute,
           useValue: {
@@ -117,9 +117,6 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
     selectDisplayedChips: { type: 'function', control: false },
   },
 }
-export const InteractiveDataViewTemplate: StoryFn = (args) => ({
-  props: args,
-})
 
 export const defaultInteractiveDataViewArgs = {
   columns: [
@@ -187,8 +184,17 @@ export const defaultInteractiveDataViewArgs = {
   defaultGroupKey: 'test',
 }
 
-export const defaultInteractiveDataViewArgTypes = {
-  deleteItem: { action: 'deleteItem' },
-  editItem: { action: 'editItem' },
-  viewItem: { action: 'viewItem' },
+export const defaultInteractiveDataViewActionsArgs = {
+  deleteItem: {
+    observed: () => true,
+    emit: action('deleteItem'),
+  },
+  editItem: {
+    observed: () => true,
+    emit: action('editItem'),
+  },
+  viewItem: {
+    observed: () => true,
+    emit: action('viewItem'),
+  },
 }

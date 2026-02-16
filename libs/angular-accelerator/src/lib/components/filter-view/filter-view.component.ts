@@ -88,7 +88,7 @@ export class FilterViewComponent {
   readonly filterViewChipContent = signal<TemplateRef<any> | undefined>(undefined)
   readonly filterViewShowMoreChip = signal<TemplateRef<any> | undefined>(undefined)
 
-  readonly templates = input<QueryList<PrimeTemplate> | null | undefined>(undefined)
+  readonly templates = input<readonly PrimeTemplate[] | null | undefined>(undefined)
   readonly templates$ = toObservable(this.templates)
 
   readonly columnFilterDataRows = computed(() => {

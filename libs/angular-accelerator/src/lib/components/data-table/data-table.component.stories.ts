@@ -182,7 +182,7 @@ export const WithRowSelection = {
       ...dataTableSelectionArgs,
     },
     template: `
-      <ocx-data-table ${argsToTemplate(args)} (selectionChanged)="selectionChanged($event)" (componentStateChanged)="componentStateChanged($event)">
+      <ocx-data-table ${argsToTemplate(args)} (selectionChanged)="selectionChanged.emit($event)" (componentStateChanged)="componentStateChanged($event)">
       </ocx-data-table>
     `,
   }),
@@ -195,7 +195,7 @@ export const WithRowSelectionAndDefaultSelection = {
       ...dataTableSelectionArgs,
     },
     template: `
-      <ocx-data-table ${argsToTemplate(args)} (selectionChanged)="selectionChanged($event)" (componentStateChanged)="componentStateChanged($event)">
+      <ocx-data-table ${argsToTemplate(args)} (selectionChanged)="selectionChanged.emit($event)" (componentStateChanged)="componentStateChanged($event)">
       </ocx-data-table>
     `,
   }),
@@ -216,7 +216,7 @@ export const WithRowSelectionAndDisabledDefaultSelection = {
       ...dataTableSelectionArgs,
     },
     template: `
-      <ocx-data-table ${argsToTemplate(args)} (selectionChanged)="selectionChanged($event)" (componentStateChanged)="componentStateChanged($event)">
+      <ocx-data-table ${argsToTemplate(args)} (selectionChanged)="selectionChanged.emit($event)" (componentStateChanged)="componentStateChanged($event)">
       </ocx-data-table>
     `,
   }),
@@ -600,7 +600,6 @@ export const WithPageSizes = {
   args: {
     ...defaultComponentArgs,
     pageSizes: [2, 15, 25],
-    showAllOption: false,
   },
 }
 
