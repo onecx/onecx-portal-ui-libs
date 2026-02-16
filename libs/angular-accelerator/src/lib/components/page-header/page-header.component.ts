@@ -20,6 +20,7 @@ import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { TranslationKey } from '../../model/translation.model'
 import { Router } from '@angular/router'
 import { RouterLink } from '../../model/data-action'
+import { onActionClick, resolveRouterLink } from '../../utils/action-router.utils'
 
 /**
  * Action definition.
@@ -313,30 +314,12 @@ export class PageHeaderComponent implements OnInit {
         tooltipEvent: 'hover',
         tooltipPosition: 'top',
       },
-      command: () => this.onActionClick(a),
+      command: () => onActionClick(this.router, a),
       disabled: a.disabled,
     }))
   }
 
-  private async resolveRouterLink(
-    routerLink: RouterLink
-  ): Promise<string> {
-    if (typeof routerLink === 'string') {
-      return routerLink
-    } else if (typeof routerLink === 'function') {
-      const result = routerLink()
-      return typeof result === 'string' ? result : await result
-    } else {
-      return await routerLink
-    }
-  }
-
   async onActionClick(action: Action): Promise<void> {
-    if (action.routerLink) {
-      const resolvedLink = await this.resolveRouterLink(action.routerLink)
-      await this.router.navigate([resolvedLink])
-    } else {
-      action.actionCallback()
-    }
+    await onActionClick(this.router, action)
   }
 }
