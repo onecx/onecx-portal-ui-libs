@@ -34,7 +34,7 @@ import {
   switchMap,
 } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
-import { DataAction, RouterLink } from '../../model/data-action'
+import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { Filter } from '../../model/filter.model'
@@ -43,7 +43,7 @@ import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { Row } from '../data-table/data-table.component'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
-import { onActionClick, resolveRouterLink } from '../../utils/action-router.utils'
+import { onActionClick } from '../../utils/action-router.utils'
 
 export type ListGridData = {
   id: string | number

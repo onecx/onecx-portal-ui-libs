@@ -20,7 +20,7 @@ import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { TranslationKey } from '../../model/translation.model'
 import { Router } from '@angular/router'
 import { RouterLink } from '../../model/data-action'
-import { onActionClick, resolveRouterLink } from '../../utils/action-router.utils'
+import { onActionClick } from '../../utils/action-router.utils'
 
 /**
  * Action definition.
