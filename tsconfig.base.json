@@ -27,10 +27,10 @@
       "@onecx/angular-standalone-shell": ["libs/angular-standalone-shell/src/index.ts"],
       "@onecx/angular-testing": ["libs/angular-testing/src/index.ts"],
       "@onecx/angular-utils": ["libs/angular-utils/src/index.ts"],
-      "@onecx/angular-utils/mocks": ["libs/angular-utils/mocks/index.ts"],
       "@onecx/angular-utils/guards": ["libs/angular-utils/guards/index.ts"],
-      "@onecx/angular-utils/theme/primeng": ["libs/angular-utils/theme/primeng/src/index.ts"],
+      "@onecx/angular-utils/mocks": ["libs/angular-utils/mocks/index.ts"],
       "@onecx/angular-utils/style": ["libs/angular-utils/style/src/index.ts"],
+      "@onecx/angular-utils/theme/primeng": ["libs/angular-utils/theme/primeng/src/index.ts"],
       "@onecx/angular-webcomponents": ["libs/angular-webcomponents/src/index.ts"],
       "@onecx/integration-interface": ["libs/integration-interface/src/index.ts"],
       "@onecx/ngrx-accelerator": ["libs/ngrx-accelerator/src/index.ts"],
@@ -38,7 +38,8 @@
       "@onecx/nx-migration-utils/angular": ["libs/nx-migration-utils/src/lib/angular/index.ts"],
       "@onecx/release": ["tools/release/src/index.ts"],
       "@onecx/angular-linter-rules": ["libs/angular-linter-rules/src/index.ts"],
-      "@onecx/ngrx-linter-rules": ["libs/ngrx-linter-rules/src/index.ts"]
+      "@onecx/ngrx-linter-rules": ["libs/ngrx-linter-rules/src/index.ts"],
+      "@onecx/shell-auth": ["libs/shell-auth/src/index.ts"],
     },
     "allowSyntheticDefaultImports": true
   },
