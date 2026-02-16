@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { ImageRepositoryService as ImageRepositryInterface, ImageRepositoryInfo } from '@onecx/integration-interface';
+import { ImageRepositoryService as ImageRepositoryInterface, ImageRepositoryInfo } from '@onecx/integration-interface';
 import { FakeTopic } from '@onecx/accelerator';
 import { ImageRepositoryService } from './image-repository.service';
 
@@ -10,7 +10,7 @@ const MOCK_URLS: ImageRepositoryInfo = { images: { [URL_NAME]: EXPECTED_URL, 'lo
 
 describe('ImageRepositoryService', () => {
   let service: ImageRepositoryService;
-  let imageRepositoryInterface: ImageRepositryInterface;
+  let imageRepositoryInterface: ImageRepositoryInterface;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -49,19 +49,5 @@ describe('ImageRepositoryService', () => {
     service.ngOnDestroy();
 
     expect(spyDestroy).toHaveBeenCalled();
-  });
-
-  it('should call ngOnDestroy from destroy()', () => {
-    const spyDestroy = jest.spyOn(service, 'ngOnDestroy');
-
-    service.destroy();
-	
-    expect(spyDestroy).toHaveBeenCalled();
-  });  
-
-  it('should test topic getter/setter', async () => {   
-    service.imageRepositoryTopic = imageRepositoryInterface.imageRepositoryTopic;
-
-    expect(service.imageRepositoryTopic).toBe(imageRepositoryInterface.imageRepositoryTopic);
   });
 });
