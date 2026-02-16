@@ -5,6 +5,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { of, throwError } from 'rxjs'
 import { SrcDirective } from './src.directive'
 import { OcxSrcHarness } from '../../../testing/ocx-src.directive.harness'
+import * as loggerUtils from '../utils/logger.utils'
 
 @Component({
   // eslint-disable-next-line @angular-eslint/prefer-standalone
@@ -150,12 +151,21 @@ describe('SrcDirective', () => {
   })
 
   it('should fall back to raw src when URL parsing throws', async () => {
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined)
+    const errorSpy = jest.fn()
+    const mockedLogger = {
+      debug: jest.fn() as any,
+      info: jest.fn() as any,
+      warn: jest.fn() as any,
+      error: errorSpy as any,
+    }
+    jest.spyOn(loggerUtils, 'createLogger').mockReturnValue(mockedLogger)
+
+    ;(component.directive as any).logger = mockedLogger
 
     component.src = 'http://[invalid-url'
     fixture.detectChanges()
 
-    expect(consoleSpy).toHaveBeenCalled()
+    expect(errorSpy).toHaveBeenCalledWith('Cannot parse URL', 'http://[invalid-url', expect.anything())
 
     const srcAttr = await harness.getSrcAttribute()
     const srcProp = await harness.getSrcProperty()

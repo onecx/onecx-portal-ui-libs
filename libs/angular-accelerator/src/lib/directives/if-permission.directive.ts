@@ -15,9 +15,11 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop'
 import { UserService } from '@onecx/angular-integration-interface'
 import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
 import { from, Observable, of, switchMap, withLatestFrom } from 'rxjs'
+import { createLogger } from '../utils/logger.utils'
 
 @Directive({ selector: '[ocxIfPermission], [ocxIfNotPermission]', standalone: false })
 export class IfPermissionDirective {
+  private readonly logger = createLogger('IfPermissionDirective')
   private renderer = inject(Renderer2)
   private viewContainer = inject(ViewContainerRef)
   private hasPermissionChecker = inject<HasPermissionChecker>(HAS_PERMISSION_CHECKER, { optional: true })
@@ -89,7 +91,7 @@ export class IfPermissionDirective {
     if (overridePermissions) {
       const result = permission.every((p) => overridePermissions?.includes(p))
       if (!result) {
-        console.log('👮‍♀️ No permission in overwrites for: `', permission)
+        this.logger.debug('No permission in overwrites for:', permission)
       }
       return of(result)
     }
@@ -101,7 +103,7 @@ export class IfPermissionDirective {
         switchMap((permissions) => {
           const result = permission.every((p) => permissions.includes(p))
           if (!result) {
-            console.log('👮‍♀️ No permission from permission checker for: `', permission)
+            this.logger.debug('No permission from permission checker for:', permission)
           }
           return of(result)
         })

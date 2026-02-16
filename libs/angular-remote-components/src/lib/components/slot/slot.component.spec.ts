@@ -16,6 +16,7 @@ import { SlotHarness } from '@onecx/angular-remote-components/testing'
 import { SlotComponent } from './slot.component'
 import { SLOT_SERVICE } from '../../services/slot.service'
 import { ocxRemoteComponent } from '../../model/remote-component'
+import * as loggerUtils from '../../utils/logger.utils'
 
 // Rxjs operators mock
 import * as rxjsOperators from 'rxjs/operators'
@@ -65,11 +66,6 @@ class ResizeObserverMock {
 
 ;(global as any).ResizeObserver = ResizeObserverMock
 
-// Mock ResizeEventsPublisher
-class ResizeEventsPublisherMock {
-  publish = jest.fn()
-}
-
 // Test component
 @Component({
   selector: 'ocx-mock-angular-component',
@@ -99,10 +95,17 @@ describe('SlotComponent', () => {
   let slotServiceMock: SlotServiceMock
 
   let resizeObserverMock: ResizeObserverMock
-  let resizedEventsPublisherMock: ResizeEventsPublisherMock
   let resizedEventsTopic: FakeTopic<TopicResizedEventType>
 
+  const loggerErrorFn = jest.fn()
+
   beforeEach(async () => {
+    jest.spyOn(loggerUtils, 'createLogger').mockReturnValue({
+      debug: jest.fn() as any,
+      info: jest.fn() as any,
+      warn: jest.fn() as any,
+      error: loggerErrorFn as any,
+    })
     // Without this debounceTime is not working in tests with fakeAsync/tick
     jest
       .spyOn(rxjsOperators, 'debounceTime')
@@ -116,8 +119,6 @@ describe('SlotComponent', () => {
     component = fixture.componentInstance
     // These must be set before detectChanges which triggers ngOnInit
     fixture.componentRef.setInput('name', 'test-slot')
-    resizedEventsPublisherMock = new ResizeEventsPublisherMock()
-    ;(component as any)['resizedEventsPublisher'] = resizedEventsPublisherMock
     fixture.detectChanges()
 
     slotServiceMock = TestBed.inject(SLOT_SERVICE) as unknown as SlotServiceMock
@@ -125,18 +126,21 @@ describe('SlotComponent', () => {
     resizedEventsTopic = component['resizedEventsTopic'] as any as FakeTopic<TopicResizedEventType>
   })
 
+  afterEach(() => {
+    jest.restoreAllMocks()
+    loggerErrorFn.mockClear()
+  })
+
   it('should create', () => {
     expect(component).toBeTruthy()
   })
 
   it('should log error if slot service is not defined', () => {
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
     component['slotService'] = undefined as any
     component.ngOnInit()
-    expect(consoleSpy).toHaveBeenCalledWith(
+    expect(loggerErrorFn).toHaveBeenCalledWith(
       'SLOT_SERVICE token was not provided. test-slot slot will not be filled with data.'
     )
-    consoleSpy.mockRestore()
   })
 
   describe('on destroy', () => {
@@ -230,7 +234,6 @@ describe('SlotComponent', () => {
       })
 
       it('should create if span was not found', async () => {
-        const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
         jest.spyOn(component['viewContainerRef'].element.nativeElement, 'querySelector').mockReturnValue(null)
         slotServiceMock.assignComponents({
           'test-slot': [
@@ -252,7 +255,7 @@ describe('SlotComponent', () => {
 
         const element = await slotHarness.getElement('ocx-mock-angular-component')
         expect(element).not.toBeNull()
-        expect(consoleSpy).toHaveBeenCalledWith(
+        expect(loggerErrorFn).toHaveBeenCalledWith(
           'Component span was not found for slot component creation. The order of the components may be incorrect.'
         )
       })
@@ -332,7 +335,6 @@ describe('SlotComponent', () => {
       })
 
       it('should create webcomponent if span was not found', async () => {
-        const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
         jest.spyOn(component['viewContainerRef'].element.nativeElement, 'querySelector').mockReturnValue(null)
         slotServiceMock.assignComponents({
           'test-slot': [
@@ -355,7 +357,7 @@ describe('SlotComponent', () => {
 
         const element = await slotHarness.getElement('mock-webcomponent-no-span')
         expect(element).not.toBeNull()
-        expect(consoleSpy).toHaveBeenCalledWith(
+        expect(loggerErrorFn).toHaveBeenCalledWith(
           'Component span was not found for slot component creation. The order of the components may be incorrect.'
         )
       })
@@ -480,12 +482,12 @@ describe('SlotComponent', () => {
 
   describe('size changes', () => {
     it('should publish initial size', fakeAsync(() => {
-      resizedEventsPublisherMock.publish.mockClear()
+      jest.spyOn(resizedEventsTopic, 'publish')
       resizeObserverMock.trigger(200, 100)
 
       tick(200) // debounceTime
 
-      expect(resizedEventsPublisherMock.publish).toHaveBeenCalledWith({
+      expect(resizedEventsTopic.publish).toHaveBeenCalledWith({
         type: ResizedEventType.SLOT_RESIZED,
         payload: {
           slotName: 'test-slot',
@@ -494,7 +496,7 @@ describe('SlotComponent', () => {
       })
     }))
     it('should debounce size changes', fakeAsync(() => {
-      resizedEventsPublisherMock.publish.mockClear()
+      jest.spyOn(resizedEventsTopic, 'publish')
       resizeObserverMock.trigger(200, 100)
       resizeObserverMock.trigger(300, 400)
 
@@ -502,7 +504,7 @@ describe('SlotComponent', () => {
 
       resizeObserverMock.trigger(400, 700)
 
-      expect(resizedEventsPublisherMock.publish).toHaveBeenCalledWith({
+      expect(resizedEventsTopic.publish).toHaveBeenCalledWith({
         type: ResizedEventType.SLOT_RESIZED,
         payload: {
           slotName: 'test-slot',
@@ -512,7 +514,7 @@ describe('SlotComponent', () => {
 
       tick(100)
 
-      expect(resizedEventsPublisherMock.publish).toHaveBeenCalledWith({
+      expect(resizedEventsTopic.publish).toHaveBeenCalledWith({
         type: ResizedEventType.SLOT_RESIZED,
         payload: {
           slotName: 'test-slot',
@@ -522,11 +524,10 @@ describe('SlotComponent', () => {
     }))
 
     it('should publish when requestedEventsChanged emits for this slot', fakeAsync(() => {
+      jest.spyOn(resizedEventsTopic, 'publish')
       resizeObserverMock.trigger(200, 100)
 
       tick(200) // debounceTime
-
-      resizedEventsPublisherMock.publish.mockClear()
 
       resizedEventsTopic.publish({
         type: ResizedEventType.REQUESTED_EVENTS_CHANGED,
@@ -536,7 +537,7 @@ describe('SlotComponent', () => {
         },
       })
 
-      expect(resizedEventsPublisherMock.publish).toHaveBeenCalledWith({
+      expect(resizedEventsTopic.publish).toHaveBeenCalledWith({
         type: ResizedEventType.SLOT_RESIZED,
         payload: {
           slotName: 'test-slot',

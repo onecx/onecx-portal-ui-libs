@@ -28,6 +28,8 @@ import {
   providePortalDialogService,
 } from './portal-dialog.service'
 
+import * as loggerUtils from '../utils/logger.utils'
+
 // This component is in charge of dialog display
 @Component({
   standalone: false,
@@ -249,6 +251,8 @@ describe('PortalDialogService', () => {
   let pDialogService: DialogService
   let rootLoader: HarnessLoader
   let fixture: ComponentFixture<BaseTestComponent>
+  let loggerWarnSpy: jest.Mock
+  let loggerErrorSpy: jest.Mock
 
   const translations = {
     TITLE_TRANSLATE: 'simpleTitle',
@@ -272,6 +276,15 @@ describe('PortalDialogService', () => {
 
   beforeEach(async () => {
     Object.defineProperty(global.document.body, 'removeChild', { value: removeChildSpy })
+    loggerWarnSpy = jest.fn()
+    loggerErrorSpy = jest.fn()
+    jest.spyOn(loggerUtils, 'createLogger').mockReturnValue({
+      debug: jest.fn() as any,
+      info: jest.fn() as any,
+      warn: loggerWarnSpy as any,
+      error: loggerErrorSpy as any,
+    })
+
     await TestBed.configureTestingModule({
       declarations: [
         BaseTestComponent,
@@ -298,6 +311,10 @@ describe('PortalDialogService', () => {
     fixture = TestBed.createComponent(BaseTestComponent)
     pDialogService = TestBed.inject(DialogService)
     rootLoader = TestbedHarnessEnvironment.documentRootLoader(fixture)
+  })
+
+  afterEach(() => {
+    jest.restoreAllMocks()
     jest.clearAllMocks()
   })
 
@@ -321,26 +338,22 @@ describe('PortalDialogService', () => {
   })
 
   it('should log error and return null if dialog could not be opened', async () => {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
     jest.spyOn(pDialogService, 'open').mockReturnValue(null)
 
     fixture.componentInstance.show('TITLE_TRANSLATE', 'message', 'button1', 'button2')
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith('Dialog could not be opened, dialog creation failed.')
+    expect(loggerErrorSpy).toHaveBeenCalledWith('Dialog could not be opened, dialog creation failed.')
     const result = fixture.componentInstance.resultFromShow
     expect(result).toBeNull()
   })
 
   it('should warn if dialog component instance could not be found after creation', async () => {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
     jest.spyOn(pDialogService, 'open')
     jest.spyOn(pDialogService, 'getInstance').mockReturnValue(undefined)
 
     fixture.componentInstance.show('TITLE_TRANSLATE', 'message', 'button1', 'button2')
 
-    expect(consoleWarnSpy).toHaveBeenCalledWith(
+    expect(loggerWarnSpy).toHaveBeenCalledWith(
       'Dialog component instance could not be found after creation. The displayed dialog may not function as expected.'
     )
   })
@@ -944,11 +957,9 @@ describe('PortalDialogService', () => {
 
       fixture.detectChanges()
       jest.spyOn(pDialogService, 'getInstance').mockReturnValue(undefined)
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
 
       fixture.componentInstance.portalDialogService.ngOnDestroy()
-      expect(consoleWarnSpy).toHaveBeenCalledWith(
+      expect(loggerWarnSpy).toHaveBeenCalledWith(
         'Dialog component instance could not be found during cleanup. The displayed dialog may not function as expected.'
       )
     })

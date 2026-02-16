@@ -46,6 +46,7 @@ export interface Action {
   ariaLabelKey?: string
   btnClass?: string
   actionCallback(): void
+  loading?: boolean
   disabled?: boolean
   disabledTooltip?: string
   disabledTooltipKey?: string

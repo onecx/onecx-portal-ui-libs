@@ -2,6 +2,9 @@ import { Router, RoutesRecognized } from '@angular/router'
 import { RouterNavigatedAction } from '@ngrx/router-store'
 import { filter, map, MonoTypeOperatorFunction, withLatestFrom } from 'rxjs'
 
+/**
+ * @deprecated This helper is deprecated. Please use `filterOutOnlyFragmentParamsChanged` for filtering URI parameters.
+ */
 export function filterOutOnlyQueryParamsChanged<A extends RouterNavigatedAction>(
   router: Router
 ): MonoTypeOperatorFunction<A> {

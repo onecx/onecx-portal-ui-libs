@@ -19,6 +19,7 @@ import {
   logGuardsDebug,
   resolveToPromise,
 } from './guards-utils.utils'
+import { createLogger } from './logger.utils'
 
 /**
  * Wrapper for canActivate guards that handles the navigation state and executes guards accordingly.
@@ -37,7 +38,8 @@ export class ActivateGuardsWrapper {
     state: RouterStateSnapshot,
     guards: Array<CanActivateFn | Type<CanActivate>>
   ): MaybeAsync<GuardResult> {
-    const guardsNavigationState = this.router.currentNavigation()?.extras.state ?? ({} as GuardsNavigationState)
+    const logger = createLogger('ActivateGuardsWrapper')
+    const guardsNavigationState = this.router.getCurrentNavigation()?.extras.state ?? ({} as GuardsNavigationState)
     const futureUrl = getUrlFromSnapshot(route)
 
     switch (this.guardsNavigationStateController.getMode(guardsNavigationState)) {
@@ -46,11 +48,13 @@ export class ActivateGuardsWrapper {
       // This will be handled by the Shell
       // Additionally, during GuardsCheckEnd, the results will be reported so Shell can decide what to do
       case GUARD_MODE.INITIAL_ROUTER_SYNC:
-        return this.executeActivateGuards(route, state, guards, combineToBoolean)
+        return this.executeActivateGuards(logger, route, state, guards, combineToBoolean)
       case GUARD_MODE.ROUTER_SYNC:
-        return this.executeActivateGuards(route, state, guards, combineToBoolean).then(() => executeRouterSyncGuard())
+        return this.executeActivateGuards(logger, route, state, guards, combineToBoolean).then(() =>
+          executeRouterSyncGuard()
+        )
       case GUARD_MODE.GUARD_CHECK:
-        return this.executeActivateGuards(route, state, guards, combineToBoolean).then((result) => {
+        return this.executeActivateGuards(logger, route, state, guards, combineToBoolean).then((result) => {
           if (result === false) {
             logGuardsDebug('GuardCheck - Route is guarded for activation, resolving false.')
             this.guardsGatherer.resolveRoute(futureUrl, false)
@@ -62,30 +66,31 @@ export class ActivateGuardsWrapper {
         //Wait until we received info from others
         let checkStartPromise = this.guardsNavigationStateController.getGuardCheckPromise(guardsNavigationState)
         if (!checkStartPromise) {
-          console.warn('No guard check promise found in guards navigation state, returning true.')
+          logger.warn('No guard check promise found in guards navigation state, returning true.')
           checkStartPromise = Promise.resolve(true)
         }
         return checkStartPromise.then((result) => {
           if (result === false) {
-            console.warn(
+            logger.warn(
               `Cannot route to ${futureUrl} because ${state.url} deactivation is guarded or ${futureUrl} activation its guarded.`
             )
             return false
           }
-          return this.executeActivateGuards(route, state, guards, combineToGuardResult)
+          return this.executeActivateGuards(logger, route, state, guards, combineToGuardResult)
         })
       }
     }
   }
 
   private executeActivateGuards<T extends boolean | GuardResult>(
+    logger: ReturnType<typeof createLogger>,
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot,
     guards: Array<CanActivateFn | Type<CanActivate>>,
     combineFn: (results: GuardResult[]) => T
   ): Promise<T> {
     if (!route.routeConfig) {
-      console.warn('No route configuration found for canActivate guard.')
+      logger.warn('No route configuration found for canActivate guard.')
       logGuardsDebug('No route configuration found for canActivate guard.')
       return Promise.resolve(true as T)
     }
@@ -97,7 +102,7 @@ export class ActivateGuardsWrapper {
         try {
           return fn(route, state)
         } catch {
-          console.warn('Guard does not implement canActivate:', fn)
+          logger.warn('Guard does not implement canActivate:', fn)
           return Promise.resolve(true) // Default to true if guard does not implement canActivate
         }
       })

@@ -1,9 +1,11 @@
 import { HttpClient, HttpResponse } from '@angular/common/http'
 import { Directive, ElementRef, EventEmitter, Input, Output, effect, inject, input } from '@angular/core'
 import { take } from 'rxjs'
+import { createLogger } from '../utils/logger.utils'
 
 @Directive({ selector: '[ocxSrc]', standalone: false })
 export class SrcDirective {
+  private readonly logger = createLogger('SrcDirective')
   private readonly el = inject(ElementRef)
   private readonly httpClient = inject(HttpClient)
   // eslint-disable-next-line @angular-eslint/no-output-native
@@ -51,7 +53,7 @@ export class SrcDirective {
             this.el.nativeElement.style.visibility = 'initial'
           }
         } catch (error) {
-          console.error('Cannot parse URL ', src, error)
+          this.logger.error('Cannot parse URL', src, error)
           this.el.nativeElement.src = src
           this.el.nativeElement.style.visibility = 'initial'
         }

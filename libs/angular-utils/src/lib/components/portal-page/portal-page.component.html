@@ -1,5 +1,5 @@
 <div class="content-wrapper">
-  @if (hasAccess$ | async) {
+  @let accessAllowed = (hasAccess$ | async); @if (accessAllowed !== null) { @if (accessAllowed) {
   <ng-content></ng-content>
   } @else {
   <h3>{{'OCX_PORTAL_PAGE.UNAUTHORIZED_TITLE' | translate}}</h3>
@@ -7,5 +7,5 @@
     {{'OCX_PORTAL_PAGE.UNAUTHORIZED_MESSAGE' | translate}}
     <span>{{'OCX_PORTAL_PAGE.MISSING_PERMISSION' | translate : {permission: permission} }}</span>
   </p>
-  }
+  } }
 </div>

@@ -1,5 +1,5 @@
 [#add-angular-material-plugin]
-=== Add Webpack Plugin for Angular Material
+= Add Webpack Plugin for Angular Material
 
 In OneCX v6, applications using Angular Material or Angular CDK must add a Webpack plugin. This change is required after upgrading to Angular 19.
 
@@ -8,7 +8,7 @@ In OneCX v6, applications using Angular Material or Angular CDK must add a Webpa
 This setup will be replaced by a OneCX-provided Webpack plugin in a future version.
 ====
 
-==== Install and Configure Webpack Plugin
+== Install and Configure Webpack Plugin
 
 . Install `modify-source-webpack-plugin`
 +

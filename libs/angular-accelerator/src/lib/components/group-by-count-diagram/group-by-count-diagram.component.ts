@@ -37,12 +37,17 @@ export class GroupByCountDiagramComponent {
   /**
    * This property determines if diagram should generate the colors for the data that does not have any set.
    *
-   * Setting this property to false will result in using the provided colors only if every data item has one. In the scenario where at least one item does not have a color set, diagram will generate all colors.
+   * Setting this property to false will result in using the provided colors only if every data item has one.
+   *  In the scenario where at least one item does not have a color set, diagram will generate all colors.
    */
   fillMissingColors = input<boolean>(true)
   supportedDiagramTypes = input<DiagramType[]>([])
 
   data = model<unknown[]>([])
+
+  allLabelKeys = input<string[]>([])
+
+  showAllLabels = input<boolean>(false)
 
   columnType = model<ColumnType>(ColumnType.STRING)
 
@@ -61,27 +66,48 @@ export class GroupByCountDiagramComponent {
     toObservable(this.columnField),
     toObservable(this.columnType),
     toObservable(this.colors),
+    toObservable(this.allLabelKeys),
+    toObservable(this.showAllLabels),
   ]).pipe(
-    mergeMap(([data, columnField, columnType, colors]) => {
+    mergeMap(([data, columnField, columnType, colors, allLabelKeys, showAllLabels]) => {
       const columnData = data.map((d) => ObjectUtils.resolveFieldData(d, columnField))
-      const occurrences = columnData.reduce((acc, current) => {
-        return acc.some((e: { label: any }) => e.label === current)
-          ? (acc.find((e: { label: any }) => e.label === current).value++, acc)
-          : [...acc, { label: current, value: 1, backgroundColor: colors[current.toString()] }]
-      }, [])
+      let occurrences: DiagramData[] = []
+
+      if (showAllLabels && allLabelKeys.length > 0) {
+        occurrences = allLabelKeys.map((label) => ({
+          label: label,
+          value: 0,
+          backgroundColor: colors[label],
+        }))
+
+        columnData.forEach((current) => {
+          const foundColumn = occurrences.find((e) => e.label === current)
+          if (foundColumn) {
+            foundColumn.value++
+          } else {
+            occurrences.push({ label: current, value: 1, backgroundColor: colors[current.toString()] })
+          }
+        })
+      } else {
+        occurrences = columnData.reduce((acc, current) => {
+          return acc.some((e: { label: string }) => e.label === current)
+            ? (acc.find((e: { label: string }) => e.label === current).value++, acc)
+            : [...acc, { label: current, value: 1, backgroundColor: colors[current.toString()] }]
+        }, [])
+      }
+
       if (columnType === ColumnType.TRANSLATION_KEY && occurrences.length > 0) {
-        return this.translateService.get(occurrences.map((o: { label: any }) => o.label)).pipe(
-          map((translations: { [x: string]: any }) =>
-            occurrences.map((o: { label: string; value: any; backgroundColor: string | undefined }) => ({
+        return this.translateService.get(occurrences.map((o) => o.label)).pipe(
+          map((translations) =>
+            occurrences.map((o) => ({
               label: translations[o.label],
               value: o.value,
               backgroundColor: o.backgroundColor,
             }))
           )
         )
-      } else {
-        return of(occurrences)
       }
+      return of(occurrences)
     })
   )
 
