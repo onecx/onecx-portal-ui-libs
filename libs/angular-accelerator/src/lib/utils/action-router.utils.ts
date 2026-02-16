@@ -23,12 +23,10 @@ export async function handleAction(router: Router, action: Action | DataAction, 
   if (action.routerLink) {
     const resolvedLink = await resolveRouterLink(action.routerLink)
     await router.navigate([resolvedLink])
-  } else {
-    if ('callback' in action && typeof action.callback === 'function') {
-      action.callback(data)
-    } else if ('actionCallback' in action && typeof action.actionCallback === 'function') {
-      action.actionCallback()
-    }
+  } else if ('callback' in action && typeof action.callback === 'function') {
+    action.callback(data)
+  } else if ('actionCallback' in action && typeof action.actionCallback === 'function') {
+    action.actionCallback()
   }
 }
 
