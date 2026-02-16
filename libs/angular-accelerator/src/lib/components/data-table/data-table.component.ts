@@ -47,7 +47,7 @@ import { findTemplate } from '../../utils/template.utils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
-import { onActionClick } from '../../utils/action-router.utils'
+import { handleAction, handleActionSync } from '../../utils/action-router.utils'
 
 export type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -950,10 +950,10 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
 
   async onActionClick(action: DataAction, rowObject: any): Promise<void> {
-    await onActionClick(this.router, action, rowObject)
+    await handleAction(this.router, action, rowObject)
   }
   
   private createMenuItemCommand(action: DataAction, row: any): () => void {
-    return () => onActionClick(this.router, action, row)
+    return () => handleActionSync(this.router, action, row)
   }
 }

@@ -43,7 +43,7 @@ import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { Row } from '../data-table/data-table.component'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
-import { onActionClick } from '../../utils/action-router.utils'
+import { handleAction, handleActionSync } from '../../utils/action-router.utils'
 
 export type ListGridData = {
   id: string | number
@@ -673,7 +673,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
           styleClass: (a.classes || []).join(' '),
           disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(selectedItem, a.actionEnabledField)),
           visible: isVisible,
-          command: () => onActionClick(this.router, a, selectedItem),
+          command: () => handleActionSync(this.router, a, selectedItem),
           automationId: isVisible ? automationId : automationIdHidden,
         }
       })
@@ -728,10 +728,12 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   }
 
   async onActionClick(action: DataAction, item: any): Promise<void> {
-    await onActionClick(this.router, action, item)
+    // Component-specific logic could go here
+    // For example: logging, analytics, validation
+    await handleAction(this.router, action, item)
   }
 
   private createMenuItemCommand(action: DataAction, row: any): () => void {
-    return () => onActionClick(this.router, action, row)
+    return () => handleActionSync(this.router, action, row)
   }
 }

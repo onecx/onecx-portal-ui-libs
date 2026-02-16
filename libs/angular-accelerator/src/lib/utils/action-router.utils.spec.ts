@@ -1,5 +1,5 @@
 import { Router } from '@angular/router'
-import { onActionClick, resolveRouterLink } from './action-router.utils'
+import { handleAction, handleActionSync, resolveRouterLink } from './action-router.utils'
 import { DataAction } from '../model/data-action'
 import { Action } from '../components/page-header/page-header.component'
 
@@ -39,7 +39,7 @@ describe('ActionRouterUtils', () => {
     })
   })
 
-  describe('onActionClick', () => {
+  describe('handleAction', () => {
     it('should navigate when DataAction has routerLink', async () => {
       const action: DataAction = {
         id: 'test',
@@ -48,7 +48,7 @@ describe('ActionRouterUtils', () => {
         callback: jest.fn()
       }
 
-      await onActionClick(mockRouter, action, 'testData')
+      await handleAction(mockRouter, action, 'testData')
 
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/test-route'])
     })
@@ -61,7 +61,7 @@ describe('ActionRouterUtils', () => {
         callback: callbackFn
       }
 
-      await onActionClick(mockRouter, action, 'testData')
+      await handleAction(mockRouter, action, 'testData')
 
       expect(callbackFn).toHaveBeenCalledWith('testData')
       expect(mockRouter.navigate).not.toHaveBeenCalled()
@@ -74,7 +74,7 @@ describe('ActionRouterUtils', () => {
         actionCallback: jest.fn()
       }
 
-      await onActionClick(mockRouter, action)
+      await handleAction(mockRouter, action)
 
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/test-route'])
     })
@@ -86,7 +86,38 @@ describe('ActionRouterUtils', () => {
         actionCallback: actionCallbackFn
       }
 
-      await onActionClick(mockRouter, action)
+      await handleAction(mockRouter, action)
+
+      expect(actionCallbackFn).toHaveBeenCalled()
+      expect(mockRouter.navigate).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('handleActionSync', () => {
+
+    it('should call callback when DataAction has no routerLink', () => {
+      const callbackFn = jest.fn()
+      const action: DataAction = {
+        id: 'test',
+        permission: 'TEST_PERMISSION',
+        callback: callbackFn
+      }
+      const testData = { id: 1, name: 'test' }
+
+      handleActionSync(mockRouter, action, testData)
+
+      expect(callbackFn).toHaveBeenCalledWith(testData)
+      expect(mockRouter.navigate).not.toHaveBeenCalled()
+    })
+
+    it('should call actionCallback when Action has no routerLink', () => {
+      const actionCallbackFn = jest.fn()
+      const action: Action = {
+        id: 'test',
+        actionCallback: actionCallbackFn
+      }
+
+      handleActionSync(mockRouter, action)
 
       expect(actionCallbackFn).toHaveBeenCalled()
       expect(mockRouter.navigate).not.toHaveBeenCalled()

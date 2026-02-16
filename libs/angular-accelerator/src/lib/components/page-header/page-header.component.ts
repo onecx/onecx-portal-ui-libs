@@ -20,7 +20,7 @@ import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { TranslationKey } from '../../model/translation.model'
 import { Router } from '@angular/router'
 import { RouterLink } from '../../model/data-action'
-import { onActionClick } from '../../utils/action-router.utils'
+import { handleAction, handleActionSync } from '../../utils/action-router.utils'
 
 /**
  * Action definition.
@@ -314,12 +314,12 @@ export class PageHeaderComponent implements OnInit {
         tooltipEvent: 'hover',
         tooltipPosition: 'top',
       },
-      command: () => onActionClick(this.router, a),
+      command: () => handleActionSync(this.router, a),
       disabled: a.disabled,
     }))
   }
 
   async onActionClick(action: Action): Promise<void> {
-    await onActionClick(this.router, action)
+    await handleAction(this.router, action)
   }
 }
