@@ -15,18 +15,6 @@ import { ColumnType } from '../../model/column-type.model'
 import { CustomGroupColumnSelectorComponent } from './custom-group-column-selector.component'
 import { TooltipModule } from 'primeng/tooltip'
 
-type CustomGroupColumnSelectorInputs = Pick<
-  CustomGroupColumnSelectorComponent,
-  | 'columns'
-  | 'displayedColumns'
-  | 'actionColumnPosition'
-  | 'frozenActionColumn'
-  | 'dialogTitle'
-  | 'saveButtonLabel'
-  | 'cancelButtonLabel'
-  | 'activeColumnsLabel'
-  | 'inactiveColumnsLabel'
->
 const CustomGroupColumnSelectorComponentSBConfig: Meta<CustomGroupColumnSelectorComponent> = {
   title: 'Components/CustomGroupColumnSelectorComponent',
   component: CustomGroupColumnSelectorComponent,
