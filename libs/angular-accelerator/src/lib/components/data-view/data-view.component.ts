@@ -2,6 +2,7 @@ import {
   Component,
   Injector,
   Input,
+  OnInit,
   Output,
   TemplateRef,
   computed,
@@ -41,7 +42,7 @@ export type DataViewComponentState = DataListGridComponentState & DataTableCompo
   styleUrls: ['./data-view.component.css'],
   providers: [{ provide: 'DataViewComponent', useExisting: DataViewComponent }],
 })
-export class DataViewComponent {
+export class DataViewComponent implements OnInit {
   private readonly injector = inject(Injector)
 
   dataListGridComponent = viewChild(DataListGridComponent)
