@@ -35,6 +35,8 @@ export class ObservableOutputEmitterRef<T> extends OutputEmitterRef<T> {
 }
 
 export function observableOutput<T>(): ObservableOutputEmitterRef<T> {
-  ngDevMode && assertInInjectionContext(observableOutput)
+  if (ngDevMode) {
+    assertInInjectionContext(observableOutput)
+  }
   return new ObservableOutputEmitterRef<T>()
 }
