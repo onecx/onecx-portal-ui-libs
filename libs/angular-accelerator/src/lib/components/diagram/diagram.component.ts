@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output, effect, input, model, output, signal } from '@angular/core'
+import { Component, OnInit, effect, input, model, output, signal } from '@angular/core'
 import { ChartData, ChartOptions } from 'chart.js'
 import * as d3 from 'd3-scale-chromatic'
 import { PrimeIcons } from 'primeng/api'

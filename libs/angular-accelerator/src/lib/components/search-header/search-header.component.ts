@@ -15,9 +15,9 @@ import {
   signal,
   viewChild,
 } from '@angular/core'
-import { outputFromObservable, toObservable } from '@angular/core/rxjs-interop'
+import { toObservable } from '@angular/core/rxjs-interop'
 import { FormControlName, FormGroup } from '@angular/forms'
-import { Observable, Subject, combineLatest, debounceTime, filter, from, map, mergeMap, of, startWith } from 'rxjs'
+import { Observable, combineLatest, debounceTime, filter, from, map, mergeMap, of, startWith } from 'rxjs'
 import { getLocation } from '@onecx/accelerator'
 import { CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
 import { Action } from '../page-header/page-header.component'

@@ -5,7 +5,6 @@ import {
   input,
   model,
   output,
-  QueryList,
   signal,
   TemplateRef,
   viewChild,

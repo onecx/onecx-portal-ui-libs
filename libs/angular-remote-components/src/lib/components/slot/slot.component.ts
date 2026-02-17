@@ -7,7 +7,6 @@ import {
   OutputEmitterRef,
   Type,
   ViewContainerRef,
-  effect,
   EventEmitter,
   inject,
   input,

@@ -4,7 +4,6 @@ import {
   Input,
   Output,
   TemplateRef,
-  ViewChild,
   computed,
   contentChild,
   contentChildren,
@@ -17,7 +16,7 @@ import {
   viewChild,
 } from '@angular/core'
 import { PrimeTemplate } from 'primeng/api'
-import { BehaviorSubject, Observable, ReplaySubject, combineLatest, map, startWith, timestamp } from 'rxjs'
+import { Observable, ReplaySubject, combineLatest, map, startWith, timestamp } from 'rxjs'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'

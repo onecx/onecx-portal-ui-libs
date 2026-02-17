@@ -1,4 +1,4 @@
-import { Component, effect, inject, Input, input, model, signal } from '@angular/core'
+import { Component, effect, inject, model, signal } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 
 @Component({

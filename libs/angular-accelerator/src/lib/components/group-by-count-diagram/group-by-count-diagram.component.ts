@@ -1,18 +1,13 @@
 import {
   Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
   effect,
   inject,
   input,
   model,
   output,
-  signal,
 } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
-import { BehaviorSubject, Observable, combineLatest, map, mergeMap, of } from 'rxjs'
+import { combineLatest, map, mergeMap, of } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DiagramColumn } from '../../model/diagram-column'
 import { DiagramData } from '../../model/diagram-data'

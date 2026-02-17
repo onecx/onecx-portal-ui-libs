@@ -1,16 +1,11 @@
 import {
   Component,
-  ContentChild,
-  EventEmitter,
-  Input,
   OnInit,
-  Output,
   TemplateRef,
   Type,
   ViewEncapsulation,
   computed,
   contentChild,
-  effect,
   inject,
   input,
   model,
@@ -20,7 +15,7 @@ import {
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 import { MenuItem, PrimeIcons } from 'primeng/api'
-import { BehaviorSubject, Observable, concat, map, of, switchMap } from 'rxjs'
+import { Observable, concat, map, of, switchMap } from 'rxjs'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { PrimeIcon } from '../../utils/primeicon.utils'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'

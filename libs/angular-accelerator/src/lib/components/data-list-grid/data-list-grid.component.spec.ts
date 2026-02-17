@@ -13,7 +13,6 @@ import { ensureIntersectionObserverMockExists, ensureOriginMockExists } from '@o
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { TooltipStyle } from 'primeng/tooltip'
 import { DataListGridHarness } from '../../../../testing/data-list-grid.harness'
-import { DataTableHarness } from '../../../../testing/data-table.harness'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'

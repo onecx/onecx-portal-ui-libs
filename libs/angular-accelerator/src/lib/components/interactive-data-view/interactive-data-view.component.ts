@@ -19,7 +19,7 @@ import {
 } from '@angular/core'
 import { SlotService } from '@onecx/angular-remote-components'
 import { PrimeTemplate } from 'primeng/api'
-import { Observable, ReplaySubject, combineLatest, map, startWith, timestamp, withLatestFrom } from 'rxjs'
+import { Observable, ReplaySubject, combineLatest, map, startWith, timestamp } from 'rxjs'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
@@ -42,7 +42,6 @@ import { DataViewComponent, DataViewComponentState, RowListGridData } from '../d
 import { FilterViewComponentState, FilterViewDisplayMode } from '../filter-view/filter-view.component'
 import { observableOutput } from '../../utils/observable-output.utils'
 import { toSignal } from '@angular/core/rxjs-interop'
-import { UntypedFormArray } from '@angular/forms'
 
 export type InteractiveDataViewComponentState = ColumnGroupSelectionComponentState &
   CustomGroupColumnSelectorComponentState &

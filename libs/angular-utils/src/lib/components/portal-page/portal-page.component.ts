@@ -1,6 +1,6 @@
-import { Component, Input, OnInit, computed, inject, input } from '@angular/core'
+import { Component, OnInit, inject, input } from '@angular/core'
 import { AppStateService } from '@onecx/angular-integration-interface'
-import { Observable, of, switchMap, tap } from 'rxjs'
+import { of, switchMap, tap } from 'rxjs'
 import { CommonModule } from '@angular/common'
 import { TranslateModule } from '@ngx-translate/core'
 import { PermissionService } from '../../services/permission.service'

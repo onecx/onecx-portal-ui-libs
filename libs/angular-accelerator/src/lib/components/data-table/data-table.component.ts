@@ -5,7 +5,6 @@ import {
   LOCALE_ID,
   OnInit,
   Output,
-  QueryList,
   TemplateRef,
   computed,
   contentChild,
@@ -13,7 +12,6 @@ import {
   effect,
   inject,
   input,
-  linkedSignal,
   model,
   output,
   signal,
@@ -25,23 +23,19 @@ import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { isValidDate } from '@onecx/accelerator'
 import { UserService } from '@onecx/angular-integration-interface'
-import { MenuItem, PrimeTemplate, SelectItem } from 'primeng/api'
+import { PrimeTemplate, SelectItem } from 'primeng/api'
 import { Menu } from 'primeng/menu'
 import { MultiSelectItem } from 'primeng/multiselect'
 import {
-  BehaviorSubject,
   Observable,
   combineLatest,
   debounceTime,
   filter,
-  first,
   firstValueFrom,
   map,
   mergeMap,
   of,
-  shareReplay,
   switchMap,
-  withLatestFrom,
 } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'

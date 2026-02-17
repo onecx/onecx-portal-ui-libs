@@ -1,4 +1,4 @@
-import { Component, computed, effect, input, model, OnInit, output, signal } from '@angular/core'
+import { Component, computed, input, model, OnInit, output } from '@angular/core'
 import { PrimeIcons } from 'primeng/api'
 import { PrimeIcon } from '../../utils/primeicon.utils'
 

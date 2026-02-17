@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, effect, inject, input, model, output, signal } from '@angular/core'
+import { Component, OnInit, computed, effect, input, model, output, signal } from '@angular/core'
 import { DataTableColumn } from '../../model/data-table-column.model'
 
 export type ColumnSelectionChangedEvent = { activeColumns: DataTableColumn[] }

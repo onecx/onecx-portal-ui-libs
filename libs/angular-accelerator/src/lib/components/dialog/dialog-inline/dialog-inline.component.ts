@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, input, output } from '@angular/core'
+import { Component, input, output } from '@angular/core'
 import { ButtonDialogConfig } from '../../../model/button-dialog'
 import { DialogState } from '../../../services/portal-dialog.service'
 

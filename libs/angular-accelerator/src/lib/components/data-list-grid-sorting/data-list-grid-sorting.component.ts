@@ -1,4 +1,4 @@
-import { Component, computed, effect, input, model, OnInit, output } from '@angular/core'
+import { Component, computed, effect, input, model, output } from '@angular/core'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataColumnNameId } from '../../model/data-column-name-id.model'
 import { DataTableColumn } from '../../model/data-table-column.model'
