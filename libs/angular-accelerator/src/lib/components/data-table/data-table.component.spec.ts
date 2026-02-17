@@ -371,12 +371,12 @@ describe('DataTableComponent', () => {
 
     it('should show a table with selection checkboxes if the parent binds to the event emitter', async () => {
       expect(await dataTable.rowSelectionIsEnabled()).toEqual(false)
-      component.selectionChanged.subscribe(() => {})
+      component.selectionChanged.subscribe(() => undefined)
       expect(await dataTable.rowSelectionIsEnabled()).toEqual(true)
     })
 
     it('should pre-select rows given through selectedRows input', async () => {
-      component.selectionChanged.subscribe(() => {})
+      component.selectionChanged.subscribe(() => undefined)
 
       unselectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('unchecked')
       selectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('checked')
