@@ -107,7 +107,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
   columns = input<DataTableColumn[]>([])
   filteredColumns = computed(() => {
     const subtitleLineIds = this.subtitleLineIds() ?? []
-    let ids: string[] = [...subtitleLineIds]
+    const ids: string[] = [...subtitleLineIds]
     const titleLineId = this.titleLineId()
     if (titleLineId) {
       ids.unshift(titleLineId)

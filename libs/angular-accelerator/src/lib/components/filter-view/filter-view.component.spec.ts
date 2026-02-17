@@ -24,7 +24,7 @@ const makeColumn = (overrides: Partial<DataTableColumn> = {}): DataTableColumn =
 describe('FilterViewComponent (class logic)', () => {
   let fixture: ComponentFixture<FilterViewComponent>
   let component: FilterViewComponent
-  let panelMock = {
+  const panelMock = {
     toggle: jest.fn(),
   } as any
 

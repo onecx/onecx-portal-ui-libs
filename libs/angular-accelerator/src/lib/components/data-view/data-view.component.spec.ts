@@ -257,7 +257,7 @@ describe('DataViewComponent', () => {
     it('should show a table with selection checkboxes if the parent binds to the event emitter', async () => {
       expect(dataTable).toBeTruthy()
       expect(await dataTable?.rowSelectionIsEnabled()).toEqual(false)
-      component.selectionChanged.subscribe(() => {})
+      component.selectionChanged.subscribe(() => undefined)
       expect(await dataTable?.rowSelectionIsEnabled()).toEqual(true)
     })
 
