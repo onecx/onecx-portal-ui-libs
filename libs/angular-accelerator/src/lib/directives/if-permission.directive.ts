@@ -1,7 +1,6 @@
 import {
   Directive,
   EmbeddedViewRef,
-  OnInit,
   Renderer2,
   TemplateRef,
   ViewContainerRef,
@@ -14,7 +13,7 @@ import {
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop'
 import { UserService } from '@onecx/angular-integration-interface'
 import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
-import { from, Observable, of, switchMap, withLatestFrom } from 'rxjs'
+import { from, Observable, of, switchMap } from 'rxjs'
 import { createLogger } from '../utils/logger.utils'
 
 @Directive({ selector: '[ocxIfPermission], [ocxIfNotPermission]', standalone: false })
@@ -27,17 +26,17 @@ export class IfPermissionDirective {
   private userService = inject(UserService, { optional: true })
   private destroyRef = inject(DestroyRef)
 
-  permission = input<string | string[] | undefined>(undefined, { alias: 'ocxIfPermission' })
-  notPermission = input<string | string[] | undefined>(undefined, { alias: 'ocxIfNotPermission' })
+  ocxIfPermission = input<string | string[] | undefined>(undefined)
+  ocxIfNotPermission = input<string | string[] | undefined>(undefined)
 
-  onMissingPermission = input<'hide' | 'disable'>('hide', { alias: 'ocxIfPermissionOnMissingPermission' })
-  notOnMissingPermission = input<'hide' | 'disable'>('hide', { alias: 'ocxIfNotPermissionOnMissingPermission' })
+  ocxIfPermissionOnMissingPermission = input<'hide' | 'disable'>('hide')
+  ocxIfNotPermissionOnMissingPermission = input<'hide' | 'disable'>('hide')
 
-  permissions = input<string[] | undefined>(undefined, { alias: 'ocxIfPermissionPermissions' })
-  notPermissions = input<string[] | undefined>(undefined, { alias: 'ocxIfNotPermissionPermissions' })
+  ocxIfPermissionPermissions = input<string[] | undefined>(undefined)
+  ocxIfNotPermissionPermissions = input<string[] | undefined>(undefined)
 
-  elseTemplate = input<TemplateRef<any> | undefined>(undefined, { alias: 'ocxIfPermissionElseTemplate' })
-  notElseTemplate = input<TemplateRef<any> | undefined>(undefined, { alias: 'ocxIfNotPermissionElseTemplate' })
+  ocxIfPermissionElseTemplate = input<TemplateRef<any> | undefined>(undefined)
+  ocxIfNotPermissionElseTemplate = input<TemplateRef<any> | undefined>(undefined)
 
   private permissionChecker = computed<HasPermissionChecker | undefined>(() => {
     return this.hasPermissionChecker ?? this.userService ?? undefined
@@ -46,8 +45,8 @@ export class IfPermissionDirective {
   private directiveContentRef = signal<EmbeddedViewRef<any> | undefined>(undefined)
 
   private permissionValidation = computed(() => {
-    const positive = this.permission()
-    const negative = this.notPermission()
+    const positive = this.ocxIfPermission()
+    const negative = this.ocxIfNotPermission()
     const negate = negative !== undefined
 
     const raw = negate ? negative : positive
@@ -55,9 +54,9 @@ export class IfPermissionDirective {
     return {
       permissions,
       negate,
-      onMissing: negate ? this.notOnMissingPermission() : this.onMissingPermission(),
-      elseTemplate: negate ? this.notElseTemplate() : this.elseTemplate(),
-      overridePermissions: negate ? this.notPermissions() : this.permissions(),
+      onMissing: negate ? this.ocxIfNotPermissionOnMissingPermission() : this.ocxIfPermissionOnMissingPermission(),
+      elseTemplate: negate ? this.ocxIfNotPermissionElseTemplate() : this.ocxIfPermissionElseTemplate(),
+      overridePermissions: negate ? this.ocxIfNotPermissionPermissions() : this.ocxIfPermissionPermissions(),
     }
   })
 
