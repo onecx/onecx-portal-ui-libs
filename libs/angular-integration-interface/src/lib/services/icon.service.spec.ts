@@ -8,7 +8,7 @@
 import { TestBed } from '@angular/core/testing';
 import { FakeTopic, ensureProperty } from '@onecx/accelerator';
 import { IconService } from './icon.service';
-import {IconCache, IconClassType} from "@onecx/integration-interface";
+import {IconCache} from "@onecx/integration-interface";
 
 
 describe('IconService', () => {
