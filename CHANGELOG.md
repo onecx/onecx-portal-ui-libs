@@ -1,3 +1,15 @@
+## [6.15.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.14.4...v6.15.0) (2026-02-17)
+
+### Features
+
+* cherry-picked apply advanced overrides from main ([#1170](https://github.com/onecx/onecx-portal-ui-libs/issues/1170)) ([5aca18c](https://github.com/onecx/onecx-portal-ui-libs/commit/5aca18c5e8e8d74c156dbc4ec8395f6fd5494f16))
+
+### Bug Fixes
+
+* data-table row selection now re-render ([#1225](https://github.com/onecx/onecx-portal-ui-libs/issues/1225)) ([e765589](https://github.com/onecx/onecx-portal-ui-libs/commit/e765589d319d4f1945df8faec644723def5bc13f))
+* imageservice correct typos ([#1236](https://github.com/onecx/onecx-portal-ui-libs/issues/1236)) ([8812cb5](https://github.com/onecx/onecx-portal-ui-libs/commit/8812cb5e69749501b66859522a66a28ff38c0e69))
+* v6 reset pagination on data change ([#1214](https://github.com/onecx/onecx-portal-ui-libs/issues/1214)) ([1e6d24f](https://github.com/onecx/onecx-portal-ui-libs/commit/1e6d24fb69f0a0b8907a99f061e1bfe50f4a58ea))
+
 ## [6.14.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.14.3...v6.14.4) (2026-02-04)
 
 ### Bug Fixes
