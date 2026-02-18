@@ -6,9 +6,10 @@
  * @jest-environment jsdom
  */
 import { TestBed } from '@angular/core/testing';
-import { FakeTopic } from '@onecx/accelerator';
-import '../declarations';
+import { FakeTopic, ensureProperty } from '@onecx/accelerator';
 import { IconService } from './icon.service';
+import {IconCache, IconClassType} from "@onecx/integration-interface";
+
 
 describe('IconService', () => {
   let iconService: IconService
@@ -63,7 +64,7 @@ describe('IconService', () => {
       const topic = FakeTopic.create<any>()
       iconService.iconTopic = topic as any
       const publishSpy = jest.spyOn(topic, 'publish')
-      globalThis.onecxIcons!['mdi:cached'] = { name: 'mdi:cached', type: 'svg', body: '' }
+      ensureProperty(globalThis, ['onecxIcons', 'mdi:cached'], { name: 'mdi:cached', type: 'svg', body: '' } as IconCache)
 
       const result = iconService.requestIcon('mdi:cached')
 
@@ -76,9 +77,9 @@ describe('IconService', () => {
     it('should return null immediately when cached null', async () => {
       const topic = FakeTopic.create<any>()
       iconService.iconTopic = topic as any
-
+      
       const name = 'mdi:ghost'
-      globalThis.onecxIcons![name] = null
+      ensureProperty(globalThis, ['onecxIcons', name], null)
       const res = await iconService.requestIconAsync(name)
 
       expect(res).toBeNull()
@@ -89,7 +90,7 @@ describe('IconService', () => {
       iconService.iconTopic = topic as any
       const name = 'mdi:car'
 
-      globalThis.onecxIcons![name] = { name, type: 'svg', body: '' }
+      ensureProperty(globalThis, ['onecxIcons', name], { name, type: 'svg', body: '' } as IconCache)
       const res = await iconService.requestIconAsync(name, 'svg')
 
       expect(res).toBe('onecx-theme-icon-svg-mdi-car')
@@ -101,7 +102,8 @@ describe('IconService', () => {
       const name = 'mdi:star'
 
       const promise = iconService.requestIconAsync(name) // default background-before
-      globalThis.onecxIcons![name] = { name, type: 'svg', body: '' }
+      ensureProperty(globalThis, ['onecxIcons', name], { name, type: 'svg', body: '' } as IconCache)
+
       await topic.publish({ type: 'IconsReceived' })
       const res = await promise
 
@@ -114,7 +116,8 @@ describe('IconService', () => {
       const name = 'mdi:unknown'
 
       const promise = iconService.requestIconAsync(name, 'svg')
-      globalThis.onecxIcons![name] = null
+      ensureProperty(globalThis, ['onecxIcons', name], null)
+
       await topic.publish({ type: 'IconsReceived' })
       const res = await promise
 

@@ -1,13 +1,14 @@
 import { filter, firstValueFrom, map } from 'rxjs';
 import { IconClassType } from '../topics/icons/v1/icon.model';
 import { IconTopic } from '../topics/icons/v1/icon.topic';
+import { ensureProperty } from '@onecx/accelerator';
 import '../declarations';
 
 const DEFAULT_CLASS_TYPE: IconClassType = 'background-before'
 
 
 export function ensureIconCache(): void {
-  globalThis.onecxIcons ??= {}
+  ensureProperty(globalThis, ['onecxIcons'], {})
 }
 
 export function generateClassName(name: string, classType: IconClassType): string {
@@ -39,10 +40,9 @@ export class IconService {
     const className = generateClassName(name, classType)
 
     if (globalThis.onecxIcons && !(name in globalThis.onecxIcons)) {
-      globalThis.onecxIcons[name] = undefined
+      ensureProperty(globalThis, ['onecxIcons', name], undefined)
       this.iconTopic.publish({ type: 'IconRequested', name })
     }
-
     return className;
   }
 
@@ -63,7 +63,7 @@ export class IconService {
         filter(v => v !== undefined),
       )
     )
-
+      
     return globalThis.onecxIcons?.[name] ? className : null
   }
 

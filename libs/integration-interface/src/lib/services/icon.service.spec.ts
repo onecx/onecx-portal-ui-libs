@@ -5,10 +5,10 @@
  *
  * @jest-environment jsdom
  */
-import { FakeTopic } from '@onecx/accelerator';
-import '../declarations';
+import { FakeTopic, ensureProperty } from '@onecx/accelerator';
 import { IconCache, IconClassType } from '../topics/icons/v1/icon.model';
 import { ensureIconCache, generateClassName, IconService } from './icon.service';
+import '../declarations';
 
 jest.mock('../topics/icons/v1/icon.topic', () => {
   const actual = jest.requireActual('../topics/icons/v1/icon.topic')
@@ -76,15 +76,13 @@ describe('IconService', () => {
       const topic = (iconService.iconTopic as unknown) as FakeTopic<any>
       const publishSpy = jest.spyOn(topic, 'publish')
 
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      globalThis.onecxIcons!['prime:user'] = { name: 'prime:user' } as IconCache
+      ensureProperty(globalThis, ['onecxIcons', 'prime:user'], { name: 'prime:user' } as IconCache )
       iconService.requestIcon('prime:user', 'background')
 
       expect(publishSpy).not.toHaveBeenCalled()
 
       publishSpy.mockClear()
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      globalThis.onecxIcons!['mdi:missing'] = null
+      ensureProperty(globalThis, ['onecxIcons', 'mdi:missing'], null)
       iconService.requestIcon('mdi:missing')
 
       expect(publishSpy).not.toHaveBeenCalled()
@@ -103,8 +101,7 @@ describe('IconService', () => {
   describe('requestIconAsync', () => {
     it('should return null immediately when cached null', async () => {
       const name = 'mdi:ghost'
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      globalThis.onecxIcons![name] = null
+      ensureProperty(globalThis, ['onecxIcons', name], null)
 
       const res = await iconService.requestIconAsync(name)
 
@@ -113,8 +110,7 @@ describe('IconService', () => {
 
     it('should return class immediately when cached icon exists', async () => {
       const name = 'mdi:car'
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      globalThis.onecxIcons![name] = { name, type: 'svg', body: '' }
+      ensureProperty(globalThis, ['onecxIcons', name], { name, type: 'svg', body: '' } as IconCache)
 
       const res = await iconService.requestIconAsync(name, 'svg')
 
@@ -124,8 +120,7 @@ describe('IconService', () => {
     it('should resolve with class after IconsReceived when icon becomes available', async () => {
       const name = 'prime:check'
       const promise = iconService.requestIconAsync(name, 'background')
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      globalThis.onecxIcons![name] = { name, type: 'svg', body: '' }
+      ensureProperty(globalThis, ['onecxIcons', name], { name, type: 'svg', body: '' } as IconCache)
       const topic = (iconService.iconTopic as unknown) as FakeTopic<any>
 
       await topic.publish({ type: 'IconsReceived' })
@@ -137,8 +132,7 @@ describe('IconService', () => {
     it('should resolve null after IconsReceived when icon resolved to null', async () => {
       const name = 'mdi:unknown'
       const promise = iconService.requestIconAsync(name)
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      globalThis.onecxIcons![name] = null
+      ensureProperty(globalThis, ['onecxIcons', name], null)
       const topic = (iconService.iconTopic as unknown) as FakeTopic<any>
 
       await topic.publish({ type: 'IconsReceived' })
@@ -180,13 +174,13 @@ describe('IconService', () => {
           'prime:user': null
         }
 
-        globalThis.onecxIcons = existing
+        ensureProperty(globalThis, ['onecxIcons'], existing)
 
         ensureIconCache()
 
         expect(globalThis.onecxIcons).toBe(existing)
-        expect(globalThis.onecxIcons['mdi:home']).toBeUndefined()
-        expect(globalThis.onecxIcons['prime:user']).toBeNull()
+        expect(globalThis.onecxIcons!['mdi:home']).toBeUndefined()
+        expect(globalThis.onecxIcons!['prime:user']).toBeNull()
       })
     })
 
