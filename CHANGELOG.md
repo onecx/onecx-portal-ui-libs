@@ -1,3 +1,11 @@
+## [5.52.8](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.52.7...v5.52.8) (2026-02-18)
+
+### Bug Fixes
+
+* portal-page-componenent resolves the value first ([#1234](https://github.com/onecx/onecx-portal-ui-libs/issues/1234)) ([85ef5d9](https://github.com/onecx/onecx-portal-ui-libs/commit/85ef5d9fac227a20d7d03ad7d878e3bd8e7737a4))
+* reset pagination on data update ([#1195](https://github.com/onecx/onecx-portal-ui-libs/issues/1195)) ([1447971](https://github.com/onecx/onecx-portal-ui-libs/commit/144797156132bc12640414ed1426b341db285311))
+* v5 search-header-component resolves value first ([#1228](https://github.com/onecx/onecx-portal-ui-libs/issues/1228)) ([b36848a](https://github.com/onecx/onecx-portal-ui-libs/commit/b36848a53109da68a1759edb9d1eed493cce65f1))
+
 ## [5.52.7](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.52.6...v5.52.7) (2026-02-04)
 
 ### Refactoring
