@@ -63,7 +63,9 @@
       [ngClass]="'flex-row'"
       [attr.aria-label]="'Search Controls'"
     >
-      <ng-container *ngIf="(searchButtonsReversed$ | async); else normalOrder">
+    @let searchButtonsReversed = (searchButtonsReversed$ | async);
+    @if(searchButtonsReversed !== null){
+      <ng-container *ngIf="searchButtonsReversed; else normalOrder">
         <ng-container [ngTemplateOutlet]="searchBtn"></ng-container>
         <ng-container *ngIf="resetted.observed" [ngTemplateOutlet]="resetBtn"></ng-container>
       </ng-container>
@@ -72,6 +74,7 @@
         <ng-container *ngIf="resetted.observed" [ngTemplateOutlet]="resetBtn"></ng-container>
         <ng-container [ngTemplateOutlet]="searchBtn"></ng-container>
       </ng-template>
+    }
     </section>
   </div>
 </ocx-page-header>
