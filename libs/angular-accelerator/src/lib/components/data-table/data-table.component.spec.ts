@@ -311,7 +311,7 @@ describe('DataTableComponent', () => {
 
   describe('should display the paginator currentPageReport  with totalRecordsOnServer -', () => {
     it('de', async () => {
-      fixture.componentRef.setInput('totalRecordOnServer', 10)
+      fixture.componentRef.setInput('totalRecordsOnServer', 10)
       fixture.detectChanges()
       translateService.use('de')
       const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
@@ -321,7 +321,7 @@ describe('DataTableComponent', () => {
     })
 
     it('en', async () => {
-      fixture.componentRef.setInput('totalRecordOnServer', 10)
+      fixture.componentRef.setInput('totalRecordsOnServer', 10)
       fixture.detectChanges()
       translateService.use('en')
       const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
@@ -1011,14 +1011,14 @@ describe('DataTableComponent', () => {
     })
 
     it('should render preselected rows correctly across pages ', async () => {
-      component.selectionChanged.subscribe()
+      component.selectionChanged.subscribe(() => {})
 
-      component.pageSizes = [2]
-      component.pageSize = 2
+      component.pageSizes.set([2])
+      component.pageSize.set(2)
       fixture.detectChanges()
 
       const page2Rows = mockData.slice(2, 4)
-      component.selectedRows = page2Rows
+      component.selectedRows.set(page2Rows)
 
       let unchecked = await dataTable.getHarnessesForCheckboxes('unchecked')
       let checked = await dataTable.getHarnessesForCheckboxes('checked')
@@ -1335,9 +1335,9 @@ describe('DataTableComponent', () => {
         viewItemObserved: true,
         editItemObserved: false,
         deleteItemObserved: true,
-        viewItem: { observed: false },
-        editItem: { observed: true },
-        deleteItem: { observed: false },
+        viewItem: { observed: () => false },
+        editItem: { observed: () => true },
+        deleteItem: { observed: () => false },
       }
       jest.spyOn((component as any).injector, 'get').mockReturnValue(dvMock)
 
@@ -1350,7 +1350,7 @@ describe('DataTableComponent', () => {
     it('selectionChangedObserved should reflect DataViewComponent selectionChanged override', () => {
       const dvMock = {
         selectionChangedObserved: true,
-        selectionChanged: { observed: false },
+        selectionChanged: { observed: () => false },
       }
       jest.spyOn((component as any).injector, 'get').mockReturnValue(dvMock)
       expect(component.selectionChangedObserved).toBe(true)
