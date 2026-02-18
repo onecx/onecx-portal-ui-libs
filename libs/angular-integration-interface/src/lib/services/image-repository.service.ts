@@ -1,17 +1,10 @@
 import { Injectable, OnDestroy } from "@angular/core";
-import { ImageRepositoryService as ImageRepositryInterface, ImageRepositoryTopic } from '@onecx/integration-interface'
+import { ImageRepositoryService as ImageRepositoryInterface } from '@onecx/integration-interface'
 
 @Injectable({providedIn: 'root'}) 
 export class ImageRepositoryService implements OnDestroy {
-    private readonly imageRepositoryInterface = new ImageRepositryInterface();
-    get imageRepositoryTopic() {
-        return this.imageRepositoryInterface.imageRepositoryTopic;
-    }
-
-    set imageRepositoryTopic(source: ImageRepositoryTopic) {
-        this.imageRepositoryInterface.imageRepositoryTopic = source;
-    }
-
+    private readonly imageRepositoryInterface = new ImageRepositoryInterface();
+    
     async getUrl(names: string[]): Promise<string | undefined>;
     async getUrl(names: string[], fallbackUrl: string): Promise<string>;
     async getUrl(names: string[], fallbackUrl?: string): Promise<string | undefined> {
@@ -23,9 +16,5 @@ export class ImageRepositoryService implements OnDestroy {
 
     ngOnDestroy(): void {
         this.imageRepositoryInterface.destroy();
-    }
-
-    destroy() {
-        this.ngOnDestroy();
     }
 }
