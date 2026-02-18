@@ -1,19 +1,21 @@
 import {
-  AfterContentInit,
   Component,
-  ContentChild,
-  ContentChildren,
-  DoCheck,
-  EventEmitter,
   Injector,
-  Input,
   LOCALE_ID,
   OnInit,
   Output,
-  QueryList,
   TemplateRef,
-  ViewChildren,
+  computed,
+  contentChild,
+  contentChildren,
+  effect,
   inject,
+  input,
+  model,
+  output,
+  signal,
+  untracked,
+  viewChildren,
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
@@ -21,7 +23,7 @@ import { AppStateService, UserService } from '@onecx/angular-integration-interfa
 import { MfeInfo } from '@onecx/integration-interface'
 import { MenuItem, PrimeIcons, PrimeTemplate } from 'primeng/api'
 import { Menu } from 'primeng/menu'
-import { BehaviorSubject, Observable, combineLatest, debounceTime, first, firstValueFrom, map, mergeMap, of, switchMap } from 'rxjs'
+import { Observable, combineLatest, debounceTime, firstValueFrom, map, mergeMap, of, switchMap } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
@@ -32,6 +34,10 @@ import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { Row } from '../data-table/data-table.component'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
+import { observableOutput, ObservableOutputEmitterRef } from '../../utils/observable-output.utils'
+import { toObservable } from '@angular/core/rxjs-interop'
+import { computedPrevious } from 'ngxtension/computed-previous'
+import equal from 'fast-deep-equal'
 
 export type ListGridData = {
   id: string | number
@@ -56,7 +62,7 @@ export interface DataListGridComponentState {
   templateUrl: './data-list-grid.component.html',
   styleUrls: ['./data-list-grid.component.scss'],
 })
-export class DataListGridComponent extends DataSortBase implements OnInit, DoCheck, AfterContentInit {
+export class DataListGridComponent extends DataSortBase implements OnInit {
   private userService = inject(UserService)
   private router = inject(Router)
   private injector = inject(Injector)
@@ -64,393 +70,440 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   private hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
   private readonly liveAnnouncer = inject(LiveAnnouncer)
 
-  @Input() titleLineId: string | undefined
-  @Input() subtitleLineIds: string[] = []
-  @Input() clientSideSorting = true
-  @Input() clientSideFiltering = true
-  @Input() sortStates: DataSortDirection[] = []
+  titleLineId = input<string>()
+  subtitleLineIds = input<string[]>()
+  clientSideSorting = input<boolean>(true)
+  clientSideFiltering = input<boolean>(true)
+  sortStates = input<DataSortDirection[]>([])
 
-  _pageSizes$ = new BehaviorSubject<number[]>([10, 25, 50])
-  @Input()
-  get pageSizes(): number[] {
-    return this._pageSizes$.getValue()
-  }
-  set pageSizes(value: number[]) {
-    this._pageSizes$.next(value)
-  }
+  pageSize = model<number | undefined>(undefined)
+  pageSizes = input<number[]>([10, 25, 50])
 
-  displayedPageSize$: Observable<number>
-  _pageSize$ = new BehaviorSubject<number | undefined>(undefined)
-  @Input()
-  get pageSize(): number | undefined {
-    return this._pageSize$.getValue()
-  }
-  set pageSize(value: number | undefined) {
-    this._pageSize$.next(value)
-  }
+  displayedPageSize = computed(() => {
+    const pageSize = this.pageSize()
+    const pageSizes = this.pageSizes()
 
-  @Input() emptyResultsMessage: string | undefined
-  @Input() fallbackImage = 'placeholder.png'
-  @Input() layout: 'grid' | 'list' = 'grid'
-  _viewPermission$ = new BehaviorSubject<string | string[] | undefined>(undefined)
-  @Input()
-  get viewPermission(): string | string[] | undefined {
-    return this._viewPermission$.getValue()
-  }
-  set viewPermission(value: string | string[] | undefined) {
-    this._viewPermission$.next(value)
-  }
-  @Input() editPermission: string | string[] | undefined
-  @Input() deletePermission: string | string[] | undefined
-  @Input() deleteActionVisibleField: string | undefined
-  @Input() deleteActionEnabledField: string | undefined
-  @Input() viewActionVisibleField: string | undefined
-  @Input() viewActionEnabledField: string | undefined
-  @Input() editActionVisibleField: string | undefined
-  @Input() editActionEnabledField: string | undefined
-  @Input() viewMenuItemKey: string | undefined
-  @Input() editMenuItemKey: string | undefined
-  @Input() deleteMenuItemKey: string | undefined
-  @Input() paginator = true
-  @Input() page = 0
+    return pageSize ?? pageSizes.find((val): val is number => typeof val === 'number') ?? 50
+  })
+
+  emptyResultsMessage = input<string | undefined>(undefined)
+  fallbackImage = input<string>('placeholder.png')
+  layout = input<'grid' | 'list'>('grid')
+  viewPermission = input<string | string[] | undefined>(undefined)
+  editPermission = input<string | string[] | undefined>(undefined)
+  deletePermission = input<string | string[] | undefined>(undefined)
+  deleteActionVisibleField = input<string | undefined>(undefined)
+  deleteActionEnabledField = input<string | undefined>(undefined)
+  viewActionVisibleField = input<string | undefined>(undefined)
+  viewActionEnabledField = input<string | undefined>(undefined)
+  editActionVisibleField = input<string | undefined>(undefined)
+  editActionEnabledField = input<string | undefined>(undefined)
+  viewMenuItemKey = input<string | undefined>(undefined)
+  editMenuItemKey = input<string | undefined>(undefined)
+  deleteMenuItemKey = input<string | undefined>(undefined)
+  paginator = input<boolean>(true)
+  page = model<number>(0)
   columnTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
-  _columns$ = new BehaviorSubject<DataTableColumn[]>([])
-  @Input()
-  get columns(): DataTableColumn[] {
-    return this._columns$.getValue()
-  }
-  set columns(value: DataTableColumn[]) {
-    this._columns$.next(value)
-    const obs = value.map((c) => this.getTemplate(c))
-    this.columnTemplates$ = combineLatest(obs).pipe(
-      map((values) => Object.fromEntries(value.map((c, i) => [c.id, values[i]]))),
-      debounceTime(50)
-    )
-  }
-  @Input() name = ''
-  @Input()
-  get totalRecordsOnServer(): number | undefined {
-    return this.params['totalRecordsOnServer'] ? Number(this.params['totalRecordsOnServer']) : undefined
-  }
-  set totalRecordsOnServer(value: number | undefined) {
-    this.params['totalRecordsOnServer'] = value?.toString() ?? '0'
-  }
-  @Input() currentPageShowingKey = 'OCX_DATA_TABLE.SHOWING'
-  @Input() currentPageShowingWithTotalOnServerKey = 'OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER'
-  params: { [key: string]: string } = {
-    currentPage: '{currentPage}',
-    totalPages: '{totalPages}',
-    rows: '{rows}',
-    first: '{first}',
-    last: '{last}',
-    totalRecords: '{totalRecords}',
-  }
-
-  _data$ = new BehaviorSubject<RowListGridData[]>([])
-  @Input()
-  get data(): RowListGridData[] {
-    return this._data$.getValue()
-  }
-  set data(value: RowListGridData[]) {
-    if (this._data$.getValue().length) this.resetPage()
-    this._originalData = [...value]
-    this._data$.next([...value])
-
-    const currentResults = value.length;
-    const newStatus = currentResults === 0
-      ? 'OCX_DATA_LIST_GRID.NO_SEARCH_RESULTS_FOUND'
-      : 'OCX_DATA_LIST_GRID.SEARCH_RESULTS_FOUND';
-
-    firstValueFrom(
-      this.translateService.get(newStatus, { results: currentResults }) ).then((translatedText: string) => {
-        this.liveAnnouncer.announce(translatedText);
-      }
-    );
-  }
-
-  _filters$ = new BehaviorSubject<Filter[]>([])
-  @Input()
-  get filters(): Filter[] {
-    return this._filters$.getValue()
-  }
-  set filters(value: Filter[]) {
-    if (this._filters$.getValue().length) this.resetPage()
-    this._filters$.next(value)
-  }
-  _originalData: RowListGridData[] = []
-  _sortDirection$ = new BehaviorSubject<DataSortDirection>(DataSortDirection.NONE)
-  @Input()
-  get sortDirection(): DataSortDirection {
-    return this._sortDirection$.getValue()
-  }
-  set sortDirection(value: DataSortDirection) {
-    if (value === DataSortDirection.NONE) {
-      this._data$.next([...this._originalData])
+  columns = input<DataTableColumn[]>([])
+  filteredColumns = computed(() => {
+    const subtitleLineIds = this.subtitleLineIds() ?? []
+    const ids: string[] = [...subtitleLineIds]
+    const titleLineId = this.titleLineId()
+    if (titleLineId) {
+      ids.unshift(titleLineId)
     }
-    this._sortDirection$.next(value)
-  }
-  _sortField$ = new BehaviorSubject<string>('')
-  @Input()
-  get sortField(): string {
-    return this?._sortField$.getValue()
-  }
-  set sortField(value: string) {
-    this._sortField$.next(value)
+    return this.columns().filter((c) => !ids.includes(c.id))
+  })
+
+  name = model<string | undefined>(undefined)
+  totalRecordsOnServer = input<number | undefined>(undefined)
+  currentPageShowingKey = input<string>('OCX_DATA_TABLE.SHOWING')
+  currentPageShowingWithTotalOnServerKey = input<string>('OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER')
+  params = computed(() => {
+    const totalRecordsOnServer = this.totalRecordsOnServer()
+    return {
+      currentPage: '{currentPage}',
+      totalPages: '{totalPages}',
+      rows: '{rows}',
+      first: '{first}',
+      last: '{last}',
+      totalRecords: '{totalRecords}',
+      totalRecordsOnServer,
+    }
+  })
+
+  data = input<RowListGridData[]>([])
+  previousData = computedPrevious(this.data)
+
+  filters = input<Filter[]>([])
+  previousFilters = computedPrevious(this.filters)
+
+  sortDirection = input<DataSortDirection>(DataSortDirection.NONE)
+  sortField = input<string>('')
+
+  private permissions$ = this.getPermissions()
+
+  gridItemSubtitleLinesTemplate = input<TemplateRef<any> | undefined>(undefined)
+  gridItemSubtitleLinesChildTemplate = contentChild<TemplateRef<any>>('gridItemSubtitleLines')
+  get gridItemSubtitleLines(): TemplateRef<any> | undefined {
+    return this.gridItemSubtitleLinesTemplate() || this.gridItemSubtitleLinesChildTemplate()
   }
 
-  @Input() gridItemSubtitleLinesTemplate: TemplateRef<any> | undefined
-  @ContentChild('gridItemSubtitleLines') gridItemSubtitleLinesChildTemplate: TemplateRef<any> | undefined
-  get _gridItemSubtitleLines(): TemplateRef<any> | undefined {
-    return this.gridItemSubtitleLinesTemplate || this.gridItemSubtitleLinesChildTemplate
+  listItemSubtitleLinesTemplate = input<TemplateRef<any> | undefined>(undefined)
+  listItemSubtitleLinesChildTemplate = contentChild<TemplateRef<any>>('listItemSubtitleLines')
+  get listItemSubtitleLines(): TemplateRef<any> | undefined {
+    return this.listItemSubtitleLinesTemplate() || this.listItemSubtitleLinesChildTemplate()
   }
 
-  @Input() listItemSubtitleLinesTemplate: TemplateRef<any> | undefined
-  @ContentChild('listItemSubtitleLines') listItemSubtitleLinesChildTemplate: TemplateRef<any> | undefined
-  get _listItemSubtitleLines(): TemplateRef<any> | undefined {
-    return this.listItemSubtitleLinesTemplate || this.listItemSubtitleLinesChildTemplate
+  listItemTemplate = input<TemplateRef<any> | undefined>(undefined)
+  listItemChildTemplate = contentChild<TemplateRef<any>>('listItem')
+  get listItem(): TemplateRef<any> | undefined {
+    return this.listItemTemplate() || this.listItemChildTemplate()
   }
 
-  @Input() listItemTemplate: TemplateRef<any> | undefined
-  @ContentChild('listItem') listItemChildTemplate: TemplateRef<any> | undefined
-  get _listItem(): TemplateRef<any> | undefined {
-    return this.listItemTemplate || this.listItemChildTemplate
+  gridItemTemplate = input<TemplateRef<any> | undefined>(undefined)
+  gridItemChildTemplate = contentChild<TemplateRef<any>>('gridItem')
+  get gridItem(): TemplateRef<any> | undefined {
+    return this.gridItemTemplate() || this.gridItemChildTemplate()
   }
 
-  @Input() gridItemTemplate: TemplateRef<any> | undefined
-  @ContentChild('gridItem') gridItemChildTemplate: TemplateRef<any> | undefined
-  get _gridItem(): TemplateRef<any> | undefined {
-    return this.gridItemTemplate || this.gridItemChildTemplate
+  listValueTemplate = input<TemplateRef<any> | undefined>(undefined)
+  listValueChildTemplate = contentChild<TemplateRef<any>>('listValue')
+  get listValue(): TemplateRef<any> | undefined {
+    return this.listValueTemplate() || this.listValueChildTemplate()
   }
 
-  @Input() listValueTemplate: TemplateRef<any> | undefined
-  @ContentChild('listValue') listValueChildTemplate: TemplateRef<any> | undefined
-  get _listValue(): TemplateRef<any> | undefined {
-    return this.listValueTemplate || this.listValueChildTemplate
+  translationKeyListValueTemplate = input<TemplateRef<any> | undefined>(undefined)
+  translationKeyListValueChildTemplate = contentChild<TemplateRef<any>>('translationKeyListValue')
+  get translationKeyListValue(): TemplateRef<any> | undefined {
+    return this.translationKeyListValueTemplate() || this.translationKeyListValueChildTemplate()
   }
 
-  @Input() translationKeyListValueTemplate: TemplateRef<any> | undefined
-  @ContentChild('translationKeyListValue') translationKeyListValueChildTemplate: TemplateRef<any> | undefined
-  get _translationKeyListValue(): TemplateRef<any> | undefined {
-    return this.translationKeyListValueTemplate || this.translationKeyListValueChildTemplate
+  numberListValueTemplate = input<TemplateRef<any> | undefined>(undefined)
+  numberListValueChildTemplate = contentChild<TemplateRef<any>>('numberListValue')
+  get numberListValue(): TemplateRef<any> | undefined {
+    return this.numberListValueTemplate() || this.numberListValueChildTemplate()
   }
 
-  @Input() numberListValueTemplate: TemplateRef<any> | undefined
-  @ContentChild('numberListValue') numberListValueChildTemplate: TemplateRef<any> | undefined
-  get _numberListValue(): TemplateRef<any> | undefined {
-    return this.numberListValueTemplate || this.numberListValueChildTemplate
+  relativeDateListValueTemplate = input<TemplateRef<any> | undefined>(undefined)
+  relativeDateListValueChildTemplate = contentChild<TemplateRef<any>>('relativeDateListValue')
+  get relativeDateListValue(): TemplateRef<any> | undefined {
+    return this.relativeDateListValueTemplate() || this.relativeDateListValueChildTemplate()
   }
 
-  @Input() relativeDateListValueTemplate: TemplateRef<any> | undefined
-  @ContentChild('relativeDateListValue') relativeDateListValueChildTemplate: TemplateRef<any> | undefined
-  get _relativeDateListValue(): TemplateRef<any> | undefined {
-    return this.relativeDateListValueTemplate || this.relativeDateListValueChildTemplate
+  stringListValueTemplate = input<TemplateRef<any> | undefined>(undefined)
+  stringListValueChildTemplate = contentChild<TemplateRef<any>>('stringListValue')
+  get stringListValue(): TemplateRef<any> | undefined {
+    return this.stringListValueTemplate() || this.stringListValueChildTemplate()
   }
 
-  @Input() stringListValueTemplate: TemplateRef<any> | undefined
-  @ContentChild('stringListValue') stringListValueChildTemplate: TemplateRef<any> | undefined
-  get _stringListValue(): TemplateRef<any> | undefined {
-    return this.stringListValueTemplate || this.stringListValueChildTemplate
+  dateListValueTemplate = input<TemplateRef<any> | undefined>(undefined)
+  dateListValueChildTemplate = contentChild<TemplateRef<any>>('dateListValue')
+  get dateListValue(): TemplateRef<any> | undefined {
+    return this.dateListValueTemplate() || this.dateListValueChildTemplate()
   }
 
-  @Input() dateListValueTemplate: TemplateRef<any> | undefined
-  @ContentChild('dateListValue') dateListValueChildTemplate: TemplateRef<any> | undefined
-  get _dateListValue(): TemplateRef<any> | undefined {
-    return this.dateListValueTemplate || this.dateListValueChildTemplate
-  }
+  additionalActions = input<DataAction[]>([])
+  inlineListActions = computed(() => {
+    return this.additionalActions().filter((action) => !action.showAsOverflow)
+  })
+  overflowListActions = computed(() => {
+    return this.additionalActions().filter((action) => action.showAsOverflow)
+  })
+  overflowListActions$ = toObservable(this.overflowListActions)
+  currentMenuRow = signal<Row | null>(null)
+  overflowListMenuItems$ = combineLatest([
+    toObservable(this.overflowListActions),
+    toObservable(this.currentMenuRow),
+    this.permissions$,
+  ]).pipe(
+    map(([actions, row, permissions]) => ({
+      actions: this.filterActionsBasedOnPermissions(actions, permissions),
+      row,
+    })),
+    mergeMap(({ actions, row }) => {
+      if (actions.length === 0) {
+        return of([])
+      }
+      return this.translateService.get([...actions.map((a) => a.labelKey || '')]).pipe(
+        map((translations) => {
+          return actions.map((a) => ({
+            label: translations[a.labelKey || ''],
+            icon: a.icon,
+            styleClass: (a.classes || []).join(' '),
+            disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
+            visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
+            command: () => a.callback(row),
+          }))
+        })
+      )
+    })
+  )
 
-  inlineListActions$: Observable<DataAction[]>
-  overflowListActions$: Observable<DataAction[]>
-  overflowListMenuItems$: Observable<MenuItem[]>
-  currentMenuRow$ = new BehaviorSubject<Row | null>(null)
-  _additionalActions$ = new BehaviorSubject<DataAction[]>([])
-  @Input()
-  get additionalActions(): DataAction[] {
-    return this._additionalActions$.getValue()
-  }
-  set additionalActions(value: DataAction[]) {
-    this._additionalActions$.next(value)
-  }
-
-  @Output() viewItem = new EventEmitter<ListGridData>()
-  @Output() editItem = new EventEmitter<ListGridData>()
-  @Output() deleteItem = new EventEmitter<ListGridData>()
-  @Output() pageChanged = new EventEmitter<number>()
-  @Output() pageSizeChanged = new EventEmitter<number>()
-  @Output() componentStateChanged = new EventEmitter<DataListGridComponentState>()
+  @Output() viewItem = observableOutput<ListGridData | undefined>()
+  @Output() editItem = observableOutput<ListGridData | undefined>()
+  @Output() deleteItem = observableOutput<ListGridData | undefined>()
+  pageChanged = output<number>()
+  pageSizeChanged = output<number>()
+  componentStateChanged = output<DataListGridComponentState>()
 
   get viewItemObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
-    return dv?.viewItemObserved || dv?.viewItem.observed || this.viewItem.observed
+    return dv?.viewItemObserved || dv?.viewItem.observed() || this.viewItem.observed()
   }
   get editItemObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
-    return dv?.editItemObserved || dv?.editItem.observed || this.editItem.observed
+    return dv?.editItemObserved || dv?.editItem.observed() || this.editItem.observed()
   }
   get deleteItemObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
-    return dv?.deleteItemObserved || dv?.deleteItem.observed || this.deleteItem.observed
+    return dv?.deleteItemObserved || dv?.deleteItem.observed() || this.deleteItem.observed()
   }
 
+  observedOutputs = computed(() => {
+    return (this.viewItemObserved ? 1 : 0) + (this.deleteItemObserved ? 1 : 0) + (this.editItemObserved ? 1 : 0)
+  })
+
   get sortDirectionNumber(): number {
-    if (this.sortDirection === DataSortDirection.ASCENDING) return 1
-    if (this.sortDirection === DataSortDirection.DESCENDING) return -1
+    if (this.sortDirection() === DataSortDirection.ASCENDING) return 1
+    if (this.sortDirection() === DataSortDirection.DESCENDING) return -1
     return 0
   }
 
-  gridMenuItems$: Observable<MenuItem[]>
-  _selectedItem$ = new BehaviorSubject<ListGridData | undefined>(undefined)
-  observedOutputs$ = new BehaviorSubject<number>(0)
+  selectedItem = signal<ListGridData | undefined>(undefined)
 
-  displayedItems$: Observable<unknown[]> | undefined
+  permittedAdditionalActions$ = combineLatest([this.permissions$, toObservable(this.additionalActions)]).pipe(
+    map(([permissions, additionalActions]) => {
+      return this.filterActionsBasedOnPermissions(additionalActions, permissions)
+    })
+  )
+
+  gridMenuState$ = combineLatest([
+    // Trigger the whole chain to recalculate when data changes, to update the enabled/visible state of menu items based on the selected row
+    toObservable(this.data),
+    this.permissions$,
+    this.permittedAdditionalActions$,
+    toObservable(this.selectedItem),
+    toObservable(this.observedOutputs),
+    toObservable(this.viewMenuItemKey),
+    toObservable(this.editMenuItemKey),
+    toObservable(this.deleteMenuItemKey),
+    toObservable(this.viewPermission),
+    toObservable(this.editPermission),
+    toObservable(this.deletePermission),
+    toObservable(this.viewActionEnabledField),
+    toObservable(this.editActionEnabledField),
+    toObservable(this.deleteActionEnabledField),
+    toObservable(this.viewActionVisibleField),
+    toObservable(this.editActionVisibleField),
+    toObservable(this.deleteActionVisibleField),
+  ]).pipe(
+    map(
+      ([
+        _data,
+        permissions,
+        additionalActions,
+        selectedItem,
+        _observedOutputs,
+        viewMenuItemKey,
+        editMenuItemKey,
+        deleteMenuItemKey,
+        viewPermission,
+        editPermission,
+        deletePermission,
+        viewActionEnabledField,
+        editActionEnabledField,
+        deleteActionEnabledField,
+        viewActionVisibleField,
+        editActionVisibleField,
+        deleteActionVisibleField,
+      ]) => {
+        return {
+          permissions,
+          additionalActions,
+          selectedItem,
+          viewMenuItemKey: viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW',
+          editMenuItemKey: editMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.EDIT',
+          deleteMenuItemKey: deleteMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.DELETE',
+          viewPermission,
+          editPermission,
+          deletePermission,
+          viewActionEnabledField,
+          editActionEnabledField,
+          deleteActionEnabledField,
+          viewActionVisibleField,
+          editActionVisibleField,
+          deleteActionVisibleField,
+        }
+      }
+    )
+  )
+
+  gridMenuItems$ = this.gridMenuState$.pipe(
+    switchMap((params) => {
+      return this.getGridActionsTranslations(params.additionalActions, {
+        viewMenuItem: params.viewMenuItemKey,
+        editMenuItem: params.editMenuItemKey,
+        deleteMenuItem: params.deleteMenuItemKey,
+      }).pipe(map((translations) => ({ ...params, translations })))
+    }),
+    map((params) =>
+      this.mapGridMenuItems(
+        params.permissions,
+        params.additionalActions,
+        params.selectedItem,
+        params.translations,
+        {
+          viewMenuItem: params.viewMenuItemKey,
+          editMenuItem: params.editMenuItemKey,
+          deleteMenuItem: params.deleteMenuItemKey,
+        },
+        {
+          viewPermission: params.viewPermission,
+          editPermission: params.editPermission,
+          deletePermission: params.deletePermission,
+        },
+        {
+          viewAction: params.viewActionVisibleField,
+          editAction: params.editActionVisibleField,
+          deleteAction: params.deleteActionVisibleField,
+        },
+        {
+          viewAction: params.viewActionEnabledField,
+          editAction: params.editActionEnabledField,
+          deleteAction: params.deleteActionEnabledField,
+        }
+      )
+    )
+  )
+
+  displayedItems$ = combineLatest([
+    toObservable(this.data),
+    toObservable(this.filters),
+    toObservable(this.sortField),
+    toObservable(this.sortDirection),
+    toObservable(this.columns),
+    toObservable(this.clientSideFiltering),
+    toObservable(this.clientSideSorting),
+  ]).pipe(
+    map(([data, filters, sortField, sortDirection, columns, clientSideFiltering, clientSideSorting]) => {
+      return { data, filters, sortField, sortDirection, columns, clientSideFiltering, clientSideSorting }
+    }),
+    mergeMap((params) =>
+      this.translateItems(params.data, params.columns, params.clientSideFiltering, params.clientSideSorting).pipe(
+        map((translatedItems) => ({ ...params, translatedItems }))
+      )
+    ),
+    map((params) => ({
+      ...params,
+      data: this.filterItems([params.data, params.filters, params.translatedItems], params.clientSideFiltering),
+    })),
+    map((params) => ({
+      ...params,
+      data: this.sortItems(
+        [params.data, params.sortField, params.sortDirection, params.translatedItems],
+        params.columns,
+        params.clientSideSorting
+      ),
+    })),
+    map(({ data }) => data)
+  )
   fallbackImagePath$!: Observable<string>
 
-  templates$: BehaviorSubject<QueryList<PrimeTemplate> | undefined> = new BehaviorSubject<
-    QueryList<PrimeTemplate> | undefined
-  >(undefined)
-  @ContentChildren(PrimeTemplate)
-  set templates(value: QueryList<PrimeTemplate> | undefined) {
-    this.templates$.next(value)
-  }
+  templates = contentChildren<PrimeTemplate>(PrimeTemplate)
+  templates$ = toObservable(this.templates)
 
-  viewTemplates$: BehaviorSubject<QueryList<PrimeTemplate> | undefined> = new BehaviorSubject<
-    QueryList<PrimeTemplate> | undefined
-  >(undefined)
-  @ViewChildren(PrimeTemplate)
-  set viewTemplates(value: QueryList<PrimeTemplate> | undefined) {
-    this.viewTemplates$.next(value)
-  }
+  viewTemplates = viewChildren<PrimeTemplate>(PrimeTemplate)
+  viewTemplates$ = toObservable(this.viewTemplates)
 
-  parentTemplates$: BehaviorSubject<QueryList<PrimeTemplate> | null | undefined> = new BehaviorSubject<
-    QueryList<PrimeTemplate> | null | undefined
-  >(undefined)
-  @Input()
-  set parentTemplates(value: QueryList<PrimeTemplate> | null | undefined) {
-    this.parentTemplates$.next(value)
-  }
+  parentTemplates = model<PrimeTemplate[] | null | undefined>(undefined)
+  parentTemplates$ = toObservable(this.parentTemplates)
 
   columnType = ColumnType
-  templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
-  hasViewPermission$: Observable<boolean>
-
-  private cachedOverflowMenuItemsVisibility$: Observable<boolean> | undefined
+  private templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
+  hasViewPermission$ = toObservable(this.viewPermission).pipe(
+    map((permission) => {
+      if (!permission) return []
+      return Array.isArray(permission) ? permission : [permission]
+    }),
+    switchMap((permissionArray) => {
+      if (permissionArray.length === 0) {
+        return of(true)
+      }
+      return this.permissions$.pipe(map((permissions) => permissionArray.every((p) => permissions.includes(p))))
+    })
+  )
 
   constructor() {
     const locale = inject(LOCALE_ID)
     const translateService = inject(TranslateService)
 
     super(locale, translateService)
-    this.name = this.name || this.router.url.replace(/[^A-Za-z0-9]/, '_')
+
+    effect(() => {
+      const data = this.data()
+      // Not track previousData change to avoid the trigger
+      untracked(() => {
+        const previousData = this.previousData()
+        if (previousData.length && !equal(data, previousData)) {
+          this.page.set(0)
+        }
+      })
+
+      const currentResults = data.length
+      const newStatus =
+        currentResults === 0 ? 'OCX_DATA_LIST_GRID.NO_SEARCH_RESULTS_FOUND' : 'OCX_DATA_LIST_GRID.SEARCH_RESULTS_FOUND'
+
+      firstValueFrom(this.translateService.get(newStatus, { results: currentResults })).then(
+        (translatedText: string) => {
+          this.liveAnnouncer.announce(translatedText)
+        }
+      )
+    })
+
+    effect(() => {
+      const columns = this.columns()
+      const obs = columns.map((c) => this.getTemplate(c))
+      this.columnTemplates$ = combineLatest(obs).pipe(
+        map((values) => Object.fromEntries(columns.map((c, i) => [c.id, values[i]]))),
+        debounceTime(50)
+      )
+    })
+
+    effect(() => {
+      this.filters()
+      // Not track previousFilters change to avoid the trigger
+      untracked(() => {
+        const previousFilters = this.previousFilters()
+        if (previousFilters.length && !equal(this.filters(), previousFilters)) {
+          this.page.set(0)
+        }
+      })
+    })
+
     this.fallbackImagePath$ = this.appStateService.currentMfe$.pipe(
       map((currentMfe) => this.getFallbackImagePath(currentMfe))
     )
-    this.displayedPageSize$ = combineLatest([this._pageSize$, this._pageSizes$]).pipe(
-      map(([pageSize, pageSizes]) => pageSize ?? pageSizes.find((val): val is number => typeof val === 'number') ?? 50)
-    )
-    this.inlineListActions$ = this._additionalActions$.pipe(
-      map((actions) => actions.filter((action) => !action.showAsOverflow))
-    )
-    this.overflowListActions$ = this._additionalActions$.pipe(
-      map((actions) => actions.filter((action) => action.showAsOverflow))
-    )
-    this.overflowListMenuItems$ = combineLatest([this.overflowListActions$, this.currentMenuRow$]).pipe(
-      switchMap(([actions, row]) =>
-        this.filterActionsBasedOnPermissions(actions).pipe(
-          map((permittedActions) => ({ actions: permittedActions, row: row }))
-        )
-      ),
-      mergeMap(({ actions, row }) => {
-        if (actions.length === 0) {
-          return of([])
-        }
-        return this.translateService.get([...actions.map((a) => a.labelKey || '')]).pipe(
-          map((translations) => {
-            return actions.map((a) => ({
-              label: translations[a.labelKey || ''],
-              icon: a.icon,
-              styleClass: (a.classes || []).join(' '),
-              disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
-              visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
-              command: () => a.callback(row),
-            }))
-          })
-        )
-      })
-    )
-    this.hasViewPermission$ = this._viewPermission$.pipe(
-      map((permission) => {
-        if (!permission) return []
-        return Array.isArray(permission) ? permission : [permission]
-      }),
-      switchMap((permissionArray) => {
-        if (permissionArray.length === 0) {
-          return of(true)
-        }
-        return this.getPermissions().pipe(map((permissions) => permissionArray.every((p) => permissions.includes(p))))
-      })
-    )
-    this.gridMenuItems$ = combineLatest([
-      this.getPermissions(),
-      this._additionalActions$.asObservable(),
-      this._selectedItem$.asObservable(),
-      this.observedOutputs$.asObservable(),
-    ]).pipe(
-      switchMap(([permissions, additionalActions, selectedItem, _observedOutputs]) =>
-        this.filterActionsBasedOnPermissions(additionalActions, permissions).pipe(
-          map((permittedActions) => ({ permissions, additionalActions: permittedActions, selectedItem }))
-        )
-      ),
-      switchMap(({ permissions, additionalActions, selectedItem }) => {
-        return this.getGridActionsTranslations(additionalActions, permissions).pipe(
-          map((translations) => ({ permissions, additionalActions, selectedItem, translations }))
-        )
-      }),
-      map(({ permissions, additionalActions, selectedItem, translations }) =>
-        this.mapGridMenuItems(permissions, additionalActions, selectedItem, translations)
-      )
-    )
-  }
 
-  ngDoCheck(): void {
-    const observedOutputs = <any>this.viewItem.observed + <any>this.deleteItem.observed + <any>this.editItem.observed
-    if (this.observedOutputs$.getValue() !== observedOutputs) {
-      this.observedOutputs$.next(observedOutputs)
-    }
+    effect(() => {
+      this.emitComponentStateChanged()
+    })
+
+    effect(() => {
+      this.pageChanged.emit(this.page())
+    })
+
+    effect(() => {
+      const pageSize = this.pageSize()
+      if (pageSize === undefined) {
+        return
+      }
+      this.pageSizeChanged.emit(pageSize)
+    })
   }
 
   ngOnInit(): void {
-    this.displayedItems$ = combineLatest([this._data$, this._filters$, this._sortField$, this._sortDirection$]).pipe(
-      mergeMap((params) => this.translateItems(params, this.columns, this.clientSideFiltering, this.clientSideSorting)),
-      map((params) => this.filterItems(params, this.clientSideFiltering)),
-      map((params) => this.sortItems(params, this.columns, this.clientSideSorting)),
-      map(([items]) => items)
-    )
-
-    this.emitComponentStateChanged()
-  }
-
-  ngAfterContentInit() {
-    this.templates$.value?.forEach((item) => {
-      switch (item.getType()) {
-        case 'listValue':
-          this.listValueChildTemplate = item.template
-          break
-        case 'translationKeyListValue':
-          this.translationKeyListValueChildTemplate = item.template
-          break
-        case 'numberListValue':
-          this.numberListValueChildTemplate = item.template
-          break
-        case 'relativeDateListValue':
-          this.relativeDateListValueChildTemplate = item.template
-          break
-        case 'stringListValue':
-          this.stringListValueChildTemplate = item.template
-          break
-        case 'dateListValue':
-          this.dateListValueChildTemplate = item.template
-          break
-      }
-    })
+    this.name.set(this.name() || this.router.url.replace(/[^A-Za-z0-9]/, '_'))
   }
 
   onDeleteRow(element: ListGridData) {
@@ -476,39 +529,24 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   }
 
   setSelectedItem(item: ListGridData) {
-    this._selectedItem$.next(item)
+    this.selectedItem.set(item)
   }
 
   resolveFieldData(object: any, key: any) {
     return ObjectUtils.resolveFieldData(object, key)
   }
 
-  emitComponentStateChanged(state: DataListGridComponentState = {}) {
-    this.displayedPageSize$.pipe(first()).subscribe((pageSize) => {
-      this.componentStateChanged.emit({
-        pageSize,
-        activePage: this.page,
-        ...state,
-      })
+  emitComponentStateChanged() {
+    this.componentStateChanged.emit({
+      pageSize: this.displayedPageSize(),
+      activePage: this.page(),
     })
   }
 
   onPageChange(event: any) {
     const page = event.first / event.rows
-    this.page = page
-    this.pageSize = event.rows
-    this.pageChanged.emit(page)
-    this.pageSizeChanged.emit(event.rows)
-    this.emitComponentStateChanged({
-      activePage: page,
-      pageSize: event.rows,
-    })
-  }
-
-  resetPage() {
-    this.page = 0
-    this.pageChanged.emit(this.page)
-    this.emitComponentStateChanged()
+    this.page.set(page)
+    this.pageSize.set(event.rows)
   }
 
   fieldIsTruthy(object: any, key: any) {
@@ -516,23 +554,15 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   }
 
   hasVisibleOverflowMenuItems(row: any) {
-    return this.overflowListActions$.pipe(
-      switchMap((actions) => this.filterActionsBasedOnPermissions(actions)),
+    return combineLatest([this.overflowListActions$, this.permissions$]).pipe(
+      map(([actions, permission]) => this.filterActionsBasedOnPermissions(actions, permission)),
       map((actions) => actions.some((a) => !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField)))
     )
   }
 
   toggleOverflowMenu(event: MouseEvent, menu: Menu, row: Row) {
-    this.currentMenuRow$.next(row)
+    this.currentMenuRow.set(row)
     menu.toggle(event)
-  }
-
-  getFilteredColumns() {
-    let ids: string[] = [...(this.subtitleLineIds ?? [])]
-    if (this.titleLineId) {
-      ids = [this.titleLineId, ...(this.subtitleLineIds ?? [])]
-    }
-    return this.columns.filter((c) => !ids.includes(c.id))
   }
 
   findTemplate(templates: PrimeTemplate[], names: string[]): PrimeTemplate | undefined {
@@ -562,31 +592,31 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
           switch (column.columnType) {
             case ColumnType.DATE:
               return (
-                this._dateListValue ??
+                this.dateListValue ??
                 this.findTemplate(templates, ['dateListValue', 'defaultDateListValue'])?.template ??
                 null
               )
             case ColumnType.NUMBER:
               return (
-                this._numberListValue ??
+                this.numberListValue ??
                 this.findTemplate(templates, ['numberListValue', 'defaultNumberListValue'])?.template ??
                 null
               )
             case ColumnType.RELATIVE_DATE:
               return (
-                this._relativeDateListValue ??
+                this.relativeDateListValue ??
                 this.findTemplate(templates, ['relativeDateListValue', 'defaultRelativeDateListValue'])?.template ??
                 null
               )
             case ColumnType.TRANSLATION_KEY:
               return (
-                this._translationKeyListValue ??
+                this.translationKeyListValue ??
                 this.findTemplate(templates, ['translationKeyListValue', 'defaultTranslationKeyListValue'])?.template ??
                 null
               )
             default:
               return (
-                this._stringListValue ??
+                this.stringListValue ??
                 this.findTemplate(templates, ['stringListValue', 'defaultStringListValue'])?.template ??
                 null
               )
@@ -601,7 +631,27 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     permissions: string[],
     additionalActions: DataAction[],
     selectedItem: ListGridData | undefined,
-    translations: Record<string, string>
+    translations: Record<string, string>,
+    keys: {
+      viewMenuItem: string
+      editMenuItem: string
+      deleteMenuItem: string
+    },
+    actionPermissions: {
+      viewPermission: string | string[] | undefined
+      editPermission: string | string[] | undefined
+      deletePermission: string | string[] | undefined
+    },
+    visibleField: {
+      viewAction?: string
+      editAction?: string
+      deleteAction?: string
+    },
+    enableField: {
+      viewAction?: string
+      editAction?: string
+      deleteAction?: string
+    }
   ): MenuItem[] {
     let deleteDisabled = false
     let editDisabled = false
@@ -612,22 +662,21 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     let viewVisible = true
 
     if (selectedItem) {
-      viewDisabled = !!this.viewActionEnabledField && !this.fieldIsTruthy(selectedItem, this.viewActionEnabledField)
-      editDisabled = !!this.editActionEnabledField && !this.fieldIsTruthy(selectedItem, this.editActionEnabledField)
-      deleteDisabled =
-        !!this.deleteActionEnabledField && !this.fieldIsTruthy(selectedItem, this.deleteActionEnabledField)
+      viewDisabled = !!enableField.viewAction && !this.fieldIsTruthy(selectedItem, enableField.viewAction)
+      editDisabled = !!enableField.editAction && !this.fieldIsTruthy(selectedItem, enableField.editAction)
+      deleteDisabled = !!enableField.deleteAction && !this.fieldIsTruthy(selectedItem, enableField.deleteAction)
 
-      viewVisible = !this.viewActionVisibleField || this.fieldIsTruthy(selectedItem, this.viewActionVisibleField)
-      editVisible = !this.editActionVisibleField || this.fieldIsTruthy(selectedItem, this.editActionVisibleField)
-      deleteVisible = !this.deleteActionVisibleField || this.fieldIsTruthy(selectedItem, this.deleteActionVisibleField)
+      viewVisible = !visibleField.viewAction || this.fieldIsTruthy(selectedItem, visibleField.viewAction)
+      editVisible = !visibleField.editAction || this.fieldIsTruthy(selectedItem, visibleField.editAction)
+      deleteVisible = !visibleField.deleteAction || this.fieldIsTruthy(selectedItem, visibleField.deleteAction)
     }
 
     const menuItems: MenuItem[] = []
     const automationId = 'data-grid-action-button'
     const automationIdHidden = 'data-grid-action-button-hidden'
-    if (this.shouldDisplayAction(this.viewPermission, this.viewItem, permissions)) {
+    if (this.shouldDisplayAction(actionPermissions.viewPermission, this.viewItem, permissions)) {
       menuItems.push({
-        label: translations[this.viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW'],
+        label: translations[keys.viewMenuItem],
         icon: PrimeIcons.EYE,
         command: () => this.viewItem.emit(selectedItem),
         disabled: viewDisabled,
@@ -635,9 +684,9 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
         automationId: viewVisible ? automationId : automationIdHidden,
       })
     }
-    if (this.shouldDisplayAction(this.editPermission, this.editItem, permissions)) {
+    if (this.shouldDisplayAction(actionPermissions.editPermission, this.editItem, permissions)) {
       menuItems.push({
-        label: translations[this.editMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.EDIT'],
+        label: translations[keys.editMenuItem],
         icon: PrimeIcons.PENCIL,
         command: () => this.editItem.emit(selectedItem),
         disabled: editDisabled,
@@ -645,9 +694,9 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
         automationId: editVisible ? automationId : automationIdHidden,
       })
     }
-    if (this.shouldDisplayAction(this.deletePermission, this.deleteItem, permissions)) {
+    if (this.shouldDisplayAction(actionPermissions.deletePermission, this.deleteItem, permissions)) {
       menuItems.push({
-        label: translations[this.deleteMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.DELETE'],
+        label: translations[keys.deleteMenuItem],
         icon: PrimeIcons.TRASH,
         command: () => this.deleteItem.emit(selectedItem),
         disabled: deleteDisabled,
@@ -674,40 +723,34 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
 
   private getGridActionsTranslations(
     additionalActions: DataAction[],
-    permissions: string[]
+    keys: {
+      viewMenuItem: string
+      editMenuItem: string
+      deleteMenuItem: string
+    }
   ): Observable<Record<string, string>> {
     return this.translateService.get([
-      this.viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW',
-      this.editMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.EDIT',
-      this.deleteMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.DELETE',
-      ...additionalActions
-        .filter((action) => {
-          const permissionsArray = Array.isArray(action.permission) ? action.permission : [action.permission]
-          return permissionsArray.every((p) => permissions.includes(p))
-        })
-        .map((a) => a.labelKey || ''),
+      keys.viewMenuItem,
+      keys.editMenuItem,
+      keys.deleteMenuItem,
+      ...additionalActions.map((a) => a.labelKey || ''),
     ])
   }
 
   private shouldDisplayAction(
     permission: string | string[] | undefined,
-    emitter: EventEmitter<any>,
+    emitter: ObservableOutputEmitterRef<any>,
     userPermissions: string[]
   ): boolean {
     const permissions = Array.isArray(permission) ? permission : permission ? [permission] : []
-    return emitter.observed && permissions.every((p) => userPermissions.includes(p))
+    return emitter.observed() && permissions.every((p) => userPermissions.includes(p))
   }
 
-  private filterActionsBasedOnPermissions(actions: DataAction[], permissions?: string[]): Observable<DataAction[]> {
-    const permissions$ = permissions ? of(permissions) : this.getPermissions()
-    return permissions$.pipe(
-      map((permissions) => {
-        return actions.filter((action) => {
-          const actionPermissions = Array.isArray(action.permission) ? action.permission : [action.permission]
-          return actionPermissions.every((p) => permissions.includes(p))
-        })
-      })
-    )
+  private filterActionsBasedOnPermissions(actions: DataAction[], permissions: string[]): DataAction[] {
+    return actions.filter((action) => {
+      const actionPermissions = Array.isArray(action.permission) ? action.permission : [action.permission]
+      return actionPermissions.every((p) => permissions.includes(p))
+    })
   }
 
   private getPermissions(): Observable<string[]> {

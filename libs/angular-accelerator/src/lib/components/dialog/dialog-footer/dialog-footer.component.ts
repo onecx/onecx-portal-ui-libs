@@ -1,16 +1,14 @@
 import {
-  AfterViewInit,
   Component,
   ElementRef,
-  EventEmitter,
-  Input,
   OnInit,
-  Output,
-  QueryList,
-  ViewChild,
-  ViewChildren,
-  ViewContainerRef,
+  effect,
   inject,
+  input,
+  signal,
+  viewChild,
+  viewChildren,
+  output,
 } from '@angular/core'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { BehaviorSubject, Observable, map, withLatestFrom } from 'rxjs'
@@ -20,11 +18,24 @@ import {
   ButtonDialogCustomButtonDetails,
   ButtonDialogData,
 } from '../../../model/button-dialog'
-import {
-  DialogState,
-  DialogStateButtonClicked,
-  PortalDialogServiceData,
-} from '../../../services/portal-dialog.service'
+import { DialogState, DialogStateButtonClicked, PortalDialogServiceData } from '../../../services/portal-dialog.service'
+
+export const defaultPrimaryButtonDetails: ButtonDialogButtonDetails = {
+  key: 'OCX_BUTTON_DIALOG.CONFIRM',
+}
+
+export const defaultSecondaryButtonDetails: ButtonDialogButtonDetails = {
+  key: 'OCX_BUTTON_DIALOG.CANCEL',
+}
+
+export const defaultDialogData: ButtonDialogData = {
+  config: {
+    primaryButtonDetails: defaultPrimaryButtonDetails,
+    secondaryButtonIncluded: true,
+    secondaryButtonDetails: defaultSecondaryButtonDetails,
+  },
+  componentData: {},
+}
 
 @Component({
   standalone: false,
@@ -32,68 +43,70 @@ import {
   templateUrl: './dialog-footer.component.html',
   styleUrls: ['./dialog-footer.component.scss'],
 })
-export class DialogFooterComponent implements OnInit, AfterViewInit {
+export class DialogFooterComponent implements OnInit {
   dynamicDialogConfig = inject(DynamicDialogConfig)
   dynamicDialogRef = inject(DynamicDialogRef)
 
-  defaultPrimaryButtonDetails: ButtonDialogButtonDetails = {
-    key: 'OCX_BUTTON_DIALOG.CONFIRM',
-  }
+  config = input<ButtonDialogConfig | undefined>(undefined)
 
-  defaultSecondaryButtonDetails: ButtonDialogButtonDetails = {
-    key: 'OCX_BUTTON_DIALOG.CANCEL',
-  }
-
-  defaultDialogData: ButtonDialogData = {
-    config: {
-      primaryButtonDetails: this.defaultPrimaryButtonDetails,
-      secondaryButtonIncluded: true,
-      secondaryButtonDetails: this.defaultSecondaryButtonDetails,
-    },
-    componentData: {},
-  }
-
-  @Input() config: ButtonDialogConfig = {}
-
-  dialogData: ButtonDialogData = this.defaultDialogData
+  dialogData = signal<ButtonDialogData>(defaultDialogData)
   primaryButtonDisabled$: Observable<boolean | undefined> | undefined
   secondaryButtonDisabled$: Observable<boolean | undefined> | undefined
   customButtonsDisabled$: BehaviorSubject<Record<string, boolean>> = new BehaviorSubject({})
-  leftCustomButtons: ButtonDialogCustomButtonDetails[] = []
-  rightCustomButtons: ButtonDialogCustomButtonDetails[] = []
+  leftCustomButtons = signal<ButtonDialogCustomButtonDetails[]>([])
+  rightCustomButtons = signal<ButtonDialogCustomButtonDetails[]>([])
 
-  @Output() buttonClickedEmitter: EventEmitter<DialogState<unknown>> = new EventEmitter()
+  buttonClickedEmitter = output<DialogState<unknown>>()
 
-  @ViewChild('primaryButton', { static: true, read: ViewContainerRef })
-  primaryButton!: ViewContainerRef
-  _secondaryButton!: ViewContainerRef
-  @ViewChild('secondaryButton', { static: false, read: ViewContainerRef })
-  set secondaryButton(content: ViewContainerRef) {
-    if (content) {
-      this._secondaryButton = content
-    }
-  }
-  get secondaryButton(): ViewContainerRef {
-    return this._secondaryButton
-  }
-  @ViewChildren('customButton') customButtons!: QueryList<ElementRef>
+  primaryButton = viewChild<ElementRef>('primaryButton')
+  secondaryButton = viewChild<ElementRef>('secondaryButton')
+  customButtons = viewChildren<ElementRef>('customButton')
 
-  ngAfterViewInit(): void {
-    if (!(this.dynamicDialogConfig.data && this.dynamicDialogConfig.data.config)) return
+  constructor() {
+    // Auto focus button effect for dynamic dialog
+    effect(() => {
+      const config = this.dynamicDialogConfig.data.config
 
-    const config = this.dynamicDialogConfig.data.config
-    if (config.autoFocusButton === 'primary') {
-      this.primaryButton.element.nativeElement.focus()
-    } else if (config.autoFocusButton === 'secondary') {
-      this.secondaryButton.element.nativeElement.focus()
-    } else if (config.autoFocusButton === 'custom') {
-      const button = this.customButtons.find((customButton) => {
-        return customButton.nativeElement.id === config.autoFocusButtonCustomId
-      })
-      setTimeout(() => {
-        button?.nativeElement.focus()
-      })
-    }
+      if (!config) return
+
+      if (config.autoFocusButton === 'primary') {
+        const primaryButton = this.primaryButton()
+        primaryButton?.nativeElement.focus()
+      } else if (config.autoFocusButton === 'secondary') {
+        const secondaryButton = this.secondaryButton()
+        secondaryButton?.nativeElement.focus()
+      } else if (config.autoFocusButton === 'custom') {
+        const button = this.customButtons().find((customButton) => {
+          return customButton.nativeElement.id === config.autoFocusButtonCustomId
+        })
+        setTimeout(() => {
+          button?.nativeElement.focus()
+        })
+      }
+    })
+
+    // config update effect for inline dialog
+    effect(() => {
+      // Run the effect only if config input is provided
+      const config = this.config()
+      if (!config) return
+
+      const dialogData = this.dialogData()
+      if (config) {
+        if (!!config.primaryButtonDetails && !!config.primaryButtonDetails?.key) {
+          dialogData.config.primaryButtonDetails = config.primaryButtonDetails
+        }
+        if (config.secondaryButtonIncluded) {
+          dialogData.config.secondaryButtonIncluded = config.secondaryButtonIncluded
+        }
+        if (!!config.secondaryButtonDetails && !!config.secondaryButtonDetails?.key) {
+          dialogData.config.secondaryButtonDetails = config.secondaryButtonDetails
+        }
+      }
+      dialogData.config.customButtons = config.customButtons
+      this.dialogData.set(dialogData)
+      this.setupCustomButtons(dialogData)
+    })
   }
 
   ngOnInit(): void {
@@ -119,50 +132,35 @@ export class DialogFooterComponent implements OnInit, AfterViewInit {
   loadComponent() {
     if (this.dynamicDialogConfig.data) {
       this.setUpDialogDataForDynamicConfig()
-    } else {
-      this.setUpDialogDataForInput()
     }
-  }
-
-  setUpDialogDataForInput() {
-    if (this.config) {
-      if (!!this.config.primaryButtonDetails && !!this.config.primaryButtonDetails.key) {
-        this.dialogData.config.primaryButtonDetails = this.config.primaryButtonDetails
-      }
-      if (this.config.secondaryButtonIncluded) {
-        this.dialogData.config.secondaryButtonIncluded = this.config.secondaryButtonIncluded
-      }
-      if (!!this.config.secondaryButtonDetails && !!this.config.secondaryButtonDetails.key) {
-        this.dialogData.config.secondaryButtonDetails = this.config.secondaryButtonDetails
-      }
-    }
-    this.dialogData.config.customButtons = this.config.customButtons
-    this.setupCustomButtons(this.dialogData)
   }
 
   setUpDialogDataForDynamicConfig() {
     const dynamicConfigData: ButtonDialogData = this.dynamicDialogConfig.data
     const portalDialogServiceData: PortalDialogServiceData = this.dynamicDialogConfig.data.portalDialogServiceData
+    const dialogData = this.dialogData()
     if (dynamicConfigData.config) {
       const dialogConfig = dynamicConfigData.config
       if (!!dialogConfig.primaryButtonDetails && !!dialogConfig.primaryButtonDetails.key) {
-        this.dialogData.config.primaryButtonDetails = dialogConfig.primaryButtonDetails
+        dialogData.config.primaryButtonDetails = dialogConfig.primaryButtonDetails
       }
       if (dialogConfig.secondaryButtonIncluded !== undefined) {
-        this.dialogData.config.secondaryButtonIncluded = dialogConfig.secondaryButtonIncluded
+        dialogData.config.secondaryButtonIncluded = dialogConfig.secondaryButtonIncluded
       }
       if (!!dialogConfig.secondaryButtonDetails && !!dialogConfig.secondaryButtonDetails.key) {
-        this.dialogData.config.secondaryButtonDetails = dialogConfig.secondaryButtonDetails
+        dialogData.config.secondaryButtonDetails = dialogConfig.secondaryButtonDetails
       }
     }
 
-    this.setupCustomButtons(dynamicConfigData)
+    this.dialogData.set(dialogData)
+
+    const [leftButtons, rightButtons] = this.setupCustomButtons(dynamicConfigData)
 
     this.primaryButtonDisabled$ = portalDialogServiceData.primaryButtonEnabled$.pipe(map((isEnabled) => !isEnabled))
     this.secondaryButtonDisabled$ = portalDialogServiceData.secondaryButtonEnabled$.pipe(map((isEnabled) => !isEnabled))
 
     const initCustomButtons: Record<string, boolean> = {}
-    this.rightCustomButtons.concat(this.leftCustomButtons).map((button) => {
+    rightButtons.concat(leftButtons).map((button) => {
       initCustomButtons[button.id] = true
     })
     this.customButtonsDisabled$.next(initCustomButtons)
@@ -178,7 +176,9 @@ export class DialogFooterComponent implements OnInit, AfterViewInit {
       )
       .subscribe(this.customButtonsDisabled$)
 
-    this.buttonClickedEmitter = portalDialogServiceData.buttonClicked$
+    this.buttonClickedEmitter.subscribe((dialogState) => {
+      portalDialogServiceData.buttonClicked$.next(dialogState)
+    })
   }
 
   private buttonAction(resultButtonClickedName: DialogStateButtonClicked, buttonId?: string) {
@@ -192,7 +192,11 @@ export class DialogFooterComponent implements OnInit, AfterViewInit {
   }
 
   private setupCustomButtons(dialogData: ButtonDialogData) {
-    this.leftCustomButtons = dialogData.config.customButtons?.filter((button) => button.alignment === 'left') ?? []
-    this.rightCustomButtons = dialogData.config.customButtons?.filter((button) => button.alignment === 'right') ?? []
+    const leftButtons = dialogData.config.customButtons?.filter((button) => button.alignment === 'left') ?? []
+    const rightButtons = dialogData.config.customButtons?.filter((button) => button.alignment === 'right') ?? []
+    this.leftCustomButtons.set(leftButtons)
+    this.rightCustomButtons.set(rightButtons)
+
+    return [leftButtons, rightButtons]
   }
 }

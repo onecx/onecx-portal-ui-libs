@@ -1,38 +1,38 @@
-<div class="p-3 border-bottom-1 surface-border" [ngClass]="headerStyleClass" id="interactiveDataViewHeader">
+<div class="p-3 border-bottom-1 surface-border" [ngClass]="headerStyleClass()" id="interactiveDataViewHeader">
   <div class="flex flex-wrap justify-content-between align-items-center py-1 gap-2">
     <div class="flex flex-wrap justify-content-start align-items-center gap-2">
       <ocx-data-layout-selection
-        [supportedViewLayouts]="supportedViewLayouts"
-        [layout]="layout"
+        [supportedViewLayouts]="supportedViewLayouts()"
+        [layout]="layout()"
         (dataViewLayoutChange)="onDataViewLayoutChange($event)"
         (componentStateChanged)="dataLayoutComponentState$.next($event)"
       ></ocx-data-layout-selection>
-      @if (!disableFilterView) {
+      @if (!disableFilterView()) {
       <ocx-filter-view
-        [filters]="filters"
-        [columns]="columns"
-        [templates]="templates$ | async"
-        [displayMode]="filterViewDisplayMode"
-        [selectDisplayedChips]="selectDisplayedChips"
-        [chipStyleClass]="filterViewChipStyleClass"
-        [tableStyle]="filterViewTableStyle"
+        [filters]="filters()"
+        [columns]="columns()"
+        [templates]="templates()"
+        [displayMode]="filterViewDisplayMode()"
+        [selectDisplayedChips]="selectDisplayedChips()"
+        [chipStyleClass]="filterViewChipStyleClass()"
+        [tableStyle]="filterViewTableStyle()"
         (filtered)="filtering($event)"
         (componentStateChanged)="filterViewComponentState$.next($event)"
       ></ocx-filter-view>
       }
     </div>
 
-    @if (topCenter) {
+    @if (_topCenter(); as topCenterTemplate) {
     <div>
-      <ng-container [ngTemplateOutlet]="topCenter"> </ng-container>
+      <ng-container [ngTemplateOutlet]="topCenterTemplate"> </ng-container>
     </div>
-    } @if (layout !== 'table') {
+    } @if (layout() !== 'table') {
     <div class="flex align-items-center gap-2">
       <ocx-data-list-grid-sorting
-        [sortDirection]="sortDirection"
-        [sortField]="sortField"
-        [columns]="(displayedColumns$ | async) ?? []"
-        [sortStates]="sortStates"
+        [sortDirection]="sortDirection()"
+        [sortField]="sortField()"
+        [columns]="displayedColumns()"
+        [sortStates]="sortStates()"
         (sortChange)="onSortChange($event)"
         (sortDirectionChange)="onSortDirectionChange($event)"
         (componentStateChanged)="dataListGridSortingComponentState$.next($event)"
@@ -41,18 +41,17 @@
     }
 
     <div
-      [ngStyle]="layout !== 'table' ? {
+      [ngStyle]="layout() !== 'table' ? {
       'position': 'absolute'
     } : {}"
       class="flex flex-wrap justify-content-between align-items-center gap-2"
     >
-      @if (isColumnGroupSelectionComponentDefined$ | async) { @if (displayedColumnKeys$ | async; as displayedColumnKeys)
-      {
+      @if (isColumnGroupSelectionComponentDefined() ?? true) {
       <ocx-slot
-        [ngStyle]="layout !== 'table' ? {'display' : 'none'}  : {}"
-        *ocxIfPermission="searchConfigPermission; elseTemplate: defaultColumnGroupSelectionComponent"
+        [ngStyle]="layout() !== 'table' ? {'display' : 'none'}  : {}"
+        *ocxIfPermission="searchConfigPermission(); elseTemplate: defaultColumnGroupSelectionComponent"
         name="{{columnGroupSlotName}}"
-        [inputs]="{ placeholderKey: groupSelectionNoGroupSelectedKey, defaultGroupKey: defaultGroupKey, customGroupKey: customGroupKey, columns: columns, selectedGroupKey: selectedGroupKey, layout: layout, displayedColumnsIds: displayedColumnKeys }"
+        [inputs]="{ placeholderKey: groupSelectionNoGroupSelectedKey(), defaultGroupKey: defaultGroupKey(), customGroupKey: customGroupKey(), columns: columns(), selectedGroupKey: selectedGroupKey(), layout: layout(), displayedColumnsIds: displayedColumnKeys() }"
         [outputs]="{ groupSelectionChanged: groupSelectionChangedSlotEmitter }"
       >
         <ng-template #skeleton>
@@ -61,16 +60,16 @@
           </div>
         </ng-template>
       </ocx-slot>
-      } } @else {
+      } @else {
       <ng-container [ngTemplateOutlet]="defaultColumnGroupSelectionComponent"></ng-container>
-      } @if (layout === 'table') {
+      } @if (layout() === 'table') {
       <ocx-custom-group-column-selector
-        [columns]="columns"
-        [displayedColumns]="(displayedColumns$ | async) ?? []"
-        [customGroupKey]="customGroupKey"
+        [columns]="columns()"
+        [displayedColumns]="displayedColumns()"
+        [customGroupKey]="customGroupKey()"
         (columnSelectionChanged)="onColumnSelectionChange($event)"
-        [frozenActionColumn]="frozenActionColumn"
-        [actionColumnPosition]="actionColumnPosition"
+        [frozenActionColumn]="frozenActionColumn()"
+        [actionColumnPosition]="actionColumnPosition()"
         (actionColumnConfigChanged)="onActionColumnConfigChange($event)"
         (componentStateChanged)="customGroupColumnSelectorComponentState$.next($event)"
       ></ocx-custom-group-column-selector>
@@ -78,239 +77,86 @@
     </div>
   </div>
 </div>
-<div class="p-3" [ngClass]="contentStyleClass" id="interactiveDataViewContent">
+<div class="p-3" [ngClass]="contentStyleClass()" id="interactiveDataViewContent">
   <ocx-data-view
-    [columns]="(displayedColumns$ | async) ?? []"
-    [sortStates]="sortStates"
-    [sortField]="sortField"
-    [filters]="filters"
-    [data]="data"
-    [sortDirection]="sortDirection"
-    [titleLineId]="titleLineId"
-    [subtitleLineIds]="subtitleLineIds"
-    [clientSideSorting]="clientSideSorting"
-    [clientSideFiltering]="clientSideFiltering"
-    [pageSizes]="pageSizes"
-    [pageSize]="pageSize"
-    [emptyResultsMessage]="emptyResultsMessage"
-    [layout]="layout"
-    [name]="name"
-    [deletePermission]="deletePermission"
-    [editPermission]="editPermission"
-    [viewPermission]="viewPermission"
-    [deleteActionEnabledField]="deleteActionEnabledField"
-    [deleteActionVisibleField]="deleteActionVisibleField"
-    [editActionEnabledField]="editActionEnabledField"
-    [editActionVisibleField]="editActionVisibleField"
-    [viewActionEnabledField]="viewActionEnabledField"
-    [viewActionVisibleField]="viewActionVisibleField"
-    [additionalActions]="additionalActions"
-    [listGridPaginator]="listGridPaginator"
-    [tablePaginator]="tablePaginator"
-    [page]="page"
+    [columns]="displayedColumns()"
+    [sortStates]="sortStates()"
+    [sortField]="sortField()"
+    [filters]="filters()"
+    [data]="data()"
+    [sortDirection]="sortDirection()"
+    [titleLineId]="titleLineId()"
+    [subtitleLineIds]="subtitleLineIds()"
+    [clientSideSorting]="clientSideSorting()"
+    [clientSideFiltering]="clientSideFiltering()"
+    [pageSizes]="pageSizes()"
+    [pageSize]="pageSize()"
+    [emptyResultsMessage]="emptyResultsMessage()"
+    [layout]="layout()"
+    [name]="name()"
+    [deletePermission]="deletePermission()"
+    [editPermission]="editPermission()"
+    [viewPermission]="viewPermission()"
+    [deleteActionEnabledField]="deleteActionEnabledField()"
+    [deleteActionVisibleField]="deleteActionVisibleField()"
+    [editActionEnabledField]="editActionEnabledField()"
+    [editActionVisibleField]="editActionVisibleField()"
+    [viewActionEnabledField]="viewActionEnabledField()"
+    [viewActionVisibleField]="viewActionVisibleField()"
+    [additionalActions]="additionalActions()"
+    [listGridPaginator]="listGridPaginator()"
+    [tablePaginator]="tablePaginator()"
+    [page]="page()"
     (pageChanged)="onPageChange($event)"
     (pageSizeChanged)="onPageSizeChange($event)"
-    [selectedRows]="selectedRows"
-    [frozenActionColumn]="frozenActionColumn"
-    [actionColumnPosition]="actionColumnPosition"
-    [stringTableCellTemplate]="primeNgStringTableCell ?? _stringTableCell"
-    [numberTableCellTemplate]="primeNgNumberTableCell ?? _numberTableCell"
-    [dateTableCellTemplate]="primeNgDateTableCell ?? _dateTableCell"
-    [relativeDateTableCellTemplate]="primeNgRelativeDateTableCell ?? _relativeDateTableCell"
-    [tableCellTemplate]="primeNgTableCell ?? _tableCell"
-    [translationKeyTableCellTemplate]="primeNgTranslationKeyTableCell ?? _translationKeyTableCell"
-    [gridItemSubtitleLinesTemplate]="primeNgGridItemSubtitleLines ?? _gridItemSubtitleLines"
-    [listItemSubtitleLinesTemplate]="primeNgListItemSubtitleLines ?? _listItemSubtitleLines"
-    [listItemTemplate]="primeNgListItem ?? _listItem"
-    [listValueTemplate]="primeNgListValue ?? _listValue"
-    [translationKeyListValueTemplate]="primeNgTranslationKeyListValue ?? _translationKeyListValue"
-    [numberListValueTemplate]="primeNgNumberListValue ?? _numberListValue"
-    [relativeDateListValueTemplate]="primeNgRelativeDateListValue ?? _relativeDateListValue"
-    [stringListValueTemplate]="primeNgStringListValue ?? _stringListValue"
-    [dateListValueTemplate]="primeNgDateListValue ?? _dateListValue"
-    [gridItemTemplate]="primeNgGridItem ?? _gridItem"
-    [tableFilterCellTemplate]="primeNgTableFilterCell ?? _tableFilterCell"
-    [dateTableFilterCellTemplate]="primeNgDateTableFilterCell ?? _dateTableFilterCell"
-    [numberTableFilterCellTemplate]="primeNgNumberTableFilterCell ?? _numberTableFilterCell"
-    [stringTableFilterCellTemplate]="primeNgStringTableFilterCell ?? _stringTableFilterCell"
-    [relativeDateTableFilterCellTemplate]="primeNgRelativeDateTableFilterCell ?? _relativeDateTableFilterCell"
-    [translationKeyTableFilterCellTemplate]="primeNgTranslationKeyTableFilterCell ?? _translationKeyTableFilterCell"
+    [selectedRows]="selectedRows()"
+    [frozenActionColumn]="frozenActionColumn()"
+    [actionColumnPosition]="actionColumnPosition()"
+    [stringTableCellTemplate]="_stringTableCell()"
+    [numberTableCellTemplate]="_numberTableCell()"
+    [dateTableCellTemplate]="_dateTableCell()"
+    [relativeDateTableCellTemplate]="_relativeDateTableCell()"
+    [tableCellTemplate]="_tableCell()"
+    [translationKeyTableCellTemplate]="_translationKeyTableCell()"
+    [gridItemSubtitleLinesTemplate]="_gridItemSubtitleLines()"
+    [listItemSubtitleLinesTemplate]="_listItemSubtitleLines()"
+    [listItemTemplate]="_listItem()"
+    [listValueTemplate]="_listValue()"
+    [translationKeyListValueTemplate]="_translationKeyListValue()"
+    [numberListValueTemplate]="_numberListValue()"
+    [relativeDateListValueTemplate]="_relativeDateListValue()"
+    [stringListValueTemplate]="_stringListValue()"
+    [dateListValueTemplate]="_dateListValue()"
+    [gridItemTemplate]="_gridItem()"
+    [tableFilterCellTemplate]="_tableFilterCell()"
+    [dateTableFilterCellTemplate]="_dateTableFilterCell()"
+    [numberTableFilterCellTemplate]="_numberTableFilterCell()"
+    [stringTableFilterCellTemplate]="_stringTableFilterCell()"
+    [relativeDateTableFilterCellTemplate]="_relativeDateTableFilterCell()"
+    [translationKeyTableFilterCellTemplate]="_translationKeyTableFilterCell()"
     (sorted)="sorting($event)"
     (filtered)="filtering($event)"
-    [totalRecordsOnServer]="totalRecordsOnServer"
-    [currentPageShowingKey]="currentPageShowingKey"
-    [currentPageShowingWithTotalOnServerKey]="currentPageShowingWithTotalOnServerKey"
+    [totalRecordsOnServer]="totalRecordsOnServer()"
+    [currentPageShowingKey]="currentPageShowingKey()"
+    [currentPageShowingWithTotalOnServerKey]="currentPageShowingWithTotalOnServerKey()"
     (componentStateChanged)="dataViewComponentState$.next($event)"
-    [parentTemplates]="templates$ | async"
-    [tableAllowSelectAll]="tableAllowSelectAll"
-    [tableSelectionEnabledField]="tableSelectionEnabledField"
+    [parentTemplates]="templates()"
+    [tableAllowSelectAll]="tableAllowSelectAll()"
+    [tableSelectionEnabledField]="tableSelectionEnabledField()"
   >
   </ocx-data-view>
 </div>
 
 <ng-template #defaultColumnGroupSelectionComponent>
-  @if (layout === 'table') {
+  @if (layout() === 'table') {
   <ocx-column-group-selection
-    [selectedGroupKey]="selectedGroupKey ?? defaultGroupKey"
-    [columns]="columns"
-    [defaultGroupKey]="defaultGroupKey !== customGroupKey ? defaultGroupKey : ''"
-    [customGroupKey]="customGroupKey"
-    [placeholderKey]="groupSelectionNoGroupSelectedKey"
+    [selectedGroupKey]="selectedGroupKey() ?? defaultGroupKey()"
+    [columns]="columns()"
+    [defaultGroupKey]="defaultGroupKey() !== customGroupKey() ? defaultGroupKey() : ''"
+    [customGroupKey]="customGroupKey()"
+    [placeholderKey]="groupSelectionNoGroupSelectedKey()"
     (groupSelectionChanged)="onColumnGroupSelectionChange($event)"
     (componentStateChanged)="columnGroupSelectionComponentState$.next($event)"
   ></ocx-column-group-selection>
   }
 </ng-template>
-
-<ng-template #stringTableCell let-rowObject="rowObject" let-column="column">
-  @if (_stringTableCell) {
-  <ng-container [ngTemplateOutlet]="_stringTableCell" [ngTemplateOutletContext]="{rowObject: rowObject, column:column}">
-  </ng-container>
-  }</ng-template
->
-<ng-template #numberTableCell let-rowObject="rowObject" let-column="column">
-  @if (_numberTableCell) {
-  <ng-container [ngTemplateOutlet]="_numberTableCell" [ngTemplateOutletContext]="{rowObject: rowObject, column:column}">
-  </ng-container>
-  }</ng-template
->
-<ng-template #dateTableCell let-rowObject="rowObject" let-column="column">
-  @if (_dateTableCell) {
-  <ng-container [ngTemplateOutlet]="_dateTableCell" [ngTemplateOutletContext]="{rowObject:rowObject, column:column}">
-  </ng-container>
-  }</ng-template
->
-<ng-template #relativeDateTableCell let-rowObject="rowObject" let-column="column">
-  @if (_relativeDateTableCell) {
-  <ng-container
-    [ngTemplateOutlet]="_relativeDateTableCell"
-    [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
-  >
-  </ng-container>
-  }</ng-template
->
-<ng-template #tableCell let-rowObject="rowObject" let-column="column">
-  @if (_tableCell) {
-  <ng-container [ngTemplateOutlet]="_tableCell" [ngTemplateOutletContext]="{rowObject: rowObject, column:column}">
-  </ng-container>
-  }</ng-template
->
-<ng-template #translationKeyTableCell let-rowObject="rowObject" let-column="column">
-  @if (_translationKeyTableCell) {
-  <ng-container
-    [ngTemplateOutlet]="_translationKeyTableCell"
-    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
-  >
-  </ng-container>
-  }</ng-template
->
-<ng-template #gridItemSubtitleLines let-item>
-  @if (_gridItemSubtitleLines) {
-  <ng-container [ngTemplateOutlet]="_gridItemSubtitleLines" [ngTemplateOutletContext]="{$implicit:item}">
-  </ng-container>
-  }
-</ng-template>
-<ng-template #listItemSubtitleLines let-item>
-  @if (_listItemSubtitleLines) {
-  <ng-container [ngTemplateOutlet]="_listItemSubtitleLines" [ngTemplateOutletContext]="{$implicit:item}">
-  </ng-container>
-  }</ng-template
->
-<ng-template #gridItem let-item>
-  @if (_gridItem) {
-  <ng-container [ngTemplateOutlet]="_gridItem" [ngTemplateOutletContext]="{$implicit:item}"> </ng-container>
-  }</ng-template
->
-<ng-template #listItem let-item>
-  @if (_listItem) {
-  <ng-container [ngTemplateOutlet]="_listItem" [ngTemplateOutletContext]="{$implicit:item}"> </ng-container>
-  }</ng-template
->
-<ng-template #listValue let-rowObject="rowObject" let-column="column">
-  @if (_listValue) {
-  <ng-container [ngTemplateOutlet]="_listValue" [ngTemplateOutletContext]="{rowObject: rowObject, column:column}">
-  </ng-container>
-  }</ng-template
->
-<ng-template #translationKeyListValue let-rowObject="rowObject" let-column="column">
-  @if (_translationKeyListValue) {
-  <ng-container
-    [ngTemplateOutlet]="_translationKeyListValue"
-    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
-  >
-  </ng-container>
-  }</ng-template
->
-<ng-template #numberListValue let-rowObject="rowObject" let-column="column">
-  @if (_numberListValue) {
-  <ng-container [ngTemplateOutlet]="_numberListValue" [ngTemplateOutletContext]="{rowObject: rowObject, column:column}">
-  </ng-container>
-  }</ng-template
->
-<ng-template #relativeDateListValue let-rowObject="rowObject" let-column="column">
-  @if (_relativeDateListValue) {
-  <ng-container
-    [ngTemplateOutlet]="_relativeDateListValue"
-    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
-  >
-  </ng-container>
-  }</ng-template
->
-<ng-template #stringListValue let-rowObject="rowObject" let-column="column">
-  @if (_stringListValue) {
-  <ng-container [ngTemplateOutlet]="_stringListValue" [ngTemplateOutletContext]="{rowObject: rowObject, column:column}">
-  </ng-container>
-  }</ng-template
->
-<ng-template #dateListValue let-rowObject="rowObject" let-column="column">
-  @if (_dateListValue) {
-  <ng-container [ngTemplateOutlet]="_dateListValue" [ngTemplateOutletContext]="{rowObject: rowObject, column:column}">
-  </ng-container>
-  }</ng-template
->
-
-<ng-template #stringTableFilterCell let-rowObject="rowObject" let-column="column">
-  @if (_stringTableFilterCell) {
-  <ng-container
-    [ngTemplateOutlet]="_stringTableFilterCell"
-    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
-  >
-  </ng-container>
-  }</ng-template
->
-<ng-template #numberTableFilterCell let-rowObject="rowObject" let-column="column">
-  @if (_numberTableFilterCell) {
-  <ng-container
-    [ngTemplateOutlet]="_numberTableFilterCell"
-    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
-  >
-  </ng-container>
-  }</ng-template
->
-<ng-template #dateTableFilterCell let-rowObject="rowObject" let-column="column">
-  @if (_dateTableFilterCell) {
-  <ng-container
-    [ngTemplateOutlet]="_dateTableFilterCell"
-    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
-  >
-  </ng-container>
-  }</ng-template
->
-<ng-template #relativeDateTableFilterCell let-rowObject="rowObject" let-column="column">
-  @if (_relativeDateTableFilterCell) {
-  <ng-container
-    [ngTemplateOutlet]="_relativeDateTableFilterCell"
-    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
-  >
-  </ng-container>
-  }</ng-template
->
-<ng-template #translationKeyTableFilterCell let-rowObject="rowObject" let-column="column">
-  @if (_translationKeyTableFilterCell) {
-  <ng-container
-    [ngTemplateOutlet]="_translationKeyTableFilterCell"
-    [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
-  >
-  </ng-container>
-  }</ng-template
->

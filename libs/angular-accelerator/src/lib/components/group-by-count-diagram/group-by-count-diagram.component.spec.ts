@@ -144,7 +144,7 @@ describe('GroupByCountDiagramComponent', () => {
 
   const inputColumn = { columnType: ColumnType.STRING, id: 'testNumber' }
 
-  const labelsMock = ['test0', 'test1', 'test2', 'testNone'];
+  const labelsMock = ['test0', 'test1', 'test2', 'testNone']
 
   async function getHarness() {
     return loader.getHarness(DiagramHarness)
@@ -173,10 +173,10 @@ describe('GroupByCountDiagramComponent', () => {
     fixture = TestBed.createComponent(GroupByCountDiagramComponent)
     component = fixture.componentInstance
 
-    component.data = originalData
-    component.column = inputColumn
-    component.sumKey = definedSumKey
-    component.colors = { test0: 'green', test1: 'darkgreen' }
+    fixture.componentRef.setInput('data', originalData)
+    fixture.componentRef.setInput('column', inputColumn)
+    fixture.componentRef.setInput('sumKey', definedSumKey)
+    component.colors.set({ test0: 'green', test1: 'darkgreen' })
 
     translateService = TestBed.inject(TranslateService)
     translateService.setFallbackLang('en')
@@ -196,7 +196,7 @@ describe('GroupByCountDiagramComponent', () => {
 
   it('should convert the data properly to diagramData', async () => {
     const result = await firstValueFrom(component.diagramData$ ?? of())
-    expect(result).toEqual(diagramData)    
+    expect(result).toEqual(diagramData)
   })
 
   it('should load diagram harness', async () => {
@@ -212,7 +212,7 @@ describe('GroupByCountDiagramComponent', () => {
   })
 
   it('should not display a selectButton on the diagram by default', async () => {
-    expect(component.supportedDiagramTypes).toEqual([])
+    expect(component.supportedDiagramTypes()).toEqual([])
 
     const diagramTypeSelectButton = await (await getHarness()).getDiagramTypeSelectButton()
 
@@ -220,7 +220,7 @@ describe('GroupByCountDiagramComponent', () => {
   })
 
   it('should display a selectButton on the diagram if supportedDiagramTypes is specified', async () => {
-    component.supportedDiagramTypes = [DiagramType.PIE, DiagramType.HORIZONTAL_BAR]
+    fixture.componentRef.setInput('supportedDiagramTypes', [DiagramType.PIE, DiagramType.HORIZONTAL_BAR])
 
     const diagramTypeSelectButton = await (await getHarness()).getDiagramTypeSelectButton()
 
@@ -287,9 +287,9 @@ describe('GroupByCountDiagramComponent', () => {
 
   it('should return translated keys when columnType is TranslationKey', async () => {
     const translationsMock = {
-      'test0': 'test0_en',
-      'test1': 'test1_en',
-      'test2': 'test2_en'
+      test0: 'test0_en',
+      test1: 'test1_en',
+      test2: 'test2_en',
     }
     jest.spyOn(translateService, 'get').mockReturnValue(of(translationsMock))
     component.columnType = ColumnType.TRANSLATION_KEY

@@ -1,61 +1,64 @@
 import {
   Directive,
-  ElementRef,
   EmbeddedViewRef,
-  Input,
-  OnInit,
   Renderer2,
   TemplateRef,
   ViewContainerRef,
+  computed,
+  DestroyRef,
   inject,
+  input,
+  signal,
 } from '@angular/core'
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop'
 import { UserService } from '@onecx/angular-integration-interface'
 import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
-import { BehaviorSubject, from, Observable, of, switchMap } from 'rxjs'
+import { from, Observable, of, switchMap } from 'rxjs'
 import { createLogger } from '../utils/logger.utils'
 
 @Directive({ selector: '[ocxIfPermission], [ocxIfNotPermission]', standalone: false })
-export class IfPermissionDirective implements OnInit {
+export class IfPermissionDirective {
   private readonly logger = createLogger('IfPermissionDirective')
   private renderer = inject(Renderer2)
-  private el = inject(ElementRef)
   private viewContainer = inject(ViewContainerRef)
   private hasPermissionChecker = inject<HasPermissionChecker>(HAS_PERMISSION_CHECKER, { optional: true })
   private templateRef = inject<TemplateRef<any>>(TemplateRef, { optional: true })
   private userService = inject(UserService, { optional: true })
+  private destroyRef = inject(DestroyRef)
 
-  @Input('ocxIfPermission') set permission(value: string | string[] | undefined) {
-    this.permissionSubject$.next(value)
-  }
-  @Input('ocxIfNotPermission') set notPermission(value: string | string[] | undefined) {
-    this.permissionSubject$.next(value)
-    this.negate = true
-  }
+  ocxIfPermission = input<string | string[] | undefined>(undefined)
+  ocxIfNotPermission = input<string | string[] | undefined>(undefined)
 
-  @Input() ocxIfPermissionOnMissingPermission: 'hide' | 'disable' = 'hide'
-  @Input() set ocxIfNotPermissionOnMissingPermission(value: 'hide' | 'disable') {
-    this.ocxIfPermissionOnMissingPermission = value
-  }
-  @Input() onMissingPermission: 'hide' | 'disable' = 'hide'
+  ocxIfPermissionOnMissingPermission = input<'hide' | 'disable'>('hide')
+  ocxIfNotPermissionOnMissingPermission = input<'hide' | 'disable'>('hide')
 
-  @Input() ocxIfPermissionPermissions: string[] | undefined
-  @Input()
-  set ocxIfNotPermissionPermissions(value: string[] | undefined) {
-    this.ocxIfPermissionPermissions = value
-  }
+  ocxIfPermissionPermissions = input<string[] | undefined>(undefined)
+  ocxIfNotPermissionPermissions = input<string[] | undefined>(undefined)
 
-  @Input()
-  ocxIfPermissionElseTemplate: TemplateRef<any> | undefined
-  @Input()
-  set ocxIfNotPermissionElseTemplate(value: TemplateRef<any> | undefined) {
-    this.ocxIfPermissionElseTemplate = value
-  }
+  ocxIfPermissionElseTemplate = input<TemplateRef<any> | undefined>(undefined)
+  ocxIfNotPermissionElseTemplate = input<TemplateRef<any> | undefined>(undefined)
 
-  private permissionChecker: HasPermissionChecker
-  private permissionSubject$ = new BehaviorSubject<string | string[] | undefined>(undefined)
-  private isDisabled = false
-  private directiveContentRef: EmbeddedViewRef<any> | undefined
-  negate = false
+  private permissionChecker = computed<HasPermissionChecker | undefined>(() => {
+    return this.hasPermissionChecker ?? this.userService ?? undefined
+  })
+  private isDisabled = signal<boolean>(false)
+  private directiveContentRef = signal<EmbeddedViewRef<any> | undefined>(undefined)
+
+  private permissionValidation = computed(() => {
+    const positive = this.ocxIfPermission()
+    const negative = this.ocxIfNotPermission()
+    const negate = negative !== undefined
+
+    const raw = negate ? negative : positive
+    const permissions = raw === undefined ? [] : Array.isArray(raw) ? raw : [raw]
+    return {
+      permissions,
+      negate,
+      onMissing: negate ? this.ocxIfNotPermissionOnMissingPermission() : this.ocxIfPermissionOnMissingPermission(),
+      elseTemplate: negate ? this.ocxIfNotPermissionElseTemplate() : this.ocxIfPermissionElseTemplate(),
+      overridePermissions: negate ? this.ocxIfNotPermissionPermissions() : this.ocxIfPermissionPermissions(),
+    }
+  })
 
   constructor() {
     const validChecker = this.hasPermissionChecker || this.userService
@@ -63,41 +66,39 @@ export class IfPermissionDirective implements OnInit {
       throw 'IfPermission requires UserService or HasPermissionChecker to be provided!'
     }
 
-    this.permissionChecker = validChecker
-  }
-
-  ngOnInit() {
-    this.permissionSubject$
+    toObservable(this.permissionValidation)
       .pipe(
-        switchMap((permission) => {
-          if (!permission) {
-            return of(false)
+        switchMap((req) => {
+          if (!req.permissions.length) {
+            return of({ shouldShow: false, req })
           }
-          const permissionsArray = Array.isArray(permission) ? permission : [permission]
-          return this.hasPermission(permissionsArray)
-        })
+          return this.hasPermission(req.permissions, req.overridePermissions).pipe(
+            switchMap((has) => of({ shouldShow: req.negate ? !has : has, req }))
+          )
+        }),
+        takeUntilDestroyed(this.destroyRef)
       )
-      .subscribe((hasPermission) => {
-        const shouldShowTemplate = this.negate ? !hasPermission : hasPermission
-        if (shouldShowTemplate) {
+      .subscribe(({ shouldShow, req }) => {
+        if (shouldShow) {
           return this.showTemplateOrClear()
         }
-
-        return this.showElseTemplateOrDefaultView()
+        return this.showElseTemplateOrDefaultView(req.elseTemplate, req.onMissing)
       })
   }
 
-  private hasPermission(permission: string[]): Observable<boolean> {
-    if (this.ocxIfPermissionPermissions) {
-      const result = permission.every((p) => this.ocxIfPermissionPermissions?.includes(p))
+  private hasPermission(permission: string[], overridePermissions?: string[]): Observable<boolean> {
+    if (overridePermissions) {
+      const result = permission.every((p) => overridePermissions?.includes(p))
       if (!result) {
         this.logger.debug('No permission in overwrites for:', permission)
       }
       return of(result)
     }
 
-    if (this.permissionChecker.getPermissions) {
-      return this.permissionChecker.getPermissions().pipe(
+    const permissionChecker = this.permissionChecker()
+
+    if (permissionChecker?.getPermissions) {
+      return permissionChecker.getPermissions().pipe(
         switchMap((permissions) => {
           const result = permission.every((p) => permissions.includes(p))
           if (!result) {
@@ -108,47 +109,52 @@ export class IfPermissionDirective implements OnInit {
       )
     }
 
-    return from(this.permissionChecker.hasPermission(permission))
+    if (permissionChecker?.hasPermission) {
+      return from(permissionChecker.hasPermission(permission))
+    }
+
+    return of(false)
   }
 
   private showTemplateOrClear() {
     this.resetView()
 
     if (this.templateRef) {
-      this.directiveContentRef = this.viewContainer.createEmbeddedView(this.templateRef)
+      this.directiveContentRef.set(this.viewContainer.createEmbeddedView(this.templateRef))
     }
   }
 
-  private showElseTemplateOrDefaultView() {
+  private showElseTemplateOrDefaultView(elseTemplate?: TemplateRef<any>, onMissing: 'hide' | 'disable' = 'hide') {
     this.resetView()
-    if (this.ocxIfPermissionElseTemplate) {
-      this.viewContainer.createEmbeddedView(this.ocxIfPermissionElseTemplate)
+
+    if (elseTemplate) {
+      this.viewContainer.createEmbeddedView(elseTemplate)
       return
     }
 
-    if (this.ocxIfPermissionOnMissingPermission === 'disable' && this.templateRef) {
-      this.directiveContentRef = this.viewContainer.createEmbeddedView(this.templateRef)
+    if (onMissing === 'disable' && this.templateRef) {
+      this.directiveContentRef.set(this.viewContainer.createEmbeddedView(this.templateRef))
 
       const el = this.getElement()
       if (el) {
-        this.renderer.setAttribute(el, 'disabled', 'disabled')
+        this.renderer.setAttribute(el as any, 'disabled', 'disabled')
       }
-      this.isDisabled = true
+      this.isDisabled.set(true)
     }
   }
 
   private resetView() {
     this.viewContainer.clear()
-    if (this.isDisabled) {
-      this.isDisabled = false
+    if (this.isDisabled()) {
+      this.isDisabled.set(false)
       const el = this.getElement()
       if (el) {
-        this.renderer.removeAttribute(el, 'disabled')
+        this.renderer.removeAttribute(el as any, 'disabled')
       }
     }
   }
 
   private getElement(): Node | undefined {
-    return this.directiveContentRef?.rootNodes[0]
+    return this.directiveContentRef()?.rootNodes?.[0]
   }
 }

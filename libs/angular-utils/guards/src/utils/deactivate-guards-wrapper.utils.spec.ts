@@ -40,7 +40,7 @@ describe('DeactivateGuardsWrapper', () => {
     } as any)
 
     mockRouter = {
-      getCurrentNavigation: jest.fn(),
+      currentNavigation: jest.fn(),
     } as unknown as jest.Mocked<Router>
     mockNavigationStateController = {
       getMode: jest.fn().mockReturnValue('NAVIGATION_REQUESTED'),
