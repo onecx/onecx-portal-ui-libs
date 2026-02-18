@@ -251,6 +251,28 @@ describe('ensureProperty', () => {
       expect(mockGlobal).toEqual({ myApp: { config: { debug: false } } })
     })
 
+    it('should work with actual globalThis without type cast', () => {
+      const testPropName = '__testEnsureProperty' + Date.now()
+      
+      ensureProperty(globalThis, [testPropName], { test: 'value' })
+      
+      expect((globalThis as any)[testPropName]).toEqual({ test: 'value' })
+      
+      // Cleanup
+      delete (globalThis as any)[testPropName]
+    })
+
+    it('should work with globalThis nested properties without type cast', () => {
+      const testPropName = '__testEnsurePropertyNested' + Date.now()
+      
+      ensureProperty(globalThis, [testPropName, 'nested', 'deep'], 'test')
+      
+      expect((globalThis as any)[testPropName]).toEqual({ nested: { deep: 'test' } })
+      
+      // Cleanup
+      delete (globalThis as any)[testPropName]
+    })
+
     it('should initialize configuration without overwriting', () => {
       const config: any = {}
       ensureProperty(config, ['database', 'host'], 'localhost')
