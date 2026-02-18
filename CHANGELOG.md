@@ -1,3 +1,10 @@
+## [6.15.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.15.0...v6.15.1) (2026-02-18)
+
+### Bug Fixes
+
+* portal-page-componenent resolves the value first ([#1227](https://github.com/onecx/onecx-portal-ui-libs/issues/1227)) ([a8f3e2f](https://github.com/onecx/onecx-portal-ui-libs/commit/a8f3e2f2ea376f2a4af18a20dc34fc81602c5d0e))
+* search-header-component resolves value first ([#1230](https://github.com/onecx/onecx-portal-ui-libs/issues/1230)) ([549aadc](https://github.com/onecx/onecx-portal-ui-libs/commit/549aadca795400b10e1d2338ed39b09feb78e51e))
+
 ## [6.15.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.14.4...v6.15.0) (2026-02-17)
 
 ### Features

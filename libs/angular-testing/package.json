@@ -1,6 +1,6 @@
 {
   "name": "@onecx/angular-testing",
-  "version": "6.15.0",
+  "version": "6.15.1",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -10,7 +10,7 @@
     "@angular/cdk": "^19.0.0",
     "primeng": "^19.0.0",
     "@nx/devkit": "^20.3.0",
-    "@onecx/nx-migration-utils": "^6.15.0"
+    "@onecx/nx-migration-utils": "^6.15.1"
   },
   "dependencies": {},
   "publishConfig": {
