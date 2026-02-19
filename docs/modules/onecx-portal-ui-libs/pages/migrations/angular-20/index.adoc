@@ -25,6 +25,11 @@ To assist with the migration process, you can utilize the AI-driven migration as
 
 include::ai-prompt-19-to-20.adoc[]
 
+[#upgrade-to-angular-20]
+== Upgrade to Angular 20
+Follow the official Angular update guide to perform the version upgrade by following this link: https://angular.dev/update-guide?v=19.0-20.0&l=3[Angular Update Guide].
+
+
 [#migration-checklist]
 == OneCx v7 Libs migration checklist
 
