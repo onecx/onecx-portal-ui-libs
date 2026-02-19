@@ -65,7 +65,7 @@ export class DialogFooterComponent implements OnInit {
   constructor() {
     // Auto focus button effect for dynamic dialog
     effect(() => {
-      const config = this.dynamicDialogConfig.data.config
+      const config = this.dynamicDialogConfig.data?.config
 
       if (!config) return
 
