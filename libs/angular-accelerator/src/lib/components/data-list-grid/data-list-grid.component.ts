@@ -728,8 +728,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   }
 
   async onActionClick(action: DataAction, item: any): Promise<void> {
-    // Component-specific logic could go here
-    // For example: logging, analytics, validation
     await handleAction(this.router, action, item)
   }
 

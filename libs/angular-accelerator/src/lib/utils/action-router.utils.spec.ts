@@ -67,6 +67,30 @@ describe('ActionRouterUtils', () => {
       expect(mockRouter.navigate).not.toHaveBeenCalled()
     })
 
+    it('should not call callback when DataAction has callback that is not a function', async () => {
+      const action: DataAction = {
+        id: 'test',
+        permission: 'TEST',
+        callback: 'not-a-function' as any
+      }
+
+      await handleAction(mockRouter, action, 'testData')
+
+      expect(mockRouter.navigate).not.toHaveBeenCalled()
+    })
+
+    it('should do nothing when DataAction has no routerLink and no valid callback', async () => {
+      const action: DataAction = {
+        id: 'test',
+        permission: 'TEST',
+        callback: undefined as any
+      }
+
+      await handleAction(mockRouter, action, 'testData')
+
+      expect(mockRouter.navigate).not.toHaveBeenCalled()
+    })
+
     it('should navigate when Action has routerLink', async () => {
       const action: Action = {
         id: 'test',
@@ -107,6 +131,30 @@ describe('ActionRouterUtils', () => {
       handleActionSync(mockRouter, action, testData)
 
       expect(callbackFn).toHaveBeenCalledWith(testData)
+      expect(mockRouter.navigate).not.toHaveBeenCalled()
+    })
+
+    it('should not call callback when DataAction has callback that is not a function', () => {
+      const action: DataAction = {
+        id: 'test',
+        permission: 'TEST_PERMISSION',
+        callback: 'not-a-function' as any
+      }
+
+      handleActionSync(mockRouter, action, 'testData')
+
+      expect(mockRouter.navigate).not.toHaveBeenCalled()
+    })
+
+    it('should do nothing when DataAction has no routerLink and no valid callback', () => {
+      const action: DataAction = {
+        id: 'test',
+        permission: 'TEST_PERMISSION',
+        callback: undefined as any
+      }
+
+      handleActionSync(mockRouter, action, 'testData')
+
       expect(mockRouter.navigate).not.toHaveBeenCalled()
     })
 

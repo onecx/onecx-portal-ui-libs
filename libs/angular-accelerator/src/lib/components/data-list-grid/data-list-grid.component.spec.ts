@@ -12,6 +12,7 @@ import {
 import { ensureIntersectionObserverMockExists, ensureOriginMockExists } from '@onecx/angular-testing'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { TooltipStyle } from 'primeng/tooltip'
+import { firstValueFrom } from 'rxjs'
 import { DataListGridHarness } from '../../../../testing/data-list-grid.harness'
 import { DataTableHarness } from '../../../../testing/data-table.harness'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
@@ -1206,6 +1207,38 @@ describe('DataListGridComponent', () => {
         expect(await gridActions[1].text()).toEqual('GRID_EDIT_KEY')
         expect(await gridActions[2].text()).toEqual('GRID_DELETE_KEY')
         expect(await gridActions[3].text()).toEqual('CUSTOM_ACTION_KEY')
+      })
+
+      it('should execute handleActionSync when grid menu item with routerLink is clicked', async () => {
+        userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
+        const routerSpy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+        
+        component.additionalActions = [
+          {
+            permission: 'CUSTOM#ACTION',
+            routerLink: '/test-route',
+            id: 'customAction',
+            labelKey: 'CUSTOM_ACTION_KEY',
+            callback: jest.fn()
+          },
+        ]
+        
+        component.setSelectedItem(mockData[0])
+        fixture.detectChanges()
+        await fixture.whenStable()
+
+        const menuItems = await firstValueFrom(component.gridMenuItems$)
+        
+        const customMenuItem = menuItems.find(item => item.label === 'CUSTOM_ACTION_KEY')
+        expect(customMenuItem).toBeTruthy()
+        expect(customMenuItem?.command).toBeDefined()
+        
+        const dummyEvent = { originalEvent: new Event('click') } as any
+        customMenuItem!.command!(dummyEvent)
+
+        await fixture.whenStable()
+        
+        expect(routerSpy).toHaveBeenCalledWith(['/test-route'])
       })
     })
   })
