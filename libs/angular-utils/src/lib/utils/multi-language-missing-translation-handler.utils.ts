@@ -7,7 +7,6 @@ import {
 } from '@ngx-translate/core'
 import { getNormalizedBrowserLocales } from '@onecx/accelerator'
 import { DynamicTranslationService, UserService } from '@onecx/angular-integration-interface'
-import { DynamicAppId } from '@onecx/angular-webcomponents'
 import { Observable, of } from 'rxjs'
 import { catchError, map, mergeMap, shareReplay, take } from 'rxjs/operators'
 import { MULTI_LANGUAGE_IDENTIFIER, MultiLanguageIdentifier } from '../injection-tokens/multi-language-identifier'

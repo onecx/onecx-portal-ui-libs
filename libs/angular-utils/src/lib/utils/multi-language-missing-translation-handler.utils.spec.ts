@@ -7,7 +7,6 @@ import { of, throwError } from 'rxjs'
 import { UserProfile } from '@onecx/integration-interface'
 import { DynamicTranslationService } from '@onecx/angular-integration-interface'
 import { MULTI_LANGUAGE_IDENTIFIER } from '../injection-tokens/multi-language-identifier'
-import { DynamicAppId } from '@onecx/angular-webcomponents'
 
 jest.mock('@onecx/accelerator', () => {
   const actual = jest.requireActual('@onecx/accelerator')
@@ -534,8 +533,7 @@ describe('MultiLanguageMissingTranslationHandler', () => {
 
   describe('createMultiLanguageIdentifiers with APP_ID', () => {
     it('should add app identifier from DynamicAppId when no app identifier exists', () => {
-      const dynamicAppId = new DynamicAppId('test-app')
-      dynamicAppId.appElementName = 'my-app'
+      const dynamicAppId = { appElementName: 'my-app' }
 
       TestBed.resetTestingModule()
       TestBed.configureTestingModule({
@@ -558,8 +556,7 @@ describe('MultiLanguageMissingTranslationHandler', () => {
     })
 
     it('should not add app identifier if one already exists', () => {
-      const dynamicAppId = new DynamicAppId('test-app')
-      dynamicAppId.appElementName = 'my-app'
+      const dynamicAppId = { appElementName: 'my-app' }
 
       TestBed.resetTestingModule()
       TestBed.configureTestingModule({
@@ -608,8 +605,7 @@ describe('MultiLanguageMissingTranslationHandler', () => {
     })
 
     it('should not add app identifier if appElementName is empty', () => {
-      const dynamicAppId = new DynamicAppId('test-app')
-      dynamicAppId.appElementName = ''
+      const dynamicAppId = { appElementName: '' }
 
       TestBed.resetTestingModule()
       TestBed.configureTestingModule({
