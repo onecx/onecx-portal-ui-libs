@@ -4,4 +4,4 @@ declare global {
     var onecxIcons: Record<string, IconCache | null | undefined> | undefined;
 }
 
-export {}
+export default globalThis
