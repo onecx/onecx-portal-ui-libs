@@ -57,7 +57,7 @@
             [iconPos]="action.iconPos ?? 'left'"
             type="button"
             class="action-button"
-            (onClick)="action.actionCallback()"
+            (onClick)="onActionClick(action)"
             [disabled]="action.disabled ? action.disabled : false"
             [loading]="action.loading ?? false"
             [attr.name]="action.icon ? 'ocx-page-header-inline-action-icon-button' : 'ocx-page-header-inline-action-button'"
