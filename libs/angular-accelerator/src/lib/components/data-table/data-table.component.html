@@ -59,7 +59,7 @@
         class="p-button-rounded p-button-text"
         [ngClass]="action.classes"
         [icon]="action.icon || ''"
-        (click)="action.callback(rowObject)"
+        (click)="onActionClick(action, rowObject)"
         [title]="action.labelKey ? (action.labelKey | translate) : ''"
         [attr.aria-label]="action.labelKey ? (action.labelKey | translate) : ''"
         [disabled]="action.disabled || (!!action.actionEnabledField && !fieldIsTruthy(rowObject, action.actionEnabledField))"

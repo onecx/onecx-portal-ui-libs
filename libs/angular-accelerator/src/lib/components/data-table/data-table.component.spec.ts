@@ -16,6 +16,7 @@ import { LiveAnnouncer } from '@angular/cdk/a11y'
 import { firstValueFrom, of } from 'rxjs'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataAction } from '../../model/data-action'
+import { Router } from '@angular/router'
 
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>
@@ -24,6 +25,7 @@ describe('DataTableComponent', () => {
   let dataTable: DataTableHarness
   let unselectedCheckBoxes: PTableCheckboxHarness[]
   let selectedCheckBoxes: PTableCheckboxHarness[]
+  let router: Router
 
   const ENGLISH_LANGUAGE = 'en'
   const ENGLISH_TRANSLATIONS = {
@@ -233,6 +235,7 @@ describe('DataTableComponent', () => {
     userServiceMock.permissionsTopic$.publish(['VIEW', 'EDIT', 'DELETE'])
     fixture.detectChanges()
     dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
+    router = TestBed.inject(Router)
   })
 
   it('should create the data table component', () => {
@@ -856,6 +859,239 @@ describe('DataTableComponent', () => {
       expect(menuItems!.length).toBe(1)
       const menuItemText = await menuItems![0].getText()
       expect(menuItemText).toBe('Label')
+    })
+
+    describe('should render action buttons with routerLink', () => {
+      beforeEach(() => {
+        component.rows = [
+          {
+            version: 0,
+            creationDate: '2023-09-12T09:34:27.184086Z',
+            creationUser: '',
+            modificationDate: '2023-09-12T09:34:27.184086Z',
+            modificationUser: '',
+            id: 'rowId',
+            name: 'name 3',
+            description: '',
+            status: 'status name 3',
+            responsible: '',
+            endDate: '2023-09-15T09:34:24Z',
+            startDate: '2023-09-14T09:34:22Z',
+            imagePath: '',
+            testNumber: '7.1',
+            ready: false,
+          },
+        ]
+        component.additionalActions = []
+      })
+      it('should render inline action button with routerLink', async () => {
+        const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+        jest.spyOn(console, 'log')
+        component.additionalActions = [
+          {
+            id: 'routerLinkAction',
+            callback: () => {
+              console.log('My routing Action')
+            },
+            routerLink: '/inline',
+            permission: 'VIEW',
+          },
+        ]
+        fixture.detectChanges()
+        await fixture.whenStable()
+
+        const tableActions = await dataTable.getActionButtons()
+        expect(tableActions.length).toBe(1)
+
+        await tableActions[0].click()
+        expect(spy).toHaveBeenCalledTimes(1)
+        expect(spy).toHaveBeenCalledWith(['/inline'])
+        expect(console.log).not.toHaveBeenCalledWith('My routing Action')
+      })
+
+      it('should render overflow action button with routerLink', async () => {
+        const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+
+        jest.spyOn(console, 'log')
+
+        component.additionalActions = [
+          {
+            id: 'routerLinkAction',
+            callback: () => {
+              console.log('My overflow routing Action')
+            },
+            routerLink: '/overflow',
+            permission: 'VIEW',
+            showAsOverflow: true,
+          },
+        ]
+
+        const overflowButton = await dataTable.getOverflowActionMenuButton()
+        await overflowButton?.click()
+
+        const overflowMenu = await dataTable.getOverflowMenu()
+        expect(overflowMenu).toBeTruthy()
+        const tableActions = await overflowMenu?.getAllMenuItems()
+        expect(tableActions!.length).toBe(1)
+
+        await tableActions![0].selectItem()
+        expect(spy).toHaveBeenCalledTimes(1)
+        expect(spy).toHaveBeenCalledWith(['/overflow'])
+        expect(console.log).not.toHaveBeenCalledWith('My overflow routing Action')
+      })
+
+      it('should handle routerLink as function returning string', async () => {
+        const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+        const routerLinkFunction = jest.fn(() => '/function-link')
+
+        component.additionalActions = [
+          {
+            id: 'functionRouterLink',
+            callback: jest.fn(),
+            routerLink: routerLinkFunction,
+            permission: 'VIEW',
+          },
+        ]
+
+        const tableActions = await dataTable.getActionButtons()
+        await tableActions[0].click()
+
+        expect(routerLinkFunction).toHaveBeenCalledTimes(1)
+        expect(spy).toHaveBeenCalledWith(['/function-link'])
+      })
+
+      it('should handle routerLink as function returning Promise<string>', async () => {
+        const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+        const routerLinkPromiseFunction = jest.fn(() => Promise.resolve('/promise-function-link'))
+
+        component.additionalActions = [
+          {
+            id: 'promiseFunctionRouterLink',
+            callback: jest.fn(),
+            routerLink: routerLinkPromiseFunction,
+            permission: 'VIEW',
+          },
+        ]
+
+        const tableActions = await dataTable.getActionButtons()
+        await tableActions[0].click()
+
+        expect(routerLinkPromiseFunction).toHaveBeenCalledTimes(1)
+        expect(spy).toHaveBeenCalledWith(['/promise-function-link'])
+      })
+
+      it('should handle routerLink as Promise<string>', async () => {
+        const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+
+        component.additionalActions = [
+          {
+            id: 'promiseRouterLink',
+            callback: jest.fn(),
+            routerLink: Promise.resolve('/promise-link'),
+            permission: 'VIEW',
+          },
+        ]
+
+        const tableActions = await dataTable.getActionButtons()
+        await tableActions[0].click()
+
+        expect(spy).toHaveBeenCalledWith(['/promise-link'])
+      })
+
+      it('should handle overflow action with function routerLink', async () => {
+        const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+        const routerLinkFunction = jest.fn(() => '/overflow-function')
+
+        component.additionalActions = [
+          {
+            id: 'overflowFunctionRouterLink',
+            callback: jest.fn(),
+            routerLink: routerLinkFunction,
+            permission: 'VIEW',
+            showAsOverflow: true,
+          },
+        ]
+
+        const overflowButton = await dataTable.getOverflowActionMenuButton()
+        await overflowButton?.click()
+
+        const overflowMenu = await dataTable.getOverflowMenu()
+        const menuItems = await overflowMenu?.getAllMenuItems()
+        await menuItems![0].selectItem()
+
+        expect(routerLinkFunction).toHaveBeenCalledTimes(1)
+        expect(spy).toHaveBeenCalledWith(['/overflow-function'])
+      })
+
+      it('should prioritize routerLink over actionCallback when both are provided', async () => {
+        const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+        const callbackSpy = jest.fn()
+
+        component.additionalActions = [
+          {
+            id: 'routerLinkWithCallback',
+            callback: callbackSpy,
+            routerLink: '/prioritized-link',
+            permission: 'VIEW',
+          },
+        ]
+
+        const tableActions = await dataTable.getActionButtons()
+        await tableActions[0].click()
+
+        expect(spy).toHaveBeenCalledTimes(1)
+        expect(spy).toHaveBeenCalledWith(['/prioritized-link'])
+        expect(callbackSpy).not.toHaveBeenCalled()
+      })
+
+      it('should prioritize routerLink over actionCallback in overflow menu when both are provided', async () => {
+        const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+        const callbackSpy = jest.fn()
+
+        component.additionalActions = [
+          {
+            id: 'overflowRouterLinkWithCallback',
+            callback: callbackSpy,
+            routerLink: '/overflow-prioritized',
+            permission: 'VIEW',
+            showAsOverflow: true,
+          },
+        ]
+
+        const overflowButton = await dataTable.getOverflowActionMenuButton()
+        await overflowButton?.click()
+
+        const overflowMenu = await dataTable.getOverflowMenu()
+        expect(overflowMenu).toBeTruthy()
+        const tableActions = await overflowMenu?.getAllMenuItems()
+        expect(tableActions!.length).toBe(1)
+
+        await tableActions![0].selectItem()
+        expect(spy).toHaveBeenCalledTimes(1)
+        expect(spy).toHaveBeenCalledWith(['/overflow-prioritized'])
+        expect(callbackSpy).not.toHaveBeenCalled()
+      })
+
+
+
+      it('should execute actionCallback when no routerLink is provided', async () => {
+        const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+        const callbackSpy = jest.fn()
+
+        component.additionalActions = [
+          {
+            id: 'callbackOnlyAction',
+            callback: callbackSpy,
+            permission: 'VIEW',
+          },
+        ]
+
+        const tableActions = await dataTable.getActionButtons()
+        await tableActions[0].click()
+
+        expect(spy).not.toHaveBeenCalled()
+        expect(callbackSpy).toHaveBeenCalledWith(component.rows[0])
+      })
     })
   })
 

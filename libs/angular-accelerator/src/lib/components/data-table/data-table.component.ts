@@ -47,7 +47,7 @@ import { findTemplate } from '../../utils/template.utils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
-
+import { handleAction, handleActionSync } from '../../utils/action-router.utils'
 
 export type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -83,7 +83,7 @@ export interface DataTableComponentState {
   styleUrls: ['./data-table.component.scss'],
 })
 export class DataTableComponent extends DataSortBase implements OnInit, AfterContentInit {
-  private readonly router = inject(Router)
+  router = inject(Router)
   private readonly injector = inject(Injector)
   private readonly userService = inject(UserService)
   private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
@@ -104,16 +104,13 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     }
     this._rows$.next(value)
 
-    const currentResults = value.length;
-    const newStatus = currentResults === 0
-        ? 'OCX_DATA_TABLE.NO_SEARCH_RESULTS_FOUND'
-        : 'OCX_DATA_TABLE.SEARCH_RESULTS_FOUND';
-    
-    firstValueFrom(
-      this.translateService.get(newStatus, { results: currentResults }) ).then((translatedText: string) => {
-        this.liveAnnouncer.announce(translatedText);
-      }
-    );
+    const currentResults = value.length
+    const newStatus =
+      currentResults === 0 ? 'OCX_DATA_TABLE.NO_SEARCH_RESULTS_FOUND' : 'OCX_DATA_TABLE.SEARCH_RESULTS_FOUND'
+
+    firstValueFrom(this.translateService.get(newStatus, { results: currentResults })).then((translatedText: string) => {
+      this.liveAnnouncer.announce(translatedText)
+    })
   }
 
   _selectionIds$ = new BehaviorSubject<(string | number)[]>([])
@@ -434,7 +431,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
               styleClass: (a.classes || []).join(' '),
               disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
               visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
-              command: () => a.callback(row),
+              command: this.createMenuItemCommand(a, row),
             }))
           })
         )
@@ -678,9 +675,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
 
   sortIconTitle(sortColumn: string) {
-    return this.sortDirectionToTitle(
-      this.columnNextSortDirection(sortColumn)
-    )
+    return this.sortDirectionToTitle(this.columnNextSortDirection(sortColumn))
   }
 
   sortDirectionToTitle(sortDirection: DataSortDirection) {
@@ -956,5 +951,13 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         })
       })
     )
+  }
+
+  async onActionClick(action: DataAction, rowObject: any): Promise<void> {
+    await handleAction(this.router, action, rowObject)
+  }
+  
+  private createMenuItemCommand(action: DataAction, row: any): () => void {
+    return () => handleActionSync(this.router, action, row)
   }
 }

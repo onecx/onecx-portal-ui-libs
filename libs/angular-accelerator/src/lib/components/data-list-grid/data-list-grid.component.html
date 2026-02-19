@@ -167,7 +167,7 @@
             class="p-button-rounded p-button-text"
             [ngClass]="action.classes"
             [icon]="action.icon || ''"
-            (click)="action.callback(item)"
+            (click)="onActionClick(action, item)"
             [pTooltip]="action.labelKey ? (action.labelKey | translate) : ''"
             tooltipPosition="top"
             [tooltipOptions]="{
