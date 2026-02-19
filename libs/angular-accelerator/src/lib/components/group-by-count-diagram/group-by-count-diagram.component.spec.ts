@@ -188,10 +188,10 @@ describe('GroupByCountDiagramComponent', () => {
 
   it('should create the group-by-count-diagram component', () => {
     expect(component).toBeTruthy()
-    expect(component.data).toEqual(originalData)
-    expect(component.column).toEqual(inputColumn)
-    expect(component.columnType).toBe(ColumnType.STRING)
-    expect(component.columnField).toBe('testNumber')
+    expect(component.data()).toEqual(originalData)
+    expect(component.column()).toEqual(inputColumn)
+    expect(component.columnType()).toBe(ColumnType.STRING)
+    expect(component.columnField()).toBe('testNumber')
   })
 
   it('should convert the data properly to diagramData', async () => {
@@ -228,8 +228,8 @@ describe('GroupByCountDiagramComponent', () => {
   })
 
   it('should verify if all labels appear', async () => {
-    component.allLabelKeys = labelsMock
-    component.showAllLabels = true
+    fixture.componentRef.setInput('allLabelKeys', labelsMock)
+    fixture.componentRef.setInput('showAllLabels', true)
 
     fixture.detectChanges()
     const ariaLabel = await getCanvasAriaLabel()
@@ -239,21 +239,21 @@ describe('GroupByCountDiagramComponent', () => {
     expect(ariaLabel).toContain('test2:4')
     expect(ariaLabel).toContain('testNone:0')
     expect(ariaLabel).toContain('Total amount: 7')
-    expect(component.allLabelKeys).toEqual(labelsMock)
-    expect(component.showAllLabels).toBe(true)
-    expect(component.colors).toEqual({ test0: 'green', test1: 'darkgreen' })
+    expect(component.allLabelKeys()).toEqual(labelsMock)
+    expect(component.showAllLabels()).toBe(true)
+    expect(component.colors()).toEqual({ test0: 'green', test1: 'darkgreen' })
   })
 
   it('should verify if label with zero count will not appear', async () => {
-    component.allLabelKeys = labelsMock
+    fixture.componentRef.setInput('allLabelKeys', labelsMock)
 
     fixture.detectChanges()
     const ariaLabel = await getCanvasAriaLabel()
 
     expect(ariaLabel).not.toContain('testNone:0')
     expect(ariaLabel).toContain('Total amount: 7')
-    expect(component.allLabelKeys).toEqual(labelsMock)
-    expect(component.showAllLabels).toBe(false)
+    expect(component.allLabelKeys()).toEqual(labelsMock)
+    expect(component.showAllLabels()).toBe(false)
   })
 
   it('should emit dataSelected event when dataClicked is called', () => {
@@ -267,7 +267,7 @@ describe('GroupByCountDiagramComponent', () => {
   })
 
   it('should emit diagramTypeChanged event when diagram type is changed', async () => {
-    component.supportedDiagramTypes = [DiagramType.PIE, DiagramType.HORIZONTAL_BAR]
+    fixture.componentRef.setInput('supportedDiagramTypes', [DiagramType.PIE, DiagramType.HORIZONTAL_BAR])
     const emitDiagramTypeChangedSpy = jest.spyOn(component.diagramTypeChanged, 'emit')
     const emitComponentStateChangedSpy = jest.spyOn(component.componentStateChanged, 'emit')
     fixture.detectChanges()
@@ -279,7 +279,7 @@ describe('GroupByCountDiagramComponent', () => {
     fixture.detectChanges()
 
     expect(emitDiagramTypeChangedSpy).toHaveBeenCalledWith(DiagramType.HORIZONTAL_BAR)
-    expect(component.diagramType).toBe(DiagramType.HORIZONTAL_BAR)
+    expect(component.diagramType()).toBe(DiagramType.HORIZONTAL_BAR)
     expect(emitComponentStateChangedSpy).toHaveBeenCalledWith({
       activeDiagramType: DiagramType.HORIZONTAL_BAR,
     })
@@ -292,8 +292,8 @@ describe('GroupByCountDiagramComponent', () => {
       test2: 'test2_en',
     }
     jest.spyOn(translateService, 'get').mockReturnValue(of(translationsMock))
-    component.columnType = ColumnType.TRANSLATION_KEY
-    component.columnField = 'testNumber'
+    component.columnType.set(ColumnType.TRANSLATION_KEY)
+    component.columnField.set('testNumber')
     fixture.detectChanges()
 
     const result = await firstValueFrom(component.diagramData$ ?? of([]))
@@ -305,10 +305,10 @@ describe('GroupByCountDiagramComponent', () => {
   })
 
   it('should include missing labels with configured color when all labels are shown', async () => {
-    component.colors = { ...component.colors, test3: 'blue' }
-    component.data = [...originalData, { ...originalData[0], testNumber: 'test3' }]
-    component.allLabelKeys = labelsMock
-    component.showAllLabels = true
+    component.colors.set({ ...component.colors(), test3: 'blue' })
+    component.data.set([...originalData, { ...originalData[0], testNumber: 'test3' }])
+    fixture.componentRef.setInput('allLabelKeys', labelsMock)
+    fixture.componentRef.setInput('showAllLabels', true)
     fixture.detectChanges()
 
     const result = await firstValueFrom(component.diagramData$ ?? of([]))
