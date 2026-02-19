@@ -198,7 +198,7 @@ describe('PageHeaderComponent', () => {
   it('should show a loading spinner when action is loading', async () => {
     const mockFn = jest.fn()
 
-    component.actions = [
+    fixture.componentRef.setInput('actions', [
       {
         label: 'My Test Loading Action',
         show: 'always',
@@ -206,7 +206,7 @@ describe('PageHeaderComponent', () => {
         permission: 'TEST#TEST_PERMISSION',
         loading: true,
       },
-    ]
+    ])
 
     const loadingActionElement = await pageHeaderHarness.getInlineActionButtonByLabel('My Test Loading Action')
     expect(loadingActionElement).toBeTruthy()
