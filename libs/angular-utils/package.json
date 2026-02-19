@@ -1,6 +1,6 @@
 {
   "name": "@onecx/angular-utils",
-  "version": "5.52.7",
+  "version": "5.52.8",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -11,9 +11,9 @@
     "@angular/core": "^18.0.5",
     "@ngx-translate/core": "^15.0.0",
     "@ngx-translate/http-loader": "^8.0.0",
-    "@onecx/accelerator": "^5.52.7",
-    "@onecx/angular-integration-interface": "^5.52.7",
-    "@onecx/nx-migration-utils": "^5.52.7",
+    "@onecx/accelerator": "^5.52.8",
+    "@onecx/angular-integration-interface": "^5.52.8",
+    "@onecx/nx-migration-utils": "^5.52.8",
     "@nx/devkit": "^19.8.0",
     "rxjs": "^7.8.1",
     "@jest/globals": "29.7.0",

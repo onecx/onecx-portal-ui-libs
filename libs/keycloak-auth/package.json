@@ -1,6 +1,6 @@
 {
   "name": "@onecx/keycloak-auth",
-  "version": "5.52.7",
+  "version": "5.52.8",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -11,8 +11,8 @@
     "@angular/core": "^18.0.5",
     "keycloak-angular": "^16.0.1",
     "keycloak-js": "^25.0.1",
-    "@onecx/angular-integration-interface": "^5.52.7",
-    "@onecx/integration-interface": "^5.52.7",
+    "@onecx/angular-integration-interface": "^5.52.8",
+    "@onecx/integration-interface": "^5.52.8",
     "rxjs": "^7.8.1"
   },
   "publishConfig": {

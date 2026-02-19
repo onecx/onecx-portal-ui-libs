@@ -924,4 +924,91 @@ describe('DataTableComponent', () => {
     });
   });
 
+
+  describe('rows & filters setter (resetPage)', () => {
+    it('should call resetPage when rows length decreases', () => {
+      const resetSpy = jest.spyOn(component, 'resetPage')
+      const pageSpy = jest.spyOn(component.pageChanged, 'emit')
+      const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
+      component.page = 2
+
+      component.rows = mockData.slice(0, 3)
+
+      expect(resetSpy).toHaveBeenCalled()
+      expect(component.page).toBe(0)
+      expect(pageSpy).toHaveBeenCalledWith(0)
+      expect(stateSpy).toHaveBeenCalled()
+    })
+
+    it('should not call resetPage when rows length increases', () => {
+      const resetSpy = jest.spyOn(component, 'resetPage')
+      const pageSpy = jest.spyOn(component.pageChanged, 'emit')
+      component.page = 2
+
+      component.rows = Array.from({ length: 10 }).map((_, i) => ({ id: i, name: i } as any))
+
+      expect(resetSpy).not.toHaveBeenCalled()
+      expect(component.page).toBe(2)
+      expect(pageSpy).not.toHaveBeenCalled()
+    })
+
+    it('should resetPage when filters length changes', () => {
+      const resetSpy = jest.spyOn(component, 'resetPage')
+      component.page = 4
+      component.filters = [
+        { columnId: 'a', value: 1 },
+        { columnId: 'b', value: 2 },
+      ] as any
+      resetSpy.mockClear()
+
+      component.filters = [{ columnId: 'a', value: 1 }] as any
+
+      component.page = 2
+
+      component.filters = [
+        { columnId: 'a', value: 1 },
+        { columnId: 'b', value: 2 },
+        { columnId: 'c', value: 3 },
+      ] as any
+
+      expect(resetSpy).toHaveBeenCalledTimes(2)
+      expect(component.page).toBe(0)
+    })
+  })
+  describe('DataTableComponent rowTrackByFunction & selection behaviour', () => {
+    it('should return item id', () => {
+      const item = { id: 'abc-123' } as Row
+      const callRowTrackBy = (c: DataTableComponent, i: any) =>
+        (c.rowTrackByFunction as any).length >= 2 ? (c.rowTrackByFunction as any)(0, i) : (c.rowTrackByFunction as any)(i)
+
+      const result = callRowTrackBy(component, item)
+
+      expect(result).toBe(item.id)
+    })
+
+    it('should render preselected rows correctly across pages ', async () => {
+      component.selectionChanged.subscribe()
+
+      component.pageSizes = [2]
+      component.pageSize = 2
+      fixture.detectChanges()
+
+      const page2Rows = mockData.slice(2, 4)
+      component.selectedRows = page2Rows
+
+      let unchecked = await dataTable.getHarnessesForCheckboxes('unchecked')
+      let checked = await dataTable.getHarnessesForCheckboxes('checked')
+      expect(unchecked.length).toBe(2)
+      expect(checked.length).toBe(0)
+
+      component.onPageChange({ first: 2, rows: 2 })
+      fixture.detectChanges()
+
+      unchecked = await dataTable.getHarnessesForCheckboxes('unchecked')
+      checked = await dataTable.getHarnessesForCheckboxes('checked')
+      expect(unchecked.length).toBe(0)
+      expect(checked.length).toBe(2)
+    })
+  })
+
 })
