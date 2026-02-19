@@ -31,6 +31,10 @@ export class OcxContentContainerDirective implements OnInit {
 
   constructor() {
     effect(() => {
+      // Read signals to establish dependencies
+      this.layout()
+      this.breakpoint()
+      this.ngClass()
       this.addContainerStyles()
     })
   }
