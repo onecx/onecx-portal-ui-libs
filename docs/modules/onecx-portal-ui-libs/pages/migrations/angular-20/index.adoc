@@ -18,6 +18,18 @@ Before starting this migration:
 * You have OneCX UI libraries v6.x installed  
 * You have a working development environment
 
+[#ai-driven-migration-assistance]
+== AI Driven Migration Assistance
+
+To assist with the migration process, you can utilize the AI-driven migration assistant. Below you can find the migration prompt, which you can copy and use in your preferred AI tool. This prompt has been tested with github copilot GPT-5.2 in agent mode.
+
+include::ai-prompt-19-to-20.adoc[]
+
+[#upgrade-to-angular-20]
+== Upgrade to Angular 20
+Follow the official Angular update guide to perform the version upgrade by following this link: https://angular.dev/update-guide?v=19.0-20.0&l=3[Angular Update Guide].
+
+
 [#migration-checklist]
 == OneCx v7 Libs migration checklist
 
