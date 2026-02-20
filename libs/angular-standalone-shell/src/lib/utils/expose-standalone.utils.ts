@@ -10,10 +10,11 @@ import {
 import { initializeRouter } from '@onecx/angular-webcomponents'
 import { Router } from '@angular/router'
 import { PermissionsTopic, Theme, UserProfile, Workspace } from '@onecx/integration-interface'
-import { provideAlwaysGrantPermissionChecker, provideTranslationPathFromMeta } from '@onecx/angular-utils'
+import { provideAlwaysGrantPermissionChecker, provideMultiLanguageIdentifier, provideTranslationPathFromMeta } from '@onecx/angular-utils'
 import { provideAuthService, provideTokenInterceptor } from '@onecx/angular-auth'
 import { MessageService } from 'primeng/api'
 import { createLogger } from './logger.utils'
+import { LIB_VERSION } from '../../version'
 
 const logger = createLogger('expose-standalone')
 
@@ -114,6 +115,7 @@ export function provideStandaloneProviders(config?: Partial<ProvideStandalonePro
       deps: [Router, AppStateService],
     },
     provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/'),
+    provideMultiLanguageIdentifier('@onecx/angular-standalone-shell', LIB_VERSION, 'lib'),
     provideAlwaysGrantPermissionChecker(),
     provideTokenInterceptor(),
     provideAuthService(),

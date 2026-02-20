@@ -17,6 +17,7 @@ When writing tests use the following guidelines:
 - Create use case driven tests
 - Test statement coverage should be 100% for new code.
 - Group the tests logically with describe blocks (e.g. by tested method) and use descriptive test names.
+- Consider using the class FakeTopic to mock the behavior of a topic when testing services that depend on it.
 - Run the tests first for the file you are working on only (task: "nx affected test (current work)"). Once they pass, run the full test suite to ensure nothing else is broken.
 
 For components consider the following guidelines:
