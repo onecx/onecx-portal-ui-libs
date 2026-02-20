@@ -136,14 +136,4 @@ describe('IconService', () => {
       expect(spy).toHaveBeenCalled()
     })
   })
-
-
-  it('should call ngOnDestroy when destroy() is invoked', () => {
-    const spy = jest.spyOn(iconService, 'ngOnDestroy');
-
-    iconService.destroy();
-
-    expect(spy).toHaveBeenCalled();
-  });
-
 })

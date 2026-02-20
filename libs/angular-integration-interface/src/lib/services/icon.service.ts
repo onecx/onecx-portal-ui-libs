@@ -23,8 +23,4 @@ export class IconService implements OnDestroy {
   ngOnDestroy(): void {
     this.iconServiceInterface.destroy();
   }
-
-  destroy() {
-    this.ngOnDestroy();
-  }
 }
