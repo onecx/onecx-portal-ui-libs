@@ -3,6 +3,9 @@
 
 :angular_issues_url: xref:documentation:onecx-docs-overview:module-federation/webcomponents.adoc#angular_issues
 
+:icon_topic_url: xref:./integration-interface.adoc#icon-topic 
+:icon_service_url: xref:onecx-portal-ui-libs:service/icon-service.adoc
+
 = Library: @onecx/integration-interface
 
 [#overview]
@@ -218,6 +221,38 @@ Data::
 **Boolean** indicating whether global loading is happening or not.
 
 include::documentation:onecx-portal-ui-libs:partial$app-state-service-note.adoc[]
+
+
+[#icon-topic]
+=== Icon Topic
+Usage::
+Coordinate icon requests and availability across the platform. Microfrontends publish requests; the Shell loads missing icons and signals completion.
+Shell actions::
+Listens for `IconRequested`, batches missing icon loads, injects CSS for requested render styles, then publishes `IconsReceived`.
+Data::
+**Icon messages and cache** used by the topic and helper utilities:
++
+.Icon-related types
+[cols="1,1,3"]
+|===
+| Name | Type | Description
+
+| `IconRequested` | `{ type: 'IconRequested'; name: string; classType: 'svg' \| 'background' \| 'background-before' }` | Published when an icon is requested.
+| `IconsReceived` | `{ type: 'IconsReceived' }` | Published when the Shell finished loading/injecting icons.
+| `IconCache` | `{ name: string; type: string; body: string; parent?: string \| null }` | SVG data and metadata for a resolved icon.
+|===
++
+.Global cache
+[cols="1,~"]
+|===
+| `window.onecxIcons` | `Record<string, IconCache \| null \| undefined>` where `undefined` means requested but not yet loaded, `null` means not found, and `IconCache` means available.
+|===
+
+[NOTE]
+====
+For Angular applications, see the {icon_service_url}[Icon Service] which wraps this topic and utilities.
+====
+
 
 [#is-authenticated-topic]
 === Is Authenticated Topic
