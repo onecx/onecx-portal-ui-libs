@@ -447,11 +447,6 @@ export class InteractiveDataViewComponent implements OnInit {
   @Output() groupSelectionChangedSlotEmitter = observableOutput<ColumnGroupData | undefined>()
   private groupSelectionChanged$ = new Subject<ColumnGroupData | undefined>()
 
-  // Test hook to trigger internal subscription
-  _triggerGroupSelectionChanged(value: ColumnGroupData | undefined) {
-    this.groupSelectionChanged$.next(value)
-  }
-
   constructor() {
     // Intercept emit to feed our internal Subject
     const originalEmit = this.groupSelectionChangedSlotEmitter.emit.bind(this.groupSelectionChangedSlotEmitter)
