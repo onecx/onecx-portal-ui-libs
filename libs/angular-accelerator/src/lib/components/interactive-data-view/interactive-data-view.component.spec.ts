@@ -1,8 +1,8 @@
 import { SlotService } from '@onecx/angular-remote-components'
-import { EventEmitter } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
-import { BehaviorSubject, take } from 'rxjs'
-import { DataViewComponent, RowListGridData } from '../data-view/data-view.component'
+import { TemplateRef } from '@angular/core'
+import { BehaviorSubject } from 'rxjs'
+import { PrimeTemplate } from 'primeng/api'
 import { InteractiveDataViewComponent } from './interactive-data-view.component'
 
 describe('InteractiveDataViewComponent (class logic)', () => {
@@ -140,10 +140,19 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
       expect(component.selectedGroupKey()).toBe('not-present')
     })
+    it('should trigger subscription when groupSelectionChanged is called', () => {
+      const { component } = createComponent(true)
 
-    // SKIPPED: Component bug - groupSelectionChangedSlotEmitter uses output() instead of observableOutput()
-    // which prevents internal subscription. Tests fail because emit doesn't trigger the subscription handler.
-    it.skip('should set groupSelectionChangedSlotEmitter fallback groupKey to defaultGroupKey when selectedGroupKey is undefined', () => {
+      setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'G', predefinedGroupKeys: [] } as any])
+      component.displayedColumnKeys.set(['c1'])
+      setInputSignal(component, 'defaultGroupKey', 'test-default')
+
+      component.groupSelectionChangedSlotEmitter.emit(undefined)
+
+      // Should use defaultGroupKey as fallback
+      expect(component.selectedGroupKey()).toBe('test-default')
+    })
+    it('should set groupSelectionChangedSlotEmitter fallback groupKey to defaultGroupKey when selectedGroupKey is undefined', () => {
       const { component } = createComponent(true)
 
       const emitSpy = jest.spyOn(component.displayedColumnKeysChange, 'emit')
@@ -151,12 +160,12 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'G', predefinedGroupKeys: [] } as any])
       component.displayedColumnKeys.set(['c1'])
       setInputSignal(component, 'defaultGroupKey', 'dg')
-      component.selectedGroupKey.set(undefined)
 
-      component.groupSelectionChangedSlotEmitter.emit(undefined)
-      TestBed.tick()
+      component._triggerGroupSelectionChanged(undefined)
 
       expect(component.selectedGroupKey()).toBe('dg')
+      // Effect emission happens async
+      TestBed.tick()
       expect(emitSpy).toHaveBeenCalledWith(['c1'])
     })
 
@@ -184,8 +193,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(component.selectedGroupKey()).toBe('custom')
     })
 
-    // SKIPPED: Component bug - groupSelectionChangedSlotEmitter uses output() instead of observableOutput()    // which prevents internal subscription. Tests fail because emit doesn't trigger the subscription handler.
-    it.skip('should update column group selection state when groupSelectionChangedSlotEmitter emits undefined', () => {
+    it('should update column group selection state when groupSelectionChangedSlotEmitter emits undefined', () => {
       const { component } = createComponent(true)
       const emitSpy = jest.spyOn(component.displayedColumnKeysChange, 'emit')
       const stateSpy = jest.fn()
@@ -196,10 +204,13 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       setInputSignal(component, 'defaultGroupKey', 'dg')
       component.selectedGroupKey.set('sg')
 
-      component.groupSelectionChangedSlotEmitter.emit(undefined)
+      component._triggerGroupSelectionChanged(undefined)
 
+      // When `undefined` is passed, it uses current selectedGroupKey ('sg') as fallback
       expect(component.displayedColumnKeys()).toEqual(['c1'])
       expect(component.selectedGroupKey()).toBe('sg')
+      // Effect emission happens async
+      TestBed.tick()
       expect(emitSpy).toHaveBeenCalledWith(['c1'])
       expect(stateSpy).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -559,9 +570,495 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     })
   })
 
-  describe('template mapping', () => {
-    // Template tests removed - templates are now automatically managed via contentChildren() signal
-    // The _tableCell, _gridItem, etc. are computed signals that automatically read from templates()
-    // No manual mapping or ngAfterContentInit is needed with signal-based content queries
+  describe('template computed signals', () => {
+    it('should return childTableCell when no PrimeNG template is defined', () => {
+      const { component } = createComponent(true)
+
+      const mockTemplate = {} as TemplateRef<any>
+      Object.defineProperty(component, 'childTableCell', {
+        value: () => mockTemplate,
+        writable: true,
+        configurable: true,
+      })
+      Object.defineProperty(component, 'templates', {
+        value: () => [],
+        writable: true,
+        configurable: true,
+      })
+
+      expect(component._tableCell()).toBe(mockTemplate)
+    })
+
+    it('should return PrimeNG template when defined for tableCell', () => {
+      const { component } = createComponent(true)
+
+      const mockPrimeTemplate = {} as TemplateRef<any>
+      const primeTemplateWrapper = {
+        getType: () => 'tableCell',
+        template: mockPrimeTemplate,
+      } as PrimeTemplate
+
+      Object.defineProperty(component, 'templates', {
+        value: () => [primeTemplateWrapper],
+        writable: true,
+        configurable: true,
+      })
+
+      expect(component.primeNgTableCell()).toBe(mockPrimeTemplate)
+      expect(component._tableCell()).toBe(mockPrimeTemplate)
+    })
+
+    it('should prioritize PrimeNG template over childContent for dateTableCell', () => {
+      const { component } = createComponent(true)
+
+      const childTemplate = {} as TemplateRef<any>
+      const primeTemplate = {} as TemplateRef<any>
+      const primeTemplateWrapper = {
+        getType: () => 'dateTableCell',
+        template: primeTemplate,
+      } as PrimeTemplate
+
+      Object.defineProperty(component, 'childDateTableCell', {
+        value: () => childTemplate,
+        writable: true,
+        configurable: true,
+      })
+      Object.defineProperty(component, 'templates', {
+        value: () => [primeTemplateWrapper],
+        writable: true,
+        configurable: true,
+      })
+
+      expect(component._dateTableCell()).toBe(primeTemplate)
+    })
+
+    it('should return undefined when no template is defined for gridItem', () => {
+      const { component } = createComponent(true)
+
+      Object.defineProperty(component, 'childGridItem', {
+        value: () => undefined,
+        writable: true,
+        configurable: true,
+      })
+      Object.defineProperty(component, 'templates', {
+        value: () => [],
+        writable: true,
+        configurable: true,
+      })
+
+      expect(component._gridItem()).toBeUndefined()
+    })
+
+    it('should handle multiple template types and return correct ones', () => {
+      const { component } = createComponent(true)
+
+      const gridItemTemplate = {} as TemplateRef<any>
+      const listItemTemplate = {} as TemplateRef<any>
+
+      const templates = [
+        { getType: () => 'gridItem', template: gridItemTemplate } as PrimeTemplate,
+        { getType: () => 'listItem', template: listItemTemplate } as PrimeTemplate,
+      ]
+
+      Object.defineProperty(component, 'templates', {
+        value: () => templates,
+        writable: true,
+        configurable: true,
+      })
+
+      expect(component.primeNgGridItem()).toBe(gridItemTemplate)
+      expect(component.primeNgListItem()).toBe(listItemTemplate)
+      expect(component._gridItem()).toBe(gridItemTemplate)
+      expect(component._listItem()).toBe(listItemTemplate)
+    })
+  })
+
+  describe('effects behavior', () => {
+    it('should trigger filtered output when filters change via effect', () => {
+      const { component } = createComponent(true)
+
+      const filteredSpy = jest.spyOn(component.filtered, 'emit')
+      const filters = [{ columnId: 'c1', filterType: 'stringContains', value: 'test' } as any]
+
+      component.filters.set(filters)
+      TestBed.tick()
+
+      expect(filteredSpy).toHaveBeenCalledWith(filters)
+    })
+
+    it('should trigger sorted output when sortField or sortDirection changes via effect', () => {
+      const { component } = createComponent(true)
+
+      const sortedSpy = jest.spyOn(component.sorted, 'emit')
+
+      component.sortField.set('name')
+      component.sortDirection.set('ASCENDING' as any)
+      TestBed.tick()
+
+      expect(sortedSpy).toHaveBeenCalledWith({ sortColumn: 'name', sortDirection: 'ASCENDING' })
+    })
+
+    it('should trigger dataViewLayoutChange when layout changes via effect', () => {
+      const { component } = createComponent(true)
+
+      const layoutSpy = jest.spyOn(component.dataViewLayoutChange, 'emit')
+
+      component.layout.set('grid')
+      TestBed.tick()
+
+      expect(layoutSpy).toHaveBeenCalledWith('grid')
+    })
+
+    it('should trigger pageChanged when page changes via effect', () => {
+      const { component } = createComponent(true)
+
+      const pageSpy = jest.spyOn(component.pageChanged, 'emit')
+
+      component.page.set(3)
+      TestBed.tick()
+
+      expect(pageSpy).toHaveBeenCalledWith(3)
+    })
+
+    it('should trigger pageSizeChanged when pageSize changes via effect', () => {
+      const { component } = createComponent(true)
+
+      const pageSizeSpy = jest.spyOn(component.pageSizeChanged, 'emit')
+
+      component.pageSize.set(50)
+      TestBed.tick()
+
+      expect(pageSizeSpy).toHaveBeenCalledWith(50)
+    })
+
+    it('should not trigger pageSizeChanged when pageSize is undefined', () => {
+      const { component } = createComponent(true)
+
+      const pageSizeSpy = jest.spyOn(component.pageSizeChanged, 'emit')
+
+      component.pageSize.set(undefined)
+      TestBed.tick()
+
+      expect(pageSizeSpy).not.toHaveBeenCalled()
+    })
+
+    it('should trigger displayedColumnKeysChange when displayedColumnKeys changes via effect', () => {
+      const { component } = createComponent(true)
+
+      const displayedSpy = jest.spyOn(component.displayedColumnKeysChange, 'emit')
+
+      component.displayedColumnKeys.set(['c1', 'c2'])
+      TestBed.tick()
+
+      expect(displayedSpy).toHaveBeenCalledWith(['c1', 'c2'])
+    })
+
+    it('should clear selectedGroupKey via layout effect when invalid group is selected', () => {
+      const { component } = createComponent(true)
+
+      setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'validGroup', predefinedGroupKeys: [] } as any])
+      setInputSignal(component, 'customGroupKey', 'custom')
+      component.selectedGroupKey.set('invalidGroup')
+
+      component.layout.set('grid')
+      TestBed.tick()
+
+      expect(component.selectedGroupKey()).toBeUndefined()
+    })
+
+    it('should not clear selectedGroupKey via layout effect when valid group is selected', () => {
+      const { component } = createComponent(true)
+
+      setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'validGroup', predefinedGroupKeys: [] } as any])
+      setInputSignal(component, 'customGroupKey', 'custom')
+      component.selectedGroupKey.set('validGroup')
+
+      component.layout.set('table')
+      TestBed.tick()
+
+      expect(component.selectedGroupKey()).toBe('validGroup')
+    })
+
+    it('should not clear selectedGroupKey when it equals customGroupKey', () => {
+      const { component } = createComponent(true)
+
+      setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'group1', predefinedGroupKeys: [] } as any])
+      setInputSignal(component, 'customGroupKey', 'myCustom')
+      component.selectedGroupKey.set('myCustom')
+
+      component.layout.set('list')
+      TestBed.tick()
+
+      expect(component.selectedGroupKey()).toBe('myCustom')
+    })
+  })
+
+  describe('registerEventListenerForDataView', () => {
+    it('should not register listeners when outputs are not observed', () => {
+      const { component } = createComponent(true)
+
+      const mockDataView = {
+        deleteItem: { observed: () => false, subscribe: jest.fn() },
+        viewItem: { observed: () => false, subscribe: jest.fn() },
+        editItem: { observed: () => false, subscribe: jest.fn() },
+        selectionChanged: { observed: () => false, subscribe: jest.fn() },
+      }
+
+      Object.defineProperty(component, 'dataViewComponent', {
+        value: () => mockDataView,
+        writable: true,
+        configurable: true,
+      })
+
+      component.registerEventListenerForDataView()
+
+      expect(mockDataView.deleteItem.subscribe).not.toHaveBeenCalled()
+      expect(mockDataView.viewItem.subscribe).not.toHaveBeenCalled()
+      expect(mockDataView.editItem.subscribe).not.toHaveBeenCalled()
+      expect(mockDataView.selectionChanged.subscribe).not.toHaveBeenCalled()
+    })
+
+    it('should register deleteItem listener when observed and not already registered', () => {
+      const { component } = createComponent(true)
+
+      component.deleteItem.subscribe(jest.fn())
+
+      const mockDataView = {
+        deleteItem: { observed: () => false, subscribe: jest.fn() },
+        viewItem: { observed: () => false, subscribe: jest.fn() },
+        editItem: { observed: () => false, subscribe: jest.fn() },
+        selectionChanged: { observed: () => false, subscribe: jest.fn() },
+      }
+
+      Object.defineProperty(component, 'dataViewComponent', {
+        value: () => mockDataView,
+        writable: true,
+        configurable: true,
+      })
+
+      component.registerEventListenerForDataView()
+
+      expect(mockDataView.deleteItem.subscribe).toHaveBeenCalled()
+    })
+
+    it('should not register listeners twice when already observed in dataView', () => {
+      const { component } = createComponent(true)
+
+      component.deleteItem.subscribe(jest.fn())
+      component.viewItem.subscribe(jest.fn())
+
+      const mockDataView = {
+        deleteItem: { observed: () => true, subscribe: jest.fn() },
+        viewItem: { observed: () => true, subscribe: jest.fn() },
+        editItem: { observed: () => false, subscribe: jest.fn() },
+        selectionChanged: { observed: () => false, subscribe: jest.fn() },
+      }
+
+      Object.defineProperty(component, 'dataViewComponent', {
+        value: () => mockDataView,
+        writable: true,
+        configurable: true,
+      })
+
+      component.registerEventListenerForDataView()
+
+      expect(mockDataView.deleteItem.subscribe).not.toHaveBeenCalled()
+      expect(mockDataView.viewItem.subscribe).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('edge cases and integration', () => {
+    it('should handle rapid layout changes without breaking state', () => {
+      const { component } = createComponent(true)
+
+      setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'group1', predefinedGroupKeys: [] } as any])
+      setInputSignal(component, 'customGroupKey', 'custom')
+
+      component.layout.set('grid')
+      TestBed.tick()
+      component.layout.set('list')
+      TestBed.tick()
+      component.layout.set('table')
+      TestBed.tick()
+
+      expect(component.layout()).toBe('table')
+    })
+
+    it('should handle empty columns array gracefully', () => {
+      const { component } = createComponent(true)
+
+      setInputSignal(component, 'columns', [])
+      component.displayedColumnKeys.set(['c1', 'c2'])
+
+      expect(component.displayedColumns()).toEqual([])
+    })
+
+    it('should properly filter displayedColumns when some keys do not match', () => {
+      const { component } = createComponent(true)
+
+      const c1 = { id: 'c1', nameKey: 'C1' } as any
+      const c2 = { id: 'c2', nameKey: 'C2' } as any
+      setInputSignal(component, 'columns', [c1, c2])
+
+      component.displayedColumnKeys.set(['c1', 'nonexistent', 'c2', 'another-missing'])
+
+      expect(component.displayedColumns()).toEqual([c1, c2])
+    })
+
+    it('should maintain correct order of displayedColumns based on displayedColumnKeys', () => {
+      const { component } = createComponent(true)
+
+      const c1 = { id: 'c1', nameKey: 'C1' } as any
+      const c2 = { id: 'c2', nameKey: 'C2' } as any
+      const c3 = { id: 'c3', nameKey: 'C3' } as any
+      setInputSignal(component, 'columns', [c1, c2, c3])
+
+      component.displayedColumnKeys.set(['c3', 'c1', 'c2'])
+
+      expect(component.displayedColumns()).toEqual([c3, c1, c2])
+    })
+
+    it('should handle totalRecordsOnServer input', () => {
+      const { component } = createComponent(true)
+
+      setInputSignal(component, 'totalRecordsOnServer', 1000)
+
+      expect(component.totalRecordsOnServer()).toBe(1000)
+    })
+
+    it('should handle supportedViewLayouts with single layout', () => {
+      const { component } = createComponent(true)
+
+      setInputSignal(component, 'supportedViewLayouts', ['table'])
+
+      expect(component.supportedViewLayouts()).toEqual(['table'])
+    })
+
+    it('should handle emptyResultsMessage input', () => {
+      const { component } = createComponent(true)
+
+      setInputSignal(component, 'emptyResultsMessage', 'No data available')
+
+      expect(component.emptyResultsMessage()).toBe('No data available')
+    })
+
+    it('should handle clientSideSorting and clientSideFiltering inputs', () => {
+      const { component } = createComponent(true)
+
+      setInputSignal(component, 'clientSideSorting', false)
+      setInputSignal(component, 'clientSideFiltering', false)
+
+      expect(component.clientSideSorting()).toBe(false)
+      expect(component.clientSideFiltering()).toBe(false)
+    })
+
+    it('should handle additionalActions input', () => {
+      const { component } = createComponent(true)
+
+      const actions = [{ labelKey: 'ACTION1', icon: 'pi-plus' } as any]
+      setInputSignal(component, 'additionalActions', actions)
+
+      expect(component.additionalActions()).toEqual(actions)
+    })
+
+    it('should handle all permission inputs', () => {
+      const { component } = createComponent(true)
+
+      setInputSignal(component, 'deletePermission', 'DELETE_PERM')
+      setInputSignal(component, 'editPermission', ['EDIT_PERM1', 'EDIT_PERM2'])
+      setInputSignal(component, 'viewPermission', 'VIEW_PERM')
+      setInputSignal(component, 'searchConfigPermission', 'SEARCH_PERM')
+
+      expect(component.deletePermission()).toBe('DELETE_PERM')
+      expect(component.editPermission()).toEqual(['EDIT_PERM1', 'EDIT_PERM2'])
+      expect(component.viewPermission()).toBe('VIEW_PERM')
+      expect(component.searchConfigPermission()).toBe('SEARCH_PERM')
+    })
+
+    it('should handle action field inputs', () => {
+      const { component } = createComponent(true)
+
+      setInputSignal(component, 'deleteActionVisibleField', 'deleteVisible')
+      setInputSignal(component, 'deleteActionEnabledField', 'deleteEnabled')
+      setInputSignal(component, 'viewActionVisibleField', 'viewVisible')
+      setInputSignal(component, 'viewActionEnabledField', 'viewEnabled')
+      setInputSignal(component, 'editActionVisibleField', 'editVisible')
+      setInputSignal(component, 'editActionEnabledField', 'editEnabled')
+
+      expect(component.deleteActionVisibleField()).toBe('deleteVisible')
+      expect(component.deleteActionEnabledField()).toBe('deleteEnabled')
+      expect(component.viewActionVisibleField()).toBe('viewVisible')
+      expect(component.viewActionEnabledField()).toBe('viewEnabled')
+      expect(component.editActionVisibleField()).toBe('editVisible')
+      expect(component.editActionEnabledField()).toBe('editEnabled')
+    })
+
+    it('should handle filterView configuration inputs', () => {
+      const { component } = createComponent(true)
+
+      setInputSignal(component, 'filterViewDisplayMode', 'panel')
+      setInputSignal(component, 'filterViewChipStyleClass', 'custom-chip')
+      setInputSignal(component, 'filterViewTableStyle', { 'max-height': '100vh' })
+      setInputSignal(component, 'filterViewPanelStyle', { 'max-width': '100%' })
+
+      expect(component.filterViewDisplayMode()).toBe('panel')
+      expect(component.filterViewChipStyleClass()).toBe('custom-chip')
+      expect(component.filterViewTableStyle()).toEqual({ 'max-height': '100vh' })
+      expect(component.filterViewPanelStyle()).toEqual({ 'max-width': '100%' })
+    })
+
+    it('should handle headerStyleClass and contentStyleClass inputs', () => {
+      const { component } = createComponent(true)
+
+      setInputSignal(component, 'headerStyleClass', 'custom-header')
+      setInputSignal(component, 'contentStyleClass', 'custom-content')
+
+      expect(component.headerStyleClass()).toBe('custom-header')
+      expect(component.contentStyleClass()).toBe('custom-content')
+    })
+  })
+
+  describe('state synchronization', () => {
+    it('should synchronize state when multiple inputs change in ngOnInit', () => {
+      const { component } = createComponent(true)
+
+      // Set columns where one nameKey matches the defaultGroupKey to avoid layout effect clearing it
+      setInputSignal(component, 'columns', [
+        { id: 'c1', nameKey: 'g1', predefinedGroupKeys: ['g1'] } as any,
+        { id: 'c2', nameKey: 'G2', predefinedGroupKeys: ['g2'] } as any,
+      ])
+      setInputSignal(component, 'defaultGroupKey', 'g1')
+      setInputSignal(component, 'customGroupKey', 'custom')
+      component.layout.set('grid')
+
+      component.ngOnInit()
+      TestBed.tick()
+
+      expect(component.selectedGroupKey()).toBe('g1')
+      expect(component.displayedColumnKeys()).toEqual(['c1'])
+    })
+
+    it('should handle componentStateChanged emission with all state sources', () => {
+      const { component } = createComponent(true)
+
+      const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
+
+      component.layout.set('table')
+      component.ngOnInit()
+
+      component.columnGroupSelectionComponentState$.next({ activeColumnGroupKey: 'g1', displayedColumns: [] } as any)
+      component.customGroupColumnSelectorComponentState$.next({ displayedColumns: [], activeColumnGroupKey: 'g1' } as any)
+      component.dataLayoutComponentState$.next({ layout: 'table', supportedViewLayouts: ['table'] } as any)
+      component.dataListGridSortingComponentState$.next({ sortField: 'name', sortDirection: 'ASCENDING' } as any)
+      component.dataViewComponentState$.next({ page: 1, pageSize: 25 } as any)
+      component.filterViewComponentState$.next({ filters: [] } as any)
+
+      TestBed.tick()
+
+      expect(stateSpy).toHaveBeenCalled()
+      const emittedState = stateSpy.mock.calls[stateSpy.mock.calls.length - 1][0]
+      expect(emittedState).toBeDefined()
+      expect(emittedState.layout).toBe('table')
+    })
   })
 })

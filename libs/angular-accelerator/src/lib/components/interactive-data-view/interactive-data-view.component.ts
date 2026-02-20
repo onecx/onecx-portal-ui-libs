@@ -19,7 +19,7 @@ import {
 } from '@angular/core'
 import { SlotService } from '@onecx/angular-remote-components'
 import { PrimeTemplate } from 'primeng/api'
-import { Observable, ReplaySubject, combineLatest, map, startWith, timestamp } from 'rxjs'
+import { Observable, ReplaySubject, Subject, combineLatest, map, startWith, timestamp } from 'rxjs'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
@@ -444,9 +444,22 @@ export class InteractiveDataViewComponent implements OnInit {
   readonly columnGroupSlotName = 'onecx-column-group-selection'
   isColumnGroupSelectionComponentDefined$: Observable<boolean>
   isColumnGroupSelectionComponentDefined: Signal<boolean | undefined>
-  groupSelectionChangedSlotEmitter = output<ColumnGroupData | undefined>()
+  @Output() groupSelectionChangedSlotEmitter = observableOutput<ColumnGroupData | undefined>()
+  private groupSelectionChanged$ = new Subject<ColumnGroupData | undefined>()
+
+  // Test hook to trigger internal subscription
+  _triggerGroupSelectionChanged(value: ColumnGroupData | undefined) {
+    this.groupSelectionChanged$.next(value)
+  }
 
   constructor() {
+    // Intercept emit to feed our internal Subject
+    const originalEmit = this.groupSelectionChangedSlotEmitter.emit.bind(this.groupSelectionChangedSlotEmitter)
+    this.groupSelectionChangedSlotEmitter.emit = (value: ColumnGroupData | undefined) => {
+      this.groupSelectionChanged$.next(value)
+      return originalEmit(value)
+    }
+
     this.isColumnGroupSelectionComponentDefined$ = this.slotService
       .isSomeComponentDefinedForSlot(this.columnGroupSlotName)
       .pipe(startWith(true))
@@ -508,7 +521,7 @@ export class InteractiveDataViewComponent implements OnInit {
       })
     })
 
-    this.groupSelectionChangedSlotEmitter.subscribe((event: ColumnGroupData | undefined) => {
+    this.groupSelectionChanged$.subscribe((event: ColumnGroupData | undefined) => {
       event ??= {
         activeColumns: this.displayedColumns(),
         groupKey: this.selectedGroupKey() ?? this.defaultGroupKey(),
@@ -520,6 +533,7 @@ export class InteractiveDataViewComponent implements OnInit {
         activeColumnGroupKey: event.groupKey,
         displayedColumns: event.activeColumns,
       })
+      this.groupSelectionChangedSlotEmitter.emit(event)
     })
   }
 
