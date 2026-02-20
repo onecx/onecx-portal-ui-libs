@@ -21,6 +21,7 @@ import { PageHeaderHarness, provideTranslateTestingService, TestbedHarnessEnviro
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
+import { Router } from '@angular/router'
 
 const mockActions: Action[] = [
   {
@@ -56,6 +57,7 @@ describe('PageHeaderComponent', () => {
   let fixture: ComponentFixture<PageHeaderComponent>
   let pageHeaderHarness: PageHeaderHarness
   let userServiceMock: UserServiceMock
+  let router: Router
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -95,6 +97,7 @@ describe('PageHeaderComponent', () => {
       baseUrl: '',
       microfrontendRegistrations: [],
     })
+    router = TestBed.inject(Router)
   })
 
   beforeEach(async () => {
@@ -221,6 +224,213 @@ describe('PageHeaderComponent', () => {
     expect(await loadingActionElement?.getLoadingIcon()).toBeTruthy()
     await loadingActionElement?.click()
     expect(mockFn).not.toHaveBeenCalled()
+  })
+
+  it('should render inline action button with routerLink', async () => {
+    const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+    jest.spyOn(console, 'log')
+
+    component.actions = [
+      {
+        label: 'Inline action with routerLink',
+        show: 'always',
+        actionCallback: () => {
+          console.log('My routing Action')
+        },
+        routerLink: '/inline',
+        permission: 'TEST#TEST_PERMISSION',
+        icon: PrimeIcons.MAP,
+      },
+    ]
+
+    const routerLinkInline = await pageHeaderHarness.getInlineActionButtonByLabel('Inline action with routerLink')
+    expect(routerLinkInline).toBeTruthy()
+
+    await routerLinkInline?.click()
+    expect(spy).toHaveBeenCalledTimes(1)
+    expect(spy).toHaveBeenCalledWith(['/inline'])
+    expect(console.log).not.toHaveBeenCalledWith('My routing Action')
+  })
+
+  it('should render overflow action button with routerLink', async () => {
+    const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+    jest.spyOn(console, 'log')
+
+    component.actions = [
+      {
+        label: 'Overflow action with routerLink',
+        show: 'asOverflow',
+        actionCallback: () => {
+          console.log('My routing Action')
+        },
+        routerLink: '/overflow',
+        permission: 'TEST#TEST_PERMISSION',
+        icon: PrimeIcons.MAP,
+      },
+    ]
+
+    const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
+    expect(menuOverflowButton).toBeTruthy()
+    await menuOverflowButton?.click()
+    const menuItems = await pageHeaderHarness.getOverFlowMenuItems()
+    expect(menuItems.length).toBe(1)
+
+    await menuItems[0]?.selectItem()
+    expect(spy).toHaveBeenCalledTimes(1)
+    expect(spy).toHaveBeenCalledWith(['/overflow'])
+    expect(console.log).not.toHaveBeenCalledWith('My routing Action')
+  })
+
+  it('should handle routerLink as function returning string', async () => {
+    const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+    const routerLinkFunction = jest.fn(() => '/function-link')
+
+    component.actions = [
+      {
+        label: 'Action with function routerLink',
+        show: 'always',
+        actionCallback: jest.fn(),
+        routerLink: routerLinkFunction,
+        permission: 'TEST#TEST_PERMISSION',
+      },
+    ]
+
+    const inlineButton = await pageHeaderHarness.getInlineActionButtonByLabel('Action with function routerLink')
+    await inlineButton?.click()
+
+    expect(routerLinkFunction).toHaveBeenCalledTimes(1)
+    expect(spy).toHaveBeenCalledWith(['/function-link'])
+  })
+
+  it('should handle routerLink as function returning Promise<string>', async () => {
+    const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+    const routerLinkPromiseFunction = jest.fn(() => Promise.resolve('/promise-function-link'))
+
+    component.actions = [
+      {
+        label: 'Action with promise function routerLink',
+        show: 'always',
+        actionCallback: jest.fn(),
+        routerLink: routerLinkPromiseFunction,
+        permission: 'TEST#TEST_PERMISSION',
+      },
+    ]
+
+    const inlineButton = await pageHeaderHarness.getInlineActionButtonByLabel('Action with promise function routerLink')
+    await inlineButton?.click()
+
+    expect(routerLinkPromiseFunction).toHaveBeenCalledTimes(1)
+    expect(spy).toHaveBeenCalledWith(['/promise-function-link'])
+  })
+
+  it('should handle routerLink as Promise<string>', async () => {
+    const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+
+    component.actions = [
+      {
+        label: 'Action with promise routerLink',
+        show: 'always',
+        actionCallback: jest.fn(),
+        routerLink: Promise.resolve('/promise-link'),
+        permission: 'TEST#TEST_PERMISSION',
+      },
+    ]
+
+    const inlineButton = await pageHeaderHarness.getInlineActionButtonByLabel('Action with promise routerLink')
+    await inlineButton?.click()
+
+    expect(spy).toHaveBeenCalledWith(['/promise-link'])
+  })
+
+  it('should handle overflow action with function routerLink', async () => {
+    const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+    const routerLinkFunction = jest.fn(() => '/overflow-function')
+
+    component.actions = [
+      {
+        label: 'Overflow function routerLink',
+        show: 'asOverflow',
+        actionCallback: jest.fn(),
+        routerLink: routerLinkFunction,
+        permission: 'TEST#TEST_PERMISSION',
+      },
+    ]
+
+    const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
+    await menuOverflowButton?.click()
+
+    const menuItems = await pageHeaderHarness.getOverFlowMenuItems()
+    await menuItems[0]?.selectItem()
+
+    expect(routerLinkFunction).toHaveBeenCalledTimes(1)
+    expect(spy).toHaveBeenCalledWith(['/overflow-function'])
+  })
+
+  it('should prioritize routerLink over actionCallback when both are provided', async () => {
+    const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+    const callbackSpy = jest.fn()
+
+    component.actions = [
+      {
+        label: 'Action with routerLink and callback',
+        show: 'always',
+        actionCallback: callbackSpy,
+        routerLink: '/prioritized-link',
+        permission: 'TEST#TEST_PERMISSION',
+      },
+    ]
+
+    const inlineButton = await pageHeaderHarness.getInlineActionButtonByLabel('Action with routerLink and callback')
+    await inlineButton?.click()
+
+    expect(spy).toHaveBeenCalledTimes(1)
+    expect(spy).toHaveBeenCalledWith(['/prioritized-link'])
+    expect(callbackSpy).not.toHaveBeenCalled()
+  })
+
+  it('should prioritize routerLink over actionCallback in overflow menu when both are provided', async () => {
+    const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+    const callbackSpy = jest.fn()
+
+    component.actions = [
+      {
+        label: 'Overflow with routerLink and callback',
+        show: 'asOverflow',
+        actionCallback: callbackSpy,
+        routerLink: '/overflow-prioritized',
+        permission: 'TEST#TEST_PERMISSION',
+      },
+    ]
+
+    const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
+    await menuOverflowButton?.click()
+
+    const menuItems = await pageHeaderHarness.getOverFlowMenuItems()
+    await menuItems[0]?.selectItem()
+
+    expect(spy).toHaveBeenCalledTimes(1)
+    expect(spy).toHaveBeenCalledWith(['/overflow-prioritized'])
+    expect(callbackSpy).not.toHaveBeenCalled()
+  })
+
+  it('should execute actionCallback when no routerLink is provided', async () => {
+    const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+    const callbackSpy = jest.fn()
+
+    component.actions = [
+      {
+        label: 'Action with callback only',
+        show: 'always',
+        actionCallback: callbackSpy,
+        permission: 'TEST#TEST_PERMISSION',
+      },
+    ]
+
+    const inlineButton = await pageHeaderHarness.getInlineActionButtonByLabel('Action with callback only')
+    await inlineButton?.click()
+
+    expect(spy).not.toHaveBeenCalled()
+    expect(callbackSpy).toHaveBeenCalledTimes(1)
   })
 
   it('should render objectDetails as object info in the page header', async () => {
