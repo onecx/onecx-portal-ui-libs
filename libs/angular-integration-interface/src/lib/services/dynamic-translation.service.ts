@@ -9,6 +9,10 @@ import {
 export class DynamicTranslationService implements OnDestroy {
   private readonly dynamicTranslationInterface = new DynamicTranslationInterface();
 
+  get dynamicTranslationsTopic$() {
+      return this.dynamicTranslationInterface.dynamicTranslationsTopic$;
+  }
+
   getTranslations(
     lang: string,
     contexts: TranslationContext[]

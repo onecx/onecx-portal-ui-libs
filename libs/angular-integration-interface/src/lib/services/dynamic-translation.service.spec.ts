@@ -1,7 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { firstValueFrom, of } from 'rxjs';
+import { FakeTopic } from '@onecx/accelerator';
 import { DynamicTranslationService } from './dynamic-translation.service';
-import { TranslationContext } from '@onecx/integration-interface';
+import { DynamicTranslationsMessage, TranslationContext } from '@onecx/integration-interface';
 
 describe('DynamicTranslationService', () => {
   let service: DynamicTranslationService;
@@ -13,6 +14,17 @@ describe('DynamicTranslationService', () => {
 
   it('should be created', () => {
     expect(service).toBeTruthy();
+  });
+
+  describe('dynamicTranslationsTopic$', () => {
+    it('should return the dynamicTranslationsTopic$ from the underlying interface', () => {
+      const fakeTopic = FakeTopic.create<DynamicTranslationsMessage>();
+      jest
+        .spyOn(service['dynamicTranslationInterface'], 'dynamicTranslationsTopic$', 'get')
+        .mockReturnValue(fakeTopic);
+
+      expect(service.dynamicTranslationsTopic$).toBe(fakeTopic);
+    });
   });
 
   describe('getTranslations', () => {
