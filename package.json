@@ -36,7 +36,7 @@
     "@nx/plugin": "^22.0.2",
     "@phenomnomnominal/tsquery": "^6",
     "@primeng/themes": "^20.3.0",
-    "axios": "^1.13.2",
+    "axios": "^1.13.5",
     "chart.js": "^4.5.1",
     "d3-scale-chromatic": "^3.1.0",
     "debug": "^4.4.3",
