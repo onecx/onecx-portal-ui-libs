@@ -10,8 +10,10 @@ import { DynamicTranslationService, UserService } from '@onecx/angular-integrati
 import { Observable, of } from 'rxjs'
 import { catchError, map, mergeMap, shareReplay, take } from 'rxjs/operators'
 import { MULTI_LANGUAGE_IDENTIFIER, MultiLanguageIdentifier } from '../injection-tokens/multi-language-identifier'
+import deepmerge = require('deepmerge')
 
 type DeepmergeFunction = (target: Record<string, unknown>, source: Record<string, unknown>) => Record<string, unknown>
+type DynamicAppId = { appElementName?: string }
 
 @Injectable()
 export class MultiLanguageMissingTranslationHandler implements MissingTranslationHandler {
@@ -46,7 +48,7 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
    */
   findTranslationForLang(lang: string, params: MissingTranslationHandlerParams): Observable<string> {
     return params.translateService.reloadLang(lang).pipe(
-      map((interpolatableTranslationObject: Record<string, any>) => {
+      map((interpolatableTranslationObject: Record<string, unknown>) => {
         const translatedValue = this.parser.interpolate(
           getValue(interpolatableTranslationObject, params.key) as string,
           params.interpolateParams
@@ -76,8 +78,7 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
   }
 
   private mergeTranslations(values: unknown[]): Record<string, unknown> {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const merge = require('deepmerge') as DeepmergeFunction
+    const merge = deepmerge as DeepmergeFunction
     return values.reduce<Record<string, unknown>>(
       (acc, current) => merge(acc, (current as Record<string, unknown>) ?? {}),
       {}
@@ -86,12 +87,12 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
 
   loadTranslations(langConfig: Observable<string[]>, params: MissingTranslationHandlerParams): Observable<string> {
     return langConfig.pipe(
-      mergeMap((l) => {
-        const langs = [...l]
-        const chain = (o: Observable<string[]>): Observable<any> => {
-          return o.pipe(
-            mergeMap((lang) => {
-              return this.findTranslationForLang(lang[0], params)
+      mergeMap((configuredLanguages) => {
+        const langs = [...configuredLanguages]
+        const chain = (languages$: Observable<string[]>): Observable<string> => {
+          return languages$.pipe(
+            mergeMap((currentLanguages) => {
+              return this.findTranslationForLang(currentLanguages[0], params)
             }),
             catchError(() => {
               langs.shift()
@@ -110,7 +111,7 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
   private createMultiLanguageIdentifiers(): MultiLanguageIdentifier[] {
     const identifiers = inject(MULTI_LANGUAGE_IDENTIFIER, { optional: true }) ?? []
     const hasAppIdentifier = identifiers.some((id) => id.type === 'app')
-    const appId = inject(APP_ID, { optional: true }) as any
+    const appId = inject(APP_ID, { optional: true }) as DynamicAppId | undefined
 
     if (!hasAppIdentifier && appId?.appElementName) {
       return [

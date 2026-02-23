@@ -359,7 +359,7 @@ export class DynamicTranslationService {
     }
 
     private isContextIncomplete(match: CachedVersion | null | undefined): boolean {
-        return match === undefined || match === null || match.value === undefined;
+        return match?.value === undefined;
     }
 
     private addContextTranslations(
@@ -367,10 +367,11 @@ export class DynamicTranslationService {
         context: TranslationContext,
         match: CachedVersion | null | undefined
     ) {
-        if (match && match.value !== null && match.value !== undefined) {
+        const matchedValue = match?.value;
+        if (matchedValue !== null && matchedValue !== undefined) {
             const contextKey = this.getContextKey(context);
-            target[contextKey] = match.value;
-            this.logger.debug('Added context translations', { contextKey, translationKeys: Object.keys(match.value) });
+            target[contextKey] = matchedValue;
+            this.logger.debug('Added context translations', { contextKey, translationKeys: Object.keys(matchedValue) });
         }
     }
 

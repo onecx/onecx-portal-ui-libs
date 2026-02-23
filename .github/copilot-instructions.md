@@ -4,6 +4,8 @@ When creating new files make sure they are included in the appropriate index.ts 
 
 Make sure to avoid linter errors.
 
+Make sure to avoid sonarqube errors or code smells.
+
 Only use comments if it is not directly obvious why something is done a certain way but never to explain what the code is doing. TS-docs are excluded from this rule.  
 
 This is very important: ALWAYS prefer running lint, test, coverage, build and all other tasks defined in .vscode/tasks.json via the workspace tasks! Reduce the usage of direct terminal commands. Some of the tasks are taking much time, so please wait for them to finish before making further changes (up to 15min).
