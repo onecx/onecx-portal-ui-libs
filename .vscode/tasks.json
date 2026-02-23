@@ -82,6 +82,26 @@
       }
     },
     {
+      "label": "nx affected test (current work, coverage)",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "affected", "-t", "test", "--coverage", "--no-interactive"],
+      "detail": "Runs tests with coverage only for affected projects (use for currently worked-on changes).",
+      "group": "test",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
       "label": "nx affected lint (current work)",
       "type": "process",
       "command": "npx",
@@ -377,6 +397,26 @@
       "command": "npx",
       "args": ["nx", "test", "integration-interface", "--no-interactive"],
       "detail": "Runs the tests for the library \"integration-interface\" using Nx.",
+      "group": "test",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx test integration-interface (coverage)",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "test", "integration-interface", "--coverage", "--no-interactive"],
+      "detail": "Runs the tests for the library \"integration-interface\" with coverage and prints a coverage summary.",
       "group": "test",
       "isBackground": false,
       "problemMatcher": [],

@@ -15,8 +15,17 @@ import { hasShellCapability } from '../utils/shell-capability.utils';
 
 const UNVERSIONED_KEY = 'undefined';
 
+/**
+ * Describes a translation namespace that should be resolved for a locale.
+ */
 export interface TranslationContext {
+    /** Translation namespace (for example `common` or `app`). */
     name: string;
+    /**
+     * Optional concrete semantic version.
+     *
+     * Example: `1.2.3`.
+     */
     version?: string;
 }
 
@@ -39,10 +48,19 @@ function getDynamicTranslationsCache(): DynamicTranslationsCache {
 }
 
 
+/**
+ * Resolves dynamic translations from a shared cache and topic-based shell communication.
+ *
+ * The service returns cached values immediately when possible and requests missing
+ * translations via `dynamicTranslationsTopic$` when needed.
+ */
 export class DynamicTranslationService {
     private readonly logger = createLogger('DynamicTranslationService');
     private _dynamicTranslationsTopic$: DynamicTranslationsTopic | undefined;
 
+    /**
+     * Topic used to request and receive dynamic translations.
+     */
     get dynamicTranslationsTopic$() {
         this._dynamicTranslationsTopic$ ??= new DynamicTranslationsTopic();
         return this._dynamicTranslationsTopic$;
@@ -52,18 +70,38 @@ export class DynamicTranslationService {
         this._dynamicTranslationsTopic$ = source;
     }
 
+    /**
+     * Returns translations for the given locale and contexts.
+     *
+     * The method first attempts to resolve from cache, requests missing entries,
+     * and waits for a `RECEIVED` message when data is still pending.
+     *
+     * @param locale Target locale (for example `en`, `de`).
+     * @param contexts Translation contexts to resolve.
+     * @returns An observable emitting a context-keyed translation map.
+     */
     getTranslations(locale: string, contexts: TranslationContext[]): Observable<Record<string, Record<string, unknown>>> {
         this.logger.debug('getTranslations', { locale, contexts });
 
+        const safeContexts = contexts.filter((context) => this.isSafeContext(context));
+        if (safeContexts.length !== contexts.length) {
+            this.logger.debug('Skipping unsafe translation contexts', { locale, contexts });
+        }
+
+        if (!this.isSafeCacheKey(locale)) {
+            this.logger.debug('Skipping dynamic translation resolution for unsafe locale key', { locale });
+            return of(this.createEmptyRecords(safeContexts));
+        }
+
         if (!hasShellCapability(ShellCapability.DYNAMIC_TRANSLATIONS_TOPIC)) {
             this.logger.debug('Shell does not support dynamic translations, returning empty records');
-            return of(this.createEmptyRecords(contexts));
+            return of(this.createEmptyRecords(safeContexts));
         }
 
         const cache = getDynamicTranslationsCache();
         ensureProperty(cache, [locale], {});
 
-        const { missing, pending } = this.categorizeContexts(locale, contexts);
+        const { missing, pending } = this.categorizeContexts(locale, safeContexts);
         this.logger.debug('Categorized contexts', { missing, pending });
 
         if (missing.length > 0) {
@@ -74,10 +112,10 @@ export class DynamicTranslationService {
 
         if (this.hasIncompleteContexts(missing, pending)) {
             this.logger.debug('Waiting for translations', { missing, pending });
-            return this.waitForTranslations(locale, contexts);
+            return this.waitForTranslations(locale, safeContexts);
         }
 
-        const result = this.collectTranslations(locale, contexts);
+        const result = this.collectTranslations(locale, safeContexts);
         this.logger.debug('Collected translations', { translations: result.translations });
         return of(result.translations);
     }
@@ -140,9 +178,16 @@ export class DynamicTranslationService {
     }
 
     private getContextCache(locale: string, contextName: string) {
+        if (!this.isSafeCacheKey(locale) || !this.isSafeCacheKey(contextName)) {
+            return undefined;
+        }
+
         const cache = getDynamicTranslationsCache();
         const localeCache = cache[locale];
-        return localeCache?.[contextName];
+        if (!localeCache || !Object.hasOwn(localeCache, contextName)) {
+            return undefined;
+        }
+        return localeCache[contextName];
     }
 
     private getFirstAvailableVersion(contextCache: Record<string, Record<string, unknown> | null | undefined>, versions: string[]): CachedVersion {
@@ -209,10 +254,27 @@ export class DynamicTranslationService {
     private markContextsAsRequested(cache: DynamicTranslationsCache, locale: string, contexts: TranslationContext[]) {
         this.logger.debug('Marking contexts as requested', { locale, contexts });
         for (const context of contexts) {
+            if (!this.isSafeContext(context)) {
+                this.logger.debug('Skipping unsafe context key while marking as requested', { locale, context });
+                continue;
+            }
+
             ensureProperty(cache, [locale, context.name], {});
             cache[locale][context.name][context.version ?? UNVERSIONED_KEY] = undefined;
             this.logger.debug('Marked context as requested', { locale, context });
         }
+    }
+
+    private isSafeContext(context: TranslationContext): boolean {
+        return this.isSafeCacheKey(context.name) && this.isSafeCacheKey(context.version);
+    }
+
+    private isSafeCacheKey(key: string | undefined): boolean {
+        if (!key) {
+            return true;
+        }
+
+        return key !== '__proto__' && key !== 'prototype' && key !== 'constructor';
     }
 
     private requestTranslations(locale: string, contexts: TranslationContext[]) {
@@ -303,6 +365,9 @@ export class DynamicTranslationService {
         return context.version ? `${context.name}@${context.version}` : context.name;
     }
 
+    /**
+     * Releases topic resources held by this service instance.
+     */
     destroy() {
         this.dynamicTranslationsTopic$.destroy();
     }

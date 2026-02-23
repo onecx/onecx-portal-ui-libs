@@ -10,6 +10,7 @@ import { DynamicTranslationService, TranslationContext } from './dynamic-transla
 import { DynamicTranslationsMessageType } from '../topics/dynamic-translations/v1/dynamic-translations.model';
 import { ensureProperty, FakeTopic } from '@onecx/accelerator';
 import { ShellCapability } from '../models/shell-capability.model';
+import * as semver from 'semver';
 
 describe('DynamicTranslationService', () => {
   let service: DynamicTranslationService;
@@ -1060,6 +1061,57 @@ describe('DynamicTranslationService', () => {
 
       const result = await firstValueFrom(service.getTranslations('en', [{ name: 'context1', version: '>=1.0.0 <1.5.0 || >=3.0.0' }]));
       expect(result).toEqual({ 'context1@>=1.0.0 <1.5.0 || >=3.0.0': { key1: 'value3.0.0' } });
+    });
+
+    it('should skip unsafe contexts before processing', async () => {
+      window['onecx-shell-capabilities'] = [];
+
+      const result = await firstValueFrom(
+        service.getTranslations('en', [
+          { name: 'common' },
+          { name: '__proto__', version: '1.0.0' },
+        ])
+      );
+
+      expect(result).toEqual({
+        common: {},
+      });
+    });
+
+    it('should return empty records for unsafe locale keys', async () => {
+      const publishSpy = jest.spyOn(service.dynamicTranslationsTopic$, 'publish');
+
+      const result = await firstValueFrom(service.getTranslations('__proto__', [{ name: 'common' }]));
+
+      expect(result).toEqual({ common: {} });
+      expect(publishSpy).not.toHaveBeenCalled();
+    });
+
+    it('should return undefined from getContextCache for unsafe keys', () => {
+      const unsafeLocaleResult = (service as any).getContextCache('__proto__', 'common');
+      const unsafeContextResult = (service as any).getContextCache('en', 'constructor');
+
+      expect(unsafeLocaleResult).toBeUndefined();
+      expect(unsafeContextResult).toBeUndefined();
+    });
+
+    it('should handle thrown errors in satisfiesVersion and skip unsafe request keys', () => {
+      const satisfiesSpy = jest.spyOn(semver, 'satisfies').mockImplementation(() => {
+        throw new Error('forced semver failure');
+      });
+
+      const versionResult = (service as any).satisfiesVersion('1.0.0', '^1.0.0');
+      expect(versionResult).toBe(false);
+      satisfiesSpy.mockRestore();
+
+      const cache = { en: {} } as Record<string, Record<string, Record<string, unknown> | undefined>>;
+      (service as any).markContextsAsRequested(cache, 'en', [
+        { name: '__proto__', version: '1.0.0' },
+        { name: 'safe' },
+      ]);
+
+      expect(Object.hasOwn(cache['en'], '__proto__')).toBe(false);
+      expect(cache['en']?.['safe']).toEqual({ undefined: undefined });
     });
   });
 });

@@ -15,7 +15,7 @@ When writing tests use the following guidelines:
 - Use Jest as the testing framework.
 - Prefer the usage of test harnesses for Angular component/directive/pipe tests.
 - Create use case driven tests
-- Test statement coverage should be 100% for new code.
+- Test statement coverage has be 100% for new code. Check it when you think you are done and add more tests if needed. If you are not able to cover some lines think about if the code is needed or if it is unreachable. For existing code, try to increase the coverage if it is below 80% but do not spend too much time on it. Output the coverage to the user.
 - Group the tests logically with describe blocks (e.g. by tested method) and use descriptive test names.
 - Consider using the class FakeTopic to mock the behavior of a topic when testing services that depend on it.
 - Run the tests first for the file you are working on only (task: "nx affected test (current work)"). Once they pass, run the full test suite to ensure nothing else is broken.

@@ -17,7 +17,7 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
   private readonly userService = inject(UserService)
   private readonly parser = inject(TranslateParser)
   private readonly dynamicTranslationService = inject(DynamicTranslationService)
-  private readonly multiLanguageIdentifier = this.createMultiLanguageIdentifiers()
+  private readonly multiLanguageIdentifiers = this.createMultiLanguageIdentifiers()
 
   handle(params: MissingTranslationHandlerParams): Observable<string> {
     const locales$ = this.userService.profile$.pipe(
@@ -56,7 +56,7 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
         return translatedValue
       }),
       catchError(() => {
-        return this.dynamicTranslationService.getTranslations(lang, this.multiLanguageIdentifier).pipe(
+        return this.dynamicTranslationService.getTranslations(lang, this.multiLanguageIdentifiers).pipe(
           map((translationsPerIdentifier) => {
             const values = Object.values(translationsPerIdentifier)
             const translations = values.length > 0 ? deepmerge.all(values) : {}
