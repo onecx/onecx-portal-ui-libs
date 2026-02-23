@@ -86,6 +86,15 @@ type SetPathTuple<T, Path extends ReadonlyArray<string | number>, Value> =
  * // obj.name is now 'Default'
  */
 export function ensureProperty<
+    const Path extends ReadonlyArray<string | number>,
+    Value
+>(
+    obj: typeof globalThis,
+    path: Path,
+    initialValue: Value
+): asserts obj is typeof globalThis & SetPathTuple<typeof globalThis, Path, Value>;
+
+export function ensureProperty<
     T extends object,
     const Path extends ValidPaths<T>,
     Value

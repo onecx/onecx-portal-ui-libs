@@ -14,6 +14,7 @@
 *** xref:onecx-portal-ui-libs:migrations/angular-20/index.adoc[Migrate App to Angular 20]
 
 ** Services
+*** xref:onecx-portal-ui-libs:service/icon-service.adoc[IconService]
 *** xref:onecx-portal-ui-libs:service/portal-message-service.adoc[PortalMessageService]
 *** xref:onecx-portal-ui-libs:service/portal-dialog-service.adoc[PortalDialogService]
 *** xref:onecx-portal-ui-libs:service/workspace-service.adoc[WorkspaceService]
