@@ -18,6 +18,13 @@ Before starting this migration:
 * You have OneCX UI libraries v5.x installed  
 * You have a working development environment
 
+[#ai-driven-migration-assistance]
+== AI Driven Migration Assistance
+
+To assist with the migration process, you can utilize the AI-driven migration assistant. Below you can find the migration prompt, which you can copy and use in your preferred AI tool. This prompt has been tested with github copilot GPT-5.2 in agent mode.
+
+include::ai-prompt.adoc[]
+
 [#migration-steps-before-angular-19]
 == Migration Steps before upgrading to Angular 19
 
@@ -28,13 +35,10 @@ You can click the name of any change to open a detailed migration guide with ins
 ** [ ] xref:./remove-keycloak-auth.adoc[Remove @onecx/keycloak-auth]
 ** [ ] xref:./update-component-imports.adoc[Update Component Imports]
 ** [ ] xref:./switch-to-new-components.adoc[Replace Removed Components]
-** [ ] xref:./update-portal-api-configuration.adoc[Update Portal API Configuration object parameters]
-** [ ] xref:./remove-portal-layout-styles.adoc[Remove @onecx/portal-layout-styles]
 ** [ ] xref:./update-filtertype-value.adoc[Update FilterType Value]
 ** [ ] xref:./update-configuration-service-usage.adoc[Update ConfigurationService Usage]
 ** [ ] xref:./adjust-packages-in-webpack-config.adoc[Adjust Packages in Webpack Config]
 ** [ ] xref:./adjust-standalone-mode.adoc[Adjust Standalone Mode]
-** [ ] xref:./remove-add-initialize-module-guard.adoc[Remove addInitializeModuleGuard()]
 ** [ ] xref:./remove-menuservice.adoc[Remove MenuService]
 ** [ ] xref:./update-translations.adoc[Update Translations]
 
@@ -45,6 +49,9 @@ After these steps are completed, it is recommended to build the application to e
 npm run build
 ----
 
+[#upgrade-to-angular-19]
+== Upgrade to Angular 19
+After completing the pre-migration steps, you can proceed with upgrading your application to Angular 19. Follow the official Angular update guide to perform the version upgrade by following this link: https://angular.dev/update-guide?v=18.0-19.0&l=3[Angular Update Guide].
 
 [#migration-steps-after-angular-19]
 == Migration Steps after upgrading to Angular 19
@@ -52,6 +59,9 @@ npm run build
 Once the previous steps are completed, **the application should be upgraded to Angular 19 and libs v6 should be installed**. After the version updates are completed, the remaining steps of the migration can be followed:
 
 [%interactive]
+** [ ] xref:./update-portal-api-configuration.adoc[Update Portal API Configuration object parameters]
+** [ ] xref:./remove-portal-layout-styles.adoc[Remove @onecx/portal-layout-styles]
+** [ ] xref:./remove-add-initialize-module-guard.adoc[Remove addInitializeModuleGuard()]
 ** [ ] xref:./update-packages.adoc[Required Package Updates]
 ** [ ] xref:./remove-portal-core-module.adoc[Remove PortalCoreModule]
 ** [ ] xref:./update-base-url.adoc[Replace BASE_URL injection token]

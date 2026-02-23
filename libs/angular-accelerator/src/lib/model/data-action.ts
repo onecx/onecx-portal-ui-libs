@@ -1,3 +1,9 @@
+export type RouterLink = 
+  | string
+  | (() => string)
+  | (() => Promise<string>)
+  | Promise<string>
+
 export interface DataAction {
   id?: string
   labelKey?: string
@@ -9,4 +15,5 @@ export interface DataAction {
   actionEnabledField?: string
   showAsOverflow?: boolean
   callback: (data: any) => void
+  routerLink?: RouterLink
 }
