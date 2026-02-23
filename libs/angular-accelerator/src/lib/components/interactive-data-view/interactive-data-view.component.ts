@@ -1,5 +1,6 @@
 import {
   Component,
+  DestroyRef,
   Input,
   OnInit,
   Output,
@@ -63,6 +64,7 @@ export interface ColumnGroupData {
 })
 export class InteractiveDataViewComponent implements OnInit {
   private readonly slotService = inject(SlotService)
+  private readonly destroyRef = inject(DestroyRef)
 
   dataViewComponent = viewChild(DataViewComponent)
 
@@ -455,9 +457,10 @@ export class InteractiveDataViewComponent implements OnInit {
 
     this.isColumnGroupSelectionComponentDefined = toSignal(this.isColumnGroupSelectionComponentDefined$)
 
-    this.groupSelectionChangedSlotInput.subscribe((event) => {
-      this._triggerGroupSelectionChanged(event)
+    const subscription = this.groupSelectionChangedSlotInput.subscribe((event) => {
+      this.triggerGroupSelectionChanged(event)
     })
+    this.destroyRef.onDestroy(() => subscription.unsubscribe())
 
     effect(() => {
       this.registerEventListenerForDataView()
@@ -523,7 +526,7 @@ export class InteractiveDataViewComponent implements OnInit {
    * 
    * @param event The column group data, or undefined to use current state
    */
-  _triggerGroupSelectionChanged(event: ColumnGroupData | undefined): void {
+  triggerGroupSelectionChanged(event: ColumnGroupData | undefined): void {
     event ??= {
       activeColumns: this.displayedColumns(),
       groupKey: this.selectedGroupKey() ?? this.defaultGroupKey(),

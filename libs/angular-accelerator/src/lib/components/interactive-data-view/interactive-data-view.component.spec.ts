@@ -151,7 +151,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       component.displayedColumnKeys.set(['c1'])
       setInputSignal(component, 'defaultGroupKey', 'test-default')
 
-      component._triggerGroupSelectionChanged(undefined)
+      component.triggerGroupSelectionChanged(undefined)
 
       // Should use defaultGroupKey as fallback
       expect(component.selectedGroupKey()).toBe('test-default')
@@ -165,7 +165,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       component.displayedColumnKeys.set(['c1'])
       setInputSignal(component, 'defaultGroupKey', 'dg')
 
-      component._triggerGroupSelectionChanged(undefined)
+      component.triggerGroupSelectionChanged(undefined)
 
       expect(component.selectedGroupKey()).toBe('dg')
       // Effect emission happens async
@@ -208,7 +208,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       setInputSignal(component, 'defaultGroupKey', 'dg')
       component.selectedGroupKey.set('sg')
 
-      component._triggerGroupSelectionChanged(undefined)
+      component.triggerGroupSelectionChanged(undefined)
 
       // When `undefined` is passed, it uses current selectedGroupKey ('sg') as fallback
       expect(component.displayedColumnKeys()).toEqual(['c1'])
