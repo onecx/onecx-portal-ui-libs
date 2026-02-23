@@ -1,5 +1,6 @@
 import { Observable, filter, first, map, of } from 'rxjs';
 import { ensureProperty } from '@onecx/accelerator';
+import { rcompare, satisfies, valid } from 'semver';
 import {
     DynamicTranslationsTopic,
     DynamicTranslationsMessage,
@@ -166,7 +167,8 @@ export class DynamicTranslationService {
         }
 
         const nullCheck = this.checkForNullTranslations(contextCache, versions);
-        if (nullCheck !== undefined) {
+        const hasNullMatch = nullCheck === null;
+        if (hasNullMatch) {
             this.logger.debug('Found null translations check result', { requestedVersion });
         } else {
             this.logger.debug('No match found', { requestedVersion });
@@ -180,8 +182,8 @@ export class DynamicTranslationService {
         requestedVersion: string
     ): CachedVersion | undefined {
         const satisfyingVersions = versions
-            .filter((v) => v !== UNVERSIONED_KEY && this.isValidSemanticVersion(v) && this.satisfiesVersion(v, requestedVersion))
-            .sort((b, a) => this.compareVersions(a, b));
+            .filter((v) => v !== UNVERSIONED_KEY && valid(v) !== null && this.satisfiesVersion(v, requestedVersion))
+            .sort(rcompare);
 
         if (satisfyingVersions.length > 0) {
             const bestMatch = satisfyingVersions[0];
@@ -191,177 +193,12 @@ export class DynamicTranslationService {
         return undefined;
     }
 
-    private isValidSemanticVersion(version: string): boolean {
-        const semverRegex = /^\d+\.\d+\.\d+$/;
-        return semverRegex.test(version);
-    }
-
     private satisfiesVersion(availableVersion: string, requestedVersion: string): boolean {
-        const ranges = requestedVersion.split('||').map(r => r.trim());
-        return ranges.some(range => this.matchesAndRange(availableVersion, range));
-    }
-
-    private matchesAndRange(availableVersion: string, range: string): boolean {
-        const hyphenMatch = range.match(/^(\S+)\s+-\s+(\S+)$/);
-        if (hyphenMatch) {
-            return this.matchesSingleRange(availableVersion, `>=${hyphenMatch[1]}`) &&
-                   this.matchesSingleRange(availableVersion, `<=${hyphenMatch[2]}`);
-        }
-
-        const comparators = range.split(/\s+/).filter(Boolean);
-        return comparators.every(comparator => this.matchesSingleRange(availableVersion, comparator));
-    }
-
-    private matchesSingleRange(availableVersion: string, range: string): boolean {
-        const available = this.parseVersion(availableVersion)!;
-
-        if (range.startsWith('>=')) {
-            return this.matchesGreaterOrEqual(available, range.substring(2).trim());
-        }
-
-        if (range.startsWith('>')) {
-            return this.matchesGreater(available, range.substring(1).trim());
-        }
-
-        if (range.startsWith('<=')) {
-            return this.matchesLessOrEqual(available, range.substring(2).trim());
-        }
-
-        if (range.startsWith('<')) {
-            return this.matchesLess(available, range.substring(1).trim());
-        }
-
-        if (range.startsWith('~')) {
-            return this.matchesTildeRange(available, range.substring(1).trim());
-        }
-
-        if (range.startsWith('^')) {
-            return this.matchesCaretRange(available, range.substring(1).trim());
-        }
-
-        if (range.startsWith('=')) {
-            return this.matchesExact(available, range.substring(1).trim());
-        }
-
-        return this.matchesExact(available, range);
-    }
-
-    private matchesExact(available: { major: number; minor: number; patch: number }, rangeVersion: string): boolean {
-        const requested = this.parseVersion(rangeVersion);
-        if (!requested) {
+        try {
+            return satisfies(availableVersion, requestedVersion, { includePrerelease: true });
+        } catch {
             return false;
         }
-
-        return available.major === requested.major && 
-               available.minor === requested.minor &&
-               available.patch === requested.patch;
-    }
-
-    private matchesCaretRange(available: { major: number; minor: number; patch: number }, rangeVersion: string): boolean {
-        const requested = this.parseVersion(rangeVersion);
-        if (!requested) {
-            return false;
-        }
-
-        if (requested.major === 0) {
-            if (requested.minor === 0) {
-                return available.major === 0 && 
-                       available.minor === 0 &&
-                       available.patch === requested.patch;
-            }
-            return available.major === 0 && 
-                   available.minor === requested.minor &&
-                   available.patch >= requested.patch;
-        }
-
-        return available.major === requested.major && 
-               available.minor >= requested.minor &&
-               (available.minor > requested.minor || available.patch >= requested.patch);
-    }
-
-    private matchesTildeRange(available: { major: number; minor: number; patch: number }, rangeVersion: string): boolean {
-        const requested = this.parseVersion(rangeVersion);
-        if (!requested) {
-            return false;
-        }
-
-        return available.major === requested.major && 
-               available.minor === requested.minor &&
-               available.patch >= requested.patch;
-    }
-
-    private matchesGreaterOrEqual(available: { major: number; minor: number; patch: number }, rangeVersion: string): boolean {
-        const requested = this.parseVersion(rangeVersion);
-        if (!requested) {
-            return false;
-        }
-
-        const comparison = this.compareVersionObjects(available, requested);
-        return comparison >= 0;
-    }
-
-    private matchesGreater(available: { major: number; minor: number; patch: number }, rangeVersion: string): boolean {
-        const requested = this.parseVersion(rangeVersion);
-        if (!requested) {
-            return false;
-        }
-
-        const comparison = this.compareVersionObjects(available, requested);
-        return comparison > 0;
-    }
-
-    private matchesLessOrEqual(available: { major: number; minor: number; patch: number }, rangeVersion: string): boolean {
-        const requested = this.parseVersion(rangeVersion);
-        if (!requested) {
-            return false;
-        }
-
-        const comparison = this.compareVersionObjects(available, requested);
-        return comparison <= 0;
-    }
-
-    private matchesLess(available: { major: number; minor: number; patch: number }, rangeVersion: string): boolean {
-        const requested = this.parseVersion(rangeVersion);
-        if (!requested) {
-            return false;
-        }
-
-        const comparison = this.compareVersionObjects(available, requested);
-        return comparison < 0;
-    }
-
-    private compareVersionObjects(
-        a: { major: number; minor: number; patch: number },
-        b: { major: number; minor: number; patch: number }
-    ): number {
-        if (a.major !== b.major) {
-            return a.major - b.major;
-        }
-        if (a.minor !== b.minor) {
-            return a.minor - b.minor;
-        }
-        return a.patch - b.patch;
-    }
-
-    private parseVersion(version: string): { major: number; minor: number; patch: number } | null {
-        const parts = version.split('.').map(Number);
-        if (parts.length !== 3 || parts.some(Number.isNaN)) {
-            return null;
-        }
-        return { major: parts[0], minor: parts[1], patch: parts[2] };
-    }
-
-    private compareVersions(a: string, b: string): number {
-        const versionA = this.parseVersion(a)!;
-        const versionB = this.parseVersion(b)!;
-
-        if (versionA.major !== versionB.major) {
-            return versionA.major - versionB.major;
-        }
-        if (versionA.minor !== versionB.minor) {
-            return versionA.minor - versionB.minor;
-        }
-        return versionA.patch - versionB.patch;
     }
 
     private checkForNullTranslations(contextCache: Record<string, Record<string, unknown> | null | undefined>, versions: string[]): null | undefined {
