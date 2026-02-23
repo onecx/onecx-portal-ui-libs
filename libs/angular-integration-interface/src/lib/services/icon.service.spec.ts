@@ -8,7 +8,7 @@
 import { TestBed } from '@angular/core/testing';
 import { FakeTopic, ensureProperty } from '@onecx/accelerator';
 import { IconService } from './icon.service';
-import { Icon, IconService as IconServiceInterface , IconTopic} from '@onecx/integration-interface';
+import { Icon, IconService as IconServiceInterface} from '@onecx/integration-interface';
 import {IconCache} from "@onecx/integration-interface";
 
 
@@ -76,7 +76,7 @@ describe('IconService', () => {
     it('should return null immediately when cached null', async () => {
       const name = 'mdi:ghost'
       ensureProperty(globalThis, ['onecxIcons', name], null)
-      
+
       const res = await iconService.requestIconAsync(name)
 
       expect(res).toBeNull()
