@@ -278,6 +278,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       setInputSignal(component, 'customGroupKey', 'custom')
 
       component.ngOnInit()
+      TestBed.tick()
 
       expect(component.displayedColumnKeys()).toEqual(['b', 'c'])
     })
@@ -456,21 +457,19 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     it('should not forward delete/view/edit when not observed', () => {
       const { component } = createComponent(true)
 
-      const deleteSpy = jest.spyOn(component, 'onDeleteElement')
-      const viewSpy = jest.spyOn(component, 'onViewElement')
-      const editSpy = jest.spyOn(component, 'onEditElement')
+      const deleteEmitSpy = jest.spyOn(component.deleteItem, 'emit')
+      const viewEmitSpy = jest.spyOn(component.viewItem, 'emit')
+      const editEmitSpy = jest.spyOn(component.editItem, 'emit')
 
       const element = { id: 'x' } as any
       
-      // When outputs are not observed, the on* methods should not emit
       component.onDeleteElement(element)
       component.onViewElement(element)
       component.onEditElement(element)
 
-      // The methods are called but don't emit if not observed
-      expect(deleteSpy).toHaveBeenCalled()
-      expect(viewSpy).toHaveBeenCalled()
-      expect(editSpy).toHaveBeenCalled()
+      expect(deleteEmitSpy).not.toHaveBeenCalled()
+      expect(viewEmitSpy).not.toHaveBeenCalled()
+      expect(editEmitSpy).not.toHaveBeenCalled()
     })
 
     it('should forward row selection only when selectionChanged is observed', () => {
@@ -579,16 +578,8 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       const { component } = createComponent(true)
 
       const mockTemplate = {} as TemplateRef<any>
-      Object.defineProperty(component, 'childTableCell', {
-        value: () => mockTemplate,
-        writable: true,
-        configurable: true,
-      })
-      Object.defineProperty(component, 'templates', {
-        value: () => [],
-        writable: true,
-        configurable: true,
-      })
+      setInputSignal(component, 'childTableCell', mockTemplate)
+      setInputSignal(component, 'templates', [])
 
       expect(component._tableCell()).toBe(mockTemplate)
     })
@@ -602,11 +593,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
         template: mockPrimeTemplate,
       } as PrimeTemplate
 
-      Object.defineProperty(component, 'templates', {
-        value: () => [primeTemplateWrapper],
-        writable: true,
-        configurable: true,
-      })
+      setInputSignal(component, 'templates', [primeTemplateWrapper])
 
       expect(component.primeNgTableCell()).toBe(mockPrimeTemplate)
       expect(component._tableCell()).toBe(mockPrimeTemplate)
@@ -622,16 +609,8 @@ describe('InteractiveDataViewComponent (class logic)', () => {
         template: primeTemplate,
       } as PrimeTemplate
 
-      Object.defineProperty(component, 'childDateTableCell', {
-        value: () => childTemplate,
-        writable: true,
-        configurable: true,
-      })
-      Object.defineProperty(component, 'templates', {
-        value: () => [primeTemplateWrapper],
-        writable: true,
-        configurable: true,
-      })
+      setInputSignal(component, 'childDateTableCell', childTemplate)
+      setInputSignal(component, 'templates', [primeTemplateWrapper])
 
       expect(component._dateTableCell()).toBe(primeTemplate)
     })
@@ -639,16 +618,8 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     it('should return undefined when no template is defined for gridItem', () => {
       const { component } = createComponent(true)
 
-      Object.defineProperty(component, 'childGridItem', {
-        value: () => undefined,
-        writable: true,
-        configurable: true,
-      })
-      Object.defineProperty(component, 'templates', {
-        value: () => [],
-        writable: true,
-        configurable: true,
-      })
+      setInputSignal(component, 'childGridItem', undefined)
+      setInputSignal(component, 'templates', [])
 
       expect(component._gridItem()).toBeUndefined()
     })
@@ -664,16 +635,113 @@ describe('InteractiveDataViewComponent (class logic)', () => {
         { getType: () => 'listItem', template: listItemTemplate } as PrimeTemplate,
       ]
 
-      Object.defineProperty(component, 'templates', {
-        value: () => templates,
-        writable: true,
-        configurable: true,
-      })
+      setInputSignal(component, 'templates', templates)
 
       expect(component.primeNgGridItem()).toBe(gridItemTemplate)
       expect(component.primeNgListItem()).toBe(listItemTemplate)
       expect(component._gridItem()).toBe(gridItemTemplate)
       expect(component._listItem()).toBe(listItemTemplate)
+    })
+
+    it('should handle all table cell types with PrimeNG template prioritization', () => {
+      const { component } = createComponent(true)
+
+      const relativeDateTableCellTemplate = {} as TemplateRef<any>
+      const translationKeyTableCellTemplate = {} as TemplateRef<any>
+      const stringTableCellTemplate = {} as TemplateRef<any>
+      const numberTableCellTemplate = {} as TemplateRef<any>
+
+      const templates = [
+        { getType: () => 'relativeDateTableCell', template: relativeDateTableCellTemplate } as PrimeTemplate,
+        { getType: () => 'translationKeyTableCell', template: translationKeyTableCellTemplate } as PrimeTemplate,
+        { getType: () => 'stringTableCell', template: stringTableCellTemplate } as PrimeTemplate,
+        { getType: () => 'numberTableCell', template: numberTableCellTemplate } as PrimeTemplate,
+      ]
+
+      setInputSignal(component, 'templates', templates)
+
+      expect(component._relativeDateTableCell()).toBe(relativeDateTableCellTemplate)
+      expect(component._translationKeyTableCell()).toBe(translationKeyTableCellTemplate)
+      expect(component._stringTableCell()).toBe(stringTableCellTemplate)
+      expect(component._numberTableCell()).toBe(numberTableCellTemplate)
+    })
+
+    it('should handle list value templates with PrimeNG template prioritization', () => {
+      const { component } = createComponent(true)
+
+      const listValueTemplate = {} as TemplateRef<any>
+      const translationKeyListValueTemplate = {} as TemplateRef<any>
+      const numberListValueTemplate = {} as TemplateRef<any>
+      const relativeDateListValueTemplate = {} as TemplateRef<any>
+      const stringListValueTemplate = {} as TemplateRef<any>
+      const dateListValueTemplate = {} as TemplateRef<any>
+
+      const templates = [
+        { getType: () => 'listValue', template: listValueTemplate } as PrimeTemplate,
+        { getType: () => 'translationKeyListValue', template: translationKeyListValueTemplate } as PrimeTemplate,
+        { getType: () => 'numberListValue', template: numberListValueTemplate } as PrimeTemplate,
+        { getType: () => 'relativeDateListValue', template: relativeDateListValueTemplate } as PrimeTemplate,
+        { getType: () => 'stringListValue', template: stringListValueTemplate } as PrimeTemplate,
+        { getType: () => 'dateListValue', template: dateListValueTemplate } as PrimeTemplate,
+      ]
+
+      setInputSignal(component, 'templates', templates)
+
+      expect(component._listValue()).toBe(listValueTemplate)
+      expect(component._translationKeyListValue()).toBe(translationKeyListValueTemplate)
+      expect(component._numberListValue()).toBe(numberListValueTemplate)
+      expect(component._relativeDateListValue()).toBe(relativeDateListValueTemplate)
+      expect(component._stringListValue()).toBe(stringListValueTemplate)
+      expect(component._dateListValue()).toBe(dateListValueTemplate)
+    })
+
+    it('should handle table filter cell templates with PrimeNG template prioritization', () => {
+      const { component } = createComponent(true)
+
+      const tableFilterCellTemplate = {} as TemplateRef<any>
+      const dateTableFilterCellTemplate = {} as TemplateRef<any>
+      const relativeDateTableFilterCellTemplate = {} as TemplateRef<any>
+      const translationKeyTableFilterCellTemplate = {} as TemplateRef<any>
+      const stringTableFilterCellTemplate = {} as TemplateRef<any>
+      const numberTableFilterCellTemplate = {} as TemplateRef<any>
+
+      const templates = [
+        { getType: () => 'tableFilterCell', template: tableFilterCellTemplate } as PrimeTemplate,
+        { getType: () => 'dateTableFilterCell', template: dateTableFilterCellTemplate } as PrimeTemplate,
+        { getType: () => 'relativeDateTableFilterCell', template: relativeDateTableFilterCellTemplate } as PrimeTemplate,
+        { getType: () => 'translationKeyTableFilterCell', template: translationKeyTableFilterCellTemplate } as PrimeTemplate,
+        { getType: () => 'stringTableFilterCell', template: stringTableFilterCellTemplate } as PrimeTemplate,
+        { getType: () => 'numberTableFilterCell', template: numberTableFilterCellTemplate } as PrimeTemplate,
+      ]
+
+      setInputSignal(component, 'templates', templates)
+
+      expect(component._tableFilterCell()).toBe(tableFilterCellTemplate)
+      expect(component._dateTableFilterCell()).toBe(dateTableFilterCellTemplate)
+      expect(component._relativeDateTableFilterCell()).toBe(relativeDateTableFilterCellTemplate)
+      expect(component._translationKeyTableFilterCell()).toBe(translationKeyTableFilterCellTemplate)
+      expect(component._stringTableFilterCell()).toBe(stringTableFilterCellTemplate)
+      expect(component._numberTableFilterCell()).toBe(numberTableFilterCellTemplate)
+    })
+
+    it('should handle subtitle and other miscellaneous templates', () => {
+      const { component } = createComponent(true)
+
+      const gridItemSubtitleLinesTemplate = {} as TemplateRef<any>
+      const listItemSubtitleLinesTemplate = {} as TemplateRef<any>
+      const topCenterTemplate = {} as TemplateRef<any>
+
+      const templates = [
+        { getType: () => 'gridItemSubtitleLines', template: gridItemSubtitleLinesTemplate } as PrimeTemplate,
+        { getType: () => 'listItemSubtitleLines', template: listItemSubtitleLinesTemplate } as PrimeTemplate,
+        { getType: () => 'topCenter', template: topCenterTemplate } as PrimeTemplate,
+      ]
+
+      setInputSignal(component, 'templates', templates)
+
+      expect(component._gridItemSubtitleLines()).toBe(gridItemSubtitleLinesTemplate)
+      expect(component._listItemSubtitleLines()).toBe(listItemSubtitleLinesTemplate)
+      expect(component._topCenter()).toBe(topCenterTemplate)
     })
   })
 
@@ -690,7 +758,29 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(filteredSpy).toHaveBeenCalledWith(filters)
     })
 
-    it('should trigger sorted output when sortField or sortDirection changes via effect', () => {
+    it('should trigger sorted output when sortField without sortDirection changes via effect', () => {
+      const { component } = createComponent(true)
+
+      const sortedSpy = jest.spyOn(component.sorted, 'emit')
+
+      component.sortField.set('name')
+      TestBed.tick()
+
+      expect(sortedSpy).toHaveBeenCalledWith({ sortColumn: 'name', sortDirection: 'NONE' })
+    })
+
+    it('should trigger sorted output when sortDirection without sortField changes via effect', () => {
+      const { component } = createComponent(true)
+
+      const sortedSpy = jest.spyOn(component.sorted, 'emit')
+
+      component.sortDirection.set('DESCENDING' as any)
+      TestBed.tick()
+
+      expect(sortedSpy).toHaveBeenCalledWith({ sortColumn: '', sortDirection: 'DESCENDING' })
+    })
+
+    it('should trigger sorted output when sortField and sortDirection changes via effect', () => {
       const { component } = createComponent(true)
 
       const sortedSpy = jest.spyOn(component.sorted, 'emit')
@@ -801,6 +891,10 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     it('should not register listeners when outputs are not observed', () => {
       const { component } = createComponent(true)
 
+      // Given: No subscriptions to parent InteractiveDataViewComponent outputs
+      // (component.deleteItem, viewItem, etc. are not observed)
+
+      // Given: Mock child DataViewComponent
       const mockDataView = {
         deleteItem: { observed: () => false, subscribe: jest.fn() },
         viewItem: { observed: () => false, subscribe: jest.fn() },
@@ -808,14 +902,12 @@ describe('InteractiveDataViewComponent (class logic)', () => {
         selectionChanged: { observed: () => false, subscribe: jest.fn() },
       }
 
-      Object.defineProperty(component, 'dataViewComponent', {
-        value: () => mockDataView,
-        writable: true,
-        configurable: true,
-      })
+      setInputSignal(component, 'dataViewComponent', mockDataView)
 
+      // When: Registering event listeners
       component.registerEventListenerForDataView()
 
+      // Then: Since parent outputs are not observed, don't subscribe to child
       expect(mockDataView.deleteItem.subscribe).not.toHaveBeenCalled()
       expect(mockDataView.viewItem.subscribe).not.toHaveBeenCalled()
       expect(mockDataView.editItem.subscribe).not.toHaveBeenCalled()
@@ -825,8 +917,13 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     it('should register deleteItem listener when observed and not already registered', () => {
       const { component } = createComponent(true)
 
+      // Given: Subscribe to parent InteractiveDataViewComponent's deleteItem output
+      // This simulates an external consumer listening to the parent component's events
       component.deleteItem.subscribe(jest.fn())
 
+      // Given: Mock child DataViewComponent where deleteItem is NOT yet observed
+      // observed() returns false = no one has subscribed to the child's output yet
+      // This means we need to create a subscription to forward events from child to parent
       const mockDataView = {
         deleteItem: { observed: () => false, subscribe: jest.fn() },
         viewItem: { observed: () => false, subscribe: jest.fn() },
@@ -834,23 +931,25 @@ describe('InteractiveDataViewComponent (class logic)', () => {
         selectionChanged: { observed: () => false, subscribe: jest.fn() },
       }
 
-      Object.defineProperty(component, 'dataViewComponent', {
-        value: () => mockDataView,
-        writable: true,
-        configurable: true,
-      })
+      setInputSignal(component, 'dataViewComponent', mockDataView)
 
+      // When: Registering event listeners
       component.registerEventListenerForDataView()
 
+      // Then: Since parent's deleteItem is observed but child's is not,
+      // the method should subscribe to child's deleteItem to establish event forwarding
       expect(mockDataView.deleteItem.subscribe).toHaveBeenCalled()
     })
 
     it('should not register listeners twice when already observed in dataView', () => {
       const { component } = createComponent(true)
 
+      // Given: Subscribe to parent InteractiveDataViewComponent's outputs
       component.deleteItem.subscribe(jest.fn())
       component.viewItem.subscribe(jest.fn())
 
+      // Given: Mock child DataViewComponent where outputs are ALREADY observed
+      // observed() returns true = someone already subscribed (previous call established forwarding)
       const mockDataView = {
         deleteItem: { observed: () => true, subscribe: jest.fn() },
         viewItem: { observed: () => true, subscribe: jest.fn() },
@@ -858,14 +957,12 @@ describe('InteractiveDataViewComponent (class logic)', () => {
         selectionChanged: { observed: () => false, subscribe: jest.fn() },
       }
 
-      Object.defineProperty(component, 'dataViewComponent', {
-        value: () => mockDataView,
-        writable: true,
-        configurable: true,
-      })
+      setInputSignal(component, 'dataViewComponent', mockDataView)
 
+      // When: Registering event listeners
       component.registerEventListenerForDataView()
 
+      // Then: Child's outputs are already observed, so don't subscribe again
       expect(mockDataView.deleteItem.subscribe).not.toHaveBeenCalled()
       expect(mockDataView.viewItem.subscribe).not.toHaveBeenCalled()
     })
@@ -920,105 +1017,6 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       component.displayedColumnKeys.set(['c3', 'c1', 'c2'])
 
       expect(component.displayedColumns()).toEqual([c3, c1, c2])
-    })
-
-    it('should handle totalRecordsOnServer input', () => {
-      const { component } = createComponent(true)
-
-      setInputSignal(component, 'totalRecordsOnServer', 1000)
-
-      expect(component.totalRecordsOnServer()).toBe(1000)
-    })
-
-    it('should handle supportedViewLayouts with single layout', () => {
-      const { component } = createComponent(true)
-
-      setInputSignal(component, 'supportedViewLayouts', ['table'])
-
-      expect(component.supportedViewLayouts()).toEqual(['table'])
-    })
-
-    it('should handle emptyResultsMessage input', () => {
-      const { component } = createComponent(true)
-
-      setInputSignal(component, 'emptyResultsMessage', 'No data available')
-
-      expect(component.emptyResultsMessage()).toBe('No data available')
-    })
-
-    it('should handle clientSideSorting and clientSideFiltering inputs', () => {
-      const { component } = createComponent(true)
-
-      setInputSignal(component, 'clientSideSorting', false)
-      setInputSignal(component, 'clientSideFiltering', false)
-
-      expect(component.clientSideSorting()).toBe(false)
-      expect(component.clientSideFiltering()).toBe(false)
-    })
-
-    it('should handle additionalActions input', () => {
-      const { component } = createComponent(true)
-
-      const actions = [{ labelKey: 'ACTION1', icon: 'pi-plus' } as any]
-      setInputSignal(component, 'additionalActions', actions)
-
-      expect(component.additionalActions()).toEqual(actions)
-    })
-
-    it('should handle all permission inputs', () => {
-      const { component } = createComponent(true)
-
-      setInputSignal(component, 'deletePermission', 'DELETE_PERM')
-      setInputSignal(component, 'editPermission', ['EDIT_PERM1', 'EDIT_PERM2'])
-      setInputSignal(component, 'viewPermission', 'VIEW_PERM')
-      setInputSignal(component, 'searchConfigPermission', 'SEARCH_PERM')
-
-      expect(component.deletePermission()).toBe('DELETE_PERM')
-      expect(component.editPermission()).toEqual(['EDIT_PERM1', 'EDIT_PERM2'])
-      expect(component.viewPermission()).toBe('VIEW_PERM')
-      expect(component.searchConfigPermission()).toBe('SEARCH_PERM')
-    })
-
-    it('should handle action field inputs', () => {
-      const { component } = createComponent(true)
-
-      setInputSignal(component, 'deleteActionVisibleField', 'deleteVisible')
-      setInputSignal(component, 'deleteActionEnabledField', 'deleteEnabled')
-      setInputSignal(component, 'viewActionVisibleField', 'viewVisible')
-      setInputSignal(component, 'viewActionEnabledField', 'viewEnabled')
-      setInputSignal(component, 'editActionVisibleField', 'editVisible')
-      setInputSignal(component, 'editActionEnabledField', 'editEnabled')
-
-      expect(component.deleteActionVisibleField()).toBe('deleteVisible')
-      expect(component.deleteActionEnabledField()).toBe('deleteEnabled')
-      expect(component.viewActionVisibleField()).toBe('viewVisible')
-      expect(component.viewActionEnabledField()).toBe('viewEnabled')
-      expect(component.editActionVisibleField()).toBe('editVisible')
-      expect(component.editActionEnabledField()).toBe('editEnabled')
-    })
-
-    it('should handle filterView configuration inputs', () => {
-      const { component } = createComponent(true)
-
-      setInputSignal(component, 'filterViewDisplayMode', 'panel')
-      setInputSignal(component, 'filterViewChipStyleClass', 'custom-chip')
-      setInputSignal(component, 'filterViewTableStyle', { 'max-height': '100vh' })
-      setInputSignal(component, 'filterViewPanelStyle', { 'max-width': '100%' })
-
-      expect(component.filterViewDisplayMode()).toBe('panel')
-      expect(component.filterViewChipStyleClass()).toBe('custom-chip')
-      expect(component.filterViewTableStyle()).toEqual({ 'max-height': '100vh' })
-      expect(component.filterViewPanelStyle()).toEqual({ 'max-width': '100%' })
-    })
-
-    it('should handle headerStyleClass and contentStyleClass inputs', () => {
-      const { component } = createComponent(true)
-
-      setInputSignal(component, 'headerStyleClass', 'custom-header')
-      setInputSignal(component, 'contentStyleClass', 'custom-content')
-
-      expect(component.headerStyleClass()).toBe('custom-header')
-      expect(component.contentStyleClass()).toBe('custom-content')
     })
   })
 

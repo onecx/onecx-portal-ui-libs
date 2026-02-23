@@ -1,6 +1,7 @@
 import {
   Component,
   DestroyRef,
+  EventEmitter,
   Input,
   OnInit,
   Output,
@@ -448,7 +449,9 @@ export class InteractiveDataViewComponent implements OnInit {
   isColumnGroupSelectionComponentDefined: Signal<boolean | undefined>
   @Output() groupSelectionChangedSlotEmitter = observableOutput<ColumnGroupData | undefined>()
 
-  readonly groupSelectionChangedSlotInput = observableOutput<ColumnGroupData | undefined>()
+  // Internal EventEmitter for handling slot's groupSelectionChanged output
+  // Used for communication between the slot component and this component's internal logic
+  readonly slotGroupSelectionChangeListener = new EventEmitter<ColumnGroupData | undefined>()
 
   constructor() {
     this.isColumnGroupSelectionComponentDefined$ = this.slotService
@@ -457,7 +460,7 @@ export class InteractiveDataViewComponent implements OnInit {
 
     this.isColumnGroupSelectionComponentDefined = toSignal(this.isColumnGroupSelectionComponentDefined$)
 
-    const subscription = this.groupSelectionChangedSlotInput.subscribe((event) => {
+    const subscription = this.slotGroupSelectionChangeListener.subscribe((event) => {
       this.triggerGroupSelectionChanged(event)
     })
     this.destroyRef.onDestroy(() => subscription.unsubscribe())

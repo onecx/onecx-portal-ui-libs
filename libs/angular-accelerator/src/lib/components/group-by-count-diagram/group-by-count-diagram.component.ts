@@ -124,6 +124,7 @@ export class GroupByCountDiagramComponent {
   }
 
   onDiagramTypeChanged(newDiagramType: DiagramType) {
+    this.diagramType.set(newDiagramType)
     this.diagramTypeChanged.emit(newDiagramType)
     this.componentStateChanged.emit({
       activeDiagramType: newDiagramType,
