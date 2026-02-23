@@ -427,7 +427,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
         return this.translateService.get([...actions.map((a) => a.labelKey || '')]).pipe(
           map((translations) => {
-            return this.mapActions(actions, translations, row!)
+            return this.mapActions(actions, translations, row)
           })
         )
       })
@@ -950,7 +950,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     )
   }
 
-  private mapActions(actions: DataAction[], translations: any, row: Row) {
+  private mapActions(actions: DataAction[], translations: any, row: Row | null) {
     return actions.map((a) => ({
       label: translations[a.labelKey || ''],
       icon: a.icon,

@@ -363,7 +363,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
         }
         return this.translateService.get([...actions.map((a) => a.labelKey || '')]).pipe(
           map((translations) => {
-            return this.mapActions(actions, translations, row!)
+            return this.mapActions(actions, translations, row)
           })
         )
       })
@@ -710,7 +710,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return this.userService.getPermissions()
   }
 
-  private mapActions(actions: DataAction[], translations: any, row: Row) {
+  private mapActions(actions: DataAction[], translations: any, row: Row | null) {
     return actions.map((a) => ({
       label: translations[a.labelKey || ''],
       icon: a.icon,
