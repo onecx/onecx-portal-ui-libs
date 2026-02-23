@@ -198,14 +198,18 @@ export class DynamicTranslationService {
 
     private satisfiesVersion(availableVersion: string, requestedVersion: string): boolean {
         const ranges = requestedVersion.split('||').map(r => r.trim());
-        
-        for (const range of ranges) {
-            if (this.matchesSingleRange(availableVersion, range)) {
-                return true;
-            }
+        return ranges.some(range => this.matchesAndRange(availableVersion, range));
+    }
+
+    private matchesAndRange(availableVersion: string, range: string): boolean {
+        const hyphenMatch = range.match(/^(\S+)\s+-\s+(\S+)$/);
+        if (hyphenMatch) {
+            return this.matchesSingleRange(availableVersion, `>=${hyphenMatch[1]}`) &&
+                   this.matchesSingleRange(availableVersion, `<=${hyphenMatch[2]}`);
         }
-        
-        return false;
+
+        const comparators = range.split(/\s+/).filter(Boolean);
+        return comparators.every(comparator => this.matchesSingleRange(availableVersion, comparator));
     }
 
     private matchesSingleRange(availableVersion: string, range: string): boolean {

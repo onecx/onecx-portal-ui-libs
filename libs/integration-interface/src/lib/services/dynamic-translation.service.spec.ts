@@ -1018,5 +1018,48 @@ describe('DynamicTranslationService', () => {
       const result = await firstValueFrom(service.getTranslations('en', contexts));
       expect(result).toEqual({ 'context1@>=1.0.0': { key1: 'value1.1.0' } });
     });
+
+    it('should support AND range with space-separated comparators (>=x <y)', async () => {
+      global['@onecx/integration_interface'].dynamicTranslationsCache['en'] = {
+        context1: {
+          '0.9.0': { key1: 'value0.9.0' },
+          '1.0.0': { key1: 'value1.0.0' },
+          '1.5.0': { key1: 'value1.5.0' },
+          '2.0.0': { key1: 'value2.0.0' },
+        },
+      };
+
+      const result = await firstValueFrom(service.getTranslations('en', [{ name: 'context1', version: '>=1.0.0 <2.0.0' }]));
+      expect(result).toEqual({ 'context1@>=1.0.0 <2.0.0': { key1: 'value1.5.0' } });
+    });
+
+    it('should support hyphen range (x - y)', async () => {
+      global['@onecx/integration_interface'].dynamicTranslationsCache['en'] = {
+        context1: {
+          '0.9.0': { key1: 'value0.9.0' },
+          '1.0.0': { key1: 'value1.0.0' },
+          '1.5.0': { key1: 'value1.5.0' },
+          '2.0.0': { key1: 'value2.0.0' },
+          '3.0.0': { key1: 'value3.0.0' },
+        },
+      };
+
+      const result = await firstValueFrom(service.getTranslations('en', [{ name: 'context1', version: '1.0.0 - 2.0.0' }]));
+      expect(result).toEqual({ 'context1@1.0.0 - 2.0.0': { key1: 'value2.0.0' } });
+    });
+
+    it('should support combined OR with AND ranges (>=x <y || >=z)', async () => {
+      global['@onecx/integration_interface'].dynamicTranslationsCache['en'] = {
+        context1: {
+          '1.0.0': { key1: 'value1.0.0' },
+          '1.5.0': { key1: 'value1.5.0' },
+          '2.0.0': { key1: 'value2.0.0' },
+          '3.0.0': { key1: 'value3.0.0' },
+        },
+      };
+
+      const result = await firstValueFrom(service.getTranslations('en', [{ name: 'context1', version: '>=1.0.0 <1.5.0 || >=3.0.0' }]));
+      expect(result).toEqual({ 'context1@>=1.0.0 <1.5.0 || >=3.0.0': { key1: 'value3.0.0' } });
+    });
   });
 });
