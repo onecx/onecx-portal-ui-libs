@@ -8,11 +8,7 @@ export class ImageRepositoryService implements OnDestroy {
     get imageRepositoryTopic() {
         return this.imageRepositoryInterface.imageRepositoryTopic;
     }
-
-    set imageRepositoryTopic(source: ImageRepositoryTopic) {
-        this.imageRepositoryInterface.imageRepositoryTopic = source;
-    }
-    
+        
     async getUrl(names: string[]): Promise<string | undefined>;
     async getUrl(names: string[], fallbackUrl: string): Promise<string>;
     async getUrl(names: string[], fallbackUrl?: string): Promise<string | undefined> {

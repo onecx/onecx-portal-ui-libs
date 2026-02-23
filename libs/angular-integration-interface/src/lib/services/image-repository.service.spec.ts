@@ -19,7 +19,7 @@ describe('ImageRepositoryService', () => {
 	const mockTopic = new FakeTopic<ImageRepositoryInfo>();
     service = TestBed.inject(ImageRepositoryService);
     imageRepositoryInterface = (service as any).imageRepositoryInterface;
-    service.imageRepositoryTopic = mockTopic as any as ImageRepositoryTopic;
+    imageRepositoryInterface.imageRepositoryTopic = mockTopic as any as ImageRepositoryTopic;
     service.imageRepositoryTopic?.publish(MOCK_URLS);
   });
 
