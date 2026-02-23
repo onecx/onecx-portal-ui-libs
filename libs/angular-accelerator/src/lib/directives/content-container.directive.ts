@@ -31,6 +31,10 @@ export class OcxContentContainerDirective implements OnInit {
 
   constructor() {
     effect(() => {
+      // Read signals to establish dependencies
+      this.layout()
+      this.breakpoint()
+      this.ngClass()
       this.addContainerStyles()
     })
   }
@@ -38,50 +42,37 @@ export class OcxContentContainerDirective implements OnInit {
   private addContainerStyles() {
     const addClasses = (classes: string[]) => this.el.nativeElement.classList.add(...classes)
     const removeClasses = (classes: string[]) => this.el.nativeElement.classList.remove(...classes)
-    
-    // Remove default classes first
-    const defaultClasses = ['gap-3', 'flex-column', 'md:flex-row']
-    removeClasses(defaultClasses)
-    
-    // Remove all breakpoint-dependent flex-row classes (e.g., sm:flex-row, md:flex-row, etc.)
-    const classesToRemove: string[] = []
-    const regexPattern = /\w+:flex-row$/
-    this.el.nativeElement.classList.forEach((className: string) => {
-      if (regexPattern.test(className)) {
-        classesToRemove.push(className)
+    // We need to ensure that all breakpoint dependent flex-row classes are removed from the element
+    // This way we can avoid multiple contradictory layout classes and unexpected effects
+    const removeResponsiveLayoutClasses = () => {
+      const classesToRemove: string[] = []
+      const regexPattern = /\w+:flex-row$/
+      this.el.nativeElement.classList.forEach((className: string) => {
+        if (regexPattern.test(className)) {
+          classesToRemove.push(className)
+        }
+      })
+      removeClasses(classesToRemove)
+    }
+    const addSharedClasses = () => {
+      let styleClasses = Array.from(this.el.nativeElement.classList as string[])
+      const defaultClasses = ['gap-3', 'flex-column', 'md:flex-row']
+      removeClasses(defaultClasses)
+      if (styleClasses.some((cls) => cls.startsWith('gap-') && cls !== 'gap-3')) {
+        styleClasses = styleClasses.filter((cls) => !cls.startsWith('gap-3'))
       }
-    })
-    removeClasses(classesToRemove)
-    
-    // Parse the ngClass input to see what custom classes are being applied
-    const customClasses = this.ngClass() ? this.ngClass()!.split(' ').filter(cls => cls.length > 0) : []
-    
-    // Now get the current state after removals (includes classes from ngClass after it's applied)
-    const currentClasses = Array.from(this.el.nativeElement.classList as string[])
-    
-    // Combine current classes with custom classes from ngClass input to check what's available
-    const allRelevantClasses = [...currentClasses, ...customClasses]
-    
-    // Determine what to add back
-    const classesToAdd: string[] = []
-    
-    // Check if there's a custom gap class, otherwise use default
-    if (!allRelevantClasses.some((cls) => cls.startsWith('gap-'))) {
-      classesToAdd.push('gap-3')
+      const flexClasses = ['flex-row', 'flex-row-reverse', 'flex-column-reverse']
+      if (styleClasses.some((cls) => flexClasses.includes(cls))) {
+        styleClasses = styleClasses.filter((cls) => cls !== 'flex-column')
+      }
+      if (this.layout() != 'vertical') {
+        const responsiveLayoutClass = `${this.breakpoint() || 'md'}:flex-row`
+        styleClasses.push(responsiveLayoutClass)
+      }
+      addClasses(styleClasses)
     }
-    
-    // Check if there's a custom flex direction class, otherwise use default
-    const flexClasses = ['flex-row', 'flex-row-reverse', 'flex-column-reverse']
-    if (!allRelevantClasses.some((cls) => flexClasses.includes(cls))) {
-      classesToAdd.push('flex-column')
-    }
-    
-    // Add responsive layout class for horizontal layouts
-    if (this.layout() !== 'vertical') {
-      const responsiveLayoutClass = `${this.breakpoint() || 'md'}:flex-row`
-      classesToAdd.push(responsiveLayoutClass)
-    }
-    
-    addClasses(classesToAdd)
+
+    removeResponsiveLayoutClasses()
+    addSharedClasses()
   }
 }
