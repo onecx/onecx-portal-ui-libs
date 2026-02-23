@@ -50,3 +50,8 @@ export * from './lib/topics/parameters/v1/parameters.topic'
 export * from './lib/topics/image-repository/image-repository.model'
 export * from './lib/topics/image-repository/image-repository.topic'
 export * from './lib/services/image-repository.service'
+
+
+export * from './lib/topics/icons/v1/icon.model'
+export * from './lib/topics/icons/v1/icon.topic'
+export * from './lib/services/icon.service'
