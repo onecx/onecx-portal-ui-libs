@@ -1011,7 +1011,9 @@ describe('DataTableComponent', () => {
     })
 
     it('should render preselected rows correctly across pages ', async () => {
-      component.selectionChanged.subscribe(() => {})
+      component.selectionChanged.subscribe(() => {
+        // Subscription needed to trigger observable
+      })
 
       component.pageSizes.set([2])
       component.pageSize.set(2)
