@@ -29,9 +29,9 @@ describe('MultiLanguageMissingTranslationHandler', () => {
       if (!value) return value
       if (params) {
         let result = value
-        Object.keys(params).forEach((key) => {
+        for (const key of Object.keys(params)) {
           result = result.replace(`{{${key}}}`, params[key])
-        })
+        }
         return result
       }
       return value
@@ -63,9 +63,9 @@ describe('MultiLanguageMissingTranslationHandler', () => {
       if (!value) return value
       if (params) {
         let result = value
-        Object.keys(params).forEach((key) => {
+        for (const key of Object.keys(params)) {
           result = result.replace(`{{${key}}}`, params[key])
-        })
+        }
         return result
       }
       return value
