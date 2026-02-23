@@ -13,7 +13,10 @@ import { createLogger } from '../utils/logger.utils';
 import { ShellCapability } from '../models/shell-capability.model';
 import { hasShellCapability } from '../utils/shell-capability.utils';
 
-const UNVERSIONED_KEY = 'undefined';
+/**
+ * Cache key used for translation contexts without an explicit version.
+ */
+export const UNVERSIONED_KEY = 'undefined';
 
 /**
  * Describes a translation namespace that should be resolved for a locale.
@@ -34,7 +37,12 @@ interface CachedVersion {
     version: string;
 }
 
-interface DynamicTranslationsCache {
+/**
+ * Global cache shape for dynamic translations.
+ *
+ * Keys are organized as locale -> context name -> version.
+ */
+export interface DynamicTranslationsCache {
     [locale: string]: {
         [contextName: string]: {
             [version: string]: Record<string, unknown> | null | undefined;
@@ -42,7 +50,12 @@ interface DynamicTranslationsCache {
     };
 }
 
-function getDynamicTranslationsCache(): DynamicTranslationsCache {
+/**
+ * Returns the shared dynamic translations cache stored on `globalThis`.
+ *
+ * @returns Mutable cache object used by dynamic translation resolution.
+ */
+export function getDynamicTranslationsCache(): DynamicTranslationsCache {
     const global = ensureProperty(globalThis, ['@onecx/integration_interface', 'dynamicTranslationsCache'], {});
     return global['@onecx/integration_interface'].dynamicTranslationsCache;
 }
