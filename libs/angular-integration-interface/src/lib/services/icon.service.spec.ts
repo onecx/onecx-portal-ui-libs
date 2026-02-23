@@ -8,16 +8,20 @@
 import { TestBed } from '@angular/core/testing';
 import { FakeTopic, ensureProperty } from '@onecx/accelerator';
 import { IconService } from './icon.service';
+import { Icon, IconService as IconServiceInterface , IconTopic} from '@onecx/integration-interface';
 import {IconCache} from "@onecx/integration-interface";
 
 
 describe('IconService', () => {
   let iconService: IconService
+  let iconServiceInterface: IconServiceInterface;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({ providers: [IconService] })
+    TestBed.configureTestingModule({ providers: [IconService] });
     globalThis.onecxIcons = {}
     iconService = TestBed.inject(IconService)
+    iconServiceInterface = (iconService as any).iconServiceInterface;
+    iconServiceInterface.iconTopic = FakeTopic.create<Icon>();
   })
 
   afterEach(() => {
@@ -31,8 +35,7 @@ describe('IconService', () => {
 
 
   it('should return the underlying iconTopic', () => {
-    const topic = FakeTopic.create<any>();
-    iconService.iconTopic = topic as any;
+    const topic = iconServiceInterface.iconTopic
 
     expect(iconService.iconTopic).toBe(topic);
   });
@@ -40,8 +43,7 @@ describe('IconService', () => {
 
   describe('requestIcon', () => {
     it('should return normalized class and publish IconRequested on first request', () => {
-      const topic = FakeTopic.create<any>()
-      iconService.iconTopic = topic as any
+      const topic = iconServiceInterface.iconTopic
       const name = 'mdi:home-battery'
       const publishSpy = jest.spyOn(topic, 'publish')
 
@@ -52,8 +54,6 @@ describe('IconService', () => {
     })
 
     it('should honor explicit IconClassType', () => {
-      const topic = FakeTopic.create<any>()
-      iconService.iconTopic = topic as any
 
       const result = iconService.requestIcon('prime:check-circle', 'svg')
 
@@ -62,7 +62,6 @@ describe('IconService', () => {
 
     it('should not publish when icon already present in cache', () => {
       const topic = FakeTopic.create<any>()
-      iconService.iconTopic = topic as any
       const publishSpy = jest.spyOn(topic, 'publish')
       ensureProperty(globalThis, ['onecxIcons', 'mdi:cached'], { name: 'mdi:cached', type: 'svg', body: '' } as IconCache)
 
@@ -75,19 +74,15 @@ describe('IconService', () => {
 
   describe('requestIconAsync', () => {
     it('should return null immediately when cached null', async () => {
-      const topic = FakeTopic.create<any>()
-      iconService.iconTopic = topic as any
-      
       const name = 'mdi:ghost'
       ensureProperty(globalThis, ['onecxIcons', name], null)
+      
       const res = await iconService.requestIconAsync(name)
 
       expect(res).toBeNull()
     })
 
     it('should return class immediately when cached icon exists', async () => {
-      const topic = FakeTopic.create<any>()
-      iconService.iconTopic = topic as any
       const name = 'mdi:car'
 
       ensureProperty(globalThis, ['onecxIcons', name], { name, type: 'svg', body: '' } as IconCache)
@@ -97,8 +92,7 @@ describe('IconService', () => {
     })
 
     it('should resolve with class after IconsReceived when icon becomes available', async () => {
-      const topic = FakeTopic.create<any>()
-      iconService.iconTopic = topic as any
+      const topic = iconServiceInterface.iconTopic
       const name = 'mdi:star'
 
       const promise = iconService.requestIconAsync(name) // default background-before
@@ -111,8 +105,7 @@ describe('IconService', () => {
     })
 
     it('should resolve null after IconsReceived when icon resolved to null', async () => {
-      const topic = FakeTopic.create<any>()
-      iconService.iconTopic = topic as any
+      const topic = iconServiceInterface.iconTopic
       const name = 'mdi:unknown'
 
       const promise = iconService.requestIconAsync(name, 'svg')
@@ -127,13 +120,13 @@ describe('IconService', () => {
 
   describe('ngOnDestroy', () => {
     it('should destroy the underlying topic', () => {
-      const topic = FakeTopic.create<any>()
-      iconService.iconTopic = topic as any
-      const spy = jest.spyOn(topic, 'destroy')
+      const spyDestroy = jest.spyOn(iconServiceInterface, 'destroy');
+      const spy = jest.spyOn(iconServiceInterface.iconTopic, 'destroy')
 
-      iconService.ngOnDestroy()
+      iconService.ngOnDestroy();
 
       expect(spy).toHaveBeenCalled()
+      expect(spyDestroy).toHaveBeenCalled();
     })
   })
 })

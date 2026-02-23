@@ -5,11 +5,8 @@ import { IconService as IconServiceInterface, IconClassType, IconTopic } from '@
 export class IconService implements OnDestroy {
   private readonly iconServiceInterface = new IconServiceInterface()
 
-  get iconTopic() {
+  get iconTopic(): IconTopic {
     return this.iconServiceInterface.iconTopic;
-  }
-  set iconTopic(source: IconTopic) {
-    this.iconServiceInterface.iconTopic = source;
   }
 
   requestIcon(name: string, type?: IconClassType): string {
