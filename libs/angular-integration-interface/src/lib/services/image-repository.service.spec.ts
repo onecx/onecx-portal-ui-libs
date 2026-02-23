@@ -18,7 +18,7 @@ describe('ImageRepositoryService', () => {
 	});
     service = TestBed.inject(ImageRepositoryService);
     imageRepositoryInterface = (service as any).imageRepositoryInterface;
-    service.imageRepositoryTopic = FakeTopic.create<ImageRepositoryInfo>();
+    imageRepositoryInterface.imageRepositoryTopic = FakeTopic.create<ImageRepositoryInfo>();
     service.imageRepositoryTopic?.publish(MOCK_URLS);
   });
 
