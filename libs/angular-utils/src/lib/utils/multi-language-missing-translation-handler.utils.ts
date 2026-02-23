@@ -10,7 +10,7 @@ import { DynamicTranslationService, UserService } from '@onecx/angular-integrati
 import { Observable, of } from 'rxjs'
 import { catchError, map, mergeMap, shareReplay, take } from 'rxjs/operators'
 import { MULTI_LANGUAGE_IDENTIFIER, MultiLanguageIdentifier } from '../injection-tokens/multi-language-identifier'
-import deepmerge = require('deepmerge')
+import deepmerge from 'deepmerge'
 
 type DeepmergeFunction = (target: Record<string, unknown>, source: Record<string, unknown>) => Record<string, unknown>
 type DynamicAppId = { appElementName?: string }

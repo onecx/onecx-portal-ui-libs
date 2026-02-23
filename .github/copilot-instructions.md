@@ -8,7 +8,7 @@ Make sure to avoid sonarqube errors or code smells.
 
 Only use comments if it is not directly obvious why something is done a certain way but never to explain what the code is doing. TS-docs are excluded from this rule.  
 
-This is very important: ALWAYS prefer running lint, test, coverage, build and all other tasks defined in .vscode/tasks.json via the workspace tasks! Reduce the usage of direct terminal commands. Some of the tasks are taking much time, so please wait for them to finish before making further changes (up to 15min).
+This is very important: ALWAYS prefer running lint, test, coverage, build and all other tasks defined in .vscode/tasks.json via the workspace tasks! Reduce the usage of direct terminal commands. You are not allowed to run commands which are in the tasks via commandline. This also holds for equivalents of them. If a task is not fitting your needs or is missing and if it is a repeating tasks, suggest a change of the tasks to the user. Some of the tasks are taking much time, so please wait for them to finish before making further changes (up to 15min).
 
 When reading information about packages from npm, always prefer using the npm MCP server instead of reading directly from the npm registry.
 
