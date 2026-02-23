@@ -58,7 +58,18 @@ describe('MultiLanguageMissingTranslationHandler', () => {
     handler = TestBed.inject(MultiLanguageMissingTranslationHandler)
     mockedGetNormalizedBrowserLocales = getNormalizedBrowserLocales as jest.Mock
 
-    parserMock.interpolate.mockClear()
+    parserMock.interpolate.mockReset()
+    parserMock.interpolate.mockImplementation((value, params) => {
+      if (!value) return value
+      if (params) {
+        let result = value
+        Object.keys(params).forEach((key) => {
+          result = result.replace(`{{${key}}}`, params[key])
+        })
+        return result
+      }
+      return value
+    })
 
     dynamicTranslationServiceMock.getTranslations.mockClear()
   })
@@ -548,7 +559,7 @@ describe('MultiLanguageMissingTranslationHandler', () => {
       })
 
       const newHandler = TestBed.inject(MultiLanguageMissingTranslationHandler)
-      const identifiers = (newHandler as any).multiLanguageIdentifier
+      const identifiers = (newHandler as any).multiLanguageIdentifiers
 
       expect(identifiers).toHaveLength(2)
       expect(identifiers[0]).toEqual({ name: 'test-lib', version: '1.0.0', type: 'lib' })
@@ -577,7 +588,7 @@ describe('MultiLanguageMissingTranslationHandler', () => {
       })
 
       const newHandler = TestBed.inject(MultiLanguageMissingTranslationHandler)
-      const identifiers = (newHandler as any).multiLanguageIdentifier
+      const identifiers = (newHandler as any).multiLanguageIdentifiers
 
       expect(identifiers).toHaveLength(2)
       expect(identifiers[0]).toEqual({ name: 'existing-app', type: 'app' })
@@ -598,7 +609,7 @@ describe('MultiLanguageMissingTranslationHandler', () => {
       })
 
       const newHandler = TestBed.inject(MultiLanguageMissingTranslationHandler)
-      const identifiers = (newHandler as any).multiLanguageIdentifier
+      const identifiers = (newHandler as any).multiLanguageIdentifiers
 
       expect(identifiers).toHaveLength(1)
       expect(identifiers[0]).toEqual({ name: 'test-lib', version: '1.0.0', type: 'lib' })
@@ -620,7 +631,7 @@ describe('MultiLanguageMissingTranslationHandler', () => {
       })
 
       const newHandler = TestBed.inject(MultiLanguageMissingTranslationHandler)
-      const identifiers = (newHandler as any).multiLanguageIdentifier
+      const identifiers = (newHandler as any).multiLanguageIdentifiers
 
       expect(identifiers).toHaveLength(1)
       expect(identifiers[0]).toEqual({ name: 'test-lib', version: '1.0.0', type: 'lib' })
@@ -639,7 +650,7 @@ describe('MultiLanguageMissingTranslationHandler', () => {
       })
 
       const newHandler = TestBed.inject(MultiLanguageMissingTranslationHandler)
-      const identifiers = (newHandler as any).multiLanguageIdentifier
+      const identifiers = (newHandler as any).multiLanguageIdentifiers
 
       expect(identifiers).toHaveLength(1)
       expect(identifiers[0]).toEqual({ name: 'test-lib', version: '1.0.0', type: 'lib' })
