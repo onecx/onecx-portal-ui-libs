@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from "@angular/core";
-import { ImageRepositoryService as ImageRepositoryInterface, ImageRepositoryTopic } from '@onecx/integration-interface'
+import { ImageRepositoryService as ImageRepositoryInterface } from '@onecx/integration-interface'
 
 @Injectable({providedIn: 'root'}) 
 export class ImageRepositoryService implements OnDestroy {
