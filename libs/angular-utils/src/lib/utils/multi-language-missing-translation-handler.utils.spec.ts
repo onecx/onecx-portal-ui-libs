@@ -260,6 +260,29 @@ describe('MultiLanguageMissingTranslationHandler', () => {
       })
     })
 
+    it('should merge dynamic contexts when one context value is undefined', (done) => {
+      const params: MissingTranslationHandlerParams = {
+        key: 'dynamic.key',
+        translateService: {
+          reloadLang: jest.fn().mockReturnValue(of({})),
+        } as any,
+      }
+
+      parserMock.interpolate.mockReturnValueOnce(undefined).mockReturnValueOnce('Dynamic Value')
+
+      dynamicTranslationServiceMock.getTranslations.mockReturnValue(
+        of({
+          context1: undefined as any,
+          context2: { 'dynamic.key': 'Dynamic Value' },
+        })
+      )
+
+      handler.findTranslationForLang('en', params).subscribe((result) => {
+        expect(result).toBe('Dynamic Value')
+        done()
+      })
+    })
+
     it('should interpolate dynamic translations with parameters', (done) => {
       const params: MissingTranslationHandlerParams = {
         key: 'dynamic.key',
@@ -646,6 +669,26 @@ describe('MultiLanguageMissingTranslationHandler', () => {
           { provide: TranslateParser, useValue: parserMock },
           { provide: DynamicTranslationService, useValue: dynamicTranslationServiceMock },
           { provide: MULTI_LANGUAGE_IDENTIFIER, useValue: [{ name: 'test-lib', version: '1.0.0', type: 'lib' }] },
+        ],
+      })
+
+      const newHandler = TestBed.inject(MultiLanguageMissingTranslationHandler)
+      const identifiers = (newHandler as any).multiLanguageIdentifiers
+
+      expect(identifiers).toHaveLength(1)
+      expect(identifiers[0]).toEqual({ name: 'test-lib', version: '1.0.0', type: 'lib' })
+    })
+
+    it('should not add app identifier when APP_ID is explicitly undefined', () => {
+      TestBed.resetTestingModule()
+      TestBed.configureTestingModule({
+        providers: [
+          provideUserServiceMock(),
+          MultiLanguageMissingTranslationHandler,
+          { provide: TranslateParser, useValue: parserMock },
+          { provide: DynamicTranslationService, useValue: dynamicTranslationServiceMock },
+          { provide: MULTI_LANGUAGE_IDENTIFIER, useValue: [{ name: 'test-lib', version: '1.0.0', type: 'lib' }] },
+          { provide: APP_ID, useValue: undefined },
         ],
       })
 

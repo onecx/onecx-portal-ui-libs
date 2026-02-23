@@ -10,7 +10,8 @@ import { DynamicTranslationService, UserService } from '@onecx/angular-integrati
 import { Observable, of } from 'rxjs'
 import { catchError, map, mergeMap, shareReplay, take } from 'rxjs/operators'
 import { MULTI_LANGUAGE_IDENTIFIER, MultiLanguageIdentifier } from '../injection-tokens/multi-language-identifier'
-import deepmerge from 'deepmerge'
+
+type DeepmergeFunction = (target: Record<string, unknown>, source: Record<string, unknown>) => Record<string, unknown>
 
 @Injectable()
 export class MultiLanguageMissingTranslationHandler implements MissingTranslationHandler {
@@ -59,7 +60,7 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
         return this.dynamicTranslationService.getTranslations(lang, this.multiLanguageIdentifiers).pipe(
           map((translationsPerIdentifier) => {
             const values = Object.values(translationsPerIdentifier)
-            const translations = values.length > 0 ? deepmerge.all(values) : {}
+            const translations = this.mergeTranslations(values)
             const translatedValue = this.parser.interpolate(
               getValue(translations, params.key) as string,
               params.interpolateParams
@@ -71,6 +72,15 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
           })
         )
       })
+    )
+  }
+
+  private mergeTranslations(values: unknown[]): Record<string, unknown> {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const merge = require('deepmerge') as DeepmergeFunction
+    return values.reduce<Record<string, unknown>>(
+      (acc, current) => merge(acc, (current as Record<string, unknown>) ?? {}),
+      {}
     )
   }
 
