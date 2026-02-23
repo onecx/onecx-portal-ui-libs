@@ -446,13 +446,7 @@ export class InteractiveDataViewComponent implements OnInit {
   isColumnGroupSelectionComponentDefined: Signal<boolean | undefined>
   @Output() groupSelectionChangedSlotEmitter = observableOutput<ColumnGroupData | undefined>()
 
-  /**
-   * A bound function that can be passed to slot components.
-   * This ensures the correct context and triggers internal logic when called.
-   */
-  readonly groupSelectionChangedHandler = (event: ColumnGroupData | undefined) => {
-    this._triggerGroupSelectionChanged(event)
-  }
+  readonly groupSelectionChangedSlotInput = observableOutput<ColumnGroupData | undefined>()
 
   constructor() {
     this.isColumnGroupSelectionComponentDefined$ = this.slotService
@@ -460,6 +454,10 @@ export class InteractiveDataViewComponent implements OnInit {
       .pipe(startWith(true))
 
     this.isColumnGroupSelectionComponentDefined = toSignal(this.isColumnGroupSelectionComponentDefined$)
+
+    this.groupSelectionChangedSlotInput.subscribe((event) => {
+      this._triggerGroupSelectionChanged(event)
+    })
 
     effect(() => {
       this.registerEventListenerForDataView()
