@@ -52,7 +52,7 @@
         *ocxIfPermission="searchConfigPermission(); elseTemplate: defaultColumnGroupSelectionComponent"
         name="{{columnGroupSlotName}}"
         [inputs]="{ placeholderKey: groupSelectionNoGroupSelectedKey(), defaultGroupKey: defaultGroupKey(), customGroupKey: customGroupKey(), columns: columns(), selectedGroupKey: selectedGroupKey(), layout: layout(), displayedColumnsIds: displayedColumnKeys() }"
-        [outputs]="{ groupSelectionChanged: groupSelectionChangedSlotEmitter }"
+        [outputs]="{ groupSelectionChanged: groupSelectionChangedHandler }"
       >
         <ng-template #skeleton>
           <div class="flex">

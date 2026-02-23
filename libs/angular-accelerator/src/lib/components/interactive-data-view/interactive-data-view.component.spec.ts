@@ -6,7 +6,11 @@ import { PrimeTemplate } from 'primeng/api'
 import { InteractiveDataViewComponent } from './interactive-data-view.component'
 
 describe('InteractiveDataViewComponent (class logic)', () => {
-  // Helper function to set input signals in tests
+  /**
+   * Direct instantiation without fixture to control ngOnInit timing and avoid race conditions
+   * with async slot service checks and combineLatest streams during initialization.
+   * It tests pure class logic in isolation from template bindings and DOM.
+   */
   const setInputSignal = <T>(obj: any, prop: string, value: T) => {
     Object.defineProperty(obj, prop, {
       value: () => value,
@@ -147,7 +151,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       component.displayedColumnKeys.set(['c1'])
       setInputSignal(component, 'defaultGroupKey', 'test-default')
 
-      component.groupSelectionChangedSlotEmitter.emit(undefined)
+      component._triggerGroupSelectionChanged(undefined)
 
       // Should use defaultGroupKey as fallback
       expect(component.selectedGroupKey()).toBe('test-default')
