@@ -66,19 +66,19 @@ describe('AuthProxyService', () => {
     it('should reject when onecxAuth is undefined', async () => {
       delete window.onecxAuth
 
-      await expect(service.updateTokenIfNeeded()).rejects.toBe('No authServiceWrapper provided.')
+      await expect(service.updateTokenIfNeeded()).rejects.toBe('No authServiceWrapper provided. Please update to the latest shell version to use the new auth mechanism.')
     })
 
     it('should reject when authServiceProxy is undefined', async () => {
       window.onecxAuth = {}
 
-      await expect(service.updateTokenIfNeeded()).rejects.toBe('No authServiceWrapper provided.')
+      await expect(service.updateTokenIfNeeded()).rejects.toBe('No authServiceWrapper provided. Please update to the latest shell version to use the new auth mechanism.')
     })
 
     it('should reject when v1 is undefined', async () => {
       window.onecxAuth = { authServiceProxy: {} }
 
-      await expect(service.updateTokenIfNeeded()).rejects.toBe('No authServiceWrapper provided.')
+      await expect(service.updateTokenIfNeeded()).rejects.toBe('No authServiceWrapper provided. Please update to the latest shell version to use the new auth mechanism.')
     })
   })
 })
