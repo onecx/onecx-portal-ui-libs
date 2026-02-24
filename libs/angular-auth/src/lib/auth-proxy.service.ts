@@ -1,22 +1,22 @@
 import { Injectable } from '@angular/core'
 import './declarations'
 import { createLogger } from './utils/logger.utils'
+import { ensureProperty } from '@onecx/accelerator'
 
 @Injectable()
 export class AuthProxyService {
   private readonly logger = createLogger('AuthProxyService')
 
   getHeaderValues(): Record<string, string> {
-    return window.onecxAuth?.authServiceProxy?.v1?.getHeaderValues() ?? {}
+    const global = ensureProperty(globalThis, ['onecxAuth', 'authServiceProxy', 'v1', 'getHeaderValues'], () => ({}))
+    return global.onecxAuth.authServiceProxy.v1.getHeaderValues()
   }
 
   async updateTokenIfNeeded(): Promise<boolean> {
-    if (!window.onecxAuth?.authServiceProxy?.v1?.updateTokenIfNeeded) {
-      this.logger.error('Please update to the latest shell version to use the new auth mechanism.')
-    }
-    return (
-      window.onecxAuth?.authServiceProxy?.v1?.updateTokenIfNeeded() ??
-      Promise.reject('No authServiceWrapper provided.')
-    )
+    const global = ensureProperty(globalThis, ['onecxAuth', 'authServiceProxy', 'v1', 'updateTokenIfNeeded'], (): Promise<boolean> => Promise.reject('No authServiceWrapper provided. Please update to the latest shell version to use the new auth mechanism.'))
+    return global.onecxAuth.authServiceProxy.v1.updateTokenIfNeeded().catch((error) => {
+      this.logger.error('Error updating token:', error)
+      throw error
+    })
   }
 }
