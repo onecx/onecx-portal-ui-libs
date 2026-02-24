@@ -1,0 +1,58 @@
+[#upgrade-nx-to-angular-19]
+= Upgrade NX Application to Angular 19
+
+This guide describes how to upgrade an NX-based OneCX application to Angular 19. Complete the pre-migration steps from the main migration guide before you continue.
+
+== Update NX Packages
+
+Update the Angular and NX packages in your workspace by running:
+
+[source, bash]
+----
+nx migrate 20.4.0 --interactive
+----
+
+This command prompts you to apply updates for each major version of Angular and TypeScript. Apply all proposed updates up to Angular 19.1 and TypeScript 5.7.
+
+For details on NX / Angular compatibility, refer to the xref:https://nx.dev/docs/technologies/angular/guides/angular-nx-version-matrix[Angular NX Version Matrix].
+
+For details on `nx migrate`, refer to the official documentation: xref:https://nx.dev/docs/guides/tips-n-tricks/advanced-update[NX Migrate Documentation].
+
+== Update Package Versions in package.json
+
+1. After running the migration command, update the remaining packages manually. Update all `@onecx/*` packages to version `^6.0.0`.
+
+2. Update the packages listed here to the specified versions: xref:./update-packages.adoc[Required Package Updates].
+
+3. The following packages should be removed:
+
+* `@onecx/keycloak-auth` - Follow the instructions in xref:./remove-keycloak-auth.adoc[Remove @onecx/keycloak-auth] to update your application accordingly.
+* `@onecx/portal-layout-styles`
+* `@onecx/portal-integration-angular`
+
+4. After updating `package.json`, run `npm install` to install the new versions. If you see peer dependency errors, update the affected packages to compatible versions.
+
+[NOTE]
+==== 
+If you still see dependency conflicts that reference old versions, reinstall dependencies from scratch:
+
+[source, bash]
+----
+rm -rf node_modules package-lock.json .angular dist ~/.angular/cache && npm cache clean --force && npm install
+----
+====
+
+[IMPORTANT]
+====
+Make sure to migrate the updated packages and resolve any breaking changes. Refer to the official documentation of each package for migration guides and instructions.
+====
+
+== Run NX Migration
+After updating the package versions, run the following command to apply the generated migrations:
+
+[source, bash]
+----
+nx migrate --run-migrations
+----
+
+After this step, proceed with the remaining post-migration steps.
