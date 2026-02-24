@@ -447,7 +447,7 @@ export class InteractiveDataViewComponent implements OnInit {
   readonly columnGroupSlotName = 'onecx-column-group-selection'
   isColumnGroupSelectionComponentDefined$: Observable<boolean>
   isColumnGroupSelectionComponentDefined: Signal<boolean | undefined>
-  @Output() groupSelectionChangedSlotEmitter = observableOutput<ColumnGroupData | undefined>()
+  groupSelectionChangedSlotEmitter = output<ColumnGroupData | undefined>()
 
   // Internal EventEmitter for handling slot's groupSelectionChanged output
   // Used for communication between the slot component and this component's internal logic
