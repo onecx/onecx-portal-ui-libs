@@ -14,6 +14,11 @@
         "showReuseMessage": false,
         "close": false,
         "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
       }
     },
     {
@@ -29,6 +34,11 @@
         "showReuseMessage": false,
         "close": false,
         "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
       }
     },
     {
@@ -44,6 +54,11 @@
         "showReuseMessage": false,
         "close": false,
         "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
       }
     },
     {
@@ -59,14 +74,99 @@
         "showReuseMessage": false,
         "close": false,
         "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
       }
     },
     {
-      "label": "nx affected test (current work)",
+      "label": "npm:build",
       "type": "process",
-      "command": "npx",
-      "args": ["nx", "affected", "-t", "test", "--no-interactive"],
-      "detail": "Runs tests only for affected projects (use for currently worked-on changes).",
+      "command": "npm",
+      "args": ["run", "build"],
+      "detail": "Builds the entire Nx workspace.",
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "npm:build-copy",
+      "type": "process",
+      "command": "npm",
+      "args": ["run", "build-copy"],
+      "detail": "Runs the \"build-copy\" script via npm.",
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "npm:clean",
+      "type": "process",
+      "command": "npm",
+      "args": ["run", "clean"],
+      "detail": "Runs the \"clean\" script via npm.",
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "npm:sonar",
+      "type": "process",
+      "command": "npm",
+      "args": ["run", "sonar"],
+      "detail": "Runs the \"sonar\" script via npm.",
+      "group": "test",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "npm:sonar:all",
+      "type": "process",
+      "command": "npm",
+      "args": ["run", "sonar:all"],
+      "detail": "Runs the \"sonar:all\" script via npm.",
       "group": "test",
       "isBackground": false,
       "problemMatcher": [],
@@ -94,114 +194,19 @@
         "showReuseMessage": false,
         "close": false,
         "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
       }
     },
     {
-      "label": "nx affected build (current work)",
+      "label": "nx affected test (current work)",
       "type": "process",
       "command": "npx",
-      "args": ["nx", "affected", "-t", "build"],
-      "detail": "Builds only affected projects (use for currently worked-on changes).",
-      "group": "build",
-      "isBackground": false,
-      "problemMatcher": [],
-      "presentation": {
-        "showReuseMessage": false,
-        "close": false,
-        "panel": "dedicated"
-      }
-    },
-    {
-      "label": "npm:build",
-      "type": "process",
-      "command": "npm",
-      "args": ["run", "build"],
-      "detail": "Builds the entire Nx workspace.",
-      "isBackground": false,
-      "problemMatcher": [],
-      "presentation": {
-        "showReuseMessage": false,
-        "close": false,
-        "panel": "dedicated"
-      }
-    },
-    {
-      "label": "npm:build-copy",
-      "type": "process",
-      "command": "npm",
-      "args": ["run", "build-copy"],
-      "detail": "Runs the \"build-copy\" script via npm.",
-      "isBackground": false,
-      "problemMatcher": [],
-      "presentation": {
-        "showReuseMessage": false,
-        "close": false,
-        "panel": "dedicated"
-      }
-    },
-    {
-      "label": "npm:clean",
-      "type": "process",
-      "command": "npm",
-      "args": ["run", "clean"],
-      "detail": "Runs the \"clean\" script via npm.",
-      "isBackground": false,
-      "problemMatcher": [],
-      "presentation": {
-        "showReuseMessage": false,
-        "close": false,
-        "panel": "dedicated"
-      }
-    },
-    {
-      "label": "npm:sonar",
-      "type": "process",
-      "command": "npm",
-      "args": ["run", "sonar"],
-      "detail": "Runs the \"sonar\" script via npm.",
-      "isBackground": false,
-      "problemMatcher": [],
-      "presentation": {
-        "showReuseMessage": false,
-        "close": false,
-        "panel": "dedicated"
-      }
-    },
-    {
-      "label": "npm:sonar:all",
-      "type": "process",
-      "command": "npm",
-      "args": ["run", "sonar:all"],
-      "detail": "Runs the \"sonar:all\" script via npm.",
-      "isBackground": false,
-      "problemMatcher": [],
-      "presentation": {
-        "showReuseMessage": false,
-        "close": false,
-        "panel": "dedicated"
-      }
-    },
-    {
-      "label": "nx build angular-integration-interface",
-      "type": "process",
-      "command": "npx",
-      "args": ["nx", "build", "angular-integration-interface"],
-      "detail": "Builds the library \"angular-integration-interface\" using Nx.",
-      "group": "build",
-      "isBackground": false,
-      "problemMatcher": [],
-      "presentation": {
-        "showReuseMessage": false,
-        "close": false,
-        "panel": "dedicated"
-      }
-    },
-    {
-      "label": "nx test angular-integration-interface",
-      "type": "process",
-      "command": "npx",
-      "args": ["nx", "test", "angular-integration-interface", "--no-interactive"],
-      "detail": "Runs the tests for the library \"angular-integration-interface\" using Nx.",
+      "args": ["nx", "affected", "-t", "test", "--no-interactive"],
+      "detail": "Runs tests only for affected projects (use for currently worked-on changes).",
       "group": "test",
       "isBackground": false,
       "problemMatcher": [],
@@ -217,11 +222,31 @@
       }
     },
     {
-      "label": "nx build ngrx-integration-interface",
+      "label": "nx affected test (current work, coverage)",
       "type": "process",
       "command": "npx",
-      "args": ["nx", "build", "ngrx-integration-interface"],
-      "detail": "Builds the library \"ngrx-integration-interface\" using Nx.",
+      "args": ["nx", "affected", "-t", "test", "--coverage", "--no-interactive"],
+      "detail": "Runs tests with coverage only for affected projects (use for currently worked-on changes).",
+      "group": "test",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx affected build (current work)",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "affected", "-t", "build"],
+      "detail": "Builds only affected projects (use for currently worked-on changes).",
       "group": "build",
       "isBackground": false,
       "problemMatcher": [],
@@ -229,14 +254,279 @@
         "showReuseMessage": false,
         "close": false,
         "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
       }
     },
     {
-      "label": "nx test ngrx-integration-interface",
+      "label": "nx build accelerator",
       "type": "process",
       "command": "npx",
-      "args": ["nx", "test", "ngrx-integration-interface", "--no-interactive"],
-      "detail": "Runs the tests for the library \"ngrx-integration-interface\" using Nx.",
+      "args": ["nx", "build", "accelerator"],
+      "detail": "Builds the library \"accelerator\" using Nx.",
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx lint accelerator",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "lint", "accelerator"],
+      "detail": "Runs lint for the library \"accelerator\" using Nx.",
+      "group": "test",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx test accelerator",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "test", "accelerator", "--no-interactive"],
+      "detail": "Runs the tests for the library \"accelerator\" using Nx.",
+      "group": "test",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx build angular-accelerator",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "build", "angular-accelerator"],
+      "detail": "Builds the library \"angular-accelerator\" using Nx.",
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx lint angular-accelerator",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "lint", "angular-accelerator"],
+      "detail": "Runs lint for the library \"angular-accelerator\" using Nx.",
+      "group": "test",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx test angular-accelerator",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "test", "angular-accelerator", "--no-interactive"],
+      "detail": "Runs the tests for the library \"angular-accelerator\" using Nx.",
+      "group": "test",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx run angular-accelerator:build-storybook",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "run", "angular-accelerator:build-storybook"],
+      "detail": "Builds the Storybook for the library \"angular-accelerator\" using Nx.",
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx run angular-accelerator:storybook",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "run", "angular-accelerator:storybook"],
+      "detail": "Runs the Storybook for the library \"angular-accelerator\" using Nx.",
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx build angular-auth",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "build", "angular-auth"],
+      "detail": "Builds the library \"angular-auth\" using Nx.",
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx lint angular-auth",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "lint", "angular-auth"],
+      "detail": "Runs lint for the library \"angular-auth\" using Nx.",
+      "group": "test",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx test angular-auth",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "test", "angular-auth", "--no-interactive"],
+      "detail": "Runs the tests for the library \"angular-auth\" using Nx.",
+      "group": "test",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx build angular-integration-interface",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "build", "angular-integration-interface"],
+      "detail": "Builds the library \"angular-integration-interface\" using Nx.",
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx lint angular-integration-interface",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "lint", "angular-integration-interface"],
+      "detail": "Runs lint for the library \"angular-integration-interface\" using Nx.",
+      "group": "test",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx test angular-integration-interface",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "test", "angular-integration-interface", "--no-interactive"],
+      "detail": "Runs the tests for the library \"angular-integration-interface\" using Nx.",
       "group": "test",
       "isBackground": false,
       "problemMatcher": [],
@@ -264,6 +554,31 @@
         "showReuseMessage": false,
         "close": false,
         "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx lint angular-remote-components",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "lint", "angular-remote-components"],
+      "detail": "Runs lint for the library \"angular-remote-components\" using Nx.",
+      "group": "test",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
       }
     },
     {
@@ -299,6 +614,31 @@
         "showReuseMessage": false,
         "close": false,
         "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx lint angular-standalone-shell",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "lint", "angular-standalone-shell"],
+      "detail": "Runs lint for the library \"angular-standalone-shell\" using Nx.",
+      "group": "test",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
       }
     },
     {
@@ -307,211 +647,6 @@
       "command": "npx",
       "args": ["nx", "test", "angular-standalone-shell", "--no-interactive"],
       "detail": "Runs the tests for the library \"angular-standalone-shell\" using Nx.",
-      "group": "test",
-      "isBackground": false,
-      "problemMatcher": [],
-      "presentation": {
-        "showReuseMessage": false,
-        "close": false,
-        "panel": "dedicated"
-      },
-      "options": {
-        "env": {
-          "CI": "true"
-        }
-      }
-    },
-    {
-      "label": "nx build angular-webcomponents",
-      "type": "process",
-      "command": "npx",
-      "args": ["nx", "build", "angular-webcomponents"],
-      "detail": "Builds the library \"angular-webcomponents\" using Nx.",
-      "group": "build",
-      "isBackground": false,
-      "problemMatcher": [],
-      "presentation": {
-        "showReuseMessage": false,
-        "close": false,
-        "panel": "dedicated"
-      }
-    },
-    {
-      "label": "nx test angular-webcomponents",
-      "type": "process",
-      "command": "npx",
-      "args": ["nx", "test", "angular-webcomponents", "--no-interactive"],
-      "detail": "Runs the tests for the library \"angular-webcomponents\" using Nx.",
-      "group": "test",
-      "isBackground": false,
-      "problemMatcher": [],
-      "presentation": {
-        "showReuseMessage": false,
-        "close": false,
-        "panel": "dedicated"
-      },
-      "options": {
-        "env": {
-          "CI": "true"
-        }
-      }
-    },
-    {
-      "label": "nx build integration-interface",
-      "type": "process",
-      "command": "npx",
-      "args": ["nx", "build", "integration-interface"],
-      "detail": "Builds the library \"integration-interface\" using Nx.",
-      "group": "build",
-      "isBackground": false,
-      "problemMatcher": [],
-      "presentation": {
-        "showReuseMessage": false,
-        "close": false,
-        "panel": "dedicated"
-      }
-    },
-    {
-      "label": "nx test integration-interface",
-      "type": "process",
-      "command": "npx",
-      "args": ["nx", "test", "integration-interface", "--no-interactive"],
-      "detail": "Runs the tests for the library \"integration-interface\" using Nx.",
-      "group": "test",
-      "isBackground": false,
-      "problemMatcher": [],
-      "presentation": {
-        "showReuseMessage": false,
-        "close": false,
-        "panel": "dedicated"
-      },
-      "options": {
-        "env": {
-          "CI": "true"
-        }
-      }
-    },
-    {
-      "label": "nx build angular-accelerator",
-      "type": "process",
-      "command": "npx",
-      "args": ["nx", "build", "angular-accelerator"],
-      "detail": "Builds the library \"angular-accelerator\" using Nx.",
-      "group": "build",
-      "isBackground": false,
-      "problemMatcher": [],
-      "presentation": {
-        "showReuseMessage": false,
-        "close": false,
-        "panel": "dedicated"
-      }
-    },
-    {
-      "label": "nx run angular-accelerator:build-storybook",
-      "type": "process",
-      "command": "npx",
-      "args": ["nx", "run", "angular-accelerator:build-storybook"],
-      "detail": "Builds the Storybook for the library \"angular-accelerator\" using Nx.",
-      "group": "build",
-      "isBackground": false,
-      "problemMatcher": [],
-      "presentation": {
-        "showReuseMessage": false,
-        "close": false,
-        "panel": "dedicated"
-      }
-    },
-    {
-      "label": "nx run angular-accelerator:storybook",
-      "type": "process",
-      "command": "npx",
-      "args": ["nx", "run", "angular-accelerator:storybook"],
-      "detail": "Runs the Storybook for the library \"angular-accelerator\" using Nx.",
-      "group": "build",
-      "isBackground": false,
-      "problemMatcher": [],
-      "presentation": {
-        "showReuseMessage": false,
-        "close": false,
-        "panel": "dedicated"
-      }
-    },
-    {
-      "label": "nx test angular-accelerator",
-      "type": "process",
-      "command": "npx",
-      "args": ["nx", "test", "angular-accelerator", "--no-interactive"],
-      "detail": "Runs the tests for the library \"angular-accelerator\" using Nx.",
-      "group": "test",
-      "isBackground": false,
-      "problemMatcher": [],
-      "presentation": {
-        "showReuseMessage": false,
-        "close": false,
-        "panel": "dedicated"
-      },
-      "options": {
-        "env": {
-          "CI": "true"
-        }
-      }
-    },
-    {
-      "label": "nx build nx-migration-utils",
-      "type": "process",
-      "command": "npx",
-      "args": ["nx", "build", "nx-migration-utils"],
-      "detail": "Builds the library \"nx-migration-utils\" using Nx.",
-      "group": "build",
-      "isBackground": false,
-      "problemMatcher": [],
-      "presentation": {
-        "showReuseMessage": false,
-        "close": false,
-        "panel": "dedicated"
-      }
-    },
-    {
-      "label": "nx test nx-migration-utils",
-      "type": "process",
-      "command": "npx",
-      "args": ["nx", "test", "nx-migration-utils", "--no-interactive"],
-      "detail": "Runs the tests for the library \"nx-migration-utils\" using Nx.",
-      "group": "test",
-      "isBackground": false,
-      "problemMatcher": [],
-      "presentation": {
-        "showReuseMessage": false,
-        "close": false,
-        "panel": "dedicated"
-      },
-      "options": {
-        "env": {
-          "CI": "true"
-        }
-      }
-    },
-    {
-      "label": "nx build ngrx-accelerator",
-      "type": "process",
-      "command": "npx",
-      "args": ["nx", "build", "ngrx-accelerator"],
-      "detail": "Builds the library \"ngrx-accelerator\" using Nx.",
-      "group": "build",
-      "isBackground": false,
-      "problemMatcher": [],
-      "presentation": {
-        "showReuseMessage": false,
-        "close": false,
-        "panel": "dedicated"
-      }
-    },
-    {
-      "label": "nx test ngrx-accelerator",
-      "type": "process",
-      "command": "npx",
-      "args": ["nx", "test", "ngrx-accelerator", "--no-interactive"],
-      "detail": "Runs the tests for the library \"ngrx-accelerator\" using Nx.",
       "group": "test",
       "isBackground": false,
       "problemMatcher": [],
@@ -539,6 +674,31 @@
         "showReuseMessage": false,
         "close": false,
         "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx lint angular-testing",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "lint", "angular-testing"],
+      "detail": "Runs lint for the library \"angular-testing\" using Nx.",
+      "group": "test",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
       }
     },
     {
@@ -574,6 +734,31 @@
         "showReuseMessage": false,
         "close": false,
         "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx lint angular-utils",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "lint", "angular-utils"],
+      "detail": "Runs lint for the library \"angular-utils\" using Nx.",
+      "group": "test",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
       }
     },
     {
@@ -587,7 +772,8 @@
       "problemMatcher": [],
       "presentation": {
         "showReuseMessage": false,
-        "close": false
+        "close": false,
+        "panel": "dedicated"
       },
       "options": {
         "env": {
@@ -596,31 +782,38 @@
       }
     },
     {
-      "label": "nx build angular-auth",
+      "label": "nx build angular-webcomponents",
       "type": "process",
       "command": "npx",
-      "args": ["nx", "build", "angular-auth"],
-      "detail": "Builds the library \"angular-auth\" using Nx.",
+      "args": ["nx", "build", "angular-webcomponents"],
+      "detail": "Builds the library \"angular-webcomponents\" using Nx.",
       "group": "build",
       "isBackground": false,
       "problemMatcher": [],
       "presentation": {
         "showReuseMessage": false,
-        "close": false
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
       }
     },
     {
-      "label": "nx test angular-auth",
+      "label": "nx lint angular-webcomponents",
       "type": "process",
       "command": "npx",
-      "args": ["nx", "test", "angular-auth", "--no-interactive"],
-      "detail": "Runs the tests for the library \"angular-auth\" using Nx.",
+      "args": ["nx", "lint", "angular-webcomponents"],
+      "detail": "Runs lint for the library \"angular-webcomponents\" using Nx.",
       "group": "test",
       "isBackground": false,
       "problemMatcher": [],
       "presentation": {
         "showReuseMessage": false,
-        "close": false
+        "close": false,
+        "panel": "dedicated"
       },
       "options": {
         "env": {
@@ -629,25 +822,271 @@
       }
     },
     {
-      "label": "nx build accelerator",
+      "label": "nx test angular-webcomponents",
       "type": "process",
       "command": "npx",
-      "args": ["nx", "build", "accelerator"],
-      "detail": "Builds the library \"accelerator\" using Nx.",
+      "args": ["nx", "test", "angular-webcomponents", "--no-interactive"],
+      "detail": "Runs the tests for the library \"angular-webcomponents\" using Nx.",
+      "group": "test",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx build integration-interface",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "build", "integration-interface"],
+      "detail": "Builds the library \"integration-interface\" using Nx.",
       "group": "build",
       "isBackground": false,
       "problemMatcher": [],
       "presentation": {
         "showReuseMessage": false,
-        "close": false
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
       }
     },
     {
-      "label": "nx test accelerator",
+      "label": "nx lint integration-interface",
       "type": "process",
       "command": "npx",
-      "args": ["nx", "test", "accelerator", "--no-interactive"],
-      "detail": "Runs the tests for the library \"accelerator\" using Nx.",
+      "args": ["nx", "lint", "integration-interface"],
+      "detail": "Runs lint for the library \"integration-interface\" using Nx.",
+      "group": "test",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx test integration-interface",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "test", "integration-interface", "--no-interactive"],
+      "detail": "Runs the tests for the library \"integration-interface\" using Nx.",
+      "group": "test",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx test integration-interface (coverage)",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "test", "integration-interface", "--coverage", "--no-interactive"],
+      "detail": "Runs the tests for the library \"integration-interface\" with coverage and prints a coverage summary.",
+      "group": "test",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx build ngrx-accelerator",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "build", "ngrx-accelerator"],
+      "detail": "Builds the library \"ngrx-accelerator\" using Nx.",
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx lint ngrx-accelerator",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "lint", "ngrx-accelerator"],
+      "detail": "Runs lint for the library \"ngrx-accelerator\" using Nx.",
+      "group": "test",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx test ngrx-accelerator",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "test", "ngrx-accelerator", "--no-interactive"],
+      "detail": "Runs the tests for the library \"ngrx-accelerator\" using Nx.",
+      "group": "test",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx build ngrx-integration-interface",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "build", "ngrx-integration-interface"],
+      "detail": "Builds the library \"ngrx-integration-interface\" using Nx.",
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx lint ngrx-integration-interface",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "lint", "ngrx-integration-interface"],
+      "detail": "Runs lint for the library \"ngrx-integration-interface\" using Nx.",
+      "group": "test",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx test ngrx-integration-interface",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "test", "ngrx-integration-interface", "--no-interactive"],
+      "detail": "Runs the tests for the library \"ngrx-integration-interface\" using Nx.",
+      "group": "test",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx build nx-migration-utils",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "build", "nx-migration-utils"],
+      "detail": "Builds the library \"nx-migration-utils\" using Nx.",
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx lint nx-migration-utils",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "lint", "nx-migration-utils"],
+      "detail": "Runs lint for the library \"nx-migration-utils\" using Nx.",
+      "group": "test",
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "showReuseMessage": false,
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
+      }
+    },
+    {
+      "label": "nx test nx-migration-utils",
+      "type": "process",
+      "command": "npx",
+      "args": ["nx", "test", "nx-migration-utils", "--no-interactive"],
+      "detail": "Runs the tests for the library \"nx-migration-utils\" using Nx.",
       "group": "test",
       "isBackground": false,
       "problemMatcher": [],
@@ -673,7 +1112,13 @@
       "problemMatcher": [],
       "presentation": {
         "showReuseMessage": false,
-        "close": false
+        "close": false,
+        "panel": "dedicated"
+      },
+      "options": {
+        "env": {
+          "CI": "true"
+        }
       }
     },
     {
@@ -687,7 +1132,8 @@
       "problemMatcher": [],
       "presentation": {
         "showReuseMessage": false,
-        "close": false
+        "close": false,
+        "panel": "dedicated"
       },
       "options": {
         "env": {

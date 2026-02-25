@@ -49,6 +49,7 @@
     "primelocale": "^2.2.2",
     "primeng": "^20.3.0",
     "rxjs": "^7.8.2",
+    "semver": "^7.7.3",
     "ts-semaphore": "^1.0.0",
     "tslib": "^2.8.1",
     "zod": "^4.1.12",

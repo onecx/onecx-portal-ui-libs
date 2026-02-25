@@ -29,6 +29,7 @@ import {
   provideTranslationConnectionService,
   provideTranslationPathFromMeta,
   MultiLanguageMissingTranslationHandler,
+  provideMultiLanguageIdentifier,
 } from '@onecx/angular-utils'
 import { SrcDirective } from './directives/src.directive'
 import { TooltipOnOverflowDirective } from './directives/tooltipOnOverflow.directive'
@@ -52,6 +53,7 @@ import { BasicDirective } from './directives/basic.directive'
 import { LoadingIndicatorDirective } from './directives/loading-indicator.directive'
 import { MessageService } from 'primeng/api'
 import { ConsentComponent } from './components/consent/consent.component'
+import { LIB_VERSION } from '../version'
 
 export class AngularAcceleratorMissingTranslationHandler extends MultiLanguageMissingTranslationHandler {}
 
@@ -123,6 +125,7 @@ function appInitializer(userService: UserService) {
     },
     provideTranslationPathFromMeta(import.meta.url, 'onecx-angular-accelerator/assets/i18n/'),
     provideTranslationPathFromMeta(import.meta.url, 'onecx-angular-accelerator/assets/i18n/primeng/'),
+    provideMultiLanguageIdentifier('@onecx/angular-accelerator', LIB_VERSION, 'lib'),
     {
       provide: MessageService,
       useClass: MessageService,

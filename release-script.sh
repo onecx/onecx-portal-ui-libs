@@ -21,6 +21,13 @@ for folder in "${folder_names[@]}"; do
     libPackageVersion=$(echo "$packageJsonDataLib" | jq -r '.version')
     packageJsonDataLib=$(echo "$packageJsonDataLib" | sed -E 's/(@onecx[^"]+?": *?")([^"]+)"/\1^'$1'"/')
     echo $packageJsonDataLib > libs/$folder/package.json
+
+    versionFilePath="libs/$folder/src/version.ts"
+    if [[ -f "$versionFilePath" ]]
+    then
+        echo "export const LIB_VERSION = '$1'" > "$versionFilePath"
+    fi
+
     if [[ $libPackageVersion != $1 ]]
     then
         npx -p replace-json-property rjp libs/$folder/package.json version $1
