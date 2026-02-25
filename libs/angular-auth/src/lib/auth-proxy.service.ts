@@ -13,7 +13,7 @@ export class AuthProxyService {
   }
 
   async updateTokenIfNeeded(): Promise<boolean> {
-    const global = ensureProperty(globalThis, ['onecxAuth', 'authServiceProxy', 'v1', 'updateTokenIfNeeded'], (): Promise<boolean> => Promise.reject('No authServiceWrapper provided. Please update to the latest shell version to use the new auth mechanism.'))
+    const global = ensureProperty(globalThis, ['onecxAuth', 'authServiceProxy', 'v1', 'updateTokenIfNeeded'], (): Promise<boolean> => Promise.reject(new Error('No authServiceWrapper provided. Please update to the latest shell version to use the new auth mechanism.')))
     return global.onecxAuth.authServiceProxy.v1.updateTokenIfNeeded().catch((error) => {
       this.logger.error('Error updating token:', error)
       throw error
