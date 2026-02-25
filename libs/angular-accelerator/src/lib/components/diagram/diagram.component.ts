@@ -63,6 +63,8 @@ export class DiagramComponent implements OnInit, OnChanges {
    * Setting this property to false will result in using the provided colors only if every data item has one. In the scenario where at least one item does not have a color set, diagram will generate all colors.
    */
   @Input() fillMissingColors = true
+  @Input() enableResponsiveHeight = false
+
   private _diagramType: DiagramType = DiagramType.PIE
   selectedDiagramType: DiagramLayouts | undefined
   public chartType: 'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'polarArea' | 'radar' = 'pie'
@@ -87,6 +89,12 @@ export class DiagramComponent implements OnInit, OnChanges {
   @Output() dataSelected: EventEmitter<any> = new EventEmitter()
   @Output() diagramTypeChanged: EventEmitter<DiagramType> = new EventEmitter()
   @Output() componentStateChanged: EventEmitter<DiagramComponentState> = new EventEmitter()
+
+  // enabled for only pie chart as it contains legends which overflows
+  get isResponsiveHeight(): boolean {
+    return this._diagramType === DiagramType.PIE && this.enableResponsiveHeight 
+  }
+
   chartOptions: ChartOptions | undefined
   chartData: ChartData | undefined
   amountOfData: number | undefined | null
