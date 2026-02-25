@@ -4,7 +4,11 @@ import { ImageRepositoryService as ImageRepositoryInterface } from '@onecx/integ
 @Injectable({providedIn: 'root'}) 
 export class ImageRepositoryService implements OnDestroy {
     private readonly imageRepositoryInterface = new ImageRepositoryInterface();
-    
+
+    get imageRepositoryTopic() {
+        return this.imageRepositoryInterface.imageRepositoryTopic;
+    }
+        
     async getUrl(names: string[]): Promise<string | undefined>;
     async getUrl(names: string[], fallbackUrl: string): Promise<string>;
     async getUrl(names: string[], fallbackUrl?: string): Promise<string | undefined> {
